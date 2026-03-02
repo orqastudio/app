@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/session-start-hook.sh"
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/skill-instructions-hook.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/pre-commit-reminder.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

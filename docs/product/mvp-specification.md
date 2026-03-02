@@ -1,0 +1,325 @@
+# MVP Feature Specification
+
+**Date:** 2026-03-02
+
+Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped to the minimum needed for dogfooding — Forge must be able to manage its own development after this phase.
+
+**Guiding principle:** Ship the smallest thing that lets us stop using the CLI-based bootstrap process for Forge's own development. Every feature below serves the dogfooding milestone. Features that would be nice but aren't needed for dogfooding are listed under "Explicitly Deferred."
+
+---
+
+## MVP Features
+
+### F-001: Project Open & Codebase Scan
+
+**Description:** User can open a project directory. Forge scans the codebase and populates project metadata.
+
+**Acceptance Criteria:**
+- [ ] User can open a directory via native file dialog (tauri-plugin-dialog)
+- [ ] Tier 1 scan (manifest heuristics) completes in < 100ms and detects: languages, frameworks, package manager, project name
+- [ ] Tier 1 scan also detects design system tokens: `tailwind.config.*` theme colors/fonts, CSS custom properties in `:root`, component library conventions
+- [ ] Tier 2 scan (hyperpolyglot) completes in < 5s for projects up to 10,000 files
+- [ ] Detected metadata (including design tokens) is stored in SQLite and displayed in sidebar Project tab
+- [ ] If design tokens are found, Forge's UI theme adapts to match the project's color palette (per-project theming). Missing tokens fall back to Forge defaults.
+- [ ] If `.claude/` directory exists, governance artifacts are indexed and counts displayed
+- [ ] Last-opened project is remembered across app restarts (tauri-plugin-store)
+- [ ] Empty project (no recognized files) shows a meaningful empty state
+
+**Architecture References:** AD-016 (onboarding strategy), AD-014 (persistence), AD-012 (plugins)
+
+---
+
+### F-001b: New Project Workflow
+
+**Description:** User can create a brand new project from scratch. Forge initializes the directory structure, scaffolds a `.claude/` governance skeleton, and drops the user into a conversation.
+
+**Acceptance Criteria:**
+
+*Directory and registration:*
+- [ ] "New Project" action is available alongside "Open Project" (toolbar or welcome state)
+- [ ] User provides a project name and selects a parent directory (or selects an existing empty directory)
+- [ ] Forge creates the project directory (if needed) with: `.claude/CLAUDE.md`, `.claude/agents/`, `.claude/rules/`, `.claude/skills/`, `.claude/hooks/`, `docs/`, `.gitignore` (with `forge.db`)
+- [ ] If the directory is not a git repo, Forge offers to run `git init`
+- [ ] Project is registered in SQLite and set as active
+- [ ] Sidebar shows the new project with "New project, no code detected" status
+- [ ] The scaffolded `.claude/` structure is fully compatible with Claude Code CLI
+- [ ] Empty artifact browser categories show actionable empty states ("Create your first agent")
+
+*Project discovery conversation:*
+- [ ] After directory creation, Forge offers to start a project discovery conversation (not a wizard)
+- [ ] The discovery session uses a system prompt that structures the conversation through product definition, tech stack, team, conventions, and prior art topics
+- [ ] User answers naturally in conversation — Claude synthesizes the responses and asks follow-ups
+- [ ] The system prompt guides Claude to cover all topics but does not enforce a rigid order
+- [ ] User can say "that's enough" or "skip" at any point to end discovery early
+- [ ] At the end of discovery, Claude proposes governance artifacts based on the conversation
+- [ ] User reviews and approves, modifies, or rejects each proposed artifact before it is written to disk
+- [ ] Generated CLAUDE.md contains a project summary derived from the conversation (product description, tech stack, team, key decisions)
+- [ ] Generated agents are tailored to the stated tech stack (not generic defaults)
+- [ ] Generated rules reflect stated conventions and preferences
+- [ ] The discovery conversation is saved as a regular session (appears in session history, is searchable and resumable)
+- [ ] User can skip discovery entirely via a "Skip — Use Defaults" action and start with generic scaffolding
+- [ ] Skipping creates a minimal CLAUDE.md (project name + date) with empty governance directories
+
+**Architecture References:** AD-015 (governance format), AD-016 (onboarding strategy), AD-014 (persistence)
+
+---
+
+### F-002: Agent SDK Sidecar Lifecycle
+
+**Description:** Forge spawns, monitors, and communicates with the Agent SDK sidecar process.
+
+**Acceptance Criteria:**
+- [ ] Sidecar binary is bundled with the application (Bun-compiled, ~18-25 MB)
+- [ ] Sidecar spawns via `tauri-plugin-shell` `spawn()` on first conversation request
+- [ ] Sidecar communicates via stdin/stdout NDJSON protocol
+- [ ] Health check: Forge detects if sidecar exits unexpectedly and reports status
+- [ ] If Claude Code CLI is not available, Forge shows a clear error with installation guidance
+- [ ] Status bar shows sidecar state: not started, starting, connected, error
+- [ ] Sidecar process is terminated cleanly on app close
+
+**Architecture References:** AD-007 (sidecar integration), AD-008 (Max authentication), AD-012 (plugins)
+
+---
+
+### F-003: Conversation Streaming
+
+**Description:** User can send messages and receive streaming AI responses in real-time.
+
+**Acceptance Criteria:**
+- [ ] User can type a message in the input area and send with Enter
+- [ ] Shift+Enter inserts a newline without sending
+- [ ] Message is sent to sidecar via stdin NDJSON
+- [ ] Response tokens stream into the conversation panel character by character
+- [ ] Streaming uses the pipeline: sidecar stdout → Rust NDJSON parser → Channel<T> → Svelte `$state` → DOM
+- [ ] First token appears in < 2 seconds after send (network permitting)
+- [ ] Complete messages are rendered as markdown (headings, bold, italic, code blocks, lists)
+- [ ] Code blocks have syntax highlighting (svelte-highlight)
+- [ ] User messages are visually distinct from assistant messages
+- [ ] The conversation auto-scrolls during streaming (scroll-to-bottom behavior)
+- [ ] User can scroll up during streaming without being snapped back to bottom
+- [ ] Error responses (sidecar errors, provider errors) display as error blocks in the conversation
+
+**Architecture References:** AD-009 (streaming pipeline), AD-013 (frontend libraries), AD-007 (sidecar)
+
+---
+
+### F-004: Tool Call Display
+
+**Description:** Tool calls made by the AI during a conversation are displayed as collapsible cards.
+
+**Acceptance Criteria:**
+- [ ] Tool calls appear inline in the conversation at the point where the AI invoked them
+- [ ] Each tool call card shows: tool name, input summary (truncated), status badge (completed/error)
+- [ ] Cards are collapsed by default, showing only the summary line
+- [ ] Expanding a card reveals: full input parameters, full output/result
+- [ ] File-related tool calls show the file path prominently
+- [ ] Edit/Write tool calls show a diff view when expanded (additions green, deletions red)
+- [ ] Command tool calls show the command and output with monospace formatting
+- [ ] Tool result errors are visually distinct (error styling)
+- [ ] Cards are read-only in Phase 1 (no approval/denial controls)
+
+**Architecture References:** AD-010 (tool implementation as MCP), AD-013 (frontend libraries)
+
+---
+
+### F-005: Session Persistence
+
+**Description:** Sessions are saved automatically and can be browsed, resumed, and searched.
+
+**Acceptance Criteria:**
+- [ ] Sessions are created automatically when the first message is sent
+- [ ] Session metadata (title, created_at, updated_at, message_count, model) is stored in SQLite
+- [ ] Messages and content blocks are stored in SQLite (one row per content block)
+- [ ] Sessions are auto-titled from the first user message (first 50 characters)
+- [ ] Session list appears in the sidebar Sessions tab, ordered by most recent
+- [ ] Clicking a session in the list loads it in the conversation view with full message history
+- [ ] The active session is highlighted in the list
+- [ ] New Session button (`Ctrl+N`) creates a new empty session
+- [ ] Sessions persist across app restarts
+- [ ] The last-active session is restored on app restart
+
+**Architecture References:** AD-014 (persistence architecture), AD-005 (SQLite)
+
+---
+
+### F-006: Three-Pane Layout
+
+**Description:** The main window uses a three-pane resizable layout with collapsible sidebar and detail panel.
+
+**Acceptance Criteria:**
+- [ ] Layout uses PaneForge (shadcn-svelte Resizable) with three panes
+- [ ] Sidebar (left): default 240px, min 180px, collapsible with `Ctrl+B`
+- [ ] Primary (center): flexible width, min 400px, not collapsible
+- [ ] Detail (right): default 360px, min 280px, collapsible with `Ctrl+\`
+- [ ] Pane resize handles are visible and draggable
+- [ ] Collapsed panes animate smoothly (not instant hide/show)
+- [ ] Panel sizes and collapse state persist across app restarts (tauri-plugin-window-state)
+- [ ] Window size and position persist across restarts
+- [ ] Layout is functional at minimum window size of 900x600px
+
+**Architecture References:** AD-013 (PaneForge), AD-012 (window-state plugin)
+
+---
+
+### F-007: Artifact Browser
+
+**Description:** User can browse governance artifacts (agents, rules, skills, hooks, docs) in the detail panel.
+
+**Acceptance Criteria:**
+- [ ] Detail panel has an artifact browser view accessible from sidebar Project tab quick links or `Ctrl+Shift+A`
+- [ ] Artifact browser has category tabs: Docs (default), Agents, Rules, Skills, Hooks
+- [ ] Each tab lists artifacts found in the corresponding `.claude/` subdirectory (or `docs/` for documentation)
+- [ ] Each list entry shows: filename, brief description (from YAML frontmatter `description` or first paragraph)
+- [ ] Clicking an artifact opens it in the detail panel artifact viewer (conversation stays visible)
+- [ ] Artifact viewer renders markdown content with proper formatting
+- [ ] YAML frontmatter is displayed as structured metadata above the rendered body
+- [ ] File watcher detects changes to `.claude/` files and updates the browser within 500ms
+- [ ] Empty categories show a meaningful empty state
+
+**Architecture References:** AD-015 (governance artifact format), AD-013 (frontend libraries)
+
+---
+
+### F-008: Artifact Editor
+
+**Description:** User can edit governance artifacts through the UI.
+
+**Acceptance Criteria:**
+- [ ] Artifact viewer has an "Edit" toggle (`Ctrl+E`) that switches to CodeMirror 6 source editing
+- [ ] CodeMirror editor has markdown syntax highlighting
+- [ ] YAML frontmatter is editable within the same editor
+- [ ] `Ctrl+S` saves the file to disk immediately
+- [ ] After save, switching back to rendered view shows updated content
+- [ ] Unsaved changes are indicated visually (modified indicator in title)
+- [ ] Closing the editor with unsaved changes prompts: save, discard, or cancel
+- [ ] "New" button in artifact browser creates a template file and opens it in edit mode
+
+**Architecture References:** AD-013 (CodeMirror 6), AD-015 (governance format)
+
+---
+
+### F-009: Settings View
+
+**Description:** User can view and configure application settings.
+
+**Acceptance Criteria:**
+- [ ] Settings are accessible via the gear icon in the toolbar
+- [ ] Settings open in the detail panel
+- [ ] Provider section shows: sidecar status, Claude Code CLI detection status, connection health
+- [ ] Project section shows: project root path, detected stack, file watcher status
+- [ ] Appearance section has: theme toggle (light/dark/system), font size adjustment
+- [ ] Settings are persisted via tauri-plugin-store
+- [ ] Theme changes apply immediately without restart
+
+**Architecture References:** AD-012 (plugins), AD-011 (security model)
+
+---
+
+### F-010: Status Bar
+
+**Description:** A status bar at the bottom of the window shows connection and system status.
+
+**Acceptance Criteria:**
+- [ ] Status bar spans full window width
+- [ ] Shows sidecar connection status: icon + text (Not started / Starting / Connected / Error)
+- [ ] Shows active model name (e.g., "Claude Opus 4.6")
+- [ ] Shows token usage for current session (input tokens / output tokens) — updated per message
+- [ ] Status indicators use color coding: green (healthy), yellow (degraded), red (error)
+
+**Architecture References:** AD-007 (sidecar), AD-013 (frontend libraries)
+
+---
+
+### F-011: SQLite Infrastructure
+
+**Description:** SQLite database with schema, migrations, and the core tables needed for Phase 1.
+
+**Acceptance Criteria:**
+- [ ] Database file is created in the Tauri app data directory
+- [ ] Schema is applied via migrations (tauri-plugin-sql)
+- [ ] Phase 1 tables exist: projects, sessions, messages, message_blocks, artifacts, feature_gates
+- [ ] FTS5 virtual table exists for session message search (infrastructure ready, UI deferred)
+- [ ] WAL mode is enabled for concurrent read/write
+- [ ] Database operations use `rusqlite` on the Rust side
+- [ ] Frontend queries use `tauri-plugin-sql` via invoke commands
+
+**Architecture References:** AD-014 (persistence), AD-005 (SQLite)
+
+---
+
+### F-012: MCP Tool Server
+
+**Description:** Forge's tools are exposed as a custom MCP server that the Agent SDK sidecar connects to.
+
+**Acceptance Criteria:**
+- [ ] Forge implements an MCP server that the sidecar registers as `mcpServers: { "forge": ... }`
+- [ ] Agent SDK's built-in tools are disabled (`tools: []`)
+- [ ] File tools are available: Read, Write, Edit, Glob, Grep
+- [ ] Shell tool is available: Bash (scoped execution)
+- [ ] Tool calls from the AI route through the sidecar to Forge's MCP server
+- [ ] Tool results are returned to the AI via the MCP protocol
+- [ ] Tools execute natively in Rust (not shelling out)
+- [ ] Tool execution respects Tauri security scopes (no access outside project root + home)
+
+**Architecture References:** AD-010 (tool implementation as MCP), AD-011 (security model)
+
+---
+
+### F-013: Session Handoff Summaries
+
+**Description:** When a session ends, Forge generates a Claude-powered summary that captures what happened, what's unfinished, and what the next session should know. Context loss between sessions is the #1 pain point.
+
+**Acceptance Criteria:**
+- [ ] When a session ends (user starts a new session, or explicitly closes the current one), the sidecar generates a handoff summary
+- [ ] Summary prompt includes: what was accomplished, what was in progress, key decisions made, open questions/blockers, files being modified
+- [ ] Summary is stored in `sessions.summary` and `sessions.handoff_notes`
+- [ ] Summary is kept under 500 words
+- [ ] When a new session starts for the same project, handoff notes from the most recent session are included in the system prompt
+- [ ] If the sidecar is unavailable (e.g., app closing quickly), a rule-based fallback generates a basic summary from: last user message, files modified (from tool calls), tool call count
+- [ ] Handoff notes are visible in the session list (expandable preview)
+- [ ] Generating the summary does not block the user from starting the next session (async generation)
+
+**Architecture References:** AD-007 (sidecar), AD-009 (streaming pipeline), AD-014 (persistence)
+
+---
+
+## Explicitly Deferred (Not in Phase 1)
+
+These features are valuable but not needed for the dogfooding milestone:
+
+| Feature | Reason for Deferral | Target Phase |
+|---------|-------------------|--------------|
+| Tool call approval flow | Read-only tool display sufficient for dogfooding | Phase 2 |
+| Global search UI | FTS5 infrastructure exists, UI can wait | Phase 2 |
+| Project file tree panel | Can browse files through conversation tool calls | Phase 2 |
+| Scanner dashboard | No scanners to run yet | Phase 3 |
+| Metrics dashboard | No metrics data yet | Phase 5 |
+| Learning loop (IMPL capture, promotion) | Process benefit, not blocking dogfooding | Phase 5 |
+| Conversational governance backfill | Can manually create/edit artifacts in Phase 1 | Phase 4 |
+| Multi-project switching | Single project sufficient for dogfooding | Phase 2 |
+| API key provider | Max subscription is primary path | Future |
+| Cross-session search UI | FTS5 ready, UI deferred | Phase 2 |
+| Multi-user collaborative access | Single-user desktop app first; schema includes nullable user_id for future expansion | Future |
+
+---
+
+## Dogfooding Validation Checklist
+
+After Phase 1 is complete, Forge must pass these checks to transition from the CLI bootstrap process:
+
+- [ ] **Can browse governance artifacts**: Open Forge, navigate to artifact browser, see agents/rules/skills/hooks listed, view their content rendered as markdown
+- [ ] **Can edit governance artifacts**: Edit an agent file, save, verify change persists on disk and in the UI
+- [ ] **Can run a conversation**: Send a message, receive a streaming response, see tool calls displayed
+- [ ] **Can review tool calls**: Expand a tool call card, see the input and output, understand what the AI did
+- [ ] **Can manage sessions**: Start a new session, switch between sessions, see session history
+- [ ] **Can detect project context**: Open Forge on the Forge project itself, see detected stack and existing governance artifacts
+- [ ] **Persistence works**: Close Forge, reopen, last session and project are restored
+
+---
+
+## Related Documents
+
+- [User Journeys](/product/journeys) — Workflows that these features support
+- [Information Architecture](/product/information-architecture) — UI structure for these features
+- [Roadmap](/product/roadmap) — Phase 1 in the context of all phases
+- [Product Governance — Transition Criteria](/product/governance) — Dogfooding milestone

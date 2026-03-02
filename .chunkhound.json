@@ -1,0 +1,15 @@
+{
+  "database": {
+    "provider": "duckdb",
+    "path": ".chunkhound/chunks.duckdb"
+  },
+  "embedding": {
+    "provider": "openai",
+    "base_url": "http://localhost:11435/v1",
+    "api_key": "local",
+    "model": "bge-large-en-v1.5"
+  },
+  "llm": {
+    "provider": "claude-code-cli"
+  }
+}

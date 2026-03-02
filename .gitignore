@@ -36,3 +36,11 @@ tmp/
 # Claude Code
 .claude/plugins/
 .claude/worktrees/
+
+# Skills CLI (source cache — .claude/skills/ is the primary)
+.agents/
+.continue/
+skills-lock.json
+
+# ChunkHound
+.chunkhound/
