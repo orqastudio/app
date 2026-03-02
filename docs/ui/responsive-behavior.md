@@ -16,7 +16,7 @@ Forge does not use CSS media query breakpoints in the traditional web sense. Ins
 |------|-----------|-----------|
 | Activity Bar | 48px | Never collapses (fixed) |
 | Explorer Panel | 280px | Never collapses (focal point) |
-| Sessions Panel | 180px | Collapses to 0px |
+| Nav Sub-Panel | 160px | Collapses to 0px |
 | Chat Panel | 360px | Never collapses — always visible |
 
 ### Window Width Ranges
@@ -24,14 +24,14 @@ Forge does not use CSS media query breakpoints in the traditional web sense. Ins
 | Window Width | Layout |
 |-------------|--------|
 | **> 1200px** | All zones open. Comfortable working space. |
-| **900-1200px** | Sessions Panel auto-collapsed. Activity Bar + Explorer + Chat visible. |
-| **720-900px** | Sessions Panel as overlay Sheet. Activity Bar + Explorer + Chat visible. |
+| **900-1200px** | Nav Sub-Panel auto-collapsed. Activity Bar + Explorer + Chat visible. |
+| **720-900px** | Nav Sub-Panel as overlay Sheet. Activity Bar + Explorer + Chat visible. |
 | **< 720px** | Activity Bar as floating toggle. Chat as overlay Sheet. Explorer fills window. |
 
 ### Collapse Priority
 
 When the window shrinks, panels collapse in this order:
-1. **Sessions Panel** collapses first (session list is secondary to active content)
+1. **Nav Sub-Panel** collapses first (navigation is secondary to active content)
 2. **Chat Panel** becomes overlay second (conversation accessible via Sheet)
 3. **Activity Bar** becomes floating toggle third
 4. **Explorer Panel** never collapses (artifact focal point)
@@ -42,13 +42,13 @@ When the window grows, panels restore in reverse order.
 
 ## Panel Adaptation
 
-### Sessions Panel Adaptations
+### Nav Sub-Panel Adaptations
 
 | Width | Behavior |
 |-------|----------|
-| 240px+ (normal) | Full session list with titles, dates, preview text. Both tabs visible. |
-| 180-240px (narrow) | Truncated titles, dates only, no preview. Tabs still accessible. |
-| < 180px | Collapsed to 0px. Content accessible via `Ctrl+B` toggle or overlay Sheet. |
+| 200px+ (normal) | Full tree/list navigation with section headers. |
+| 160-200px (narrow) | Compact list items, abbreviated labels. |
+| < 160px | Collapsed to 0px. Content accessible via `Ctrl+B` toggle or overlay Sheet. |
 
 ### Explorer Panel Adaptations
 
@@ -118,19 +118,19 @@ This preserves all functionality in narrow windows without requiring a completel
   <ActivityBar class="w-12 shrink-0" />
   <PaneGroup direction="horizontal" class="flex-1">
     <Pane
-      defaultSize={40}
-      minSize={20}
-    >
-      <!-- Explorer Panel -->
-    </Pane>
-    <PaneResizeHandle />
-    <Pane
-      defaultSize={20}
+      defaultSize={15}
       minSize={12}
       collapsible={true}
       collapsedSize={0}
     >
-      <!-- Sessions Panel -->
+      <!-- Nav Sub-Panel -->
+    </Pane>
+    <PaneResizeHandle />
+    <Pane
+      defaultSize={45}
+      minSize={20}
+    >
+      <!-- Explorer Panel -->
     </Pane>
     <PaneResizeHandle />
     <Pane
@@ -143,7 +143,7 @@ This preserves all functionality in narrow windows without requiring a completel
 </div>
 ```
 
-PaneForge sizes are percentages, not pixels. The actual pixel widths depend on the window size. Min sizes ensure panels don't shrink below their minimum pixel widths — PaneForge handles this automatically via `minSize` as a percentage, but we also need to handle collapse triggers when the calculated pixel width drops below the minimum.
+PaneForge sizes are percentages, not pixels. The actual pixel widths depend on the window size. Min sizes ensure panels don't shrink below their minimum pixel widths — PaneForge handles this automatically via `minSize` as a percentage, but we also need to handle collapse triggers when the Nav Sub-Panel's calculated pixel width drops below the minimum.
 
 ---
 
@@ -156,7 +156,7 @@ All layout state is persisted via `tauri-plugin-window-state`:
 | Window size (width, height) | Yes |
 | Window position (x, y) | Yes |
 | Panel widths (percentage) | Yes |
-| Sessions Panel collapsed | Yes |
+| Nav Sub-Panel collapsed | Yes |
 | Maximized state | Yes |
 
 On app restart, the window restores to its previous size, position, and panel configuration.
@@ -171,7 +171,7 @@ Minimum set of window sizes to validate responsive behavior:
 |------|------|----------------|
 | 1920x1080 | Full HD | All zones, comfortable |
 | 1440x900 | Laptop | All zones, slightly tighter |
-| 1280x720 | Small laptop | Sessions Panel auto-collapsed; Activity Bar + Explorer + Chat |
-| 1024x768 | Compact | Sessions Panel auto-collapsed; Activity Bar + Explorer + Chat |
-| 800x600 | Minimum recommended | Sessions as overlay; Activity Bar + Explorer + Chat |
+| 1280x720 | Small laptop | Nav Sub-Panel auto-collapsed; Activity Bar + Explorer + Chat |
+| 1024x768 | Compact | Nav Sub-Panel auto-collapsed; Activity Bar + Explorer + Chat |
+| 800x600 | Minimum recommended | Nav Sub-Panel as overlay; Activity Bar + Explorer + Chat |
 | 720x480 | Minimum viable | Activity Bar floating; Chat as overlay; Explorer fills window |

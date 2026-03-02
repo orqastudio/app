@@ -218,19 +218,27 @@ Session continuity data that summarizes what happened in a session and what the 
 
 ### Panel
 
-A resizable section of the Forge window. PaneForge manages three resizable zones: the Explorer Panel (artifact browser, viewer, dashboards, settings), the Sessions Panel (session list, project info), and the Chat Panel (conversation). The Activity Bar (48px fixed icon rail) sits outside PaneForge and controls what the Explorer Panel displays.
+A resizable section of the Forge window. PaneForge manages three resizable zones: the Nav Sub-Panel (per-category sub-navigation), the Explorer Panel (artifact viewer/editor, dashboards, settings), and the Chat Panel (conversation). The Activity Bar (48px fixed icon rail) sits outside PaneForge and controls what both the Nav Sub-Panel and Explorer Panel display.
+
+### Project Dashboard
+
+A dedicated Explorer Panel view showing project overview information: detected stack, project root path, governance artifact counts (agents, rules, skills, hooks), quick links to scanner status, metrics, and learning, and recent sessions with quick-resume links. Accessed via the top icon in the Activity Bar (`Ctrl+0`). When active, the Nav Sub-Panel is hidden.
 
 ### Activity Bar
 
-A fixed 48px vertical icon rail on the far left of the window. Contains icons for artifact categories (Docs, Agents, Rules, Skills, Hooks), dashboards (Scanners, Metrics, Learning), and Settings. Clicking an icon switches the Explorer Panel to the corresponding view. The Activity Bar is always visible and not collapsible.
+A fixed 48px vertical icon rail on the far left of the window. The top icon is Project Dashboard (`Ctrl+0`). Below it are artifact categories (Docs, Agents, Rules, Skills, Hooks), then dashboards (Scanners, Metrics, Learning), and Settings at the bottom. Clicking an icon switches the Explorer Panel and Nav Sub-Panel to the corresponding view. The Activity Bar is always visible and not collapsible.
 
 ### Explorer Panel
 
-The central content area that displays artifacts, dashboards, or settings based on the active Activity Bar icon. When an artifact category is active, shows the artifact list for that category. Clicking an artifact opens its viewer/editor within the Explorer Panel. The Explorer Panel is always visible and never collapses — it is the focal point of the artifact-centric layout.
+The central content area that displays artifacts, dashboards, or settings based on the active Activity Bar icon. When an artifact category is active and an artifact is selected in the Nav Sub-Panel, shows the artifact's viewer/editor. If no artifact is selected (or the Nav Sub-Panel is collapsed), shows the artifact list as a fallback. When a dashboard icon is active, shows that dashboard. The Explorer Panel is always visible and never collapses — it is the focal point of the artifact-centric layout.
 
-### Sessions Panel
+### Nav Sub-Panel
 
-The zone between the Explorer Panel and Chat Panel. Contains two tabs: Sessions (session list with search) and Project (project info, governance summary, quick links). Collapsible via `Ctrl+B` to give more space to the Explorer and Chat panels. Default width 240px.
+A collapsible 200px panel between the Activity Bar and Explorer Panel. Provides per-category sub-navigation: a structured doc tree for the Docs category, flat/categorized lists for Agents, Rules, Skills, and Hooks. Hidden when Project Dashboard, Scanners, or Metrics is active. Toggle with `Ctrl+B`. Collapse range: 200px default, 160px minimum, 280px maximum, collapses to 0px.
+
+### Session Dropdown
+
+A dropdown control in the Chat Panel header for switching between sessions. Shows the active session title (clickable to open), a list of recent sessions with search filter, and a "New Session" button. Replaces the dedicated Sessions Panel from the previous four-zone layout (AD-018). `Ctrl+N` creates a new session directly.
 
 ### Chat Panel
 
@@ -238,7 +246,7 @@ The rightmost zone, always visible. Shows the active conversation session — me
 
 ### Artifact Browser
 
-The Explorer Panel view for browsing governance artifacts. The active category is determined by the Activity Bar icon (Docs, Agents, Rules, Skills, or Hooks). Displays artifact lists with metadata, renders markdown content in the viewer, and provides source editing via CodeMirror 6.
+The combined Nav Sub-Panel + Explorer Panel view for browsing governance artifacts. The active category is determined by the Activity Bar icon (Docs, Agents, Rules, Skills, or Hooks). The Nav Sub-Panel shows the artifact list or tree navigation; the Explorer Panel renders the selected artifact's markdown content in the viewer and provides source editing via CodeMirror 6.
 
 ### Streaming Display
 

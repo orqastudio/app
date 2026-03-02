@@ -51,7 +51,7 @@ Settings appears in the Explorer Panel when the user clicks the Settings icon in
       Font Size | ^14px^
       ---
       Panel Default Widths
-      Sessions | [240] px
+      Nav Sub-Panel | [200] px
       Explorer | [360] px
       ---
       [X] Enable per-project theming
@@ -64,7 +64,7 @@ Settings appears in the Explorer Panel when the user clicks the Settings icon in
         Shortcut | Action
         Ctrl+K | Global search
         Ctrl+N | New session
-        Ctrl+B | Toggle Sessions Panel
+        Ctrl+B | Toggle Nav Sub-Panel
         Ctrl+, | Open settings
         Ctrl+Enter | Send message
         Ctrl+Shift+N | New project
@@ -451,7 +451,7 @@ For a truly new project with no code detected, the scan table is replaced with a
 
 ## 5b. New Project -- Discovery Conversation
 
-After the user clicks "Start Project Discovery", Forge opens the main four-zone workspace with a discovery conversation already in progress. This is a regular conversation session — the discovery behavior comes from the system prompt, not special UI.
+After the user clicks "Start Project Discovery", Forge opens the main three-zone workspace with a discovery conversation already in progress. This is a regular conversation session — the discovery behavior comes from the system prompt, not special UI.
 
 ```plantuml
 @startsalt
@@ -459,21 +459,21 @@ After the user clicks "Start Project Discovery", Forge opens the main four-zone 
   {/ <b>Forge</b> | . | . | . | . | . | . | . | . }
   {
     {
-      <b>Sessions</b>
+      <b>Nav Sub-Panel</b>
       ---
-      {SI
-        "">> Project Discovery""
-        .
-      }
-      ---
-      <b>Project</b>
-      ---
-      new-saas-app
-      <i>New project</i>
+      <i>(empty)</i>
     }
     |
     {
-      <b>Project Discovery</b>
+      <b>Explorer</b>
+      ---
+      <i>No artifacts yet.</i>
+      <i>Discovery in progress...</i>
+      .
+    }
+    |
+    {
+      { ^Project Discovery v^ | . | ^Auto (recommended)^ }
       ---
       {SI
         <b>Claude:</b> Welcome to your new project!
@@ -501,14 +501,6 @@ After the user clicks "Start Project Discovery", Forge opens the main four-zone 
       ---
       { [Type your response...              ] | [Send] }
     }
-    |
-    {
-      <b>Explorer</b>
-      ---
-      <i>No artifacts yet.</i>
-      <i>Discovery in progress...</i>
-      .
-    }
   }
 }
 @endsalt
@@ -518,11 +510,11 @@ After the user clicks "Start Project Discovery", Forge opens the main four-zone 
 
 | Element | Notes |
 |---------|-------|
-| **Session list** | The discovery session appears as "Project Discovery" — a regular session, not a special mode. |
+| **Session dropdown** | The discovery session appears as "Project Discovery" in the session dropdown — a regular session, not a special mode. |
 | **Conversation** | Claude follows a system prompt that covers product, tech stack, team, conventions, and prior art. The user responds naturally. |
 | **Explorer Panel** | Empty during discovery. Populates after the user approves generated artifacts. |
 | **Exit anytime** | The user can close the conversation, start a new session, or say "that's enough." The discovery session persists and can be resumed. |
-| **No special UI** | This is the standard four-zone layout. The discovery "magic" is entirely in the system prompt — no wizard, no special components. |
+| **No special UI** | This is the standard three-zone layout. The discovery "magic" is entirely in the system prompt — no wizard, no special components. |
 
 ---
 

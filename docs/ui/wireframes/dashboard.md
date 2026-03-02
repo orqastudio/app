@@ -13,8 +13,8 @@ Dashboard views are Explorer Panel views, accessed the same way as the artifact 
 | Entry Point | Action |
 |-------------|--------|
 | **Activity Bar icons** | Scanners, Metrics, and Learning icons in the Activity Bar switch the Explorer Panel to the corresponding dashboard view. |
-| **Sessions Panel Project tab** | Scanner status summary, metrics summary, and learning summary are clickable links that activate the corresponding Activity Bar icon. |
-| **Keyboard shortcuts** | `Ctrl+Shift+S` (scanners), `Ctrl+Shift+M` (metrics), `Ctrl+Shift+L` (learning). |
+| **Project Dashboard** | Scanner status, metrics, and learning summaries on the Project Dashboard are clickable links that activate the corresponding Activity Bar icon. |
+| **Activity Bar** | Click the Scanners, Metrics, or Learning icons in the Activity Bar. |
 
 All dashboards share the Explorer Panel — switching to a dashboard replaces the current Explorer view. The conversation always remains visible in the Chat Panel.
 
@@ -411,9 +411,7 @@ Draft --> Review --> Promoted
 
 | Shortcut | Action |
 |----------|--------|
-| `Ctrl+Shift+S` | Open Scanner Dashboard in Explorer Panel |
-| `Ctrl+Shift+M` | Open Metrics Dashboard in Explorer Panel |
-| `Ctrl+Shift+L` | Open Learning Loop in Explorer Panel |
+| Activity Bar icon click | Open corresponding dashboard in Explorer Panel |
 | `Up/Down` | Navigate between scanner rows or learning cards |
 | `Enter` | Expand selected scanner or card |
 | `Escape` | Collapse expanded detail |

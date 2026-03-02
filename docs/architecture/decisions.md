@@ -25,7 +25,8 @@ Architecture decisions for Forge. Each decision is numbered AD-NNN and is immuta
 | AD-015 | Governance artifact format | 2026-03-02 | Active |
 | AD-016 | Onboarding strategy | 2026-03-02 | Active |
 | AD-017 | Composability principle | 2026-03-02 | Active |
-| AD-018 | Four-zone VS Code-style layout | 2026-03-02 | Active (supersedes layout aspects of AD-013) |
+| AD-018 | Four-zone VS Code-style layout | 2026-03-02 | Superseded by AD-019 |
+| AD-019 | Three-zone + Nav Sub-Panel layout | 2026-03-02 | Active (supersedes AD-018) |
 
 ---
 
@@ -284,7 +285,7 @@ Architecture decisions for Forge. Each decision is numbered AD-NNN and is immuta
 
 ## AD-018: Four-Zone VS Code-Style Layout
 
-**Date:** 2026-03-02 | **Status:** Active (supersedes layout aspects of AD-013)
+**Date:** 2026-03-02 | **Status:** Superseded by AD-019
 
 **Decision:** Replace the three-pane layout (Sidebar | Primary/Conversation | Detail) with a four-zone VS Code-style layout: Activity Bar (48px fixed icon rail) | Explorer Panel (flexible, artifact-centric) | Sessions Panel (240px, collapsible) | Chat Panel (flexible, conversation). The Activity Bar replaces the old five-tab bar in the detail panel with direct icon navigation for Docs, Agents, Rules, Skills, Hooks (artifact categories), plus Scanners, Metrics, Learning (dashboards, Phase 3-5), and Settings. PaneForge manages the three resizable zones; the Activity Bar sits outside PaneForge as a fixed CSS flex element.
 
@@ -293,5 +294,21 @@ Architecture decisions for Forge. Each decision is numbered AD-NNN and is immuta
 **Supersedes:** Layout aspects of AD-013 (panel arrangement and tab navigation). AD-013's library selections (PaneForge, shadcn-svelte, CodeMirror 6, LayerChart, lucide-svelte) remain active.
 
 **Consequences:** The `ArtifactBrowser` component no longer has internal category tabs — it receives the active category as a prop from the Activity Bar state. New components: `ActivityBar.svelte`, `ActivityBarItem.svelte`, `SessionsPanel.svelte`. The `NavigationStore` is restructured around `activeActivity` (Activity Bar selection) and `explorerView` (what the Explorer Panel shows). Keyboard shortcuts `Ctrl+1` through `Ctrl+5` switch artifact categories directly. The detail panel toggle (`Ctrl+\`) is removed; the Sessions Panel toggle (`Ctrl+B`) replaces the old sidebar toggle.
+
+**Research:** [Frontend Research](/research/frontend), [Information Architecture](/product/information-architecture)
+
+---
+
+## AD-019: Three-Zone + Nav Sub-Panel Layout
+
+**Date:** 2026-03-02 | **Status:** Active (supersedes AD-018)
+
+**Decision:** Replace the four-zone layout (Activity Bar | Explorer Panel | Sessions Panel | Chat Panel) with a three-zone + nav sub-panel layout: Activity Bar (48px fixed) | Nav Sub-Panel (200px, collapsible) | Explorer Panel (flex) | Chat Panel (flex). The Sessions Panel is eliminated — session switching moves to a dropdown in the Chat Panel header. A new Nav Sub-Panel provides structured per-category sub-navigation (tree nav for Docs, flat lists for other artifact categories). Project Dashboard is promoted to a first-class Activity Bar destination. PaneForge manages three resizable zones (Nav Sub-Panel | Explorer | Chat); the Activity Bar sits outside PaneForge as a fixed CSS flex element.
+
+**Rationale:** The four-zone layout (AD-018) dedicated 240px to a Sessions Panel that served a low-frequency action (session switching). A dropdown in the Chat Panel header is more space-efficient. The 26+ documentation pages across 6 sections cannot be navigated effectively in a flat Explorer list — a structured tree in the Nav Sub-Panel solves this. Project info (hidden behind a tab in the Sessions Panel) deserves first-class Activity Bar status as a dashboard. The three-zone layout reclaims horizontal space and adds structured sub-navigation for deep hierarchies.
+
+**Supersedes:** AD-018 (four-zone layout). AD-018's Activity Bar concept and library selections remain — only the zone count and panel arrangement change.
+
+**Consequences:** New components: `NavSubPanel.svelte`, `DocTreeNav.svelte`, `ArtifactListNav.svelte`, `SessionDropdown.svelte`, `ProjectDashboard.svelte`. Removed components: `SessionsPanel.svelte`, `ProjectInfo.svelte` (absorbed into ProjectDashboard). The `NavigationStore` replaces `sessionsPanelCollapsed`/`sessionsPanelTab` with `navPanelCollapsed`. `Ctrl+B` toggles the Nav Sub-Panel (was: Sessions Panel). Session switching via dropdown in Chat Panel header with `Ctrl+N` for new sessions. Auto-session-on-plan-mode: entering plan mode automatically creates a new `[Plan] <topic>` session.
 
 **Research:** [Frontend Research](/research/frontend), [Information Architecture](/product/information-architecture)

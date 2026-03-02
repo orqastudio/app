@@ -26,11 +26,9 @@ Components used directly from the shadcn-svelte library. No custom code needed b
 
 | Component | Usage | Phase |
 |-----------|-------|-------|
-| **Resizable** (PaneForge) | Three-zone resizable layout (Explorer, Sessions, Chat) within PaneForge | 1 |
+| **Resizable** (PaneForge) | Three-zone resizable layout (Nav Sub-Panel, Explorer, Chat) within PaneForge | 1 |
 | **ScrollArea** | Message stream, artifact list, session list | 1 |
-| **Tabs** | Sessions Panel tabs (Sessions/Project) | 1 |
 | **Collapsible** | Tool call cards (collapsed/expanded), settings sections | 1 |
-| **Sidebar** | Sessions Panel with session/project navigation | 1 |
 
 ### Data Display
 
@@ -70,14 +68,14 @@ Components specific to Forge that are not provided by shadcn-svelte.
 |-----------|-------------|-----------|-------|
 | `ActivityBar` | Fixed 48px vertical icon rail. Renders artifact category icons, dashboard icons, and settings icon. Manages active state with 2px left border indicator. | Button, Tooltip | 1 |
 | `ActivityBarItem` | Individual icon button within the Activity Bar. Receives icon, label, active state, shortcut hint as props. | Button, Tooltip | 1 |
-| `SessionsPanel` | Wraps SessionList and ProjectInfo with a two-tab layout (Sessions | Project). Collapsible via Ctrl+B. | Tabs, ScrollArea | 1 |
+| `NavSubPanel` | Collapsible 200px panel between Activity Bar and Explorer. Renders per-category navigation: DocTreeNav for Docs, ArtifactListNav for other categories. Toggle via Ctrl+B. | ScrollArea, Collapsible | 1 |
 
 ### Conversation Components
 
 | Component | Description | Builds On | Phase |
 |-----------|-------------|-----------|-------|
 | `ConversationView` | Full conversation panel: header, message stream, input area. Manages scroll position, streaming state, auto-scroll behavior. | ScrollArea, Card | 1 |
-| `SessionHeader` | Editable session title, model selector dropdown, token usage counter. | Input, Select, Badge | 1 |
+| `SessionHeader` | Session dropdown (session switching), model selector dropdown, token usage counter. | DropdownMenu, Select, Badge | 1 |
 | `MessageBubble` | Single message rendering. Accepts role (user/assistant/system), content blocks, timestamp. | Card | 1 |
 | `UserMessage` | User message variant. Shows person icon, name, timestamp, rendered markdown content. | MessageBubble | 1 |
 | `AssistantMessage` | Assistant message variant. Shows AI icon, name, timestamp, rendered content + inline tool call cards. | MessageBubble, ToolCallCard | 1 |
@@ -118,9 +116,10 @@ Components specific to Forge that are not provided by shadcn-svelte.
 
 | Component | Description | Builds On | Phase |
 |-----------|-------------|-----------|-------|
-| `SessionList` | Scrollable list of sessions with search filter. Active session highlighted. | ScrollArea, Input | 1 |
-| `SessionListItem` | Single session entry: title, date, message count, preview snippet. | — | 1 |
-| `ProjectInfo` | Project metadata display: name, path, detected stack, artifact counts. | Card, Badge | 1 |
+| `DocTreeNav` | Hierarchical tree navigation for the Docs category. Mirrors docs/ directory structure. Expand/collapse state persists. | Collapsible, ScrollArea | 1 |
+| `ArtifactListNav` | Flat or categorized list navigator for Agents, Rules, Skills, Hooks categories. Search filter input. | ScrollArea, Input | 1 |
+| `SessionDropdown` | Session switcher in Chat Panel header. Shows recent sessions, search filter, "New Session" button. | DropdownMenu, Input, Button | 1 |
+| `ProjectDashboard` | Project overview: metadata, detected stack, governance counts, quick links. Shown when Project Dashboard is active in Activity Bar. | Card, Badge | 1 |
 | `ProjectSwitcher` | Dropdown for switching between recent projects. | Popover, Command | 1 |
 | `StatusBar` | Bottom bar: connection status, sidecar state, Claude Code version. | Badge | 1 |
 
@@ -139,7 +138,7 @@ Components specific to Forge that are not provided by shadcn-svelte.
 
 | Component | Description | Builds On | Phase |
 |-----------|-------------|-----------|-------|
-| `AppLayout` | Root layout: toolbar + four-zone body (Activity Bar + PaneForge) + status bar. Manages zone collapse state. | Resizable | 1 |
+| `AppLayout` | Root layout: toolbar + three-zone body (Activity Bar + Nav Sub-Panel + PaneForge) + status bar. Manages zone collapse state. | Resizable | 1 |
 | `Toolbar` | Top bar: project name, search, new session. | Button, Command | 1 |
 | `WelcomeScreen` | First-run / empty project state. Forge branding, setup guidance. | Card, Button | 1 |
 
@@ -185,6 +184,6 @@ Extensions to the markdown renderer for Forge-specific content types.
 | Category | Phase 1 | Phase 2+ | Total |
 |----------|---------|----------|-------|
 | shadcn-svelte (library) | 21 | 0 | 21 |
-| Custom application | 33 | 5 | 38 |
+| Custom application | 34 | 5 | 39 |
 | Custom markdown blocks | 2 | 2 | 4 |
-| **Total** | **56** | **7** | **63** |
+| **Total** | **57** | **7** | **64** |

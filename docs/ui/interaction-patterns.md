@@ -126,15 +126,15 @@ Hookify rules (`.claude/hookify.*.local.md`) use YAML frontmatter with structure
 
 ### Resize Handles
 
-- PaneForge drag handles between the Explorer, Sessions, and Chat panes: 1px visible border, 8px invisible drag target
+- PaneForge drag handles between the Nav Sub-Panel, Explorer, and Chat panes: 1px visible border, 8px invisible drag target
 - Cursor changes to `col-resize` on hover
 - Drag smoothly resizes with min/max constraints
-- Double-click handle: collapse the Sessions Panel (only collapsible zone)
+- Double-click handle: collapse the Nav Sub-Panel (only collapsible zone)
 
 ### Collapse Animation
 
 - Collapse duration: 200ms ease-out
-- Collapsed Sessions Panel: 0px (completely hidden)
+- Collapsed Nav Sub-Panel: 0px (completely hidden)
 - Explorer and Chat panels fill freed space
 - Activity Bar is always visible (fixed 48px)
 
@@ -142,10 +142,10 @@ Hookify rules (`.claude/hookify.*.local.md`) use YAML frontmatter with structure
 
 | Trigger | Effect |
 |---------|--------|
-| `Ctrl+B` | Toggle Sessions Panel |
+| `Ctrl+B` | Toggle Nav Sub-Panel |
 | `Ctrl+1` through `Ctrl+5` | Switch Activity Bar to artifact category |
 | `Ctrl+,` | Switch Activity Bar to settings |
-| Double-click Sessions handle | Collapse/expand Sessions Panel |
+| Double-click Nav Sub-Panel handle | Collapse/expand Nav Sub-Panel |
 | `Escape` (overlay open) | Close overlay |
 
 ### State Persistence
@@ -162,7 +162,8 @@ Panel widths and collapse states are persisted via `tauri-plugin-window-state` a
 |----------|--------|---------|
 | `Ctrl+K` / `Cmd+K` | Global search | Always |
 | `Ctrl+N` / `Cmd+N` | New session | Always |
-| `Ctrl+B` / `Cmd+B` | Toggle Sessions Panel | Always |
+| `Ctrl+B` / `Cmd+B` | Toggle Nav Sub-Panel | Always |
+| `Ctrl+0` / `Cmd+0` | Project Dashboard | Always |
 | `Ctrl+1` through `Ctrl+5` | Switch artifact category | Always |
 | `Ctrl+,` / `Cmd+,` | Open settings | Always |
 | `Escape` | Close overlay / collapse detail / exit edit mode | Context-dependent |
@@ -190,9 +191,6 @@ Panel widths and collapse states are persisted via `tauri-plugin-window-state` a
 
 | Shortcut | Action | Context |
 |----------|--------|---------|
-| `Ctrl+Shift+S` / `Cmd+Shift+S` | Scanner dashboard | Always |
-| `Ctrl+Shift+M` / `Cmd+Shift+M` | Metrics dashboard | Always |
-| `Ctrl+Shift+L` / `Cmd+Shift+L` | Learning loop | Always |
 | `Tab` | Move focus between zones | Always |
 | `Shift+Tab` | Move focus backward between zones | Always |
 
@@ -225,7 +223,7 @@ When `prefers-reduced-motion: reduce` is active:
 
 ### Focus Order
 
-Logical tab order follows the visual layout: Toolbar → Activity Bar → Explorer Panel → Sessions Panel → Chat Panel → Status Bar.
+Logical tab order follows the visual layout: Toolbar → Activity Bar → Nav Sub-Panel → Explorer Panel → Chat Panel → Status Bar.
 
 Within each pane, tab order follows reading order (top to bottom, left to right).
 
@@ -246,7 +244,7 @@ When a dialog/overlay closes, focus returns to the element that triggered it.
 | Scenario | Loading UI |
 |----------|-----------|
 | App startup | Splash: Forge anvil mark + "Loading..." |
-| Project scanning | Sessions Panel: skeleton loader for project info |
+| Project scanning | Nav Sub-Panel: skeleton loader for tree/list content |
 | Session loading | Chat Panel: skeleton loader for message list |
 | Artifact loading | Explorer Panel: skeleton loader for markdown content |
 | Search | Command palette: spinner + results populate incrementally |
@@ -277,8 +275,10 @@ Every empty container has a meaningful message and a single clear call to action
 
 | View | Message | Action |
 |------|---------|--------|
-| No sessions | "No conversations yet" | "Start a conversation" → focus input |
+| Session dropdown (empty) | "No conversations yet" | "Start a conversation" → focus input |
 | Welcome (no project) | Forge anvil + "Welcome to Forge" + feature summary | "Open Project" / "New Project" buttons |
+| Empty Nav Sub-Panel | "No docs found" or "No {category} defined" | "Add items to get started" |
+| Nav Sub-Panel (Hooks, no hookify rules) | "No hookify rules configured" | "Create hookify rule" button |
 | Empty artifact category | "No {agents/rules/skills} defined" | "Create new {type}" button |
 | Empty hooks view | "No hooks configured. Add lifecycle hooks to .claude/hooks/ or hookify rules to .claude/hookify.*.local.md" | "Create lifecycle hook" / "Create hookify rule" buttons |
 | Empty search results | "No results for '{query}'" | Suggest broader search terms |

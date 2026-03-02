@@ -99,7 +99,8 @@ A conversation in progress with user messages, assistant responses, and tool cal
 
 | Element | Behavior |
 |---------|----------|
-| **Session title** | Editable inline. Click to select, type to rename. Auto-generated from first user message (first 50 chars) if not manually set. `Escape` cancels editing. `Enter` confirms. |
+| **Session dropdown** | Clickable session title that opens a dropdown. Dropdown shows: recent sessions list (ordered by most recent), search filter input, "New Session" button. Selecting a session loads it. `Ctrl+N` creates a new session. |
+| **Session title** | Editable inline via the dropdown. Click title to open dropdown, double-click to rename. Auto-generated from first user message (first 50 chars) if not manually set. `Escape` cancels editing. `Enter` confirms. |
 | **Model selector** | Dropdown showing available models: `Auto (recommended)` (visually separated with a divider), `claude-opus-4-6`, `claude-sonnet-4-6`, `claude-haiku-4-5`. "Auto" is the default when the provider supports it — it delegates model choice to the provider based on current rate limits and availability. If the provider does not support auto, the option is hidden and a specific model is required. Changing model takes effect on the next message sent. Does not affect previous messages. |
 | **Token usage** | Format: `{input tokens} / {output tokens} tokens`. Updated after each complete message exchange. Sourced from sidecar usage reporting. |
 
@@ -459,7 +460,7 @@ How wireframe elements map to implementation components and libraries.
 
 | Condition | Behavior |
 |-----------|----------|
-| **Sessions Panel collapsed** | Chat Panel expands. Message lines wrap at wider widths. Code blocks gain more horizontal room. |
+| **Nav Sub-Panel collapsed** | Chat Panel expands. Message lines wrap at wider widths. Code blocks gain more horizontal room. |
 | **Wide window (all zones open)** | Chat Panel shares space with Explorer. Comfortable conversation width. |
 | **Narrow window (< 720px)** | Chat becomes overlay Sheet. Explorer fills window as focal point. |
 | **Minimum window (900x600)** | Chat Panel at min-width 360px. Messages wrap aggressively. Code blocks show horizontal scrollbar. Tool call cards stack their summary elements. Input area remains full-width at bottom. |
@@ -481,7 +482,7 @@ How wireframe elements map to implementation components and libraries.
 
 ## Related Documents
 
-- [Core Layout Wireframe](/ui/wireframes/core-layout) -- Four-zone structure that contains this view
+- [Core Layout Wireframe](/ui/wireframes/core-layout) -- Three-zone + nav sub-panel structure that contains this view
 - [Information Architecture](/product/information-architecture) -- Chat Panel: Conversation View specification
 - [Frontend Research Q1](/research/frontend) -- Markdown rendering and code highlighting decisions
 - [Frontend Research Q2](/research/frontend) -- Conversation UI component architecture

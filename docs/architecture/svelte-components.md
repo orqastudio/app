@@ -46,7 +46,7 @@ src/
 │   │   │   ├── AppLayout.svelte
 │   │   │   ├── ActivityBar.svelte
 │   │   │   ├── ActivityBarItem.svelte
-│   │   │   ├── SessionsPanel.svelte
+│   │   │   ├── NavSubPanel.svelte
 │   │   │   ├── Toolbar.svelte
 │   │   │   ├── StatusBar.svelte
 │   │   │   └── WelcomeScreen.svelte
@@ -77,9 +77,10 @@ src/
 │   │   │   ├── ArtifactEditor.svelte
 │   │   │   └── Breadcrumb.svelte
 │   │   ├── navigation/               # Navigation domain
-│   │   │   ├── SessionList.svelte
-│   │   │   ├── SessionListItem.svelte
-│   │   │   ├── ProjectInfo.svelte
+│   │   │   ├── DocTreeNav.svelte
+│   │   │   ├── ArtifactListNav.svelte
+│   │   │   ├── SessionDropdown.svelte
+│   │   │   ├── ProjectDashboard.svelte
 │   │   │   └── ProjectSwitcher.svelte
 │   │   └── settings/                 # Settings domain
 │   │       ├── SettingsView.svelte
@@ -166,6 +167,7 @@ Indentation shows parent-child nesting. Components prefixed with `ui:` are shadc
             │
             ├── [Activity Bar — fixed 48px, outside PaneForge]
             │   └── ActivityBar
+            │       ├── ActivityBarItem (Project Dashboard — top)
             │       ├── ActivityBarItem (Docs — default active)
             │       ├── ActivityBarItem (Agents)
             │       ├── ActivityBarItem (Rules)
@@ -216,29 +218,40 @@ Indentation shows parent-child nesting. Components prefixed with `ui:` are shadc
             │   │   ├── [when activeActivity === "scanners"]
             │   │   │   └── ScannerDashboard (Phase 3+)
             │   │   │
-            │   │   └── [when activeActivity === "metrics"]
-            │   │       └── MetricsDashboard (Phase 5)
+            │   │   ├── [when activeActivity === "metrics"]
+            │   │   │   └── MetricsDashboard (Phase 5)
+            │   │   │
+            │   │   └── [when activeActivity === "project-dashboard"]
+            │   │       └── ProjectDashboard
+            │   │           ├── ui:Card (project metadata)
+            │   │           ├── ui:Badge (stack tags)
+            │   │           └── [governance summary + quick links]
             │   │
-            │   ├── [Sessions Pane — collapsible via Ctrl+B]
-            │   │   └── SessionsPanel
-            │   │       └── ui:Tabs (Sessions | Project)
-            │   │           ├── [Sessions Tab]
-            │   │           │   └── SessionList
-            │   │           │       ├── ui:Input (search filter)
-            │   │           │       ├── ui:ScrollArea
-            │   │           │       │   └── SessionListItem (repeated)
-            │   │           │       └── [empty state: "No sessions yet"]
-            │   │           │
-            │   │           └── [Project Tab]
-            │   │               └── ProjectInfo
-            │   │                   ├── ui:Card (project metadata)
-            │   │                   ├── ui:Badge (stack detection tags)
-            │   │                   └── [governance summary]
+            │   ├── [Nav Sub-Panel — collapsible via Ctrl+B]
+            │   │   └── NavSubPanel
+            │   │       ├── [when activeActivity === "docs"]
+            │   │       │   └── DocTreeNav
+            │   │       │       ├── ui:Collapsible (section groups)
+            │   │       │       └── ui:ScrollArea
+            │   │       │
+            │   │       ├── [when activeActivity is artifact category (agents/rules/skills/hooks)]
+            │   │       │   └── ArtifactListNav
+            │   │       │       ├── ui:Input (search filter)
+            │   │       │       └── ui:ScrollArea
+            │   │       │
+            │   │       ├── [when activeActivity === "settings"]
+            │   │       │   └── ArtifactListNav (settings categories)
+            │   │       │
+            │   │       └── [when activeActivity is dashboard — hidden]
             │   │
             │   └── [Chat Pane — always conversation]
             │       ├── [when activeSession exists]
             │       │   └── ConversationView
             │       │       ├── SessionHeader
+            │       │       │   ├── SessionDropdown
+            │       │       │   │   ├── ui:DropdownMenu
+            │       │       │   │   ├── ui:Input (session search)
+            │       │       │   │   └── ui:Button (new session)
             │       │       │   ├── ui:Input (editable title)
             │       │       │   ├── ui:Select (model selector: Auto | Opus | Sonnet | Haiku)
             │       │       │   └── ui:Badge (token usage)
@@ -277,13 +290,13 @@ Indentation shows parent-child nesting. Components prefixed with `ui:` are shadc
 | `+page.svelte` | `AppLayout` | Single child, passes all data as props |
 | `AppLayout` | `Toolbar`, `ActivityBar`, `ui:Resizable`, `StatusBar` | Shell composition (Activity Bar outside PaneForge) |
 | `ActivityBar` | `ActivityBarItem` (repeated) | Icon rail with active state |
-| `SessionsPanel` | `ui:Tabs`, `SessionList`, `ProjectInfo` | Tabbed container |
+| `NavSubPanel` | `DocTreeNav`, `ArtifactListNav` | Per-category navigation container |
 | `ConversationView` | `SessionHeader`, `ui:ScrollArea`, `MessageInput` | Vertical stack |
+| `SessionHeader` | `SessionDropdown`, `ui:Select`, `ui:Badge` | Session context + switching |
 | `AssistantMessage` | `MessageBubble`, `ToolCallCard` | Message with inline tool calls |
 | `ToolCallCard` | `ToolCallInput`, `ToolCallOutput` | Expandable detail |
 | `ArtifactViewer` | `Breadcrumb`, `FrontmatterDisplay`, `MarkdownRenderer`, `ArtifactEditor` | View/edit toggle |
 | `ArtifactBrowser` | `ArtifactListItem` | List container (category from Activity Bar) |
-| `SessionList` | `SessionListItem` | List container |
 | `SettingsView` | `ProviderSettings`, `ProjectSettings`, `AppearanceSettings`, `ShortcutsReference` | Collapsible sections |
 
 ---
@@ -299,6 +312,8 @@ All stores use Svelte 5 runes exclusively (AD-004). Store files use the `.svelte
 class SessionStore {
   sessions = $state<Session[]>([]);
   activeSessionId = $state<string | null>(null);
+  sessionDropdownOpen = $state(false);
+  sessionSearchFilter = $state("");
 
   activeSession = $derived(
     this.sessions.find(s => s.id === this.activeSessionId) ?? null
@@ -315,24 +330,25 @@ export const sessionStore = new SessionStore();
 
 ```typescript
 // UI navigation state — what is visible in each zone
-type ActivityBarItem = "docs" | "agents" | "rules" | "skills" | "hooks"
+type ActivityBarItem = "project-dashboard" | "docs" | "agents" | "rules" | "skills" | "hooks"
   | "scanners" | "metrics" | "learning" | "settings";
 
 type ExplorerView = "artifact-list" | "artifact-viewer" | "artifact-editor"
-  | "scanner-dashboard" | "metrics-dashboard" | "learning-loop" | "settings";
+  | "project-dashboard" | "scanner-dashboard" | "metrics-dashboard" | "learning-loop" | "settings";
 
 class NavigationStore {
   activeActivity = $state<ActivityBarItem>("docs");
   explorerView = $state<ExplorerView>("artifact-list");
   selectedArtifact = $state<string | null>(null);
-  sessionsPanelTab = $state<"sessions" | "project">("sessions");
-  sessionsPanelCollapsed = $state(false);
+  navPanelCollapsed = $state(false);
 
   switchActivity(item: ActivityBarItem) {
     this.activeActivity = item;
     // Map activity bar items to explorer views
     if (["docs", "agents", "rules", "skills", "hooks"].includes(item)) {
       this.explorerView = "artifact-list";
+    } else if (item === "project-dashboard") {
+      this.explorerView = "project-dashboard";
     } else if (item === "scanners") {
       this.explorerView = "scanner-dashboard";
     } else if (item === "metrics") {
@@ -350,8 +366,8 @@ class NavigationStore {
     this.explorerView = "artifact-viewer";
   }
 
-  toggleSessionsPanel() {
-    this.sessionsPanelCollapsed = !this.sessionsPanelCollapsed;
+  toggleNavPanel() {
+    this.navPanelCollapsed = !this.navPanelCollapsed;
   }
 }
 
@@ -554,7 +570,7 @@ CONTAINERS (may call invoke):          DISPLAY COMPONENTS (props only):
 +page.svelte                           AppLayout
 +layout.svelte                         ActivityBar
                                        ActivityBarItem
-                                       SessionsPanel
+                                       NavSubPanel
                                        Toolbar
                                        StatusBar
                                        ConversationView
@@ -567,8 +583,8 @@ CONTAINERS (may call invoke):          DISPLAY COMPONENTS (props only):
                                        ArtifactBrowser / ArtifactListItem
                                        ArtifactViewer / ArtifactEditor
                                        Breadcrumb
-                                       SessionList / SessionListItem
-                                       ProjectInfo / ProjectSwitcher
+                                       DocTreeNav / ArtifactListNav
+                                       SessionDropdown / ProjectDashboard / ProjectSwitcher
                                        SettingsView / ProviderSettings / ProjectSettings
                                        AppearanceSettings / ThemeToggle / ShortcutsReference
                                        WelcomeScreen / StreamingIndicator
@@ -874,8 +890,8 @@ $effect(() => {
 | Data fetching | `+page.svelte` and `+layout.svelte` are the only files that call `invoke()`. | AD-006 |
 | Callback props | Display components emit user intent via callback props (`onSend`, `onSelect`, etc.). | AD-006 |
 | shadcn-svelte imports | `import { Button } from "$lib/components/ui/button"` | AD-013 |
-| Activity Bar | 48px fixed icon rail controls Explorer Panel content. Active icon has left border indicator. Hooks icon covers both lifecycle hooks and hookify enforcement rules. | AD-018 |
-| Custom components | Organized by domain: `conversation/`, `tool/`, `content/`, `artifact/`, `navigation/`, `settings/`, `layout/` (includes `ActivityBar.svelte`, `ActivityBarItem.svelte`, `SessionsPanel.svelte`) | — |
+| Activity Bar | 48px fixed icon rail controls Explorer Panel content. Active icon has left border indicator. Hooks icon covers both lifecycle hooks and hookify enforcement rules. | AD-019 |
+| Custom components | Organized by domain: `conversation/`, `tool/`, `content/`, `artifact/`, `navigation/`, `settings/`, `layout/` (includes `ActivityBar.svelte`, `ActivityBarItem.svelte`, `NavSubPanel.svelte`) | — |
 | Store files | `.svelte.ts` extension, class-based with `$state` fields, exported singleton | AD-004 |
 | Type safety | All `invoke()` calls use typed wrappers from `$lib/commands/` | AD-002 |
 | Streaming | `Channel<T>` for high-frequency token streams, `emit/listen` for low-frequency events | AD-009 |

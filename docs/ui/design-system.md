@@ -499,4 +499,4 @@ Icons inherit text color. Use semantic color classes: `text-foreground`, `text-m
 | [Design Tokens Research](/research/design-tokens) | Token format, runtime application, extraction pipeline, per-project persistence |
 | [Branding Research](/research/branding) | Three-layer branding strategy, governance artifact, code generation, hierarchy |
 | [Frontend Research](/research/frontend) | Component library selection, markdown rendering, panel layout, charts |
-| [Information Architecture](/product/information-architecture) | Three-pane layout, navigation model, keyboard shortcuts, state management |
+| [Information Architecture](/product/information-architecture) | Three-zone + nav sub-panel layout, navigation model, keyboard shortcuts, state management |

@@ -2,33 +2,32 @@
 
 **Date:** 2026-03-02
 
-How Forge's UI is structured. Defines the navigation model, view hierarchy, panel relationships, and what the user sees at each level of the application. This document drives wireframe design (Phase 0d) and component tree definition (Phase 0e).
+How Forge's UI is structured. Defines the navigation model, view hierarchy, panel relationships, and what the user sees at each level of the application. This document drives wireframe design and component tree definition.
 
 ---
 
 ## Layout Model
 
-Forge uses a **four-zone VS Code-style layout**. The Activity Bar is a fixed CSS flex element; the three resizable zones (Explorer Panel, Sessions Panel, Chat Panel) are managed by PaneForge (shadcn-svelte Resizable).
+Forge uses a **three-zone + nav sub-panel layout**. The Activity Bar is a fixed CSS flex element; the three resizable zones (Nav Sub-Panel, Explorer Panel, Chat Panel) are managed by PaneForge (shadcn-svelte Resizable).
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│  Toolbar                                                          │
-├────┬────────────────────┬─────────────┬──────────────────────────┤
-│    │                    │             │                          │
-│ AB │  Explorer Panel    │  Sessions   │   Chat Panel             │
-│    │  (flexible)        │  Panel      │   (flexible)             │
-│ 48 │                    │  (240px,    │                          │
-│ px │  Artifact browser/ │  collapsible│   Always: Conversation   │
-│    │  viewer/editor,    │  )          │                          │
-│ I  │  Dashboards,       │             │                          │
-│ C  │  Settings          │  Session    │                          │
-│ O  │                    │  list +     │                          │
-│ N  │                    │  Project    │                          │
-│ S  │                    │  info       │                          │
-│    │                    │             │                          │
-├────┴────────────────────┴─────────────┴──────────────────────────┤
-│  Status Bar                                                       │
-└──────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│  Toolbar                                                      │
+├────┬────────┬────────────────────┬───────────────────────────┤
+│    │  Nav   │                    │  [Session▼] [Auto▼]       │
+│ AB │  Sub   │  Explorer Panel    │                           │
+│    │  Panel │  (viewer/editor/   │  Chat Panel               │
+│ 48 │        │   dashboard/       │  (conversation)           │
+│ px │  Tree/ │   settings)        │                           │
+│    │  list  │                    │                           │
+│ I  │  nav   │                    │                           │
+│ C  │        │                    │                           │
+│ O  │ 200px  │                    │                           │
+│ N  │ collap │                    │                           │
+│ S  │ sible  │                    │                           │
+├────┴────────┴────────────────────┴───────────────────────────┤
+│  Status Bar                                                   │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 ### Zone Dimensions
@@ -36,13 +35,13 @@ Forge uses a **four-zone VS Code-style layout**. The Activity Bar is a fixed CSS
 | Zone | Default | Min | Max | Collapsible |
 |------|---------|-----|-----|-------------|
 | Activity Bar | 48px (fixed) | 48px | 48px | No |
+| Nav Sub-Panel | 200px | 160px | 280px | Yes → 0px |
 | Explorer Panel | Flex (fills remaining) | 280px | — | No |
-| Sessions Panel | 240px | 180px | 320px | Yes → 0px |
 | Chat Panel | Flex (fills remaining) | 360px | — | No |
 | Toolbar | Full width | — | — | No |
 | Status Bar | Full width | — | — | No |
 
-Explorer and Chat share remaining space ~50/50 after Activity Bar (48px) and Sessions Panel (240px).
+Nav Sub-Panel, Explorer, and Chat share remaining space after Activity Bar (48px). PaneForge manages the three resizable zones; the Activity Bar sits outside PaneForge.
 
 ---
 
@@ -54,17 +53,22 @@ The toolbar spans the full window width and provides global context and actions.
 |---------|----------|-------------|
 | Project name | Left | Currently open project. Click to switch projects. |
 | Global search | Center | FTS5-powered search across sessions and artifacts. `Ctrl+K` / `Cmd+K`. |
-| New session | Right | Start a new conversation session. `Ctrl+N` / `Cmd+N`. |
 
-> **Note:** Settings gear removed from toolbar — now accessible via the Activity Bar.
+> **Note:** New session button removed from toolbar — session creation is via `Ctrl+N` or the session dropdown in the Chat Panel header. Settings accessible via Activity Bar.
 
 ---
 
 ## Activity Bar
 
-A 48px fixed-width vertical icon rail on the far left. Provides direct navigation to artifact categories, dashboards, and settings without tab bars.
+A 48px fixed-width vertical icon rail on the far left. Provides direct navigation to the Project Dashboard, artifact categories, dashboards, and settings.
 
 ### Icon Groups
+
+**Top — Project Dashboard:**
+
+| Icon | Label | Lucide Icon |
+|------|-------|-------------|
+| Project Dashboard | Project Dashboard | LayoutDashboard |
 
 **Group 1 — Artifact Categories:**
 
@@ -98,61 +102,140 @@ Active icon: 2px left border indicator (`--primary` color) + highlighted backgro
 
 ### View Mapping
 
-| Activity Bar Icon | Explorer Panel Shows |
-|-------------------|---------------------|
-| Docs (default) | Docs artifact list → click opens viewer/editor |
-| Agents | Agents artifact list → click opens viewer/editor |
-| Rules | Rules artifact list → click opens viewer/editor |
-| Skills | Skills artifact list → click opens viewer/editor |
-| Hooks | Hooks artifact list (lifecycle hooks and hookify enforcement files) → click opens viewer/editor |
-| Scanners | Scanner dashboard |
-| Metrics | Metrics dashboard |
-| Learning | Learning loop view |
-| Settings | Settings view |
+| Activity Bar Icon | Nav Sub-Panel Shows | Explorer Panel Shows |
+|-------------------|---------------------|---------------------|
+| Project Dashboard | Hidden | Project dashboard |
+| Docs (default) | Doc tree (sections > pages) | Selected doc viewer/editor |
+| Agents | Agent list | Selected agent viewer/editor |
+| Rules | Rule list | Selected rule viewer/editor |
+| Skills | Skill list | Selected skill viewer/editor |
+| Hooks | Hook list (lifecycle + hookify) | Selected hook viewer/editor |
+| Scanners | Scanner list | Scanner results |
+| Metrics | Metric categories | Metrics dashboard |
+| Learning | Lesson/retro list | Selected lesson/retro |
+| Settings | Settings categories | Settings form |
+
+---
+
+## Nav Sub-Panel
+
+A collapsible 200px panel between the Activity Bar and Explorer Panel. Provides per-category sub-navigation. Toggle with `Ctrl+B`.
+
+### Docs Category (Structured Tree)
+
+The Docs category uses a hierarchical tree that mirrors the `docs/` directory structure:
+
+```
+Product
+  ├── Vision
+  ├── Governance
+  ├── Personas
+  ├── Journeys
+  ├── Information Architecture
+  ├── MVP Specification
+  ├── Glossary
+  └── Roadmap
+Architecture
+  ├── Decisions
+  ├── IPC Commands
+  ├── Rust Modules
+  ├── Svelte Components
+  ├── Streaming Pipeline
+  ├── Tool Definitions
+  ├── MCP Host
+  ├── Error Taxonomy
+  ├── SQLite Schema
+  └── Wireframe Serving
+UI
+  ├── Design System
+  ├── Brand Identity
+  ├── Component Inventory
+  ├── Interaction Patterns
+  ├── Responsive Behavior
+  └── Wireframes
+    ├── Core Layout
+    ├── Conversation View
+    ├── Artifact Browser
+    ├── Dashboard
+    └── Settings & Onboarding
+Development
+  ├── Coding Standards
+  ├── Agentic Workflow
+  └── Lessons
+Process
+  ├── Team
+  ├── Orchestration
+  ├── Definition of Ready
+  ├── Definition of Done
+  └── Retrospectives
+Research
+  ├── Claude Integration
+  ├── Tauri v2
+  ├── Frontend
+  └── Persistence
+```
+
+Tree expand/collapse state persists across navigation. Single-click selects a page and loads it in the Explorer Panel viewer.
+
+### Other Artifact Categories
+
+Agents, Rules, Skills, and Hooks use a flat or categorized list with a search/filter input at the top. Click an item to open it in the Explorer Panel.
+
+### Dashboard Categories
+
+When Project Dashboard, Scanners, or Metrics is active, the Nav Sub-Panel is hidden — all content goes directly to the Explorer Panel.
+
+When Learning is active, the Nav Sub-Panel shows a lesson/retro list; clicking an item opens it in the Explorer Panel.
+
+### Settings
+
+Settings shows a category list in the Nav Sub-Panel (Provider, Project, Appearance, Keyboard Shortcuts). Clicking a category shows the corresponding settings form in the Explorer Panel.
 
 ---
 
 ## Explorer Panel
 
-The Explorer Panel is always visible. It shows content determined by the Activity Bar selection.
+The Explorer Panel is always visible. It shows content determined by the Activity Bar selection and the Nav Sub-Panel selection.
 
-When an artifact category is active, the Explorer Panel shows the artifact list for that category. Clicking an artifact opens it in the viewer/editor within the Explorer Panel. When a dashboard icon is active, the Explorer Panel shows that dashboard. The old five-tab bar (Docs | Agents | Rules | Skills | Hooks) is eliminated — the Activity Bar provides direct navigation to each category.
-
-### Artifact List View
-
-| Element | Description |
-|---------|-------------|
-| Artifact list | Each entry shows: name, brief description (first sentence or frontmatter), status indicator. Click to open in the artifact viewer. |
-| New button | Create a new artifact in the selected category from a template. |
-| Search/filter | Text filter within the current category. |
+When an artifact category is active, the Explorer Panel shows the selected artifact's viewer/editor. If no artifact is selected, it shows the artifact list for that category (fallback when Nav Sub-Panel is collapsed). When a dashboard icon is active, the Explorer Panel shows that dashboard.
 
 ### Artifact Viewer
 
-When the user clicks an artifact in the list, the Explorer Panel switches from the list to the artifact viewer. The conversation remains visible in the Chat Panel so the user can discuss the artifact with Claude simultaneously.
+When the user clicks an artifact in the Nav Sub-Panel (or in the fallback list), the Explorer Panel shows the artifact viewer.
 
 | Element | Description |
 |---------|-------------|
-| Breadcrumb | Navigation context: Category > Artifact name. Click category to return to the list. |
+| Breadcrumb | Navigation context: Category > Section > Artifact name. Click any level to navigate up. |
 | Rendered view | Markdown rendering of the artifact content. YAML frontmatter displayed as structured metadata above the body. |
 | Edit mode | Toggle to CodeMirror 6 source editing. Full markdown + YAML editing with syntax highlighting. Save: `Ctrl+S` / `Cmd+S`. |
-| Back button | Returns to the artifact list view. |
+
+### Project Dashboard
+
+Shown when the Project Dashboard Activity Bar icon is active. Nav Sub-Panel is hidden.
+
+| Element | Description |
+|---------|-------------|
+| Project info | Detected stack (languages, frameworks), project root path. |
+| Governance summary | Counts of artifacts: N agents, N rules, N skills, N hooks. Click any category to activate it in the Activity Bar. |
+| Quick links | Scanner status, metrics, learning — Phase 3-5. |
+| Recent sessions | Last 5 sessions with quick-resume links. |
 
 ### Settings View
 
-Application and project settings, shown when the Settings icon is active in the Activity Bar.
+Application and project settings, shown when the Settings icon is active in the Activity Bar. Settings category list in the Nav Sub-Panel.
 
 | Section | Contents |
 |---------|----------|
 | Provider | Sidecar status, Claude Code CLI path, connection health indicator. |
 | Project | Project root, scan settings, file watcher status. |
-| Appearance | Theme (light/dark/system), font size, panel defaults. Per-project theming toggle (inherit project design tokens or use Forge defaults). |
+| Appearance | Theme (light/dark/system), font size, panel defaults. Per-project theming toggle. |
 | Keyboard shortcuts | Reference card for all keyboard shortcuts. |
 
 ### Scanner Dashboard (Phase 3+)
 
 | Element | Description |
 |---------|-------------|
-| Scanner list | Each scanner with last result: pass/fail, timestamp. |
+| Scanner list | Each scanner with last result: pass/fail, timestamp (in Nav Sub-Panel when active). |
 | Trend chart | Pass/fail rate over time (LayerChart). |
 | Violation details | Expandable list of current violations with file location and description. |
 
@@ -166,37 +249,34 @@ Application and project settings, shown when the Settings icon is active in the 
 
 ---
 
-## Sessions Panel
-
-The Sessions Panel is 240px by default and collapsible via `Ctrl+B`. It has two tabs at the top.
-
-### Tab: Sessions (Default)
-
-The default tab. Shows conversation session history for the current project.
-
-| Element | Description |
-|---------|-------------|
-| Session list | Chronological list of sessions. Each entry shows: title (auto-generated or user-named), date, message count, preview snippet. |
-| Active session | Highlighted. Clicking another session loads it in the Chat Panel. |
-| Search filter | Text filter to narrow the session list. |
-
-### Tab: Project
-
-Project-level information.
-
-| Element | Description |
-|---------|-------------|
-| Project info | Detected stack (languages, frameworks), project root path. |
-| Governance summary | Counts of artifacts: N agents, N rules, N skills, N hooks. Click any category to activate it in the Activity Bar. |
-| Quick links | Scanner status, metrics, learning — Phase 3-5. |
-
----
-
 ## Chat Panel
 
 The Chat Panel is always visible and always shows the active conversation. It is positioned at the far right. It is not collapsible. The core workflow is collaborating with Claude *on* artifacts — the conversation must remain visible while viewing, editing, or discussing any artifact in the Explorer Panel.
 
-### View: Conversation (Only View)
+### Session Header
+
+The session header sits at the top of the Chat Panel and provides session context and switching.
+
+| Element | Description |
+|---------|-------------|
+| Session dropdown | Active session title (clickable). Opens a dropdown with: recent sessions list, search filter, "New Session" button. |
+| Model selector | Auto / Opus / Sonnet / Haiku dropdown. "Auto (recommended)" is the default — separated from specific models by a visual divider. |
+| Token usage | Token count for the current session. |
+
+### Auto-Session on Plan Mode
+
+When a conversation triggers plan mode (user says "plan this", "how should we build X", or Claude determines planning is needed), Forge automatically:
+1. Creates a new session titled `[Plan] <topic>`
+2. Switches to the new session in the Chat Panel
+3. Preserves the previous session in history
+
+This keeps sessions focused on a single concern and makes session history a meaningful navigable record.
+
+**Trigger:** Both explicit user requests ("plan this feature") and autonomous Claude-initiated plan mode.
+
+**Configuration:** Users can disable auto-session in Settings > Project.
+
+### Conversation View
 
 | Element | Description |
 |---------|-------------|
@@ -205,33 +285,32 @@ The Chat Panel is always visible and always shows the active conversation. It is
 | Tool call cards | Collapsible. Summary shows: tool name, input summary, result summary, duration. Expanded shows: full input, full output, diff view (for edits). Badge indicates status: pending, approved, denied, completed. |
 | Streaming indicator | When the AI is responding: typing indicator + streaming tokens appear character by character in the current message. |
 | Input area | Bottom of panel. Multi-line text input with markdown support. `Enter` to send, `Shift+Enter` for newline. Attachment button for files (Phase 2+). |
-| Session header | Top of panel: session title (editable), model selector dropdown (Auto / Opus / Sonnet / Haiku), token usage. "Auto (recommended)" is the default when the provider supports it — separated from specific models by a visual divider. |
 
 ---
 
 ## Navigation Model
 
-Navigation uses the Activity Bar and contextual panel switching, not a traditional menu or route-based navigation. The four zones are always visible (unless Sessions Panel is collapsed); the user's "location" is determined by the Activity Bar selection and what's showing in each panel.
+Navigation uses the Activity Bar, Nav Sub-Panel, and contextual panel switching — not a traditional menu or route-based navigation. All zones are always visible (unless Nav Sub-Panel is collapsed); the user's "location" is determined by the Activity Bar selection and the Nav Sub-Panel selection.
 
-| Action | Activity Bar | Explorer Panel | Sessions Panel | Chat Panel |
-|--------|-------------|----------------|----------------|------------|
-| Start app | Docs active | Docs artifact list | Sessions tab, session list | Conversation (active or welcome) |
-| Click Agents icon | Agents active | Agents artifact list | Unchanged | Unchanged |
-| Click an artifact | Unchanged | Switches to artifact viewer | Unchanged | Unchanged |
-| Click Settings icon | Settings active | Shows settings view | Unchanged | Unchanged |
-| Click Scanners icon | Scanners active | Shows scanner dashboard | Unchanged | Unchanged |
-| Click a session in list | Unchanged | Unchanged | Highlights session | Loads that session's conversation |
-| `Ctrl+K` global search | Unchanged | Shows search results | Unchanged | Unchanged |
+| Action | Activity Bar | Nav Sub-Panel | Explorer Panel | Chat Panel |
+|--------|-------------|---------------|----------------|------------|
+| Start app | Docs active | Doc tree | Docs overview | Conversation (active or welcome) |
+| Click Agents icon | Agents active | Agent list | Agent list (if none selected) | Unchanged |
+| Click an artifact in Nav | Unchanged | Highlights item | Opens artifact viewer | Unchanged |
+| Click Project Dashboard | Dashboard active | Hidden | Project dashboard | Unchanged |
+| Click Settings icon | Settings active | Settings categories | Settings form | Unchanged |
+| Click Scanners icon | Scanners active | Scanner list | Scanner results | Unchanged |
+| Open session dropdown | Unchanged | Unchanged | Unchanged | Shows session list dropdown |
+| Click a session | Unchanged | Unchanged | Unchanged | Loads session conversation |
+| `Ctrl+K` global search | Unchanged | Unchanged | Shows search results | Unchanged |
 
 ### Keyboard Shortcuts
 
 | Shortcut | Action |
 |----------|--------|
+| `Ctrl+0` | Project Dashboard |
 | `Ctrl+1` through `Ctrl+5` | Switch artifact category (Docs / Agents / Rules / Skills / Hooks) |
-| `Ctrl+B` | Toggle Sessions Panel |
-| `Ctrl+Shift+S` | Scanner dashboard |
-| `Ctrl+Shift+M` | Metrics dashboard |
-| `Ctrl+Shift+L` | Learning loop |
+| `Ctrl+B` | Toggle Nav Sub-Panel |
 | `Ctrl+,` | Settings |
 | `Ctrl+K` | Global search |
 | `Ctrl+N` | New session |
@@ -239,7 +318,7 @@ Navigation uses the Activity Bar and contextual panel switching, not a tradition
 | `Ctrl+S` | Save (in edit mode) |
 | `Escape` | Close overlay / exit edit mode |
 
-**Removed:** `Ctrl+\` (detail panel toggle — Explorer is always visible), `Ctrl+Shift+A` (artifact browser — now Activity Bar icons).
+**Removed from AD-018:** `Ctrl+Shift+S` (Scanner dashboard), `Ctrl+Shift+M` (Metrics dashboard), `Ctrl+Shift+L` (Learning loop) — these are Activity Bar destinations, not keyboard shortcut targets. `Ctrl+B` repurposed from Sessions Panel toggle to Nav Sub-Panel toggle.
 
 ---
 
@@ -250,22 +329,41 @@ Navigation uses the Activity Bar and contextual panel switching, not a tradition
 Forge is a desktop application, not a web app. There are no URLs or routes. Navigation state is managed through a single `NavigationStore` using Svelte 5 runes:
 
 ```typescript
-type ActivityBarItem = "docs" | "agents" | "rules" | "skills" | "hooks"
+type ActivityBarItem = "project-dashboard" | "docs" | "agents" | "rules" | "skills" | "hooks"
   | "scanners" | "metrics" | "learning" | "settings";
 
 type ExplorerView = "artifact-list" | "artifact-viewer" | "artifact-editor"
-  | "scanner-dashboard" | "metrics-dashboard" | "learning-loop" | "settings";
+  | "project-dashboard" | "scanner-dashboard" | "metrics-dashboard" | "learning-loop" | "settings";
 
 class NavigationStore {
   activeActivity = $state<ActivityBarItem>("docs");
   explorerView = $state<ExplorerView>("artifact-list");
   selectedArtifact = $state<string | null>(null);
-  sessionsPanelTab = $state<"sessions" | "project">("sessions");
-  sessionsPanelCollapsed = $state(false);
+  navPanelCollapsed = $state(false);
 
-  switchActivity(item: ActivityBarItem) { /* sets explorerView based on item */ }
+  switchActivity(item: ActivityBarItem) { /* sets explorerView + navPanel visibility based on item */ }
   openArtifact(path: string) { /* sets selectedArtifact + explorerView */ }
-  toggleSessionsPanel() { /* toggles collapse */ }
+  toggleNavPanel() { /* toggles collapse */ }
+}
+```
+
+### Session State
+
+```typescript
+class SessionStore {
+  // ... existing session fields ...
+  sessionDropdownOpen = $state(false);
+  sessionSearchFilter = $state("");
+}
+```
+
+### Auto-Session State
+
+```typescript
+class ConversationStore {
+  // ... existing conversation fields ...
+  // When plan mode is detected, create new session automatically
+  autoSessionEnabled = $state(true); // user-configurable
 }
 ```
 
@@ -275,12 +373,13 @@ class NavigationStore {
 - **Session history**: SQLite
 - **Active session**: Restored on app restart via last-used session ID in `tauri-plugin-store`
 - **Panel collapse state**: Restored via `tauri-plugin-window-state`
+- **Nav Sub-Panel tree expand/collapse state**: `tauri-plugin-store`
 
 ---
 
 ## Focus Order
 
-Toolbar → Activity Bar → Explorer Panel → Sessions Panel → Chat Panel → Status Bar
+Toolbar → Activity Bar → Nav Sub-Panel → Explorer Panel → Chat Panel → Status Bar
 
 ---
 
@@ -289,11 +388,11 @@ Toolbar → Activity Bar → Explorer Panel → Sessions Panel → Chat Panel �
 | Window Width | Layout |
 |-------------|--------|
 | > 1200px | All zones open |
-| 900-1200px | Sessions Panel auto-collapsed |
-| 720-900px | Sessions as overlay Sheet |
+| 900-1200px | Nav Sub-Panel auto-collapsed |
+| 720-900px | Nav Sub-Panel as overlay Sheet |
 | < 720px | Activity Bar as floating toggle; Chat as overlay Sheet |
 
-Collapse priority: Sessions Panel → Chat Panel (overlay) → Activity Bar (floating). Explorer never collapses (focal point).
+Collapse priority: Nav Sub-Panel → Chat Panel (overlay) → Activity Bar (floating). Explorer never collapses (focal point).
 
 ---
 
@@ -303,10 +402,12 @@ Every view has a meaningful empty state that guides the user toward the next act
 
 | View | Empty State | Call to Action |
 |------|------------|----------------|
-| Session list | "No sessions yet" | "Start a conversation" button → focuses input |
+| Session dropdown | "No sessions yet" | "Start a conversation" prompt in input area |
 | Conversation | Welcome message explaining Forge | "Type a message to begin" in input placeholder |
 | Artifact list (no .claude/) | "No governance artifacts found" | "Open a project with .claude/ directory" or "Create your first agent" |
 | Artifact list (empty category) | "No {category} defined" | "Create new {category}" button |
+| Nav Sub-Panel (empty tree) | "No docs found" | "Add documentation to your docs/ directory" |
+| Project Dashboard (no project) | "No project open" | "Open a project" button |
 | Scanner dashboard | "No scanner results" | "Scanners run automatically during implementation" |
 | Metrics dashboard | "Not enough data" | "Metrics populate as you use Forge" |
 
@@ -317,13 +418,14 @@ Every view has a meaningful empty state that guides the user toward the next act
 The MVP includes only the views and elements needed for the core journeys:
 
 **Included:**
-- Four-zone layout with PaneForge + Activity Bar
-- Toolbar (project name, new session)
-- Activity Bar (5 artifact categories + settings)
-- Explorer Panel (artifact browser, artifact viewer, settings)
-- Sessions Panel (session list, project info)
-- Chat Panel (conversation, streaming, tool calls read-only, input)
-- Status bar (connection status, sidecar state, model display — shows "Auto → Sonnet 4.6" when auto is active, or just "Opus 4.6" when a specific model is pinned)
+- Three-zone layout with PaneForge + Activity Bar + Nav Sub-Panel
+- Toolbar (project name)
+- Activity Bar (Project Dashboard + 5 artifact categories + settings)
+- Nav Sub-Panel (doc tree for Docs, flat lists for other categories)
+- Explorer Panel (artifact browser, artifact viewer, project dashboard, settings)
+- Chat Panel (conversation, streaming, tool calls read-only, input, session dropdown)
+- Session dropdown (session switching, new session creation)
+- Status bar (connection status, sidecar state, model display)
 - Empty states for all included views
 - Keyboard shortcuts for core actions
 
@@ -332,6 +434,16 @@ The MVP includes only the views and elements needed for the core journeys:
 - Global search (Phase 2 — FTS5 infrastructure exists but UI deferred)
 - Tool inspector (Phase 2)
 - Tool approval controls (Phase 2)
+- Auto-session on plan mode (Phase 2 — requires sidecar plan-mode detection)
+
+---
+
+## Pillar Alignment
+
+| Pillar | Alignment |
+|--------|-----------|
+| Self-Learning Loop | N/A |
+| Process Governance | Defines the navigation structure that makes governance artifacts (agents, rules, skills, hooks) browsable, editable, and first-class destinations in the UI — making governance tangible and manageable. |
 
 ---
 
@@ -341,5 +453,5 @@ The MVP includes only the views and elements needed for the core journeys:
 - [User Personas](/product/personas) — Who navigates this UI
 - [MVP Feature Specification](/product/mvp-specification) — What's included in Phase 1
 - AD-013: Frontend library selections — shadcn-svelte, PaneForge, CodeMirror 6
-- AD-018: Four-zone VS Code-style layout — layout architecture decision
+- AD-019: Three-zone + Nav Sub-Panel layout — layout architecture decision
 - AD-014: Persistence architecture — SQLite for session/artifact storage

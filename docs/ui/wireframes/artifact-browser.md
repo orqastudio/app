@@ -2,52 +2,54 @@
 
 **Date:** 2026-03-02 | **Informed by:** [Information Architecture](/product/information-architecture), [Frontend Research](/research/frontend), [MVP Spec F-007, F-008](/product/mvp-specification)
 
-The artifact browser surfaces governance artifacts (Docs, Agents, Rules, Skills, Hooks) in the Explorer Panel: as a category list (browser) and as a rendered/editable view (viewer). Both views live in the Explorer Panel so the conversation remains visible in the Chat Panel — the core workflow is collaborating with Claude *on* artifacts. Artifacts are Markdown files with YAML frontmatter stored in `.forge/` directories.
+The artifact browser surfaces governance artifacts (Docs, Agents, Rules, Skills, Hooks) as a navigation list in the Nav Sub-Panel and as a rendered/editable view in the Explorer Panel. The artifact list and viewer are split across two zones so the conversation remains visible in the Chat Panel — the core workflow is collaborating with Claude *on* artifacts. Artifacts are Markdown files with YAML frontmatter stored in `.forge/` directories.
 
 ---
 
-## 1. Explorer Panel: Artifact Browser (Docs — Default)
+## 1. Nav Sub-Panel + Explorer: Artifact Browser (Docs — Default)
 
-The default view when the Docs icon is active in the Activity Bar. Docs is the default because documentation is the most frequently touched artifact category during active development. Agents, Rules, and other governance artifacts are primarily modified during retrospectives.
+The default view when the Docs icon is active. The Nav Sub-Panel shows the structured doc tree, and the Explorer Panel shows the selected document viewer. If no document is selected, the Explorer Panel shows the artifact list as a fallback.
 
 ```plantuml
 @startsalt
 {
-  { <b>Docs</b> (via Activity Bar) }
+  { <b>Nav Sub-Panel</b> | . | <b>Explorer Panel</b> }
   ---
-  [Filter docs...            ]
-  ---
-  {SI
+  {
     {
-      <&document> <b>architecture-decisions</b>
-      Formal architecture decisions log
+      <b>Product</b>
+      . Vision
+      . Governance
+      . Personas
+      . Journeys
+      ---
+      <b>Architecture</b>
+      . <b>Decisions</b>
+      . IPC Commands
+      . Rust Modules
+      ---
+      <b>Development</b>
+      . Coding Standards
+      . Agentic Workflow
+      ---
+      .
+    } | {
+      { <&home> Docs / Architecture / <b>Decisions</b> | . | [Edit] }
+      ---
+      {SI
+        <b>Architecture Decisions</b>
+        ---
+        Formal architecture decisions log.
+        Each decision is numbered AD-NNN...
+        ---
+        <b>AD-001: Thick Backend</b>
+        ---
+        Rust owns the domain model...
+        ---
+        .
+      }
     }
-    ---
-    {
-      <&document> <b>coding-standards</b>
-      Rust and TypeScript conventions
-    }
-    ---
-    {
-      <&document> <b>glossary</b>
-      Domain model and terminology
-    }
-    ---
-    {
-      <&document> <b>mvp-specification</b>
-      Feature specs and acceptance criteria
-    }
-    ---
-    {
-      <&document> <b>roadmap</b>
-      Phase plan and feature backlog
-    }
-    ---
-    .
-    .
   }
-  ---
-  [+ New Doc]
 }
 @endsalt
 ```
@@ -72,7 +74,7 @@ The default view when the Docs icon is active in the Activity Bar. Docs is the d
 
 ---
 
-## 2. Explorer Panel: Rules (via Activity Bar)
+## 2. Nav Sub-Panel + Explorer: Rules (via Activity Bar)
 
 The Rules tab shows rule artifacts with their applicable path scopes, helping users understand which rules apply where.
 
@@ -296,7 +298,7 @@ The source editing mode replaces the rendered view in the Explorer Panel with a 
 
 ---
 
-## 5. Explorer Panel: Empty State
+## 5. Nav Sub-Panel + Explorer: Empty State
 
 Shown when a category has no artifacts yet. Provides guidance and a clear call to action.
 
@@ -364,9 +366,10 @@ Shown when a category has no artifacts yet. Provides guidance and a clear call t
 | Explorer Panel at minimum width (280px) | Description text truncated to 1 line; path scopes hidden. Artifact viewer/editor uses full available width. |
 | Explorer Panel wider than 400px | Full 2-line descriptions; path scopes shown. Artifact viewer has room for metadata card 2-column layout. |
 | Explorer Panel at maximum width (480px) | Rendered Markdown limited to panel width for readability. Editor has comfortable editing width. |
+| Nav Sub-Panel collapsed | When Nav Sub-Panel is collapsed, the Explorer Panel shows the full artifact list as fallback. |
 
 ---
 
 ## File Watching
 
-Artifacts are stored as files on disk (`.forge/agents/*.md`, `.forge/rules/*.md`, etc.). Hooks watch two source paths: `.claude/hooks/` for lifecycle hooks and `.claude/hookify.*.local.md` for hookify enforcement rules. The Explorer Panel list uses Tauri's `fs.watch` API to live-reload when files change externally (e.g., via git pull or direct editing). A brief fade animation indicates a refresh.
+Artifacts are stored as files on disk (`.claude/agents/*.md`, `.claude/rules/*.md`, etc.). Hooks watch two source paths: `.claude/hooks/` for lifecycle hooks and `.claude/hookify.*.local.md` for hookify enforcement rules. The Nav Sub-Panel list and Explorer Panel fallback list use Tauri's `fs.watch` API to live-reload when files change externally (e.g., via git pull or direct editing). A brief fade animation indicates a refresh.

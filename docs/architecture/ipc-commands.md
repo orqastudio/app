@@ -974,7 +974,7 @@ export interface ThemeToken {
 //   "default_model"     -> "auto" | "claude-opus-4-6" | "claude-sonnet-4-6" | "claude-haiku-4-5"
 //   "last_project_id"   -> number
 //   "last_session_id"   -> number
-//   "sidebar_tab"       -> "sessions" | "project"
+//   "nav_panel_collapsed" -> boolean
 
 // ---------------------------------------------------------------------------
 // Sidecar

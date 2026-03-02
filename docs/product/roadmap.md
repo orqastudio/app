@@ -30,7 +30,7 @@ Research and resolve technical decision points. Each item results in documented 
 
 - [x] Markdown rendering + editing → CodeMirror 6 (editing) + @humanspeak/svelte-markdown (rendering). No WYSIWYG.
 - [x] Conversation UI component → Custom build on shadcn-svelte. Vercel AI SDK for patterns only.
-- [x] Panel layout system → PaneForge (shadcn-svelte Resizable). Three-pane layout.
+- [x] Panel layout system → PaneForge (shadcn-svelte Resizable). Three-zone + nav sub-panel layout.
 - [x] Chart/visualization library → LayerChart (shadcn-svelte Chart). Badge + lucide for indicators.
 
 **Persistence** — [`docs/research/persistence.md`](/research/persistence)
@@ -68,7 +68,7 @@ Define what we're building before designing how it looks. These documents live i
 - [x] **Glossary / domain model** — 40+ terms across 9 categories. Canonical definitions for all product documentation. [`docs/product/glossary.md`](/product/glossary)
 - [x] **User personas** — Three personas: Alex (PM/Tech Lead, primary), Sam (Developer, secondary), Jordan (Solo Technical PM, tertiary). Goals, pain points, workflows, design implications. Comparison matrix. [`docs/product/personas.md`](/product/personas)
 - [x] **User journeys** — Six end-to-end workflows: first-time setup, define governance, implementation cycle, review/approve, learning loop, onboard existing project. MVP coverage matrix. [`docs/product/journeys.md`](/product/journeys)
-- [x] **Information architecture** — Three-pane layout (sidebar, primary, detail). Navigation model, keyboard shortcuts, state management, empty states. Phase 1 scope defined. [`docs/product/information-architecture.md`](/product/information-architecture)
+- [x] **Information architecture** — Three-zone + nav sub-panel layout (Activity Bar, Nav Sub-Panel, Explorer, Chat). Navigation model, keyboard shortcuts, state management, empty states. Phase 1 scope defined. [`docs/product/information-architecture.md`](/product/information-architecture)
 - [x] **MVP feature specification** — 14 features (F-001 through F-013 + F-001b New Project) with acceptance criteria. Includes Claude-generated handoff summaries (F-013) and New Project workflow (F-001b) in Phase 1. Dogfooding validation checklist. Explicit deferral list with rationale and target phase. [`docs/product/mvp-specification.md`](/product/mvp-specification)
 
 ## Phase 0d: UX Design
@@ -77,7 +77,7 @@ Design the user interface before building it. These documents live in `docs/ui/`
 
 - [x] **Wireframing tool research** — PlantUML Salt (primary, wireframes) + D2 (secondary, architecture diagrams). ImagineUI abandoned and not recommended. [`docs/research/wireframing.md`](/research/wireframing)
 - [x] **Design system** — Forge's own design tokens (colors, typography, spacing, dark/light mode). Per-project theming via extracted design tokens. Brand extension variables. Component library specification. [`docs/ui/design-system.md`](/ui/design-system) ← research: [Design Tokens](/research/design-tokens), [Branding](/research/branding), [Brand Identity](/ui/brand-identity)
-- [x] **Wireframes: Core layout** — Four-zone layout (Activity Bar, Explorer, Sessions, Chat) with toolbar and status bar. Default and Sessions-collapsed states. Zone dimensions and collapse behavior. [`docs/ui/wireframes/core-layout.md`](/ui/wireframes/core-layout) ← informed by: [Information Architecture](/product/information-architecture), [Wireframing](/research/wireframing)
+- [x] **Wireframes: Core layout** — Three-zone + nav sub-panel layout (Activity Bar, Nav Sub-Panel, Explorer, Chat) with toolbar and status bar. Default and Nav Sub-Panel-collapsed states. Zone dimensions and collapse behavior. [`docs/ui/wireframes/core-layout.md`](/ui/wireframes/core-layout) ← informed by: [Information Architecture](/product/information-architecture), [Wireframing](/research/wireframing)
 - [x] **Wireframes: Conversation view** — Active conversation, streaming state, empty/welcome state, error states. Tool call cards collapsed and expanded. All tool types represented. [`docs/ui/wireframes/conversation-view.md`](/ui/wireframes/conversation-view) ← informed by: [Information Architecture](/product/information-architecture), [Frontend](/research/frontend), [MVP Spec F-003, F-004](/product/mvp-specification)
 - [x] **Wireframes: Artifact browser** — Explorer Panel browser with Activity Bar category selection, artifact viewer (rendered), editor (source), empty states. Path scope display for rules. [`docs/ui/wireframes/artifact-browser.md`](/ui/wireframes/artifact-browser) ← informed by: [Information Architecture](/product/information-architecture), [Frontend](/research/frontend), [MVP Spec F-007, F-008](/product/mvp-specification)
 - [x] **Wireframes: Settings / onboarding** — Settings panel (provider, project, appearance, shortcuts). First-run welcome, CLI setup, project open with scan results, new project governance scaffolding. [`docs/ui/wireframes/settings-onboarding.md`](/ui/wireframes/settings-onboarding) ← informed by: [Onboarding](/research/onboarding), [MVP Spec F-001, F-001b, F-009](/product/mvp-specification)
@@ -115,10 +115,10 @@ Build the minimum viable application that can run a conversation with Claude.
 - [ ] Rust backend: SQLite setup with initial schema + migrations ← AD: [AD-014](/architecture/decisions); research: [Persistence](/research/persistence)
 - [ ] Rust backend: Session CRUD commands ← AD: [AD-014](/architecture/decisions); research: [Persistence](/research/persistence)
 - [ ] Rust backend: API key storage via keyring ← AD: [AD-011](/architecture/decisions); research: [Tauri v2](/research/tauri-v2)
-- [ ] Frontend: Main layout (conversation panel + collapsible side panel) ← AD: [AD-013](/architecture/decisions); research: [Frontend](/research/frontend); product: [Information Architecture](/product/information-architecture)
+- [ ] Frontend: Main layout (three-zone + nav sub-panel layout per AD-019) ← AD: [AD-013, AD-019](/architecture/decisions); research: [Frontend](/research/frontend); product: [Information Architecture](/product/information-architecture)
 - [ ] Frontend: Conversation component with streaming token display ← AD: [AD-013](/architecture/decisions); research: [Frontend](/research/frontend); spec: [F-003](/product/mvp-specification)
 - [ ] Frontend: Tool call rendering (collapsible cards with input/output) ← research: [Frontend](/research/frontend); spec: [F-004](/product/mvp-specification)
-- [ ] Frontend: Session history sidebar ← research: [Frontend](/research/frontend); spec: [F-005](/product/mvp-specification); product: [Information Architecture](/product/information-architecture)
+- [ ] Frontend: Session dropdown in Chat Panel header ← research: [Frontend](/research/frontend); spec: [F-005](/product/mvp-specification); product: [Information Architecture](/product/information-architecture)
 - [ ] Frontend: Settings view (API key entry, model selection) ← spec: [F-009](/product/mvp-specification); product: [Information Architecture](/product/information-architecture)
 - [ ] Integration: Send message → stream response → render in UI ← spec: [F-003](/product/mvp-specification)
 - [ ] Integration: Basic tool call display (read-only, no approval yet) ← spec: [F-004](/product/mvp-specification)

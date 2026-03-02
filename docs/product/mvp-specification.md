@@ -134,9 +134,9 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] Session metadata (title, created_at, updated_at, message_count, model) is stored in SQLite. The `model` field stores `"auto"` as a string value when auto model selection is active (not null).
 - [ ] Messages and content blocks are stored in SQLite (one row per content block)
 - [ ] Sessions are auto-titled from the first user message (first 50 characters)
-- [ ] Session list appears in the sidebar Sessions tab, ordered by most recent
-- [ ] Clicking a session in the list loads it in the conversation view with full message history
-- [ ] The active session is highlighted in the list
+- [ ] Session list appears in the Chat Panel header session dropdown, ordered by most recent
+- [ ] Clicking a session in the dropdown loads it in the Chat Panel with full message history
+- [ ] The active session title is shown in the dropdown trigger
 - [ ] New Session button (`Ctrl+N`) creates a new empty session
 - [ ] Sessions persist across app restarts
 - [ ] The last-active session is restored on app restart
@@ -145,28 +145,31 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 
 ---
 
-### F-006: Four-Zone Layout
+### F-006: Three-Zone + Nav Sub-Panel Layout
 
-**Description:** The main window uses a VS Code-style four-zone layout: Activity Bar (fixed 48px icon rail), Explorer Panel (flexible, artifact-centric), Sessions Panel (240px, collapsible), and Chat Panel (flexible, conversation).
+**Description:** The main window uses a three-zone + nav sub-panel layout: Activity Bar (fixed 48px icon rail), Nav Sub-Panel (200px, collapsible, per-category sub-navigation), Explorer Panel (flexible, artifact viewer/editor/dashboards), and Chat Panel (flexible, conversation with session dropdown).
 
 **Acceptance Criteria:**
 - [ ] Activity Bar is a fixed 48px vertical icon rail on the far left, outside PaneForge
-- [ ] Activity Bar has icons for: Docs (default active), Agents, Rules, Skills, Hooks (lifecycle + hookify); separator; Settings (bottom-aligned)
+- [ ] Activity Bar has icons for: Project Dashboard (top); Docs (default active), Agents, Rules, Skills, Hooks (lifecycle + hookify); separator; Settings (bottom-aligned)
 - [ ] Active Activity Bar icon has 2px left border indicator + highlighted background
-- [ ] `Ctrl+1` through `Ctrl+5` switch artifact categories; `Ctrl+,` opens settings
-- [ ] Explorer Panel fills remaining space, shows content based on Activity Bar selection
-- [ ] Sessions Panel: default 240px, min 180px, max 320px, collapsible with `Ctrl+B`
-- [ ] Sessions Panel has two tabs: Sessions (default) and Project
+- [ ] `Ctrl+0` opens Project Dashboard; `Ctrl+1` through `Ctrl+5` switch artifact categories; `Ctrl+,` opens settings
+- [ ] Nav Sub-Panel: default 200px, min 160px, max 280px, collapsible with `Ctrl+B`
+- [ ] Nav Sub-Panel shows per-category navigation: structured doc tree for Docs, flat lists for Agents/Rules/Skills/Hooks, category list for Settings
+- [ ] Nav Sub-Panel is hidden when Project Dashboard, Scanners, or Metrics is active
+- [ ] Doc tree mirrors `docs/` directory structure with expand/collapse state that persists across navigation
+- [ ] Explorer Panel fills remaining space, shows selected artifact viewer/editor, project dashboard, or settings form
 - [ ] Chat Panel fills remaining space, always shows conversation, not collapsible
-- [ ] PaneForge manages three resizable zones: Explorer | Sessions | Chat
+- [ ] Chat Panel header includes session dropdown and model selector
+- [ ] PaneForge manages three resizable zones: Nav Sub-Panel | Explorer | Chat
 - [ ] Pane resize handles are visible and draggable
-- [ ] Collapsed Sessions Panel redistributes space to Explorer and Chat
+- [ ] Collapsed Nav Sub-Panel redistributes space to Explorer and Chat
 - [ ] Panel sizes and collapse state persist across app restarts (tauri-plugin-window-state)
 - [ ] Window size and position persist across restarts
 - [ ] Layout is functional at minimum window size of 900x600px
-- [ ] Responsive: Sessions Panel auto-collapses below 1200px; overlay Sheet below 720px
+- [ ] Responsive: Nav Sub-Panel auto-collapses below 1200px; overlay Sheet below 720px
 
-**Architecture References:** AD-018 (four-zone layout), AD-013 (PaneForge), AD-012 (window-state plugin)
+**Architecture References:** AD-019 (three-zone + nav sub-panel layout), AD-013 (PaneForge), AD-012 (window-state plugin)
 
 ---
 
@@ -296,6 +299,24 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 
 ---
 
+### F-014: Auto-Session on Plan Mode
+
+**Description:** When a conversation triggers plan mode, Forge automatically creates a new session to keep planning focused and session history meaningful.
+
+**Acceptance Criteria:**
+- [ ] Plan-mode trigger is detected by the sidecar or conversation analysis (both explicit user requests like "plan this" and autonomous Claude-initiated plan mode)
+- [ ] When plan mode triggers, a new session is created with title `[Plan] <topic>`
+- [ ] The previous session is preserved with its full history
+- [ ] The Chat Panel switches to the new session immediately
+- [ ] The session dropdown shows the new session after creation
+- [ ] User can rename the auto-generated `[Plan]` title
+- [ ] Auto-session behavior is configurable: users can disable it in Settings > Project
+- [ ] When disabled, plan mode starts in the current session (no new session created)
+
+**Architecture References:** AD-019 (auto-session behavior), AD-014 (persistence), AD-007 (sidecar)
+
+---
+
 ## Explicitly Deferred (Not in Phase 1)
 
 These features are valuable but not needed for the dogfooding milestone:
@@ -324,7 +345,7 @@ After Phase 1 is complete, Forge must pass these checks to transition from the C
 - [ ] **Can edit governance artifacts**: Edit an agent file, save, verify change persists on disk and in the UI
 - [ ] **Can run a conversation**: Send a message, receive a streaming response, see tool calls displayed
 - [ ] **Can review tool calls**: Expand a tool call card, see the input and output, understand what the AI did
-- [ ] **Can manage sessions**: Start a new session, switch between sessions, see session history
+- [ ] **Can manage sessions**: Start a new session, switch between sessions via the session dropdown, see session history
 - [ ] **Can detect project context**: Open Forge on the Forge project itself, see detected stack and existing governance artifacts
 - [ ] **Persistence works**: Close Forge, reopen, last session and project are restored
 

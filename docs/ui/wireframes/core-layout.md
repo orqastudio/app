@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-02 | **Informed by:** [Information Architecture](/product/information-architecture), [Frontend Research](/research/frontend), [Design System](/ui/design-system)
 
-The main window structure showing all four zones: Activity Bar, Explorer Panel, Sessions Panel, and Chat Panel, plus Toolbar and Status Bar. This replaces the previous three-pane layout with a VS Code-style artifact-centric design.
+The main window structure showing all zones: Activity Bar, Nav Sub-Panel, Explorer Panel, and Chat Panel, plus Toolbar and Status Bar. This replaces the previous four-zone layout with a three-zone + nav sub-panel design (AD-019).
 
 ---
 
@@ -11,9 +11,11 @@ The main window structure showing all four zones: Activity Bar, Explorer Panel, 
 ```plantuml
 @startsalt
 {+
-  {/ <b>Forge</b> | . | . | . | . | [Ctrl+K Search...] | . | [+ New Session] }
+  {/ <b>Forge</b> | . | . | . | . | [Ctrl+K Search...] | . | . }
   {+
     {
+      <&grid>
+      ---
       <&document>
       ---
       <&person>
@@ -31,6 +33,24 @@ The main window structure showing all four zones: Activity Bar, Explorer Panel, 
       .
       ---
       <&cog>
+    } | {
+      <b>Product</b>
+      ---
+      {SI
+        . Vision
+        . Governance
+        . Personas
+        . Journeys
+      }
+      ---
+      <b>Architecture</b>
+      ---
+      {SI
+        . Decisions
+        . IPC Commands
+      }
+      ---
+      .
     } | {
       [Filter docs...            ]
       ---
@@ -56,24 +76,7 @@ The main window structure showing all four zones: Activity Bar, Explorer Panel, 
       ---
       [+ New Doc]
     } | {
-      {/ <b>Sessions</b> | Project }
-      {SI
-        <b>Session: Fix auth bug</b>
-        Today, 14:32 - 8 messages
-        ---
-        Session: Add user model
-        Today, 10:15 - 23 messages
-        ---
-        Session: Initial setup
-        Yesterday - 5 messages
-        ---
-        .
-        .
-      }
-      ---
-      [Search sessions...]
-    } | {
-      { <b>Fix auth bug</b> | . | . | ^claude-4-opus^ | 1.2k tokens }
+      { ^Fix auth bug   v^ | . | ^Auto (recommended)^ | 1.2k tokens }
       ---
       {SI
         {
@@ -114,30 +117,32 @@ The main window structure showing all four zones: Activity Bar, Explorer Panel, 
 | Zone | Default | Min | Max | Collapsible |
 |------|---------|-----|-----|-------------|
 | Activity Bar | 48px (fixed) | 48px | 48px | No |
+| Nav Sub-Panel | 200px | 160px | 280px | Yes (collapse to 0px) |
 | Explorer Panel | Flex (fills remaining) | 280px | — | No |
-| Sessions Panel | 240px | 180px | 320px | Yes (collapse to 0px) |
 | Chat Panel | Flex (fills remaining) | 360px | — | No |
 | Toolbar | Full width | — | — | No |
 | Status Bar | Full width | — | — | No |
 
-Explorer and Chat share remaining horizontal space approximately 50/50 after the Activity Bar (48px) and Sessions Panel (240px) are accounted for.
+Nav Sub-Panel, Explorer, and Chat share remaining horizontal space after the Activity Bar (48px). When the Nav Sub-Panel is collapsed, its space redistributes to Explorer and Chat.
 
 ### Zone Relationship to PaneForge
 
-The Activity Bar sits **outside** PaneForge as a fixed-width CSS flex element (48px). PaneForge manages the three resizable zones: Explorer Panel | Sessions Panel | Chat Panel.
+The Activity Bar sits **outside** PaneForge as a fixed-width CSS flex element (48px). PaneForge manages the three resizable zones: Nav Sub-Panel | Explorer Panel | Chat Panel.
 
 ---
 
-## Sessions Panel Collapsed State
+## Nav Sub-Panel Collapsed State
 
-When the Sessions Panel is collapsed via `Ctrl+B`, its space redistributes to the Explorer and Chat panels.
+When the Nav Sub-Panel is collapsed via `Ctrl+B`, its space redistributes to the Explorer and Chat panels.
 
 ```plantuml
 @startsalt
 {+
-  {/ <b>Forge</b> | . | . | . | . | . | [Ctrl+K Search...] | . | [+ New Session] }
+  {/ <b>Forge</b> | . | . | . | . | . | [Ctrl+K Search...] | . | . }
   {+
     {
+      <&grid>
+      ---
       <&document>
       ---
       <&person>
@@ -185,7 +190,7 @@ When the Sessions Panel is collapsed via `Ctrl+B`, its space redistributes to th
       ---
       [+ New Doc]
     } | {
-      { <b>Fix auth bug</b> | . | . | . | . | ^claude-4-opus^ | 1.2k tokens }
+      { ^Fix auth bug   v^ | . | . | . | ^Auto (recommended)^ | 1.2k tokens }
       ---
       {SI
         {
@@ -230,9 +235,11 @@ When the user clicks the Agents icon in the Activity Bar, the Explorer Panel swi
 ```plantuml
 @startsalt
 {+
-  {/ <b>Forge</b> | . | . | . | . | [Ctrl+K Search...] | . | [+ New Session] }
+  {/ <b>Forge</b> | . | . | . | . | [Ctrl+K Search...] | . | . }
   {+
     {
+      <&grid>
+      ---
       <&document>
       ---
       **<&person>**
@@ -250,6 +257,17 @@ When the user clicks the Agents icon in the Activity Bar, the Explorer Panel swi
       .
       ---
       <&cog>
+    } | {
+      [Filter agents...]
+      ---
+      {SI
+        . backend-engineer
+        . frontend-engineer
+        . code-reviewer
+        . debugger
+        . test-engineer
+        .
+      }
     } | {
       [Filter agents...           ]
       ---
@@ -275,20 +293,7 @@ When the user clicks the Agents icon in the Activity Bar, the Explorer Panel swi
       ---
       [+ New Agent]
     } | {
-      {/ <b>Sessions</b> | Project }
-      {SI
-        <b>Session: Fix auth bug</b>
-        Today, 14:32 - 8 messages
-        ---
-        Session: Add user model
-        Today, 10:15 - 23 messages
-        ---
-        .
-      }
-      ---
-      [Search sessions...]
-    } | {
-      { <b>Fix auth bug</b> | . | . | ^claude-4-opus^ | 1.2k tokens }
+      { ^Fix auth bug   v^ | . | . | ^Auto (recommended)^ | 1.2k tokens }
       ---
       {SI
         {
@@ -310,12 +315,14 @@ When the user clicks the Agents icon in the Activity Bar, the Explorer Panel swi
 
 ---
 
-## Sessions Panel: Project Tab
+## Project Dashboard View
+
+When the user clicks the Project Dashboard icon (top of Activity Bar), the Explorer Panel shows the project overview. The Nav Sub-Panel is hidden for this view.
 
 ```plantuml
 @startsalt
 {
-  {/ Sessions | <b>Project</b> }
+  { <b>Project Dashboard</b> }
   ---
   {
     <b>forge</b>
@@ -332,6 +339,14 @@ When the user clicks the Agents icon in the Activity Bar, the Explorer Panel swi
     <&document> Docs: 12 | <&document> Agents: 3
     <&document> Rules: 5 | <&document> Skills: 2
     <&document> Hooks: 1
+  }
+  ---
+  {
+    <b>Recent Sessions</b>
+    ---
+    Fix auth bug -- Today, 14:32
+    Add user model -- Today, 10:15
+    Initial setup -- Yesterday
   }
   ---
   {
@@ -355,19 +370,19 @@ When the user clicks the Agents icon in the Activity Bar, the Explorer Panel swi
 |---------|----------|
 | **Project name** ("Forge") | Click opens project switcher dropdown. Shows current project name. |
 | **Search** | `Ctrl+K` focuses. FTS5-powered search across sessions and artifacts. Results appear in Explorer Panel. |
-| **New Session** | Creates a new conversation session and focuses the Chat Panel input. `Ctrl+N`. |
 
-Note: The settings gear is removed from the toolbar. Settings is now accessible via the Activity Bar (bottom icon) or `Ctrl+,`.
+Note: The settings gear is removed from the toolbar. Settings is now accessible via the Activity Bar (bottom icon) or `Ctrl+,`. New sessions are created via `Ctrl+N` or the session dropdown in the Chat Panel header.
 
 ### Activity Bar
 
 | Element | Behavior |
 |---------|----------|
+| **Project Dashboard icon** | Top of Activity Bar. Click switches Explorer Panel to project dashboard. Nav Sub-Panel hidden. `Ctrl+0`. |
 | **Artifact category icons** | Docs (default), Agents, Rules, Skills, Hooks. Click switches the Explorer Panel to that category's artifact list. Active icon has a 2px left border indicator + highlighted background. The Hooks icon surfaces both lifecycle hooks (`.claude/hooks/`) and hookify enforcement rules (`.claude/hookify.*.local.md`). |
 | **Dashboard icons** | Scanners, Metrics, Learning (Phase 3-5). Click switches the Explorer Panel to the corresponding dashboard. |
 | **Settings icon** | Bottom-aligned. Click switches the Explorer Panel to the settings view. `Ctrl+,`. |
 | **Tooltips** | Each icon shows a tooltip on hover with the zone name and keyboard shortcut. |
-| **Keyboard shortcuts** | `Ctrl+1` through `Ctrl+5` for artifact categories. `Ctrl+Shift+S/M/L` for dashboards. `Ctrl+,` for settings. |
+| **Keyboard shortcuts** | `Ctrl+0` for Project Dashboard. `Ctrl+1` through `Ctrl+5` for artifact categories. `Ctrl+,` for settings. |
 
 ### Status Bar
 
@@ -379,7 +394,7 @@ Note: The settings gear is removed from the toolbar. Settings is now accessible 
 
 ### Resize Handles
 
-PaneForge provides drag handles between the Explorer, Sessions, and Chat panes. Handles are 1px borders with an 8px invisible drag target. Double-click a handle to collapse/expand the Sessions Panel.
+PaneForge provides drag handles between the Nav Sub-Panel, Explorer, and Chat panes. Handles are 1px borders with an 8px invisible drag target. Double-click a handle to collapse/expand the Nav Sub-Panel.
 
 ---
 
@@ -387,9 +402,10 @@ PaneForge provides drag handles between the Explorer, Sessions, and Chat panes. 
 
 | Shortcut | Action |
 |----------|--------|
+| `Ctrl+0` | Project Dashboard |
 | `Ctrl+1` through `Ctrl+5` | Switch artifact category |
-| `Ctrl+B` | Toggle Sessions Panel |
+| `Ctrl+B` | Toggle Nav Sub-Panel |
 | `Ctrl+K` | Focus global search |
 | `Ctrl+N` | New session |
 | `Ctrl+,` | Open settings in Explorer Panel |
-| `Tab` | Move focus between zones (Activity Bar > Explorer > Sessions > Chat) |
+| `Tab` | Move focus between zones (Activity Bar > Nav Sub-Panel > Explorer > Chat) |

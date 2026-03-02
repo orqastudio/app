@@ -16,7 +16,7 @@ questions:
   - id: Q3
     title: Panel Layout System
     status: resolved
-    verdict: PaneForge (shadcn-svelte Resizable). Three-pane layout.
+    verdict: PaneForge (shadcn-svelte Resizable). Three-zone + nav sub-panel layout.
   - id: Q4
     title: Chart/Visualization Library
     status: resolved

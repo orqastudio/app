@@ -25,7 +25,7 @@ These journeys inform UI design (Phase 0d) and the MVP feature specification.
    - **Tier 2 (~1-2s):** `hyperpolyglot` confirms language detection across the full file tree. Results update the project metadata.
    - **Tier 3 (deferred):** Claude analysis is available on-demand but not triggered automatically on first open.
 
-   The Sessions Panel populates with the project name, detected stack, and a file tree summary.
+   The Project Dashboard populates with the project name, detected stack, and a file tree summary.
 
 4. **Detect existing governance** — Forge checks for `.claude/` directory. If found, governance artifacts are indexed into SQLite and displayed in the artifact browser. If not found, the UI notes "No governance framework detected" and offers to help create one (Journey 2).
 
@@ -33,7 +33,7 @@ These journeys inform UI design (Phase 0d) and the MVP feature specification.
 
 6. **First response streams** — Tokens stream into the conversation panel in real-time. The user sees the AI responding. Tool calls (if any) appear as collapsible cards.
 
-7. **Session persisted** — The session is automatically saved to SQLite. It appears in the session history sidebar. The user can close and reopen Forge without losing context.
+7. **Session persisted** — The session is automatically saved to SQLite. It appears in the session dropdown in the Chat Panel header. The user can close and reopen Forge without losing context.
 
 ### Success Criteria
 
@@ -247,7 +247,7 @@ These journeys inform UI design (Phase 0d) and the MVP feature specification.
    - A `.gitignore` with `forge.db` entry
    - Optionally: `git init` if the directory isn't already a git repo
 
-3. **Project registered** — Forge registers the project in SQLite, sets it as active, and displays it in the sidebar. The scan runs but finds no code — the project info shows "New project, no code detected."
+3. **Project registered** — Forge registers the project in SQLite, sets it as active, and displays it in the Project Dashboard. The scan runs but finds no code — the project info shows "New project, no code detected."
 
 4. **Project discovery conversation** — Instead of dropping the user into a blank conversation, Forge starts a structured discovery session. The conversation view opens with a system prompt that guides Claude through a series of topics to understand what the user is building. This is a real conversation — not a wizard or a form — and the user can answer naturally, skip topics, or go deep on what matters to them.
 
