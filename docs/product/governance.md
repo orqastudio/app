@@ -57,6 +57,7 @@ The current process uses:
 - **Claude Code CLI** as the orchestrator (`.claude/CLAUDE.md`)
 - **15 specialized agents** defined as `.claude/agents/*.md` files
 - **20 rules** enforced via `.claude/rules/*.md`
+- **11 hookify files** in `.claude/` for real-time code/command enforcement
 - **3 hooks** in `.claude/hooks/` (session start, skill loading, pre-commit)
 - **Git worktree workflow** for task isolation
 

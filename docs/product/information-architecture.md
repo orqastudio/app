@@ -74,7 +74,7 @@ A 48px fixed-width vertical icon rail on the far left. Provides direct navigatio
 | Agents | Agents | Bot |
 | Rules | Rules | Shield |
 | Skills | Skills | Zap |
-| Hooks | Hooks | GitBranch |
+| Hooks | Hooks (lifecycle hooks + hookify) | GitBranch |
 
 **Separator**
 
@@ -104,7 +104,7 @@ Active icon: 2px left border indicator (`--primary` color) + highlighted backgro
 | Agents | Agents artifact list → click opens viewer/editor |
 | Rules | Rules artifact list → click opens viewer/editor |
 | Skills | Skills artifact list → click opens viewer/editor |
-| Hooks | Hooks artifact list → click opens viewer/editor |
+| Hooks | Hooks artifact list (lifecycle hooks and hookify enforcement files) → click opens viewer/editor |
 | Scanners | Scanner dashboard |
 | Metrics | Metrics dashboard |
 | Learning | Learning loop view |

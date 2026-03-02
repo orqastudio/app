@@ -36,7 +36,7 @@ The runtime state of an open project in Forge: the active session, open panels, 
 
 ### Artifact
 
-Any structured document that defines how a project operates. Governance artifacts include agents, rules, skills, hooks, and documentation. Artifacts live on disk in `.claude/` or `docs/` (authoritative) and are indexed in SQLite (derived cache).
+Any structured document that defines how a project operates. Governance artifacts include agents, rules, skills, hooks, hookify files, and documentation. Artifacts live on disk in `.claude/` or `docs/` (authoritative) and are indexed in SQLite (derived cache).
 
 ### Agent
 
@@ -58,7 +58,13 @@ A reusable knowledge package that provides domain-specific context to agents. Sk
 
 ### Hook
 
-A shell command that executes in response to a lifecycle event (session start, skill load, pre-commit). Hooks automate repetitive tasks and enforce gates. Hooks are the fifth layer of the governance model.
+A governance enforcement mechanism triggered automatically during development. Forge supports two types of hooks:
+
+**Lifecycle hooks** (`.claude/hooks/`) — Shell scripts that execute in response to lifecycle events (session start, stop). Used for process reminders and checklists.
+
+**Hookify rules** (`.claude/hookify.*.local.md`) — Pattern-based enforcement files that block or warn in real-time when a file edit or bash command matches a forbidden pattern. Used for active prevention of code-level violations.
+
+Both types appear in the Hooks view of the Activity Bar.
 
 ### Documentation
 
@@ -70,7 +76,7 @@ Structured project knowledge maintained in `docs/`. Documentation covers archite
 
 ### Governance Framework
 
-The complete set of artifacts (agents, rules, skills, hooks, documentation) that define how a project operates. The governance framework is the product that Forge makes visible and manageable.
+The complete set of artifacts (agents, rules, skills, hooks, hookify files, documentation) that define how a project operates. The governance framework is the product that Forge makes visible and manageable.
 
 ### Two-Pillar Test
 

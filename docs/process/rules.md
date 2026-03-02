@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-02
 
-This page lists all 20 enforcement rules in `.claude/rules/`, explains the rule injection mechanism, and clarifies the relationship between rules and documentation.
+This page lists all 20 enforcement rules in `.claude/rules/` and 11 hookify enforcement files in `.claude/`, explains the rule injection mechanism, and clarifies the relationship between rules, hookify, and documentation.
 
 ---
 
@@ -43,6 +43,50 @@ Rules are the last line of defense: they exist to catch violations that other me
 
 ---
 
+## Hookify Enforcement Files
+
+In addition to the 20 rules above, Forge uses 11 hookify enforcement files (`.claude/hookify.*.local.md`) for real-time pattern-based enforcement. Where rules are written instructions injected into agent context, hookify files actively block or warn when a file edit or bash command matches a forbidden pattern.
+
+**How hookify works:**
+
+Each hookify file is a markdown file with YAML frontmatter that defines:
+
+- **`event`** — `file` (triggers on file edits) or `bash` (triggers on bash commands)
+- **`action`** — `block` (prevents the action) or `warn` (allows but displays a warning)
+- **`conditions`** / **`pattern`** — The regex or glob pattern to match against
+
+**Hookify Inventory:**
+
+| # | Hookify File | Event | Action | Purpose |
+|---|-------------|-------|--------|---------|
+| 1 | `hookify.no-any-type.local.md` | file | block | Blocks `: any` type annotations in TypeScript files |
+| 2 | `hookify.no-unwrap.local.md` | file | block | Blocks `unwrap()` and `expect()` in Rust production code |
+| 3 | `hookify.no-todo-macro.local.md` | file | block | Blocks `todo!()` macro in Rust production code |
+| 4 | `hookify.no-svelte4-patterns.local.md` | file | block | Blocks Svelte 4 patterns (`$:`, `export let`) in Svelte files |
+| 5 | `hookify.no-todo-comments.local.md` | file | block | Blocks TODO/FIXME/HACK comments in production code |
+| 6 | `hookify.no-console-log.local.md` | file | warn | Warns on `console.log` in TypeScript/Svelte files |
+| 7 | `hookify.no-no-verify.local.md` | bash | block | Blocks `--no-verify` flag in git commands |
+| 8 | `hookify.warn-destructive-git.local.md` | bash | warn | Warns on destructive git commands (`reset --hard`, `clean -fd`, `checkout .`) |
+| 9 | `hookify.no-force-push.local.md` | bash | block | Blocks `git push --force` to main/master |
+| 10 | `hookify.no-ts-ignore.local.md` | file | block | Blocks `@ts-ignore` and `@ts-nocheck` directives |
+| 11 | `hookify.no-hardcoded-secrets.local.md` | file | block | Blocks patterns resembling hardcoded API keys and secrets |
+
+**Relationship to rules:**
+
+Rules define constraints as written instructions ("No `unwrap()` in production code"). Hookify files enforce a subset of those constraints in real-time by pattern-matching against file edits and commands. Not every rule has a corresponding hookify file — only rules with violations detectable by pattern matching are promoted to hookify enforcement.
+
+| Rule | Enforced by Hookify |
+|------|-------------------|
+| `coding-standards.md` — No `unwrap()` in production | `hookify.no-unwrap.local.md` (block) |
+| `coding-standards.md` — Svelte 5 runes only | `hookify.no-svelte4-patterns.local.md` (block) |
+| `coding-standards.md` — Strict TypeScript, no `any` | `hookify.no-any-type.local.md` (block) |
+| `no-stubs.md` — No TODO comments | `hookify.no-todo-comments.local.md` (block) |
+| `git-workflow.md` — No `--no-verify` | `hookify.no-no-verify.local.md` (block) |
+| `git-workflow.md` — No destructive git without approval | `hookify.warn-destructive-git.local.md` (warn) |
+| `error-ownership.md` — No `todo!()` macro | `hookify.no-todo-macro.local.md` (block) |
+
+---
+
 ## Rule Injection Mechanism
 
 Claude Code automatically injects the contents of every `.md` file in `.claude/rules/` into the system prompt of every session. This happens before the user's first message. There is no explicit loading step -- rules are always active.
@@ -77,6 +121,8 @@ Create a new rule when:
 2. An implementation lesson has recurred enough times to warrant automatic enforcement (recurrence >= 2 per `development/lessons.md`)
 3. A process change is significant enough that agents would violate it without automatic reminders
 
+When creating a rule, also consider whether the constraint can be additionally enforced via hookify. If the violation is a specific pattern in code or commands (e.g., a forbidden function call, a banned flag), create a hookify file alongside the rule for real-time prevention.
+
 Do NOT create a new rule when:
 
 - The constraint applies only to one agent -- put it in that agent's instructions
@@ -99,7 +145,7 @@ The `code-reviewer` includes rule compliance in every code review:
 
 ## Related Documents
 
-- [Content Governance](/process/content-governance) -- The four-layer ownership model
+- [Content Governance](/process/content-governance) -- The six-layer ownership model
 - [Team Overview](/process/team) -- Which agents load which skills and follow which rules
 - [Process Retrospectives](/process/retrospectives) -- History of rule creation and governance changes
 - [Implementation Lessons](/development/lessons) -- Individual patterns that may be promoted to rules
