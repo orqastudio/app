@@ -1,0 +1,38 @@
+# Rust
+/target/
+Cargo.lock
+
+# Node
+node_modules/
+dist/
+
+# Tauri
+/src-tauri/target/
+/src-tauri/WixTools/
+/src-tauri/icons/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment
+.env
+.env.local
+
+# Build output
+/build/
+
+# Temporary
+tmp/
+*.log
+
+# Claude Code
+.claude/plugins/
+.claude/worktrees/
