@@ -148,6 +148,21 @@ These extend the shadcn-svelte base set for Forge-specific needs (contextual spa
 }
 ```
 
+### Layout Tokens
+
+```css
+:root {
+  /* Layout tokens */
+  --forge-activity-bar-width: 48px;
+  --forge-activity-bar-icon-size: 24px;
+  --forge-activity-bar-hit-target: 48px;
+  --forge-activity-bar-indicator: 2px;
+  --forge-sessions-panel-default: 240px;
+  --forge-sessions-panel-min: 180px;
+  --forge-sessions-panel-max: 320px;
+}
+```
+
 ### Color Usage Rules
 
 | Do | Don't |

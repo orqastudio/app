@@ -16,7 +16,7 @@ These journeys inform UI design (Phase 0d) and the MVP feature specification.
 
 ### Steps
 
-1. **Launch Forge** — The main window opens with a welcome state. No project loaded. The primary panel shows a brief orientation: what Forge does and how to get started.
+1. **Launch Forge** — The main window opens with a welcome state. No project loaded. The Explorer Panel shows a brief orientation: what Forge does and how to get started.
 
 2. **Open a project** — User clicks "Open Project" or drags a folder onto the window. Forge prompts for a directory. User selects their project root.
 
@@ -25,7 +25,7 @@ These journeys inform UI design (Phase 0d) and the MVP feature specification.
    - **Tier 2 (~1-2s):** `hyperpolyglot` confirms language detection across the full file tree. Results update the project metadata.
    - **Tier 3 (deferred):** Claude analysis is available on-demand but not triggered automatically on first open.
 
-   The sidebar populates with the project name, detected stack, and a file tree summary.
+   The Sessions Panel populates with the project name, detected stack, and a file tree summary.
 
 4. **Detect existing governance** — Forge checks for `.claude/` directory. If found, governance artifacts are indexed into SQLite and displayed in the artifact browser. If not found, the UI notes "No governance framework detected" and offers to help create one (Journey 2).
 
@@ -58,7 +58,7 @@ These journeys inform UI design (Phase 0d) and the MVP feature specification.
 
 ### Steps
 
-1. **Open artifact browser** — User navigates to the artifact browser panel (sidebar tab or keyboard shortcut). The browser shows a categorized list of governance artifacts: Agents, Rules, Skills, Hooks, Documentation.
+1. **Open artifact browser** — User clicks an artifact category icon in the Activity Bar. The Explorer Panel shows the artifact list for the selected category.
 
 2. **Browse existing artifacts** — Each artifact shows its name, a brief description (from YAML frontmatter or first paragraph), and status. User clicks to view the full content rendered as markdown with metadata displayed.
 
@@ -89,7 +89,7 @@ These journeys inform UI design (Phase 0d) and the MVP feature specification.
 
 1. **State the requirement** — User types a requirement in the conversation input: "Add a settings panel with API key entry and model selection." The message is sent to the AI via the sidecar.
 
-2. **AI proposes a plan** — The AI responds with an implementation plan: scope, affected files, approach, testing strategy. The plan streams into the conversation panel as structured content.
+2. **AI proposes a plan** — The AI responds with an implementation plan: scope, affected files, approach, testing strategy. The plan streams into the Chat Panel as structured content.
 
 3. **Human reviews and approves** — The user reads the plan. They can:
    - **Approve:** "Looks good, go ahead." The AI proceeds to implementation.

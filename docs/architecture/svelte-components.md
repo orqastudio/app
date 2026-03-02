@@ -44,6 +44,9 @@ src/
 │   │   │   └── sonner/
 │   │   ├── layout/                   # Application shell components
 │   │   │   ├── AppLayout.svelte
+│   │   │   ├── ActivityBar.svelte
+│   │   │   ├── ActivityBarItem.svelte
+│   │   │   ├── SessionsPanel.svelte
 │   │   │   ├── Toolbar.svelte
 │   │   │   ├── StatusBar.svelte
 │   │   │   └── WelcomeScreen.svelte
@@ -159,109 +162,109 @@ Indentation shows parent-child nesting. Components prefixed with `ui:` are shadc
             │   │   ├── ui:Popover
             │   │   └── ui:Command
             │   ├── ui:Command (global search, Ctrl+K)
-            │   ├── ui:Button (new session)
-            │   └── ui:Button (settings gear)
+            │   └── ui:Button (new session)
             │
-            ├── ui:Resizable (three-pane container)
+            ├── [Activity Bar — fixed 48px, outside PaneForge]
+            │   └── ActivityBar
+            │       ├── ActivityBarItem (Docs — default active)
+            │       ├── ActivityBarItem (Agents)
+            │       ├── ActivityBarItem (Rules)
+            │       ├── ActivityBarItem (Skills)
+            │       ├── ActivityBarItem (Hooks)
+            │       ├── ui:Separator
+            │       ├── ActivityBarItem (Scanners — Phase 3+)
+            │       ├── ActivityBarItem (Metrics — Phase 5)
+            │       ├── ActivityBarItem (Learning — Phase 5)
+            │       ├── ui:Separator
+            │       └── ActivityBarItem (Settings — bottom-aligned)
+            │
+            ├── ui:Resizable (three-zone container)
             │   │
-            │   ├── [Sidebar Pane — collapsible left]
-            │   │   ├── ui:Sidebar
-            │   │   │   └── ui:Tabs (Sessions | Project)
-            │   │   │       ├── [Sessions Tab]
-            │   │   │       │   └── SessionList
-            │   │   │       │       ├── ui:Input (search filter)
-            │   │   │       │       ├── ui:ScrollArea
-            │   │   │       │       │   └── SessionListItem (repeated)
-            │   │   │       │       └── [empty state: "No sessions yet"]
-            │   │   │       │
-            │   │   │       └── [Project Tab]
-            │   │   │           └── ProjectInfo
-            │   │   │               ├── ui:Card (project metadata)
-            │   │   │               ├── ui:Badge (stack detection tags)
-            │   │   │               └── [governance summary — click to open artifact browser]
+            │   ├── [Explorer Pane — always visible, artifact-centric]
+            │   │   ├── [when activeActivity is artifact category]
+            │   │   │   ├── [when explorerView === "artifact-list"]
+            │   │   │   │   └── ArtifactBrowser
+            │   │   │   │       ├── ui:Input (search filter)
+            │   │   │   │       ├── ui:ScrollArea
+            │   │   │   │       │   └── ArtifactListItem (repeated)
+            │   │   │   │       └── ui:Button (new artifact)
+            │   │   │   │
+            │   │   │   ├── [when explorerView === "artifact-viewer"]
+            │   │   │   │   └── ArtifactViewer
+            │   │   │   │       ├── Breadcrumb
+            │   │   │   │       ├── FrontmatterDisplay
+            │   │   │   │       │   ├── ui:Badge (metadata fields)
+            │   │   │   │       │   └── ui:Card
+            │   │   │   │       ├── MarkdownRenderer (rendered view)
+            │   │   │   │       ├── ArtifactEditor (edit mode)
+            │   │   │   │       │   └── MarkdownEditor
+            │   │   │   │       │       └── svelte-codemirror-editor
+            │   │   │   │       └── ui:Button (edit toggle)
+            │   │   │   │
+            │   │   │   └── [when explorerView === "artifact-editor"]
+            │   │   │       └── ArtifactEditor
+            │   │   │           └── MarkdownEditor
             │   │   │
-            │   │   └── ui:Separator
-            │   │
-            │   ├── [Primary Pane — always conversation]
-            │   │   ├── [when activeSession exists]
-            │   │   │   └── ConversationView
-            │   │   │       ├── SessionHeader
-            │   │   │       │   ├── ui:Input (editable title)
-            │   │   │       │   ├── ui:Select (model selector)
-            │   │   │       │   └── ui:Badge (token usage)
-            │   │   │       ├── ui:ScrollArea (message stream)
-            │   │   │       │   ├── UserMessage (repeated)
-            │   │   │       │   │   └── MessageBubble
-            │   │   │       │   │       ├── MarkdownRenderer
-            │   │   │       │   │       │   ├── CodeBlock (per fenced block)
-            │   │   │       │   │       │   │   ├── svelte-highlight
-            │   │   │       │   │       │   │   └── ui:Button (copy)
-            │   │   │       │   │       │   └── [custom renderers: artifact link, tool ref]
-            │   │   │       │   │       └── ui:Tooltip (timestamp)
-            │   │   │       │   ├── AssistantMessage (repeated)
-            │   │   │       │   │   └── MessageBubble
-            │   │   │       │   │       ├── MarkdownRenderer
-            │   │   │       │   │       └── ToolCallCard (inline, repeated)
-            │   │   │       │   │           ├── ui:Collapsible
-            │   │   │       │   │           ├── ui:Card
-            │   │   │       │   │           ├── ui:Badge (status)
-            │   │   │       │   │           ├── ToolCallInput
-            │   │   │       │   │           │   └── CodeBlock
-            │   │   │       │   │           └── ToolCallOutput
-            │   │   │       │   │               ├── CodeBlock
-            │   │   │       │   │               └── DiffView (for Edit/Write tools)
-            │   │   │       │   ├── SystemMessage (repeated)
-            │   │   │       │   │   └── MessageBubble (muted variant)
-            │   │   │       │   └── StreamingIndicator (when streaming)
-            │   │   │       └── MessageInput
-            │   │   │           ├── ui:Textarea
-            │   │   │           └── ui:Button (send)
+            │   │   ├── [when activeActivity === "settings"]
+            │   │   │   └── SettingsView
+            │   │   │       ├── ui:Collapsible (sections)
+            │   │   │       ├── ProviderSettings
+            │   │   │       ├── ProjectSettings
+            │   │   │       ├── AppearanceSettings
+            │   │   │       └── ShortcutsReference
             │   │   │
-            │   │   └── [when no activeSession]
-            │   │       └── WelcomeScreen
-            │   │           ├── ui:Card (branding, guidance)
-            │   │           └── ui:Button (start conversation)
+            │   │   ├── [when activeActivity === "scanners"]
+            │   │   │   └── ScannerDashboard (Phase 3+)
+            │   │   │
+            │   │   └── [when activeActivity === "metrics"]
+            │   │       └── MetricsDashboard (Phase 5)
             │   │
-            │   └── [Detail Pane — collapsible right]
-            │       ├── [when detailView === "artifact-browser"]
-            │       │   └── ArtifactBrowser
-            │       │       ├── ui:Tabs (Docs | Agents | Rules | Skills | Hooks)
-            │       │       ├── ui:Input (search filter)
-            │       │       ├── ui:ScrollArea
-            │       │       │   └── ArtifactListItem (repeated)
-            │       │       └── ui:Button (new artifact)
+            │   ├── [Sessions Pane — collapsible via Ctrl+B]
+            │   │   └── SessionsPanel
+            │   │       └── ui:Tabs (Sessions | Project)
+            │   │           ├── [Sessions Tab]
+            │   │           │   └── SessionList
+            │   │           │       ├── ui:Input (search filter)
+            │   │           │       ├── ui:ScrollArea
+            │   │           │       │   └── SessionListItem (repeated)
+            │   │           │       └── [empty state: "No sessions yet"]
+            │   │           │
+            │   │           └── [Project Tab]
+            │   │               └── ProjectInfo
+            │   │                   ├── ui:Card (project metadata)
+            │   │                   ├── ui:Badge (stack detection tags)
+            │   │                   └── [governance summary]
+            │   │
+            │   └── [Chat Pane — always conversation]
+            │       ├── [when activeSession exists]
+            │       │   └── ConversationView
+            │       │       ├── SessionHeader
+            │       │       │   ├── ui:Input (editable title)
+            │       │       │   ├── ui:Select (model selector)
+            │       │       │   └── ui:Badge (token usage)
+            │       │       ├── ui:ScrollArea (message stream)
+            │       │       │   ├── UserMessage (repeated)
+            │       │       │   │   └── MessageBubble
+            │       │       │   │       ├── MarkdownRenderer
+            │       │       │   │       │   ├── CodeBlock
+            │       │       │   │       │   │   ├── svelte-highlight
+            │       │       │   │       │   │   └── ui:Button (copy)
+            │       │       │   │       │   └── [custom renderers]
+            │       │       │   │       └── ui:Tooltip (timestamp)
+            │       │       │   ├── AssistantMessage (repeated)
+            │       │       │   │   └── MessageBubble
+            │       │       │   │       ├── MarkdownRenderer
+            │       │       │   │       └── ToolCallCard (inline, repeated)
+            │       │       │   ├── SystemMessage (repeated)
+            │       │       │   └── StreamingIndicator (when streaming)
+            │       │       └── MessageInput
+            │       │           ├── ui:Textarea
+            │       │           └── ui:Button (send)
             │       │
-            │       ├── [when detailView === "artifact-viewer"]
-            │       │   └── ArtifactViewer
-            │       │       ├── Breadcrumb (click category to return to browser)
-            │       │       ├── FrontmatterDisplay
-            │       │       │   ├── ui:Badge (metadata fields)
-            │       │       │   └── ui:Card
-            │       │       ├── MarkdownRenderer (rendered view)
-            │       │       ├── ArtifactEditor (edit mode)
-            │       │       │   └── MarkdownEditor
-            │       │       │       └── svelte-codemirror-editor
-            │       │       └── ui:Button (edit toggle)
-            │       │
-            │       ├── [when detailView === "settings"]
-            │       │   └── SettingsView
-            │       │       ├── ui:Collapsible (sections)
-            │       │       ├── ProviderSettings
-            │       │       │   ├── ui:Input (CLI path)
-            │       │       │   ├── ui:Badge (sidecar status)
-            │       │       │   └── ui:Button (test connection)
-            │       │       ├── ProjectSettings
-            │       │       │   ├── ui:Input (project root)
-            │       │       │   ├── ui:Badge (watcher status)
-            │       │       │   └── ui:Button (rescan)
-            │       │       ├── AppearanceSettings
-            │       │       │   ├── ui:Select (theme mode)
-            │       │       │   └── ui:Checkbox (per-project theming)
-            │       │       └── ShortcutsReference
-            │       │           └── ui:Table
-            │       │
-            │       └── [when detailCollapsed]
-            │           └── (pane hidden)
+            │       └── [when no activeSession]
+            │           └── WelcomeScreen
+            │               ├── ui:Card (branding, guidance)
+            │               └── ui:Button (start conversation)
             │
             └── StatusBar
                 └── ui:Badge (connection status, sidecar state, version)
@@ -272,12 +275,14 @@ Indentation shows parent-child nesting. Components prefixed with `ui:` are shadc
 | Parent | Children | Relationship |
 |--------|----------|-------------|
 | `+page.svelte` | `AppLayout` | Single child, passes all data as props |
-| `AppLayout` | `Toolbar`, `ui:Resizable`, `StatusBar` | Shell composition |
+| `AppLayout` | `Toolbar`, `ActivityBar`, `ui:Resizable`, `StatusBar` | Shell composition (Activity Bar outside PaneForge) |
+| `ActivityBar` | `ActivityBarItem` (repeated) | Icon rail with active state |
+| `SessionsPanel` | `ui:Tabs`, `SessionList`, `ProjectInfo` | Tabbed container |
 | `ConversationView` | `SessionHeader`, `ui:ScrollArea`, `MessageInput` | Vertical stack |
 | `AssistantMessage` | `MessageBubble`, `ToolCallCard` | Message with inline tool calls |
 | `ToolCallCard` | `ToolCallInput`, `ToolCallOutput` | Expandable detail |
 | `ArtifactViewer` | `Breadcrumb`, `FrontmatterDisplay`, `MarkdownRenderer`, `ArtifactEditor` | View/edit toggle |
-| `ArtifactBrowser` | `ArtifactListItem` | List container |
+| `ArtifactBrowser` | `ArtifactListItem` | List container (category from Activity Bar) |
 | `SessionList` | `SessionListItem` | List container |
 | `SettingsView` | `ProviderSettings`, `ProjectSettings`, `AppearanceSettings`, `ShortcutsReference` | Collapsible sections |
 
@@ -309,36 +314,45 @@ export const sessionStore = new SessionStore();
 ### navigation.svelte.ts
 
 ```typescript
-// UI navigation state — what is visible in each panel
-// Primary panel always shows conversation. Artifact viewing happens in the detail panel
-// so the user can collaborate with Claude on artifacts simultaneously.
-type DetailView = "artifact-browser" | "artifact-viewer" | "settings" | "tool-inspector" | "scanner-dashboard" | "metrics";
+// UI navigation state — what is visible in each zone
+type ActivityBarItem = "docs" | "agents" | "rules" | "skills" | "hooks"
+  | "scanners" | "metrics" | "learning" | "settings";
+
+type ExplorerView = "artifact-list" | "artifact-viewer" | "artifact-editor"
+  | "scanner-dashboard" | "metrics-dashboard" | "learning-loop" | "settings";
 
 class NavigationStore {
-  detailView = $state<DetailView>("artifact-browser");
+  activeActivity = $state<ActivityBarItem>("docs");
+  explorerView = $state<ExplorerView>("artifact-list");
   selectedArtifact = $state<string | null>(null);
-  sidebarTab = $state<"sessions" | "project">("sessions");
-  sidebarCollapsed = $state(false);
-  detailCollapsed = $state(true);
+  sessionsPanelTab = $state<"sessions" | "project">("sessions");
+  sessionsPanelCollapsed = $state(false);
+
+  switchActivity(item: ActivityBarItem) {
+    this.activeActivity = item;
+    // Map activity bar items to explorer views
+    if (["docs", "agents", "rules", "skills", "hooks"].includes(item)) {
+      this.explorerView = "artifact-list";
+    } else if (item === "scanners") {
+      this.explorerView = "scanner-dashboard";
+    } else if (item === "metrics") {
+      this.explorerView = "metrics-dashboard";
+    } else if (item === "learning") {
+      this.explorerView = "learning-loop";
+    } else if (item === "settings") {
+      this.explorerView = "settings";
+    }
+    this.selectedArtifact = null;
+  }
 
   openArtifact(path: string) {
     this.selectedArtifact = path;
-    this.detailView = "artifact-viewer";
-    this.detailCollapsed = false;
+    this.explorerView = "artifact-viewer";
   }
 
-  openArtifactBrowser() {
-    this.detailView = "artifact-browser";
-    this.detailCollapsed = false;
+  toggleSessionsPanel() {
+    this.sessionsPanelCollapsed = !this.sessionsPanelCollapsed;
   }
-
-  openSettings() {
-    this.detailView = "settings";
-    this.detailCollapsed = false;
-  }
-
-  toggleSidebar() { this.sidebarCollapsed = !this.sidebarCollapsed; }
-  toggleDetail() { this.detailCollapsed = !this.detailCollapsed; }
 }
 
 export const navigationStore = new NavigationStore();
@@ -524,7 +538,10 @@ Per AD-006, only containers and pages call `invoke()`. Display components receiv
 CONTAINERS (may call invoke):          DISPLAY COMPONENTS (props only):
 ─────────────────────────────          ─────────────────────────────────
 +page.svelte                           AppLayout
-+layout.svelte                         Toolbar
++layout.svelte                         ActivityBar
+                                       ActivityBarItem
+                                       SessionsPanel
+                                       Toolbar
                                        StatusBar
                                        ConversationView
                                        SessionHeader
@@ -833,7 +850,8 @@ $effect(() => {
 | Data fetching | `+page.svelte` and `+layout.svelte` are the only files that call `invoke()`. | AD-006 |
 | Callback props | Display components emit user intent via callback props (`onSend`, `onSelect`, etc.). | AD-006 |
 | shadcn-svelte imports | `import { Button } from "$lib/components/ui/button"` | AD-013 |
-| Custom components | Organized by domain: `conversation/`, `tool/`, `content/`, `artifact/`, `navigation/`, `settings/`, `layout/` | — |
+| Activity Bar | 48px fixed icon rail controls Explorer Panel content. Active icon has left border indicator. | AD-018 |
+| Custom components | Organized by domain: `conversation/`, `tool/`, `content/`, `artifact/`, `navigation/`, `settings/`, `layout/` (includes `ActivityBar.svelte`, `ActivityBarItem.svelte`, `SessionsPanel.svelte`) | — |
 | Store files | `.svelte.ts` extension, class-based with `$state` fields, exported singleton | AD-004 |
 | Type safety | All `invoke()` calls use typed wrappers from `$lib/commands/` | AD-002 |
 | Streaming | `Channel<T>` for high-frequency token streams, `emit/listen` for low-frequency events | AD-009 |

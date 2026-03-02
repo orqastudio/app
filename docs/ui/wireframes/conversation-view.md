@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-02 | **Informed by:** [Information Architecture](/product/information-architecture), [Frontend Research](/research/frontend), [MVP Spec F-003, F-004](/product/mvp-specification)
 
-The conversation view is the primary panel content. It is where the user interacts with the AI: sending messages, reading streaming responses, and reviewing tool call results. This document covers the active conversation state, streaming mid-response state, and the empty/welcome state.
+The conversation view is the Chat Panel content. It is where the user interacts with the AI: sending messages, reading streaming responses, and reviewing tool call results. This document covers the active conversation state, streaming mid-response state, and the empty/welcome state.
 
 ---
 
@@ -459,10 +459,10 @@ How wireframe elements map to implementation components and libraries.
 
 | Condition | Behavior |
 |-----------|----------|
-| **Detail panel collapsed** | Conversation view expands to fill the freed space. Message lines wrap at wider widths. Code blocks gain more horizontal room. |
-| **Sidebar collapsed** | Conversation view expands leftward. No layout change within the conversation itself. |
-| **Both panels collapsed** | Conversation fills nearly the full window width. Maximum reading comfort. |
-| **Minimum window (900x600)** | Conversation view at min-width 400px. Messages wrap aggressively. Code blocks show horizontal scrollbar. Tool call cards stack their summary elements. Input area remains full-width at bottom. |
+| **Sessions Panel collapsed** | Chat Panel expands. Message lines wrap at wider widths. Code blocks gain more horizontal room. |
+| **Wide window (all zones open)** | Chat Panel shares space with Explorer. Comfortable conversation width. |
+| **Narrow window (< 720px)** | Chat becomes overlay Sheet. Explorer fills window as focal point. |
+| **Minimum window (900x600)** | Chat Panel at min-width 360px. Messages wrap aggressively. Code blocks show horizontal scrollbar. Tool call cards stack their summary elements. Input area remains full-width at bottom. |
 
 ---
 
@@ -481,8 +481,8 @@ How wireframe elements map to implementation components and libraries.
 
 ## Related Documents
 
-- [Core Layout Wireframe](/ui/wireframes/core-layout) -- Three-pane structure that contains this view
-- [Information Architecture](/product/information-architecture) -- Primary Panel: Conversation View specification
+- [Core Layout Wireframe](/ui/wireframes/core-layout) -- Four-zone structure that contains this view
+- [Information Architecture](/product/information-architecture) -- Chat Panel: Conversation View specification
 - [Frontend Research Q1](/research/frontend) -- Markdown rendering and code highlighting decisions
 - [Frontend Research Q2](/research/frontend) -- Conversation UI component architecture
 - [MVP Spec F-003](/product/mvp-specification) -- Conversation Streaming acceptance criteria

@@ -2,32 +2,32 @@
 
 **Date:** 2026-03-02 | **Informed by:** [Information Architecture](/product/information-architecture), [Frontend Research](/research/frontend)
 
-Dashboard views appear in the detail panel and provide operational visibility into scanning, metrics, and the learning loop. These are Phase 3-5 features designed early to validate the information architecture and panel system.
+Dashboard views appear in the Explorer Panel and provide operational visibility into scanning, metrics, and the learning loop. These are Phase 3-5 features designed early to validate the information architecture and panel system.
 
 > **Note:** These wireframes represent future-phase features (Scanner Dashboard: Phase 3+, Metrics Dashboard: Phase 5, Learning Loop: Phase 5). They are designed now to ensure the panel system and data model accommodate these views without rework.
 
 ### How to Navigate to Dashboards
 
-Dashboard views are detail panel views, accessed the same way as the artifact browser or settings:
+Dashboard views are Explorer Panel views, accessed the same way as the artifact browser or settings:
 
 | Entry Point | Action |
 |-------------|--------|
-| **Sidebar Project tab** | Scanner status summary, metrics summary, and learning summary are clickable links that open the corresponding dashboard in the detail panel. |
+| **Activity Bar icons** | Scanners, Metrics, and Learning icons in the Activity Bar switch the Explorer Panel to the corresponding dashboard view. |
+| **Sessions Panel Project tab** | Scanner status summary, metrics summary, and learning summary are clickable links that activate the corresponding Activity Bar icon. |
 | **Keyboard shortcuts** | `Ctrl+Shift+S` (scanners), `Ctrl+Shift+M` (metrics), `Ctrl+Shift+L` (learning). |
-| **Artifact browser tabs** | The Scanners, Metrics, and Learning tabs in the detail panel tab bar (visible in the wireframes below) navigate between dashboards and the artifact browser. |
 
-All dashboards share the detail panel — switching to a dashboard replaces the current detail view. The conversation always remains visible in the primary panel.
+All dashboards share the Explorer Panel — switching to a dashboard replaces the current Explorer view. The conversation always remains visible in the Chat Panel.
 
 ---
 
 ## 1. Scanner Dashboard (Mixed Pass/Fail Results)
 
-The scanner dashboard shows all configured scanners with their current status, accessible from the detail panel's Scanners tab.
+The scanner dashboard shows all configured scanners with their current status, accessible via the Scanners icon in the Activity Bar.
 
 ```plantuml
 @startsalt
 {+
-  {/ Docs | Agents | Rules | Skills | Hooks | <b>Scanners</b> }
+  { <b>Scanners</b> (via Activity Bar) }
   ---
   { <b>Scanner Dashboard</b> | . | . | [Run All Scanners] }
   ---
@@ -113,7 +113,7 @@ When a failing scanner row is clicked, it expands to show individual violations 
 ```plantuml
 @startsalt
 {+
-  {/ Docs | Agents | Rules | Skills | Hooks | <b>Scanners</b> }
+  { <b>Scanners</b> (via Activity Bar) }
   ---
   { <b>Scanner Dashboard</b> | . | . | [Run All Scanners] }
   ---
@@ -192,7 +192,7 @@ The metrics dashboard provides operational KPIs with trend indicators and sparkl
 ```plantuml
 @startsalt
 {+
-  {/ Docs | Agents | Rules | Skills | Hooks | <b>Metrics</b> }
+  { <b>Metrics</b> (via Activity Bar) }
   ---
   { <b>Metrics Dashboard</b> | . | . | Period: ^Last 7 days^ }
   ---
@@ -288,7 +288,7 @@ The metrics dashboard provides operational KPIs with trend indicators and sparkl
 | Element | Behavior |
 |---------|----------|
 | **Type column** | IMPL (implementation lesson) or RETRO (retrospective insight). |
-| **Title** | Click to open the full lesson entry in the detail panel. |
+| **Title** | Click to open the full lesson entry in the Explorer Panel. |
 | **Status** | Draft, Review, Promoted, Archived. |
 | **Promoted entries** | Promoted lessons have been converted into active rules or agent instructions. |
 
@@ -301,7 +301,7 @@ The learning loop view manages implementation lessons and retrospective insights
 ```plantuml
 @startsalt
 {+
-  {/ Docs | Agents | Rules | Skills | Hooks | <b>Learning</b> }
+  { <b>Learning</b> (via Activity Bar) }
   ---
   { <b>Learning Loop</b> | . | . | [+ New Entry] }
   ---
@@ -398,7 +398,7 @@ Draft --> Review --> Promoted
 | **Title** | Bold text. Click to expand/collapse card body. |
 | **Status badge** | Draft (gray), Review (yellow), Promoted (green), Archived (muted). |
 | **Description** | Free-text body of the lesson or retrospective. Markdown supported. |
-| **Source link** | Links back to the originating session. Opens in the primary panel. |
+| **Source link** | Links back to the originating session. Opens in the Chat Panel. |
 | **Promote to Rule** | Creates a new rule artifact pre-filled from the lesson content. |
 | **Promote to Lesson** | Promotes as a general lesson referenced by agents. |
 | **Archive** | Moves entry to archived status. |
@@ -411,9 +411,9 @@ Draft --> Review --> Promoted
 
 | Shortcut | Action |
 |----------|--------|
-| `Ctrl+Shift+S` | Open Scanner Dashboard in detail panel |
-| `Ctrl+Shift+M` | Open Metrics Dashboard in detail panel |
-| `Ctrl+Shift+L` | Open Learning Loop in detail panel |
+| `Ctrl+Shift+S` | Open Scanner Dashboard in Explorer Panel |
+| `Ctrl+Shift+M` | Open Metrics Dashboard in Explorer Panel |
+| `Ctrl+Shift+L` | Open Learning Loop in Explorer Panel |
 | `Up/Down` | Navigate between scanner rows or learning cards |
 | `Enter` | Expand selected scanner or card |
 | `Escape` | Collapse expanded detail |

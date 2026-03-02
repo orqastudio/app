@@ -2,18 +2,18 @@
 
 **Date:** 2026-03-02 | **Informed by:** [Information Architecture](/product/information-architecture), [Frontend Research](/research/frontend), [MVP Spec F-007, F-008](/product/mvp-specification)
 
-The artifact browser surfaces governance artifacts (Docs, Agents, Rules, Skills, Hooks) in the detail panel: as a category list (browser) and as a rendered/editable view (viewer). Both views live in the detail panel so the conversation remains visible in the primary panel — the core workflow is collaborating with Claude *on* artifacts. Artifacts are Markdown files with YAML frontmatter stored in `.forge/` directories.
+The artifact browser surfaces governance artifacts (Docs, Agents, Rules, Skills, Hooks) in the Explorer Panel: as a category list (browser) and as a rendered/editable view (viewer). Both views live in the Explorer Panel so the conversation remains visible in the Chat Panel — the core workflow is collaborating with Claude *on* artifacts. Artifacts are Markdown files with YAML frontmatter stored in `.forge/` directories.
 
 ---
 
-## 1. Detail Panel: Artifact Browser (Docs Tab — Default)
+## 1. Explorer Panel: Artifact Browser (Docs — Default)
 
-The default view when the detail panel shows the artifact browser. Docs is the default tab because documentation is the most frequently touched artifact category during active development. Agents, Rules, and other governance artifacts are primarily modified during retrospectives.
+The default view when the Docs icon is active in the Activity Bar. Docs is the default because documentation is the most frequently touched artifact category during active development. Agents, Rules, and other governance artifacts are primarily modified during retrospectives.
 
 ```plantuml
 @startsalt
 {
-  {/ <b>Docs</b> | Agents | Rules | Skills | Hooks }
+  { <b>Docs</b> (via Activity Bar) }
   ---
   [Filter docs...            ]
   ---
@@ -65,21 +65,20 @@ The default view when the detail panel shows the artifact browser. Docs is the d
 
 | Action | Result |
 |--------|--------|
-| Click artifact row | Opens artifact viewer in the detail panel (replaces the browser list). Conversation stays visible in primary panel. |
+| Click artifact row | Opens artifact viewer in the Explorer Panel (replaces the browser list). Conversation stays visible in Chat Panel. |
 | Click "Filter agents..." | Focuses input; filters list by name and description substring match |
 | Click "+ New Agent" | Creates new artifact from category template, opens in editor mode |
-| `Ctrl+\` | Collapses detail panel |
 
 ---
 
-## 2. Detail Panel: Rules Tab with Path Scopes
+## 2. Explorer Panel: Rules (via Activity Bar)
 
 The Rules tab shows rule artifacts with their applicable path scopes, helping users understand which rules apply where.
 
 ```plantuml
 @startsalt
 {
-  {/ Docs | Agents | <b>Rules</b> | Skills | Hooks }
+  { <b>Rules</b> (via Activity Bar) }
   ---
   [Filter rules...           ]
   ---
@@ -134,9 +133,9 @@ Rules include a `globs` field in frontmatter that controls where the rule applie
 
 ---
 
-## 3. Detail Panel: Artifact Viewer (Rendered)
+## 3. Explorer Panel: Artifact Viewer (Rendered)
 
-When clicking an artifact in the browser, the detail panel switches from the list to the artifact viewer. The conversation remains visible in the primary panel so the user can discuss the artifact with Claude. YAML frontmatter is displayed as structured metadata above the rendered Markdown body.
+When clicking an artifact in the browser, the Explorer Panel switches from the list to the artifact viewer. The conversation remains visible in the Chat Panel so the user can discuss the artifact with Claude. YAML frontmatter is displayed as structured metadata above the rendered Markdown body.
 
 ```plantuml
 @startsalt
@@ -214,15 +213,15 @@ Metadata fields vary by category. The viewer dynamically renders whatever frontm
 | Action | Result |
 |--------|--------|
 | Click "Edit" button | Switches to source editing mode (State 4) |
-| Click breadcrumb "Agents" | Returns to detail panel Agents tab |
+| Click breadcrumb "Agents" | Returns to Explorer Panel Agents list |
 | Click breadcrumb "Project" | Returns to project overview |
 | Links in rendered Markdown | Open in default browser (external) or navigate (internal) |
 
 ---
 
-## 4. Detail Panel: Artifact Editor (Source)
+## 4. Explorer Panel: Artifact Editor (Source)
 
-The source editing mode replaces the rendered view in the detail panel with a CodeMirror 6 editor. YAML frontmatter and Markdown syntax highlighting are provided. An unsaved changes indicator appears when the buffer differs from disk.
+The source editing mode replaces the rendered view in the Explorer Panel with a CodeMirror 6 editor. YAML frontmatter and Markdown syntax highlighting are provided. An unsaved changes indicator appears when the buffer differs from disk.
 
 ```plantuml
 @startsalt
@@ -296,14 +295,14 @@ The source editing mode replaces the rendered view in the detail panel with a Co
 
 ---
 
-## 5. Detail Panel: Empty State
+## 5. Explorer Panel: Empty State
 
-Shown when a category tab has no artifacts yet. Provides guidance and a clear call to action.
+Shown when a category has no artifacts yet. Provides guidance and a clear call to action.
 
 ```plantuml
 @startsalt
 {
-  {/ Docs | Agents | Rules | <b>Skills</b> | Hooks }
+  { <b>Skills</b> (via Activity Bar) }
   ---
   [Filter skills...          ]
   ---
@@ -347,14 +346,13 @@ Shown when a category tab has no artifacts yet. Provides guidance and a clear ca
 
 | Shortcut | Context | Action |
 |----------|---------|--------|
-| `Up` / `Down` | Detail panel list | Navigate between artifacts |
-| `Enter` | Detail panel list | Open selected artifact in detail panel viewer |
-| `Ctrl+N` | Detail panel | Create new artifact in current category |
-| `Ctrl+F` | Detail panel | Focus filter input |
-| `Ctrl+E` | Artifact viewer | Toggle to editor mode |
-| `Ctrl+S` | Artifact editor | Save changes |
-| `Escape` | Artifact editor | Cancel editing (with confirm if unsaved) |
-| `Tab` | Category tabs | Move between category tabs |
+| `Up` / `Down` | Explorer Panel list | Navigate between artifacts |
+| `Enter` | Explorer Panel list | Open selected artifact in Explorer Panel viewer |
+| `Ctrl+N` | Explorer Panel | Create new artifact in current category |
+| `Ctrl+F` | Explorer Panel | Focus filter input |
+| `Ctrl+E` | Explorer Panel viewer | Toggle to editor mode |
+| `Ctrl+S` | Explorer Panel editor | Save changes |
+| `Escape` | Explorer Panel editor | Cancel editing (with confirm if unsaved) |
 
 ---
 
@@ -362,12 +360,12 @@ Shown when a category tab has no artifacts yet. Provides guidance and a clear ca
 
 | Condition | Behavior |
 |-----------|----------|
-| Detail panel at minimum width (280px) | Description text truncated to 1 line; path scopes hidden. Artifact viewer/editor uses full available width. |
-| Detail panel wider than 400px | Full 2-line descriptions; path scopes shown. Artifact viewer has room for metadata card 2-column layout. |
-| Detail panel at maximum width (480px) | Rendered Markdown limited to panel width for readability. Editor has comfortable editing width. |
+| Explorer Panel at minimum width (280px) | Description text truncated to 1 line; path scopes hidden. Artifact viewer/editor uses full available width. |
+| Explorer Panel wider than 400px | Full 2-line descriptions; path scopes shown. Artifact viewer has room for metadata card 2-column layout. |
+| Explorer Panel at maximum width (480px) | Rendered Markdown limited to panel width for readability. Editor has comfortable editing width. |
 
 ---
 
 ## File Watching
 
-Artifacts are stored as files on disk (`.forge/agents/*.md`, `.forge/rules/*.md`, etc.). The detail panel list uses Tauri's `fs.watch` API to live-reload when files change externally (e.g., via git pull or direct editing). A brief fade animation indicates a refresh.
+Artifacts are stored as files on disk (`.forge/agents/*.md`, `.forge/rules/*.md`, etc.). The Explorer Panel list uses Tauri's `fs.watch` API to live-reload when files change externally (e.g., via git pull or direct editing). A brief fade animation indicates a refresh.

@@ -316,7 +316,7 @@ When Claude calls a namespaced tool:
 
 ### Settings View (F-009)
 
-The Settings detail panel includes an "MCP Servers" section:
+The Settings view in the Explorer Panel includes an "MCP Servers" section:
 
 **Server List:**
 

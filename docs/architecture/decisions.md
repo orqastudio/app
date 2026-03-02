@@ -25,6 +25,7 @@ Architecture decisions for Forge. Each decision is numbered AD-NNN and is immuta
 | AD-015 | Governance artifact format | 2026-03-02 | Active |
 | AD-016 | Onboarding strategy | 2026-03-02 | Active |
 | AD-017 | Composability principle | 2026-03-02 | Active |
+| AD-018 | Four-zone VS Code-style layout | 2026-03-02 | Active (supersedes layout aspects of AD-013) |
 
 ---
 
@@ -278,3 +279,19 @@ Architecture decisions for Forge. Each decision is numbered AD-NNN and is immuta
 **Consequences:** The `ProviderEvent` enum must be stable and provider-neutral. The sidecar protocol (stdin/stdout NDJSON) is the contract — any process that speaks it can be a provider. Provider selection and configuration surfaces in Forge's settings UI.
 
 **Research:** [Claude Integration Research](/research/claude-integration), [Product Governance](/product/governance)
+
+---
+
+## AD-018: Four-Zone VS Code-Style Layout
+
+**Date:** 2026-03-02 | **Status:** Active (supersedes layout aspects of AD-013)
+
+**Decision:** Replace the three-pane layout (Sidebar | Primary/Conversation | Detail) with a four-zone VS Code-style layout: Activity Bar (48px fixed icon rail) | Explorer Panel (flexible, artifact-centric) | Sessions Panel (240px, collapsible) | Chat Panel (flexible, conversation). The Activity Bar replaces the old five-tab bar in the detail panel with direct icon navigation for Docs, Agents, Rules, Skills, Hooks (artifact categories), plus Scanners, Metrics, Learning (dashboards, Phase 3-5), and Settings. PaneForge manages the three resizable zones; the Activity Bar sits outside PaneForge as a fixed CSS flex element.
+
+**Rationale:** The original three-pane layout placed conversation at center, implying it was the primary content. Forge is an artifact-centric product management tool — docs, agents, rules, skills, and hooks are the deliverables. The VS Code-style layout makes artifacts the focal point (Explorer Panel), with conversation supporting from the right (Chat Panel). This pattern is familiar to developers, scales to accommodate future dashboard views without tab bar proliferation, and provides clear visual hierarchy: artifacts are work, conversation is collaboration.
+
+**Supersedes:** Layout aspects of AD-013 (panel arrangement and tab navigation). AD-013's library selections (PaneForge, shadcn-svelte, CodeMirror 6, LayerChart, lucide-svelte) remain active.
+
+**Consequences:** The `ArtifactBrowser` component no longer has internal category tabs — it receives the active category as a prop from the Activity Bar state. New components: `ActivityBar.svelte`, `ActivityBarItem.svelte`, `SessionsPanel.svelte`. The `NavigationStore` is restructured around `activeActivity` (Activity Bar selection) and `explorerView` (what the Explorer Panel shows). Keyboard shortcuts `Ctrl+1` through `Ctrl+5` switch artifact categories directly. The detail panel toggle (`Ctrl+\`) is removed; the Sessions Panel toggle (`Ctrl+B`) replaces the old sidebar toggle.
+
+**Research:** [Frontend Research](/research/frontend), [Information Architecture](/product/information-architecture)

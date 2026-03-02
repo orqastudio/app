@@ -26,11 +26,11 @@ Components used directly from the shadcn-svelte library. No custom code needed b
 
 | Component | Usage | Phase |
 |-----------|-------|-------|
-| **Resizable** (PaneForge) | Three-pane layout (sidebar, primary, detail) | 1 |
+| **Resizable** (PaneForge) | Three-zone resizable layout (Explorer, Sessions, Chat) within PaneForge | 1 |
 | **ScrollArea** | Message stream, artifact list, session list | 1 |
-| **Tabs** | Sidebar tabs (Sessions/Project), detail panel tabs (Agents/Rules/Skills/Hooks/Docs), category tabs | 1 |
+| **Tabs** | Sessions Panel tabs (Sessions/Project) | 1 |
 | **Collapsible** | Tool call cards (collapsed/expanded), settings sections | 1 |
-| **Sidebar** | Application sidebar with session/project navigation | 1 |
+| **Sidebar** | Sessions Panel with session/project navigation | 1 |
 
 ### Data Display
 
@@ -47,7 +47,7 @@ Components used directly from the shadcn-svelte library. No custom code needed b
 |-----------|-------|-------|
 | **Dialog** | Confirmation dialogs (delete artifact, discard changes), project creation | 1 |
 | **Popover** | Project switcher, model info | 1 |
-| **Sheet** | Mobile/narrow responsive alternative to detail panel | 1 |
+| **Sheet** | Mobile/narrow responsive alternative to collapsed panels | 1 |
 | **Command** | Global search (`Ctrl+K`) with result list | 1 |
 | **DropdownMenu** | Context menus, session actions, artifact actions | 1 |
 
@@ -63,6 +63,14 @@ Components used directly from the shadcn-svelte library. No custom code needed b
 ## Custom Application Components (Must Build)
 
 Components specific to Forge that are not provided by shadcn-svelte.
+
+### Layout Components
+
+| Component | Description | Builds On | Phase |
+|-----------|-------------|-----------|-------|
+| `ActivityBar` | Fixed 48px vertical icon rail. Renders artifact category icons, dashboard icons, and settings icon. Manages active state with 2px left border indicator. | Button, Tooltip | 1 |
+| `ActivityBarItem` | Individual icon button within the Activity Bar. Receives icon, label, active state, shortcut hint as props. | Button, Tooltip | 1 |
+| `SessionsPanel` | Wraps SessionList and ProjectInfo with a two-tab layout (Sessions | Project). Collapsible via Ctrl+B. | Tabs, ScrollArea | 1 |
 
 ### Conversation Components
 
@@ -131,8 +139,8 @@ Components specific to Forge that are not provided by shadcn-svelte.
 
 | Component | Description | Builds On | Phase |
 |-----------|-------------|-----------|-------|
-| `AppLayout` | Root layout: toolbar + three-pane body + status bar. Manages pane collapse state. | Resizable | 1 |
-| `Toolbar` | Top bar: project name, search, new session, settings gear. | Button, Command | 1 |
+| `AppLayout` | Root layout: toolbar + four-zone body (Activity Bar + PaneForge) + status bar. Manages zone collapse state. | Resizable | 1 |
+| `Toolbar` | Top bar: project name, search, new session. | Button, Command | 1 |
 | `WelcomeScreen` | First-run / empty project state. Forge branding, setup guidance. | Card, Button | 1 |
 
 ### Dashboard Components (Later Phases)

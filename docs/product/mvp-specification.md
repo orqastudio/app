@@ -142,35 +142,41 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 
 ---
 
-### F-006: Three-Pane Layout
+### F-006: Four-Zone Layout
 
-**Description:** The main window uses a three-pane resizable layout with collapsible sidebar and detail panel.
+**Description:** The main window uses a VS Code-style four-zone layout: Activity Bar (fixed 48px icon rail), Explorer Panel (flexible, artifact-centric), Sessions Panel (240px, collapsible), and Chat Panel (flexible, conversation).
 
 **Acceptance Criteria:**
-- [ ] Layout uses PaneForge (shadcn-svelte Resizable) with three panes
-- [ ] Sidebar (left): default 240px, min 180px, collapsible with `Ctrl+B`
-- [ ] Primary (center): flexible width, min 400px, not collapsible
-- [ ] Detail (right): default 360px, min 280px, collapsible with `Ctrl+\`
+- [ ] Activity Bar is a fixed 48px vertical icon rail on the far left, outside PaneForge
+- [ ] Activity Bar has icons for: Docs (default active), Agents, Rules, Skills, Hooks; separator; Settings (bottom-aligned)
+- [ ] Active Activity Bar icon has 2px left border indicator + highlighted background
+- [ ] `Ctrl+1` through `Ctrl+5` switch artifact categories; `Ctrl+,` opens settings
+- [ ] Explorer Panel fills remaining space, shows content based on Activity Bar selection
+- [ ] Sessions Panel: default 240px, min 180px, max 320px, collapsible with `Ctrl+B`
+- [ ] Sessions Panel has two tabs: Sessions (default) and Project
+- [ ] Chat Panel fills remaining space, always shows conversation, not collapsible
+- [ ] PaneForge manages three resizable zones: Explorer | Sessions | Chat
 - [ ] Pane resize handles are visible and draggable
-- [ ] Collapsed panes animate smoothly (not instant hide/show)
+- [ ] Collapsed Sessions Panel redistributes space to Explorer and Chat
 - [ ] Panel sizes and collapse state persist across app restarts (tauri-plugin-window-state)
 - [ ] Window size and position persist across restarts
 - [ ] Layout is functional at minimum window size of 900x600px
+- [ ] Responsive: Sessions Panel auto-collapses below 1200px; overlay Sheet below 720px
 
-**Architecture References:** AD-013 (PaneForge), AD-012 (window-state plugin)
+**Architecture References:** AD-018 (four-zone layout), AD-013 (PaneForge), AD-012 (window-state plugin)
 
 ---
 
 ### F-007: Artifact Browser
 
-**Description:** User can browse governance artifacts (agents, rules, skills, hooks, docs) in the detail panel.
+**Description:** User can browse governance artifacts (agents, rules, skills, hooks, docs) in the Explorer Panel.
 
 **Acceptance Criteria:**
-- [ ] Detail panel has an artifact browser view accessible from sidebar Project tab quick links or `Ctrl+Shift+A`
-- [ ] Artifact browser has category tabs: Docs (default), Agents, Rules, Skills, Hooks
+- [ ] Explorer Panel shows the artifact browser when an artifact category is active in the Activity Bar
+- [ ] Activity Bar icons select the artifact category — no tab bar within the Explorer Panel
 - [ ] Each tab lists artifacts found in the corresponding `.claude/` subdirectory (or `docs/` for documentation)
 - [ ] Each list entry shows: filename, brief description (from YAML frontmatter `description` or first paragraph)
-- [ ] Clicking an artifact opens it in the detail panel artifact viewer (conversation stays visible)
+- [ ] Clicking an artifact opens it in the Explorer Panel artifact viewer (conversation stays visible in Chat Panel)
 - [ ] Artifact viewer renders markdown content with proper formatting
 - [ ] YAML frontmatter is displayed as structured metadata above the rendered body
 - [ ] File watcher detects changes to `.claude/` files and updates the browser within 500ms
@@ -203,8 +209,8 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 **Description:** User can view and configure application settings.
 
 **Acceptance Criteria:**
-- [ ] Settings are accessible via the gear icon in the toolbar
-- [ ] Settings open in the detail panel
+- [ ] Settings are accessible via the Settings icon in the Activity Bar (bottom) or `Ctrl+,`
+- [ ] Settings open in the Explorer Panel
 - [ ] Provider section shows: sidecar status, Claude Code CLI detection status, connection health
 - [ ] Project section shows: project root path, detected stack, file watcher status
 - [ ] Appearance section has: theme toggle (light/dark/system), font size adjustment

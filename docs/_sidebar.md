@@ -29,12 +29,13 @@
   - [Component Inventory](/ui/component-inventory)
   - [Interaction Patterns](/ui/interaction-patterns)
   - [Responsive Behavior](/ui/responsive-behavior)
-  - **Wireframes**
-    - [Core Layout](/ui/wireframes/core-layout)
-    - [Conversation View](/ui/wireframes/conversation-view)
-    - [Artifact Browser](/ui/wireframes/artifact-browser)
-    - [Settings & Onboarding](/ui/wireframes/settings-onboarding)
-    - [Dashboard](/ui/wireframes/dashboard)
+
+- **Wireframes**
+  - [Core Layout](/ui/wireframes/core-layout)
+  - [Conversation View](/ui/wireframes/conversation-view)
+  - [Artifact Browser](/ui/wireframes/artifact-browser)
+  - [Settings & Onboarding](/ui/wireframes/settings-onboarding)
+  - [Dashboard](/ui/wireframes/dashboard)
 
 - **Development**
   - [Coding Standards](/development/coding-standards)

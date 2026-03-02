@@ -80,7 +80,7 @@ Tool call received → Card appears with "Pending" badge (amber)
 
 - **Collapsed** (default): Single line showing tool icon + name + file path/summary + status badge
 - **Click to expand**: Full input parameters + full output + diff view (for edits)
-- **Click tool name**: Opens tool inspector in detail panel (Phase 2+)
+- **Click tool name**: Opens tool inspector in Explorer Panel (Phase 2+)
 - **Copy button**: Copies tool output to clipboard
 
 ### Visual Hierarchy for Tool Types
@@ -98,7 +98,7 @@ Tool call received → Card appears with "Pending" badge (amber)
 
 ## 3. Inline Editing
 
-### Artifact Editing (Detail Panel)
+### Artifact Editing (Explorer Panel)
 
 | State | UI |
 |-------|----|
@@ -122,29 +122,27 @@ Tool call received → Card appears with "Pending" badge (amber)
 
 ### Resize Handles
 
-- PaneForge drag handles between panes: 1px visible border, 8px invisible drag target
+- PaneForge drag handles between the Explorer, Sessions, and Chat panes: 1px visible border, 8px invisible drag target
 - Cursor changes to `col-resize` on hover
 - Drag smoothly resizes with min/max constraints
-- Double-click handle: collapse the smaller adjacent pane
+- Double-click handle: collapse the Sessions Panel (only collapsible zone)
 
 ### Collapse Animation
 
 - Collapse duration: 200ms ease-out
-- Collapsed sidebar: 0px (completely hidden), icon strip not shown in Phase 1
-- Collapsed detail: 0px (completely hidden)
-- Primary panel fills freed space
+- Collapsed Sessions Panel: 0px (completely hidden)
+- Explorer and Chat panels fill freed space
+- Activity Bar is always visible (fixed 48px)
 
 ### Collapse Triggers
 
 | Trigger | Effect |
 |---------|--------|
-| `Ctrl+B` | Toggle sidebar |
-| `Ctrl+\` | Toggle detail panel |
-| Double-click sidebar handle | Collapse/expand sidebar |
-| Double-click detail handle | Collapse/expand detail |
-| Click settings gear (detail collapsed) | Expand detail, show settings |
-| Click artifact link (detail collapsed) | Expand detail, show artifact browser |
-| `Escape` (detail focused) | Collapse detail panel |
+| `Ctrl+B` | Toggle Sessions Panel |
+| `Ctrl+1` through `Ctrl+5` | Switch Activity Bar to artifact category |
+| `Ctrl+,` | Switch Activity Bar to settings |
+| Double-click Sessions handle | Collapse/expand Sessions Panel |
+| `Escape` (overlay open) | Close overlay |
 
 ### State Persistence
 
@@ -160,8 +158,9 @@ Panel widths and collapse states are persisted via `tauri-plugin-window-state` a
 |----------|--------|---------|
 | `Ctrl+K` / `Cmd+K` | Global search | Always |
 | `Ctrl+N` / `Cmd+N` | New session | Always |
-| `Ctrl+B` / `Cmd+B` | Toggle sidebar | Always |
-| `Ctrl+\` / `Cmd+\` | Toggle detail panel | Always |
+| `Ctrl+B` / `Cmd+B` | Toggle Sessions Panel | Always |
+| `Ctrl+1` through `Ctrl+5` | Switch artifact category | Always |
+| `Ctrl+,` / `Cmd+,` | Open settings | Always |
 | `Escape` | Close overlay / collapse detail / exit edit mode | Context-dependent |
 
 ### Conversation Shortcuts
@@ -187,9 +186,11 @@ Panel widths and collapse states are persisted via `tauri-plugin-window-state` a
 
 | Shortcut | Action | Context |
 |----------|--------|---------|
-| `Ctrl+Shift+A` / `Cmd+Shift+A` | Open artifact browser | Always |
-| `Tab` | Move focus between panes | Always |
-| `Shift+Tab` | Move focus backward between panes | Always |
+| `Ctrl+Shift+S` / `Cmd+Shift+S` | Scanner dashboard | Always |
+| `Ctrl+Shift+M` / `Cmd+Shift+M` | Metrics dashboard | Always |
+| `Ctrl+Shift+L` / `Cmd+Shift+L` | Learning loop | Always |
+| `Tab` | Move focus between zones | Always |
+| `Shift+Tab` | Move focus backward between zones | Always |
 
 ---
 
@@ -220,7 +221,7 @@ When `prefers-reduced-motion: reduce` is active:
 
 ### Focus Order
 
-Logical tab order follows the visual layout: Toolbar → Sidebar → Primary → Detail → Status Bar.
+Logical tab order follows the visual layout: Toolbar → Activity Bar → Explorer Panel → Sessions Panel → Chat Panel → Status Bar.
 
 Within each pane, tab order follows reading order (top to bottom, left to right).
 
@@ -241,9 +242,9 @@ When a dialog/overlay closes, focus returns to the element that triggered it.
 | Scenario | Loading UI |
 |----------|-----------|
 | App startup | Splash: Forge anvil mark + "Loading..." |
-| Project scanning | Sidebar: skeleton loader for project info |
-| Session loading | Primary: skeleton loader for message list |
-| Artifact loading | Detail: skeleton loader for markdown content |
+| Project scanning | Sessions Panel: skeleton loader for project info |
+| Session loading | Chat Panel: skeleton loader for message list |
+| Artifact loading | Explorer Panel: skeleton loader for markdown content |
 | Search | Command palette: spinner + results populate incrementally |
 
 ### Skeleton Loaders

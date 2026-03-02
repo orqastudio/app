@@ -70,7 +70,7 @@ Define what we're building. Documents in `docs/product/`.
 - [x] Glossary / domain model — `docs/product/glossary.md`. 40+ terms across 9 categories. Establishes consistent terminology for all documentation.
 - [x] User personas — `docs/product/personas.md`. Three personas: Alex (PM/Tech Lead, primary), Sam (Developer, secondary), Jordan (Solo Technical PM, tertiary). Comparison matrix and design priorities.
 - [x] User journeys — `docs/product/journeys.md`. Six journeys: first-time setup, define governance, implementation cycle, review/approve, learning loop, onboard existing project. MVP coverage matrix.
-- [x] Information architecture — `docs/product/information-architecture.md`. Three-pane layout, toolbar, sidebar (2 tabs), primary panel (2 views), detail panel (5 views), navigation model, keyboard shortcuts, state management, empty states.
+- [x] Information architecture — `docs/product/information-architecture.md`. Four-zone layout (Activity Bar, Explorer Panel, Sessions Panel, Chat Panel), toolbar, navigation model, keyboard shortcuts, state management, empty states.
 - [x] MVP feature specification — `docs/product/mvp-specification.md`. 14 features (F-001 through F-013 + F-001b New Project) with acceptance criteria. Dogfooding validation checklist. Explicit deferral list.
 
 ---
@@ -119,7 +119,7 @@ Design the technical architecture. Documents in `docs/architecture/`.
 - [ ] Rust: SQLite setup with schema + migrations
 - [ ] Rust: Session CRUD commands
 - [ ] Rust: API key storage via keyring
-- [ ] Frontend: Main layout (conversation + side panel)
+- [ ] Frontend: Main layout (four-zone: Activity Bar + Explorer + Sessions + Chat)
 - [ ] Frontend: Conversation with streaming tokens
 - [ ] Frontend: Tool call rendering (collapsible cards)
 - [ ] Frontend: Session history sidebar

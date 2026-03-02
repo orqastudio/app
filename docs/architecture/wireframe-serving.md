@@ -296,7 +296,7 @@ Parameters:
 ```markdown
 ## Core Layout
 
-The three-pane layout arranges sidebar, conversation, and detail panels:
+The four-zone layout arranges Activity Bar, Explorer Panel, Sessions Panel, and Chat Panel:
 
 ![wireframe](forge://wireframe/core-layout?theme=light)
 

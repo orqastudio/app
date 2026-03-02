@@ -2,11 +2,11 @@
 
 **Date:** 2026-03-02 | **Informed by:** [Onboarding Research](/research/onboarding), [MVP Spec F-001, F-001b, F-009](/product/mvp-specification)
 
-Settings appears in the detail panel (right pane) when the user clicks the Settings toolbar button or presses `Ctrl+,`. Onboarding flows are full-window overlays shown on first run or when no project is loaded.
+Settings appears in the Explorer Panel when the user clicks the Settings icon in the Activity Bar (bottom) or presses `Ctrl+,`. Onboarding flows are full-window overlays shown on first run or when no project is loaded.
 
 ---
 
-## 1. Settings in Detail Panel (All Sections)
+## 1. Settings in Explorer Panel (All Sections)
 
 ```plantuml
 @startsalt
@@ -51,8 +51,8 @@ Settings appears in the detail panel (right pane) when the user clicks the Setti
       Font Size | ^14px^
       ---
       Panel Default Widths
-      Sidebar | [240] px
-      Detail | [360] px
+      Sessions | [240] px
+      Explorer | [360] px
       ---
       [X] Enable per-project theming
     }
@@ -64,8 +64,7 @@ Settings appears in the detail panel (right pane) when the user clicks the Setti
         Shortcut | Action
         Ctrl+K | Global search
         Ctrl+N | New session
-        Ctrl+B | Toggle sidebar
-        Ctrl+\\ | Toggle detail panel
+        Ctrl+B | Toggle Sessions Panel
         Ctrl+, | Open settings
         Ctrl+Enter | Send message
         Ctrl+Shift+N | New project
@@ -94,7 +93,7 @@ Settings appears in the detail panel (right pane) when the user clicks the Setti
 
 ## 2. First-Run Welcome Screen (No Project, No API Key)
 
-Full-window overlay. No sidebar, no detail panel -- just the centered welcome content.
+Full-window overlay. No panels -- just the centered welcome content.
 
 ```plantuml
 @startsalt
@@ -452,7 +451,7 @@ For a truly new project with no code detected, the scan table is replaced with a
 
 ## 5b. New Project -- Discovery Conversation
 
-After the user clicks "Start Project Discovery", Forge opens the main three-pane workspace with a discovery conversation already in progress. This is a regular conversation session — the discovery behavior comes from the system prompt, not special UI.
+After the user clicks "Start Project Discovery", Forge opens the main four-zone workspace with a discovery conversation already in progress. This is a regular conversation session — the discovery behavior comes from the system prompt, not special UI.
 
 ```plantuml
 @startsalt
@@ -504,7 +503,7 @@ After the user clicks "Start Project Discovery", Forge opens the main three-pane
     }
     |
     {
-      <b>Artifacts</b>
+      <b>Explorer</b>
       ---
       <i>No artifacts yet.</i>
       <i>Discovery in progress...</i>
@@ -521,9 +520,9 @@ After the user clicks "Start Project Discovery", Forge opens the main three-pane
 |---------|-------|
 | **Session list** | The discovery session appears as "Project Discovery" — a regular session, not a special mode. |
 | **Conversation** | Claude follows a system prompt that covers product, tech stack, team, conventions, and prior art. The user responds naturally. |
-| **Artifact panel** | Empty during discovery. Populates after the user approves generated artifacts. |
+| **Explorer Panel** | Empty during discovery. Populates after the user approves generated artifacts. |
 | **Exit anytime** | The user can close the conversation, start a new session, or say "that's enough." The discovery session persists and can be resumed. |
-| **No special UI** | This is the standard three-pane layout. The discovery "magic" is entirely in the system prompt — no wizard, no special components. |
+| **No special UI** | This is the standard four-zone layout. The discovery "magic" is entirely in the system prompt — no wizard, no special components. |
 
 ---
 
@@ -573,7 +572,7 @@ After discovery (or when Claude has enough context), Claude proposes artifacts. 
 
 ---
 
-## Settings Panel -- Sidecar Error State
+## Settings in Explorer Panel -- Sidecar Error State
 
 When the sidecar process encounters an error, the Provider section surfaces the problem.
 
@@ -610,7 +609,7 @@ When the sidecar process encounters an error, the Provider section surfaces the 
 
 ---
 
-## Settings Panel -- Idle Sidecar State
+## Settings in Explorer Panel -- Idle Sidecar State
 
 When no session is active, the sidecar is idle.
 
@@ -722,7 +721,7 @@ endif
 
 | Shortcut | Action |
 |----------|--------|
-| `Ctrl+,` | Open settings in detail panel |
+| `Ctrl+,` | Open settings in Explorer Panel |
 | `Ctrl+O` | Open project (shows folder dialog) |
 | `Ctrl+Shift+N` | New project (onboarding flow from project selection) |
 | `Esc` | Close onboarding overlay / return to workspace |

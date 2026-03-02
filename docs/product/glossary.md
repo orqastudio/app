@@ -204,11 +204,27 @@ Session continuity data that summarizes what happened in a session and what the 
 
 ### Panel
 
-A resizable section of the Forge window. The three-pane layout consists of a collapsible sidebar (navigation, session history), the primary panel (conversation), and a collapsible detail panel (artifact browser, settings). Managed by PaneForge.
+A resizable section of the Forge window. PaneForge manages three resizable zones: the Explorer Panel (artifact browser, viewer, dashboards, settings), the Sessions Panel (session list, project info), and the Chat Panel (conversation). The Activity Bar (48px fixed icon rail) sits outside PaneForge and controls what the Explorer Panel displays.
+
+### Activity Bar
+
+A fixed 48px vertical icon rail on the far left of the window. Contains icons for artifact categories (Docs, Agents, Rules, Skills, Hooks), dashboards (Scanners, Metrics, Learning), and Settings. Clicking an icon switches the Explorer Panel to the corresponding view. The Activity Bar is always visible and not collapsible.
+
+### Explorer Panel
+
+The central content area that displays artifacts, dashboards, or settings based on the active Activity Bar icon. When an artifact category is active, shows the artifact list for that category. Clicking an artifact opens its viewer/editor within the Explorer Panel. The Explorer Panel is always visible and never collapses — it is the focal point of the artifact-centric layout.
+
+### Sessions Panel
+
+The zone between the Explorer Panel and Chat Panel. Contains two tabs: Sessions (session list with search) and Project (project info, governance summary, quick links). Collapsible via `Ctrl+B` to give more space to the Explorer and Chat panels. Default width 240px.
+
+### Chat Panel
+
+The rightmost zone, always visible. Shows the active conversation session — message stream, streaming tokens, tool call cards, and message input. The conversation stays visible while browsing artifacts in the Explorer Panel, enabling side-by-side collaboration.
 
 ### Artifact Browser
 
-The UI for browsing and editing governance artifacts (agents, rules, skills, docs). Displays metadata, renders markdown content, and provides inline editing via CodeMirror 6.
+The Explorer Panel view for browsing governance artifacts. The active category is determined by the Activity Bar icon (Docs, Agents, Rules, Skills, or Hooks). Displays artifact lists with metadata, renders markdown content in the viewer, and provides source editing via CodeMirror 6.
 
 ### Streaming Display
 
