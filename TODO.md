@@ -28,7 +28,7 @@ Research and resolve technical decision points. Each item results in documented 
 
 - [x] **Markdown rendering + editing** — Two-component strategy: CodeMirror 6 (`svelte-codemirror-editor` v2.1.0, Svelte 5 runes) for editing, `@humanspeak/svelte-markdown` v0.8.13 for rendering. `svelte-highlight` for runtime syntax highlighting. **No WYSIWYG — source-level editing preserves markdown fidelity.**
 - [x] **Conversation UI component** — Custom build on shadcn-svelte primitives (Button, ScrollArea, Collapsible, Tabs, Badge). Vercel AI SDK studied for patterns only (SSE transport incompatible with Channel<T>). Streaming via Svelte 5 `$state` for fine-grained DOM updates. **Recommendation: Custom.**
-- [x] **Panel layout system** — PaneForge v1.0.2 (Svelte 5 native, shadcn-svelte `Resizable` IS PaneForge). Three-pane layout: collapsible sidebar, primary conversation, collapsible detail panel. Tabs via shadcn-svelte. **Recommendation: PaneForge + shadcn-svelte Tabs.**
+- [x] **Panel layout system** — PaneForge v1.0.2 (Svelte 5 native, shadcn-svelte `Resizable` IS PaneForge). Three-zone + nav sub-panel layout. Tabs via shadcn-svelte. **Recommendation: PaneForge + shadcn-svelte Tabs.**
 - [x] **Chart/visualization library** — LayerChart (shadcn-svelte `Chart` IS LayerChart). Composable Svelte components. Status indicators via shadcn-svelte `Badge` + `lucide-svelte` icons. **Recommendation: LayerChart via shadcn-svelte.**
 
 ### Persistence — `docs/research/persistence.md`
@@ -70,7 +70,7 @@ Define what we're building. Documents in `docs/product/`.
 - [x] Glossary / domain model — `docs/product/glossary.md`. 40+ terms across 9 categories. Establishes consistent terminology for all documentation.
 - [x] User personas — `docs/product/personas.md`. Three personas: Alex (PM/Tech Lead, primary), Sam (Developer, secondary), Jordan (Solo Technical PM, tertiary). Comparison matrix and design priorities.
 - [x] User journeys — `docs/product/journeys.md`. Six journeys: first-time setup, define governance, implementation cycle, review/approve, learning loop, onboard existing project. MVP coverage matrix.
-- [x] Information architecture — `docs/product/information-architecture.md`. Four-zone layout (Activity Bar, Explorer Panel, Sessions Panel, Chat Panel), toolbar, navigation model, keyboard shortcuts, state management, empty states.
+- [x] Information architecture — `docs/product/information-architecture.md`. Three-zone + nav sub-panel layout (Activity Bar, Nav Sub-Panel, Explorer Panel, Chat Panel), toolbar, navigation model, keyboard shortcuts, state management, empty states.
 - [x] MVP feature specification — `docs/product/mvp-specification.md`. 14 features (F-001 through F-013 + F-001b New Project) with acceptance criteria. Dogfooding validation checklist. Explicit deferral list.
 
 ---
@@ -119,10 +119,10 @@ Design the technical architecture. Documents in `docs/architecture/`.
 - [ ] Rust: SQLite setup with schema + migrations
 - [ ] Rust: Session CRUD commands
 - [ ] Rust: API key storage via keyring
-- [ ] Frontend: Main layout (four-zone: Activity Bar + Explorer + Sessions + Chat)
+- [ ] Frontend: Main layout (three-zone + nav sub-panel per AD-019)
 - [ ] Frontend: Conversation with streaming tokens
 - [ ] Frontend: Tool call rendering (collapsible cards)
-- [ ] Frontend: Session history sidebar
+- [ ] Frontend: Session dropdown in Chat Panel header
 - [ ] Frontend: Settings (API key, model selection)
 - [ ] Integration: Send message → stream → render
 - [ ] First working demo: chat with Claude in the app

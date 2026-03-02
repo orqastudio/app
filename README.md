@@ -18,3 +18,11 @@ A desktop app for managed agentic development. Claude Code's capabilities with a
 - **AI Integration:** Claude API + Claude Max (via Agent SDK or direct API)
 - **Persistence:** SQLite (session history, metrics, project config)
 - **Target platforms:** Windows, macOS, Linux
+
+## Getting Started
+
+See [Development > Getting Started](docs/development/getting-started.md) for prerequisites and setup instructions.
+
+## Documentation
+
+Run `npx docsify-cli serve docs` to browse the full documentation site locally.

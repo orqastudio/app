@@ -159,8 +159,8 @@ UI
     ├── Dashboard
     └── Settings & Onboarding
 Development
+  ├── Getting Started
   ├── Coding Standards
-  ├── Agentic Workflow
   └── Lessons
 Process
   ├── Team

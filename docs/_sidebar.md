@@ -38,6 +38,7 @@
   - [Dashboard](/ui/wireframes/dashboard)
 
 - **Development**
+  - [Getting Started](/development/getting-started)
   - [Coding Standards](/development/coding-standards)
   - [Lessons Learned](/development/lessons)
 
