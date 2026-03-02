@@ -1,62 +1,49 @@
 # Sidebar Synchronization (NON-NEGOTIABLE)
 
-The Forge documentation site uses sidebar files that must always be kept in sync. A navigation entry that exists in one sidebar but not the others produces broken links or missing items depending on which section the reader is in.
+Forge uses a **single root sidebar** (`docs/_sidebar.md`) for the entire documentation site. There are no subdirectory sidebar files. This matches Alvarez's pattern and avoids synchronization drift between multiple copies of the same navigation.
+
+## Single Sidebar Rule
+
+- The **only** sidebar file is `docs/_sidebar.md`
+- **NEVER** create `_sidebar.md` files in subdirectories — Docsify inherits the root sidebar for all pages
+- If a subdirectory `_sidebar.md` is found, delete it immediately — it will override the root and drift out of sync
 
 ## Top-Level Sections (canonical order)
 
-Every sidebar file MUST contain all top-level sections in this exact order:
+The root sidebar MUST contain all top-level sections in this exact order:
 
 1. **Introduction** — home link (`/`)
 2. **Product** — vision, pillars, governance, roadmap
 3. **Architecture** — decisions, IPC design, data flow, module structure
 4. **User Interface** — per-page UI documentation, component library
-5. **Development** — coding standards, workflow, tooling, testing
-6. **Research** — background investigations, tech stack evaluations
-7. **Process** — team, orchestration, workflow, governance, rules, skills, retrospectives
+5. **Wireframes** — layout and view wireframes (top-level, not nested under UI)
+6. **Development** — coding standards, workflow, tooling, testing
+7. **Research** — background investigations, tech stack evaluations
+8. **Process** — team, orchestration, workflow, governance, rules, skills, retrospectives
 
-## Mandatory Synchronization Rules
-
-> [!IMPORTANT]
-> Every change to any sidebar MUST be reflected in ALL sidebar files in the same commit. Partial updates are rejected.
-
-### Adding a new page
+## Adding a new page
 
 1. Identify which section owns the page
-2. Add the entry to the **owning sidebar** in the expanded section at the correct position
-3. Add the entry to the **root sidebar** in the collapsed or expanded view of that section
-4. Verify all **other sidebar files** still match the root for that section
+2. Add the entry to `docs/_sidebar.md` in the correct section at the correct position
+3. Verify the link path matches the file's actual location on disk
 
-### Moving a page between sections
+## Moving a page between sections
 
-1. Remove the entry from the old section in ALL sidebar files
-2. Add the entry to the new section in ALL sidebar files
+1. Remove the entry from the old section in `docs/_sidebar.md`
+2. Add the entry to the new section in `docs/_sidebar.md`
 3. Move the file on disk (`git mv`) to the new section's folder
-4. Update the path in all sidebar files to match the new location
+4. Update the path in the sidebar to match the new location
 
-### Removing a page
+## Removing a page
 
-Remove the entry from ALL sidebar files in the same commit that deletes the file. Never leave dead links.
-
-### Reordering entries within a section
-
-When changing the order of entries within a section, update the order in ALL sidebar files. The owning sidebar must match the root sidebar's ordering for that section.
+Remove the entry from `docs/_sidebar.md` in the same commit that deletes the file. Never leave dead links.
 
 ## Verification Checklist (run before committing)
 
-- [ ] Root sidebar — updated with the change
-- [ ] Owning section's sidebar — expanded entry added/updated/removed
-- [ ] All other sidebar files — top-level section list consistent with root
-- [ ] No sidebar contains a link to a file that no longer exists
-- [ ] No sidebar is missing a link to a file that does exist and is not exempt
-
-## Common Mistakes
-
-| Mistake | Consequence | Fix |
-|---------|-------------|-----|
-| Adding a page to only the root sidebar | Page unreachable from within its own section | Add to owning sidebar too |
-| Adding a page to only the owning sidebar | Page missing from root navigation | Add to root sidebar too |
-| Forgetting to update non-owning sidebars | Stale navigation in other sections | Update all sidebar files |
-| Moving a file without updating all paths | 404 errors across all sidebar files | Search-replace old path across all files |
+- [ ] `docs/_sidebar.md` — updated with the change
+- [ ] No sidebar entry links to a file that no longer exists
+- [ ] No documentation file exists that is missing from the sidebar (unless exempt)
+- [ ] No subdirectory `_sidebar.md` files exist
 
 ## Related Rules
 

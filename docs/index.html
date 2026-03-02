@@ -1,33 +1,395 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Forge Docs</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="description" content="Forge — Managed Agentic Development Platform Documentation">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-tabs@1/dist/docsify-tabs.min.css">
+  <link rel="stylesheet" href="/assets/custom.css">
 </head>
 <body>
   <div id="app"></div>
   <script>
     window.$docsify = {
-      name: 'Forge',
+      // Branding
+      name: '<strong style="letter-spacing:-0.02em;">Forge Docs</strong>',
+      nameLink: '/',
+
+      // GitHub repo corner icon
       repo: '',
+
+      // Sidebar
       loadSidebar: true,
-      subMaxLevel: 3,
-      search: 'auto',
-    }
+      subMaxLevel: 0,
+      auto2top: true,
+
+      // Search
+      search: {
+        placeholder: 'Search documentation',
+        noData: 'No results',
+        depth: 3
+      },
+
+      // Tabs plugin
+      tabs: {
+        persist: true,
+        sync: true,
+        theme: 'material'
+      },
+
+      // Flexible alerts
+      'flexible-alerts': {
+        style: 'callout',
+        note: { label: 'Note' },
+        tip: { label: 'Tip' },
+        warning: { label: 'Warning' },
+        attention: { label: 'Important' }
+      },
+
+      // Pagination
+      pagination: {
+        previousText: 'Previous',
+        nextText: 'Next',
+        crossChapter: true,
+        crossChapterText: true
+      },
+
+      // Custom plugins
+      plugins: [
+        // -- Breadcrumb bar with search ----------------------------------------
+        function breadcrumbPlugin(hook) {
+          hook.doneEach(function () {
+            var hash = window.location.hash.replace(/^#/, '').replace(/\?.*$/, '');
+
+            // Get or create the breadcrumb bar
+            var bar = document.querySelector('.breadcrumb-bar');
+            if (!bar) {
+              bar = document.createElement('div');
+              bar.className = 'breadcrumb-bar';
+              // Docsify 4 structure: <section class="content"> inside <main>
+              var section = document.querySelector('section.content');
+              if (section) {
+                section.insertBefore(bar, section.firstChild);
+              }
+            }
+
+            bar.style.display = '';
+
+            var parts = (hash && hash !== '/' && hash !== '')
+              ? hash.split('/').filter(Boolean)
+              : [];
+            var crumbs = parts.length > 0
+              ? ['<a href="#/">Home</a>']
+              : ['<span>Home</span>'];
+            var accumulated = '';
+
+            for (var i = 0; i < parts.length; i++) {
+              accumulated += '/' + parts[i];
+              var label = parts[i]
+                .replace(/\.md$/, '')
+                .replace(/-/g, ' ')
+                .replace(/\b\w/g, function (l) { return l.toUpperCase(); });
+
+              if (label === 'Readme') label = 'Overview';
+
+              if (i === parts.length - 1) {
+                crumbs.push('<span>' + label + '</span>');
+              } else {
+                crumbs.push('<a href="#' + accumulated + '/">' + label + '</a>');
+              }
+            }
+
+            bar.innerHTML =
+              '<div class="breadcrumb-crumbs">' +
+                crumbs.join('<span class="separator">/</span>') +
+              '</div>' +
+              '<div class="breadcrumb-search">' +
+                '<input type="text" placeholder="Search docs..." />' +
+                '<div class="search-results"></div>' +
+              '</div>';
+
+            // Wire up the inline search to docsify's search index
+            var input = bar.querySelector('.breadcrumb-search input');
+            var results = bar.querySelector('.search-results');
+            if (input && results && window.Docsify && window.Docsify.dom) {
+              input.addEventListener('input', function () {
+                var query = input.value.trim();
+                if (!query) { results.classList.remove('visible'); return; }
+                // Trigger docsify search and read results
+                var sidebarSearch = document.querySelector('.sidebar .search input');
+                if (sidebarSearch) {
+                  sidebarSearch.value = query;
+                  sidebarSearch.dispatchEvent(new Event('input', { bubbles: true }));
+                  // Read results from sidebar search panel after a brief delay
+                  setTimeout(function () {
+                    var items = document.querySelectorAll('.sidebar .search .matching-post');
+                    var html = '';
+                    items.forEach(function (item) {
+                      var a = item.querySelector('a');
+                      if (a) html += '<a href="' + a.getAttribute('href') + '">' + a.textContent + '</a>';
+                    });
+                    results.innerHTML = html || '<a style="color:#999;pointer-events:none;">No results</a>';
+                    results.classList.add('visible');
+                  }, 200);
+                }
+              });
+              input.addEventListener('blur', function () {
+                setTimeout(function () { results.classList.remove('visible'); }, 200);
+              });
+              input.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') { results.classList.remove('visible'); input.blur(); }
+              });
+            }
+          });
+        },
+
+        // -- Sidebar section collapse with persistent manual toggles -----------
+        function sectionCollapsePlugin(hook) {
+          var manualState = {};
+
+          hook.doneEach(function () {
+            var currentPath = (window.location.hash.replace(/^#/, '') || '/').replace(/\?.*$/, '');
+            var topItems = document.querySelectorAll('.sidebar-nav > ul > li');
+
+            topItems.forEach(function (li) {
+              // Find section header: a <strong> anywhere in this <li> but not inside a link
+              var strong = li.querySelector('strong');
+              if (!strong) return;
+              // Skip if the <strong> is inside an <a> (it's a bold link, not a header)
+              if (strong.closest('a')) return;
+
+              var subList = li.querySelector('ul');
+              if (!subList) return;
+
+              var sectionName = strong.textContent.trim();
+
+              // Check if current page is inside this section
+              var isActiveSection = false;
+              var links = subList.querySelectorAll('a[href]');
+              for (var i = 0; i < links.length; i++) {
+                var href = links[i].getAttribute('href') || '';
+                var linkPath = href.replace(/^#/, '');
+                if (currentPath === linkPath || currentPath.indexOf(linkPath) === 0) {
+                  isActiveSection = true;
+                  break;
+                }
+              }
+
+              var shouldExpand = (sectionName in manualState)
+                ? manualState[sectionName]
+                : isActiveSection;
+
+              // Collapse/expand the child list
+              subList.className = subList.className
+                .replace(/\bsection-collapsed\b/g, '')
+                .replace(/\bsection-expanded\b/g, '').trim();
+              subList.classList.add('section-collapsed');
+              if (shouldExpand) subList.classList.add('section-expanded');
+
+              // Check if we already wrapped this <strong> on a previous run
+              var existing = li.querySelector('.section-toggle');
+              if (existing) {
+                // Just update expanded state
+                existing.classList.toggle('section-expanded', shouldExpand);
+                return;
+              }
+
+              // Wrap the <strong> (and any <p> around it) in a clickable <div>
+              // with a Lucide chevron-right SVG icon
+              var wrapper = document.createElement('div');
+              wrapper.className = 'section-toggle' + (shouldExpand ? ' section-expanded' : '');
+              var chevron = document.createElement('span');
+              chevron.className = 'section-chevron';
+              chevron.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+
+              // If <strong> is inside a <p>, replace the <p> entirely
+              var parent = strong.parentNode;
+              if (parent && parent.tagName === 'P') {
+                li.insertBefore(wrapper, parent);
+                wrapper.appendChild(strong);
+                wrapper.appendChild(chevron);
+                parent.remove();
+              } else {
+                li.insertBefore(wrapper, strong);
+                wrapper.appendChild(strong);
+                wrapper.appendChild(chevron);
+              }
+
+              wrapper.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var expanded = subList.classList.toggle('section-expanded');
+                wrapper.classList.toggle('section-expanded', expanded);
+                manualState[sectionName] = expanded;
+              });
+            });
+
+            // Style the Introduction link to match section headers
+            var firstItem = document.querySelector('.sidebar-nav > ul > li:first-child');
+            if (firstItem) {
+              var introLink = firstItem.querySelector('a');
+              if (introLink && !firstItem.querySelector('ul')) {
+                introLink.classList.add('section-intro-link');
+              }
+            }
+          });
+        },
+
+        // -- Sub-page collapse: only show children of active parent ------------
+        function subpageCollapsePlugin(hook) {
+          hook.doneEach(function () {
+            var currentPath = (window.location.hash.replace(/^#/, '') || '/').replace(/\?.*$/, '');
+            var allLis = document.querySelectorAll('.sidebar-nav li');
+
+            allLis.forEach(function (li) {
+              // Skip section headers (handled by sectionCollapsePlugin)
+              if (li.querySelector('.section-toggle')) return;
+              if (li.querySelector('strong')) return;
+
+              var childUl = li.querySelector(':scope > ul');
+              if (!childUl) return;
+
+              var parentLink = li.querySelector(':scope > a');
+              var isActive = false;
+
+              if (parentLink) {
+                var parentPath = (parentLink.getAttribute('href') || '').replace(/^#/, '');
+                if (currentPath === parentPath || currentPath.indexOf(parentPath.replace(/\/$/, '') + '/') === 0) {
+                  isActive = true;
+                }
+              }
+
+              if (!isActive) {
+                var childLinks = childUl.querySelectorAll(':scope > li > a');
+                for (var i = 0; i < childLinks.length; i++) {
+                  var childPath = (childLinks[i].getAttribute('href') || '').replace(/^#/, '');
+                  if (currentPath === childPath) {
+                    isActive = true;
+                    break;
+                  }
+                }
+              }
+
+              childUl.classList.add('subpage-list');
+              if (isActive) {
+                childUl.classList.add('subpage-active');
+              } else {
+                childUl.classList.remove('subpage-active');
+              }
+
+              // Add/update chevron on the parent link
+              if (parentLink) {
+                var existingChevron = parentLink.querySelector('.subpage-chevron');
+                if (!existingChevron) {
+                  var chevron = document.createElement('span');
+                  chevron.className = 'subpage-chevron';
+                  chevron.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+                  parentLink.appendChild(chevron);
+                  parentLink.classList.add('has-subpages');
+                } else {
+                  existingChevron = existingChevron; // already exists
+                }
+                // Hide chevron when active (children already visible)
+                parentLink.classList.toggle('subpages-expanded', isActive);
+              }
+            });
+          });
+        },
+
+        // -- In-page Table of Contents (fixed left of content) -----------------
+        function tocPlugin(hook) {
+          hook.doneEach(function () {
+            var article = document.querySelector('article.markdown-section');
+            if (!article) return;
+
+            // Get or create the fixed ToC container (appended to body once)
+            var toc = document.querySelector('.page-toc');
+            if (!toc) {
+              toc = document.createElement('div');
+              toc.className = 'page-toc';
+              document.body.appendChild(toc);
+            }
+
+            var headings = article.querySelectorAll('h2[id], h3[id]');
+            if (headings.length === 0) {
+              toc.style.display = 'none';
+              return;
+            }
+
+            toc.style.display = '';
+            var html = '<div class="page-toc-title">On this page</div><ul>';
+            var pagePath = window.location.hash.replace(/^#/, '').replace(/\?.*$/, '');
+
+            headings.forEach(function (h) {
+              var level = h.tagName === 'H3' ? 'toc-h3' : 'toc-h2';
+              var id = h.getAttribute('id');
+              var text = h.textContent.replace(/^#\s*/, '');
+              html += '<li class="' + level + '"><a href="#' +
+                pagePath + '?id=' + id + '">' + text + '</a></li>';
+            });
+
+            html += '</ul>';
+            toc.innerHTML = html;
+
+            // Highlight the currently visible heading on scroll
+            var contentEl = document.querySelector('section.content');
+            if (!contentEl) return;
+
+            function updateActiveHeading() {
+              var scrollTop = contentEl.scrollTop;
+              var active = null;
+
+              headings.forEach(function (h) {
+                if (h.offsetTop - 80 <= scrollTop) {
+                  active = h.getAttribute('id');
+                }
+              });
+
+              var tocLinks = toc.querySelectorAll('a');
+              tocLinks.forEach(function (a) {
+                var isActive = active && a.getAttribute('href').indexOf('id=' + active) !== -1;
+                a.classList.toggle('toc-active', !!isActive);
+              });
+            }
+
+            contentEl.addEventListener('scroll', updateActiveHeading);
+            updateActiveHeading();
+          });
+        }
+      ]
+    };
   </script>
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
-  <!-- Search -->
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
-  <!-- Mermaid diagrams -->
-  <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/docsify-mermaid@latest/dist/docsify-mermaid.js"></script>
-  <!-- Flexible alerts (callouts) -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-plugin-flexible-alerts/dist/docsify-plugin-flexible-alerts.min.js"></script>
-  <!-- Tabs -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-tabs/dist/docsify-tabs.min.js"></script>
+
+  <!-- Docsify core -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4"></script>
+
+  <!-- Docsify plugins -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-plugin-flexible-alerts@1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-pagination@2/dist/docsify-pagination.min.js"></script>
+
   <!-- PlantUML / Salt wireframe rendering -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-plantuml/dist/docsify-plantuml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-plantuml/dist/docsify-plantuml.min.js"></script>
+
+  <!-- Prism syntax highlighting -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-rust.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-typescript.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-toml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-markup.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-svelte.min.js"></script>
+
+  <!-- Mermaid diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-mermaid@2/dist/docsify-mermaid.js"></script>
+  <script>mermaid.initialize({ startOnLoad: false });</script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-mermaid-zoom@1"></script>
 </body>
 </html>

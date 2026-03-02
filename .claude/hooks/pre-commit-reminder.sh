@@ -1,25 +1,37 @@
 #!/bin/bash
-# Reminder hook for commit-related tasks
+# Reminder hook for commit-related tasks + active worktree check
+
+# Active enforcement: warn about open worktrees
+WORKTREES=$(git worktree list 2>/dev/null | grep -v "$(git rev-parse --show-toplevel 2>/dev/null)")
+if [ -n "$WORKTREES" ]; then
+    echo ""
+    echo "WARNING: Open worktrees detected — merge and clean up before reporting task complete:"
+    echo "$WORKTREES"
+    echo ""
+fi
 
 cat <<'EOF'
 PRE-COMMIT CHECKLIST:
 
 □ All checks pass (cargo test, cargo clippy, npm run check)
 □ No stub/mock/placeholder patterns in committed code
+□ No `any` types in TypeScript
 □ Working in worktree (not main)
 □ Changes are within your task scope
 □ No TODO comments or stubs added
 □ Function size limits respected (≤50 lines)
 □ Documentation updated if behaviour changed?
+□ IPC contract documentation updated for any command changes?
 
 FORBIDDEN:
 □ NEVER use --no-verify - fix the errors instead
 □ NEVER skip pre-commit hooks
 
-If merging to main:
-□ code-reviewer approval received
-□ git merge <branch> from main worktree
-□ Clean up: git branch -d <branch> && git worktree remove ../forge-<task>
+BEFORE REPORTING TASK COMPLETE (NON-NEGOTIABLE):
+□ Worktree merged to main
+□ Branch deleted: git branch -d <branch>
+□ Worktree removed: git worktree remove ../forge-<task>
+□ Verify: git worktree list (should show only main)
 
 SESSION STATE REMINDER:
 Before this session ends, write a session summary to tmp/session-state.md:

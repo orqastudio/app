@@ -49,3 +49,4 @@ fi
 echo "SESSION START CHECKLIST:"
 echo "- Read TODO.md for current tasks"
 echo "- Check BLOCKERS.md for known issues"
+echo "- Embeddings server needed for ChunkHound: ensure localhost:11435 is running"

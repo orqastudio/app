@@ -200,6 +200,7 @@ A task is NOT done unless ALL of the following are true:
 - [ ] UI matches specs (`ux-reviewer` agent, if UI changes)
 - [ ] No stub/mock/placeholder code remains
 - [ ] No TODO comments added
+- [ ] Worktree merged to main and cleaned up (branch deleted, directory removed)
 
 **If DoD is not met, the task is NOT complete. Fix deficiencies before reporting done.**
 

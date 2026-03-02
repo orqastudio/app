@@ -1,0 +1,452 @@
+/* ============================================================
+   Forge Documentation — Custom Styles
+   ============================================================ */
+
+/* ----------------------------------------------------------
+   Sidebar: logo / name area
+   ---------------------------------------------------------- */
+
+.app-name-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--theme-color, #42b983);
+  padding: 1rem 15px 0.5rem;
+  text-decoration: none;
+}
+
+.app-name-link:hover {
+  color: var(--theme-color, #42b983);
+  opacity: 0.85;
+}
+
+/* ----------------------------------------------------------
+   Search: hidden from sidebar, relocated to breadcrumb bar
+   ---------------------------------------------------------- */
+
+.sidebar .search {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* ----------------------------------------------------------
+   Content area: remove vue theme top padding so breadcrumb
+   sits flush at the top of the viewport.
+   ---------------------------------------------------------- */
+
+section.content {
+  padding-top: 2.5rem !important;
+}
+
+/* ----------------------------------------------------------
+   Breadcrumb bar: sticky top bar across content area
+   ---------------------------------------------------------- */
+
+.breadcrumb-bar {
+  padding: 0.45rem calc(80px + 1.25rem) 0.45rem 1.25rem;
+  font-size: 0.82rem;
+  color: #888;
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.15rem;
+  position: fixed;
+  top: 0;
+  left: 300px;
+  right: 0;
+  z-index: 10;
+}
+
+.breadcrumb-bar .breadcrumb-crumbs {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+}
+
+.breadcrumb-bar .breadcrumb-search {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.breadcrumb-bar .breadcrumb-search input {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.82rem;
+  width: 180px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.breadcrumb-bar .breadcrumb-search input:focus {
+  border-color: var(--theme-color, #42b983);
+}
+
+.breadcrumb-bar .breadcrumb-search .search-results {
+  position: absolute;
+  right: 1.25rem;
+  top: 100%;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  max-height: 300px;
+  overflow-y: auto;
+  width: 350px;
+  z-index: 20;
+  display: none;
+}
+
+.breadcrumb-bar .breadcrumb-search .search-results.visible {
+  display: block;
+}
+
+.breadcrumb-bar .breadcrumb-search .search-results a {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  color: #333;
+  text-decoration: none;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 0.82rem;
+}
+
+.breadcrumb-bar .breadcrumb-search .search-results a:hover {
+  background: #f9f9f9;
+}
+
+.breadcrumb-bar .breadcrumb-search .search-results a:last-child {
+  border-bottom: none;
+}
+
+.breadcrumb-bar a {
+  color: var(--theme-color, #42b983);
+  text-decoration: none;
+}
+
+.breadcrumb-bar a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-bar .separator {
+  color: #ccc;
+  margin: 0 0.2rem;
+  user-select: none;
+}
+
+/* ----------------------------------------------------------
+   GitHub corner icon (injected by Docsify `repo` setting)
+   ---------------------------------------------------------- */
+
+.github-corner svg {
+  fill: var(--theme-color, #42b983);
+  color: #fff;
+}
+
+/* ----------------------------------------------------------
+   Sidebar sections: all collapsed by default
+   Expands on click or when the section contains the active page.
+   The JS plugin adds .section-collapsed / .section-expanded classes.
+   ---------------------------------------------------------- */
+
+.sidebar-nav ul.section-collapsed {
+  display: none;
+}
+
+.sidebar-nav ul.section-collapsed.section-expanded {
+  display: block;
+}
+
+/* ----------------------------------------------------------
+   Sidebar: unified nav item sizing
+   All items (headers, links, sub-links) share the same height,
+   width, and chevron positioning. Only font-weight and indent differ.
+   ---------------------------------------------------------- */
+
+/* Base item: every navigable row in the sidebar */
+.sidebar-nav li {
+  list-style: none;
+}
+
+.sidebar-nav li > a,
+.section-toggle,
+a.section-intro-link {
+  display: flex !important;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.2rem 0;
+  font-size: 14px;
+  color: #364149;
+  text-decoration: none !important;
+  transition: color 0.15s;
+  line-height: 1.4;
+}
+
+/* Hover + Active: all items turn green */
+.sidebar-nav li > a:hover,
+.section-toggle:hover,
+.section-toggle:hover strong,
+a.section-intro-link:hover,
+a.section-intro-link.active {
+  color: var(--theme-color, #42b983) !important;
+}
+
+/* Link text fills available space (pushes chevron right) */
+.sidebar-nav li > a {
+  flex: 1;
+}
+
+/* Top-level items: bold (section headers + intro link) */
+.section-toggle strong {
+  font-weight: 700;
+  color: inherit;
+  flex: 1;
+}
+
+.section-toggle {
+  cursor: pointer;
+  user-select: none;
+  font-weight: 700;
+}
+
+a.section-intro-link {
+  font-weight: 700 !important;
+  color: #364149 !important;
+}
+
+/* Active state: must override the base color above */
+.sidebar-nav a.section-intro-link.active {
+  color: var(--theme-color, #42b983) !important;
+}
+
+/* Indentation by depth: none needed, text-indent handles it naturally */
+.sidebar-nav > ul > li > ul > li > ul {
+  padding-left: 0;
+}
+
+/* ----------------------------------------------------------
+   Chevron icon: shared styles for section + sub-page chevrons
+   All chevrons are 14px, aligned to the right edge of the row.
+   ---------------------------------------------------------- */
+
+.section-chevron,
+.subpage-chevron {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: 4px;
+  color: #aaa;
+  transition: transform 0.2s, color 0.15s;
+}
+
+.section-chevron svg,
+.subpage-chevron svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Hover: chevron turns green with its parent */
+.section-toggle:hover .section-chevron,
+.sidebar-nav a:hover .subpage-chevron {
+  color: var(--theme-color, #42b983);
+}
+
+/* Expanded state: rotate chevron 90deg */
+.section-toggle.section-expanded .section-chevron {
+  transform: rotate(90deg);
+}
+
+/* ----------------------------------------------------------
+   Sidebar sub-pages: hidden unless parent/child is active
+   ---------------------------------------------------------- */
+
+.sidebar-nav .subpage-list {
+  display: none;
+}
+
+.sidebar-nav .subpage-list.subpage-active {
+  display: block;
+}
+
+/* Sub-page parent: needs flex for chevron alignment */
+.sidebar-nav a.has-subpages {
+  display: flex;
+  align-items: center;
+}
+
+/* Hide chevron when children are already visible */
+.sidebar-nav a.has-subpages.subpages-expanded .subpage-chevron {
+  display: none;
+}
+
+/* ----------------------------------------------------------
+   In-page Table of Contents: fixed left column
+   Gap between sidebar<->ToC = Gap between ToC<->content = 1.25rem
+   ---------------------------------------------------------- */
+
+.page-toc {
+  position: fixed;
+  top: calc(2.5rem + 1.25rem);
+  left: calc(300px + 1.25rem);
+  width: 270px;
+  max-height: calc(100vh - 2.5rem - 2.5rem);
+  overflow-y: auto;
+  font-size: 14px;
+  z-index: 5;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 0.75rem;
+  background: #fff;
+}
+
+.page-toc-title {
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.page-toc ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.page-toc li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.page-toc li.toc-h2 a,
+.page-toc li.toc-h3 a {
+  display: flex !important;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.2rem 0;
+  font-size: 14px;
+  color: #888;
+  text-decoration: none !important;
+  transition: color 0.15s;
+  line-height: 1.4;
+}
+
+.page-toc li.toc-h3 a {
+  padding-left: 0.75rem;
+}
+
+.page-toc a:hover {
+  color: var(--theme-color, #42b983) !important;
+}
+
+.page-toc a.toc-active {
+  color: var(--theme-color, #42b983);
+  font-weight: 500;
+}
+
+/* Content left margin: ToC width + gap on each side */
+.markdown-section {
+  margin-left: calc(270px + 2.5rem - 10px) !important;
+}
+
+/* ----------------------------------------------------------
+   Copy-to-clipboard: replace text with Lucide clipboard icon
+   ---------------------------------------------------------- */
+
+.docsify-copy-code-button {
+  font-size: 0 !important;
+  width: 28px !important;
+  height: 28px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: transparent !important;
+  border: none !important;
+  opacity: 0.4;
+  transition: opacity 0.15s;
+}
+
+.docsify-copy-code-button:hover {
+  opacity: 0.8;
+}
+
+.docsify-copy-code-button::after {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='14' height='14' x='8' y='8' rx='2' ry='2'/%3E%3Cpath d='M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+/* ----------------------------------------------------------
+   Tables and alerts: full width within content area
+   ---------------------------------------------------------- */
+
+.markdown-section table {
+  display: table;
+  width: 100%;
+}
+
+.markdown-section table th,
+.markdown-section table td {
+  text-align: left;
+}
+
+/* Label columns (all except last) shrink to fit content */
+.markdown-section table th:not(:last-child),
+.markdown-section table td:not(:last-child) {
+  width: 1px;
+  white-space: nowrap;
+}
+
+/* Inline code in label columns must also not wrap */
+.markdown-section table td:not(:last-child) code,
+.markdown-section table th:not(:last-child) code {
+  white-space: nowrap;
+}
+
+/* Description column (last) takes remaining space */
+.markdown-section table th:last-child,
+.markdown-section table td:last-child {
+  width: auto;
+}
+
+.markdown-section .alert {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Hide ToC + reset margin on narrow screens */
+@media (max-width: 1300px) {
+  .page-toc {
+    display: none !important;
+  }
+  .markdown-section {
+    margin-left: 0 !important;
+  }
+}
