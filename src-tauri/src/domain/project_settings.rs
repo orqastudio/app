@@ -29,6 +29,8 @@ pub struct ProjectSettings {
     pub stack: Option<DetectedStack>,
     #[serde(default)]
     pub governance: Option<GovernanceCounts>,
+    #[serde(default)]
+    pub icon: Option<String>,
 }
 
 fn default_model() -> String {
@@ -104,6 +106,7 @@ mod tests {
                 hooks: 1,
                 has_claude_config: true,
             }),
+            icon: None,
         }
     }
 

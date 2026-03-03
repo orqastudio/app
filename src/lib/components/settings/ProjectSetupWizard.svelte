@@ -52,6 +52,7 @@
 			excluded_paths: ["node_modules", ".git", "target", "dist", "build"],
 			stack: scanResult.stack,
 			governance: scanResult.governance,
+			icon: null,
 		};
 		await projectStore.saveProjectSettings(props.projectPath, settings);
 		await projectStore.loadProjectSettings(props.projectPath);

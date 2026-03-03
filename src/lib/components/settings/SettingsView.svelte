@@ -195,6 +195,9 @@
 					onSave={(s) => projectStore.saveProjectSettings(project.path, s)}
 					onRescan={() => projectStore.scanProject(project.path, projectStore.projectSettings?.excluded_paths)}
 					rescanning={projectStore.scanning}
+					iconDataUrl={projectStore.iconDataUrl}
+					onUploadIcon={(sourcePath) => projectStore.uploadIcon(sourcePath)}
+					onRemoveIcon={() => projectStore.removeIcon()}
 				/>
 			{:else}
 				<ProjectSetupWizard

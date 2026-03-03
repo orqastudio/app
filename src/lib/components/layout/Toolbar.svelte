@@ -42,7 +42,11 @@
 </script>
 
 <div class="flex h-10 items-center gap-2 border-b border-border bg-background px-4">
-	<img src={fMark} alt="Forge" class="h-5 w-5" />
+	{#if projectStore.iconDataUrl}
+		<img src={projectStore.iconDataUrl} alt={projectName || "Forge"} class="h-5 w-5 rounded object-contain" />
+	{:else}
+		<img src={fMark} alt="Forge" class="h-5 w-5" />
+	{/if}
 	<span class="text-sm font-semibold">{projectName || "Forge"}</span>
 	<div class="flex-1"></div>
 	{#if hasProject}

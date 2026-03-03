@@ -41,6 +41,7 @@ export interface ProjectSettings {
 	excluded_paths: string[];
 	stack: DetectedStack | null;
 	governance: GovernanceCounts | null;
+	icon: string | null;
 }
 
 export interface GovernanceCounts {

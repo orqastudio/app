@@ -5,10 +5,14 @@
 	import { Separator } from "$lib/components/ui/separator";
 	import { Input } from "$lib/components/ui/input";
 	import { Textarea } from "$lib/components/ui/textarea";
+	import { open } from "@tauri-apps/plugin-dialog";
 	import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
 	import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
 	import XIcon from "@lucide/svelte/icons/x";
 	import PlusIcon from "@lucide/svelte/icons/plus";
+	import ImageIcon from "@lucide/svelte/icons/image";
+	import UploadIcon from "@lucide/svelte/icons/upload";
+	import TrashIcon from "@lucide/svelte/icons/trash-2";
 	import type { ProjectSettings, ProjectScanResult } from "$lib/types";
 
 	interface Props {
@@ -17,6 +21,9 @@
 		onSave: (settings: ProjectSettings) => void;
 		onRescan: () => Promise<ProjectScanResult | null>;
 		rescanning: boolean;
+		iconDataUrl: string | null;
+		onUploadIcon: (sourcePath: string) => void;
+		onRemoveIcon: () => void;
 	}
 
 	const props: Props = $props();
@@ -86,6 +93,17 @@
 			});
 		}
 	}
+
+	async function handleIconUpload() {
+		const selected = await open({
+			multiple: false,
+			title: "Select Project Icon",
+			filters: [{ name: "Images", extensions: ["png", "jpg", "jpeg", "svg", "ico"] }],
+		});
+		if (selected && typeof selected === "string") {
+			props.onUploadIcon(selected);
+		}
+	}
 </script>
 
 <Card.Root>
@@ -96,6 +114,37 @@
 		</Card.Description>
 	</Card.Header>
 	<Card.Content class="space-y-4">
+		<div class="space-y-2">
+			<span class="text-sm font-medium">Project Icon</span>
+			<div class="flex items-center gap-3">
+				{#if props.iconDataUrl}
+					<img
+						src={props.iconDataUrl}
+						alt="Project icon"
+						class="h-10 w-10 rounded border object-contain"
+					/>
+				{:else}
+					<div class="flex h-10 w-10 items-center justify-center rounded border bg-muted">
+						<ImageIcon class="h-5 w-5 text-muted-foreground" />
+					</div>
+				{/if}
+				<div class="flex gap-2">
+					<Button variant="outline" size="sm" onclick={handleIconUpload}>
+						<UploadIcon class="mr-1.5 h-3.5 w-3.5" />
+						{props.iconDataUrl ? "Change" : "Upload"}
+					</Button>
+					{#if props.iconDataUrl}
+						<Button variant="outline" size="sm" onclick={props.onRemoveIcon}>
+							<TrashIcon class="mr-1.5 h-3.5 w-3.5" />
+							Remove
+						</Button>
+					{/if}
+				</div>
+			</div>
+		</div>
+
+		<Separator />
+
 		<div>
 			<label class="text-sm font-medium" for="settings-name">Name</label>
 			<Input

@@ -75,6 +75,8 @@ pub fn run() {
             commands::project_settings_commands::project_settings_read,
             commands::project_settings_commands::project_settings_write,
             commands::project_settings_commands::project_scan,
+            commands::project_settings_commands::project_icon_upload,
+            commands::project_settings_commands::project_icon_read,
             // Settings commands
             commands::settings_commands::settings_get,
             commands::settings_commands::settings_set,

@@ -16,6 +16,7 @@ class ProjectStore {
 	projectSettings = $state<ProjectSettings | null>(null);
 	settingsLoaded = $state(false);
 	scanning = $state(false);
+	iconDataUrl = $state<string | null>(null);
 
 	get hasProject(): boolean {
 		return this.activeProject !== null;
@@ -88,6 +89,11 @@ class ProjectStore {
 				{ path },
 			);
 			this.projectSettings = settings;
+			if (settings?.icon) {
+				await this.loadIcon();
+			} else {
+				this.iconDataUrl = null;
+			}
 		} catch {
 			this.projectSettings = null;
 		} finally {
@@ -130,11 +136,54 @@ class ProjectStore {
 		}
 	}
 
+	/** Upload a project icon from a file path */
+	async uploadIcon(sourcePath: string) {
+		if (!this.projectPath || !this.projectSettings) return;
+		try {
+			const filename = await forgeInvoke<string>("project_icon_upload", {
+				project_path: this.projectPath,
+				source_path: sourcePath,
+			});
+			this.projectSettings = { ...this.projectSettings, icon: filename };
+			await this.saveProjectSettings(this.projectPath, this.projectSettings);
+			await this.loadIcon();
+		} catch (err: unknown) {
+			const message = err instanceof Error ? err.message : String(err);
+			this.error = `Failed to upload icon: ${message}`;
+		}
+	}
+
+	/** Load the project icon as a data URL */
+	async loadIcon() {
+		if (!this.projectPath || !this.projectSettings?.icon) {
+			this.iconDataUrl = null;
+			return;
+		}
+		try {
+			const dataUrl = await forgeInvoke<string>("project_icon_read", {
+				project_path: this.projectPath,
+				icon_filename: this.projectSettings.icon,
+			});
+			this.iconDataUrl = dataUrl;
+		} catch {
+			this.iconDataUrl = null;
+		}
+	}
+
+	/** Remove the project icon */
+	async removeIcon() {
+		if (!this.projectPath || !this.projectSettings) return;
+		this.projectSettings = { ...this.projectSettings, icon: null };
+		await this.saveProjectSettings(this.projectPath, this.projectSettings);
+		this.iconDataUrl = null;
+	}
+
 	/** Close the current project, returning to the welcome screen. */
 	closeProject() {
 		this.activeProject = null;
 		this.projectSettings = null;
 		this.settingsLoaded = false;
+		this.iconDataUrl = null;
 		this.error = null;
 	}
 
@@ -162,6 +211,7 @@ class ProjectStore {
 		this.projectSettings = null;
 		this.settingsLoaded = false;
 		this.scanning = false;
+		this.iconDataUrl = null;
 		this.loading = false;
 		this.error = null;
 	}
