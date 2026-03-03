@@ -1,9 +1,10 @@
 <script lang="ts">
-	import type { Session } from "$lib/types";
+	import type { Session, SessionSummary } from "$lib/types";
 	import PlusIcon from "@lucide/svelte/icons/plus";
 	import PencilIcon from "@lucide/svelte/icons/pencil";
 	import CheckIcon from "@lucide/svelte/icons/check";
 	import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
+	import HistoryIcon from "@lucide/svelte/icons/history";
 	import { Button } from "$lib/components/ui/button";
 	import {
 		DropdownMenu,
@@ -12,19 +13,26 @@
 		DropdownMenuTrigger,
 	} from "$lib/components/ui/dropdown-menu";
 	import { Badge } from "$lib/components/ui/badge";
+	import SessionDropdown from "./SessionDropdown.svelte";
 
 	let {
 		session,
+		sessions,
 		resolvedModel,
 		onNewSession,
 		onUpdateTitle,
 		onSelectModel,
+		onSelectSession,
+		onDeleteSession,
 	}: {
 		session: Session;
+		sessions: SessionSummary[];
 		resolvedModel: string | null;
 		onNewSession: () => void;
 		onUpdateTitle: (title: string) => void;
 		onSelectModel: (model: string) => void;
+		onSelectSession: (sessionId: number) => void;
+		onDeleteSession: (sessionId: number) => void;
 	} = $props();
 
 	let isEditing = $state(false);
@@ -80,6 +88,19 @@
 </script>
 
 <div class="flex items-center gap-2 border-b border-border px-3 py-2">
+	<!-- Session dropdown trigger -->
+	<SessionDropdown
+		{sessions}
+		activeSessionId={session.id}
+		onSelect={onSelectSession}
+		onNewSession={onNewSession}
+		onDelete={onDeleteSession}
+	>
+		<Button variant="ghost" size="icon-sm" aria-label="Session history" title="Session history">
+			<HistoryIcon class="h-4 w-4" />
+		</Button>
+	</SessionDropdown>
+
 	<!-- Session title -->
 	<div class="flex min-w-0 flex-1 items-center gap-1.5">
 		{#if isEditing}

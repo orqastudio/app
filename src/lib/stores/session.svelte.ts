@@ -11,6 +11,10 @@ class SessionStore {
 		return this.activeSession !== null;
 	}
 
+	get activeSessionId(): number | null {
+		return this.activeSession?.id ?? null;
+	}
+
 	async loadSessions(projectId: number): Promise<void> {
 		this.isLoading = true;
 		this.error = null;
@@ -33,6 +37,7 @@ class SessionStore {
 				model: model ?? "auto",
 			});
 			this.activeSession = session;
+			await this.persistActiveSessionId(session.id);
 			await this.loadSessions(projectId);
 			return session;
 		} catch (err) {
@@ -48,8 +53,26 @@ class SessionStore {
 			this.activeSession = await forgeInvoke<Session>("get_session", {
 				session_id: sessionId,
 			});
+			await this.persistActiveSessionId(sessionId);
 		} catch (err) {
 			this.error = err instanceof Error ? err.message : String(err);
+		} finally {
+			this.isLoading = false;
+		}
+	}
+
+	async restoreSession(sessionId: number): Promise<boolean> {
+		this.isLoading = true;
+		this.error = null;
+		try {
+			this.activeSession = await forgeInvoke<Session>("get_session", {
+				session_id: sessionId,
+			});
+			return true;
+		} catch {
+			// Session no longer exists — clear persisted ID
+			await this.clearPersistedSessionId();
+			return false;
 		} finally {
 			this.isLoading = false;
 		}
@@ -97,6 +120,7 @@ class SessionStore {
 			this.sessions = this.sessions.filter((s) => s.id !== sessionId);
 			if (this.activeSession && this.activeSession.id === sessionId) {
 				this.activeSession = null;
+				await this.clearPersistedSessionId();
 			}
 		} catch (err) {
 			this.error = err instanceof Error ? err.message : String(err);
@@ -108,6 +132,30 @@ class SessionStore {
 		this.activeSession = null;
 		this.isLoading = false;
 		this.error = null;
+	}
+
+	private async persistActiveSessionId(sessionId: number): Promise<void> {
+		try {
+			await forgeInvoke("settings_set", {
+				key: "last_session_id",
+				value: sessionId,
+				scope: "app",
+			});
+		} catch {
+			// Non-critical — best-effort persistence
+		}
+	}
+
+	private async clearPersistedSessionId(): Promise<void> {
+		try {
+			await forgeInvoke("settings_set", {
+				key: "last_session_id",
+				value: null,
+				scope: "app",
+			});
+		} catch {
+			// Non-critical — best-effort persistence
+		}
 	}
 }
 

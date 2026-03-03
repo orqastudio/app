@@ -12,11 +12,15 @@
 	import { conversationStore } from "$lib/stores/conversation.svelte";
 	import { sessionStore } from "$lib/stores/session.svelte";
 	import { projectStore } from "$lib/stores/project.svelte";
+	import { forgeInvoke } from "$lib/ipc/invoke";
+	import { onMount } from "svelte";
 
 	let scrollViewportRef = $state<HTMLElement | null>(null);
 	let userScrolledUp = $state(false);
+	let initialized = $state(false);
 
 	const session = $derived(sessionStore.activeSession);
+	const sessions = $derived(sessionStore.sessions);
 	const messages = $derived(conversationStore.messages);
 	const isStreaming = $derived(conversationStore.isStreaming);
 	const isLoading = $derived(conversationStore.isLoading);
@@ -24,6 +28,50 @@
 	const streamingContent = $derived(conversationStore.streamingContent);
 	const streamingThinking = $derived(conversationStore.streamingThinking);
 	const activeToolCalls = $derived(conversationStore.activeToolCalls);
+
+	// Restore last session on mount
+	onMount(() => {
+		restoreLastSession();
+
+		// Keyboard shortcut: Ctrl+N for new session
+		function handleKeydown(event: KeyboardEvent) {
+			if ((event.ctrlKey || event.metaKey) && event.key === "n") {
+				event.preventDefault();
+				handleNewSession();
+			}
+		}
+		window.addEventListener("keydown", handleKeydown);
+		return () => window.removeEventListener("keydown", handleKeydown);
+	});
+
+	async function restoreLastSession() {
+		const project = projectStore.activeProject;
+		if (!project) {
+			initialized = true;
+			return;
+		}
+
+		// Load sessions list for the dropdown
+		await sessionStore.loadSessions(project.id);
+
+		// Try to restore the last active session
+		if (!sessionStore.hasActiveSession) {
+			try {
+				const allSettings = await forgeInvoke<Record<string, unknown>>(
+					"settings_get_all",
+					{ scope: "app" }
+				);
+				const lastSessionId = allSettings["last_session_id"];
+				if (typeof lastSessionId === "number" && lastSessionId > 0) {
+					await sessionStore.restoreSession(lastSessionId);
+				}
+			} catch {
+				// Non-critical — proceed without restoring
+			}
+		}
+
+		initialized = true;
+	}
 
 	// Load messages when session changes
 	$effect(() => {
@@ -78,10 +126,17 @@
 	async function handleNewSession() {
 		const project = projectStore.activeProject;
 		if (!project) return;
+		conversationStore.clear();
 		await sessionStore.createSession(project.id);
-		if (sessionStore.activeSession) {
-			conversationStore.clear();
-		}
+	}
+
+	async function handleSelectSession(sessionId: number) {
+		conversationStore.clear();
+		await sessionStore.selectSession(sessionId);
+	}
+
+	async function handleDeleteSession(sessionId: number) {
+		await sessionStore.deleteSession(sessionId);
 	}
 
 	function handleUpdateTitle(title: string) {
@@ -106,14 +161,21 @@
 </script>
 
 <div class="flex h-full flex-col">
-	{#if session}
+	{#if !initialized}
+		<div class="flex h-full items-center justify-center">
+			<LoadingSpinner />
+		</div>
+	{:else if session}
 		<!-- Session header -->
 		<SessionHeader
 			{session}
+			{sessions}
 			resolvedModel={conversationStore.currentModel}
 			onNewSession={handleNewSession}
 			onUpdateTitle={handleUpdateTitle}
 			onSelectModel={handleSelectModel}
+			onSelectSession={handleSelectSession}
+			onDeleteSession={handleDeleteSession}
 		/>
 
 		<!-- Message area -->
