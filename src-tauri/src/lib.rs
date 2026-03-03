@@ -28,6 +28,7 @@ pub fn run() {
 
             app.manage(state::AppState {
                 db: std::sync::Mutex::new(conn),
+                sidecar: sidecar::manager::SidecarManager::new(),
             });
 
             Ok(())
@@ -42,6 +43,9 @@ pub fn run() {
             // Sidecar commands
             commands::sidecar_commands::sidecar_status,
             commands::sidecar_commands::sidecar_restart,
+            // Stream commands
+            commands::stream_commands::stream_send_message,
+            commands::stream_commands::stream_stop,
             // Project commands
             commands::project_commands::project_open,
             commands::project_commands::project_create,

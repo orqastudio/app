@@ -136,6 +136,17 @@ pub fn search(
     Ok(results)
 }
 
+/// Get the next turn index for a session (max turn_index + 1, or 0 if no messages).
+pub fn next_turn_index(conn: &Connection, session_id: i64) -> Result<i32, ForgeError> {
+    let max: Option<i32> = conn.query_row(
+        "SELECT MAX(turn_index) FROM messages WHERE session_id = ?1",
+        params![session_id],
+        |row| row.get(0),
+    )?;
+
+    Ok(max.map_or(0, |m| m + 1))
+}
+
 /// Update the content of a message (used during streaming accumulation).
 pub fn update_content(conn: &Connection, id: i64, content: &str) -> Result<(), ForgeError> {
     let rows = conn.execute(
@@ -396,5 +407,32 @@ mod tests {
         let conn = init_memory_db().expect("db init");
         let result = create(&conn, 999, "user", "text", Some("hello"), 0, 0);
         assert!(result.is_err(), "should fail with FK violation");
+    }
+
+    #[test]
+    fn next_turn_index_empty_session() {
+        let conn = setup();
+        let idx = next_turn_index(&conn, 1).expect("next turn index");
+        assert_eq!(idx, 0, "empty session should start at turn 0");
+    }
+
+    #[test]
+    fn next_turn_index_after_messages() {
+        let conn = setup();
+        create(&conn, 1, "user", "text", Some("msg1"), 0, 0).expect("create");
+        create(&conn, 1, "assistant", "text", Some("msg2"), 1, 0).expect("create");
+
+        let idx = next_turn_index(&conn, 1).expect("next turn index");
+        assert_eq!(idx, 2, "should be max(1) + 1 = 2");
+    }
+
+    #[test]
+    fn next_turn_index_with_gaps() {
+        let conn = setup();
+        create(&conn, 1, "user", "text", Some("msg1"), 0, 0).expect("create");
+        create(&conn, 1, "assistant", "text", Some("msg2"), 5, 0).expect("create");
+
+        let idx = next_turn_index(&conn, 1).expect("next turn index");
+        assert_eq!(idx, 6, "should be max(5) + 1 = 6");
     }
 }
