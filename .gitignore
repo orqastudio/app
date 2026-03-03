@@ -1,6 +1,7 @@
 # Rust
 /target/
-Cargo.lock
+# Note: Cargo.lock is committed for applications (not libraries)
+# src-tauri/Cargo.lock is tracked for reproducible builds
 
 # Node
 node_modules/

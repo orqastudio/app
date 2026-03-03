@@ -1,0 +1,15 @@
+{
+  "identifier": "default",
+  "description": "Default capability for Forge",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "sql:default",
+    "fs:default",
+    "shell:default",
+    "store:default",
+    "window-state:default",
+    "dialog:default",
+    "notification:default"
+  ]
+}
