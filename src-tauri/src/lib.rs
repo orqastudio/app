@@ -1,3 +1,7 @@
+pub mod domain;
+pub mod error;
+pub mod state;
+
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_sql::Builder::default().build())
