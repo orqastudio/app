@@ -4,6 +4,10 @@
 	import Toolbar from "./Toolbar.svelte";
 	import StatusBar from "./StatusBar.svelte";
 	import WelcomeScreen from "./WelcomeScreen.svelte";
+	import ProjectDashboard from "$lib/components/dashboard/ProjectDashboard.svelte";
+	import ArtifactBrowser from "$lib/components/artifact/ArtifactBrowser.svelte";
+	import ArtifactViewer from "$lib/components/artifact/ArtifactViewer.svelte";
+	import SettingsView from "$lib/components/settings/SettingsView.svelte";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 </script>
 
@@ -17,15 +21,29 @@
 		<ActivityBar />
 
 		<!-- Nav Sub-Panel (collapsible, 200px) -->
-		{#if !navigationStore.navPanelCollapsed}
+		{#if navigationStore.showNavPanel}
 			<NavSubPanel />
 		{/if}
 
 		<!-- Explorer + Chat panels -->
 		<div class="flex flex-1 overflow-hidden">
 			<!-- Explorer Panel -->
-			<div class="flex-1 overflow-auto border-r border-border">
-				<WelcomeScreen />
+			<div class="flex-1 overflow-hidden border-r border-border">
+				{#if navigationStore.activeActivity === "project"}
+					<ProjectDashboard />
+				{:else if navigationStore.activeActivity === "settings"}
+					<SettingsView />
+				{:else if navigationStore.activeActivity === "chat"}
+					<WelcomeScreen />
+				{:else if navigationStore.isArtifactActivity}
+					{#if navigationStore.explorerView === "artifact-viewer"}
+						<ArtifactViewer />
+					{:else}
+						<ArtifactBrowser category={navigationStore.activeActivity} />
+					{/if}
+				{:else}
+					<WelcomeScreen />
+				{/if}
 			</div>
 
 			<!-- Chat Panel -->

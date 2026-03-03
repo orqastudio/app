@@ -8,16 +8,77 @@ export type ActivityView =
 	| "hooks"
 	| "settings";
 
+export type ExplorerView =
+	| "artifact-list"
+	| "artifact-viewer"
+	| "project-dashboard"
+	| "settings";
+
+/** Activity views that use the nav sub-panel for sub-navigation */
+const ACTIVITIES_WITH_NAV_PANEL: ActivityView[] = [
+	"docs",
+	"agents",
+	"rules",
+	"skills",
+	"hooks",
+	"settings",
+	"chat",
+];
+
+/** Activity views that show artifact browsing in the explorer */
+const ARTIFACT_ACTIVITIES: ActivityView[] = ["docs", "agents", "rules", "skills", "hooks"];
+
 class NavigationStore {
 	activeActivity = $state<ActivityView>("chat");
+	explorerView = $state<ExplorerView>("artifact-list");
+	selectedArtifactPath = $state<string | null>(null);
 	navPanelCollapsed = $state(false);
+	breadcrumbs = $state<string[]>([]);
+
+	get showNavPanel(): boolean {
+		if (this.navPanelCollapsed) return false;
+		return ACTIVITIES_WITH_NAV_PANEL.includes(this.activeActivity);
+	}
+
+	get isArtifactActivity(): boolean {
+		return ARTIFACT_ACTIVITIES.includes(this.activeActivity);
+	}
 
 	setActivity(view: ActivityView) {
 		this.activeActivity = view;
-		// Auto-expand nav panel when switching activities
-		if (this.navPanelCollapsed) {
-			this.navPanelCollapsed = false;
+		this.selectedArtifactPath = null;
+		this.breadcrumbs = [];
+
+		if (view === "project") {
+			this.explorerView = "project-dashboard";
+			this.navPanelCollapsed = true;
+		} else if (view === "settings") {
+			this.explorerView = "settings";
+			if (this.navPanelCollapsed) {
+				this.navPanelCollapsed = false;
+			}
+		} else if (ARTIFACT_ACTIVITIES.includes(view)) {
+			this.explorerView = "artifact-list";
+			if (this.navPanelCollapsed) {
+				this.navPanelCollapsed = false;
+			}
+		} else {
+			if (this.navPanelCollapsed) {
+				this.navPanelCollapsed = false;
+			}
 		}
+	}
+
+	openArtifact(path: string, breadcrumbs: string[]) {
+		this.selectedArtifactPath = path;
+		this.explorerView = "artifact-viewer";
+		this.breadcrumbs = breadcrumbs;
+	}
+
+	closeArtifact() {
+		this.selectedArtifactPath = null;
+		this.explorerView = "artifact-list";
+		this.breadcrumbs = [];
 	}
 
 	toggleNavPanel() {
