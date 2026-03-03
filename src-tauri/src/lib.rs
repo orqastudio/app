@@ -39,8 +39,40 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_notification::init())
         .invoke_handler(tauri::generate_handler![
+            // Sidecar commands
             commands::sidecar_commands::sidecar_status,
             commands::sidecar_commands::sidecar_restart,
+            // Project commands
+            commands::project_commands::project_open,
+            commands::project_commands::project_create,
+            commands::project_commands::project_get,
+            commands::project_commands::project_get_active,
+            commands::project_commands::project_list,
+            // Session commands
+            commands::session_commands::session_create,
+            commands::session_commands::session_list,
+            commands::session_commands::session_get,
+            commands::session_commands::session_update_title,
+            commands::session_commands::session_end,
+            commands::session_commands::session_delete,
+            // Message commands
+            commands::message_commands::message_list,
+            commands::message_commands::message_search,
+            // Artifact commands
+            commands::artifact_commands::artifact_list,
+            commands::artifact_commands::artifact_get,
+            commands::artifact_commands::artifact_get_by_path,
+            commands::artifact_commands::artifact_create,
+            commands::artifact_commands::artifact_update,
+            commands::artifact_commands::artifact_delete,
+            // Settings commands
+            commands::settings_commands::settings_get,
+            commands::settings_commands::settings_set,
+            commands::settings_commands::settings_get_all,
+            // Theme commands
+            commands::theme_commands::theme_get_project,
+            commands::theme_commands::theme_set_override,
+            commands::theme_commands::theme_clear_overrides,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
