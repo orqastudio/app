@@ -74,6 +74,13 @@ src-tauri/src/
 │   ├── tier2.rs                     # hyperpolyglot language detection
 │   └── theme_extractor.rs           # Extract design tokens from tailwind.config, CSS vars
 │
+├── search/                          # Built-in code search (see search-engine.md)
+│   ├── mod.rs                       # SearchEngine struct, public API
+│   ├── store.rs                     # DuckDB connection, schema, queries
+│   ├── chunker.rs                   # .gitignore-aware file walking, code splitting
+│   ├── embedder.rs                  # ONNX Runtime + DirectML, bge-small-en-v1.5
+│   └── types.rs                     # SearchResult, ChunkInfo, IndexStatus
+│
 └── watcher/                         # File system watcher for .claude/ artifacts
     ├── mod.rs                       # Re-exports
     └── artifact_watcher.rs          # notify-debouncer-full, 500ms debounce, SHA-256 diffing
