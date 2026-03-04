@@ -1,5 +1,5 @@
 import { forgeInvoke } from "$lib/ipc/invoke";
-import type { SidecarStatus } from "$lib/types/settings";
+import type { SidecarStatus, StartupSnapshot, StartupTask } from "$lib/types/settings";
 
 export type ThemeMode = "light" | "dark" | "system";
 export type DefaultModel = "auto" | "claude-opus-4-6" | "claude-sonnet-4-6" | "claude-haiku-4-5";
@@ -39,6 +39,7 @@ class SettingsStore {
 
 	loading = $state(false);
 	error = $state<string | null>(null);
+	startupStatus = $state<StartupSnapshot | null>(null);
 
 	private _initialized = false;
 	private _pollIntervalId: ReturnType<typeof setInterval> | null = null;
@@ -159,7 +160,25 @@ class SettingsStore {
 		this.activeSection = section;
 	}
 
+	get startupDone(): boolean {
+		return this.startupStatus?.all_done ?? false;
+	}
+
+	get activeStartupTask(): StartupTask | null {
+		return this.startupStatus?.tasks.find((t) => t.status === "in_progress") ?? null;
+	}
+
 	async refreshSidecarStatus(): Promise<void> {
+		// Poll startup status until all tasks are done
+		if (!this.startupDone) {
+			try {
+				const status = await forgeInvoke<StartupSnapshot>("get_startup_status");
+				this.startupStatus = status;
+			} catch {
+				// Startup status is best-effort; don't fail the poll
+			}
+		}
+
 		try {
 			const status = await forgeInvoke<SidecarStatus>("sidecar_status");
 			this.sidecarStatus = status;

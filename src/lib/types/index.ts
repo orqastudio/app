@@ -37,6 +37,8 @@ export type {
 	ThemeToken,
 	SidecarStatus,
 	SidecarState,
+	StartupTask,
+	StartupSnapshot,
 } from "./settings";
 
 export type { StreamEvent } from "./streaming";

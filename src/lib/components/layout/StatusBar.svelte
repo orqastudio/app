@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { LoaderCircle } from "lucide-svelte";
 	import { settingsStore } from "$lib/stores/settings.svelte";
 	import { projectStore } from "$lib/stores/project.svelte";
 
@@ -32,6 +33,16 @@
 	<div class="flex min-w-0 flex-1 items-center justify-center">
 		<span class="truncate">{projectPath}</span>
 	</div>
+
+	<!-- Startup task indicator (between center and right) -->
+	{#if settingsStore.activeStartupTask}
+		<div class="mr-4 flex items-center gap-1.5">
+			<LoaderCircle class="h-3 w-3 animate-spin text-muted-foreground" />
+			<span>
+				{settingsStore.activeStartupTask.label}{settingsStore.activeStartupTask.detail ? `: ${settingsStore.activeStartupTask.detail}` : '...'}
+			</span>
+		</div>
+	{/if}
 
 	<!-- Right: Sidecar connection status -->
 	<div class="flex items-center gap-1.5">

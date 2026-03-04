@@ -22,3 +22,15 @@ export interface SidecarStatus {
 }
 
 export type SidecarState = "not_started" | "starting" | "connected" | "error" | "stopped";
+
+export interface StartupTask {
+	id: string;
+	label: string;
+	status: "pending" | "in_progress" | "done" | "error";
+	detail: string | null;
+}
+
+export interface StartupSnapshot {
+	tasks: StartupTask[];
+	all_done: boolean;
+}

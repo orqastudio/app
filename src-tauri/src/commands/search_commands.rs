@@ -3,6 +3,7 @@ use tauri::State;
 use crate::search::embedder;
 use crate::search::types::{IndexStatus, SearchResult};
 use crate::search::SearchEngine;
+use crate::startup::StartupSnapshot;
 use crate::state::AppState;
 
 /// Index a codebase at the given project path, storing chunks in DuckDB.
@@ -139,4 +140,15 @@ pub async fn init_embedder(
     }
 
     Ok(())
+}
+
+/// Get the current status of all startup tasks.
+///
+/// Returns a snapshot of every registered startup task with its current
+/// status and optional detail string (e.g. download percentage).
+#[tauri::command]
+pub async fn get_startup_status(
+    state: State<'_, AppState>,
+) -> Result<StartupSnapshot, String> {
+    Ok(state.startup.snapshot())
 }

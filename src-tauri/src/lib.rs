@@ -5,9 +5,14 @@ pub mod error;
 pub mod repo;
 pub mod search;
 pub mod sidecar;
+pub mod startup;
 pub mod state;
 
+use std::sync::Arc;
+
 use tauri::Manager;
+
+use crate::startup::TaskStatus;
 
 pub fn run() {
     tauri::Builder::default()
@@ -27,15 +32,26 @@ pub fn run() {
             let conn = db::init_db(db_path_str)
                 .map_err(|e| format!("failed to initialize database: {e}"))?;
 
+            // Create startup tracker and register tasks
+            let tracker = startup::StartupTracker::new();
+            tracker.register("sidecar", "Sidecar");
+            tracker.register("embedding_model", "Embedding model");
+
             let app_state = state::AppState {
                 db: std::sync::Mutex::new(conn),
                 sidecar: sidecar::manager::SidecarManager::new(),
                 search: std::sync::Mutex::new(None),
+                startup: Arc::clone(&tracker),
             };
 
-            // Auto-start the sidecar so the status bar shows "Connected" immediately
-            if let Err(e) = commands::sidecar_commands::ensure_sidecar_running(&app_state) {
-                eprintln!("Warning: failed to auto-start sidecar: {e}");
+            // Auto-start the sidecar
+            tracker.update("sidecar", TaskStatus::InProgress, Some("Starting...".into()));
+            match commands::sidecar_commands::ensure_sidecar_running(&app_state) {
+                Ok(()) => tracker.update("sidecar", TaskStatus::Done, None),
+                Err(e) => {
+                    eprintln!("Warning: failed to auto-start sidecar: {e}");
+                    tracker.update("sidecar", TaskStatus::Error, Some(e.to_string()));
+                }
             }
 
             app.manage(app_state);
@@ -44,17 +60,37 @@ pub fn run() {
             // search is ready when the user first needs it. Non-blocking —
             // if the model already exists this returns immediately.
             let model_dir = app_dir.join("models").join("bge-small-en-v1.5");
+            let tracker_clone = Arc::clone(&tracker);
+            tracker.update(
+                "embedding_model",
+                TaskStatus::InProgress,
+                Some("Checking...".into()),
+            );
             tauri::async_runtime::spawn(async move {
-                if let Err(e) =
-                    search::embedder::ensure_model_exists(&model_dir, |file, downloaded, total| {
+                match search::embedder::ensure_model_exists(
+                    &model_dir,
+                    |_file, downloaded, total| {
                         if let Some(total) = total {
                             let pct = (downloaded as f64 / total as f64 * 100.0) as u32;
-                            eprintln!("forge: downloading {file}: {pct}% ({downloaded}/{total})");
+                            tracker_clone.update(
+                                "embedding_model",
+                                TaskStatus::InProgress,
+                                Some(format!("{pct}%")),
+                            );
                         }
-                    })
-                    .await
+                    },
+                )
+                .await
                 {
-                    eprintln!("Warning: failed to pre-download embedding model: {e}");
+                    Ok(()) => tracker_clone.update("embedding_model", TaskStatus::Done, None),
+                    Err(e) => {
+                        eprintln!("Warning: failed to pre-download embedding model: {e}");
+                        tracker_clone.update(
+                            "embedding_model",
+                            TaskStatus::Error,
+                            Some(e.to_string()),
+                        );
+                    }
                 }
             });
 
@@ -120,6 +156,8 @@ pub fn run() {
             commands::search_commands::search_semantic,
             commands::search_commands::get_index_status,
             commands::search_commands::init_embedder,
+            // Startup commands
+            commands::search_commands::get_startup_status,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
