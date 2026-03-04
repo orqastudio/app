@@ -81,11 +81,11 @@ Design the UI. Documents in `docs/ui/`.
 
 - [x] Wireframing tool research — PlantUML Salt (primary, wireframes) + D2 (secondary, architecture diagrams). ImagineUI abandoned, not recommended. `docs/research/wireframing.md`
 - [x] Design system — Forge's own design tokens, brand extensions, component library spec, per-project theming. `docs/ui/design-system.md`
-- [x] Wireframes: Core layout — `docs/ui/wireframes/core-layout.md`
-- [x] Wireframes: Conversation view — `docs/ui/wireframes/conversation-view.md`
-- [x] Wireframes: Artifact browser — `docs/ui/wireframes/artifact-browser.md`
-- [x] Wireframes: Settings / onboarding — `docs/ui/wireframes/settings-onboarding.md`
-- [x] Wireframes: Dashboard — `docs/ui/wireframes/dashboard.md`
+- [x] Wireframes: Core layout — `docs/wireframes/core-layout.md`
+- [x] Wireframes: Conversation view — `docs/wireframes/conversation-view.md`
+- [x] Wireframes: Artifact browser — `docs/wireframes/artifact-browser.md`
+- [x] Wireframes: Settings / onboarding — `docs/wireframes/settings-onboarding.md`
+- [x] Wireframes: Dashboard — `docs/wireframes/dashboard.md`
 - [x] Component inventory — `docs/ui/component-inventory.md`
 - [x] Interaction patterns — `docs/ui/interaction-patterns.md`
 - [x] Responsive behavior — `docs/ui/responsive-behavior.md`

@@ -830,6 +830,6 @@ To prevent runaway tool loops (e.g., Claude repeatedly calling Bash in an infini
 
 - [Architecture Decisions](/architecture/decisions) -- AD-010 (tool implementation as MCP), AD-011 (security model)
 - [MVP Specification](/product/mvp-specification) -- F-004 (tool call display), F-012 (MCP tool server)
-- [Conversation View Wireframe](/ui/wireframes/conversation-view) -- Tool call card visual specifications
+- [Conversation View Wireframe](/wireframes/conversation-view) -- Tool call card visual specifications
 - [Streaming Pipeline](/architecture/decisions) -- AD-009 (how tool events flow through the system)
 - [SQLite Schema](/architecture/sqlite-schema) -- `message_blocks` table where tool call/result data is stored

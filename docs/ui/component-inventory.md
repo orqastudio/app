@@ -1,6 +1,6 @@
 # Component Inventory
 
-**Date:** 2026-03-02 | **Informed by:** [Frontend Research](/research/frontend), [Design System](/ui/design-system), [Information Architecture](/product/information-architecture), [Wireframes](/ui/wireframes/)
+**Date:** 2026-03-02 | **Informed by:** [Frontend Research](/research/frontend), [Design System](/ui/design-system), [Information Architecture](/product/information-architecture), [Wireframes](/wireframes/)
 
 Complete inventory of UI components needed for Phase 1. Split into shadcn-svelte library components (use as-is), custom application components (must be built), and custom markdown rendering blocks.
 
@@ -195,9 +195,9 @@ Extensions to the markdown renderer for Forge-specific content types.
 
 ## Component Count Summary
 
-| Category | Phase 1 | Phase 2+ | Total |
-|----------|---------|----------|-------|
-| shadcn-svelte (library) | 21 | 0 | 21 |
-| Custom application | 34 | 5 | 39 |
-| Custom markdown blocks | 2 | 2 | 4 |
-| **Total** | **57** | **7** | **64** |
+| Category | Implemented | Not Yet Built | Total |
+|----------|-------------|---------------|-------|
+| shadcn-svelte (library) | 13 families | 8+ planned | 21 |
+| Custom application | 41 | ~10 | ~51 |
+| Custom markdown blocks | 0 | 4 | 4 |
+| **Total** | **54** | **~22** | **~76** |

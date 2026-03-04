@@ -548,7 +548,7 @@ D2's superior theming, single-binary distribution, and excellent grid layout mak
 
 ```bash
 # Generate wireframe PNG from Salt file
-java -jar plantuml.jar -tpng docs/ui/wireframes/core-layout.puml -o docs/ui/wireframes/
+java -jar plantuml.jar -tpng docs/wireframes/core-layout.puml -o docs/wireframes/
 
 # Generate architecture SVG from D2 file
 d2 docs/architecture/diagrams/streaming-pipeline.d2 docs/architecture/diagrams/streaming-pipeline.svg

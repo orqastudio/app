@@ -214,4 +214,4 @@ This reuses the data collected during setup. The Settings view calls the same `c
 - [Roadmap — Phase 2a](/product/roadmap)
 - [Streaming Pipeline](/architecture/streaming-pipeline)
 - [IPC Commands](/architecture/ipc-commands)
-- [Settings & Onboarding Wireframes](/ui/wireframes/settings-onboarding)
+- [Settings & Onboarding Wireframes](/wireframes/settings-onboarding)

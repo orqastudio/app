@@ -482,7 +482,7 @@ How wireframe elements map to implementation components and libraries.
 
 ## Related Documents
 
-- [Core Layout Wireframe](/ui/wireframes/core-layout) -- Three-zone + nav sub-panel structure that contains this view
+- [Core Layout Wireframe](/wireframes/core-layout) -- Three-zone + nav sub-panel structure that contains this view
 - [Information Architecture](/product/information-architecture) -- Chat Panel: Conversation View specification
 - [Frontend Research Q1](/research/frontend) -- Markdown rendering and code highlighting decisions
 - [Frontend Research Q2](/research/frontend) -- Conversation UI component architecture

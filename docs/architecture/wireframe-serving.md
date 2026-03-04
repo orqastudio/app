@@ -104,7 +104,7 @@ CREATE TABLE wireframe_cache (
     id              INTEGER PRIMARY KEY,
     project_id      INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     wireframe_name  TEXT NOT NULL,               -- logical name, e.g. "core-layout"
-    source_path     TEXT NOT NULL,               -- relative path: "docs/ui/wireframes/core-layout.puml"
+    source_path     TEXT NOT NULL,               -- relative path: "docs/wireframes/core-layout.puml"
     source_hash     TEXT NOT NULL,               -- SHA-256 of .puml file content
     style_variant   TEXT NOT NULL                -- "light", "dark", "brand"
                     CHECK (style_variant IN ('light', 'dark', 'brand')),

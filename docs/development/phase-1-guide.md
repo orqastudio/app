@@ -17,17 +17,17 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
 | Feature ID | Name | Sub-Phase | Governing Docs | Key Files (Rust) | Key Files (Frontend) | Agent |
 |------------|------|-----------|-----------------|-------------------|----------------------|-------|
 | F-011 | SQLite Infrastructure | 1 | [sqlite-schema](/architecture/sqlite-schema) | `lib.rs`, `state.rs`, `error.rs`, `repo/` | -- | `backend-engineer` |
-| F-006 | Three-Zone + Nav Sub-Panel Layout | 2 | [svelte-components](/architecture/svelte-components), [core-layout wireframe](/ui/wireframes/core-layout) | -- | `AppLayout`, `ActivityBar`, `NavSubPanel`, `StatusBar`, `Toolbar` | `frontend-engineer` |
+| F-006 | Three-Zone + Nav Sub-Panel Layout | 2 | [svelte-components](/architecture/svelte-components), [core-layout wireframe](/wireframes/core-layout) | -- | `AppLayout`, `ActivityBar`, `NavSubPanel`, `StatusBar`, `Toolbar` | `frontend-engineer` |
 | F-001 | Project Open & Codebase Scan | 3 | [ipc-commands](/architecture/ipc-commands) (project_open, project_scan), [sqlite-schema](/architecture/sqlite-schema) (projects) | `commands/project_commands.rs`, `scanner/`, `domain/project.rs`, `repo/project_repo.rs` | `ProjectDashboard`, `ProjectSwitcher`, `project.svelte.ts`, `commands/project.ts` | `backend-engineer` + `frontend-engineer` |
 | F-001b | New Project Workflow | 3 | [ipc-commands](/architecture/ipc-commands) (project_create), [mvp-specification](/product/mvp-specification) F-001b | `commands/project_commands.rs`, `scanner/` | `ProjectSwitcher`, `WelcomeScreen` | `backend-engineer` + `frontend-engineer` |
 | F-002 | Agent SDK Sidecar Lifecycle | 4 | [rust-modules](/architecture/rust-modules) (sidecar/), [streaming-pipeline](/architecture/streaming-pipeline) | `sidecar/manager.rs`, `sidecar/protocol.rs`, `sidecar/types.rs` | `sidecar.svelte.ts`, `commands/sidecar.ts` | `backend-engineer` |
 | F-012 | MCP Tool Server | 5 | [tool-definitions](/architecture/tool-definitions), [mcp-host](/architecture/mcp-host) | `tools/mcp_server.rs`, `tools/read.rs`, `tools/write.rs`, `tools/edit.rs`, `tools/bash.rs`, `tools/glob.rs`, `tools/grep.rs`, `tools/security.rs` | -- | `backend-engineer` |
 | F-005 | Session Persistence | 6 | [ipc-commands](/architecture/ipc-commands) (session_*), [sqlite-schema](/architecture/sqlite-schema) (sessions, messages) | `commands/session_commands.rs`, `commands/message_commands.rs`, `repo/session_repo.rs`, `repo/message_repo.rs`, `domain/session.rs`, `domain/message.rs` | `session.svelte.ts`, `commands/session.ts`, `SessionDropdown`, `SessionHeader` | `backend-engineer` + `frontend-engineer` |
-| F-003 | Conversation Streaming | 7 | [ipc-commands](/architecture/ipc-commands) (stream_send_message), [streaming-pipeline](/architecture/streaming-pipeline), [conversation-view wireframe](/ui/wireframes/conversation-view) | `sidecar/stream.rs`, `commands/message_commands.rs` | `ConversationView`, `MessageBubble`, `UserMessage`, `AssistantMessage`, `MessageInput`, `StreamingIndicator`, `conversation.svelte.ts`, `commands/conversation.ts` | `backend-engineer` + `frontend-engineer` |
-| F-004 | Tool Call Display | 8 | [tool-definitions](/architecture/tool-definitions), [conversation-view wireframe](/ui/wireframes/conversation-view) | -- (uses existing stream events) | `ToolCallCard`, `ToolCallInput`, `ToolCallOutput`, `DiffView` | `frontend-engineer` |
-| F-007 | Artifact Browser | 9 | [ipc-commands](/architecture/ipc-commands) (artifact_*), [artifact-browser wireframe](/ui/wireframes/artifact-browser) | `commands/artifact_commands.rs`, `repo/artifact_repo.rs`, `watcher/artifact_watcher.rs` | `ArtifactBrowser`, `ArtifactListItem`, `ArtifactViewer`, `FrontmatterDisplay`, `artifact.svelte.ts`, `commands/artifact.ts`, `DocTreeNav`, `ArtifactListNav` | `backend-engineer` + `frontend-engineer` |
+| F-003 | Conversation Streaming | 7 | [ipc-commands](/architecture/ipc-commands) (stream_send_message), [streaming-pipeline](/architecture/streaming-pipeline), [conversation-view wireframe](/wireframes/conversation-view) | `sidecar/stream.rs`, `commands/message_commands.rs` | `ConversationView`, `MessageBubble`, `UserMessage`, `AssistantMessage`, `MessageInput`, `StreamingIndicator`, `conversation.svelte.ts`, `commands/conversation.ts` | `backend-engineer` + `frontend-engineer` |
+| F-004 | Tool Call Display | 8 | [tool-definitions](/architecture/tool-definitions), [conversation-view wireframe](/wireframes/conversation-view) | -- (uses existing stream events) | `ToolCallCard`, `ToolCallInput`, `ToolCallOutput`, `DiffView` | `frontend-engineer` |
+| F-007 | Artifact Browser | 9 | [ipc-commands](/architecture/ipc-commands) (artifact_*), [artifact-browser wireframe](/wireframes/artifact-browser) | `commands/artifact_commands.rs`, `repo/artifact_repo.rs`, `watcher/artifact_watcher.rs` | `ArtifactBrowser`, `ArtifactListItem`, `ArtifactViewer`, `FrontmatterDisplay`, `artifact.svelte.ts`, `commands/artifact.ts`, `DocTreeNav`, `ArtifactListNav` | `backend-engineer` + `frontend-engineer` |
 | F-008 | Artifact Editor | 10 | [ipc-commands](/architecture/ipc-commands) (artifact_update, artifact_create) | `commands/artifact_commands.rs` | `ArtifactEditor`, `MarkdownEditor` (CodeMirror 6) | `frontend-engineer` |
-| F-009 | Settings View | 11 | [ipc-commands](/architecture/ipc-commands) (settings_*), [settings wireframe](/ui/wireframes/settings-onboarding) | `commands/settings_commands.rs`, `repo/settings_repo.rs` | `SettingsView`, `ProviderSettings`, `ProjectSettings`, `AppearanceSettings`, `ThemeToggle` | `frontend-engineer` + `backend-engineer` |
+| F-009 | Settings View | 11 | [ipc-commands](/architecture/ipc-commands) (settings_*), [settings wireframe](/wireframes/settings-onboarding) | `commands/settings_commands.rs`, `repo/settings_repo.rs` | `SettingsView`, `ProviderSettings`, `ProjectSettings`, `AppearanceSettings`, `ThemeToggle` | `frontend-engineer` + `backend-engineer` |
 | F-010 | Status Bar | 11 | [svelte-components](/architecture/svelte-components) | -- | `StatusBar` | `frontend-engineer` |
 | F-013 | Session Handoff Summaries | 12 | [ipc-commands](/architecture/ipc-commands) (session_end), [streaming-pipeline](/architecture/streaming-pipeline) | `commands/session_commands.rs`, `sidecar/` | `SessionDropdown` (handoff preview) | `backend-engineer` |
 | F-014 | Auto-Session on Plan Mode | 13 | [mvp-specification](/product/mvp-specification) F-014 | `commands/session_commands.rs`, `sidecar/stream.rs` | `session.svelte.ts`, `conversation.svelte.ts` | `backend-engineer` + `frontend-engineer` |
@@ -83,7 +83,7 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
   - PaneForge manages three resizable zones
   - Panel sizes and collapse state persist across restarts
   - Functional at 900x600px minimum; auto-collapse below 1200px
-- **Governing Docs:** [Svelte Components](/architecture/svelte-components), [Core Layout Wireframe](/ui/wireframes/core-layout), [Information Architecture](/product/information-architecture)
+- **Governing Docs:** [Svelte Components](/architecture/svelte-components), [Core Layout Wireframe](/wireframes/core-layout), [Information Architecture](/product/information-architecture)
 - **Agent:** `frontend-engineer`
 
 ### Sub-Phase 3: Project Open & New Project (F-001, F-001b)
@@ -196,7 +196,7 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
   - Auto-scroll during streaming; user can scroll up without snap-back
   - Errors display as error blocks in conversation
   - Model selector includes "Auto (recommended)" default option
-- **Governing Docs:** [IPC Commands](/architecture/ipc-commands) (stream_send_message, StreamEvent), [Streaming Pipeline](/architecture/streaming-pipeline), [Conversation View Wireframe](/ui/wireframes/conversation-view)
+- **Governing Docs:** [IPC Commands](/architecture/ipc-commands) (stream_send_message, StreamEvent), [Streaming Pipeline](/architecture/streaming-pipeline), [Conversation View Wireframe](/wireframes/conversation-view)
 - **Agent:** `backend-engineer` (StreamHandler), `frontend-engineer` (conversation UI)
 
 ### Sub-Phase 8: Tool Call Display (F-004)
@@ -217,7 +217,7 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
   - Command calls show command + output in monospace
   - Error results are visually distinct
   - Read-only in Phase 1 (no approval/denial controls)
-- **Governing Docs:** [Tool Definitions](/architecture/tool-definitions), [Conversation View Wireframe](/ui/wireframes/conversation-view)
+- **Governing Docs:** [Tool Definitions](/architecture/tool-definitions), [Conversation View Wireframe](/wireframes/conversation-view)
 - **Agent:** `frontend-engineer`
 
 ### Sub-Phase 9: Artifact Browser (F-007)
@@ -244,7 +244,7 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
   - Markdown rendered with proper formatting; YAML frontmatter as structured metadata
   - File watcher updates within 500ms of disk change
   - Empty categories show meaningful empty state
-- **Governing Docs:** [IPC Commands](/architecture/ipc-commands) (Artifact Commands), [Artifact Browser Wireframe](/ui/wireframes/artifact-browser)
+- **Governing Docs:** [IPC Commands](/architecture/ipc-commands) (Artifact Commands), [Artifact Browser Wireframe](/wireframes/artifact-browser)
 - **Agent:** `backend-engineer` (commands, watcher), `frontend-engineer` (artifact UI)
 
 ### Sub-Phase 10: Artifact Editor (F-008)
@@ -263,7 +263,7 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
   - Unsaved changes indicator in title
   - Close with unsaved changes prompts: save, discard, cancel
   - "New" button creates template file and opens in edit mode
-- **Governing Docs:** [IPC Commands](/architecture/ipc-commands) (artifact_update, artifact_create), [Artifact Browser Wireframe](/ui/wireframes/artifact-browser)
+- **Governing Docs:** [IPC Commands](/architecture/ipc-commands) (artifact_update, artifact_create), [Artifact Browser Wireframe](/wireframes/artifact-browser)
 - **Agent:** `frontend-engineer`
 
 ### Sub-Phase 11: Settings & Status Bar (F-009, F-010)
@@ -283,7 +283,7 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
 - **Acceptance Criteria:**
   - F-009: Settings via Activity Bar icon or `Ctrl+,`; opens in Explorer Panel; Provider section shows sidecar/CLI status; Project section shows root path, detected stack, file watcher status; Appearance has theme toggle (light/dark/system) + font size; persisted via tauri-plugin-store; theme changes apply immediately
   - F-010: Status bar spans full width; sidecar status with icon + text; active model name (or "Auto -> resolved model"); token usage per session; color-coded indicators (green/yellow/red)
-- **Governing Docs:** [IPC Commands](/architecture/ipc-commands) (Settings + Theme Commands), [Settings Wireframe](/ui/wireframes/settings-onboarding)
+- **Governing Docs:** [IPC Commands](/architecture/ipc-commands) (Settings + Theme Commands), [Settings Wireframe](/wireframes/settings-onboarding)
 - **Agent:** `frontend-engineer` (settings UI, status bar), `backend-engineer` (settings + theme commands)
 
 ### Sub-Phase 12: Session Handoff Summaries (F-013)
