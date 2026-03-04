@@ -9,9 +9,11 @@
 	import CircleDotIcon from "@lucide/svelte/icons/circle-dot";
 	import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
 	import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
+	import ShieldCheckIcon from "@lucide/svelte/icons/shield-check";
 	import SelectMenu from "$lib/components/shared/SelectMenu.svelte";
 	import { projectStore } from "$lib/stores/project.svelte";
 	import { settingsStore, type ThemeMode, type DefaultModel } from "$lib/stores/settings.svelte";
+	import { setupStore } from "$lib/stores/setup.svelte";
 	import ProjectSetupWizard from "./ProjectSetupWizard.svelte";
 	import ProjectGeneralSettings from "./ProjectGeneralSettings.svelte";
 	import ProjectScanningSettings from "./ProjectScanningSettings.svelte";
@@ -61,9 +63,25 @@
 		settingsStore.setDefaultModel(value as DefaultModel);
 	}
 
+	let cliChecking = $state(false);
+
+	async function handleCheckCli(): Promise<void> {
+		cliChecking = true;
+		await setupStore.checkCli();
+		await setupStore.checkAuth();
+		cliChecking = false;
+	}
+
 	function handleRestart(): void {
 		settingsStore.restartSidecar();
 	}
+
+	// Auto-check CLI info when provider section is viewed
+	$effect(() => {
+		if (settingsStore.activeSection === "provider" && !setupStore.cliInfo) {
+			handleCheckCli();
+		}
+	});
 </script>
 
 <ScrollArea.Root class="h-full">
@@ -136,6 +154,79 @@
 					<Button variant="outline" size="sm" onclick={handleRestart}>
 						<RefreshCwIcon class="mr-1.5 h-3.5 w-3.5" />
 						Restart Sidecar
+					</Button>
+				</Card.Content>
+			</Card.Root>
+
+			<Card.Root>
+				<Card.Header>
+					<Card.Title>Claude CLI</Card.Title>
+					<Card.Description>Claude Code CLI version and authentication status</Card.Description>
+				</Card.Header>
+				<Card.Content class="space-y-4">
+					{#if cliChecking}
+						<div class="flex items-center gap-2 text-sm">
+							<LoaderCircleIcon class="h-4 w-4 animate-spin text-muted-foreground" />
+							<span class="text-muted-foreground">Checking CLI status...</span>
+						</div>
+					{:else if setupStore.cliInfo}
+						<div class="space-y-3">
+							<div class="flex items-center gap-2 text-sm">
+								<span class="w-32 text-muted-foreground">Installed:</span>
+								{#if setupStore.cliInfo.installed}
+									<div class="flex items-center gap-1.5">
+										<CircleCheckIcon class="h-4 w-4 text-green-500" />
+										<span>Yes</span>
+									</div>
+								{:else}
+									<div class="flex items-center gap-1.5">
+										<CircleXIcon class="h-4 w-4 text-red-500" />
+										<span class="text-red-600 dark:text-red-400">Not found</span>
+									</div>
+								{/if}
+							</div>
+
+							{#if setupStore.cliInfo.version}
+								<div class="flex items-center gap-2 text-sm">
+									<span class="w-32 text-muted-foreground">Version:</span>
+									<span class="font-mono text-xs">{setupStore.cliInfo.version}</span>
+								</div>
+							{/if}
+
+							{#if setupStore.cliInfo.path}
+								<div class="flex items-center gap-2 text-sm">
+									<span class="w-32 text-muted-foreground">Path:</span>
+									<span class="font-mono text-xs">{setupStore.cliInfo.path}</span>
+								</div>
+							{/if}
+
+							<div class="flex items-center gap-2 text-sm">
+								<span class="w-32 text-muted-foreground">Authenticated:</span>
+								{#if setupStore.cliInfo.authenticated}
+									<div class="flex items-center gap-1.5">
+										<ShieldCheckIcon class="h-4 w-4 text-green-500" />
+										<span>Yes</span>
+										{#if setupStore.cliInfo.subscription_type}
+											<Badge variant="secondary" class="text-xs">{setupStore.cliInfo.subscription_type}</Badge>
+										{/if}
+									</div>
+								{:else}
+									<div class="flex items-center gap-1.5">
+										<CircleXIcon class="h-4 w-4 text-amber-500" />
+										<span class="text-amber-600 dark:text-amber-400">Not authenticated</span>
+									</div>
+								{/if}
+							</div>
+						</div>
+					{:else}
+						<p class="text-sm text-muted-foreground">CLI status not checked yet.</p>
+					{/if}
+
+					<Separator />
+
+					<Button variant="outline" size="sm" onclick={handleCheckCli} disabled={cliChecking}>
+						<RefreshCwIcon class="mr-1.5 h-3.5 w-3.5" />
+						Re-check Status
 					</Button>
 				</Card.Content>
 			</Card.Root>
