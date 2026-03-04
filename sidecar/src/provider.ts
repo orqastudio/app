@@ -47,6 +47,27 @@ const SUMMARY_SYSTEM_PROMPT =
     'Summarize the following conversation in 2-3 concise sentences. ' +
     'Focus on the key topics discussed and any decisions or outcomes reached.';
 
+const TOOL_SYSTEM_PROMPT = `You have access to these tools:
+- read_file: Read a file from the filesystem
+- write_file: Write content to a file
+- edit_file: Edit a file with search and replace
+- bash: Execute a bash command
+- glob: Find files matching a glob pattern
+- grep: Search file contents with regex
+
+Use these tools by their short names. When referencing tools in your responses, use the short name (e.g. "read_file" not "mcp__forge__read_file").
+
+For understanding code structure, use grep with relevant patterns. For precise text matching, use grep.`;
+
+/**
+ * Strip MCP server prefixes from tool names.
+ * e.g. "mcp__forge__read_file" → "read_file"
+ */
+function stripMcpPrefix(name: string): string {
+    const match = name.match(/^mcp__[^_]+__(.+)$/);
+    return match ? match[1] : name;
+}
+
 // ── Session State ──
 
 /** Per-session abort controllers for cancellation. */
@@ -348,15 +369,16 @@ export async function streamMessage(
                     input: Record<string, unknown>,
                 ) => {
                     const toolCallId = `forge_approval_${nextToolCallId++}`;
+                    const strippedName = stripMcpPrefix(name);
                     process.stderr.write(
-                        `forge-sidecar: canUseTool called: name=${name} id=${toolCallId}\n`,
+                        `forge-sidecar: canUseTool called: name=${strippedName} id=${toolCallId}\n`,
                     );
 
                     // Send approval request to Rust/UI via stdout
                     sendResponse({
                         type: 'tool_approval_request',
                         tool_call_id: toolCallId,
-                        tool_name: name,
+                        tool_name: strippedName,
                         input: JSON.stringify(input),
                     });
 
@@ -376,7 +398,7 @@ export async function streamMessage(
                 },
                 pathToClaudeCodeExecutable: SDK_CLI_PATH,
                 includePartialMessages: true,  // Token-level streaming
-                systemPrompt: systemPrompt ?? undefined,
+                systemPrompt: (TOOL_SYSTEM_PROMPT + '\n\n' + (systemPrompt ?? '')).trim() || undefined,
                 model: resolvedModel,
                 abortController,
                 // Resume the SDK session if we have a previous one for this Forge session
@@ -510,31 +532,35 @@ function translateAgentMessage(
                 });
             } else if (b.type === 'tool_use') {
                 // Tool use blocks are handled by the MCP server callbacks,
-                // but we emit tracking events for the frontend
-                if (typeof b.id === 'string' && typeof b.name === 'string') {
-                    sendResponse({
-                        type: 'tool_use_start',
-                        tool_call_id: b.id,
-                        tool_name: b.name,
-                    });
-                }
-                if (typeof b.input === 'string') {
-                    sendResponse({
-                        type: 'tool_input_delta',
-                        tool_call_id:
-                            typeof b.id === 'string' ? b.id : '',
-                        content: b.input,
-                    });
-                } else if (
-                    b.input !== undefined &&
-                    b.input !== null
-                ) {
-                    sendResponse({
-                        type: 'tool_input_delta',
-                        tool_call_id:
-                            typeof b.id === 'string' ? b.id : '',
-                        content: JSON.stringify(b.input),
-                    });
+                // but we emit tracking events for the frontend.
+                // Skip forge tools — executeToolViaRust already emits these events.
+                const isForge = typeof b.name === 'string' && b.name.startsWith('mcp__forge__');
+                if (!isForge) {
+                    if (typeof b.id === 'string' && typeof b.name === 'string') {
+                        sendResponse({
+                            type: 'tool_use_start',
+                            tool_call_id: b.id,
+                            tool_name: stripMcpPrefix(b.name),
+                        });
+                    }
+                    if (typeof b.input === 'string') {
+                        sendResponse({
+                            type: 'tool_input_delta',
+                            tool_call_id:
+                                typeof b.id === 'string' ? b.id : '',
+                            content: b.input,
+                        });
+                    } else if (
+                        b.input !== undefined &&
+                        b.input !== null
+                    ) {
+                        sendResponse({
+                            type: 'tool_input_delta',
+                            tool_call_id:
+                                typeof b.id === 'string' ? b.id : '',
+                            content: JSON.stringify(b.input),
+                        });
+                    }
                 }
             }
         }

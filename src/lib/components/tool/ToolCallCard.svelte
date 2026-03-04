@@ -4,12 +4,33 @@
 	import CheckCircleIcon from "@lucide/svelte/icons/check-circle";
 	import XCircleIcon from "@lucide/svelte/icons/x-circle";
 	import LoaderIcon from "@lucide/svelte/icons/loader";
+	import FileTextIcon from "@lucide/svelte/icons/file-text";
+	import FilePenIcon from "@lucide/svelte/icons/file-pen";
+	import PencilIcon from "@lucide/svelte/icons/pencil";
+	import TerminalIcon from "@lucide/svelte/icons/terminal";
+	import FolderSearchIcon from "@lucide/svelte/icons/folder-search";
+	import FileSearchIcon from "@lucide/svelte/icons/file-search";
+	import RegexIcon from "@lucide/svelte/icons/regex";
+	import BrainIcon from "@lucide/svelte/icons/brain";
+	import BookOpenIcon from "@lucide/svelte/icons/book-open";
 	import CodeBlock from "$lib/components/content/CodeBlock.svelte";
 	import {
 		Collapsible,
 		CollapsibleContent,
 		CollapsibleTrigger,
 	} from "$lib/components/ui/collapsible";
+
+	const TOOL_DISPLAY: Record<string, { label: string; icon: typeof WrenchIcon }> = {
+		read_file: { label: "Read File", icon: FileTextIcon },
+		write_file: { label: "Write File", icon: FilePenIcon },
+		edit_file: { label: "Edit File", icon: PencilIcon },
+		bash: { label: "Run Command", icon: TerminalIcon },
+		glob: { label: "Find Files", icon: FolderSearchIcon },
+		grep: { label: "Search Content", icon: FileSearchIcon },
+		search_regex: { label: "Regex Search", icon: RegexIcon },
+		search_semantic: { label: "Semantic Search", icon: BrainIcon },
+		code_research: { label: "Code Research", icon: BookOpenIcon },
+	};
 
 	let {
 		toolName,
@@ -27,6 +48,8 @@
 
 	let open = $state(false);
 
+	const displayInfo = $derived(TOOL_DISPLAY[toolName] ?? { label: toolName, icon: WrenchIcon });
+
 	const statusColor = $derived(
 		isComplete ? (isError ? "text-destructive" : "text-green-500") : "text-muted-foreground"
 	);
@@ -41,8 +64,9 @@
 				? 'rotate-90'
 				: ''}"
 		/>
-		<WrenchIcon class="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-		<span class="flex-1 truncate font-mono text-xs">{toolName}</span>
+		{@const Icon = displayInfo.icon}
+		<Icon class="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+		<span class="flex-1 truncate font-mono text-xs">{displayInfo.label}</span>
 		{#if isComplete && isError}
 			<XCircleIcon class="h-3.5 w-3.5 shrink-0 {statusColor}" />
 		{:else if isComplete}
