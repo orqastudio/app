@@ -91,12 +91,6 @@ cargo tauri dev                   # Run Tauri app in development mode
 cargo tauri build                 # Build distributable application
 ```
 
-### Documentation
-
-```bash
-npx docsify-cli serve docs        # Browse docs locally at http://localhost:3000
-```
-
 ---
 
 ## Project Structure
@@ -110,7 +104,7 @@ forge/
 ├── src/                    # Svelte 5 frontend
 │   ├── lib/                # Shared components, stores, types
 │   └── routes/             # SvelteKit pages
-├── docs/                   # Project documentation (Docsify)
+├── docs/                   # Project documentation
 ├── tests/                  # E2E tests (Playwright)
 ├── .claude/                # Governance framework
 │   ├── agents/             # Agent definitions

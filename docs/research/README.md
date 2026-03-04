@@ -29,7 +29,7 @@ Research → Findings → Decision → AD-NNN → Implementation
 
 ## Frontmatter Convention
 
-All research documents use YAML frontmatter to enable future migration into Forge's research artifact system (Phase 1.5). This frontmatter is parseable by `yaml-front-matter` / `comrak` and maps directly to the planned research artifact schema.
+All research documents use YAML frontmatter to enable future migration into Forge's research artifact system (a future phase). This frontmatter is parseable by `yaml-front-matter` / `comrak` and maps directly to the planned research artifact schema.
 
 ```yaml
 ---
@@ -74,7 +74,7 @@ informs_features: [F-002, F-003]            # MVP features this informs
 
 ### Why This Convention
 
-These markdown files will be migrated into Forge's research artifact system in Phase 1.5 (Discovery & Research Process Management). The YAML frontmatter provides:
+These markdown files will be migrated into Forge's research artifact system in a future phase. The YAML frontmatter provides:
 
 1. **Machine-parseable metadata** — Forge can index these files into SQLite using the same `yaml-front-matter` + `comrak` pipeline used for `.claude/` governance artifacts
 2. **Question-level tracking** — Each question has its own status, enabling partial-completion visibility

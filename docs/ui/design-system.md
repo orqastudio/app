@@ -335,7 +335,7 @@ These are not provided by shadcn-svelte and must be built:
 | `MarkdownRenderer` | Rendered markdown content | `@humanspeak/svelte-markdown` |
 | `MarkdownEditor` | Source-level markdown editor | `svelte-codemirror-editor` (CodeMirror 6) |
 | `ArtifactBrowser` | Browse/filter governance artifacts | Table, Badge, Input |
-| `SessionList` | Session history with search | ScrollArea, Input |
+| `SessionDropdown` | Session switcher dropdown with search | DropdownMenu, Input |
 | `ThemeToggle` | Light/dark/system mode switch | `mode-watcher`, Button |
 
 ### Component Usage Rules
