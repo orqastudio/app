@@ -88,10 +88,10 @@ Components specific to Forge that are not provided by shadcn-svelte.
 | Component | Description | Builds On | Phase |
 |-----------|-------------|-----------|-------|
 | `ToolCallCard` | Collapsible card for a single tool call. Shows tool name, input summary, status badge. Expands to show full input/output. | Collapsible, Card, Badge | 1 |
-| `ToolCallInput` | Formatted display of tool call input parameters. Syntax-highlighted JSON/code. | CodeBlock | 1 |
-| `ToolCallOutput` | Formatted display of tool call result. Handles text, code, diff, error. | CodeBlock, DiffView | 1 |
-| `DiffView` | Unified diff display with green additions and red deletions. For Edit/Write tool calls. | — | 1 |
-| `ToolApprovalControls` | Approve / Deny / Modify buttons for pending tool calls. | Button, Badge | 2 |
+| `ToolCallInput` | Formatted display of tool call input parameters. Syntax-highlighted JSON/code. (not yet implemented) | CodeBlock | 1 |
+| `ToolCallOutput` | Formatted display of tool call result. Handles text, code, diff, error. (not yet implemented) | CodeBlock, DiffView | 1 |
+| `DiffView` | Unified diff display with green additions and red deletions. For Edit/Write tool calls. (not yet implemented) | — | 1 |
+| `ToolApprovalControls` | Approve / Deny / Modify buttons for pending tool calls. (not yet implemented) | Button, Badge | 2 |
 
 ### Content Rendering Components
 
@@ -99,17 +99,21 @@ Components specific to Forge that are not provided by shadcn-svelte.
 |-----------|-------------|-----------|-------|
 | `MarkdownRenderer` | Renders markdown content using `@humanspeak/svelte-markdown`. Custom renderers for code blocks, links, images. | `svelte-markdown` | 1 |
 | `CodeBlock` | Syntax-highlighted code block with language label and copy button. | `svelte-highlight`, Button | 1 |
-| `MarkdownEditor` | CodeMirror 6 source editor for markdown/YAML files. Save (`Ctrl+S`), cancel, unsaved indicator. | `svelte-codemirror-editor` | 1 |
-| `FrontmatterDisplay` | Renders YAML frontmatter as structured metadata badges/cards above markdown body. | Badge, Card | 1 |
+| `MarkdownEditor` | CodeMirror 6 source editor for markdown/YAML files. Save (`Ctrl+S`), cancel, unsaved indicator. (not yet implemented) | `svelte-codemirror-editor` | 1 |
+| `FrontmatterDisplay` | Renders YAML frontmatter as structured metadata badges/cards above markdown body. (not yet implemented) | Badge, Card | 1 |
 
 ### Artifact Components
 
 | Component | Description | Builds On | Phase |
 |-----------|-------------|-----------|-------|
-| `ArtifactBrowser` | Category-tabbed list of governance artifacts. Search filter. New button. Hooks category renders both lifecycle hooks and hookify rules with a subtype filter (All / Lifecycle / Hookify). | Tabs, ScrollArea, Input, Button | 1 |
-| `ArtifactListItem` | Single artifact in the browser list. Icon, name, description snippet, click to open. For hookify rules, shows event type (file/bash), action (block/warn), and pattern summary instead of frontmatter description. | Badge | 1 |
+| `ArtifactBrowser` | Category-tabbed list of governance artifacts. Search filter. New button. Hooks category renders both lifecycle hooks and hookify rules with a subtype filter (All / Lifecycle / Hookify). (not yet implemented) | Tabs, ScrollArea, Input, Button | 1 |
+| `ArtifactListItem` | Single artifact in the browser list. Icon, name, description snippet, click to open. For hookify rules, shows event type (file/bash), action (block/warn), and pattern summary instead of frontmatter description. (not yet implemented) | Badge | 1 |
 | `ArtifactViewer` | Rendered view of a single artifact. Breadcrumb, frontmatter display, markdown body, edit toggle. | MarkdownRenderer, FrontmatterDisplay | 1 |
-| `ArtifactEditor` | Source editing view. CodeMirror 6 with markdown+YAML support. Save/cancel actions. | MarkdownEditor | 1 |
+| `ArtifactEditor` | Source editing view. CodeMirror 6 with markdown+YAML support. Save/cancel actions. (not yet implemented) | MarkdownEditor | 1 |
+| `ArtifactLanding` | Category landing page for artifact browser. Shows overview and entry points for artifact categories. | Card | 1 |
+| `AgentViewer` | Specialized viewer for agent definitions. Renders agent YAML/markdown with structured display. | ArtifactViewer | 1 |
+| `SkillViewer` | Specialized viewer for skill definitions. Renders skill metadata and content. | ArtifactViewer | 1 |
+| `HookViewer` | Specialized viewer for hook scripts. Displays hook configuration and script content. | ArtifactViewer | 1 |
 | `Breadcrumb` | Navigation breadcrumb: Project > Category > Artifact name. | — | 1 |
 
 ### Navigation Components
@@ -119,20 +123,20 @@ Components specific to Forge that are not provided by shadcn-svelte.
 | `DocTreeNav` | Hierarchical tree navigation for the Docs category. Mirrors docs/ directory structure. Expand/collapse state persists. | Collapsible, ScrollArea | 1 |
 | `ArtifactListNav` | Flat or categorized list navigator for Agents, Rules, Skills, Hooks categories. Search filter input. | ScrollArea, Input | 1 |
 | `SessionDropdown` | Session switcher in Chat Panel header. Shows recent sessions, search filter, "New Session" button. | DropdownMenu, Input, Button | 1 |
-| `ProjectDashboard` | Project overview: metadata, detected stack, governance counts, quick links. Shown when Project Dashboard is active in Activity Bar. | Card, Badge | 1 |
-| `ProjectSwitcher` | Dropdown for switching between recent projects. | Popover, Command | 1 |
+| `SettingsCategoryNav` | Category navigation sidebar for the settings panel. Shows setting categories with active state. | ScrollArea, Button | 1 |
+| `ProjectSwitcher` | Dropdown for switching between recent projects. (not yet implemented) | Popover, Command | 1 |
 | `StatusBar` | Bottom bar: connection status, sidecar state, Claude Code version. | Badge | 1 |
 
 ### Settings Components
 
 | Component | Description | Builds On | Phase |
 |-----------|-------------|-----------|-------|
-| `SettingsView` | Settings panel with collapsible sections. | Collapsible | 1 |
-| `ProviderSettings` | Claude Code CLI path, sidecar status, connection health. | Input, Badge, Button | 1 |
-| `ProjectSettings` | Project root, detected stack, file watcher status, rescan button. | Input, Badge, Button | 1 |
-| `AppearanceSettings` | Theme toggle (light/dark/system), per-project theming toggle. | Select, Checkbox | 1 |
-| `ThemeToggle` | Light/dark/system mode switch button. | `mode-watcher`, Button | 1 |
-| `ShortcutsReference` | Keyboard shortcuts reference card. | Table | 1 |
+| `SettingsView` | Main settings container with category navigation and content area. | Collapsible | 1 |
+| `ProjectSetupWizard` | Project-level setup and configuration wizard. Guides initial project configuration. | Card, Button, Input | 1 |
+| `ProjectGeneralSettings` | General project settings: name, path, icon. | Input, Button | 1 |
+| `ProjectGovernanceSettings` | Governance artifact settings: agent, rule, and skill configuration. | Input, Badge, Button | 1 |
+| `ProjectScanningSettings` | Code scanning and indexing settings. | Input, Checkbox, Button | 1 |
+| `SettingsCategoryNav` | Settings navigation sidebar. (Also listed under Navigation Components.) | ScrollArea, Button | 1 |
 
 ### Layout Components
 
@@ -142,10 +146,20 @@ Components specific to Forge that are not provided by shadcn-svelte.
 | `Toolbar` | Top bar: project name, search, new session. | Button, Command | 1 |
 | `WelcomeScreen` | First-run / empty project state. Forge branding, setup guidance. | Card, Button | 1 |
 
-### Dashboard Components (Later Phases)
+### Shared Utility Components
 
 | Component | Description | Builds On | Phase |
 |-----------|-------------|-----------|-------|
+| `SmallBadge` | Small badge variant for compact displays. | Badge | 1 |
+| `MetadataRow` | Key-value metadata display row. | — | 1 |
+| `SearchInput` | Reusable search input with icon. | Input | 1 |
+| `SelectMenu` | Select/dropdown menu component. | Select | 1 |
+
+### Dashboard Components
+
+| Component | Description | Builds On | Phase |
+|-----------|-------------|-----------|-------|
+| `ProjectDashboard` | Project overview dashboard: metadata, detected stack, governance counts, quick links. Shown when Project Dashboard is active in Activity Bar. | Card, Badge | 1 |
 | `ScannerDashboard` | Scanner results list, trend chart, violation details. | Table, Card | 3 |
 | `MetricsDashboard` | KPI cards, time-series charts, lesson log. | Card, LayerChart | 5 |
 | `KPICard` | Single KPI: value, trend arrow, sparkline. | Card, LayerChart | 5 |

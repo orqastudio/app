@@ -122,7 +122,7 @@ forge/
 │   │   └── api/                  # Tauri IPC client wrappers
 │   └── app.html
 │
-├── docs/                         # Docsify documentation
+├── docs/                         # Project documentation
 │   ├── product/                  # Vision, pillars, governance, roadmap
 │   ├── architecture/             # Decisions, IPC design, module structure
 │   ├── ui/                       # UX specs, component library

@@ -25,4 +25,4 @@ See [Development > Getting Started](docs/development/getting-started.md) for pre
 
 ## Documentation
 
-Run `npx docsify-cli serve docs` to browse the full documentation site locally.
+Documentation lives in the `docs/` directory. Open any `.md` file directly or browse in Forge's built-in doc viewer.
