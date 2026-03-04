@@ -40,6 +40,24 @@ pub fn run() {
 
             app.manage(app_state);
 
+            // Pre-download the embedding model in the background so semantic
+            // search is ready when the user first needs it. Non-blocking —
+            // if the model already exists this returns immediately.
+            let model_dir = app_dir.join("models").join("bge-small-en-v1.5");
+            tauri::async_runtime::spawn(async move {
+                if let Err(e) =
+                    search::embedder::ensure_model_exists(&model_dir, |file, downloaded, total| {
+                        if let Some(total) = total {
+                            let pct = (downloaded as f64 / total as f64 * 100.0) as u32;
+                            eprintln!("forge: downloading {file}: {pct}% ({downloaded}/{total})");
+                        }
+                    })
+                    .await
+                {
+                    eprintln!("Warning: failed to pre-download embedding model: {e}");
+                }
+            });
+
             Ok(())
         })
         .plugin(tauri_plugin_fs::init())
