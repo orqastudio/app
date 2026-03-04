@@ -1,3 +1,5 @@
+![Orqa Studio](assets/banners/banner-1680x240.png)
+
 # Orqa Studio — Brand Guidelines
 
 ## 1. Brand Overview
