@@ -1,8 +1,8 @@
 # Forge TODO
 
-**Last Updated:** 2026-03-02
+**Last Updated:** 2026-03-04
 
-Current phase: **0e (Technical Design) — COMPLETE.** Phases 0a–0e all done. Ready for Phase 1 (Scaffold) pending review and approval.
+Current phase: **Phase 1 COMPLETE. Next: Phase 2a (First-Run Setup Wizard).**
 
 ---
 
@@ -109,42 +109,124 @@ Design the technical architecture. Documents in `docs/architecture/`.
 
 ---
 
-## Phase 1: Scaffold
+## Phase 1: Scaffold — COMPLETE
 
 **Prerequisites:** Phases 0a–0e complete and approved.
 
-- [ ] Initialize Tauri v2 + Svelte 5 project with plugins
-- [ ] Rust: Claude API client with streaming
-- [ ] Rust: Channel<T> streaming to frontend
-- [ ] Rust: SQLite setup with schema + migrations
-- [ ] Rust: Session CRUD commands
-- [ ] Rust: API key storage via keyring
-- [ ] Frontend: Main layout (three-zone + nav sub-panel per AD-019)
-- [ ] Frontend: Conversation with streaming tokens
-- [ ] Frontend: Tool call rendering (collapsible cards)
-- [ ] Frontend: Session dropdown in Chat Panel header
-- [ ] Frontend: Settings (API key, model selection)
-- [ ] Integration: Send message → stream → render
-- [ ] First working demo: chat with Claude in the app
+- [x] Initialize Tauri v2 + Svelte 5 project with plugins
+- [x] Rust: Claude API client with streaming
+- [x] Rust: Channel<T> streaming to frontend
+- [x] Rust: SQLite setup with schema + migrations
+- [x] Rust: Session CRUD commands
+- [x] Rust: API key storage via keyring — **Deferred:** Max subscription uses OAuth via Claude CLI, not API keys. Keyring integration not needed for current auth path.
+- [x] Frontend: Main layout (three-zone + nav sub-panel per AD-019)
+- [x] Frontend: Conversation with streaming tokens
+- [x] Frontend: Tool call rendering (collapsible cards)
+- [x] Frontend: Session dropdown in Chat Panel header
+- [x] Frontend: Settings (API key, model selection)
+- [x] Integration: Send message → stream → render
+- [x] First working demo: chat with Claude in the app — **Partially complete:** Echo sidecar works end-to-end. Real Agent SDK sidecar needs build tooling (Bun compilation).
+
+**Summary:** Phase 1 delivered a working Tauri v2 app with Claude conversations via Agent SDK sidecar, 40+ IPC commands, 91 Svelte components, full CRUD, streaming, and semantic code search (ONNX embeddings + DuckDB).
 
 ---
 
-## Phase 1.5: Discovery & Research Process Management
+## Phase 2a: First-Run Setup Wizard
 
-**Prerequisites:** Dogfood Milestone complete.
+**Prerequisites:** Phase 1 complete.
 
-First post-MVP phase. Makes the discovery process a first-class managed artifact within Forge, providing tooling to aid dogfooding of all subsequent phases. See `docs/product/roadmap.md` for details.
+Version-gated setup wizard for first launch. Detects Claude CLI, auth, sidecar, embedding model.
 
-- [ ] Research artifact type (structured objects, not just markdown)
-- [ ] Decision traceability graph (research → AD → feature → implementation)
+- [ ] Backend: Setup domain types (SetupStatus, SetupStepStatus, ClaudeCliInfo)
+- [ ] Backend: Setup commands (check_claude_cli, check_claude_auth, check_embedding_model, get_setup_status, complete_setup)
+- [ ] Backend: Version-gated setup check on app launch
+- [ ] Frontend: SetupWizard full-screen overlay component
+- [ ] Frontend: ClaudeCliStep — CLI detection + install guidance
+- [ ] Frontend: ClaudeAuthStep — Auth detection + login flow
+- [ ] Frontend: SidecarStep — Sidecar startup with status
+- [ ] Frontend: EmbeddingModelStep — Model download with progress
+- [ ] Frontend: SetupComplete — Completion confirmation
+- [ ] Frontend: SetupStore — step state, detection results, actions
+- [ ] Frontend: Mount wizard in AppLayout when setup incomplete
+- [ ] Settings: Provider section shows CLI version, auth status, re-auth button
+- [ ] Design doc: `docs/architecture/setup-wizard.md`
+
+## Phase 2b: Governance Bootstrap
+
+**Prerequisites:** Phase 2a complete (sidecar running).
+
+Claude-powered governance scan, analysis, and recommendations for projects.
+
+- [ ] Backend: Governance domain types (GovernanceScanResult, Recommendation, etc.)
+- [ ] Backend: Governance scanner — filesystem walk to collect .claude/ and other governance files
+- [ ] Backend: Governance repo — CRUD for analyses and recommendations (SQLite)
+- [ ] Backend: Governance commands (governance_scan, recommendations_list, recommendation_update, recommendation_apply)
+- [ ] Backend: Migration 002 — governance_analyses and governance_recommendations tables
+- [ ] Frontend: GovernanceBootstrapWizard — wizard overlay on project open
+- [ ] Frontend: GovernanceScanPanel — scan results and coverage indicator
+- [ ] Frontend: RecommendationList + RecommendationCard — review and approve/reject
+- [ ] Frontend: GovernanceStore — scan state, analysis state, recommendations
+- [ ] Frontend: Trigger governance scan on project open
+- [ ] Frontend: Dashboard governance health badge
+- [ ] Design doc: `docs/architecture/governance-bootstrap.md`
+
+## Phase 2c: Artifact Editing
+
+**Prerequisites:** Phase 2b complete.
+
+Edit agents, rules, skills, and hooks directly in the Forge UI.
+
+- [ ] Artifact editor component with markdown/YAML editing
+- [ ] Create new artifacts from templates
+- [ ] File watcher for external changes (CLI or text editor edits)
+- [ ] Validation and linting for artifact formats
+
+## Phase 2d: Self-Learning Loop
+
+**Prerequisites:** Phase 2c complete.
+
+Native hooks/rules for lesson capture + recurrence + promotion; Forge UI for visibility.
+
+- [ ] Native: Hooks that capture lessons after sessions
+- [ ] Native: Rules enforcing lesson checking before implementation
+- [ ] Native: CLAUDE.md describes the promotion pipeline
+- [ ] Forge: Lesson dashboard with recurrence trends
+- [ ] Forge: Browse/edit lessons UI
+- [ ] Forge: Automated promotion suggestions
+- [ ] Forge: Session analytics
+
+## Phase 2e: Enforcement & Continuity
+
+**Prerequisites:** Phase 2d complete.
+
+Native hooks for rule injection + violation detection; Forge UI for session handoff.
+
+- [ ] Native: Hooks inject rules into conversations
+- [ ] Native: Hooks detect violations
+- [ ] Forge: Real-time violation detection during streaming
+- [ ] Forge: Visual compliance dashboard
+- [ ] Forge: Session handoff and continuity
+
+## Phase 3: File Tools & MCP
+
+- [ ] Implement file tools (Read, Write, Edit, Glob, Grep) in Rust backend
+- [ ] Tool call approval flow (approve/deny/modify before execution)
+- [ ] Project file tree panel in UI
+- [ ] File viewer/editor panel
+- [ ] Git status integration
+
+## Phase 4: Process Visibility
+
+- [ ] Scanner runner and dashboard
+- [ ] Metrics dashboard with KPI cards
+- [ ] Agent activity panel
+- [ ] Documentation panel (browse, render, edit)
+
+## Phase 5: Discovery & Research
+
+- [ ] Research artifact type (structured objects)
+- [ ] Decision traceability graph
 - [ ] Research-to-AD promotion workflow
-- [ ] Discovery dashboard (open questions, pending decisions, readiness)
+- [ ] Discovery dashboard
 - [ ] Phase gate management
 - [ ] Conversational research workflow
-- [ ] Template-driven discovery
-
----
-
-## Phase 2–5
-
-See `docs/product/roadmap.md` for Phases 1.5–5 (Discovery & Research, File System Integration, Process Layer, Governance Backfill, Learning Loops). These phases are defined at a high level and will be refined as earlier phases complete.

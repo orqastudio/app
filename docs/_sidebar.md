@@ -22,6 +22,8 @@
   - [Error Taxonomy](/architecture/error-taxonomy)
   - [Wireframe Serving](/architecture/wireframe-serving)
   - [PlantUML Spike](/architecture/plantuml-spike)
+  - [Setup Wizard](/architecture/setup-wizard)
+  - [Governance Bootstrap](/architecture/governance-bootstrap)
 
 - **User Interface**
   - [Brand Identity](/ui/brand-identity)

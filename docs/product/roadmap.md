@@ -1,6 +1,6 @@
 # Roadmap
 
-**Date:** 2026-03-02
+**Date:** 2026-03-04
 
 Feature ideas and future work. Remove entries once implemented.
 
@@ -103,56 +103,117 @@ Design the technical architecture before building it. These documents live in `d
 
 ---
 
-## Phase 1: Scaffold
+## Phase 1: Scaffold — COMPLETE
 
 **Prerequisites:** Phases 0a–0e complete and approved.
 
-Build the minimum viable application that can run a conversation with Claude.
+Phase 1 delivered a working Tauri v2 app with Claude conversations via Agent SDK sidecar, 40+ IPC commands, 91 Svelte components, full CRUD, streaming, and semantic code search (ONNX embeddings + DuckDB).
 
-- [ ] Initialize Tauri v2 + Svelte 5 project with configured plugins ← AD: [AD-012](/architecture/decisions); research: [Tauri v2](/research/tauri-v2)
-- [ ] Rust backend: Claude API client with streaming (reqwest + SSE) ← AD: [AD-007, AD-009](/architecture/decisions); research: [Claude Integration](/research/claude-integration)
-- [ ] Rust backend: Channel<T> streaming to frontend ← AD: [AD-009](/architecture/decisions); research: [Tauri v2](/research/tauri-v2)
-- [ ] Rust backend: SQLite setup with initial schema + migrations ← AD: [AD-014](/architecture/decisions); research: [Persistence](/research/persistence)
-- [ ] Rust backend: Session CRUD commands ← AD: [AD-014](/architecture/decisions); research: [Persistence](/research/persistence)
-- [ ] Rust backend: API key storage via keyring ← AD: [AD-011](/architecture/decisions); research: [Tauri v2](/research/tauri-v2)
-- [ ] Frontend: Main layout (three-zone + nav sub-panel layout per AD-019) ← AD: [AD-013, AD-019](/architecture/decisions); research: [Frontend](/research/frontend); product: [Information Architecture](/product/information-architecture)
-- [ ] Frontend: Conversation component with streaming token display ← AD: [AD-013](/architecture/decisions); research: [Frontend](/research/frontend); spec: [F-003](/product/mvp-specification)
-- [ ] Frontend: Tool call rendering (collapsible cards with input/output) ← research: [Frontend](/research/frontend); spec: [F-004](/product/mvp-specification)
-- [ ] Frontend: Session dropdown in Chat Panel header ← research: [Frontend](/research/frontend); spec: [F-005](/product/mvp-specification); product: [Information Architecture](/product/information-architecture)
-- [ ] Frontend: Settings view (API key entry, model selection) ← spec: [F-009](/product/mvp-specification); product: [Information Architecture](/product/information-architecture)
-- [ ] Integration: Send message → stream response → render in UI ← spec: [F-003](/product/mvp-specification)
-- [ ] Integration: Basic tool call display (read-only, no approval yet) ← spec: [F-004](/product/mvp-specification)
-- [ ] First working demo: chat with Claude in the desktop app ← spec: [Dogfooding Validation Checklist](/product/mvp-specification)
+- [x] Initialize Tauri v2 + Svelte 5 project with configured plugins
+- [x] Rust backend: Claude API client with streaming (Agent SDK sidecar)
+- [x] Rust backend: Channel<T> streaming to frontend
+- [x] Rust backend: SQLite setup with initial schema + migrations
+- [x] Rust backend: Session CRUD commands
+- [x] Rust backend: API key storage via keyring — *Deferred: Max subscription uses OAuth via Claude CLI, not API keys*
+- [x] Frontend: Main layout (four-zone layout per AD-018/AD-019)
+- [x] Frontend: Conversation component with streaming token display
+- [x] Frontend: Tool call rendering (collapsible cards with input/output)
+- [x] Frontend: Session dropdown in Chat Panel header
+- [x] Frontend: Settings view (provider config, model selection)
+- [x] Integration: Send message → stream response → render in UI
+- [x] Integration: Basic tool call display (read-only)
+- [x] First working demo: chat with Claude in the desktop app — *Partially complete: echo sidecar works E2E, real Agent SDK sidecar needs Bun build*
+- [x] Semantic code search: ONNX embeddings + DuckDB vector search + startup model download
 
-## Dogfood Milestone (after Phase 1)
+---
 
-Once Phase 1 delivers a working chat UI with Claude integration, Forge begins managing its own development. This is the transition point from the temporary Alvarez-derived CLI process to Forge-as-primary-tool. ← spec: [Dogfooding Validation Checklist](/product/mvp-specification)
+> **Core Principle: Native Claude Code Artifacts First**
+>
+> Every capability in Phase 2 is implemented via native `.claude/` artifacts (hooks, rules, skills, CLAUDE.md) first, so it works in the CLI without Forge. Forge then adds visual management, dashboards, and enhanced UX on top. This means Forge is always additive — it never creates vendor lock-in against the Claude Code CLI.
 
-**Minimum viable dogfood:**
-- [ ] Can browse and edit process artifacts (agents, rules, skills, hooks including hookify) in the UI ← spec: [F-007, F-008](/product/mvp-specification)
-- [ ] Can run a conversation with Claude and see streaming responses ← spec: [F-003](/product/mvp-specification)
-- [ ] Can view session history ← spec: [F-005](/product/mvp-specification)
-- [ ] Can capture notes/lessons through the interface
+## Phase 2a: First-Run Setup Wizard
 
-Features that are painful or missing when dogfooding become the highest-priority work items.
+**Prerequisites:** Phase 1 complete.
 
-## Phase 1.5: Discovery & Research Process Management
+A version-gated setup wizard that runs on first launch. Detects what's configured (Claude CLI, authentication, sidecar, embedding model), skips completed steps, and guides through missing ones. Re-triggers when new requirements are added in future builds by incrementing a setup version constant.
 
-**Prerequisites:** Dogfood Milestone complete.
+- [ ] Backend: Setup domain types (SetupStatus, SetupStepStatus, ClaudeCliInfo)
+- [ ] Backend: Setup commands (check_claude_cli, check_claude_auth, check_embedding_model, get_setup_status, complete_setup)
+- [ ] Backend: Version-gated setup check on app launch
+- [ ] Frontend: SetupWizard full-screen overlay component
+- [ ] Frontend: ClaudeCliStep — CLI detection + install guidance
+- [ ] Frontend: ClaudeAuthStep — Auth detection + login flow
+- [ ] Frontend: SidecarStep — Sidecar startup with status
+- [ ] Frontend: EmbeddingModelStep — Model download with progress
+- [ ] Frontend: SetupComplete — Completion confirmation
+- [ ] Frontend: SetupStore — step state, detection results, actions
+- [ ] Frontend: Mount wizard in AppLayout when setup incomplete
+- [ ] Settings: Provider section shows CLI version, auth status, re-auth button
+- [ ] Design doc: [`docs/architecture/setup-wizard.md`](/architecture/setup-wizard)
 
-The define-before-build discovery process (research → architecture decisions → product definition → UX design → technical design) is itself a repeatable, structured workflow — but currently lives in flat markdown files. Making the discovery process a first-class managed artifact within Forge gives the PM persona a dedicated UX for driving the end-to-end journey from question to decision to design to implementation. This phase comes immediately after MVP because it provides tooling to aid dogfooding of all subsequent phases — every feature added in Phase 2+ benefits from managed discovery. ← product: [Personas](/product/personas) (Alex: PM/Tech Lead), [Journeys](/product/journeys), [Roadmap](/product/roadmap) (Phase 0a–0e pattern)
+## Phase 2b: Governance Bootstrap
 
-**Note:** Current research documents (`docs/research/*.md`) use YAML frontmatter with structured metadata to enable future migration into Forge's research artifact system. See the frontmatter convention in [`docs/research/README.md`](/research/).
+**Prerequisites:** Phase 2a complete (sidecar running).
 
-- [ ] Research artifact type — First-class `research` artifact alongside agents/rules/skills. Each research doc is a structured object: open questions, findings, verdict, status (open/complete). Not just markdown — queryable, filterable, linkable. Migrate existing `docs/research/*.md` files using their YAML frontmatter.
-- [ ] Decision traceability graph — Visual graph showing the flow from research findings → architecture decisions → product features → technical designs → implementation. Navigate upstream ("why was this decided?") and downstream ("what depends on this?").
-- [ ] Research-to-AD promotion workflow — When research produces a recommendation, a structured workflow promotes it to a formal architecture decision. Track which research informed which AD, and surface when research is updated after an AD was recorded.
-- [ ] Discovery dashboard — For a project, show: open research questions, pending decisions, unresolved design items, implementation readiness. The PM can see at a glance where the process is blocked or incomplete.
-- [ ] Phase gate management — Define phases with prerequisites, track completion, enforce sequencing. Automate the "is Phase X complete?" check rather than manually reviewing checklists.
-- [ ] Conversational research workflow — Use Claude to conduct research interactively: ask questions, evaluate options, document findings, draft recommendations. The conversation produces structured research artifacts, not just chat history.
-- [ ] Template-driven discovery — Project templates that include a discovery phase structure. "Starting a new Tauri app" could include pre-defined research questions (which plugins? which frontend framework? what persistence?) with suggested evaluation criteria.
+When a user opens a project, Claude (via sidecar) scans existing governance files, analyzes them, and generates recommendations. Output is native Claude Code artifacts (`.claude/rules/*.md`, `.claude/hooks/*.sh`, `.claude/agents/*.md`, etc.). Can also translate from other tool formats (Cursor, Copilot, Continue) into Claude Code artifacts.
 
-## Phase 2: File System Integration
+- [ ] Backend: Governance domain types (GovernanceScanResult, Recommendation, etc.)
+- [ ] Backend: Governance scanner — filesystem walk to collect .claude/ and other governance files
+- [ ] Backend: Governance repo — CRUD for analyses and recommendations (SQLite)
+- [ ] Backend: Governance commands (governance_scan, recommendations_list, recommendation_update, recommendation_apply)
+- [ ] Backend: Migration 002 — governance_analyses and governance_recommendations tables
+- [ ] Frontend: GovernanceBootstrapWizard — wizard overlay on project open
+- [ ] Frontend: GovernanceScanPanel — scan results and coverage indicator
+- [ ] Frontend: RecommendationList + RecommendationCard — review and approve/reject
+- [ ] Frontend: GovernanceStore — scan state, analysis state, recommendations
+- [ ] Frontend: Trigger governance scan on project open
+- [ ] Frontend: Dashboard governance health badge
+- [ ] Design doc: [`docs/architecture/governance-bootstrap.md`](/architecture/governance-bootstrap)
+
+## Phase 2c: Artifact Editing
+
+**Prerequisites:** Phase 2b complete.
+
+Edit agents, rules, skills, and hooks directly in the Forge UI. Forge becomes the primary interface for managing governance artifacts, with file watcher support so CLI and text editor edits are reflected in real time.
+
+- [ ] Artifact editor component with markdown/YAML editing (CodeMirror 6)
+- [ ] Create new artifacts from templates
+- [ ] File watcher for external changes (CLI or text editor edits)
+- [ ] Validation and linting for artifact formats
+
+## Phase 2d: Self-Learning Loop
+
+**Prerequisites:** Phase 2c complete.
+
+Implements the learning loop as native Claude Code hooks and rules first (works in CLI), then adds Forge-only dashboards for visibility and management.
+
+**Native artifacts:**
+- [ ] Hooks that capture lessons after sessions (post-session hook writes to `docs/development/lessons.md`)
+- [ ] Rules enforcing lesson checking before implementation
+- [ ] CLAUDE.md section describing the promotion pipeline (lesson → rule → scanner → enforcement)
+
+**Forge enhancements:**
+- [ ] Lesson dashboard with recurrence trends (LayerChart)
+- [ ] Browse/edit lessons UI
+- [ ] Automated promotion suggestions (when recurrence >= threshold)
+- [ ] Session analytics (pass/fail rates, coverage trends)
+
+## Phase 2e: Enforcement & Continuity
+
+**Prerequisites:** Phase 2d complete.
+
+Implements rule injection and violation detection as native hooks (works in CLI), then adds Forge-only real-time streaming analysis and session handoff UI.
+
+**Native artifacts:**
+- [ ] Hooks that inject relevant rules into conversations based on file context
+- [ ] Hooks that detect violations and log them
+
+**Forge enhancements:**
+- [ ] Real-time violation detection during streaming (pattern matching on streamed tokens)
+- [ ] Visual compliance dashboard
+- [ ] Session handoff and continuity (cross-session search, handoff summaries)
+
+## Phase 3: File Tools & MCP
 
 ← research: [Claude Integration](/research/claude-integration) (tool implementation), [Tauri v2](/research/tauri-v2) (fs plugin, security scopes); AD: [AD-010](/architecture/decisions), [AD-011](/architecture/decisions)
 
@@ -162,34 +223,27 @@ The define-before-build discovery process (research → architecture decisions �
 - [ ] File viewer/editor panel (markdown rendering + code highlighting) ← research: [Frontend](/research/frontend) (CodeMirror, markdown rendering)
 - [ ] Git status integration (show modified files, branch info)
 
-## Phase 3: Process Layer
+## Phase 4: Process Visibility
 
 ← research: [Onboarding](/research/onboarding) (governance format), [Frontend](/research/frontend) (LayerChart for dashboard); AD: [AD-015](/architecture/decisions)
 
-- [ ] Documentation panel (browse, render, edit project docs)
-- [ ] Scanner runner (execute scanners, parse results)
-- [ ] Scanner dashboard (pass/fail history, violation details)
+- [ ] Scanner runner and dashboard (pass/fail history, violation details)
+- [ ] Metrics dashboard with KPI cards (LayerChart)
 - [ ] Agent activity panel (which agent is working, what tools it's using)
+- [ ] Documentation panel (browse, render, edit project docs)
 
-## Phase 4: Governance Backfill
+## Phase 5: Discovery & Research
 
-← research: [Onboarding](/research/onboarding) (scanning strategy, progressive disclosure); AD: [AD-015](/architecture/decisions), [AD-016](/architecture/decisions)
+← product: [Personas](/product/personas) (Alex: PM/Tech Lead), [Journeys](/product/journeys); research: [Persistence](/research/persistence) (FTS5 search)
 
-- [ ] Codebase scanner (detect languages, frameworks, structure)
-- [ ] Conversational onboarding flow (ask questions, generate governance artifacts)
-- [ ] Agent definition generator
-- [ ] Rule generator from conversation
-- [ ] Architecture decision capture from conversation
+Research and discovery as a managed artifact within Forge, giving the PM persona tooling for the define-before-build workflow.
 
-## Phase 5: Learning Loops
-
-← research: [Persistence](/research/persistence) (session persistence, FTS5 search); product: [Journeys](/product/journeys) (Journey 5: Learning Loop)
-
-- [ ] Retrospective UI (IMPL/RETRO cards with promotion workflow)
-- [ ] Metrics dashboard (KPIs rendered as charts) ← research: [Frontend](/research/frontend) (LayerChart)
-- [ ] Session continuity (handoff notes, cross-session search) ← research: [Persistence](/research/persistence); spec: [F-013](/product/mvp-specification)
-- [ ] Bug investigation workflow (screenshot + annotation + doc comparison)
-- [ ] Cross-project learning — Global lesson store (app-level, not per-project). Promote lessons/rules from project-local to global scope. New projects inherit relevant global patterns during onboarding. Tag-based relevance matching (language, framework, domain).
+- [ ] Research artifact type (structured objects, not just markdown — queryable, filterable)
+- [ ] Decision traceability graph (research → AD → feature → implementation)
+- [ ] Research-to-AD promotion workflow
+- [ ] Discovery dashboard (open questions, pending decisions, implementation readiness)
+- [ ] Phase gate management (define phases with prerequisites, track completion)
+- [ ] Conversational research workflow (Claude-assisted investigation producing structured artifacts)
 
 ## Future: Provider Ecosystem
 
