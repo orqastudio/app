@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-03-04
 
-Current phase: **Phase 1 COMPLETE. Next: Phase 2a (First-Run Setup Wizard).**
+Current phase: **Phase 2a COMPLETE. Next: Phase 2b (Governance Bootstrap).**
 
 ---
 
@@ -135,25 +135,27 @@ Design the technical architecture. Documents in `docs/architecture/`.
 
 ---
 
-## Phase 2a: First-Run Setup Wizard
+## Phase 2a: First-Run Setup Wizard — COMPLETE
 
 **Prerequisites:** Phase 1 complete.
 
 Version-gated setup wizard for first launch. Detects Claude CLI, auth, sidecar, embedding model.
 
-- [ ] Backend: Setup domain types (SetupStatus, SetupStepStatus, ClaudeCliInfo)
-- [ ] Backend: Setup commands (check_claude_cli, check_claude_auth, check_embedding_model, get_setup_status, complete_setup)
-- [ ] Backend: Version-gated setup check on app launch
-- [ ] Frontend: SetupWizard full-screen overlay component
-- [ ] Frontend: ClaudeCliStep — CLI detection + install guidance
-- [ ] Frontend: ClaudeAuthStep — Auth detection + login flow
-- [ ] Frontend: SidecarStep — Sidecar startup with status
-- [ ] Frontend: EmbeddingModelStep — Model download with progress
-- [ ] Frontend: SetupComplete — Completion confirmation
-- [ ] Frontend: SetupStore — step state, detection results, actions
-- [ ] Frontend: Mount wizard in AppLayout when setup incomplete
-- [ ] Settings: Provider section shows CLI version, auth status, re-auth button
-- [ ] Design doc: `docs/architecture/setup-wizard.md`
+- [x] Backend: Setup domain types (SetupStatus, SetupStepStatus, ClaudeCliInfo)
+- [x] Backend: Setup commands (check_claude_cli, check_claude_auth, check_embedding_model, get_setup_status, complete_setup)
+- [x] Backend: Version-gated setup check on app launch
+- [x] Frontend: SetupWizard full-screen overlay component
+- [x] Frontend: ClaudeCliStep — CLI detection + install guidance
+- [x] Frontend: ClaudeAuthStep — Auth detection + login flow
+- [x] Frontend: SidecarStep — Sidecar startup with status
+- [x] Frontend: EmbeddingModelStep — Model download with progress
+- [x] Frontend: SetupComplete — Completion confirmation
+- [x] Frontend: SetupStore — step state, detection results, actions
+- [x] Frontend: Mount wizard in AppLayout when setup incomplete
+- [ ] Settings: Provider section shows CLI version, auth status, re-auth button — **Deferred:** not blocking; settings view already shows sidecar status
+- [x] Design doc: `docs/architecture/setup-wizard.md`
+
+**Summary:** Phase 2a delivered a 5-step setup wizard (CLI detection, auth verification, sidecar startup, embedding model check, completion) gated by `setup_version` in SQLite. 5 Tauri commands, 6 Svelte components, 13 backend tests. Wizard blocks main UI until all prerequisites pass, skips on subsequent launches.
 
 ## Phase 2b: Governance Bootstrap
 
