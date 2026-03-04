@@ -2,9 +2,11 @@
 
 **Date:** 2026-03-02
 
-Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped to the minimum needed for dogfooding — Forge must be able to manage its own development after this phase.
+Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped to the minimum needed for dogfooding — Forge must be able to manage its own development after this phase. Forge requires the Claude Code CLI as a prerequisite; it wraps the CLI with a visual management layer rather than replacing it.
 
-**Guiding principle:** Ship the smallest thing that lets us stop using the CLI-based bootstrap process for Forge's own development. Every feature below serves the dogfooding milestone. Features that would be nice but aren't needed for dogfooding are listed under "Explicitly Deferred."
+**Guiding principle:** Ship the smallest thing that lets us supplement the CLI-based bootstrap process with Forge's visual governance UI. Every feature below serves the dogfooding milestone. Features that would be nice but aren't needed for dogfooding are listed under "Explicitly Deferred."
+
+**Universal acceptance criterion:** All `.claude/` files created or modified by Forge are immediately compatible with the Claude Code CLI. No proprietary formats, no migration steps.
 
 ---
 
@@ -66,7 +68,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 
 ### F-002: Agent SDK Sidecar Lifecycle
 
-**Description:** Forge spawns, monitors, and communicates with the Agent SDK sidecar process.
+**Description:** Forge requires the Claude Code CLI and spawns an Agent SDK sidecar process to communicate with Claude. The sidecar is the bridge between Forge's UI and Claude's capabilities.
 
 **Acceptance Criteria:**
 - [ ] Sidecar binary is bundled with the application (Bun-compiled, ~18-25 MB)
@@ -208,6 +210,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] Unsaved changes are indicated visually (modified indicator in title)
 - [ ] Closing the editor with unsaved changes prompts: save, discard, or cancel
 - [ ] "New" button in artifact browser creates a template file and opens it in edit mode
+- [ ] Edited files are saved in native `.claude/` format and are immediately usable by the Claude Code CLI without any conversion
 
 **Architecture References:** AD-013 (CodeMirror 6), AD-015 (governance format)
 

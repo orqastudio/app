@@ -48,9 +48,18 @@ The following are immutable without explicit user approval:
 8. **Documentation-first workflow** — Document → Approve → Implement → Verify
 9. **Error propagation** — Result types everywhere, no unwrap in production
 
-## Bootstrap Phase — Temporary Alvarez-Derived Process
+## Governance Artifact Format
 
-> **This section documents a temporary state.** The current development process is inherited from the [Alvarez project](../process/orchestration) and will be replaced by Forge itself once the MVP is functional.
+Governance artifacts are native `.claude/` files stored on disk. Forge reads and writes these files through its UI. The same files are read by the Claude Code CLI. Forge's SQLite database is a derived cache, not the source of truth.
+
+This means:
+- `.claude/rules/*.md`, `.claude/agents/*.md`, `.claude/skills/`, `.claude/hooks/`, and `CLAUDE.md` are the canonical governance format
+- Users can edit these files in Forge, in a text editor, or through a Claude Code CLI session — all changes are reflected everywhere
+- Forge adds a visual management layer on top of this file-based governance; it does not replace the file format with a proprietary one
+
+## Bootstrap Phase — CLI-Only Governance
+
+> **This section documents the current state.** The governance framework uses native `.claude/` artifacts managed through the Claude Code CLI. Forge will supplement this with a visual UI once the MVP is functional.
 
 The current process uses:
 
@@ -61,15 +70,15 @@ The current process uses:
 - **3 hooks** in `.claude/hooks/` (session start, skill loading, pre-commit)
 - **Git worktree workflow** for task isolation
 
-This is the same framework used in the Alvarez project, adapted for Forge's Tauri/Svelte/Rust stack. It works, but it's invisible infrastructure — exactly the problem Forge exists to solve.
+This is the same framework used in the Alvarez project, adapted for Forge's Tauri/Svelte/Rust stack. The governance works, but it is invisible — artifacts live in dotfiles and terminal output. This is exactly the problem Forge exists to solve: making this governance visible through a UI while preserving the underlying `.claude/` file format.
 
 ### The Dogfooding Milestone
 
-Once the MVP delivers a working conversation UI with basic Claude integration (Phase 1 complete), **Forge must become the primary tool for managing its own development.** This means:
+Once the MVP delivers a working conversation UI with basic Claude integration (Phase 1 complete), **Forge's UI becomes the primary way to manage governance for its own development.** The CLI remains available for all development tasks. This means:
 
-1. **Process artifacts become visible** — Agents, rules, skills, and docs are browsed and edited in Forge's UI, not raw files
+1. **Process artifacts become visible** — Agents, rules, skills, and docs are browsed and edited in Forge's UI, supplementing the raw file access that the CLI provides
 2. **Learning loops are active** — IMPL lessons and RETRO entries are captured through Forge's interface, not manual markdown editing
-3. **Governance is enforced through Forge** — Scanner results, verification gates, and compliance checks surface in the dashboard, not terminal output
+3. **Governance is visible through Forge** — Scanner results, verification gates, and compliance checks surface in the dashboard, supplementing terminal output
 
 ### Why Dogfooding Matters
 
@@ -82,15 +91,16 @@ Using Forge to build Forge creates a natural feedback loop:
 
 ### Transition Criteria
 
-The Alvarez-derived process is retired when Forge can:
+Forge's UI becomes the primary governance management tool when it can:
 
-- [ ] Display and edit process artifacts (agents, rules, skills)
+- [ ] Display and edit process artifacts (agents, rules, skills) through its UI
 - [ ] Run a conversation with Claude and display streaming responses
 - [ ] Show scanner/verification results in the UI
 - [ ] Capture IMPL lessons through the interface
 - [ ] Persist session history in SQLite
+- [ ] Detect and display Claude Code CLI status and version
 
-Until these criteria are met, the current CLI-based process remains in effect.
+Until these criteria are met, governance is managed through direct `.claude/` file editing and CLI sessions. After these criteria are met, both Forge and the CLI continue to operate on the same `.claude/` artifacts — Forge adds the visual layer, the CLI remains fully functional.
 
 ## Decision Process
 

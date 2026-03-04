@@ -31,7 +31,7 @@ Alex is a senior product manager with a strong technical background. They can re
 
 ### Pain Points
 
-1. **Invisible governance** — Current AI tools bury process artifacts in dotfiles and terminal output. Alex can't see the governance framework without reading raw markdown files and CLI logs.
+1. **Invisible governance** — Claude Code CLI's governance lives in `.claude/` dotfiles and terminal output. Alex can't see the governance framework without reading raw markdown files and CLI logs.
 2. **No oversight layer** — There's no way to define standards and verify they're being followed without manually reviewing every output. The approval gate is missing.
 3. **Context loss** — Every new conversation starts from scratch. Lessons learned in one session aren't automatically applied in the next.
 4. **Cost unpredictability** — API-based pricing makes costs hard to forecast. A productive day of agentic development can cost hundreds of dollars.
@@ -49,7 +49,11 @@ Alex is a senior product manager with a strong technical background. They can re
 
 ### What Success Looks Like
 
-Alex can manage a product's entire development cycle — from requirement to shipped feature — through Forge's UI. They define the standards, the AI implements within those standards, and the system gets smarter over time. Alex spends their time on product decisions and architecture review, not on terminal commands and dotfile management.
+Alex can manage a product's entire development cycle — from requirement to shipped feature — through Forge's UI. They define the standards, Claude Code agents implement within those standards, and the system gets smarter over time. Alex spends their time on product decisions and architecture review, not on terminal commands and dotfile management.
+
+### Relationship to Claude Code CLI
+
+Alex uses Forge as their primary interface. The governance artifacts they create and edit through Forge's UI are native `.claude/` files — meaning Claude Code agents running in the CLI also follow them. Alex benefits from CLI-compatible artifacts without needing to manage the CLI directly.
 
 ### Key Design Implications
 
@@ -67,7 +71,7 @@ Alex can manage a product's entire development cycle — from requirement to shi
 
 ### Profile
 
-Sam is a senior software developer who already uses AI coding tools (Claude Code, Copilot, Cursor) daily. They write production code and are comfortable in the terminal. They're interested in Forge because they want their AI-assisted workflow to be more structured, repeatable, and self-improving — not because they need a GUI wrapper for the CLI.
+Sam is a senior software developer who already uses Claude Code CLI and other AI coding tools (Copilot, Cursor) daily. They write production code and are comfortable in the terminal. They value Forge as a visual layer that makes the Claude Code CLI's governance visible and manageable — seeing rule enforcement trends, browsing agent definitions, and tracking learning loop metrics through a UI rather than reading raw dotfiles.
 
 ### Demographics
 
@@ -104,6 +108,10 @@ Sam is a senior software developer who already uses AI coding tools (Claude Code
 ### What Success Looks Like
 
 Sam's AI-assisted development produces consistently high-quality results because the governance framework is active, not passive. Mistakes from last week don't recur this week. Standards are enforced automatically. The process improves without Sam manually editing rule files.
+
+### Relationship to Claude Code CLI
+
+Sam uses both Forge and the Claude Code CLI interchangeably. As a power user of the CLI, Sam appreciates that Forge operates on the same `.claude/` artifacts — governance changes made in Forge are immediately effective in CLI sessions, and vice versa. Sam may prefer the CLI for coding and Forge for governance visibility.
 
 ### Key Design Implications
 
@@ -160,6 +168,10 @@ Jordan is building a product alone or with a very small team. They have enough t
 
 Jordan ships quality software at a pace that would normally require a small team. The governance framework they build up over time becomes a compounding advantage — each session is better than the last because the rules, lessons, and scanners accumulate. Jordan spends time on product decisions, not process management.
 
+### Relationship to Claude Code CLI
+
+Jordan may discover Forge after already using the Claude Code CLI, or may use Forge to bootstrap governance that is then available in CLI sessions. Either path works because Forge and the CLI share the same `.claude/` artifact format. Jordan benefits from Forge's visual governance management without being locked out of the CLI when they need it.
+
 ### Key Design Implications
 
 - **Instant value** — First-run experience must deliver a working conversation within 1 minute
@@ -181,6 +193,7 @@ Jordan ships quality software at a pace that would normally require a small team
 | MCP extensibility | Low priority | High priority | Low priority |
 | Learning loop value | Strategic (quality trends) | Tactical (stop repeating mistakes) | Survival (safety net) |
 | Cost sensitivity | Budget-aware, prefers flat rate | Employer pays, less sensitive | Highly sensitive, needs flat rate |
+| CLI usage | Minimal — prefers Forge UI | Heavy — uses CLI and Forge interchangeably | Occasional — prefers Forge, CLI when needed |
 | First-run expectation | 5-10 min setup, configure governance | 1-2 min, connect to existing project | < 1 min to first conversation |
 
 ---

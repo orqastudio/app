@@ -10,7 +10,9 @@ The result: AI-assisted development produces inconsistent quality, accumulates t
 
 ## Solution
 
-Forge is a desktop application that automates product management and the agentic implementation cycle. It wraps Claude's capabilities with a visual process layer where governance artifacts — agents, skills, rules, architecture decisions, learning loops — live alongside the conversation as interactive, editable documents. The system learns from every session and feeds improvements back into the governance framework automatically.
+Forge is a desktop application that wraps the Claude Code CLI with a visual product management layer. Governance artifacts — agents, skills, rules, architecture decisions, learning loops — are native `.claude/` files on disk, the same format that Claude Code CLI reads and writes. Forge adds a UI where these artifacts live alongside the conversation as interactive, editable documents. The system learns from every session and feeds improvements back into the governance framework automatically.
+
+Users can switch between Forge and the Claude Code CLI interchangeably. Both tools operate on the same `.claude/` directory. Forge does not replace the CLI — it makes the CLI's file-based governance visible and manageable through a graphical interface.
 
 Forge turns the invisible infrastructure of managed agentic development into a tangible, manageable product.
 
@@ -18,7 +20,7 @@ Forge turns the invisible infrastructure of managed agentic development into a t
 
 ### Product Managers & Tech Leads (Primary)
 
-Technical product managers and tech leads who want to:
+Technical product managers and tech leads who use Claude Code agents and want to:
 
 - Define product requirements, architecture, and standards through a structured UI
 - Delegate implementation to AI agents with confidence that process governance is enforced
@@ -30,7 +32,7 @@ A capable solo technical PM should be able to use Forge to build well-researched
 
 ### Developers (Secondary)
 
-Developers who want structured, repeatable, improving processes for their AI-assisted work. Forge makes the governance layer visible and manageable rather than buried in dotfiles and terminal output.
+Developers who already use Claude Code CLI and want structured, repeatable, improving processes for their AI-assisted work. Forge makes the CLI's governance layer visible and manageable rather than buried in dotfiles and terminal output. Developers can use Forge and the CLI interchangeably — the same `.claude/` artifacts power both.
 
 ### The Key Insight
 
@@ -64,19 +66,30 @@ Governance is not a document collecting dust. It is a living, enforceable, visib
 
 ## Dogfooding Principle
 
-Forge is built using Forge. Once the MVP delivers a working conversation UI with Claude integration, the project transitions from the bootstrap Alvarez-derived process (CLI-based agents, markdown rules, terminal-only governance) to using Forge itself as the primary development management tool.
+Forge is built using Forge alongside the Claude Code CLI. Once the MVP delivers a working conversation UI with Claude integration, the project transitions from terminal-only governance (reading raw `.claude/` files and CLI output) to using Forge's UI as the primary governance management layer — while the CLI remains available for all development tasks.
 
 This is not optional — it is a foundational design constraint:
 
 - **Every governance feature must be good enough for Forge's own team to use daily.** If a feature isn't useful for managing this project, it isn't useful for anyone.
 - **Deficiencies discovered through self-use are highest-priority fixes.** The dogfooding loop is the primary driver of roadmap priority after the MVP.
-- **The bootstrap process is temporary scaffolding**, not the long-term architecture. See [Product Governance](/product/governance) for transition criteria.
+- **Forge and the CLI coexist permanently.** The transition is from "invisible CLI governance buried in dotfiles" to "visible governance through Forge's UI." The CLI continues to work against the same `.claude/` files. See [Product Governance](/product/governance) for transition criteria.
+
+## CLI Interoperability
+
+Forge is a companion to the Claude Code CLI, not a replacement for it. This interoperability is a foundational design constraint:
+
+- **Shared artifact format** — All governance artifacts Forge creates (`.claude/rules/`, `.claude/hooks/`, `.claude/agents/`, `.claude/skills/`, `CLAUDE.md`) are native Claude Code artifacts. They work identically whether accessed through Forge's UI or the CLI.
+- **Bidirectional editing** — Users can edit `.claude/` files in Forge's artifact editor, in a text editor, or through Claude Code CLI sessions. Forge's file watcher detects external changes and reflects them in the UI.
+- **No lock-in** — A user can stop using Forge at any time and continue with the CLI alone. All governance artifacts remain functional on disk.
+- **SQLite is a derived cache** — Forge's SQLite database stores session history, project metadata, and indexed artifact data. The `.claude/` files on disk are the source of truth for governance. If the database is deleted, Forge re-indexes from disk on next launch.
+- **CLI detection** — Forge checks for Claude Code CLI availability at startup and surfaces its status in the UI. The CLI is a prerequisite for AI-powered features.
 
 ## Key Differentiators
 
 1. **Product management, not developer tooling** — Designed for PMs and tech leads who define process and review results, not just developers who write code
-2. **Process visibility** — What was invisible (governance artifacts, scanner results, learning loops) becomes a first-class UI
-3. **Automated governance backfill** — Point at an existing codebase, answer questions, and Forge builds the governance framework through conversation
-4. **Continuous improvement** — The system genuinely gets smarter over time through the learning loop, not just accumulating conversation history
-5. **Solo PM capability** — A technical PM can define product standards, delegate to agents, and ship software with architecture oversight but without dedicated developer resource
-6. **Dogfooding-driven design** — Forge is its own first customer, ensuring every feature is validated by real use before release
+2. **Native Claude Code format** — All governance artifacts are standard `.claude/` files that work identically in Forge and the Claude Code CLI. No proprietary formats, no lock-in.
+3. **Process visibility** — What was invisible in the CLI (governance artifacts, scanner results, learning loops) becomes a first-class UI
+4. **Automated governance backfill** — Point at an existing codebase, answer questions, and Forge builds the governance framework through conversation
+5. **Continuous improvement** — The system genuinely gets smarter over time through the learning loop, not just accumulating conversation history
+6. **Solo PM capability** — A technical PM can define product standards, delegate to Claude Code agents, and ship software with architecture oversight but without dedicated developer resource
+7. **Dogfooding-driven design** — Forge is its own first customer, ensuring every feature is validated by real use before release

@@ -16,7 +16,7 @@ These journeys inform UI design (Phase 0d) and the MVP feature specification.
 
 ### Steps
 
-1. **Launch Forge** — The main window opens with a welcome state. No project loaded. The Explorer Panel shows a brief orientation: what Forge does and how to get started.
+1. **Launch Forge** — The main window opens with a welcome state. No project loaded. Forge checks for Claude Code CLI availability. If found, the status bar shows "CLI: Connected" with the version. If not found, Forge shows a setup prompt with installation guidance (the rest of the UI remains functional for project browsing and artifact viewing).
 
 2. **Open a project** — User clicks "Open Project" or drags a folder onto the window. Forge prompts for a directory. User selects their project root.
 
@@ -68,7 +68,7 @@ These journeys inform UI design (Phase 0d) and the MVP feature specification.
 
 5. **Conversational governance (Phase 4)** — User describes what they want in conversation: "I need a rule that prevents agents from using unwrap in Rust code." Claude generates the rule file, the user reviews and approves it, and Forge writes it to `.claude/rules/`. For pattern-matchable violations (e.g., specific strings or regex patterns in file edits or bash commands), the user can also create hookify rules — Forge generates a `.claude/hookify.*.local.md` file with the appropriate `event`, `action`, and `conditions` fields.
 
-6. **File watcher sync** — Any changes made to `.claude/` files outside Forge (e.g., in a text editor or via git pull) are detected by the file watcher and reflected in the artifact browser within 500ms.
+6. **File watcher sync** — Any changes made to `.claude/` files outside Forge (e.g., in a text editor, via git pull, or via a Claude Code CLI session) are detected by the file watcher and reflected in the artifact browser within 500ms. This means artifacts edited in Forge are immediately available to Claude Code CLI sessions, and vice versa.
 
 ### Success Criteria
 
@@ -194,8 +194,8 @@ These journeys inform UI design (Phase 0d) and the MVP feature specification.
 
 ## Journey 6: Onboard Existing Project
 
-**Trigger:** User opens a project that has code but no governance framework.
-**Persona emphasis:** Jordan (most common entry point), Alex (systematic approach).
+**Trigger:** User opens a project that has code but incomplete or no governance framework. This is a key scenario for projects that already have `.claude/` artifacts created through Claude Code CLI sessions.
+**Persona emphasis:** Jordan (most common entry point), Sam (existing CLI user discovering Forge), Alex (systematic approach).
 **MVP scope:** Partial — codebase scan in Phase 1. Conversational backfill in Phase 4.
 
 ### Steps
@@ -206,9 +206,9 @@ These journeys inform UI design (Phase 0d) and the MVP feature specification.
    - Languages and frameworks (from manifests and hyperpolyglot)
    - Project structure (directory layout, entry points)
    - Existing configuration (CI/CD files, linters, test frameworks)
-   - Existing `.claude/` artifacts (if any)
+   - Existing `.claude/` artifacts (if any — these may have been created through Claude Code CLI usage)
 
-3. **Governance gap analysis** — Forge identifies what governance artifacts exist and what's missing. Display: "Found: 3 rules, 1 agent. Missing: architecture decisions, skills, documentation."
+3. **Governance gap analysis** — Forge identifies what governance artifacts exist and what's missing. Display: "Found: 3 rules, 1 agent. Missing: architecture decisions, skills, documentation." For projects with existing `.claude/` artifacts from CLI usage, this is the moment where previously invisible governance becomes visible for the first time in Forge's UI.
 
 4. **Conversational backfill (Phase 4)** — Forge initiates a guided conversation:
    - "I see this is a TypeScript project using Next.js and Prisma. What are your coding standards?"
@@ -300,6 +300,35 @@ These journeys inform UI design (Phase 0d) and the MVP feature specification.
 
 ---
 
+## Journey 8: Existing CLI User Discovers Forge
+
+**Trigger:** A developer who already uses Claude Code CLI with `.claude/` governance opens Forge for the first time.
+**Persona emphasis:** Sam (primary), Jordan (secondary).
+**MVP scope:** Yes — covered by Journey 1 + Journey 6 infrastructure.
+
+### Steps
+
+1. **Launch Forge** — Sam has been using Claude Code CLI for months. Their project has `.claude/rules/`, `.claude/agents/`, `.claude/hooks/`, and a well-developed `CLAUDE.md`. They install Forge and open it.
+
+2. **Detect CLI and artifacts** — Forge detects Claude Code CLI (status bar: "CLI: Connected"). Sam opens their project directory. The codebase scan runs, and Forge discovers the existing `.claude/` directory.
+
+3. **Governance surfaces in UI** — For the first time, Sam sees their governance framework as a browsable, visual interface. The artifact browser shows: "12 rules, 5 agents, 3 skills, 2 hooks." Sam clicks through and sees their rules rendered as formatted markdown with YAML metadata displayed — instead of reading raw files in a text editor.
+
+4. **Continue working** — Sam starts a conversation in Forge. The AI session respects the same `.claude/` governance that their CLI sessions use. Tool calls appear as visual cards instead of terminal output.
+
+5. **Edit through Forge** — Sam edits a rule through Forge's artifact editor. They save, then switch to a terminal and run a Claude Code CLI session — the edited rule is immediately effective in the CLI because it was written to the same `.claude/rules/` file on disk.
+
+6. **Ongoing dual usage** — Sam uses Forge for governance visibility (browsing artifacts, reviewing learning loop metrics, checking scanner dashboards) and the CLI for rapid coding sessions. Both tools operate on the same `.claude/` files.
+
+### Success Criteria
+
+- Existing `.claude/` artifacts are fully recognized and displayed without migration or conversion
+- No "import" step — Forge reads the files directly from disk
+- Sam can switch between Forge and CLI within the same work session without any sync issues
+- Changes made in either tool are immediately visible in the other
+
+---
+
 ## Journey Interdependencies
 
 ```
@@ -307,6 +336,7 @@ Journey 1 (First-Time Setup)
     ├──→ Journey 7 (New Project) — if starting from scratch
     ├──→ Journey 2 (Define Governance) — if no .claude/ found
     ├──→ Journey 6 (Onboard Existing) — if code exists without governance
+    ├──→ Journey 8 (CLI User Discovers Forge) — if .claude/ exists from CLI usage
     └──→ Journey 3 (Implementation Cycle) — immediate conversation
               └──→ Journey 4 (Review and Approve)
                         └──→ Journey 5 (Learning Loop) — when mistakes occur
@@ -326,6 +356,7 @@ Journey 1 (First-Time Setup)
 | 5. Learning Loop | Not in MVP | Phase 5 |
 | 6. Onboard Existing | Codebase scan only | Phase 4 (conversational backfill) |
 | 7. New Project | Directory creation + .claude/ scaffold + project discovery conversation | Phase 1 (full discovery flow) |
+| 8. CLI User Discovers Forge | Full (artifact detection + display) | Phase 1 |
 
 ---
 

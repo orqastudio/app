@@ -6,6 +6,15 @@ How Forge's UI is structured. Defines the navigation model, view hierarchy, pane
 
 ---
 
+## First Run Flow
+
+On first launch, Forge performs a Claude Code CLI check:
+
+1. **CLI detected** — Status bar shows "CLI: Connected" with version. All features are available. The user proceeds to open or create a project.
+2. **CLI not detected** — Forge shows a prominent but non-blocking setup prompt: "Claude Code CLI is required for AI features. [Install Instructions]". The rest of the UI (project browsing, artifact viewing and editing) remains functional without AI. The setup prompt appears in the Explorer Panel welcome state and persists until the CLI is detected.
+
+This ensures Forge is always useful for governance management (browsing and editing `.claude/` artifacts) even if the CLI is not yet installed, while making it clear that AI features require the CLI.
+
 ## Layout Model
 
 Forge uses a **three-zone + nav sub-panel layout**. The Activity Bar is a fixed CSS flex element; the three resizable zones (Nav Sub-Panel, Explorer Panel, Chat Panel) are managed by PaneForge (shadcn-svelte Resizable).
@@ -261,6 +270,7 @@ The session header sits at the top of the Chat Panel and provides session contex
 |---------|-------------|
 | Session dropdown | Active session title (clickable). Opens a dropdown with: recent sessions list, search filter, "New Session" button. |
 | Model selector | Auto / Opus / Sonnet / Haiku dropdown. "Auto (recommended)" is the default — separated from specific models by a visual divider. |
+| CLI status | Claude Code CLI version and connection status (e.g., "CLI: v1.2.3" or "CLI: Not found"). |
 | Token usage | Token count for the current session. |
 
 ### Auto-Session on Plan Mode
@@ -404,7 +414,7 @@ Every view has a meaningful empty state that guides the user toward the next act
 |------|------------|----------------|
 | Session dropdown | "No sessions yet" | "Start a conversation" prompt in input area |
 | Conversation | Welcome message explaining Forge | "Type a message to begin" in input placeholder |
-| Artifact list (no .claude/) | "No governance artifacts found" | "Open a project with .claude/ directory" or "Create your first agent" |
+| Artifact list (no .claude/) | "No governance framework detected" | "Set up governance for this project" button (creates `.claude/` scaffold) or "This project has no `.claude/` directory yet" |
 | Artifact list (empty category) | "No {category} defined" | "Create new {category}" button |
 | Nav Sub-Panel (empty tree) | "No docs found" | "Add documentation to your docs/ directory" |
 | Project Dashboard (no project) | "No project open" | "Open a project" button |
@@ -435,6 +445,18 @@ The MVP includes only the views and elements needed for the core journeys:
 - Tool inspector (Phase 2)
 - Tool approval controls (Phase 2)
 - Auto-session on plan mode (Phase 2 — requires sidecar plan-mode detection)
+
+---
+
+## CLI Interoperability
+
+All artifact changes in Forge are bidirectional with the Claude Code CLI:
+
+- **Forge to CLI** — When a user creates or edits an artifact in Forge's artifact editor, the file is written to the `.claude/` directory on disk. Any subsequent Claude Code CLI session reads the updated file immediately.
+- **CLI to Forge** — When a user or Claude Code CLI session modifies a `.claude/` file, Forge's file watcher detects the change within 500ms and updates the artifact browser and viewer.
+- **No sync layer** — There is no synchronization protocol. Both tools read and write the same files on disk. The file system is the shared state.
+
+This design means the Claude Code CLI status shown in the status bar is meaningful context: it tells the user whether AI-powered features are available, and it confirms that their governance artifacts are being read by the same CLI their agents run in.
 
 ---
 
