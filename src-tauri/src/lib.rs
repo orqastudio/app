@@ -169,6 +169,14 @@ pub fn run() {
             commands::setup_commands::check_embedding_model,
             commands::setup_commands::complete_setup,
             commands::setup_commands::reauthenticate_claude,
+            // Governance commands
+            commands::governance_commands::governance_scan,
+            commands::governance_commands::governance_analyze,
+            commands::governance_commands::governance_analysis_get,
+            commands::governance_commands::recommendations_list,
+            commands::governance_commands::recommendation_update,
+            commands::governance_commands::recommendation_apply,
+            commands::governance_commands::recommendations_apply_all,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

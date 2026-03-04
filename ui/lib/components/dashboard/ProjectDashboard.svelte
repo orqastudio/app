@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as Card from "$lib/components/ui/card";
 	import * as ScrollArea from "$lib/components/ui/scroll-area";
+	import { Button } from "$lib/components/ui/button";
 	import FolderOpenIcon from "@lucide/svelte/icons/folder-open";
 	import FileTextIcon from "@lucide/svelte/icons/file-text";
 	import BotIcon from "@lucide/svelte/icons/bot";
@@ -8,9 +9,12 @@
 	import ZapIcon from "@lucide/svelte/icons/zap";
 	import GitBranchIcon from "@lucide/svelte/icons/git-branch";
 	import LayersIcon from "@lucide/svelte/icons/layers";
+	import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
 	import EmptyState from "$lib/components/shared/EmptyState.svelte";
+	import CoverageIndicator from "$lib/components/governance/CoverageIndicator.svelte";
 	import { projectStore } from "$lib/stores/project.svelte";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
+	import { governanceStore } from "$lib/stores/governance.svelte";
 	import type { Component } from "svelte";
 
 	const project = $derived(projectStore.activeProject);
@@ -101,6 +105,38 @@
 					</Card.Content>
 				</Card.Root>
 			{/if}
+
+			<!-- Governance health -->
+			<Card.Root class="mb-4">
+				<Card.Header class="pb-3">
+					<div class="flex items-center justify-between">
+						<Card.Title class="text-base">
+							<div class="flex items-center gap-2">
+								<ShieldIcon class="h-4 w-4" />
+								Governance Health
+							</div>
+						</Card.Title>
+						<Button
+							variant="ghost"
+							size="sm"
+							onclick={() => governanceStore.showWizard()}
+						>
+							<RefreshCwIcon class="mr-1.5 h-3.5 w-3.5" />
+							Re-analyze Governance
+						</Button>
+					</div>
+				</Card.Header>
+				<Card.Content>
+					{#if governanceStore.scanResult}
+						<CoverageIndicator
+							areas={governanceStore.scanResult.areas}
+							coverageRatio={governanceStore.scanResult.coverage_ratio}
+						/>
+					{:else}
+						<p class="text-sm text-muted-foreground">Scan not yet run</p>
+					{/if}
+				</Card.Content>
+			</Card.Root>
 
 			<!-- Governance artifacts -->
 			<Card.Root class="mb-4">

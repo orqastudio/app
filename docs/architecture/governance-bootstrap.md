@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-04
 **Phase:** 2b
-**Status:** Design
+**Status:** Implemented
 
 ## Overview
 
@@ -140,36 +140,39 @@ CREATE TABLE governance_recommendations (
 ## Key Types
 
 ```rust
-/// Result of scanning the filesystem for governance files
-#[derive(Debug, Clone, Serialize)]
+/// Result of scanning the filesystem for governance files.
+/// project_id is not stored here — the command takes it as a parameter.
+/// total_files is derivable from areas.iter().map(|a| a.files.len()).sum().
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GovernanceScanResult {
-    pub project_id: i64,
     pub areas: Vec<GovernanceArea>,
-    pub total_files: usize,
-    pub coverage_ratio: f32,  // 0.0 to 1.0
+    pub coverage_ratio: f64,  // 0.0 to 1.0 — covered canonical areas / 7
 }
 
-/// A governance area (rules, hooks, agents, etc.)
-#[derive(Debug, Clone, Serialize)]
+/// A governance area (rules, hooks, agents, etc.) found during scanning.
+/// `source` identifies the tool ecosystem: "claude", "cursor", "copilot", "continue".
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GovernanceArea {
-    pub category: String,
+    pub name: String,        // e.g. "claude_rules", "cursor", "copilot"
+    pub source: String,      // tool ecosystem identifier
     pub files: Vec<GovernanceFile>,
     pub covered: bool,
 }
 
-/// A single governance file found on disk
-#[derive(Debug, Clone, Serialize)]
+/// A single governance file found on disk.
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GovernanceFile {
     pub path: String,
-    pub content: String,
-    pub source: String,  // "claude", "cursor", "copilot", "continue"
+    pub size_bytes: u64,
+    pub content_preview: String,  // first 500 chars of file content
 }
 
-/// Claude's analysis of the governance state
+/// Claude's analysis of the project's governance state.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GovernanceAnalysis {
     pub id: i64,
     pub project_id: i64,
+    pub scan_data: GovernanceScanResult,  // raw scan results for display
     pub summary: String,
     pub strengths: Vec<String>,
     pub gaps: Vec<String>,
@@ -177,12 +180,48 @@ pub struct GovernanceAnalysis {
     pub created_at: String,
 }
 
-/// A single recommendation from Claude
+/// Priority of a governance recommendation (type-safe enum).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum RecommendationPriority {
+    Critical,
+    Recommended,
+    Optional,
+}
+
+/// Lifecycle status of a governance recommendation (type-safe enum).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum RecommendationStatus {
+    Pending,
+    Approved,
+    Rejected,
+    Applied,
+}
+
+/// A single recommendation from Claude's governance analysis.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Recommendation {
     pub id: i64,
     pub project_id: i64,
     pub analysis_id: i64,
+    pub category: String,
+    pub priority: RecommendationPriority,
+    pub title: String,
+    pub description: String,
+    pub artifact_type: String,
+    pub target_path: String,
+    pub content: String,
+    pub rationale: String,
+    pub status: RecommendationStatus,
+    pub applied_at: Option<String>,
+    pub created_at: String,
+    pub updated_at: String,
+}
+
+/// A raw recommendation as parsed from Claude's JSON output (before DB persistence).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RawRecommendation {
     pub category: String,
     pub priority: String,
     pub title: String,
@@ -191,10 +230,15 @@ pub struct Recommendation {
     pub target_path: String,
     pub content: String,
     pub rationale: String,
-    pub status: String,
-    pub applied_at: Option<String>,
-    pub created_at: String,
-    pub updated_at: String,
+}
+
+/// Claude's structured analysis output (parsed from JSON code block in the response).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ClaudeAnalysisOutput {
+    pub summary: String,
+    pub strengths: Vec<String>,
+    pub gaps: Vec<String>,
+    pub recommendations: Vec<RawRecommendation>,
 }
 ```
 

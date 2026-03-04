@@ -18,6 +18,7 @@ pub fn init_db(path: &str) -> Result<Connection, OrqaError> {
     )?;
 
     conn.execute_batch(include_str!("../migrations/001_initial_schema.sql"))?;
+    conn.execute_batch(include_str!("../migrations/002_governance_bootstrap.sql"))?;
 
     Ok(conn)
 }
@@ -28,6 +29,7 @@ pub fn init_memory_db() -> Result<Connection, OrqaError> {
 
     conn.execute_batch("PRAGMA foreign_keys = ON;")?;
     conn.execute_batch(include_str!("../migrations/001_initial_schema.sql"))?;
+    conn.execute_batch(include_str!("../migrations/002_governance_bootstrap.sql"))?;
 
     Ok(conn)
 }

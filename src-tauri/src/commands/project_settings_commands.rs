@@ -32,10 +32,7 @@ pub fn project_settings_write(
 /// Removes any existing `icon.*` files before copying.
 /// Returns the icon filename (e.g. `icon.png`).
 #[tauri::command(rename_all = "snake_case")]
-pub fn project_icon_upload(
-    project_path: String,
-    source_path: String,
-) -> Result<String, OrqaError> {
+pub fn project_icon_upload(project_path: String, source_path: String) -> Result<String, OrqaError> {
     let source = Path::new(&source_path);
     if !source.exists() {
         return Err(OrqaError::NotFound(format!(
@@ -81,10 +78,7 @@ pub fn project_icon_upload(
 /// The `icon_filename` should be the filename returned by `project_icon_upload`
 /// (e.g. `icon.png`). Returns a `data:{mime};base64,...` string.
 #[tauri::command(rename_all = "snake_case")]
-pub fn project_icon_read(
-    project_path: String,
-    icon_filename: String,
-) -> Result<String, OrqaError> {
+pub fn project_icon_read(project_path: String, icon_filename: String) -> Result<String, OrqaError> {
     let icon_path = Path::new(&project_path).join(".orqa").join(&icon_filename);
 
     if !icon_path.exists() {

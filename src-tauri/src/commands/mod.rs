@@ -1,4 +1,5 @@
 pub mod artifact_commands;
+pub mod governance_commands;
 pub mod message_commands;
 pub mod project_commands;
 pub mod project_settings_commands;

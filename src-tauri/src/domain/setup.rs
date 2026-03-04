@@ -193,7 +193,10 @@ mod tests {
         assert!(!json["authenticated"].as_bool().expect("should be bool"));
         assert!(json["subscription_type"].is_null());
         assert!(json["rate_limit_tier"].is_null());
-        assert!(json["scopes"].as_array().expect("should be array").is_empty());
+        assert!(json["scopes"]
+            .as_array()
+            .expect("should be array")
+            .is_empty());
         assert!(json["expires_at"].is_null());
     }
 }

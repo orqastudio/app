@@ -113,10 +113,7 @@ pub fn theme_set_override(
 
 /// Clear all theme overrides for a project.
 #[tauri::command]
-pub fn theme_clear_overrides(
-    project_id: i64,
-    state: State<'_, AppState>,
-) -> Result<(), OrqaError> {
+pub fn theme_clear_overrides(project_id: i64, state: State<'_, AppState>) -> Result<(), OrqaError> {
     let conn = state
         .db
         .lock()

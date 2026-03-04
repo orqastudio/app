@@ -12,12 +12,14 @@
 	import ConversationView from "$lib/components/conversation/ConversationView.svelte";
 	import ProjectSetupWizard from "$lib/components/settings/ProjectSetupWizard.svelte";
 	import SetupWizard from "$lib/components/setup/SetupWizard.svelte";
+	import GovernanceBootstrapWizard from "$lib/components/governance/GovernanceBootstrapWizard.svelte";
 	import setupBackground from "$lib/assets/setup-background.png";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import { settingsStore } from "$lib/stores/settings.svelte";
 	import { artifactStore } from "$lib/stores/artifact.svelte";
 	import { projectStore } from "$lib/stores/project.svelte";
 	import { setupStore } from "$lib/stores/setup.svelte";
+	import { governanceStore } from "$lib/stores/governance.svelte";
 
 	const hasProject = $derived(projectStore.hasProject);
 	const isConfiguring = $derived(navigationStore.activeActivity === "configure");
@@ -57,6 +59,24 @@
 		) {
 			artifactStore.loadDocTree();
 		}
+	});
+
+	// Auto-trigger governance scan when a project is fully loaded
+	$effect(() => {
+		const project = projectStore.activeProject;
+		if (!project || needsSetup) return;
+		const projectId = project.id;
+		(async () => {
+			await governanceStore.scan(projectId);
+			await governanceStore.checkExistingAnalysis(projectId);
+			if (
+				governanceStore.scanResult !== null &&
+				governanceStore.scanResult.coverage_ratio < 3 / 7 &&
+				governanceStore.analysis === null
+			) {
+				governanceStore.showWizard();
+			}
+		})();
 	});
 
 	// Activity-to-artifact-type mapping
@@ -164,6 +184,11 @@
 					</div>
 				{/if}
 			</div>
+
+			<!-- Governance bootstrap wizard overlay -->
+			{#if governanceStore.wizardVisible && projectStore.activeProject}
+				<GovernanceBootstrapWizard projectId={projectStore.activeProject.id} />
+			{/if}
 		{:else}
 			<!-- No project loaded — welcome screen, no sidebar -->
 			<div class="flex flex-1 overflow-hidden">

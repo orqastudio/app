@@ -51,3 +51,13 @@ export type {
 	StepStatus,
 	ClaudeCliInfo,
 } from "./setup";
+
+export type {
+	GovernanceScanResult,
+	GovernanceArea,
+	GovernanceFile,
+	GovernanceAnalysis,
+	RecommendationPriority,
+	RecommendationStatus,
+	Recommendation,
+} from "./governance";

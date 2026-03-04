@@ -1,4 +1,6 @@
 pub mod artifact;
+pub mod governance;
+pub mod governance_scanner;
 pub mod message;
 pub mod project;
 pub mod project_scanner;
