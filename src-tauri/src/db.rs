@@ -1,9 +1,9 @@
 use rusqlite::Connection;
 
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 
 /// Open (or create) the SQLite database at `path`, apply PRAGMAs, and run migrations.
-pub fn init_db(path: &str) -> Result<Connection, ForgeError> {
+pub fn init_db(path: &str) -> Result<Connection, OrqaError> {
     let conn = Connection::open(path)?;
 
     conn.execute_batch(
@@ -23,7 +23,7 @@ pub fn init_db(path: &str) -> Result<Connection, ForgeError> {
 }
 
 /// Create an in-memory SQLite database for testing.
-pub fn init_memory_db() -> Result<Connection, ForgeError> {
+pub fn init_memory_db() -> Result<Connection, OrqaError> {
     let conn = Connection::open_in_memory()?;
 
     conn.execute_batch("PRAGMA foreign_keys = ON;")?;

@@ -1,5 +1,5 @@
 /**
- * Forge Agent SDK Sidecar — Main Entry Point
+ * Orqa Studio Agent SDK Sidecar — Main Entry Point
  *
  * Reads NDJSON requests from stdin, dispatches to the appropriate handler,
  * and writes NDJSON responses to stdout. This is the real sidecar that
@@ -108,4 +108,4 @@ process.on('SIGTERM', () => process.exit(0));
 process.on('SIGINT', () => process.exit(0));
 
 // Log startup to stderr (not stdout, which is reserved for NDJSON protocol)
-process.stderr.write('forge-sidecar: started, waiting for NDJSON input on stdin\n');
+process.stderr.write('orqa-studio-sidecar: started, waiting for NDJSON input on stdin\n');

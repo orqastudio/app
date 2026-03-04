@@ -1,7 +1,7 @@
 use tauri::State;
 
 use crate::domain::session::{Session, SessionSummary};
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 use crate::repo::session_repo;
 use crate::state::AppState;
 
@@ -14,16 +14,16 @@ pub fn session_create(
     model: Option<String>,
     system_prompt: Option<String>,
     state: State<'_, AppState>,
-) -> Result<Session, ForgeError> {
+) -> Result<Session, OrqaError> {
     let model_str = model.unwrap_or_else(|| "auto".to_string());
     if model_str.trim().is_empty() {
-        return Err(ForgeError::Validation("model cannot be empty".to_string()));
+        return Err(OrqaError::Validation("model cannot be empty".to_string()));
     }
 
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     session_repo::create(
         &conn,
@@ -41,17 +41,17 @@ pub fn session_list(
     limit: Option<i64>,
     offset: Option<i64>,
     state: State<'_, AppState>,
-) -> Result<Vec<SessionSummary>, ForgeError> {
+) -> Result<Vec<SessionSummary>, OrqaError> {
     let limit_val = limit.unwrap_or(50);
     let offset_val = offset.unwrap_or(0);
 
     if limit_val < 0 {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "limit cannot be negative".to_string(),
         ));
     }
     if offset_val < 0 {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "offset cannot be negative".to_string(),
         ));
     }
@@ -59,18 +59,18 @@ pub fn session_list(
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     session_repo::list(&conn, project_id, status.as_deref(), limit_val, offset_val)
 }
 
 /// Get a session by its ID.
 #[tauri::command]
-pub fn session_get(session_id: i64, state: State<'_, AppState>) -> Result<Session, ForgeError> {
+pub fn session_get(session_id: i64, state: State<'_, AppState>) -> Result<Session, OrqaError> {
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
     session_repo::get(&conn, session_id)
 }
 
@@ -80,35 +80,35 @@ pub fn session_update_title(
     session_id: i64,
     title: String,
     state: State<'_, AppState>,
-) -> Result<(), ForgeError> {
+) -> Result<(), OrqaError> {
     if title.trim().is_empty() {
-        return Err(ForgeError::Validation("title cannot be empty".to_string()));
+        return Err(OrqaError::Validation("title cannot be empty".to_string()));
     }
 
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
     session_repo::update_title(&conn, session_id, title.trim())
 }
 
 /// End a session (mark as completed).
 #[tauri::command]
-pub fn session_end(session_id: i64, state: State<'_, AppState>) -> Result<(), ForgeError> {
+pub fn session_end(session_id: i64, state: State<'_, AppState>) -> Result<(), OrqaError> {
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
     session_repo::end_session(&conn, session_id)
 }
 
 /// Delete a session and its messages (cascading).
 #[tauri::command]
-pub fn session_delete(session_id: i64, state: State<'_, AppState>) -> Result<(), ForgeError> {
+pub fn session_delete(session_id: i64, state: State<'_, AppState>) -> Result<(), OrqaError> {
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
     session_repo::delete(&conn, session_id)
 }
 

@@ -3,7 +3,7 @@ type: research
 status: complete
 date: 2026-03-02
 category: frontend
-description: Frontend libraries and patterns for Forge's UI layer.
+description: Frontend libraries and patterns for Orqa Studio's UI layer.
 questions:
   - id: Q1
     title: Markdown Rendering + Editing
@@ -30,13 +30,13 @@ informs_features: [F-003, F-004, F-006, F-007, F-008, F-010]
 
 **Date:** 2026-03-02 | **Status:** Complete
 
-Research into frontend libraries and patterns for Forge's UI layer.
+Research into frontend libraries and patterns for Orqa Studio's UI layer.
 
 ---
 
 ## Q1: Markdown Rendering + Editing
 
-**Question:** What component should handle rendering and editing markdown in Forge?
+**Question:** What component should handle rendering and editing markdown in Orqa Studio?
 
 **Requirements:**
 - Render markdown beautifully (conversation messages, documentation panels)
@@ -58,7 +58,7 @@ Research into frontend libraries and patterns for Forge's UI layer.
 - **Last release:** CodeMirror core packages actively maintained (weekly releases). svelte-codemirror-editor v2.1.0 ~Oct 2025.
 - **Svelte 5:** svelte-codemirror-editor v2.x explicitly supports Svelte 5 runes. v1.x was for Svelte 3/4/5 without runes. Direct integration also works since CM6 is framework-agnostic.
 
-**Strengths for Forge:**
+**Strengths for Orqa Studio:**
 - Battle-tested editing engine (used by Obsidian, VS Code web, Firefox DevTools)
 - Markdown language mode with syntax highlighting built in
 - Extension system: can add YAML frontmatter parsing, custom widgets, folding, search
@@ -79,7 +79,7 @@ Research into frontend libraries and patterns for Forge's UI layer.
 - **Svelte 5:** Full support. Documentation examples use `$state()`, `$props()` syntax. Two components: `MarkdownEditor` (full editor) and `Markdown` (read-only renderer).
 - **SSR:** Supports server-side pre-rendering via `carta.render()`
 
-**Strengths for Forge:**
+**Strengths for Orqa Studio:**
 - Built specifically for Svelte — not a port from React/Vue
 - Lightweight: no ProseMirror or CodeMirror dependency
 - Split view editor with live preview built in
@@ -101,7 +101,7 @@ Research into frontend libraries and patterns for Forge's UI layer.
 - **Svelte 5:** Uncertain. Official docs have Svelte recipes but community reports difficulties with custom node components in Svelte (one developer switched to TipTap because custom nodes were easier there). Framework-agnostic/headless design.
 - **GitHub stars:** ~8k+
 
-**Strengths for Forge:**
+**Strengths for Orqa Studio:**
 - True WYSIWYG markdown editing — renders as you type
 - Plugin-driven architecture (everything is a plugin)
 - Y.js support for collaborative editing (future use)
@@ -123,7 +123,7 @@ Research into frontend libraries and patterns for Forge's UI layer.
 - **Bundle size:** Medium-heavy — TipTap core + ProseMirror + extensions
 - **Svelte 5:** TipTap officially lists Svelte support. Tipex explicitly uses Svelte 5 runes and snippets.
 
-**Strengths for Forge:**
+**Strengths for Orqa Studio:**
 - Headless — maximum styling control
 - TipTap has enormous extension ecosystem (200+ extensions)
 - Rich text editing with markdown serialization
@@ -144,7 +144,7 @@ Research into frontend libraries and patterns for Forge's UI layer.
 - **Svelte 5:** Yes — built with Svelte 5 runes, strict TypeScript
 - **Bundle size:** Small (marked has zero dependencies)
 
-**Strengths for Forge:**
+**Strengths for Orqa Studio:**
 - Intelligent token caching: 50-200x speedup for repeated content, cache hits under 1ms
 - Image lazy loading by default
 - Svelte 5 with strict TypeScript
@@ -160,7 +160,7 @@ Research into frontend libraries and patterns for Forge's UI layer.
 - **Svelte integrations:** `mdsvex` (compile-time preprocessor), `sveltex-unified` (reactive markdown)
 - **Bundle size:** Moderate (multiple packages, but tree-shakeable)
 
-**Strengths for Forge:**
+**Strengths for Orqa Studio:**
 - Most flexible pipeline: parse markdown to AST, transform, render to HTML
 - Enormous plugin ecosystem: remark-gfm, remark-frontmatter, rehype-highlight, rehype-shiki
 - Can extract frontmatter YAML as structured data during rendering
@@ -228,7 +228,7 @@ For code blocks within rendered markdown and in the editor:
 - **Key class:** `Chat` (Svelte equivalent of React's `useChat` hook — uses classes, not hooks)
 - **Features:** Streaming via SSE, typed tool invocations, message metadata, custom message types, data parts for streaming arbitrary typed data
 
-**Assessment for Forge:** The AI SDK is designed for SvelteKit server routes proxying to OpenAI/Anthropic. Forge's architecture is different: Rust backend handles the Claude API, streams via Tauri `Channel<T>`, and the frontend receives events through Tauri's IPC. The AI SDK's transport layer (SSE to SvelteKit server) does not fit Forge. However, the SDK's **UI patterns** (message types, streaming text accumulation, tool call rendering) are worth studying.
+**Assessment for Orqa Studio:** The AI SDK is designed for SvelteKit server routes proxying to OpenAI/Anthropic. Orqa Studio's architecture is different: Rust backend handles the Claude API, streams via Tauri `Channel<T>`, and the frontend receives events through Tauri's IPC. The AI SDK's transport layer (SSE to SvelteKit server) does not fit Orqa Studio. However, the SDK's **UI patterns** (message types, streaming text accumulation, tool call rendering) are worth studying.
 
 **Verdict:** Do not use as a dependency. Study its patterns for the custom implementation.
 
@@ -238,7 +238,7 @@ For code blocks within rendered markdown and in the editor:
 - **Features:** Glassmorphism UI, mobile-first, Svelte 5 runes, AI SDK integration
 - **Dependencies:** marked, zod, lucide-svelte
 
-**Assessment:** Lightweight starting point for a chat widget, but far too simple for Forge's needs (no tool call cards, no approval flows, no agent delegation, no search).
+**Assessment:** Lightweight starting point for a chat widget, but far too simple for Orqa Studio's needs (no tool call cards, no approval flows, no agent delegation, no search).
 
 **Verdict:** Reference for styling patterns only.
 
@@ -248,7 +248,7 @@ For code blocks within rendered markdown and in the editor:
 - **Dependencies:** Requires shadcn-svelte (button, avatar, textarea)
 - **Style:** shadcn copy-paste philosophy
 
-**Assessment:** Provides basic chat UI building blocks (message bubbles, input areas, avatars). Useful starting point but would need heavy extension for Forge's tool call rendering, streaming, and approval flows.
+**Assessment:** Provides basic chat UI building blocks (message bubbles, input areas, avatars). Useful starting point but would need heavy extension for Orqa Studio's tool call rendering, streaming, and approval flows.
 
 **Verdict:** Evaluate as a starting scaffold, extend significantly.
 
@@ -315,7 +315,7 @@ Key Svelte 5 reactivity advantages for streaming:
 
 ### Q2 Recommendation
 
-**Build custom from shadcn-svelte primitives.** No existing library matches Forge's requirements.
+**Build custom from shadcn-svelte primitives.** No existing library matches Orqa Studio's requirements.
 
 **Architecture:**
 
@@ -335,7 +335,7 @@ Key Svelte 5 reactivity advantages for streaming:
 - `svelte-highlight` v7.9.0 — Syntax highlighting in code blocks
 - `lucide-svelte` — Icons (copy, check, chevron, etc.)
 
-**Why not use the Vercel AI SDK?** Forge does not use SvelteKit server routes for AI. The Rust backend manages the Claude API connection. The AI SDK's transport layer (SSE to Node.js server) is incompatible with Forge's Tauri Channel<T> architecture. Building custom ensures the conversation UI integrates tightly with Tauri's IPC.
+**Why not use the Vercel AI SDK?** Orqa Studio does not use SvelteKit server routes for AI. The Rust backend manages the Claude API connection. The AI SDK's transport layer (SSE to Node.js server) is incompatible with Orqa Studio's Tauri Channel<T> architecture. Building custom ensures the conversation UI integrates tightly with Tauri's IPC.
 
 **Decision:** Custom build on shadcn-svelte primitives + @humanspeak/svelte-markdown + svelte-highlight.
 
@@ -372,11 +372,11 @@ Key Svelte 5 reactivity advantages for streaming:
   - Collapsible panes
   - Shadow DOM support
 
-**Strengths for Forge:**
+**Strengths for Orqa Studio:**
 - Same ecosystem as shadcn-svelte (svecosystem) — guaranteed compatibility
 - shadcn-svelte's `Resizable` component IS PaneForge (it re-exports PaneForge)
 - Proven API design from react-resizable-panels
-- Built-in layout persistence (LocalStorage) — maps to Forge's requirement
+- Built-in layout persistence (LocalStorage) — maps to Orqa Studio's requirement
 - Simple, composable API: PaneGroup > Pane + PaneResizer
 - Svelte 5 native
 
@@ -405,7 +405,7 @@ Key Svelte 5 reactivity advantages for streaming:
   - Programmatic resizing and two-way size binding
   - Programmatic pane add/remove
 
-**Strengths for Forge:**
+**Strengths for Orqa Studio:**
 - More features out of the box than PaneForge (snap, push, edge snap, double-click expand)
 - Very actively maintained (release within days)
 - Comprehensive demo site with examples
@@ -447,7 +447,7 @@ Key Svelte 5 reactivity advantages for streaming:
 
 Rationale:
 1. **PaneForge is shadcn-svelte's own resizable component** — using anything else means maintaining a parallel dependency for the same functionality.
-2. PaneForge's API (PaneGroup/Pane/PaneResizer) maps cleanly to Forge's layout: `PaneGroup(horizontal) > [Sidebar Pane, PaneResizer, Main PaneGroup(horizontal) > [Conversation Pane, PaneResizer, Detail Pane]]`
+2. PaneForge's API (PaneGroup/Pane/PaneResizer) maps cleanly to Orqa Studio's layout: `PaneGroup(horizontal) > [Sidebar Pane, PaneResizer, Main PaneGroup(horizontal) > [Conversation Pane, PaneResizer, Detail Pane]]`
 3. Built-in persistence via LocalStorage covers the requirement. Can be upgraded to `tauri-plugin-store` for a more desktop-native persistence layer.
 4. Tabs are a separate concern — shadcn-svelte's `Tabs` component handles multiple documents open in the same panel.
 5. Collapse/expand can be done via PaneForge's collapsible pane support + a custom toggle button.
@@ -497,7 +497,7 @@ This is a standard three-pane layout (similar to VS Code, Slack, email clients).
 - **Features:** Area, Bar, Line, Pie, Scatter, Heatmap, Tree, Sankey, and more. Composable Svelte components.
 - **CSS:** Supports css-only usage without Tailwind, with first-class Tailwind support.
 
-**Strengths for Forge:**
+**Strengths for Orqa Studio:**
 - shadcn-svelte's official charting solution — guaranteed design consistency
 - Composable Svelte components (not a canvas/WebGL black box)
 - Time series, bar charts, and line charts all supported
@@ -581,7 +581,7 @@ This is a standard three-pane layout (similar to VS Code, Slack, email clients).
 
 **Weaknesses:**
 - Massive bundle size (needs aggressive tree-shaking)
-- Overkill for Forge's dashboard needs
+- Overkill for Orqa Studio's dashboard needs
 - Canvas/WebGL rendering — not Svelte-native
 - Svelte wrapper is community-maintained, thin
 
@@ -592,7 +592,7 @@ This is a standard three-pane layout (similar to VS Code, Slack, email clients).
 - **Svelte 5:** Compatible via wrapper
 
 **Strengths:**
-- Designed for SaaS dashboards (matches Forge's use case)
+- Designed for SaaS dashboards (matches Orqa Studio's use case)
 - Separates data logic from visual rendering
 - Dark mode built in
 
@@ -607,9 +607,9 @@ This is a standard three-pane layout (similar to VS Code, Slack, email clients).
 Rationale:
 1. **LayerChart is shadcn-svelte's official charting solution** — it is literally the `Chart` component in shadcn-svelte. Using anything else means fighting the design system.
 2. Composable Svelte components mean charts integrate naturally with Svelte 5 reactivity (`$state`, `$derived`).
-3. Covers all of Forge's needs: time series (line/area), bar charts, and can render status indicators via custom Svelte components.
+3. Covers all of Orqa Studio's needs: time series (line/area), bar charts, and can render status indicators via custom Svelte components.
 4. v2.0 pre-release is a risk, but v1.x is stable and the shadcn-svelte integration works today.
-5. If LayerChart proves insufficient for a specific chart type later, ECharts can be added as a targeted supplement — but Forge's Phase 3 needs (pass/fail trends, coverage bars, status badges) are well within LayerChart's capability.
+5. If LayerChart proves insufficient for a specific chart type later, ECharts can be added as a targeted supplement — but Orqa Studio's Phase 3 needs (pass/fail trends, coverage bars, status badges) are well within LayerChart's capability.
 
 **For status indicators (badges, trend arrows):** These are not charts — they are simple UI components. Use shadcn-svelte `Badge` + `lucide-svelte` icons (TrendingUp, TrendingDown, CheckCircle, XCircle). No charting library needed.
 
@@ -637,7 +637,7 @@ The strongest pattern across all four decisions is that **shadcn-svelte has alre
 - Its component library (Button, Tabs, Badge, Collapsible, ScrollArea, etc.) provides the building blocks for the conversation UI
 - Its design system (Tailwind + CSS variables) provides the styling foundation
 
-By aligning with shadcn-svelte's choices, Forge gets a coherent, well-maintained design system where all components work together. The only choices outside the shadcn-svelte ecosystem are CodeMirror 6 (for editing — no shadcn-svelte editor component exists) and the markdown renderer (which shadcn-svelte does not provide).
+By aligning with shadcn-svelte's choices, Orqa Studio gets a coherent, well-maintained design system where all components work together. The only choices outside the shadcn-svelte ecosystem are CodeMirror 6 (for editing — no shadcn-svelte editor component exists) and the markdown renderer (which shadcn-svelte does not provide).
 
 ## Dependencies
 

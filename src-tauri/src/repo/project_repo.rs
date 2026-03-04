@@ -1,7 +1,7 @@
 use rusqlite::{params, Connection, OptionalExtension};
 
 use crate::domain::project::{DetectedStack, Project, ProjectSummary};
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 
 /// Create a new project and return the full `Project` record.
 pub fn create(
@@ -9,7 +9,7 @@ pub fn create(
     name: &str,
     path: &str,
     description: Option<&str>,
-) -> Result<Project, ForgeError> {
+) -> Result<Project, OrqaError> {
     conn.execute(
         "INSERT INTO projects (name, path, description) VALUES (?1, ?2, ?3)",
         params![name, path, description],
@@ -20,7 +20,7 @@ pub fn create(
 }
 
 /// Get a project by its primary key.
-pub fn get(conn: &Connection, id: i64) -> Result<Project, ForgeError> {
+pub fn get(conn: &Connection, id: i64) -> Result<Project, OrqaError> {
     conn.query_row(
         "SELECT id, name, path, description, detected_stack, created_at, updated_at \
          FROM projects WHERE id = ?1",
@@ -40,13 +40,13 @@ pub fn get(conn: &Connection, id: i64) -> Result<Project, ForgeError> {
         },
     )
     .map_err(|e| match e {
-        rusqlite::Error::QueryReturnedNoRows => ForgeError::NotFound(format!("project {id}")),
-        other => ForgeError::Database(other.to_string()),
+        rusqlite::Error::QueryReturnedNoRows => OrqaError::NotFound(format!("project {id}")),
+        other => OrqaError::Database(other.to_string()),
     })
 }
 
 /// Get a project by its filesystem path.
-pub fn get_by_path(conn: &Connection, path: &str) -> Result<Project, ForgeError> {
+pub fn get_by_path(conn: &Connection, path: &str) -> Result<Project, OrqaError> {
     conn.query_row(
         "SELECT id, name, path, description, detected_stack, created_at, updated_at \
          FROM projects WHERE path = ?1",
@@ -67,14 +67,14 @@ pub fn get_by_path(conn: &Connection, path: &str) -> Result<Project, ForgeError>
     )
     .map_err(|e| match e {
         rusqlite::Error::QueryReturnedNoRows => {
-            ForgeError::NotFound(format!("project with path {path}"))
+            OrqaError::NotFound(format!("project with path {path}"))
         }
-        other => ForgeError::Database(other.to_string()),
+        other => OrqaError::Database(other.to_string()),
     })
 }
 
 /// Get the most recently updated project, if any.
-pub fn get_active(conn: &Connection) -> Result<Option<Project>, ForgeError> {
+pub fn get_active(conn: &Connection) -> Result<Option<Project>, OrqaError> {
     conn.query_row(
         "SELECT id, name, path, description, detected_stack, created_at, updated_at \
          FROM projects ORDER BY updated_at DESC, id DESC LIMIT 1",
@@ -94,11 +94,11 @@ pub fn get_active(conn: &Connection) -> Result<Option<Project>, ForgeError> {
         },
     )
     .optional()
-    .map_err(|e| ForgeError::Database(e.to_string()))
+    .map_err(|e| OrqaError::Database(e.to_string()))
 }
 
 /// List all projects with summary info (session + artifact counts).
-pub fn list(conn: &Connection) -> Result<Vec<ProjectSummary>, ForgeError> {
+pub fn list(conn: &Connection) -> Result<Vec<ProjectSummary>, OrqaError> {
     let mut stmt = conn.prepare(
         "SELECT p.id, p.name, p.path, p.detected_stack, p.updated_at, \
                 (SELECT COUNT(*) FROM sessions s WHERE s.project_id = p.id) AS session_count, \
@@ -133,7 +133,7 @@ pub fn update_detected_stack(
     conn: &Connection,
     id: i64,
     stack: &DetectedStack,
-) -> Result<(), ForgeError> {
+) -> Result<(), OrqaError> {
     let stack_json = serde_json::to_string(stack)?;
     let rows = conn.execute(
         "UPDATE projects SET detected_stack = ?1, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') \
@@ -142,7 +142,7 @@ pub fn update_detected_stack(
     )?;
 
     if rows == 0 {
-        return Err(ForgeError::NotFound(format!("project {id}")));
+        return Err(OrqaError::NotFound(format!("project {id}")));
     }
     Ok(())
 }
@@ -171,7 +171,7 @@ mod tests {
     fn get_nonexistent_returns_not_found() {
         let conn = init_memory_db().expect("db init");
         let result = get(&conn, 999);
-        assert!(matches!(result, Err(ForgeError::NotFound(_))));
+        assert!(matches!(result, Err(OrqaError::NotFound(_))));
     }
 
     #[test]
@@ -187,7 +187,7 @@ mod tests {
     fn get_by_path_not_found() {
         let conn = init_memory_db().expect("db init");
         let result = get_by_path(&conn, "/no/such/path");
-        assert!(matches!(result, Err(ForgeError::NotFound(_))));
+        assert!(matches!(result, Err(OrqaError::NotFound(_))));
     }
 
     #[test]
@@ -260,7 +260,7 @@ mod tests {
         };
 
         let result = update_detected_stack(&conn, 999, &stack);
-        assert!(matches!(result, Err(ForgeError::NotFound(_))));
+        assert!(matches!(result, Err(OrqaError::NotFound(_))));
     }
 
     #[test]

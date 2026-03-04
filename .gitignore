@@ -11,9 +11,9 @@ dist/
 .svelte-kit/
 
 # SQLite database (local data, not committed)
-forge.db
-forge.db-wal
-forge.db-shm
+orqa.db
+orqa.db-wal
+orqa.db-shm
 
 # Tauri
 /src-tauri/target/

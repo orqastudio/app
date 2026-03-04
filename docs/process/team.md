@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-02
 
-Forge uses an agentic development model: one orchestrator coordinates, and specialized subagents implement. This page defines the team structure, each agent's role, the skills available to them, and how review gates work.
+Orqa Studio uses an agentic development model: one orchestrator coordinates, and specialized subagents implement. This page defines the team structure, each agent's role, the skills available to them, and how review gates work.
 
 ---
 
@@ -47,7 +47,7 @@ All 15 agents are defined in `.claude/agents/`. Each is invoked via the Task too
 
 ## Skill Directory
 
-Skills are domain-specific instruction sets stored in `.claude/skills/`. They follow the open [Agent Skills](https://agentskills.io) standard and must be portable -- no Forge-specific architectural rules in skills.
+Skills are domain-specific instruction sets stored in `.claude/skills/`. They follow the open [Agent Skills](https://agentskills.io) standard and must be portable -- no Orqa Studio-specific architectural rules in skills.
 
 | Skill | Source | Domain | Loaded By |
 |-------|--------|--------|-----------|
@@ -99,7 +99,7 @@ Each layer of the governance system owns a specific type of content. For the ful
 |-------|------|
 | `docs/` | Standards, IPC contracts, architecture decisions -- source of truth |
 | `.claude/agents/` | Process: how agents work, what to read, when to delegate |
-| `.claude/skills/` | Technology patterns -- portable, no Forge-specific rules |
+| `.claude/skills/` | Technology patterns -- portable, no Orqa Studio-specific rules |
 | `.claude/rules/` | Behavioral enforcement -- applies to all agents automatically |
 | `.claude/hooks/` | Lifecycle hooks -- shell scripts triggered by lifecycle events (session start, stop, pre-commit) |
 | `.claude/hookify.*.local.md` | Hookify rules -- action-boundary enforcement that blocks or warns on specific patterns in file edits or bash commands |

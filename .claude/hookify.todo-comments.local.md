@@ -6,7 +6,7 @@ action: block
 conditions:
   - field: file_path
     operator: regex_match
-    pattern: (src/|src-tauri/src/)/.*\.(ts|svelte|rs)$
+    pattern: (ui/|src-tauri/src/)/.*\.(ts|svelte|rs)$
   - field: new_text
     operator: regex_match
     pattern: (#|//)\s*(TODO|FIXME|HACK|XXX|TEMP)\b

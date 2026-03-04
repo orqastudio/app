@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-02
 
-Detailed profiles of Forge's target users. These personas drive UI design, feature prioritization, and acceptance criteria throughout the product.
+Detailed profiles of Orqa Studio's target users. These personas drive UI design, feature prioritization, and acceptance criteria throughout the product.
 
 ---
 
@@ -49,11 +49,11 @@ Alex is a senior product manager with a strong technical background. They can re
 
 ### What Success Looks Like
 
-Alex can manage a product's entire development cycle — from requirement to shipped feature — through Forge's UI. They define the standards, Claude Code agents implement within those standards, and the system gets smarter over time. Alex spends their time on product decisions and architecture review, not on terminal commands and dotfile management.
+Alex can manage a product's entire development cycle — from requirement to shipped feature — through Orqa Studio's UI. They define the standards, Claude Code agents implement within those standards, and the system gets smarter over time. Alex spends their time on product decisions and architecture review, not on terminal commands and dotfile management.
 
 ### Relationship to Claude Code CLI
 
-Alex uses Forge as their primary interface. The governance artifacts they create and edit through Forge's UI are native `.claude/` files — meaning Claude Code agents running in the CLI also follow them. Alex benefits from CLI-compatible artifacts without needing to manage the CLI directly.
+Alex uses Orqa Studio as their primary interface. The governance artifacts they create and edit through Orqa Studio's UI are native `.claude/` files — meaning Claude Code agents running in the CLI also follow them. Alex benefits from CLI-compatible artifacts without needing to manage the CLI directly.
 
 ### Key Design Implications
 
@@ -71,7 +71,7 @@ Alex uses Forge as their primary interface. The governance artifacts they create
 
 ### Profile
 
-Sam is a senior software developer who already uses Claude Code CLI and other AI coding tools (Copilot, Cursor) daily. They write production code and are comfortable in the terminal. They value Forge as a visual layer that makes the Claude Code CLI's governance visible and manageable — seeing rule enforcement trends, browsing agent definitions, and tracking learning loop metrics through a UI rather than reading raw dotfiles.
+Sam is a senior software developer who already uses Claude Code CLI and other AI coding tools (Copilot, Cursor) daily. They write production code and are comfortable in the terminal. They value Orqa Studio as a visual layer that makes the Claude Code CLI's governance visible and manageable — seeing rule enforcement trends, browsing agent definitions, and tracking learning loop metrics through a UI rather than reading raw dotfiles.
 
 ### Demographics
 
@@ -111,7 +111,7 @@ Sam's AI-assisted development produces consistently high-quality results because
 
 ### Relationship to Claude Code CLI
 
-Sam uses both Forge and the Claude Code CLI interchangeably. As a power user of the CLI, Sam appreciates that Forge operates on the same `.claude/` artifacts — governance changes made in Forge are immediately effective in CLI sessions, and vice versa. Sam may prefer the CLI for coding and Forge for governance visibility.
+Sam uses both Orqa Studio and the Claude Code CLI interchangeably. As a power user of the CLI, Sam appreciates that Orqa Studio operates on the same `.claude/` artifacts — governance changes made in Orqa Studio are immediately effective in CLI sessions, and vice versa. Sam may prefer the CLI for coding and Orqa Studio for governance visibility.
 
 ### Key Design Implications
 
@@ -143,7 +143,7 @@ Jordan is building a product alone or with a very small team. They have enough t
 1. **Ship solo** — Build production-quality software with AI agents doing the heavy implementation work
 2. **Maintain quality without a team** — Scanners, review gates, and learning loops substitute for a QA team and code review culture
 3. **Governance as a force multiplier** — Define standards once, enforce them automatically across all future sessions
-4. **Minimize ramp-up** — Get value from Forge within minutes of opening a project, not hours of configuration
+4. **Minimize ramp-up** — Get value from Orqa Studio within minutes of opening a project, not hours of configuration
 5. **Cost control** — Flat-rate AI usage (Max subscription) so productivity isn't penalized by cost
 
 ### Pain Points
@@ -170,7 +170,7 @@ Jordan ships quality software at a pace that would normally require a small team
 
 ### Relationship to Claude Code CLI
 
-Jordan may discover Forge after already using the Claude Code CLI, or may use Forge to bootstrap governance that is then available in CLI sessions. Either path works because Forge and the CLI share the same `.claude/` artifact format. Jordan benefits from Forge's visual governance management without being locked out of the CLI when they need it.
+Jordan may discover Orqa Studio after already using the Claude Code CLI, or may use Orqa Studio to bootstrap governance that is then available in CLI sessions. Either path works because Orqa Studio and the CLI share the same `.claude/` artifact format. Jordan benefits from Orqa Studio's visual governance management without being locked out of the CLI when they need it.
 
 ### Key Design Implications
 
@@ -193,7 +193,7 @@ Jordan may discover Forge after already using the Claude Code CLI, or may use Fo
 | MCP extensibility | Low priority | High priority | Low priority |
 | Learning loop value | Strategic (quality trends) | Tactical (stop repeating mistakes) | Survival (safety net) |
 | Cost sensitivity | Budget-aware, prefers flat rate | Employer pays, less sensitive | Highly sensitive, needs flat rate |
-| CLI usage | Minimal — prefers Forge UI | Heavy — uses CLI and Forge interchangeably | Occasional — prefers Forge, CLI when needed |
+| CLI usage | Minimal — prefers Orqa Studio UI | Heavy — uses CLI and Orqa Studio interchangeably | Occasional — prefers Orqa Studio, CLI when needed |
 | First-run expectation | 5-10 min setup, configure governance | 1-2 min, connect to existing project | < 1 min to first conversation |
 
 ---
@@ -213,5 +213,5 @@ Jordan may discover Forge after already using the Claude Code CLI, or may use Fo
 ## Related Documents
 
 - [Product Vision](/product/vision) — Primary users section
-- [User Journeys](/product/journeys) — How each persona interacts with Forge
+- [User Journeys](/product/journeys) — How each persona interacts with Orqa Studio
 - [Information Architecture](/product/information-architecture) — UI structure driven by persona needs

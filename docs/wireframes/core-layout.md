@@ -11,7 +11,7 @@ The main window structure showing all zones: Activity Bar, Nav Sub-Panel, Explor
 ```plantuml
 @startsalt
 {+
-  {/ <b>Forge</b> | . | . | . | . | [Ctrl+K Search...] | . | . }
+  {/ <b>Orqa Studio</b> | . | . | . | . | [Ctrl+K Search...] | . | . }
   {+
     {
       <&grid>
@@ -138,7 +138,7 @@ When the Nav Sub-Panel is collapsed via `Ctrl+B`, its space redistributes to the
 ```plantuml
 @startsalt
 {+
-  {/ <b>Forge</b> | . | . | . | . | . | [Ctrl+K Search...] | . | . }
+  {/ <b>Orqa Studio</b> | . | . | . | . | . | [Ctrl+K Search...] | . | . }
   {+
     {
       <&grid>
@@ -235,7 +235,7 @@ When the user clicks the Agents icon in the Activity Bar, the Explorer Panel swi
 ```plantuml
 @startsalt
 {+
-  {/ <b>Forge</b> | . | . | . | . | [Ctrl+K Search...] | . | . }
+  {/ <b>Orqa Studio</b> | . | . | . | . | [Ctrl+K Search...] | . | . }
   {+
     {
       <&grid>
@@ -325,8 +325,8 @@ When the user clicks the Project Dashboard icon (top of Activity Bar), the Explo
   { <b>Project Dashboard</b> }
   ---
   {
-    <b>forge</b>
-    ~/code/forge
+    <b>orqa-studio</b>
+    ~/code/orqa-studio
     ---
     <b>Stack:</b> Rust, TypeScript, Svelte
     <b>Frameworks:</b> Tauri v2, shadcn-svelte
@@ -368,7 +368,7 @@ When the user clicks the Project Dashboard icon (top of Activity Bar), the Explo
 
 | Element | Behavior |
 |---------|----------|
-| **Project name** ("Forge") | Click opens project switcher dropdown. Shows current project name. |
+| **Project name** ("Orqa Studio") | Click opens project switcher dropdown. Shows current project name. |
 | **Search** | `Ctrl+K` focuses. FTS5-powered search across sessions and artifacts. Results appear in Explorer Panel. |
 
 Note: The settings gear is removed from the toolbar. Settings is now accessible via the Activity Bar (bottom icon) or `Ctrl+,`. New sessions are created via `Ctrl+N` or the session dropdown in the Chat Panel header.

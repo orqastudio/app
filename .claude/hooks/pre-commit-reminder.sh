@@ -30,7 +30,7 @@ FORBIDDEN:
 BEFORE REPORTING TASK COMPLETE (NON-NEGOTIABLE):
 □ Worktree merged to main
 □ Branch deleted: git branch -d <branch>
-□ Worktree removed: git worktree remove ../forge-<task>
+□ Worktree removed: git worktree remove ../orqa-<task>
 □ Verify: git worktree list (should show only main)
 
 SESSION STATE REMINDER:

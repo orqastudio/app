@@ -2,15 +2,15 @@
 
 **Date:** 2026-03-02 | **Status:** Phase 0d specification
 
-The authoritative design system specification for Forge's UI. Consolidates decisions from [design-tokens research](/research/design-tokens), [branding research](/research/branding), [frontend research](/research/frontend), and [brand identity guidelines](/ui/brand-identity) into an implementation-ready reference.
+The authoritative design system specification for Orqa Studio's UI. Consolidates decisions from [design-tokens research](/research/design-tokens), [branding research](/research/branding), [frontend research](/research/frontend), and [brand identity guidelines](/ui/brand-identity) into an implementation-ready reference.
 
 ---
 
 ## Design Principles
 
-1. **Professional authority** — Forge governs product development. Decisive, not playful.
+1. **Professional authority** — Orqa Studio governs product development. Decisive, not playful.
 2. **Technical competence** — Information-dense, developer-familiar patterns (monospace code, keyboard shortcuts, dark mode).
-3. **Quiet confidence** — Forge recedes when project themes are applied. The project brand dominates, not Forge's.
+3. **Quiet confidence** — Orqa Studio recedes when project themes are applied. The project brand dominates, not Orqa Studio's.
 4. **Clarity over decoration** — Every pixel serves information delivery.
 
 ---
@@ -19,7 +19,7 @@ The authoritative design system specification for Forge's UI. Consolidates decis
 
 ### Base Palette: Zinc
 
-Forge uses shadcn-svelte's zinc neutral scale. Zinc's cool undertone reads as "technical" without the blue conflict of slate. It is the shadcn-svelte default — zero customization of the neutral scale.
+Orqa Studio uses shadcn-svelte's zinc neutral scale. Zinc's cool undertone reads as "technical" without the blue conflict of slate. It is the shadcn-svelte default — zero customization of the neutral scale.
 
 ### shadcn-svelte CSS Variables (Complete Set)
 
@@ -48,7 +48,7 @@ These are the component library's contract. Every shadcn-svelte component refere
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
 
-  /* Forge signature indigo-violet accent */
+  /* Orqa Studio signature indigo-violet accent */
   --primary: oklch(0.55 0.18 280);
   --primary-foreground: oklch(0.985 0 0);
   --ring: oklch(0.55 0.18 280);
@@ -114,37 +114,37 @@ These are the component library's contract. Every shadcn-svelte component refere
 }
 ```
 
-### Forge Brand Extension Variables
+### Orqa Studio Brand Extension Variables
 
-These extend the shadcn-svelte base set for Forge-specific needs (contextual spark colors, status states, logo theming). See [Brand Identity Guidelines](/ui/brand-identity) for full context.
+These extend the shadcn-svelte base set for Orqa Studio-specific needs (contextual spark colors, status states, logo theming). See [Brand Identity Guidelines](/ui/brand-identity) for full context.
 
 ```css
 :root {
   /* Contextual spark / accent colors */
-  --forge-ember: oklch(0.64 0.27 25);     /* Action / execution */
-  --forge-amber: oklch(0.80 0.17 75);     /* Learning loop */
-  --forge-arc: oklch(0.78 0.12 220);      /* Governance / rules */
+  --orqa-ember: oklch(0.64 0.27 25);     /* Action / execution */
+  --orqa-amber: oklch(0.80 0.17 75);     /* Learning loop */
+  --orqa-arc: oklch(0.78 0.12 220);      /* Governance / rules */
 
   /* Status colors */
-  --forge-success: oklch(0.72 0.19 150);  /* Pass / success */
-  --forge-warning: oklch(0.79 0.17 75);   /* Warning */
-  --forge-info: oklch(0.76 0.13 230);     /* Informational */
+  --orqa-success: oklch(0.72 0.19 150);  /* Pass / success */
+  --orqa-warning: oklch(0.79 0.17 75);   /* Warning */
+  --orqa-info: oklch(0.76 0.13 230);     /* Informational */
   /* --destructive covers error (shadcn base) */
 
   /* Logo theming */
-  --forge-logo-body: oklch(0.145 0 0);
-  --forge-logo-spark: var(--forge-ember);
+  --orqa-logo-body: oklch(0.145 0 0);
+  --orqa-logo-spark: var(--orqa-ember);
 }
 
 .dark {
-  --forge-ember: oklch(0.64 0.27 25);
-  --forge-amber: oklch(0.80 0.17 75);
-  --forge-arc: oklch(0.78 0.12 220);
-  --forge-success: oklch(0.72 0.19 150);
-  --forge-warning: oklch(0.79 0.17 75);
-  --forge-info: oklch(0.76 0.13 230);
-  --forge-logo-body: oklch(0.92 0.003 260);
-  --forge-logo-spark: var(--forge-ember);
+  --orqa-ember: oklch(0.64 0.27 25);
+  --orqa-amber: oklch(0.80 0.17 75);
+  --orqa-arc: oklch(0.78 0.12 220);
+  --orqa-success: oklch(0.72 0.19 150);
+  --orqa-warning: oklch(0.79 0.17 75);
+  --orqa-info: oklch(0.76 0.13 230);
+  --orqa-logo-body: oklch(0.92 0.003 260);
+  --orqa-logo-spark: var(--orqa-ember);
 }
 ```
 
@@ -153,13 +153,13 @@ These extend the shadcn-svelte base set for Forge-specific needs (contextual spa
 ```css
 :root {
   /* Layout tokens */
-  --forge-activity-bar-width: 48px;
-  --forge-activity-bar-icon-size: 24px;
-  --forge-activity-bar-hit-target: 48px;
-  --forge-activity-bar-indicator: 2px;
-  --forge-sessions-panel-default: 240px;
-  --forge-sessions-panel-min: 180px;
-  --forge-sessions-panel-max: 320px;
+  --orqa-activity-bar-width: 48px;
+  --orqa-activity-bar-icon-size: 24px;
+  --orqa-activity-bar-hit-target: 48px;
+  --orqa-activity-bar-indicator: 2px;
+  --orqa-sessions-panel-default: 240px;
+  --orqa-sessions-panel-min: 180px;
+  --orqa-sessions-panel-max: 320px;
 }
 ```
 
@@ -172,7 +172,7 @@ These extend the shadcn-svelte base set for Forge-specific needs (contextual spa
 | `text-muted-foreground` | `text-[#71717a]` |
 | `bg-destructive` for error states | `bg-red-500` |
 | Use semantic classes exclusively | Use raw Tailwind palette colors for brand elements |
-| Use `--forge-success` / `--forge-warning` / `--forge-info` for status | Invent ad-hoc status colors |
+| Use `--orqa-success` / `--orqa-warning` / `--orqa-info` for status | Invent ad-hoc status colors |
 
 Dark mode is handled entirely by CSS variable redefinition under `.dark`. Components never need `dark:` Tailwind variants for colors.
 
@@ -267,7 +267,7 @@ Tailwind's default 4px increment scale. Commonly used values:
 ### Implementation
 
 ```svelte
-<!-- src/routes/+layout.svelte -->
+<!-- ui/routes/+layout.svelte -->
 <script lang="ts">
   import '../app.css';
   import { ModeWatcher } from 'mode-watcher';
@@ -349,12 +349,12 @@ These are not provided by shadcn-svelte and must be built:
 
 ## Per-Project Theming
 
-Forge adapts its UI to match the active project's design tokens. This makes Forge feel like a native companion to each project.
+Orqa Studio adapts its UI to match the active project's design tokens. This makes Orqa Studio feel like a native companion to each project.
 
 ### Theme Resolution Chain
 
 ```
-User Override  >  Extracted Project Token  >  Forge Default Theme
+User Override  >  Extracted Project Token  >  Orqa Studio Default Theme
 ```
 
 ### How It Works
@@ -373,15 +373,15 @@ export function applyProjectTheme(theme: ProjectTheme | null): void {
   const root = document.documentElement;
 
   if (!theme) {
-    // Reset to Forge defaults: remove all inline overrides
-    for (const key of Object.keys(FORGE_DEFAULTS)) {
+    // Reset to Orqa Studio defaults: remove all inline overrides
+    for (const key of Object.keys(ORQA_DEFAULTS)) {
       root.style.removeProperty(`--${key}`);
     }
     return;
   }
 
   // Apply resolved tokens (user overrides > extracted > defaults)
-  for (const [key, defaultValue] of Object.entries(FORGE_DEFAULTS)) {
+  for (const [key, defaultValue] of Object.entries(ORQA_DEFAULTS)) {
     const resolved = theme.user_overrides?.[key]
       ?? theme.tokens?.[key]
       ?? null;
@@ -410,7 +410,7 @@ Setting 30 CSS custom properties on `:root`: < 1ms. Subsequent repaint: 2-5ms. I
 
 ## Brand-Aware Code Generation
 
-When Claude generates frontend code, Forge injects a compact `<design-system>` context block into the system prompt. This ensures generated code uses semantic token classes rather than raw color values.
+When Claude generates frontend code, Orqa Studio injects a compact `<design-system>` context block into the system prompt. This ensures generated code uses semantic token classes rather than raw color values.
 
 ### Injection Conditions
 

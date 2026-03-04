@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use tauri::State;
 
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 use crate::repo::settings_repo;
 use crate::state::AppState;
 
@@ -14,9 +14,9 @@ pub fn settings_get(
     key: String,
     scope: Option<String>,
     state: State<'_, AppState>,
-) -> Result<Option<serde_json::Value>, ForgeError> {
+) -> Result<Option<serde_json::Value>, OrqaError> {
     if key.trim().is_empty() {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "settings key cannot be empty".to_string(),
         ));
     }
@@ -26,7 +26,7 @@ pub fn settings_get(
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     settings_repo::get(&conn, key.trim(), &scope_str)
 }
@@ -40,9 +40,9 @@ pub fn settings_set(
     value: serde_json::Value,
     scope: Option<String>,
     state: State<'_, AppState>,
-) -> Result<(), ForgeError> {
+) -> Result<(), OrqaError> {
     if key.trim().is_empty() {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "settings key cannot be empty".to_string(),
         ));
     }
@@ -52,7 +52,7 @@ pub fn settings_set(
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     settings_repo::set(&conn, key.trim(), &value, &scope_str)
 }
@@ -64,13 +64,13 @@ pub fn settings_set(
 pub fn settings_get_all(
     scope: Option<String>,
     state: State<'_, AppState>,
-) -> Result<HashMap<String, serde_json::Value>, ForgeError> {
+) -> Result<HashMap<String, serde_json::Value>, OrqaError> {
     let scope_str = scope.unwrap_or_else(|| "app".to_string());
 
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     settings_repo::get_all(&conn, &scope_str)
 }

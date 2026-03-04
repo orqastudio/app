@@ -4,7 +4,7 @@
 
 Complete catalog of `#[tauri::command]` functions for Phase 1 (MVP). Every frontend-to-backend call crosses the IPC boundary through one of these commands. Streaming data uses `Channel<T>` (AD-009) rather than `invoke()`.
 
-All commands return `Result<T, ForgeError>` where `ForgeError` is a `thiserror`-derived enum serialized as a JSON object with `code` and `message` fields (AD-003).
+All commands return `Result<T, OrqaError>` where `OrqaError` is a `thiserror`-derived enum serialized as a JSON object with `code` and `message` fields (AD-003).
 
 ---
 
@@ -14,7 +14,7 @@ Every command returns the same error shape on failure:
 
 ```rust
 #[derive(Debug, thiserror::Error, serde::Serialize)]
-pub enum ForgeError {
+pub enum OrqaError {
     #[error("not found: {0}")]
     NotFound(String),
 
@@ -47,7 +47,7 @@ pub enum ForgeError {
 TypeScript receives this as:
 
 ```typescript
-interface ForgeError {
+interface OrqaError {
   code: "not_found" | "database" | "file_system" | "sidecar" | "validation" | "scan" | "serialization" | "permission_denied" | "search";
   message: string;
 }
@@ -59,13 +59,13 @@ interface ForgeError {
 
 ### `project_open`
 
-Open an existing directory as a Forge project. Registers it in SQLite, runs Tier 1 + Tier 2 codebase scan, indexes `.claude/` artifacts, and extracts design tokens if found.
+Open an existing directory as a Orqa Studio project. Registers it in SQLite, runs Tier 1 + Tier 2 codebase scan, indexes `.claude/` artifacts, and extracts design tokens if found.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `path` | `String` | Yes | Absolute path to the project directory |
 
-**Returns:** `Result<Project, ForgeError>`
+**Returns:** `Result<Project, OrqaError>`
 
 **Error cases:**
 - `NotFound` — path does not exist or is not a directory
@@ -87,7 +87,7 @@ Create a new project directory with scaffolded `.claude/` governance skeleton. R
 | `parent_path` | `String` | Yes | Parent directory where project folder is created |
 | `init_git` | `bool` | No (default `true`) | Whether to run `git init` |
 
-**Returns:** `Result<Project, ForgeError>`
+**Returns:** `Result<Project, OrqaError>`
 
 **Error cases:**
 - `FileSystem` — cannot create directory or write scaffold files
@@ -107,7 +107,7 @@ List all registered projects, ordered by most recently opened.
 |-----------|------|----------|-------------|
 | *(none)* | | | |
 
-**Returns:** `Result<Vec<ProjectSummary>, ForgeError>`
+**Returns:** `Result<Vec<ProjectSummary>, OrqaError>`
 
 **Error cases:**
 - `Database` — query failure
@@ -124,7 +124,7 @@ Get full project details including detected stack, artifact counts, and theme st
 |-----------|------|----------|-------------|
 | `project_id` | `i64` | Yes | Project ID |
 
-**Returns:** `Result<Project, ForgeError>`
+**Returns:** `Result<Project, OrqaError>`
 
 **Error cases:**
 - `NotFound` — no project with this ID
@@ -142,7 +142,7 @@ Get the currently active project (last-opened). Returns `None` if no project has
 |-----------|------|----------|-------------|
 | *(none)* | | | |
 
-**Returns:** `Result<Option<Project>, ForgeError>`
+**Returns:** `Result<Option<Project>, OrqaError>`
 
 **Error cases:**
 - `Database` — query failure
@@ -160,7 +160,7 @@ Scan a project directory to detect languages, frameworks, package manager, and g
 | `path` | `String` | Yes | Absolute path to the project directory |
 | `excluded_paths` | `Option<Vec<String>>` | No | Directory names to skip (defaults to `["node_modules", ".git", "target", "dist", "build"]`) |
 
-**Returns:** `Result<ProjectScanResult, ForgeError>`
+**Returns:** `Result<ProjectScanResult, OrqaError>`
 
 ```rust
 pub struct ProjectScanResult {
@@ -180,13 +180,13 @@ pub struct ProjectScanResult {
 
 ### `project_settings_read`
 
-Read project settings from `.forge/project.json` at the given project path. Returns `None` if the file does not exist (not an error — triggers setup wizard in the UI).
+Read project settings from `.orqa/project.json` at the given project path. Returns `None` if the file does not exist (not an error — triggers setup wizard in the UI).
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `path` | `String` | Yes | Absolute path to the project directory |
 
-**Returns:** `Result<Option<ProjectSettings>, ForgeError>`
+**Returns:** `Result<Option<ProjectSettings>, OrqaError>`
 
 ```rust
 pub struct ProjectSettings {
@@ -218,17 +218,17 @@ pub struct GovernanceCounts {
 
 ### `project_settings_write`
 
-Write project settings to `.forge/project.json`. Creates the `.forge/` directory if it does not exist. Returns the written settings as confirmation.
+Write project settings to `.orqa/project.json`. Creates the `.orqa/` directory if it does not exist. Returns the written settings as confirmation.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `path` | `String` | Yes | Absolute path to the project directory |
 | `settings` | `ProjectSettings` | Yes | The settings object to write |
 
-**Returns:** `Result<ProjectSettings, ForgeError>`
+**Returns:** `Result<ProjectSettings, OrqaError>`
 
 **Error cases:**
-- `FileSystem` — cannot create `.forge/` directory or write file
+- `FileSystem` — cannot create `.orqa/` directory or write file
 - `Serialization` — settings cannot be serialized (should not happen with valid types)
 
 **TS mirror:** `Promise<ProjectSettings>`
@@ -247,7 +247,7 @@ Create a new conversation session for the active project. If there is a previous
 | `model` | `Option<String>` | No | Model selection. `None` or `"auto"` both mean auto-select (provider chooses the best available model based on rate limits and availability). An explicit model string (e.g., `"claude-opus-4-6"`) pins the session to that model. Default from settings applies when omitted. |
 | `system_prompt` | `Option<String>` | No | Custom system prompt override |
 
-**Returns:** `Result<Session, ForgeError>`
+**Returns:** `Result<Session, OrqaError>`
 
 **Error cases:**
 - `NotFound` — no project with this ID
@@ -269,7 +269,7 @@ List sessions for a project, ordered by most recent. Includes preview snippet an
 | `limit` | `Option<i64>` | No | Max results (default 50) |
 | `offset` | `Option<i64>` | No | Pagination offset (default 0) |
 
-**Returns:** `Result<Vec<SessionSummary>, ForgeError>`
+**Returns:** `Result<Vec<SessionSummary>, OrqaError>`
 
 **Error cases:**
 - `NotFound` — no project with this ID
@@ -288,7 +288,7 @@ Get full session details including metadata and token usage.
 |-----------|------|----------|-------------|
 | `session_id` | `i64` | Yes | Session ID |
 
-**Returns:** `Result<Session, ForgeError>`
+**Returns:** `Result<Session, OrqaError>`
 
 **Error cases:**
 - `NotFound` — no session with this ID
@@ -307,7 +307,7 @@ Update a session's display title.
 | `session_id` | `i64` | Yes | Session ID |
 | `title` | `String` | Yes | New title |
 
-**Returns:** `Result<(), ForgeError>`
+**Returns:** `Result<(), OrqaError>`
 
 **Error cases:**
 - `NotFound` — no session with this ID
@@ -326,7 +326,7 @@ End a session. Triggers handoff summary generation (async, does not block). Sets
 |-----------|------|----------|-------------|
 | `session_id` | `i64` | Yes | Session ID |
 
-**Returns:** `Result<(), ForgeError>`
+**Returns:** `Result<(), OrqaError>`
 
 **Error cases:**
 - `NotFound` — no session with this ID
@@ -345,7 +345,7 @@ Delete a session and all its messages. Irreversible.
 |-----------|------|----------|-------------|
 | `session_id` | `i64` | Yes | Session ID |
 
-**Returns:** `Result<(), ForgeError>`
+**Returns:** `Result<(), OrqaError>`
 
 **Error cases:**
 - `NotFound` — no session with this ID
@@ -367,7 +367,7 @@ List all messages (content blocks) for a session, ordered by `turn_index` then `
 | `limit` | `Option<i64>` | No | Max results (default: all) |
 | `offset` | `Option<i64>` | No | Pagination offset (default 0) |
 
-**Returns:** `Result<Vec<Message>, ForgeError>`
+**Returns:** `Result<Vec<Message>, OrqaError>`
 
 **Error cases:**
 - `NotFound` — no session with this ID
@@ -387,7 +387,7 @@ Full-text search across messages using FTS5. Searches within a project scope. Re
 | `query` | `String` | Yes | FTS5 search query |
 | `limit` | `Option<i64>` | No | Max results (default 50) |
 
-**Returns:** `Result<Vec<SearchResult>, ForgeError>`
+**Returns:** `Result<Vec<SearchResult>, OrqaError>`
 
 **Error cases:**
 - `NotFound` — no project with this ID
@@ -416,7 +416,7 @@ This is the primary conversation command. It:
 | `content` | `String` | Yes | User message text |
 | `on_event` | `Channel<StreamEvent>` | Yes | Tauri channel for streaming events |
 
-**Returns:** `Result<MessageId, ForgeError>`
+**Returns:** `Result<MessageId, OrqaError>`
 
 The `MessageId` is the ID of the persisted user message. Assistant messages stream via the channel.
 
@@ -438,7 +438,7 @@ Abort the current streaming response. Sends a cancellation signal to the sidecar
 |-----------|------|----------|-------------|
 | `session_id` | `i64` | Yes | Session ID |
 
-**Returns:** `Result<(), ForgeError>`
+**Returns:** `Result<(), OrqaError>`
 
 **Error cases:**
 - `NotFound` — no session with this ID, or no active stream
@@ -459,7 +459,7 @@ List governance artifacts for a project, optionally filtered by type.
 | `project_id` | `i64` | Yes | Project ID |
 | `artifact_type` | `Option<String>` | No | Filter: `"agent"`, `"rule"`, `"skill"`, `"hook"`, `"doc"` |
 
-**Returns:** `Result<Vec<ArtifactSummary>, ForgeError>`
+**Returns:** `Result<Vec<ArtifactSummary>, OrqaError>`
 
 **Error cases:**
 - `NotFound` — no project with this ID
@@ -478,7 +478,7 @@ Get full artifact details including rendered content read from disk.
 |-----------|------|----------|-------------|
 | `artifact_id` | `i64` | Yes | Artifact ID |
 
-**Returns:** `Result<Artifact, ForgeError>`
+**Returns:** `Result<Artifact, OrqaError>`
 
 **Error cases:**
 - `NotFound` — no artifact with this ID, or file missing from disk
@@ -498,7 +498,7 @@ Get an artifact by its relative path within the project. Useful when navigating 
 | `project_id` | `i64` | Yes | Project ID |
 | `rel_path` | `String` | Yes | Relative path, e.g. `".claude/agents/backend-engineer.md"` |
 
-**Returns:** `Result<Artifact, ForgeError>`
+**Returns:** `Result<Artifact, OrqaError>`
 
 **Error cases:**
 - `NotFound` — no artifact at this path
@@ -520,7 +520,7 @@ Create a new governance artifact. Writes the file to disk and indexes it in SQLi
 | `name` | `String` | Yes | Artifact name (used for filename) |
 | `content` | `String` | Yes | Full file content (markdown with optional YAML frontmatter) |
 
-**Returns:** `Result<Artifact, ForgeError>`
+**Returns:** `Result<Artifact, OrqaError>`
 
 **Error cases:**
 - `NotFound` — no project with this ID
@@ -541,7 +541,7 @@ Update an artifact's content on disk. Re-indexes metadata in SQLite.
 | `artifact_id` | `i64` | Yes | Artifact ID |
 | `content` | `String` | Yes | New full file content |
 
-**Returns:** `Result<Artifact, ForgeError>`
+**Returns:** `Result<Artifact, OrqaError>`
 
 **Error cases:**
 - `NotFound` — no artifact with this ID
@@ -560,7 +560,7 @@ Delete an artifact. Removes the file from disk and the record from SQLite.
 |-----------|------|----------|-------------|
 | `artifact_id` | `i64` | Yes | Artifact ID |
 
-**Returns:** `Result<(), ForgeError>`
+**Returns:** `Result<(), OrqaError>`
 
 **Error cases:**
 - `NotFound` — no artifact with this ID
@@ -575,13 +575,13 @@ Delete an artifact. Removes the file from disk and the record from SQLite.
 
 ### `theme_get_project`
 
-Get the resolved theme for a project. Merges auto-extracted tokens with any user overrides. Returns Forge defaults for any unmapped tokens.
+Get the resolved theme for a project. Merges auto-extracted tokens with any user overrides. Returns Orqa Studio defaults for any unmapped tokens.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `project_id` | `i64` | Yes | Project ID |
 
-**Returns:** `Result<ResolvedTheme, ForgeError>`
+**Returns:** `Result<ResolvedTheme, OrqaError>`
 
 **Error cases:**
 - `NotFound` — no project with this ID
@@ -602,7 +602,7 @@ Set a manual override for a specific design token. Overrides persist until clear
 | `value_light` | `String` | Yes | OKLCH color value for light mode |
 | `value_dark` | `Option<String>` | No | OKLCH color value for dark mode |
 
-**Returns:** `Result<(), ForgeError>`
+**Returns:** `Result<(), OrqaError>`
 
 **Error cases:**
 - `NotFound` — no project with this ID
@@ -615,13 +615,13 @@ Set a manual override for a specific design token. Overrides persist until clear
 
 ### `theme_clear_overrides`
 
-Remove all manual theme overrides for a project. Reverts to auto-extracted tokens (or Forge defaults if none).
+Remove all manual theme overrides for a project. Reverts to auto-extracted tokens (or Orqa Studio defaults if none).
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `project_id` | `i64` | Yes | Project ID |
 
-**Returns:** `Result<(), ForgeError>`
+**Returns:** `Result<(), OrqaError>`
 
 **Error cases:**
 - `NotFound` — no project with this ID
@@ -642,7 +642,7 @@ Get a single setting value by key. Settings are scoped to `"app"` or a specific 
 | `key` | `String` | Yes | Setting key |
 | `scope` | `Option<String>` | No | `"app"` (default) or a project ID as string |
 
-**Returns:** `Result<Option<serde_json::Value>, ForgeError>`
+**Returns:** `Result<Option<serde_json::Value>, OrqaError>`
 
 **Error cases:**
 - `Database` — query failure
@@ -661,7 +661,7 @@ Set a single setting value.
 | `value` | `serde_json::Value` | Yes | JSON value |
 | `scope` | `Option<String>` | No | `"app"` (default) or a project ID as string |
 
-**Returns:** `Result<(), ForgeError>`
+**Returns:** `Result<(), OrqaError>`
 
 **Error cases:**
 - `Validation` — empty key
@@ -680,7 +680,7 @@ Get all settings for a given scope, returned as a key-value map.
 |-----------|------|----------|-------------|
 | `scope` | `Option<String>` | No | `"app"` (default) or a project ID as string |
 
-**Returns:** `Result<HashMap<String, serde_json::Value>, ForgeError>`
+**Returns:** `Result<HashMap<String, serde_json::Value>, OrqaError>`
 
 **Error cases:**
 - `Database` — query failure
@@ -699,7 +699,7 @@ Get the current sidecar process status.
 |-----------|------|----------|-------------|
 | *(none)* | | | |
 
-**Returns:** `Result<SidecarStatus, ForgeError>`
+**Returns:** `Result<SidecarStatus, OrqaError>`
 
 **Error cases:**
 - *(always succeeds — returns status even if sidecar is not running)*
@@ -716,7 +716,7 @@ Kill the current sidecar process (if any) and spawn a new one.
 |-----------|------|----------|-------------|
 | *(none)* | | | |
 
-**Returns:** `Result<SidecarStatus, ForgeError>`
+**Returns:** `Result<SidecarStatus, OrqaError>`
 
 **Error cases:**
 - `Sidecar` — failed to spawn new sidecar process
@@ -736,7 +736,7 @@ Read a documentation file from the project's `docs/` directory. Returns an `Arti
 |-----------|------|----------|-------------|
 | `rel_path` | `String` | Yes | Relative path within `docs/` (e.g. `"product/vision.md"`) |
 
-**Returns:** `Result<Artifact, ForgeError>`
+**Returns:** `Result<Artifact, OrqaError>`
 
 **Error cases:**
 - `Validation` — path contains `..` (traversal attempt)
@@ -755,7 +755,7 @@ Scan the active project's `docs/` directory and return a tree structure of docum
 |-----------|------|----------|-------------|
 | *(none)* | | | Uses the active project |
 
-**Returns:** `Result<Vec<DocNode>, ForgeError>`
+**Returns:** `Result<Vec<DocNode>, OrqaError>`
 
 **Error cases:**
 - `NotFound` — no active project
@@ -773,7 +773,7 @@ List governance artifacts (agents, rules, skills, hooks) by scanning the `.claud
 |-----------|------|----------|-------------|
 | `artifact_type` | `String` | Yes | One of: `"agent"`, `"rule"`, `"skill"`, `"hook"`. Not `"doc"` (use `doc_tree_scan`). |
 
-**Returns:** `Result<Vec<ArtifactSummary>, ForgeError>`
+**Returns:** `Result<Vec<ArtifactSummary>, OrqaError>`
 
 **Error cases:**
 - `Validation` — invalid type or `"doc"` passed
@@ -791,7 +791,7 @@ Read a governance artifact file from the active project's `.claude/` directory. 
 |-----------|------|----------|-------------|
 | `rel_path` | `String` | Yes | Relative path within project (e.g. `".claude/agents/backend-engineer.md"`) |
 
-**Returns:** `Result<Artifact, ForgeError>`
+**Returns:** `Result<Artifact, OrqaError>`
 
 **Error cases:**
 - `Validation` — path contains `..`
@@ -806,13 +806,13 @@ Read a governance artifact file from the active project's `.claude/` directory. 
 
 ### `project_settings_read`
 
-Read project settings from the `.forge/project.json` file in the project directory. Returns `None` if the settings file does not exist yet.
+Read project settings from the `.orqa/project.json` file in the project directory. Returns `None` if the settings file does not exist yet.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `path` | `String` | Yes | Absolute path to the project directory |
 
-**Returns:** `Result<Option<ProjectSettings>, ForgeError>`
+**Returns:** `Result<Option<ProjectSettings>, OrqaError>`
 
 **Error cases:**
 - `Serialization` — malformed JSON in settings file
@@ -823,14 +823,14 @@ Read project settings from the `.forge/project.json` file in the project directo
 
 ### `project_settings_write`
 
-Write project settings to the `.forge/project.json` file. Creates the `.forge/` directory if it does not exist. Returns the written settings for confirmation.
+Write project settings to the `.orqa/project.json` file. Creates the `.orqa/` directory if it does not exist. Returns the written settings for confirmation.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `path` | `String` | Yes | Absolute path to the project directory |
 | `settings` | `ProjectSettings` | Yes | Settings to write |
 
-**Returns:** `Result<ProjectSettings, ForgeError>`
+**Returns:** `Result<ProjectSettings, OrqaError>`
 
 **Error cases:**
 - `FileSystem` — cannot create directory or write file
@@ -849,7 +849,7 @@ Scan a project directory for language, framework, and governance info. Uses file
 | `path` | `String` | Yes | Absolute path to the project directory |
 | `excluded_paths` | `Option<Vec<String>>` | No | Directory names to skip (defaults to node_modules, .git, target, dist, build) |
 
-**Returns:** `Result<ProjectScanResult, ForgeError>`
+**Returns:** `Result<ProjectScanResult, OrqaError>`
 
 **Error cases:**
 - `Validation` — path does not exist or is not a directory
@@ -860,14 +860,14 @@ Scan a project directory for language, framework, and governance info. Uses file
 
 ### `project_icon_upload`
 
-Upload a project icon by copying an image file to `.forge/icon.{ext}`. Validates file extension and removes any existing icon files before copying.
+Upload a project icon by copying an image file to `.orqa/icon.{ext}`. Validates file extension and removes any existing icon files before copying.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `project_path` | `String` | Yes | Absolute path to the project directory |
 | `source_path` | `String` | Yes | Absolute path to the source image file |
 
-**Returns:** `Result<String, ForgeError>` — icon filename (e.g. `"icon.png"`)
+**Returns:** `Result<String, OrqaError>` — icon filename (e.g. `"icon.png"`)
 
 **Error cases:**
 - `NotFound` — source file does not exist
@@ -887,7 +887,7 @@ Read a project icon and return it as a base64-encoded data URI (`data:{mime};bas
 | `project_path` | `String` | Yes | Absolute path to the project directory |
 | `icon_filename` | `String` | Yes | Icon filename returned by `project_icon_upload` |
 
-**Returns:** `Result<String, ForgeError>` — data URI string
+**Returns:** `Result<String, OrqaError>` — data URI string
 
 **Error cases:**
 - `NotFound` — icon file does not exist
@@ -901,7 +901,7 @@ Read a project icon and return it as a base64-encoded data URI (`data:{mime};bas
 
 ### `index_codebase`
 
-Index a project's codebase for search. Creates or replaces a DuckDB index at `<project_path>/.forge/search.duckdb`. Chunks source files and stores them for regex and semantic search.
+Index a project's codebase for search. Creates or replaces a DuckDB index at `<project_path>/.orqa/search.duckdb`. Chunks source files and stores them for regex and semantic search.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -1118,7 +1118,7 @@ All types used by the frontend to communicate with the Rust backend. These are g
 
 ```typescript
 // =============================================================================
-// src/lib/types/ipc.ts
+// ui/lib/types/ipc.ts
 // Generated from Rust types — keep in sync with src-tauri/src/domain/types.rs
 // =============================================================================
 
@@ -1126,7 +1126,7 @@ All types used by the frontend to communicate with the Rust backend. These are g
 // Error
 // ---------------------------------------------------------------------------
 
-export interface ForgeError {
+export interface OrqaError {
   code:
     | "not_found"
     | "database"
@@ -1462,7 +1462,7 @@ tauri::Builder::default()
 | Documentation | `doc_tree_scan` | invoke | Scan docs/ directory and return tree structure |
 | Documentation | `governance_list` | invoke | List all governance artifacts by category |
 | Documentation | `governance_read` | invoke | Read a governance artifact by relative path |
-| Project Settings | `project_settings_read` | invoke | Read file-based project settings (.forge/project.json) |
+| Project Settings | `project_settings_read` | invoke | Read file-based project settings (.orqa/project.json) |
 | Project Settings | `project_settings_write` | invoke | Write file-based project settings |
 | Project Settings | `project_scan` | invoke | Re-run project codebase scan |
 | Project Settings | `project_icon_upload` | invoke | Upload/copy a project icon image |
@@ -1489,16 +1489,16 @@ tauri::Builder::default()
 All `invoke()` calls go through a typed wrapper that handles error unwrapping:
 
 ```typescript
-// src/lib/ipc.ts
+// ui/lib/ipc.ts
 import { invoke } from "@tauri-apps/api/core";
-import type { ForgeError } from "$lib/types/ipc";
+import type { OrqaError } from "$lib/types/ipc";
 
-export async function forgeInvoke<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
+export async function invoke<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
   try {
     return await invoke<T>(cmd, args);
   } catch (error) {
-    // Tauri serializes ForgeError as a JSON string
-    throw typeof error === "string" ? JSON.parse(error) as ForgeError : error;
+    // Tauri serializes OrqaError as a JSON string
+    throw typeof error === "string" ? JSON.parse(error) as OrqaError : error;
   }
 }
 ```
@@ -1506,7 +1506,7 @@ export async function forgeInvoke<T>(cmd: string, args?: Record<string, unknown>
 ### Streaming Setup
 
 ```typescript
-// src/lib/ipc.ts
+// ui/lib/ipc.ts
 import { Channel } from "@tauri-apps/api/core";
 import type { StreamEvent } from "$lib/types/ipc";
 
@@ -1537,7 +1537,7 @@ const channel = createStreamChannel((event) => {
   }
 });
 
-await forgeInvoke("stream_send_message", {
+await invoke("stream_send_message", {
   session_id: activeSessionId,
   content: userInput,
   on_event: channel,

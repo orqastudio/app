@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-04 | **Status:** Active specification | **References:** [Rust Modules](/architecture/rust-modules), [IPC Commands](/architecture/ipc-commands), [Tool Definitions](/architecture/tool-definitions)
 
-Built-in semantic code search with no external dependencies. The entire search stack — code chunking, ONNX embeddings, vector store, and search API — runs natively in Forge's Rust backend.
+Built-in semantic code search with no external dependencies. The entire search stack — code chunking, ONNX embeddings, vector store, and search API — runs natively in Orqa Studio's Rust backend.
 
 ---
 
@@ -11,7 +11,7 @@ Built-in semantic code search with no external dependencies. The entire search s
 ```
 User types query → Claude uses search tool
                          ↓
-                   Sidecar MCP server (forge)
+                   Sidecar MCP server (orqa-studio)
                          ↓ tool_execute NDJSON
                    Rust search module
                          ↓
@@ -21,14 +21,14 @@ User types query → Claude uses search tool
                    └─────┬─────┘
                          ↓
                    ┌─────┴─────┐
-                   │  DuckDB    │  ← .forge/search.duckdb
+                   │  DuckDB    │  ← .orqa/search.duckdb
                    │  VSS index │     HNSW cosine similarity
                    └─────┬─────┘
                          ↓
                    Top-K results → tool_result → Claude
 ```
 
-**Design principle:** Zero configuration. Forge indexes the codebase, embeds chunks, and searches — all within the Tauri process. No external servers, no API keys, no Docker containers.
+**Design principle:** Zero configuration. Orqa Studio indexes the codebase, embeds chunks, and searches — all within the Tauri process. No external servers, no API keys, no Docker containers.
 
 ---
 
@@ -55,7 +55,7 @@ src-tauri/src/search/
 
 ## 3. Data Model
 
-### DuckDB Schema (`.forge/search.duckdb`)
+### DuckDB Schema (`.orqa/search.duckdb`)
 
 ```sql
 CREATE TABLE IF NOT EXISTS chunks (
@@ -112,7 +112,7 @@ pub struct IndexStatus {
 
 **Approach:** Line-based splitting with language-aware boundary detection.
 
-1. **File walking:** Uses the `ignore` crate which respects `.gitignore`, `.git/info/exclude`, and global gitignore. Also respects project `excluded_paths` from `.forge/project.json`.
+1. **File walking:** Uses the `ignore` crate which respects `.gitignore`, `.git/info/exclude`, and global gitignore. Also respects project `excluded_paths` from `.orqa/project.json`.
 2. **File filtering:** Skip binary files, files > 1MB, and non-text extensions.
 3. **Splitting heuristic:**
    - Target chunk size: 20-100 lines
@@ -159,14 +159,14 @@ let session = Session::builder()?
 ### Model Distribution
 
 **Production (installer build):**
-- The ONNX model files (`model.onnx`, `tokenizer.json`) are **bundled with the Forge installer**
+- The ONNX model files (`model.onnx`, `tokenizer.json`) are **bundled with the Orqa Studio installer**
 - This adds ~130MB to the installer size
 - The bundled model is placed in the app's resource directory during installation
 - Build pipeline must include a step to download/verify the model before packaging
 - Tauri's `resources` configuration in `tauri.conf.json` handles bundling
 
 **Development (first-use download):**
-- On first use, if the model is not found in the resource directory, Forge downloads it from Hugging Face to the app data directory (`{app_data}/forge/models/bge-small-en-v1.5/`)
+- On first use, if the model is not found in the resource directory, Orqa Studio downloads it from Hugging Face to the app data directory (`{app_data}/orqa-studio/models/bge-small-en-v1.5/`)
 - Download progress is reported via Tauri events for UI feedback
 - The model is cached — subsequent runs use the cached copy
 - A hash check verifies model integrity after download
@@ -253,7 +253,7 @@ All commands follow the standard Tauri error propagation pattern: domain errors 
 
 ## 8. Sidecar Tool Integration
 
-Tools are registered in the forge MCP server (`sidecar/src/provider.ts`):
+Tools are registered in the orqa-studio MCP server (`sidecar/src/provider.ts`):
 
 | Tool | Sidecar Name | Auto-approve | Description |
 |------|-------------|--------------|-------------|
@@ -297,7 +297,7 @@ Embedding is the bottleneck. It runs asynchronously via `tokio::spawn_blocking` 
 
 ## 11. Installer Build Requirements
 
-When building the Forge installer for distribution:
+When building the Orqa Studio installer for distribution:
 
 1. **Download the ONNX model** during the build pipeline (CI/CD step)
 2. **Verify model integrity** with SHA-256 checksum

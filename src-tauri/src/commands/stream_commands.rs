@@ -1,5 +1,5 @@
 use crate::domain::provider_event::StreamEvent;
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 use crate::repo::{message_repo, project_repo, session_repo};
 use crate::sidecar::types::{SidecarRequest, SidecarResponse};
 use crate::state::AppState;
@@ -109,11 +109,11 @@ pub fn stream_send_message(
     content: String,
     on_event: tauri::ipc::Channel<StreamEvent>,
     state: tauri::State<'_, AppState>,
-) -> Result<i64, ForgeError> {
+) -> Result<i64, OrqaError> {
     // 1. Validate content
     let content = content.trim().to_string();
     if content.is_empty() {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "message content cannot be empty".to_string(),
         ));
     }
@@ -123,7 +123,7 @@ pub fn stream_send_message(
         let db = state
             .db
             .lock()
-            .map_err(|e| ForgeError::Database(format!("failed to acquire db lock: {e}")))?;
+            .map_err(|e| OrqaError::Database(format!("failed to acquire db lock: {e}")))?;
 
         // Verify session exists
         session_repo::get(&db, session_id)?;
@@ -284,7 +284,7 @@ pub fn stream_send_message(
         let db = state
             .db
             .lock()
-            .map_err(|e| ForgeError::Database(format!("failed to acquire db lock: {e}")))?;
+            .map_err(|e| OrqaError::Database(format!("failed to acquire db lock: {e}")))?;
 
         let assistant_turn = turn_index + 1;
         let content_value = if accumulated_text.is_empty() {
@@ -327,7 +327,7 @@ pub fn stream_send_message(
 /// with a `StreamCancelled` event, which the read loop in `stream_send_message`
 /// will handle.
 #[tauri::command]
-pub fn stream_stop(session_id: i64, state: tauri::State<'_, AppState>) -> Result<(), ForgeError> {
+pub fn stream_stop(session_id: i64, state: tauri::State<'_, AppState>) -> Result<(), OrqaError> {
     state
         .sidecar
         .send(&SidecarRequest::CancelStream { session_id })

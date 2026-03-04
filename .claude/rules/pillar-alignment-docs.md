@@ -15,7 +15,7 @@ Every documentation page that describes a feature, component, workflow, integrat
 
 Every page must serve at least one pillar. If a page cannot justify alignment with either pillar, it is scope creep and should be flagged for removal.
 
-## Forge's Two Pillars
+## Orqa Studio's Two Pillars
 
 **Pillar 1: Self-Learning Loop** — The system improves over time. Features that capture lessons, track metrics, feed retrospectives back into governance, accumulate knowledge across sessions, or make the system smarter with each interaction serve this pillar.
 

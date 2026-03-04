@@ -3,21 +3,21 @@ use std::path::Path;
 use tauri::State;
 
 use crate::domain::project::{Project, ProjectSummary};
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 use crate::repo::project_repo;
 use crate::state::AppState;
 
-/// Open an existing directory as a Forge project.
+/// Open an existing directory as an Orqa Studio project.
 ///
 /// If the directory is already registered, returns the existing project.
 /// Otherwise creates a new project record. In Phase 1, scanning is deferred.
 #[tauri::command]
-pub fn project_open(path: String, state: State<'_, AppState>) -> Result<Project, ForgeError> {
+pub fn project_open(path: String, state: State<'_, AppState>) -> Result<Project, OrqaError> {
     let canonical = validate_directory_path(&path)?;
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     // Check if already registered
     match project_repo::get_by_path(&conn, &canonical) {
@@ -29,7 +29,7 @@ pub fn project_open(path: String, state: State<'_, AppState>) -> Result<Project,
             )?;
             project_repo::get(&conn, project.id)
         }
-        Err(ForgeError::NotFound(_)) => {
+        Err(OrqaError::NotFound(_)) => {
             let name = derive_project_name(&canonical);
             project_repo::create(&conn, &name, &canonical, None)
         }
@@ -47,23 +47,23 @@ pub fn project_create(
     parent_path: String,
     init_git: Option<bool>,
     state: State<'_, AppState>,
-) -> Result<Project, ForgeError> {
+) -> Result<Project, OrqaError> {
     if name.trim().is_empty() {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "project name cannot be empty".to_string(),
         ));
     }
 
     let parent = Path::new(&parent_path);
     if !parent.exists() || !parent.is_dir() {
-        return Err(ForgeError::Validation(format!(
+        return Err(OrqaError::Validation(format!(
             "parent path does not exist or is not a directory: {parent_path}"
         )));
     }
 
     let project_dir = parent.join(&name);
     if project_dir.exists() {
-        return Err(ForgeError::Validation(format!(
+        return Err(OrqaError::Validation(format!(
             "directory already exists: {}",
             project_dir.display()
         )));
@@ -88,63 +88,63 @@ pub fn project_create(
 
     let canonical = project_dir
         .to_str()
-        .ok_or_else(|| ForgeError::Validation("project path is not valid UTF-8".to_string()))?
+        .ok_or_else(|| OrqaError::Validation("project path is not valid UTF-8".to_string()))?
         .to_string();
 
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     project_repo::create(&conn, name.trim(), &canonical, None)
 }
 
 /// Get a project by its ID.
 #[tauri::command]
-pub fn project_get(project_id: i64, state: State<'_, AppState>) -> Result<Project, ForgeError> {
+pub fn project_get(project_id: i64, state: State<'_, AppState>) -> Result<Project, OrqaError> {
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
     project_repo::get(&conn, project_id)
 }
 
 /// Get the most recently active project, if any.
 #[tauri::command]
-pub fn project_get_active(state: State<'_, AppState>) -> Result<Option<Project>, ForgeError> {
+pub fn project_get_active(state: State<'_, AppState>) -> Result<Option<Project>, OrqaError> {
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
     project_repo::get_active(&conn)
 }
 
 /// List all projects with summary information.
 #[tauri::command]
-pub fn project_list(state: State<'_, AppState>) -> Result<Vec<ProjectSummary>, ForgeError> {
+pub fn project_list(state: State<'_, AppState>) -> Result<Vec<ProjectSummary>, OrqaError> {
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
     project_repo::list(&conn)
 }
 
 /// Validate that a path exists and is a directory, returning the canonical path string.
-fn validate_directory_path(path: &str) -> Result<String, ForgeError> {
+fn validate_directory_path(path: &str) -> Result<String, OrqaError> {
     let p = Path::new(path);
     if !p.exists() {
-        return Err(ForgeError::Validation(format!(
+        return Err(OrqaError::Validation(format!(
             "path does not exist: {path}"
         )));
     }
     if !p.is_dir() {
-        return Err(ForgeError::Validation(format!(
+        return Err(OrqaError::Validation(format!(
             "path is not a directory: {path}"
         )));
     }
     p.to_str()
         .map(|s| s.to_string())
-        .ok_or_else(|| ForgeError::Validation("path is not valid UTF-8".to_string()))
+        .ok_or_else(|| OrqaError::Validation("path is not valid UTF-8".to_string()))
 }
 
 /// Derive a project name from the directory path (last path component).
@@ -171,7 +171,7 @@ mod tests {
     #[test]
     fn validate_directory_path_nonexistent() {
         let result = validate_directory_path("/nonexistent/path/xyz123");
-        assert!(matches!(result, Err(ForgeError::Validation(_))));
+        assert!(matches!(result, Err(OrqaError::Validation(_))));
     }
 
     #[test]

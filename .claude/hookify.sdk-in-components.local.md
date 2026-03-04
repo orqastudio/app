@@ -6,7 +6,7 @@ action: block
 conditions:
   - field: file_path
     operator: regex_match
-    pattern: src/lib/components/.*\.svelte$
+    pattern: ui/lib/components/.*\.svelte$
   - field: new_text
     operator: regex_match
     pattern: invoke\s*\(|from\s+['"]@tauri-apps/api
@@ -19,7 +19,7 @@ Pages and containers fetch data via `invoke()`. Display components receive data 
 **Correct pattern:**
 
 ```svelte
-<!-- src/routes/sessions/+page.svelte (page fetches) -->
+<!-- ui/routes/sessions/+page.svelte (page fetches) -->
 <script lang="ts">
   import { invoke } from '@tauri-apps/api/core';
   import SessionList from '$lib/components/SessionList.svelte';
@@ -28,7 +28,7 @@ Pages and containers fetch data via `invoke()`. Display components receive data 
 </script>
 <SessionList {sessions} />
 
-<!-- src/lib/components/SessionList.svelte (component displays) -->
+<!-- ui/lib/components/SessionList.svelte (component displays) -->
 <script lang="ts">
   let { sessions } = $props();
 </script>

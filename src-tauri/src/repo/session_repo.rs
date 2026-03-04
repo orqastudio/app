@@ -1,7 +1,7 @@
 use rusqlite::{params, Connection};
 
 use crate::domain::session::{Session, SessionStatus, SessionSummary};
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 
 /// Create a new session and return the full `Session` record.
 pub fn create(
@@ -9,7 +9,7 @@ pub fn create(
     project_id: i64,
     model: &str,
     system_prompt: Option<&str>,
-) -> Result<Session, ForgeError> {
+) -> Result<Session, OrqaError> {
     conn.execute(
         "INSERT INTO sessions (project_id, model, system_prompt) VALUES (?1, ?2, ?3)",
         params![project_id, model, system_prompt],
@@ -20,7 +20,7 @@ pub fn create(
 }
 
 /// Get a session by its primary key.
-pub fn get(conn: &Connection, id: i64) -> Result<Session, ForgeError> {
+pub fn get(conn: &Connection, id: i64) -> Result<Session, OrqaError> {
     conn.query_row(
         "SELECT id, project_id, title, model, system_prompt, status, summary, \
                 handoff_notes, total_input_tokens, total_output_tokens, total_cost_usd, \
@@ -47,8 +47,8 @@ pub fn get(conn: &Connection, id: i64) -> Result<Session, ForgeError> {
         },
     )
     .map_err(|e| match e {
-        rusqlite::Error::QueryReturnedNoRows => ForgeError::NotFound(format!("session {id}")),
-        other => ForgeError::Database(other.to_string()),
+        rusqlite::Error::QueryReturnedNoRows => OrqaError::NotFound(format!("session {id}")),
+        other => OrqaError::Database(other.to_string()),
     })
 }
 
@@ -59,7 +59,7 @@ pub fn list(
     status_filter: Option<&str>,
     limit: i64,
     offset: i64,
-) -> Result<Vec<SessionSummary>, ForgeError> {
+) -> Result<Vec<SessionSummary>, OrqaError> {
     let (sql, has_filter) = if status_filter.is_some() {
         (
             "SELECT s.id, s.title, s.status, s.created_at, s.updated_at, \
@@ -105,7 +105,7 @@ pub fn list(
 }
 
 /// Update the title of a session.
-pub fn update_title(conn: &Connection, id: i64, title: &str) -> Result<(), ForgeError> {
+pub fn update_title(conn: &Connection, id: i64, title: &str) -> Result<(), OrqaError> {
     let rows = conn.execute(
         "UPDATE sessions SET title = ?1, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') \
          WHERE id = ?2",
@@ -113,13 +113,13 @@ pub fn update_title(conn: &Connection, id: i64, title: &str) -> Result<(), Forge
     )?;
 
     if rows == 0 {
-        return Err(ForgeError::NotFound(format!("session {id}")));
+        return Err(OrqaError::NotFound(format!("session {id}")));
     }
     Ok(())
 }
 
 /// Mark a session as completed.
-pub fn end_session(conn: &Connection, id: i64) -> Result<(), ForgeError> {
+pub fn end_session(conn: &Connection, id: i64) -> Result<(), OrqaError> {
     let rows = conn.execute(
         "UPDATE sessions SET status = 'completed', \
          updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') \
@@ -128,17 +128,17 @@ pub fn end_session(conn: &Connection, id: i64) -> Result<(), ForgeError> {
     )?;
 
     if rows == 0 {
-        return Err(ForgeError::NotFound(format!("session {id}")));
+        return Err(OrqaError::NotFound(format!("session {id}")));
     }
     Ok(())
 }
 
 /// Delete a session and its messages (cascading).
-pub fn delete(conn: &Connection, id: i64) -> Result<(), ForgeError> {
+pub fn delete(conn: &Connection, id: i64) -> Result<(), OrqaError> {
     let rows = conn.execute("DELETE FROM sessions WHERE id = ?1", params![id])?;
 
     if rows == 0 {
-        return Err(ForgeError::NotFound(format!("session {id}")));
+        return Err(OrqaError::NotFound(format!("session {id}")));
     }
     Ok(())
 }
@@ -149,7 +149,7 @@ pub fn update_token_usage(
     id: i64,
     input_tokens: i64,
     output_tokens: i64,
-) -> Result<(), ForgeError> {
+) -> Result<(), OrqaError> {
     let rows = conn.execute(
         "UPDATE sessions SET \
          total_input_tokens = total_input_tokens + ?1, \
@@ -160,7 +160,7 @@ pub fn update_token_usage(
     )?;
 
     if rows == 0 {
-        return Err(ForgeError::NotFound(format!("session {id}")));
+        return Err(OrqaError::NotFound(format!("session {id}")));
     }
     Ok(())
 }
@@ -221,7 +221,7 @@ mod tests {
     fn get_nonexistent_session() {
         let conn = setup();
         let result = get(&conn, 999);
-        assert!(matches!(result, Err(ForgeError::NotFound(_))));
+        assert!(matches!(result, Err(OrqaError::NotFound(_))));
     }
 
     #[test]
@@ -298,7 +298,7 @@ mod tests {
         delete(&conn, s.id).expect("delete");
 
         let result = get(&conn, s.id);
-        assert!(matches!(result, Err(ForgeError::NotFound(_))));
+        assert!(matches!(result, Err(OrqaError::NotFound(_))));
 
         // Verify messages were cascaded
         let msg_count: i64 = conn
@@ -328,7 +328,7 @@ mod tests {
     fn update_token_usage_not_found() {
         let conn = setup();
         let result = update_token_usage(&conn, 999, 100, 50);
-        assert!(matches!(result, Err(ForgeError::NotFound(_))));
+        assert!(matches!(result, Err(OrqaError::NotFound(_))));
     }
 
     #[test]

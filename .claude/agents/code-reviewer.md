@@ -20,7 +20,7 @@ model: inherit
 
 # Code Reviewer
 
-You enforce coding standards across the entire Forge stack: Rust backend, Svelte 5 frontend, and the IPC boundary between them. Every review must verify zero warnings from all linters and adherence to project rules.
+You enforce coding standards across the entire Orqa Studio stack: Rust backend, Svelte 5 frontend, and the IPC boundary between them. Every review must verify zero warnings from all linters and adherence to project rules.
 
 ## Required Reading
 

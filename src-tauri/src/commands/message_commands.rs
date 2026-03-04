@@ -1,7 +1,7 @@
 use tauri::State;
 
 use crate::domain::message::{Message, SearchResult};
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 use crate::repo::message_repo;
 use crate::state::AppState;
 
@@ -12,17 +12,17 @@ pub fn message_list(
     limit: Option<i64>,
     offset: Option<i64>,
     state: State<'_, AppState>,
-) -> Result<Vec<Message>, ForgeError> {
+) -> Result<Vec<Message>, OrqaError> {
     let limit_val = limit.unwrap_or(100);
     let offset_val = offset.unwrap_or(0);
 
     if limit_val < 0 {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "limit cannot be negative".to_string(),
         ));
     }
     if offset_val < 0 {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "offset cannot be negative".to_string(),
         ));
     }
@@ -30,7 +30,7 @@ pub fn message_list(
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     message_repo::list(&conn, session_id, limit_val, offset_val)
 }
@@ -42,16 +42,16 @@ pub fn message_search(
     query: String,
     limit: Option<i64>,
     state: State<'_, AppState>,
-) -> Result<Vec<SearchResult>, ForgeError> {
+) -> Result<Vec<SearchResult>, OrqaError> {
     if query.trim().is_empty() {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "search query cannot be empty".to_string(),
         ));
     }
 
     let limit_val = limit.unwrap_or(20);
     if limit_val < 0 {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "limit cannot be negative".to_string(),
         ));
     }
@@ -59,7 +59,7 @@ pub fn message_search(
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     message_repo::search(&conn, project_id, query.trim(), limit_val)
 }

@@ -8,7 +8,7 @@ Every feature MUST be implemented across ALL layers in the same commit. Partial 
 
 ## The Full Stack Rule
 
-Forge is a Tauri desktop app. There is no API gateway — the Tauri IPC bridge IS the boundary between backend and frontend. When adding or modifying ANY feature, ALL of the following layers MUST be updated together:
+Orqa Studio is a Tauri desktop app. There is no API gateway — the Tauri IPC bridge IS the boundary between backend and frontend. When adding or modifying ANY feature, ALL of the following layers MUST be updated together:
 
 1. **Rust command** — the `#[tauri::command]` function in `src-tauri/src/` that implements the backend logic
 2. **IPC type** — Rust structs with `Serialize`/`Deserialize` for the command's input/output, AND matching TypeScript interfaces in the frontend
@@ -92,7 +92,7 @@ pub async fn get_hardware_info() -> Result<HardwareInfo, String> {
 }
 ```
 
-**3. TypeScript types (`src/lib/types/`):**
+**3. TypeScript types (`ui/lib/types/`):**
 
 ```typescript
 export interface HardwareInfo {

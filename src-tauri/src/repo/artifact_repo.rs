@@ -1,7 +1,7 @@
 use rusqlite::{params, Connection};
 
 use crate::domain::artifact::{Artifact, ArtifactSummary, ArtifactType, ComplianceStatus};
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 
 /// Create a new artifact and return the full record.
 pub fn create(
@@ -12,7 +12,7 @@ pub fn create(
     name: &str,
     content: &str,
     description: Option<&str>,
-) -> Result<Artifact, ForgeError> {
+) -> Result<Artifact, OrqaError> {
     let type_str = serialize_artifact_type(artifact_type);
 
     conn.execute(
@@ -34,7 +34,7 @@ pub fn create(
 }
 
 /// Get an artifact by its primary key.
-pub fn get(conn: &Connection, id: i64) -> Result<Artifact, ForgeError> {
+pub fn get(conn: &Connection, id: i64) -> Result<Artifact, OrqaError> {
     conn.query_row(
         "SELECT id, project_id, artifact_type, rel_path, name, description, \
                 file_hash, file_size, file_modified_at, compliance_status, \
@@ -67,8 +67,8 @@ pub fn get(conn: &Connection, id: i64) -> Result<Artifact, ForgeError> {
         },
     )
     .map_err(|e| match e {
-        rusqlite::Error::QueryReturnedNoRows => ForgeError::NotFound(format!("artifact {id}")),
-        other => ForgeError::Database(other.to_string()),
+        rusqlite::Error::QueryReturnedNoRows => OrqaError::NotFound(format!("artifact {id}")),
+        other => OrqaError::Database(other.to_string()),
     })
 }
 
@@ -77,7 +77,7 @@ pub fn get_by_path(
     conn: &Connection,
     project_id: i64,
     rel_path: &str,
-) -> Result<Artifact, ForgeError> {
+) -> Result<Artifact, OrqaError> {
     conn.query_row(
         "SELECT id, project_id, artifact_type, rel_path, name, description, \
                 file_hash, file_size, file_modified_at, compliance_status, \
@@ -110,10 +110,10 @@ pub fn get_by_path(
         },
     )
     .map_err(|e| match e {
-        rusqlite::Error::QueryReturnedNoRows => ForgeError::NotFound(format!(
+        rusqlite::Error::QueryReturnedNoRows => OrqaError::NotFound(format!(
             "artifact with path {rel_path} in project {project_id}"
         )),
-        other => ForgeError::Database(other.to_string()),
+        other => OrqaError::Database(other.to_string()),
     })
 }
 
@@ -122,7 +122,7 @@ pub fn list(
     conn: &Connection,
     project_id: i64,
     type_filter: Option<&ArtifactType>,
-) -> Result<Vec<ArtifactSummary>, ForgeError> {
+) -> Result<Vec<ArtifactSummary>, OrqaError> {
     let (sql, has_filter) = if type_filter.is_some() {
         (
             "SELECT id, artifact_type, rel_path, name, description, \
@@ -164,7 +164,7 @@ pub fn update(
     file_hash: &str,
     file_size: i64,
     file_modified_at: &str,
-) -> Result<(), ForgeError> {
+) -> Result<(), OrqaError> {
     let rows = conn.execute(
         "UPDATE artifacts SET file_hash = ?1, file_size = ?2, file_modified_at = ?3, \
          last_scanned_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), \
@@ -174,19 +174,19 @@ pub fn update(
     )?;
 
     if rows == 0 {
-        return Err(ForgeError::NotFound(format!("artifact {id}")));
+        return Err(OrqaError::NotFound(format!("artifact {id}")));
     }
     Ok(())
 }
 
 /// Delete an artifact by id.
-pub fn delete(conn: &Connection, id: i64) -> Result<(), ForgeError> {
+pub fn delete(conn: &Connection, id: i64) -> Result<(), OrqaError> {
     // Remove from contentless FTS index first
     conn.execute("DELETE FROM artifacts_fts WHERE rowid = ?1", params![id])?;
 
     let rows = conn.execute("DELETE FROM artifacts WHERE id = ?1", params![id])?;
     if rows == 0 {
-        return Err(ForgeError::NotFound(format!("artifact {id}")));
+        return Err(OrqaError::NotFound(format!("artifact {id}")));
     }
     Ok(())
 }
@@ -275,7 +275,7 @@ mod tests {
     fn get_nonexistent_artifact() {
         let conn = setup();
         let result = get(&conn, 999);
-        assert!(matches!(result, Err(ForgeError::NotFound(_))));
+        assert!(matches!(result, Err(OrqaError::NotFound(_))));
     }
 
     #[test]
@@ -301,7 +301,7 @@ mod tests {
     fn get_by_path_not_found() {
         let conn = setup();
         let result = get_by_path(&conn, 1, "nonexistent.md");
-        assert!(matches!(result, Err(ForgeError::NotFound(_))));
+        assert!(matches!(result, Err(OrqaError::NotFound(_))));
     }
 
     #[test]
@@ -353,7 +353,7 @@ mod tests {
     fn update_not_found() {
         let conn = setup();
         let result = update(&conn, 999, "hash", 0, "now");
-        assert!(matches!(result, Err(ForgeError::NotFound(_))));
+        assert!(matches!(result, Err(OrqaError::NotFound(_))));
     }
 
     #[test]
@@ -364,14 +364,14 @@ mod tests {
         delete(&conn, artifact.id).expect("delete");
 
         let result = get(&conn, artifact.id);
-        assert!(matches!(result, Err(ForgeError::NotFound(_))));
+        assert!(matches!(result, Err(OrqaError::NotFound(_))));
     }
 
     #[test]
     fn delete_not_found() {
         let conn = setup();
         let result = delete(&conn, 999);
-        assert!(matches!(result, Err(ForgeError::NotFound(_))));
+        assert!(matches!(result, Err(OrqaError::NotFound(_))));
     }
 
     #[test]

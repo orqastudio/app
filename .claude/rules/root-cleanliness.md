@@ -21,7 +21,7 @@ The project root must stay lean. Every file in root must have a justification.
 | `.mcp.json` | Claude Code MCP server config |
 | `.chunkhound.json` | ChunkHound code search config (must be root for auto-discovery) |
 | `src-tauri/` | Tauri/Rust backend source |
-| `src/` | Svelte/TypeScript frontend source |
+| `ui/` | Svelte/TypeScript frontend source |
 | `tests/` | E2E tests |
 | `docs/` | Project documentation |
 

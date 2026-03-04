@@ -1,4 +1,4 @@
-# Forge
+# Orqa Studio
 
 Desktop application that automates product management and the agentic implementation cycle. Designed for Product Managers and Tech Leads who define process governance, delegate implementation to AI agents, and verify results — with a visual process layer where governance artifacts (agents, skills, rules, learning loops, documentation) live alongside the conversation as interactive, editable documents.
 
@@ -86,7 +86,7 @@ npm run test
 ## Project Structure
 
 ```text
-forge/
+orqa-studio/
 ├── AGENTS.md                     # Cross-agent project instructions (this file)
 ├── .claude/                      # Claude Code configuration
 │   ├── CLAUDE.md                 # Orchestrator config (imports AGENTS.md)
@@ -108,7 +108,7 @@ forge/
 │   ├── Cargo.toml
 │   └── tauri.conf.json
 │
-├── src/                          # Svelte 5 frontend
+├── ui/                           # Svelte 5 frontend
 │   ├── routes/                   # File-based routing
 │   ├── lib/
 │   │   ├── components/           # UI components
@@ -136,7 +136,7 @@ forge/
 
 ## Architecture Overview
 
-Forge uses a **thick backend** architecture. Rust owns the domain model — sessions, artifacts, governance state, and agent orchestration. Svelte is a view layer that renders what Rust tells it.
+Orqa Studio uses a **thick backend** architecture. Rust owns the domain model — sessions, artifacts, governance state, and agent orchestration. Svelte is a view layer that renders what Rust tells it.
 
 ```text
 ┌─────────────────────────────────────────────────────────┐
@@ -182,7 +182,7 @@ cargo clippy --all-targets -- -D warnings            # Lint (pedantic)
 cargo fmt --check                                    # Format check
 ```
 
-### Frontend (`src/`)
+### Frontend (`ui/`)
 
 ```bash
 npm install                # Install dependencies
@@ -239,7 +239,7 @@ From `docs/development/coding-standards.md`:
 
 - **Rust unit tests:** `src-tauri/src/**/mod.rs` — `#[cfg(test)] mod tests`
 - **Rust integration tests:** `src-tauri/tests/` — Cross-module flows
-- **Frontend unit tests:** `src/**/*.test.ts` — Vitest component/store tests
+- **Frontend unit tests:** `ui/**/*.test.ts` — Vitest component/store tests
 - **Frontend E2E tests:** `tests/` — Playwright browser tests
 - **Coverage target:** 80% minimum
 
@@ -249,11 +249,11 @@ Every task uses a git worktree. Upon completion: merge to main, delete branch, r
 
 ```bash
 # Create worktree
-git worktree add ../forge-<task> -b <agent>/<task>
+git worktree add ../orqa-<task> -b <agent>/<task>
 
 # After task completion
-cd ../forge && git merge <branch>
-git branch -d <branch> && git worktree remove ../forge-<task>
+cd ../orqa-studio && git merge <branch>
+git branch -d <branch> && git worktree remove ../orqa-<task>
 
 # Verify builds
 cargo build --manifest-path src-tauri/Cargo.toml && npm run build

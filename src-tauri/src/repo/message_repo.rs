@@ -1,7 +1,7 @@
 use rusqlite::{params, Connection};
 
 use crate::domain::message::{ContentType, Message, MessageRole, SearchResult, StreamStatus};
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 
 /// Parameters for creating a tool-related message.
 pub struct NewToolMessage<'a> {
@@ -26,7 +26,7 @@ pub fn create(
     content: Option<&str>,
     turn_index: i32,
     block_index: i32,
-) -> Result<Message, ForgeError> {
+) -> Result<Message, OrqaError> {
     conn.execute(
         "INSERT INTO messages (session_id, role, content_type, content, turn_index, block_index) \
          VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
@@ -48,7 +48,7 @@ pub fn create(
 pub fn create_tool_message(
     conn: &Connection,
     msg: &NewToolMessage<'_>,
-) -> Result<Message, ForgeError> {
+) -> Result<Message, OrqaError> {
     conn.execute(
         "INSERT INTO messages \
          (session_id, role, content_type, content, tool_call_id, tool_name, \
@@ -78,7 +78,7 @@ pub fn list(
     session_id: i64,
     limit: i64,
     offset: i64,
-) -> Result<Vec<Message>, ForgeError> {
+) -> Result<Vec<Message>, OrqaError> {
     let mut stmt = conn.prepare(
         "SELECT id, session_id, role, content_type, content, tool_call_id, tool_name, \
                 tool_input, tool_is_error, turn_index, block_index, stream_status, \
@@ -104,7 +104,7 @@ pub fn search(
     project_id: i64,
     query: &str,
     limit: i64,
-) -> Result<Vec<SearchResult>, ForgeError> {
+) -> Result<Vec<SearchResult>, OrqaError> {
     let mut stmt = conn.prepare(
         "SELECT m.id, m.session_id, s.title, \
                 snippet(messages_fts, 0, '<mark>', '</mark>', '...', 32) AS highlighted, \
@@ -137,7 +137,7 @@ pub fn search(
 }
 
 /// Get the next turn index for a session (max turn_index + 1, or 0 if no messages).
-pub fn next_turn_index(conn: &Connection, session_id: i64) -> Result<i32, ForgeError> {
+pub fn next_turn_index(conn: &Connection, session_id: i64) -> Result<i32, OrqaError> {
     let max: Option<i32> = conn.query_row(
         "SELECT MAX(turn_index) FROM messages WHERE session_id = ?1",
         params![session_id],
@@ -148,32 +148,32 @@ pub fn next_turn_index(conn: &Connection, session_id: i64) -> Result<i32, ForgeE
 }
 
 /// Update the content of a message (used during streaming accumulation).
-pub fn update_content(conn: &Connection, id: i64, content: &str) -> Result<(), ForgeError> {
+pub fn update_content(conn: &Connection, id: i64, content: &str) -> Result<(), OrqaError> {
     let rows = conn.execute(
         "UPDATE messages SET content = ?1 WHERE id = ?2",
         params![content, id],
     )?;
 
     if rows == 0 {
-        return Err(ForgeError::NotFound(format!("message {id}")));
+        return Err(OrqaError::NotFound(format!("message {id}")));
     }
     Ok(())
 }
 
 /// Update the stream status of a message.
-pub fn update_stream_status(conn: &Connection, id: i64, status: &str) -> Result<(), ForgeError> {
+pub fn update_stream_status(conn: &Connection, id: i64, status: &str) -> Result<(), OrqaError> {
     let rows = conn.execute(
         "UPDATE messages SET stream_status = ?1 WHERE id = ?2",
         params![status, id],
     )?;
 
     if rows == 0 {
-        return Err(ForgeError::NotFound(format!("message {id}")));
+        return Err(OrqaError::NotFound(format!("message {id}")));
     }
     Ok(())
 }
 
-fn get(conn: &Connection, id: i64) -> Result<Message, ForgeError> {
+fn get(conn: &Connection, id: i64) -> Result<Message, OrqaError> {
     conn.query_row(
         "SELECT id, session_id, role, content_type, content, tool_call_id, tool_name, \
                 tool_input, tool_is_error, turn_index, block_index, stream_status, \
@@ -183,8 +183,8 @@ fn get(conn: &Connection, id: i64) -> Result<Message, ForgeError> {
         map_message,
     )
     .map_err(|e| match e {
-        rusqlite::Error::QueryReturnedNoRows => ForgeError::NotFound(format!("message {id}")),
-        other => ForgeError::Database(other.to_string()),
+        rusqlite::Error::QueryReturnedNoRows => OrqaError::NotFound(format!("message {id}")),
+        other => OrqaError::Database(other.to_string()),
     })
 }
 
@@ -386,7 +386,7 @@ mod tests {
     fn update_content_not_found() {
         let conn = setup();
         let result = update_content(&conn, 999, "text");
-        assert!(matches!(result, Err(ForgeError::NotFound(_))));
+        assert!(matches!(result, Err(OrqaError::NotFound(_))));
     }
 
     #[test]

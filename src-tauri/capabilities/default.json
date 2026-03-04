@@ -1,6 +1,6 @@
 {
   "identifier": "default",
-  "description": "Default capability for Forge",
+  "description": "Default capability for Orqa Studio",
   "windows": ["main"],
   "permissions": [
     "core:default",

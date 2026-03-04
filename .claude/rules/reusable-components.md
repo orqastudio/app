@@ -39,7 +39,7 @@ Every list page MUST follow this exact pattern:
 
 ## Panel Layout Template
 
-Forge uses a multi-panel layout (conversation + artifact panels). Panel components MUST:
+Orqa Studio uses a multi-panel layout (conversation + artifact panels). Panel components MUST:
 
 - Be resizable via drag handles
 - Support collapsed/expanded states

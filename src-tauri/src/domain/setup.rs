@@ -33,6 +33,9 @@ pub struct ClaudeCliInfo {
     pub path: Option<String>,
     pub authenticated: bool,
     pub subscription_type: Option<String>,
+    pub rate_limit_tier: Option<String>,
+    pub scopes: Vec<String>,
+    pub expires_at: Option<u64>,
 }
 
 #[cfg(test)]
@@ -148,6 +151,9 @@ mod tests {
             path: Some("/usr/local/bin/claude".to_string()),
             authenticated: true,
             subscription_type: Some("pro".to_string()),
+            rate_limit_tier: Some("default_claude_pro".to_string()),
+            scopes: vec!["user:inference".to_string(), "user:profile".to_string()],
+            expires_at: Some(1772671490973),
         };
 
         let json = serde_json::to_string(&info).expect("serialization should succeed");
@@ -159,6 +165,12 @@ mod tests {
         assert_eq!(deserialized.path.as_deref(), Some("/usr/local/bin/claude"));
         assert!(deserialized.authenticated);
         assert_eq!(deserialized.subscription_type.as_deref(), Some("pro"));
+        assert_eq!(
+            deserialized.rate_limit_tier.as_deref(),
+            Some("default_claude_pro")
+        );
+        assert_eq!(deserialized.scopes.len(), 2);
+        assert_eq!(deserialized.expires_at, Some(1772671490973));
     }
 
     #[test]
@@ -169,6 +181,9 @@ mod tests {
             path: None,
             authenticated: false,
             subscription_type: None,
+            rate_limit_tier: None,
+            scopes: Vec::new(),
+            expires_at: None,
         };
 
         let json = serde_json::to_value(&info).expect("serialization should succeed");
@@ -177,5 +192,8 @@ mod tests {
         assert!(json["path"].is_null());
         assert!(!json["authenticated"].as_bool().expect("should be bool"));
         assert!(json["subscription_type"].is_null());
+        assert!(json["rate_limit_tier"].is_null());
+        assert!(json["scopes"].as_array().expect("should be array").is_empty());
+        assert!(json["expires_at"].is_null());
     }
 }

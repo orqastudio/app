@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-02
 
-Architecture decisions for Forge. Each decision is numbered AD-NNN and is immutable once recorded (can only be superseded by a new AD).
+Architecture decisions for Orqa Studio. Each decision is numbered AD-NNN and is immutable once recorded (can only be superseded by a new AD).
 
 ## Decision Log
 
@@ -107,13 +107,13 @@ Architecture decisions for Forge. Each decision is numbered AD-NNN and is immuta
 
 **Date:** 2026-03-02 | **Status:** Active
 
-**Decision:** Forge integrates with Claude via a Bun-compiled TypeScript sidecar running the official Agent SDK (`@anthropic-ai/claude-agent-sdk`). The sidecar communicates with the Rust backend via stdin/stdout newline-delimited JSON (NDJSON). The Rust backend spawns the sidecar via `std::process::Command`.
+**Decision:** Orqa Studio integrates with Claude via a Bun-compiled TypeScript sidecar running the official Agent SDK (`@anthropic-ai/claude-agent-sdk`). The sidecar communicates with the Rust backend via stdin/stdout newline-delimited JSON (NDJSON). The Rust backend spawns the sidecar via `std::process::Command`.
 
-**Rationale:** The Agent SDK spawns the official Claude Code CLI binary, which is the only legal path to Max subscription usage. Bun compile produces ~18-25 MB standalone binaries per platform — far smaller than Electron (~150+ MB). stdin/stdout NDJSON is the same pattern used by LSP (Language Server Protocol) and adds negligible latency (~0.1-0.5ms per event vs Claude's 30-100ms/token generation). The Agent SDK provides `tools: []` to disable built-in tools, `canUseTool` for approval UI delegation, `includePartialMessages` for token-level streaming, and custom MCP servers for routing tool execution to Forge.
+**Rationale:** The Agent SDK spawns the official Claude Code CLI binary, which is the only legal path to Max subscription usage. Bun compile produces ~18-25 MB standalone binaries per platform — far smaller than Electron (~150+ MB). stdin/stdout NDJSON is the same pattern used by LSP (Language Server Protocol) and adds negligible latency (~0.1-0.5ms per event vs Claude's 30-100ms/token generation). The Agent SDK provides `tools: []` to disable built-in tools, `canUseTool` for approval UI delegation, `includePartialMessages` for token-level streaming, and custom MCP servers for routing tool execution to Orqa Studio.
 
 **Consequences:** The build pipeline must cross-compile the sidecar for each target platform (`bun build --compile --target=<platform>`). Process lifecycle management (start, restart on crash, kill on exit) must be implemented in Rust. The Claude Code CLI must be installed on the user's machine for the Agent SDK path to function.
 
-**Implementation Notes (Phase 1):** The original spec called for `tauri-plugin-shell spawn()` for process spawning. During Phase 1 implementation, this was changed to `std::process::Command` for more direct control over stdin/stdout piping and process lifecycle. The `SidecarManager` in `sidecar/manager.rs` uses interior mutability (per-field `Mutex` locks) rather than being wrapped in a single `Mutex` at the `AppState` level. The sidecar protocol has grown beyond the original spec to include additional request/response variants: `ToolApproval` (approve/deny tool calls), `CancelStream` (abort active streaming), `HealthCheck` / `HealthOk` (process liveness), `ToolExecute` (sidecar-to-Forge tool dispatch), and `ToolApprovalRequest` (sidecar requesting UI approval).
+**Implementation Notes (Phase 1):** The original spec called for `tauri-plugin-shell spawn()` for process spawning. During Phase 1 implementation, this was changed to `std::process::Command` for more direct control over stdin/stdout piping and process lifecycle. The `SidecarManager` in `sidecar/manager.rs` uses interior mutability (per-field `Mutex` locks) rather than being wrapped in a single `Mutex` at the `AppState` level. The sidecar protocol has grown beyond the original spec to include additional request/response variants: `ToolApproval` (approve/deny tool calls), `CancelStream` (abort active streaming), `HealthCheck` / `HealthOk` (process liveness), `ToolExecute` (sidecar-to-Orqa Studio tool dispatch), and `ToolApprovalRequest` (sidecar requesting UI approval).
 
 **Research:** [Claude Integration Research](/research/claude-integration)
 
@@ -123,11 +123,11 @@ Architecture decisions for Forge. Each decision is numbered AD-NNN and is immuta
 
 **Date:** 2026-03-02 | **Status:** Active
 
-**Decision:** Forge's primary authentication path is Claude Max subscription via the Agent SDK. The Agent SDK spawns the official Claude Code CLI, which authenticates via OAuth 2.0 with PKCE against claude.ai. API key authentication and other providers (Bedrock, Vertex, OpenAI) are deferred to the roadmap as future sidecar providers.
+**Decision:** Orqa Studio's primary authentication path is Claude Max subscription via the Agent SDK. The Agent SDK spawns the official Claude Code CLI, which authenticates via OAuth 2.0 with PKCE against claude.ai. API key authentication and other providers (Bedrock, Vertex, OpenAI) are deferred to the roadmap as future sidecar providers.
 
 **Rationale:** Max subscription ($100-200/month flat) is cost-effective at 25+ conversations/day vs API billing (~$304/month at 75 conversations/day with Sonnet). Third-party OAuth token usage is banned and enforced with server-side fingerprinting since January 2026 — the Agent SDK is the only legal path. The provider-agnostic sidecar interface (AD-017) ensures future providers can be added without changing the Rust core or Svelte UI.
 
-**Consequences:** Users must have Claude Code CLI installed and authenticated (`claude login`). Forge must detect whether authentication is available and surface clear guidance if not. Rate limits from Max subscription (5-hour rolling windows, weekly caps) must be surfaced in the UI.
+**Consequences:** Users must have Claude Code CLI installed and authenticated (`claude login`). Orqa Studio must detect whether authentication is available and surface clear guidance if not. Rate limits from Max subscription (5-hour rolling windows, weekly caps) must be surfaced in the UI.
 
 **Implementation Status:** Not yet fully implemented. Phase 1 includes sidecar spawning and basic health checks but does not verify Claude CLI authentication. Phase 2a will add a first-run setup wizard with Claude CLI detection, authentication checking, and guided onboarding for users who have not yet run `claude login`.
 
@@ -155,11 +155,11 @@ Architecture decisions for Forge. Each decision is numbered AD-NNN and is immuta
 
 **Date:** 2026-03-02 | **Status:** Active
 
-**Decision:** Forge's core tools (Read, Write, Edit, Bash, Glob, Grep) are implemented natively in Rust and exposed to the Agent SDK as a custom MCP server via `createSdkMcpServer()`. The Agent SDK's built-in tools are disabled (`tools: []`). Forge also acts as an MCP host for user-provided MCP servers (extensibility).
+**Decision:** Orqa Studio's core tools (Read, Write, Edit, Bash, Glob, Grep) are implemented natively in Rust and exposed to the Agent SDK as a custom MCP server via `createSdkMcpServer()`. The Agent SDK's built-in tools are disabled (`tools: []`). Orqa Studio also acts as an MCP host for user-provided MCP servers (extensibility).
 
-**Rationale:** Native Rust tools give Forge full control over tool execution, permission model, and UI rendering. Exposing them as MCP servers to the Agent SDK is the SDK's documented extension mechanism. Disabling built-in tools ensures Claude cannot read/write files without Forge's knowledge. The MCP host capability connects Forge to the 10,000+ MCP server ecosystem.
+**Rationale:** Native Rust tools give Orqa Studio full control over tool execution, permission model, and UI rendering. Exposing them as MCP servers to the Agent SDK is the SDK's documented extension mechanism. Disabling built-in tools ensures Claude cannot read/write files without Orqa Studio's knowledge. The MCP host capability connects Orqa Studio to the 10,000+ MCP server ecosystem.
 
-**Consequences:** Each core tool must be implemented as both a Rust function (for execution) and an MCP tool definition (for the Agent SDK). The `canUseTool` callback routes approval requests to Forge's UI before execution. Tool results flow back to the Agent SDK, which sends them to Claude for the next conversation turn.
+**Consequences:** Each core tool must be implemented as both a Rust function (for execution) and an MCP tool definition (for the Agent SDK). The `canUseTool` callback routes approval requests to Orqa Studio's UI before execution. Tool results flow back to the Agent SDK, which sends them to Claude for the next conversation turn.
 
 **Research:** [Claude Integration Research](/research/claude-integration)
 
@@ -199,7 +199,7 @@ Architecture decisions for Forge. Each decision is numbered AD-NNN and is immuta
 | `tauri-plugin-keyring` | community | API key storage in OS keychain |
 | `tauri-plugin-persisted-scope` | official | Remember file system permissions |
 
-**Rationale:** All plugins exist in the official `tauri-apps/plugins-workspace` or are well-maintained community packages. Each addresses a specific Forge requirement confirmed during Tauri v2 research.
+**Rationale:** All plugins exist in the official `tauri-apps/plugins-workspace` or are well-maintained community packages. Each addresses a specific Orqa Studio requirement confirmed during Tauri v2 research.
 
 **Consequences:** Plugin versions must be tracked for security updates. `tauri-plugin-sql` migrations managed via `include_str!()` referencing `.sql` files. Store plugin is for preferences only, never for secrets or relational data.
 
@@ -240,7 +240,7 @@ Architecture decisions for Forge. Each decision is numbered AD-NNN and is immuta
 
 **Rationale:** One row per content block enables granular FTS indexing, efficient streaming updates, tool-specific queries, and natural UI component mapping. The hybrid file/DB approach (Obsidian pattern) preserves full CLI compatibility — `.claude/` files are authoritative, SQLite is a derived cache. `notify-debouncer-full` file watcher (500ms debounce) keeps the index in sync. Full session history stored (< 5 GB/year at heavy use). FTS5 cross-session search performs under 50ms at 1M messages. Handoff summaries address the #1 pain point (context loss between sessions) — negligible cost via sidecar. Multi-user columns are nullable and unused in Phase 1, avoiding a migration-heavy schema change when collaborative access is implemented.
 
-**Consequences:** Schema managed via numbered SQL migration files in `src-tauri/migrations/`. `.claude/` directory watched with `notify` crate. `forge.db` added to `.gitignore`. SHA-256 hashes used for change detection to avoid re-indexing unchanged files. Sidecar must support a "generate summary" request type for handoff note generation.
+**Consequences:** Schema managed via numbered SQL migration files in `src-tauri/migrations/`. `.claude/` directory watched with `notify` crate. `orqa.db` added to `.gitignore`. SHA-256 hashes used for change detection to avoid re-indexing unchanged files. Sidecar must support a "generate summary" request type for handoff note generation.
 
 **Research:** [Persistence Research](/research/persistence), [Onboarding Research](/research/onboarding)
 
@@ -250,11 +250,11 @@ Architecture decisions for Forge. Each decision is numbered AD-NNN and is immuta
 
 **Date:** 2026-03-02 | **Status:** Active
 
-**Decision:** Forge reads and writes governance artifacts as native Claude Code artifacts in the exact `.claude/` format (markdown with YAML frontmatter for agents/skills, pure markdown for rules, JSON for settings). All `.claude/` files created by Forge work identically in Claude Code CLI — there is no Forge-specific format or metadata embedded in the files. Forge-specific metadata (compliance status, usage counts, parsed timestamps) lives only in SQLite — files are never modified to add Forge metadata.
+**Decision:** Orqa Studio reads and writes governance artifacts as native Claude Code artifacts in the exact `.claude/` format (markdown with YAML frontmatter for agents/skills, pure markdown for rules, JSON for settings). All `.claude/` files created by Orqa Studio work identically in Claude Code CLI — there is no Orqa Studio-specific format or metadata embedded in the files. Orqa Studio-specific metadata (compliance status, usage counts, parsed timestamps) lives only in SQLite — files are never modified to add Orqa Studio metadata.
 
-**Rationale:** Full compatibility with Claude Code CLI. Users can switch between Forge and CLI seamlessly. Markdown is the natural format for AI instructions. Parsing via `yaml-front-matter` (frontmatter extraction) + `comrak` (markdown body parsing/rendering, used by crates.io and docs.rs).
+**Rationale:** Full compatibility with Claude Code CLI. Users can switch between Orqa Studio and CLI seamlessly. Markdown is the natural format for AI instructions. Parsing via `yaml-front-matter` (frontmatter extraction) + `comrak` (markdown body parsing/rendering, used by crates.io and docs.rs).
 
-**Consequences:** Files are always authoritative — if a file changes on disk, the SQLite cache is updated to match. No Forge-specific annotations in `.claude/` files. The DB stores enriched metadata (word count, heading structure, tool lists, compliance status) that does not exist in the files.
+**Consequences:** Files are always authoritative — if a file changes on disk, the SQLite cache is updated to match. No Orqa Studio-specific annotations in `.claude/` files. The DB stores enriched metadata (word count, heading structure, tool lists, compliance status) that does not exist in the files.
 
 **Research:** [Onboarding Research](/research/onboarding)
 
@@ -274,7 +274,7 @@ Architecture decisions for Forge. Each decision is numbered AD-NNN and is immuta
 - **App-level first-run wizard (Phase 2a):** A separate app-level first-run setup wizard will be added in Phase 2a for Claude CLI detection and authentication checking.
 - **`feature_gates` table not implemented:** The SQLite-based progressive disclosure via `feature_gates` was not built. The current UI uses static navigation with all sections visible from the start. Progressive disclosure may be revisited in a later phase.
 
-**Consequences:** The first-run flow is: open project (via wizard or direct path) → auto-scan → conversation. Project settings are stored in file-based `.forge/project.json` (per AD-014's hybrid file/DB approach).
+**Consequences:** The first-run flow is: open project (via wizard or direct path) → auto-scan → conversation. Project settings are stored in file-based `.orqa/project.json` (per AD-014's hybrid file/DB approach).
 
 **Research:** [Onboarding Research](/research/onboarding)
 
@@ -288,7 +288,7 @@ Architecture decisions for Forge. Each decision is numbered AD-NNN and is immuta
 
 **Rationale:** Extends the composability design principle from the Alvarez project. Decoupling the AI provider from the core application means: (1) switching providers requires only a new sidecar implementation, (2) supporting multiple providers simultaneously is architecturally possible, (3) the Rust core and Svelte UI are tested independently of any provider, (4) if Anthropic releases a Rust SDK, the sidecar can be replaced with a native implementation.
 
-**Consequences:** The `ProviderEvent` enum must be stable and provider-neutral. The sidecar protocol (stdin/stdout NDJSON) is the contract — any process that speaks it can be a provider. Provider selection and configuration surfaces in Forge's settings UI.
+**Consequences:** The `ProviderEvent` enum must be stable and provider-neutral. The sidecar protocol (stdin/stdout NDJSON) is the contract — any process that speaks it can be a provider. Provider selection and configuration surfaces in Orqa Studio's settings UI.
 
 **Research:** [Claude Integration Research](/research/claude-integration), [Product Governance](/product/governance)
 
@@ -300,7 +300,7 @@ Architecture decisions for Forge. Each decision is numbered AD-NNN and is immuta
 
 **Decision:** Replace the three-pane layout (Sidebar | Primary/Conversation | Detail) with a four-zone VS Code-style layout: Activity Bar (48px fixed icon rail) | Explorer Panel (flexible, artifact-centric) | Sessions Panel (240px, collapsible) | Chat Panel (flexible, conversation). The Activity Bar replaces the old five-tab bar in the detail panel with direct icon navigation for Docs, Agents, Rules, Skills, Hooks (artifact categories), plus Scanners, Metrics, Learning (dashboards, Phase 3-5), and Settings. PaneForge manages the three resizable zones; the Activity Bar sits outside PaneForge as a fixed CSS flex element.
 
-**Rationale:** The original three-pane layout placed conversation at center, implying it was the primary content. Forge is an artifact-centric product management tool — docs, agents, rules, skills, and hooks are the deliverables. The VS Code-style layout makes artifacts the focal point (Explorer Panel), with conversation supporting from the right (Chat Panel). This pattern is familiar to developers, scales to accommodate future dashboard views without tab bar proliferation, and provides clear visual hierarchy: artifacts are work, conversation is collaboration.
+**Rationale:** The original three-pane layout placed conversation at center, implying it was the primary content. Orqa Studio is an artifact-centric product management tool — docs, agents, rules, skills, and hooks are the deliverables. The VS Code-style layout makes artifacts the focal point (Explorer Panel), with conversation supporting from the right (Chat Panel). This pattern is familiar to developers, scales to accommodate future dashboard views without tab bar proliferation, and provides clear visual hierarchy: artifacts are work, conversation is collaboration.
 
 **Supersedes:** Layout aspects of AD-013 (panel arrangement and tab navigation). AD-013's library selections (PaneForge, shadcn-svelte, CodeMirror 6, LayerChart, lucide-svelte) remain active.
 
@@ -330,12 +330,12 @@ Architecture decisions for Forge. Each decision is numbered AD-NNN and is immuta
 
 **Date:** 2026-03-03 | **Status:** Active
 
-**Decision:** Documentation browsing in Forge is project-scoped — docs are only visible when a project is loaded, and the doc tree is built dynamically from the project's filesystem rather than hardcoded in the frontend. Docsify (`_sidebar.md`, `index.html`, `docs/assets/custom.css`) is superseded by Forge's built-in doc viewer and should be removed from managed projects. Forge manages projects — it is not itself the project.
+**Decision:** Documentation browsing in Orqa Studio is project-scoped — docs are only visible when a project is loaded, and the doc tree is built dynamically from the project's filesystem rather than hardcoded in the frontend. Docsify (`_sidebar.md`, `index.html`, `docs/assets/custom.css`) is superseded by Orqa Studio's built-in doc viewer and should be removed from managed projects. Orqa Studio manages projects — it is not itself the project.
 
-**Rationale:** Forge is a tool for managing agentic development projects. Each project has its own documentation, governance artifacts, and structure. Showing docs without a loaded project breaks this model. Hardcoding the doc tree in `DocTreeNav.svelte` creates a maintenance burden and couples the navigation to a single project's structure. The filesystem is the source of truth — the doc tree should be generated by scanning the project's `docs/` directory. Docsify served as a documentation viewer during bootstrap, but Forge's ArtifactViewer now provides equivalent functionality integrated into the desktop app.
+**Rationale:** Orqa Studio is a tool for managing agentic development projects. Each project has its own documentation, governance artifacts, and structure. Showing docs without a loaded project breaks this model. Hardcoding the doc tree in `DocTreeNav.svelte` creates a maintenance burden and couples the navigation to a single project's structure. The filesystem is the source of truth — the doc tree should be generated by scanning the project's `docs/` directory. Docsify served as a documentation viewer during bootstrap, but Orqa Studio's ArtifactViewer now provides equivalent functionality integrated into the desktop app.
 
 **Supersedes:** The `sidebar-synchronization.md` rule (`.claude/rules/sidebar-synchronization.md`) becomes obsolete once filesystem-driven navigation is implemented, as there will be no `_sidebar.md` to synchronize.
 
-**Consequences:** (1) The `DocTreeNav` component must be refactored to receive its tree structure as a prop (generated from filesystem scanning) rather than using a hardcoded `docTree` array. (2) A Rust command (e.g., `doc_tree_scan`) is needed to walk a project's `docs/` directory and return a tree structure. (3) Docsify artifacts (`docs/_sidebar.md`, `docs/index.html`, `docs/assets/custom.css`) should be removed from the Forge project. (4) The docs Activity Bar item should be disabled or hidden when no project is loaded. (5) SQLite can cache doc metadata for change tracking, but the filesystem is always authoritative — if a file changes on disk, the cache updates to match (consistent with AD-015).
+**Consequences:** (1) The `DocTreeNav` component must be refactored to receive its tree structure as a prop (generated from filesystem scanning) rather than using a hardcoded `docTree` array. (2) A Rust command (e.g., `doc_tree_scan`) is needed to walk a project's `docs/` directory and return a tree structure. (3) Docsify artifacts (`docs/_sidebar.md`, `docs/index.html`, `docs/assets/custom.css`) should be removed from the Orqa Studio project. (4) The docs Activity Bar item should be disabled or hidden when no project is loaded. (5) SQLite can cache doc metadata for change tracking, but the filesystem is always authoritative — if a file changes on disk, the cache updates to match (consistent with AD-015).
 
 **Research:** [Frontend Research](/research/frontend), [Information Architecture](/product/information-architecture)

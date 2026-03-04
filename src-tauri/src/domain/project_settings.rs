@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::path::Path;
 
 use crate::domain::project::DetectedStack;
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 
 /// Governance artifact counts for a project.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -15,7 +15,7 @@ pub struct GovernanceCounts {
     pub has_claude_config: bool,
 }
 
-/// File-based project settings stored in `{project}/.forge/project.json`.
+/// File-based project settings stored in `{project}/.orqa/project.json`.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProjectSettings {
     pub name: String,
@@ -47,12 +47,12 @@ fn default_excluded_paths() -> Vec<String> {
     ]
 }
 
-/// Read project settings from `{project_path}/.forge/project.json`.
+/// Read project settings from `{project_path}/.orqa/project.json`.
 ///
 /// Returns `Ok(None)` if the file does not exist.
-/// Returns `Err(ForgeError::Serialization(...))` if JSON is malformed.
-pub fn read_settings(project_path: &str) -> Result<Option<ProjectSettings>, ForgeError> {
-    let settings_file = Path::new(project_path).join(".forge").join("project.json");
+/// Returns `Err(OrqaError::Serialization(...))` if JSON is malformed.
+pub fn read_settings(project_path: &str) -> Result<Option<ProjectSettings>, OrqaError> {
+    let settings_file = Path::new(project_path).join(".orqa").join("project.json");
 
     if !settings_file.exists() {
         return Ok(None);
@@ -63,14 +63,14 @@ pub fn read_settings(project_path: &str) -> Result<Option<ProjectSettings>, Forg
     Ok(Some(settings))
 }
 
-/// Write project settings to `{project_path}/.forge/project.json`.
+/// Write project settings to `{project_path}/.orqa/project.json`.
 ///
-/// Creates the `.forge/` directory if it does not exist.
-pub fn write_settings(project_path: &str, settings: &ProjectSettings) -> Result<(), ForgeError> {
-    let forge_dir = Path::new(project_path).join(".forge");
-    std::fs::create_dir_all(&forge_dir)?;
+/// Creates the `.orqa/` directory if it does not exist.
+pub fn write_settings(project_path: &str, settings: &ProjectSettings) -> Result<(), OrqaError> {
+    let orqa_dir = Path::new(project_path).join(".orqa");
+    std::fs::create_dir_all(&orqa_dir)?;
 
-    let settings_file = forge_dir.join("project.json");
+    let settings_file = orqa_dir.join("project.json");
     let json = serde_json::to_string_pretty(settings)?;
     std::fs::write(&settings_file, json)?;
     Ok(())
@@ -160,17 +160,17 @@ mod tests {
     fn malformed_json_returns_serialization_error() {
         let tmp = std::env::temp_dir().join("forge_test_settings_malformed");
         let _ = std::fs::remove_dir_all(&tmp);
-        let forge_dir = tmp.join(".forge");
-        std::fs::create_dir_all(&forge_dir).expect("create dirs");
+        let orqa_dir = tmp.join(".orqa");
+        std::fs::create_dir_all(&orqa_dir).expect("create dirs");
 
-        let settings_file = forge_dir.join("project.json");
+        let settings_file = orqa_dir.join("project.json");
         std::fs::write(&settings_file, "{ invalid json }").expect("write bad json");
 
         let tmp_str = tmp.to_str().expect("temp path as str");
         let result = read_settings(tmp_str);
         assert!(result.is_err());
         let err = result.expect_err("should be error");
-        assert!(matches!(err, ForgeError::Serialization(_)));
+        assert!(matches!(err, OrqaError::Serialization(_)));
 
         // Cleanup
         let _ = std::fs::remove_dir_all(&tmp);

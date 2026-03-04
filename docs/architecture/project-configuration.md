@@ -1,4 +1,4 @@
-# Project Configuration (`.forge/project.json`)
+# Project Configuration (`.orqa/project.json`)
 
 **Date:** 2026-03-03 | **Status:** Active | **Decision:** AD-019 — File-based project settings
 
@@ -6,21 +6,21 @@
 
 ## Overview
 
-Forge uses a file-based configuration model for project settings. Each managed project stores its configuration in `.forge/project.json` at the project root. This file is the **source of truth** for project-specific settings.
+Orqa Studio uses a file-based configuration model for project settings. Each managed project stores its configuration in `.orqa/project.json` at the project root. This file is the **source of truth** for project-specific settings.
 
-The SQLite `projects` table remains as the app-wide registry of known projects (recent list, IDs, timestamps). It does NOT own project configuration — `.forge/project.json` does.
+The SQLite `projects` table remains as the app-wide registry of known projects (recent list, IDs, timestamps). It does NOT own project configuration — `.orqa/project.json` does.
 
 ---
 
-## `.forge/` Directory Convention
+## `.orqa/` Directory Convention
 
-Forge creates a `.forge/` directory in each managed project for Forge-specific configuration. This is separate from `.claude/` (which belongs to Claude Code itself).
+Orqa Studio creates a `.orqa/` directory in each managed project for Orqa Studio-specific configuration. This is separate from `.claude/` (which belongs to Claude Code itself).
 
 | Path | Purpose |
 |------|---------|
-| `.forge/project.json` | Project configuration file (this document) |
+| `.orqa/project.json` | Project configuration file (this document) |
 
-The `.forge/` directory is created automatically when the user saves project settings for the first time.
+The `.orqa/` directory is created automatically when the user saves project settings for the first time.
 
 ---
 
@@ -28,7 +28,7 @@ The `.forge/` directory is created automatically when the user saves project set
 
 ```json
 {
-    "name": "forge",
+    "name": "orqa-studio",
     "description": "Desktop app for managed agentic development",
     "default_model": "auto",
     "excluded_paths": ["node_modules", ".git", "target", "dist", "build"],
@@ -86,7 +86,7 @@ The `.forge/` directory is created automatically when the user saves project set
 
 ## Discovery Rules
 
-1. When a project is opened (`project_open`), Forge checks for `.forge/project.json` at the project root
+1. When a project is opened (`project_open`), Orqa Studio checks for `.orqa/project.json` at the project root
 2. **File exists** — load it as the source of truth for project settings
 3. **File missing** — not an error; the UI shows a setup wizard that scans the project and creates the file
 4. The `project_open` command syncs the file-based name to SQLite so the recent projects list stays current
@@ -98,7 +98,7 @@ The `.forge/` directory is created automatically when the user saves project set
 | Concern | Owner | Why |
 |---------|-------|-----|
 | Project registry (ID, path, timestamps) | SQLite `projects` table | App needs a cross-project list for recent projects, session associations |
-| Project configuration (name, model, stack, governance) | `.forge/project.json` | User-visible, version-controllable, portable |
+| Project configuration (name, model, stack, governance) | `.orqa/project.json` | User-visible, version-controllable, portable |
 
 When `project_settings_write` is called, the `name` field is synced back to the SQLite `projects` table to keep the recent projects list display current.
 
@@ -114,10 +114,10 @@ Reserved for future use. When a `version` field is needed for migrations, it wil
 
 | Scenario | Error | Behavior |
 |----------|-------|----------|
-| Malformed JSON in `.forge/project.json` | `ForgeError::Serialization` | UI shows error, offers to re-scan and overwrite |
-| Permission denied reading/writing | `ForgeError::FileSystem` (from `io::Error`) | UI shows error message |
-| `.forge/project.json` does not exist | Not an error | `project_settings_read` returns `None`, UI shows setup wizard |
-| `.forge/` directory does not exist | Not an error | Created automatically on first write |
+| Malformed JSON in `.orqa/project.json` | `OrqaError::Serialization` | UI shows error, offers to re-scan and overwrite |
+| Permission denied reading/writing | `OrqaError::FileSystem` (from `io::Error`) | UI shows error message |
+| `.orqa/project.json` does not exist | Not an error | `project_settings_read` returns `None`, UI shows setup wizard |
+| `.orqa/` directory does not exist | Not an error | Created automatically on first write |
 
 ---
 
@@ -125,8 +125,8 @@ Reserved for future use. When a `version` field is needed for migrations, it wil
 
 Three commands manage project settings:
 
-- `project_settings_read(path)` — reads `.forge/project.json`, returns `Option<ProjectSettings>`
-- `project_settings_write(path, settings)` — writes `.forge/project.json`, creates `.forge/` dir if needed
+- `project_settings_read(path)` — reads `.orqa/project.json`, returns `Option<ProjectSettings>`
+- `project_settings_write(path, settings)` — writes `.orqa/project.json`, creates `.orqa/` dir if needed
 - `project_scan(path, excluded_paths?)` — scans filesystem for stack detection and governance counts
 
 See [IPC Command Catalog](./ipc-commands.md) for full parameter tables.
@@ -138,7 +138,7 @@ See [IPC Command Catalog](./ipc-commands.md) for full parameter tables.
 | Pillar | Alignment |
 |--------|-----------|
 | Self-Learning Loop | Project settings store detected governance artifact counts, giving the system awareness of its own governance maturity per project. |
-| Process Governance | The `.forge/project.json` file makes project configuration visible, versionable, and portable — governance artifacts are counted and surfaced in the UI. |
+| Process Governance | The `.orqa/project.json` file makes project configuration visible, versionable, and portable — governance artifacts are counted and surfaced in the UI. |
 
 ---
 

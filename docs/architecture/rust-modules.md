@@ -13,7 +13,7 @@ src-tauri/src/
 ├── main.rs                          # Tauri entry point (calls lib::run())
 ├── lib.rs                           # App builder, plugin registration, command registration, startup
 ├── state.rs                         # AppState struct (Tauri managed state)
-├── error.rs                         # ForgeError enum (thiserror + serde), Result type alias
+├── error.rs                         # OrqaError enum (thiserror + serde), Result type alias
 ├── db.rs                            # Database initialization (rusqlite, PRAGMAs, migrations)
 ├── startup.rs                       # StartupTracker: async task status for frontend polling
 │
@@ -25,7 +25,7 @@ src-tauri/src/
 │   ├── artifact.rs                  # Artifact, ArtifactType, ComplianceStatus, DocNode
 │   ├── settings.rs                  # Setting, SettingScope
 │   ├── project_scanner.rs           # Filesystem walking for language/framework detection
-│   ├── project_settings.rs          # File-based ProjectSettings (.forge/project.json), GovernanceCounts
+│   ├── project_settings.rs          # File-based ProjectSettings (.orqa/project.json), GovernanceCounts
 │   └── provider_event.rs            # ProviderEvent enum (streaming protocol)
 │
 ├── repo/                            # Repository layer — database access (AD-014)
@@ -93,7 +93,7 @@ Defines `AppState`, the single struct passed as Tauri managed state. Holds: `db`
 
 ### `error.rs`
 
-Defines `ForgeError` with 9 variants (via `thiserror` + `serde::Serialize`): NotFound, Database, FileSystem, Sidecar, Validation, Scan, Serialization, PermissionDenied, Search. Serialized as `{"code": "<variant>", "message": "<detail>"}` using `#[serde(tag = "code", content = "message")]`. Tauri auto-converts via blanket `impl<T: Serialize> From<T> for InvokeError`.
+Defines `OrqaError` with 9 variants (via `thiserror` + `serde::Serialize`): NotFound, Database, FileSystem, Sidecar, Validation, Scan, Serialization, PermissionDenied, Search. Serialized as `{"code": "<variant>", "message": "<detail>"}` using `#[serde(tag = "code", content = "message")]`. Tauri auto-converts via blanket `impl<T: Serialize> From<T> for InvokeError`.
 
 ### `db.rs`
 
@@ -105,7 +105,7 @@ Generic startup task tracker. Tasks are registered with an ID and label, then up
 
 ### `domain/`
 
-Pure domain model types. No dependencies on Tauri, rusqlite, or serde_json beyond derive macros. This module is the source of truth for what Forge's data looks like (AD-001). Other modules depend on `domain/`; it depends on nothing else. Includes `project_scanner.rs` for filesystem walking and `project_settings.rs` for file-based project configuration.
+Pure domain model types. No dependencies on Tauri, rusqlite, or serde_json beyond derive macros. This module is the source of truth for what Orqa Studio's data looks like (AD-001). Other modules depend on `domain/`; it depends on nothing else. Includes `project_scanner.rs` for filesystem walking and `project_settings.rs` for file-based project configuration.
 
 ### `repo/`
 
@@ -113,7 +113,7 @@ One repository per entity (AD-014). Each repo struct takes a database connection
 
 ### `commands/`
 
-Thin command handlers. Each function is `#[tauri::command]`, receives `State<AppState>` and parameters, calls the appropriate repo or service, and returns `Result<T, ForgeError>`. No business logic lives here — commands are glue between the IPC boundary and the domain/repo layers. 11 command modules covering 39 total commands.
+Thin command handlers. Each function is `#[tauri::command]`, receives `State<AppState>` and parameters, calls the appropriate repo or service, and returns `Result<T, OrqaError>`. No business logic lives here — commands are glue between the IPC boundary and the domain/repo layers. 11 command modules covering 39 total commands.
 
 ### `sidecar/`
 
@@ -303,14 +303,14 @@ pub enum SettingScope {
 
 ### `domain/project_settings.rs`
 
-File-based project settings stored at `.forge/project.json` within the project root. This is separate from the SQLite-backed `settings` table.
+File-based project settings stored at `.orqa/project.json` within the project root. This is separate from the SQLite-backed `settings` table.
 
 ```rust
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProjectSettings {
     pub name: String,
     pub description: Option<String>,
-    pub icon: Option<String>,            // filename in .forge/ directory
+    pub icon: Option<String>,            // filename in .orqa/ directory
     pub governance: GovernanceCounts,
 }
 
@@ -381,7 +381,7 @@ pub enum ProviderEvent {
 
 ## 4. Command Handlers
 
-Every command is registered in `lib.rs` via `tauri::Builder::invoke_handler(tauri::generate_handler![...])`. All return `Result<T, ForgeError>`. See [IPC Commands](/architecture/ipc-commands) for full parameter and return type documentation.
+Every command is registered in `lib.rs` via `tauri::Builder::invoke_handler(tauri::generate_handler![...])`. All return `Result<T, OrqaError>`. See [IPC Commands](/architecture/ipc-commands) for full parameter and return type documentation.
 
 ### `commands/project_commands.rs`
 
@@ -452,7 +452,7 @@ Every command is registered in `lib.rs` via `tauri::Builder::invoke_handler(taur
 
 | Command | Description |
 |---------|-------------|
-| `project_settings_read` | Read file-based project settings (.forge/project.json) |
+| `project_settings_read` | Read file-based project settings (.orqa/project.json) |
 | `project_settings_write` | Write file-based project settings |
 | `project_scan` | Re-run project codebase scan |
 | `project_icon_upload` | Upload/copy a project icon image |
@@ -695,7 +695,7 @@ pub enum SidecarResponse {
     // Non-streaming responses
     HealthOk { version: String },
     SummaryResult { session_id: i64, summary: String },
-    // Tool execution (sidecar -> Forge)
+    // Tool execution (sidecar -> Orqa Studio)
     ToolExecute { tool_call_id: String, tool_name: String, input: String },
     ToolApprovalRequest { tool_call_id: String, tool_name: String, input: String },
 }
@@ -707,7 +707,7 @@ pub enum SidecarResponse {
 
 ## 7. Error Types (AD-003)
 
-### ForgeError
+### OrqaError
 
 ```rust
 // error.rs
@@ -715,7 +715,7 @@ use serde::Serialize;
 
 #[derive(Debug, thiserror::Error, Serialize)]
 #[serde(tag = "code", content = "message")]
-pub enum ForgeError {
+pub enum OrqaError {
     #[error("not found: {0}")]
     #[serde(rename = "not_found")]
     NotFound(String),
@@ -756,7 +756,7 @@ pub enum ForgeError {
 
 ### Tauri Serialization
 
-`ForgeError` derives `Serialize` with `#[serde(tag = "code", content = "message")]`, producing `{"code": "not_found", "message": "..."}`. Tauri auto-converts via its blanket `impl<T: Serialize> From<T> for InvokeError`. The Phase 0e spec used `From<ForgeError> for InvokeError` with `err.to_string()`, but the actual implementation uses serde for structured error JSON.
+`OrqaError` derives `Serialize` with `#[serde(tag = "code", content = "message")]`, producing `{"code": "not_found", "message": "..."}`. Tauri auto-converts via its blanket `impl<T: Serialize> From<T> for InvokeError`. The Phase 0e spec used `From<OrqaError> for InvokeError` with `err.to_string()`, but the actual implementation uses serde for structured error JSON.
 
 `From` impls exist for `std::io::Error` (-> FileSystem), `serde_json::Error` (-> Serialization), and `rusqlite::Error` (-> Database), all converting to string messages.
 
@@ -804,7 +804,7 @@ Arrows point from the dependent module to the module it depends on. The `domain`
      ▼        ┌────────┘
 ┌─────────────┴───────────┐     ┌──────────┐
 │       domain/           │     │ error.rs │
-│                         │◄────│(ForgeErr)│
+│                         │◄────│(OrqaErr)│
 │ project  session        │     └──────────┘
 │ message  artifact       │          ▲
 │ settings                │          │
@@ -915,18 +915,18 @@ Every command handler follows the same pattern:
 pub fn session_get(
     state: tauri::State<'_, AppState>,
     id: i64,
-) -> Result<Session, ForgeError> {
+) -> Result<Session, OrqaError> {
     let conn = state.db.lock()
-        .map_err(|e| ForgeError::Database(e.to_string()))?;
+        .map_err(|e| OrqaError::Database(e.to_string()))?;
     SessionRepo::get_by_id(&conn, id)?
-        .ok_or_else(|| ForgeError::NotFound(format!("session {id}")))
+        .ok_or_else(|| OrqaError::NotFound(format!("session {id}")))
 }
 ```
 
 1. Extract `State<AppState>` from Tauri.
 2. Lock the resource needed (db, sidecar, search, etc.).
 3. Call the repository or service method.
-4. Return `Result<T, ForgeError>`.
+4. Return `Result<T, OrqaError>`.
 
 No business logic in the handler. No `unwrap()`. No `panic!()`.
 

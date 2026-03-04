@@ -104,7 +104,7 @@ Incremental input JSON for a tool call. The sidecar streams this as the Agent SD
 
 #### tool_result
 
-The result of a tool execution. Sent after Forge's MCP server processes the tool call and returns the result through the Agent SDK.
+The result of a tool execution. Sent after Orqa Studio's MCP server processes the tool call and returns the result through the Agent SDK.
 
 ```json
 {"type":"tool_result","tool_call_id":"toolu_01ABC123","content":"fn main() {\n    println!(\"Hello\");\n}","is_error":false,"message_id":"msg_01XFDUDYJgAACzvnptvVoYEL","turn_index":2,"block_index":0}
@@ -234,7 +234,7 @@ pub async fn spawn_sidecar(
 
     let shell = app.shell();
     let (mut child_rx, _child) = shell
-        .sidecar("forge-sidecar")
+        .sidecar("orqa-studio-sidecar")
         .expect("sidecar binary not found")
         .args([
             "--session-id", &session_id.to_string(),
@@ -478,7 +478,7 @@ The frontend listens to `Channel<T>` events and updates `$state` runes for fine-
 ### Stream State Type
 
 ```typescript
-// src/lib/types/stream.ts
+// ui/lib/types/stream.ts
 
 export type StreamStatus = 'idle' | 'waiting' | 'streaming' | 'complete' | 'error';
 
@@ -511,7 +511,7 @@ export interface ContentBlock {
 
 ```svelte
 <script lang="ts" module>
-  // src/lib/stores/stream.svelte.ts
+  // ui/lib/stores/stream.svelte.ts
   import { invoke, Channel } from '@tauri-apps/api/core';
   import type {
     StreamStatus,
@@ -690,7 +690,7 @@ export interface ContentBlock {
 ### Component Usage
 
 ```svelte
-<!-- src/lib/components/conversation/StreamingMessage.svelte -->
+<!-- ui/lib/components/conversation/StreamingMessage.svelte -->
 <script lang="ts">
   import type { StreamingMessage } from '$lib/types/stream';
   import TextBlock from './TextBlock.svelte';
@@ -764,7 +764,7 @@ During active streaming, accumulated text is displayed as raw characters -- not 
 The `TextBlock` component handles this:
 
 ```svelte
-<!-- src/lib/components/conversation/TextBlock.svelte -->
+<!-- ui/lib/components/conversation/TextBlock.svelte -->
 <script lang="ts">
   import Markdown from '$lib/components/shared/Markdown.svelte';
 

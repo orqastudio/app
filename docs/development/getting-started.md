@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-02
 
-Prerequisites, installation, and development commands for working on Forge.
+Prerequisites, installation, and development commands for working on Orqa Studio.
 
 ---
 
@@ -47,8 +47,8 @@ claude --version      # any
 
 ```bash
 # Clone the repository
-git clone git@github.com:bobbibg/forge.git
-cd forge
+git clone git@github.com:bobbibg/orqa-studio.git
+cd orqa-studio
 
 # Install frontend dependencies
 npm install
@@ -67,8 +67,8 @@ cargo tauri init
 ```
 
 The `cargo tauri init` command prompts for:
-- **App name:** `forge`
-- **Window title:** `Forge`
+- **App name:** `orqa-studio`
+- **Window title:** `Orqa Studio`
 - **Frontend dev server URL:** `http://localhost:5173` (Vite default)
 - **Frontend build command:** `npm run build`
 - **Frontend dev command:** `npm run dev`
@@ -76,7 +76,7 @@ The `cargo tauri init` command prompts for:
 After initialization, the expected directory structure is:
 
 ```
-forge/
+orqa-studio/
 ├── src-tauri/
 │   ├── src/
 │   │   └── main.rs              # Tauri entry point
@@ -85,7 +85,7 @@ forge/
 │   ├── icons/                   # App icons
 │   ├── Cargo.toml               # Rust dependencies
 │   └── tauri.conf.json          # Tauri configuration
-├── src/                         # SvelteKit frontend (already exists)
+├── ui/                          # SvelteKit frontend (already exists)
 ├── package.json
 ├── svelte.config.js
 ├── vite.config.ts
@@ -94,7 +94,7 @@ forge/
 
 ### Tauri Plugins (AD-012)
 
-Forge requires the following Tauri v2 plugins. All are official and maintained in [tauri-apps/plugins-workspace](https://github.com/tauri-apps/plugins-workspace) unless noted.
+Orqa Studio requires the following Tauri v2 plugins. All are official and maintained in [tauri-apps/plugins-workspace](https://github.com/tauri-apps/plugins-workspace) unless noted.
 
 | Plugin | Purpose | Notes |
 |--------|---------|-------|
@@ -150,7 +150,7 @@ Each plugin must also be registered in the Tauri app builder (`src-tauri/src/mai
 
 ### Frontend Dependencies (AD-013)
 
-Forge's frontend depends on these libraries, selected in [AD-013](/architecture/decisions#ad-013-frontend-library-selections):
+Orqa Studio's frontend depends on these libraries, selected in [AD-013](/architecture/decisions#ad-013-frontend-library-selections):
 
 | Library | Purpose |
 |---------|---------|
@@ -206,9 +206,9 @@ dist/
 /build/
 
 # SQLite database (local data, not committed)
-forge.db
-forge.db-wal
-forge.db-shm
+orqa.db
+orqa.db-wal
+orqa.db-shm
 ```
 
 See the root `.gitignore` file for the complete list, which also covers IDE files, OS artifacts, environment files, temporary output, and Claude Code workspace directories.
@@ -250,13 +250,13 @@ cargo tauri build                 # Build distributable application
 ## Project Structure
 
 ```
-forge/
+orqa-studio/
 ├── src-tauri/              # Rust backend (Tauri v2)
 │   ├── src/                # Rust source code
 │   ├── capabilities/       # Tauri security permissions (JSON)
 │   ├── migrations/         # SQLite migrations (.sql files)
 │   └── Cargo.toml          # Rust dependencies
-├── src/                    # Svelte 5 frontend
+├── ui/                     # Svelte 5 frontend
 │   ├── lib/                # Shared components, stores, types
 │   └── routes/             # SvelteKit pages
 ├── docs/                   # Project documentation
@@ -271,7 +271,7 @@ forge/
 └── AGENTS.md               # Cross-agent instructions
 ```
 
-Currently only `docs/` and `.claude/` exist. The `src-tauri/` and `src/` directories will be created during Phase 1 scaffold using `cargo tauri init`.
+Currently only `docs/` and `.claude/` exist. The `src-tauri/` and `ui/` directories will be created during Phase 1 scaffold using `cargo tauri init`.
 
 ---
 

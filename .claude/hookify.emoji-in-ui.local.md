@@ -6,7 +6,7 @@ action: warn
 conditions:
   - field: file_path
     operator: regex_match
-    pattern: src/.*\.svelte$
+    pattern: ui/.*\.svelte$
   - field: new_text
     operator: regex_match
     pattern: "[^\\x00-\\x7F]{2,}"

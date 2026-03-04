@@ -1,5 +1,5 @@
 use crate::domain::settings::SidecarStatus;
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 use crate::state::AppState;
 
 /// The sidecar is a Node.js process.
@@ -43,7 +43,7 @@ fn sidecar_args() -> Vec<String> {
 /// Ensure the sidecar is running, spawning it if necessary.
 ///
 /// Returns Ok(()) if the sidecar is already connected or was successfully spawned.
-pub fn ensure_sidecar_running(state: &AppState) -> Result<(), ForgeError> {
+pub fn ensure_sidecar_running(state: &AppState) -> Result<(), OrqaError> {
     if state.sidecar.is_connected() {
         return Ok(());
     }
@@ -54,7 +54,7 @@ pub fn ensure_sidecar_running(state: &AppState) -> Result<(), ForgeError> {
         .sidecar
         .spawn(SIDECAR_COMMAND, &arg_refs)
         .map_err(|e| {
-            ForgeError::Sidecar(format!(
+            OrqaError::Sidecar(format!(
                 "failed to auto-start sidecar: {e}. \
                  Ensure Node.js is installed and in PATH."
             ))
@@ -66,7 +66,7 @@ pub fn ensure_sidecar_running(state: &AppState) -> Result<(), ForgeError> {
 /// Returns the live status from `SidecarManager`, including PID, uptime,
 /// and connection state.
 #[tauri::command]
-pub fn sidecar_status(state: tauri::State<'_, AppState>) -> Result<SidecarStatus, ForgeError> {
+pub fn sidecar_status(state: tauri::State<'_, AppState>) -> Result<SidecarStatus, OrqaError> {
     Ok(state.sidecar.status())
 }
 
@@ -74,7 +74,7 @@ pub fn sidecar_status(state: tauri::State<'_, AppState>) -> Result<SidecarStatus
 ///
 /// Kills any existing sidecar process and spawns a new one.
 #[tauri::command]
-pub fn sidecar_restart(state: tauri::State<'_, AppState>) -> Result<SidecarStatus, ForgeError> {
+pub fn sidecar_restart(state: tauri::State<'_, AppState>) -> Result<SidecarStatus, OrqaError> {
     let args = sidecar_args();
     let arg_refs: Vec<&str> = args.iter().map(|s| s.as_str()).collect();
     state.sidecar.restart(SIDECAR_COMMAND, &arg_refs)

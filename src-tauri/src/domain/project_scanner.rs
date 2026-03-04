@@ -5,7 +5,7 @@ use std::time::Instant;
 
 use crate::domain::project::DetectedStack;
 use crate::domain::project_settings::GovernanceCounts;
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 
 const MAX_SCAN_DEPTH: usize = 10;
 
@@ -25,12 +25,12 @@ pub struct ProjectScanResult {
 pub fn scan_project(
     project_path: &str,
     excluded_paths: &[String],
-) -> Result<ProjectScanResult, ForgeError> {
+) -> Result<ProjectScanResult, OrqaError> {
     let start = Instant::now();
     let root = Path::new(project_path);
 
     if !root.exists() || !root.is_dir() {
-        return Err(ForgeError::Validation(format!(
+        return Err(OrqaError::Validation(format!(
             "project path does not exist or is not a directory: {project_path}"
         )));
     }
@@ -410,7 +410,7 @@ mod tests {
         let result = scan_project("/nonexistent/scanner/test/path", &[]);
         assert!(result.is_err());
         let err = result.expect_err("should be error");
-        assert!(matches!(err, ForgeError::Validation(_)));
+        assert!(matches!(err, OrqaError::Validation(_)));
     }
 
     #[test]

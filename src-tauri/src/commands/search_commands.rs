@@ -8,7 +8,7 @@ use crate::state::AppState;
 
 /// Index a codebase at the given project path, storing chunks in DuckDB.
 ///
-/// Creates or replaces the search index at `<project_path>/.forge/search.duckdb`.
+/// Creates or replaces the search index at `<project_path>/.orqa/search.duckdb`.
 #[tauri::command]
 pub async fn index_codebase(
     state: State<'_, AppState>,
@@ -16,9 +16,9 @@ pub async fn index_codebase(
     excluded_paths: Vec<String>,
 ) -> Result<IndexStatus, String> {
     let project_path_buf = std::path::PathBuf::from(&project_path);
-    let db_path = project_path_buf.join(".forge").join("search.duckdb");
+    let db_path = project_path_buf.join(".orqa").join("search.duckdb");
 
-    // Ensure .forge directory exists
+    // Ensure .orqa directory exists
     if let Some(parent) = db_path.parent() {
         std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
     }
@@ -88,7 +88,7 @@ pub async fn get_index_status(
 
     // If no engine loaded, check if a search DB exists on disk
     let db_path = std::path::PathBuf::from(&project_path)
-        .join(".forge")
+        .join(".orqa")
         .join("search.duckdb");
 
     if db_path.exists() {
@@ -122,9 +122,9 @@ pub async fn init_embedder(state: State<'_, AppState>, model_dir: String) -> Res
     embedder::ensure_model_exists(&model_path, |file, downloaded, total| {
         if let Some(total) = total {
             let pct = (downloaded as f64 / total as f64 * 100.0) as u32;
-            eprintln!("forge: downloading {file}: {pct}% ({downloaded}/{total} bytes)");
+            eprintln!("orqa: downloading {file}: {pct}% ({downloaded}/{total} bytes)");
         } else {
-            eprintln!("forge: downloading {file}: {downloaded} bytes");
+            eprintln!("orqa: downloading {file}: {downloaded} bytes");
         }
     })
     .await

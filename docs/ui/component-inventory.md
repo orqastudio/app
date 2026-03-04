@@ -60,7 +60,7 @@ Components used directly from the shadcn-svelte library. No custom code needed b
 
 ## Custom Application Components (Must Build)
 
-Components specific to Forge that are not provided by shadcn-svelte.
+Components specific to Orqa Studio that are not provided by shadcn-svelte.
 
 ### Layout Components
 
@@ -144,7 +144,7 @@ Components specific to Forge that are not provided by shadcn-svelte.
 |-----------|-------------|-----------|-------|
 | `AppLayout` | Root layout: toolbar + three-zone body (Activity Bar + Nav Sub-Panel + PaneForge) + status bar. Manages zone collapse state. | Resizable | 1 |
 | `Toolbar` | Top bar: project name, search, new session. | Button, Command | 1 |
-| `WelcomeScreen` | First-run / empty project state. Forge branding, setup guidance. | Card, Button | 1 |
+| `WelcomeScreen` | First-run / empty project state. Orqa Studio branding, setup guidance. | Card, Button | 1 |
 
 ### Shared Utility Components
 
@@ -169,12 +169,12 @@ Components specific to Forge that are not provided by shadcn-svelte.
 
 ## Custom Markdown Rendering Blocks
 
-Extensions to the markdown renderer for Forge-specific content types.
+Extensions to the markdown renderer for Orqa Studio-specific content types.
 
 | Block | Syntax | Rendering | Phase |
 |-------|--------|-----------|-------|
-| **Wireframe image** | `![wireframe](forge://wireframe/core-layout?theme=dark)` | Serves cached wireframe image from local store. Selects light/dark/brand variant based on active theme. | 1.5 |
-| **UX flow navigation** | `<!-- forge:ux-flow screens="screen1,screen2,screen3" -->` | Renders clickable wireframe sequence with forward/back navigation. | 1.5 |
+| **Wireframe image** | `![wireframe](orqa://wireframe/core-layout?theme=dark)` | Serves cached wireframe image from local store. Selects light/dark/brand variant based on active theme. | 1.5 |
+| **UX flow navigation** | `<!-- orqa:ux-flow screens="screen1,screen2,screen3" -->` | Renders clickable wireframe sequence with forward/back navigation. | 1.5 |
 | **Artifact link** | `[agent:backend-engineer]` | Renders as a styled badge/chip linking to the artifact in the viewer. | 1 |
 | **Tool call reference** | `[tool:Read src/main.rs]` | Renders as a tool call summary card (collapsed). | 1 |
 

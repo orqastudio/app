@@ -3,7 +3,7 @@ name: block-delete-source-dirs
 enabled: true
 event: bash
 action: block
-pattern: (rm\s+-rf?|git\s+rm\s+-r)\s+.*(docs/|src-tauri/|src/|tests/)
+pattern: (rm\s+-rf?|git\s+rm\s+-r)\s+.*(docs/|src-tauri/|ui/|tests/)
 ---
 
 **BLOCKED: Deleting source-of-truth directories requires explicit user approval.**

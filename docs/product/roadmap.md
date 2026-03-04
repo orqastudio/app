@@ -16,7 +16,7 @@ Research and resolve technical decision points. Each item results in documented 
 
 - [x] Claude integration approach → Agent SDK as primary (spawns official CLI, Max subscription). `tools: []` + custom MCP for control.
 - [x] Claude Max integration path → Max subscription via Agent SDK. Cost-effective at 25+ conv/day. API key + other providers on roadmap.
-- [x] Tool implementation strategy → Forge tools as custom MCP server exposed to Agent SDK. Native Rust execution. MCP host for extensibility.
+- [x] Tool implementation strategy → Orqa Studio tools as custom MCP server exposed to Agent SDK. Native Rust execution. MCP host for extensibility.
 - [x] Streaming architecture → Agent SDK → sidecar (Bun-compiled) → NDJSON stdout → Rust → Channel<T> → Svelte store.
 
 **Tauri v2** — [`docs/research/tauri-v2.md`](/research/tauri-v2)
@@ -52,7 +52,7 @@ Promote research findings to formal Architecture Decisions in [`docs/architectur
 - [x] AD-007: Agent SDK sidecar integration — Bun-compiled TypeScript, stdin/stdout NDJSON, `tauri-plugin-shell` spawn. ← [Claude Integration](/research/claude-integration)
 - [x] AD-008: Max subscription authentication — Primary auth via Agent SDK + Claude Code CLI. API key + other providers on roadmap. ← [Claude Integration](/research/claude-integration)
 - [x] AD-009: Streaming pipeline — Agent SDK → sidecar → NDJSON → Rust → Channel<T> → Svelte. Clarifies AD-002. ← [Claude Integration](/research/claude-integration)
-- [x] AD-010: Tool implementation as MCP — Forge tools as custom MCP server to Agent SDK. Built-in tools disabled. MCP host for extensibility. ← [Claude Integration](/research/claude-integration)
+- [x] AD-010: Tool implementation as MCP — Orqa Studio tools as custom MCP server to Agent SDK. Built-in tools disabled. MCP host for extensibility. ← [Claude Integration](/research/claude-integration)
 - [x] AD-011: Security model — Tauri three-layer (permissions → scopes → capabilities). Keyring for secrets. Persisted scopes. ← [Tauri v2](/research/tauri-v2)
 - [x] AD-012: Tauri plugin selections — 11 plugins (sql, fs, shell, store, autostart, updater, window-state, dialog, notification, keyring, persisted-scope). ← [Tauri v2](/research/tauri-v2)
 - [x] AD-013: Frontend library selections — shadcn-svelte + CodeMirror 6 + PaneForge + LayerChart. Custom conversation UI. ← [Frontend](/research/frontend)
@@ -76,7 +76,7 @@ Define what we're building before designing how it looks. These documents live i
 Design the user interface before building it. These documents live in `docs/ui/`.
 
 - [x] **Wireframing tool research** — PlantUML Salt (primary, wireframes) + D2 (secondary, architecture diagrams). ImagineUI abandoned and not recommended. [`docs/research/wireframing.md`](/research/wireframing)
-- [x] **Design system** — Forge's own design tokens (colors, typography, spacing, dark/light mode). Per-project theming via extracted design tokens. Brand extension variables. Component library specification. [`docs/ui/design-system.md`](/ui/design-system) ← research: [Design Tokens](/research/design-tokens), [Branding](/research/branding), [Brand Identity](/ui/brand-identity)
+- [x] **Design system** — Orqa Studio's own design tokens (colors, typography, spacing, dark/light mode). Per-project theming via extracted design tokens. Brand extension variables. Component library specification. [`docs/ui/design-system.md`](/ui/design-system) ← research: [Design Tokens](/research/design-tokens), [Branding](/research/branding), [Brand Identity](/ui/brand-identity)
 - [x] **Wireframes: Core layout** — Three-zone + nav sub-panel layout (Activity Bar, Nav Sub-Panel, Explorer, Chat) with toolbar and status bar. Default and Nav Sub-Panel-collapsed states. Zone dimensions and collapse behavior. [`docs/wireframes/core-layout.md`](/wireframes/core-layout) ← informed by: [Information Architecture](/product/information-architecture), [Wireframing](/research/wireframing)
 - [x] **Wireframes: Conversation view** — Active conversation, streaming state, empty/welcome state, error states. Tool call cards collapsed and expanded. All tool types represented. [`docs/wireframes/conversation-view.md`](/wireframes/conversation-view) ← informed by: [Information Architecture](/product/information-architecture), [Frontend](/research/frontend), [MVP Spec F-003, F-004](/product/mvp-specification)
 - [x] **Wireframes: Artifact browser** — Explorer Panel browser with Activity Bar category selection, artifact viewer (rendered), editor (source), empty states. Path scope display for rules. [`docs/wireframes/artifact-browser.md`](/wireframes/artifact-browser) ← informed by: [Information Architecture](/product/information-architecture), [Frontend](/research/frontend), [MVP Spec F-007, F-008](/product/mvp-specification)
@@ -91,12 +91,12 @@ Design the user interface before building it. These documents live in `docs/ui/`
 Design the technical architecture before building it. These documents live in `docs/architecture/`.
 
 - [x] **SQLite schema** — 11 core tables + 2 FTS5 virtual tables. WAL mode, foreign keys, busy timeout. Migration strategy via tauri-plugin-sql. Streaming write pattern. Common query patterns. [`docs/architecture/sqlite-schema.md`](/architecture/sqlite-schema) ← research: [Persistence](/research/persistence), [Design Tokens](/research/design-tokens)
-- [x] **IPC command catalog** — 26 commands across 8 domains (Project, Session, Message, Streaming, Artifact, Theme, Settings, Sidecar). 10 StreamEvent variants. Typed `forgeInvoke<T>` wrapper. [`docs/architecture/ipc-commands.md`](/architecture/ipc-commands) ← research: [Tauri v2](/research/tauri-v2)
-- [x] **Rust module architecture** — 8 top-level modules. Domain types matching SQLite schema. 20 command handlers. Repository pattern with New/Update DTOs. SidecarManager lifecycle. Tool trait and ToolRegistry. ForgeError with 15 variants. [`docs/architecture/rust-modules.md`](/architecture/rust-modules) ← research: [Claude Integration](/research/claude-integration), [Tauri v2](/research/tauri-v2), [Persistence](/research/persistence)
+- [x] **IPC command catalog** — 26 commands across 8 domains (Project, Session, Message, Streaming, Artifact, Theme, Settings, Sidecar). 10 StreamEvent variants. Typed `invoke<T>` wrapper. [`docs/architecture/ipc-commands.md`](/architecture/ipc-commands) ← research: [Tauri v2](/research/tauri-v2)
+- [x] **Rust module architecture** — 8 top-level modules. Domain types matching SQLite schema. 20 command handlers. Repository pattern with New/Update DTOs. SidecarManager lifecycle. Tool trait and ToolRegistry. Orqa StudioError with 15 variants. [`docs/architecture/rust-modules.md`](/architecture/rust-modules) ← research: [Claude Integration](/research/claude-integration), [Tauri v2](/research/tauri-v2), [Persistence](/research/persistence)
 - [x] **Svelte component tree** — Single-route architecture with state-driven views. 7 stores as Svelte 5 class-based singletons. Component-to-command mapping. Data flow diagrams. [`docs/architecture/svelte-components.md`](/architecture/svelte-components) ← research: [Frontend](/research/frontend), [Design Tokens](/research/design-tokens); product: [Information Architecture](/product/information-architecture)
 - [x] **Streaming pipeline** — End-to-end pipeline with latency annotations. 7 NDJSON message types. requestAnimationFrame-based token buffering. StreamBuffer for SQLite writes. Backpressure analysis (~89KB max). Reconnection strategy. [`docs/architecture/streaming-pipeline.md`](/architecture/streaming-pipeline) ← research: [Claude Integration](/research/claude-integration); AD: [AD-009](/architecture/decisions)
 - [x] **Tool definitions** — 6 tools (Read, Write, Edit, Bash, Glob, Grep) with MCP JSON Schema, Rust implementation, parameter schemas, result formats, UI rendering specs, security constraints. Tool approval matrix. [`docs/architecture/tool-definitions.md`](/architecture/tool-definitions) ← research: [Claude Integration](/research/claude-integration); AD: [AD-010](/architecture/decisions)
-- [x] **MCP host interface** — Dual MCP role (server + host). Built-in 6-tool forge_ namespace. External server discovery and lifecycle. Three trust levels. Tool aggregation with namespacing. [`docs/architecture/mcp-host.md`](/architecture/mcp-host) ← research: [Claude Integration](/research/claude-integration); AD: [AD-010](/architecture/decisions)
+- [x] **MCP host interface** — Dual MCP role (server + host). Built-in 6-tool orqa_ namespace. External server discovery and lifecycle. Three trust levels. Tool aggregation with namespacing. [`docs/architecture/mcp-host.md`](/architecture/mcp-host) ← research: [Claude Integration](/research/claude-integration); AD: [AD-010](/architecture/decisions)
 - [x] **Error taxonomy** — 8 sub-enums with 48 total variants. thiserror derivation. IPC serialization. UI surface mapping for all variants. Three recovery tiers. Logging with tracing crate. [`docs/architecture/error-taxonomy.md`](/architecture/error-taxonomy)
 - [x] **Wireframe serving infrastructure** — Salt source storage. SQLite wireframe_cache table. Style variants (light/dark/brand). On-demand generation with per-wireframe mutex. Custom protocol handler. PlantUML binary resolution. [`docs/architecture/wireframe-serving.md`](/architecture/wireframe-serving) ← research: [Wireframing](/research/wireframing), [Design Tokens](/research/design-tokens)
 - [x] **PlantUML bundling spike** — 4 options evaluated: GraalVM native-image (30-40MB), bundled JRE via jlink (38-50MB), system JRE detection, WASM (not ready). Recommendation: try A, fall back to B, always include C. 6 acceptance criteria. 3-day timebox. [`docs/architecture/plantuml-spike.md`](/architecture/plantuml-spike) ← research: [Wireframing](/research/wireframing)
@@ -129,7 +129,7 @@ Phase 1 delivered a working Tauri v2 app with Claude conversations via Agent SDK
 
 > **Core Principle: Native Claude Code Artifacts First**
 >
-> Every capability in Phase 2 is implemented via native `.claude/` artifacts (hooks, rules, skills, CLAUDE.md) first, so it works in the CLI without Forge. Forge then adds visual management, dashboards, and enhanced UX on top. This means Forge is always additive — it never creates vendor lock-in against the Claude Code CLI.
+> Every capability in Phase 2 is implemented via native `.claude/` artifacts (hooks, rules, skills, CLAUDE.md) first, so it works in the CLI without Orqa Studio. Orqa Studio then adds visual management, dashboards, and enhanced UX on top. This means Orqa Studio is always additive — it never creates vendor lock-in against the Claude Code CLI.
 
 ## Phase 2a: First-Run Setup Wizard
 
@@ -174,7 +174,7 @@ When a user opens a project, Claude (via sidecar) scans existing governance file
 
 **Prerequisites:** Phase 2b complete.
 
-Edit agents, rules, skills, and hooks directly in the Forge UI. Forge becomes the primary interface for managing governance artifacts, with file watcher support so CLI and text editor edits are reflected in real time.
+Edit agents, rules, skills, and hooks directly in the Orqa Studio UI. Orqa Studio becomes the primary interface for managing governance artifacts, with file watcher support so CLI and text editor edits are reflected in real time.
 
 - [ ] Artifact editor component with markdown/YAML editing (CodeMirror 6)
 - [ ] Create new artifacts from templates
@@ -185,14 +185,14 @@ Edit agents, rules, skills, and hooks directly in the Forge UI. Forge becomes th
 
 **Prerequisites:** Phase 2c complete.
 
-Implements the learning loop as native Claude Code hooks and rules first (works in CLI), then adds Forge-only dashboards for visibility and management.
+Implements the learning loop as native Claude Code hooks and rules first (works in CLI), then adds Orqa Studio-only dashboards for visibility and management.
 
 **Native artifacts:**
 - [ ] Hooks that capture lessons after sessions (post-session hook writes to `docs/development/lessons.md`)
 - [ ] Rules enforcing lesson checking before implementation
 - [ ] CLAUDE.md section describing the promotion pipeline (lesson → rule → scanner → enforcement)
 
-**Forge enhancements:**
+**Orqa Studio enhancements:**
 - [ ] Lesson dashboard with recurrence trends (LayerChart)
 - [ ] Browse/edit lessons UI
 - [ ] Automated promotion suggestions (when recurrence >= threshold)
@@ -202,13 +202,13 @@ Implements the learning loop as native Claude Code hooks and rules first (works 
 
 **Prerequisites:** Phase 2d complete.
 
-Implements rule injection and violation detection as native hooks (works in CLI), then adds Forge-only real-time streaming analysis and session handoff UI.
+Implements rule injection and violation detection as native hooks (works in CLI), then adds Orqa Studio-only real-time streaming analysis and session handoff UI.
 
 **Native artifacts:**
 - [ ] Hooks that inject relevant rules into conversations based on file context
 - [ ] Hooks that detect violations and log them
 
-**Forge enhancements:**
+**Orqa Studio enhancements:**
 - [ ] Real-time violation detection during streaming (pattern matching on streamed tokens)
 - [ ] Visual compliance dashboard
 - [ ] Session handoff and continuity (cross-session search, handoff summaries)
@@ -236,7 +236,7 @@ Implements rule injection and violation detection as native hooks (works in CLI)
 
 ← product: [Personas](/product/personas) (Alex: PM/Tech Lead), [Journeys](/product/journeys); research: [Persistence](/research/persistence) (FTS5 search)
 
-Research and discovery as a managed artifact within Forge, giving the PM persona tooling for the define-before-build workflow.
+Research and discovery as a managed artifact within Orqa Studio, giving the PM persona tooling for the define-before-build workflow.
 
 - [ ] Research artifact type (structured objects, not just markdown — queryable, filterable)
 - [ ] Decision traceability graph (research → AD → feature → implementation)
@@ -256,7 +256,7 @@ The provider-agnostic sidecar interface supports additional providers without ch
 
 ## Future: Multi-User Collaborative Access
 
-A small team (PM, Tech Lead, Developer) sharing a single Forge instance with visibility into each other's sessions and governance work. Schema includes nullable `user_id` and `last_edited_by` columns from Phase 1 to avoid migration-heavy changes later. ← research: [Persistence](/research/persistence) (multi-user considerations); product: [Personas](/product/personas)
+A small team (PM, Tech Lead, Developer) sharing a single Orqa Studio instance with visibility into each other's sessions and governance work. Schema includes nullable `user_id` and `last_edited_by` columns from Phase 1 to avoid migration-heavy changes later. ← research: [Persistence](/research/persistence) (multi-user considerations); product: [Personas](/product/personas)
 
 - [ ] User identity and authentication (local accounts or SSO)
 - [ ] Session visibility controls (own, team, all)
@@ -268,7 +268,7 @@ A small team (PM, Tech Lead, Developer) sharing a single Forge instance with vis
 
 ## Future: Wireframe Browser & Interactive UX Flows
 
-Wireframes are generated as styled images during Phase 0d and stored in a local image cache. This future work makes them a first-class browsable, interactive artifact within Forge. ← research: [Wireframing](/research/wireframing), [Design Tokens](/research/design-tokens); product: [Journeys](/product/journeys)
+Wireframes are generated as styled images during Phase 0d and stored in a local image cache. This future work makes them a first-class browsable, interactive artifact within Orqa Studio. ← research: [Wireframing](/research/wireframing), [Design Tokens](/research/design-tokens); product: [Journeys](/product/journeys)
 
 - [ ] Wireframe browser view — Browse all wireframes for a project, organized by UX flow / journey
 - [ ] Custom markdown block for wireframe images — Renders cached wireframes with style-awareness (serves light/dark/brand variant based on active theme)
@@ -282,8 +282,8 @@ Wireframes are generated as styled images during Phase 0d and stored in a local 
 Rather than building comprehensive design tooling internally, integrate with 3rd-party design tools where designers already work. This enables a **Designer persona** to complete the end-to-end team (PM/Tech Lead + Developer + Designer) and avoids reinventing design tooling. ← research: [Design Tokens](/research/design-tokens); product: [Personas](/product/personas)
 
 - [ ] Figma integration — Import design tokens (colors, typography, spacing) from Figma files. Use Figma MCP server for two-way communication. Extract component specifications from Figma designs.
-- [ ] Design token sync — Bidirectional sync between project design tokens and external design tools. Changes in Figma propagate to Forge's per-project theme; governance-defined tokens can be pushed back. ← research: [Design Tokens](/research/design-tokens)
-- [ ] Design-to-wireframe pipeline — Import high-fidelity designs from Figma as wireframe references. Link designs to user journeys and UX flows within Forge.
+- [ ] Design token sync — Bidirectional sync between project design tokens and external design tools. Changes in Figma propagate to Orqa Studio's per-project theme; governance-defined tokens can be pushed back. ← research: [Design Tokens](/research/design-tokens)
+- [ ] Design-to-wireframe pipeline — Import high-fidelity designs from Figma as wireframe references. Link designs to user journeys and UX flows within Orqa Studio.
 - [ ] Code-to-Figma backfill — Analyze existing frontend implementation (components, styles, layout) and generate corresponding Figma components that accurately represent them. Use those components to reconstruct wireframes as Figma designs, enabling teams who prototyped in code to backfill a proper design system. This bridges the gap to Figma's dev tools pipeline for full design-to-development integration. Potentially unique in the market — no existing tool automates code→Figma component generation at this level.
-- [ ] Designer persona — Extend the persona model with a Designer role who defines visual standards, reviews UI compliance, and manages the design system through Forge's governance framework. ← product: [Personas](/product/personas)
-- [ ] Replace automated wireframing — If Figma integration matures, automated wireframe generation becomes optional. Designers create wireframes in their native tool; Forge indexes and organizes them.
+- [ ] Designer persona — Extend the persona model with a Designer role who defines visual standards, reviews UI compliance, and manages the design system through Orqa Studio's governance framework. ← product: [Personas](/product/personas)
+- [ ] Replace automated wireframing — If Figma integration matures, automated wireframe generation becomes optional. Designers create wireframes in their native tool; Orqa Studio indexes and organizes them.

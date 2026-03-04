@@ -2,14 +2,14 @@ use std::collections::HashMap;
 
 use rusqlite::{params, Connection, OptionalExtension};
 
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 
 /// Get a single setting value by key and scope.
 pub fn get(
     conn: &Connection,
     key: &str,
     scope: &str,
-) -> Result<Option<serde_json::Value>, ForgeError> {
+) -> Result<Option<serde_json::Value>, OrqaError> {
     let value: Option<String> = conn
         .query_row(
             "SELECT value FROM settings WHERE key = ?1 AND scope = ?2",
@@ -33,7 +33,7 @@ pub fn set(
     key: &str,
     value: &serde_json::Value,
     scope: &str,
-) -> Result<(), ForgeError> {
+) -> Result<(), OrqaError> {
     let value_str = serde_json::to_string(value)?;
 
     conn.execute(
@@ -51,7 +51,7 @@ pub fn set(
 pub fn get_all(
     conn: &Connection,
     scope: &str,
-) -> Result<HashMap<String, serde_json::Value>, ForgeError> {
+) -> Result<HashMap<String, serde_json::Value>, OrqaError> {
     let mut stmt =
         conn.prepare("SELECT key, value FROM settings WHERE scope = ?1 ORDER BY key ASC")?;
 

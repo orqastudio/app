@@ -1,5 +1,5 @@
 /**
- * Claude Agent SDK integration for the Forge sidecar.
+ * Claude Agent SDK integration for the Orqa Studio sidecar.
  *
  * Uses @anthropic-ai/claude-agent-sdk which spawns the official Claude Code
  * CLI binary. Authentication is handled via Claude Max subscription OAuth —
@@ -57,13 +57,13 @@ const TOOL_SYSTEM_PROMPT = `You have access to these tools:
 - search_regex: Search indexed codebase with a regex pattern (must be indexed first)
 - search_semantic: Search codebase using natural language (semantic similarity, must be indexed with embeddings first)
 
-Use these tools by their short names. When referencing tools in your responses, use the short name (e.g. "read_file" not "mcp__forge__read_file").
+Use these tools by their short names. When referencing tools in your responses, use the short name (e.g. "read_file" not "mcp__orqa__read_file").
 
 For understanding code structure, use grep with relevant patterns. For precise text matching, use grep. For searching the indexed codebase, use search_regex. For natural language code search, use search_semantic.`;
 
 /**
  * Strip MCP server prefixes from tool names.
- * e.g. "mcp__forge__read_file" → "read_file"
+ * e.g. "mcp__orqa__read_file" → "read_file"
  */
 function stripMcpPrefix(name: string): string {
     const match = name.match(/^mcp__[^_]+__(.+)$/);
@@ -86,9 +86,9 @@ let nextMessageId = 1;
 let nextToolCallId = 1;
 
 /**
- * Maps Forge session IDs to Agent SDK session IDs.
+ * Maps Orqa Studio session IDs to Agent SDK session IDs.
  * The SDK uses its own UUID-based session IDs for conversation persistence.
- * On the first message in a Forge session, we start a new SDK conversation and
+ * On the first message in an Orqa Studio session, we start a new SDK conversation and
  * capture the SDK session ID. Subsequent messages use `resume` to continue
  * the same SDK conversation, giving Claude access to the full history.
  */
@@ -121,7 +121,7 @@ export function resolveToolResult(result: ToolResultRequest): void {
         resolve(result);
     } else {
         process.stderr.write(
-            `forge-sidecar: no pending tool_result for ${result.tool_call_id}\n`,
+            `orqa-studio-sidecar: no pending tool_result for ${result.tool_call_id}\n`,
         );
     }
 }
@@ -132,7 +132,7 @@ export function resolveToolResult(result: ToolResultRequest): void {
  */
 export function resolveToolApproval(result: ToolApprovalRequest): void {
     process.stderr.write(
-        `forge-sidecar: resolveToolApproval: id=${result.tool_call_id} approved=${result.approved} pending_count=${pendingToolApprovals.size}\n`,
+        `orqa-studio-sidecar: resolveToolApproval: id=${result.tool_call_id} approved=${result.approved} pending_count=${pendingToolApprovals.size}\n`,
     );
     const resolve = pendingToolApprovals.get(result.tool_call_id);
     if (resolve) {
@@ -140,7 +140,7 @@ export function resolveToolApproval(result: ToolApprovalRequest): void {
         resolve(result);
     } else {
         process.stderr.write(
-            `forge-sidecar: no pending tool_approval for ${result.tool_call_id}\n`,
+            `orqa-studio-sidecar: no pending tool_approval for ${result.tool_call_id}\n`,
         );
     }
 }
@@ -188,16 +188,16 @@ function waitForToolApproval(
 }
 
 /**
- * Create the Forge MCP tool server that routes tool calls to Rust
+ * Create the Orqa Studio MCP tool server that routes tool calls to Rust
  * via the NDJSON protocol.
  *
  * Each tool call sends a tool_execute event to stdout and waits for
  * a tool_result response from stdin. This allows Rust (and the Tauri
  * frontend) to control all tool execution.
  */
-function createForgeToolServer(sendResponse: ResponseSender) {
+function createOrqaToolServer(sendResponse: ResponseSender) {
     return createSdkMcpServer({
-        name: 'forge-tools',
+        name: 'orqa-studio-tools',
         tools: [
             tool(
                 'read_file',
@@ -296,9 +296,9 @@ async function executeToolViaRust(
     args: Record<string, unknown>,
     sendResponse: ResponseSender,
 ): Promise<{ content: Array<{ type: 'text'; text: string }> }> {
-    const toolCallId = `forge_tool_${nextToolCallId++}`;
+    const toolCallId = `orqa_tool_${nextToolCallId++}`;
     process.stderr.write(
-        `forge-sidecar: executeToolViaRust called: tool=${toolName} id=${toolCallId}\n`,
+        `orqa-studio-sidecar: executeToolViaRust called: tool=${toolName} id=${toolCallId}\n`,
     );
 
     // Send tool_execute to Rust via stdout
@@ -363,7 +363,7 @@ export async function streamMessage(
     activeStreams.set(sessionId, abortController);
 
     // Create the MCP tool server for this conversation
-    const forgeToolServer = createForgeToolServer(sendResponse);
+    const orqaToolServer = createOrqaToolServer(sendResponse);
 
     try {
         // Emit stream_start
@@ -385,15 +385,15 @@ export async function streamMessage(
             prompt: content,
             options: {
                 tools: [],  // Disable ALL built-in Claude Code tools
-                mcpServers: { forge: forgeToolServer },  // Route tools to Forge
+                mcpServers: { orqa: orqaToolServer },  // Route tools to Orqa Studio
                 canUseTool: async (
                     name: string,
                     input: Record<string, unknown>,
                 ) => {
-                    const toolCallId = `forge_approval_${nextToolCallId++}`;
+                    const toolCallId = `orqa_approval_${nextToolCallId++}`;
                     const strippedName = stripMcpPrefix(name);
                     process.stderr.write(
-                        `forge-sidecar: canUseTool called: name=${strippedName} id=${toolCallId}\n`,
+                        `orqa-studio-sidecar: canUseTool called: name=${strippedName} id=${toolCallId}\n`,
                     );
 
                     // Send approval request to Rust/UI via stdout
@@ -407,7 +407,7 @@ export async function streamMessage(
                     // Wait for Rust/UI to send back the approval decision
                     const approval = await waitForToolApproval(toolCallId);
                     process.stderr.write(
-                        `forge-sidecar: canUseTool resolved: id=${toolCallId} approved=${approval.approved}\n`,
+                        `orqa-studio-sidecar: canUseTool resolved: id=${toolCallId} approved=${approval.approved}\n`,
                     );
 
                     if (approval.approved) {
@@ -423,7 +423,7 @@ export async function streamMessage(
                 systemPrompt: (TOOL_SYSTEM_PROMPT + '\n\n' + (systemPrompt ?? '')).trim() || undefined,
                 model: resolvedModel,
                 abortController,
-                // Resume the SDK session if we have a previous one for this Forge session
+                // Resume the SDK session if we have a previous one for this Orqa Studio session
                 ...(existingSdkSessionId ? { resume: existingSdkSessionId } : {}),
             },
         });
@@ -443,7 +443,7 @@ export async function streamMessage(
                 if (msg.type === 'system' && msg.subtype === 'init' && typeof msg.session_id === 'string') {
                     sdkSessionMap.set(sessionId, msg.session_id);
                     process.stderr.write(
-                        `forge-sidecar: mapped forge session ${sessionId} -> SDK session ${msg.session_id}\n`,
+                        `orqa-studio-sidecar: mapped orqa session ${sessionId} -> SDK session ${msg.session_id}\n`,
                     );
                 }
 
@@ -555,9 +555,9 @@ function translateAgentMessage(
             } else if (b.type === 'tool_use') {
                 // Tool use blocks are handled by the MCP server callbacks,
                 // but we emit tracking events for the frontend.
-                // Skip forge tools — executeToolViaRust already emits these events.
-                const isForge = typeof b.name === 'string' && b.name.startsWith('mcp__forge__');
-                if (!isForge) {
+                // Skip Orqa Studio tools — executeToolViaRust already emits these events.
+                const isOrqa = typeof b.name === 'string' && b.name.startsWith('mcp__orqa__');
+                if (!isOrqa) {
                     if (typeof b.id === 'string' && typeof b.name === 'string') {
                         sendResponse({
                             type: 'tool_use_start',

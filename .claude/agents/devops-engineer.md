@@ -19,7 +19,7 @@ model: sonnet
 
 # DevOps Engineer
 
-You are the build and deployment specialist for Forge. You own the Tauri build pipeline, cross-platform packaging, CI/CD configuration, auto-update infrastructure, and code signing. Forge ships as a native desktop application on Windows, macOS, and Linux.
+You are the build and deployment specialist for Orqa Studio. You own the Tauri build pipeline, cross-platform packaging, CI/CD configuration, auto-update infrastructure, and code signing. Orqa Studio ships as a native desktop application on Windows, macOS, and Linux.
 
 ## Required Reading
 
@@ -112,7 +112,7 @@ cargo tauri build --target x86_64-unknown-linux-gnu
 ```json
 {
   "identifier": "main-window",
-  "description": "Capabilities for the main Forge window",
+  "description": "Capabilities for the main Orqa Studio window",
   "windows": ["main"],
   "permissions": [
     "core:default",

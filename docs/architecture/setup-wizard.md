@@ -139,15 +139,15 @@ pub struct ClaudeCliInfo {
 
 | File | Change |
 |------|--------|
-| `src/lib/types/setup.ts` | New — TypeScript interfaces matching Rust types |
-| `src/lib/stores/setup.svelte.ts` | New — setup store with step state, detection results, actions |
-| `src/lib/components/setup/SetupWizard.svelte` | New — full-screen overlay container, step navigation |
-| `src/lib/components/setup/ClaudeCliStep.svelte` | New — CLI detection UI |
-| `src/lib/components/setup/ClaudeAuthStep.svelte` | New — auth detection + login flow |
-| `src/lib/components/setup/SidecarStep.svelte` | New — sidecar startup with spinner |
-| `src/lib/components/setup/EmbeddingModelStep.svelte` | New — model download with progress bar |
-| `src/lib/components/setup/SetupComplete.svelte` | New — completion confirmation |
-| `src/routes/+layout.svelte` (or AppLayout) | Mount SetupWizard when `setup_complete === false` |
+| `ui/lib/types/setup.ts` | New — TypeScript interfaces matching Rust types |
+| `ui/lib/stores/setup.svelte.ts` | New — setup store with step state, detection results, actions |
+| `ui/lib/components/setup/SetupWizard.svelte` | New — full-screen overlay container, step navigation |
+| `ui/lib/components/setup/ClaudeCliStep.svelte` | New — CLI detection UI |
+| `ui/lib/components/setup/ClaudeAuthStep.svelte` | New — auth detection + login flow |
+| `ui/lib/components/setup/SidecarStep.svelte` | New — sidecar startup with spinner |
+| `ui/lib/components/setup/EmbeddingModelStep.svelte` | New — model download with progress bar |
+| `ui/lib/components/setup/SetupComplete.svelte` | New — completion confirmation |
+| `ui/routes/+layout.svelte` (or AppLayout) | Mount SetupWizard when `setup_complete === false` |
 
 ## Component State Table
 
@@ -174,7 +174,7 @@ This reuses the data collected during setup. The Settings view calls the same `c
 ## User Journeys
 
 **First-time install (everything missing):**
-1. User launches Forge for the first time
+1. User launches Orqa Studio for the first time
 2. Wizard appears: Step 1 shows "Claude CLI not found" with install link
 3. User installs CLI, clicks "Check Again" — detected, auto-advances
 4. Step 2: "Not authenticated" — user clicks "Log in", authenticates
@@ -183,12 +183,12 @@ This reuses the data collected during setup. The Settings view calls the same `c
 7. Step 5: "You're all set!" — user clicks "Get Started"
 
 **Returning user (everything configured):**
-1. User launches Forge
+1. User launches Orqa Studio
 2. Backend checks `setup_version` — matches `CURRENT_SETUP_VERSION`
 3. Wizard does not appear, main app loads immediately
 
 **Upgrade scenario (new version adds steps):**
-1. User updates Forge to a version with `CURRENT_SETUP_VERSION = 2`
+1. User updates Orqa Studio to a version with `CURRENT_SETUP_VERSION = 2`
 2. On launch, stored version (1) < current version (2)
 3. Wizard appears showing only the new steps (previously completed steps show as "Complete" and are skipped or shown briefly)
 4. After new steps complete, `setup_version` updated to 2

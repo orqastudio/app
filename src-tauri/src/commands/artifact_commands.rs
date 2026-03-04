@@ -3,7 +3,7 @@ use std::path::{Path, PathBuf};
 use tauri::State;
 
 use crate::domain::artifact::{Artifact, ArtifactSummary, ArtifactType, DocNode};
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 use crate::repo::{artifact_repo, project_repo};
 use crate::state::AppState;
 
@@ -13,7 +13,7 @@ pub fn artifact_list(
     project_id: i64,
     artifact_type: Option<String>,
     state: State<'_, AppState>,
-) -> Result<Vec<ArtifactSummary>, ForgeError> {
+) -> Result<Vec<ArtifactSummary>, OrqaError> {
     let type_filter = artifact_type
         .as_deref()
         .map(parse_artifact_type)
@@ -22,18 +22,18 @@ pub fn artifact_list(
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     artifact_repo::list(&conn, project_id, type_filter.as_ref())
 }
 
 /// Get an artifact by its ID.
 #[tauri::command]
-pub fn artifact_get(artifact_id: i64, state: State<'_, AppState>) -> Result<Artifact, ForgeError> {
+pub fn artifact_get(artifact_id: i64, state: State<'_, AppState>) -> Result<Artifact, OrqaError> {
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     let mut artifact = artifact_repo::get(&conn, artifact_id)?;
 
@@ -54,9 +54,9 @@ pub fn artifact_get_by_path(
     project_id: i64,
     rel_path: String,
     state: State<'_, AppState>,
-) -> Result<Artifact, ForgeError> {
+) -> Result<Artifact, OrqaError> {
     if rel_path.trim().is_empty() {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "relative path cannot be empty".to_string(),
         ));
     }
@@ -64,7 +64,7 @@ pub fn artifact_get_by_path(
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     let mut artifact = artifact_repo::get_by_path(&conn, project_id, &rel_path)?;
 
@@ -87,9 +87,9 @@ pub fn artifact_create(
     name: String,
     content: String,
     state: State<'_, AppState>,
-) -> Result<Artifact, ForgeError> {
+) -> Result<Artifact, OrqaError> {
     if name.trim().is_empty() {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "artifact name cannot be empty".to_string(),
         ));
     }
@@ -100,7 +100,7 @@ pub fn artifact_create(
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     // Get the project to resolve the full filesystem path
     let project = project_repo::get(&conn, project_id)?;
@@ -151,11 +151,11 @@ pub fn artifact_update(
     artifact_id: i64,
     content: String,
     state: State<'_, AppState>,
-) -> Result<Artifact, ForgeError> {
+) -> Result<Artifact, OrqaError> {
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     // Get the artifact to find its path
     let artifact = artifact_repo::get(&conn, artifact_id)?;
@@ -187,11 +187,11 @@ pub fn artifact_update(
 
 /// Delete an artifact, removing the file from disk and the database record.
 #[tauri::command]
-pub fn artifact_delete(artifact_id: i64, state: State<'_, AppState>) -> Result<(), ForgeError> {
+pub fn artifact_delete(artifact_id: i64, state: State<'_, AppState>) -> Result<(), OrqaError> {
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     // Get the artifact to find its path
     let artifact = artifact_repo::get(&conn, artifact_id)?;
@@ -208,14 +208,14 @@ pub fn artifact_delete(artifact_id: i64, state: State<'_, AppState>) -> Result<(
 }
 
 /// Look up the active project's filesystem path from the database.
-fn active_project_path(state: &State<'_, AppState>) -> Result<String, ForgeError> {
+fn active_project_path(state: &State<'_, AppState>) -> Result<String, OrqaError> {
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     let project = project_repo::get_active(&conn)?.ok_or_else(|| {
-        ForgeError::NotFound("no active project — open a project first".to_string())
+        OrqaError::NotFound("no active project — open a project first".to_string())
     })?;
 
     Ok(project.path)
@@ -223,12 +223,12 @@ fn active_project_path(state: &State<'_, AppState>) -> Result<String, ForgeError
 
 /// Read a documentation file directly from the active project's docs/ directory on disk.
 #[tauri::command]
-pub fn doc_read(rel_path: String, state: State<'_, AppState>) -> Result<Artifact, ForgeError> {
+pub fn doc_read(rel_path: String, state: State<'_, AppState>) -> Result<Artifact, OrqaError> {
     use crate::domain::artifact::ComplianceStatus;
 
     // Security: prevent path traversal
     if rel_path.contains("..") {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "path traversal not allowed".to_string(),
         ));
     }
@@ -239,7 +239,7 @@ pub fn doc_read(rel_path: String, state: State<'_, AppState>) -> Result<Artifact
         .join(format!("{}.md", rel_path));
 
     if !docs_path.exists() {
-        return Err(ForgeError::NotFound(format!("doc not found: {}", rel_path)));
+        return Err(OrqaError::NotFound(format!("doc not found: {}", rel_path)));
     }
 
     let content = std::fs::read_to_string(&docs_path)?;
@@ -277,7 +277,7 @@ pub fn doc_read(rel_path: String, state: State<'_, AppState>) -> Result<Artifact
 ///
 /// Returns an empty vec if `docs/` does not exist (no error).
 #[tauri::command]
-pub fn doc_tree_scan(state: State<'_, AppState>) -> Result<Vec<DocNode>, ForgeError> {
+pub fn doc_tree_scan(state: State<'_, AppState>) -> Result<Vec<DocNode>, OrqaError> {
     let project_path = active_project_path(&state)?;
     let docs_dir = Path::new(&project_path).join("docs");
     if !docs_dir.is_dir() {
@@ -294,10 +294,10 @@ pub fn doc_tree_scan(state: State<'_, AppState>) -> Result<Vec<DocNode>, ForgeEr
 pub fn governance_list(
     artifact_type: String,
     state: State<'_, AppState>,
-) -> Result<Vec<ArtifactSummary>, ForgeError> {
+) -> Result<Vec<ArtifactSummary>, OrqaError> {
     let parsed = parse_artifact_type(&artifact_type)?;
     if parsed == ArtifactType::Doc {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "use doc_tree_scan for docs".to_string(),
         ));
     }
@@ -312,11 +312,11 @@ pub fn governance_list(
 pub fn governance_read(
     rel_path: String,
     state: State<'_, AppState>,
-) -> Result<Artifact, ForgeError> {
+) -> Result<Artifact, OrqaError> {
     use crate::domain::artifact::ComplianceStatus;
 
     if rel_path.contains("..") {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "path traversal not allowed".to_string(),
         ));
     }
@@ -325,7 +325,7 @@ pub fn governance_read(
     let full_path = Path::new(&project_path).join(&rel_path);
 
     if !full_path.exists() {
-        return Err(ForgeError::NotFound(format!(
+        return Err(OrqaError::NotFound(format!(
             "artifact not found: {}",
             rel_path
         )));
@@ -376,7 +376,7 @@ pub fn governance_read(
 fn list_governance_files(
     root: &Path,
     artifact_type: &ArtifactType,
-) -> Result<Vec<ArtifactSummary>, ForgeError> {
+) -> Result<Vec<ArtifactSummary>, OrqaError> {
     use crate::domain::artifact::ComplianceStatus;
 
     let dir = match artifact_type {
@@ -455,7 +455,7 @@ fn list_governance_files(
 ///
 /// Hidden entries (starting with `.` or `_`) are skipped.
 /// Directories come first (alphabetically), then `.md` files (alphabetically).
-fn scan_directory(dir: &Path, docs_root: &Path) -> Result<Vec<DocNode>, ForgeError> {
+fn scan_directory(dir: &Path, docs_root: &Path) -> Result<Vec<DocNode>, OrqaError> {
     let mut dirs: Vec<(String, PathBuf)> = Vec::new();
     let mut files: Vec<(String, PathBuf)> = Vec::new();
 
@@ -553,14 +553,14 @@ fn title_case_word(word: &str) -> String {
 }
 
 /// Parse a string into an `ArtifactType`, returning a validation error for unknown types.
-fn parse_artifact_type(s: &str) -> Result<ArtifactType, ForgeError> {
+fn parse_artifact_type(s: &str) -> Result<ArtifactType, OrqaError> {
     match s {
         "agent" => Ok(ArtifactType::Agent),
         "rule" => Ok(ArtifactType::Rule),
         "skill" => Ok(ArtifactType::Skill),
         "hook" => Ok(ArtifactType::Hook),
         "doc" => Ok(ArtifactType::Doc),
-        other => Err(ForgeError::Validation(format!(
+        other => Err(OrqaError::Validation(format!(
             "unknown artifact type: {other} (valid: agent, rule, skill, hook, doc)"
         ))),
     }
@@ -683,7 +683,7 @@ mod tests {
     #[test]
     fn parse_artifact_type_invalid() {
         let result = parse_artifact_type("unknown");
-        assert!(matches!(result, Err(ForgeError::Validation(_))));
+        assert!(matches!(result, Err(OrqaError::Validation(_))));
     }
 
     #[test]
@@ -808,7 +808,7 @@ mod tests {
     fn artifact_get_nonexistent() {
         let conn = setup();
         let result = artifact_repo::get(&conn, 999);
-        assert!(matches!(result, Err(ForgeError::NotFound(_))));
+        assert!(matches!(result, Err(OrqaError::NotFound(_))));
     }
 
     #[test]
@@ -846,7 +846,7 @@ mod tests {
 
         artifact_repo::delete(&conn, artifact.id).expect("delete");
         let result = artifact_repo::get(&conn, artifact.id);
-        assert!(matches!(result, Err(ForgeError::NotFound(_))));
+        assert!(matches!(result, Err(OrqaError::NotFound(_))));
     }
 
     #[test]

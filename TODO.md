@@ -1,4 +1,4 @@
-# Forge TODO
+# Orqa Studio TODO
 
 **Last Updated:** 2026-03-04
 
@@ -12,9 +12,9 @@ Research and resolve technical decision points. Each item results in documented 
 
 ### Claude Integration — `docs/research/claude-integration.md`
 
-- [x] **Claude integration approach** — Agent SDK (`@anthropic-ai/claude-agent-sdk`) as primary integration. Spawns official Claude Code CLI, uses Max subscription. `tools: []` + custom MCP for Forge tool control, `canUseTool` for approval UI, `includePartialMessages` for streaming. **Recommendation: Agent SDK sidecar.**
+- [x] **Claude integration approach** — Agent SDK (`@anthropic-ai/claude-agent-sdk`) as primary integration. Spawns official Claude Code CLI, uses Max subscription. `tools: []` + custom MCP for Orqa Studio tool control, `canUseTool` for approval UI, `includePartialMessages` for streaming. **Recommendation: Agent SDK sidecar.**
 - [x] **Claude Max integration path** — Max subscription via Agent SDK (spawns official CLI, legal). Cost-effective at 25+ conversations/day ($100-200/month flat vs ~$300+/month API). **Recommendation: Max subscription primary.** API key and other providers are roadmap items.
-- [x] **Tool implementation strategy** — Forge's tools exposed as custom MCP server to Agent SDK. Native Rust execution. User-extensible via MCP host. **Recommendation: Forge tools as MCP server + MCP host for extensibility.**
+- [x] **Tool implementation strategy** — Orqa Studio's tools exposed as custom MCP server to Agent SDK. Native Rust execution. User-extensible via MCP host. **Recommendation: Orqa Studio tools as MCP server + MCP host for extensibility.**
 - [x] **Streaming architecture** — Agent SDK streams `SDKMessage` events → Bun-compiled sidecar translates to NDJSON → stdout → Rust `CommandEvent::Stdout` → `Channel<T>` → Svelte store. **Recommendation: Agent SDK → sidecar → NDJSON → Rust → Channel<T> → Svelte.**
 
 ### Tauri v2 — `docs/research/tauri-v2.md`
@@ -52,7 +52,7 @@ Promote research findings to formal ADs in `docs/architecture/decisions.md`.
 - [x] AD-007: Agent SDK sidecar integration — Bun-compiled TypeScript, stdin/stdout NDJSON, `tauri-plugin-shell` spawn
 - [x] AD-008: Max subscription authentication — Primary auth via Agent SDK + Claude Code CLI. API key + other providers on roadmap.
 - [x] AD-009: Streaming pipeline — Agent SDK → sidecar → NDJSON → Rust → Channel<T> → Svelte. Clarifies AD-002.
-- [x] AD-010: Tool implementation as MCP — Forge tools as custom MCP server to Agent SDK. Built-in tools disabled. MCP host for extensibility.
+- [x] AD-010: Tool implementation as MCP — Orqa Studio tools as custom MCP server to Agent SDK. Built-in tools disabled. MCP host for extensibility.
 - [x] AD-011: Security model — Tauri three-layer (permissions → scopes → capabilities). Keyring for secrets. Persisted scopes.
 - [x] AD-012: Tauri plugin selections — 11 plugins (sql, fs, shell, store, autostart, updater, window-state, dialog, notification, keyring, persisted-scope).
 - [x] AD-013: Frontend library selections — shadcn-svelte + CodeMirror 6 + PaneForge + LayerChart. Custom conversation UI.
@@ -80,7 +80,7 @@ Define what we're building. Documents in `docs/product/`.
 Design the UI. Documents in `docs/ui/`.
 
 - [x] Wireframing tool research — PlantUML Salt (primary, wireframes) + D2 (secondary, architecture diagrams). ImagineUI abandoned, not recommended. `docs/research/wireframing.md`
-- [x] Design system — Forge's own design tokens, brand extensions, component library spec, per-project theming. `docs/ui/design-system.md`
+- [x] Design system — Orqa Studio's own design tokens, brand extensions, component library spec, per-project theming. `docs/ui/design-system.md`
 - [x] Wireframes: Core layout — `docs/wireframes/core-layout.md`
 - [x] Wireframes: Conversation view — `docs/wireframes/conversation-view.md`
 - [x] Wireframes: Artifact browser — `docs/wireframes/artifact-browser.md`
@@ -98,7 +98,7 @@ Design the technical architecture. Documents in `docs/architecture/`.
 
 - [x] SQLite schema — `docs/architecture/sqlite-schema.md`. 11 core tables + 2 FTS5. WAL mode. Migration strategy.
 - [x] IPC command catalog — `docs/architecture/ipc-commands.md`. 26 commands, 10 streaming events, TypeScript types.
-- [x] Rust module architecture — `docs/architecture/rust-modules.md`. 8 modules, 20 handlers, repository pattern, ForgeError.
+- [x] Rust module architecture — `docs/architecture/rust-modules.md`. 8 modules, 20 handlers, repository pattern, OrqaError.
 - [x] Svelte component tree — `docs/architecture/svelte-components.md`. Single-route, 7 stores, component-to-command mapping.
 - [x] Streaming pipeline — `docs/architecture/streaming-pipeline.md`. End-to-end with buffering, backpressure, reconnection.
 - [x] Tool definitions — `docs/architecture/tool-definitions.md`. 6 tools with MCP schemas, Rust impl, UI specs.
@@ -180,7 +180,7 @@ Claude-powered governance scan, analysis, and recommendations for projects.
 
 **Prerequisites:** Phase 2b complete.
 
-Edit agents, rules, skills, and hooks directly in the Forge UI.
+Edit agents, rules, skills, and hooks directly in the Orqa Studio UI.
 
 - [ ] Artifact editor component with markdown/YAML editing
 - [ ] Create new artifacts from templates
@@ -191,27 +191,27 @@ Edit agents, rules, skills, and hooks directly in the Forge UI.
 
 **Prerequisites:** Phase 2c complete.
 
-Native hooks/rules for lesson capture + recurrence + promotion; Forge UI for visibility.
+Native hooks/rules for lesson capture + recurrence + promotion; Orqa Studio UI for visibility.
 
 - [ ] Native: Hooks that capture lessons after sessions
 - [ ] Native: Rules enforcing lesson checking before implementation
 - [ ] Native: CLAUDE.md describes the promotion pipeline
-- [ ] Forge: Lesson dashboard with recurrence trends
-- [ ] Forge: Browse/edit lessons UI
-- [ ] Forge: Automated promotion suggestions
-- [ ] Forge: Session analytics
+- [ ] Orqa Studio: Lesson dashboard with recurrence trends
+- [ ] Orqa Studio: Browse/edit lessons UI
+- [ ] Orqa Studio: Automated promotion suggestions
+- [ ] Orqa Studio: Session analytics
 
 ## Phase 2e: Enforcement & Continuity
 
 **Prerequisites:** Phase 2d complete.
 
-Native hooks for rule injection + violation detection; Forge UI for session handoff.
+Native hooks for rule injection + violation detection; Orqa Studio UI for session handoff.
 
 - [ ] Native: Hooks inject rules into conversations
 - [ ] Native: Hooks detect violations
-- [ ] Forge: Real-time violation detection during streaming
-- [ ] Forge: Visual compliance dashboard
-- [ ] Forge: Session handoff and continuity
+- [ ] Orqa Studio: Real-time violation detection during streaming
+- [ ] Orqa Studio: Visual compliance dashboard
+- [ ] Orqa Studio: Session handoff and continuity
 
 ## Phase 3: File Tools & MCP
 

@@ -3,13 +3,13 @@
 **Date:** 2026-03-02 | **Status:** Phase 0e specification
 **References:** [Wireframing Research](/research/wireframing) (Q1 verdict: PlantUML Salt), [SQLite Schema](/architecture/sqlite-schema), [Design System](/ui/design-system)
 
-How Forge stores, renders, caches, and serves PlantUML Salt wireframes as themed images within its Tauri WebView.
+How Orqa Studio stores, renders, caches, and serves PlantUML Salt wireframes as themed images within its Tauri WebView.
 
 ---
 
 ## Overview
 
-Wireframing is a first-class product feature. Forge's AI agent generates PlantUML Salt source files during UX design sessions, and Forge renders them to PNG/SVG images on demand. The rendering pipeline supports three style variants (light, dark, brand) backed by a SQLite image cache. A custom markdown syntax (`forge://wireframe/...`) embeds wireframes into documentation rendered in the WebView.
+Wireframing is a first-class product feature. Orqa Studio's AI agent generates PlantUML Salt source files during UX design sessions, and Orqa Studio renders them to PNG/SVG images on demand. The rendering pipeline supports three style variants (light, dark, brand) backed by a SQLite image cache. A custom markdown syntax (`orqa://wireframe/...`) embeds wireframes into documentation rendered in the WebView.
 
 ```
 Salt source file (.puml)
@@ -95,7 +95,7 @@ The Rust backend discovers wireframe sources by scanning for `*.puml` files that
 
 ## SQLite Image Cache
 
-Rendered wireframe images are cached in SQLite to avoid re-rendering unchanged sources. This table is added to `forge.db` alongside the existing schema.
+Rendered wireframe images are cached in SQLite to avoid re-rendering unchanged sources. This table is added to `orqa.db` alongside the existing schema.
 
 ### Table Definition
 
@@ -126,10 +126,10 @@ CREATE INDEX idx_wireframe_cache_name
 
 ### Cache Directory
 
-Rendered images are stored under the project's Forge data directory:
+Rendered images are stored under the project's Orqa Studio data directory:
 
 ```
-.forge/
+.orqa/
   cache/
     wireframes/
       core-layout.light.png
@@ -140,7 +140,7 @@ Rendered images are stored under the project's Forge data directory:
       ...
 ```
 
-The `image_path` column stores the path relative to the project root (e.g., `.forge/cache/wireframes/core-layout.light.png`).
+The `image_path` column stores the path relative to the project root (e.g., `.orqa/cache/wireframes/core-layout.light.png`).
 
 ### Migration
 
@@ -161,7 +161,7 @@ Each wireframe can be rendered in three visual variants. The variant determines 
 
 ### Light
 
-Default wireframe aesthetic. White/light gray background, dark text. Uses Forge's light mode design tokens.
+Default wireframe aesthetic. White/light gray background, dark text. Uses Orqa Studio's light mode design tokens.
 
 ```plantuml
 <style>
@@ -182,7 +182,7 @@ Token mapping from the design system:
 
 ### Dark
 
-Dark background, light text. Uses Forge's dark mode design tokens.
+Dark background, light text. Uses Orqa Studio's dark mode design tokens.
 
 ```plantuml
 <style>
@@ -203,7 +203,7 @@ Token mapping:
 
 ### Brand
 
-Uses the active project's extracted theme colors from the `project_themes` table. Falls back to Forge's indigo-violet primary if no project theme is active.
+Uses the active project's extracted theme colors from the `project_themes` table. Falls back to Orqa Studio's indigo-violet primary if no project theme is active.
 
 ```plantuml
 <style>
@@ -218,7 +218,7 @@ salt {
 </style>
 ```
 
-The brand variant reads from the theme resolution chain defined in the design system: `User Override > Extracted Project Token > Forge Default Theme`. The `--primary` token value is converted from OKLCH to hex for PlantUML compatibility.
+The brand variant reads from the theme resolution chain defined in the design system: `User Override > Extracted Project Token > Orqa Studio Default Theme`. The `--primary` token value is converted from OKLCH to hex for PlantUML compatibility.
 
 ### Style Template Generation
 
@@ -237,7 +237,7 @@ fn generate_style_block(variant: StyleVariant, theme: Option<&ProjectTheme>) -> 
         StyleVariant::Brand => {
             let primary = theme
                 .and_then(|t| resolve_primary_hex(t))
-                .unwrap_or(FORGE_DEFAULT_PRIMARY_HEX);
+                .unwrap_or(ORQA_DEFAULT_PRIMARY_HEX);
             BRAND_STYLE_TEMPLATE.replace("{primary}", &primary)
         }
     }
@@ -253,7 +253,7 @@ Wireframes are rendered lazily. No background batch processing. The rendering pi
 ### Request Flow
 
 ```
-1. WebView requests:  forge://wireframe/core-layout?theme=dark&format=png
+1. WebView requests:  orqa://wireframe/core-layout?theme=dark&format=png
 2. Rust handler extracts: name="core-layout", variant="dark", format="png"
 3. Resolve source file: scan docs/ for core-layout.puml containing @startsalt
 4. Compute source_hash: SHA-256 of file content
@@ -265,7 +265,7 @@ Wireframes are rendered lazily. No background batch processing. The rendering pi
       i.   Generate style block for "dark" variant
       ii.  Prepend style block to Salt source
       iii. Invoke PlantUML to render PNG
-      iv.  Write PNG to .forge/cache/wireframes/core-layout.dark.png
+      iv.  Write PNG to .orqa/cache/wireframes/core-layout.dark.png
       v.   INSERT into wireframe_cache
       vi.  Return image_path, serve file
 ```
@@ -278,18 +278,18 @@ If multiple requests arrive for the same uncached wireframe simultaneously, the 
 
 ## Custom Markdown Rendering Block
 
-Wireframes are embedded in markdown documentation using a custom URI scheme that the Forge markdown renderer intercepts.
+Wireframes are embedded in markdown documentation using a custom URI scheme that the Orqa Studio markdown renderer intercepts.
 
 ### Syntax
 
 ```markdown
-![wireframe](forge://wireframe/{name}?theme={variant})
+![wireframe](orqa://wireframe/{name}?theme={variant})
 ```
 
 Parameters:
 - `{name}` — The wireframe's logical name, matching the `.puml` filename without extension (e.g., `core-layout`)
 - `{variant}` — Style variant: `light`, `dark`, or `brand`. Defaults to the user's current mode (light/dark) if omitted.
-- `format` — Optional. `png` (default) or `svg`. Example: `forge://wireframe/core-layout?theme=dark&format=svg`
+- `format` — Optional. `png` (default) or `svg`. Example: `orqa://wireframe/core-layout?theme=dark&format=svg`
 
 ### Examples
 
@@ -298,22 +298,22 @@ Parameters:
 
 The three-zone + nav sub-panel layout arranges Activity Bar, Nav Sub-Panel, Explorer Panel, and Chat Panel:
 
-![wireframe](forge://wireframe/core-layout?theme=light)
+![wireframe](orqa://wireframe/core-layout?theme=light)
 
 In dark mode:
 
-![wireframe](forge://wireframe/core-layout?theme=dark)
+![wireframe](orqa://wireframe/core-layout?theme=dark)
 
 With the project's brand colors applied:
 
-![wireframe](forge://wireframe/core-layout?theme=brand)
+![wireframe](orqa://wireframe/core-layout?theme=brand)
 ```
 
 ### Markdown Renderer Integration
 
-The `MarkdownRenderer` Svelte component (from the design system's custom component list) intercepts `forge://wireframe/` URLs in image nodes during rendering:
+The `MarkdownRenderer` Svelte component (from the design system's custom component list) intercepts `orqa://wireframe/` URLs in image nodes during rendering:
 
-1. Parse the `forge://wireframe/{name}` URL and extract query parameters
+1. Parse the `orqa://wireframe/{name}` URL and extract query parameters
 2. If `theme` is omitted, detect current mode from `mode-watcher` (light or dark)
 3. Issue a Tauri command (`invoke('get_wireframe_image', { name, variant, format })`)
 4. The Rust backend returns either a cached image path or triggers on-demand generation
@@ -327,7 +327,7 @@ If the source `.puml` file does not exist, the renderer displays a placeholder w
 
 ### Invocation
 
-Forge invokes PlantUML as an external process. The exact binary depends on the bundling strategy (see [PlantUML Bundling Spike](/architecture/plantuml-spike)).
+Orqa Studio invokes PlantUML as an external process. The exact binary depends on the bundling strategy (see [PlantUML Bundling Spike](/architecture/plantuml-spike)).
 
 ```rust
 use std::process::Command;
@@ -344,7 +344,7 @@ fn render_wireframe(
     };
 
     // Write styled source to a temp file
-    let temp_input = temp_dir().join("forge_wireframe_input.puml");
+    let temp_input = temp_dir().join("orqa_wireframe_input.puml");
     std::fs::write(&temp_input, source)?;
 
     let status = Command::new(plantuml_bin)
@@ -376,7 +376,7 @@ The Rust backend locates the PlantUML binary using this precedence:
 3. **Bundled JAR with system JRE** — `java -jar {app_resources}/plantuml.jar` (fallback)
 4. **System PlantUML** — `plantuml` on PATH (development fallback)
 
-If no working PlantUML binary is found, Forge displays an error in the UI with instructions for installing Java or PlantUML. This should never happen in production builds (bundling ensures availability).
+If no working PlantUML binary is found, Orqa Studio displays an error in the UI with instructions for installing Java or PlantUML. This should never happen in production builds (bundling ensures availability).
 
 ### Rendering Performance
 
@@ -385,7 +385,7 @@ PlantUML Salt rendering for typical wireframes:
 - Warm rendering (JVM already running): ~200-500ms
 - Native binary (GraalVM): ~100-300ms with no cold start
 
-For the JRE-based path, Forge may keep a long-running PlantUML process using `-pipe` mode to avoid repeated JVM startup costs:
+For the JRE-based path, Orqa Studio may keep a long-running PlantUML process using `-pipe` mode to avoid repeated JVM startup costs:
 
 ```bash
 # Pipe mode: PlantUML reads from stdin, writes image to stdout
@@ -400,7 +400,7 @@ The cache is invalidated when the inputs to rendering change: either the source 
 
 ### Source Change Invalidation
 
-When Forge detects that a `.puml` file has been modified (via file watcher or on-access hash check):
+When Orqa Studio detects that a `.puml` file has been modified (via file watcher or on-access hash check):
 
 ```sql
 -- Delete all cached variants for the changed source
@@ -428,7 +428,7 @@ DELETE FROM wireframe_cache
 WHERE project_id = ? AND style_variant = 'brand';
 ```
 
-Light and dark variants use Forge's static design tokens, so they are only invalidated on Forge version upgrades (when the built-in style templates may change).
+Light and dark variants use Orqa Studio's static design tokens, so they are only invalidated on Orqa Studio version upgrades (when the built-in style templates may change).
 
 ### Manual Invalidation
 
@@ -456,9 +456,9 @@ Register a custom protocol handler in Tauri that serves files from the cache dir
 ```rust
 // src-tauri/src/lib.rs
 tauri::Builder::default()
-    .register_asynchronous_uri_scheme_protocol("forge", |_ctx, request, responder| {
-        // Parse: forge://wireframe/core-layout?theme=dark&format=png
-        // Resolve to .forge/cache/wireframes/core-layout.dark.png
+    .register_asynchronous_uri_scheme_protocol("orqa", |_ctx, request, responder| {
+        // Parse: orqa://wireframe/core-layout?theme=dark&format=png
+        // Resolve to .orqa/cache/wireframes/core-layout.dark.png
         // Return file contents with appropriate Content-Type
     })
 ```
@@ -466,7 +466,7 @@ tauri::Builder::default()
 The WebView then references images directly:
 
 ```html
-<img src="forge://wireframe/core-layout?theme=dark" />
+<img src="orqa://wireframe/core-layout?theme=dark" />
 ```
 
 This approach avoids running a separate HTTP server and integrates naturally with Tauri's security model. The protocol handler triggers the on-demand rendering pipeline if the cache misses.
@@ -487,7 +487,7 @@ Direct `file://` URLs to the cache directory. Simplest but may face Content Secu
 
 ### Recommendation
 
-Use Tauri's custom protocol handler (Option A). It is the idiomatic approach for serving local resources in Tauri applications, respects the CSP, and unifies the `forge://wireframe/` URL scheme between the markdown syntax and the serving mechanism.
+Use Tauri's custom protocol handler (Option A). It is the idiomatic approach for serving local resources in Tauri applications, respects the CSP, and unifies the `orqa://wireframe/` URL scheme between the markdown syntax and the serving mechanism.
 
 ---
 
@@ -496,10 +496,10 @@ Use Tauri's custom protocol handler (Option A). It is the idiomatic approach for
 | Concern | Approach |
 |---------|----------|
 | Source storage | `.puml` files on disk in `docs/` alongside documentation |
-| Cache storage | SQLite `wireframe_cache` table + image files in `.forge/cache/wireframes/` |
+| Cache storage | SQLite `wireframe_cache` table + image files in `.orqa/cache/wireframes/` |
 | Variants | light, dark, brand (project theme colors) |
 | Rendering trigger | On-demand when cache misses |
-| Markdown syntax | `![wireframe](forge://wireframe/{name}?theme={variant})` |
+| Markdown syntax | `![wireframe](orqa://wireframe/{name}?theme={variant})` |
 | PlantUML execution | External process, native binary preferred, JAR fallback |
 | Cache invalidation | Source hash mismatch or theme token change |
-| Image serving | Tauri custom `forge://` protocol handler |
+| Image serving | Tauri custom `orqa://` protocol handler |

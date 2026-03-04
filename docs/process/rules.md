@@ -44,7 +44,7 @@ Rules are the last line of defense: they exist to catch violations that other me
 
 ## Hookify Enforcement Files
 
-In addition to the 20 rules above, Forge uses 11 hookify enforcement files (`.claude/hookify.*.local.md`) for real-time pattern-based enforcement. Where rules are written instructions injected into agent context, hookify files actively block or warn when a file edit or bash command matches a forbidden pattern.
+In addition to the 20 rules above, Orqa Studio uses 11 hookify enforcement files (`.claude/hookify.*.local.md`) for real-time pattern-based enforcement. Where rules are written instructions injected into agent context, hookify files actively block or warn when a file edit or bash command matches a forbidden pattern.
 
 **How hookify works:**
 

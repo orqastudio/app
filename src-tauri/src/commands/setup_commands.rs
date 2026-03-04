@@ -1,7 +1,7 @@
 use tauri::Manager;
 
 use crate::domain::setup::{ClaudeCliInfo, SetupStatus, SetupStepStatus, StepStatus};
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 use crate::repo::settings_repo;
 use crate::state::AppState;
 
@@ -49,11 +49,11 @@ fn default_steps() -> Vec<SetupStepStatus> {
 /// Reads the stored `setup_version` from settings. If the stored version
 /// is missing or less than `CURRENT_SETUP_VERSION`, setup is incomplete.
 #[tauri::command]
-pub fn get_setup_status(state: tauri::State<'_, AppState>) -> Result<SetupStatus, ForgeError> {
+pub fn get_setup_status(state: tauri::State<'_, AppState>) -> Result<SetupStatus, OrqaError> {
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     let stored = settings_repo::get(&conn, "setup_version", "app")?;
 
@@ -77,7 +77,7 @@ pub fn get_setup_status(state: tauri::State<'_, AppState>) -> Result<SetupStatus
 /// Runs `claude --version` to detect installation. Attempts to locate
 /// the binary path via `where` (Windows) or `which` (Unix).
 #[tauri::command]
-pub fn check_claude_cli() -> Result<ClaudeCliInfo, ForgeError> {
+pub fn check_claude_cli() -> Result<ClaudeCliInfo, OrqaError> {
     let version_output = std::process::Command::new("claude")
         .args(["--version"])
         .output();
@@ -98,6 +98,9 @@ pub fn check_claude_cli() -> Result<ClaudeCliInfo, ForgeError> {
                 path,
                 authenticated: false,
                 subscription_type: None,
+                rate_limit_tier: None,
+                scopes: Vec::new(),
+                expires_at: None,
             })
         }
         _ => Ok(ClaudeCliInfo {
@@ -106,6 +109,9 @@ pub fn check_claude_cli() -> Result<ClaudeCliInfo, ForgeError> {
             path: None,
             authenticated: false,
             subscription_type: None,
+            rate_limit_tier: None,
+            scopes: Vec::new(),
+            expires_at: None,
         }),
     }
 }
@@ -140,12 +146,12 @@ fn resolve_cli_path() -> Option<String> {
 
 /// Check whether the Claude CLI is authenticated.
 ///
-/// Runs `claude --version` to confirm the CLI is installed, then checks
-/// for the presence of a credentials file as a secondary authentication signal.
+/// Runs `claude --version` to confirm the CLI is installed, then reads
+/// the credentials file to detect authentication and subscription details.
 /// Claude Code requires login during installation, so a working CLI
 /// with a credentials file is a strong indicator of authentication.
 #[tauri::command]
-pub fn check_claude_auth() -> Result<ClaudeCliInfo, ForgeError> {
+pub fn check_claude_auth() -> Result<ClaudeCliInfo, OrqaError> {
     let version_output = std::process::Command::new("claude")
         .args(["--version"])
         .output();
@@ -160,8 +166,8 @@ pub fn check_claude_auth() -> Result<ClaudeCliInfo, ForgeError> {
             let cred_path = std::path::Path::new(&home)
                 .join(".claude")
                 .join(".credentials.json");
-            let authenticated = cred_path.exists();
 
+            let cred_details = parse_credentials(&cred_path);
             let path = resolve_cli_path();
 
             Ok(ClaudeCliInfo {
@@ -172,8 +178,11 @@ pub fn check_claude_auth() -> Result<ClaudeCliInfo, ForgeError> {
                     Some(version)
                 },
                 path,
-                authenticated,
-                subscription_type: None,
+                authenticated: cred_details.authenticated,
+                subscription_type: cred_details.subscription_type,
+                rate_limit_tier: cred_details.rate_limit_tier,
+                scopes: cred_details.scopes,
+                expires_at: cred_details.expires_at,
             })
         }
         _ => Ok(ClaudeCliInfo {
@@ -182,7 +191,109 @@ pub fn check_claude_auth() -> Result<ClaudeCliInfo, ForgeError> {
             path: None,
             authenticated: false,
             subscription_type: None,
+            rate_limit_tier: None,
+            scopes: Vec::new(),
+            expires_at: None,
         }),
+    }
+}
+
+/// Parsed credential details from the Claude credentials file.
+struct CredentialDetails {
+    authenticated: bool,
+    subscription_type: Option<String>,
+    rate_limit_tier: Option<String>,
+    scopes: Vec<String>,
+    expires_at: Option<u64>,
+}
+
+/// Read the credentials file and extract authentication and subscription info.
+///
+/// If the file cannot be read or parsed, falls back to checking file existence.
+fn parse_credentials(path: &std::path::Path) -> CredentialDetails {
+    let not_found = CredentialDetails {
+        authenticated: path.exists(),
+        subscription_type: None,
+        rate_limit_tier: None,
+        scopes: Vec::new(),
+        expires_at: None,
+    };
+
+    let contents = match std::fs::read_to_string(path) {
+        Ok(c) => c,
+        Err(_) => return not_found,
+    };
+
+    let json: serde_json::Value = match serde_json::from_str(&contents) {
+        Ok(v) => v,
+        Err(_) => {
+            return CredentialDetails {
+                authenticated: true,
+                ..not_found
+            }
+        }
+    };
+
+    // The credentials file nests auth details under "claudeAiOauth"
+    let oauth = json.get("claudeAiOauth").unwrap_or(&json);
+
+    let subscription_type = oauth
+        .get("subscriptionType")
+        .and_then(|v| v.as_str())
+        .map(String::from);
+
+    let rate_limit_tier = oauth
+        .get("rateLimitTier")
+        .and_then(|v| v.as_str())
+        .map(String::from);
+
+    let scopes = oauth
+        .get("scopes")
+        .and_then(|v| v.as_array())
+        .map(|arr| {
+            arr.iter()
+                .filter_map(|v| v.as_str().map(String::from))
+                .collect()
+        })
+        .unwrap_or_default();
+
+    let expires_at = oauth.get("expiresAt").and_then(|v| v.as_u64());
+
+    CredentialDetails {
+        authenticated: true,
+        subscription_type,
+        rate_limit_tier,
+        scopes,
+        expires_at,
+    }
+}
+
+/// Trigger the Claude CLI login flow.
+///
+/// Runs `claude login` which opens the browser for OAuth authentication.
+/// After completion, re-reads credentials and returns updated info.
+#[tauri::command]
+pub fn reauthenticate_claude() -> Result<ClaudeCliInfo, OrqaError> {
+    let login_result = std::process::Command::new("claude")
+        .args(["login"])
+        .output();
+
+    match login_result {
+        Ok(output) if output.status.success() => check_claude_auth(),
+        Ok(output) => {
+            let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
+            Err(OrqaError::Sidecar(format!(
+                "claude login failed: {}",
+                if stderr.is_empty() {
+                    "unknown error".to_string()
+                } else {
+                    stderr
+                }
+            )))
+        }
+        Err(e) => Err(OrqaError::Sidecar(format!(
+            "failed to run claude login: {e}"
+        ))),
     }
 }
 
@@ -191,11 +302,11 @@ pub fn check_claude_auth() -> Result<ClaudeCliInfo, ForgeError> {
 /// Looks for `model.onnx` and `tokenizer.json` in the app data directory
 /// under `models/bge-small-en-v1.5/`.
 #[tauri::command]
-pub fn check_embedding_model(app_handle: tauri::AppHandle) -> Result<SetupStepStatus, ForgeError> {
+pub fn check_embedding_model(app_handle: tauri::AppHandle) -> Result<SetupStepStatus, OrqaError> {
     let app_dir = app_handle
         .path()
         .app_data_dir()
-        .map_err(|e| ForgeError::FileSystem(format!("failed to resolve app data dir: {e}")))?;
+        .map_err(|e| OrqaError::FileSystem(format!("failed to resolve app data dir: {e}")))?;
     let model_dir = app_dir.join("models").join("bge-small-en-v1.5");
 
     let model_file = model_dir.join("model.onnx");
@@ -220,11 +331,11 @@ pub fn check_embedding_model(app_handle: tauri::AppHandle) -> Result<SetupStepSt
 
 /// Mark setup as complete by storing the current version in settings.
 #[tauri::command]
-pub fn complete_setup(state: tauri::State<'_, AppState>) -> Result<(), ForgeError> {
+pub fn complete_setup(state: tauri::State<'_, AppState>) -> Result<(), OrqaError> {
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     settings_repo::set(
         &conn,
@@ -359,6 +470,9 @@ mod tests {
             path: None,
             authenticated: false,
             subscription_type: None,
+            rate_limit_tier: None,
+            scopes: Vec::new(),
+            expires_at: None,
         };
         assert!(!info.installed);
         assert!(info.version.is_none());

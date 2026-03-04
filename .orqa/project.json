@@ -1,0 +1,37 @@
+{
+  "name": "Orqa Dogfood",
+  "description": "Development environment for Orqa Studio. Desktop app for managed agentic development. Claude Code's capabilities with a visual process layer.",
+  "default_model": "auto",
+  "excluded_paths": [
+    "node_modules",
+    ".git",
+    "target",
+    "dist",
+    "build"
+  ],
+  "stack": {
+    "languages": [
+      "javascript",
+      "rust",
+      "svelte",
+      "typescript"
+    ],
+    "frameworks": [
+      "svelte",
+      "typescript",
+      "vite"
+    ],
+    "package_manager": "npm",
+    "has_claude_config": true,
+    "has_design_tokens": false
+  },
+  "governance": {
+    "docs": 54,
+    "agents": 15,
+    "rules": 19,
+    "skills": 9,
+    "hooks": 3,
+    "has_claude_config": true
+  },
+  "icon": "icon.svg"
+}

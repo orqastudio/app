@@ -24,7 +24,7 @@ pub fn run() {
             std::fs::create_dir_all(&app_dir)
                 .map_err(|e| format!("failed to create app data dir: {e}"))?;
 
-            let db_path = app_dir.join("forge.db");
+            let db_path = app_dir.join("orqa.db");
             let db_path_str = db_path
                 .to_str()
                 .ok_or_else(|| "app data path is not valid UTF-8".to_string())?;
@@ -168,6 +168,7 @@ pub fn run() {
             commands::setup_commands::check_claude_auth,
             commands::setup_commands::check_embedding_model,
             commands::setup_commands::complete_setup,
+            commands::setup_commands::reauthenticate_claude,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

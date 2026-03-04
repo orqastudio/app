@@ -11,7 +11,7 @@ This page documents the task process: how to start a task, run it, complete it, 
 Copy and complete at the start of every implementation session:
 
 ```text
-[ ] Created worktree: git worktree add ../forge-<task> -b <branch>
+[ ] Created worktree: git worktree add ../orqa-<task> -b <branch>
 [ ] Working in worktree (NOT main)
 [ ] Re-read relevant implementation plan and governing docs
 [ ] Loaded relevant skills (Skill tool) including chunkhound
@@ -31,8 +31,8 @@ For the full worktree protocol including background process discipline, Windows-
 
 ```bash
 # 1. START -- Create worktree
-git worktree add ../forge-<task-name> -b <agent>/<task-description>
-cd ../forge-<task-name>
+git worktree add ../orqa-<task-name> -b <agent>/<task-description>
+cd ../orqa-<task-name>
 
 # 2. WORK -- Make changes, commit regularly
 
@@ -47,9 +47,9 @@ npm run check && npm run lint && npm run test
 # Do NOT merge until approved
 
 # 5. MERGE -- Only after approval
-cd ../forge && git merge <branch>
+cd ../orqa && git merge <branch>
 git branch -d <branch>
-git worktree remove ../forge-<task-name>
+git worktree remove ../orqa-<task-name>
 
 # 6. POST-MERGE VERIFICATION
 cargo build && npm run build

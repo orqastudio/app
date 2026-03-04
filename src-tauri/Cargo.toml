@@ -1,5 +1,5 @@
 [package]
-name = "forge"
+name = "orqa-studio"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,11 +7,11 @@ edition = "2021"
 # tauri build metadata - managed by tauri-build
 
 [[bin]]
-name = "forge"
+name = "orqa-studio"
 path = "src/main.rs"
 
 [lib]
-name = "forge_lib"
+name = "orqa_studio_lib"
 path = "src/lib.rs"
 
 [build-dependencies]

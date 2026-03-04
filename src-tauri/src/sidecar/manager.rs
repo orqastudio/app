@@ -4,7 +4,7 @@ use std::sync::Mutex;
 use std::time::Instant;
 
 use crate::domain::settings::{SidecarState, SidecarStatus};
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 
 use super::protocol;
 use super::types::{SidecarRequest, SidecarResponse};
@@ -69,7 +69,7 @@ impl SidecarManager {
     /// If a process is already running, it is killed first.
     /// The process is started with stdin and stdout piped for NDJSON communication.
     /// Stderr is inherited so sidecar debug output appears in the Tauri console.
-    pub fn spawn(&self, command: &str, args: &[&str]) -> Result<(), ForgeError> {
+    pub fn spawn(&self, command: &str, args: &[&str]) -> Result<(), OrqaError> {
         // Kill any existing process first
         self.kill_inner()?;
 
@@ -85,7 +85,7 @@ impl SidecarManager {
             .stdout(Stdio::piped())
             .stderr(Stdio::inherit())
             .spawn()
-            .map_err(|e| ForgeError::Sidecar(format!("failed to spawn sidecar: {e}")))?;
+            .map_err(|e| OrqaError::Sidecar(format!("failed to spawn sidecar: {e}")))?;
 
         let child_pid = child.id();
 
@@ -93,11 +93,11 @@ impl SidecarManager {
         let child_stdin = child
             .stdin
             .take()
-            .ok_or_else(|| ForgeError::Sidecar("failed to capture sidecar stdin".to_string()))?;
+            .ok_or_else(|| OrqaError::Sidecar("failed to capture sidecar stdin".to_string()))?;
         let child_stdout = child
             .stdout
             .take()
-            .ok_or_else(|| ForgeError::Sidecar("failed to capture sidecar stdout".to_string()))?;
+            .ok_or_else(|| OrqaError::Sidecar("failed to capture sidecar stdout".to_string()))?;
 
         // Store everything
         {
@@ -129,19 +129,19 @@ impl SidecarManager {
     }
 
     /// Send a request to the sidecar via stdin as NDJSON.
-    pub fn send(&self, request: &SidecarRequest) -> Result<(), ForgeError> {
+    pub fn send(&self, request: &SidecarRequest) -> Result<(), OrqaError> {
         let line = protocol::to_ndjson(request)?;
         let mut stdin_lock = self.stdin.lock().expect("stdin lock poisoned");
         let stdin = stdin_lock
             .as_mut()
-            .ok_or_else(|| ForgeError::Sidecar("sidecar not running".to_string()))?;
+            .ok_or_else(|| OrqaError::Sidecar("sidecar not running".to_string()))?;
 
         stdin
             .write_all(line.as_bytes())
-            .map_err(|e| ForgeError::Sidecar(format!("failed to write to sidecar stdin: {e}")))?;
+            .map_err(|e| OrqaError::Sidecar(format!("failed to write to sidecar stdin: {e}")))?;
         stdin
             .flush()
-            .map_err(|e| ForgeError::Sidecar(format!("failed to flush sidecar stdin: {e}")))?;
+            .map_err(|e| OrqaError::Sidecar(format!("failed to flush sidecar stdin: {e}")))?;
 
         Ok(())
     }
@@ -150,16 +150,16 @@ impl SidecarManager {
     ///
     /// Returns `Ok(None)` if the sidecar has closed stdout (process exited).
     /// Blocks until a line is available.
-    pub fn read_line(&self) -> Result<Option<SidecarResponse>, ForgeError> {
+    pub fn read_line(&self) -> Result<Option<SidecarResponse>, OrqaError> {
         let mut stdout_lock = self.stdout.lock().expect("stdout lock poisoned");
         let stdout = stdout_lock
             .as_mut()
-            .ok_or_else(|| ForgeError::Sidecar("sidecar not running".to_string()))?;
+            .ok_or_else(|| OrqaError::Sidecar("sidecar not running".to_string()))?;
 
         let mut line = String::new();
         let bytes_read = stdout
             .read_line(&mut line)
-            .map_err(|e| ForgeError::Sidecar(format!("failed to read from sidecar stdout: {e}")))?;
+            .map_err(|e| OrqaError::Sidecar(format!("failed to read from sidecar stdout: {e}")))?;
 
         if bytes_read == 0 {
             // EOF — process closed stdout
@@ -171,7 +171,7 @@ impl SidecarManager {
     }
 
     /// Kill the sidecar process if running, updating state to `Stopped`.
-    pub fn kill(&self) -> Result<(), ForgeError> {
+    pub fn kill(&self) -> Result<(), OrqaError> {
         self.kill_inner()?;
         let mut state = self.state.lock().expect("state lock poisoned");
         *state = SidecarState::Stopped;
@@ -179,7 +179,7 @@ impl SidecarManager {
     }
 
     /// Kill and restart the sidecar process.
-    pub fn restart(&self, command: &str, args: &[&str]) -> Result<SidecarStatus, ForgeError> {
+    pub fn restart(&self, command: &str, args: &[&str]) -> Result<SidecarStatus, OrqaError> {
         self.kill()?;
         self.spawn(command, args)?;
         Ok(self.status())
@@ -188,7 +188,7 @@ impl SidecarManager {
     /// Internal kill that cleans up all handles without setting state to Stopped.
     /// This allows `spawn` to call it without leaving the state as Stopped between
     /// the kill and the new spawn.
-    fn kill_inner(&self) -> Result<(), ForgeError> {
+    fn kill_inner(&self) -> Result<(), OrqaError> {
         // Drop stdin first to signal the process
         {
             let mut stdin_lock = self.stdin.lock().expect("stdin lock poisoned");

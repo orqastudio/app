@@ -3,30 +3,30 @@ use std::path::Path;
 
 use crate::domain::project_scanner::{self, ProjectScanResult};
 use crate::domain::project_settings::{self, ProjectSettings};
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 
-/// Read project settings from the `.forge/project.json` file.
+/// Read project settings from the `.orqa/project.json` file.
 ///
 /// Returns `None` if the settings file does not exist yet.
 #[tauri::command]
-pub fn project_settings_read(path: String) -> Result<Option<ProjectSettings>, ForgeError> {
+pub fn project_settings_read(path: String) -> Result<Option<ProjectSettings>, OrqaError> {
     project_settings::read_settings(&path)
 }
 
-/// Write project settings to the `.forge/project.json` file.
+/// Write project settings to the `.orqa/project.json` file.
 ///
-/// Creates the `.forge/` directory if it does not exist.
+/// Creates the `.orqa/` directory if it does not exist.
 /// Returns the written settings for confirmation.
 #[tauri::command]
 pub fn project_settings_write(
     path: String,
     settings: ProjectSettings,
-) -> Result<ProjectSettings, ForgeError> {
+) -> Result<ProjectSettings, OrqaError> {
     project_settings::write_settings(&path, &settings)?;
     Ok(settings)
 }
 
-/// Upload a project icon by copying an image file to `.forge/icon.{ext}`.
+/// Upload a project icon by copying an image file to `.orqa/icon.{ext}`.
 ///
 /// Validates the source file exists and has a supported extension (png, jpg, jpeg, svg, ico).
 /// Removes any existing `icon.*` files before copying.
@@ -35,10 +35,10 @@ pub fn project_settings_write(
 pub fn project_icon_upload(
     project_path: String,
     source_path: String,
-) -> Result<String, ForgeError> {
+) -> Result<String, OrqaError> {
     let source = Path::new(&source_path);
     if !source.exists() {
-        return Err(ForgeError::NotFound(format!(
+        return Err(OrqaError::NotFound(format!(
             "Source file not found: {source_path}"
         )));
     }
@@ -51,15 +51,15 @@ pub fn project_icon_upload(
 
     let allowed = ["png", "jpg", "jpeg", "svg", "ico"];
     if !allowed.contains(&ext.as_str()) {
-        return Err(ForgeError::Validation(format!(
+        return Err(OrqaError::Validation(format!(
             "Unsupported icon format: .{ext}. Use png, jpg, jpeg, svg, or ico"
         )));
     }
 
-    let forge_dir = Path::new(&project_path).join(".forge");
-    std::fs::create_dir_all(&forge_dir)?;
+    let orqa_dir = Path::new(&project_path).join(".orqa");
+    std::fs::create_dir_all(&orqa_dir)?;
 
-    if let Ok(entries) = std::fs::read_dir(&forge_dir) {
+    if let Ok(entries) = std::fs::read_dir(&orqa_dir) {
         for entry in entries.flatten() {
             let name = entry.file_name();
             let name_str = name.to_string_lossy();
@@ -70,7 +70,7 @@ pub fn project_icon_upload(
     }
 
     let icon_filename = format!("icon.{ext}");
-    let dest = forge_dir.join(&icon_filename);
+    let dest = orqa_dir.join(&icon_filename);
     std::fs::copy(source, &dest)?;
 
     Ok(icon_filename)
@@ -84,11 +84,11 @@ pub fn project_icon_upload(
 pub fn project_icon_read(
     project_path: String,
     icon_filename: String,
-) -> Result<String, ForgeError> {
-    let icon_path = Path::new(&project_path).join(".forge").join(&icon_filename);
+) -> Result<String, OrqaError> {
+    let icon_path = Path::new(&project_path).join(".orqa").join(&icon_filename);
 
     if !icon_path.exists() {
-        return Err(ForgeError::NotFound(format!(
+        return Err(OrqaError::NotFound(format!(
             "Icon file not found: {icon_filename}"
         )));
     }
@@ -119,7 +119,7 @@ pub fn project_icon_read(
 pub fn project_scan(
     path: String,
     excluded_paths: Option<Vec<String>>,
-) -> Result<ProjectScanResult, ForgeError> {
+) -> Result<ProjectScanResult, OrqaError> {
     let defaults = vec![
         "node_modules".to_string(),
         ".git".to_string(),

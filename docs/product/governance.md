@@ -50,16 +50,16 @@ The following are immutable without explicit user approval:
 
 ## Governance Artifact Format
 
-Governance artifacts are native `.claude/` files stored on disk. Forge reads and writes these files through its UI. The same files are read by the Claude Code CLI. Forge's SQLite database is a derived cache, not the source of truth.
+Governance artifacts are native `.claude/` files stored on disk. Orqa Studio reads and writes these files through its UI. The same files are read by the Claude Code CLI. Orqa Studio's SQLite database is a derived cache, not the source of truth.
 
 This means:
 - `.claude/rules/*.md`, `.claude/agents/*.md`, `.claude/skills/`, `.claude/hooks/`, and `CLAUDE.md` are the canonical governance format
-- Users can edit these files in Forge, in a text editor, or through a Claude Code CLI session — all changes are reflected everywhere
-- Forge adds a visual management layer on top of this file-based governance; it does not replace the file format with a proprietary one
+- Users can edit these files in Orqa Studio, in a text editor, or through a Claude Code CLI session — all changes are reflected everywhere
+- Orqa Studio adds a visual management layer on top of this file-based governance; it does not replace the file format with a proprietary one
 
 ## Bootstrap Phase — CLI-Only Governance
 
-> **This section documents the current state.** The governance framework uses native `.claude/` artifacts managed through the Claude Code CLI. Forge will supplement this with a visual UI once the MVP is functional.
+> **This section documents the current state.** The governance framework uses native `.claude/` artifacts managed through the Claude Code CLI. Orqa Studio will supplement this with a visual UI once the MVP is functional.
 
 The current process uses:
 
@@ -70,28 +70,28 @@ The current process uses:
 - **3 hooks** in `.claude/hooks/` (session start, skill loading, pre-commit)
 - **Git worktree workflow** for task isolation
 
-This is the same framework used in the Alvarez project, adapted for Forge's Tauri/Svelte/Rust stack. The governance works, but it is invisible — artifacts live in dotfiles and terminal output. This is exactly the problem Forge exists to solve: making this governance visible through a UI while preserving the underlying `.claude/` file format.
+This is the same framework used in the Alvarez project, adapted for Orqa Studio's Tauri/Svelte/Rust stack. The governance works, but it is invisible — artifacts live in dotfiles and terminal output. This is exactly the problem Orqa Studio exists to solve: making this governance visible through a UI while preserving the underlying `.claude/` file format.
 
 ### The Dogfooding Milestone
 
-Once the MVP delivers a working conversation UI with basic Claude integration (Phase 1 complete), **Forge's UI becomes the primary way to manage governance for its own development.** The CLI remains available for all development tasks. This means:
+Once the MVP delivers a working conversation UI with basic Claude integration (Phase 1 complete), **Orqa Studio's UI becomes the primary way to manage governance for its own development.** The CLI remains available for all development tasks. This means:
 
-1. **Process artifacts become visible** — Agents, rules, skills, and docs are browsed and edited in Forge's UI, supplementing the raw file access that the CLI provides
-2. **Learning loops are active** — IMPL lessons and RETRO entries are captured through Forge's interface, not manual markdown editing
-3. **Governance is visible through Forge** — Scanner results, verification gates, and compliance checks surface in the dashboard, supplementing terminal output
+1. **Process artifacts become visible** — Agents, rules, skills, and docs are browsed and edited in Orqa Studio's UI, supplementing the raw file access that the CLI provides
+2. **Learning loops are active** — IMPL lessons and RETRO entries are captured through Orqa Studio's interface, not manual markdown editing
+3. **Governance is visible through Orqa Studio** — Scanner results, verification gates, and compliance checks surface in the dashboard, supplementing terminal output
 
 ### Why Dogfooding Matters
 
-Using Forge to build Forge creates a natural feedback loop:
+Using Orqa Studio to build Orqa Studio creates a natural feedback loop:
 
 - **Deficiencies surface immediately** — If a governance feature is missing or painful, the team experiences it daily
 - **Features are validated by real use** — Every new feature is tested in production (on this project) before being considered "done"
 - **Priority is self-evident** — The most painful gaps in the tool become the highest-priority features organically
-- **The learning loop bootstraps itself** — Forge's self-learning capabilities improve Forge's own governance, which improves Forge
+- **The learning loop bootstraps itself** — Orqa Studio's self-learning capabilities improve Orqa Studio's own governance, which improves Orqa Studio
 
 ### Transition Criteria
 
-Forge's UI becomes the primary governance management tool when it can:
+Orqa Studio's UI becomes the primary governance management tool when it can:
 
 - [ ] Display and edit process artifacts (agents, rules, skills) through its UI
 - [ ] Run a conversation with Claude and display streaming responses
@@ -100,7 +100,7 @@ Forge's UI becomes the primary governance management tool when it can:
 - [ ] Persist session history in SQLite
 - [ ] Detect and display Claude Code CLI status and version
 
-Until these criteria are met, governance is managed through direct `.claude/` file editing and CLI sessions. After these criteria are met, both Forge and the CLI continue to operate on the same `.claude/` artifacts — Forge adds the visual layer, the CLI remains fully functional.
+Until these criteria are met, governance is managed through direct `.claude/` file editing and CLI sessions. After these criteria are met, both Orqa Studio and the CLI continue to operate on the same `.claude/` artifacts — Orqa Studio adds the visual layer, the CLI remains fully functional.
 
 ## Decision Process
 

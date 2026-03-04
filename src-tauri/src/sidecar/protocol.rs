@@ -1,14 +1,14 @@
 use serde::{Deserialize, Serialize};
 
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 
 /// Serialize a value to an NDJSON line (compact JSON followed by a newline).
 ///
 /// NDJSON (Newline-Delimited JSON) is the wire format for sidecar communication.
 /// Each message is a single JSON object on one line, terminated by `\n`.
-pub fn to_ndjson<T: Serialize>(value: &T) -> Result<String, ForgeError> {
+pub fn to_ndjson<T: Serialize>(value: &T) -> Result<String, OrqaError> {
     let mut json =
-        serde_json::to_string(value).map_err(|e| ForgeError::Serialization(e.to_string()))?;
+        serde_json::to_string(value).map_err(|e| OrqaError::Serialization(e.to_string()))?;
     json.push('\n');
     Ok(json)
 }
@@ -17,8 +17,8 @@ pub fn to_ndjson<T: Serialize>(value: &T) -> Result<String, ForgeError> {
 ///
 /// Trims leading/trailing whitespace (including the newline delimiter)
 /// before parsing.
-pub fn from_ndjson<T: for<'de> Deserialize<'de>>(line: &str) -> Result<T, ForgeError> {
-    serde_json::from_str(line.trim()).map_err(|e| ForgeError::Serialization(e.to_string()))
+pub fn from_ndjson<T: for<'de> Deserialize<'de>>(line: &str) -> Result<T, OrqaError> {
+    serde_json::from_str(line.trim()).map_err(|e| OrqaError::Serialization(e.to_string()))
 }
 
 #[cfg(test)]

@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-02
 
-This page tracks all installed skills in the Forge project -- their source, purpose, and when they were added. It is maintained by the `agent-maintainer` agent.
+This page tracks all installed skills in the Orqa Studio project -- their source, purpose, and when they were added. It is maintained by the `agent-maintainer` agent.
 
 Skills are stored in `.claude/skills/` and follow the open [Agent Skills](https://agentskills.io) standard.
 
@@ -29,8 +29,8 @@ Skills are stored in `.claude/skills/` and follow the open [Agent Skills](https:
 | Category | Description | Examples |
 |----------|-------------|---------|
 | `skills.sh` | Downloaded directly from the skills.sh ecosystem -- fully portable, no project-specific content | tauri-v2, svelte5-best-practices, typescript-advanced-types, rust-async-patterns, tailwind-design-system |
-| `skills.sh + modified` | Started as a skills.sh skill but modified for Forge patterns | (none yet) |
-| `Custom (adapted)` | Adapted from Alvarez project for Forge's architecture and workflow | chunkhound, planning, architecture, skills-maintenance |
+| `skills.sh + modified` | Started as a skills.sh skill but modified for Orqa Studio patterns | (none yet) |
+| `Custom (adapted)` | Adapted from Alvarez project for Orqa Studio's architecture and workflow | chunkhound, planning, architecture, skills-maintenance |
 
 ---
 
@@ -47,12 +47,12 @@ Skills are stored in `.claude/skills/` and follow the open [Agent Skills](https:
 
 **Not portable (must go in docs, agent instructions, or rules):**
 
-- Any architecture decision or Forge architectural rule
-- Any reference to `$lib/components/shared/` or Forge-specific paths
-- Any Forge-specific Tauri command patterns
+- Any architecture decision or Orqa Studio architectural rule
+- Any reference to `$lib/components/shared/` or Orqa Studio-specific paths
+- Any Orqa Studio-specific Tauri command patterns
 - Any product pillar or governance rule
 
-The `agent-maintainer` audits skills periodically for portability violations. Any Forge-specific content found in a skill is extracted to the appropriate destination (docs, rules, or agent instructions).
+The `agent-maintainer` audits skills periodically for portability violations. Any Orqa Studio-specific content found in a skill is extracted to the appropriate destination (docs, rules, or agent instructions).
 
 ---
 

@@ -1,13 +1,13 @@
 use serde::Serialize;
 
-/// Canonical error type for all Forge IPC commands.
+/// Canonical error type for all Orqa Studio IPC commands.
 ///
 /// Serialized as `{"code": "<variant>", "message": "<detail>"}` for the frontend.
 /// The `Serialize` derive enables automatic conversion to `tauri::ipc::InvokeError`
 /// via Tauri's blanket `impl<T: Serialize> From<T> for InvokeError`.
 #[derive(Debug, thiserror::Error, Serialize)]
 #[serde(tag = "code", content = "message")]
-pub enum ForgeError {
+pub enum OrqaError {
     #[error("not found: {0}")]
     #[serde(rename = "not_found")]
     NotFound(String),
@@ -45,19 +45,19 @@ pub enum ForgeError {
     Search(String),
 }
 
-impl From<std::io::Error> for ForgeError {
+impl From<std::io::Error> for OrqaError {
     fn from(err: std::io::Error) -> Self {
         Self::FileSystem(err.to_string())
     }
 }
 
-impl From<serde_json::Error> for ForgeError {
+impl From<serde_json::Error> for OrqaError {
     fn from(err: serde_json::Error) -> Self {
         Self::Serialization(err.to_string())
     }
 }
 
-impl From<rusqlite::Error> for ForgeError {
+impl From<rusqlite::Error> for OrqaError {
     fn from(err: rusqlite::Error) -> Self {
         Self::Database(err.to_string())
     }
@@ -69,7 +69,7 @@ mod tests {
 
     #[test]
     fn serialize_not_found() {
-        let err = ForgeError::NotFound("project 42".to_string());
+        let err = OrqaError::NotFound("project 42".to_string());
         let json = serde_json::to_value(&err).expect("serialization should succeed");
         assert_eq!(json["code"], "not_found");
         assert_eq!(json["message"], "project 42");
@@ -77,7 +77,7 @@ mod tests {
 
     #[test]
     fn serialize_database() {
-        let err = ForgeError::Database("connection refused".to_string());
+        let err = OrqaError::Database("connection refused".to_string());
         let json = serde_json::to_value(&err).expect("serialization should succeed");
         assert_eq!(json["code"], "database");
         assert_eq!(json["message"], "connection refused");
@@ -85,7 +85,7 @@ mod tests {
 
     #[test]
     fn serialize_file_system() {
-        let err = ForgeError::FileSystem("no such file".to_string());
+        let err = OrqaError::FileSystem("no such file".to_string());
         let json = serde_json::to_value(&err).expect("serialization should succeed");
         assert_eq!(json["code"], "file_system");
         assert_eq!(json["message"], "no such file");
@@ -93,7 +93,7 @@ mod tests {
 
     #[test]
     fn serialize_sidecar() {
-        let err = ForgeError::Sidecar("process exited".to_string());
+        let err = OrqaError::Sidecar("process exited".to_string());
         let json = serde_json::to_value(&err).expect("serialization should succeed");
         assert_eq!(json["code"], "sidecar");
         assert_eq!(json["message"], "process exited");
@@ -101,7 +101,7 @@ mod tests {
 
     #[test]
     fn serialize_validation() {
-        let err = ForgeError::Validation("name is empty".to_string());
+        let err = OrqaError::Validation("name is empty".to_string());
         let json = serde_json::to_value(&err).expect("serialization should succeed");
         assert_eq!(json["code"], "validation");
         assert_eq!(json["message"], "name is empty");
@@ -109,7 +109,7 @@ mod tests {
 
     #[test]
     fn serialize_scan() {
-        let err = ForgeError::Scan("tier 2 failed".to_string());
+        let err = OrqaError::Scan("tier 2 failed".to_string());
         let json = serde_json::to_value(&err).expect("serialization should succeed");
         assert_eq!(json["code"], "scan");
         assert_eq!(json["message"], "tier 2 failed");
@@ -117,7 +117,7 @@ mod tests {
 
     #[test]
     fn serialize_serialization() {
-        let err = ForgeError::Serialization("invalid utf-8".to_string());
+        let err = OrqaError::Serialization("invalid utf-8".to_string());
         let json = serde_json::to_value(&err).expect("serialization should succeed");
         assert_eq!(json["code"], "serialization");
         assert_eq!(json["message"], "invalid utf-8");
@@ -125,7 +125,7 @@ mod tests {
 
     #[test]
     fn serialize_permission_denied() {
-        let err = ForgeError::PermissionDenied("path outside scope".to_string());
+        let err = OrqaError::PermissionDenied("path outside scope".to_string());
         let json = serde_json::to_value(&err).expect("serialization should succeed");
         assert_eq!(json["code"], "permission_denied");
         assert_eq!(json["message"], "path outside scope");
@@ -133,40 +133,40 @@ mod tests {
 
     #[test]
     fn display_uses_thiserror_format() {
-        let err = ForgeError::NotFound("session 99".to_string());
+        let err = OrqaError::NotFound("session 99".to_string());
         assert_eq!(err.to_string(), "not found: session 99");
 
-        let err = ForgeError::Database("timeout".to_string());
+        let err = OrqaError::Database("timeout".to_string());
         assert_eq!(err.to_string(), "database error: timeout");
     }
 
     #[test]
     fn from_io_error() {
         let io_err = std::io::Error::new(std::io::ErrorKind::NotFound, "missing file");
-        let forge_err = ForgeError::from(io_err);
-        assert!(matches!(forge_err, ForgeError::FileSystem(_)));
+        let orqa_err = OrqaError::from(io_err);
+        assert!(matches!(orqa_err, OrqaError::FileSystem(_)));
     }
 
     #[test]
     fn from_serde_json_error() {
         let json_err =
             serde_json::from_str::<serde_json::Value>("{{bad}}").expect_err("should fail to parse");
-        let forge_err = ForgeError::from(json_err);
-        assert!(matches!(forge_err, ForgeError::Serialization(_)));
+        let orqa_err = OrqaError::from(json_err);
+        assert!(matches!(orqa_err, OrqaError::Serialization(_)));
     }
 
     #[test]
     fn all_variants_serialize_as_tagged_json() {
-        let variants: Vec<ForgeError> = vec![
-            ForgeError::NotFound("a".into()),
-            ForgeError::Database("b".into()),
-            ForgeError::FileSystem("c".into()),
-            ForgeError::Sidecar("d".into()),
-            ForgeError::Validation("e".into()),
-            ForgeError::Scan("f".into()),
-            ForgeError::Serialization("g".into()),
-            ForgeError::PermissionDenied("h".into()),
-            ForgeError::Search("i".into()),
+        let variants: Vec<OrqaError> = vec![
+            OrqaError::NotFound("a".into()),
+            OrqaError::Database("b".into()),
+            OrqaError::FileSystem("c".into()),
+            OrqaError::Sidecar("d".into()),
+            OrqaError::Validation("e".into()),
+            OrqaError::Scan("f".into()),
+            OrqaError::Serialization("g".into()),
+            OrqaError::PermissionDenied("h".into()),
+            OrqaError::Search("i".into()),
         ];
 
         let expected_codes = [

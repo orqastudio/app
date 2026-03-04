@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-02 | **Informed by:** [Information Architecture](/product/information-architecture), [Frontend Research](/research/frontend), [Claude Integration Research](/research/claude-integration), [Design System](/ui/design-system)
 
-How Forge's UI responds to user actions. Covers streaming display, tool call approval, inline editing, panel behavior, and keyboard shortcuts.
+How Orqa Studio's UI responds to user actions. Covers streaming display, tool call approval, inline editing, panel behavior, and keyboard shortcuts.
 
 ---
 
@@ -243,7 +243,7 @@ When a dialog/overlay closes, focus returns to the element that triggered it.
 
 | Scenario | Loading UI |
 |----------|-----------|
-| App startup | Splash: Forge anvil mark + "Loading..." |
+| App startup | Splash: Orqa Studio anvil mark + "Loading..." |
 | Project scanning | Nav Sub-Panel: skeleton loader for tree/list content |
 | Session loading | Chat Panel: skeleton loader for message list |
 | Artifact loading | Explorer Panel: skeleton loader for markdown content |
@@ -276,11 +276,11 @@ Every empty container has a meaningful message and a single clear call to action
 | View | Message | Action |
 |------|---------|--------|
 | Session dropdown (empty) | "No conversations yet" | "Start a conversation" → focus input |
-| Welcome (no project) | Forge anvil + "Welcome to Forge" + feature summary | "Open Project" / "New Project" buttons |
+| Welcome (no project) | Orqa Studio anvil + "Welcome to Orqa Studio" + feature summary | "Open Project" / "New Project" buttons |
 | Empty Nav Sub-Panel | "No docs found" or "No {category} defined" | "Add items to get started" |
 | Nav Sub-Panel (Hooks, no hookify rules) | "No hookify rules configured" | "Create hookify rule" button |
 | Empty artifact category | "No {agents/rules/skills} defined" | "Create new {type}" button |
 | Empty hooks view | "No hooks configured. Add lifecycle hooks to .claude/hooks/ or hookify rules to .claude/hookify.*.local.md" | "Create lifecycle hook" / "Create hookify rule" buttons |
 | Empty search results | "No results for '{query}'" | Suggest broader search terms |
 | No scanner results | "No scanner results yet" | "Scanners run during implementation" |
-| No metrics | "Not enough data for metrics" | "Metrics populate as you use Forge" |
+| No metrics | "Not enough data for metrics" | "Metrics populate as you use Orqa Studio" |

@@ -27,12 +27,12 @@ fi
 
 # Check for orphaned worktree directories
 PARENT_DIR=$(dirname "$(pwd)")
-ORPHANS=$(find "$PARENT_DIR" -maxdepth 1 -name "forge-*" -type d 2>/dev/null)
+ORPHANS=$(find "$PARENT_DIR" -maxdepth 1 -name "orqa-*" -type d 2>/dev/null)
 if [ -n "$ORPHANS" ]; then
     echo "WARNING: Orphaned worktree directories found (no .git link, likely from prior sessions):"
     echo "$ORPHANS"
     echo ""
-    echo "Check for stale processes: ps -ef | grep forge-"
+    echo "Check for stale processes: ps -ef | grep orqa-"
     echo "Then: kill <pids> && rm -rf <directory>"
     echo ""
 fi

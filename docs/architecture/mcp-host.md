@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-02 | **Status:** Phase 0e specification
 
-How Forge discovers, connects to, and manages MCP servers. Forge plays two MCP roles simultaneously: it is an **MCP server** (exposing its native tools to the Agent SDK sidecar) and an **MCP host** (connecting to external user-installed MCP servers and aggregating their tools for the sidecar).
+How Orqa Studio discovers, connects to, and manages MCP servers. Orqa Studio plays two MCP roles simultaneously: it is an **MCP server** (exposing its native tools to the Agent SDK sidecar) and an **MCP host** (connecting to external user-installed MCP servers and aggregating their tools for the sidecar).
 
 **Architecture References:** AD-007 (sidecar integration), AD-010 (tool implementation as MCP), AD-011 (security model), AD-017 (composability principle)
 
@@ -23,7 +23,7 @@ How Forge discovers, connects to, and manages MCP servers. Forge plays two MCP r
                    stdin/stdout |          | MCP (stdio)
                       NDJSON    |          |
                            +----v----------v-----+
-                           |   Forge Rust Core    |
+                           |   Orqa Studio Rust Core    |
                            |                      |
                            |  +----------------+  |
                            |  | Built-in MCP   |  |
@@ -56,27 +56,27 @@ How Forge discovers, connects to, and manages MCP servers. Forge plays two MCP r
 
 | Role | Description |
 |------|-------------|
-| **Built-in MCP Server** | Forge exposes its native Rust tools (Read, Write, Edit, Bash, Glob, Grep) as an MCP server that the Agent SDK sidecar connects to via `mcpServers` configuration. The sidecar calls these tools on Claude's behalf. |
-| **MCP Host** | Forge connects to external MCP servers (user-installed) and proxies their tool definitions to the sidecar. Tool calls from Claude are routed through Forge to the appropriate external MCP server. |
+| **Built-in MCP Server** | Orqa Studio exposes its native Rust tools (Read, Write, Edit, Bash, Glob, Grep) as an MCP server that the Agent SDK sidecar connects to via `mcpServers` configuration. The sidecar calls these tools on Claude's behalf. |
+| **MCP Host** | Orqa Studio connects to external MCP servers (user-installed) and proxies their tool definitions to the sidecar. Tool calls from Claude are routed through Orqa Studio to the appropriate external MCP server. |
 
 ---
 
-## 2. Built-in Forge MCP Server
+## 2. Built-in Orqa Studio MCP Server
 
 ### Purpose
 
-The built-in MCP server replaces the Agent SDK's default tool implementations. By disabling built-in tools (`tools: []`) and registering a custom MCP server, Forge gains full control over every file read, write, edit, and shell command. This is essential for the permission model, UI rendering, and audit trail.
+The built-in MCP server replaces the Agent SDK's default tool implementations. By disabling built-in tools (`tools: []`) and registering a custom MCP server, Orqa Studio gains full control over every file read, write, edit, and shell command. This is essential for the permission model, UI rendering, and audit trail.
 
 ### Exposed Tools
 
 | Tool | MCP Tool Name | Description |
 |------|---------------|-------------|
-| Read | `forge_read` | Read file contents. Returns content as text with line numbers. |
-| Write | `forge_write` | Write or overwrite a file. |
-| Edit | `forge_edit` | Perform exact string replacement in a file. |
-| Bash | `forge_bash` | Execute a shell command within the project scope. |
-| Glob | `forge_glob` | Find files matching a glob pattern. |
-| Grep | `forge_grep` | Search file contents with regex patterns. |
+| Read | `orqa_read` | Read file contents. Returns content as text with line numbers. |
+| Write | `orqa_write` | Write or overwrite a file. |
+| Edit | `orqa_edit` | Perform exact string replacement in a file. |
+| Bash | `orqa_bash` | Execute a shell command within the project scope. |
+| Glob | `orqa_glob` | Find files matching a glob pattern. |
+| Grep | `orqa_grep` | Search file contents with regex patterns. |
 
 ### Implementation
 
@@ -89,32 +89,32 @@ The built-in MCP server is created in the sidecar using the Agent SDK's `createS
 
 ```typescript
 // Sidecar: MCP server registration (simplified)
-const forgeMcpServer = createSdkMcpServer({
-  name: "forge",
+const orqaMcpServer = createSdkMcpServer({
+  name: "orqa-studio",
   tools: {
-    forge_read: {
+    orqa_read: {
       description: "Read file contents from the project",
       inputSchema: { /* JSON Schema */ },
       handler: async (input) => {
         // Send tool call to Rust backend via stdout NDJSON
-        const result = await callRustTool("forge_read", input);
+        const result = await callRustTool("orqa_read", input);
         return result;
       }
     },
-    // ... forge_write, forge_edit, forge_bash, forge_glob, forge_grep
+    // ... orqa_write, orqa_edit, orqa_bash, orqa_glob, orqa_grep
   }
 });
 
 const agent = new Agent({
   tools: [],  // Disable all built-in tools
-  mcpServers: { forge: forgeMcpServer },
+  mcpServers: { orqa: orqaMcpServer },
   // ...
 });
 ```
 
 ### Tool Execution in Rust
 
-Each tool is implemented natively in Rust within `src-tauri/src/domain/tools/`. No shelling out to external programs (except for `forge_bash`, which executes user-specified commands under controlled scope).
+Each tool is implemented natively in Rust within `src-tauri/src/domain/tools/`. No shelling out to external programs (except for `orqa_bash`, which executes user-specified commands under controlled scope).
 
 ```
 src-tauri/src/domain/tools/
@@ -136,14 +136,14 @@ All tool functions return `Result<ToolOutput, ToolError>`. See the [Error Taxono
 The full lifecycle of a tool call:
 
 ```
-1. Claude decides to use a tool (e.g., forge_read)
+1. Claude decides to use a tool (e.g., orqa_read)
      |
 2. Agent SDK receives the tool_use content block
      |
-3. Agent SDK calls the MCP server handler for "forge_read"
+3. Agent SDK calls the MCP server handler for "orqa_read"
      |
 4. Sidecar handler serializes the call as NDJSON on stdout:
-   {"type":"tool_call","id":"tc_abc","tool":"forge_read","input":{"file_path":"src/main.rs"}}
+   {"type":"tool_call","id":"tc_abc","tool":"orqa_read","input":{"file_path":"src/main.rs"}}
      |
 5. Rust backend reads the NDJSON line from sidecar stdout
      |
@@ -178,13 +178,13 @@ The full lifecycle of a tool call:
 
 ### Configuration File
 
-Forge discovers external MCP servers from a configuration file at the project level or user level. Forge reads the standard `.claude/mcp-servers.json` format for CLI compatibility, plus its own settings.
+Orqa Studio discovers external MCP servers from a configuration file at the project level or user level. Orqa Studio reads the standard `.claude/mcp-servers.json` format for CLI compatibility, plus its own settings.
 
 **Resolution order (first match wins for duplicate server names):**
 
 1. **Project-level:** `{project_root}/.claude/mcp-servers.json`
-2. **User-level:** `~/.config/forge/mcp-servers.json` (macOS/Linux) or `%APPDATA%/forge/mcp-servers.json` (Windows)
-3. **Settings UI:** Servers configured in Forge's Settings view are written to the user-level file.
+2. **User-level:** `~/.config/orqa-studio/mcp-servers.json` (macOS/Linux) or `%APPDATA%/orqa-studio/mcp-servers.json` (Windows)
+3. **Settings UI:** Servers configured in Orqa Studio's Settings view are written to the user-level file.
 
 ### Configuration Format
 
@@ -245,19 +245,19 @@ For MCP servers distributed as CLI tools (the most common case).
 
 **Lifecycle:**
 
-1. Forge spawns the MCP server process using `tauri-plugin-shell` with the configured `command` and `args`.
+1. Orqa Studio spawns the MCP server process using `tauri-plugin-shell` with the configured `command` and `args`.
 2. Communication uses stdin/stdout with the MCP JSON-RPC protocol (newline-delimited JSON).
-3. Forge sends `initialize` request, waits for `initialized` notification.
-4. Forge calls `tools/list` to discover available tools.
+3. Orqa Studio sends `initialize` request, waits for `initialized` notification.
+4. Orqa Studio calls `tools/list` to discover available tools.
 5. Tool calls are sent as `tools/call` requests; results are returned as responses.
-6. On shutdown, Forge sends a `shutdown` request and then terminates the process.
+6. On shutdown, Orqa Studio sends a `shutdown` request and then terminates the process.
 
 **Process management:**
 
-- Each stdio MCP server runs as a child process of the Forge Rust backend.
+- Each stdio MCP server runs as a child process of the Orqa Studio Rust backend.
 - Processes are spawned lazily on first tool call (not at app startup) unless configured otherwise.
-- If a process exits unexpectedly, Forge marks it as disconnected and shows a status indicator.
-- Forge attempts one automatic restart. If the restart fails, the server is disabled until manual re-enable.
+- If a process exits unexpectedly, Orqa Studio marks it as disconnected and shows a status indicator.
+- Orqa Studio attempts one automatic restart. If the restart fails, the server is disabled until manual re-enable.
 - All child processes are terminated on app close via process group signals.
 
 ### 5.2 SSE Transport (Server-Sent Events)
@@ -266,7 +266,7 @@ For MCP servers running as HTTP services (remote or local).
 
 **Lifecycle:**
 
-1. Forge opens an HTTP connection to the configured `url` with optional `headers`.
+1. Orqa Studio opens an HTTP connection to the configured `url` with optional `headers`.
 2. The SSE stream carries JSON-RPC messages from server to client.
 3. Client-to-server messages are sent as HTTP POST requests to the same URL.
 4. Tool discovery and invocation follow the same MCP protocol as stdio.
@@ -274,14 +274,14 @@ For MCP servers running as HTTP services (remote or local).
 **Connection management:**
 
 - SSE connections include automatic reconnection with exponential backoff (1s, 2s, 4s, max 30s).
-- If the server is unreachable at startup, Forge logs a warning and retries periodically.
+- If the server is unreachable at startup, Orqa Studio logs a warning and retries periodically.
 - A health check ping is sent every 30 seconds to detect stale connections.
 
 ---
 
 ## 6. External Tool Aggregation
 
-When the sidecar starts a conversation, Forge provides it with the complete list of available tools from all connected MCP servers (built-in + external).
+When the sidecar starts a conversation, Orqa Studio provides it with the complete list of available tools from all connected MCP servers (built-in + external).
 
 ### Tool Namespacing
 
@@ -289,7 +289,7 @@ External tools are namespaced by their server name to avoid collisions:
 
 | Source | Tool Name in Agent SDK |
 |--------|----------------------|
-| Built-in Forge MCP server | `forge_read`, `forge_write`, etc. |
+| Built-in Orqa Studio MCP server | `orqa_read`, `orqa_write`, etc. |
 | External "filesystem" server | `mcp__filesystem__read_file`, `mcp__filesystem__write_file`, etc. |
 | External "web-search" server | `mcp__web-search__search`, etc. |
 
@@ -308,7 +308,7 @@ When Claude calls a namespaced tool:
 1. Rust parses the namespace prefix to identify the target MCP server.
 2. The `mcp__` prefix and server name are stripped; the original tool name is sent to the external server.
 3. The external server executes the tool and returns the result.
-4. Forge wraps the result in the Agent SDK's expected format and returns it to the sidecar.
+4. Orqa Studio wraps the result in the Agent SDK's expected format and returns it to the sidecar.
 
 ---
 
@@ -347,7 +347,7 @@ The Settings view in the Explorer Panel includes an "MCP Servers" section:
 
 ### Built-in Server
 
-The built-in Forge MCP server always appears first in the list with trust level `builtin`. It cannot be disabled or removed. Its tools are not editable.
+The built-in Orqa Studio MCP server always appears first in the list with trust level `builtin`. It cannot be disabled or removed. Its tools are not editable.
 
 ---
 
@@ -359,8 +359,8 @@ MCP servers operate at one of three trust levels, which determine what capabilit
 
 | Trust Level | Description | Scope | Example |
 |-------------|-------------|-------|---------|
-| `builtin` | Forge's own MCP server. Hardcoded, not user-configurable. | Full access to project files within Tauri security scopes. Shell execution within project root. | The built-in Forge MCP server. |
-| `user` | Installed by the user at the user level. Persists across projects. | Access determined by the server's own capabilities. Forge does not restrict further (the user explicitly trusted it). | A web search server, a database server. |
+| `builtin` | Orqa Studio's own MCP server. Hardcoded, not user-configurable. | Full access to project files within Tauri security scopes. Shell execution within project root. | The built-in Orqa Studio MCP server. |
+| `user` | Installed by the user at the user level. Persists across projects. | Access determined by the server's own capabilities. Orqa Studio does not restrict further (the user explicitly trusted it). | A web search server, a database server. |
 | `project` | Defined in `.claude/mcp-servers.json` within a project. May be committed by collaborators. | Most restricted. Tool calls require user approval on first use per session. Environment variable expansion is disabled for security. | Project-specific tooling committed to the repo. |
 
 ### Capability Scoping
@@ -370,13 +370,13 @@ MCP servers operate at one of three trust levels, which determine what capabilit
 - Base scope: `$HOME/**`
 - Project scope: dynamically expanded via `app_handle.fs_scope().allow_directory()` when a project is opened
 - Deny list: `.ssh`, `.gnupg`, `.aws/credentials`, and other sensitive paths
-- Shell commands (`forge_bash`): executed with `cwd` set to the project root; `PATH` is inherited but the command is run within the Tauri shell plugin's pre-declared command validators
+- Shell commands (`orqa_bash`): executed with `cwd` set to the project root; `PATH` is inherited but the command is run within the Tauri shell plugin's pre-declared command validators
 
 **External stdio servers:**
 
 - Spawned with `cwd` set to the project root
 - Inherit a filtered environment (sensitive variables like `AWS_SECRET_ACCESS_KEY` are excluded unless explicitly listed in `env`)
-- The spawned process has the same filesystem access as Forge itself (OS-level); Forge does not sandbox external processes beyond trust-level approval gating
+- The spawned process has the same filesystem access as Orqa Studio itself (OS-level); Orqa Studio does not sandbox external processes beyond trust-level approval gating
 
 **External SSE servers:**
 
@@ -387,7 +387,7 @@ MCP servers operate at one of three trust levels, which determine what capabilit
 
 When a project-level MCP server is encountered for the first time:
 
-1. Forge shows a dialog: "This project includes an MCP server '{name}' ({transport}). Allow it to run?"
+1. Orqa Studio shows a dialog: "This project includes an MCP server '{name}' ({transport}). Allow it to run?"
 2. Options: "Allow for this session" / "Always allow for this project" / "Deny"
 3. "Always allow" is persisted in the user-level config (not in the project file)
 4. Denied servers are marked `enabled: false` in the user-level override

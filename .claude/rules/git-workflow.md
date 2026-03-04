@@ -6,25 +6,25 @@
 
 ```bash
 # 1. Create worktree at task start
-git worktree add ../forge-<task> -b <agent>/<task>
-cd ../forge-<task>
+git worktree add ../orqa-<task> -b <agent>/<task>
+cd ../orqa-<task>
 
 # 2. Work in isolation, commit regularly
 
 # 3. Request code-reviewer approval BEFORE merging
 
 # 4. Merge only after approval
-cd ../forge && git merge <branch>
+cd ../orqa-studio && git merge <branch>
 
 # 5. MANDATORY CLEANUP — no stale worktrees
-git branch -d <branch> && git worktree remove ../forge-<task>
+git branch -d <branch> && git worktree remove ../orqa-<task>
 ```
 
 ## Worktree Cleanup (NON-NEGOTIABLE)
 
 **Every completed task MUST have its worktree merged and cleaned up immediately.**
 
-- **Kill all processes in the worktree BEFORE removal** — `ps -ef | grep "forge-<task>"` then `kill` each PID. Background dev servers, test runs, and log tailers hold file locks that prevent directory deletion on Windows.
+- **Kill all processes in the worktree BEFORE removal** — `ps -ef | grep "orqa-<task>"` then `kill` each PID. Background dev servers, test runs, and log tailers hold file locks that prevent directory deletion on Windows.
 - Merge conflicts MUST be resolved aligned with the task goals:
   - Task changes take priority in task-modified files
   - Preserve unrelated changes from main in shared files

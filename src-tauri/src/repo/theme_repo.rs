@@ -1,6 +1,6 @@
 use rusqlite::{params, Connection};
 
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 
 /// A raw theme row from the `project_themes` table.
 #[derive(Debug, Clone)]
@@ -27,7 +27,7 @@ pub struct ThemeOverrideRow {
 }
 
 /// Get all active themes for a project.
-pub fn get_themes(conn: &Connection, project_id: i64) -> Result<Vec<ThemeRow>, ForgeError> {
+pub fn get_themes(conn: &Connection, project_id: i64) -> Result<Vec<ThemeRow>, OrqaError> {
     let mut stmt = conn.prepare(
         "SELECT id, project_id, source_file, source_hash, extracted_at, \
                 tokens_light, tokens_dark, unmapped, is_active \
@@ -62,7 +62,7 @@ pub fn get_themes(conn: &Connection, project_id: i64) -> Result<Vec<ThemeRow>, F
 pub fn get_overrides(
     conn: &Connection,
     project_id: i64,
-) -> Result<Vec<ThemeOverrideRow>, ForgeError> {
+) -> Result<Vec<ThemeOverrideRow>, OrqaError> {
     let mut stmt = conn.prepare(
         "SELECT id, project_id, token_name, value_light, value_dark \
          FROM project_theme_overrides \
@@ -94,7 +94,7 @@ pub fn set_override(
     token_name: &str,
     value_light: &str,
     value_dark: Option<&str>,
-) -> Result<(), ForgeError> {
+) -> Result<(), OrqaError> {
     conn.execute(
         "INSERT INTO project_theme_overrides \
          (project_id, token_name, value_light, value_dark, updated_at) \
@@ -110,7 +110,7 @@ pub fn set_override(
 }
 
 /// Clear all theme overrides for a project.
-pub fn clear_overrides(conn: &Connection, project_id: i64) -> Result<(), ForgeError> {
+pub fn clear_overrides(conn: &Connection, project_id: i64) -> Result<(), OrqaError> {
     conn.execute(
         "DELETE FROM project_theme_overrides WHERE project_id = ?1",
         params![project_id],

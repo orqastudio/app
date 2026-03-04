@@ -6,7 +6,7 @@
 
 ## Overview
 
-Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CLI-based bootstrap process for Forge's own development. After this phase, Forge can manage its own governance artifacts, run conversations with Claude, persist sessions, and display tool calls. Every feature below serves the dogfooding milestone defined in [MVP Specification](/product/mvp-specification).
+Phase 1 delivers the Orqa Studio MVP: a dogfood-ready desktop app that replaces the CLI-based bootstrap process for Orqa Studio's own development. After this phase, Orqa Studio can manage its own governance artifacts, run conversations with Claude, persist sessions, and display tool calls. Every feature below serves the dogfooding milestone defined in [MVP Specification](/product/mvp-specification).
 
 **Prerequisites:** Phases 0a-0e (research, architecture decisions, product definition, UX design, technical design) are all complete and approved.
 
@@ -43,7 +43,7 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
 - **Creates:**
   - `src-tauri/migrations/001_initial_schema.sql` -- 9 tables + 2 FTS5 + indexes + triggers
   - `src-tauri/migrations/002_add_themes.sql` -- project_themes + project_theme_overrides
-  - `src-tauri/src/error.rs` -- ForgeError enum with thiserror
+  - `src-tauri/src/error.rs` -- Orqa StudioError enum with thiserror
   - `src-tauri/src/state.rs` -- AppState struct
   - `src-tauri/src/domain/mod.rs` and all domain type files
   - `src-tauri/src/repo/mod.rs` and all repository files
@@ -64,17 +64,17 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
 - **Goal:** Three-zone + nav sub-panel layout with Activity Bar, resizable panels, and status bar.
 - **Depends on:** Sub-Phase 1 (settings persistence for panel state).
 - **Creates:**
-  - `src/routes/+layout.svelte` -- ThemeProvider, global keybindings, Sonner
-  - `src/routes/+page.svelte` -- single-page container
-  - `src/lib/components/layout/AppLayout.svelte`
-  - `src/lib/components/layout/ActivityBar.svelte` + `ActivityBarItem.svelte`
-  - `src/lib/components/layout/NavSubPanel.svelte`
-  - `src/lib/components/layout/Toolbar.svelte`
-  - `src/lib/components/layout/StatusBar.svelte`
-  - `src/lib/components/layout/WelcomeScreen.svelte`
-  - `src/lib/stores/navigation.svelte.ts`
-  - `src/lib/stores/theme.svelte.ts`
-  - `src/app.css` -- Tailwind directives, shadcn CSS variables, Forge semantic tokens
+  - `ui/routes/+layout.svelte` -- ThemeProvider, global keybindings, Sonner
+  - `ui/routes/+page.svelte` -- single-page container
+  - `ui/lib/components/layout/AppLayout.svelte`
+  - `ui/lib/components/layout/ActivityBar.svelte` + `ActivityBarItem.svelte`
+  - `ui/lib/components/layout/NavSubPanel.svelte`
+  - `ui/lib/components/layout/Toolbar.svelte`
+  - `ui/lib/components/layout/StatusBar.svelte`
+  - `ui/lib/components/layout/WelcomeScreen.svelte`
+  - `ui/lib/stores/navigation.svelte.ts`
+  - `ui/lib/stores/theme.svelte.ts`
+  - `ui/app.css` -- Tailwind directives, shadcn CSS variables, Orqa Studio semantic tokens
 - **Acceptance Criteria:**
   - Activity Bar: fixed 48px icon rail with Project Dashboard, Docs (default active), Agents, Rules, Skills, Hooks, separator, Settings (bottom)
   - Active icon has 2px left border indicator + highlighted background
@@ -93,10 +93,10 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
 - **Creates:**
   - `src-tauri/src/commands/project_commands.rs` -- project_open, project_create, project_list, project_get, project_get_active, project_scan
   - `src-tauri/src/scanner/mod.rs`, `tier1.rs`, `tier2.rs`, `theme_extractor.rs`
-  - `src/lib/stores/project.svelte.ts`
-  - `src/lib/commands/project.ts`
-  - `src/lib/components/navigation/ProjectDashboard.svelte`
-  - `src/lib/components/navigation/ProjectSwitcher.svelte`
+  - `ui/lib/stores/project.svelte.ts`
+  - `ui/lib/commands/project.ts`
+  - `ui/lib/components/navigation/ProjectDashboard.svelte`
+  - `ui/lib/components/navigation/ProjectSwitcher.svelte`
 - **Acceptance Criteria:**
   - F-001: Open via native file dialog; Tier 1 scan < 100ms; Tier 2 scan < 5s for 10k files; `.claude/` artifacts indexed; last-opened remembered; empty project shows empty state
   - F-001b: New Project action available; directory created with `.claude/` skeleton (CLAUDE.md, agents/, rules/, skills/, hooks/, docs/); git init offered; project registered; discovery conversation offered (not a wizard); skip option with defaults
@@ -113,8 +113,8 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
   - `src-tauri/src/sidecar/protocol.rs` -- NDJSON line framing
   - `src-tauri/src/sidecar/types.rs` -- SidecarStatus, SidecarRequest, SidecarResponse
   - `src-tauri/src/commands/sidecar_commands.rs` -- sidecar_status, sidecar_restart
-  - `src/lib/stores/sidecar.svelte.ts`
-  - `src/lib/commands/sidecar.ts`
+  - `ui/lib/stores/sidecar.svelte.ts`
+  - `ui/lib/commands/sidecar.ts`
   - Bundled sidecar binary (Bun-compiled TypeScript)
 - **Acceptance Criteria:**
   - Sidecar binary bundled with app (~18-25 MB)
@@ -129,7 +129,7 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
 
 ### Sub-Phase 5: MCP Tool Server (F-012)
 
-- **Goal:** Expose Forge's tools as an MCP server for the sidecar.
+- **Goal:** Expose Orqa Studio's tools as an MCP server for the sidecar.
 - **Depends on:** Sub-Phase 4 (sidecar to connect to).
 - **Creates:**
   - `src-tauri/src/tools/mod.rs` -- ToolRegistry, Tool trait
@@ -137,7 +137,7 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
   - `src-tauri/src/tools/read.rs`, `write.rs`, `edit.rs`, `bash.rs`, `glob.rs`, `grep.rs`
   - `src-tauri/src/tools/security.rs` -- path validation, scope enforcement
 - **Acceptance Criteria:**
-  - MCP server registered as `mcpServers: { "forge": ... }` in sidecar config
+  - MCP server registered as `mcpServers: { "orqa-studio": ... }` in sidecar config
   - Agent SDK built-in tools disabled (`tools: []`)
   - All 6 tools available: Read, Write, Edit, Bash, Glob, Grep
   - Tools execute natively in Rust
@@ -152,10 +152,10 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
 - **Creates:**
   - `src-tauri/src/commands/session_commands.rs` -- session_create, session_list, session_get, session_update_title, session_end, session_delete
   - `src-tauri/src/commands/message_commands.rs` -- message_list, message_search
-  - `src/lib/stores/session.svelte.ts`
-  - `src/lib/commands/session.ts`
-  - `src/lib/components/navigation/SessionDropdown.svelte`
-  - `src/lib/components/conversation/SessionHeader.svelte`
+  - `ui/lib/stores/session.svelte.ts`
+  - `ui/lib/commands/session.ts`
+  - `ui/lib/components/navigation/SessionDropdown.svelte`
+  - `ui/lib/components/conversation/SessionHeader.svelte`
 - **Acceptance Criteria:**
   - Sessions auto-created on first message
   - Metadata stored in SQLite: title, created_at, updated_at, message_count, model (stores "auto" when auto model selection active)
@@ -174,17 +174,17 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
 - **Depends on:** Sub-Phase 4 (sidecar), Sub-Phase 5 (MCP tools), Sub-Phase 6 (session to stream into).
 - **Creates:**
   - `src-tauri/src/sidecar/stream.rs` -- StreamHandler: NDJSON parser, Channel<T> forwarder, DB buffer
-  - `src/lib/stores/conversation.svelte.ts`
-  - `src/lib/commands/conversation.ts`
-  - `src/lib/components/conversation/ConversationView.svelte`
-  - `src/lib/components/conversation/MessageBubble.svelte`
-  - `src/lib/components/conversation/UserMessage.svelte`
-  - `src/lib/components/conversation/AssistantMessage.svelte`
-  - `src/lib/components/conversation/SystemMessage.svelte`
-  - `src/lib/components/conversation/MessageInput.svelte`
-  - `src/lib/components/conversation/StreamingIndicator.svelte`
-  - `src/lib/components/content/MarkdownRenderer.svelte`
-  - `src/lib/components/content/CodeBlock.svelte`
+  - `ui/lib/stores/conversation.svelte.ts`
+  - `ui/lib/commands/conversation.ts`
+  - `ui/lib/components/conversation/ConversationView.svelte`
+  - `ui/lib/components/conversation/MessageBubble.svelte`
+  - `ui/lib/components/conversation/UserMessage.svelte`
+  - `ui/lib/components/conversation/AssistantMessage.svelte`
+  - `ui/lib/components/conversation/SystemMessage.svelte`
+  - `ui/lib/components/conversation/MessageInput.svelte`
+  - `ui/lib/components/conversation/StreamingIndicator.svelte`
+  - `ui/lib/components/content/MarkdownRenderer.svelte`
+  - `ui/lib/components/content/CodeBlock.svelte`
 - **Acceptance Criteria:**
   - Enter sends, Shift+Enter inserts newline
   - Message sent to sidecar via stdin NDJSON
@@ -204,10 +204,10 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
 - **Goal:** Render tool calls as collapsible cards inline in conversation.
 - **Depends on:** Sub-Phase 7 (conversation streaming provides tool events).
 - **Creates:**
-  - `src/lib/components/tool/ToolCallCard.svelte`
-  - `src/lib/components/tool/ToolCallInput.svelte`
-  - `src/lib/components/tool/ToolCallOutput.svelte`
-  - `src/lib/components/tool/DiffView.svelte`
+  - `ui/lib/components/tool/ToolCallCard.svelte`
+  - `ui/lib/components/tool/ToolCallInput.svelte`
+  - `ui/lib/components/tool/ToolCallOutput.svelte`
+  - `ui/lib/components/tool/DiffView.svelte`
 - **Acceptance Criteria:**
   - Tool calls appear inline at invocation point
   - Card shows: tool name, input summary (truncated), status badge
@@ -227,14 +227,14 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
 - **Creates:**
   - `src-tauri/src/commands/artifact_commands.rs` -- artifact_list, artifact_get, artifact_get_by_path, artifact_create, artifact_update, artifact_delete
   - `src-tauri/src/watcher/artifact_watcher.rs` -- notify-debouncer-full, 500ms debounce
-  - `src/lib/stores/artifact.svelte.ts`
-  - `src/lib/commands/artifact.ts`
-  - `src/lib/components/artifact/ArtifactBrowser.svelte`
-  - `src/lib/components/artifact/ArtifactListItem.svelte`
-  - `src/lib/components/artifact/ArtifactViewer.svelte`
-  - `src/lib/components/content/FrontmatterDisplay.svelte`
-  - `src/lib/components/navigation/DocTreeNav.svelte`
-  - `src/lib/components/navigation/ArtifactListNav.svelte`
+  - `ui/lib/stores/artifact.svelte.ts`
+  - `ui/lib/commands/artifact.ts`
+  - `ui/lib/components/artifact/ArtifactBrowser.svelte`
+  - `ui/lib/components/artifact/ArtifactListItem.svelte`
+  - `ui/lib/components/artifact/ArtifactViewer.svelte`
+  - `ui/lib/components/content/FrontmatterDisplay.svelte`
+  - `ui/lib/components/navigation/DocTreeNav.svelte`
+  - `ui/lib/components/navigation/ArtifactListNav.svelte`
 - **Acceptance Criteria:**
   - Explorer shows artifact browser when category active in Activity Bar
   - Activity Bar icons select category (no tab bar in Explorer)
@@ -252,8 +252,8 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
 - **Goal:** Edit governance artifacts via CodeMirror 6 source editing.
 - **Depends on:** Sub-Phase 9 (artifact viewer to add edit mode to).
 - **Creates:**
-  - `src/lib/components/artifact/ArtifactEditor.svelte`
-  - `src/lib/components/content/MarkdownEditor.svelte` -- CodeMirror 6 integration
+  - `ui/lib/components/artifact/ArtifactEditor.svelte`
+  - `ui/lib/components/content/MarkdownEditor.svelte` -- CodeMirror 6 integration
 - **Acceptance Criteria:**
   - "Edit" toggle (`Ctrl+E`) switches to CodeMirror 6 editor
   - Markdown syntax highlighting in editor
@@ -273,13 +273,13 @@ Phase 1 delivers the Forge MVP: a dogfood-ready desktop app that replaces the CL
 - **Creates:**
   - `src-tauri/src/commands/settings_commands.rs` -- settings_get, settings_set, settings_get_all
   - `src-tauri/src/commands/theme_commands.rs` -- theme_get_project, theme_set_override, theme_clear_overrides
-  - `src/lib/components/settings/SettingsView.svelte`
-  - `src/lib/components/settings/ProviderSettings.svelte`
-  - `src/lib/components/settings/ProjectSettings.svelte`
-  - `src/lib/components/settings/AppearanceSettings.svelte`
-  - `src/lib/components/settings/ThemeToggle.svelte`
-  - `src/lib/components/settings/ShortcutsReference.svelte`
-  - `src/lib/commands/settings.ts`
+  - `ui/lib/components/settings/SettingsView.svelte`
+  - `ui/lib/components/settings/ProviderSettings.svelte`
+  - `ui/lib/components/settings/ProjectSettings.svelte`
+  - `ui/lib/components/settings/AppearanceSettings.svelte`
+  - `ui/lib/components/settings/ThemeToggle.svelte`
+  - `ui/lib/components/settings/ShortcutsReference.svelte`
+  - `ui/lib/commands/settings.ts`
 - **Acceptance Criteria:**
   - F-009: Settings via Activity Bar icon or `Ctrl+,`; opens in Explorer Panel; Provider section shows sidecar/CLI status; Project section shows root path, detected stack, file watcher status; Appearance has theme toggle (light/dark/system) + font size; persisted via tauri-plugin-store; theme changes apply immediately
   - F-010: Status bar spans full width; sidecar status with icon + text; active model name (or "Auto -> resolved model"); token usage per session; color-coded indicators (green/yellow/red)
@@ -353,7 +353,7 @@ npm run test                         # Vitest passes
 
 - [ ] Rust `#[tauri::command]` function exists and is registered in the invoke handler
 - [ ] Input/output Rust types derive `Serialize`, `Deserialize`
-- [ ] Matching TypeScript interfaces exist in `src/lib/types/`
+- [ ] Matching TypeScript interfaces exist in `ui/lib/types/`
 - [ ] Svelte component calls `invoke()` via typed wrapper with correct command name
 - [ ] Store manages state lifecycle (loading, loaded, error)
 - [ ] Types are consistent across Rust structs and TypeScript interfaces
@@ -373,7 +373,7 @@ Per [MVP Specification](/product/mvp-specification) dogfooding checklist:
 - [ ] Can run a conversation (send message, streaming response, tool calls displayed)
 - [ ] Can review tool calls (expand card, see input/output)
 - [ ] Can manage sessions (new, switch via dropdown, history)
-- [ ] Can detect project context (open Forge on itself, see detected stack + governance)
+- [ ] Can detect project context (open Orqa Studio on itself, see detected stack + governance)
 - [ ] Persistence works (close, reopen, last session + project restored)
 
 ---

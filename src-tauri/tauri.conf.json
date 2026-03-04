@@ -1,8 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-utils/schema.json",
-  "productName": "Forge",
+  "productName": "Orqa Studio",
   "version": "0.1.0",
-  "identifier": "com.forge.app",
+  "identifier": "com.orqa.studio",
   "build": {
     "frontendDist": "../build",
     "devUrl": "http://localhost:1420",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Forge",
+        "title": "Orqa Studio",
         "width": 1280,
         "height": 800,
         "minWidth": 720,

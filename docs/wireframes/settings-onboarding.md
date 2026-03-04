@@ -32,7 +32,7 @@ Settings appears in the Explorer Panel when the user clicks the Settings icon in
       <b>Project</b>
       ---
       Project Root
-      { [~/code/forge                    ] | [Change...] }
+      { [~/code/orqa-studio                    ] | [Change...] }
       ---
       Detected Stack
       { Languages: Rust, TypeScript, Svelte }
@@ -85,7 +85,7 @@ Settings appears in the Explorer Panel when the user clicks the Settings icon in
 | Section | Notes |
 |---------|-------|
 | **Provider** | CLI path can be typed, browsed via native file dialog, or auto-detected. Auto-detect searches PATH and common install locations. Sidecar status updates in real time. |
-| **Project** | Project settings are stored in `.forge/project.json` (file-based, source of truth). When no settings file exists, shows a setup wizard with scan + save flow. When settings file exists, shows an editable form (name, description, model, excluded paths, detected stack, governance counts). Rescan re-detects stack and governance artifacts. Changes save on blur — no manual save button. |
+| **Project** | Project settings are stored in `.orqa/project.json` (file-based, source of truth). When no settings file exists, shows a setup wizard with scan + save flow. When settings file exists, shows an editable form (name, description, model, excluded paths, detected stack, governance counts). Rescan re-detects stack and governance artifacts. Changes save on blur — no manual save button. |
 | **Appearance** | Theme dropdown offers Light, Dark, System. Font size dropdown ranges 12px--20px. Panel widths accept numeric input with min/max validation. |
 | **Keyboard Shortcuts** | Read-only reference card. All shortcuts are global (not remappable in MVP). |
 
@@ -98,20 +98,20 @@ Full-window overlay. No panels -- just the centered welcome content.
 ```plantuml
 @startsalt
 {+
-  {/ <b>Forge</b> | . | . | . | . | . | . | . | . }
+  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
       ---
       .
       .
-      { . | . | <b><size:24>Forge</size></b> | . | . }
+      { . | . | <b><size:24>Orqa Studio</size></b> | . | . }
       { . | . | <i>AI-powered product management</i> | . | . }
       .
       ---
-      { . | . | Welcome to Forge. Let's get you set up. | . | . }
+      { . | . | Welcome to Orqa Studio. Let's get you set up. | . | . }
       .
-      { . | . | To start, Forge needs access to Claude Code | . | . }
+      { . | . | To start, Orqa Studio needs access to Claude Code | . | . }
       { . | . | CLI so it can run AI sessions on your behalf. | . | . }
       .
       ---
@@ -145,7 +145,7 @@ Still a full-window overlay. The user provides the Claude Code CLI path.
 ```plantuml
 @startsalt
 {+
-  {/ <b>Forge</b> | . | . | . | . | . | . | . | . }
+  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
@@ -153,8 +153,8 @@ Still a full-window overlay. The user provides the Claude Code CLI path.
       .
       { . | <b><size:18>Connect Claude Code CLI</size></b> | . | . }
       .
-      { . | Forge uses the Claude Code CLI as its AI engine. | . | . }
-      { . | Enter the path or let Forge find it automatically. | . | . }
+      { . | Orqa Studio uses the Claude Code CLI as its AI engine. | . | . }
+      { . | Enter the path or let Orqa Studio find it automatically. | . | . }
       .
       ---
       { . | CLI Path | . | . }
@@ -182,7 +182,7 @@ Still a full-window overlay. The user provides the Claude Code CLI path.
 ```plantuml
 @startsalt
 {+
-  {/ <b>Forge</b> | . | . | . | . | . | . | . | . }
+  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
@@ -190,8 +190,8 @@ Still a full-window overlay. The user provides the Claude Code CLI path.
       .
       { . | <b><size:18>Connect Claude Code CLI</size></b> | . | . }
       .
-      { . | Forge uses the Claude Code CLI as its AI engine. | . | . }
-      { . | Enter the path or let Forge find it automatically. | . | . }
+      { . | Orqa Studio uses the Claude Code CLI as its AI engine. | . | . }
+      { . | Enter the path or let Orqa Studio find it automatically. | . | . }
       .
       ---
       { . | CLI Path | . | . }
@@ -232,7 +232,7 @@ After CLI setup, the user selects a project folder. This screen shows the scan r
 ```plantuml
 @startsalt
 {+
-  {/ <b>Forge</b> | . | . | . | . | . | . | . | . }
+  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
@@ -240,7 +240,7 @@ After CLI setup, the user selects a project folder. This screen shows the scan r
       .
       { . | <b><size:18>Project Scanned</size></b> | . | . }
       .
-      { . | <b>forge</b> -- ~/code/forge | . | . }
+      { . | <b>orqa-studio</b> -- ~/code/orqa-studio | . | . }
       .
       ---
       { . |
@@ -276,7 +276,7 @@ Before the scan results appear, the user sees a project selection screen.
 ```plantuml
 @startsalt
 {+
-  {/ <b>Forge</b> | . | . | . | . | . | . | . | . }
+  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
@@ -284,7 +284,7 @@ Before the scan results appear, the user sees a project selection screen.
       .
       { . | <b><size:18>Open a Project</size></b> | . | . }
       .
-      { . | Select a folder to manage with Forge. | . | . }
+      { . | Select a folder to manage with Orqa Studio. | . | . }
       .
       ---
       { . | [Open Folder...] | . | . }
@@ -309,7 +309,7 @@ Before the scan results appear, the user sees a project selection screen.
 ```plantuml
 @startsalt
 {+
-  {/ <b>Forge</b> | . | . | . | . | . | . | . | . }
+  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
@@ -317,7 +317,7 @@ Before the scan results appear, the user sees a project selection screen.
       .
       { . | <b><size:18>Open a Project</size></b> | . | . }
       .
-      { . | Select a folder to manage with Forge. | . | . }
+      { . | Select a folder to manage with Orqa Studio. | . | . }
       .
       ---
       { . | [Open Folder...] | . | . }
@@ -326,8 +326,8 @@ Before the scan results appear, the user sees a project selection screen.
       { . | <b>Recent Projects</b> | . | . }
       {SI
         {
-          <&folder> <b>forge</b>
-          ~/code/forge -- Rust, TypeScript, Svelte
+          <&folder> <b>orqa-studio</b>
+          ~/code/orqa-studio -- Rust, TypeScript, Svelte
         }
         ---
         {
@@ -356,12 +356,12 @@ Before the scan results appear, the user sees a project selection screen.
 
 ## 5a. New Project -- Discovery Prompt
 
-When the user opens a folder that has no `.claude/` directory (or creates a new project), Forge offers to start a project discovery conversation instead of just scaffolding generic files.
+When the user opens a folder that has no `.claude/` directory (or creates a new project), Orqa Studio offers to start a project discovery conversation instead of just scaffolding generic files.
 
 ```plantuml
 @startsalt
 {+
-  {/ <b>Forge</b> | . | . | . | . | . | . | . | . }
+  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
@@ -386,7 +386,7 @@ When the user opens a folder that has no `.claude/` directory (or creates a new 
       ---
       { . | <&warning> No governance artifacts found. | . | . }
       .
-      { . | Forge can help you set up your project through | . | . }
+      { . | Orqa Studio can help you set up your project through | . | . }
       { . | a quick conversation about what you're building, | . | . }
       { . | your tech stack, and your conventions. | . | . }
       .
@@ -408,7 +408,7 @@ For a truly new project with no code detected, the scan table is replaced with a
 ```plantuml
 @startsalt
 {+
-  {/ <b>Forge</b> | . | . | . | . | . | . | . | . }
+  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
@@ -423,7 +423,7 @@ For a truly new project with no code detected, the scan table is replaced with a
       { . | <&warning> No governance artifacts found. | . | . }
       .
       ---
-      { . | Forge can help you set up your project through | . | . }
+      { . | Orqa Studio can help you set up your project through | . | . }
       { . | a quick conversation about what you're building, | . | . }
       { . | your tech stack, and your conventions. | . | . }
       .
@@ -451,12 +451,12 @@ For a truly new project with no code detected, the scan table is replaced with a
 
 ## 5b. New Project -- Discovery Conversation
 
-After the user clicks "Start Project Discovery", Forge opens the main three-zone workspace with a discovery conversation already in progress. This is a regular conversation session — the discovery behavior comes from the system prompt, not special UI.
+After the user clicks "Start Project Discovery", Orqa Studio opens the main three-zone workspace with a discovery conversation already in progress. This is a regular conversation session — the discovery behavior comes from the system prompt, not special UI.
 
 ```plantuml
 @startsalt
 {
-  {/ <b>Forge</b> | . | . | . | . | . | . | . | . }
+  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
   {
     {
       <b>Nav Sub-Panel</b>
@@ -525,7 +525,7 @@ After discovery (or when Claude has enough context), Claude proposes artifacts. 
 ```plantuml
 @startsalt
 {+
-  {/ <b>Forge</b> | . | . | . | . | . | . | . | . }
+  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
@@ -684,7 +684,7 @@ endif
 | **CLI Setup** | Configure the Claude Code CLI path. Auto-detect available. | Valid CLI detected and verified. |
 | **Project Selection** | Pick a folder. Recent projects shown on return visits. | Folder selected via native dialog or recent list. |
 | **Scan Results** | Display detected stack, file count, existing artifacts. For projects with existing `.claude/`. | User clicks "Open Workspace" or "Change Project". |
-| **Discovery Prompt** | Offer project discovery conversation for projects without `.claude/`. Explains that Forge can learn about the project through conversation. | User clicks "Start Project Discovery" or "Skip -- Use Defaults". |
+| **Discovery Prompt** | Offer project discovery conversation for projects without `.claude/`. Explains that Orqa Studio can learn about the project through conversation. | User clicks "Start Project Discovery" or "Skip -- Use Defaults". |
 | **Discovery Conversation** | A regular conversation session in the main workspace where Claude asks about product, tech stack, team, and conventions. Not a special UI mode. | User completes discovery or says "that's enough". Claude proposes artifacts. |
 | **Governance Confirmation** | Review proposed governance artifacts (from discovery or defaults) before writing to disk. User can uncheck individual files. | User confirms or cancels. |
 
@@ -693,7 +693,7 @@ endif
 | Section | Persisted To | Scope |
 |---------|-------------|-------|
 | **Provider** | App-level config (SQLite) | Global |
-| **Project** | `.forge/project.json` (file-based, per-project) | Project |
+| **Project** | `.orqa/project.json` (file-based, per-project) | Project |
 | **Appearance** | App-level config; per-project override if toggle enabled | Global / Project |
 | **Keyboard Shortcuts** | Read-only in MVP | Global |
 

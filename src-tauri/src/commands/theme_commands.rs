@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use tauri::State;
 
 use crate::domain::settings::{ResolvedTheme, ThemeToken, ThemeTokenSource};
-use crate::error::ForgeError;
+use crate::error::OrqaError;
 use crate::repo::theme_repo;
 use crate::state::AppState;
 
@@ -15,11 +15,11 @@ use crate::state::AppState;
 pub fn theme_get_project(
     project_id: i64,
     state: State<'_, AppState>,
-) -> Result<ResolvedTheme, ForgeError> {
+) -> Result<ResolvedTheme, OrqaError> {
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     let theme_rows = theme_repo::get_themes(&conn, project_id)?;
     let override_rows = theme_repo::get_overrides(&conn, project_id)?;
@@ -85,14 +85,14 @@ pub fn theme_set_override(
     value_light: String,
     value_dark: Option<String>,
     state: State<'_, AppState>,
-) -> Result<(), ForgeError> {
+) -> Result<(), OrqaError> {
     if token_name.trim().is_empty() {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "token name cannot be empty".to_string(),
         ));
     }
     if value_light.trim().is_empty() {
-        return Err(ForgeError::Validation(
+        return Err(OrqaError::Validation(
             "light value cannot be empty".to_string(),
         ));
     }
@@ -100,7 +100,7 @@ pub fn theme_set_override(
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     theme_repo::set_override(
         &conn,
@@ -116,11 +116,11 @@ pub fn theme_set_override(
 pub fn theme_clear_overrides(
     project_id: i64,
     state: State<'_, AppState>,
-) -> Result<(), ForgeError> {
+) -> Result<(), OrqaError> {
     let conn = state
         .db
         .lock()
-        .map_err(|e| ForgeError::Database(format!("lock poisoned: {e}")))?;
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     theme_repo::clear_overrides(&conn, project_id)
 }

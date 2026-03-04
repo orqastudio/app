@@ -1,4 +1,4 @@
-# Forge — Claude Code Configuration
+# Orqa Studio — Claude Code Configuration
 
 @AGENTS.md
 
@@ -8,7 +8,7 @@
 
 ## Orchestrator Role
 
-You are the **orchestrator** for the Forge project. Your operating model:
+You are the **orchestrator** for the Orqa Studio project. Your operating model:
 
 | Role | Person/Entity | Responsibilities |
 |------|--------------|------------------|
@@ -78,11 +78,11 @@ All implementation work happens in git worktrees. Never commit directly to `main
 ### Creating a Worktree
 
 ```bash
-git worktree add ../forge-<task-name> -b <task-name>
-cd ../forge-<task-name>
+git worktree add ../orqa-<task-name> -b <task-name>
+cd ../orqa-<task-name>
 ```
 
-Naming convention: `forge-<task>` (e.g., `forge-ipc-commands`, `forge-session-panel`).
+Naming convention: `orqa-<task>` (e.g., `orqa-ipc-commands`, `orqa-session-panel`).
 
 ### After Merge
 
@@ -97,14 +97,14 @@ Then clean up:
 
 ```bash
 git branch -d <task-name>
-git worktree remove ../forge-<task-name>
+git worktree remove ../orqa-<task-name>
 ```
 
 ### Background Process Discipline
 
 **BEFORE** removing any worktree or switching context:
 
-1. Check for running processes: `ps -ef | grep forge`
+1. Check for running processes: `ps -ef | grep orqa`
 2. Kill any processes tied to the worktree
 3. Only then proceed with removal
 

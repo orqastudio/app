@@ -2,13 +2,13 @@
 
 **Date:** 2026-03-02 | **Informed by:** [Information Architecture](/product/information-architecture), [Frontend Research](/research/frontend)
 
-How Forge's layout adapts to different window sizes. Forge is a desktop application — there is no mobile viewport — but windows can be resized from ultrawide monitors down to fairly small sizes.
+How Orqa Studio's layout adapts to different window sizes. Orqa Studio is a desktop application — there is no mobile viewport — but windows can be resized from ultrawide monitors down to fairly small sizes.
 
 ---
 
 ## Breakpoint Model
 
-Forge does not use CSS media query breakpoints in the traditional web sense. Instead, it uses **panel collapse points** — thresholds at which panels auto-collapse to maintain minimum usable widths.
+Orqa Studio does not use CSS media query breakpoints in the traditional web sense. Instead, it uses **panel collapse points** — thresholds at which panels auto-collapse to maintain minimum usable widths.
 
 ### Minimum Panel Widths
 

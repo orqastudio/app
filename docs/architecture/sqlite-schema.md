@@ -3,7 +3,7 @@
 **Date:** 2026-03-02 | **Updated:** 2026-03-04 | **Status:** Aligned with Phase 1 implementation
 **References:** [Persistence Research](/research/persistence) (AD-014), [Design Tokens Research](/research/design-tokens)
 
-Full table definitions, indexes, FTS5 configuration, and migration strategy for `forge.db`.
+Full table definitions, indexes, FTS5 configuration, and migration strategy for `orqa.db`.
 
 ---
 
@@ -339,7 +339,7 @@ src-tauri/migrations/
 
 ```rust
 // src-tauri/src/db.rs
-pub fn init_db(path: &str) -> Result<Connection, ForgeError> {
+pub fn init_db(path: &str) -> Result<Connection, OrqaError> {
     let conn = Connection::open(path)?;
     conn.execute_batch("PRAGMA journal_mode = WAL; ...");
     conn.execute_batch(include_str!("../migrations/001_initial_schema.sql"))?;
@@ -347,7 +347,7 @@ pub fn init_db(path: &str) -> Result<Connection, ForgeError> {
 }
 ```
 
-The database path is `forge.db` in the Tauri app data directory, resolved during `.setup()` in `lib.rs`.
+The database path is `orqa.db` in the Tauri app data directory, resolved during `.setup()` in `lib.rs`.
 
 For tests, `db::init_memory_db()` creates an in-memory SQLite database with the same schema.
 
@@ -442,14 +442,14 @@ WHERE pt.project_id = ? AND pt.is_active = 1;
 
 ## Global Store (Phase 5)
 
-Cross-project learning requires app-level storage outside any per-project `forge.db` database. A global SQLite database (e.g., `~/.forge/global.db`) would store:
+Cross-project learning requires app-level storage outside any per-project `orqa.db` database. A global SQLite database (e.g., `~/.orqa/global.db`) would store:
 
 - **Global lessons** — Lessons promoted from project scope, with a reference to their source project
 - **Global rules** — Rules promoted from project-local rules for cross-project enforcement
 - **Cross-project metrics and patterns** — Aggregated data across projects
 - **Tag-based categorization** — Language, framework, and domain tags for relevance matching when onboarding new projects
 
-This database is separate from per-project `forge.db` files. Global lessons reference their origin project but are not owned by it — deleting a project does not remove its contributed global lessons.
+This database is separate from per-project `orqa.db` files. Global lessons reference their origin project but are not owned by it — deleting a project does not remove its contributed global lessons.
 
 Schema design for `global.db` will be specified when Phase 5 implementation begins. The key constraint is that per-project databases remain self-contained; the global store is additive.
 

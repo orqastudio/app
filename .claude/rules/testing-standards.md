@@ -8,7 +8,7 @@
 |----------|------|---------|
 | `src-tauri/src/**/tests/` | Rust unit tests | Single-module logic, domain functions, utilities |
 | `src-tauri/tests/` | Rust integration tests | Cross-module flows, database interactions, file system operations |
-| `src/**/*.test.ts` | Frontend unit tests | Svelte components, stores, utility functions (Vitest) |
+| `ui/**/*.test.ts` | Frontend unit tests | Svelte components, stores, utility functions (Vitest) |
 | `tests/` (root) | E2E tests | Playwright browser tests against the running Tauri app |
 
 ## Coverage Requirements

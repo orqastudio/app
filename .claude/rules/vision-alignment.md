@@ -1,6 +1,6 @@
 # Vision Alignment (MANDATORY)
 
-Every feature, command, and UI element must serve Forge's product vision. Read `docs/product/vision.md` and `docs/product/governance.md` before implementing any new capability.
+Every feature, command, and UI element must serve Orqa Studio's product vision. Read `docs/product/vision.md` and `docs/product/governance.md` before implementing any new capability.
 
 ## Two-Pillar Test
 
@@ -10,7 +10,7 @@ Every feature MUST trace to at least one pillar:
 Covers: lesson capture from agent sessions, metric tracking (pass/fail rates, coverage trends, violation recurrence), retrospective generation, pattern promotion (lesson -> rule -> scanner -> enforcement), session continuity and handoff, codebase scanning and re-scanning, knowledge accumulation over time. The system gets smarter with every session — mistakes are documented, patterns are extracted, and governance artifacts are updated automatically.
 
 **Pillar 2: Process Governance**
-Covers: rule enforcement and visualization, agent definition management, scanner execution and dashboard, documentation browsing and editing, architecture decision tracking, skill management, quality gate enforcement, coding standard compliance. Governance is not a document collecting dust — it is a living, enforceable, visible layer of the development process that Forge makes tangible and manageable.
+Covers: rule enforcement and visualization, agent definition management, scanner execution and dashboard, documentation browsing and editing, architecture decision tracking, skill management, quality gate enforcement, coding standard compliance. Governance is not a document collecting dust — it is a living, enforceable, visible layer of the development process that Orqa Studio makes tangible and manageable.
 
 ## Feature Rejection Criteria
 
@@ -77,7 +77,7 @@ If the user gives an instruction that appears to conflict with a foundational pr
 **Examples of instructions that should be questioned:**
 
 - "Skip the SQLite layer and just use localStorage" -> Conflicts with the persistence architecture (SQLite for structured data)
-- "Add a web server so Forge can be used in the browser" -> Conflicts with the desktop-app scope (Tauri)
+- "Add a web server so Orqa Studio can be used in the browser" -> Conflicts with the desktop-app scope (Tauri)
 - "Let components call invoke() directly instead of going through stores" -> Conflicts with component purity principle
 - "Just use unwrap() here, it'll never panic" -> Conflicts with error propagation principle
 - "Add a feature that has nothing to do with learning or governance" -> Conflicts with pillar alignment

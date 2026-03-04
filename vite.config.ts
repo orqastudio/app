@@ -9,8 +9,11 @@ export default defineConfig({
     port: 1420,
     strictPort: true,
     allowedHosts: true,
+    fs: {
+      allow: ['ui', '.svelte-kit', 'node_modules']
+    },
     watch: {
-      ignored: ['**/.forge/**']
+      ignored: ['**/.orqa/**']
     }
   }
 });

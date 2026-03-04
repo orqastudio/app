@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-02 | **Informed by:** [Information Architecture](/product/information-architecture), [Frontend Research](/research/frontend), [MVP Spec F-007, F-008](/product/mvp-specification)
 
-The artifact browser surfaces governance artifacts (Docs, Agents, Rules, Skills, Hooks) as a navigation list in the Nav Sub-Panel and as a rendered/editable view in the Explorer Panel. The artifact list and viewer are split across two zones so the conversation remains visible in the Chat Panel — the core workflow is collaborating with Claude *on* artifacts. Artifacts are Markdown files with YAML frontmatter stored in `.forge/` directories.
+The artifact browser surfaces governance artifacts (Docs, Agents, Rules, Skills, Hooks) as a navigation list in the Nav Sub-Panel and as a rendered/editable view in the Explorer Panel. The artifact list and viewer are split across two zones so the conversation remains visible in the Chat Panel — the core workflow is collaborating with Claude *on* artifacts. Artifacts are Markdown files with YAML frontmatter stored in `.orqa/` directories.
 
 ---
 
@@ -104,7 +104,7 @@ The Rules tab shows rule artifacts with their applicable path scopes, helping us
       <&shield> <b>component-patterns</b> | . | <&media-record> active
       Svelte 5 runes, $props(),
       snippet-based composition
-      <i><&folder> src/lib/**/*.svelte</i>
+      <i><&folder> ui/lib/**/*.svelte</i>
     }
     ---
     {
@@ -172,7 +172,7 @@ When clicking an artifact in the browser, the Explorer Panel switches from the l
     <b>Guidelines</b>
     .
     - Follow the project's error handling rules:
-      use Result<T, ForgeError> for all fallible
+      use Result<T, Orqa StudioError> for all fallible
       operations
     - Prefer async functions using tokio
     - Write integration tests for all new endpoints
@@ -254,7 +254,7 @@ The source editing mode replaces the rendered view in the Explorer Panel with a 
       # Guidelines
       .
       ""- Follow the project's error handling rules:""
-      ""  use Result<T, ForgeError> for all""
+      ""  use Result<T, Orqa StudioError> for all""
       ""  fallible operations""
       ""- Prefer async functions using tokio""
       ""- Write integration tests for all new""

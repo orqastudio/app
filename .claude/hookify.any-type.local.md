@@ -6,7 +6,7 @@ action: block
 conditions:
   - field: file_path
     operator: regex_match
-    pattern: src/.*\.(ts|svelte)$
+    pattern: ui/.*\.(ts|svelte)$
   - field: new_text
     operator: regex_match
     pattern: :\s*any\b|as\s+any\b|<any>
