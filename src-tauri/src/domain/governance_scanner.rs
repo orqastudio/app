@@ -9,11 +9,10 @@ const CONTENT_PREVIEW_CHARS: usize = 500;
 /// Total number of canonical governance areas checked for coverage ratio.
 const TOTAL_AREAS: usize = 7;
 
-/// Scan a project directory for governance files across all known tool ecosystems.
+/// Scan a project directory for governance files across the 7 canonical Claude governance areas.
 ///
-/// Returns a `GovernanceScanResult` covering 7 canonical Claude governance areas
-/// plus detection of non-Claude governance tools (Cursor, Copilot, Continue).
-/// The `coverage_ratio` is computed over the 7 canonical areas only.
+/// Returns a `GovernanceScanResult` covering all 7 Claude governance areas.
+/// The `coverage_ratio` is computed over all 7 areas.
 pub fn scan_governance(project_path: &Path) -> Result<GovernanceScanResult, OrqaError> {
     if !project_path.exists() || !project_path.is_dir() {
         return Err(OrqaError::Validation(format!(
@@ -22,15 +21,10 @@ pub fn scan_governance(project_path: &Path) -> Result<GovernanceScanResult, Orqa
         )));
     }
 
-    let mut areas = scan_claude_areas(project_path);
-    areas.extend(scan_non_claude_areas(project_path));
+    let areas = scan_claude_areas(project_path);
 
-    let covered_canonical = areas
-        .iter()
-        .filter(|a| a.source == "claude" && a.covered)
-        .count();
-
-    let coverage_ratio = covered_canonical as f64 / TOTAL_AREAS as f64;
+    let covered = areas.iter().filter(|a| a.covered).count();
+    let coverage_ratio = covered as f64 / TOTAL_AREAS as f64;
 
     Ok(GovernanceScanResult {
         areas,
@@ -179,100 +173,6 @@ fn scan_single_file_area(name: &str, source: &str, path: &Path) -> GovernanceAre
     }
 }
 
-/// Scan for non-Claude governance tools (Cursor, Copilot, Continue).
-fn scan_non_claude_areas(project_root: &Path) -> Vec<GovernanceArea> {
-    vec![
-        scan_cursor_area(project_root),
-        scan_copilot_area(project_root),
-        scan_continue_area(project_root),
-    ]
-}
-
-/// Scan for Cursor rules (`.cursor/rules/` directory and `.cursorrules` file).
-fn scan_cursor_area(project_root: &Path) -> GovernanceArea {
-    let cursor_rules_dir = project_root.join(".cursor").join("rules");
-    let cursorrules = project_root.join(".cursorrules");
-    let mut files = Vec::new();
-
-    if cursor_rules_dir.is_dir() {
-        if let Ok(entries) = std::fs::read_dir(&cursor_rules_dir) {
-            for entry in entries.flatten() {
-                let path = entry.path();
-                if path.is_file() {
-                    if let Some(f) = read_governance_file(&path) {
-                        files.push(f);
-                    }
-                }
-            }
-        }
-    }
-    if cursorrules.is_file() {
-        if let Some(f) = read_governance_file(&cursorrules) {
-            files.push(f);
-        }
-    }
-    files.sort_by(|a, b| a.path.cmp(&b.path));
-    let covered = !files.is_empty();
-    GovernanceArea {
-        name: "cursor".to_string(),
-        source: "cursor".to_string(),
-        files,
-        covered,
-    }
-}
-
-/// Scan for GitHub Copilot instructions (`.github/copilot-instructions.md`).
-fn scan_copilot_area(project_root: &Path) -> GovernanceArea {
-    let copilot_path = project_root.join(".github").join("copilot-instructions.md");
-    let files = if copilot_path.is_file() {
-        read_governance_file(&copilot_path)
-            .into_iter()
-            .collect::<Vec<_>>()
-    } else {
-        Vec::new()
-    };
-    let covered = !files.is_empty();
-    GovernanceArea {
-        name: "copilot".to_string(),
-        source: "copilot".to_string(),
-        files,
-        covered,
-    }
-}
-
-/// Scan for Continue IDE extension configuration (`.continue/` directory).
-fn scan_continue_area(project_root: &Path) -> GovernanceArea {
-    let continue_dir = project_root.join(".continue");
-    let files = if continue_dir.is_dir() {
-        collect_files_in_dir(&continue_dir)
-    } else {
-        Vec::new()
-    };
-    let covered = !files.is_empty();
-    GovernanceArea {
-        name: "continue".to_string(),
-        source: "continue".to_string(),
-        files,
-        covered,
-    }
-}
-
-/// Collect all files directly in a directory (non-recursive).
-fn collect_files_in_dir(dir: &Path) -> Vec<GovernanceFile> {
-    let mut files = Vec::new();
-    if let Ok(entries) = std::fs::read_dir(dir) {
-        for entry in entries.flatten() {
-            if entry.path().is_file() {
-                if let Some(f) = read_governance_file(&entry.path()) {
-                    files.push(f);
-                }
-            }
-        }
-    }
-    files.sort_by(|a, b| a.path.cmp(&b.path));
-    files
-}
-
 /// Read a governance file using its absolute path as the stored path.
 ///
 /// Returns `None` if the file metadata cannot be read (e.g. permissions error).
@@ -349,9 +249,8 @@ mod tests {
         let result = scan_governance(&dir).expect("scan");
 
         assert_eq!(result.coverage_ratio, 0.0);
-        // 7 canonical + 3 non-Claude areas
-        assert_eq!(result.areas.len(), 10);
-        for area in result.areas.iter().filter(|a| a.source == "claude") {
+        assert_eq!(result.areas.len(), 7);
+        for area in &result.areas {
             assert!(!area.covered);
         }
 
@@ -424,43 +323,6 @@ mod tests {
             "expected ratio ~{expected:.4}, got {:.4}",
             result.coverage_ratio
         );
-
-        cleanup(&dir);
-    }
-
-    #[test]
-    fn cursor_rules_detected() {
-        let dir = create_test_dir("cursor");
-        let cursor_dir = dir.join(".cursor").join("rules");
-        fs::create_dir_all(&cursor_dir).expect("mkdir");
-        fs::write(cursor_dir.join("my-rule.md"), "# Cursor Rule").expect("write");
-
-        let result = scan_governance(&dir).expect("scan");
-        let cursor_area = result
-            .areas
-            .iter()
-            .find(|a| a.name == "cursor")
-            .expect("cursor area");
-        assert!(cursor_area.covered);
-        assert_eq!(cursor_area.files.len(), 1);
-
-        cleanup(&dir);
-    }
-
-    #[test]
-    fn copilot_instructions_detected() {
-        let dir = create_test_dir("copilot");
-        let github_dir = dir.join(".github");
-        fs::create_dir_all(&github_dir).expect("mkdir");
-        fs::write(github_dir.join("copilot-instructions.md"), "# Copilot").expect("write");
-
-        let result = scan_governance(&dir).expect("scan");
-        let area = result
-            .areas
-            .iter()
-            .find(|a| a.name == "copilot")
-            .expect("copilot area");
-        assert!(area.covered);
 
         cleanup(&dir);
     }

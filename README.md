@@ -1,7 +1,5 @@
 ![Orqa Studio](ui/lib/assets/banner.png)
 
-# Orqa Studio
-
 A desktop app for managed agentic development. Claude Code's capabilities with a visual process layer.
 
 **Core idea:** The governance framework that makes agentic development reliable (agents, skills, rules, learning loops, documentation-first workflow) is currently invisible infrastructure. Orqa Studio makes it tangible — a workspace where process artifacts live alongside the conversation as interactive, editable documents.
