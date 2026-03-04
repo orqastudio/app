@@ -37,6 +37,10 @@ impl SearchStore {
     }
 
     /// Create the chunks table and index if they do not already exist.
+    ///
+    /// Embeddings are stored as BLOBs (raw f32 bytes) for compatibility with
+    /// the DuckDB Rust crate, which does not implement `ToSql`/`FromSql` for
+    /// typed arrays. The application handles serialization.
     fn ensure_schema(&self) -> Result<(), StoreError> {
         self.conn.execute_batch(
             "CREATE SEQUENCE IF NOT EXISTS seq_chunk_id START 1;
@@ -47,7 +51,7 @@ impl SearchStore {
                  end_line INTEGER NOT NULL,
                  content TEXT NOT NULL,
                  language TEXT,
-                 embedding FLOAT[384]
+                 embedding BLOB
              );
              CREATE INDEX IF NOT EXISTS idx_chunks_file ON chunks(file_path);",
         )?;
@@ -182,6 +186,158 @@ impl SearchStore {
             last_indexed: None,
             index_path: self.index_path.to_string_lossy().to_string(),
         })
+    }
+
+    /// Update the embedding vector for a specific chunk.
+    ///
+    /// Serializes the `f32` slice to raw bytes for BLOB storage.
+    pub fn update_embedding(&self, chunk_id: i32, embedding: &[f32]) -> Result<(), StoreError> {
+        let bytes = floats_to_bytes(embedding);
+        self.conn.execute(
+            "UPDATE chunks SET embedding = ? WHERE id = ?",
+            params![bytes, chunk_id],
+        )?;
+        Ok(())
+    }
+
+    /// Batch update embeddings for multiple chunks.
+    pub fn update_embeddings(&self, updates: &[(i32, Vec<f32>)]) -> Result<(), StoreError> {
+        let mut stmt = self
+            .conn
+            .prepare("UPDATE chunks SET embedding = ? WHERE id = ?")?;
+        for (chunk_id, embedding) in updates {
+            let bytes = floats_to_bytes(embedding);
+            stmt.execute(params![bytes, *chunk_id])?;
+        }
+        Ok(())
+    }
+
+    /// Get chunks that do not have embeddings yet, returning their IDs and content.
+    pub fn get_unembedded_chunks(&self) -> Result<Vec<(i32, String)>, StoreError> {
+        let mut stmt = self.conn.prepare(
+            "SELECT id, content FROM chunks WHERE embedding IS NULL ORDER BY id",
+        )?;
+        let rows = stmt.query_map([], |row| {
+            Ok((row.get::<_, i32>(0)?, row.get::<_, String>(1)?))
+        })?;
+        let mut result = Vec::new();
+        for row in rows {
+            result.push(row?);
+        }
+        Ok(result)
+    }
+
+    /// Semantic search by computing cosine similarity against stored embeddings.
+    ///
+    /// Fetches all embedded chunks, computes cosine similarity in Rust,
+    /// and returns the top `max_results` matches sorted by score descending.
+    pub fn search_semantic(
+        &self,
+        query_embedding: &[f32],
+        max_results: u32,
+    ) -> Result<Vec<SearchResult>, StoreError> {
+        let mut stmt = self.conn.prepare(
+            "SELECT id, file_path, start_line, end_line, content, language, embedding \
+             FROM chunks WHERE embedding IS NOT NULL",
+        )?;
+
+        let rows = stmt.query_map([], |row| {
+            let id: i32 = row.get(0)?;
+            let file_path: String = row.get(1)?;
+            let start_line: i32 = row.get(2)?;
+            let end_line: i32 = row.get(3)?;
+            let content: String = row.get(4)?;
+            let language: Option<String> = row.get(5)?;
+            let embedding_bytes: Vec<u8> = row.get(6)?;
+            let embedding = bytes_to_floats(&embedding_bytes);
+            Ok((id, file_path, start_line, end_line, content, language, embedding))
+        })?;
+
+        let mut scored: Vec<(f64, SearchResult)> = Vec::new();
+
+        for row_result in rows {
+            let (_id, file_path, start_line, end_line, content, language, embedding) =
+                row_result?;
+
+            let score = cosine_similarity(query_embedding, &embedding);
+
+            let match_context = content
+                .lines()
+                .take(3)
+                .collect::<Vec<_>>()
+                .join("\n");
+
+            scored.push((
+                score,
+                SearchResult {
+                    file_path,
+                    start_line: start_line as u32,
+                    end_line: end_line as u32,
+                    content,
+                    language,
+                    score,
+                    match_context,
+                },
+            ));
+        }
+
+        // Sort by score descending
+        scored.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
+
+        // Take top results
+        let results = scored
+            .into_iter()
+            .take(max_results as usize)
+            .map(|(_, result)| result)
+            .collect();
+
+        Ok(results)
+    }
+}
+
+/// Serialize a slice of f32 values to raw little-endian bytes.
+fn floats_to_bytes(floats: &[f32]) -> Vec<u8> {
+    let mut bytes = Vec::with_capacity(floats.len() * 4);
+    for f in floats {
+        bytes.extend_from_slice(&f.to_le_bytes());
+    }
+    bytes
+}
+
+/// Deserialize raw little-endian bytes back to f32 values.
+fn bytes_to_floats(bytes: &[u8]) -> Vec<f32> {
+    bytes
+        .chunks_exact(4)
+        .map(|chunk| {
+            let arr: [u8; 4] = [chunk[0], chunk[1], chunk[2], chunk[3]];
+            f32::from_le_bytes(arr)
+        })
+        .collect()
+}
+
+/// Compute cosine similarity between two vectors.
+fn cosine_similarity(a: &[f32], b: &[f32]) -> f64 {
+    if a.len() != b.len() || a.is_empty() {
+        return 0.0;
+    }
+
+    let mut dot = 0.0f64;
+    let mut norm_a = 0.0f64;
+    let mut norm_b = 0.0f64;
+
+    for (x, y) in a.iter().zip(b.iter()) {
+        let x = f64::from(*x);
+        let y = f64::from(*y);
+        dot += x * y;
+        norm_a += x * x;
+        norm_b += y * y;
+    }
+
+    let denom = norm_a.sqrt() * norm_b.sqrt();
+    if denom > 0.0 {
+        dot / denom
+    } else {
+        0.0
     }
 }
 

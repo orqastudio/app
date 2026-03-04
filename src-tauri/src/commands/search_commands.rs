@@ -52,6 +52,23 @@ pub async fn search_regex(
     engine.search_regex(&pattern, path.as_deref(), max_results.unwrap_or(20))
 }
 
+/// Search the indexed codebase using semantic similarity.
+///
+/// Embeds the natural language query and finds the most semantically similar
+/// code chunks. Requires the codebase to be indexed and embeddings generated.
+#[tauri::command]
+pub async fn search_semantic(
+    state: State<'_, AppState>,
+    query: String,
+    max_results: Option<u32>,
+) -> Result<Vec<SearchResult>, String> {
+    let mut search_guard = state.search.lock().map_err(|e| e.to_string())?;
+    let engine = search_guard
+        .as_mut()
+        .ok_or_else(|| "search index not initialized — index the codebase first".to_string())?;
+    engine.search_semantic(&query, max_results.unwrap_or(10))
+}
+
 /// Get the current status of the search index for a project.
 ///
 /// If the search engine is not loaded but a database file exists on disk,

@@ -55,10 +55,11 @@ const TOOL_SYSTEM_PROMPT = `You have access to these tools:
 - glob: Find files matching a glob pattern
 - grep: Search file contents with regex
 - search_regex: Search indexed codebase with a regex pattern (must be indexed first)
+- search_semantic: Search codebase using natural language (semantic similarity, must be indexed with embeddings first)
 
 Use these tools by their short names. When referencing tools in your responses, use the short name (e.g. "read_file" not "mcp__forge__read_file").
 
-For understanding code structure, use grep with relevant patterns. For precise text matching, use grep. For searching the indexed codebase, use search_regex.`;
+For understanding code structure, use grep with relevant patterns. For precise text matching, use grep. For searching the indexed codebase, use search_regex. For natural language code search, use search_semantic.`;
 
 /**
  * Strip MCP server prefixes from tool names.
@@ -269,6 +270,16 @@ function createForgeToolServer(sendResponse: ResponseSender) {
                 async (args) => {
                     return await executeToolViaRust(
                         'search_regex', args, sendResponse,
+                    );
+                },
+            ),
+            tool(
+                'search_semantic',
+                'Search the codebase using natural language. Finds semantically similar code chunks. Best for understanding how things work, finding related patterns, or exploring unfamiliar code. The codebase must be indexed with embeddings first.',
+                { query: z.string(), max_results: z.number().optional() },
+                async (args) => {
+                    return await executeToolViaRust(
+                        'search_semantic', args, sendResponse,
                     );
                 },
             ),

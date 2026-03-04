@@ -99,6 +99,7 @@ pub fn run() {
             // Search commands
             commands::search_commands::index_codebase,
             commands::search_commands::search_regex,
+            commands::search_commands::search_semantic,
             commands::search_commands::get_index_status,
         ])
         .run(tauri::generate_context!())
