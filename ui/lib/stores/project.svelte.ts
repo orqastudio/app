@@ -139,23 +139,17 @@ class ProjectStore {
 	/** Upload a project icon from a file path */
 	async uploadIcon(sourcePath: string) {
 		if (!this.projectPath || !this.projectSettings) {
-			console.error("[uploadIcon] bail: projectPath=", this.projectPath, "settings=", !!this.projectSettings);
 			return;
 		}
 		try {
-			console.log("[uploadIcon] calling project_icon_upload", { project_path: this.projectPath, source_path: sourcePath });
 			const filename = await invoke<string>("project_icon_upload", {
 				project_path: this.projectPath,
 				source_path: sourcePath,
 			});
-			console.log("[uploadIcon] got filename:", filename);
 			this.projectSettings = { ...this.projectSettings, icon: filename };
 			await this.saveProjectSettings(this.projectPath, this.projectSettings);
-			console.log("[uploadIcon] settings saved, loading icon...");
 			await this.loadIcon();
-			console.log("[uploadIcon] done, iconDataUrl set:", !!this.iconDataUrl);
 		} catch (err: unknown) {
-			console.error("[uploadIcon] error:", err);
 			const message = err instanceof Error ? err.message : String(err);
 			this.error = `Failed to upload icon: ${message}`;
 		}
@@ -164,20 +158,16 @@ class ProjectStore {
 	/** Load the project icon as a data URL */
 	async loadIcon() {
 		if (!this.projectPath || !this.projectSettings?.icon) {
-			console.log("[loadIcon] bail: projectPath=", this.projectPath, "icon=", this.projectSettings?.icon);
 			this.iconDataUrl = null;
 			return;
 		}
 		try {
-			console.log("[loadIcon] calling project_icon_read", { project_path: this.projectPath, icon_filename: this.projectSettings.icon });
 			const dataUrl = await invoke<string>("project_icon_read", {
 				project_path: this.projectPath,
 				icon_filename: this.projectSettings.icon,
 			});
-			console.log("[loadIcon] got dataUrl length:", dataUrl?.length);
 			this.iconDataUrl = dataUrl;
-		} catch (err) {
-			console.error("[loadIcon] error:", err);
+		} catch {
 			this.iconDataUrl = null;
 		}
 	}
