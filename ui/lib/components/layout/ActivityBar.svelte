@@ -3,6 +3,7 @@
 	import FileTextIcon from "@lucide/svelte/icons/file-text";
 	import BotIcon from "@lucide/svelte/icons/bot";
 	import ShieldIcon from "@lucide/svelte/icons/shield";
+	import ShieldAlertIcon from "@lucide/svelte/icons/shield-alert";
 	import ZapIcon from "@lucide/svelte/icons/zap";
 	import GitBranchIcon from "@lucide/svelte/icons/git-branch";
 	import SettingsIcon from "@lucide/svelte/icons/settings";
@@ -30,6 +31,7 @@
 		{ view: "rules", icon: ShieldIcon, label: "Rules" },
 		{ view: "skills", icon: ZapIcon, label: "Skills" },
 		{ view: "hooks", icon: GitBranchIcon, label: "Hooks" },
+		{ view: "enforcement", icon: ShieldAlertIcon, label: "Enforcement" },
 	];
 </script>
 

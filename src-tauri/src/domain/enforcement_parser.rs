@@ -15,6 +15,8 @@ struct RawEntry {
     #[serde(default)]
     conditions: Vec<RawCondition>,
     pattern: Option<String>,
+    #[serde(default)]
+    scope: Option<String>,
 }
 
 /// Raw YAML frontmatter shape for a condition.
@@ -66,6 +68,7 @@ fn parse_entry(raw: RawEntry) -> Result<EnforcementEntry, OrqaError> {
     let event = match raw.event.as_str() {
         "file" => EventType::File,
         "bash" => EventType::Bash,
+        "scan" => EventType::Scan,
         other => {
             return Err(OrqaError::Validation(format!(
                 "unknown enforcement event type: '{other}'"
@@ -97,6 +100,7 @@ fn parse_entry(raw: RawEntry) -> Result<EnforcementEntry, OrqaError> {
         action,
         conditions,
         pattern: raw.pattern,
+        scope: raw.scope,
     })
 }
 
@@ -230,6 +234,7 @@ mod tests {
                 },
             ],
             pattern: None,
+            scope: None,
         };
         let entry = parse_entry(raw).expect("should parse");
         assert_eq!(entry.event, EventType::File);
@@ -244,6 +249,7 @@ mod tests {
             action: "warn".to_string(),
             conditions: vec![],
             pattern: Some("--no-verify".to_string()),
+            scope: None,
         };
         let entry = parse_entry(raw).expect("should parse");
         assert_eq!(entry.event, EventType::Bash);
@@ -258,6 +264,7 @@ mod tests {
             action: "block".to_string(),
             conditions: vec![],
             pattern: None,
+            scope: None,
         };
         assert!(parse_entry(raw).is_err());
     }
@@ -269,8 +276,29 @@ mod tests {
             action: "ignore".to_string(),
             conditions: vec![],
             pattern: None,
+            scope: None,
         };
         assert!(parse_entry(raw).is_err());
+    }
+
+    #[test]
+    fn parse_entry_scan_with_scope() {
+        let raw = RawEntry {
+            event: "scan".to_string(),
+            action: "warn".to_string(),
+            conditions: vec![RawCondition {
+                field: "content".to_string(),
+                pattern: r"unwrap\(\)".to_string(),
+            }],
+            pattern: None,
+            scope: Some(".claude/agents/*.md".to_string()),
+        };
+        let entry = parse_entry(raw).expect("should parse");
+        assert_eq!(entry.event, EventType::Scan);
+        assert_eq!(entry.action, RuleAction::Warn);
+        assert_eq!(entry.conditions.len(), 1);
+        assert_eq!(entry.scope.as_deref(), Some(".claude/agents/*.md"));
+        assert!(entry.pattern.is_none());
     }
 
     #[test]

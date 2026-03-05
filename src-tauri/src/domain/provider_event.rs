@@ -56,6 +56,16 @@ pub enum StreamEvent {
         /// JSON string of the tool parameters, for display in the UI.
         input: String,
     },
+    /// Emitted after a turn completes when a process compliance violation is detected.
+    ///
+    /// Violations are warnings only — they do not block execution. The frontend
+    /// should display them to draw attention to documentation-first process failures.
+    ProcessViolation {
+        /// Machine-readable check identifier (e.g. `"docs_before_code"`).
+        check: String,
+        /// Human-readable description of the violation.
+        message: String,
+    },
 }
 
 #[cfg(test)]

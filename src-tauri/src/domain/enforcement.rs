@@ -8,6 +8,8 @@ pub enum EventType {
     File,
     /// Applies to bash tool calls.
     Bash,
+    /// Applies to on-demand governance scans across project files.
+    Scan,
 }
 
 /// What happens when an enforcement entry matches.
@@ -35,15 +37,38 @@ pub struct Condition {
 /// One enforcement entry within a rule file's frontmatter.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EnforcementEntry {
-    /// Whether this applies to file or bash events.
+    /// Whether this applies to file, bash, or scan events.
     pub event: EventType,
     /// Whether to block or warn on match.
     pub action: RuleAction,
-    /// Conditions for file events (all must match).
+    /// Conditions for file and scan events (all must match).
     #[serde(default)]
     pub conditions: Vec<Condition>,
     /// Pattern for bash events (single regex against the full command).
     pub pattern: Option<String>,
+    /// Glob pattern for scan events (e.g., `.claude/agents/*.md`).
+    ///
+    /// Defines which project files are scanned when this entry is evaluated.
+    /// Resolved relative to the project root at scan time.
+    #[serde(default)]
+    pub scope: Option<String>,
+}
+
+/// A finding produced by a governance scan entry.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ScanFinding {
+    /// The name of the rule that produced this finding.
+    pub rule_name: String,
+    /// Whether this finding is a block or warn.
+    pub action: RuleAction,
+    /// The path to the file where the violation was found.
+    pub file_path: String,
+    /// The 1-based line number of the matching line.
+    pub line: usize,
+    /// The content of the matching line (trimmed).
+    pub content: String,
+    /// An excerpt of the rule prose for context.
+    pub message: String,
 }
 
 /// A parsed enforcement rule from a `.claude/rules/*.md` file.

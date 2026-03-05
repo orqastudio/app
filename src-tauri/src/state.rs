@@ -5,6 +5,7 @@ use std::sync::{Arc, Mutex};
 use rusqlite::Connection;
 
 use crate::domain::enforcement_engine::EnforcementEngine;
+use crate::domain::process_state::SessionProcessState;
 use crate::search::SearchEngine;
 use crate::sidecar::manager::SidecarManager;
 use crate::startup::StartupTracker;
@@ -37,4 +38,9 @@ pub struct AppState {
     ///
     /// `None` until the first project is opened. Reloaded via `enforcement_rules_reload`.
     pub enforcement: Mutex<Option<EnforcementEngine>>,
+    /// Session-level process compliance state.
+    ///
+    /// Tracks whether docs were read and skills were loaded before code was written.
+    /// Resets when `stream_send_message` is called for a different session.
+    pub process_state: Mutex<SessionProcessState>,
 }

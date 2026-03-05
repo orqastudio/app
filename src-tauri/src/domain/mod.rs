@@ -5,6 +5,7 @@ pub mod enforcement_parser;
 pub mod governance;
 pub mod governance_scanner;
 pub mod message;
+pub mod process_state;
 pub mod project;
 pub mod project_scanner;
 pub mod project_settings;

@@ -2,7 +2,7 @@ use std::path::Path;
 
 use tauri::State;
 
-use crate::domain::enforcement::EnforcementRule;
+use crate::domain::enforcement::{EnforcementRule, ScanFinding};
 use crate::domain::enforcement_engine::EnforcementEngine;
 use crate::error::OrqaError;
 use crate::repo::project_repo;
@@ -59,6 +59,31 @@ pub fn enforcement_rules_reload(state: State<'_, AppState>) -> Result<usize, Orq
         rules_dir.display()
     );
     Ok(count)
+}
+
+/// Scan the active project's governance files for rule violations.
+///
+/// Runs all `event: scan` enforcement entries against the project files matching
+/// each entry's `scope` glob. Returns a flat list of findings across all scan
+/// entries and all matching files.
+///
+/// Returns an empty list if no project is active or the enforcement engine has
+/// not been loaded yet.
+#[tauri::command]
+pub fn enforcement_scan_governance(
+    state: State<'_, AppState>,
+) -> Result<Vec<ScanFinding>, OrqaError> {
+    let project_path = resolve_active_project_path(&state)?;
+
+    let guard = state
+        .enforcement
+        .lock()
+        .map_err(|e| OrqaError::Database(format!("enforcement lock poisoned: {e}")))?;
+
+    match guard.as_ref() {
+        None => Ok(Vec::new()),
+        Some(engine) => engine.scan(Path::new(&project_path)),
+    }
 }
 
 /// Resolve the active project's path from the database.

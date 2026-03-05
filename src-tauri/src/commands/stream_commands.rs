@@ -8,6 +8,15 @@ use crate::state::AppState;
 use std::path::{Path, PathBuf};
 use std::sync::mpsc;
 
+/// Maximum number of characters to return from a single tool output.
+///
+/// Outputs exceeding this limit are truncated with an explanatory message.
+/// This prevents context window overflow when tools return very large results.
+const MAX_TOOL_OUTPUT_CHARS: usize = 100_000;
+
+/// Default maximum number of lines returned by `read_file`.
+const DEFAULT_READ_FILE_MAX_LINES: usize = 2000;
+
 /// Tool names that are read-only and can be auto-approved without user interaction.
 const READ_ONLY_TOOLS: &[&str] = &[
     "read_file",
@@ -18,6 +27,46 @@ const READ_ONLY_TOOLS: &[&str] = &[
     "load_skill",
     "code_research",
 ];
+
+/// Truncate a tool output string to `MAX_TOOL_OUTPUT_CHARS` characters.
+///
+/// When the output exceeds the limit, the returned string contains the first
+/// `MAX_TOOL_OUTPUT_CHARS` characters followed by a clear truncation notice.
+/// This prevents context window overflow when tools return very large results.
+fn truncate_tool_output(output: String) -> String {
+    if output.len() <= MAX_TOOL_OUTPUT_CHARS {
+        return output;
+    }
+    let truncated = &output[..MAX_TOOL_OUTPUT_CHARS];
+    format!(
+        "{truncated}\n\n[Output truncated: {} chars total, showing first {MAX_TOOL_OUTPUT_CHARS}]",
+        output.len()
+    )
+}
+
+/// Translate a context-overflow error code into a user-friendly message.
+///
+/// Returns `Some(friendly_message)` when the code indicates a context/token
+/// limit error that should be surfaced with a clear explanation.
+fn friendly_context_overflow_message(code: &str, message: &str) -> Option<String> {
+    let lower_code = code.to_lowercase();
+    let lower_msg = message.to_lowercase();
+    let is_overflow = lower_code.contains("context")
+        || lower_code.contains("token")
+        || lower_msg.contains("context window")
+        || lower_msg.contains("token limit")
+        || lower_msg.contains("too long")
+        || lower_msg.contains("max_tokens");
+    if is_overflow {
+        Some(
+            "The conversation has exceeded the model's context window. \
+             Start a new session to continue, or summarize earlier context before proceeding."
+                .to_string(),
+        )
+    } else {
+        None
+    }
+}
 
 /// Translate a `SidecarResponse` into a `StreamEvent`, if applicable.
 ///
@@ -81,11 +130,15 @@ fn translate_response(response: &SidecarResponse) -> Option<StreamEvent> {
             code,
             message,
             recoverable,
-        } => Some(StreamEvent::StreamError {
-            code: code.clone(),
-            message: message.clone(),
-            recoverable: *recoverable,
-        }),
+        } => {
+            let user_message =
+                friendly_context_overflow_message(code, message).unwrap_or_else(|| message.clone());
+            Some(StreamEvent::StreamError {
+                code: code.clone(),
+                message: user_message,
+                recoverable: *recoverable,
+            })
+        }
         SidecarResponse::StreamCancelled => Some(StreamEvent::StreamCancelled),
         // Non-streaming responses — not forwarded to the frontend channel
         SidecarResponse::HealthOk { .. } | SidecarResponse::SummaryResult { .. } => None,
@@ -160,7 +213,12 @@ fn handle_tool_execute(
     on_event: &tauri::ipc::Channel<StreamEvent>,
 ) -> bool {
     tracing::debug!("[stream] received ToolExecute: id={tool_call_id} tool={tool_name}");
-    let (output, is_error) = execute_tool(tool_name, input, state);
+    let (raw_output, is_error) = execute_tool(tool_name, input, state);
+
+    // Track completed tool call for process compliance checks.
+    track_process_state(tool_name, input, state);
+
+    let output = truncate_tool_output(raw_output);
     let tool_result = SidecarRequest::ToolResult {
         tool_call_id: tool_call_id.to_string(),
         output,
@@ -420,6 +478,69 @@ fn persist_assistant_message(
     Ok(())
 }
 
+/// Reset the session process state when a new session begins.
+///
+/// If the stored session id differs from `session_id`, all process compliance
+/// flags are cleared and the session id is updated. This ensures violations
+/// from a previous conversation do not carry over into a new one.
+fn reset_process_state_if_new_session(state: &tauri::State<'_, AppState>, session_id: i64) {
+    match state.process_state.lock() {
+        Ok(mut ps) => {
+            if ps.session_id != Some(session_id) {
+                ps.reset(session_id);
+            }
+        }
+        Err(e) => {
+            tracing::warn!("[process] process_state mutex poisoned, skipping reset: {e}");
+        }
+    }
+}
+
+/// Record a completed tool call in the session process state.
+///
+/// Parses `input_json` into a `serde_json::Value`; silently skips tracking
+/// if the JSON is malformed (the tool execution result takes precedence).
+fn track_process_state(tool_name: &str, input_json: &str, state: &tauri::State<'_, AppState>) {
+    let input: serde_json::Value = match serde_json::from_str(input_json) {
+        Ok(v) => v,
+        Err(_) => return,
+    };
+    match state.process_state.lock() {
+        Ok(mut ps) => ps.track_tool_call(tool_name, &input),
+        Err(e) => {
+            tracing::warn!("[process] process_state mutex poisoned, skipping track: {e}");
+        }
+    }
+}
+
+/// Emit `StreamEvent::ProcessViolation` for any active process compliance violations.
+///
+/// Called after every turn completes. Violations are warnings only and do not
+/// interrupt the stream or prevent persistence.
+fn emit_process_violations(
+    state: &tauri::State<'_, AppState>,
+    on_event: &tauri::ipc::Channel<StreamEvent>,
+) {
+    let violations = match state.process_state.lock() {
+        Ok(ps) => ps.check_violations(),
+        Err(e) => {
+            tracing::warn!("[process] process_state mutex poisoned, skipping violation check: {e}");
+            return;
+        }
+    };
+    for v in violations {
+        tracing::debug!(
+            "[process] violation: check={} severity={}",
+            v.check,
+            v.severity
+        );
+        let _ = on_event.send(StreamEvent::ProcessViolation {
+            check: v.check,
+            message: v.message,
+        });
+    }
+}
+
 /// Read a governance file from the project directory, returning its contents.
 /// Returns `None` if the file does not exist, `Err` on read errors.
 fn read_governance_file(project_path: &Path, relative: &str) -> Result<Option<String>, OrqaError> {
@@ -575,6 +696,8 @@ pub fn stream_send_message(
 
     let (user_message_id, turn_index) = persist_user_message(&state, session_id, &content)?;
 
+    reset_process_state_if_new_session(&state, session_id);
+
     super::sidecar_commands::ensure_sidecar_running(&state)?;
 
     let system_prompt = match project_root(&state) {
@@ -605,6 +728,8 @@ pub fn stream_send_message(
     let acc = run_stream_loop(&state, &on_event);
 
     persist_assistant_message(&state, session_id, turn_index, &acc)?;
+
+    emit_process_violations(&state, &on_event);
 
     Ok(user_message_id)
 }
@@ -873,7 +998,15 @@ fn execute_tool(
     (output, is_error)
 }
 
-/// Read a file's contents.
+/// Read a file's contents, with optional line offset and limit.
+///
+/// Parameters:
+/// - `path` (required): path to the file, relative to the project root.
+/// - `offset` (optional, default 0): 0-based line number to start from.
+/// - `limit` (optional, default 2000): maximum number of lines to return.
+///
+/// If the file contains more lines than the effective limit, a truncation notice
+/// is appended so the caller knows additional lines exist.
 fn tool_read_file(input: &serde_json::Value, root: &Path) -> (String, bool) {
     let raw_path = match input["path"].as_str() {
         Some(p) => p,
@@ -885,9 +1018,43 @@ fn tool_read_file(input: &serde_json::Value, root: &Path) -> (String, bool) {
         Err(e) => return (e, true),
     };
 
-    match std::fs::read_to_string(&path) {
-        Ok(contents) => (contents, false),
-        Err(e) => (format!("failed to read '{}': {e}", path.display()), true),
+    let contents = match std::fs::read_to_string(&path) {
+        Ok(c) => c,
+        Err(e) => return (format!("failed to read '{}': {e}", path.display()), true),
+    };
+
+    let offset = input["offset"].as_u64().unwrap_or(0) as usize;
+    let limit = input["limit"]
+        .as_u64()
+        .map(|n| n as usize)
+        .unwrap_or(DEFAULT_READ_FILE_MAX_LINES);
+
+    let all_lines: Vec<&str> = contents.lines().collect();
+    let total_lines = all_lines.len();
+
+    if offset >= total_lines && total_lines > 0 {
+        return (
+            format!("offset {offset} is past end of file ({total_lines} lines total)"),
+            true,
+        );
+    }
+
+    let end = (offset + limit).min(total_lines);
+    let selected = &all_lines[offset..end];
+    let result = selected.join("\n");
+
+    if end < total_lines {
+        (
+            format!(
+                "{result}\n\n[File truncated: showing lines {}-{} of {total_lines} total. \
+                 Use offset/limit parameters for specific ranges.]",
+                offset + 1,
+                end,
+            ),
+            false,
+        )
+    } else {
+        (result, false)
     }
 }
 
@@ -1667,5 +1834,178 @@ mod tests {
                 "{tool} must NOT be in READ_ONLY_TOOLS — it requires user approval"
             );
         }
+    }
+
+    // ── truncate_tool_output tests ──
+
+    #[test]
+    fn truncate_tool_output_short_output_unchanged() {
+        let short = "hello world".to_string();
+        let result = truncate_tool_output(short.clone());
+        assert_eq!(result, short);
+    }
+
+    #[test]
+    fn truncate_tool_output_exactly_at_limit_unchanged() {
+        let at_limit = "x".repeat(MAX_TOOL_OUTPUT_CHARS);
+        let result = truncate_tool_output(at_limit.clone());
+        assert_eq!(result, at_limit);
+    }
+
+    #[test]
+    fn truncate_tool_output_over_limit_includes_notice() {
+        let over_limit = "x".repeat(MAX_TOOL_OUTPUT_CHARS + 500);
+        let total_len = over_limit.len();
+        let result = truncate_tool_output(over_limit);
+        assert!(result.contains("[Output truncated:"));
+        assert!(result.contains(&total_len.to_string()));
+        assert!(result.len() > MAX_TOOL_OUTPUT_CHARS);
+        // The first MAX_TOOL_OUTPUT_CHARS chars should be the 'x' characters
+        assert!(result.starts_with(&"x".repeat(MAX_TOOL_OUTPUT_CHARS)));
+    }
+
+    // ── friendly_context_overflow_message tests ──
+
+    #[test]
+    fn friendly_message_returned_for_context_code() {
+        let msg = friendly_context_overflow_message("context_length_exceeded", "too long");
+        assert!(msg.is_some());
+        let text = msg.unwrap();
+        assert!(text.contains("context window"));
+    }
+
+    #[test]
+    fn friendly_message_returned_for_token_in_message() {
+        let msg = friendly_context_overflow_message("api_error", "token limit reached");
+        assert!(msg.is_some());
+    }
+
+    #[test]
+    fn friendly_message_returned_for_context_window_in_message() {
+        let msg = friendly_context_overflow_message("api_error", "context window exceeded");
+        assert!(msg.is_some());
+    }
+
+    #[test]
+    fn friendly_message_none_for_unrelated_error() {
+        let msg = friendly_context_overflow_message("rate_limit", "Too many requests");
+        assert!(msg.is_none());
+    }
+
+    #[test]
+    fn translate_stream_error_context_overflow_gets_friendly_message() {
+        let resp = SidecarResponse::StreamError {
+            code: "context_length_exceeded".to_string(),
+            message: "Input is too long".to_string(),
+            recoverable: false,
+        };
+        let event = translate_response(&resp).expect("should translate");
+        match event {
+            StreamEvent::StreamError { code, message, .. } => {
+                assert_eq!(code, "context_length_exceeded");
+                // Message should be the friendly version, not the raw one
+                assert!(message.contains("context window"));
+            }
+            _ => panic!("expected StreamError"),
+        }
+    }
+
+    #[test]
+    fn translate_stream_error_normal_error_keeps_original_message() {
+        let resp = SidecarResponse::StreamError {
+            code: "rate_limit".to_string(),
+            message: "Too many requests".to_string(),
+            recoverable: true,
+        };
+        let event = translate_response(&resp).expect("should translate");
+        match event {
+            StreamEvent::StreamError { message, .. } => {
+                assert_eq!(message, "Too many requests");
+            }
+            _ => panic!("expected StreamError"),
+        }
+    }
+
+    // ── tool_read_file line limit tests ──
+
+    #[test]
+    fn read_file_line_limit_applies_truncation_notice() {
+        use std::io::Write;
+        use tempfile::NamedTempFile;
+
+        let mut f = NamedTempFile::new().expect("temp file");
+        for i in 0..2500 {
+            writeln!(f, "line {i}").expect("write");
+        }
+        let path = f.path().to_path_buf();
+        let root = path.parent().expect("parent").to_path_buf();
+        let file_name = path
+            .file_name()
+            .expect("name")
+            .to_string_lossy()
+            .to_string();
+
+        let input = serde_json::json!({ "path": file_name });
+        let (output, is_error) = tool_read_file(&input, &root);
+        assert!(!is_error, "should not be an error: {output}");
+        assert!(
+            output.contains("[File truncated:"),
+            "should contain truncation notice"
+        );
+    }
+
+    #[test]
+    fn read_file_offset_and_limit_respected() {
+        use std::io::Write;
+        use tempfile::NamedTempFile;
+
+        let mut f = NamedTempFile::new().expect("temp file");
+        for i in 0..100 {
+            writeln!(f, "line {i}").expect("write");
+        }
+        let path = f.path().to_path_buf();
+        let root = path.parent().expect("parent").to_path_buf();
+        let file_name = path
+            .file_name()
+            .expect("name")
+            .to_string_lossy()
+            .to_string();
+
+        let input = serde_json::json!({ "path": file_name, "offset": 10, "limit": 5 });
+        let (output, is_error) = tool_read_file(&input, &root);
+        assert!(!is_error, "should not be an error: {output}");
+        assert!(output.contains("line 10"));
+        assert!(output.contains("line 14"));
+        assert!(
+            !output.contains("line 9"),
+            "should not include line before offset"
+        );
+        assert!(
+            !output.contains("line 15"),
+            "should not include line past limit"
+        );
+    }
+
+    #[test]
+    fn read_file_small_file_no_truncation_notice() {
+        use std::io::Write;
+        use tempfile::NamedTempFile;
+
+        let mut f = NamedTempFile::new().expect("temp file");
+        for i in 0..10 {
+            writeln!(f, "line {i}").expect("write");
+        }
+        let path = f.path().to_path_buf();
+        let root = path.parent().expect("parent").to_path_buf();
+        let file_name = path
+            .file_name()
+            .expect("name")
+            .to_string_lossy()
+            .to_string();
+
+        let input = serde_json::json!({ "path": file_name });
+        let (output, is_error) = tool_read_file(&input, &root);
+        assert!(!is_error);
+        assert!(!output.contains("[File truncated:"));
     }
 }

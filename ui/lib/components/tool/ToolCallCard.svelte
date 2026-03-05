@@ -19,6 +19,7 @@
 		CollapsibleContent,
 		CollapsibleTrigger,
 	} from "$lib/components/ui/collapsible";
+	import ViolationBadge from "$lib/components/enforcement/ViolationBadge.svelte";
 
 	const TOOL_DISPLAY: Record<string, { label: string; icon: typeof WrenchIcon }> = {
 		read_file: { label: "Read File", icon: FileTextIcon },
@@ -31,6 +32,12 @@
 		search_semantic: { label: "Semantic Search", icon: BrainIcon },
 		code_research: { label: "Code Research", icon: BookOpenIcon },
 	};
+
+	// Parses "Rule 'rule-name' blocked..." text to extract rule name
+	function parseEnforcementRuleName(text: string): string | null {
+		const match = /^Rule '([^']+)'/.exec(text);
+		return match ? match[1] : null;
+	}
 
 	let {
 		toolName,
@@ -53,11 +60,17 @@
 	const statusColor = $derived(
 		isComplete ? (isError ? "text-destructive" : "text-green-500") : "text-muted-foreground"
 	);
+
+	// Detect if this is an enforcement block — error output starts with "Rule '"
+	const enforcementRuleName = $derived(
+		isError && isComplete && toolOutput ? parseEnforcementRuleName(toolOutput) : null
+	);
+	const isEnforcementBlock = $derived(enforcementRuleName !== null);
 </script>
 
 <Collapsible bind:open>
 	<CollapsibleTrigger
-		class="flex w-full items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2 text-left text-sm transition-colors hover:bg-muted/50"
+		class="flex w-full items-center gap-2 rounded-lg border {isEnforcementBlock ? 'border-destructive/50 bg-destructive/5' : 'border-border bg-muted/30'} px-3 py-2 text-left text-sm transition-colors hover:bg-muted/50"
 	>
 		<ChevronRightIcon
 			class="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform {open
@@ -67,7 +80,9 @@
 		{@const Icon = displayInfo.icon}
 		<Icon class="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
 		<span class="flex-1 truncate font-mono text-xs">{displayInfo.label}</span>
-		{#if isComplete && isError}
+		{#if isEnforcementBlock && enforcementRuleName}
+			<ViolationBadge action="Block" ruleName={enforcementRuleName} />
+		{:else if isComplete && isError}
 			<XCircleIcon class="h-3.5 w-3.5 shrink-0 {statusColor}" />
 		{:else if isComplete}
 			<CheckCircleIcon class="h-3.5 w-3.5 shrink-0 {statusColor}" />

@@ -36,6 +36,7 @@ fn build_app_state(
         startup: Arc::clone(tracker),
         pending_approvals: std::sync::Mutex::new(std::collections::HashMap::new()),
         enforcement: std::sync::Mutex::new(None),
+        process_state: std::sync::Mutex::new(domain::process_state::SessionProcessState::default()),
     })
 }
 
@@ -214,6 +215,7 @@ pub fn run() {
             // Enforcement commands
             commands::enforcement_commands::enforcement_rules_list,
             commands::enforcement_commands::enforcement_rules_reload,
+            commands::enforcement_commands::enforcement_scan_governance,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -3,7 +3,7 @@ use std::path::Path;
 use regex::Regex;
 
 use crate::domain::enforcement::{
-    Condition, EnforcementEntry, EnforcementRule, EventType, RuleAction, Verdict,
+    Condition, EnforcementEntry, EnforcementRule, EventType, RuleAction, ScanFinding, Verdict,
 };
 use crate::domain::enforcement_parser::load_rules;
 use crate::error::OrqaError;
@@ -14,10 +14,12 @@ struct CompiledEntry {
     rule_index: usize,
     action: RuleAction,
     event: EventType,
-    /// Compiled condition regexes for file events: (field_name, regex).
+    /// Compiled condition regexes for file and scan events: (field_name, regex).
     compiled_conditions: Vec<(String, Regex)>,
     /// Compiled bash pattern regex.
     compiled_bash_pattern: Option<Regex>,
+    /// Raw scope glob pattern for scan entries.
+    scope: Option<String>,
 }
 
 /// Compile an `EnforcementEntry` into a `CompiledEntry`.
@@ -70,6 +72,7 @@ fn compile_entry(
         event: entry.event.clone(),
         compiled_conditions,
         compiled_bash_pattern,
+        scope: entry.scope.clone(),
     })
 }
 
@@ -81,6 +84,69 @@ fn prose_excerpt(prose: &str) -> String {
     } else {
         format!("{}…", &trimmed[..200])
     }
+}
+
+/// Expand a glob pattern and return all matching file paths.
+fn collect_glob_paths(pattern: &str) -> Result<Vec<String>, OrqaError> {
+    let entries = glob::glob(pattern)
+        .map_err(|e| OrqaError::Scan(format!("invalid glob pattern '{pattern}': {e}")))?;
+
+    let mut paths = Vec::new();
+    for entry in entries {
+        match entry {
+            Ok(path) => {
+                if let Some(s) = path.to_str() {
+                    paths.push(s.to_string());
+                }
+            }
+            Err(e) => {
+                tracing::warn!("[enforcement] glob entry error for '{pattern}': {e}");
+            }
+        }
+    }
+
+    Ok(paths)
+}
+
+/// Scan a single file for violations defined by a compiled scan entry.
+///
+/// Checks every line against all `content` conditions; returns findings for
+/// every line where all conditions match.
+fn scan_file(
+    file_path: &str,
+    ce: &CompiledEntry,
+    rule: &EnforcementRule,
+) -> Result<Vec<ScanFinding>, OrqaError> {
+    let content = std::fs::read_to_string(file_path)
+        .map_err(|e| OrqaError::FileSystem(format!("cannot read file '{file_path}': {e}")))?;
+
+    let mut findings = Vec::new();
+
+    for (idx, line) in content.lines().enumerate() {
+        let all_match = ce
+            .compiled_conditions
+            .iter()
+            .all(|(field, re)| match field.as_str() {
+                "content" => re.is_match(line),
+                other => {
+                    tracing::warn!("[enforcement] unknown scan condition field: '{other}'");
+                    false
+                }
+            });
+
+        if all_match {
+            findings.push(ScanFinding {
+                rule_name: rule.name.clone(),
+                action: ce.action.clone(),
+                file_path: file_path.to_string(),
+                line: idx + 1,
+                content: line.trim().to_string(),
+                message: prose_excerpt(&rule.prose),
+            });
+        }
+    }
+
+    Ok(findings)
 }
 
 /// The enforcement engine. Holds parsed rules and pre-compiled regexes.
@@ -184,6 +250,44 @@ impl EnforcementEngine {
         }
 
         verdicts
+    }
+
+    /// Scan project files for governance violations defined by `event: scan` entries.
+    ///
+    /// For each scan entry, resolves the `scope` glob relative to `project_path`,
+    /// reads each matching file, and checks every line against the entry's conditions.
+    /// Returns a flat list of findings — all entries and all matching files combined.
+    pub fn scan(&self, project_path: &Path) -> Result<Vec<ScanFinding>, OrqaError> {
+        let mut findings = Vec::new();
+
+        for ce in &self.compiled {
+            if ce.event != EventType::Scan {
+                continue;
+            }
+
+            let scope = match &ce.scope {
+                Some(s) => s,
+                None => {
+                    tracing::warn!(
+                        "[enforcement] scan entry in rule '{}' has no scope — skipping",
+                        self.rules[ce.rule_index].name
+                    );
+                    continue;
+                }
+            };
+
+            let glob_pattern = project_path.join(scope);
+            let glob_str = glob_pattern.to_string_lossy();
+
+            let paths = collect_glob_paths(&glob_str)?;
+
+            for file_path in paths {
+                let file_findings = scan_file(&file_path, ce, &self.rules[ce.rule_index])?;
+                findings.extend(file_findings);
+            }
+        }
+
+        Ok(findings)
     }
 
     /// Return the loaded rules (for IPC listing).
@@ -365,5 +469,192 @@ enforcement:
         let short_prose = "Short prose.";
         let excerpt = prose_excerpt(short_prose);
         assert_eq!(excerpt, "Short prose.");
+    }
+
+    #[test]
+    fn scan_finds_pattern_in_matching_files() {
+        let rules_dir = tempfile::tempdir().expect("tempdir");
+        let project_dir = tempfile::tempdir().expect("tempdir");
+
+        // Create a subdirectory and agent file inside the project
+        let agents_dir = project_dir.path().join("agents");
+        std::fs::create_dir_all(&agents_dir).expect("create agents dir");
+
+        std::fs::write(
+            agents_dir.join("bad-agent.md"),
+            "# Bad Agent\n\nDo not use unwrap() in production code.\n",
+        )
+        .expect("write agent file");
+
+        std::fs::write(
+            agents_dir.join("good-agent.md"),
+            "# Good Agent\n\nThis agent is well-behaved.\n",
+        )
+        .expect("write agent file");
+
+        write_rule_file(
+            rules_dir.path(),
+            "no-restating-rules",
+            r#"---
+scope: project
+enforcement:
+  - event: scan
+    action: warn
+    scope: "agents/*.md"
+    conditions:
+      - field: content
+        pattern: "unwrap\\(\\)"
+---
+# No Restating Rules
+
+Agent files should not restate rule content inline.
+"#,
+        );
+
+        let engine = EnforcementEngine::load(rules_dir.path()).expect("should load");
+        let findings = engine
+            .scan(project_dir.path())
+            .expect("scan should succeed");
+
+        assert_eq!(findings.len(), 1);
+        assert_eq!(findings[0].rule_name, "no-restating-rules");
+        assert_eq!(findings[0].action, RuleAction::Warn);
+        assert!(findings[0].file_path.contains("bad-agent.md"));
+        assert_eq!(findings[0].line, 3);
+        assert!(findings[0].content.contains("unwrap()"));
+    }
+
+    #[test]
+    fn scan_returns_empty_when_no_scan_entries() {
+        let rules_dir = tempfile::tempdir().expect("tempdir");
+        let project_dir = tempfile::tempdir().expect("tempdir");
+
+        write_rule_file(
+            rules_dir.path(),
+            "bash-only",
+            r#"---
+scope: project
+enforcement:
+  - event: bash
+    action: block
+    pattern: "--no-verify"
+---
+# Bash Only Rule
+"#,
+        );
+
+        let engine = EnforcementEngine::load(rules_dir.path()).expect("should load");
+        let findings = engine
+            .scan(project_dir.path())
+            .expect("scan should succeed");
+        assert!(findings.is_empty());
+    }
+
+    #[test]
+    fn scan_returns_empty_when_no_files_match_glob() {
+        let rules_dir = tempfile::tempdir().expect("tempdir");
+        let project_dir = tempfile::tempdir().expect("tempdir");
+
+        write_rule_file(
+            rules_dir.path(),
+            "scan-rule",
+            r#"---
+scope: project
+enforcement:
+  - event: scan
+    action: warn
+    scope: "nonexistent-dir/*.md"
+    conditions:
+      - field: content
+        pattern: "TODO"
+---
+# Scan Rule
+"#,
+        );
+
+        let engine = EnforcementEngine::load(rules_dir.path()).expect("should load");
+        let findings = engine
+            .scan(project_dir.path())
+            .expect("scan should succeed");
+        assert!(findings.is_empty());
+    }
+
+    #[test]
+    fn scan_reports_correct_line_numbers() {
+        let rules_dir = tempfile::tempdir().expect("tempdir");
+        let project_dir = tempfile::tempdir().expect("tempdir");
+
+        std::fs::write(
+            project_dir.path().join("file.md"),
+            "line one\nline two\nTODO: fix this\nline four\n",
+        )
+        .expect("write file");
+
+        write_rule_file(
+            rules_dir.path(),
+            "no-todo",
+            r#"---
+scope: project
+enforcement:
+  - event: scan
+    action: warn
+    scope: "*.md"
+    conditions:
+      - field: content
+        pattern: "^TODO:"
+---
+# No TODO in Files
+"#,
+        );
+
+        let engine = EnforcementEngine::load(rules_dir.path()).expect("should load");
+        let findings = engine
+            .scan(project_dir.path())
+            .expect("scan should succeed");
+
+        assert_eq!(findings.len(), 1);
+        assert_eq!(findings[0].line, 3);
+        assert_eq!(findings[0].content, "TODO: fix this");
+    }
+
+    #[test]
+    fn scan_with_multiple_conditions_requires_all_to_match() {
+        let rules_dir = tempfile::tempdir().expect("tempdir");
+        let project_dir = tempfile::tempdir().expect("tempdir");
+
+        std::fs::write(
+            project_dir.path().join("agent.md"),
+            "# Agent\nfoo bar\nbaz qux\nfoo qux\n",
+        )
+        .expect("write file");
+
+        write_rule_file(
+            rules_dir.path(),
+            "multi-condition",
+            r#"---
+scope: project
+enforcement:
+  - event: scan
+    action: warn
+    scope: "*.md"
+    conditions:
+      - field: content
+        pattern: "foo"
+      - field: content
+        pattern: "qux"
+---
+# Multi Condition
+"#,
+        );
+
+        let engine = EnforcementEngine::load(rules_dir.path()).expect("should load");
+        let findings = engine
+            .scan(project_dir.path())
+            .expect("scan should succeed");
+
+        // Only "foo qux" (line 4) matches both conditions; "foo bar" and "baz qux" do not
+        assert_eq!(findings.len(), 1);
+        assert_eq!(findings[0].line, 4);
+        assert_eq!(findings[0].content, "foo qux");
     }
 }

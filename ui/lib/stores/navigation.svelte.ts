@@ -7,7 +7,8 @@ export type ActivityView =
 	| "skills"
 	| "hooks"
 	| "settings"
-	| "configure";
+	| "configure"
+	| "enforcement";
 
 export type ExplorerView =
 	| "artifact-list"

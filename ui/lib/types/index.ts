@@ -61,3 +61,10 @@ export type {
 	RecommendationStatus,
 	Recommendation,
 } from "./governance";
+
+export type {
+	EnforcementRule,
+	EnforcementEntry,
+	Condition,
+	EnforcementViolation,
+} from "./enforcement";
