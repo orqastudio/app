@@ -2,6 +2,7 @@ use std::path::Path;
 
 use tauri::State;
 
+use crate::domain::enforcement_engine::EnforcementEngine;
 use crate::domain::project::{Project, ProjectSummary};
 use crate::error::OrqaError;
 use crate::repo::project_repo;
@@ -11,6 +12,8 @@ use crate::state::AppState;
 ///
 /// If the directory is already registered, returns the existing project.
 /// Otherwise creates a new project record. In Phase 1, scanning is deferred.
+///
+/// Also loads the enforcement engine from `.claude/rules/` if it exists.
 #[tauri::command]
 pub fn project_open(path: String, state: State<'_, AppState>) -> Result<Project, OrqaError> {
     let canonical = validate_directory_path(&path)?;
@@ -20,20 +23,64 @@ pub fn project_open(path: String, state: State<'_, AppState>) -> Result<Project,
         .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     // Check if already registered
-    match project_repo::get_by_path(&conn, &canonical) {
+    let project = match project_repo::get_by_path(&conn, &canonical) {
         Ok(project) => {
             // Touch the updated_at timestamp so it surfaces as the active project
             conn.execute(
                 "UPDATE projects SET updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?1",
                 rusqlite::params![project.id],
             )?;
-            project_repo::get(&conn, project.id)
+            project_repo::get(&conn, project.id)?
         }
         Err(OrqaError::NotFound(_)) => {
             let name = derive_project_name(&canonical);
-            project_repo::create(&conn, &name, &canonical, None)
+            project_repo::create(&conn, &name, &canonical, None)?
         }
-        Err(e) => Err(e),
+        Err(e) => return Err(e),
+    };
+
+    // Release the DB lock before loading rules (file I/O, no DB needed)
+    drop(conn);
+
+    load_enforcement_engine(&state, &canonical);
+
+    Ok(project)
+}
+
+/// Load the enforcement engine from the project's `.claude/rules/` directory.
+///
+/// If the rules directory does not exist, the engine is cleared (no enforcement).
+/// Failures are logged as warnings — a missing or malformed rules directory must
+/// not block the project from opening.
+fn load_enforcement_engine(state: &State<'_, AppState>, project_path: &str) {
+    let rules_dir = Path::new(project_path).join(".claude").join("rules");
+
+    let engine = if rules_dir.exists() {
+        match EnforcementEngine::load(&rules_dir) {
+            Ok(engine) => {
+                tracing::debug!(
+                    "[enforcement] loaded {} rules from '{}'",
+                    engine.rules().len(),
+                    rules_dir.display()
+                );
+                Some(engine)
+            }
+            Err(e) => {
+                tracing::warn!("[enforcement] failed to load rules: {e}");
+                None
+            }
+        }
+    } else {
+        tracing::debug!(
+            "[enforcement] no rules directory at '{}'",
+            rules_dir.display()
+        );
+        None
+    };
+
+    match state.enforcement.lock() {
+        Ok(mut guard) => *guard = engine,
+        Err(e) => tracing::warn!("[enforcement] failed to acquire enforcement lock: {e}"),
     }
 }
 
@@ -90,7 +137,9 @@ pub fn project_create(
     state: State<'_, AppState>,
 ) -> Result<Project, OrqaError> {
     if name.trim().is_empty() {
-        return Err(OrqaError::Validation("project name cannot be empty".to_string()));
+        return Err(OrqaError::Validation(
+            "project name cannot be empty".to_string(),
+        ));
     }
 
     let canonical = init_project_directory(name.trim(), &parent_path, init_git.unwrap_or(true))?;

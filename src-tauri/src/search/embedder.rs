@@ -91,8 +91,15 @@ impl Embedder {
             return Ok(vec![vec![0.0f32; 384]; batch_size]);
         }
 
-        let output_array = self.run_inference(&input_ids, &attention_mask, &token_type_ids, batch_size, max_len)?;
-        let embeddings = postprocess_embeddings(&output_array, &attention_mask, batch_size, max_len);
+        let output_array = self.run_inference(
+            &input_ids,
+            &attention_mask,
+            &token_type_ids,
+            batch_size,
+            max_len,
+        )?;
+        let embeddings =
+            postprocess_embeddings(&output_array, &attention_mask, batch_size, max_len);
 
         Ok(embeddings)
     }
@@ -100,17 +107,18 @@ impl Embedder {
     /// Tokenize a batch of texts into flat padded arrays.
     ///
     /// Returns `(input_ids, attention_mask, token_type_ids, batch_size, max_len)`.
-    fn tokenize_batch(
-        &self,
-        texts: &[&str],
-    ) -> Result<TokenizedBatch, EmbedError> {
+    fn tokenize_batch(&self, texts: &[&str]) -> Result<TokenizedBatch, EmbedError> {
         let encodings = self
             .tokenizer
             .encode_batch(texts.to_vec(), true)
             .map_err(|e| EmbedError::Tokenizer(e.to_string()))?;
 
         let batch_size = encodings.len();
-        let max_len = encodings.iter().map(|e| e.get_ids().len()).max().unwrap_or(0);
+        let max_len = encodings
+            .iter()
+            .map(|e| e.get_ids().len())
+            .max()
+            .unwrap_or(0);
         let total = batch_size * max_len;
 
         let mut input_ids = vec![0i64; total];
@@ -122,7 +130,12 @@ impl Embedder {
             for (j, (&id, (&m, &t))) in encoding
                 .get_ids()
                 .iter()
-                .zip(encoding.get_attention_mask().iter().zip(encoding.get_type_ids().iter()))
+                .zip(
+                    encoding
+                        .get_attention_mask()
+                        .iter()
+                        .zip(encoding.get_type_ids().iter()),
+                )
                 .enumerate()
             {
                 input_ids[row_offset + j] = id as i64;
@@ -131,7 +144,13 @@ impl Embedder {
             }
         }
 
-        Ok((input_ids, attention_mask, token_type_ids, batch_size, max_len))
+        Ok((
+            input_ids,
+            attention_mask,
+            token_type_ids,
+            batch_size,
+            max_len,
+        ))
     }
 
     /// Run ONNX inference on pre-tokenized inputs.

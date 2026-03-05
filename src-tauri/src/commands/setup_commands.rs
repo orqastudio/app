@@ -222,7 +222,11 @@ fn extract_oauth_details(oauth: &serde_json::Value) -> CredentialDetails {
     let scopes = oauth
         .get("scopes")
         .and_then(|v| v.as_array())
-        .map(|arr| arr.iter().filter_map(|v| v.as_str().map(String::from)).collect())
+        .map(|arr| {
+            arr.iter()
+                .filter_map(|v| v.as_str().map(String::from))
+                .collect()
+        })
         .unwrap_or_default();
 
     let expires_at = oauth.get("expiresAt").and_then(|v| v.as_u64());
@@ -255,7 +259,12 @@ fn parse_credentials(path: &std::path::Path) -> CredentialDetails {
 
     let json: serde_json::Value = match serde_json::from_str(&contents) {
         Ok(v) => v,
-        Err(_) => return CredentialDetails { authenticated: true, ..not_found },
+        Err(_) => {
+            return CredentialDetails {
+                authenticated: true,
+                ..not_found
+            }
+        }
     };
 
     // The credentials file nests auth details under "claudeAiOauth"

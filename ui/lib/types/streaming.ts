@@ -14,4 +14,9 @@ export type StreamEvent =
 			type: "stream_error";
 			data: { code: string; message: string; recoverable: boolean };
 		}
-	| { type: "stream_cancelled"; data: null };
+	| { type: "stream_cancelled"; data: null }
+	| {
+			/** Emitted when a write or execute tool requests user approval before running. */
+			type: "tool_approval_request";
+			data: { tool_call_id: string; tool_name: string; input: string };
+		};

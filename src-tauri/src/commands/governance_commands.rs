@@ -462,8 +462,16 @@ fn format_coverage_header(scan: &GovernanceScanResult) -> String {
         .map(|a| a.name.as_str())
         .collect();
 
-    let covered_str = if covered.is_empty() { "none".to_string() } else { covered.join(", ") };
-    let uncovered_str = if uncovered.is_empty() { "none".to_string() } else { uncovered.join(", ") };
+    let covered_str = if covered.is_empty() {
+        "none".to_string()
+    } else {
+        covered.join(", ")
+    };
+    let uncovered_str = if uncovered.is_empty() {
+        "none".to_string()
+    } else {
+        uncovered.join(", ")
+    };
 
     format!(
         "Coverage: {:.0}% ({} of 7 canonical areas covered)\nCovered areas: {}\nMissing areas: {}",

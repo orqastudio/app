@@ -2,15 +2,21 @@
 	import SendIcon from "@lucide/svelte/icons/send";
 	import SquareIcon from "@lucide/svelte/icons/square";
 	import { Button } from "$lib/components/ui/button";
+	import ModelSelector from "./ModelSelector.svelte";
+	import { DEFAULT_MODEL } from "./model-options";
 
 	let {
 		isStreaming = false,
+		selectedModel = DEFAULT_MODEL,
 		onsend,
 		onstop,
+		onmodelchange,
 	}: {
 		isStreaming?: boolean;
+		selectedModel?: string;
 		onsend: (content: string) => void;
 		onstop?: () => void;
+		onmodelchange?: (model: string) => void;
 	} = $props();
 
 	let inputValue = $state("");
@@ -51,6 +57,12 @@
 </script>
 
 <div class="border-t border-border bg-background p-3">
+	<div class="mb-2 flex items-center">
+		<ModelSelector
+			value={selectedModel}
+			onchange={(model) => onmodelchange?.(model)}
+		/>
+	</div>
 	<div class="flex items-center gap-2">
 		<textarea
 			bind:this={textareaRef}

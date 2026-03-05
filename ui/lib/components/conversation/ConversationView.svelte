@@ -9,6 +9,7 @@
 	import MessageInput from "./MessageInput.svelte";
 	import StreamingIndicator from "./StreamingIndicator.svelte";
 	import ToolCallCard from "$lib/components/tool/ToolCallCard.svelte";
+	import ToolApprovalDialog from "$lib/components/tool/ToolApprovalDialog.svelte";
 	import { conversationStore } from "$lib/stores/conversation.svelte";
 	import { sessionStore } from "$lib/stores/session.svelte";
 	import { projectStore } from "$lib/stores/project.svelte";
@@ -28,6 +29,7 @@
 	const streamingContent = $derived(conversationStore.streamingContent);
 	const streamingThinking = $derived(conversationStore.streamingThinking);
 	const activeToolCalls = $derived(conversationStore.activeToolCalls);
+	const pendingApproval = $derived(conversationStore.pendingApproval);
 
 	// Restore last session on mount
 	onMount(() => {
@@ -149,8 +151,8 @@
 		sessionStore.updateTitle(session.id, title);
 	}
 
-	function handleSelectModel(_model: string) {
-		// Model selection will be wired to backend in a future phase
+	function handleSelectModel(model: string) {
+		conversationStore.selectedModel = model;
 	}
 
 	// Determine if the last message is a streaming assistant message
@@ -237,6 +239,17 @@
 						{#if isStreaming && !streamingContent && toolCallsArray.length === 0}
 							<StreamingIndicator isThinking={streamingThinking.length > 0} />
 						{/if}
+
+						<!-- Tool approval dialog — rendered inline in the message stream -->
+						{#if pendingApproval}
+							<div class="px-4">
+								<ToolApprovalDialog
+									approval={pendingApproval}
+									onApprove={() => conversationStore.respondToApproval(true)}
+									onDeny={() => conversationStore.respondToApproval(false)}
+								/>
+							</div>
+						{/if}
 					</div>
 				</ScrollArea>
 
@@ -253,7 +266,13 @@
 		</div>
 
 		<!-- Input area -->
-		<MessageInput {isStreaming} onsend={handleSend} onstop={handleStop} />
+		<MessageInput
+			{isStreaming}
+			selectedModel={conversationStore.selectedModel}
+			onsend={handleSend}
+			onstop={handleStop}
+			onmodelchange={(model) => { conversationStore.selectedModel = model; }}
+		/>
 	{:else}
 		<!-- No session selected -->
 		<div class="flex h-full items-center justify-center">

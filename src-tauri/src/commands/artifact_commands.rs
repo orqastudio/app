@@ -103,7 +103,13 @@ fn index_artifact(
     let mut artifact =
         artifact_repo::create(conn, project_id, parsed_type, rel_path, name, content, None)?;
 
-    artifact_repo::update(conn, artifact.id, &file_hash, file_size, &artifact.created_at)?;
+    artifact_repo::update(
+        conn,
+        artifact.id,
+        &file_hash,
+        file_size,
+        &artifact.created_at,
+    )?;
 
     artifact = artifact_repo::get(conn, artifact.id)?;
     artifact.content = content.to_string();
@@ -137,7 +143,14 @@ pub fn artifact_create(
     let full_path = Path::new(&project.path).join(&rel_path);
 
     write_artifact_file(&full_path, &content)?;
-    index_artifact(&conn, project_id, &parsed_type, &rel_path, name.trim(), &content)
+    index_artifact(
+        &conn,
+        project_id,
+        &parsed_type,
+        &rel_path,
+        name.trim(),
+        &content,
+    )
 }
 
 /// Update an artifact's content, writing to disk and updating the database.

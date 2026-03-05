@@ -48,9 +48,7 @@ impl SidecarManager {
         let state = lock_mutex(&self.state)
             .map(|g| g.clone())
             .unwrap_or(SidecarState::Error);
-        let pid = lock_mutex(&self.pid)
-            .map(|g| *g)
-            .unwrap_or(None);
+        let pid = lock_mutex(&self.pid).map(|g| *g).unwrap_or(None);
         let uptime_seconds = lock_mutex(&self.start_time)
             .ok()
             .and_then(|g| *g)

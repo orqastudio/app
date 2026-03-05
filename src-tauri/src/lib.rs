@@ -16,8 +16,8 @@ use crate::startup::TaskStatus;
 
 /// Initialize the SQLite database at `db_path` and return the connection.
 fn setup_database(db_path_str: &str) -> Result<rusqlite::Connection, Box<dyn std::error::Error>> {
-    let conn = db::init_db(db_path_str)
-        .map_err(|e| format!("failed to initialize database: {e}"))?;
+    let conn =
+        db::init_db(db_path_str).map_err(|e| format!("failed to initialize database: {e}"))?;
     Ok(conn)
 }
 
@@ -34,16 +34,19 @@ fn build_app_state(
         sidecar: sidecar::manager::SidecarManager::new(),
         search: std::sync::Mutex::new(None),
         startup: Arc::clone(tracker),
+        pending_approvals: std::sync::Mutex::new(std::collections::HashMap::new()),
+        enforcement: std::sync::Mutex::new(None),
     })
 }
 
 /// Auto-start the sidecar process, updating the tracker with the result.
-fn start_sidecar(
-    app_state: &state::AppState,
-    tracker: &Arc<startup::StartupTracker>,
-) {
+fn start_sidecar(app_state: &state::AppState, tracker: &Arc<startup::StartupTracker>) {
     tracker
-        .update("sidecar", TaskStatus::InProgress, Some("Starting...".into()))
+        .update(
+            "sidecar",
+            TaskStatus::InProgress,
+            Some("Starting...".into()),
+        )
         .unwrap_or_else(|e| tracing::warn!("tracker update failed: {e}"));
 
     match commands::sidecar_commands::ensure_sidecar_running(app_state) {
@@ -62,10 +65,7 @@ fn start_sidecar(
 }
 
 /// Spawn a background task that pre-downloads the embedding model.
-fn spawn_model_download(
-    model_dir: std::path::PathBuf,
-    tracker: Arc<startup::StartupTracker>,
-) {
+fn spawn_model_download(model_dir: std::path::PathBuf, tracker: Arc<startup::StartupTracker>) {
     tracker
         .update(
             "embedding_model",
@@ -75,21 +75,18 @@ fn spawn_model_download(
         .unwrap_or_else(|e| tracing::warn!("tracker update failed: {e}"));
 
     tauri::async_runtime::spawn(async move {
-        match search::embedder::ensure_model_exists(
-            &model_dir,
-            |_file, downloaded, total| {
-                if let Some(total) = total {
-                    let pct = (downloaded as f64 / total as f64 * 100.0) as u32;
-                    tracker
-                        .update(
-                            "embedding_model",
-                            TaskStatus::InProgress,
-                            Some(format!("{pct}%")),
-                        )
-                        .unwrap_or_else(|e| tracing::warn!("tracker update failed: {e}"));
-                }
-            },
-        )
+        match search::embedder::ensure_model_exists(&model_dir, |_file, downloaded, total| {
+            if let Some(total) = total {
+                let pct = (downloaded as f64 / total as f64 * 100.0) as u32;
+                tracker
+                    .update(
+                        "embedding_model",
+                        TaskStatus::InProgress,
+                        Some(format!("{pct}%")),
+                    )
+                    .unwrap_or_else(|e| tracing::warn!("tracker update failed: {e}"));
+            }
+        })
         .await
         {
             Ok(()) => {
@@ -122,12 +119,10 @@ pub fn run() {
                 .to_str()
                 .ok_or_else(|| "app data path is not valid UTF-8".to_string())?;
 
-            let conn = setup_database(db_path_str)
-                .map_err(|e| e.to_string())?;
+            let conn = setup_database(db_path_str).map_err(|e| e.to_string())?;
 
             let tracker = startup::StartupTracker::new();
-            let app_state = build_app_state(conn, &tracker)
-                .map_err(|e| e.to_string())?;
+            let app_state = build_app_state(conn, &tracker).map_err(|e| e.to_string())?;
 
             start_sidecar(&app_state, &tracker);
 
@@ -151,6 +146,7 @@ pub fn run() {
             // Stream commands
             commands::stream_commands::stream_send_message,
             commands::stream_commands::stream_stop,
+            commands::stream_commands::stream_tool_approval_respond,
             // Project commands
             commands::project_commands::project_open,
             commands::project_commands::project_create,
@@ -215,6 +211,9 @@ pub fn run() {
             commands::governance_commands::recommendation_update,
             commands::governance_commands::recommendation_apply,
             commands::governance_commands::recommendations_apply_all,
+            // Enforcement commands
+            commands::enforcement_commands::enforcement_rules_list,
+            commands::enforcement_commands::enforcement_rules_reload,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

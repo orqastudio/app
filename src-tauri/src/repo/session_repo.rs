@@ -83,7 +83,10 @@ pub fn list(
     let mut stmt = conn.prepare(sql)?;
 
     let rows = if let Some(status) = status_filter {
-        stmt.query_map(params![project_id, status, limit, offset], map_session_summary)?
+        stmt.query_map(
+            params![project_id, status, limit, offset],
+            map_session_summary,
+        )?
     } else {
         stmt.query_map(params![project_id, limit, offset], map_session_summary)?
     };

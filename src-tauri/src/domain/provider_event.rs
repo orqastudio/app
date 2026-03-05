@@ -46,6 +46,16 @@ pub enum StreamEvent {
         recoverable: bool,
     },
     StreamCancelled,
+    /// Emitted when the sidecar requests approval for a write or execute tool.
+    ///
+    /// The frontend must call `stream_tool_approval_respond` with the matching
+    /// `tool_call_id` to unblock the stream loop.
+    ToolApprovalRequest {
+        tool_call_id: String,
+        tool_name: String,
+        /// JSON string of the tool parameters, for display in the UI.
+        input: String,
+    },
 }
 
 #[cfg(test)]
@@ -177,6 +187,24 @@ mod tests {
         let json = serde_json::to_value(&event).expect("serialization should succeed");
         assert_eq!(json["type"], "stream_cancelled");
         // StreamCancelled has no data — serde renders it without a "data" field
+    }
+
+    #[test]
+    fn tool_approval_request_serialization() {
+        let event = StreamEvent::ToolApprovalRequest {
+            tool_call_id: "call_abc123".to_string(),
+            tool_name: "write_file".to_string(),
+            input: r#"{"path":"/tmp/out.txt","content":"hello"}"#.to_string(),
+        };
+
+        let json = serde_json::to_value(&event).expect("serialization should succeed");
+        assert_eq!(json["type"], "tool_approval_request");
+        assert_eq!(json["data"]["tool_call_id"], "call_abc123");
+        assert_eq!(json["data"]["tool_name"], "write_file");
+        assert_eq!(
+            json["data"]["input"],
+            r#"{"path":"/tmp/out.txt","content":"hello"}"#
+        );
     }
 
     #[test]

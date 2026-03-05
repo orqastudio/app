@@ -1,3 +1,4 @@
+use crate::domain::enforcement::RuleAction;
 use crate::domain::provider_event::StreamEvent;
 use crate::error::OrqaError;
 use crate::repo::{message_repo, project_repo, session_repo};
@@ -5,6 +6,18 @@ use crate::sidecar::types::{SidecarRequest, SidecarResponse};
 use crate::state::AppState;
 
 use std::path::{Path, PathBuf};
+use std::sync::mpsc;
+
+/// Tool names that are read-only and can be auto-approved without user interaction.
+const READ_ONLY_TOOLS: &[&str] = &[
+    "read_file",
+    "glob",
+    "grep",
+    "search_regex",
+    "search_semantic",
+    "load_skill",
+    "code_research",
+];
 
 /// Translate a `SidecarResponse` into a `StreamEvent`, if applicable.
 ///
@@ -76,8 +89,18 @@ fn translate_response(response: &SidecarResponse) -> Option<StreamEvent> {
         SidecarResponse::StreamCancelled => Some(StreamEvent::StreamCancelled),
         // Non-streaming responses — not forwarded to the frontend channel
         SidecarResponse::HealthOk { .. } | SidecarResponse::SummaryResult { .. } => None,
-        // Bidirectional tool protocol — handled in the read loop, not forwarded to frontend
-        SidecarResponse::ToolExecute { .. } | SidecarResponse::ToolApprovalRequest { .. } => None,
+        // ToolExecute is handled synchronously in the read loop — not forwarded to frontend
+        SidecarResponse::ToolExecute { .. } => None,
+        // ToolApprovalRequest for write/execute tools is forwarded to the frontend
+        SidecarResponse::ToolApprovalRequest {
+            tool_call_id,
+            tool_name,
+            input,
+        } => Some(StreamEvent::ToolApprovalRequest {
+            tool_call_id: tool_call_id.clone(),
+            tool_name: tool_name.clone(),
+            input: input.clone(),
+        }),
     }
 }
 
@@ -104,7 +127,15 @@ fn persist_user_message(
 
     session_repo::get(&db, session_id)?;
     let turn_index = message_repo::next_turn_index(&db, session_id)?;
-    let user_msg = message_repo::create(&db, session_id, "user", "text", Some(content), turn_index, 0)?;
+    let user_msg = message_repo::create(
+        &db,
+        session_id,
+        "user",
+        "text",
+        Some(content),
+        turn_index,
+        0,
+    )?;
 
     Ok((user_msg.id, i64::from(turn_index)))
 }
@@ -146,19 +177,20 @@ fn handle_tool_execute(
     true
 }
 
-/// Handle a `ToolApprovalRequest`: auto-approve and send the approval back.
+/// Send a tool approval decision to the sidecar.
 ///
 /// Returns `true` to continue the loop, `false` on send failure.
-fn handle_tool_approval(
+fn send_approval(
     tool_call_id: &str,
+    approved: bool,
+    reason: Option<String>,
     state: &tauri::State<'_, AppState>,
     on_event: &tauri::ipc::Channel<StreamEvent>,
 ) -> bool {
-    tracing::debug!("[stream] received ToolApprovalRequest: id={tool_call_id}");
     let approval = SidecarRequest::ToolApproval {
         tool_call_id: tool_call_id.to_string(),
-        approved: true,
-        reason: None,
+        approved,
+        reason,
     };
     if let Err(e) = state.sidecar.send(&approval) {
         let _ = on_event.send(StreamEvent::StreamError {
@@ -169,6 +201,81 @@ fn handle_tool_approval(
         return false;
     }
     true
+}
+
+/// Handle a `ToolApprovalRequest`.
+///
+/// Read-only tools (listed in `READ_ONLY_TOOLS`) are auto-approved immediately.
+/// Write/execute tools emit a `StreamEvent::ToolApprovalRequest` to the frontend
+/// and block on a sync channel until `stream_tool_approval_respond` is called.
+///
+/// Returns `true` to continue the loop, `false` on failure.
+fn handle_tool_approval(
+    tool_call_id: &str,
+    tool_name: &str,
+    input: &str,
+    state: &tauri::State<'_, AppState>,
+    on_event: &tauri::ipc::Channel<StreamEvent>,
+) -> bool {
+    tracing::debug!("[stream] ToolApprovalRequest: id={tool_call_id} tool={tool_name}");
+
+    // Auto-approve read-only tools
+    if READ_ONLY_TOOLS.contains(&tool_name) {
+        tracing::debug!("[stream] auto-approving read-only tool: {tool_name}");
+        return send_approval(tool_call_id, true, None, state, on_event);
+    }
+
+    // For write/execute tools, emit event to frontend and wait for user decision
+    tracing::debug!("[stream] requesting user approval for: {tool_name}");
+
+    let (tx, rx) = mpsc::sync_channel::<bool>(1);
+
+    // Register the sender so stream_tool_approval_respond can signal us
+    {
+        let Ok(mut map) = state.pending_approvals.lock() else {
+            tracing::error!("[stream] pending_approvals mutex poisoned");
+            return send_approval(
+                tool_call_id,
+                false,
+                Some("internal error".to_string()),
+                state,
+                on_event,
+            );
+        };
+        map.insert(tool_call_id.to_string(), tx);
+    }
+
+    // Emit the approval request event to the frontend
+    let emit_result = on_event.send(StreamEvent::ToolApprovalRequest {
+        tool_call_id: tool_call_id.to_string(),
+        tool_name: tool_name.to_string(),
+        input: input.to_string(),
+    });
+    if emit_result.is_err() {
+        tracing::warn!("[stream] failed to emit ToolApprovalRequest to frontend");
+        // Clean up our registration and deny
+        if let Ok(mut map) = state.pending_approvals.lock() {
+            map.remove(tool_call_id);
+        }
+        return send_approval(
+            tool_call_id,
+            false,
+            Some("frontend not reachable".to_string()),
+            state,
+            on_event,
+        );
+    }
+
+    // Block until the frontend calls stream_tool_approval_respond
+    let approved = rx.recv().unwrap_or(false);
+    tracing::debug!("[stream] received user decision for {tool_call_id}: approved={approved}");
+
+    let reason = if approved {
+        None
+    } else {
+        Some("denied by user".to_string())
+    };
+    send_approval(tool_call_id, approved, reason, state, on_event)
 }
 
 /// Run the sidecar read loop, accumulating results into a `StreamAccumulator`.
@@ -207,7 +314,12 @@ fn run_stream_loop(
             }
         };
 
-        if let SidecarResponse::ToolExecute { ref tool_call_id, ref tool_name, ref input } = response {
+        if let SidecarResponse::ToolExecute {
+            ref tool_call_id,
+            ref tool_name,
+            ref input,
+        } = response
+        {
             if !handle_tool_execute(tool_call_id, tool_name, input, state, on_event) {
                 acc.had_error = true;
                 break;
@@ -215,8 +327,13 @@ fn run_stream_loop(
             continue;
         }
 
-        if let SidecarResponse::ToolApprovalRequest { ref tool_call_id, .. } = response {
-            if !handle_tool_approval(tool_call_id, state, on_event) {
+        if let SidecarResponse::ToolApprovalRequest {
+            ref tool_call_id,
+            ref tool_name,
+            ref input,
+        } = response
+        {
+            if !handle_tool_approval(tool_call_id, tool_name, input, state, on_event) {
                 acc.had_error = true;
                 break;
             }
@@ -242,12 +359,19 @@ fn accumulate_response(response: &SidecarResponse, acc: &mut StreamAccumulator) 
     if let SidecarResponse::TextDelta { ref content } = response {
         acc.text.push_str(content);
     }
-    if let SidecarResponse::TurnComplete { input_tokens, output_tokens } = response {
+    if let SidecarResponse::TurnComplete {
+        input_tokens,
+        output_tokens,
+    } = response
+    {
         acc.input_tokens = *input_tokens;
         acc.output_tokens = *output_tokens;
         acc.stream_complete = true;
     }
-    if matches!(response, SidecarResponse::StreamError { .. } | SidecarResponse::StreamCancelled) {
+    if matches!(
+        response,
+        SidecarResponse::StreamError { .. } | SidecarResponse::StreamCancelled
+    ) {
         acc.had_error = true;
     }
 }
@@ -266,13 +390,27 @@ fn persist_assistant_message(
 
     let assistant_turn = i32::try_from(turn_index + 1)
         .map_err(|_| OrqaError::Database("turn index overflow".to_string()))?;
-    let content_value = if acc.text.is_empty() { None } else { Some(acc.text.as_str()) };
+    let content_value = if acc.text.is_empty() {
+        None
+    } else {
+        Some(acc.text.as_str())
+    };
 
     let assistant_msg = message_repo::create(
-        &db, session_id, "assistant", "text", content_value, assistant_turn, 0,
+        &db,
+        session_id,
+        "assistant",
+        "text",
+        content_value,
+        assistant_turn,
+        0,
     )?;
 
-    let status = if acc.stream_complete && !acc.had_error { "complete" } else { "error" };
+    let status = if acc.stream_complete && !acc.had_error {
+        "complete"
+    } else {
+        "error"
+    };
     message_repo::update_stream_status(&db, assistant_msg.id, status)?;
 
     if acc.stream_complete {
@@ -394,9 +532,7 @@ fn build_system_prompt(project_path: &Path) -> Result<String, OrqaError> {
         }
     }
 
-    if let Some(claude_md) =
-        read_governance_file(project_path, ".claude/CLAUDE.md")?
-    {
+    if let Some(claude_md) = read_governance_file(project_path, ".claude/CLAUDE.md")? {
         parts.push("\n## Project Instructions".to_string());
         parts.push(claude_md);
     }
@@ -426,12 +562,15 @@ fn build_system_prompt(project_path: &Path) -> Result<String, OrqaError> {
 pub fn stream_send_message(
     session_id: i64,
     content: String,
+    model: Option<String>,
     on_event: tauri::ipc::Channel<StreamEvent>,
     state: tauri::State<'_, AppState>,
 ) -> Result<i64, OrqaError> {
     let content = content.trim().to_string();
     if content.is_empty() {
-        return Err(OrqaError::Validation("message content cannot be empty".to_string()));
+        return Err(OrqaError::Validation(
+            "message content cannot be empty".to_string(),
+        ));
     }
 
     let (user_message_id, turn_index) = persist_user_message(&state, session_id, &content)?;
@@ -439,18 +578,16 @@ pub fn stream_send_message(
     super::sidecar_commands::ensure_sidecar_running(&state)?;
 
     let system_prompt = match project_root(&state) {
-        Ok(root) => {
-            match build_system_prompt(&root) {
-                Ok(prompt) => {
-                    tracing::debug!("[stream] system prompt built ({} chars)", prompt.len());
-                    Some(prompt)
-                }
-                Err(e) => {
-                    tracing::warn!("[stream] failed to build system prompt: {e}");
-                    None
-                }
+        Ok(root) => match build_system_prompt(&root) {
+            Ok(prompt) => {
+                tracing::debug!("[stream] system prompt built ({} chars)", prompt.len());
+                Some(prompt)
             }
-        }
+            Err(e) => {
+                tracing::warn!("[stream] failed to build system prompt: {e}");
+                None
+            }
+        },
         Err(e) => {
             tracing::warn!("[stream] no active project for system prompt: {e}");
             None
@@ -460,7 +597,7 @@ pub fn stream_send_message(
     let request = SidecarRequest::SendMessage {
         session_id,
         content,
-        model: None,
+        model,
         system_prompt,
     };
     state.sidecar.send(&request)?;
@@ -484,6 +621,42 @@ pub fn stream_stop(session_id: i64, state: tauri::State<'_, AppState>) -> Result
         .send(&SidecarRequest::CancelStream { session_id })
 }
 
+/// Respond to a pending tool approval request from the frontend.
+///
+/// The stream loop blocks waiting for this command whenever a write or execute
+/// tool (e.g. `write_file`, `edit_file`, `bash`) requests approval. Calling this
+/// command with `approved = true` permits the tool to run; `approved = false`
+/// causes the sidecar to receive a denial and the tool call to fail gracefully.
+///
+/// Returns `NotFound` if no pending approval exists for the given `tool_call_id`,
+/// which can happen if the stream already timed out or completed.
+#[tauri::command]
+pub fn stream_tool_approval_respond(
+    tool_call_id: String,
+    approved: bool,
+    state: tauri::State<'_, AppState>,
+) -> Result<(), OrqaError> {
+    let sender = state
+        .pending_approvals
+        .lock()
+        .map_err(|_| OrqaError::Sidecar("pending_approvals mutex poisoned".to_string()))?
+        .remove(&tool_call_id);
+
+    match sender {
+        Some(tx) => {
+            tx.send(approved).map_err(|_| {
+                OrqaError::Sidecar(format!(
+                    "stream loop receiver dropped for tool_call_id={tool_call_id}"
+                ))
+            })?;
+            Ok(())
+        }
+        None => Err(OrqaError::NotFound(format!(
+            "no pending approval for tool_call_id={tool_call_id}"
+        ))),
+    }
+}
+
 // ── Tool Execution ──
 
 /// Resolve the active project's root path for use as working directory.
@@ -504,7 +677,9 @@ fn resolve_path(raw: &str, root: &Path) -> Result<PathBuf, String> {
         root.join(raw)
     };
 
-    let resolved = candidate.canonicalize().unwrap_or_else(|_| candidate.clone());
+    let resolved = candidate
+        .canonicalize()
+        .unwrap_or_else(|_| candidate.clone());
     let root_canon = root.canonicalize().unwrap_or_else(|_| root.to_path_buf());
 
     if !resolved.starts_with(&root_canon) {
@@ -525,12 +700,105 @@ fn resolve_write_path(raw: &str, root: &Path) -> Result<PathBuf, String> {
     let root_canon = root.canonicalize().unwrap_or_else(|_| root.to_path_buf());
 
     if let Some(parent) = candidate.parent() {
-        let parent_resolved = parent.canonicalize().unwrap_or_else(|_| parent.to_path_buf());
+        let parent_resolved = parent
+            .canonicalize()
+            .unwrap_or_else(|_| parent.to_path_buf());
         if !parent_resolved.starts_with(&root_canon) {
             return Err(format!("path '{}' is outside the project root", raw));
         }
     }
     Ok(candidate)
+}
+
+/// Run enforcement checks for a file write/edit tool call.
+///
+/// Returns `Some((error_message, true))` if a Block verdict fires.
+/// Warn verdicts log but return `None` (execution continues).
+fn enforce_file(
+    tool_name: &str,
+    file_path: &str,
+    new_text: &str,
+    state: &tauri::State<'_, AppState>,
+) -> Option<(String, bool)> {
+    let guard = match state.enforcement.lock() {
+        Ok(g) => g,
+        Err(e) => {
+            tracing::warn!("[enforcement] lock poisoned: {e}");
+            return None;
+        }
+    };
+
+    let engine = guard.as_ref()?;
+
+    let verdicts = engine.evaluate_file(file_path, new_text);
+    for verdict in &verdicts {
+        match verdict.action {
+            RuleAction::Block => {
+                tracing::debug!(
+                    "[enforcement] BLOCK tool={tool_name} rule='{}' file='{file_path}'",
+                    verdict.rule_name
+                );
+                return Some((
+                    format!(
+                        "Rule '{}' blocked this tool call.\n\n{}",
+                        verdict.rule_name, verdict.message
+                    ),
+                    true,
+                ));
+            }
+            RuleAction::Warn => {
+                tracing::warn!(
+                    "[enforcement] WARN tool={tool_name} rule='{}' file='{file_path}'",
+                    verdict.rule_name
+                );
+            }
+        }
+    }
+
+    None
+}
+
+/// Run enforcement checks for a bash tool call.
+///
+/// Returns `Some((error_message, true))` if a Block verdict fires.
+/// Warn verdicts log but return `None` (execution continues).
+fn enforce_bash(command: &str, state: &tauri::State<'_, AppState>) -> Option<(String, bool)> {
+    let guard = match state.enforcement.lock() {
+        Ok(g) => g,
+        Err(e) => {
+            tracing::warn!("[enforcement] lock poisoned: {e}");
+            return None;
+        }
+    };
+
+    let engine = guard.as_ref()?;
+
+    let verdicts = engine.evaluate_bash(command);
+    for verdict in &verdicts {
+        match verdict.action {
+            RuleAction::Block => {
+                tracing::debug!(
+                    "[enforcement] BLOCK tool=bash rule='{}' command='{command}'",
+                    verdict.rule_name
+                );
+                return Some((
+                    format!(
+                        "Rule '{}' blocked this bash command.\n\n{}",
+                        verdict.rule_name, verdict.message
+                    ),
+                    true,
+                ));
+            }
+            RuleAction::Warn => {
+                tracing::warn!(
+                    "[enforcement] WARN tool=bash rule='{}' command='{command}'",
+                    verdict.rule_name
+                );
+            }
+        }
+    }
+
+    None
 }
 
 /// Dispatch a tool call to the appropriate handler.
@@ -560,6 +828,29 @@ fn execute_tool(
             return (format!("cannot resolve project: {e}"), true);
         }
     };
+
+    // Run enforcement checks before executing write/bash tools
+    let enforcement_result = match tool_name {
+        "write_file" => {
+            let file_path = input["path"].as_str().unwrap_or("");
+            let new_text = input["content"].as_str().unwrap_or("");
+            enforce_file(tool_name, file_path, new_text, state)
+        }
+        "edit_file" => {
+            let file_path = input["path"].as_str().unwrap_or("");
+            let new_text = input["new_string"].as_str().unwrap_or("");
+            enforce_file(tool_name, file_path, new_text, state)
+        }
+        "bash" => {
+            let command = input["command"].as_str().unwrap_or("");
+            enforce_bash(command, state)
+        }
+        _ => None,
+    };
+
+    if let Some(blocked) = enforcement_result {
+        return blocked;
+    }
 
     let (output, is_error) = match tool_name {
         "read_file" => tool_read_file(&input, &root),
@@ -623,7 +914,10 @@ fn tool_write_file(input: &serde_json::Value, root: &Path) -> (String, bool) {
     }
 
     match std::fs::write(&path, content) {
-        Ok(()) => (format!("wrote {} bytes to '{}'", content.len(), path.display()), false),
+        Ok(()) => (
+            format!("wrote {} bytes to '{}'", content.len(), path.display()),
+            false,
+        ),
         Err(e) => (format!("failed to write '{}': {e}", path.display()), true),
     }
 }
@@ -655,18 +949,27 @@ fn tool_edit_file(input: &serde_json::Value, root: &Path) -> (String, bool) {
 
     let count = contents.matches(old_string).count();
     if count == 0 {
-        return (format!("old_string not found in '{}'", path.display()), true);
+        return (
+            format!("old_string not found in '{}'", path.display()),
+            true,
+        );
     }
     if count > 1 {
         return (
-            format!("old_string found {count} times in '{}' — must be unique", path.display()),
+            format!(
+                "old_string found {count} times in '{}' — must be unique",
+                path.display()
+            ),
             true,
         );
     }
 
     let updated = contents.replacen(old_string, new_string, 1);
     match std::fs::write(&path, &updated) {
-        Ok(()) => (format!("edited '{}' (1 replacement)", path.display()), false),
+        Ok(()) => (
+            format!("edited '{}' (1 replacement)", path.display()),
+            false,
+        ),
         Err(e) => (format!("failed to write '{}': {e}", path.display()), true),
     }
 }
@@ -793,7 +1096,10 @@ fn tool_grep(input: &serde_json::Value, root: &Path) -> (String, bool) {
     if lines.len() > 200 {
         let truncated: String = lines[..200].join("\n");
         (
-            format!("{truncated}\n\n... ({} total matches, showing first 200)", lines.len()),
+            format!(
+                "{truncated}\n\n... ({} total matches, showing first 200)",
+                lines.len()
+            ),
             false,
         )
     } else {
@@ -831,7 +1137,10 @@ fn tool_search_regex(
         None => return ("missing 'pattern' parameter".to_string(), true),
     };
     let path_filter = input["path"].as_str();
-    let max_results = input["max_results"].as_u64().map(|n| n as u32).unwrap_or(20);
+    let max_results = input["max_results"]
+        .as_u64()
+        .map(|n| n as u32)
+        .unwrap_or(20);
 
     let search_guard = match state.search.lock() {
         Ok(g) => g,
@@ -839,7 +1148,12 @@ fn tool_search_regex(
     };
     let engine = match search_guard.as_ref() {
         Some(e) => e,
-        None => return ("search index not initialized — index the codebase first".to_string(), true),
+        None => {
+            return (
+                "search index not initialized — index the codebase first".to_string(),
+                true,
+            )
+        }
     };
 
     match engine.search_regex(pattern, path_filter, max_results) {
@@ -857,7 +1171,10 @@ fn tool_search_semantic(
         Some(q) => q,
         None => return ("missing 'query' parameter".to_string(), true),
     };
-    let max_results = input["max_results"].as_u64().map(|n| n as u32).unwrap_or(10);
+    let max_results = input["max_results"]
+        .as_u64()
+        .map(|n| n as u32)
+        .unwrap_or(10);
 
     let mut search_guard = match state.search.lock() {
         Ok(g) => g,
@@ -865,7 +1182,12 @@ fn tool_search_semantic(
     };
     let engine = match search_guard.as_mut() {
         Some(e) => e,
-        None => return ("search index not initialized — index the codebase first".to_string(), true),
+        None => {
+            return (
+                "search index not initialized — index the codebase first".to_string(),
+                true,
+            )
+        }
     };
 
     match engine.search_semantic(query, max_results) {
@@ -883,16 +1205,24 @@ fn tool_load_skill(input: &serde_json::Value, root: &Path) -> (String, bool) {
 
     // Validate skill name: must be a simple directory name with no path separators
     if name.contains('/') || name.contains('\\') || name.contains("..") {
-        return (format!("invalid skill name '{name}': must not contain path separators"), true);
+        return (
+            format!("invalid skill name '{name}': must not contain path separators"),
+            true,
+        );
     }
 
-    let skill_path = root.join(".claude").join("skills").join(name).join("SKILL.md");
+    let skill_path = root
+        .join(".claude")
+        .join("skills")
+        .join(name)
+        .join("SKILL.md");
 
     match std::fs::read_to_string(&skill_path) {
         Ok(contents) => (contents, false),
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
-            (format!("skill '{name}' not found at '{}'", skill_path.display()), true)
-        }
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => (
+            format!("skill '{name}' not found at '{}'", skill_path.display()),
+            true,
+        ),
         Err(e) => (format!("failed to read skill '{name}': {e}"), true),
     }
 }
@@ -1167,13 +1497,28 @@ mod tests {
     }
 
     #[test]
-    fn translate_tool_approval_request_returns_none() {
+    fn translate_tool_approval_request_returns_event() {
+        // ToolApprovalRequest is forwarded to the frontend as a StreamEvent so
+        // the UI can display the approval dialog for write/execute tools.
         let resp = SidecarResponse::ToolApprovalRequest {
             tool_call_id: "call_011".to_string(),
             tool_name: "write_file".to_string(),
             input: r#"{"path":"/tmp/out.txt"}"#.to_string(),
         };
-        assert!(translate_response(&resp).is_none());
+        let event = translate_response(&resp);
+        assert!(event.is_some());
+        if let Some(StreamEvent::ToolApprovalRequest {
+            tool_call_id,
+            tool_name,
+            input,
+        }) = event
+        {
+            assert_eq!(tool_call_id, "call_011");
+            assert_eq!(tool_name, "write_file");
+            assert_eq!(input, r#"{"path":"/tmp/out.txt"}"#);
+        } else {
+            panic!("expected StreamEvent::ToolApprovalRequest");
+        }
     }
 
     #[test]
@@ -1290,5 +1635,37 @@ mod tests {
         let content = "  Hello world  ".trim().to_string();
         assert!(!content.is_empty());
         assert_eq!(content, "Hello world");
+    }
+
+    // ── Tool approval classification tests ──
+
+    #[test]
+    fn read_only_tools_are_recognized() {
+        let read_only = [
+            "read_file",
+            "glob",
+            "grep",
+            "search_regex",
+            "search_semantic",
+            "load_skill",
+            "code_research",
+        ];
+        for tool in &read_only {
+            assert!(
+                READ_ONLY_TOOLS.contains(tool),
+                "{tool} should be in READ_ONLY_TOOLS"
+            );
+        }
+    }
+
+    #[test]
+    fn write_tools_are_not_read_only() {
+        let write_tools = ["write_file", "edit_file", "bash"];
+        for tool in &write_tools {
+            assert!(
+                !READ_ONLY_TOOLS.contains(tool),
+                "{tool} must NOT be in READ_ONLY_TOOLS — it requires user approval"
+            );
+        }
     }
 }

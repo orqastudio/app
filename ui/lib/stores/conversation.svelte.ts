@@ -1,6 +1,7 @@
 import type { Message } from "$lib/types";
 import type { StreamEvent } from "$lib/types/streaming";
 import { invoke, createStreamChannel } from "$lib/ipc/invoke";
+import { DEFAULT_MODEL } from "$lib/components/conversation/model-options";
 
 export interface ToolCallState {
 	toolCallId: string;
@@ -11,6 +12,14 @@ export interface ToolCallState {
 	isComplete: boolean;
 }
 
+/** State for a pending tool approval — drives the approval dialog. */
+export interface PendingApproval {
+	toolCallId: string;
+	toolName: string;
+	/** Raw JSON string of tool parameters, for display. */
+	input: string;
+}
+
 class ConversationStore {
 	messages = $state<Message[]>([]);
 	streamingContent = $state("");
@@ -19,6 +28,9 @@ class ConversationStore {
 	isLoading = $state(false);
 	error = $state<string | null>(null);
 	activeToolCalls = $state<Map<string, ToolCallState>>(new Map());
+	selectedModel = $state<string>(DEFAULT_MODEL);
+	/** Non-null when a write/execute tool is waiting for user approval. */
+	pendingApproval = $state<PendingApproval | null>(null);
 
 	private resolvedModel = $state<string | null>(null);
 	private streamingMessageId = $state<number | null>(null);
@@ -84,6 +96,7 @@ class ConversationStore {
 			await invoke("stream_send_message", {
 				sessionId,
 				content,
+				model: this.selectedModel,
 				onEvent: channel,
 			});
 		} catch (err) {
@@ -110,6 +123,23 @@ class ConversationStore {
 		this.activeToolCalls = new Map();
 		this.resolvedModel = null;
 		this.streamingMessageId = null;
+		this.selectedModel = DEFAULT_MODEL;
+		this.pendingApproval = null;
+	}
+
+	/** Approve or deny the currently pending tool call, then invoke the backend. */
+	async respondToApproval(approved: boolean): Promise<void> {
+		const approval = this.pendingApproval;
+		if (!approval) return;
+		this.pendingApproval = null;
+		try {
+			await invoke("stream_tool_approval_respond", {
+				toolCallId: approval.toolCallId,
+				approved,
+			});
+		} catch (err) {
+			this.error = err instanceof Error ? err.message : String(err);
+		}
 	}
 
 	private handleStreamEvent(event: StreamEvent) {
@@ -200,6 +230,15 @@ class ConversationStore {
 
 			case "stream_cancelled":
 				this.isStreaming = false;
+				break;
+
+			case "tool_approval_request":
+				// Surface the approval request so ConversationView can render the dialog.
+				this.pendingApproval = {
+					toolCallId: event.data.tool_call_id,
+					toolName: event.data.tool_name,
+					input: event.data.input,
+				};
 				break;
 		}
 	}

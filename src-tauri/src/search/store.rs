@@ -111,10 +111,7 @@ impl SearchStore {
     }
 
     /// Fetch raw chunk rows for regex search, optionally filtered by path prefix.
-    fn fetch_regex_rows(
-        &self,
-        path_filter: Option<&str>,
-    ) -> Result<Vec<ChunkRow>, StoreError> {
+    fn fetch_regex_rows(&self, path_filter: Option<&str>) -> Result<Vec<ChunkRow>, StoreError> {
         let sql = if path_filter.is_some() {
             "SELECT file_path, start_line, end_line, content, language \
              FROM chunks WHERE file_path LIKE ? || '%' \
@@ -215,9 +212,7 @@ impl SearchStore {
     }
 
     /// Fetch all embedded chunks from DuckDB for semantic scoring.
-    fn fetch_embedded_chunks(
-        &self,
-    ) -> Result<Vec<EmbeddedChunkRow>, StoreError> {
+    fn fetch_embedded_chunks(&self) -> Result<Vec<EmbeddedChunkRow>, StoreError> {
         let mut stmt = self.conn.prepare(
             "SELECT id, file_path, start_line, end_line, content, language, embedding \
              FROM chunks WHERE embedding IS NOT NULL",
@@ -231,7 +226,9 @@ impl SearchStore {
             let language: Option<String> = row.get(5)?;
             let embedding_bytes: Vec<u8> = row.get(6)?;
             let embedding = bytes_to_floats(&embedding_bytes);
-            Ok((id, file_path, start_line, end_line, content, language, embedding))
+            Ok((
+                id, file_path, start_line, end_line, content, language, embedding,
+            ))
         })?;
         let mut result = Vec::new();
         for row in rows {
@@ -266,7 +263,11 @@ fn build_regex_results(
             }
         }
     }
-    results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
+    results.sort_by(|a, b| {
+        b.score
+            .partial_cmp(&a.score)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
     Ok(results)
 }
 
@@ -278,23 +279,32 @@ fn build_semantic_results(
 ) -> Vec<SearchResult> {
     let mut scored: Vec<(f64, SearchResult)> = rows
         .into_iter()
-        .map(|(_id, file_path, start_line, end_line, content, language, embedding)| {
-            let score = cosine_similarity(query_embedding, &embedding);
-            let match_context = content.lines().take(3).collect::<Vec<_>>().join("\n");
-            (score, SearchResult {
-                file_path,
-                start_line: start_line as u32,
-                end_line: end_line as u32,
-                content,
-                language,
-                score,
-                match_context,
-            })
-        })
+        .map(
+            |(_id, file_path, start_line, end_line, content, language, embedding)| {
+                let score = cosine_similarity(query_embedding, &embedding);
+                let match_context = content.lines().take(3).collect::<Vec<_>>().join("\n");
+                (
+                    score,
+                    SearchResult {
+                        file_path,
+                        start_line: start_line as u32,
+                        end_line: end_line as u32,
+                        content,
+                        language,
+                        score,
+                        match_context,
+                    },
+                )
+            },
+        )
         .collect();
 
     scored.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
-    scored.into_iter().take(max_results as usize).map(|(_, r)| r).collect()
+    scored
+        .into_iter()
+        .take(max_results as usize)
+        .map(|(_, r)| r)
+        .collect()
 }
 
 /// Serialize a slice of f32 values to raw little-endian bytes.
