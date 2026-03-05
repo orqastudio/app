@@ -99,7 +99,62 @@ Avoid cyan on very light backgrounds when contrast is insufficient.
 
 ---
 
-## 5. Colour Palette
+## 5. Wordmark
+
+When the logo is paired with text, use the **OrqaStudio** wordmark — a single compound word with no space.
+
+![Wordmark reference](assets/banners/banner-1680x240.png)
+
+### Construction
+
+| Property | Value |
+| --- | --- |
+| Typeface | Inter |
+| **Orqa** | Bold (700) |
+| **Studio** | Light (300) |
+| Casing | PascalCase — **O**rqa**S**tudio |
+| Spacing | No space between words |
+
+### Sizing & Placement
+
+* The wordmark height should sit **just under** the height of the logo mark
+* Leave generous horizontal spacing between the logo and the wordmark — at minimum the width of the logo mark itself
+* Vertically centre the wordmark against the logo
+
+### Implementation
+
+```css
+.wordmark {
+  font-family: 'Inter', sans-serif;
+  font-size: /* match to logo height */;
+  letter-spacing: -0.02em;
+}
+
+.wordmark-orqa {
+  font-weight: 700;
+}
+
+.wordmark-studio {
+  font-weight: 300;
+}
+```
+
+```html
+<span class="wordmark">
+  <span class="wordmark-orqa">Orqa</span><span class="wordmark-studio">Studio</span>
+</span>
+```
+
+### Don'ts
+
+* Do not add a space between "Orqa" and "Studio"
+* Do not use a single font weight for the full wordmark
+* Do not set the wordmark larger than the logo height
+* Do not place the wordmark too close to the logo — maintain breathing room
+
+---
+
+## 6. Colour Palette
 
 ### Primary Brand Colours
 
@@ -150,7 +205,7 @@ Used sparingly for highlights and light themes.
 
 ---
 
-## 6. Typography
+## 7. Typography
 
 ### Primary UI Typeface
 
@@ -182,7 +237,7 @@ Used for:
 
 ---
 
-## 7. Iconography
+## 8. Iconography
 
 Icons follow the same geometry principles as the logo.
 
@@ -197,7 +252,7 @@ Icons should feel like **components of the sonar system**.
 
 ---
 
-## 8. Motion Principles
+## 9. Motion Principles
 
 Animation reinforces the platform’s learning loop.
 
@@ -219,7 +274,7 @@ Motion should feel **calm and intelligent**, never flashy.
 
 ---
 
-## 9. Backgrounds
+## 10. Backgrounds
 
 Preferred background styles:
 
@@ -237,7 +292,7 @@ The brand should feel **precise and intelligent**.
 
 ---
 
-## 10. Voice & Tone
+## 11. Voice & Tone
 
 The Orqa Studio voice is:
 
@@ -262,7 +317,7 @@ Example:
 
 ---
 
-## 11. Design Principles
+## 12. Design Principles
 
 All brand expressions should reflect:
 
@@ -275,7 +330,7 @@ The design should always feel like **engineering infrastructure**, not consumer 
 
 ---
 
-## 12. Summary
+## 13. Summary
 
 The Orqa Studio brand expresses a simple idea:
 
