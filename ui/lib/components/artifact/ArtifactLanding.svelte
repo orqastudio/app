@@ -6,7 +6,9 @@
 	import GitBranchIcon from "@lucide/svelte/icons/git-branch";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 	import ErrorDisplay from "$lib/components/shared/ErrorDisplay.svelte";
+	import { Badge } from "$lib/components/ui/badge";
 	import { artifactStore } from "$lib/stores/artifact.svelte";
+	import { enforcementStore } from "$lib/stores/enforcement.svelte";
 	import { navigationStore, type ActivityView } from "$lib/stores/navigation.svelte";
 	import type { ArtifactType } from "$lib/types";
 	import type { Component } from "svelte";
@@ -65,6 +67,19 @@
 	const config = $derived(categoryConfig[category]);
 	const items = $derived(config ? artifactStore.artifactsByType(config.artifactType) : []);
 
+	// Violation counts per rule name (only relevant when category === "rules")
+	const violationsByRule = $derived(
+		enforcementStore.violations.reduce<Record<string, { blocks: number; warns: number }>>(
+			(acc, v) => {
+				if (!acc[v.rule_name]) acc[v.rule_name] = { blocks: 0, warns: 0 };
+				if (v.action === "Block") acc[v.rule_name].blocks++;
+				else acc[v.rule_name].warns++;
+				return acc;
+			},
+			{},
+		),
+	);
+
 	function handleItemClick(name: string, path: string) {
 		if (!config) return;
 		navigationStore.openArtifact(path, [name]);
@@ -95,6 +110,21 @@
 					</p>
 				</div>
 
+				{#if category === "rules" && (enforcementStore.blockCount > 0 || enforcementStore.warnCount > 0)}
+					<div class="flex items-center gap-2">
+						{#if enforcementStore.blockCount > 0}
+							<Badge variant="destructive" class="text-xs px-1.5 py-0.5">
+								{enforcementStore.blockCount} blocked
+							</Badge>
+						{/if}
+						{#if enforcementStore.warnCount > 0}
+							<Badge variant="outline" class="text-xs px-1.5 py-0.5 border-amber-500/50 text-amber-600 dark:text-amber-400">
+								{enforcementStore.warnCount} warned
+							</Badge>
+						{/if}
+					</div>
+				{/if}
+
 				{#if items.length === 0}
 					<Card.Root>
 						<Card.Content class="py-8 text-center">
@@ -111,7 +141,7 @@
 
 					<!-- Card grid -->
 					<div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-						{#each items as item}
+						{#each items as item (item.rel_path)}
 							{@const Icon = config.icon}
 							<button
 								class="text-left"
@@ -121,7 +151,7 @@
 									<Card.Content class="p-4">
 										<div class="flex items-start gap-3">
 											<Icon class="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-											<div class="min-w-0">
+											<div class="min-w-0 flex-1">
 												<p class="truncate text-sm font-medium">{item.name}</p>
 												{#if item.description}
 													<p class="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
@@ -129,6 +159,21 @@
 													</p>
 												{/if}
 											</div>
+											{#if category === "rules" && violationsByRule[item.name]}
+												{@const counts = violationsByRule[item.name]}
+												<div class="flex shrink-0 items-center gap-1">
+													{#if counts.blocks > 0}
+														<Badge variant="destructive" class="h-4 px-1 py-0 text-xs">
+															{counts.blocks}
+														</Badge>
+													{/if}
+													{#if counts.warns > 0}
+														<Badge variant="outline" class="h-4 border-amber-500/50 px-1 py-0 text-xs text-amber-600 dark:text-amber-400">
+															{counts.warns}
+														</Badge>
+													{/if}
+												</div>
+											{/if}
 										</div>
 									</Card.Content>
 								</Card.Root>

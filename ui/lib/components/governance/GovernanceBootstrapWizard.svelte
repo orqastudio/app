@@ -99,7 +99,7 @@
 
 				<!-- Step indicator -->
 				<div class="mt-3 flex items-center gap-2">
-					{#each Array(TOTAL_STEPS) as _, i}
+					{#each Array.from({ length: TOTAL_STEPS }, (_, idx) => idx) as i (i)}
 						<div
 							class="h-1.5 flex-1 rounded-full transition-colors {i < governanceStore.wizardStep
 								? 'bg-primary'
@@ -162,7 +162,7 @@
 										Strengths
 									</p>
 									<ul class="space-y-1">
-										{#each governanceStore.analysis.strengths as strength}
+										{#each governanceStore.analysis.strengths as strength, i (i)}
 											<li class="flex items-start gap-2 text-sm">
 												<CheckCircleIcon class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
 												<span>{strength}</span>
@@ -176,7 +176,7 @@
 								<div>
 									<p class="mb-2 text-sm font-medium text-muted-foreground">Gaps Identified</p>
 									<ul class="space-y-1">
-										{#each governanceStore.analysis.gaps as gap}
+										{#each governanceStore.analysis.gaps as gap, i (i)}
 											<li class="flex items-start gap-2 text-sm text-muted-foreground">
 												<span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-muted-foreground"></span>
 												<span>{gap}</span>

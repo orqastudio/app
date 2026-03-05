@@ -72,7 +72,7 @@
 						No matching docs.
 					</div>
 				{:else}
-					{#each filteredTree as node}
+					{#each filteredTree as node (node.path ?? node.label)}
 						{@render treeSection(node, 0)}
 					{/each}
 				{/if}
@@ -92,7 +92,7 @@
 				{node.label}
 			</Collapsible.Trigger>
 			<Collapsible.Content>
-				{#each node.children as child}
+				{#each node.children as child (child.path ?? child.label)}
 					{@render treeSection(child, depth + 1)}
 				{/each}
 			</Collapsible.Content>

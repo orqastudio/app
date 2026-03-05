@@ -37,7 +37,7 @@
 		</Button>
 	</DropdownMenuTrigger>
 	<DropdownMenuContent {align}>
-		{#each items as item}
+		{#each items as item (item.value)}
 			<DropdownMenuItem onclick={() => onSelect(item.value)}>
 				{item.label}
 				{#if item.value === selected}

@@ -63,21 +63,23 @@ enforcement:
 ## Running Tests
 
 ```bash
-# Rust tests
-cargo test
+# All tests (Rust + frontend)
+make test
 
-# Rust tests with coverage
-cargo tarpaulin --out Html
+# Rust tests only
+make test-rust
 
-# Frontend unit tests
-npm run test
+# Frontend unit tests (Vitest)
+make test-frontend
 
 # Frontend tests in watch mode
-npm run test -- --watch
+make test-watch
 
 # E2E tests (requires running app)
-npx playwright test
+make test-e2e
 ```
+
+For the full command reference, see `docs/development/commands.md`.
 
 ## Related Rules
 

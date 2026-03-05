@@ -58,7 +58,7 @@
 	<!-- Filter tabs -->
 	<Tabs.Root value={activeTab} onValueChange={(v) => (activeTab = v as FilterTab)}>
 		<Tabs.List class="w-full">
-			{#each tabs as tab}
+			{#each tabs as tab (tab.value)}
 				<Tabs.Trigger value={tab.value} class="flex-1 text-xs">
 					{tab.label}
 					{#if tab.value !== "all"}

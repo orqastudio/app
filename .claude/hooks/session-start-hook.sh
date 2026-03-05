@@ -19,7 +19,9 @@ if [ -n "$STASHES" ]; then
 fi
 
 # Check for stale worktrees (git-linked)
-WORKTREES=$(git worktree list 2>/dev/null | grep -v "$(pwd)")
+# Use git rev-parse instead of pwd — pwd returns POSIX paths on MINGW64
+# while git worktree list returns Windows-style paths, causing false matches
+WORKTREES=$(git worktree list 2>/dev/null | grep -v "$(git rev-parse --show-toplevel 2>/dev/null)")
 if [ -n "$WORKTREES" ]; then
     echo "WARNING: Non-main worktrees detected! Check if these need cleanup:"
     echo "$WORKTREES"
@@ -27,8 +29,9 @@ if [ -n "$WORKTREES" ]; then
 fi
 
 # Check for orphaned worktree directories
-PARENT_DIR=$(dirname "$(pwd)")
-ORPHANS=$(find "$PARENT_DIR" -maxdepth 1 -name "orqa-*" -type d 2>/dev/null)
+# Use git rev-parse for consistent path format across platforms
+PARENT_DIR=$(dirname "$(git rev-parse --show-toplevel 2>/dev/null)")
+ORPHANS=$(ls -d "$PARENT_DIR"/orqa-* 2>/dev/null)
 if [ -n "$ORPHANS" ]; then
     echo "WARNING: Orphaned worktree directories found (no .git link, likely from prior sessions):"
     echo "$ORPHANS"

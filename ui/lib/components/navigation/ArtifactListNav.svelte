@@ -7,6 +7,7 @@
 	import EmptyState from "$lib/components/shared/EmptyState.svelte";
 	import SearchInput from "$lib/components/shared/SearchInput.svelte";
 	import { artifactStore } from "$lib/stores/artifact.svelte";
+	import { enforcementStore } from "$lib/stores/enforcement.svelte";
 	import { navigationStore, type ActivityView } from "$lib/stores/navigation.svelte";
 	import type { ArtifactType } from "$lib/types";
 	import type { Component } from "svelte";
@@ -66,6 +67,11 @@
 	const config = $derived(categoryConfig[category]);
 	const items = $derived(config ? artifactStore.artifactsByType(config.artifactType) : []);
 
+	// Set of rule names that have violations (for sidebar dot indicators)
+	const rulesWithViolations = $derived(
+		new Set(enforcementStore.violations.map((v) => v.rule_name)),
+	);
+
 	function handleItemClick(name: string, path: string) {
 		if (!config) return;
 		navigationStore.openArtifact(path, [name]);
@@ -93,13 +99,18 @@
 						/>
 					</div>
 				{:else}
-					{#each items as item}
+					{#each items as item (item.rel_path)}
 						<button
 							class="flex w-full flex-col gap-0.5 rounded px-2 py-1.5 text-left hover:bg-accent/50"
 							class:bg-accent={navigationStore.selectedArtifactPath === item.rel_path}
 							onclick={() => handleItemClick(item.name, item.rel_path)}
 						>
-							<span class="truncate text-sm font-medium">{item.name}</span>
+							<span class="flex items-center gap-1.5 truncate text-sm font-medium">
+								{item.name}
+								{#if category === "rules" && rulesWithViolations.has(item.name)}
+									<span class="inline-block h-2 w-2 shrink-0 rounded-full bg-destructive" title="Has violations"></span>
+								{/if}
+							</span>
 							{#if item.description}
 								<p class="line-clamp-2 text-xs text-muted-foreground">
 									{item.description}

@@ -13,6 +13,7 @@ pub enum SidecarRequest {
         content: String,
         model: Option<String>,
         system_prompt: Option<String>,
+        sdk_session_id: Option<String>,
     },
     CancelStream {
         session_id: i64,
@@ -105,6 +106,10 @@ pub enum SidecarResponse {
         tool_name: String,
         input: String,
     },
+    SessionInitialized {
+        session_id: i64,
+        sdk_session_id: String,
+    },
 }
 
 #[cfg(test)]
@@ -120,6 +125,7 @@ mod tests {
             content: "hello".to_string(),
             model: Some("claude-opus-4-6".to_string()),
             system_prompt: None,
+            sdk_session_id: None,
         };
 
         let json = serde_json::to_value(&req).expect("serialization should succeed");
@@ -128,6 +134,7 @@ mod tests {
         assert_eq!(json["content"], "hello");
         assert_eq!(json["model"], "claude-opus-4-6");
         assert!(json["system_prompt"].is_null());
+        assert!(json["sdk_session_id"].is_null());
     }
 
     #[test]
@@ -237,6 +244,7 @@ mod tests {
                 content: "test".to_string(),
                 model: None,
                 system_prompt: Some("be helpful".to_string()),
+                sdk_session_id: Some("abc-123".to_string()),
             },
             SidecarRequest::CancelStream { session_id: 2 },
             SidecarRequest::HealthCheck,
@@ -442,6 +450,33 @@ mod tests {
     }
 
     #[test]
+    fn session_initialized_response() {
+        let resp = SidecarResponse::SessionInitialized {
+            session_id: 1,
+            sdk_session_id: "abc-def-123".to_string(),
+        };
+
+        let json = serde_json::to_value(&resp).expect("serialization should succeed");
+        assert_eq!(json["type"], "session_initialized");
+        assert_eq!(json["session_id"], 1);
+        assert_eq!(json["sdk_session_id"], "abc-def-123");
+    }
+
+    #[test]
+    fn send_message_with_sdk_session_id() {
+        let req = SidecarRequest::SendMessage {
+            session_id: 1,
+            content: "hello".to_string(),
+            model: None,
+            system_prompt: None,
+            sdk_session_id: Some("resume-uuid".to_string()),
+        };
+
+        let json = serde_json::to_value(&req).expect("serialization should succeed");
+        assert_eq!(json["sdk_session_id"], "resume-uuid");
+    }
+
+    #[test]
     fn response_roundtrip() {
         let responses = vec![
             SidecarResponse::StreamStart {
@@ -498,6 +533,10 @@ mod tests {
                 tool_call_id: "c3".to_string(),
                 tool_name: "write_file".to_string(),
                 input: r#"{"path":"bar"}"#.to_string(),
+            },
+            SidecarResponse::SessionInitialized {
+                session_id: 1,
+                sdk_session_id: "uuid-123".to_string(),
             },
         ];
 

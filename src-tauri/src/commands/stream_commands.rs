@@ -141,7 +141,9 @@ fn translate_response(response: &SidecarResponse) -> Option<StreamEvent> {
         }
         SidecarResponse::StreamCancelled => Some(StreamEvent::StreamCancelled),
         // Non-streaming responses — not forwarded to the frontend channel
-        SidecarResponse::HealthOk { .. } | SidecarResponse::SummaryResult { .. } => None,
+        SidecarResponse::HealthOk { .. }
+        | SidecarResponse::SummaryResult { .. }
+        | SidecarResponse::SessionInitialized { .. } => None,
         // ToolExecute is handled synchronously in the read loop — not forwarded to frontend
         SidecarResponse::ToolExecute { .. } => None,
         // ToolApprovalRequest for write/execute tools is forwarded to the frontend
@@ -371,6 +373,21 @@ fn run_stream_loop(
                 break;
             }
         };
+
+        // Persist SDK session UUID — not forwarded to frontend
+        if let SidecarResponse::SessionInitialized {
+            session_id,
+            ref sdk_session_id,
+        } = response
+        {
+            if let Ok(db) = state.db.lock() {
+                if let Err(e) = session_repo::update_sdk_session_id(&db, session_id, sdk_session_id)
+                {
+                    tracing::warn!("[stream] failed to persist sdk_session_id: {e}");
+                }
+            }
+            continue;
+        }
 
         if let SidecarResponse::ToolExecute {
             ref tool_call_id,
@@ -717,11 +734,23 @@ pub fn stream_send_message(
         }
     };
 
+    // Look up persisted SDK session UUID for resume across restarts
+    let sdk_session_id = {
+        let db = state
+            .db
+            .lock()
+            .map_err(|e| OrqaError::Database(format!("failed to acquire db lock: {e}")))?;
+        session_repo::get(&db, session_id)
+            .ok()
+            .and_then(|s| s.sdk_session_id)
+    };
+
     let request = SidecarRequest::SendMessage {
         session_id,
         content,
         model,
         system_prompt,
+        sdk_session_id,
     };
     state.sidecar.send(&request)?;
 
@@ -986,6 +1015,7 @@ fn execute_tool(
         "grep" => tool_grep(&input, &root),
         "search_regex" => tool_search_regex(&input, state),
         "search_semantic" => tool_search_semantic(&input, state),
+        "code_research" => tool_code_research(&input, state),
         "load_skill" => tool_load_skill(&input, &root),
         _ => (format!("unknown tool: {tool_name}"), true),
     };
@@ -1360,6 +1390,83 @@ fn tool_search_semantic(
     match engine.search_semantic(query, max_results) {
         Ok(results) => (format_search_results(&results), false),
         Err(e) => (format!("search_semantic failed: {e}"), true),
+    }
+}
+
+/// Combined code research: runs both regex and semantic search, merging results.
+///
+/// Accepts a `query` string and optional `max_results`. The query is used as-is
+/// for semantic search. For regex search, it is treated as a literal pattern
+/// (special regex chars are escaped).
+fn tool_code_research(
+    input: &serde_json::Value,
+    state: &tauri::State<'_, AppState>,
+) -> (String, bool) {
+    let query = match input["query"].as_str() {
+        Some(q) => q,
+        None => return ("missing 'query' parameter".to_string(), true),
+    };
+    let max_results = input["max_results"]
+        .as_u64()
+        .map(|n| n as u32)
+        .unwrap_or(10);
+
+    let half = max_results / 2 + 1;
+    let mut out = String::new();
+
+    // Semantic results (best for natural language queries)
+    {
+        let mut search_guard = match state.search.lock() {
+            Ok(g) => g,
+            Err(e) => return (format!("search lock error: {e}"), true),
+        };
+        if let Some(engine) = search_guard.as_mut() {
+            match engine.search_semantic(query, half) {
+                Ok(results) => {
+                    if !results.is_empty() {
+                        out.push_str("## Semantic Matches\n\n");
+                        out.push_str(&format_search_results(&results));
+                        out.push('\n');
+                    }
+                }
+                Err(e) => {
+                    out.push_str(&format!("(semantic search unavailable: {e})\n\n"));
+                }
+            }
+        }
+    }
+
+    // Regex results (best for exact identifiers)
+    {
+        let search_guard = match state.search.lock() {
+            Ok(g) => g,
+            Err(e) => return (format!("search lock error: {e}"), true),
+        };
+        if let Some(engine) = search_guard.as_ref() {
+            let escaped = regex::escape(query);
+            match engine.search_regex(&escaped, None, half) {
+                Ok(results) => {
+                    if !results.is_empty() {
+                        out.push_str("## Regex Matches\n\n");
+                        out.push_str(&format_search_results(&results));
+                    }
+                }
+                Err(e) => {
+                    out.push_str(&format!("(regex search unavailable: {e})\n\n"));
+                }
+            }
+        }
+    }
+
+    if out.is_empty() {
+        (
+            "search index not initialized — index the codebase first".to_string(),
+            true,
+        )
+    } else if out.trim().is_empty() || (out.contains("unavailable") && !out.contains("Matches")) {
+        ("no results found".to_string(), false)
+    } else {
+        (out, false)
     }
 }
 

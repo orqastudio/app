@@ -21,7 +21,7 @@
 	</div>
 
 	<div class="flex gap-1">
-		{#each areas as area}
+		{#each areas as area (area.name)}
 			<div
 				class="h-2 flex-1 rounded-sm transition-colors {area.covered
 					? 'bg-green-500'

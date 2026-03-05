@@ -103,7 +103,7 @@
 		<div class="space-y-2">
 			<h4 class="text-sm font-medium">Excluded Paths</h4>
 			<div class="flex flex-wrap gap-1.5">
-				{#each localExcludedPaths as path}
+				{#each localExcludedPaths as path (path)}
 					<Badge variant="outline" class="gap-1 pr-1">
 						{path}
 						<button
@@ -150,7 +150,7 @@
 					<div class="space-y-1">
 						<span class="text-xs text-muted-foreground">Languages</span>
 						<div class="flex flex-wrap gap-1.5">
-							{#each props.settings.stack.languages as lang}
+							{#each props.settings.stack.languages as lang (lang)}
 								<Badge variant="secondary">{lang}</Badge>
 							{/each}
 						</div>
@@ -160,7 +160,7 @@
 					<div class="space-y-1">
 						<span class="text-xs text-muted-foreground">Frameworks</span>
 						<div class="flex flex-wrap gap-1.5">
-							{#each props.settings.stack.frameworks as fw}
+							{#each props.settings.stack.frameworks as fw (fw)}
 								<Badge variant="outline">{fw}</Badge>
 							{/each}
 						</div>

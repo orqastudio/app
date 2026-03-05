@@ -294,7 +294,7 @@
 										<div class="flex items-start gap-2 text-sm">
 											<span class="w-28 shrink-0 text-muted-foreground">Scopes:</span>
 											<div class="flex flex-wrap gap-1">
-												{#each setupStore.cliInfo.scopes as scope}
+												{#each setupStore.cliInfo.scopes as scope (scope)}
 													<Badge variant="outline" class="text-xs font-mono">{formatScope(scope)}</Badge>
 												{/each}
 											</div>
@@ -442,7 +442,7 @@
 				</Card.Header>
 				<Card.Content>
 					<div class="space-y-2">
-						{#each shortcuts as shortcut}
+						{#each shortcuts as shortcut (shortcut.key)}
 							<div class="flex items-center justify-between rounded px-2 py-1.5 text-sm hover:bg-muted/50">
 								<span class="text-muted-foreground">{shortcut.action}</span>
 								<Badge variant="outline" class="font-mono text-xs">{shortcut.key}</Badge>

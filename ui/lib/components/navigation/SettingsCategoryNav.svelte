@@ -76,7 +76,7 @@
 
 <ScrollArea.Root class="h-full">
 	<div class="space-y-0.5 p-2">
-		{#each categories as cat}
+		{#each categories as cat (cat.id)}
 			{@const Icon = cat.icon}
 			<button
 				class="flex w-full items-center gap-2 rounded px-2 py-2 text-left transition-colors hover:bg-accent/50"

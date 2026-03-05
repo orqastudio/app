@@ -8,8 +8,7 @@ export type ActivityView =
 	| "skills"
 	| "hooks"
 	| "settings"
-	| "configure"
-	| "enforcement";
+	| "configure";
 
 export type ExplorerView =
 	| "artifact-list"
@@ -69,8 +68,8 @@ class NavigationStore {
 			if (this.navPanelCollapsed) {
 				this.navPanelCollapsed = false;
 			}
-		} else if (view === "lessons" || view === "enforcement") {
-			// These views manage their own internal panels — collapse the nav sub-panel.
+		} else if (view === "lessons") {
+			// This view manages its own internal panel — collapse the nav sub-panel.
 			this.navPanelCollapsed = true;
 		} else if (ARTIFACT_ACTIVITIES.includes(view)) {
 			this.explorerView = "artifact-list";

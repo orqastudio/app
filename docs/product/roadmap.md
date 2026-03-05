@@ -263,6 +263,36 @@ Implements the `spawn_agent` tool so the orchestrator agent can delegate tasks t
 - [ ] Frontend: Sub-agent result display — summary card with expandable detail
 - [ ] Design doc: [`docs/architecture/sub-agents.md`](/architecture/sub-agents)
 
+## Future: CI/CD, Versioning & Auto-Update
+
+Automated build pipeline, semantic versioning with pre-release builds, and configurable in-app auto-update. Uses tauri-plugin-updater with GitHub Releases as the distribution channel.
+
+**CI/CD Pipeline:**
+- [ ] GitHub Actions workflow: PR checks (`make check` on all platforms)
+- [ ] GitHub Actions workflow: build artifacts on merge to main (pre-release)
+- [ ] GitHub Actions workflow: build release artifacts on tag push (stable)
+- [ ] Platform matrix: Windows (x64), macOS (x64, arm64), Linux (x64)
+- [ ] Artifact signing: Tauri updater signature keys
+- [ ] Caching strategy: Rust target, node_modules, bun cache
+
+**Versioning:**
+- [ ] Semantic versioning: MAJOR.MINOR.PATCH + pre-release suffix
+- [ ] Version source of truth: tauri.conf.json + Cargo.toml + package.json sync
+- [ ] Conventional commits + auto-changelog generation
+- [ ] Git tag workflow: v0.1.0 (stable), v0.2.0-beta.1 (pre-release)
+- [ ] Version bump automation (make release-patch, release-minor, release-major)
+
+**Auto-Update:**
+- [ ] Backend: Update channel domain types (PreRelease, Minor, MajorOnly)
+- [ ] Backend: Update check command — compare current version against GitHub Releases
+- [ ] Backend: Channel filtering — parse semver, filter by user preference
+- [ ] Backend: Update download + install via tauri-plugin-updater
+- [ ] Frontend: Update channel selector in Settings (pre-release / minor / major only)
+- [ ] Frontend: Update notification badge + changelog preview dialog
+- [ ] Frontend: Update progress indicator during download/install
+- [ ] SQLite: user_preferences for update_channel, update_check_interval
+- [ ] Design doc: docs/architecture/auto-update.md
+
 ## Phase 3: File Tools & MCP
 
 ← research: [Claude Integration](/research/claude-integration) (tool implementation), [Tauri v2](/research/tauri-v2) (fs plugin, security scopes); AD: [AD-010](/architecture/decisions), [AD-011](/architecture/decisions)

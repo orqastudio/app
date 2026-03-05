@@ -146,7 +146,7 @@
 				</Card.Header>
 				<Card.Content>
 					<div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
-						{#each artifactCategories as cat}
+						{#each artifactCategories as cat (cat.activity)}
 							{@const Icon = cat.icon}
 							<button
 								class="flex flex-col items-center gap-1.5 rounded-lg border border-border p-3 transition-colors hover:bg-accent/50"

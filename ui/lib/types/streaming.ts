@@ -19,4 +19,9 @@ export type StreamEvent =
 			/** Emitted when a write or execute tool requests user approval before running. */
 			type: "tool_approval_request";
 			data: { tool_call_id: string; tool_name: string; input: string };
+		}
+	| {
+			/** Emitted after a turn when a process compliance violation is detected. */
+			type: "process_violation";
+			data: { check: string; message: string };
 		};

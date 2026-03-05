@@ -1,7 +1,6 @@
 <script lang="ts">
 	import TrendingUpIcon from "@lucide/svelte/icons/trending-up";
 	import ArrowUpCircleIcon from "@lucide/svelte/icons/arrow-up-circle";
-	import CheckCircleIcon from "@lucide/svelte/icons/check-circle";
 	import ExternalLinkIcon from "@lucide/svelte/icons/external-link";
 	import { Badge } from "$lib/components/ui/badge";
 	import { Button } from "$lib/components/ui/button";
@@ -28,17 +27,6 @@
 				return "bg-amber-500/10 text-amber-600 dark:text-amber-400";
 			default:
 				return "bg-muted text-muted-foreground";
-		}
-	}
-
-	function statusIcon(status: string) {
-		switch (status) {
-			case "promoted":
-				return ArrowUpCircleIcon;
-			case "resolved":
-				return CheckCircleIcon;
-			default:
-				return TrendingUpIcon;
 		}
 	}
 

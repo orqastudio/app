@@ -1,50 +1,58 @@
 # Orqa Studio TODO
 
-**Last Updated:** 2026-03-04
+**Last Updated:** 2026-03-05
 
 **Current goal: DOGFOOD MILESTONE — use Orqa Studio to build itself.**
 
-The app already has conversations, streaming, 6 file tools (read, write, edit, bash, glob, grep), tool approval protocol, session persistence, governance scanning, and artifact browsing. The gaps below are what's needed to switch from Claude Code CLI to Orqa Studio for all future development.
+The app has conversations, streaming, 6 file tools (read, write, edit, bash, glob, grep), search tools (search_regex, search_semantic), tool approval protocol, session persistence, SDK session resume across restarts, governance scanning, enforcement engine, and artifact browsing. The remaining gaps below are what's needed to switch from Claude Code CLI to Orqa Studio for all future development.
 
 ---
 
 ## Dogfood Blockers (DO THESE FIRST)
 
-Critical issues that prevent using the app for real development work.
+*All dogfood blockers are resolved. The app is ready for dogfooding.*
 
-### D-001: System Prompt — Inject CLAUDE.md + Governance
+---
 
-`stream_commands.rs:156` hardcodes `system_prompt: None`. Claude inside the app has no project context — no rules, no coding standards, no governance. This is the single biggest blocker.
+---
 
-- [ ] On `stream_send_message`, read CLAUDE.md from the active project and pass it as the system prompt
-- [ ] Include AGENTS.md content if present
-- [ ] Include a summary of governance scan results (coverage, key rules)
-- [ ] Frontend: Allow users to view/edit the system prompt before sending (optional, can be Phase 2)
+## Resolved Dogfood Blockers
 
-### D-002: Tool Approval UI
+<details>
+<summary>D-001: System Prompt — RESOLVED</summary>
 
-The tool approval protocol exists (sidecar → Rust → frontend → back) but needs verification that the frontend actually renders approve/deny buttons. Without this, write_file and bash are either auto-approved (dangerous) or silently blocked.
+`build_system_prompt()` in `stream_commands.rs` reads CLAUDE.md, AGENTS.md, all `.claude/rules/*.md` files, and the skill catalog from the active project. Injected automatically on every `stream_send_message`.
+</details>
 
-- [ ] Verify tool approval requests reach the frontend and render a UI prompt
-- [ ] If missing: implement approve/deny dialog for tool calls (especially write_file, edit_file, bash)
-- [ ] Read-only tools (read_file, glob, grep) can auto-approve
-- [ ] Show tool input (file path, content preview) in the approval dialog
+<details>
+<summary>D-002: Tool Approval UI — RESOLVED</summary>
 
-### D-003: Context Window Management
+`ToolApprovalDialog.svelte` renders approve/deny buttons inline in the conversation. Read-only tools (read_file, glob, grep, search_regex, search_semantic, load_skill, code_research) are auto-approved. Write/execute tools (write_file, edit_file, bash) require explicit user approval. Tool input is displayed in the dialog.
+</details>
 
-The app hit "Prompt is too long" when Claude tried to read all project docs. The CLI handles this with auto-compaction; the app needs a strategy.
+<details>
+<summary>D-003: Context Window Management — PARTIALLY RESOLVED</summary>
 
-- [ ] Set a reasonable max context size in the sidecar/Agent SDK config
-- [ ] Handle context overflow gracefully (show error, suggest shorter prompt)
-- [ ] Consider: summarize large file reads, truncate tool outputs over a threshold
+Tool outputs are truncated at 100K characters (`truncate_tool_output`). Context overflow errors are caught and shown with a friendly message suggesting a new session. Full auto-compaction (summarize + continue) is deferred — not blocking dogfooding since the user can start a new session.
+</details>
 
-### D-004: Hook Errors
+<details>
+<summary>D-004: Hook Errors — RESOLVED</summary>
 
-User reports hook errors on every prompt. Investigate and fix.
+Root cause: `session-start-hook.sh` used `$(pwd)` which returns POSIX paths on MINGW64, while `git worktree list` uses Windows paths. The `grep -v` filter never matched, causing false warnings on every prompt. Fix: replaced `$(pwd)` with `$(git rev-parse --show-toplevel)` for consistent path format. Also replaced `find` with `ls -d` for orphan detection, and removed nonexistent `skill-instructions-hook.sh` from CLAUDE.md hooks table.
+</details>
 
-- [ ] Diagnose which hook is erroring (session-start or skill-instructions)
-- [ ] Fix the root cause (likely `pwd` sensitivity in session-start-hook.sh)
-- [ ] These are Claude Code CLI hooks, not app hooks — but they affect the development workflow
+<details>
+<summary>D-005: code_research Tool — RESOLVED</summary>
+
+Added `code_research` dispatch case in `execute_tool()` combining `search_regex` + `search_semantic` results. Added `code_research` tool definition in sidecar `provider.ts` and updated `TOOL_SYSTEM_PROMPT`. The tool is auto-approved (read-only). Full LLM-synthesis version deferred to Phase 4.
+</details>
+
+<details>
+<summary>D-006: Process Violation Events — RESOLVED</summary>
+
+Added `process_violation` variant to `StreamEvent` TypeScript union. Added handler in `conversationStore.handleStreamEvent()` that accumulates violations. Added `processViolations` state field, cleared on each new message. Violations display as yellow warning banners inline in the conversation after each turn.
+</details>
 
 ---
 
@@ -133,4 +141,10 @@ Working Tauri v2 app with Claude conversations via Agent SDK sidecar, 50+ IPC co
 <summary>Phase 2b: Governance Bootstrap — COMPLETE</summary>
 
 Claude-powered governance scanning with 7 Tauri commands, 2 SQLite tables, 5 Svelte components. Scanner covers 7 canonical Claude governance areas. Wizard auto-triggers on project open when coverage < 3/7. Dashboard shows governance health badge.
+</details>
+
+<details>
+<summary>Dogfood Infrastructure — COMPLETE</summary>
+
+System prompt injection (CLAUDE.md + AGENTS.md + rules + skills), tool approval UI, tool output truncation, context overflow handling, SDK session resume across app restarts (sdk_session_id persisted to SQLite, passed through NDJSON protocol, sidecar rebuilds session mapping on restart).
 </details>

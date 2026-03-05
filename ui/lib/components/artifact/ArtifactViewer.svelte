@@ -3,6 +3,7 @@
 	import AgentViewer from "./AgentViewer.svelte";
 	import SkillViewer from "./SkillViewer.svelte";
 	import HookViewer from "./HookViewer.svelte";
+	import RuleViewer from "./RuleViewer.svelte";
 	import MarkdownRenderer from "$lib/components/content/MarkdownRenderer.svelte";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 	import ErrorDisplay from "$lib/components/shared/ErrorDisplay.svelte";
@@ -67,6 +68,8 @@
 					<SkillViewer content={artifact.content} />
 				{:else if activity === "hooks"}
 					<HookViewer content={artifact.content} />
+				{:else if activity === "rules"}
+					<RuleViewer content={artifact.content} ruleName={artifact.name} />
 				{:else}
 					<MarkdownRenderer content={artifact.content} />
 				{/if}

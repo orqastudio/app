@@ -37,7 +37,7 @@
 		<Icon class="h-3.5 w-3.5" />
 	</button>
 
-	{#each items as item, index}
+	{#each items as item, index (index)}
 		<ChevronRightIcon class="h-3 w-3 text-muted-foreground" />
 		{#if index === items.length - 1}
 			<span class="font-medium text-foreground">{item}</span>

@@ -20,6 +20,7 @@ pub fn init_db(path: &str) -> Result<Connection, OrqaError> {
     conn.execute_batch(include_str!("../migrations/001_initial_schema.sql"))?;
     conn.execute_batch(include_str!("../migrations/002_governance_bootstrap.sql"))?;
     conn.execute_batch(include_str!("../migrations/003_enforcement.sql"))?;
+    run_migration_004(&conn)?;
 
     Ok(conn)
 }
@@ -32,8 +33,27 @@ pub fn init_memory_db() -> Result<Connection, OrqaError> {
     conn.execute_batch(include_str!("../migrations/001_initial_schema.sql"))?;
     conn.execute_batch(include_str!("../migrations/002_governance_bootstrap.sql"))?;
     conn.execute_batch(include_str!("../migrations/003_enforcement.sql"))?;
+    run_migration_004(&conn)?;
 
     Ok(conn)
+}
+
+/// Migration 004: Add `sdk_session_id` column to sessions table.
+///
+/// Idempotent — checks `pragma_table_info` before altering.
+fn run_migration_004(conn: &Connection) -> Result<(), OrqaError> {
+    let has_col: bool = conn
+        .prepare(
+            "SELECT COUNT(*) FROM pragma_table_info('sessions') WHERE name = 'sdk_session_id'",
+        )?
+        .query_row([], |row| row.get::<_, i64>(0))
+        .map(|count| count > 0)
+        .unwrap_or(false);
+
+    if !has_col {
+        conn.execute_batch("ALTER TABLE sessions ADD COLUMN sdk_session_id TEXT")?;
+    }
+    Ok(())
 }
 
 #[cfg(test)]

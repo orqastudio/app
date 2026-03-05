@@ -61,7 +61,7 @@
 	<CoverageIndicator areas={scanResult.areas} coverageRatio={scanResult.coverage_ratio} />
 
 	<div class="space-y-2">
-		{#each scanResult.areas as area}
+		{#each scanResult.areas as area (area.name)}
 			{@const AreaIcon = getAreaIcon(area.name)}
 			<Card.Root class="overflow-hidden">
 				<Card.Content class="p-4">
@@ -86,7 +86,7 @@
 
 							{#if area.covered && area.files.length > 0}
 								<ul class="mt-1 space-y-0.5">
-									{#each area.files as file}
+									{#each area.files as file (file.path)}
 										<li class="flex items-center gap-2 text-xs text-muted-foreground">
 											<span class="truncate font-mono">{file.path}</span>
 											<span class="flex-shrink-0 text-muted-foreground/60">

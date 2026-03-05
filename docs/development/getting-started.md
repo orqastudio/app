@@ -50,12 +50,15 @@ claude --version      # any
 git clone git@github.com:bobbibg/orqa-studio.git
 cd orqa-studio
 
-# Install frontend dependencies
-npm install
+# Install all dependencies and build the sidecar
+make install
+make install-sidecar
 
-# Build and run in development mode
-cargo tauri dev
+# Run in development mode
+make dev
 ```
+
+For all development commands, see [Development Commands](commands.md).
 
 ### Project Initialization (New Project)
 
@@ -215,38 +218,6 @@ See the root `.gitignore` file for the complete list, which also covers IDE file
 
 ---
 
-## Development Commands
-
-These commands will be available after Phase 1 scaffold is complete:
-
-### Backend (Rust)
-
-```bash
-cargo build                       # Compile backend
-cargo test                        # Run backend tests
-cargo clippy -- -D warnings       # Lint (zero warnings policy)
-cargo fmt --check                 # Format check
-```
-
-### Frontend (Svelte/TypeScript)
-
-```bash
-npm run dev                       # Vite dev server (frontend only)
-npm run build                     # Production build
-npm run check                     # svelte-check + TypeScript
-npm run lint                      # ESLint
-npm run test                      # Vitest
-```
-
-### Full Application
-
-```bash
-cargo tauri dev                   # Run Tauri app in development mode
-cargo tauri build                 # Build distributable application
-```
-
----
-
 ## Project Structure
 
 ```
@@ -286,6 +257,7 @@ Currently only `docs/` and `.claude/` exist. The `src-tauri/` and `ui/` director
 
 ## Related Documents
 
+- [Development Commands](commands.md) — All Makefile targets with descriptions and underlying commands
 - [Coding Standards](/development/coding-standards) — Code quality rules and patterns
 - [Agentic Workflow](/process/workflow) — Task lifecycle and agent coordination
 - [Tauri v2 Research](/research/tauri-v2) — Platform capabilities and plugin selections

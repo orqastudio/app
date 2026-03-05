@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Orqa Studio pre-commit hook
+# Runs all quality checks before allowing a commit.
+# Install: git config core.hooksPath .githooks
+
+set -euo pipefail
+
+echo "=== Pre-commit: Running quality checks ==="
+
+# Rust checks (only if Rust files changed)
+RUST_CHANGED=$(git diff --cached --name-only --diff-filter=ACMR -- '*.rs' 'Cargo.toml' 'Cargo.lock' | head -1)
+if [ -n "$RUST_CHANGED" ]; then
+  echo "--- Rust: fmt-check ---"
+  make fmt-check
+  echo "--- Rust: clippy ---"
+  make clippy
+  echo "--- Rust: test ---"
+  make test-rust
+fi
+
+# Frontend checks (only if frontend files changed)
+FRONTEND_CHANGED=$(git diff --cached --name-only --diff-filter=ACMR -- '*.svelte' '*.ts' '*.js' '*.css' '*.html' | head -1)
+if [ -n "$FRONTEND_CHANGED" ]; then
+  echo "--- Frontend: svelte-check + TypeScript ---"
+  make check-frontend
+  echo "--- Frontend: ESLint ---"
+  make lint
+  echo "--- Frontend: test ---"
+  make test-frontend
+fi
+
+# If nothing relevant changed, still confirm
+if [ -z "$RUST_CHANGED" ] && [ -z "$FRONTEND_CHANGED" ]; then
+  echo "No Rust or frontend files changed — skipping quality checks."
+fi
+
+echo "=== Pre-commit: All checks passed ==="

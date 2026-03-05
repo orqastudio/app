@@ -39,7 +39,7 @@
 
 				<!-- Step indicator -->
 				<div class="flex items-center justify-center gap-2 pt-3">
-					{#each Array(setupStore.totalSteps) as _, i}
+					{#each Array.from({ length: setupStore.totalSteps }, (_, idx) => idx) as i (i)}
 						<div
 							class="h-2 w-2 rounded-full transition-colors {i < setupStore.currentStep
 								? 'bg-primary'

@@ -69,12 +69,39 @@ enforcement:
 Run before every commit:
 
 ```bash
-# Rust
-cargo fmt --check && cargo clippy -- -D warnings && cargo test
-
-# Frontend
-npm run check && npm run lint && npm run test
+make check
 ```
+
+This single command runs: `fmt-check` + `clippy` + `test-rust` + `check-frontend` + `lint` + `test-frontend`.
+
+A git pre-commit hook (`.githooks/pre-commit`) enforces this automatically. It runs the relevant subset of checks based on which files are staged. **NEVER bypass the hook with `--no-verify`.**
+
+For individual checks, see `docs/development/commands.md` or run `make help`.
+
+## Lint Rule Alignment (NON-NEGOTIABLE)
+
+Coding standards MUST be reflected in automated linting rules. If a standard exists in this document or in `docs/development/coding-standards.md`, there MUST be a corresponding lint rule that enforces it. Conversely, if a lint rule enforces something, that standard MUST be documented.
+
+**When modifying coding standards:**
+
+1. Update this document AND `docs/development/coding-standards.md`
+2. Add or update the corresponding ESLint rule in `eslint.config.js` (frontend) or clippy configuration (Rust)
+3. Run `make check` to verify the rule works
+4. Fix ALL existing violations introduced by the new rule in the same commit
+5. Update the pre-commit hook if the enforcement mechanism changes
+
+**When a lint rule catches violations:**
+
+- Pre-existing violations are NOT an excuse to skip or disable the rule
+- Fix every violation, even in files you did not modify
+- If the violation count is very large (50+), flag it to the user for prioritization — but never silently ignore it
+
+**FORBIDDEN:**
+
+- `// eslint-disable` without a documented justification in the same line
+- `#[allow(clippy::...)]` without a documented justification
+- Adding a rule to an ignore list instead of fixing the code
+- Claiming "this error existed before" as a reason not to fix it
 
 ## Related Rules
 

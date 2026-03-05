@@ -22,7 +22,7 @@
 			<Icon class="h-3.5 w-3.5" />
 			{label}
 		</span>
-		{#each items as item}
+		{#each items as item, i (i)}
 			<SmallBadge variant={badgeVariant}>{item}</SmallBadge>
 		{/each}
 	</div>

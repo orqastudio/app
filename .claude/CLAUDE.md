@@ -347,5 +347,4 @@ Configured in `.claude/settings.json`:
 | Hook | Trigger | Script | Purpose |
 |------|---------|--------|---------|
 | Session start | `UserPromptSubmit` (first) | `.claude/hooks/session-start-hook.sh` | Check stashes, worktrees, session state |
-| Skill instructions | `UserPromptSubmit` | `.claude/hooks/skill-instructions-hook.sh` | Enforce skill loading protocol |
 | Pre-commit reminder | `Stop` | `.claude/hooks/pre-commit-reminder.sh` | Checklist before committing, session state reminder |

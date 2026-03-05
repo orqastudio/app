@@ -6,6 +6,8 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.233 0.070 265.033);
@@ -75,6 +77,8 @@
 }
 
 @theme inline {
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -117,7 +121,11 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+  code, pre, kbd, samp, .font-mono {
+    font-family: var(--font-mono);
   }
 
   /* Interactive elements show pointer cursor */

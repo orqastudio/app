@@ -24,7 +24,7 @@ pub fn get(conn: &Connection, id: i64) -> Result<Session, OrqaError> {
     conn.query_row(
         "SELECT id, project_id, title, model, system_prompt, status, summary, \
                 handoff_notes, total_input_tokens, total_output_tokens, total_cost_usd, \
-                created_at, updated_at \
+                sdk_session_id, created_at, updated_at \
          FROM sessions WHERE id = ?1",
         params![id],
         |row| {
@@ -41,8 +41,9 @@ pub fn get(conn: &Connection, id: i64) -> Result<Session, OrqaError> {
                 total_input_tokens: row.get(8)?,
                 total_output_tokens: row.get(9)?,
                 total_cost_usd: row.get(10)?,
-                created_at: row.get(11)?,
-                updated_at: row.get(12)?,
+                sdk_session_id: row.get(11)?,
+                created_at: row.get(12)?,
+                updated_at: row.get(13)?,
             })
         },
     )
@@ -151,6 +152,25 @@ pub fn update_token_usage(
          updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') \
          WHERE id = ?3",
         params![input_tokens, output_tokens, id],
+    )?;
+
+    if rows == 0 {
+        return Err(OrqaError::NotFound(format!("session {id}")));
+    }
+    Ok(())
+}
+
+/// Store the SDK session UUID so it survives app restarts.
+pub fn update_sdk_session_id(
+    conn: &Connection,
+    id: i64,
+    sdk_session_id: &str,
+) -> Result<(), OrqaError> {
+    let rows = conn.execute(
+        "UPDATE sessions SET sdk_session_id = ?1, \
+         updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') \
+         WHERE id = ?2",
+        params![sdk_session_id, id],
     )?;
 
     if rows == 0 {
@@ -322,6 +342,25 @@ mod tests {
     fn update_token_usage_not_found() {
         let conn = setup();
         let result = update_token_usage(&conn, 999, 100, 50);
+        assert!(matches!(result, Err(OrqaError::NotFound(_))));
+    }
+
+    #[test]
+    fn update_sdk_session_id_roundtrip() {
+        let conn = setup();
+        let s = create(&conn, 1, "auto", None).expect("create");
+        assert!(s.sdk_session_id.is_none());
+
+        update_sdk_session_id(&conn, s.id, "sdk-uuid-abc").expect("update sdk_session_id");
+
+        let fetched = get(&conn, s.id).expect("get");
+        assert_eq!(fetched.sdk_session_id.as_deref(), Some("sdk-uuid-abc"));
+    }
+
+    #[test]
+    fn update_sdk_session_id_not_found() {
+        let conn = setup();
+        let result = update_sdk_session_id(&conn, 999, "sdk-uuid");
         assert!(matches!(result, Err(OrqaError::NotFound(_))));
     }
 

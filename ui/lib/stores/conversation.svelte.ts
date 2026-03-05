@@ -1,3 +1,4 @@
+import { SvelteMap } from "svelte/reactivity";
 import type { Message } from "$lib/types";
 import type { StreamEvent } from "$lib/types/streaming";
 import { invoke, createStreamChannel } from "$lib/ipc/invoke";
@@ -27,10 +28,12 @@ class ConversationStore {
 	isStreaming = $state(false);
 	isLoading = $state(false);
 	error = $state<string | null>(null);
-	activeToolCalls = $state<Map<string, ToolCallState>>(new Map());
+	activeToolCalls = $state<SvelteMap<string, ToolCallState>>(new SvelteMap());
 	selectedModel = $state<string>(DEFAULT_MODEL);
 	/** Non-null when a write/execute tool is waiting for user approval. */
 	pendingApproval = $state<PendingApproval | null>(null);
+	/** Process compliance violations from the most recent turn. */
+	processViolations = $state<Array<{ check: string; message: string }>>([]);
 
 	private resolvedModel = $state<string | null>(null);
 	private streamingMessageId = $state<number | null>(null);
@@ -61,8 +64,9 @@ class ConversationStore {
 		this.error = null;
 		this.streamingContent = "";
 		this.streamingThinking = "";
-		this.activeToolCalls = new Map();
+		this.activeToolCalls = new SvelteMap();
 		this.streamingMessageId = null;
+		this.processViolations = [];
 		this.isStreaming = true;
 
 		// Optimistically add the user message to the UI immediately
@@ -120,11 +124,12 @@ class ConversationStore {
 		this.isStreaming = false;
 		this.isLoading = false;
 		this.error = null;
-		this.activeToolCalls = new Map();
+		this.activeToolCalls = new SvelteMap();
 		this.resolvedModel = null;
 		this.streamingMessageId = null;
 		this.selectedModel = DEFAULT_MODEL;
 		this.pendingApproval = null;
+		this.processViolations = [];
 	}
 
 	/** Approve or deny the currently pending tool call, then invoke the backend. */
@@ -163,7 +168,7 @@ class ConversationStore {
 				break;
 
 			case "tool_use_start": {
-				const newMap = new Map(this.activeToolCalls);
+				const newMap = new SvelteMap(this.activeToolCalls);
 				newMap.set(event.data.tool_call_id, {
 					toolCallId: event.data.tool_call_id,
 					toolName: event.data.tool_name,
@@ -179,7 +184,7 @@ class ConversationStore {
 			case "tool_input_delta": {
 				const toolCall = this.activeToolCalls.get(event.data.tool_call_id);
 				if (toolCall) {
-					const updatedMap = new Map(this.activeToolCalls);
+					const updatedMap = new SvelteMap(this.activeToolCalls);
 					updatedMap.set(event.data.tool_call_id, {
 						...toolCall,
 						input: toolCall.input + event.data.content,
@@ -192,7 +197,7 @@ class ConversationStore {
 			case "tool_result": {
 				const existingCall = this.activeToolCalls.get(event.data.tool_call_id);
 				if (existingCall) {
-					const resultMap = new Map(this.activeToolCalls);
+					const resultMap = new SvelteMap(this.activeToolCalls);
 					resultMap.set(event.data.tool_call_id, {
 						...existingCall,
 						output: event.data.result,
@@ -212,7 +217,7 @@ class ConversationStore {
 				this.isStreaming = false;
 				this.streamingContent = "";
 				this.streamingThinking = "";
-				this.activeToolCalls = new Map();
+				this.activeToolCalls = new SvelteMap();
 				// Reload messages from DB to get the finalized state
 				if (this.streamingMessageId !== null) {
 					// Use the session_id from the first message, or rely on the caller
@@ -239,6 +244,13 @@ class ConversationStore {
 					toolName: event.data.tool_name,
 					input: event.data.input,
 				};
+				break;
+
+			case "process_violation":
+				this.processViolations = [
+					...this.processViolations,
+					{ check: event.data.check, message: event.data.message },
+				];
 				break;
 		}
 	}

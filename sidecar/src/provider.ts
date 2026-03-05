@@ -56,6 +56,7 @@ const TOOL_SYSTEM_PROMPT = `You have access to these tools:
 - grep: Search file contents with regex
 - search_regex: Search indexed codebase with a regex pattern (must be indexed first)
 - search_semantic: Search codebase using natural language (semantic similarity, must be indexed with embeddings first)
+- code_research: Research the codebase using combined regex and semantic search — best for understanding how features work end-to-end
 - load_skill: Load the full content of a project skill by name
 
 Use these tools by their short names. When referencing tools in your responses, use the short name (e.g. "read_file" not "mcp__orqa__read_file").
@@ -285,6 +286,16 @@ function createOrqaToolServer(sendResponse: ResponseSender) {
                 },
             ),
             tool(
+                'code_research',
+                'Research the codebase using combined regex and semantic search. Best for understanding how a feature works end-to-end, finding all callers of a function, or exploring relationships between modules. Returns results from both exact pattern matching and semantic similarity.',
+                { query: z.string(), max_results: z.number().optional() },
+                async (args) => {
+                    return await executeToolViaRust(
+                        'code_research', args, sendResponse,
+                    );
+                },
+            ),
+            tool(
                 'load_skill',
                 'Load the full content of a project skill by name. Skills contain domain knowledge, patterns, and guidelines. Use this to load a skill before applying its guidance.',
                 { name: z.string() },
@@ -365,6 +376,7 @@ export async function streamMessage(
     model: string | null,
     systemPrompt: string | null,
     sendResponse: ResponseSender,
+    sdkSessionId: string | null = null,
 ): Promise<void> {
     const resolvedModel = resolveModel(model);
     const messageId = nextMessageId++;
@@ -387,6 +399,14 @@ export async function streamMessage(
         let blockIndex = 0;
         let inputTokens = 0;
         let outputTokens = 0;
+
+        // Pre-populate map from persisted SDK session UUID (survives restart)
+        if (sdkSessionId && !sdkSessionMap.has(sessionId)) {
+            sdkSessionMap.set(sessionId, sdkSessionId);
+            process.stderr.write(
+                `orqa-studio-sidecar: restored SDK session mapping ${sessionId} -> ${sdkSessionId}\n`,
+            );
+        }
 
         // Check if we have an existing SDK session to resume
         const existingSdkSessionId = sdkSessionMap.get(sessionId);
@@ -456,6 +476,12 @@ export async function streamMessage(
                     process.stderr.write(
                         `orqa-studio-sidecar: mapped orqa session ${sessionId} -> SDK session ${msg.session_id}\n`,
                     );
+                    // Notify Rust to persist the mapping for restart recovery
+                    sendResponse({
+                        type: 'session_initialized',
+                        session_id: sessionId,
+                        sdk_session_id: msg.session_id,
+                    });
                 }
 
                 // SDK yields: {type:"assistant", message:{content:[...], usage:{...}}}

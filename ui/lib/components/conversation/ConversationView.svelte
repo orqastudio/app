@@ -19,6 +19,7 @@
 	let scrollViewportRef = $state<HTMLElement | null>(null);
 	let userScrolledUp = $state(false);
 	let initialized = $state(false);
+	let showResumeBanner = $state(false);
 
 	const session = $derived(sessionStore.activeSession);
 	const sessions = $derived(sessionStore.sessions);
@@ -30,6 +31,7 @@
 	const streamingThinking = $derived(conversationStore.streamingThinking);
 	const activeToolCalls = $derived(conversationStore.activeToolCalls);
 	const pendingApproval = $derived(conversationStore.pendingApproval);
+	const processViolations = $derived(conversationStore.processViolations);
 
 	// Restore last session on mount
 	onMount(() => {
@@ -66,6 +68,10 @@
 				const lastSessionId = allSettings["last_session_id"];
 				if (typeof lastSessionId === "number" && lastSessionId > 0) {
 					await sessionStore.restoreSession(lastSessionId);
+					// Show resume banner if session was restored (has messages from before restart)
+					if (sessionStore.hasActiveSession) {
+						showResumeBanner = true;
+					}
 				}
 			} catch {
 				// Non-critical — proceed without restoring
@@ -122,6 +128,7 @@
 	function handleSend(content: string) {
 		if (!session) return;
 		userScrolledUp = false;
+		showResumeBanner = false;
 		conversationStore.sendMessage(session.id, content);
 	}
 
@@ -184,6 +191,19 @@
 			onSelectSession={handleSelectSession}
 			onDeleteSession={handleDeleteSession}
 		/>
+
+		<!-- Resume notification banner -->
+		{#if showResumeBanner}
+			<div class="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-2 text-sm text-muted-foreground">
+				<span>Session resumed after restart. Send a message to continue.</span>
+				<button
+					class="ml-2 text-xs hover:text-foreground"
+					onclick={() => { showResumeBanner = false; }}
+				>
+					Dismiss
+				</button>
+			</div>
+		{/if}
 
 		<!-- Message area -->
 		<div class="relative flex-1 overflow-hidden">
@@ -248,6 +268,17 @@
 									onApprove={() => conversationStore.respondToApproval(true)}
 									onDeny={() => conversationStore.respondToApproval(false)}
 								/>
+							</div>
+						{/if}
+
+						<!-- Process violation warnings -->
+						{#if processViolations.length > 0}
+							<div class="space-y-1 px-4">
+								{#each processViolations as violation (violation.check)}
+									<div class="rounded-md border border-yellow-500/30 bg-yellow-500/10 px-3 py-2 text-sm text-yellow-700 dark:text-yellow-400">
+										<span class="font-medium">Process:</span> {violation.message}
+									</div>
+								{/each}
 							</div>
 						{/if}
 					</div>

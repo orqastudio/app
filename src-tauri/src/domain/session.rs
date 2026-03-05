@@ -13,6 +13,7 @@ pub struct Session {
     pub total_input_tokens: i64,
     pub total_output_tokens: i64,
     pub total_cost_usd: f64,
+    pub sdk_session_id: Option<String>,
     pub created_at: String,
     pub updated_at: String,
 }
@@ -90,6 +91,7 @@ mod tests {
             total_input_tokens: 0,
             total_output_tokens: 0,
             total_cost_usd: 0.0,
+            sdk_session_id: None,
             created_at: "2026-03-03T00:00:00Z".to_string(),
             updated_at: "2026-03-03T00:00:00Z".to_string(),
         };

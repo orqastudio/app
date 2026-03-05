@@ -13,7 +13,7 @@
 	import ProjectSetupWizard from "$lib/components/settings/ProjectSetupWizard.svelte";
 	import SetupWizard from "$lib/components/setup/SetupWizard.svelte";
 	import GovernanceBootstrapWizard from "$lib/components/governance/GovernanceBootstrapWizard.svelte";
-	import EnforcementPanel from "$lib/components/enforcement/EnforcementPanel.svelte";
+
 	import LessonsPanel from "$lib/components/lessons/LessonsPanel.svelte";
 	import setupBackground from "$lib/assets/setup-background.png";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
@@ -22,6 +22,7 @@
 	import { projectStore } from "$lib/stores/project.svelte";
 	import { setupStore } from "$lib/stores/setup.svelte";
 	import { governanceStore } from "$lib/stores/governance.svelte";
+	import { enforcementStore } from "$lib/stores/enforcement.svelte";
 
 	const hasProject = $derived(projectStore.hasProject);
 	const isConfiguring = $derived(navigationStore.activeActivity === "configure");
@@ -29,7 +30,6 @@
 	const hideChatPanel = $derived(
 		navigationStore.activeActivity === "settings" ||
 			navigationStore.activeActivity === "project" ||
-			navigationStore.activeActivity === "enforcement" ||
 			navigationStore.activeActivity === "lessons",
 	);
 	const setupNeeded = $derived(!setupStore.setupComplete);
@@ -98,6 +98,9 @@
 		const artifactType = activityToArtifactType[activity];
 		if (hasProject && !needsSetup && artifactType) {
 			artifactStore.loadGovernanceList(artifactType);
+			if (activity === "rules") {
+				enforcementStore.loadRules();
+			}
 		}
 	});
 
@@ -169,8 +172,6 @@
 						<ProjectDashboard />
 					{:else if navigationStore.activeActivity === "settings"}
 						<SettingsView />
-					{:else if navigationStore.activeActivity === "enforcement"}
-						<EnforcementPanel />
 					{:else if navigationStore.activeActivity === "lessons"}
 						<LessonsPanel />
 					{:else if navigationStore.activeActivity === "chat"}

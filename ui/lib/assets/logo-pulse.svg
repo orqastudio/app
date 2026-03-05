@@ -1,0 +1,135 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+  /* Opacity: rings appear sequentially, hold, then all fade out */
+  .ring-inner {
+    animation: inner 4s ease-in-out infinite;
+  }
+  .ring-middle {
+    animation: middle 4s ease-in-out infinite;
+  }
+  .ring-outer {
+    animation: outer 4s ease-in-out infinite;
+  }
+
+  @keyframes inner {
+    0%   { opacity: 0; }
+    20%  { opacity: 1; }
+    78%  { opacity: 1; }
+    85%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+  @keyframes middle {
+    0%   { opacity: 0; }
+    18%  { opacity: 0; }
+    38%  { opacity: 1; }
+    78%  { opacity: 1; }
+    85%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+  @keyframes outer {
+    0%   { opacity: 0; }
+    35%  { opacity: 0; }
+    55%  { opacity: 1; }
+    78%  { opacity: 1; }
+    85%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  /* Stroke draw: mask ellipses trace the ring path during fade-in */
+  .draw-inner {
+    animation: draw-inner 4s ease-in-out infinite;
+  }
+  .draw-middle {
+    animation: draw-middle 4s ease-in-out infinite;
+  }
+  .draw-outer {
+    animation: draw-outer 4s ease-in-out infinite;
+  }
+
+  @keyframes draw-inner {
+    0%   { stroke-dashoffset: 1; }
+    20%  { stroke-dashoffset: 0; }
+    84%  { stroke-dashoffset: 0; }
+    85%  { stroke-dashoffset: 1; }
+    100% { stroke-dashoffset: 1; }
+  }
+  @keyframes draw-middle {
+    0%   { stroke-dashoffset: 1; }
+    18%  { stroke-dashoffset: 1; }
+    38%  { stroke-dashoffset: 0; }
+    84%  { stroke-dashoffset: 0; }
+    85%  { stroke-dashoffset: 1; }
+    100% { stroke-dashoffset: 1; }
+  }
+  @keyframes draw-outer {
+    0%   { stroke-dashoffset: 1; }
+    35%  { stroke-dashoffset: 1; }
+    55%  { stroke-dashoffset: 0; }
+    84%  { stroke-dashoffset: 0; }
+    85%  { stroke-dashoffset: 1; }
+    100% { stroke-dashoffset: 1; }
+  }
+</style>
+
+<defs>
+  <!-- Mask ellipses trace the center of each ring -->
+  <mask id="mask-inner">
+    <path class="draw-inner"
+      d="M512,622 A290,78 0 1,1 511.99,622 Z"
+      fill="none" stroke="white" stroke-width="200"
+      pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+  </mask>
+  <mask id="mask-middle">
+    <path class="draw-middle"
+      d="M512,592 A398,108 0 1,1 511.99,592 Z"
+      fill="none" stroke="white" stroke-width="260"
+      pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+  </mask>
+  <mask id="mask-outer">
+    <path class="draw-outer"
+      d="M512,570 A503,140 0 1,1 511.99,570 Z"
+      fill="none" stroke="white" stroke-width="300"
+      pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+  </mask>
+
+  <linearGradient id="paint0_linear_37_59" x1="512" y1="621.619" x2="512" y2="778.35" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#45D6E9"/>
+    <stop offset="1" stop-color="#39BDDE"/>
+  </linearGradient>
+  <linearGradient id="paint1_linear_37_59" x1="512" y1="592.028" x2="512" y2="807.942" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#45D6E9"/>
+    <stop offset="1" stop-color="#39BDDE"/>
+  </linearGradient>
+  <linearGradient id="paint2_linear_37_59" x1="512" y1="569.084" x2="512" y2="850.866" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#45D6E9"/>
+    <stop offset="1" stop-color="#39BDDE"/>
+  </linearGradient>
+  <linearGradient id="paint3_linear_37_59" x1="747.674" y1="181.361" x2="300.452" y2="714.059" gradientUnits="userSpaceOnUse">
+    <stop stop-color="white"/>
+    <stop offset="1" stop-color="#45D6E9"/>
+    <animate attributeName="x1" values="747.674;947.674;747.674" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1"/>
+    <animate attributeName="y1" values="181.361;-18.639;181.361" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1"/>
+    <animate attributeName="x2" values="300.452;100.452;300.452" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1"/>
+  </linearGradient>
+  <linearGradient id="paint4_linear_37_59" x1="747.737" y1="181.361" x2="300.526" y2="714.121" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#45D6E9"/>
+    <stop offset="1" stop-color="#2D92C9"/>
+    <animate attributeName="x1" values="747.737;947.737;747.737" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1"/>
+    <animate attributeName="y1" values="181.361;-18.639;181.361" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1"/>
+    <animate attributeName="x2" values="300.526;100.526;300.526" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1"/>
+  </linearGradient>
+</defs>
+
+<!-- Inner ring -->
+<path class="ring-inner" mask="url(#mask-inner)" d="M512 621.619C352.496 621.619 223.153 656.718 223.153 699.985C223.153 743.251 352.458 778.35 512 778.35C671.542 778.35 800.847 743.251 800.847 699.985C800.847 656.68 671.504 621.619 512 621.619ZM750.174 725.17C733.384 736.831 705.312 746.974 669.567 754.571C624.895 764.22 568.334 769.955 506.796 769.955C362.182 769.955 244.957 738.161 244.957 698.921C244.957 659.681 362.182 627.887 506.796 627.887C651.41 627.887 768.635 659.681 768.635 698.921C768.635 708.19 762.101 717.079 750.174 725.17Z" fill="url(#paint0_linear_37_59)"/>
+
+<!-- Middle ring -->
+<path class="ring-middle" mask="url(#mask-middle)" d="M512 592.028C292.212 592.028 114.056 640.384 114.056 699.985C114.056 759.623 292.212 807.942 512 807.942C731.788 807.942 909.944 759.585 909.944 699.985C909.944 640.346 731.788 592.028 512 592.028ZM512 800.952C306.456 800.952 139.849 755.749 139.849 699.985C139.849 644.221 306.456 599.017 512 599.017C717.544 599.017 884.151 644.221 884.151 699.985C884.151 755.749 717.544 800.952 512 800.952Z" fill="url(#paint1_linear_37_59)"/>
+
+<!-- Outer ring -->
+<path class="ring-outer" mask="url(#mask-outer)" d="M715.834 569.084C878.605 592.028 991.235 641.486 991.235 698.769C991.235 777.932 776.194 842.091 510.936 842.091C245.678 842.091 30.6002 777.932 30.6002 698.769C30.6002 644.677 131.036 597.574 279.334 573.149C118.5 597.726 8.72015 646.956 8.72015 703.707C8.72015 784.998 234.055 850.866 512 850.866C789.945 850.866 1015.28 784.96 1015.28 703.707C1015.28 643.651 892.242 591.99 715.834 569.084Z" fill="url(#paint2_linear_37_59)"/>
+
+<!-- Fin (static) -->
+<path fill-rule="evenodd" clip-rule="evenodd" d="M302.272 719.803C300.592 712.173 548.867 342.802 744.944 181.361C614.382 357.867 548.511 472.831 461.681 744.831C392.75 746.254 303.952 727.433 302.272 719.803Z" fill="url(#paint3_linear_37_59)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M461.681 744.831C548.511 472.831 614.382 357.867 744.944 181.361C746.112 183.705 748.116 187.162 747.674 190.458C747.233 193.754 683.056 466.692 674.036 662.2C674.036 662.2 674.036 675.707 664.781 679.343C655.526 682.979 545.245 738.859 461.681 744.831Z" fill="url(#paint4_linear_37_59)"/>
+</svg>

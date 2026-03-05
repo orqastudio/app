@@ -154,7 +154,6 @@
 				<div class="p-1">
 					{#each filteredSessions as session (session.id)}
 						{@const isActive = session.id === activeSessionId}
-						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div
 							class="group flex w-full cursor-pointer items-start gap-2 rounded-md px-2 py-2 text-left transition-colors hover:bg-accent {isActive ? 'bg-accent/50' : ''}"
 							onclick={() => handleSelect(session.id)}

@@ -107,7 +107,7 @@
 				<h4 class="text-sm font-medium">Detected Stack</h4>
 				{#if scanResult.stack.languages.length > 0}
 					<div class="flex flex-wrap gap-1.5">
-						{#each scanResult.stack.languages as lang}
+						{#each scanResult.stack.languages as lang (lang)}
 							<Badge variant="secondary">{lang}</Badge>
 						{/each}
 					</div>
@@ -117,7 +117,7 @@
 
 				{#if scanResult.stack.frameworks.length > 0}
 					<div class="flex flex-wrap gap-1.5">
-						{#each scanResult.stack.frameworks as fw}
+						{#each scanResult.stack.frameworks as fw (fw)}
 							<Badge variant="outline">{fw}</Badge>
 						{/each}
 					</div>
