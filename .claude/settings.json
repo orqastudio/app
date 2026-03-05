@@ -5,11 +5,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/session-start-hook.sh"
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-start-hook.sh\""
           },
           {
             "type": "command",
-            "command": ".claude/hooks/skill-instructions-hook.sh"
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/skill-instructions-hook.sh\""
           }
         ]
       }
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pre-commit-reminder.sh"
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-commit-reminder.sh\""
           }
         ]
       }
