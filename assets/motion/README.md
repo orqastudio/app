@@ -12,20 +12,23 @@ A looping sonar pulse animation. The three concentric rings illuminate sequentia
 
 | Property | Value |
 |---|---|
-| Cycle duration | 2.4s |
+| Cycle duration | 3s |
 | Easing | ease-in-out |
 | Loop | infinite |
 | Technique | CSS `@keyframes` (no JS required) |
 
 ### Timing
 
-| Element | Delay | Effect |
-|---|---|---|
-| Inner ring | 0s | Pulses first |
-| Middle ring | 0.4s | Follows inner |
-| Outer ring | 0.8s | Follows middle |
+The animation has three phases:
 
-Each ring animates from 15% opacity to full and back, creating a calm outward ripple.
+| Phase | Frames | What happens |
+|---|---|---|
+| Ripple in | 0–45% | Rings appear sequentially — inner, then middle, then outer |
+| Hold | 45–65% | All three rings stay fully visible together |
+| Fade out | 65–80% | All rings fade out simultaneously |
+| Pause | 80–100% | All rings invisible before the next cycle |
+
+Each ring goes fully to `opacity: 0` between pulses — no partial-opacity frames.
 
 ### Usage
 
@@ -72,8 +75,8 @@ If you need to override timing or colours, embed the SVG directly in your markup
 You can override the animation duration or delay with your own CSS:
 
 ```css
-.ring {
-  animation-duration: 3s; /* slower pulse */
+.ring-inner, .ring-middle, .ring-outer {
+  animation-duration: 4s; /* slower pulse */
 }
 ```
 
