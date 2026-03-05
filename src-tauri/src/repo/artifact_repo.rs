@@ -123,28 +123,22 @@ pub fn list(
     project_id: i64,
     type_filter: Option<&ArtifactType>,
 ) -> Result<Vec<ArtifactSummary>, OrqaError> {
-    let (sql, has_filter) = if type_filter.is_some() {
-        (
-            "SELECT id, artifact_type, rel_path, name, description, \
-                    compliance_status, file_modified_at \
-             FROM artifacts WHERE project_id = ?1 AND artifact_type = ?2 \
-             ORDER BY name ASC",
-            true,
-        )
+    let sql = if type_filter.is_some() {
+        "SELECT id, artifact_type, rel_path, name, description, \
+                compliance_status, file_modified_at \
+         FROM artifacts WHERE project_id = ?1 AND artifact_type = ?2 \
+         ORDER BY name ASC"
     } else {
-        (
-            "SELECT id, artifact_type, rel_path, name, description, \
-                    compliance_status, file_modified_at \
-             FROM artifacts WHERE project_id = ?1 \
-             ORDER BY artifact_type ASC, name ASC",
-            false,
-        )
+        "SELECT id, artifact_type, rel_path, name, description, \
+                compliance_status, file_modified_at \
+         FROM artifacts WHERE project_id = ?1 \
+         ORDER BY artifact_type ASC, name ASC"
     };
 
     let mut stmt = conn.prepare(sql)?;
 
-    let rows = if has_filter {
-        let type_str = serialize_artifact_type(type_filter.expect("filter checked above"));
+    let rows = if let Some(filter) = type_filter {
+        let type_str = serialize_artifact_type(filter);
         stmt.query_map(params![project_id, type_str], map_summary)?
     } else {
         stmt.query_map(params![project_id], map_summary)?

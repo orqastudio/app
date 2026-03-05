@@ -151,24 +151,24 @@ A version-gated setup wizard that runs on first launch. Detects what's configure
 - [ ] Settings: Provider section shows CLI version, auth status, re-auth button
 - [ ] Design doc: [`docs/architecture/setup-wizard.md`](/architecture/setup-wizard)
 
-## Phase 2b: Governance Bootstrap
+## Phase 2b: Governance Bootstrap — COMPLETE
 
 **Prerequisites:** Phase 2a complete (sidecar running).
 
 When a user opens a project, Claude (via sidecar) scans existing governance files, analyzes them, and generates recommendations. Output is native Claude Code artifacts (`.claude/rules/*.md`, `.claude/hooks/*.sh`, `.claude/agents/*.md`, etc.). Can also translate from other tool formats (Cursor, Copilot, Continue) into Claude Code artifacts.
 
-- [ ] Backend: Governance domain types (GovernanceScanResult, Recommendation, etc.)
-- [ ] Backend: Governance scanner — filesystem walk to collect .claude/ and other governance files
-- [ ] Backend: Governance repo — CRUD for analyses and recommendations (SQLite)
-- [ ] Backend: Governance commands (governance_scan, recommendations_list, recommendation_update, recommendation_apply)
-- [ ] Backend: Migration 002 — governance_analyses and governance_recommendations tables
-- [ ] Frontend: GovernanceBootstrapWizard — wizard overlay on project open
-- [ ] Frontend: GovernanceScanPanel — scan results and coverage indicator
-- [ ] Frontend: RecommendationList + RecommendationCard — review and approve/reject
-- [ ] Frontend: GovernanceStore — scan state, analysis state, recommendations
-- [ ] Frontend: Trigger governance scan on project open
-- [ ] Frontend: Dashboard governance health badge
-- [ ] Design doc: [`docs/architecture/governance-bootstrap.md`](/architecture/governance-bootstrap)
+- [x] Backend: Governance domain types (GovernanceScanResult, Recommendation, etc.)
+- [x] Backend: Governance scanner — filesystem walk to collect .claude/ and other governance files
+- [x] Backend: Governance repo — CRUD for analyses and recommendations (SQLite)
+- [x] Backend: Governance commands (governance_scan, recommendations_list, recommendation_update, recommendation_apply)
+- [x] Backend: Migration 002 — governance_analyses and governance_recommendations tables
+- [x] Frontend: GovernanceBootstrapWizard — wizard overlay on project open
+- [x] Frontend: GovernanceScanPanel — scan results and coverage indicator
+- [x] Frontend: RecommendationList + RecommendationCard — review and approve/reject
+- [x] Frontend: GovernanceStore — scan state, analysis state, recommendations
+- [x] Frontend: Trigger governance scan on project open
+- [x] Frontend: Dashboard governance health badge
+- [x] Design doc: [`docs/architecture/governance-bootstrap.md`](/architecture/governance-bootstrap)
 
 ## Phase 2c: Artifact Editing
 
@@ -212,6 +212,56 @@ Implements rule injection and violation detection as native hooks (works in CLI)
 - [ ] Real-time violation detection during streaming (pattern matching on streamed tokens)
 - [ ] Visual compliance dashboard
 - [ ] Session handoff and continuity (cross-session search, handoff summaries)
+
+## Phase 2f: Rule Enforcement Engine
+
+**Prerequisites:** Phase 2e complete.
+
+Implements the rule enforcement engine as a first-class Orqa Studio feature. Rule files carry YAML frontmatter declaring enforcement patterns. The engine reads frontmatter, evaluates patterns against agent tool calls, records violations, and surfaces them in the UI. CLI-compatible hookify files are auto-generated from the same frontmatter.
+
+- [ ] Backend: Enforcement domain types (EnforcementEntry, Violation, ViolationVerdict)
+- [ ] Backend: Rule frontmatter parser (yaml-front-matter + comrak) — extracts enforcement entries from `.claude/rules/*.md`
+- [ ] Backend: Enforcement engine — compile entries, evaluate tool calls, produce block/warn verdicts
+- [ ] Backend: Violation persistence — `violations` SQLite table with rule ID, entry ID, matched text, session ID, timestamp
+- [ ] Backend: Enforcement commands (list_violations, get_violation, dismiss_violation, list_enforcement_entries)
+- [ ] Backend: Hookify generator — derives CLI-compatible `.local.md` files from rule frontmatter
+- [ ] Frontend: EnforcementPanel — sidebar showing active rules and violation groups
+- [ ] Frontend: ViolationBadge — inline red/amber indicator on ToolCallCard
+- [ ] Frontend: GovernanceScanResults — scan output with enforcement coverage summary
+- [ ] Frontend: EnforcementStore — violation state, enforcement entry list, actions
+- [ ] Design docs: [`docs/architecture/enforcement.md`](/architecture/enforcement), [`docs/ui/enforcement-panel.md`](/ui/enforcement-panel)
+
+## Phase 2g: Lesson Management
+
+**Prerequisites:** Phase 2f complete.
+
+Implements the lesson management UI. Lessons are individual markdown files in `.orqa/lessons/` with YAML frontmatter tracking metadata (category, tags, recurrence, promotion status). SQLite caches metadata for fast queries. The UI shows lessons, tracks recurrence, and highlights promotion candidates.
+
+- [ ] Backend: Lesson domain types (Lesson, LessonMetadata, PromotionCandidate)
+- [ ] Backend: Lesson storage — `.orqa/lessons/*.md` files with YAML frontmatter
+- [ ] Backend: Lesson metadata cache — `lessons` SQLite table (derived from frontmatter)
+- [ ] Backend: Lesson commands (list_lessons, get_lesson, create_lesson, update_lesson, list_promotion_candidates)
+- [ ] Backend: Promotion workflow — convert lesson to rule enforcement entry when recurrence threshold met
+- [ ] Frontend: LessonList — navigation section with recurrence badges
+- [ ] Frontend: LessonViewer — individual lesson display with metadata
+- [ ] Frontend: Promotion candidate highlights — surface lessons ready to promote
+- [ ] Frontend: LessonStore — lesson state, promotion candidates, actions
+- [ ] Design docs: [`docs/architecture/lessons.md`](/architecture/lessons), [`docs/ui/lesson-dashboard.md`](/ui/lesson-dashboard)
+
+## Phase 2h: Sub-Agent Support
+
+**Prerequisites:** Phase 2f complete.
+
+Implements the `spawn_agent` tool so the orchestrator agent can delegate tasks to specialized sub-agents within an Orqa Studio session. The agent registry reads `.claude/agents/*.md`. Sub-agent tool calls are aggregated and not surfaced individually in the conversation view.
+
+- [ ] Backend: Agent registry — reads `.claude/agents/*.md`, indexes capabilities
+- [ ] Backend: `spawn_agent` tool — spawns a sub-agent with the given role and instructions
+- [ ] Backend: Explore mode — lightweight codebase exploration agent (no tool approval required)
+- [ ] Backend: Output aggregation — child tool calls collected, not surfaced individually
+- [ ] Backend: Turn limits — configurable max turns per sub-agent invocation
+- [ ] Frontend: Sub-agent indicator in conversation view — shows when a sub-agent is active
+- [ ] Frontend: Sub-agent result display — summary card with expandable detail
+- [ ] Design doc: [`docs/architecture/sub-agents.md`](/architecture/sub-agents)
 
 ## Phase 3: File Tools & MCP
 

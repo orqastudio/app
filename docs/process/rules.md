@@ -1,114 +1,106 @@
 # Enforcement Rules Reference
 
-**Date:** 2026-03-02
+**Date:** 2026-03-05
 
-This page lists all 20 enforcement rules in `.claude/rules/` and 11 hookify enforcement files in `.claude/`, explains the rule injection mechanism, and clarifies the relationship between rules, hookify, and documentation.
+This page describes the rule enforcement model, lists all active rules in `.claude/rules/`, and explains how rules, frontmatter, and generated hooks relate to each other.
 
 ---
 
 ## How Rules Work
 
-Rules files in `.claude/rules/` are **automatically injected into every Claude Code session** -- both the orchestrator session and every subagent session. They enforce behavioral constraints that apply universally, regardless of the task or agent.
+Rule files in `.claude/rules/` serve two purposes simultaneously:
 
-Rules are the last line of defense: they exist to catch violations that other mechanisms (docs, agent instructions, skills) might miss.
+1. **Context injection** — Every `.md` file in `.claude/rules/` is automatically injected into every Claude Code session as part of the system prompt. Rules describe behavioral constraints that agents must follow.
 
-**Rules are NOT documentation.** They do not define product knowledge, coding standards, or architectural patterns. They point to the documentation that defines those things, and enforce that agents follow them.
+2. **Enforcement definitions** — Each rule file carries YAML frontmatter that declares machine-readable enforcement entries. The app reads this frontmatter to power the enforcement engine (pattern evaluation, block/warn verdicts, violation persistence) and to auto-generate CLI-compatible hook scripts.
+
+The rule file IS the enforcement definition. There is no separate enforcement configuration — the frontmatter and the human-readable rule body are one artifact.
+
+---
+
+## Rule Frontmatter Schema
+
+```yaml
+---
+enforcement:
+  - id: RULE-NNN-001          # Unique identifier for this enforcement entry
+    description: "Brief description of what is being enforced"
+    event: file | bash         # What triggers this check
+    action: block | warn       # What happens on a match
+    pattern: "regex pattern"   # Pattern to match against file content or command text
+    scope: system | project    # Whether this rule applies everywhere or only to a specific project
+---
+```
+
+A single rule file can declare multiple enforcement entries — one per pattern it enforces. Rules without frontmatter enforcement entries are context-only: they inform agent behavior but are not programmatically enforced.
+
+---
+
+## Enforcement Engine
+
+When the app loads a project, it reads YAML frontmatter from all rule files in `.claude/rules/` and compiles them into an in-memory enforcement set.
+
+**Evaluation flow:**
+
+```text
+Agent tool call (file write or bash command)
+  → Enforcement engine receives the action
+    → For each enforcement entry matching the event type:
+        → Evaluate pattern against file content or command text
+          → Match found:
+              → block: action is prevented, violation is recorded
+              → warn:  action proceeds, warning is surfaced, violation is recorded
+          → No match: action proceeds silently
+```
+
+**Violation persistence:** Every block and warn event is written to the `violations` SQLite table with the rule ID, entry ID, matched text snippet, timestamp, and session ID. The enforcement panel queries this table for display.
+
+---
+
+## CLI Backwards Compatibility
+
+The same frontmatter that drives the app's enforcement engine also generates hookify-compatible `.local.md` files in `.claude/`. These generated files allow the enforcement rules to work in plain Claude Code CLI sessions without running the Orqa Studio app.
+
+**Generation:** When rule frontmatter changes, the app re-generates the corresponding hookify files. The generated files are named `hookify.<rule-id>-<entry-id>.local.md`.
+
+**The hookify files are derived artifacts** — they are generated from rule frontmatter and should not be edited directly. Edit the rule's frontmatter; the hookify files update automatically.
 
 ---
 
 ## Rule Inventory
 
-| # | Rule File | Purpose |
-|---|-----------|---------|
-| 1 | `vision-alignment.md` | Every feature must serve Pillar 1 (Self-Learning Loop) or Pillar 2 (Process Governance). Foundational principles are immutable. UX-first design. |
-| 2 | `architecture-decisions.md` | Architecture decisions must be read before coding. Lists critical decisions (error propagation, IPC boundary, component purity, type safety, immutability, Svelte 5 only, SQLite for structured data). |
-| 3 | `chunkhound-usage.md` | ChunkHound tools must be preferred over Grep/Glob for multi-file searches. Mandatory documentation review before implementation. |
-| 4 | `coding-standards.md` | References `docs/development/coding-standards.md`. Rust standards (rustfmt, clippy pedantic, thiserror, no unwrap). TypeScript/Svelte standards (Svelte 5 runes only, strict TS, shadcn-svelte, no emoji in UI). 80%+ coverage. |
-| 5 | `documentation-first.md` | Documentation is the source of truth. No code before docs exist. Re-read governing docs at the start of every phase. Bug investigation protocol. No deprecated documentation. |
-| 6 | `end-to-end-completeness.md` | Every feature must span all 4 layers (Rust command + IPC type + Svelte component + store binding). The IPC boundary rule: Tauri `invoke()` is the ONLY interface. |
-| 7 | `error-ownership.md` | All errors are the agent's responsibility. Never assume, always verify. No backwards compatibility shims. |
-| 8 | `git-workflow.md` | Worktree lifecycle, branch naming, data loss prevention, stash policy, background process discipline, untracked files policy, post-merge verification. |
-| 9 | `honest-reporting.md` | Reporting partial work as complete is worse than reporting it incomplete. The "Would It Work" test. Precise status categories (Done, Partially done, Scaffolded, Not started). |
-| 10 | `lessons-learned.md` | Two learning loops: implementation lessons (`development/lessons.md`) and process retrospectives (`process/retrospectives.md`). Promotion pipeline at recurrence >= 2. Review agent output requirements. |
-| 11 | `no-aliases-or-hacks.md` | Fix root causes, not symptoms. No alias entries, shims, normalizer maps, serde aliases to tolerate wrong names, or widened type unions. One canonical identifier per concept across Rust and TypeScript. |
-| 12 | `no-stubs.md` | No hardcoded fake data, no-op handlers, always-success functions, or placeholder implementations. Stub scanner enforcement. Mandatory agent completion report structure (What Was Done, What Is NOT Done, Evidence, Smoke Test). |
-| 13 | `pillar-alignment-docs.md` | Every feature/workflow/capability documentation page must include a Pillar Alignment section mapping to Pillar 1 and/or Pillar 2. |
-| 14 | `plan-mode-compliance.md` | Every plan requires architectural compliance verification, systems architecture checklist, and UX-first design. Three-reviewer verification gate. Evidence requirements for Tauri commands, frontend components, and IPC wiring. |
-| 15 | `required-reading.md` | Every agent must read its Required Reading documentation before implementation. Missing documents halt work. |
-| 16 | `reusable-components.md` | Shared components (EmptyState, LoadingSpinner, ErrorDisplay, PageToolbar, StatusBadge, ProgressBar, Panel, CodeBlock, MarkdownRenderer, ConversationMessage, ToolCallCard) must be used. No inline equivalents. |
-| 17 | `root-cleanliness.md` | Project root stays lean. Temporary files to `tmp/`. Documentation to `docs/`. Tools to `tools/`. Only configuration files that require root placement. |
-| 18 | `skill-enforcement.md` | Every agent must have a `skills:` list. `chunkhound` is universal. Agent-maintainer audits skill lists against Required Reading domains. |
-| 19 | `testing-standards.md` | Test organization (Rust unit/integration, Vitest, Playwright E2E). 80%+ coverage. Mock only at adapter boundaries. Test isolation requirements. |
+| # | Rule File | Enforcement Entries | Purpose |
+|---|-----------|--------------------:|---------|
+| 1 | `vision-alignment.md` | 0 | Every feature must serve Pillar 1 or Pillar 2. Foundational principles are immutable. UX-first design. Context-only — requires judgment, cannot be pattern-matched. |
+| 2 | `architecture-decisions.md` | 0 | Architecture decisions must be read before coding. Lists critical decisions (error propagation, IPC boundary, component purity, type safety, immutability, Svelte 5 only, SQLite for structured data). Context-only. |
+| 3 | `chunkhound-usage.md` | 0 | ChunkHound tools must be preferred over Grep/Glob for multi-file searches. Mandatory documentation review before implementation. Context-only. |
+| 4 | `coding-standards.md` | 3 | References `docs/development/coding-standards.md`. Rust: no `unwrap()`, no `todo!()`. TypeScript: no `: any`, no Svelte 4 patterns. Pattern-enforced via frontmatter. |
+| 5 | `documentation-first.md` | 0 | Documentation is the source of truth. No code before docs exist. Re-read governing docs at the start of every phase. Context-only. |
+| 6 | `end-to-end-completeness.md` | 0 | Every feature must span all 4 layers (Rust command + IPC type + Svelte component + store binding). Context-only. |
+| 7 | `error-ownership.md` | 1 | All errors are the agent's responsibility. Pattern-enforced: blocks `todo!()` macro in Rust. |
+| 8 | `git-workflow.md` | 3 | Worktree lifecycle, data loss prevention, stash policy, background process discipline. Pattern-enforced: no `--no-verify`, warn destructive git commands, block force push. |
+| 9 | `honest-reporting.md` | 0 | Partial work must not be reported as complete. The "Would It Work" test. Context-only. |
+| 10 | `lessons-learned.md` | 0 | Two learning loops: implementation lessons and process retrospectives. Promotion pipeline. Context-only. |
+| 11 | `no-aliases-or-hacks.md` | 0 | Fix root causes, not symptoms. No alias entries, shims, normalizer maps. Context-only. |
+| 12 | `no-stubs.md` | 1 | No hardcoded fake data or no-op handlers. Pattern-enforced: blocks TODO/FIXME/HACK comments in production code. |
+| 13 | `pillar-alignment-docs.md` | 0 | Every feature/workflow/capability doc must include a Pillar Alignment section. Context-only. |
+| 14 | `plan-mode-compliance.md` | 0 | Every plan requires architectural compliance verification, systems architecture checklist, and UX-first design. Context-only. |
+| 15 | `required-reading.md` | 0 | Every agent must read its Required Reading documentation before implementation. Context-only. |
+| 16 | `reusable-components.md` | 0 | Shared components must be used — no inline equivalents. Context-only. |
+| 17 | `root-cleanliness.md` | 0 | Project root stays lean. Temporary files to `tmp/`. Context-only. |
+| 18 | `skill-enforcement.md` | 0 | Every agent must have a `skills:` list. `chunkhound` is universal. Context-only. |
+| 19 | `testing-standards.md` | 0 | Test organization, 80%+ coverage, mock only at adapter boundaries. Context-only. |
 
 ---
 
-## Hookify Enforcement Files
+## Context-Only vs Pattern-Enforced
 
-In addition to the 20 rules above, Orqa Studio uses 11 hookify enforcement files (`.claude/hookify.*.local.md`) for real-time pattern-based enforcement. Where rules are written instructions injected into agent context, hookify files actively block or warn when a file edit or bash command matches a forbidden pattern.
+| Type | How It Works | Example |
+|------|--------------|---------|
+| **Context-only** | Injected into agent system prompt. Agents read and follow it. Violations are caught during code review. | "Documentation must exist before implementation begins" |
+| **Pattern-enforced** | Has frontmatter enforcement entries. App evaluates patterns against every file write and bash command. Violations are blocked or warned in real time. | Block `: any` type in TypeScript files |
 
-**How hookify works:**
-
-Each hookify file is a markdown file with YAML frontmatter that defines:
-
-- **`event`** — `file` (triggers on file edits) or `bash` (triggers on bash commands)
-- **`action`** — `block` (prevents the action) or `warn` (allows but displays a warning)
-- **`conditions`** / **`pattern`** — The regex or glob pattern to match against
-
-**Hookify Inventory:**
-
-| # | Hookify File | Event | Action | Purpose |
-|---|-------------|-------|--------|---------|
-| 1 | `hookify.no-any-type.local.md` | file | block | Blocks `: any` type annotations in TypeScript files |
-| 2 | `hookify.no-unwrap.local.md` | file | block | Blocks `unwrap()` and `expect()` in Rust production code |
-| 3 | `hookify.no-todo-macro.local.md` | file | block | Blocks `todo!()` macro in Rust production code |
-| 4 | `hookify.no-svelte4-patterns.local.md` | file | block | Blocks Svelte 4 patterns (`$:`, `export let`) in Svelte files |
-| 5 | `hookify.no-todo-comments.local.md` | file | block | Blocks TODO/FIXME/HACK comments in production code |
-| 6 | `hookify.no-console-log.local.md` | file | warn | Warns on `console.log` in TypeScript/Svelte files |
-| 7 | `hookify.no-no-verify.local.md` | bash | block | Blocks `--no-verify` flag in git commands |
-| 8 | `hookify.warn-destructive-git.local.md` | bash | warn | Warns on destructive git commands (`reset --hard`, `clean -fd`, `checkout .`) |
-| 9 | `hookify.no-force-push.local.md` | bash | block | Blocks `git push --force` to main/master |
-| 10 | `hookify.no-ts-ignore.local.md` | file | block | Blocks `@ts-ignore` and `@ts-nocheck` directives |
-| 11 | `hookify.no-hardcoded-secrets.local.md` | file | block | Blocks patterns resembling hardcoded API keys and secrets |
-
-**Relationship to rules:**
-
-Rules define constraints as written instructions ("No `unwrap()` in production code"). Hookify files enforce a subset of those constraints in real-time by pattern-matching against file edits and commands. Not every rule has a corresponding hookify file — only rules with violations detectable by pattern matching are promoted to hookify enforcement.
-
-| Rule | Enforced by Hookify |
-|------|-------------------|
-| `coding-standards.md` — No `unwrap()` in production | `hookify.no-unwrap.local.md` (block) |
-| `coding-standards.md` — Svelte 5 runes only | `hookify.no-svelte4-patterns.local.md` (block) |
-| `coding-standards.md` — Strict TypeScript, no `any` | `hookify.no-any-type.local.md` (block) |
-| `no-stubs.md` — No TODO comments | `hookify.no-todo-comments.local.md` (block) |
-| `git-workflow.md` — No `--no-verify` | `hookify.no-no-verify.local.md` (block) |
-| `git-workflow.md` — No destructive git without approval | `hookify.warn-destructive-git.local.md` (warn) |
-| `error-ownership.md` — No `todo!()` macro | `hookify.no-todo-macro.local.md` (block) |
-
----
-
-## Rule Injection Mechanism
-
-Claude Code automatically injects the contents of every `.md` file in `.claude/rules/` into the system prompt of every session. This happens before the user's first message. There is no explicit loading step -- rules are always active.
-
-Because rules are injected verbatim, they must be:
-
-- **Concise** -- verbose rules fill context and may be partially ignored
-- **Enforcement-focused** -- behavioral constraints, not documentation
-- **Reference-based** -- point to docs for the full standard, don't restate it
-
----
-
-## Relationship to Documentation
-
-Rules enforce the standards defined in `docs/`. They do not replace them.
-
-| If you want to... | Use... |
-|-------------------|--------|
-| Define a coding standard | `docs/development/coding-standards.md` |
-| Define an architectural decision | `docs/architecture/decisions.md` |
-| Define an IPC contract | `docs/architecture/` or feature-specific docs |
-| Enforce that agents follow a standard | `.claude/rules/` |
-| Teach a technology pattern | `.claude/skills/` |
+Context-only rules require judgment that pattern matching cannot provide. They are enforced through agent training (the rule text itself) and the code review gate (`code-reviewer` agent). Pattern-enforced rules catch violations at the moment they happen — before a commit, before a review.
 
 ---
 
@@ -116,17 +108,17 @@ Rules enforce the standards defined in `docs/`. They do not replace them.
 
 Create a new rule when:
 
-1. A behavioral constraint applies to ALL agents universally (not just one agent's process)
-2. An implementation lesson has recurred enough times to warrant automatic enforcement (recurrence >= 2 per `development/lessons.md`)
+1. A behavioral constraint applies to all agents universally, not just one agent's process
+2. An implementation lesson has recurred enough times to warrant automatic enforcement (recurrence >= 2 per `docs/development/lessons.md`)
 3. A process change is significant enough that agents would violate it without automatic reminders
 
-When creating a rule, also consider whether the constraint can be additionally enforced via hookify. If the violation is a specific pattern in code or commands (e.g., a forbidden function call, a banned flag), create a hookify file alongside the rule for real-time prevention.
+When creating a rule, also decide whether the constraint is pattern-enforceable. If the violation is a specific pattern in file content or a banned command flag, add frontmatter enforcement entries. The generated hookify files will be created automatically.
 
 Do NOT create a new rule when:
 
-- The constraint applies only to one agent -- put it in that agent's instructions
-- The constraint is a product/architecture standard -- put it in `docs/`
-- The existing rules already cover the constraint -- extend an existing rule instead
+- The constraint applies only to one agent — put it in that agent's instructions
+- The constraint is a product or architecture standard — put it in `docs/`
+- Existing rules already cover the constraint — extend an existing rule instead
 
 ---
 
@@ -142,9 +134,19 @@ The `code-reviewer` includes rule compliance in every code review:
 
 ---
 
+## Pillar Alignment
+
+| Pillar | Alignment |
+|--------|-----------|
+| Self-Learning Loop | N/A — this page describes the rule structure, not a learning feature. The lessons-learned rule drives learning loop behavior. |
+| Process Governance | Rule files are the primary mechanism through which behavioral standards are enforced on all agents. This page documents that enforcement model, making governance tangible and auditable. |
+
+---
+
 ## Related Documents
 
-- [Content Governance](/process/content-governance) -- The six-layer ownership model
-- [Team Overview](/process/team) -- Which agents load which skills and follow which rules
-- [Process Retrospectives](/process/retrospectives) -- History of rule creation and governance changes
-- [Implementation Lessons](/development/lessons) -- Individual patterns that may be promoted to rules
+- [Content Governance](content-governance.md) — The six-layer ownership model (docs, agents, skills, rules, hooks, enforcement)
+- [Team Overview](team.md) — Which agents load which skills and follow which rules
+- [Process Retrospectives](retrospectives.md) — History of rule creation and governance changes
+- `docs/development/lessons.md` — Individual patterns that may be promoted to rules
+- `docs/architecture/enforcement.md` — Technical architecture of the enforcement engine

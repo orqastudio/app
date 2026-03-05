@@ -122,9 +122,9 @@ pub async fn init_embedder(state: State<'_, AppState>, model_dir: String) -> Res
     embedder::ensure_model_exists(&model_path, |file, downloaded, total| {
         if let Some(total) = total {
             let pct = (downloaded as f64 / total as f64 * 100.0) as u32;
-            eprintln!("orqa: downloading {file}: {pct}% ({downloaded}/{total} bytes)");
+            tracing::debug!("orqa: downloading {file}: {pct}% ({downloaded}/{total} bytes)");
         } else {
-            eprintln!("orqa: downloading {file}: {downloaded} bytes");
+            tracing::debug!("orqa: downloading {file}: {downloaded} bytes");
         }
     })
     .await
@@ -145,5 +145,5 @@ pub async fn init_embedder(state: State<'_, AppState>, model_dir: String) -> Res
 /// status and optional detail string (e.g. download percentage).
 #[tauri::command]
 pub async fn get_startup_status(state: State<'_, AppState>) -> Result<StartupSnapshot, String> {
-    Ok(state.startup.snapshot())
+    state.startup.snapshot().map_err(|e| e.to_string())
 }

@@ -5,6 +5,9 @@ use ndarray::Axis;
 use ort::value::TensorRef;
 use tokio::io::AsyncWriteExt;
 
+/// Tokenized batch output: (input_ids, attention_mask, token_type_ids, batch_size, max_len).
+type TokenizedBatch = (Vec<i64>, Vec<i64>, Vec<i64>, usize, usize);
+
 /// Error type for embedding operations.
 #[derive(Debug, thiserror::Error)]
 pub enum EmbedError {
@@ -81,36 +84,46 @@ impl Embedder {
             return Ok(Vec::new());
         }
 
-        // Tokenize all texts
+        let (input_ids, attention_mask, token_type_ids, batch_size, max_len) =
+            self.tokenize_batch(texts)?;
+
+        if max_len == 0 {
+            return Ok(vec![vec![0.0f32; 384]; batch_size]);
+        }
+
+        let output_array = self.run_inference(&input_ids, &attention_mask, &token_type_ids, batch_size, max_len)?;
+        let embeddings = postprocess_embeddings(&output_array, &attention_mask, batch_size, max_len);
+
+        Ok(embeddings)
+    }
+
+    /// Tokenize a batch of texts into flat padded arrays.
+    ///
+    /// Returns `(input_ids, attention_mask, token_type_ids, batch_size, max_len)`.
+    fn tokenize_batch(
+        &self,
+        texts: &[&str],
+    ) -> Result<TokenizedBatch, EmbedError> {
         let encodings = self
             .tokenizer
             .encode_batch(texts.to_vec(), true)
             .map_err(|e| EmbedError::Tokenizer(e.to_string()))?;
 
         let batch_size = encodings.len();
-        let max_len = encodings
-            .iter()
-            .map(|e| e.get_ids().len())
-            .max()
-            .unwrap_or(0);
+        let max_len = encodings.iter().map(|e| e.get_ids().len()).max().unwrap_or(0);
+        let total = batch_size * max_len;
 
-        if max_len == 0 {
-            return Ok(vec![vec![0.0f32; 384]; batch_size]);
-        }
-
-        // Build flat input arrays with padding
-        let total_elements = batch_size * max_len;
-        let mut input_ids = vec![0i64; total_elements];
-        let mut attention_mask = vec![0i64; total_elements];
-        let mut token_type_ids = vec![0i64; total_elements];
+        let mut input_ids = vec![0i64; total];
+        let mut attention_mask = vec![0i64; total];
+        let mut token_type_ids = vec![0i64; total];
 
         for (i, encoding) in encodings.iter().enumerate() {
-            let ids = encoding.get_ids();
-            let mask = encoding.get_attention_mask();
-            let type_ids = encoding.get_type_ids();
             let row_offset = i * max_len;
-
-            for (j, (&id, (&m, &t))) in ids.iter().zip(mask.iter().zip(type_ids.iter())).enumerate()
+            for (j, (&id, (&m, &t))) in encoding
+                .get_ids()
+                .iter()
+                .zip(encoding.get_attention_mask().iter().zip(encoding.get_type_ids().iter()))
+                .enumerate()
             {
                 input_ids[row_offset + j] = id as i64;
                 attention_mask[row_offset + j] = m as i64;
@@ -118,17 +131,26 @@ impl Embedder {
             }
         }
 
+        Ok((input_ids, attention_mask, token_type_ids, batch_size, max_len))
+    }
+
+    /// Run ONNX inference on pre-tokenized inputs.
+    fn run_inference(
+        &mut self,
+        input_ids: &[i64],
+        attention_mask: &[i64],
+        token_type_ids: &[i64],
+        batch_size: usize,
+        max_len: usize,
+    ) -> Result<ndarray::ArrayD<f32>, EmbedError> {
         let shape = [batch_size, max_len];
-
-        // Create tensor references from flat arrays + shape
-        let a_ids = TensorRef::from_array_view((shape, &*input_ids))
+        let a_ids = TensorRef::from_array_view((shape, input_ids))
             .map_err(|e| EmbedError::Ort(e.to_string()))?;
-        let a_mask = TensorRef::from_array_view((shape, &*attention_mask))
+        let a_mask = TensorRef::from_array_view((shape, attention_mask))
             .map_err(|e| EmbedError::Ort(e.to_string()))?;
-        let a_type_ids = TensorRef::from_array_view((shape, &*token_type_ids))
+        let a_type_ids = TensorRef::from_array_view((shape, token_type_ids))
             .map_err(|e| EmbedError::Ort(e.to_string()))?;
 
-        // Run inference with named inputs
         let outputs = self
             .session
             .run(ort::inputs![
@@ -138,54 +160,10 @@ impl Embedder {
             ])
             .map_err(|e| EmbedError::Ort(e.to_string()))?;
 
-        // Extract embeddings from the output.
-        // bge-small outputs last_hidden_state of shape [batch, seq_len, 384].
-        // We mean-pool over the sequence dimension, masked by attention_mask.
-        let output_array = outputs[0]
+        outputs[0]
             .try_extract_array::<f32>()
-            .map_err(|e| EmbedError::Ort(e.to_string()))?;
-
-        let output_shape = output_array.shape(); // [batch, seq_len, hidden_dim]
-        let hidden_dim = output_shape[2];
-
-        let mut embeddings = Vec::with_capacity(batch_size);
-
-        for i in 0..batch_size {
-            let row_slice = output_array.index_axis(Axis(0), i);
-            let row_offset = i * max_len;
-
-            let mut sum = vec![0.0f32; hidden_dim];
-            let mut count = 0.0f32;
-
-            for j in 0..output_shape[1] {
-                if attention_mask[row_offset + j] == 1 {
-                    let token_embedding = row_slice.index_axis(Axis(0), j);
-                    for (k, val) in token_embedding.iter().enumerate() {
-                        sum[k] += val;
-                    }
-                    count += 1.0;
-                }
-            }
-
-            // Mean pooling
-            if count > 0.0 {
-                for val in &mut sum {
-                    *val /= count;
-                }
-            }
-
-            // L2 normalize
-            let norm: f32 = sum.iter().map(|x| x * x).sum::<f32>().sqrt();
-            if norm > 0.0 {
-                for val in &mut sum {
-                    *val /= norm;
-                }
-            }
-
-            embeddings.push(sum);
-        }
-
-        Ok(embeddings)
+            .map(|a| a.into_owned())
+            .map_err(|e| EmbedError::Ort(e.to_string()))
     }
 }
 
@@ -222,6 +200,55 @@ where
     }
 
     Ok(())
+}
+
+/// Apply mean pooling and L2 normalization to ONNX output.
+///
+/// Takes the [batch, seq_len, hidden_dim] output array and returns one
+/// normalized 384-d vector per sample.
+fn postprocess_embeddings(
+    output_array: &ndarray::ArrayD<f32>,
+    attention_mask: &[i64],
+    batch_size: usize,
+    max_len: usize,
+) -> Vec<Vec<f32>> {
+    let output_shape = output_array.shape();
+    let hidden_dim = output_shape[2];
+    let mut embeddings = Vec::with_capacity(batch_size);
+
+    for i in 0..batch_size {
+        let row_slice = output_array.index_axis(Axis(0), i);
+        let row_offset = i * max_len;
+        let mut sum = vec![0.0f32; hidden_dim];
+        let mut count = 0.0f32;
+
+        for j in 0..output_shape[1] {
+            if attention_mask[row_offset + j] == 1 {
+                let token_embedding = row_slice.index_axis(Axis(0), j);
+                for (k, val) in token_embedding.iter().enumerate() {
+                    sum[k] += val;
+                }
+                count += 1.0;
+            }
+        }
+
+        if count > 0.0 {
+            for val in &mut sum {
+                *val /= count;
+            }
+        }
+
+        let norm: f32 = sum.iter().map(|x| x * x).sum::<f32>().sqrt();
+        if norm > 0.0 {
+            for val in &mut sum {
+                *val /= norm;
+            }
+        }
+
+        embeddings.push(sum);
+    }
+
+    embeddings
 }
 
 /// Download a single file from `url` to `dest`, streaming through a `.part` file.

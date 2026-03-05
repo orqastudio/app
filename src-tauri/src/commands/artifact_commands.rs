@@ -79,6 +79,37 @@ pub fn artifact_get_by_path(
     Ok(artifact)
 }
 
+/// Write artifact content to disk, creating parent directories as needed.
+fn write_artifact_file(full_path: &Path, content: &str) -> Result<(), OrqaError> {
+    if let Some(parent) = full_path.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
+    std::fs::write(full_path, content)?;
+    Ok(())
+}
+
+/// Index a new artifact in the database and update its file metadata.
+fn index_artifact(
+    conn: &rusqlite::Connection,
+    project_id: i64,
+    parsed_type: &crate::domain::artifact::ArtifactType,
+    rel_path: &str,
+    name: &str,
+    content: &str,
+) -> Result<Artifact, OrqaError> {
+    let file_size = content.len() as i64;
+    let file_hash = format!("sha256:{:x}", simple_hash(content));
+
+    let mut artifact =
+        artifact_repo::create(conn, project_id, parsed_type, rel_path, name, content, None)?;
+
+    artifact_repo::update(conn, artifact.id, &file_hash, file_size, &artifact.created_at)?;
+
+    artifact = artifact_repo::get(conn, artifact.id)?;
+    artifact.content = content.to_string();
+    Ok(artifact)
+}
+
 /// Create a new artifact, writing the file to disk and indexing in the database.
 #[tauri::command]
 pub fn artifact_create(
@@ -102,47 +133,11 @@ pub fn artifact_create(
         .lock()
         .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
-    // Get the project to resolve the full filesystem path
     let project = project_repo::get(&conn, project_id)?;
     let full_path = Path::new(&project.path).join(&rel_path);
 
-    // Ensure the parent directory exists
-    if let Some(parent) = full_path.parent() {
-        std::fs::create_dir_all(parent)?;
-    }
-
-    // Write file to disk
-    std::fs::write(&full_path, &content)?;
-
-    // Calculate file metadata
-    let file_size = content.len() as i64;
-    let file_hash = format!("sha256:{:x}", simple_hash(&content));
-
-    // Index in database
-    let mut artifact = artifact_repo::create(
-        &conn,
-        project_id,
-        &parsed_type,
-        &rel_path,
-        name.trim(),
-        &content,
-        None,
-    )?;
-
-    // Update file metadata
-    artifact_repo::update(
-        &conn,
-        artifact.id,
-        &file_hash,
-        file_size,
-        &artifact.created_at,
-    )?;
-
-    // Re-fetch to get updated metadata
-    artifact = artifact_repo::get(&conn, artifact.id)?;
-    artifact.content = content;
-
-    Ok(artifact)
+    write_artifact_file(&full_path, &content)?;
+    index_artifact(&conn, project_id, &parsed_type, &rel_path, name.trim(), &content)
 }
 
 /// Update an artifact's content, writing to disk and updating the database.
@@ -307,41 +302,9 @@ pub fn governance_list(
     list_governance_files(root, &parsed)
 }
 
-/// Read a single governance artifact from disk by its relative path.
-#[tauri::command]
-pub fn governance_read(
-    rel_path: String,
-    state: State<'_, AppState>,
-) -> Result<Artifact, OrqaError> {
-    use crate::domain::artifact::ComplianceStatus;
-
-    if rel_path.contains("..") {
-        return Err(OrqaError::Validation(
-            "path traversal not allowed".to_string(),
-        ));
-    }
-
-    let project_path = active_project_path(&state)?;
-    let full_path = Path::new(&project_path).join(&rel_path);
-
-    if !full_path.exists() {
-        return Err(OrqaError::NotFound(format!(
-            "artifact not found: {}",
-            rel_path
-        )));
-    }
-
-    let content = std::fs::read_to_string(&full_path)?;
-    let file_name = full_path
-        .file_name()
-        .map(|n| n.to_string_lossy().into_owned())
-        .unwrap_or_default();
-    let name = humanize_name(&file_name);
-    let metadata = std::fs::metadata(&full_path).ok();
-    let file_size = metadata.as_ref().map(|m| m.len() as i64);
-
-    // Infer type from path prefix
-    let artifact_type = if rel_path.starts_with(".claude/agents") {
+/// Infer an `ArtifactType` from a `.claude/` relative path prefix.
+fn infer_artifact_type_from_path(rel_path: &str) -> ArtifactType {
+    if rel_path.starts_with(".claude/agents") {
         ArtifactType::Agent
     } else if rel_path.starts_with(".claude/rules") {
         ArtifactType::Rule
@@ -351,7 +314,24 @@ pub fn governance_read(
         ArtifactType::Hook
     } else {
         ArtifactType::Doc
-    };
+    }
+}
+
+/// Build an in-memory `Artifact` struct from a file on disk (no DB record).
+fn artifact_from_file(
+    full_path: &Path,
+    rel_path: String,
+    artifact_type: ArtifactType,
+) -> Result<Artifact, OrqaError> {
+    use crate::domain::artifact::ComplianceStatus;
+
+    let content = std::fs::read_to_string(full_path)?;
+    let file_name = full_path
+        .file_name()
+        .map(|n| n.to_string_lossy().into_owned())
+        .unwrap_or_default();
+    let name = humanize_name(&file_name);
+    let file_size = std::fs::metadata(full_path).ok().map(|m| m.len() as i64);
 
     Ok(Artifact {
         id: 0,
@@ -370,6 +350,32 @@ pub fn governance_read(
         created_at: String::new(),
         updated_at: String::new(),
     })
+}
+
+/// Read a single governance artifact from disk by its relative path.
+#[tauri::command]
+pub fn governance_read(
+    rel_path: String,
+    state: State<'_, AppState>,
+) -> Result<Artifact, OrqaError> {
+    if rel_path.contains("..") {
+        return Err(OrqaError::Validation(
+            "path traversal not allowed".to_string(),
+        ));
+    }
+
+    let project_path = active_project_path(&state)?;
+    let full_path = Path::new(&project_path).join(&rel_path);
+
+    if !full_path.exists() {
+        return Err(OrqaError::NotFound(format!(
+            "artifact not found: {}",
+            rel_path
+        )));
+    }
+
+    let artifact_type = infer_artifact_type_from_path(&rel_path);
+    artifact_from_file(&full_path, rel_path, artifact_type)
 }
 
 /// Scan a governance directory and return sorted artifact summaries.

@@ -207,6 +207,35 @@ struct CredentialDetails {
     expires_at: Option<u64>,
 }
 
+/// Extract `CredentialDetails` from a parsed OAuth JSON node.
+fn extract_oauth_details(oauth: &serde_json::Value) -> CredentialDetails {
+    let subscription_type = oauth
+        .get("subscriptionType")
+        .and_then(|v| v.as_str())
+        .map(String::from);
+
+    let rate_limit_tier = oauth
+        .get("rateLimitTier")
+        .and_then(|v| v.as_str())
+        .map(String::from);
+
+    let scopes = oauth
+        .get("scopes")
+        .and_then(|v| v.as_array())
+        .map(|arr| arr.iter().filter_map(|v| v.as_str().map(String::from)).collect())
+        .unwrap_or_default();
+
+    let expires_at = oauth.get("expiresAt").and_then(|v| v.as_u64());
+
+    CredentialDetails {
+        authenticated: true,
+        subscription_type,
+        rate_limit_tier,
+        scopes,
+        expires_at,
+    }
+}
+
 /// Read the credentials file and extract authentication and subscription info.
 ///
 /// If the file cannot be read or parsed, falls back to checking file existence.
@@ -226,46 +255,12 @@ fn parse_credentials(path: &std::path::Path) -> CredentialDetails {
 
     let json: serde_json::Value = match serde_json::from_str(&contents) {
         Ok(v) => v,
-        Err(_) => {
-            return CredentialDetails {
-                authenticated: true,
-                ..not_found
-            }
-        }
+        Err(_) => return CredentialDetails { authenticated: true, ..not_found },
     };
 
     // The credentials file nests auth details under "claudeAiOauth"
     let oauth = json.get("claudeAiOauth").unwrap_or(&json);
-
-    let subscription_type = oauth
-        .get("subscriptionType")
-        .and_then(|v| v.as_str())
-        .map(String::from);
-
-    let rate_limit_tier = oauth
-        .get("rateLimitTier")
-        .and_then(|v| v.as_str())
-        .map(String::from);
-
-    let scopes = oauth
-        .get("scopes")
-        .and_then(|v| v.as_array())
-        .map(|arr| {
-            arr.iter()
-                .filter_map(|v| v.as_str().map(String::from))
-                .collect()
-        })
-        .unwrap_or_default();
-
-    let expires_at = oauth.get("expiresAt").and_then(|v| v.as_u64());
-
-    CredentialDetails {
-        authenticated: true,
-        subscription_type,
-        rate_limit_tier,
-        scopes,
-        expires_at,
-    }
+    extract_oauth_details(oauth)
 }
 
 /// Trigger the Claude CLI login flow.

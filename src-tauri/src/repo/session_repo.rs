@@ -60,39 +60,30 @@ pub fn list(
     limit: i64,
     offset: i64,
 ) -> Result<Vec<SessionSummary>, OrqaError> {
-    let (sql, has_filter) = if status_filter.is_some() {
-        (
-            "SELECT s.id, s.title, s.status, s.created_at, s.updated_at, \
-                    (SELECT COUNT(*) FROM messages m WHERE m.session_id = s.id) AS message_count, \
-                    (SELECT m2.content FROM messages m2 WHERE m2.session_id = s.id \
-                     AND m2.role = 'user' ORDER BY m2.turn_index ASC LIMIT 1) AS preview \
-             FROM sessions s \
-             WHERE s.project_id = ?1 AND s.status = ?2 \
-             ORDER BY s.updated_at DESC \
-             LIMIT ?3 OFFSET ?4",
-            true,
-        )
+    let sql = if status_filter.is_some() {
+        "SELECT s.id, s.title, s.status, s.created_at, s.updated_at, \
+                (SELECT COUNT(*) FROM messages m WHERE m.session_id = s.id) AS message_count, \
+                (SELECT m2.content FROM messages m2 WHERE m2.session_id = s.id \
+                 AND m2.role = 'user' ORDER BY m2.turn_index ASC LIMIT 1) AS preview \
+         FROM sessions s \
+         WHERE s.project_id = ?1 AND s.status = ?2 \
+         ORDER BY s.updated_at DESC \
+         LIMIT ?3 OFFSET ?4"
     } else {
-        (
-            "SELECT s.id, s.title, s.status, s.created_at, s.updated_at, \
-                    (SELECT COUNT(*) FROM messages m WHERE m.session_id = s.id) AS message_count, \
-                    (SELECT m2.content FROM messages m2 WHERE m2.session_id = s.id \
-                     AND m2.role = 'user' ORDER BY m2.turn_index ASC LIMIT 1) AS preview \
-             FROM sessions s \
-             WHERE s.project_id = ?1 \
-             ORDER BY s.updated_at DESC \
-             LIMIT ?2 OFFSET ?3",
-            false,
-        )
+        "SELECT s.id, s.title, s.status, s.created_at, s.updated_at, \
+                (SELECT COUNT(*) FROM messages m WHERE m.session_id = s.id) AS message_count, \
+                (SELECT m2.content FROM messages m2 WHERE m2.session_id = s.id \
+                 AND m2.role = 'user' ORDER BY m2.turn_index ASC LIMIT 1) AS preview \
+         FROM sessions s \
+         WHERE s.project_id = ?1 \
+         ORDER BY s.updated_at DESC \
+         LIMIT ?2 OFFSET ?3"
     };
 
     let mut stmt = conn.prepare(sql)?;
 
-    let rows = if has_filter {
-        stmt.query_map(
-            params![project_id, status_filter, limit, offset],
-            map_session_summary,
-        )?
+    let rows = if let Some(status) = status_filter {
+        stmt.query_map(params![project_id, status, limit, offset], map_session_summary)?
     } else {
         stmt.query_map(params![project_id, limit, offset], map_session_summary)?
     };

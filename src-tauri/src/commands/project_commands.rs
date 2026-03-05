@@ -37,6 +37,47 @@ pub fn project_open(path: String, state: State<'_, AppState>) -> Result<Project,
     }
 }
 
+/// Validate inputs and create the project directory structure on disk.
+///
+/// Returns the canonical (UTF-8) path to the newly created project directory.
+fn init_project_directory(
+    name: &str,
+    parent_path: &str,
+    init_git: bool,
+) -> Result<String, OrqaError> {
+    let parent = Path::new(parent_path);
+    if !parent.exists() || !parent.is_dir() {
+        return Err(OrqaError::Validation(format!(
+            "parent path does not exist or is not a directory: {parent_path}"
+        )));
+    }
+
+    let project_dir = parent.join(name);
+    if project_dir.exists() {
+        return Err(OrqaError::Validation(format!(
+            "directory already exists: {}",
+            project_dir.display()
+        )));
+    }
+
+    std::fs::create_dir_all(project_dir.join(".claude"))?;
+
+    if init_git {
+        if let Err(e) = std::process::Command::new("git")
+            .arg("init")
+            .current_dir(&project_dir)
+            .output()
+        {
+            tracing::warn!("git init failed: {e}");
+        }
+    }
+
+    project_dir
+        .to_str()
+        .ok_or_else(|| OrqaError::Validation("project path is not valid UTF-8".to_string()))
+        .map(|s| s.to_string())
+}
+
 /// Create a new project directory and register it.
 ///
 /// Creates the directory at `parent_path/name`, creates a `.claude/` subdirectory,
@@ -49,47 +90,10 @@ pub fn project_create(
     state: State<'_, AppState>,
 ) -> Result<Project, OrqaError> {
     if name.trim().is_empty() {
-        return Err(OrqaError::Validation(
-            "project name cannot be empty".to_string(),
-        ));
+        return Err(OrqaError::Validation("project name cannot be empty".to_string()));
     }
 
-    let parent = Path::new(&parent_path);
-    if !parent.exists() || !parent.is_dir() {
-        return Err(OrqaError::Validation(format!(
-            "parent path does not exist or is not a directory: {parent_path}"
-        )));
-    }
-
-    let project_dir = parent.join(&name);
-    if project_dir.exists() {
-        return Err(OrqaError::Validation(format!(
-            "directory already exists: {}",
-            project_dir.display()
-        )));
-    }
-
-    // Create project directory and .claude/ subdirectory
-    std::fs::create_dir_all(project_dir.join(".claude"))?;
-
-    // Optionally initialize git
-    let should_init_git = init_git.unwrap_or(true);
-    if should_init_git {
-        let output = std::process::Command::new("git")
-            .arg("init")
-            .current_dir(&project_dir)
-            .output();
-
-        if let Err(e) = output {
-            // git init is best-effort; log but don't fail project creation
-            eprintln!("warning: git init failed: {e}");
-        }
-    }
-
-    let canonical = project_dir
-        .to_str()
-        .ok_or_else(|| OrqaError::Validation("project path is not valid UTF-8".to_string()))?
-        .to_string();
+    let canonical = init_project_directory(name.trim(), &parent_path, init_git.unwrap_or(true))?;
 
     let conn = state
         .db

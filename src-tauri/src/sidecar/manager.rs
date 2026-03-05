@@ -1,6 +1,6 @@
 use std::io::{BufRead, BufReader, Write};
 use std::process::{Child, Command, Stdio};
-use std::sync::Mutex;
+use std::sync::{Mutex, MutexGuard, PoisonError};
 use std::time::Instant;
 
 use crate::domain::settings::{SidecarState, SidecarStatus};
@@ -23,6 +23,13 @@ pub struct SidecarManager {
     pid: Mutex<Option<u32>>,
 }
 
+/// Acquire a mutex lock, mapping a poison error to `OrqaError::Sidecar`.
+fn lock_mutex<T>(mutex: &Mutex<T>) -> Result<MutexGuard<'_, T>, OrqaError> {
+    mutex
+        .lock()
+        .map_err(|_: PoisonError<_>| OrqaError::Sidecar("sidecar mutex poisoned".to_string()))
+}
+
 impl SidecarManager {
     /// Create a new manager with no running process.
     pub fn new() -> Self {
@@ -38,19 +45,24 @@ impl SidecarManager {
 
     /// Return the current status of the sidecar process.
     pub fn status(&self) -> SidecarStatus {
-        let state = self.state.lock().expect("state lock poisoned");
-        let pid = self.pid.lock().expect("pid lock poisoned");
-        let start_time = self.start_time.lock().expect("start_time lock poisoned");
-
-        let uptime_seconds = start_time.map(|t| t.elapsed().as_secs());
+        let state = lock_mutex(&self.state)
+            .map(|g| g.clone())
+            .unwrap_or(SidecarState::Error);
+        let pid = lock_mutex(&self.pid)
+            .map(|g| *g)
+            .unwrap_or(None);
+        let uptime_seconds = lock_mutex(&self.start_time)
+            .ok()
+            .and_then(|g| *g)
+            .map(|t| t.elapsed().as_secs());
 
         SidecarStatus {
             state: state.clone(),
-            pid: *pid,
+            pid,
             uptime_seconds,
             cli_detected: false,
             cli_version: None,
-            error_message: if *state == SidecarState::Error {
+            error_message: if state == SidecarState::Error {
                 Some("sidecar process failed".to_string())
             } else {
                 None
@@ -60,8 +72,9 @@ impl SidecarManager {
 
     /// Check if the sidecar is currently connected (process running with I/O).
     pub fn is_connected(&self) -> bool {
-        let state = self.state.lock().expect("state lock poisoned");
-        *state == SidecarState::Connected
+        lock_mutex(&self.state)
+            .map(|g| *g == SidecarState::Connected)
+            .unwrap_or(false)
     }
 
     /// Spawn a new sidecar process with the given command and arguments.
@@ -74,10 +87,7 @@ impl SidecarManager {
         self.kill_inner()?;
 
         // Update state to Starting
-        {
-            let mut state = self.state.lock().expect("state lock poisoned");
-            *state = SidecarState::Starting;
-        }
+        *lock_mutex(&self.state)? = SidecarState::Starting;
 
         let mut child = Command::new(command)
             .args(args)
@@ -100,30 +110,12 @@ impl SidecarManager {
             .ok_or_else(|| OrqaError::Sidecar("failed to capture sidecar stdout".to_string()))?;
 
         // Store everything
-        {
-            let mut child_lock = self.child.lock().expect("child lock poisoned");
-            *child_lock = Some(child);
-        }
-        {
-            let mut stdin_lock = self.stdin.lock().expect("stdin lock poisoned");
-            *stdin_lock = Some(child_stdin);
-        }
-        {
-            let mut stdout_lock = self.stdout.lock().expect("stdout lock poisoned");
-            *stdout_lock = Some(BufReader::new(child_stdout));
-        }
-        {
-            let mut pid_lock = self.pid.lock().expect("pid lock poisoned");
-            *pid_lock = Some(child_pid);
-        }
-        {
-            let mut start = self.start_time.lock().expect("start_time lock poisoned");
-            *start = Some(Instant::now());
-        }
-        {
-            let mut state = self.state.lock().expect("state lock poisoned");
-            *state = SidecarState::Connected;
-        }
+        *lock_mutex(&self.child)? = Some(child);
+        *lock_mutex(&self.stdin)? = Some(child_stdin);
+        *lock_mutex(&self.stdout)? = Some(BufReader::new(child_stdout));
+        *lock_mutex(&self.pid)? = Some(child_pid);
+        *lock_mutex(&self.start_time)? = Some(Instant::now());
+        *lock_mutex(&self.state)? = SidecarState::Connected;
 
         Ok(())
     }
@@ -131,7 +123,7 @@ impl SidecarManager {
     /// Send a request to the sidecar via stdin as NDJSON.
     pub fn send(&self, request: &SidecarRequest) -> Result<(), OrqaError> {
         let line = protocol::to_ndjson(request)?;
-        let mut stdin_lock = self.stdin.lock().expect("stdin lock poisoned");
+        let mut stdin_lock = lock_mutex(&self.stdin)?;
         let stdin = stdin_lock
             .as_mut()
             .ok_or_else(|| OrqaError::Sidecar("sidecar not running".to_string()))?;
@@ -151,7 +143,7 @@ impl SidecarManager {
     /// Returns `Ok(None)` if the sidecar has closed stdout (process exited).
     /// Blocks until a line is available.
     pub fn read_line(&self) -> Result<Option<SidecarResponse>, OrqaError> {
-        let mut stdout_lock = self.stdout.lock().expect("stdout lock poisoned");
+        let mut stdout_lock = lock_mutex(&self.stdout)?;
         let stdout = stdout_lock
             .as_mut()
             .ok_or_else(|| OrqaError::Sidecar("sidecar not running".to_string()))?;
@@ -173,8 +165,7 @@ impl SidecarManager {
     /// Kill the sidecar process if running, updating state to `Stopped`.
     pub fn kill(&self) -> Result<(), OrqaError> {
         self.kill_inner()?;
-        let mut state = self.state.lock().expect("state lock poisoned");
-        *state = SidecarState::Stopped;
+        *lock_mutex(&self.state)? = SidecarState::Stopped;
         Ok(())
     }
 
@@ -190,18 +181,12 @@ impl SidecarManager {
     /// the kill and the new spawn.
     fn kill_inner(&self) -> Result<(), OrqaError> {
         // Drop stdin first to signal the process
-        {
-            let mut stdin_lock = self.stdin.lock().expect("stdin lock poisoned");
-            *stdin_lock = None;
-        }
+        *lock_mutex(&self.stdin)? = None;
         // Drop stdout reader
-        {
-            let mut stdout_lock = self.stdout.lock().expect("stdout lock poisoned");
-            *stdout_lock = None;
-        }
+        *lock_mutex(&self.stdout)? = None;
         // Kill and drop the child process
         {
-            let mut child_lock = self.child.lock().expect("child lock poisoned");
+            let mut child_lock = lock_mutex(&self.child)?;
             if let Some(ref mut child) = *child_lock {
                 let _ = child.kill();
                 let _ = child.wait();
@@ -209,14 +194,8 @@ impl SidecarManager {
             *child_lock = None;
         }
         // Clear pid and start time
-        {
-            let mut pid_lock = self.pid.lock().expect("pid lock poisoned");
-            *pid_lock = None;
-        }
-        {
-            let mut start = self.start_time.lock().expect("start_time lock poisoned");
-            *start = None;
-        }
+        *lock_mutex(&self.pid)? = None;
+        *lock_mutex(&self.start_time)? = None;
 
         Ok(())
     }

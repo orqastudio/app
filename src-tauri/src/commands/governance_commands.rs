@@ -446,8 +446,8 @@ fn is_leap_year(year: u64) -> bool {
     (year.is_multiple_of(4) && !year.is_multiple_of(100)) || year.is_multiple_of(400)
 }
 
-/// Build the analysis prompt from governance scan data.
-fn build_analysis_prompt(scan: &GovernanceScanResult) -> String {
+/// Build the coverage header section for the analysis prompt.
+fn format_coverage_header(scan: &GovernanceScanResult) -> String {
     let covered: Vec<&str> = scan
         .areas
         .iter()
@@ -462,14 +462,27 @@ fn build_analysis_prompt(scan: &GovernanceScanResult) -> String {
         .map(|a| a.name.as_str())
         .collect();
 
+    let covered_str = if covered.is_empty() { "none".to_string() } else { covered.join(", ") };
+    let uncovered_str = if uncovered.is_empty() { "none".to_string() } else { uncovered.join(", ") };
+
+    format!(
+        "Coverage: {:.0}% ({} of 7 canonical areas covered)\nCovered areas: {}\nMissing areas: {}",
+        scan.coverage_ratio * 100.0,
+        covered.len(),
+        covered_str,
+        uncovered_str,
+    )
+}
+
+/// Build the analysis prompt from governance scan data.
+fn build_analysis_prompt(scan: &GovernanceScanResult) -> String {
+    let header = format_coverage_header(scan);
     let file_list = format_file_list(scan);
 
     format!(
         "Analyze the governance files found in this project.\n\n\
-         Coverage: {:.0}% ({} of 7 canonical areas covered)\n\
-         Covered areas: {}\n\
-         Missing areas: {}\n\n\
-         Found governance files:\n{}\n\n\
+         {header}\n\n\
+         Found governance files:\n{file_list}\n\n\
          Return a JSON object (inside a ```json code block) with this exact structure:\n\
          {{\n\
            \"summary\": \"<2-3 sentence overall assessment>\",\n\
@@ -487,20 +500,7 @@ fn build_analysis_prompt(scan: &GovernanceScanResult) -> String {
                \"rationale\": \"<why Claude recommends this>\"\n\
              }}\n\
            ]\n\
-         }}",
-        scan.coverage_ratio * 100.0,
-        covered.len(),
-        if covered.is_empty() {
-            "none".to_string()
-        } else {
-            covered.join(", ")
-        },
-        if uncovered.is_empty() {
-            "none".to_string()
-        } else {
-            uncovered.join(", ")
-        },
-        file_list
+         }}"
     )
 }
 

@@ -91,6 +91,197 @@ fn is_terminal(response: &SidecarResponse) -> bool {
     )
 }
 
+/// Persist the user message and return `(user_message_id, turn_index)`.
+fn persist_user_message(
+    state: &AppState,
+    session_id: i64,
+    content: &str,
+) -> Result<(i64, i64), OrqaError> {
+    let db = state
+        .db
+        .lock()
+        .map_err(|e| OrqaError::Database(format!("failed to acquire db lock: {e}")))?;
+
+    session_repo::get(&db, session_id)?;
+    let turn_index = message_repo::next_turn_index(&db, session_id)?;
+    let user_msg = message_repo::create(&db, session_id, "user", "text", Some(content), turn_index, 0)?;
+
+    Ok((user_msg.id, i64::from(turn_index)))
+}
+
+/// Accumulated state from the sidecar read loop.
+struct StreamAccumulator {
+    text: String,
+    input_tokens: i64,
+    output_tokens: i64,
+    stream_complete: bool,
+    had_error: bool,
+}
+
+/// Handle a `ToolExecute` response: execute the tool and send the result back to the sidecar.
+///
+/// Returns `true` to continue the loop, `false` on send failure.
+fn handle_tool_execute(
+    tool_call_id: &str,
+    tool_name: &str,
+    input: &str,
+    state: &tauri::State<'_, AppState>,
+    on_event: &tauri::ipc::Channel<StreamEvent>,
+) -> bool {
+    tracing::debug!("[stream] received ToolExecute: id={tool_call_id} tool={tool_name}");
+    let (output, is_error) = execute_tool(tool_name, input, state);
+    let tool_result = SidecarRequest::ToolResult {
+        tool_call_id: tool_call_id.to_string(),
+        output,
+        is_error,
+    };
+    if let Err(e) = state.sidecar.send(&tool_result) {
+        let _ = on_event.send(StreamEvent::StreamError {
+            code: "tool_result_send_error".to_string(),
+            message: format!("failed to send tool result to sidecar: {e}"),
+            recoverable: false,
+        });
+        return false;
+    }
+    true
+}
+
+/// Handle a `ToolApprovalRequest`: auto-approve and send the approval back.
+///
+/// Returns `true` to continue the loop, `false` on send failure.
+fn handle_tool_approval(
+    tool_call_id: &str,
+    state: &tauri::State<'_, AppState>,
+    on_event: &tauri::ipc::Channel<StreamEvent>,
+) -> bool {
+    tracing::debug!("[stream] received ToolApprovalRequest: id={tool_call_id}");
+    let approval = SidecarRequest::ToolApproval {
+        tool_call_id: tool_call_id.to_string(),
+        approved: true,
+        reason: None,
+    };
+    if let Err(e) = state.sidecar.send(&approval) {
+        let _ = on_event.send(StreamEvent::StreamError {
+            code: "tool_approval_send_error".to_string(),
+            message: format!("failed to send tool approval to sidecar: {e}"),
+            recoverable: false,
+        });
+        return false;
+    }
+    true
+}
+
+/// Run the sidecar read loop, accumulating results into a `StreamAccumulator`.
+fn run_stream_loop(
+    state: &tauri::State<'_, AppState>,
+    on_event: &tauri::ipc::Channel<StreamEvent>,
+) -> StreamAccumulator {
+    let mut acc = StreamAccumulator {
+        text: String::new(),
+        input_tokens: 0,
+        output_tokens: 0,
+        stream_complete: false,
+        had_error: false,
+    };
+
+    loop {
+        let response = match state.sidecar.read_line() {
+            Ok(Some(resp)) => resp,
+            Ok(None) => {
+                let _ = on_event.send(StreamEvent::StreamError {
+                    code: "sidecar_eof".to_string(),
+                    message: "sidecar process closed unexpectedly".to_string(),
+                    recoverable: false,
+                });
+                acc.had_error = true;
+                break;
+            }
+            Err(e) => {
+                let _ = on_event.send(StreamEvent::StreamError {
+                    code: "sidecar_read_error".to_string(),
+                    message: e.to_string(),
+                    recoverable: false,
+                });
+                acc.had_error = true;
+                break;
+            }
+        };
+
+        if let SidecarResponse::ToolExecute { ref tool_call_id, ref tool_name, ref input } = response {
+            if !handle_tool_execute(tool_call_id, tool_name, input, state, on_event) {
+                acc.had_error = true;
+                break;
+            }
+            continue;
+        }
+
+        if let SidecarResponse::ToolApprovalRequest { ref tool_call_id, .. } = response {
+            if !handle_tool_approval(tool_call_id, state, on_event) {
+                acc.had_error = true;
+                break;
+            }
+            continue;
+        }
+
+        accumulate_response(&response, &mut acc);
+
+        let terminal = is_terminal(&response);
+        if let Some(event) = translate_response(&response) {
+            let _ = on_event.send(event);
+        }
+        if terminal {
+            break;
+        }
+    }
+
+    acc
+}
+
+/// Update the accumulator with data from a streaming response.
+fn accumulate_response(response: &SidecarResponse, acc: &mut StreamAccumulator) {
+    if let SidecarResponse::TextDelta { ref content } = response {
+        acc.text.push_str(content);
+    }
+    if let SidecarResponse::TurnComplete { input_tokens, output_tokens } = response {
+        acc.input_tokens = *input_tokens;
+        acc.output_tokens = *output_tokens;
+        acc.stream_complete = true;
+    }
+    if matches!(response, SidecarResponse::StreamError { .. } | SidecarResponse::StreamCancelled) {
+        acc.had_error = true;
+    }
+}
+
+/// Persist the assistant message and update session token usage.
+fn persist_assistant_message(
+    state: &AppState,
+    session_id: i64,
+    turn_index: i64,
+    acc: &StreamAccumulator,
+) -> Result<(), OrqaError> {
+    let db = state
+        .db
+        .lock()
+        .map_err(|e| OrqaError::Database(format!("failed to acquire db lock: {e}")))?;
+
+    let assistant_turn = i32::try_from(turn_index + 1)
+        .map_err(|_| OrqaError::Database("turn index overflow".to_string()))?;
+    let content_value = if acc.text.is_empty() { None } else { Some(acc.text.as_str()) };
+
+    let assistant_msg = message_repo::create(
+        &db, session_id, "assistant", "text", content_value, assistant_turn, 0,
+    )?;
+
+    let status = if acc.stream_complete && !acc.had_error { "complete" } else { "error" };
+    message_repo::update_stream_status(&db, assistant_msg.id, status)?;
+
+    if acc.stream_complete {
+        session_repo::update_token_usage(&db, session_id, acc.input_tokens, acc.output_tokens)?;
+    }
+
+    Ok(())
+}
+
 /// Send a message to the sidecar and stream responses back via `Channel<T>`.
 ///
 /// This command:
@@ -110,43 +301,13 @@ pub fn stream_send_message(
     on_event: tauri::ipc::Channel<StreamEvent>,
     state: tauri::State<'_, AppState>,
 ) -> Result<i64, OrqaError> {
-    // 1. Validate content
     let content = content.trim().to_string();
     if content.is_empty() {
-        return Err(OrqaError::Validation(
-            "message content cannot be empty".to_string(),
-        ));
+        return Err(OrqaError::Validation("message content cannot be empty".to_string()));
     }
 
-    // 2. Lock DB briefly: verify session exists, get turn index, persist user message
-    let (user_message_id, turn_index) = {
-        let db = state
-            .db
-            .lock()
-            .map_err(|e| OrqaError::Database(format!("failed to acquire db lock: {e}")))?;
+    let (user_message_id, turn_index) = persist_user_message(&state, session_id, &content)?;
 
-        // Verify session exists
-        session_repo::get(&db, session_id)?;
-
-        // Get next turn index
-        let turn_index = message_repo::next_turn_index(&db, session_id)?;
-
-        // Create user message
-        let user_msg = message_repo::create(
-            &db,
-            session_id,
-            "user",
-            "text",
-            Some(&content),
-            turn_index,
-            0,
-        )?;
-
-        (user_msg.id, turn_index)
-    };
-    // DB lock released here
-
-    // 3. Ensure sidecar is running (auto-spawn if needed), then send message
     super::sidecar_commands::ensure_sidecar_running(&state)?;
 
     let request = SidecarRequest::SendMessage {
@@ -157,166 +318,9 @@ pub fn stream_send_message(
     };
     state.sidecar.send(&request)?;
 
-    // 4. Read response loop — no DB lock held
-    let mut accumulated_text = String::new();
-    let mut input_tokens: i64 = 0;
-    let mut output_tokens: i64 = 0;
-    let mut stream_complete = false;
-    let mut had_error = false;
+    let acc = run_stream_loop(&state, &on_event);
 
-    loop {
-        let response = match state.sidecar.read_line() {
-            Ok(Some(resp)) => resp,
-            Ok(None) => {
-                // EOF — sidecar closed stdout unexpectedly
-                let error_event = StreamEvent::StreamError {
-                    code: "sidecar_eof".to_string(),
-                    message: "sidecar process closed unexpectedly".to_string(),
-                    recoverable: false,
-                };
-                let _ = on_event.send(error_event);
-                had_error = true;
-                break;
-            }
-            Err(e) => {
-                let error_event = StreamEvent::StreamError {
-                    code: "sidecar_read_error".to_string(),
-                    message: e.to_string(),
-                    recoverable: false,
-                };
-                let _ = on_event.send(error_event);
-                had_error = true;
-                break;
-            }
-        };
-
-        // Handle bidirectional tool protocol — sidecar asking Rust to execute a tool
-        if let SidecarResponse::ToolExecute {
-            ref tool_call_id,
-            ref tool_name,
-            ref input,
-        } = response
-        {
-            eprintln!("[stream] received ToolExecute: id={tool_call_id} tool={tool_name}");
-            let (output, is_error) = execute_tool(tool_name, input, &state);
-
-            let tool_result = SidecarRequest::ToolResult {
-                tool_call_id: tool_call_id.clone(),
-                output,
-                is_error,
-            };
-            if let Err(e) = state.sidecar.send(&tool_result) {
-                let error_event = StreamEvent::StreamError {
-                    code: "tool_result_send_error".to_string(),
-                    message: format!("failed to send tool result to sidecar: {e}"),
-                    recoverable: false,
-                };
-                let _ = on_event.send(error_event);
-                had_error = true;
-                break;
-            }
-            continue;
-        }
-
-        // Handle bidirectional tool protocol — sidecar asking for tool approval
-        if let SidecarResponse::ToolApprovalRequest {
-            ref tool_call_id, ..
-        } = response
-        {
-            eprintln!("[stream] received ToolApprovalRequest: id={tool_call_id}");
-            // Phase 1: auto-approve all tool calls
-            let approval = SidecarRequest::ToolApproval {
-                tool_call_id: tool_call_id.clone(),
-                approved: true,
-                reason: None,
-            };
-            if let Err(e) = state.sidecar.send(&approval) {
-                let error_event = StreamEvent::StreamError {
-                    code: "tool_approval_send_error".to_string(),
-                    message: format!("failed to send tool approval to sidecar: {e}"),
-                    recoverable: false,
-                };
-                let _ = on_event.send(error_event);
-                had_error = true;
-                break;
-            }
-            continue;
-        }
-
-        // Accumulate text content
-        if let SidecarResponse::TextDelta { ref content } = response {
-            accumulated_text.push_str(content);
-        }
-
-        // Capture token usage
-        if let SidecarResponse::TurnComplete {
-            input_tokens: inp,
-            output_tokens: out,
-        } = &response
-        {
-            input_tokens = *inp;
-            output_tokens = *out;
-            stream_complete = true;
-        }
-
-        // Track error/cancel
-        if matches!(
-            response,
-            SidecarResponse::StreamError { .. } | SidecarResponse::StreamCancelled
-        ) {
-            had_error = true;
-        }
-
-        let terminal = is_terminal(&response);
-
-        // Translate and send to frontend channel
-        if let Some(event) = translate_response(&response) {
-            let _ = on_event.send(event);
-        }
-
-        if terminal {
-            break;
-        }
-    }
-
-    // 5. Lock DB briefly: persist assistant message and update token usage
-    {
-        let db = state
-            .db
-            .lock()
-            .map_err(|e| OrqaError::Database(format!("failed to acquire db lock: {e}")))?;
-
-        let assistant_turn = turn_index + 1;
-        let content_value = if accumulated_text.is_empty() {
-            None
-        } else {
-            Some(accumulated_text.as_str())
-        };
-
-        let assistant_msg = message_repo::create(
-            &db,
-            session_id,
-            "assistant",
-            "text",
-            content_value,
-            assistant_turn,
-            0,
-        )?;
-
-        // Set stream status based on outcome
-        let status = if stream_complete && !had_error {
-            "complete"
-        } else {
-            "error"
-        };
-        message_repo::update_stream_status(&db, assistant_msg.id, status)?;
-
-        // Update session token usage if we got a TurnComplete
-        if stream_complete {
-            session_repo::update_token_usage(&db, session_id, input_tokens, output_tokens)?;
-        }
-    }
-    // DB lock released here
+    persist_assistant_message(&state, session_id, turn_index, &acc)?;
 
     Ok(user_message_id)
 }
@@ -353,10 +357,7 @@ fn resolve_path(raw: &str, root: &Path) -> Result<PathBuf, String> {
         root.join(raw)
     };
 
-    let resolved = candidate
-        .canonicalize()
-        .unwrap_or_else(|_| candidate.clone());
-
+    let resolved = candidate.canonicalize().unwrap_or_else(|_| candidate.clone());
     let root_canon = root.canonicalize().unwrap_or_else(|_| root.to_path_buf());
 
     if !resolved.starts_with(&root_canon) {
@@ -376,11 +377,8 @@ fn resolve_write_path(raw: &str, root: &Path) -> Result<PathBuf, String> {
 
     let root_canon = root.canonicalize().unwrap_or_else(|_| root.to_path_buf());
 
-    // For new files, check that the parent directory is within project root
     if let Some(parent) = candidate.parent() {
-        let parent_resolved = parent
-            .canonicalize()
-            .unwrap_or_else(|_| parent.to_path_buf());
+        let parent_resolved = parent.canonicalize().unwrap_or_else(|_| parent.to_path_buf());
         if !parent_resolved.starts_with(&root_canon) {
             return Err(format!("path '{}' is outside the project root", raw));
         }
@@ -395,23 +393,23 @@ fn execute_tool(
     input_json: &str,
     state: &tauri::State<'_, AppState>,
 ) -> (String, bool) {
-    eprintln!("[tool] execute_tool called: tool={tool_name} input={input_json}");
+    tracing::debug!("[tool] execute_tool called: tool={tool_name} input={input_json}");
 
     let input: serde_json::Value = match serde_json::from_str(input_json) {
         Ok(v) => v,
         Err(e) => {
-            eprintln!("[tool] JSON parse error: {e}");
+            tracing::debug!("[tool] JSON parse error: {e}");
             return (format!("invalid tool input JSON: {e}"), true);
         }
     };
 
     let root = match project_root(state) {
         Ok(r) => {
-            eprintln!("[tool] project root: {}", r.display());
+            tracing::debug!("[tool] project root: {}", r.display());
             r
         }
         Err(e) => {
-            eprintln!("[tool] project root error: {e}");
+            tracing::debug!("[tool] project root error: {e}");
             return (format!("cannot resolve project: {e}"), true);
         }
     };
@@ -426,7 +424,7 @@ fn execute_tool(
         _ => (format!("unknown tool: {tool_name}"), true),
     };
 
-    eprintln!(
+    tracing::debug!(
         "[tool] result: is_error={is_error} output_len={} first_100={}",
         output.len(),
         &output[..output.len().min(100)]
@@ -475,10 +473,7 @@ fn tool_write_file(input: &serde_json::Value, root: &Path) -> (String, bool) {
     }
 
     match std::fs::write(&path, content) {
-        Ok(()) => (
-            format!("wrote {} bytes to '{}'", content.len(), path.display()),
-            false,
-        ),
+        Ok(()) => (format!("wrote {} bytes to '{}'", content.len(), path.display()), false),
         Err(e) => (format!("failed to write '{}': {e}", path.display()), true),
     }
 }
@@ -510,27 +505,18 @@ fn tool_edit_file(input: &serde_json::Value, root: &Path) -> (String, bool) {
 
     let count = contents.matches(old_string).count();
     if count == 0 {
-        return (
-            format!("old_string not found in '{}'", path.display()),
-            true,
-        );
+        return (format!("old_string not found in '{}'", path.display()), true);
     }
     if count > 1 {
         return (
-            format!(
-                "old_string found {count} times in '{}' — must be unique",
-                path.display()
-            ),
+            format!("old_string found {count} times in '{}' — must be unique", path.display()),
             true,
         );
     }
 
     let updated = contents.replacen(old_string, new_string, 1);
     match std::fs::write(&path, &updated) {
-        Ok(()) => (
-            format!("edited '{}' (1 replacement)", path.display()),
-            false,
-        ),
+        Ok(()) => (format!("edited '{}' (1 replacement)", path.display()), false),
         Err(e) => (format!("failed to write '{}': {e}", path.display()), true),
     }
 }
@@ -629,7 +615,6 @@ fn tool_grep(input: &serde_json::Value, root: &Path) -> (String, bool) {
         None => root.to_path_buf(),
     };
 
-    // Use grep/ripgrep via bash for simplicity and correctness
     let search_str = search_path.to_string_lossy();
     let cmd = format!(
         "rg --no-heading --line-number --color never -e {} {} 2>/dev/null || grep -rn {} {} 2>/dev/null",
@@ -651,22 +636,18 @@ fn tool_grep(input: &serde_json::Value, root: &Path) -> (String, bool) {
 
     let stdout = String::from_utf8_lossy(&output.stdout);
     if stdout.trim().is_empty() {
-        ("no matches found".to_string(), false)
+        return ("no matches found".to_string(), false);
+    }
+
+    let lines: Vec<&str> = stdout.lines().collect();
+    if lines.len() > 200 {
+        let truncated: String = lines[..200].join("\n");
+        (
+            format!("{truncated}\n\n... ({} total matches, showing first 200)", lines.len()),
+            false,
+        )
     } else {
-        // Trim output to avoid overwhelming responses
-        let lines: Vec<&str> = stdout.lines().collect();
-        if lines.len() > 200 {
-            let truncated: String = lines[..200].join("\n");
-            (
-                format!(
-                    "{truncated}\n\n... ({} total matches, showing first 200)",
-                    lines.len()
-                ),
-                false,
-            )
-        } else {
-            (stdout.to_string(), false)
-        }
+        (stdout.to_string(), false)
     }
 }
 

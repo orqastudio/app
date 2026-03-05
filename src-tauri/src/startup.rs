@@ -1,6 +1,8 @@
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
 
 use serde::Serialize;
+
+use crate::error::OrqaError;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct StartupTask {
@@ -33,6 +35,15 @@ pub struct StartupTracker {
     tasks: Mutex<Vec<StartupTask>>,
 }
 
+/// Acquire a mutex lock, mapping a poison error to `OrqaError::Database`.
+fn lock_tasks<'a>(
+    mutex: &'a Mutex<Vec<StartupTask>>,
+) -> Result<MutexGuard<'a, Vec<StartupTask>>, OrqaError> {
+    mutex.lock().map_err(|_: PoisonError<_>| {
+        OrqaError::Database("startup tracker mutex poisoned".to_string())
+    })
+}
+
 impl StartupTracker {
     pub fn new() -> Arc<Self> {
         Arc::new(Self {
@@ -40,34 +51,43 @@ impl StartupTracker {
         })
     }
 
-    pub fn register(&self, id: &str, label: &str) -> String {
-        let mut tasks = self.tasks.lock().expect("startup tracker poisoned");
+    /// Register a new startup task by id and display label.
+    pub fn register(&self, id: &str, label: &str) -> Result<String, OrqaError> {
+        let mut tasks = lock_tasks(&self.tasks)?;
         tasks.push(StartupTask {
             id: id.to_string(),
             label: label.to_string(),
             status: TaskStatus::Pending,
             detail: None,
         });
-        id.to_string()
+        Ok(id.to_string())
     }
 
-    pub fn update(&self, id: &str, status: TaskStatus, detail: Option<String>) {
-        let mut tasks = self.tasks.lock().expect("startup tracker poisoned");
+    /// Update the status of a registered task.
+    pub fn update(
+        &self,
+        id: &str,
+        status: TaskStatus,
+        detail: Option<String>,
+    ) -> Result<(), OrqaError> {
+        let mut tasks = lock_tasks(&self.tasks)?;
         if let Some(task) = tasks.iter_mut().find(|t| t.id == id) {
             task.status = status;
             task.detail = detail;
         }
+        Ok(())
     }
 
-    pub fn snapshot(&self) -> StartupSnapshot {
-        let tasks = self.tasks.lock().expect("startup tracker poisoned");
+    /// Snapshot the current state of all registered tasks.
+    pub fn snapshot(&self) -> Result<StartupSnapshot, OrqaError> {
+        let tasks = lock_tasks(&self.tasks)?;
         let all_done = !tasks.is_empty()
             && tasks
                 .iter()
                 .all(|t| matches!(t.status, TaskStatus::Done | TaskStatus::Error));
-        StartupSnapshot {
+        Ok(StartupSnapshot {
             tasks: tasks.clone(),
             all_done,
-        }
+        })
     }
 }

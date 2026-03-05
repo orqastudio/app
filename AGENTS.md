@@ -261,7 +261,19 @@ cargo build --manifest-path src-tauri/Cargo.toml && npm run build
 
 **No stale worktrees.** After every task batch, verify no orphaned worktrees remain.
 
-## Skills
+## Agent Model
+
+Agents in `.claude/agents/` are **generic roles**. They define process: how the agent works, which tools it uses, which documentation it reads, and when it delegates. They do not embed project-specific knowledge.
+
+Project-specific knowledge is injected at runtime through skills. When the orchestrator delegates a task, the agent's declared skills are loaded automatically, providing:
+
+- Technology patterns (Svelte 5 runes, Rust async, Tauri v2)
+- Architecture context (decisions, IPC contracts, module structure)
+- Codebase-specific conventions (derived from `docs/`)
+
+This separation keeps agents portable. The same `backend-engineer` agent definition works across Orqa Studio and any other Tauri project — only the injected skills differ.
+
+### Skills
 
 Skills are domain-specific instruction sets stored in `.claude/skills/` following the open [Agent Skills](https://agentskills.io) standard.
 
@@ -271,15 +283,17 @@ npx skills add <source> -y   # Install a skill
 npx skills list              # List installed skills
 ```
 
-| Skill | Purpose |
-|-------|---------|
-| `svelte` | Svelte 5 components, runes, reactivity |
-| `typescript` | Strict TypeScript patterns |
-| `tailwind` | Tailwind CSS utilities |
-| `chunkhound` | Semantic code search (mandatory) |
-| `planning` | Planning methodology |
-| `skills-maintenance` | Skill lifecycle management |
-| `architecture` | Architectural compliance |
+| Skill | Purpose | Scope |
+|-------|---------|-------|
+| `svelte` | Svelte 5 components, runes, reactivity | Technology — portable |
+| `typescript` | Strict TypeScript patterns | Technology — portable |
+| `tailwind` | Tailwind CSS utilities | Technology — portable |
+| `chunkhound` | Semantic code search (mandatory) | Technology — portable |
+| `planning` | Planning methodology | Process — portable |
+| `skills-maintenance` | Skill lifecycle management | Process — portable |
+| `architecture` | Architectural compliance patterns | Technology — portable |
+
+Project-specific knowledge (Orqa Studio architecture decisions, IPC contracts, component specs) lives in `docs/` and is referenced by agent Required Reading lists — not embedded in skills.
 
 ## MCP Tools
 

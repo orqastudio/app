@@ -5,6 +5,12 @@ use regex::Regex;
 
 use super::types::{ChunkInfo, IndexStatus, SearchResult};
 
+/// A raw chunk row: (file_path, start_line, end_line, content, language).
+type ChunkRow = (String, i32, i32, String, Option<String>);
+
+/// An embedded chunk row: (id, file_path, start_line, end_line, content, language, embedding).
+type EmbeddedChunkRow = (i32, String, i32, i32, String, Option<String>, Vec<f32>);
+
 /// Error type for search store operations.
 #[derive(Debug, thiserror::Error)]
 pub enum StoreError {
@@ -99,72 +105,35 @@ impl SearchStore {
         max_results: u32,
     ) -> Result<Vec<SearchResult>, StoreError> {
         let re = Regex::new(pattern).map_err(|e| StoreError::InvalidRegex(e.to_string()))?;
+        let rows = self.fetch_regex_rows(path_filter)?;
+        let results = build_regex_results(rows, &re, max_results)?;
+        Ok(results)
+    }
 
-        let (sql, has_path_filter) = if path_filter.is_some() {
-            (
-                "SELECT file_path, start_line, end_line, content, language \
-                 FROM chunks WHERE file_path LIKE ? || '%' \
-                 ORDER BY file_path, start_line",
-                true,
-            )
+    /// Fetch raw chunk rows for regex search, optionally filtered by path prefix.
+    fn fetch_regex_rows(
+        &self,
+        path_filter: Option<&str>,
+    ) -> Result<Vec<ChunkRow>, StoreError> {
+        let sql = if path_filter.is_some() {
+            "SELECT file_path, start_line, end_line, content, language \
+             FROM chunks WHERE file_path LIKE ? || '%' \
+             ORDER BY file_path, start_line"
         } else {
-            (
-                "SELECT file_path, start_line, end_line, content, language \
-                 FROM chunks ORDER BY file_path, start_line",
-                false,
-            )
+            "SELECT file_path, start_line, end_line, content, language \
+             FROM chunks ORDER BY file_path, start_line"
         };
-
         let mut stmt = self.conn.prepare(sql)?;
-
-        let rows = if has_path_filter {
+        let rows = if path_filter.is_some() {
             stmt.query_map(params![path_filter], map_chunk_row)?
         } else {
             stmt.query_map([], map_chunk_row)?
         };
-
-        let mut results = Vec::new();
-
-        for row_result in rows {
-            let (file_path, start_line, end_line, content, language): (
-                String,
-                i32,
-                i32,
-                String,
-                Option<String>,
-            ) = row_result?;
-
-            if let Some(mat) = re.find(&content) {
-                // Extract a context line around the first match
-                let match_context = extract_match_context(&content, mat.start(), mat.end());
-
-                // Score: count of matches in the chunk
-                let match_count = re.find_iter(&content).count();
-
-                results.push(SearchResult {
-                    file_path,
-                    start_line: start_line as u32,
-                    end_line: end_line as u32,
-                    content: content.clone(),
-                    language,
-                    score: match_count as f64,
-                    match_context,
-                });
-
-                if results.len() >= max_results as usize {
-                    break;
-                }
-            }
+        let mut result = Vec::new();
+        for row in rows {
+            result.push(row?);
         }
-
-        // Sort by score descending
-        results.sort_by(|a, b| {
-            b.score
-                .partial_cmp(&a.score)
-                .unwrap_or(std::cmp::Ordering::Equal)
-        });
-
-        Ok(results)
+        Ok(result)
     }
 
     /// Get the current status of the search index.
@@ -240,11 +209,19 @@ impl SearchStore {
         query_embedding: &[f32],
         max_results: u32,
     ) -> Result<Vec<SearchResult>, StoreError> {
+        let rows = self.fetch_embedded_chunks()?;
+        let results = build_semantic_results(rows, query_embedding, max_results);
+        Ok(results)
+    }
+
+    /// Fetch all embedded chunks from DuckDB for semantic scoring.
+    fn fetch_embedded_chunks(
+        &self,
+    ) -> Result<Vec<EmbeddedChunkRow>, StoreError> {
         let mut stmt = self.conn.prepare(
             "SELECT id, file_path, start_line, end_line, content, language, embedding \
              FROM chunks WHERE embedding IS NOT NULL",
         )?;
-
         let rows = stmt.query_map([], |row| {
             let id: i32 = row.get(0)?;
             let file_path: String = row.get(1)?;
@@ -254,46 +231,70 @@ impl SearchStore {
             let language: Option<String> = row.get(5)?;
             let embedding_bytes: Vec<u8> = row.get(6)?;
             let embedding = bytes_to_floats(&embedding_bytes);
-            Ok((
-                id, file_path, start_line, end_line, content, language, embedding,
-            ))
+            Ok((id, file_path, start_line, end_line, content, language, embedding))
         })?;
-
-        let mut scored: Vec<(f64, SearchResult)> = Vec::new();
-
-        for row_result in rows {
-            let (_id, file_path, start_line, end_line, content, language, embedding) = row_result?;
-
-            let score = cosine_similarity(query_embedding, &embedding);
-
-            let match_context = content.lines().take(3).collect::<Vec<_>>().join("\n");
-
-            scored.push((
-                score,
-                SearchResult {
-                    file_path,
-                    start_line: start_line as u32,
-                    end_line: end_line as u32,
-                    content,
-                    language,
-                    score,
-                    match_context,
-                },
-            ));
+        let mut result = Vec::new();
+        for row in rows {
+            result.push(row?);
         }
-
-        // Sort by score descending
-        scored.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
-
-        // Take top results
-        let results = scored
-            .into_iter()
-            .take(max_results as usize)
-            .map(|(_, result)| result)
-            .collect();
-
-        Ok(results)
+        Ok(result)
     }
+}
+
+/// Build `SearchResult` entries from raw regex-matched chunk rows.
+fn build_regex_results(
+    rows: Vec<ChunkRow>,
+    re: &Regex,
+    max_results: u32,
+) -> Result<Vec<SearchResult>, StoreError> {
+    let mut results = Vec::new();
+    for (file_path, start_line, end_line, content, language) in rows {
+        if let Some(mat) = re.find(&content) {
+            let match_context = extract_match_context(&content, mat.start(), mat.end());
+            let match_count = re.find_iter(&content).count();
+            results.push(SearchResult {
+                file_path,
+                start_line: start_line as u32,
+                end_line: end_line as u32,
+                content,
+                language,
+                score: match_count as f64,
+                match_context,
+            });
+            if results.len() >= max_results as usize {
+                break;
+            }
+        }
+    }
+    results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
+    Ok(results)
+}
+
+/// Build `SearchResult` entries from embedded chunk rows, sorted by cosine similarity.
+fn build_semantic_results(
+    rows: Vec<EmbeddedChunkRow>,
+    query_embedding: &[f32],
+    max_results: u32,
+) -> Vec<SearchResult> {
+    let mut scored: Vec<(f64, SearchResult)> = rows
+        .into_iter()
+        .map(|(_id, file_path, start_line, end_line, content, language, embedding)| {
+            let score = cosine_similarity(query_embedding, &embedding);
+            let match_context = content.lines().take(3).collect::<Vec<_>>().join("\n");
+            (score, SearchResult {
+                file_path,
+                start_line: start_line as u32,
+                end_line: end_line as u32,
+                content,
+                language,
+                score,
+                match_context,
+            })
+        })
+        .collect();
+
+    scored.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
+    scored.into_iter().take(max_results as usize).map(|(_, r)| r).collect()
 }
 
 /// Serialize a slice of f32 values to raw little-endian bytes.

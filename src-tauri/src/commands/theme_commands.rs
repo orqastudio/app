@@ -7,6 +7,56 @@ use crate::error::OrqaError;
 use crate::repo::theme_repo;
 use crate::state::AppState;
 
+/// Merge extracted theme rows into the token map.
+fn apply_extracted_tokens(
+    theme_rows: &[crate::repo::theme_repo::ThemeRow],
+    tokens: &mut HashMap<String, ThemeToken>,
+    source_files: &mut Vec<String>,
+) {
+    for row in theme_rows {
+        source_files.push(row.source_file.clone());
+        let Ok(light_map) = serde_json::from_str::<HashMap<String, String>>(&row.tokens_light)
+        else {
+            continue;
+        };
+        let dark_map: HashMap<String, String> = row
+            .tokens_dark
+            .as_ref()
+            .and_then(|d| serde_json::from_str(d).ok())
+            .unwrap_or_default();
+
+        for (name, value_light) in &light_map {
+            tokens.insert(
+                name.clone(),
+                ThemeToken {
+                    name: name.clone(),
+                    value_light: value_light.clone(),
+                    value_dark: dark_map.get(name).cloned(),
+                    source: ThemeTokenSource::Extracted,
+                },
+            );
+        }
+    }
+}
+
+/// Apply override rows on top of extracted tokens.
+fn apply_override_tokens(
+    override_rows: &[crate::repo::theme_repo::ThemeOverrideRow],
+    tokens: &mut HashMap<String, ThemeToken>,
+) {
+    for ov in override_rows {
+        tokens.insert(
+            ov.token_name.clone(),
+            ThemeToken {
+                name: ov.token_name.clone(),
+                value_light: ov.value_light.clone(),
+                value_dark: ov.value_dark.clone(),
+                source: ThemeTokenSource::Override,
+            },
+        );
+    }
+}
+
 /// Get the resolved theme for a project.
 ///
 /// Merges extracted theme tokens with any user overrides. Override values
@@ -27,45 +77,9 @@ pub fn theme_get_project(
     let mut tokens: HashMap<String, ThemeToken> = HashMap::new();
     let mut source_files: Vec<String> = Vec::new();
 
-    // Process extracted theme tokens
-    for row in &theme_rows {
-        source_files.push(row.source_file.clone());
-
-        // Parse the tokens_light JSON into individual tokens
-        if let Ok(light_map) = serde_json::from_str::<HashMap<String, String>>(&row.tokens_light) {
-            let dark_map: HashMap<String, String> = row
-                .tokens_dark
-                .as_ref()
-                .and_then(|d| serde_json::from_str(d).ok())
-                .unwrap_or_default();
-
-            for (name, value_light) in &light_map {
-                tokens.insert(
-                    name.clone(),
-                    ThemeToken {
-                        name: name.clone(),
-                        value_light: value_light.clone(),
-                        value_dark: dark_map.get(name).cloned(),
-                        source: ThemeTokenSource::Extracted,
-                    },
-                );
-            }
-        }
-    }
-
-    // Apply overrides (these take precedence)
+    apply_extracted_tokens(&theme_rows, &mut tokens, &mut source_files);
     let has_overrides = !override_rows.is_empty();
-    for ov in &override_rows {
-        tokens.insert(
-            ov.token_name.clone(),
-            ThemeToken {
-                name: ov.token_name.clone(),
-                value_light: ov.value_light.clone(),
-                value_dark: ov.value_dark.clone(),
-                source: ThemeTokenSource::Override,
-            },
-        );
-    }
+    apply_override_tokens(&override_rows, &mut tokens);
 
     source_files.dedup();
 

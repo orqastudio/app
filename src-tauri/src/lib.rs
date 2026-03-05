@@ -14,6 +14,99 @@ use tauri::Manager;
 
 use crate::startup::TaskStatus;
 
+/// Initialize the SQLite database at `db_path` and return the connection.
+fn setup_database(db_path_str: &str) -> Result<rusqlite::Connection, Box<dyn std::error::Error>> {
+    let conn = db::init_db(db_path_str)
+        .map_err(|e| format!("failed to initialize database: {e}"))?;
+    Ok(conn)
+}
+
+/// Construct and return the `AppState`, registering startup tasks.
+fn build_app_state(
+    conn: rusqlite::Connection,
+    tracker: &Arc<startup::StartupTracker>,
+) -> Result<state::AppState, Box<dyn std::error::Error>> {
+    tracker.register("sidecar", "Sidecar")?;
+    tracker.register("embedding_model", "Embedding model")?;
+
+    Ok(state::AppState {
+        db: std::sync::Mutex::new(conn),
+        sidecar: sidecar::manager::SidecarManager::new(),
+        search: std::sync::Mutex::new(None),
+        startup: Arc::clone(tracker),
+    })
+}
+
+/// Auto-start the sidecar process, updating the tracker with the result.
+fn start_sidecar(
+    app_state: &state::AppState,
+    tracker: &Arc<startup::StartupTracker>,
+) {
+    tracker
+        .update("sidecar", TaskStatus::InProgress, Some("Starting...".into()))
+        .unwrap_or_else(|e| tracing::warn!("tracker update failed: {e}"));
+
+    match commands::sidecar_commands::ensure_sidecar_running(app_state) {
+        Ok(()) => {
+            tracker
+                .update("sidecar", TaskStatus::Done, None)
+                .unwrap_or_else(|e| tracing::warn!("tracker update failed: {e}"));
+        }
+        Err(e) => {
+            tracing::warn!("failed to auto-start sidecar: {e}");
+            tracker
+                .update("sidecar", TaskStatus::Error, Some(e.to_string()))
+                .unwrap_or_else(|err| tracing::warn!("tracker update failed: {err}"));
+        }
+    }
+}
+
+/// Spawn a background task that pre-downloads the embedding model.
+fn spawn_model_download(
+    model_dir: std::path::PathBuf,
+    tracker: Arc<startup::StartupTracker>,
+) {
+    tracker
+        .update(
+            "embedding_model",
+            TaskStatus::InProgress,
+            Some("Checking...".into()),
+        )
+        .unwrap_or_else(|e| tracing::warn!("tracker update failed: {e}"));
+
+    tauri::async_runtime::spawn(async move {
+        match search::embedder::ensure_model_exists(
+            &model_dir,
+            |_file, downloaded, total| {
+                if let Some(total) = total {
+                    let pct = (downloaded as f64 / total as f64 * 100.0) as u32;
+                    tracker
+                        .update(
+                            "embedding_model",
+                            TaskStatus::InProgress,
+                            Some(format!("{pct}%")),
+                        )
+                        .unwrap_or_else(|e| tracing::warn!("tracker update failed: {e}"));
+                }
+            },
+        )
+        .await
+        {
+            Ok(()) => {
+                tracker
+                    .update("embedding_model", TaskStatus::Done, None)
+                    .unwrap_or_else(|e| tracing::warn!("tracker update failed: {e}"));
+            }
+            Err(e) => {
+                tracing::warn!("failed to pre-download embedding model: {e}");
+                tracker
+                    .update("embedding_model", TaskStatus::Error, Some(e.to_string()))
+                    .unwrap_or_else(|err| tracing::warn!("tracker update failed: {err}"));
+            }
+        }
+    });
+}
+
 pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
@@ -29,74 +122,19 @@ pub fn run() {
                 .to_str()
                 .ok_or_else(|| "app data path is not valid UTF-8".to_string())?;
 
-            let conn = db::init_db(db_path_str)
-                .map_err(|e| format!("failed to initialize database: {e}"))?;
+            let conn = setup_database(db_path_str)
+                .map_err(|e| e.to_string())?;
 
-            // Create startup tracker and register tasks
             let tracker = startup::StartupTracker::new();
-            tracker.register("sidecar", "Sidecar");
-            tracker.register("embedding_model", "Embedding model");
+            let app_state = build_app_state(conn, &tracker)
+                .map_err(|e| e.to_string())?;
 
-            let app_state = state::AppState {
-                db: std::sync::Mutex::new(conn),
-                sidecar: sidecar::manager::SidecarManager::new(),
-                search: std::sync::Mutex::new(None),
-                startup: Arc::clone(&tracker),
-            };
-
-            // Auto-start the sidecar
-            tracker.update(
-                "sidecar",
-                TaskStatus::InProgress,
-                Some("Starting...".into()),
-            );
-            match commands::sidecar_commands::ensure_sidecar_running(&app_state) {
-                Ok(()) => tracker.update("sidecar", TaskStatus::Done, None),
-                Err(e) => {
-                    eprintln!("Warning: failed to auto-start sidecar: {e}");
-                    tracker.update("sidecar", TaskStatus::Error, Some(e.to_string()));
-                }
-            }
+            start_sidecar(&app_state, &tracker);
 
             app.manage(app_state);
 
-            // Pre-download the embedding model in the background so semantic
-            // search is ready when the user first needs it. Non-blocking —
-            // if the model already exists this returns immediately.
             let model_dir = app_dir.join("models").join("bge-small-en-v1.5");
-            let tracker_clone = Arc::clone(&tracker);
-            tracker.update(
-                "embedding_model",
-                TaskStatus::InProgress,
-                Some("Checking...".into()),
-            );
-            tauri::async_runtime::spawn(async move {
-                match search::embedder::ensure_model_exists(
-                    &model_dir,
-                    |_file, downloaded, total| {
-                        if let Some(total) = total {
-                            let pct = (downloaded as f64 / total as f64 * 100.0) as u32;
-                            tracker_clone.update(
-                                "embedding_model",
-                                TaskStatus::InProgress,
-                                Some(format!("{pct}%")),
-                            );
-                        }
-                    },
-                )
-                .await
-                {
-                    Ok(()) => tracker_clone.update("embedding_model", TaskStatus::Done, None),
-                    Err(e) => {
-                        eprintln!("Warning: failed to pre-download embedding model: {e}");
-                        tracker_clone.update(
-                            "embedding_model",
-                            TaskStatus::Error,
-                            Some(e.to_string()),
-                        );
-                    }
-                }
-            });
+            spawn_model_download(model_dir, Arc::clone(&tracker));
 
             Ok(())
         })

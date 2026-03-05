@@ -28,7 +28,7 @@ The Product Manager and Tech Lead roles may be filled by the same person. Both a
 5. Verify deliverables meet Definition of Done
 6. Report status honestly
 
-Reference: `process/orchestration.md`, `process/definition-of-ready.md`, `process/definition-of-done.md`
+Reference: `docs/process/orchestration.md`, `docs/process/definition-of-ready.md`, `docs/process/definition-of-done.md`
 
 ---
 
@@ -265,7 +265,7 @@ Claude Code has finite context. Protect it aggressively.
 
 When an agent encounters something unexpected during implementation (a library quirk, a platform-specific behavior, a non-obvious pattern), capture it:
 
-1. Delegate to `documentation-writer` to add the lesson to `docs/lessons/` with:
+1. Delegate to `documentation-writer` to add the lesson to `docs/development/lessons.md` with:
    - What happened
    - Why it was unexpected
    - The correct approach
@@ -279,7 +279,7 @@ At the end of significant features or when the User requests it:
 1. What went well in the process
 2. What caused friction or delays
 3. Proposed improvements to agents, rules, or workflow
-4. Capture in `docs/retrospectives/` with date and feature name
+4. Capture in `docs/process/retrospectives.md` with date and feature name
 
 ---
 
@@ -305,12 +305,12 @@ When the User mentions a future feature or "we should eventually...":
 | Rules | `.claude/rules/` | Governance rules |
 | Hooks | `.claude/hooks/` | Session start, skill loading, pre-commit |
 | Settings | `.claude/settings.json` | Hook configuration |
-| Process docs | `process/` | Orchestration, DoR, DoD, workflow docs |
+| Process docs | `docs/process/` | Orchestration, DoR, DoD, workflow docs |
 | Architecture docs | `docs/architecture/` | System design, IPC contracts |
 | UI specs | `docs/ui/` | Component specs, wireframes |
 | Product docs | `docs/product/` | Roadmap, feature specs |
-| Lessons learned | `docs/lessons/` | Implementation lessons |
-| Retrospectives | `docs/retrospectives/` | Process retrospectives |
+| Lessons learned | `docs/development/lessons.md` | Implementation lessons |
+| Retrospectives | `docs/process/retrospectives.md` | Process retrospectives |
 | Session state | `tmp/session-state.md` | Cross-session continuity |
 
 ---
