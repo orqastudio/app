@@ -1,3 +1,7 @@
+---
+scope: system
+---
+
 # No Stubs, Placeholders, or Hardcoded Fake Data (NON-NEGOTIABLE)
 
 ## What Counts as a Stub

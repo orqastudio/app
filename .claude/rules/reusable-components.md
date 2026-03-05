@@ -1,3 +1,7 @@
+---
+scope: system
+---
+
 # Reusable Components (NON-NEGOTIABLE)
 
 ## Shared Component Library

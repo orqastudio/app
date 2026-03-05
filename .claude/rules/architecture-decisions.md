@@ -1,3 +1,15 @@
+---
+scope: project
+enforcement:
+  - event: file
+    action: block
+    conditions:
+      - field: file_path
+        pattern: ui/lib/components/.*\.svelte$
+      - field: new_text
+        pattern: invoke\s*\(|from\s+['"]@tauri-apps/api
+---
+
 # Architecture Decisions
 
 **Source of Truth:** `@docs/architecture/decisions.md`

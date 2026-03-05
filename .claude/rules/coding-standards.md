@@ -1,3 +1,36 @@
+---
+scope: project
+enforcement:
+  - event: file
+    action: block
+    conditions:
+      - field: file_path
+        pattern: src-tauri/src/.*\.rs$
+      - field: new_text
+        pattern: (todo!\(|unimplemented!\(|panic!\(|\.unwrap\(\)|\.expect\()
+  - event: file
+    action: block
+    conditions:
+      - field: file_path
+        pattern: ui/.*\.(ts|svelte)$
+      - field: new_text
+        pattern: :\s*any\b|as\s+any\b|<any>
+  - event: file
+    action: block
+    conditions:
+      - field: file_path
+        pattern: (ui/|src-tauri/src/)/.*\.(ts|svelte|rs)$
+      - field: new_text
+        pattern: (#|//)\s*(TODO|FIXME|HACK|XXX|TEMP)\b
+  - event: file
+    action: warn
+    conditions:
+      - field: file_path
+        pattern: ui/.*\.svelte$
+      - field: new_text
+        pattern: "[^\\x00-\\x7F]{2,}"
+---
+
 # Coding Standards
 
 **Source of Truth:** `@docs/development/coding-standards.md`

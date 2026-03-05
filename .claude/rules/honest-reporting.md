@@ -1,3 +1,7 @@
+---
+scope: system
+---
+
 # Honest Reporting (NON-NEGOTIABLE)
 
 ## The Core Rule

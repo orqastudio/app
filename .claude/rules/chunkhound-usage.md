@@ -1,3 +1,7 @@
+---
+scope: system
+---
+
 # ChunkHound Usage (MANDATORY when available)
 
 The `chunkhound` skill contains tool selection guides, query patterns, and anti-patterns. Load it. **Prefer ChunkHound over Grep/Glob for any search that spans more than one file or directory.**
@@ -11,6 +15,10 @@ The `chunkhound` skill contains tool selection guides, query patterns, and anti-
 ## Documentation Review (MANDATORY before implementation)
 
 Before writing ANY implementation code, check the project documentation for existing designs, plans, and architecture decisions related to the task. Use `code_research` with a query describing the feature area — it searches docs AND code together.
+
+## Tool Availability
+
+In Orqa Studio, ChunkHound tools (`search_regex`, `search_semantic`, `code_research`) are available natively as built-in tools. In the CLI, they are available via the ChunkHound MCP server. The same usage patterns and query strategies apply in both environments.
 
 ## When ChunkHound is Unavailable
 

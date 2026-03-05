@@ -1,3 +1,7 @@
+---
+scope: project
+---
+
 # Pillar Alignment in Documentation (MANDATORY)
 
 Every documentation page that describes a feature, component, workflow, integration, or capability MUST include a "Pillar Alignment" section. This ensures all documented work traces back to the product vision and prevents scope creep from accumulating silently in the docs.

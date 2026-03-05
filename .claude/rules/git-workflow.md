@@ -1,3 +1,20 @@
+---
+scope: system
+enforcement:
+  - event: bash
+    action: block
+    pattern: --no-verify
+  - event: bash
+    action: warn
+    pattern: git\s+(reset\s+--hard|checkout\s+\.|clean\s+-fd|push\s+--force|stash\s+drop)
+  - event: bash
+    action: block
+    pattern: (rm\s+-rf?|git\s+rm\s+-r)\s+.*(docs/|src-tauri/|ui/|tests/)
+  - event: bash
+    action: warn
+    pattern: (npm\s+run\s+dev|cargo\s+tauri\s+dev|cargo\s+watch|tauri\s+dev)
+---
+
 # Git Workflow
 
 **Source of Truth:** `@docs/development/agentic-workflow.md`

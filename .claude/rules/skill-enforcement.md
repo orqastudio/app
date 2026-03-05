@@ -1,3 +1,7 @@
+---
+scope: system
+---
+
 # Skill Enforcement (NON-NEGOTIABLE)
 
 Every agent MUST have a `skills:` list in its YAML frontmatter that includes ALL skills it needs for its domain.
@@ -17,6 +21,10 @@ Every agent MUST have a `skills:` list in its YAML frontmatter that includes ALL
 - The `agent-maintainer` periodically audits that agent skill lists match their Required Reading domains
 - Missing skills are added; irrelevant skills are removed
 - All skill changes are documented in `docs/process/skills-log.md`
+
+## App-Managed Loading
+
+In Orqa Studio, skills are loaded via the `load_skill` tool and managed by the app's process enforcement layer. The app tracks which skills each agent has loaded and can enforce loading before task execution begins. The YAML frontmatter `skills:` declarations remain authoritative for CLI usage, where agents self-load skills based on their frontmatter lists.
 
 ## Related Rules
 

@@ -1,3 +1,7 @@
+---
+scope: system
+---
+
 # Documentation-First Implementation (NON-NEGOTIABLE)
 
 ## Principle

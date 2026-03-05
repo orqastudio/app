@@ -1,3 +1,7 @@
+---
+scope: project
+---
+
 # Vision Alignment (MANDATORY)
 
 Every feature, command, and UI element must serve Orqa Studio's product vision. Read `docs/product/vision.md` and `docs/product/governance.md` before implementing any new capability.

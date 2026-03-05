@@ -1,3 +1,15 @@
+---
+scope: project
+enforcement:
+  - event: file
+    action: warn
+    conditions:
+      - field: file_path
+        pattern: src-tauri/.*test.*\.rs$
+      - field: new_text
+        pattern: (mock!|#\[mockall|MockAll|mockall::)
+---
+
 # Testing Standards (NON-NEGOTIABLE)
 
 **Source of Truth:** This file defines testing patterns. `docs/development/coding-standards.md` defines coverage requirements.

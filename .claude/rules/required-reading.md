@@ -1,3 +1,7 @@
+---
+scope: system
+---
+
 # Required Reading (NON-NEGOTIABLE)
 
 Every agent MUST read its Required Reading documentation before any implementation work begins. The Required Reading section in each agent definition lists the specific documentation pages that agent needs loaded into context.
@@ -17,6 +21,10 @@ Every agent MUST read its Required Reading documentation before any implementati
 ## Why This Exists
 
 Required Reading replaces scattered "Before Implementation" checklists that were inconsistent across agents. It ensures every agent loads the same governing documentation before writing code, preventing drift between implementation and specification.
+
+## App Enforcement
+
+In Orqa Studio, Required Reading compliance is enforced via process checks (Phase 7). The app verifies that agents have loaded their required documents before task execution proceeds and can block tasks where required documents are missing. In the CLI, agents self-enforce by following the protocol described above.
 
 ## Related Rules
 

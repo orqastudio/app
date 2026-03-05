@@ -1,3 +1,13 @@
+---
+scope: system
+enforcement:
+  - event: file
+    action: warn
+    conditions:
+      - field: file_path
+        pattern: ^[^/]*\.(txt|log|json|yaml|yml)$
+---
+
 # Root Directory Cleanliness (MANDATORY)
 
 The project root must stay lean. Every file in root must have a justification.

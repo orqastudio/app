@@ -1,3 +1,7 @@
+---
+scope: system
+---
+
 # Plan Mode Compliance (NON-NEGOTIABLE)
 
 Every implementation plan — whether created in plan mode, written to TODO.md, or proposed in conversation — MUST satisfy two mandatory requirements before implementation begins.
@@ -153,6 +157,10 @@ Claims without evidence are not verification. The reviewer MUST collect and incl
 Plans that omit architectural compliance or UX-first design are rejected. The orchestrator MUST verify both sections exist and are substantive (not just boilerplate) before delegating implementation to subagents.
 
 After every phase implementation, the orchestrator MUST invoke the code-reviewer agent for independent verification before proceeding to the next phase.
+
+## App Enforcement
+
+In Orqa Studio, the app can verify that plans contain the required sections (Architectural Compliance, Systems Architecture Checklist, UX-First Design) via process checks before allowing implementation to begin. The app also manages verification gate transitions, ensuring that each phase receives independent review before the next phase starts. In the CLI, reviewers verify plan structure and gate compliance manually following the protocol above.
 
 ## Related Rules
 

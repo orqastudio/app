@@ -1,16 +1,22 @@
+---
+scope: system
+---
+
 # Lessons Learned (NON-NEGOTIABLE)
 
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.
 
-## Implementation Lessons (`docs/development/lessons.md`)
+## Implementation Lessons
+
+Lessons are stored as individual markdown files in `.orqa/lessons/`, one file per lesson with YAML frontmatter (id, title, category, recurrence count, promoted-to, tags). In the CLI, agents can also reference `docs/development/lessons.md` as a consolidated view.
 
 When `code-reviewer`, `qa-tester`, or `ux-reviewer` reports a FAIL verdict:
 
-1. **Check existing lessons** — search `docs/development/lessons.md` for the failure pattern before reporting it as a novel finding
-2. **If the failure matches an existing lesson:** note the recurrence (increment the count in the entry)
-3. **If the failure is new:** the reviewing agent adds a new `IMPL-NNN` entry before the fix-and-resubmit cycle begins
+1. **Check existing lessons** — search `.orqa/lessons/` (or `docs/development/lessons.md` in CLI) for the failure pattern before reporting it as a novel finding
+2. **If the failure matches an existing lesson:** note the recurrence (increment the count in the lesson file's frontmatter)
+3. **If the failure is new:** the reviewing agent creates a new `IMPL-NNN.md` file in `.orqa/lessons/` before the fix-and-resubmit cycle begins
 4. **When an IMPL entry reaches recurrence >= 2:** the `agent-maintainer` is triggered to promote it to a rule, coding standard addition, or skill update
-5. **After promotion:** the IMPL entry's "Promoted to" field is updated with the target artifact
+5. **After promotion:** the lesson file's "promoted-to" frontmatter field is updated with the target artifact
 
 ## Process Retrospectives (`docs/process/retrospectives.md`)
 
@@ -34,11 +40,17 @@ All review agents (`code-reviewer`, `qa-tester`, `ux-reviewer`) MUST include a "
 
 - Any new IMPL entries added during this review
 - Any recurrence updates to existing IMPL entries
-- Confirmation that `docs/development/lessons.md` was checked for known patterns
+- Confirmation that `.orqa/lessons/` (or `docs/development/lessons.md` in CLI) was checked for known patterns
 
 ## The learning loop is NOT optional
 
 Review agents that skip lesson documentation are in violation of this rule. The `agent-maintainer` audits compliance during governance reviews.
+
+## App-Managed Workflow
+
+In Orqa Studio, the lesson pipeline (create, recurrence tracking, promotion) is managed through the UI. The app provides a lessons view where users can browse, filter, and promote lessons. Recurrence counts are updated automatically when the app detects matching failure patterns. Promotion to rules or coding standards is initiated from the UI and routed to the `agent-maintainer` for execution.
+
+In the CLI, agents create lesson files manually in `.orqa/lessons/` following the YAML frontmatter format, and the `agent-maintainer` handles promotion through the standard governance audit process.
 
 ## Related Rules
 

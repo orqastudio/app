@@ -1,3 +1,7 @@
+---
+scope: system
+---
+
 # End-to-End Completeness (NON-NEGOTIABLE)
 
 Every feature MUST be implemented across ALL layers in the same commit. Partial implementations that work in isolation but fail at runtime due to missing layers are forbidden.

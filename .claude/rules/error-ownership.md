@@ -1,3 +1,7 @@
+---
+scope: system
+---
+
 # Error Ownership
 
 **Source of Truth:** `@TODO.md` -> "HOW TO WORK" section

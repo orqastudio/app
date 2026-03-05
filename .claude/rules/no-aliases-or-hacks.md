@@ -1,3 +1,7 @@
+---
+scope: system
+---
+
 # No Aliases or Hacky Fixes (NON-NEGOTIABLE)
 
 When a value or type mismatch exists between layers, fix the root cause. Never paper over it with aliases, shims, or duplicate mappings.
