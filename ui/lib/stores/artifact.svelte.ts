@@ -5,7 +5,11 @@ class ArtifactStore {
 	artifacts = $state<ArtifactSummary[]>([]);
 	activeArtifact = $state<Artifact | null>(null);
 	docTree = $state<DocNode[]>([]);
+	researchTree = $state<DocNode[]>([]);
+	planTree = $state<DocNode[]>([]);
 	docTreeLoading = $state(false);
+	researchTreeLoading = $state(false);
+	planTreeLoading = $state(false);
 	loading = $state(false);
 	error = $state<string | null>(null);
 	filterText = $state("");
@@ -94,6 +98,62 @@ class ArtifactStore {
 		}
 	}
 
+	async loadResearchTree() {
+		this.researchTreeLoading = true;
+		try {
+			this.researchTree = await invoke<DocNode[]>("research_tree_scan");
+		} catch (err: unknown) {
+			const message = err instanceof Error ? err.message : String(err);
+			this.error = `Failed to load research tree: ${message}`;
+			this.researchTree = [];
+		} finally {
+			this.researchTreeLoading = false;
+		}
+	}
+
+	async loadPlanTree() {
+		this.planTreeLoading = true;
+		try {
+			this.planTree = await invoke<DocNode[]>("plan_tree_scan");
+		} catch (err: unknown) {
+			const message = err instanceof Error ? err.message : String(err);
+			this.error = `Failed to load plans tree: ${message}`;
+			this.planTree = [];
+		} finally {
+			this.planTreeLoading = false;
+		}
+	}
+
+	async loadPlan(relPath: string) {
+		this.loading = true;
+		this.error = null;
+		try {
+			const artifact = await invoke<Artifact>("plan_read", { relPath });
+			this.activeArtifact = artifact;
+		} catch (err: unknown) {
+			const message = err instanceof Error ? err.message : String(err);
+			this.error = `Failed to load plan document: ${message}`;
+			this.activeArtifact = null;
+		} finally {
+			this.loading = false;
+		}
+	}
+
+	async loadResearch(relPath: string) {
+		this.loading = true;
+		this.error = null;
+		try {
+			const artifact = await invoke<Artifact>("research_read", { relPath });
+			this.activeArtifact = artifact;
+		} catch (err: unknown) {
+			const message = err instanceof Error ? err.message : String(err);
+			this.error = `Failed to load research document: ${message}`;
+			this.activeArtifact = null;
+		} finally {
+			this.loading = false;
+		}
+	}
+
 	async loadDoc(relPath: string) {
 		this.loading = true;
 		this.error = null;
@@ -113,7 +173,11 @@ class ArtifactStore {
 		this.artifacts = [];
 		this.activeArtifact = null;
 		this.docTree = [];
+		this.researchTree = [];
+		this.planTree = [];
 		this.docTreeLoading = false;
+		this.researchTreeLoading = false;
+		this.planTreeLoading = false;
 		this.loading = false;
 		this.error = null;
 		this.filterText = "";

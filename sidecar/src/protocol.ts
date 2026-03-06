@@ -15,6 +15,7 @@ export interface SendMessageRequest {
     model: string | null;
     system_prompt: string | null;
     sdk_session_id: string | null;
+    enable_thinking: boolean;
 }
 
 export interface CancelStreamRequest {

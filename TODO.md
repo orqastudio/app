@@ -74,7 +74,7 @@ Edit governance artifacts directly in the app instead of switching to a text edi
 The learning loop that makes the system improve over time.
 
 **Native artifacts (work in CLI too):**
-- [ ] Post-session hook that captures lessons to `docs/development/lessons.md`
+- [ ] Post-session hook that captures lessons to `.orqa/lessons/`
 - [ ] Rules enforcing lesson checking before implementation
 - [ ] CLAUDE.md section describing the promotion pipeline
 

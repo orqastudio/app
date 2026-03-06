@@ -1,3 +1,11 @@
+---
+title: "Enforcement Engine Architecture"
+category: architecture
+tags: []
+created: 2026-03-05
+updated: 2026-03-05
+---
+
 # Enforcement Engine Architecture
 
 **Date:** 2026-03-05

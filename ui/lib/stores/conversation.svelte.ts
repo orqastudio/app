@@ -14,6 +14,20 @@ export interface ToolCallState {
 	isComplete: boolean;
 }
 
+export type ContextEntry =
+	| {
+			type: "system_prompt_sent";
+			customPrompt: string | null;
+			governancePrompt: string;
+			totalChars: number;
+	  }
+	| {
+			type: "context_injected";
+			messageCount: number;
+			totalChars: number;
+			messages: string;
+	  };
+
 /** State for a pending tool approval — drives the approval dialog. */
 export interface PendingApproval {
 	toolCallId: string;
@@ -35,6 +49,8 @@ class ConversationStore {
 	pendingApproval = $state<PendingApproval | null>(null);
 	/** Process compliance violations from the most recent turn. */
 	processViolations = $state<Array<{ check: string; message: string }>>([]);
+	/** Context entries sent to the model at the start of the most recent turn. */
+	contextEntries = $state<ContextEntry[]>([]);
 
 	private resolvedModel = $state<string | null>(null);
 	private streamingMessageId = $state<number | null>(null);
@@ -131,6 +147,7 @@ class ConversationStore {
 		this.selectedModel = DEFAULT_MODEL;
 		this.pendingApproval = null;
 		this.processViolations = [];
+		this.contextEntries = [];
 	}
 
 	/** Approve or deny the currently pending tool call, then invoke the backend. */
@@ -155,6 +172,10 @@ class ConversationStore {
 				this.streamingContent = "";
 				this.streamingThinking = "";
 				this.streamingMessageId = event.data.message_id;
+				// Note: contextEntries are NOT reset here — SystemPromptSent and
+				// ContextInjected arrive BEFORE stream_start (emitted by Rust before
+				// the sidecar is called). Resetting here would wipe them out.
+				// They are reset in sendMessage() instead.
 				if (event.data.resolved_model) {
 					this.resolvedModel = event.data.resolved_model;
 				}
@@ -256,6 +277,30 @@ class ConversationStore {
 
 			case "session_title_updated":
 				sessionStore.handleTitleUpdate(event.data.session_id, event.data.title);
+				break;
+
+			case "system_prompt_sent":
+				this.contextEntries = [
+					...this.contextEntries,
+					{
+						type: "system_prompt_sent",
+						customPrompt: event.data.custom_prompt,
+						governancePrompt: event.data.governance_prompt,
+						totalChars: event.data.total_chars,
+					},
+				];
+				break;
+
+			case "context_injected":
+				this.contextEntries = [
+					...this.contextEntries,
+					{
+						type: "context_injected",
+						messageCount: event.data.message_count,
+						totalChars: event.data.total_chars,
+						messages: event.data.messages,
+					},
+				];
 				break;
 		}
 	}

@@ -31,6 +31,10 @@ pub struct ProjectSettings {
     pub governance: Option<GovernanceCounts>,
     #[serde(default)]
     pub icon: Option<String>,
+    #[serde(default)]
+    pub show_thinking: bool,
+    #[serde(default)]
+    pub custom_system_prompt: Option<String>,
 }
 
 fn default_model() -> String {
@@ -102,6 +106,8 @@ mod tests {
                 has_claude_config: true,
             }),
             icon: None,
+            show_thinking: false,
+            custom_system_prompt: None,
         }
     }
 
@@ -188,5 +194,7 @@ mod tests {
         assert_eq!(settings.excluded_paths.len(), 5);
         assert!(settings.stack.is_none());
         assert!(settings.governance.is_none());
+        assert!(!settings.show_thinking);
+        assert!(settings.custom_system_prompt.is_none());
     }
 }

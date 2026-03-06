@@ -44,8 +44,8 @@ function resolveSdkCliPath(): string {
 
 const SDK_CLI_PATH = resolveSdkCliPath();
 const SUMMARY_SYSTEM_PROMPT =
-    'Summarize the following conversation in 2-3 concise sentences. ' +
-    'Focus on the key topics discussed and any decisions or outcomes reached.';
+    'Generate a short title (3-5 words max) for this conversation. ' +
+    'No quotes, no punctuation, no prefix. Just the title.';
 
 const TOOL_SYSTEM_PROMPT = `You have access to these tools:
 - read_file: Read a file from the filesystem
@@ -377,6 +377,7 @@ export async function streamMessage(
     systemPrompt: string | null,
     sendResponse: ResponseSender,
     sdkSessionId: string | null = null,
+    enableThinking: boolean = false,
 ): Promise<void> {
     const resolvedModel = resolveModel(model);
     const messageId = nextMessageId++;
@@ -396,7 +397,7 @@ export async function streamMessage(
             resolved_model: resolvedModel,
         });
 
-        let blockIndex = 0;
+        const emittedToolIds: Record<number, string> = {};  // index -> tool_call_id
         let inputTokens = 0;
         let outputTokens = 0;
 
@@ -454,6 +455,8 @@ export async function streamMessage(
                 systemPrompt: (TOOL_SYSTEM_PROMPT + '\n\n' + (systemPrompt ?? '')).trim() || undefined,
                 model: resolvedModel,
                 abortController,
+                // Enable extended thinking if requested
+                ...(enableThinking ? { maxThinkingTokens: 8000 } : {}),
                 // Resume the SDK session if we have a previous one for this Orqa Studio session
                 ...(existingSdkSessionId ? { resume: existingSdkSessionId } : {}),
             },
@@ -469,6 +472,7 @@ export async function streamMessage(
             // Translate each content block type to our SidecarResponse events.
             if (message && typeof message === 'object') {
                 const msg = message as Record<string, unknown>;
+                process.stderr.write(`orqa-studio-sidecar: msg.type=${msg.type} subtype=${msg.subtype ?? ''}\n`);
 
                 // Capture the SDK session ID from the init message
                 if (msg.type === 'system' && msg.subtype === 'init' && typeof msg.session_id === 'string') {
@@ -484,11 +488,49 @@ export async function streamMessage(
                     });
                 }
 
-                // SDK yields: {type:"assistant", message:{content:[...], usage:{...}}}
-                // and:        {type:"result", subtype:"success", usage:{...}}
+                // SDK yields stream_event messages with raw Anthropic API events.
+                // These are true incremental deltas — no dedup needed.
+                if (msg.type === 'stream_event' && msg.event && typeof msg.event === 'object') {
+                    const event = msg.event as Record<string, unknown>;
+
+                    if (event.type === 'content_block_delta' && event.delta && typeof event.delta === 'object') {
+                        const delta = event.delta as Record<string, unknown>;
+                        if (delta.type === 'text_delta' && typeof delta.text === 'string') {
+                            sendResponse({ type: 'text_delta', content: delta.text });
+                        } else if (delta.type === 'thinking_delta' && typeof delta.thinking === 'string') {
+                            sendResponse({ type: 'thinking_delta', content: delta.thinking });
+                        } else if (delta.type === 'input_json_delta' && typeof delta.partial_json === 'string') {
+                            // Tool input streaming — find which tool this belongs to
+                            if (typeof event.index === 'number' && emittedToolIds[event.index]) {
+                                sendResponse({
+                                    type: 'tool_input_delta',
+                                    tool_call_id: emittedToolIds[event.index],
+                                    content: delta.partial_json,
+                                });
+                            }
+                        }
+                    } else if (event.type === 'content_block_start' && event.content_block && typeof event.content_block === 'object') {
+                        const block = event.content_block as Record<string, unknown>;
+                        if (block.type === 'tool_use' && typeof block.id === 'string' && typeof block.name === 'string') {
+                            const isOrqa = block.name.startsWith('mcp__orqa__');
+                            if (!isOrqa) {
+                                sendResponse({
+                                    type: 'tool_use_start',
+                                    tool_call_id: block.id,
+                                    tool_name: stripMcpPrefix(block.name),
+                                });
+                            }
+                            // Track by index for input_json_delta correlation
+                            if (typeof event.index === 'number') {
+                                emittedToolIds[event.index] = block.id;
+                            }
+                        }
+                    }
+                }
+
+                // assistant messages: only extract usage (content handled via stream_event)
                 if (msg.type === 'assistant' && msg.message && typeof msg.message === 'object') {
                     const inner = msg.message as Record<string, unknown>;
-                    translateAgentMessage(inner, sendResponse, blockIndex);
 
                     // Track token usage from the inner message
                     if (inner.usage && typeof inner.usage === 'object') {
@@ -502,11 +544,6 @@ export async function streamMessage(
                         if (usage.output_tokens !== undefined) {
                             outputTokens = usage.output_tokens;
                         }
-                    }
-
-                    // Track block count for block_complete events
-                    if (Array.isArray(inner.content)) {
-                        blockIndex = inner.content.length;
                     }
                 } else if (msg.type === 'result' && msg.usage && typeof msg.usage === 'object') {
                     // Final usage from the result message
@@ -546,83 +583,6 @@ export async function streamMessage(
         });
     } finally {
         activeStreams.delete(sessionId);
-    }
-}
-
-/**
- * Translate an Agent SDK message into SidecarResponse events.
- *
- * The Agent SDK yields partial messages that contain content blocks.
- * We translate text blocks to text_delta, thinking blocks to thinking_delta,
- * and tool_use blocks to tool_use_start/tool_input_delta events.
- */
-function translateAgentMessage(
-    message: unknown,
-    sendResponse: ResponseSender,
-    _previousBlockCount: number,
-): void {
-    if (!message || typeof message !== 'object') {
-        return;
-    }
-
-    const msg = message as Record<string, unknown>;
-
-    // Handle content array from partial messages
-    if ('content' in msg && Array.isArray(msg.content)) {
-        for (const block of msg.content) {
-            if (!block || typeof block !== 'object') {
-                continue;
-            }
-
-            const b = block as Record<string, unknown>;
-
-            if (b.type === 'text' && typeof b.text === 'string') {
-                sendResponse({
-                    type: 'text_delta',
-                    content: b.text,
-                });
-            } else if (
-                b.type === 'thinking' &&
-                typeof b.thinking === 'string'
-            ) {
-                sendResponse({
-                    type: 'thinking_delta',
-                    content: b.thinking,
-                });
-            } else if (b.type === 'tool_use') {
-                // Tool use blocks are handled by the MCP server callbacks,
-                // but we emit tracking events for the frontend.
-                // Skip Orqa Studio tools — executeToolViaRust already emits these events.
-                const isOrqa = typeof b.name === 'string' && b.name.startsWith('mcp__orqa__');
-                if (!isOrqa) {
-                    if (typeof b.id === 'string' && typeof b.name === 'string') {
-                        sendResponse({
-                            type: 'tool_use_start',
-                            tool_call_id: b.id,
-                            tool_name: stripMcpPrefix(b.name),
-                        });
-                    }
-                    if (typeof b.input === 'string') {
-                        sendResponse({
-                            type: 'tool_input_delta',
-                            tool_call_id:
-                                typeof b.id === 'string' ? b.id : '',
-                            content: b.input,
-                        });
-                    } else if (
-                        b.input !== undefined &&
-                        b.input !== null
-                    ) {
-                        sendResponse({
-                            type: 'tool_input_delta',
-                            tool_call_id:
-                                typeof b.id === 'string' ? b.id : '',
-                            content: JSON.stringify(b.input),
-                        });
-                    }
-                }
-            }
-        }
     }
 }
 

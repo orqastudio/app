@@ -5,6 +5,8 @@
 	import ShieldIcon from "@lucide/svelte/icons/shield";
 
 	import BookOpenIcon from "@lucide/svelte/icons/book-open";
+	import FlaskConicalIcon from "@lucide/svelte/icons/flask-conical";
+	import ClipboardListIcon from "@lucide/svelte/icons/clipboard-list";
 	import ZapIcon from "@lucide/svelte/icons/zap";
 	import GitBranchIcon from "@lucide/svelte/icons/git-branch";
 	import SettingsIcon from "@lucide/svelte/icons/settings";
@@ -28,6 +30,8 @@
 
 	const artifactItems: ActivityItem[] = [
 		{ view: "docs", icon: FileTextIcon, label: "Docs" },
+		{ view: "research", icon: FlaskConicalIcon, label: "Research" },
+		{ view: "plans", icon: ClipboardListIcon, label: "Plans" },
 		{ view: "agents", icon: BotIcon, label: "Agents" },
 		{ view: "lessons", icon: BookOpenIcon, label: "Lessons" },
 		{ view: "rules", icon: ShieldIcon, label: "Rules" },

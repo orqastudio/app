@@ -1,4 +1,5 @@
 use crate::domain::enforcement::RuleAction;
+use crate::domain::project_settings::read_settings;
 use crate::domain::provider_event::StreamEvent;
 use crate::error::OrqaError;
 use crate::repo::{message_repo, project_repo, session_repo};
@@ -770,6 +771,53 @@ fn build_system_prompt(project_path: &Path) -> Result<String, OrqaError> {
     Ok(parts.join("\n"))
 }
 
+/// A condensed message record used for context injection into the system prompt.
+#[derive(serde::Serialize)]
+struct ContextMessage {
+    role: String,
+    content: String,
+}
+
+/// Load recent text messages from a session for context injection.
+///
+/// Returns up to 20 recent user/assistant text messages in chronological order.
+/// Returns `None` if the database lock fails or the session has no qualifying messages.
+fn load_context_messages(state: &AppState, session_id: i64) -> Option<Vec<ContextMessage>> {
+    use crate::domain::message::{ContentType, MessageRole};
+
+    let db = state.db.lock().ok()?;
+    // Load a generous window; we'll slice from the end below.
+    let messages = message_repo::list(&db, session_id, 200, 0).ok()?;
+
+    let context: Vec<ContextMessage> = messages
+        .iter()
+        .filter(|m| {
+            matches!(m.role, MessageRole::User | MessageRole::Assistant)
+                && m.content_type == ContentType::Text
+                && m.content.is_some()
+        })
+        .rev()
+        .take(20)
+        .collect::<Vec<_>>()
+        .into_iter()
+        .rev()
+        .map(|m| ContextMessage {
+            role: match m.role {
+                MessageRole::User => "user".to_string(),
+                MessageRole::Assistant => "assistant".to_string(),
+                MessageRole::System => "system".to_string(),
+            },
+            content: m.content.clone().unwrap_or_default(),
+        })
+        .collect();
+
+    if context.is_empty() {
+        None
+    } else {
+        Some(context)
+    }
+}
+
 /// Send a message to the sidecar and stream responses back via `Channel<T>`.
 ///
 /// This command:
@@ -804,22 +852,46 @@ pub fn stream_send_message(
 
     super::sidecar_commands::ensure_sidecar_running(&state)?;
 
-    let system_prompt = match project_root(&state) {
-        Ok(root) => match build_system_prompt(&root) {
-            Ok(prompt) => {
-                tracing::debug!("[stream] system prompt built ({} chars)", prompt.len());
-                Some(prompt)
-            }
-            Err(e) => {
-                tracing::warn!("[stream] failed to build system prompt: {e}");
-                None
-            }
-        },
+    let (governance_prompt, custom_prompt, enable_thinking) = match project_root(&state) {
+        Ok(root) => {
+            let gov = match build_system_prompt(&root) {
+                Ok(prompt) => {
+                    tracing::debug!("[stream] system prompt built ({} chars)", prompt.len());
+                    Some(prompt)
+                }
+                Err(e) => {
+                    tracing::warn!("[stream] failed to build system prompt: {e}");
+                    None
+                }
+            };
+            let (custom, thinking) = match read_settings(root.to_str().unwrap_or_default()) {
+                Ok(Some(settings)) => (settings.custom_system_prompt, settings.show_thinking),
+                _ => (None, false),
+            };
+            (gov, custom, thinking)
+        }
         Err(e) => {
             tracing::warn!("[stream] no active project for system prompt: {e}");
-            None
+            (None, None, false)
         }
     };
+
+    // Assemble final system prompt: custom + governance
+    let final_prompt = match (&custom_prompt, &governance_prompt) {
+        (Some(c), Some(g)) => Some(format!("{c}\n\n---\n\n{g}")),
+        (Some(c), None) => Some(c.clone()),
+        (None, g) => g.clone(),
+    };
+
+    // Emit transparency event so the frontend can display what system prompt was sent.
+    if let Some(ref prompt) = final_prompt {
+        let total_chars = prompt.len() as i64;
+        let _ = on_event.send(StreamEvent::SystemPromptSent {
+            custom_prompt: custom_prompt.clone(),
+            governance_prompt: governance_prompt.unwrap_or_default(),
+            total_chars,
+        });
+    }
 
     // Look up persisted SDK session UUID for resume across restarts
     let sdk_session_id = {
@@ -832,12 +904,61 @@ pub fn stream_send_message(
             .and_then(|s| s.sdk_session_id)
     };
 
+    // ── Context injection for session continuity ──
+    // When resuming a session that has an existing SDK session ID, load recent
+    // message history from SQLite and append it to the system prompt as a
+    // fallback. The SDK will also attempt resume via sdk_session_id, but if
+    // local storage was cleared or the session expired, this ensures Claude
+    // still has the conversation context it needs.
+    let final_prompt = if sdk_session_id.is_some() {
+        match load_context_messages(&state, session_id) {
+            Some(context_messages) if !context_messages.is_empty() => {
+                let msg_count = context_messages.len() as i32;
+                let context_json = serde_json::to_string(&context_messages).unwrap_or_default();
+                let total_chars = context_json.len() as i64;
+
+                let history = context_messages
+                    .iter()
+                    .map(|m| format!("[{}]: {}", m.role, m.content))
+                    .collect::<Vec<_>>()
+                    .join("\n\n");
+
+                let context_section = format!(
+                    "## Conversation History\n\
+                     The following is the recent conversation history from this session. \
+                     Use it to maintain continuity.\n\n{history}"
+                );
+
+                tracing::debug!(
+                    "[stream] injecting {} messages of context ({} chars)",
+                    msg_count,
+                    total_chars
+                );
+
+                let _ = on_event.send(StreamEvent::ContextInjected {
+                    message_count: msg_count,
+                    total_chars,
+                    messages: context_json,
+                });
+
+                match final_prompt {
+                    Some(p) => Some(format!("{p}\n\n---\n\n{context_section}")),
+                    None => Some(context_section),
+                }
+            }
+            _ => final_prompt,
+        }
+    } else {
+        final_prompt
+    };
+
     let request = SidecarRequest::SendMessage {
         session_id,
         content,
         model,
-        system_prompt,
+        system_prompt: final_prompt,
         sdk_session_id,
+        enable_thinking,
     };
     state.sidecar.send(&request)?;
 
@@ -901,6 +1022,22 @@ pub fn stream_tool_approval_respond(
             "no pending approval for tool_call_id={tool_call_id}"
         ))),
     }
+}
+
+/// Return the auto-generated governance system prompt for the active project.
+///
+/// This allows the Settings UI to show a preview of the governance prompt that
+/// will be prepended to every conversation. Returns `Ok(None)` when no project
+/// is currently active.
+#[tauri::command]
+pub fn system_prompt_preview(
+    state: tauri::State<'_, AppState>,
+) -> Result<Option<String>, OrqaError> {
+    let project_root = match project_root(&state) {
+        Ok(root) => root,
+        Err(_) => return Ok(None),
+    };
+    Ok(build_system_prompt(&project_root).ok())
 }
 
 // ── Tool Execution ──
@@ -1263,43 +1400,120 @@ fn tool_edit_file(input: &serde_json::Value, root: &Path) -> (String, bool) {
     }
 }
 
+/// Kill a process and its children by PID.
+fn kill_process_tree(pid: u32) {
+    #[cfg(windows)]
+    {
+        let _ = std::process::Command::new("taskkill")
+            .args(["/F", "/T", "/PID", &pid.to_string()])
+            .output();
+    }
+    #[cfg(unix)]
+    {
+        let _ = std::process::Command::new("kill")
+            .args(["-9", &pid.to_string()])
+            .output();
+    }
+}
+
 /// Execute a bash command in the project root.
 fn tool_bash(input: &serde_json::Value, root: &Path) -> (String, bool) {
+    use std::io::Read;
+    use std::process::Stdio;
+
+    /// Maximum time a bash command is allowed to run before being killed.
+    const BASH_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(120);
+
+    /// Maximum bytes to read from stdout/stderr each to prevent OOM.
+    const MAX_PIPE_BYTES: usize = 512_000;
+
     let command = match input["command"].as_str() {
         Some(c) => c,
         None => return ("missing 'command' parameter".to_string(), true),
     };
 
-    let output = match std::process::Command::new("bash")
+    let mut child = match std::process::Command::new("bash")
         .arg("-c")
         .arg(command)
         .current_dir(root)
-        .output()
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
     {
-        Ok(o) => o,
+        Ok(c) => c,
         Err(e) => return (format!("failed to execute bash: {e}"), true),
     };
 
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let stderr = String::from_utf8_lossy(&output.stderr);
+    // Take stdout/stderr handles BEFORE waiting — reading the pipes
+    // concurrently with the child process prevents pipe-buffer deadlocks
+    // (child blocks writing when the OS pipe buffer is full).
+    let stdout_pipe = child.stdout.take();
+    let stderr_pipe = child.stderr.take();
+    let child_id = child.id();
 
-    let mut result = String::new();
-    if !stdout.is_empty() {
-        result.push_str(&stdout);
-    }
-    if !stderr.is_empty() {
-        if !result.is_empty() {
-            result.push('\n');
+    // Read stdout in a background thread (capped to prevent OOM)
+    let stdout_handle = std::thread::spawn(move || {
+        let mut buf = String::new();
+        if let Some(pipe) = stdout_pipe {
+            let _ = pipe.take(MAX_PIPE_BYTES as u64).read_to_string(&mut buf);
         }
-        result.push_str("STDERR:\n");
-        result.push_str(&stderr);
-    }
-    if result.is_empty() {
-        result.push_str("(no output)");
-    }
+        buf
+    });
 
-    let is_error = !output.status.success();
-    (result, is_error)
+    // Read stderr in a background thread (capped to prevent OOM)
+    let stderr_handle = std::thread::spawn(move || {
+        let mut buf = String::new();
+        if let Some(pipe) = stderr_pipe {
+            let _ = pipe.take(MAX_PIPE_BYTES as u64).read_to_string(&mut buf);
+        }
+        buf
+    });
+
+    // Wait for the child with timeout
+    let (tx, rx) = mpsc::channel();
+    std::thread::spawn(move || {
+        let result = child.wait();
+        let _ = tx.send(result);
+    });
+
+    match rx.recv_timeout(BASH_TIMEOUT) {
+        Ok(Ok(status)) => {
+            let stdout = stdout_handle.join().unwrap_or_default();
+            let stderr = stderr_handle.join().unwrap_or_default();
+
+            let mut result = String::new();
+            if !stdout.is_empty() {
+                result.push_str(&stdout);
+            }
+            if !stderr.is_empty() {
+                if !result.is_empty() {
+                    result.push('\n');
+                }
+                result.push_str("STDERR:\n");
+                result.push_str(&stderr);
+            }
+            if result.is_empty() {
+                result.push_str("(no output)");
+            }
+            let is_error = !status.success();
+            (result, is_error)
+        }
+        Ok(Err(e)) => (format!("failed to wait on bash process: {e}"), true),
+        Err(_) => {
+            // Timed out — kill the process tree
+            kill_process_tree(child_id);
+            // Join the reader threads so they don't leak
+            let _ = stdout_handle.join();
+            let _ = stderr_handle.join();
+            (
+                format!(
+                    "Command timed out after {} seconds and was killed.",
+                    BASH_TIMEOUT.as_secs()
+                ),
+                true,
+            )
+        }
+    }
 }
 
 /// Find files matching a glob pattern.
@@ -1358,8 +1572,9 @@ fn tool_grep(input: &serde_json::Value, root: &Path) -> (String, bool) {
     };
 
     let search_str = search_path.to_string_lossy();
+    // Use --max-count to limit output at the source, preventing unbounded reads
     let cmd = format!(
-        "rg --no-heading --line-number --color never -e {} {} 2>/dev/null || grep -rn {} {} 2>/dev/null",
+        "rg --no-heading --line-number --color never --max-count 200 -e {} {} 2>/dev/null || grep -rn -m 200 {} {} 2>/dev/null",
         shell_escape(pattern),
         shell_escape(&search_str),
         shell_escape(pattern),

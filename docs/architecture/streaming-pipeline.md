@@ -1,3 +1,11 @@
+---
+title: "Streaming Pipeline"
+category: architecture
+tags: []
+created: 2026-03-02
+updated: 2026-03-04
+---
+
 # Streaming Pipeline
 
 **Date:** 2026-03-02 | **Status:** Phase 0e specification | **References:** [Claude Integration Research](/research/claude-integration) (AD-007, AD-009)

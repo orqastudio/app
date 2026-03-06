@@ -39,7 +39,7 @@ The following page categories are exempt because they define or govern the pilla
 
 | Exempt Category | Examples | Reason |
 |-----------------|----------|--------|
-| Research pages | `docs/research/` | Historical investigations, not features |
+| Research pages | `.orqa/research/` | Historical investigations, not features |
 | Development guidelines | Coding standards, agentic workflow, library guides | Internal process docs |
 | High-level overview pages | `docs/product/vision.md`, `docs/product/governance.md` | These define the pillars |
 | Architecture decisions log | `docs/architecture/decisions.md` | Individual decisions already have context |

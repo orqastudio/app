@@ -8,11 +8,11 @@ The team maintains two learning loops to prevent mistakes from recurring across 
 
 ## Implementation Lessons
 
-Lessons are stored as individual markdown files in `.orqa/lessons/`, one file per lesson with YAML frontmatter (id, title, category, recurrence count, promoted-to, tags). In the CLI, agents can also reference `docs/development/lessons.md` as a consolidated view.
+Lessons are stored as individual markdown files in `.orqa/lessons/`, one file per lesson with YAML frontmatter (id, title, category, recurrence count, promoted-to, tags). In the CLI, agents can also reference `.orqa/lessons/` as a consolidated view.
 
 When `code-reviewer`, `qa-tester`, or `ux-reviewer` reports a FAIL verdict:
 
-1. **Check existing lessons** — search `.orqa/lessons/` (or `docs/development/lessons.md` in CLI) for the failure pattern before reporting it as a novel finding
+1. **Check existing lessons** — search `.orqa/lessons/` for the failure pattern before reporting it as a novel finding
 2. **If the failure matches an existing lesson:** note the recurrence (increment the count in the lesson file's frontmatter)
 3. **If the failure is new:** the reviewing agent creates a new `IMPL-NNN.md` file in `.orqa/lessons/` before the fix-and-resubmit cycle begins
 4. **When an IMPL entry reaches recurrence >= 2:** the `agent-maintainer` is triggered to promote it to a rule, coding standard addition, or skill update
@@ -40,7 +40,7 @@ All review agents (`code-reviewer`, `qa-tester`, `ux-reviewer`) MUST include a "
 
 - Any new IMPL entries added during this review
 - Any recurrence updates to existing IMPL entries
-- Confirmation that `.orqa/lessons/` (or `docs/development/lessons.md` in CLI) was checked for known patterns
+- Confirmation that `.orqa/lessons/` was checked for known patterns
 
 ## The learning loop is NOT optional
 

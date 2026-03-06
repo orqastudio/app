@@ -11,6 +11,10 @@
 		<h2 class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
 			{#if navigationStore.activeActivity === "docs"}
 				Docs
+			{:else if navigationStore.activeActivity === "research"}
+				Research
+			{:else if navigationStore.activeActivity === "plans"}
+				Plans
 			{:else if navigationStore.activeActivity === "agents"}
 				Agents
 			{:else if navigationStore.activeActivity === "rules"}
@@ -34,7 +38,11 @@
 	<!-- Panel content -->
 	<div class="flex-1 overflow-hidden">
 		{#if navigationStore.activeActivity === "docs"}
-			<DocTreeNav />
+			<DocTreeNav mode="docs" />
+		{:else if navigationStore.activeActivity === "research"}
+			<DocTreeNav mode="research" />
+		{:else if navigationStore.activeActivity === "plans"}
+			<DocTreeNav mode="plans" />
 		{:else if navigationStore.activeActivity === "agents" || navigationStore.activeActivity === "rules" || navigationStore.activeActivity === "skills" || navigationStore.activeActivity === "hooks"}
 			<ArtifactListNav category={navigationStore.activeActivity} />
 		{:else if navigationStore.activeActivity === "settings"}

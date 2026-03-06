@@ -1,3 +1,11 @@
+---
+title: "Enforcement Rules Reference"
+category: process
+tags: []
+created: 2026-03-02
+updated: 2026-03-05
+---
+
 # Enforcement Rules Reference
 
 **Date:** 2026-03-05
@@ -109,7 +117,7 @@ Context-only rules require judgment that pattern matching cannot provide. They a
 Create a new rule when:
 
 1. A behavioral constraint applies to all agents universally, not just one agent's process
-2. An implementation lesson has recurred enough times to warrant automatic enforcement (recurrence >= 2 per `docs/development/lessons.md`)
+2. An implementation lesson has recurred enough times to warrant automatic enforcement (recurrence >= 2 per `.orqa/lessons/`)
 3. A process change is significant enough that agents would violate it without automatic reminders
 
 When creating a rule, also decide whether the constraint is pattern-enforceable. If the violation is a specific pattern in file content or a banned command flag, add frontmatter enforcement entries. The generated hookify files will be created automatically.
@@ -148,5 +156,5 @@ The `code-reviewer` includes rule compliance in every code review:
 - [Content Governance](content-governance.md) — The six-layer ownership model (docs, agents, skills, rules, hooks, enforcement)
 - [Team Overview](team.md) — Which agents load which skills and follow which rules
 - [Process Retrospectives](retrospectives.md) — History of rule creation and governance changes
-- `docs/development/lessons.md` — Individual patterns that may be promoted to rules
+- `.orqa/lessons/` — Individual patterns that may be promoted to rules
 - `docs/architecture/enforcement.md` — Technical architecture of the enforcement engine

@@ -1,3 +1,11 @@
+---
+title: "Lesson Promotion Pipeline Architecture"
+category: architecture
+tags: []
+created: 2026-03-05
+updated: 2026-03-05
+---
+
 # Lesson Promotion Pipeline Architecture
 
 **Date:** 2026-03-05
@@ -187,4 +195,4 @@ src-tauri/src/
 - `docs/ui/lesson-dashboard.md` — UI spec for the lesson navigation and viewer
 - `docs/architecture/enforcement.md` — Enforcement engine that consumes promoted lessons
 - `docs/process/rules.md` — Rule frontmatter schema that receives promoted entries
-- `docs/development/lessons.md` — Current lesson log (the actual lesson content, not this architecture doc)
+- `.orqa/lessons/` — Current lesson log (the actual lesson content, not this architecture doc)

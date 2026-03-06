@@ -1,3 +1,11 @@
+---
+title: "The Agentic Development Team"
+category: process
+tags: []
+created: 2026-03-02
+updated: 2026-03-04
+---
+
 # The Agentic Development Team
 
 **Date:** 2026-03-02

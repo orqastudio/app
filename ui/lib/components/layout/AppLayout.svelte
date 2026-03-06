@@ -15,6 +15,7 @@
 	import GovernanceBootstrapWizard from "$lib/components/governance/GovernanceBootstrapWizard.svelte";
 
 	import LessonsPanel from "$lib/components/lessons/LessonsPanel.svelte";
+	import * as Resizable from "$lib/components/ui/resizable";
 	import setupBackground from "$lib/assets/setup-background.png";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import { settingsStore } from "$lib/stores/settings.svelte";
@@ -25,12 +26,9 @@
 	import { enforcementStore } from "$lib/stores/enforcement.svelte";
 
 	const hasProject = $derived(projectStore.hasProject);
-	const isConfiguring = $derived(navigationStore.activeActivity === "configure");
 	const needsSetup = $derived(projectStore.settingsLoaded && !projectStore.hasSettings);
 	const hideChatPanel = $derived(
-		navigationStore.activeActivity === "settings" ||
-			navigationStore.activeActivity === "project" ||
-			navigationStore.activeActivity === "lessons",
+		navigationStore.activeActivity === "settings",
 	);
 	const setupNeeded = $derived(!setupStore.setupComplete);
 
@@ -63,6 +61,30 @@
 			artifactStore.docTree.length === 0
 		) {
 			artifactStore.loadDocTree();
+		}
+	});
+
+	// Load research tree when switching to research activity
+	$effect(() => {
+		if (
+			hasProject &&
+			!needsSetup &&
+			navigationStore.activeActivity === "research" &&
+			artifactStore.researchTree.length === 0
+		) {
+			artifactStore.loadResearchTree();
+		}
+	});
+
+	// Load plan tree when switching to plans activity
+	$effect(() => {
+		if (
+			hasProject &&
+			!needsSetup &&
+			navigationStore.activeActivity === "plans" &&
+			artifactStore.planTree.length === 0
+		) {
+			artifactStore.loadPlanTree();
 		}
 	});
 
@@ -112,6 +134,10 @@
 
 		if (activity === "docs") {
 			artifactStore.loadDoc(path);
+		} else if (activity === "research") {
+			artifactStore.loadResearch(path);
+		} else if (activity === "plans") {
+			artifactStore.loadPlan(path);
 		} else if (activityToArtifactType[activity]) {
 			artifactStore.loadGovernanceArtifact(path);
 		}
@@ -131,16 +157,6 @@
 					projectStore.loadActiveProject();
 				}}
 			/>
-		{:else if isConfiguring}
-			<!-- App Configuration — no activity bar, nav panel for config categories -->
-			{#if navigationStore.showNavPanel}
-				<NavSubPanel />
-			{/if}
-			<div class="flex flex-1 overflow-hidden">
-				<div class="flex-1 overflow-hidden">
-					<SettingsView />
-				</div>
-			</div>
 		{:else if hasProject && needsSetup}
 			<!-- Project needs setup — show wizard only, no chat/nav/activity bar -->
 			<div
@@ -164,36 +180,44 @@
 				<NavSubPanel />
 			{/if}
 
-			<!-- Explorer + Chat panels -->
-			<div class="flex flex-1 overflow-hidden">
-				<!-- Explorer Panel -->
-				<div class="min-w-0 flex-[7] overflow-hidden" class:border-r={!hideChatPanel} class:border-border={!hideChatPanel}>
-					{#if navigationStore.activeActivity === "project"}
-						<ProjectDashboard />
-					{:else if navigationStore.activeActivity === "settings"}
+			<!-- Explorer + Chat (resizable) -->
+			{#if hideChatPanel}
+				<div class="min-w-0 flex-1 overflow-hidden">
+					{#if navigationStore.activeActivity === "settings"}
 						<SettingsView />
-					{:else if navigationStore.activeActivity === "lessons"}
-						<LessonsPanel />
-					{:else if navigationStore.activeActivity === "chat"}
-						<WelcomeScreen />
-					{:else if navigationStore.isArtifactActivity}
-						{#if navigationStore.explorerView === "artifact-viewer"}
-							<ArtifactViewer />
-						{:else}
-							<ArtifactLanding category={navigationStore.activeActivity} />
-						{/if}
 					{:else}
 						<WelcomeScreen />
 					{/if}
 				</div>
-
-				<!-- Chat Panel (hidden on settings and dashboard) -->
-				{#if !hideChatPanel}
-					<div class="flex min-w-[320px] flex-[3] flex-col border-l border-border">
-						<ConversationView />
-					</div>
-				{/if}
-			</div>
+			{:else}
+				<Resizable.PaneGroup direction="horizontal" class="flex-1">
+					<Resizable.Pane defaultSize={70} minSize={30}>
+						<div class="h-full overflow-hidden">
+							{#if navigationStore.activeActivity === "project"}
+								<ProjectDashboard />
+							{:else if navigationStore.activeActivity === "lessons"}
+								<LessonsPanel />
+							{:else if navigationStore.activeActivity === "chat"}
+								<WelcomeScreen />
+							{:else if navigationStore.isArtifactActivity}
+								{#if navigationStore.explorerView === "artifact-viewer"}
+									<ArtifactViewer />
+								{:else}
+									<ArtifactLanding category={navigationStore.activeActivity} />
+								{/if}
+							{:else}
+								<WelcomeScreen />
+							{/if}
+						</div>
+					</Resizable.Pane>
+					<Resizable.Handle />
+					<Resizable.Pane defaultSize={30} minSize={20}>
+						<div class="flex h-full flex-col bg-chat">
+							<ConversationView />
+						</div>
+					</Resizable.Pane>
+				</Resizable.PaneGroup>
+			{/if}
 
 			<!-- Governance bootstrap wizard overlay -->
 			{#if governanceStore.wizardVisible && projectStore.activeProject}

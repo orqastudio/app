@@ -53,9 +53,9 @@ See `.claude/rules/no-stubs.md` > "Agent Completion Reports" for the mandatory o
 
 Completion reports from review agents (`code-reviewer`, `qa-tester`, `ux-reviewer`) MUST include lesson documentation status:
 
-- Were any new IMPL entries added to `docs/development/lessons.md`?
+- Were any new IMPL entries added to `.orqa/lessons/`?
 - Were any existing IMPL entries updated with recurrence increments?
-- Was `docs/development/lessons.md` checked for known patterns before reporting findings?
+- Was `.orqa/lessons/` checked for known patterns before reporting findings?
 
 Review agents that skip lesson documentation are in violation of this rule AND `.claude/rules/lessons-learned.md`.
 

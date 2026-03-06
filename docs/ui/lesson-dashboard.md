@@ -1,3 +1,11 @@
+---
+title: "Lesson Dashboard UI Spec"
+category: ui
+tags: []
+created: 2026-03-05
+updated: 2026-03-05
+---
+
 # Lesson Dashboard UI Spec
 
 **Date:** 2026-03-05

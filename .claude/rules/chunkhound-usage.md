@@ -2,31 +2,39 @@
 scope: system
 ---
 
-# ChunkHound Usage (MANDATORY when available)
+# ChunkHound / Semantic Search Usage (MANDATORY)
 
-The `chunkhound` skill contains tool selection guides, query patterns, and anti-patterns. Load it. **Prefer ChunkHound over Grep/Glob for any search that spans more than one file or directory.**
+The `chunkhound` skill contains tool selection guides, query patterns, and anti-patterns. Load it. **Prefer semantic search over Grep/Glob for any search that spans more than one file or directory.**
+
+## Dual-Context Tool Names
+
+Semantic search is available in two contexts with different tool names. Both are permanent and first-class.
+
+| Context | Tool Names | How They Work |
+|---------|-----------|---------------|
+| **CLI** (Claude Code) | `mcp__chunkhound__search_regex`, `mcp__chunkhound__search_semantic`, `mcp__chunkhound__code_research` | Via ChunkHound MCP server configured in `.mcp.json` |
+| **App** (Orqa Studio) | `search_regex`, `search_semantic`, `code_research` | Native embedded search (ONNX embeddings + DuckDB in `src-tauri/src/search/`) |
+
+The tools do the same thing — only the names differ. The `chunkhound` skill teaches query patterns that work in both contexts. Use whichever set is available in your current environment.
 
 ## Enforcement
 
-- The orchestrator and ALL subagents MUST prefer ChunkHound over Grep/Glob for multi-file searches
-- Grep/Glob are only appropriate for single-file lookups or when ChunkHound is confirmed unavailable
+- The orchestrator and ALL subagents MUST prefer semantic search over Grep/Glob for multi-file searches
+- Grep/Glob are only appropriate for single-file lookups or when semantic search is confirmed unavailable
 - Every agent's YAML frontmatter MUST include `chunkhound` in its `skills:` list
+- Every agent's YAML frontmatter MUST list both CLI and app tool names
 
 ## Documentation Review (MANDATORY before implementation)
 
 Before writing ANY implementation code, check the project documentation for existing designs, plans, and architecture decisions related to the task. Use `code_research` with a query describing the feature area — it searches docs AND code together.
 
-## Tool Availability
+## When Semantic Search is Unavailable
 
-In Orqa Studio, ChunkHound tools (`search_regex`, `search_semantic`, `code_research`) are available natively as built-in tools. In the CLI, they are available via the ChunkHound MCP server. The same usage patterns and query strategies apply in both environments.
+If neither tool name set is available in the current session:
 
-## When ChunkHound is Unavailable
-
-If ChunkHound MCP tools are not available in the current session:
-
-1. **Subagents** — Delegate research to a subagent that has ChunkHound access
+1. **Subagents** — Delegate research to a subagent that has search access
 2. **Direct fallback** — Only if subagent delegation is impractical, use Grep/Glob
-3. **Always note** — State in the task summary that ChunkHound was unavailable so results may be incomplete
+3. **Always note** — State in the task summary that semantic search was unavailable so results may be incomplete
 
 ## Related Rules
 

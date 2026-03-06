@@ -1,19 +1,33 @@
-# Phase 0 Research
+---
+title: "Research"
+category: research
+tags: []
+created: 2026-03-02
+updated: 2026-03-04
+---
+
+# Research
 
 Tech stack research and decision documentation. Each research document captures findings, options evaluated, and the rationale for the chosen approach. Once a research topic results in a firm decision, it is promoted to an Architecture Decision in `docs/architecture/decisions.md`.
 
-## Research Areas
+## Research Sections
+
+Research documents are organized into subfolders by project phase. Each subfolder contains the documents produced during that phase.
+
+### MVP Phase (`mvp/`)
+
+Research completed during the MVP define-before-build sequence (Phases 0a–0e).
 
 | Document | Status | Topic | ADs Produced |
 |----------|--------|-------|-------------|
-| [Claude Integration](/research/claude-integration) | Complete | Agent SDK, Claude Max, tool strategy, streaming | AD-007, AD-008, AD-009, AD-010, AD-017 |
-| [Tauri v2](/research/tauri-v2) | Complete | Capabilities, IPC design, security, plugins | AD-011, AD-012 |
-| [Frontend](/research/frontend) | Complete | Markdown editing, conversation UI, panels, charts | AD-013 |
-| [Persistence](/research/persistence) | Complete | SQLite schema, file/DB boundary, session model | AD-014 |
-| [Onboarding](/research/onboarding) | Complete | Codebase scanning, governance format, progressive disclosure | AD-015, AD-016 |
-| [Wireframing](/research/wireframing) | Complete | Wireframing tool selection (PlantUML Salt + D2) | — |
-| [Design Tokens](/research/design-tokens) | Complete | Token format, runtime theming, extraction pipeline, per-project persistence | — |
-| [Branding](/research/branding) | Complete | Orqa Studio brand identity, design system as governance artifact, brand-aware code generation, conflict resolution | — |
+| [Claude Integration](/research/mvp/claude-integration) | Complete | Agent SDK, Claude Max, tool strategy, streaming | AD-007, AD-008, AD-009, AD-010, AD-017 |
+| [Tauri v2](/research/mvp/tauri-v2) | Complete | Capabilities, IPC design, security, plugins | AD-011, AD-012 |
+| [Frontend](/research/mvp/frontend) | Complete | Markdown editing, conversation UI, panels, charts | AD-013 |
+| [Persistence](/research/mvp/persistence) | Complete | SQLite schema, file/DB boundary, session model | AD-014 |
+| [Onboarding](/research/mvp/onboarding) | Complete | Codebase scanning, governance format, progressive disclosure | AD-015, AD-016 |
+| [Wireframing](/research/mvp/wireframing) | Complete | Wireframing tool selection (PlantUML Salt + D2) | — |
+| [Design Tokens](/research/mvp/design-tokens) | Complete | Token format, runtime theming, extraction pipeline, per-project persistence | — |
+| [Branding](/research/mvp/branding) | Complete | Orqa Studio brand identity, design system as governance artifact, brand-aware code generation, conflict resolution | — |
 
 ## Research-to-Decision Pipeline
 

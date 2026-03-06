@@ -1,3 +1,11 @@
+---
+title: "Skills Inventory"
+category: process
+tags: []
+created: 2026-03-02
+updated: 2026-03-04
+---
+
 # Skills Inventory
 
 **Date:** 2026-03-02

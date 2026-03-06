@@ -1,3 +1,11 @@
+---
+title: "Project Configuration (`.orqa/project.json`)"
+category: architecture
+tags: []
+created: 2026-03-03
+updated: 2026-03-04
+---
+
 # Project Configuration (`.orqa/project.json`)
 
 **Date:** 2026-03-03 | **Status:** Active | **Decision:** AD-019 — File-based project settings

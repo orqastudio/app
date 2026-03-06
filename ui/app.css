@@ -9,10 +9,11 @@
   --font-sans: "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
+  --background: oklch(0.970 0.007 227);
   --foreground: oklch(0.233 0.070 265.033);
-  --card: oklch(0.985 0.005 227);
+  --card: oklch(0.990 0.003 227);
   --card-foreground: oklch(0.233 0.070 265.033);
+  --chat: oklch(0.955 0.010 227);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.233 0.070 265.033);
   --primary: oklch(0.797 0.147 221.311);
@@ -43,10 +44,11 @@
 }
 
 .dark {
-  --background: oklch(0.085 0.015 268);
+  --background: oklch(0.105 0.018 268);
   --foreground: oklch(0.930 0.015 228);
-  --card: oklch(0.115 0.020 268);
+  --card: oklch(0.140 0.022 268);
   --card-foreground: oklch(0.930 0.015 228);
+  --chat: oklch(0.080 0.014 268);
   --popover: oklch(0.115 0.020 268);
   --popover-foreground: oklch(0.930 0.015 228);
   --primary: oklch(0.797 0.147 221.311);
@@ -106,6 +108,7 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-chat: var(--chat);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);

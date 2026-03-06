@@ -46,6 +46,7 @@ mod tests {
             model: None,
             system_prompt: None,
             sdk_session_id: None,
+            enable_thinking: false,
         };
         let line = to_ndjson(&req).expect("serialization should succeed");
         let parsed: serde_json::Value =
@@ -81,6 +82,7 @@ mod tests {
             model: Some("claude-opus-4-6".to_string()),
             system_prompt: Some("be concise".to_string()),
             sdk_session_id: None,
+            enable_thinking: false,
         };
 
         let line = to_ndjson(&req).expect("serialization should succeed");
@@ -143,6 +145,7 @@ mod tests {
             model: None,
             system_prompt: None,
             sdk_session_id: None,
+            enable_thinking: false,
         };
         let line = to_ndjson(&req).expect("serialization should succeed");
         // The JSON itself must be a single line (newlines in content are escaped)

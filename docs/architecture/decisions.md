@@ -1,3 +1,11 @@
+---
+title: "Architecture Decisions"
+category: architecture
+tags: []
+created: 2026-03-02
+updated: 2026-03-04
+---
+
 # Architecture Decisions
 
 **Date:** 2026-03-02

@@ -1,3 +1,11 @@
+---
+title: "Coding Standards"
+category: development
+tags: []
+created: 2026-03-02
+updated: 2026-03-02
+---
+
 # Coding Standards
 
 **Date:** 2026-03-02

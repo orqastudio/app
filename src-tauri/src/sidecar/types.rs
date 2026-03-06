@@ -14,6 +14,7 @@ pub enum SidecarRequest {
         model: Option<String>,
         system_prompt: Option<String>,
         sdk_session_id: Option<String>,
+        enable_thinking: bool,
     },
     CancelStream {
         session_id: i64,
@@ -126,6 +127,7 @@ mod tests {
             model: Some("claude-opus-4-6".to_string()),
             system_prompt: None,
             sdk_session_id: None,
+            enable_thinking: false,
         };
 
         let json = serde_json::to_value(&req).expect("serialization should succeed");
@@ -135,6 +137,7 @@ mod tests {
         assert_eq!(json["model"], "claude-opus-4-6");
         assert!(json["system_prompt"].is_null());
         assert!(json["sdk_session_id"].is_null());
+        assert!(!json["enable_thinking"].as_bool().expect("should be bool"));
     }
 
     #[test]
@@ -245,6 +248,7 @@ mod tests {
                 model: None,
                 system_prompt: Some("be helpful".to_string()),
                 sdk_session_id: Some("abc-123".to_string()),
+                enable_thinking: true,
             },
             SidecarRequest::CancelStream { session_id: 2 },
             SidecarRequest::HealthCheck,
@@ -470,6 +474,7 @@ mod tests {
             model: None,
             system_prompt: None,
             sdk_session_id: Some("resume-uuid".to_string()),
+            enable_thinking: false,
         };
 
         let json = serde_json::to_value(&req).expect("serialization should succeed");

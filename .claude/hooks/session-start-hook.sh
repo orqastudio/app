@@ -50,7 +50,29 @@ if [ -f "tmp/session-state.md" ]; then
     echo ""
 fi
 
+# Delegation reminder
+echo "ORCHESTRATOR REMINDERS:"
+echo "- You coordinate. You do NOT implement. Delegate to specialized agents."
+echo "- Available agents: backend-engineer, frontend-engineer, designer, debugger,"
+echo "  test-engineer, code-reviewer, data-engineer, devops-engineer,"
+echo "  documentation-writer, security-engineer, refactor-agent, agent-maintainer,"
+echo "  systems-architect, qa-tester, ux-reviewer"
+echo ""
+
+# Dogfood detection
+if [ -f ".orqa/project.json" ]; then
+    DOGFOOD=$(grep -o '"dogfood"[[:space:]]*:[[:space:]]*true' .orqa/project.json 2>/dev/null)
+    if [ -n "$DOGFOOD" ]; then
+        echo "DOGFOOD MODE ACTIVE: You are editing the app you are running inside."
+        echo "- Use 'make dev' (--no-watch) — never 'make dev-watch'"
+        echo "- After Rust changes: write session state, then ask user to restart"
+        echo "- See .claude/rules/dogfood-mode.md for full rules"
+        echo ""
+    fi
+fi
+
 echo "SESSION START CHECKLIST:"
 echo "- Read TODO.md for current tasks"
 echo "- Check BLOCKERS.md for known issues"
 echo "- Embeddings server needed for ChunkHound: ensure localhost:11435 is running"
+echo ""

@@ -3,16 +3,46 @@
 	import * as ScrollArea from "$lib/components/ui/scroll-area";
 	import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
 	import FileTextIcon from "@lucide/svelte/icons/file-text";
+	import FlaskConicalIcon from "@lucide/svelte/icons/flask-conical";
+	import ClipboardListIcon from "@lucide/svelte/icons/clipboard-list";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 	import SearchInput from "$lib/components/shared/SearchInput.svelte";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import { artifactStore } from "$lib/stores/artifact.svelte";
 	import type { DocNode } from "$lib/types";
 
+	let { mode = "docs" }: { mode?: "docs" | "research" | "plans" } = $props();
+
+	const ItemIcon = $derived(
+		mode === "research" ? FlaskConicalIcon : mode === "plans" ? ClipboardListIcon : FileTextIcon,
+	);
+
 	let filterText = $state("");
 
-	const tree = $derived(artifactStore.docTree);
-	const loading = $derived(artifactStore.docTreeLoading);
+	const tree = $derived(
+		mode === "research"
+			? artifactStore.researchTree
+			: mode === "plans"
+				? artifactStore.planTree
+				: artifactStore.docTree,
+	);
+	const loading = $derived(
+		mode === "research"
+			? artifactStore.researchTreeLoading
+			: mode === "plans"
+				? artifactStore.planTreeLoading
+				: artifactStore.docTreeLoading,
+	);
+	const emptyLabel = $derived(
+		mode === "research"
+			? "No research docs found."
+			: mode === "plans"
+				? "No plans found."
+				: "No documentation found.",
+	);
+	const filterPlaceholder = $derived(
+		mode === "research" ? "Filter research..." : mode === "plans" ? "Filter plans..." : "Filter docs...",
+	);
 
 	/** Filter out root-level README from the tree (accessible via home icon). */
 	const baseTree = $derived(tree.filter((node) => node.path !== "README"));
@@ -58,12 +88,12 @@
 	</div>
 {:else if tree.length === 0}
 	<div class="flex h-full items-center justify-center p-4 text-center text-xs text-muted-foreground">
-		No documentation found.
+		{emptyLabel}
 	</div>
 {:else}
 	<div class="flex h-full flex-col">
 		<div class="border-b border-border p-2">
-			<SearchInput bind:value={filterText} placeholder="Filter docs..." size="xs" />
+			<SearchInput bind:value={filterText} placeholder={filterPlaceholder} size="xs" />
 		</div>
 		<ScrollArea.Root class="min-h-0 flex-1">
 			<div class="space-y-0.5 p-2">
@@ -105,7 +135,7 @@
 			style="padding-left: {depth * 12 + 8}px"
 			onclick={() => handleDocClick(node.path!)}
 		>
-			<FileTextIcon class="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+			<ItemIcon class="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
 			<span class="truncate">{node.label}</span>
 		</button>
 	{/if}

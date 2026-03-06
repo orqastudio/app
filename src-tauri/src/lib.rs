@@ -137,7 +137,14 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_store::Builder::default().build())
-        .plugin(tauri_plugin_window_state::Builder::default().build())
+        .plugin(
+            tauri_plugin_window_state::Builder::default()
+                .with_state_flags(
+                    tauri_plugin_window_state::StateFlags::all()
+                        & !tauri_plugin_window_state::StateFlags::DECORATIONS,
+                )
+                .build(),
+        )
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_notification::init())
         .invoke_handler(tauri::generate_handler![
@@ -148,6 +155,7 @@ pub fn run() {
             commands::stream_commands::stream_send_message,
             commands::stream_commands::stream_stop,
             commands::stream_commands::stream_tool_approval_respond,
+            commands::stream_commands::system_prompt_preview,
             // Project commands
             commands::project_commands::project_open,
             commands::project_commands::project_create,
@@ -173,6 +181,10 @@ pub fn run() {
             commands::artifact_commands::artifact_delete,
             commands::artifact_commands::doc_read,
             commands::artifact_commands::doc_tree_scan,
+            commands::artifact_commands::research_tree_scan,
+            commands::artifact_commands::research_read,
+            commands::artifact_commands::plan_tree_scan,
+            commands::artifact_commands::plan_read,
             commands::artifact_commands::governance_list,
             commands::artifact_commands::governance_read,
             // Project settings commands (file-based)

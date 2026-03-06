@@ -4,6 +4,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import { Separator } from "$lib/components/ui/separator";
 	import { Input } from "$lib/components/ui/input";
+	import { Textarea } from "$lib/components/ui/textarea";
 	import SelectMenu from "$lib/components/shared/SelectMenu.svelte";
 	import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
 	import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
@@ -23,10 +24,14 @@
 	let localModel = $state("auto");
 	let localExcludedPaths = $state<string[]>([]);
 	let newExcludedPath = $state("");
+	let localShowThinking = $state(false);
+	let localCustomPrompt = $state("");
 
 	$effect(() => {
 		localModel = props.settings.default_model;
 		localExcludedPaths = [...props.settings.excluded_paths];
+		localShowThinking = props.settings.show_thinking;
+		localCustomPrompt = props.settings.custom_system_prompt ?? "";
 	});
 
 	function buildSettings(): ProjectSettings {
@@ -34,6 +39,8 @@
 			...props.settings,
 			default_model: localModel,
 			excluded_paths: localExcludedPaths,
+			show_thinking: localShowThinking,
+			custom_system_prompt: localCustomPrompt.trim() || null,
 		};
 	}
 
@@ -96,6 +103,42 @@
 			<p class="mt-1 text-xs text-muted-foreground">
 				{modelOptions.find((o) => o.value === localModel)?.description ?? ""}
 			</p>
+		</div>
+
+		<Separator />
+
+		<div>
+			<div class="flex items-center justify-between">
+				<div>
+					<span class="text-sm font-medium">Show Thinking</span>
+					<p class="text-xs text-muted-foreground">Stream Claude's reasoning process during responses</p>
+				</div>
+				<button
+					class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors {localShowThinking ? 'bg-primary' : 'bg-muted-foreground/30'}"
+					onclick={() => { localShowThinking = !localShowThinking; props.onSave(buildSettings()); }}
+					role="switch"
+					aria-checked={localShowThinking}
+					aria-label="Toggle show thinking"
+				>
+					<span class="inline-block h-4 w-4 transform rounded-full bg-background shadow-sm transition-transform {localShowThinking ? 'translate-x-4' : 'translate-x-0.5'}"></span>
+				</button>
+			</div>
+		</div>
+
+		<Separator />
+
+		<div class="space-y-2">
+			<span class="text-sm font-medium">Custom System Prompt</span>
+			<p class="text-xs text-muted-foreground">Prepended to the auto-generated governance prompt on every turn</p>
+			<Textarea
+				bind:value={localCustomPrompt}
+				placeholder="Enter custom instructions..."
+				class="min-h-[100px] resize-y font-mono text-xs"
+				onblur={() => props.onSave(buildSettings())}
+			/>
+			{#if localCustomPrompt.trim()}
+				<p class="text-xs text-muted-foreground">{localCustomPrompt.trim().length} characters</p>
+			{/if}
 		</div>
 
 		<Separator />

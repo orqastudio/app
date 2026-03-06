@@ -5,26 +5,20 @@
 	import CheckIcon from "@lucide/svelte/icons/check";
 	import HistoryIcon from "@lucide/svelte/icons/history";
 	import { Button } from "$lib/components/ui/button";
-	import { Badge } from "$lib/components/ui/badge";
-	import SelectMenu from "$lib/components/shared/SelectMenu.svelte";
 	import SessionDropdown from "./SessionDropdown.svelte";
 
 	let {
 		session,
 		sessions,
-		resolvedModel,
 		onNewSession,
 		onUpdateTitle,
-		onSelectModel,
 		onSelectSession,
 		onDeleteSession,
 	}: {
 		session: Session;
 		sessions: SessionSummary[];
-		resolvedModel: string | null;
 		onNewSession: () => void;
 		onUpdateTitle: (title: string) => void;
-		onSelectModel: (model: string) => void;
 		onSelectSession: (sessionId: number) => void;
 		onDeleteSession: (sessionId: number) => void;
 	} = $props();
@@ -34,30 +28,10 @@
 	let inputRef = $state<HTMLInputElement | null>(null);
 
 	const displayTitle = $derived(session.title ?? "New Session");
-	const modelLabel = $derived(getModelLabel(session.model));
-	const resolvedLabel = $derived(resolvedModel ? getModelLabel(resolvedModel) : null);
-	const modelTriggerLabel = $derived(
-		resolvedLabel && resolvedLabel !== modelLabel
-			? `${modelLabel} (${resolvedLabel})`
-			: modelLabel,
-	);
-
-	const models: { value: string; label: string }[] = [
-		{ value: "auto", label: "Auto" },
-		{ value: "opus", label: "Opus" },
-		{ value: "sonnet", label: "Sonnet" },
-		{ value: "haiku", label: "Haiku" },
-	];
-
-	function getModelLabel(model: string): string {
-		const found = models.find((m) => m.value === model);
-		return found ? found.label : model;
-	}
 
 	function startEditing() {
 		isEditing = true;
 		editTitle = session.title ?? "";
-		// Focus input after it renders
 		setTimeout(() => inputRef?.focus(), 0);
 	}
 
@@ -76,13 +50,6 @@
 		} else if (event.key === "Escape") {
 			isEditing = false;
 		}
-	}
-
-	function formatTokens(count: number): string {
-		if (count >= 1000) {
-			return `${(count / 1000).toFixed(1)}k`;
-		}
-		return String(count);
 	}
 </script>
 
@@ -120,21 +87,6 @@
 			</Button>
 		{/if}
 	</div>
-
-	<!-- Model selector -->
-	<SelectMenu
-		items={models}
-		selected={session.model}
-		onSelect={onSelectModel}
-		triggerLabel={modelTriggerLabel}
-	/>
-
-	<!-- Token usage -->
-	{#if session.total_input_tokens > 0 || session.total_output_tokens > 0}
-		<Badge variant="secondary" class="text-[10px]">
-			{formatTokens(session.total_input_tokens)}↑ {formatTokens(session.total_output_tokens)}↓
-		</Badge>
-	{/if}
 
 	<!-- New session -->
 	<Button variant="ghost" size="icon-sm" onclick={onNewSession} aria-label="New session">

@@ -1,3 +1,11 @@
+---
+title: "Tool Definitions"
+category: architecture
+tags: []
+created: 2026-03-02
+updated: 2026-03-04
+---
+
 # Tool Definitions
 
 **Date:** 2026-03-02 | **Status:** Phase 0e specification | **References:** [Claude Integration Research](/research/claude-integration) (AD-010)

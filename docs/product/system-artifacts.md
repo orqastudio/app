@@ -1,3 +1,11 @@
+---
+title: "System vs Project Artifacts"
+category: product
+tags: []
+created: 2026-03-05
+updated: 2026-03-05
+---
+
 # System vs Project Artifacts
 
 **Date:** 2026-03-05
@@ -33,7 +41,7 @@ Project artifacts describe the specific codebase the agents are working on. They
 | Product docs | `docs/product/` | Vision, personas, roadmap, MVP specification — specific to this product |
 | Development docs | `docs/development/` | Coding standards, getting-started guide — specific to this stack |
 | UI specs | `docs/ui/` | Component inventory, design system, interaction patterns — specific to this app |
-| Lessons | `docs/development/lessons.md` (current) or `.orqa/lessons/*.md` (Phase 2g) | Mistakes observed in this codebase, not universal |
+| Lessons | `.orqa/lessons/*.md` | Mistakes observed in this codebase, not universal |
 | SQLite schema | `docs/architecture/sqlite-schema.md` | This project's database design |
 | Project config | `.orqa/config.json` | Per-project Orqa Studio settings (scan paths, promotion threshold, etc.) |
 

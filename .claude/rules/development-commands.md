@@ -7,6 +7,8 @@ All development commands MUST be invoked via `make` targets. Raw `cargo` and `np
 | Action | Use This | NOT This |
 |--------|----------|----------|
 | Run app | `make dev` | `cargo tauri dev` |
+| Stop app | `make stop` | `taskkill` / manual process hunting |
+| Restart app | `make restart` | killing processes then `make dev` |
 | Run all checks | `make check` | `cargo clippy && npm run check && ...` |
 | Format Rust | `make fmt` | `cargo fmt` |
 | Check formatting | `make fmt-check` | `cargo fmt --check` |
@@ -36,7 +38,7 @@ Any session that modifies code (Rust, Svelte, TypeScript, CSS) MUST have `make d
 
 **Dogfooding context:** Orqa Studio is developed using itself. The app you are running inside IS the codebase you are editing. `make dev` uses `--no-watch` so that editing `.rs` files does not kill the running app mid-conversation. Vite HMR still works for frontend changes.
 
-After Rust backend changes, the user must manually restart `make dev` to pick up the new code. **NEVER use `make dev-watch`** — it causes the app to restart on every Rust file save, which destroys the active session.
+After Rust backend changes, use `make restart` to cleanly stop all processes and restart. This kills the Tauri app, Vite dev server, and any cargo builds, waits for ports to release, then starts fresh. **NEVER use `make dev-watch`** — it causes the app to restart on every Rust file save, which destroys the active session.
 
 **Rules:**
 

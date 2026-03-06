@@ -1,3 +1,11 @@
+---
+title: "Glossary & Domain Model"
+category: product
+tags: []
+created: 2026-03-02
+updated: 2026-03-04
+---
+
 # Glossary & Domain Model
 
 **Date:** 2026-03-02

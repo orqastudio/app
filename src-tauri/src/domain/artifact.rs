@@ -56,6 +56,47 @@ pub struct ArtifactRelationship {
     pub target: String,
 }
 
+/// YAML frontmatter metadata extracted from a documentation file.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct DocFrontmatter {
+    pub title: Option<String>,
+    pub category: Option<String>,
+    #[serde(default)]
+    pub tags: Vec<String>,
+    pub created: Option<String>,
+    pub updated: Option<String>,
+}
+
+/// A research question within a research document's frontmatter.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct ResearchQuestion {
+    pub id: String,
+    pub title: String,
+    #[serde(default)]
+    pub status: String,
+    #[serde(default)]
+    pub verdict: Option<String>,
+}
+
+/// YAML frontmatter metadata extracted from a research file.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct ResearchFrontmatter {
+    #[serde(rename = "type", default)]
+    pub research_type: Option<String>,
+    pub status: Option<String>,
+    pub date: Option<String>,
+    pub category: Option<String>,
+    pub description: Option<String>,
+    #[serde(default)]
+    pub questions: Vec<ResearchQuestion>,
+    #[serde(default)]
+    pub produces_decisions: Vec<String>,
+    #[serde(default)]
+    pub informs_phases: Vec<serde_yaml::Value>,
+    #[serde(default)]
+    pub informs_features: Vec<String>,
+}
+
 /// A node in the documentation tree. Directories have children; markdown files have a path.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DocNode {
@@ -65,6 +106,72 @@ pub struct DocNode {
     pub path: Option<String>,
     /// Child nodes for directories. `None` for leaf files.
     pub children: Option<Vec<DocNode>>,
+    /// Frontmatter metadata extracted from the file. `None` for directories.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub frontmatter: Option<DocFrontmatter>,
+}
+
+/// Extract the YAML text between `---` delimiters from a markdown file.
+///
+/// Returns `(yaml_text, body)`. If no frontmatter is present, returns `(None, full_content)`.
+pub fn extract_frontmatter(content: &str) -> (Option<String>, String) {
+    let trimmed = content.trim_start();
+    if !trimmed.starts_with("---") {
+        return (None, content.to_string());
+    }
+
+    let after_open = &trimmed[3..];
+    let Some(close_pos) = after_open.find("\n---") else {
+        return (None, content.to_string());
+    };
+
+    let fm_text = after_open[..close_pos].to_string();
+    let body = after_open[close_pos + 4..]
+        .trim_start_matches('\n')
+        .to_string();
+    (Some(fm_text), body)
+}
+
+/// Parse YAML frontmatter into any deserializable type.
+///
+/// Returns `(parsed_frontmatter, body)`. If no frontmatter is present or parsing fails,
+/// returns `(Default, full_content)`.
+pub fn parse_frontmatter<T: serde::de::DeserializeOwned + Default>(content: &str) -> (T, String) {
+    let (fm_text, body) = extract_frontmatter(content);
+    let frontmatter = fm_text
+        .and_then(|text| serde_yaml::from_str::<T>(&text).ok())
+        .unwrap_or_default();
+    (frontmatter, body)
+}
+
+/// Convenience alias: parse doc frontmatter.
+pub fn parse_doc_frontmatter(content: &str) -> (DocFrontmatter, String) {
+    parse_frontmatter::<DocFrontmatter>(content)
+}
+
+/// Convenience alias: parse research frontmatter.
+pub fn parse_research_frontmatter(content: &str) -> (ResearchFrontmatter, String) {
+    parse_frontmatter::<ResearchFrontmatter>(content)
+}
+
+/// YAML frontmatter metadata extracted from an implementation plan file.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct PlanFrontmatter {
+    pub title: Option<String>,
+    pub status: Option<String>,
+    pub created: Option<String>,
+    pub updated: Option<String>,
+    #[serde(default)]
+    pub phases: Option<i64>,
+    #[serde(default)]
+    pub completed_phases: Option<i64>,
+    #[serde(default)]
+    pub tags: Vec<String>,
+}
+
+/// Convenience alias: parse plan frontmatter.
+pub fn parse_plan_frontmatter(content: &str) -> (PlanFrontmatter, String) {
+    parse_frontmatter::<PlanFrontmatter>(content)
 }
 
 #[cfg(test)]

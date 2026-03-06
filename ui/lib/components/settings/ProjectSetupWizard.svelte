@@ -53,6 +53,8 @@
 			stack: scanResult.stack,
 			governance: scanResult.governance,
 			icon: null,
+			show_thinking: false,
+			custom_system_prompt: null,
 		};
 		await projectStore.saveProjectSettings(props.projectPath, settings);
 		await projectStore.loadProjectSettings(props.projectPath);

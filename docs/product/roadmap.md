@@ -1,3 +1,11 @@
+---
+title: "Roadmap"
+category: product
+tags: []
+created: 2026-03-02
+updated: 2026-03-05
+---
+
 # Roadmap
 
 **Date:** 2026-03-04
@@ -10,36 +18,36 @@ The roadmap enforces a strict **define before build** sequence. Phases 0a throug
 
 ## Phase 0a: Tech Stack Research
 
-Research and resolve technical decision points. Each item results in documented findings in `docs/research/` with a recommendation.
+Research and resolve technical decision points. Each item results in documented findings in `.orqa/research/` with a recommendation.
 
-**Claude Integration** — [`docs/research/claude-integration.md`](/research/claude-integration)
+**Claude Integration** — [`.orqa/research/mvp/claude-integration.md`](/research/mvp/claude-integration)
 
 - [x] Claude integration approach → Agent SDK as primary (spawns official CLI, Max subscription). `tools: []` + custom MCP for control.
 - [x] Claude Max integration path → Max subscription via Agent SDK. Cost-effective at 25+ conv/day. API key + other providers on roadmap.
 - [x] Tool implementation strategy → Orqa Studio tools as custom MCP server exposed to Agent SDK. Native Rust execution. MCP host for extensibility.
 - [x] Streaming architecture → Agent SDK → sidecar (Bun-compiled) → NDJSON stdout → Rust → Channel<T> → Svelte store.
 
-**Tauri v2** — [`docs/research/tauri-v2.md`](/research/tauri-v2)
+**Tauri v2** — [`.orqa/research/mvp/tauri-v2.md`](/research/mvp/tauri-v2)
 
 - [x] Tauri v2 capability audit → All 8 requirements confirmed supported
 - [x] IPC design → invoke() for CRUD, Channel<T> for streaming, events for notifications
 - [x] Security model → Scoped capabilities, keyring for API keys, persisted scopes
 - [x] Plugin ecosystem → All 9 needed plugins exist and are stable
 
-**Frontend** — [`docs/research/frontend.md`](/research/frontend)
+**Frontend** — [`.orqa/research/mvp/frontend.md`](/research/mvp/frontend)
 
 - [x] Markdown rendering + editing → CodeMirror 6 (editing) + @humanspeak/svelte-markdown (rendering). No WYSIWYG.
 - [x] Conversation UI component → Custom build on shadcn-svelte. Vercel AI SDK for patterns only.
 - [x] Panel layout system → PaneForge (shadcn-svelte Resizable). Three-zone + nav sub-panel layout.
 - [x] Chart/visualization library → LayerChart (shadcn-svelte Chart). Badge + lucide for indicators.
 
-**Persistence** — [`docs/research/persistence.md`](/research/persistence)
+**Persistence** — [`.orqa/research/mvp/persistence.md`](/research/mvp/persistence)
 
 - [x] SQLite schema design → 9 tables + 2 FTS5. One row per content block. rusqlite + tauri-plugin-sql.
 - [x] File vs DB boundary → Hybrid: metadata + FTS in DB, content from disk. notify file watcher.
 - [x] Session persistence model → Full history (<5 GB/year). FTS5 cross-session search. Rule-based handoff.
 
-**Onboarding** — [`docs/research/onboarding.md`](/research/onboarding)
+**Onboarding** — [`.orqa/research/mvp/onboarding.md`](/research/mvp/onboarding)
 
 - [x] Codebase scanning strategy → Three-tier hybrid: manifest heuristics + hyperpolyglot + Claude on-demand.
 - [x] Governance framework format → .claude/ on disk (authoritative) + SQLite metadata (derived cache).
@@ -49,17 +57,17 @@ Research and resolve technical decision points. Each item results in documented 
 
 Promote research findings to formal Architecture Decisions in [`docs/architecture/decisions.md`](/architecture/decisions). Each AD is immutable once recorded. Research origin noted for traceability.
 
-- [x] AD-007: Agent SDK sidecar integration — Bun-compiled TypeScript, stdin/stdout NDJSON, `tauri-plugin-shell` spawn. ← [Claude Integration](/research/claude-integration)
-- [x] AD-008: Max subscription authentication — Primary auth via Agent SDK + Claude Code CLI. API key + other providers on roadmap. ← [Claude Integration](/research/claude-integration)
-- [x] AD-009: Streaming pipeline — Agent SDK → sidecar → NDJSON → Rust → Channel<T> → Svelte. Clarifies AD-002. ← [Claude Integration](/research/claude-integration)
-- [x] AD-010: Tool implementation as MCP — Orqa Studio tools as custom MCP server to Agent SDK. Built-in tools disabled. MCP host for extensibility. ← [Claude Integration](/research/claude-integration)
-- [x] AD-011: Security model — Tauri three-layer (permissions → scopes → capabilities). Keyring for secrets. Persisted scopes. ← [Tauri v2](/research/tauri-v2)
-- [x] AD-012: Tauri plugin selections — 11 plugins (sql, fs, shell, store, autostart, updater, window-state, dialog, notification, keyring, persisted-scope). ← [Tauri v2](/research/tauri-v2)
-- [x] AD-013: Frontend library selections — shadcn-svelte + CodeMirror 6 + PaneForge + LayerChart. Custom conversation UI. ← [Frontend](/research/frontend)
-- [x] AD-014: Persistence architecture — 9 tables + 2 FTS5. One row per content block. Hybrid file/DB. Full session history. ← [Persistence](/research/persistence)
-- [x] AD-015: Governance artifact format — .claude/ on disk (authoritative) + SQLite metadata cache. yaml-front-matter + comrak. ← [Onboarding](/research/onboarding)
-- [x] AD-016: Onboarding strategy — Three-tier scanning. Conversation-first progressive disclosure. Feature gates in SQLite. ← [Onboarding](/research/onboarding)
-- [x] AD-017: Composability principle — Provider-agnostic ProviderEvent protocol. Swappable sidecar providers. ← [Claude Integration](/research/claude-integration)
+- [x] AD-007: Agent SDK sidecar integration — Bun-compiled TypeScript, stdin/stdout NDJSON, `tauri-plugin-shell` spawn. ← [Claude Integration](/research/mvp/claude-integration)
+- [x] AD-008: Max subscription authentication — Primary auth via Agent SDK + Claude Code CLI. API key + other providers on roadmap. ← [Claude Integration](/research/mvp/claude-integration)
+- [x] AD-009: Streaming pipeline — Agent SDK → sidecar → NDJSON → Rust → Channel<T> → Svelte. Clarifies AD-002. ← [Claude Integration](/research/mvp/claude-integration)
+- [x] AD-010: Tool implementation as MCP — Orqa Studio tools as custom MCP server to Agent SDK. Built-in tools disabled. MCP host for extensibility. ← [Claude Integration](/research/mvp/claude-integration)
+- [x] AD-011: Security model — Tauri three-layer (permissions → scopes → capabilities). Keyring for secrets. Persisted scopes. ← [Tauri v2](/research/mvp/tauri-v2)
+- [x] AD-012: Tauri plugin selections — 11 plugins (sql, fs, shell, store, autostart, updater, window-state, dialog, notification, keyring, persisted-scope). ← [Tauri v2](/research/mvp/tauri-v2)
+- [x] AD-013: Frontend library selections — shadcn-svelte + CodeMirror 6 + PaneForge + LayerChart. Custom conversation UI. ← [Frontend](/research/mvp/frontend)
+- [x] AD-014: Persistence architecture — 9 tables + 2 FTS5. One row per content block. Hybrid file/DB. Full session history. ← [Persistence](/research/mvp/persistence)
+- [x] AD-015: Governance artifact format — .claude/ on disk (authoritative) + SQLite metadata cache. yaml-front-matter + comrak. ← [Onboarding](/research/mvp/onboarding)
+- [x] AD-016: Onboarding strategy — Three-tier scanning. Conversation-first progressive disclosure. Feature gates in SQLite. ← [Onboarding](/research/mvp/onboarding)
+- [x] AD-017: Composability principle — Provider-agnostic ProviderEvent protocol. Swappable sidecar providers. ← [Claude Integration](/research/mvp/claude-integration)
 
 ## Phase 0c: Product Definition
 
@@ -75,31 +83,31 @@ Define what we're building before designing how it looks. These documents live i
 
 Design the user interface before building it. These documents live in `docs/ui/`.
 
-- [x] **Wireframing tool research** — PlantUML Salt (primary, wireframes) + D2 (secondary, architecture diagrams). ImagineUI abandoned and not recommended. [`docs/research/wireframing.md`](/research/wireframing)
-- [x] **Design system** — Orqa Studio's own design tokens (colors, typography, spacing, dark/light mode). Per-project theming via extracted design tokens. Brand extension variables. Component library specification. [`docs/ui/design-system.md`](/ui/design-system) ← research: [Design Tokens](/research/design-tokens), [Branding](/research/branding), [Brand Identity](/ui/brand-identity)
-- [x] **Wireframes: Core layout** — Three-zone + nav sub-panel layout (Activity Bar, Nav Sub-Panel, Explorer, Chat) with toolbar and status bar. Default and Nav Sub-Panel-collapsed states. Zone dimensions and collapse behavior. [`docs/wireframes/core-layout.md`](/wireframes/core-layout) ← informed by: [Information Architecture](/product/information-architecture), [Wireframing](/research/wireframing)
-- [x] **Wireframes: Conversation view** — Active conversation, streaming state, empty/welcome state, error states. Tool call cards collapsed and expanded. All tool types represented. [`docs/wireframes/conversation-view.md`](/wireframes/conversation-view) ← informed by: [Information Architecture](/product/information-architecture), [Frontend](/research/frontend), [MVP Spec F-003, F-004](/product/mvp-specification)
-- [x] **Wireframes: Artifact browser** — Explorer Panel browser with Activity Bar category selection, artifact viewer (rendered), editor (source), empty states. Path scope display for rules. [`docs/wireframes/artifact-browser.md`](/wireframes/artifact-browser) ← informed by: [Information Architecture](/product/information-architecture), [Frontend](/research/frontend), [MVP Spec F-007, F-008](/product/mvp-specification)
-- [x] **Wireframes: Settings / onboarding** — Settings panel (provider, project, appearance, shortcuts). First-run welcome, CLI setup, project open with scan results, new project governance scaffolding. [`docs/wireframes/settings-onboarding.md`](/wireframes/settings-onboarding) ← informed by: [Onboarding](/research/onboarding), [MVP Spec F-001, F-001b, F-009](/product/mvp-specification)
-- [x] **Wireframes: Dashboard** — Scanner dashboard with violation details (Phase 3), metrics dashboard with KPI cards (Phase 5), learning loop IMPL/RETRO cards with promotion workflow (Phase 5). Designed early to validate info architecture. [`docs/wireframes/dashboard.md`](/wireframes/dashboard) ← informed by: [Information Architecture](/product/information-architecture), [Frontend](/research/frontend)
-- [x] **Component inventory** — 21 shadcn-svelte library components, 38 custom application components, 4 custom markdown blocks. Phase-tagged. Third-party library mapping. [`docs/ui/component-inventory.md`](/ui/component-inventory) ← informed by: [Frontend](/research/frontend), [Wireframing](/research/wireframing)
-- [x] **Interaction patterns** — Streaming token display pipeline, tool call approval flow (Phase 1 read-only, Phase 2 interactive), inline editing, panel resize/collapse, keyboard shortcuts, transitions, focus management, loading/error/empty states. [`docs/ui/interaction-patterns.md`](/ui/interaction-patterns) ← informed by: [Information Architecture](/product/information-architecture), [Frontend](/research/frontend), [Claude Integration](/research/claude-integration)
-- [x] **Responsive behavior** — Panel collapse priority chain, window width ranges (720-1200px+), overlay mode for narrow windows, toolbar/input/status bar adaptations, PaneForge configuration, testing matrix. [`docs/ui/responsive-behavior.md`](/ui/responsive-behavior) ← informed by: [Information Architecture](/product/information-architecture), [Frontend](/research/frontend)
+- [x] **Wireframing tool research** — PlantUML Salt (primary, wireframes) + D2 (secondary, architecture diagrams). ImagineUI abandoned and not recommended. [`.orqa/research/mvp/wireframing.md`](/research/mvp/wireframing)
+- [x] **Design system** — Orqa Studio's own design tokens (colors, typography, spacing, dark/light mode). Per-project theming via extracted design tokens. Brand extension variables. Component library specification. [`docs/ui/design-system.md`](/ui/design-system) ← research: [Design Tokens](/research/mvp/design-tokens), [Branding](/research/mvp/branding), [Brand Identity](/ui/brand-identity)
+- [x] **Wireframes: Core layout** — Three-zone + nav sub-panel layout (Activity Bar, Nav Sub-Panel, Explorer, Chat) with toolbar and status bar. Default and Nav Sub-Panel-collapsed states. Zone dimensions and collapse behavior. [`docs/wireframes/core-layout.md`](/wireframes/core-layout) ← informed by: [Information Architecture](/product/information-architecture), [Wireframing](/research/mvp/wireframing)
+- [x] **Wireframes: Conversation view** — Active conversation, streaming state, empty/welcome state, error states. Tool call cards collapsed and expanded. All tool types represented. [`docs/wireframes/conversation-view.md`](/wireframes/conversation-view) ← informed by: [Information Architecture](/product/information-architecture), [Frontend](/research/mvp/frontend), [MVP Spec F-003, F-004](/product/mvp-specification)
+- [x] **Wireframes: Artifact browser** — Explorer Panel browser with Activity Bar category selection, artifact viewer (rendered), editor (source), empty states. Path scope display for rules. [`docs/wireframes/artifact-browser.md`](/wireframes/artifact-browser) ← informed by: [Information Architecture](/product/information-architecture), [Frontend](/research/mvp/frontend), [MVP Spec F-007, F-008](/product/mvp-specification)
+- [x] **Wireframes: Settings / onboarding** — Settings panel (provider, project, appearance, shortcuts). First-run welcome, CLI setup, project open with scan results, new project governance scaffolding. [`docs/wireframes/settings-onboarding.md`](/wireframes/settings-onboarding) ← informed by: [Onboarding](/research/mvp/onboarding), [MVP Spec F-001, F-001b, F-009](/product/mvp-specification)
+- [x] **Wireframes: Dashboard** — Scanner dashboard with violation details (Phase 3), metrics dashboard with KPI cards (Phase 5), learning loop IMPL/RETRO cards with promotion workflow (Phase 5). Designed early to validate info architecture. [`docs/wireframes/dashboard.md`](/wireframes/dashboard) ← informed by: [Information Architecture](/product/information-architecture), [Frontend](/research/mvp/frontend)
+- [x] **Component inventory** — 21 shadcn-svelte library components, 38 custom application components, 4 custom markdown blocks. Phase-tagged. Third-party library mapping. [`docs/ui/component-inventory.md`](/ui/component-inventory) ← informed by: [Frontend](/research/mvp/frontend), [Wireframing](/research/mvp/wireframing)
+- [x] **Interaction patterns** — Streaming token display pipeline, tool call approval flow (Phase 1 read-only, Phase 2 interactive), inline editing, panel resize/collapse, keyboard shortcuts, transitions, focus management, loading/error/empty states. [`docs/ui/interaction-patterns.md`](/ui/interaction-patterns) ← informed by: [Information Architecture](/product/information-architecture), [Frontend](/research/mvp/frontend), [Claude Integration](/research/mvp/claude-integration)
+- [x] **Responsive behavior** — Panel collapse priority chain, window width ranges (720-1200px+), overlay mode for narrow windows, toolbar/input/status bar adaptations, PaneForge configuration, testing matrix. [`docs/ui/responsive-behavior.md`](/ui/responsive-behavior) ← informed by: [Information Architecture](/product/information-architecture), [Frontend](/research/mvp/frontend)
 
 ## Phase 0e: Technical Design
 
 Design the technical architecture before building it. These documents live in `docs/architecture/`.
 
-- [x] **SQLite schema** — 11 core tables + 2 FTS5 virtual tables. WAL mode, foreign keys, busy timeout. Migration strategy via tauri-plugin-sql. Streaming write pattern. Common query patterns. [`docs/architecture/sqlite-schema.md`](/architecture/sqlite-schema) ← research: [Persistence](/research/persistence), [Design Tokens](/research/design-tokens)
-- [x] **IPC command catalog** — 26 commands across 8 domains (Project, Session, Message, Streaming, Artifact, Theme, Settings, Sidecar). 10 StreamEvent variants. Typed `invoke<T>` wrapper. [`docs/architecture/ipc-commands.md`](/architecture/ipc-commands) ← research: [Tauri v2](/research/tauri-v2)
-- [x] **Rust module architecture** — 8 top-level modules. Domain types matching SQLite schema. 20 command handlers. Repository pattern with New/Update DTOs. SidecarManager lifecycle. Tool trait and ToolRegistry. Orqa StudioError with 15 variants. [`docs/architecture/rust-modules.md`](/architecture/rust-modules) ← research: [Claude Integration](/research/claude-integration), [Tauri v2](/research/tauri-v2), [Persistence](/research/persistence)
-- [x] **Svelte component tree** — Single-route architecture with state-driven views. 7 stores as Svelte 5 class-based singletons. Component-to-command mapping. Data flow diagrams. [`docs/architecture/svelte-components.md`](/architecture/svelte-components) ← research: [Frontend](/research/frontend), [Design Tokens](/research/design-tokens); product: [Information Architecture](/product/information-architecture)
-- [x] **Streaming pipeline** — End-to-end pipeline with latency annotations. 7 NDJSON message types. requestAnimationFrame-based token buffering. StreamBuffer for SQLite writes. Backpressure analysis (~89KB max). Reconnection strategy. [`docs/architecture/streaming-pipeline.md`](/architecture/streaming-pipeline) ← research: [Claude Integration](/research/claude-integration); AD: [AD-009](/architecture/decisions)
-- [x] **Tool definitions** — 6 tools (Read, Write, Edit, Bash, Glob, Grep) with MCP JSON Schema, Rust implementation, parameter schemas, result formats, UI rendering specs, security constraints. Tool approval matrix. [`docs/architecture/tool-definitions.md`](/architecture/tool-definitions) ← research: [Claude Integration](/research/claude-integration); AD: [AD-010](/architecture/decisions)
-- [x] **MCP host interface** — Dual MCP role (server + host). Built-in 6-tool orqa_ namespace. External server discovery and lifecycle. Three trust levels. Tool aggregation with namespacing. [`docs/architecture/mcp-host.md`](/architecture/mcp-host) ← research: [Claude Integration](/research/claude-integration); AD: [AD-010](/architecture/decisions)
+- [x] **SQLite schema** — 11 core tables + 2 FTS5 virtual tables. WAL mode, foreign keys, busy timeout. Migration strategy via tauri-plugin-sql. Streaming write pattern. Common query patterns. [`docs/architecture/sqlite-schema.md`](/architecture/sqlite-schema) ← research: [Persistence](/research/mvp/persistence), [Design Tokens](/research/mvp/design-tokens)
+- [x] **IPC command catalog** — 26 commands across 8 domains (Project, Session, Message, Streaming, Artifact, Theme, Settings, Sidecar). 10 StreamEvent variants. Typed `invoke<T>` wrapper. [`docs/architecture/ipc-commands.md`](/architecture/ipc-commands) ← research: [Tauri v2](/research/mvp/tauri-v2)
+- [x] **Rust module architecture** — 8 top-level modules. Domain types matching SQLite schema. 20 command handlers. Repository pattern with New/Update DTOs. SidecarManager lifecycle. Tool trait and ToolRegistry. Orqa StudioError with 15 variants. [`docs/architecture/rust-modules.md`](/architecture/rust-modules) ← research: [Claude Integration](/research/mvp/claude-integration), [Tauri v2](/research/mvp/tauri-v2), [Persistence](/research/mvp/persistence)
+- [x] **Svelte component tree** — Single-route architecture with state-driven views. 7 stores as Svelte 5 class-based singletons. Component-to-command mapping. Data flow diagrams. [`docs/architecture/svelte-components.md`](/architecture/svelte-components) ← research: [Frontend](/research/mvp/frontend), [Design Tokens](/research/mvp/design-tokens); product: [Information Architecture](/product/information-architecture)
+- [x] **Streaming pipeline** — End-to-end pipeline with latency annotations. 7 NDJSON message types. requestAnimationFrame-based token buffering. StreamBuffer for SQLite writes. Backpressure analysis (~89KB max). Reconnection strategy. [`docs/architecture/streaming-pipeline.md`](/architecture/streaming-pipeline) ← research: [Claude Integration](/research/mvp/claude-integration); AD: [AD-009](/architecture/decisions)
+- [x] **Tool definitions** — 6 tools (Read, Write, Edit, Bash, Glob, Grep) with MCP JSON Schema, Rust implementation, parameter schemas, result formats, UI rendering specs, security constraints. Tool approval matrix. [`docs/architecture/tool-definitions.md`](/architecture/tool-definitions) ← research: [Claude Integration](/research/mvp/claude-integration); AD: [AD-010](/architecture/decisions)
+- [x] **MCP host interface** — Dual MCP role (server + host). Built-in 6-tool orqa_ namespace. External server discovery and lifecycle. Three trust levels. Tool aggregation with namespacing. [`docs/architecture/mcp-host.md`](/architecture/mcp-host) ← research: [Claude Integration](/research/mvp/claude-integration); AD: [AD-010](/architecture/decisions)
 - [x] **Error taxonomy** — 8 sub-enums with 48 total variants. thiserror derivation. IPC serialization. UI surface mapping for all variants. Three recovery tiers. Logging with tracing crate. [`docs/architecture/error-taxonomy.md`](/architecture/error-taxonomy)
-- [x] **Wireframe serving infrastructure** — Salt source storage. SQLite wireframe_cache table. Style variants (light/dark/brand). On-demand generation with per-wireframe mutex. Custom protocol handler. PlantUML binary resolution. [`docs/architecture/wireframe-serving.md`](/architecture/wireframe-serving) ← research: [Wireframing](/research/wireframing), [Design Tokens](/research/design-tokens)
-- [x] **PlantUML bundling spike** — 4 options evaluated: GraalVM native-image (30-40MB), bundled JRE via jlink (38-50MB), system JRE detection, WASM (not ready). Recommendation: try A, fall back to B, always include C. 6 acceptance criteria. 3-day timebox. [`docs/architecture/plantuml-spike.md`](/architecture/plantuml-spike) ← research: [Wireframing](/research/wireframing)
+- [x] **Wireframe serving infrastructure** — Salt source storage. SQLite wireframe_cache table. Style variants (light/dark/brand). On-demand generation with per-wireframe mutex. Custom protocol handler. PlantUML binary resolution. [`docs/architecture/wireframe-serving.md`](/architecture/wireframe-serving) ← research: [Wireframing](/research/mvp/wireframing), [Design Tokens](/research/mvp/design-tokens)
+- [x] **PlantUML bundling spike** — 4 options evaluated: GraalVM native-image (30-40MB), bundled JRE via jlink (38-50MB), system JRE detection, WASM (not ready). Recommendation: try A, fall back to B, always include C. 6 acceptance criteria. 3-day timebox. [`docs/architecture/plantuml-spike.md`](/architecture/plantuml-spike) ← research: [Wireframing](/research/mvp/wireframing)
 
 ---
 
@@ -188,7 +196,7 @@ Edit agents, rules, skills, and hooks directly in the Orqa Studio UI. Orqa Studi
 Implements the learning loop as native Claude Code hooks and rules first (works in CLI), then adds Orqa Studio-only dashboards for visibility and management.
 
 **Native artifacts:**
-- [ ] Hooks that capture lessons after sessions (post-session hook writes to `docs/development/lessons.md`)
+- [ ] Hooks that capture lessons after sessions (post-session hook writes to `.orqa/lessons/`)
 - [ ] Rules enforcing lesson checking before implementation
 - [ ] CLAUDE.md section describing the promotion pipeline (lesson → rule → scanner → enforcement)
 
@@ -293,28 +301,53 @@ Automated build pipeline, semantic versioning with pre-release builds, and confi
 - [ ] SQLite: user_preferences for update_channel, update_check_interval
 - [ ] Design doc: docs/architecture/auto-update.md
 
-## Phase 3: File Tools & MCP
+## Phase 3: File Tools & MCP Host
 
-← research: [Claude Integration](/research/claude-integration) (tool implementation), [Tauri v2](/research/tauri-v2) (fs plugin, security scopes); AD: [AD-010](/architecture/decisions), [AD-011](/architecture/decisions)
+← research: [Claude Integration](/research/mvp/claude-integration) (tool implementation), [Tauri v2](/research/mvp/tauri-v2) (fs plugin, security scopes); AD: [AD-010](/architecture/decisions), [AD-011](/architecture/decisions); design: [`docs/architecture/mcp-host.md`](/architecture/mcp-host)
 
+**File Tools:**
 - [ ] Implement file tools (Read, Write, Edit, Glob, Grep) in Rust backend
 - [ ] Tool call approval flow (approve/deny/modify before execution)
 - [ ] Project file tree panel in UI
-- [ ] File viewer/editor panel (markdown rendering + code highlighting) ← research: [Frontend](/research/frontend) (CodeMirror, markdown rendering)
+- [ ] File viewer/editor panel (markdown rendering + code highlighting) ← research: [Frontend](/research/mvp/frontend) (CodeMirror, markdown rendering)
 - [ ] Git status integration (show modified files, branch info)
+
+**Semantic Search:**
+
+Semantic search is embedded natively in the app (ONNX embeddings + DuckDB in `src-tauri/src/search/`, sidecar exposes `search_regex`, `search_semantic`, `code_research` as built-in tools). ChunkHound via `.mcp.json` is a permanent CLI/dev-tool enhancement — both paths are first-class.
+
+- [ ] Index management UI — trigger re-index, show index status, configure inclusion/exclusion patterns
+
+**MCP Host — External Server Support:**
+
+Orqa Studio connects to user-installed external MCP servers and aggregates their tools for the sidecar. Architecture fully specified in [`docs/architecture/mcp-host.md`](/architecture/mcp-host).
+
+- [ ] Backend: MCP host module (`src-tauri/src/mcp_host/`) — JSON-RPC protocol handler, connection state machine
+- [ ] Backend: stdio transport — spawn external MCP server processes via `tauri-plugin-shell`, stdin/stdout JSON-RPC framing, process lifecycle (lazy spawn, crash detection, auto-restart, graceful shutdown)
+- [ ] Backend: SSE transport — HTTP client for remote MCP servers, reconnection with exponential backoff, health check pings
+- [ ] Backend: Config loader — read/merge `.claude/mcp-servers.json` (project) + `%APPDATA%/orqa-studio/mcp-servers.json` (user), env var expansion, trust level resolution
+- [ ] Backend: Tool aggregator — merge built-in + external tool lists, namespace external tools (`mcp__{server}__{tool}`), route tool calls to correct server
+- [ ] Backend: Tauri commands — `mcp_server_list`, `mcp_server_add`, `mcp_server_remove`, `mcp_server_test`, `mcp_server_toggle`
+- [ ] Sidecar: Accept aggregated tool list from Rust, register external tools with Agent SDK
+- [ ] Frontend: MCP Servers section in Settings — server list (name, transport, status, tool count, trust level), enable/disable toggle
+- [ ] Frontend: Add Server dialog — transport type, command/URL, env vars, trust level, "Test Connection" button
+- [ ] Frontend: Server detail view — tool list, connection log, restart button
+- [ ] Frontend: First-use approval dialog for project-level servers
+- [ ] Security: Three trust levels (builtin/user/project), env var filtering, project-level approval gating
 
 ## Phase 4: Process Visibility
 
-← research: [Onboarding](/research/onboarding) (governance format), [Frontend](/research/frontend) (LayerChart for dashboard); AD: [AD-015](/architecture/decisions)
+← research: [Onboarding](/research/mvp/onboarding) (governance format), [Frontend](/research/mvp/frontend) (LayerChart for dashboard); AD: [AD-015](/architecture/decisions)
 
 - [ ] Scanner runner and dashboard (pass/fail history, violation details)
 - [ ] Metrics dashboard with KPI cards (LayerChart)
 - [ ] Agent activity panel (which agent is working, what tools it's using)
+- [ ] Agent enforcement dashboard (track agent utilization per session, warn if orchestrator writes code directly, enforce skill loading before task execution)
 - [ ] Documentation panel (browse, render, edit project docs)
 
 ## Phase 5: Discovery & Research
 
-← product: [Personas](/product/personas) (Alex: PM/Tech Lead), [Journeys](/product/journeys); research: [Persistence](/research/persistence) (FTS5 search)
+← product: [Personas](/product/personas) (Alex: PM/Tech Lead), [Journeys](/product/journeys); research: [Persistence](/research/mvp/persistence) (FTS5 search)
 
 Research and discovery as a managed artifact within Orqa Studio, giving the PM persona tooling for the define-before-build workflow.
 
@@ -327,12 +360,68 @@ Research and discovery as a managed artifact within Orqa Studio, giving the PM p
 
 ## Future: Provider Ecosystem
 
-The provider-agnostic sidecar interface supports additional providers without changing the Rust core or Svelte UI. Each provider is a new implementation behind the same `ProviderEvent` protocol. ← AD: [AD-017](/architecture/decisions); research: [Claude Integration](/research/claude-integration)
+The provider-agnostic sidecar interface supports additional providers without changing the Rust core or Svelte UI. Each provider is a new implementation behind the same `ProviderEvent` protocol. ← AD: [AD-017](/architecture/decisions); research: [Claude Integration](/research/mvp/claude-integration)
 
 - [ ] API key provider (Anthropic TypeScript SDK — direct HTTP, pay-per-token)
 - [ ] Cloud provider routing (Amazon Bedrock, Google Vertex AI, Azure AI Foundry)
 - [ ] Alternative model providers (OpenAI, Google Gemini, open-weight models)
 - [ ] Local model support (Ollama, llama.cpp — for offline/air-gapped use)
+
+## Future: Project Type System & Tooling Profiles
+
+Orqa Studio's product discipline (define → research → design → build → govern) applies to any kind of project, not just software. The project setup wizard should determine what the end product is and install the appropriate agents, tools, and environment accordingly.
+
+**Project Type Detection & Setup:**
+- [ ] Project type selector during setup — Software, Web Application, Documentation, Research, Design, Custom
+- [ ] Project type determines which agents are installed (e.g., software projects get `backend-engineer`, `frontend-engineer`, `test-engineer`; non-software projects get domain-appropriate agents)
+- [ ] Project type determines which dev tools are installed (e.g., software projects get ChunkHound for semantic code search; others don't)
+- [ ] Project type stored in `.orqa/project.json` and drives conditional behavior throughout the app
+- [ ] Custom project types — users can define their own type with a custom agent/tool manifest
+
+**Software Project Tooling (default for dogfooding):**
+- [ ] ChunkHound / semantic search auto-configured for code-based projects
+- [ ] Dev environment toolbar — start/stop local dev server, build, test, lint from the app
+- [ ] Terminal integration — embedded terminal panel for running commands without leaving the app
+- [ ] Git integration panel — branch management, diff viewer, commit history
+
+**Web Application Tooling:**
+- [ ] Embedded browser preview — render the web app output alongside the conversation (iframe or webview)
+- [ ] Hot-reload integration — preview updates live as the agent makes changes
+- [ ] Responsive preview — toggle viewport sizes to verify responsive behavior
+- [ ] Network inspector — monitor API calls made by the previewed app
+- [ ] Dogfood detection — when the project being managed IS Orqa Studio itself, preview tooling is disabled (you can't preview yourself inside yourself). Dogfood-specific enhanced caution (no-watch dev server, session state persistence, sidecar self-edit warnings) is implemented as part of the agent governance overhaul — see `docs/process/agent-governance-plan.md` Phase 1
+
+**Asset & Content Tooling:**
+- [ ] Asset viewers — image, video, audio, 3D model preview panels based on project type
+- [ ] Document preview — PDF, slides, or rich text rendering for documentation projects
+- [ ] Markdown preview — live-rendered markdown alongside source for content projects
+
+**Environment Management:**
+- [ ] Local dev environment launcher — configure and start Docker containers, local servers, databases from the app
+- [ ] Environment profiles — save/restore different environment configurations per project
+- [ ] Health checks — verify the local environment is running and accessible before starting a session
+
+## Future: Onboarding Flow Review
+
+Review and polish the end-to-end onboarding experience — from first app launch through project creation/initialization to first conversation. Ensure the flows are intuitive, well-documented, and handle edge cases gracefully.
+
+- [ ] Audit first-run setup wizard — verify each step is necessary, clear, and skippable when already configured
+- [ ] New Project flow — "Create From Scratch" should scaffold a sensible project structure (README, .gitignore, .orqa/) with optional templates (e.g., Rust, Node, Python starter)
+- [ ] Initialize Existing Folder flow — improve scan results presentation, show what Orqa will add vs. what already exists, preview `.orqa/` directory structure before creation
+- [ ] Open Project validation — graceful handling of corrupted `.orqa/`, missing files, version mismatches between app and project config
+- [ ] Onboarding analytics — track where users drop off or get stuck (locally, not telemetry)
+- [ ] Guided first conversation — after project setup, suggest a first task or provide a walkthrough of the conversation interface
+- [ ] Re-onboarding — when the app updates with new features, surface a "What's New" flow highlighting changes relevant to the user's project
+
+## Future: Multi-Window & Multi-Project
+
+Multiple projects open simultaneously, each in its own window with independent state. Requires system tray support, per-window project context, and per-window sidecar management.
+
+- [ ] System tray integration — `tray-icon` Tauri plugin. Close Window minimizes to tray instead of quitting. Tray icon shows running status. Right-click menu for quick access.
+- [ ] Multi-window support — Open additional projects in new Tauri windows. Each window has its own project store, conversation state, and sidecar process.
+- [ ] Window management — Track open windows and their projects. "Window" menu listing all open project windows. Switch between windows.
+- [ ] Per-window sidecar lifecycle — Each window spawns and owns its own sidecar process. Sidecar cleanup on window close.
+- [ ] Shared settings — App-level settings (provider config, appearance) shared across windows. Project-level settings isolated per window.
 
 ## Future: Multi-User Collaborative Access
 
@@ -348,7 +437,7 @@ A small team (PM, Tech Lead, Developer) sharing a single Orqa Studio instance wi
 
 ## Future: Wireframe Browser & Interactive UX Flows
 
-Wireframes are generated as styled images during Phase 0d and stored in a local image cache. This future work makes them a first-class browsable, interactive artifact within Orqa Studio. ← research: [Wireframing](/research/wireframing), [Design Tokens](/research/design-tokens); product: [Journeys](/product/journeys)
+Wireframes are generated as styled images during Phase 0d and stored in a local image cache. This future work makes them a first-class browsable, interactive artifact within Orqa Studio. ← research: [Wireframing](/research/mvp/wireframing), [Design Tokens](/research/mvp/design-tokens); product: [Journeys](/product/journeys)
 
 - [ ] Wireframe browser view — Browse all wireframes for a project, organized by UX flow / journey
 - [ ] Custom markdown block for wireframe images — Renders cached wireframes with style-awareness (serves light/dark/brand variant based on active theme)
@@ -359,11 +448,26 @@ Wireframes are generated as styled images during Phase 0d and stored in a local 
 
 ## Future: Design Tool Integration
 
-Rather than building comprehensive design tooling internally, integrate with 3rd-party design tools where designers already work. This enables a **Designer persona** to complete the end-to-end team (PM/Tech Lead + Developer + Designer) and avoids reinventing design tooling. ← research: [Design Tokens](/research/design-tokens); product: [Personas](/product/personas)
+Rather than building comprehensive design tooling internally, integrate with 3rd-party design tools where designers already work. This enables a **Designer persona** to complete the end-to-end team (PM/Tech Lead + Developer + Designer) and avoids reinventing design tooling. ← research: [Design Tokens](/research/mvp/design-tokens); product: [Personas](/product/personas)
 
 - [ ] Figma integration — Import design tokens (colors, typography, spacing) from Figma files. Use Figma MCP server for two-way communication. Extract component specifications from Figma designs.
-- [ ] Design token sync — Bidirectional sync between project design tokens and external design tools. Changes in Figma propagate to Orqa Studio's per-project theme; governance-defined tokens can be pushed back. ← research: [Design Tokens](/research/design-tokens)
+- [ ] Design token sync — Bidirectional sync between project design tokens and external design tools. Changes in Figma propagate to Orqa Studio's per-project theme; governance-defined tokens can be pushed back. ← research: [Design Tokens](/research/mvp/design-tokens)
 - [ ] Design-to-wireframe pipeline — Import high-fidelity designs from Figma as wireframe references. Link designs to user journeys and UX flows within Orqa Studio.
 - [ ] Code-to-Figma backfill — Analyze existing frontend implementation (components, styles, layout) and generate corresponding Figma components that accurately represent them. Use those components to reconstruct wireframes as Figma designs, enabling teams who prototyped in code to backfill a proper design system. This bridges the gap to Figma's dev tools pipeline for full design-to-development integration. Potentially unique in the market — no existing tool automates code→Figma component generation at this level.
 - [ ] Designer persona — Extend the persona model with a Designer role who defines visual standards, reviews UI compliance, and manages the design system through Orqa Studio's governance framework. ← product: [Personas](/product/personas)
 - [ ] Replace automated wireframing — If Figma integration matures, automated wireframe generation becomes optional. Designers create wireframes in their native tool; Orqa Studio indexes and organizes them.
+
+
+## Future: Developer Experience (Dogfooding)
+
+DX improvements discovered while dogfooding Orqa Studio with itself.
+
+- [ ] Build splash window — Small branded Tauri window that appears during `make dev` compilation and disappears once the app opens. Shows concise build status by default with an expandable accordion for detailed build output (cargo compile progress, warnings, etc.). Helps the developer know the app is building rather than staring at a blank screen.
+- [ ] Custom system prompt templates — Pre-built prompt templates for common scenarios (dogfooding, greenfield, legacy codebase) that can be selected in project settings.
+- [ ] Project-local database — Move SQLite DB from `app_data_dir` to `.orqa/orqa.db` so session history and audit data travels with the project and can be committed to git. Requires `.gitignore` entries for WAL/SHM journal files (`*.db-wal`, `*.db-shm`). Consider whether all tables belong in the portable DB or if some (e.g. app preferences) should remain app-local.
+
+## Future: Code Quality Audit
+
+- [ ] Abstraction pattern audit — Review the codebase for areas where iterative development has introduced overcomplicated patterns, duplicate logic, or unnecessary layers. Identify opportunities for reusable abstractions (e.g. the generic `parse_frontmatter<T>` pattern applied to YAML parsing). Produce a refactoring plan with prioritised simplification targets that reduce maintenance burden without losing functionality.
+- [ ] Coding standards compliance audit — Systematic review of the entire codebase against `docs/development/coding-standards.md`. Verify all Rust code follows error propagation rules, function size limits, naming conventions, and clippy compliance. Verify all Svelte code uses Svelte 5 runes only, strict TypeScript, component purity, and shared component patterns. Document violations and produce a remediation plan.
+- [ ] Enforcement artifact review — Audit existing rules (`.claude/rules/`), hooks (`.claude/hooks/`), and skills (`.claude/skills/`) for completeness and effectiveness. Identify coding standards that lack automated enforcement. Create missing enforcement hooks and rules to close gaps. Ensure pre-commit hooks catch all documented standards.

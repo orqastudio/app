@@ -1,3 +1,11 @@
+---
+title: "Wireframe: Settings & Onboarding"
+category: wireframes
+tags: []
+created: 2026-03-02
+updated: 2026-03-04
+---
+
 # Wireframe: Settings & Onboarding
 
 **Date:** 2026-03-02 | **Informed by:** [Onboarding Research](/research/onboarding), [MVP Spec F-001, F-001b, F-009](/product/mvp-specification)

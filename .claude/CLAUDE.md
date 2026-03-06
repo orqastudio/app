@@ -265,7 +265,7 @@ Claude Code has finite context. Protect it aggressively.
 
 When an agent encounters something unexpected during implementation (a library quirk, a platform-specific behavior, a non-obvious pattern), capture it:
 
-1. Delegate to `documentation-writer` to add the lesson to `docs/development/lessons.md` with:
+1. Delegate to `documentation-writer` to add the lesson to `.orqa/lessons/` with:
    - What happened
    - Why it was unexpected
    - The correct approach
@@ -309,7 +309,7 @@ When the User mentions a future feature or "we should eventually...":
 | Architecture docs | `docs/architecture/` | System design, IPC contracts |
 | UI specs | `docs/ui/` | Component specs, wireframes |
 | Product docs | `docs/product/` | Roadmap, feature specs |
-| Lessons learned | `docs/development/lessons.md` | Implementation lessons |
+| Lessons learned | `.orqa/lessons/` | Implementation lessons |
 | Retrospectives | `docs/process/retrospectives.md` | Process retrospectives |
 | Session state | `tmp/session-state.md` | Cross-session continuity |
 

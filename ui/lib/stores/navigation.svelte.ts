@@ -2,6 +2,8 @@ export type ActivityView =
 	| "chat"
 	| "project"
 	| "docs"
+	| "research"
+	| "plans"
 	| "agents"
 	| "rules"
 	| "lessons"
@@ -19,6 +21,8 @@ export type ExplorerView =
 /** Activity views that use the nav sub-panel for sub-navigation */
 const ACTIVITIES_WITH_NAV_PANEL: ActivityView[] = [
 	"docs",
+	"research",
+	"plans",
 	"agents",
 	"rules",
 	"skills",
@@ -29,7 +33,7 @@ const ACTIVITIES_WITH_NAV_PANEL: ActivityView[] = [
 ];
 
 /** Activity views that show artifact browsing in the explorer */
-const ARTIFACT_ACTIVITIES: ActivityView[] = ["docs", "agents", "rules", "skills", "hooks"];
+const ARTIFACT_ACTIVITIES: ActivityView[] = ["docs", "research", "plans", "agents", "rules", "skills", "hooks"];
 
 class NavigationStore {
 	activeActivity = $state<ActivityView>("chat");
@@ -62,6 +66,22 @@ class NavigationStore {
 			}
 		} else if (view === "docs") {
 			// Auto-open the docs homepage (no breadcrumb — home icon suffices)
+			this.explorerView = "artifact-viewer";
+			this.selectedArtifactPath = "README";
+			this.breadcrumbs = [];
+			if (this.navPanelCollapsed) {
+				this.navPanelCollapsed = false;
+			}
+		} else if (view === "research") {
+			// Auto-open the research index
+			this.explorerView = "artifact-viewer";
+			this.selectedArtifactPath = "README";
+			this.breadcrumbs = [];
+			if (this.navPanelCollapsed) {
+				this.navPanelCollapsed = false;
+			}
+		} else if (view === "plans") {
+			// Auto-open the plans index
 			this.explorerView = "artifact-viewer";
 			this.selectedArtifactPath = "README";
 			this.breadcrumbs = [];

@@ -74,6 +74,25 @@ pub enum StreamEvent {
         session_id: i64,
         title: String,
     },
+    /// Emitted when the system prompt is sent to the model at the start of a turn.
+    ///
+    /// Carries both the optional user-supplied custom prompt and the governance
+    /// prompt injected by the backend, plus the combined character count.
+    SystemPromptSent {
+        custom_prompt: Option<String>,
+        governance_prompt: String,
+        total_chars: i64,
+    },
+    /// Emitted when prior conversation messages are injected as context.
+    ///
+    /// The `messages` field is a JSON array of `{role, content}` objects suitable
+    /// for rendering in a dialog on the frontend.
+    ContextInjected {
+        message_count: i32,
+        total_chars: i64,
+        /// JSON array of `{role, content}` objects for dialog display.
+        messages: String,
+    },
 }
 
 #[cfg(test)]

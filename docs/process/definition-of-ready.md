@@ -1,3 +1,11 @@
+---
+title: "Definition of Ready"
+category: process
+tags: []
+created: 2026-03-02
+updated: 2026-03-02
+---
+
 # Definition of Ready
 
 **Date:** 2026-03-02

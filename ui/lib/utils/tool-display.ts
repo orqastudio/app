@@ -78,3 +78,68 @@ export function groupLabel(toolName: string, count: number): string {
 	};
 	return labels[stripped] ?? `${stripped} (${count} calls)`;
 }
+
+/**
+ * Maps a tool name to an activity phase label shown during streaming.
+ */
+export function getActivityPhase(toolName: string): string {
+	const stripped = stripToolName(toolName);
+	const phases: Record<string, string> = {
+		read_file: "Exploring Code",
+		glob: "Exploring Code",
+		grep: "Exploring Code",
+		search_regex: "Exploring Code",
+		search_semantic: "Exploring Code",
+		code_research: "Researching",
+		bash: "Running Commands",
+		write_file: "Writing Code",
+		edit_file: "Writing Code",
+	};
+	return phases[stripped] ?? "Working";
+}
+
+/**
+ * Returns a short ephemeral description for a tool call in progress.
+ * e.g. "Reading src/main.rs" or "Searching for 'handleClick'"
+ */
+export function getEphemeralLabel(toolName: string, input: string): string {
+	const stripped = stripToolName(toolName);
+	try {
+		const parsed = JSON.parse(input);
+		switch (stripped) {
+			case "read_file":
+				return `Reading ${shortenPath(parsed.file_path ?? parsed.path ?? "")}`;
+			case "write_file":
+				return `Writing ${shortenPath(parsed.file_path ?? parsed.path ?? "")}`;
+			case "edit_file":
+				return `Editing ${shortenPath(parsed.file_path ?? parsed.path ?? "")}`;
+			case "glob":
+				return `Finding ${parsed.pattern ?? "files"}`;
+			case "grep":
+				return `Searching for "${truncate(parsed.pattern ?? parsed.query ?? "", 40)}"`;
+			case "search_regex":
+				return `Searching for "${truncate(parsed.pattern ?? "", 40)}"`;
+			case "search_semantic":
+				return `Searching "${truncate(parsed.query ?? "", 40)}"`;
+			case "code_research":
+				return `Researching "${truncate(parsed.query ?? "", 40)}"`;
+			case "bash":
+				return `Running command`;
+			default:
+				return getToolDisplay(toolName).label;
+		}
+	} catch {
+		return getToolDisplay(toolName).label;
+	}
+}
+
+function shortenPath(path: string): string {
+	if (!path) return "file";
+	const parts = path.replace(/\\/g, "/").split("/");
+	if (parts.length <= 2) return parts.join("/");
+	return `.../${parts.slice(-2).join("/")}`;
+}
+
+function truncate(str: string, max: number): string {
+	return str.length > max ? str.slice(0, max) + "..." : str;
+}

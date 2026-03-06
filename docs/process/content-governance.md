@@ -1,3 +1,11 @@
+---
+title: "Content Ownership: Docs, Agents, Skills, and Rules"
+category: process
+tags: []
+created: 2026-03-02
+updated: 2026-03-04
+---
+
 # Content Ownership: Docs, Agents, Skills, and Rules
 
 **Created:** 2026-03-02
@@ -276,7 +284,7 @@ When the `documentation-writer` agent makes changes to any documentation page, i
 
 ### Rule → Hook / Hookify Promotion
 
-When a rule is repeatedly violated (recurrence >= 2 in `docs/development/lessons.md`), consider whether it can be enforced by a hook or hookify file. The promotion path:
+When a rule is repeatedly violated (recurrence >= 2 in `.orqa/lessons/`), consider whether it can be enforced by a hook or hookify file. The promotion path:
 
 1. Rule violation captured as an IMPL lesson
 2. Lesson recurrence reaches threshold

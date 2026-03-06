@@ -1,3 +1,11 @@
+---
+title: "Process Metrics"
+category: process
+tags: []
+created: 2026-03-02
+updated: 2026-03-02
+---
+
 # Process Metrics
 
 **Date:** 2026-03-02

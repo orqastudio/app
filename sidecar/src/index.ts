@@ -61,6 +61,7 @@ async function handleRequest(line: string): Promise<void> {
                 request.system_prompt,
                 sendResponse,
                 request.sdk_session_id,
+                request.enable_thinking,
             );
             break;
 

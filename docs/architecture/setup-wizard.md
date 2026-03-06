@@ -1,3 +1,11 @@
+---
+title: "First-Run Setup Wizard"
+category: architecture
+tags: []
+created: 2026-03-04
+updated: 2026-03-04
+---
+
 # First-Run Setup Wizard
 
 **Date:** 2026-03-04

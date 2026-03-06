@@ -42,6 +42,8 @@ export interface ProjectSettings {
 	stack: DetectedStack | null;
 	governance: GovernanceCounts | null;
 	icon: string | null;
+	show_thinking: boolean;
+	custom_system_prompt: string | null;
 }
 
 export interface GovernanceCounts {

@@ -1,3 +1,11 @@
+---
+title: "Component Inventory"
+category: ui
+tags: []
+created: 2026-03-02
+updated: 2026-03-04
+---
+
 # Component Inventory
 
 **Date:** 2026-03-02 | **Informed by:** [Frontend Research](/research/frontend), [Design System](/ui/design-system), [Information Architecture](/product/information-architecture), [Wireframes](/wireframes/)

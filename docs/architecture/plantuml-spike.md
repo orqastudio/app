@@ -1,3 +1,11 @@
+---
+title: "PlantUML Bundling Spike"
+category: architecture
+tags: []
+created: 2026-03-02
+updated: 2026-03-04
+---
+
 # PlantUML Bundling Spike
 
 **Date:** 2026-03-02 | **Status:** Phase 0e specification

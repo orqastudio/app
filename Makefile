@@ -5,7 +5,7 @@
 CARGO_MANIFEST := src-tauri/Cargo.toml
 
 .PHONY: install install-sidecar \
-        dev dev-watch dev-frontend dev-sidecar \
+        dev dev-watch dev-frontend dev-sidecar stop restart \
         build build-frontend build-sidecar \
         check fmt fmt-check clippy lint check-frontend \
         test test-rust test-frontend test-watch test-e2e \
@@ -28,6 +28,24 @@ install-sidecar: ## Install sidecar dependencies
 
 dev: ## Run app without Rust file watcher (safe default for dogfooding)
 	cargo tauri dev --no-watch
+
+stop: ## Stop all Orqa Studio processes (app, Vite, cargo)
+	@echo "Stopping Orqa Studio processes..."
+	@taskkill //F //IM orqa-studio.exe 2>/dev/null || true
+	@for pid in $$(netstat -ano 2>/dev/null | grep ':1420.*LISTENING' | awk '{print $$5}' | sort -u); do \
+		echo "Killing Vite (PID $$pid)"; \
+		taskkill //F //PID $$pid 2>/dev/null || true; \
+	done
+	@for pid in $$(netstat -ano 2>/dev/null | grep ':1421.*LISTENING' | awk '{print $$5}' | sort -u); do \
+		echo "Killing dev server (PID $$pid)"; \
+		taskkill //F //PID $$pid 2>/dev/null || true; \
+	done
+	@echo "Waiting for ports to release..."
+	@sleep 2
+	@echo "Done."
+
+restart: stop ## Restart dev server (stop all, then start)
+	$(MAKE) dev
 
 dev-watch: ## Run app with auto-rebuild on Rust file changes
 	cargo tauri dev

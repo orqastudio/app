@@ -8,14 +8,15 @@
 	import MessageBubble from "./MessageBubble.svelte";
 	import MessageInput from "./MessageInput.svelte";
 	import StreamingIndicator from "./StreamingIndicator.svelte";
-	import ToolCallCard from "$lib/components/tool/ToolCallCard.svelte";
-	import ToolCallGroup from "$lib/components/tool/ToolCallGroup.svelte";
+	import ToolCallSummary from "$lib/components/tool/ToolCallSummary.svelte";
 	import ToolApprovalDialog from "$lib/components/tool/ToolApprovalDialog.svelte";
-	import { stripToolName } from "$lib/utils/tool-display";
+	import ContextEntryComponent from "./ContextEntry.svelte";
+	import ThinkingBlock from "$lib/components/shared/ThinkingBlock.svelte";
 	import { conversationStore } from "$lib/stores/conversation.svelte";
-	import { sessionStore } from "$lib/stores/session.svelte";
+import { sessionStore } from "$lib/stores/session.svelte";
 	import { projectStore } from "$lib/stores/project.svelte";
 	import { settingsStore } from "$lib/stores/settings.svelte";
+	import type { Message } from "$lib/types";
 	import { onMount } from "svelte";
 
 	let scrollViewportRef = $state<HTMLElement | null>(null);
@@ -30,10 +31,11 @@
 	const isLoading = $derived(conversationStore.isLoading);
 	const error = $derived(conversationStore.error);
 	const streamingContent = $derived(conversationStore.streamingContent);
-	const streamingThinking = $derived(conversationStore.streamingThinking);
 	const activeToolCalls = $derived(conversationStore.activeToolCalls);
 	const pendingApproval = $derived(conversationStore.pendingApproval);
 	const processViolations = $derived(conversationStore.processViolations);
+	const contextEntries = $derived(conversationStore.contextEntries);
+	const streamingThinking = $derived(conversationStore.streamingThinking);
 
 	// Restore last session on mount
 	onMount(() => {
@@ -98,6 +100,7 @@
 		void messages.length;
 		void streamingContent;
 		void activeToolCalls.size;
+		void contextEntries.length;
 
 		if (!userScrolledUp && scrollViewportRef) {
 			requestAnimationFrame(() => {
@@ -155,10 +158,6 @@
 		sessionStore.updateTitle(session.id, title);
 	}
 
-	function handleSelectModel(model: string) {
-		conversationStore.selectedModel = model;
-	}
-
 	// Determine if the last message is a streaming assistant message
 	const lastMessage = $derived(messages.length > 0 ? messages[messages.length - 1] : null);
 	const isLastMessageStreaming = $derived(
@@ -167,63 +166,40 @@
 			lastMessage.stream_status === "pending"
 	);
 
-	// Convert active tool calls map to array for display
+	// Convert active tool calls map to array for the streaming indicator
 	const toolCallsArray = $derived(Array.from(activeToolCalls.values()));
 
-	interface ToolCallInfo {
-		toolCallId: string;
-		toolName: string;
-		input: string | null;
-		output: string | null;
-		isError: boolean;
-		isComplete: boolean;
-	}
+	// Group messages into display entries: regular messages + tool summary groups
+	type DisplayEntry =
+		| { kind: "message"; message: Message }
+		| { kind: "tool-summary"; messages: Message[]; key: number };
 
-	type GroupedEntry =
-		| { kind: "single"; toolCall: ToolCallInfo }
-		| { kind: "group"; toolName: string; toolCalls: ToolCallInfo[]; key: string };
-
-	function groupConsecutiveToolCalls(calls: ToolCallInfo[]): GroupedEntry[] {
-		const result: GroupedEntry[] = [];
+	const displayEntries = $derived.by(() => {
+		const entries: DisplayEntry[] = [];
 		let i = 0;
-		while (i < calls.length) {
-			const current = calls[i];
-			const strippedName = stripToolName(current.toolName);
-
-			// Don't group incomplete/running calls
-			if (!current.isComplete) {
-				result.push({ kind: "single", toolCall: current });
-				i++;
-				continue;
-			}
-
-			// Collect consecutive completed calls of the same type
-			let j = i + 1;
-			while (
-				j < calls.length &&
-				calls[j].isComplete &&
-				stripToolName(calls[j].toolName) === strippedName
-			) {
-				j++;
-			}
-
-			const count = j - i;
-			if (count >= 2) {
-				result.push({
-					kind: "group",
-					toolName: current.toolName,
-					toolCalls: calls.slice(i, j),
-					key: current.toolCallId,
-				});
+		while (i < messages.length) {
+			const msg = messages[i];
+			if (msg.content_type === "tool_use" || msg.content_type === "tool_result") {
+				// Collect consecutive tool messages
+				const toolGroup: Message[] = [msg];
+				let j = i + 1;
+				while (
+					j < messages.length &&
+					(messages[j].content_type === "tool_use" ||
+						messages[j].content_type === "tool_result")
+				) {
+					toolGroup.push(messages[j]);
+					j++;
+				}
+				entries.push({ kind: "tool-summary", messages: toolGroup, key: toolGroup[0].id });
+				i = j;
 			} else {
-				result.push({ kind: "single", toolCall: current });
+				entries.push({ kind: "message", message: msg });
+				i++;
 			}
-			i = j;
 		}
-		return result;
-	}
-
-	const groupedToolCalls = $derived(groupConsecutiveToolCalls(toolCallsArray));
+		return entries;
+	});
 </script>
 
 <div class="flex h-full flex-col">
@@ -236,10 +212,8 @@
 		<SessionHeader
 			{session}
 			{sessions}
-			resolvedModel={conversationStore.currentModel}
 			onNewSession={handleNewSession}
 			onUpdateTitle={handleUpdateTitle}
-			onSelectModel={handleSelectModel}
 			onSelectSession={handleSelectSession}
 			onDeleteSession={handleDeleteSession}
 		/>
@@ -283,40 +257,39 @@
 			{:else}
 				<ScrollArea class="h-full" bind:viewportRef={scrollViewportRef}>
 					<div class="space-y-4 p-4" onscroll={handleScroll}>
-						{#each messages as message (message.id)}
-							<MessageBubble
-								{message}
-								streamingContent={isLastMessageStreaming && message.id === lastMessage?.id
-									? streamingContent
-									: undefined}
-							/>
+						<!-- Context entries — inline system messages showing what was sent to Claude -->
+						{#each contextEntries as entry, i (entry.type + i)}
+							<ContextEntryComponent {entry} />
 						{/each}
 
-						<!-- Active tool calls during streaming -->
-						{#if isStreaming && toolCallsArray.length > 0}
-							<div class="space-y-2 px-4">
-								{#each groupedToolCalls as entry (entry.kind === "group" ? entry.key : entry.toolCall.toolCallId)}
-									{#if entry.kind === "group"}
-										<ToolCallGroup
-											toolName={entry.toolName}
-											toolCalls={entry.toolCalls}
-										/>
-									{:else}
-										<ToolCallCard
-											toolName={entry.toolCall.toolName}
-											toolInput={entry.toolCall.input || null}
-											toolOutput={entry.toolCall.output}
-											isError={entry.toolCall.isError}
-											isComplete={entry.toolCall.isComplete}
-										/>
-									{/if}
-								{/each}
-							</div>
+						{#each displayEntries as entry (entry.kind === "message" ? entry.message.id : entry.key)}
+							{#if entry.kind === "tool-summary"}
+								<div class="px-4">
+									<ToolCallSummary messages={entry.messages} />
+								</div>
+							{:else}
+								<MessageBubble
+									message={entry.message}
+									streamingContent={isLastMessageStreaming && entry.message.id === lastMessage?.id
+										? streamingContent
+										: undefined}
+								/>
+							{/if}
+						{/each}
+
+						<!-- Streaming activity indicator -->
+						{#if isStreaming}
+							<StreamingIndicator
+								hasContent={streamingContent.length > 0}
+								toolCalls={toolCallsArray}
+							/>
 						{/if}
 
-						<!-- Streaming indicator -->
-						{#if isStreaming && !streamingContent && toolCallsArray.length === 0}
-							<StreamingIndicator isThinking={streamingThinking.length > 0} />
+						<!-- Thinking block — ephemeral reasoning display below activity -->
+						{#if streamingThinking}
+							<div class="px-4">
+								<ThinkingBlock content={streamingThinking} isStreaming={isStreaming} />
+							</div>
 						{/if}
 
 						<!-- Tool approval dialog — rendered inline in the message stream -->
@@ -358,10 +331,8 @@
 		<!-- Input area -->
 		<MessageInput
 			{isStreaming}
-			selectedModel={conversationStore.selectedModel}
 			onsend={handleSend}
 			onstop={handleStop}
-			onmodelchange={(model) => { conversationStore.selectedModel = model; }}
 		/>
 	{:else}
 		<!-- No session selected -->

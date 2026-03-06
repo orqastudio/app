@@ -1,3 +1,11 @@
+---
+title: "Wireframe: Dashboard Views"
+category: wireframes
+tags: []
+created: 2026-03-02
+updated: 2026-03-04
+---
+
 # Wireframe: Dashboard Views
 
 **Date:** 2026-03-02 | **Informed by:** [Information Architecture](/product/information-architecture), [Frontend Research](/research/frontend)

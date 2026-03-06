@@ -25,4 +25,20 @@ export type StreamEvent =
 			type: "process_violation";
 			data: { check: string; message: string };
 		}
-	| { type: "session_title_updated"; data: { session_id: number; title: string } };
+	| { type: "session_title_updated"; data: { session_id: number; title: string } }
+	| {
+			type: "system_prompt_sent";
+			data: {
+				custom_prompt: string | null;
+				governance_prompt: string;
+				total_chars: number;
+			};
+		}
+	| {
+			type: "context_injected";
+			data: {
+				message_count: number;
+				total_chars: number;
+				messages: string; // JSON array of {role, content}
+			};
+		};
