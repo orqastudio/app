@@ -7,6 +7,7 @@ use crate::domain::governance::{
     RecommendationPriority, RecommendationStatus,
 };
 use crate::domain::governance_scanner::scan_governance;
+use crate::domain::time_utils;
 use crate::error::OrqaError;
 use crate::repo::{governance_repo, project_repo, session_repo};
 use crate::sidecar::types::{SidecarRequest, SidecarResponse};
@@ -41,7 +42,7 @@ pub fn governance_analyze(
     super::sidecar_commands::ensure_sidecar_running(&state)?;
     let raw_response = send_and_collect(&state, session_id, &prompt)?;
     let output = parse_claude_output(&raw_response)?;
-    let now = current_timestamp();
+    let now = time_utils::format_unix_timestamp(time_utils::now_unix_secs());
     let analysis = GovernanceAnalysis {
         id: 0,
         project_id,
@@ -376,77 +377,6 @@ fn normalize_path(path: &Path) -> PathBuf {
     components.iter().collect()
 }
 
-/// Return the current UTC timestamp in RFC3339 format.
-fn current_timestamp() -> String {
-    // Use a simple approach compatible with the existing codebase.
-    // The schema uses strftime for DB defaults; here we need Rust-side timestamps.
-    use std::time::{SystemTime, UNIX_EPOCH};
-    let secs = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_secs())
-        .unwrap_or(0);
-    format_unix_timestamp(secs)
-}
-
-/// Format a Unix timestamp as a compact ISO-8601 string matching SQLite's default.
-fn format_unix_timestamp(secs: u64) -> String {
-    // Days since epoch, accounting for leap years
-    let (year, month, day, hour, minute, second) = unix_to_datetime(secs);
-    format!("{year:04}-{month:02}-{day:02}T{hour:02}:{minute:02}:{second:02}.000Z")
-}
-
-/// Decompose a Unix timestamp into (year, month, day, hour, minute, second).
-fn unix_to_datetime(secs: u64) -> (u64, u64, u64, u64, u64, u64) {
-    let second = secs % 60;
-    let minutes = secs / 60;
-    let minute = minutes % 60;
-    let hours = minutes / 60;
-    let hour = hours % 24;
-    let total_days = hours / 24;
-
-    // Gregorian calendar approximation
-    let mut year = 1970u64;
-    let mut remaining_days = total_days;
-    loop {
-        let days_in_year = if is_leap_year(year) { 366 } else { 365 };
-        if remaining_days < days_in_year {
-            break;
-        }
-        remaining_days -= days_in_year;
-        year += 1;
-    }
-
-    let leap = is_leap_year(year);
-    let month_days: [u64; 12] = [
-        31,
-        if leap { 29 } else { 28 },
-        31,
-        30,
-        31,
-        30,
-        31,
-        31,
-        30,
-        31,
-        30,
-        31,
-    ];
-    let mut month = 1u64;
-    for &days in &month_days {
-        if remaining_days < days {
-            break;
-        }
-        remaining_days -= days;
-        month += 1;
-    }
-    let day = remaining_days + 1;
-
-    (year, month, day, hour, minute, second)
-}
-
-fn is_leap_year(year: u64) -> bool {
-    (year.is_multiple_of(4) && !year.is_multiple_of(100)) || year.is_multiple_of(400)
-}
 
 /// Build the coverage header section for the analysis prompt.
 fn format_coverage_header(scan: &GovernanceScanResult) -> String {
@@ -597,13 +527,6 @@ mod tests {
     fn resolve_target_path_traversal_rejected() {
         let result = resolve_target_path("../../etc/passwd", "/project");
         assert!(matches!(result, Err(OrqaError::PermissionDenied(_))));
-    }
-
-    #[test]
-    fn format_unix_timestamp_produces_valid_format() {
-        // Unix epoch
-        let ts = format_unix_timestamp(0);
-        assert_eq!(ts, "1970-01-01T00:00:00.000Z");
     }
 
     #[test]
