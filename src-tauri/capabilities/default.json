@@ -4,12 +4,9 @@
   "windows": ["main"],
   "permissions": [
     "core:default",
-    "fs:default",
-    "shell:default",
     "store:default",
     "window-state:default",
-    "dialog:default",
-    "notification:default",
+    "dialog:allow-open",
     "core:window:allow-minimize",
     "core:window:allow-maximize",
     "core:window:allow-unmaximize",
