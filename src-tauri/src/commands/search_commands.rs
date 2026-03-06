@@ -1,5 +1,6 @@
 use tauri::State;
 
+use crate::error::OrqaError;
 use crate::search::embedder;
 use crate::search::types::{IndexStatus, SearchResult};
 use crate::search::SearchEngine;
@@ -14,26 +15,30 @@ pub async fn index_codebase(
     state: State<'_, AppState>,
     project_path: String,
     excluded_paths: Vec<String>,
-) -> Result<IndexStatus, String> {
+) -> Result<IndexStatus, OrqaError> {
     let project_path_buf = std::path::PathBuf::from(&project_path);
     let db_path = project_path_buf.join(".orqa").join("search.duckdb");
 
     // Ensure .orqa directory exists
     if let Some(parent) = db_path.parent() {
-        std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+        std::fs::create_dir_all(parent).map_err(|e| OrqaError::Search(e.to_string()))?;
     }
 
-    let mut search_guard = state.search.lock().map_err(|e| e.to_string())?;
+    let mut search_guard = state
+        .search
+        .lock()
+        .map_err(|e| OrqaError::Search(e.to_string()))?;
 
     // Initialize or replace the search engine
-    let engine = SearchEngine::new(&db_path)?;
+    let engine = SearchEngine::new(&db_path).map_err(OrqaError::Search)?;
     *search_guard = Some(engine);
 
     // Index the codebase
     search_guard
         .as_mut()
-        .ok_or_else(|| "search engine not initialized".to_string())?
+        .ok_or_else(|| OrqaError::Search("search engine not initialized".to_string()))?
         .index(&project_path_buf, &excluded_paths)
+        .map_err(OrqaError::Search)
 }
 
 /// Search the indexed codebase using a regex pattern.
@@ -46,12 +51,17 @@ pub async fn search_regex(
     pattern: String,
     path: Option<String>,
     max_results: Option<u32>,
-) -> Result<Vec<SearchResult>, String> {
-    let search_guard = state.search.lock().map_err(|e| e.to_string())?;
-    let engine = search_guard
-        .as_ref()
-        .ok_or_else(|| "search index not initialized — index the codebase first".to_string())?;
-    engine.search_regex(&pattern, path.as_deref(), max_results.unwrap_or(20))
+) -> Result<Vec<SearchResult>, OrqaError> {
+    let search_guard = state
+        .search
+        .lock()
+        .map_err(|e| OrqaError::Search(e.to_string()))?;
+    let engine = search_guard.as_ref().ok_or_else(|| {
+        OrqaError::Search("search index not initialized — index the codebase first".to_string())
+    })?;
+    engine
+        .search_regex(&pattern, path.as_deref(), max_results.unwrap_or(20))
+        .map_err(OrqaError::Search)
 }
 
 /// Search the indexed codebase using semantic similarity.
@@ -63,12 +73,17 @@ pub async fn search_semantic(
     state: State<'_, AppState>,
     query: String,
     max_results: Option<u32>,
-) -> Result<Vec<SearchResult>, String> {
-    let mut search_guard = state.search.lock().map_err(|e| e.to_string())?;
-    let engine = search_guard
-        .as_mut()
-        .ok_or_else(|| "search index not initialized — index the codebase first".to_string())?;
-    engine.search_semantic(&query, max_results.unwrap_or(10))
+) -> Result<Vec<SearchResult>, OrqaError> {
+    let mut search_guard = state
+        .search
+        .lock()
+        .map_err(|e| OrqaError::Search(e.to_string()))?;
+    let engine = search_guard.as_mut().ok_or_else(|| {
+        OrqaError::Search("search index not initialized — index the codebase first".to_string())
+    })?;
+    engine
+        .search_semantic(&query, max_results.unwrap_or(10))
+        .map_err(OrqaError::Search)
 }
 
 /// Get the current status of the search index for a project.
@@ -79,11 +94,14 @@ pub async fn search_semantic(
 pub async fn get_index_status(
     state: State<'_, AppState>,
     project_path: String,
-) -> Result<IndexStatus, String> {
-    let search_guard = state.search.lock().map_err(|e| e.to_string())?;
+) -> Result<IndexStatus, OrqaError> {
+    let search_guard = state
+        .search
+        .lock()
+        .map_err(|e| OrqaError::Search(e.to_string()))?;
 
     if let Some(engine) = search_guard.as_ref() {
-        return engine.get_status();
+        return engine.get_status().map_err(OrqaError::Search);
     }
 
     // If no engine loaded, check if a search DB exists on disk
@@ -94,9 +112,12 @@ pub async fn get_index_status(
     if db_path.exists() {
         // Drop the current guard before re-acquiring as mutable
         drop(search_guard);
-        let mut search_guard = state.search.lock().map_err(|e| e.to_string())?;
-        let engine = SearchEngine::new(&db_path)?;
-        let status = engine.get_status()?;
+        let mut search_guard = state
+            .search
+            .lock()
+            .map_err(|e| OrqaError::Search(e.to_string()))?;
+        let engine = SearchEngine::new(&db_path).map_err(OrqaError::Search)?;
+        let status = engine.get_status().map_err(OrqaError::Search)?;
         *search_guard = Some(engine);
         Ok(status)
     } else {
@@ -115,7 +136,7 @@ pub async fn get_index_status(
 /// This must be called before `search_semantic` can be used.
 /// Progress is logged to stderr during download.
 #[tauri::command]
-pub async fn init_embedder(state: State<'_, AppState>, model_dir: String) -> Result<(), String> {
+pub async fn init_embedder(state: State<'_, AppState>, model_dir: String) -> Result<(), OrqaError> {
     let model_path = std::path::PathBuf::from(&model_dir);
 
     // Download happens outside the mutex lock since it's async and long-running
@@ -128,12 +149,17 @@ pub async fn init_embedder(state: State<'_, AppState>, model_dir: String) -> Res
         }
     })
     .await
-    .map_err(|e| e.to_string())?;
+    .map_err(|e| OrqaError::Search(e.to_string()))?;
 
     // Now load the model into the search engine
-    let mut search_guard = state.search.lock().map_err(|e| e.to_string())?;
+    let mut search_guard = state
+        .search
+        .lock()
+        .map_err(|e| OrqaError::Search(e.to_string()))?;
     if let Some(engine) = search_guard.as_mut() {
-        engine.init_embedder_sync(&model_path)?;
+        engine
+            .init_embedder_sync(&model_path)
+            .map_err(OrqaError::Search)?;
     }
 
     Ok(())
@@ -144,6 +170,9 @@ pub async fn init_embedder(state: State<'_, AppState>, model_dir: String) -> Res
 /// Returns a snapshot of every registered startup task with its current
 /// status and optional detail string (e.g. download percentage).
 #[tauri::command]
-pub async fn get_startup_status(state: State<'_, AppState>) -> Result<StartupSnapshot, String> {
-    state.startup.snapshot().map_err(|e| e.to_string())
+pub async fn get_startup_status(state: State<'_, AppState>) -> Result<StartupSnapshot, OrqaError> {
+    state
+        .startup
+        .snapshot()
+        .map_err(|e| OrqaError::Search(e.to_string()))
 }
