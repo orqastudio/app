@@ -466,38 +466,38 @@ DX improvements discovered while dogfooding Orqa Studio with itself.
 - [ ] Custom system prompt templates — Pre-built prompt templates for common scenarios (dogfooding, greenfield, legacy codebase) that can be selected in project settings.
 - [ ] Project-local database — Move SQLite DB from `app_data_dir` to `.orqa/orqa.db` so session history and audit data travels with the project and can be committed to git. Requires `.gitignore` entries for WAL/SHM journal files (`*.db-wal`, `*.db-shm`). Consider whether all tables belong in the portable DB or if some (e.g. app preferences) should remain app-local.
 
-## Future: Composability as Platform Principle
+## Phase 2i: Composability Gate — NEXT (blocks dogfooding)
 
-Composability is not just an internal coding standard — it is a platform principle that Orqa Studio promotes for every project it manages. In a world of ever-changing demands, composable software is dramatically easier to pivot, extend, and maintain. This future work makes composability a first-class, enforceable, teachable part of the Orqa Studio experience.
+**Prerequisites:** Phase 2h complete. **Blocks:** Dogfooding.
 
-**Portable Composability Skill:**
-- [ ] Extract a generic `composability` skill (not `orqa-` prefixed) that teaches the philosophy without codebase-specific examples — ships with the app for all projects
-- [ ] Adapt composability principles to different tech stacks (not just Rust/Svelte) — the skill should teach functional paradigm, pipeline composition, feature isolation, and pluggable integrations regardless of language
-- [ ] Include composability in the default skill set loaded for every new project (alongside `chunkhound`)
+**Plan:** [`.orqa/plans/composability-gate.md`](/.orqa/plans/composability-gate)
 
-**Project Initialization Templates:**
-- [ ] When Orqa Studio initializes a new project, scaffold composable architecture by default — domain layer, thin command/controller layer, typed boundaries, pluggable integrations
-- [ ] Language-specific templates (Rust, TypeScript, Python, Go) that demonstrate composable patterns in that ecosystem
-- [ ] Template selection during project setup wizard — "Composable Monolith", "Microservice", "CLI Tool", "Library", "Full-Stack App"
-- [ ] Each template includes a project-specific composability skill with real examples from the scaffolded code
+Composability is not just a coding standard — it is a platform principle. The app must practice what it preaches before it can credibly enforce composability on projects it manages. This phase audits, refactors, and architecturally hardens the entire stack, then builds the composable learning loop that adapts to any project.
 
-**Composability Governance Scanner:**
-- [ ] Scanning rules that detect anti-patterns: god components (>150 lines with 3+ store imports), thick command handlers (business logic in controller layer), circular module dependencies, tightly coupled features
-- [ ] Composability health score per project — ratio of pure functions to stateful ones, average function size, dependency graph depth, feature isolation index
-- [ ] Dashboard visualization — composability trends over time, hotspots that need decomposition
-- [ ] Integration with lesson promotion — when composability violations recur, automatically promote to enforcement rules
+**Phase A: Deep Composability Audit** — Every layer: AI provider integration, Rust backend (every module), frontend stores, components, CSS/design system, configuration. Produces scorecard + prioritized refactoring plan.
 
-**Pluggable Integration Architecture:**
-- [ ] Make the AI provider swappable per-project via the sidecar protocol (already proven with AD-017)
-- [ ] Make the search backend swappable — ChunkHound for code projects, different search for non-code projects
-- [ ] Make the scanner pluggable — projects can define custom scanning rules beyond the built-in governance scanner
-- [ ] Make the tool executor pluggable — projects can register custom tools (via MCP or native) that compose with built-in tools
-- [ ] Configuration-driven feature assembly — projects declare which capabilities they need in `.orqa/project.json`, and the app assembles the right agents, tools, and scanners
+**Phase B: Refactoring to Composability:**
+- [ ] Extract domain services from `stream_commands.rs` (~1000 lines → ≤200 lines)
+- [ ] Decompose `ConversationView.svelte` into composable units
+- [ ] Resolve `conversationStore` → `sessionStore` coupling
+- [ ] UI component architecture review — shared components used everywhere, variant props, no inline states
+- [ ] Provider abstraction hardening — protocol cleaned of Claude-specific leaks, pluggable auth, provider selection in project config
 
-**Self-Dogfooding:**
-- [ ] Orqa Studio's own codebase uses these same composability patterns — the app eats its own cooking
-- [ ] The composability scanner runs on Orqa Studio itself as part of `make check`
-- [ ] Composability violations in Orqa Studio's own code are treated as first-class bugs
+**Phase C: Composable Learning Loop:**
+- [ ] Base + Project layering — base skills/agents/rules/scanner ship with app, project-specific layer on top
+- [ ] `.orqa/project.json` schema extended for composability config (base_skills, project_skills, base_agents, project_agents, scanner_profiles)
+- [ ] Portable `composability` skill (language-agnostic, no `orqa-` prefix) — ships with app for all projects
+- [ ] Agents composable per-project — same role adapts to different tech stacks
+- [ ] Rules layered — base always apply, project rules add on top
+- [ ] Scanner pluggable — base scans + project-defined custom scans
+
+**Phase D: Initialization Composability Assessment:**
+- [ ] Governance scan includes composability analysis (function size distribution, coupling, purity, feature isolation)
+- [ ] User-facing assessment report with score, strengths, gaps, and options (refactor plan / accept / skip)
+- [ ] Greenfield projects get composability by default
+- [ ] No-code PM scenario — composability principles applied automatically, user never sees the complexity
+
+**Verification:** Orqa Studio's own composability score ≥85/100. Composability scanner runs on itself as part of `make check`.
 
 ## Future: Code Quality Audit
 
