@@ -17,4 +17,5 @@ pub mod settings;
 pub mod setup;
 pub mod stream_loop;
 pub mod system_prompt;
+pub mod time_utils;
 pub mod tool_executor;

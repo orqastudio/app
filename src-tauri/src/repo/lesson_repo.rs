@@ -1,6 +1,7 @@
 use std::path::{Path, PathBuf};
 
 use crate::domain::lessons::{parse_lesson, render_lesson, Lesson, NewLesson};
+use crate::domain::time_utils;
 use crate::error::OrqaError;
 
 /// Directory within the project root that holds lesson files.
@@ -57,7 +58,7 @@ pub fn create(project_path: &Path, new_lesson: &NewLesson) -> Result<Lesson, Orq
     std::fs::create_dir_all(&lessons_dir)?;
 
     let id = next_id(project_path)?;
-    let today = today_date();
+    let today = time_utils::today_date_string();
 
     let lesson = Lesson {
         id: id.clone(),
@@ -91,7 +92,7 @@ pub fn increment_recurrence(project_path: &Path, id: &str) -> Result<Lesson, Orq
 
     let mut lesson = read_lesson_file(&file_path, project_path)?;
     lesson.recurrence += 1;
-    lesson.updated = today_date();
+    lesson.updated = time_utils::today_date_string();
 
     let content = render_lesson(&lesson);
     std::fs::write(&file_path, content)?;
@@ -154,59 +155,6 @@ fn read_lesson_file(file_path: &Path, project_path: &Path) -> Result<Lesson, Orq
     })
 }
 
-/// Return today's date as a simple YYYY-MM-DD string.
-fn today_date() -> String {
-    use std::time::{SystemTime, UNIX_EPOCH};
-    let secs = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_secs())
-        .unwrap_or(0);
-    let days = secs / 86400;
-    let (year, month, day) = days_to_ymd(days);
-    format!("{year:04}-{month:02}-{day:02}")
-}
-
-/// Convert days-since-epoch to (year, month, day).
-fn days_to_ymd(total_days: u64) -> (u64, u64, u64) {
-    let mut year = 1970u64;
-    let mut remaining = total_days;
-    loop {
-        let days_in_year = if is_leap_year(year) { 366 } else { 365 };
-        if remaining < days_in_year {
-            break;
-        }
-        remaining -= days_in_year;
-        year += 1;
-    }
-    let leap = is_leap_year(year);
-    let month_lengths: [u64; 12] = [
-        31,
-        if leap { 29 } else { 28 },
-        31,
-        30,
-        31,
-        30,
-        31,
-        31,
-        30,
-        31,
-        30,
-        31,
-    ];
-    let mut month = 1u64;
-    for &len in &month_lengths {
-        if remaining < len {
-            break;
-        }
-        remaining -= len;
-        month += 1;
-    }
-    (year, month, remaining + 1)
-}
-
-fn is_leap_year(year: u64) -> bool {
-    (year.is_multiple_of(4) && !year.is_multiple_of(100)) || year.is_multiple_of(400)
-}
 
 #[cfg(test)]
 mod tests {
@@ -333,10 +281,4 @@ mod tests {
         assert_eq!(parse_impl_number("IMPL-.md"), None);
     }
 
-    #[test]
-    fn today_date_format() {
-        let date = today_date();
-        assert_eq!(date.len(), 10);
-        assert!(date.contains('-'));
-    }
 }
