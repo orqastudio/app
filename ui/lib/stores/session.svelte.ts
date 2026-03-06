@@ -1,5 +1,5 @@
 import type { Session, SessionSummary } from "$lib/types";
-import { invoke } from "$lib/ipc/invoke";
+import { invoke, extractErrorMessage } from "$lib/ipc/invoke";
 
 class SessionStore {
 	sessions = $state<SessionSummary[]>([]);
@@ -23,7 +23,7 @@ class SessionStore {
 				projectId,
 			});
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		} finally {
 			this.isLoading = false;
 		}
@@ -41,7 +41,7 @@ class SessionStore {
 			await this.loadSessions(projectId);
 			return session;
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 			throw err;
 		}
 	}
@@ -55,7 +55,7 @@ class SessionStore {
 			});
 			await this.persistActiveSessionId(sessionId);
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		} finally {
 			this.isLoading = false;
 		}
@@ -104,7 +104,7 @@ class SessionStore {
 				summary.title = title;
 			}
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		}
 	}
 
@@ -120,7 +120,7 @@ class SessionStore {
 				summary.status = "completed";
 			}
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		}
 	}
 
@@ -135,7 +135,7 @@ class SessionStore {
 			await invoke("session_delete", { sessionId });
 			await this.clearPersistedSessionId();
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		}
 	}
 

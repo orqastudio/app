@@ -1,4 +1,4 @@
-import { invoke } from "$lib/ipc/invoke";
+import { invoke, extractErrorMessage } from "$lib/ipc/invoke";
 import type { ClaudeCliInfo, SetupStatus, SetupStepStatus } from "$lib/types/setup";
 
 const STEP_IDS = ["claude_cli", "claude_auth", "sidecar", "embedding_model", "complete"] as const;
@@ -28,7 +28,7 @@ class SetupStore {
 			const status = await invoke<SetupStatus>("get_setup_status");
 			this.setupComplete = status.setup_complete;
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 			this.setupComplete = false;
 		} finally {
 			this.loading = false;
@@ -42,7 +42,7 @@ class SetupStore {
 			const info = await invoke<ClaudeCliInfo>("check_claude_cli");
 			this.cliInfo = info;
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 			this.cliInfo = null;
 		}
 	}
@@ -54,7 +54,7 @@ class SetupStore {
 			const info = await invoke<ClaudeCliInfo>("check_claude_auth");
 			this.cliInfo = info;
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		}
 	}
 
@@ -65,7 +65,7 @@ class SetupStore {
 			const status = await invoke<SetupStepStatus>("check_embedding_model");
 			this.embeddingStatus = status;
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 			this.embeddingStatus = null;
 		}
 	}
@@ -77,7 +77,7 @@ class SetupStore {
 			const info = await invoke<ClaudeCliInfo>("reauthenticate_claude");
 			this.cliInfo = info;
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		}
 	}
 
@@ -88,7 +88,7 @@ class SetupStore {
 			await invoke<void>("complete_setup");
 			this.setupComplete = true;
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		}
 	}
 

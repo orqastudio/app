@@ -155,10 +155,14 @@ pub fn parse_research_frontmatter(content: &str) -> (ResearchFrontmatter, String
 }
 
 /// YAML frontmatter metadata extracted from an implementation plan file.
+///
+/// Fields use `serde(default)` liberally so older plans missing newer fields
+/// still parse without error — forward-compatible by design.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct PlanFrontmatter {
     pub title: Option<String>,
     pub status: Option<String>,
+    pub priority: Option<String>,
     pub created: Option<String>,
     pub updated: Option<String>,
     #[serde(default)]
@@ -167,6 +171,30 @@ pub struct PlanFrontmatter {
     pub completed_phases: Option<i64>,
     #[serde(default)]
     pub tags: Vec<String>,
+    /// Plans this depends on (plan filenames without .md extension).
+    #[serde(default, rename = "depends-on")]
+    pub depends_on: Vec<String>,
+    /// What this plan blocks (plan names or milestone identifiers).
+    #[serde(default)]
+    pub blocks: Vec<String>,
+    /// Which product pillars this plan serves.
+    #[serde(default)]
+    pub pillar: Vec<String>,
+    /// Agent or role responsible for orchestrating execution.
+    #[serde(default)]
+    pub owner: Option<String>,
+    /// Roadmap phase reference (e.g., "2i").
+    #[serde(default, rename = "roadmap-ref")]
+    pub roadmap_ref: Option<String>,
+    /// Artifacts produced on completion (rules, skills, scanner profiles, etc.).
+    #[serde(default)]
+    pub produces: Vec<String>,
+    /// Codebase areas affected (e.g., "src-tauri", "ui", "sidecar").
+    #[serde(default)]
+    pub scope: Vec<String>,
+    /// Back-references to research documents that informed this plan.
+    #[serde(default, rename = "research-refs")]
+    pub research_refs: Vec<String>,
 }
 
 /// Convenience alias: parse plan frontmatter.

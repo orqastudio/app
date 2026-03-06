@@ -81,7 +81,7 @@ class NavigationStore {
 				this.navPanelCollapsed = false;
 			}
 		} else if (view === "plans") {
-			// Auto-open the plans index
+			// Auto-open the plans landing page
 			this.explorerView = "artifact-viewer";
 			this.selectedArtifactPath = "README";
 			this.breadcrumbs = [];

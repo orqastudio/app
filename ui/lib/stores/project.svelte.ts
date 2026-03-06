@@ -1,4 +1,4 @@
-import { invoke } from "$lib/ipc/invoke";
+import { invoke, extractErrorMessage } from "$lib/ipc/invoke";
 import type {
 	Project,
 	ProjectSummary,
@@ -47,7 +47,7 @@ class ProjectStore {
 				await this.loadProjectSettings(project.path);
 			}
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = extractErrorMessage(err);
 			this.error = `Failed to load active project: ${message}`;
 		} finally {
 			this.loading = false;
@@ -64,7 +64,7 @@ class ProjectStore {
 			await this.loadProjects();
 			await this.loadProjectSettings(path);
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = extractErrorMessage(err);
 			this.error = `Failed to open project: ${message}`;
 		} finally {
 			this.loading = false;
@@ -77,7 +77,7 @@ class ProjectStore {
 			const projects = await invoke<ProjectSummary[]>("project_list");
 			this.projects = projects;
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = extractErrorMessage(err);
 			this.error = `Failed to load project list: ${message}`;
 		}
 	}
@@ -97,7 +97,7 @@ class ProjectStore {
 				this.iconDataUrl = null;
 			}
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = extractErrorMessage(err);
 			this.error = `Failed to load project settings: ${message}`;
 			this.projectSettings = null;
 		} finally {
@@ -114,7 +114,7 @@ class ProjectStore {
 			);
 			this.projectSettings = saved;
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = extractErrorMessage(err);
 			this.error = `Failed to save project settings: ${message}`;
 		}
 	}
@@ -132,7 +132,7 @@ class ProjectStore {
 			});
 			return result;
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = extractErrorMessage(err);
 			this.error = `Failed to scan project: ${message}`;
 			return null;
 		} finally {
@@ -154,7 +154,7 @@ class ProjectStore {
 			await this.saveProjectSettings(this.projectPath, this.projectSettings);
 			await this.loadIcon();
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = extractErrorMessage(err);
 			this.error = `Failed to upload icon: ${message}`;
 		}
 	}
@@ -172,7 +172,7 @@ class ProjectStore {
 			});
 			this.iconDataUrl = dataUrl;
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = extractErrorMessage(err);
 			this.error = `Failed to load project icon: ${message}`;
 			this.iconDataUrl = null;
 		}

@@ -1,4 +1,4 @@
-import { invoke } from "$lib/ipc/invoke";
+import { invoke, extractErrorMessage } from "$lib/ipc/invoke";
 import type { SidecarStatus, StartupSnapshot, StartupTask } from "$lib/types/settings";
 
 export type ThemeMode = "light" | "dark" | "system";
@@ -122,7 +122,7 @@ class SettingsStore {
 				this.lastSessionId = all["last_session_id"];
 			}
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		} finally {
 			this.loading = false;
 		}
@@ -139,7 +139,7 @@ class SettingsStore {
 				scope: "app",
 			});
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		}
 	}
 
@@ -153,7 +153,7 @@ class SettingsStore {
 				scope: "app",
 			});
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		}
 	}
 
@@ -167,7 +167,7 @@ class SettingsStore {
 				scope: "app",
 			});
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		}
 	}
 
@@ -190,7 +190,7 @@ class SettingsStore {
 				const status = await invoke<StartupSnapshot>("get_startup_status");
 				this.startupStatus = status;
 			} catch (err: unknown) {
-				const message = err instanceof Error ? err.message : String(err);
+				const message = extractErrorMessage(err);
 				this.error = `Failed to check startup status: ${message}`;
 			}
 		}
@@ -205,7 +205,7 @@ class SettingsStore {
 				uptime_seconds: null,
 				cli_detected: false,
 				cli_version: null,
-				error_message: err instanceof Error ? err.message : String(err),
+				error_message: extractErrorMessage(err),
 			};
 		}
 	}
@@ -221,7 +221,7 @@ class SettingsStore {
 				uptime_seconds: null,
 				cli_detected: false,
 				cli_version: null,
-				error_message: err instanceof Error ? err.message : String(err),
+				error_message: extractErrorMessage(err),
 			};
 		}
 	}

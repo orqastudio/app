@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button } from "$lib/components/ui/button";
+	import { extractErrorMessage } from "$lib/ipc/invoke";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 	import ErrorDisplay from "$lib/components/shared/ErrorDisplay.svelte";
 	import CheckCircleIcon from "@lucide/svelte/icons/circle-check";
@@ -41,7 +42,7 @@
 				starting = false;
 			}
 		} catch (err) {
-			setupStore.error = err instanceof Error ? err.message : String(err);
+			setupStore.error = extractErrorMessage(err);
 			starting = false;
 		}
 	}

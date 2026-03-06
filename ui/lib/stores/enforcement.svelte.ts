@@ -1,4 +1,4 @@
-import { invoke } from "$lib/ipc/invoke";
+import { invoke, extractErrorMessage } from "$lib/ipc/invoke";
 import type { EnforcementRule, EnforcementViolation } from "$lib/types/enforcement";
 
 class EnforcementStore {
@@ -16,7 +16,7 @@ class EnforcementStore {
 		try {
 			this.rules = await invoke<EnforcementRule[]>("enforcement_rules_list");
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		} finally {
 			this.loading = false;
 		}
@@ -29,7 +29,7 @@ class EnforcementStore {
 			await invoke<number>("enforcement_rules_reload");
 			this.rules = await invoke<EnforcementRule[]>("enforcement_rules_list");
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		} finally {
 			this.loading = false;
 		}

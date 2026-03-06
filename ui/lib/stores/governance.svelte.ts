@@ -1,4 +1,4 @@
-import { invoke } from "$lib/ipc/invoke";
+import { invoke, extractErrorMessage } from "$lib/ipc/invoke";
 import type {
 	GovernanceScanResult,
 	GovernanceAnalysis,
@@ -21,7 +21,7 @@ class GovernanceStore {
 		try {
 			this.scanResult = await invoke<GovernanceScanResult>("governance_scan", { projectId });
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		} finally {
 			this.loading = false;
 		}
@@ -35,7 +35,7 @@ class GovernanceStore {
 				projectId,
 			});
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		} finally {
 			this.loading = false;
 		}
@@ -50,7 +50,7 @@ class GovernanceStore {
 				scanResult,
 			});
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		} finally {
 			this.loading = false;
 		}
@@ -64,7 +64,7 @@ class GovernanceStore {
 				projectId,
 			});
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		} finally {
 			this.loading = false;
 		}
@@ -79,7 +79,7 @@ class GovernanceStore {
 			});
 			this.recommendations = this.recommendations.map((r) => (r.id === id ? updated : r));
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		}
 	}
 
@@ -92,7 +92,7 @@ class GovernanceStore {
 			});
 			this.recommendations = this.recommendations.map((r) => (r.id === id ? updated : r));
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		}
 	}
 
@@ -102,7 +102,7 @@ class GovernanceStore {
 			const updated = await invoke<Recommendation>("recommendation_apply", { id });
 			this.recommendations = this.recommendations.map((r) => (r.id === id ? updated : r));
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		}
 	}
 
@@ -114,7 +114,7 @@ class GovernanceStore {
 			const updatedMap = new Map(updated.map((r) => [r.id, r]));
 			this.recommendations = this.recommendations.map((r) => updatedMap.get(r.id) ?? r);
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		} finally {
 			this.loading = false;
 		}

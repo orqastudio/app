@@ -6,6 +6,16 @@ created: 2026-03-06
 updated: 2026-03-06
 depends-on: []
 blocks: [dogfooding]
+pillar: [self-learning-loop, process-governance]
+owner: systems-architect
+roadmap-ref: "2i"
+produces:
+  - skill/orqa-composability
+  - scanner/composability-anti-patterns
+  - rule/composability-enforcement
+scope: [src-tauri, ui, sidecar, .claude, .orqa]
+research-refs: []
+tags: [composability, architecture, dogfooding]
 ---
 
 # Composability Gate: Audit, Alignment & Platform Architecture

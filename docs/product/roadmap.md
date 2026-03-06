@@ -8,7 +8,7 @@ updated: 2026-03-06
 
 # Roadmap
 
-**Date:** 2026-03-04
+**Date:** 2026-03-06
 
 Feature ideas and future work. Remove entries once implemented.
 
@@ -357,6 +357,98 @@ Research and discovery as a managed artifact within Orqa Studio, giving the PM p
 - [ ] Discovery dashboard (open questions, pending decisions, implementation readiness)
 - [ ] Phase gate management (define phases with prerequisites, track completion)
 - [ ] Conversational research workflow (Claude-assisted investigation producing structured artifacts)
+
+## Phase 6: Idea & Feedback Capture
+
+← product: [Journeys](/product/journeys) (define governance, learning loop); research: [Persistence](/research/mvp/persistence) (FTS5 search); pillars: Self-Learning Loop, Process Governance
+
+The top of the funnel. Ideas, feedback, and observations captured during conversations or entered manually flow into the artifact pipeline — surfacing as research topics, informing plans, and ultimately driving implementation. Closes the loop between "I noticed something" and "we built something about it."
+
+**Capture:**
+- [ ] Idea artifact type in `.orqa/ideas/` — lightweight markdown with YAML frontmatter (source, category, priority, status, linked-session)
+- [ ] Quick-capture from conversation — highlight text or use a slash command to create an idea from a conversation insight
+- [ ] Quick-capture from anywhere — global shortcut or status bar button to log a thought without leaving the current context
+- [ ] Feedback tagging — tag ideas as `enhancement`, `question`, `observation`, `user-feedback`
+- [ ] Session-linked ideas — automatically backlink to the session where the idea originated
+
+**Triage & Flow:**
+- [ ] Idea inbox — dashboard view showing uncategorised ideas, sortable by recency, source, and priority
+- [ ] Idea-to-research promotion — when an idea needs investigation, promote it to a research document in `.orqa/research/` with backlink
+- [ ] Idea-to-plan promotion — when an idea is ready for implementation, promote it directly to a plan in `.orqa/plans/` with backlink
+- [ ] Duplicate detection — surface similar existing ideas, research, or plans when a new idea is created (FTS5 + semantic search)
+- [ ] Idea retirement — archive ideas that are resolved, out of scope, or superseded, with a reason
+
+**Traceability:**
+- [ ] Idea frontmatter: `source` (conversation, manual, feedback), `promoted-to` (research ref, plan ref), `session-id`, `tags`
+- [ ] Ideas visible in the traceability graph: Idea → Research → Plan → Implementation
+- [ ] Idea recurrence tracking — similar ideas from different sessions increase priority automatically
+
+## Phase 7: Implementation Breakdown & Work Management
+
+← product: [Journeys](/product/journeys) (implementation cycle, review/approve); research: [Persistence](/research/mvp/persistence); pillars: Process Governance
+
+The bottom of the funnel. Plans break down into epics, epics into backlog items, backlog items into tasks. Each level is trackable, prioritisable, and assignable. This is the execution layer that turns approved plans into delivered features.
+
+**Hierarchy:**
+- [ ] Epic — a major body of work derived from a plan phase. Lives in `.orqa/epics/` with frontmatter linking to the parent plan
+- [ ] Backlog Item — a user-facing deliverable within an epic. Sized, prioritised, and acceptance-criteria'd
+- [ ] Task — an agent-assignable unit of work within a backlog item. Maps to a worktree branch
+
+**Plan-to-Backlog Flow:**
+- [ ] Plan phase breakdown — when a plan is approved, generate epics from its phases with one click
+- [ ] Epic-to-backlog breakdown — decompose an epic into sized backlog items with Claude assistance
+- [ ] Backlog-to-task breakdown — decompose a backlog item into agent-assignable tasks
+- [ ] Traceability: Plan → Epic → Backlog Item → Task → Commit → Verification
+
+**Bug Tracking:**
+
+Bugs are first-class backlog items, not sub-types of ideas or tasks. They are typically single-task items that go straight from report to fix. The key challenge is prioritising bugs against feature work — the prioritisation framework (above) handles this by scoring bugs on the same dimensions as everything else, so a high-impact urgent bug naturally outranks medium-priority features without needing a subjective severity label.
+
+- [ ] Bug artifact type in `.orqa/bugs/` — markdown with YAML frontmatter (status, component, reproduction-steps, linked-session, linked-task, impact, urgency)
+- [ ] Bug creation from conversation — when a user or agent discovers a defect, create a bug with session context
+- [ ] Bug creation from test failures — failed tests auto-generate bug reports with stack trace and reproduction context
+- [ ] Bugs appear in the unified backlog alongside feature items — not in a separate silo
+- [ ] Priority derived from the same scoring dimensions as everything else — a high-impact, urgent bug naturally outranks a low-impact feature without needing a separate severity label
+- [ ] Bug-to-task — a bug becomes a single task assigned to an agent, with the reproduction steps and linked session as context
+- [ ] Bug triage view — filtered view of unresolved bugs sorted by composite priority score, with linked sessions and reproduction steps
+
+**Prioritisation Framework:**
+
+The automated system needs to know where any item — bug, feature, or idea — fits in the roadmap and implementation hierarchy. This requires a user-defined scoring model that captures the project's values and constraints, so the system can rank items consistently without requiring human triage on every decision.
+
+- [ ] Priority dimensions — user configures which dimensions matter and their relative weights. Defaults:
+  - **Impact** — how many users/workflows does this affect? How broken is the experience? (1-5)
+  - **Effort** — how much work to implement? (1-5, inverted — low effort scores higher)
+  - **Urgency** — time sensitivity, deadlines, blocking other work (1-5)
+  - **Product Alignment** — does this serve the product vision and pillars? (0=off-roadmap, 3=one pillar, 5=core to both pillars)
+- [ ] No separate severity field — severity is an emergent property of the other dimensions. A high-impact, high-urgency bug with strong product alignment IS critical. A low-impact, low-urgency bug IS cosmetic. Explicit severity is a subjective duplicate that creates disagreements; derived priority from objective dimensions does not.
+- [ ] Dimension weights — user sets relative importance per dimension (e.g., impact×3, effort×2, urgency×2, alignment×2). Stored in `.orqa/project.json`
+- [ ] Composite priority score — weighted sum produces a single comparable number across all item types. A high-impact bug naturally rises above a medium-priority feature without needing a separate severity label
+- [ ] Priority bands — score ranges map to named bands (`P0-Critical`, `P1-High`, `P2-Medium`, `P3-Low`, `P4-Backlog`) for human-readable grouping
+- [ ] Auto-scoring — when a new item is created, the system suggests dimension scores based on frontmatter fields (tags, pillar, scope, component) and presents the suggested priority for user confirmation
+- [ ] Manual override — user can always override the calculated score. Overrides are tracked so the model can learn which dimensions the user values differently than the defaults
+- [ ] Priority recalculation — when weights change, all items are re-scored. User reviews items that shifted bands
+- [ ] Custom dimensions — users can add project-specific dimensions (e.g., "customer-facing", "security-related", "tech-debt") with their own scales and weights
+- [ ] Priority decay — optional: items that sit unworked lose urgency score over time, or gain it (configurable — some items become more urgent the longer they wait, others become less relevant)
+- [ ] Priority views — backlog sortable by composite score, filterable by band. "What should I work on next?" answered by the top of the sorted list
+
+**Backlog Management:**
+- [ ] Unified backlog view — bugs and feature items together, filterable and sortable by type, epic, status, priority band, assignee
+- [ ] Status workflow — `draft` → `ready` → `in-progress` → `review` → `done` (configurable per project)
+- [ ] Sprint/iteration planning — optional timeboxing. Drag items into iterations. Burndown visibility
+- [ ] Dependency tracking — items can depend on other items, surfacing blocked work
+
+**Agent Integration:**
+- [ ] Task-to-agent assignment — assign tasks to specific agents (backend-engineer, frontend-engineer, etc.)
+- [ ] Auto-generate worktree branch from task — `git worktree add` with conventional naming
+- [ ] Task context injection — when an agent starts a task, the task description, acceptance criteria, and linked plan context are injected into the conversation
+- [ ] Task completion detection — agent reports done → triggers verification gates (code-reviewer, qa-tester, ux-reviewer)
+- [ ] Task progress tracking — link commits and conversations to tasks for audit trail
+
+**Reporting:**
+- [ ] Progress dashboard — plan completion %, epic progress, velocity trends (if iterations enabled)
+- [ ] Blocked items view — surface items waiting on dependencies, review, or external input
+- [ ] Pillar alignment report — which pillar each in-progress item serves, ensuring balanced investment
 
 ## Future: Provider Ecosystem
 

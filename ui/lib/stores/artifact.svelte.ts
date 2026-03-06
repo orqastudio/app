@@ -1,4 +1,4 @@
-import { invoke } from "$lib/ipc/invoke";
+import { invoke, extractErrorMessage } from "$lib/ipc/invoke";
 import type { Artifact, ArtifactSummary, ArtifactType, DocNode } from "$lib/types";
 
 class ArtifactStore {
@@ -61,7 +61,7 @@ class ArtifactStore {
 			const other = this.artifacts.filter((a) => a.artifact_type !== artifactType);
 			this.artifacts = [...other, ...results];
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = extractErrorMessage(err);
 			this.error = `Failed to load artifacts: ${message}`;
 		} finally {
 			this.loading = false;
@@ -77,7 +77,7 @@ class ArtifactStore {
 			});
 			this.activeArtifact = artifact;
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = extractErrorMessage(err);
 			this.error = `Failed to load artifact: ${message}`;
 			this.activeArtifact = null;
 		} finally {
@@ -90,7 +90,7 @@ class ArtifactStore {
 		try {
 			this.docTree = await invoke<DocNode[]>("doc_tree_scan");
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = extractErrorMessage(err);
 			this.error = `Failed to load documentation tree: ${message}`;
 			this.docTree = [];
 		} finally {
@@ -103,7 +103,7 @@ class ArtifactStore {
 		try {
 			this.researchTree = await invoke<DocNode[]>("research_tree_scan");
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = extractErrorMessage(err);
 			this.error = `Failed to load research tree: ${message}`;
 			this.researchTree = [];
 		} finally {
@@ -116,7 +116,7 @@ class ArtifactStore {
 		try {
 			this.planTree = await invoke<DocNode[]>("plan_tree_scan");
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = extractErrorMessage(err);
 			this.error = `Failed to load plans tree: ${message}`;
 			this.planTree = [];
 		} finally {
@@ -131,7 +131,7 @@ class ArtifactStore {
 			const artifact = await invoke<Artifact>("plan_read", { relPath });
 			this.activeArtifact = artifact;
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = extractErrorMessage(err);
 			this.error = `Failed to load plan document: ${message}`;
 			this.activeArtifact = null;
 		} finally {
@@ -146,7 +146,7 @@ class ArtifactStore {
 			const artifact = await invoke<Artifact>("research_read", { relPath });
 			this.activeArtifact = artifact;
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = extractErrorMessage(err);
 			this.error = `Failed to load research document: ${message}`;
 			this.activeArtifact = null;
 		} finally {
@@ -161,7 +161,7 @@ class ArtifactStore {
 			const artifact = await invoke<Artifact>("doc_read", { relPath });
 			this.activeArtifact = artifact;
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = extractErrorMessage(err);
 			this.error = `Failed to load document: ${message}`;
 			this.activeArtifact = null;
 		} finally {

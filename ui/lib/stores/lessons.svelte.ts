@@ -1,4 +1,4 @@
-import { invoke } from "$lib/ipc/invoke";
+import { invoke, extractErrorMessage } from "$lib/ipc/invoke";
 import type { Lesson } from "$lib/types/lessons";
 
 class LessonStore {
@@ -17,7 +17,7 @@ class LessonStore {
 		try {
 			this.lessons = await invoke<Lesson[]>("lessons_list", { projectPath });
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		} finally {
 			this.loading = false;
 		}
@@ -39,7 +39,7 @@ class LessonStore {
 			});
 			this.lessons = [...this.lessons, lesson].sort((a, b) => a.id.localeCompare(b.id));
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		}
 	}
 
@@ -49,7 +49,7 @@ class LessonStore {
 			const updated = await invoke<Lesson>("lesson_increment_recurrence", { projectPath, id });
 			this.lessons = this.lessons.map((l) => (l.id === id ? updated : l));
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		}
 	}
 }

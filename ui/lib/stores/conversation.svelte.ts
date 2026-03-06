@@ -1,7 +1,7 @@
 import { SvelteMap } from "svelte/reactivity";
 import type { Message } from "$lib/types";
 import type { StreamEvent } from "$lib/types/streaming";
-import { invoke, createStreamChannel } from "$lib/ipc/invoke";
+import { invoke, createStreamChannel, extractErrorMessage } from "$lib/ipc/invoke";
 import { sessionStore } from "$lib/stores/session.svelte";
 import { DEFAULT_MODEL } from "$lib/components/conversation/model-options";
 
@@ -71,7 +71,7 @@ class ConversationStore {
 				sessionId,
 			});
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		} finally {
 			this.isLoading = false;
 		}
@@ -121,7 +121,7 @@ class ConversationStore {
 				onEvent: channel,
 			});
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 			this.isStreaming = false;
 		}
 	}
@@ -130,7 +130,7 @@ class ConversationStore {
 		try {
 			await invoke("stream_stop", { sessionId });
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		}
 	}
 
@@ -161,7 +161,7 @@ class ConversationStore {
 				approved,
 			});
 		} catch (err) {
-			this.error = err instanceof Error ? err.message : String(err);
+			this.error = extractErrorMessage(err);
 		}
 	}
 
