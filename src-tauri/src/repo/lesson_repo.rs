@@ -155,7 +155,6 @@ fn read_lesson_file(file_path: &Path, project_path: &Path) -> Result<Lesson, Orq
     })
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -280,5 +279,4 @@ mod tests {
         assert_eq!(parse_impl_number("README.md"), None);
         assert_eq!(parse_impl_number("IMPL-.md"), None);
     }
-
 }

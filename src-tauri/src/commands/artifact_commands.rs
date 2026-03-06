@@ -953,7 +953,6 @@ fn simple_hash(content: &str) -> u64 {
     hash
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1161,5 +1160,4 @@ mod tests {
         let name = "   ";
         assert!(name.trim().is_empty());
     }
-
 }

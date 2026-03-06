@@ -377,7 +377,6 @@ fn normalize_path(path: &Path) -> PathBuf {
     components.iter().collect()
 }
 
-
 /// Build the coverage header section for the analysis prompt.
 fn format_coverage_header(scan: &GovernanceScanResult) -> String {
     let covered: Vec<&str> = scan
