@@ -17,12 +17,15 @@ tools:
   - code_research
 skills:
   - chunkhound
+  - orqa-composability
   - svelte5-best-practices
   - tailwind-design-system
   - typescript-advanced-types
   - orqa-ipc-patterns
   - orqa-store-patterns
+  - orqa-store-orchestration
   - orqa-streaming
+  - orqa-error-composition
 model: sonnet
 ---
 

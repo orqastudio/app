@@ -19,7 +19,8 @@ If a skill fails to load, the agent MUST report the failure explicitly. Do NOT s
 ## Universal Skills
 
 - The `chunkhound` skill MUST be in every agent's skill list — it is a universal skill for code search
-- The orchestrator loads `chunkhound` and `planning` skills on every session (via CLAUDE.md)
+- The `orqa-composability` skill MUST be in every agent's skill list — it is the meta-skill that shapes how all code is structured
+- The orchestrator loads `chunkhound`, `planning`, and `orqa-composability` skills on every session (via CLAUDE.md)
 
 ## Project-Level Skills
 
@@ -27,9 +28,14 @@ Orqa Studio has project-specific skills that capture codebase patterns:
 
 | Skill | Domain | Used By |
 |-------|--------|---------|
+| `orqa-composability` | Composability philosophy, pure functions, pipelines, feature isolation | ALL agents (universal) |
 | `orqa-ipc-patterns` | Tauri IPC, Channel<T>, command registration | backend-engineer, frontend-engineer, debugger, systems-architect |
 | `orqa-store-patterns` | Svelte 5 rune stores, reactive data flow | frontend-engineer, designer, debugger |
+| `orqa-store-orchestration` | Multi-store coordination, $effect wiring, circular dep prevention | frontend-engineer, designer, debugger, systems-architect |
 | `orqa-streaming` | Agent SDK → sidecar → NDJSON → Rust → Svelte pipeline | backend-engineer, frontend-engineer, debugger |
+| `orqa-domain-services` | Domain service anatomy, command delegation, service composition | backend-engineer, data-engineer, systems-architect, refactor-agent |
+| `orqa-repository-pattern` | SQLite repos, migrations, query patterns, connection management | backend-engineer, data-engineer |
+| `orqa-error-composition` | OrqaError flow, From impls, frontend error handling | backend-engineer, frontend-engineer, debugger, code-reviewer |
 | `orqa-governance` | Artifacts, scanning, lessons, rules, `.orqa/` structure | agent-maintainer, code-reviewer, documentation-writer |
 | `orqa-testing` | Test commands, patterns, mock boundaries, file locations | test-engineer, qa-tester, code-reviewer |
 

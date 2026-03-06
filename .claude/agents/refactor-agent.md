@@ -17,8 +17,11 @@ tools:
   - code_research
 skills:
   - chunkhound
+  - orqa-composability
   - rust-async-patterns
   - svelte5-best-practices
+  - orqa-domain-services
+  - orqa-store-orchestration
 model: sonnet
 ---
 

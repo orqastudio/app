@@ -16,9 +16,11 @@ tools:
   - code_research
 skills:
   - chunkhound
+  - orqa-composability
   - svelte5-best-practices
   - tailwind-design-system
   - orqa-store-patterns
+  - orqa-store-orchestration
 model: sonnet
 ---
 

@@ -16,6 +16,7 @@ tools:
   - code_research
 skills:
   - chunkhound
+  - orqa-composability
   - planning
   - skills-maintenance
   - orqa-governance

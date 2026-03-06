@@ -14,9 +14,13 @@ tools:
   - code_research
 skills:
   - chunkhound
+  - orqa-composability
   - planning
   - architecture
   - orqa-ipc-patterns
+  - orqa-domain-services
+  - orqa-store-orchestration
+  - orqa-error-composition
 model: inherit
 ---
 

@@ -16,12 +16,15 @@ tools:
   - code_research
 skills:
   - chunkhound
+  - orqa-composability
   - rust-async-patterns
   - tauri-v2
   - svelte5-best-practices
   - orqa-ipc-patterns
   - orqa-store-patterns
+  - orqa-store-orchestration
   - orqa-streaming
+  - orqa-error-composition
 model: sonnet
 ---
 

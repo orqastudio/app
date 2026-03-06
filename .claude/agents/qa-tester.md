@@ -15,6 +15,7 @@ tools:
   - code_research
 skills:
   - chunkhound
+  - orqa-composability
   - orqa-testing
 model: inherit
 ---

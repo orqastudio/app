@@ -15,10 +15,12 @@ tools:
   - code_research
 skills:
   - chunkhound
+  - orqa-composability
   - rust-async-patterns
   - svelte5-best-practices
   - orqa-governance
   - orqa-testing
+  - orqa-error-composition
 model: inherit
 ---
 

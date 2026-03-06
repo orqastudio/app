@@ -15,6 +15,7 @@ tools:
   - code_research
 skills:
   - chunkhound
+  - orqa-composability
   - tauri-v2
 model: sonnet
 ---

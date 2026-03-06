@@ -16,6 +16,7 @@ tools:
   - code_research
 skills:
   - chunkhound
+  - orqa-composability
   - planning
   - orqa-governance
 model: sonnet

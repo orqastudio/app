@@ -14,6 +14,7 @@ tools:
   - code_research
 skills:
   - chunkhound
+  - orqa-composability
   - tailwind-design-system
 model: inherit
 ---
