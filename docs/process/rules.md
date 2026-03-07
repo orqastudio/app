@@ -67,7 +67,7 @@ Agent tool call (file write or bash command)
 
 ## CLI Backwards Compatibility
 
-The same frontmatter that drives the app's enforcement engine also generates hookify-compatible `.local.md` files in `.claude/`. These generated files allow the enforcement rules to work in plain Claude Code CLI sessions without running the Orqa Studio app.
+The same frontmatter that drives the app's enforcement engine also generates hookify-compatible `.local.md` files in `.claude/`. These generated files allow the enforcement rules to work in plain Claude Code CLI sessions without running the OrqaStudio™ app.
 
 **Generation:** When rule frontmatter changes, the app re-generates the corresponding hookify files. The generated files are named `hookify.<rule-id>-<entry-id>.local.md`.
 

@@ -9,7 +9,7 @@ use crate::error::OrqaError;
 use crate::repo::project_repo;
 use crate::state::AppState;
 
-/// Open an existing directory as an Orqa Studio project.
+/// Open an existing directory as an OrqaStudio project.
 ///
 /// If the directory is already registered, returns the existing project.
 /// Otherwise creates a new project record. In Phase 1, scanning is deferred.

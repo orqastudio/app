@@ -14,7 +14,7 @@ updated: 2026-03-04
 
 ## Overview
 
-When a user opens a project in Orqa Studio, Claude (via the Agent SDK sidecar) scans existing governance files, analyzes their coverage and quality, and generates recommendations for improvements. The output is always native Claude Code artifacts — `.claude/rules/*.md`, `.claude/hooks/*.sh`, `.claude/agents/*.md`, `.claude/skills/*/SKILL.md`, `.claude/settings.json`, `CLAUDE.md`, and `AGENTS.md`.
+When a user opens a project in OrqaStudio™, Claude (via the Agent SDK sidecar) scans existing governance files, analyzes their coverage and quality, and generates recommendations for improvements. The output is always native Claude Code artifacts — `.claude/rules/*.md`, `.claude/hooks/*.sh`, `.claude/agents/*.md`, `.claude/skills/*/SKILL.md`, `.claude/settings.json`, `CLAUDE.md`, and `AGENTS.md`.
 
 The governance bootstrap is the bridge between "project has some governance" and "project has comprehensive, enforceable governance." It is Claude-powered because static analysis cannot understand intent, detect gaps in coverage, or generate contextually appropriate rules.
 
@@ -47,9 +47,9 @@ The governance scanner walks the filesystem to collect governance files from mul
 
 ## Output: Native Artifacts Only
 
-The governance bootstrap produces native Claude Code artifacts exclusively. It never creates Orqa Studio-specific files or proprietary formats. This means:
+The governance bootstrap produces native Claude Code artifacts exclusively. It never creates OrqaStudio-specific files or proprietary formats. This means:
 
-- Governance works in the CLI without Orqa Studio installed
+- Governance works in the CLI without OrqaStudio installed
 - Users can edit artifacts with any text editor
 - No vendor lock-in — the artifacts are the Claude Code standard
 
@@ -95,7 +95,7 @@ The governance bootstrap wizard appears when a project is opened and meets one o
 5. **Analysis results** — Claude returns structured analysis: strengths, gaps, and recommendations. Displayed in a review panel
 6. **Review panel** — Each recommendation is a card showing: category, priority, title, description, target file path, and content preview. User can approve, reject, or edit each recommendation
 7. **Conversational refinement** — User can send follow-up messages in the governance session to refine recommendations (e.g., "Make that rule stricter" or "We don't use Playwright, use Vitest instead")
-8. **Apply** — Approved recommendations are written to disk as native files. Orqa Studio calls `fs::write` for each approved artifact
+8. **Apply** — Approved recommendations are written to disk as native files. OrqaStudio calls `fs::write` for each approved artifact
 9. **Done** — Dashboard updated with new governance health status
 
 ## Backend Changes
@@ -307,7 +307,7 @@ pub struct ClaudeAnalysisOutput {
 7. User reviews, approves, applies
 
 **Existing project with comprehensive governance:**
-1. User opens the Orqa Studio project itself (which has extensive `.claude/` governance)
+1. User opens the OrqaStudio project itself (which has extensive `.claude/` governance)
 2. Scan finds 20+ files across all 7 areas
 3. Coverage is 7/7 — wizard does NOT auto-trigger
 4. User can still click "Re-analyze" on the dashboard to get improvement suggestions
@@ -326,7 +326,7 @@ pub struct ClaudeAnalysisOutput {
 | Pillar | Alignment |
 |--------|-----------|
 | Self-Learning Loop | Governance bootstrap is the first turn of the learning loop — Claude reads what exists and improves it. Each re-analysis captures what changed and suggests further improvements, building knowledge over time. |
-| Process Governance | Creates native Claude Code governance artifacts from scratch or by translating from other tools, making governance visible and enforceable from the moment a project is opened in Orqa Studio. |
+| Process Governance | Creates native Claude Code governance artifacts from scratch or by translating from other tools, making governance visible and enforceable from the moment a project is opened in OrqaStudio. |
 
 ## Related Documents
 

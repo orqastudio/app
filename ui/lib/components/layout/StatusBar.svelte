@@ -92,7 +92,7 @@
 
 		<div class="flex items-center gap-1.5">
 			<img src={logoPulse} class="h-3.5 w-3.5" alt="" />
-			<span>Orqa Studio</span>
+			<span>OrqaStudio</span>
 		</div>
 	</div>
 </div>

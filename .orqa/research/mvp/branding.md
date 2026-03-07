@@ -4,10 +4,10 @@ status: complete
 date: 2026-03-02
 category: branding
 description: >
-  Branding as a three-layer cross-cutting concern: Orqa Studio's own visual identity, per-project brand adaptation, and brand-aware AI code generation.
+  Branding as a three-layer cross-cutting concern: OrqaStudio's own visual identity, per-project brand adaptation, and brand-aware AI code generation.
 questions:
   - id: Q1
-    title: "Orqa Studio's Own Brand Identity"
+    title: "OrqaStudio's Own Brand Identity"
     status: resolved
     verdict: >
       Dual-mode identity (Product: Industrial Minimal, Marketing: Cyber-Technical). Three logo marks with shared spark wedge geometry. Contextual spark colors. Zinc base + Inter font stack. See docs/ui/brand-identity.md for authoritative direction.
@@ -25,7 +25,7 @@ questions:
     title: "Brand Hierarchy & Conflict Resolution"
     status: resolved
     verdict: >
-      Three-tier precedence: component library conventions > project tokens > Orqa Studio defaults. Per-project theming toggle. Wireframes always use project brand. Multi-project theming deferred to Phase 2+.
+      Three-tier precedence: component library conventions > project tokens > OrqaStudio defaults. Per-project theming toggle. Wireframes always use project brand. Multi-project theming deferred to Phase 2+.
 produces_decisions: []
 informs_phases: [0d, 0e, 1, 1.5]
 informs_features: [F-001, F-009]
@@ -35,7 +35,7 @@ informs_features: [F-001, F-009]
 
 **Date:** 2026-03-02 | **Status:** Complete
 
-Research into branding as a first-class, three-layer cross-cutting concern in Orqa Studio: (1) Orqa Studio's own visual identity, (2) per-project UI adaptation, and (3) brand-aware AI code generation.
+Research into branding as a first-class, three-layer cross-cutting concern in OrqaStudio: (1) OrqaStudio's own visual identity, (2) per-project UI adaptation, and (3) brand-aware AI code generation.
 
 ---
 
@@ -54,24 +54,24 @@ This document addresses the **gaps** not covered elsewhere. The following aspect
 
 ---
 
-## Q1: Orqa Studio's Own Brand Identity
+## Q1: OrqaStudio's Own Brand Identity
 
-> **Authoritative brand direction:** [Orqa Studio Dual-Mode Identity Guidelines (v1)](/ui/brand-identity) supersedes the initial recommendations below. The guidelines define a dual-mode identity system (Product Mode: Industrial Minimal / Marketing Mode: Cyber-Technical), three logo marks with shared spark wedge geometry, and contextual spark colors (`--orqa-ember`, `--orqa-arc`, `--orqa-amber`, `--orqa-success`). The zinc base palette, Inter font stack, and system-preference dark mode decisions below remain valid.
+> **Authoritative brand direction:** [OrqaStudio Dual-Mode Identity Guidelines (v1)](/ui/brand-identity) supersedes the initial recommendations below. The guidelines define a dual-mode identity system (Product Mode: Industrial Minimal / Marketing Mode: Cyber-Technical), three logo marks with shared spark wedge geometry, and contextual spark colors (`--orqa-ember`, `--orqa-arc`, `--orqa-amber`, `--orqa-success`). The zinc base palette, Inter font stack, and system-preference dark mode decisions below remain valid.
 
-**Question:** What design principles should guide Orqa Studio's visual identity? Color palette, typography, dark mode defaults, and relationship to the shadcn-svelte base theme.
+**Question:** What design principles should guide OrqaStudio's visual identity? Color palette, typography, dark mode defaults, and relationship to the shadcn-svelte base theme.
 
 ### Design Principles
 
-Orqa Studio occupies a specific niche: a product management tool used by technical people (PMs, tech leads, senior engineers). It is not an IDE, not a design tool, and not a business dashboard. The visual identity must communicate:
+OrqaStudio occupies a specific niche: a product management tool used by technical people (PMs, tech leads, senior engineers). It is not an IDE, not a design tool, and not a business dashboard. The visual identity must communicate:
 
 1. **Professional authority** -- This tool governs product development. It should feel decisive, not playful.
 2. **Technical competence** -- Users are technical. The UI can be information-dense and use developer-familiar patterns (monospace code, keyboard shortcuts, dark mode).
-3. **Quiet confidence** -- The tool should recede when project themes are applied. Orqa Studio's brand should not compete with the project being managed.
+3. **Quiet confidence** -- The tool should recede when project themes are applied. OrqaStudio's brand should not compete with the project being managed.
 4. **Clarity over decoration** -- Every pixel serves information delivery. No gradients for the sake of gradients. No illustrations in the chrome.
 
 ### What Professional Tools Do
 
-An analysis of tools in Orqa Studio's competitive space reveals a consistent pattern:
+An analysis of tools in OrqaStudio's competitive space reveals a consistent pattern:
 
 | Tool | Base Palette | Accent | Typography | Dark Mode | Key Principle |
 |------|-------------|--------|------------|-----------|---------------|
@@ -103,7 +103,7 @@ shadcn-svelte offers five neutral base options:
 1. Its cool undertone reads as "technical" without being cold.
 2. It does not have the blue undertone of slate, which would conflict with projects using blue as their primary brand color. When a project's theme applies a blue primary, the blue would bleed into zinc's neutral areas less than it would into slate's already-blue-tinted grays.
 3. It is shadcn-svelte's actual default, meaning zero customization of the neutral scale is needed. Less customization means fewer maintenance burdens when shadcn-svelte updates.
-4. Linear -- the closest analog to Orqa Studio in the PM-tool space -- uses a very similar cool desaturated neutral base.
+4. Linear -- the closest analog to OrqaStudio in the PM-tool space -- uses a very similar cool desaturated neutral base.
 
 #### Signature accent color
 
@@ -117,7 +117,7 @@ Rationale:
 5. **OKLCH generation** -- Indigo at the 280-degree hue angle in OKLCH produces clean, perceptually uniform variants across the lightness scale.
 
 **Where the accent appears:**
-- `--primary` in Orqa Studio's default theme (buttons, links, active tabs, selected items)
+- `--primary` in OrqaStudio's default theme (buttons, links, active tabs, selected items)
 - `--ring` (focus rings)
 - `--sidebar-primary` (active navigation item)
 - Chart accent colors (chart-1)
@@ -130,7 +130,7 @@ Rationale:
 #### Concrete default theme values
 
 ```css
-/* Orqa Studio default theme -- light mode */
+/* OrqaStudio default theme -- light mode */
 :root {
   --radius: 0.625rem;
   /* Zinc neutrals (shadcn-svelte defaults, unchanged) */
@@ -150,7 +150,7 @@ Rationale:
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
 
-  /* Orqa Studio signature indigo-violet accent */
+  /* OrqaStudio signature indigo-violet accent */
   --primary: oklch(0.55 0.18 280);
   --primary-foreground: oklch(0.985 0 0);
   --ring: oklch(0.55 0.18 280);
@@ -173,7 +173,7 @@ Rationale:
   --chart-5: oklch(0.769 0.188 70.08);
 }
 
-/* Orqa Studio default theme -- dark mode */
+/* OrqaStudio default theme -- dark mode */
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -213,7 +213,7 @@ Rationale:
 }
 ```
 
-The key difference from stock shadcn-svelte zinc: `--primary`, `--ring`, `--sidebar-primary`, and `--chart-1` shift from achromatic zinc to indigo-violet. Everything else stays untouched. This means Orqa Studio has a recognizable brand color while remaining neutral enough for project themes to dominate when applied.
+The key difference from stock shadcn-svelte zinc: `--primary`, `--ring`, `--sidebar-primary`, and `--chart-1` shift from achromatic zinc to indigo-violet. Everything else stays untouched. This means OrqaStudio has a recognizable brand color while remaining neutral enough for project themes to dominate when applied.
 
 ### Typography
 
@@ -225,14 +225,14 @@ The key difference from stock shadcn-svelte zinc: `--primary`, `--ring`, `--side
 |----------|------|------|
 | **System fonts** | Zero load time, native feel, no FOUT, smaller bundle | Less distinctive, varies by OS |
 | **Bundled font (e.g., Inter)** | Consistent across platforms, more control | +200-400 KB bundle, FOUT possible, maintenance burden |
-| **Custom font (like Figma Sans)** | Maximum brand distinction | Licensing cost, large bundle, overkill for Orqa Studio |
+| **Custom font (like Figma Sans)** | Maximum brand distinction | Licensing cost, large bundle, overkill for OrqaStudio |
 
 For a Tauri desktop app, system fonts are the best choice:
 
 1. **Desktop apps should feel native.** A Tauri app using the platform's native font feels like a first-class desktop citizen, not a website in a frame.
 2. **Inter is already a system font on many developer machines.** It ships with many Linux distributions, is commonly installed by developers on macOS and Windows, and is the default for many developer tools (VS Code, Linear).
 3. **No FOUT.** Bundled fonts in a Tauri WebView can flash unstyled text during app startup. System fonts render immediately.
-4. **Orqa Studio is not a brand-forward consumer app.** It does not need its own typeface for marketing or consumer recognition. It is a professional tool where typography should be invisible -- legible, information-dense, and fast.
+4. **OrqaStudio is not a brand-forward consumer app.** It does not need its own typeface for marketing or consumer recognition. It is a professional tool where typography should be invisible -- legible, information-dense, and fast.
 
 #### Font stack declaration
 
@@ -260,7 +260,7 @@ For monospace, JetBrains Mono and Cascadia Code are the modern standards for dev
 
 Linear uses Inter Display for headings because it has slightly different optical sizing for large text. This is a reasonable choice but adds complexity:
 - Inter Display requires a separate font file or variable font axis
-- The visual difference at Orqa Studio's heading sizes (16-24px) is marginal
+- The visual difference at OrqaStudio's heading sizes (16-24px) is marginal
 - Inter's variable font axis (`font-variation-settings: 'opsz' 28`) can achieve a similar effect without a separate file
 
 **Decision:** Use standard Inter with `font-variation-settings` for optical sizing at large sizes if Inter's variable font is available. This is a zero-cost enhancement that degrades gracefully.
@@ -275,11 +275,11 @@ Linear uses Inter Display for headings because it has slightly different optical
 | **Light default** | "This is a business/PM tool" | Notion, Jira, Asana |
 | **System preference** | "We respect your setup" | Figma, GitHub, macOS apps |
 
-Orqa Studio straddles the developer/PM line. Its primary persona (Alex, PM/Tech Lead) works in both contexts. System preference is the safest default because:
+OrqaStudio straddles the developer/PM line. Its primary persona (Alex, PM/Tech Lead) works in both contexts. System preference is the safest default because:
 
 1. It respects the user's existing environment. A PM using light mode everywhere will not be jarred. A developer using dark mode everywhere will feel at home.
 2. `mode-watcher` (already decided in design-tokens.md) handles system preference detection, manual toggle, and persistence out of the box.
-3. If system preference is not available (rare, but possible on some Linux WMs), dark mode is the better fallback because Orqa Studio's primary user base skews technical.
+3. If system preference is not available (rare, but possible on some Linux WMs), dark mode is the better fallback because OrqaStudio's primary user base skews technical.
 
 **Implementation:** Already covered in [`design-tokens.md`](/research/design-tokens) Q2. `mode-watcher` with `ModeWatcher` component in root layout. Default mode: `'system'`. Fallback: `'dark'`.
 
@@ -287,7 +287,7 @@ Orqa Studio straddles the developer/PM line. Its primary persona (Alex, PM/Tech 
 
 ## Q2: Design System as Governance Artifact
 
-**Question:** Should a project's design system be a `.claude/` governance artifact? What format? How does it relate to existing artifact types? Should Orqa Studio auto-generate it?
+**Question:** Should a project's design system be a `.claude/` governance artifact? What format? How does it relate to existing artifact types? Should OrqaStudio auto-generate it?
 
 ### The Case for Design System as a Governance Artifact
 
@@ -311,7 +311,7 @@ This information is no different from a coding standard or architectural rule. I
 | **Zeroheight** | Living documentation platform. Syncs with Figma and Storybook. Manages tokens via W3C DTCG spec. | Web platform (DTCG JSON for tokens) |
 | **Style Dictionary** | JSON/YAML token definitions. Build system transforms tokens to platform-specific outputs (CSS vars, iOS, Android). First-class DTCG support in v4. | JSON/YAML (DTCG format) |
 
-**Key insight from v0.dev:** Vercel's approach with registries demonstrates that the most effective way to give AI design system context is through a structured specification that maps directly to the component library's conventions. Their registry uses the shadcn CSS variable naming convention -- exactly what Orqa Studio already uses internally.
+**Key insight from v0.dev:** Vercel's approach with registries demonstrates that the most effective way to give AI design system context is through a structured specification that maps directly to the component library's conventions. Their registry uses the shadcn CSS variable naming convention -- exactly what OrqaStudio already uses internally.
 
 **Key insight from Cursor:** Path-scoped rules are the correct pattern. A design system rule should only be injected into context when Claude is working on frontend files, not when it is writing Rust backend code or SQL migrations.
 
@@ -321,10 +321,10 @@ This information is no different from a coding standard or architectural rule. I
 
 This format is chosen because:
 
-1. **CLI compatibility** -- It is a standard `.claude/rules/` file. Claude Code CLI will automatically load it when working in scoped paths. No Orqa Studio-specific format needed.
+1. **CLI compatibility** -- It is a standard `.claude/rules/` file. Claude Code CLI will automatically load it when working in scoped paths. No OrqaStudio-specific format needed.
 2. **Path scoping** -- The `paths:` frontmatter field limits injection to frontend work, avoiding wasted context tokens on backend conversations.
 3. **Human-readable** -- PMs and designers can read and edit the file without understanding JSON schemas.
-4. **Machine-parseable** -- YAML frontmatter contains structured token data that Orqa Studio can extract programmatically. The markdown body contains natural language instructions that Claude consumes directly.
+4. **Machine-parseable** -- YAML frontmatter contains structured token data that OrqaStudio can extract programmatically. The markdown body contains natural language instructions that Claude consumes directly.
 5. **Git-friendly** -- Lives in the repo. Version-controlled. Reviewed in PRs.
 
 #### File structure
@@ -397,28 +397,28 @@ This project uses shadcn-svelte (Svelte 5). When generating UI code:
 
 The design system artifact is a **rule**, not a new artifact type. It lives in `.claude/rules/` because it governs code generation behavior -- exactly what rules do. The only special treatment is:
 
-1. **Auto-generation** -- Orqa Studio can auto-generate this file during codebase scan (Tier 1 heuristics)
-2. **Orqa Studio UI integration** -- Orqa Studio reads the `tokens:` frontmatter to apply per-project theming (in addition to the token extraction pipeline from `design-tokens.md`)
+1. **Auto-generation** -- OrqaStudio can auto-generate this file during codebase scan (Tier 1 heuristics)
+2. **OrqaStudio UI integration** -- OrqaStudio reads the `tokens:` frontmatter to apply per-project theming (in addition to the token extraction pipeline from `design-tokens.md`)
 3. **Path scoping** -- Scoped to frontend paths so it does not waste context on backend work
 
 ### Auto-Generation During Codebase Scan
 
-**Verdict: Yes. Orqa Studio should auto-generate `.claude/rules/design-system.md` if design tokens are detected during codebase scan AND the file does not already exist.**
+**Verdict: Yes. OrqaStudio should auto-generate `.claude/rules/design-system.md` if design tokens are detected during codebase scan AND the file does not already exist.**
 
 The auto-generation flow:
 
 1. **Tier 1 scan** detects design tokens (tailwind.config, CSS custom properties, component library dependencies)
-2. Orqa Studio checks if `.claude/rules/design-system.md` exists
-3. If it does not exist, Orqa Studio generates it from extracted tokens:
+2. OrqaStudio checks if `.claude/rules/design-system.md` exists
+3. If it does not exist, OrqaStudio generates it from extracted tokens:
    - `tokens:` frontmatter populated from extracted values
    - `component-library:` set based on detected dependencies (shadcn, Chakra, Radix, etc.)
    - `css-framework:` set based on detected framework (tailwind-v3, tailwind-v4, vanilla-css)
    - `paths:` set based on detected frontend directory structure
    - Markdown body contains standard usage rules appropriate to the detected stack
-4. Orqa Studio presents the generated file to the user for review before writing to disk: "I detected design tokens in your project. Would you like me to create a design system rule for Claude?"
+4. OrqaStudio presents the generated file to the user for review before writing to disk: "I detected design tokens in your project. Would you like me to create a design system rule for Claude?"
 5. User can edit, approve, or dismiss
 
-**If the file already exists**, Orqa Studio reads it as an additional source for per-project theming (the `tokens:` frontmatter). Orqa Studio never overwrites an existing file.
+**If the file already exists**, OrqaStudio reads it as an additional source for per-project theming (the `tokens:` frontmatter). OrqaStudio never overwrites an existing file.
 
 **Why require user approval:** Auto-generating governance artifacts without user consent violates the progressive disclosure principle from [`onboarding.md`](/research/onboarding). The user should feel in control of what goes into `.claude/`.
 
@@ -426,15 +426,15 @@ The auto-generation flow:
 
 The design system rule is surfaced to Claude through the standard `.claude/rules/` mechanism:
 
-1. **Claude Code CLI (direct):** The CLI automatically loads all `.claude/rules/*.md` files. Path-scoped rules are only loaded when Claude is working with matching files. No Orqa Studio-specific logic needed -- this is built into the CLI.
+1. **Claude Code CLI (direct):** The CLI automatically loads all `.claude/rules/*.md` files. Path-scoped rules are only loaded when Claude is working with matching files. No OrqaStudio-specific logic needed -- this is built into the CLI.
 
-2. **Orqa Studio's Agent SDK sidecar (via system prompt):** When Orqa Studio constructs a `ConversationRequest` to send to the sidecar, it includes relevant rules in the system prompt. Orqa Studio's rule injection logic:
+2. **OrqaStudio's Agent SDK sidecar (via system prompt):** When OrqaStudio constructs a `ConversationRequest` to send to the sidecar, it includes relevant rules in the system prompt. OrqaStudio's rule injection logic:
    - Reads all `.claude/rules/*.md` files
    - For each rule, checks the `paths:` frontmatter against the files currently being discussed in the conversation
    - If the conversation involves frontend files (detected by file extensions or explicit user intent), the design system rule is included
    - If the conversation is purely backend, the design system rule is excluded
 
-This is the same mechanism used for all rules. The design system rule is not special in how it is delivered -- only in how it is generated and how Orqa Studio uses its `tokens:` frontmatter for UI theming.
+This is the same mechanism used for all rules. The design system rule is not special in how it is delivered -- only in how it is generated and how OrqaStudio uses its `tokens:` frontmatter for UI theming.
 
 ---
 
@@ -463,7 +463,7 @@ v0.dev's approach is the most mature:
 3. **Default stack** -- When no registry is provided, v0 defaults to shadcn/ui + Tailwind CSS + Lucide icons. This means generated code always targets a known component library.
 4. **Registry as context** -- The registry is described as "a distribution specification designed to pass context from your design system to AI Models." The AI model receives the registry and generates code that references the project's actual components and tokens.
 
-**Lesson for Orqa Studio:** The most effective approach is to give Claude a compact, structured specification of the project's design system -- not the entire design system documentation, but a focused summary of what to use and what to avoid.
+**Lesson for OrqaStudio:** The most effective approach is to give Claude a compact, structured specification of the project's design system -- not the entire design system documentation, but a focused summary of what to use and what to avoid.
 
 #### Cursor
 
@@ -473,13 +473,13 @@ Cursor uses `.cursor/rules/*.mdc` files with path scoping. Frontend rules specif
 - Component library usage patterns
 - State management conventions
 
-**Lesson for Orqa Studio:** Path scoping is critical. Design system context should only be injected when the conversation involves frontend files. Injecting it during backend work wastes context tokens and clutters the prompt.
+**Lesson for OrqaStudio:** Path scoping is critical. Design system context should only be injected when the conversation involves frontend files. Injecting it during backend work wastes context tokens and clutters the prompt.
 
 #### Claude Code CLI
 
 Claude Code uses `.claude/rules/*.md` with path-based scoping via `paths:` frontmatter. Rules are automatically loaded when Claude is working with matching files.
 
-**Lesson for Orqa Studio:** The existing `.claude/rules/` mechanism is sufficient. No new delivery mechanism is needed.
+**Lesson for OrqaStudio:** The existing `.claude/rules/` mechanism is sufficient. No new delivery mechanism is needed.
 
 ### System Prompt Design for Design Awareness
 
@@ -601,7 +601,7 @@ This is a heuristic, not a classifier. False positives (injecting design context
 
 ### Component Library Convention Communication
 
-Different component libraries have different conventions. The design system rule should include library-specific instructions. Orqa Studio can auto-generate these based on the detected component library:
+Different component libraries have different conventions. The design system rule should include library-specific instructions. OrqaStudio can auto-generate these based on the detected component library:
 
 | Library | Key Conventions |
 |---------|----------------|
@@ -612,7 +612,7 @@ Different component libraries have different conventions. The design system rule
 | **MUI** | `sx` prop for styling. Theme via `ThemeProvider`. Slots API for customization. |
 | **Mantine** | CSS Modules by default. `styles` prop for overrides. Theme via `MantineProvider`. |
 
-Orqa Studio generates the appropriate convention block based on `component-library:` in the design system rule frontmatter. If no library is detected, a generic "use semantic CSS variables" instruction is used.
+OrqaStudio generates the appropriate convention block based on `component-library:` in the design system rule frontmatter. If no library is detected, a generic "use semantic CSS variables" instruction is used.
 
 ### Design-System-Aware Agent
 
@@ -644,13 +644,13 @@ After generating code:
 3. Verify spacing follows the project's scale
 ```
 
-**Why defer to post-Phase 1:** Phase 1 does not include agent delegation (the ability to route conversations to specialized agents). The design system rule in `.claude/rules/` provides adequate design awareness for Phase 1's single-agent conversations. The specialized agent becomes valuable in Phase 2+ when Orqa Studio supports multi-agent workflows.
+**Why defer to post-Phase 1:** Phase 1 does not include agent delegation (the ability to route conversations to specialized agents). The design system rule in `.claude/rules/` provides adequate design awareness for Phase 1's single-agent conversations. The specialized agent becomes valuable in Phase 2+ when OrqaStudio supports multi-agent workflows.
 
 ---
 
 ## Q4: Brand Hierarchy & Conflict Resolution
 
-**Question:** When Orqa Studio's brand, a project's brand, and a component library's conventions conflict, what wins? How does theming work across multiple projects?
+**Question:** When OrqaStudio's brand, a project's brand, and a component library's conventions conflict, what wins? How does theming work across multiple projects?
 
 ### The Three-Tier Precedence Model
 
@@ -659,38 +659,38 @@ When there is a conflict between branding layers, the resolution follows this pr
 ```
 1. Component Library Conventions  (highest -- structural, not optional)
 2. Project's Design Tokens         (the project's actual brand)
-3. Orqa Studio's Default Theme            (lowest -- the fallback)
+3. OrqaStudio's Default Theme            (lowest -- the fallback)
 ```
 
 #### Why this order
 
 **Component library conventions win** because they are structural, not aesthetic. If shadcn-svelte expects `--primary` to be a single color value applied via `bg-primary`, you cannot override this convention without breaking every component. Library conventions dictate how tokens are consumed, not what values they have. This is non-negotiable.
 
-**Project tokens override Orqa Studio defaults** because the entire purpose of per-project theming is to make Orqa Studio feel like a companion to the project. If the user opens a project with a red brand, Orqa Studio should be red, not indigo. Orqa Studio's defaults are literally fallbacks for when project tokens are not available.
+**Project tokens override OrqaStudio defaults** because the entire purpose of per-project theming is to make OrqaStudio feel like a companion to the project. If the user opens a project with a red brand, OrqaStudio should be red, not indigo. OrqaStudio's defaults are literally fallbacks for when project tokens are not available.
 
-**Orqa Studio's defaults are the floor** -- they provide a complete, coherent theme when no project is open or when the project has no detectable design tokens.
+**OrqaStudio's defaults are the floor** -- they provide a complete, coherent theme when no project is open or when the project has no detectable design tokens.
 
 ### Concrete Conflict Scenarios
 
 | Scenario | Resolution |
 |----------|------------|
-| Project uses `--primary: red` but Orqa Studio's default is indigo | **Project wins.** Orqa Studio's UI turns red. |
-| Project uses `--primary: red` but shadcn-svelte expects `--primary` to be a CSS color value, and the project provides an invalid value | **Orqa Studio default wins.** Invalid values are discarded; fallback to indigo. |
-| Project uses Chakra UI (no CSS variables, uses `bg="red.500"` pattern) but Orqa Studio's chrome uses shadcn-svelte | **Orqa Studio chrome uses Orqa Studio defaults.** The project's Chakra tokens cannot map to shadcn-svelte variables. Orqa Studio's theming adapts what it can (extracted color values mapped to `--primary`), but Orqa Studio's own UI remains shadcn-based. |
+| Project uses `--primary: red` but OrqaStudio's default is indigo | **Project wins.** OrqaStudio's UI turns red. |
+| Project uses `--primary: red` but shadcn-svelte expects `--primary` to be a CSS color value, and the project provides an invalid value | **OrqaStudio default wins.** Invalid values are discarded; fallback to indigo. |
+| Project uses Chakra UI (no CSS variables, uses `bg="red.500"` pattern) but OrqaStudio's chrome uses shadcn-svelte | **OrqaStudio chrome uses OrqaStudio defaults.** The project's Chakra tokens cannot map to shadcn-svelte variables. OrqaStudio's theming adapts what it can (extracted color values mapped to `--primary`), but OrqaStudio's own UI remains shadcn-based. |
 | User manually overrides `--primary` to green in project settings | **User override wins over extraction.** This is already implemented in `project_theme_overrides` (see design-tokens.md Q4). |
-| Project has a `.claude/rules/design-system.md` that says "use bg-blue-600" but the project's tokens have `--primary: red` | **The rule wins for Claude's code generation** (Claude follows the rule text). **The tokens win for Orqa Studio's UI** (Orqa Studio reads `tokens:` frontmatter for theming). This is an inconsistency in the project's governance, not a Orqa Studio bug. |
+| Project has a `.claude/rules/design-system.md` that says "use bg-blue-600" but the project's tokens have `--primary: red` | **The rule wins for Claude's code generation** (Claude follows the rule text). **The tokens win for OrqaStudio's UI** (OrqaStudio reads `tokens:` frontmatter for theming). This is an inconsistency in the project's governance, not a OrqaStudio bug. |
 
 ### Multi-Project Theming (Future -- Phase 2+)
 
-**Current state (Phase 1):** Orqa Studio has a single active project at a time. When the user switches projects, the old theme is cleared and the new project's theme is applied. This is simple and avoids any multi-project theming complexity.
+**Current state (Phase 1):** OrqaStudio has a single active project at a time. When the user switches projects, the old theme is cleared and the new project's theme is applied. This is simple and avoids any multi-project theming complexity.
 
-**Future state (Phase 2+):** When Orqa Studio supports multiple open projects (tabs or sidebar), each project's conversation panel could theoretically use its own theme. This raises the question: does the entire Orqa Studio chrome change, or only the content area?
+**Future state (Phase 2+):** When OrqaStudio supports multiple open projects (tabs or sidebar), each project's conversation panel could theoretically use its own theme. This raises the question: does the entire OrqaStudio chrome change, or only the content area?
 
-**Verdict: Chrome stays Orqa Studio-branded. Content area adopts project theme. Deferred to Phase 2+ design.**
+**Verdict: Chrome stays OrqaStudio-branded. Content area adopts project theme. Deferred to Phase 2+ design.**
 
 The recommended approach for multi-project theming:
 
-1. **Orqa Studio chrome** (sidebar, header, settings) always uses Orqa Studio's default theme. This provides visual stability -- the user always knows they are in Orqa Studio.
+1. **OrqaStudio chrome** (sidebar, header, settings) always uses OrqaStudio's default theme. This provides visual stability -- the user always knows they are in OrqaStudio.
 2. **Content area** (conversation panel, artifact viewer, detail panel) adopts the active project's theme. The active project is the one currently focused.
 3. **Visual indicator** -- A small color swatch or badge in the project tab shows the project's primary color, helping users distinguish projects even when the content area is not themed.
 4. **Theme transition** -- When switching projects, the content area's CSS variables are updated. This is the same `applyProjectTheme()` mechanism from design-tokens.md, just scoped to a content container instead of `:root`.
@@ -720,25 +720,25 @@ This is a CSS-only change -- shadow-free, no JavaScript per frame, and no perfor
 
 | Setting | Location | Effect |
 |---------|----------|--------|
-| **Global toggle** | Settings > Appearance > "Adapt UI to project theme" | When OFF, Orqa Studio always uses its default theme regardless of detected tokens. |
-| **Per-project toggle** | Project Settings > Theme > "Use detected theme" | When OFF, this specific project uses Orqa Studio defaults. Other projects still adapt. |
+| **Global toggle** | Settings > Appearance > "Adapt UI to project theme" | When OFF, OrqaStudio always uses its default theme regardless of detected tokens. |
+| **Per-project toggle** | Project Settings > Theme > "Use detected theme" | When OFF, this specific project uses OrqaStudio defaults. Other projects still adapt. |
 | **Per-project override** | Project Settings > Theme > Token overrides | User can tweak individual tokens. Already implemented in `project_theme_overrides`. |
 
 Global toggle default: **ON** (per-project theming is a headline feature -- users should experience it by default).
 
 ### Wireframe Generation and Brand
 
-**Verdict: Wireframes always use the project's brand, never Orqa Studio's brand.**
+**Verdict: Wireframes always use the project's brand, never OrqaStudio's brand.**
 
-When Claude generates wireframes for a project (PlantUML Salt diagrams, as decided in [`wireframing.md`](/research/wireframing)), the wireframes should represent the **project's** interface, not Orqa Studio's interface. This means:
+When Claude generates wireframes for a project (PlantUML Salt diagrams, as decided in [`wireframing.md`](/research/wireframing)), the wireframes should represent the **project's** interface, not OrqaStudio's interface. This means:
 
 1. **Color tokens** -- If the project has a detected/declared design system, wireframe annotations should reference the project's token names and values.
 2. **Component library** -- Wireframes should show the project's component library patterns (e.g., shadcn button variants), not generic HTML elements.
-3. **Orqa Studio as invisible tool** -- Orqa Studio is the tool generating the wireframe, not the product being wireframed. Just as Figma does not inject its own brand into designs created within it, Orqa Studio should not inject its brand into wireframes.
+3. **OrqaStudio as invisible tool** -- OrqaStudio is the tool generating the wireframe, not the product being wireframed. Just as Figma does not inject its own brand into designs created within it, OrqaStudio should not inject its brand into wireframes.
 
 The design system context injected into Claude's prompt (Q3) handles this automatically: when Claude generates wireframes, it has the project's design system context and will use project-appropriate tokens and components.
 
-**Exception:** If no project design system is detected (empty project, no tokens), wireframes fall back to generic patterns (neutral colors, standard HTML elements). They do not use Orqa Studio's indigo-violet brand in wireframes.
+**Exception:** If no project design system is detected (empty project, no tokens), wireframes fall back to generic patterns (neutral colors, standard HTML elements). They do not use OrqaStudio's indigo-violet brand in wireframes.
 
 ---
 
@@ -749,13 +749,13 @@ The design system context injected into Claude's prompt (Q3) handles this automa
 | Q1: Brand Identity | Zinc base + indigo-violet accent. System fonts (Inter-first). System-preference dark mode. | Neutral enough for project themes. Distinctive enough to be recognizable. Linear precedent. |
 | Q2: Governance Artifact | Auto-generated `.claude/rules/design-system.md` with YAML frontmatter tokens + markdown usage rules. Path-scoped to frontend files. | CLI-compatible. Human-readable. Machine-parseable tokens. Git-friendly. |
 | Q3: Code Generation | Compact `<design-system>` block in system prompt. Conditional injection based on frontend file context or intent keywords. ~500 tokens. | Prevents raw color values. Ensures component library usage. Low context cost. |
-| Q4: Conflict Resolution | Library conventions > project tokens > Orqa Studio defaults. User toggles for theming. Wireframes use project brand. Multi-project deferred. | Clear precedence eliminates ambiguity. User stays in control. |
+| Q4: Conflict Resolution | Library conventions > project tokens > OrqaStudio defaults. User toggles for theming. Wireframes use project brand. Multi-project deferred. | Clear precedence eliminates ambiguity. User stays in control. |
 
 ### Key Implementation Artifacts
 
 | Artifact | Phase | Description |
 |----------|-------|-------------|
-| Orqa Studio default CSS theme | Phase 0d | Zinc + indigo-violet CSS variable declarations for light/dark |
+| OrqaStudio default CSS theme | Phase 0d | Zinc + indigo-violet CSS variable declarations for light/dark |
 | Font stack declaration | Phase 0d | `--font-sans` and `--font-mono` CSS custom properties |
 | Design system rule auto-generator | Phase 1 | Rust function that produces `.claude/rules/design-system.md` from extracted tokens |
 | System prompt design system block | Phase 1 | Template for the `<design-system>` prompt section |

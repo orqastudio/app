@@ -22,7 +22,7 @@ tags: [composability, architecture, dogfooding]
 
 ## Problem Statement
 
-Orqa Studio promotes composability as a core principle (AD-017, `orqa-composability` skill) but the app itself has composability debt: monolithic commands, god components, tightly coupled features. The app cannot credibly enforce composability on projects it manages if it doesn't adhere to those principles itself.
+OrqaStudio promotes composability as a core principle (AD-017, `orqa-composability` skill) but the app itself has composability debt: monolithic commands, god components, tightly coupled features. The app cannot credibly enforce composability on projects it manages if it doesn't adhere to those principles itself.
 
 Beyond the app's own code, composability must be a **platform-level architectural principle** that shapes:
 - How the app is built (every layer, from AI provider integration to UI components)
@@ -42,9 +42,9 @@ This is the gate before dogfooding. Once this work is complete, every feature bu
 
 ---
 
-## Phase A: Deep Composability Audit (Orqa Studio)
+## Phase A: Deep Composability Audit (OrqaStudio)
 
-Comprehensive audit of the entire Orqa Studio codebase against composability principles. Every layer. No exceptions.
+Comprehensive audit of the entire OrqaStudio codebase against composability principles. Every layer. No exceptions.
 
 ### A1: AI Provider Integration Layer
 
@@ -232,7 +232,7 @@ Skills must be:
 - **Stackable** — base skill provides principles, project skill provides examples
 - **Overridable** — project skill can override base skill guidance for specific patterns
 - **Discoverable** — the app can suggest skills based on detected tech stack
-- **Portable** — skills work in both CLI (Claude Code) and App (Orqa Studio) contexts
+- **Portable** — skills work in both CLI (Claude Code) and App (OrqaStudio) contexts
 
 ### C3: Agent Composability
 
@@ -262,7 +262,7 @@ Scanners must be:
 
 ## Phase D: Initialization Composability Assessment
 
-When Orqa Studio initializes in an existing project, assess its composability and present options.
+When OrqaStudio initializes in an existing project, assess its composability and present options.
 
 ### D1: Composability Analysis
 
@@ -341,7 +341,7 @@ When a non-technical user creates a product from scratch:
 2. **Phase B complete when:** `stream_commands.rs` ≤200 lines, `ConversationView.svelte` decomposed, no store-to-store imports, all shared components used consistently, `make check` passes
 3. **Phase C complete when:** Base skills/agents/rules/scanner defined and separated from project-specific ones, `.orqa/project.json` schema supports composability config, learning loop works with both layers
 4. **Phase D complete when:** Initialization scan includes composability assessment, user sees options dialog, greenfield projects get composability by default
-5. **Overall gate passed when:** Orqa Studio's own composability score is ≥85/100, and the composability scanner can run on itself as part of `make check`
+5. **Overall gate passed when:** OrqaStudio's own composability score is ≥85/100, and the composability scanner can run on itself as part of `make check`
 
 ---
 

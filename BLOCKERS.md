@@ -1,4 +1,4 @@
-# Orqa Studio Blockers
+# OrqaStudio Blockers
 
 **Last Updated:** 2026-03-05
 

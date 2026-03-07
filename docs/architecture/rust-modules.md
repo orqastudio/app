@@ -113,7 +113,7 @@ Generic startup task tracker. Tasks are registered with an ID and label, then up
 
 ### `domain/`
 
-Pure domain model types. No dependencies on Tauri, rusqlite, or serde_json beyond derive macros. This module is the source of truth for what Orqa Studio's data looks like (AD-001). Other modules depend on `domain/`; it depends on nothing else. Includes `project_scanner.rs` for filesystem walking and `project_settings.rs` for file-based project configuration.
+Pure domain model types. No dependencies on Tauri, rusqlite, or serde_json beyond derive macros. This module is the source of truth for what OrqaStudio™'s data looks like (AD-001). Other modules depend on `domain/`; it depends on nothing else. Includes `project_scanner.rs` for filesystem walking and `project_settings.rs` for file-based project configuration.
 
 ### `repo/`
 
@@ -703,7 +703,7 @@ pub enum SidecarResponse {
     // Non-streaming responses
     HealthOk { version: String },
     SummaryResult { session_id: i64, summary: String },
-    // Tool execution (sidecar -> Orqa Studio)
+    // Tool execution (sidecar -> OrqaStudio)
     ToolExecute { tool_call_id: String, tool_name: String, input: String },
     ToolApprovalRequest { tool_call_id: String, tool_name: String, input: String },
 }

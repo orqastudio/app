@@ -2,17 +2,17 @@
 
 **Date:** 2026-03-07
 **Status:** Complete
-**Purpose:** Inform the multi-provider abstraction design for Orqa Studio's sidecar layer
+**Purpose:** Inform the multi-provider abstraction design for OrqaStudio's sidecar layer
 
 ## Aim: Compatibility
 
-The documented aim of this research and the resulting architecture is **compatibility**. Orqa Studio should work with as many AI providers as possible — from fixed-cost subscriptions (Claude Max) to pay-per-token APIs (Anthropic, OpenAI, Gemini) to free/local models (Ollama, vLLM). The architecture must support both agent runtime SDKs (via sidecar) and direct API calls (via Rust) without the frontend knowing or caring which path is used. Provider choice is a user/org decision driven by cost, compliance, and ecosystem preferences — the app should never constrain that choice.
+The documented aim of this research and the resulting architecture is **compatibility**. OrqaStudio should work with as many AI providers as possible — from fixed-cost subscriptions (Claude Max) to pay-per-token APIs (Anthropic, OpenAI, Gemini) to free/local models (Ollama, vLLM). The architecture must support both agent runtime SDKs (via sidecar) and direct API calls (via Rust) without the frontend knowing or caring which path is used. Provider choice is a user/org decision driven by cost, compliance, and ecosystem preferences — the app should never constrain that choice.
 
 ---
 
 ## Executive Summary
 
-Orqa Studio needs a multi-provider architecture. Research identified two categories of AI providers with fundamentally different integration patterns:
+OrqaStudio needs a multi-provider architecture. Research identified two categories of AI providers with fundamentally different integration patterns:
 
 1. **Agent runtime SDKs** (Claude Agent SDK, OpenAI Agents SDK, Google ADK) — full runtimes that manage tool loops, sessions, and streaming internally. Architecturally similar to each other. Require a Node.js/Bun sidecar process.
 
@@ -165,7 +165,7 @@ Additionally, business ecosystem AI (Microsoft 365 Copilot, Google Workspace Gem
 
 ### The Honest Answer for Charities / Small Companies
 
-An M365 Copilot or Google Workspace subscription does **not** give general-purpose AI API access for third-party tools. To use AI in Orqa Studio, organizations need one of:
+An M365 Copilot or Google Workspace subscription does **not** give general-purpose AI API access for third-party tools. To use AI in OrqaStudio, organizations need one of:
 
 | Path | Cost | Complexity |
 |------|------|------------|
@@ -239,7 +239,7 @@ The direct API path fully supports multi-agent setups. Each "agent" is just:
 - A set of tool definitions
 - A conversation history (stored in SQLite)
 
-Orqa Studio's Rust layer manages the tool loop, orchestration, and handoffs. This gives us **more** control than the agent SDKs, not less.
+OrqaStudio's Rust layer manages the tool loop, orchestration, and handoffs. This gives us **more** control than the agent SDKs, not less.
 
 ---
 

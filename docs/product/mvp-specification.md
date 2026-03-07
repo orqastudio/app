@@ -10,11 +10,11 @@ updated: 2026-03-04
 
 **Date:** 2026-03-02
 
-Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped to the minimum needed for dogfooding — Orqa Studio must be able to manage its own development after this phase. Orqa Studio requires the Claude Code CLI as a prerequisite; it wraps the CLI with a visual management layer rather than replacing it.
+Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped to the minimum needed for dogfooding — OrqaStudio™ must be able to manage its own development after this phase. OrqaStudio requires the Claude Code CLI as a prerequisite; it wraps the CLI with a visual management layer rather than replacing it.
 
-**Guiding principle:** Ship the smallest thing that lets us supplement the CLI-based bootstrap process with Orqa Studio's visual governance UI. Every feature below serves the dogfooding milestone. Features that would be nice but aren't needed for dogfooding are listed under "Explicitly Deferred."
+**Guiding principle:** Ship the smallest thing that lets us supplement the CLI-based bootstrap process with OrqaStudio's visual governance UI. Every feature below serves the dogfooding milestone. Features that would be nice but aren't needed for dogfooding are listed under "Explicitly Deferred."
 
-**Universal acceptance criterion:** All `.claude/` files created or modified by Orqa Studio are immediately compatible with the Claude Code CLI. No proprietary formats, no migration steps.
+**Universal acceptance criterion:** All `.claude/` files created or modified by OrqaStudio are immediately compatible with the Claude Code CLI. No proprietary formats, no migration steps.
 
 ---
 
@@ -22,7 +22,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 
 ### F-001: Project Open & Codebase Scan
 
-**Description:** User can open a project directory. Orqa Studio scans the codebase and populates project metadata.
+**Description:** User can open a project directory. OrqaStudio scans the codebase and populates project metadata.
 
 **Acceptance Criteria:**
 - [ ] User can open a directory via native file dialog (tauri-plugin-dialog)
@@ -30,7 +30,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] Tier 1 scan also detects design system tokens: `tailwind.config.*` theme colors/fonts, CSS custom properties in `:root`, component library conventions
 - [ ] Tier 2 scan (hyperpolyglot) completes in < 5s for projects up to 10,000 files
 - [ ] Detected metadata (including design tokens) is stored in SQLite and displayed in the Project Dashboard (Activity Bar)
-- [ ] If design tokens are found, Orqa Studio's UI theme adapts to match the project's color palette (per-project theming). Missing tokens fall back to Orqa Studio defaults.
+- [ ] If design tokens are found, OrqaStudio's UI theme adapts to match the project's color palette (per-project theming). Missing tokens fall back to OrqaStudio defaults.
 - [ ] If `.claude/` directory exists, governance artifacts are indexed and counts displayed
 - [ ] Last-opened project is remembered across app restarts (tauri-plugin-store)
 - [ ] Empty project (no recognized files) shows a meaningful empty state
@@ -41,22 +41,22 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 
 ### F-001b: New Project Workflow
 
-**Description:** User can create a brand new project from scratch. Orqa Studio initializes the directory structure, scaffolds a `.claude/` governance skeleton, and drops the user into a conversation.
+**Description:** User can create a brand new project from scratch. OrqaStudio initializes the directory structure, scaffolds a `.claude/` governance skeleton, and drops the user into a conversation.
 
 **Acceptance Criteria:**
 
 *Directory and registration:*
 - [ ] "New Project" action is available alongside "Open Project" (toolbar or welcome state)
 - [ ] User provides a project name and selects a parent directory (or selects an existing empty directory)
-- [ ] Orqa Studio creates the project directory (if needed) with: `.claude/CLAUDE.md`, `.claude/agents/`, `.claude/rules/`, `.claude/skills/`, `.claude/hooks/`, `docs/`, `.gitignore` (with `orqa.db`)
-- [ ] If the directory is not a git repo, Orqa Studio offers to run `git init`
+- [ ] OrqaStudio creates the project directory (if needed) with: `.claude/CLAUDE.md`, `.claude/agents/`, `.claude/rules/`, `.claude/skills/`, `.claude/hooks/`, `docs/`, `.gitignore` (with `orqa.db`)
+- [ ] If the directory is not a git repo, OrqaStudio offers to run `git init`
 - [ ] Project is registered in SQLite and set as active
 - [ ] Nav Sub-Panel shows the new project with "New project, no code detected" status
 - [ ] The scaffolded `.claude/` structure is fully compatible with Claude Code CLI
 - [ ] Empty artifact browser categories show actionable empty states ("Create your first agent")
 
 *Project discovery conversation:*
-- [ ] After directory creation, Orqa Studio offers to start a project discovery conversation (not a wizard)
+- [ ] After directory creation, OrqaStudio offers to start a project discovery conversation (not a wizard)
 - [ ] The discovery session uses a system prompt that structures the conversation through product definition, tech stack, team, conventions, and prior art topics
 - [ ] User answers naturally in conversation — Claude synthesizes the responses and asks follow-ups
 - [ ] The system prompt guides Claude to cover all topics but does not enforce a rigid order
@@ -76,14 +76,14 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 
 ### F-002: Agent SDK Sidecar Lifecycle
 
-**Description:** Orqa Studio requires the Claude Code CLI and spawns an Agent SDK sidecar process to communicate with Claude. The sidecar is the bridge between Orqa Studio's UI and Claude's capabilities.
+**Description:** OrqaStudio requires the Claude Code CLI and spawns an Agent SDK sidecar process to communicate with Claude. The sidecar is the bridge between OrqaStudio's UI and Claude's capabilities.
 
 **Acceptance Criteria:**
 - [ ] Sidecar binary is bundled with the application (Bun-compiled, ~18-25 MB)
 - [ ] Sidecar spawns via `tauri-plugin-shell` `spawn()` on first conversation request
 - [ ] Sidecar communicates via stdin/stdout NDJSON protocol
-- [ ] Health check: Orqa Studio detects if sidecar exits unexpectedly and reports status
-- [ ] If Claude Code CLI is not available, Orqa Studio shows a clear error with installation guidance
+- [ ] Health check: OrqaStudio detects if sidecar exits unexpectedly and reports status
+- [ ] If Claude Code CLI is not available, OrqaStudio shows a clear error with installation guidance
 - [ ] Status bar shows sidecar state: not started, starting, connected, error
 - [ ] Sidecar process is terminated cleanly on app close
 
@@ -276,14 +276,14 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 
 ### F-012: MCP Tool Server
 
-**Description:** Orqa Studio's tools are exposed as a custom MCP server that the Agent SDK sidecar connects to.
+**Description:** OrqaStudio's tools are exposed as a custom MCP server that the Agent SDK sidecar connects to.
 
 **Acceptance Criteria:**
-- [ ] Orqa Studio implements an MCP server that the sidecar registers as `mcpServers: { "orqa-studio": ... }`
+- [ ] OrqaStudio implements an MCP server that the sidecar registers as `mcpServers: { "orqa-studio": ... }`
 - [ ] Agent SDK's built-in tools are disabled (`tools: []`)
 - [ ] File tools are available: Read, Write, Edit, Glob, Grep
 - [ ] Shell tool is available: Bash (scoped execution)
-- [ ] Tool calls from the AI route through the sidecar to Orqa Studio's MCP server
+- [ ] Tool calls from the AI route through the sidecar to OrqaStudio's MCP server
 - [ ] Tool results are returned to the AI via the MCP protocol
 - [ ] Tools execute natively in Rust (not shelling out)
 - [ ] Tool execution respects Tauri security scopes (no access outside project root + home)
@@ -294,7 +294,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 
 ### F-013: Session Handoff Summaries
 
-**Description:** When a session ends, Orqa Studio generates a Claude-powered summary that captures what happened, what's unfinished, and what the next session should know. Context loss between sessions is the #1 pain point.
+**Description:** When a session ends, OrqaStudio generates a Claude-powered summary that captures what happened, what's unfinished, and what the next session should know. Context loss between sessions is the #1 pain point.
 
 **Acceptance Criteria:**
 - [ ] When a session ends (user starts a new session, or explicitly closes the current one), the sidecar generates a handoff summary
@@ -312,7 +312,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 
 ### F-014: Auto-Session on Plan Mode
 
-**Description:** When a conversation triggers plan mode, Orqa Studio automatically creates a new session to keep planning focused and session history meaningful.
+**Description:** When a conversation triggers plan mode, OrqaStudio automatically creates a new session to keep planning focused and session history meaningful.
 
 **Acceptance Criteria:**
 - [ ] Plan-mode trigger is detected by the sidecar or conversation analysis (both explicit user requests like "plan this" and autonomous Claude-initiated plan mode)
@@ -350,15 +350,15 @@ These features are valuable but not needed for the dogfooding milestone:
 
 ## Dogfooding Validation Checklist
 
-After Phase 1 is complete, Orqa Studio must pass these checks to transition from the CLI bootstrap process:
+After Phase 1 is complete, OrqaStudio must pass these checks to transition from the CLI bootstrap process:
 
-- [ ] **Can browse governance artifacts**: Open Orqa Studio, navigate to artifact browser, see agents/rules/skills/hooks listed, view their content rendered as markdown
+- [ ] **Can browse governance artifacts**: Open OrqaStudio, navigate to artifact browser, see agents/rules/skills/hooks listed, view their content rendered as markdown
 - [ ] **Can edit governance artifacts**: Edit an agent file, save, verify change persists on disk and in the UI
 - [ ] **Can run a conversation**: Send a message, receive a streaming response, see tool calls displayed
 - [ ] **Can review tool calls**: Expand a tool call card, see the input and output, understand what the AI did
 - [ ] **Can manage sessions**: Start a new session, switch between sessions via the session dropdown, see session history
-- [ ] **Can detect project context**: Open Orqa Studio on the Orqa Studio project itself, see detected stack and existing governance artifacts
-- [ ] **Persistence works**: Close Orqa Studio, reopen, last session and project are restored
+- [ ] **Can detect project context**: Open OrqaStudio on the OrqaStudio project itself, see detected stack and existing governance artifacts
+- [ ] **Persistence works**: Close OrqaStudio, reopen, last session and project are restored
 
 ---
 

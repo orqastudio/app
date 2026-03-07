@@ -8,7 +8,7 @@ This rule applies ONLY when `.orqa/project.json` contains `"dogfood": true`. For
 
 ## What Dogfooding Means
 
-You are editing the app you are running inside. The Orqa Studio codebase IS the running Orqa Studio instance. This creates unique constraints that don't apply to normal projects.
+You are editing the app you are running inside. The OrqaStudio codebase IS the running OrqaStudio instance. This creates unique constraints that don't apply to normal projects.
 
 ## Enhanced Caution Rules
 

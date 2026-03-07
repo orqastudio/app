@@ -10,7 +10,7 @@ updated: 2026-03-04
 
 **Created:** 2026-03-02
 
-Orqa Studio uses six distinct layers for governance knowledge: documentation, agent instructions, skills, rules, hooks, and hookify. Each layer owns a specific type of content. Mixing them creates maintenance burden and drift -- when a standard changes in one place, stale copies in other layers remain undetected.
+OrqaStudio™ uses six distinct layers for governance knowledge: documentation, agent instructions, skills, rules, hooks, and hookify. Each layer owns a specific type of content. Mixing them creates maintenance burden and drift -- when a standard changes in one place, stale copies in other layers remain undetected.
 
 ---
 
@@ -20,7 +20,7 @@ Orqa Studio uses six distinct layers for governance knowledge: documentation, ag
 |-------|------|----------|---------------------|
 | **Documentation (`docs/`)** | Functional and product knowledge: architecture decisions, coding standards, IPC contracts, UI specs | Architecture decisions, function size limits, IPC response format, component state tables | Yes -- code that doesn't match docs is wrong |
 | **Agent Instructions (`.claude/agents/`)** | Process: how the agent works, which tools it uses, which docs to read first, when to delegate, verification steps | "Run clippy before committing", "Read docs/architecture/decisions.md first", "Delegate to test-engineer after implementation" | Process only -- agents reference docs, not restate them |
-| **Skills (`.claude/skills/`)** | Domain knowledge: how a technology works, general patterns, reusable techniques not specific to Orqa Studio | How Svelte 5 runes work, how to structure a Rust module, how to write a cargo test | Technology patterns only -- skills must not contain Orqa Studio-specific architectural rules |
+| **Skills (`.claude/skills/`)** | Domain knowledge: how a technology works, general patterns, reusable techniques not specific to OrqaStudio | How Svelte 5 runes work, how to structure a Rust module, how to write a cargo test | Technology patterns only -- skills must not contain OrqaStudio-specific architectural rules |
 | **Rules (`.claude/rules/`)** | Enforcement: automated checks and behavioral constraints that apply across all agents | "No stubs", "Error ownership", "End-to-end completeness" | Behavioral constraints -- rules reference docs for the standards they enforce |
 | **Hooks (`.claude/hooks/`)** | Automated rule implementation: shell scripts triggered by lifecycle events that enforce rules programmatically | Session-start checklist, skill loading protocol, pre-commit verification | Executable enforcement -- hooks are the mechanism through which rules are actively enforced at key lifecycle points |
 | **Hookify (`.claude/hookify.*.local.md`)** | Real-time enforcement: pattern-based blocks and warnings triggered by file edits and bash commands | Block `any` type in TypeScript, block `todo!()` in Rust, warn on destructive git commands, block `--no-verify` | Action-level constraints -- hookify files are the active enforcement mechanism that catches violations at the moment they happen, not at lifecycle boundaries |
@@ -59,7 +59,7 @@ IPC boundary: only invoke()...         <- Belongs in docs/architecture/decisions
 
 ### Skills (`.claude/skills/`)
 
-Skills teach **how a technology works** -- patterns, idioms, and examples from the technology's own documentation and best practices. They are intentionally portable: a Svelte skill should be useful on any Svelte project, not just Orqa Studio.
+Skills teach **how a technology works** -- patterns, idioms, and examples from the technology's own documentation and best practices. They are intentionally portable: a Svelte skill should be useful on any Svelte project, not just OrqaStudio.
 
 **Correct skill content:**
 
@@ -73,7 +73,7 @@ How to structure a cargo test with test fixtures.
 
 ```text
 IPC boundary: Tauri commands only.            <- Project rule, not technology knowledge
-EmptyState component from $lib/components/    <- Orqa Studio-specific, not portable
+EmptyState component from $lib/components/    <- OrqaStudio-specific, not portable
 All Rust functions must return Result.        <- Project architecture rule
 ```
 
@@ -229,7 +229,7 @@ Never call invoke() directly in display components. Use stores.
 
 # CORRECT: Technology pattern in skill, project rule in docs
 ## See Also
-This skill covers Svelte 5 technology patterns. For Orqa Studio-specific
+This skill covers Svelte 5 technology patterns. For OrqaStudio-specific
 architectural constraints, see docs/architecture/decisions.md.
 ```
 
@@ -246,7 +246,7 @@ When the same behavioral rule appears in two or more agent files, it will drift.
 The `agent-maintainer` and `code-reviewer` include doc-layer compliance in their review checklists:
 
 - Agent files reference docs for standards they cite, rather than restating them
-- Skill files contain technology patterns, not Orqa Studio-specific rules
+- Skill files contain technology patterns, not OrqaStudio-specific rules
 - Rule files enforce behavioral constraints, not product knowledge
 
 ### Change Process

@@ -7,7 +7,7 @@ updated: 2026-03-06
 
 # Implementation Plans
 
-Phased implementation plans for Orqa Studio features. Each plan captures the problem statement, target UX, architectural approach, implementation phases, and verification criteria.
+Phased implementation plans for OrqaStudio features. Each plan captures the problem statement, target UX, architectural approach, implementation phases, and verification criteria.
 
 Plans live in `.orqa/plans/` and follow a structured lifecycle:
 
@@ -88,7 +88,7 @@ tags: [composability, architecture]
 
 ### Traceability
 
-The frontmatter fields create a traceability web across Orqa Studio's governance artifacts:
+The frontmatter fields create a traceability web across OrqaStudio's governance artifacts:
 
 ```
 Research  --research-refs-->  Plan  --produces-->  Rules / Skills / Scanners

@@ -10,7 +10,7 @@ updated: 2026-03-07
 
 **Date:** 2026-03-07
 
-Detailed profiles of OrqaStudio's target users. These personas drive UI design, feature prioritisation, and acceptance criteria throughout the product.
+Detailed profiles of OrqaStudio™'s target users. These personas drive UI design, feature prioritisation, and acceptance criteria throughout the product.
 
 OrqaStudio's first domain is AI-assisted software development, so personas are grounded in that context. The underlying needs — structured thinking, visible governance, reflective learning — apply more broadly and will inform how personas evolve as the platform expands to other domains.
 

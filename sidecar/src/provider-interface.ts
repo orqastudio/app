@@ -1,5 +1,5 @@
 /**
- * Provider interface for the Orqa Studio sidecar.
+ * Provider interface for the OrqaStudio sidecar.
  *
  * Defines the contract between the main sidecar entry point (index.ts)
  * and any provider implementation. New providers (e.g., a direct API

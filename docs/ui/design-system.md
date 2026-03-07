@@ -10,15 +10,15 @@ updated: 2026-03-04
 
 **Date:** 2026-03-02 | **Status:** Phase 0d specification
 
-The authoritative design system specification for Orqa Studio's UI. Consolidates decisions from [design-tokens research](/research/design-tokens), [branding research](/research/branding), [frontend research](/research/frontend), and [brand identity guidelines](/ui/brand-identity) into an implementation-ready reference.
+The authoritative design system specification for OrqaStudio™'s UI. Consolidates decisions from [design-tokens research](/research/design-tokens), [branding research](/research/branding), [frontend research](/research/frontend), and [brand identity guidelines](/ui/brand-identity) into an implementation-ready reference.
 
 ---
 
 ## Design Principles
 
-1. **Professional authority** — Orqa Studio governs product development. Decisive, not playful.
+1. **Professional authority** — OrqaStudio governs product development. Decisive, not playful.
 2. **Technical competence** — Information-dense, developer-familiar patterns (monospace code, keyboard shortcuts, dark mode).
-3. **Quiet confidence** — Orqa Studio recedes when project themes are applied. The project brand dominates, not Orqa Studio's.
+3. **Quiet confidence** — OrqaStudio recedes when project themes are applied. The project brand dominates, not OrqaStudio's.
 4. **Clarity over decoration** — Every pixel serves information delivery.
 
 ---
@@ -27,7 +27,7 @@ The authoritative design system specification for Orqa Studio's UI. Consolidates
 
 ### Base Palette: Zinc
 
-Orqa Studio uses shadcn-svelte's zinc neutral scale. Zinc's cool undertone reads as "technical" without the blue conflict of slate. It is the shadcn-svelte default — zero customization of the neutral scale.
+OrqaStudio uses shadcn-svelte's zinc neutral scale. Zinc's cool undertone reads as "technical" without the blue conflict of slate. It is the shadcn-svelte default — zero customization of the neutral scale.
 
 ### shadcn-svelte CSS Variables (Complete Set)
 
@@ -56,7 +56,7 @@ These are the component library's contract. Every shadcn-svelte component refere
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
 
-  /* Orqa Studio signature indigo-violet accent */
+  /* OrqaStudio signature indigo-violet accent */
   --primary: oklch(0.55 0.18 280);
   --primary-foreground: oklch(0.985 0 0);
   --ring: oklch(0.55 0.18 280);
@@ -122,9 +122,9 @@ These are the component library's contract. Every shadcn-svelte component refere
 }
 ```
 
-### Orqa Studio Brand Extension Variables
+### OrqaStudio Brand Extension Variables
 
-These extend the shadcn-svelte base set for Orqa Studio-specific needs (contextual spark colors, status states, logo theming). See [Brand Identity Guidelines](/ui/brand-identity) for full context.
+These extend the shadcn-svelte base set for OrqaStudio-specific needs (contextual spark colors, status states, logo theming). See [Brand Identity Guidelines](/ui/brand-identity) for full context.
 
 ```css
 :root {
@@ -357,12 +357,12 @@ These are not provided by shadcn-svelte and must be built:
 
 ## Per-Project Theming
 
-Orqa Studio adapts its UI to match the active project's design tokens. This makes Orqa Studio feel like a native companion to each project.
+OrqaStudio adapts its UI to match the active project's design tokens. This makes OrqaStudio feel like a native companion to each project.
 
 ### Theme Resolution Chain
 
 ```
-User Override  >  Extracted Project Token  >  Orqa Studio Default Theme
+User Override  >  Extracted Project Token  >  OrqaStudio Default Theme
 ```
 
 ### How It Works
@@ -381,7 +381,7 @@ export function applyProjectTheme(theme: ProjectTheme | null): void {
   const root = document.documentElement;
 
   if (!theme) {
-    // Reset to Orqa Studio defaults: remove all inline overrides
+    // Reset to OrqaStudio defaults: remove all inline overrides
     for (const key of Object.keys(ORQA_DEFAULTS)) {
       root.style.removeProperty(`--${key}`);
     }
@@ -418,7 +418,7 @@ Setting 30 CSS custom properties on `:root`: < 1ms. Subsequent repaint: 2-5ms. I
 
 ## Brand-Aware Code Generation
 
-When Claude generates frontend code, Orqa Studio injects a compact `<design-system>` context block into the system prompt. This ensures generated code uses semantic token classes rather than raw color values.
+When Claude generates frontend code, OrqaStudio injects a compact `<design-system>` context block into the system prompt. This ensures generated code uses semantic token classes rather than raw color values.
 
 ### Injection Conditions
 

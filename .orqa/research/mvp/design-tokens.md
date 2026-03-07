@@ -3,7 +3,7 @@ type: research
 status: complete
 date: 2026-03-02
 category: design-tokens
-description: How Orqa Studio stores, maps, and applies design tokens at runtime — both Orqa Studio's own baseline theme and per-project themes extracted from opened projects.
+description: How OrqaStudio stores, maps, and applies design tokens at runtime — both OrqaStudio's own baseline theme and per-project themes extracted from opened projects.
 questions:
   - id: Q1
     title: Design Token Format & Storage
@@ -30,19 +30,19 @@ informs_features: [F-001, F-009]
 
 **Date:** 2026-03-02 | **Status:** Complete
 
-Research into how Orqa Studio stores, maps, and applies design tokens at runtime — both Orqa Studio's own baseline theme and per-project themes extracted from opened projects.
+Research into how OrqaStudio stores, maps, and applies design tokens at runtime — both OrqaStudio's own baseline theme and per-project themes extracted from opened projects.
 
 ---
 
 ## Context
 
-Orqa Studio needs two design token capabilities:
+OrqaStudio needs two design token capabilities:
 
-1. **Orqa Studio's own design system** -- A set of default design tokens (colors, typography, spacing, dark/light mode) that define Orqa Studio's visual identity. This is the baseline theme that ships with the application.
+1. **OrqaStudio's own design system** -- A set of default design tokens (colors, typography, spacing, dark/light mode) that define OrqaStudio's visual identity. This is the baseline theme that ships with the application.
 
-2. **Per-project design token extraction and application** -- When a user opens a project in Orqa Studio, Orqa Studio scans for design tokens (tailwind.config.*, CSS custom properties in `:root`, component library conventions) and adapts its own UI to match the project's color palette. Each opened project should make Orqa Studio feel like a native companion to that project.
+2. **Per-project design token extraction and application** -- When a user opens a project in OrqaStudio, OrqaStudio scans for design tokens (tailwind.config.*, CSS custom properties in `:root`, component library conventions) and adapts its own UI to match the project's color palette. Each opened project should make OrqaStudio feel like a native companion to that project.
 
-The scanning/detection side is covered in `docs/research/onboarding.md` (Tier 1 manifest heuristics -- specifically the "Design system / branding detection" table). This research focuses on what happens AFTER tokens are detected: how they are stored, mapped to Orqa Studio's internal schema, and applied to the UI at runtime.
+The scanning/detection side is covered in `docs/research/onboarding.md` (Tier 1 manifest heuristics -- specifically the "Design system / branding detection" table). This research focuses on what happens AFTER tokens are detected: how they are stored, mapped to OrqaStudio's internal schema, and applied to the UI at runtime.
 
 ### Constraints
 
@@ -56,11 +56,11 @@ The scanning/detection side is covered in `docs/research/onboarding.md` (Tier 1 
 
 ## Q1: Design Token Format & Storage
 
-**Question:** What format should Orqa Studio store design tokens internally? How do popular standards work? What is the mapping layer between extracted project tokens and Orqa Studio's internal token schema?
+**Question:** What format should OrqaStudio store design tokens internally? How do popular standards work? What is the mapping layer between extracted project tokens and OrqaStudio's internal token schema?
 
-### Orqa Studio's Internal Token Schema: shadcn-svelte's CSS Variable Convention
+### OrqaStudio's Internal Token Schema: shadcn-svelte's CSS Variable Convention
 
-Orqa Studio uses shadcn-svelte as its component library. shadcn-svelte defines a fixed set of CSS custom properties that every component references. This is not negotiable -- it is the contract between the design system and the component library. Orqa Studio's internal token schema IS shadcn-svelte's variable set.
+OrqaStudio uses shadcn-svelte as its component library. shadcn-svelte defines a fixed set of CSS custom properties that every component references. This is not negotiable -- it is the contract between the design system and the component library. OrqaStudio's internal token schema IS shadcn-svelte's variable set.
 
 **The complete shadcn-svelte CSS variable set (current version, OKLCH format):**
 
@@ -161,17 +161,17 @@ The Design Tokens Community Group released the first stable specification (2025.
 
 Key features: `$type` for categorization, `$value` for the token value, `$description` for documentation, alias syntax `{group.token}` for references, `$extensions` for vendor metadata. File extension: `.tokens` or `.tokens.json`. MIME type: `application/design-tokens+json`.
 
-**Relevance to Orqa Studio:** The DTCG spec is a vendor-neutral interchange format. Orqa Studio does not need to adopt it as its internal representation, but understanding it helps if a project ships `.tokens` files. This is a future detection target for Tier 1 heuristics.
+**Relevance to OrqaStudio:** The DTCG spec is a vendor-neutral interchange format. OrqaStudio does not need to adopt it as its internal representation, but understanding it helps if a project ships `.tokens` files. This is a future detection target for Tier 1 heuristics.
 
 #### Style Dictionary
 
-Style Dictionary is a build system that transforms design tokens (stored as JSON/YAML) into platform-specific outputs (CSS custom properties, iOS, Android, etc.). It is forward-compatible with the DTCG spec. Style Dictionary would be overkill for Orqa Studio's use case -- Orqa Studio does not need to output tokens to multiple platforms. Orqa Studio only needs to consume tokens and map them to its CSS variables.
+Style Dictionary is a build system that transforms design tokens (stored as JSON/YAML) into platform-specific outputs (CSS custom properties, iOS, Android, etc.). It is forward-compatible with the DTCG spec. Style Dictionary would be overkill for OrqaStudio's use case -- OrqaStudio does not need to output tokens to multiple platforms. OrqaStudio only needs to consume tokens and map them to its CSS variables.
 
 #### Tailwind Theme Format
 
 Tailwind v3 uses a JavaScript config object (`tailwind.config.js`) with `theme.colors`, `theme.extend.colors`, `theme.fontFamily`, etc. Tailwind v4 moves to CSS-first configuration with the `@theme` directive, exposing all design tokens as CSS custom properties on `:root` automatically (e.g., `--color-blue-500`, `--font-sans`).
 
-**Relevance to Orqa Studio:** Many projects Orqa Studio will open use Tailwind. Extracting colors from `tailwind.config.*` (v3) or from the generated CSS output (v4) is a primary extraction target.
+**Relevance to OrqaStudio:** Many projects OrqaStudio will open use Tailwind. Extracting colors from `tailwind.config.*` (v3) or from the generated CSS output (v4) is a primary extraction target.
 
 ### Internal Storage Format
 
@@ -217,7 +217,7 @@ The internal storage format maps directly to the shadcn-svelte variable names. A
 **Why this format:**
 
 1. **Direct application** -- Keys map 1:1 to CSS variable names. Applying the theme is iterating the object and calling `document.documentElement.style.setProperty('--' + key, value)`.
-2. **Partial themes** -- Not every project will provide every token. Missing keys fall back to Orqa Studio's defaults.
+2. **Partial themes** -- Not every project will provide every token. Missing keys fall back to OrqaStudio's defaults.
 3. **OKLCH normalization** -- All extracted colors are converted to OKLCH before storage, matching shadcn-svelte's format. This avoids runtime conversion.
 4. **Provenance tracking** -- `source` and `source_hash` enable cache invalidation when the source file changes.
 5. **User overrides** -- A separate `user_overrides` object lets users tweak auto-extracted values without losing the original extraction.
@@ -225,10 +225,10 @@ The internal storage format maps directly to the shadcn-svelte variable names. A
 
 ### Fallback Chain
 
-When Orqa Studio resolves a CSS variable value for a given project, it follows this chain:
+When OrqaStudio resolves a CSS variable value for a given project, it follows this chain:
 
 ```
-User Override  >  Extracted Project Token  >  Orqa Studio Default Theme
+User Override  >  Extracted Project Token  >  OrqaStudio Default Theme
 ```
 
 In code, when applying a theme:
@@ -239,12 +239,12 @@ function resolveToken(name: string, projectTheme: ProjectTheme | null): string {
   if (projectTheme?.user_overrides?.[name]) return projectTheme.user_overrides[name];
   // 2. Extracted token
   if (projectTheme?.tokens?.[name]) return projectTheme.tokens[name];
-  // 3. Orqa Studio default (already in CSS from the stylesheet -- no action needed)
+  // 3. OrqaStudio default (already in CSS from the stylesheet -- no action needed)
   return ''; // empty means "use the CSS default"
 }
 ```
 
-In practice, the fallback is handled by CSS itself: Orqa Studio's default theme is defined in the global stylesheet as `:root` variables. Project-specific overrides are applied via `document.documentElement.style.setProperty()`, which takes precedence over stylesheet rules. Removing a property (`.removeProperty()`) restores the default.
+In practice, the fallback is handled by CSS itself: OrqaStudio's default theme is defined in the global stylesheet as `:root` variables. Project-specific overrides are applied via `document.documentElement.style.setProperty()`, which takes precedence over stylesheet rules. Removing a property (`.removeProperty()`) restores the default.
 
 ---
 
@@ -272,7 +272,7 @@ The `bg-primary` class resolves to `background-color: var(--primary)`. This mean
 
 ### Runtime Theme Switching: The Mechanism
 
-To apply a project theme at runtime, Orqa Studio sets CSS custom properties on `document.documentElement`:
+To apply a project theme at runtime, OrqaStudio sets CSS custom properties on `document.documentElement`:
 
 ```typescript
 // theme-manager.ts -- runs in the Svelte frontend
@@ -289,7 +289,7 @@ export function applyProjectTheme(theme: ProjectTheme | null): void {
   const root = document.documentElement;
 
   if (!theme) {
-    // Reset to Orqa Studio defaults: remove all inline overrides
+    // Reset to OrqaStudio defaults: remove all inline overrides
     for (const key of Object.keys(ORQA_DEFAULTS)) {
       root.style.removeProperty(`--${key}`);
     }
@@ -411,11 +411,11 @@ Benchmarks from real-world applications show that updating 20-30 CSS custom prop
 
 ## Q3: Token Extraction Pipeline
 
-**Question:** How does Orqa Studio extract design tokens from project files and map them to its internal schema?
+**Question:** How does OrqaStudio extract design tokens from project files and map them to its internal schema?
 
 ### Minimum Viable Token Set
 
-Orqa Studio needs to map extracted project colors to these semantic roles (the shadcn-svelte variables):
+OrqaStudio needs to map extracted project colors to these semantic roles (the shadcn-svelte variables):
 
 | Token | Role | Extraction Priority |
 |-------|------|-------------------|
@@ -434,7 +434,7 @@ Orqa Studio needs to map extracted project colors to these semantic roles (the s
 | `input` | Input border/background | Derived |
 | `ring` | Focus ring | Derived |
 
-**"Required" means:** if the extraction finds nothing for this role, the project theme is considered empty and Orqa Studio falls back entirely to its default theme. A project theme with only a primary color is still useful.
+**"Required" means:** if the extraction finds nothing for this role, the project theme is considered empty and OrqaStudio falls back entirely to its default theme. A project theme with only a primary color is still useful.
 
 **"Derived" means:** these can be computed from the required/optional values. For example, `primary-foreground` is computed to be white or black depending on the lightness of `primary` (contrast ratio check). `border` and `input` are typically derived from `background` with reduced lightness.
 
@@ -444,7 +444,7 @@ Orqa Studio needs to map extracted project colors to these semantic roles (the s
 
 The highest-fidelity source. If a project defines `:root { --color-primary: #1a1a2e; }`, this is an explicit design decision.
 
-**Parsing approach (Rust):** Use the `csscolorparser` crate for color value parsing. For CSS file parsing, use a regex-based approach rather than a full CSS parser -- Orqa Studio only needs to extract `:root` (and `.dark`) variable declarations, not understand the full CSS AST.
+**Parsing approach (Rust):** Use the `csscolorparser` crate for color value parsing. For CSS file parsing, use a regex-based approach rather than a full CSS parser -- OrqaStudio only needs to extract `:root` (and `.dark`) variable declarations, not understand the full CSS AST.
 
 ```rust
 use csscolorparser::Color;
@@ -547,7 +547,7 @@ pub fn extract_tailwind_colors(project_root: &Path) -> Result<HashMap<String, St
 
 #### Source 3: shadcn/shadcn-svelte Theme File
 
-If the project itself uses shadcn (React) or shadcn-svelte, the theme is defined in the global CSS file with the exact same variable names Orqa Studio uses. Direct extraction with zero mapping required.
+If the project itself uses shadcn (React) or shadcn-svelte, the theme is defined in the global CSS file with the exact same variable names OrqaStudio uses. Direct extraction with zero mapping required.
 
 **Detection:** Look for `--primary:` and `--primary-foreground:` in any CSS file's `:root` block. If both exist, this is almost certainly a shadcn-style theme.
 
@@ -585,7 +585,7 @@ pub fn to_oklch(css_color: &str) -> Result<String> {
 
 ### Token Mapping Algorithm
 
-When Orqa Studio extracts raw colors from a project, it must map them to the semantic roles (`primary`, `secondary`, `accent`, etc.). This mapping depends on the source format:
+When OrqaStudio extracts raw colors from a project, it must map them to the semantic roles (`primary`, `secondary`, `accent`, etc.). This mapping depends on the source format:
 
 **Case 1: shadcn-style variables detected (trivial mapping)**
 
@@ -848,10 +848,10 @@ listen<ThemeUpdatedPayload>('theme-updated', (event) => {
 The settings panel includes a "Theme" section where users can:
 
 1. **See the current extracted palette** -- Color swatches for each mapped token.
-2. **Toggle per-project theming** -- Enable/disable project theme (fall back to Orqa Studio defaults).
+2. **Toggle per-project theming** -- Enable/disable project theme (fall back to OrqaStudio defaults).
 3. **Override individual tokens** -- Click a swatch to open a color picker. The chosen value is saved to `project_theme_overrides`.
 4. **Reset overrides** -- "Reset to extracted" button clears all overrides for the project.
-5. **Reset theme** -- "Use Orqa Studio defaults" button disables the project theme entirely.
+5. **Reset theme** -- "Use OrqaStudio defaults" button disables the project theme entirely.
 
 ```svelte
 <!-- ThemeSettings.svelte (simplified) -->
@@ -912,7 +912,7 @@ Tier 1 Heuristics (< 100ms)
   |-- tailwind.config.* found?  --> Extract via Node subprocess
   |-- :root CSS vars found?     --> Extract via regex parsing
   |-- shadcn variables found?   --> Direct mapping (trivial)
-  |-- Nothing found?            --> Use Orqa Studio defaults (no project theme)
+  |-- Nothing found?            --> Use OrqaStudio defaults (no project theme)
   |
   v
 Color Conversion (all values -> OKLCH)
@@ -962,9 +962,9 @@ File Watcher Active
 | `mode-watcher` | npm | Dark/light/system mode management for shadcn-svelte |
 | `colorsys` or `chroma-js` | npm | Frontend color picker utilities (if needed for override UI) |
 
-### Orqa Studio Default Theme Tokens
+### OrqaStudio Default Theme Tokens
 
-The baseline Orqa Studio theme (used when no project theme is active) is the default shadcn-svelte "zinc" palette. It is defined in the global CSS file (`ui/app.css`) and requires no runtime processing. When a project theme is cleared, removing inline styles on `:root` instantly restores these defaults via the CSS cascade.
+The baseline OrqaStudio theme (used when no project theme is active) is the default shadcn-svelte "zinc" palette. It is defined in the global CSS file (`ui/app.css`) and requires no runtime processing. When a project theme is cleared, removing inline styles on `:root` instantly restores these defaults via the CSS cascade.
 
 ---
 

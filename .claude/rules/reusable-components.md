@@ -44,7 +44,7 @@ Every list page MUST follow this exact pattern:
 
 ## Panel Layout Template
 
-Orqa Studio uses a multi-panel layout (conversation + artifact panels). Panel components MUST:
+OrqaStudio uses a multi-panel layout (conversation + artifact panels). Panel components MUST:
 
 - Be resizable via drag handles
 - Support collapsed/expanded states

@@ -1,0 +1,42 @@
+---
+id: EPIC-006
+title: "File Watcher for External Changes"
+status: draft
+priority: P2
+milestone: MS-001
+created: 2026-03-07
+updated: 2026-03-07
+deadline: null
+plan: null
+depends-on: []
+blocks: []
+assignee: null
+pillar:
+  - clarity-through-structure
+scoring:
+  pillar: 3
+  impact: 3
+  dependency: 2
+  effort: 2
+score: 10.5
+roadmap-ref: "D6"
+docs-required:
+  - docs/architecture/rust-modules.md
+docs-produced:
+  - docs/architecture/rust-modules.md (update with file watcher module)
+  - docs/architecture/decisions.md (AD for file watching strategy and debouncing)
+tags: [file-watcher, sync, notify]
+---
+
+# File Watcher for External Changes
+
+## Why P2
+
+Without this, CLI edits to governance files and `.orqa/` artifacts aren't reflected in the app until manual refresh. Important for dogfooding where both the CLI and app are used simultaneously.
+
+## Tasks
+
+- [ ] Add `notify` crate for filesystem watching
+- [ ] Watch `.claude/` and `.orqa/` directories for external modifications
+- [ ] Refresh artifact list and viewer when files change on disk
+- [ ] Debounce rapid changes (editor auto-save)

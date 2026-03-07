@@ -1,6 +1,6 @@
 {
   "identifier": "default",
-  "description": "Default capability for Orqa Studio",
+  "description": "Default capability for OrqaStudio",
   "windows": ["main"],
   "permissions": [
     "core:default",

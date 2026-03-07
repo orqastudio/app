@@ -10,15 +10,15 @@ updated: 2026-03-07
 
 **Date:** 2026-03-07
 
-> OrqaStudio is an AI-assisted clarity engine that helps people turn messy situations into structured understanding and evolving plans through agile thinking and continuous retrospection.
+> OrqaStudio™ is an AI-assisted clarity engine that helps people turn messy situations into structured understanding and evolving plans through agile thinking and continuous retrospection.
 
 This roadmap is structured around two milestones and a feature enhancement backlog:
 
-1. **Milestone 1: Dogfooding** — OrqaStudio is usable as a daily workspace for its own development
-2. **Milestone 2: MVP** — Someone else can use OrqaStudio to fulfil the mission statement
-3. **Feature Enhancements** — Future ideas that enhance the platform beyond MVP
+1. **Milestone 1: Dogfooding** (MS-001) — OrqaStudio is usable as a daily workspace for its own development
+2. **Milestone 2: MVP** (MS-002) — Someone else can use OrqaStudio to fulfil the mission statement
+3. **Feature Enhancements** — Future ideas (IDEA-001 through IDEA-022) that enhance the platform beyond MVP
 
-Items within milestones are prioritised using the framework defined below.
+Items within milestones are prioritised using the framework defined below. All items are tracked as first-class artifacts in `.orqa/` — see [Artifact Framework](artifact-framework.md) for schemas and structure.
 
 ---
 
@@ -159,11 +159,25 @@ Backend CRUD exists (`artifact_create`, `artifact_update`, `artifact_delete`). R
 
 **Why P1:** Can't manage governance in-app without editing. Currently requires switching to a text editor.
 
+#### D5. Artifact Browser & Visibility
+
+Make `.orqa/` artifacts (milestones, epics, ideas, plans, research, lessons) browsable as rendered markdown documents in OrqaStudio's UI. This is the **underlying UX model** — all richer views are optional layers built on top.
+
+- [ ] `.orqa/` directory scanner — read and parse all artifact types
+- [ ] Frontmatter parser — extract YAML frontmatter into structured data
+- [ ] Artifact browser sidebar — tree navigation by type
+- [ ] Markdown renderer view — render artifact body with syntax highlighting
+- [ ] Frontmatter metadata panel — display structured metadata alongside the document
+- [ ] Connection links — clickable references to related artifacts
+- [ ] Status badges and priority band indicators
+
+**Why P1:** Structured thinking artifacts must be visible in the app. Markdown-first visibility is the foundational UX layer that all other views build upon.
+
 ### P2 — Enablers
 
 These significantly improve dogfooding quality but aren't strict blockers.
 
-#### D5. File Watcher for External Changes
+#### D6. File Watcher for External Changes
 
 - [ ] Add `notify` crate for filesystem watching
 - [ ] Watch `.claude/` and `.orqa/` directories for external modifications
@@ -172,7 +186,7 @@ These significantly improve dogfooding quality but aren't strict blockers.
 
 **Why P2:** Without this, CLI edits to governance files aren't reflected in the app until manual refresh.
 
-#### D6. Composability Refactoring
+#### D7. Composability Refactoring
 
 The codebase has solid boundaries (stores, IPC, components) but monolithic service files.
 
@@ -183,7 +197,7 @@ The codebase has solid boundaries (stores, IPC, components) but monolithic servi
 
 **Why P2:** Code health for sustained velocity. Functions individually pass size limits, but file-level cohesion is poor.
 
-#### D7. Code Quality Audit
+#### D8. Code Quality Audit
 
 - [ ] Coding standards compliance audit against `docs/development/coding-standards.md`
 - [ ] Enforcement artifact review — rules/hooks/skills completeness
@@ -192,7 +206,7 @@ The codebase has solid boundaries (stores, IPC, components) but monolithic servi
 
 **Why P2:** Can't credibly enforce quality on managed projects if our own code has violations.
 
-#### D8. Frontend Test Suite
+#### D9. Frontend Test Suite
 
 - [ ] Vitest setup for Svelte component and store testing
 - [ ] Store unit tests (conversation, session, project, settings — state transitions, reactive updates)
@@ -203,7 +217,7 @@ The codebase has solid boundaries (stores, IPC, components) but monolithic servi
 
 ### P3 — Polish
 
-#### D9. Developer Experience
+#### D10. Developer Experience
 
 - [ ] Project-local database — move SQLite from `app_data_dir` to `.orqa/orqa.db` so session history travels with the project
 - [ ] Build splash window — small branded window during `make dev` compilation

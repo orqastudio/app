@@ -61,6 +61,8 @@ The orchestrator assigns a risk level at task start. The review gate matches the
 - [ ] IPC contract documentation updated if commands were added or changed
 - [ ] Component state table verified against implementation (if UI-facing)
 - [ ] Any moved or deleted pages removed from all sidebar files
+- [ ] Epic `docs-produced` items verified -- all listed documents have been created or updated
+- [ ] Roadmap updated if this epic changes the project's milestone/epic/idea landscape
 
 ### Review Gates
 
@@ -86,6 +88,12 @@ The orchestrator assigns a risk level at task start. The review gate matches the
 - [ ] Any new implementation patterns discovered during this task logged in `development/lessons.md`
 - [ ] Any review failures that revealed new patterns added as IMPL-NNN entries
 - [ ] If a pattern appeared for the second or more time, recurrence count updated
+
+### Artifact Updates
+
+- [ ] Epic `status` updated to `done` in `.orqa/epics/EPIC-NNN.md`
+- [ ] Parent milestone `completed-epics` count updated in `.orqa/milestones/MS-NNN.md`
+- [ ] If all P1 epics in the milestone are done -- check whether milestone gate is satisfied
 
 ### Worktree Cleanup
 
@@ -153,6 +161,8 @@ Chain: COMPLETE
 
 ## Related Documents
 
+- [Artifact Workflow](/process/artifact-workflow) -- How artifacts flow through the development process
+- [Artifact Framework](/product/artifact-framework) -- Artifact schemas and design principles
 - [Definition of Ready](/process/definition-of-ready) -- The gate checklist before implementation starts
 - [Orchestration](/process/orchestration) -- Orchestrator verification gate protocol
 - [Workflow](/process/workflow) -- Full task lifecycle including review gate steps

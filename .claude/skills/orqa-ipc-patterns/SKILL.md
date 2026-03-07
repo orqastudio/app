@@ -1,7 +1,7 @@
 ---
 name: orqa-ipc-patterns
 description: |
-  Orqa Studio IPC patterns: Tauri invoke() calls, #[tauri::command] handlers,
+  OrqaStudio IPC patterns: Tauri invoke() calls, #[tauri::command] handlers,
   Channel<T> streaming, command registration, and IPC type contracts.
   Use when: Adding or modifying Tauri commands, wiring frontend to backend,
   implementing streaming features, or debugging IPC boundary issues.
@@ -12,7 +12,7 @@ user-invocable: true
 
 # Orqa IPC Patterns
 
-Orqa Studio uses Tauri v2's `invoke()` as the ONLY interface between the Svelte frontend and the Rust backend. There are no HTTP servers, no direct FFI calls, and no side channels.
+OrqaStudio uses Tauri v2's `invoke()` as the ONLY interface between the Svelte frontend and the Rust backend. There are no HTTP servers, no direct FFI calls, and no side channels.
 
 ## The Full Request Chain
 

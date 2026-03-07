@@ -27,7 +27,7 @@ Research completed during the MVP define-before-build sequence (Phases 0a–0e).
 | [Onboarding](/research/mvp/onboarding) | Complete | Codebase scanning, governance format, progressive disclosure | AD-015, AD-016 |
 | [Wireframing](/research/mvp/wireframing) | Complete | Wireframing tool selection (PlantUML Salt + D2) | — |
 | [Design Tokens](/research/mvp/design-tokens) | Complete | Token format, runtime theming, extraction pipeline, per-project persistence | — |
-| [Branding](/research/mvp/branding) | Complete | Orqa Studio brand identity, design system as governance artifact, brand-aware code generation, conflict resolution | — |
+| [Branding](/research/mvp/branding) | Complete | OrqaStudio brand identity, design system as governance artifact, brand-aware code generation, conflict resolution | — |
 
 ## Research-to-Decision Pipeline
 
@@ -43,7 +43,7 @@ Research → Findings → Decision → AD-NNN → Implementation
 
 ## Frontmatter Convention
 
-All research documents use YAML frontmatter to enable future migration into Orqa Studio's research artifact system (a future phase). This frontmatter is parseable by `yaml-front-matter` / `comrak` and maps directly to the planned research artifact schema.
+All research documents use YAML frontmatter to enable future migration into OrqaStudio's research artifact system (a future phase). This frontmatter is parseable by `yaml-front-matter` / `comrak` and maps directly to the planned research artifact schema.
 
 ```yaml
 ---
@@ -52,7 +52,7 @@ status: complete                            # open | in-progress | complete
 date: 2026-03-02                            # Date created or last major update
 category: claude-integration                # Kebab-case identifier (matches filename)
 description: >                              # One-line summary for listing/search
-  How Orqa Studio integrates with Claude's API.
+  How OrqaStudio integrates with Claude's API.
 questions:                                  # Structured list of research questions
   - id: Q1                                  # Stable identifier
     title: Claude Agent SDK vs Raw API      # Human-readable title
@@ -88,9 +88,9 @@ informs_features: [F-002, F-003]            # MVP features this informs
 
 ### Why This Convention
 
-These markdown files will be migrated into Orqa Studio's research artifact system in a future phase. The YAML frontmatter provides:
+These markdown files will be migrated into OrqaStudio's research artifact system in a future phase. The YAML frontmatter provides:
 
-1. **Machine-parseable metadata** — Orqa Studio can index these files into SQLite using the same `yaml-front-matter` + `comrak` pipeline used for `.claude/` governance artifacts
+1. **Machine-parseable metadata** — OrqaStudio can index these files into SQLite using the same `yaml-front-matter` + `comrak` pipeline used for `.claude/` governance artifacts
 2. **Question-level tracking** — Each question has its own status, enabling partial-completion visibility
 3. **Traceability** — `produces_decisions`, `informs_phases`, and `informs_features` create the upstream/downstream links needed for the decision traceability graph
 4. **Search and filtering** — `category`, `status`, and `type` fields support the discovery dashboard

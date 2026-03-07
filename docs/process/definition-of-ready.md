@@ -26,6 +26,13 @@ The DoR exists to catch these gaps before the first line of code is written.
 
 Run this checklist for every task before delegating it. Check each item that applies to the task type.
 
+### Artifact Trail
+
+- [ ] An artifact exists for this work -- either an `EPIC-NNN` in `.orqa/epics/` or a task within one
+- [ ] Epic `docs-required` gate is satisfied -- all listed documents exist and are current
+- [ ] Epic status is `ready` or later -- not still `draft`
+- [ ] If promoted from an idea -- the source `IDEA-NNN` has `status: shaped` or `promoted`, and `research-needed` items have been addressed
+
 ### Documentation
 
 - [ ] Documentation exists for the feature area (`docs/ui/`, `docs/architecture/`) -- **or** has been created and approved in the current session
@@ -35,6 +42,7 @@ Run this checklist for every task before delegating it. Check each item that app
 ### Planning
 
 - [ ] Implementation plan approved -- applies if the task requires a plan per `plan-mode-compliance.md` (crosses 3+ files or the IPC boundary)
+- [ ] If the epic has a `plan` field -- the referenced plan file exists in `.orqa/plans/` and is approved
 - [ ] UX design documented with component state table -- applies if the task is user-facing
 - [ ] **Design review passed** (Medium/High risk tasks only): `systems-architect` reviewed and approved the implementation plan for architectural compliance before implementation begins
 
@@ -85,6 +93,8 @@ A plan that omits any of these is not approved, and the task does not meet DoR.
 
 ## Related Documents
 
+- [Artifact Workflow](/process/artifact-workflow) -- How artifacts flow through the development process
+- [Artifact Framework](/product/artifact-framework) -- Artifact schemas and design principles
 - [Definition of Done](/process/definition-of-done) -- The gate checklist before a task is marked complete
 - [Orchestration](/process/orchestration) -- Full orchestrator responsibilities and delegation guide
 - [Workflow](/process/workflow) -- Task lifecycle protocol including the before-starting checklist

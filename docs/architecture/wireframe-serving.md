@@ -11,13 +11,13 @@ updated: 2026-03-04
 **Date:** 2026-03-02 | **Status:** Phase 0e specification
 **References:** [Wireframing Research](/research/wireframing) (Q1 verdict: PlantUML Salt), [SQLite Schema](/architecture/sqlite-schema), [Design System](/ui/design-system)
 
-How Orqa Studio stores, renders, caches, and serves PlantUML Salt wireframes as themed images within its Tauri WebView.
+How OrqaStudio™ stores, renders, caches, and serves PlantUML Salt wireframes as themed images within its Tauri WebView.
 
 ---
 
 ## Overview
 
-Wireframing is a first-class product feature. Orqa Studio's AI agent generates PlantUML Salt source files during UX design sessions, and Orqa Studio renders them to PNG/SVG images on demand. The rendering pipeline supports three style variants (light, dark, brand) backed by a SQLite image cache. A custom markdown syntax (`orqa://wireframe/...`) embeds wireframes into documentation rendered in the WebView.
+Wireframing is a first-class product feature. OrqaStudio's AI agent generates PlantUML Salt source files during UX design sessions, and OrqaStudio renders them to PNG/SVG images on demand. The rendering pipeline supports three style variants (light, dark, brand) backed by a SQLite image cache. A custom markdown syntax (`orqa://wireframe/...`) embeds wireframes into documentation rendered in the WebView.
 
 ```
 Salt source file (.puml)
@@ -134,7 +134,7 @@ CREATE INDEX idx_wireframe_cache_name
 
 ### Cache Directory
 
-Rendered images are stored under the project's Orqa Studio data directory:
+Rendered images are stored under the project's OrqaStudio data directory:
 
 ```
 .orqa/
@@ -169,7 +169,7 @@ Each wireframe can be rendered in three visual variants. The variant determines 
 
 ### Light
 
-Default wireframe aesthetic. White/light gray background, dark text. Uses Orqa Studio's light mode design tokens.
+Default wireframe aesthetic. White/light gray background, dark text. Uses OrqaStudio's light mode design tokens.
 
 ```plantuml
 <style>
@@ -190,7 +190,7 @@ Token mapping from the design system:
 
 ### Dark
 
-Dark background, light text. Uses Orqa Studio's dark mode design tokens.
+Dark background, light text. Uses OrqaStudio's dark mode design tokens.
 
 ```plantuml
 <style>
@@ -211,7 +211,7 @@ Token mapping:
 
 ### Brand
 
-Uses the active project's extracted theme colors from the `project_themes` table. Falls back to Orqa Studio's indigo-violet primary if no project theme is active.
+Uses the active project's extracted theme colors from the `project_themes` table. Falls back to OrqaStudio's indigo-violet primary if no project theme is active.
 
 ```plantuml
 <style>
@@ -226,7 +226,7 @@ salt {
 </style>
 ```
 
-The brand variant reads from the theme resolution chain defined in the design system: `User Override > Extracted Project Token > Orqa Studio Default Theme`. The `--primary` token value is converted from OKLCH to hex for PlantUML compatibility.
+The brand variant reads from the theme resolution chain defined in the design system: `User Override > Extracted Project Token > OrqaStudio Default Theme`. The `--primary` token value is converted from OKLCH to hex for PlantUML compatibility.
 
 ### Style Template Generation
 
@@ -286,7 +286,7 @@ If multiple requests arrive for the same uncached wireframe simultaneously, the 
 
 ## Custom Markdown Rendering Block
 
-Wireframes are embedded in markdown documentation using a custom URI scheme that the Orqa Studio markdown renderer intercepts.
+Wireframes are embedded in markdown documentation using a custom URI scheme that the OrqaStudio markdown renderer intercepts.
 
 ### Syntax
 
@@ -335,7 +335,7 @@ If the source `.puml` file does not exist, the renderer displays a placeholder w
 
 ### Invocation
 
-Orqa Studio invokes PlantUML as an external process. The exact binary depends on the bundling strategy (see [PlantUML Bundling Spike](/architecture/plantuml-spike)).
+OrqaStudio invokes PlantUML as an external process. The exact binary depends on the bundling strategy (see [PlantUML Bundling Spike](/architecture/plantuml-spike)).
 
 ```rust
 use std::process::Command;
@@ -384,7 +384,7 @@ The Rust backend locates the PlantUML binary using this precedence:
 3. **Bundled JAR with system JRE** — `java -jar {app_resources}/plantuml.jar` (fallback)
 4. **System PlantUML** — `plantuml` on PATH (development fallback)
 
-If no working PlantUML binary is found, Orqa Studio displays an error in the UI with instructions for installing Java or PlantUML. This should never happen in production builds (bundling ensures availability).
+If no working PlantUML binary is found, OrqaStudio displays an error in the UI with instructions for installing Java or PlantUML. This should never happen in production builds (bundling ensures availability).
 
 ### Rendering Performance
 
@@ -393,7 +393,7 @@ PlantUML Salt rendering for typical wireframes:
 - Warm rendering (JVM already running): ~200-500ms
 - Native binary (GraalVM): ~100-300ms with no cold start
 
-For the JRE-based path, Orqa Studio may keep a long-running PlantUML process using `-pipe` mode to avoid repeated JVM startup costs:
+For the JRE-based path, OrqaStudio may keep a long-running PlantUML process using `-pipe` mode to avoid repeated JVM startup costs:
 
 ```bash
 # Pipe mode: PlantUML reads from stdin, writes image to stdout
@@ -408,7 +408,7 @@ The cache is invalidated when the inputs to rendering change: either the source 
 
 ### Source Change Invalidation
 
-When Orqa Studio detects that a `.puml` file has been modified (via file watcher or on-access hash check):
+When OrqaStudio detects that a `.puml` file has been modified (via file watcher or on-access hash check):
 
 ```sql
 -- Delete all cached variants for the changed source
@@ -436,7 +436,7 @@ DELETE FROM wireframe_cache
 WHERE project_id = ? AND style_variant = 'brand';
 ```
 
-Light and dark variants use Orqa Studio's static design tokens, so they are only invalidated on Orqa Studio version upgrades (when the built-in style templates may change).
+Light and dark variants use OrqaStudio's static design tokens, so they are only invalidated on OrqaStudio version upgrades (when the built-in style templates may change).
 
 ### Manual Invalidation
 

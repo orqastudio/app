@@ -1,5 +1,5 @@
 /**
- * Provider factory for the Orqa Studio sidecar.
+ * Provider factory for the OrqaStudio sidecar.
  *
  * Creates the appropriate Provider implementation based on the requested type.
  * New providers are registered here as additional switch cases.

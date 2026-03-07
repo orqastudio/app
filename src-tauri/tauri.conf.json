@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-utils/schema.json",
-  "productName": "Orqa Studio",
+  "productName": "OrqaStudio",
   "version": "0.1.0",
   "identifier": "com.orqa.studio",
   "build": {
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Orqa Studio",
+        "title": "OrqaStudio",
         "width": 1280,
         "height": 800,
         "minWidth": 720,

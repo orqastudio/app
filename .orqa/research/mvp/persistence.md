@@ -3,7 +3,7 @@ type: research
 status: complete
 date: 2026-03-02
 category: persistence
-description: SQLite schema design, the file/DB boundary, and session persistence for Orqa Studio.
+description: SQLite schema design, the file/DB boundary, and session persistence for OrqaStudio.
 questions:
   - id: Q1
     title: SQLite Schema Design
@@ -26,7 +26,7 @@ informs_features: [F-005, F-011, F-013]
 
 **Date:** 2026-03-02 | **Status:** Complete
 
-Research into SQLite schema design, the file/DB boundary, and session persistence for Orqa Studio.
+Research into SQLite schema design, the file/DB boundary, and session persistence for OrqaStudio.
 
 ---
 
@@ -34,7 +34,7 @@ Research into SQLite schema design, the file/DB boundary, and session persistenc
 
 ### Q1: SQLite Schema Design
 
-**Question:** What tables does Orqa Studio need, and how should they be structured?
+**Question:** What tables does OrqaStudio need, and how should they be structured?
 
 **Findings:**
 
@@ -141,7 +141,7 @@ CREATE TABLE artifacts (
     file_hash       TEXT,               -- SHA-256 of file content for change detection
     file_size       INTEGER,
     file_modified_at TEXT,              -- OS file modification time
-    -- Orqa Studio metadata
+    -- OrqaStudio metadata
     last_scanned_at TEXT,
     compliance_status TEXT DEFAULT 'unknown'
                     CHECK (compliance_status IN ('compliant', 'non_compliant', 'unknown', 'error')),
@@ -343,7 +343,7 @@ CREATE VIRTUAL TABLE artifacts_fts USING fts5(
 );
 ```
 
-**FTS5 query examples for Orqa Studio:**
+**FTS5 query examples for OrqaStudio:**
 
 ```sql
 -- Search messages across all sessions in a project
@@ -434,7 +434,7 @@ INSERT INTO artifacts (metadata) VALUES (jsonb('{"category": "core"}'));
 
 #### Migration Strategy
 
-**Recommendation: Use `tauri-plugin-sql` migrations for Orqa Studio.**
+**Recommendation: Use `tauri-plugin-sql` migrations for OrqaStudio.**
 
 The plugin provides a `Migration` struct with version-ordered SQL statements, applied automatically at startup:
 
@@ -514,18 +514,18 @@ PRAGMA mmap_size=268435456;        -- 256MB memory-mapped I/O
 
 **Findings:**
 
-#### What Metadata Does Orqa Studio Need?
+#### What Metadata Does OrqaStudio Need?
 
-Governance artifacts (`.claude/agents/*.md`, `.claude/rules/*.md`, `.claude/skills/**`, `docs/**`) are markdown files committed to git. Orqa Studio needs the following metadata that cannot be derived from the file alone:
+Governance artifacts (`.claude/agents/*.md`, `.claude/rules/*.md`, `.claude/skills/**`, `docs/**`) are markdown files committed to git. OrqaStudio needs the following metadata that cannot be derived from the file alone:
 
 | Metadata | Source | Why DB |
 |----------|--------|--------|
-| Last scanned timestamp | Orqa Studio scanner | Tracks when Orqa Studio last analyzed this artifact |
-| Compliance status | Orqa Studio scanner | Pass/fail/unknown from governance scanners |
+| Last scanned timestamp | OrqaStudio scanner | Tracks when OrqaStudio last analyzed this artifact |
+| Compliance status | OrqaStudio scanner | Pass/fail/unknown from governance scanners |
 | File hash (SHA-256) | Computed from content | Change detection without re-reading full content |
 | Relationship graph | Parsed from content | Which artifacts reference which others |
-| Edit history | Orqa Studio UI | When edits were made through Orqa Studio (not from git log) |
-| Scanner findings | Orqa Studio scanner | Detailed issues found during scanning |
+| Edit history | OrqaStudio UI | When edits were made through OrqaStudio (not from git log) |
+| Scanner findings | OrqaStudio scanner | Detailed issues found during scanning |
 | Classification tags | User/auto | Categories beyond the file's directory location |
 | Content index | FTS5 | Full-text search over artifact content |
 
@@ -549,15 +549,15 @@ This is the same pattern used by Obsidian and VS Code:
 - Language services parse files and cache symbol tables
 - Search uses `ripgrep` directly on disk (no DB-based search)
 
-**How Cursor does it (closest analog to Orqa Studio):**
+**How Cursor does it (closest analog to OrqaStudio):**
 - Conversation data stored in `state.vscdb` (SQLite) as JSON in a key-value `ItemTable`
 - File-backed content remains on disk
 - Conversations are local-only, not synced to servers
 
-**Orqa Studio's hybrid approach:**
+**OrqaStudio's hybrid approach:**
 
 ```
-                    Source of Truth         Orqa Studio Metadata         Search Index
+                    Source of Truth         OrqaStudio Metadata         Search Index
                     ================       ================       ==============
 Artifacts           Disk (.claude/)   -->  SQLite (artifacts)     FTS5 (artifacts_fts)
                          ^                      |                      |
@@ -573,12 +573,12 @@ Artifacts           Disk (.claude/)   -->  SQLite (artifacts)     FTS5 (artifact
 
 #### File Watcher Architecture
 
-**The `notify` crate** (used by `tauri-plugin-fs`) provides cross-platform file watching. Key considerations for Orqa Studio:
+**The `notify` crate** (used by `tauri-plugin-fs`) provides cross-platform file watching. Key considerations for OrqaStudio:
 
-**Debouncing:** Use `notify-debouncer-full` (not `notify-debouncer-mini`) for Orqa Studio because it:
+**Debouncing:** Use `notify-debouncer-full` (not `notify-debouncer-mini`) for OrqaStudio because it:
 - Merges rapid successive events into one (editors often trigger multiple events per save)
 - Tracks file renames (important for git operations)
-- Emits events with a configurable delay (recommended: 500ms for Orqa Studio)
+- Emits events with a configurable delay (recommended: 500ms for OrqaStudio)
 
 **Editor temporary files:** Many editors save files by writing a temp file then renaming it. This produces Create + Rename events instead of a single Modify. The debouncer handles this correctly by tracking the final path.
 
@@ -660,7 +660,7 @@ Caching full file content in SQLite creates a dual source of truth. When the use
 
 **Why not Option A (disk-only)?**
 
-No metadata storage means no scan history, no compliance tracking, no relationship graph, and no full-text search. These are core Orqa Studio features.
+No metadata storage means no scan history, no compliance tracking, no relationship graph, and no full-text search. These are core OrqaStudio features.
 
 **Why not Option C (metadata-only DB, no FTS)?**
 
@@ -672,7 +672,7 @@ Searching artifact content is a key feature. Without FTS5 indexing, every search
 
 ### Q3: Session Persistence Model
 
-**Question:** How much conversation history should Orqa Studio persist, and how?
+**Question:** How much conversation history should OrqaStudio persist, and how?
 
 **Findings:**
 
@@ -754,20 +754,20 @@ ALTER TABLE messages ADD COLUMN content_original_size INTEGER;
 - Commands are not always idempotent. Re-running `git log` gives different results.
 - The conversation makes sense only with the original tool results in context.
 
-#### Claude's Context Window and Orqa Studio's Role
+#### Claude's Context Window and OrqaStudio's Role
 
 **Claude's context window management:**
 
 Claude (Sonnet 4, Opus 4) has a 200K token context window. Claude Code auto-compacts when the context reaches ~155-160K tokens (reserving ~40-45K for the response buffer). Auto-compaction summarizes older conversation turns to free up context space.
 
-**Orqa Studio's role:**
+**OrqaStudio's role:**
 
-Orqa Studio manages its own context independently from Claude's context window. Key distinction:
+OrqaStudio manages its own context independently from Claude's context window. Key distinction:
 
-- **Claude's context** = what Claude sees in a single API call (up to 200K tokens). Managed by Orqa Studio's conversation engine -- it decides what to include in each API request.
-- **Orqa Studio's history** = everything ever said, stored in SQLite. Complete and permanent.
+- **Claude's context** = what Claude sees in a single API call (up to 200K tokens). Managed by OrqaStudio's conversation engine -- it decides what to include in each API request.
+- **OrqaStudio's history** = everything ever said, stored in SQLite. Complete and permanent.
 
-Orqa Studio should implement its own context management strategy:
+OrqaStudio should implement its own context management strategy:
 
 ```
 When sending a message to Claude:
@@ -778,7 +778,7 @@ When sending a message to Claude:
 5. Track cumulative token count. When approaching 150K tokens, summarize older turns.
 ```
 
-**Important:** Orqa Studio must track token counts per message (stored in `messages.input_tokens` and `messages.output_tokens`) to know when it is approaching context limits. The Claude API returns usage in every response.
+**Important:** OrqaStudio must track token counts per message (stored in `messages.input_tokens` and `messages.output_tokens`) to know when it is approaching context limits. The Claude API returns usage in every response.
 
 #### Cross-Session Search
 
@@ -828,7 +828,7 @@ WHERE messages_fts MATCH 'tool_name : Bash AND content : "error"';
 
 When a session ends (user closes it, starts a new one, or the app closes):
 
-1. Orqa Studio generates a handoff summary by calling Claude with a special prompt:
+1. OrqaStudio generates a handoff summary by calling Claude with a special prompt:
    ```
    Summarize this conversation for the next session. Include:
    - What was accomplished
@@ -851,7 +851,7 @@ When a session ends (user closes it, starts a new one, or the app closes):
 
 This is free but less intelligent. **Recommendation: Claude-generated handoff summaries from Phase 1.** Context loss between sessions is the highest-impact pain point for all three personas. The cost is negligible (< $0.01/session via the sidecar) and the value is immediate. Rule-based summaries can serve as a fallback when the sidecar is unavailable.
 
-**Decision:** Full history storage for all messages and tool results. Size-based truncation only for results > 1 MB. FTS5 for cross-session search. Claude-generated handoff summaries on session end from Phase 1 (rule-based fallback when sidecar unavailable). Orqa Studio manages its own context window independently from Claude.
+**Decision:** Full history storage for all messages and tool results. Size-based truncation only for results > 1 MB. FTS5 for cross-session search. Claude-generated handoff summaries on session end from Phase 1 (rule-based fallback when sidecar unavailable). OrqaStudio manages its own context window independently from Claude.
 
 ---
 
@@ -859,13 +859,13 @@ This is free but less intelligent. **Recommendation: Claude-generated handoff su
 
 ### Future Direction: Collaborative Access
 
-Orqa Studio is initially a single-user desktop application, but the architecture should not preclude multi-user collaborative access in the future (e.g., a small team sharing a Orqa Studio instance where a PM, Tech Lead, and Developer each have visibility into the project's sessions and governance).
+OrqaStudio is initially a single-user desktop application, but the architecture should not preclude multi-user collaborative access in the future (e.g., a small team sharing a OrqaStudio instance where a PM, Tech Lead, and Developer each have visibility into the project's sessions and governance).
 
 **Schema implications (build for single-user, don't preclude multi-user):**
 
 - **Sessions table:** Include a nullable `user_id TEXT` column from Phase 1. Default to `NULL` (single-user mode). When multi-user is implemented, this becomes the session author.
 - **Messages table:** No per-message user_id needed — the session's user_id identifies the human participant. AI messages belong to the session.
-- **Artifacts table:** Include a nullable `last_edited_by TEXT` column. Tracks who last modified a governance artifact through Orqa Studio.
+- **Artifacts table:** Include a nullable `last_edited_by TEXT` column. Tracks who last modified a governance artifact through OrqaStudio.
 - **Settings table:** The existing `scope` column (`'app'` or project_id) can be extended to include user-specific scopes (`'user:<id>'`).
 
 **What multi-user would require (not Phase 1):**
@@ -895,7 +895,7 @@ Orqa Studio is initially a single-user desktop application, but the architecture
 | `diesel` | ORM | No | Yes (schema.rs) | Good | Heaviest abstraction, steepest learning curve |
 | `sea-orm` | ORM | Yes | Partial | Good | Async-first, now has rusqlite backend |
 
-**Recommendation for Orqa Studio: Use both `tauri-plugin-sql` (frontend) and `rusqlite` (backend).**
+**Recommendation for OrqaStudio: Use both `tauri-plugin-sql` (frontend) and `rusqlite` (backend).**
 
 **Why:**
 
@@ -905,7 +905,7 @@ Orqa Studio is initially a single-user desktop application, but the architecture
 
 3. **Why not `sqlx`?** The `query!()` macro requires a running SQLite database at compile time. For a desktop app where the database does not exist until first launch, this creates an awkward development workflow (maintain a "dev" database file, keep it in sync with migrations). `rusqlite` avoids this entirely -- queries are runtime-checked.
 
-4. **Why not `diesel` or `sea-orm`?** Orqa Studio's queries are mostly straightforward (CRUD + FTS5 + JSON functions). A full ORM adds learning curve and abstraction for minimal benefit. SQLite-specific features (FTS5 `MATCH`, `bm25()`, `json_extract()`) are easier to express in raw SQL than through an ORM's query builder.
+4. **Why not `diesel` or `sea-orm`?** OrqaStudio's queries are mostly straightforward (CRUD + FTS5 + JSON functions). A full ORM adds learning curve and abstraction for minimal benefit. SQLite-specific features (FTS5 `MATCH`, `bm25()`, `json_extract()`) are easier to express in raw SQL than through an ORM's query builder.
 
 **Shared database access pattern:**
 
@@ -964,7 +964,7 @@ Alternatively, use a single `rusqlite` connection managed in Rust state, and rou
 
 ### Connection Pooling
 
-**Not needed for a desktop app.** Connection pooling (r2d2, deadpool) solves the problem of many concurrent users competing for database connections. Orqa Studio has exactly one user. A single connection (or two: one for the plugin, one for Rust) is sufficient.
+**Not needed for a desktop app.** Connection pooling (r2d2, deadpool) solves the problem of many concurrent users competing for database connections. OrqaStudio has exactly one user. A single connection (or two: one for the plugin, one for Rust) is sufficient.
 
 The only scenario where pooling might help: if multiple Tauri commands run concurrently and all need DB access, a `Mutex<Connection>` serializes them. But SQLite itself serializes writes anyway (one writer at a time), so a pool of 2-4 connections provides marginal benefit at best. **Do not add a connection pool unless profiling shows `Mutex` contention is a bottleneck.**
 
@@ -984,7 +984,7 @@ The only scenario where pooling might help: if multiple Tauri commands run concu
 | **Q3: History** | Full history, truncate only > 1 MB tool results | Disk is cheap, full history enables search, summarization loses info |
 | **Q3: Search** | FTS5 over all messages, performs well to 1M+ rows | < 50ms queries at 1M rows, scales with matches not total rows |
 | **Q3: Continuity** | Claude-generated handoff summaries from Phase 1 (rule-based fallback) | Context loss is the #1 pain point; cost is negligible via sidecar |
-| **Q3: Context** | Orqa Studio manages its own context window, independent of Claude's | Full history in DB, selective context in API calls |
+| **Q3: Context** | OrqaStudio manages its own context window, independent of Claude's | Full history in DB, selective context in API calls |
 | **ORM** | `rusqlite` (Rust) + `tauri-plugin-sql` (frontend JS) | Best SQLite fit, no compile-time DB requirement, shared file |
 | **Pooling** | Not needed | Single user, 1-2 connections sufficient |
 
@@ -994,7 +994,7 @@ The only scenario where pooling might help: if multiple Tauri commands run concu
 
 - Q1 (schema) can start immediately -- initial design will evolve
 - Q2 (file/DB boundary) depends on Tauri file watching capabilities (see Tauri research) -- **resolved: notify crate via tauri-plugin-fs is sufficient**
-- Q3 (session model) depends on Claude integration decisions (context window management) -- **resolved: Orqa Studio manages its own context**
+- Q3 (session model) depends on Claude integration decisions (context window management) -- **resolved: OrqaStudio manages its own context**
 
 ## References
 

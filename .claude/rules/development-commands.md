@@ -36,7 +36,7 @@ Any session that modifies code (Rust, Svelte, TypeScript, CSS) MUST have `make d
 - **Frontend**: Vite HMR — instant reload, window stays open
 - **Rust**: Changes require manual restart (see below)
 
-**Dogfooding context:** Orqa Studio is developed using itself. The app you are running inside IS the codebase you are editing. `make dev` uses `--no-watch` so that editing `.rs` files does not kill the running app mid-conversation. Vite HMR still works for frontend changes.
+**Dogfooding context:** OrqaStudio is developed using itself. The app you are running inside IS the codebase you are editing. `make dev` uses `--no-watch` so that editing `.rs` files does not kill the running app mid-conversation. Vite HMR still works for frontend changes.
 
 After Rust backend changes, use `make restart` to cleanly stop all processes and restart. This kills the Tauri app, Vite dev server, and any cargo builds, waits for ports to release, then starts fresh. **NEVER use `make dev-watch`** — it causes the app to restart on every Rust file save, which destroys the active session.
 

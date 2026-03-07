@@ -33,7 +33,7 @@
 
 	<div class="relative z-10 flex h-full flex-col items-center justify-between py-24">
 		<div class="text-center">
-			<h2 class="text-xl font-semibold">Welcome to Orqa Studio</h2>
+			<h2 class="text-xl font-semibold">Welcome to OrqaStudio</h2>
 			<p class="mt-2 text-sm text-muted-foreground">Open a project to get started</p>
 		</div>
 		<div class="flex flex-col items-center gap-3">

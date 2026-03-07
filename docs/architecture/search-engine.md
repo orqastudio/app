@@ -10,7 +10,7 @@ updated: 2026-03-04
 
 **Date:** 2026-03-04 | **Status:** Active specification | **References:** [Rust Modules](/architecture/rust-modules), [IPC Commands](/architecture/ipc-commands), [Tool Definitions](/architecture/tool-definitions)
 
-Built-in semantic code search with no external dependencies. The entire search stack — code chunking, ONNX embeddings, vector store, and search API — runs natively in Orqa Studio's Rust backend.
+Built-in semantic code search with no external dependencies. The entire search stack — code chunking, ONNX embeddings, vector store, and search API — runs natively in OrqaStudio™'s Rust backend.
 
 ---
 
@@ -36,7 +36,7 @@ User types query → Claude uses search tool
                    Top-K results → tool_result → Claude
 ```
 
-**Design principle:** Zero configuration. Orqa Studio indexes the codebase, embeds chunks, and searches — all within the Tauri process. No external servers, no API keys, no Docker containers.
+**Design principle:** Zero configuration. OrqaStudio indexes the codebase, embeds chunks, and searches — all within the Tauri process. No external servers, no API keys, no Docker containers.
 
 ---
 
@@ -167,14 +167,14 @@ let session = Session::builder()?
 ### Model Distribution
 
 **Production (installer build):**
-- The ONNX model files (`model.onnx`, `tokenizer.json`) are **bundled with the Orqa Studio installer**
+- The ONNX model files (`model.onnx`, `tokenizer.json`) are **bundled with the OrqaStudio installer**
 - This adds ~130MB to the installer size
 - The bundled model is placed in the app's resource directory during installation
 - Build pipeline must include a step to download/verify the model before packaging
 - Tauri's `resources` configuration in `tauri.conf.json` handles bundling
 
 **Development (first-use download):**
-- On first use, if the model is not found in the resource directory, Orqa Studio downloads it from Hugging Face to the app data directory (`{app_data}/orqa-studio/models/bge-small-en-v1.5/`)
+- On first use, if the model is not found in the resource directory, OrqaStudio downloads it from Hugging Face to the app data directory (`{app_data}/orqa-studio/models/bge-small-en-v1.5/`)
 - Download progress is reported via Tauri events for UI feedback
 - The model is cached — subsequent runs use the cached copy
 - A hash check verifies model integrity after download
@@ -305,7 +305,7 @@ Embedding is the bottleneck. It runs asynchronously via `tokio::spawn_blocking` 
 
 ## 11. Installer Build Requirements
 
-When building the Orqa Studio installer for distribution:
+When building the OrqaStudio installer for distribution:
 
 1. **Download the ONNX model** during the build pipeline (CI/CD step)
 2. **Verify model integrity** with SHA-256 checksum

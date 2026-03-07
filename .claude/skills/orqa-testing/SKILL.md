@@ -1,7 +1,7 @@
 ---
 name: orqa-testing
 description: |
-  Orqa Studio testing patterns: make test commands, Rust unit/integration tests,
+  OrqaStudio testing patterns: make test commands, Rust unit/integration tests,
   Vitest frontend tests, mock boundaries, and test file organization.
   Use when: Writing tests, fixing test failures, setting up test infrastructure,
   or verifying test coverage.
@@ -12,7 +12,7 @@ user-invocable: true
 
 # Orqa Testing Patterns
 
-Orqa Studio uses `make` targets for all test commands. Tests are organized by layer: Rust unit tests inline with source, Rust integration tests in `src-tauri/tests/`, frontend unit tests alongside components, and E2E tests in `tests/`.
+OrqaStudio uses `make` targets for all test commands. Tests are organized by layer: Rust unit tests inline with source, Rust integration tests in `src-tauri/tests/`, frontend unit tests alongside components, and E2E tests in `tests/`.
 
 ## Test Commands (MANDATORY)
 

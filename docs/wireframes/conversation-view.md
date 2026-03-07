@@ -317,7 +317,7 @@ The conversation view when no session is active or when a new empty session has 
     {
       . | . | <&star> | . | .
       ---
-      . | <b>Welcome to Orqa Studio</b>
+      . | <b>Welcome to OrqaStudio</b>
       ---
       . | Start a conversation to begin working
       . | with Claude on your project.
@@ -350,8 +350,8 @@ The conversation view when no session is active or when a new empty session has 
 |---------|----------|
 | **Session title** | Defaults to "New Session". Becomes auto-titled after the first user message is sent (first 50 characters of the message). |
 | **Token counter** | Shows "0 tokens" until the first exchange. |
-| **Welcome icon** | A centered star or Orqa Studio logo icon. Visually anchors the empty state. |
-| **Welcome heading** | "Welcome to Orqa Studio" in bold. |
+| **Welcome icon** | A centered star or OrqaStudio™ logo icon. Visually anchors the empty state. |
+| **Welcome heading** | "Welcome to OrqaStudio" in bold. |
 | **Welcome subtitle** | Brief guidance text: "Start a conversation to begin working with Claude on your project." |
 | **Suggestion prompts** | 3-4 clickable suggestions relevant to common workflows. Each is a `comment-square` icon + quoted text. Clicking a suggestion inserts it into the input area and focuses the input (does not auto-send). Suggestions are context-aware: if project metadata is available (detected languages, frameworks), suggestions reference the actual project. |
 | **Input placeholder** | "Ask Claude anything about your project..." -- slightly different from the active session placeholder to reinforce the starting context. |

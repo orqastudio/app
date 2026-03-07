@@ -180,7 +180,7 @@ When clicking an artifact in the browser, the Explorer Panel switches from the l
     <b>Guidelines</b>
     .
     - Follow the project's error handling rules:
-      use Result<T, Orqa StudioError> for all fallible
+      use Result<T, OrqaStudioError> for all fallible
       operations
     - Prefer async functions using tokio
     - Write integration tests for all new endpoints
@@ -262,7 +262,7 @@ The source editing mode replaces the rendered view in the Explorer Panel with a 
       # Guidelines
       .
       ""- Follow the project's error handling rules:""
-      ""  use Result<T, Orqa StudioError> for all""
+      ""  use Result<T, OrqaStudioError> for all""
       ""  fallible operations""
       ""- Prefer async functions using tokio""
       ""- Write integration tests for all new""

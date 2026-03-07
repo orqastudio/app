@@ -24,7 +24,7 @@ If a skill fails to load, the agent MUST report the failure explicitly. Do NOT s
 
 ## Project-Level Skills
 
-Orqa Studio has project-specific skills that capture codebase patterns:
+OrqaStudio has project-specific skills that capture codebase patterns:
 
 | Skill | Domain | Used By |
 |-------|--------|---------|
@@ -53,7 +53,7 @@ Orqa Studio has project-specific skills that capture codebase patterns:
 
 ## App-Managed Loading
 
-In Orqa Studio, skills are loaded via the `load_skill` tool and managed by the app's process enforcement layer. The app tracks which skills each agent has loaded and can enforce loading before task execution begins. The YAML frontmatter `skills:` declarations remain authoritative for CLI usage, where agents self-load skills based on their frontmatter lists.
+In OrqaStudio, skills are loaded via the `load_skill` tool and managed by the app's process enforcement layer. The app tracks which skills each agent has loaded and can enforce loading before task execution begins. The YAML frontmatter `skills:` declarations remain authoritative for CLI usage, where agents self-load skills based on their frontmatter lists.
 
 ## Related Rules
 

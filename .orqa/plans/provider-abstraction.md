@@ -1,6 +1,6 @@
 # Plan: Provider Abstraction Layer
 
-**Aim:** Compatibility — Orqa Studio should work with as many AI providers as possible.
+**Aim:** Compatibility — OrqaStudio should work with as many AI providers as possible.
 **Research:** `.orqa/research/provider-architecture.md`
 **Status:** Approved for implementation
 

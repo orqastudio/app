@@ -10,13 +10,13 @@ updated: 2026-03-05
 
 **Date:** 2026-03-05
 
-Sub-agent support allows the orchestrator agent to delegate tasks to specialized sub-agents within a single Orqa Studio session. The `spawn_agent` tool spawns a sub-agent with a declared role and instructions. The agent registry reads `.claude/agents/*.md` to discover available roles. Child tool calls are aggregated and not surfaced individually in the conversation view. Turn limits prevent runaway sub-agent loops.
+Sub-agent support allows the orchestrator agent to delegate tasks to specialized sub-agents within a single OrqaStudio™ session. The `spawn_agent` tool spawns a sub-agent with a declared role and instructions. The agent registry reads `.claude/agents/*.md` to discover available roles. Child tool calls are aggregated and not surfaced individually in the conversation view. Turn limits prevent runaway sub-agent loops.
 
 ---
 
 ## `spawn_agent` Tool
 
-The `spawn_agent` tool is an Orqa Studio MCP tool, implemented in Rust, exposed to the sidecar via the MCP server interface.
+The `spawn_agent` tool is an OrqaStudio MCP tool, implemented in Rust, exposed to the sidecar via the MCP server interface.
 
 ### Tool Invocation Schema
 

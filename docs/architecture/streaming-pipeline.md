@@ -112,7 +112,7 @@ Incremental input JSON for a tool call. The sidecar streams this as the Agent SD
 
 #### tool_result
 
-The result of a tool execution. Sent after Orqa Studio's MCP server processes the tool call and returns the result through the Agent SDK.
+The result of a tool execution. Sent after OrqaStudio™'s MCP server processes the tool call and returns the result through the Agent SDK.
 
 ```json
 {"type":"tool_result","tool_call_id":"toolu_01ABC123","content":"fn main() {\n    println!(\"Hello\");\n}","is_error":false,"message_id":"msg_01XFDUDYJgAACzvnptvVoYEL","turn_index":2,"block_index":0}

@@ -6,7 +6,7 @@ created: 2026-03-07
 updated: 2026-03-07
 ---
 
-# Contributing to OrqaStudio
+# Contributing to OrqaStudio™
 
 **Date:** 2026-03-07
 

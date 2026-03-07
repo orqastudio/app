@@ -67,7 +67,7 @@ interface OrqaError {
 
 ### `project_open`
 
-Open an existing directory as a Orqa Studio project. Registers it in SQLite, runs Tier 1 + Tier 2 codebase scan, indexes `.claude/` artifacts, and extracts design tokens if found.
+Open an existing directory as a OrqaStudio™ project. Registers it in SQLite, runs Tier 1 + Tier 2 codebase scan, indexes `.claude/` artifacts, and extracts design tokens if found.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -583,7 +583,7 @@ Delete an artifact. Removes the file from disk and the record from SQLite.
 
 ### `theme_get_project`
 
-Get the resolved theme for a project. Merges auto-extracted tokens with any user overrides. Returns Orqa Studio defaults for any unmapped tokens.
+Get the resolved theme for a project. Merges auto-extracted tokens with any user overrides. Returns OrqaStudio defaults for any unmapped tokens.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -623,7 +623,7 @@ Set a manual override for a specific design token. Overrides persist until clear
 
 ### `theme_clear_overrides`
 
-Remove all manual theme overrides for a project. Reverts to auto-extracted tokens (or Orqa Studio defaults if none).
+Remove all manual theme overrides for a project. Reverts to auto-extracted tokens (or OrqaStudio defaults if none).
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|

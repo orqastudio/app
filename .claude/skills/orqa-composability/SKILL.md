@@ -1,7 +1,7 @@
 ---
 name: orqa-composability
 description: |
-  Orqa Studio's composability philosophy: building systems from small, pure, swappable units.
+  OrqaStudio's composability philosophy: building systems from small, pure, swappable units.
   Shapes how agents think about code structure at both the function level and the feature level.
   Use when: Writing any new code, reviewing architecture, planning features, or refactoring
   existing modules. This is the meta-skill — it informs all other patterns.
@@ -12,9 +12,9 @@ user-invocable: true
 
 # Orqa Composability
 
-Orqa Studio is built from small, composable units at every level: functions, modules, features, and integrations. This skill teaches the composability philosophy that shapes all code in the project, grounded in AD-017 (Composability Principle).
+OrqaStudio is built from small, composable units at every level: functions, modules, features, and integrations. This skill teaches the composability philosophy that shapes all code in the project, grounded in AD-017 (Composability Principle).
 
-Composability is not just a coding pattern — it is a platform principle. Every software project initialized with Orqa Studio should be composable by default, because composable systems are dramatically easier to pivot, extend, and maintain as requirements change.
+Composability is not just a coding pattern — it is a platform principle. Every software project initialized with OrqaStudio should be composable by default, because composable systems are dramatically easier to pivot, extend, and maintain as requirements change.
 
 ## The Core Idea
 
@@ -25,7 +25,7 @@ Every piece of the system should be:
 3. **Typed enough to compose safely**
 4. **Swappable enough to replace without cascading changes**
 
-This applies at every scale: individual functions, modules, features, integrations, and even the app itself. Orqa Studio eats its own cooking — the app is built with the same composability principles it enforces on projects it manages.
+This applies at every scale: individual functions, modules, features, integrations, and even the app itself. OrqaStudio eats its own cooking — the app is built with the same composability principles it enforces on projects it manages.
 
 ## Principle 1: Pure Over Stateful
 
@@ -409,7 +409,7 @@ Before writing or reviewing code, verify:
 
 ## Platform Principle
 
-Composability is not just for Orqa Studio's own codebase — it is a principle the platform promotes for every project it manages. When Orqa Studio initializes a new project, the governance framework, agent definitions, and coding standards should guide developers toward composable architecture by default. In a world of ever-changing demands, composable software is dramatically easier to pivot and extend. This skill encodes that belief into the development process.
+Composability is not just for OrqaStudio's own codebase — it is a principle the platform promotes for every project it manages. When OrqaStudio initializes a new project, the governance framework, agent definitions, and coding standards should guide developers toward composable architecture by default. In a world of ever-changing demands, composable software is dramatically easier to pivot and extend. This skill encodes that belief into the development process.
 
 ## See Also
 

@@ -1,5 +1,5 @@
 /**
- * Orqa Studio Agent SDK Sidecar — Main Entry Point
+ * OrqaStudio Agent SDK Sidecar — Main Entry Point
  *
  * Reads NDJSON requests from stdin, dispatches to the appropriate handler,
  * and writes NDJSON responses to stdout. This is the real sidecar that

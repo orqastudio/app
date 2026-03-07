@@ -13,7 +13,7 @@ Semantic search is available in two contexts with different tool names. Both are
 | Context | Tool Names | How They Work |
 |---------|-----------|---------------|
 | **CLI** (Claude Code) | `mcp__chunkhound__search_regex`, `mcp__chunkhound__search_semantic`, `mcp__chunkhound__code_research` | Via ChunkHound MCP server configured in `.mcp.json` |
-| **App** (Orqa Studio) | `search_regex`, `search_semantic`, `code_research` | Native embedded search (ONNX embeddings + DuckDB in `src-tauri/src/search/`) |
+| **App** (OrqaStudio) | `search_regex`, `search_semantic`, `code_research` | Native embedded search (ONNX embeddings + DuckDB in `src-tauri/src/search/`) |
 
 The tools do the same thing — only the names differ. The `chunkhound` skill teaches query patterns that work in both contexts. Use whichever set is available in your current environment.
 

@@ -18,14 +18,14 @@ All 15 agent definitions in `.claude/agents/` are effectively dormant. Dogfoodin
 2. **Missing skills** — Almost all agents only declare `chunkhound`. Domain-specific skills are missing.
 3. **Nonexistent tools** — 6 agents reference `mcp__MCP_DOCKER__*` tools that don't exist.
 4. **No context awareness** — Agents don't know they operate in two contexts (CLI vs. app) with different tool names and capabilities.
-5. **Generic bodies** — Agent instructions are boilerplate templates, not Orqa Studio-specific.
+5. **Generic bodies** — Agent instructions are boilerplate templates, not OrqaStudio-specific.
 6. **No enforcement** — No mechanism ensures agents are actually used or that they load their skills.
 7. **Research organization** — MVP-phase research files aren't grouped as such.
 
 ## Goal
 
 **Dogfooding-ready agent framework.** After this plan is complete, every agent:
-- Knows the Orqa Studio tech stack (Tauri v2, Svelte 5, Rust, SQLite, Agent SDK sidecar)
+- Knows the OrqaStudio tech stack (Tauri v2, Svelte 5, Rust, SQLite, Agent SDK sidecar)
 - Knows which tools are available and what they're called in each context
 - Has correct documentation paths that resolve to real files
 - Has domain-appropriate skills loaded before implementation begins
@@ -35,11 +35,11 @@ All 15 agent definitions in `.claude/agents/` are effectively dormant. Dogfoodin
 
 ## Phase 1: Dogfooding-Ready Agent Definitions
 
-**Goal**: Every agent is fully operational in both CLI and app contexts with Orqa Studio-specific instructions.
+**Goal**: Every agent is fully operational in both CLI and app contexts with OrqaStudio-specific instructions.
 
 ### 1a: Dual-Context Tool Configuration
 
-Orqa Studio permanently supports two operating contexts. Both are first-class — neither is temporary or deprecated.
+OrqaStudio permanently supports two operating contexts. Both are first-class — neither is temporary or deprecated.
 
 **CLI context** (Claude Code CLI with `.mcp.json`):
 - File tools: `Read`, `Edit`, `Write`, `Bash`, `Glob`, `Grep` (built-in Claude Code tools)
@@ -47,7 +47,7 @@ Orqa Studio permanently supports two operating contexts. Both are first-class �
 - ChunkHound is a permanent dev-tool environment enhancement for CLI usage
 - No sidecar, no streaming, no Tauri commands
 
-**App context** (Orqa Studio sidecar):
+**App context** (OrqaStudio sidecar):
 - File tools: `read`, `write`, `edit`, `bash`, `glob`, `grep` (native Rust tools exposed via built-in MCP server)
 - Search tools: `search_regex`, `search_semantic`, `code_research` (native, embedded ONNX + DuckDB)
 - Streaming, tool approval UI, governance scanning, sub-agent spawning
@@ -58,7 +58,7 @@ Orqa Studio permanently supports two operating contexts. Both are first-class �
 - In CLI: search tools have `mcp__chunkhound__` prefix (MCP server)
 - In app: search tools have no prefix (native embedded)
 - The `chunkhound` skill teaches query patterns that work in both contexts
-- **When dogfooding** (using Orqa Studio to develop Orqa Studio): agents must be explicitly told they are dogfooding. This changes behavior — e.g., `make dev` uses `--no-watch` so editing `.rs` files doesn't kill the running app mid-session
+- **When dogfooding** (using OrqaStudio to develop OrqaStudio): agents must be explicitly told they are dogfooding. This changes behavior — e.g., `make dev` uses `--no-watch` so editing `.rs` files doesn't kill the running app mid-session
 
 **Agent `tools:` frontmatter**: List both sets so agents work in either context:
 ```yaml
@@ -81,7 +81,7 @@ tools:
 
 ### 1f: Dogfood Detection & Enhanced Caution
 
-When the project being managed IS Orqa Studio itself, agents need enhanced caution that doesn't apply to normal projects. This must be detectable and enforceable now — not deferred to the future project type system.
+When the project being managed IS OrqaStudio itself, agents need enhanced caution that doesn't apply to normal projects. This must be detectable and enforceable now — not deferred to the future project type system.
 
 **Detection mechanism:**
 - Add `"dogfood": true` flag to `.orqa/project.json`
@@ -139,7 +139,7 @@ When the project being managed IS Orqa Studio itself, agents need enhanced cauti
 | `qa-tester` | `chunkhound` | *(none needed beyond chunkhound)* |
 | `ux-reviewer` | `chunkhound` | `tailwind-design-system` |
 
-### 1e: Orqa Studio-Specific Agent Bodies
+### 1e: OrqaStudio-Specific Agent Bodies
 
 Every agent body must be rewritten to reference the actual project, not generic placeholders. Each agent body must include:
 
@@ -160,7 +160,7 @@ You may run in two contexts:
 use MCP namespace: `mcp__chunkhound__search_regex`, `mcp__chunkhound__search_semantic`,
 `mcp__chunkhound__code_research`.
 
-**App (Orqa Studio):** File tools are native Rust implementations (`read`, `edit`, etc.).
+**App (OrqaStudio):** File tools are native Rust implementations (`read`, `edit`, etc.).
 Search tools are native embedded: `search_regex`, `search_semantic`, `code_research`.
 No MCP prefix needed.
 
@@ -203,12 +203,12 @@ Update `.claude/rules/chunkhound-usage.md` to:
 - [ ] No agent references `mcp__MCP_DOCKER__*` tools
 - [ ] All agents list BOTH `mcp__chunkhound__*` (CLI) AND native `search_regex`, `search_semantic`, `code_research` (app) — both permanent
 - [ ] Every agent body includes an "Operating Context" section explaining CLI vs. app tool names
-- [ ] Every agent body references Orqa Studio's specific tech stack, patterns, and `make` commands
+- [ ] Every agent body references OrqaStudio's specific tech stack, patterns, and `make` commands
 - [ ] `chunkhound-usage.md` rule documents both tool name sets and explains native embedding
 - [ ] `.mcp.json` ChunkHound entry is permanent (CLI/dev-tool enhancement)
 - [ ] An agent invoked in the CLI can find its Required Reading, load its skills, and use search tools
 - [ ] An agent invoked in the app can find its Required Reading, load its skills, and use search tools
-- [ ] `.orqa/project.json` has `"dogfood": true` for the Orqa Studio project
+- [ ] `.orqa/project.json` has `"dogfood": true` for the OrqaStudio project
 - [ ] `dogfood-mode.md` rule exists with consolidated dogfood-specific caution rules
 - [ ] Every agent's "Operating Context" section references dogfood mode detection
 - [ ] Dogfood-specific caution (no-watch, session state before restart, sidecar self-edit warnings) is only active when `dogfood: true`
@@ -217,7 +217,7 @@ Update `.claude/rules/chunkhound-usage.md` to:
 
 ## Phase 2: Create Project-Level Skills
 
-**Goal**: Orqa Studio-specific patterns captured as loadable skills so agents have concrete guidance, not generic advice.
+**Goal**: OrqaStudio-specific patterns captured as loadable skills so agents have concrete guidance, not generic advice.
 
 ### Skills to Create
 
@@ -240,7 +240,7 @@ Each skill is a `.md` file in `.claude/skills/` following the standard format:
 ### Acceptance Criteria
 
 - [ ] 5 project-level skills created in `.claude/skills/`
-- [ ] Each skill has concrete Orqa Studio code examples (not generic)
+- [ ] Each skill has concrete OrqaStudio code examples (not generic)
 - [ ] Agent definitions updated to reference these skills in their `skills:` lists
 - [ ] Skills load successfully via `Skill(name)` invocation
 

@@ -1,4 +1,4 @@
-# Orqa Studio
+# OrqaStudio
 
 Desktop application that automates product management and the agentic implementation cycle. Designed for Product Managers and Tech Leads who define process governance, delegate implementation to AI agents, and verify results — with a visual process layer where governance artifacts (agents, skills, rules, learning loops, documentation) live alongside the conversation as interactive, editable documents.
 
@@ -136,7 +136,7 @@ orqa-studio/
 
 ## Architecture Overview
 
-Orqa Studio uses a **thick backend** architecture. Rust owns the domain model — sessions, artifacts, governance state, and agent orchestration. Svelte is a view layer that renders what Rust tells it.
+OrqaStudio uses a **thick backend** architecture. Rust owns the domain model — sessions, artifacts, governance state, and agent orchestration. Svelte is a view layer that renders what Rust tells it.
 
 ```text
 ┌─────────────────────────────────────────────────────────┐
@@ -271,7 +271,7 @@ Project-specific knowledge is injected at runtime through skills. When the orche
 - Architecture context (decisions, IPC contracts, module structure)
 - Codebase-specific conventions (derived from `docs/`)
 
-This separation keeps agents portable. The same `backend-engineer` agent definition works across Orqa Studio and any other Tauri project — only the injected skills differ.
+This separation keeps agents portable. The same `backend-engineer` agent definition works across OrqaStudio and any other Tauri project — only the injected skills differ.
 
 ### Skills
 
@@ -293,7 +293,7 @@ npx skills list              # List installed skills
 | `skills-maintenance` | Skill lifecycle management | Process — portable |
 | `architecture` | Architectural compliance patterns | Technology — portable |
 
-Project-specific knowledge (Orqa Studio architecture decisions, IPC contracts, component specs) lives in `docs/` and is referenced by agent Required Reading lists — not embedded in skills.
+Project-specific knowledge (OrqaStudio architecture decisions, IPC contracts, component specs) lives in `docs/` and is referenced by agent Required Reading lists — not embedded in skills.
 
 ## MCP Tools
 

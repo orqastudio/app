@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-/// Canonical error type for all Orqa Studio IPC commands.
+/// Canonical error type for all OrqaStudio IPC commands.
 ///
 /// Serialized as `{"code": "<variant>", "message": "<detail>"}` for the frontend.
 /// The `Serialize` derive enables automatic conversion to `tauri::ipc::InvokeError`

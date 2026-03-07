@@ -1,7 +1,7 @@
 ---
 name: orqa-repository-pattern
 description: |
-  Orqa Studio's persistence layer using the repository pattern with rusqlite.
+  OrqaStudio's persistence layer using the repository pattern with rusqlite.
   Covers repository anatomy, connection management, query patterns, migrations,
   error handling, and testing.
   Use when: Adding a new database entity, writing a new repository module,
@@ -13,7 +13,7 @@ user-invocable: true
 
 # Orqa Repository Pattern
 
-Orqa Studio persists structured data in SQLite via the `rusqlite` crate. Every database entity follows the same repository pattern: a module of free functions in `src-tauri/src/repo/` that accepts a `&Connection` and returns `Result<T, OrqaError>`.
+OrqaStudio persists structured data in SQLite via the `rusqlite` crate. Every database entity follows the same repository pattern: a module of free functions in `src-tauri/src/repo/` that accepts a `&Connection` and returns `Result<T, OrqaError>`.
 
 ## Repository Anatomy
 

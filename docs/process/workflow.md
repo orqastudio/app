@@ -94,9 +94,10 @@ Merge conflicts are the primary source of lost work. Every conflict MUST be reso
 ### Before Starting a Task
 
 1. Check the [Definition of Ready](/process/definition-of-ready) -- verify all applicable items
-2. Check `BLOCKERS.md` -- ensure the task is not blocked
-3. Read the full task description including scope, action, and acceptance criteria
-4. Run `code_research` in ChunkHound to understand existing code you will modify
+2. Verify the artifact trail -- confirm an `EPIC-NNN` exists with `status: ready` and `docs-required` gate satisfied
+3. Check `BLOCKERS.md` -- ensure the task is not blocked
+4. Read the full task description including scope, action, and acceptance criteria
+5. Run `code_research` in ChunkHound to understand existing code you will modify
 
 ### During a Task
 
@@ -110,7 +111,10 @@ Merge conflicts are the primary source of lost work. Every conflict MUST be reso
 2. Verify the [Definition of Done](/process/definition-of-done) -- all applicable items must be satisfied
 3. Request review from `code-reviewer`, then `qa-tester`, then `ux-reviewer` (if UI-facing)
 4. Update `TODO.md` -- mark the task `[x]`
-5. Log any new patterns discovered in `development/lessons.md`
+5. Update the epic's task checklist and status in `.orqa/epics/EPIC-NNN.md`
+6. Verify all `docs-produced` items from the epic have been created or updated
+7. Update the parent milestone's `completed-epics` count if the epic is now `done`
+8. Log any new patterns discovered in `.orqa/lessons/`
 
 ---
 
@@ -244,6 +248,8 @@ Template:
 
 ## Related Documents
 
+- [Artifact Workflow](/process/artifact-workflow) -- How artifacts flow through the development process
+- [Artifact Framework](/product/artifact-framework) -- Artifact schemas and design principles
 - [Team Overview](/process/team) -- Agent roles and skill assignments
 - [Orchestration](/process/orchestration) -- Orchestrator responsibilities and context discipline
 - [Definition of Ready](/process/definition-of-ready) -- What must be true before work starts

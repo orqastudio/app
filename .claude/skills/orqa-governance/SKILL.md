@@ -1,7 +1,7 @@
 ---
 name: orqa-governance
 description: |
-  Orqa Studio governance patterns: artifact types, scanning pipeline, lesson promotion,
+  OrqaStudio governance patterns: artifact types, scanning pipeline, lesson promotion,
   rule enforcement, frontmatter schemas, and .orqa/ directory structure.
   Use when: Working with governance artifacts (docs, research, plans, lessons, rules),
   modifying scanning or enforcement, or maintaining the .orqa/ directory.
@@ -12,7 +12,7 @@ user-invocable: true
 
 # Orqa Governance Patterns
 
-Orqa Studio's governance layer manages documentation, research, plans, lessons, rules, agents, skills, and hooks as browsable, scannable artifacts. Understanding this system is critical for anyone working on the governance features.
+OrqaStudio's governance layer manages documentation, research, plans, lessons, rules, agents, skills, and hooks as browsable, scannable artifacts. Understanding this system is critical for anyone working on the governance features.
 
 ## .orqa/ Directory Structure
 

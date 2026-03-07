@@ -10,7 +10,7 @@ updated: 2026-03-05
 
 **Date:** 2026-03-05
 
-Orqa Studio distinguishes between **system artifacts** and **project artifacts**. System artifacts encode the methodology — how to run a managed agentic development process — and are shared across every project that uses Orqa Studio. Project artifacts encode project-specific knowledge — the technology stack, architecture decisions, and conventions for one particular codebase.
+OrqaStudio™ distinguishes between **system artifacts** and **project artifacts**. System artifacts encode the methodology — how to run a managed agentic development process — and are shared across every project that uses OrqaStudio. Project artifacts encode project-specific knowledge — the technology stack, architecture decisions, and conventions for one particular codebase.
 
 This separation ensures that governance methodology is portable. A new project does not start from scratch; it inherits proven process from the system and adds its own technical context on top.
 
@@ -20,7 +20,7 @@ This separation ensures that governance methodology is portable. A new project d
 
 ### System Artifacts (Methodology)
 
-System artifacts describe how to do managed agentic development correctly. They apply universally — any project using Orqa Studio benefits from them, regardless of the technology stack.
+System artifacts describe how to do managed agentic development correctly. They apply universally — any project using OrqaStudio benefits from them, regardless of the technology stack.
 
 | Artifact | Location | What It Contains |
 |----------|----------|-----------------|
@@ -43,7 +43,7 @@ Project artifacts describe the specific codebase the agents are working on. They
 | UI specs | `docs/ui/` | Component inventory, design system, interaction patterns — specific to this app |
 | Lessons | `.orqa/lessons/*.md` | Mistakes observed in this codebase, not universal |
 | SQLite schema | `docs/architecture/sqlite-schema.md` | This project's database design |
-| Project config | `.orqa/config.json` | Per-project Orqa Studio settings (scan paths, promotion threshold, etc.) |
+| Project config | `.orqa/config.json` | Per-project OrqaStudio settings (scan paths, promotion threshold, etc.) |
 
 ---
 
@@ -53,7 +53,7 @@ The following rules are classified as system-level because they apply to every m
 
 | Rule | Classification Rationale |
 |------|--------------------------|
-| `vision-alignment.md` | The Two-Pillar framework is Orqa Studio's methodology. Any project using Orqa Studio must pass features through this test. |
+| `vision-alignment.md` | The Two-Pillar framework is OrqaStudio's methodology. Any project using OrqaStudio must pass features through this test. |
 | `documentation-first.md` | Documentation-first is a universal principle of managed agentic development. It does not depend on the tech stack. |
 | `no-stubs.md` | Stub prevention applies to any implementation. Not specific to Rust or Svelte. |
 | `error-ownership.md` | All errors are the agent's responsibility — universal. |
@@ -64,7 +64,7 @@ The following rules are classified as system-level because they apply to every m
 | `lessons-learned.md` | The learning loop structure applies to any managed development process. |
 | `no-aliases-or-hacks.md` | Fix root causes, not symptoms — universal. |
 | `chunkhound-usage.md` | ChunkHound is the system's code search tool — universal for any project indexed with it. |
-| `pillar-alignment-docs.md` | Documentation pillar alignment applies to any project following Orqa Studio governance. |
+| `pillar-alignment-docs.md` | Documentation pillar alignment applies to any project following OrqaStudio governance. |
 | `skill-enforcement.md` | The skill loading protocol applies to all agents. |
 | `required-reading.md` | Required Reading protocol applies to all agents. |
 | `root-cleanliness.md` | Project root discipline applies to any project. |
@@ -73,7 +73,7 @@ The following rules are classified as system-level because they apply to every m
 
 ### Rules That Are System-Level But Reference Project Technology
 
-Some system rules reference technology choices (Rust, Svelte 5, SQLite) because Orqa Studio itself is built on those choices. For other projects, the technology-specific content would differ while the principle remains the same.
+Some system rules reference technology choices (Rust, Svelte 5, SQLite) because OrqaStudio itself is built on those choices. For other projects, the technology-specific content would differ while the principle remains the same.
 
 | Rule | System Principle | Project-Specific Content |
 |------|-----------------|--------------------------|
@@ -105,7 +105,7 @@ An agent definition that says "write Rust code this way" is encoding project kno
 | Type | Examples | Where It Lives |
 |------|----------|---------------|
 | **System skills** (technology patterns, portable) | `chunkhound`, `planning`, `svelte5-best-practices`, `rust-async-patterns`, `tauri-v2`, `architecture` | `.claude/skills/` |
-| **Project skills** (would be project-specific knowledge) | "How Orqa Studio's session model works", "The governance bootstrap flow" | Does NOT exist as a skill — lives in `docs/` and is Referenced Reading in agent files |
+| **Project skills** (would be project-specific knowledge) | "How OrqaStudio's session model works", "The governance bootstrap flow" | Does NOT exist as a skill — lives in `docs/` and is Referenced Reading in agent files |
 
 Project knowledge should not be encoded as skills. Skills are portable technology patterns. Project-specific context belongs in documentation, referenced by agent Required Reading lists.
 
@@ -113,7 +113,7 @@ Project knowledge should not be encoded as skills. Skills are portable technolog
 
 ## Project Initialization Flow
 
-When Orqa Studio opens a new project for the first time:
+When OrqaStudio opens a new project for the first time:
 
 1. **Scan** — The governance scanner walks the project directory looking for:
    - Existing `.claude/` artifacts (rules, agents, hooks, skills)
@@ -131,7 +131,7 @@ When Orqa Studio opens a new project for the first time:
    - "These architecture decisions should be created based on the README"
    - "The following governance docs are missing — here are starter templates"
 
-4. **Apply** — The user reviews and approves recommendations. Orqa Studio writes the approved artifacts to `.claude/` and `docs/`.
+4. **Apply** — The user reviews and approves recommendations. OrqaStudio writes the approved artifacts to `.claude/` and `docs/`.
 
 The output is a project that has both the system methodology baseline and its own technical context layer.
 
@@ -139,9 +139,9 @@ The output is a project that has both the system methodology baseline and its ow
 
 ## CLI Compatibility Model
 
-Orqa Studio governance artifacts are native Claude Code artifacts. Everything Orqa Studio manages works in a plain CLI session without the app running.
+OrqaStudio governance artifacts are native Claude Code artifacts. Everything OrqaStudio manages works in a plain CLI session without the app running.
 
-| Artifact | Works in CLI without Orqa Studio |
+| Artifact | Works in CLI without OrqaStudio |
 |----------|----------------------------------|
 | `.claude/rules/*.md` | Yes — injected into context automatically |
 | `.claude/agents/*.md` | Yes — used by orchestrator |
@@ -150,7 +150,7 @@ Orqa Studio governance artifacts are native Claude Code artifacts. Everything Or
 | `.orqa/lessons/*.md` | PLANNED — readable by agents via file tools |
 | `docs/` | Yes — readable by agents via file tools |
 
-Orqa Studio adds visual management, dashboards, and enhanced UX on top of these native artifacts. It never creates vendor lock-in.
+OrqaStudio adds visual management, dashboards, and enhanced UX on top of these native artifacts. It never creates vendor lock-in.
 
 ---
 

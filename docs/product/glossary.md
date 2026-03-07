@@ -10,7 +10,7 @@ updated: 2026-03-04
 
 **Date:** 2026-03-02
 
-Canonical definitions for terms used throughout Orqa Studio documentation. All product, design, and technical documents should use these terms consistently. If a new term is introduced, add it here first.
+Canonical definitions for terms used throughout OrqaStudio™ documentation. All product, design, and technical documents should use these terms consistently. If a new term is introduced, add it here first.
 
 ---
 
@@ -18,7 +18,7 @@ Canonical definitions for terms used throughout Orqa Studio documentation. All p
 
 ### Session
 
-A single conversation between the user and an AI provider through Orqa Studio. A session has a start time, an optional end time, a sequence of messages, and belongs to a project. Sessions are persisted in SQLite and are searchable via FTS5.
+A single conversation between the user and an AI provider through OrqaStudio. A session has a start time, an optional end time, a sequence of messages, and belongs to a project. Sessions are persisted in SQLite and are searchable via FTS5.
 
 **Not:** A login session or application lifecycle. "Session" always means a conversation session.
 
@@ -32,11 +32,11 @@ A typed segment within a message: text, code, tool call, tool result, image, or 
 
 ### Project
 
-A codebase and its associated governance framework that the user manages through Orqa Studio. A project has a root directory, a set of governance artifacts, sessions, and configuration. A user may have multiple projects.
+A codebase and its associated governance framework that the user manages through OrqaStudio. A project has a root directory, a set of governance artifacts, sessions, and configuration. A user may have multiple projects.
 
 ### Workspace
 
-The runtime state of an open project in Orqa Studio: the active session, open panels, selected artifacts, and UI layout. Workspace state is ephemeral (window-state plugin handles persistence across restarts).
+The runtime state of an open project in OrqaStudio: the active session, open panels, selected artifacts, and UI layout. Workspace state is ephemeral (window-state plugin handles persistence across restarts).
 
 ---
 
@@ -48,7 +48,7 @@ Any structured document that defines how a project operates. Governance artifact
 
 ### Agent
 
-A specialized AI persona with a defined role, skill set, and domain boundary. Agents are defined as markdown files (`.claude/agents/*.md`) with YAML frontmatter specifying skills and capabilities. In the current bootstrap process, agents are Claude Code subagents; in Orqa Studio, they become provider-agnostic definitions that the sidecar instantiates.
+A specialized AI persona with a defined role, skill set, and domain boundary. Agents are defined as markdown files (`.claude/agents/*.md`) with YAML frontmatter specifying skills and capabilities. In the current bootstrap process, agents are Claude Code subagents; in OrqaStudio, they become provider-agnostic definitions that the sidecar instantiates.
 
 **Examples:** backend-engineer, frontend-engineer, code-reviewer, systems-architect.
 
@@ -66,7 +66,7 @@ A reusable knowledge package that provides domain-specific context to agents. Sk
 
 ### Hook
 
-A governance enforcement mechanism triggered automatically during development. Orqa Studio supports two types of hooks:
+A governance enforcement mechanism triggered automatically during development. OrqaStudio supports two types of hooks:
 
 **Lifecycle hooks** (`.claude/hooks/`) — Shell scripts that execute in response to lifecycle events (session start, stop). Used for process reminders and checklists.
 
@@ -84,7 +84,7 @@ Structured project knowledge maintained in `docs/`. Documentation covers archite
 
 ### Governance Framework
 
-The complete set of artifacts (agents, rules, skills, hooks, hookify files, documentation) that define how a project operates. The governance framework is the product that Orqa Studio makes visible and manageable.
+The complete set of artifacts (agents, rules, skills, hooks, hookify files, documentation) that define how a project operates. The governance framework is the product that OrqaStudio makes visible and manageable.
 
 ### Two-Pillar Test
 
@@ -150,11 +150,11 @@ The act of elevating a lesson or pattern into a permanent governance artifact. W
 
 ### Cross-Project Learning
 
-The mechanism by which lessons learned in one project are made available to other projects. Lessons can be promoted from project-local to global scope. When onboarding a new project, Orqa Studio consults global lessons for relevant patterns.
+The mechanism by which lessons learned in one project are made available to other projects. Lessons can be promoted from project-local to global scope. When onboarding a new project, OrqaStudio consults global lessons for relevant patterns.
 
 ### Global Lesson
 
-A lesson that has been promoted from project scope to global scope. Global lessons apply across all projects managed by Orqa Studio. Example: "Always use constant-time comparison for password hashing" is universally applicable regardless of project.
+A lesson that has been promoted from project scope to global scope. Global lessons apply across all projects managed by OrqaStudio. Example: "Always use constant-time comparison for password hashing" is universally applicable regardless of project.
 
 ### Metric (KPI)
 
@@ -166,7 +166,7 @@ A quantitative measurement of process health. Metrics include review failure rat
 
 ### Sidecar
 
-A standalone process that handles communication with an AI provider. The sidecar is a Bun-compiled TypeScript binary that Orqa Studio spawns via `tauri-plugin-shell`. It communicates with the Rust backend over stdin/stdout using NDJSON. The sidecar is provider-specific; the Rust core is provider-agnostic.
+A standalone process that handles communication with an AI provider. The sidecar is a Bun-compiled TypeScript binary that OrqaStudio spawns via `tauri-plugin-shell`. It communicates with the Rust backend over stdin/stdout using NDJSON. The sidecar is provider-specific; the Rust core is provider-agnostic.
 
 ### Model
 
@@ -190,7 +190,7 @@ The official Anthropic SDK (`@anthropic-ai/claude-agent-sdk`) that spawns the Cl
 
 ### MCP (Model Context Protocol)
 
-A protocol for connecting AI models to external tools and data sources. Orqa Studio exposes its own tools as a custom MCP server to the Agent SDK. Orqa Studio also acts as an MCP host, allowing users to connect additional MCP servers for extensibility.
+A protocol for connecting AI models to external tools and data sources. OrqaStudio exposes its own tools as a custom MCP server to the Agent SDK. OrqaStudio also acts as an MCP host, allowing users to connect additional MCP servers for extensibility.
 
 ### Channel\<T\>
 
@@ -214,7 +214,7 @@ The persistence strategy where governance artifacts are stored as files on disk 
 
 ### FTS5
 
-SQLite's full-text search extension. Orqa Studio uses two FTS5 virtual tables: one for session message search, one for governance artifact search. Provides sub-50ms search across all content.
+SQLite's full-text search extension. OrqaStudio uses two FTS5 virtual tables: one for session message search, one for governance artifact search. Provides sub-50ms search across all content.
 
 ### Handoff Notes
 
@@ -226,7 +226,7 @@ Session continuity data that summarizes what happened in a session and what the 
 
 ### Panel
 
-A resizable section of the Orqa Studio window. PaneForge manages three resizable zones: the Nav Sub-Panel (per-category sub-navigation), the Explorer Panel (artifact viewer/editor, dashboards, settings), and the Chat Panel (conversation). The Activity Bar (48px fixed icon rail) sits outside PaneForge and controls what both the Nav Sub-Panel and Explorer Panel display.
+A resizable section of the OrqaStudio window. PaneForge manages three resizable zones: the Nav Sub-Panel (per-category sub-navigation), the Explorer Panel (artifact viewer/editor, dashboards, settings), and the Chat Panel (conversation). The Activity Bar (48px fixed icon rail) sits outside PaneForge and controls what both the Nav Sub-Panel and Explorer Panel display.
 
 ### Project Dashboard
 
@@ -274,7 +274,7 @@ A row in the SQLite `feature_gates` table that controls whether a feature is vis
 
 ### Product Manager (PM)
 
-A human user who defines product requirements, reviews implementation plans, and manages the governance framework. The primary persona for Orqa Studio. May also fill the Tech Lead role.
+A human user who defines product requirements, reviews implementation plans, and manages the governance framework. The primary persona for OrqaStudio. May also fill the Tech Lead role.
 
 ### Tech Lead
 
@@ -282,11 +282,11 @@ A human user who approves implementation plans, reviews architecture decisions, 
 
 ### Developer
 
-A human user who uses Orqa Studio for structured, repeatable AI-assisted development. The secondary persona — benefits from governance visibility but may not define the governance framework themselves.
+A human user who uses OrqaStudio for structured, repeatable AI-assisted development. The secondary persona — benefits from governance visibility but may not define the governance framework themselves.
 
 ### Orchestrator
 
-The coordinating intelligence in the agentic team. In the bootstrap process, this is the Claude Code main session. In Orqa Studio, this becomes the Rust backend + sidecar system. The orchestrator delegates implementation to agents and gates completion on review.
+The coordinating intelligence in the agentic team. In the bootstrap process, this is the Claude Code main session. In OrqaStudio, this becomes the Rust backend + sidecar system. The orchestrator delegates implementation to agents and gates completion on review.
 
 ---
 

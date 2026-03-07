@@ -19,7 +19,7 @@
 	<Dialog.Content>
 		<Dialog.Header>
 			<div class="flex items-center gap-3">
-				<img src={logoPulse} alt="Orqa Studio" class="h-10 w-10" />
+				<img src={logoPulse} alt="OrqaStudio" class="h-10 w-10" />
 				<div>
 					<Dialog.Title>{appName}</Dialog.Title>
 					<Dialog.Description>Version {appVersion}</Dialog.Description>

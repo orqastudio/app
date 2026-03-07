@@ -3,7 +3,7 @@ type: research
 status: complete
 date: 2026-03-02
 category: onboarding
-description: How Orqa Studio onboards new projects — scanning existing codebases, choosing governance formats, and progressively introducing process features.
+description: How OrqaStudio onboards new projects — scanning existing codebases, choosing governance formats, and progressively introducing process features.
 questions:
   - id: Q1
     title: Codebase Scanning Strategy
@@ -26,7 +26,7 @@ informs_features: [F-001, F-001b, F-007]
 
 **Date:** 2026-03-02 | **Status:** Complete
 
-Research into how Orqa Studio onboards new projects — scanning existing codebases, choosing governance formats, and progressively introducing process features.
+Research into how OrqaStudio onboards new projects — scanning existing codebases, choosing governance formats, and progressively introducing process features.
 
 ---
 
@@ -34,7 +34,7 @@ Research into how Orqa Studio onboards new projects — scanning existing codeba
 
 ### Q1: Codebase Scanning Strategy
 
-**Question:** When a user opens a new project in Orqa Studio, how does it understand the codebase structure?
+**Question:** When a user opens a new project in OrqaStudio, how does it understand the codebase structure?
 
 **What needs to be detected:**
 - Languages and frameworks in use
@@ -108,13 +108,13 @@ The presence of specific files at the project root is an extraordinarily reliabl
 | `figma.config.*` or `.figmarc` | Figma integration tokens |
 | Brand assets directory (`public/`, `assets/`, `static/`) | Logo files, favicon, brand color usage in SVGs |
 
-Orqa Studio uses extracted design tokens to theme its own UI when a project is open, making Orqa Studio feel like a native companion to the project. Extraction is best-effort — missing tokens fall back to Orqa Studio's default theme.
+OrqaStudio uses extracted design tokens to theme its own UI when a project is open, making OrqaStudio feel like a native companion to the project. Extraction is best-effort — missing tokens fall back to OrqaStudio's default theme.
 
 **Governance artifact detection:**
 
 | File/Dir | Meaning |
 |----------|---------|
-| `.claude/` | Claude Code governance (Orqa Studio-compatible) |
+| `.claude/` | Claude Code governance (OrqaStudio-compatible) |
 | `.claude/CLAUDE.md` | Main orchestrator instructions |
 | `.claude/agents/` | Agent definitions |
 | `.claude/rules/` | Governance rules |
@@ -163,7 +163,7 @@ Send file tree + manifests + README to Claude for deep analysis. Triggered by us
 
 ### Q2: Governance Framework Format
 
-**Question:** Should Orqa Studio adopt the exact `.claude/` format (compatible with Claude Code CLI) or define its own more structured format?
+**Question:** Should OrqaStudio adopt the exact `.claude/` format (compatible with Claude Code CLI) or define its own more structured format?
 
 **Verdict: Option C — `.claude/` files on disk + structured metadata in SQLite.**
 
@@ -177,9 +177,9 @@ Parse `.claude/` files as-is. YAML frontmatter + markdown body for agents/skills
 - [`comrak`](https://github.com/kivikakk/comrak) — Full CommonMark + GFM parser (used by crates.io, docs.rs, GitLab). Has `front_matter_delimiter` option. Full AST for extracting structured sections.
 
 **Pros:** Full CLI compatibility. Zero migration friction. Git-friendly.
-**Cons:** Cannot store Orqa Studio-specific metadata without modifying files.
+**Cons:** Cannot store OrqaStudio-specific metadata without modifying files.
 
-#### Option B: Orqa Studio-specific structured format
+#### Option B: OrqaStudio-specific structured format
 
 JSON or YAML schema for each artifact type.
 
@@ -187,7 +187,7 @@ JSON or YAML schema for each artifact type.
 
 #### Option C: `.claude/` on disk + SQLite metadata (RECOMMENDED)
 
-Preserves full compatibility while giving Orqa Studio structured data.
+Preserves full compatibility while giving OrqaStudio structured data.
 
 ```
 .claude/                    ← Source of truth (git-committed, CLI-compatible)
@@ -205,11 +205,11 @@ orqa.db (SQLite)           ← Derived/enriched data (gitignored)
 
 **Conflict resolution:** Files are always authoritative. DB is a cache/index. SHA-256 hash comparison to detect actual content changes vs. metadata-only file touches.
 
-**Orqa Studio-only metadata in SQLite (not in files):**
+**OrqaStudio-only metadata in SQLite (not in files):**
 
 | Column | Purpose |
 |--------|---------|
-| `parsed_at` | When Orqa Studio last parsed the file |
+| `parsed_at` | When OrqaStudio last parsed the file |
 | `file_hash` | SHA-256 for change detection |
 | `extracted_tools` | Tools list from frontmatter |
 | `compliance_status` | Does this artifact align with current codebase? |
@@ -228,7 +228,7 @@ Add comment markers for structured sections. **Verdict:** Not recommended. Fragi
 | Cursor | `.cursor/rules/` (markdown) | Same pattern as Claude Code |
 | Kubernetes | YAML + JSON Schema | Declarative infrastructure config (different domain) |
 
-Tools that configure AI behavior use markdown because the content is natural language instructions. Orqa Studio's governance artifacts are AI instructions, so markdown is the right format.
+Tools that configure AI behavior use markdown because the content is natural language instructions. OrqaStudio's governance artifacts are AI instructions, so markdown is the right format.
 
 **Decision:** Option C. Parse `.claude/` with `yaml-front-matter` + `comrak`. Store enriched data in SQLite. Watch with `notify` for live sync. Files are authoritative; DB is derived. `orqa.db` goes in `.gitignore`. → Extends persistence AD.
 
@@ -238,13 +238,13 @@ Tools that configure AI behavior use markdown because the content is natural lan
 
 ### Q3: Progressive Disclosure
 
-**Question:** How should new users be introduced to Orqa Studio's governance features?
+**Question:** How should new users be introduced to OrqaStudio's governance features?
 
 **Verdict: Conversation-first with organic feature introduction. Value in under 1 minute.**
 
 #### Core Principle
 
-Orqa Studio's target user is a PM/Tech Lead, not a developer in a code editor. The first experience should feel like opening a project management tool, not configuring an IDE. **Show the value before showing the machinery.**
+OrqaStudio's target user is a PM/Tech Lead, not a developer in a code editor. The first experience should feel like opening a project management tool, not configuring an IDE. **Show the value before showing the machinery.**
 
 #### Recommended First-Run Flow
 
@@ -281,7 +281,7 @@ Scanning project...
 
 **Step 3: The Conversation (Primary Interface)**
 
-User lands on the conversation view. Pre-populated system message summarizes the scan and suggests what the user can do. The user types. Orqa Studio responds. Governance features appear as they become relevant.
+User lands on the conversation view. Pre-populated system message summarizes the scan and suggests what the user can do. The user types. OrqaStudio responds. Governance features appear as they become relevant.
 
 **Step 4: Feature Introduction (Organic, Not Wizard)**
 
@@ -351,7 +351,7 @@ Use the technical terms (agent, rule, skill, hook) for `.claude/` compatibility,
 
 **What other tools do well:**
 
-| Tool | Pattern | Lesson for Orqa Studio |
+| Tool | Pattern | Lesson for OrqaStudio |
 |------|---------|-----------------|
 | Linear | Minimal setup, then immediately into the issue board | Speed to value |
 | Notion | Empty workspace with a single page. Templates available but not pushed. | Blank canvas approach |

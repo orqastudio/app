@@ -10,7 +10,7 @@ updated: 2026-03-04
 
 **Date:** 2026-03-02 | **Status:** Phase 0e specification
 
-Complete error type hierarchy for Orqa Studio. Every error path in the application is represented by a typed Rust enum using `thiserror`. No `unwrap()`, `expect()`, or `panic!()` in production code (AD-003).
+Complete error type hierarchy for OrqaStudio™. Every error path in the application is represented by a typed Rust enum using `thiserror`. No `unwrap()`, `expect()`, or `panic!()` in production code (AD-003).
 
 **Architecture References:** AD-003 (error propagation via Result types), AD-002 (IPC boundary design), AD-009 (streaming pipeline), AD-011 (security model)
 
@@ -109,7 +109,7 @@ OrqaError (top-level, all commands return this)
 ```rust
 use thiserror::Error;
 
-/// Top-level error type for all Orqa Studio operations.
+/// Top-level error type for all OrqaStudio operations.
 /// All Tauri commands return Result<T, OrqaError>.
 #[derive(Error, Debug)]
 pub enum OrqaError {
@@ -591,11 +591,11 @@ Each error category maps to one or more UI presentation mechanisms. The frontend
 | `DatabaseError::MigrationFailed` | `migration_failed` | Dialog | -- | Fatal on startup. Dialog with "Reset Database" or "Contact Support" options. |
 | `DatabaseError::QueryFailed` | `query_failed` | Toast | -- | "Failed to load {resource}. Retrying..." Auto-retry once. |
 | `DatabaseError::TransactionFailed` | `transaction_failed` | Toast | -- | "Failed to save changes. Retrying..." |
-| `DatabaseError::SchemaVersionMismatch` | `schema_version_mismatch` | Dialog | -- | "Database was created by a newer version of Orqa Studio. Please update." |
+| `DatabaseError::SchemaVersionMismatch` | `schema_version_mismatch` | Dialog | -- | "Database was created by a newer version of OrqaStudio. Please update." |
 | `IpcError::SerializationFailed` | `serialization_failed` | Toast | -- | "Internal error. Please try again." Log full details. |
 | `IpcError::DeserializationFailed` | `deserialization_failed` | Toast | -- | "Internal error. Please try again." |
 | `IpcError::ChannelClosed` | `channel_closed` | Toast | Status bar | "Connection to backend lost. Restarting..." |
-| `IpcError::CommandNotFound` | `command_not_found` | Toast | -- | "Feature unavailable. Please update Orqa Studio." |
+| `IpcError::CommandNotFound` | `command_not_found` | Toast | -- | "Feature unavailable. Please update OrqaStudio." |
 | `IpcError::PayloadTooLarge` | `payload_too_large` | Toast | -- | "Response too large to display." |
 | `SidecarError::SpawnFailed` | `spawn_failed` | Inline error | Status bar | Conversation: "Failed to start AI connection." Status bar: red dot. |
 | `SidecarError::NotInstalled` | `not_installed` | Dialog | Status bar | "Claude Code CLI not found." With installation instructions and link to settings. |
@@ -664,8 +664,8 @@ These errors require user action. The UI provides a clear path to recovery:
 | Error | Recovery Path |
 |-------|--------------|
 | `DatabaseError::ConnectionFailed` | Dialog: "Reset Database" creates a fresh DB. "Choose Location" lets user pick a new path. |
-| `DatabaseError::MigrationFailed` | Dialog: "Reset Database" (loses data) or "Update Orqa Studio" (if schema is from a newer version). |
-| `DatabaseError::SchemaVersionMismatch` | Dialog: "Update Orqa Studio" link to download page. |
+| `DatabaseError::MigrationFailed` | Dialog: "Reset Database" (loses data) or "Update OrqaStudio" (if schema is from a newer version). |
+| `DatabaseError::SchemaVersionMismatch` | Dialog: "Update OrqaStudio" link to download page. |
 | `SidecarError::NotInstalled` | Dialog: step-by-step installation instructions for Claude Code CLI. "Check Again" button re-runs detection. |
 | `SidecarError::SpawnFailed` | Inline error with "Retry" button. Link to settings for CLI path configuration. |
 | `ProviderError::AuthenticationFailed` | Inline error: "Open Settings" link. Settings view shows re-authentication flow (`claude login`). |
@@ -687,7 +687,7 @@ These errors indicate a fundamental problem. The app degrades gracefully:
 |-------|-------------|
 | `DatabaseError::ConnectionFailed` (after reset) | App runs in read-only mode. No session persistence. Clear warning banner. |
 | `SidecarError::SpawnFailed` (after retry) | Conversation disabled. Artifact browsing and editing still work. |
-| `IpcError::ChannelClosed` | Full app restart required. Dialog: "Orqa Studio encountered an error. Restart?" |
+| `IpcError::ChannelClosed` | Full app restart required. Dialog: "OrqaStudio encountered an error. Restart?" |
 
 ---
 

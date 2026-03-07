@@ -17,11 +17,11 @@ open_questions:
   - id: OQ2
     title: PlantUML Salt Layout Limitations
     status: open
-    description: Test wireframe of Orqa Studio's three-pane layout to validate Salt's grid system.
+    description: Test wireframe of OrqaStudio's three-pane layout to validate Salt's grid system.
   - id: OQ3
     title: Design Token Integration
     status: open
-    description: Test PlantUML's <style> system with Orqa Studio's design tokens.
+    description: Test PlantUML's <style> system with OrqaStudio's design tokens.
   - id: OQ4
     title: SVG vs PNG Output Quality
     status: open
@@ -35,15 +35,15 @@ informs_features: []
 
 **Date:** 2026-03-02 | **Status:** Complete
 
-Research into text-based wireframing tools suitable for AI-agent-driven UX design during Orqa Studio's Phase 0d.
+Research into text-based wireframing tools suitable for AI-agent-driven UX design during OrqaStudio's Phase 0d.
 
 ---
 
 ## Context
 
-Orqa Studio's Phase 0d (UX Design) requires generating wireframe images for core layouts, conversation views, artifact browsers, settings, and dashboards. These wireframes will be embedded as PNG/SVG images in markdown documentation under `docs/ui/`.
+OrqaStudio's Phase 0d (UX Design) requires generating wireframe images for core layouts, conversation views, artifact browsers, settings, and dashboards. These wireframes will be embedded as PNG/SVG images in markdown documentation under `docs/ui/`.
 
-The wireframing tool must be usable by an AI agent (Claude) during development sessions — this means the tool must accept a **text-based input format** (not a GUI-only tool), output **image files** (PNG or SVG), and ideally support **theming** so wireframes can match Orqa Studio's eventual design system.
+The wireframing tool must be usable by an AI agent (Claude) during development sessions — this means the tool must accept a **text-based input format** (not a GUI-only tool), output **image files** (PNG or SVG), and ideally support **theming** so wireframes can match OrqaStudio's eventual design system.
 
 ImagineUI (https://imagineui.github.io/en/) was the initial candidate. This research validates that choice and compares alternatives.
 
@@ -117,11 +117,11 @@ npx imagineui-cli --input=path/to/file.scene --outputDir=path/to/output/
 - (-) **Documentation is offline/broken** — imagineui.io is down
 - (-) **No theming or styling** support whatsoever
 - (-) **Poorly specified DSL** — no formal grammar, limited examples available
-- (-) **Layout limitations** — cannot do complex multi-pane layouts needed for Orqa Studio wireframes
+- (-) **Layout limitations** — cannot do complex multi-pane layouts needed for OrqaStudio wireframes
 - (-) Heavy Puppeteer/Chromium dependency
 - (-) PNG only (no SVG)
 
-**Verdict: Not recommended.** The project is effectively abandoned, the documentation is broken, the DSL is under-specified for reliable AI generation, and it lacks the layout complexity and theming needed for Orqa Studio.
+**Verdict: Not recommended.** The project is effectively abandoned, the documentation is broken, the DSL is under-specified for reliable AI generation, and it lacks the layout complexity and theming needed for OrqaStudio.
 
 ---
 
@@ -191,7 +191,7 @@ cat diagram.puml | java -jar plantuml.jar -pipe -tsvg > output.svg
 
 **AI agent reliability:** HIGH. The DSL is well-documented with extensive examples. The syntax is concise and rule-based (not ambiguous natural language). PlantUML has been widely used by AI models — Claude and other LLMs can generate PlantUML Salt reliably. The element vocabulary maps directly to standard UI components.
 
-**Bundling:** Requires Java runtime (JRE). The `plantuml.jar` file is ~10MB. Runs fully offline. Since wireframing is a first-class product feature (not just a dev tool), the JRE must be bundled with Orqa Studio or compiled to a native binary via GraalVM. See Open Questions for bundling options.
+**Bundling:** Requires Java runtime (JRE). The `plantuml.jar` file is ~10MB. Runs fully offline. Since wireframing is a first-class product feature (not just a dev tool), the JRE must be bundled with OrqaStudio or compiled to a native binary via GraalVM. See Open Questions for bundling options.
 
 **Assessment:**
 - (+) **Purpose-built for wireframes** with rich UI element vocabulary
@@ -287,7 +287,7 @@ d2 -t 200 input.d2 output.png  # with theme ID
 - (-) Creating a wireframe requires manually composing boxes with labels to approximate UI elements
 - (-) MPL-2.0 license is permissive but requires sharing modifications to D2 source files (file-level copyleft)
 
-**Verdict: Not recommended for wireframes specifically.** D2 is an excellent diagramming tool and would be ideal for architecture diagrams, system diagrams, and flow diagrams in Orqa Studio's documentation. However, it lacks UI-specific vocabulary, making wireframe creation verbose and unreliable — every button, text field, and checkbox must be manually approximated with generic shapes.
+**Verdict: Not recommended for wireframes specifically.** D2 is an excellent diagramming tool and would be ideal for architecture diagrams, system diagrams, and flow diagrams in OrqaStudio's documentation. However, it lacks UI-specific vocabulary, making wireframe creation verbose and unreliable — every button, text field, and checkbox must be manually approximated with generic shapes.
 
 ---
 
@@ -441,7 +441,7 @@ npx @mermaid-js/mermaid-cli -i diagram.mmd -o output.png -b transparent
 
 **Self-hosted:** Docker Compose with companion containers for each rendering engine.
 
-**Assessment:** Kroki is a rendering service, not a diagram language. It does not add wireframe capabilities — it merely renders existing formats. Could be useful as a rendering backend if Orqa Studio wanted to support multiple diagram types, but does not solve the wireframe input problem. Adds deployment complexity (Docker containers) without adding design capabilities.
+**Assessment:** Kroki is a rendering service, not a diagram language. It does not add wireframe capabilities — it merely renders existing formats. Could be useful as a rendering backend if OrqaStudio wanted to support multiple diagram types, but does not solve the wireframe input problem. Adds deployment complexity (Docker containers) without adding design capabilities.
 
 **Verdict: Not applicable.** Kroki is a rendering service, not a wireframing tool. It could serve as infrastructure if we needed server-side rendering of multiple diagram formats, but it doesn't address the core question of wireframe input format.
 
@@ -518,7 +518,7 @@ npx @mermaid-js/mermaid-cli -i diagram.mmd -o output.png -b transparent
 
 **Primary wireframing tool: PlantUML Salt**
 
-PlantUML Salt is the clear winner for Orqa Studio's wireframing needs:
+PlantUML Salt is the clear winner for OrqaStudio's wireframing needs:
 
 1. **Purpose-built for wireframes** — It has native vocabulary for buttons, text fields, checkboxes, radio buttons, tabs, menus, trees, scrollbars, and dropdowns. No other evaluated tool has this.
 
@@ -526,7 +526,7 @@ PlantUML Salt is the clear winner for Orqa Studio's wireframing needs:
 
 3. **Multi-format output** — Both PNG and SVG via simple CLI flags (`-tpng`, `-tsvg`).
 
-4. **Theming and styling** — CSS-like `<style>` blocks, color directives, font control, and a theme gallery. Sufficient to align wireframes with Orqa Studio's design tokens.
+4. **Theming and styling** — CSS-like `<style>` blocks, color directives, font control, and a theme gallery. Sufficient to align wireframes with OrqaStudio's design tokens.
 
 5. **Mature and maintained** — PlantUML has been in active development for over a decade with continuous releases, extensive documentation, and a large community.
 
@@ -536,7 +536,7 @@ PlantUML Salt is the clear winner for Orqa Studio's wireframing needs:
 
 **Secondary tool: D2**
 
-D2 should be adopted for non-wireframe diagrams in Orqa Studio's documentation:
+D2 should be adopted for non-wireframe diagrams in OrqaStudio's documentation:
 - Architecture diagrams
 - System flow diagrams
 - Data flow / pipeline diagrams
@@ -554,23 +554,23 @@ java -jar plantuml.jar -tpng docs/wireframes/core-layout.puml -o docs/wireframes
 d2 docs/architecture/diagrams/streaming-pipeline.d2 docs/architecture/diagrams/streaming-pipeline.svg
 ```
 
-**Why not ImagineUI:** The project is abandoned (no commits since March 2024), documentation is offline, the DSL is under-specified, it has no theming support, and its layout system cannot handle the multi-pane layouts Orqa Studio needs. It should be replaced.
+**Why not ImagineUI:** The project is abandoned (no commits since March 2024), documentation is offline, the DSL is under-specified, it has no theming support, and its layout system cannot handle the multi-pane layouts OrqaStudio needs. It should be replaced.
 
 ---
 
 ## Open Questions
 
-1. **Java runtime dependency** — PlantUML requires a JRE. Wireframing is a first-class product feature (not just a development tool for building Orqa Studio), so the Java runtime must be bundled with or installed alongside Orqa Studio. Options to resolve:
+1. **Java runtime dependency** — PlantUML requires a JRE. Wireframing is a first-class product feature (not just a development tool for building OrqaStudio), so the Java runtime must be bundled with or installed alongside OrqaStudio. Options to resolve:
 
-   - **Option A: Bundle a JRE with the installer.** Tauri's bundler supports sidecar binaries. A minimal JRE (e.g., Eclipse Temurin JRE, ~50MB compressed) can be included in the Orqa Studio installer and placed in the app's resource directory. PlantUML runs against this bundled JRE. The user never sees Java. This is the cleanest UX but increases installer size by ~50MB.
+   - **Option A: Bundle a JRE with the installer.** Tauri's bundler supports sidecar binaries. A minimal JRE (e.g., Eclipse Temurin JRE, ~50MB compressed) can be included in the OrqaStudio installer and placed in the app's resource directory. PlantUML runs against this bundled JRE. The user never sees Java. This is the cleanest UX but increases installer size by ~50MB.
    - **Option B: GraalVM native-image compilation.** Compile `plantuml.jar` to a native binary using GraalVM's `native-image` ahead of time. This eliminates the JRE dependency entirely — the output is a standalone executable (~30-40MB). PlantUML has known GraalVM compatibility. This would need testing with Salt specifically. Best UX and smallest footprint if it works.
    - **Option C: Detect system JRE, install if missing.** On first wireframe generation, check for `java` on PATH. If missing, prompt the user to install a JRE or offer to download one. Poor UX — user-facing Java installation is undesirable.
    - **Option D: WebAssembly port.** PlantUML has experimental WASM support via CheerpJ or similar Java-to-WASM compilation. Could run PlantUML directly in Tauri's WebView. Unproven and likely fragile.
 
    **Preliminary recommendation: Option B (GraalVM native-image) if feasible, Option A (bundled JRE) as fallback.** This needs a spike during Phase 0e to validate GraalVM compilation of PlantUML with Salt support. → Technical design item.
 
-2. **PlantUML Salt layout limitations** — Salt's grid system is implicit (pipe-separated columns in nested brackets). Complex layouts like "sidebar + tabbed main content + collapsible detail panel" may require creative nesting. A test wireframe of Orqa Studio's core layout should be attempted early to validate feasibility.
+2. **PlantUML Salt layout limitations** — Salt's grid system is implicit (pipe-separated columns in nested brackets). Complex layouts like "sidebar + tabbed main content + collapsible detail panel" may require creative nesting. A test wireframe of OrqaStudio's core layout should be attempted early to validate feasibility.
 
-3. **Design token integration** — PlantUML's `<style>` system should be tested to confirm that Orqa Studio's design tokens (colors, fonts, spacing from Phase 0d) can be expressed as a reusable PlantUML theme/include file.
+3. **Design token integration** — PlantUML's `<style>` system should be tested to confirm that OrqaStudio's design tokens (colors, fonts, spacing from Phase 0d) can be expressed as a reusable PlantUML theme/include file.
 
 4. **SVG vs PNG** — SVG is preferred for documentation (scalable, smaller file size, searchable text), but PlantUML's SVG output quality with Salt should be verified.

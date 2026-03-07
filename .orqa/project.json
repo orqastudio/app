@@ -1,6 +1,6 @@
 {
   "name": "Orqa Dogfood",
-  "description": "Development environment for Orqa Studio. Desktop app for managed agentic development. Claude Code's capabilities with a visual process layer.",
+  "description": "Development environment for OrqaStudio. Desktop app for managed agentic development. Claude Code's capabilities with a visual process layer.",
   "dogfood": true,
   "default_model": "auto",
   "excluded_paths": [
@@ -36,5 +36,41 @@
   },
   "icon": "icon.svg",
   "show_thinking": true,
-  "custom_system_prompt": "You are running inside Orqa Studio — the same app you are helping develop. Your responses flow through the Agent SDK sidecar (sidecar/dist/sidecar.js) → Rust Channel<T> → this Svelte UI.\n\nKey constraints of this environment:\n  - Rust backend changes require a manual app restart (no hot reload)\n  - Frontend changes hot-reload via Vite HMR — but editing components mid-stream can crash the window\n  - The sidecar must be rebuilt (`cd sidecar && bun run build`) after any changes to sidecar source\n  - You have 6 file tools available: read, write, edit, bash, glob, grep\n\nProject conventions:\n  - Svelte 5 runes only — no $:, no export let, no let:\n  - All Rust functions return Result — no unwrap() in production\n  - Use `make` targets, not raw cargo/npm commands\n  - shadcn-svelte for UI components, Tailwind for styling\n  - SQLite for all structured persistence, not localStorage\n\nCurrent codebase: Tauri v2 + Svelte 5 + Rust + SQLite desktop app at C:\\Users\\Bobbi\\code\\orqa-studio."
+  "custom_system_prompt": "You are running inside OrqaStudio — the same app you are helping develop. Your responses flow through the Agent SDK sidecar (sidecar/dist/sidecar.js) → Rust Channel<T> → this Svelte UI.\n\nKey constraints of this environment:\n  - Rust backend changes require a manual app restart (no hot reload)\n  - Frontend changes hot-reload via Vite HMR — but editing components mid-stream can crash the window\n  - The sidecar must be rebuilt (`cd sidecar && bun run build`) after any changes to sidecar source\n  - You have 6 file tools available: read, write, edit, bash, glob, grep\n\nProject conventions:\n  - Svelte 5 runes only — no $:, no export let, no let:\n  - All Rust functions return Result — no unwrap() in production\n  - Use `make` targets, not raw cargo/npm commands\n  - shadcn-svelte for UI components, Tailwind for styling\n  - SQLite for all structured persistence, not localStorage\n\nCurrent codebase: Tauri v2 + Svelte 5 + Rust + SQLite desktop app at C:\\Users\\Bobbi\\code\\orqa-studio.",
+  "priority": {
+    "dimensions": [
+      {
+        "key": "pillar",
+        "label": "Pillar Alignment",
+        "scale": [0, 5],
+        "weight": 3,
+        "description": "How strongly this serves Clarity Through Structure and/or Learning Through Reflection. 0=neither, 3=one pillar, 5=both."
+      },
+      {
+        "key": "impact",
+        "label": "User Impact",
+        "scale": [1, 5],
+        "weight": 2,
+        "description": "How much this changes the daily experience for the target user."
+      },
+      {
+        "key": "dependency",
+        "label": "Dependency",
+        "scale": [1, 3],
+        "weight": 3,
+        "description": "How many other items are blocked by this. 1=independent, 2=some dependents, 3=critical path."
+      }
+    ],
+    "divisor": {
+      "key": "effort",
+      "label": "Effort",
+      "scale": [1, 5],
+      "description": "Implementation size. Larger effort = lower score."
+    },
+    "bands": [
+      { "label": "P1", "min_score": 10.0, "meaning": "Critical path — milestone blocked without this" },
+      { "label": "P2", "min_score": 5.0, "meaning": "High value — significant quality improvement" },
+      { "label": "P3", "min_score": 0, "meaning": "Nice to have — improves experience but not blocking" }
+    ]
+  }
 }

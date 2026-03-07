@@ -12,7 +12,7 @@ updated: 2026-03-04
 
 The orchestrator is the Claude Code main session. It reads user requests, manages the task lifecycle, delegates implementation to specialized agents, and gates completion on review. This page is the source of truth for orchestrator behaviour -- `CLAUDE.md` references this page rather than duplicating its content.
 
-> **Temporary process.** This CLI-based orchestration model is inherited from the Alvarez project and serves as scaffolding until Orqa Studio's MVP can manage its own development. See [Product Governance — Bootstrap Phase](/product/governance) for transition criteria.
+> **Temporary process.** This CLI-based orchestration model is inherited from the Alvarez project and serves as scaffolding until OrqaStudio™'s MVP can manage its own development. See [Product Governance — Bootstrap Phase](/product/governance) for transition criteria.
 
 ---
 

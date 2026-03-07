@@ -106,20 +106,20 @@ Full-window overlay. No panels -- just the centered welcome content.
 ```plantuml
 @startsalt
 {+
-  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
+  {/ <b>OrqaStudio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
       ---
       .
       .
-      { . | . | <b><size:24>Orqa Studio</size></b> | . | . }
+      { . | . | <b><size:24>OrqaStudio</size></b> | . | . }
       { . | . | <i>AI-powered product management</i> | . | . }
       .
       ---
-      { . | . | Welcome to Orqa Studio. Let's get you set up. | . | . }
+      { . | . | Welcome to OrqaStudio. Let's get you set up. | . | . }
       .
-      { . | . | To start, Orqa Studio needs access to Claude Code | . | . }
+      { . | . | To start, OrqaStudio needs access to Claude Code | . | . }
       { . | . | CLI so it can run AI sessions on your behalf. | . | . }
       .
       ---
@@ -153,7 +153,7 @@ Still a full-window overlay. The user provides the Claude Code CLI path.
 ```plantuml
 @startsalt
 {+
-  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
+  {/ <b>OrqaStudio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
@@ -161,8 +161,8 @@ Still a full-window overlay. The user provides the Claude Code CLI path.
       .
       { . | <b><size:18>Connect Claude Code CLI</size></b> | . | . }
       .
-      { . | Orqa Studio uses the Claude Code CLI as its AI engine. | . | . }
-      { . | Enter the path or let Orqa Studio find it automatically. | . | . }
+      { . | OrqaStudio uses the Claude Code CLI as its AI engine. | . | . }
+      { . | Enter the path or let OrqaStudio find it automatically. | . | . }
       .
       ---
       { . | CLI Path | . | . }
@@ -190,7 +190,7 @@ Still a full-window overlay. The user provides the Claude Code CLI path.
 ```plantuml
 @startsalt
 {+
-  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
+  {/ <b>OrqaStudio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
@@ -198,8 +198,8 @@ Still a full-window overlay. The user provides the Claude Code CLI path.
       .
       { . | <b><size:18>Connect Claude Code CLI</size></b> | . | . }
       .
-      { . | Orqa Studio uses the Claude Code CLI as its AI engine. | . | . }
-      { . | Enter the path or let Orqa Studio find it automatically. | . | . }
+      { . | OrqaStudio uses the Claude Code CLI as its AI engine. | . | . }
+      { . | Enter the path or let OrqaStudio find it automatically. | . | . }
       .
       ---
       { . | CLI Path | . | . }
@@ -240,7 +240,7 @@ After CLI setup, the user selects a project folder. This screen shows the scan r
 ```plantuml
 @startsalt
 {+
-  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
+  {/ <b>OrqaStudio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
@@ -284,7 +284,7 @@ Before the scan results appear, the user sees a project selection screen.
 ```plantuml
 @startsalt
 {+
-  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
+  {/ <b>OrqaStudio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
@@ -292,7 +292,7 @@ Before the scan results appear, the user sees a project selection screen.
       .
       { . | <b><size:18>Open a Project</size></b> | . | . }
       .
-      { . | Select a folder to manage with Orqa Studio. | . | . }
+      { . | Select a folder to manage with OrqaStudio. | . | . }
       .
       ---
       { . | [Open Folder...] | . | . }
@@ -317,7 +317,7 @@ Before the scan results appear, the user sees a project selection screen.
 ```plantuml
 @startsalt
 {+
-  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
+  {/ <b>OrqaStudio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
@@ -325,7 +325,7 @@ Before the scan results appear, the user sees a project selection screen.
       .
       { . | <b><size:18>Open a Project</size></b> | . | . }
       .
-      { . | Select a folder to manage with Orqa Studio. | . | . }
+      { . | Select a folder to manage with OrqaStudio. | . | . }
       .
       ---
       { . | [Open Folder...] | . | . }
@@ -364,12 +364,12 @@ Before the scan results appear, the user sees a project selection screen.
 
 ## 5a. New Project -- Discovery Prompt
 
-When the user opens a folder that has no `.claude/` directory (or creates a new project), Orqa Studio offers to start a project discovery conversation instead of just scaffolding generic files.
+When the user opens a folder that has no `.claude/` directory (or creates a new project), OrqaStudio™ offers to start a project discovery conversation instead of just scaffolding generic files.
 
 ```plantuml
 @startsalt
 {+
-  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
+  {/ <b>OrqaStudio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
@@ -394,7 +394,7 @@ When the user opens a folder that has no `.claude/` directory (or creates a new 
       ---
       { . | <&warning> No governance artifacts found. | . | . }
       .
-      { . | Orqa Studio can help you set up your project through | . | . }
+      { . | OrqaStudio can help you set up your project through | . | . }
       { . | a quick conversation about what you're building, | . | . }
       { . | your tech stack, and your conventions. | . | . }
       .
@@ -416,7 +416,7 @@ For a truly new project with no code detected, the scan table is replaced with a
 ```plantuml
 @startsalt
 {+
-  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
+  {/ <b>OrqaStudio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
@@ -431,7 +431,7 @@ For a truly new project with no code detected, the scan table is replaced with a
       { . | <&warning> No governance artifacts found. | . | . }
       .
       ---
-      { . | Orqa Studio can help you set up your project through | . | . }
+      { . | OrqaStudio can help you set up your project through | . | . }
       { . | a quick conversation about what you're building, | . | . }
       { . | your tech stack, and your conventions. | . | . }
       .
@@ -459,12 +459,12 @@ For a truly new project with no code detected, the scan table is replaced with a
 
 ## 5b. New Project -- Discovery Conversation
 
-After the user clicks "Start Project Discovery", Orqa Studio opens the main three-zone workspace with a discovery conversation already in progress. This is a regular conversation session — the discovery behavior comes from the system prompt, not special UI.
+After the user clicks "Start Project Discovery", OrqaStudio opens the main three-zone workspace with a discovery conversation already in progress. This is a regular conversation session — the discovery behavior comes from the system prompt, not special UI.
 
 ```plantuml
 @startsalt
 {
-  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
+  {/ <b>OrqaStudio</b> | . | . | . | . | . | . | . | . }
   {
     {
       <b>Nav Sub-Panel</b>
@@ -533,7 +533,7 @@ After discovery (or when Claude has enough context), Claude proposes artifacts. 
 ```plantuml
 @startsalt
 {+
-  {/ <b>Orqa Studio</b> | . | . | . | . | . | . | . | . }
+  {/ <b>OrqaStudio</b> | . | . | . | . | . | . | . | . }
   {+
     {
       . | . | . | . | . | .
@@ -692,7 +692,7 @@ endif
 | **CLI Setup** | Configure the Claude Code CLI path. Auto-detect available. | Valid CLI detected and verified. |
 | **Project Selection** | Pick a folder. Recent projects shown on return visits. | Folder selected via native dialog or recent list. |
 | **Scan Results** | Display detected stack, file count, existing artifacts. For projects with existing `.claude/`. | User clicks "Open Workspace" or "Change Project". |
-| **Discovery Prompt** | Offer project discovery conversation for projects without `.claude/`. Explains that Orqa Studio can learn about the project through conversation. | User clicks "Start Project Discovery" or "Skip -- Use Defaults". |
+| **Discovery Prompt** | Offer project discovery conversation for projects without `.claude/`. Explains that OrqaStudio can learn about the project through conversation. | User clicks "Start Project Discovery" or "Skip -- Use Defaults". |
 | **Discovery Conversation** | A regular conversation session in the main workspace where Claude asks about product, tech stack, team, and conventions. Not a special UI mode. | User completes discovery or says "that's enough". Claude proposes artifacts. |
 | **Governance Confirmation** | Review proposed governance artifacts (from discovery or defaults) before writing to disk. User can uncheck individual files. | User confirms or cancels. |
 

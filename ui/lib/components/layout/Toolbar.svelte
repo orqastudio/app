@@ -19,7 +19,7 @@
 	let newProjectOpen = $state(false);
 	let initConfirmOpen = $state(false);
 	let pendingInitPath = $state<string | null>(null);
-	let appName = $state("Orqa Studio");
+	let appName = $state("OrqaStudio");
 	let appVersion = $state("0.1.0");
 
 	$effect(() => {
@@ -91,9 +91,9 @@
 >
 	<div class="flex h-10 w-12 shrink-0 items-center justify-center border-r border-border">
 		{#if projectStore.iconDataUrl}
-			<img src={projectStore.iconDataUrl} alt="Orqa Studio" class="h-5 w-5 rounded object-contain pointer-events-none" />
+			<img src={projectStore.iconDataUrl} alt="OrqaStudio" class="h-5 w-5 rounded object-contain pointer-events-none" />
 		{:else}
-			<img src={finMark} alt="Orqa Studio" class="h-5 w-5 pointer-events-none" />
+			<img src={finMark} alt="OrqaStudio" class="h-5 w-5 pointer-events-none" />
 		{/if}
 	</div>
 

@@ -12,7 +12,7 @@ updated: 2026-03-07
 
 ## Mission
 
-> OrqaStudio is an AI-assisted clarity engine that helps people turn messy situations into structured understanding and evolving plans through agile thinking and continuous retrospection.
+> OrqaStudio™ is an AI-assisted clarity engine that helps people turn messy situations into structured understanding and evolving plans through agile thinking and continuous retrospection.
 
 ## Vision
 

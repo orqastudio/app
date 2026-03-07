@@ -1,10 +1,10 @@
-# Orqa Studio TODO
+# OrqaStudio TODO
 
 **Last Updated:** 2026-03-05
 
-**Current goal: DOGFOOD MILESTONE — use Orqa Studio to build itself.**
+**Current goal: DOGFOOD MILESTONE — use OrqaStudio to build itself.**
 
-The app has conversations, streaming, 6 file tools (read, write, edit, bash, glob, grep), search tools (search_regex, search_semantic), tool approval protocol, session persistence, SDK session resume across restarts, governance scanning, enforcement engine, and artifact browsing. The remaining gaps below are what's needed to switch from Claude Code CLI to Orqa Studio for all future development.
+The app has conversations, streaming, 6 file tools (read, write, edit, bash, glob, grep), search tools (search_regex, search_semantic), tool approval protocol, session persistence, SDK session resume across restarts, governance scanning, enforcement engine, and artifact browsing. The remaining gaps below are what's needed to switch from Claude Code CLI to OrqaStudio for all future development.
 
 ---
 

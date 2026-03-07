@@ -433,7 +433,7 @@ Print a summary of all available `make` targets with one-line descriptions.
 
 ## For Agents
 
-`make` targets are the standard interface for all development operations in Orqa Studio. Agents MUST use `make` targets rather than raw `cargo`, `npm`, or `bun` commands.
+`make` targets are the standard interface for all development operations in OrqaStudio™. Agents MUST use `make` targets rather than raw `cargo`, `npm`, or `bun` commands.
 
 **Why:** Makefile targets encode the correct flags, manifest paths, and command sequences for this project. Raw commands omit project-specific flags (e.g., `--manifest-path`, `-D warnings`) and silently produce incomplete results.
 

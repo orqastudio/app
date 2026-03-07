@@ -68,7 +68,7 @@ Components used directly from the shadcn-svelte library. No custom code needed b
 
 ## Custom Application Components (Must Build)
 
-Components specific to Orqa Studio that are not provided by shadcn-svelte.
+Components specific to OrqaStudio™ that are not provided by shadcn-svelte.
 
 ### Layout Components
 
@@ -152,7 +152,7 @@ Components specific to Orqa Studio that are not provided by shadcn-svelte.
 |-----------|-------------|-----------|-------|
 | `AppLayout` | Root layout: toolbar + three-zone body (Activity Bar + Nav Sub-Panel + PaneForge) + status bar. Manages zone collapse state. | Resizable | 1 |
 | `Toolbar` | Top bar: project name, search, new session. | Button, Command | 1 |
-| `WelcomeScreen` | First-run / empty project state. Orqa Studio branding, setup guidance. | Card, Button | 1 |
+| `WelcomeScreen` | First-run / empty project state. OrqaStudio branding, setup guidance. | Card, Button | 1 |
 
 ### Shared Utility Components
 
@@ -177,7 +177,7 @@ Components specific to Orqa Studio that are not provided by shadcn-svelte.
 
 ## Custom Markdown Rendering Blocks
 
-Extensions to the markdown renderer for Orqa Studio-specific content types.
+Extensions to the markdown renderer for OrqaStudio-specific content types.
 
 | Block | Syntax | Rendering | Phase |
 |-------|--------|-----------|-------|

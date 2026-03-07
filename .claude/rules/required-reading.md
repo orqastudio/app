@@ -24,7 +24,7 @@ Required Reading replaces scattered "Before Implementation" checklists that were
 
 ## App Enforcement
 
-In Orqa Studio, Required Reading compliance is enforced via process checks (Phase 7). The app verifies that agents have loaded their required documents before task execution proceeds and can block tasks where required documents are missing. In the CLI, agents self-enforce by following the protocol described above.
+In OrqaStudio, Required Reading compliance is enforced via process checks (Phase 7). The app verifies that agents have loaded their required documents before task execution proceeds and can block tasks where required documents are missing. In the CLI, agents self-enforce by following the protocol described above.
 
 ## Related Rules
 

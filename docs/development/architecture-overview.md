@@ -10,7 +10,7 @@ updated: 2026-03-07
 
 **Date:** 2026-03-07
 
-A contributor-friendly introduction to OrqaStudio's architecture. For detailed decisions, see [Architecture Decisions](../architecture/decisions.md).
+A contributor-friendly introduction to OrqaStudio™'s architecture. For detailed decisions, see [Architecture Decisions](../architecture/decisions.md).
 
 ---
 

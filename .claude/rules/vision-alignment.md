@@ -94,6 +94,7 @@ If the user gives an instruction that appears to conflict with a foundational pr
 
 ## Related Rules
 
+- `artifact-lifecycle.md` — artifact creation, status transitions, promotion gates, documentation gates
 - `pillar-alignment-docs.md` — pillar alignment for *documentation* pages
 - `architecture-decisions.md` — architecture decisions that implement the vision
 - `no-stubs.md` — real implementations required, not fake demos
@@ -102,3 +103,5 @@ If the user gives an instruction that appears to conflict with a foundational pr
 
 - Vision: `docs/product/vision.md`
 - Governance: `docs/product/governance.md`
+- Artifact Framework: `docs/product/artifact-framework.md`
+- Artifact Workflow: `docs/process/artifact-workflow.md`

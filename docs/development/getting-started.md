@@ -10,7 +10,7 @@ updated: 2026-03-05
 
 **Date:** 2026-03-02
 
-Prerequisites, installation, and development commands for working on Orqa Studio.
+Prerequisites, installation, and development commands for working on OrqaStudio™.
 
 ---
 
@@ -79,7 +79,7 @@ cargo tauri init
 
 The `cargo tauri init` command prompts for:
 - **App name:** `orqa-studio`
-- **Window title:** `Orqa Studio`
+- **Window title:** `OrqaStudio`
 - **Frontend dev server URL:** `http://localhost:5173` (Vite default)
 - **Frontend build command:** `npm run build`
 - **Frontend dev command:** `npm run dev`
@@ -105,7 +105,7 @@ orqa-studio/
 
 ### Tauri Plugins (AD-012)
 
-Orqa Studio requires the following Tauri v2 plugins. All are official and maintained in [tauri-apps/plugins-workspace](https://github.com/tauri-apps/plugins-workspace) unless noted.
+OrqaStudio requires the following Tauri v2 plugins. All are official and maintained in [tauri-apps/plugins-workspace](https://github.com/tauri-apps/plugins-workspace) unless noted.
 
 | Plugin | Purpose | Notes |
 |--------|---------|-------|
@@ -161,7 +161,7 @@ Each plugin must also be registered in the Tauri app builder (`src-tauri/src/mai
 
 ### Frontend Dependencies (AD-013)
 
-Orqa Studio's frontend depends on these libraries, selected in [AD-013](/architecture/decisions#ad-013-frontend-library-selections):
+OrqaStudio's frontend depends on these libraries, selected in [AD-013](/architecture/decisions#ad-013-frontend-library-selections):
 
 | Library | Purpose |
 |---------|---------|

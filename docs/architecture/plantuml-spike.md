@@ -11,20 +11,20 @@ updated: 2026-03-04
 **Date:** 2026-03-02 | **Status:** Phase 0e specification
 **References:** [Wireframing Research](/research/wireframing) (OQ1: Java Runtime Dependency), [Wireframe Serving Infrastructure](/architecture/wireframe-serving)
 
-A time-boxed investigation into eliminating or bundling PlantUML's Java dependency so that wireframe rendering works out of the box for all Orqa Studio users.
+A time-boxed investigation into eliminating or bundling PlantUML's Java dependency so that wireframe rendering works out of the box for all OrqaStudio™ users.
 
 ---
 
 ## The Problem
 
-PlantUML Salt is Orqa Studio's primary wireframing tool (decided in [wireframing research](/research/wireframing)). Wireframing is a first-class product feature, not a developer-only build tool. Every Orqa Studio user must be able to render wireframes without manual setup.
+PlantUML Salt is OrqaStudio's primary wireframing tool (decided in [wireframing research](/research/wireframing)). Wireframing is a first-class product feature, not a developer-only build tool. Every OrqaStudio user must be able to render wireframes without manual setup.
 
-PlantUML is a Java application distributed as a JAR file (~10MB). It requires a Java Runtime Environment (JRE 8+) to execute. Orqa Studio is a Tauri desktop application targeting Windows, macOS, and Linux. Shipping Orqa Studio with a "please install Java first" prerequisite is unacceptable for the following reasons:
+PlantUML is a Java application distributed as a JAR file (~10MB). It requires a Java Runtime Environment (JRE 8+) to execute. OrqaStudio is a Tauri desktop application targeting Windows, macOS, and Linux. Shipping OrqaStudio with a "please install Java first" prerequisite is unacceptable for the following reasons:
 
 1. **UX friction** — Users installing a desktop app expect it to work immediately. A Java installation prompt is a deal-breaker.
 2. **Support burden** — Java version mismatches, PATH configuration issues, and platform-specific JRE packaging would generate a disproportionate support load.
-3. **Brand perception** — Orqa Studio positions itself as a polished, modern development tool. Requiring Java installation undermines that perception.
-4. **Reliability** — Depending on the user's system Java means Orqa Studio cannot guarantee a specific Java version or configuration. Silent failures are likely.
+3. **Brand perception** — OrqaStudio positions itself as a polished, modern development tool. Requiring Java installation undermines that perception.
+4. **Reliability** — Depending on the user's system Java means OrqaStudio cannot guarantee a specific Java version or configuration. Silent failures are likely.
 
 This spike evaluates four options for resolving the dependency, determines which to prototype first, and defines acceptance criteria for the spike.
 
@@ -148,7 +148,7 @@ Salt uses the same AWT rendering pipeline as other PlantUML diagrams. Salt-speci
 
 ## Option B: Bundled Minimal JRE
 
-Ship a stripped-down Java runtime alongside Orqa Studio. Use `jlink` to create a custom JRE containing only the modules PlantUML requires.
+Ship a stripped-down Java runtime alongside OrqaStudio. Use `jlink` to create a custom JRE containing only the modules PlantUML requires.
 
 ### How jlink Works
 
@@ -181,15 +181,15 @@ Module breakdown:
 | jlink minimal (modules above) | ~90MB | ~45MB |
 | jlink minimal + `--compress=zip-9` | ~90MB | ~38MB |
 
-The minimal JRE adds approximately 38-50MB to Orqa Studio's installer size.
+The minimal JRE adds approximately 38-50MB to OrqaStudio's installer size.
 
 ### Cross-Platform Considerations
 
-A jlink'd JRE is platform-specific. Orqa Studio must bundle a different JRE for each target:
+A jlink'd JRE is platform-specific. OrqaStudio must bundle a different JRE for each target:
 
 | Platform | JRE Variant | Notes |
 |----------|------------|-------|
-| Windows x64 | Temurin JRE 21 LTS, Windows x64 | Most common Orqa Studio target |
+| Windows x64 | Temurin JRE 21 LTS, Windows x64 | Most common OrqaStudio target |
 | Windows ARM64 | Temurin JRE 21 LTS, Windows aarch64 | Surface Pro X, etc. |
 | macOS x64 | Temurin JRE 21 LTS, macOS x64 | Intel Macs |
 | macOS aarch64 | Temurin JRE 21 LTS, macOS aarch64 | Apple Silicon (primary Mac target) |
@@ -223,7 +223,7 @@ Tauri's `tauri.conf.json` includes the resource directory:
 }
 ```
 
-Orqa Studio invokes PlantUML via:
+OrqaStudio invokes PlantUML via:
 
 ```bash
 {app_resources}/jre/bin/java -jar {app_resources}/plantuml.jar -tpng input.puml
@@ -293,9 +293,9 @@ java -version 2>&1 | head -1
 
 This is not a primary distribution strategy. It serves as:
 
-1. **Development fallback** — During Orqa Studio development, contributors use their own JRE
+1. **Development fallback** — During OrqaStudio development, contributors use their own JRE
 2. **Graceful degradation** — If the bundled native binary or JRE is corrupted/missing, attempt system Java before declaring failure
-3. **Lightweight installs** — Users who already have Java and want a smaller Orqa Studio download could opt out of the bundled JRE (future advanced installer option)
+3. **Lightweight installs** — Users who already have Java and want a smaller OrqaStudio download could opt out of the bundled JRE (future advanced installer option)
 
 ### Risk Assessment
 
@@ -358,7 +358,7 @@ This would be attractive because:
 | AWT emulation fidelity | High | Font metrics, layout may differ |
 | CheerpJ licensing | Medium | Commercial license for production use |
 | WASM runtime size | Medium | 20-40MB of CheerpJ runtime |
-| Maintenance burden | High | Orqa Studio would depend on third-party Java-to-WASM tooling |
+| Maintenance burden | High | OrqaStudio would depend on third-party Java-to-WASM tooling |
 | Performance | Unknown | Could be slower than native; could be faster than JVM cold start |
 
 ### Verdict

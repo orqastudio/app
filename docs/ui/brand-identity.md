@@ -1,16 +1,18 @@
 ---
-title: "Orqa Studio — Brand Guidelines"
+title: "OrqaStudio — Brand Guidelines"
 category: ui
 tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---
 
-# Orqa Studio — Brand Guidelines
+# OrqaStudio — Brand Guidelines
 
 ## 1. Brand Overview
 
-**Orqa Studio** is a platform for orchestrating intelligent software development.
+**OrqaStudio™** is an AI-assisted clarity engine that helps people turn messy situations into structured understanding and evolving plans through agile thinking and continuous retrospection.
+
+**Orqa** is derived from the concept of *orchestration* — the coordination of complex systems into coherent outcomes.
 
 The brand visual language reflects three core ideas:
 
@@ -245,7 +247,7 @@ The brand should feel **precise and intelligent**.
 
 ## 10. Voice & Tone
 
-The Orqa Studio voice is:
+The OrqaStudio voice is:
 
 * clear
 * precise
@@ -294,7 +296,7 @@ The design should always feel like **engineering infrastructure**, not consumer 
 
 ## 13. Summary
 
-The Orqa Studio brand expresses a simple idea:
+The OrqaStudio brand expresses a simple idea:
 
 > Intelligent systems require awareness and direction.
 

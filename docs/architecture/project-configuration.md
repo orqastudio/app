@@ -14,7 +14,7 @@ updated: 2026-03-04
 
 ## Overview
 
-Orqa Studio uses a file-based configuration model for project settings. Each managed project stores its configuration in `.orqa/project.json` at the project root. This file is the **source of truth** for project-specific settings.
+OrqaStudio™ uses a file-based configuration model for project settings. Each managed project stores its configuration in `.orqa/project.json` at the project root. This file is the **source of truth** for project-specific settings.
 
 The SQLite `projects` table remains as the app-wide registry of known projects (recent list, IDs, timestamps). It does NOT own project configuration — `.orqa/project.json` does.
 
@@ -22,7 +22,7 @@ The SQLite `projects` table remains as the app-wide registry of known projects (
 
 ## `.orqa/` Directory Convention
 
-Orqa Studio creates a `.orqa/` directory in each managed project for Orqa Studio-specific configuration. This is separate from `.claude/` (which belongs to Claude Code itself).
+OrqaStudio creates a `.orqa/` directory in each managed project for OrqaStudio-specific configuration. This is separate from `.claude/` (which belongs to Claude Code itself).
 
 | Path | Purpose |
 |------|---------|
@@ -94,7 +94,7 @@ The `.orqa/` directory is created automatically when the user saves project sett
 
 ## Discovery Rules
 
-1. When a project is opened (`project_open`), Orqa Studio checks for `.orqa/project.json` at the project root
+1. When a project is opened (`project_open`), OrqaStudio checks for `.orqa/project.json` at the project root
 2. **File exists** — load it as the source of truth for project settings
 3. **File missing** — not an error; the UI shows a setup wizard that scans the project and creates the file
 4. The `project_open` command syncs the file-based name to SQLite so the recent projects list stays current

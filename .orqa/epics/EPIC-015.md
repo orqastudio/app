@@ -1,0 +1,49 @@
+---
+id: EPIC-015
+title: "CI/CD Pipeline & Distribution"
+status: draft
+priority: P1
+milestone: MS-002
+created: 2026-03-07
+updated: 2026-03-07
+deadline: null
+plan: null
+depends-on: []
+blocks: []
+assignee: null
+pillar:
+  - clarity-through-structure
+scoring:
+  pillar: 2
+  impact: 5
+  dependency: 3
+  effort: 4
+score: 5.3
+roadmap-ref: "M5"
+docs-required:
+  - .orqa/plans/ (plan required before implementation)
+docs-produced:
+  - .orqa/plans/ (CI/CD plan)
+  - docs/development/getting-started.md (update with release process)
+  - docs/architecture/decisions.md (AD for signing, update channels, versioning strategy)
+tags: [ci, cd, distribution, release]
+---
+
+# CI/CD Pipeline & Distribution
+
+Must be distributable for anyone else to use it.
+
+## Why P1
+
+Can't ship to users without a build pipeline and update mechanism.
+
+## Tasks
+
+- [ ] GitHub Actions: PR checks (`make check` on all platforms)
+- [ ] GitHub Actions: build artifacts on merge to main (pre-release)
+- [ ] GitHub Actions: build release on tag push (stable)
+- [ ] Platform matrix: Windows (x64), macOS (x64, arm64), Linux (x64)
+- [ ] Artifact signing with Tauri updater keys
+- [ ] Semantic versioning: tauri.conf.json + Cargo.toml + package.json sync
+- [ ] Auto-update via `tauri-plugin-updater` with GitHub Releases
+- [ ] Update channel selector in Settings (pre-release / stable)

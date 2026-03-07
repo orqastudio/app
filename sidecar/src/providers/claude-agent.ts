@@ -1,5 +1,5 @@
 /**
- * Claude Agent SDK provider for the Orqa Studio sidecar.
+ * Claude Agent SDK provider for the OrqaStudio sidecar.
  *
  * Uses @anthropic-ai/claude-agent-sdk which spawns the official Claude Code
  * CLI binary. Authentication is handled via Claude Max subscription OAuth —
@@ -200,7 +200,7 @@ function translateAgentMessage(
             } else if (b.type === 'tool_use') {
                 // Tool use blocks are handled by the MCP server callbacks,
                 // but we emit tracking events for the frontend.
-                // Skip Orqa Studio tools — executeToolViaRust already emits these events.
+                // Skip OrqaStudio tools — executeToolViaRust already emits these events.
                 const isOrqa = typeof b.name === 'string' && b.name.startsWith('mcp__orqa__');
                 if (!isOrqa) {
                     if (typeof b.id === 'string' && typeof b.name === 'string') {
@@ -256,9 +256,9 @@ export class ClaudeAgentProvider implements Provider {
     private nextToolCallId = 1;
 
     /**
-     * Maps Orqa Studio session IDs to provider session IDs.
+     * Maps OrqaStudio session IDs to provider session IDs.
      * The SDK uses its own UUID-based session IDs for conversation persistence.
-     * On the first message in an Orqa Studio session, we start a new SDK
+     * On the first message in an OrqaStudio session, we start a new SDK
      * conversation and capture the session ID. Subsequent messages use `resume`
      * to continue the same conversation, giving Claude access to the full history.
      */
@@ -602,7 +602,7 @@ export class ClaudeAgentProvider implements Provider {
     }
 
     /**
-     * Create the Orqa Studio MCP tool server that routes tool calls to Rust
+     * Create the OrqaStudio MCP tool server that routes tool calls to Rust
      * via the NDJSON protocol.
      *
      * Each tool call sends a tool_execute event to stdout and waits for

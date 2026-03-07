@@ -32,7 +32,7 @@
 	<div class="relative z-10 w-full max-w-lg px-4">
 		<Card.Root>
 			<Card.Header class="text-center">
-				<Card.Title class="text-xl">Welcome to Orqa Studio</Card.Title>
+				<Card.Title class="text-xl">Welcome to OrqaStudio</Card.Title>
 				<Card.Description>
 					Let's make sure everything is set up for managed agentic development.
 				</Card.Description>

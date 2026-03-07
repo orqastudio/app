@@ -110,7 +110,10 @@ For third-party dependency licenses, see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NO
 
 ## Trademark Notice
 
-The **OrqaStudio** name and branding are the property of the project maintainers.
+**OrqaStudio™** is a trademark of Bobbi Byrne-Graham.
+
+- **Domains:** [orqastudio.com](https://orqastudio.com), [orqastudio.ai](https://orqastudio.ai)
+- **Namespace:** [github.com/orqastudio](https://github.com/orqastudio)
 
 Brand assets are maintained separately in the [`orqastudio-brand`](https://github.com/orqastudio/orqastudio-brand) repository and may be subject to additional usage restrictions.
 

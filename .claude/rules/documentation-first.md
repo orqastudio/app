@@ -15,6 +15,8 @@ Documentation is the source of truth. Before writing ANY implementation code, ve
 3. Check `docs/development/coding-standards.md` for implementation patterns
 4. Check `TODO.md` for phase requirements and constraints
 5. Check `docs/product/roadmap.md` to verify work is prioritized
+6. Check the relevant `EPIC-NNN.md` in `.orqa/epics/` — verify `docs-required` gate is satisfied
+7. Check `docs/product/artifact-framework.md` if working with `.orqa/` artifacts
 
 **Documentation priorities ALWAYS come before implementation priorities in TODO.md.** Never reorder to put code changes ahead of documentation corrections.
 
@@ -24,6 +26,8 @@ Documentation is the source of truth. Before writing ANY implementation code, ve
 
 1. Read `docs/product/vision.md` — verify feature serves Pillar 1 or Pillar 2
 2. Read `docs/product/governance.md` — verify feature passes governance criteria
+3. Verify the feature has an artifact trail — an `IDEA-NNN` that was shaped and promoted to an `EPIC-NNN`, or an `EPIC-NNN` created directly with user approval
+4. Verify the epic's `docs-required` gate is satisfied before starting implementation
 
 ## Architectural Principles (verify compliance on EVERY change)
 
@@ -73,8 +77,20 @@ When investigating bugs, UI mismatches, or differences between user expectations
 
 **NEVER jump straight to fixing code without checking documentation first.** The fix direction depends on whether the documentation matches user intent.
 
+## Epic Documentation Gates
+
+The artifact framework enforces documentation at two points:
+
+- **`docs-required`** — documentation that must exist BEFORE implementation starts (epic `draft → ready` transition)
+- **`docs-produced`** — documentation that this work MUST create or update on completion (verified at `review → done` transition)
+
+These fields are defined on every epic. The orchestrator checks `docs-required` before starting work, and the code-reviewer verifies `docs-produced` during the review gate.
+
+See `.claude/rules/artifact-lifecycle.md` for enforcement details and `docs/process/artifact-workflow.md` for the full workflow.
+
 ## Related Rules
 
+- `artifact-lifecycle.md` — artifact creation, status transitions, documentation gates
 - `plan-mode-compliance.md` — plan structure requirements
 - `chunkhound-usage.md` — using code_research for documentation discovery
 - `vision-alignment.md` — pillar alignment and governance

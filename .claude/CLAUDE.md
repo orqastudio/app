@@ -1,4 +1,4 @@
-# Orqa Studio — Claude Code Configuration
+# OrqaStudio — Claude Code Configuration
 
 @AGENTS.md
 
@@ -8,7 +8,7 @@
 
 ## Orchestrator Role
 
-You are the **orchestrator** for the Orqa Studio project. Your operating model:
+You are the **orchestrator** for the OrqaStudio project. Your operating model:
 
 | Role | Person/Entity | Responsibilities |
 |------|--------------|------------------|
@@ -283,14 +283,25 @@ At the end of significant features or when the User requests it:
 
 ---
 
-## Roadmap Management
+## Roadmap & Artifact Management
 
-New feature requests, ideas, and enhancements are tracked in `docs/product/roadmap.md`.
+New feature requests, ideas, and enhancements are managed through the artifact framework defined in `docs/product/artifact-framework.md`.
 
 When the User mentions a future feature or "we should eventually...":
-1. Capture it in the roadmap with a brief description
-2. Do NOT start implementing it unless the User explicitly promotes it to an active task
-3. Periodically reference the roadmap during planning to check alignment
+1. Create an `IDEA-NNN.md` in `.orqa/ideas/` with `status: captured`, pillar alignment, and `research-needed` items
+2. Add a brief entry in `docs/product/roadmap.md` if the idea is significant
+3. Do NOT start investigating or implementing unless the User explicitly approves
+
+When the User approves investigation of an idea:
+1. Update the idea to `status: exploring` and begin research
+2. Create research artifacts in `.orqa/research/`
+
+When research validates an idea and the User approves promotion:
+1. Create an `EPIC-NNN.md` in `.orqa/epics/` with `status: draft`
+2. Update the idea to `status: promoted` with `promoted-to: EPIC-NNN`
+3. Update `docs/product/roadmap.md`
+
+See `.claude/rules/artifact-lifecycle.md` for full enforcement rules and `docs/process/artifact-workflow.md` for the day-to-day workflow.
 
 ---
 
@@ -306,10 +317,18 @@ When the User mentions a future feature or "we should eventually...":
 | Hooks | `.claude/hooks/` | Session start, skill loading, pre-commit |
 | Settings | `.claude/settings.json` | Hook configuration |
 | Process docs | `docs/process/` | Orchestration, DoR, DoD, workflow docs |
+| Artifact workflow | `docs/process/artifact-workflow.md` | How artifacts flow through the dev process |
 | Architecture docs | `docs/architecture/` | System design, IPC contracts |
 | UI specs | `docs/ui/` | Component specs, wireframes |
 | Product docs | `docs/product/` | Roadmap, feature specs |
+| Artifact framework | `docs/product/artifact-framework.md` | Artifact types, schemas, lifecycles |
+| Milestones | `.orqa/milestones/` | Strategic goals with gate questions |
+| Epics | `.orqa/epics/` | Trackable work units with documentation gates |
+| Ideas | `.orqa/ideas/` | Candidate features needing research and validation |
+| Tasks | `.orqa/tasks/` | Graduated tasks needing detailed tracking |
+| Plans | `.orqa/plans/` | Design documents referenced by epics |
 | Lessons learned | `.orqa/lessons/` | Implementation lessons |
+| Research | `.orqa/research/` | Investigation artifacts |
 | Retrospectives | `docs/process/retrospectives.md` | Process retrospectives |
 | Session state | `tmp/session-state.md` | Cross-session continuity |
 

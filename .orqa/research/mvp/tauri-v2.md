@@ -3,7 +3,7 @@ type: research
 status: complete
 date: 2026-03-02
 category: tauri-v2
-description: Tauri v2's capabilities, security model, and plugin ecosystem for Orqa Studio's requirements.
+description: Tauri v2's capabilities, security model, and plugin ecosystem for OrqaStudio's requirements.
 questions:
   - id: Q1
     title: Capability Audit
@@ -30,7 +30,7 @@ informs_features: [F-001, F-002, F-006, F-009, F-011]
 
 **Date:** 2026-03-02 | **Status:** Complete
 
-Research into Tauri v2's capabilities, security model, and plugin ecosystem for Orqa Studio's requirements.
+Research into Tauri v2's capabilities, security model, and plugin ecosystem for OrqaStudio's requirements.
 
 ---
 
@@ -38,7 +38,7 @@ Research into Tauri v2's capabilities, security model, and plugin ecosystem for 
 
 ### Q1: Capability Audit
 
-**Question:** Does Tauri v2 cover all of Orqa Studio's requirements?
+**Question:** Does Tauri v2 cover all of OrqaStudio's requirements?
 
 **Verdict: ALL eight requirements are supported.**
 
@@ -70,7 +70,7 @@ Research into Tauri v2's capabilities, security model, and plugin ecosystem for 
 
 ### Q2: IPC Design
 
-**Question:** How should the Tauri IPC boundary be designed for Orqa Studio's needs?
+**Question:** How should the Tauri IPC boundary be designed for OrqaStudio's needs?
 
 **Findings:**
 
@@ -138,7 +138,7 @@ Fire-and-forget. Not type-safe, cannot return values. Best for simple notificati
 
 No documented hard limits. ~200ms for 3MB JSON via standard IPC. For large binary data, use `tauri::ipc::Response` (bypasses JSON) or Channel with chunked delivery.
 
-**Proposed IPC patterns for Orqa Studio:**
+**Proposed IPC patterns for OrqaStudio:**
 
 | Pattern | Use Case | Mechanism |
 |---------|----------|-----------|
@@ -154,7 +154,7 @@ No documented hard limits. ~200ms for 3MB JSON via standard IPC. For large binar
 
 ### Q3: Security Model
 
-**Question:** How should Tauri's permission system be configured for Orqa Studio?
+**Question:** How should Tauri's permission system be configured for OrqaStudio?
 
 **Findings:**
 
@@ -166,7 +166,7 @@ Three-layer security model:
 
 Capabilities are defined as JSON/TOML files in `src-tauri/capabilities/`, compiled into the binary at build time. **Deny always takes precedence over allow.**
 
-**Recommended capability configuration for Orqa Studio:**
+**Recommended capability configuration for OrqaStudio:**
 
 ```json
 {
@@ -214,11 +214,11 @@ const key = await getPassword('orqa-studio', 'claude-api-key');
 
 ### Q4: Plugin Ecosystem
 
-**Question:** Which Tauri plugins should Orqa Studio use?
+**Question:** Which Tauri plugins should OrqaStudio use?
 
 **All plugins are official, stable, and maintained in [tauri-apps/plugins-workspace](https://github.com/tauri-apps/plugins-workspace).** Tauri core is at v2.10.2 (Feb 2026). Minimum Rust version: 1.77.2.
 
-| Plugin | Version | Use in Orqa Studio | Notes |
+| Plugin | Version | Use in OrqaStudio | Notes |
 |--------|---------|-------------|-------|
 | `tauri-plugin-sql` | 2.3.1 | SQLite for sessions, metrics, tasks | Enable `--features sqlite`. Runs migrations. For complex queries, use `sqlx` in Rust directly. |
 | `tauri-plugin-fs` | 2.4.5 | Read/write project files, watch for changes | Enable `watch` feature. Runtime scope expansion. Path traversal blocked. |
@@ -244,7 +244,7 @@ const key = await getPassword('orqa-studio', 'claude-api-key');
 
 ## Summary
 
-Tauri v2 is fully capable for Orqa Studio. No blockers, no workarounds needed. The key architectural patterns:
+Tauri v2 is fully capable for OrqaStudio. No blockers, no workarounds needed. The key architectural patterns:
 
 - **Claude streaming:** `reqwest` SSE → `Channel<T>` → Svelte store
 - **File operations:** `tauri-plugin-fs` with runtime scope expansion + persisted scope

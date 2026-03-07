@@ -85,6 +85,17 @@ State "N/A — [reason]" for inapplicable ones.]
 [Measured by user-visible outcomes]
 ```
 
+## Artifact Integration
+
+Plans exist within the artifact framework. When a plan is created:
+
+1. **If the plan serves an epic:** The epic's `plan` field MUST reference the plan filename (without `.md`)
+2. **If the plan serves an idea being shaped:** The plan is created during the `exploring → shaped` transition
+3. **Plans produce epics:** A plan that is approved should result in an `EPIC-NNN` being created (or updated) with `docs-required` and `docs-produced` fields populated from the plan's documentation sections
+4. **The plan's documentation section feeds the epic's gates:** Items in the plan's "Documentation" dimension of the Systems Architecture Checklist become the epic's `docs-required` and `docs-produced` lists
+
+See `.claude/rules/artifact-lifecycle.md` for the full artifact lifecycle and `docs/process/artifact-workflow.md` for day-to-day workflow.
+
 ## When This Rule Applies
 
 - Creating a new implementation plan (plan mode or TODO.md)
@@ -160,10 +171,11 @@ After every phase implementation, the orchestrator MUST invoke the code-reviewer
 
 ## App Enforcement
 
-In Orqa Studio, the app can verify that plans contain the required sections (Architectural Compliance, Systems Architecture Checklist, UX-First Design) via process checks before allowing implementation to begin. The app also manages verification gate transitions, ensuring that each phase receives independent review before the next phase starts. In the CLI, reviewers verify plan structure and gate compliance manually following the protocol above.
+In OrqaStudio, the app can verify that plans contain the required sections (Architectural Compliance, Systems Architecture Checklist, UX-First Design) via process checks before allowing implementation to begin. The app also manages verification gate transitions, ensuring that each phase receives independent review before the next phase starts. In the CLI, reviewers verify plan structure and gate compliance manually following the protocol above.
 
 ## Related Rules
 
+- `artifact-lifecycle.md` — artifact creation, status transitions, promotion gates
 - `vision-alignment.md` — the Two-Pillar framework that plans must serve
 - `architecture-decisions.md` — the architecture decisions plans must comply with
 - `coding-standards.md` — the standards implementations must meet

@@ -1,7 +1,7 @@
 ---
 name: orqa-streaming
 description: |
-  Orqa Studio streaming pipeline: Agent SDK → sidecar (Bun) → NDJSON → Rust Channel<T> → Svelte.
+  OrqaStudio streaming pipeline: Agent SDK → sidecar (Bun) → NDJSON → Rust Channel<T> → Svelte.
   Covers ProviderEvent types, StreamEvent types, sidecar protocol, error handling, and tool approval.
   Use when: Modifying the streaming pipeline, adding new event types, debugging streaming issues,
   or working with the sidecar.
@@ -12,7 +12,7 @@ user-invocable: true
 
 # Orqa Streaming Pipeline
 
-Orqa Studio streams Claude conversations through a multi-layer pipeline. Understanding this pipeline is critical for anyone touching streaming, tool execution, or the sidecar.
+OrqaStudio streams Claude conversations through a multi-layer pipeline. Understanding this pipeline is critical for anyone touching streaming, tool execution, or the sidecar.
 
 ## Pipeline Overview
 

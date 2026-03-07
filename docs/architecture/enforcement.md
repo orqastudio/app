@@ -10,7 +10,7 @@ updated: 2026-03-05
 
 **Date:** 2026-03-05
 
-The enforcement engine is Orqa Studio's mechanism for evaluating agent tool calls against behavioral rules in real time. Rules carry machine-readable YAML frontmatter declaring enforcement entries. The engine loads entries, evaluates patterns against every file write and bash command, records violations, and surfaces them in the UI. The same frontmatter auto-generates CLI-compatible hookify files so enforcement works in plain Claude Code sessions too.
+The enforcement engine is OrqaStudio™'s mechanism for evaluating agent tool calls against behavioral rules in real time. Rules carry machine-readable YAML frontmatter declaring enforcement entries. The engine loads entries, evaluates patterns against every file write and bash command, records violations, and surfaces them in the UI. The same frontmatter auto-generates CLI-compatible hookify files so enforcement works in plain Claude Code sessions too.
 
 ---
 

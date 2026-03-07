@@ -48,7 +48,7 @@ Review agents that skip lesson documentation are in violation of this rule. The 
 
 ## App-Managed Workflow
 
-In Orqa Studio, the lesson pipeline (create, recurrence tracking, promotion) is managed through the UI. The app provides a lessons view where users can browse, filter, and promote lessons. Recurrence counts are updated automatically when the app detects matching failure patterns. Promotion to rules or coding standards is initiated from the UI and routed to the `agent-maintainer` for execution.
+In OrqaStudio, the lesson pipeline (create, recurrence tracking, promotion) is managed through the UI. The app provides a lessons view where users can browse, filter, and promote lessons. Recurrence counts are updated automatically when the app detects matching failure patterns. Promotion to rules or coding standards is initiated from the UI and routed to the `agent-maintainer` for execution.
 
 In the CLI, agents create lesson files manually in `.orqa/lessons/` following the YAML frontmatter format, and the `agent-maintainer` handles promotion through the standard governance audit process.
 

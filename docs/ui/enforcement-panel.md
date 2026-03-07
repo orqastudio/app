@@ -10,7 +10,7 @@ updated: 2026-03-05
 
 **Date:** 2026-03-05
 
-The enforcement panel surfaces active enforcement rules and their violations within the Orqa Studio UI. Violations from blocked and warned tool calls are displayed inline on the relevant tool call card and aggregated in the enforcement sidebar. The governance scan results view shows enforcement coverage across the rule inventory.
+The enforcement panel surfaces active enforcement rules and their violations within the OrqaStudio™ UI. Violations from blocked and warned tool calls are displayed inline on the relevant tool call card and aggregated in the enforcement sidebar. The governance scan results view shows enforcement coverage across the rule inventory.
 
 ---
 

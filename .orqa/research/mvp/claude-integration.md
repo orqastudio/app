@@ -3,7 +3,7 @@ type: research
 status: complete
 date: 2026-03-02
 category: claude-integration
-description: How Orqa Studio integrates with Claude's API and tooling. Most foundational research area — decisions here constrain the entire backend architecture.
+description: How OrqaStudio integrates with Claude's API and tooling. Most foundational research area — decisions here constrain the entire backend architecture.
 questions:
   - id: Q1
     title: Claude Agent SDK vs Raw API
@@ -16,7 +16,7 @@ questions:
   - id: Q3
     title: Tool Implementation Strategy
     status: resolved
-    verdict: Orqa Studio tools as custom MCP server exposed to Agent SDK
+    verdict: OrqaStudio tools as custom MCP server exposed to Agent SDK
   - id: Q4
     title: Streaming Architecture
     status: resolved
@@ -30,7 +30,7 @@ informs_features: [F-002, F-003, F-012]
 
 **Date:** 2026-03-02 | **Status:** Complete
 
-Research into how Orqa Studio integrates with Claude's API and tooling. This is the most foundational research area — decisions here constrain the entire backend architecture.
+Research into how OrqaStudio integrates with Claude's API and tooling. This is the most foundational research area — decisions here constrain the entire backend architecture.
 
 ---
 
@@ -38,7 +38,7 @@ Research into how Orqa Studio integrates with Claude's API and tooling. This is 
 
 ### Q1: Claude Agent SDK vs Raw API
 
-**Question:** Should Orqa Studio use the Claude Agent SDK (which handles the tool-use loop, multi-turn, etc.) or call the raw Claude API directly?
+**Question:** Should OrqaStudio use the Claude Agent SDK (which handles the tool-use loop, multi-turn, etc.) or call the raw Claude API directly?
 
 **Key considerations:**
 - Does the Agent SDK support streaming responses?
@@ -55,9 +55,9 @@ The Claude Agent SDK is a **production-grade library** (not a CLI wrapper or fra
 
 **Streaming:** Yes. Both `query()` and `ClaudeSDKClient.receive_response()` are async iterators yielding messages as they arrive. Message types include `AssistantMessage`, `ToolUseBlock`, `ToolResultBlock`, `ResultMessage`, `SystemMessage`.
 
-**Tool call interception:** Yes, via the **hooks system**. The `PreToolUse` hook fires before any tool executes and can return `"allow"`, `"deny"`, or `"ask"`. The `PermissionRequest` hook fires when the agent would normally display a permission dialog — Orqa Studio could implement its own approval UI. Hooks can also **modify tool inputs** before execution (since v2.0.10).
+**Tool call interception:** Yes, via the **hooks system**. The `PreToolUse` hook fires before any tool executes and can return `"allow"`, `"deny"`, or `"ask"`. The `PermissionRequest` hook fires when the agent would normally display a permission dialog — OrqaStudio could implement its own approval UI. Hooks can also **modify tool inputs** before execution (since v2.0.10).
 
-**Rust support:** Not natively. Options for Orqa Studio:
+**Rust support:** Not natively. Options for OrqaStudio:
 
 | Path | How | Pros | Cons |
 |------|-----|------|------|
@@ -77,7 +77,7 @@ The Claude Agent SDK is a **production-grade library** (not a CLI wrapper or fra
 | Capability | How |
 |------------|-----|
 | Disable ALL built-in tools | `tools: []` parameter |
-| Provide only Orqa Studio's tools | Custom MCP server via `mcpServers` parameter |
+| Provide only OrqaStudio's tools | Custom MCP server via `mcpServers` parameter |
 | Intercept tool calls for approval UI | `canUseTool` callback returns allow/deny |
 | Token-level streaming for rich UI | `includePartialMessages: true` gives raw SSE events |
 | Control system prompt | `systemPrompt` parameter (replace or append) |
@@ -86,7 +86,7 @@ The Claude Agent SDK is a **production-grade library** (not a CLI wrapper or fra
 | Restrict tool set per conversation | `tools` parameter (whitelist) |
 | Budget caps | `maxBudgetUsd` parameter |
 
-The Agent SDK is NOT a black box when configured correctly. With `tools: []` + custom MCP + `canUseTool`, Orqa Studio controls tool execution, approval, and UI rendering — the SDK only handles API communication and context management.
+The Agent SDK is NOT a black box when configured correctly. With `tools: []` + custom MCP + `canUseTool`, OrqaStudio controls tool execution, approval, and UI rendering — the SDK only handles API communication and context management.
 
 **Critical:** The Agent SDK is the ONLY legal path to using Max subscriptions. It spawns the official Claude Code CLI, which authenticates via OAuth. Anthropic's third-party ban applies to apps that extract OAuth tokens directly — not to apps that use the official SDK/CLI.
 
@@ -117,7 +117,7 @@ From the Agent SDK docs:
 
 OAuth tokens from Claude Free/Pro/Max are only valid for Claude Code and claude.ai. Server-side enforcement is active — tokens are rejected. The only exception is a specific partnership agreement with Anthropic.
 
-**Authentication options for Orqa Studio users:**
+**Authentication options for OrqaStudio users:**
 
 | Method | Setup | Pricing |
 |--------|-------|---------|
@@ -128,7 +128,7 @@ OAuth tokens from Claude Free/Pro/Max are only valid for Claude Code and claude.
 
 **REVISED (March 2026):** The Agent SDK (`@anthropic-ai/claude-agent-sdk`) spawns the official Claude Code CLI binary, which authenticates via Max subscription OAuth. Anthropic's fingerprinting sees the official CLI, not a third-party tool. This is architecturally identical to VS Code / JetBrains / Emacs extensions, which are officially supported.
 
-**Decision:** Orqa Studio supports BOTH authentication paths:
+**Decision:** OrqaStudio supports BOTH authentication paths:
 - **Path A (Max subscription):** Agent SDK spawns Claude Code CLI → uses Max subscription at $0 marginal cost
 - **Path B (API key):** TypeScript SDK direct HTTP → pay per token
 
@@ -137,13 +137,13 @@ OAuth tokens from Claude Free/Pro/Max are only valid for Claude Code and claude.
 - Max 5x: $100/month (break-even at ~25 conversations/day)
 - Max 20x: $200/month (break-even at ~49 conversations/day)
 
-Max subscription is the default recommendation for regular Orqa Studio users. API key path exists for burst work, enterprise users, and cloud provider routing (Bedrock/Vertex/Azure).
+Max subscription is the default recommendation for regular OrqaStudio users. API key path exists for burst work, enterprise users, and cloud provider routing (Bedrock/Vertex/Azure).
 
 ---
 
 ### Q3: Tool Implementation Strategy
 
-**Question:** How should Orqa Studio implement Claude Code's tools (Read, Write, Edit, Bash, Glob, Grep)?
+**Question:** How should OrqaStudio implement Claude Code's tools (Read, Write, Edit, Bash, Glob, Grep)?
 
 **Options:**
 
@@ -156,15 +156,15 @@ Max subscription is the default recommendation for regular Orqa Studio users. AP
 
 **Findings:**
 
-Given the decision to use the raw API (Q1), Orqa Studio must implement its own tools. The Agent SDK option (c) would tie us to the CLI subprocess for tool execution, defeating the purpose of going raw API.
+Given the decision to use the raw API (Q1), OrqaStudio must implement its own tools. The Agent SDK option (c) would tie us to the CLI subprocess for tool execution, defeating the purpose of going raw API.
 
-**Option (a) Native Rust is the strongest fit** for Orqa Studio because:
+**Option (a) Native Rust is the strongest fit** for OrqaStudio because:
 - Tools need deep UI integration (show file contents in editor panel, render grep results, display git diffs)
-- Orqa Studio already needs file system access via Tauri — tools are a natural extension
-- Full control over permission model (Orqa Studio's own approval UI, not CLI prompts)
+- OrqaStudio already needs file system access via Tauri — tools are a natural extension
+- Full control over permission model (OrqaStudio's own approval UI, not CLI prompts)
 - No external binary dependency
 
-**MCP (option d) is complementary, not a replacement.** Orqa Studio should:
+**MCP (option d) is complementary, not a replacement.** OrqaStudio should:
 - Implement core tools (Read, Write, Edit, Bash, Glob, Grep) natively in Rust
 - Act as an **MCP host** for user-provided MCP servers (extensibility)
 - Expose native tools to Claude as standard tool definitions in the API call
@@ -172,8 +172,8 @@ Given the decision to use the raw API (Q1), Orqa Studio must implement its own t
 
 **Findings on MCP:**
 - MCP is an open protocol (JSON-RPC 2.0) now under the Linux Foundation
-- Orqa Studio as MCP host: spawn MCP servers (stdio or HTTP), discover tools via `tools/list`, route `tool_use` calls
-- 10,000+ MCP servers exist in the ecosystem — Orqa Studio users could connect databases, browsers, custom APIs
+- OrqaStudio as MCP host: spawn MCP servers (stdio or HTTP), discover tools via `tools/list`, route `tool_use` calls
+- 10,000+ MCP servers exist in the ecosystem — OrqaStudio users could connect databases, browsers, custom APIs
 - For Rust: implement JSON-RPC over stdin/stdout (straightforward — spawn process, write JSON, read JSON)
 
 **Decision:** _Pending user approval — see Architecture Recommendation below_
@@ -267,7 +267,7 @@ User (Svelte UI)
 import { query, createSdkMcpServer, tool } from "@anthropic-ai/claude-agent-sdk";
 import { z } from "zod";
 
-// Orqa Studio's tools exposed as MCP server to the Agent SDK
+// OrqaStudio's tools exposed as MCP server to the Agent SDK
 const orqaTools = createSdkMcpServer({
   name: "orqa-tools",
   tools: [
@@ -286,9 +286,9 @@ async function handleConversation(request) {
     prompt: request.prompt,
     options: {
       tools: [],                          // Disable ALL built-in tools
-      mcpServers: { "orqa": orqaTools },// Route tool calls to Orqa Studio
+      mcpServers: { "orqa": orqaTools },// Route tool calls to OrqaStudio
       canUseTool: async (name, input) => {
-        // Delegate approval to Orqa Studio's UI via stdin/stdout
+        // Delegate approval to OrqaStudio's UI via stdin/stdout
         send({ type: 'tool_approval_request', name, input });
         const response = await waitForStdinResponse('tool_approval');
         return response.approved
@@ -315,7 +315,7 @@ async function handleConversation(request) {
 | **Cost at 75 conv/day** | $100-200/month flat (vs ~$304/month API) |
 | **SDK maintenance** | Anthropic maintains |
 | **Streaming** | `includePartialMessages` gives raw SSE-level events |
-| **Tool control** | `tools: []` + custom MCP = full Orqa Studio control |
+| **Tool control** | `tools: []` + custom MCP = full OrqaStudio control |
 | **Session management** | Built into CLI (resume, context, compaction) |
 | **Context management** | CLI handles compaction automatically |
 
@@ -328,7 +328,7 @@ The interface between the Rust backend and the AI sidecar is **provider-neutral*
 - The Rust backend sends a `ConversationRequest` (system prompt, messages, tool definitions, config)
 - The sidecar translates to the active provider's format and streams back `ProviderEvent` types
 - Swapping providers means implementing the same interface — Claude today, potentially others later
-- This extends the **composability principle** from Alvarez into Orqa Studio's architecture
+- This extends the **composability principle** from Alvarez into OrqaStudio's architecture
 
 **Provider-agnostic event types (Rust side):**
 
@@ -424,7 +424,7 @@ Latency overhead of the sidecar hop: ~0.1-0.5ms per event. Completely negligible
 
 - Q1 (SDK vs API) → **Resolved: Agent SDK sidecar as primary integration. Max subscription auth.**
 - Q2 (Claude Max) → **Resolved: Supported via Agent SDK (spawns official CLI). API key + other providers on roadmap.**
-- Q3 (tools) → **Resolved: Orqa Studio's tools as custom MCP server exposed to Agent SDK. Native Rust execution.**
+- Q3 (tools) → **Resolved: OrqaStudio's tools as custom MCP server exposed to Agent SDK. Native Rust execution.**
 - Q4 (streaming) → **Resolved: Agent SDK → sidecar → NDJSON stdout → Rust → Channel<T> → Svelte**
 
 ## Related

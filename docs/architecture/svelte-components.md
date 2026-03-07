@@ -10,7 +10,7 @@ updated: 2026-03-04
 
 **Date:** 2026-03-02 | **Updated:** 2026-03-04 | **Status:** Aligned with Phase 1 implementation | **References:** [Frontend Research](/research/frontend), [Design Tokens Research](/research/design-tokens), [Information Architecture](/product/information-architecture)
 
-Defines the complete Svelte component architecture for Orqa Studio: directory layout, route structure, component hierarchy, store design, command mapping, data flow, streaming integration, and theme integration.
+Defines the complete Svelte component architecture for OrqaStudio™: directory layout, route structure, component hierarchy, store design, command mapping, data flow, streaming integration, and theme integration.
 
 ---
 
@@ -131,7 +131,7 @@ ui/
 
 ## Route Structure
 
-Orqa Studio is a desktop application running on SvelteKit's static adapter. There is a single route; all navigation is state-driven through Svelte stores. No client-side routing or URL changes occur.
+OrqaStudio is a desktop application running on SvelteKit's static adapter. There is a single route; all navigation is state-driven through Svelte stores. No client-side routing or URL changes occur.
 
 ```
 routes/
@@ -151,7 +151,7 @@ routes/
     - This is the PRIMARY data-fetching boundary (AD-006)
 ```
 
-**Why a single route:** SvelteKit is used as the build toolchain (Vite, HMR, adapter-static), not for its routing capabilities. Orqa Studio's navigation model (Activity Bar + panel switching) does not map to URL paths. A single `+page.svelte` acts as the application container and data-fetching boundary.
+**Why a single route:** SvelteKit is used as the build toolchain (Vite, HMR, adapter-static), not for its routing capabilities. OrqaStudio's navigation model (Activity Bar + panel switching) does not map to URL paths. A single `+page.svelte` acts as the application container and data-fetching boundary.
 
 ---
 
@@ -775,14 +775,14 @@ Theme management uses three layers:
 ### CSS Variable Strategy
 
 ```css
-/* app.css — shadcn-svelte generated, extended with Orqa Studio tokens */
+/* app.css — shadcn-svelte generated, extended with OrqaStudio tokens */
 :root {
   /* shadcn-svelte base palette */
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
   /* ... full shadcn palette ... */
 
-  /* Orqa Studio semantic tokens */
+  /* OrqaStudio semantic tokens */
   --orqa-message-user: var(--primary);
   --orqa-message-assistant: var(--muted);
   --orqa-tool-pending: var(--warning);

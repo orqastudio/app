@@ -10,7 +10,7 @@ updated: 2026-03-04
 
 **Date:** 2026-03-02 | **Status:** Phase 0e specification | **References:** [Claude Integration Research](/research/claude-integration) (AD-010)
 
-This document defines the six core tools that Orqa Studio exposes to the Agent SDK sidecar as a custom MCP server. Each tool is implemented natively in Rust, registered via `createSdkMcpServer()`, and rendered in the conversation UI as a collapsible tool call card. The Agent SDK's built-in tools are disabled (`tools: []`) so that all tool execution flows through Orqa Studio.
+This document defines the six core tools that OrqaStudio™ exposes to the Agent SDK sidecar as a custom MCP server. Each tool is implemented natively in Rust, registered via `createSdkMcpServer()`, and rendered in the conversation UI as a collapsible tool call card. The Agent SDK's built-in tools are disabled (`tools: []`) so that all tool execution flows through OrqaStudio.
 
 ---
 
@@ -32,7 +32,7 @@ This document defines the six core tools that Orqa Studio exposes to the Agent S
 
 ## MCP Server Registration
 
-Orqa Studio's tools are exposed to the Agent SDK sidecar as a custom MCP server. The sidecar registers the server when it spawns, and all tool calls from Claude route through it.
+OrqaStudio's tools are exposed to the Agent SDK sidecar as a custom MCP server. The sidecar registers the server when it spawns, and all tool calls from Claude route through it.
 
 ### Registration Flow
 
@@ -50,8 +50,8 @@ Orqa Studio's tools are exposed to the Agent SDK sidecar as a custom MCP server.
    });
    ```
 3. The MCP server responds to `tools/list` with all six tool definitions (schemas below).
-4. When Claude emits a `tool_use` content block, the Agent SDK routes it to the Orqa Studio MCP server.
-5. Orqa Studio executes the tool natively in Rust and returns the result via `tool_result`.
+4. When Claude emits a `tool_use` content block, the Agent SDK routes it to the OrqaStudio MCP server.
+5. OrqaStudio executes the tool natively in Rust and returns the result via `tool_result`.
 6. The sidecar forwards the result to Claude for the next conversation turn.
 
 ### MCP Protocol Details
@@ -424,7 +424,7 @@ The MCP server process is spawned by the Rust backend as a child process (or run
 **Key logic:** Commands execute via `tauri-plugin-shell` which requires pre-declared shell scopes in `src-tauri/capabilities/default.json`. The shell scope uses argument validators (regex patterns) to restrict which commands can execute. Process group kill (`kill -- -$PGID`) ensures child processes are cleaned up on timeout.
 
 **Security considerations:**
-- Commands run with the privileges of the Orqa Studio process (the desktop user).
+- Commands run with the privileges of the OrqaStudio process (the desktop user).
 - Shell scopes in Tauri capabilities restrict which executables can be invoked.
 - The working directory is always set to the project root.
 - Environment variables are inherited but sensitive variables can be filtered.
@@ -722,7 +722,7 @@ All six tools execute immediately when invoked by Claude. The UI displays tool c
 
 ### Phase 2: Approval Flow
 
-The `canUseTool` callback in the Agent SDK sidecar routes approval requests to the Orqa Studio UI. The following matrix defines the default approval behavior. Users can customize this in settings.
+The `canUseTool` callback in the Agent SDK sidecar routes approval requests to the OrqaStudio UI. The following matrix defines the default approval behavior. Users can customize this in settings.
 
 | Tool | Default Behavior | Rationale |
 |------|-----------------|-----------|
@@ -775,7 +775,7 @@ UI truncation is purely a rendering concern -- the full result is stored in the 
 
 ## Security Model
 
-All tools operate within Orqa Studio's security model defined in AD-011. Security is enforced at the Rust level before any tool executes.
+All tools operate within OrqaStudio's security model defined in AD-011. Security is enforced at the Rust level before any tool executes.
 
 ### Path Validation
 
@@ -801,7 +801,7 @@ Every tool that accepts a file path performs the following validation chain:
 | `~/.env` | Environment secrets (home directory) |
 | Any path containing `.git/objects` | Git internal data (large, binary) |
 
-5. **Tauri scope enforcement:** In addition to Orqa Studio's own validation, Tauri's compiled-in capability scopes provide a second layer of defense. If a path is outside the Tauri scope, the plugin-level call will fail even if Orqa Studio's validation has a bug.
+5. **Tauri scope enforcement:** In addition to OrqaStudio's own validation, Tauri's compiled-in capability scopes provide a second layer of defense. If a path is outside the Tauri scope, the plugin-level call will fail even if OrqaStudio's validation has a bug.
 
 ### Shell Command Restrictions
 

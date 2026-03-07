@@ -1,7 +1,7 @@
 ---
 name: orqa-error-composition
 description: |
-  Orqa Studio error composition and flow: OrqaError anatomy, From implementations,
+  OrqaStudio error composition and flow: OrqaError anatomy, From implementations,
   error propagation through domain/repo/command layers, IPC serialization, and
   frontend error handling patterns.
   Use when: Adding new error variants, implementing error handling in commands or
@@ -14,7 +14,7 @@ user-invocable: true
 
 # Orqa Error Composition
 
-Orqa Studio uses a single canonical error type (`OrqaError`) that flows from deep in the Rust backend, through the Tauri IPC boundary, and into Svelte stores where it is surfaced to the user. Every Rust function returns `Result<T, OrqaError>`. No `unwrap()`, `expect()`, or `panic!()` in production code.
+OrqaStudio uses a single canonical error type (`OrqaError`) that flows from deep in the Rust backend, through the Tauri IPC boundary, and into Svelte stores where it is surfaced to the user. Every Rust function returns `Result<T, OrqaError>`. No `unwrap()`, `expect()`, or `panic!()` in production code.
 
 ## OrqaError Anatomy
 

@@ -1,7 +1,7 @@
 ---
 name: orqa-store-orchestration
 description: |
-  How multiple Svelte 5 rune stores coordinate in Orqa Studio without tight coupling.
+  How multiple Svelte 5 rune stores coordinate in OrqaStudio without tight coupling.
   Covers store independence, component-level orchestration via $derived and $effect,
   circular dependency prevention, cross-store derived state, and initialization order.
   Use when: Wiring multiple stores together, adding cross-store coordination,
@@ -13,7 +13,7 @@ user-invocable: true
 
 # Orqa Store Orchestration
 
-Orqa Studio has 10 singleton stores, each owning a single domain. Stores never import each other (with one documented exception). All cross-store coordination happens in components — primarily layout components that have visibility into multiple domains.
+OrqaStudio has 10 singleton stores, each owning a single domain. Stores never import each other (with one documented exception). All cross-store coordination happens in components — primarily layout components that have visibility into multiple domains.
 
 ## Store Inventory
 

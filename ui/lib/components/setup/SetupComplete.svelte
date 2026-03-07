@@ -25,7 +25,7 @@
 <div class="space-y-6 text-center">
 	<RocketIcon class="mx-auto h-12 w-12 text-primary" />
 	<h3 class="text-lg font-semibold">All Set</h3>
-	<p class="text-sm text-muted-foreground">Orqa Studio is configured and ready to use.</p>
+	<p class="text-sm text-muted-foreground">OrqaStudio is configured and ready to use.</p>
 
 	<div class="mx-auto max-w-xs space-y-2 text-left">
 		<div class="flex items-center gap-2 text-sm">

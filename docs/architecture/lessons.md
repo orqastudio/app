@@ -18,7 +18,7 @@ The lesson promotion pipeline captures implementation mistakes, tracks their rec
 
 Lessons are stored as individual markdown files in `.orqa/lessons/` within the project root. Each file holds a single lesson with YAML frontmatter for machine-readable metadata and a markdown body for human-readable content.
 
-This location is intentional: `.orqa/` is the project-specific directory for Orqa Studio metadata, separate from `.claude/` which contains Claude Code artifacts.
+This location is intentional: `.orqa/` is the project-specific directory for OrqaStudio™ metadata, separate from `.claude/` which contains Claude Code artifacts.
 
 ### File Naming
 
@@ -139,7 +139,7 @@ Threshold reached (recurrence >= 2)
 When a lesson is promoted to a rule:
 
 1. The user selects "Promote to Rule" in the lesson viewer.
-2. Orqa Studio presents a prefilled enforcement entry form based on the lesson's category and tags.
+2. OrqaStudio presents a prefilled enforcement entry form based on the lesson's category and tags.
 3. The user selects the target rule file and fills in the pattern.
 4. On confirm, the app:
    - Appends the new enforcement entry to the target rule's YAML frontmatter
