@@ -1,6 +1,6 @@
 # Motion Assets
 
-Animated SVG variants of the Orqa Studio logo for use in loading states, splash screens, and transitions.
+Animated SVG variants of the OrqaStudio logo for use in loading states, splash screens, and transitions.
 
 ---
 

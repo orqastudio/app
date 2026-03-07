@@ -14,6 +14,13 @@ Derivatives or modified branding are **not permitted** under the terms of the li
 
 If the application repository includes branding assets for runtime use, they originate from this repository.
 
+## Trademark
+
+**OrqaStudio™** is a trademark of Bobbi Byrne-Graham.
+
+- **Domains:** [orqastudio.com](https://orqastudio.com), [orqastudio.ai](https://orqastudio.ai)
+- **Namespace:** [github.com/orqastudio](https://github.com/orqastudio)
+
 ## Licensing
 
 Licensed under [Creative Commons Attribution-NoDerivatives 4.0 (CC BY-ND 4.0)](LICENSE).
@@ -26,7 +33,9 @@ Copyright (c) 2026 Bobbi Byrne-Graham
 
 ## 1. Brand Overview
 
-**OrqaStudio** is an AI-assisted clarity engine that helps people turn complex situations into structured understanding and evolving plans.
+**OrqaStudio™** is an AI-assisted clarity engine that helps people turn messy situations into structured understanding and evolving plans through agile thinking and continuous retrospection.
+
+**Orqa** is derived from the concept of *orchestration* — the coordination of complex systems into coherent outcomes.
 
 The brand visual language reflects three core ideas:
 
@@ -316,7 +325,7 @@ The brand should feel **precise and intelligent**.
 
 ## 11. Voice & Tone
 
-The Orqa Studio voice is:
+The OrqaStudio voice is:
 
 * clear
 * precise
@@ -354,7 +363,7 @@ The design should always feel like **engineering infrastructure**, not consumer 
 
 ## 13. Summary
 
-The Orqa Studio brand expresses a simple idea:
+The OrqaStudio brand expresses a simple idea:
 
 > Intelligent systems require awareness and direction.
 
