@@ -139,3 +139,8 @@ Each repository contains its own license file describing the terms under which i
 
 - The core platform is released under an open-source license.  
 - Branding assets are maintained separately and may have additional usage restrictions.
+
+Content in this repository is licensed under the
+Creative Commons Attribution 4.0 International License.
+
+Copyright (c) 2026 Bobbi Byrne-Graham
