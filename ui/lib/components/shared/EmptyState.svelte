@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Component } from "svelte";
+	import { Button } from "$lib/components/ui/button";
 
 	let {
 		icon: Icon,
@@ -23,11 +24,8 @@
 		<p class="mt-1 text-sm text-muted-foreground">{description}</p>
 	{/if}
 	{#if action}
-		<button
-			class="mt-4 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90"
-			onclick={action.onclick}
-		>
+		<Button variant="default" size="sm" class="mt-4" onclick={action.onclick}>
 			{action.label}
-		</button>
+		</Button>
 	{/if}
 </div>

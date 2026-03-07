@@ -1,5 +1,6 @@
 <script lang="ts">
 	import CircleAlertIcon from "@lucide/svelte/icons/circle-alert";
+	import { Button } from "$lib/components/ui/button";
 
 	let {
 		message,
@@ -14,11 +15,8 @@
 	<CircleAlertIcon class="mb-3 h-10 w-10 text-destructive" />
 	<p class="text-sm text-destructive">{message}</p>
 	{#if onRetry}
-		<button
-			class="mt-3 rounded-md bg-secondary px-4 py-2 text-sm text-secondary-foreground hover:bg-secondary/80"
-			onclick={onRetry}
-		>
+		<Button variant="secondary" size="sm" class="mt-3" onclick={onRetry}>
 			Retry
-		</button>
+		</Button>
 	{/if}
 </div>
