@@ -128,6 +128,18 @@ pub fn list(conn: &Connection) -> Result<Vec<ProjectSummary>, OrqaError> {
     Ok(projects)
 }
 
+/// Touch the `updated_at` timestamp for a project, surfacing it as the most recently active.
+pub fn touch_updated_at(conn: &Connection, id: i64) -> Result<(), OrqaError> {
+    let rows = conn.execute(
+        "UPDATE projects SET updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?1",
+        params![id],
+    )?;
+    if rows == 0 {
+        return Err(OrqaError::NotFound(format!("project {id}")));
+    }
+    Ok(())
+}
+
 /// Update the detected stack for a project (serialized as JSON).
 pub fn update_detected_stack(
     conn: &Connection,

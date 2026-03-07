@@ -2,10 +2,8 @@ use std::path::{Path, PathBuf};
 
 use tauri::State;
 
-use crate::domain::artifact::{
-    parse_doc_frontmatter, parse_plan_frontmatter, parse_research_frontmatter, Artifact,
-    ArtifactSummary, ArtifactType, DocFrontmatter, DocNode,
-};
+use crate::domain::artifact::{Artifact, ArtifactSummary, ArtifactType, DocNode};
+use crate::domain::artifact_reader::{self, humanize_name};
 use crate::domain::paths;
 use crate::domain::time_utils;
 use crate::error::OrqaError;
@@ -97,7 +95,7 @@ fn write_artifact_file(full_path: &Path, content: &str) -> Result<(), OrqaError>
 fn index_artifact(
     conn: &rusqlite::Connection,
     project_id: i64,
-    parsed_type: &crate::domain::artifact::ArtifactType,
+    parsed_type: &ArtifactType,
     rel_path: &str,
     name: &str,
     content: &str,
@@ -184,12 +182,7 @@ pub fn artifact_update(
     let now = time_utils::now_iso_basic();
 
     artifact_repo::update(&conn, artifact_id, &file_hash, file_size, &now)?;
-
-    // Update FTS index content
-    conn.execute(
-        "UPDATE artifacts_fts SET content = ?1 WHERE rowid = ?2",
-        rusqlite::params![content, artifact_id],
-    )?;
+    artifact_repo::update_fts_content(&conn, artifact_id, &content)?;
 
     // Re-fetch and return with content
     let mut updated = artifact_repo::get(&conn, artifact_id)?;
@@ -237,9 +230,6 @@ fn active_project_path(state: &State<'_, AppState>) -> Result<String, OrqaError>
 /// Read a documentation file directly from the active project's docs/ directory on disk.
 #[tauri::command]
 pub fn doc_read(rel_path: String, state: State<'_, AppState>) -> Result<Artifact, OrqaError> {
-    use crate::domain::artifact::ComplianceStatus;
-
-    // Security: prevent path traversal
     if rel_path.contains("..") {
         return Err(OrqaError::Validation(
             "path traversal not allowed".to_string(),
@@ -247,54 +237,12 @@ pub fn doc_read(rel_path: String, state: State<'_, AppState>) -> Result<Artifact
     }
 
     let project_path = active_project_path(&state)?;
-    let docs_path = Path::new(&project_path)
-        .join("docs")
-        .join(format!("{}.md", rel_path));
-
-    if !docs_path.exists() {
-        return Err(OrqaError::NotFound(format!("doc not found: {}", rel_path)));
-    }
-
-    let raw_content = std::fs::read_to_string(&docs_path)?;
-    let (frontmatter, body) = parse_doc_frontmatter(&raw_content);
-
-    // Use frontmatter title if available, otherwise derive from path
-    let name = frontmatter.title.clone().unwrap_or_else(|| {
-        rel_path
-            .split('/')
-            .next_back()
-            .unwrap_or(&rel_path)
-            .replace('-', " ")
-    });
-
-    let fs_metadata = std::fs::metadata(&docs_path).ok();
-    let file_size = fs_metadata.as_ref().map(|m| m.len() as i64);
-    let fm_json = serde_json::to_value(&frontmatter).ok();
-
-    Ok(Artifact {
-        id: 0,
-        project_id: 0,
-        artifact_type: ArtifactType::Doc,
-        rel_path: format!("docs/{}.md", rel_path),
-        name,
-        description: None,
-        content: body,
-        file_hash: None,
-        file_size,
-        file_modified_at: frontmatter.updated.clone(),
-        compliance_status: ComplianceStatus::Unknown,
-        relationships: None,
-        metadata: fm_json,
-        created_at: frontmatter.created.unwrap_or_default(),
-        updated_at: frontmatter.updated.unwrap_or_default(),
-    })
+    artifact_reader::read_doc(Path::new(&project_path), &rel_path)
 }
 
 /// Read a single research document from `.orqa/research/`.
 #[tauri::command]
 pub fn research_read(rel_path: String, state: State<'_, AppState>) -> Result<Artifact, OrqaError> {
-    use crate::domain::artifact::ComplianceStatus;
-
     if rel_path.contains("..") {
         return Err(OrqaError::Validation(
             "path traversal not allowed".to_string(),
@@ -302,68 +250,7 @@ pub fn research_read(rel_path: String, state: State<'_, AppState>) -> Result<Art
     }
 
     let project_path = active_project_path(&state)?;
-    let file_path = Path::new(&project_path)
-        .join(paths::RESEARCH_DIR)
-        .join(format!("{}.md", rel_path));
-
-    if !file_path.exists() {
-        return Err(OrqaError::NotFound(format!(
-            "research doc not found: {}",
-            rel_path
-        )));
-    }
-
-    let raw_content = std::fs::read_to_string(&file_path)?;
-    let (frontmatter, body) = parse_research_frontmatter(&raw_content);
-
-    // Use category as a title fallback (e.g. "persistence" -> "Persistence Research")
-    let name = frontmatter
-        .category
-        .as_deref()
-        .map(|c| {
-            let titled = c
-                .split('-')
-                .map(|w| {
-                    let mut chars = w.chars();
-                    match chars.next() {
-                        Some(first) => first.to_uppercase().to_string() + chars.as_str(),
-                        None => String::new(),
-                    }
-                })
-                .collect::<Vec<_>>()
-                .join(" ");
-            format!("{titled} Research")
-        })
-        .unwrap_or_else(|| {
-            rel_path
-                .split('/')
-                .next_back()
-                .unwrap_or(&rel_path)
-                .replace('-', " ")
-        });
-
-    let description = frontmatter.description.clone();
-    let fs_metadata = std::fs::metadata(&file_path).ok();
-    let file_size = fs_metadata.as_ref().map(|m| m.len() as i64);
-    let fm_json = serde_json::to_value(&frontmatter).ok();
-
-    Ok(Artifact {
-        id: 0,
-        project_id: 0,
-        artifact_type: ArtifactType::Doc,
-        rel_path: format!("{}/{}.md", paths::RESEARCH_DIR, rel_path),
-        name,
-        description,
-        content: body,
-        file_hash: None,
-        file_size,
-        file_modified_at: frontmatter.date.clone(),
-        compliance_status: ComplianceStatus::Unknown,
-        relationships: None,
-        metadata: fm_json,
-        created_at: frontmatter.date.clone().unwrap_or_default(),
-        updated_at: frontmatter.date.unwrap_or_default(),
-    })
+    artifact_reader::read_research(Path::new(&project_path), &rel_path)
 }
 
 /// Scan the active project's `docs/` directory tree and return a hierarchical structure.
@@ -377,15 +264,14 @@ pub fn doc_tree_scan(state: State<'_, AppState>) -> Result<Vec<DocNode>, OrqaErr
         return Ok(Vec::new());
     }
 
-    scan_directory(&docs_dir, &docs_dir)
+    artifact_reader::scan_doc_tree(&docs_dir)
 }
 
 /// Scan the active project's `.orqa/research/` directory tree and return a hierarchical structure.
 ///
 /// Uses `ResearchFrontmatter` to extract labels from the research-specific YAML schema for leaf
 /// nodes. Subdirectories produce `DocNode` entries with `children` (label = humanized directory
-/// name, path = None). This mirrors the behaviour of `doc_tree_scan` / `scan_directory`.
-/// Returns an empty vec if `.orqa/research/` does not exist (no error).
+/// name, path = None). Returns an empty vec if `.orqa/research/` does not exist (no error).
 #[tauri::command]
 pub fn research_tree_scan(state: State<'_, AppState>) -> Result<Vec<DocNode>, OrqaError> {
     let project_path = active_project_path(&state)?;
@@ -394,110 +280,7 @@ pub fn research_tree_scan(state: State<'_, AppState>) -> Result<Vec<DocNode>, Or
         return Ok(Vec::new());
     }
 
-    scan_research_directory(&research_dir, &research_dir)
-}
-
-/// Recursively scan a research directory and build a sorted list of `DocNode` entries.
-///
-/// Subdirectories become directory nodes with `children`. `.md` files (except README and hidden
-/// entries) become leaf nodes using `ResearchFrontmatter` for the label.
-/// Directories come first (alphabetically), then `.md` files (alphabetically).
-fn scan_research_directory(dir: &Path, research_root: &Path) -> Result<Vec<DocNode>, OrqaError> {
-    let mut dirs: Vec<(String, PathBuf)> = Vec::new();
-    let mut files: Vec<(String, PathBuf)> = Vec::new();
-
-    for entry in std::fs::read_dir(dir)? {
-        let entry = entry?;
-        let file_name = entry.file_name();
-        let name = file_name.to_string_lossy();
-
-        if name.starts_with('.') || name.starts_with('_') {
-            continue;
-        }
-
-        // Skip README at any level — it is a meta-document, not a research document.
-        if name.to_ascii_uppercase() == "README.MD" {
-            continue;
-        }
-
-        let path = entry.path();
-        if path.is_dir() {
-            dirs.push((name.into_owned(), path));
-        } else if name.ends_with(".md") {
-            files.push((name.into_owned(), path));
-        }
-    }
-
-    dirs.sort_by(|a, b| a.0.cmp(&b.0));
-    files.sort_by(|a, b| a.0.cmp(&b.0));
-
-    let mut nodes = Vec::with_capacity(dirs.len() + files.len());
-
-    for (name, path) in dirs {
-        let children = scan_research_directory(&path, research_root)?;
-        nodes.push(DocNode {
-            label: humanize_name(&name),
-            path: None,
-            children: Some(children),
-            frontmatter: None,
-        });
-    }
-
-    for (name, path) in files {
-        let rel = relative_research_path(&path, research_root);
-        let content = std::fs::read_to_string(&path).unwrap_or_default();
-        let (fm, _) = parse_research_frontmatter(&content);
-
-        // Derive label: use category (title-cased) + " Research", or fall back to filename.
-        let label = fm
-            .category
-            .as_deref()
-            .map(|c| {
-                let titled: String = c
-                    .split('-')
-                    .map(|w| {
-                        let mut chars = w.chars();
-                        match chars.next() {
-                            Some(first) => first.to_uppercase().to_string() + chars.as_str(),
-                            None => String::new(),
-                        }
-                    })
-                    .collect::<Vec<_>>()
-                    .join(" ");
-                format!("{titled} Research")
-            })
-            .unwrap_or_else(|| humanize_name(&name));
-
-        // Convert research frontmatter to DocFrontmatter for the tree node.
-        let doc_fm = DocFrontmatter {
-            title: Some(label.clone()),
-            category: fm.category,
-            tags: Vec::new(),
-            created: fm.date.clone(),
-            updated: fm.date,
-        };
-
-        nodes.push(DocNode {
-            label,
-            path: Some(rel),
-            children: None,
-            frontmatter: Some(doc_fm),
-        });
-    }
-
-    Ok(nodes)
-}
-
-/// Build the relative path from `research_root` without the `.md` extension.
-///
-/// Example: `.orqa/research/mvp/persistence.md` -> `"mvp/persistence"`.
-fn relative_research_path(file: &Path, research_root: &Path) -> String {
-    let rel = file
-        .strip_prefix(research_root)
-        .unwrap_or(file)
-        .with_extension("");
-    // Normalise to forward slashes (important on Windows)
-    rel.to_string_lossy().replace('\\', "/")
+    artifact_reader::scan_research_tree(&research_dir)
 }
 
 /// Scan the active project's `.orqa/plans/` directory and return a flat list of plan docs.
@@ -512,51 +295,12 @@ pub fn plan_tree_scan(state: State<'_, AppState>) -> Result<Vec<DocNode>, OrqaEr
         return Ok(Vec::new());
     }
 
-    let mut nodes = Vec::new();
-    for entry in std::fs::read_dir(&plans_dir)? {
-        let entry = entry?;
-        let file_name = entry.file_name();
-        let name = file_name.to_string_lossy();
-
-        if name.starts_with('.') || name.starts_with('_') || !name.ends_with(".md") {
-            continue;
-        }
-
-        let path = entry.path();
-        let rel = name.trim_end_matches(".md").to_string();
-
-        let content = std::fs::read_to_string(&path).unwrap_or_default();
-        let (fm, _) = parse_plan_frontmatter(&content);
-
-        // Derive label: use title field if available, otherwise humanize the filename
-        let label = fm.title.clone().unwrap_or_else(|| humanize_name(&name));
-
-        // Convert plan frontmatter to DocFrontmatter for the tree node
-        let doc_fm = DocFrontmatter {
-            title: Some(label.clone()),
-            category: None,
-            tags: fm.tags.clone(),
-            created: fm.created.clone(),
-            updated: fm.updated.clone(),
-        };
-
-        nodes.push(DocNode {
-            label,
-            path: Some(rel),
-            children: None,
-            frontmatter: Some(doc_fm),
-        });
-    }
-
-    nodes.sort_by(|a, b| a.label.cmp(&b.label));
-    Ok(nodes)
+    artifact_reader::scan_plan_tree(&plans_dir)
 }
 
 /// Read a single implementation plan from `.orqa/plans/`.
 #[tauri::command]
 pub fn plan_read(rel_path: String, state: State<'_, AppState>) -> Result<Artifact, OrqaError> {
-    use crate::domain::artifact::ComplianceStatus;
-
     if rel_path.contains("..") {
         return Err(OrqaError::Validation(
             "path traversal not allowed".to_string(),
@@ -564,48 +308,7 @@ pub fn plan_read(rel_path: String, state: State<'_, AppState>) -> Result<Artifac
     }
 
     let project_path = active_project_path(&state)?;
-    let file_path = Path::new(&project_path)
-        .join(paths::PLANS_DIR)
-        .join(format!("{}.md", rel_path));
-
-    if !file_path.exists() {
-        return Err(OrqaError::NotFound(format!("plan not found: {}", rel_path)));
-    }
-
-    let raw_content = std::fs::read_to_string(&file_path)?;
-    let (frontmatter, body) = parse_plan_frontmatter(&raw_content);
-
-    // Use title field if available, otherwise humanize the filename
-    let file_name = file_path
-        .file_name()
-        .map(|n| n.to_string_lossy().into_owned())
-        .unwrap_or_default();
-    let name = frontmatter
-        .title
-        .clone()
-        .unwrap_or_else(|| humanize_name(&file_name));
-
-    let fs_metadata = std::fs::metadata(&file_path).ok();
-    let file_size = fs_metadata.as_ref().map(|m| m.len() as i64);
-    let fm_json = serde_json::to_value(&frontmatter).ok();
-
-    Ok(Artifact {
-        id: 0,
-        project_id: 0,
-        artifact_type: ArtifactType::Doc,
-        rel_path: format!("{}/{}.md", paths::PLANS_DIR, rel_path),
-        name,
-        description: None,
-        content: body,
-        file_hash: None,
-        file_size,
-        file_modified_at: frontmatter.updated.clone(),
-        compliance_status: ComplianceStatus::Unknown,
-        relationships: None,
-        metadata: fm_json,
-        created_at: frontmatter.created.clone().unwrap_or_default(),
-        updated_at: frontmatter.updated.unwrap_or_default(),
-    })
+    artifact_reader::read_plan(Path::new(&project_path), &rel_path)
 }
 
 /// List governance artifacts (agents, rules, skills, hooks) by scanning disk.
@@ -715,71 +418,6 @@ fn governance_dir(root: &Path, artifact_type: &ArtifactType) -> Option<PathBuf> 
     }
 }
 
-/// Try to build an `ArtifactSummary` from a single directory entry.
-///
-/// Returns `None` if the entry should be skipped (wrong type, hidden, invalid extension).
-fn summary_from_entry(
-    entry: &std::fs::DirEntry,
-    artifact_type: &ArtifactType,
-) -> Result<Option<ArtifactSummary>, OrqaError> {
-    use crate::domain::artifact::ComplianceStatus;
-
-    let file_name = entry.file_name();
-    let name = file_name.to_string_lossy();
-
-    if name.starts_with('.') || name.starts_with('_') {
-        return Ok(None);
-    }
-
-    let ft = entry.file_type()?;
-
-    let summary = match artifact_type {
-        ArtifactType::Skill => {
-            if ft.is_dir() && entry.path().join("SKILL.md").exists() {
-                Some(ArtifactSummary {
-                    id: 0,
-                    artifact_type: artifact_type.clone(),
-                    rel_path: format!(".claude/skills/{}/SKILL.md", name),
-                    name: humanize_name(&name),
-                    description: None,
-                    compliance_status: ComplianceStatus::Unknown,
-                    file_modified_at: None,
-                })
-            } else {
-                None
-            }
-        }
-        _ if ft.is_file() => {
-            let valid = match artifact_type {
-                ArtifactType::Agent | ArtifactType::Rule => name.ends_with(".md"),
-                ArtifactType::Hook => true,
-                _ => false,
-            };
-            if valid {
-                let rel_path = match artifact_type {
-                    ArtifactType::Agent => format!(".claude/agents/{}", name),
-                    ArtifactType::Rule => format!(".claude/rules/{}", name),
-                    ArtifactType::Hook => format!(".claude/hooks/{}", name),
-                    _ => return Ok(None),
-                };
-                Some(ArtifactSummary {
-                    id: 0,
-                    artifact_type: artifact_type.clone(),
-                    rel_path,
-                    name: humanize_name(&name),
-                    description: None,
-                    compliance_status: ComplianceStatus::Unknown,
-                    file_modified_at: None,
-                })
-            } else {
-                None
-            }
-        }
-        _ => None,
-    };
-
-    Ok(summary)
-}
 
 /// Scan a governance directory and return sorted artifact summaries.
 fn list_governance_files(
@@ -797,7 +435,7 @@ fn list_governance_files(
     let mut summaries = Vec::new();
     for entry in std::fs::read_dir(&dir)? {
         let entry = entry?;
-        if let Some(summary) = summary_from_entry(&entry, artifact_type)? {
+        if let Some(summary) = artifact_reader::summary_from_entry(&entry, artifact_type)? {
             summaries.push(summary);
         }
     }
@@ -806,115 +444,6 @@ fn list_governance_files(
     Ok(summaries)
 }
 
-/// Recursively scan a directory and build a sorted list of `DocNode` entries.
-///
-/// Hidden entries (starting with `.` or `_`) are skipped.
-/// Directories come first (alphabetically), then `.md` files (alphabetically).
-fn scan_directory(dir: &Path, docs_root: &Path) -> Result<Vec<DocNode>, OrqaError> {
-    let mut dirs: Vec<(String, PathBuf)> = Vec::new();
-    let mut files: Vec<(String, PathBuf)> = Vec::new();
-
-    for entry in std::fs::read_dir(dir)? {
-        let entry = entry?;
-        let file_name = entry.file_name();
-        let name = file_name.to_string_lossy();
-
-        if name.starts_with('.') || name.starts_with('_') {
-            continue;
-        }
-
-        let path = entry.path();
-        if path.is_dir() {
-            dirs.push((name.into_owned(), path));
-        } else if name.ends_with(".md") {
-            files.push((name.into_owned(), path));
-        }
-    }
-
-    dirs.sort_by(|a, b| a.0.cmp(&b.0));
-    files.sort_by(|a, b| a.0.cmp(&b.0));
-
-    let mut nodes = Vec::with_capacity(dirs.len() + files.len());
-
-    for (name, path) in dirs {
-        let children = scan_directory(&path, docs_root)?;
-        nodes.push(DocNode {
-            label: humanize_name(&name),
-            path: None,
-            children: Some(children),
-            frontmatter: None,
-        });
-    }
-
-    for (name, path) in files {
-        let rel = relative_doc_path(&path, docs_root);
-        let fm = std::fs::read_to_string(&path)
-            .ok()
-            .map(|content| parse_doc_frontmatter(&content).0);
-        let label = fm
-            .as_ref()
-            .and_then(|f| f.title.clone())
-            .unwrap_or_else(|| humanize_name(&name));
-        nodes.push(DocNode {
-            label,
-            path: Some(rel),
-            children: None,
-            frontmatter: fm,
-        });
-    }
-
-    Ok(nodes)
-}
-
-/// Build the relative path from `docs_root` without the `.md` extension.
-///
-/// Example: `docs/product/vision.md` -> `"product/vision"`.
-fn relative_doc_path(file: &Path, docs_root: &Path) -> String {
-    let rel = file
-        .strip_prefix(docs_root)
-        .unwrap_or(file)
-        .with_extension("");
-    // Normalise to forward slashes (important on Windows)
-    rel.to_string_lossy().replace('\\', "/")
-}
-
-/// Convert a filename to a human-readable label.
-///
-/// Strips `.md` / `.sh`, replaces hyphens with spaces, and title-cases each word.
-/// Preserves fully uppercase names (e.g. README, CHANGELOG).
-fn humanize_name(filename: &str) -> String {
-    let stem = filename
-        .strip_suffix(".md")
-        .or_else(|| filename.strip_suffix(".sh"))
-        .unwrap_or(filename);
-    // Preserve all-caps names like README, CHANGELOG, TODO
-    if stem
-        .chars()
-        .all(|c| c.is_ascii_uppercase() || c == '-' || c == '_')
-        && stem.chars().any(|c| c.is_ascii_uppercase())
-    {
-        return stem.to_string();
-    }
-    stem.split('-')
-        .map(title_case_word)
-        .collect::<Vec<_>>()
-        .join(" ")
-}
-
-/// Title-case a single word (first char uppercase, rest lowercase).
-fn title_case_word(word: &str) -> String {
-    let mut chars = word.chars();
-    match chars.next() {
-        None => String::new(),
-        Some(first) => {
-            let mut s = first.to_uppercase().to_string();
-            for ch in chars {
-                s.extend(ch.to_lowercase());
-            }
-            s
-        }
-    }
-}
 
 /// Parse a string into an `ArtifactType`, returning a validation error for unknown types.
 fn parse_artifact_type(s: &str) -> Result<ArtifactType, OrqaError> {

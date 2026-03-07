@@ -27,10 +27,7 @@ pub fn project_open(path: String, state: State<'_, AppState>) -> Result<Project,
     let project = match project_repo::get_by_path(&conn, &canonical) {
         Ok(project) => {
             // Touch the updated_at timestamp so it surfaces as the active project
-            conn.execute(
-                "UPDATE projects SET updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?1",
-                rusqlite::params![project.id],
-            )?;
+            project_repo::touch_updated_at(&conn, project.id)?;
             project_repo::get(&conn, project.id)?
         }
         Err(OrqaError::NotFound(_)) => {

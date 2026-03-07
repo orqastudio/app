@@ -173,6 +173,15 @@ pub fn update(
     Ok(())
 }
 
+/// Update the FTS index content for an artifact after its body text changes.
+pub fn update_fts_content(conn: &Connection, id: i64, content: &str) -> Result<(), OrqaError> {
+    conn.execute(
+        "UPDATE artifacts_fts SET content = ?1 WHERE rowid = ?2",
+        params![content, id],
+    )?;
+    Ok(())
+}
+
 /// Delete an artifact by id.
 pub fn delete(conn: &Connection, id: i64) -> Result<(), OrqaError> {
     // Remove from contentless FTS index first
