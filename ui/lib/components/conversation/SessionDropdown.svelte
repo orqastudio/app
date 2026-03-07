@@ -14,20 +14,29 @@
 	import { ScrollArea } from "$lib/components/ui/scroll-area";
 	import SearchInput from "$lib/components/shared/SearchInput.svelte";
 	import ConfirmDeleteDialog from "$lib/components/shared/ConfirmDeleteDialog.svelte";
+	import EmptyState from "$lib/components/shared/EmptyState.svelte";
+	import ErrorDisplay from "$lib/components/shared/ErrorDisplay.svelte";
+	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 
 	let {
 		sessions,
 		activeSessionId,
+		loading = false,
+		error = null,
 		onSelect,
 		onNewSession,
 		onDelete,
+		onRetry,
 		children,
 	}: {
 		sessions: SessionSummary[];
 		activeSessionId: number | null;
+		loading?: boolean;
+		error?: string | null;
 		onSelect: (sessionId: number) => void;
 		onNewSession: () => void;
 		onDelete: (sessionId: number) => void;
+		onRetry?: () => void;
 		children: import("svelte").Snippet;
 	} = $props();
 
@@ -147,15 +156,19 @@
 
 		<!-- Session list -->
 		<ScrollArea class="max-h-64">
-			{#if filteredSessions.length === 0}
-				<div class="flex flex-col items-center py-6 text-center">
-					<MessageSquareIcon class="mb-2 h-8 w-8 text-muted-foreground" />
-					<p class="text-xs text-muted-foreground">
-						{searchQuery.trim().length > 0
-							? "No matching sessions"
-							: "No sessions yet"}
-					</p>
+			{#if loading}
+				<div class="flex items-center justify-center py-6">
+					<LoadingSpinner />
 				</div>
+			{:else if error}
+				<div class="px-3 py-4">
+					<ErrorDisplay message={error} onRetry={onRetry} />
+				</div>
+			{:else if filteredSessions.length === 0}
+				<EmptyState
+					icon={MessageSquareIcon}
+					title={searchQuery.trim().length > 0 ? "No matching sessions" : "No sessions yet"}
+				/>
 			{:else}
 				<div class="p-1">
 					{#each filteredSessions as session (session.id)}

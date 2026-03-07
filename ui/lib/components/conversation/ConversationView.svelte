@@ -222,10 +222,16 @@ import { sessionStore } from "$lib/stores/session.svelte";
 		<SessionHeader
 			{session}
 			{sessions}
+			sessionsLoading={sessionStore.isLoading}
+			sessionsError={sessionStore.error}
 			onNewSession={handleNewSession}
 			onUpdateTitle={handleUpdateTitle}
 			onSelectSession={handleSelectSession}
 			onDeleteSession={handleDeleteSession}
+			onRetryLoadSessions={() => {
+				const project = projectStore.activeProject;
+				if (project) sessionStore.loadSessions(project.id);
+			}}
 		/>
 
 		<!-- Resume notification banner -->

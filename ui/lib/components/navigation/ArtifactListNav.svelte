@@ -5,6 +5,8 @@
 	import ZapIcon from "@lucide/svelte/icons/zap";
 	import GitBranchIcon from "@lucide/svelte/icons/git-branch";
 	import EmptyState from "$lib/components/shared/EmptyState.svelte";
+	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
+	import ErrorDisplay from "$lib/components/shared/ErrorDisplay.svelte";
 	import SearchInput from "$lib/components/shared/SearchInput.svelte";
 	import { artifactStore } from "$lib/stores/artifact.svelte";
 	import { enforcementStore } from "$lib/stores/enforcement.svelte";
@@ -90,7 +92,18 @@
 
 		<ScrollArea.Root class="min-h-0 flex-1">
 			<div class="p-1">
-				{#if items.length === 0}
+				{#if artifactStore.loading}
+					<div class="flex items-center justify-center py-8">
+						<LoadingSpinner />
+					</div>
+				{:else if artifactStore.error}
+					<div class="px-2 py-4">
+						<ErrorDisplay
+							message={artifactStore.error}
+							onRetry={() => artifactStore.loadGovernanceList(config.artifactType)}
+						/>
+					</div>
+				{:else if items.length === 0}
 					<div class="px-2 py-8">
 						<EmptyState
 							icon={config.icon}

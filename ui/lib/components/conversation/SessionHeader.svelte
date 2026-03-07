@@ -10,17 +10,23 @@
 	let {
 		session,
 		sessions,
+		sessionsLoading = false,
+		sessionsError = null,
 		onNewSession,
 		onUpdateTitle,
 		onSelectSession,
 		onDeleteSession,
+		onRetryLoadSessions,
 	}: {
 		session: Session;
 		sessions: SessionSummary[];
+		sessionsLoading?: boolean;
+		sessionsError?: string | null;
 		onNewSession: () => void;
 		onUpdateTitle: (title: string) => void;
 		onSelectSession: (sessionId: number) => void;
 		onDeleteSession: (sessionId: number) => void;
+		onRetryLoadSessions?: () => void;
 	} = $props();
 
 	let isEditing = $state(false);
@@ -58,9 +64,12 @@
 	<SessionDropdown
 		{sessions}
 		activeSessionId={session.id}
+		loading={sessionsLoading}
+		error={sessionsError}
 		onSelect={onSelectSession}
 		onNewSession={onNewSession}
 		onDelete={onDeleteSession}
+		onRetry={onRetryLoadSessions}
 	>
 		<Button variant="ghost" size="icon-sm" aria-label="Session history" title="Session history">
 			<HistoryIcon class="h-4 w-4" />

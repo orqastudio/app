@@ -11,6 +11,8 @@
 	import LayersIcon from "@lucide/svelte/icons/layers";
 	import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
 	import EmptyState from "$lib/components/shared/EmptyState.svelte";
+	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
+	import ErrorDisplay from "$lib/components/shared/ErrorDisplay.svelte";
 	import CoverageIndicator from "$lib/components/governance/CoverageIndicator.svelte";
 	import { projectStore } from "$lib/stores/project.svelte";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
@@ -127,7 +129,19 @@
 					</div>
 				</Card.Header>
 				<Card.Content>
-					{#if governanceStore.scanResult}
+					{#if governanceStore.loading}
+						<div class="flex items-center justify-center py-4">
+							<LoadingSpinner />
+						</div>
+					{:else if governanceStore.error}
+						<ErrorDisplay
+							message={governanceStore.error}
+							onRetry={() => {
+								const p = projectStore.activeProject;
+								if (p) governanceStore.scan(p.id);
+							}}
+						/>
+					{:else if governanceStore.scanResult}
 						<CoverageIndicator
 							areas={governanceStore.scanResult.areas}
 							coverageRatio={governanceStore.scanResult.coverage_ratio}

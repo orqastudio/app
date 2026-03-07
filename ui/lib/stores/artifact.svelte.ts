@@ -10,6 +10,9 @@ class ArtifactStore {
 	docTreeLoading = $state(false);
 	researchTreeLoading = $state(false);
 	planTreeLoading = $state(false);
+	docTreeError = $state<string | null>(null);
+	researchTreeError = $state<string | null>(null);
+	planTreeError = $state<string | null>(null);
 	loading = $state(false);
 	error = $state<string | null>(null);
 	filterText = $state("");
@@ -87,11 +90,12 @@ class ArtifactStore {
 
 	async loadDocTree() {
 		this.docTreeLoading = true;
+		this.docTreeError = null;
 		try {
 			this.docTree = await invoke<DocNode[]>("doc_tree_scan");
 		} catch (err: unknown) {
 			const message = extractErrorMessage(err);
-			this.error = `Failed to load documentation tree: ${message}`;
+			this.docTreeError = `Failed to load documentation tree: ${message}`;
 			this.docTree = [];
 		} finally {
 			this.docTreeLoading = false;
@@ -100,11 +104,12 @@ class ArtifactStore {
 
 	async loadResearchTree() {
 		this.researchTreeLoading = true;
+		this.researchTreeError = null;
 		try {
 			this.researchTree = await invoke<DocNode[]>("research_tree_scan");
 		} catch (err: unknown) {
 			const message = extractErrorMessage(err);
-			this.error = `Failed to load research tree: ${message}`;
+			this.researchTreeError = `Failed to load research tree: ${message}`;
 			this.researchTree = [];
 		} finally {
 			this.researchTreeLoading = false;
@@ -113,11 +118,12 @@ class ArtifactStore {
 
 	async loadPlanTree() {
 		this.planTreeLoading = true;
+		this.planTreeError = null;
 		try {
 			this.planTree = await invoke<DocNode[]>("plan_tree_scan");
 		} catch (err: unknown) {
 			const message = extractErrorMessage(err);
-			this.error = `Failed to load plans tree: ${message}`;
+			this.planTreeError = `Failed to load plans tree: ${message}`;
 			this.planTree = [];
 		} finally {
 			this.planTreeLoading = false;
@@ -178,6 +184,9 @@ class ArtifactStore {
 		this.docTreeLoading = false;
 		this.researchTreeLoading = false;
 		this.planTreeLoading = false;
+		this.docTreeError = null;
+		this.researchTreeError = null;
+		this.planTreeError = null;
 		this.loading = false;
 		this.error = null;
 		this.filterText = "";

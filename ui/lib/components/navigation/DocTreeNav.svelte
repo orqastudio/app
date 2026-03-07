@@ -6,6 +6,8 @@
 	import FlaskConicalIcon from "@lucide/svelte/icons/flask-conical";
 	import ClipboardListIcon from "@lucide/svelte/icons/clipboard-list";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
+	import EmptyState from "$lib/components/shared/EmptyState.svelte";
+	import ErrorDisplay from "$lib/components/shared/ErrorDisplay.svelte";
 	import SearchInput from "$lib/components/shared/SearchInput.svelte";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import { artifactStore } from "$lib/stores/artifact.svelte";
@@ -32,6 +34,20 @@
 			: mode === "plans"
 				? artifactStore.planTreeLoading
 				: artifactStore.docTreeLoading,
+	);
+	const treeError = $derived(
+		mode === "research"
+			? artifactStore.researchTreeError
+			: mode === "plans"
+				? artifactStore.planTreeError
+				: artifactStore.docTreeError,
+	);
+	const reloadTree = $derived(
+		mode === "research"
+			? () => artifactStore.loadResearchTree()
+			: mode === "plans"
+				? () => artifactStore.loadPlanTree()
+				: () => artifactStore.loadDocTree(),
 	);
 	const emptyLabel = $derived(
 		mode === "research"
@@ -86,9 +102,13 @@
 	<div class="flex h-full items-center justify-center">
 		<LoadingSpinner />
 	</div>
+{:else if treeError}
+	<div class="flex h-full items-center justify-center p-4">
+		<ErrorDisplay message={treeError} onRetry={reloadTree} />
+	</div>
 {:else if tree.length === 0}
-	<div class="flex h-full items-center justify-center p-4 text-center text-xs text-muted-foreground">
-		{emptyLabel}
+	<div class="flex h-full items-center justify-center p-4">
+		<EmptyState icon={ItemIcon} title={emptyLabel} />
 	</div>
 {:else}
 	<div class="flex h-full flex-col">

@@ -1,5 +1,7 @@
 <script lang="ts">
 	import * as Card from "$lib/components/ui/card";
+	import ShieldIcon from "@lucide/svelte/icons/shield";
+	import EmptyState from "$lib/components/shared/EmptyState.svelte";
 	import type { GovernanceCounts } from "$lib/types";
 
 	interface Props {
@@ -45,9 +47,11 @@
 				</div>
 			</div>
 		{:else}
-			<p class="text-sm text-muted-foreground">
-				No governance data available. Run a project scan from Model & Scanning to detect governance artifacts.
-			</p>
+			<EmptyState
+				icon={ShieldIcon}
+				title="No governance data available"
+				description="Run a project scan from Model & Scanning to detect governance artifacts."
+			/>
 		{/if}
 	</Card.Content>
 </Card.Root>
