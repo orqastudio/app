@@ -3,6 +3,7 @@ pub mod enforcement;
 pub mod enforcement_engine;
 pub mod enforcement_parser;
 pub mod governance;
+pub mod governance_analysis;
 pub mod governance_scanner;
 pub mod lessons;
 pub mod message;
