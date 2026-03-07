@@ -68,11 +68,10 @@ fn friendly_context_overflow_message(code: &str, message: &str) -> Option<String
     }
 }
 
-/// Translate a `SidecarResponse` into a `StreamEvent`, if applicable.
+/// Translate content and turn lifecycle responses into `StreamEvent`s.
 ///
-/// Returns `None` for sidecar-specific responses (HealthOk, SummaryResult)
-/// that are not part of the streaming conversation flow.
-fn translate_response(response: &SidecarResponse) -> Option<StreamEvent> {
+/// Returns `None` for responses not part of content/turn flow.
+fn translate_content_event(response: &SidecarResponse) -> Option<StreamEvent> {
     match response {
         SidecarResponse::StreamStart {
             message_id,
@@ -87,6 +86,44 @@ fn translate_response(response: &SidecarResponse) -> Option<StreamEvent> {
         SidecarResponse::ThinkingDelta { content } => Some(StreamEvent::ThinkingDelta {
             content: content.clone(),
         }),
+        SidecarResponse::BlockComplete {
+            block_index,
+            content_type,
+        } => Some(StreamEvent::BlockComplete {
+            block_index: *block_index,
+            content_type: content_type.clone(),
+        }),
+        SidecarResponse::TurnComplete {
+            input_tokens,
+            output_tokens,
+        } => Some(StreamEvent::TurnComplete {
+            input_tokens: *input_tokens,
+            output_tokens: *output_tokens,
+        }),
+        SidecarResponse::StreamCancelled => Some(StreamEvent::StreamCancelled),
+        SidecarResponse::StreamError {
+            code,
+            message,
+            recoverable,
+        } => {
+            let user_message =
+                friendly_context_overflow_message(code, message).unwrap_or_else(|| message.clone());
+            Some(StreamEvent::StreamError {
+                code: code.clone(),
+                message: user_message,
+                recoverable: *recoverable,
+            })
+        }
+        _ => None,
+    }
+}
+
+/// Translate tool-related responses into `StreamEvent`s.
+///
+/// Returns `None` for non-tool responses (handled by `translate_content_event`
+/// or suppressed entirely).
+fn translate_tool_event(response: &SidecarResponse) -> Option<StreamEvent> {
+    match response {
         SidecarResponse::ToolUseStart {
             tool_call_id,
             tool_name,
@@ -112,41 +149,6 @@ fn translate_response(response: &SidecarResponse) -> Option<StreamEvent> {
             result: result.clone(),
             is_error: *is_error,
         }),
-        SidecarResponse::BlockComplete {
-            block_index,
-            content_type,
-        } => Some(StreamEvent::BlockComplete {
-            block_index: *block_index,
-            content_type: content_type.clone(),
-        }),
-        SidecarResponse::TurnComplete {
-            input_tokens,
-            output_tokens,
-        } => Some(StreamEvent::TurnComplete {
-            input_tokens: *input_tokens,
-            output_tokens: *output_tokens,
-        }),
-        SidecarResponse::StreamError {
-            code,
-            message,
-            recoverable,
-        } => {
-            let user_message =
-                friendly_context_overflow_message(code, message).unwrap_or_else(|| message.clone());
-            Some(StreamEvent::StreamError {
-                code: code.clone(),
-                message: user_message,
-                recoverable: *recoverable,
-            })
-        }
-        SidecarResponse::StreamCancelled => Some(StreamEvent::StreamCancelled),
-        // Non-streaming responses — not forwarded to the frontend channel
-        SidecarResponse::HealthOk { .. }
-        | SidecarResponse::SummaryResult { .. }
-        | SidecarResponse::SessionInitialized { .. } => None,
-        // ToolExecute is handled synchronously in the read loop — not forwarded to frontend
-        SidecarResponse::ToolExecute { .. } => None,
-        // ToolApprovalRequest for write/execute tools is forwarded to the frontend
         SidecarResponse::ToolApprovalRequest {
             tool_call_id,
             tool_name,
@@ -156,7 +158,16 @@ fn translate_response(response: &SidecarResponse) -> Option<StreamEvent> {
             tool_name: tool_name.clone(),
             input: input.clone(),
         }),
+        _ => None,
     }
+}
+
+/// Translate a `SidecarResponse` into a `StreamEvent`, if applicable.
+///
+/// Returns `None` for sidecar-specific responses (HealthOk, SummaryResult,
+/// SessionInitialized, ToolExecute) that are not forwarded to the frontend.
+fn translate_response(response: &SidecarResponse) -> Option<StreamEvent> {
+    translate_content_event(response).or_else(|| translate_tool_event(response))
 }
 
 /// Returns true if this response is a terminal event (stream complete, error, or cancelled).
@@ -263,6 +274,58 @@ fn send_approval(
     true
 }
 
+/// Register an approval sender in `pending_approvals` and return the receiver.
+///
+/// Returns `None` if the mutex is poisoned, in which case the caller should deny.
+fn register_approval_sender(
+    tool_call_id: &str,
+    state: &tauri::State<'_, AppState>,
+) -> Option<mpsc::Receiver<bool>> {
+    let (tx, rx) = mpsc::sync_channel::<bool>(1);
+    let Ok(mut map) = state.pending_approvals.lock() else {
+        tracing::error!("[stream] pending_approvals mutex poisoned");
+        return None;
+    };
+    map.insert(tool_call_id.to_string(), tx);
+    Some(rx)
+}
+
+/// Handle a `ToolApprovalRequest`.
+///
+/// Read-only tools (listed in `READ_ONLY_TOOLS`) are auto-approved immediately.
+/// Write/execute tools emit a `StreamEvent::ToolApprovalRequest` to the frontend
+/// and block on a sync channel until `stream_tool_approval_respond` is called.
+///
+/// Returns `true` to continue the loop, `false` on failure.
+/// Emit an approval request event to the frontend and wait for the user's decision.
+///
+/// Returns `Some(approved)` on success, or `None` if the event could not be sent.
+/// On failure, removes the pending approval entry to avoid a dangling sender.
+fn emit_and_await_approval(
+    tool_call_id: &str,
+    tool_name: &str,
+    input: &str,
+    rx: mpsc::Receiver<bool>,
+    state: &tauri::State<'_, AppState>,
+    on_event: &tauri::ipc::Channel<StreamEvent>,
+) -> Option<bool> {
+    let emit_result = on_event.send(StreamEvent::ToolApprovalRequest {
+        tool_call_id: tool_call_id.to_string(),
+        tool_name: tool_name.to_string(),
+        input: input.to_string(),
+    });
+    if emit_result.is_err() {
+        tracing::warn!("[stream] failed to emit ToolApprovalRequest to frontend");
+        if let Ok(mut map) = state.pending_approvals.lock() {
+            map.remove(tool_call_id);
+        }
+        return None;
+    }
+    let approved = rx.recv().unwrap_or(false);
+    tracing::debug!("[stream] received user decision for {tool_call_id}: approved={approved}");
+    Some(approved)
+}
+
 /// Handle a `ToolApprovalRequest`.
 ///
 /// Read-only tools (listed in `READ_ONLY_TOOLS`) are auto-approved immediately.
@@ -279,63 +342,129 @@ fn handle_tool_approval(
 ) -> bool {
     tracing::debug!("[stream] ToolApprovalRequest: id={tool_call_id} tool={tool_name}");
 
-    // Auto-approve read-only tools
     if READ_ONLY_TOOLS.contains(&tool_name) {
         tracing::debug!("[stream] auto-approving read-only tool: {tool_name}");
         return send_approval(tool_call_id, true, None, state, on_event);
     }
 
-    // For write/execute tools, emit event to frontend and wait for user decision
     tracing::debug!("[stream] requesting user approval for: {tool_name}");
-
-    let (tx, rx) = mpsc::sync_channel::<bool>(1);
-
-    // Register the sender so stream_tool_approval_respond can signal us
-    {
-        let Ok(mut map) = state.pending_approvals.lock() else {
-            tracing::error!("[stream] pending_approvals mutex poisoned");
+    let rx = match register_approval_sender(tool_call_id, state) {
+        Some(rx) => rx,
+        None => {
             return send_approval(
                 tool_call_id,
                 false,
                 Some("internal error".to_string()),
                 state,
                 on_event,
-            );
-        };
-        map.insert(tool_call_id.to_string(), tx);
-    }
-
-    // Emit the approval request event to the frontend
-    let emit_result = on_event.send(StreamEvent::ToolApprovalRequest {
-        tool_call_id: tool_call_id.to_string(),
-        tool_name: tool_name.to_string(),
-        input: input.to_string(),
-    });
-    if emit_result.is_err() {
-        tracing::warn!("[stream] failed to emit ToolApprovalRequest to frontend");
-        // Clean up our registration and deny
-        if let Ok(mut map) = state.pending_approvals.lock() {
-            map.remove(tool_call_id);
+            )
         }
-        return send_approval(
+    };
+
+    match emit_and_await_approval(tool_call_id, tool_name, input, rx, state, on_event) {
+        Some(approved) => {
+            let reason = if approved {
+                None
+            } else {
+                Some("denied by user".to_string())
+            };
+            send_approval(tool_call_id, approved, reason, state, on_event)
+        }
+        None => send_approval(
             tool_call_id,
             false,
             Some("frontend not reachable".to_string()),
             state,
             on_event,
-        );
+        ),
     }
+}
 
-    // Block until the frontend calls stream_tool_approval_respond
-    let approved = rx.recv().unwrap_or(false);
-    tracing::debug!("[stream] received user decision for {tool_call_id}: approved={approved}");
+/// Persist the SDK session UUID when a `SessionInitialized` response is received.
+fn handle_session_initialized(
+    session_id: i64,
+    sdk_session_id: &str,
+    state: &tauri::State<'_, AppState>,
+) {
+    if let Ok(db) = state.db.lock() {
+        if let Err(e) = session_repo::update_sdk_session_id(&db, session_id, sdk_session_id) {
+            tracing::warn!("[stream] failed to persist sdk_session_id: {e}");
+        }
+    }
+}
 
-    let reason = if approved {
-        None
-    } else {
-        Some("denied by user".to_string())
-    };
-    send_approval(tool_call_id, approved, reason, state, on_event)
+/// Read one line from the sidecar, emitting an error event and returning `None` on failure.
+fn read_sidecar_line(
+    state: &tauri::State<'_, AppState>,
+    on_event: &tauri::ipc::Channel<StreamEvent>,
+) -> Option<SidecarResponse> {
+    match state.sidecar.read_line() {
+        Ok(Some(resp)) => Some(resp),
+        Ok(None) => {
+            let _ = on_event.send(StreamEvent::StreamError {
+                code: "sidecar_eof".to_string(),
+                message: "sidecar process closed unexpectedly".to_string(),
+                recoverable: false,
+            });
+            None
+        }
+        Err(e) => {
+            let _ = on_event.send(StreamEvent::StreamError {
+                code: "sidecar_read_error".to_string(),
+                message: e.to_string(),
+                recoverable: false,
+            });
+            None
+        }
+    }
+}
+
+/// Dispatch one sidecar response to its handler.
+///
+/// Returns `Ok(true)` to continue the loop, `Ok(false)` to break (terminal event),
+/// and `Err(())` when a handler signals a fatal error.
+fn dispatch_response(
+    response: SidecarResponse,
+    acc: &mut StreamAccumulator,
+    state: &tauri::State<'_, AppState>,
+    on_event: &tauri::ipc::Channel<StreamEvent>,
+) -> Result<bool, ()> {
+    if let SidecarResponse::SessionInitialized {
+        session_id,
+        ref sdk_session_id,
+    } = response
+    {
+        handle_session_initialized(session_id, sdk_session_id, state);
+        return Ok(true);
+    }
+    if let SidecarResponse::ToolExecute {
+        ref tool_call_id,
+        ref tool_name,
+        ref input,
+    } = response
+    {
+        if !handle_tool_execute(tool_call_id, tool_name, input, state, on_event) {
+            return Err(());
+        }
+        return Ok(true);
+    }
+    if let SidecarResponse::ToolApprovalRequest {
+        ref tool_call_id,
+        ref tool_name,
+        ref input,
+    } = response
+    {
+        if !handle_tool_approval(tool_call_id, tool_name, input, state, on_event) {
+            return Err(());
+        }
+        return Ok(true);
+    }
+    accumulate_response(&response, acc);
+    let terminal = is_terminal(&response);
+    if let Some(event) = translate_response(&response) {
+        let _ = on_event.send(event);
+    }
+    Ok(!terminal)
 }
 
 /// Run the sidecar read loop, accumulating results into a `StreamAccumulator`.
@@ -352,77 +481,21 @@ fn run_stream_loop(
     };
 
     loop {
-        let response = match state.sidecar.read_line() {
-            Ok(Some(resp)) => resp,
-            Ok(None) => {
-                let _ = on_event.send(StreamEvent::StreamError {
-                    code: "sidecar_eof".to_string(),
-                    message: "sidecar process closed unexpectedly".to_string(),
-                    recoverable: false,
-                });
-                acc.had_error = true;
-                break;
-            }
-            Err(e) => {
-                let _ = on_event.send(StreamEvent::StreamError {
-                    code: "sidecar_read_error".to_string(),
-                    message: e.to_string(),
-                    recoverable: false,
-                });
+        let response = match read_sidecar_line(state, on_event) {
+            Some(r) => r,
+            None => {
                 acc.had_error = true;
                 break;
             }
         };
 
-        // Persist SDK session UUID — not forwarded to frontend
-        if let SidecarResponse::SessionInitialized {
-            session_id,
-            ref sdk_session_id,
-        } = response
-        {
-            if let Ok(db) = state.db.lock() {
-                if let Err(e) = session_repo::update_sdk_session_id(&db, session_id, sdk_session_id)
-                {
-                    tracing::warn!("[stream] failed to persist sdk_session_id: {e}");
-                }
-            }
-            continue;
-        }
-
-        if let SidecarResponse::ToolExecute {
-            ref tool_call_id,
-            ref tool_name,
-            ref input,
-        } = response
-        {
-            if !handle_tool_execute(tool_call_id, tool_name, input, state, on_event) {
+        match dispatch_response(response, &mut acc, state, on_event) {
+            Ok(true) => continue,
+            Ok(false) => break,
+            Err(()) => {
                 acc.had_error = true;
                 break;
             }
-            continue;
-        }
-
-        if let SidecarResponse::ToolApprovalRequest {
-            ref tool_call_id,
-            ref tool_name,
-            ref input,
-        } = response
-        {
-            if !handle_tool_approval(tool_call_id, tool_name, input, state, on_event) {
-                acc.had_error = true;
-                break;
-            }
-            continue;
-        }
-
-        accumulate_response(&response, &mut acc);
-
-        let terminal = is_terminal(&response);
-        if let Some(event) = translate_response(&response) {
-            let _ = on_event.send(event);
-        }
-        if terminal {
-            break;
         }
     }
 
@@ -683,6 +756,37 @@ fn build_system_prompt(project_path: &Path) -> Result<String, OrqaError> {
     Ok(parts.join("\n"))
 }
 
+/// Look up the persisted SDK session UUID for the given session, used to resume across restarts.
+fn lookup_sdk_session_id(state: &AppState, session_id: i64) -> Result<Option<String>, OrqaError> {
+    let db = state
+        .db
+        .lock()
+        .map_err(|e| OrqaError::Database(format!("failed to acquire db lock: {e}")))?;
+    Ok(session_repo::get(&db, session_id)
+        .ok()
+        .and_then(|s| s.sdk_session_id))
+}
+
+/// Resolve the optional system prompt for the current project, logging but not failing on errors.
+fn resolve_system_prompt(state: &tauri::State<'_, AppState>) -> Option<String> {
+    match project_root(state) {
+        Ok(root) => match build_system_prompt(&root) {
+            Ok(prompt) => {
+                tracing::debug!("[stream] system prompt built ({} chars)", prompt.len());
+                Some(prompt)
+            }
+            Err(e) => {
+                tracing::warn!("[stream] failed to build system prompt: {e}");
+                None
+            }
+        },
+        Err(e) => {
+            tracing::warn!("[stream] no active project for system prompt: {e}");
+            None
+        }
+    }
+}
+
 /// Send a message to the sidecar and stream responses back via `Channel<T>`.
 ///
 /// This command:
@@ -712,38 +816,11 @@ pub fn stream_send_message(
     }
 
     let (user_message_id, turn_index) = persist_user_message(&state, session_id, &content)?;
-
     reset_process_state_if_new_session(&state, session_id);
-
     super::sidecar_commands::ensure_sidecar_running(&state)?;
 
-    let system_prompt = match project_root(&state) {
-        Ok(root) => match build_system_prompt(&root) {
-            Ok(prompt) => {
-                tracing::debug!("[stream] system prompt built ({} chars)", prompt.len());
-                Some(prompt)
-            }
-            Err(e) => {
-                tracing::warn!("[stream] failed to build system prompt: {e}");
-                None
-            }
-        },
-        Err(e) => {
-            tracing::warn!("[stream] no active project for system prompt: {e}");
-            None
-        }
-    };
-
-    // Look up persisted SDK session UUID for resume across restarts
-    let sdk_session_id = {
-        let db = state
-            .db
-            .lock()
-            .map_err(|e| OrqaError::Database(format!("failed to acquire db lock: {e}")))?;
-        session_repo::get(&db, session_id)
-            .ok()
-            .and_then(|s| s.sdk_session_id)
-    };
+    let system_prompt = resolve_system_prompt(&state);
+    let sdk_session_id = lookup_sdk_session_id(&state, session_id)?;
 
     let request = SidecarRequest::SendMessage {
         session_id,
@@ -755,9 +832,7 @@ pub fn stream_send_message(
     state.sidecar.send(&request)?;
 
     let acc = run_stream_loop(&state, &on_event);
-
     persist_assistant_message(&state, session_id, turn_index, &acc)?;
-
     emit_process_violations(&state, &on_event);
 
     Ok(user_message_id)
@@ -955,6 +1030,33 @@ fn enforce_bash(command: &str, state: &tauri::State<'_, AppState>) -> Option<(St
     None
 }
 
+/// Run enforcement checks for the given tool before execution.
+///
+/// Returns `Some((error_message, true))` if a rule blocks the call, `None` to proceed.
+fn check_enforcement(
+    tool_name: &str,
+    input: &serde_json::Value,
+    state: &tauri::State<'_, AppState>,
+) -> Option<(String, bool)> {
+    match tool_name {
+        "write_file" => {
+            let file_path = input["path"].as_str().unwrap_or("");
+            let new_text = input["content"].as_str().unwrap_or("");
+            enforce_file(tool_name, file_path, new_text, state)
+        }
+        "edit_file" => {
+            let file_path = input["path"].as_str().unwrap_or("");
+            let new_text = input["new_string"].as_str().unwrap_or("");
+            enforce_file(tool_name, file_path, new_text, state)
+        }
+        "bash" => {
+            let command = input["command"].as_str().unwrap_or("");
+            enforce_bash(command, state)
+        }
+        _ => None,
+    }
+}
+
 /// Dispatch a tool call to the appropriate handler.
 /// Returns `(output, is_error)`.
 fn execute_tool(
@@ -983,26 +1085,7 @@ fn execute_tool(
         }
     };
 
-    // Run enforcement checks before executing write/bash tools
-    let enforcement_result = match tool_name {
-        "write_file" => {
-            let file_path = input["path"].as_str().unwrap_or("");
-            let new_text = input["content"].as_str().unwrap_or("");
-            enforce_file(tool_name, file_path, new_text, state)
-        }
-        "edit_file" => {
-            let file_path = input["path"].as_str().unwrap_or("");
-            let new_text = input["new_string"].as_str().unwrap_or("");
-            enforce_file(tool_name, file_path, new_text, state)
-        }
-        "bash" => {
-            let command = input["command"].as_str().unwrap_or("");
-            enforce_bash(command, state)
-        }
-        _ => None,
-    };
-
-    if let Some(blocked) = enforcement_result {
+    if let Some(blocked) = check_enforcement(tool_name, &input, state) {
         return blocked;
     }
 
@@ -1393,6 +1476,56 @@ fn tool_search_semantic(
     }
 }
 
+/// Append semantic search results for `query` to `out`, returning an error string on lock failure.
+fn collect_semantic_section(
+    query: &str,
+    max_results: u32,
+    state: &tauri::State<'_, AppState>,
+    out: &mut String,
+) -> Result<(), String> {
+    let mut search_guard = state
+        .search
+        .lock()
+        .map_err(|e| format!("search lock error: {e}"))?;
+    if let Some(engine) = search_guard.as_mut() {
+        match engine.search_semantic(query, max_results) {
+            Ok(results) if !results.is_empty() => {
+                out.push_str("## Semantic Matches\n\n");
+                out.push_str(&format_search_results(&results));
+                out.push('\n');
+            }
+            Ok(_) => {}
+            Err(e) => out.push_str(&format!("(semantic search unavailable: {e})\n\n")),
+        }
+    }
+    Ok(())
+}
+
+/// Append regex search results for the escaped `query` to `out`, returning an error on lock failure.
+fn collect_regex_section(
+    query: &str,
+    max_results: u32,
+    state: &tauri::State<'_, AppState>,
+    out: &mut String,
+) -> Result<(), String> {
+    let search_guard = state
+        .search
+        .lock()
+        .map_err(|e| format!("search lock error: {e}"))?;
+    if let Some(engine) = search_guard.as_ref() {
+        let escaped = regex::escape(query);
+        match engine.search_regex(&escaped, None, max_results) {
+            Ok(results) if !results.is_empty() => {
+                out.push_str("## Regex Matches\n\n");
+                out.push_str(&format_search_results(&results));
+            }
+            Ok(_) => {}
+            Err(e) => out.push_str(&format!("(regex search unavailable: {e})\n\n")),
+        }
+    }
+    Ok(())
+}
+
 /// Combined code research: runs both regex and semantic search, merging results.
 ///
 /// Accepts a `query` string and optional `max_results`. The query is used as-is
@@ -1414,48 +1547,11 @@ fn tool_code_research(
     let half = max_results / 2 + 1;
     let mut out = String::new();
 
-    // Semantic results (best for natural language queries)
-    {
-        let mut search_guard = match state.search.lock() {
-            Ok(g) => g,
-            Err(e) => return (format!("search lock error: {e}"), true),
-        };
-        if let Some(engine) = search_guard.as_mut() {
-            match engine.search_semantic(query, half) {
-                Ok(results) => {
-                    if !results.is_empty() {
-                        out.push_str("## Semantic Matches\n\n");
-                        out.push_str(&format_search_results(&results));
-                        out.push('\n');
-                    }
-                }
-                Err(e) => {
-                    out.push_str(&format!("(semantic search unavailable: {e})\n\n"));
-                }
-            }
-        }
+    if let Err(e) = collect_semantic_section(query, half, state, &mut out) {
+        return (e, true);
     }
-
-    // Regex results (best for exact identifiers)
-    {
-        let search_guard = match state.search.lock() {
-            Ok(g) => g,
-            Err(e) => return (format!("search lock error: {e}"), true),
-        };
-        if let Some(engine) = search_guard.as_ref() {
-            let escaped = regex::escape(query);
-            match engine.search_regex(&escaped, None, half) {
-                Ok(results) => {
-                    if !results.is_empty() {
-                        out.push_str("## Regex Matches\n\n");
-                        out.push_str(&format_search_results(&results));
-                    }
-                }
-                Err(e) => {
-                    out.push_str(&format!("(regex search unavailable: {e})\n\n"));
-                }
-            }
-        }
+    if let Err(e) = collect_regex_section(query, half, state, &mut out) {
+        return (e, true);
     }
 
     if out.is_empty() {
