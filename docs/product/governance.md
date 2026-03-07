@@ -10,6 +10,8 @@ updated: 2026-03-07
 
 **Date:** 2026-03-07
 
+> OrqaStudio is an AI-assisted clarity engine that helps people turn messy situations into structured understanding and evolving plans through agile thinking and continuous retrospection.
+
 ## Feature Governance Framework
 
 Every feature, task, and implementation must pass the Two-Pillar Test before work begins.

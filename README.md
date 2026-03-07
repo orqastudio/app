@@ -4,28 +4,9 @@
 
 # OrqaStudio
 
-OrqaStudio is an AI-assisted clarity engine designed to help people turn messy situations into structured understanding and evolving plans.
+> **OrqaStudio is an AI-assisted clarity engine that helps people turn messy situations into structured understanding and evolving plans through agile thinking and continuous retrospection.**
 
-Rather than focusing purely on task management or software generation, OrqaStudio focuses on improving the quality of thinking that leads to action. It operationalises agile thinking through AI-assisted reasoning, enabling individuals and teams to explore problems, shape ideas, design experiments, and continuously learn through structured retrospection.
-
----
-
-## Project Philosophy
-
-OrqaStudio focuses on **clarity before execution**. Clear thinking leads to better action.
-
-The platform supports a structured thinking loop:
-
-```
-Chaos --> Structured Understanding --> Experiments / Backlog --> Execution --> Retrospective --> Improved Understanding
-```
-
-### Core Principles
-
-- **Clarity before execution** — Clear thinking leads to better action
-- **Human-led AI** — AI acts as a structured thinking partner rather than replacing human judgement
-- **Artifact-driven reasoning** — Markdown artifacts represent structured knowledge that can evolve over time
-- **Reflective learning** — Retrospectives and iteration history enable continuous learning
+Rather than focusing primarily on building software or managing tasks, OrqaStudio focuses on **improving the quality of thinking that precedes action**. Projects, backlogs, and execution plans are outputs of improved understanding, not the primary goal.
 
 ---
 
@@ -33,9 +14,40 @@ Chaos --> Structured Understanding --> Experiments / Backlog --> Execution --> R
 
 - **AI-assisted thinking** — Use AI as a structured reasoning partner to explore problems, challenge assumptions, and build understanding before committing to action
 - **Artifact-driven knowledge** — Conversations produce markdown artifacts — plans, decisions, retrospectives — that evolve over time and accumulate into a knowledge base
-- **Governance as a living system** — Standards, rules, and agent definitions are not documents collecting dust. They are visible, enforceable, and editable through the UI
-- **Self-learning loop** — Every session contributes to improving the governance framework. Mistakes become lessons, lessons become rules, rules become enforcement
-- **Process visibility** — Scanner dashboards, task pipelines, retrospective cards, and metrics charts make invisible process tangible and manageable
+- **Reflective learning** — Every session feeds the learning loop. Mistakes become lessons, lessons become rules, rules become enforcement. The system gets smarter with each cycle.
+- **Governance as a living system** — Standards, rules, and agent definitions are visible, enforceable, and editable through the UI — not hidden in dotfiles
+- **Domain-agnostic core** — Software development is the first domain, but the clarity engine applies to any complex work: research, operations, consulting, personal management
+
+### Core Principles
+
+- **Clarity before execution** — Clear thinking leads to better action
+- **Human-led AI** — AI acts as a structured thinking partner rather than replacing human judgement
+- **Agile as a thinking system** — Restoring the full agile learning loop, not just backlog management
+- **Artifact-driven reasoning** — Markdown artifacts are the canonical state of knowledge, reusable in prompts and portable outside the system
+
+### The Agile Learning Loop
+
+```
+Chaos / Input
+  --> Structured Understanding
+  --> Experiments / Backlog
+  --> Execution
+  --> Retrospective
+  --> Improved Understanding
+```
+
+### Entry Modes
+
+Users can enter from four starting points — each supporting new projects or existing work:
+
+| Mode | Starting point |
+|------|---------------|
+| **Problem** | Something is not working and needs diagnosis |
+| **Idea** | A concept needs validation and shaping |
+| **Goal** | A desired outcome requires planning |
+| **Chaos** | A messy situation needs clarity |
+
+Each path triggers different AI-assisted onboarding flows but converges into the same structured reasoning loop.
 
 ---
 

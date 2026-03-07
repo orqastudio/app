@@ -747,3 +747,74 @@ Expanding beyond desktop.
 - [ ] Mobile companion — Quick capture and review on mobile devices
 - [ ] API access — Programmatic access to OrqaStudio's artifact store and learning loop for automation
 - [ ] CLI companion — Lightweight command-line tool for artifact queries and quick captures without launching the full app
+
+## Future: Spaces & Organisational Structure
+
+Containers for organising projects as adoption scales.
+
+- [ ] Spaces — Named containers (organisations, teams, programs, strategy domains) that group related projects
+- [ ] Space-level governance — Shared rules, agents, and standards that apply across all projects within a space
+- [ ] Space-level insights — Aggregated metrics, learning, and retrospective analysis across a space's projects
+- [ ] Space hierarchy — Nested spaces for complex organisational structures (org → program → team → project)
+
+## Future: Reasoning Transparency
+
+Maintaining clear reasoning trails across all interactions.
+
+- [ ] Reasoning summaries — AI-generated summaries of how conclusions were reached in each session
+- [ ] Change justification notes — Structured explanations attached to artifact changes explaining why
+- [ ] Confidence indicators — AI signals how confident it is in recommendations, surfacing uncertainty
+- [ ] Decision logs — Chronological record of all decisions with context, alternatives considered, and rationale
+
+## Future: Chaos-to-Clarity Engine
+
+Dedicated workflows for transforming unstructured situations into structured understanding.
+
+- [ ] Cognitive unloading interfaces — Structured brain-dump flows that capture everything before organising
+- [ ] AI-driven theme detection — Automatic identification of themes, patterns, and clusters in unstructured input
+- [ ] Situation mapping — Visual representation of the current situation with relationships and dependencies
+- [ ] Pathway recommendation — AI suggests the most promising paths forward based on the mapped situation
+
+## Future: Multi-View Output System
+
+Expanding artifact projections beyond backlogs.
+
+- [ ] Strategy maps — Visual projections of how artifacts connect to strategic objectives
+- [ ] Experiment frameworks — Structured views for hypothesis → test → measure → learn cycles
+- [ ] Stakeholder systems diagrams — Visual maps of who cares about what and how they interact
+- [ ] Communication summaries — Auto-generated summaries tailored for different audiences from the same artifacts
+
+## Future: Reflective AI Facilitation
+
+The system actively supports structured reflection beyond passive history.
+
+- [ ] AI retrospective facilitator — Guided retrospective sessions with prompts drawn from actual project history
+- [ ] Assumption challenge prompts — AI proactively surfaces assumptions for the user to validate or revise
+- [ ] Insight synthesis — Cross-session analysis that synthesises learning into actionable recommendations
+- [ ] Learning cycle detection — AI identifies when the same mistakes or patterns are recurring across iterations
+
+## Future: Institutional Memory
+
+Long-term knowledge preservation for organisations.
+
+- [ ] Historical project evolution maps — Visual timeline of how a project's understanding evolved over months/years
+- [ ] Organisational learning records — Persistent capture of lessons that outlive individual projects
+- [ ] Strategic timeline visualisations — How organisational strategy has shifted over time, with decision context
+
+## Future: Output Composability
+
+Supporting new artifact generation modules for different domains.
+
+- [ ] Service design maps — Artifact templates for service design thinking
+- [ ] Policy development frameworks — Structured reasoning for policy creation and analysis
+- [ ] Innovation pipelines — Idea → validation → development → launch artifact flows
+- [ ] Research planning systems — Literature review, methodology design, and findings capture
+
+## Future: Ecosystem Potential
+
+Long-term potential for OrqaStudio to support broader communities.
+
+- [ ] Ethical AI capability platform — Transparent, auditable AI-assisted reasoning as a service
+- [ ] Open reasoning framework — Open-source the core reasoning patterns for community adoption
+- [ ] Community innovation infrastructure — Shared spaces for collaborative structured thinking
+- [ ] Tools for charities and social organisations — Adapted workflows for resource-constrained contexts
