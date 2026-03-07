@@ -1,3 +1,5 @@
+![License](https://img.shields.io/badge/license-Apache%202.0-blue)
+
 ![Orqa Studio](https://github.com/orqastudio/orqastudio-brand/blob/main/assets/banners/banner-1680x240.png?raw=1)
 
 A desktop app for managed agentic development. Claude Code's capabilities with a visual process layer.
@@ -26,4 +28,5 @@ See [Development > Getting Started](docs/development/getting-started.md) for pre
 ## Documentation
 
 Documentation lives in the `docs/` directory. Open any `.md` file directly or browse in Orqa Studio's built-in doc viewer.
+
 
