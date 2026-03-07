@@ -4,9 +4,9 @@
 
 # OrqaStudio
 
-OrqaStudio is an AI-assisted clarity engine that helps people turn complex situations into structured understanding and evolving plans.
+OrqaStudio is an AI-assisted clarity engine designed to help people turn messy situations into structured understanding and evolving plans.
 
-It applies agile thinking beyond software development, enabling individuals and teams to explore problems, design experiments, and continuously learn through structured retrospection.
+Rather than focusing purely on task management or software generation, OrqaStudio focuses on improving the quality of thinking that leads to action. It operationalises agile thinking through AI-assisted reasoning, enabling individuals and teams to explore problems, shape ideas, design experiments, and continuously learn through structured retrospection.
 
 ---
 
@@ -17,7 +17,7 @@ OrqaStudio focuses on **clarity before execution**. Clear thinking leads to bett
 The platform supports a structured thinking loop:
 
 ```
-Chaos --> Clarity --> Structured Understanding --> Experiments --> Reflection --> Improved Understanding
+Chaos --> Structured Understanding --> Experiments / Backlog --> Execution --> Retrospective --> Improved Understanding
 ```
 
 ### Core Principles
@@ -31,10 +31,11 @@ Chaos --> Clarity --> Structured Understanding --> Experiments --> Reflection --
 
 ## What OrqaStudio Does
 
-- **Wraps Claude Code** — Same model, same capabilities, but with a UI that surfaces the process layer
-- **Backfills governance** — Point it at an existing codebase, answer questions, and OrqaStudio progressively builds the documentation, rules, and agent definitions through conversation
-- **Makes process visible** — Scanner dashboards, task pipelines, retrospective cards, and metrics charts replace terminal output
-- **Persists everything** — Conversation history linked to artifacts, searchable across sessions
+- **AI-assisted thinking** — Use AI as a structured reasoning partner to explore problems, challenge assumptions, and build understanding before committing to action
+- **Artifact-driven knowledge** — Conversations produce markdown artifacts — plans, decisions, retrospectives — that evolve over time and accumulate into a knowledge base
+- **Governance as a living system** — Standards, rules, and agent definitions are not documents collecting dust. They are visible, enforceable, and editable through the UI
+- **Self-learning loop** — Every session contributes to improving the governance framework. Mistakes become lessons, lessons become rules, rules become enforcement
+- **Process visibility** — Scanner dashboards, task pipelines, retrospective cards, and metrics charts make invisible process tangible and manageable
 
 ---
 
@@ -48,7 +49,7 @@ This is the main application repository containing the OrqaStudio desktop app so
 
 - **Desktop:** Tauri v2 (Rust backend, lightweight native shell)
 - **Frontend:** Svelte 5 (runes, component architecture)
-- **AI Integration:** Claude API + Claude Max (via Agent SDK or direct API)
+- **AI Integration:** Multi-provider — Claude Agent SDK, direct APIs, with architecture for additional providers
 - **Persistence:** SQLite (session history, metrics, project config)
 - **Target platforms:** Windows, macOS, Linux
 
@@ -67,13 +68,15 @@ This is the main application repository containing the OrqaStudio desktop app so
 
 ## Getting Started
 
-See [Development > Getting Started](docs/development/getting-started.md) for prerequisites and setup instructions.
+See [Getting Started](docs/development/getting-started.md) for prerequisites and setup instructions.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to contribute.
 
 ## Documentation
 
 Documentation lives in the `docs/` directory. Open any `.md` file directly or browse in OrqaStudio's built-in doc viewer.
-
-Documentation is licensed under [CC BY 4.0](docs/LICENSE).
 
 ---
 
