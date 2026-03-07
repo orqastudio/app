@@ -1,5 +1,3 @@
-use std::path::Path;
-
 use serde::Deserialize;
 
 use crate::domain::enforcement::{
@@ -104,21 +102,15 @@ fn parse_entry(raw: RawEntry) -> Result<EnforcementEntry, OrqaError> {
     })
 }
 
-/// Parse a rule file at `path` into an `EnforcementRule`.
+/// Parse rule content (file name stem + string content) into an `EnforcementRule`.
+///
+/// This is a pure function — no filesystem I/O. Callers are responsible for
+/// reading the file content and providing the rule name (typically the file stem).
 ///
 /// Files without YAML frontmatter or without an `enforcement:` key are
 /// returned with empty `entries` — they are documentation-only rules.
-pub fn parse_rule_file(path: &Path) -> Result<EnforcementRule, OrqaError> {
-    let name = path
-        .file_stem()
-        .and_then(|s| s.to_str())
-        .unwrap_or("unknown")
-        .to_string();
-
-    let content = std::fs::read_to_string(path)
-        .map_err(|e| OrqaError::FileSystem(format!("cannot read rule file '{name}': {e}")))?;
-
-    let (frontmatter_str, prose) = split_frontmatter(&content);
+pub fn parse_rule_content(name: &str, content: &str) -> Result<EnforcementRule, OrqaError> {
+    let (frontmatter_str, prose) = split_frontmatter(content);
 
     let (scope, entries) = match frontmatter_str {
         None => ("project".to_string(), Vec::new()),
@@ -142,50 +134,11 @@ pub fn parse_rule_file(path: &Path) -> Result<EnforcementRule, OrqaError> {
     };
 
     Ok(EnforcementRule {
-        name,
+        name: name.to_string(),
         scope,
         entries,
         prose: prose.to_string(),
     })
-}
-
-/// Load all rule files from `rules_dir/*.md` and parse them.
-///
-/// Files that fail to parse are logged as warnings and skipped — one bad
-/// rule file must not prevent other rules from loading.
-pub fn load_rules(rules_dir: &Path) -> Result<Vec<EnforcementRule>, OrqaError> {
-    let read_dir = std::fs::read_dir(rules_dir).map_err(|e| {
-        OrqaError::FileSystem(format!(
-            "cannot read rules directory '{}': {e}",
-            rules_dir.display()
-        ))
-    })?;
-
-    let mut rules = Vec::new();
-
-    for entry in read_dir.flatten() {
-        let path = entry.path();
-        if path.extension().and_then(|e| e.to_str()) != Some("md") {
-            continue;
-        }
-
-        match parse_rule_file(&path) {
-            Ok(rule) => {
-                tracing::debug!(
-                    "[enforcement] loaded rule '{}' ({} entries)",
-                    rule.name,
-                    rule.entries.len()
-                );
-                rules.push(rule);
-            }
-            Err(e) => {
-                tracing::warn!("[enforcement] failed to parse '{}': {e}", path.display());
-            }
-        }
-    }
-
-    rules.sort_by(|a, b| a.name.cmp(&b.name));
-    Ok(rules)
 }
 
 #[cfg(test)]
@@ -302,12 +255,9 @@ mod tests {
     }
 
     #[test]
-    fn parse_rule_file_no_frontmatter() {
-        let dir = tempfile::tempdir().expect("tempdir");
-        let path = dir.path().join("my-rule.md");
-        std::fs::write(&path, "# My Rule\n\nSome prose.").expect("write");
-
-        let rule = parse_rule_file(&path).expect("should parse");
+    fn parse_rule_content_no_frontmatter() {
+        let rule =
+            parse_rule_content("my-rule", "# My Rule\n\nSome prose.").expect("should parse");
         assert_eq!(rule.name, "my-rule");
         assert_eq!(rule.scope, "project");
         assert!(rule.entries.is_empty());
@@ -315,9 +265,7 @@ mod tests {
     }
 
     #[test]
-    fn parse_rule_file_with_enforcement() {
-        let dir = tempfile::tempdir().expect("tempdir");
-        let path = dir.path().join("coding-standards.md");
+    fn parse_rule_content_with_enforcement() {
         let content = r#"---
 scope: project
 enforcement:
@@ -336,9 +284,8 @@ enforcement:
 
 Do not use unwrap in production code.
 "#;
-        std::fs::write(&path, content).expect("write");
 
-        let rule = parse_rule_file(&path).expect("should parse");
+        let rule = parse_rule_content("coding-standards", content).expect("should parse");
         assert_eq!(rule.name, "coding-standards");
         assert_eq!(rule.entries.len(), 2);
         assert_eq!(rule.entries[0].event, EventType::File);

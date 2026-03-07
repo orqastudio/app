@@ -22,6 +22,13 @@ pub struct ProjectScanResult {
 /// Walks the filesystem up to `MAX_SCAN_DEPTH` levels deep, skipping
 /// directories listed in `excluded_paths`. Only reads directory entries
 /// (never file contents) for speed.
+///
+/// # Filesystem dependency
+///
+/// This function performs filesystem I/O (recursive directory walking and existence checks).
+/// The dependency is intentional — project scanning is a filesystem domain service whose
+/// sole purpose is to inspect local project structure. It does not access the database or
+/// any network resource.
 pub fn scan_project(
     project_path: &str,
     excluded_paths: &[String],

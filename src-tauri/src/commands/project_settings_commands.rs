@@ -3,7 +3,8 @@ use std::path::Path;
 
 use crate::domain::paths;
 use crate::domain::project_scanner::{self, ProjectScanResult};
-use crate::domain::project_settings::{self, ProjectSettings};
+use crate::domain::project_settings::ProjectSettings;
+use crate::repo::project_settings_repo;
 use crate::error::OrqaError;
 
 /// Read project settings from the `.orqa/project.json` file.
@@ -11,7 +12,7 @@ use crate::error::OrqaError;
 /// Returns `None` if the settings file does not exist yet.
 #[tauri::command]
 pub fn project_settings_read(path: String) -> Result<Option<ProjectSettings>, OrqaError> {
-    project_settings::read_settings(&path)
+    project_settings_repo::read(&path)
 }
 
 /// Write project settings to the `.orqa/project.json` file.
@@ -23,7 +24,7 @@ pub fn project_settings_write(
     path: String,
     settings: ProjectSettings,
 ) -> Result<ProjectSettings, OrqaError> {
-    project_settings::write_settings(&path, &settings)?;
+    project_settings_repo::write(&path, &settings)?;
     Ok(settings)
 }
 

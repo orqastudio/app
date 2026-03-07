@@ -5,7 +5,6 @@ use regex::Regex;
 use crate::domain::enforcement::{
     Condition, EnforcementEntry, EnforcementRule, EventType, RuleAction, ScanFinding, Verdict,
 };
-use crate::domain::enforcement_parser::load_rules;
 use crate::error::OrqaError;
 
 /// A compiled enforcement entry with pre-built regex objects for fast matching.
@@ -108,18 +107,19 @@ fn collect_glob_paths(pattern: &str) -> Result<Vec<String>, OrqaError> {
     Ok(paths)
 }
 
-/// Scan a single file for violations defined by a compiled scan entry.
+/// Scan the lines of `content` for violations defined by a compiled scan entry.
+///
+/// This is a pure function — no filesystem I/O. The caller is responsible for
+/// reading the file and providing its content as a string slice.
 ///
 /// Checks every line against all `content` conditions; returns findings for
 /// every line where all conditions match.
-fn scan_file(
+fn scan_content(
     file_path: &str,
+    content: &str,
     ce: &CompiledEntry,
     rule: &EnforcementRule,
-) -> Result<Vec<ScanFinding>, OrqaError> {
-    let content = std::fs::read_to_string(file_path)
-        .map_err(|e| OrqaError::FileSystem(format!("cannot read file '{file_path}': {e}")))?;
-
+) -> Vec<ScanFinding> {
     let mut findings = Vec::new();
 
     for (idx, line) in content.lines().enumerate() {
@@ -146,7 +146,7 @@ fn scan_file(
         }
     }
 
-    Ok(findings)
+    findings
 }
 
 /// The enforcement engine. Holds parsed rules and pre-compiled regexes.
@@ -159,12 +159,14 @@ pub struct EnforcementEngine {
 }
 
 impl EnforcementEngine {
-    /// Load enforcement rules from all `*.md` files in `rules_dir`.
+    /// Build an `EnforcementEngine` from a pre-loaded set of rules.
     ///
-    /// Files without YAML frontmatter load as documentation-only (no entries).
+    /// The caller is responsible for loading the rules from disk (via
+    /// `repo::enforcement_rules_repo::load_rules`). This constructor is
+    /// pure — it only compiles regexes and builds internal indices.
+    ///
     /// Invalid regex patterns are skipped with a warning.
-    pub fn load(rules_dir: &Path) -> Result<Self, OrqaError> {
-        let rules = load_rules(rules_dir)?;
+    pub fn new(rules: Vec<EnforcementRule>) -> Self {
         let mut compiled = Vec::new();
 
         for (idx, rule) in rules.iter().enumerate() {
@@ -181,7 +183,7 @@ impl EnforcementEngine {
             compiled.len()
         );
 
-        Ok(Self { rules, compiled })
+        Self { rules, compiled }
     }
 
     /// Evaluate a file write or edit tool call.
@@ -257,6 +259,9 @@ impl EnforcementEngine {
     /// For each scan entry, resolves the `scope` glob relative to `project_path`,
     /// reads each matching file, and checks every line against the entry's conditions.
     /// Returns a flat list of findings — all entries and all matching files combined.
+    ///
+    /// Note: this method performs filesystem I/O (glob resolution + file reads).
+    /// The domain logic for line matching is pure (see `scan_content`).
     pub fn scan(&self, project_path: &Path) -> Result<Vec<ScanFinding>, OrqaError> {
         let mut findings = Vec::new();
 
@@ -282,7 +287,17 @@ impl EnforcementEngine {
             let paths = collect_glob_paths(&glob_str)?;
 
             for file_path in paths {
-                let file_findings = scan_file(&file_path, ce, &self.rules[ce.rule_index])?;
+                let content = match std::fs::read_to_string(&file_path) {
+                    Ok(c) => c,
+                    Err(e) => {
+                        tracing::warn!(
+                            "[enforcement] cannot read file '{file_path}': {e}"
+                        );
+                        continue;
+                    }
+                };
+                let file_findings =
+                    scan_content(&file_path, &content, ce, &self.rules[ce.rule_index]);
                 findings.extend(file_findings);
             }
         }
@@ -299,15 +314,21 @@ impl EnforcementEngine {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::repo::enforcement_rules_repo;
 
     fn write_rule_file(dir: &Path, name: &str, content: &str) {
         std::fs::write(dir.join(format!("{name}.md")), content).expect("write rule");
     }
 
+    fn load_engine(rules_dir: &Path) -> EnforcementEngine {
+        let rules = enforcement_rules_repo::load_rules(rules_dir).expect("should load rules");
+        EnforcementEngine::new(rules)
+    }
+
     #[test]
     fn load_empty_rules_dir() {
         let dir = tempfile::tempdir().expect("tempdir");
-        let engine = EnforcementEngine::load(dir.path()).expect("should load");
+        let engine = load_engine(dir.path());
         assert!(engine.rules().is_empty());
     }
 
@@ -315,7 +336,7 @@ mod tests {
     fn load_documentation_only_rule() {
         let dir = tempfile::tempdir().expect("tempdir");
         write_rule_file(dir.path(), "vision-alignment", "# Vision\n\nJust prose.");
-        let engine = EnforcementEngine::load(dir.path()).expect("should load");
+        let engine = load_engine(dir.path());
         assert_eq!(engine.rules().len(), 1);
         assert!(engine.rules()[0].entries.is_empty());
         assert!(engine.evaluate_file("anything.rs", "unwrap()").is_empty());
@@ -345,7 +366,7 @@ Do not use unwrap() in production code.
 "#,
         );
 
-        let engine = EnforcementEngine::load(dir.path()).expect("should load");
+        let engine = load_engine(dir.path());
 
         // Matching: Rust file path + unwrap in content
         let verdicts =
@@ -385,7 +406,7 @@ Never use --no-verify on commits.
 "#,
         );
 
-        let engine = EnforcementEngine::load(dir.path()).expect("should load");
+        let engine = load_engine(dir.path());
 
         let verdicts = engine.evaluate_bash("git commit --no-verify -m 'skip hooks'");
         assert_eq!(verdicts.len(), 1);
@@ -415,7 +436,7 @@ Force pushing is risky.
 "#,
         );
 
-        let engine = EnforcementEngine::load(dir.path()).expect("should load");
+        let engine = load_engine(dir.path());
         let verdicts = engine.evaluate_bash("git push --force origin main");
         assert_eq!(verdicts.len(), 1);
         assert_eq!(verdicts[0].action, RuleAction::Warn);
@@ -451,7 +472,7 @@ enforcement:
 "#,
         );
 
-        let engine = EnforcementEngine::load(dir.path()).expect("should load");
+        let engine = load_engine(dir.path());
         let verdicts = engine.evaluate_bash("git commit --no-verify");
         assert_eq!(verdicts.len(), 2);
     }
@@ -511,7 +532,7 @@ Agent files should not restate rule content inline.
 "#,
         );
 
-        let engine = EnforcementEngine::load(rules_dir.path()).expect("should load");
+        let engine = load_engine(rules_dir.path());
         let findings = engine
             .scan(project_dir.path())
             .expect("scan should succeed");
@@ -543,7 +564,7 @@ enforcement:
 "#,
         );
 
-        let engine = EnforcementEngine::load(rules_dir.path()).expect("should load");
+        let engine = load_engine(rules_dir.path());
         let findings = engine
             .scan(project_dir.path())
             .expect("scan should succeed");
@@ -572,7 +593,7 @@ enforcement:
 "#,
         );
 
-        let engine = EnforcementEngine::load(rules_dir.path()).expect("should load");
+        let engine = load_engine(rules_dir.path());
         let findings = engine
             .scan(project_dir.path())
             .expect("scan should succeed");
@@ -607,7 +628,7 @@ enforcement:
 "#,
         );
 
-        let engine = EnforcementEngine::load(rules_dir.path()).expect("should load");
+        let engine = load_engine(rules_dir.path());
         let findings = engine
             .scan(project_dir.path())
             .expect("scan should succeed");
@@ -647,7 +668,7 @@ enforcement:
 "#,
         );
 
-        let engine = EnforcementEngine::load(rules_dir.path()).expect("should load");
+        let engine = load_engine(rules_dir.path());
         let findings = engine
             .scan(project_dir.path())
             .expect("scan should succeed");

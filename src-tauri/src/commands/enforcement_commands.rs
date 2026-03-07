@@ -5,6 +5,7 @@ use tauri::State;
 use crate::domain::enforcement::{EnforcementRule, ScanFinding};
 use crate::domain::enforcement_engine::EnforcementEngine;
 use crate::error::OrqaError;
+use crate::repo::enforcement_rules_repo;
 use crate::repo::project_repo;
 use crate::state::AppState;
 
@@ -45,7 +46,8 @@ pub fn enforcement_rules_reload(state: State<'_, AppState>) -> Result<usize, Orq
         return Ok(0);
     }
 
-    let engine = EnforcementEngine::load(&rules_dir)?;
+    let rules = enforcement_rules_repo::load_rules(&rules_dir)?;
+    let engine = EnforcementEngine::new(rules);
     let count = engine.rules().len();
 
     let mut guard = state

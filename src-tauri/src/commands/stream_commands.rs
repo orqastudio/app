@@ -1,4 +1,4 @@
-use crate::domain::project_settings::read_settings;
+use crate::repo::project_settings_repo;
 use crate::domain::provider_event::StreamEvent;
 use crate::domain::session_title::maybe_auto_title;
 use crate::domain::stream_loop::{run_stream_loop, StreamAccumulator};
@@ -171,7 +171,7 @@ pub fn stream_send_message(
                     None
                 }
             };
-            let (custom, thinking) = match read_settings(root.to_str().unwrap_or_default()) {
+            let (custom, thinking) = match project_settings_repo::read(root.to_str().unwrap_or_default()) {
                 Ok(Some(settings)) => (settings.custom_system_prompt, settings.show_thinking),
                 _ => (None, false),
             };

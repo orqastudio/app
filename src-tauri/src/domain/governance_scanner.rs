@@ -13,6 +13,13 @@ const TOTAL_AREAS: usize = 7;
 ///
 /// Returns a `GovernanceScanResult` covering all 7 Claude governance areas.
 /// The `coverage_ratio` is computed over all 7 areas.
+///
+/// # Filesystem dependency
+///
+/// This function performs filesystem I/O (directory listing, file metadata reads, and content
+/// previews). The dependency is intentional — governance scanning is inherently a filesystem
+/// operation whose purpose is to walk and inspect local project files. It does not access
+/// the database or any network resource.
 pub fn scan_governance(project_path: &Path) -> Result<GovernanceScanResult, OrqaError> {
     if !project_path.exists() || !project_path.is_dir() {
         return Err(OrqaError::Validation(format!(

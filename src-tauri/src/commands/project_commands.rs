@@ -3,6 +3,7 @@ use std::path::Path;
 use tauri::State;
 
 use crate::domain::enforcement_engine::EnforcementEngine;
+use crate::repo::enforcement_rules_repo;
 use crate::domain::project::{Project, ProjectSummary};
 use crate::error::OrqaError;
 use crate::repo::project_repo;
@@ -56,7 +57,7 @@ fn load_enforcement_engine(state: &State<'_, AppState>, project_path: &str) {
     let rules_dir = Path::new(project_path).join(".claude").join("rules");
 
     let engine = if rules_dir.exists() {
-        match EnforcementEngine::load(&rules_dir) {
+        match enforcement_rules_repo::load_rules(&rules_dir).map(EnforcementEngine::new) {
             Ok(engine) => {
                 tracing::debug!(
                     "[enforcement] loaded {} rules from '{}'",
