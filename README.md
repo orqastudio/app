@@ -29,4 +29,22 @@ See [Development > Getting Started](docs/development/getting-started.md) for pre
 
 Documentation lives in the `docs/` directory. Open any `.md` file directly or browse in Orqa Studio's built-in doc viewer.
 
+---
 
+## License
+
+Copyright (c) 2026 Bobbi Byrne-Graham
+
+The OrqaStudio platform is released under the **Apache License 2.0**.
+
+You are free to use, modify, and distribute this software in accordance with the terms of the license.
+
+See the [LICENSE](./LICENSE) file for the full license text.
+
+---
+
+## Trademark Notice
+
+The **OrqaStudio** name and branding are the property of the project maintainers.
+
+Brand assets are maintained separately in the `orqastudio-brand` repository and may be subject to additional usage restrictions.
