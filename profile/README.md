@@ -1,7 +1,7 @@
 ![License](https://img.shields.io/badge/license-CC--BY--4.0-lightgrey)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/orqastudio/orqastudio-brand/refs/heads/main/assets/banners/banner-1680x240.png?token=GHSAT0AAAAAADQX5UJX4NPXWEMZQ47PL5NK2NL6LRQ">
+  <img src="https://github.com/orqastudio/orqastudio-brand/blob/main/assets/banners/banner-1680x240.png?raw=1">
 </p>
 
 <p align="center">
