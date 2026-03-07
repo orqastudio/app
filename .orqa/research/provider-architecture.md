@@ -1,3 +1,31 @@
+---
+type: research
+status: complete
+date: 2026-03-07
+category: provider-architecture
+description: Multi-provider abstraction design for OrqaStudio's sidecar layer. Covers agent runtime SDKs (Claude, OpenAI, Google ADK), direct HTTP APIs, and business ecosystem AI. Informs the Provider interface architecture.
+questions:
+  - id: Q1
+    title: Agent Runtime SDKs
+    status: resolved
+    verdict: Claude SDK, OpenAI Agents SDK, Google ADK are architecturally similar — shared sidecar with Provider interface.
+  - id: Q2
+    title: Direct APIs
+    status: resolved
+    verdict: Rust-native HTTP path for Anthropic, OpenAI-compatible, Gemini, Ollama. No sidecar needed.
+  - id: Q3
+    title: Business Ecosystem AI
+    status: resolved
+    verdict: M365 Copilot and Google Workspace do NOT provide general-purpose API access for third-party tools.
+  - id: Q4
+    title: Recommended Architecture
+    status: resolved
+    verdict: Hybrid — shared sidecar (agent SDKs) + direct Rust HTTP (API providers). Both converge at ProviderEvent.
+produces_decisions: [AD-017]
+informs_epics: []
+informs_phases: ["1", "roadmap"]
+---
+
 # Provider Architecture Research
 
 **Date:** 2026-03-07

@@ -1,3 +1,16 @@
+---
+title: "Provider Abstraction Layer"
+category: plan
+tags: [provider, sidecar, abstraction, composability, architecture]
+created: "2026-03-07"
+updated: "2026-03-07"
+status: approved
+phases: 1
+completed_phases: 1
+research: provider-architecture
+informs_epics: []
+---
+
 # Plan: Provider Abstraction Layer
 
 **Aim:** Compatibility — OrqaStudio should work with as many AI providers as possible.

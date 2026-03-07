@@ -3,7 +3,11 @@ title: Agent Governance Overhaul Plan
 category: process
 tags: [agents, governance, enforcement, skills, research, dogfooding]
 created: "2026-03-06"
-updated: "2026-03-06"
+updated: "2026-03-07"
+status: complete
+phases: 5
+completed_phases: 5
+informs_epics: []
 ---
 
 # Agent Governance Overhaul Plan
