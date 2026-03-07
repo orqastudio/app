@@ -1,10 +1,30 @@
-![Orqa Studio](assets/banners/banner-1680x240.png)
+![OrqaStudio](assets/banners/banner-1680x240.png)
 
-# Orqa Studio — Brand Guidelines
+# OrqaStudio — Brand Assets
+
+This repository contains the canonical OrqaStudio branding assets including logos, colour palettes, typography guidelines, and usage rules.
+
+## Repository Purpose
+
+This is the official source of truth for all OrqaStudio branding. Assets may be used to reference the project in accordance with the license below.
+
+Derivatives or modified branding are **not permitted** under the terms of the license.
+
+If the application repository includes branding assets for runtime use, they originate from this repository.
+
+## Licensing
+
+Licensed under [Creative Commons Attribution-NoDerivatives 4.0 (CC BY-ND 4.0)](LICENSE).
+
+Copyright (c) 2026 Bobbi Byrne-Graham
+
+---
+
+# Brand Guidelines
 
 ## 1. Brand Overview
 
-**Orqa Studio** is a platform for orchestrating intelligent software development.
+**OrqaStudio** is an AI-assisted clarity engine that helps people turn complex situations into structured understanding and evolving plans.
 
 The brand visual language reflects three core ideas:
 
