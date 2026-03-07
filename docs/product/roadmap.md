@@ -609,6 +609,20 @@ The aim is **compatibility** — Orqa Studio should work with as many AI provide
 - [ ] Provider selection in project config — Per-project provider preferences in `.orqa/project.json`
 - [ ] M365 Copilot / Google Workspace AI — Keep integration path open for future partnership. Currently locked to their own apps (no general-purpose API for third-party tools).
 
+## Future: Transportable Governance Format
+
+Move governance definitions from `.claude/`-specific format into a generic `.orqa/` directory structure. The `.claude/` directory becomes a thin adapter that references the generic content, rather than the canonical source. This enables:
+
+- [ ] Generic governance format — Agents, rules, skills, and hooks defined in `.orqa/governance/` as the canonical source. Format is provider-agnostic and environment-agnostic.
+- [ ] Claude Code adapter — `.claude/` directory references `.orqa/governance/` content via entry points (e.g., `CLAUDE.md` imports from `.orqa/`). Existing Claude Code CLI compatibility preserved.
+- [ ] Continue adapter — `.continue/` directory adapter for the Continue IDE extension, referencing the same `.orqa/governance/` content
+- [ ] Cursor adapter — `.cursor/` directory adapter for Cursor IDE, referencing generic governance
+- [ ] Other environment adapters — Pattern established for any AI coding tool that uses directory-based configuration
+- [ ] Remove Claude-specific language from governance — Rules, agents, and skills written in provider-neutral terms with adapter layers handling tool-specific translation
+- [ ] Migration tooling — Automated migration from current `.claude/`-only format to the new `.orqa/` + adapter pattern
+
+This makes OrqaStudio's governance genuinely portable: define your standards once, use them across any AI tool.
+
 ## Future: Code Quality Audit
 
 - [ ] Abstraction pattern audit — Review the codebase for areas where iterative development has introduced overcomplicated patterns, duplicate logic, or unnecessary layers. Identify opportunities for reusable abstractions (e.g. the generic `parse_frontmatter<T>` pattern applied to YAML parsing). Produce a refactoring plan with prioritised simplification targets that reduce maintenance burden without losing functionality.
