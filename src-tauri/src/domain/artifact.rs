@@ -1,5 +1,49 @@
 use serde::{Deserialize, Serialize};
 
+use crate::error::OrqaError;
+
+/// Parse a string into an `ArtifactType`, returning a validation error for unknown types.
+pub fn parse_artifact_type(s: &str) -> Result<ArtifactType, OrqaError> {
+    match s {
+        "agent" => Ok(ArtifactType::Agent),
+        "rule" => Ok(ArtifactType::Rule),
+        "skill" => Ok(ArtifactType::Skill),
+        "hook" => Ok(ArtifactType::Hook),
+        "doc" => Ok(ArtifactType::Doc),
+        other => Err(OrqaError::Validation(format!(
+            "unknown artifact type: {other} (valid: agent, rule, skill, hook, doc)"
+        ))),
+    }
+}
+
+/// Derive the relative path for an artifact based on its type and name.
+pub fn derive_rel_path(artifact_type: &ArtifactType, name: &str) -> String {
+    let sanitized = name.replace(' ', "-").to_lowercase();
+
+    match artifact_type {
+        ArtifactType::Agent => format!(".claude/agents/{sanitized}.md"),
+        ArtifactType::Rule => format!(".claude/rules/{sanitized}.md"),
+        ArtifactType::Skill => format!(".claude/skills/{sanitized}/SKILL.md"),
+        ArtifactType::Hook => format!(".claude/hooks/{sanitized}.sh"),
+        ArtifactType::Doc => format!("docs/{sanitized}.md"),
+    }
+}
+
+/// Infer an `ArtifactType` from a `.claude/` relative path prefix.
+pub fn infer_artifact_type_from_path(rel_path: &str) -> ArtifactType {
+    if rel_path.starts_with(".claude/agents") {
+        ArtifactType::Agent
+    } else if rel_path.starts_with(".claude/rules") {
+        ArtifactType::Rule
+    } else if rel_path.starts_with(".claude/skills") {
+        ArtifactType::Skill
+    } else if rel_path.starts_with(".claude/hooks") {
+        ArtifactType::Hook
+    } else {
+        ArtifactType::Doc
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Artifact {
     pub id: i64,
@@ -70,6 +114,73 @@ pub struct DocNode {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn parse_artifact_type_valid() {
+        assert!(matches!(
+            parse_artifact_type("agent"),
+            Ok(ArtifactType::Agent)
+        ));
+        assert!(matches!(
+            parse_artifact_type("rule"),
+            Ok(ArtifactType::Rule)
+        ));
+        assert!(matches!(
+            parse_artifact_type("skill"),
+            Ok(ArtifactType::Skill)
+        ));
+        assert!(matches!(
+            parse_artifact_type("hook"),
+            Ok(ArtifactType::Hook)
+        ));
+        assert!(matches!(parse_artifact_type("doc"), Ok(ArtifactType::Doc)));
+    }
+
+    #[test]
+    fn parse_artifact_type_invalid() {
+        let result = parse_artifact_type("unknown");
+        assert!(matches!(result, Err(OrqaError::Validation(_))));
+    }
+
+    #[test]
+    fn derive_rel_path_agent() {
+        assert_eq!(
+            derive_rel_path(&ArtifactType::Agent, "backend-engineer"),
+            ".claude/agents/backend-engineer.md"
+        );
+    }
+
+    #[test]
+    fn derive_rel_path_skill() {
+        assert_eq!(
+            derive_rel_path(&ArtifactType::Skill, "chunkhound"),
+            ".claude/skills/chunkhound/SKILL.md"
+        );
+    }
+
+    #[test]
+    fn derive_rel_path_sanitizes_spaces() {
+        assert_eq!(
+            derive_rel_path(&ArtifactType::Rule, "No Stubs Rule"),
+            ".claude/rules/no-stubs-rule.md"
+        );
+    }
+
+    #[test]
+    fn infer_artifact_type_agents() {
+        assert_eq!(
+            infer_artifact_type_from_path(".claude/agents/foo.md"),
+            ArtifactType::Agent
+        );
+    }
+
+    #[test]
+    fn infer_artifact_type_doc_fallback() {
+        assert_eq!(
+            infer_artifact_type_from_path("docs/something.md"),
+            ArtifactType::Doc
+        );
+    }
 
     #[test]
     fn artifact_type_serializes_snake_case() {

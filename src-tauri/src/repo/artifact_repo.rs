@@ -173,6 +173,36 @@ pub fn update(
     Ok(())
 }
 
+/// Index a new artifact: create the DB record, update file metadata, and return the full artifact.
+///
+/// This is the standard entry point for writing a new artifact to disk and indexing it.
+/// The caller is responsible for writing the file to disk before calling this function.
+pub fn index_artifact(
+    conn: &Connection,
+    project_id: i64,
+    parsed_type: &ArtifactType,
+    rel_path: &str,
+    name: &str,
+    content: &str,
+) -> Result<Artifact, OrqaError> {
+    let file_size = content.len() as i64;
+    let file_hash = format!("sha256:{:x}", simple_hash(content));
+
+    let mut artifact = create(conn, project_id, parsed_type, rel_path, name, content, None)?;
+
+    update(
+        conn,
+        artifact.id,
+        &file_hash,
+        file_size,
+        &artifact.created_at,
+    )?;
+
+    artifact = get(conn, artifact.id)?;
+    artifact.content = content.to_string();
+    Ok(artifact)
+}
+
 /// Delete an artifact by id.
 pub fn delete(conn: &Connection, id: i64) -> Result<(), OrqaError> {
     // Remove from contentless FTS index first
@@ -214,6 +244,15 @@ fn parse_compliance_status(s: &str) -> ComplianceStatus {
         "error" => ComplianceStatus::Error,
         _ => ComplianceStatus::Unknown,
     }
+}
+
+/// Simple non-cryptographic hash for file content change detection.
+fn simple_hash(content: &str) -> u64 {
+    let mut hash: u64 = 5381;
+    for byte in content.bytes() {
+        hash = hash.wrapping_mul(33).wrapping_add(u64::from(byte));
+    }
+    hash
 }
 
 fn map_summary(row: &rusqlite::Row<'_>) -> rusqlite::Result<ArtifactSummary> {
