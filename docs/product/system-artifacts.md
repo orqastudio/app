@@ -10,7 +10,7 @@ updated: 2026-03-05
 
 **Date:** 2026-03-05
 
-OrqaStudio™ distinguishes between **system artifacts** and **project artifacts**. System artifacts encode the methodology — how to run a managed agentic development process — and are shared across every project that uses OrqaStudio. Project artifacts encode project-specific knowledge — the technology stack, architecture decisions, and conventions for one particular codebase.
+OrqaStudio™ is an AI-assisted clarity engine that helps people turn messy situations into structured understanding and evolving plans. It distinguishes between **system artifacts** and **project artifacts**. System artifacts encode the methodology — how to run a structured thinking and development process — and are shared across every project that uses OrqaStudio. Project artifacts encode project-specific knowledge — the technology stack, architecture decisions, and conventions for one particular codebase.
 
 This separation ensures that governance methodology is portable. A new project does not start from scratch; it inherits proven process from the system and adds its own technical context on top.
 
@@ -158,8 +158,8 @@ OrqaStudio adds visual management, dashboards, and enhanced UX on top of these n
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | The system/project distinction ensures that lessons learned in one project can inform the system baseline — promoted patterns become system-level rules applicable across all projects. |
-| Process Governance | Defining what is system-scoped vs project-scoped makes governance visible and portable. The initialization flow ensures new projects start with proven methodology rather than an empty governance structure. |
+| Clarity Through Structure | Defining what is system-scoped vs project-scoped makes governance visible and portable. The initialization flow ensures new projects start with proven methodology rather than an empty governance structure. |
+| Learning Through Reflection | The system/project distinction ensures that lessons learned in one project can inform the system baseline — promoted patterns become system-level rules applicable across all projects. |
 
 ---
 

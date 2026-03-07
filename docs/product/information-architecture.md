@@ -472,8 +472,8 @@ This design means the Claude Code CLI status shown in the status bar is meaningf
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | N/A |
-| Process Governance | Defines the navigation structure that makes governance artifacts (agents, rules, skills, hooks) browsable, editable, and first-class destinations in the UI — making governance tangible and manageable. |
+| Learning Through Reflection | N/A |
+| Clarity Through Structure | Defines the navigation structure that makes governance artifacts (agents, rules, skills, hooks) browsable, editable, and first-class destinations in the UI — making governance tangible and manageable. |
 
 ---
 

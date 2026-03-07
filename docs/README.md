@@ -19,9 +19,9 @@ Desktop app for managed agentic development. Claude Code's capabilities with a v
 
 ## Product Pillars
 
-**Pillar 1: Self-Learning Loop** — The system improves over time via retrospectives, metrics, and lessons feeding back into governance. Every session makes OrqaStudio smarter.
+**Pillar 1: Clarity Through Structure** — Making governance visible and manageable. Standards, rules, and workflows are not invisible infrastructure — they are tangible, enforceable, and browsable.
 
-**Pillar 2: Process Governance** — Automated enforcement of standards, rules, and workflows. Governance is not invisible infrastructure — it is tangible, visible, and manageable.
+**Pillar 2: Learning Through Reflection** — The system and its users improve over time. Retrospectives, metrics, and lessons feed back into governance. Every session makes OrqaStudio smarter.
 
 ## Tech Stack
 

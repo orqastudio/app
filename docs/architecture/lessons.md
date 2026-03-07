@@ -185,8 +185,8 @@ src-tauri/src/
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | Lessons are the core mechanism through which mistakes are captured, tracked across sessions, and promoted into enforced standards — making the system progressively smarter. |
-| Process Governance | Promoted lessons become enforcement entries that actively block or warn on the patterns that caused past mistakes. The promotion pipeline connects learning directly to governance. |
+| Learning Through Reflection | Lessons are the core mechanism through which mistakes are captured, tracked across sessions, and promoted into enforced standards — making the system progressively smarter. |
+| Clarity Through Structure | Promoted lessons become enforcement entries that actively block or warn on the patterns that caused past mistakes. The promotion pipeline connects learning directly to governance. |
 
 ---
 

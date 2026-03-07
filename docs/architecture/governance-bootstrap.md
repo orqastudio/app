@@ -325,8 +325,8 @@ pub struct ClaudeAnalysisOutput {
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | Governance bootstrap is the first turn of the learning loop — Claude reads what exists and improves it. Each re-analysis captures what changed and suggests further improvements, building knowledge over time. |
-| Process Governance | Creates native Claude Code governance artifacts from scratch or by translating from other tools, making governance visible and enforceable from the moment a project is opened in OrqaStudio. |
+| Learning Through Reflection | Governance bootstrap is the first turn of the learning loop — Claude reads what exists and improves it. Each re-analysis captures what changed and suggests further improvements, building knowledge over time. |
+| Clarity Through Structure | Creates native Claude Code governance artifacts from scratch or by translating from other tools, making governance visible and enforceable from the moment a project is opened in OrqaStudio. |
 
 ## Related Documents
 

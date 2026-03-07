@@ -214,8 +214,8 @@ This reuses the data collected during setup. The Settings view calls the same `c
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | N/A |
-| Process Governance | The setup wizard ensures Claude Code CLI and sidecar are properly configured — prerequisites for all governance enforcement features. Without a working sidecar, no governance analysis, no rule enforcement, and no learning loop can operate. |
+| Learning Through Reflection | N/A |
+| Clarity Through Structure | The setup wizard ensures Claude Code CLI and sidecar are properly configured — prerequisites for all governance enforcement features. Without a working sidecar, no governance analysis, no rule enforcement, and no learning loop can operate. |
 
 ## Related Documents
 

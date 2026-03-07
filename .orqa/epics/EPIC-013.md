@@ -1,6 +1,6 @@
 ---
 id: EPIC-013
-title: "Self-Learning Loop"
+title: "Learning Through Reflection"
 status: draft
 priority: P1
 milestone: MS-002
@@ -31,7 +31,7 @@ docs-produced:
 tags: [learning, lessons, promotion]
 ---
 
-# Self-Learning Loop
+# Learning Through Reflection
 
 Lesson management exists (CRUD, UI). Missing: the automated capture and promotion pipeline.
 

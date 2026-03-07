@@ -453,8 +453,8 @@ The only exception is when a target does not yet exist for a specific operation.
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | N/A |
-| Process Governance | Standardizes development commands into a single discoverable interface, reducing process friction and ensuring consistent quality checks across all contributors and agents. |
+| Learning Through Reflection | N/A |
+| Clarity Through Structure | Standardizes development commands into a single discoverable interface, reducing process friction and ensuring consistent quality checks across all contributors and agents. |
 
 ---
 

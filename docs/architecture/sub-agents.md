@@ -213,8 +213,8 @@ src-tauri/src/
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | Sub-agent turn logs are persisted and contribute to session analytics. Explore mode enables the system to gather codebase context that feeds into more accurate governance recommendations. |
-| Process Governance | Sub-agents execute within the enforcement engine boundary — all agent tool calls are evaluated against active rules. Delegation to specialized roles (code-reviewer, test-engineer) implements the governance review gates described in the process docs. |
+| Learning Through Reflection | Sub-agent turn logs are persisted and contribute to session analytics. Explore mode enables the system to gather codebase context that feeds into more accurate governance recommendations. |
+| Clarity Through Structure | Sub-agents execute within the enforcement engine boundary — all agent tool calls are evaluated against active rules. Delegation to specialized roles (code-reviewer, test-engineer) implements the governance review gates described in the process docs. |
 
 ---
 

@@ -30,7 +30,7 @@ You are the technical writer for OrqaStudio. You create and maintain all project
 
 Before any documentation work, load and understand:
 
-- `docs/product/vision.md` — Two-Pillar framework (Self-Learning Loop + Process Governance)
+- `docs/product/vision.md` — Two-Pillar framework (Clarity Through Structure + Learning Through Reflection)
 - `docs/product/governance.md` — Governance rules and decision-making
 - `docs/process/content-governance.md` — Content governance rules and structure
 - `.claude/rules/*.md` — Active rules that constrain documentation
@@ -116,8 +116,8 @@ Every feature documentation page (architecture, UI specs, component docs) MUST i
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | [How this serves Pillar 1, or "N/A"] |
-| Process Governance | [How this serves Pillar 2, or "N/A"] |
+| Learning Through Reflection | [How this serves Pillar 1, or "N/A"] |
+| Clarity Through Structure | [How this serves Pillar 2, or "N/A"] |
 ```
 
 Every page must serve at least one pillar. If it serves neither, flag it as potential scope creep. See `.claude/rules/pillar-alignment-docs.md` for details.

@@ -258,8 +258,8 @@ Currently only `docs/` and `.claude/` exist. The `src-tauri/` and `ui/` director
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | N/A |
-| Process Governance | Defines the development environment and commands that all agents and contributors use — standardizing the build/test/lint workflow that governance enforcement depends on. |
+| Learning Through Reflection | N/A |
+| Clarity Through Structure | Defines the development environment and commands that all agents and contributors use — standardizing the build/test/lint workflow that governance enforcement depends on. |
 
 ---
 

@@ -259,7 +259,7 @@ Governance coverage exists. Missing: richer process visibility.
 
 **Why P1:** Pillar 1 (Clarity Through Structure) — governance must be visible, not buried in terminal output.
 
-#### M3. Self-Learning Loop
+#### M3. Learning Through Reflection
 
 Lesson management exists (CRUD, UI). Missing: the automated capture and promotion pipeline.
 

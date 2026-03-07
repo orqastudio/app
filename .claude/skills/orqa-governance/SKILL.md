@@ -183,7 +183,7 @@ Every governance artifact serves at least one pillar:
 
 | Pillar | What It Covers |
 |--------|---------------|
-| **Self-Learning Loop** | Lessons, metrics, retrospectives, pattern promotion, knowledge accumulation |
+| **Learning Through Reflection** | Lessons, metrics, retrospectives, pattern promotion, knowledge accumulation |
 | **Process Governance** | Rules, agents, scanners, enforcement, quality gates, architecture decisions |
 
 Features that serve neither pillar are out of scope.

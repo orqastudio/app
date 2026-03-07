@@ -349,5 +349,5 @@ When a non-technical user creates a product from scratch:
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | The composability scanner feeds findings into the lesson system. Recurring violations are promoted to rules. The system learns which composability patterns work for which project types. |
-| Process Governance | Composability becomes an enforceable governance dimension — scannable, scoreable, visible in dashboards. Rules, agents, and skills are themselves governed by composability principles. |
+| Learning Through Reflection | The composability scanner feeds findings into the lesson system. Recurring violations are promoted to rules. The system learns which composability patterns work for which project types. |
+| Clarity Through Structure | Composability becomes an enforceable governance dimension — scannable, scoreable, visible in dashboards. Rules, agents, and skills are themselves governed by composability principles. |

@@ -331,8 +331,8 @@ This is a build-time concern, not a runtime concern. The application code checks
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | Semantic search enables Claude to understand the codebase contextually, improving the quality of suggestions and reducing repeated mistakes by finding relevant patterns and precedents. |
-| Process Governance | Regex search enables rule scanners and compliance checks to verify code patterns programmatically across the entire codebase. |
+| Learning Through Reflection | Semantic search enables Claude to understand the codebase contextually, improving the quality of suggestions and reducing repeated mistakes by finding relevant patterns and precedents. |
+| Clarity Through Structure | Regex search enables rule scanners and compliance checks to verify code patterns programmatically across the entire codebase. |
 
 ---
 

@@ -204,8 +204,8 @@ Displays the output of a governance scan, including enforcement coverage — how
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | N/A |
-| Process Governance | The enforcement panel makes rule violations visible in the conversation UI, turning abstract governance standards into concrete, actionable feedback on agent tool calls. |
+| Learning Through Reflection | N/A |
+| Clarity Through Structure | The enforcement panel makes rule violations visible in the conversation UI, turning abstract governance standards into concrete, actionable feedback on agent tool calls. |
 
 ---
 

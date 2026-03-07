@@ -146,8 +146,8 @@ The `code-reviewer` includes rule compliance in every code review:
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | N/A — this page describes the rule structure, not a learning feature. The lessons-learned rule drives learning loop behavior. |
-| Process Governance | Rule files are the primary mechanism through which behavioral standards are enforced on all agents. This page documents that enforcement model, making governance tangible and auditable. |
+| Learning Through Reflection | N/A — this page describes the rule structure, not a learning feature. The lessons-learned rule drives learning loop behavior. |
+| Clarity Through Structure | Rule files are the primary mechanism through which behavioral standards are enforced on all agents. This page documents that enforcement model, making governance tangible and auditable. |
 
 ---
 

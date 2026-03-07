@@ -145,8 +145,8 @@ See [IPC Command Catalog](./ipc-commands.md) for full parameter tables.
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | Project settings store detected governance artifact counts, giving the system awareness of its own governance maturity per project. |
-| Process Governance | The `.orqa/project.json` file makes project configuration visible, versionable, and portable — governance artifacts are counted and surfaced in the UI. |
+| Learning Through Reflection | Project settings store detected governance artifact counts, giving the system awareness of its own governance maturity per project. |
+| Clarity Through Structure | The `.orqa/project.json` file makes project configuration visible, versionable, and portable — governance artifacts are counted and surfaced in the UI. |
 
 ---
 

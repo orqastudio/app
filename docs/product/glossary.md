@@ -88,15 +88,15 @@ The complete set of artifacts (agents, rules, skills, hooks, hookify files, docu
 
 ### Two-Pillar Test
 
-The feature acceptance gate: every feature must serve at least one of (1) Self-Learning Loop or (2) Process Governance. Features that serve neither are rejected. When pillars conflict, Process Governance takes priority. See [Product Governance](/product/governance).
+The feature acceptance gate: every feature must serve at least one of (1) Clarity Through Structure or (2) Learning Through Reflection. Features that serve neither are rejected. When pillars conflict, Pillar 1 takes priority — you cannot improve a process that isn't visible and structured. See [Product Governance](/product/governance).
 
-### Self-Learning Loop (Pillar 1)
+### Clarity Through Structure (Pillar 1)
 
-The system's ability to improve over time. Implemented through lesson capture, pattern promotion, retrospectives, metrics tracking, and session continuity. The learning loop feeds outcomes from agent sessions back into the governance framework.
+Making governance artifacts visible and manageable. Producing structured knowledge (plans, decisions, rules). Surfacing what would otherwise be hidden in files or terminal output. Enforcing documentation-first workflows. Rule enforcement and visualisation, agent definition management, scanner execution and dashboards, quality gate enforcement. Governance is not a document collecting dust — it is a living, enforceable, visible layer that OrqaStudio makes tangible and manageable.
 
-### Process Governance (Pillar 2)
+### Learning Through Reflection (Pillar 2)
 
-The visibility and enforceability of standards, rules, and workflows. Implemented through rule enforcement, agent management, scanner dashboards, architecture decision tracking, and the documentation-first workflow.
+The system and its users improving over time. Lesson capture, metric tracking (pass/fail rates, coverage trends, violation recurrence), retrospective generation, pattern promotion (lesson → rule → scanner → enforcement), session continuity and handoff, codebase scanning and re-scanning, knowledge accumulation over time. Mistakes are documented, patterns are extracted, and governance artifacts are updated automatically.
 
 ### Human Approval Gate
 

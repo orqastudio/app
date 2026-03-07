@@ -200,8 +200,8 @@ src-tauri/src/
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | Violations are persisted and queryable over time, enabling recurrence tracking that feeds into the lesson promotion pipeline. |
-| Process Governance | The enforcement engine is the primary mechanism through which governance rules become active constraints on agent behavior — making governance enforceable, not just documented. |
+| Learning Through Reflection | Violations are persisted and queryable over time, enabling recurrence tracking that feeds into the lesson promotion pipeline. |
+| Clarity Through Structure | The enforcement engine is the primary mechanism through which governance rules become active constraints on agent behavior — making governance enforceable, not just documented. |
 
 ---
 

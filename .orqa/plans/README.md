@@ -30,7 +30,7 @@ Every plan follows a consistent structure:
 3. **Phases** — Ordered implementation steps with clear scope boundaries
 4. **Implementation Order** — Sequenced tasks with agent assignments
 5. **Verification** — Measurable criteria for completion
-6. **Pillar Alignment** — How the plan serves the Self-Learning Loop and/or Process Governance pillars
+6. **Pillar Alignment** — How the plan serves the Learning Through Reflection and/or Process Governance pillars
 
 ## Frontmatter Schema
 

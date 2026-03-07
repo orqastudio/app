@@ -16,9 +16,9 @@ updated: 2026-03-04
 
 The brand visual language reflects three core ideas:
 
-* **Orchestration** — coordinating intelligent systems
-* **Signal & insight** — sensing and learning from systems
-* **Direction** — guiding execution through governance
+* **Clarity** — making complex thinking visible and structured
+* **Reflection** — sensing, learning, and improving from what came before
+* **Direction** — guiding execution through governance and intentional planning
 
 The logo combines two symbols:
 
@@ -30,7 +30,7 @@ The logo combines two symbols:
 Together they represent the core cycle of the platform:
 
 ```text
-scan → insight → execution
+observe → structure → act → reflect
 ```
 
 ---
@@ -262,7 +262,7 @@ Example:
 
 ### Good
 
-> Orchestrate intelligent development.
+> Turn messy thinking into structured understanding.
 
 ### Avoid
 
@@ -290,7 +290,7 @@ All brand expressions should reflect:
 3. **System thinking**
 4. **Calm intelligence**
 
-The design should always feel like **engineering infrastructure**, not consumer AI branding.
+The design should always feel like **thoughtful infrastructure for structured thinking**, not consumer AI branding.
 
 ---
 

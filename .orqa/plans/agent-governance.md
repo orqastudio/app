@@ -399,5 +399,5 @@ Phase 1 is the largest (15 agent files + dogfood detection + rule updates) but e
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | Properly configured agents with correct skills and reading lists produce higher-quality output, reducing rework and feeding better data into the lesson pipeline. |
-| Process Governance | This plan IS governance — it ensures the agent framework is actually functional, enforceable, and used as designed. Dogfooding readiness means governance is real, not theoretical. |
+| Learning Through Reflection | Properly configured agents with correct skills and reading lists produce higher-quality output, reducing rework and feeding better data into the lesson pipeline. |
+| Clarity Through Structure | This plan IS governance — it ensures the agent framework is actually functional, enforceable, and used as designed. Dogfooding readiness means governance is real, not theoretical. |

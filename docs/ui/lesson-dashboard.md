@@ -220,8 +220,8 @@ A modal dialog that walks the user through promoting a lesson to a rule enforcem
 
 | Pillar | Alignment |
 |--------|-----------|
-| Self-Learning Loop | The lesson dashboard is the primary UI for the learning loop — it makes lesson capture, recurrence tracking, and pattern promotion visible and actionable to the user. |
-| Process Governance | Lesson promotion converts documented mistakes into rule enforcement entries, directly strengthening governance. The dashboard tracks the pipeline from observed mistake to enforced standard. |
+| Learning Through Reflection | The lesson dashboard is the primary UI for the learning loop — it makes lesson capture, recurrence tracking, and pattern promotion visible and actionable to the user. |
+| Clarity Through Structure | Lesson promotion converts documented mistakes into rule enforcement entries, directly strengthening governance. The dashboard tracks the pipeline from observed mistake to enforced standard. |
 
 ---
 
