@@ -1,4 +1,6 @@
-![OrqaStudio](ui/lib/assets/banner.png)
+![License](https://img.shields.io/badge/license-Apache%202.0-blue)
+
+![OrqaStudio](https://github.com/orqastudio/orqastudio-brand/blob/main/assets/banners/banner-1680x240.png?raw=1)
 
 # OrqaStudio
 
@@ -75,13 +77,25 @@ Documentation is licensed under [CC BY 4.0](docs/LICENSE).
 
 ---
 
-## Licensing
+## License
 
-Application source code is licensed under the Apache License 2.0. See [LICENSE](LICENSE) for details.
+Copyright (c) 2026 Bobbi Byrne-Graham
+
+The OrqaStudio platform is released under the **Apache License 2.0**.
+
+You are free to use, modify, and distribute this software in accordance with the terms of the license.
+
+See the [LICENSE](./LICENSE) file for the full license text.
 
 Documentation (`docs/`) is licensed under [Creative Commons Attribution 4.0 (CC BY 4.0)](docs/LICENSE).
 
-Copyright (c) 2026 Bobbi Byrne-Graham
+---
+
+## Trademark Notice
+
+The **OrqaStudio** name and branding are the property of the project maintainers.
+
+Brand assets are maintained separately in the [`orqastudio-brand`](https://github.com/orqastudio/orqastudio-brand) repository and may be subject to additional usage restrictions.
 
 ---
 
