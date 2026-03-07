@@ -60,7 +60,7 @@ async function handleRequest(line: string): Promise<void> {
                 request.model,
                 request.system_prompt,
                 sendResponse,
-                request.sdk_session_id,
+                request.provider_session_id,
             );
             break;
 

@@ -374,16 +374,17 @@ fn run_stream_loop(
             }
         };
 
-        // Persist SDK session UUID — not forwarded to frontend
+        // Persist provider session ID — not forwarded to frontend
         if let SidecarResponse::SessionInitialized {
             session_id,
-            ref sdk_session_id,
+            ref provider_session_id,
         } = response
         {
             if let Ok(db) = state.db.lock() {
-                if let Err(e) = session_repo::update_sdk_session_id(&db, session_id, sdk_session_id)
+                if let Err(e) =
+                    session_repo::update_provider_session_id(&db, session_id, provider_session_id)
                 {
-                    tracing::warn!("[stream] failed to persist sdk_session_id: {e}");
+                    tracing::warn!("[stream] failed to persist provider_session_id: {e}");
                 }
             }
             continue;
@@ -735,14 +736,14 @@ pub fn stream_send_message(
     };
 
     // Look up persisted SDK session UUID for resume across restarts
-    let sdk_session_id = {
+    let provider_session_id = {
         let db = state
             .db
             .lock()
             .map_err(|e| OrqaError::Database(format!("failed to acquire db lock: {e}")))?;
         session_repo::get(&db, session_id)
             .ok()
-            .and_then(|s| s.sdk_session_id)
+            .and_then(|s| s.provider_session_id)
     };
 
     let request = SidecarRequest::SendMessage {
@@ -750,7 +751,7 @@ pub fn stream_send_message(
         content,
         model,
         system_prompt,
-        sdk_session_id,
+        provider_session_id,
     };
     state.sidecar.send(&request)?;
 

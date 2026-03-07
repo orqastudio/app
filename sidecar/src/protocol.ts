@@ -14,7 +14,7 @@ export interface SendMessageRequest {
     content: string;
     model: string | null;
     system_prompt: string | null;
-    sdk_session_id: string | null;
+    provider_session_id: string | null;
 }
 
 export interface CancelStreamRequest {
@@ -164,13 +164,13 @@ export interface ToolApprovalRequestResponse {
 }
 
 /**
- * Sidecar notifies Rust that the SDK session UUID has been captured.
+ * Sidecar notifies Rust that the provider session UUID has been captured.
  * Rust persists this to SQLite so the mapping survives app restarts.
  */
 export interface SessionInitializedResponse {
     type: 'session_initialized';
     session_id: number;
-    sdk_session_id: string;
+    provider_session_id: string;
 }
 
 export type SidecarResponse =

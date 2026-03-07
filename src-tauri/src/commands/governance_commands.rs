@@ -200,7 +200,7 @@ fn send_and_collect(
         content: content.to_string(),
         model: None,
         system_prompt: Some(GOVERNANCE_SYSTEM_PROMPT.to_string()),
-        sdk_session_id: None,
+        provider_session_id: None,
     };
     state.sidecar.send(&request)?;
 
