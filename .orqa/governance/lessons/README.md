@@ -1,3 +1,11 @@
+---
+role: artifacts
+label: "Lessons"
+description: "Implementation discoveries that prevent recurring mistakes."
+icon: "book-open"
+sort: 2
+---
+
 # Lessons
 
 Lessons record implementation discoveries and prevent recurring mistakes. When a code reviewer, QA tester, or UX reviewer finds an issue, the pattern is captured here so it isn't repeated.

@@ -1,3 +1,11 @@
+---
+role: artifacts
+label: "Milestones"
+description: "Strategic goals that group related epics together."
+icon: "target"
+sort: 1
+---
+
 # Milestones
 
 Milestones are strategic goals that group related epics together. Each milestone has a gate question — a yes/no question that determines when the milestone is complete.

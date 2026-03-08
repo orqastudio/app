@@ -1,3 +1,11 @@
+---
+role: artifacts
+label: "Agents"
+description: "Specialized AI personas with domain knowledge and behavioral rules."
+icon: "bot"
+sort: 1
+---
+
 # Agents
 
 Agents are specialized AI personas with domain-specific knowledge, skills, and behavioral rules. Each agent definition specifies what the agent can do, what documentation it must read before working, and what skills it loads.

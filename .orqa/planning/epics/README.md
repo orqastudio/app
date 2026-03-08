@@ -1,3 +1,11 @@
+---
+role: artifacts
+label: "Epics"
+description: "Trackable work units that group related tasks together."
+icon: "layers"
+sort: 2
+---
+
 # Epics
 
 Epics are trackable work units that group related tasks together. Each epic has documentation gates, priority scoring, and verification requirements.

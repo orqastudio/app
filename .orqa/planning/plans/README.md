@@ -1,8 +1,9 @@
 ---
-title: "Implementation Plans"
-tags: []
-created: 2026-03-06
-updated: 2026-03-06
+role: artifacts
+label: "Plans"
+description: "Design documents that define implementation approach for epics."
+icon: "clipboard-list"
+sort: 6
 ---
 
 # Implementation Plans

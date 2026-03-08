@@ -1,3 +1,11 @@
+---
+role: artifacts
+label: "Rules"
+description: "Coding standards, process requirements, and project conventions."
+icon: "shield"
+sort: 3
+---
+
 # Rules
 
 Rules enforce coding standards, process requirements, and project conventions. They are automatically loaded and applied based on file path context. Each rule defines what is required, what is forbidden, and how compliance is verified.

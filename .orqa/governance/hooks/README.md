@@ -1,3 +1,11 @@
+---
+role: artifacts
+label: "Hooks"
+description: "Automated actions that run at lifecycle boundaries."
+icon: "git-branch"
+sort: 4
+---
+
 # Hooks
 
 Hooks are automated actions that run in response to lifecycle events. They enforce process compliance at key moments — session start, pre-commit, and task completion.

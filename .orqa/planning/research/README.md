@@ -1,9 +1,9 @@
 ---
-title: "Research"
-category: research
-tags: []
-created: 2026-03-02
-updated: 2026-03-04
+role: artifacts
+label: "Research"
+description: "Investigation artifacts that validate ideas before implementation."
+icon: "flask-conical"
+sort: 5
 ---
 
 # Research

@@ -1,3 +1,11 @@
+---
+role: artifacts
+label: "Ideas"
+description: "Candidate features that need research and validation before promotion."
+icon: "lightbulb"
+sort: 4
+---
+
 # Ideas
 
 Ideas are candidate features that need research and validation before they can become epics. They capture "what if we..." and "we should eventually..." moments.

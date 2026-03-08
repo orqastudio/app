@@ -1,3 +1,11 @@
+---
+role: artifacts
+label: "Tasks"
+description: "Scoped work items within an epic."
+icon: "check-square"
+sort: 3
+---
+
 # Tasks
 
 Tasks are scoped work items within an epic. They represent individual units of work that can be assigned to a single agent.

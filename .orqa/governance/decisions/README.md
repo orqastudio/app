@@ -1,3 +1,11 @@
+---
+role: artifacts
+label: "Decisions"
+description: "Architecture decisions that capture why key technical choices were made."
+icon: "scroll-text"
+sort: 1
+---
+
 # Decisions
 
 Architecture decisions capture the reasoning behind key technical choices. They record what was decided, why, what alternatives were considered, and what trade-offs were accepted.
