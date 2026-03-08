@@ -17,7 +17,7 @@
 	import LessonsPanel from "$lib/components/lessons/LessonsPanel.svelte";
 	import * as Resizable from "$lib/components/ui/resizable";
 	import setupBackground from "$lib/assets/setup-background.png";
-	import { navigationStore } from "$lib/stores/navigation.svelte";
+	import { navigationStore, COMING_SOON_ACTIVITIES } from "$lib/stores/navigation.svelte";
 	import { settingsStore } from "$lib/stores/settings.svelte";
 	import { artifactStore } from "$lib/stores/artifact.svelte";
 	import { projectStore } from "$lib/stores/project.svelte";
@@ -199,12 +199,16 @@
 								<LessonsPanel />
 							{:else if navigationStore.activeActivity === "chat"}
 								<WelcomeScreen />
-							{:else if navigationStore.isArtifactActivity}
+							{:else if navigationStore.isArtifactActivity || (navigationStore.activeGroup !== null && navigationStore.explorerView === "artifact-viewer")}
 								{#if navigationStore.explorerView === "artifact-viewer"}
 									<ArtifactViewer />
 								{:else}
 									<ArtifactLanding category={navigationStore.activeActivity} />
 								{/if}
+							{:else if navigationStore.activeGroup !== null && COMING_SOON_ACTIVITIES.includes(navigationStore.activeActivity)}
+								<div class="flex h-full items-center justify-center p-8 text-center text-sm text-muted-foreground">
+									Select an item from the sidebar to view it here.
+								</div>
 							{:else}
 								<WelcomeScreen />
 							{/if}

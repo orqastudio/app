@@ -332,6 +332,108 @@ pub fn plan_read(rel_path: String, state: State<'_, AppState>) -> Result<Artifac
     crate::domain::artifact_reader::read_plan(Path::new(&project_path), &rel_path)
 }
 
+/// List all milestone files from the active project's `.orqa/milestones/` directory.
+#[tauri::command]
+pub fn milestone_list(state: State<'_, AppState>) -> Result<Vec<ArtifactSummary>, OrqaError> {
+    let project_path = active_project_path(&state)?;
+    crate::domain::artifact_reader::scan_milestones(Path::new(&project_path))
+}
+
+/// Read a single milestone file by relative path.
+#[tauri::command]
+pub fn milestone_read(rel_path: String, state: State<'_, AppState>) -> Result<Artifact, OrqaError> {
+    if rel_path.contains("..") {
+        return Err(OrqaError::Validation("path traversal not allowed".into()));
+    }
+    let project_path = active_project_path(&state)?;
+    crate::domain::artifact_reader::read_milestone(Path::new(&project_path), &rel_path)
+}
+
+/// List all epic files from the active project's `.orqa/epics/` directory.
+#[tauri::command]
+pub fn epic_list(state: State<'_, AppState>) -> Result<Vec<ArtifactSummary>, OrqaError> {
+    let project_path = active_project_path(&state)?;
+    crate::domain::artifact_reader::scan_epics(Path::new(&project_path))
+}
+
+/// Read a single epic file by relative path.
+#[tauri::command]
+pub fn epic_read(rel_path: String, state: State<'_, AppState>) -> Result<Artifact, OrqaError> {
+    if rel_path.contains("..") {
+        return Err(OrqaError::Validation("path traversal not allowed".into()));
+    }
+    let project_path = active_project_path(&state)?;
+    crate::domain::artifact_reader::read_epic(Path::new(&project_path), &rel_path)
+}
+
+/// List all task files from the active project's `.orqa/tasks/` directory.
+#[tauri::command]
+pub fn task_list(state: State<'_, AppState>) -> Result<Vec<ArtifactSummary>, OrqaError> {
+    let project_path = active_project_path(&state)?;
+    crate::domain::artifact_reader::scan_tasks(Path::new(&project_path))
+}
+
+/// Read a single task file by relative path.
+#[tauri::command]
+pub fn task_read(rel_path: String, state: State<'_, AppState>) -> Result<Artifact, OrqaError> {
+    if rel_path.contains("..") {
+        return Err(OrqaError::Validation("path traversal not allowed".into()));
+    }
+    let project_path = active_project_path(&state)?;
+    crate::domain::artifact_reader::read_task(Path::new(&project_path), &rel_path)
+}
+
+/// List all idea files from the active project's `.orqa/ideas/` directory.
+#[tauri::command]
+pub fn idea_list(state: State<'_, AppState>) -> Result<Vec<ArtifactSummary>, OrqaError> {
+    let project_path = active_project_path(&state)?;
+    crate::domain::artifact_reader::scan_ideas(Path::new(&project_path))
+}
+
+/// Read a single idea file by relative path.
+#[tauri::command]
+pub fn idea_read(rel_path: String, state: State<'_, AppState>) -> Result<Artifact, OrqaError> {
+    if rel_path.contains("..") {
+        return Err(OrqaError::Validation("path traversal not allowed".into()));
+    }
+    let project_path = active_project_path(&state)?;
+    crate::domain::artifact_reader::read_idea(Path::new(&project_path), &rel_path)
+}
+
+/// List all decision record files from the active project's `.orqa/decisions/` directory.
+#[tauri::command]
+pub fn decision_list(state: State<'_, AppState>) -> Result<Vec<ArtifactSummary>, OrqaError> {
+    let project_path = active_project_path(&state)?;
+    crate::domain::artifact_reader::scan_decisions(Path::new(&project_path))
+}
+
+/// Read a single decision record file by relative path.
+#[tauri::command]
+pub fn decision_read(rel_path: String, state: State<'_, AppState>) -> Result<Artifact, OrqaError> {
+    if rel_path.contains("..") {
+        return Err(OrqaError::Validation("path traversal not allowed".into()));
+    }
+    let project_path = active_project_path(&state)?;
+    crate::domain::artifact_reader::read_decision(Path::new(&project_path), &rel_path)
+}
+
+/// List all lesson files from the active project's `.orqa/lessons/` directory.
+#[tauri::command]
+pub fn lesson_list(state: State<'_, AppState>) -> Result<Vec<ArtifactSummary>, OrqaError> {
+    let project_path = active_project_path(&state)?;
+    crate::domain::artifact_reader::scan_lessons_dir(Path::new(&project_path))
+}
+
+/// Read a single lesson file by relative path.
+#[tauri::command]
+pub fn lesson_read(rel_path: String, state: State<'_, AppState>) -> Result<Artifact, OrqaError> {
+    if rel_path.contains("..") {
+        return Err(OrqaError::Validation("path traversal not allowed".into()));
+    }
+    let project_path = active_project_path(&state)?;
+    crate::domain::artifact_reader::read_lesson_file(Path::new(&project_path), &rel_path)
+}
+
 /// Look up the active project's filesystem path from the database.
 fn active_project_path(state: &State<'_, AppState>) -> Result<String, OrqaError> {
     let conn = state

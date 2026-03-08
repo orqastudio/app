@@ -246,6 +246,131 @@ pub fn parse_plan_frontmatter(content: &str) -> (PlanFrontmatter, String) {
     parse_frontmatter::<PlanFrontmatter>(content)
 }
 
+/// YAML frontmatter metadata extracted from a milestone file (`.orqa/milestones/`).
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct MilestoneFrontmatter {
+    pub id: Option<String>,
+    pub title: Option<String>,
+    pub status: Option<String>,
+    pub created: Option<String>,
+    pub updated: Option<String>,
+    pub deadline: Option<String>,
+    pub description: Option<String>,
+    #[serde(default)]
+    pub tags: Vec<String>,
+}
+
+/// Convenience alias: parse milestone frontmatter.
+pub fn parse_milestone_frontmatter(content: &str) -> (MilestoneFrontmatter, String) {
+    parse_frontmatter::<MilestoneFrontmatter>(content)
+}
+
+/// YAML frontmatter metadata extracted from an epic file (`.orqa/epics/`).
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct EpicFrontmatter {
+    pub id: Option<String>,
+    pub title: Option<String>,
+    pub status: Option<String>,
+    pub priority: Option<String>,
+    pub milestone: Option<String>,
+    pub created: Option<String>,
+    pub updated: Option<String>,
+    pub deadline: Option<String>,
+    pub description: Option<String>,
+    pub assignee: Option<String>,
+    #[serde(default)]
+    pub pillar: Vec<String>,
+    #[serde(default)]
+    pub tags: Vec<String>,
+}
+
+/// Convenience alias: parse epic frontmatter.
+pub fn parse_epic_frontmatter(content: &str) -> (EpicFrontmatter, String) {
+    parse_frontmatter::<EpicFrontmatter>(content)
+}
+
+/// YAML frontmatter metadata extracted from a task file (`.orqa/tasks/`).
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct TaskFrontmatter {
+    pub id: Option<String>,
+    pub title: Option<String>,
+    pub status: Option<String>,
+    pub epic: Option<String>,
+    pub created: Option<String>,
+    pub updated: Option<String>,
+    pub assignee: Option<String>,
+    pub description: Option<String>,
+    #[serde(default)]
+    pub tags: Vec<String>,
+}
+
+/// Convenience alias: parse task frontmatter.
+pub fn parse_task_frontmatter(content: &str) -> (TaskFrontmatter, String) {
+    parse_frontmatter::<TaskFrontmatter>(content)
+}
+
+/// YAML frontmatter metadata extracted from an idea file (`.orqa/ideas/`).
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct IdeaFrontmatter {
+    pub id: Option<String>,
+    pub title: Option<String>,
+    pub status: Option<String>,
+    pub created: Option<String>,
+    pub updated: Option<String>,
+    pub description: Option<String>,
+    #[serde(rename = "promoted-to")]
+    pub promoted_to: Option<String>,
+    #[serde(default)]
+    pub pillar: Vec<String>,
+    #[serde(default)]
+    pub tags: Vec<String>,
+}
+
+/// Convenience alias: parse idea frontmatter.
+pub fn parse_idea_frontmatter(content: &str) -> (IdeaFrontmatter, String) {
+    parse_frontmatter::<IdeaFrontmatter>(content)
+}
+
+/// YAML frontmatter metadata extracted from a decision record file (`.orqa/decisions/`).
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct DecisionFrontmatter {
+    pub id: Option<String>,
+    pub title: Option<String>,
+    pub status: Option<String>,
+    pub category: Option<String>,
+    pub created: Option<String>,
+    pub updated: Option<String>,
+    pub description: Option<String>,
+    #[serde(default)]
+    pub tags: Vec<String>,
+}
+
+/// Convenience alias: parse decision frontmatter.
+pub fn parse_decision_frontmatter(content: &str) -> (DecisionFrontmatter, String) {
+    parse_frontmatter::<DecisionFrontmatter>(content)
+}
+
+/// YAML frontmatter metadata extracted from a lesson file (`.orqa/lessons/`).
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct LessonFrontmatter {
+    pub id: Option<String>,
+    pub title: Option<String>,
+    pub category: Option<String>,
+    pub status: Option<String>,
+    pub recurrence: Option<i64>,
+    pub promoted_to: Option<String>,
+    pub created: Option<String>,
+    pub updated: Option<String>,
+    pub description: Option<String>,
+    #[serde(default)]
+    pub tags: Vec<String>,
+}
+
+/// Convenience alias: parse lesson frontmatter.
+pub fn parse_lesson_frontmatter(content: &str) -> (LessonFrontmatter, String) {
+    parse_frontmatter::<LessonFrontmatter>(content)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

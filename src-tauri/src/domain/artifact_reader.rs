@@ -277,8 +277,282 @@ pub fn summary_from_entry(
 }
 
 // ---------------------------------------------------------------------------
+// Orqa artifact directory readers (milestones, epics, tasks, ideas, decisions, lessons)
+// ---------------------------------------------------------------------------
+
+/// Scan a flat `.orqa/<subdir>/` directory and return sorted `ArtifactSummary` entries.
+///
+/// Each `.md` file is parsed for its frontmatter `id`, `title`, `status`, and `description`.
+/// Hidden files (starting with `.` or `_`) and non-`.md` files are skipped.
+/// Returns an empty vec when the directory does not exist.
+pub fn scan_orqa_artifact_dir(
+    dir: &Path,
+    dir_label: &str,
+) -> Result<Vec<ArtifactSummary>, OrqaError> {
+    if !dir.is_dir() {
+        return Ok(Vec::new());
+    }
+
+    let mut summaries: Vec<ArtifactSummary> = Vec::new();
+
+    for entry in std::fs::read_dir(dir)? {
+        let entry = entry?;
+        let file_name = entry.file_name();
+        let name = file_name.to_string_lossy();
+
+        if name.starts_with('.') || name.starts_with('_') || !name.ends_with(".md") {
+            continue;
+        }
+
+        if !entry.file_type()?.is_file() {
+            continue;
+        }
+
+        let path = entry.path();
+        let content = std::fs::read_to_string(&path).unwrap_or_default();
+        let (id, title, status, description) = extract_basic_frontmatter(&content);
+
+        let display_name = title.or_else(|| id.clone()).unwrap_or_else(|| humanize_name(&name));
+        let rel_path = format!("{}/{}", dir_label, name);
+
+        summaries.push(ArtifactSummary {
+            id: 0,
+            artifact_type: ArtifactType::Doc,
+            rel_path,
+            name: display_name,
+            description,
+            compliance_status: status
+                .as_deref()
+                .map(status_to_compliance)
+                .unwrap_or(ComplianceStatus::Unknown),
+            file_modified_at: None,
+        });
+    }
+
+    // Sort by numeric ID extracted from the filename (e.g. MS-001 → 1), then alphabetically.
+    summaries.sort_by(|a, b| {
+        let na = numeric_id_from_path(&a.rel_path);
+        let nb = numeric_id_from_path(&b.rel_path);
+        na.cmp(&nb).then_with(|| a.rel_path.cmp(&b.rel_path))
+    });
+
+    Ok(summaries)
+}
+
+/// Read a single `.orqa/<subdir>/<filename>.md` artifact and construct an `Artifact`.
+///
+/// `dir` is the full path to the parent directory (e.g. `<project>/.orqa/milestones/`).
+/// `dir_label` is the relative prefix stored in `rel_path` (e.g. `.orqa/milestones`).
+/// `rel_path` is the caller-supplied filename (without `.md`) or full relative path.
+///
+/// The caller must have already rejected `..` path traversal.
+pub fn read_orqa_artifact(
+    dir: &Path,
+    dir_label: &str,
+    rel_path: &str,
+) -> Result<Artifact, OrqaError> {
+    // Accept either bare filename ("MS-001") or full relative path (".orqa/milestones/MS-001.md").
+    let filename = rel_path
+        .split('/')
+        .next_back()
+        .unwrap_or(rel_path)
+        .trim_end_matches(".md");
+
+    let file_path = dir.join(format!("{filename}.md"));
+
+    if !file_path.exists() {
+        return Err(OrqaError::NotFound(format!(
+            "artifact not found: {rel_path}"
+        )));
+    }
+
+    let raw_content = std::fs::read_to_string(&file_path)?;
+    let (id, title, _status, description) = extract_basic_frontmatter(&raw_content);
+
+    let name = title.or_else(|| id.clone()).unwrap_or_else(|| {
+        let fname = file_path
+            .file_name()
+            .map(|n| n.to_string_lossy().into_owned())
+            .unwrap_or_default();
+        humanize_name(&fname)
+    });
+
+    let file_size = std::fs::metadata(&file_path).ok().map(|m| m.len() as i64);
+    let full_rel_path = format!("{}/{filename}.md", dir_label);
+
+    // Strip frontmatter from content so callers receive only the body.
+    let body = crate::domain::artifact::extract_frontmatter(&raw_content)
+        .1;
+
+    Ok(Artifact {
+        id: 0,
+        project_id: 0,
+        artifact_type: ArtifactType::Doc,
+        rel_path: full_rel_path,
+        name,
+        description,
+        content: body,
+        file_hash: None,
+        file_size,
+        file_modified_at: None,
+        compliance_status: ComplianceStatus::Unknown,
+        relationships: None,
+        metadata: None,
+        created_at: String::new(),
+        updated_at: String::new(),
+    })
+}
+
+// Milestone
+
+/// Scan the `.orqa/milestones/` directory and return sorted `ArtifactSummary` entries.
+pub fn scan_milestones(project_path: &Path) -> Result<Vec<ArtifactSummary>, OrqaError> {
+    let dir = project_path.join(paths::MILESTONES_DIR);
+    scan_orqa_artifact_dir(&dir, paths::MILESTONES_DIR)
+}
+
+/// Read a single milestone file.
+pub fn read_milestone(project_path: &Path, rel_path: &str) -> Result<Artifact, OrqaError> {
+    let dir = project_path.join(paths::MILESTONES_DIR);
+    read_orqa_artifact(&dir, paths::MILESTONES_DIR, rel_path)
+}
+
+// Epic
+
+/// Scan the `.orqa/epics/` directory and return sorted `ArtifactSummary` entries.
+pub fn scan_epics(project_path: &Path) -> Result<Vec<ArtifactSummary>, OrqaError> {
+    let dir = project_path.join(paths::EPICS_DIR);
+    scan_orqa_artifact_dir(&dir, paths::EPICS_DIR)
+}
+
+/// Read a single epic file.
+pub fn read_epic(project_path: &Path, rel_path: &str) -> Result<Artifact, OrqaError> {
+    let dir = project_path.join(paths::EPICS_DIR);
+    read_orqa_artifact(&dir, paths::EPICS_DIR, rel_path)
+}
+
+// Task
+
+/// Scan the `.orqa/tasks/` directory and return sorted `ArtifactSummary` entries.
+pub fn scan_tasks(project_path: &Path) -> Result<Vec<ArtifactSummary>, OrqaError> {
+    let dir = project_path.join(paths::TASKS_DIR);
+    scan_orqa_artifact_dir(&dir, paths::TASKS_DIR)
+}
+
+/// Read a single task file.
+pub fn read_task(project_path: &Path, rel_path: &str) -> Result<Artifact, OrqaError> {
+    let dir = project_path.join(paths::TASKS_DIR);
+    read_orqa_artifact(&dir, paths::TASKS_DIR, rel_path)
+}
+
+// Idea
+
+/// Scan the `.orqa/ideas/` directory and return sorted `ArtifactSummary` entries.
+pub fn scan_ideas(project_path: &Path) -> Result<Vec<ArtifactSummary>, OrqaError> {
+    let dir = project_path.join(paths::IDEAS_DIR);
+    scan_orqa_artifact_dir(&dir, paths::IDEAS_DIR)
+}
+
+/// Read a single idea file.
+pub fn read_idea(project_path: &Path, rel_path: &str) -> Result<Artifact, OrqaError> {
+    let dir = project_path.join(paths::IDEAS_DIR);
+    read_orqa_artifact(&dir, paths::IDEAS_DIR, rel_path)
+}
+
+// Decision
+
+/// Scan the `.orqa/decisions/` directory and return sorted `ArtifactSummary` entries.
+pub fn scan_decisions(project_path: &Path) -> Result<Vec<ArtifactSummary>, OrqaError> {
+    let dir = project_path.join(paths::DECISIONS_DIR);
+    scan_orqa_artifact_dir(&dir, paths::DECISIONS_DIR)
+}
+
+/// Read a single decision record file.
+pub fn read_decision(project_path: &Path, rel_path: &str) -> Result<Artifact, OrqaError> {
+    let dir = project_path.join(paths::DECISIONS_DIR);
+    read_orqa_artifact(&dir, paths::DECISIONS_DIR, rel_path)
+}
+
+// Lesson
+
+/// Scan the `.orqa/lessons/` directory and return sorted `ArtifactSummary` entries.
+pub fn scan_lessons_dir(project_path: &Path) -> Result<Vec<ArtifactSummary>, OrqaError> {
+    let dir = project_path.join(paths::LESSONS_DIR);
+    scan_orqa_artifact_dir(&dir, paths::LESSONS_DIR)
+}
+
+/// Read a single lesson file.
+pub fn read_lesson_file(project_path: &Path, rel_path: &str) -> Result<Artifact, OrqaError> {
+    let dir = project_path.join(paths::LESSONS_DIR);
+    read_orqa_artifact(&dir, paths::LESSONS_DIR, rel_path)
+}
+
+// ---------------------------------------------------------------------------
 // Private helpers
 // ---------------------------------------------------------------------------
+
+/// Extract the four most common frontmatter fields without committing to a specific schema.
+///
+/// Returns `(id, title, status, description)` — all `Option<String>`.
+fn extract_basic_frontmatter(
+    content: &str,
+) -> (Option<String>, Option<String>, Option<String>, Option<String>) {
+    use crate::domain::artifact::extract_frontmatter;
+
+    let (fm_text, _) = extract_frontmatter(content);
+    let Some(yaml) = fm_text else {
+        return (None, None, None, None);
+    };
+
+    // Use the serde_yaml Value type to avoid coupling to any specific struct.
+    let value: serde_yaml::Value = serde_yaml::from_str(&yaml).unwrap_or(serde_yaml::Value::Null);
+
+    let get_str = |key: &str| -> Option<String> {
+        value
+            .get(key)
+            .and_then(|v| v.as_str())
+            .map(str::to_owned)
+    };
+
+    (get_str("id"), get_str("title"), get_str("status"), get_str("description"))
+}
+
+/// Map a `status` string to a `ComplianceStatus` for display purposes.
+///
+/// - `done` / `accepted` / `compliant` / `active` → `Compliant`
+/// - `non_compliant` / `rejected` / `error` → `NonCompliant`
+/// - Anything else → `Unknown`
+fn status_to_compliance(status: &str) -> ComplianceStatus {
+    match status {
+        "done" | "accepted" | "compliant" | "active" | "complete" => ComplianceStatus::Compliant,
+        "non_compliant" | "rejected" | "error" => ComplianceStatus::NonCompliant,
+        _ => ComplianceStatus::Unknown,
+    }
+}
+
+/// Extract a numeric suffix from a relative path for natural sort order.
+///
+/// Example: `.orqa/epics/EPIC-005.md` → `5`, `.orqa/milestones/MS-001.md` → `1`.
+/// Falls back to `u64::MAX` if no numeric suffix is found.
+fn numeric_id_from_path(rel_path: &str) -> u64 {
+    let stem = rel_path
+        .split('/')
+        .next_back()
+        .unwrap_or(rel_path)
+        .trim_end_matches(".md");
+
+    // Find the last run of digits in the stem.
+    let digits: String = stem
+        .chars()
+        .rev()
+        .take_while(|c| c.is_ascii_digit())
+        .collect::<String>()
+        .chars()
+        .rev()
+        .collect();
+
+    digits.parse::<u64>().unwrap_or(u64::MAX)
+}
 
 /// Recursively scan a directory and build a sorted list of `DocNode` entries.
 fn scan_directory(dir: &Path, docs_root: &Path) -> Result<Vec<DocNode>, OrqaError> {
@@ -667,5 +941,193 @@ mod tests {
         assert_eq!(nodes.len(), 2);
         assert_eq!(nodes[0].label, "Alpha Plan");
         assert_eq!(nodes[1].label, "Zebra Plan");
+    }
+
+    // -----------------------------------------------------------------------
+    // scan_orqa_artifact_dir and read_orqa_artifact tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn scan_orqa_artifact_dir_missing_dir_returns_empty() {
+        let tmp = make_temp_project();
+        let result = scan_orqa_artifact_dir(&tmp.path().join("nonexistent"), ".orqa/milestones")
+            .expect("should not error");
+        assert!(result.is_empty());
+    }
+
+    #[test]
+    fn scan_orqa_artifact_dir_parses_frontmatter() {
+        let tmp = make_temp_project();
+        let dir = tmp.path().join(".orqa").join("milestones");
+        fs::create_dir_all(&dir).expect("create dir");
+        fs::write(
+            dir.join("MS-001.md"),
+            "---\nid: MS-001\ntitle: Dogfooding\nstatus: active\n---\n# Milestone 1",
+        )
+        .expect("write file");
+
+        let summaries =
+            scan_orqa_artifact_dir(&dir, ".orqa/milestones").expect("scan");
+        assert_eq!(summaries.len(), 1);
+        assert_eq!(summaries[0].name, "Dogfooding");
+        assert_eq!(summaries[0].rel_path, ".orqa/milestones/MS-001.md");
+    }
+
+    #[test]
+    fn scan_orqa_artifact_dir_skips_hidden_files() {
+        let tmp = make_temp_project();
+        let dir = tmp.path().join(".orqa").join("epics");
+        fs::create_dir_all(&dir).expect("create dir");
+        fs::write(dir.join("EPIC-001.md"), "---\ntitle: Real\n---\nContent.").expect("write");
+        fs::write(dir.join(".hidden.md"), "---\ntitle: Hidden\n---\nContent.").expect("write hidden");
+
+        let summaries = scan_orqa_artifact_dir(&dir, ".orqa/epics").expect("scan");
+        assert_eq!(summaries.len(), 1);
+        assert_eq!(summaries[0].name, "Real");
+    }
+
+    #[test]
+    fn scan_orqa_artifact_dir_sorted_by_numeric_id() {
+        let tmp = make_temp_project();
+        let dir = tmp.path().join(".orqa").join("epics");
+        fs::create_dir_all(&dir).expect("create dir");
+        fs::write(dir.join("EPIC-010.md"), "---\ntitle: Ten\n---\n").expect("write");
+        fs::write(dir.join("EPIC-002.md"), "---\ntitle: Two\n---\n").expect("write");
+        fs::write(dir.join("EPIC-001.md"), "---\ntitle: One\n---\n").expect("write");
+
+        let summaries = scan_orqa_artifact_dir(&dir, ".orqa/epics").expect("scan");
+        assert_eq!(summaries.len(), 3);
+        assert_eq!(summaries[0].name, "One");
+        assert_eq!(summaries[1].name, "Two");
+        assert_eq!(summaries[2].name, "Ten");
+    }
+
+    #[test]
+    fn read_orqa_artifact_returns_content_without_frontmatter() {
+        let tmp = make_temp_project();
+        let dir = tmp.path().join(".orqa").join("milestones");
+        fs::create_dir_all(&dir).expect("create dir");
+        fs::write(
+            dir.join("MS-001.md"),
+            "---\nid: MS-001\ntitle: Dogfooding\nstatus: active\n---\n# Milestone 1\n\nBody here.",
+        )
+        .expect("write file");
+
+        let artifact = read_orqa_artifact(&dir, ".orqa/milestones", "MS-001").expect("read");
+        assert_eq!(artifact.name, "Dogfooding");
+        assert_eq!(artifact.rel_path, ".orqa/milestones/MS-001.md");
+        assert!(artifact.content.contains("# Milestone 1"));
+        assert!(artifact.content.contains("Body here."));
+        // Frontmatter must not appear in content
+        assert!(!artifact.content.contains("---"));
+    }
+
+    #[test]
+    fn read_orqa_artifact_not_found() {
+        let tmp = make_temp_project();
+        let dir = tmp.path().join(".orqa").join("epics");
+        fs::create_dir_all(&dir).expect("create dir");
+
+        let result = read_orqa_artifact(&dir, ".orqa/epics", "EPIC-999");
+        assert!(matches!(result, Err(OrqaError::NotFound(_))));
+    }
+
+    #[test]
+    fn scan_milestones_returns_summaries() {
+        let tmp = make_temp_project();
+        let dir = tmp.path().join(paths::MILESTONES_DIR);
+        fs::create_dir_all(&dir).expect("create dir");
+        fs::write(dir.join("MS-001.md"), "---\ntitle: First Milestone\n---\n").expect("write");
+
+        let summaries = scan_milestones(tmp.path()).expect("scan");
+        assert_eq!(summaries.len(), 1);
+        assert_eq!(summaries[0].name, "First Milestone");
+    }
+
+    #[test]
+    fn scan_epics_returns_summaries() {
+        let tmp = make_temp_project();
+        let dir = tmp.path().join(paths::EPICS_DIR);
+        fs::create_dir_all(&dir).expect("create dir");
+        fs::write(dir.join("EPIC-001.md"), "---\ntitle: First Epic\n---\n").expect("write");
+
+        let summaries = scan_epics(tmp.path()).expect("scan");
+        assert_eq!(summaries.len(), 1);
+        assert_eq!(summaries[0].name, "First Epic");
+    }
+
+    #[test]
+    fn scan_tasks_returns_summaries() {
+        let tmp = make_temp_project();
+        let dir = tmp.path().join(paths::TASKS_DIR);
+        fs::create_dir_all(&dir).expect("create dir");
+        fs::write(dir.join("TASK-001.md"), "---\ntitle: First Task\n---\n").expect("write");
+
+        let summaries = scan_tasks(tmp.path()).expect("scan");
+        assert_eq!(summaries.len(), 1);
+        assert_eq!(summaries[0].name, "First Task");
+    }
+
+    #[test]
+    fn scan_ideas_returns_summaries() {
+        let tmp = make_temp_project();
+        let dir = tmp.path().join(paths::IDEAS_DIR);
+        fs::create_dir_all(&dir).expect("create dir");
+        fs::write(dir.join("IDEA-001.md"), "---\ntitle: First Idea\n---\n").expect("write");
+
+        let summaries = scan_ideas(tmp.path()).expect("scan");
+        assert_eq!(summaries.len(), 1);
+        assert_eq!(summaries[0].name, "First Idea");
+    }
+
+    #[test]
+    fn scan_decisions_returns_summaries() {
+        let tmp = make_temp_project();
+        let dir = tmp.path().join(paths::DECISIONS_DIR);
+        fs::create_dir_all(&dir).expect("create dir");
+        fs::write(dir.join("AD-001.md"), "---\ntitle: Thick Backend\n---\n").expect("write");
+
+        let summaries = scan_decisions(tmp.path()).expect("scan");
+        assert_eq!(summaries.len(), 1);
+        assert_eq!(summaries[0].name, "Thick Backend");
+    }
+
+    #[test]
+    fn scan_lessons_dir_returns_summaries() {
+        let tmp = make_temp_project();
+        let dir = tmp.path().join(paths::LESSONS_DIR);
+        fs::create_dir_all(&dir).expect("create dir");
+        fs::write(
+            dir.join("IMPL-001.md"),
+            "---\ntitle: Run vite optimize\n---\n",
+        )
+        .expect("write");
+
+        let summaries = scan_lessons_dir(tmp.path()).expect("scan");
+        assert_eq!(summaries.len(), 1);
+        assert_eq!(summaries[0].name, "Run vite optimize");
+    }
+
+    #[test]
+    fn status_compliant_mapping() {
+        assert_eq!(status_to_compliance("done"), ComplianceStatus::Compliant);
+        assert_eq!(status_to_compliance("accepted"), ComplianceStatus::Compliant);
+        assert_eq!(status_to_compliance("active"), ComplianceStatus::Compliant);
+        assert_eq!(
+            status_to_compliance("non_compliant"),
+            ComplianceStatus::NonCompliant
+        );
+        assert_eq!(
+            status_to_compliance("in-progress"),
+            ComplianceStatus::Unknown
+        );
+    }
+
+    #[test]
+    fn numeric_id_from_path_extracts_correctly() {
+        assert_eq!(numeric_id_from_path(".orqa/epics/EPIC-005.md"), 5);
+        assert_eq!(numeric_id_from_path(".orqa/milestones/MS-001.md"), 1);
+        assert_eq!(numeric_id_from_path(".orqa/decisions/AD-012.md"), 12);
+        assert_eq!(numeric_id_from_path("no-number.md"), u64::MAX);
     }
 }
