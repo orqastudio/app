@@ -1,4 +1,7 @@
 ---
+id: root-cleanliness
+title: "Root Directory Cleanliness"
+description: "The project root must stay lean. Every file in root must have a justification."
 scope: system
 enforcement:
   - event: file
@@ -8,7 +11,6 @@ enforcement:
         pattern: ^[^/]*\.(txt|log|json|yaml|yml)$
 ---
 
-# Root Directory Cleanliness (MANDATORY)
 
 The project root must stay lean. Every file in root must have a justification.
 

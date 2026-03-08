@@ -26,10 +26,11 @@ docs-required:
   - .orqa/plans/ (plan required before implementation)
 docs-produced:
   - .orqa/plans/ (idea capture plan)
+description: >
+  Build idea quick-capture from conversation and anywhere, idea inbox,
+  promotion workflows, and duplicate detection.
 tags: [ideas, capture, promotion]
 ---
-
-# Idea & Feedback Capture
 
 ## Tasks
 

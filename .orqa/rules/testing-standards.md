@@ -1,4 +1,7 @@
 ---
+id: testing-standards
+title: "Testing Standards"
+description: "Test organisation, coverage requirements, mock boundaries, and isolation rules."
 scope: project
 enforcement:
   - event: file
@@ -10,7 +13,6 @@ enforcement:
         pattern: (mock!|#\[mockall|MockAll|mockall::)
 ---
 
-# Testing Standards (NON-NEGOTIABLE)
 
 **Source of Truth:** This file defines testing patterns. `docs/development/coding-standards.md` defines coverage requirements.
 

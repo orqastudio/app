@@ -1,11 +1,14 @@
 ---
+id: PLAN-007
+title: "AI Transparency Wiring"
+description: >
+  Wire the SystemPromptSent emission logic in the Rust backend and
+  verify end-to-end AI transparency rendering.
 status: approved
 epic: EPIC-001
 created: 2026-03-07
 updated: 2026-03-07
 ---
-
-# Plan: EPIC-001 — AI Transparency Wiring
 
 ## Problem Statement
 

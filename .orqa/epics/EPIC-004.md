@@ -26,12 +26,11 @@ docs-required:
 docs-produced:
   - docs/wireframes/artifact-browser.md (update with edit mode wireframes)
   - docs/architecture/ipc-commands.md (verify artifact CRUD commands documented)
+description: >
+  Build an editor component for governance artifacts, connecting existing
+  backend CRUD commands to a CodeMirror-based editing UI.
 tags: [artifacts, editing, governance]
 ---
-
-# Artifact Editing UI
-
-Backend CRUD exists (`artifact_create`, `artifact_update`, `artifact_delete`). Read-only viewers exist. Missing: an editor component for `.claude/` governance artifacts.
 
 ## Why P1
 

@@ -10,12 +10,11 @@ promoted-to: null
 research-needed:
   - Module format design
   - Domain-specific output templates
+description: >
+  New artifact generation modules for different domains including
+  service design, policy development, and research planning.
 tags: [output, modules, composability]
 ---
-
-# Output Composability
-
-New artifact generation modules for different domains.
 
 ## Candidate Items
 

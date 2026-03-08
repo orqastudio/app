@@ -29,9 +29,9 @@ export type ExplorerView =
 /** Sub-categories within each group */
 export const GROUP_SUB_CATEGORIES: Record<ActivityGroup, ActivityView[]> = {
 	documentation: ["docs"],
-	planning: ["research", "plans", "milestones", "epics", "tasks", "ideas"],
-	team: ["agents", "skills", "orchestrator"],
-	governance: ["rules", "hooks", "lessons", "decisions"],
+	planning: ["ideas", "research", "plans", "milestones", "epics", "tasks"],
+	team: ["orchestrator", "agents", "skills"],
+	governance: ["lessons", "decisions", "rules", "hooks"],
 };
 
 /** Sub-category display config */
@@ -84,9 +84,6 @@ const ACTIVITIES_WITH_NAV_PANEL: ActivityView[] = [
 
 /** Activity views that show artifact browsing in the explorer */
 const ARTIFACT_ACTIVITIES: ActivityView[] = ["docs", "research", "plans", "agents", "rules", "skills", "hooks"];
-
-/** Orqa planning/governance sub-categories backed by the new artifact readers */
-const ORQA_ARTIFACT_ACTIVITIES: ActivityView[] = ["milestones", "epics", "tasks", "ideas", "decisions"];
 
 /** Sub-categories that have no backend reader yet (show EmptyState) */
 export const COMING_SOON_ACTIVITIES: ActivityView[] = [];
@@ -179,13 +176,16 @@ class NavigationStore {
 			if (this.navPanelCollapsed) {
 				this.navPanelCollapsed = false;
 			}
-		} else if (ORQA_ARTIFACT_ACTIVITIES.includes(view)) {
-			this.explorerView = "artifact-list";
+		} else if (view === "milestones" || view === "epics" || view === "tasks" || view === "ideas") {
+			// Planning artifacts: open with README as entry point, same as docs/research/plans
+			this.explorerView = "artifact-viewer";
+			this.selectedArtifactPath = "README";
+			this.breadcrumbs = [];
 			if (this.navPanelCollapsed) {
 				this.navPanelCollapsed = false;
 			}
-		} else if (view === "lessons") {
-			// Lessons: sidebar nav shows orqa lessons; main panel shows LessonsPanel or ArtifactViewer
+		} else if (view === "decisions" || view === "lessons") {
+			// Governance artifacts: show list in sidebar, nothing selected until user clicks
 			this.explorerView = "artifact-list";
 			if (this.navPanelCollapsed) {
 				this.navPanelCollapsed = false;

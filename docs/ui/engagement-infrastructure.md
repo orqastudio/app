@@ -1,5 +1,6 @@
 ---
 title: "Engagement & Communication Infrastructure Timeline"
+description: "Timeline and strategy for engagement and communication infrastructure around the product launch."
 category: ui
 tags: [brand, strategy, community, communication]
 created: 2026-03-07

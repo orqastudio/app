@@ -11,12 +11,11 @@ research-needed:
   - Priority integrations (git, issue trackers)
   - Bidirectional sync architecture
   - Import format support
+description: >
+  Connect OrqaStudio with external tools and workflows including
+  git, issue trackers, documentation platforms, and CI/CD.
 tags: [integrations, git, issue-trackers, import]
 ---
-
-# Integration Ecosystem
-
-Connecting OrqaStudio with external tools and workflows.
 
 ## Candidate Items
 

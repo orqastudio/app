@@ -26,12 +26,11 @@ docs-required:
 docs-produced:
   - docs/architecture/streaming-pipeline.md (update with context injection protocol)
   - docs/architecture/decisions.md (AD for context injection strategy)
+description: >
+  Add fallback context injection when SDK session resume fails due to
+  app restart or cleared storage.
 tags: [session, resume, context]
 ---
-
-# Context Injection on Failed Resume
-
-SDK session resume works on the happy path. Missing: fallback when SDK state is lost (app restart, cleared storage).
 
 ## Why P1
 

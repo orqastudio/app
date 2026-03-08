@@ -18,10 +18,11 @@ acceptance:
   - ThinkingBlock renders during streaming if thinking deltas arrive
   - No context entry appears when no project is loaded
   - Conversation streaming works normally in all cases (no regression)
+description: >
+  Verify the full AI transparency pipeline works end-to-end: Rust
+  emission to Channel<T> to store accumulation to component rendering.
 tags: [streaming, transparency, qa]
 ---
-
-# Verify End-to-End AI Transparency Rendering
 
 ## What
 

@@ -11,12 +11,11 @@ research-needed:
   - Space hierarchy data model
   - Space-level governance inheritance
   - Multi-project aggregation UX
+description: >
+  Containers for organising projects as adoption scales, with
+  space-level governance and aggregated insights.
 tags: [spaces, organisation, hierarchy]
 ---
-
-# Spaces & Organisational Structure
-
-Containers for organising projects as adoption scales.
 
 ## Candidate Items
 

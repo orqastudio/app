@@ -1,4 +1,6 @@
 ---
+id: chunkhound
+title: "ChunkHound"
 name: chunkhound
 description: |
   ChunkHound semantic code search: three search modes (regex, semantic, code_research),
@@ -10,7 +12,6 @@ tags: [code-search, semantic-search, codebase, architecture, tools]
 user-invocable: true
 ---
 
-# ChunkHound Skill
 
 ChunkHound provides three MCP tools for structured code search. Use them instead of manually grepping through files. The goal is to understand the codebase deeply before making changes, not to accumulate file reads in context.
 

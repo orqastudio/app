@@ -1,4 +1,7 @@
 ---
+id: coding-standards
+title: "Coding Standards"
+description: "Rust and TypeScript coding standards: formatting, linting, error handling, component patterns, and coverage requirements."
 scope: project
 enforcement:
   - event: file
@@ -31,7 +34,6 @@ enforcement:
         pattern: "[^\\x00-\\x7F]{2,}"
 ---
 
-# Coding Standards
 
 **Source of Truth:** `@docs/development/coding-standards.md`
 

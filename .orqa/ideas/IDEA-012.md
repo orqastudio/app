@@ -11,12 +11,11 @@ research-needed:
   - Conversation summarisation approaches
   - Session branching data model
   - Proactive learning pattern matching
+description: >
+  Make AI conversations smarter over time with summarisation,
+  context-aware suggestions, session branching, and proactive learning.
 tags: [sessions, intelligence, summarisation]
 ---
-
-# Session Intelligence
-
-Making AI conversations smarter over time.
 
 ## Candidate Items
 

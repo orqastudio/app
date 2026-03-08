@@ -1,4 +1,6 @@
 ---
+id: orqa-testing
+title: "Orqa Testing Patterns"
 name: orqa-testing
 description: |
   OrqaStudio testing patterns: make test commands, Rust unit/integration tests,
@@ -10,7 +12,6 @@ tags: [orqa, testing, vitest, cargo-test, playwright, tdd, mocking]
 user-invocable: true
 ---
 
-# Orqa Testing Patterns
 
 OrqaStudio uses `make` targets for all test commands. Tests are organized by layer: Rust unit tests inline with source, Rust integration tests in `src-tauri/tests/`, frontend unit tests alongside components, and E2E tests in `tests/`.
 

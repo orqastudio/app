@@ -1,8 +1,10 @@
 ---
+id: plan-mode-compliance
+title: "Plan Mode Compliance"
+description: "Every implementation plan must have architectural compliance verification and UX-first design."
 scope: system
 ---
 
-# Plan Mode Compliance (NON-NEGOTIABLE)
 
 Every implementation plan — whether created in plan mode, written to TODO.md, or proposed in conversation — MUST satisfy two mandatory requirements before implementation begins.
 

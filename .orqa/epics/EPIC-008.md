@@ -26,10 +26,11 @@ docs-required:
 docs-produced:
   - docs/development/coding-standards.md (update if gaps found)
   - .orqa/lessons/ (new lessons from audit findings)
+description: >
+  Audit the codebase against coding standards, fix violations, and
+  feed findings into the learning loop as lessons.
 tags: [audit, quality, standards]
 ---
-
-# Code Quality Audit
 
 ## Why P2
 

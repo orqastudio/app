@@ -1,12 +1,11 @@
 ---
 title: "Enforcement Rules Reference"
+description: "Reference index of all enforcement rules in .claude/rules/ with their purpose and scope."
 category: process
 tags: []
 created: 2026-03-02
 updated: 2026-03-05
 ---
-
-# Enforcement Rules Reference
 
 **Date:** 2026-03-05
 

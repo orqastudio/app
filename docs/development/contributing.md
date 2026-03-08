@@ -1,5 +1,6 @@
 ---
 title: "Contributing"
+description: "Guide for contributors covering setup, workflow, and conventions for the OrqaStudio codebase."
 category: development
 tags: []
 created: 2026-03-07

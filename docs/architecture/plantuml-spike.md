@@ -1,12 +1,11 @@
 ---
 title: "PlantUML Bundling Spike"
+description: "Investigation spike for bundling PlantUML diagram rendering within the desktop application."
 category: architecture
 tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---
-
-# PlantUML Bundling Spike
 
 **Date:** 2026-03-02 | **Status:** Phase 0e specification
 **References:** [Wireframing Research](/research/wireframing) (OQ1: Java Runtime Dependency), [Wireframe Serving Infrastructure](/architecture/wireframe-serving)

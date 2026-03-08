@@ -1,4 +1,6 @@
 ---
+id: RES-003
+title: "Design Token Research"
 type: research
 status: complete
 date: 2026-03-02
@@ -26,7 +28,6 @@ informs_phases: [0d, 0e, 1]
 informs_features: [F-001, F-009]
 ---
 
-# Design Token Implementation Research
 
 **Date:** 2026-03-02 | **Status:** Complete
 

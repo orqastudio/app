@@ -1,8 +1,10 @@
 ---
+id: agent-delegation
+title: "Agent Delegation"
+description: "The orchestrator coordinates but does not implement. All implementation is delegated to specialized agents."
 scope: system
 ---
 
-# Agent Delegation (NON-NEGOTIABLE)
 
 The orchestrator coordinates. It does NOT implement. Every implementation task is delegated to a specialized agent.
 

@@ -1,5 +1,9 @@
 ---
-title: Agent Governance Overhaul Plan
+id: PLAN-001
+title: "Agent Governance Overhaul"
+description: >
+  Make the agentic framework operational: fix agent paths, add skills,
+  remove broken tools, add dual-context awareness, and enforce usage.
 category: process
 tags: [agents, governance, enforcement, skills, research, dogfooding]
 created: "2026-03-06"
@@ -9,8 +13,6 @@ phases: 5
 completed_phases: 5
 informs_epics: []
 ---
-
-# Agent Governance Overhaul Plan
 
 ## Problem Statement
 

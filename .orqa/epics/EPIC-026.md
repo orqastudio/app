@@ -25,12 +25,11 @@ docs-required:
   - .orqa/research/mvp/
 docs-produced:
   - docs/architecture/decisions.md
+description: >
+  Formal architecture decision records (AD-007 through AD-017) capturing
+  every significant technical choice made before implementation.
 tags: [foundation, architecture, decisions, adr]
 ---
-
-# Phase 0b — Architecture Decisions
-
-Formal architecture decision records (AD-007 through AD-017) capturing every significant technical choice made before implementation began.
 
 ## Why P1
 

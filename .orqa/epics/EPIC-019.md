@@ -27,10 +27,11 @@ docs-produced:
   - .orqa/plans/ (MCP host plan)
   - docs/architecture/mcp-host.md (update with implementation)
   - docs/architecture/decisions.md (AD for transport selection, trust model)
+description: >
+  Implement MCP host with JSON-RPC protocol handler, stdio and SSE
+  transports, tool aggregation, and settings UI for external servers.
 tags: [mcp, external-tools, integrations]
 ---
-
-# MCP Host — External Servers
 
 ## Tasks
 

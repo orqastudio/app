@@ -1,12 +1,11 @@
 ---
 title: "Wireframe Serving Infrastructure"
+description: "Infrastructure for serving and rendering wireframe assets within the application."
 category: architecture
 tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---
-
-# Wireframe Serving Infrastructure
 
 **Date:** 2026-03-02 | **Status:** Phase 0e specification
 **References:** [Wireframing Research](/research/wireframing) (Q1 verdict: PlantUML Salt), [SQLite Schema](/architecture/sqlite-schema), [Design System](/ui/design-system)

@@ -1,8 +1,10 @@
 ---
+id: honest-reporting
+title: "Honest Reporting"
+description: "Report status accurately. Partial work reported as complete is worse than reporting it as incomplete."
 scope: system
 ---
 
-# Honest Reporting (NON-NEGOTIABLE)
 
 ## The Core Rule
 

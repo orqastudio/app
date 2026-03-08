@@ -11,12 +11,11 @@ research-needed:
   - AI facilitation prompt design
   - Assumption challenge effectiveness
   - Learning cycle pattern recognition
+description: >
+  Active structured reflection support with AI-facilitated
+  retrospectives, assumption challenges, and learning cycle detection.
 tags: [reflection, facilitation, retrospectives]
 ---
-
-# Reflective AI Facilitation
-
-Active structured reflection support.
 
 ## Candidate Items
 

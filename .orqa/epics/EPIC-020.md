@@ -28,10 +28,11 @@ docs-required:
 docs-produced:
   - .orqa/plans/ (discovery artifacts plan)
   - docs/architecture/decisions.md (AD for traceability graph data model)
+description: >
+  Build structured research artifacts, decision traceability graph,
+  research-to-AD promotion, and conversational research workflow.
 tags: [research, discovery, decisions]
 ---
-
-# Discovery & Research Artifacts
 
 ## Tasks
 

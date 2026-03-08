@@ -1,12 +1,11 @@
 ---
 title: "Product Governance"
+description: "Product governance criteria defining how features are evaluated against the two-pillar framework."
 category: product
 tags: []
 created: 2026-03-02
 updated: 2026-03-07
 ---
-
-# Product Governance
 
 **Date:** 2026-03-07
 

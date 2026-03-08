@@ -1,12 +1,11 @@
 ---
 title: "SQLite Schema"
+description: "SQLite database schema covering sessions, messages, governance artifacts, and configuration tables."
 category: architecture
 tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---
-
-# SQLite Schema
 
 **Date:** 2026-03-02 | **Updated:** 2026-03-04 | **Status:** Aligned with Phase 1 implementation
 **References:** [Persistence Research](/research/persistence) (AD-014), [Design Tokens Research](/research/design-tokens)

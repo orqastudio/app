@@ -1,4 +1,6 @@
 ---
+id: orqa-store-patterns
+title: "Orqa Store Patterns"
 name: orqa-store-patterns
 description: |
   OrqaStudio Svelte 5 rune store patterns: class-based stores with $state/$derived,
@@ -10,7 +12,6 @@ tags: [orqa, svelte5, runes, stores, state-management, reactivity]
 user-invocable: true
 ---
 
-# Orqa Store Patterns
 
 OrqaStudio uses Svelte 5 rune-based stores exclusively. All stores live in `ui/lib/stores/*.svelte.ts` files and use class-based patterns with `$state` and `$derived`.
 

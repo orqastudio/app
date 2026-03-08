@@ -11,12 +11,11 @@ research-needed:
   - Cognitive unloading UX patterns
   - Theme detection accuracy
   - Situation mapping visualisation
+description: >
+  Dedicated workflows for transforming unstructured situations into
+  structured understanding through brain-dump flows and AI-driven triage.
 tags: [chaos, clarity, brain-dump, triage]
 ---
-
-# Chaos-to-Clarity Engine
-
-Dedicated workflows for transforming unstructured situations.
 
 ## Candidate Items
 

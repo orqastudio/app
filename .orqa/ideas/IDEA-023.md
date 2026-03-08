@@ -15,16 +15,11 @@ research-needed:
   - Response queue UX and scheduling model
   - Signal classification taxonomy
   - Privacy and data handling for external messages
+description: >
+  Manage incoming communication from multiple channels in a structured
+  way, applying OrqaStudio's structured thinking to community triage.
 tags: [community, communication, inbox, triage, integration]
 ---
-
-# Community Inbox
-
-Community Inbox is a future capability for OrqaStudio™ designed to help manage incoming communication from multiple channels in a structured and sustainable way.
-
-It applies the same principles used by OrqaStudio for structured thinking to the problem of **community interaction and communication triage**.
-
-Instead of requiring constant monitoring of multiple platforms, incoming messages are captured, structured, and reviewed intentionally.
 
 ---
 

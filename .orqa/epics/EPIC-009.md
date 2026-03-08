@@ -24,10 +24,11 @@ docs-required:
   - docs/development/coding-standards.md (testing section)
 docs-produced:
   - docs/development/coding-standards.md (update with frontend test patterns)
+description: >
+  Establish a frontend test suite using Vitest for Svelte stores and
+  components, covering the gap left by zero frontend tests.
 tags: [testing, vitest, frontend]
 ---
-
-# Frontend Test Suite
 
 ## Why P2
 

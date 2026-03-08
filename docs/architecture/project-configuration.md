@@ -1,12 +1,11 @@
 ---
 title: "Project Configuration (`.orqa/project.json`)"
+description: "Schema and usage of the .orqa/project.json configuration file that defines project-level settings."
 category: architecture
 tags: []
 created: 2026-03-03
 updated: 2026-03-04
 ---
-
-# Project Configuration (`.orqa/project.json`)
 
 **Date:** 2026-03-03 | **Status:** Active | **Decision:** AD-019 — File-based project settings
 

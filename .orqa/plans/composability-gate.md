@@ -1,5 +1,9 @@
 ---
-title: "Composability Gate: Audit, Alignment & Platform Architecture"
+id: PLAN-003
+title: "Composability Gate"
+description: >
+  Audit codebase for composability alignment, produce the
+  orqa-composability skill, scanner, and enforcement rule.
 status: draft
 priority: critical
 created: 2026-03-06

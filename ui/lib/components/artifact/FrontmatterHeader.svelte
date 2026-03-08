@@ -51,10 +51,14 @@
 		return ARTIFACT_ID_RE.test(value.trim());
 	}
 
-	/** Fields rendered with a dedicated display. Skip them in the generic loop. */
+	/**
+	 * Fields rendered with a dedicated display or shown outside the metadata card.
+	 * Skip them in the generic loop.
+	 */
 	const HANDLED_FIELDS = new Set([
 		"id",
 		"title",
+		"description",
 		"status",
 		"priority",
 		"milestone",
@@ -97,6 +101,7 @@
 
 	const id = $derived(metadata["id"] as string | undefined);
 	const title = $derived(metadata["title"] as string | undefined);
+	const description = $derived(metadata["description"] as string | undefined);
 	const status = $derived(metadata["status"] as string | undefined);
 	const priority = $derived(metadata["priority"] as string | undefined);
 	const gate = $derived(metadata["gate"] as string | undefined);
@@ -126,17 +131,27 @@
 	}
 </script>
 
-<div class="mb-6 space-y-3 border-b border-border pb-6">
-	<!-- ID + Status row -->
+<!-- Title — from YAML `title` field -->
+{#if title}
+	<h1 class="mb-1 text-2xl font-bold leading-snug">{title}</h1>
+{/if}
+
+<!-- Description — from YAML `description` field -->
+{#if description}
+	<p class="mb-4 text-sm leading-relaxed text-muted-foreground">{description}</p>
+{:else if title}
+	<div class="mb-4"></div>
+{/if}
+
+<!-- Metadata card — shows all YAML fields except title and description -->
+<div class="mb-4 space-y-3 rounded-lg border border-border bg-muted/30 px-4 py-3">
+	<!-- ID + Status/Priority row -->
 	<div class="flex items-start justify-between gap-3">
 		<div class="space-y-0.5">
 			{#if id}
 				<p class="font-mono text-xs font-semibold uppercase tracking-widest text-muted-foreground">
 					{artifactType} · {id}
 				</p>
-			{/if}
-			{#if title}
-				<h1 class="text-xl font-bold leading-snug">{title}</h1>
 			{/if}
 		</div>
 
@@ -260,3 +275,4 @@
 		</div>
 	{/each}
 </div>
+

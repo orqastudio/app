@@ -11,12 +11,11 @@ research-needed:
   - UX research for each entry mode flow
   - Domain-agnostic template design
   - Mode detection accuracy testing
+description: >
+  AI-assisted onboarding flows beyond chat guidance, with each mode
+  supporting new projects and existing work adaptation.
 tags: [entry-modes, onboarding, guided-flows]
 ---
-
-# Entry Modes & Directed Onboarding
-
-AI-assisted onboarding flows beyond chat guidance. Each mode supports new projects and existing work adaptation.
 
 ## Candidate Items
 

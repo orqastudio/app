@@ -25,10 +25,11 @@ docs-required:
 docs-produced:
   - docs/architecture/project-configuration.md (update with local DB path)
   - docs/architecture/decisions.md (AD for project-local database location)
+description: >
+  Quality-of-life improvements for dogfooding, including project-local
+  database, build splash window, and system prompt templates.
 tags: [dx, polish, dogfooding]
 ---
-
-# Developer Experience Polish
 
 ## Why P3
 

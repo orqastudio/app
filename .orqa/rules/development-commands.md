@@ -1,4 +1,9 @@
-# Development Commands (NON-NEGOTIABLE)
+---
+id: development-commands
+title: "Development Commands"
+description: "All development commands must be invoked via make targets. Raw cargo and npm commands are forbidden."
+---
+
 
 All development commands MUST be invoked via `make` targets. Raw `cargo` and `npm run` commands are forbidden for tasks that have a `make` equivalent.
 

@@ -1,12 +1,11 @@
 ---
 title: "Interaction Patterns"
+description: "Standard interaction patterns for navigation, selection, editing, and feedback across the UI."
 category: ui
 tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---
-
-# Interaction Patterns
 
 **Date:** 2026-03-02 | **Informed by:** [Information Architecture](/product/information-architecture), [Frontend Research](/research/frontend), [Claude Integration Research](/research/claude-integration), [Design System](/ui/design-system)
 

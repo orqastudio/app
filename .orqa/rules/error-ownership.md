@@ -1,8 +1,10 @@
 ---
+id: error-ownership
+title: "Error Ownership"
+description: "All errors are your responsibility. Pre-existing errors must be fixed. Never skip or ignore failures."
 scope: system
 ---
 
-# Error Ownership
 
 **Source of Truth:** `@TODO.md` -> "HOW TO WORK" section
 

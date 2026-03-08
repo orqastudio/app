@@ -25,10 +25,11 @@ docs-required:
 docs-produced:
   - docs/architecture/rust-modules.md (update with file watcher module)
   - docs/architecture/decisions.md (AD for file watching strategy and debouncing)
+description: >
+  Watch .claude/ and .orqa/ directories for external modifications and
+  refresh artifact list and viewer when files change on disk.
 tags: [file-watcher, sync, notify]
 ---
-
-# File Watcher for External Changes
 
 ## Why P2
 

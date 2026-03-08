@@ -25,12 +25,11 @@ docs-required:
   - docs/architecture/
   - docs/ui/
 docs-produced: []
+description: >
+  The first working version: a Tauri v2 desktop app with Claude
+  conversations via Agent SDK sidecar, streaming, SQLite, and conversation UI.
 tags: [foundation, scaffold, tauri, svelte, rust, sqlite, streaming]
 ---
-
-# Phase 1 — Scaffold
-
-The first working version of Orqa Studio: a Tauri v2 desktop app capable of Claude conversations via the Agent SDK sidecar, with full streaming, SQLite persistence, and a functional conversation UI.
 
 ## Why P1
 

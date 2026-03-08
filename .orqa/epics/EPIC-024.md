@@ -22,10 +22,11 @@ score: 4.0
 roadmap-ref: "M14"
 docs-required: []
 docs-produced: []
+description: >
+  Nice-to-have polish items for MVP launch including search index UI,
+  multi-window support, and sprint planning.
 tags: [polish, nice-to-have]
 ---
-
-# Additional MVP Polish
 
 ## Tasks
 

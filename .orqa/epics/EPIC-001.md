@@ -24,12 +24,11 @@ docs-required:
   - docs/architecture/streaming-pipeline.md
 docs-produced:
   - docs/architecture/streaming-pipeline.md (update with SystemPromptSent/ContextInjected emission)
+description: >
+  Wire the emission logic that connects existing AI transparency types,
+  components, and store handling into a working end-to-end pipeline.
 tags: [streaming, transparency, reasoning]
 ---
-
-# AI Transparency Wiring
-
-The types, components, and store handling for AI transparency all exist. Missing: the emission logic that connects them.
 
 ## Why P1
 

@@ -1,4 +1,6 @@
 ---
+id: RES-007
+title: "Tauri v2 Research"
 type: research
 status: complete
 date: 2026-03-02
@@ -26,7 +28,6 @@ informs_phases: [0b, 0e, 1, 2]
 informs_features: [F-001, F-002, F-006, F-009, F-011]
 ---
 
-# Tauri v2 Research
 
 **Date:** 2026-03-02 | **Status:** Complete
 

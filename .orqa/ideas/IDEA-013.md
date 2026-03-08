@@ -11,12 +11,11 @@ research-needed:
   - Reasoning summary generation quality
   - Confidence indicator calibration
   - Decision log UX design
+description: >
+  Maintain clear reasoning trails with AI-generated summaries,
+  confidence indicators, and chronological decision logs.
 tags: [reasoning, transparency, confidence]
 ---
-
-# Reasoning Transparency
-
-Maintaining clear reasoning trails.
 
 ## Candidate Items
 

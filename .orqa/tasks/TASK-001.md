@@ -15,10 +15,11 @@ acceptance:
   - No event emitted when system prompt is None (no project loaded)
   - Emission failure does not prevent message from being sent
   - No unwrap() or expect() in the new code
+description: >
+  In stream_send_message(), emit a SystemPromptSent event via on_event
+  channel after resolve_system_prompt() and before sidecar.send().
 tags: [streaming, transparency, rust]
 ---
-
-# Emit SystemPromptSent Event
 
 ## What
 

@@ -1,8 +1,10 @@
 ---
+id: no-stubs
+title: "No Stubs or Placeholders"
+description: "No hardcoded fake data, TODO functions, or scaffolded implementations in production code."
 scope: system
 ---
 
-# No Stubs, Placeholders, or Hardcoded Fake Data (NON-NEGOTIABLE)
 
 ## What Counts as a Stub
 

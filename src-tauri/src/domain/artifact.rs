@@ -153,6 +153,10 @@ pub struct DocNode {
     /// Frontmatter metadata extracted from the file. `None` for directories.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub frontmatter: Option<DocFrontmatter>,
+    /// Short description for leaf nodes: YAML `description` field if present, otherwise the
+    /// first paragraph of the body. `None` for directories.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
 }
 
 /// Extract the YAML text between `---` delimiters from a markdown file.

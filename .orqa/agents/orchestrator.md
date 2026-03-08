@@ -1,4 +1,6 @@
 ---
+id: orchestrator
+title: "Orchestrator"
 name: Orchestrator
 scope: system
 description: Process coordinator for OrqaStudio. Breaks work into tasks, delegates to specialized agents, enforces governance gates, manages the artifact lifecycle, and reports status honestly. Does NOT write implementation code.
@@ -23,7 +25,6 @@ skills:
 model: sonnet
 ---
 
-# Orchestrator
 
 ## Project Context
 

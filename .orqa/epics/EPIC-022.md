@@ -26,10 +26,11 @@ docs-required:
 docs-produced:
   - .orqa/plans/ (work management plan)
   - docs/architecture/decisions.md (AD for work item data model)
+description: >
+  Build epic-to-task hierarchy, plan-to-backlog breakdown, unified
+  backlog view, status workflow, and progress dashboard.
 tags: [work-management, epics, tasks, backlog]
 ---
-
-# Implementation Breakdown & Work Management
 
 ## Tasks
 

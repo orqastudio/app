@@ -12,12 +12,11 @@ research-needed:
   - Cost model research and budget prediction
   - UX for provider switching and selection
   - Local LLM viability (Ollama, air-gapped use)
+description: >
+  Support additional AI providers through the provider-agnostic sidecar
+  interface without changing the Rust core or Svelte UI.
 tags: [providers, composability, multi-provider]
 ---
-
-# Multi-Provider Ecosystem
-
-The provider-agnostic sidecar interface supports additional providers without changing the Rust core or Svelte UI.
 
 ## Candidate Items
 

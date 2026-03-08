@@ -11,12 +11,11 @@ research-needed:
   - Generic governance format design
   - Adapter pattern for .claude/, .continue/, .cursor/
   - Migration tooling and backwards compatibility
+description: >
+  Move governance from .claude/-specific format to generic
+  .orqa/governance/ with environment-specific adapters.
 tags: [governance, transportable, adapters]
 ---
-
-# Transportable Governance Format
-
-Move governance from `.claude/`-specific format to generic `.orqa/governance/` with environment-specific adapters.
 
 ## Candidate Items
 

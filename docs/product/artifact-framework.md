@@ -1,12 +1,11 @@
 ---
 title: "Artifact Framework"
+description: "Schema definitions, lifecycle rules, and governance for all structured artifacts in .orqa/."
 category: product
 tags: [artifacts, governance, structured-thinking]
 created: 2026-03-07
 updated: 2026-03-07
 ---
-
-# Artifact Framework
 
 **Date:** 2026-03-07
 

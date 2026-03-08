@@ -1,12 +1,11 @@
 ---
 title: "Process Metrics"
+description: "Process metrics tracked across development including pass/fail rates, coverage, and violation trends."
 category: process
 tags: []
 created: 2026-03-02
 updated: 2026-03-02
 ---
-
-# Process Metrics
 
 **Date:** 2026-03-02
 

@@ -1,12 +1,11 @@
 ---
 title: "Governance Bootstrap"
+description: "How governance artifacts are loaded and initialized when a project is first opened."
 category: architecture
 tags: []
 created: 2026-03-04
 updated: 2026-03-04
 ---
-
-# Governance Bootstrap
 
 **Date:** 2026-03-04
 **Phase:** 2b

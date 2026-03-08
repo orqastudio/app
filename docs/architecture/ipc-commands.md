@@ -1,12 +1,11 @@
 ---
 title: "IPC Command Catalog"
+description: "Catalog of all Tauri IPC commands defining the frontend-backend communication contract."
 category: architecture
 tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---
-
-# IPC Command Catalog
 
 **Date:** 2026-03-02 | **Status:** Phase 0e specification | **References:** [Tauri v2 Research](/research/tauri-v2) (AD-002, AD-012), [MVP Specification](/product/mvp-specification)
 

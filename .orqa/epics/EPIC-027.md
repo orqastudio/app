@@ -23,12 +23,11 @@ roadmap-ref: "Phase 0c"
 docs-required: []
 docs-produced:
   - docs/product/
+description: >
+  The complete product specification: personas, user journeys,
+  information architecture, glossary, and MVP feature set.
 tags: [foundation, product, personas, journeys, specification]
 ---
-
-# Phase 0c — Product Definition
-
-The complete product specification: who the app is for, what it does, what words it uses, and what features constitute the MVP.
 
 ## Why P1
 

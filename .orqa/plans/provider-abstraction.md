@@ -1,5 +1,9 @@
 ---
+id: PLAN-004
 title: "Provider Abstraction Layer"
+description: >
+  Refactor the sidecar into a provider-agnostic interface so multiple
+  AI providers can be supported without changing the Rust core.
 category: plan
 tags: [provider, sidecar, abstraction, composability, architecture]
 created: "2026-03-07"
@@ -10,8 +14,6 @@ completed_phases: 1
 research: provider-architecture
 informs_epics: []
 ---
-
-# Plan: Provider Abstraction Layer
 
 **Aim:** Compatibility — OrqaStudio should work with as many AI providers as possible.
 **Research:** `.orqa/research/provider-architecture.md`

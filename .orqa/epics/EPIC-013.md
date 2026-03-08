@@ -28,12 +28,11 @@ docs-produced:
   - .orqa/plans/ (self-learning loop plan)
   - docs/architecture/lessons.md (update with automated capture pipeline)
   - docs/ui/lesson-dashboard.md (update with trend charts)
+description: >
+  Build the automated lesson capture and promotion pipeline on top
+  of the existing lesson management CRUD and UI.
 tags: [learning, lessons, promotion]
 ---
-
-# Learning Through Reflection
-
-Lesson management exists (CRUD, UI). Missing: the automated capture and promotion pipeline.
 
 ## Why P1
 

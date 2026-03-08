@@ -1,13 +1,15 @@
 ---
+id: PLAN-005
 title: "Self-Sustaining Artifact System"
+description: >
+  Make the artifact system self-sustaining so new artifacts are created
+  correctly by default and all types are defined in the framework.
 status: active
 created: 2026-03-07
 updated: 2026-03-08
 epic: EPIC-032
 tags: [migration, artifacts, governance, self-sustaining]
 ---
-
-# Plan: Self-Sustaining Artifact System
 
 ## Problem Statement
 

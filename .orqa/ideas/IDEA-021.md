@@ -11,12 +11,11 @@ research-needed:
   - Wireframe rendering library evaluation
   - Terminal integration approach (xterm.js vs native)
   - Git panel scope and UX
+description: >
+  Developer experience improvements discovered through self-use,
+  including wireframe browser, terminal, and git integration.
 tags: [dx, dogfooding, terminal, git]
 ---
-
-# Developer Experience Enhancements
-
-DX improvements discovered through self-use.
 
 ## Candidate Items
 

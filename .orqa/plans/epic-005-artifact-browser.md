@@ -1,13 +1,15 @@
 ---
-title: "Artifact Browser: Unified Navigation, Platform Portability, and Cross-Linking"
+id: PLAN-006
+title: "Artifact Browser"
+description: >
+  Restructure navigation into groups, move governance to .orqa/ with
+  platform adapters, and enable cross-artifact navigation.
 status: draft
 created: 2026-03-08
 updated: 2026-03-08
 epic: EPIC-005
 tags: [navigation, artifacts, viewers, cross-linking, portability, ux]
 ---
-
-# Plan: Artifact Browser
 
 ## Problem Statement
 

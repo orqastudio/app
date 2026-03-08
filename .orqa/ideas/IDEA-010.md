@@ -1,6 +1,7 @@
 ---
 id: IDEA-010
 title: "Domain Expansion"
+description: "Extend OrqaStudio beyond software development to other domains — research, product management, operations, personal productivity, consulting, and education."
 status: captured
 created: 2026-03-07
 updated: 2026-03-07

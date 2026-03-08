@@ -25,10 +25,11 @@ docs-required:
   - docs/architecture/setup-wizard.md
 docs-produced:
   - docs/wireframes/settings-onboarding.md (update with reviewed flows)
+description: >
+  Audit and improve the first-run setup wizard, new project flow,
+  existing folder initialization, and guided first conversation.
 tags: [onboarding, setup, first-run]
 ---
-
-# Onboarding Flow Review
 
 ## Tasks
 

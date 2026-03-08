@@ -28,12 +28,11 @@ docs-produced:
   - .orqa/plans/ (prioritisation plan)
   - docs/architecture/project-configuration.md (update with priority config schema)
   - docs/architecture/decisions.md (AD for scoring formula and configurability)
+description: >
+  Build the scoring model from the roadmap into the app with
+  configurable dimensions, weights, and priority bands.
 tags: [prioritisation, scoring, backlog]
 ---
-
-# Prioritisation Framework
-
-The scoring model defined in the roadmap, built into the app.
 
 ## Why P1
 

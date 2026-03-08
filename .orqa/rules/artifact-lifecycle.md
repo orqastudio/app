@@ -1,8 +1,10 @@
 ---
+id: artifact-lifecycle
+title: "Artifact Lifecycle"
+description: "Enforces creation standards, status transitions, promotion gates, and documentation gates for all .orqa/ artifacts."
 scope: project
 ---
 
-# Artifact Lifecycle (NON-NEGOTIABLE)
 
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
 

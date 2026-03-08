@@ -26,12 +26,11 @@ docs-produced:
   - .orqa/plans/ (CI/CD plan)
   - docs/development/getting-started.md (update with release process)
   - docs/architecture/decisions.md (AD for signing, update channels, versioning strategy)
+description: >
+  Build the CI/CD pipeline with GitHub Actions, cross-platform builds,
+  artifact signing, and auto-update for distribution.
 tags: [ci, cd, distribution, release]
 ---
-
-# CI/CD Pipeline & Distribution
-
-Must be distributable for anyone else to use it.
 
 ## Why P1
 

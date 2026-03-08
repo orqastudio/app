@@ -1,4 +1,7 @@
 ---
+id: git-workflow
+title: "Git Workflow"
+description: "Worktree-based workflow with mandatory cleanup, stash policy, and data loss prevention rules."
 scope: system
 enforcement:
   - event: bash
@@ -15,7 +18,6 @@ enforcement:
     pattern: (npm\s+run\s+dev|cargo\s+tauri\s+dev|cargo\s+watch|tauri\s+dev)
 ---
 
-# Git Workflow
 
 **Source of Truth:** `@docs/development/agentic-workflow.md`
 

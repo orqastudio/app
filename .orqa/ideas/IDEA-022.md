@@ -11,12 +11,11 @@ research-needed:
   - Web companion architecture (read-only vs interactive)
   - Mobile companion scope
   - API design for programmatic access
+description: >
+  Expand beyond desktop with web companion, mobile companion,
+  API access, and CLI companion.
 tags: [web, mobile, api, cli]
 ---
-
-# Platform Access
-
-Expanding beyond desktop.
 
 ## Candidate Items
 

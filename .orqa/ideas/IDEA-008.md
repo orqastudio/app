@@ -11,12 +11,11 @@ research-needed:
   - Multi-user data model (local-first vs server)
   - Conflict resolution for shared artifacts
   - Role-based access design
+description: >
+  Multi-user support for the clarity engine with shared projects,
+  role-based access, and structured handoff protocols.
 tags: [collaboration, teams, multi-user]
 ---
-
-# Collaboration & Teams
-
-Multi-user support for the clarity engine.
 
 ## Candidate Items
 

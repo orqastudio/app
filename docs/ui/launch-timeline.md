@@ -1,5 +1,6 @@
 ---
 title: "Public Launch Content Timeline"
+description: "Timeline for public launch content milestones and deliverables."
 category: ui
 tags: [brand, strategy, gtm, launch]
 created: 2026-03-07

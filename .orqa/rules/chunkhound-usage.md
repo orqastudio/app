@@ -1,8 +1,10 @@
 ---
+id: chunkhound-usage
+title: "ChunkHound Usage"
+description: "Prefer semantic search over Grep/Glob for multi-file searches. ChunkHound is mandatory for all agents."
 scope: system
 ---
 
-# ChunkHound / Semantic Search Usage (MANDATORY)
 
 The `chunkhound` skill contains tool selection guides, query patterns, and anti-patterns. Load it. **Prefer semantic search over Grep/Glob for any search that spans more than one file or directory.**
 

@@ -27,10 +27,11 @@ docs-produced:
   - .orqa/plans/ (sub-agent plan)
   - docs/architecture/sub-agents.md (update with implementation details)
   - docs/architecture/ipc-commands.md (new spawn_agent commands)
+description: >
+  Build agent registry, spawn_agent tool, explore mode, output
+  aggregation, and turn limits for sub-agent delegation.
 tags: [agents, sub-agents, delegation]
 ---
-
-# Sub-Agent Support
 
 ## Tasks
 

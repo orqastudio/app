@@ -1,4 +1,6 @@
 ---
+id: architecture
+title: "Architecture"
 name: architecture
 description: |
   Portable software architecture knowledge: ADR patterns, data flow mapping, adapter pattern,
@@ -11,7 +13,6 @@ tags: [architecture, adr, design-patterns, desktop-app, layered-architecture]
 user-invocable: true
 ---
 
-# Architecture Skill
 
 Software architecture is the set of decisions that are difficult to change later. This skill covers how to identify architecturally significant changes, how to document decisions as ADRs, and how to evaluate implementation plans for compliance with established principles.
 

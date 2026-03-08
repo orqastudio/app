@@ -24,12 +24,11 @@ roadmap-ref: "Phase 2b"
 docs-required:
   - docs/architecture/decisions.md
 docs-produced: []
+description: >
+  The initial governance layer: filesystem scanner, coverage analysis,
+  recommendations, and governance coverage indicator on the dashboard.
 tags: [foundation, governance, scanner, analysis, recommendations]
 ---
-
-# Phase 2b — Governance Bootstrap
-
-The initial governance layer: a filesystem scanner that collects governance artifacts, analyses them for coverage gaps, produces recommendations, and surfaces a coverage indicator on the dashboard.
 
 ## Why P1
 

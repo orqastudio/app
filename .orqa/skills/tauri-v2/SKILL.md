@@ -1,9 +1,10 @@
 ---
+id: tauri-v2
+title: "Tauri v2 Development"
 name: tauri-v2
 description: "Tauri v2 cross-platform app development with Rust backend. Use when configuring tauri.conf.json, implementing Rust commands (#[tauri::command]), setting up IPC patterns (invoke, emit, channels), configuring permissions/capabilities, troubleshooting build issues, or deploying desktop/mobile apps. Triggers on Tauri, src-tauri, invoke, emit, capabilities.json."
 ---
 
-# Tauri v2 Development Skill
 
 > Build cross-platform desktop and mobile apps with web frontends and Rust backends.
 

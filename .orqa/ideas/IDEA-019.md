@@ -12,12 +12,11 @@ research-needed:
   - Open-source strategy
   - Community infrastructure requirements
   - Ethical AI framework design
+description: >
+  Long-term platform potential including ethical AI capabilities,
+  open reasoning framework, and community innovation infrastructure.
 tags: [ecosystem, community, open-source]
 ---
-
-# Ecosystem Potential
-
-Long-term platform potential.
 
 ## Candidate Items
 

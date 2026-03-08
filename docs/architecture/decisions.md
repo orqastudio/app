@@ -1,12 +1,11 @@
 ---
 title: "Architecture Decisions"
+description: "Summary index of numbered architecture decisions (AD-NNN) that govern OrqaStudio's technical direction."
 category: architecture
 tags: []
 created: 2026-03-02
 updated: 2026-03-08
 ---
-
-# Architecture Decisions
 
 > Individual decision artifacts are in `.orqa/decisions/`. This page is a summary index.
 > To add a new decision, create `AD-NNN.md` in `.orqa/decisions/` following the schema in

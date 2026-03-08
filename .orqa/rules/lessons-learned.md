@@ -1,8 +1,10 @@
 ---
+id: lessons-learned
+title: "Lessons Learned"
+description: "Two learning loops: implementation lessons in .orqa/lessons/ and process retrospectives. Both are mandatory."
 scope: system
 ---
 
-# Lessons Learned (NON-NEGOTIABLE)
 
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.
 

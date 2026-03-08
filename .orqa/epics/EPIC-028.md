@@ -24,12 +24,11 @@ docs-required:
   - docs/product/
 docs-produced:
   - docs/ui/
+description: >
+  The complete UX specification: design system, wireframes, component
+  inventory, interaction patterns, and responsive behaviour rules.
 tags: [foundation, ux, design, wireframes, components]
 ---
-
-# Phase 0d — UX Design
-
-The complete UX specification: design system, wireframes for every major screen, component inventory, interaction patterns, and responsive behaviour rules.
 
 ## Why P1
 

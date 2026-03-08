@@ -1,4 +1,7 @@
 ---
+id: architecture-decisions
+title: "Architecture Decisions"
+description: "All code must comply with architecture decisions in docs/architecture/decisions.md."
 scope: project
 enforcement:
   - event: file
@@ -10,7 +13,6 @@ enforcement:
         pattern: invoke\s*\(|from\s+['"]@tauri-apps/api
 ---
 
-# Architecture Decisions
 
 **Source of Truth:** `@docs/architecture/decisions.md` (index) and `.orqa/decisions/` (individual `AD-NNN.md` artifacts)
 

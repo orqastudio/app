@@ -12,12 +12,11 @@ research-needed:
   - Which tools provide most value for structured thinkers
   - UX research for interactive decision matrices
   - Integration with artifact layer
+description: >
+  Tools that operationalise the agile learning loop beyond conversation,
+  including decision matrices, experiments, and assumption mapping.
 tags: [thinking-tools, decision-matrices, experiments]
 ---
-
-# Structured Thinking Tools
-
-Tools that operationalise the agile learning loop beyond conversation.
 
 ## Candidate Items
 

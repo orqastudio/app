@@ -1,4 +1,6 @@
 ---
+id: orqa-composability
+title: "Orqa Composability"
 name: orqa-composability
 description: |
   OrqaStudio's composability philosophy: building systems from small, pure, swappable units.
@@ -10,7 +12,6 @@ tags: [orqa, composability, architecture, pure-functions, pipeline, modularity]
 user-invocable: true
 ---
 
-# Orqa Composability
 
 OrqaStudio is built from small, composable units at every level: functions, modules, features, and integrations. This skill teaches the composability philosophy that shapes all code in the project, grounded in AD-017 (Composability Principle).
 

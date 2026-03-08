@@ -131,6 +131,7 @@ pub fn scan_directory(dir: &Path, docs_root: &Path) -> Result<Vec<DocNode>, Orqa
             path: None,
             children: Some(children),
             frontmatter: None,
+            description: None,
         });
     }
 
@@ -141,6 +142,7 @@ pub fn scan_directory(dir: &Path, docs_root: &Path) -> Result<Vec<DocNode>, Orqa
             path: Some(rel),
             children: None,
             frontmatter: None,
+            description: None,
         });
     }
 

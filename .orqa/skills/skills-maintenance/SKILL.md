@@ -1,4 +1,6 @@
 ---
+id: skills-maintenance
+title: "Skills Maintenance"
 name: skills-maintenance
 description: |
   Full skills.sh lifecycle management: CLI reference, skill evaluation criteria, SKILL.md format,
@@ -10,7 +12,6 @@ tags: [skills, agent-skills, lifecycle, governance, skills-sh]
 user-invocable: true
 ---
 
-# Skills Maintenance Skill
 
 Agent skills are portable domain knowledge that agents load on demand. This skill covers the full lifecycle of managing skills: discovering them, installing them, evaluating their portability, updating them, and removing them when no longer needed.
 

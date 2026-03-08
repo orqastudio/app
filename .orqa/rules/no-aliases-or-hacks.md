@@ -1,8 +1,10 @@
 ---
+id: no-aliases-or-hacks
+title: "No Aliases or Hacks"
+description: "Fix root causes of type mismatches between layers. Never paper over with aliases, shims, or duplicate mappings."
 scope: system
 ---
 
-# No Aliases or Hacky Fixes (NON-NEGOTIABLE)
 
 When a value or type mismatch exists between layers, fix the root cause. Never paper over it with aliases, shims, or duplicate mappings.
 

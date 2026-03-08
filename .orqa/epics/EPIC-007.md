@@ -27,12 +27,11 @@ docs-required:
 docs-produced:
   - docs/architecture/rust-modules.md (update with refactored module structure)
   - docs/architecture/streaming-pipeline.md (update with StreamOrchestrator)
+description: >
+  Refactor monolithic service files into composable units while
+  preserving existing store, IPC, and component boundaries.
 tags: [composability, refactoring, code-health]
 ---
-
-# Composability Refactoring
-
-The codebase has solid boundaries (stores, IPC, components) but monolithic service files that reduce maintainability.
 
 ## Why P2
 

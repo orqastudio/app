@@ -11,12 +11,11 @@ research-needed:
   - Long-term knowledge preservation model
   - Project evolution timeline UX
   - Organisational learning aggregation
+description: >
+  Long-term knowledge preservation with project evolution maps,
+  organisational learning records, and strategic timeline visualisations.
 tags: [memory, history, preservation]
 ---
-
-# Institutional Memory
-
-Long-term knowledge preservation.
 
 ## Candidate Items
 

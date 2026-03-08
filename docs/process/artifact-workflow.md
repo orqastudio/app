@@ -1,12 +1,11 @@
 ---
 title: "Artifact Workflow"
+description: "Day-to-day workflow for creating, transitioning, and managing artifacts through their lifecycle."
 category: process
 tags: [artifacts, workflow, lifecycle]
 created: 2026-03-07
 updated: 2026-03-07
 ---
-
-# Artifact Workflow
 
 **Date:** 2026-03-07
 

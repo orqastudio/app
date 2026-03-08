@@ -1,12 +1,11 @@
 ---
 title: "Lesson Promotion Pipeline Architecture"
+description: "Architecture of the lesson promotion pipeline that converts implementation lessons into enforced rules."
 category: architecture
 tags: []
 created: 2026-03-05
 updated: 2026-03-05
 ---
-
-# Lesson Promotion Pipeline Architecture
 
 **Date:** 2026-03-05
 

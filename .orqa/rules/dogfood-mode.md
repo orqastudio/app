@@ -1,14 +1,39 @@
 ---
-scope: system
+id: dogfood-mode
+title: "Dogfood Mode"
+description: "Project-level rule for when an app is editing itself. Provides agent context awareness, operational caution, and system prompt injection. Active when dogfood: true in project.json."
+status: active
+tags: [project-level, dogfood, operational, context-awareness]
 ---
 
 # Dogfood Mode (CONDITIONAL — only when `dogfood: true`)
 
-This rule applies ONLY when `.orqa/project.json` contains `"dogfood": true`. For non-dogfood projects, ignore this rule entirely.
+This rule applies ONLY when `.orqa/project.json` contains `"dogfood": true`. For non-dogfood projects, ignore this rule entirely. This is a **project-level** rule, not a universal rule.
 
 ## What Dogfooding Means
 
-You are editing the app you are running inside. The OrqaStudio codebase IS the running OrqaStudio instance. This creates unique constraints that don't apply to normal projects.
+You are editing the app you are running inside. The codebase IS the running instance. This creates unique constraints that don't apply to normal projects.
+
+## Agent Context Awareness
+
+When the dogfood flag is set, the project's system prompt injection tells orchestrating agents their operational context. Agents must always know:
+
+| Question | Answer in Dogfood Mode |
+|----------|----------------------|
+| **What am I?** | An orchestrating agent coordinating implementation work |
+| **Where am I?** | CLI (Claude Code) or App (OrqaStudio) — determines which tools and governance are available |
+| **Am I dogfooding?** | Yes — my changes affect my own runtime environment |
+| **What does that mean practically?** | Extra caution on restarts, protocol changes, and structural modifications. The systems-thinking rule applies with heightened urgency because I am modifying the system I am operating within. |
+
+**This is NOT recursive reasoning about reasoning.** The agent needs one clear signal: "you are editing the app you are running inside." The project system prompt provides that signal. This rule provides the operational specifics.
+
+### System Prompt Injection
+
+When `dogfood: true`, the app's system prompt builder should include context like:
+
+> You are working on a project that is dogfooding — the app you are building IS the app you are running inside. Changes to the backend require a restart. Changes to the sidecar protocol affect your active connection. Frontend changes apply via HMR but can crash mid-stream. Apply the systems-thinking rule with awareness that you are part of the system you are modifying.
+
+This injection is what transitions an agent from "building an app" to "building the app I'm running in." The CLI achieves this via `.claude/rules/dogfood-mode.md` being loaded into context. The app achieves it via the system prompt injection.
 
 ## Enhanced Caution Rules
 
@@ -56,5 +81,6 @@ Check `.orqa/project.json` for `"dogfood": true` at task start. In the app conte
 
 ## Related Rules
 
+- `systems-thinking.md` — universal rule that applies to all projects; dogfood mode heightens its urgency
 - `development-commands.md` — `make dev` and `make restart` commands
 - `coding-standards.md` — general coding standards apply regardless of dogfood mode

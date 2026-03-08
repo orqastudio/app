@@ -10,12 +10,11 @@ promoted-to: null
 research-needed:
   - View projection architecture
   - Audience-tailored output generation
+description: >
+  Expand artifact projections beyond backlogs with strategy maps,
+  experiment frameworks, and audience-tailored summaries.
 tags: [views, output, projections]
 ---
-
-# Multi-View Output System
-
-Expanding artifact projections beyond backlogs.
 
 ## Candidate Items
 

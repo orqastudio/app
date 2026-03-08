@@ -11,12 +11,11 @@ research-needed:
   - Cross-project data model
   - Privacy and data isolation concerns
   - Template format design
+description: >
+  Enable learning that transfers between projects through shared
+  templates, cross-project patterns, and accumulated insights.
 tags: [cross-project, templates, learning]
 ---
-
-# Cross-Project Intelligence
-
-Learning that transfers between projects.
 
 ## Candidate Items
 

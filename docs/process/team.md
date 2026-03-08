@@ -1,12 +1,11 @@
 ---
 title: "The Agentic Development Team"
+description: "Roster of specialized agents in the agentic development team with their roles and responsibilities."
 category: process
 tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---
-
-# The Agentic Development Team
 
 **Date:** 2026-03-02
 

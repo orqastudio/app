@@ -1,4 +1,6 @@
 ---
+id: RES-008
+title: "Wireframing Tool Research"
 type: research
 status: complete
 date: 2026-03-02
@@ -31,7 +33,6 @@ informs_phases: [0d, 0e]
 informs_features: []
 ---
 
-# Wireframing Tool Research
 
 **Date:** 2026-03-02 | **Status:** Complete
 

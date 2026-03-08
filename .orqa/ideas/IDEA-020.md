@@ -11,12 +11,11 @@ research-needed:
   - Figma MCP server capabilities
   - Design token sync architecture
   - Code-to-Figma backfill feasibility
+description: >
+  Integration with 3rd-party design tools including Figma MCP server,
+  design token sync, and code-to-Figma backfill.
 tags: [design, figma, tokens]
 ---
-
-# Design Tool Integration
-
-Integration with 3rd-party design tools.
 
 ## Candidate Items
 

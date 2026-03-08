@@ -25,15 +25,12 @@ docs-produced:
   - ".orqa/rules/architecture-decisions.md (dual-source reference)"
 depends-on: []
 blocks: [EPIC-005]
+description: >
+  Make the artifact system self-sustaining: correct default creation,
+  historical content linkage, and framework coverage for all 8 types.
 tags: [migration, artifacts, governance, self-sustaining]
 deadline: null
 ---
-
-# EPIC-032: Artifact System Migration
-
-## Summary
-
-Make the artifact system self-sustaining so that new artifacts are created correctly by default, all historical content has proper artifact linkage, and the framework covers all 8 artifact types.
 
 ## Workstreams
 

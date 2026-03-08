@@ -1,4 +1,6 @@
 ---
+id: RES-005
+title: "Onboarding Research"
 type: research
 status: complete
 date: 2026-03-02
@@ -22,7 +24,6 @@ informs_phases: [0b, 0d, 1, 4]
 informs_features: [F-001, F-001b, F-007]
 ---
 
-# Project Onboarding Research
 
 **Date:** 2026-03-02 | **Status:** Complete
 

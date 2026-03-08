@@ -184,6 +184,11 @@ pub fn scan_plan_tree(plans_path: &Path) -> Result<Vec<DocNode>, OrqaError> {
             continue;
         }
 
+        // Skip README — it is a landing page, not a browsable artifact.
+        if name.to_ascii_uppercase() == "README.MD" {
+            continue;
+        }
+
         let path = entry.path();
         let rel = name.trim_end_matches(".md").to_string();
 
@@ -200,11 +205,16 @@ pub fn scan_plan_tree(plans_path: &Path) -> Result<Vec<DocNode>, OrqaError> {
             updated: fm.updated.clone(),
         };
 
+        // Use YAML description field.
+        let (_, _, _, yaml_desc) = extract_basic_frontmatter(&content);
+        let description = yaml_desc;
+
         nodes.push(DocNode {
             label,
             path: Some(rel),
             children: None,
             frontmatter: Some(doc_fm),
+            description,
         });
     }
 
@@ -226,17 +236,27 @@ pub fn summary_from_entry(
         return Ok(None);
     }
 
+    // Skip README — it is a landing page, not an artifact.
+    if name.to_ascii_uppercase() == "README.MD" {
+        return Ok(None);
+    }
+
     let ft = entry.file_type()?;
 
     let summary = match artifact_type {
         ArtifactType::Skill => {
-            if ft.is_dir() && entry.path().join("SKILL.md").exists() {
+            let skill_path = entry.path().join("SKILL.md");
+            if ft.is_dir() && skill_path.exists() {
+                let content = std::fs::read_to_string(&skill_path).unwrap_or_default();
+                let (_id, title, _status, yaml_desc) = extract_basic_frontmatter(&content);
+                let display_name = title.unwrap_or_else(|| humanize_name(&name));
+                let description = yaml_desc;
                 Some(ArtifactSummary {
                     id: 0,
                     artifact_type: artifact_type.clone(),
                     rel_path: format!(".orqa/skills/{}/SKILL.md", name),
-                    name: humanize_name(&name),
-                    description: None,
+                    name: display_name,
+                    description,
                     compliance_status: ComplianceStatus::Unknown,
                     file_modified_at: None,
                 })
@@ -257,12 +277,16 @@ pub fn summary_from_entry(
                     ArtifactType::Hook => format!(".orqa/hooks/{name}"),
                     _ => return Ok(None),
                 };
+                let content = std::fs::read_to_string(entry.path()).unwrap_or_default();
+                let (_id, title, _status, yaml_desc) = extract_basic_frontmatter(&content);
+                let display_name = title.unwrap_or_else(|| humanize_name(&name));
+                let description = yaml_desc;
                 Some(ArtifactSummary {
                     id: 0,
                     artifact_type: artifact_type.clone(),
                     rel_path,
-                    name: humanize_name(&name),
-                    description: None,
+                    name: display_name,
+                    description,
                     compliance_status: ComplianceStatus::Unknown,
                     file_modified_at: None,
                 })
@@ -301,6 +325,11 @@ pub fn scan_orqa_artifact_dir(
         let name = file_name.to_string_lossy();
 
         if name.starts_with('.') || name.starts_with('_') || !name.ends_with(".md") {
+            continue;
+        }
+
+        // Skip README — it is a landing page, not an artifact.
+        if name.to_ascii_uppercase() == "README.MD" {
             continue;
         }
 
@@ -380,10 +409,6 @@ pub fn read_orqa_artifact(
     let file_size = std::fs::metadata(&file_path).ok().map(|m| m.len() as i64);
     let full_rel_path = format!("{}/{filename}.md", dir_label);
 
-    // Strip frontmatter from content so callers receive only the body.
-    let body = crate::domain::artifact::extract_frontmatter(&raw_content)
-        .1;
-
     Ok(Artifact {
         id: 0,
         project_id: 0,
@@ -391,7 +416,7 @@ pub fn read_orqa_artifact(
         rel_path: full_rel_path,
         name,
         description,
-        content: body,
+        content: raw_content,
         file_hash: None,
         file_size,
         file_modified_at: None,
@@ -491,6 +516,76 @@ pub fn read_lesson_file(project_path: &Path, rel_path: &str) -> Result<Artifact,
 // Private helpers
 // ---------------------------------------------------------------------------
 
+/// Extract the first non-empty paragraph from the markdown body of a document.
+///
+/// The YAML frontmatter block (everything between the opening `---` and closing `---`) is
+/// stripped first. Leading ATX heading lines (`#`, `##`, `###`, …) are then skipped. The
+/// first run of consecutive non-blank lines is collected as the paragraph text, trimmed, and
+/// truncated to ~150 characters with `"..."` appended if necessary.
+///
+/// Returns `None` when no paragraph text can be found after stripping headings.
+fn extract_first_paragraph(content: &str) -> Option<String> {
+    // Strip the YAML frontmatter block if present.
+    let body = if content.trim_start().starts_with("---") {
+        // Find the closing `---` after the opening fence.
+        let after_open = content.trim_start().trim_start_matches("---");
+        if let Some(close) = after_open.find("\n---") {
+            // Skip past the closing fence line (including the newline that follows it).
+            let rest = &after_open[close + 4..];
+            // Consume a single trailing newline after the `---` if present.
+            rest.strip_prefix('\n').unwrap_or(rest)
+        } else {
+            // Malformed frontmatter — treat entire content as body.
+            content
+        }
+    } else {
+        content
+    };
+
+    // Walk lines, skip headings, collect the first paragraph.
+    let mut paragraph_lines: Vec<&str> = Vec::new();
+    let mut in_paragraph = false;
+
+    for line in body.lines() {
+        let trimmed = line.trim();
+
+        if trimmed.is_empty() {
+            if in_paragraph {
+                // Blank line ends the paragraph.
+                break;
+            }
+            // Leading blank line — keep looking.
+            continue;
+        }
+
+        // Skip ATX headings (# / ## / ### …).
+        if trimmed.starts_with('#') {
+            if in_paragraph {
+                // Heading inside paragraph — treat as paragraph end.
+                break;
+            }
+            continue;
+        }
+
+        in_paragraph = true;
+        paragraph_lines.push(trimmed);
+    }
+
+    if paragraph_lines.is_empty() {
+        return None;
+    }
+
+    let text = paragraph_lines.join(" ");
+    const MAX_LEN: usize = 150;
+    if text.len() > MAX_LEN {
+        // Truncate at a character boundary, then append ellipsis.
+        let truncated: String = text.chars().take(MAX_LEN).collect();
+        Some(format!("{truncated}..."))
+    } else {
+        Some(text)
+    }
+}
+
 /// Extract the four most common frontmatter fields without committing to a specific schema.
 ///
 /// Returns `(id, title, status, description)` — all `Option<String>`.
@@ -588,23 +683,28 @@ fn scan_directory(dir: &Path, docs_root: &Path) -> Result<Vec<DocNode>, OrqaErro
             path: None,
             children: Some(children),
             frontmatter: None,
+            description: None,
         });
     }
 
     for (name, path) in files {
+        // Skip README — it is a landing page, not a browsable artifact.
+        if name.to_ascii_uppercase() == "README.MD" {
+            continue;
+        }
         let rel = relative_path_without_extension(&path, docs_root);
-        let fm = std::fs::read_to_string(&path)
-            .ok()
-            .map(|content| parse_doc_frontmatter(&content).0);
-        let label = fm
-            .as_ref()
-            .and_then(|f| f.title.clone())
-            .unwrap_or_else(|| humanize_name(&name));
+        let content = std::fs::read_to_string(&path).unwrap_or_default();
+        let (fm, _) = parse_doc_frontmatter(&content);
+        let label = fm.title.clone().unwrap_or_else(|| humanize_name(&name));
+        // Use YAML description field.
+        let (_, _, _, yaml_desc) = extract_basic_frontmatter(&content);
+        let description = yaml_desc;
         nodes.push(DocNode {
             label,
             path: Some(rel),
             children: None,
-            frontmatter: fm,
+            frontmatter: Some(fm),
+            description,
         });
     }
 
@@ -650,6 +750,7 @@ fn scan_research_directory(dir: &Path, research_root: &Path) -> Result<Vec<DocNo
             path: None,
             children: Some(children),
             frontmatter: None,
+            description: None,
         });
     }
 
@@ -664,6 +765,9 @@ fn scan_research_directory(dir: &Path, research_root: &Path) -> Result<Vec<DocNo
             .map(|c| format!("{} Research", title_case_hyphenated(c)))
             .unwrap_or_else(|| humanize_name(&name));
 
+        // Use YAML description field.
+        let description = fm.description.clone();
+
         let doc_fm = DocFrontmatter {
             title: Some(label.clone()),
             category: fm.category,
@@ -677,6 +781,7 @@ fn scan_research_directory(dir: &Path, research_root: &Path) -> Result<Vec<DocNo
             path: Some(rel),
             children: None,
             frontmatter: Some(doc_fm),
+            description,
         });
     }
 
@@ -1003,7 +1108,7 @@ mod tests {
     }
 
     #[test]
-    fn read_orqa_artifact_returns_content_without_frontmatter() {
+    fn read_orqa_artifact_returns_raw_content_with_frontmatter() {
         let tmp = make_temp_project();
         let dir = tmp.path().join(".orqa").join("milestones");
         fs::create_dir_all(&dir).expect("create dir");
@@ -1018,8 +1123,9 @@ mod tests {
         assert_eq!(artifact.rel_path, ".orqa/milestones/MS-001.md");
         assert!(artifact.content.contains("# Milestone 1"));
         assert!(artifact.content.contains("Body here."));
-        // Frontmatter must not appear in content
-        assert!(!artifact.content.contains("---"));
+        // Raw content includes frontmatter so the frontend can parse and display it
+        assert!(artifact.content.contains("---"));
+        assert!(artifact.content.contains("id: MS-001"));
     }
 
     #[test]
@@ -1106,6 +1212,115 @@ mod tests {
         let summaries = scan_lessons_dir(tmp.path()).expect("scan");
         assert_eq!(summaries.len(), 1);
         assert_eq!(summaries[0].name, "Run vite optimize");
+    }
+
+    // -----------------------------------------------------------------------
+    // extract_first_paragraph tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn extract_first_paragraph_basic() {
+        let content = "---\ntitle: Test\n---\nThis is the first paragraph.";
+        assert_eq!(
+            extract_first_paragraph(content),
+            Some("This is the first paragraph.".to_string())
+        );
+    }
+
+    #[test]
+    fn extract_first_paragraph_skips_h1_heading() {
+        let content = "---\ntitle: Test\n---\n# Heading\n\nReal paragraph here.";
+        assert_eq!(
+            extract_first_paragraph(content),
+            Some("Real paragraph here.".to_string())
+        );
+    }
+
+    #[test]
+    fn extract_first_paragraph_skips_multiple_headings() {
+        let content = "---\ntitle: Test\n---\n# H1\n## H2\n### H3\n\nActual content.";
+        assert_eq!(
+            extract_first_paragraph(content),
+            Some("Actual content.".to_string())
+        );
+    }
+
+    #[test]
+    fn extract_first_paragraph_stops_at_blank_line() {
+        let content = "---\ntitle: T\n---\nFirst line.\nSecond line.\n\nSecond paragraph.";
+        assert_eq!(
+            extract_first_paragraph(content),
+            Some("First line. Second line.".to_string())
+        );
+    }
+
+    #[test]
+    fn extract_first_paragraph_truncates_long_text() {
+        let long_text = "a".repeat(200);
+        let content = format!("---\ntitle: T\n---\n{long_text}");
+        let result = extract_first_paragraph(&content).unwrap();
+        assert!(result.ends_with("..."));
+        // 150 chars + "..." = 153
+        assert_eq!(result.len(), 153);
+    }
+
+    #[test]
+    fn extract_first_paragraph_no_frontmatter() {
+        let content = "# Heading\n\nSome paragraph text.";
+        assert_eq!(
+            extract_first_paragraph(content),
+            Some("Some paragraph text.".to_string())
+        );
+    }
+
+    #[test]
+    fn extract_first_paragraph_returns_none_when_only_headings() {
+        let content = "---\ntitle: T\n---\n# Only a heading";
+        // The heading line itself is skipped; if nothing follows, returns None.
+        assert_eq!(extract_first_paragraph(content), None);
+    }
+
+    #[test]
+    fn extract_first_paragraph_empty_content() {
+        assert_eq!(extract_first_paragraph(""), None);
+    }
+
+    #[test]
+    fn scan_orqa_artifact_dir_falls_back_to_first_paragraph() {
+        let tmp = make_temp_project();
+        let dir = tmp.path().join(".orqa").join("ideas");
+        fs::create_dir_all(&dir).expect("create dir");
+        fs::write(
+            dir.join("IDEA-001.md"),
+            "---\nid: IDEA-001\ntitle: Cool Idea\nstatus: captured\n---\n# Background\n\nThis is the idea description extracted from the body.",
+        )
+        .expect("write file");
+
+        let summaries = scan_orqa_artifact_dir(&dir, ".orqa/ideas").expect("scan");
+        assert_eq!(summaries.len(), 1);
+        assert_eq!(
+            summaries[0].description.as_deref(),
+            Some("This is the idea description extracted from the body.")
+        );
+    }
+
+    #[test]
+    fn scan_orqa_artifact_dir_prefers_yaml_description_over_paragraph() {
+        let tmp = make_temp_project();
+        let dir = tmp.path().join(".orqa").join("ideas");
+        fs::create_dir_all(&dir).expect("create dir");
+        fs::write(
+            dir.join("IDEA-002.md"),
+            "---\nid: IDEA-002\ntitle: Another Idea\ndescription: YAML description wins.\n---\n\nBody paragraph that should be ignored.",
+        )
+        .expect("write file");
+
+        let summaries = scan_orqa_artifact_dir(&dir, ".orqa/ideas").expect("scan");
+        assert_eq!(summaries.len(), 1);
+        assert_eq!(
+            summaries[0].description.as_deref(),
+            Some("YAML description wins.")
+        );
     }
 
     #[test]

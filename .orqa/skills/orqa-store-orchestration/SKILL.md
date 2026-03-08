@@ -1,4 +1,6 @@
 ---
+id: orqa-store-orchestration
+title: "Orqa Store Orchestration"
 name: orqa-store-orchestration
 description: |
   How multiple Svelte 5 rune stores coordinate in OrqaStudio without tight coupling.
@@ -11,7 +13,6 @@ tags: [orqa, svelte5, runes, stores, orchestration, coordination, state-manageme
 user-invocable: true
 ---
 
-# Orqa Store Orchestration
 
 OrqaStudio has 10 singleton stores, each owning a single domain. Stores never import each other (with one documented exception). All cross-store coordination happens in components — primarily layout components that have visibility into multiple domains.
 

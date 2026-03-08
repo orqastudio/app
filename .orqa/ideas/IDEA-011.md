@@ -11,12 +11,11 @@ research-needed:
   - Report template design
   - Shareable link architecture (local app constraint)
   - Export format priorities
+description: >
+  Make understanding accessible to non-users through executive
+  dashboards, shareable links, and formatted report exports.
 tags: [reporting, export, stakeholders]
 ---
-
-# Reporting & Stakeholder Access
-
-Making understanding accessible to non-users.
 
 ## Candidate Items
 

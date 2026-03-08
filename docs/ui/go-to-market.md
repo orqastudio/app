@@ -1,5 +1,6 @@
 ---
 title: "Go-To-Market Strategy"
+description: "Go-to-market strategy covering positioning, channels, and launch sequencing."
 category: ui
 tags: [brand, strategy, gtm]
 created: 2026-03-07

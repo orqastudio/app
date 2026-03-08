@@ -1,12 +1,11 @@
 ---
 title: "Glossary & Domain Model"
+description: "Domain model and glossary of key terms used throughout OrqaStudio documentation and code."
 category: product
 tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---
-
-# Glossary & Domain Model
 
 **Date:** 2026-03-02
 

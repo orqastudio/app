@@ -14,10 +14,10 @@
 	import SetupWizard from "$lib/components/setup/SetupWizard.svelte";
 	import GovernanceBootstrapWizard from "$lib/components/governance/GovernanceBootstrapWizard.svelte";
 
-	import LessonsPanel from "$lib/components/lessons/LessonsPanel.svelte";
+	import ArtifactMasterDetail from "$lib/components/artifact/ArtifactMasterDetail.svelte";
 	import * as Resizable from "$lib/components/ui/resizable";
 	import setupBackground from "$lib/assets/setup-background.png";
-	import { navigationStore } from "$lib/stores/navigation.svelte";
+	import { navigationStore, GROUP_SUB_CATEGORIES } from "$lib/stores/navigation.svelte";
 	import { settingsStore } from "$lib/stores/settings.svelte";
 	import { artifactStore } from "$lib/stores/artifact.svelte";
 	import { projectStore } from "$lib/stores/project.svelte";
@@ -26,6 +26,10 @@
 	import { enforcementStore } from "$lib/stores/enforcement.svelte";
 
 	const hasProject = $derived(projectStore.hasProject);
+	const groupHasMultipleSubCategories = $derived(
+		navigationStore.activeGroup !== null &&
+		GROUP_SUB_CATEGORIES[navigationStore.activeGroup].length > 1,
+	);
 	const needsSetup = $derived(projectStore.settingsLoaded && !projectStore.hasSettings);
 	const hideChatPanel = $derived(
 		navigationStore.activeActivity === "settings",
@@ -130,6 +134,9 @@
 	$effect(() => {
 		const activity = navigationStore.activeActivity;
 		if (!hasProject || needsSetup) return;
+		// Clear any stale error from a previously visited artifact type so it
+		// does not bleed into the newly selected view (Bug 2 fix).
+		artifactStore.error = null;
 		if (activity === "milestones" && artifactStore.milestones.length === 0) {
 			artifactStore.loadMilestones();
 		} else if (activity === "epics" && artifactStore.epics.length === 0) {
@@ -157,6 +164,8 @@
 			artifactStore.loadResearch(path);
 		} else if (activity === "plans") {
 			artifactStore.loadPlan(path);
+		} else if (activity === "orchestrator") {
+			artifactStore.loadGovernanceArtifact(".orqa/agents/orchestrator.md");
 		} else if (activityToArtifactType[activity]) {
 			artifactStore.loadGovernanceArtifact(path);
 		} else if (
@@ -205,8 +214,10 @@
 			<!-- Activity Bar (48px fixed width) — project only -->
 			<ActivityBar />
 
-			<!-- Nav Sub-Panel (collapsible, 200px) -->
-			{#if navigationStore.showNavPanel}
+			<!-- Nav Sub-Panel (200px) — shown for settings/chat and for groups with
+			     more than one sub-category (Planning, Team, Governance). Hidden for
+			     Documentation (single sub-category) and single-item views like Orchestrator. -->
+			{#if navigationStore.showNavPanel && (navigationStore.activeGroup === null || groupHasMultipleSubCategories)}
 				<NavSubPanel />
 			{/if}
 
@@ -225,27 +236,19 @@
 						<div class="h-full overflow-hidden">
 							{#if navigationStore.activeActivity === "project"}
 								<ProjectDashboard />
-							{:else if navigationStore.activeActivity === "lessons"}
-								{#if navigationStore.explorerView === "artifact-viewer"}
-									<ArtifactViewer />
-								{:else}
-									<LessonsPanel />
-								{/if}
 							{:else if navigationStore.activeActivity === "chat"}
 								<WelcomeScreen />
-							{:else if navigationStore.isArtifactActivity || (navigationStore.activeGroup !== null && navigationStore.explorerView === "artifact-viewer")}
+							{:else if navigationStore.activeGroup !== null}
+								{#if navigationStore.activeActivity === "orchestrator"}
+									<ArtifactViewer />
+								{:else}
+									<ArtifactMasterDetail activity={navigationStore.activeActivity} />
+								{/if}
+							{:else if navigationStore.isArtifactActivity}
 								{#if navigationStore.explorerView === "artifact-viewer"}
 									<ArtifactViewer />
 								{:else}
 									<ArtifactLanding category={navigationStore.activeActivity} />
-								{/if}
-							{:else if navigationStore.activeGroup !== null}
-								{#if navigationStore.explorerView === "artifact-viewer"}
-									<ArtifactViewer />
-								{:else}
-									<div class="flex h-full items-center justify-center p-8 text-center text-sm text-muted-foreground">
-										Select an item from the sidebar to view it here.
-									</div>
 								{/if}
 							{:else}
 								<WelcomeScreen />

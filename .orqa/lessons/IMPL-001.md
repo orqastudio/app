@@ -7,9 +7,10 @@ status: active
 promoted_to: null
 created: 2026-03-03
 updated: 2026-03-03
+description: >
+  After installing new npm dependencies, run npx vite optimize before
+  starting the dev server to avoid WebView2 white screen on Windows.
 ---
-
-# Run `npx vite optimize` after new dependencies
 
 ## Pattern
 After `npm install` or when Vite encounters new dependencies for the first time, `cargo tauri dev` launches the app but Vite triggers a dependency optimization reload. On Windows, the Tauri WebView2 webview fails to reconnect after this reload, leaving the app stuck on a white screen. The app only works after a full restart.

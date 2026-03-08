@@ -1,12 +1,11 @@
 ---
 title: "User Journeys"
+description: "User journey maps covering key workflows from project creation through ongoing governance."
 category: product
 tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---
-
-# User Journeys
 
 **Date:** 2026-03-02
 

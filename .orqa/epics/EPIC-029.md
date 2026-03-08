@@ -25,12 +25,11 @@ docs-required:
   - docs/ui/
 docs-produced:
   - docs/architecture/
+description: >
+  The complete technical blueprint: database schema, IPC commands, Rust
+  modules, streaming pipeline, tool definitions, and error taxonomy.
 tags: [foundation, technical-design, schema, ipc, architecture]
 ---
-
-# Phase 0e — Technical Design
-
-The complete technical blueprint: database schema, IPC command catalogue, Rust module architecture, Svelte component tree, streaming pipeline specification, tool definitions, MCP host interface, and error taxonomy.
 
 ## Why P1
 

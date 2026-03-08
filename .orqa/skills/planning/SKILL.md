@@ -1,4 +1,6 @@
 ---
+id: planning
+title: "Planning"
 name: planning
 description: |
   Enforces documentation-first planning for all implementation tasks.
@@ -7,7 +9,6 @@ description: |
 allowed-tools: Read, Glob, Grep, mcp__MCP_DOCKER__fetch, mcp__MCP_DOCKER__search
 ---
 
-# Planning Skill
 
 Every implementation task follows a strict documentation-first workflow: **Document → Approve → Implement → Verify**. No code is written before documentation is approved. Documentation is the source of truth — code that diverges from docs is wrong and must be fixed.
 

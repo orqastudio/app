@@ -1,8 +1,10 @@
 ---
+id: documentation-first
+title: "Documentation-First Implementation"
+description: "Documentation is the source of truth. Verify docs exist before writing code; update docs before changing code."
 scope: system
 ---
 
-# Documentation-First Implementation (NON-NEGOTIABLE)
 
 ## Principle
 

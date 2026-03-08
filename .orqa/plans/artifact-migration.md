@@ -1,13 +1,15 @@
 ---
-title: "Artifact Migration & Backfill Plan"
+id: PLAN-002
+title: "Artifact Migration & Backfill"
+description: >
+  Backfill historical content with artifact linkage, build viewers
+  for missing artifact types, and enable cross-artifact navigation.
 status: active
 created: 2026-03-07
 updated: 2026-03-08
 epic: EPIC-032
 tags: [migration, artifacts, backfill, infrastructure]
 ---
-
-# Artifact Migration & Backfill Plan
 
 ## Problem Statement
 

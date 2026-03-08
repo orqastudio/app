@@ -1,12 +1,11 @@
 ---
 title: "Wireframe: Core Layout"
+description: "Wireframe specification for the core application layout with sidebar, panels, and toolbar."
 category: wireframes
 tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---
-
-# Wireframe: Core Layout
 
 **Date:** 2026-03-02 | **Informed by:** [Information Architecture](/product/information-architecture), [Frontend Research](/research/frontend), [Design System](/ui/design-system)
 

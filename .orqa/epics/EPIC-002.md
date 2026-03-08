@@ -25,12 +25,11 @@ docs-required:
   - docs/architecture/project-configuration.md
 docs-produced:
   - docs/wireframes/settings-onboarding.md (update with thinking toggle and prompt sections)
+description: >
+  Add UI controls for show_thinking toggle and custom system prompt
+  fields that already exist in the backend.
 tags: [settings, thinking, system-prompt]
 ---
-
-# Settings UI for Thinking & Custom Prompt
-
-Fields exist in both Rust and TypeScript. Missing: UI controls to set them.
 
 ## Why P1
 

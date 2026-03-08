@@ -1,4 +1,9 @@
-# No Deferred Deliverables (NON-NEGOTIABLE)
+---
+id: no-deferred-deliverables
+title: "No Deferred Deliverables"
+description: "If a deliverable is in scope, it ships with the epic. Deferring scoped deliverables is forbidden."
+---
+
 
 ## The Rule
 

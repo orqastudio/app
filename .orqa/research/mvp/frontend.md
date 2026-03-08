@@ -1,4 +1,6 @@
 ---
+id: RES-004
+title: "Frontend Research"
 type: research
 status: complete
 date: 2026-03-02
@@ -26,7 +28,6 @@ informs_phases: [0b, 0d, 0e, 1]
 informs_features: [F-003, F-004, F-006, F-007, F-008, F-010]
 ---
 
-# Frontend Research
 
 **Date:** 2026-03-02 | **Status:** Complete
 

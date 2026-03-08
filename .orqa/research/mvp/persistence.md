@@ -1,4 +1,6 @@
 ---
+id: RES-006
+title: "Persistence Research"
 type: research
 status: complete
 date: 2026-03-02
@@ -22,7 +24,6 @@ informs_phases: [0b, 0e, 1, 5]
 informs_features: [F-005, F-011, F-013]
 ---
 
-# Persistence Research
 
 **Date:** 2026-03-02 | **Status:** Complete
 

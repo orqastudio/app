@@ -1,12 +1,11 @@
 ---
 title: "Architecture Overview"
+description: "High-level overview of OrqaStudio's architecture spanning Tauri, Rust backend, Svelte frontend, and sidecar."
 category: development
 tags: []
 created: 2026-03-07
 updated: 2026-03-07
 ---
-
-# Architecture Overview
 
 **Date:** 2026-03-07
 

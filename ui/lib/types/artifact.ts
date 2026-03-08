@@ -42,4 +42,6 @@ export interface DocNode {
 	path: string | null;
 	/** Child nodes for directories. Null for leaf files. */
 	children: DocNode[] | null;
+	/** Optional short description shown below the label for flat-list items. */
+	description?: string | null;
 }

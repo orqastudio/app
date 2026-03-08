@@ -27,12 +27,11 @@ docs-required:
 docs-produced:
   - .orqa/plans/ (onboarding plan)
   - docs/architecture/project-configuration.md (update with project state awareness)
+description: >
+  Make the chat conversation itself guide new users through setup,
+  with project state awareness and entry mode detection.
 tags: [onboarding, chat, entry-modes]
 ---
-
-# Chat-Guided Onboarding
-
-No directed onboarding flows needed — the chat itself guides new users through setup.
 
 ## Why P1
 

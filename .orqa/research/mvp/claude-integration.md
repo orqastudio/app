@@ -1,4 +1,6 @@
 ---
+id: RES-002
+title: "Claude Integration Research"
 type: research
 status: complete
 date: 2026-03-02
@@ -26,7 +28,6 @@ informs_phases: [0b, 0e, 1, 2]
 informs_features: [F-002, F-003, F-012]
 ---
 
-# Claude Integration Research
 
 **Date:** 2026-03-02 | **Status:** Complete
 

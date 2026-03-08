@@ -28,12 +28,11 @@ docs-produced:
   - .orqa/plans/ (project type system plan)
   - docs/architecture/project-configuration.md (update with project_type field)
   - docs/architecture/decisions.md (AD for project type taxonomy)
+description: >
+  Add a project type system so OrqaStudio adapts its agents, tools,
+  and scanning to the domain (software, research, product, personal).
 tags: [project-types, domain-agnostic]
 ---
-
-# Project Type System
-
-OrqaStudio's governance applies to any project, not just software. The app needs to know what kind of project it's managing.
 
 ## Why P1
 

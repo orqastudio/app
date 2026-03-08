@@ -1,9 +1,13 @@
 ---
+id: RES-009
+title: "Provider Architecture"
 type: research
 status: complete
 date: 2026-03-07
 category: provider-architecture
-description: Multi-provider abstraction design for OrqaStudio's sidecar layer. Covers agent runtime SDKs (Claude, OpenAI, Google ADK), direct HTTP APIs, and business ecosystem AI. Informs the Provider interface architecture.
+description: >
+  Multi-provider abstraction design for OrqaStudio's sidecar layer.
+  Covers agent runtime SDKs, direct HTTP APIs, and business ecosystem AI.
 questions:
   - id: Q1
     title: Agent Runtime SDKs
@@ -25,12 +29,6 @@ produces_decisions: [AD-017]
 informs_epics: []
 informs_phases: ["1", "roadmap"]
 ---
-
-# Provider Architecture Research
-
-**Date:** 2026-03-07
-**Status:** Complete
-**Purpose:** Inform the multi-provider abstraction design for OrqaStudio's sidecar layer
 
 ## Aim: Compatibility
 

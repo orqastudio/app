@@ -1,4 +1,6 @@
 ---
+id: orqa-streaming
+title: "Orqa Streaming Pipeline"
 name: orqa-streaming
 description: |
   OrqaStudio streaming pipeline: Agent SDK → sidecar (Bun) → NDJSON → Rust Channel<T> → Svelte.
@@ -10,7 +12,6 @@ tags: [orqa, streaming, sidecar, ndjson, channel, agent-sdk, claude]
 user-invocable: true
 ---
 
-# Orqa Streaming Pipeline
 
 OrqaStudio streams Claude conversations through a multi-layer pipeline. Understanding this pipeline is critical for anyone touching streaming, tool execution, or the sidecar.
 

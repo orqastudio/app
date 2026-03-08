@@ -23,12 +23,11 @@ roadmap-ref: "Phase 0a"
 docs-required: []
 docs-produced:
   - .orqa/research/mvp/
+description: >
+  Pre-build investigation that determined the technology choices
+  underpinning the entire OrqaStudio platform.
 tags: [foundation, research, tech-stack, planning]
 ---
-
-# Phase 0a — Tech Stack Research
-
-Pre-build investigation that determined the technology choices underpinning the entire Orqa Studio platform. All findings are documented in `.orqa/research/mvp/`.
 
 ## Why P1
 

@@ -11,12 +11,11 @@ research-needed:
   - Semantic search across markdown artifacts
   - Knowledge graph representation
   - Staleness detection heuristics
+description: >
+  Make the accumulated knowledge base actively useful through semantic
+  search, knowledge graphs, and staleness detection.
 tags: [knowledge, search, graph, intelligence]
 ---
-
-# Knowledge & Artifact Intelligence
-
-Making the accumulated knowledge base actively useful.
 
 ## Candidate Items
 

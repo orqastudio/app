@@ -27,12 +27,12 @@ docs-required:
 docs-produced:
   - docs/architecture/ipc-commands.md (new artifact scanning commands)
   - docs/ui/navigation-groups.md (grouped navigation wireframes)
+description: >
+  Make all .orqa/ artifacts browsable, restructure navigation into groups,
+  establish .orqa/ as the single source of truth with platform adapters,
+  and enable cross-artifact navigation.
 tags: [artifacts, browser, navigation, portability, cross-linking]
 ---
-
-# Artifact Browser: Navigation Groups, Platform Portability, Cross-Linking
-
-Make all `.orqa/` artifacts browsable, restructure navigation into groups, make `.orqa/` the single source of truth with platform adapters, and enable cross-artifact navigation.
 
 ## Why P1
 

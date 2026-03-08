@@ -28,10 +28,11 @@ docs-required:
 docs-produced:
   - .orqa/plans/ (enforcement plan)
   - docs/architecture/enforcement.md (update with real-time violation detection)
+description: >
+  Add real-time violation detection during streaming, hook-based rule
+  injection, compliance dashboard, and session handoff continuity.
 tags: [enforcement, continuity, hooks]
 ---
-
-# Enforcement & Continuity
 
 ## Tasks
 

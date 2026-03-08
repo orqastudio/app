@@ -1,12 +1,11 @@
 ---
 title: "Search Engine Architecture"
+description: "Architecture of the embedded semantic and regex search engine using ONNX embeddings and DuckDB."
 category: architecture
 tags: []
 created: 2026-03-04
 updated: 2026-03-04
 ---
-
-# Search Engine Architecture
 
 **Date:** 2026-03-04 | **Status:** Active specification | **References:** [Rust Modules](/architecture/rust-modules), [IPC Commands](/architecture/ipc-commands), [Tool Definitions](/architecture/tool-definitions)
 

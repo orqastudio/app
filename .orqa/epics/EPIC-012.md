@@ -28,12 +28,11 @@ docs-produced:
   - .orqa/plans/ (dashboard plan)
   - docs/wireframes/dashboard.md (update with scanner and metrics wireframes)
   - docs/architecture/rust-modules.md (update with scanner runner module)
+description: >
+  Build scanner runner, scanner dashboard, metrics dashboard, and
+  agent activity panel for richer process visibility.
 tags: [dashboard, scanners, metrics]
 ---
-
-# Process Visibility Dashboard
-
-Governance coverage exists. Missing: richer process visibility.
 
 ## Why P1
 

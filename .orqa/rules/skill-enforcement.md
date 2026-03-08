@@ -1,8 +1,10 @@
 ---
+id: skill-enforcement
+title: "Skill Enforcement"
+description: "Every agent must load all declared skills before starting work. ChunkHound is universal."
 scope: system
 ---
 
-# Skill Enforcement (NON-NEGOTIABLE)
 
 Every agent MUST have a `skills:` list in its YAML frontmatter that includes ALL skills it needs for its domain.
 

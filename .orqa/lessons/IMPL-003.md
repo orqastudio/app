@@ -7,9 +7,10 @@ status: active
 promoted_to: null
 created: 2026-03-03
 updated: 2026-03-03
+description: >
+  The orchestrator should automatically manage dev server restart
+  instead of telling the user to do it manually.
 ---
-
-# Orchestrator must manage the dev environment lifecycle
 
 ## Pattern
 After making code changes, the orchestrator reported what needed to happen ("you'll need to restart") but left the user to do it manually. The user should not need to run terminal commands.

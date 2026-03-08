@@ -1,8 +1,10 @@
 ---
+id: vision-alignment
+title: "Vision Alignment"
+description: "Every feature must serve at least one pillar: Clarity Through Structure or Learning Through Reflection."
 scope: project
 ---
 
-# Vision Alignment (MANDATORY)
 
 Every feature, command, and UI element must serve OrqaStudio's product vision. Read `docs/product/vision.md` and `docs/product/governance.md` before implementing any new capability.
 

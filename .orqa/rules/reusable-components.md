@@ -1,8 +1,10 @@
 ---
+id: reusable-components
+title: "Reusable Components"
+description: "Check shared component library before creating new UI elements. Use EmptyState, LoadingSpinner, ErrorDisplay, etc."
 scope: system
 ---
 
-# Reusable Components (NON-NEGOTIABLE)
 
 ## Shared Component Library
 

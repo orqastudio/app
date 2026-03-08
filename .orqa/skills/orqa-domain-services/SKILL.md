@@ -1,4 +1,6 @@
 ---
+id: orqa-domain-services
+title: "Orqa Domain Services"
 name: orqa-domain-services
 description: |
   OrqaStudio domain service patterns: how Rust backend services are structured,
@@ -11,7 +13,6 @@ tags: [orqa, rust, domain, services, architecture, backend, error-handling]
 user-invocable: true
 ---
 
-# Orqa Domain Services
 
 Domain services live in `src-tauri/src/domain/`. They contain the business logic of OrqaStudio and are the heart of the thick-backend architecture (AD-001). Commands in `src-tauri/src/commands/` are thin wrappers that delegate to domain services and repositories.
 

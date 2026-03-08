@@ -13,10 +13,11 @@ acceptance:
   - Emission location noted (after resolve_system_prompt, before sidecar.send)
   - custom_prompt documented as populated by EPIC-002
   - ContextInjected documented as added by EPIC-003
+description: >
+  Update streaming-pipeline.md to reflect the new SystemPromptSent
+  emission point added by TASK-001.
 tags: [streaming, transparency, docs]
 ---
-
-# Update Streaming Pipeline Documentation
 
 ## What
 
