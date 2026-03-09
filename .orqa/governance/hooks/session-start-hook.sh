@@ -53,10 +53,8 @@ fi
 # Delegation reminder
 echo "ORCHESTRATOR REMINDERS:"
 echo "- You coordinate. You do NOT implement. Delegate to specialized agents."
-echo "- Available agents: backend-engineer, frontend-engineer, designer, debugger,"
-echo "  test-engineer, code-reviewer, data-engineer, devops-engineer,"
-echo "  documentation-writer, security-engineer, refactor-agent, agent-maintainer,"
-echo "  systems-architect, qa-tester, ux-reviewer"
+echo "- Universal roles (AD-029): researcher, planner, implementer, reviewer, writer, designer"
+echo "- Roles are specialised via skills at runtime (e.g., implementer + rust-async-patterns = backend specialist)"
 echo ""
 
 # Dogfood detection

@@ -1,0 +1,33 @@
+---
+id: TASK-054
+title: "Create project setup skills"
+description: >
+  Write the four setup skills that replace templates for project initialisation:
+  base scaffolding, folder inference, agentic config migration, and the
+  software project type preset.
+status: done
+epic: EPIC-045
+created: 2026-03-09
+updated: 2026-03-09
+depends-on: [TASK-057]
+assignee: orchestrator
+skills: [orqa-governance, skills-maintenance]
+scope:
+  - .orqa/team/skills/
+acceptance:
+  - project-setup skill created (universal scaffolding — .orqa/ structure, canon rules, canon skills)
+  - project-inference skill created (reads folder, produces project profile YAML)
+  - project-migration skill created (reads existing agentic config, maps to OrqaStudio)
+  - project-type-software skill created (software development governance preset)
+  - Each skill follows SKILL.md format with proper frontmatter
+  - project-setup knows how to create .orqa/ directory structure
+  - project-inference knows file patterns for languages, frameworks, existing governance
+  - project-migration knows config formats for Claude Code, Cursor, Copilot, Aider
+  - project-type-software knows worktree rules, code quality, testing standards
+tags: [skills, setup, initialisation, AD-030]
+---
+
+## Reference
+
+- AD-030 defines the four setup skills and their responsibilities
+- AD-030 Section "The Four Setup Skills" has detailed specs for each
