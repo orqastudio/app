@@ -33,3 +33,4 @@ Can't control reasoning behaviour without these toggles. The custom system promp
 - [ ] Add `show_thinking` toggle in Settings > Model section
 - [ ] Add `custom_system_prompt` textarea in Settings > Project section
 - [ ] Add "View auto-generated prompt" collapsible preview (reuse `build_system_prompt()`)
+- [ ] Separate dogfood context from base orchestrator — move dogfood behavioral rules (session lifecycle, sidecar self-edit warnings, restart protocol) out of the orchestrator prompt and into app-injected system prompt only. CLI sessions should NOT absorb dogfood-mode behavioral rules via `.claude/rules/` symlinks. The `RULE-019` (dogfood-mode) file should either be restructured or the app system prompt builder should be the sole injection point for dogfood behavioral context when `project.json` has `dogfood: true`.
