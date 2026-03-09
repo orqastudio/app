@@ -6,7 +6,11 @@ export type {
 	ProjectSettings,
 	GovernanceCounts,
 	ProjectScanResult,
+	ArtifactTypeConfig,
+	ArtifactGroupConfig,
+	ArtifactEntry,
 } from "./project";
+export { isArtifactGroup } from "./project";
 
 export type {
 	Session,

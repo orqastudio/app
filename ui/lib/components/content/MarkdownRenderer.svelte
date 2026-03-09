@@ -77,12 +77,18 @@
 	$effect(() => {
 		if (!containerEl) return;
 		// Re-process whenever body changes. Use a microtask to let SvelteMarkdown finish rendering.
+		// Guard with a cancelled flag so that if body changes again before the microtask fires,
+		// the stale microtask is a no-op and only the latest one processes the DOM.
 		const el = containerEl;
 		const _body = body; // track dependency
 		void _body;
+		let cancelled = false;
 		queueMicrotask(() => {
-			processArtifactLinks(el);
+			if (!cancelled) processArtifactLinks(el);
 		});
+		return () => {
+			cancelled = true;
+		};
 	});
 </script>
 

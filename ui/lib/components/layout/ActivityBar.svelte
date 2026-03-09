@@ -5,24 +5,50 @@
 	import UsersIcon from "@lucide/svelte/icons/users";
 	import ShieldIcon from "@lucide/svelte/icons/shield";
 	import SettingsIcon from "@lucide/svelte/icons/settings";
+	import FolderIcon from "@lucide/svelte/icons/folder";
+	import BookOpenIcon from "@lucide/svelte/icons/book-open";
+	import ZapIcon from "@lucide/svelte/icons/zap";
+	import TargetIcon from "@lucide/svelte/icons/target";
+	import LayersIcon from "@lucide/svelte/icons/layers";
+	import LightbulbIcon from "@lucide/svelte/icons/lightbulb";
+	import FlaskConicalIcon from "@lucide/svelte/icons/flask-conical";
+	import ScrollTextIcon from "@lucide/svelte/icons/scroll-text";
+	import GitBranchIcon from "@lucide/svelte/icons/git-branch";
+	import BotIcon from "@lucide/svelte/icons/bot";
 	import { Separator } from "$lib/components/ui/separator";
-	import { navigationStore, type ActivityGroup } from "$lib/stores/navigation.svelte";
+	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import { settingsStore } from "$lib/stores/settings.svelte";
+	import { projectStore } from "$lib/stores/project.svelte";
+	import { isArtifactGroup } from "$lib/types/project";
 	import ActivityBarItem from "./ActivityBarItem.svelte";
 	import type { Component } from "svelte";
 
-	interface GroupItem {
-		group: ActivityGroup;
-		icon: Component;
-		label: string;
+	/** Map from icon name strings (as stored in config) to Lucide icon components. */
+	const ICON_MAP: Record<string, Component> = {
+		"file-text": FileTextIcon,
+		"clipboard-list": ClipboardListIcon,
+		users: UsersIcon,
+		shield: ShieldIcon,
+		folder: FolderIcon,
+		"book-open": BookOpenIcon,
+		zap: ZapIcon,
+		target: TargetIcon,
+		layers: LayersIcon,
+		lightbulb: LightbulbIcon,
+		"flask-conical": FlaskConicalIcon,
+		"scroll-text": ScrollTextIcon,
+		"git-branch": GitBranchIcon,
+		bot: BotIcon,
+	};
+
+	function resolveIcon(iconName: string | undefined): Component {
+		if (iconName && iconName in ICON_MAP) {
+			return ICON_MAP[iconName];
+		}
+		return FolderIcon;
 	}
 
-	const groupItems: GroupItem[] = [
-		{ group: "documentation", icon: FileTextIcon, label: "Documentation" },
-		{ group: "planning", icon: ClipboardListIcon, label: "Planning" },
-		{ group: "team", icon: UsersIcon, label: "Team" },
-		{ group: "governance", icon: ShieldIcon, label: "Governance" },
-	];
+	const artifactConfig = $derived(projectStore.artifactConfig);
 </script>
 
 <div class="flex w-12 flex-col items-center border-r border-border bg-muted/30 py-2">
@@ -34,19 +60,33 @@
 		onclick={() => navigationStore.setActivity("project")}
 	/>
 
-	<div class="my-1 w-6">
-		<Separator />
-	</div>
+	{#if artifactConfig.length > 0}
+		<div class="my-1 w-6">
+			<Separator />
+		</div>
 
-	<!-- Group categories -->
-	{#each groupItems as item (item.group)}
-		<ActivityBarItem
-			icon={item.icon}
-			label={item.label}
-			active={navigationStore.activeGroup === item.group}
-			onclick={() => navigationStore.setGroup(item.group)}
-		/>
-	{/each}
+		<!-- Config-driven artifact entries -->
+		{#each artifactConfig as entry (entry.key)}
+			{@const Icon = resolveIcon(entry.icon)}
+			{#if isArtifactGroup(entry)}
+				<!-- Group entry — clicking activates the group -->
+				<ActivityBarItem
+					icon={Icon}
+					label={entry.label}
+					active={navigationStore.activeGroup === entry.key}
+					onclick={() => navigationStore.setGroup(entry.key)}
+				/>
+			{:else}
+				<!-- Direct type entry — clicking activates the type directly -->
+				<ActivityBarItem
+					icon={Icon}
+					label={entry.label}
+					active={navigationStore.activeActivity === entry.key && navigationStore.activeGroup === null}
+					onclick={() => { navigationStore.activeGroup = null; navigationStore.setActivity(entry.key); }}
+				/>
+			{/if}
+		{/each}
+	{/if}
 
 	<div class="flex-1"></div>
 

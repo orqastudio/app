@@ -7,7 +7,9 @@ class ArtifactStore {
 	navTreeLoading = $state(false);
 	navTreeError = $state<string | null>(null);
 
-	// Cache for full artifact content when viewing
+	// Cache for full artifact content when viewing.
+	// Capped at MAX_VIEWER_CACHE entries; oldest entry is evicted on overflow.
+	private static readonly MAX_VIEWER_CACHE = 50;
 	private viewerCache = new Map<string, string>();
 
 	// Active viewer state
@@ -44,6 +46,11 @@ class ArtifactStore {
 		this.activeContentError = null;
 		try {
 			const result = await invoke<{ content: string }>("read_artifact", { relPath: path });
+			if (this.viewerCache.size >= ArtifactStore.MAX_VIEWER_CACHE) {
+				// Evict the oldest entry (Map preserves insertion order).
+				const oldestKey = this.viewerCache.keys().next().value;
+				if (oldestKey !== undefined) this.viewerCache.delete(oldestKey);
+			}
 			this.viewerCache.set(path, result.content);
 			this.activeContent = result.content;
 		} catch (err: unknown) {

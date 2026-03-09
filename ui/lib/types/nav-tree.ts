@@ -42,6 +42,8 @@ export interface DocNode {
 	path: string | null;
 	/** Child nodes for directories. Null for leaf files. */
 	children: DocNode[] | null;
+	/** Status value from YAML frontmatter (e.g. "draft", "in-progress", "done"). Null for directories. */
+	status?: string | null;
 	/** Optional short description shown below the label for flat-list items. */
 	description?: string | null;
 }

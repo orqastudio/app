@@ -61,7 +61,7 @@
 	const config = $derived(categoryConfig[category]);
 
 	/** Derive items from the navTree nodes for this category. */
-	const items = $derived(() => {
+	const items = $derived.by(() => {
 		const navType = navigationStore.getNavType(category);
 		if (!navType) return [];
 		return navType.nodes.filter((n) => {
@@ -130,7 +130,7 @@
 					</div>
 				{/if}
 
-				{#if items().length === 0}
+				{#if items.length === 0}
 					<Card.Root>
 						<Card.Content class="py-8 text-center">
 							<p class="text-sm text-muted-foreground">
@@ -141,12 +141,12 @@
 				{:else}
 					<!-- Summary -->
 					<p class="text-sm text-muted-foreground">
-						{items().length} {items().length === 1 ? config.singular : config.label.toLowerCase()} detected. Select one from the sidebar to view its contents.
+						{items.length} {items.length === 1 ? config.singular : config.label.toLowerCase()} detected. Select one from the sidebar to view its contents.
 					</p>
 
 					<!-- Card grid -->
 					<div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-						{#each items() as item (item.path)}
+						{#each items as item (item.path)}
 							{@const Icon = config.icon}
 							<button
 								class="text-left"

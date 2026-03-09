@@ -1,26 +1,17 @@
 import { artifactStore } from "$lib/stores/artifact.svelte";
+import { projectStore } from "$lib/stores/project.svelte";
+import { isArtifactGroup } from "$lib/types/project";
 
-export type ActivityView =
-	| "chat"
-	| "project"
-	| "docs"
-	| "research"
-	| "plans"
-	| "agents"
-	| "rules"
-	| "lessons"
-	| "skills"
-	| "hooks"
-	| "settings"
-	| "configure"
-	| "milestones"
-	| "epics"
-	| "tasks"
-	| "ideas"
-	| "decisions"
-	| "orchestrator";
+/**
+ * ActivityView is now a string since artifact type keys come from config.
+ * Built-in non-artifact views are: "chat", "project", "settings", "configure".
+ */
+export type ActivityView = string;
 
-export type ActivityGroup = "documentation" | "planning" | "team" | "governance";
+/**
+ * ActivityGroup is now a string since group keys come from config.
+ */
+export type ActivityGroup = string;
 
 export type ExplorerView =
 	| "artifact-list"
@@ -30,75 +21,12 @@ export type ExplorerView =
 
 /** Sub-category display config */
 export interface SubCategoryConfig {
-	key: ActivityView;
+	key: string;
 	label: string;
 }
 
-/**
- * Static fallback sub-categories — used when the navTree has not loaded yet.
- * Once the navTree loads, the store's `groupSubCategories` getter replaces these.
- */
-const STATIC_GROUP_SUB_CATEGORIES: Record<ActivityGroup, ActivityView[]> = {
-	documentation: ["docs"],
-	planning: ["ideas", "research", "plans", "milestones", "epics", "tasks"],
-	team: ["orchestrator", "agents", "skills"],
-	governance: ["lessons", "decisions", "rules", "hooks"],
-};
-
-/** Export the static version so existing imports of GROUP_SUB_CATEGORIES keep working. */
-export const GROUP_SUB_CATEGORIES = STATIC_GROUP_SUB_CATEGORIES;
-
-/** Sub-category display labels */
-export const SUB_CATEGORY_LABELS: Record<ActivityView, string> = {
-	chat: "Chat",
-	project: "Project",
-	docs: "Docs",
-	research: "Research",
-	plans: "Plans",
-	agents: "Agents",
-	rules: "Rules",
-	lessons: "Lessons",
-	skills: "Skills",
-	hooks: "Hooks",
-	settings: "Settings",
-	configure: "Configuration",
-	milestones: "Milestones",
-	epics: "Epics",
-	tasks: "Tasks",
-	ideas: "Ideas",
-	decisions: "Decisions",
-	orchestrator: "Orchestrator",
-};
-
-/** Activity views that use the nav sub-panel for sub-navigation */
-const ACTIVITIES_WITH_NAV_PANEL: ActivityView[] = [
-	"docs",
-	"research",
-	"plans",
-	"agents",
-	"rules",
-	"skills",
-	"hooks",
-	"settings",
-	"configure",
-	"chat",
-	"milestones",
-	"epics",
-	"tasks",
-	"ideas",
-	"decisions",
-	"orchestrator",
-	"lessons",
-];
-
-/** Activity views that show artifact browsing in the explorer */
-const ARTIFACT_ACTIVITIES: ActivityView[] = ["docs", "research", "plans", "agents", "rules", "skills", "hooks"];
-
-/** Sub-categories that have no backend reader yet (show EmptyState) */
-export const COMING_SOON_ACTIVITIES: ActivityView[] = [];
-
-/** Maps artifact ID prefixes to their group and sub-category */
-const ARTIFACT_PREFIX_MAP: Record<string, { group: ActivityGroup; subCategory: ActivityView }> = {
+/** Maps artifact ID prefixes to their group and sub-category for cross-link navigation. */
+const ARTIFACT_PREFIX_MAP: Record<string, { group: string; subCategory: string }> = {
 	MS: { group: "planning", subCategory: "milestones" },
 	EPIC: { group: "planning", subCategory: "epics" },
 	TASK: { group: "planning", subCategory: "tasks" },
@@ -108,9 +36,9 @@ const ARTIFACT_PREFIX_MAP: Record<string, { group: ActivityGroup; subCategory: A
 };
 
 class NavigationStore {
-	activeActivity = $state<ActivityView>("chat");
-	activeGroup = $state<ActivityGroup | null>(null);
-	activeSubCategory = $state<ActivityView | null>(null);
+	activeActivity = $state<string>("chat");
+	activeGroup = $state<string | null>(null);
+	activeSubCategory = $state<string | null>(null);
 	explorerView = $state<ExplorerView>("artifact-list");
 	selectedArtifactPath = $state<string | null>(null);
 	navPanelCollapsed = $state(false);
@@ -118,76 +46,165 @@ class NavigationStore {
 	/** Pending artifact ID to auto-select after navigating to a sub-category via cross-link. */
 	pendingArtifactId = $state<string | null>(null);
 
+	/** Flat list of all artifact type keys from config (groups expanded to their children). */
+	get allArtifactKeys(): string[] {
+		const config = projectStore.artifactConfig;
+		const keys: string[] = [];
+		for (const entry of config) {
+			if (isArtifactGroup(entry)) {
+				for (const child of entry.children) {
+					keys.push(child.key);
+				}
+			} else {
+				keys.push(entry.key);
+			}
+		}
+		return keys;
+	}
+
+	/** Keys of entries that are groups (have children). */
+	get groupKeys(): string[] {
+		return projectStore.artifactConfig
+			.filter(isArtifactGroup)
+			.map((e) => e.key);
+	}
+
+	/** Whether the given key is a group key. */
+	isGroupKey(key: string): boolean {
+		return this.groupKeys.includes(key);
+	}
+
+	/** Whether the current activity is an artifact activity (not a built-in view). */
+	get isArtifactActivity(): boolean {
+		return this.allArtifactKeys.includes(this.activeActivity);
+	}
+
+	/** Whether any view should show the nav panel. */
 	get showNavPanel(): boolean {
 		if (this.navPanelCollapsed) return false;
 		// If a group is active, always show nav panel
 		if (this.activeGroup !== null) return true;
-		return ACTIVITIES_WITH_NAV_PANEL.includes(this.activeActivity);
+		// Built-in views that use the nav panel
+		if (this.activeActivity === "chat") return true;
+		if (this.activeActivity === "settings") return true;
+		if (this.activeActivity === "configure") return true;
+		// Any artifact activity shows the nav panel
+		if (this.isArtifactActivity) return true;
+		return false;
 	}
 
-	get isArtifactActivity(): boolean {
-		return ARTIFACT_ACTIVITIES.includes(this.activeActivity);
-	}
-
-	/**
-	 * Sub-categories for each group, derived from the navTree when available,
-	 * falling back to the static mapping.
-	 */
-	get groupSubCategories(): Record<ActivityGroup, ActivityView[]> {
-		const tree = artifactStore.navTree;
-		if (!tree) return STATIC_GROUP_SUB_CATEGORIES;
-
-		const result: Partial<Record<ActivityGroup, ActivityView[]>> = {};
-		for (const group of tree.groups) {
-			const groupKey = group.path.split("/").pop() as ActivityGroup | undefined;
-			if (!groupKey || !(groupKey in STATIC_GROUP_SUB_CATEGORIES)) continue;
-			result[groupKey] = group.types
-				.map((t) => t.path.split("/").pop() as ActivityView | undefined)
-				.filter((v): v is ActivityView => v !== undefined && v in SUB_CATEGORY_LABELS);
-		}
-
-		// Fill in any missing groups from the static fallback
-		for (const key of Object.keys(STATIC_GROUP_SUB_CATEGORIES) as ActivityGroup[]) {
-			if (!result[key]) {
-				result[key] = STATIC_GROUP_SUB_CATEGORIES[key];
+	/** Get label for a given key from the artifact config. */
+	getLabelForKey(key: string): string {
+		const config = projectStore.artifactConfig;
+		for (const entry of config) {
+			if (entry.key === key) return entry.label;
+			if (isArtifactGroup(entry)) {
+				for (const child of entry.children) {
+					if (child.key === key) return child.label;
+				}
 			}
 		}
-
-		return result as Record<ActivityGroup, ActivityView[]>;
+		return key;
 	}
 
 	/**
-	 * Find the NavType for the given ActivityView string, if the navTree has loaded.
-	 * Returns null if the navTree is not yet available or the type is not found.
+	 * Sub-categories (children) for a given group key.
+	 * Derived from the artifact config.
 	 */
-	getNavType(view: ActivityView) {
+	getGroupChildren(groupKey: string): SubCategoryConfig[] {
+		const config = projectStore.artifactConfig;
+		for (const entry of config) {
+			if (isArtifactGroup(entry) && entry.key === groupKey) {
+				return entry.children.map((c) => ({ key: c.key, label: c.label }));
+			}
+		}
+		return [];
+	}
+
+	/**
+	 * All group sub-categories, keyed by group key.
+	 * Derived from config. Kept for compatibility with components that iterate groups.
+	 */
+	get groupSubCategories(): Record<string, string[]> {
+		const config = projectStore.artifactConfig;
+		const result: Record<string, string[]> = {};
+		for (const entry of config) {
+			if (isArtifactGroup(entry)) {
+				result[entry.key] = entry.children.map((c) => c.key);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Find the NavType for the given activity string, if the navTree has loaded.
+	 * Returns null if the navTree is not yet available or the type is not found.
+	 *
+	 * Matching strategy: look up the configured path for the view key, then match
+	 * NavType entries by path. This handles both group children (where the key is
+	 * the last path segment) and direct-type entries (where the key may differ from
+	 * the last path segment, e.g. key="docs" but path=".orqa/documentation").
+	 */
+	getNavType(view: string) {
 		const tree = artifactStore.navTree;
 		if (!tree) return null;
+
+		// Resolve the configured path for this view key.
+		const configPath = this.getConfiguredPath(view);
+
 		for (const group of tree.groups) {
 			for (const type of group.types) {
-				const typeKey = type.path.split("/").pop();
-				if (typeKey === view) return type;
+				// Match by configured path when available; fall back to matching
+				// the last path segment (legacy behaviour for group children).
+				if (configPath !== null) {
+					if (type.path === configPath) return type;
+				} else {
+					const typeKey = type.path.split("/").pop();
+					if (typeKey === view) return type;
+				}
 			}
 		}
 		return null;
 	}
 
-	setGroup(group: ActivityGroup) {
-		this.activeGroup = group;
-		const subCategories = this.groupSubCategories[group];
-		const firstSub = subCategories[0];
-		this.setSubCategory(firstSub);
+	/**
+	 * Return the configured `path` for the given artifact key, or null if not found.
+	 * Searches both direct-type entries and group children.
+	 */
+	getConfiguredPath(key: string): string | null {
+		const config = projectStore.artifactConfig;
+		for (const entry of config) {
+			if (isArtifactGroup(entry)) {
+				for (const child of entry.children) {
+					if (child.key === key) return child.path;
+				}
+			} else {
+				if (entry.key === key) return entry.path;
+			}
+		}
+		return null;
 	}
 
-	setSubCategory(key: ActivityView) {
+	setGroup(group: string) {
+		this.activeGroup = group;
+		const children = this.getGroupChildren(group);
+		if (children.length > 0) {
+			this.setSubCategory(children[0].key);
+		}
+	}
+
+	setSubCategory(key: string) {
 		this.activeSubCategory = key;
 		this.setActivity(key);
 	}
 
-	setActivity(view: ActivityView) {
+	setActivity(view: string) {
 		this.activeActivity = view;
 		this.selectedArtifactPath = null;
 		this.breadcrumbs = [];
+		// Clear any pending cross-link ID that was not consumed. This prevents a
+		// stale ID from auto-selecting an unrelated artifact on a future navigation.
+		this.pendingArtifactId = null;
 
 		if (view === "project") {
 			this.activeGroup = null;
@@ -199,50 +216,7 @@ class NavigationStore {
 			if (this.navPanelCollapsed) {
 				this.navPanelCollapsed = false;
 			}
-		} else if (view === "docs") {
-			this.explorerView = "artifact-viewer";
-			this.selectedArtifactPath = "README";
-			this.breadcrumbs = [];
-			if (this.navPanelCollapsed) {
-				this.navPanelCollapsed = false;
-			}
-		} else if (view === "research") {
-			this.explorerView = "artifact-viewer";
-			this.selectedArtifactPath = "README";
-			this.breadcrumbs = [];
-			if (this.navPanelCollapsed) {
-				this.navPanelCollapsed = false;
-			}
-		} else if (view === "plans") {
-			this.explorerView = "artifact-viewer";
-			this.selectedArtifactPath = "README";
-			this.breadcrumbs = [];
-			if (this.navPanelCollapsed) {
-				this.navPanelCollapsed = false;
-			}
-		} else if (view === "orchestrator") {
-			// Load the orchestrator agent file directly
-			this.explorerView = "artifact-viewer";
-			this.selectedArtifactPath = "orchestrator";
-			this.breadcrumbs = ["Orchestrator"];
-			if (this.navPanelCollapsed) {
-				this.navPanelCollapsed = false;
-			}
-		} else if (view === "milestones" || view === "epics" || view === "tasks" || view === "ideas") {
-			// Planning artifacts: open with README as entry point, same as docs/research/plans
-			this.explorerView = "artifact-viewer";
-			this.selectedArtifactPath = "README";
-			this.breadcrumbs = [];
-			if (this.navPanelCollapsed) {
-				this.navPanelCollapsed = false;
-			}
-		} else if (view === "decisions" || view === "lessons") {
-			// Governance artifacts: show list in sidebar, nothing selected until user clicks
-			this.explorerView = "artifact-list";
-			if (this.navPanelCollapsed) {
-				this.navPanelCollapsed = false;
-			}
-		} else if (ARTIFACT_ACTIVITIES.includes(view)) {
+		} else if (this.isArtifactActivity) {
 			this.explorerView = "artifact-list";
 			if (this.navPanelCollapsed) {
 				this.navPanelCollapsed = false;

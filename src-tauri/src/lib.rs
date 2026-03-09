@@ -7,6 +7,7 @@ pub mod search;
 pub mod sidecar;
 pub mod startup;
 pub mod state;
+pub mod watcher;
 
 use std::sync::Arc;
 
@@ -37,6 +38,7 @@ fn build_app_state(
         pending_approvals: std::sync::Mutex::new(std::collections::HashMap::new()),
         enforcement: std::sync::Mutex::new(None),
         process_state: std::sync::Mutex::new(domain::process_state::SessionProcessState::default()),
+        artifact_watcher: std::sync::Arc::new(std::sync::Mutex::new(None)),
     })
 }
 
@@ -172,35 +174,17 @@ pub fn run() {
             // Message commands
             commands::message_commands::message_list,
             commands::message_commands::message_search,
-            // Artifact commands
+            // Artifact commands (DB-backed CRUD)
             commands::artifact_commands::artifact_list,
             commands::artifact_commands::artifact_get,
             commands::artifact_commands::artifact_get_by_path,
             commands::artifact_commands::artifact_create,
             commands::artifact_commands::artifact_update,
             commands::artifact_commands::artifact_delete,
-            commands::artifact_commands::doc_read,
-            commands::artifact_commands::doc_tree_scan,
-            commands::artifact_commands::research_tree_scan,
-            commands::artifact_commands::research_read,
-            commands::artifact_commands::plan_tree_scan,
-            commands::artifact_commands::plan_read,
-            commands::artifact_commands::governance_list,
-            commands::artifact_commands::governance_read,
-            // Orqa artifact commands (milestones, epics, tasks, ideas, decisions, lessons)
-            commands::artifact_commands::milestone_list,
-            commands::artifact_commands::milestone_read,
-            commands::artifact_commands::epic_list,
-            commands::artifact_commands::epic_read,
-            commands::artifact_commands::task_list,
-            commands::artifact_commands::task_read,
-            commands::artifact_commands::idea_list,
-            commands::artifact_commands::idea_read,
-            commands::artifact_commands::decision_list,
-            commands::artifact_commands::decision_read,
-            commands::artifact_commands::lesson_list,
-            commands::artifact_commands::lesson_read,
+            // Artifact commands (filesystem discovery)
+            commands::artifact_commands::read_artifact,
             commands::artifact_commands::artifact_scan_tree,
+            commands::artifact_commands::artifact_watch_start,
             // Project settings commands (file-based)
             commands::project_settings_commands::project_settings_read,
             commands::project_settings_commands::project_settings_write,

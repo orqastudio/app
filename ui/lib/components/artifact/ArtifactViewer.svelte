@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Breadcrumb from "./Breadcrumb.svelte";
 	import FrontmatterHeader from "./FrontmatterHeader.svelte";
+	import HookViewer from "./HookViewer.svelte";
 	import MarkdownRenderer from "$lib/components/content/MarkdownRenderer.svelte";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 	import ErrorDisplay from "$lib/components/shared/ErrorDisplay.svelte";
@@ -38,10 +39,34 @@
 	}
 
 	/**
+	 * File extension of the selected artifact path (lowercase, without the dot).
+	 * Used to route non-markdown file types to their appropriate viewer.
+	 */
+	const fileExtension = $derived.by(() => {
+		const path = navigationStore.selectedArtifactPath;
+		if (!path) return "";
+		const filename = path.split("/").pop() ?? "";
+		const dotIndex = filename.lastIndexOf(".");
+		return dotIndex !== -1 ? filename.slice(dotIndex + 1).toLowerCase() : "";
+	});
+
+	/**
+	 * Whether this is a README file. READMEs are introductory pages —
+	 * their YAML frontmatter is not displayed.
+	 */
+	const isReadme = $derived.by(() => {
+		const path = navigationStore.selectedArtifactPath;
+		if (!path) return false;
+		const filename = path.split("/").pop() ?? "";
+		return filename.toUpperCase().startsWith("README");
+	});
+
+	/**
 	 * Whether this artifact has frontmatter with a title field.
 	 * When true, we strip the leading heading/description from the body to avoid duplication.
 	 */
 	const hasFrontmatterTitle = $derived(
+		!isReadme &&
 		parsedContent !== null && typeof parsedContent.metadata["title"] === "string",
 	);
 
@@ -50,6 +75,7 @@
 	 * Determines whether to render the metadata card.
 	 */
 	const hasMetadataFields = $derived(
+		!isReadme &&
 		parsedContent !== null &&
 		Object.keys(parsedContent.metadata).some(
 			(k) => k !== "title" && k !== "description",
@@ -106,7 +132,7 @@
 	<!-- Content -->
 	{#if artifactStore.activeContentLoading}
 		<div class="flex flex-1 items-center justify-center">
-			<LoadingSpinner />
+			<LoadingSpinner size="lg" />
 		</div>
 	{:else if artifactStore.activeContentError}
 		<div class="flex flex-1 items-center justify-center px-4">
@@ -117,7 +143,9 @@
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div class="min-h-0 flex-1 overflow-y-auto" onclick={handleContentClick}>
 			<div class="p-6">
-				{#if parsedContent}
+				{#if fileExtension === "sh"}
+					<HookViewer {content} />
+				{:else if parsedContent}
 					{#if hasMetadataFields}
 						<FrontmatterHeader
 							metadata={parsedContent.metadata}

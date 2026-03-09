@@ -69,6 +69,7 @@ mod tests {
             icon: None,
             show_thinking: false,
             custom_system_prompt: None,
+            artifacts: vec![],
         }
     }
 

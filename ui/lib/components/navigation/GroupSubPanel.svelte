@@ -13,20 +13,34 @@
 	import CheckSquareIcon from "@lucide/svelte/icons/check-square";
 	import LightbulbIcon from "@lucide/svelte/icons/lightbulb";
 	import ScrollTextIcon from "@lucide/svelte/icons/scroll-text";
+	import FolderIcon from "@lucide/svelte/icons/folder";
 	import * as Tooltip from "$lib/components/ui/tooltip";
-	import {
-		navigationStore,
-		SUB_CATEGORY_LABELS,
-		type ActivityGroup,
-		type ActivityView,
-	} from "$lib/stores/navigation.svelte";
+	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import type { Component } from "svelte";
 
-	let { group }: { group: ActivityGroup } = $props();
+	let { group }: { group: string } = $props();
 
-	const subCategoryIcons: Record<ActivityView, Component> = {
-		chat: UsersIcon,
-		project: LayersIcon,
+	/** Map from icon name strings to Lucide icon components. */
+	const ICON_MAP: Record<string, Component> = {
+		"file-text": FileTextIcon,
+		"flask-conical": FlaskConicalIcon,
+		"clipboard-list": ClipboardListIcon,
+		bot: BotIcon,
+		zap: ZapIcon,
+		users: UsersIcon,
+		shield: ShieldIcon,
+		"git-branch": GitBranchIcon,
+		"book-open": BookOpenIcon,
+		target: TargetIcon,
+		layers: LayersIcon,
+		"check-square": CheckSquareIcon,
+		lightbulb: LightbulbIcon,
+		"scroll-text": ScrollTextIcon,
+		folder: FolderIcon,
+	};
+
+	/** Fallback icon map keyed by artifact type key (for projects without icon in config). */
+	const FALLBACK_ICONS: Record<string, Component> = {
 		docs: FileTextIcon,
 		research: FlaskConicalIcon,
 		plans: ClipboardListIcon,
@@ -41,19 +55,27 @@
 		hooks: GitBranchIcon,
 		lessons: BookOpenIcon,
 		decisions: ScrollTextIcon,
-		settings: ShieldIcon,
-		configure: ShieldIcon,
 	};
 
-	// Use the store getter which derives from navTree when available
-	const subCategories = $derived(navigationStore.groupSubCategories[group]);
+	function resolveIcon(key: string, iconName: string | undefined): Component {
+		if (iconName && iconName in ICON_MAP) {
+			return ICON_MAP[iconName];
+		}
+		if (key in FALLBACK_ICONS) {
+			return FALLBACK_ICONS[key];
+		}
+		return FolderIcon;
+	}
+
+	// Use the store getter which derives from artifact config
+	const subCategories = $derived(navigationStore.getGroupChildren(group));
 	const activeSubCategory = $derived(navigationStore.activeSubCategory);
 </script>
 
 <div class="flex flex-col">
-	{#each subCategories as subKey (subKey)}
-		{@const SubIcon = subCategoryIcons[subKey]}
-		{@const isActive = activeSubCategory === subKey}
+	{#each subCategories as sub (sub.key)}
+		{@const SubIcon = resolveIcon(sub.key, undefined)}
+		{@const isActive = activeSubCategory === sub.key}
 		<Tooltip.Root>
 			<Tooltip.Trigger class="w-full">
 				{#snippet child({ props })}
@@ -63,10 +85,10 @@
 							{isActive
 							? 'bg-accent text-accent-foreground font-medium'
 							: 'text-muted-foreground hover:bg-accent/40 hover:text-foreground'}"
-						onclick={() => navigationStore.setSubCategory(subKey)}
+						onclick={() => navigationStore.setSubCategory(sub.key)}
 					>
 						<SubIcon class="h-4 w-4 shrink-0" />
-						<span class="truncate">{SUB_CATEGORY_LABELS[subKey]}</span>
+						<span class="truncate">{sub.label}</span>
 					</button>
 				{/snippet}
 			</Tooltip.Trigger>

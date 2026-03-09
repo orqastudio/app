@@ -5,7 +5,7 @@
 
 use std::path::{Path, PathBuf};
 
-use crate::domain::artifact::{Artifact, ArtifactSummary, ArtifactType, ComplianceStatus, DocNode};
+use crate::domain::artifact::{Artifact, ArtifactType, ComplianceStatus, DocNode};
 use crate::error::OrqaError;
 
 /// Write artifact content to disk, creating parent directories as needed.
@@ -67,33 +67,6 @@ pub fn governance_dir(root: &Path, artifact_type: &ArtifactType) -> Option<PathB
     }
 }
 
-/// Scan a governance directory and return sorted artifact summaries.
-///
-/// Performs filesystem I/O. Returns an empty vec if the directory does not exist.
-pub fn list_governance_files(
-    root: &Path,
-    artifact_type: &ArtifactType,
-) -> Result<Vec<ArtifactSummary>, OrqaError> {
-    let Some(dir) = governance_dir(root, artifact_type) else {
-        return Ok(Vec::new());
-    };
-
-    if !dir.is_dir() {
-        return Ok(Vec::new());
-    }
-
-    let mut summaries = Vec::new();
-    for entry in std::fs::read_dir(&dir)? {
-        let entry = entry?;
-        if let Some(summary) = summary_from_entry(&entry, artifact_type)? {
-            summaries.push(summary);
-        }
-    }
-
-    summaries.sort_by(|a, b| a.name.cmp(&b.name));
-    Ok(summaries)
-}
-
 /// Recursively scan a directory and build a sorted list of `DocNode` entries.
 ///
 /// Performs filesystem I/O. Hidden entries (starting with `.` or `_`) are skipped.
@@ -131,6 +104,7 @@ pub fn scan_directory(dir: &Path, docs_root: &Path) -> Result<Vec<DocNode>, Orqa
             path: None,
             children: Some(children),
             frontmatter: None,
+            status: None,
             description: None,
         });
     }
@@ -142,6 +116,7 @@ pub fn scan_directory(dir: &Path, docs_root: &Path) -> Result<Vec<DocNode>, Orqa
             path: Some(rel),
             children: None,
             frontmatter: None,
+            status: None,
             description: None,
         });
     }
@@ -166,70 +141,6 @@ pub fn now_iso() -> String {
     let (year, month, day) = days_to_ymd(days);
 
     format!("{year:04}-{month:02}-{day:02}T{hours:02}:{minutes:02}:{seconds:02}Z")
-}
-
-/// Try to build an `ArtifactSummary` from a single directory entry.
-///
-/// Returns `None` if the entry should be skipped (wrong type, hidden, invalid extension).
-fn summary_from_entry(
-    entry: &std::fs::DirEntry,
-    artifact_type: &ArtifactType,
-) -> Result<Option<ArtifactSummary>, OrqaError> {
-    let file_name = entry.file_name();
-    let name = file_name.to_string_lossy();
-
-    if name.starts_with('.') || name.starts_with('_') {
-        return Ok(None);
-    }
-
-    let ft = entry.file_type()?;
-
-    let summary = match artifact_type {
-        ArtifactType::Skill => {
-            if ft.is_dir() && entry.path().join("SKILL.md").exists() {
-                Some(ArtifactSummary {
-                    id: 0,
-                    artifact_type: artifact_type.clone(),
-                    rel_path: format!(".orqa/team/skills/{}/SKILL.md", name),
-                    name: humanize_name(&name),
-                    description: None,
-                    compliance_status: ComplianceStatus::Unknown,
-                    file_modified_at: None,
-                })
-            } else {
-                None
-            }
-        }
-        _ if ft.is_file() => {
-            let valid = match artifact_type {
-                ArtifactType::Agent | ArtifactType::Rule => name.ends_with(".md"),
-                ArtifactType::Hook => true,
-                _ => false,
-            };
-            if valid {
-                let rel_path = match artifact_type {
-                    ArtifactType::Agent => format!(".orqa/team/agents/{}", name),
-                    ArtifactType::Rule => format!(".orqa/governance/rules/{}", name),
-                    ArtifactType::Hook => format!(".orqa/governance/hooks/{}", name),
-                    _ => return Ok(None),
-                };
-                Some(ArtifactSummary {
-                    id: 0,
-                    artifact_type: artifact_type.clone(),
-                    rel_path,
-                    name: humanize_name(&name),
-                    description: None,
-                    compliance_status: ComplianceStatus::Unknown,
-                    file_modified_at: None,
-                })
-            } else {
-                None
-            }
-        }
-        _ => None,
-    };
-
-    Ok(summary)
 }
 
 /// Build the relative path from `docs_root` without the `.md` extension.

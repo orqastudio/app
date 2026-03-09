@@ -9,6 +9,7 @@ use crate::domain::process_state::SessionProcessState;
 use crate::search::SearchEngine;
 use crate::sidecar::manager::SidecarManager;
 use crate::startup::StartupTracker;
+use crate::watcher::SharedWatcher;
 
 /// Application state managed by Tauri.
 ///
@@ -43,4 +44,9 @@ pub struct AppState {
     /// Tracks whether docs were read and skills were loaded before code was written.
     /// Resets when `stream_send_message` is called for a different session.
     pub process_state: Mutex<SessionProcessState>,
+    /// Active `.orqa/` file-system watcher.
+    ///
+    /// Replaced via `artifact_watch_start` whenever a different project is opened.
+    /// Dropping the inner value stops the underlying watcher.
+    pub artifact_watcher: SharedWatcher,
 }

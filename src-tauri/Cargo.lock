@@ -3515,6 +3515,8 @@ dependencies = [
  "glob",
  "ignore",
  "ndarray",
+ "notify",
+ "notify-debouncer-full",
  "ort",
  "regex",
  "reqwest 0.12.28",

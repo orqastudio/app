@@ -7,12 +7,23 @@ use crate::error::OrqaError;
 const CONTENT_PREVIEW_CHARS: usize = 500;
 
 /// Total number of canonical governance areas checked for coverage ratio.
+///
+/// The 7 areas map directly to the governance sub-directories declared in `.orqa/project.json`:
+/// rules, agents, skills, hooks, lessons, decisions, documentation.
 const TOTAL_AREAS: usize = 7;
 
-/// Scan a project directory for governance files across the 7 canonical Claude governance areas.
+/// Scan a project directory for governance files across the 7 canonical OrqaStudio governance areas.
 ///
-/// Returns a `GovernanceScanResult` covering all 7 Claude governance areas.
-/// The `coverage_ratio` is computed over all 7 areas.
+/// The areas correspond to the artifact config in `.orqa/project.json`:
+/// - `.orqa/governance/rules` — enforcement rules (`.md` files)
+/// - `.orqa/team/agents` — agent definitions (`.md` files)
+/// - `.orqa/team/skills` — skill definitions (subdirectories with `SKILL.md`)
+/// - `.orqa/governance/hooks` — lifecycle hooks (any files)
+/// - `.orqa/governance/lessons` — implementation lessons (`.md` files)
+/// - `.orqa/governance/decisions` — architecture decisions (`.md` files)
+/// - `.orqa/documentation` — project documentation (`.md` files, recursive)
+///
+/// The `coverage_ratio` is computed as covered areas / `TOTAL_AREAS`.
 ///
 /// # Filesystem dependency
 ///
@@ -28,7 +39,7 @@ pub fn scan_governance(project_path: &Path) -> Result<GovernanceScanResult, Orqa
         )));
     }
 
-    let areas = scan_claude_areas(project_path);
+    let areas = scan_orqa_areas(project_path);
 
     let covered = areas.iter().filter(|a| a.covered).count();
     let coverage_ratio = covered as f64 / TOTAL_AREAS as f64;
@@ -39,39 +50,42 @@ pub fn scan_governance(project_path: &Path) -> Result<GovernanceScanResult, Orqa
     })
 }
 
-/// Scan all 7 canonical governance areas.
-///
-/// Governance artifacts (agents, rules, skills, hooks) are read from `.orqa/`.
-/// Platform config (settings.json, CLAUDE.md) remains in `.claude/`.
-fn scan_claude_areas(project_path: &Path) -> Vec<GovernanceArea> {
+/// Scan all 7 canonical governance areas from the `.orqa/` directory tree.
+fn scan_orqa_areas(project_path: &Path) -> Vec<GovernanceArea> {
     let orqa_dir = project_path.join(".orqa");
-    let claude_dir = project_path.join(".claude");
+    let governance_dir = orqa_dir.join("governance");
+    let team_dir = orqa_dir.join("team");
+
     vec![
+        scan_directory_area("rules", "orqa", &governance_dir.join("rules"), Some(".md")),
+        scan_directory_area("agents", "orqa", &team_dir.join("agents"), Some(".md")),
+        scan_skills_area(project_path, &team_dir.join("skills")),
+        scan_directory_area("hooks", "orqa", &governance_dir.join("hooks"), None),
         scan_directory_area(
-            "claude_rules",
-            "claude",
-            &orqa_dir.join("rules"),
+            "lessons",
+            "orqa",
+            &governance_dir.join("lessons"),
             Some(".md"),
         ),
         scan_directory_area(
-            "claude_agents",
-            "claude",
-            &orqa_dir.join("agents"),
+            "decisions",
+            "orqa",
+            &governance_dir.join("decisions"),
             Some(".md"),
         ),
-        scan_skills_area(project_path, &orqa_dir.join("skills")),
-        scan_directory_area("claude_hooks", "claude", &orqa_dir.join("hooks"), None),
-        scan_single_file_area(
-            "claude_settings",
-            "claude",
-            &claude_dir.join("settings.json"),
+        scan_recursive_area(
+            "documentation",
+            "orqa",
+            &orqa_dir.join("documentation"),
+            Some(".md"),
         ),
-        scan_claude_md_area(project_path),
-        scan_single_file_area("agents_md", "claude", &project_path.join("AGENTS.md")),
     ]
 }
 
-/// Scan a directory for governance files with an optional extension filter.
+/// Scan a flat directory for governance files with an optional extension filter.
+///
+/// Only files directly inside `dir` are included. For recursive scanning use
+/// [`scan_recursive_area`].
 fn scan_directory_area(name: &str, source: &str, dir: &Path, ext: Option<&str>) -> GovernanceArea {
     let mut files = Vec::new();
 
@@ -109,7 +123,60 @@ fn scan_directory_area(name: &str, source: &str, dir: &Path, ext: Option<&str>) 
     }
 }
 
-/// Scan the skills directory — each subdirectory with a `SKILL.md` is one skill.
+/// Scan a directory tree recursively for governance files with an optional extension filter.
+///
+/// Descends into subdirectories. Files matching the extension filter (or all files if `ext` is
+/// `None`) at any depth below `dir` are included.
+fn scan_recursive_area(
+    name: &str,
+    source: &str,
+    dir: &Path,
+    ext: Option<&str>,
+) -> GovernanceArea {
+    let mut files = Vec::new();
+
+    if dir.is_dir() {
+        collect_files_recursive(dir, ext, &mut files);
+        files.sort_by(|a, b| a.path.cmp(&b.path));
+    }
+
+    let covered = !files.is_empty();
+    GovernanceArea {
+        name: name.to_string(),
+        source: source.to_string(),
+        files,
+        covered,
+    }
+}
+
+/// Walk `dir` recursively, appending matching files to `out`.
+fn collect_files_recursive(dir: &Path, ext: Option<&str>, out: &mut Vec<GovernanceFile>) {
+    let Ok(entries) = std::fs::read_dir(dir) else {
+        return;
+    };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_dir() {
+            collect_files_recursive(&path, ext, out);
+        } else if path.is_file() {
+            if let Some(required_ext) = ext {
+                let matches = path
+                    .extension()
+                    .and_then(|e| e.to_str())
+                    .map(|e| format!(".{e}") == required_ext)
+                    .unwrap_or(false);
+                if !matches {
+                    continue;
+                }
+            }
+            if let Some(f) = read_governance_file(&path) {
+                out.push(f);
+            }
+        }
+    }
+}
+
+/// Scan the skills directory — each subdirectory containing a `SKILL.md` is one skill.
 fn scan_skills_area(project_root: &Path, skills_dir: &Path) -> GovernanceArea {
     let mut files = Vec::new();
 
@@ -132,53 +199,8 @@ fn scan_skills_area(project_root: &Path, skills_dir: &Path) -> GovernanceArea {
 
     let covered = !files.is_empty();
     GovernanceArea {
-        name: "claude_skills".to_string(),
-        source: "claude".to_string(),
-        files,
-        covered,
-    }
-}
-
-/// Scan for CLAUDE.md — checks `.claude/CLAUDE.md` then root `CLAUDE.md`.
-fn scan_claude_md_area(project_root: &Path) -> GovernanceArea {
-    let candidates = [
-        project_root.join(".claude").join("CLAUDE.md"),
-        project_root.join("CLAUDE.md"),
-    ];
-
-    let mut files = Vec::new();
-    for candidate in &candidates {
-        if candidate.is_file() {
-            if let Some(f) = read_governance_file_relative(candidate, project_root) {
-                files.push(f);
-            }
-            break; // Only include the first match
-        }
-    }
-
-    let covered = !files.is_empty();
-    GovernanceArea {
-        name: "claude_md".to_string(),
-        source: "claude".to_string(),
-        files,
-        covered,
-    }
-}
-
-/// Scan a single file as a governance area.
-fn scan_single_file_area(name: &str, source: &str, path: &Path) -> GovernanceArea {
-    let mut files = Vec::new();
-    if path.is_file() {
-        if let Some(parent) = path.parent() {
-            if let Some(f) = read_governance_file_relative(path, parent) {
-                files.push(f);
-            }
-        }
-    }
-    let covered = !files.is_empty();
-    GovernanceArea {
-        name: name.to_string(),
-        source: source.to_string(),
+        name: "skills".to_string(),
+        source: "orqa".to_string(),
         files,
         covered,
     }
@@ -269,49 +291,58 @@ mod tests {
     }
 
     #[test]
-    fn full_claude_governance_has_full_coverage() {
+    fn full_orqa_governance_has_full_coverage() {
         let dir = create_test_dir("full");
-        let orqa_dir = dir.join(".orqa");
-        let claude_dir = dir.join(".claude");
+        let governance_dir = dir.join(".orqa").join("governance");
+        let team_dir = dir.join(".orqa").join("team");
+        let doc_dir = dir.join(".orqa").join("documentation");
 
-        // claude_rules — now in .orqa/
-        fs::create_dir_all(orqa_dir.join("rules")).expect("mkdir");
-        fs::write(orqa_dir.join("rules").join("no-stubs.md"), "# Rule").expect("write");
+        // rules
+        fs::create_dir_all(governance_dir.join("rules")).expect("mkdir");
+        fs::write(governance_dir.join("rules").join("no-stubs.md"), "# Rule").expect("write");
 
-        // claude_agents — now in .orqa/
-        fs::create_dir_all(orqa_dir.join("agents")).expect("mkdir");
-        fs::write(orqa_dir.join("agents").join("backend.md"), "# Agent").expect("write");
+        // agents
+        fs::create_dir_all(team_dir.join("agents")).expect("mkdir");
+        fs::write(team_dir.join("agents").join("backend.md"), "# Agent").expect("write");
 
-        // claude_skills — now in .orqa/
-        fs::create_dir_all(orqa_dir.join("skills").join("chunkhound")).expect("mkdir");
+        // skills (subdirectory with SKILL.md)
+        fs::create_dir_all(team_dir.join("skills").join("chunkhound")).expect("mkdir");
         fs::write(
-            orqa_dir
-                .join("skills")
-                .join("chunkhound")
-                .join("SKILL.md"),
+            team_dir.join("skills").join("chunkhound").join("SKILL.md"),
             "# Skill",
         )
         .expect("write");
 
-        // claude_hooks — now in .orqa/
-        fs::create_dir_all(orqa_dir.join("hooks")).expect("mkdir");
+        // hooks
+        fs::create_dir_all(governance_dir.join("hooks")).expect("mkdir");
         fs::write(
-            orqa_dir.join("hooks").join("pre-commit.sh"),
+            governance_dir.join("hooks").join("pre-commit.sh"),
             "#!/bin/bash",
         )
         .expect("write");
 
-        // claude_settings — stays in .claude/
-        fs::create_dir_all(&claude_dir).expect("mkdir claude");
-        fs::write(claude_dir.join("settings.json"), "{}").expect("write");
+        // lessons
+        fs::create_dir_all(governance_dir.join("lessons")).expect("mkdir");
+        fs::write(
+            governance_dir.join("lessons").join("IMPL-001.md"),
+            "# Lesson",
+        )
+        .expect("write");
 
-        // claude_md — stays in .claude/
-        fs::write(claude_dir.join("CLAUDE.md"), "# Config").expect("write");
+        // decisions
+        fs::create_dir_all(governance_dir.join("decisions")).expect("mkdir");
+        fs::write(
+            governance_dir.join("decisions").join("AD-001.md"),
+            "# Decision",
+        )
+        .expect("write");
 
-        // agents_md
-        fs::write(dir.join("AGENTS.md"), "# Agents").expect("write");
+        // documentation
+        fs::create_dir_all(doc_dir.join("architecture")).expect("mkdir");
+        fs::write(doc_dir.join("architecture").join("overview.md"), "# Arch").expect("write");
 
         let result = scan_governance(&dir).expect("scan");
+        assert_eq!(result.areas.len(), 7);
         assert_eq!(result.coverage_ratio, 1.0);
 
         cleanup(&dir);
@@ -320,14 +351,15 @@ mod tests {
     #[test]
     fn partial_coverage_computed_correctly() {
         let dir = create_test_dir("partial");
-        let orqa_dir = dir.join(".orqa");
+        let governance_dir = dir.join(".orqa").join("governance");
+        let team_dir = dir.join(".orqa").join("team");
 
         // Only rules and agents covered (2 of 7)
-        fs::create_dir_all(orqa_dir.join("rules")).expect("mkdir");
-        fs::write(orqa_dir.join("rules").join("rule.md"), "# Rule").expect("write");
+        fs::create_dir_all(governance_dir.join("rules")).expect("mkdir");
+        fs::write(governance_dir.join("rules").join("rule.md"), "# Rule").expect("write");
 
-        fs::create_dir_all(orqa_dir.join("agents")).expect("mkdir");
-        fs::write(orqa_dir.join("agents").join("agent.md"), "# Agent").expect("write");
+        fs::create_dir_all(team_dir.join("agents")).expect("mkdir");
+        fs::write(team_dir.join("agents").join("agent.md"), "# Agent").expect("write");
 
         let result = scan_governance(&dir).expect("scan");
         let expected = 2.0 / 7.0;
@@ -343,17 +375,17 @@ mod tests {
     #[test]
     fn content_preview_truncated_at_500_chars() {
         let dir = create_test_dir("preview");
-        let claude_dir = dir.join(".orqa").join("rules");
-        fs::create_dir_all(&claude_dir).expect("mkdir");
+        let rules_dir = dir.join(".orqa").join("governance").join("rules");
+        fs::create_dir_all(&rules_dir).expect("mkdir");
 
         let long_content = "x".repeat(1000);
-        fs::write(claude_dir.join("long.md"), &long_content).expect("write");
+        fs::write(rules_dir.join("long.md"), &long_content).expect("write");
 
         let result = scan_governance(&dir).expect("scan");
         let rules_area = result
             .areas
             .iter()
-            .find(|a| a.name == "claude_rules")
+            .find(|a| a.name == "rules")
             .expect("rules area");
         assert!(rules_area.covered);
         let file = &rules_area.files[0];
@@ -371,17 +403,51 @@ mod tests {
     }
 
     #[test]
-    fn claude_md_found_in_root_when_not_in_claude_dir() {
-        let dir = create_test_dir("claude_md_root");
-        fs::write(dir.join("CLAUDE.md"), "# Root Config").expect("write");
+    fn documentation_area_scans_recursively() {
+        let dir = create_test_dir("doc_recursive");
+        let doc_dir = dir.join(".orqa").join("documentation");
+
+        // Create nested structure
+        fs::create_dir_all(doc_dir.join("architecture")).expect("mkdir");
+        fs::create_dir_all(doc_dir.join("product")).expect("mkdir");
+        fs::write(
+            doc_dir.join("architecture").join("decisions.md"),
+            "# Decisions",
+        )
+        .expect("write");
+        fs::write(doc_dir.join("product").join("vision.md"), "# Vision").expect("write");
 
         let result = scan_governance(&dir).expect("scan");
-        let area = result
+        let doc_area = result
             .areas
             .iter()
-            .find(|a| a.name == "claude_md")
-            .expect("claude_md area");
-        assert!(area.covered);
+            .find(|a| a.name == "documentation")
+            .expect("documentation area");
+
+        assert!(doc_area.covered);
+        assert_eq!(doc_area.files.len(), 2);
+
+        cleanup(&dir);
+    }
+
+    #[test]
+    fn area_names_match_expected_keys() {
+        let dir = create_test_dir("names");
+        let result = scan_governance(&dir).expect("scan");
+
+        let names: Vec<&str> = result.areas.iter().map(|a| a.name.as_str()).collect();
+        assert_eq!(
+            names,
+            [
+                "rules",
+                "agents",
+                "skills",
+                "hooks",
+                "lessons",
+                "decisions",
+                "documentation"
+            ]
+        );
 
         cleanup(&dir);
     }

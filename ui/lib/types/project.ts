@@ -44,6 +44,7 @@ export interface ProjectSettings {
 	icon: string | null;
 	show_thinking: boolean;
 	custom_system_prompt: string | null;
+	artifacts?: ArtifactEntry[];
 }
 
 export interface GovernanceCounts {
@@ -59,4 +60,28 @@ export interface ProjectScanResult {
 	stack: DetectedStack;
 	governance: GovernanceCounts;
 	scan_duration_ms: number;
+}
+
+/** A single artifact type entry from project.json artifacts config. */
+export interface ArtifactTypeConfig {
+	key: string;
+	label: string;
+	icon?: string;
+	path: string;
+}
+
+/** A group entry containing child artifact types. */
+export interface ArtifactGroupConfig {
+	key: string;
+	label: string;
+	icon?: string;
+	children: ArtifactTypeConfig[];
+}
+
+/** An entry in the artifacts config — either a direct type or a group. */
+export type ArtifactEntry = ArtifactTypeConfig | ArtifactGroupConfig;
+
+/** Type guard: is this entry a group (has children)? */
+export function isArtifactGroup(entry: ArtifactEntry): entry is ArtifactGroupConfig {
+	return "children" in entry;
 }

@@ -43,6 +43,8 @@ reqwest = { version = "0.12", features = ["stream"] }
 futures-util = "0.3"
 sha2 = "0.10"
 tracing = "0.1"
+notify = "8"
+notify-debouncer-full = "0.6"
 
 [dev-dependencies]
 tempfile = "3"

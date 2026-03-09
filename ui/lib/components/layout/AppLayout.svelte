@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte";
+	import { invoke } from "@tauri-apps/api/core";
+	import { listen } from "@tauri-apps/api/event";
+	import type { UnlistenFn } from "@tauri-apps/api/event";
 	import ActivityBar from "./ActivityBar.svelte";
 	import NavSubPanel from "./NavSubPanel.svelte";
 	import Toolbar from "./Toolbar.svelte";
 	import StatusBar from "./StatusBar.svelte";
 	import WelcomeScreen from "./WelcomeScreen.svelte";
 	import ProjectDashboard from "$lib/components/dashboard/ProjectDashboard.svelte";
-	import ArtifactLanding from "$lib/components/artifact/ArtifactLanding.svelte";
 	import ArtifactViewer from "$lib/components/artifact/ArtifactViewer.svelte";
 	import SettingsView from "$lib/components/settings/SettingsView.svelte";
 	import ConversationView from "$lib/components/conversation/ConversationView.svelte";
@@ -25,6 +27,9 @@
 	import { governanceStore } from "$lib/stores/governance.svelte";
 	import { enforcementStore } from "$lib/stores/enforcement.svelte";
 
+	/** Unlisten function for the artifact-changed event, cleaned up on destroy. */
+	let unlistenArtifactChanged: UnlistenFn | null = null;
+
 	const hasProject = $derived(projectStore.hasProject);
 	const groupHasMultipleSubCategories = $derived(
 		navigationStore.activeGroup !== null &&
@@ -42,10 +47,16 @@
 		if (setupStore.setupComplete) {
 			projectStore.loadActiveProject();
 		}
+
+		// Listen for backend file-watcher events and refresh the nav tree.
+		unlistenArtifactChanged = await listen("artifact-changed", () => {
+			artifactStore.invalidateNavTree();
+		});
 	});
 
 	onDestroy(() => {
 		settingsStore.destroy();
+		unlistenArtifactChanged?.();
 	});
 
 	// When a project becomes active, switch to the project dashboard
@@ -61,6 +72,16 @@
 		if (hasProject && !needsSetup && artifactStore.navTree === null) {
 			artifactStore.loadNavTree();
 		}
+	});
+
+	// Start the .orqa/ file watcher when a project becomes active so the nav
+	// tree refreshes automatically when files change on disk.
+	$effect(() => {
+		const project = projectStore.activeProject;
+		if (!project || needsSetup) return;
+		invoke("artifact_watch_start", { projectPath: project.path }).catch((err: unknown) => {
+			console.warn("[artifact-watcher] failed to start:", err);
+		});
 	});
 
 	// Load enforcement rules when the rules activity is active
@@ -162,7 +183,9 @@
 								{#if navigationStore.explorerView === "artifact-viewer"}
 									<ArtifactViewer />
 								{:else}
-									<ArtifactLanding category={navigationStore.activeActivity} />
+									<div class="flex h-full items-center justify-center text-sm text-muted-foreground">
+										Select an item to view it
+									</div>
 								{/if}
 							{:else}
 								<WelcomeScreen />

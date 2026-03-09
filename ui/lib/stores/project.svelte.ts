@@ -4,6 +4,7 @@ import type {
 	ProjectSummary,
 	ProjectSettings,
 	ProjectScanResult,
+	ArtifactEntry,
 } from "$lib/types";
 
 class ProjectStore {
@@ -34,6 +35,10 @@ class ProjectStore {
 		if (!this.activeProject) return {};
 		const summary = this.projects.find((p) => p.id === this.activeProject?.id);
 		return summary ? { total: summary.artifact_count } : {};
+	}
+
+	get artifactConfig(): ArtifactEntry[] {
+		return this.projectSettings?.artifacts ?? [];
 	}
 
 	/** Try to restore the last active project on app startup. */

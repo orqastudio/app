@@ -2,6 +2,35 @@ use serde::{Deserialize, Serialize};
 
 use crate::domain::project::DetectedStack;
 
+/// A single artifact type with a filesystem path to scan.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ArtifactTypeConfig {
+    pub key: String,
+    pub label: String,
+    #[serde(default)]
+    pub icon: Option<String>,
+    pub path: String,
+}
+
+/// An entry in the artifacts config — either a direct type or a group of types.
+///
+/// Serde uses `untagged` matching: `Group` must come before `Type` in the enum
+/// because it has a required `children` field that distinguishes it from a bare type.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ArtifactEntry {
+    /// A named group containing multiple artifact types.
+    Group {
+        key: String,
+        label: String,
+        #[serde(default)]
+        icon: Option<String>,
+        children: Vec<ArtifactTypeConfig>,
+    },
+    /// A direct artifact type with its own path.
+    Type(ArtifactTypeConfig),
+}
+
 /// Governance artifact counts for a project.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GovernanceCounts {
@@ -33,6 +62,12 @@ pub struct ProjectSettings {
     pub show_thinking: bool,
     #[serde(default)]
     pub custom_system_prompt: Option<String>,
+    /// Config-driven artifact navigation tree.
+    ///
+    /// Each entry is either a direct artifact type or a group of types.
+    /// When absent, the scanner returns an empty navigation tree.
+    #[serde(default)]
+    pub artifacts: Vec<ArtifactEntry>,
 }
 
 fn default_model() -> String {
@@ -77,6 +112,7 @@ mod tests {
             icon: None,
             show_thinking: false,
             custom_system_prompt: None,
+            artifacts: vec![],
         }
     }
 

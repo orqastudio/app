@@ -11,7 +11,10 @@ export interface FrontmatterResult {
  * This is a lightweight regex-based parser -- not a full YAML parser.
  */
 export function parseFrontmatter(content: string): FrontmatterResult {
-	const trimmed = content.trimStart();
+	// Normalise CRLF line endings to LF so the regex anchors ($) and
+	// continuation-line checks work correctly regardless of the file's
+	// line-ending style on disk (Windows files often use CRLF).
+	const trimmed = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n").trimStart();
 	if (!trimmed.startsWith("---")) {
 		return { metadata: {}, body: content };
 	}

@@ -1,29 +1,26 @@
 <script lang="ts">
 	import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
-	import FileTextIcon from "@lucide/svelte/icons/file-text";
-	import BotIcon from "@lucide/svelte/icons/bot";
-	import ShieldIcon from "@lucide/svelte/icons/shield";
-	import ZapIcon from "@lucide/svelte/icons/zap";
-	import GitBranchIcon from "@lucide/svelte/icons/git-branch";
+	import HomeIcon from "@lucide/svelte/icons/home";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
-	import type { Component } from "svelte";
 
 	let { items }: { items: string[] } = $props();
 
-	const activityIcon: Record<string, Component> = {
-		docs: FileTextIcon,
-		agents: BotIcon,
-		rules: ShieldIcon,
-		skills: ZapIcon,
-		hooks: GitBranchIcon,
-	};
-
-	const Icon = $derived(activityIcon[navigationStore.activeActivity] ?? FileTextIcon);
-
 	function handleHome() {
-		if (navigationStore.activeActivity === "docs") {
-			navigationStore.openArtifact("README", []);
-		} else {
+		navigationStore.closeArtifact();
+	}
+
+	/**
+	 * Navigate to an intermediate breadcrumb at the given index.
+	 * items[0] is the section label, items[1..n-1] are folder segments,
+	 * items[n-1] is the leaf (non-clickable). Clicking a folder segment
+	 * closes the artifact viewer and returns to the list.
+	 */
+	function handleSegmentClick(index: number) {
+		// Only the first segment (section label) has a meaningful navigation target:
+		// return to the artifact list for this category.
+		// Deeper folder segments don't correspond to selectable routes in the current
+		// navigation model, so they also return to the list root.
+		if (index < items.length - 1) {
 			navigationStore.closeArtifact();
 		}
 	}
@@ -34,7 +31,7 @@
 		class="flex items-center text-muted-foreground hover:text-foreground"
 		onclick={handleHome}
 	>
-		<Icon class="h-3.5 w-3.5" />
+		<HomeIcon class="h-3.5 w-3.5" />
 	</button>
 
 	{#each items as item, index (index)}
@@ -44,7 +41,7 @@
 		{:else}
 			<button
 				class="text-muted-foreground hover:text-foreground"
-				onclick={handleHome}
+				onclick={() => handleSegmentClick(index)}
 			>
 				{item}
 			</button>

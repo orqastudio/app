@@ -111,36 +111,6 @@ pub struct DocFrontmatter {
     pub updated: Option<String>,
 }
 
-/// A research question within a research document's frontmatter.
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct ResearchQuestion {
-    pub id: String,
-    pub title: String,
-    #[serde(default)]
-    pub status: String,
-    #[serde(default)]
-    pub verdict: Option<String>,
-}
-
-/// YAML frontmatter metadata extracted from a research file.
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct ResearchFrontmatter {
-    #[serde(rename = "type", default)]
-    pub research_type: Option<String>,
-    pub status: Option<String>,
-    pub date: Option<String>,
-    pub category: Option<String>,
-    pub description: Option<String>,
-    #[serde(default)]
-    pub questions: Vec<ResearchQuestion>,
-    #[serde(default)]
-    pub produces_decisions: Vec<String>,
-    #[serde(default)]
-    pub informs_phases: Vec<serde_yaml::Value>,
-    #[serde(default)]
-    pub informs_features: Vec<String>,
-}
-
 /// A node in the documentation tree. Directories have children; markdown files have a path.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DocNode {
@@ -153,6 +123,10 @@ pub struct DocNode {
     /// Frontmatter metadata extracted from the file. `None` for directories.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub frontmatter: Option<DocFrontmatter>,
+    /// Status value from YAML frontmatter (e.g. `"draft"`, `"in-progress"`, `"done"`). `None` for
+    /// directories and files without a `status` field.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub status: Option<String>,
     /// Short description for leaf nodes: YAML `description` field if present, otherwise the
     /// first paragraph of the body. `None` for directories.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -265,59 +239,6 @@ pub fn parse_frontmatter<T: serde::de::DeserializeOwned + Default>(content: &str
 /// Convenience alias: parse doc frontmatter.
 pub fn parse_doc_frontmatter(content: &str) -> (DocFrontmatter, String) {
     parse_frontmatter::<DocFrontmatter>(content)
-}
-
-/// Convenience alias: parse research frontmatter.
-pub fn parse_research_frontmatter(content: &str) -> (ResearchFrontmatter, String) {
-    parse_frontmatter::<ResearchFrontmatter>(content)
-}
-
-/// YAML frontmatter metadata extracted from an implementation plan file.
-///
-/// Fields use `serde(default)` liberally so older plans missing newer fields
-/// still parse without error — forward-compatible by design.
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct PlanFrontmatter {
-    pub title: Option<String>,
-    pub status: Option<String>,
-    pub priority: Option<String>,
-    pub created: Option<String>,
-    pub updated: Option<String>,
-    #[serde(default)]
-    pub phases: Option<i64>,
-    #[serde(default)]
-    pub completed_phases: Option<i64>,
-    #[serde(default)]
-    pub tags: Vec<String>,
-    /// Plans this depends on (plan filenames without .md extension).
-    #[serde(default, rename = "depends-on")]
-    pub depends_on: Vec<String>,
-    /// What this plan blocks (plan names or milestone identifiers).
-    #[serde(default)]
-    pub blocks: Vec<String>,
-    /// Which product pillars this plan serves.
-    #[serde(default)]
-    pub pillar: Vec<String>,
-    /// Agent or role responsible for orchestrating execution.
-    #[serde(default)]
-    pub owner: Option<String>,
-    /// Roadmap phase reference (e.g., "2i").
-    #[serde(default, rename = "roadmap-ref")]
-    pub roadmap_ref: Option<String>,
-    /// Artifacts produced on completion (rules, skills, scanner profiles, etc.).
-    #[serde(default)]
-    pub produces: Vec<String>,
-    /// Codebase areas affected (e.g., "src-tauri", "ui", "sidecar").
-    #[serde(default)]
-    pub scope: Vec<String>,
-    /// Back-references to research documents that informed this plan.
-    #[serde(default, rename = "research-refs")]
-    pub research_refs: Vec<String>,
-}
-
-/// Convenience alias: parse plan frontmatter.
-pub fn parse_plan_frontmatter(content: &str) -> (PlanFrontmatter, String) {
-    parse_frontmatter::<PlanFrontmatter>(content)
 }
 
 /// YAML frontmatter metadata extracted from a milestone file (`.orqa/milestones/`).
