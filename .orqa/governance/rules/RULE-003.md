@@ -27,8 +27,22 @@ The scanner walks directories like a file explorer:
 - **Flat directories** (e.g., milestones, epics): Scans `.md` files directly in the configured path
 - **Tree directories** (e.g., documentation with subdirectories): Recursively walks subdirectories, building `DocNode` entries with `children` for folders and leaf nodes for files
 - **Empty directories are omitted** — No empty folder nodes in the tree
-- **README.md is navigation metadata** — Skipped as a browsable artifact at all levels
+- **README.md is navigation metadata** — Skipped as a browsable artifact, but its YAML frontmatter (icon, label, description, sort) is extracted and used to enrich the nav tree
 - **Hidden entries** (starting with `.` or `_`) are skipped at all levels
+
+## README as Primary Metadata Source
+
+Every artifact directory's README.md provides the default icon, label, description, and sort order for that directory's nav tree entry. The scanner extracts these from YAML frontmatter.
+
+**Config is the override layer, not the primary source.** The `artifacts` array in `project.json` should only include `icon`, `label`, or `description` fields when they intentionally differ from the README. This keeps config minimal and enables plugins to override specific entries without duplicating README content.
+
+| Field | Primary source | Override source |
+|-------|---------------|-----------------|
+| `icon` | README frontmatter | Config entry (only if different from README) |
+| `label` | README frontmatter | Config entry (only if different from README) |
+| `description` | README frontmatter | Config entry |
+| `sort` | README frontmatter | Config ordering (array position) |
+| `path` | Config entry only | N/A — always in config |
 
 ## Display Label Priority
 
@@ -54,10 +68,14 @@ Before committing any change that affects artifact paths or structure:
 ## ArtifactEntry Config Schema
 
 ```jsonc
-// Direct type (flat or tree directory of .md files)
-{ "key": "docs", "label": "Documentation", "icon": "file-text", "path": ".orqa/documentation" }
+// Minimal entry — icon, label, description all come from directory README.md
+{ "key": "docs", "label": "Documentation", "path": ".orqa/documentation" }
+
+// Override entry — icon differs from README, so it's specified here
+{ "key": "process", "label": "Process", "icon": "workflow", "path": ".orqa/documentation/process" }
 
 // Group of types (renders as expandable group in sidebar)
+// icon: "target" overrides the README's "clipboard-list"
 { "key": "planning", "label": "Planning", "icon": "target",
   "children": [
     { "key": "ideas", "label": "Ideas", "path": ".orqa/planning/ideas" },
