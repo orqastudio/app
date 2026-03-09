@@ -49,7 +49,7 @@
     },
     { "key": "planning", "label": "Planning", "icon": "target",
       "children": [
-        { "key": "pillars", "label": "Pillars", "path": ".orqa/planning/pillars" },
+        { "key": "pillars", "label": "Pillars", "icon": "compass", "path": ".orqa/planning/pillars" },
         { "key": "ideas", "label": "Ideas", "path": ".orqa/planning/ideas" },
         { "key": "research", "label": "Research", "path": ".orqa/planning/research" },
         { "key": "milestones", "label": "Milestones", "path": ".orqa/planning/milestones" },

@@ -3,6 +3,20 @@
 	import * as ScrollArea from "$lib/components/ui/scroll-area";
 	import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
 	import FileTextIcon from "@lucide/svelte/icons/file-text";
+	import FolderIcon from "@lucide/svelte/icons/folder";
+	import BookOpenIcon from "@lucide/svelte/icons/book-open";
+	import BotIcon from "@lucide/svelte/icons/bot";
+	import CheckSquareIcon from "@lucide/svelte/icons/check-square";
+	import ClipboardListIcon from "@lucide/svelte/icons/clipboard-list";
+	import FlaskConicalIcon from "@lucide/svelte/icons/flask-conical";
+	import GitBranchIcon from "@lucide/svelte/icons/git-branch";
+	import LayersIcon from "@lucide/svelte/icons/layers";
+	import LightbulbIcon from "@lucide/svelte/icons/lightbulb";
+	import ScrollTextIcon from "@lucide/svelte/icons/scroll-text";
+	import ShieldIcon from "@lucide/svelte/icons/shield";
+	import TargetIcon from "@lucide/svelte/icons/target";
+	import UsersIcon from "@lucide/svelte/icons/users";
+	import ZapIcon from "@lucide/svelte/icons/zap";
 	import EmptyState from "$lib/components/shared/EmptyState.svelte";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 	import ErrorDisplay from "$lib/components/shared/ErrorDisplay.svelte";
@@ -14,6 +28,33 @@
 		type ActivityView,
 	} from "$lib/stores/navigation.svelte";
 	import type { DocNode } from "$lib/types/nav-tree";
+	import type { Component } from "svelte";
+
+	/** Map from icon name strings (as stored in README frontmatter) to Lucide icon components. */
+	const ICON_MAP: Record<string, Component> = {
+		"book-open": BookOpenIcon,
+		bot: BotIcon,
+		"check-square": CheckSquareIcon,
+		"clipboard-list": ClipboardListIcon,
+		"file-text": FileTextIcon,
+		"flask-conical": FlaskConicalIcon,
+		folder: FolderIcon,
+		"git-branch": GitBranchIcon,
+		layers: LayersIcon,
+		lightbulb: LightbulbIcon,
+		"scroll-text": ScrollTextIcon,
+		shield: ShieldIcon,
+		target: TargetIcon,
+		users: UsersIcon,
+		zap: ZapIcon,
+	};
+
+	function resolveDirectoryIcon(iconName: string | null | undefined): Component {
+		if (iconName && iconName in ICON_MAP) {
+			return ICON_MAP[iconName];
+		}
+		return FolderIcon;
+	}
 
 	let { category }: { category: ActivityView } = $props();
 
@@ -197,12 +238,14 @@
 
 {#snippet treeSection(node: DocNode, depth: number)}
 	{#if node.children}
+		{@const DirIcon = resolveDirectoryIcon(node.icon)}
 		<Collapsible.Root open={true}>
 			<Collapsible.Trigger
 				class="flex w-full items-center gap-1 rounded px-1 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:bg-accent/50"
 				style="padding-left: {depth * 12 + 4}px"
 			>
 				<ChevronRightIcon class="h-3 w-3 transition-transform [[data-state=open]_&]:rotate-90" />
+				<DirIcon class="h-3 w-3 shrink-0" />
 				{node.label}
 			</Collapsible.Trigger>
 			<Collapsible.Content>

@@ -46,4 +46,6 @@ export interface DocNode {
 	status?: string | null;
 	/** Optional short description shown below the label for flat-list items. */
 	description?: string | null;
+	/** Icon name from README frontmatter, for directory nodes only. Null for leaf files. */
+	icon?: string | null;
 }

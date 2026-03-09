@@ -106,6 +106,7 @@ pub fn scan_directory(dir: &Path, docs_root: &Path) -> Result<Vec<DocNode>, Orqa
             frontmatter: None,
             status: None,
             description: None,
+            icon: None,
         });
     }
 
@@ -118,6 +119,7 @@ pub fn scan_directory(dir: &Path, docs_root: &Path) -> Result<Vec<DocNode>, Orqa
             frontmatter: None,
             status: None,
             description: None,
+            icon: None,
         });
     }
 

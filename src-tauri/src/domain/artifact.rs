@@ -131,6 +131,10 @@ pub struct DocNode {
     /// first paragraph of the body. `None` for directories.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    /// Lucide icon name sourced from the directory's README.md frontmatter. `None` for leaf files
+    /// and directories without a README.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub icon: Option<String>,
 }
 
 /// README frontmatter for navigation discovery.

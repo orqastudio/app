@@ -113,18 +113,34 @@ fn scan_group_from_config(
 /// Build a `NavType` from a single artifact type config entry.
 ///
 /// Walks the configured path for `.md` files and populates `DocNode` entries.
+/// README.md frontmatter enriches `description` and provides an `icon` fallback
+/// when the config does not specify one.  Config values always take priority.
 fn scan_type_from_config(
     project_path: &Path,
     cfg: &ArtifactTypeConfig,
 ) -> Result<NavType, OrqaError> {
     let type_dir = project_path.join(&cfg.path);
     let readme_content = read_readme_content(&type_dir);
+    let readme_fm = read_readme_frontmatter(&type_dir);
     let nodes = scan_type_nodes(&type_dir, &cfg.key, &cfg.path)?;
+
+    // Config icon takes priority; fall back to README icon, then a generic default.
+    let icon = cfg
+        .icon
+        .clone()
+        .or_else(|| readme_fm.as_ref().and_then(|fm| fm.icon.clone()))
+        .unwrap_or_else(|| "file".to_string());
+
+    // README description is the fallback when config provides none.
+    let description = readme_fm
+        .as_ref()
+        .and_then(|fm| fm.description.clone())
+        .unwrap_or_default();
 
     Ok(NavType {
         label: cfg.label.clone(),
-        description: String::new(),
-        icon: cfg.icon.clone().unwrap_or_else(|| "file".to_string()),
+        description,
+        icon,
         sort: i64::MAX,
         path: cfg.path.clone(),
         readme_content,
@@ -190,6 +206,7 @@ fn scan_skills_nodes(type_dir: &Path, type_path: &str) -> Result<Vec<DocNode>, O
             frontmatter: None,
             status,
             description,
+            icon: None,
         });
     }
 
@@ -250,6 +267,7 @@ fn scan_hooks_nodes(type_dir: &Path, type_path: &str) -> Result<Vec<DocNode>, Or
             frontmatter: None,
             status,
             description,
+            icon: None,
         });
     }
 
@@ -306,6 +324,7 @@ fn scan_recursive_nodes(
                 frontmatter: None,
                 status,
                 description,
+                icon: None,
             });
         } else if ft.is_dir() {
             let child_path = format!("{current_path}/{name}");
@@ -314,13 +333,22 @@ fn scan_recursive_nodes(
                 // Skip directories with no .md content anywhere inside.
                 continue;
             }
+            // Enrich the directory node with README frontmatter if present.
+            let dir_readme = read_readme_frontmatter(&entry.path());
+            let dir_label = dir_readme
+                .as_ref()
+                .and_then(|fm| fm.label.clone())
+                .unwrap_or_else(|| humanize_name(&name));
+            let dir_description = dir_readme.as_ref().and_then(|fm| fm.description.clone());
+            let dir_icon = dir_readme.as_ref().and_then(|fm| fm.icon.clone());
             dir_nodes.push(DocNode {
-                label: humanize_name(&name),
+                label: dir_label,
                 path: None,
                 children: Some(children),
                 frontmatter: None,
                 status: None,
-                description: None,
+                description: dir_description,
+                icon: dir_icon,
             });
         }
     }
@@ -345,6 +373,23 @@ fn read_readme_content(dir: &Path) -> String {
         std::fs::read_to_string(&readme).unwrap_or_default()
     } else {
         String::new()
+    }
+}
+
+/// Parse the `NavReadme` frontmatter from a `README.md` in `dir`.
+///
+/// Returns `None` when the README does not exist or has no parseable frontmatter.
+fn read_readme_frontmatter(dir: &Path) -> Option<crate::domain::artifact::NavReadme> {
+    use crate::domain::artifact::parse_frontmatter;
+
+    let readme = dir.join("README.md");
+    let content = std::fs::read_to_string(&readme).ok()?;
+    let (fm, _): (crate::domain::artifact::NavReadme, _) = parse_frontmatter(&content);
+    // Return Some only when at least one meaningful field was extracted.
+    if fm.icon.is_some() || fm.description.is_some() || fm.label.is_some() || fm.sort.is_some() {
+        Some(fm)
+    } else {
+        None
     }
 }
 
