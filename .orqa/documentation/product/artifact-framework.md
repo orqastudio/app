@@ -331,8 +331,8 @@ tags: [streaming, transparency]
 | `description` | No | string | Brief description of the epic |
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
-| `research-refs` | No | string[] | `RES-NNN` identifiers of research docs that informed this epic |
-| `docs-required` | No | string[] | Documentation that must exist before work begins |
+| `research-refs` | No | string[] | `RES-NNN` identifiers of research docs that informed this epic (traceability — "what shaped this design?") |
+| `docs-required` | No | string[] | Documentation that must exist before work begins (gate — "what blocks starting?"). Research docs in `research-refs` should also appear here unless they are context-only. May also include non-research docs (architecture specs, UI wireframes). |
 | `docs-produced` | No | string[] | Documentation this work will create or update |
 | `pillars` | No | string[] | Pillar IDs this epic serves (e.g., `[PILLAR-001, PILLAR-002]`) |
 | `scoring` | No | object | Dimension scores for priority calculation (includes computed `score` field) |

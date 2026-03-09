@@ -151,6 +151,19 @@ Every epic's `docs-required` field lists documentation that MUST exist before im
 
 **If any `docs-required` item is missing:** The epic is blocked. Document the gap and create the documentation first.
 
+### Research Reference Consistency Check
+
+`research-refs` and `docs-required` serve different purposes on epics:
+
+- **`research-refs`** — traceability: "What research informed this design?" (backward-looking)
+- **`docs-required`** — gate: "What must exist before we start?" (forward-looking)
+
+These fields intentionally overlap when a research doc is both informative and a prerequisite. When creating or updating an epic, the orchestrator MUST check for consistency:
+
+1. **Every `research-refs` entry should appear in `docs-required`** unless the research is context-only (informative but not blocking). If a research doc is omitted from `docs-required`, annotate the `research-refs` entry with a comment explaining why it is not a prerequisite.
+2. **`docs-required` may contain non-research entries** — architecture specs, UI wireframes, and other documentation that must be written before implementation. These do not appear in `research-refs`.
+3. **Drift detection**: If `research-refs` lists a `RES-NNN` that is not in `docs-required` and there is no documented reason for the omission, flag it during review as a potential oversight.
+
 ### After Epic Implementation Completes (`review → done`)
 
 Every epic's `docs-produced` field lists documentation that this work creates or updates. The code-reviewer MUST verify:
@@ -248,6 +261,8 @@ The orchestrator SHOULD periodically verify:
 3. **Status consistency** — a milestone marked `active` has at least one `in-progress` or `ready` epic
 4. **Count accuracy** — milestone `epic-count` and `completed-epics` match reality
 5. **Frontmatter completeness** — all required fields are present and non-empty
+6. **Research-refs / docs-required consistency** — every `RES-NNN` in `research-refs` either appears in `docs-required` or has a documented reason for omission
+7. **Promotion chain integrity** — every lesson with `promoted_to: RULE-NNN` points to an existing rule, and that rule's `promoted_from` points back to the lesson
 
 ---
 
