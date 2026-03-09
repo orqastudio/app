@@ -2,7 +2,7 @@
 role: group
 label: "Planning"
 description: "Strategic planning artifacts — milestones, epics, tasks, ideas, research, and plans."
-icon: "clipboard-list"
+icon: "target"
 sort: 2
 ---
 

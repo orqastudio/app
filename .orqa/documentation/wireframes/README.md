@@ -2,6 +2,6 @@
 role: artifacts
 label: Wireframes
 description: Visual wireframes and mockups.
-icon: image
+icon: palette
 sort: 6
 ---

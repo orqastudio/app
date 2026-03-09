@@ -42,12 +42,12 @@
         { "key": "architecture", "label": "Architecture", "path": ".orqa/documentation/architecture" },
         { "key": "product", "label": "Product", "path": ".orqa/documentation/product" },
         { "key": "development", "label": "Development", "path": ".orqa/documentation/development" },
-        { "key": "process", "label": "Process", "icon": "workflow", "path": ".orqa/documentation/process" },
+        { "key": "process", "label": "Process", "path": ".orqa/documentation/process" },
         { "key": "ui", "label": "User Interface", "path": ".orqa/documentation/ui" },
-        { "key": "wireframes", "label": "Wireframes", "icon": "palette", "path": ".orqa/documentation/wireframes" }
+        { "key": "wireframes", "label": "Wireframes", "path": ".orqa/documentation/wireframes" }
       ]
     },
-    { "key": "planning", "label": "Planning", "icon": "target",
+    { "key": "planning", "label": "Planning",
       "children": [
         { "key": "pillars", "label": "Pillars", "path": ".orqa/planning/pillars" },
         { "key": "ideas", "label": "Ideas", "path": ".orqa/planning/ideas" },
