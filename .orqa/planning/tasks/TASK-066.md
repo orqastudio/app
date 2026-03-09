@@ -1,7 +1,7 @@
 ---
 id: TASK-066
 title: "Update git-workflow rule for governance-only work"
-status: todo
+status: done
 epic: EPIC-047
 created: 2026-03-09
 updated: 2026-03-09

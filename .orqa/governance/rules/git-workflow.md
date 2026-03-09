@@ -93,6 +93,32 @@ Run `git status --short`. If untracked (`??`) or modified (`M`) files exist: com
 
 **Before bulk cleanup commits:** Run `git diff --cached --stat` and verify no documentation or source code is being accidentally deleted.
 
+## Commit Discipline (NON-NEGOTIABLE)
+
+Commit at natural boundaries. Never accumulate large numbers of uncommitted files.
+
+### When to Commit
+
+| Boundary | Action |
+|----------|--------|
+| Task completion | Commit all task deliverables |
+| Epic completion | Commit + update epic/task statuses |
+| Session end | Commit ALL uncommitted changes before ending |
+| Governance-only work (rules, docs, artifacts) | Commit at least every 20 files or at each logical milestone |
+
+### Governance-Only Work
+
+Work that only modifies `.orqa/` files (rules, docs, agents, skills, planning artifacts) is often done on main without a worktree. This is acceptable, but commit discipline still applies:
+
+- Commit at each logical milestone (e.g., "all rules updated", "epic planned", "docs migrated")
+- The session-start hook warns when uncommitted files exceed 20
+- The session-end hook reminds to commit before closing
+- **Never end a session with uncommitted changes on main**
+
+### Threshold
+
+If `git status --short | wc -l` exceeds 20 on main, stop current work and commit. This threshold exists because large uncommitted batches increase the risk of context loss and make git history harder to understand.
+
 ## Git Stash Policy (NON-NEGOTIABLE)
 
 **`git stash` is ONLY for temporary use within a single procedure** (e.g., stash -> rebase -> pop). Must be popped/applied in the same command sequence. NEVER leave stashes at session end.

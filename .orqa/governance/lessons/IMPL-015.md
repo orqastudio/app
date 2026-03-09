@@ -3,7 +3,7 @@ id: IMPL-015
 title: "237 files uncommitted across multiple sessions"
 category: process
 recurrence: 1
-promoted_to: null
+promoted_to: [git-workflow.md (Commit Discipline section), project-type-software/SKILL.md (Commit Discipline section), session-start-hook.sh (uncommitted check), pre-commit-reminder.sh (uncommitted check)]
 tags: [git, workflow, commit-discipline, governance-gap]
 created: 2026-03-09
 ---

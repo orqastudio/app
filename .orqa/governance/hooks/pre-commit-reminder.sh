@@ -11,6 +11,14 @@ if [ -n "$WORKTREES" ]; then
     echo ""
 fi
 
+# Uncommitted changes warning
+UNCOMMITTED=$(git status --short 2>/dev/null | wc -l | tr -d ' ')
+if [ "$UNCOMMITTED" -gt 0 ]; then
+    echo ""
+    echo "UNCOMMITTED CHANGES: $UNCOMMITTED files. Commit or stash before ending session."
+    echo ""
+fi
+
 cat <<'EOF'
 PRE-COMMIT CHECKLIST:
 
@@ -33,6 +41,11 @@ BEFORE REPORTING TASK COMPLETE (NON-NEGOTIABLE):
 □ Branch deleted: git branch -d <branch>
 □ Worktree removed: git worktree remove ../orqa-<task>
 □ Verify: git worktree list (should show only main)
+
+COMMIT DISCIPLINE:
+□ Commit at natural boundaries: end of task, end of epic, end of session
+□ Governance-only work (rules, docs, artifacts) still needs regular commits
+□ Never end a session with uncommitted changes on main
 
 SESSION STATE REMINDER:
 Before this session ends, write a session summary to tmp/session-state.md:

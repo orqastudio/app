@@ -41,6 +41,20 @@ if [ -n "$ORPHANS" ]; then
     echo ""
 fi
 
+# Check for uncommitted changes on main
+CURRENT_BRANCH=$(git branch --show-current 2>/dev/null)
+if [ "$CURRENT_BRANCH" = "main" ]; then
+    UNCOMMITTED=$(git status --short 2>/dev/null | wc -l | tr -d ' ')
+    if [ "$UNCOMMITTED" -gt 20 ]; then
+        echo "WARNING: $UNCOMMITTED uncommitted files on main! Commit before starting new work."
+        echo "Run: git status --short"
+        echo ""
+    elif [ "$UNCOMMITTED" -gt 0 ]; then
+        echo "NOTE: $UNCOMMITTED uncommitted files on main. Consider committing before starting new work."
+        echo ""
+    fi
+fi
+
 # Check for session state from previous session
 if [ -f "tmp/session-state.md" ]; then
     echo "PREVIOUS SESSION STATE FOUND (tmp/session-state.md):"

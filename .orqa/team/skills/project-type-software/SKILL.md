@@ -97,9 +97,35 @@ For software projects, the orchestrator's Tier 2 injection table is populated:
 - Add IPC boundary rules (if applicable)
 - Set up type consistency checking across boundaries
 
+## Commit Discipline
+
+Software projects require regular commits to prevent work loss and maintain clean history.
+
+### Commit Boundaries
+
+| Work Type | When to Commit |
+|-----------|---------------|
+| Feature implementation (worktree) | At each sub-task completion |
+| Bug fixes | After each fix, before starting the next |
+| Governance-only work (rules, docs, artifacts) | At each logical milestone or every ~20 files |
+| Refactoring | After each safe, verified step |
+
+### Governance Work on Main
+
+Governance-only changes (`.orqa/` files) are often done directly on main without a worktree. This is acceptable because they don't affect build state, but commit discipline still applies:
+
+- Commit at logical milestones (e.g., "rules updated", "epic planned")
+- The session-start hook warns when uncommitted files exceed 20 on main
+- Never end a session with uncommitted changes
+
+### Session Boundaries
+
+Every session that produces changes MUST commit before ending. The session-end hook reminds about this, but agents should commit proactively rather than waiting for the reminder.
+
 ## Critical Rules
 
 - NEVER assume a one-size-fits-all approach — adapt to the detected stack
 - ALWAYS ask the user to review generated coding standards before finalising
 - Stack detection drives skill selection — don't load irrelevant skills
 - Generated rules should be starting points, not final — the user customises them
+- ALWAYS commit at natural boundaries — never accumulate large uncommitted batches

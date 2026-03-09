@@ -1,7 +1,7 @@
 ---
 id: EPIC-047
 title: "Git Workflow Enforcement Review"
-status: draft
+status: done
 priority: P1
 milestone: MS-001
 description: >
