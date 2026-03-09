@@ -48,6 +48,13 @@
 		return FolderIcon;
 	}
 
+	/** Convert a config key to a human-readable label (mirrors Rust humanize_name). */
+	function humanizeKey(key: string): string {
+		return key
+			.replace(/[-_]/g, " ")
+			.replace(/\b\w/g, (c) => c.toUpperCase());
+	}
+
 	const artifactConfig = $derived(projectStore.artifactConfig);
 </script>
 
@@ -68,11 +75,12 @@
 		<!-- Config-driven artifact entries -->
 		{#each artifactConfig as entry (entry.key)}
 			{@const Icon = resolveIcon(entry.icon)}
+			{@const entryLabel = entry.label ?? humanizeKey(entry.key)}
 			{#if isArtifactGroup(entry)}
 				<!-- Group entry — clicking activates the group -->
 				<ActivityBarItem
 					icon={Icon}
-					label={entry.label}
+					label={entryLabel}
 					active={navigationStore.activeGroup === entry.key}
 					onclick={() => navigationStore.setGroup(entry.key)}
 				/>
@@ -80,7 +88,7 @@
 				<!-- Direct type entry — clicking activates the type directly -->
 				<ActivityBarItem
 					icon={Icon}
-					label={entry.label}
+					label={entryLabel}
 					active={navigationStore.activeActivity === entry.key && navigationStore.activeGroup === null}
 					onclick={() => { navigationStore.activeGroup = null; navigationStore.setActivity(entry.key); }}
 				/>

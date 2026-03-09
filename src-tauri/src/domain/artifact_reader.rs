@@ -35,7 +35,7 @@ pub fn artifact_scan_tree(
                 icon,
                 children,
             } => {
-                let group = scan_group_from_config(project_path, key, label, icon.as_deref(), children)?;
+                let group = scan_group_from_config(project_path, key, label.as_deref(), icon.as_deref(), children)?;
                 if !group.types.is_empty() {
                     groups.push(group);
                 }
@@ -46,9 +46,9 @@ pub fn artifact_scan_tree(
                 let nav_type = scan_type_from_config(project_path, type_cfg)?;
                 if !nav_type.nodes.is_empty() {
                     let group = NavGroup {
-                        label: type_cfg.label.clone(),
+                        label: nav_type.label.clone(),
                         description: String::new(),
-                        icon: type_cfg.icon.clone().unwrap_or_else(|| "folder".to_string()),
+                        icon: nav_type.icon.clone(),
                         sort: i64::MAX,
                         path: type_cfg.path.clone(),
                         readme_content: read_readme_content(&project_path.join(&type_cfg.path)),
@@ -70,11 +70,15 @@ pub fn artifact_scan_tree(
 /// Build a `NavGroup` from a config group entry.
 ///
 /// Scans each child's path for markdown files to produce `NavType` entries.
+/// Label and icon are resolved in priority order:
+/// 1. Config value (explicit override)
+/// 2. README.md frontmatter in the group directory
+/// 3. Humanized key name / "folder" icon fallback
 fn scan_group_from_config(
     project_path: &Path,
     key: &str,
-    label: &str,
-    icon: Option<&str>,
+    config_label: Option<&str>,
+    config_icon: Option<&str>,
     children: &[ArtifactTypeConfig],
 ) -> Result<NavGroup, OrqaError> {
     let mut types: Vec<NavType> = Vec::new();
@@ -99,10 +103,24 @@ fn scan_group_from_config(
             .join("/"),
     );
 
+    let readme_fm = read_readme_frontmatter(&group_dir);
+
+    // Resolve label: config override → README frontmatter → humanized key
+    let label = config_label
+        .map(str::to_owned)
+        .or_else(|| readme_fm.as_ref().and_then(|fm| fm.label.clone()))
+        .unwrap_or_else(|| humanize_name(key));
+
+    // Resolve icon: config override → README frontmatter → "folder"
+    let icon = config_icon
+        .map(str::to_owned)
+        .or_else(|| readme_fm.as_ref().and_then(|fm| fm.icon.clone()))
+        .unwrap_or_else(|| "folder".to_string());
+
     Ok(NavGroup {
-        label: label.to_string(),
+        label,
         description: String::new(),
-        icon: icon.unwrap_or("folder").to_string(),
+        icon,
         sort: i64::MAX,
         path: format!(".orqa/{key}"),
         readme_content: read_readme_content(&group_dir),
@@ -113,8 +131,10 @@ fn scan_group_from_config(
 /// Build a `NavType` from a single artifact type config entry.
 ///
 /// Walks the configured path for `.md` files and populates `DocNode` entries.
-/// README.md frontmatter enriches `description` and provides an `icon` fallback
-/// when the config does not specify one.  Config values always take priority.
+/// Label, icon, and description are resolved in priority order:
+/// 1. Config value (explicit override)
+/// 2. README.md frontmatter in the type directory
+/// 3. Humanized key name / "file" icon / empty description fallback
 fn scan_type_from_config(
     project_path: &Path,
     cfg: &ArtifactTypeConfig,
@@ -124,7 +144,14 @@ fn scan_type_from_config(
     let readme_fm = read_readme_frontmatter(&type_dir);
     let nodes = scan_type_nodes(&type_dir, &cfg.key, &cfg.path)?;
 
-    // Config icon takes priority; fall back to README icon, then a generic default.
+    // Resolve label: config override → README frontmatter → humanized key
+    let label = cfg
+        .label
+        .clone()
+        .or_else(|| readme_fm.as_ref().and_then(|fm| fm.label.clone()))
+        .unwrap_or_else(|| humanize_name(&cfg.key));
+
+    // Resolve icon: config override → README frontmatter → "file"
     let icon = cfg
         .icon
         .clone()
@@ -138,7 +165,7 @@ fn scan_type_from_config(
         .unwrap_or_default();
 
     Ok(NavType {
-        label: cfg.label.clone(),
+        label,
         description,
         icon,
         sort: i64::MAX,
@@ -497,7 +524,7 @@ mod tests {
         let tmp = make_temp_project();
         let entries = vec![ArtifactEntry::Type(ArtifactTypeConfig {
             key: "ideas".to_string(),
-            label: "Ideas".to_string(),
+            label: None,
             icon: None,
             path: ".orqa/planning/ideas".to_string(),
         })];
@@ -513,18 +540,24 @@ mod tests {
         fs::create_dir_all(&type_dir).expect("create dir");
         fs::write(type_dir.join("IDEA-001.md"), "---\ntitle: First Idea\n---\n").expect("write");
         fs::write(type_dir.join("IDEA-002.md"), "# Bare\n").expect("write");
-        fs::write(type_dir.join("README.md"), "# Readme\n").expect("write readme");
+        // README with frontmatter label used when config label is absent.
+        fs::write(
+            type_dir.join("README.md"),
+            "---\nlabel: Ideas\nicon: lightbulb\n---\n",
+        )
+        .expect("write readme");
 
         let entries = vec![ArtifactEntry::Type(ArtifactTypeConfig {
             key: "ideas".to_string(),
-            label: "Ideas".to_string(),
-            icon: Some("lightbulb".to_string()),
+            label: None,
+            icon: None,
             path: ".orqa/planning/ideas".to_string(),
         })];
 
         let tree = artifact_scan_tree(tmp.path(), &entries).expect("scan");
         assert_eq!(tree.groups.len(), 1);
         let group = &tree.groups[0];
+        // Label comes from README frontmatter.
         assert_eq!(group.label, "Ideas");
         assert_eq!(group.types.len(), 1);
         let nav_type = &group.types[0];
@@ -536,6 +569,26 @@ mod tests {
     }
 
     #[test]
+    fn type_entry_label_falls_back_to_humanized_key() {
+        let tmp = make_temp_project();
+        let type_dir = tmp.path().join(".orqa/planning/ideas");
+        fs::create_dir_all(&type_dir).expect("create dir");
+        fs::write(type_dir.join("IDEA-001.md"), "---\ntitle: First Idea\n---\n").expect("write");
+
+        // No README — label should be humanized from key.
+        let entries = vec![ArtifactEntry::Type(ArtifactTypeConfig {
+            key: "my-ideas".to_string(),
+            label: None,
+            icon: None,
+            path: ".orqa/planning/ideas".to_string(),
+        })];
+
+        let tree = artifact_scan_tree(tmp.path(), &entries).expect("scan");
+        assert_eq!(tree.groups.len(), 1);
+        assert_eq!(tree.groups[0].label, "My Ideas");
+    }
+
+    #[test]
     fn group_entry_produces_multi_type_group() {
         let tmp = make_temp_project();
 
@@ -543,23 +596,41 @@ mod tests {
         let epics_dir = tmp.path().join(".orqa/planning/epics");
         fs::create_dir_all(&ideas_dir).expect("ideas dir");
         fs::create_dir_all(&epics_dir).expect("epics dir");
+        // Write README with frontmatter for the group directory.
+        let planning_dir = tmp.path().join(".orqa/planning");
+        fs::write(
+            planning_dir.join("README.md"),
+            "---\nlabel: Planning\nicon: target\n---\n",
+        )
+        .expect("group readme");
         fs::write(ideas_dir.join("IDEA-001.md"), "---\ntitle: My Idea\n---\n").expect("idea");
         fs::write(epics_dir.join("EPIC-001.md"), "---\ntitle: My Epic\n---\n").expect("epic");
+        // READMEs for child types.
+        fs::write(
+            ideas_dir.join("README.md"),
+            "---\nlabel: Ideas\n---\n",
+        )
+        .expect("ideas readme");
+        fs::write(
+            epics_dir.join("README.md"),
+            "---\nlabel: Epics\n---\n",
+        )
+        .expect("epics readme");
 
         let entries = vec![ArtifactEntry::Group {
             key: "planning".to_string(),
-            label: "Planning".to_string(),
-            icon: Some("target".to_string()),
+            label: None,
+            icon: None,
             children: vec![
                 ArtifactTypeConfig {
                     key: "ideas".to_string(),
-                    label: "Ideas".to_string(),
+                    label: None,
                     icon: None,
                     path: ".orqa/planning/ideas".to_string(),
                 },
                 ArtifactTypeConfig {
                     key: "epics".to_string(),
-                    label: "Epics".to_string(),
+                    label: None,
                     icon: None,
                     path: ".orqa/planning/epics".to_string(),
                 },
@@ -569,6 +640,7 @@ mod tests {
         let tree = artifact_scan_tree(tmp.path(), &entries).expect("scan");
         assert_eq!(tree.groups.len(), 1);
         let group = &tree.groups[0];
+        // Label and icon come from group directory README frontmatter.
         assert_eq!(group.label, "Planning");
         assert_eq!(group.icon, "target");
         assert_eq!(group.types.len(), 2);
@@ -590,8 +662,12 @@ mod tests {
         fs::create_dir_all(&product_dir).expect("product dir");
         fs::create_dir_all(&nested_dir).expect("nested dir");
 
-        // README at root level should be skipped.
-        fs::write(docs_root.join("README.md"), "# Docs\n").expect("readme");
+        // README at root level with frontmatter.
+        fs::write(
+            docs_root.join("README.md"),
+            "---\nlabel: Documentation\nicon: file-text\n---\n",
+        )
+        .expect("readme");
 
         // Files in subdirectories.
         fs::write(arch_dir.join("decisions.md"), "---\ntitle: Architecture Decisions\n---\n")
@@ -608,8 +684,8 @@ mod tests {
 
         let entries = vec![ArtifactEntry::Type(ArtifactTypeConfig {
             key: "docs".to_string(),
-            label: "Documentation".to_string(),
-            icon: Some("file-text".to_string()),
+            label: None,
+            icon: None,
             path: ".orqa/documentation".to_string(),
         })];
 

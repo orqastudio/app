@@ -3,10 +3,14 @@ use serde::{Deserialize, Serialize};
 use crate::domain::project::DetectedStack;
 
 /// A single artifact type with a filesystem path to scan.
+///
+/// `label` and `icon` are optional — the scanner reads them from the directory's
+/// README.md frontmatter when absent, falling back to a humanized key name.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ArtifactTypeConfig {
     pub key: String,
-    pub label: String,
+    #[serde(default)]
+    pub label: Option<String>,
     #[serde(default)]
     pub icon: Option<String>,
     pub path: String,
@@ -16,13 +20,17 @@ pub struct ArtifactTypeConfig {
 ///
 /// Serde uses `untagged` matching: `Group` must come before `Type` in the enum
 /// because it has a required `children` field that distinguishes it from a bare type.
+///
+/// `label` and `icon` on both variants are optional — presentation metadata comes
+/// primarily from README.md frontmatter in each directory, not from this config.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum ArtifactEntry {
     /// A named group containing multiple artifact types.
     Group {
         key: String,
-        label: String,
+        #[serde(default)]
+        label: Option<String>,
         #[serde(default)]
         icon: Option<String>,
         children: Vec<ArtifactTypeConfig>,

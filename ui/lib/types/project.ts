@@ -62,18 +62,26 @@ export interface ProjectScanResult {
 	scan_duration_ms: number;
 }
 
-/** A single artifact type entry from project.json artifacts config. */
+/** A single artifact type entry from project.json artifacts config.
+ *
+ * `label` and `icon` are optional — the scanner reads them from the directory's
+ * README.md frontmatter when absent, falling back to a humanized key name.
+ */
 export interface ArtifactTypeConfig {
 	key: string;
-	label: string;
+	label?: string;
 	icon?: string;
 	path: string;
 }
 
-/** A group entry containing child artifact types. */
+/** A group entry containing child artifact types.
+ *
+ * `label` and `icon` are optional — presentation metadata comes from the group
+ * directory's README.md frontmatter, not from this config.
+ */
 export interface ArtifactGroupConfig {
 	key: string;
-	label: string;
+	label?: string;
 	icon?: string;
 	children: ArtifactTypeConfig[];
 }

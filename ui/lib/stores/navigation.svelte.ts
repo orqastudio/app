@@ -3,6 +3,17 @@ import { projectStore } from "$lib/stores/project.svelte";
 import { isArtifactGroup } from "$lib/types/project";
 
 /**
+ * Convert a config key to a human-readable label.
+ * Replaces hyphens and underscores with spaces and title-cases each word.
+ * Mirrors the Rust `humanize_name` logic for the frontend fallback path.
+ */
+function humanizeKey(key: string): string {
+	return key
+		.replace(/[-_]/g, " ")
+		.replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/**
  * ActivityView is now a string since artifact type keys come from config.
  * Built-in non-artifact views are: "chat", "project", "settings", "configure".
  */
@@ -93,18 +104,22 @@ class NavigationStore {
 		return false;
 	}
 
-	/** Get label for a given key from the artifact config. */
+	/** Get label for a given key from the artifact config.
+	 *
+	 * Falls back to the navTree label (sourced from README frontmatter) when the
+	 * config entry has no explicit label. Humanizes the key as a last resort.
+	 */
 	getLabelForKey(key: string): string {
 		const config = projectStore.artifactConfig;
 		for (const entry of config) {
-			if (entry.key === key) return entry.label;
+			if (entry.key === key) return entry.label ?? humanizeKey(key);
 			if (isArtifactGroup(entry)) {
 				for (const child of entry.children) {
-					if (child.key === key) return child.label;
+					if (child.key === key) return child.label ?? humanizeKey(child.key);
 				}
 			}
 		}
-		return key;
+		return humanizeKey(key);
 	}
 
 	/**
@@ -115,7 +130,7 @@ class NavigationStore {
 		const config = projectStore.artifactConfig;
 		for (const entry of config) {
 			if (isArtifactGroup(entry) && entry.key === groupKey) {
-				return entry.children.map((c) => ({ key: c.key, label: c.label }));
+				return entry.children.map((c) => ({ key: c.key, label: c.label ?? humanizeKey(c.key) }));
 			}
 		}
 		return [];
