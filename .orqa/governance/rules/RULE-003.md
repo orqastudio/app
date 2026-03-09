@@ -1,0 +1,108 @@
+---
+id: RULE-003
+slug: artifact-config-integrity
+layer: canon
+status: active
+title: "Artifact Config Integrity"
+description: "Every path in project.json artifacts must resolve to an actual directory on disk. Config-driven scanning with no hardcoded paths."
+scope: project
+---
+
+# Artifact Config Integrity (NON-NEGOTIABLE)
+
+The `artifacts` array in `.orqa/project.json` is the single source of truth for what the app scans, displays, and navigates. Every path in the config MUST resolve to an actual directory on disk. Every directory the app needs to scan MUST be listed in the config.
+
+## Config-Driven Scanning
+
+The artifact scanner (`artifact_reader.rs`) does NOT guess directory structure. It reads the `artifacts` config and scans exactly what's configured. This means:
+
+1. **Config paths must match disk** — If the config says `.orqa/planning/milestones`, the directory `.orqa/planning/milestones/` must exist
+2. **Disk changes require config updates** — Moving `.orqa/lessons/` to `.orqa/governance/lessons/` requires updating the config path
+3. **No hardcoded paths in Rust or TypeScript** — All artifact paths come from config, never from constants
+
+## Recursive File Explorer Pattern
+
+The scanner walks directories like a file explorer:
+
+- **Flat directories** (e.g., milestones, epics): Scans `.md` files directly in the configured path
+- **Tree directories** (e.g., documentation with subdirectories): Recursively walks subdirectories, building `DocNode` entries with `children` for folders and leaf nodes for files
+- **Empty directories are omitted** — No empty folder nodes in the tree
+- **README.md is navigation metadata** — Skipped as a browsable artifact at all levels
+- **Hidden entries** (starting with `.` or `_`) are skipped at all levels
+
+## Display Label Priority
+
+Every `.md` file's display label follows this priority:
+
+1. **YAML frontmatter `title` field** — Use as the label if present
+2. **Humanized filename** — Fallback when no frontmatter title exists (e.g., `coding-standards.md` becomes "Coding Standards")
+
+Artifact IDs in all-caps format (e.g., `EPIC-001`, `IDEA-002`, `AD-015`) are preserved as-is — they are NOT humanized.
+
+The same applies to `description` — use frontmatter `description` when present, otherwise omit.
+
+## Verification Checklist
+
+Before committing any change that affects artifact paths or structure:
+
+- [ ] Every path in `project.json` `artifacts` resolves to an existing directory
+- [ ] No hardcoded artifact paths exist in Rust commands or TypeScript stores
+- [ ] Moving a directory on disk is accompanied by a config path update
+- [ ] New artifact types are added to the config before being referenced in code
+- [ ] The scanner handles both flat and tree directory structures at the configured path
+
+## ArtifactEntry Config Schema
+
+```jsonc
+// Direct type (flat or tree directory of .md files)
+{ "key": "docs", "label": "Documentation", "icon": "file-text", "path": ".orqa/documentation" }
+
+// Group of types (renders as expandable group in sidebar)
+{ "key": "planning", "label": "Planning", "icon": "target",
+  "children": [
+    { "key": "ideas", "label": "Ideas", "path": ".orqa/planning/ideas" },
+    { "key": "epics", "label": "Epics", "path": ".orqa/planning/epics" }
+  ]
+}
+```
+
+## .claude/ Symlink Architecture
+
+`.orqa/` is the single source of truth for ALL governance artifacts. The `.claude/` directory exists only for CLI tool compatibility and contains symlinks — NOT copies.
+
+| Symlink | Target (source of truth) |
+|---------|-------------------------|
+| `.claude/rules/` | → `.orqa/governance/rules/` |
+| `.claude/agents/` | → `.orqa/team/agents/` |
+| `.claude/skills/` | → `.orqa/team/skills/` |
+| `.claude/hooks/` | → `.orqa/governance/hooks/` |
+| `.claude/CLAUDE.md` | → `.orqa/team/agents/orchestrator.md` |
+
+**Real files in `.claude/`** (not symlinks):
+- `settings.json` — CLI-specific configuration
+- `worktrees/` — CLI worktree state
+
+### Rules
+
+1. **NEVER write directly to `.claude/` directories** — always write to `.orqa/` source of truth
+2. **NEVER create separate copies** — if a symlink is broken, fix the symlink, don't create a duplicate file
+3. **All agents writing governance artifacts** must target `.orqa/` paths, not `.claude/` paths
+4. **New rules** go in `.orqa/governance/rules/`, new agents in `.orqa/team/agents/`, new skills in `.orqa/team/skills/`
+5. **If symlinks don't exist**, create them — they're the compatibility layer, not the source
+
+## FORBIDDEN
+
+- Writing governance artifacts directly to `.claude/` (use `.orqa/` source of truth)
+- Maintaining separate copies in `.claude/` and `.orqa/` (causes divergence)
+- Artifact paths in code that don't come from the config
+- Config paths that don't match actual disk structure
+- Ignoring subdirectories — if a configured path has subdirectories with `.md` files, they must be scanned recursively
+- Skipping frontmatter extraction — every `.md` file gets its YAML frontmatter read for title/description
+- Hardcoded display labels that override frontmatter titles
+
+## Related Rules
+
+- RULE-010 (end-to-end-completeness) — config changes must be reflected across all layers
+- RULE-018 (no-aliases-or-hacks) — no alias paths or fallback path resolution
+- RULE-008 (documentation-first) — document the config schema before implementing
+- RULE-011 (enforcement-before-code) — create enforcement artifacts before implementation

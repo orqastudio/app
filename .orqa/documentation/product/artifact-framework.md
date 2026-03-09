@@ -176,7 +176,8 @@ Artifact types fall into three management layers. **Canon** artifacts are manage
 | **Task** | `TASK-NNN` | `.orqa/tasks/` | Project | Individual implementation unit within an epic |
 | **Idea** | `IDEA-NNN` | `.orqa/ideas/` | Project | Candidate for future work, needs validation |
 | **Lesson** | `IMPL-NNN` | `.orqa/lessons/` | Project | Learning capture from implementation |
-| **Research** | (filename) | `.orqa/research/` | Project | Investigation, design exploration, or implementation plan — produces decisions |
+| **Research** | `RES-NNN` | `.orqa/research/` | Project | Investigation, design exploration, or implementation plan — produces decisions |
+| **Rule** | `RULE-NNN` | `.orqa/governance/rules/` | Canon/Project | Constraint that must be followed — binary: compliant or not |
 | **Decision** | `AD-NNN` | `.orqa/decisions/` | Project | Architecture decision record — captures what was decided and why |
 
 ### Type Definitions (When to Use Each)
@@ -305,7 +306,7 @@ description: >
   user can see system prompts, tool calls, and thinking in real time.
 created: 2026-03-07
 updated: 2026-03-07
-research-refs: []                 # Research filenames (without .md) in .orqa/research/ that informed this epic
+research-refs: []                 # RES-NNN identifiers of research docs that informed this epic
 docs-required:                    # Documentation that must exist before work begins
   - docs/architecture/streaming-pipeline.md
 docs-produced:                    # Documentation this work creates or updates
@@ -330,7 +331,7 @@ tags: [streaming, transparency]
 | `description` | No | string | Brief description of the epic |
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
-| `research-refs` | No | string[] | Research filenames (without `.md`) in `.orqa/research/` that informed this epic |
+| `research-refs` | No | string[] | `RES-NNN` identifiers of research docs that informed this epic |
 | `docs-required` | No | string[] | Documentation that must exist before work begins |
 | `docs-produced` | No | string[] | Documentation this work will create or update |
 | `pillars` | No | string[] | Pillar IDs this epic serves (e.g., `[PILLAR-001, PILLAR-002]`) |
@@ -451,15 +452,15 @@ tags: [streaming, ipc, tauri]
 
 The decision body follows the standard structure: **Context** (what situation prompted this decision), **Decision** (what was chosen and why), **Consequences** (what becomes easier, harder, or constrained).
 
-### Research (filename)
+### Research (`RES-NNN`)
 
 Research documents cover investigations, design explorations, architecture spikes, and implementation plans. They replaced the Plan artifact type — the distinction between "investigating something" and "designing an implementation approach" was artificial; both are research activities that produce artifacts referenced by epics and decisions.
 
-Research documents are referenced via `research-refs` on epics, tasks, and decisions.
+Research documents are referenced via `research-refs` on epics, tasks, and decisions using their `RES-NNN` identifier.
 
 ```yaml
 ---
-id: streaming-ipc-options
+id: RES-001
 title: "Streaming IPC Options"
 status: complete                  # draft | complete | surpassed
 description: >
@@ -468,20 +469,21 @@ description: >
 created: 2026-03-07
 updated: 2026-03-07
 milestone: MS-001                 # Milestone this research serves
+surpassed-by: null                # RES-NNN of the doc that supersedes this, or null
 tags: [streaming, ipc]
 ---
 ```
 
 | Field | Required | Type | Description |
 |-------|----------|------|-------------|
-| `id` | No | string | Identifier (typically derived from filename) |
+| `id` | Yes | string | Auto-incrementing `RES-NNN` identifier |
 | `title` | Yes | string | Human-readable research title |
 | `status` | Yes | enum | `draft`, `complete`, `surpassed` |
 | `description` | No | string | Brief description of what is being investigated |
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
 | `milestone` | No | string | Milestone ID this research serves |
-| `surpassed-by` | No | string | Filename of the research doc that supersedes this, or null |
+| `surpassed-by` | No | string | `RES-NNN` of the research doc that supersedes this, or null |
 | `tags` | No | string[] | Freeform tags |
 
 The research body follows the structure: **Question** (what is being investigated), **Research Findings** (what was discovered), **Options Evaluated** (alternatives considered), **Recommendation** (what to do and why).
@@ -520,29 +522,33 @@ tags: [rust, error-handling, tauri]
 | `updated` | Yes | date | ISO date of last update |
 | `tags` | No | string[] | Freeform tags |
 
-### Rule
+### Rule (`RULE-NNN`)
 
-Rules enforce coding standards, process requirements, and project conventions. They are loaded as context for agents and verified during code review.
+Rules enforce coding standards, process requirements, and project conventions. They are loaded as context for agents and verified during code review. Rules may be promoted from lessons (`IMPL-NNN`) when a pattern recurs — the `promoted_from` field traces this lineage.
 
 ```yaml
 ---
-id: coding-standards
+id: RULE-006
+slug: coding-standards
 layer: canon
 status: active
 title: "Coding Standards"
 description: "Enforces Rust and TypeScript coding standards including formatting, linting, error handling, and test coverage."
-scope: system
+promoted_from: null               # IMPL-NNN if promoted from a lesson, null otherwise
+tags: [coding, standards, quality]
 ---
 ```
 
 | Field | Required | Type | Description |
 |-------|----------|------|-------------|
-| `id` | Yes | string | Rule identifier (typically matches filename) |
+| `id` | Yes | string | Auto-incrementing `RULE-NNN` identifier |
+| `slug` | Yes | string | Human-readable slug (original filename without `.md`) for reference |
 | `layer` | Yes | enum | `canon` (platform), `project` (project-specific), `plugin` (ecosystem) |
 | `status` | Yes | enum | `active` (enforced) or `inactive` (preserved but not enforced) |
 | `title` | Yes | string | Human-readable rule title |
 | `description` | Yes | string | Brief description of what the rule enforces |
-| `scope` | No | string | `system` (universal) or `project` (project-specific) |
+| `promoted_from` | No | string | `IMPL-NNN` if promoted from a lesson, null otherwise |
+| `tags` | No | string[] | Freeform tags |
 
 ---
 
@@ -571,9 +577,9 @@ YAML frontmatter fields follow a consistent content hierarchy across all artifac
 | **Task** | id, title, status, epic, description, created, updated, depends-on, assignee, skills, scope, acceptance, tags |
 | **Idea** | id, title, status, pillars, description, research-needed, promoted-to, tags |
 | **Lesson** | id, title, category, description, recurrence, promoted_to, tags |
-| **Rule** | id, title, description, scope |
+| **Rule** | id, slug, layer, status, title, description, promoted_from, tags |
 | **Decision** | id, title, status, description, created, updated, supersedes, superseded-by, tags |
-| **Research** | id, title, status, description, created, updated, milestone, tags |
+| **Research** | id, title, status, description, created, updated, milestone, surpassed-by, tags |
 
 ---
 
@@ -691,7 +697,8 @@ Priority dimensions, weights, and bands are stored in `.orqa/project.json` under
 │   └── AD-001.md
 ├── research/                 # Investigations, design explorations, spikes, implementation plans
 │   ├── README.md
-│   └── mvp/
+│   ├── RES-001.md
+│   └── ...
 └── icon.svg
 ```
 
@@ -708,6 +715,8 @@ All artifact IDs auto-increment within their type:
 - `IDEA-001`, `IDEA-002`, ...
 - `IMPL-001`, `IMPL-002`, ...
 - `AD-001`, `AD-002`, ...
+- `RES-001`, `RES-002`, ...
+- `RULE-001`, `RULE-002`, ...
 
 IDs are stable — never reused after deletion. The next ID is determined by scanning existing files in the directory.
 
@@ -768,7 +777,7 @@ Pillar ←── pillars ── Epic
 Idea ──research-needed──→ Research ──→ (validates) ──→ promoted-to ──→ Epic
                                     └── docs-produced ──→ Research artifact
 
-Lesson ──promoted-to──→ Rule / Skill
+Lesson (IMPL-NNN) ──promoted-to──→ Rule (RULE-NNN) / Skill
 
 Research ──produces──→ Decision (AD-NNN) ──supersedes──→ Earlier Decision
 ```

@@ -8,7 +8,7 @@ description: >
   addressing six findings is better than six independent fixes.
 status: promoted
 recurrence: 1
-promoted_to: uat-process
+promoted_to: RULE-030
 tags: [uat, systemic-thinking, investigation, debugging]
 ---
 

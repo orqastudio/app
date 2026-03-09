@@ -10,7 +10,7 @@ description: >
 created: 2026-03-07
 updated: 2026-03-07
 research-refs:
-  - composability-gate
+  - RES-020
 docs-required:
   - .orqa/plans/composability-gate.md
   - docs/architecture/rust-modules.md

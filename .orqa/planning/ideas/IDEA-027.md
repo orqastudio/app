@@ -14,8 +14,10 @@ research-needed:
   - Define hook lifecycle (pre-commit, session-start, pre-delegation, post-delegation, etc.)
   - Determine which hooks should be platform-managed vs user-defined
   - Consider how hooks relate to the three-layer governance model
+  - Evaluate building a custom Claude Code MCP plugin for CLI enforcement parity
+  - Design HOOK-NNN identifiers for app-managed hooks (completing the promotion chain IMPL → RULE → HOOK)
 promoted-to: null
-tags: [hooks, governance, enforcement, cli-compatibility, platform]
+tags: [hooks, governance, enforcement, cli-compatibility, platform, mcp-plugin]
 ---
 
 ## Problem
@@ -32,6 +34,25 @@ The hooks section in the UI currently shows "no hooks yet" because it only scans
 ## Inspiration
 
 The Claude hookify plugin provides a pattern for defining hooks declaratively and translating them to Claude Code's hook format. This could be the bridge between app-managed hooks and CLI compatibility.
+
+## Custom Claude Code MCP Plugin (CLI Enforcement Parity)
+
+Instead of using hookify, we could build our own Claude Code MCP plugin that mirrors the app's enforcement mechanisms. This would give true parity between app and CLI:
+
+- The app enforces governance via its built-in process layer (artifact scanning, rule checking, hook triggers)
+- The CLI would enforce the same governance via an MCP plugin that reads `.orqa/` and applies the same rules
+- Both contexts share one source of truth (`.orqa/`) with one enforcement model
+- This could simplify or eliminate the `.claude/` symlink architecture — the MCP plugin replaces what symlinks currently provide (rule/agent/skill loading)
+
+### HOOK-NNN Identifiers
+
+When hooks become app-managed artifacts (not just bash scripts), they should get typed IDs like every other artifact: `HOOK-NNN`. This completes the promotion chain:
+
+```
+IMPL-NNN (lesson) → RULE-NNN (rule) → HOOK-NNN (automated enforcement)
+```
+
+The lesson documents the pattern, the rule codifies it, and the hook enforces it mechanically. Full traceability from discovery to enforcement.
 
 ## Origin
 

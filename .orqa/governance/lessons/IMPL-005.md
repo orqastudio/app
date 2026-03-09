@@ -7,7 +7,7 @@ description: >
   on disk. Mismatches cause silent empty results with no error.
 status: promoted
 recurrence: 1
-promoted_to: artifact-config-integrity
+promoted_to: RULE-003
 tags: [config, scanning, paths, artifacts, bug]
 ---
 
@@ -31,4 +31,4 @@ The scanner silently returned empty results when a path didn't exist. No error, 
 
 ## Prevention
 
-This lesson was promoted to the `artifact-config-integrity` rule, which enforces config-disk alignment and is part of the pre-commit verification checklist.
+This lesson was promoted to RULE-003 (`artifact-config-integrity`), which enforces config-disk alignment and is part of the pre-commit verification checklist.

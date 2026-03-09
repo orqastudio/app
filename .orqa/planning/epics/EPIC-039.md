@@ -12,8 +12,8 @@ description: >
 created: 2026-03-06
 updated: 2026-03-09
 research-refs:
-  - composability-gate
-  - composability-refactoring
+  - RES-020
+  - RES-021
 docs-required: []
 docs-produced:
   - .orqa/governance/decisions/AD-026.md

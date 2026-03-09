@@ -8,7 +8,7 @@ description: >
   encoded in the relevant agent, rule, or skill.
 status: promoted
 recurrence: 1
-promoted_to: uat-process
+promoted_to: RULE-030
 tags: [learning-loop, governance, enforcement, audit-trail]
 ---
 

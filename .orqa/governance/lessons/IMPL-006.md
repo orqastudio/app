@@ -8,7 +8,7 @@ description: >
   silently diverge.
 status: promoted
 recurrence: 1
-promoted_to: artifact-config-integrity
+promoted_to: RULE-003
 tags: [symlinks, governance, divergence, source-of-truth, bug]
 ---
 
@@ -36,4 +36,4 @@ All writes go to `.orqa/`; symlinks ensure CLI reads the same content.
 
 ## Prevention
 
-This lesson was promoted to the `artifact-config-integrity` rule's `.claude/ Symlink Architecture` section, which forbids writing directly to `.claude/` and requires symlinks.
+This lesson was promoted to RULE-003 (`artifact-config-integrity`), specifically the `.claude/ Symlink Architecture` section, which forbids writing directly to `.claude/` and requires symlinks.

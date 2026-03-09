@@ -10,10 +10,11 @@ description: >
 created: 2026-03-08
 updated: 2026-03-08
 research-refs:
-  - self-sustaining-artifacts
+  - RES-028
+  - RES-025
 docs-required:
-  - ".orqa/planning/research/self-sustaining-artifacts.md"
-  - ".orqa/planning/research/artifact-migration.md"
+  - .orqa/planning/research/RES-028.md
+  - .orqa/planning/research/RES-025.md
 docs-produced:
   - "docs/product/artifact-framework.md (Decision type added)"
   - "docs/process/artifact-workflow.md (Decision creation section)"

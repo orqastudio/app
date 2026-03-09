@@ -38,7 +38,7 @@ OrqaStudio's governance layer manages documentation, research, lessons, rules, a
   governance/               # Governance artifacts
     lessons/                #   IMPL-NNN.md
     decisions/              #   AD-NNN.md
-    rules/                  #   Rule markdown files
+    rules/                  #   RULE-NNN.md
     hooks/                  #   Hook scripts
   team/                     # Team artifacts
     agents/                 #   Agent definitions
@@ -48,15 +48,19 @@ OrqaStudio's governance layer manages documentation, research, lessons, rules, a
 ## Artifact Traceability Chain
 
 ```
-Task → Epic → Milestone
-         ↑
-    research-refs → Research
+Task (TASK-NNN) → Epic (EPIC-NNN) → Milestone (MS-NNN)
+                       ↑
+                  research-refs → Research (RES-NNN)
+
+Lesson (IMPL-NNN) → Rule (RULE-NNN)
+                       ↑ promoted_from
 ```
 
 - **Tasks** always have `epic:` field referencing an existing EPIC-NNN
 - **Epics** always have `milestone:` field referencing an existing MS-NNN
-- **Epics** may have `research-refs:` array linking to research documents
+- **Epics** may have `research-refs:` array linking to RES-NNN documents
 - **Research** documents are investigations, design explorations, and spikes
+- **Rules** may have `promoted_from:` field tracing lineage from IMPL-NNN lessons
 - **There is NO "Plan" artifact type** — epics contain implementation design in their body
 
 ### FORBIDDEN
@@ -227,12 +231,29 @@ tags: []
 
 ```yaml
 ---
+id: RES-NNN
 title: "Research Title"
 status: draft | complete | surpassed
-surpassed-by: "reference"   # Set when status: surpassed
-category: investigation | design | spike
+description: "Brief description"
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
+milestone: MS-NNN              # Optional — milestone this serves
+surpassed-by: RES-NNN          # Set when status: surpassed
+tags: []
+---
+```
+
+### Rule Frontmatter
+
+```yaml
+---
+id: RULE-NNN
+slug: human-readable-slug      # Original filename, preserved for reference
+layer: canon | project
+title: "Rule Title"
+description: "What this rule enforces"
+status: active
+promoted_from: IMPL-NNN        # If promoted from a lesson, null otherwise
 tags: []
 ---
 ```

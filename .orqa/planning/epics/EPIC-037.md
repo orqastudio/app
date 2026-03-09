@@ -12,8 +12,8 @@ description: >
 created: 2026-03-05
 updated: 2026-03-09
 research-refs:
-  - dogfood-alignment
-  - enforcement-engine
+  - RES-018
+  - RES-019
 docs-required: []
 docs-produced:
   - .orqa/governance/rules/dogfood-mode.md
