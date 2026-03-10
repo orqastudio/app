@@ -11,8 +11,8 @@
 
 	let containerEl = $state<HTMLDivElement | undefined>(undefined);
 
-	/** Regex matching artifact IDs like EPIC-005, MS-001, AD-017, IMPL-003. */
-	const ARTIFACT_ID_RE = /\b(MS|EPIC|TASK|IDEA|AD|IMPL)-(\d{3})\b/g;
+	/** Regex matching artifact IDs like EPIC-005, MS-001, AD-017, IMPL-003, RES-032, PILLAR-001, RULE-031. */
+	const ARTIFACT_ID_RE = /\b(EPIC|TASK|AD|MS|IDEA|IMPL|RES|PILLAR|RULE)-(\d{3,})\b/g;
 
 	/**
 	 * After the markdown renders, walk text nodes in the container
@@ -55,7 +55,7 @@
 				const btn = document.createElement("button");
 				btn.textContent = id;
 				btn.className =
-					"inline-flex items-center rounded border border-border bg-secondary/60 px-1 font-mono text-[11px] font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground";
+					"text-primary hover:underline cursor-pointer";
 				btn.title = `Navigate to ${id}`;
 				btn.addEventListener("click", (e) => {
 					e.stopPropagation();
