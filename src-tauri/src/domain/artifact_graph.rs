@@ -79,15 +79,23 @@ const SINGLE_REF_FIELDS: &[&str] = &[
     "milestone",
     "epic",
     "promoted-to",
-    "promoted_to",
     "supersedes",
     "superseded-by",
     "surpassed-by",
-    "promoted_from",
+    "promoted-from",
+    "assignee",
 ];
 
 /// Frontmatter fields that hold an array of artifact ID references.
-const ARRAY_REF_FIELDS: &[&str] = &["depends-on", "blocks", "pillars", "research-refs"];
+const ARRAY_REF_FIELDS: &[&str] = &[
+    "depends-on",
+    "blocks",
+    "pillars",
+    "research-refs",
+    "docs-required",
+    "docs-produced",
+    "skills",
+];
 
 /// Build an `ArtifactGraph` by scanning all `.md` files under `orqa_dir`.
 ///

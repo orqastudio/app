@@ -3,10 +3,10 @@ id: RULE-014
 title: Historical Artifact Preservation
 description: Documentation is deleted when outdated. Research, plans, and tasks are preserved and marked as surpassed for historical traceability.
 status: active
-created: 2026-03-07
-updated: 2026-03-07
 layer: canon
 scope: system
+created: "2026-03-07"
+updated: "2026-03-07"
 ---
 
 ## Two Categories of Written Artifacts
@@ -32,7 +32,7 @@ This applies to:
 - Plans (`.orqa/planning/plans/`)
 - Tasks (`.orqa/planning/tasks/`)
 - Ideas (`.orqa/planning/ideas/`) — use `status: archived` per existing lifecycle
-- Lessons (`.orqa/governance/lessons/`) — use `promoted_to` field per existing lifecycle
+- Lessons (`.orqa/governance/lessons/`) — use `promoted-to` field per existing lifecycle
 
 ## The `surpassed` Status
 

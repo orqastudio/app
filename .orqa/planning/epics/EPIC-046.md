@@ -4,17 +4,17 @@ title: Pillars as First-Class Artifacts
 description: Make product pillars structured artifacts in .orqa/planning/pillars/ with frontmatter schema, referenced by ID from other artifacts, and injected into AI system prompts. Replaces hardcoded pillar strings across rules and documentation. Implements AD-031.
 status: done
 priority: P1
-created: 2026-03-09
-updated: 2026-03-09
+created: "2026-03-09"
+updated: "2026-03-09"
 milestone: MS-001
 pillars:
   - PILLAR-001
 research-refs: []
 docs-required:
-  - .orqa/governance/decisions/AD-031.md
+  - AD-031
 docs-produced:
-  - .orqa/planning/pillars/PILLAR-001.md
-  - .orqa/planning/pillars/PILLAR-002.md
+  - PILLAR-001
+  - PILLAR-002
 scoring:
   user-value: 4
   pillar-alignment: 5

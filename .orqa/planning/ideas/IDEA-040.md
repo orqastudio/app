@@ -1,18 +1,18 @@
 ---
 id: IDEA-040
 title: Identifiable app processes in task manager
-description: "Make OrqaStudio's spawned processes (Tauri app, Vite dev server, sidecar, cargo builds) easily identifiable in the OS task manager so developers can quickly find and kill them when needed."
+description: Make OrqaStudio's spawned processes (Tauri app, Vite dev server, sidecar, cargo builds) easily identifiable in the OS task manager so developers can quickly find and kill them when needed.
 status: captured
-created: 2026-03-10
-updated: 2026-03-10
+created: "2026-03-10"
+updated: "2026-03-10"
 pillars:
   - PILLAR-002
 research-needed:
-  - "Windows process naming — can we rename spawned child processes or set window titles?"
-  - "Tauri process tree — which processes does cargo tauri dev spawn, and which can we control?"
-  - "Vite/Node process identification — custom process title or environment variable marker"
-  - "Sidecar process naming — Bun process identification in task manager"
-  - "make stop reliability — why do zombie handles persist after taskkill on Windows?"
+  - Windows process naming — can we rename spawned child processes or set window titles?
+  - Tauri process tree — which processes does cargo tauri dev spawn, and which can we control?
+  - Vite/Node process identification — custom process title or environment variable marker
+  - Sidecar process naming — Bun process identification in task manager
+  - make stop reliability — why do zombie handles persist after taskkill on Windows?
 promoted-to: null
 ---
 

@@ -1,8 +1,9 @@
 ---
-title: "System vs Project Artifacts"
-description: "Distinction between system-level and project-level artifacts and their management boundaries."
-created: 2026-03-05
-updated: 2026-03-08
+id: DOC-045
+title: System vs Project Artifacts
+description: Distinction between system-level and project-level artifacts and their management boundaries.
+created: "2026-03-05"
+updated: "2026-03-08"
 ---
 
 **Date:** 2026-03-05

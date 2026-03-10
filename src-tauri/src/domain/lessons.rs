@@ -81,7 +81,7 @@ fn parse_frontmatter_fields(
     })?;
     let status = extract_field(frontmatter, "status")
         .ok_or_else(|| "frontmatter missing required field: status".to_string())?;
-    let promoted_to = extract_nullable_field(frontmatter, "promoted_to");
+    let promoted_to = extract_nullable_field(frontmatter, "promoted-to");
     let created = extract_field(frontmatter, "created")
         .ok_or_else(|| "frontmatter missing required field: created".to_string())?;
     let updated = extract_field(frontmatter, "updated")
@@ -139,7 +139,7 @@ pub fn render_lesson(lesson: &Lesson) -> String {
         .unwrap_or_else(|| "null".to_string());
 
     format!(
-        "---\nid: {}\ntitle: \"{}\"\ncategory: {}\nrecurrence: {}\nstatus: {}\npromoted_to: {}\ncreated: {}\nupdated: {}\n---\n{}",
+        "---\nid: {}\ntitle: \"{}\"\ncategory: {}\nrecurrence: {}\nstatus: {}\npromoted-to: {}\ncreated: {}\nupdated: {}\n---\n{}",
         lesson.id,
         lesson.title,
         lesson.category,
@@ -162,7 +162,7 @@ title: "Agent forgot to load skills"
 category: process
 recurrence: 2
 status: active
-promoted_to: null
+promoted-to: null
 created: 2026-03-05
 updated: 2026-03-05
 ---
@@ -206,9 +206,9 @@ Test body.
 
     #[test]
     fn parse_promoted_to_value() {
-        let content = "---\nid: IMPL-002\ntitle: \"Test\"\ncategory: coding\nrecurrence: 3\nstatus: promoted\npromoted_to: \".orqa/governance/rules/foo.md\"\ncreated: 2026-01-01\nupdated: 2026-01-02\n---\nbody\n";
+        let content = "---\nid: IMPL-002\ntitle: \"Test\"\ncategory: coding\nrecurrence: 3\nstatus: promoted\npromoted-to: \"RULE-001\"\ncreated: 2026-01-01\nupdated: 2026-01-02\n---\nbody\n";
         let lesson = parse_lesson(content, ".orqa/governance/lessons/IMPL-002.md").expect("should parse");
-        assert_eq!(lesson.promoted_to, Some(".orqa/governance/rules/foo.md".to_string()));
+        assert_eq!(lesson.promoted_to, Some("RULE-001".to_string()));
     }
 
     #[test]
@@ -242,7 +242,7 @@ Test body.
     #[test]
     fn extract_nullable_field_null() {
         assert_eq!(
-            extract_nullable_field("promoted_to: null\n", "promoted_to"),
+            extract_nullable_field("promoted-to: null\n", "promoted-to"),
             None
         );
     }

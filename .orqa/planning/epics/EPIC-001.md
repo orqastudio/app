@@ -4,17 +4,17 @@ title: AI Transparency Wiring
 description: Wire the emission logic that connects existing AI transparency types, components, and store handling into a working end-to-end pipeline.
 status: done
 priority: P1
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 milestone: MS-001
 pillars:
   - PILLAR-001
 research-refs:
   - RES-026
 docs-required:
-  - docs/architecture/streaming-pipeline.md
+  - DOC-014
 docs-produced:
-  - docs/architecture/streaming-pipeline.md (update with SystemPromptSent/ContextInjected emission)
+  - DOC-014
 scoring:
   pillar: 5
   impact: 5

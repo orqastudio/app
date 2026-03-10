@@ -1,7 +1,5 @@
 <script lang="ts">
 	import Breadcrumb from "./Breadcrumb.svelte";
-	import AgentViewer from "./AgentViewer.svelte";
-	import SkillViewer from "./SkillViewer.svelte";
 	import FrontmatterHeader from "./FrontmatterHeader.svelte";
 	import HookViewer from "./HookViewer.svelte";
 	import MarkdownRenderer from "$lib/components/content/MarkdownRenderer.svelte";
@@ -126,15 +124,8 @@
 
 	/**
 	 * Artifact type from the graph node. Falls back to activity string.
-	 * Used to route to specialised viewer components (AgentViewer, SkillViewer).
 	 */
 	const artifactType = $derived(graphNode?.artifact_type ?? activity);
-
-	/** True when the current artifact should use the AgentViewer. */
-	const isAgentArtifact = $derived(artifactType === "agent");
-
-	/** True when the current artifact should use the SkillViewer. */
-	const isSkillArtifact = $derived(artifactType === "skill");
 
 	/**
 	 * Pattern matching artifact IDs like EPIC-048, TASK-001, AD-017, MS-001, etc.
@@ -200,10 +191,6 @@
 			<div class="p-6">
 				{#if fileExtension === "sh"}
 					<HookViewer {content} />
-				{:else if isAgentArtifact}
-					<AgentViewer {content} path={currentPath ?? undefined} />
-				{:else if isSkillArtifact}
-					<SkillViewer {content} path={currentPath ?? undefined} />
 				{:else if parsedContent}
 					{#if hasMetadataFields}
 						<FrontmatterHeader

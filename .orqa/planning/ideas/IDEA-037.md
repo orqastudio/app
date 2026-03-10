@@ -1,10 +1,10 @@
 ---
 id: IDEA-037
 title: Artifact Node Graph
-description: "Build a bidirectional graph of all governance artifacts with typed relationships, enabling backreference queries, broken link detection, orphan detection, and a plugin-ready SDK for unified artifact access."
+description: Build a bidirectional graph of all governance artifacts with typed relationships, enabling backreference queries, broken link detection, orphan detection, and a plugin-ready SDK for unified artifact access.
 status: promoted
-created: 2026-03-10
-updated: 2026-03-10
+created: "2026-03-10"
+updated: "2026-03-10"
 pillars:
   - PILLAR-001
   - PILLAR-002

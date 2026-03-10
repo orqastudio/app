@@ -4,21 +4,18 @@ title: MCP Host — External Servers
 description: Implement MCP host with JSON-RPC protocol handler, stdio and SSE transports, tool aggregation, and settings UI for external servers.
 status: draft
 priority: P2
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 milestone: MS-002
 pillars:
   - PILLAR-001
 depends-on: []
 blocks: []
 docs-required:
-  - docs/architecture/mcp-host.md
-  - .orqa/plans/ (plan required before implementation)
+  - DOC-007
 docs-produced:
-  - .orqa/plans/ (MCP host plan)
-  - docs/architecture/mcp-host.md (update with implementation)
-  - docs/architecture/decisions.md (AD for transport selection
-  - trust model)
+  - DOC-007
+  - DOC-001
 scoring:
   pillar: 3
   impact: 4

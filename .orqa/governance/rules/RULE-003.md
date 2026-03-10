@@ -3,10 +3,10 @@ id: RULE-003
 title: Artifact Config Integrity
 description: Every path in project.json artifacts must resolve to an actual directory on disk. Config-driven scanning with no hardcoded paths.
 status: active
-created: 2026-03-07
-updated: 2026-03-07
 layer: canon
 scope: project
+created: "2026-03-07"
+updated: "2026-03-07"
 ---# Artifact Config Integrity (NON-NEGOTIABLE)
 
 The `artifacts` array in `.orqa/project.json` is the single source of truth for what the app scans, displays, and navigates. Every path in the config MUST resolve to an actual directory on disk. Every directory the app needs to scan MUST be listed in the config.

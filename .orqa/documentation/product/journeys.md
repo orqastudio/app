@@ -1,8 +1,9 @@
 ---
-title: "User Journeys"
-description: "User journey maps covering key workflows from project creation through ongoing governance."
-created: 2026-03-02
-updated: 2026-03-08
+id: DOC-041
+title: User Journeys
+description: User journey maps covering key workflows from project creation through ongoing governance.
+created: "2026-03-02"
+updated: "2026-03-08"
 ---
 
 **Date:** 2026-03-02

@@ -4,19 +4,17 @@ title: Artifact Browser Enhancements
 description: Make all .orqa/ artifacts browsable, restructure navigation into groups, establish .orqa/ as the single source of truth with platform adapters, and enable cross-artifact navigation.
 status: draft
 priority: P1
-created: 2026-03-07
-updated: 2026-03-08
+created: "2026-03-07"
+updated: "2026-03-08"
 milestone: MS-001
 pillars:
   - PILLAR-001
 research-refs:
   - RES-029
 docs-required:
-  - docs/product/artifact-framework.md
-  - .orqa/plans/epic-005-artifact-browser.md
+  - DOC-036
 docs-produced:
-  - docs/architecture/ipc-commands.md (new artifact scanning commands)
-  - docs/ui/navigation-groups.md (grouped navigation wireframes)
+  - DOC-005
 scoring:
   pillar: 5
   impact: 5

@@ -1,8 +1,9 @@
 ---
-title: "Rust Module Architecture"
-description: "Module layout and dependency structure of the Rust backend crate."
-created: 2026-03-02
-updated: 2026-03-09
+id: DOC-010
+title: Rust Module Architecture
+description: Module layout and dependency structure of the Rust backend crate.
+created: "2026-03-02"
+updated: "2026-03-09"
 ---
 
 **Date:** 2026-03-02 | **Updated:** 2026-03-04 | **Status:** Aligned with Phase 1 implementation | **References:** [Claude Integration](/research/claude-integration), [Tauri v2](/research/tauri-v2), [Persistence](/research/persistence)

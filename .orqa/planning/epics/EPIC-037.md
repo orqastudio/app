@@ -4,8 +4,8 @@ title: Dogfood Readiness
 description: Multi-phase sprint to make OrqaStudio ready for self-hosted development (dogfooding). Covers governance alignment, frontend audit fixes, documentation alignment, enforcement engine, tool approval, lesson promotion, and SDK session resume.
 status: done
 priority: P1
-created: 2026-03-05
-updated: 2026-03-09
+created: "2026-03-05"
+updated: "2026-03-09"
 milestone: MS-001
 pillars:
   - PILLAR-001
@@ -14,8 +14,8 @@ research-refs:
   - RES-019
 docs-required: []
 docs-produced:
-  - .orqa/governance/rules/dogfood-mode.md
-  - .orqa/governance/rules/development-commands.md
+  - RULE-009
+  - RULE-007
 scoring:
   user-value: 5
   pillar-alignment: 5

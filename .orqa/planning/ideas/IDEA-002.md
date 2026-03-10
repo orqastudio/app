@@ -4,8 +4,8 @@ title: Transportable Governance Format
 description: |
   Move governance from .claude/-specific format to generic .orqa/governance/ with environment-specific adapters.
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-001
 research-needed:

@@ -4,8 +4,8 @@ title: Session Intelligence
 description: |
   Make AI conversations smarter over time with summarisation, context-aware suggestions, session branching, and proactive PILLAR-002.
 status: exploring
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-002
 research-needed:

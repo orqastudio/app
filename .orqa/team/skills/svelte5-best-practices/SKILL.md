@@ -1,13 +1,15 @@
 ---
-id: svelte5-best-practices
-layer: canon
-title: "Svelte 5 Best Practices"
-name: svelte5-best-practices
+id: SKILL-030
+title: Svelte 5 Best Practices
 description: "Svelte 5 runes, snippets, SvelteKit patterns, and modern best practices for TypeScript and component development. Use when writing, reviewing, or refactoring Svelte 5 components and SvelteKit applications. Triggers on: Svelte components, runes ($state, $derived, $effect, $props, $bindable, $inspect), snippets ({#snippet}, {@render}), event handling, SvelteKit data loading, form actions, Svelte 4 to Svelte 5 migration, store to rune migration, slots to snippets migration, TypeScript props typing, generic components, SSR state isolation, performance optimization, or component testing."
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 license: MIT
 metadata:
   author: ejirocodes
-  version: '1.0.0'
+  version: 1.0.0
 ---
 
 

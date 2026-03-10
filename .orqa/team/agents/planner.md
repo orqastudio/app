@@ -1,13 +1,14 @@
 ---
-id: planner
-title: "Planner"
-name: Planner
+id: AGENT-004
+title: Planner
+description: |
+  Designs implementation approaches, evaluates architectural tradeoffs, maps dependencies, and produces structured plans. Does not implement — plans inform the Implementer.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
 layer: canon
 scope: general
-description: >
-  Designs implementation approaches, evaluates architectural tradeoffs,
-  maps dependencies, and produces structured plans. Does not implement —
-  plans inform the Implementer.
+model: inherit
 tools:
   - Read
   - Grep
@@ -19,11 +20,10 @@ tools:
   - search_semantic
   - code_research
 skills:
-  - code-search
-  - orqa-composability
-  - planning
-  - architecture
-model: inherit
+  - SKILL-005
+  - SKILL-008
+  - SKILL-019
+  - SKILL-002
 subagent_mapping:
   default: Plan
 ---

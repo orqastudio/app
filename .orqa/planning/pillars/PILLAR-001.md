@@ -3,8 +3,8 @@ id: PILLAR-001
 title: Clarity Through Structure
 description: Making thinking, standards, and decisions visible and structured.
 status: active
-created: 2026-03-09
-updated: 2026-03-09
+created: "2026-03-09"
+updated: "2026-03-09"
 gate:
   - Does this make governance artifacts visible and manageable?
   - Does it produce structured knowledge (plans, decisions, rules)?

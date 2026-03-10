@@ -3,17 +3,17 @@ id: TASK-043
 title: Scanner frontmatter extraction
 description: Extends the artifact scanner to extract and expose the status field from YAML frontmatter so sidebar list items display correct titles and status indicators for all artifact types.
 status: done
-created: 2026-03-09
-updated: 2026-03-09
-epic: EPIC-043
-assignee: backend-engineer
-skills:
-  - code-search
-  - orqa-composability
 scope:
   - src-tauri/src/domain/artifact_reader.rs
   - ui/lib/types/nav-tree.ts
   - ui/lib/components/navigation/ArtifactNav.svelte
+created: "2026-03-09"
+updated: "2026-03-09"
+epic: EPIC-043
+assignee: AGENT-002
+skills:
+  - SKILL-005
+  - SKILL-008
 acceptance:
   - DocNode struct includes optional status field populated from YAML frontmatter
   - DocNode label always uses frontmatter title when available (never raw filename like TASK-002)

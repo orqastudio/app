@@ -1,8 +1,9 @@
 ---
-title: "Go-To-Market Strategy"
-description: "Go-to-market strategy covering positioning, channels, and launch sequencing."
-created: 2026-03-07
-updated: 2026-03-07
+id: DOC-052
+title: Go-To-Market Strategy
+description: Go-to-market strategy covering positioning, channels, and launch sequencing.
+created: "2026-03-07"
+updated: "2026-03-07"
 ---
 
 # OrqaStudio™ — Go-To-Market Strategy

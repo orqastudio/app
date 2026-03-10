@@ -1,21 +1,21 @@
 ---
 id: IDEA-039
 title: Local Model Support and Democratised AI Development
-description: "Explore running OrqaStudio with cheaper local models once the structured thinking foundation is mature enough, reducing dependency on expensive cloud subscriptions and democratising AI-assisted development."
+description: Explore running OrqaStudio with cheaper local models once the structured thinking foundation is mature enough, reducing dependency on expensive cloud subscriptions and democratising AI-assisted development.
 status: captured
-created: 2026-03-10
-updated: 2026-03-10
+created: "2026-03-10"
+updated: "2026-03-10"
 pillars:
   - PILLAR-001
   - PILLAR-002
 research-needed:
-  - "Minimum model capability threshold — what reasoning quality is needed for structured artifact creation, planning, and code generation?"
-  - "Context window requirements — the file-based architecture means loading the right files at the right time, not everything at once. What's the minimum context window?"
-  - "Memory footprint — local models (llama.cpp, Ollama, LM Studio) vs cloud API. What hardware is required?"
-  - "Provider abstraction — AD-025 already defines provider-agnostic integration. How much work to add local model backends (Ollama, llama.cpp, vLLM)?"
-  - "Quality degradation mapping — which OrqaStudio capabilities degrade gracefully with smaller models vs which require frontier-class reasoning?"
-  - "Hybrid approach — could a local model handle routine tasks (artifact creation, simple edits) while cloud models handle complex planning and architecture?"
-  - "Skill-driven context injection — since skills load domain knowledge at the right time, does this compensate for smaller context windows?"
+  - Minimum model capability threshold — what reasoning quality is needed for structured artifact creation, planning, and code generation?
+  - Context window requirements — the file-based architecture means loading the right files at the right time, not everything at once. What's the minimum context window?
+  - Memory footprint — local models (llama.cpp, Ollama, LM Studio) vs cloud API. What hardware is required?
+  - Provider abstraction — AD-025 already defines provider-agnostic integration. How much work to add local model backends (Ollama, llama.cpp, vLLM)?
+  - Quality degradation mapping — which OrqaStudio capabilities degrade gracefully with smaller models vs which require frontier-class reasoning?
+  - Hybrid approach — could a local model handle routine tasks (artifact creation, simple edits) while cloud models handle complex planning and architecture?
+  - Skill-driven context injection — since skills load domain knowledge at the right time, does this compensate for smaller context windows?
 promoted-to: null
 ---
 ## Motivation

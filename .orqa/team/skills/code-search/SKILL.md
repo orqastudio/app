@@ -1,14 +1,16 @@
 ---
-id: code-search
-layer: canon
-title: "Code Search"
-name: code-search
+id: SKILL-005
+title: Code Search
 description: |
   Context-aware code search wrapper. Detects whether you are in CLI (ChunkHound MCP)
   or App (native DuckDB+ONNX) context and provides the appropriate search patterns.
   Three tools: search_regex, search_semantic, code_research.
   Use when: Searching a codebase before creating new code, verifying endpoints exist,
   understanding how a system works, finding all callers before refactoring.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 version: 1.0.0
 user-invocable: true
 ---

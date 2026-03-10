@@ -4,8 +4,8 @@ title: UX Polish Sprint
 description: "UX improvements identified during early dogfooding: streaming fix, output truncation, tool call grouping, auto-naming sessions, custom titlebar."
 status: done
 priority: P2
-created: 2026-03-06
-updated: 2026-03-09
+created: "2026-03-06"
+updated: "2026-03-09"
 milestone: MS-001
 pillars:
   - PILLAR-001

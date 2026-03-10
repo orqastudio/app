@@ -3,19 +3,6 @@ id: TASK-009
 title: "Frontend: config-driven navigation and fix app hang"
 description: Replace all hardcoded navigation constants with config-driven derivation. This fixes the app hang (caused by mismatch between scanner output and hardcoded navigation expectations) and enables dynamic artifact types.
 status: done
-created: 2026-03-08
-updated: 2026-03-08
-epic: EPIC-033
-depends-on:
-  - TASK-007
-  - TASK-008
-assignee: frontend-engineer
-skills:
-  - chunkhound
-  - orqa-store-patterns
-  - orqa-store-orchestration
-  - svelte5-best-practices
-  - tailwind-design-system
 scope:
   - ui/lib/types/project.ts
   - ui/lib/stores/navigation.svelte.ts
@@ -26,6 +13,19 @@ scope:
   - ui/lib/components/artifact/ArtifactMasterDetail.svelte
   - ui/lib/components/artifact/ArtifactLanding.svelte
   - ui/lib/components/navigation/ArtifactNav.svelte
+created: "2026-03-08"
+updated: "2026-03-08"
+epic: EPIC-033
+depends-on:
+  - TASK-007
+  - TASK-008
+assignee: AGENT-002
+skills:
+  - SKILL-003
+  - SKILL-016
+  - SKILL-015
+  - SKILL-030
+  - SKILL-031
 acceptance:
   - TypeScript types for ArtifactEntry / ArtifactTypeConfig added
   - Navigation store derives all state from config (no hardcoded constants)

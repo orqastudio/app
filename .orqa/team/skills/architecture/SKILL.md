@@ -1,14 +1,16 @@
 ---
-id: architecture
-layer: canon
-title: "Architecture"
-name: architecture
+id: SKILL-002
+title: Architecture
 description: |
   Portable software architecture knowledge: ADR patterns, data flow mapping, adapter pattern,
   violation detection, and vocabulary for layered desktop applications.
   Use when: Planning features that cross layer boundaries, evaluating whether a change is
   architecturally significant, reviewing implementation plans for architectural compliance,
   documenting architecture decisions.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 version: 1.0.0
 user-invocable: true
 ---

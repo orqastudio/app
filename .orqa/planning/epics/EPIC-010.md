@@ -4,17 +4,17 @@ title: Developer Experience Polish
 description: Quality-of-life improvements for dogfooding, including project-local database, build splash window, and system prompt templates.
 status: draft
 priority: P3
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 milestone: MS-001
 pillars:
   - PILLAR-001
 research-refs: []
 docs-required:
-  - docs/architecture/project-configuration.md
+  - DOC-009
 docs-produced:
-  - docs/architecture/project-configuration.md (update with local DB path)
-  - docs/architecture/decisions.md (AD for project-local database location)
+  - DOC-009
+  - DOC-001
 scoring:
   pillar: 2
   impact: 2

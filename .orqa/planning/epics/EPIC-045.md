@@ -4,25 +4,25 @@ title: Portable Governance Framework
 description: Restructure agents from 16 software-specific roles to 7 universal roles, extract domain knowledge into skills, create project setup skills, update product documentation to reflect the PILLAR-001 engine identity and governance hub capability. Implements AD-029 and AD-030.
 status: done
 priority: P1
-created: 2026-03-09
-updated: 2026-03-09
+created: "2026-03-09"
+updated: "2026-03-09"
 milestone: MS-002
 pillars:
   - PILLAR-001
 research-refs:
   - RES-010
 docs-required:
-  - .orqa/governance/decisions/AD-029.md
-  - .orqa/governance/decisions/AD-030.md
-  - .orqa/documentation/product/vision.md
+  - AD-029
+  - AD-030
+  - DOC-046
 docs-produced:
-  - .orqa/documentation/product/governance.md
-  - .orqa/documentation/product/governance-hub.md
-  - .orqa/team/agents/researcher.md
-  - .orqa/team/agents/planner.md
-  - .orqa/team/agents/implementer.md
-  - .orqa/team/agents/reviewer.md
-  - .orqa/team/agents/writer.md
+  - DOC-039
+  - DOC-038
+  - AGENT-005
+  - AGENT-004
+  - AGENT-002
+  - AGENT-006
+  - AGENT-007
 scoring:
   user-value: 5
   pillar-alignment: 5

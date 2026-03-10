@@ -3,13 +3,6 @@ id: TASK-037
 title: Fix documentation visibility and navigation
 description: Fixes the documentation section failing to appear in the sidebar and artifact viewer when selected, and corrects breadcrumb paths that duplicate hierarchy segments.
 status: done
-created: 2026-03-09
-updated: 2026-03-09
-epic: EPIC-043
-assignee: debugger
-skills:
-  - code-search
-  - orqa-composability
 scope:
   - ui/lib/components/layout/AppLayout.svelte
   - ui/lib/components/layout/NavSubPanel.svelte
@@ -17,6 +10,13 @@ scope:
   - ui/lib/components/navigation/ArtifactNav.svelte
   - ui/lib/components/artifact/Breadcrumb.svelte
   - ui/lib/stores/navigation.svelte.ts
+created: "2026-03-09"
+updated: "2026-03-09"
+epic: EPIC-043
+assignee: AGENT-002
+skills:
+  - SKILL-005
+  - SKILL-008
 acceptance:
   - Documentation section visible and navigable when clicking the docs icon in ActivityBar
   - Sidebar populates with documentation tree when a direct-type artifact is selected

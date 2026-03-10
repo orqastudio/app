@@ -1,14 +1,14 @@
 ---
-id: designer
-title: "Designer"
-name: Designer
+id: AGENT-001
+title: Designer
+description: |
+  Designs experiences, interfaces, and structures. Produces visual designs, interaction patterns, information architecture, and layout specifications. In software, builds UI. In other domains, designs how humans interact with the system.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
 layer: canon
 scope: general
-description: >
-  Designs experiences, interfaces, and structures. Produces visual designs,
-  interaction patterns, information architecture, and layout specifications.
-  In software, builds UI. In other domains, designs how humans interact with
-  the system.
+model: sonnet
 tools:
   - Read
   - Edit
@@ -22,9 +22,8 @@ tools:
   - search_semantic
   - code_research
 skills:
-  - code-search
-  - orqa-composability
-model: sonnet
+  - SKILL-005
+  - SKILL-008
 subagent_mapping:
   default: Designer
   with_frontend_skills: Frontend Engineer

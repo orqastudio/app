@@ -2,7 +2,7 @@
 	import { open } from "@tauri-apps/plugin-dialog";
 	import { getCurrentWindow } from "@tauri-apps/api/window";
 	import { getVersion, getName } from "@tauri-apps/api/app";
-	import finMark from "$lib/assets/fin-mark.svg";
+	import logoStatic from "$lib/assets/logo-static.svg";
 	import { projectStore } from "$lib/stores/project.svelte";
 	import { settingsStore } from "$lib/stores/settings.svelte";
 	import WindowControls from "./WindowControls.svelte";
@@ -93,7 +93,7 @@
 		{#if projectStore.iconDataUrl}
 			<img src={projectStore.iconDataUrl} alt="OrqaStudio" class="h-5 w-5 rounded object-contain pointer-events-none" />
 		{:else}
-			<img src={finMark} alt="OrqaStudio" class="h-5 w-5 pointer-events-none" />
+			<img src={logoStatic} alt="OrqaStudio" class="h-5 w-5 pointer-events-none" />
 		{/if}
 	</div>
 

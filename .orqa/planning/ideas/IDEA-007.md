@@ -4,8 +4,8 @@ title: Spaces & Organisational Structure
 description: |
   Containers for organising projects as adoption scales, with space-level governance and aggregated insights.
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-001
 research-needed:

@@ -4,8 +4,8 @@ title: Technical Design
 description: "The complete technical blueprint: database schema, IPC commands, Rust modules, streaming pipeline, tool definitions, and error taxonomy."
 status: done
 priority: P1
-created: 2026-03-02
-updated: 2026-03-07
+created: "2026-03-02"
+updated: "2026-03-07"
 milestone: MS-000
 pillars:
   - PILLAR-001
@@ -16,10 +16,8 @@ depends-on:
 blocks:
   - EPIC-030
 docs-required:
-  - docs/architecture/decisions.md
-  - docs/ui/
-docs-produced:
-  - docs/architecture/
+  - DOC-001
+docs-produced: []
 scoring:
   pillar: 3
   impact: 5

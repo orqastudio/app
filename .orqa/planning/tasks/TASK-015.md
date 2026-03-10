@@ -3,16 +3,16 @@ id: TASK-015
 title: Model auto-download and startup loading
 description: Automatically downloads the embedding model from Hugging Face on first use and pre-loads it at startup, with download progress visible in the status bar.
 status: done
-created: 2026-03-04
-updated: 2026-03-09
-epic: EPIC-034
-assignee: backend-engineer
-skills:
-  - rust-async-patterns
-  - tauri-v2
 scope:
   - src-tauri/src/search/embedder.rs
   - src-tauri/src/commands/search_commands.rs
+created: "2026-03-04"
+updated: "2026-03-09"
+epic: EPIC-034
+assignee: AGENT-002
+skills:
+  - SKILL-027
+  - SKILL-032
 acceptance:
   - Model auto-downloads from Hugging Face on first use
   - Pre-download at app startup with progress tracking

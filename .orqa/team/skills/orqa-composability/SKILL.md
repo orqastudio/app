@@ -1,13 +1,15 @@
 ---
-id: orqa-composability
-layer: canon
-title: "Orqa Composability"
-name: orqa-composability
+id: SKILL-008
+title: Orqa Composability
 description: |
   OrqaStudio's composability philosophy: building systems from small, pure, swappable units.
   Shapes how agents think about code structure at both the function level and the feature level.
   Use when: Writing any new code, reviewing architecture, planning features, or refactoring
   existing modules. This is the meta-skill — it informs all other patterns.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 version: 1.0.0
 user-invocable: true
 ---

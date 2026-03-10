@@ -3,8 +3,8 @@ id: PILLAR-002
 title: Learning Through Reflection
 description: The system and its users improve over time through structured retrospection.
 status: active
-created: 2026-03-09
-updated: 2026-03-09
+created: "2026-03-09"
+updated: "2026-03-09"
 gate:
   - Does this capture lessons, discoveries, or patterns?
   - Does it track metrics or outcomes that show improvement (or regression)?

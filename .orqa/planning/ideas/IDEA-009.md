@@ -4,8 +4,8 @@ title: Integration Ecosystem
 description: |
   Connect OrqaStudio with external tools and workflows including git, issue trackers, documentation platforms, and CI/CD.
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-001
 research-needed:

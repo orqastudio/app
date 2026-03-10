@@ -1,11 +1,11 @@
 ---
 id: EPIC-048
 title: Artifact Graph SDK and Structural Integrity
-description: "Build a bidirectional artifact node graph with a typed frontend SDK, body template enforcement, markdown cross-linking, file watcher for live refresh, and plugin-ready subscription API — establishing the foundation for the plugin architecture."
+description: Build a bidirectional artifact node graph with a typed frontend SDK, body template enforcement, markdown cross-linking, file watcher for live refresh, and plugin-ready subscription API — establishing the foundation for the plugin architecture.
 status: review
 priority: P1
-created: 2026-03-10
-updated: 2026-03-10
+created: "2026-03-10"
+updated: "2026-03-10"
 milestone: MS-001
 pillars:
   - PILLAR-001
@@ -15,14 +15,14 @@ research-refs:
   - RES-033
   - RES-034
 docs-required:
-  - .orqa/planning/research/RES-032.md
-  - .orqa/planning/research/RES-033.md
-  - .orqa/planning/research/RES-034.md
-  - .orqa/documentation/product/artifact-framework.md
+  - RES-032
+  - RES-033
+  - RES-034
+  - DOC-036
 docs-produced:
-  - .orqa/documentation/product/artifact-framework.md
-  - .orqa/documentation/development/artifact-graph-sdk.md
-  - .orqa/team/skills/plugin-development/SKILL.md
+  - DOC-036
+  - DOC-020
+  - SKILL-020
 scoring:
   user-value: 5
   pillar-alignment: 5

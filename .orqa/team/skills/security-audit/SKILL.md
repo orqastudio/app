@@ -1,14 +1,16 @@
 ---
-id: security-audit
-layer: canon
-title: "Security Audit"
-name: security-audit
+id: SKILL-028
+title: Security Audit
 description: |
   Security auditing methodology: secret management, capability/permission systems,
   file system scoping, input validation, dependency auditing, and vulnerability
   classification. Portable across desktop and web applications.
   Use when: Auditing application security, reviewing permissions, checking for
   credential exposure, validating input handling, or assessing dependency risk.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 version: 1.0.0
 user-invocable: true
 ---

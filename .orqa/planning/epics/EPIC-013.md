@@ -4,21 +4,19 @@ title: Learning Through Reflection
 description: Build the automated lesson capture and promotion pipeline on top of the existing lesson management CRUD and UI.
 status: draft
 priority: P1
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 milestone: MS-002
 pillars:
   - PILLAR-002
 depends-on: []
 blocks: []
 docs-required:
-  - docs/architecture/lessons.md
-  - docs/ui/lesson-dashboard.md
-  - .orqa/plans/ (plan required before implementation)
+  - DOC-006
+  - DOC-055
 docs-produced:
-  - .orqa/plans/ (self-PILLAR-002 loop plan)
-  - docs/architecture/lessons.md (update with automated capture pipeline)
-  - docs/ui/lesson-dashboard.md (update with trend charts)
+  - DOC-006
+  - DOC-055
 scoring:
   pillar: 5
   impact: 4

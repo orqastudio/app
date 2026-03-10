@@ -5,6 +5,11 @@
   "type": "object",
   "required": ["id", "title", "description", "status", "created", "updated"],
   "additionalProperties": false,
+  "propertyOrder": [
+    "id", "title", "description", "status", "category",
+    "created", "updated",
+    "research-refs", "supersedes", "superseded-by"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^AD-\\d+$" },
     "title": { "type": "string" },
@@ -15,10 +20,10 @@
     "updated": { "type": "string", "format": "date" },
     "research-refs": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": { "type": "string", "pattern": "^RES-\\d+$" }
     },
-    "supersedes": { "type": ["string", "null"] },
-    "superseded-by": { "type": ["string", "null"] }
+    "supersedes": { "type": ["string", "null"], "pattern": "^AD-\\d+$" },
+    "superseded-by": { "type": ["string", "null"], "pattern": "^AD-\\d+$" }
   },
   "bodyTemplate": {
     "description": "Required body sections for decision artifacts",

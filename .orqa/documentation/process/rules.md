@@ -1,8 +1,9 @@
 ---
-title: "Enforcement Rules Reference"
-description: "Reference index of all enforcement rules in .orqa/governance/rules/ with their purpose and scope."
-created: 2026-03-02
-updated: 2026-03-08
+id: DOC-032
+title: Enforcement Rules Reference
+description: Reference index of all enforcement rules in .orqa/governance/rules/ with their purpose and scope.
+created: "2026-03-02"
+updated: "2026-03-08"
 ---
 
 **Date:** 2026-03-05

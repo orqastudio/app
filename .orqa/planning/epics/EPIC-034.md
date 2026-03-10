@@ -4,8 +4,8 @@ title: Native Search Engine
 description: "Implement native code search engine using DuckDB for storage, ONNX Runtime for embeddings, and DirectML for hardware acceleration. Three search modes: regex, semantic, and code_research."
 status: done
 priority: P1
-created: 2026-03-04
-updated: 2026-03-09
+created: "2026-03-04"
+updated: "2026-03-09"
 milestone: MS-001
 pillars:
   - PILLAR-001
@@ -14,7 +14,7 @@ research-refs:
   - RES-006
 docs-required: []
 docs-produced:
-  - .orqa/documentation/architecture/search-engine.md
+  - DOC-011
 scoring:
   user-value: 5
   pillar-alignment: 5

@@ -5,6 +5,11 @@
   "type": "object",
   "required": ["id", "title", "description", "status", "created", "updated", "layer", "scope"],
   "additionalProperties": false,
+  "propertyOrder": [
+    "id", "title", "description", "status",
+    "created", "updated",
+    "layer", "scope", "promoted-from"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^RULE-\\d+$" },
     "title": { "type": "string" },
@@ -14,7 +19,7 @@
     "updated": { "type": "string", "format": "date" },
     "layer": { "enum": ["canon", "project", "plugin"] },
     "scope": { "type": "string" },
-    "promoted_from": { "type": ["string", "null"] }
+    "promoted-from": { "type": ["string", "null"], "pattern": "^IMPL-\\d+$" }
   },
   "bodyTemplate": {
     "description": "Semi-structured body for rule artifacts. Opening paragraph and Related Rules required; FORBIDDEN encouraged.",

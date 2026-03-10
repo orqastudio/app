@@ -4,8 +4,8 @@ title: Enforcement & Continuity
 description: Add real-time violation detection during streaming, hook-based rule injection, compliance dashboard, and session handoff continuity.
 status: draft
 priority: P2
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 milestone: MS-002
 pillars:
   - PILLAR-001
@@ -13,12 +13,10 @@ pillars:
 depends-on: []
 blocks: []
 docs-required:
-  - docs/architecture/enforcement.md
-  - docs/architecture/streaming-pipeline.md
-  - .orqa/plans/ (plan required before implementation)
+  - DOC-002
+  - DOC-014
 docs-produced:
-  - .orqa/plans/ (enforcement plan)
-  - docs/architecture/enforcement.md (update with real-time violation detection)
+  - DOC-002
 scoring:
   pillar: 5
   impact: 3

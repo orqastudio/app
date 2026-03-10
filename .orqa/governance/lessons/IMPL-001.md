@@ -4,8 +4,8 @@ title: Vite Optimize After New Dependencies
 description: |
   After installing new npm dependencies, run npx vite optimize before starting the dev server to avoid WebView2 white screen on Windows.
 status: active
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 recurrence: 1
 ---
 ## Pattern

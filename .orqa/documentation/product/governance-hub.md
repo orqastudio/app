@@ -1,8 +1,9 @@
 ---
-title: "Governance Hub"
-description: "How OrqaStudio distributes governance to external AI tools and coexists with their native configurations."
-created: 2026-03-09
-updated: 2026-03-09
+id: DOC-038
+title: Governance Hub
+description: How OrqaStudio distributes governance to external AI tools and coexists with their native configurations.
+created: "2026-03-09"
+updated: "2026-03-09"
 ---
 
 # Governance Hub

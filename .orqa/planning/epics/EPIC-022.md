@@ -4,8 +4,8 @@ title: Implementation Breakdown & Work Management
 description: Build epic-to-task hierarchy, plan-to-backlog breakdown, unified backlog view, status workflow, and progress dashboard.
 status: draft
 priority: P2
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 milestone: MS-002
 pillars:
   - PILLAR-001
@@ -14,11 +14,9 @@ depends-on:
   - EPIC-016
 blocks: []
 docs-required:
-  - docs/product/artifact-framework.md (epic/task schemas)
-  - .orqa/plans/ (plan required before implementation)
+  - DOC-036
 docs-produced:
-  - .orqa/plans/ (work management plan)
-  - docs/architecture/decisions.md (AD for work item data model)
+  - DOC-001
 scoring:
   pillar: 4
   impact: 4

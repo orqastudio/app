@@ -1,19 +1,19 @@
 ---
 id: IDEA-038
 title: Plugin Distribution via Git Submodules
-description: "An official plugins repository under the GitHub org that embeds each plugin as a git submodule. The app reads the repository catalogue, pulls plugins based on user selection, and manages versioning/updates. Each plugin is its own repo with independent releases."
+description: An official plugins repository under the GitHub org that embeds each plugin as a git submodule. The app reads the repository catalogue, pulls plugins based on user selection, and manages versioning/updates. Each plugin is its own repo with independent releases.
 status: captured
-created: 2026-03-10
-updated: 2026-03-10
+created: "2026-03-10"
+updated: "2026-03-10"
 pillars:
   - PILLAR-001
 research-needed:
-  - "Git submodule vs git subtree for plugin embedding — trade-offs for automated updates"
-  - "Plugin catalogue format — how does the app discover available plugins from the repo?"
-  - "Versioning strategy — semver per plugin repo, pinned in the main catalogue"
-  - "Auto-update mechanism — how does the app detect and pull new plugin versions?"
-  - "Plugin isolation — how to prevent a broken plugin from affecting the app"
-  - "Plugin signing/trust — how to verify plugins from the official repo vs third-party"
+  - Git submodule vs git subtree for plugin embedding — trade-offs for automated updates
+  - Plugin catalogue format — how does the app discover available plugins from the repo?
+  - Versioning strategy — semver per plugin repo, pinned in the main catalogue
+  - Auto-update mechanism — how does the app detect and pull new plugin versions?
+  - Plugin isolation — how to prevent a broken plugin from affecting the app
+  - Plugin signing/trust — how to verify plugins from the official repo vs third-party
 promoted-to: null
 ---
 ## Motivation

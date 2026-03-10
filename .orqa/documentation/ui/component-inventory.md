@@ -1,8 +1,9 @@
 ---
-title: "Component Inventory"
-description: "Inventory of all UI components with their status, variants, and usage guidelines."
-created: 2026-03-02
-updated: 2026-03-04
+id: DOC-048
+title: Component Inventory
+description: Inventory of all UI components with their status, variants, and usage guidelines.
+created: "2026-03-02"
+updated: "2026-03-04"
 ---
 
 **Date:** 2026-03-02 | **Informed by:** [Frontend Research](/research/frontend), [Design System](/ui/design-system), [Information Architecture](/product/information-architecture), [Wireframes](/wireframes/)

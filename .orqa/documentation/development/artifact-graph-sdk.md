@@ -1,10 +1,17 @@
 ---
+id: DOC-020
 title: Artifact Graph SDK
-category: development
-tags: [artifact-graph, sdk, typescript, svelte5, ipc, plugins]
-created: 2026-03-10
-updated: 2026-03-10
 description: Development guide for the Artifact Graph SDK — the typed frontend interface to the bidirectional artifact node graph.
+created: "2026-03-10"
+updated: "2026-03-10"
+category: development
+tags:
+  - artifact-graph
+  - sdk
+  - typescript
+  - svelte5
+  - ipc
+  - plugins
 ---
 
 # Artifact Graph SDK
@@ -489,7 +496,7 @@ The Rust backend builds the graph using a two-pass algorithm in `artifact_graph.
 
 Pass 1: Walk every `.md` file under `.orqa/`. For each file that has a YAML `id` frontmatter field, create an `ArtifactNode` with `references_out` populated from well-known frontmatter fields.
 
-**Single-value reference fields:** `milestone`, `epic`, `promoted-to`, `promoted_to`, `supersedes`, `superseded-by`, `surpassed-by`, `promoted_from`
+**Single-value reference fields:** `milestone`, `epic`, `promoted-to`, `promoted-to`, `supersedes`, `superseded-by`, `surpassed-by`, `promoted-from`
 
 **Array reference fields:** `depends-on`, `blocks`, `pillars`, `research-refs`
 

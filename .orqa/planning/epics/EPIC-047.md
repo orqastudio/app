@@ -4,8 +4,8 @@ title: Git Workflow Enforcement Review
 description: Review and strengthen git commit discipline enforcement after discovering 237 files uncommitted across multiple sessions. Update session hooks, git-workflow rule, and create a software project-type skill for commit discipline. Addresses IMPL-015.
 status: done
 priority: P1
-created: 2026-03-09
-updated: 2026-03-09
+created: "2026-03-09"
+updated: "2026-03-09"
 milestone: MS-001
 pillars:
   - PILLAR-001
@@ -63,7 +63,7 @@ encodes commit discipline patterns:
 
 ### 4. Promote IMPL-015
 
-After enforcement artifacts are in place, update IMPL-015 with `promoted_to`
+After enforcement artifacts are in place, update IMPL-015 with `promoted-to`
 referencing the updated rule and new skill.
 
 ## Constraints

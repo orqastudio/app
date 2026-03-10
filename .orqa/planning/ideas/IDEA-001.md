@@ -4,8 +4,8 @@ title: Multi-Provider Ecosystem
 description: |
   Support additional AI providers through the provider-agnostic sidecar interface without changing the Rust core or Svelte UI.
 status: promoted
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-001
 research-needed:

@@ -5,6 +5,11 @@
   "type": "object",
   "required": ["id", "title", "description", "status", "created", "updated", "gate"],
   "additionalProperties": false,
+  "propertyOrder": [
+    "id", "title", "description", "status",
+    "created", "updated",
+    "gate"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^PILLAR-\\d+$" },
     "title": { "type": "string" },

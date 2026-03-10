@@ -3,16 +3,16 @@ id: TASK-061
 title: Add pillar reference field to epic/idea schemas
 description: Add pillar reference field to epic/idea schemas
 status: done
-created: 2026-03-09
-updated: 2026-03-09
+scope:
+  - .orqa/documentation/product/artifact-framework.md
+created: "2026-03-09"
+updated: "2026-03-09"
 epic: EPIC-046
 depends-on:
   - TASK-058
-assignee: orchestrator
+assignee: AGENT-003
 skills:
-  - orqa-governance
-scope:
-  - .orqa/documentation/product/artifact-framework.md
+  - SKILL-011
 acceptance:
   - Epic schema includes optional pillars field (list of PILLAR-NNN IDs)
   - Idea schema includes optional pillars field

@@ -1,13 +1,15 @@
 ---
-id: plugin-development
-layer: project
-title: "Plugin Development"
-name: plugin-development
+id: SKILL-020
+title: Plugin Development
 description: |
   OrqaStudio plugin development: creating plugins in standalone projects with seed data,
   using the Artifact Graph SDK, and the four-layer plugin model (built-in, official,
   community, user). Use when: Building new plugins, helping users create custom views,
   or extending OrqaStudio with additional artifact visualisations.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: project
 version: 1.0.0
 user-invocable: true
 ---

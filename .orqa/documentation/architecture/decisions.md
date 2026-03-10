@@ -1,8 +1,9 @@
 ---
-title: "Architecture Decisions"
-description: "Summary index of numbered architecture decisions (AD-NNN) that govern OrqaStudio's technical direction."
-created: 2026-03-02
-updated: 2026-03-09
+id: DOC-001
+title: Architecture Decisions
+description: Summary index of numbered architecture decisions (AD-NNN) that govern OrqaStudio's technical direction.
+created: "2026-03-02"
+updated: "2026-03-09"
 ---
 
 > Individual decision artifacts are in `.orqa/governance/decisions/`. This page is a summary index.

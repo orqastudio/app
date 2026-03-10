@@ -4,8 +4,8 @@ title: Composability Refactoring
 description: Major refactoring sprint establishing the domain service extraction pattern. Decomposed monolithic command files, decoupled stores, extracted utilities, added semantic design tokens, and established the thin-command → domain service → repository pattern.
 status: done
 priority: P1
-created: 2026-03-06
-updated: 2026-03-09
+created: "2026-03-06"
+updated: "2026-03-09"
 milestone: MS-001
 pillars:
   - PILLAR-001
@@ -14,7 +14,7 @@ research-refs:
   - RES-021
 docs-required: []
 docs-produced:
-  - .orqa/governance/decisions/AD-026.md
+  - AD-026
 scoring:
   user-value: 4
   pillar-alignment: 5

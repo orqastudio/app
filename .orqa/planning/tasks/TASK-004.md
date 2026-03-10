@@ -3,13 +3,6 @@ id: TASK-004
 title: Audit product docs for vision alignment
 description: Audit all product documentation pages against the updated vision. Fix references to .claude/ as source of truth, Claude-specific identity language, and missing three-layer architecture concepts.
 status: done
-created: 2026-03-08
-updated: 2026-03-08
-epic: EPIC-033
-assignee: documentation-writer
-skills:
-  - chunkhound
-  - orqa-governance
 scope:
   - .orqa/documentation/product/artifact-framework.md
   - .orqa/documentation/product/glossary.md
@@ -19,6 +12,13 @@ scope:
   - .orqa/documentation/product/information-architecture.md
   - .orqa/documentation/product/personas.md
   - .orqa/documentation/product/journeys.md
+created: "2026-03-08"
+updated: "2026-03-08"
+epic: EPIC-033
+assignee: AGENT-007
+skills:
+  - SKILL-003
+  - SKILL-011
 acceptance:
   - Every product doc checked against 5 audit criteria from plan
   - No .claude/ referenced as source of truth (only as optional symlink layer)

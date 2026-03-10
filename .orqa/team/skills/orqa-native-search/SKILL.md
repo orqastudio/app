@@ -1,12 +1,14 @@
 ---
-id: orqa-native-search
-layer: project
-title: "OrqaStudio Native Search Engine"
-name: orqa-native-search
+id: SKILL-013
+title: OrqaStudio Native Search Engine
 description: |
   OrqaStudio's embedded code search engine: DuckDB storage, ONNX Runtime embeddings
   with DirectML acceleration, and three search tools (search_regex, search_semantic,
   code_research). Use when working within the OrqaStudio app context.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: project
 version: 1.0.0
 user-invocable: true
 ---

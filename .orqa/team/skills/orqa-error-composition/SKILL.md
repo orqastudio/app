@@ -1,8 +1,6 @@
 ---
-id: orqa-error-composition
-layer: project
-title: "Orqa Error Composition"
-name: orqa-error-composition
+id: SKILL-010
+title: Orqa Error Composition
 description: |
   OrqaStudio error composition and flow: OrqaError anatomy, From implementations,
   error propagation through domain/repo/command layers, IPC serialization, and
@@ -10,6 +8,10 @@ description: |
   Use when: Adding new error variants, implementing error handling in commands or
   domain services, wiring error states in Svelte stores, or debugging error flow
   across the Tauri boundary.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: project
 version: 1.0.0
 user-invocable: true
 ---

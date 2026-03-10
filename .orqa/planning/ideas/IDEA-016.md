@@ -4,8 +4,8 @@ title: Reflective AI Facilitation
 description: |
   Active structured reflection support with AI-facilitated retrospectives, assumption challenges, and PILLAR-002 cycle detection.
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-002
 research-needed:

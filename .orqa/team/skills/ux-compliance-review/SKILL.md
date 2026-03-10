@@ -1,14 +1,16 @@
 ---
-id: ux-compliance-review
-layer: canon
-title: "UX Compliance Review"
-name: ux-compliance-review
+id: SKILL-036
+title: UX Compliance Review
 description: |
   UX compliance review methodology: label auditing, state coverage verification,
   shared component usage checks, layout and accessibility auditing, and structured
   UX review output format.
   Use when: Reviewing UI implementations against specifications, auditing accessibility,
   checking design system compliance, or verifying state coverage.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 version: 1.0.0
 user-invocable: true
 ---

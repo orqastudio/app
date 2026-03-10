@@ -1,8 +1,9 @@
 ---
-title: "Information Architecture"
-description: "Information architecture defining how content is organized and navigated within the application."
-created: 2026-03-02
-updated: 2026-03-08
+id: DOC-040
+title: Information Architecture
+description: Information architecture defining how content is organized and navigated within the application.
+created: "2026-03-02"
+updated: "2026-03-08"
 ---
 
 **Date:** 2026-03-02

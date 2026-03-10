@@ -4,21 +4,19 @@ title: Process Visibility Dashboard
 description: Build scanner runner, scanner dashboard, metrics dashboard, and agent activity panel for richer process visibility.
 status: draft
 priority: P1
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 milestone: MS-002
 pillars:
   - PILLAR-001
 depends-on: []
 blocks: []
 docs-required:
-  - docs/wireframes/dashboard.md
-  - docs/architecture/enforcement.md
-  - .orqa/plans/ (plan required before implementation)
+  - DOC-060
+  - DOC-002
 docs-produced:
-  - .orqa/plans/ (dashboard plan)
-  - docs/wireframes/dashboard.md (update with scanner and metrics wireframes)
-  - docs/architecture/rust-modules.md (update with scanner runner module)
+  - DOC-060
+  - DOC-010
 scoring:
   pillar: 5
   impact: 4

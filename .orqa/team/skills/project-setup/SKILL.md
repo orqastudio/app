@@ -1,14 +1,16 @@
 ---
-id: project-setup
-layer: canon
-title: "Project Setup"
-name: project-setup
+id: SKILL-023
+title: Project Setup
 description: |
   Universal project scaffolding: creates the .orqa/ directory structure,
   copies canon rules and skills, initialises project.json, and sets up
   CLI symlinks. This is the base setup — project type presets layer on top.
   Use when: Initialising a new project with OrqaStudio governance, or
   repairing a broken .orqa/ structure.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 version: 1.0.0
 user-invocable: true
 ---

@@ -57,18 +57,18 @@
         { "key": "tasks", "path": ".orqa/planning/tasks" }
       ]
     },
-    { "key": "team",
-      "children": [
-        { "key": "agents", "path": ".orqa/team/agents" },
-        { "key": "skills", "path": ".orqa/team/skills" }
-      ]
-    },
     { "key": "governance",
       "children": [
         { "key": "lessons", "path": ".orqa/governance/lessons" },
         { "key": "decisions", "path": ".orqa/governance/decisions" },
         { "key": "rules", "path": ".orqa/governance/rules" },
         { "key": "hooks", "path": ".orqa/governance/hooks" }
+      ]
+    },
+    { "key": "team",
+      "children": [
+        { "key": "agents", "path": ".orqa/team/agents" },
+        { "key": "skills", "path": ".orqa/team/skills" }
       ]
     }
   ]

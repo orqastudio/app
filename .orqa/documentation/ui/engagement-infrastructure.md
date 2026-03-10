@@ -1,8 +1,9 @@
 ---
-title: "Engagement & Communication Infrastructure Timeline"
-description: "Timeline and strategy for engagement and communication infrastructure around the product launch."
-created: 2026-03-07
-updated: 2026-03-07
+id: DOC-051
+title: Engagement & Communication Infrastructure Timeline
+description: Timeline and strategy for engagement and communication infrastructure around the product launch.
+created: "2026-03-07"
+updated: "2026-03-07"
 ---
 
 # OrqaStudio™ – Engagement & Communication Infrastructure Timeline

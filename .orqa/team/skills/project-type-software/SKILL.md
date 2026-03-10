@@ -1,13 +1,15 @@
 ---
-id: project-type-software
-layer: canon
+id: SKILL-024
 title: "Project Type: Software"
-name: project-type-software
 description: |
   Software development governance preset: adds worktree workflow rules,
   code quality standards, testing requirements, CI/CD patterns, and
   development-specific agent skills to the base OrqaStudio setup.
   Use when: The project being set up is a software development project.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 version: 1.0.0
 user-invocable: true
 ---

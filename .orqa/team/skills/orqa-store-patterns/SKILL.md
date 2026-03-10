@@ -1,13 +1,15 @@
 ---
-id: orqa-store-patterns
-layer: project
-title: "Orqa Store Patterns"
-name: orqa-store-patterns
+id: SKILL-016
+title: Orqa Store Patterns
 description: |
   OrqaStudio Svelte 5 rune store patterns: class-based stores with $state/$derived,
   store-to-component data flow, and reactive state management.
   Use when: Creating or modifying Svelte stores, wiring stores to components,
   managing loading/error/empty states, or debugging reactivity issues.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: project
 version: 1.0.0
 user-invocable: true
 ---

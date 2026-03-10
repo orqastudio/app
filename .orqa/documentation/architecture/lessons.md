@@ -1,8 +1,9 @@
 ---
-title: "Lesson Promotion Pipeline Architecture"
-description: "Architecture of the lesson promotion pipeline that converts implementation lessons into enforced rules."
-created: 2026-03-05
-updated: 2026-03-05
+id: DOC-006
+title: Lesson Promotion Pipeline Architecture
+description: Architecture of the lesson promotion pipeline that converts implementation lessons into enforced rules.
+created: "2026-03-05"
+updated: "2026-03-05"
 ---
 
 **Date:** 2026-03-05
@@ -34,7 +35,7 @@ tags:
   - error-handling
 recurrence: 3
 status: active | promoted | archived
-promoted_to: null | "RULE-NNN enforcement entry RULE-NNN-001"
+promoted-to: null | "RULE-NNN enforcement entry RULE-NNN-001"
 created_at: "2026-03-05T14:30:00Z"
 last_seen_at: "2026-03-10T09:15:00Z"
 session_ids:
@@ -54,7 +55,7 @@ session_ids:
 | `tags` | string[] | Freeform tags for search and discoverability. |
 | `recurrence` | integer | How many times this mistake has been observed. Starts at 1 on creation. Incremented each time the pattern recurs. |
 | `status` | string | `active`: tracked but not yet promoted. `promoted`: converted to a rule enforcement entry. `archived`: no longer relevant. |
-| `promoted_to` | string or null | When promoted, references the rule ID and entry ID. Null until promoted. |
+| `promoted-to` | string or null | When promoted, references the rule ID and entry ID. Null until promoted. |
 | `created_at` | ISO 8601 | When the lesson was first recorded. |
 | `last_seen_at` | ISO 8601 | When the lesson was most recently observed. |
 | `session_ids` | string[] | Session IDs where this lesson was observed. Used for traceability. |
@@ -95,7 +96,7 @@ CREATE TABLE lessons (
     tags            TEXT NOT NULL,         -- JSON array
     recurrence      INTEGER NOT NULL DEFAULT 1,
     status          TEXT NOT NULL DEFAULT 'active',
-    promoted_to     TEXT,                  -- nullable
+    promoted-to     TEXT,                  -- nullable
     created_at      TEXT NOT NULL,
     last_seen_at    TEXT NOT NULL,
     file_path       TEXT NOT NULL          -- absolute path to the .md file
@@ -124,7 +125,7 @@ Threshold reached (recurrence >= 2)
     → User reviews and approves promotion
       → Rule frontmatter updated with new enforcement entry
         → lesson.status = "promoted"
-        → lesson.promoted_to = "RULE-NNN enforcement entry RULE-NNN-001"
+        → lesson.promoted-to = "RULE-NNN enforcement entry RULE-NNN-001"
         → Hookify file generated for the new enforcement entry
 ```
 
@@ -139,7 +140,7 @@ When a lesson is promoted to a rule:
 3. The user selects the target rule file and fills in the pattern.
 4. On confirm, the app:
    - Appends the new enforcement entry to the target rule's YAML frontmatter
-   - Updates the lesson's `status` to `promoted` and `promoted_to` to reference the new entry
+   - Updates the lesson's `status` to `promoted` and `promoted-to` to reference the new entry
    - Triggers hookify file regeneration for the updated rule
 5. The enforcement engine reloads its compiled set from the updated rule files.
 

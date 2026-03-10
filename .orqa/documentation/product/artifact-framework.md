@@ -1,8 +1,9 @@
 ---
-title: "Artifact Framework"
-description: "Schema definitions, lifecycle rules, and governance for all structured artifacts in .orqa/."
-created: 2026-03-07
-updated: 2026-03-07
+id: DOC-036
+title: Artifact Framework
+description: Schema definitions, lifecycle rules, and governance for all structured artifacts in .orqa/.
+created: "2026-03-07"
+updated: "2026-03-07"
 ---
 
 **Date:** 2026-03-07
@@ -497,7 +498,7 @@ description: >
 created: 2026-03-07
 updated: 2026-03-07
 recurrence: 0
-promoted_to: null
+promoted-to: null
 ---
 ```
 
@@ -510,11 +511,11 @@ promoted_to: null
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
 | `recurrence` | Yes | integer | How many times this lesson has recurred (triggers promotion at threshold) |
-| `promoted_to` | No | string | Target artifact if promoted (rule name, skill name, etc.) |
+| `promoted-to` | No | string | Target artifact if promoted (rule name, skill name, etc.) |
 
 ### Rule (`RULE-NNN`)
 
-Rules enforce coding standards, process requirements, and project conventions. They are loaded as context for agents and verified during code review. Rules may be promoted from lessons (`IMPL-NNN`) when a pattern recurs — the `promoted_from` field traces this lineage.
+Rules enforce coding standards, process requirements, and project conventions. They are loaded as context for agents and verified during code review. Rules may be promoted from lessons (`IMPL-NNN`) when a pattern recurs — the `promoted-from` field traces this lineage.
 
 ```yaml
 ---
@@ -527,7 +528,7 @@ title: "Coding Standards"
 description: "Enforces Rust and TypeScript coding standards including formatting, linting, error handling, and test coverage."
 created: 2026-03-07
 updated: 2026-03-07
-promoted_from: null               # IMPL-NNN if promoted from a lesson, null otherwise
+promoted-from: null               # IMPL-NNN if promoted from a lesson, null otherwise
 ---
 ```
 
@@ -542,7 +543,7 @@ promoted_from: null               # IMPL-NNN if promoted from a lesson, null oth
 | `description` | Yes | string | Brief description of what the rule enforces |
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
-| `promoted_from` | No | string | `IMPL-NNN` if promoted from a lesson, null otherwise |
+| `promoted-from` | No | string | `IMPL-NNN` if promoted from a lesson, null otherwise |
 
 ---
 
@@ -619,9 +620,9 @@ YAML frontmatter fields follow a consistent content hierarchy across all artifac
 2. **Classification** — `slug`, `layer`, `status`, `priority`, `scope`, `milestone`, `epic`, `pillars` (what kind of thing is it?)
 3. **Description** — `description`, `test-questions` (what is it about?)
 4. **Lifecycle** — `created`, `updated`, `deadline` (when?)
-5. **Relationships** — `depends-on`, `blocks`, `research-refs`, `docs-required`, `docs-produced`, `research-needed`, `promoted-to`, `supersedes`, `superseded-by`, `surpassed-by`, `promoted_from` (what connects to what?)
+5. **Relationships** — `depends-on`, `blocks`, `research-refs`, `docs-required`, `docs-produced`, `research-needed`, `promoted-to`, `supersedes`, `superseded-by`, `surpassed-by`, `promoted-from` (what connects to what?)
 6. **Scoring** — `scoring` block (how important?)
-7. **Operational** — `assignee`, `skills`, `scope`, `acceptance`, `gate`, `epic-count`, `completed-epics`, `recurrence`, `promoted_to` (how is it managed?)
+7. **Operational** — `assignee`, `skills`, `scope`, `acceptance`, `gate`, `epic-count`, `completed-epics`, `recurrence`, `promoted-to` (how is it managed?)
 
 ### Per-Type Field Order
 
@@ -632,8 +633,8 @@ YAML frontmatter fields follow a consistent content hierarchy across all artifac
 | **Epic** | id, title, status, priority, milestone, pillars, description, created, updated, research-refs, docs-required, docs-produced, depends-on, blocks, deadline, scoring |
 | **Task** | id, title, status, epic, description, created, updated, depends-on, assignee, skills, scope, acceptance |
 | **Idea** | id, title, status, pillars, description, created, updated, research-needed, promoted-to |
-| **Lesson** | id, title, status, description, created, updated, recurrence, promoted_to |
-| **Rule** | id, slug, layer, status, scope, title, description, created, updated, promoted_from |
+| **Lesson** | id, title, status, description, created, updated, recurrence, promoted-to |
+| **Rule** | id, slug, layer, status, scope, title, description, created, updated, promoted-from |
 | **Decision** | id, title, status, description, created, updated, research-refs, supersedes, superseded-by |
 | **Research** | id, title, status, description, created, updated, surpassed-by |
 

@@ -3,10 +3,10 @@ id: RULE-031
 title: Vision Alignment
 description: Every feature must serve at least one active pillar defined in .orqa/planning/pillars/.
 status: active
-created: 2026-03-07
-updated: 2026-03-07
 layer: canon
 scope: project
+created: "2026-03-07"
+updated: "2026-03-07"
 ---
 Every feature, command, and UI element must serve the project's guiding principles. These principles are defined as **pillar artifacts** in `.orqa/planning/pillars/`. Read the active pillars before implementing any new capability.
 

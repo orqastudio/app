@@ -3,13 +3,6 @@ id: TASK-040
 title: Governance data quality backfill
 description: Audits and repairs frontmatter quality across all governance artifacts — adding missing titles, descriptions, and consistent YAML field ordering — with no code changes required.
 status: done
-created: 2026-03-09
-updated: 2026-03-09
-epic: EPIC-043
-assignee: agent-maintainer
-skills:
-  - orqa-governance
-  - skills-maintenance
 scope:
   - .orqa/governance/lessons/
   - .orqa/governance/rules/
@@ -18,6 +11,13 @@ scope:
   - .orqa/planning/milestones/MS-000.md
   - .orqa/planning/epics/
   - .orqa/planning/tasks/
+created: "2026-03-09"
+updated: "2026-03-09"
+epic: EPIC-043
+assignee: AGENT-003
+skills:
+  - SKILL-011
+  - SKILL-029
 acceptance:
   - All lessons have human-readable titles (no code references) and descriptions
   - All rules have descriptions in their frontmatter
@@ -45,8 +45,8 @@ Recommended field order per type:
 - **Milestones**: id, title, status, description, created, updated, deadline, gate, epic-count, completed-epics, tags
 - **Epics**: id, title, status, priority, milestone, description, created, updated, research-refs, docs-required, docs-produced, scoring, tags
 - **Tasks**: id, title, status, epic, description, created, updated, assignee, skills, scope, acceptance, tags
-- **Ideas**: id, title, status, pillar, description, research-needed, promoted_to, tags
-- **Lessons**: id, title, category, description, recurrence, promoted_to, tags
+- **Ideas**: id, title, status, pillar, description, research-needed, promoted-to, tags
+- **Lessons**: id, title, category, description, recurrence, promoted-to, tags
 - **Rules**: id, title, description, scope
 - **Decisions**: id, title, status, description, created, updated, supersedes, superseded_by, tags
 - **Research**: id, title, status, description, created, updated, milestone, tags

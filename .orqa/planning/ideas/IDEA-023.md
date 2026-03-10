@@ -4,8 +4,8 @@ title: Community Inbox
 description: |
   Manage incoming communication from multiple channels in a structured way, applying OrqaStudio's structured thinking to community triage.
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-001
   - PILLAR-002

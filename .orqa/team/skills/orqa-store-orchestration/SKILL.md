@@ -1,14 +1,16 @@
 ---
-id: orqa-store-orchestration
-layer: project
-title: "Orqa Store Orchestration"
-name: orqa-store-orchestration
+id: SKILL-015
+title: Orqa Store Orchestration
 description: |
   How multiple Svelte 5 rune stores coordinate in OrqaStudio without tight coupling.
   Covers store independence, component-level orchestration via $derived and $effect,
   circular dependency prevention, cross-store derived state, and initialization order.
   Use when: Wiring multiple stores together, adding cross-store coordination,
   debugging state synchronization issues, or planning new multi-store features.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: project
 version: 1.0.0
 user-invocable: true
 ---

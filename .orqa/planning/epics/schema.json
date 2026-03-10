@@ -8,6 +8,13 @@
     "created", "updated", "milestone", "pillars", "scoring"
   ],
   "additionalProperties": false,
+  "propertyOrder": [
+    "id", "title", "description", "status", "priority",
+    "created", "updated", "deadline",
+    "milestone", "pillars",
+    "depends-on", "blocks", "research-refs",
+    "docs-required", "docs-produced", "scoring"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^EPIC-\\d+$" },
     "title": { "type": "string" },
@@ -32,15 +39,15 @@
     },
     "research-refs": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": { "type": "string", "pattern": "^RES-\\d+$" }
     },
     "docs-required": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": { "type": "string", "pattern": "^[A-Z]+-\\d+$" }
     },
     "docs-produced": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": { "type": "string", "pattern": "^[A-Z]+-\\d+$" }
     },
     "scoring": {
       "type": "object",

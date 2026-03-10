@@ -3,15 +3,15 @@ id: TASK-046
 title: Epic title naming convention cleanup
 description: Renames all epic titles that use process words instead of describing outcomes, and adds a naming convention to the artifact lifecycle rule to prevent recurrence.
 status: done
-created: 2026-03-09
-updated: 2026-03-09
-epic: EPIC-043
-assignee: agent-maintainer
-skills:
-  - orqa-governance
 scope:
   - .orqa/planning/epics/
   - .orqa/governance/rules/artifact-lifecycle.md
+created: "2026-03-09"
+updated: "2026-03-09"
+epic: EPIC-043
+assignee: AGENT-003
+skills:
+  - SKILL-011
 acceptance:
   - All epic titles describe outcomes/content
   - not process activities

@@ -1,13 +1,15 @@
 ---
-id: uat-process
-layer: canon
-title: "UAT Process"
-name: uat-process
+id: SKILL-035
+title: UAT Process
 description: |
   Structured user acceptance testing methodology. Collect all findings first,
   group by systemic root cause, investigate architecture before proposing fixes,
   create tasks at the system level, and encode process improvements as lessons.
   Use when: Running UAT rounds, triaging user-reported issues, planning fix sprints.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 version: 1.0.0
 user-invocable: false
 ---
@@ -89,7 +91,7 @@ After implementation:
 3. **Process improvements MUST be encoded** (this is non-negotiable):
    - Create IMPL-NNN lessons for each process insight
    - Update relevant rules/skills/agents
-   - Set `promoted_to` on lessons that become enforcement artifacts
+   - Set `promoted-to` on lessons that become enforcement artifacts
 
 ## The Learning Loop
 

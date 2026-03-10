@@ -4,8 +4,8 @@ title: Institutional Memory
 description: |
   Long-term knowledge preservation with project evolution maps, organisational PILLAR-002 records, and strategic timeline visualisations.
 status: exploring
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-002
 research-needed:

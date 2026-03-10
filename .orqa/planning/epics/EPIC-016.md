@@ -4,8 +4,8 @@ title: Prioritisation Framework
 description: Build the scoring model from the roadmap into the app with configurable dimensions, weights, and priority bands.
 status: draft
 priority: P1
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 milestone: MS-002
 pillars:
   - PILLAR-001
@@ -14,12 +14,10 @@ depends-on:
   - EPIC-005
 blocks: []
 docs-required:
-  - docs/product/artifact-framework.md (prioritisation framework section)
-  - .orqa/plans/ (plan required before implementation)
+  - DOC-036
 docs-produced:
-  - .orqa/plans/ (prioritisation plan)
-  - docs/architecture/project-configuration.md (update with priority config schema)
-  - docs/architecture/decisions.md (AD for scoring formula and configurability)
+  - DOC-009
+  - DOC-001
 scoring:
   pillar: 5
   impact: 4

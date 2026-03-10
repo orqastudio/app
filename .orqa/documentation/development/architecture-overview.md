@@ -1,8 +1,9 @@
 ---
-title: "Architecture Overview"
-description: "High-level overview of OrqaStudio's architecture spanning Tauri, Rust backend, Svelte frontend, and sidecar."
-created: 2026-03-07
-updated: 2026-03-09
+id: DOC-019
+title: Architecture Overview
+description: High-level overview of OrqaStudio's architecture spanning Tauri, Rust backend, Svelte frontend, and sidecar.
+created: "2026-03-07"
+updated: "2026-03-09"
 ---
 
 **Date:** 2026-03-07

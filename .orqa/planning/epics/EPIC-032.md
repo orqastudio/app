@@ -4,8 +4,8 @@ title: Artifact System Migration
 description: "Make the artifact system self-sustaining: correct default creation, historical content linkage, and framework coverage for all 8 types."
 status: in-progress
 priority: P1
-created: 2026-03-08
-updated: 2026-03-08
+created: "2026-03-08"
+updated: "2026-03-08"
 milestone: MS-001
 pillars:
   - PILLAR-001
@@ -13,14 +13,12 @@ research-refs:
   - RES-028
   - RES-025
 docs-required:
-  - .orqa/planning/research/RES-028.md
-  - .orqa/planning/research/RES-025.md
+  - RES-028
+  - RES-025
 docs-produced:
-  - docs/product/artifact-framework.md (Decision type added)
-  - docs/process/artifact-workflow.md (Decision creation section)
-  - docs/architecture/decisions.md (converted to index)
-  - .orqa/rules/artifact-lifecycle.md (Decision enforcement)
-  - .orqa/rules/architecture-decisions.md (dual-source reference)
+  - DOC-036
+  - DOC-025
+  - DOC-001
 scoring:
   dogfood-value: 5
   foundation: 5

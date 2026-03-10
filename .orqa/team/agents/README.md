@@ -1,7 +1,7 @@
 ---
+description: "Universal roles that coordinate work through skill-based specialisation."
 role: artifacts
 label: "Agents"
-description: "Universal roles that coordinate work through skill-based specialisation."
 icon: "bot"
 sort: 1
 ---

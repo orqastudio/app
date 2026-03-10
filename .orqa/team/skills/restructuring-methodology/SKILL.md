@@ -1,14 +1,16 @@
 ---
-id: restructuring-methodology
-layer: canon
-title: "Restructuring Methodology"
-name: restructuring-methodology
+id: SKILL-026
+title: Restructuring Methodology
 description: |
   Safe, incremental refactoring methodology: one change at a time, verify after
   each step, preserve behavior, no temporary files. Covers module extraction,
   type unification, store consolidation, and scope assessment.
   Use when: Cleaning up architectural debt, reorganizing modules, consolidating
   patterns, or performing any structural code change.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 version: 1.0.0
 user-invocable: true
 ---

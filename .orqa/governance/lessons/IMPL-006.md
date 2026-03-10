@@ -4,10 +4,10 @@ title: Symlinks Prevent Governance Divergence
 description: |
   When .claude/ contains copies instead of symlinks to .orqa/, agents writing to .claude/ bypass the source of truth and the two directories silently diverge.
 status: promoted
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 recurrence: 1
-promoted_to: RULE-003
+promoted-to: RULE-003
 ---
 ## What Happened
 

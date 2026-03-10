@@ -1,14 +1,16 @@
 ---
-id: project-inference
-layer: canon
-title: "Project Inference"
-name: project-inference
+id: SKILL-021
+title: Project Inference
 description: |
   Reads a project's folder structure and files to infer its characteristics:
   languages, frameworks, build tools, existing governance, and project type.
   Produces a structured project profile that drives setup decisions.
   Use when: Setting up OrqaStudio on an existing project, or detecting
   project characteristics for skill/rule selection.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 version: 1.0.0
 user-invocable: true
 ---

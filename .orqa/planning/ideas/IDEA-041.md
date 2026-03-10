@@ -1,19 +1,19 @@
 ---
 id: IDEA-041
 title: Centralised error surfacing to the frontend
-description: "Ensure all backend errors, failed invokes, and silent promise rejections are surfaced visibly to the user. No error should be silently swallowed — every failure should either appear in a toast, status indicator, or error panel."
+description: Ensure all backend errors, failed invokes, and silent promise rejections are surfaced visibly to the user. No error should be silently swallowed — every failure should either appear in a toast, status indicator, or error panel.
 status: captured
-created: 2026-03-10
-updated: 2026-03-10
+created: "2026-03-10"
+updated: "2026-03-10"
 pillars:
   - PILLAR-001
   - PILLAR-002
 research-needed:
-  - "Audit all invoke() call sites for void/fire-and-forget patterns that swallow errors"
-  - "Design a centralised error notification system (toast queue, error log panel, or both)"
-  - "Determine which errors are user-actionable vs informational"
-  - "Evaluate Svelte 5 error boundary patterns for component-level error catching"
-  - "Review Tauri event-based error propagation for backend errors that aren't invoke responses"
+  - Audit all invoke() call sites for void/fire-and-forget patterns that swallow errors
+  - Design a centralised error notification system (toast queue, error log panel, or both)
+  - Determine which errors are user-actionable vs informational
+  - Evaluate Svelte 5 error boundary patterns for component-level error catching
+  - Review Tauri event-based error propagation for backend errors that aren't invoke responses
 promoted-to: null
 ---
 

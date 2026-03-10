@@ -4,8 +4,8 @@ title: Vision & Brand Identity
 description: Evolve OrqaStudio's vision from software development tool to domain-agnostic PILLAR-001 engine. Rename pillars, broaden personas, establish licensing, and align all documentation with canonical strategic vision.
 status: done
 priority: P1
-created: 2026-03-07
-updated: 2026-03-09
+created: "2026-03-07"
+updated: "2026-03-09"
 milestone: MS-001
 pillars:
   - PILLAR-001
@@ -14,9 +14,9 @@ research-refs:
   - RES-001
 docs-required: []
 docs-produced:
-  - .orqa/documentation/product/vision.md
-  - .orqa/documentation/product/governance.md
-  - .orqa/governance/decisions/AD-027.md
+  - DOC-046
+  - DOC-039
+  - AD-027
 scoring:
   user-value: 4
   pillar-alignment: 5

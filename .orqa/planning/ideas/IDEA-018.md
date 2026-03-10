@@ -4,8 +4,8 @@ title: Output Composability
 description: |
   New artifact generation modules for different domains including service design, policy development, and research planning.
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-001
 research-needed:

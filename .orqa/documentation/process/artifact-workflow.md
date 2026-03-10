@@ -1,8 +1,9 @@
 ---
-title: "Artifact Workflow"
-description: "Day-to-day workflow for creating, transitioning, and managing artifacts through their lifecycle."
-created: 2026-03-07
-updated: 2026-03-09
+id: DOC-025
+title: Artifact Workflow
+description: Day-to-day workflow for creating, transitioning, and managing artifacts through their lifecycle.
+created: "2026-03-07"
+updated: "2026-03-09"
 ---
 
 **Date:** 2026-03-07

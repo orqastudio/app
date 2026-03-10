@@ -4,8 +4,8 @@ title: Domain-Neutral Naming Avoids Renames
 description: |
   Provider-specific names like sdk_session_id spread across the entire stack. When the architecture evolves to support multiple providers, the rename touches every layer including database migrations.
 status: active
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 recurrence: 1
 ---
 ## What Happened

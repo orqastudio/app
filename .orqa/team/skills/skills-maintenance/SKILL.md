@@ -1,13 +1,15 @@
 ---
-id: skills-maintenance
-layer: canon
-title: "Skills Maintenance"
-name: skills-maintenance
+id: SKILL-029
+title: Skills Maintenance
 description: |
   Full skills.sh lifecycle management: CLI reference, skill evaluation criteria, SKILL.md format,
   portability rules, provenance tracking, and skill audit protocol.
   Use when: Adding, updating, removing, or auditing agent skills; evaluating whether to install
   a community skill or create a project-specific one; managing the .orqa/skills/ directory.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 version: 1.0.0
 user-invocable: true
 ---

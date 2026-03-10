@@ -1,13 +1,15 @@
 ---
-id: orqa-testing
-layer: project
-title: "Orqa Testing Patterns"
-name: orqa-testing
+id: SKILL-018
+title: Orqa Testing Patterns
 description: |
   OrqaStudio testing patterns: make test commands, Rust unit/integration tests,
   Vitest frontend tests, mock boundaries, and test file organization.
   Use when: Writing tests, fixing test failures, setting up test infrastructure,
   or verifying test coverage.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: project
 version: 1.0.0
 user-invocable: true
 ---

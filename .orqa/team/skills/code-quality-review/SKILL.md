@@ -1,14 +1,16 @@
 ---
-id: code-quality-review
-layer: canon
-title: "Code Quality Review"
-name: code-quality-review
+id: SKILL-004
+title: Code Quality Review
 description: |
   Code review methodology: automated checks, manual review checklists, forbidden
   pattern detection, function size limits, and structured review output format.
   Portable across any codebase with linting and testing infrastructure.
   Use when: Reviewing code for quality, running compliance checks, or producing
   structured review verdicts.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 version: 1.0.0
 user-invocable: true
 ---

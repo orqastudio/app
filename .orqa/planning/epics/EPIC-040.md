@@ -4,8 +4,8 @@ title: Provider Abstraction Layer
 description: Refactor sidecar from Claude-specific to provider-agnostic architecture. Provider interface, Claude adapter, sdk_session_id → provider_session_id rename across 13+ files including SQLite migration.
 status: done
 priority: P1
-created: 2026-03-07
-updated: 2026-03-09
+created: "2026-03-07"
+updated: "2026-03-09"
 milestone: MS-001
 pillars:
   - PILLAR-001
@@ -14,7 +14,7 @@ research-refs:
   - RES-027
 docs-required: []
 docs-produced:
-  - .orqa/governance/decisions/AD-025.md
+  - AD-025
 scoring:
   user-value: 4
   pillar-alignment: 4

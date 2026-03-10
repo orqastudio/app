@@ -4,8 +4,8 @@ title: Documentation Must Be App-Native
 description: |
   External documentation tools (like Docsify) create parallel navigation and rendering systems that diverge from the app. First-class features should be rendered natively by the app itself.
 status: active
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 recurrence: 1
 ---
 ## What Happened

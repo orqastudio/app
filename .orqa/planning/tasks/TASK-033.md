@@ -3,15 +3,15 @@ id: TASK-033
 title: Three-tier skill loading for agents
 description: Updates all 16 agent definitions to carry only portable Tier 1 skills and the code-search wrapper, removing all project-specific and context-specific skills from their frontmatter.
 status: done
-created: 2026-03-09
-updated: 2026-03-09
-epic: EPIC-042
-assignee: agent-maintainer
-skills:
-  - skills-maintenance
-  - orqa-governance
 scope:
   - .orqa/team/agents/*.md
+created: "2026-03-09"
+updated: "2026-03-09"
+epic: EPIC-042
+assignee: AGENT-003
+skills:
+  - SKILL-029
+  - SKILL-011
 acceptance:
   - "All agent skills: lists contain ONLY Tier 1 portable skills + code-search wrapper"
   - No agent lists chunkhound, orqa-native-search, or any orqa-* skill directly

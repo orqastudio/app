@@ -1,8 +1,9 @@
 ---
-title: "IPC Command Catalog"
-description: "Catalog of all Tauri IPC commands defining the frontend-backend communication contract."
-created: 2026-03-02
-updated: 2026-03-09
+id: DOC-005
+title: IPC Command Catalog
+description: Catalog of all Tauri IPC commands defining the frontend-backend communication contract.
+created: "2026-03-02"
+updated: "2026-03-09"
 ---
 
 **Date:** 2026-03-02 | **Status:** Phase 0e specification | **References:** [Tauri v2 Research](/research/tauri-v2) (AD-002, AD-012), [MVP Specification](/product/mvp-specification)

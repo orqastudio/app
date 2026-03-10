@@ -3,17 +3,17 @@ id: TASK-058
 title: Create pillar artifact schema and initial pillars
 description: Create pillar artifact schema and initial pillars
 status: done
-created: 2026-03-09
-updated: 2026-03-09
-epic: EPIC-046
-depends-on: []
-assignee: orchestrator
-skills:
-  - orqa-governance
 scope:
   - .orqa/planning/pillars/PILLAR-001.md
   - .orqa/planning/pillars/PILLAR-002.md
   - .orqa/documentation/product/artifact-framework.md
+created: "2026-03-09"
+updated: "2026-03-09"
+epic: EPIC-046
+depends-on: []
+assignee: AGENT-003
+skills:
+  - SKILL-011
 acceptance:
   - Pillar schema defined in artifact-framework.md (id
   - title

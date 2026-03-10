@@ -4,8 +4,8 @@ title: File-first data alignment audit
 description: |
   Audit all persistent data to ensure clear file-vs-database justification. Files are the source of truth for governance artifacts; the database is a derived index rebuilt on scan. Verify no governance data is database-only.
 status: captured
-created: 2026-03-09
-updated: 2026-03-09
+created: "2026-03-09"
+updated: "2026-03-09"
 pillars:
   - PILLAR-001
   - PILLAR-002

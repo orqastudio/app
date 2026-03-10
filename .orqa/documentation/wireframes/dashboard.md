@@ -1,8 +1,9 @@
 ---
+id: DOC-060
 title: "Wireframe: Dashboard Views"
-description: "Wireframe specification for dashboard views including metrics, status, and activity summaries."
-created: 2026-03-02
-updated: 2026-03-04
+description: Wireframe specification for dashboard views including metrics, status, and activity summaries.
+created: "2026-03-02"
+updated: "2026-03-04"
 ---
 
 **Date:** 2026-03-02 | **Informed by:** [Information Architecture](/product/information-architecture), [Frontend Research](/research/frontend)

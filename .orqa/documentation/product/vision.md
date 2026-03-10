@@ -1,8 +1,9 @@
 ---
-title: "Product Vision"
-description: "Product vision defining OrqaStudio as an AI-assisted clarity engine built on two pillars."
-created: 2026-03-02
-updated: 2026-03-07
+id: DOC-046
+title: Product Vision
+description: Product vision defining OrqaStudio as an AI-assisted clarity engine built on two pillars.
+created: "2026-03-02"
+updated: "2026-03-07"
 ---
 
 **Date:** 2026-03-07

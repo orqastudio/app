@@ -1,12 +1,14 @@
 ---
-id: implementer
-title: "Implementer"
-name: Implementer
+id: AGENT-002
+title: Implementer
+description: |
+  Builds things — code, deliverables, artifacts. Whatever "work" means in the project domain. Takes plans and turns them into working implementations.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
 layer: canon
 scope: general
-description: >
-  Builds things — code, deliverables, artifacts. Whatever "work" means in
-  the project domain. Takes plans and turns them into working implementations.
+model: sonnet
 tools:
   - Read
   - Edit
@@ -21,9 +23,8 @@ tools:
   - search_semantic
   - code_research
 skills:
-  - code-search
-  - orqa-composability
-model: sonnet
+  - SKILL-005
+  - SKILL-008
 subagent_mapping:
   default: Backend Engineer
   with_backend_skills: Backend Engineer

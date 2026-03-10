@@ -1,8 +1,9 @@
 ---
-title: "MVP Feature Specification"
-description: "Feature specification for the minimum viable product release of OrqaStudio."
-created: 2026-03-02
-updated: 2026-03-08
+id: DOC-042
+title: MVP Feature Specification
+description: Feature specification for the minimum viable product release of OrqaStudio.
+created: "2026-03-02"
+updated: "2026-03-08"
 ---
 
 **Date:** 2026-03-02

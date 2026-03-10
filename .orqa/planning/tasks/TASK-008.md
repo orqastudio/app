@@ -3,19 +3,19 @@ id: TASK-008
 title: Update scanner to use config-driven paths
 description: Replace the scanner's folder-guessing logic with config-driven scanning. The scanner reads the artifacts array from project.json and scans exactly those paths. No more inferring groups from README frontmatter.
 status: done
-created: 2026-03-08
-updated: 2026-03-08
-epic: EPIC-033
-depends-on:
-  - TASK-007
-assignee: backend-engineer
-skills:
-  - chunkhound
-  - orqa-ipc-patterns
-  - orqa-domain-services
 scope:
   - src-tauri/src/domain/artifact_reader.rs
   - src-tauri/src/commands/artifact_commands.rs
+created: "2026-03-08"
+updated: "2026-03-08"
+epic: EPIC-033
+depends-on:
+  - TASK-007
+assignee: AGENT-002
+skills:
+  - SKILL-003
+  - SKILL-012
+  - SKILL-009
 acceptance:
   - artifact_scan_tree reads artifacts config from project.json
   - For each Type entry

@@ -1,8 +1,9 @@
 ---
-title: "First-Run Setup Wizard"
-description: "Design of the first-run setup wizard that guides users through initial project configuration."
-created: 2026-03-04
-updated: 2026-03-04
+id: DOC-012
+title: First-Run Setup Wizard
+description: Design of the first-run setup wizard that guides users through initial project configuration.
+created: "2026-03-04"
+updated: "2026-03-04"
 ---
 
 **Date:** 2026-03-04

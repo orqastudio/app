@@ -4,8 +4,8 @@ title: Artifact platform audit — built-in vs external
 description: |
   Audit which artifact types are first-class platform citizens with enforced lifecycles versus display-only documents, mapped to the three-layer governance model.
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-001
 research-needed:

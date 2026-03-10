@@ -4,17 +4,16 @@ title: Code Quality Audit
 description: Audit the codebase against coding standards, fix violations, and feed findings into the PILLAR-002 loop as lessons.
 status: draft
 priority: P2
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 milestone: MS-001
 pillars:
   - PILLAR-001
 research-refs: []
 docs-required:
-  - docs/development/coding-standards.md
+  - DOC-021
 docs-produced:
-  - docs/development/coding-standards.md (update if gaps found)
-  - .orqa/lessons/ (new lessons from audit findings)
+  - DOC-021
 scoring:
   pillar: 4
   impact: 3

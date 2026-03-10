@@ -4,15 +4,15 @@ title: Three-Tier Skill Loading
 description: "Implement AD-028: restructure skill loading into three tiers — portable agent skills (Tier 1), orchestrator-injected project skills (Tier 2), and wrapper skills that resolve context-dependent implementations (Tier 3)."
 status: done
 priority: P1
-created: 2026-03-09
-updated: 2026-03-09
+created: "2026-03-09"
+updated: "2026-03-09"
 milestone: MS-001
 pillars:
   - PILLAR-001
 research-refs: []
 docs-required: []
 docs-produced:
-  - .orqa/governance/decisions/AD-028.md
+  - AD-028
 scoring:
   user-value: 4
   pillar-alignment: 5

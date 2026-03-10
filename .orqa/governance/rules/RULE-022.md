@@ -3,10 +3,10 @@ id: RULE-022
 title: Plan Mode Compliance
 description: Every implementation plan must have architectural compliance verification and UX-first design.
 status: active
-created: 2026-03-07
-updated: 2026-03-07
 layer: canon
 scope: system
+created: "2026-03-07"
+updated: "2026-03-07"
 ---
 Every implementation plan — whether created in plan mode, written to TODO.md, or proposed in conversation — MUST satisfy two mandatory requirements before implementation begins.
 

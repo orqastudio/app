@@ -1,12 +1,14 @@
 ---
-id: writer
-title: "Writer"
-name: Writer
+id: AGENT-007
+title: Writer
+description: |
+  Creates documentation, communications, and records. Produces structured written artifacts that capture decisions, specifications, and knowledge.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
 layer: canon
 scope: general
-description: >
-  Creates documentation, communications, and records. Produces structured
-  written artifacts that capture decisions, specifications, and knowledge.
+model: sonnet
 tools:
   - Read
   - Edit
@@ -20,10 +22,9 @@ tools:
   - search_semantic
   - code_research
 skills:
-  - code-search
-  - orqa-composability
-  - planning
-model: sonnet
+  - SKILL-005
+  - SKILL-008
+  - SKILL-019
 subagent_mapping:
   default: Documentation Writer
 ---

@@ -1,13 +1,14 @@
 ---
-id: reviewer
-title: "Reviewer"
-name: Reviewer
+id: AGENT-006
+title: Reviewer
+description: |
+  Checks quality, compliance, and correctness. Produces PASS/FAIL verdicts with evidence. Does not implement fixes — sends findings back to the Implementer.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
 layer: canon
 scope: general
-description: >
-  Checks quality, compliance, and correctness. Produces PASS/FAIL verdicts
-  with evidence. Does not implement fixes — sends findings back to the
-  Implementer.
+model: inherit
 tools:
   - Read
   - Grep
@@ -20,9 +21,8 @@ tools:
   - search_semantic
   - code_research
 skills:
-  - code-search
-  - orqa-composability
-model: inherit
+  - SKILL-005
+  - SKILL-008
 subagent_mapping:
   default: Code Reviewer
   with_code_quality_skills: Code Reviewer

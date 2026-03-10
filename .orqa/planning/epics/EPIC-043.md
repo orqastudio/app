@@ -4,8 +4,8 @@ title: Dogfood Readiness Verification
 description: First round of user acceptance testing. The user exercises the app end-to-end, testing conversation flow, artifact browsing, governance visibility, settings, and streaming behaviour. Findings are captured as tasks within this epic.
 status: in-progress
 priority: P1
-created: 2026-03-09
-updated: 2026-03-09
+created: "2026-03-09"
+updated: "2026-03-09"
 milestone: MS-001
 pillars:
   - PILLAR-001
@@ -73,7 +73,7 @@ For each UAT finding:
 
 | # | Finding | Type | Area |
 |---|---------|------|------|
-| F9 | Null YAML values displayed in read views (e.g., `promoted_to: null`, `deadline: Invalid Date`) — general rule: hide null/empty fields | ux | Artifact display |
+| F9 | Null YAML values displayed in read views (e.g., `promoted-to: null`, `deadline: Invalid Date`) — general rule: hide null/empty fields | ux | Artifact display |
 | F10 | Milestone `gate` question should be displayed last, not mixed with other fields | ux | Artifact display |
 | F11 | Epic P1/P2/P3 tags not explained in UI — unclear what they mean | ux | Planning |
 | F12 | Task list inconsistent — sometimes title+description, sometimes just title, sometimes shows raw TASK-ID despite having a title | ux | Planning |

@@ -3,16 +3,16 @@ id: TASK-059
 title: Register pillars in artifact config
 description: Register pillars in artifact config
 status: done
-created: 2026-03-09
-updated: 2026-03-09
+scope:
+  - .orqa/project.json
+created: "2026-03-09"
+updated: "2026-03-09"
 epic: EPIC-046
 depends-on:
   - TASK-058
-assignee: orchestrator
+assignee: AGENT-003
 skills:
-  - orqa-governance
-scope:
-  - .orqa/project.json
+  - SKILL-011
 acceptance:
   - Pillars path added to project.json artifacts array under Planning group
   - App artifact scanner discovers pillar files

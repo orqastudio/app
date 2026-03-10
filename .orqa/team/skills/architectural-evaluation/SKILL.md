@@ -1,14 +1,16 @@
 ---
-id: architectural-evaluation
-layer: canon
-title: "Architectural Evaluation"
-name: architectural-evaluation
+id: SKILL-001
+title: Architectural Evaluation
 description: |
   Architectural compliance evaluation methodology: boundary verification,
   domain model integrity checks, data flow mapping, schema evolution review,
   and structured compliance report format.
   Use when: Evaluating architectural compliance of plans or implementations,
   reviewing boundary integrity, mapping data flows, or assessing schema changes.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 version: 1.0.0
 user-invocable: true
 ---

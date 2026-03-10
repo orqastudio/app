@@ -4,8 +4,8 @@ title: Architecture Decisions
 description: Formal architecture decision records (AD-007 through AD-017) capturing every significant technical choice made before implementation.
 status: done
 priority: P1
-created: 2026-03-02
-updated: 2026-03-07
+created: "2026-03-02"
+updated: "2026-03-07"
 milestone: MS-000
 pillars:
   - PILLAR-001
@@ -15,10 +15,9 @@ depends-on:
 blocks:
   - EPIC-029
   - EPIC-030
-docs-required:
-  - .orqa/research/mvp/
+docs-required: []
 docs-produced:
-  - docs/architecture/decisions.md
+  - DOC-001
 scoring:
   pillar: 5
   impact: 5

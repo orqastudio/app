@@ -1,8 +1,9 @@
 ---
-title: "Skills Inventory"
-description: "Inventory of loaded skills with version tracking and change history."
-created: 2026-03-02
-updated: 2026-03-08
+id: DOC-033
+title: Skills Inventory
+description: Inventory of loaded skills with version tracking and change history.
+created: "2026-03-02"
+updated: "2026-03-08"
 ---
 
 **Date:** 2026-03-02

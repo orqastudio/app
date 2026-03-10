@@ -4,21 +4,17 @@ title: CI/CD Pipeline & Distribution
 description: Build the CI/CD pipeline with GitHub Actions, cross-platform builds, artifact signing, and auto-update for distribution.
 status: draft
 priority: P1
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 milestone: MS-002
 pillars:
   - PILLAR-001
 depends-on: []
 blocks: []
-docs-required:
-  - .orqa/plans/ (plan required before implementation)
+docs-required: []
 docs-produced:
-  - .orqa/plans/ (CI/CD plan)
-  - docs/development/getting-started.md (update with release process)
-  - docs/architecture/decisions.md (AD for signing
-  - update channels
-  - versioning strategy)
+  - DOC-024
+  - DOC-001
 scoring:
   pillar: 2
   impact: 5

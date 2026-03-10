@@ -4,8 +4,8 @@ title: Artifact Traceability Graph
 description: |
   Build a navigable knowledge graph from artifact cross-references that auto-updates when content changes. Enables plugin-driven views (dependency trees, impact analysis, knowledge provenance) without manual reverse links.
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-001
   - PILLAR-002

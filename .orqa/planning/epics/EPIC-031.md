@@ -4,8 +4,8 @@ title: Governance Bootstrap
 description: "The initial governance layer: filesystem scanner, coverage analysis, recommendations, and governance coverage indicator on the dashboard."
 status: done
 priority: P1
-created: 2026-03-02
-updated: 2026-03-07
+created: "2026-03-02"
+updated: "2026-03-07"
 milestone: MS-000
 pillars:
   - PILLAR-001
@@ -14,7 +14,7 @@ depends-on:
   - EPIC-030
 blocks: []
 docs-required:
-  - docs/architecture/decisions.md
+  - DOC-001
 docs-produced: []
 scoring:
   pillar: 5

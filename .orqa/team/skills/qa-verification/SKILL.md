@@ -1,14 +1,16 @@
 ---
-id: qa-verification
-layer: canon
-title: "QA Verification"
-name: qa-verification
+id: SKILL-025
+title: QA Verification
 description: |
   End-to-end functional verification methodology: the "Would It Work" protocol,
   verification path tracing, persistence verification, common QA failure patterns,
   and structured QA report format.
   Use when: Verifying features work end-to-end, checking acceptance criteria,
   tracing data through system layers, or producing QA verdicts.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 version: 1.0.0
 user-invocable: true
 ---

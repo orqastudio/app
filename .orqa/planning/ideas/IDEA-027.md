@@ -4,8 +4,8 @@ title: Native Hooks System
 description: |
   Design a hooks layer that works in both app and CLI contexts, with richer lifecycle events and backwards compatibility with Claude Code hooks.
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-001
 research-needed:

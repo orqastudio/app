@@ -4,8 +4,8 @@ title: Ecosystem Potential
 description: |
   Long-term platform potential including ethical AI capabilities, open reasoning framework, and community innovation infrastructure.
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-001
   - PILLAR-002

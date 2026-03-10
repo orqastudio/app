@@ -4,8 +4,8 @@ title: UX Design
 description: "The complete UX specification: design system, wireframes, component inventory, interaction patterns, and responsive behaviour rules."
 status: done
 priority: P1
-created: 2026-03-02
-updated: 2026-03-07
+created: "2026-03-02"
+updated: "2026-03-07"
 milestone: MS-000
 pillars:
   - PILLAR-001
@@ -15,10 +15,8 @@ depends-on:
 blocks:
   - EPIC-029
   - EPIC-030
-docs-required:
-  - docs/product/
-docs-produced:
-  - docs/ui/
+docs-required: []
+docs-produced: []
 scoring:
   pillar: 3
   impact: 5

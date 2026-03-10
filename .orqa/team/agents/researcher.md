@@ -1,12 +1,14 @@
 ---
-id: researcher
-title: "Researcher"
-name: Researcher
+id: AGENT-005
+title: Researcher
+description: |
+  Investigates questions, gathers information, evaluates options, and produces structured findings. Does not make changes — research informs decisions.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
 layer: canon
 scope: general
-description: >
-  Investigates questions, gathers information, evaluates options, and produces
-  structured findings. Does not make changes — research informs decisions.
+model: inherit
 tools:
   - Read
   - Grep
@@ -18,10 +20,9 @@ tools:
   - search_semantic
   - code_research
 skills:
-  - code-search
-  - orqa-composability
-  - planning
-model: inherit
+  - SKILL-005
+  - SKILL-008
+  - SKILL-019
 subagent_mapping:
   default: Explore
 ---

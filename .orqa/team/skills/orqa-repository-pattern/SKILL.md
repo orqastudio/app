@@ -1,14 +1,16 @@
 ---
-id: orqa-repository-pattern
-layer: project
-title: "Orqa Repository Pattern"
-name: orqa-repository-pattern
+id: SKILL-014
+title: Orqa Repository Pattern
 description: |
   OrqaStudio's persistence layer using the repository pattern with rusqlite.
   Covers repository anatomy, connection management, query patterns, migrations,
   error handling, and testing.
   Use when: Adding a new database entity, writing a new repository module,
   modifying persistence logic, writing migration SQL, or testing database code.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: project
 version: 1.0.0
 user-invocable: true
 ---

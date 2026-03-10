@@ -3,19 +3,19 @@ id: TASK-055
 title: Update product documentation
 description: Update governance.md with the concept taxonomy from AD-029, create a new governance-hub.md page for the distribution and coexistence model from AD-030, and verify artifact-framework.md alignment.
 status: done
-created: 2026-03-09
-updated: 2026-03-09
-epic: EPIC-045
-depends-on:
-  - TASK-052
-  - TASK-056
-assignee: orchestrator
-skills:
-  - orqa-governance
 scope:
   - .orqa/documentation/product/governance.md
   - .orqa/documentation/product/governance-hub.md
   - .orqa/documentation/product/artifact-framework.md
+created: "2026-03-09"
+updated: "2026-03-09"
+epic: EPIC-045
+depends-on:
+  - TASK-052
+  - TASK-056
+assignee: AGENT-003
+skills:
+  - SKILL-011
 acceptance:
   - governance.md updated with concept taxonomy (agent/skill/rule/hook/lesson definitions)
   - governance.md updated with agent vs skill decision framework

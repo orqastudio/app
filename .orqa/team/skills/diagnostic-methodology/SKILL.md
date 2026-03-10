@@ -1,14 +1,16 @@
 ---
-id: diagnostic-methodology
-layer: canon
-title: "Diagnostic Methodology"
-name: diagnostic-methodology
+id: SKILL-006
+title: Diagnostic Methodology
 description: |
   Root cause analysis methodology: capture, reproduce, isolate, fix, verify.
   Covers debug process, common issue categories, root cause classification,
   and the discipline of fixing causes not symptoms.
   Use when: Debugging failures, diagnosing unexpected behavior, tracing
   data flow through multi-layer systems, or investigating production issues.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 version: 1.0.0
 user-invocable: true
 ---

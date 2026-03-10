@@ -1,8 +1,9 @@
 ---
-title: "The Agentic Development Team"
-description: "Roster of specialized agents in the agentic development team with their roles and responsibilities."
-created: 2026-03-02
-updated: 2026-03-09
+id: DOC-034
+title: The Agentic Development Team
+description: Roster of specialized agents in the agentic development team with their roles and responsibilities.
+created: "2026-03-02"
+updated: "2026-03-09"
 ---
 
 **Date:** 2026-03-02

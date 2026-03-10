@@ -4,8 +4,8 @@ title: Structured Thinking Tools
 description: |
   Tools that operationalise the agile PILLAR-002 loop beyond conversation, including decision matrices, experiments, and assumption mapping.
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-001
   - PILLAR-002

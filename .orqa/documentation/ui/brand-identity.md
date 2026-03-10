@@ -1,8 +1,9 @@
 ---
-title: "OrqaStudio — Brand Guidelines"
-description: "Brand guidelines covering visual identity, tone, typography, and color palette for OrqaStudio."
-created: 2026-03-02
-updated: 2026-03-04
+id: DOC-047
+title: OrqaStudio — Brand Guidelines
+description: Brand guidelines covering visual identity, tone, typography, and color palette for OrqaStudio.
+created: "2026-03-02"
+updated: "2026-03-04"
 ---
 
 ## 1. Brand Overview

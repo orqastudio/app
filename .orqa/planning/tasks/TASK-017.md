@@ -3,16 +3,16 @@ id: TASK-017
 title: First-run setup wizard
 description: Implements an onboarding wizard for first-time users covering Claude CLI detection, auth verification, and project name, icon, and model configuration.
 status: done
-created: 2026-03-04
-updated: 2026-03-09
-epic: EPIC-035
-assignee: frontend-engineer
-skills:
-  - svelte5-best-practices
-  - tauri-v2
 scope:
   - ui/lib/components/settings/ProjectSetupWizard.svelte
   - ui/lib/components/settings/
+created: "2026-03-04"
+updated: "2026-03-09"
+epic: EPIC-035
+assignee: AGENT-002
+skills:
+  - SKILL-030
+  - SKILL-032
 acceptance:
   - Claude CLI detection (binary on PATH)
   - Auth status verification

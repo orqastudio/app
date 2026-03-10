@@ -3,10 +3,10 @@ id: RULE-017
 title: Lessons Learned
 description: "Two learning loops: implementation lessons in .orqa/lessons/ and process retrospectives. Both are mandatory."
 status: active
-created: 2026-03-07
-updated: 2026-03-07
 layer: canon
 scope: system
+created: "2026-03-07"
+updated: "2026-03-07"
 ---
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.
 
@@ -56,7 +56,7 @@ Lessons carry a `status` field that reflects their promotion state:
 | `recurring` | Recurrence >= 2, pending promotion review | Amber dot |
 | `promoted` | Promoted to a rule, coding standard, or skill | Purple dot |
 
-When a lesson's recurrence is incremented to >= 2, update `status: recurring`. When promoted (the `promoted_to` field is set), update `status: promoted`.
+When a lesson's recurrence is incremented to >= 2, update `status: recurring`. When promoted (the `promoted-to` field is set), update `status: promoted`.
 
 ## The learning loop is NOT optional
 

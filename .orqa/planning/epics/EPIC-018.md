@@ -4,20 +4,18 @@ title: Sub-Agent Support
 description: Build agent registry, spawn_agent tool, explore mode, output aggregation, and turn limits for sub-agent delegation.
 status: draft
 priority: P2
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 milestone: MS-002
 pillars:
   - PILLAR-001
 depends-on: []
 blocks: []
 docs-required:
-  - docs/architecture/sub-agents.md
-  - .orqa/plans/ (plan required before implementation)
+  - DOC-015
 docs-produced:
-  - .orqa/plans/ (sub-agent plan)
-  - docs/architecture/sub-agents.md (update with implementation details)
-  - docs/architecture/ipc-commands.md (new spawn_agent commands)
+  - DOC-015
+  - DOC-005
 scoring:
   pillar: 3
   impact: 4

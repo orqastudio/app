@@ -5,6 +5,12 @@
   "type": "object",
   "required": ["id", "title", "description", "status", "created", "updated", "epic"],
   "additionalProperties": false,
+  "propertyOrder": [
+    "id", "title", "description", "status",
+    "created", "updated",
+    "epic", "depends-on", "assignee", "skills",
+    "scope", "acceptance"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^TASK-\\d+$" },
     "title": { "type": "string" },
@@ -17,10 +23,10 @@
       "type": "array",
       "items": { "type": "string", "pattern": "^TASK-\\d+$" }
     },
-    "assignee": { "type": "string" },
+    "assignee": { "type": "string", "pattern": "^AGENT-\\d+$" },
     "skills": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": { "type": "string", "pattern": "^SKILL-\\d+$" }
     },
     "scope": {
       "type": "array",

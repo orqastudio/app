@@ -1,34 +1,65 @@
 <script lang="ts">
 	import ExternalLinkIcon from "@lucide/svelte/icons/external-link";
 	import Link2OffIcon from "@lucide/svelte/icons/link-2-off";
+	import * as Tooltip from "$lib/components/ui/tooltip";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 
-	let { id }: { id: string } = $props();
+	let { id, path }: { id?: string; path?: string } = $props();
 
-	/** True when the SDK can resolve this ID to a known artifact node. */
-	const resolvable = $derived(artifactGraphSDK.resolve(id) !== undefined);
+	/** Resolve the display label and whether this link is navigable. */
+	const resolved = $derived.by(() => {
+		if (id) {
+			const node = artifactGraphSDK.resolve(id);
+			return { label: id, resolvable: node !== undefined, targetId: node ? id : null };
+		}
+		if (path) {
+			const targetId = artifactGraphSDK.pathIndex.get(path.trim());
+			return { label: path, resolvable: targetId !== undefined, targetId: targetId ?? null };
+		}
+		return { label: "??", resolvable: false, targetId: null };
+	});
 
 	function handleClick() {
-		navigationStore.navigateToArtifact(id);
+		if (resolved.targetId) {
+			navigationStore.navigateToArtifact(resolved.targetId);
+		}
 	}
 </script>
 
-{#if resolvable}
-	<button
-		class="inline-flex items-center gap-1 rounded border border-border bg-secondary/60 px-1.5 py-0.5 font-mono text-[11px] font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-		onclick={handleClick}
-		title="Navigate to {id}"
-	>
-		{id}
-		<ExternalLinkIcon class="h-3 w-3 shrink-0 text-muted-foreground" />
-	</button>
+{#if resolved.resolvable}
+	<Tooltip.Root>
+		<Tooltip.Trigger>
+			{#snippet child({ props })}
+				<button
+					{...props}
+					class="inline-flex items-center gap-1 rounded border border-cyan-500/30 bg-cyan-500/10 px-1.5 py-0.5 font-mono text-[11px] font-medium text-cyan-400 transition-all hover:border-cyan-400 hover:bg-cyan-500/20"
+					onclick={handleClick}
+				>
+					{resolved.label}
+					<ExternalLinkIcon class="h-3 w-3 shrink-0 text-cyan-500/60" />
+				</button>
+			{/snippet}
+		</Tooltip.Trigger>
+		<Tooltip.Content side="top">
+			<p>Navigate to {resolved.label}</p>
+		</Tooltip.Content>
+	</Tooltip.Root>
 {:else}
-	<span
-		class="inline-flex items-center gap-1 font-mono text-[11px] font-medium text-warning"
-		title="Broken link: {id} not found in artifact graph"
-	>
-		<Link2OffIcon class="h-3 w-3 shrink-0 text-muted-foreground" />
-		{id}
-	</span>
+	<Tooltip.Root>
+		<Tooltip.Trigger>
+			{#snippet child({ props })}
+				<span
+					{...props}
+					class="inline-flex items-center gap-1 rounded border border-warning/30 bg-warning/10 px-1.5 py-0.5 font-mono text-[11px] font-medium text-warning"
+				>
+					<Link2OffIcon class="h-3 w-3 shrink-0 text-muted-foreground" />
+					{resolved.label}
+				</span>
+			{/snippet}
+		</Tooltip.Trigger>
+		<Tooltip.Content side="top">
+			<p>Not found in artifact graph: {resolved.label}</p>
+		</Tooltip.Content>
+	</Tooltip.Root>
 {/if}

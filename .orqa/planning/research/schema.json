@@ -5,6 +5,11 @@
   "type": "object",
   "required": ["id", "title", "description", "status", "created", "updated"],
   "additionalProperties": false,
+  "propertyOrder": [
+    "id", "title", "description", "status",
+    "created", "updated",
+    "surpassed-by"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^RES-\\d+$" },
     "title": { "type": "string" },
@@ -12,7 +17,7 @@
     "status": { "enum": ["draft", "complete", "surpassed"] },
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
-    "surpassed-by": { "type": ["string", "null"] }
+    "surpassed-by": { "type": ["string", "null"], "pattern": "^RES-\\d+$" }
   },
   "bodyTemplate": null
 }

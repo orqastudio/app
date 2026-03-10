@@ -1,8 +1,9 @@
 ---
-title: "Sub-Agent Support Architecture"
-description: "Architecture for sub-agent support enabling nested agent delegation within conversations."
-created: 2026-03-05
-updated: 2026-03-05
+id: DOC-015
+title: Sub-Agent Support Architecture
+description: Architecture for sub-agent support enabling nested agent delegation within conversations.
+created: "2026-03-05"
+updated: "2026-03-05"
 ---
 
 **Date:** 2026-03-05

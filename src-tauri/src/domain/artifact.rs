@@ -357,6 +357,7 @@ pub struct LessonFrontmatter {
     pub category: Option<String>,
     pub status: Option<String>,
     pub recurrence: Option<i64>,
+    #[serde(rename = "promoted-to")]
     pub promoted_to: Option<String>,
     pub created: Option<String>,
     pub updated: Option<String>,

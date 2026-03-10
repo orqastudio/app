@@ -1,7 +1,7 @@
 ---
+description: "Reusable knowledge packages that agents load before working."
 role: artifacts
 label: "Skills"
-description: "Reusable knowledge packages that agents load before working."
 icon: "zap"
 sort: 2
 ---

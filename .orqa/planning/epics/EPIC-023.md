@@ -4,8 +4,8 @@ title: Onboarding Flow Review
 description: Audit and improve the first-run setup wizard, new project flow, existing folder initialization, and guided first conversation.
 status: draft
 priority: P2
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 milestone: MS-002
 pillars:
   - PILLAR-001
@@ -13,10 +13,10 @@ depends-on:
   - EPIC-011
 blocks: []
 docs-required:
-  - docs/wireframes/settings-onboarding.md
-  - docs/architecture/setup-wizard.md
+  - DOC-061
+  - DOC-012
 docs-produced:
-  - docs/wireframes/settings-onboarding.md (update with reviewed flows)
+  - DOC-061
 scoring:
   pillar: 3
   impact: 4

@@ -4,8 +4,8 @@ title: Developer Experience Enhancements
 description: |
   Developer experience improvements discovered through self-use, including wireframe browser, terminal, and git integration.
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-001
 research-needed:

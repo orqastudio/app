@@ -1,8 +1,9 @@
 ---
-title: "Lesson Dashboard UI Spec"
-description: "UI specification for the lesson dashboard that visualizes implementation lessons and promotion status."
-created: 2026-03-05
-updated: 2026-03-05
+id: DOC-055
+title: Lesson Dashboard UI Spec
+description: UI specification for the lesson dashboard that visualizes implementation lessons and promotion status.
+created: "2026-03-05"
+updated: "2026-03-05"
 ---
 
 **Date:** 2026-03-05

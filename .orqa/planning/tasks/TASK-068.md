@@ -3,21 +3,21 @@ id: TASK-068
 title: Promote IMPL-015 to enforcement artifacts
 description: Promote IMPL-015 to enforcement artifacts
 status: done
-created: 2026-03-09
-updated: 2026-03-09
+scope:
+  - .orqa/governance/lessons/IMPL-015.md
+created: "2026-03-09"
+updated: "2026-03-09"
 epic: EPIC-047
 depends-on:
   - TASK-064
   - TASK-065
   - TASK-066
   - TASK-067
-assignee: orchestrator
+assignee: AGENT-003
 skills:
-  - orqa-governance
-scope:
-  - .orqa/governance/lessons/IMPL-015.md
+  - SKILL-011
 acceptance:
-  - IMPL-015 promoted_to field updated with references to updated rule and skill
+  - IMPL-015 promoted-to field updated with references to updated rule and skill
   - Verification that all root causes identified in IMPL-015 are addressed
 ---
 

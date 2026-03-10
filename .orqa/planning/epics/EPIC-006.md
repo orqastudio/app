@@ -4,17 +4,17 @@ title: File Watcher for External Changes
 description: Watch .claude/ and .orqa/ directories for external modifications and refresh artifact list and viewer when files change on disk.
 status: draft
 priority: P2
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 milestone: MS-001
 pillars:
   - PILLAR-001
 research-refs: []
 docs-required:
-  - docs/architecture/rust-modules.md
+  - DOC-010
 docs-produced:
-  - docs/architecture/rust-modules.md (update with file watcher module)
-  - docs/architecture/decisions.md (AD for file watching strategy and debouncing)
+  - DOC-010
+  - DOC-001
 scoring:
   pillar: 3
   impact: 3

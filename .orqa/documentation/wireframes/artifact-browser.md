@@ -1,8 +1,9 @@
 ---
+id: DOC-057
 title: "Wireframe: Artifact Browser"
-description: "Wireframe specification for the artifact browser view showing governance artifacts in a navigable list."
-created: 2026-03-02
-updated: 2026-03-04
+description: Wireframe specification for the artifact browser view showing governance artifacts in a navigable list.
+created: "2026-03-02"
+updated: "2026-03-04"
 ---
 
 **Date:** 2026-03-02 | **Informed by:** [Information Architecture](/product/information-architecture), [Frontend Research](/research/frontend), [MVP Spec F-007, F-008](/product/mvp-specification)

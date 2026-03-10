@@ -1,8 +1,9 @@
 ---
-title: "Development Workflow"
-description: "Development workflow covering worktree lifecycle, branch strategy, and merge procedures."
-created: 2026-03-02
-updated: 2026-03-04
+id: DOC-035
+title: Development Workflow
+description: Development workflow covering worktree lifecycle, branch strategy, and merge procedures.
+created: "2026-03-02"
+updated: "2026-03-04"
 ---
 
 **Date:** 2026-03-02

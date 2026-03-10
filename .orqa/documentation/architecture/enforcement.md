@@ -1,8 +1,9 @@
 ---
-title: "Enforcement Engine Architecture"
-description: "Architecture of the enforcement engine that evaluates agent tool calls against behavioral rules in real time."
-created: 2026-03-05
-updated: 2026-03-05
+id: DOC-002
+title: Enforcement Engine Architecture
+description: Architecture of the enforcement engine that evaluates agent tool calls against behavioral rules in real time.
+created: "2026-03-05"
+updated: "2026-03-05"
 ---
 
 **Date:** 2026-03-05

@@ -2,7 +2,6 @@
 	import ArtifactLink from "./ArtifactLink.svelte";
 	import GateQuestions from "./GateQuestions.svelte";
 	import StatusIndicator from "$lib/components/shared/StatusIndicator.svelte";
-	import Link2OffIcon from "@lucide/svelte/icons/link-2-off";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 
 	let {
@@ -45,23 +44,7 @@
 		}
 	}
 
-	/**
-	 * Returns true when the SDK can resolve the value to a known artifact node.
-	 * This is authoritative — no regex needed; the graph is the source of truth.
-	 */
-	function isArtifactId(value: string): boolean {
-		return artifactGraphSDK.resolve(value.trim()) !== undefined;
-	}
-
-	/**
-	 * Returns true when the SDK cannot resolve the path to a known artifact node.
-	 * Used for docs-required / docs-produced file path validation.
-	 */
-	function isBrokenPath(path: string): boolean {
-		return artifactGraphSDK.resolveByPath(path.trim()) === undefined;
-	}
-
-	/** Returns true if a value is non-empty (not null, undefined, empty string, or "null"). */
+/** Returns true if a value is non-empty (not null, undefined, empty string, or "null"). */
 	function isPresent(value: unknown): boolean {
 		if (value === null || value === undefined) return false;
 		if (value === "" || value === "null") return false;
@@ -82,31 +65,30 @@
 	 */
 	const SKIP_FIELDS = new Set([
 		"id", "title", "description", "status", "priority", "scoring",
+		"bodyTemplate", "tools",
 	]);
 
 	const DATE_FIELDS = new Set(["created", "updated", "deadline"]);
 
 	/** FILE_LIST_FIELDS: path-like values rendered as monospace chips. */
-	const FILE_LIST_FIELDS = new Set([
-		"docs-required", "docs-produced",
-	]);
+	const FILE_LIST_FIELDS = new Set<string>([]);
 
 	/**
 	 * LINK_FIELDS: values that are artifact IDs and should render as clickable ArtifactLink chips.
 	 * research-refs added here (RES-NNN IDs).
 	 */
 	const LINK_FIELDS = new Set([
-		"milestone", "epic", "pillars", "promoted-to", "promoted_to",
-		"surpassed-by", "supersedes", "superseded-by",
+		"milestone", "epic", "pillars", "promoted-to",
+		"promoted-from", "surpassed-by", "supersedes", "superseded-by",
 		"depends-on", "blocks", "research-refs",
+		"docs-required", "docs-produced",
+		"assignee", "skills",
 	]);
 
 	/**
 	 * CHIP_FIELDS: rendered as styled chips but NOT clickable links.
 	 */
-	const CHIP_FIELDS = new Set([
-		"assignee", "skills",
-	]);
+	const CHIP_FIELDS = new Set<string>([]);
 
 	/** Classify a field key into its render type. */
 	type FieldType = "date" | "file-list" | "link" | "chip" | "generic";
@@ -121,7 +103,10 @@
 
 	/** Humanize a kebab-case field key for display. */
 	function humanizeKey(key: string): string {
-		return key.replace(/-/g, " ").replace(/_/g, " ");
+		return key
+			.replace(/-/g, " ")
+			.replace(/_/g, " ")
+			.replace(/\b\w/g, (c) => c.toUpperCase());
 	}
 
 	// --- Derived header values (always rendered first) ---
@@ -139,6 +124,28 @@
 	/** Gate — supports both a single string (milestones) and an array (pillars). */
 	const gateQuestions = $derived(
 		isPresent(metadata["gate"]) ? asArray(metadata["gate"]).filter(Boolean) : [],
+	);
+
+	/** Human-friendly labels for app-context tools. CLI-only tools (mcp__*) are omitted. */
+	const TOOL_LABELS: Record<string, string> = {
+		Read: "Read Files",
+		Edit: "Edit Files",
+		Write: "Write Files",
+		Glob: "Find Files",
+		Grep: "Search Content",
+		Bash: "Run Commands",
+		search_regex: "Regex Search",
+		search_semantic: "Semantic Search",
+		code_research: "Code Research",
+	};
+
+	/** Tools filtered for app context with human-friendly names. */
+	const appTools = $derived(
+		isPresent(metadata["tools"])
+			? asArray(metadata["tools"])
+					.filter((t) => !t.startsWith("mcp__"))
+					.map((t) => TOOL_LABELS[t] ?? humanizeKey(t))
+			: [],
 	);
 
 	/**
@@ -205,8 +212,8 @@
 		{#if type === "date"}
 			{@const formatted = formatDate(value)}
 			{#if formatted}
-				<div class="flex items-center gap-2">
-					<span class="min-w-[7rem] text-xs font-medium capitalize text-muted-foreground">
+				<div class="flex items-start gap-2">
+					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
 						{humanizeKey(key)}
 					</span>
 					<span class="text-xs text-foreground">{formatted}</span>
@@ -216,27 +223,13 @@
 		{:else if type === "file-list"}
 			{@const items = asArray(value).filter(Boolean)}
 			{#if items.length > 0}
-				<div class="flex flex-wrap items-start gap-2">
-					<span class="min-w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
+				<div class="flex items-start gap-2">
+					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
 						{humanizeKey(key)}
 					</span>
-					<div class="flex flex-wrap gap-1">
+					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
 						{#each items as item, i (i)}
-							{#if isBrokenPath(item)}
-								<span
-									class="inline-flex items-center gap-1 rounded border border-warning/30 bg-warning/10 px-1.5 py-0.5 font-mono text-[11px] text-warning"
-									title="Path not found: {item}"
-								>
-									<Link2OffIcon class="h-3 w-3 shrink-0 text-muted-foreground" />
-									{item}
-								</span>
-							{:else}
-								<span
-									class="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[11px] text-foreground"
-								>
-									{item}
-								</span>
-							{/if}
+							<ArtifactLink path={item.trim()} />
 						{/each}
 					</div>
 				</div>
@@ -245,23 +238,13 @@
 		{:else if type === "link"}
 			{@const vals = asArray(value).filter(Boolean)}
 			{#if vals.length > 0}
-				<div class="flex flex-wrap items-start gap-2">
-					<span class="min-w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
+				<div class="flex items-start gap-2">
+					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
 						{humanizeKey(key)}
 					</span>
-					<div class="flex flex-wrap gap-1">
+					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
 						{#each vals as val, i (i)}
-							{#if isArtifactId(val.trim())}
-								<ArtifactLink id={val.trim()} />
-							{:else}
-								<span
-									class="inline-flex items-center gap-1 font-mono text-[11px] font-medium text-warning"
-									title="Broken link: {val.trim()} not found in artifact graph"
-								>
-									<Link2OffIcon class="h-3 w-3 shrink-0 text-muted-foreground" />
-									{val}
-								</span>
-							{/if}
+							<ArtifactLink id={val.trim()} />
 						{/each}
 					</div>
 				</div>
@@ -270,11 +253,11 @@
 		{:else if type === "chip"}
 			{@const items = asArray(value).filter(Boolean)}
 			{#if items.length > 0}
-				<div class="flex flex-wrap items-start gap-2">
-					<span class="min-w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
+				<div class="flex items-start gap-2">
+					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
 						{humanizeKey(key)}
 					</span>
-					<div class="flex flex-wrap gap-1">
+					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
 						{#each items as item, i (i)}
 							<span class="rounded-full border border-border bg-secondary px-2 py-0.5 text-[11px] capitalize text-secondary-foreground">
 								{item}
@@ -287,23 +270,47 @@
 		{:else}
 			<!-- generic -->
 			<div class="flex items-start gap-2">
-				<span class="min-w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
+				<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
 					{humanizeKey(key)}
 				</span>
 				{#if Array.isArray(value)}
-					<div class="flex flex-wrap gap-1">
+					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
 						{#each value as v, i (i)}
 							<span class="rounded-full border border-border bg-secondary px-2 py-0.5 text-[11px] capitalize text-secondary-foreground">
 								{v}
 							</span>
 						{/each}
 					</div>
+				{:else if typeof value === "object" && value !== null}
+					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
+						{#each Object.entries(value as Record<string, unknown>) as [k, v], i (i)}
+							<span class="rounded border border-border bg-secondary px-2 py-0.5 text-[11px] text-secondary-foreground">
+								<span class="text-muted-foreground">{humanizeKey(k)}:</span> {String(v)}
+							</span>
+						{/each}
+					</div>
 				{:else}
-					<span class="text-xs capitalize text-foreground">{String(value)}</span>
+					<span class="min-w-0 flex-1 text-xs capitalize text-foreground">{String(value)}</span>
 				{/if}
 			</div>
 		{/if}
 	{/each}
+
+	<!-- Tools (app-context only, human-friendly names) -->
+	{#if appTools.length > 0}
+		<div class="flex items-start gap-2">
+			<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
+				Tools
+			</span>
+			<div class="flex min-w-0 flex-1 flex-wrap gap-1">
+				{#each appTools as tool, i (i)}
+					<span class="rounded border border-border bg-secondary px-2 py-0.5 text-[11px] text-secondary-foreground">
+						{tool}
+					</span>
+				{/each}
+			</div>
+		</div>
+	{/if}
 
 	<!-- Gate question(s) — always last -->
 	<GateQuestions questions={gateQuestions} />

@@ -4,8 +4,8 @@ title: Tech Stack Research
 description: Pre-build investigation that determined the technology choices underpinning the entire OrqaStudio platform.
 status: done
 priority: P1
-created: 2026-03-02
-updated: 2026-03-07
+created: "2026-03-02"
+updated: "2026-03-07"
 milestone: MS-000
 pillars:
   - PILLAR-001
@@ -17,8 +17,7 @@ blocks:
   - EPIC-029
   - EPIC-030
 docs-required: []
-docs-produced:
-  - .orqa/research/mvp/
+docs-produced: []
 scoring:
   pillar: 3
   impact: 5

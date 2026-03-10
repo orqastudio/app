@@ -3,18 +3,18 @@ id: TASK-039
 title: Shared list item and status indicator components
 description: Extracts duplicated list item and status display logic into reusable shared components covering all artifact lifecycle statuses, used consistently across the sidebar and landing grid.
 status: done
-created: 2026-03-09
-updated: 2026-03-09
-epic: EPIC-043
-assignee: designer
-skills:
-  - code-search
-  - orqa-composability
 scope:
   - ui/lib/components/shared/
   - ui/lib/components/navigation/ArtifactNav.svelte
   - ui/lib/components/artifact/ArtifactLanding.svelte
   - ui/lib/components/artifact/FrontmatterHeader.svelte
+created: "2026-03-09"
+updated: "2026-03-09"
+epic: EPIC-043
+assignee: AGENT-001
+skills:
+  - SKILL-005
+  - SKILL-008
 acceptance:
   - A shared StatusIndicator component exists with semantic colours and icons per status value
   - StatusIndicator works in list items

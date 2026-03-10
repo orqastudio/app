@@ -3,10 +3,10 @@ id: RULE-019
 title: No Deferred Deliverables
 description: If a deliverable is in scope, it ships with the epic. Deferring scoped deliverables is forbidden.
 status: active
-created: 2026-03-07
-updated: 2026-03-07
 layer: canon
 scope: system
+created: "2026-03-07"
+updated: "2026-03-07"
 ---
 ## The Rule
 

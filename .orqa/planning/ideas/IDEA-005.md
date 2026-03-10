@@ -4,8 +4,8 @@ title: Knowledge & Artifact Intelligence
 description: |
   Make the accumulated knowledge base actively useful through semantic search, knowledge graphs, and staleness detection.
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-002
 research-needed:

@@ -3,19 +3,19 @@ id: TASK-026
 title: Frontend decomposition and design tokens
 description: Decomposes monolithic frontend components and stores, decouples the conversation store from the session store, and replaces 60+ hardcoded colors with semantic design tokens.
 status: done
-created: 2026-03-06
-updated: 2026-03-09
-epic: EPIC-039
-assignee: frontend-engineer
-skills:
-  - svelte5-best-practices
-  - tailwind-design-system
-  - orqa-store-patterns
 scope:
   - ui/lib/components/settings/
   - ui/lib/components/layout/
   - ui/lib/stores/
   - ui/app.css
+created: "2026-03-06"
+updated: "2026-03-09"
+epic: EPIC-039
+assignee: AGENT-002
+skills:
+  - SKILL-030
+  - SKILL-031
+  - SKILL-016
 acceptance:
   - SettingsView decomposed into focused sub-components
   - Toolbar decomposed into focused sub-components

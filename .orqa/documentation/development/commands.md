@@ -1,8 +1,9 @@
 ---
-title: "Development Commands"
-description: "Reference for all development commands available via make targets."
-created: 2026-03-05
-updated: 2026-03-05
+id: DOC-022
+title: Development Commands
+description: Reference for all development commands available via make targets.
+created: "2026-03-05"
+updated: "2026-03-05"
 ---
 
 **Date:** 2026-03-05

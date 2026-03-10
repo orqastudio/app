@@ -4,8 +4,8 @@ title: Multi-View Output System
 description: |
   Expand artifact projections beyond backlogs with strategy maps, experiment frameworks, and audience-tailored summaries.
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-001
 research-needed:

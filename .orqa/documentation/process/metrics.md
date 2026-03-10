@@ -1,8 +1,9 @@
 ---
-title: "Process Metrics"
-description: "Process metrics tracked across development including pass/fail rates, coverage, and violation trends."
-created: 2026-03-02
-updated: 2026-03-08
+id: DOC-029
+title: Process Metrics
+description: Process metrics tracked across development including pass/fail rates, coverage, and violation trends.
+created: "2026-03-02"
+updated: "2026-03-08"
 ---
 
 **Date:** 2026-03-02

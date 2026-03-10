@@ -1,12 +1,14 @@
 ---
-id: planning
-layer: canon
-title: "Planning"
-name: planning
+id: SKILL-019
+title: Planning
 description: |
   Enforces documentation-first planning for all implementation tasks.
   Plans must start with documentation, get user approval, then implement with
   mandatory verification gates. Prevents documentation drift across sessions.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 allowed-tools: Read, Glob, Grep, mcp__MCP_DOCKER__fetch, mcp__MCP_DOCKER__search
 ---
 

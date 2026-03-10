@@ -4,8 +4,8 @@ title: Agent task ownership review
 description: |
   Audit agent definitions for process vs execution knowledge placement, define clear task ownership boundaries between orchestrator and specialist agents.
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-001
 research-needed:

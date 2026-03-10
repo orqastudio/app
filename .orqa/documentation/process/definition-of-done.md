@@ -1,8 +1,9 @@
 ---
-title: "Definition of Done"
-description: "Checklist of gates that must be satisfied before any task is considered complete."
-created: 2026-03-02
-updated: 2026-03-08
+id: DOC-027
+title: Definition of Done
+description: Checklist of gates that must be satisfied before any task is considered complete.
+created: "2026-03-02"
+updated: "2026-03-08"
 ---
 
 **Date:** 2026-03-02

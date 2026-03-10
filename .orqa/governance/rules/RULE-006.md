@@ -3,10 +3,10 @@ id: RULE-006
 title: Coding Standards
 description: "Rust and TypeScript coding standards: formatting, linting, error handling, component patterns, and coverage requirements."
 status: active
-created: 2026-03-07
-updated: 2026-03-07
 layer: canon
 scope: project
+created: "2026-03-07"
+updated: "2026-03-07"
 ---
 **Source of Truth:** `.orqa/documentation/development/coding-standards.md`
 

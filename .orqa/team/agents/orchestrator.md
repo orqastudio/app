@@ -1,13 +1,14 @@
 ---
-id: orchestrator
-title: "Orchestrator"
-name: Orchestrator
+id: AGENT-003
+title: Orchestrator
+description: |
+  Process coordinator. Breaks work into tasks, delegates to universal agent roles, enforces governance gates, manages the artifact lifecycle, and reports status honestly. Does NOT write implementation code.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
 layer: canon
 scope: general
-description: >
-  Process coordinator. Breaks work into tasks, delegates to universal
-  agent roles, enforces governance gates, manages the artifact lifecycle,
-  and reports status honestly. Does NOT write implementation code.
+model: sonnet
 tools:
   - Read
   - Edit
@@ -22,11 +23,10 @@ tools:
   - search_semantic
   - code_research
 skills:
-  - code-search
-  - orqa-composability
-  - planning
-  - uat-process
-model: sonnet
+  - SKILL-005
+  - SKILL-008
+  - SKILL-019
+  - SKILL-035
 ---
 
 

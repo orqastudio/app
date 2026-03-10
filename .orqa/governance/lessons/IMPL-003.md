@@ -4,8 +4,8 @@ title: Orchestrator must manage the dev environment lifecycle automatically
 description: |
   The orchestrator should automatically manage dev server restart instead of telling the user to do it manually.
 status: active
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 recurrence: 1
 ---
 ## Pattern

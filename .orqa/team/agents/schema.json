@@ -1,0 +1,34 @@
+{
+  "$id": "orqa://schemas/agent",
+  "title": "Agent",
+  "description": "Universal agent role definition",
+  "type": "object",
+  "required": ["id", "title", "description", "status", "layer", "scope"],
+  "additionalProperties": false,
+  "propertyOrder": [
+    "id", "title", "description", "status",
+    "created", "updated",
+    "layer", "scope", "model",
+    "tools", "skills", "subagent_mapping"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^AGENT-\\d+$" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "status": { "enum": ["active", "inactive"] },
+    "created": { "type": "string", "format": "date" },
+    "updated": { "type": "string", "format": "date" },
+    "layer": { "enum": ["canon", "project", "plugin"] },
+    "scope": { "enum": ["general", "software-engineering", "governance"] },
+    "tools": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "skills": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^SKILL-\\d+$" }
+    },
+    "model": { "type": "string" },
+    "subagent_mapping": { "type": "object" }
+  }
+}

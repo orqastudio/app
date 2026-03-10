@@ -3,18 +3,18 @@ id: TASK-044
 title: Artifact type definitions and classification
 description: Adds formal one-paragraph definitions for each artifact type to the framework documentation and reclassifies any misclassified artifacts, flattening the research directory to a relationship-via-YAML-fields model.
 status: done
-created: 2026-03-09
-updated: 2026-03-09
-epic: EPIC-043
-assignee: agent-maintainer
-skills:
-  - orqa-governance
-  - skills-maintenance
 scope:
   - .orqa/documentation/product/artifact-framework.md
   - .orqa/planning/research/
   - .orqa/planning/ideas/
   - .orqa/governance/rules/artifact-lifecycle.md
+created: "2026-03-09"
+updated: "2026-03-09"
+epic: EPIC-043
+assignee: AGENT-003
+skills:
+  - SKILL-011
+  - SKILL-029
 acceptance:
   - Each artifact type has a clear one-paragraph definition of its purpose and when to use it
   - Definitions include 'use this, NOT that' guidance

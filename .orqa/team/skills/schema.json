@@ -1,0 +1,28 @@
+{
+  "$id": "orqa://schemas/skill",
+  "title": "Skill",
+  "description": "Domain knowledge or methodology loaded into agents",
+  "type": "object",
+  "required": ["id", "title", "description", "status", "layer"],
+  "additionalProperties": false,
+  "propertyOrder": [
+    "id", "title", "description", "status",
+    "created", "updated",
+    "layer", "scope", "version",
+    "user-invocable", "license", "metadata"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^SKILL-\\d+$" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "status": { "enum": ["active", "inactive"] },
+    "created": { "type": "string", "format": "date" },
+    "updated": { "type": "string", "format": "date" },
+    "layer": { "enum": ["canon", "project", "plugin"] },
+    "scope": { "enum": ["general", "software-engineering", "governance"] },
+    "version": { "type": "string" },
+    "user-invocable": { "type": "boolean" },
+    "license": { "type": "string" },
+    "metadata": { "type": "object" }
+  }
+}

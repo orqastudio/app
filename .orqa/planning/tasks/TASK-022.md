@@ -3,16 +3,16 @@ id: TASK-022
 title: Session resume and code research tool
 description: Enables conversation continuity across app restarts via session ID persistence, and implements a native code research tool that combines semantic search with LLM analysis.
 status: done
-created: 2026-03-05
-updated: 2026-03-09
-epic: EPIC-037
-assignee: backend-engineer
-skills:
-  - orqa-streaming
-  - tauri-v2
 scope:
   - src-tauri/src/commands/stream_commands.rs
   - sidecar/src/provider.ts
+created: "2026-03-05"
+updated: "2026-03-09"
+epic: EPIC-037
+assignee: AGENT-002
+skills:
+  - SKILL-017
+  - SKILL-032
 acceptance:
   - Sessions resume across app restarts
   - code_research tool implemented natively

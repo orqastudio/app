@@ -4,8 +4,8 @@ title: Vision Alignment & Schema Simplification
 description: "Align all documentation, governance rules, agent definitions, and code with the evolved vision: .orqa/ as sole source of truth, provider-agnostic AI integration, three-layer architecture (Canon/Project/Plugin), and simplified artifact schema where plans are merged into research and tasks trace cleanly to epics to milestones."
 status: in-progress
 priority: P1
-created: 2026-03-08
-updated: 2026-03-08
+created: "2026-03-08"
+updated: "2026-03-08"
 milestone: MS-001
 pillars:
   - PILLAR-001
@@ -16,11 +16,7 @@ research-refs:
   - RES-017
 docs-required: []
 docs-produced:
-  - .orqa/documentation/product/artifact-framework.md (Plan type removed
-  - Research schema added)
-  - .orqa/governance/rules/artifact-lifecycle.md (plan transitions removed
-  - research-refs added)
-  - .orqa/governance/rules/historical-artifacts.md (surpassed status for research/tasks)
+  - DOC-036
 scoring:
   dogfood-value: 5
   foundation: 5

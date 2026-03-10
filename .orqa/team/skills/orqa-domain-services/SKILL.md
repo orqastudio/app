@@ -1,14 +1,16 @@
 ---
-id: orqa-domain-services
-layer: project
-title: "Orqa Domain Services"
-name: orqa-domain-services
+id: SKILL-009
+title: Orqa Domain Services
 description: |
   OrqaStudio domain service patterns: how Rust backend services are structured,
   composed, tested, and wired to Tauri commands. Covers service anatomy, command
   delegation, error propagation, and the boundary between domain logic and framework code.
   Use when: Creating new domain services, refactoring backend logic out of commands,
   adding business logic to the Rust backend, or reviewing service architecture.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: project
 version: 1.0.0
 user-invocable: true
 ---

@@ -4,8 +4,8 @@ title: Reporting & Stakeholder Access
 description: |
   Make understanding accessible to non-users through executive dashboards, shareable links, and formatted report exports.
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 pillars:
   - PILLAR-001
 research-needed:

@@ -1,8 +1,9 @@
 ---
-title: "Streaming Pipeline"
-description: "End-to-end streaming architecture from Agent SDK through sidecar NDJSON to Rust Channel<T> to Svelte."
-created: 2026-03-02
-updated: 2026-03-09
+id: DOC-014
+title: Streaming Pipeline
+description: End-to-end streaming architecture from Agent SDK through sidecar NDJSON to Rust Channel<T> to Svelte.
+created: "2026-03-02"
+updated: "2026-03-09"
 ---
 
 **Date:** 2026-03-02 | **Status:** Phase 0e specification | **References:** [AI Provider Research](/research/claude-integration) (AD-007, AD-009)

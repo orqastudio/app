@@ -3,17 +3,17 @@ id: TASK-023
 title: Streaming and Conversation UX Fixes
 description: "Fixes a set of UX issues found during early dogfooding: broken streaming, unreadable tool output, cluttered tool display, unnamed sessions, and a generic titlebar."
 status: done
-created: 2026-03-06
-updated: 2026-03-09
-epic: EPIC-038
-assignee: frontend-engineer
-skills:
-  - svelte5-best-practices
-  - orqa-streaming
 scope:
   - ui/lib/components/conversation/
   - ui/lib/stores/conversation.svelte.ts
   - sidecar/src/
+created: "2026-03-06"
+updated: "2026-03-09"
+epic: EPIC-038
+assignee: AGENT-002
+skills:
+  - SKILL-030
+  - SKILL-017
 acceptance:
   - NDJSON streaming handles partial messages correctly
   - Tool output truncated at 500 chars with "Show more"

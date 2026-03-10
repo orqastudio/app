@@ -3,17 +3,17 @@ id: TASK-041
 title: Memory leak investigation and fix
 description: Identifies and resolves memory growth during extended artifact browsing sessions by cleaning up orphaned DOM event listeners and adding an eviction policy to the viewer cache.
 status: done
-created: 2026-03-09
-updated: 2026-03-09
-epic: EPIC-043
-assignee: debugger
-skills:
-  - code-search
-  - orqa-composability
 scope:
   - ui/lib/components/content/MarkdownRenderer.svelte
   - ui/lib/stores/artifact.svelte.ts
   - ui/lib/stores/navigation.svelte.ts
+created: "2026-03-09"
+updated: "2026-03-09"
+epic: EPIC-043
+assignee: AGENT-002
+skills:
+  - SKILL-005
+  - SKILL-008
 acceptance:
   - MarkdownRenderer cleans up event listeners on content change and unmount
   - Artifact viewer cache has an eviction policy (e.g.

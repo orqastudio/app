@@ -1,8 +1,9 @@
 ---
-title: "Wireframe Serving Infrastructure"
-description: "Infrastructure for serving and rendering wireframe assets within the application."
-created: 2026-03-02
-updated: 2026-03-04
+id: DOC-018
+title: Wireframe Serving Infrastructure
+description: Infrastructure for serving and rendering wireframe assets within the application.
+created: "2026-03-02"
+updated: "2026-03-04"
 ---
 
 **Date:** 2026-03-02 | **Status:** Phase 0e specification

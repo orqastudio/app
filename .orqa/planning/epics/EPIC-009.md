@@ -4,16 +4,16 @@ title: Frontend Test Suite
 description: Establish a frontend test suite using Vitest for Svelte stores and components, covering the gap left by zero frontend tests.
 status: draft
 priority: P2
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 milestone: MS-001
 pillars:
   - PILLAR-001
 research-refs: []
 docs-required:
-  - docs/development/coding-standards.md (testing section)
+  - DOC-021
 docs-produced:
-  - docs/development/coding-standards.md (update with frontend test patterns)
+  - DOC-021
 scoring:
   pillar: 3
   impact: 3

@@ -4,10 +4,10 @@ title: Encode Improvements in Artifacts
 description: |
   If a process improvement exists only in conversation history, it is lost in the next session. Every improvement must be recorded as a lesson and encoded in the relevant agent, rule, or skill.
 status: promoted
-created: 2026-03-07
-updated: 2026-03-07
+created: "2026-03-07"
+updated: "2026-03-07"
 recurrence: 1
-promoted_to: RULE-030
+promoted-to: RULE-030
 ---
 ## What Happened
 
@@ -30,7 +30,7 @@ Every time a process works better than expected or a new pattern emerges:
 1. Create a lesson (IMPL-NNN) documenting the pattern
 2. Update the relevant governance artifact (agent prompt, rule, or skill)
 3. Cross-reference: lesson → artifact, artifact → lesson
-4. The lesson's `promoted_to` field tracks whether and where it was promoted
+4. The lesson's `promoted-to` field tracks whether and where it was promoted
 
 ## Applies To
 

@@ -3,15 +3,15 @@ id: TASK-064
 title: Update session-start hook with uncommitted changes check
 description: Update session-start hook with uncommitted changes check
 status: done
-created: 2026-03-09
-updated: 2026-03-09
-epic: EPIC-047
-depends-on: []
-assignee: orchestrator
-skills:
-  - orqa-governance
 scope:
   - .orqa/governance/hooks/session-start-hook.sh
+created: "2026-03-09"
+updated: "2026-03-09"
+epic: EPIC-047
+depends-on: []
+assignee: AGENT-003
+skills:
+  - SKILL-011
 acceptance:
   - Hook runs git status --short and counts uncommitted files
   - Warning displayed if count exceeds threshold (suggest 20)

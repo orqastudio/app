@@ -4,8 +4,8 @@ title: Product Definition
 description: "The complete product specification: personas, user journeys, information architecture, glossary, and MVP feature set."
 status: done
 priority: P1
-created: 2026-03-02
-updated: 2026-03-07
+created: "2026-03-02"
+updated: "2026-03-07"
 milestone: MS-000
 pillars:
   - PILLAR-001
@@ -15,8 +15,7 @@ blocks:
   - EPIC-028
   - EPIC-030
 docs-required: []
-docs-produced:
-  - docs/product/
+docs-produced: []
 scoring:
   pillar: 3
   impact: 5

@@ -1,9 +1,11 @@
 ---
-id: typescript-advanced-types
-layer: canon
-title: "TypeScript Advanced Types"
-name: typescript-advanced-types
+id: SKILL-034
+title: TypeScript Advanced Types
 description: Master TypeScript's advanced type system including generics, conditional types, mapped types, template literals, and utility types for building type-safe applications. Use when implementing complex type logic, creating reusable type utilities, or ensuring compile-time type safety in TypeScript projects.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: canon
 ---
 
 

@@ -1,13 +1,15 @@
 ---
-id: orqa-governance
-layer: project
-title: "Orqa Governance Patterns"
-name: orqa-governance
+id: SKILL-011
+title: Orqa Governance Patterns
 description: |
   OrqaStudio governance patterns: artifact types, scanning pipeline, lesson promotion,
   rule enforcement, frontmatter schemas, and .orqa/ directory structure.
   Use when: Working with governance artifacts (docs, research, lessons, rules),
   modifying scanning or enforcement, or maintaining the .orqa/ directory.
+status: active
+created: "2026-03-01"
+updated: "2026-03-10"
+layer: project
 version: 2.0.0
 user-invocable: true
 ---
@@ -52,14 +54,14 @@ Task (TASK-NNN) → Epic (EPIC-NNN) → Milestone (MS-NNN)
                   research-refs → Research (RES-NNN)
 
 Lesson (IMPL-NNN) → Rule (RULE-NNN)
-                       ↑ promoted_from
+                       ↑ promoted-from
 ```
 
 - **Tasks** always have `epic:` field referencing an existing EPIC-NNN
 - **Epics** always have `milestone:` field referencing an existing MS-NNN
 - **Epics** may have `research-refs:` array linking to RES-NNN documents
 - **Research** documents are investigations, design explorations, and spikes
-- **Rules** may have `promoted_from:` field tracing lineage from IMPL-NNN lessons
+- **Rules** may have `promoted-from:` field tracing lineage from IMPL-NNN lessons
 - **There is NO "Plan" artifact type** — epics contain implementation design in their body
 
 ### FORBIDDEN
@@ -252,7 +254,7 @@ layer: canon | project
 title: "Rule Title"
 description: "What this rule enforces"
 status: active
-promoted_from: IMPL-NNN        # If promoted from a lesson, null otherwise
+promoted-from: IMPL-NNN        # If promoted from a lesson, null otherwise
 tags: []
 ---
 ```
@@ -266,7 +268,7 @@ layer: project
 title: "Lesson Title"
 category: implementation
 recurrence: 0
-promoted_to: null
+promoted-to: null
 tags: []
 ---
 ```

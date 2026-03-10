@@ -1,8 +1,9 @@
 ---
-title: "Product Governance"
-description: "Product governance criteria defining how features are evaluated against the project's active pillars."
-created: 2026-03-02
-updated: 2026-03-07
+id: DOC-039
+title: Product Governance
+description: Product governance criteria defining how features are evaluated against the project's active pillars.
+created: "2026-03-02"
+updated: "2026-03-07"
 ---
 
 **Date:** 2026-03-07
