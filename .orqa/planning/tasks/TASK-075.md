@@ -16,6 +16,7 @@ skills:
 scope:
   - ui/lib/sdk/
   - ui/lib/components/shared/StatusBar.svelte
+  - ui/lib/components/dashboard/ProjectDashboard.svelte
 acceptance:
   - "ArtifactGraphSDK class with reactive graph state"
   - "Synchronous resolve, resolveByPath, referencesFrom, referencesTo, children, byType, byStatus methods"
@@ -25,6 +26,7 @@ acceptance:
   - "Auto-refresh on artifact-graph-updated Tauri event"
   - "TypeScript types for ArtifactNode, ArtifactRef, GraphStats exported"
   - "Status bar indexing button: triggers manual refresh, disabled with spinner while indexing"
+  - "Dashboard Graph Insights card showing: node count, edge count, orphan count, broken ref count, artifacts-by-type breakdown, and status distribution"
 ---
 
 ## What
