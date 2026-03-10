@@ -64,6 +64,9 @@ class ArtifactGraphSDK {
     /** Tauri event unlisten function, set after initialize(). */
     private unlistenFn: UnlistenFn | null = null;
 
+    /** Non-reactive flag to prevent $effect re-triggering on error. */
+    private _initCalled = false;
+
     // -----------------------------------------------------------------------
     // Lifecycle
     // -----------------------------------------------------------------------
@@ -73,10 +76,12 @@ class ArtifactGraphSDK {
      * for auto-refresh on backend `"artifact-graph-updated"` events.
      *
      * Safe to call multiple times — subsequent calls are no-ops if already
-     * initialized and not in an error state.
+     * initialized. Uses a non-reactive flag to avoid $effect dependency
+     * tracking on reactive state (which would cause infinite retry loops).
      */
     async initialize(): Promise<void> {
-        if (this.graph.size > 0 && !this.error) return;
+        if (this._initCalled) return;
+        this._initCalled = true;
         await this._loadAll();
         if (!this.unlistenFn) {
             this.unlistenFn = await listen("artifact-graph-updated", () => {
@@ -250,6 +255,7 @@ class ArtifactGraphSDK {
         this.loading = true;
         this.error = null;
         try {
+            await invoke<void>("refresh_artifact_graph");
             await this._fetchAll();
             this.lastRefresh = new Date();
         } catch (err: unknown) {
@@ -270,7 +276,7 @@ class ArtifactGraphSDK {
         const [statsResult, ...typedNodes] = await Promise.all([
             invoke<GraphStats>("get_graph_stats"),
             ...ARTIFACT_TYPES.map((t) =>
-                invoke<ArtifactNode[]>("get_artifacts_by_type", { artifact_type: t }),
+                invoke<ArtifactNode[]>("get_artifacts_by_type", { artifactType: t }),
             ),
         ]);
 

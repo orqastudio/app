@@ -8,7 +8,16 @@ export async function invoke<T>(cmd: string, args?: Record<string, unknown>): Pr
 		return await tauriInvoke<T>(cmd, args);
 	} catch (error) {
 		if (typeof error === "string") {
-			throw JSON.parse(error) as OrqaError;
+			try {
+				throw JSON.parse(error) as OrqaError;
+			} catch (parseErr) {
+				// If the error string isn't valid JSON (e.g. a raw Tauri framework error),
+				// wrap it as a plain Error instead of letting the SyntaxError propagate.
+				if (parseErr instanceof SyntaxError) {
+					throw new Error(error);
+				}
+				throw parseErr;
+			}
 		}
 		throw error;
 	}

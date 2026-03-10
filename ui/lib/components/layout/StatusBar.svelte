@@ -2,6 +2,7 @@
 	import { LoaderCircle } from "lucide-svelte";
 	import BrainIcon from "@lucide/svelte/icons/brain";
 	import DatabaseIcon from "@lucide/svelte/icons/database";
+	import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
 	import { settingsStore } from "$lib/stores/settings.svelte";
 	import { sessionStore } from "$lib/stores/session.svelte";
 	import { projectStore } from "$lib/stores/project.svelte";
@@ -82,13 +83,15 @@
 		{/if}
 
 		<button
-			class="flex items-center gap-1 rounded px-1.5 py-0.5 transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50"
+			class="flex items-center gap-1 rounded px-1.5 py-0.5 transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50 {artifactGraphSDK.error ? 'text-destructive' : ''}"
 			onclick={() => artifactGraphSDK.refresh()}
 			disabled={artifactGraphSDK.loading}
-			title="Rebuild artifact graph index"
+			title={artifactGraphSDK.error ? `Index error: ${artifactGraphSDK.error}` : "Rebuild artifact graph index"}
 		>
 			{#if artifactGraphSDK.loading}
 				<LoaderCircle class="h-3 w-3 animate-spin" />
+			{:else if artifactGraphSDK.error}
+				<TriangleAlertIcon class="h-3 w-3" />
 			{:else}
 				<DatabaseIcon class="h-3 w-3" />
 			{/if}
