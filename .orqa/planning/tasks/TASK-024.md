@@ -3,12 +3,6 @@ id: TASK-024
 title: Decompose stream commands into domain modules
 description: Extracts business logic from the monolithic stream_commands.rs (2,425 lines) into four focused domain modules, leaving the command file as thin orchestration only.
 status: done
-scope:
-  - src-tauri/src/commands/stream_commands.rs
-  - src-tauri/src/domain/tool_executor.rs
-  - src-tauri/src/domain/system_prompt.rs
-  - src-tauri/src/domain/stream_loop.rs
-  - src-tauri/src/domain/session_title.rs
 created: "2026-03-06"
 updated: "2026-03-09"
 epic: EPIC-039
@@ -16,6 +10,12 @@ assignee: AGENT-002
 skills:
   - SKILL-009
   - SKILL-008
+scope:
+  - src-tauri/src/commands/stream_commands.rs
+  - src-tauri/src/domain/tool_executor.rs
+  - src-tauri/src/domain/system_prompt.rs
+  - src-tauri/src/domain/stream_loop.rs
+  - src-tauri/src/domain/session_title.rs
 acceptance:
   - stream_commands.rs reduced from 2
   - 425 to ~280 lines

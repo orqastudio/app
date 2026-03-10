@@ -3,9 +3,6 @@ id: TASK-060
 title: Update rules to reference pillar artifacts generically
 description: Update rules to reference pillar artifacts generically
 status: done
-scope:
-  - .orqa/governance/rules/vision-alignment.md
-  - .orqa/governance/rules/pillar-alignment-docs.md
 created: "2026-03-09"
 updated: "2026-03-09"
 epic: EPIC-046
@@ -14,6 +11,9 @@ depends-on:
 assignee: AGENT-003
 skills:
   - SKILL-011
+scope:
+  - .orqa/governance/rules/vision-alignment.md
+  - .orqa/governance/rules/pillar-alignment-docs.md
 acceptance:
   - vision-alignment.md references pillar artifacts by path
   - not hardcoded names

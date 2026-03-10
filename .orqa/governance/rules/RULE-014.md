@@ -3,10 +3,10 @@ id: RULE-014
 title: Historical Artifact Preservation
 description: Documentation is deleted when outdated. Research, plans, and tasks are preserved and marked as surpassed for historical traceability.
 status: active
-layer: canon
-scope: system
 created: "2026-03-07"
 updated: "2026-03-07"
+layer: canon
+scope: system
 ---
 
 ## Two Categories of Written Artifacts

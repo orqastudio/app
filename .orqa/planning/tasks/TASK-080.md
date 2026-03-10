@@ -3,8 +3,6 @@ id: TASK-080
 title: Write Artifact Graph SDK documentation
 description: Create a development guide for the Artifact Graph SDK covering API reference, usage patterns, and plugin integration examples.
 status: done
-scope:
-  - .orqa/documentation/development/artifact-graph-sdk.md
 created: "2026-03-10"
 updated: "2026-03-10"
 epic: EPIC-048
@@ -13,6 +11,8 @@ depends-on:
 assignee: AGENT-007
 skills:
   - SKILL-011
+scope:
+  - .orqa/documentation/development/artifact-graph-sdk.md
 acceptance:
   - API reference for all SDK methods with TypeScript signatures
   - Usage examples for resolution, relationships, content reading, and subscriptions

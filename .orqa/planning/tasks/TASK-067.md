@@ -3,8 +3,6 @@ id: TASK-067
 title: Create or update commit discipline skill
 description: Create or update commit discipline skill
 status: done
-scope:
-  - .orqa/team/skills/project-type-software/SKILL.md
 created: "2026-03-09"
 updated: "2026-03-09"
 epic: EPIC-047
@@ -14,6 +12,8 @@ assignee: AGENT-003
 skills:
   - SKILL-011
   - SKILL-029
+scope:
+  - .orqa/team/skills/project-type-software/SKILL.md
 acceptance:
   - project-type-software skill includes commit discipline section
   - Covers when to commit during governance work

@@ -3,9 +3,6 @@ id: TASK-034
 title: Orchestrator skill injection table
 description: Adds a Tier 2 skill injection table to the orchestrator definition and updates the skill-enforcement rule to document how project-specific skills are matched to task scope at delegation time.
 status: done
-scope:
-  - .orqa/team/agents/orchestrator.md
-  - .orqa/governance/rules/skill-enforcement.md
 created: "2026-03-09"
 updated: "2026-03-09"
 epic: EPIC-042
@@ -13,6 +10,9 @@ assignee: AGENT-003
 skills:
   - SKILL-029
   - SKILL-011
+scope:
+  - .orqa/team/agents/orchestrator.md
+  - .orqa/governance/rules/skill-enforcement.md
 acceptance:
   - Orchestrator agent definition includes a skill injection table mapping scope → skills
   - skill-enforcement.md updated to document the three-tier model

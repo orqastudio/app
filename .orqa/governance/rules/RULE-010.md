@@ -3,10 +3,10 @@ id: RULE-010
 title: End-to-End Completeness
 description: Every feature must be implemented across all layers (Rust command, IPC type, Svelte component, store) in the same commit.
 status: active
-layer: canon
-scope: system
 created: "2026-03-07"
 updated: "2026-03-07"
+layer: canon
+scope: system
 ---
 Every feature MUST be implemented across ALL layers in the same commit. Partial implementations that work in isolation but fail at runtime due to missing layers are forbidden.
 

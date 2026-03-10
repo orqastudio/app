@@ -3,8 +3,6 @@ id: TASK-079
 title: File watcher for .orqa/ with graph rebuild and event emission
 description: Watch .orqa/ for file system changes and rebuild the artifact graph on change, emitting a full snapshot Tauri event to the frontend.
 status: done
-scope:
-  - src-tauri/src/
 created: "2026-03-10"
 updated: "2026-03-10"
 epic: EPIC-048
@@ -14,6 +12,8 @@ assignee: AGENT-002
 skills:
   - SKILL-027
   - SKILL-032
+scope:
+  - src-tauri/src/
 acceptance:
   - File watcher monitors .orqa/ for create, modify, delete, rename events
   - Graph rebuild is debounced (500ms)

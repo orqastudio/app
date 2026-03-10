@@ -9,7 +9,7 @@
     "id", "title", "description", "status",
     "created", "updated",
     "layer", "scope", "version",
-    "user-invocable", "license", "metadata"
+    "user-invocable", "allowed-tools", "license", "metadata"
   ],
   "properties": {
     "id": { "type": "string", "pattern": "^SKILL-\\d+$" },
@@ -22,6 +22,7 @@
     "scope": { "enum": ["general", "software-engineering", "governance"] },
     "version": { "type": "string" },
     "user-invocable": { "type": "boolean" },
+    "allowed-tools": { "type": "string" },
     "license": { "type": "string" },
     "metadata": { "type": "object" }
   }

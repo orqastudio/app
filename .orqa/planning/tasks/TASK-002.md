@@ -3,16 +3,16 @@ id: TASK-002
 title: Verify end-to-end AI transparency rendering
 description: "Verify the full AI transparency pipeline works end-to-end: Rust emission to Channel<T> to store accumulation to component rendering."
 status: done
+created: "2026-03-07"
+updated: "2026-03-07"
+epic: EPIC-001
+assignee: AGENT-006
 scope:
   - ui/lib/components/conversation/ConversationView.svelte
   - ui/lib/components/conversation/ContextEntry.svelte
   - ui/lib/components/conversation/ContextDetailDialog.svelte
   - ui/lib/components/shared/ThinkingBlock.svelte
   - ui/lib/stores/conversation.svelte.ts
-created: "2026-03-07"
-updated: "2026-03-07"
-epic: EPIC-001
-assignee: AGENT-006
 acceptance:
   - System prompt sent (N chars) appears inline above assistant response when project is loaded
   - Clicking the entry opens ContextDetailDialog with governance prompt text visible

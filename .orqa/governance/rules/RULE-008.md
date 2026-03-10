@@ -3,10 +3,10 @@ id: RULE-008
 title: Documentation-First Implementation
 description: Documentation is the source of truth. Verify docs exist before writing code; update docs before changing code.
 status: active
-layer: canon
-scope: system
 created: "2026-03-07"
 updated: "2026-03-07"
+layer: canon
+scope: system
 ---
 ## Principle
 

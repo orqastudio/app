@@ -3,14 +3,14 @@ id: TASK-027
 title: "Security hardening: CSP and permissions"
 description: Audits and restricts Tauri capabilities to the minimum required permissions, removing broad defaults and enabling a Content Security Policy.
 status: done
-scope:
-  - src-tauri/capabilities/default.json
 created: "2026-03-06"
 updated: "2026-03-09"
 epic: EPIC-039
 assignee: AGENT-006
 skills:
   - SKILL-032
+scope:
+  - src-tauri/capabilities/default.json
 acceptance:
   - fs:default, shell:default, dialog:default, notification:default removed
   - Only dialog:allow-open retained

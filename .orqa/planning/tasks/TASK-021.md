@@ -3,9 +3,6 @@ id: TASK-021
 title: Lesson promotion pipeline
 description: Implements the self-learning loop that creates lesson entries, tracks recurrence counts, and promotes repeated patterns into rules or skills at a configurable threshold.
 status: done
-scope:
-  - src-tauri/src/domain/
-  - ui/lib/components/
 created: "2026-03-05"
 updated: "2026-03-09"
 epic: EPIC-037
@@ -13,6 +10,9 @@ assignee: AGENT-002
 skills:
   - SKILL-011
   - SKILL-012
+scope:
+  - src-tauri/src/domain/
+  - ui/lib/components/
 acceptance:
   - IMPL entries created and tracked
   - Recurrence count incremented on match

@@ -3,11 +3,6 @@ id: TASK-026
 title: Frontend decomposition and design tokens
 description: Decomposes monolithic frontend components and stores, decouples the conversation store from the session store, and replaces 60+ hardcoded colors with semantic design tokens.
 status: done
-scope:
-  - ui/lib/components/settings/
-  - ui/lib/components/layout/
-  - ui/lib/stores/
-  - ui/app.css
 created: "2026-03-06"
 updated: "2026-03-09"
 epic: EPIC-039
@@ -16,6 +11,11 @@ skills:
   - SKILL-030
   - SKILL-031
   - SKILL-016
+scope:
+  - ui/lib/components/settings/
+  - ui/lib/components/layout/
+  - ui/lib/stores/
+  - ui/app.css
 acceptance:
   - SettingsView decomposed into focused sub-components
   - Toolbar decomposed into focused sub-components

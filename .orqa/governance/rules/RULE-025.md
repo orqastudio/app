@@ -3,10 +3,10 @@ id: RULE-025
 title: Root Directory Cleanliness
 description: The project root must stay lean. Every file in root must have a justification.
 status: active
-layer: canon
-scope: system
 created: "2026-03-07"
 updated: "2026-03-07"
+layer: canon
+scope: system
 ---
 The project root must stay lean. Every file in root must have a justification.
 

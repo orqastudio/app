@@ -3,10 +3,10 @@ id: RULE-015
 title: Honest Reporting
 description: Report status accurately. Partial work reported as complete is worse than reporting it as incomplete.
 status: active
-layer: canon
-scope: system
 created: "2026-03-07"
 updated: "2026-03-07"
+layer: canon
+scope: system
 ---
 ## The Core Rule
 

@@ -3,10 +3,10 @@ id: RULE-012
 title: Error Ownership
 description: All errors are your responsibility. Pre-existing errors must be fixed. Never skip or ignore failures.
 status: active
-layer: canon
-scope: system
 created: "2026-03-07"
 updated: "2026-03-07"
+layer: canon
+scope: system
 ---
 **Source of Truth:** `TODO.md` -> "HOW TO WORK" section
 

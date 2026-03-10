@@ -3,15 +3,15 @@ id: TASK-019
 title: Governance artifact alignment for dogfooding
 description: Aligns governance artifacts with the live codebase in preparation for dogfood use, fixing hook paths, removing debug logging, and eliminating unsafe type annotations.
 status: done
-scope:
-  - .orqa/
-  - src-tauri/src/commands/
 created: "2026-03-05"
 updated: "2026-03-09"
 epic: EPIC-037
 assignee: AGENT-002
 skills:
   - SKILL-011
+scope:
+  - .orqa/
+  - src-tauri/src/commands/
 acceptance:
   - Hook paths use $CLAUDE_PROJECT_DIR
   - Governance artifacts match codebase state

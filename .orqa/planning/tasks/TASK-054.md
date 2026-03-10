@@ -3,8 +3,6 @@ id: TASK-054
 title: Create project setup skills
 description: "Write the four setup skills that replace templates for project initialisation: base scaffolding, folder inference, agentic config migration, and the software project type preset."
 status: done
-scope:
-  - .orqa/team/skills/
 created: "2026-03-09"
 updated: "2026-03-09"
 epic: EPIC-045
@@ -14,6 +12,8 @@ assignee: AGENT-003
 skills:
   - SKILL-011
   - SKILL-029
+scope:
+  - .orqa/team/skills/
 acceptance:
   - project-setup skill created (universal scaffolding — .orqa/ structure
   - canon rules

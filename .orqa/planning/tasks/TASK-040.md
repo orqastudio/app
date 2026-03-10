@@ -3,6 +3,13 @@ id: TASK-040
 title: Governance data quality backfill
 description: Audits and repairs frontmatter quality across all governance artifacts — adding missing titles, descriptions, and consistent YAML field ordering — with no code changes required.
 status: done
+created: "2026-03-09"
+updated: "2026-03-09"
+epic: EPIC-043
+assignee: AGENT-003
+skills:
+  - SKILL-011
+  - SKILL-029
 scope:
   - .orqa/governance/lessons/
   - .orqa/governance/rules/
@@ -11,13 +18,6 @@ scope:
   - .orqa/planning/milestones/MS-000.md
   - .orqa/planning/epics/
   - .orqa/planning/tasks/
-created: "2026-03-09"
-updated: "2026-03-09"
-epic: EPIC-043
-assignee: AGENT-003
-skills:
-  - SKILL-011
-  - SKILL-029
 acceptance:
   - All lessons have human-readable titles (no code references) and descriptions
   - All rules have descriptions in their frontmatter

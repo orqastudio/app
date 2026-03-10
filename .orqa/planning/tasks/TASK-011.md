@@ -3,12 +3,6 @@ id: TASK-011
 title: Backfill Historical Artifact Metadata
 description: Backfill historical artifact data so the decision history, lesson pipeline, and surpassed artifact workflows have real data to test against when we build the navigation and visualization tooling. Some reconstruction from session history is expected — the goal is representative data, not perfect accuracy. This ensures we're dogfooding the full artifact lifecycle, not just the happy path of "create and leave as accepted."
 status: done
-scope:
-  - .orqa/governance/decisions/
-  - .orqa/governance/lessons/
-  - .orqa/planning/research/
-  - .orqa/planning/tasks/
-  - .orqa/planning/epics/
 created: "2026-03-08"
 updated: "2026-03-08"
 epic: EPIC-033
@@ -16,6 +10,12 @@ assignee: AGENT-007
 skills:
   - SKILL-003
   - SKILL-011
+scope:
+  - .orqa/governance/decisions/
+  - .orqa/governance/lessons/
+  - .orqa/planning/research/
+  - .orqa/planning/tasks/
+  - .orqa/planning/epics/
 acceptance:
   - At least 3 decisions have surpassed predecessors (showing evolution chains)
   - At least 2 research docs marked as surpassed with surpassed-by references

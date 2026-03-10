@@ -3,9 +3,6 @@ id: TASK-007
 title: Add artifacts config to project.json and Rust types
 description: Define the artifacts config schema in project.json and add corresponding Rust types. This is the foundation — the scanner and frontend will read from this config.
 status: done
-scope:
-  - .orqa/project.json
-  - src-tauri/src/domain/project_settings.rs
 created: "2026-03-08"
 updated: "2026-03-08"
 epic: EPIC-033
@@ -15,6 +12,9 @@ skills:
   - SKILL-012
   - SKILL-009
   - SKILL-027
+scope:
+  - .orqa/project.json
+  - src-tauri/src/domain/project_settings.rs
 acceptance:
   - project.json has artifacts array with all current groups and types
   - ArtifactEntry enum (Group | Type) added to project_settings.rs

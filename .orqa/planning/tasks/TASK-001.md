@@ -3,12 +3,12 @@ id: TASK-001
 title: Emit SystemPromptSent event from stream_commands.rs
 description: In stream_send_message(), emit a SystemPromptSent event via on_event channel after resolve_system_prompt() and before sidecar.send().
 status: done
-scope:
-  - src-tauri/src/commands/stream_commands.rs
 created: "2026-03-07"
 updated: "2026-03-07"
 epic: EPIC-001
 assignee: AGENT-002
+scope:
+  - src-tauri/src/commands/stream_commands.rs
 acceptance:
   - SystemPromptSent event is emitted via on_event channel before sidecar request is sent
   - Event carries governance_prompt (full text) and total_chars (correct length)

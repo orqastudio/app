@@ -3,10 +3,10 @@ id: RULE-033
 title: Tooltips over title attributes
 description: Use shadcn Tooltip components for hover hints instead of native HTML title attributes. Tooltips provide consistent styling, positioning, and accessibility.
 status: active
-layer: project
-scope: software-engineering
 created: "2026-03-10"
 updated: "2026-03-10"
+layer: project
+scope: software-engineering
 promoted-from: null
 ---
 

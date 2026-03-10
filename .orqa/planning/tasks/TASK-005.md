@@ -3,6 +3,14 @@ id: TASK-005
 title: Architecture Docs Vision Audit
 description: Audit architecture, process, and development docs for alignment with the updated vision. These define how the app is built and how work happens — they must reflect .orqa/ as source of truth and provider-agnostic framing.
 status: done
+created: "2026-03-08"
+updated: "2026-03-08"
+epic: EPIC-033
+assignee: AGENT-007
+skills:
+  - SKILL-003
+  - SKILL-011
+  - SKILL-002
 scope:
   - .orqa/documentation/architecture/decisions.md
   - .orqa/documentation/architecture/project-configuration.md
@@ -19,14 +27,6 @@ scope:
   - .orqa/documentation/development/architecture-overview.md
   - .orqa/documentation/development/getting-started.md
   - .orqa/documentation/development/contributing.md
-created: "2026-03-08"
-updated: "2026-03-08"
-epic: EPIC-033
-assignee: AGENT-007
-skills:
-  - SKILL-003
-  - SKILL-011
-  - SKILL-002
 acceptance:
   - Every architecture
   - process

@@ -3,8 +3,6 @@ id: TASK-069
 title: Improve nav item hover and active state visibility
 description: "User feedback: hover and active states on navigation items need to be a little"
 status: todo
-scope:
-  - ui/lib/components/navigation/
 created: "2026-03-09"
 updated: "2026-03-09"
 epic: EPIC-010
@@ -13,6 +11,8 @@ assignee: AGENT-002
 skills:
   - SKILL-030
   - SKILL-031
+scope:
+  - ui/lib/components/navigation/
 acceptance:
   - Hover state on navigation items has noticeably stronger visual feedback
   - Active/selected state is clearly distinguishable from default and hover

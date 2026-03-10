@@ -3,8 +3,6 @@ id: TASK-053
 title: Extract domain skills from old agents
 description: Read each old software-specific agent and extract its domain knowledge into a standalone skill file. These skills will be loaded into universal roles at runtime based on project context.
 status: done
-scope:
-  - .orqa/team/skills/
 created: "2026-03-09"
 updated: "2026-03-09"
 epic: EPIC-045
@@ -15,6 +13,8 @@ assignee: AGENT-003
 skills:
   - SKILL-011
   - SKILL-029
+scope:
+  - .orqa/team/skills/
 acceptance:
   - diagnostic-methodology skill created (from debugger)
   - restructuring-methodology skill created (from refactor-agent)

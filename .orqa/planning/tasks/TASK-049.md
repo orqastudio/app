@@ -3,15 +3,15 @@ id: TASK-049
 title: Classify rules and hooks with layer field
 description: Adds layer classification to all rule and hook files, separating platform-level canon rules from OrqaStudio-specific project rules.
 status: done
-scope:
-  - .orqa/governance/rules/
-  - .orqa/governance/hooks/
 created: "2026-03-09"
 updated: "2026-03-09"
 epic: EPIC-044
 assignee: AGENT-003
 skills:
   - SKILL-011
+scope:
+  - .orqa/governance/rules/
+  - .orqa/governance/hooks/
 acceptance:
   - All rule files have `layer:` field in YAML frontmatter
   - All hook files have classification documented

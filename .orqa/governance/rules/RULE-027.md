@@ -3,10 +3,10 @@ id: RULE-027
 title: Structure Before Work
 description: No implementation work may begin without the full artifact structure in place first.
 status: active
-layer: canon
-scope: system
 created: "2026-03-07"
 updated: "2026-03-07"
+layer: canon
+scope: system
 ---
 
 ## The Rule (NON-NEGOTIABLE)

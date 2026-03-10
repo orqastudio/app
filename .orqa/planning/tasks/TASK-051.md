@@ -3,13 +3,6 @@ id: TASK-051
 title: Create universal agent definitions
 description: Write the 4 new universal role agent files (researcher, planner, implementer, reviewer), rename documentation-writer to writer, and broaden designer to cover experience/interface/structure design beyond just UI.
 status: done
-scope:
-  - .orqa/team/agents/researcher.md
-  - .orqa/team/agents/planner.md
-  - .orqa/team/agents/implementer.md
-  - .orqa/team/agents/reviewer.md
-  - .orqa/team/agents/writer.md
-  - .orqa/team/agents/designer.md
 created: "2026-03-09"
 updated: "2026-03-09"
 epic: EPIC-045
@@ -18,6 +11,13 @@ depends-on:
 assignee: AGENT-003
 skills:
   - SKILL-011
+scope:
+  - .orqa/team/agents/researcher.md
+  - .orqa/team/agents/planner.md
+  - .orqa/team/agents/implementer.md
+  - .orqa/team/agents/reviewer.md
+  - .orqa/team/agents/writer.md
+  - .orqa/team/agents/designer.md
 acceptance:
   - researcher.md exists with universal investigation role definition
   - planner.md exists with universal approach design role definition

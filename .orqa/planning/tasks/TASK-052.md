@@ -3,10 +3,6 @@ id: TASK-052
 title: Remove old software-specific agents
 description: Delete the 14 old agent files that have been merged into universal roles. Update all cross-references in rules, skills, epics, and documentation that mention old agent names.
 status: done
-scope:
-  - .orqa/team/agents/
-  - .orqa/governance/rules/
-  - .orqa/team/skills/
 created: "2026-03-09"
 updated: "2026-03-09"
 epic: EPIC-045
@@ -16,6 +12,10 @@ depends-on:
 assignee: AGENT-003
 skills:
   - SKILL-011
+scope:
+  - .orqa/team/agents/
+  - .orqa/governance/rules/
+  - .orqa/team/skills/
 acceptance:
   - 14 old agent files deleted (backend-engineer
   - frontend-engineer

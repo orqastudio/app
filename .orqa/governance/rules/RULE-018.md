@@ -3,10 +3,10 @@ id: RULE-018
 title: No Aliases or Hacks
 description: Fix root causes of type mismatches between layers. Never paper over with aliases, shims, or duplicate mappings.
 status: active
-layer: canon
-scope: system
 created: "2026-03-07"
 updated: "2026-03-07"
+layer: canon
+scope: system
 ---
 When a value or type mismatch exists between layers, fix the root cause. Never paper over it with aliases, shims, or duplicate mappings.
 

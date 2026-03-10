@@ -3,14 +3,14 @@ id: TASK-047
 title: Classify agents with layer and scope fields
 description: Adds layer and scope classification fields to all 16 agent definitions, distinguishing canon agents from project agents and categorising each by domain (software-engineering, governance, or general).
 status: done
-scope:
-  - .orqa/team/agents/
 created: "2026-03-09"
 updated: "2026-03-09"
 epic: EPIC-044
 assignee: AGENT-003
 skills:
   - SKILL-011
+scope:
+  - .orqa/team/agents/
 acceptance:
   - All 16 agent definitions have `layer:` field (canon/project/plugin)
   - All 16 agent definitions have `scope:` changed from `system` to one of software-engineering, governance, general
