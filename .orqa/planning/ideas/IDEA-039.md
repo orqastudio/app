@@ -24,7 +24,7 @@ OrqaStudio currently requires a Claude Max Pro subscription for development — 
 
 **If the structure does enough of the thinking, does the model need to be as smart?**
 
-The file-based architecture (AD-032) means governance data is flat files with enforced frontmatter. The artifact graph (EPIC-048) provides the relational layer. Skills inject the right domain knowledge at the right time. Rules enforce constraints mechanically. The model's job shifts from "figure everything out from scratch" to "follow structured patterns with the right context loaded."
+The file-based architecture ([AD-032](AD-032)) means governance data is flat files with enforced frontmatter. The artifact graph ([EPIC-048](EPIC-048)) provides the relational layer. Skills inject the right domain knowledge at the right time. Rules enforce constraints mechanically. The model's job shifts from "figure everything out from scratch" to "follow structured patterns with the right context loaded."
 
 This is fundamentally different from asking a local model to reason about an unstructured codebase. The structure IS the intelligence — the model is the executor.
 

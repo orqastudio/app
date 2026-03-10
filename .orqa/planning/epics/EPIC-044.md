@@ -55,10 +55,10 @@ Most rules are `layer: canon` (platform principles). Project-specific rules are 
 
 | Task | Title | Assignee |
 |------|-------|----------|
-| TASK-047 | Classify agents with layer and scope fields | agent-maintainer |
-| TASK-048 | Classify skills with layer field | agent-maintainer |
-| TASK-049 | Classify rules and hooks with layer field | agent-maintainer |
-| TASK-050 | Update artifact-framework with classification schema | agent-maintainer |
+| [TASK-047](TASK-047) | Classify agents with layer and scope fields | agent-maintainer |
+| [TASK-048](TASK-048) | Classify skills with layer field | agent-maintainer |
+| [TASK-049](TASK-049) | Classify rules and hooks with layer field | agent-maintainer |
+| [TASK-050](TASK-050) | Update artifact-framework with classification schema | agent-maintainer |
 
 ## Context
 

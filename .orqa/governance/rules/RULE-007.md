@@ -79,6 +79,6 @@ When adding a new recurring command to the project:
 
 ## Related Rules
 
-- RULE-006 (coding-standards) — references `make check` for pre-commit verification
-- RULE-029 (testing-standards) — references `make test` variants for running tests
-- RULE-013 (git-workflow) — git commands remain raw (no make wrapper needed)
+- [RULE-006](RULE-006) (coding-standards) — references `make check` for pre-commit verification
+- [RULE-029](RULE-029) (testing-standards) — references `make test` variants for running tests
+- [RULE-013](RULE-013) (git-workflow) — git commands remain raw (no make wrapper needed)

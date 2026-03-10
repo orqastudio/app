@@ -209,7 +209,7 @@ A modal dialog that walks the user through promoting a lesson to a rule enforcem
 | `status: promoted` | "Promoted" |
 | `status: archived` | "Archived" |
 | `recurrence` | Shows the count directly (e.g., "3") — no label |
-| IMPL number | "IMPL-006" — shown as-is |
+| IMPL number | "[IMPL-006](IMPL-006)" — shown as-is |
 | Promotion threshold | Not exposed directly; surfaced as "meets the threshold" |
 
 ---

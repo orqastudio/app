@@ -82,12 +82,12 @@ Every implementation plan must include these sections in order:
 
 | Principle | Verify |
 |-----------|--------|
-| AD-001 (Thick backend) | Domain logic in Rust, Svelte is view layer only |
-| AD-002 (IPC boundary) | All communication via `#[tauri::command]` and `invoke()` |
-| AD-003 (Error propagation) | All functions return `Result<T, E>`, no unwrap/expect/panic |
-| AD-004 (Svelte 5 runes) | `$state`, `$derived`, `$effect`, `$props()` only — no Svelte 4 patterns |
-| AD-005 (SQLite persistence) | Structured data in SQLite, file-based artifacts from disk |
-| AD-006 (Component purity) | Pages fetch data, components receive via props only |
+| [AD-001](AD-001) (Thick backend) | Domain logic in Rust, Svelte is view layer only |
+| [AD-002](AD-002) (IPC boundary) | All communication via `#[tauri::command]` and `invoke()` |
+| [AD-003](AD-003) (Error propagation) | All functions return `Result<T, E>`, no unwrap/expect/panic |
+| [AD-004](AD-004) (Svelte 5 runes) | `$state`, `$derived`, `$effect`, `$props()` only — no Svelte 4 patterns |
+| [AD-005](AD-005) (SQLite persistence) | Structured data in SQLite, file-based artifacts from disk |
+| [AD-006](AD-006) (Component purity) | Pages fetch data, components receive via props only |
 | End-to-end completeness | Every feature includes all 4 layers: Rust command → IPC type → Svelte component → store binding |
 | Coding standards | Function size limits, zero clippy/rustfmt warnings, 80%+ coverage |
 

@@ -42,7 +42,7 @@
 			Claude wants to run <span class="font-mono text-foreground">{stripToolName(approval.toolName)}</span> with the
 			following parameters. Allow this action?
 		</p>
-		<CodeBlock code={formattedInput()} language="json" />
+		<CodeBlock text={formattedInput()} lang="json" />
 	</CardContent>
 	<CardFooter class="flex gap-2 pt-2">
 		<Button variant="default" size="sm" onclick={onApprove} class="gap-1.5">

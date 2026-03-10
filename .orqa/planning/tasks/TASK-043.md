@@ -26,7 +26,7 @@ acceptance:
 ---
 ## Findings Addressed
 
-- **F19**: Tasks showing TASK-002 instead of title
+- **F19**: Tasks showing [TASK-002](TASK-002) instead of title
 - **F21**: Status dots not showing on list items
 
 ## Root Cause

@@ -50,6 +50,6 @@ Use `search_regex` to find function definitions before calling them — faster a
 
 ## Related Rules
 
-- RULE-006 (coding-standards) — defines *what* to verify (specific checks and patterns)
-- RULE-005 (chunkhound-usage) — tools for finding and verifying code before modifying it
-- RULE-010 (end-to-end-completeness) — the full chain that must be verified
+- [RULE-006](RULE-006) (coding-standards) — defines *what* to verify (specific checks and patterns)
+- [RULE-005](RULE-005) (chunkhound-usage) — tools for finding and verifying code before modifying it
+- [RULE-010](RULE-010) (end-to-end-completeness) — the full chain that must be verified

@@ -30,7 +30,7 @@ acceptance:
 
 `FrontmatterHeader.svelte` has hardcoded field lists with a predefined render order. The generic "extra fields" loop (line 261) does not filter nulls. Date fields render `Invalid Date` when the value is null.
 
-Current field order is hardcoded in the component. The fix should respect YAML source order instead, with the component simply iterating and rendering — but the YAML field order in the artifacts themselves must be audited to ensure it makes sense from a content hierarchy perspective (separate data quality task TASK-040).
+Current field order is hardcoded in the component. The fix should respect YAML source order instead, with the component simply iterating and rendering — but the YAML field order in the artifacts themselves must be audited to ensure it makes sense from a content hierarchy perspective (separate data quality task [TASK-040](TASK-040)).
 
 ## Root Cause
 

@@ -12,7 +12,8 @@ research-needed:
   - Module format design
   - Domain-specific output templates
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Service design maps
 - Policy development frameworks

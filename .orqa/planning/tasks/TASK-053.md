@@ -30,7 +30,7 @@ acceptance:
 ---
 ## Reference
 
-- AD-029 migration table shows which agents become which skills
+- [AD-029](AD-029) migration table shows which agents become which skills
 - universal-roles-ownership.md has the extraction mapping
 
 ## What

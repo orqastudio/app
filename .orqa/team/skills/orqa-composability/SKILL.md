@@ -15,7 +15,7 @@ user-invocable: true
 ---
 
 
-OrqaStudio is built from small, composable units at every level: functions, modules, features, and integrations. This skill teaches the composability philosophy that shapes all code in the project, grounded in AD-017 (Composability Principle).
+OrqaStudio is built from small, composable units at every level: functions, modules, features, and integrations. This skill teaches the composability philosophy that shapes all code in the project, grounded in [AD-017](AD-017) (Composability Principle).
 
 Composability is not just a coding pattern — it is a platform principle. Every software project initialized with OrqaStudio should be composable by default, because composable systems are dramatically easier to pivot, extend, and maintain as requirements change.
 
@@ -246,7 +246,7 @@ export async function streamMessage(
 ): Promise<void> { /* ... */ }
 ```
 
-The `ResponseSender` type is the contract. The Rust backend reads NDJSON lines from stdout — it does not care what generated them. Per AD-017, adding a new AI provider means implementing a new sidecar that speaks the same NDJSON protocol. Zero changes to Rust or Svelte.
+The `ResponseSender` type is the contract. The Rust backend reads NDJSON lines from stdout — it does not care what generated them. Per [AD-017](AD-017), adding a new AI provider means implementing a new sidecar that speaks the same NDJSON protocol. Zero changes to Rust or Svelte.
 
 ### Tool Server as MCP
 
@@ -416,7 +416,7 @@ Composability is not just for OrqaStudio's own codebase — it is a principle th
 
 ## See Also
 
-- `docs/architecture/decisions.md` — AD-017 defines the composability principle
+- `docs/architecture/decisions.md` — [AD-017](AD-017) defines the composability principle
 - `src-tauri/src/domain/enforcement_engine.rs` — canonical example of pure function composition
 - `src-tauri/src/error.rs` — canonical example of error composition via From traits
 - `sidecar/src/provider.ts` — canonical example of a pluggable integration boundary

@@ -7,7 +7,8 @@ layer: project
 scope: system
 created: "2026-03-07"
 updated: "2026-03-07"
----# Dogfood Mode (CONDITIONAL — only when `dogfood: true`)
+---
+# Dogfood Mode (CONDITIONAL — only when `dogfood: true`)
 
 This rule applies ONLY when `.orqa/project.json` contains `"dogfood": true`. For non-dogfood projects, ignore this rule entirely. This is a **project-level** rule, not a universal rule.
 
@@ -103,6 +104,6 @@ Check `.orqa/project.json` for `"dogfood": true` at task start. **Context detect
 
 ## Related Rules
 
-- RULE-028 (systems-thinking) — universal rule that applies to all projects; dogfood mode heightens its urgency
-- RULE-007 (development-commands) — `make dev` and `make restart` commands
-- RULE-006 (coding-standards) — general coding standards apply regardless of dogfood mode
+- [RULE-028](RULE-028) (systems-thinking) — universal rule that applies to all projects; dogfood mode heightens its urgency
+- [RULE-007](RULE-007) (development-commands) — `make dev` and `make restart` commands
+- [RULE-006](RULE-006) (coding-standards) — general coding standards apply regardless of dogfood mode

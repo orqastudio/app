@@ -24,4 +24,4 @@ A node graph makes all relationships queryable in both directions, enables broke
 - Live refresh via `.orqa/` file watcher with debounced graph rebuild
 - Replaces all ad-hoc artifact access patterns (prefix map, label matching, raw file reads for metadata)
 
-Research: RES-033 (linking design), RES-034 (graph SDK design). Implementation: EPIC-048.
+Research: [RES-033](RES-033) (linking design), [RES-034](RES-034) (graph SDK design). Implementation: [EPIC-048](EPIC-048).

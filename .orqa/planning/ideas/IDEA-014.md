@@ -13,7 +13,8 @@ research-needed:
   - Theme detection accuracy
   - Situation mapping visualisation
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Cognitive unloading interfaces — structured brain-dump flows
 - AI-driven theme detection — automatic pattern identification in unstructured input

@@ -11,7 +11,8 @@ pillars:
 research-needed:
   - Evaluate Tauri fs watch plugin vs notify crate for file watching
   - Determine debounce strategy for bulk file changes
----## Motivation
+---
+## Motivation
 
 When artifact files change on disk (e.g., during bulk data quality
 updates), the UI shows stale data until the user hard-refreshes.

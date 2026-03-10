@@ -18,14 +18,14 @@ acceptance:
 ---
 ## What
 
-Update `docs/architecture/streaming-pipeline.md` to reflect the new `SystemPromptSent` emission point added by TASK-001.
+Update `docs/architecture/streaming-pipeline.md` to reflect the new `SystemPromptSent` emission point added by [TASK-001](TASK-001).
 
 ## Sections to Update
 
 1. **Event sequence diagram** — Add `SystemPromptSent` between system prompt resolution and sidecar send
 2. **StreamEvent variants table** — Ensure `SystemPromptSent` and `ContextInjected` are listed with their fields
 3. **Emission points section** — Document where and when `SystemPromptSent` is emitted
-4. **Future work notes** — Note that `custom_prompt` (EPIC-002) and `ContextInjected` (EPIC-003) extend this
+4. **Future work notes** — Note that `custom_prompt` ([EPIC-002](EPIC-002)) and `ContextInjected` ([EPIC-003](EPIC-003)) extend this
 
 ## How
 

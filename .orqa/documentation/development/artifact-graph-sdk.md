@@ -160,13 +160,13 @@ These methods are synchronous — they read from the in-memory `graph` and `path
 resolve(id: string): ArtifactNode | undefined
 ```
 
-Resolve an artifact node by its frontmatter ID (e.g. `"EPIC-048"`). Returns `undefined` when no artifact with the given ID exists in the graph.
+Resolve an artifact node by its frontmatter ID (e.g. `"[EPIC-048](EPIC-048)"`). Returns `undefined` when no artifact with the given ID exists in the graph.
 
 ```typescript
 resolveByPath(path: string): ArtifactNode | undefined
 ```
 
-Resolve an artifact node by its relative file path (e.g. `".orqa/planning/epics/EPIC-048.md"`). Returns `undefined` when no artifact at that path has been indexed.
+Resolve an artifact node by its relative file path (e.g. `".orqa/planning/epics/[EPIC-048](EPIC-048).md"`). Returns `undefined` when no artifact at that path has been indexed.
 
 ### Relationship Methods
 
@@ -204,7 +204,7 @@ Both methods iterate the full in-memory graph and return a new array on each cal
 async readContent(path: string): Promise<string>
 ```
 
-Read the raw markdown content of an artifact file from disk. This is always an async IPC call — the SDK does not cache file content. Pass the relative path from the project root (e.g. `".orqa/planning/epics/EPIC-048.md"`).
+Read the raw markdown content of an artifact file from disk. This is always an async IPC call — the SDK does not cache file content. Pass the relative path from the project root (e.g. `".orqa/planning/epics/[EPIC-048](EPIC-048).md"`).
 
 ### Graph Health
 

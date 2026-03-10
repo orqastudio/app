@@ -222,10 +222,10 @@ Changes to seed data trigger graph rebuild via the file watcher.
 
 ## What This Skill Does NOT Cover
 
-- **Plugin distribution architecture** -- see IDEA-038 for the git submodule catalogue design
+- **Plugin distribution architecture** -- see [IDEA-038](IDEA-038) for the git submodule catalogue design
 - **Plugin marketplace UI** -- future feature, not yet designed
 - **Plugin API beyond the Artifact Graph SDK** -- plugins currently only access the graph SDK
-- **Plugin security/sandboxing** -- research needed (listed in IDEA-038 research-needed)
+- **Plugin security/sandboxing** -- research needed (listed in [IDEA-038](IDEA-038) research-needed)
 
 ## Anti-Patterns
 

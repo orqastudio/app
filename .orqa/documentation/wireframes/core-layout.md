@@ -6,9 +6,9 @@ created: "2026-03-02"
 updated: "2026-03-04"
 ---
 
-**Date:** 2026-03-02 | **Informed by:** [Information Architecture](/product/information-architecture), [Frontend Research](/research/frontend), [Design System](/ui/design-system)
+**Date:** 2026-03-02 | **Informed by:** [Information Architecture](DOC-040), [Frontend Research](RES-004), [Design System](DOC-049)
 
-The main window structure showing all zones: Activity Bar, Nav Sub-Panel, Explorer Panel, and Chat Panel, plus Toolbar and Status Bar. This replaces the previous four-zone layout with a three-zone + nav sub-panel design (AD-019).
+The main window structure showing all zones: Activity Bar, Nav Sub-Panel, Explorer Panel, and Chat Panel, plus Toolbar and Status Bar. This replaces the previous four-zone layout with a three-zone + nav sub-panel design ([AD-019](AD-019)).
 
 ---
 

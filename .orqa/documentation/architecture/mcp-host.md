@@ -10,7 +10,7 @@ updated: "2026-03-04"
 
 How OrqaStudio™ discovers, connects to, and manages MCP servers. OrqaStudio plays two MCP roles simultaneously: it is an **MCP server** (exposing its native tools to the Agent SDK sidecar) and an **MCP host** (connecting to external user-installed MCP servers and aggregating their tools for the sidecar).
 
-**Architecture References:** AD-007 (sidecar integration), AD-010 (tool implementation as MCP), AD-011 (security model), AD-017 (composability principle)
+**Architecture References:** [AD-007](AD-007) (sidecar integration), [AD-010](AD-010) (tool implementation as MCP), [AD-011](AD-011) (security model), [AD-017](AD-017) (composability principle)
 
 ---
 
@@ -372,7 +372,7 @@ MCP servers operate at one of three trust levels, which determine what capabilit
 
 ### Capability Scoping
 
-**Built-in tools** operate within Tauri's file system security scopes (AD-011):
+**Built-in tools** operate within Tauri's file system security scopes ([AD-011](AD-011)):
 
 - Base scope: `$HOME/**`
 - Project scope: dynamically expanded via `app_handle.fs_scope().allow_directory()` when a project is opened
@@ -521,7 +521,7 @@ The `projectOverrides` section stores per-project trust decisions for project-le
 
 ## Related Documents
 
-- [Architecture Decisions](./decisions.md) -- AD-007, AD-010, AD-011, AD-017
+- [Architecture Decisions](./decisions.md) -- [AD-007](AD-007), [AD-010](AD-010), [AD-011](AD-011), [AD-017](AD-017)
 - [Error Taxonomy](./error-taxonomy.md) -- Error types for MCP/sidecar/tool failures
-- [MVP Specification](/product/mvp-specification) -- F-002 (sidecar lifecycle), F-012 (MCP tool server)
-- [Interaction Patterns](/ui/interaction-patterns) -- Tool call display, error states
+- [MVP Specification](DOC-042) -- F-002 (sidecar lifecycle), F-012 (MCP tool server)
+- [Interaction Patterns](DOC-053) -- Tool call display, error states

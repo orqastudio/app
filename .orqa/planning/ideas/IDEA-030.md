@@ -11,7 +11,8 @@ pillars:
 research-needed:
   - Verify config-only change works without code changes
   - Assess whether doc categories become their own governance concern
----## Motivation
+---
+## Motivation
 
 The collapsible tree navigation for documentation is harder to use
 than the dual-level navigation (group + type) that other sections

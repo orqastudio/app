@@ -18,38 +18,38 @@ Architecture decisions for OrqaStudio™. Each decision is numbered AD-NNN and i
 
 | ID | Title | Status | Category | Artifact |
 |----|-------|--------|----------|----------|
-| AD-001 | Thick Backend Architecture | accepted | architecture | `.orqa/governance/decisions/AD-001.md` |
-| AD-002 | IPC Boundary Design | accepted | architecture | `.orqa/governance/decisions/AD-002.md` |
-| AD-003 | Error Propagation via Result Types | accepted | architecture | `.orqa/governance/decisions/AD-003.md` |
-| AD-004 | Svelte 5 Runes Only | accepted | frontend | `.orqa/governance/decisions/AD-004.md` |
-| AD-005 | SQLite for All Structured Persistence | superseded | persistence | `.orqa/governance/decisions/AD-005.md` |
-| AD-006 | Component Purity | accepted | frontend | `.orqa/governance/decisions/AD-006.md` |
-| AD-007 | Agent SDK Sidecar Integration | accepted | integration | `.orqa/governance/decisions/AD-007.md` |
-| AD-008 | Max Subscription Authentication | accepted | integration | `.orqa/governance/decisions/AD-008.md` |
-| AD-009 | Streaming Pipeline | accepted | architecture | `.orqa/governance/decisions/AD-009.md` |
-| AD-010 | Tool Implementation as MCP | accepted | integration | `.orqa/governance/decisions/AD-010.md` |
-| AD-011 | Security Model | accepted | security | `.orqa/governance/decisions/AD-011.md` |
-| AD-012 | Tauri Plugin Selections | accepted | dependencies | `.orqa/governance/decisions/AD-012.md` |
-| AD-013 | Frontend Library Selections | accepted | dependencies | `.orqa/governance/decisions/AD-013.md` |
-| AD-014 | Persistence Architecture | accepted | persistence | `.orqa/governance/decisions/AD-014.md` |
-| AD-015 | Governance Artifact Format | superseded | architecture | `.orqa/governance/decisions/AD-015.md` |
-| AD-016 | Onboarding Strategy | accepted | ux | `.orqa/governance/decisions/AD-016.md` |
-| AD-017 | Composability Principle | accepted | architecture | `.orqa/governance/decisions/AD-017.md` |
-| AD-018 | Four-Zone VS Code-Style Layout | superseded | ux | `.orqa/governance/decisions/AD-018.md` |
-| AD-019 | Three-Zone + Nav Sub-Panel Layout | accepted | ux | `.orqa/governance/decisions/AD-019.md` |
-| AD-020 | Documentation Browsing Is Project-Scoped and Filesystem-Driven | accepted | ux | `.orqa/governance/decisions/AD-020.md` |
-| AD-021 | .orqa/ as Single Source of Truth | accepted | governance | `.orqa/governance/decisions/AD-021.md` |
-| AD-022 | Config-Driven Artifact Scanning | accepted | governance | `.orqa/governance/decisions/AD-022.md` |
-| AD-023 | Artifact Schema Simplification — Plans Merged Into Research | accepted | governance | `.orqa/governance/decisions/AD-023.md` |
-| AD-024 | Native Search Engine (DuckDB + ONNX Embeddings + DirectML) | accepted | architecture | `.orqa/governance/decisions/AD-024.md` |
-| AD-025 | Provider-Agnostic AI Integration | accepted | architecture | `.orqa/governance/decisions/AD-025.md` |
-| AD-026 | Domain Service Extraction Pattern | accepted | architecture | `.orqa/governance/decisions/AD-026.md` |
-| AD-027 | Vision Evolution — Domain-Agnostic Clarity Engine | accepted | product | `.orqa/governance/decisions/AD-027.md` |
-| AD-028 | Three-Tier Skill Loading — Agent, Orchestrator, Wrapper | accepted | governance | `.orqa/governance/decisions/AD-028.md` |
-| AD-029 | Universal Roles, Domain-Specific Skills | accepted | governance | `.orqa/governance/decisions/AD-029.md` |
-| AD-030 | Skill-Driven Project Initialisation | accepted | governance | `.orqa/governance/decisions/AD-030.md` |
-| AD-031 | Pillars as First-Class Planning Artifacts | accepted | governance | `.orqa/governance/decisions/AD-031.md` |
-| AD-032 | SQLite for Conversation Persistence Only | accepted | architecture | `.orqa/governance/decisions/AD-032.md` |
+| [AD-001](AD-001) | Thick Backend Architecture | accepted | architecture | `.orqa/governance/decisions/[AD-001](AD-001).md` |
+| [AD-002](AD-002) | IPC Boundary Design | accepted | architecture | `.orqa/governance/decisions/[AD-002](AD-002).md` |
+| [AD-003](AD-003) | Error Propagation via Result Types | accepted | architecture | `.orqa/governance/decisions/[AD-003](AD-003).md` |
+| [AD-004](AD-004) | Svelte 5 Runes Only | accepted | frontend | `.orqa/governance/decisions/[AD-004](AD-004).md` |
+| [AD-005](AD-005) | SQLite for All Structured Persistence | superseded | persistence | `.orqa/governance/decisions/[AD-005](AD-005).md` |
+| [AD-006](AD-006) | Component Purity | accepted | frontend | `.orqa/governance/decisions/[AD-006](AD-006).md` |
+| [AD-007](AD-007) | Agent SDK Sidecar Integration | accepted | integration | `.orqa/governance/decisions/[AD-007](AD-007).md` |
+| [AD-008](AD-008) | Max Subscription Authentication | accepted | integration | `.orqa/governance/decisions/[AD-008](AD-008).md` |
+| [AD-009](AD-009) | Streaming Pipeline | accepted | architecture | `.orqa/governance/decisions/[AD-009](AD-009).md` |
+| [AD-010](AD-010) | Tool Implementation as MCP | accepted | integration | `.orqa/governance/decisions/[AD-010](AD-010).md` |
+| [AD-011](AD-011) | Security Model | accepted | security | `.orqa/governance/decisions/[AD-011](AD-011).md` |
+| [AD-012](AD-012) | Tauri Plugin Selections | accepted | dependencies | `.orqa/governance/decisions/[AD-012](AD-012).md` |
+| [AD-013](AD-013) | Frontend Library Selections | accepted | dependencies | `.orqa/governance/decisions/[AD-013](AD-013).md` |
+| [AD-014](AD-014) | Persistence Architecture | accepted | persistence | `.orqa/governance/decisions/[AD-014](AD-014).md` |
+| [AD-015](AD-015) | Governance Artifact Format | superseded | architecture | `.orqa/governance/decisions/[AD-015](AD-015).md` |
+| [AD-016](AD-016) | Onboarding Strategy | accepted | ux | `.orqa/governance/decisions/[AD-016](AD-016).md` |
+| [AD-017](AD-017) | Composability Principle | accepted | architecture | `.orqa/governance/decisions/[AD-017](AD-017).md` |
+| [AD-018](AD-018) | Four-Zone VS Code-Style Layout | superseded | ux | `.orqa/governance/decisions/[AD-018](AD-018).md` |
+| [AD-019](AD-019) | Three-Zone + Nav Sub-Panel Layout | accepted | ux | `.orqa/governance/decisions/[AD-019](AD-019).md` |
+| [AD-020](AD-020) | Documentation Browsing Is Project-Scoped and Filesystem-Driven | accepted | ux | `.orqa/governance/decisions/[AD-020](AD-020).md` |
+| [AD-021](AD-021) | .orqa/ as Single Source of Truth | accepted | governance | `.orqa/governance/decisions/[AD-021](AD-021).md` |
+| [AD-022](AD-022) | Config-Driven Artifact Scanning | accepted | governance | `.orqa/governance/decisions/[AD-022](AD-022).md` |
+| [AD-023](AD-023) | Artifact Schema Simplification — Plans Merged Into Research | accepted | governance | `.orqa/governance/decisions/[AD-023](AD-023).md` |
+| [AD-024](AD-024) | Native Search Engine (DuckDB + ONNX Embeddings + DirectML) | accepted | architecture | `.orqa/governance/decisions/[AD-024](AD-024).md` |
+| [AD-025](AD-025) | Provider-Agnostic AI Integration | accepted | architecture | `.orqa/governance/decisions/[AD-025](AD-025).md` |
+| [AD-026](AD-026) | Domain Service Extraction Pattern | accepted | architecture | `.orqa/governance/decisions/[AD-026](AD-026).md` |
+| [AD-027](AD-027) | Vision Evolution — Domain-Agnostic Clarity Engine | accepted | product | `.orqa/governance/decisions/[AD-027](AD-027).md` |
+| [AD-028](AD-028) | Three-Tier Skill Loading — Agent, Orchestrator, Wrapper | accepted | governance | `.orqa/governance/decisions/[AD-028](AD-028).md` |
+| [AD-029](AD-029) | Universal Roles, Domain-Specific Skills | accepted | governance | `.orqa/governance/decisions/[AD-029](AD-029).md` |
+| [AD-030](AD-030) | Skill-Driven Project Initialisation | accepted | governance | `.orqa/governance/decisions/[AD-030](AD-030).md` |
+| [AD-031](AD-031) | Pillars as First-Class Planning Artifacts | accepted | governance | `.orqa/governance/decisions/[AD-031](AD-031).md` |
+| [AD-032](AD-032) | SQLite for Conversation Persistence Only | accepted | architecture | `.orqa/governance/decisions/[AD-032](AD-032).md` |
 
 ## How to Read This Table
 

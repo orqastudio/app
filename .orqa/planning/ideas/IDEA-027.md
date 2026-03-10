@@ -18,7 +18,8 @@ research-needed:
   - Evaluate building a custom Claude Code MCP plugin for CLI enforcement parity
   - Design HOOK-NNN identifiers for app-managed hooks (completing the promotion chain IMPL → RULE → HOOK)
 promoted-to: null
----## Problem
+---
+## Problem
 
 OrqaStudio currently relies on Claude Code hooks (`.claude/settings.json`) for process enforcement — session-start checks, pre-commit reminders. But these only work in the CLI context. The app needs its own hooks layer that:
 
@@ -54,4 +55,4 @@ The lesson documents the pattern, the rule codifies it, and the hook enforces it
 
 ## Origin
 
-UAT Round 1 (EPIC-043): F18 — Hooks section shows empty despite Claude hooks existing
+UAT Round 1 ([EPIC-043](EPIC-043)): F18 — Hooks section shows empty despite Claude hooks existing

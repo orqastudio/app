@@ -32,6 +32,6 @@ In OrqaStudio, Required Reading compliance is enforced via process checks (Phase
 
 ## Related Rules
 
-- RULE-008 (documentation-first) — documentation is the specification; code is the implementation
-- RULE-006 (coding-standards) — standards that agents must read
-- RULE-002 (architecture-decisions) — decisions that agents must comply with
+- [RULE-008](RULE-008) (documentation-first) — documentation is the specification; code is the implementation
+- [RULE-006](RULE-006) (coding-standards) — standards that agents must read
+- [RULE-002](RULE-002) (architecture-decisions) — decisions that agents must comply with

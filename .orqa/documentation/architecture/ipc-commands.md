@@ -6,11 +6,11 @@ created: "2026-03-02"
 updated: "2026-03-09"
 ---
 
-**Date:** 2026-03-02 | **Status:** Phase 0e specification | **References:** [Tauri v2 Research](/research/tauri-v2) (AD-002, AD-012), [MVP Specification](/product/mvp-specification)
+**Date:** 2026-03-02 | **Status:** Phase 0e specification | **References:** [Tauri v2 Research](RES-007) ([AD-002](AD-002), [AD-012](AD-012)), [MVP Specification](DOC-042)
 
-Complete catalog of `#[tauri::command]` functions for Phase 1 (MVP). Every frontend-to-backend call crosses the IPC boundary through one of these commands. Streaming data uses `Channel<T>` (AD-009) rather than `invoke()`.
+Complete catalog of `#[tauri::command]` functions for Phase 1 (MVP). Every frontend-to-backend call crosses the IPC boundary through one of these commands. Streaming data uses `Channel<T>` ([AD-009](AD-009)) rather than `invoke()`.
 
-All commands return `Result<T, OrqaError>` where `OrqaError` is a `thiserror`-derived enum serialized as a JSON object with `code` and `message` fields (AD-003).
+All commands return `Result<T, OrqaError>` where `OrqaError` is a `thiserror`-derived enum serialized as a JSON object with `code` and `message` fields ([AD-003](AD-003)).
 
 ---
 
@@ -1015,7 +1015,7 @@ Get the current status of all startup initialization tasks (sidecar launch, embe
 
 ## Channel Event Types (Streaming)
 
-These are **not** commands. They are the event payloads sent over `Channel<StreamEvent>` during active streaming (AD-009). The frontend registers a callback when calling `stream_send_message` and receives these events in order.
+These are **not** commands. They are the event payloads sent over `Channel<StreamEvent>` during active streaming ([AD-009](AD-009)). The frontend registers a callback when calling `stream_send_message` and receives these events in order.
 
 ### `StreamEvent` Enum
 
@@ -1554,7 +1554,7 @@ await invoke("stream_send_message", {
 
 ## Related Documents
 
-- [SQLite Schema](/architecture/sqlite-schema) — Table definitions these commands operate on
-- [Architecture Decisions](/architecture/decisions) — AD-002 (IPC boundary), AD-003 (errors), AD-009 (streaming)
-- [MVP Specification](/product/mvp-specification) — Features F-001 through F-013 that these commands support
-- [Information Architecture](/product/information-architecture) — UI views that call these commands
+- [SQLite Schema](DOC-013) — Table definitions these commands operate on
+- [Architecture Decisions](DOC-001) — [AD-002](AD-002) (IPC boundary), [AD-003](AD-003) (errors), [AD-009](AD-009) (streaming)
+- [MVP Specification](DOC-042) — Features F-001 through F-013 that these commands support
+- [Information Architecture](DOC-040) — UI views that call these commands

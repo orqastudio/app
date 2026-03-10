@@ -101,7 +101,7 @@ All governance artifacts (agents, skills, rules, hooks) carry a `layer` field th
 
 ### Governance Concept Definitions
 
-Each governance concept type has a distinct purpose. See AD-029 for the full decision.
+Each governance concept type has a distinct purpose. See [AD-029](AD-029) for the full decision.
 
 | Concept | Definition | Test |
 |---------|-----------|------|
@@ -123,7 +123,7 @@ Each governance concept type has a distinct purpose. See AD-029 for the full dec
 
 ### Universal Agent Roles
 
-Agents are portable roles that work across any project type. Domain-specific capability is loaded via skills. See AD-029.
+Agents are portable roles that work across any project type. Domain-specific capability is loaded via skills. See [AD-029](AD-029).
 
 | Role | Purpose |
 |------|---------|
@@ -324,7 +324,7 @@ scoring:                          # Priority dimension scores
 | `status` | Yes | enum | `draft`, `ready`, `in-progress`, `review`, `done` |
 | `priority` | Yes | enum | `P1`, `P2`, `P3` — derived from score |
 | `milestone` | Yes | string | Milestone ID this belongs to |
-| `pillars` | Yes | string[] | Pillar IDs this epic serves (e.g., `[PILLAR-001, PILLAR-002]`) |
+| `pillars` | Yes | string[] | Pillar IDs this epic serves (e.g., `[[PILLAR-001](PILLAR-001), [PILLAR-002](PILLAR-002)]`) |
 | `description` | Yes | string | Brief description of the epic |
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
@@ -334,7 +334,7 @@ scoring:                          # Priority dimension scores
 | `depends-on` | No | string[] | `EPIC-NNN` IDs that must be done before this can start |
 | `blocks` | No | string[] | `EPIC-NNN` IDs that this epic blocks |
 | `deadline` | No | date/null | ISO date for time-constrained epics, null otherwise |
-| `scoring` | Yes | object | Dimension scores for priority calculation (includes computed `score` field). Required for now — see IDEA-035 for configurable scoring. |
+| `scoring` | Yes | object | Dimension scores for priority calculation (includes computed `score` field). Required for now — see [IDEA-035](IDEA-035) for configurable scoring. |
 
 **Task checklists in epics:** Tasks are listed as markdown checklists in the epic body. When a task needs its own detailed tracking (acceptance criteria, agent assignment, discussion), it graduates to a separate `TASK-NNN.md` file in `.orqa/tasks/`.
 
@@ -410,7 +410,7 @@ promoted-to: null                 # Epic ID if promoted, null otherwise
 | `id` | Yes | string | Auto-incrementing `IDEA-NNN` identifier |
 | `title` | Yes | string | Human-readable idea name |
 | `status` | Yes | enum | `captured`, `exploring`, `shaped`, `promoted`, `archived` |
-| `pillars` | Yes | string[] | Pillar IDs this idea serves (e.g., `[PILLAR-001, PILLAR-002]`) |
+| `pillars` | Yes | string[] | Pillar IDs this idea serves (e.g., `[[PILLAR-001](PILLAR-001), [PILLAR-002](PILLAR-002)]`) |
 | `description` | Yes | string | Brief description of the idea |
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
@@ -455,7 +455,7 @@ The decision body follows the standard structure: **Context** (what situation pr
 
 Research documents cover investigations, design explorations, architecture spikes, and implementation plans. They replaced the Plan artifact type — the distinction between "investigating something" and "designing an implementation approach" was artificial; both are research activities that produce artifacts referenced by epics and decisions.
 
-Research documents are referenced via `research-refs` on epics, tasks, and decisions using their `RES-NNN` identifier. Traceability flows from consumers (epics, decisions) pointing at research — research docs do not maintain reverse links. See IDEA-032 for the planned traceability graph that will derive these relationships automatically.
+Research documents are referenced via `research-refs` on epics, tasks, and decisions using their `RES-NNN` identifier. Traceability flows from consumers (epics, decisions) pointing at research — research docs do not maintain reverse links. See [IDEA-032](IDEA-032) for the planned traceability graph that will derive these relationships automatically.
 
 ```yaml
 ---
@@ -538,7 +538,7 @@ promoted-from: null               # IMPL-NNN if promoted from a lesson, null oth
 | `slug` | Yes | string | Human-readable slug (original filename without `.md`) for reference |
 | `layer` | Yes | enum | `canon` (platform), `project` (project-specific), `plugin` (ecosystem) |
 | `status` | Yes | enum | `active` (enforced) or `inactive` (preserved but not enforced) |
-| `scope` | Yes | string | What the rule governs: `system`, `domain`, `project`, `role`, `artifact`. Temporary — will be replaced by structured enforcement model (IDEA-034). |
+| `scope` | Yes | string | What the rule governs: `system`, `domain`, `project`, `role`, `artifact`. Temporary — will be replaced by structured enforcement model ([IDEA-034](IDEA-034)). |
 | `title` | Yes | string | Human-readable rule title |
 | `description` | Yes | string | Brief description of what the rule enforces |
 | `created` | Yes | date | ISO date of creation |
@@ -590,7 +590,7 @@ Body templates are enforced at two levels:
 1. **Documentation** — this section and the schema.json files define the templates. Agents follow them when creating artifacts.
 2. **Linting** — the pre-commit hook checks for required `## Heading` patterns in artifact bodies, reading template definitions from each type's schema.json.
 
-A third level (app-assisted template pre-population in an artifact editor) is deferred to EPIC-004.
+A third level (app-assisted template pre-population in an artifact editor) is deferred to [EPIC-004](EPIC-004).
 
 ### Schema Location
 
@@ -765,15 +765,15 @@ Priority dimensions, weights, and bands are stored in `.orqa/project.json` under
 
 All artifact IDs auto-increment within their type:
 
-- `PILLAR-001`, `PILLAR-002`, ...
-- `MS-001`, `MS-002`, ...
-- `EPIC-001`, `EPIC-002`, ...
-- `TASK-001`, `TASK-002`, ...
-- `IDEA-001`, `IDEA-002`, ...
-- `IMPL-001`, `IMPL-002`, ...
-- `AD-001`, `AD-002`, ...
-- `RES-001`, `RES-002`, ...
-- `RULE-001`, `RULE-002`, ...
+- `[PILLAR-001](PILLAR-001)`, `[PILLAR-002](PILLAR-002)`, ...
+- `[MS-001](MS-001)`, `[MS-002](MS-002)`, ...
+- `[EPIC-001](EPIC-001)`, `[EPIC-002](EPIC-002)`, ...
+- `[TASK-001](TASK-001)`, `[TASK-002](TASK-002)`, ...
+- `[IDEA-001](IDEA-001)`, `[IDEA-002](IDEA-002)`, ...
+- `[IMPL-001](IMPL-001)`, `[IMPL-002](IMPL-002)`, ...
+- `[AD-001](AD-001)`, `[AD-002](AD-002)`, ...
+- `[RES-001](RES-001)`, `[RES-002](RES-002)`, ...
+- `[RULE-001](RULE-001)`, `[RULE-002](RULE-002)`, ...
 
 IDs are stable — never reused after deletion. The next ID is determined by scanning existing files in the directory.
 
@@ -789,8 +789,8 @@ IDs are stable — never reused after deletion. The next ID is determined by sca
 
 | Layer | What It Provides | When Built |
 |-------|-----------------|------------|
-| **Document browser** | Navigate and read `.orqa/` artifacts as rendered markdown | Dogfooding (EPIC-005) |
-| **Frontmatter sidebar** | Structured metadata displayed alongside the document | Dogfooding (EPIC-005) |
+| **Document browser** | Navigate and read `.orqa/` artifacts as rendered markdown | Dogfooding ([EPIC-005](EPIC-005)) |
+| **Frontmatter sidebar** | Structured metadata displayed alongside the document | Dogfooding ([EPIC-005](EPIC-005)) |
 | **Status filtering** | Filter artifacts by status, priority, milestone, type | MVP |
 | **Board views** | Kanban-style board projecting epic/task status | MVP |
 | **Priority dashboard** | Scored and ranked backlog with band indicators | MVP |

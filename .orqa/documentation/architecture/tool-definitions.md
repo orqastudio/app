@@ -6,7 +6,7 @@ created: "2026-03-02"
 updated: "2026-03-04"
 ---
 
-**Date:** 2026-03-02 | **Status:** Phase 0e specification | **References:** [Agent SDK Integration Research](/research/agent-sdk-integration) (AD-010)
+**Date:** 2026-03-02 | **Status:** Phase 0e specification | **References:** [Agent SDK Integration Research](RES-002) ([AD-010](AD-010))
 
 This document defines the six core tools that OrqaStudio™ exposes to the Agent SDK sidecar as a custom MCP server. Each tool is implemented natively in Rust, registered via `createSdkMcpServer()`, and rendered in the conversation UI as a collapsible tool call card. The Agent SDK's built-in tools are disabled (`tools: []`) so that all tool execution flows through OrqaStudio.
 
@@ -773,7 +773,7 @@ UI truncation is purely a rendering concern -- the full result is stored in the 
 
 ## Security Model
 
-All tools operate within OrqaStudio's security model defined in AD-011. Security is enforced at the Rust level before any tool executes.
+All tools operate within OrqaStudio's security model defined in [AD-011](AD-011). Security is enforced at the Rust level before any tool executes.
 
 ### Path Validation
 
@@ -783,7 +783,7 @@ Every tool that accepts a file path performs the following validation chain:
 2. **Canonicalization:** Resolve symlinks and `..` components via `std::fs::canonicalize()` to prevent path traversal attacks (e.g., `/project/../../../etc/passwd`).
 3. **Scope check:** The canonicalized path must fall within one of:
    - The active project root directory (primary scope).
-   - `$HOME` (broad scope, per AD-011), excluding denied paths.
+   - `$HOME` (broad scope, per [AD-011](AD-011)), excluding denied paths.
 4. **Denied path check:** Deny always takes precedence over allow. The following paths are always denied:
 
 | Denied Path | Reason |
@@ -834,8 +834,8 @@ To prevent runaway tool loops (e.g., Claude repeatedly calling Bash in an infini
 
 ## Related Documents
 
-- [Architecture Decisions](/architecture/decisions) -- AD-010 (tool implementation as MCP), AD-011 (security model)
-- [MVP Specification](/product/mvp-specification) -- F-004 (tool call display), F-012 (MCP tool server)
-- [Conversation View Wireframe](/wireframes/conversation-view) -- Tool call card visual specifications
-- [Streaming Pipeline](/architecture/decisions) -- AD-009 (how tool events flow through the system)
-- [SQLite Schema](/architecture/sqlite-schema) -- `message_blocks` table where tool call/result data is stored
+- [Architecture Decisions](DOC-001) -- [AD-010](AD-010) (tool implementation as MCP), [AD-011](AD-011) (security model)
+- [MVP Specification](DOC-042) -- F-004 (tool call display), F-012 (MCP tool server)
+- [Conversation View Wireframe](DOC-058) -- Tool call card visual specifications
+- [Streaming Pipeline](DOC-001) -- [AD-009](AD-009) (how tool events flow through the system)
+- [SQLite Schema](DOC-013) -- `message_blocks` table where tool call/result data is stored

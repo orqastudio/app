@@ -61,5 +61,5 @@ Use `search_semantic` to find similar components across the *entire* frontend, n
 
 ## Related Rules
 
-- RULE-006 (coding-standards) — component size limits and variant patterns
-- RULE-005 (chunkhound-usage) — semantic search for finding existing implementations
+- [RULE-006](RULE-006) (coding-standards) — component size limits and variant patterns
+- [RULE-005](RULE-005) (chunkhound-usage) — semantic search for finding existing implementations

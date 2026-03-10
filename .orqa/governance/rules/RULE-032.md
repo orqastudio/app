@@ -61,6 +61,6 @@ All three share the same `schema.json` files — one source of truth, three cons
 
 ## Related Rules
 
-- RULE-004 (artifact-lifecycle) — status transitions and promotion gates
-- RULE-003 (artifact-config-integrity) — config paths must match disk
-- RULE-027 (structure-before-work) — artifacts must exist before implementation
+- [RULE-004](RULE-004) (artifact-lifecycle) — status transitions and promotion gates
+- [RULE-003](RULE-003) (artifact-config-integrity) — config paths must match disk
+- [RULE-027](RULE-027) (structure-before-work) — artifacts must exist before implementation

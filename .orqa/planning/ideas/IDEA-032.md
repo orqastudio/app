@@ -15,7 +15,8 @@ research-needed:
   - Plugin API for consuming the graph (query interface, event hooks)
   - Visualization options (force-directed, hierarchical, timeline)
 promoted-to: null
----## Concept
+---
+## Concept
 
 Artifacts already reference each other via structured fields (`research-refs`, `milestone`, `epic`, `depends-on`, `promoted-to`, `supersedes`, etc.). Today these are one-directional — the consumer points at the source, but the source doesn't know who references it.
 

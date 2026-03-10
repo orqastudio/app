@@ -59,7 +59,7 @@ You are the **orchestrator**. Your operating model:
 
 ---
 
-## Universal Agent Roles (AD-029)
+## Universal Agent Roles ([AD-029](AD-029))
 
 Agents are portable roles that work across any project type. Domain-specific
 capability is loaded via skills, not baked into agent identity.

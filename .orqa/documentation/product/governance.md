@@ -89,7 +89,7 @@ OrqaStudio's governance framework is built from five concept types. Each serves 
 | **Skill** | Knowledge — defines *what* someone knows | Provides domain expertise, patterns, decision frameworks | `rust-async-patterns`, `diagnostic-methodology`, `project-setup` |
 | **Rule** | A constraint — defines *what must or must not happen* | Enforces standards, prevents known failure patterns | `no-stubs`, `error-ownership`, `documentation-first` |
 | **Hook** | Automation — runs at process events | Executes checks, loads context, enforces gates | Session start, pre-commit, skill loading |
-| **Lesson** | A learned pattern — captures *what was discovered* | Records mistakes, non-obvious behaviors, reusable insights | `IMPL-001: unwrap causes panics in sidecar` |
+| **Lesson** | A learned pattern — captures *what was discovered* | Records mistakes, non-obvious behaviors, reusable insights | `[IMPL-001](IMPL-001): unwrap causes panics in sidecar` |
 
 ### Agent vs Skill Decision Framework
 

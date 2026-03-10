@@ -1,5 +1,6 @@
 <script lang="ts">
 	import "../app.css";
+	import "svelte-highlight/styles/github-dark-dimmed.css";
 	import * as Tooltip from "$lib/components/ui/tooltip";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 

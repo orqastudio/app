@@ -7,7 +7,7 @@ updated: "2026-03-04"
 ---
 
 **Date:** 2026-03-02 | **Updated:** 2026-03-04 | **Status:** Aligned with Phase 1 implementation
-**References:** [Persistence Research](/research/persistence) (AD-014), [Design Tokens Research](/research/design-tokens)
+**References:** [Persistence Research](RES-006) ([AD-014](AD-014)), [Design Tokens Research](RES-003)
 
 Full table definitions, indexes, FTS5 configuration, and migration strategy for `orqa.db`.
 
@@ -237,7 +237,7 @@ CREATE TABLE IF NOT EXISTS settings (
 
 ### project_themes
 
-Per-project design token storage. See [Design Tokens Research](/research/design-tokens) Q4.
+Per-project design token storage. See [Design Tokens Research](RES-003) Q4.
 
 ```sql
 CREATE TABLE IF NOT EXISTS project_themes (

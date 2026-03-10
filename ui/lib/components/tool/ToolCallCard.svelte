@@ -96,7 +96,7 @@
 			{#if displayInput}
 				<div>
 					<p class="mb-1 text-xs font-medium text-muted-foreground">Input</p>
-					<CodeBlock code={displayInput} language="json" />
+					<CodeBlock text={displayInput} lang="json" />
 					{#if inputIsTruncated}
 						<button
 							class="mt-1 text-xs text-muted-foreground hover:text-foreground"
@@ -116,7 +116,7 @@
 					<p class="mb-1 text-xs font-medium text-muted-foreground">
 						{isError ? "Error" : "Output"}
 					</p>
-					<CodeBlock code={displayOutput} language={isError ? "" : "json"} />
+					<CodeBlock text={displayOutput} lang={isError ? "" : "json"} />
 					{#if outputIsTruncated}
 						<button
 							class="mt-1 text-xs text-muted-foreground hover:text-foreground"

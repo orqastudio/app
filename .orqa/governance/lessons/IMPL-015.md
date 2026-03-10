@@ -13,12 +13,12 @@ promoted-to: RULE-013
 
 Over multiple sessions, 237 files of changes accumulated on main without being
 committed. This included app code changes (artifact scanning system), governance
-restructuring (EPIC-045), documentation migration, planning artifacts, and
+restructuring ([EPIC-045](EPIC-045)), documentation migration, planning artifacts, and
 architecture decisions. The user discovered this when reviewing priorities.
 
 ## Why It Was Unexpected
 
-RULE-013 (`git-workflow`) requires worktree-based development and regular commits.
+[RULE-013](RULE-013) (`git-workflow`) requires worktree-based development and regular commits.
 The session-start hook checks for stashes and worktrees but does NOT check for
 uncommitted changes on main. Multiple sessions of governance-only work (rules,
 agents, skills, documentation) bypassed the worktree requirement because the
@@ -44,7 +44,7 @@ orchestrator is permitted to edit governance artifacts directly.
 2. Session-end (Stop hook) should prompt to commit if uncommitted changes exist
 3. A rule should require committing governance changes at natural boundaries
    (end of epic, end of task batch, end of session)
-4. RULE-013 (`git-workflow`) should explicitly address governance-only work patterns
+4. [RULE-013](RULE-013) (`git-workflow`) should explicitly address governance-only work patterns
    where worktrees aren't used
 
 ## Pattern

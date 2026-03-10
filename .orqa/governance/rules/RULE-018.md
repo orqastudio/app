@@ -82,7 +82,7 @@ If the same concept has two IDs in any of these locations, that is a bug — not
 
 ## Related Rules
 
-- RULE-010 (end-to-end-completeness) — type consistency must hold across all layers in the same commit
-- RULE-012 (error-ownership) — a type mismatch is an error you own; fix it, don't work around it
-- RULE-020 (no-stubs) — alias entries are a form of fake data hiding real gaps
-- RULE-005 (chunkhound-usage) — use `search_regex` to find all usages of an identifier before renaming or removing it
+- [RULE-010](RULE-010) (end-to-end-completeness) — type consistency must hold across all layers in the same commit
+- [RULE-012](RULE-012) (error-ownership) — a type mismatch is an error you own; fix it, don't work around it
+- [RULE-020](RULE-020) (no-stubs) — alias entries are a form of fake data hiding real gaps
+- [RULE-005](RULE-005) (chunkhound-usage) — use `search_regex` to find all usages of an identifier before renaming or removing it

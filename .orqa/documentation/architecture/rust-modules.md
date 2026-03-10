@@ -6,9 +6,9 @@ created: "2026-03-02"
 updated: "2026-03-09"
 ---
 
-**Date:** 2026-03-02 | **Updated:** 2026-03-04 | **Status:** Aligned with Phase 1 implementation | **References:** [Claude Integration](/research/claude-integration), [Tauri v2](/research/tauri-v2), [Persistence](/research/persistence)
+**Date:** 2026-03-02 | **Updated:** 2026-03-04 | **Status:** Aligned with Phase 1 implementation | **References:** [Claude Integration](RES-002), [Tauri v2](RES-007), [Persistence](RES-006)
 
-Module tree, domain types, command handlers, and dependency graph for `src-tauri/src/`. Rust owns the domain model (AD-001). All functions return `Result<T, E>` (AD-003). No `unwrap()`, `expect()`, or `panic!()` in production code.
+Module tree, domain types, command handlers, and dependency graph for `src-tauri/src/`. Rust owns the domain model ([AD-001](AD-001)). All functions return `Result<T, E>` ([AD-003](AD-003)). No `unwrap()`, `expect()`, or `panic!()` in production code.
 
 ---
 
@@ -111,11 +111,11 @@ Generic startup task tracker. Tasks are registered with an ID and label, then up
 
 ### `domain/`
 
-Pure domain model types. No dependencies on Tauri, rusqlite, or serde_json beyond derive macros. This module is the source of truth for what OrqaStudio™'s data looks like (AD-001). Other modules depend on `domain/`; it depends on nothing else. Includes `project_scanner.rs` for filesystem walking and `project_settings.rs` for file-based project configuration.
+Pure domain model types. No dependencies on Tauri, rusqlite, or serde_json beyond derive macros. This module is the source of truth for what OrqaStudio™'s data looks like ([AD-001](AD-001)). Other modules depend on `domain/`; it depends on nothing else. Includes `project_scanner.rs` for filesystem walking and `project_settings.rs` for file-based project configuration.
 
 ### `repo/`
 
-One repository per entity (AD-014). Each repo struct takes a database connection reference and provides typed methods for CRUD operations, queries, and FTS search. Repos return domain types, never raw SQL rows. All SQL is isolated to this layer. Currently 6 repos: project, session, message, artifact, settings, theme. (Spec'd repos for tasks, lessons, scanner_results, and metrics are deferred to later phases.)
+One repository per entity ([AD-014](AD-014)). Each repo struct takes a database connection reference and provides typed methods for CRUD operations, queries, and FTS search. Repos return domain types, never raw SQL rows. All SQL is isolated to this layer. Currently 6 repos: project, session, message, artifact, settings, theme. (Spec'd repos for tasks, lessons, scanner_results, and metrics are deferred to later phases.)
 
 ### `commands/`
 
@@ -334,7 +334,7 @@ pub struct GovernanceCounts {
 
 ### `domain/provider_event.rs`
 
-The provider-neutral streaming protocol (AD-017). Every sidecar implementation produces these events.
+The provider-neutral streaming protocol ([AD-017](AD-017)). Every sidecar implementation produces these events.
 
 ```rust
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -387,7 +387,7 @@ pub enum ProviderEvent {
 
 ## 4. Command Handlers
 
-Every command is registered in `lib.rs` via `tauri::Builder::invoke_handler(tauri::generate_handler![...])`. All return `Result<T, OrqaError>`. See [IPC Commands](/architecture/ipc-commands) for full parameter and return type documentation.
+Every command is registered in `lib.rs` via `tauri::Builder::invoke_handler(tauri::generate_handler![...])`. All return `Result<T, OrqaError>`. See [IPC Commands](DOC-005) for full parameter and return type documentation.
 
 ### `commands/project_commands.rs`
 
@@ -485,7 +485,7 @@ Every command is registered in `lib.rs` via `tauri::Builder::invoke_handler(taur
 
 ---
 
-## 5. Repository Pattern (AD-014)
+## 5. Repository Pattern ([AD-014](AD-014))
 
 One repository struct per database entity. Each repo is stateless — it borrows a connection reference for each operation.
 
@@ -555,7 +555,7 @@ pub struct ProjectUpdate {
 
 ---
 
-## 6. AI Provider / Sidecar Integration (AD-007, AD-009)
+## 6. AI Provider / Sidecar Integration ([AD-007](AD-007), [AD-009](AD-009))
 
 ### Sidecar Manager
 
@@ -605,7 +605,7 @@ pub fn read_event(line: &str) -> Result<ProviderEvent> {
 }
 ```
 
-### Streaming Pipeline (AD-009)
+### Streaming Pipeline ([AD-009](AD-009))
 
 ```
 AI Provider API (SSE, via Agent SDK)
@@ -711,7 +711,7 @@ pub enum SidecarResponse {
 
 ---
 
-## 7. Error Types (AD-003)
+## 7. Error Types ([AD-003](AD-003))
 
 ### OrqaError
 
@@ -940,7 +940,7 @@ No business logic in the handler. No `unwrap()`. No `panic!()`.
 
 ## Related Documents
 
-- [Architecture Decisions](/architecture/decisions) -- AD-001 through AD-018
-- [IPC Commands](/architecture/ipc-commands) -- Full parameter and return type documentation for all 39 commands
-- [SQLite Schema](/architecture/sqlite-schema) -- Full table definitions and migration strategy
-- [MVP Feature Specification](/product/mvp-specification) -- Phase 1 scope and acceptance criteria
+- [Architecture Decisions](DOC-001) -- [AD-001](AD-001) through [AD-018](AD-018)
+- [IPC Commands](DOC-005) -- Full parameter and return type documentation for all 39 commands
+- [SQLite Schema](DOC-013) -- Full table definitions and migration strategy
+- [MVP Feature Specification](DOC-042) -- Phase 1 scope and acceptance criteria

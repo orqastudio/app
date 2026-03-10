@@ -6,7 +6,7 @@ created: "2026-03-02"
 updated: "2026-03-09"
 ---
 
-**Date:** 2026-03-02 | **Status:** Phase 0e specification | **References:** [AI Provider Research](/research/claude-integration) (AD-007, AD-009)
+**Date:** 2026-03-02 | **Status:** Phase 0e specification | **References:** [AI Provider Research](RES-002) ([AD-007](AD-007), [AD-009](AD-009))
 
 End-to-end design for streaming AI responses through the provider sidecar, Rust backend, and into the Svelte UI. The sidecar implements a provider interface — currently using the Claude Agent SDK, with the architecture designed for additional providers. Covers the NDJSON protocol, parsing, event routing, token buffering, persistence, error handling, backpressure, reconnection, and cancellation.
 
@@ -66,7 +66,7 @@ Detailed flow with latency annotations:
                                                                     +------------------+
 ```
 
-The sidecar hop adds ~0.1-0.5ms per event, which is negligible compared to AI providers' typical 30-100ms per token generation time. `Channel<T>` is Tauri's recommended streaming mechanism — faster than `emit`/`listen` events, with ordered delivery and index-based sequencing (AD-009).
+The sidecar hop adds ~0.1-0.5ms per event, which is negligible compared to AI providers' typical 30-100ms per token generation time. `Channel<T>` is Tauri's recommended streaming mechanism — faster than `emit`/`listen` events, with ordered delivery and index-based sequencing ([AD-009](AD-009)).
 
 ---
 
@@ -720,7 +720,7 @@ export interface ContentBlock {
 {/each}
 ```
 
-Svelte 5's fine-grained reactivity means that when `block.content` changes, only that specific text node updates -- not the entire message tree. This is critical for avoiding layout thrashing during streaming (AD-004).
+Svelte 5's fine-grained reactivity means that when `block.content` changes, only that specific text node updates -- not the entire message tree. This is critical for avoiding layout thrashing during streaming ([AD-004](AD-004)).
 
 ---
 
@@ -967,7 +967,7 @@ This ensures no message is left in a permanently pending state after a crash.
 | Completion | Final UPDATE | Full content + `stream_status = 'complete'` |
 | Tool result | Immediate INSERT | New row for tool_result block |
 
-WAL mode (AD-005, see [SQLite Schema](/docs/architecture/sqlite-schema.md)) ensures the UI can read session data concurrently while streaming writes occur.
+WAL mode ([AD-005](AD-005), see [SQLite Schema](DOC-013)) ensures the UI can read session data concurrently while streaming writes occur.
 
 ---
 
@@ -1225,18 +1225,18 @@ The `stop_reason: "user_cancelled"` field distinguishes user-cancelled responses
 
 | Constraint | Solution | Reference |
 |-----------|----------|-----------|
-| Thick backend owns domain logic | Rust parses, buffers, and persists; Svelte only renders | AD-001 |
-| IPC via Tauri commands only | `invoke('send_message')` + `Channel<T>` for streaming | AD-002, AD-009 |
-| No panics in production | All parser errors logged and skipped, never fatal | AD-003 |
-| Svelte 5 runes only | `$state`, `$derived`, `$props` for all reactivity | AD-004 |
-| SQLite for persistence | Buffered writes every ~500ms, WAL mode for concurrency | AD-005 |
-| Provider-agnostic protocol | `ProviderEvent` enum is neutral; sidecar is swappable | AD-017 |
+| Thick backend owns domain logic | Rust parses, buffers, and persists; Svelte only renders | [AD-001](AD-001) |
+| IPC via Tauri commands only | `invoke('send_message')` + `Channel<T>` for streaming | [AD-002](AD-002), [AD-009](AD-009) |
+| No panics in production | All parser errors logged and skipped, never fatal | [AD-003](AD-003) |
+| Svelte 5 runes only | `$state`, `$derived`, `$props` for all reactivity | [AD-004](AD-004) |
+| SQLite for persistence | Buffered writes every ~500ms, WAL mode for concurrency | [AD-005](AD-005) |
+| Provider-agnostic protocol | `ProviderEvent` enum is neutral; sidecar is swappable | [AD-017](AD-017) |
 
 ---
 
 ## 12. Current Implementation Reference
 
-> **Note:** Sections 1–11 above reflect the original design specification. This section documents the actual implemented state of the streaming pipeline as of EPIC-001 (AI Transparency Wiring).
+> **Note:** Sections 1–11 above reflect the original design specification. This section documents the actual implemented state of the streaming pipeline as of [EPIC-001](EPIC-001) (AI Transparency Wiring).
 
 ### Implemented StreamEvent Enum
 
@@ -1309,7 +1309,7 @@ Fields:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `custom_prompt` | `string \| null` | User-supplied custom prompt prefix. Always `null` until EPIC-002 is implemented. |
+| `custom_prompt` | `string \| null` | User-supplied custom prompt prefix. Always `null` until [EPIC-002](EPIC-002) is implemented. |
 | `governance_prompt` | `string` | Full governance prompt built from project artifacts (CLAUDE.md, AGENTS.md, etc.). |
 | `total_chars` | `number` | Character count of the combined prompt. |
 
@@ -1326,8 +1326,8 @@ Fields:
 
 ### Future Work
 
-- **EPIC-002 (Custom System Prompt):** The `custom_prompt` field on `system_prompt_sent` will carry the user-supplied custom prompt prefix. Currently always `null`.
-- **EPIC-003 (Context Injection on Failed Resume):** When a provider session resume fails, Rust will load prior messages from SQLite and inject them into the sidecar conversation. The `ContextInjected` event emission already exists (EPIC-001) — EPIC-003 adds the actual injection mechanism.
+- **[EPIC-002](EPIC-002) (Custom System Prompt):** The `custom_prompt` field on `system_prompt_sent` will carry the user-supplied custom prompt prefix. Currently always `null`.
+- **[EPIC-003](EPIC-003) (Context Injection on Failed Resume):** When a provider session resume fails, Rust will load prior messages from SQLite and inject them into the sidecar conversation. The `ContextInjected` event emission already exists ([EPIC-001](EPIC-001)) — [EPIC-003](EPIC-003) adds the actual injection mechanism.
 
 ### Pillar Alignment
 

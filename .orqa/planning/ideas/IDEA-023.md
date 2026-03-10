@@ -17,7 +17,8 @@ research-needed:
   - Signal classification taxonomy
   - Privacy and data handling for external messages
 promoted-to: null
----## Problem
+---
+## Problem
 
 When a project becomes public, communication can arrive from many sources simultaneously.
 

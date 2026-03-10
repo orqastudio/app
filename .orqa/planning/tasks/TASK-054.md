@@ -38,8 +38,8 @@ acceptance:
 ---
 ## Reference
 
-- AD-030 defines the four setup skills and their responsibilities
-- AD-030 Section "The Four Setup Skills" has detailed specs for each
+- [AD-030](AD-030) defines the four setup skills and their responsibilities
+- [AD-030](AD-030) Section "The Four Setup Skills" has detailed specs for each
 
 ## What
 

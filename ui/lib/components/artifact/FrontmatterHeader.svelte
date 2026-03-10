@@ -2,6 +2,9 @@
 	import ArtifactLink from "./ArtifactLink.svelte";
 	import GateQuestions from "./GateQuestions.svelte";
 	import StatusIndicator from "$lib/components/shared/StatusIndicator.svelte";
+	import { Badge } from "$lib/components/ui/badge";
+	import CalendarPlusIcon from "@lucide/svelte/icons/calendar-plus";
+	import CalendarCheckIcon from "@lucide/svelte/icons/calendar-check";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 
 	let {
@@ -65,7 +68,7 @@
 	 */
 	const SKIP_FIELDS = new Set([
 		"id", "title", "description", "status", "priority", "scoring",
-		"bodyTemplate", "tools",
+		"bodyTemplate", "tools", "created", "updated",
 	]);
 
 	const DATE_FIELDS = new Set(["created", "updated", "deadline"]);
@@ -88,15 +91,19 @@
 	/**
 	 * CHIP_FIELDS: rendered as styled chips but NOT clickable links.
 	 */
-	const CHIP_FIELDS = new Set<string>([]);
+	const CHIP_FIELDS = new Set<string>(["layer", "scope", "model", "recurrence"]);
+
+	/** CODE_FIELDS: rendered as monospace inline code badges (e.g. file paths). */
+	const CODE_FIELDS = new Set<string>(["scope"]);
 
 	/** Classify a field key into its render type. */
-	type FieldType = "date" | "file-list" | "link" | "chip" | "generic";
+	type FieldType = "date" | "file-list" | "link" | "code" | "chip" | "generic";
 
-	function fieldType(key: string): FieldType {
+	function fieldType(key: string, value: unknown): FieldType {
 		if (DATE_FIELDS.has(key)) return "date";
 		if (FILE_LIST_FIELDS.has(key)) return "file-list";
 		if (LINK_FIELDS.has(key)) return "link";
+		if (CODE_FIELDS.has(key) && Array.isArray(value)) return "code";
 		if (CHIP_FIELDS.has(key)) return "chip";
 		return "generic";
 	}
@@ -117,10 +124,27 @@
 	const priority = $derived(
 		isPresent(metadata["priority"]) ? String(metadata["priority"]) : undefined,
 	);
-	/**
-	 * Gate question — extracted and rendered last,
-	 * separated from the main body entries loop.
-	 */
+
+	/** Short date format for the header chip (e.g. "Jan 5"). */
+	function shortDate(value: unknown): string | null {
+		if (value === null || value === undefined || value === "" || value === "null") return null;
+		try {
+			const d = new Date(String(value));
+			if (isNaN(d.getTime())) return null;
+			return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+		} catch {
+			return null;
+		}
+	}
+
+	const createdShort = $derived(shortDate(metadata["created"]));
+	const updatedShort = $derived(shortDate(metadata["updated"]));
+	const dateChip = $derived(
+		createdShort && updatedShort && createdShort !== updatedShort
+			? `${createdShort} → ${updatedShort}`
+			: createdShort ?? updatedShort,
+	);
+
 	/** Gate — supports both a single string (milestones) and an array (pillars). */
 	const gateQuestions = $derived(
 		isPresent(metadata["gate"]) ? asArray(metadata["gate"]).filter(Boolean) : [],
@@ -163,6 +187,9 @@
 			return true;
 		}),
 	);
+
+	/** True when the card has content below the header row. */
+	const hasBody = $derived(bodyEntries.length > 0 || appTools.length > 0 || gateQuestions.length > 0);
 </script>
 
 <!-- Title -->
@@ -180,8 +207,8 @@
 <!-- Metadata card -->
 <div class="mb-4 space-y-3 rounded-lg border border-border bg-muted/30 px-4 py-3">
 	<!-- ID + Status/Priority row — only rendered when at least one value is present -->
-	{#if id || (status && isPresent(status)) || priority}
-		<div class="flex items-start justify-between gap-3">
+	{#if id || (status && isPresent(status)) || priority || dateChip}
+		<div class="flex justify-between gap-3" class:items-center={!hasBody} class:items-start={hasBody}>
 			<div class="space-y-0.5">
 				{#if id}
 					<p class="font-mono text-xs font-semibold uppercase tracking-widest text-muted-foreground">
@@ -190,16 +217,24 @@
 				{/if}
 			</div>
 
-			<div class="flex shrink-0 items-center gap-1.5">
-				{#if status && isPresent(status)}
-					<StatusIndicator {status} mode="badge" />
+			<div class="flex shrink-0 items-center gap-2">
+				{#if createdShort}
+					<Badge variant="secondary" class="text-muted-foreground">
+						<CalendarPlusIcon class="h-3 w-3" />{createdShort}
+					</Badge>
+				{/if}
+				{#if updatedShort && updatedShort !== createdShort}
+					<Badge variant="secondary" class="text-muted-foreground">
+						<CalendarCheckIcon class="h-3 w-3" />{updatedShort}
+					</Badge>
 				{/if}
 				{#if priority}
-					<span
-						class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium {priorityClass(priority)}"
-					>
+					<Badge variant="outline" class={priorityClass(priority)}>
 						{priorityLabel(priority)}
-					</span>
+					</Badge>
+				{/if}
+				{#if status && isPresent(status)}
+					<StatusIndicator {status} mode="badge" />
 				{/if}
 			</div>
 		</div>
@@ -207,12 +242,12 @@
 
 	<!-- Dynamic body — YAML source order, type-dispatched -->
 	{#each bodyEntries as [key, value] (key)}
-		{@const type = fieldType(key)}
+		{@const type = fieldType(key, value)}
 
 		{#if type === "date"}
 			{@const formatted = formatDate(value)}
 			{#if formatted}
-				<div class="flex items-start gap-2">
+				<div class="flex items-baseline gap-2">
 					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
 						{humanizeKey(key)}
 					</span>
@@ -223,7 +258,7 @@
 		{:else if type === "file-list"}
 			{@const items = asArray(value).filter(Boolean)}
 			{#if items.length > 0}
-				<div class="flex items-start gap-2">
+				<div class="flex items-baseline gap-2">
 					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
 						{humanizeKey(key)}
 					</span>
@@ -238,7 +273,7 @@
 		{:else if type === "link"}
 			{@const vals = asArray(value).filter(Boolean)}
 			{#if vals.length > 0}
-				<div class="flex items-start gap-2">
+				<div class="flex items-baseline gap-2">
 					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
 						{humanizeKey(key)}
 					</span>
@@ -250,18 +285,31 @@
 				</div>
 			{/if}
 
-		{:else if type === "chip"}
+		{:else if type === "code"}
 			{@const items = asArray(value).filter(Boolean)}
 			{#if items.length > 0}
-				<div class="flex items-start gap-2">
+				<div class="flex items-baseline gap-2">
 					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
 						{humanizeKey(key)}
 					</span>
 					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
 						{#each items as item, i (i)}
-							<span class="rounded-full border border-border bg-secondary px-2 py-0.5 text-[11px] capitalize text-secondary-foreground">
-								{item}
-							</span>
+							<code class="rounded bg-muted px-1.5 py-0.5 font-mono text-[11px] text-foreground">{item}</code>
+						{/each}
+					</div>
+				</div>
+			{/if}
+
+		{:else if type === "chip"}
+			{@const items = asArray(value).filter(Boolean)}
+			{#if items.length > 0}
+				<div class="flex items-baseline gap-2">
+					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
+						{humanizeKey(key)}
+					</span>
+					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
+						{#each items as item, i (i)}
+							<Badge variant="secondary" class="capitalize">{item}</Badge>
 						{/each}
 					</div>
 				</div>
@@ -269,24 +317,22 @@
 
 		{:else}
 			<!-- generic -->
-			<div class="flex items-start gap-2">
+			<div class="flex items-baseline gap-2">
 				<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
 					{humanizeKey(key)}
 				</span>
 				{#if Array.isArray(value)}
 					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
 						{#each value as v, i (i)}
-							<span class="rounded-full border border-border bg-secondary px-2 py-0.5 text-[11px] capitalize text-secondary-foreground">
-								{v}
-							</span>
+							<Badge variant="secondary" class="capitalize">{v}</Badge>
 						{/each}
 					</div>
 				{:else if typeof value === "object" && value !== null}
 					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
 						{#each Object.entries(value as Record<string, unknown>) as [k, v], i (i)}
-							<span class="rounded border border-border bg-secondary px-2 py-0.5 text-[11px] text-secondary-foreground">
+							<Badge variant="secondary">
 								<span class="text-muted-foreground">{humanizeKey(k)}:</span> {String(v)}
-							</span>
+							</Badge>
 						{/each}
 					</div>
 				{:else}
@@ -298,15 +344,13 @@
 
 	<!-- Tools (app-context only, human-friendly names) -->
 	{#if appTools.length > 0}
-		<div class="flex items-start gap-2">
+		<div class="flex items-baseline gap-2">
 			<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
 				Tools
 			</span>
 			<div class="flex min-w-0 flex-1 flex-wrap gap-1">
 				{#each appTools as tool, i (i)}
-					<span class="rounded border border-border bg-secondary px-2 py-0.5 text-[11px] text-secondary-foreground">
-						{tool}
-					</span>
+					<Badge variant="secondary">{tool}</Badge>
 				{/each}
 			</div>
 		</div>

@@ -329,8 +329,8 @@ pub struct AnalysisOutput {
 
 ## Related Documents
 
-- [Roadmap — Phase 2b](/product/roadmap)
-- [Setup Wizard (Phase 2a)](/architecture/setup-wizard)
-- [SQLite Schema](/architecture/sqlite-schema)
-- [IPC Commands](/architecture/ipc-commands)
-- [Streaming Pipeline](/architecture/streaming-pipeline)
+- [Roadmap — Phase 2b](DOC-044)
+- [Setup Wizard (Phase 2a)](DOC-012)
+- [SQLite Schema](DOC-013)
+- [IPC Commands](DOC-005)
+- [Streaming Pipeline](DOC-014)

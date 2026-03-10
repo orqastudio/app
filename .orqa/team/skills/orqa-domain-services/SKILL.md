@@ -16,7 +16,7 @@ user-invocable: true
 ---
 
 
-Domain services live in `src-tauri/src/domain/`. They contain the business logic of OrqaStudio and are the heart of the thick-backend architecture (AD-001). Commands in `src-tauri/src/commands/` are thin wrappers that delegate to domain services and repositories.
+Domain services live in `src-tauri/src/domain/`. They contain the business logic of OrqaStudio and are the heart of the thick-backend architecture ([AD-001](AD-001)). Commands in `src-tauri/src/commands/` are thin wrappers that delegate to domain services and repositories.
 
 ## Service Anatomy
 

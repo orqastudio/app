@@ -29,7 +29,7 @@ acceptance:
 The scanner in `artifact_reader.rs` scans for `.md` files. If `.orqa/governance/hooks/` contains `.sh` files (shell scripts), they won't be found. Need to either:
 1. Scan for all file types in hooks directory, or
 2. Create `.md` wrapper files for each hook with frontmatter describing the hook, or
-3. Defer hooks display to IDEA-027 (hooks system research)
+3. Defer hooks display to [IDEA-027](IDEA-027) (hooks system research)
 
 Check what files actually exist in `.orqa/governance/hooks/` first.
 

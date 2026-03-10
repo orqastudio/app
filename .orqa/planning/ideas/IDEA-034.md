@@ -15,7 +15,8 @@ research-needed:
   - UI for rule management (browse, enable/disable, see enforcement coverage)
   - Migration path from current freeform scope field to structured model
 promoted-to: null
----## Problem
+---
+## Problem
 
 Rules currently carry a freeform `scope` field (`system`, `domain`, `project`, etc.) that agents interpret loosely. The app doesn't use this field at all — it can't filter rules by relevance to the current file, artifact type, or agent context. Every agent loads every rule, regardless of relevance.
 

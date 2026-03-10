@@ -13,7 +13,8 @@ research-needed:
   - Assumption challenge effectiveness
   - Learning cycle pattern recognition
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - AI retrospective facilitator — guided sessions with prompts from project history
 - Assumption challenge prompts — proactive assumption surfacing

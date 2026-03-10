@@ -39,13 +39,13 @@ Three systemic gaps identified during dogfooding prevent the artifact system fro
 
 2. **Cross-linking is fragile** — ArtifactLink navigation uses a hardcoded `ARTIFACT_PREFIX_MAP` in the frontend and `label.startsWith(pendingId)` string matching. This breaks for tree-structured directories, misses artifact types without prefix entries (RES, PILLAR, RULE), and silently fails when titles don't match filenames. There is no backend resolution.
 
-3. **No unified artifact API** — The sidebar, viewer, linking system, and future plugins all access artifact data through different ad-hoc patterns. There is no single source of truth for artifact metadata and relationships, no way to query backreferences ("what links to EPIC-001?"), and no foundation for plugin development.
+3. **No unified artifact API** — The sidebar, viewer, linking system, and future plugins all access artifact data through different ad-hoc patterns. There is no single source of truth for artifact metadata and relationships, no way to query backreferences ("what links to [EPIC-001](EPIC-001)?"), and no foundation for plugin development.
 
-This epic addresses all three by building a bidirectional artifact node graph in the backend, exposing it through a typed frontend SDK, and migrating all artifact access to use it. The SDK becomes the foundation for the plugin architecture (see IDEA-036 for future expansion to full-codebase graph).
+This epic addresses all three by building a bidirectional artifact node graph in the backend, exposing it through a typed frontend SDK, and migrating all artifact access to use it. The SDK becomes the foundation for the plugin architecture (see [IDEA-036](IDEA-036) for future expansion to full-codebase graph).
 
 ## Implementation Design
 
-### Part 1: Body Templates (RES-032)
+### Part 1: Body Templates ([RES-032](RES-032))
 
 Document and enforce minimum body structure for each artifact type:
 
@@ -68,7 +68,7 @@ Document and enforce minimum body structure for each artifact type:
 
 Body templates are defined in schema.json alongside frontmatter schemas — one source of truth for all structural expectations per artifact type.
 
-### Part 2: Backend Artifact Node Graph (RES-033, RES-034)
+### Part 2: Backend Artifact Node Graph ([RES-033](RES-033), [RES-034](RES-034))
 
 Replace the flat ID→path index with a full bidirectional graph:
 
@@ -100,7 +100,7 @@ ArtifactRef { target_id, field, source_id }
 - `read_artifact_content(path)` — raw markdown body (always from disk, no caching)
 - `get_graph_stats()` — node count, edge count, orphans, broken refs
 
-### Part 3: Frontend Artifact Graph SDK (RES-034)
+### Part 3: Frontend Artifact Graph SDK ([RES-034](RES-034))
 
 Typed Svelte 5 rune store at `ui/lib/sdk/artifact-graph.svelte.ts`:
 
@@ -197,7 +197,7 @@ Phase 4c — Navigation and linking components:
 - Rebuild artifact graph on change (debounced)
 - Emit full graph snapshot as Tauri event to frontend
 - SDK receives event, replaces local graph, fires subscription callbacks
-- Note: full snapshot approach will need to become incremental when graph expands to full codebase (see IDEA-036)
+- Note: full snapshot approach will need to become incremental when graph expands to full codebase (see [IDEA-036](IDEA-036))
 
 ### Built-in vs Plugin Boundary
 
@@ -206,11 +206,11 @@ The app ships with **default views only** — these are the artifact browser, vi
 | Layer | Examples | Distribution |
 |-------|----------|-------------|
 | **Built-in (default)** | Artifact browser, viewers (artifact, agent, skill, rule, hook), navigation, conversation | Shipped with app binary |
-| **Official plugins** | Governance dashboard, dependency graph, sprint planning | Official plugins repo (IDEA-038) |
+| **Official plugins** | Governance dashboard, dependency graph, sprint planning | Official plugins repo ([IDEA-038](IDEA-038)) |
 | **Community plugins** | Third-party extensions shared publicly | Their own repos, installable via URL |
 | **User plugins** | Custom extensions built locally with the AI | Local file path, git-versioned locally |
 
-### Plugin Development Skill (TASK-081)
+### Plugin Development Skill ([TASK-081](TASK-081))
 
 The skill must guide the AI to:
 
@@ -219,34 +219,34 @@ The skill must guide the AI to:
 3. **Develop and test against seed data** using the Artifact Graph SDK
 4. **Only import into production** once the plugin is working and tested
 
-This protects production governance data during development. The skill references IDEA-038 for the distribution architecture that will be built in the next phase.
+This protects production governance data during development. The skill references [IDEA-038](IDEA-038) for the distribution architecture that will be built in the next phase.
 
 ## Out of Scope
 
 - Graph visualization UI (node/edge rendering) — separate epic
-- App-assisted template pre-population (artifact editor) — deferred to EPIC-004
-- Full-codebase graph expansion — captured as IDEA-036
-- Plugin runtime, loading, and distribution mechanism — captured as IDEA-038
-- Artifact write operations via SDK — EPIC-004 scope
+- App-assisted template pre-population (artifact editor) — deferred to [EPIC-004](EPIC-004)
+- Full-codebase graph expansion — captured as [IDEA-036](IDEA-036)
+- Plugin runtime, loading, and distribution mechanism — captured as [IDEA-038](IDEA-038)
+- Artifact write operations via SDK — [EPIC-004](EPIC-004) scope
 
 ## Tasks
 
 | Task | Title | Scope |
 |------|-------|-------|
-| TASK-070 | Document body templates in artifact-framework.md and schema.json | .orqa/documentation/, .orqa/**/schema.json |
-| TASK-071 | Add body template linting to pre-commit hook | .githooks/validate-schema.mjs |
-| TASK-072 | Backfill existing artifacts to match body templates | .orqa/planning/, .orqa/governance/ |
-| TASK-073 | Build backend artifact node graph with bidirectional references | src-tauri/src/domain/ |
-| TASK-074 | Add artifact graph Tauri commands | src-tauri/src/commands/ |
-| TASK-075 | Build frontend Artifact Graph SDK with subscription API | ui/lib/sdk/ |
-| TASK-076 | Migrate stores to SDK: replace artifact/navigation store ad-hoc patterns | ui/lib/stores/ |
-| TASK-082 | Migrate viewer components to SDK: frontmatter from graph, link handling | ui/lib/components/artifact/*Viewer.svelte |
-| TASK-083 | Migrate nav and linking to SDK: ArtifactLink, ArtifactNav, FrontmatterHeader, AppLayout | ui/lib/components/ |
-| TASK-077 | Broken link styling and path validation | ui/lib/components/artifact/ |
-| TASK-078 | Markdown cross-linking in MarkdownRenderer | ui/lib/components/shared/ |
-| TASK-079 | File watcher for .orqa/ with graph rebuild and event emission | src-tauri/src/ |
-| TASK-080 | Write Artifact Graph SDK documentation | .orqa/documentation/development/ |
-| TASK-081 | Create plugin-development skill (new project + seed data approach) | .orqa/team/skills/ |
+| [TASK-070](TASK-070) | Document body templates in artifact-framework.md and schema.json | .orqa/documentation/, .orqa/**/schema.json |
+| [TASK-071](TASK-071) | Add body template linting to pre-commit hook | .githooks/validate-schema.mjs |
+| [TASK-072](TASK-072) | Backfill existing artifacts to match body templates | .orqa/planning/, .orqa/governance/ |
+| [TASK-073](TASK-073) | Build backend artifact node graph with bidirectional references | src-tauri/src/domain/ |
+| [TASK-074](TASK-074) | Add artifact graph Tauri commands | src-tauri/src/commands/ |
+| [TASK-075](TASK-075) | Build frontend Artifact Graph SDK with subscription API | ui/lib/sdk/ |
+| [TASK-076](TASK-076) | Migrate stores to SDK: replace artifact/navigation store ad-hoc patterns | ui/lib/stores/ |
+| [TASK-082](TASK-082) | Migrate viewer components to SDK: frontmatter from graph, link handling | ui/lib/components/artifact/*Viewer.svelte |
+| [TASK-083](TASK-083) | Migrate nav and linking to SDK: ArtifactLink, ArtifactNav, FrontmatterHeader, AppLayout | ui/lib/components/ |
+| [TASK-077](TASK-077) | Broken link styling and path validation | ui/lib/components/artifact/ |
+| [TASK-078](TASK-078) | Markdown cross-linking in MarkdownRenderer | ui/lib/components/shared/ |
+| [TASK-079](TASK-079) | File watcher for .orqa/ with graph rebuild and event emission | src-tauri/src/ |
+| [TASK-080](TASK-080) | Write Artifact Graph SDK documentation | .orqa/documentation/development/ |
+| [TASK-081](TASK-081) | Create plugin-development skill (new project + seed data approach) | .orqa/team/skills/ |
 
 ## Dependency Chain
 
@@ -268,4 +268,4 @@ Track C — Documentation (after migration proves the SDK):
 TASK-083 (migration complete) ──> TASK-080 (SDK docs) ──> TASK-081 (plugin skill)
 ```
 
-Tracks A and B are independent and can be parallelized. Track C depends on the migration being complete — the SDK docs describe the proven API, not a speculative one. Within Track B, TASK-082 and TASK-083 can be parallelized after TASK-076. TASK-077 and TASK-078 can be parallelized after TASK-083.
+Tracks A and B are independent and can be parallelized. Track C depends on the migration being complete — the SDK docs describe the proven API, not a speculative one. Within Track B, [TASK-082](TASK-082) and [TASK-083](TASK-083) can be parallelized after [TASK-076](TASK-076). [TASK-077](TASK-077) and [TASK-078](TASK-078) can be parallelized after [TASK-083](TASK-083).

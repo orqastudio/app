@@ -7,7 +7,8 @@ layer: canon
 scope: project
 created: "2026-03-07"
 updated: "2026-03-07"
----# Artifact Config Integrity (NON-NEGOTIABLE)
+---
+# Artifact Config Integrity (NON-NEGOTIABLE)
 
 The `artifacts` array in `.orqa/project.json` is the single source of truth for what the app scans, displays, and navigates. Every path in the config MUST resolve to an actual directory on disk. Every directory the app needs to scan MUST be listed in the config.
 
@@ -50,7 +51,7 @@ Every `.md` file's display label follows this priority:
 1. **YAML frontmatter `title` field** — Use as the label if present
 2. **Humanized filename** — Fallback when no frontmatter title exists (e.g., `coding-standards.md` becomes "Coding Standards")
 
-Artifact IDs in all-caps format (e.g., `EPIC-001`, `IDEA-002`, `AD-015`) are preserved as-is — they are NOT humanized.
+Artifact IDs in all-caps format (e.g., `[EPIC-001](EPIC-001)`, `[IDEA-002](IDEA-002)`, `[AD-015](AD-015)`) are preserved as-is — they are NOT humanized.
 
 The same applies to `description` — use frontmatter `description` when present, otherwise omit.
 
@@ -119,7 +120,7 @@ Before committing any change that affects artifact paths or structure:
 
 ## Related Rules
 
-- RULE-010 (end-to-end-completeness) — config changes must be reflected across all layers
-- RULE-018 (no-aliases-or-hacks) — no alias paths or fallback path resolution
-- RULE-008 (documentation-first) — document the config schema before implementing
-- RULE-011 (enforcement-before-code) — create enforcement artifacts before implementation
+- [RULE-010](RULE-010) (end-to-end-completeness) — config changes must be reflected across all layers
+- [RULE-018](RULE-018) (no-aliases-or-hacks) — no alias paths or fallback path resolution
+- [RULE-008](RULE-008) (documentation-first) — document the config schema before implementing
+- [RULE-011](RULE-011) (enforcement-before-code) — create enforcement artifacts before implementation

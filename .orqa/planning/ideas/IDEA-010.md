@@ -13,7 +13,8 @@ research-needed:
   - Domain-specific artifact templates
   - Tool and agent customisation per domain
 promoted-to: null
----# Domain Expansion
+---
+# Domain Expansion
 
 Extending beyond software development.
 

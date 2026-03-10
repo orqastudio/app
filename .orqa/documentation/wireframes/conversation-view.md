@@ -6,7 +6,7 @@ created: "2026-03-02"
 updated: "2026-03-04"
 ---
 
-**Date:** 2026-03-02 | **Informed by:** [Information Architecture](/product/information-architecture), [Frontend Research](/research/frontend), [MVP Spec F-003, F-004](/product/mvp-specification)
+**Date:** 2026-03-02 | **Informed by:** [Information Architecture](DOC-040), [Frontend Research](RES-004), [MVP Spec F-003, F-004](DOC-042)
 
 The conversation view is the Chat Panel content. It is where the user interacts with the AI: sending messages, reading streaming responses, and reviewing tool call results. This document covers the active conversation state, streaming mid-response state, and the empty/welcome state.
 
@@ -488,10 +488,10 @@ How wireframe elements map to implementation components and libraries.
 
 ## Related Documents
 
-- [Core Layout Wireframe](/wireframes/core-layout) -- Three-zone + nav sub-panel structure that contains this view
-- [Information Architecture](/product/information-architecture) -- Chat Panel: Conversation View specification
-- [Frontend Research Q1](/research/frontend) -- Markdown rendering and code highlighting decisions
-- [Frontend Research Q2](/research/frontend) -- Conversation UI component architecture
-- [MVP Spec F-003](/product/mvp-specification) -- Conversation Streaming acceptance criteria
-- [MVP Spec F-004](/product/mvp-specification) -- Tool Call Display acceptance criteria
-- [MVP Spec F-005](/product/mvp-specification) -- Session Persistence (affects session header)
+- [Core Layout Wireframe](DOC-059) -- Three-zone + nav sub-panel structure that contains this view
+- [Information Architecture](DOC-040) -- Chat Panel: Conversation View specification
+- [Frontend Research Q1](RES-004) -- Markdown rendering and code highlighting decisions
+- [Frontend Research Q2](RES-004) -- Conversation UI component architecture
+- [MVP Spec F-003](DOC-042) -- Conversation Streaming acceptance criteria
+- [MVP Spec F-004](DOC-042) -- Tool Call Display acceptance criteria
+- [MVP Spec F-005](DOC-042) -- Session Persistence (affects session header)

@@ -10,7 +10,7 @@ recurrence: 1
 ---
 ## What Happened
 
-During UAT Round 2 (EPIC-043), epics were found with process-oriented titles like "UAT Round 1 — Dogfood Readiness Verification". The title describes the testing activity rather than the outcome being verified.
+During UAT Round 2 ([EPIC-043](EPIC-043)), epics were found with process-oriented titles like "UAT Round 1 — Dogfood Readiness Verification". The title describes the testing activity rather than the outcome being verified.
 
 ## The Correct Approach
 

@@ -22,7 +22,7 @@ scoring:
 ---
 ## Context
 
-IMPL-015 documents a governance gap: 237 files accumulated uncommitted across
+[IMPL-015](IMPL-015) documents a governance gap: 237 files accumulated uncommitted across
 multiple sessions because:
 - Session hooks don't check for uncommitted changes on main
 - Governance-only work is exempt from worktrees, creating no natural commit point
@@ -61,9 +61,9 @@ encodes commit discipline patterns:
 - Commit message conventions for governance vs code changes
 - Session-end commit checklist
 
-### 4. Promote IMPL-015
+### 4. Promote [IMPL-015](IMPL-015)
 
-After enforcement artifacts are in place, update IMPL-015 with `promoted-to`
+After enforcement artifacts are in place, update [IMPL-015](IMPL-015) with `promoted-to`
 referencing the updated rule and new skill.
 
 ## Constraints
@@ -77,11 +77,11 @@ referencing the updated rule and new skill.
 
 | Task | Title | Depends On |
 |------|-------|------------|
-| TASK-064 | Update session-start hook with uncommitted changes check | — |
-| TASK-065 | Update pre-commit-reminder hook with commit prompt | — |
-| TASK-066 | Update git-workflow rule for governance-only work patterns | — |
-| TASK-067 | Create or update commit discipline skill | TASK-066 |
-| TASK-068 | Promote IMPL-015 to enforcement artifacts | TASK-064, TASK-065, TASK-066, TASK-067 |
+| [TASK-064](TASK-064) | Update session-start hook with uncommitted changes check | — |
+| [TASK-065](TASK-065) | Update pre-commit-reminder hook with commit prompt | — |
+| [TASK-066](TASK-066) | Update git-workflow rule for governance-only work patterns | — |
+| [TASK-067](TASK-067) | Create or update commit discipline skill | [TASK-066](TASK-066) |
+| [TASK-068](TASK-068) | Promote [IMPL-015](IMPL-015) to enforcement artifacts | [TASK-064](TASK-064), [TASK-065](TASK-065), [TASK-066](TASK-066), [TASK-067](TASK-067) |
 
 ## Implementation Design
 

@@ -13,7 +13,8 @@ research-needed:
   - Domain-agnostic template design
   - Mode detection accuracy testing
 promoted-to: EPIC-035
----## Candidate Items
+---
+## Candidate Items
 
 - Problem mode — guided diagnosis flow with root cause mapping
 - Idea mode — validation flow with feasibility exploration

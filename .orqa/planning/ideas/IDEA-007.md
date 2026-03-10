@@ -13,7 +13,8 @@ research-needed:
   - Space-level governance inheritance
   - Multi-project aggregation UX
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Spaces — named containers (organisations, teams, programs) grouping projects
 - Space-level governance — shared rules across projects

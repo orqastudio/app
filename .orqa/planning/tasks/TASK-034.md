@@ -29,7 +29,7 @@ The injection table maps task scope (file paths/directories) to the project-spec
 skills that should be loaded. The orchestrator includes these skills in the delegation
 prompt when creating tasks for agents.
 
-Table from EPIC-042 implementation design:
+Table from [EPIC-042](EPIC-042) implementation design:
 
 | Task Scope | Injected Skills |
 |-----------|----------------|

@@ -7,7 +7,7 @@ updated: "2026-03-04"
 ---
 
 **Date:** 2026-03-02 | **Status:** Phase 0e specification
-**References:** [Wireframing Research](/research/wireframing) (Q1 verdict: PlantUML Salt), [SQLite Schema](/architecture/sqlite-schema), [Design System](/ui/design-system)
+**References:** [Wireframing Research](RES-008) (Q1 verdict: PlantUML Salt), [SQLite Schema](DOC-013), [Design System](DOC-049)
 
 How OrqaStudio™ stores, renders, caches, and serves PlantUML Salt wireframes as themed images within its Tauri WebView.
 
@@ -333,7 +333,7 @@ If the source `.puml` file does not exist, the renderer displays a placeholder w
 
 ### Invocation
 
-OrqaStudio invokes PlantUML as an external process. The exact binary depends on the bundling strategy (see [PlantUML Bundling Spike](/architecture/plantuml-spike)).
+OrqaStudio invokes PlantUML as an external process. The exact binary depends on the bundling strategy (see [PlantUML Bundling Spike](DOC-008)).
 
 ```rust
 use std::process::Command;

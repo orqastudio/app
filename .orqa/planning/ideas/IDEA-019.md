@@ -14,7 +14,8 @@ research-needed:
   - Community infrastructure requirements
   - Ethical AI framework design
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Ethical AI capability platform — transparent, auditable reasoning
 - Open reasoning framework — open-source core reasoning patterns

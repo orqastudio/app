@@ -13,7 +13,8 @@ research-needed:
   - Bidirectional sync architecture
   - Import format support
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Git integration — branch awareness, commit correlation with decisions
 - Issue tracker sync — bidirectional with GitHub Issues, Linear, Jira

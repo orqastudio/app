@@ -29,7 +29,7 @@ The scanner silently returned empty results when a path didn't exist. No error, 
 
 ## Prevention
 
-This lesson was promoted to RULE-003 (`artifact-config-integrity`), which enforces config-disk alignment and is part of the pre-commit verification checklist.
+This lesson was promoted to [RULE-003](RULE-003) (`artifact-config-integrity`), which enforces config-disk alignment and is part of the pre-commit verification checklist.
 
 ## Pattern
 

@@ -149,7 +149,7 @@ Blocked by RULE-004-001: No `any` type in TypeScript files. Use proper types ins
 
 `hookify.<lowercase-rule-id>-<lowercase-entry-id>.local.md`
 
-Example: rule `RULE-004-001` produces `hookify.rule-004-001.local.md`.
+Example: rule `[RULE-004](RULE-004)-001` produces `hookify.rule-004-001.local.md`.
 
 ---
 
@@ -207,5 +207,5 @@ src-tauri/src/
 
 - `.orqa/documentation/process/rules.md` — Rule inventory, frontmatter schema reference, when to create rules
 - `.orqa/documentation/ui/enforcement-panel.md` — UI spec for the enforcement sidebar and violation display
-- `.orqa/documentation/architecture/decisions.md` — AD-015: Governance artifact format
+- `.orqa/documentation/architecture/decisions.md` — [AD-015](AD-015): Governance artifact format
 - `.orqa/documentation/process/content-governance.md` — Content ownership model (rules vs docs vs hooks)

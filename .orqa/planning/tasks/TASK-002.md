@@ -22,7 +22,7 @@ acceptance:
 ---
 ## What
 
-After TASK-001 is implemented, verify the full pipeline works: Rust emission → Channel<T> → store accumulation → component rendering.
+After [TASK-001](TASK-001) is implemented, verify the full pipeline works: Rust emission → Channel<T> → store accumulation → component rendering.
 
 ## Test Cases
 

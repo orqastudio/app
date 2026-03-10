@@ -24,7 +24,7 @@ acceptance:
 ---
 ## What
 
-Apply the domain service extraction pattern (established in TASK-024) to the
+Apply the domain service extraction pattern (established in [TASK-024](TASK-024)) to the
 remaining command files: setup, governance, and artifact commands.
 
 ## Outcome

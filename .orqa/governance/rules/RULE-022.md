@@ -98,7 +98,7 @@ Plans exist within the artifact framework. When a plan is created:
 3. **Plans produce epics:** A plan that is approved should result in an `EPIC-NNN` being created (or updated) with `docs-required` and `docs-produced` fields populated from the plan's documentation sections
 4. **The plan's documentation section feeds the epic's gates:** Items in the plan's "Documentation" dimension of the Systems Architecture Checklist become the epic's `docs-required` and `docs-produced` lists
 
-See RULE-004 (artifact-lifecycle) for the full artifact lifecycle and `.orqa/documentation/process/artifact-workflow.md` for day-to-day workflow.
+See [RULE-004](RULE-004) (artifact-lifecycle) for the full artifact lifecycle and `.orqa/documentation/process/artifact-workflow.md` for day-to-day workflow.
 
 ## Roadmap Reconciliation (MANDATORY)
 
@@ -109,7 +109,7 @@ Before a plan is approved, the orchestrator MUST reconcile the plan's task list 
 3. If any roadmap item is missing from the plan, either add it as a task or get explicit user approval to descope it
 4. No item may be silently moved to "Out of Scope" or deferred to another epic without user approval
 
-See RULE-019 (no-deferred-deliverables) for the full enforcement rule.
+See [RULE-019](RULE-019) (no-deferred-deliverables) for the full enforcement rule.
 
 ## When This Rule Applies
 
@@ -190,8 +190,8 @@ In OrqaStudio, the app can verify that plans contain the required sections (Arch
 
 ## Related Rules
 
-- RULE-004 (artifact-lifecycle) — artifact creation, status transitions, promotion gates
-- RULE-031 (vision-alignment) — the pillar framework that plans must serve
-- RULE-002 (architecture-decisions) — the architecture decisions plans must comply with
-- RULE-006 (coding-standards) — the standards implementations must meet
-- RULE-010 (end-to-end-completeness) — the full-stack requirement per feature
+- [RULE-004](RULE-004) (artifact-lifecycle) — artifact creation, status transitions, promotion gates
+- [RULE-031](RULE-031) (vision-alignment) — the pillar framework that plans must serve
+- [RULE-002](RULE-002) (architecture-decisions) — the architecture decisions plans must comply with
+- [RULE-006](RULE-006) (coding-standards) — the standards implementations must meet
+- [RULE-010](RULE-010) (end-to-end-completeness) — the full-stack requirement per feature

@@ -13,7 +13,8 @@ research-needed:
   - Adapter pattern for .claude/, .continue/, .cursor/
   - Migration tooling and backwards compatibility
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Generic governance format — agents, rules, skills, hooks in `.orqa/governance/` as canonical source
 - Claude Code adapter — `.claude/` references `.orqa/governance/` content

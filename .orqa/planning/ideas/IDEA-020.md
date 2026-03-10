@@ -13,7 +13,8 @@ research-needed:
   - Design token sync architecture
   - Code-to-Figma backfill feasibility
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Figma integration — import design tokens, Figma MCP server
 - Design token sync — bidirectional between project tokens and design tools

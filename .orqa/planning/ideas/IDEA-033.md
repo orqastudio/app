@@ -14,7 +14,8 @@ research-needed:
   - UI design for roadmap view (timeline, kanban, grouped list)
   - What happens to the markdown roadmap doc — deprecate or auto-generate?
 promoted-to: null
----## Problem
+---
+## Problem
 
 The roadmap document (`.orqa/documentation/product/roadmap.md`) is a manually maintained markdown file that lists milestones, epics, and their statuses. It drifts constantly — every time an epic status changes, the roadmap must be manually updated. This violates the single-source-of-truth principle: the real status lives in epic/milestone frontmatter, but the roadmap is a stale copy.
 
@@ -48,7 +49,7 @@ This could be built as either a core feature or a plugin. Both have trade-offs.
 - Con: Plugin API doesn't exist yet — building the roadmap would force plugin architecture decisions prematurely
 - Con: Roadmap needs deep access to milestone/epic state — may need privileged plugin APIs
 
-**Recommendation to investigate:** If the traceability graph (IDEA-032) is built as core infrastructure, the roadmap could be a view on top of that graph — making it a natural plugin candidate. But if the roadmap is needed before the graph, it may be better as a core feature that later migrates to the plugin layer.
+**Recommendation to investigate:** If the traceability graph ([IDEA-032](IDEA-032)) is built as core infrastructure, the roadmap could be a view on top of that graph — making it a natural plugin candidate. But if the roadmap is needed before the graph, it may be better as a core feature that later migrates to the plugin layer.
 
 ## Scope Note
 

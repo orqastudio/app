@@ -13,7 +13,8 @@ research-needed:
   - Confidence indicator calibration
   - Decision log UX design
 promoted-to: EPIC-001
----## Candidate Items
+---
+## Candidate Items
 
 - Reasoning summaries — AI-generated summaries of how conclusions were reached
 - Change justification notes — structured explanations on artifact changes

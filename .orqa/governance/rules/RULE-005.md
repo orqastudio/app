@@ -7,7 +7,8 @@ layer: canon
 scope: system
 created: "2026-03-07"
 updated: "2026-03-07"
----**Prefer semantic search over Grep/Glob for any search that spans more than one file or directory.**
+---
+**Prefer semantic search over Grep/Glob for any search that spans more than one file or directory.**
 
 ## Two Search Skills — Context-Dependent Loading
 
@@ -59,8 +60,8 @@ If neither tool set is available in the current session:
 
 ## Related Rules
 
-- RULE-026 (skill-enforcement) — search skills are universal, required for every agent
-- RULE-012 (error-ownership) — use `search_regex` to find function signatures before calling them
-- RULE-024 (reusable-components) — use `search_semantic` to find similar components
-- RULE-010 (end-to-end-completeness) — use `code_research` to map the full request chain
-- RULE-020 (no-stubs) — use `search_regex` to verify implementations exist
+- [RULE-026](RULE-026) (skill-enforcement) — search skills are universal, required for every agent
+- [RULE-012](RULE-012) (error-ownership) — use `search_regex` to find function signatures before calling them
+- [RULE-024](RULE-024) (reusable-components) — use `search_semantic` to find similar components
+- [RULE-010](RULE-010) (end-to-end-completeness) — use `code_research` to map the full request chain
+- [RULE-020](RULE-020) (no-stubs) — use `search_regex` to verify implementations exist

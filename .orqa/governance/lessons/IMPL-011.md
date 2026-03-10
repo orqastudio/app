@@ -11,7 +11,7 @@ promoted-to: RULE-030
 ---
 ## What Happened
 
-During UAT Round 1 (EPIC-043), multiple issues were identified across artifact display, status UX, null value handling, breadcrumbs, and memory leaks. The instinct was to fix each finding immediately as reported.
+During UAT Round 1 ([EPIC-043](EPIC-043)), multiple issues were identified across artifact display, status UX, null value handling, breadcrumbs, and memory leaks. The instinct was to fix each finding immediately as reported.
 
 ## Why It Was Wrong
 

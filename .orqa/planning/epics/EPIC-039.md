@@ -48,7 +48,7 @@ scoring:
 
 ## Produced Decision
 
-AD-026 (Domain Service Extraction Pattern)
+[AD-026](AD-026) (Domain Service Extraction Pattern)
 
 ## Git Evidence
 

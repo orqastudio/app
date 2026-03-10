@@ -70,7 +70,7 @@ A UAT round that only produces bug fixes without process improvements has failed
 
 ## Related Rules
 
-- RULE-028 (systems-thinking) — systemic analysis is systems thinking applied to QA
-- RULE-017 (lessons-learned) — lesson creation and promotion pipeline
-- RULE-015 (honest-reporting) — findings must be reported accurately
-- RULE-027 (structure-before-work) — tasks require artifacts before implementation
+- [RULE-028](RULE-028) (systems-thinking) — systemic analysis is systems thinking applied to QA
+- [RULE-017](RULE-017) (lessons-learned) — lesson creation and promotion pipeline
+- [RULE-015](RULE-015) (honest-reporting) — findings must be reported accurately
+- [RULE-027](RULE-027) (structure-before-work) — tasks require artifacts before implementation

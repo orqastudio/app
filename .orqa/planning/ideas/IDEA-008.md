@@ -13,7 +13,8 @@ research-needed:
   - Conflict resolution for shared artifacts
   - Role-based access design
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Shared projects — multiple users viewing and contributing
 - Role-based access — viewer, contributor, approver per project

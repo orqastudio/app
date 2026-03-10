@@ -6,7 +6,7 @@ created: "2026-03-04"
 updated: "2026-03-04"
 ---
 
-**Date:** 2026-03-04 | **Status:** Active specification | **References:** [Rust Modules](/architecture/rust-modules), [IPC Commands](/architecture/ipc-commands), [Tool Definitions](/architecture/tool-definitions)
+**Date:** 2026-03-04 | **Status:** Active specification | **References:** [Rust Modules](DOC-010), [IPC Commands](DOC-005), [Tool Definitions](DOC-017)
 
 Built-in semantic code search with no external dependencies. The entire search stack — code chunking, ONNX embeddings, vector store, and search API — runs natively in OrqaStudio™'s Rust backend.
 
@@ -336,7 +336,7 @@ This is a build-time concern, not a runtime concern. The application code checks
 
 ## Related Documents
 
-- [Rust Module Architecture](/architecture/rust-modules) — module tree and dependency graph
-- [IPC Commands](/architecture/ipc-commands) — command registration and type contracts
-- [Tool Definitions](/architecture/tool-definitions) — MCP tool specifications
-- [Streaming Pipeline](/architecture/streaming-pipeline) — event flow from sidecar to UI
+- [Rust Module Architecture](DOC-010) — module tree and dependency graph
+- [IPC Commands](DOC-005) — command registration and type contracts
+- [Tool Definitions](DOC-017) — MCP tool specifications
+- [Streaming Pipeline](DOC-014) — event flow from sidecar to UI

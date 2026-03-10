@@ -29,4 +29,4 @@ Add a `bodyTemplate` key to each schema.json containing an array of objects with
 
 - Every schema.json (except research) has a `bodyTemplate` array
 - artifact-framework.md documents all templates with examples
-- Templates match the patterns identified in RES-032
+- Templates match the patterns identified in [RES-032](RES-032)

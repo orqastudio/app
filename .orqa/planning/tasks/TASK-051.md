@@ -32,7 +32,7 @@ acceptance:
 ---
 ## Reference
 
-- AD-029 defines the 7 universal roles and migration path
+- [AD-029](AD-029) defines the 7 universal roles and migration path
 - universal-roles-ownership.md has the ownership boundaries and subagent mapping
 - Orchestrator already restructured (Section 1 + 2) — not in scope here
 

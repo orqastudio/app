@@ -7,7 +7,8 @@ layer: canon
 scope: system
 created: "2026-03-07"
 updated: "2026-03-07"
----# Enforcement Before Code (NON-NEGOTIABLE)
+---
+# Enforcement Before Code (NON-NEGOTIABLE)
 
 When making changes to the app that introduce new patterns, fix recurring bugs, or establish conventions, the corresponding enforcement artifacts MUST be created BEFORE the implementation code is written.
 
@@ -56,6 +57,6 @@ Code without enforcement drifts. If a pattern is important enough to implement, 
 
 ## Related Rules
 
-- RULE-008 (documentation-first) — documentation before code; this rule extends that to enforcement artifacts
-- RULE-017 (lessons-learned) — lessons are one type of enforcement artifact
-- RULE-026 (skill-enforcement) — skills must be loaded before implementation
+- [RULE-008](RULE-008) (documentation-first) — documentation before code; this rule extends that to enforcement artifacts
+- [RULE-017](RULE-017) (lessons-learned) — lessons are one type of enforcement artifact
+- [RULE-026](RULE-026) (skill-enforcement) — skills must be loaded before implementation

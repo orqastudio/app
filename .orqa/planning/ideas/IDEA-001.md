@@ -14,7 +14,8 @@ research-needed:
   - UX for provider switching and selection
   - Local LLM viability (Ollama, air-gapped use)
 promoted-to: EPIC-040
----## Candidate Items
+---
+## Candidate Items
 
 - Third-party AI cloud provider research — OpenRouter, Together AI, Fireworks, Replicate
 - Direct Anthropic API provider — Rust-native HTTP, pay-per-token

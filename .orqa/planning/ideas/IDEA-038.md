@@ -94,7 +94,7 @@ The barrier from "I had an idea" to "I have a working plugin" is a single conver
 
 ### Development Workflow
 
-Plugin development uses the `plugin-development` skill (TASK-081), which guides the AI to:
+Plugin development uses the `plugin-development` skill ([TASK-081](TASK-081)), which guides the AI to:
 
 1. Create the plugin in a **new standalone project** (not inside the user's production project)
 2. Generate **seed data** for testing (mock `.orqa/` directory with representative artifacts)

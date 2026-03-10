@@ -8,7 +8,7 @@ updated: "2026-03-07"
 layer: canon
 scope: system
 ---
-Every agent MUST have a `skills:` list in its YAML frontmatter. Skills load in three tiers (AD-028).
+Every agent MUST have a `skills:` list in its YAML frontmatter. Skills load in three tiers ([AD-028](AD-028)).
 
 ## Three-Tier Model
 
@@ -132,6 +132,6 @@ In OrqaStudio, skills are loaded via the `load_skill` tool and managed by the ap
 
 ## Related Rules
 
-- RULE-023 (required-reading) — docs that agents must load (complementary to skills)
-- RULE-005 (chunkhound-usage) — code search usage and context detection
-- RULE-001 (agent-delegation) — orchestrator must delegate to agents, not implement directly
+- [RULE-023](RULE-023) (required-reading) — docs that agents must load (complementary to skills)
+- [RULE-005](RULE-005) (chunkhound-usage) — code search usage and context detection
+- [RULE-001](RULE-001) (agent-delegation) — orchestrator must delegate to agents, not implement directly

@@ -14,7 +14,7 @@ After making code changes, the orchestrator reported what needed to happen ("you
 ## Fix
 When changes require a dev server restart (Rust changes, new dependencies, config changes), the orchestrator must automatically:
 1. Kill any existing dev server processes
-2. Run `npx vite optimize` if dependencies changed (IMPL-001)
+2. Run `npx vite optimize` if dependencies changed ([IMPL-001](IMPL-001))
 3. Start `make dev` in the background
 4. Verify the server started successfully before reporting to the user
 

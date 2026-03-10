@@ -52,7 +52,7 @@ Replace 8 individual activity bar items with 4 grouped categories:
 
 ### 3. Cross-Linking
 - Frontmatter fields containing artifact IDs render as clickable links
-- Markdown body references (EPIC-001, AD-017, etc.) detected and linked
+- Markdown body references ([EPIC-001](EPIC-001), [AD-017](AD-017), etc.) detected and linked
 - Clicking navigates to the correct group/sub-category/artifact
 
 ## Phases

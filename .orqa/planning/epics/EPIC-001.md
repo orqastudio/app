@@ -36,17 +36,17 @@ Can't debug reasoning without seeing what's sent to the model. This is a reasoni
 
 ## Tasks
 
-- [x] [TASK-001] Emit `SystemPromptSent` event from `stream_commands.rs` (backend-engineer)
-- [x] [TASK-002] Verify end-to-end rendering (qa-tester)
-- [x] [TASK-003] Update streaming pipeline documentation (documentation-writer)
+- [x] [[TASK-001](TASK-001)] Emit `SystemPromptSent` event from `stream_commands.rs` (backend-engineer)
+- [x] [[TASK-002](TASK-002)] Verify end-to-end rendering (qa-tester)
+- [x] [[TASK-003](TASK-003)] Update streaming pipeline documentation (documentation-writer)
 
 ## Additional Completed Work
 
-- [x] [TASK-004] Emit `ContextInjected` event when prior messages exist in session (backend-engineer)
+- [x] [[TASK-004](TASK-004)] Emit `ContextInjected` event when prior messages exist in session (backend-engineer)
 
 ## Out of Scope (handled by other epics)
-- `show_thinking` project setting toggle — EPIC-002 (Settings UI)
-- Custom system prompt — EPIC-002 (Settings UI)
+- `show_thinking` project setting toggle — [EPIC-002](EPIC-002) (Settings UI)
+- Custom system prompt — [EPIC-002](EPIC-002) (Settings UI)
 
 ## Notes
 

@@ -19,7 +19,7 @@ promoted-to: null
 Development workflow repeatedly hits friction from unreliable dev server lifecycle:
 
 - **Port conflicts**: Vite holds port 1420 after the Tauri app closes. `taskkill` often times out on Windows.
-- **No Makefile**: RULE-007 mandates `make` targets but no Makefile exists yet. Agents fall back to raw `cargo tauri dev` which lacks process cleanup.
+- **No Makefile**: [RULE-007](RULE-007) mandates `make` targets but no Makefile exists yet. Agents fall back to raw `cargo tauri dev` which lacks process cleanup.
 - **Orphaned processes**: Node/Vite child processes survive parent kills, holding file locks and ports.
 - **No restart command**: Restart requires manually killing processes, waiting for ports to release, then relaunching. This is error-prone and breaks agent automation.
 - **Background task confusion**: `cargo tauri dev` completing as a background task means the app exited, not that it started successfully. Agents misinterpret this.

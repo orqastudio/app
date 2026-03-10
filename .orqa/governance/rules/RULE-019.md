@@ -76,7 +76,7 @@ Sometimes a deliverable genuinely depends on infrastructure from another epic. T
 
 ## Related Rules
 
-- RULE-015 (honest-reporting) — deferring deliverables is a form of false "complete"
-- RULE-022 (plan-mode-compliance) — plans must reconcile with roadmap scope
-- RULE-020 (no-stubs) — scaffolded implementations are not deliverables
-- RULE-004 (artifact-lifecycle) — epic status transitions require all deliverables complete
+- [RULE-015](RULE-015) (honest-reporting) — deferring deliverables is a form of false "complete"
+- [RULE-022](RULE-022) (plan-mode-compliance) — plans must reconcile with roadmap scope
+- [RULE-020](RULE-020) (no-stubs) — scaffolded implementations are not deliverables
+- [RULE-004](RULE-004) (artifact-lifecycle) — epic status transitions require all deliverables complete

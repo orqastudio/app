@@ -33,7 +33,7 @@ All writes go to `.orqa/`; symlinks ensure CLI reads the same content.
 
 ## Prevention
 
-This lesson was promoted to RULE-003 (`artifact-config-integrity`), specifically the `.claude/ Symlink Architecture` section, which forbids writing directly to `.claude/` and requires symlinks.
+This lesson was promoted to [RULE-003](RULE-003) (`artifact-config-integrity`), specifically the `.claude/ Symlink Architecture` section, which forbids writing directly to `.claude/` and requires symlinks.
 
 ## Pattern
 

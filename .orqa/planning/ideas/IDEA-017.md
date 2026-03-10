@@ -13,7 +13,8 @@ research-needed:
   - Project evolution timeline UX
   - Organisational PILLAR-002 aggregation
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Historical project evolution maps — timeline of understanding evolution
 - Organisational learning records — lessons that outlive projects

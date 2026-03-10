@@ -10,7 +10,7 @@ updated: "2026-03-08"
 
 A living record of process-level lessons: how the agentic development system was shaped by real failures and deliberate improvements. Each entry documents a problem, its root cause, the change made, and whether the change worked.
 
-For implementation-specific lessons (coding mistakes, architectural gotchas), see [Implementation Lessons](/development/lessons).
+For implementation-specific lessons (coding mistakes, architectural gotchas), see [Implementation Lessons](DOC-006).
 
 New entries are added by the `agent-maintainer` when process changes are made.
 
@@ -88,9 +88,9 @@ The following RETRO entries are imported from the Alvarez project. They represen
 
 - **Context:** In Alvarez, sidebar synchronization was a recurring source of broken navigation. The `sidebar-synchronization.md` rule was created after multiple incidents of pages added to one sidebar but not others, producing dead links.
 - **Root cause:** Sidebar files were created incrementally as sections were populated. By the time the synchronization rule was established, many sidebars were already out of sync.
-- **Action taken (OrqaStudio):** Initially adopted from Alvarez. Superseded by AD-020 — Docsify replaced by OrqaStudio's built-in doc viewer with filesystem-driven navigation. Rule and sidebar files removed.
+- **Action taken (OrqaStudio):** Initially adopted from Alvarez. Superseded by [AD-020](AD-020) — Docsify replaced by OrqaStudio's built-in doc viewer with filesystem-driven navigation. Rule and sidebar files removed.
 - **Outcome:** Resolved — sidebar synchronization no longer applicable. Doc navigation is generated dynamically from the project's `docs/` directory.
-- **Status:** Closed (AD-020)
+- **Status:** Closed ([AD-020](AD-020))
 
 ---
 
@@ -117,8 +117,8 @@ The following RETRO entries are imported from the Alvarez project. They represen
 
 ## Related Documents
 
-- [Implementation Lessons](/development/lessons) -- Implementation-level patterns (coding mistakes, architectural gotchas)
-- [Rules Reference](/process/rules) -- Rules created as a result of retrospective actions
-- [Content Governance](/process/content-governance) -- Framework established in response to Alvarez lessons
-- [Definition of Done](/process/definition-of-done) -- Review gate informed by Alvarez experience
-- [Metrics](/process/metrics) -- Quantitative tracking of process health
+- [Implementation Lessons](DOC-006) -- Implementation-level patterns (coding mistakes, architectural gotchas)
+- [Rules Reference](DOC-032) -- Rules created as a result of retrospective actions
+- [Content Governance](DOC-026) -- Framework established in response to Alvarez lessons
+- [Definition of Done](DOC-027) -- Review gate informed by Alvarez experience
+- [Metrics](DOC-029) -- Quantitative tracking of process health

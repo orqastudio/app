@@ -334,7 +334,7 @@ Navigation uses the Activity Bar, Nav Sub-Panel, and contextual panel switching 
 | `Ctrl+S` | Save (in edit mode) |
 | `Escape` | Close overlay / exit edit mode |
 
-**Removed from AD-018:** `Ctrl+Shift+S` (Scanner dashboard), `Ctrl+Shift+M` (Metrics dashboard), `Ctrl+Shift+L` (Learning loop) — these are Activity Bar destinations, not keyboard shortcut targets. `Ctrl+B` repurposed from Sessions Panel toggle to Nav Sub-Panel toggle.
+**Removed from [AD-018](AD-018):** `Ctrl+Shift+S` (Scanner dashboard), `Ctrl+Shift+M` (Metrics dashboard), `Ctrl+Shift+L` (Learning loop) — these are Activity Bar destinations, not keyboard shortcut targets. `Ctrl+B` repurposed from Sessions Panel toggle to Nav Sub-Panel toggle.
 
 ---
 
@@ -477,9 +477,9 @@ This design means the AI provider status shown in the status bar is meaningful c
 
 ## Related Documents
 
-- [User Journeys](/product/journeys) — Workflows that this architecture supports
-- [User Personas](/product/personas) — Who navigates this UI
-- [MVP Feature Specification](/product/mvp-specification) — What's included in Phase 1
-- AD-013: Frontend library selections — shadcn-svelte, PaneForge, CodeMirror 6
-- AD-019: Three-zone + Nav Sub-Panel layout — layout architecture decision
-- AD-014: Persistence architecture — SQLite for session/artifact storage
+- [User Journeys](DOC-041) — Workflows that this architecture supports
+- [User Personas](DOC-043) — Who navigates this UI
+- [MVP Feature Specification](DOC-042) — What's included in Phase 1
+- [AD-013](AD-013): Frontend library selections — shadcn-svelte, PaneForge, CodeMirror 6
+- [AD-019](AD-019): Three-zone + Nav Sub-Panel layout — layout architecture decision
+- [AD-014](AD-014): Persistence architecture — SQLite for session/artifact storage

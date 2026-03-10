@@ -9,14 +9,12 @@
 </script>
 
 {#if questions.length > 0}
-	<div class="rounded border border-border bg-muted/40 px-3 py-2">
-		<p class="text-xs font-medium text-muted-foreground">{label}</p>
-		<div class="mt-3 space-y-1.5">
+	<div>
+		<p class="mb-2 text-xs font-medium text-muted-foreground">{label}</p>
+		<blockquote class="space-y-2 border-l-2 border-muted-foreground/30 pl-3">
 			{#each questions as question, i (i)}
-				<blockquote class="border-l-2 border-muted-foreground/30 pl-3 text-sm italic text-foreground">
-					"{question}"
-				</blockquote>
+				<p class="text-xs italic text-foreground">"{question}"</p>
 			{/each}
-		</div>
+		</blockquote>
 	</div>
 {/if}

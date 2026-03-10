@@ -7,7 +7,7 @@ updated: "2026-03-04"
 ---
 
 **Date:** 2026-03-02 | **Status:** Phase 0e specification
-**References:** [Wireframing Research](/research/wireframing) (OQ1: Java Runtime Dependency), [Wireframe Serving Infrastructure](/architecture/wireframe-serving)
+**References:** [Wireframing Research](RES-008) (OQ1: Java Runtime Dependency), [Wireframe Serving Infrastructure](DOC-018)
 
 A time-boxed investigation into eliminating or bundling PlantUML's Java dependency so that wireframe rendering works out of the box for all OrqaStudio™ users.
 
@@ -15,7 +15,7 @@ A time-boxed investigation into eliminating or bundling PlantUML's Java dependen
 
 ## The Problem
 
-PlantUML Salt is OrqaStudio's primary wireframing tool (decided in [wireframing research](/research/wireframing)). Wireframing is a first-class product feature, not a developer-only build tool. Every OrqaStudio user must be able to render wireframes without manual setup.
+PlantUML Salt is OrqaStudio's primary wireframing tool (decided in [wireframing research](RES-008)). Wireframing is a first-class product feature, not a developer-only build tool. Every OrqaStudio user must be able to render wireframes without manual setup.
 
 PlantUML is a Java application distributed as a JAR file (~10MB). It requires a Java Runtime Environment (JRE 8+) to execute. OrqaStudio is a Tauri desktop application targeting Windows, macOS, and Linux. Shipping OrqaStudio with a "please install Java first" prerequisite is unacceptable for the following reasons:
 

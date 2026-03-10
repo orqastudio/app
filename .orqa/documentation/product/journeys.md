@@ -377,6 +377,6 @@ Journey 1 (First-Time Setup)
 
 ## Related Documents
 
-- [User Personas](/product/personas) — Who follows these journeys
-- [MVP Feature Specification](/product/mvp-specification) — What Phase 1 delivers
-- [Information Architecture](/product/information-architecture) — UI structure that supports these journeys
+- [User Personas](DOC-043) — Who follows these journeys
+- [MVP Feature Specification](DOC-042) — What Phase 1 delivers
+- [Information Architecture](DOC-040) — UI structure that supports these journeys

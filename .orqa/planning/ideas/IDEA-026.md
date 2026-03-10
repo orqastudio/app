@@ -14,7 +14,8 @@ research-needed:
   - Define the boundary between platform-managed and user-managed artifacts
   - Consider the three-layer governance model (canon, project, plugin) and where each artifact type falls
 promoted-to: null
----## Problem
+---
+## Problem
 
 The platform scans and displays artifacts from `.orqa/` but treats them all as generic markdown files with frontmatter. Some artifact types (milestones, epics, tasks) are core to the platform's purpose and should have richer support — lifecycle enforcement, status transitions, cross-referencing validation. Others may remain as plain documents.
 
@@ -27,4 +28,4 @@ The platform scans and displays artifacts from `.orqa/` but treats them all as g
 
 ## Origin
 
-UAT Round 1 (EPIC-043): User observation during artifact browsing
+UAT Round 1 ([EPIC-043](EPIC-043)): User observation during artifact browsing

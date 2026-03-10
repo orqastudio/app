@@ -100,7 +100,7 @@ The scanner recursively walks directories like a file explorer:
 2. **Tree directories** — Recurses into subdirectories, creating `DocNode` entries with `children` for folders
 3. **Frontmatter extraction** — Every `.md` file gets YAML frontmatter parsed for `title` (→ label) and `description`
 4. **Label priority**: frontmatter `title` > `humanize_name(filename)` > raw filename
-5. **Artifact IDs** (all-caps like `EPIC-001`, `AD-015`) are preserved as-is, not humanized
+5. **Artifact IDs** (all-caps like `[EPIC-001](EPIC-001)`, `[AD-015](AD-015)`) are preserved as-is, not humanized
 6. **README.md** is navigation metadata, skipped as browsable artifact at all levels
 7. **Hidden entries** (`.` or `_` prefix) skipped
 8. **Empty directories** omitted from tree

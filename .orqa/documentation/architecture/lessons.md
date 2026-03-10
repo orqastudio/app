@@ -22,7 +22,7 @@ This location is intentional: `.orqa/` is the project-specific directory for Orq
 
 `<IMPL-NNN>.md` — lesson identifier matches the IMPL number displayed in the UI.
 
-Example: `.orqa/lessons/IMPL-001.md`
+Example: `.orqa/lessons/[IMPL-001](IMPL-001).md`
 
 ### YAML Frontmatter Schema
 

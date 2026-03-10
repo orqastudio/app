@@ -36,8 +36,8 @@ scope: project
 - **Coverage**: 80%+ test coverage. No exceptions without documented justification.
 - **No TODO comments**: If something isn't done, it's tracked in TODO.md, not scattered across the codebase. TODO comments in committed code are a build failure.
 - **No commented-out code**: Delete it. Git history preserves it.
-- **No hardcoded fake data**: See RULE-020 (no-stubs).
-- **MUST use shared components**: See RULE-024 (reusable-components) for the shared component library.
+- **No hardcoded fake data**: See [RULE-020](RULE-020) (no-stubs).
+- **MUST use shared components**: See [RULE-024](RULE-024) (reusable-components) for the shared component library.
 
 ## Enforcement
 
@@ -80,7 +80,7 @@ Coding standards MUST be reflected in automated linting rules. If a standard exi
 
 ## Related Rules
 
-- RULE-012 (error-ownership) — *when* to verify (always, before every call)
-- RULE-024 (reusable-components) — *which* components to use (shared library)
-- RULE-029 (testing-standards) — testing patterns and coverage requirements
-- RULE-005 (chunkhound-usage) — use semantic search before creating new code
+- [RULE-012](RULE-012) (error-ownership) — *when* to verify (always, before every call)
+- [RULE-024](RULE-024) (reusable-components) — *which* components to use (shared library)
+- [RULE-029](RULE-029) (testing-standards) — testing patterns and coverage requirements
+- [RULE-005](RULE-005) (chunkhound-usage) — use semantic search before creating new code

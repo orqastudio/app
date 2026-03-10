@@ -35,7 +35,7 @@ scoring:
 
 ### Phase B: Reference Migration (IN PROGRESS)
 - Convert `plan:` field to `research-refs:` on all epics
-- Update all tasks to reference `epic: EPIC-033`
+- Update all tasks to reference `epic: [EPIC-033](EPIC-033)`
 - Remove `plans` from project.json artifacts config
 - Update Rust types and frontend types to remove `plan` field
 - Verify every task has a valid epic, every epic has a valid milestone
@@ -45,7 +45,7 @@ scoring:
 - Ensure no `plan:` field can be created going forward
 - Verify scanning/reading code handles `research-refs:` correctly
 
-### Phase D: Historical Backfill (TASK-011)
+### Phase D: Historical Backfill ([TASK-011](TASK-011))
 - Decision chains, surpassed artifacts, lesson history
 - Reference integrity for all existing artifacts
 
@@ -53,17 +53,17 @@ scoring:
 
 | Task | Title | Status |
 |------|-------|--------|
-| TASK-004 | Audit product docs for vision alignment | done |
-| TASK-005 | Audit architecture and process docs | done |
-| TASK-006 | Audit governance rules and agent definitions | done |
-| TASK-007 | Add artifacts config to project.json and Rust types | done |
-| TASK-008 | Update scanner to use config-driven paths | done |
-| TASK-009 | Frontend: config-driven navigation | done |
-| TASK-010 | Update task and artifact-framework schemas | done |
-| TASK-012 | Remove Plan type from artifact-framework.md | done |
-| TASK-013 | Migrate existing plans to research | done |
-| TASK-014 | Update artifact-lifecycle.md rules | done |
-| TASK-011 | Historical backfill | todo |
+| [TASK-004](TASK-004) | Audit product docs for vision alignment | done |
+| [TASK-005](TASK-005) | Audit architecture and process docs | done |
+| [TASK-006](TASK-006) | Audit governance rules and agent definitions | done |
+| [TASK-007](TASK-007) | Add artifacts config to project.json and Rust types | done |
+| [TASK-008](TASK-008) | Update scanner to use config-driven paths | done |
+| [TASK-009](TASK-009) | Frontend: config-driven navigation | done |
+| [TASK-010](TASK-010) | Update task and artifact-framework schemas | done |
+| [TASK-012](TASK-012) | Remove Plan type from artifact-framework.md | done |
+| [TASK-013](TASK-013) | Migrate existing plans to research | done |
+| [TASK-014](TASK-014) | Update artifact-lifecycle.md rules | done |
+| [TASK-011](TASK-011) | Historical backfill | todo |
 
 ## Acceptance Criteria
 

@@ -46,5 +46,5 @@ All interactive elements that need hover hints MUST use the shadcn `Tooltip` com
 
 ## Related Rules
 
-- RULE-006 (coding-standards) — component library usage
-- RULE-024 (reusable-components) — use shared components consistently
+- [RULE-006](RULE-006) (coding-standards) — component library usage
+- [RULE-024](RULE-024) (reusable-components) — use shared components consistently

@@ -33,13 +33,13 @@ acceptance:
 - **F5**: Research milestone grouping inconsistent
 - **F6**: Lessons have code-reference titles, some lack descriptions
 - **F7**: Rules not all have descriptions
-- **F8**: MS-000 needs restructuring as epics/tasks
+- **F8**: [MS-000](MS-000) needs restructuring as epics/tasks
 
 ## Notes
 
 This is a data-only task — no code changes. All fixes are governance file edits.
 
-The YAML field order audit is critical because TASK-038 will make the renderer respect YAML source order. If the field order in existing files doesn't make sense from a content hierarchy perspective, the renderer fix will surface that as a display problem.
+The YAML field order audit is critical because [TASK-038](TASK-038) will make the renderer respect YAML source order. If the field order in existing files doesn't make sense from a content hierarchy perspective, the renderer fix will surface that as a display problem.
 
 Recommended field order per type:
 - **Milestones**: id, title, status, description, created, updated, deadline, gate, epic-count, completed-epics, tags

@@ -35,7 +35,7 @@ scoring:
 
 ## Produced Decision
 
-AD-027 (Vision Evolution)
+[AD-027](AD-027) (Vision Evolution)
 
 ## Git Evidence
 

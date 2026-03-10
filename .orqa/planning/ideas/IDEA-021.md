@@ -13,7 +13,8 @@ research-needed:
   - Terminal integration approach (xterm.js vs native)
   - Git panel scope and UX
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Wireframe browser — browsable, interactive wireframe artifacts
 - Custom system prompt templates — pre-built prompts for common scenarios

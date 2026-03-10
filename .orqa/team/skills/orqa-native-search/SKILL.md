@@ -150,5 +150,5 @@ If the ONNX model hasn't loaded yet (first startup, download in progress):
 ## Related
 
 - `chunkhound` skill — CLI-context equivalent (external MCP server)
-- AD-024 — Architecture decision documenting the native search engine
+- [AD-024](AD-024) — Architecture decision documenting the native search engine
 - `search-engine-implementation` research doc — Design rationale

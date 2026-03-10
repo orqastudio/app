@@ -79,6 +79,6 @@ For the full command reference, see `.orqa/documentation/development/commands.md
 
 ## Related Rules
 
-- RULE-006 (coding-standards) — function size limits apply to test helpers too
-- RULE-020 (no-stubs) — test doubles are NOT stubs; they implement real traits
-- RULE-012 (error-ownership) — failing tests are YOUR responsibility to fix
+- [RULE-006](RULE-006) (coding-standards) — function size limits apply to test helpers too
+- [RULE-020](RULE-020) (no-stubs) — test doubles are NOT stubs; they implement real traits
+- [RULE-012](RULE-012) (error-ownership) — failing tests are YOUR responsibility to fix

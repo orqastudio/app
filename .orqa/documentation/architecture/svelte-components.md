@@ -6,7 +6,7 @@ created: "2026-03-02"
 updated: "2026-03-04"
 ---
 
-**Date:** 2026-03-02 | **Updated:** 2026-03-04 | **Status:** Aligned with Phase 1 implementation | **References:** [Frontend Research](/research/frontend), [Design Tokens Research](/research/design-tokens), [Information Architecture](/product/information-architecture)
+**Date:** 2026-03-02 | **Updated:** 2026-03-04 | **Status:** Aligned with Phase 1 implementation | **References:** [Frontend Research](RES-004), [Design Tokens Research](RES-003), [Information Architecture](DOC-040)
 
 Defines the complete Svelte component architecture for OrqaStudio™: directory layout, route structure, component hierarchy, store design, command mapping, data flow, streaming integration, and theme integration.
 
@@ -289,7 +289,7 @@ Indentation shows parent-child nesting. Components prefixed with `ui:` are shadc
 
 ## Store Architecture
 
-All stores use Svelte 5 runes exclusively (AD-004). Store files use the `.svelte.ts` extension to enable runes outside of components.
+All stores use Svelte 5 runes exclusively ([AD-004](AD-004)). Store files use the `.svelte.ts` extension to enable runes outside of components.
 
 ### session.svelte.ts
 
@@ -491,7 +491,7 @@ export const settingsStore = new SettingsStore();
 
 ## Component-to-Command Mapping
 
-Per AD-006, only containers and pages call `invoke()`. Display components receive data via `$props()`.
+Per [AD-006](AD-006), only containers and pages call `invoke()`. Display components receive data via `$props()`.
 
 ### Data-Fetching Boundary: `+page.svelte`
 
@@ -688,7 +688,7 @@ async function handleSendMessage(content: string) {
 
 ### ProviderEvent Types
 
-The `ProviderEvent` discriminated union mirrors the Rust enum (AD-009, AD-017):
+The `ProviderEvent` discriminated union mirrors the Rust enum ([AD-009](AD-009), [AD-017](AD-017)):
 
 ```typescript
 // $lib/types/provider-event.ts
@@ -818,24 +818,24 @@ $effect(() => {
 
 | Convention | Rule | Reference |
 |-----------|------|-----------|
-| Runes only | `$state`, `$derived`, `$effect`, `$props` everywhere. No `export let`, no `$:`, no `<slot>`. | AD-004 |
-| Component purity | `$lib/components/` components are props-only. No `invoke()` inside them. | AD-006 |
-| Data fetching | `+page.svelte` and `+layout.svelte` are the only files that call `invoke()`. | AD-006 |
-| Callback props | Display components emit user intent via callback props (`onSend`, `onSelect`, etc.). | AD-006 |
-| shadcn-svelte imports | `import { Button } from "$lib/components/ui/button"` | AD-013 |
-| Activity Bar | 48px fixed icon rail controls Explorer Panel content. Active icon has left border indicator. Hooks icon covers both lifecycle hooks (`.orqa/hooks/`) and hookify enforcement rules (`.orqa/hookify/`). | AD-019 |
+| Runes only | `$state`, `$derived`, `$effect`, `$props` everywhere. No `export let`, no `$:`, no `<slot>`. | [AD-004](AD-004) |
+| Component purity | `$lib/components/` components are props-only. No `invoke()` inside them. | [AD-006](AD-006) |
+| Data fetching | `+page.svelte` and `+layout.svelte` are the only files that call `invoke()`. | [AD-006](AD-006) |
+| Callback props | Display components emit user intent via callback props (`onSend`, `onSelect`, etc.). | [AD-006](AD-006) |
+| shadcn-svelte imports | `import { Button } from "$lib/components/ui/button"` | [AD-013](AD-013) |
+| Activity Bar | 48px fixed icon rail controls Explorer Panel content. Active icon has left border indicator. Hooks icon covers both lifecycle hooks (`.orqa/hooks/`) and hookify enforcement rules (`.orqa/hookify/`). | [AD-019](AD-019) |
 | Custom components | Organized by domain: `conversation/`, `tool/`, `content/`, `artifact/`, `navigation/`, `settings/`, `layout/` (includes `ActivityBar.svelte`, `ActivityBarItem.svelte`, `NavSubPanel.svelte`) | — |
-| Store files | `.svelte.ts` extension, class-based with `$state` fields, exported singleton | AD-004 |
-| Type safety | All `invoke()` calls use typed wrappers from `$lib/commands/` | AD-002 |
-| Streaming | `Channel<T>` for high-frequency token streams, `emit/listen` for low-frequency events | AD-009 |
-| Snippets over slots | Use `{#snippet}` and `{@render}` instead of `<slot>` for component composition | AD-004 |
+| Store files | `.svelte.ts` extension, class-based with `$state` fields, exported singleton | [AD-004](AD-004) |
+| Type safety | All `invoke()` calls use typed wrappers from `$lib/commands/` | [AD-002](AD-002) |
+| Streaming | `Channel<T>` for high-frequency token streams, `emit/listen` for low-frequency events | [AD-009](AD-009) |
+| Snippets over slots | Use `{#snippet}` and `{@render}` instead of `<slot>` for component composition | [AD-004](AD-004) |
 
 ---
 
 ## Related Documents
 
-- [Component Inventory](/ui/component-inventory) — Complete list of all components
-- [Information Architecture](/product/information-architecture) — Layout model and navigation
-- [Architecture Decisions](/architecture/decisions) — AD-004 (runes), AD-006 (purity), AD-009 (streaming)
-- [Design System](/ui/design-system) — Visual design tokens and typography
-- [SQLite Schema](/architecture/sqlite-schema) — Database tables backing the stores
+- [Component Inventory](DOC-048) — Complete list of all components
+- [Information Architecture](DOC-040) — Layout model and navigation
+- [Architecture Decisions](DOC-001) — [AD-004](AD-004) (runes), [AD-006](AD-006) (purity), [AD-009](AD-009) (streaming)
+- [Design System](DOC-049) — Visual design tokens and typography
+- [SQLite Schema](DOC-013) — Database tables backing the stores

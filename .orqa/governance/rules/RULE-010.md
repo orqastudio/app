@@ -159,6 +159,6 @@ Use `code_research` to map the full request chain (component -> store -> invoke 
 
 ## Related Rules
 
-- RULE-020 (no-stubs) — commands must return real data, not fake responses
-- RULE-012 (error-ownership) — verify the full chain works, don't assume
-- RULE-005 (chunkhound-usage) — tools for verifying the chain exists
+- [RULE-020](RULE-020) (no-stubs) — commands must return real data, not fake responses
+- [RULE-012](RULE-012) (error-ownership) — verify the full chain works, don't assume
+- [RULE-005](RULE-005) (chunkhound-usage) — tools for verifying the chain exists

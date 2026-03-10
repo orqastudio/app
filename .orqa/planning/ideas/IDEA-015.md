@@ -12,7 +12,8 @@ research-needed:
   - View projection architecture
   - Audience-tailored output generation
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Strategy maps — visual connections to strategic objectives
 - Experiment frameworks — structured hypothesis -> learn cycle views

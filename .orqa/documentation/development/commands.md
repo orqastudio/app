@@ -486,4 +486,4 @@ The only exception is when a target does not yet exist for a specific operation.
 
 - [Getting Started](getting-started.md) — Prerequisites and project setup
 - [Coding Standards](coding-standards.md) — Code quality rules and patterns
-- [Agentic Workflow](/process/workflow) — Task lifecycle and agent coordination
+- [Agentic Workflow](DOC-035) — Task lifecycle and agent coordination

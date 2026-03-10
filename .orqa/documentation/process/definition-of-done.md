@@ -184,9 +184,9 @@ Chain: COMPLETE
 
 ## Related Documents
 
-- [Artifact Workflow](/process/artifact-workflow) -- How artifacts flow through the development process
-- [Artifact Framework](/product/artifact-framework) -- Artifact schemas and design principles
-- [Definition of Ready](/process/definition-of-ready) -- The gate checklist before implementation starts
-- [Orchestration](/process/orchestration) -- Orchestrator verification gate protocol
-- [Workflow](/process/workflow) -- Full task lifecycle including review gate steps
-- [Implementation Lessons](/development/lessons) -- Patterns to document when review fails
+- [Artifact Workflow](DOC-025) -- How artifacts flow through the development process
+- [Artifact Framework](DOC-036) -- Artifact schemas and design principles
+- [Definition of Ready](DOC-028) -- The gate checklist before implementation starts
+- [Orchestration](DOC-030) -- Orchestrator verification gate protocol
+- [Workflow](DOC-035) -- Full task lifecycle including review gate steps
+- [Implementation Lessons](DOC-006) -- Patterns to document when review fails

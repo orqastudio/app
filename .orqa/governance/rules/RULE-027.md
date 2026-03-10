@@ -91,8 +91,8 @@ Agents receiving tasks MUST:
 
 ## Related Rules
 
-- RULE-008 (documentation-first) — documentation before code (this rule extends it to ALL artifacts)
-- RULE-004 (artifact-lifecycle) — artifact creation standards and status transitions
-- RULE-011 (enforcement-before-code) — enforcement artifacts before implementation
-- RULE-019 (no-deferred-deliverables) — if it's in scope, it ships
-- RULE-015 (honest-reporting) — structure prevents ambiguous completion claims
+- [RULE-008](RULE-008) (documentation-first) — documentation before code (this rule extends it to ALL artifacts)
+- [RULE-004](RULE-004) (artifact-lifecycle) — artifact creation standards and status transitions
+- [RULE-011](RULE-011) (enforcement-before-code) — enforcement artifacts before implementation
+- [RULE-019](RULE-019) (no-deferred-deliverables) — if it's in scope, it ships
+- [RULE-015](RULE-015) (honest-reporting) — structure prevents ambiguous completion claims

@@ -70,5 +70,5 @@ In the CLI, agents create lesson files manually in `.orqa/lessons/` following th
 
 ## Related Rules
 
-- RULE-015 (honest-reporting) — completion reports must include lesson documentation status
-- RULE-022 (plan-mode-compliance) — verification gate protocol that triggers lesson logging
+- [RULE-015](RULE-015) (honest-reporting) — completion reports must include lesson documentation status
+- [RULE-022](RULE-022) (plan-mode-compliance) — verification gate protocol that triggers lesson logging

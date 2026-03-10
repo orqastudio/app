@@ -13,7 +13,8 @@ research-needed:
   - Shareable link architecture (local app constraint)
   - Export format priorities
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Executive dashboards — project health, progress, risk summaries
 - Shareable artifact links — read-only access

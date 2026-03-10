@@ -175,7 +175,7 @@ Turn limits are enforced by the Rust runtime, not by the sidecar. The sidecar re
 
 ## Enforcement in Sub-Agents
 
-Sub-agent tool calls pass through the same enforcement engine as parent tool calls. A sub-agent writing a file with `: any` in TypeScript will be blocked by RULE-004-001, the same as if the orchestrator wrote it directly. Sub-agent violations are recorded in the `violations` table with the `session_id` of the parent session and a `sub_agent_spawn_id` reference.
+Sub-agent tool calls pass through the same enforcement engine as parent tool calls. A sub-agent writing a file with `: any` in TypeScript will be blocked by [RULE-004](RULE-004)-001, the same as if the orchestrator wrote it directly. Sub-agent violations are recorded in the `violations` table with the `session_id` of the parent session and a `sub_agent_spawn_id` reference.
 
 ---
 
@@ -218,7 +218,7 @@ src-tauri/src/
 
 ## Related Documents
 
-- `.orqa/documentation/architecture/decisions.md` — AD-010: Tool implementation as MCP (orqa_ tool namespace)
+- `.orqa/documentation/architecture/decisions.md` — [AD-010](AD-010): Tool implementation as MCP (orqa_ tool namespace)
 - `.orqa/documentation/architecture/enforcement.md` — Enforcement engine that sub-agent calls pass through
 - `.orqa/documentation/architecture/tool-definitions.md` — Built-in tool definitions and approval matrix
 - `.orqa/documentation/process/orchestration.md` — Orchestration model and task delegation workflow

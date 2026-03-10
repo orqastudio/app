@@ -86,7 +86,7 @@ The complete set of artifacts (agents, rules, skills, hooks, hookify files, docu
 
 ### Two-Pillar Test
 
-The feature acceptance gate: every feature must serve at least one of (1) Clarity Through Structure or (2) Learning Through Reflection. Features that serve neither are rejected. When pillars conflict, Pillar 1 takes priority — you cannot improve a process that isn't visible and structured. See [Product Governance](/product/governance).
+The feature acceptance gate: every feature must serve at least one of (1) Clarity Through Structure or (2) Learning Through Reflection. Features that serve neither are rejected. When pillars conflict, Pillar 1 takes priority — you cannot improve a process that isn't visible and structured. See [Product Governance](DOC-039).
 
 ### Clarity Through Structure (Pillar 1)
 
@@ -244,7 +244,7 @@ A collapsible 200px panel between the Activity Bar and Explorer Panel. Provides 
 
 ### Session Dropdown
 
-A dropdown control in the Chat Panel header for switching between sessions. Shows the active session title (clickable to open), a list of recent sessions with search filter, and a "New Session" button. Replaces the dedicated Sessions Panel from the previous four-zone layout (AD-018). `Ctrl+N` creates a new session directly.
+A dropdown control in the Chat Panel header for switching between sessions. Shows the active session title (clickable to open), a list of recent sessions with search filter, and a "New Session" button. Replaces the dedicated Sessions Panel from the previous four-zone layout ([AD-018](AD-018)). `Ctrl+N` creates a new session directly.
 
 ### Chat Panel
 
@@ -290,7 +290,7 @@ The coordinating intelligence in the agentic team. In the bootstrap phase, this 
 
 ## Related Documents
 
-- [Product Vision](/product/vision) — Problem statement, solution, pillars
-- [Product Governance](/product/governance) — Two-Pillar Test, foundational principles
-- [Architecture Decisions](/architecture/decisions) — Formal technical decisions
-- [Orchestration](/process/orchestration) — Current (bootstrap) process model
+- [Product Vision](DOC-046) — Problem statement, solution, pillars
+- [Product Governance](DOC-039) — Two-Pillar Test, foundational principles
+- [Architecture Decisions](DOC-001) — Formal technical decisions
+- [Orchestration](DOC-030) — Current (bootstrap) process model

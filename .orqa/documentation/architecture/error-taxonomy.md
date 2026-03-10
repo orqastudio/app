@@ -8,9 +8,9 @@ updated: "2026-03-04"
 
 **Date:** 2026-03-02 | **Status:** Phase 0e specification
 
-Complete error type hierarchy for OrqaStudio™. Every error path in the application is represented by a typed Rust enum using `thiserror`. No `unwrap()`, `expect()`, or `panic!()` in production code (AD-003).
+Complete error type hierarchy for OrqaStudio™. Every error path in the application is represented by a typed Rust enum using `thiserror`. No `unwrap()`, `expect()`, or `panic!()` in production code ([AD-003](AD-003)).
 
-**Architecture References:** AD-003 (error propagation via Result types), AD-002 (IPC boundary design), AD-009 (streaming pipeline), AD-011 (security model)
+**Architecture References:** [AD-003](AD-003) (error propagation via Result types), [AD-002](AD-002) (IPC boundary design), [AD-009](AD-009) (streaming pipeline), [AD-011](AD-011) (security model)
 
 ---
 
@@ -671,7 +671,7 @@ These errors require user action. The UI provides a clear path to recovery:
 | `ProviderError::ContextWindowExceeded` | Inline error: "New Session" button. Handoff summary preserves context. |
 | `ProviderError::NetworkError` (persistent) | Status bar click opens network diagnostics. "Retry" button in conversation. |
 | `ToolError::PermissionDenied` | Tool call card: "Grant Access" button expands Tauri file scope for the requested path. |
-| `ToolError::SecurityViolation` | Tool call card: explains why the path is blocked. No override (deny always wins per AD-011). |
+| `ToolError::SecurityViolation` | Tool call card: explains why the path is blocked. No override (deny always wins per [AD-011](AD-011)). |
 | `ArtifactError::ParseFailed` | Banner: "Edit Source" button opens raw file in CodeMirror to fix syntax. |
 | `ArtifactError::ValidationFailed` | Banner: lists violations with line numbers. Clicking a violation jumps to the line in the editor. |
 | `McpError::ConfigurationInvalid` | Toast links to Settings > MCP Servers. Highlights the misconfigured server. |
@@ -738,7 +738,7 @@ Each error type has tests verifying:
 
 ## Related Documents
 
-- [Architecture Decisions](./decisions.md) -- AD-003 (Result types), AD-010 (MCP tools), AD-011 (security)
+- [Architecture Decisions](./decisions.md) -- [AD-003](AD-003) (Result types), [AD-010](AD-010) (MCP tools), [AD-011](AD-011) (security)
 - [MCP Host Interface](./mcp-host.md) -- McpError context
-- [Interaction Patterns](/ui/interaction-patterns) -- Error states UI patterns
-- [MVP Specification](/product/mvp-specification) -- Feature acceptance criteria referencing error handling
+- [Interaction Patterns](DOC-053) -- Error states UI patterns
+- [MVP Specification](DOC-042) -- Feature acceptance criteria referencing error handling

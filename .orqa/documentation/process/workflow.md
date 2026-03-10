@@ -91,7 +91,7 @@ Merge conflicts are the primary source of lost work. Every conflict MUST be reso
 
 ### Before Starting a Task
 
-1. Check the [Definition of Ready](/process/definition-of-ready) -- verify all applicable items
+1. Check the [Definition of Ready](DOC-028) -- verify all applicable items
 2. Verify the artifact trail -- confirm an `EPIC-NNN` exists with `status: ready` and `docs-required` gate satisfied
 3. Check `BLOCKERS.md` -- ensure the task is not blocked
 4. Read the full task description including scope, action, and acceptance criteria
@@ -106,7 +106,7 @@ Merge conflicts are the primary source of lost work. Every conflict MUST be reso
 ### After Completing a Task
 
 1. Run acceptance criteria -- execute the specific checks listed for this task
-2. Verify the [Definition of Done](/process/definition-of-done) -- all applicable items must be satisfied
+2. Verify the [Definition of Done](DOC-027) -- all applicable items must be satisfied
 3. Request review from `code-reviewer`, then `qa-tester`, then `ux-reviewer` (if UI-facing)
 4. Update `TODO.md` -- mark the task `[x]`
 5. Update the epic's task checklist and status in `.orqa/planning/epics/EPIC-NNN.md`
@@ -205,13 +205,13 @@ NO backwards compatibility shims. Fix ALL callers in the same commit. See `.orqa
 
 | Document | Purpose |
 |----------|---------|
-| [Coding Standards](/development/coding-standards) | Full code quality rules |
-| [Architecture Decisions](/architecture/decisions) | All architecture decisions |
-| [Team Overview](/process/team) | Agent directory, skill directory |
-| [Definition of Ready](/process/definition-of-ready) | Task start gate checklist |
-| [Definition of Done](/process/definition-of-done) | Task completion gate checklist |
-| [Orchestration](/process/orchestration) | Orchestrator responsibilities |
-| [Implementation Lessons](/development/lessons) | Known patterns and gotchas |
+| [Coding Standards](DOC-021) | Full code quality rules |
+| [Architecture Decisions](DOC-001) | All architecture decisions |
+| [Team Overview](DOC-034) | Agent directory, skill directory |
+| [Definition of Ready](DOC-028) | Task start gate checklist |
+| [Definition of Done](DOC-027) | Task completion gate checklist |
+| [Orchestration](DOC-030) | Orchestrator responsibilities |
+| [Implementation Lessons](DOC-006) | Known patterns and gotchas |
 | `BLOCKERS.md` | Active blockers awaiting user clarification |
 
 ---
@@ -246,11 +246,11 @@ Template:
 
 ## Related Documents
 
-- [Artifact Workflow](/process/artifact-workflow) -- How artifacts flow through the development process
-- [Artifact Framework](/product/artifact-framework) -- Artifact schemas and design principles
-- [Team Overview](/process/team) -- Agent roles and skill assignments
-- [Orchestration](/process/orchestration) -- Orchestrator responsibilities and context discipline
-- [Definition of Ready](/process/definition-of-ready) -- What must be true before work starts
-- [Definition of Done](/process/definition-of-done) -- What must be true before work is complete
-- [Implementation Lessons](/development/lessons) -- Known implementation patterns and gotchas
-- [Process Retrospectives](/process/retrospectives) -- Process-level lessons and changes
+- [Artifact Workflow](DOC-025) -- How artifacts flow through the development process
+- [Artifact Framework](DOC-036) -- Artifact schemas and design principles
+- [Team Overview](DOC-034) -- Agent roles and skill assignments
+- [Orchestration](DOC-030) -- Orchestrator responsibilities and context discipline
+- [Definition of Ready](DOC-028) -- What must be true before work starts
+- [Definition of Done](DOC-027) -- What must be true before work is complete
+- [Implementation Lessons](DOC-006) -- Known implementation patterns and gotchas
+- [Process Retrospectives](DOC-031) -- Process-level lessons and changes

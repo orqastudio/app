@@ -81,6 +81,6 @@ Every agent completing implementation work MUST include these sections in its fi
 
 ## Related Rules
 
-- RULE-010 (end-to-end-completeness) — the full chain that must exist
-- RULE-012 (error-ownership) — if the command doesn't exist, create it
-- RULE-005 (chunkhound-usage) — tools for verifying implementations exist
+- [RULE-010](RULE-010) (end-to-end-completeness) — the full chain that must exist
+- [RULE-012](RULE-012) (error-ownership) — if the command doesn't exist, create it
+- [RULE-005](RULE-005) (chunkhound-usage) — tools for verifying implementations exist

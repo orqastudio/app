@@ -17,7 +17,8 @@ research-needed:
   - Auto-commit strategy — when should the app commit artifact changes?
   - Remote origin discovery and optional sync UI
 promoted-to: null
----## Design Principles
+---
+## Design Principles
 
 ### Git is local infrastructure, not an integration
 

@@ -51,7 +51,7 @@ Use these precise terms — not vague language like "mostly done" or "almost com
 
 ## Agent Output Requirements
 
-See RULE-020 (no-stubs) > "Agent Completion Reports" for the mandatory output structure.
+See [RULE-020](RULE-020) (no-stubs) > "Agent Completion Reports" for the mandatory output structure.
 
 ## Lesson Documentation Status
 
@@ -61,12 +61,12 @@ Completion reports from review agents (`code-reviewer`, `qa-tester`, `ux-reviewe
 - Were any existing IMPL entries updated with recurrence increments?
 - Was `.orqa/lessons/` checked for known patterns before reporting findings?
 
-Review agents that skip lesson documentation are in violation of this rule AND RULE-017 (lessons-learned).
+Review agents that skip lesson documentation are in violation of this rule AND [RULE-017](RULE-017) (lessons-learned).
 
 ## Related Rules
 
-- RULE-020 (no-stubs) — what counts as a stub + mandatory output structure
-- RULE-019 (no-deferred-deliverables) — deferring scoped deliverables is dishonest reporting
-- RULE-022 (plan-mode-compliance) — verification gate protocol + evidence requirements
-- RULE-012 (error-ownership) — all errors are your responsibility
-- RULE-017 (lessons-learned) — learning loop enforcement for review agents
+- [RULE-020](RULE-020) (no-stubs) — what counts as a stub + mandatory output structure
+- [RULE-019](RULE-019) (no-deferred-deliverables) — deferring scoped deliverables is dishonest reporting
+- [RULE-022](RULE-022) (plan-mode-compliance) — verification gate protocol + evidence requirements
+- [RULE-012](RULE-012) (error-ownership) — all errors are your responsibility
+- [RULE-017](RULE-017) (lessons-learned) — learning loop enforcement for review agents

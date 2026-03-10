@@ -31,7 +31,7 @@ vision-alignment.md, pillar-alignment-docs.md, and scoring dimensions. This
 makes the governance framework non-portable — other projects cannot define
 their own guiding principles without editing canon rules.
 
-AD-031 establishes that pillars should be first-class artifacts with structured
+[AD-031](AD-031) establishes that pillars should be first-class artifacts with structured
 frontmatter, referenced by ID, and injected into AI system prompts.
 
 ## Implementation Scope
@@ -40,8 +40,8 @@ frontmatter, referenced by ID, and injected into AI system prompts.
 
 Create `.orqa/planning/pillars/` directory with two initial artifacts:
 
-- `PILLAR-001.md` — Clarity Through Structure
-- `PILLAR-002.md` — Learning Through Reflection
+- `[PILLAR-001](PILLAR-001).md` — Clarity Through Structure
+- `[PILLAR-002](PILLAR-002).md` — Learning Through Reflection
 
 Schema: id, title, description, test-questions, priority, status, tags.
 
@@ -64,7 +64,7 @@ Update rules that hardcode pillar names to reference pillar artifacts instead:
 
 ### 5. Artifact Reference Field
 
-Add `pillars: [PILLAR-001]` frontmatter field to the epic and idea schemas
+Add `pillars: [[PILLAR-001](PILLAR-001)]` frontmatter field to the epic and idea schemas
 in `artifact-framework.md`. Update scoring to reference pillar IDs.
 
 ## Constraints
@@ -82,12 +82,12 @@ in `artifact-framework.md`. Update scoring to reference pillar IDs.
 
 | Task | Title | Depends On |
 |------|-------|------------|
-| TASK-058 | Create pillar artifact schema and initial pillars | — |
-| TASK-059 | Register pillars in artifact config | TASK-058 |
-| TASK-060 | Update rules to reference pillar artifacts generically | TASK-058 |
-| TASK-061 | Add pillar reference field to epic/idea schemas | TASK-058 |
-| TASK-062 | Update system prompt assembly to inject pillars | TASK-058, TASK-059 |
-| TASK-063 | Update product documentation (governance.md, vision.md) | TASK-060 |
+| [TASK-058](TASK-058) | Create pillar artifact schema and initial pillars | — |
+| [TASK-059](TASK-059) | Register pillars in artifact config | [TASK-058](TASK-058) |
+| [TASK-060](TASK-060) | Update rules to reference pillar artifacts generically | [TASK-058](TASK-058) |
+| [TASK-061](TASK-061) | Add pillar reference field to epic/idea schemas | [TASK-058](TASK-058) |
+| [TASK-062](TASK-062) | Update system prompt assembly to inject pillars | [TASK-058](TASK-058), [TASK-059](TASK-059) |
+| [TASK-063](TASK-063) | Update product documentation (governance.md, vision.md) | [TASK-060](TASK-060) |
 
 ## Dependency Chain
 

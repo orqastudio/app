@@ -77,5 +77,5 @@ Rules use `active` / `inactive` — NOT `surpassed`. Surpassed is for research, 
 
 ## Related Rules
 
-- RULE-008 (documentation-first) — documentation describes current state, deleted when outdated
-- RULE-004 (artifact-lifecycle) — status transitions for ideas, epics, milestones
+- [RULE-008](RULE-008) (documentation-first) — documentation describes current state, deleted when outdated
+- [RULE-004](RULE-004) (artifact-lifecycle) — status transitions for ideas, epics, milestones

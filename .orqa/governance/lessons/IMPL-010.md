@@ -18,7 +18,7 @@ Docsify seemed like a quick way to get documentation browsing working — it's a
 
 ## The Correct Approach
 
-Documentation browsing is a first-class feature of OrqaStudio, not a bolted-on external tool. The artifact scanner reads markdown files directly, extracts frontmatter, and renders them in the app's artifact panel. This was formalized in AD-020 and AD-022.
+Documentation browsing is a first-class feature of OrqaStudio, not a bolted-on external tool. The artifact scanner reads markdown files directly, extracts frontmatter, and renders them in the app's artifact panel. This was formalized in [AD-020](AD-020) and [AD-022](AD-022).
 
 ## Git Evidence
 

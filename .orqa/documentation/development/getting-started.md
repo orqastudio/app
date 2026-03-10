@@ -101,7 +101,7 @@ orqa-studio/
 └── tsconfig.json
 ```
 
-### Tauri Plugins (AD-012)
+### Tauri Plugins ([AD-012](AD-012))
 
 OrqaStudio requires the following Tauri v2 plugins. All are official and maintained in [tauri-apps/plugins-workspace](https://github.com/tauri-apps/plugins-workspace) unless noted.
 
@@ -117,7 +117,7 @@ OrqaStudio requires the following Tauri v2 plugins. All are official and maintai
 | `tauri-plugin-autostart` | Optional launch at system startup | |
 | `tauri-plugin-keyring` | API key storage in OS keychain | Community plugin |
 
-> **Note:** SQLite persistence is implemented via `rusqlite` directly in `src-tauri/src/db.rs`, not via `tauri-plugin-sql`. Do not add `tauri-plugin-sql` — it conflicts with the direct `rusqlite` approach (AD-005, AD-014).
+> **Note:** SQLite persistence is implemented via `rusqlite` directly in `src-tauri/src/db.rs`, not via `tauri-plugin-sql`. Do not add `tauri-plugin-sql` — it conflicts with the direct `rusqlite` approach ([AD-005](AD-005), [AD-014](AD-014)).
 
 **Install Rust-side plugins** (run from `src-tauri/`):
 
@@ -151,11 +151,11 @@ npm install @tauri-apps/plugin-autostart
 npm install tauri-plugin-keyring-api
 ```
 
-Each plugin must also be registered in the Tauri app builder (`src-tauri/src/main.rs`) and have its permissions declared in `src-tauri/capabilities/default.json`. See [AD-012](/architecture/decisions#ad-012-tauri-plugin-selections) and [Tauri v2 Research](/research/tauri-v2) for configuration details.
+Each plugin must also be registered in the Tauri app builder (`src-tauri/src/main.rs`) and have its permissions declared in `src-tauri/capabilities/default.json`. See [AD-012](DOC-001) and [Tauri v2 Research](RES-007) for configuration details.
 
-### Frontend Dependencies (AD-013)
+### Frontend Dependencies ([AD-013](AD-013))
 
-OrqaStudio's frontend depends on these libraries, selected in [AD-013](/architecture/decisions#ad-013-frontend-library-selections):
+OrqaStudio's frontend depends on these libraries, selected in [AD-013](DOC-001):
 
 | Library | Purpose |
 |---------|---------|
@@ -271,7 +271,7 @@ orqa-studio/
 ## Related Documents
 
 - [Development Commands](commands.md) — All Makefile targets with descriptions and underlying commands
-- [Coding Standards](/development/coding-standards) — Code quality rules and patterns
-- [Agentic Workflow](/process/workflow) — Task lifecycle and agent coordination
-- [Tauri v2 Research](/research/tauri-v2) — Platform capabilities and plugin selections
-- [Frontend Research](/research/frontend) — Library selections and patterns
+- [Coding Standards](DOC-021) — Code quality rules and patterns
+- [Agentic Workflow](DOC-035) — Task lifecycle and agent coordination
+- [Tauri v2 Research](RES-007) — Platform capabilities and plugin selections
+- [Frontend Research](RES-004) — Library selections and patterns

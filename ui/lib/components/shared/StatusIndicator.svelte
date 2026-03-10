@@ -114,5 +114,7 @@
 		<span class="capitalize">{status}</span>
 	</span>
 {:else}
-	<Badge variant={badgeVariant} class="{badgeExtra} capitalize">{status}</Badge>
+	<Badge variant={badgeVariant} class="{badgeExtra} capitalize">
+		<Icon class="h-3 w-3 shrink-0" />{status}
+	</Badge>
 {/if}

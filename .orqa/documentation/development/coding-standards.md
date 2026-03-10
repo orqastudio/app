@@ -50,7 +50,7 @@ updated: "2026-03-08"
 
 ## TypeScript / Svelte Standards
 
-### Svelte 5 Runes (AD-004)
+### Svelte 5 Runes ([AD-004](AD-004))
 
 - `$state()` for reactive state — never `let x = value` for reactive vars
 - `$derived()` for computed values — never `$:` reactive declarations

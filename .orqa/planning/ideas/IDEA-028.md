@@ -14,7 +14,8 @@ research-needed:
   - Can the artifacts table be treated as a pure scan cache?
   - Should governance_analyses be exportable as artifacts?
 promoted-to: null
----## Context
+---
+## Context
 
 OrqaStudio stores governance artifacts as markdown files in `.orqa/` and also
 indexes them in SQLite (`artifacts` table). The file is the source of truth;

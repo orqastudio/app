@@ -7,7 +7,8 @@ layer: canon
 scope: system
 created: "2026-03-07"
 updated: "2026-03-07"
----# Systems Thinking First (NON-NEGOTIABLE)
+---
+# Systems Thinking First (NON-NEGOTIABLE)
 
 This is a universal rule. It applies to every project OrqaStudio manages, not just OrqaStudio itself. The app exists to provide a framework for systems thinking applied to complex problems — this rule defines what that means in practice.
 

@@ -139,7 +139,7 @@ When deciding whether to install a community skill or create a new one:
 A skill is portable if a different project could use it unchanged. Skills MUST NOT contain:
 
 - Project-specific file paths (e.g., `src-tauri/src/domain/sessions.rs`)
-- Architecture decision numbers from this project (e.g., `AD-001`, `AD-005`)
+- Architecture decision numbers from this project (e.g., `[AD-001](AD-001)`, `[AD-005](AD-005)`)
 - Project-specific config values (hardcoded URLs, service names, environment variables)
 - Enforcement rules (those belong in `.orqa/rules/`)
 - Product decisions (those belong in `docs/product/`)

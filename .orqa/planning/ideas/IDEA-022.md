@@ -13,7 +13,8 @@ research-needed:
   - Mobile companion scope
   - API design for programmatic access
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Web companion — read-only web view for artifacts and dashboards
 - Mobile companion — quick capture and review

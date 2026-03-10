@@ -33,7 +33,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] Last-opened project is remembered across app restarts (tauri-plugin-store)
 - [ ] Empty project (no recognized files) shows a meaningful empty state
 
-**Architecture References:** AD-016 (onboarding strategy), AD-014 (persistence), AD-012 (plugins)
+**Architecture References:** [AD-016](AD-016) (onboarding strategy), [AD-014](AD-014) (persistence), [AD-012](AD-012) (plugins)
 
 ---
 
@@ -68,7 +68,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] User can skip discovery entirely via a "Skip — Use Defaults" action and start with generic scaffolding
 - [ ] Skipping creates a minimal project summary with empty governance directories
 
-**Architecture References:** AD-015 (governance format), AD-016 (onboarding strategy), AD-014 (persistence)
+**Architecture References:** [AD-015](AD-015) (governance format), [AD-016](AD-016) (onboarding strategy), [AD-014](AD-014) (persistence)
 
 ---
 
@@ -85,7 +85,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] Status bar shows sidecar state: not started, starting, connected, error
 - [ ] Sidecar process is terminated cleanly on app close
 
-**Architecture References:** AD-007 (sidecar integration), AD-008 (Max authentication), AD-012 (plugins)
+**Architecture References:** [AD-007](AD-007) (sidecar integration), [AD-008](AD-008) (Max authentication), [AD-012](AD-012) (plugins)
 
 ---
 
@@ -110,7 +110,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] Auto delegates model choice to the provider; the sidecar resolves to the best available model based on rate limits and availability
 - [ ] If the provider does not support auto, the Auto option is hidden and a specific model must be selected
 
-**Architecture References:** AD-009 (streaming pipeline), AD-013 (frontend libraries), AD-007 (sidecar)
+**Architecture References:** [AD-009](AD-009) (streaming pipeline), [AD-013](AD-013) (frontend libraries), [AD-007](AD-007) (sidecar)
 
 ---
 
@@ -129,7 +129,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] Tool result errors are visually distinct (error styling)
 - [ ] Cards are read-only in Phase 1 (no approval/denial controls)
 
-**Architecture References:** AD-010 (tool implementation as MCP), AD-013 (frontend libraries)
+**Architecture References:** [AD-010](AD-010) (tool implementation as MCP), [AD-013](AD-013) (frontend libraries)
 
 ---
 
@@ -149,7 +149,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] Sessions persist across app restarts
 - [ ] The last-active session is restored on app restart
 
-**Architecture References:** AD-014 (persistence architecture), AD-005 (SQLite)
+**Architecture References:** [AD-014](AD-014) (persistence architecture), [AD-005](AD-005) (SQLite)
 
 ---
 
@@ -177,7 +177,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] Layout is functional at minimum window size of 900x600px
 - [ ] Responsive: Nav Sub-Panel auto-collapses below 1200px; overlay Sheet below 720px
 
-**Architecture References:** AD-019 (three-zone + nav sub-panel layout), AD-013 (PaneForge), AD-012 (window-state plugin)
+**Architecture References:** [AD-019](AD-019) (three-zone + nav sub-panel layout), [AD-013](AD-013) (PaneForge), [AD-012](AD-012) (window-state plugin)
 
 ---
 
@@ -199,7 +199,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] File watcher detects changes to `.orqa/` files and updates the browser within 500ms
 - [ ] Empty categories show a meaningful empty state
 
-**Architecture References:** AD-015 (governance artifact format), AD-013 (frontend libraries)
+**Architecture References:** [AD-015](AD-015) (governance artifact format), [AD-013](AD-013) (frontend libraries)
 
 ---
 
@@ -218,7 +218,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] "New" button in artifact browser creates a template file and opens it in edit mode
 - [ ] Edited files are saved to `.orqa/` as standard markdown and are immediately usable by OrqaStudio and any connected CLI tools (via symlinks)
 
-**Architecture References:** AD-013 (CodeMirror 6), AD-015 (governance format)
+**Architecture References:** [AD-013](AD-013) (CodeMirror 6), [AD-015](AD-015) (governance format)
 
 ---
 
@@ -235,7 +235,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] Settings are persisted via tauri-plugin-store
 - [ ] Theme changes apply immediately without restart
 
-**Architecture References:** AD-012 (plugins), AD-011 (security model)
+**Architecture References:** [AD-012](AD-012) (plugins), [AD-011](AD-011) (security model)
 
 ---
 
@@ -251,7 +251,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] Shows token usage for current session (input tokens / output tokens) — updated per message
 - [ ] Status indicators use color coding: green (healthy), yellow (degraded), red (error)
 
-**Architecture References:** AD-007 (sidecar), AD-013 (frontend libraries)
+**Architecture References:** [AD-007](AD-007) (sidecar), [AD-013](AD-013) (frontend libraries)
 
 ---
 
@@ -268,7 +268,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] Database operations use `rusqlite` on the Rust side
 - [ ] Frontend queries use `tauri-plugin-sql` via invoke commands
 
-**Architecture References:** AD-014 (persistence), AD-005 (SQLite)
+**Architecture References:** [AD-014](AD-014) (persistence), [AD-005](AD-005) (SQLite)
 
 ---
 
@@ -286,7 +286,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] Tools execute natively in Rust (not shelling out)
 - [ ] Tool execution respects Tauri security scopes (no access outside project root + home)
 
-**Architecture References:** AD-010 (tool implementation as MCP), AD-011 (security model)
+**Architecture References:** [AD-010](AD-010) (tool implementation as MCP), [AD-011](AD-011) (security model)
 
 ---
 
@@ -304,7 +304,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] Handoff notes are visible in the session list (expandable preview)
 - [ ] Generating the summary does not block the user from starting the next session (async generation)
 
-**Architecture References:** AD-007 (sidecar), AD-009 (streaming pipeline), AD-014 (persistence)
+**Architecture References:** [AD-007](AD-007) (sidecar), [AD-009](AD-009) (streaming pipeline), [AD-014](AD-014) (persistence)
 
 ---
 
@@ -322,7 +322,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] Auto-session behavior is configurable: users can disable it in Settings > Project
 - [ ] When disabled, plan mode starts in the current session (no new session created)
 
-**Architecture References:** AD-019 (auto-session behavior), AD-014 (persistence), AD-007 (sidecar)
+**Architecture References:** [AD-019](AD-019) (auto-session behavior), [AD-014](AD-014) (persistence), [AD-007](AD-007) (sidecar)
 
 ---
 
@@ -362,7 +362,7 @@ After Phase 1 is complete, OrqaStudio must pass these checks to transition from 
 
 ## Related Documents
 
-- [User Journeys](/product/journeys) — Workflows that these features support
-- [Information Architecture](/product/information-architecture) — UI structure for these features
-- [Roadmap](/product/roadmap) — Phase 1 in the context of all phases
-- [Product Governance — Transition Criteria](/product/governance) — Dogfooding milestone
+- [User Journeys](DOC-041) — Workflows that these features support
+- [Information Architecture](DOC-040) — UI structure for these features
+- [Roadmap](DOC-044) — Phase 1 in the context of all phases
+- [Product Governance — Transition Criteria](DOC-039) — Dogfooding milestone

@@ -8,7 +8,7 @@ updated: "2026-03-04"
 
 **Date:** 2026-03-02 | **Status:** Phase 0d specification
 
-The authoritative design system specification for OrqaStudio™'s UI. Consolidates decisions from [design-tokens research](/research/design-tokens), [branding research](/research/branding), [frontend research](/research/frontend), and [brand identity guidelines](/ui/brand-identity) into an implementation-ready reference.
+The authoritative design system specification for OrqaStudio™'s UI. Consolidates decisions from [design-tokens research](RES-003), [branding research](RES-001), [frontend research](RES-004), and [brand identity guidelines](DOC-047) into an implementation-ready reference.
 
 ---
 
@@ -122,7 +122,7 @@ These are the component library's contract. Every shadcn-svelte component refere
 
 ### OrqaStudio Brand Extension Variables
 
-These extend the shadcn-svelte base set for OrqaStudio-specific needs (contextual spark colors, status states, logo theming). See [Brand Identity Guidelines](/ui/brand-identity) for full context.
+These extend the shadcn-svelte base set for OrqaStudio-specific needs (contextual spark colors, status states, logo theming). See [Brand Identity Guidelines](DOC-047) for full context.
 
 ```css
 :root {
@@ -454,7 +454,7 @@ The design system context is injected when:
 
 ### Governance Artifact
 
-Auto-generated as `.orqa/governance/rules/design-system.md` during codebase scan if design tokens are detected. Path-scoped to frontend files via `paths:` frontmatter. User approval required before writing. See [branding research Q2](/research/branding) for full specification.
+Auto-generated as `.orqa/governance/rules/design-system.md` during codebase scan if design tokens are detected. Path-scoped to frontend files via `paths:` frontmatter. User approval required before writing. See [branding research Q2](RES-001) for full specification.
 
 ---
 
@@ -501,8 +501,8 @@ Icons inherit text color. Use semantic color classes: `text-foreground`, `text-m
 
 | Document | What It Covers |
 |----------|---------------|
-| [Brand Identity Guidelines](/ui/brand-identity) | Dual-mode identity, logo family, contextual spark colors, deliverables checklist |
-| [Design Tokens Research](/research/design-tokens) | Token format, runtime application, extraction pipeline, per-project persistence |
-| [Branding Research](/research/branding) | Three-layer branding strategy, governance artifact, code generation, hierarchy |
-| [Frontend Research](/research/frontend) | Component library selection, markdown rendering, panel layout, charts |
-| [Information Architecture](/product/information-architecture) | Three-zone + nav sub-panel layout, navigation model, keyboard shortcuts, state management |
+| [Brand Identity Guidelines](DOC-047) | Dual-mode identity, logo family, contextual spark colors, deliverables checklist |
+| [Design Tokens Research](RES-003) | Token format, runtime application, extraction pipeline, per-project persistence |
+| [Branding Research](RES-001) | Three-layer branding strategy, governance artifact, code generation, hierarchy |
+| [Frontend Research](RES-004) | Component library selection, markdown rendering, panel layout, charts |
+| [Information Architecture](DOC-040) | Three-zone + nav sub-panel layout, navigation model, keyboard shortcuts, state management |

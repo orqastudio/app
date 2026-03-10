@@ -45,7 +45,7 @@ scoring:
 
 ## Produced Decision
 
-AD-025 (Provider-Agnostic AI Integration)
+[AD-025](AD-025) (Provider-Agnostic AI Integration)
 
 ## Git Evidence
 

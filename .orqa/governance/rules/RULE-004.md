@@ -27,7 +27,7 @@ Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enf
 | An epic is approved and scoped for implementation | Update `EPIC-NNN` | Set `status: ready` (requires `docs-required` gate satisfied) |
 | A task within an epic needs detailed tracking | `TASK-NNN` | Create in `.orqa/tasks/` with `epic:` reference |
 | A strategic goal is defined | `MS-NNN` | Create in `.orqa/milestones/` |
-| An implementation reveals a reusable pattern | `IMPL-NNN` | Create in `.orqa/lessons/` (see RULE-017 (lessons-learned)) |
+| An implementation reveals a reusable pattern | `IMPL-NNN` | Create in `.orqa/lessons/` (see [RULE-017](RULE-017) (lessons-learned)) |
 | A question needs investigation before a decision | Research file | Create in `.orqa/research/` |
 | Research produces an architectural choice | `AD-NNN` | Create in `.orqa/decisions/`, add entry to `.orqa/documentation/architecture/decisions.md` index |
 
@@ -282,8 +282,8 @@ The orchestrator SHOULD periodically verify:
 
 ## Related Rules
 
-- RULE-008 (documentation-first) — documentation is the source of truth; artifacts enforce the documentation-first principle at the workflow level
-- RULE-031 (vision-alignment) — pillar alignment required for all artifacts
-- RULE-017 (lessons-learned) — lesson lifecycle and promotion pipeline
-- RULE-021 (pillar-alignment-docs) — pillar alignment in documentation pages
-- RULE-015 (honest-reporting) — artifact status must reflect reality
+- [RULE-008](RULE-008) (documentation-first) — documentation is the source of truth; artifacts enforce the documentation-first principle at the workflow level
+- [RULE-031](RULE-031) (vision-alignment) — pillar alignment required for all artifacts
+- [RULE-017](RULE-017) (lessons-learned) — lesson lifecycle and promotion pipeline
+- [RULE-021](RULE-021) (pillar-alignment-docs) — pillar alignment in documentation pages
+- [RULE-015](RULE-015) (honest-reporting) — artifact status must reflect reality

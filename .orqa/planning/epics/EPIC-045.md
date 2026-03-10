@@ -33,11 +33,11 @@ scoring:
 ---
 ## Context
 
-AD-029 established that agents should represent universal roles (Orchestrator, Researcher,
+[AD-029](AD-029) established that agents should represent universal roles (Orchestrator, Researcher,
 Planner, Implementer, Reviewer, Writer, Designer) that work across any project type.
 Domain-specific knowledge lives in skills loaded at runtime.
 
-AD-030 established that project setup is skill-driven — no templates directory, no hardcoded
+[AD-030](AD-030) established that project setup is skill-driven — no templates directory, no hardcoded
 scaffolding. Setup skills contain the knowledge of what a project needs.
 
 Both decisions support OrqaStudio's identity as a clarity engine for structured thinking,
@@ -45,7 +45,7 @@ not an AI development tool.
 
 ## Implementation Scope
 
-### 1. Agent Restructuring (AD-029)
+### 1. Agent Restructuring ([AD-029](AD-029))
 
 Replace 16 software-specific agent files with 7 universal role definitions:
 
@@ -71,7 +71,7 @@ Replace 16 software-specific agent files with 7 universal role definitions:
 - debugger.md, refactor-agent.md → become skills only
 - agent-maintainer.md → becomes skill for Orchestrator
 
-### 2. Domain Skill Extraction (AD-029)
+### 2. Domain Skill Extraction ([AD-029](AD-029))
 
 Extract domain knowledge from old agents into loadable skills:
 
@@ -87,7 +87,7 @@ Extract domain knowledge from old agents into loadable skills:
 | test-engineer | `test-engineering` | TDD workflow, coverage, mock boundaries |
 | systems-architect | `architectural-evaluation` | Compliance checks, boundary verification |
 
-### 3. Project Setup Skills (AD-030)
+### 3. Project Setup Skills ([AD-030](AD-030))
 
 Create the four setup skills that replace templates:
 
@@ -98,9 +98,9 @@ Create the four setup skills that replace templates:
 
 ### 4. Product Documentation Update
 
-- Update `governance.md` with concept taxonomy from AD-029
-- Create `governance-hub.md` for the distribution/coexistence model from AD-030
-- Verify `artifact-framework.md` alignment with AD-029 concepts
+- Update `governance.md` with concept taxonomy from [AD-029](AD-029)
+- Create `governance-hub.md` for the distribution/coexistence model from [AD-030](AD-030)
+- Verify `artifact-framework.md` alignment with [AD-029](AD-029) concepts
 
 ## Constraints
 
@@ -119,13 +119,13 @@ Create the four setup skills that replace templates:
 
 | Task | Title | Depends On |
 |------|-------|------------|
-| TASK-057 | Task Dependency Mechanism | — |
-| TASK-051 | Create universal agent definitions | TASK-057 |
-| TASK-053 | Extract domain skills from old agents | TASK-057, TASK-051 |
-| TASK-052 | Remove old software-specific agents | TASK-051, TASK-053 |
-| TASK-054 | Create project setup skills | TASK-057 |
-| TASK-056 | Update rules for universal roles | TASK-052, TASK-053 |
-| TASK-055 | Update product documentation | TASK-052, TASK-056 |
+| [TASK-057](TASK-057) | Task Dependency Mechanism | — |
+| [TASK-051](TASK-051) | Create universal agent definitions | [TASK-057](TASK-057) |
+| [TASK-053](TASK-053) | Extract domain skills from old agents | [TASK-057](TASK-057), [TASK-051](TASK-051) |
+| [TASK-052](TASK-052) | Remove old software-specific agents | [TASK-051](TASK-051), [TASK-053](TASK-053) |
+| [TASK-054](TASK-054) | Create project setup skills | [TASK-057](TASK-057) |
+| [TASK-056](TASK-056) | Update rules for universal roles | [TASK-052](TASK-052), [TASK-053](TASK-053) |
+| [TASK-055](TASK-055) | Update product documentation | [TASK-052](TASK-052), [TASK-056](TASK-056) |
 
 ## Dependency Chain
 

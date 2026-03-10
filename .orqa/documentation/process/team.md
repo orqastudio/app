@@ -23,7 +23,7 @@ OrqaStudio™ uses an agentic development model: one orchestrator coordinates, a
 
 The Product Manager and Tech Lead roles may be filled by the same person if they have the skillset. Both are human gates — no implementation proceeds without explicit user approval of the plan.
 
-The orchestrator does NOT implement code directly. Its job is coordination, delegation, and gating. See [Orchestration](/process/orchestration) for the full orchestrator protocol.
+The orchestrator does NOT implement code directly. Its job is coordination, delegation, and gating. See [Orchestration](DOC-030) for the full orchestrator protocol.
 
 ---
 
@@ -67,7 +67,7 @@ Skills are domain-specific instruction sets stored in `.orqa/team/skills/`. They
 | `rust-async-patterns` | skills.sh registry | Rust async/await, tokio, error handling, lifetimes | backend-engineer, data-engineer, debugger, code-reviewer, test-engineer, security-engineer, refactor-agent |
 | `tauri-v2` | skills.sh registry | Tauri v2 commands, Channel&lt;T&gt;, plugins, security model | backend-engineer, debugger, devops-engineer, security-engineer, systems-architect |
 
-For full provenance and date-added information, see [Skills Log](/process/skills-log).
+For full provenance and date-added information, see [Skills Log](DOC-033).
 
 ---
 
@@ -93,13 +93,13 @@ graph LR
 | `qa-tester` | End-to-end functional correctness from a user perspective; smoke test; DoD smoke test items |
 | `ux-reviewer` | Labels match UI specs in `.orqa/documentation/ui/`; all component states handled; shared components used; no jargon in UI; DoD UI items |
 
-Review failures generate entries in [Implementation Lessons](/development/lessons). The agent-maintainer promotes recurring failures to rules or standards.
+Review failures generate entries in [Implementation Lessons](DOC-006). The agent-maintainer promotes recurring failures to rules or standards.
 
 ---
 
 ## Content Ownership
 
-Each layer of the governance system owns a specific type of content. For the full framework, see [Content Governance](/process/content-governance). The `agent-maintainer` owns hookify rule files alongside lifecycle hooks.
+Each layer of the governance system owns a specific type of content. For the full framework, see [Content Governance](DOC-026). The `agent-maintainer` owns hookify rule files alongside lifecycle hooks.
 
 | Layer | Owns |
 |-------|------|
@@ -114,9 +114,9 @@ Each layer of the governance system owns a specific type of content. For the ful
 
 ## Related Documents
 
-- [Orchestration](/process/orchestration) -- Orchestrator responsibilities and context discipline
-- [Workflow](/process/workflow) -- Task lifecycle from start to complete
-- [Content Governance](/process/content-governance) -- The six-layer ownership model
-- [Skills Log](/process/skills-log) -- Full skill inventory with provenance and dates
-- [Definition of Ready](/process/definition-of-ready) -- What must be true before implementation starts
-- [Definition of Done](/process/definition-of-done) -- What must be true before a task is marked complete
+- [Orchestration](DOC-030) -- Orchestrator responsibilities and context discipline
+- [Workflow](DOC-035) -- Task lifecycle from start to complete
+- [Content Governance](DOC-026) -- The six-layer ownership model
+- [Skills Log](DOC-033) -- Full skill inventory with provenance and dates
+- [Definition of Ready](DOC-028) -- What must be true before implementation starts
+- [Definition of Done](DOC-027) -- What must be true before a task is marked complete

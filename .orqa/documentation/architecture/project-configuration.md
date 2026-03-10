@@ -6,7 +6,7 @@ created: "2026-03-03"
 updated: "2026-03-09"
 ---
 
-**Date:** 2026-03-03 | **Status:** Active | **Decision:** AD-019 — File-based project settings
+**Date:** 2026-03-03 | **Status:** Active | **Decision:** [AD-019](AD-019) — File-based project settings
 
 ---
 

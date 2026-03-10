@@ -80,13 +80,13 @@ If the user gives an instruction that appears to conflict with a foundational pr
 3. **Document the outcome** — If the user confirms a change to a foundational principle:
    - Update the relevant documentation
    - Update `.orqa/documentation/product/vision.md` and/or `.orqa/documentation/product/governance.md` if the pillars or governance rules change
-   - Update this rule file (RULE-031 (vision-alignment)) to reflect the new principle
+   - Update this rule file ([RULE-031](RULE-031) (vision-alignment)) to reflect the new principle
    - Update all affected agent definitions in `.orqa/team/agents/`
 4. **Never silently comply** — If an instruction contradicts a principle, do NOT just implement it without flagging the conflict first
 
 **Examples of instructions that should be questioned:**
 
-- "Skip the SQLite layer and just use localStorage" -> Conflicts with the persistence architecture (SQLite for conversation data, file-based artifacts for governance — AD-032)
+- "Skip the SQLite layer and just use localStorage" -> Conflicts with the persistence architecture (SQLite for conversation data, file-based artifacts for governance — [AD-032](AD-032))
 - "Add a web server so OrqaStudio can be used in the browser" -> Conflicts with the desktop-app scope (Tauri)
 - "Let components call invoke() directly instead of going through stores" -> Conflicts with component purity principle
 - "Just use unwrap() here, it'll never panic" -> Conflicts with error propagation principle
@@ -100,10 +100,10 @@ If the user gives an instruction that appears to conflict with a foundational pr
 
 ## Related Rules
 
-- RULE-004 (artifact-lifecycle) — artifact creation, status transitions, promotion gates, documentation gates
-- RULE-021 (pillar-alignment-docs) — pillar alignment for *documentation* pages
-- RULE-002 (architecture-decisions) — architecture decisions that implement the vision
-- RULE-020 (no-stubs) — real implementations required, not fake demos
+- [RULE-004](RULE-004) (artifact-lifecycle) — artifact creation, status transitions, promotion gates, documentation gates
+- [RULE-021](RULE-021) (pillar-alignment-docs) — pillar alignment for *documentation* pages
+- [RULE-002](RULE-002) (architecture-decisions) — architecture decisions that implement the vision
+- [RULE-020](RULE-020) (no-stubs) — real implementations required, not fake demos
 
 ## Governance References
 

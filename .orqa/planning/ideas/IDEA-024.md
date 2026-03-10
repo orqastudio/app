@@ -16,7 +16,8 @@ research-needed:
   - How do branches/worktrees relate to the artifact lifecycle (tasks, epics)?
   - What git state is relevant for dogfooding (uncommitted changes, stale worktrees, merge conflicts)?
 promoted-to: null
----## Problem
+---
+## Problem
 
 The app has zero git awareness. During dogfooding, all version control operations happen in the terminal — branching, committing, worktree management, merge conflict resolution, stale worktree cleanup. This is a significant gap for the "use the app instead of the terminal" dogfooding goal.
 
@@ -24,7 +25,7 @@ Worktrees are particularly important because the CLI uses them to give agents is
 
 ## Why It Matters for Dogfooding
 
-The gate question for MS-001 is: "Can we use this app instead of the terminal?" Git integration is a major piece of the CLI workflow. Without it, the user still needs the terminal for:
+The gate question for [MS-001](MS-001) is: "Can we use this app instead of the terminal?" Git integration is a major piece of the CLI workflow. Without it, the user still needs the terminal for:
 
 - Seeing uncommitted changes, branch status, stale stashes
 - Seeing active worktrees and their branches

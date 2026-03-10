@@ -13,7 +13,8 @@ research-needed:
   - Session branching data model
   - Proactive PILLAR-002 pattern matching
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Conversation summarisation — auto-generate session summaries
 - Context-aware suggestions — AI suggests relevant artifacts during conversation

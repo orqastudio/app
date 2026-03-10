@@ -4,4 +4,4 @@
 	let { content }: { content: string } = $props();
 </script>
 
-<CodeBlock code={content} language="bash" />
+<CodeBlock text={content} lang="bash" />

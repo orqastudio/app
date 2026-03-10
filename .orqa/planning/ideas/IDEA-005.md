@@ -13,7 +13,8 @@ research-needed:
   - Knowledge graph representation
   - Staleness detection heuristics
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Semantic search across artifacts — search by meaning, not just keywords
 - Cross-artifact linking — automatic relationship detection

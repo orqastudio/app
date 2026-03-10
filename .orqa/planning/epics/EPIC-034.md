@@ -44,7 +44,7 @@ scoring:
 
 ## Produced Decision
 
-AD-024
+[AD-024](AD-024)
 
 ## Git Evidence
 

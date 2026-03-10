@@ -14,7 +14,8 @@ research-needed:
   - UX research for interactive decision matrices
   - Integration with artifact layer
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Decision matrices — structured comparison with weighted criteria
 - Experiment design — hypothesis -> test -> measure -> learn templates

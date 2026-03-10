@@ -6,7 +6,7 @@ created: "2026-03-02"
 updated: "2026-03-04"
 ---
 
-**Date:** 2026-03-02 | **Informed by:** [Onboarding Research](/research/onboarding), [MVP Spec F-001, F-001b, F-009](/product/mvp-specification)
+**Date:** 2026-03-02 | **Informed by:** [Onboarding Research](RES-005), [MVP Spec F-001, F-001b, F-009](DOC-042)
 
 Settings appears in the Explorer Panel when the user clicks the Settings icon in the Activity Bar (bottom) or presses `Ctrl+,`. Onboarding flows are full-window overlays shown on first run or when no project is loaded.
 

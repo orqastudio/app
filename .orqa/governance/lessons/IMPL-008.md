@@ -18,7 +18,7 @@ During initial implementation (Sub-Phases 3-12), the priority was getting featur
 
 ## The Correct Approach
 
-Extract domain logic into focused service modules (`domain/*.rs`) as soon as a command file exceeds ~300 lines. Command handlers should be thin orchestrators (30-50 lines) that delegate to domain services. This was formalized in AD-026.
+Extract domain logic into focused service modules (`domain/*.rs`) as soon as a command file exceeds ~300 lines. Command handlers should be thin orchestrators (30-50 lines) that delegate to domain services. This was formalized in [AD-026](AD-026).
 
 ## Git Evidence
 

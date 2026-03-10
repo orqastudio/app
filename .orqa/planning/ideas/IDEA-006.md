@@ -13,7 +13,8 @@ research-needed:
   - Privacy and data isolation concerns
   - Template format design
 promoted-to: null
----## Candidate Items
+---
+## Candidate Items
 
 - Project templates — pre-configured governance for common project types
 - Cross-project pattern detection — recurring lessons suggest universal rules

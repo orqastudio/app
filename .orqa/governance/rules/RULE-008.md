@@ -90,13 +90,13 @@ The artifact framework enforces documentation at two points:
 
 These fields are defined on every epic. The orchestrator checks `docs-required` before starting work, and the code-reviewer verifies `docs-produced` during the review gate.
 
-See RULE-004 (artifact-lifecycle) for enforcement details and `.orqa/documentation/process/artifact-workflow.md` for the full workflow.
+See [RULE-004](RULE-004) (artifact-lifecycle) for enforcement details and `.orqa/documentation/process/artifact-workflow.md` for the full workflow.
 
 ## Related Rules
 
-- RULE-004 (artifact-lifecycle) — artifact creation, status transitions, documentation gates
-- RULE-022 (plan-mode-compliance) — plan structure requirements
-- RULE-005 (chunkhound-usage) — using code_research for documentation discovery
-- RULE-031 (vision-alignment) — pillar alignment and governance
-- RULE-002 (architecture-decisions) — architecture decision compliance
-- RULE-006 (coding-standards) — function size, typing, coverage requirements
+- [RULE-004](RULE-004) (artifact-lifecycle) — artifact creation, status transitions, documentation gates
+- [RULE-022](RULE-022) (plan-mode-compliance) — plan structure requirements
+- [RULE-005](RULE-005) (chunkhound-usage) — using code_research for documentation discovery
+- [RULE-031](RULE-031) (vision-alignment) — pillar alignment and governance
+- [RULE-002](RULE-002) (architecture-decisions) — architecture decision compliance
+- [RULE-006](RULE-006) (coding-standards) — function size, typing, coverage requirements
