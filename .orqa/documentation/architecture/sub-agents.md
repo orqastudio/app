@@ -103,7 +103,7 @@ skills:
   - rust-async-patterns
   - tauri-v2
 required_reading:
-  - .orqa/documentation/architecture/decisions.md
+  - .orqa/governance/decisions/
   - .orqa/documentation/development/coding-standards.md
 capabilities:
   - write_files
@@ -218,7 +218,7 @@ src-tauri/src/
 
 ## Related Documents
 
-- `.orqa/documentation/architecture/decisions.md` — [AD-010](AD-010): Tool implementation as MCP (orqa_ tool namespace)
+- [AD-010](AD-010) — Tool implementation as MCP (orqa_ tool namespace)
 - `.orqa/documentation/architecture/enforcement.md` — Enforcement engine that sub-agent calls pass through
 - `.orqa/documentation/architecture/tool-definitions.md` — Built-in tool definitions and approval matrix
 - `.orqa/documentation/process/orchestration.md` — Orchestration model and task delegation workflow

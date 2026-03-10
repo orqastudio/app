@@ -35,7 +35,7 @@ Project artifacts describe the specific codebase the agents are working on. They
 
 | Artifact | Location | What It Contains |
 |----------|----------|-----------------|
-| Architecture decisions | `.orqa/decisions/` | Technology stack choices and architecture decision records (AD-NNN) for this project |
+| Architecture decisions | `.orqa/governance/decisions/` | Technology stack choices and architecture decision records (AD-NNN) for this project |
 | Product docs | `.orqa/documentation/product/` | Vision, personas, roadmap, MVP specification — specific to this product |
 | Development docs | `.orqa/documentation/development/` | Coding standards, getting-started guide — specific to this stack |
 | UI specs | `.orqa/documentation/ui/` | Component inventory, design system, interaction patterns — specific to this app |
@@ -75,7 +75,7 @@ Some system rules reference technology choices (Rust, Svelte 5, SQLite) because 
 
 | Rule | System Principle | Project-Specific Content |
 |------|-----------------|--------------------------|
-| `architecture-decisions.md` | Read architecture decisions before coding | The specific decisions (Tauri v2, Svelte 5) are Orqa-specific |
+| [RULE-002](RULE-002) | Read architecture decisions before coding | The specific decisions (Tauri v2, Svelte 5) are Orqa-specific |
 | `coding-standards.md` | Read coding standards before coding | The Rust/Svelte details are Orqa-specific |
 | `vision-alignment.md` | Features must serve the product vision | The Two Pillars are Orqa-specific |
 

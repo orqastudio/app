@@ -273,5 +273,5 @@ There is no test for `rusqlite::Error` conversion because constructing a `rusqli
 
 ## Related Documents
 
-- [Architecture Decisions](./decisions.md) — [AD-003](AD-003) (Result types, no unwrap in production), [AD-002](AD-002) (IPC boundary)
+- [AD-003](AD-003) (Result types, no unwrap in production), [AD-002](AD-002) (IPC boundary)
 - `src-tauri/src/error.rs` — canonical source of truth for all variant definitions and From impls

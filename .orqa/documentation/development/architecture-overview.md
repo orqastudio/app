@@ -8,7 +8,7 @@ updated: "2026-03-09"
 
 **Date:** 2026-03-07
 
-A contributor-friendly introduction to OrqaStudio™'s architecture. For detailed decisions, see [Architecture Decisions](../architecture/decisions.md).
+A contributor-friendly introduction to OrqaStudio™'s architecture. For detailed decisions, see individual decision artifacts in `.orqa/governance/decisions/`.
 
 ---
 
@@ -111,7 +111,7 @@ Agent SDK → Sidecar (Bun) → NDJSON stdout → Rust → Channel<T> → Svelte
 
 ## Related Documents
 
-- [Architecture Decisions](../architecture/decisions.md) — Detailed AD records
+- Architecture decisions — individual `AD-NNN.md` artifacts in `.orqa/governance/decisions/`
 - [Coding Standards](coding-standards.md) — Code quality rules
 - [Streaming Pipeline](../architecture/streaming-pipeline.md) — AI streaming architecture
 - [IPC Commands](../architecture/ipc-commands.md) — Command inventory

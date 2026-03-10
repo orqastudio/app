@@ -78,7 +78,7 @@ Triggered when the user approves investigation of a captured idea.
    - Create or update research artifacts in `.orqa/planning/research/`
    - Investigate technical feasibility, UX implications, architectural fit
    - Document findings in the research artifacts
-3. If research produces an architectural choice, create an `AD-NNN.md` in `.orqa/governance/decisions/` (see Decision Creation below) and add an entry to the index at `.orqa/documentation/architecture/decisions.md`
+3. If research produces an architectural choice, create an `AD-NNN.md` in `.orqa/governance/decisions/` (see Decision Creation below)
 
 ### Shaping (exploring → shaped)
 
@@ -247,8 +247,6 @@ When research produces an architectural choice that affects the system — a tec
    - **Context** — what situation or question prompted this decision
    - **Decision** — what was chosen and the key reasons
    - **Consequences** — what becomes easier, harder, or newly constrained
-4. Add an entry to the index at `.orqa/documentation/architecture/decisions.md` referencing the artifact ID and title
-
 ### Supersession
 
 When a new decision replaces an existing accepted decision:
@@ -256,11 +254,10 @@ When a new decision replaces an existing accepted decision:
 1. Create the new `AD-NNN.md` with `supersedes: AD-<old>` in frontmatter
 2. Update the superseded decision: set `status: superseded` and `superseded-by: AD-<new>`
 3. Both artifacts MUST be updated in the same commit — a supersession is incomplete if only one side is updated
-4. Update the index at `.orqa/documentation/architecture/decisions.md` to reflect the new status
 
 ### What NOT to Do
 
-- Do not record decisions only in the index at `.orqa/documentation/architecture/decisions.md` without creating an individual `AD-NNN.md` artifact in `.orqa/governance/decisions/`
+- Every decision MUST be an individual `AD-NNN.md` artifact in `.orqa/governance/decisions/`
 - Do not modify an accepted decision in place — supersede it with a new decision instead
 - Do not leave a decision at `proposed` indefinitely — either accept it or archive it with a reason
 

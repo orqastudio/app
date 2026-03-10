@@ -844,7 +844,7 @@ Every stage of work self-documents its decisions:
 ```
 Idea captured
   → Research investigates (produces .orqa/research/ artifact)
-  → Research resolves → Architecture Decision recorded (.orqa/decisions/AD-NNN.md, indexed in docs/architecture/decisions.md)
+  → Research resolves → Architecture Decision recorded (`.orqa/governance/decisions/AD-NNN.md`)
   → Idea promoted → Epic created (references research-refs, lists docs-required)
   → Epic body written with implementation design (docs-required gate satisfied)
   → Implementation begins (produces code + docs-produced artifacts)

@@ -207,5 +207,5 @@ src-tauri/src/
 
 - `.orqa/documentation/process/rules.md` — Rule inventory, frontmatter schema reference, when to create rules
 - `.orqa/documentation/ui/enforcement-panel.md` — UI spec for the enforcement sidebar and violation display
-- `.orqa/documentation/architecture/decisions.md` — [AD-015](AD-015): Governance artifact format
+- [AD-015](AD-015) — Governance artifact format
 - `.orqa/documentation/process/content-governance.md` — Content ownership model (rules vs docs vs hooks)

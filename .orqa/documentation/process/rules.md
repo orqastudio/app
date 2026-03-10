@@ -78,7 +78,7 @@ The same frontmatter that drives the app's enforcement engine also generates hoo
 | # | Rule File | Enforcement Entries | Purpose |
 |---|-----------|--------------------:|---------|
 | 1 | `vision-alignment.md` | 0 | Every feature must serve Pillar 1 or Pillar 2. Foundational principles are immutable. UX-first design. Context-only — requires judgment, cannot be pattern-matched. |
-| 2 | `architecture-decisions.md` | 0 | Architecture decisions must be read before coding. Lists critical decisions (error propagation, IPC boundary, component purity, type safety, immutability, Svelte 5 only, SQLite for conversations only). Context-only. |
+| 2 | [RULE-002](RULE-002) | 0 | Architecture decisions must be read before coding. Lists critical decisions (error propagation, IPC boundary, component purity, type safety, immutability, Svelte 5 only, SQLite for conversations only). Context-only. |
 | 3 | `chunkhound-usage.md` | 0 | ChunkHound tools must be preferred over Grep/Glob for multi-file searches. Mandatory documentation review before implementation. Context-only. |
 | 4 | `coding-standards.md` | 3 | References `.orqa/documentation/development/coding-standards.md`. Rust: no `unwrap()`, no `todo!()`. TypeScript: no `: any`, no Svelte 4 patterns. Pattern-enforced via frontmatter. |
 | 5 | `documentation-first.md` | 0 | Documentation is the source of truth. No code before docs exist. Re-read governing docs at the start of every phase. Context-only. |

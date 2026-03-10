@@ -521,7 +521,7 @@ The `projectOverrides` section stores per-project trust decisions for project-le
 
 ## Related Documents
 
-- [Architecture Decisions](./decisions.md) -- [AD-007](AD-007), [AD-010](AD-010), [AD-011](AD-011), [AD-017](AD-017)
+- [AD-007](AD-007), [AD-010](AD-010), [AD-011](AD-011), [AD-017](AD-017)
 - [Error Taxonomy](./error-taxonomy.md) -- Error types for MCP/sidecar/tool failures
 - [MVP Specification](DOC-042) -- F-002 (sidecar lifecycle), F-012 (MCP tool server)
 - [Interaction Patterns](DOC-053) -- Tool call display, error states

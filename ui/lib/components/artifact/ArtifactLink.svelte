@@ -33,7 +33,7 @@
 			{#snippet child({ props })}
 				<button
 					{...props}
-					class="inline-flex items-center gap-1 rounded border border-cyan-500/30 bg-cyan-500/10 px-1.5 py-0.5 font-mono text-[11px] font-medium text-cyan-400 transition-all hover:border-cyan-400 hover:bg-cyan-500/20"
+					class="inline-flex items-center gap-1 whitespace-nowrap rounded border border-cyan-500/30 bg-cyan-500/10 px-1.5 py-0.5 font-mono text-[11px] font-medium text-cyan-400 transition-all hover:border-cyan-400 hover:bg-cyan-500/20"
 					onclick={handleClick}
 				>
 					{resolved.label}
@@ -51,7 +51,7 @@
 			{#snippet child({ props })}
 				<span
 					{...props}
-					class="inline-flex items-center gap-1 rounded border border-warning/30 bg-warning/10 px-1.5 py-0.5 font-mono text-[11px] font-medium text-warning"
+					class="inline-flex items-center gap-1 whitespace-nowrap rounded border border-warning/30 bg-warning/10 px-1.5 py-0.5 font-mono text-[11px] font-medium text-warning"
 				>
 					<Link2OffIcon class="h-3 w-3 shrink-0 text-muted-foreground" />
 					{resolved.label}
