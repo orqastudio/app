@@ -1,27 +1,22 @@
 ---
 id: EPIC-010
-title: "Developer Experience Polish"
+title: Developer Experience Polish
 status: draft
 priority: P3
 milestone: MS-001
-description: >
-  Quality-of-life improvements for dogfooding, including project-local
-  database, build splash window, and system prompt templates.
+pillars: [PILLAR-001]
+description: Quality-of-life improvements for dogfooding, including project-local database, build splash window, and system prompt templates.
 created: 2026-03-07
 updated: 2026-03-07
 research-refs: []
-docs-required:
-  - docs/architecture/project-configuration.md
-docs-produced:
-  - docs/architecture/project-configuration.md (update with local DB path)
-  - docs/architecture/decisions.md (AD for project-local database location)
+docs-required: [docs/architecture/project-configuration.md]
+docs-produced: [docs/architecture/project-configuration.md (update with local DB path), docs/architecture/decisions.md (AD for project-local database location)]
 scoring:
   pillar: 2
   impact: 2
   dependency: 1
   effort: 2
   score: 4.5
-tags: [dx, polish, dogfooding]
 ---
 
 ## Why P3

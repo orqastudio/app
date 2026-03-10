@@ -1,26 +1,15 @@
 ---
 id: TASK-043
-title: "Scanner frontmatter extraction"
-description: >
-  Extends the artifact scanner to extract and expose the status field from YAML frontmatter
-  so sidebar list items display correct titles and status indicators for all artifact types.
+title: Scanner frontmatter extraction
 status: done
 epic: EPIC-043
+description: Extends the artifact scanner to extract and expose the status field from YAML frontmatter so sidebar list items display correct titles and status indicators for all artifact types.
 created: 2026-03-09
 updated: 2026-03-09
 assignee: backend-engineer
 skills: [code-search, orqa-composability]
-scope:
-  - src-tauri/src/domain/artifact_reader.rs
-  - ui/lib/types/nav-tree.ts
-  - ui/lib/components/navigation/ArtifactNav.svelte
-acceptance:
-  - DocNode struct includes optional status field populated from YAML frontmatter
-  - DocNode label always uses frontmatter title when available (never raw filename like TASK-002)
-  - ArtifactListItem receives status from DocNode and renders StatusIndicator dot
-  - All tasks, epics, ideas, milestones show status dots in sidebar list
-  - TypeScript NavTree types updated to match Rust struct
-tags: [uat, backend, frontend, docnode, status, scanner]
+scope: [src-tauri/src/domain/artifact_reader.rs, ui/lib/types/nav-tree.ts, ui/lib/components/navigation/ArtifactNav.svelte]
+acceptance: [DocNode struct includes optional status field populated from YAML frontmatter, DocNode label always uses frontmatter title when available (never raw filename like TASK-002), ArtifactListItem receives status from DocNode and renders StatusIndicator dot, All tasks, epics, ideas, milestones show status dots in sidebar list, TypeScript NavTree types updated to match Rust struct]
 ---
 
 ## Findings Addressed

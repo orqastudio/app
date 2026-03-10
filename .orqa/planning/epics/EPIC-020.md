@@ -1,36 +1,22 @@
 ---
 id: EPIC-020
-title: "Discovery & Research Artifacts"
+title: Discovery & Research Artifacts
 status: draft
 priority: P2
 milestone: MS-002
+pillars: [clarity-through-structure, learning-through-reflection]
+description: Build structured research artifacts, decision traceability graph, research-to-AD promotion, and conversational research workflow.
 created: 2026-03-07
 updated: 2026-03-07
-deadline: null
+docs-required: [docs/product/artifact-framework.md, .orqa/research/README.md (existing research schema), .orqa/plans/ (plan required before implementation)]
+docs-produced: [.orqa/plans/ (discovery artifacts plan), docs/architecture/decisions.md (AD for traceability graph data model)]
 depends-on: [EPIC-005]
 blocks: []
-assignee: null
-pillar:
-  - clarity-through-structure
-  - learning-through-reflection
 scoring:
   pillar: 5
   impact: 3
   dependency: 1
   effort: 4
-score: 4.5
-roadmap-ref: "M10"
-docs-required:
-  - docs/product/artifact-framework.md
-  - .orqa/research/README.md (existing research schema)
-  - .orqa/plans/ (plan required before implementation)
-docs-produced:
-  - .orqa/plans/ (discovery artifacts plan)
-  - docs/architecture/decisions.md (AD for traceability graph data model)
-description: >
-  Build structured research artifacts, decision traceability graph,
-  research-to-AD promotion, and conversational research workflow.
-tags: [research, discovery, decisions]
 ---
 
 ## Tasks

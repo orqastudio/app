@@ -2,11 +2,13 @@
 id: IDEA-024
 title: "Git Integration & Worktree-Aware Workspace"
 status: captured
-pillar:
+pillars:
   - clarity-through-structure
 description: >
   Git awareness for OrqaStudio including branch status, worktree visibility,
   and version control operations surfaced through the app UI.
+created: 2026-03-07
+updated: 2026-03-07
 research-needed:
   - What git operations does the user need visibility into from the app?
   - How should branch status, diffs, and commit history surface in the UI?
@@ -15,7 +17,6 @@ research-needed:
   - How do branches/worktrees relate to the artifact lifecycle (tasks, epics)?
   - What git state is relevant for dogfooding (uncommitted changes, stale worktrees, merge conflicts)?
 promoted-to: null
-tags: [git, worktrees, agents, parallel-work, visibility, dogfooding, version-control]
 ---
 
 ## Problem

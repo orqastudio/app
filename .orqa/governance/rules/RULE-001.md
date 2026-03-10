@@ -3,9 +3,11 @@ id: RULE-001
 slug: agent-delegation
 layer: canon
 status: active
-title: "Agent Delegation"
-description: "The orchestrator coordinates but does not implement. All implementation is delegated to universal roles with appropriate skills."
 scope: system
+title: Agent Delegation
+description: The orchestrator coordinates but does not implement. All implementation is delegated to universal roles with appropriate skills.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

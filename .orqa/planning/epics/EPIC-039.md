@@ -1,22 +1,16 @@
 ---
 id: EPIC-039
-title: "Composability Refactoring"
+title: Composability Refactoring
 status: done
 priority: P1
 milestone: MS-001
-description: >
-  Major refactoring sprint establishing the domain service extraction pattern.
-  Decomposed monolithic command files, decoupled stores, extracted utilities,
-  added semantic design tokens, and established the thin-command → domain service
-  → repository pattern.
+pillars: [PILLAR-001]
+description: Major refactoring sprint establishing the domain service extraction pattern. Decomposed monolithic command files, decoupled stores, extracted utilities, added semantic design tokens, and established the thin-command → domain service → repository pattern.
 created: 2026-03-06
 updated: 2026-03-09
-research-refs:
-  - RES-020
-  - RES-021
+research-refs: [RES-020, RES-021]
 docs-required: []
-docs-produced:
-  - .orqa/governance/decisions/AD-026.md
+docs-produced: [.orqa/governance/decisions/AD-026.md]
 scoring:
   user-value: 4
   pillar-alignment: 5
@@ -24,7 +18,6 @@ scoring:
   effort: 5
   risk: 3
   score: 22
-tags: [composability, refactoring, domain-services, decomposition, design-tokens]
 ---
 
 ## Implementation Design

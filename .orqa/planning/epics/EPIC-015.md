@@ -1,34 +1,22 @@
 ---
 id: EPIC-015
-title: "CI/CD Pipeline & Distribution"
+title: CI/CD Pipeline & Distribution
 status: draft
 priority: P1
 milestone: MS-002
+pillars: [clarity-through-structure]
+description: Build the CI/CD pipeline with GitHub Actions, cross-platform builds, artifact signing, and auto-update for distribution.
 created: 2026-03-07
 updated: 2026-03-07
-deadline: null
+docs-required: [.orqa/plans/ (plan required before implementation)]
+docs-produced: [.orqa/plans/ (CI/CD plan), docs/development/getting-started.md (update with release process), docs/architecture/decisions.md (AD for signing, update channels, versioning strategy)]
 depends-on: []
 blocks: []
-assignee: null
-pillar:
-  - clarity-through-structure
 scoring:
   pillar: 2
   impact: 5
   dependency: 3
   effort: 4
-score: 5.3
-roadmap-ref: "M5"
-docs-required:
-  - .orqa/plans/ (plan required before implementation)
-docs-produced:
-  - .orqa/plans/ (CI/CD plan)
-  - docs/development/getting-started.md (update with release process)
-  - docs/architecture/decisions.md (AD for signing, update channels, versioning strategy)
-description: >
-  Build the CI/CD pipeline with GitHub Actions, cross-platform builds,
-  artifact signing, and auto-update for distribution.
-tags: [ci, cd, distribution, release]
 ---
 
 ## Why P1

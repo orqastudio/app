@@ -3,9 +3,11 @@ id: RULE-024
 slug: reusable-components
 layer: canon
 status: active
-title: "Reusable Components"
-description: "Check shared component library before creating new UI elements. Use EmptyState, LoadingSpinner, ErrorDisplay, etc."
 scope: system
+title: Reusable Components
+description: Check shared component library before creating new UI elements. Use EmptyState, LoadingSpinner, ErrorDisplay, etc.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

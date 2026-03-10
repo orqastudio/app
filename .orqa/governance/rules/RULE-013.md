@@ -3,22 +3,11 @@ id: RULE-013
 slug: git-workflow
 layer: canon
 status: active
-title: "Git Workflow"
-description: "Worktree-based workflow with mandatory cleanup, stash policy, and data loss prevention rules."
 scope: system
-enforcement:
-  - event: bash
-    action: block
-    pattern: --no-verify
-  - event: bash
-    action: warn
-    pattern: git\s+(reset\s+--hard|checkout\s+\.|clean\s+-fd|push\s+--force|stash\s+drop)
-  - event: bash
-    action: block
-    pattern: (rm\s+-rf?|git\s+rm\s+-r)\s+.*(docs/|src-tauri/|ui/|tests/)
-  - event: bash
-    action: warn
-    pattern: (npm\s+run\s+dev|cargo\s+tauri\s+dev|cargo\s+watch|tauri\s+dev)
+title: Git Workflow
+description: Worktree-based workflow with mandatory cleanup, stash policy, and data loss prevention rules.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

@@ -2,12 +2,14 @@
 id: IDEA-023
 title: "Community Inbox"
 status: captured
-created: 2026-03-07
-updated: 2026-03-07
-pillar:
+pillars:
   - clarity-through-structure
   - learning-through-reflection
-promoted-to: null
+description: >
+  Manage incoming communication from multiple channels in a structured
+  way, applying OrqaStudio's structured thinking to community triage.
+created: 2026-03-07
+updated: 2026-03-07
 research-needed:
   - Channel integration architecture (GitHub, email, blog, social)
   - Artifact schema for communication signals
@@ -15,12 +17,7 @@ research-needed:
   - Response queue UX and scheduling model
   - Signal classification taxonomy
   - Privacy and data handling for external messages
-description: >
-  Manage incoming communication from multiple channels in a structured
-  way, applying OrqaStudio's structured thinking to community triage.
-tags: [community, communication, inbox, triage, integration]
----
-
+promoted-to: null
 ---
 
 ## Problem

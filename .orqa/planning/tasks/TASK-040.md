@@ -1,32 +1,15 @@
 ---
 id: TASK-040
-title: "Governance data quality backfill"
-description: >
-  Audits and repairs frontmatter quality across all governance artifacts — adding missing
-  titles, descriptions, and consistent YAML field ordering — with no code changes required.
+title: Governance data quality backfill
 status: done
 epic: EPIC-043
+description: Audits and repairs frontmatter quality across all governance artifacts — adding missing titles, descriptions, and consistent YAML field ordering — with no code changes required.
 created: 2026-03-09
 updated: 2026-03-09
 assignee: agent-maintainer
 skills: [orqa-governance, skills-maintenance]
-scope:
-  - .orqa/governance/lessons/
-  - .orqa/governance/rules/
-  - .orqa/governance/decisions/
-  - .orqa/planning/research/
-  - .orqa/planning/milestones/MS-000.md
-  - .orqa/planning/epics/
-  - .orqa/planning/tasks/
-acceptance:
-  - All lessons have human-readable titles (no code references) and descriptions
-  - All rules have descriptions in their frontmatter
-  - All research documents have descriptions
-  - Research documents either all reference a milestone field or none do (consistent approach)
-  - MS-000 restructured to match MS-001 format with phases as epics and associated tasks
-  - YAML field order audited across all artifact types for content hierarchy sense
-  - Field ordering documented in artifact framework
-tags: [uat, data-quality, governance, backfill, no-code]
+scope: [.orqa/governance/lessons/, .orqa/governance/rules/, .orqa/governance/decisions/, .orqa/planning/research/, .orqa/planning/milestones/MS-000.md, .orqa/planning/epics/, .orqa/planning/tasks/]
+acceptance: [All lessons have human-readable titles (no code references) and descriptions, All rules have descriptions in their frontmatter, All research documents have descriptions, Research documents either all reference a milestone field or none do (consistent approach), MS-000 restructured to match MS-001 format with phases as epics and associated tasks, YAML field order audited across all artifact types for content hierarchy sense, Field ordering documented in artifact framework]
 ---
 
 ## Findings Addressed

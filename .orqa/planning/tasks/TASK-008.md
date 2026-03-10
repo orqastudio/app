@@ -1,31 +1,16 @@
 ---
 id: TASK-008
-title: "Update scanner to use config-driven paths"
+title: Update scanner to use config-driven paths
 status: done
 epic: EPIC-033
+description: Replace the scanner's folder-guessing logic with config-driven scanning. The scanner reads the artifacts array from project.json and scans exactly those paths. No more inferring groups from README frontmatter.
 created: 2026-03-08
 updated: 2026-03-08
 depends-on: [TASK-007]
 assignee: backend-engineer
 skills: [chunkhound, orqa-ipc-patterns, orqa-domain-services]
-scope:
-  - src-tauri/src/domain/artifact_reader.rs
-  - src-tauri/src/commands/artifact_commands.rs
-acceptance:
-  - artifact_scan_tree reads artifacts config from project.json
-  - For each Type entry, scans path for .md files → DocNode list
-  - For each Group entry, scans children paths → NavType list → NavGroup
-  - Direct types (no children) wrapped in synthetic NavGroup
-  - Empty/missing artifacts config returns empty NavTree (no crash)
-  - Old folder-guessing logic removed (scan_group_dir, scan_type_dirs)
-  - README.md files filtered from node lists (they're landing pages)
-  - Hidden files (. or _) skipped
-  - cargo build and clippy pass
-description: >
-  Replace the scanner's folder-guessing logic with config-driven scanning.
-  The scanner reads the artifacts array from project.json and scans
-  exactly those paths. No more inferring groups from README frontmatter.
-tags: [scanner, config, rust, artifacts]
+scope: [src-tauri/src/domain/artifact_reader.rs, src-tauri/src/commands/artifact_commands.rs]
+acceptance: [artifact_scan_tree reads artifacts config from project.json, For each Type entry, scans path for .md files → DocNode list, For each Group entry, scans children paths → NavType list → NavGroup, Direct types (no children) wrapped in synthetic NavGroup, Empty/missing artifacts config returns empty NavTree (no crash), Old folder-guessing logic removed (scan_group_dir, scan_type_dirs), README.md files filtered from node lists (they're landing pages), Hidden files (. or _) skipped, cargo build and clippy pass]
 ---
 
 ## What

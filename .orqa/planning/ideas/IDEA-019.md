@@ -2,18 +2,19 @@
 id: IDEA-019
 title: "Ecosystem Potential"
 status: captured
-pillar:
+pillars:
   - clarity-through-structure
   - learning-through-reflection
 description: >
   Long-term platform potential including ethical AI capabilities,
   open reasoning framework, and community innovation infrastructure.
+created: 2026-03-07
+updated: 2026-03-07
 research-needed:
   - Open-source strategy
   - Community infrastructure requirements
   - Ethical AI framework design
 promoted-to: null
-tags: [ecosystem, community, open-source]
 ---
 
 ## Candidate Items

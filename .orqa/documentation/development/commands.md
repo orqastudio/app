@@ -56,6 +56,32 @@ cargo tauri dev --no-watch
 
 **When to use:** Primary command for local development. Safe default during dogfooding — agents can edit `.rs` files without triggering app restarts mid-conversation. Restart manually after Rust changes.
 
+**Lifecycle note:** When run as a background task (e.g., via CLI agents), `make dev` keeps running as long as the app is open. If the app window is closed or the process exits, the background task completes — this means the app is DOWN, not that it restarted successfully. Always check whether the app is still running before assuming it is available.
+
+---
+
+### `make restart`
+
+Stop all Orqa Studio processes (app, Vite, cargo), wait for ports to release, then relaunch with `make dev`.
+
+**Underlying command:**
+
+```bash
+make stop && make dev
+```
+
+**When to use:** After Rust backend changes that require a full recompile. This is an atomic operation — do not break it into separate `make stop` + `make dev` steps.
+
+**Lifecycle note:** When run as a background task, `make restart` completing means the app has **exited** — the foreground process finished. The app is DOWN after `make restart` completes as a background task. You must run `make dev` again to relaunch. To avoid this, run `make restart` in the foreground (blocking) or follow up with `make dev` as a new background task.
+
+---
+
+### `make stop`
+
+Kill all Orqa Studio processes: the Tauri app, Vite dev server, and any cargo builds. Waits for ports to release.
+
+**When to use:** When you need to stop the app without immediately relaunching. Prefer `make restart` when you intend to relaunch.
+
 ---
 
 ### `make dev-watch`

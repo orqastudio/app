@@ -3,9 +3,11 @@ id: RULE-018
 slug: no-aliases-or-hacks
 layer: canon
 status: active
-title: "No Aliases or Hacks"
-description: "Fix root causes of type mismatches between layers. Never paper over with aliases, shims, or duplicate mappings."
 scope: system
+title: No Aliases or Hacks
+description: Fix root causes of type mismatches between layers. Never paper over with aliases, shims, or duplicate mappings.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

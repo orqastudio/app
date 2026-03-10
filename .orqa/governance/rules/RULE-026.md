@@ -3,9 +3,11 @@ id: RULE-026
 slug: skill-enforcement
 layer: canon
 status: active
-title: "Skill Enforcement"
-description: "Three-tier skill loading: agent portable skills, orchestrator-injected project skills, and context-resolving wrappers."
 scope: system
+title: Skill Enforcement
+description: "Three-tier skill loading: agent portable skills, orchestrator-injected project skills, and context-resolving wrappers."
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

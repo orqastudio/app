@@ -3,15 +3,11 @@ id: RULE-025
 slug: root-cleanliness
 layer: canon
 status: active
-title: "Root Directory Cleanliness"
-description: "The project root must stay lean. Every file in root must have a justification."
 scope: system
-enforcement:
-  - event: file
-    action: warn
-    conditions:
-      - field: file_path
-        pattern: ^[^/]*\.(txt|log|json|yaml|yml)$
+title: Root Directory Cleanliness
+description: The project root must stay lean. Every file in root must have a justification.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

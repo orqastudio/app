@@ -1,33 +1,22 @@
 ---
 id: EPIC-023
-title: "Onboarding Flow Review"
+title: Onboarding Flow Review
 status: draft
 priority: P2
 milestone: MS-002
+pillars: [clarity-through-structure]
+description: Audit and improve the first-run setup wizard, new project flow, existing folder initialization, and guided first conversation.
 created: 2026-03-07
 updated: 2026-03-07
-deadline: null
+docs-required: [docs/wireframes/settings-onboarding.md, docs/architecture/setup-wizard.md]
+docs-produced: [docs/wireframes/settings-onboarding.md (update with reviewed flows)]
 depends-on: [EPIC-011]
 blocks: []
-assignee: null
-pillar:
-  - clarity-through-structure
 scoring:
   pillar: 3
   impact: 4
   dependency: 1
   effort: 2
-score: 6.5
-roadmap-ref: "M13"
-docs-required:
-  - docs/wireframes/settings-onboarding.md
-  - docs/architecture/setup-wizard.md
-docs-produced:
-  - docs/wireframes/settings-onboarding.md (update with reviewed flows)
-description: >
-  Audit and improve the first-run setup wizard, new project flow,
-  existing folder initialization, and guided first conversation.
-tags: [onboarding, setup, first-run]
 ---
 
 ## Tasks

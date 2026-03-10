@@ -1,15 +1,15 @@
 ---
 id: IMPL-006
 title: "Symlinks Prevent Governance Divergence"
-category: implementation
+status: promoted
 description: >
   When .claude/ contains copies instead of symlinks to .orqa/, agents
   writing to .claude/ bypass the source of truth and the two directories
   silently diverge.
-status: promoted
+created: 2026-03-07
+updated: 2026-03-07
 recurrence: 1
 promoted_to: RULE-003
-tags: [symlinks, governance, divergence, source-of-truth, bug]
 ---
 
 ## What Happened

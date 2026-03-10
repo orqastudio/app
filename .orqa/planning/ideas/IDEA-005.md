@@ -2,17 +2,18 @@
 id: IDEA-005
 title: "Knowledge & Artifact Intelligence"
 status: captured
-pillar:
+pillars:
   - learning-through-reflection
 description: >
   Make the accumulated knowledge base actively useful through semantic
   search, knowledge graphs, and staleness detection.
+created: 2026-03-07
+updated: 2026-03-07
 research-needed:
   - Semantic search across markdown artifacts
   - Knowledge graph representation
   - Staleness detection heuristics
 promoted-to: null
-tags: [knowledge, search, graph, intelligence]
 ---
 
 ## Candidate Items

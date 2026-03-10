@@ -2,17 +2,18 @@
 id: IDEA-011
 title: "Reporting & Stakeholder Access"
 status: captured
-pillar:
+pillars:
   - clarity-through-structure
 description: >
   Make understanding accessible to non-users through executive
   dashboards, shareable links, and formatted report exports.
+created: 2026-03-07
+updated: 2026-03-07
 research-needed:
   - Report template design
   - Shareable link architecture (local app constraint)
   - Export format priorities
 promoted-to: null
-tags: [reporting, export, stakeholders]
 ---
 
 ## Candidate Items

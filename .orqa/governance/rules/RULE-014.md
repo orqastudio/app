@@ -3,9 +3,11 @@ id: RULE-014
 slug: historical-artifacts
 layer: canon
 status: active
-title: "Historical Artifact Preservation"
-description: "Documentation is deleted when outdated. Research, plans, and tasks are preserved and marked as surpassed for historical traceability."
 scope: system
+title: Historical Artifact Preservation
+description: Documentation is deleted when outdated. Research, plans, and tasks are preserved and marked as surpassed for historical traceability.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 ## Two Categories of Written Artifacts

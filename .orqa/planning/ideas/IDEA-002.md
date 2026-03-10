@@ -2,17 +2,18 @@
 id: IDEA-002
 title: "Transportable Governance Format"
 status: captured
-pillar:
+pillars:
   - clarity-through-structure
 description: >
   Move governance from .claude/-specific format to generic
   .orqa/governance/ with environment-specific adapters.
+created: 2026-03-07
+updated: 2026-03-07
 research-needed:
   - Generic governance format design
   - Adapter pattern for .claude/, .continue/, .cursor/
   - Migration tooling and backwards compatibility
 promoted-to: null
-tags: [governance, transportable, adapters]
 ---
 
 ## Candidate Items

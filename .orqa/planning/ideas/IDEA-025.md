@@ -2,18 +2,19 @@
 id: IDEA-025
 title: "Agent task ownership review"
 status: captured
-pillar:
+pillars:
   - clarity-through-structure
 description: >
   Audit agent definitions for process vs execution knowledge placement,
   define clear task ownership boundaries between orchestrator and specialist agents.
+created: 2026-03-07
+updated: 2026-03-07
 research-needed:
   - Audit all 16 agent definitions for process vs execution knowledge placement
   - Identify process skills incorrectly embedded in specialist agents
   - Define clear task ownership boundaries between orchestrator and agents
   - Review whether any orchestrator responsibilities are missing from its definition
 promoted-to: null
-tags: [agents, orchestration, governance, task-ownership]
 ---
 
 ## Problem

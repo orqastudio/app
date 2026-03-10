@@ -3,9 +3,11 @@ id: RULE-003
 slug: artifact-config-integrity
 layer: canon
 status: active
-title: "Artifact Config Integrity"
-description: "Every path in project.json artifacts must resolve to an actual directory on disk. Config-driven scanning with no hardcoded paths."
 scope: project
+title: Artifact Config Integrity
+description: Every path in project.json artifacts must resolve to an actual directory on disk. Config-driven scanning with no hardcoded paths.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 # Artifact Config Integrity (NON-NEGOTIABLE)

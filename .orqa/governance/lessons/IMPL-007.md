@@ -1,15 +1,14 @@
 ---
 id: IMPL-007
 title: "Do not refactor agentic structure while delegating to agents"
-category: process
+status: active
 description: >
   When modifying rules, skills, or agent definitions, the orchestrator must
   handle changes directly. Delegating to agents that read the same artifacts
   being modified causes stale-context conflicts.
-status: active
+created: 2026-03-07
+updated: 2026-03-07
 recurrence: 1
-promoted_to: null
-tags: [dogfood, agents, refactoring, context, process]
 ---
 
 ## What Happened

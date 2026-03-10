@@ -2,17 +2,18 @@
 id: IDEA-009
 title: "Integration Ecosystem"
 status: captured
-pillar:
+pillars:
   - clarity-through-structure
 description: >
   Connect OrqaStudio with external tools and workflows including
   git, issue trackers, documentation platforms, and CI/CD.
+created: 2026-03-07
+updated: 2026-03-07
 research-needed:
   - Priority integrations (git, issue trackers)
   - Bidirectional sync architecture
   - Import format support
 promoted-to: null
-tags: [integrations, git, issue-trackers, import]
 ---
 
 ## Candidate Items

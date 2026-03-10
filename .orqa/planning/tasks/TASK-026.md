@@ -1,27 +1,15 @@
 ---
 id: TASK-026
-title: "Frontend decomposition and design tokens"
-description: >
-  Decomposes monolithic frontend components and stores, decouples the conversation store
-  from the session store, and replaces 60+ hardcoded colors with semantic design tokens.
+title: Frontend decomposition and design tokens
 status: done
 epic: EPIC-039
+description: Decomposes monolithic frontend components and stores, decouples the conversation store from the session store, and replaces 60+ hardcoded colors with semantic design tokens.
 created: 2026-03-06
 updated: 2026-03-09
 assignee: frontend-engineer
 skills: [svelte5-best-practices, tailwind-design-system, orqa-store-patterns]
-scope:
-  - ui/lib/components/settings/
-  - ui/lib/components/layout/
-  - ui/lib/stores/
-  - ui/app.css
-acceptance:
-  - SettingsView decomposed into focused sub-components
-  - Toolbar decomposed into focused sub-components
-  - Conversation store decoupled from session store
-  - 60+ hardcoded colors replaced with semantic design tokens
-  - Missing error/loading states added
-tags: [decomposition, design-tokens, stores, components]
+scope: [ui/lib/components/settings/, ui/lib/components/layout/, ui/lib/stores/, ui/app.css]
+acceptance: [SettingsView decomposed into focused sub-components, Toolbar decomposed into focused sub-components, Conversation store decoupled from session store, 60+ hardcoded colors replaced with semantic design tokens, Missing error/loading states added]
 ---
 
 ## What

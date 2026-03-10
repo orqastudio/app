@@ -3,9 +3,11 @@ id: RULE-005
 slug: chunkhound-usage
 layer: canon
 status: active
-title: "Code Search Usage"
-description: "Prefer semantic search over Grep/Glob for multi-file searches. Load the correct search skill for your context."
 scope: system
+title: Code Search Usage
+description: Prefer semantic search over Grep/Glob for multi-file searches. Load the correct search skill for your context.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 **Prefer semantic search over Grep/Glob for any search that spans more than one file or directory.**

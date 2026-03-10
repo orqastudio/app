@@ -4,13 +4,11 @@ title: "Rebrand: Forge → OrqaStudio"
 status: done
 priority: P1
 milestone: MS-001
-description: >
-  Product rebrand from "Forge" to "Orqa Studio": name, directory structure
-  (src/ → ui/), brand assets, documentation, and build configuration updates.
+pillars: [PILLAR-001]
+description: "Product rebrand from \"Forge\" to \"Orqa Studio\": name, directory structure (src/ → ui/), brand assets, documentation, and build configuration updates."
 created: 2026-03-04
 updated: 2026-03-09
-research-refs:
-  - rebrand-forge-to-orqa
+research-refs: [rebrand-forge-to-orqa]
 docs-required: []
 docs-produced: []
 scoring:
@@ -20,7 +18,6 @@ scoring:
   effort: 3
   risk: 2
   score: 16
-tags: [rebrand, branding, naming, directory-structure]
 ---
 
 ## Implementation Design

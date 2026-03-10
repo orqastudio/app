@@ -2,16 +2,17 @@
 id: IDEA-031
 title: "Auto-Refresh on File Changes"
 status: captured
-pillar:
+pillars:
   - "Clarity Through Structure"
 description: >
   Watch the .orqa/ directory for file changes and automatically
   invalidate the artifact navigation tree and viewer cache so the
   UI stays current without requiring a hard refresh.
+created: 2026-03-07
+updated: 2026-03-07
 research-needed:
   - Evaluate Tauri fs watch plugin vs notify crate for file watching
   - Determine debounce strategy for bulk file changes
-tags: [file-watching, caching, ux, auto-refresh]
 ---
 
 ## Motivation

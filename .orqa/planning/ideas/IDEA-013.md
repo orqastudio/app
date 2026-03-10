@@ -2,17 +2,18 @@
 id: IDEA-013
 title: "Reasoning Transparency"
 status: promoted
-pillar:
+pillars:
   - clarity-through-structure
 description: >
   Maintain clear reasoning trails with AI-generated summaries,
   confidence indicators, and chronological decision logs.
+created: 2026-03-07
+updated: 2026-03-07
 research-needed:
   - Reasoning summary generation quality
   - Confidence indicator calibration
   - Decision log UX design
 promoted-to: EPIC-001
-tags: [reasoning, transparency, confidence]
 ---
 
 ## Candidate Items

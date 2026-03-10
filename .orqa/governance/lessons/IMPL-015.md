@@ -1,11 +1,15 @@
 ---
 id: IMPL-015
 title: "Commit at natural boundaries to prevent file accumulation"
-category: process
+status: promoted
+description: >
+  Commit governance changes at natural boundaries (end of epic, task batch,
+  or session) to prevent large numbers of uncommitted files from accumulating
+  on main.
+created: 2026-03-09
+updated: 2026-03-09
 recurrence: 1
 promoted_to: [RULE-013 (Commit Discipline section), project-type-software/SKILL.md (Commit Discipline section), session-start-hook.sh (uncommitted check), pre-commit-reminder.sh (uncommitted check)]
-tags: [git, workflow, commit-discipline, governance-gap]
-created: 2026-03-09
 ---
 
 ## What Happened

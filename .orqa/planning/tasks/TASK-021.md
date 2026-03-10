@@ -1,24 +1,15 @@
 ---
 id: TASK-021
-title: "Lesson promotion pipeline"
-description: >
-  Implements the self-learning loop that creates lesson entries, tracks recurrence counts,
-  and promotes repeated patterns into rules or skills at a configurable threshold.
+title: Lesson promotion pipeline
 status: done
 epic: EPIC-037
+description: Implements the self-learning loop that creates lesson entries, tracks recurrence counts, and promotes repeated patterns into rules or skills at a configurable threshold.
 created: 2026-03-05
 updated: 2026-03-09
 assignee: backend-engineer
 skills: [orqa-governance, orqa-ipc-patterns]
-scope:
-  - src-tauri/src/domain/
-  - ui/lib/components/
-acceptance:
-  - IMPL entries created and tracked
-  - Recurrence count incremented on match
-  - Promotion triggered at configurable threshold
-  - Lessons viewable in UI
-tags: [lessons, promotion, learning-loop, governance]
+scope: [src-tauri/src/domain/, ui/lib/components/]
+acceptance: [IMPL entries created and tracked, Recurrence count incremented on match, Promotion triggered at configurable threshold, Lessons viewable in UI]
 ---
 
 ## What

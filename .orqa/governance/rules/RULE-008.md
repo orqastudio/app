@@ -3,9 +3,11 @@ id: RULE-008
 slug: documentation-first
 layer: canon
 status: active
-title: "Documentation-First Implementation"
-description: "Documentation is the source of truth. Verify docs exist before writing code; update docs before changing code."
 scope: system
+title: Documentation-First Implementation
+description: Documentation is the source of truth. Verify docs exist before writing code; update docs before changing code.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

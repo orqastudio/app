@@ -1,34 +1,22 @@
 ---
 id: EPIC-022
-title: "Implementation Breakdown & Work Management"
+title: Implementation Breakdown & Work Management
 status: draft
 priority: P2
 milestone: MS-002
+pillars: [clarity-through-structure]
+description: Build epic-to-task hierarchy, plan-to-backlog breakdown, unified backlog view, status workflow, and progress dashboard.
 created: 2026-03-07
 updated: 2026-03-07
-deadline: null
+docs-required: [docs/product/artifact-framework.md (epic/task schemas), .orqa/plans/ (plan required before implementation)]
+docs-produced: [.orqa/plans/ (work management plan), docs/architecture/decisions.md (AD for work item data model)]
 depends-on: [EPIC-005, EPIC-016]
 blocks: []
-assignee: null
-pillar:
-  - clarity-through-structure
 scoring:
   pillar: 4
   impact: 4
   dependency: 1
   effort: 4
-score: 4.5
-roadmap-ref: "M12"
-docs-required:
-  - docs/product/artifact-framework.md (epic/task schemas)
-  - .orqa/plans/ (plan required before implementation)
-docs-produced:
-  - .orqa/plans/ (work management plan)
-  - docs/architecture/decisions.md (AD for work item data model)
-description: >
-  Build epic-to-task hierarchy, plan-to-backlog breakdown, unified
-  backlog view, status workflow, and progress dashboard.
-tags: [work-management, epics, tasks, backlog]
 ---
 
 ## Tasks

@@ -1,28 +1,22 @@
 ---
 id: EPIC-004
-title: "Artifact Editing UI"
+title: Artifact Editing UI
 status: draft
 priority: P1
 milestone: MS-001
-description: >
-  Build an editor component for governance artifacts, connecting existing
-  backend CRUD commands to a CodeMirror-based editing UI.
+pillars: [PILLAR-001]
+description: Build an editor component for governance artifacts, connecting existing backend CRUD commands to a CodeMirror-based editing UI.
 created: 2026-03-07
 updated: 2026-03-07
 research-refs: []
-docs-required:
-  - docs/wireframes/artifact-browser.md
-  - docs/architecture/ipc-commands.md
-docs-produced:
-  - docs/wireframes/artifact-browser.md (update with edit mode wireframes)
-  - docs/architecture/ipc-commands.md (verify artifact CRUD commands documented)
+docs-required: [docs/wireframes/artifact-browser.md, docs/architecture/ipc-commands.md]
+docs-produced: [docs/wireframes/artifact-browser.md (update with edit mode wireframes), docs/architecture/ipc-commands.md (verify artifact CRUD commands documented)]
 scoring:
   pillar: 5
   impact: 5
   dependency: 2
   effort: 3
   score: 10.3
-tags: [artifacts, editing, governance]
 ---
 
 ## Why P1

@@ -3,17 +3,11 @@ id: RULE-002
 slug: architecture-decisions
 layer: canon
 status: active
-title: "Architecture Decisions"
-description: "All code must comply with architecture decisions in docs/architecture/decisions.md."
 scope: project
-enforcement:
-  - event: file
-    action: block
-    conditions:
-      - field: file_path
-        pattern: ui/lib/components/.*\.svelte$
-      - field: new_text
-        pattern: invoke\s*\(|from\s+['"]@tauri-apps/api
+title: Architecture Decisions
+description: All code must comply with architecture decisions in docs/architecture/decisions.md.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

@@ -2,10 +2,12 @@
 id: RULE-028
 slug: systems-thinking
 layer: canon
-title: "Systems Thinking First"
-description: "Every change must be evaluated as part of the whole system, not as an isolated fix. This is the foundational discipline that OrqaStudio exists to enable — it applies to every project the app manages."
 status: active
-tags: [foundational, process, architecture, universal]
+scope: system
+title: Systems Thinking First
+description: Every change must be evaluated as part of the whole system, not as an isolated fix. This is the foundational discipline that OrqaStudio exists to enable — it applies to every project the app manages.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 # Systems Thinking First (NON-NEGOTIABLE)

@@ -1,31 +1,22 @@
 ---
 id: EPIC-025
-title: "Tech Stack Research"
+title: Tech Stack Research
 status: done
 priority: P1
 milestone: MS-000
+pillars: [clarity-through-structure]
+description: Pre-build investigation that determined the technology choices underpinning the entire OrqaStudio platform.
 created: 2026-03-02
 updated: 2026-03-07
-deadline: null
+docs-required: []
+docs-produced: [.orqa/research/mvp/]
 depends-on: []
 blocks: [EPIC-026, EPIC-027, EPIC-028, EPIC-029, EPIC-030]
-assignee: null
-pillar:
-  - clarity-through-structure
 scoring:
   pillar: 3
   impact: 5
   dependency: 3
   effort: 1
-score: 22.0
-roadmap-ref: "Phase 0a"
-docs-required: []
-docs-produced:
-  - .orqa/research/mvp/
-description: >
-  Pre-build investigation that determined the technology choices
-  underpinning the entire OrqaStudio platform.
-tags: [foundation, research, tech-stack, planning]
 ---
 
 ## Why P1

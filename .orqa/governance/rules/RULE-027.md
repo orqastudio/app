@@ -3,9 +3,11 @@ id: RULE-027
 slug: structure-before-work
 layer: canon
 status: active
-title: "Structure Before Work"
-description: "No implementation work may begin without the full artifact structure in place first."
 scope: system
+title: Structure Before Work
+description: No implementation work may begin without the full artifact structure in place first.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 ## The Rule (NON-NEGOTIABLE)

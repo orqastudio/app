@@ -1,17 +1,11 @@
 ---
 id: PILLAR-002
-title: "Learning Through Reflection"
+title: Learning Through Reflection
 status: active
-description: >
-  The system and its users improve over time through structured retrospection.
-test-questions:
-  - Does this capture lessons, discoveries, or patterns?
-  - Does it track metrics or outcomes that show improvement (or regression)?
-  - Does it feed retrospectives back into the governance framework?
-  - Does it accumulate knowledge across sessions so each cycle starts from a better position?
+description: The system and its users improve over time through structured retrospection.
+test-questions: [Does this capture lessons, discoveries, or patterns?, Does it track metrics or outcomes that show improvement (or regression)?, Does it feed retrospectives back into the governance framework?, Does it accumulate knowledge across sessions so each cycle starts from a better position?]
 created: 2026-03-09
 updated: 2026-03-09
-tags: [learning, reflection, improvement, retrospection]
 ---
 
 ## What This Pillar Means

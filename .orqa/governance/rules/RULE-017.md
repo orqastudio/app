@@ -3,9 +3,11 @@ id: RULE-017
 slug: lessons-learned
 layer: canon
 status: active
-title: "Lessons Learned"
-description: "Two learning loops: implementation lessons in .orqa/lessons/ and process retrospectives. Both are mandatory."
 scope: system
+title: Lessons Learned
+description: "Two learning loops: implementation lessons in .orqa/lessons/ and process retrospectives. Both are mandatory."
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

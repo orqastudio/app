@@ -1,40 +1,15 @@
 ---
 id: TASK-005
-title: "Architecture Docs Vision Audit"
+title: Architecture Docs Vision Audit
 status: done
 epic: EPIC-033
+description: Audit architecture, process, and development docs for alignment with the updated vision. These define how the app is built and how work happens — they must reflect .orqa/ as source of truth and provider-agnostic framing.
 created: 2026-03-08
 updated: 2026-03-08
 assignee: documentation-writer
 skills: [chunkhound, orqa-governance, architecture]
-scope:
-  - .orqa/documentation/architecture/decisions.md
-  - .orqa/documentation/architecture/project-configuration.md
-  - .orqa/documentation/architecture/rust-modules.md
-  - .orqa/documentation/architecture/streaming-pipeline.md
-  - .orqa/documentation/architecture/governance-bootstrap.md
-  - .orqa/documentation/architecture/ipc-commands.md
-  - .orqa/documentation/architecture/svelte-components.md
-  - .orqa/documentation/process/orchestration.md
-  - .orqa/documentation/process/artifact-workflow.md
-  - .orqa/documentation/process/content-governance.md
-  - .orqa/documentation/process/workflow.md
-  - .orqa/documentation/process/team.md
-  - .orqa/documentation/development/architecture-overview.md
-  - .orqa/documentation/development/getting-started.md
-  - .orqa/documentation/development/contributing.md
-acceptance:
-  - Every architecture, process, and development doc checked against 5 audit criteria
-  - No .claude/ referenced as source of truth
-  - No Claude-as-product-identity language
-  - Three-layer architecture referenced where governance is discussed
-  - Architecture decisions doc updated to reflect .orqa/ as canonical path
-description: >
-  Audit architecture, process, and development docs for alignment with
-  the updated vision. These define how the app is built and how work
-  happens — they must reflect .orqa/ as source of truth and
-  provider-agnostic framing.
-tags: [docs, audit, vision, alignment, architecture]
+scope: [.orqa/documentation/architecture/decisions.md, .orqa/documentation/architecture/project-configuration.md, .orqa/documentation/architecture/rust-modules.md, .orqa/documentation/architecture/streaming-pipeline.md, .orqa/documentation/architecture/governance-bootstrap.md, .orqa/documentation/architecture/ipc-commands.md, .orqa/documentation/architecture/svelte-components.md, .orqa/documentation/process/orchestration.md, .orqa/documentation/process/artifact-workflow.md, .orqa/documentation/process/content-governance.md, .orqa/documentation/process/workflow.md, .orqa/documentation/process/team.md, .orqa/documentation/development/architecture-overview.md, .orqa/documentation/development/getting-started.md, .orqa/documentation/development/contributing.md]
+acceptance: [Every architecture, process, and development doc checked against 5 audit criteria, No .claude/ referenced as source of truth, No Claude-as-product-identity language, Three-layer architecture referenced where governance is discussed, Architecture decisions doc updated to reflect .orqa/ as canonical path]
 ---
 
 ## What

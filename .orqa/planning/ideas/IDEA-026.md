@@ -2,18 +2,19 @@
 id: IDEA-026
 title: "Artifact platform audit — built-in vs external"
 status: captured
-pillar:
+pillars:
   - clarity-through-structure
 description: >
   Audit which artifact types are first-class platform citizens with enforced
   lifecycles versus display-only documents, mapped to the three-layer governance model.
+created: 2026-03-07
+updated: 2026-03-07
 research-needed:
   - Audit which artifact types need to be built into the platform for it to function
   - Identify which artifacts are external/manual and whether they should be promoted to platform-managed
   - Define the boundary between platform-managed and user-managed artifacts
   - Consider the three-layer governance model (canon, project, plugin) and where each artifact type falls
 promoted-to: null
-tags: [artifacts, platform, governance, architecture]
 ---
 
 ## Problem

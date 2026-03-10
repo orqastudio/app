@@ -1,32 +1,22 @@
 ---
 id: EPIC-031
-title: "Governance Bootstrap"
+title: Governance Bootstrap
 status: done
 priority: P1
 milestone: MS-000
+pillars: [clarity-through-structure, learning-through-reflection]
+description: "The initial governance layer: filesystem scanner, coverage analysis, recommendations, and governance coverage indicator on the dashboard."
 created: 2026-03-02
 updated: 2026-03-07
-deadline: null
+docs-required: [docs/architecture/decisions.md]
+docs-produced: []
 depends-on: [EPIC-030]
 blocks: []
-assignee: null
-pillar:
-  - clarity-through-structure
-  - learning-through-reflection
 scoring:
   pillar: 5
   impact: 5
   dependency: 3
   effort: 1
-score: 28.0
-roadmap-ref: "Phase 2b"
-docs-required:
-  - docs/architecture/decisions.md
-docs-produced: []
-description: >
-  The initial governance layer: filesystem scanner, coverage analysis,
-  recommendations, and governance coverage indicator on the dashboard.
-tags: [foundation, governance, scanner, analysis, recommendations]
 ---
 
 ## Why P1

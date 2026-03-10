@@ -1,36 +1,22 @@
 ---
 id: EPIC-014
-title: "Project Type System"
+title: Project Type System
 status: draft
 priority: P1
 milestone: MS-002
+pillars: [clarity-through-structure]
+description: Add a project type system so OrqaStudio adapts its agents, tools, and scanning to the domain (software, research, product, personal).
 created: 2026-03-07
 updated: 2026-03-07
-deadline: null
+docs-required: [docs/product/vision.md (domain-agnostic principle), docs/architecture/project-configuration.md, .orqa/plans/ (plan required before implementation)]
+docs-produced: [.orqa/plans/ (project type system plan), docs/architecture/project-configuration.md (update with project_type field), docs/architecture/decisions.md (AD for project type taxonomy)]
 depends-on: []
 blocks: []
-assignee: null
-pillar:
-  - clarity-through-structure
 scoring:
   pillar: 4
   impact: 5
   dependency: 3
   effort: 3
-score: 10.3
-roadmap-ref: "M4"
-docs-required:
-  - docs/product/vision.md (domain-agnostic principle)
-  - docs/architecture/project-configuration.md
-  - .orqa/plans/ (plan required before implementation)
-docs-produced:
-  - .orqa/plans/ (project type system plan)
-  - docs/architecture/project-configuration.md (update with project_type field)
-  - docs/architecture/decisions.md (AD for project type taxonomy)
-description: >
-  Add a project type system so OrqaStudio adapts its agents, tools,
-  and scanning to the domain (software, research, product, personal).
-tags: [project-types, domain-agnostic]
 ---
 
 ## Why P1

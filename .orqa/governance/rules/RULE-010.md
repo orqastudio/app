@@ -3,9 +3,11 @@ id: RULE-010
 slug: end-to-end-completeness
 layer: canon
 status: active
-title: "End-to-End Completeness"
-description: "Every feature must be implemented across all layers (Rust command, IPC type, Svelte component, store) in the same commit."
 scope: system
+title: End-to-End Completeness
+description: Every feature must be implemented across all layers (Rust command, IPC type, Svelte component, store) in the same commit.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

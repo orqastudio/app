@@ -3,37 +3,14 @@ id: TASK-009
 title: "Frontend: config-driven navigation and fix app hang"
 status: done
 epic: EPIC-033
+description: Replace all hardcoded navigation constants with config-driven derivation. This fixes the app hang (caused by mismatch between scanner output and hardcoded navigation expectations) and enables dynamic artifact types.
 created: 2026-03-08
 updated: 2026-03-08
 depends-on: [TASK-007, TASK-008]
 assignee: frontend-engineer
 skills: [chunkhound, orqa-store-patterns, orqa-store-orchestration, svelte5-best-practices, tailwind-design-system]
-scope:
-  - ui/lib/types/project.ts
-  - ui/lib/stores/navigation.svelte.ts
-  - ui/lib/stores/artifact.svelte.ts
-  - ui/lib/components/layout/ActivityBar.svelte
-  - ui/lib/components/layout/NavSubPanel.svelte
-  - ui/lib/components/layout/AppLayout.svelte
-  - ui/lib/components/artifact/ArtifactMasterDetail.svelte
-  - ui/lib/components/artifact/ArtifactLanding.svelte
-  - ui/lib/components/navigation/ArtifactNav.svelte
-acceptance:
-  - TypeScript types for ArtifactEntry / ArtifactTypeConfig added
-  - Navigation store derives all state from config (no hardcoded constants)
-  - STATIC_GROUP_SUB_CATEGORIES, SUB_CATEGORY_LABELS, ARTIFACT_ACTIVITIES deleted
-  - ActivityView and ActivityGroup changed to string (dynamic from config)
-  - ActivityBar renders from config
-  - NavSubPanel renders group children from config
-  - No $derived(() => ...) patterns (all use $derived.by or $derived)
-  - App starts without hanging
-  - Navigating to any artifact group shows correct file tree
-  - npm run check passes
-description: >
-  Replace all hardcoded navigation constants with config-driven derivation.
-  This fixes the app hang (caused by mismatch between scanner output and
-  hardcoded navigation expectations) and enables dynamic artifact types.
-tags: [frontend, config, navigation, svelte, fix-hang]
+scope: [ui/lib/types/project.ts, ui/lib/stores/navigation.svelte.ts, ui/lib/stores/artifact.svelte.ts, ui/lib/components/layout/ActivityBar.svelte, ui/lib/components/layout/NavSubPanel.svelte, ui/lib/components/layout/AppLayout.svelte, ui/lib/components/artifact/ArtifactMasterDetail.svelte, ui/lib/components/artifact/ArtifactLanding.svelte, ui/lib/components/navigation/ArtifactNav.svelte]
+acceptance: [TypeScript types for ArtifactEntry / ArtifactTypeConfig added, Navigation store derives all state from config (no hardcoded constants), STATIC_GROUP_SUB_CATEGORIES, SUB_CATEGORY_LABELS, ARTIFACT_ACTIVITIES deleted, ActivityView and ActivityGroup changed to string (dynamic from config), ActivityBar renders from config, NavSubPanel renders group children from config, No $derived(() => ...) patterns (all use $derived.by or $derived), App starts without hanging, Navigating to any artifact group shows correct file tree, npm run check passes]
 ---
 
 ## What

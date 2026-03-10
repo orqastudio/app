@@ -1,22 +1,16 @@
 ---
 id: EPIC-046
-title: "Pillars as First-Class Artifacts"
+title: Pillars as First-Class Artifacts
 status: done
 priority: P1
 milestone: MS-001
-description: >
-  Make product pillars structured artifacts in .orqa/planning/pillars/ with
-  frontmatter schema, referenced by ID from other artifacts, and injected
-  into AI system prompts. Replaces hardcoded pillar strings across rules
-  and documentation. Implements AD-031.
+pillars: [PILLAR-001]
+description: Make product pillars structured artifacts in .orqa/planning/pillars/ with frontmatter schema, referenced by ID from other artifacts, and injected into AI system prompts. Replaces hardcoded pillar strings across rules and documentation. Implements AD-031.
 created: 2026-03-09
 updated: 2026-03-09
 research-refs: []
-docs-required:
-  - .orqa/governance/decisions/AD-031.md
-docs-produced:
-  - .orqa/planning/pillars/PILLAR-001.md
-  - .orqa/planning/pillars/PILLAR-002.md
+docs-required: [.orqa/governance/decisions/AD-031.md]
+docs-produced: [.orqa/planning/pillars/PILLAR-001.md, .orqa/planning/pillars/PILLAR-002.md]
 scoring:
   user-value: 4
   pillar-alignment: 5
@@ -24,7 +18,6 @@ scoring:
   effort: 3
   risk: 2
   score: 17
-tags: [pillars, governance, planning, system-prompt, portability, AD-031]
 ---
 
 ## Context

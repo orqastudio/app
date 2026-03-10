@@ -1,22 +1,14 @@
 ---
 id: TASK-003
-title: "Update streaming pipeline documentation"
+title: Update streaming pipeline documentation
 status: done
 epic: EPIC-001
+description: Update streaming-pipeline.md to reflect the new SystemPromptSent emission point added by TASK-001.
 created: 2026-03-07
 updated: 2026-03-07
 assignee: documentation-writer
-scope:
-  - docs/architecture/streaming-pipeline.md
-acceptance:
-  - SystemPromptSent emission point documented in event sequence
-  - Emission location noted (after resolve_system_prompt, before sidecar.send)
-  - custom_prompt documented as populated by EPIC-002
-  - ContextInjected documented as added by EPIC-003
-description: >
-  Update streaming-pipeline.md to reflect the new SystemPromptSent
-  emission point added by TASK-001.
-tags: [streaming, transparency, docs]
+scope: [docs/architecture/streaming-pipeline.md]
+acceptance: [SystemPromptSent emission point documented in event sequence, Emission location noted (after resolve_system_prompt, before sidecar.send), custom_prompt documented as populated by EPIC-002, ContextInjected documented as added by EPIC-003]
 ---
 
 ## What

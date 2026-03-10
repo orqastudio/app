@@ -1,14 +1,14 @@
 ---
 id: IMPL-005
 title: "Config paths must match disk paths exactly"
-category: implementation
+status: promoted
 description: >
   Every path in project.json artifacts must resolve to an actual directory
   on disk. Mismatches cause silent empty results with no error.
-status: promoted
+created: 2026-03-07
+updated: 2026-03-07
 recurrence: 1
 promoted_to: RULE-003
-tags: [config, scanning, paths, artifacts, bug]
 ---
 
 ## What Happened

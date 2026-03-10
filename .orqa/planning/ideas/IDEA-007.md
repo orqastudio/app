@@ -2,17 +2,18 @@
 id: IDEA-007
 title: "Spaces & Organisational Structure"
 status: captured
-pillar:
+pillars:
   - clarity-through-structure
 description: >
   Containers for organising projects as adoption scales, with
   space-level governance and aggregated insights.
+created: 2026-03-07
+updated: 2026-03-07
 research-needed:
   - Space hierarchy data model
   - Space-level governance inheritance
   - Multi-project aggregation UX
 promoted-to: null
-tags: [spaces, organisation, hierarchy]
 ---
 
 ## Candidate Items

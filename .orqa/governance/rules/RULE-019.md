@@ -3,9 +3,11 @@ id: RULE-019
 slug: no-deferred-deliverables
 layer: canon
 status: active
-title: "No Deferred Deliverables"
-description: "If a deliverable is in scope, it ships with the epic. Deferring scoped deliverables is forbidden."
 scope: system
+title: No Deferred Deliverables
+description: If a deliverable is in scope, it ships with the epic. Deferring scoped deliverables is forbidden.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

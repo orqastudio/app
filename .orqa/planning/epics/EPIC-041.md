@@ -1,23 +1,16 @@
 ---
 id: EPIC-041
-title: "Vision & Brand Identity"
+title: Vision & Brand Identity
 status: done
 priority: P1
 milestone: MS-001
-description: >
-  Evolve OrqaStudio's vision from software development tool to domain-agnostic
-  clarity engine. Rename pillars, broaden personas, establish licensing, and
-  align all documentation with canonical strategic vision.
+pillars: [PILLAR-001]
+description: Evolve OrqaStudio's vision from software development tool to domain-agnostic clarity engine. Rename pillars, broaden personas, establish licensing, and align all documentation with canonical strategic vision.
 created: 2026-03-07
 updated: 2026-03-09
-research-refs:
-  - rebrand-forge-to-orqa
-  - mvp/branding
+research-refs: [rebrand-forge-to-orqa, mvp/branding]
 docs-required: []
-docs-produced:
-  - .orqa/documentation/product/vision.md
-  - .orqa/documentation/product/governance.md
-  - .orqa/governance/decisions/AD-027.md
+docs-produced: [.orqa/documentation/product/vision.md, .orqa/documentation/product/governance.md, .orqa/governance/decisions/AD-027.md]
 scoring:
   user-value: 4
   pillar-alignment: 5
@@ -25,7 +18,6 @@ scoring:
   effort: 3
   risk: 1
   score: 16
-tags: [vision, pillars, clarity-engine, brand, licensing]
 ---
 
 ## Implementation Design

@@ -1,20 +1,16 @@
 ---
 id: EPIC-044
-title: "Three-Layer Governance Classification"
+title: Three-Layer Governance Classification
 status: done
 priority: P1
 milestone: MS-001
-description: >
-  Classify all governance artifacts (agents, skills, rules, hooks) into three layers:
-  canon (platform principles), project (project-specific), and plugin (extensible/ecosystem).
-  Add scope categorisation to agents (software-engineering, governance, general).
-  This is foundational architecture enabling multi-project support.
+pillars: [PILLAR-001]
+description: "Classify all governance artifacts (agents, skills, rules, hooks) into three layers: canon (platform principles), project (project-specific), and plugin (extensible/ecosystem). Add scope categorisation to agents (software-engineering, governance, general). This is foundational architecture enabling multi-project support."
 created: 2026-03-09
 updated: 2026-03-09
 research-refs: []
 docs-required: []
-docs-produced:
-  - .orqa/documentation/product/artifact-framework.md
+docs-produced: [.orqa/documentation/product/artifact-framework.md]
 scoring:
   user-value: 5
   pillar-alignment: 5
@@ -22,7 +18,6 @@ scoring:
   effort: 2
   risk: 1
   score: 18
-tags: [governance, classification, multi-project, architecture, canon]
 ---
 
 ## Findings Addressed

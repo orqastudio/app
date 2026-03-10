@@ -2,17 +2,18 @@
 id: IDEA-016
 title: "Reflective AI Facilitation"
 status: captured
-pillar:
+pillars:
   - learning-through-reflection
 description: >
   Active structured reflection support with AI-facilitated
   retrospectives, assumption challenges, and learning cycle detection.
+created: 2026-03-07
+updated: 2026-03-07
 research-needed:
   - AI facilitation prompt design
   - Assumption challenge effectiveness
   - Learning cycle pattern recognition
 promoted-to: null
-tags: [reflection, facilitation, retrospectives]
 ---
 
 ## Candidate Items

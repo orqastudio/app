@@ -3,9 +3,11 @@ id: RULE-020
 slug: no-stubs
 layer: canon
 status: active
-title: "No Stubs or Placeholders"
-description: "No hardcoded fake data, TODO functions, or scaffolded implementations in production code."
 scope: system
+title: No Stubs or Placeholders
+description: No hardcoded fake data, TODO functions, or scaffolded implementations in production code.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

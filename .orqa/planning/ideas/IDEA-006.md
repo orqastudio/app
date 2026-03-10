@@ -2,17 +2,18 @@
 id: IDEA-006
 title: "Cross-Project Intelligence"
 status: captured
-pillar:
+pillars:
   - learning-through-reflection
 description: >
   Enable learning that transfers between projects through shared
   templates, cross-project patterns, and accumulated insights.
+created: 2026-03-07
+updated: 2026-03-07
 research-needed:
   - Cross-project data model
   - Privacy and data isolation concerns
   - Template format design
 promoted-to: null
-tags: [cross-project, templates, learning]
 ---
 
 ## Candidate Items

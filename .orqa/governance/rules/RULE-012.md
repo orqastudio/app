@@ -3,9 +3,11 @@ id: RULE-012
 slug: error-ownership
 layer: canon
 status: active
-title: "Error Ownership"
-description: "All errors are your responsibility. Pre-existing errors must be fixed. Never skip or ignore failures."
 scope: system
+title: Error Ownership
+description: All errors are your responsibility. Pre-existing errors must be fixed. Never skip or ignore failures.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

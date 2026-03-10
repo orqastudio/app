@@ -1,34 +1,22 @@
 ---
 id: EPIC-021
-title: "Idea & Feedback Capture"
+title: Idea & Feedback Capture
 status: draft
 priority: P2
 milestone: MS-002
+pillars: [clarity-through-structure, learning-through-reflection]
+description: Build idea quick-capture from conversation and anywhere, idea inbox, promotion workflows, and duplicate detection.
 created: 2026-03-07
 updated: 2026-03-07
-deadline: null
+docs-required: [docs/product/artifact-framework.md (idea schema), .orqa/plans/ (plan required before implementation)]
+docs-produced: [.orqa/plans/ (idea capture plan)]
 depends-on: [EPIC-005]
 blocks: []
-assignee: null
-pillar:
-  - clarity-through-structure
-  - learning-through-reflection
 scoring:
   pillar: 5
   impact: 4
   dependency: 1
   effort: 3
-score: 6.0
-roadmap-ref: "M11"
-docs-required:
-  - docs/product/artifact-framework.md (idea schema)
-  - .orqa/plans/ (plan required before implementation)
-docs-produced:
-  - .orqa/plans/ (idea capture plan)
-description: >
-  Build idea quick-capture from conversation and anywhere, idea inbox,
-  promotion workflows, and duplicate detection.
-tags: [ideas, capture, promotion]
 ---
 
 ## Tasks

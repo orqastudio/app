@@ -1,25 +1,15 @@
 ---
 id: TASK-057
-title: "Task Dependency Mechanism"
-description: >
-  Add a formal depends-on field to the task schema in the artifact framework,
-  add a dependency gate to the task lifecycle rules, and backfill existing
-  tasks that have implicit dependencies.
+title: Task Dependency Mechanism
 status: done
 epic: EPIC-045
+description: Add a formal depends-on field to the task schema in the artifact framework, add a dependency gate to the task lifecycle rules, and backfill existing tasks that have implicit dependencies.
 created: 2026-03-09
 updated: 2026-03-09
 assignee: orchestrator
 skills: [orqa-governance]
-scope:
-  - .orqa/documentation/product/artifact-framework.md
-  - .orqa/governance/rules/artifact-lifecycle.md
-acceptance:
-  - depends-on field defined in the Task schema (artifact-framework.md)
-  - Task lifecycle rule updated with dependency gate (todo → in-progress blocked if deps not done)
-  - Field ordering convention updated to include depends-on
-  - Traceability web updated to show task-level dependencies
-tags: [governance, artifacts, dependencies]
+scope: [.orqa/documentation/product/artifact-framework.md, .orqa/governance/rules/artifact-lifecycle.md]
+acceptance: [depends-on field defined in the Task schema (artifact-framework.md), Task lifecycle rule updated with dependency gate (todo → in-progress blocked if deps not done), Field ordering convention updated to include depends-on, Traceability web updated to show task-level dependencies]
 ---
 
 ## Context

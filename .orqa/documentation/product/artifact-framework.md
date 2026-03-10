@@ -235,7 +235,6 @@ test-questions:
   - Does it surface what would otherwise be hidden?
 created: 2026-03-09
 updated: 2026-03-09
-tags: [visibility, structure, governance]
 ---
 ```
 
@@ -248,7 +247,6 @@ tags: [visibility, structure, governance]
 | `test-questions` | Yes | string[] | Questions to evaluate whether work serves this pillar |
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
-| `tags` | No | string[] | Freeform tags |
 
 The pillar body contains the full narrative: what the pillar means in practice, examples of work that serves it, anti-patterns that violate it. The `description` and `test-questions` fields are the machine-readable summary used for system prompt injection and scoring.
 
@@ -269,7 +267,6 @@ deadline: null                    # ISO date or null — optional time constrain
 gate: "Can we use this app instead of the terminal for governance management, conversation debugging, and structured thinking about the project?"
 epic-count: 10                    # Total epics in this milestone
 completed-epics: 0                # Epics with status: done
-tags: []
 ---
 ```
 
@@ -278,14 +275,13 @@ tags: []
 | `id` | Yes | string | Auto-incrementing `MS-NNN` identifier |
 | `title` | Yes | string | Human-readable milestone name |
 | `status` | Yes | enum | `planning`, `active`, `complete` |
+| `description` | Yes | string | What this milestone achieves |
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
 | `deadline` | No | date/null | ISO date for time-constrained milestones, null otherwise |
 | `gate` | Yes | string | Question that determines completion |
-| `description` | Yes | string | What this milestone achieves |
 | `epic-count` | No | integer | Total epics belonging to this milestone |
 | `completed-epics` | No | integer | Epics with `status: done` |
-| `tags` | No | string[] | Freeform tags |
 
 ### Epic (`EPIC-NNN`)
 
@@ -298,6 +294,7 @@ title: "AI Transparency Wiring"
 status: draft                     # draft | ready | in-progress | review | done
 priority: P1                     # P1 | P2 | P3
 milestone: MS-001
+pillars: [PILLAR-001]
 description: >
   Wire AI transparency events through the streaming pipeline so the
   user can see system prompts, tool calls, and thinking in real time.
@@ -308,13 +305,15 @@ docs-required:                    # Documentation that must exist before work be
   - docs/architecture/streaming-pipeline.md
 docs-produced:                    # Documentation this work creates or updates
   - docs/architecture/streaming-pipeline.md (update with new events)
+depends-on: []                    # EPIC-NNN IDs that must be done before this can start
+blocks: []                        # EPIC-NNN IDs that this epic blocks
+deadline: null                    # ISO date or null
 scoring:                          # Priority dimension scores
   pillar: 5
   impact: 5
   dependency: 3
   effort: 2
   score: 17.5                    # Computed: (pillar*3 + impact*2 + dependency*3) / effort
-tags: [streaming, transparency]
 ---
 ```
 
@@ -325,15 +324,17 @@ tags: [streaming, transparency]
 | `status` | Yes | enum | `draft`, `ready`, `in-progress`, `review`, `done` |
 | `priority` | Yes | enum | `P1`, `P2`, `P3` — derived from score |
 | `milestone` | Yes | string | Milestone ID this belongs to |
-| `description` | No | string | Brief description of the epic |
+| `pillars` | Yes | string[] | Pillar IDs this epic serves (e.g., `[PILLAR-001, PILLAR-002]`) |
+| `description` | Yes | string | Brief description of the epic |
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
 | `research-refs` | No | string[] | `RES-NNN` identifiers of research docs that informed this epic (traceability — "what shaped this design?") |
 | `docs-required` | No | string[] | Documentation that must exist before work begins (gate — "what blocks starting?"). Research docs in `research-refs` should also appear here unless they are context-only. May also include non-research docs (architecture specs, UI wireframes). |
 | `docs-produced` | No | string[] | Documentation this work will create or update |
-| `pillars` | No | string[] | Pillar IDs this epic serves (e.g., `[PILLAR-001, PILLAR-002]`) |
-| `scoring` | No | object | Dimension scores for priority calculation (includes computed `score` field) |
-| `tags` | No | string[] | Freeform tags |
+| `depends-on` | No | string[] | `EPIC-NNN` IDs that must be done before this can start |
+| `blocks` | No | string[] | `EPIC-NNN` IDs that this epic blocks |
+| `deadline` | No | date/null | ISO date for time-constrained epics, null otherwise |
+| `scoring` | Yes | object | Dimension scores for priority calculation (includes computed `score` field). Required for now — see IDEA-035 for configurable scoring. |
 
 **Task checklists in epics:** Tasks are listed as markdown checklists in the epic body. When a task needs its own detailed tracking (acceptance criteria, agent assignment, discussion), it graduates to a separate `TASK-NNN.md` file in `.orqa/tasks/`.
 
@@ -354,14 +355,13 @@ created: 2026-03-07
 updated: 2026-03-07
 depends-on: []                    # Task IDs that must be done before this can start
 assignee: backend-engineer
-skills: [chunkhound, orqa-ipc-patterns, orqa-streaming]
+skills: [orqa-ipc-patterns, orqa-streaming]
 scope:                            # Files/directories affected
   - src-tauri/src/commands/stream_commands.rs
 acceptance:                       # What "done" looks like
   - SystemPromptSent event emitted before sidecar call
   - Event carries custom_prompt and governance_prompt
   - Frontend receives and displays the event
-tags: []
 ---
 ```
 
@@ -371,6 +371,7 @@ tags: []
 | `title` | Yes | string | Concise task description |
 | `status` | Yes | enum | `todo`, `in-progress`, `done` |
 | `epic` | Yes | string | Parent epic ID |
+| `description` | Yes | string | What this task does and why |
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
 | `depends-on` | No | string[] | Task IDs that must be `done` before this task can move to `in-progress` |
@@ -378,7 +379,6 @@ tags: []
 | `skills` | No | string[] | Skills the assignee should load before starting — enables traceability from plan → task → agent → skills → implementation |
 | `scope` | No | string[] | Files/directories affected |
 | `acceptance` | No | string[] | Acceptance criteria |
-| `tags` | No | string[] | Freeform tags |
 
 **The `skills` field and traceability:** The `skills` field closes the loop from epic to execution. The chain is: **Epic** defines what needs doing → **Task** specifies who does it (`assignee`) and what knowledge they need (`skills`) → **Agent** loads those skills before starting → **Implementation** is done with the right context. Populating `skills` when creating a task ensures no agent picks up work without the codebase knowledge needed to do it well.
 
@@ -395,12 +395,13 @@ pillars: [PILLAR-001]
 description: >
   Support additional AI providers through the provider-agnostic sidecar
   interface without changing the Rust core or Svelte UI.
+created: 2026-03-07
+updated: 2026-03-07
 research-needed:                  # What needs investigating before this becomes an epic
   - Provider SDK compatibility assessment
   - Cost model research
   - UX for provider switching
 promoted-to: null                 # Epic ID if promoted, null otherwise
-tags: [providers, composability]
 ---
 ```
 
@@ -409,11 +410,12 @@ tags: [providers, composability]
 | `id` | Yes | string | Auto-incrementing `IDEA-NNN` identifier |
 | `title` | Yes | string | Human-readable idea name |
 | `status` | Yes | enum | `captured`, `exploring`, `shaped`, `promoted`, `archived` |
-| `pillars` | No | string[] | Pillar IDs this idea serves (e.g., `[PILLAR-001, PILLAR-002]`) |
-| `description` | No | string | Brief description of the idea |
+| `pillars` | Yes | string[] | Pillar IDs this idea serves (e.g., `[PILLAR-001, PILLAR-002]`) |
+| `description` | Yes | string | Brief description of the idea |
+| `created` | Yes | date | ISO date of creation |
+| `updated` | Yes | date | ISO date of last update |
 | `research-needed` | No | string[] | Questions to answer before promotion |
 | `promoted-to` | No | string | Epic ID if promoted, null otherwise |
-| `tags` | No | string[] | Freeform tags |
 
 ### Decision (`AD-NNN`)
 
@@ -429,9 +431,9 @@ description: >
   Rust backend to the Svelte frontend.
 created: 2026-03-07
 updated: 2026-03-07
+research-refs: []                 # RES-NNN identifiers of research that informed this decision
 supersedes: null                  # AD-NNN of the decision this replaces, or null
 superseded-by: null               # AD-NNN of the decision that replaced this, or null
-tags: [streaming, ipc, tauri]
 ---
 ```
 
@@ -440,12 +442,12 @@ tags: [streaming, ipc, tauri]
 | `id` | Yes | string | Auto-incrementing `AD-NNN` identifier |
 | `title` | Yes | string | Human-readable decision title |
 | `status` | Yes | enum | `proposed`, `accepted`, `superseded`, `deprecated` |
-| `description` | No | string | Brief description of the decision |
+| `description` | Yes | string | Brief description of the decision |
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
+| `research-refs` | No | string[] | `RES-NNN` identifiers of research that informed this decision |
 | `supersedes` | No | string | `AD-NNN` of the decision this replaces, or null |
 | `superseded-by` | No | string | `AD-NNN` of the decision that replaced this, or null |
-| `tags` | No | string[] | Freeform tags |
 
 The decision body follows the standard structure: **Context** (what situation prompted this decision), **Decision** (what was chosen and why), **Consequences** (what becomes easier, harder, or constrained).
 
@@ -453,7 +455,7 @@ The decision body follows the standard structure: **Context** (what situation pr
 
 Research documents cover investigations, design explorations, architecture spikes, and implementation plans. They replaced the Plan artifact type — the distinction between "investigating something" and "designing an implementation approach" was artificial; both are research activities that produce artifacts referenced by epics and decisions.
 
-Research documents are referenced via `research-refs` on epics, tasks, and decisions using their `RES-NNN` identifier.
+Research documents are referenced via `research-refs` on epics, tasks, and decisions using their `RES-NNN` identifier. Traceability flows from consumers (epics, decisions) pointing at research — research docs do not maintain reverse links. See IDEA-032 for the planned traceability graph that will derive these relationships automatically.
 
 ```yaml
 ---
@@ -465,9 +467,7 @@ description: >
   delivery from the Rust backend to the Svelte frontend.
 created: 2026-03-07
 updated: 2026-03-07
-milestone: MS-001                 # Milestone this research serves
 surpassed-by: null                # RES-NNN of the doc that supersedes this, or null
-tags: [streaming, ipc]
 ---
 ```
 
@@ -476,12 +476,10 @@ tags: [streaming, ipc]
 | `id` | Yes | string | Auto-incrementing `RES-NNN` identifier |
 | `title` | Yes | string | Human-readable research title |
 | `status` | Yes | enum | `draft`, `complete`, `surpassed` |
-| `description` | No | string | Brief description of what is being investigated |
+| `description` | Yes | string | Brief description of what is being investigated |
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
-| `milestone` | No | string | Milestone ID this research serves |
 | `surpassed-by` | No | string | `RES-NNN` of the research doc that supersedes this, or null |
-| `tags` | No | string[] | Freeform tags |
 
 The research body follows the structure: **Question** (what is being investigated), **Research Findings** (what was discovered), **Options Evaluated** (alternatives considered), **Recommendation** (what to do and why).
 
@@ -493,15 +491,14 @@ Lessons capture implementation learnings — unexpected behaviours, non-obvious 
 ---
 id: IMPL-001
 title: "Use typed error enums instead of String errors in Tauri commands"
-status: active
+status: active                    # active | recurring | promoted
 description: >
   Tauri commands returning Result<T, String> lose error context.
   Use thiserror-derived enums for structured error propagation.
-recurrence: 0
-promoted_to: null
 created: 2026-03-07
 updated: 2026-03-07
-tags: [rust, error-handling, tauri]
+recurrence: 0
+promoted_to: null
 ---
 ```
 
@@ -509,14 +506,12 @@ tags: [rust, error-handling, tauri]
 |-------|----------|------|-------------|
 | `id` | Yes | string | Auto-incrementing `IMPL-NNN` identifier |
 | `title` | Yes | string | Human-readable lesson title (no code references) |
-| `category` | Yes | string | Lesson category for grouping |
 | `status` | Yes | enum | `active`, `recurring`, `promoted` — reflects promotion pipeline state |
-| `description` | No | string | Brief description of the lesson |
-| `recurrence` | Yes | integer | How many times this lesson has recurred (triggers promotion at threshold) |
-| `promoted_to` | No | string | Target artifact if promoted (rule name, skill name, etc.) |
+| `description` | Yes | string | Brief description of the lesson |
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
-| `tags` | No | string[] | Freeform tags |
+| `recurrence` | Yes | integer | How many times this lesson has recurred (triggers promotion at threshold) |
+| `promoted_to` | No | string | Target artifact if promoted (rule name, skill name, etc.) |
 
 ### Rule (`RULE-NNN`)
 
@@ -528,10 +523,12 @@ id: RULE-006
 slug: coding-standards
 layer: canon
 status: active
+scope: domain                     # system | domain | project | role | artifact
 title: "Coding Standards"
 description: "Enforces Rust and TypeScript coding standards including formatting, linting, error handling, and test coverage."
+created: 2026-03-07
+updated: 2026-03-07
 promoted_from: null               # IMPL-NNN if promoted from a lesson, null otherwise
-tags: [coding, standards, quality]
 ---
 ```
 
@@ -541,10 +538,12 @@ tags: [coding, standards, quality]
 | `slug` | Yes | string | Human-readable slug (original filename without `.md`) for reference |
 | `layer` | Yes | enum | `canon` (platform), `project` (project-specific), `plugin` (ecosystem) |
 | `status` | Yes | enum | `active` (enforced) or `inactive` (preserved but not enforced) |
+| `scope` | Yes | string | What the rule governs: `system`, `domain`, `project`, `role`, `artifact`. Temporary — will be replaced by structured enforcement model (IDEA-034). |
 | `title` | Yes | string | Human-readable rule title |
 | `description` | Yes | string | Brief description of what the rule enforces |
+| `created` | Yes | date | ISO date of creation |
+| `updated` | Yes | date | ISO date of last update |
 | `promoted_from` | No | string | `IMPL-NNN` if promoted from a lesson, null otherwise |
-| `tags` | No | string[] | Freeform tags |
 
 ---
 
@@ -555,27 +554,26 @@ YAML frontmatter fields follow a consistent content hierarchy across all artifac
 ### Ordering Principles
 
 1. **Identity** — `id`, `title` (who is this?)
-2. **Classification** — `status`, `priority`, `category`, `milestone`, `epic`, `pillar` (what kind of thing is it?)
-3. **Description** — `description` (what is it about?)
+2. **Classification** — `slug`, `layer`, `status`, `priority`, `scope`, `milestone`, `epic`, `pillars` (what kind of thing is it?)
+3. **Description** — `description`, `test-questions` (what is it about?)
 4. **Lifecycle** — `created`, `updated`, `deadline` (when?)
-5. **Relationships** — `depends-on`, `research-refs`, `docs-required`, `docs-produced`, `research-needed`, `promoted-to`, `supersedes`, `superseded-by` (what connects to what?)
+5. **Relationships** — `depends-on`, `blocks`, `research-refs`, `docs-required`, `docs-produced`, `research-needed`, `promoted-to`, `supersedes`, `superseded-by`, `surpassed-by`, `promoted_from` (what connects to what?)
 6. **Scoring** — `scoring` block (how important?)
 7. **Operational** — `assignee`, `skills`, `scope`, `acceptance`, `gate`, `epic-count`, `completed-epics`, `recurrence`, `promoted_to` (how is it managed?)
-8. **Tags** — `tags` (always last)
 
 ### Per-Type Field Order
 
 | Type | Field Order |
 |------|------------|
-| **Milestone** | id, title, status, description, created, updated, deadline, gate, epic-count, completed-epics, tags |
-| **Pillar** | id, title, status, description, test-questions, created, updated, tags |
-| **Epic** | id, title, status, priority, milestone, pillars, description, created, updated, research-refs, docs-required, docs-produced, scoring, tags |
-| **Task** | id, title, status, epic, description, created, updated, depends-on, assignee, skills, scope, acceptance, tags |
-| **Idea** | id, title, status, pillars, description, research-needed, promoted-to, tags |
-| **Lesson** | id, title, category, description, recurrence, promoted_to, tags |
-| **Rule** | id, slug, layer, status, title, description, promoted_from, tags |
-| **Decision** | id, title, status, description, created, updated, supersedes, superseded-by, tags |
-| **Research** | id, title, status, description, created, updated, milestone, surpassed-by, tags |
+| **Milestone** | id, title, status, description, created, updated, deadline, gate, epic-count, completed-epics |
+| **Pillar** | id, title, status, description, test-questions, created, updated |
+| **Epic** | id, title, status, priority, milestone, pillars, description, created, updated, research-refs, docs-required, docs-produced, depends-on, blocks, deadline, scoring |
+| **Task** | id, title, status, epic, description, created, updated, depends-on, assignee, skills, scope, acceptance |
+| **Idea** | id, title, status, pillars, description, created, updated, research-needed, promoted-to |
+| **Lesson** | id, title, status, description, created, updated, recurrence, promoted_to |
+| **Rule** | id, slug, layer, status, scope, title, description, created, updated, promoted_from |
+| **Decision** | id, title, status, description, created, updated, research-refs, supersedes, superseded-by |
+| **Research** | id, title, status, description, created, updated, surpassed-by |
 
 ---
 

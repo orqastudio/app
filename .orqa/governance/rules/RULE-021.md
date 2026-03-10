@@ -3,9 +3,11 @@ id: RULE-021
 slug: pillar-alignment-docs
 layer: canon
 status: active
-title: "Pillar Alignment in Documentation"
-description: "Every documentation page describing a feature must include a Pillar Alignment section."
 scope: project
+title: Pillar Alignment in Documentation
+description: Every documentation page describing a feature must include a Pillar Alignment section.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

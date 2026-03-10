@@ -1,33 +1,22 @@
 ---
 id: EPIC-030
-title: "Project Scaffold"
+title: Project Scaffold
 status: done
 priority: P1
 milestone: MS-000
+pillars: [clarity-through-structure]
+description: "The first working version: a Tauri v2 desktop app with Claude conversations via Agent SDK sidecar, streaming, SQLite, and conversation UI."
 created: 2026-03-02
 updated: 2026-03-07
-deadline: null
+docs-required: [docs/architecture/decisions.md, docs/architecture/, docs/ui/]
+docs-produced: []
 depends-on: [EPIC-025, EPIC-026, EPIC-027, EPIC-028, EPIC-029]
 blocks: [EPIC-031]
-assignee: null
-pillar:
-  - clarity-through-structure
 scoring:
   pillar: 3
   impact: 5
   dependency: 3
   effort: 1
-score: 22.0
-roadmap-ref: "Phase 1"
-docs-required:
-  - docs/architecture/decisions.md
-  - docs/architecture/
-  - docs/ui/
-docs-produced: []
-description: >
-  The first working version: a Tauri v2 desktop app with Claude
-  conversations via Agent SDK sidecar, streaming, SQLite, and conversation UI.
-tags: [foundation, scaffold, tauri, svelte, rust, sqlite, streaming]
 ---
 
 ## Why P1

@@ -3,8 +3,11 @@ id: RULE-016
 slug: id-not-priority
 layer: canon
 status: active
-title: "IDs Are Not Priority"
-description: "Artifact IDs are sequential identifiers for uniqueness and reference. They carry no information about priority, importance, or execution order."
+scope: system
+title: IDs Are Not Priority
+description: Artifact IDs are sequential identifiers for uniqueness and reference. They carry no information about priority, importance, or execution order.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 Artifact IDs (EPIC-045, TASK-051, AD-029, etc.) are sequential identifiers for uniqueness and reference. They carry NO information about priority, importance, or execution order.

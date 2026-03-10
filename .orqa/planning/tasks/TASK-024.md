@@ -1,26 +1,15 @@
 ---
 id: TASK-024
-title: "Decompose stream commands into domain modules"
-description: >
-  Extracts business logic from the monolithic stream_commands.rs (2,425 lines) into four
-  focused domain modules, leaving the command file as thin orchestration only.
+title: Decompose stream commands into domain modules
 status: done
 epic: EPIC-039
+description: Extracts business logic from the monolithic stream_commands.rs (2,425 lines) into four focused domain modules, leaving the command file as thin orchestration only.
 created: 2026-03-06
 updated: 2026-03-09
 assignee: refactor-agent
 skills: [orqa-domain-services, orqa-composability]
-scope:
-  - src-tauri/src/commands/stream_commands.rs
-  - src-tauri/src/domain/tool_executor.rs
-  - src-tauri/src/domain/system_prompt.rs
-  - src-tauri/src/domain/stream_loop.rs
-  - src-tauri/src/domain/session_title.rs
-acceptance:
-  - stream_commands.rs reduced from 2,425 to ~280 lines
-  - All business logic in domain modules
-  - 385 tests pass, zero clippy warnings
-tags: [decomposition, domain-services, stream-commands]
+scope: [src-tauri/src/commands/stream_commands.rs, src-tauri/src/domain/tool_executor.rs, src-tauri/src/domain/system_prompt.rs, src-tauri/src/domain/stream_loop.rs, src-tauri/src/domain/session_title.rs]
+acceptance: [stream_commands.rs reduced from 2,425 to ~280 lines, All business logic in domain modules, 385 tests pass, zero clippy warnings]
 ---
 
 ## What

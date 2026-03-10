@@ -3,9 +3,11 @@ id: RULE-030
 slug: uat-process
 layer: canon
 status: active
-title: "UAT Process"
-description: "User acceptance testing follows a collect-then-systematize approach. Findings are grouped by root cause before tasks are created."
 scope: system
+title: UAT Process
+description: User acceptance testing follows a collect-then-systematize approach. Findings are grouped by root cause before tasks are created.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 User acceptance testing follows a structured process that prevents premature fixing and ensures systemic solutions.

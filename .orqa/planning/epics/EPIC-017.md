@@ -1,36 +1,22 @@
 ---
 id: EPIC-017
-title: "Enforcement & Continuity"
+title: Enforcement & Continuity
 status: draft
 priority: P2
 milestone: MS-002
+pillars: [clarity-through-structure, learning-through-reflection]
+description: Add real-time violation detection during streaming, hook-based rule injection, compliance dashboard, and session handoff continuity.
 created: 2026-03-07
 updated: 2026-03-07
-deadline: null
+docs-required: [docs/architecture/enforcement.md, docs/architecture/streaming-pipeline.md, .orqa/plans/ (plan required before implementation)]
+docs-produced: [.orqa/plans/ (enforcement plan), docs/architecture/enforcement.md (update with real-time violation detection)]
 depends-on: []
 blocks: []
-assignee: null
-pillar:
-  - clarity-through-structure
-  - learning-through-reflection
 scoring:
   pillar: 5
   impact: 3
   dependency: 2
   effort: 4
-score: 5.8
-roadmap-ref: "M7"
-docs-required:
-  - docs/architecture/enforcement.md
-  - docs/architecture/streaming-pipeline.md
-  - .orqa/plans/ (plan required before implementation)
-docs-produced:
-  - .orqa/plans/ (enforcement plan)
-  - docs/architecture/enforcement.md (update with real-time violation detection)
-description: >
-  Add real-time violation detection during streaming, hook-based rule
-  injection, compliance dashboard, and session handoff continuity.
-tags: [enforcement, continuity, hooks]
 ---
 
 ## Tasks

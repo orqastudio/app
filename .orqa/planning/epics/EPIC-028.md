@@ -1,32 +1,22 @@
 ---
 id: EPIC-028
-title: "UX Design"
+title: UX Design
 status: done
 priority: P1
 milestone: MS-000
+pillars: [clarity-through-structure]
+description: "The complete UX specification: design system, wireframes, component inventory, interaction patterns, and responsive behaviour rules."
 created: 2026-03-02
 updated: 2026-03-07
-deadline: null
+docs-required: [docs/product/]
+docs-produced: [docs/ui/]
 depends-on: [EPIC-025, EPIC-027]
 blocks: [EPIC-029, EPIC-030]
-assignee: null
-pillar:
-  - clarity-through-structure
 scoring:
   pillar: 3
   impact: 5
   dependency: 3
   effort: 1
-score: 22.0
-roadmap-ref: "Phase 0d"
-docs-required:
-  - docs/product/
-docs-produced:
-  - docs/ui/
-description: >
-  The complete UX specification: design system, wireframes, component
-  inventory, interaction patterns, and responsive behaviour rules.
-tags: [foundation, ux, design, wireframes, components]
 ---
 
 ## Why P1

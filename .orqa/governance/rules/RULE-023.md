@@ -3,9 +3,11 @@ id: RULE-023
 slug: required-reading
 layer: canon
 status: active
-title: "Required Reading"
-description: "Every agent must read its required documentation before any implementation work begins."
 scope: system
+title: Required Reading
+description: Every agent must read its required documentation before any implementation work begins.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

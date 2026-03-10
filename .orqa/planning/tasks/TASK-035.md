@@ -1,22 +1,15 @@
 ---
 id: TASK-035
-title: "Orchestrator delegation with skill injection"
-description: >
-  Updates the orchestrator's delegation protocol to automatically include the relevant
-  Tier 2 project skills in every delegation prompt, matched from the task's scope against the injection table.
+title: Orchestrator delegation with skill injection
 status: done
 epic: EPIC-042
+description: Updates the orchestrator's delegation protocol to automatically include the relevant Tier 2 project skills in every delegation prompt, matched from the task's scope against the injection table.
 created: 2026-03-09
 updated: 2026-03-09
 assignee: agent-maintainer
 skills: [skills-maintenance, orqa-governance]
-scope:
-  - .orqa/team/agents/orchestrator.md
-acceptance:
-  - Orchestrator's delegation protocol includes skill injection step
-  - Delegation prompts to agents include project skill injection instructions
-  - The injection is based on the task's scope field matching the injection table
-tags: [orchestrator, delegation, skills, tier-2, injection]
+scope: [.orqa/team/agents/orchestrator.md]
+acceptance: [Orchestrator's delegation protocol includes skill injection step, Delegation prompts to agents include project skill injection instructions, The injection is based on the task's scope field matching the injection table]
 ---
 
 ## What

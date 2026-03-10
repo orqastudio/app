@@ -1,28 +1,15 @@
 ---
 id: TASK-007
-title: "Add artifacts config to project.json and Rust types"
+title: Add artifacts config to project.json and Rust types
 status: done
 epic: EPIC-033
+description: Define the artifacts config schema in project.json and add corresponding Rust types. This is the foundation — the scanner and frontend will read from this config.
 created: 2026-03-08
 updated: 2026-03-08
 assignee: backend-engineer
 skills: [chunkhound, orqa-ipc-patterns, orqa-domain-services, rust-async-patterns]
-scope:
-  - .orqa/project.json
-  - src-tauri/src/domain/project_settings.rs
-acceptance:
-  - project.json has artifacts array with all current groups and types
-  - ArtifactEntry enum (Group | Type) added to project_settings.rs
-  - ArtifactTypeConfig struct with key, label, icon, path fields
-  - artifacts field on project config struct with #[serde(default)]
-  - Group variant listed before Type in untagged enum (serde ordering)
-  - cargo build passes
-  - cargo clippy -- -D warnings passes
-description: >
-  Define the artifacts config schema in project.json and add corresponding
-  Rust types. This is the foundation — the scanner and frontend will read
-  from this config.
-tags: [config, rust, schema, artifacts]
+scope: [.orqa/project.json, src-tauri/src/domain/project_settings.rs]
+acceptance: [project.json has artifacts array with all current groups and types, ArtifactEntry enum (Group | Type) added to project_settings.rs, ArtifactTypeConfig struct with key, label, icon, path fields, artifacts field on project config struct with, Group variant listed before Type in untagged enum (serde ordering), cargo build passes, cargo clippy -- -D warnings passes]
 ---
 
 ## What

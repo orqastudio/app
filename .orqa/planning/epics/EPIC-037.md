@@ -1,23 +1,16 @@
 ---
 id: EPIC-037
-title: "Dogfood Readiness"
+title: Dogfood Readiness
 status: done
 priority: P1
 milestone: MS-001
-description: >
-  Multi-phase sprint to make OrqaStudio ready for self-hosted development
-  (dogfooding). Covers governance alignment, frontend audit fixes, documentation
-  alignment, enforcement engine, tool approval, lesson promotion, and SDK session
-  resume.
+pillars: [PILLAR-001]
+description: Multi-phase sprint to make OrqaStudio ready for self-hosted development (dogfooding). Covers governance alignment, frontend audit fixes, documentation alignment, enforcement engine, tool approval, lesson promotion, and SDK session resume.
 created: 2026-03-05
 updated: 2026-03-09
-research-refs:
-  - RES-018
-  - RES-019
+research-refs: [RES-018, RES-019]
 docs-required: []
-docs-produced:
-  - .orqa/governance/rules/dogfood-mode.md
-  - .orqa/governance/rules/development-commands.md
+docs-produced: [.orqa/governance/rules/dogfood-mode.md, .orqa/governance/rules/development-commands.md]
 scoring:
   user-value: 5
   pillar-alignment: 5
@@ -25,7 +18,6 @@ scoring:
   effort: 5
   risk: 4
   score: 24
-tags: [dogfood, enforcement, governance, self-hosting, tool-approval]
 ---
 
 ## Implementation Design

@@ -1,17 +1,11 @@
 ---
 id: PILLAR-001
-title: "Clarity Through Structure"
+title: Clarity Through Structure
 status: active
-description: >
-  Making thinking, standards, and decisions visible and structured.
-test-questions:
-  - Does this make governance artifacts visible and manageable?
-  - Does it produce structured knowledge (plans, decisions, rules)?
-  - Does it enforce a workflow that ensures understanding precedes action?
-  - Does it surface what would otherwise be hidden in files, terminal output, or people's heads?
+description: Making thinking, standards, and decisions visible and structured.
+test-questions: [Does this make governance artifacts visible and manageable?, Does it produce structured knowledge (plans, decisions, rules)?, Does it enforce a workflow that ensures understanding precedes action?, Does it surface what would otherwise be hidden in files, terminal output, or people's heads?]
 created: 2026-03-09
 updated: 2026-03-09
-tags: [visibility, structure, governance]
 ---
 
 ## What This Pillar Means

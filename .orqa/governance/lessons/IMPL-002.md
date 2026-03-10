@@ -1,14 +1,13 @@
 ---
 id: IMPL-002
 title: "Kill existing dev server processes before starting new ones"
-category: dev-environment
+status: active
 description: >
   Check for and kill existing dev server processes on port 1420 before
   starting a new instance to avoid port-in-use errors.
-status: active
+created: 2026-03-07
+updated: 2026-03-07
 recurrence: 1
-promoted_to: null
-tags: [dev-environment, port-conflict, process-management]
 ---
 
 ## Pattern

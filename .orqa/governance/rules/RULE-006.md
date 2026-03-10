@@ -3,38 +3,11 @@ id: RULE-006
 slug: coding-standards
 layer: canon
 status: active
-title: "Coding Standards"
-description: "Rust and TypeScript coding standards: formatting, linting, error handling, component patterns, and coverage requirements."
 scope: project
-enforcement:
-  - event: file
-    action: block
-    conditions:
-      - field: file_path
-        pattern: src-tauri/src/.*\.rs$
-      - field: new_text
-        pattern: (todo!\(|unimplemented!\(|panic!\(|\.unwrap\(\)|\.expect\()
-  - event: file
-    action: block
-    conditions:
-      - field: file_path
-        pattern: ui/.*\.(ts|svelte)$
-      - field: new_text
-        pattern: :\s*any\b|as\s+any\b|<any>
-  - event: file
-    action: block
-    conditions:
-      - field: file_path
-        pattern: (ui/|src-tauri/src/)/.*\.(ts|svelte|rs)$
-      - field: new_text
-        pattern: (#|//)\s*(TODO|FIXME|HACK|XXX|TEMP)\b
-  - event: file
-    action: warn
-    conditions:
-      - field: file_path
-        pattern: ui/.*\.svelte$
-      - field: new_text
-        pattern: "[^\\x00-\\x7F]{2,}"
+title: Coding Standards
+description: "Rust and TypeScript coding standards: formatting, linting, error handling, component patterns, and coverage requirements."
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

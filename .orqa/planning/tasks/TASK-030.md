@@ -1,24 +1,15 @@
 ---
 id: TASK-030
-title: "Vision evolution and pillar renaming"
-description: >
-  Reframes the product vision as a domain-agnostic clarity engine and renames the two
-  product pillars, aligning all vision, governance, and roadmap documentation to the new language.
+title: Vision evolution and pillar renaming
 status: done
 epic: EPIC-041
+description: Reframes the product vision as a domain-agnostic clarity engine and renames the two product pillars, aligning all vision, governance, and roadmap documentation to the new language.
 created: 2026-03-07
 updated: 2026-03-09
 assignee: documentation-writer
 skills: [orqa-governance]
-scope:
-  - .orqa/documentation/product/vision.md
-  - .orqa/documentation/product/governance.md
-  - .orqa/documentation/product/roadmap.md
-acceptance:
-  - Pillars renamed (Process Governance → Clarity Through Structure, Self-Learning Loop → Learning Through Reflection)
-  - Vision reframed as domain-agnostic clarity engine
-  - All documentation uses canonical pillar names
-tags: [vision, pillars, documentation, alignment]
+scope: [.orqa/documentation/product/vision.md, .orqa/documentation/product/governance.md, .orqa/documentation/product/roadmap.md]
+acceptance: [Pillars renamed (Process Governance → Clarity Through Structure, Self-Learning Loop → Learning Through Reflection), Vision reframed as domain-agnostic clarity engine, All documentation uses canonical pillar names]
 ---
 
 ## What

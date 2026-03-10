@@ -1,25 +1,15 @@
 ---
 id: TASK-038
-title: "Null field handling and YAML display ordering"
-description: >
-  Fixes the artifact detail renderer to suppress null, empty, and invalid-date field
-  values, and makes field render order follow YAML source order rather than a hardcoded list.
+title: Null field handling and YAML display ordering
 status: done
 epic: EPIC-043
+description: Fixes the artifact detail renderer to suppress null, empty, and invalid-date field values, and makes field render order follow YAML source order rather than a hardcoded list.
 created: 2026-03-09
 updated: 2026-03-09
 assignee: frontend-engineer
 skills: [code-search, orqa-composability]
-scope:
-  - ui/lib/components/artifact/FrontmatterHeader.svelte
-  - ui/lib/utils/frontmatter.ts
-acceptance:
-  - Null, empty string, and undefined YAML values are not displayed in read views
-  - Invalid Date never shown for null/missing date fields
-  - Fields render in the order they appear in the YAML frontmatter
-  - Priority labels (P1/P2/P3) include a human-readable explanation
-  - Milestone gate question renders as the last field in the detail view
-tags: [uat, renderer, null-handling, field-ordering, ux]
+scope: [ui/lib/components/artifact/FrontmatterHeader.svelte, ui/lib/utils/frontmatter.ts]
+acceptance: [Null, empty string, and undefined YAML values are not displayed in read views, Invalid Date never shown for null/missing date fields, Fields render in the order they appear in the YAML frontmatter, Priority labels (P1/P2/P3) include a human-readable explanation, Milestone gate question renders as the last field in the detail view]
 ---
 
 ## Findings Addressed

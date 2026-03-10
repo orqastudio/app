@@ -1,35 +1,22 @@
 ---
 id: EPIC-018
-title: "Sub-Agent Support"
+title: Sub-Agent Support
 status: draft
 priority: P2
 milestone: MS-002
+pillars: [clarity-through-structure]
+description: Build agent registry, spawn_agent tool, explore mode, output aggregation, and turn limits for sub-agent delegation.
 created: 2026-03-07
 updated: 2026-03-07
-deadline: null
+docs-required: [docs/architecture/sub-agents.md, .orqa/plans/ (plan required before implementation)]
+docs-produced: [.orqa/plans/ (sub-agent plan), docs/architecture/sub-agents.md (update with implementation details), docs/architecture/ipc-commands.md (new spawn_agent commands)]
 depends-on: []
 blocks: []
-assignee: null
-pillar:
-  - clarity-through-structure
 scoring:
   pillar: 3
   impact: 4
   dependency: 2
   effort: 4
-score: 4.8
-roadmap-ref: "M8"
-docs-required:
-  - docs/architecture/sub-agents.md
-  - .orqa/plans/ (plan required before implementation)
-docs-produced:
-  - .orqa/plans/ (sub-agent plan)
-  - docs/architecture/sub-agents.md (update with implementation details)
-  - docs/architecture/ipc-commands.md (new spawn_agent commands)
-description: >
-  Build agent registry, spawn_agent tool, explore mode, output
-  aggregation, and turn limits for sub-agent delegation.
-tags: [agents, sub-agents, delegation]
 ---
 
 ## Tasks

@@ -1,15 +1,14 @@
 ---
 id: IMPL-008
 title: "Extract domain logic before command files become monolithic"
-category: architecture
+status: active
 description: >
   Command files grow incrementally during feature work. Extract domain
   logic into focused service modules as soon as a command file exceeds
   300 lines. Thin commands delegate to domain services.
-status: active
+created: 2026-03-07
+updated: 2026-03-07
 recurrence: 1
-promoted_to: null
-tags: [decomposition, domain-services, commands, monolith, composability]
 ---
 
 ## What Happened

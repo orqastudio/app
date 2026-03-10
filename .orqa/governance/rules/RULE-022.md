@@ -3,9 +3,11 @@ id: RULE-022
 slug: plan-mode-compliance
 layer: canon
 status: active
-title: "Plan Mode Compliance"
-description: "Every implementation plan must have architectural compliance verification and UX-first design."
 scope: system
+title: Plan Mode Compliance
+description: Every implementation plan must have architectural compliance verification and UX-first design.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

@@ -1,30 +1,22 @@
 ---
 id: EPIC-024
-title: "Additional MVP Polish"
+title: Additional MVP Polish
 status: draft
 priority: P3
 milestone: MS-002
+pillars: [clarity-through-structure]
+description: Nice-to-have polish items for MVP launch including search index UI, multi-window support, and sprint planning.
 created: 2026-03-07
 updated: 2026-03-07
-deadline: null
+docs-required: []
+docs-produced: []
 depends-on: []
 blocks: []
-assignee: null
-pillar:
-  - clarity-through-structure
 scoring:
   pillar: 3
   impact: 2
   dependency: 1
   effort: 3
-score: 4.0
-roadmap-ref: "M14"
-docs-required: []
-docs-produced: []
-description: >
-  Nice-to-have polish items for MVP launch including search index UI,
-  multi-window support, and sprint planning.
-tags: [polish, nice-to-have]
 ---
 
 ## Tasks

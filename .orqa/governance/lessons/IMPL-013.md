@@ -1,15 +1,14 @@
 ---
 id: IMPL-013
 title: "Process Skills at Orchestration Level"
-category: governance
+status: active
 description: >
   Orchestration-level process knowledge (like UAT methodology) must be
   loadable by the orchestrator. Embedding it in specialist agent definitions
   makes it available only during that agent's execution.
-status: active
+created: 2026-03-07
+updated: 2026-03-07
 recurrence: 1
-promoted_to: null
-tags: [orchestration, skills, task-ownership, agent-design]
 ---
 
 ## What Happened

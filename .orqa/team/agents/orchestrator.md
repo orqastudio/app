@@ -454,6 +454,17 @@ Universal roles map to Claude Code subagent types based on loaded skills:
 
 ---
 
+## Dev Server Lifecycle (CLI Context)
+
+When running as a CLI agent (Claude Code), the dev server behaves differently from within the app:
+
+- **`make dev`** runs as a background task. It keeps running as long as the app is open. When the background task **completes**, it means the app has **exited** — the app is DOWN, not restarted.
+- **`make restart`** stops all processes, rebuilds, and relaunches. When run as a background task, completion means the app has **exited**. You must run `make dev` again to relaunch.
+- **After any `make restart` or `make dev` completion:** always start `make dev` as a new background task to bring the app back up.
+- **Do not confuse task completion with successful restart.** A completed background task = the process ended = the app is no longer running.
+
+---
+
 ## Worktree Lifecycle (MANDATORY)
 
 All implementation work happens in git worktrees. Never commit directly to `main`.

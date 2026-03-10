@@ -2,19 +2,18 @@
 id: IDEA-028
 title: "File-first data alignment audit"
 status: captured
+pillars: [PILLAR-001, PILLAR-002]
 description: >
   Audit all persistent data to ensure clear file-vs-database justification.
   Files are the source of truth for governance artifacts; the database is a
   derived index rebuilt on scan. Verify no governance data is database-only.
 created: 2026-03-09
 updated: 2026-03-09
-pillar: [1, 2]
-promoted-to: null
 research-needed:
   - Which database tables duplicate file-based data?
   - Can the artifacts table be treated as a pure scan cache?
   - Should governance_analyses be exportable as artifacts?
-tags: [data-architecture, file-first, portability, persistence]
+promoted-to: null
 ---
 
 ## Context

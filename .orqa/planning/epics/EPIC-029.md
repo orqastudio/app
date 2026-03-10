@@ -1,33 +1,22 @@
 ---
 id: EPIC-029
-title: "Technical Design"
+title: Technical Design
 status: done
 priority: P1
 milestone: MS-000
+pillars: [clarity-through-structure]
+description: "The complete technical blueprint: database schema, IPC commands, Rust modules, streaming pipeline, tool definitions, and error taxonomy."
 created: 2026-03-02
 updated: 2026-03-07
-deadline: null
+docs-required: [docs/architecture/decisions.md, docs/ui/]
+docs-produced: [docs/architecture/]
 depends-on: [EPIC-025, EPIC-026, EPIC-028]
 blocks: [EPIC-030]
-assignee: null
-pillar:
-  - clarity-through-structure
 scoring:
   pillar: 3
   impact: 5
   dependency: 3
   effort: 1
-score: 22.0
-roadmap-ref: "Phase 0e"
-docs-required:
-  - docs/architecture/decisions.md
-  - docs/ui/
-docs-produced:
-  - docs/architecture/
-description: >
-  The complete technical blueprint: database schema, IPC commands, Rust
-  modules, streaming pipeline, tool definitions, and error taxonomy.
-tags: [foundation, technical-design, schema, ipc, architecture]
 ---
 
 ## Why P1

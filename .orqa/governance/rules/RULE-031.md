@@ -3,9 +3,11 @@ id: RULE-031
 slug: vision-alignment
 layer: canon
 status: active
-title: "Vision Alignment"
-description: "Every feature must serve at least one active pillar defined in .orqa/planning/pillars/."
 scope: project
+title: Vision Alignment
+description: Every feature must serve at least one active pillar defined in .orqa/planning/pillars/.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

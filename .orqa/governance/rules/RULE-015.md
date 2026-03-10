@@ -3,9 +3,11 @@ id: RULE-015
 slug: honest-reporting
 layer: canon
 status: active
-title: "Honest Reporting"
-description: "Report status accurately. Partial work reported as complete is worse than reporting it as incomplete."
 scope: system
+title: Honest Reporting
+description: Report status accurately. Partial work reported as complete is worse than reporting it as incomplete.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

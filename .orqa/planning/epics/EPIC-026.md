@@ -1,33 +1,22 @@
 ---
 id: EPIC-026
-title: "Architecture Decisions"
+title: Architecture Decisions
 status: done
 priority: P1
 milestone: MS-000
+pillars: [clarity-through-structure, learning-through-reflection]
+description: Formal architecture decision records (AD-007 through AD-017) capturing every significant technical choice made before implementation.
 created: 2026-03-02
 updated: 2026-03-07
-deadline: null
+docs-required: [.orqa/research/mvp/]
+docs-produced: [docs/architecture/decisions.md]
 depends-on: [EPIC-025]
 blocks: [EPIC-029, EPIC-030]
-assignee: null
-pillar:
-  - clarity-through-structure
-  - learning-through-reflection
 scoring:
   pillar: 5
   impact: 5
   dependency: 3
   effort: 1
-score: 28.0
-roadmap-ref: "Phase 0b"
-docs-required:
-  - .orqa/research/mvp/
-docs-produced:
-  - docs/architecture/decisions.md
-description: >
-  Formal architecture decision records (AD-007 through AD-017) capturing
-  every significant technical choice made before implementation.
-tags: [foundation, architecture, decisions, adr]
 ---
 
 ## Why P1

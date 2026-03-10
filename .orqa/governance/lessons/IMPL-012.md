@@ -1,15 +1,15 @@
 ---
 id: IMPL-012
 title: "Encode Improvements in Artifacts"
-category: governance
+status: promoted
 description: >
   If a process improvement exists only in conversation history, it is lost
   in the next session. Every improvement must be recorded as a lesson and
   encoded in the relevant agent, rule, or skill.
-status: promoted
+created: 2026-03-07
+updated: 2026-03-07
 recurrence: 1
 promoted_to: RULE-030
-tags: [learning-loop, governance, enforcement, audit-trail]
 ---
 
 ## What Happened

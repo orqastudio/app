@@ -3,9 +3,11 @@ id: RULE-004
 slug: artifact-lifecycle
 layer: canon
 status: active
-title: "Artifact Lifecycle"
-description: "Enforces creation standards, status transitions, promotion gates, and documentation gates for all .orqa/ artifacts."
 scope: project
+title: Artifact Lifecycle
+description: Enforces creation standards, status transitions, promotion gates, and documentation gates for all .orqa/ artifacts.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

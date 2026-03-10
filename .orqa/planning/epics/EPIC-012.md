@@ -1,36 +1,22 @@
 ---
 id: EPIC-012
-title: "Process Visibility Dashboard"
+title: Process Visibility Dashboard
 status: draft
 priority: P1
 milestone: MS-002
+pillars: [clarity-through-structure]
+description: Build scanner runner, scanner dashboard, metrics dashboard, and agent activity panel for richer process visibility.
 created: 2026-03-07
 updated: 2026-03-07
-deadline: null
+docs-required: [docs/wireframes/dashboard.md, docs/architecture/enforcement.md, .orqa/plans/ (plan required before implementation)]
+docs-produced: [.orqa/plans/ (dashboard plan), docs/wireframes/dashboard.md (update with scanner and metrics wireframes), docs/architecture/rust-modules.md (update with scanner runner module)]
 depends-on: []
 blocks: []
-assignee: null
-pillar:
-  - clarity-through-structure
 scoring:
   pillar: 5
   impact: 4
   dependency: 2
   effort: 4
-score: 6.8
-roadmap-ref: "M2"
-docs-required:
-  - docs/wireframes/dashboard.md
-  - docs/architecture/enforcement.md
-  - .orqa/plans/ (plan required before implementation)
-docs-produced:
-  - .orqa/plans/ (dashboard plan)
-  - docs/wireframes/dashboard.md (update with scanner and metrics wireframes)
-  - docs/architecture/rust-modules.md (update with scanner runner module)
-description: >
-  Build scanner runner, scanner dashboard, metrics dashboard, and
-  agent activity panel for richer process visibility.
-tags: [dashboard, scanners, metrics]
 ---
 
 ## Why P1

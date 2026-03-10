@@ -1,35 +1,22 @@
 ---
 id: EPIC-011
-title: "Chat-Guided Onboarding"
+title: Chat-Guided Onboarding
 status: draft
 priority: P1
 milestone: MS-002
+pillars: [clarity-through-structure]
+description: Make the chat conversation itself guide new users through setup, with project state awareness and entry mode detection.
 created: 2026-03-07
 updated: 2026-03-07
-deadline: null
+docs-required: [docs/product/personas.md, docs/product/journeys.md, .orqa/plans/ (plan required before implementation)]
+docs-produced: [.orqa/plans/ (onboarding plan), docs/architecture/project-configuration.md (update with project state awareness)]
 depends-on: []
 blocks: []
-assignee: null
-pillar:
-  - clarity-through-structure
 scoring:
   pillar: 4
   impact: 5
   dependency: 3
   effort: 3
-score: 10.3
-roadmap-ref: "M1"
-docs-required:
-  - docs/product/personas.md
-  - docs/product/journeys.md
-  - .orqa/plans/ (plan required before implementation)
-docs-produced:
-  - .orqa/plans/ (onboarding plan)
-  - docs/architecture/project-configuration.md (update with project state awareness)
-description: >
-  Make the chat conversation itself guide new users through setup,
-  with project state awareness and entry mode detection.
-tags: [onboarding, chat, entry-modes]
 ---
 
 ## Why P1

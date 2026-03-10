@@ -3,9 +3,11 @@ id: RULE-007
 slug: development-commands
 layer: project
 status: active
-title: "Development Commands"
-description: "All development commands must be invoked via make targets. Raw cargo and npm commands are forbidden."
 scope: project
+title: Development Commands
+description: All development commands must be invoked via make targets. Raw cargo and npm commands are forbidden.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 

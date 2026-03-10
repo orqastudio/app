@@ -1,18 +1,14 @@
 ---
 id: TASK-011
-title: "Backfill Historical Artifact Metadata"
+title: Backfill Historical Artifact Metadata
 status: done
 epic: EPIC-033
+description: Backfill historical artifact data so the decision history, lesson pipeline, and surpassed artifact workflows have real data to test against when we build the navigation and visualization tooling. Some reconstruction from session history is expected — the goal is representative data, not perfect accuracy. This ensures we're dogfooding the full artifact lifecycle, not just the happy path of "create and leave as accepted."
 created: 2026-03-08
 updated: 2026-03-08
 assignee: documentation-writer
 skills: [chunkhound, orqa-governance]
-scope:
-  - .orqa/governance/decisions/
-  - .orqa/governance/lessons/
-  - .orqa/planning/research/
-  - .orqa/planning/tasks/
-  - .orqa/planning/epics/
+scope: [.orqa/governance/decisions/, .orqa/governance/lessons/, .orqa/planning/research/, .orqa/planning/tasks/, .orqa/planning/epics/]
 acceptance:
   - At least 3 decisions have surpassed predecessors (showing evolution chains)
   - At least 2 research docs marked as surpassed with surpassed-by references
@@ -22,15 +18,7 @@ acceptance:
   - Decision chains are traceable (AD-NNN surpassed-by AD-MMM)
   - Enough variety to test filtering, sorting, and chain navigation in future UI
   - Reference integrity verified: every task has a valid epic, every epic has a valid milestone
-  - No orphaned references (plan:, promoted-to, depends-on all point to existing artifacts)
-description: >
-  Backfill historical artifact data so the decision history, lesson pipeline,
-  and surpassed artifact workflows have real data to test against when we build
-  the navigation and visualization tooling. Some reconstruction from session
-  history is expected — the goal is representative data, not perfect accuracy.
-  This ensures we're dogfooding the full artifact lifecycle, not just the
-  happy path of "create and leave as accepted."
-tags: [backfill, decisions, lessons, history, dogfooding, testing-data]
+  - "No orphaned references (plan:, promoted-to, depends-on all point to existing artifacts)"
 ---
 
 ## What

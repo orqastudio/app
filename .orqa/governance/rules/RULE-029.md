@@ -3,17 +3,11 @@ id: RULE-029
 slug: testing-standards
 layer: canon
 status: active
-title: "Testing Standards"
-description: "Test organisation, coverage requirements, mock boundaries, and isolation rules."
 scope: project
-enforcement:
-  - event: file
-    action: warn
-    conditions:
-      - field: file_path
-        pattern: src-tauri/.*test.*\.rs$
-      - field: new_text
-        pattern: (mock!|#\[mockall|MockAll|mockall::)
+title: Testing Standards
+description: Test organisation, coverage requirements, mock boundaries, and isolation rules.
+created: 2026-03-07
+updated: 2026-03-07
 ---
 
 
