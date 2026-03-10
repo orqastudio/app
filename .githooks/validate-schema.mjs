@@ -172,16 +172,15 @@ for (const file of files) {
     }
   }
 
-  // Field order validation: frontmatter keys must follow schema property order
+  // Field order validation: frontmatter keys must follow schema propertyOrder
   const schema = loadSchema(artifactDir);
-  if (schema?.properties) {
-    const schemaOrder = Object.keys(schema.properties);
+  const canonicalOrder = schema?.propertyOrder ?? (schema?.properties ? Object.keys(schema.properties) : null);
+  if (canonicalOrder) {
     const fileKeys = Object.keys(frontmatter);
-    // Filter to only keys that appear in both
-    const fileKeysInSchema = fileKeys.filter((k) => schemaOrder.includes(k));
-    const expectedOrder = schemaOrder.filter((k) => fileKeysInSchema.includes(k));
+    const fileKeysInSchema = fileKeys.filter((k) => canonicalOrder.includes(k));
+    const expectedOrder = canonicalOrder.filter((k) => fileKeysInSchema.includes(k));
     if (JSON.stringify(fileKeysInSchema) !== JSON.stringify(expectedOrder)) {
-      console.error(`ERROR: ${file} — field order does not match schema`);
+      console.error(`ERROR: ${file} — field order does not match schema propertyOrder`);
       console.error(`  expected: ${expectedOrder.join(", ")}`);
       console.error(`  actual:   ${fileKeysInSchema.join(", ")}`);
       errors++;
