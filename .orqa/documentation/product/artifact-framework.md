@@ -613,7 +613,7 @@ YAML frontmatter fields follow a consistent content hierarchy across all artifac
 ### Ordering Principles
 
 1. **Identity** — `id`, `title` (who is this?)
-2. **Classification** — `slug`, `layer`, `status`, `priority`, `scope`, `milestone`, `epic`, `pillars` (what kind of thing is it?)
+2. **Classification** — `layer`, `status`, `priority`, `scope`, `milestone`, `epic`, `pillars` (what kind of thing is it?)
 3. **Description** — `description`, `gate` (what is it about?)
 4. **Lifecycle** — `created`, `updated`, `deadline` (when?)
 5. **Relationships** — `depends-on`, `blocks`, `research-refs`, `docs-required`, `docs-produced`, `research-needed`, `promoted-to`, `supersedes`, `superseded-by`, `surpassed-by`, `promoted-from` (what connects to what?)

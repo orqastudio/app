@@ -83,7 +83,7 @@ The orchestrator triggers additional skills when specific conditions arise:
 | `typescript` | When planning or reviewing TypeScript code |
 | `tailwind` | When planning or reviewing any UI styling |
 
-Note: the `architecture` skill is loaded by the `systems-architect` agent, not the orchestrator directly.
+Note: the `architecture` skill is loaded by the Planner role, not the orchestrator directly.
 
 ---
 
