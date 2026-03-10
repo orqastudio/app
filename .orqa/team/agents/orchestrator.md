@@ -285,7 +285,7 @@ OrqaStudio is a desktop application — an AI-assisted clarity engine that helps
 | **Frontend** | Svelte 5 (runes) / TypeScript 5.x | Reactive UI with `$state`, `$derived`, `$effect` |
 | **UI Components** | shadcn-svelte / Tailwind CSS / bits-ui | Accessible component library |
 | **AI Integration** | Claude API + Agent SDK | Streaming responses, tool-use loops, agent orchestration |
-| **Database** | SQLite (rusqlite or sqlx) | Session history, metrics, project config |
+| **Database** | SQLite (rusqlite or sqlx) | Conversation persistence only (sessions, messages, metrics). Governance data is file-based. |
 | **Testing** | cargo test / Vitest / Playwright | Full coverage from day one |
 | **Quality** | clippy (pedantic) / rustfmt / ESLint / svelte-check | Zero errors policy |
 

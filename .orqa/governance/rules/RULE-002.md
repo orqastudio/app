@@ -23,7 +23,7 @@ scope: project
 | Immutability | Rust domain types immutable by default. Svelte stores use runes (`$state`, `$derived`). |
 | UX-first design | User journeys drive backend requirements, not the reverse. |
 | Svelte 5 only | Runes only. No Svelte 4 patterns (`$:`, `export let`, `let:`). |
-| SQLite for structured data | All structured persistence goes through SQLite. No localStorage for application state. |
+| SQLite for conversations only | SQLite is scoped to conversation persistence (sessions, messages, metrics). All governance data lives in file-based artifacts with the node graph as the query layer. No localStorage for application state. (AD-032 supersedes AD-005) |
 
 ## Before Writing Code
 

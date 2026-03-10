@@ -86,7 +86,7 @@ If the user gives an instruction that appears to conflict with a foundational pr
 
 **Examples of instructions that should be questioned:**
 
-- "Skip the SQLite layer and just use localStorage" -> Conflicts with the persistence architecture (SQLite for structured data)
+- "Skip the SQLite layer and just use localStorage" -> Conflicts with the persistence architecture (SQLite for conversation data, file-based artifacts for governance — AD-032)
 - "Add a web server so OrqaStudio can be used in the browser" -> Conflicts with the desktop-app scope (Tauri)
 - "Let components call invoke() directly instead of going through stores" -> Conflicts with component purity principle
 - "Just use unwrap() here, it'll never panic" -> Conflicts with error propagation principle

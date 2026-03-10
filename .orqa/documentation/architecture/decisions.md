@@ -21,7 +21,7 @@ Architecture decisions for OrqaStudio™. Each decision is numbered AD-NNN and i
 | AD-002 | IPC Boundary Design | accepted | architecture | `.orqa/governance/decisions/AD-002.md` |
 | AD-003 | Error Propagation via Result Types | accepted | architecture | `.orqa/governance/decisions/AD-003.md` |
 | AD-004 | Svelte 5 Runes Only | accepted | frontend | `.orqa/governance/decisions/AD-004.md` |
-| AD-005 | SQLite for All Structured Persistence | accepted | persistence | `.orqa/governance/decisions/AD-005.md` |
+| AD-005 | SQLite for All Structured Persistence | superseded | persistence | `.orqa/governance/decisions/AD-005.md` |
 | AD-006 | Component Purity | accepted | frontend | `.orqa/governance/decisions/AD-006.md` |
 | AD-007 | Agent SDK Sidecar Integration | accepted | integration | `.orqa/governance/decisions/AD-007.md` |
 | AD-008 | Max Subscription Authentication | accepted | integration | `.orqa/governance/decisions/AD-008.md` |
@@ -48,6 +48,7 @@ Architecture decisions for OrqaStudio™. Each decision is numbered AD-NNN and i
 | AD-029 | Universal Roles, Domain-Specific Skills | accepted | governance | `.orqa/governance/decisions/AD-029.md` |
 | AD-030 | Skill-Driven Project Initialisation | accepted | governance | `.orqa/governance/decisions/AD-030.md` |
 | AD-031 | Pillars as First-Class Planning Artifacts | accepted | governance | `.orqa/governance/decisions/AD-031.md` |
+| AD-032 | SQLite for Conversation Persistence Only | accepted | architecture | `.orqa/governance/decisions/AD-032.md` |
 
 ## How to Read This Table
 
