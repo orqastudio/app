@@ -1,5 +1,6 @@
 pub mod artifact;
 pub mod artifact_fs;
+pub mod artifact_graph;
 pub mod artifact_reader;
 pub mod enforcement;
 pub mod enforcement_engine;

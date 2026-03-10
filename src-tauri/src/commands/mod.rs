@@ -1,5 +1,6 @@
 pub mod artifact_commands;
 pub mod enforcement_commands;
+pub mod graph_commands;
 pub mod governance_commands;
 pub mod lesson_commands;
 pub mod message_commands;

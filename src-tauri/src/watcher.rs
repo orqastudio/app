@@ -16,7 +16,7 @@ use std::{
 
 use notify::RecursiveMode;
 use notify_debouncer_full::new_debouncer;
-use tauri::{AppHandle, Emitter, Runtime};
+use tauri::{AppHandle, Emitter, Manager, Runtime};
 
 /// Event name emitted to all windows when `.orqa/` content changes.
 pub const ARTIFACT_CHANGED_EVENT: &str = "artifact-changed";
@@ -61,6 +61,12 @@ pub fn start<R: Runtime>(
         None,
         move |result: Result<Vec<notify_debouncer_full::DebouncedEvent>, Vec<notify::Error>>| {
             if result.is_ok() {
+                // Invalidate the cached artifact graph so the next query rebuilds it.
+                if let Some(state) = app.try_state::<crate::state::AppState>() {
+                    if let Ok(mut graph) = state.artifact_graph.lock() {
+                        *graph = None;
+                    }
+                }
                 // Emit a single signal regardless of how many events were batched.
                 if let Err(e) = app.emit(ARTIFACT_CHANGED_EVENT, ()) {
                     tracing::warn!("[watcher] failed to emit artifact-changed event: {e}");

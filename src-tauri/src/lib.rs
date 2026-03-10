@@ -39,6 +39,7 @@ fn build_app_state(
         enforcement: std::sync::Mutex::new(None),
         process_state: std::sync::Mutex::new(domain::process_state::SessionProcessState::default()),
         artifact_watcher: std::sync::Arc::new(std::sync::Mutex::new(None)),
+        artifact_graph: std::sync::Mutex::new(None),
     })
 }
 
@@ -232,6 +233,15 @@ pub fn run() {
             commands::enforcement_commands::enforcement_rules_list,
             commands::enforcement_commands::enforcement_rules_reload,
             commands::enforcement_commands::enforcement_scan_governance,
+            // Graph commands
+            commands::graph_commands::resolve_artifact,
+            commands::graph_commands::resolve_artifact_path,
+            commands::graph_commands::get_references_from,
+            commands::graph_commands::get_references_to,
+            commands::graph_commands::get_artifacts_by_type,
+            commands::graph_commands::read_artifact_content,
+            commands::graph_commands::get_graph_stats,
+            commands::graph_commands::refresh_artifact_graph,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

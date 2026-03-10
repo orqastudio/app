@@ -4,6 +4,7 @@ use std::sync::{Arc, Mutex};
 
 use rusqlite::Connection;
 
+use crate::domain::artifact_graph::ArtifactGraph;
 use crate::domain::enforcement_engine::EnforcementEngine;
 use crate::domain::process_state::SessionProcessState;
 use crate::search::SearchEngine;
@@ -49,4 +50,10 @@ pub struct AppState {
     /// Replaced via `artifact_watch_start` whenever a different project is opened.
     /// Dropping the inner value stops the underlying watcher.
     pub artifact_watcher: SharedWatcher,
+    /// Cached bidirectional artifact graph.
+    ///
+    /// `None` until the first graph query or an explicit `refresh_artifact_graph` call.
+    /// Invalidated (set to `None`) by the artifact watcher when `.orqa/` files change,
+    /// so the next query triggers a fresh build from disk.
+    pub artifact_graph: Mutex<Option<ArtifactGraph>>,
 }
