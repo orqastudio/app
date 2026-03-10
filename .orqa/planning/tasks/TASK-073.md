@@ -1,0 +1,23 @@
+---
+id: TASK-073
+title: Build backend artifact node graph with bidirectional references
+description: "Build an ArtifactGraph struct with HashMap nodes and bidirectional ArtifactRef edges, constructed during artifact_scan_tree."
+status: todo
+created: 2026-03-10
+updated: 2026-03-10
+epic: EPIC-048
+
+assignee: backend-engineer
+skills:
+  - rust-async-patterns
+  - tauri-v2
+  - orqa-domain-services
+scope:
+  - src-tauri/src/domain/
+acceptance:
+  - "ArtifactGraph struct with nodes HashMap and path_index HashMap exists"
+  - "ArtifactNode contains id, path, artifact_type, title, status, frontmatter as JSON, references_out and references_in"
+  - "Graph is built during artifact_scan_tree with two-pass construction"
+  - "All known link fields extracted as references (milestone, epic, depends-on, pillars, research-refs, supersedes, etc)"
+  - "Graph stored in AppState behind a Mutex or RwLock"
+---
