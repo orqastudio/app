@@ -26,6 +26,7 @@
 	import { setupStore } from "$lib/stores/setup.svelte";
 	import { governanceStore } from "$lib/stores/governance.svelte";
 	import { enforcementStore } from "$lib/stores/enforcement.svelte";
+	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 
 	/** Unlisten function for the artifact-changed event, cleaned up on destroy. */
 	let unlistenArtifactChanged: UnlistenFn | null = null;
@@ -87,6 +88,14 @@
 		invoke("artifact_watch_start", { projectPath: project.path }).catch((err: unknown) => {
 			console.warn("[artifact-watcher] failed to start:", err);
 		});
+	});
+
+	// Initialize the artifact graph SDK when a project becomes active.
+	// The SDK listens for "artifact-graph-updated" events and auto-refreshes.
+	$effect(() => {
+		const project = projectStore.activeProject;
+		if (!project || needsSetup) return;
+		void artifactGraphSDK.initialize();
 	});
 
 	// Load enforcement rules when the rules activity is active

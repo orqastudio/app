@@ -2,6 +2,7 @@
 	import ArtifactLink from "./ArtifactLink.svelte";
 	import GateQuestions from "./GateQuestions.svelte";
 	import StatusIndicator from "$lib/components/shared/StatusIndicator.svelte";
+	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 
 	let {
 		metadata,
@@ -43,11 +44,12 @@
 		}
 	}
 
-	/** Pattern that matches artifact IDs like EPIC-005, MS-001, AD-017, IMPL-003, RES-001, RULE-005, PILLAR-001. */
-	const ARTIFACT_ID_RE = /^(MS|EPIC|TASK|IDEA|AD|IMPL|RES|RULE|PILLAR)-\d+$/;
-
+	/**
+	 * Returns true when the SDK can resolve the value to a known artifact node.
+	 * This is authoritative — no regex needed; the graph is the source of truth.
+	 */
 	function isArtifactId(value: string): boolean {
-		return ARTIFACT_ID_RE.test(value.trim());
+		return artifactGraphSDK.resolve(value.trim()) !== undefined;
 	}
 
 	/** Returns true if a value is non-empty (not null, undefined, empty string, or "null"). */
