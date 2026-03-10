@@ -2,7 +2,7 @@
 id: EPIC-032
 title: Artifact System Migration
 description: "Make the artifact system self-sustaining: correct default creation, historical content linkage, and framework coverage for all 8 types."
-status: in-progress
+status: done
 priority: P1
 created: "2026-03-08"
 updated: "2026-03-08"

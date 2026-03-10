@@ -3,6 +3,8 @@ id: RULE-013
 title: Git Workflow
 description: Worktree-based workflow with mandatory cleanup, stash policy, and data loss prevention rules.
 status: active
+promoted-from:
+  - IMPL-015
 created: "2026-03-07"
 updated: "2026-03-07"
 layer: canon

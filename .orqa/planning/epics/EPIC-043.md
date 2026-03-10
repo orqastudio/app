@@ -2,7 +2,7 @@
 id: EPIC-043
 title: Dogfood Readiness Verification
 description: First round of user acceptance testing. The user exercises the app end-to-end, testing conversation flow, artifact browsing, governance visibility, settings, and streaming behaviour. Findings are captured as tasks within this epic.
-status: in-progress
+status: done
 priority: P1
 created: "2026-03-09"
 updated: "2026-03-09"

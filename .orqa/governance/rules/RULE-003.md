@@ -5,6 +5,9 @@ description: Every path in project.json artifacts must resolve to an actual dire
 status: active
 layer: canon
 scope: project
+promoted-from:
+  - IMPL-005
+  - IMPL-006
 created: "2026-03-07"
 updated: "2026-03-07"
 ---

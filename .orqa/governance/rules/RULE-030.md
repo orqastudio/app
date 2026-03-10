@@ -3,6 +3,9 @@ id: RULE-030
 title: UAT Process
 description: User acceptance testing follows a collect-then-systematize approach. Findings are grouped by root cause before tasks are created.
 status: active
+promoted-from:
+  - IMPL-011
+  - IMPL-012
 created: "2026-03-07"
 updated: "2026-03-07"
 layer: canon
