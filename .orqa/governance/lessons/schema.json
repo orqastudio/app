@@ -14,5 +14,12 @@
     "updated": { "type": "string", "format": "date" },
     "recurrence": { "type": "integer", "minimum": 0 },
     "promoted_to": { "type": ["string", "null"] }
+  },
+  "bodyTemplate": {
+    "description": "Required body sections for lesson artifacts",
+    "sections": [
+      { "heading": "Pattern", "required": true },
+      { "heading": "Fix", "required": true }
+    ]
   }
 }

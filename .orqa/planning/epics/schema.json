@@ -48,5 +48,14 @@
       "properties": { "score": { "type": "number" } },
       "additionalProperties": { "type": "number" }
     }
+  },
+  "bodyTemplate": {
+    "description": "Required body sections for epic artifacts",
+    "sections": [
+      { "heading": "Context", "required": true },
+      { "heading": "Implementation Design", "required": true },
+      { "heading": "Tasks", "required": true },
+      { "heading": "Out of Scope", "required": false }
+    ]
   }
 }

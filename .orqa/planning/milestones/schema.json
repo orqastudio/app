@@ -14,5 +14,13 @@
     "updated": { "type": "string", "format": "date" },
     "deadline": { "type": ["string", "null"], "format": "date" },
     "gate": { "type": "string" }
+  },
+  "bodyTemplate": {
+    "description": "Required body sections for milestone artifacts",
+    "sections": [
+      { "heading": "Context", "required": true },
+      { "heading": "Epics", "required": true },
+      { "heading": "Completion Criteria", "required": false }
+    ]
   }
 }

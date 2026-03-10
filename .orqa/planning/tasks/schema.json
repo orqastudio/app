@@ -30,5 +30,13 @@
       "type": "array",
       "items": { "type": "string" }
     }
+  },
+  "bodyTemplate": {
+    "description": "Required body sections for task artifacts",
+    "sections": [
+      { "heading": "What", "required": true },
+      { "heading": "How", "required": true },
+      { "heading": "Verification", "required": true }
+    ]
   }
 }

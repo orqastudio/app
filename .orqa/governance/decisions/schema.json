@@ -18,5 +18,13 @@
     },
     "supersedes": { "type": ["string", "null"] },
     "superseded-by": { "type": ["string", "null"] }
+  },
+  "bodyTemplate": {
+    "description": "Required body sections for decision artifacts",
+    "sections": [
+      { "heading": "Decision", "required": true },
+      { "heading": "Rationale", "required": true },
+      { "heading": "Consequences", "required": true }
+    ]
   }
 }

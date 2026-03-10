@@ -21,5 +21,12 @@
       "items": { "type": "string" }
     },
     "promoted-to": { "type": ["string", "null"] }
+  },
+  "bodyTemplate": {
+    "description": "Required body sections for idea artifacts",
+    "sections": [
+      { "heading": "Motivation", "required": true },
+      { "heading": "Sketch", "required": false }
+    ]
   }
 }

@@ -13,5 +13,6 @@
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
     "surpassed-by": { "type": ["string", "null"] }
-  }
+  },
+  "bodyTemplate": null
 }

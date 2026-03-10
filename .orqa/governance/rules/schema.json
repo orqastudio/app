@@ -15,5 +15,13 @@
     "layer": { "enum": ["canon", "project", "plugin"] },
     "scope": { "type": "string" },
     "promoted_from": { "type": ["string", "null"] }
+  },
+  "bodyTemplate": {
+    "description": "Semi-structured body for rule artifacts. Opening paragraph and Related Rules required; FORBIDDEN encouraged.",
+    "sections": [
+      { "heading": "FORBIDDEN", "required": false },
+      { "heading": "Related Rules", "required": true }
+    ],
+    "notes": "Rules must start with an opening paragraph stating the rule. Domain-specific sections vary by rule."
   }
 }

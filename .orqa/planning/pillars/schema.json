@@ -16,7 +16,17 @@
       "oneOf": [
         { "type": "string" },
         { "type": "array", "items": { "type": "string" } }
-      ]
+      ],
+      "description": "Gate question(s) to evaluate whether work serves this pillar"
     }
+  },
+  "bodyTemplate": {
+    "description": "Required body sections for pillar artifacts",
+    "sections": [
+      { "heading": "What This Pillar Means", "required": true },
+      { "heading": "Examples of Work That Serves This Pillar", "required": true },
+      { "heading": "Anti-Patterns", "required": true },
+      { "heading": "Conflict Resolution", "required": true }
+    ]
   }
 }

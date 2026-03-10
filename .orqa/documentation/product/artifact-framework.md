@@ -25,7 +25,7 @@ Richer views (kanban boards, dashboards, graph visualizations, priority matrices
 
 YAML frontmatter provides machine-parseable metadata that enables:
 
-- **Indexing** — OrqaStudio can parse frontmatter into SQLite for search, filtering, and aggregation
+- **Indexing** — OrqaStudio parses frontmatter into the artifact node graph for search, filtering, and relationship queries
 - **Connections** — Fields like `milestone`, `epic`, `depends-on` create a navigable web of relationships
 - **Status tracking** — Workflow states are frontmatter fields, not separate databases
 - **Priority scoring** — Dimension scores in frontmatter feed the prioritisation framework
@@ -228,7 +228,7 @@ title: "Clarity Through Structure"
 status: active                    # active | inactive
 description: >
   Making thinking, standards, and decisions visible and structured.
-test-questions:
+gate:
   - Does this make governance artifacts visible and manageable?
   - Does it produce structured knowledge (plans, decisions, rules)?
   - Does it surface what would otherwise be hidden?
@@ -243,11 +243,11 @@ updated: 2026-03-09
 | `title` | Yes | string | Human-readable pillar name |
 | `status` | Yes | enum | `active` (enforced), `inactive` (preserved but not evaluated against) |
 | `description` | Yes | string | What this pillar means — used in system prompt injection |
-| `test-questions` | Yes | string[] | Questions to evaluate whether work serves this pillar |
+| `gate` | Yes | string or string[] | Gate question(s) to evaluate whether work serves this pillar |
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
 
-The pillar body contains the full narrative: what the pillar means in practice, examples of work that serves it, anti-patterns that violate it. The `description` and `test-questions` fields are the machine-readable summary used for system prompt injection and scoring.
+The pillar body contains the full narrative: what the pillar means in practice, examples of work that serves it, anti-patterns that violate it. The `description` and `gate` fields are the machine-readable summary used for system prompt injection and scoring.
 
 ### Milestone (`MS-NNN`)
 
@@ -546,6 +546,69 @@ promoted_from: null               # IMPL-NNN if promoted from a lesson, null oth
 
 ---
 
+## Body Templates
+
+Body templates define the minimum required sections for each artifact type's markdown body (everything below the `---` frontmatter delimiter). Templates are defined in each type's `schema.json` file alongside the frontmatter schema, keeping all structural expectations in one place.
+
+### Template Format
+
+Each `schema.json` includes a `bodyTemplate` key:
+
+```json
+{
+  "bodyTemplate": {
+    "description": "Required body sections for this artifact type",
+    "sections": [
+      { "heading": "Section Name", "required": true },
+      { "heading": "Optional Section", "required": false }
+    ]
+  }
+}
+```
+
+A `null` value means the type is intentionally freeform (e.g., Research).
+
+### Templates by Type
+
+| Type | Required Sections | Optional Sections | Notes |
+|------|-------------------|-------------------|-------|
+| **Pillar** | What This Pillar Means, Examples of Work That Serves This Pillar, Anti-Patterns, Conflict Resolution | — | All 4 sections required |
+| **Milestone** | Context, Epics | Completion Criteria | Gate question is in frontmatter (`gate:`) |
+| **Epic** | Context, Implementation Design, Tasks | Out of Scope | Tasks section appears naturally as work is broken down |
+| **Task** | What, How, Verification | — | All 3 required; for UAT tasks, "What" contains the finding reference |
+| **Idea** | Motivation | Sketch | Sketch optional — some ideas captured before any thinking |
+| **Decision** | Decision, Rationale, Consequences | — | All 3 required; complex decisions may add subsections |
+| **Lesson** | Pattern, Fix | — | Both required; optional: Git Evidence for traceability |
+| **Rule** | Related Rules | FORBIDDEN | Must start with opening paragraph; domain-specific sections vary |
+| **Research** | — | — | Intentionally freeform (`bodyTemplate: null`) |
+
+### Enforcement
+
+Body templates are enforced at two levels:
+
+1. **Documentation** — this section and the schema.json files define the templates. Agents follow them when creating artifacts.
+2. **Linting** — the pre-commit hook checks for required `## Heading` patterns in artifact bodies, reading template definitions from each type's schema.json.
+
+A third level (app-assisted template pre-population in an artifact editor) is deferred to EPIC-004.
+
+### Schema Location
+
+All schema.json files live alongside their artifact type's directory:
+
+| Type | Schema Path |
+|------|-------------|
+| Pillar | `.orqa/planning/pillars/schema.json` |
+| Milestone | `.orqa/planning/milestones/schema.json` |
+| Epic | `.orqa/planning/epics/schema.json` |
+| Task | `.orqa/planning/tasks/schema.json` |
+| Idea | `.orqa/planning/ideas/schema.json` |
+| Research | `.orqa/planning/research/schema.json` |
+| Decision | `.orqa/governance/decisions/schema.json` |
+| Lesson | `.orqa/governance/lessons/schema.json` |
+| Rule | `.orqa/governance/rules/schema.json` |
+
+---
+
 ## Field Ordering Convention
 
 YAML frontmatter fields follow a consistent content hierarchy across all artifact types. This ordering is not arbitrary — it reflects reading priority: identity first, then classification, then description, then lifecycle metadata, then relationships, then tags.
@@ -565,7 +628,7 @@ YAML frontmatter fields follow a consistent content hierarchy across all artifac
 | Type | Field Order |
 |------|------------|
 | **Milestone** | id, title, status, description, created, updated, deadline, gate, epic-count, completed-epics |
-| **Pillar** | id, title, status, description, test-questions, created, updated |
+| **Pillar** | id, title, status, description, gate, created, updated |
 | **Epic** | id, title, status, priority, milestone, pillars, description, created, updated, research-refs, docs-required, docs-produced, depends-on, blocks, deadline, scoring |
 | **Task** | id, title, status, epic, description, created, updated, depends-on, assignee, skills, scope, acceptance |
 | **Idea** | id, title, status, pillars, description, created, updated, research-needed, promoted-to |
