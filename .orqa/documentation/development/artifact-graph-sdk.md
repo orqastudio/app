@@ -9,11 +9,15 @@ description: Development guide for the Artifact Graph SDK — the typed frontend
 
 # Artifact Graph SDK
 
-The Artifact Graph SDK is a Svelte 5 rune-based module that maintains an in-memory copy of the artifact graph built by the Rust backend. It is the single source of truth for artifact metadata and relationships in the frontend.
+## Overview
 
-After `initialize()` is called, all resolution and query methods operate synchronously on the cached graph — no IPC round-trips are needed for lookups. Only `readContent()` goes to disk, because raw file content is never cached.
+The artifact graph is a bidirectional in-memory graph of every governance artifact under `.orqa/`. Each `.md` file with a YAML `id` frontmatter field becomes a node. Frontmatter fields that reference other artifact IDs (such as `epic`, `milestone`, `depends-on`) become directed edges.
 
-The SDK lives at `ui/lib/sdk/artifact-graph.svelte.ts` and is exported as a singleton called `artifactGraphSDK`. Every component, store, or plugin that needs to resolve an artifact ID, traverse relationships, or receive live updates uses this singleton.
+The graph exists to make artifact relationships queryable without reading individual files. It replaces ad-hoc patterns — hardcoded prefix maps, direct `invoke("read_artifact")` calls, manual frontmatter parsing — with a single typed interface that any component, store, or plugin can use.
+
+The Artifact Graph SDK is a Svelte 5 rune-based module that maintains a local copy of this graph. After `initialize()` is called, all resolution and query methods operate synchronously against the cached data — no IPC round-trips are needed for lookups. Only `readContent()` makes a round-trip, because raw file content is never cached locally.
+
+The SDK lives at `ui/lib/sdk/artifact-graph.svelte.ts` and is exported as a singleton called `artifactGraphSDK`.
 
 ## Architecture
 
@@ -23,17 +27,18 @@ The data pipeline from files on disk to components in the UI:
 .orqa/ markdown files
         |
         v
-  Rust scanner (artifact_graph.rs)
+  build_artifact_graph()              — Rust domain function, two-pass construction
+  (artifact_graph.rs)
   - Pass 1: walk all .md files, collect nodes + references_out
   - Pass 2: invert references_out into references_in (backlinks)
         |
         v
-  AppState.artifact_graph (Mutex<Option<ArtifactGraph>>)
+  ArtifactGraph (in-memory)           — Cached in AppState behind Mutex
   - Lazy-init on first command call
   - Invalidated by file watcher when .orqa/ changes
         |
         v
-  Tauri commands (graph_commands.rs)
+  8 Tauri commands (graph_commands.rs)
   - resolve_artifact, resolve_artifact_path
   - get_references_from, get_references_to
   - get_artifacts_by_type
@@ -43,10 +48,10 @@ The data pipeline from files on disk to components in the UI:
         |
         v
   ArtifactGraphSDK (artifact-graph.svelte.ts)
-  - In-memory SvelteMap: id → ArtifactNode
-  - Path index: path → id
-  - Reactive state: $state runes
-  - Auto-refresh via "artifact-graph-updated" Tauri event
+  - graph: SvelteMap<string, ArtifactNode>   — keyed by artifact ID
+  - pathIndex: SvelteMap<string, string>     — path → ID reverse lookup
+  - Reactive state via $state runes
+  - Auto-refresh on "artifact-graph-updated" Tauri event
         |
         v
   Components and stores
@@ -65,30 +70,13 @@ These are separate events because the nav tree and the graph serve different pur
 
 ## Getting Started
 
-### Initialization
-
-The SDK is initialized once in `AppLayout.svelte` when an active project is detected:
-
-```typescript
-// AppLayout.svelte
-$effect(() => {
-    const project = projectStore.activeProject;
-    if (!project || needsSetup) return;
-    void artifactGraphSDK.initialize();
-});
-```
-
-`initialize()` is idempotent — calling it again when the graph is already loaded is a no-op, unless the SDK is in an error state. It fetches all artifact nodes by type in parallel, builds the in-memory maps, and registers a listener for `"artifact-graph-updated"` events.
-
-### Importing
-
-The SDK is a singleton. Import it directly from the module:
+The SDK is a singleton — import it directly from the module:
 
 ```typescript
 import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 ```
 
-Do not instantiate `ArtifactGraphSDK` directly. The singleton is the only instance in the application.
+The app shell (`AppLayout.svelte`) calls `artifactGraphSDK.initialize()` once when a project becomes active. Plugins and components can assume the graph is available and react to `loading` / `error` state for the brief initialization window.
 
 ## API Reference
 
@@ -150,7 +138,7 @@ All state is exposed as Svelte 5 `$state` runes. Components reading these proper
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `graph` | `SvelteMap<string, ArtifactNode>` | In-memory node store, keyed by artifact ID |
+| `graph` | `SvelteMap<string, ArtifactNode>` | In-memory node store, keyed by artifact ID (this is the `nodes` map) |
 | `pathIndex` | `SvelteMap<string, string>` | Reverse-lookup index: relative path to artifact ID |
 | `stats` | `GraphStats \| null` | Summary statistics from the last refresh |
 | `loading` | `boolean` | True while a refresh or initialization is in progress |
@@ -254,6 +242,8 @@ async refresh(): Promise<void>
 ```
 
 Rebuild the backend graph from disk, then re-fetch all nodes into the local cache. Updates `stats`, `graph`, `pathIndex`, and `lastRefresh`. The SDK calls this automatically when it receives an `"artifact-graph-updated"` event — manual calls are only needed when you need to force a refresh outside the normal watcher cycle.
+
+The SDK does not expose a `destroy()` method. The singleton persists for the application session. To tear down subscriptions you registered, call the unsubscribe function returned by `subscribe()` or `subscribeType()`.
 
 ## Usage Patterns
 
@@ -369,6 +359,14 @@ const unsubscribe = artifactGraphSDK.subscribeType("task", (tasks) => {
 ```
 
 Always call the returned unsubscribe function when the subscriber is no longer active. Subscriptions that are never unsubscribed will fire on every graph refresh for the lifetime of the application.
+
+## Plugin Integration
+
+Plugins consume the SDK by importing the singleton. No additional initialization is needed — the app shell calls `initialize()` when a project becomes active.
+
+Synchronous reads (`resolve`, `byType`, `byStatus`, `referencesFrom`, `referencesTo`) work inside Svelte templates and `$derived` expressions because `graph` is `$state`. For live updates across graph refreshes, register a subscription via `subscribe()` or `subscribeType()` and cancel it with the returned function when the plugin is torn down (see `onDestroy` pattern in the Usage Patterns section above).
+
+Content reads via `readContent()` are always async IPC calls — do not call them inside `$derived`. Cache the result in `$state` if needed, or call from a `$effect` or event handler.
 
 ## Migration Guide
 
