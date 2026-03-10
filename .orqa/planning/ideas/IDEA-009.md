@@ -3,7 +3,7 @@ id: IDEA-009
 title: "Integration Ecosystem"
 status: captured
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   Connect OrqaStudio with external tools and workflows including
   git, issue trackers, documentation platforms, and CI/CD.

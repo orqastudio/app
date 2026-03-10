@@ -9,7 +9,7 @@ description: >
 created: 2026-03-09
 updated: 2026-03-09
 recurrence: 1
-promoted_to: [RULE-013 (Commit Discipline section), project-type-software/SKILL.md (Commit Discipline section), session-start-hook.sh (uncommitted check), pre-commit-reminder.sh (uncommitted check)]
+promoted_to: "RULE-013, project-type-software/SKILL.md, session-start-hook.sh, pre-commit-reminder.sh"
 ---
 
 ## What Happened

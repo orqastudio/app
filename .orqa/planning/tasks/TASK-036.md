@@ -9,7 +9,11 @@ updated: 2026-03-09
 assignee: qa-tester
 skills: [orqa-governance, orqa-testing]
 scope: [.orqa/team/agents/, .orqa/team/skills/, .orqa/governance/rules/skill-enforcement.md]
-acceptance: [Dry-run a backend task delegation — confirm Tier 1, 2, 3 all load, Dry-run a frontend task delegation — confirm correct Tier 2 skills injected, Dry-run a governance task delegation — confirm orqa-governance injected, Verify no agent definition still contains orqa-* or chunkhound/orqa-native-search]
+acceptance:
+  - "Dry-run a backend task delegation — confirm Tier 1, 2, 3 all load"
+  - "Dry-run a frontend task delegation — confirm correct Tier 2 skills injected"
+  - "Dry-run a governance task delegation — confirm orqa-governance injected"
+  - "Verify no agent definition still contains orqa-* or chunkhound/orqa-native-search"
 ---
 
 ## What

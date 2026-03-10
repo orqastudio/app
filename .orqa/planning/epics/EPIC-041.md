@@ -5,7 +5,7 @@ status: done
 priority: P1
 milestone: MS-001
 pillars: [PILLAR-001]
-description: Evolve OrqaStudio's vision from software development tool to domain-agnostic clarity engine. Rename pillars, broaden personas, establish licensing, and align all documentation with canonical strategic vision.
+description: Evolve OrqaStudio's vision from software development tool to domain-agnostic PILLAR-001 engine. Rename pillars, broaden personas, establish licensing, and align all documentation with canonical strategic vision.
 created: 2026-03-07
 updated: 2026-03-09
 research-refs: [rebrand-forge-to-orqa, mvp/branding]

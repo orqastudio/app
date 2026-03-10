@@ -9,7 +9,12 @@ updated: 2026-03-09
 assignee: frontend-engineer
 skills: [code-search, orqa-composability]
 scope: [ui/lib/components/artifact/FrontmatterHeader.svelte, ui/lib/utils/frontmatter.ts]
-acceptance: [Null, empty string, and undefined YAML values are not displayed in read views, Invalid Date never shown for null/missing date fields, Fields render in the order they appear in the YAML frontmatter, Priority labels (P1/P2/P3) include a human-readable explanation, Milestone gate question renders as the last field in the detail view]
+acceptance:
+  - "Null, empty string, and undefined YAML values are not displayed in read views"
+  - "Invalid Date never shown for null/missing date fields"
+  - "Fields render in the order they appear in the YAML frontmatter"
+  - "Priority labels (P1/P2/P3) include a human-readable explanation"
+  - "Milestone gate question renders as the last field in the detail view"
 ---
 
 ## Findings Addressed

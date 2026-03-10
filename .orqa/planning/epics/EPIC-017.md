@@ -4,7 +4,7 @@ title: Enforcement & Continuity
 status: draft
 priority: P2
 milestone: MS-002
-pillars: [clarity-through-structure, learning-through-reflection]
+pillars: [PILLAR-001, PILLAR-002]
 description: Add real-time violation detection during streaming, hook-based rule injection, compliance dashboard, and session handoff continuity.
 created: 2026-03-07
 updated: 2026-03-07
@@ -17,6 +17,7 @@ scoring:
   impact: 3
   dependency: 2
   effort: 4
+  score: 6.8
 ---
 
 ## Tasks

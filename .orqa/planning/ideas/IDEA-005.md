@@ -3,7 +3,7 @@ id: IDEA-005
 title: "Knowledge & Artifact Intelligence"
 status: captured
 pillars:
-  - learning-through-reflection
+  - PILLAR-002
 description: >
   Make the accumulated knowledge base actively useful through semantic
   search, knowledge graphs, and staleness detection.

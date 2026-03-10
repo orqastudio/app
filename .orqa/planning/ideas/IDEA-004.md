@@ -3,10 +3,10 @@ id: IDEA-004
 title: "Structured Thinking Tools"
 status: captured
 pillars:
-  - clarity-through-structure
-  - learning-through-reflection
+  - PILLAR-001
+  - PILLAR-002
 description: >
-  Tools that operationalise the agile learning loop beyond conversation,
+  Tools that operationalise the agile PILLAR-002 loop beyond conversation,
   including decision matrices, experiments, and assumption mapping.
 created: 2026-03-07
 updated: 2026-03-07

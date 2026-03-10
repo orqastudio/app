@@ -4,7 +4,7 @@ title: Onboarding Flow Review
 status: draft
 priority: P2
 milestone: MS-002
-pillars: [clarity-through-structure]
+pillars: [PILLAR-001]
 description: Audit and improve the first-run setup wizard, new project flow, existing folder initialization, and guided first conversation.
 created: 2026-03-07
 updated: 2026-03-07
@@ -17,6 +17,7 @@ scoring:
   impact: 4
   dependency: 1
   effort: 2
+  score: 10
 ---
 
 ## Tasks

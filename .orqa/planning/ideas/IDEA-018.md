@@ -3,7 +3,7 @@ id: IDEA-018
 title: "Output Composability"
 status: captured
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   New artifact generation modules for different domains including
   service design, policy development, and research planning.

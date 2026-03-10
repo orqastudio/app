@@ -3,7 +3,7 @@ id: IDEA-011
 title: "Reporting & Stakeholder Access"
 status: captured
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   Make understanding accessible to non-users through executive
   dashboards, shareable links, and formatted report exports.

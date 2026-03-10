@@ -3,7 +3,7 @@ id: IDEA-025
 title: "Agent task ownership review"
 status: captured
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   Audit agent definitions for process vs execution knowledge placement,
   define clear task ownership boundaries between orchestrator and specialist agents.

@@ -4,7 +4,7 @@ title: Governance Bootstrap
 status: done
 priority: P1
 milestone: MS-000
-pillars: [clarity-through-structure, learning-through-reflection]
+pillars: [PILLAR-001, PILLAR-002]
 description: "The initial governance layer: filesystem scanner, coverage analysis, recommendations, and governance coverage indicator on the dashboard."
 created: 2026-03-02
 updated: 2026-03-07
@@ -17,6 +17,7 @@ scoring:
   impact: 5
   dependency: 3
   effort: 1
+  score: 34
 ---
 
 ## Why P1

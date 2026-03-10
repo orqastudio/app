@@ -3,7 +3,7 @@ id: IDEA-027
 title: "Native Hooks System"
 status: captured
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   Design a hooks layer that works in both app and CLI contexts, with
   richer lifecycle events and backwards compatibility with Claude Code hooks.

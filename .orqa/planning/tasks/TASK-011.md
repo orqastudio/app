@@ -14,10 +14,10 @@ acceptance:
   - At least 2 research docs marked as surpassed with surpassed-by references
   - At least 3 additional lessons exist capturing real implementation learnings from session history
   - At least 2 tasks marked as surpassed showing work that was overtaken
-  - All surpassed artifacts have status: surpassed and surpassed-by field set
+  - "All surpassed artifacts have status: surpassed and surpassed-by field set"
   - Decision chains are traceable (AD-NNN surpassed-by AD-MMM)
   - Enough variety to test filtering, sorting, and chain navigation in future UI
-  - Reference integrity verified: every task has a valid epic, every epic has a valid milestone
+  - "Reference integrity verified: every task has a valid epic, every epic has a valid milestone"
   - "No orphaned references (plan:, promoted-to, depends-on all point to existing artifacts)"
 ---
 

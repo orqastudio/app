@@ -1,0 +1,113 @@
+{
+  "$id": "orqa://schemas/epic",
+  "title": "Epic",
+  "description": "Trackable work unit within a milestone",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "status",
+    "priority",
+    "milestone",
+    "pillars",
+    "description",
+    "created",
+    "updated",
+    "scoring"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^EPIC-\\d+$"
+    },
+    "title": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "ready",
+        "in-progress",
+        "review",
+        "done"
+      ]
+    },
+    "priority": {
+      "enum": [
+        "P1",
+        "P2",
+        "P3"
+      ]
+    },
+    "milestone": {
+      "type": "string",
+      "pattern": "^MS-\\d+$"
+    },
+    "pillars": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^PILLAR-\\d+$"
+      }
+    },
+    "description": {
+      "type": "string"
+    },
+    "created": {
+      "type": "string",
+      "format": "date"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date"
+    },
+    "research-refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "docs-required": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "docs-produced": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "depends-on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^EPIC-\\d+$"
+      }
+    },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^EPIC-\\d+$"
+      }
+    },
+    "deadline": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "scoring": {
+      "type": "object",
+      "required": ["score"],
+      "properties": {
+        "score": { "type": "number" }
+      },
+      "additionalProperties": { "type": "number" }
+    }
+  }
+}

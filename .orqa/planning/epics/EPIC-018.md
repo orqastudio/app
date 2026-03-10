@@ -4,7 +4,7 @@ title: Sub-Agent Support
 status: draft
 priority: P2
 milestone: MS-002
-pillars: [clarity-through-structure]
+pillars: [PILLAR-001]
 description: Build agent registry, spawn_agent tool, explore mode, output aggregation, and turn limits for sub-agent delegation.
 created: 2026-03-07
 updated: 2026-03-07
@@ -17,6 +17,7 @@ scoring:
   impact: 4
   dependency: 2
   effort: 4
+  score: 5.8
 ---
 
 ## Tasks

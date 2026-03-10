@@ -5,63 +5,60 @@ layer: canon
 status: active
 scope: artifact
 title: "Artifact Schema Compliance"
-description: "Every artifact's YAML frontmatter must match the canonical schema defined in artifact-framework.md. Missing required fields or extra undefined fields are commit rejections."
+description: "Every artifact's YAML frontmatter must validate against the JSON Schema defined in its artifact directory's schema.json file."
 created: 2026-03-10
 updated: 2026-03-10
 ---
 
-Every artifact in `.orqa/` must have YAML frontmatter that matches the canonical schema defined in `.orqa/documentation/product/artifact-framework.md`. This rule is enforced by pre-commit hook validation and (in the app) by the artifact scanner.
+Every artifact in `.orqa/` must have YAML frontmatter that validates against the JSON Schema in its directory's `schema.json` file. Fields not defined in the schema are rejected. Required fields must be present. Enum fields must use valid values.
 
 ## Source of Truth
 
-The per-type field tables in `artifact-framework.md` are the single source of truth for:
+Each artifact type directory contains a `schema.json` file (JSON Schema format) that is the single source of truth for:
 
 - Which fields are required vs optional
+- Field types and constraints
 - Valid values for enum fields (status, priority, layer)
-- Field naming (e.g. `pillars` not `pillar`, `created` not `date`)
-- Field ordering convention
+- Whether additional properties are allowed
 
-## Required Fields by Type
+| Directory | Schema |
+|-----------|--------|
+| `.orqa/planning/pillars/` | `schema.json` |
+| `.orqa/planning/milestones/` | `schema.json` |
+| `.orqa/planning/epics/` | `schema.json` |
+| `.orqa/planning/tasks/` | `schema.json` |
+| `.orqa/planning/ideas/` | `schema.json` |
+| `.orqa/planning/research/` | `schema.json` |
+| `.orqa/governance/lessons/` | `schema.json` |
+| `.orqa/governance/decisions/` | `schema.json` |
+| `.orqa/governance/rules/` | `schema.json` |
 
-| Type | Required Fields |
-|------|----------------|
-| **Pillar** | id, title, status, description, test-questions, created, updated |
-| **Milestone** | id, title, status, description, created, updated, gate |
-| **Epic** | id, title, status, priority, milestone, pillars, description, created, updated, scoring |
-| **Task** | id, title, status, epic, description, created, updated |
-| **Idea** | id, title, status, pillars, description, created, updated |
-| **Lesson** | id, title, status, description, created, updated, recurrence |
-| **Research** | id, title, status, description, created, updated |
-| **Decision** | id, title, status, description, created, updated |
-| **Rule** | id, slug, layer, status, scope, title, description, created, updated |
+## Schema Discovery
 
-## Valid Status Values
+Schemas are discovered via `.orqa/project.json`'s `artifacts` array. The validator walks the config tree, finds which artifact directory a file belongs to, and loads `schema.json` from that directory. Adding a new artifact type only requires:
 
-| Type | Valid Statuses |
-|------|--------------|
-| Pillar | `active`, `inactive` |
-| Milestone | `planning`, `active`, `complete` |
-| Epic | `draft`, `ready`, `in-progress`, `review`, `done` |
-| Task | `todo`, `in-progress`, `done` |
-| Idea | `captured`, `exploring`, `shaped`, `promoted`, `archived` |
-| Lesson | `active`, `recurring`, `promoted` |
-| Research | `draft`, `complete`, `surpassed` |
-| Decision | `proposed`, `accepted`, `superseded`, `deprecated` |
-| Rule | `active`, `inactive` |
-
-## What Is Forbidden
-
-- Creating an artifact with missing required fields
-- Using field names not defined in the schema (e.g. `tags`, `category`, `type`, `date`)
-- Using invalid status values (e.g. `done` on an Idea)
-- Using singular `pillar` instead of plural `pillars`
-- Duplicate frontmatter keys (e.g. two `status:` lines)
+1. Create the directory under `.orqa/`
+2. Add a `schema.json` defining the frontmatter shape
+3. Register the path in `project.json`'s `artifacts` array
 
 ## Enforcement
 
-1. **Pre-commit hook** — `.githooks/pre-commit` validates frontmatter of staged `.orqa/` files before allowing the commit
-2. **Agent self-compliance** — agents check the schema before creating or modifying artifacts
-3. **App scanner** (future) — the artifact scanner validates frontmatter during scans and reports violations in the UI
+1. **Pre-commit hook** — `.githooks/pre-commit` calls `.githooks/validate-schema.mjs` (Node + ajv) on staged `.orqa/**/*.md` files. Validation failures block the commit.
+2. **Agent self-compliance** — agents read the schema before creating or modifying artifacts
+3. **Rust backend** (future) — the artifact scanner validates frontmatter using the `jsonschema` crate against the same `schema.json` files
+4. **TypeScript frontend** (future) — the artifact editor validates on save using `ajv` against the same `schema.json` files
+
+## Cross-Language Validation
+
+Schemas use JSON Schema (draft 2020-12 compatible), validated by:
+
+| Context | Library |
+|---------|---------|
+| Pre-commit hook (Node) | `ajv` v8 + `ajv-formats` |
+| Rust backend (future) | `jsonschema` crate |
+| TypeScript frontend (future) | `ajv` v8 |
+
+All three share the same `schema.json` files — one source of truth, three consumers.
 
 ## Related Rules
 

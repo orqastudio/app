@@ -4,7 +4,7 @@ title: Process Visibility Dashboard
 status: draft
 priority: P1
 milestone: MS-002
-pillars: [clarity-through-structure]
+pillars: [PILLAR-001]
 description: Build scanner runner, scanner dashboard, metrics dashboard, and agent activity panel for richer process visibility.
 created: 2026-03-07
 updated: 2026-03-07
@@ -17,6 +17,7 @@ scoring:
   impact: 4
   dependency: 2
   effort: 4
+  score: 7.3
 ---
 
 ## Why P1

@@ -3,16 +3,16 @@ id: IDEA-017
 title: "Institutional Memory"
 status: exploring
 pillars:
-  - learning-through-reflection
+  - PILLAR-002
 description: >
   Long-term knowledge preservation with project evolution maps,
-  organisational learning records, and strategic timeline visualisations.
+  organisational PILLAR-002 records, and strategic timeline visualisations.
 created: 2026-03-07
 updated: 2026-03-07
 research-needed:
   - Long-term knowledge preservation model
   - Project evolution timeline UX
-  - Organisational learning aggregation
+  - Organisational PILLAR-002 aggregation
 promoted-to: null
 ---
 

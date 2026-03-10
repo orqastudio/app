@@ -1,0 +1,48 @@
+{
+  "$id": "orqa://schemas/pillar",
+  "title": "Pillar",
+  "description": "Guiding principle that features are evaluated against",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "status",
+    "description",
+    "test-questions",
+    "created",
+    "updated"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^PILLAR-\\d+$"
+    },
+    "title": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "active",
+        "inactive"
+      ]
+    },
+    "description": {
+      "type": "string"
+    },
+    "test-questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "created": {
+      "type": "string",
+      "format": "date"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}

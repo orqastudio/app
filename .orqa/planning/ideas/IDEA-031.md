@@ -3,7 +3,7 @@ id: IDEA-031
 title: "Auto-Refresh on File Changes"
 status: captured
 pillars:
-  - "Clarity Through Structure"
+  - PILLAR-001
 description: >
   Watch the .orqa/ directory for file changes and automatically
   invalidate the artifact navigation tree and viewer cache so the

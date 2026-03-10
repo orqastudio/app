@@ -3,7 +3,7 @@ id: IDEA-007
 title: "Spaces & Organisational Structure"
 status: captured
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   Containers for organising projects as adoption scales, with
   space-level governance and aggregated insights.

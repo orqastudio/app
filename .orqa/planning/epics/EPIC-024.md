@@ -4,7 +4,7 @@ title: Additional MVP Polish
 status: draft
 priority: P3
 milestone: MS-002
-pillars: [clarity-through-structure]
+pillars: [PILLAR-001]
 description: Nice-to-have polish items for MVP launch including search index UI, multi-window support, and sprint planning.
 created: 2026-03-07
 updated: 2026-03-07
@@ -17,6 +17,7 @@ scoring:
   impact: 2
   dependency: 1
   effort: 3
+  score: 5.3
 ---
 
 ## Tasks

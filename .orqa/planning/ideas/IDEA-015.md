@@ -3,7 +3,7 @@ id: IDEA-015
 title: "Multi-View Output System"
 status: captured
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   Expand artifact projections beyond backlogs with strategy maps,
   experiment frameworks, and audience-tailored summaries.

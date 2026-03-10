@@ -3,7 +3,7 @@ id: IDEA-014
 title: "Chaos-to-Clarity Engine"
 status: captured
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   Dedicated workflows for transforming unstructured situations into
   structured understanding through brain-dump flows and AI-driven triage.

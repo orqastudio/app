@@ -4,7 +4,7 @@ title: UX Design
 status: done
 priority: P1
 milestone: MS-000
-pillars: [clarity-through-structure]
+pillars: [PILLAR-001]
 description: "The complete UX specification: design system, wireframes, component inventory, interaction patterns, and responsive behaviour rules."
 created: 2026-03-02
 updated: 2026-03-07
@@ -17,6 +17,7 @@ scoring:
   impact: 5
   dependency: 3
   effort: 1
+  score: 28
 ---
 
 ## Why P1

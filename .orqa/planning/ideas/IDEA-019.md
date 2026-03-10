@@ -3,8 +3,8 @@ id: IDEA-019
 title: "Ecosystem Potential"
 status: captured
 pillars:
-  - clarity-through-structure
-  - learning-through-reflection
+  - PILLAR-001
+  - PILLAR-002
 description: >
   Long-term platform potential including ethical AI capabilities,
   open reasoning framework, and community innovation infrastructure.

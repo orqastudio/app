@@ -3,7 +3,7 @@ id: IDEA-022
 title: "Platform Access"
 status: captured
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   Expand beyond desktop with web companion, mobile companion,
   API access, and CLI companion.

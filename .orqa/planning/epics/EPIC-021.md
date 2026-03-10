@@ -4,7 +4,7 @@ title: Idea & Feedback Capture
 status: draft
 priority: P2
 milestone: MS-002
-pillars: [clarity-through-structure, learning-through-reflection]
+pillars: [PILLAR-001, PILLAR-002]
 description: Build idea quick-capture from conversation and anywhere, idea inbox, promotion workflows, and duplicate detection.
 created: 2026-03-07
 updated: 2026-03-07
@@ -17,6 +17,7 @@ scoring:
   impact: 4
   dependency: 1
   effort: 3
+  score: 8.7
 ---
 
 ## Tasks

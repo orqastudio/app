@@ -3,7 +3,7 @@ id: IDEA-020
 title: "Design Tool Integration"
 status: captured
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   Integration with 3rd-party design tools including Figma MCP server,
   design token sync, and code-to-Figma backfill.

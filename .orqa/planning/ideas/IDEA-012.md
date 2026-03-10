@@ -3,16 +3,16 @@ id: IDEA-012
 title: "Session Intelligence"
 status: exploring
 pillars:
-  - learning-through-reflection
+  - PILLAR-002
 description: >
   Make AI conversations smarter over time with summarisation,
-  context-aware suggestions, session branching, and proactive learning.
+  context-aware suggestions, session branching, and proactive PILLAR-002.
 created: 2026-03-07
 updated: 2026-03-07
 research-needed:
   - Conversation summarisation approaches
   - Session branching data model
-  - Proactive learning pattern matching
+  - Proactive PILLAR-002 pattern matching
 promoted-to: null
 ---
 

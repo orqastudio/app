@@ -4,7 +4,7 @@ title: Technical Design
 status: done
 priority: P1
 milestone: MS-000
-pillars: [clarity-through-structure]
+pillars: [PILLAR-001]
 description: "The complete technical blueprint: database schema, IPC commands, Rust modules, streaming pipeline, tool definitions, and error taxonomy."
 created: 2026-03-02
 updated: 2026-03-07
@@ -17,6 +17,7 @@ scoring:
   impact: 5
   dependency: 3
   effort: 1
+  score: 28
 ---
 
 ## Why P1

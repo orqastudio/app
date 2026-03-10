@@ -3,8 +3,8 @@ id: IDEA-023
 title: "Community Inbox"
 status: captured
 pillars:
-  - clarity-through-structure
-  - learning-through-reflection
+  - PILLAR-001
+  - PILLAR-002
 description: >
   Manage incoming communication from multiple channels in a structured
   way, applying OrqaStudio's structured thinking to community triage.

@@ -3,7 +3,7 @@ id: IDEA-026
 title: "Artifact platform audit — built-in vs external"
 status: captured
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   Audit which artifact types are first-class platform citizens with enforced
   lifecycles versus display-only documents, mapped to the three-layer governance model.

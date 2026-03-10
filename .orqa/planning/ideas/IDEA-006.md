@@ -3,9 +3,9 @@ id: IDEA-006
 title: "Cross-Project Intelligence"
 status: captured
 pillars:
-  - learning-through-reflection
+  - PILLAR-002
 description: >
-  Enable learning that transfers between projects through shared
+  Enable PILLAR-002 that transfers between projects through shared
   templates, cross-project patterns, and accumulated insights.
 created: 2026-03-07
 updated: 2026-03-07

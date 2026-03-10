@@ -1,0 +1,59 @@
+{
+  "$id": "orqa://schemas/milestone",
+  "title": "Milestone",
+  "description": "Strategic goal with gate question",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "status",
+    "description",
+    "created",
+    "updated",
+    "gate"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^MS-\\d+$"
+    },
+    "title": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "planning",
+        "active",
+        "complete"
+      ]
+    },
+    "description": {
+      "type": "string"
+    },
+    "created": {
+      "type": "string",
+      "format": "date"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date"
+    },
+    "deadline": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "gate": {
+      "type": "string"
+    },
+    "epic-count": {
+      "type": "integer"
+    },
+    "completed-epics": {
+      "type": "integer"
+    }
+  }
+}

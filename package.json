@@ -23,6 +23,8 @@
     "@tailwindcss/vite": "^4.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
+    "ajv": "^8.18.0",
+    "ajv-formats": "^3.0.1",
     "bits-ui": "^2.16.2",
     "clsx": "^2.1.1",
     "eslint": "^9.0.0",

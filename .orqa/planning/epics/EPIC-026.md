@@ -4,7 +4,7 @@ title: Architecture Decisions
 status: done
 priority: P1
 milestone: MS-000
-pillars: [clarity-through-structure, learning-through-reflection]
+pillars: [PILLAR-001, PILLAR-002]
 description: Formal architecture decision records (AD-007 through AD-017) capturing every significant technical choice made before implementation.
 created: 2026-03-02
 updated: 2026-03-07
@@ -17,6 +17,7 @@ scoring:
   impact: 5
   dependency: 3
   effort: 1
+  score: 34
 ---
 
 ## Why P1

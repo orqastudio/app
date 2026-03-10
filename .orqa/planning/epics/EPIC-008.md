@@ -5,7 +5,7 @@ status: draft
 priority: P2
 milestone: MS-001
 pillars: [PILLAR-001]
-description: Audit the codebase against coding standards, fix violations, and feed findings into the learning loop as lessons.
+description: Audit the codebase against coding standards, fix violations, and feed findings into the PILLAR-002 loop as lessons.
 created: 2026-03-07
 updated: 2026-03-07
 research-refs: []

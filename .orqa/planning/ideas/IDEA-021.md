@@ -3,7 +3,7 @@ id: IDEA-021
 title: "Developer Experience Enhancements"
 status: captured
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   Developer experience improvements discovered through self-use,
   including wireframe browser, terminal, and git integration.

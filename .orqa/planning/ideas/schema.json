@@ -1,0 +1,64 @@
+{
+  "$id": "orqa://schemas/idea",
+  "title": "Idea",
+  "description": "Candidate for future work, needs validation",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "status",
+    "pillars",
+    "description",
+    "created",
+    "updated"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^IDEA-\\d+$"
+    },
+    "title": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "captured",
+        "exploring",
+        "shaped",
+        "promoted",
+        "archived"
+      ]
+    },
+    "pillars": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^PILLAR-\\d+$"
+      }
+    },
+    "description": {
+      "type": "string"
+    },
+    "created": {
+      "type": "string",
+      "format": "date"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date"
+    },
+    "research-needed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "promoted-to": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

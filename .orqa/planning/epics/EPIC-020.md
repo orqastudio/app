@@ -4,7 +4,7 @@ title: Discovery & Research Artifacts
 status: draft
 priority: P2
 milestone: MS-002
-pillars: [clarity-through-structure, learning-through-reflection]
+pillars: [PILLAR-001, PILLAR-002]
 description: Build structured research artifacts, decision traceability graph, research-to-AD promotion, and conversational research workflow.
 created: 2026-03-07
 updated: 2026-03-07
@@ -17,6 +17,7 @@ scoring:
   impact: 3
   dependency: 1
   effort: 4
+  score: 6
 ---
 
 ## Tasks

@@ -3,7 +3,7 @@ id: IDEA-013
 title: "Reasoning Transparency"
 status: promoted
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   Maintain clear reasoning trails with AI-generated summaries,
   confidence indicators, and chronological decision logs.

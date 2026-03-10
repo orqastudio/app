@@ -4,7 +4,7 @@ title: MCP Host — External Servers
 status: draft
 priority: P2
 milestone: MS-002
-pillars: [clarity-through-structure]
+pillars: [PILLAR-001]
 description: Implement MCP host with JSON-RPC protocol handler, stdio and SSE transports, tool aggregation, and settings UI for external servers.
 created: 2026-03-07
 updated: 2026-03-07
@@ -17,6 +17,7 @@ scoring:
   impact: 4
   dependency: 2
   effort: 5
+  score: 4.6
 ---
 
 ## Tasks

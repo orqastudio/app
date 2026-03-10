@@ -4,7 +4,7 @@ title: CI/CD Pipeline & Distribution
 status: draft
 priority: P1
 milestone: MS-002
-pillars: [clarity-through-structure]
+pillars: [PILLAR-001]
 description: Build the CI/CD pipeline with GitHub Actions, cross-platform builds, artifact signing, and auto-update for distribution.
 created: 2026-03-07
 updated: 2026-03-07
@@ -17,6 +17,7 @@ scoring:
   impact: 5
   dependency: 3
   effort: 4
+  score: 6.3
 ---
 
 ## Why P1

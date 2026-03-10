@@ -1,0 +1,48 @@
+{
+  "$id": "orqa://schemas/research",
+  "title": "Research",
+  "description": "Investigation, design exploration, or implementation plan",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "status",
+    "description",
+    "created",
+    "updated"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^RES-\\d+$"
+    },
+    "title": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "complete",
+        "surpassed"
+      ]
+    },
+    "description": {
+      "type": "string"
+    },
+    "created": {
+      "type": "string",
+      "format": "date"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date"
+    },
+    "surpassed-by": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

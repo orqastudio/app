@@ -3,8 +3,8 @@ id: IDEA-010
 title: "Domain Expansion"
 status: captured
 pillars:
-  - clarity-through-structure
-  - learning-through-reflection
+  - PILLAR-001
+  - PILLAR-002
 description: "Extend OrqaStudio beyond software development to other domains — research, product management, operations, personal productivity, consulting, and education."
 created: 2026-03-07
 updated: 2026-03-07

@@ -4,7 +4,7 @@ title: Project Scaffold
 status: done
 priority: P1
 milestone: MS-000
-pillars: [clarity-through-structure]
+pillars: [PILLAR-001]
 description: "The first working version: a Tauri v2 desktop app with Claude conversations via Agent SDK sidecar, streaming, SQLite, and conversation UI."
 created: 2026-03-02
 updated: 2026-03-07
@@ -17,6 +17,7 @@ scoring:
   impact: 5
   dependency: 3
   effort: 1
+  score: 28
 ---
 
 ## Why P1

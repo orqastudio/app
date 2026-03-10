@@ -1,0 +1,63 @@
+{
+  "$id": "orqa://schemas/rule",
+  "title": "Rule",
+  "description": "Constraint that must be followed",
+  "type": "object",
+  "required": [
+    "id",
+    "slug",
+    "layer",
+    "status",
+    "scope",
+    "title",
+    "description",
+    "created",
+    "updated"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^RULE-\\d+$"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "layer": {
+      "enum": [
+        "canon",
+        "project",
+        "plugin"
+      ]
+    },
+    "status": {
+      "enum": [
+        "active",
+        "inactive"
+      ]
+    },
+    "scope": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "created": {
+      "type": "string",
+      "format": "date"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date"
+    },
+    "promoted_from": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

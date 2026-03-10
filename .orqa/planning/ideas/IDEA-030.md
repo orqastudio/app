@@ -3,7 +3,7 @@ id: IDEA-030
 title: "Documentation as Navigation Group"
 status: archived
 pillars:
-  - "Clarity Through Structure"
+  - PILLAR-001
 description: >
   Convert the documentation artifact type from a single tree type
   to a group with child types (Architecture, Product, Development,

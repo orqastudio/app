@@ -3,7 +3,7 @@ id: IDEA-003
 title: "Entry Modes & Directed Onboarding"
 status: promoted
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   AI-assisted onboarding flows beyond chat guidance, with each mode
   supporting new projects and existing work adaptation.

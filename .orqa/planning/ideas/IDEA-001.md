@@ -3,7 +3,7 @@ id: IDEA-001
 title: "Multi-Provider Ecosystem"
 status: promoted
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   Support additional AI providers through the provider-agnostic sidecar
   interface without changing the Rust core or Svelte UI.

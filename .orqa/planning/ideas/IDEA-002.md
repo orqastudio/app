@@ -3,7 +3,7 @@ id: IDEA-002
 title: "Transportable Governance Format"
 status: captured
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   Move governance from .claude/-specific format to generic
   .orqa/governance/ with environment-specific adapters.

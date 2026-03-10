@@ -3,7 +3,7 @@ id: IDEA-024
 title: "Git Integration & Worktree-Aware Workspace"
 status: captured
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
   Git awareness for OrqaStudio including branch status, worktree visibility,
   and version control operations surfaced through the app UI.

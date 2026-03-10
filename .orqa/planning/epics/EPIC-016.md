@@ -4,7 +4,7 @@ title: Prioritisation Framework
 status: draft
 priority: P1
 milestone: MS-002
-pillars: [clarity-through-structure, learning-through-reflection]
+pillars: [PILLAR-001, PILLAR-002]
 description: Build the scoring model from the roadmap into the app with configurable dimensions, weights, and priority bands.
 created: 2026-03-07
 updated: 2026-03-07
@@ -17,6 +17,7 @@ scoring:
   impact: 4
   dependency: 2
   effort: 4
+  score: 7.3
 ---
 
 ## Why P1

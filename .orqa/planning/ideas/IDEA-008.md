@@ -3,9 +3,9 @@ id: IDEA-008
 title: "Collaboration & Teams"
 status: captured
 pillars:
-  - clarity-through-structure
+  - PILLAR-001
 description: >
-  Multi-user support for the clarity engine with shared projects,
+  Multi-user support for the PILLAR-001 engine with shared projects,
   role-based access, and structured handoff protocols.
 created: 2026-03-07
 updated: 2026-03-07
