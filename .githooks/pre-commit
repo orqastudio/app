@@ -29,9 +29,16 @@ if [ -n "$FRONTEND_CHANGED" ]; then
   make test-frontend
 fi
 
+# Artifact schema validation (only if .orqa/ markdown files changed)
+ORQA_CHANGED=$(git diff --cached --name-only --diff-filter=ACMR -- '.orqa/**/*.md' | grep -v 'README\.md' || true)
+if [ -n "$ORQA_CHANGED" ]; then
+  echo "--- Artifacts: schema validation ---"
+  bash .githooks/validate-artifacts.sh $ORQA_CHANGED
+fi
+
 # If nothing relevant changed, still confirm
-if [ -z "$RUST_CHANGED" ] && [ -z "$FRONTEND_CHANGED" ]; then
-  echo "No Rust or frontend files changed — skipping quality checks."
+if [ -z "$RUST_CHANGED" ] && [ -z "$FRONTEND_CHANGED" ] && [ -z "$ORQA_CHANGED" ]; then
+  echo "No Rust, frontend, or artifact files changed — skipping quality checks."
 fi
 
 echo "=== Pre-commit: All checks passed ==="
