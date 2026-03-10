@@ -3,7 +3,7 @@ id: DOC-036
 title: Artifact Framework
 description: Schema definitions, lifecycle rules, and governance for all structured artifacts in .orqa/.
 created: "2026-03-07"
-updated: "2026-03-07"
+updated: "2026-03-10"
 ---
 
 **Date:** 2026-03-07
@@ -265,8 +265,6 @@ created: 2026-03-07
 updated: 2026-03-07
 deadline: null                    # ISO date or null — optional time constraint
 gate: "Can we use this app instead of the terminal for governance management, conversation debugging, and structured thinking about the project?"
-epic-count: 10                    # Total epics in this milestone
-completed-epics: 0                # Epics with status: done
 ---
 ```
 
@@ -280,8 +278,6 @@ completed-epics: 0                # Epics with status: done
 | `updated` | Yes | date | ISO date of last update |
 | `deadline` | No | date/null | ISO date for time-constrained milestones, null otherwise |
 | `gate` | Yes | string | Question that determines completion |
-| `epic-count` | No | integer | Total epics belonging to this milestone |
-| `completed-epics` | No | integer | Epics with `status: done` |
 
 ### Epic (`EPIC-NNN`)
 
@@ -426,6 +422,7 @@ Decisions are architecture decision records. Each captures a significant technic
 id: AD-001
 title: "Use Tauri Channel<T> for streaming IPC"
 status: accepted                  # proposed | accepted | superseded | deprecated
+category: architecture            # Decision category (e.g., architecture, persistence, governance)
 description: >
   Use Tauri's Channel<T> mechanism for streaming AI responses from the
   Rust backend to the Svelte frontend.
@@ -442,6 +439,7 @@ superseded-by: null               # AD-NNN of the decision that replaced this, o
 | `id` | Yes | string | Auto-incrementing `AD-NNN` identifier |
 | `title` | Yes | string | Human-readable decision title |
 | `status` | Yes | enum | `proposed`, `accepted`, `superseded`, `deprecated` |
+| `category` | No | string | Decision category (e.g., `architecture`, `persistence`, `governance`) |
 | `description` | Yes | string | Brief description of the decision |
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
@@ -520,7 +518,6 @@ Rules enforce coding standards, process requirements, and project conventions. T
 ```yaml
 ---
 id: RULE-006
-slug: coding-standards
 layer: canon
 status: active
 scope: domain                     # system | domain | project | role | artifact
@@ -535,7 +532,6 @@ promoted-from: null               # IMPL-NNN if promoted from a lesson, null oth
 | Field | Required | Type | Description |
 |-------|----------|------|-------------|
 | `id` | Yes | string | Auto-incrementing `RULE-NNN` identifier |
-| `slug` | Yes | string | Human-readable slug (original filename without `.md`) for reference |
 | `layer` | Yes | enum | `canon` (platform), `project` (project-specific), `plugin` (ecosystem) |
 | `status` | Yes | enum | `active` (enforced) or `inactive` (preserved but not enforced) |
 | `scope` | Yes | string | What the rule governs: `system`, `domain`, `project`, `role`, `artifact`. Temporary — will be replaced by structured enforcement model ([IDEA-034](IDEA-034)). |
@@ -622,20 +618,20 @@ YAML frontmatter fields follow a consistent content hierarchy across all artifac
 4. **Lifecycle** — `created`, `updated`, `deadline` (when?)
 5. **Relationships** — `depends-on`, `blocks`, `research-refs`, `docs-required`, `docs-produced`, `research-needed`, `promoted-to`, `supersedes`, `superseded-by`, `surpassed-by`, `promoted-from` (what connects to what?)
 6. **Scoring** — `scoring` block (how important?)
-7. **Operational** — `assignee`, `skills`, `scope`, `acceptance`, `gate`, `epic-count`, `completed-epics`, `recurrence`, `promoted-to` (how is it managed?)
+7. **Operational** — `assignee`, `skills`, `scope`, `acceptance`, `gate`, `recurrence`, `promoted-to` (how is it managed?)
 
 ### Per-Type Field Order
 
 | Type | Field Order |
 |------|------------|
-| **Milestone** | id, title, status, description, created, updated, deadline, gate, epic-count, completed-epics |
+| **Milestone** | id, title, status, description, created, updated, deadline, gate |
 | **Pillar** | id, title, status, description, gate, created, updated |
 | **Epic** | id, title, status, priority, milestone, pillars, description, created, updated, research-refs, docs-required, docs-produced, depends-on, blocks, deadline, scoring |
 | **Task** | id, title, status, epic, description, created, updated, depends-on, assignee, skills, scope, acceptance |
 | **Idea** | id, title, status, pillars, description, created, updated, research-needed, promoted-to |
 | **Lesson** | id, title, status, description, created, updated, recurrence, promoted-to |
-| **Rule** | id, slug, layer, status, scope, title, description, created, updated, promoted-from |
-| **Decision** | id, title, status, description, created, updated, research-refs, supersedes, superseded-by |
+| **Rule** | id, title, description, status, created, updated, layer, scope, promoted-from |
+| **Decision** | id, title, description, status, category, created, updated, research-refs, supersedes, superseded-by |
 | **Research** | id, title, status, description, created, updated, surpassed-by |
 
 ---

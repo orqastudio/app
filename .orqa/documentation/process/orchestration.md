@@ -3,7 +3,7 @@ id: DOC-030
 title: Orchestration
 description: How the orchestrator coordinates work across specialized agents using delegation and verification.
 created: "2026-03-02"
-updated: "2026-03-04"
+updated: "2026-03-10"
 ---
 
 **Date:** 2026-03-02
@@ -89,26 +89,28 @@ Note: the `architecture` skill is loaded by the `systems-architect` agent, not t
 
 ## Agent Delegation Guide
 
-| Task Type | Delegate To |
-|-----------|-------------|
-| Rust backend, Tauri commands, domain logic, SQLite persistence | `backend-engineer` |
-| Svelte component, store, TypeScript IPC wrapper | `frontend-engineer` |
-| UI component styling, design system, Tailwind classes | `designer` |
-| Root cause analysis, tracing errors, IPC debugging | `debugger` |
-| Writing tests, increasing coverage, Playwright E2E | `test-engineer` |
-| Code quality review, merge approval | `code-reviewer` |
-| Database schema, repository adapters, migrations | `data-engineer` |
-| Tauri build pipeline, cross-platform packaging, CI/CD | `devops-engineer` |
-| Architecture docs, IPC contracts, component specs | `documentation-writer` |
-| API key management, Tauri security model, permissions | `security-engineer` |
-| Architectural debt, module reorganization | `refactor-agent` |
-| Governance, agent files, skill governance, process docs | `agent-maintainer` |
-| Planning tasks crossing the IPC boundary or changing contracts | `systems-architect` |
-| Functional QA, smoke testing, end-to-end verification | `qa-tester` |
-| UI compliance review against docs/ui/ specs | `ux-reviewer` |
+All agents are universal roles (see [AD-029](AD-029)). Domain expertise is loaded via skills — the role + skills combination determines capability.
+
+| Task Type | Role | Skills to Load |
+|-----------|------|----------------|
+| Rust backend, Tauri commands, domain logic, SQLite persistence | Implementer | `rust-async-patterns`, `tauri-v2`, `orqa-ipc-patterns`, `orqa-error-composition` |
+| Svelte component, store, TypeScript IPC wrapper | Implementer | `svelte5-best-practices`, `typescript-advanced-types`, `orqa-store-patterns` |
+| UI component styling, design system, Tailwind classes | Designer | `svelte5-best-practices`, `tailwind-design-system` |
+| Root cause analysis, tracing errors, IPC debugging | Implementer | `diagnostic-methodology`, `rust-async-patterns`, `tauri-v2` |
+| Writing tests, increasing coverage, Playwright E2E | Reviewer | `test-engineering`, `rust-async-patterns` |
+| Code quality review, merge approval | Reviewer | `code-quality-review`, `rust-async-patterns`, `svelte5-best-practices` |
+| Database schema, repository adapters, migrations | Implementer | `rust-async-patterns`, `orqa-repository-pattern` |
+| Tauri build pipeline, cross-platform packaging, CI/CD | Implementer | `tauri-v2` |
+| Architecture docs, IPC contracts, component specs | Writer | `architecture` |
+| API key management, Tauri security model, permissions | Reviewer | `security-audit`, `tauri-v2` |
+| Architectural debt, module reorganization | Implementer | `restructuring-methodology`, `rust-async-patterns` |
+| Governance, agent files, skill governance, process docs | Orchestrator | `governance-maintenance`, `skills-maintenance` |
+| Planning tasks crossing the IPC boundary or changing contracts | Planner | `architecture`, `planning`, `tauri-v2` |
+| Functional QA, smoke testing, end-to-end verification | Reviewer | `qa-verification`, `svelte5-best-practices` |
+| UI compliance review against docs/ui/ specs | Reviewer | `ux-compliance-review`, `svelte5-best-practices` |
 
 > [!IMPORTANT]
-> For any planning task that crosses the Rust/TypeScript IPC boundary, changes data models, or introduces new persistent state, delegate to `systems-architect` for compliance review BEFORE delegating implementation.
+> For any planning task that crosses the Rust/TypeScript IPC boundary, changes data models, or introduces new persistent state, delegate to a Planner with `architecture` skills for compliance review BEFORE delegating implementation.
 
 ---
 

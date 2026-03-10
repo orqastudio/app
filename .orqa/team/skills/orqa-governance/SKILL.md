@@ -185,12 +185,11 @@ priority: P1 | P2 | P3
 research-refs:          # Optional — links to research documents
   - research-doc-name
 scoring:
-  dogfood-value: 1-5
-  foundation: 1-5
-  user-visible: 1-5
-  scope: 1-5
-  dependency-risk: 1-5
-score: computed
+  pillar: 0-5
+  impact: 1-5
+  dependency: 1-3
+  effort: 1-5
+  score: computed
 docs-required: []       # Docs that must exist before implementation
 docs-produced: []       # Docs this work creates/updates
 depends-on: []
@@ -212,9 +211,8 @@ breakdown, and approach all go here.]
 ```yaml
 ---
 id: TASK-NNN
-layer: project
 title: "Task Title"
-status: todo | in-progress | done | surpassed
+status: todo | in-progress | done
 epic: EPIC-NNN          # REQUIRED — always references an epic
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
@@ -234,13 +232,11 @@ tags: []
 ---
 id: RES-NNN
 title: "Research Title"
-status: draft | complete | surpassed
 description: "Brief description"
+status: draft | complete | surpassed
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
-milestone: MS-NNN              # Optional — milestone this serves
 surpassed-by: RES-NNN          # Set when status: surpassed
-tags: []
 ---
 ```
 
@@ -249,13 +245,14 @@ tags: []
 ```yaml
 ---
 id: RULE-NNN
-slug: human-readable-slug      # Original filename, preserved for reference
-layer: canon | project
 title: "Rule Title"
 description: "What this rule enforces"
 status: active
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+layer: canon | project
+scope: system | domain | project | role | artifact
 promoted-from: IMPL-NNN        # If promoted from a lesson, null otherwise
-tags: []
 ---
 ```
 
@@ -264,12 +261,13 @@ tags: []
 ```yaml
 ---
 id: IMPL-NNN
-layer: project
 title: "Lesson Title"
-category: implementation
+description: "Brief description of the lesson"
+status: active
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
 recurrence: 0
 promoted-to: null
-tags: []
 ---
 ```
 

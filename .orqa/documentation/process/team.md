@@ -3,7 +3,7 @@ id: DOC-034
 title: The Agentic Development Team
 description: Roster of specialized agents in the agentic development team with their roles and responsibilities.
 created: "2026-03-02"
-updated: "2026-03-09"
+updated: "2026-03-10"
 ---
 
 **Date:** 2026-03-02
@@ -29,25 +29,19 @@ The orchestrator does NOT implement code directly. Its job is coordination, dele
 
 ## Agent Directory
 
-All 15 agents are defined in `.orqa/team/agents/`. Each is invoked via the Task tool with `subagent_type`.
+All 7 universal roles are defined in `.orqa/team/agents/`. Each role is invoked via the Task tool with the appropriate `subagent_type`, and domain capability is loaded via skills at delegation time (see [AD-029](AD-029)).
 
-| Agent | Domain | Skills Loaded | Use When |
-|-------|--------|---------------|----------|
-| `backend-engineer` | Rust / Tauri v2 / IPC commands / domain logic / SQLite | chunkhound, rust-async-patterns, tauri-v2 | Creating or modifying Rust backend code, Tauri commands, database models |
-| `frontend-engineer` | Svelte 5 / runes / shadcn-svelte / Tauri IPC client | chunkhound, svelte5-best-practices, typescript-advanced-types, tailwind-design-system | Creating or modifying Svelte components, stores, IPC wrappers |
-| `designer` | shadcn-svelte / Tailwind CSS / design system | chunkhound, svelte5-best-practices, tailwind-design-system | Implementing UI components, styling, visual polish |
-| `debugger` | Root cause analysis across Rust/Svelte boundary, IPC issues | chunkhound, rust-async-patterns, tauri-v2, svelte5-best-practices, typescript-advanced-types | Debugging test failures, tracing errors, IPC problems |
-| `test-engineer` | cargo test / Vitest / Playwright E2E / TDD | chunkhound, rust-async-patterns, typescript-advanced-types | Writing tests, fixing failures, increasing coverage |
-| `code-reviewer` | clippy pedantic / rustfmt / ESLint / svelte-check / zero-error policy | chunkhound, rust-async-patterns, svelte5-best-practices, typescript-advanced-types | Reviewing code, validating compliance with coding standards |
-| `data-engineer` | SQLite schemas / rusqlite or sqlx / migrations | chunkhound, rust-async-patterns | Database models, repository adapters, schema migrations |
-| `devops-engineer` | Tauri build pipeline / cross-platform packaging / CI/CD | chunkhound, tauri-v2 | Build configuration, platform-specific issues, CI pipeline |
-| `documentation-writer` | Architecture decisions / IPC contracts / component specs | chunkhound, architecture | Creating or updating architecture docs, IPC contracts, component specs |
-| `security-engineer` | API key management / file system permissions / Tauri security model | chunkhound, tauri-v2, rust-async-patterns | Auditing security, permissions, credential handling |
-| `refactor-agent` | Architectural debt / module reorganization | chunkhound, rust-async-patterns, typescript-advanced-types | Decoupling, consolidation, eliminating architectural violations |
-| `agent-maintainer` | Governance framework custodian / content-layer compliance | chunkhound, planning, skills-maintenance | Adding or modifying agents, auditing compliance, maintaining process docs |
-| `systems-architect` | Architectural compliance during planning / cross-boundary analysis | chunkhound, architecture, planning, tauri-v2 | Planning features that cross the IPC boundary, evaluating architecture decisions |
-| `qa-tester` | Functional QA / end-to-end user-perspective verification | chunkhound, svelte5-best-practices, typescript-advanced-types | Verifying completed features work end-to-end in the Tauri app |
-| `ux-reviewer` | UX compliance / label audit / state audit / shared component audit | chunkhound, svelte5-best-practices, tailwind-design-system, typescript-advanced-types | Reviewing completed frontend features against UI specs in `.orqa/documentation/ui/` |
+| Role | Purpose | Tier 1 Skills | When to Use |
+|------|---------|---------------|-------------|
+| **Orchestrator** | Coordinates work, enforces process, manages governance | `code-search`, `orqa-composability`, `planning`, `governance-maintenance` | Session coordination, task lifecycle, governance artifact management |
+| **Researcher** | Investigates questions, gathers information, analyses findings | `code-search`, `orqa-composability`, `planning` | Before planning, when understanding is needed; produces research documents |
+| **Planner** | Designs approaches, evaluates tradeoffs, maps dependencies | `code-search`, `orqa-composability`, `planning`, `architecture` | Before implementation; cross-boundary features; produces implementation plans in epics |
+| **Implementer** | Does the work — code, deliverables, whatever "work" means | `code-search`, `orqa-composability` + domain skills loaded by orchestrator | Rust backend, Svelte frontend, database, build, refactoring |
+| **Reviewer** | Checks quality, compliance, correctness | `code-search`, `orqa-composability` + review skills loaded by orchestrator | Code quality, QA, UX compliance, security audits |
+| **Writer** | Creates documentation, specifications, communications | `code-search`, `orqa-composability`, `planning` | Architecture docs, IPC contracts, component specs, process documentation |
+| **Designer** | Designs experiences, interfaces, and structures | `code-search`, `orqa-composability`, `svelte5-best-practices`, `tailwind-design-system` | UI components, styling, visual polish, design system |
+
+Orchestrator-injected Tier 2 skills narrow the Implementer and Reviewer roles to specific domains. See the delegation guide above and [AD-029](AD-029) for the full skill-loading model.
 
 ---
 
