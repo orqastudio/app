@@ -2,7 +2,7 @@
 id: TASK-082
 title: "Migrate viewer components to SDK: frontmatter from graph, link handling"
 description: "Replace parseFrontmatter() calls in ArtifactViewer, AgentViewer, and SkillViewer with artifactGraph metadata lookups. Update internal link handling."
-status: todo
+status: done
 created: 2026-03-10
 updated: 2026-03-10
 epic: EPIC-048
