@@ -1,7 +1,6 @@
 ---
 title: "Wireframe Serving Infrastructure"
 description: "Infrastructure for serving and rendering wireframe assets within the application."
-tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---

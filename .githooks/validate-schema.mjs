@@ -138,6 +138,22 @@ for (const file of files) {
     }
     errors += validate.errors.length;
   }
+
+  // Field order validation: frontmatter keys must follow schema property order
+  const schema = loadSchema(artifactDir);
+  if (schema?.properties) {
+    const schemaOrder = Object.keys(schema.properties);
+    const fileKeys = Object.keys(frontmatter);
+    // Filter to only keys that appear in both
+    const fileKeysInSchema = fileKeys.filter((k) => schemaOrder.includes(k));
+    const expectedOrder = schemaOrder.filter((k) => fileKeysInSchema.includes(k));
+    if (JSON.stringify(fileKeysInSchema) !== JSON.stringify(expectedOrder)) {
+      console.error(`ERROR: ${file} — field order does not match schema`);
+      console.error(`  expected: ${expectedOrder.join(", ")}`);
+      console.error(`  actual:   ${fileKeysInSchema.join(", ")}`);
+      errors++;
+    }
+  }
 }
 
 if (errors > 0) {

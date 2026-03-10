@@ -10,7 +10,6 @@ description: |
   Use when: Setting up OrqaStudio on an existing project, or detecting
   project characteristics for skill/rule selection.
 version: 1.0.0
-tags: [setup, inference, detection, project-type]
 user-invocable: true
 ---
 

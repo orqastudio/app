@@ -10,7 +10,6 @@ description: |
   Use when: Debugging failures, diagnosing unexpected behavior, tracing
   data flow through multi-layer systems, or investigating production issues.
 version: 1.0.0
-tags: [debugging, diagnostics, root-cause, methodology]
 user-invocable: true
 ---
 

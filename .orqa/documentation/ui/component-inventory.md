@@ -1,7 +1,6 @@
 ---
 title: "Component Inventory"
 description: "Inventory of all UI components with their status, variants, and usage guidelines."
-tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---

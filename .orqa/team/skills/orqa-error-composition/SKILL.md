@@ -11,7 +11,6 @@ description: |
   domain services, wiring error states in Svelte stores, or debugging error flow
   across the Tauri boundary.
 version: 1.0.0
-tags: [orqa, error-handling, thiserror, result, tauri, ipc, error-flow]
 user-invocable: true
 ---
 

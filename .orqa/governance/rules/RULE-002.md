@@ -1,16 +1,13 @@
 ---
 id: RULE-002
-slug: architecture-decisions
-layer: canon
-status: active
-scope: project
 title: Architecture Decisions
 description: All code must comply with architecture decisions in docs/architecture/decisions.md.
+status: active
 created: 2026-03-07
 updated: 2026-03-07
+layer: canon
+scope: project
 ---
-
-
 **Source of Truth:** `.orqa/documentation/architecture/decisions.md` (index) and `.orqa/decisions/` (individual `AD-NNN.md` artifacts)
 
 **READ the index document to understand all architecture decisions. For detail on any specific decision, read its individual `AD-NNN.md` artifact.**

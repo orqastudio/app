@@ -10,7 +10,6 @@ description: |
   Use when: Initialising a new project with OrqaStudio governance, or
   repairing a broken .orqa/ structure.
 version: 1.0.0
-tags: [setup, scaffolding, initialisation, governance]
 user-invocable: true
 ---
 

@@ -1,17 +1,24 @@
 ---
 id: EPIC-022
 title: Implementation Breakdown & Work Management
+description: Build epic-to-task hierarchy, plan-to-backlog breakdown, unified backlog view, status workflow, and progress dashboard.
 status: draft
 priority: P2
-milestone: MS-002
-pillars: [PILLAR-001]
-description: Build epic-to-task hierarchy, plan-to-backlog breakdown, unified backlog view, status workflow, and progress dashboard.
 created: 2026-03-07
 updated: 2026-03-07
-docs-required: [docs/product/artifact-framework.md (epic/task schemas), .orqa/plans/ (plan required before implementation)]
-docs-produced: [.orqa/plans/ (work management plan), docs/architecture/decisions.md (AD for work item data model)]
-depends-on: [EPIC-005, EPIC-016]
+milestone: MS-002
+pillars:
+  - PILLAR-001
+depends-on:
+  - EPIC-005
+  - EPIC-016
 blocks: []
+docs-required:
+  - docs/product/artifact-framework.md (epic/task schemas)
+  - .orqa/plans/ (plan required before implementation)
+docs-produced:
+  - .orqa/plans/ (work management plan)
+  - docs/architecture/decisions.md (AD for work item data model)
 scoring:
   pillar: 4
   impact: 4
@@ -19,7 +26,6 @@ scoring:
   effort: 4
   score: 5.8
 ---
-
 ## Tasks
 
 - [ ] Epic -> Task hierarchy with interactive views

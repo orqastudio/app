@@ -1,16 +1,13 @@
 ---
 id: IMPL-009
-title: "Domain-Neutral Naming Avoids Renames"
+title: Domain-Neutral Naming Avoids Renames
+description: |
+  Provider-specific names like sdk_session_id spread across the entire stack. When the architecture evolves to support multiple providers, the rename touches every layer including database migrations.
 status: active
-description: >
-  Provider-specific names like sdk_session_id spread across the entire stack.
-  When the architecture evolves to support multiple providers, the rename
-  touches every layer including database migrations.
 created: 2026-03-07
 updated: 2026-03-07
 recurrence: 1
 ---
-
 ## What Happened
 
 The field `sdk_session_id` was used throughout the entire stack — Rust types, TypeScript protocol, SQLite columns, and all callers (13+ files). When the architecture evolved to be provider-agnostic, renaming to `provider_session_id` required touching every layer simultaneously, including a database migration.

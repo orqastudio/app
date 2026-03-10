@@ -1,16 +1,13 @@
 ---
 id: RULE-029
-slug: testing-standards
-layer: canon
-status: active
-scope: project
 title: Testing Standards
 description: Test organisation, coverage requirements, mock boundaries, and isolation rules.
+status: active
 created: 2026-03-07
 updated: 2026-03-07
+layer: canon
+scope: project
 ---
-
-
 **Source of Truth:** This file defines testing patterns. `.orqa/documentation/development/coding-standards.md` defines coverage requirements.
 
 ## Test Organisation

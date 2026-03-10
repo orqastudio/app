@@ -1,7 +1,6 @@
 ---
 title: "MCP Host Interface"
 description: "Design for OrqaStudio's Model Context Protocol host interface for tool integration."
-tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---

@@ -1,17 +1,28 @@
 ---
 id: TASK-006
 title: Governance Vision Alignment Audit
-status: done
-epic: EPIC-033
 description: Audit governance rules (.claude/rules/) and agent definitions (.claude/agents/) for references that contradict the updated vision. These are the enforcement layer — they must accurately reflect .orqa/ as source of truth.
+status: done
 created: 2026-03-08
 updated: 2026-03-08
+epic: EPIC-033
 assignee: agent-maintainer
-skills: [chunkhound, orqa-governance, skills-maintenance]
-scope: [.claude/rules/, .claude/agents/, .orqa/documentation/ui/brand-identity.md, .orqa/documentation/ui/design-system.md]
-acceptance: [Every rule file checked for .claude/ as source-of-truth references, Every agent definition checked for .claude/ path references, Paths updated to .orqa/ equivalents where appropriate, UI docs checked for Claude-specific branding, No rule or agent definition implies Claude is the product identity]
+skills:
+  - chunkhound
+  - orqa-governance
+  - skills-maintenance
+scope:
+  - .claude/rules/
+  - .claude/agents/
+  - .orqa/documentation/ui/brand-identity.md
+  - .orqa/documentation/ui/design-system.md
+acceptance:
+  - Every rule file checked for .claude/ as source-of-truth references
+  - Every agent definition checked for .claude/ path references
+  - Paths updated to .orqa/ equivalents where appropriate
+  - UI docs checked for Claude-specific branding
+  - No rule or agent definition implies Claude is the product identity
 ---
-
 ## What
 
 The rules and agent definitions currently reference `.claude/` paths as if

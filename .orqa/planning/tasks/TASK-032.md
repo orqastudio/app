@@ -1,17 +1,23 @@
 ---
 id: TASK-032
 title: Create code-search wrapper skill
-status: done
-epic: EPIC-042
 description: Creates a context-detecting wrapper skill that instructs agents to load the appropriate concrete search skill depending on whether they are running in CLI or App context.
+status: done
 created: 2026-03-09
 updated: 2026-03-09
+epic: EPIC-042
 assignee: agent-maintainer
-skills: [skills-maintenance, orqa-governance]
-scope: [.orqa/team/skills/code-search/SKILL.md]
-acceptance: [Wrapper skill exists at .orqa/team/skills/code-search/SKILL.md, Documents context detection logic (check for mcp__chunkhound__* vs search_regex availability), Instructs agent to load chunkhound (CLI) or orqa-native-search (App) based on detection, Shared query patterns documented (same as both underlying skills)]
+skills:
+  - skills-maintenance
+  - orqa-governance
+scope:
+  - .orqa/team/skills/code-search/SKILL.md
+acceptance:
+  - Wrapper skill exists at .orqa/team/skills/code-search/SKILL.md
+  - Documents context detection logic (check for mcp__chunkhound__* vs search_regex availability)
+  - Instructs agent to load chunkhound (CLI) or orqa-native-search (App) based on detection
+  - Shared query patterns documented (same as both underlying skills)
 ---
-
 ## What
 
 Create the `code-search` wrapper skill that detects runtime context (CLI vs App) and

@@ -8,7 +8,6 @@ description: |
   with DirectML acceleration, and three search tools (search_regex, search_semantic,
   code_research). Use when working within the OrqaStudio app context.
 version: 1.0.0
-tags: [search, native, duckdb, onnx, embeddings, directml]
 user-invocable: true
 ---
 

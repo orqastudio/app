@@ -1,23 +1,21 @@
 ---
 id: IDEA-032
-title: "Artifact Traceability Graph"
+title: Artifact Traceability Graph
+description: |
+  Build a navigable knowledge graph from artifact cross-references that auto-updates when content changes. Enables plugin-driven views (dependency trees, impact analysis, knowledge provenance) without manual reverse links.
 status: captured
-pillars: [PILLAR-001, PILLAR-002]
-description: >
-  Build a navigable knowledge graph from artifact cross-references that
-  auto-updates when content changes. Enables plugin-driven views (dependency
-  trees, impact analysis, knowledge provenance) without manual reverse links.
 created: 2026-03-07
 updated: 2026-03-07
+pillars:
+  - PILLAR-001
+  - PILLAR-002
 research-needed:
   - Graph data model for artifact relationships (references, promotions, supersessions)
   - Incremental update strategy when a single artifact changes
   - Plugin API for consuming the graph (query interface, event hooks)
   - Visualization options (force-directed, hierarchical, timeline)
 promoted-to: null
----
-
-## Concept
+---## Concept
 
 Artifacts already reference each other via structured fields (`research-refs`, `milestone`, `epic`, `depends-on`, `promoted-to`, `supersedes`, etc.). Today these are one-directional — the consumer points at the source, but the source doesn't know who references it.
 

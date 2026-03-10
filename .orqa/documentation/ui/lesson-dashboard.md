@@ -1,7 +1,6 @@
 ---
 title: "Lesson Dashboard UI Spec"
 description: "UI specification for the lesson dashboard that visualizes implementation lessons and promotion status."
-tags: []
 created: 2026-03-05
 updated: 2026-03-05
 ---

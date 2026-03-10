@@ -1,7 +1,6 @@
 ---
 title: "Coding Standards"
 description: "Coding standards for Rust and TypeScript/Svelte covering formatting, linting, error handling, and component patterns."
-tags: []
 created: 2026-03-02
 updated: 2026-03-08
 ---

@@ -9,7 +9,6 @@ description: |
   development-specific agent skills to the base OrqaStudio setup.
   Use when: The project being set up is a software development project.
 version: 1.0.0
-tags: [setup, project-type, software, development]
 user-invocable: true
 ---
 

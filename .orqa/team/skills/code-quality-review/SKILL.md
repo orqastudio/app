@@ -10,7 +10,6 @@ description: |
   Use when: Reviewing code for quality, running compliance checks, or producing
   structured review verdicts.
 version: 1.0.0
-tags: [review, quality, linting, compliance, standards]
 user-invocable: true
 ---
 

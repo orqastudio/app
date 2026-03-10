@@ -1,16 +1,20 @@
 ---
 id: EPIC-034
 title: Native Search Engine
+description: "Implement native code search engine using DuckDB for storage, ONNX Runtime for embeddings, and DirectML for hardware acceleration. Three search modes: regex, semantic, and code_research."
 status: done
 priority: P1
-milestone: MS-001
-pillars: [PILLAR-001]
-description: "Implement native code search engine using DuckDB for storage, ONNX Runtime for embeddings, and DirectML for hardware acceleration. Three search modes: regex, semantic, and code_research."
 created: 2026-03-04
 updated: 2026-03-09
-research-refs: [search-engine-implementation, mvp/persistence]
+milestone: MS-001
+pillars:
+  - PILLAR-001
+research-refs:
+  - search-engine-implementation
+  - mvp/persistence
 docs-required: []
-docs-produced: [.orqa/documentation/architecture/search-engine.md]
+docs-produced:
+  - .orqa/documentation/architecture/search-engine.md
 scoring:
   user-value: 5
   pillar-alignment: 5
@@ -19,7 +23,6 @@ scoring:
   risk: 3
   score: 22
 ---
-
 ## Implementation Design
 
 ### Architecture

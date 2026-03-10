@@ -1,22 +1,19 @@
 ---
 id: IDEA-003
-title: "Entry Modes & Directed Onboarding"
+title: Entry Modes & Directed Onboarding
+description: |
+  AI-assisted onboarding flows beyond chat guidance, with each mode supporting new projects and existing work adaptation.
 status: promoted
-pillars:
-  - PILLAR-001
-description: >
-  AI-assisted onboarding flows beyond chat guidance, with each mode
-  supporting new projects and existing work adaptation.
 created: 2026-03-07
 updated: 2026-03-07
+pillars:
+  - PILLAR-001
 research-needed:
   - UX research for each entry mode flow
   - Domain-agnostic template design
   - Mode detection accuracy testing
 promoted-to: EPIC-035
----
-
-## Candidate Items
+---## Candidate Items
 
 - Problem mode — guided diagnosis flow with root cause mapping
 - Idea mode — validation flow with feasibility exploration

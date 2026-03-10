@@ -1,16 +1,13 @@
 ---
 id: RULE-020
-slug: no-stubs
-layer: canon
-status: active
-scope: system
 title: No Stubs or Placeholders
 description: No hardcoded fake data, TODO functions, or scaffolded implementations in production code.
+status: active
 created: 2026-03-07
 updated: 2026-03-07
+layer: canon
+scope: system
 ---
-
-
 ## What Counts as a Stub
 
 - Hardcoded return values pretending to be real data (e.g., `status: "connected"`, `latency: 42`)

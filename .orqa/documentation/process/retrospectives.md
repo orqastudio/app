@@ -1,7 +1,6 @@
 ---
 title: "Process Retrospectives"
 description: "Log of process retrospectives capturing what went well, friction points, and improvement actions."
-tags: []
 created: 2026-03-02
 updated: 2026-03-08
 ---

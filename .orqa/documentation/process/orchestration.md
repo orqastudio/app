@@ -1,7 +1,6 @@
 ---
 title: "Orchestration"
 description: "How the orchestrator coordinates work across specialized agents using delegation and verification."
-tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---

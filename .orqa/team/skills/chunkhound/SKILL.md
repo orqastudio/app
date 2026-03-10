@@ -9,7 +9,6 @@ description: |
   Use when: Searching a codebase before creating new code, verifying endpoints exist,
   understanding how a system works, finding all callers before refactoring.
 version: 1.0.0
-tags: [code-search, semantic-search, codebase, architecture, tools]
 user-invocable: true
 ---
 

@@ -9,7 +9,6 @@ description: |
   Use when: Creating or modifying Svelte stores, wiring stores to components,
   managing loading/error/empty states, or debugging reactivity issues.
 version: 1.0.0
-tags: [orqa, svelte5, runes, stores, state-management, reactivity]
 user-invocable: true
 ---
 

@@ -1,22 +1,19 @@
 ---
 id: IDEA-006
-title: "Cross-Project Intelligence"
+title: Cross-Project Intelligence
+description: |
+  Enable PILLAR-002 that transfers between projects through shared templates, cross-project patterns, and accumulated insights.
 status: captured
-pillars:
-  - PILLAR-002
-description: >
-  Enable PILLAR-002 that transfers between projects through shared
-  templates, cross-project patterns, and accumulated insights.
 created: 2026-03-07
 updated: 2026-03-07
+pillars:
+  - PILLAR-002
 research-needed:
   - Cross-project data model
   - Privacy and data isolation concerns
   - Template format design
 promoted-to: null
----
-
-## Candidate Items
+---## Candidate Items
 
 - Project templates — pre-configured governance for common project types
 - Cross-project pattern detection — recurring lessons suggest universal rules

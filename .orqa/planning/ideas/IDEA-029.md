@@ -1,15 +1,14 @@
 ---
 id: IDEA-029
-title: "Git-Based Artifact Change Tracking"
+title: Git-Based Artifact Change Tracking
+description: |
+  Use git as the change tracking layer for all governance artifacts. Git is initialised as part of project setup (not optional). Remote origins are optional for multi-user/multi-device portability. The UI provides a focused artifact history viewer — not a git client.
 status: captured
-pillars: [PILLAR-001, PILLAR-002]
-description: >
-  Use git as the change tracking layer for all governance artifacts. Git is
-  initialised as part of project setup (not optional). Remote origins are
-  optional for multi-user/multi-device portability. The UI provides a focused
-  artifact history viewer — not a git client.
 created: 2026-03-09
 updated: 2026-03-09
+pillars:
+  - PILLAR-001
+  - PILLAR-002
 research-needed:
   - Git init as part of project setup — UX for existing vs new repos
   - Artifact history viewer — commit log filtered to .orqa/ files
@@ -18,9 +17,7 @@ research-needed:
   - Auto-commit strategy — when should the app commit artifact changes?
   - Remote origin discovery and optional sync UI
 promoted-to: null
----
-
-## Design Principles
+---## Design Principles
 
 ### Git is local infrastructure, not an integration
 

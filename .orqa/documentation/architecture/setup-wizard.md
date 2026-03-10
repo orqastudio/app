@@ -1,7 +1,6 @@
 ---
 title: "First-Run Setup Wizard"
 description: "Design of the first-run setup wizard that guides users through initial project configuration."
-tags: []
 created: 2026-03-04
 updated: 2026-03-04
 ---

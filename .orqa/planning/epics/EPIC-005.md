@@ -1,16 +1,22 @@
 ---
 id: EPIC-005
 title: Artifact Browser Enhancements
+description: Make all .orqa/ artifacts browsable, restructure navigation into groups, establish .orqa/ as the single source of truth with platform adapters, and enable cross-artifact navigation.
 status: draft
 priority: P1
-milestone: MS-001
-pillars: [PILLAR-001]
-description: Make all .orqa/ artifacts browsable, restructure navigation into groups, establish .orqa/ as the single source of truth with platform adapters, and enable cross-artifact navigation.
 created: 2026-03-07
 updated: 2026-03-08
-research-refs: [epic-005-artifact-browser]
-docs-required: [docs/product/artifact-framework.md, .orqa/plans/epic-005-artifact-browser.md]
-docs-produced: [docs/architecture/ipc-commands.md (new artifact scanning commands), docs/ui/navigation-groups.md (grouped navigation wireframes)]
+milestone: MS-001
+pillars:
+  - PILLAR-001
+research-refs:
+  - epic-005-artifact-browser
+docs-required:
+  - docs/product/artifact-framework.md
+  - .orqa/plans/epic-005-artifact-browser.md
+docs-produced:
+  - docs/architecture/ipc-commands.md (new artifact scanning commands)
+  - docs/ui/navigation-groups.md (grouped navigation wireframes)
 scoring:
   pillar: 5
   impact: 5
@@ -18,7 +24,6 @@ scoring:
   effort: 4
   score: 8.8
 ---
-
 ## Why P1
 
 This is the **underlying UX model**. Markdown documents visible in the UI is the foundational layer. Without grouped navigation, adding artifact types creates bloat. Without platform portability, governance is locked to Claude CLI's `.claude/` convention. Without cross-linking, the traceability web exists in frontmatter but is invisible.

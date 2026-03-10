@@ -1,17 +1,26 @@
 ---
 id: TASK-041
 title: Memory leak investigation and fix
-status: done
-epic: EPIC-043
 description: Identifies and resolves memory growth during extended artifact browsing sessions by cleaning up orphaned DOM event listeners and adding an eviction policy to the viewer cache.
+status: done
 created: 2026-03-09
 updated: 2026-03-09
+epic: EPIC-043
 assignee: debugger
-skills: [code-search, orqa-composability]
-scope: [ui/lib/components/content/MarkdownRenderer.svelte, ui/lib/stores/artifact.svelte.ts, ui/lib/stores/navigation.svelte.ts]
-acceptance: [MarkdownRenderer cleans up event listeners on content change and unmount, Artifact viewer cache has an eviction policy (e.g., LRU with max size), No observable memory growth after navigating 50+ artifacts in sequence, No crash or freeze during extended artifact browsing sessions]
+skills:
+  - code-search
+  - orqa-composability
+scope:
+  - ui/lib/components/content/MarkdownRenderer.svelte
+  - ui/lib/stores/artifact.svelte.ts
+  - ui/lib/stores/navigation.svelte.ts
+acceptance:
+  - MarkdownRenderer cleans up event listeners on content change and unmount
+  - Artifact viewer cache has an eviction policy (e.g.
+  - LRU with max size)
+  - No observable memory growth after navigating 50+ artifacts in sequence
+  - No crash or freeze during extended artifact browsing sessions
 ---
-
 ## Findings Addressed
 
 - **F3**: Crash/freeze after navigating many artifacts (possible memory leak)

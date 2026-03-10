@@ -3,46 +3,20 @@
   "title": "Pillar",
   "description": "Guiding principle that features are evaluated against",
   "type": "object",
-  "required": [
-    "id",
-    "title",
-    "status",
-    "description",
-    "test-questions",
-    "created",
-    "updated"
-  ],
+  "required": ["id", "title", "description", "status", "created", "updated", "gate"],
   "additionalProperties": false,
   "properties": {
-    "id": {
-      "type": "string",
-      "pattern": "^PILLAR-\\d+$"
-    },
-    "title": {
-      "type": "string"
-    },
-    "status": {
-      "enum": [
-        "active",
-        "inactive"
+    "id": { "type": "string", "pattern": "^PILLAR-\\d+$" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "status": { "enum": ["active", "inactive"] },
+    "created": { "type": "string", "format": "date" },
+    "updated": { "type": "string", "format": "date" },
+    "gate": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
       ]
-    },
-    "description": {
-      "type": "string"
-    },
-    "test-questions": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "created": {
-      "type": "string",
-      "format": "date"
-    },
-    "updated": {
-      "type": "string",
-      "format": "date"
     }
   }
 }

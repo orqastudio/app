@@ -3,51 +3,16 @@
   "title": "Lesson",
   "description": "Learning capture from implementation",
   "type": "object",
-  "required": [
-    "id",
-    "title",
-    "status",
-    "description",
-    "created",
-    "updated",
-    "recurrence"
-  ],
+  "required": ["id", "title", "description", "status", "created", "updated", "recurrence"],
   "additionalProperties": false,
   "properties": {
-    "id": {
-      "type": "string",
-      "pattern": "^IMPL-\\d+$"
-    },
-    "title": {
-      "type": "string"
-    },
-    "status": {
-      "enum": [
-        "active",
-        "recurring",
-        "promoted"
-      ]
-    },
-    "description": {
-      "type": "string"
-    },
-    "created": {
-      "type": "string",
-      "format": "date"
-    },
-    "updated": {
-      "type": "string",
-      "format": "date"
-    },
-    "recurrence": {
-      "type": "integer",
-      "minimum": 0
-    },
-    "promoted_to": {
-      "type": [
-        "string",
-        "null"
-      ]
-    }
+    "id": { "type": "string", "pattern": "^IMPL-\\d+$" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "status": { "enum": ["active", "recurring", "promoted"] },
+    "created": { "type": "string", "format": "date" },
+    "updated": { "type": "string", "format": "date" },
+    "recurrence": { "type": "integer", "minimum": 0 },
+    "promoted_to": { "type": ["string", "null"] }
   }
 }

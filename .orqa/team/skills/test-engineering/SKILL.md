@@ -10,7 +10,6 @@ description: |
   Use when: Writing tests, setting up test infrastructure, defining mock
   boundaries, or enforcing test coverage requirements.
 version: 1.0.0
-tags: [testing, test-engineering, coverage, mocking, tdd]
 user-invocable: true
 ---
 

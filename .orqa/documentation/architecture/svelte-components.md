@@ -1,7 +1,6 @@
 ---
 title: "Svelte Component Tree"
 description: "Component tree structure and hierarchy of the Svelte 5 frontend application."
-tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---

@@ -1,7 +1,6 @@
 ---
 title: "Wireframe: Dashboard Views"
 description: "Wireframe specification for dashboard views including metrics, status, and activity summaries."
-tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---

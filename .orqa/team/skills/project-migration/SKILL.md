@@ -10,7 +10,6 @@ description: |
   Use when: Setting up OrqaStudio on a project that already uses other AI tools,
   or syncing governance between OrqaStudio and external tools.
 version: 1.0.0
-tags: [setup, migration, claude-code, cursor, copilot, governance-hub]
 user-invocable: true
 ---
 

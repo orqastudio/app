@@ -1,15 +1,13 @@
 ---
 id: IMPL-002
-title: "Kill existing dev server processes before starting new ones"
+title: Kill existing dev server processes before starting new ones
+description: |
+  Check for and kill existing dev server processes on port 1420 before starting a new instance to avoid port-in-use errors.
 status: active
-description: >
-  Check for and kill existing dev server processes on port 1420 before
-  starting a new instance to avoid port-in-use errors.
 created: 2026-03-07
 updated: 2026-03-07
 recurrence: 1
 ---
-
 ## Pattern
 Starting `cargo tauri dev` while a previous instance is still running (or its port is held by a lingering process) causes a `Port 1420 is already in use` error. This happens when the previous window was closed but the process wasn't fully terminated, or when restarting after code changes.
 

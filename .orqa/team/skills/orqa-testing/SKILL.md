@@ -9,7 +9,6 @@ description: |
   Use when: Writing tests, fixing test failures, setting up test infrastructure,
   or verifying test coverage.
 version: 1.0.0
-tags: [orqa, testing, vitest, cargo-test, playwright, tdd, mocking]
 user-invocable: true
 ---
 

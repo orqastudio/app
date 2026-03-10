@@ -1,16 +1,13 @@
 ---
 id: RULE-025
-slug: root-cleanliness
-layer: canon
-status: active
-scope: system
 title: Root Directory Cleanliness
 description: The project root must stay lean. Every file in root must have a justification.
+status: active
 created: 2026-03-07
 updated: 2026-03-07
+layer: canon
+scope: system
 ---
-
-
 The project root must stay lean. Every file in root must have a justification.
 
 ## What Belongs in Root

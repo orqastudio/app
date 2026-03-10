@@ -1,16 +1,22 @@
 ---
 id: EPIC-041
 title: Vision & Brand Identity
+description: Evolve OrqaStudio's vision from software development tool to domain-agnostic PILLAR-001 engine. Rename pillars, broaden personas, establish licensing, and align all documentation with canonical strategic vision.
 status: done
 priority: P1
-milestone: MS-001
-pillars: [PILLAR-001]
-description: Evolve OrqaStudio's vision from software development tool to domain-agnostic PILLAR-001 engine. Rename pillars, broaden personas, establish licensing, and align all documentation with canonical strategic vision.
 created: 2026-03-07
 updated: 2026-03-09
-research-refs: [rebrand-forge-to-orqa, mvp/branding]
+milestone: MS-001
+pillars:
+  - PILLAR-001
+research-refs:
+  - rebrand-forge-to-orqa
+  - mvp/branding
 docs-required: []
-docs-produced: [.orqa/documentation/product/vision.md, .orqa/documentation/product/governance.md, .orqa/governance/decisions/AD-027.md]
+docs-produced:
+  - .orqa/documentation/product/vision.md
+  - .orqa/documentation/product/governance.md
+  - .orqa/governance/decisions/AD-027.md
 scoring:
   user-value: 4
   pillar-alignment: 5
@@ -19,7 +25,6 @@ scoring:
   risk: 1
   score: 16
 ---
-
 ## Implementation Design
 
 ### Vision Evolution

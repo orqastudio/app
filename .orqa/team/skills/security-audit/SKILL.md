@@ -10,7 +10,6 @@ description: |
   Use when: Auditing application security, reviewing permissions, checking for
   credential exposure, validating input handling, or assessing dependency risk.
 version: 1.0.0
-tags: [security, audit, permissions, secrets, validation]
 user-invocable: true
 ---
 

@@ -9,7 +9,6 @@ description: |
   Use when: Adding or modifying Tauri commands, wiring frontend to backend,
   implementing streaming features, or debugging IPC boundary issues.
 version: 1.0.0
-tags: [orqa, tauri, ipc, invoke, channel, streaming, commands]
 user-invocable: true
 ---
 

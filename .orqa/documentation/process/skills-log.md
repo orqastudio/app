@@ -1,7 +1,6 @@
 ---
 title: "Skills Inventory"
 description: "Inventory of loaded skills with version tracking and change history."
-tags: []
 created: 2026-03-02
 updated: 2026-03-08
 ---

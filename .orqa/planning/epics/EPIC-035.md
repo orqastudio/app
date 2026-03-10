@@ -1,14 +1,17 @@
 ---
 id: EPIC-035
 title: Native Tool UX & First-Run Setup
+description: "Two related UX improvements: (1) friendly tool call display with names, icons, and grouping; (2) first-run setup wizard for project creation and AI provider configuration."
 status: done
 priority: P1
-milestone: MS-001
-pillars: [PILLAR-001]
-description: "Two related UX improvements: (1) friendly tool call display with names, icons, and grouping; (2) first-run setup wizard for project creation and AI provider configuration."
 created: 2026-03-04
 updated: 2026-03-09
-research-refs: [native-tool-ux, first-run-setup-wizard]
+milestone: MS-001
+pillars:
+  - PILLAR-001
+research-refs:
+  - native-tool-ux
+  - first-run-setup-wizard
 docs-required: []
 docs-produced: []
 scoring:
@@ -19,7 +22,6 @@ scoring:
   risk: 2
   score: 16
 ---
-
 ## Implementation Design
 
 ### Native Tool UX

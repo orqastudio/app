@@ -1,7 +1,6 @@
 ---
 title: "User Personas"
 description: "User personas describing target users, their goals, pain points, and usage patterns."
-tags: []
 created: 2026-03-02
 updated: 2026-03-08
 ---

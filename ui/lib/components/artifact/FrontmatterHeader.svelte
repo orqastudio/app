@@ -1,5 +1,6 @@
 <script lang="ts">
 	import ArtifactLink from "./ArtifactLink.svelte";
+	import GateQuestions from "./GateQuestions.svelte";
 	import StatusIndicator from "$lib/components/shared/StatusIndicator.svelte";
 
 	let {
@@ -69,18 +70,14 @@
 	 * These are skipped in the dynamic body loop.
 	 */
 	const SKIP_FIELDS = new Set([
-		"id", "title", "description", "status", "priority", "tags",
-		"enforcement", "scoring", "category", "phase", "roadmap-refs", "type",
+		"id", "title", "description", "status", "priority", "scoring",
 	]);
 
 	const DATE_FIELDS = new Set(["created", "updated", "deadline"]);
 
-	/**
-	 * FILE_LIST_FIELDS: path-like values rendered as monospace chips.
-	 * scope and research-refs removed from here — scope is generic array, research-refs are links.
-	 */
+	/** FILE_LIST_FIELDS: path-like values rendered as monospace chips. */
 	const FILE_LIST_FIELDS = new Set([
-		"docs-required", "docs-produced", "plan",
+		"docs-required", "docs-produced",
 	]);
 
 	/**
@@ -88,29 +85,26 @@
 	 * research-refs added here (RES-NNN IDs).
 	 */
 	const LINK_FIELDS = new Set([
-		"milestone", "epic", "promoted-to", "promoted_to",
+		"milestone", "epic", "pillars", "promoted-to", "promoted_to",
 		"surpassed-by", "supersedes", "superseded-by",
 		"depends-on", "blocks", "research-refs",
 	]);
 
 	/**
 	 * CHIP_FIELDS: rendered as styled chips but NOT clickable links.
-	 * e.g. pillar names, assignee, skills.
 	 */
 	const CHIP_FIELDS = new Set([
-		"pillar", "pillars", "assignee", "skills",
+		"assignee", "skills",
 	]);
 
 	/** Classify a field key into its render type. */
-	type FieldType = "date" | "file-list" | "link" | "chip" | "gate" | "progress" | "generic";
+	type FieldType = "date" | "file-list" | "link" | "chip" | "generic";
 
 	function fieldType(key: string): FieldType {
 		if (DATE_FIELDS.has(key)) return "date";
 		if (FILE_LIST_FIELDS.has(key)) return "file-list";
 		if (LINK_FIELDS.has(key)) return "link";
 		if (CHIP_FIELDS.has(key)) return "chip";
-		if (key === "gate") return "gate";
-		if (key === "epic-count" || key === "completed-epics") return "progress";
 		return "generic";
 	}
 
@@ -127,42 +121,25 @@
 	const priority = $derived(
 		isPresent(metadata["priority"]) ? String(metadata["priority"]) : undefined,
 	);
-	const tags = $derived(metadata["tags"] as string | string[] | undefined);
-	const tagList = $derived(
-		tags === undefined || tags === null || tags === ""
-			? []
-			: Array.isArray(tags)
-				? tags.filter(Boolean)
-				: String(tags).split(",").map((t) => t.trim()).filter(Boolean),
-	);
-
-	/**
-	 * Progress fields — rendered together as "X / Y epics".
-	 * Tracked separately so the progress row can combine them.
-	 */
-	const epicCount = $derived(metadata["epic-count"] as string | undefined);
-	const completedEpics = $derived(metadata["completed-epics"] as string | undefined);
-	const hasProgress = $derived(isPresent(epicCount) || isPresent(completedEpics));
-
-	/**
-	 * Gate question — extracted and rendered last (after tags),
+/**
+	 * Gate question — extracted and rendered last,
 	 * separated from the main body entries loop.
 	 */
-	const gateValue = $derived(
-		isPresent(metadata["gate"]) ? String(metadata["gate"]) : undefined,
+	/** Gate — supports both a single string (milestones) and an array (pillars). */
+	const gateQuestions = $derived(
+		isPresent(metadata["gate"]) ? asArray(metadata["gate"]).filter(Boolean) : [],
 	);
 
 	/**
 	 * The ordered body entries from the metadata object, skipping:
 	 * - Fixed header fields (SKIP_FIELDS)
 	 * - Progress fields (rendered as a combined row)
-	 * - Gate field (rendered separately after tags)
+	 * - Gate field (rendered separately at the end)
 	 * - Entries without a present value
 	 */
 	const bodyEntries = $derived(
 		Object.entries(metadata).filter(([key, value]) => {
 			if (SKIP_FIELDS.has(key)) return false;
-			if (key === "epic-count" || key === "completed-epics") return false;
 			if (key === "gate") return false;
 			if (!isPresent(value)) return false;
 			return true;
@@ -184,37 +161,29 @@
 
 <!-- Metadata card -->
 <div class="mb-4 space-y-3 rounded-lg border border-border bg-muted/30 px-4 py-3">
-	<!-- ID + Status/Priority row — always first -->
-	<div class="flex items-start justify-between gap-3">
-		<div class="space-y-0.5">
-			{#if id}
-				<p class="font-mono text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-					{artifactType} · {id}
-				</p>
-			{/if}
-		</div>
+	<!-- ID + Status/Priority row — only rendered when at least one value is present -->
+	{#if id || (status && isPresent(status)) || priority}
+		<div class="flex items-start justify-between gap-3">
+			<div class="space-y-0.5">
+				{#if id}
+					<p class="font-mono text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+						{artifactType} · {id}
+					</p>
+				{/if}
+			</div>
 
-		<div class="flex shrink-0 items-center gap-1.5">
-			{#if status && isPresent(status)}
-				<StatusIndicator {status} mode="badge" />
-			{/if}
-			{#if priority}
-				<span
-					class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium {priorityClass(priority)}"
-				>
-					{priorityLabel(priority)}
-				</span>
-			{/if}
-		</div>
-	</div>
-
-	<!-- Progress (epic-count + completed-epics combined) -->
-	{#if hasProgress}
-		<div class="flex items-center gap-2">
-			<span class="min-w-[7rem] text-xs font-medium text-muted-foreground">Progress</span>
-			<span class="text-xs text-foreground">
-				{completedEpics ?? "0"} / {epicCount ?? "?"} epics
-			</span>
+			<div class="flex shrink-0 items-center gap-1.5">
+				{#if status && isPresent(status)}
+					<StatusIndicator {status} mode="badge" />
+				{/if}
+				{#if priority}
+					<span
+						class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium {priorityClass(priority)}"
+					>
+						{priorityLabel(priority)}
+					</span>
+				{/if}
+			</div>
 		</div>
 	{/if}
 
@@ -309,27 +278,6 @@
 		{/if}
 	{/each}
 
-	<!-- Tags — after body entries, before gate -->
-	{#if tagList.length > 0}
-		<div class="flex flex-wrap items-center gap-2">
-			<span class="min-w-[7rem] text-xs font-medium text-muted-foreground">Tags</span>
-			<div class="flex flex-wrap gap-1">
-				{#each tagList as tag, i (i)}
-					<span
-						class="rounded-full border border-border bg-secondary px-2 py-0.5 text-[11px] text-secondary-foreground"
-					>
-						{tag}
-					</span>
-				{/each}
-			</div>
-		</div>
-	{/if}
-
-	<!-- Gate question — always last -->
-	{#if gateValue}
-		<div class="rounded border border-border bg-muted/40 px-3 py-2">
-			<p class="text-xs font-medium text-muted-foreground">Gate question</p>
-			<p class="mt-0.5 text-sm italic text-foreground">"{gateValue}"</p>
-		</div>
-	{/if}
+	<!-- Gate question(s) — always last -->
+	<GateQuestions questions={gateQuestions} />
 </div>

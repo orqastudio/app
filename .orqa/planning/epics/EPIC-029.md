@@ -1,17 +1,25 @@
 ---
 id: EPIC-029
 title: Technical Design
+description: "The complete technical blueprint: database schema, IPC commands, Rust modules, streaming pipeline, tool definitions, and error taxonomy."
 status: done
 priority: P1
-milestone: MS-000
-pillars: [PILLAR-001]
-description: "The complete technical blueprint: database schema, IPC commands, Rust modules, streaming pipeline, tool definitions, and error taxonomy."
 created: 2026-03-02
 updated: 2026-03-07
-docs-required: [docs/architecture/decisions.md, docs/ui/]
-docs-produced: [docs/architecture/]
-depends-on: [EPIC-025, EPIC-026, EPIC-028]
-blocks: [EPIC-030]
+milestone: MS-000
+pillars:
+  - PILLAR-001
+depends-on:
+  - EPIC-025
+  - EPIC-026
+  - EPIC-028
+blocks:
+  - EPIC-030
+docs-required:
+  - docs/architecture/decisions.md
+  - docs/ui/
+docs-produced:
+  - docs/architecture/
 scoring:
   pillar: 3
   impact: 5
@@ -19,7 +27,6 @@ scoring:
   effort: 1
   score: 28
 ---
-
 ## Why P1
 
 Implementation cannot begin without knowing the data model, the IPC surface, and the module boundaries. This phase converts the architecture decisions and UX design into implementable specifications.

@@ -1,7 +1,6 @@
 ---
 title: "System vs Project Artifacts"
 description: "Distinction between system-level and project-level artifacts and their management boundaries."
-tags: []
 created: 2026-03-05
 updated: 2026-03-08
 ---

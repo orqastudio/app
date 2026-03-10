@@ -1,22 +1,20 @@
 ---
 id: IDEA-028
-title: "File-first data alignment audit"
+title: File-first data alignment audit
+description: |
+  Audit all persistent data to ensure clear file-vs-database justification. Files are the source of truth for governance artifacts; the database is a derived index rebuilt on scan. Verify no governance data is database-only.
 status: captured
-pillars: [PILLAR-001, PILLAR-002]
-description: >
-  Audit all persistent data to ensure clear file-vs-database justification.
-  Files are the source of truth for governance artifacts; the database is a
-  derived index rebuilt on scan. Verify no governance data is database-only.
 created: 2026-03-09
 updated: 2026-03-09
+pillars:
+  - PILLAR-001
+  - PILLAR-002
 research-needed:
   - Which database tables duplicate file-based data?
   - Can the artifacts table be treated as a pure scan cache?
   - Should governance_analyses be exportable as artifacts?
 promoted-to: null
----
-
-## Context
+---## Context
 
 OrqaStudio stores governance artifacts as markdown files in `.orqa/` and also
 indexes them in SQLite (`artifacts` table). The file is the source of truth;

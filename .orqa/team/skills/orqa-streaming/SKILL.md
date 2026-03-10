@@ -9,7 +9,6 @@ description: |
   Use when: Modifying the streaming pipeline, adding new event types, debugging streaming issues,
   or working with the sidecar.
 version: 1.0.0
-tags: [orqa, streaming, sidecar, ndjson, channel, agent-sdk, claude]
 user-invocable: true
 ---
 

@@ -1,7 +1,6 @@
 ---
 title: "Wireframe: Artifact Browser"
 description: "Wireframe specification for the artifact browser view showing governance artifacts in a navigable list."
-tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---

@@ -10,7 +10,6 @@ description: |
   Use when: Creating new domain services, refactoring backend logic out of commands,
   adding business logic to the Rust backend, or reviewing service architecture.
 version: 1.0.0
-tags: [orqa, rust, domain, services, architecture, backend, error-handling]
 user-invocable: true
 ---
 

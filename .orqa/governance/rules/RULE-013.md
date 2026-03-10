@@ -1,16 +1,13 @@
 ---
 id: RULE-013
-slug: git-workflow
-layer: canon
-status: active
-scope: system
 title: Git Workflow
 description: Worktree-based workflow with mandatory cleanup, stash policy, and data loss prevention rules.
+status: active
 created: 2026-03-07
 updated: 2026-03-07
+layer: canon
+scope: system
 ---
-
-
 **Source of Truth:** `.orqa/documentation/development/agentic-workflow.md`
 
 ## Worktree Workflow (MANDATORY)

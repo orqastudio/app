@@ -1,16 +1,22 @@
 ---
 id: TASK-001
 title: Emit SystemPromptSent event from stream_commands.rs
-status: done
-epic: EPIC-001
 description: In stream_send_message(), emit a SystemPromptSent event via on_event channel after resolve_system_prompt() and before sidecar.send().
+status: done
 created: 2026-03-07
 updated: 2026-03-07
+epic: EPIC-001
 assignee: backend-engineer
-scope: [src-tauri/src/commands/stream_commands.rs]
-acceptance: [SystemPromptSent event is emitted via on_event channel before sidecar request is sent, Event carries governance_prompt (full text) and total_chars (correct length), custom_prompt is None (EPIC-002 adds this), No event emitted when system prompt is None (no project loaded), Emission failure does not prevent message from being sent, No unwrap() or expect() in the new code]
+scope:
+  - src-tauri/src/commands/stream_commands.rs
+acceptance:
+  - SystemPromptSent event is emitted via on_event channel before sidecar request is sent
+  - Event carries governance_prompt (full text) and total_chars (correct length)
+  - custom_prompt is None (EPIC-002 adds this)
+  - No event emitted when system prompt is None (no project loaded)
+  - Emission failure does not prevent message from being sent
+  - No unwrap() or expect() in the new code
 ---
-
 ## What
 
 In `stream_send_message()` in `src-tauri/src/commands/stream_commands.rs`, after `resolve_system_prompt()` returns `Some(prompt)` and before `state.sidecar.send(&request)`, emit a `SystemPromptSent` event.

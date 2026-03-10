@@ -1,16 +1,13 @@
 ---
 id: RULE-009
-slug: dogfood-mode
-layer: project
-status: active
-scope: system
 title: Dogfood Mode
 description: "Project-level rule for when an app is editing itself. Provides agent context awareness, operational caution, and system prompt injection. Active when dogfood: true in project.json."
+status: active
 created: 2026-03-07
 updated: 2026-03-07
----
-
-# Dogfood Mode (CONDITIONAL — only when `dogfood: true`)
+layer: project
+scope: system
+---# Dogfood Mode (CONDITIONAL — only when `dogfood: true`)
 
 This rule applies ONLY when `.orqa/project.json` contains `"dogfood": true`. For non-dogfood projects, ignore this rule entirely. This is a **project-level** rule, not a universal rule.
 

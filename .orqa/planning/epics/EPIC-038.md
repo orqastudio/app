@@ -1,14 +1,16 @@
 ---
 id: EPIC-038
 title: UX Polish Sprint
+description: "UX improvements identified during early dogfooding: streaming fix, output truncation, tool call grouping, auto-naming sessions, custom titlebar."
 status: done
 priority: P2
-milestone: MS-001
-pillars: [PILLAR-001]
-description: "UX improvements identified during early dogfooding: streaming fix, output truncation, tool call grouping, auto-naming sessions, custom titlebar."
 created: 2026-03-06
 updated: 2026-03-09
-research-refs: [ux-polish-sprint]
+milestone: MS-001
+pillars:
+  - PILLAR-001
+research-refs:
+  - ux-polish-sprint
 docs-required: []
 docs-produced: []
 scoring:
@@ -19,7 +21,6 @@ scoring:
   risk: 2
   score: 15
 ---
-
 ## Implementation Design
 
 ### Fixes

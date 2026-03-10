@@ -1,7 +1,6 @@
 ---
 title: "Enforcement Engine Architecture"
 description: "Architecture of the enforcement engine that evaluates agent tool calls against behavioral rules in real time."
-tags: []
 created: 2026-03-05
 updated: 2026-03-05
 ---

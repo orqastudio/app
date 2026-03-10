@@ -1,17 +1,23 @@
 ---
 id: EPIC-021
 title: Idea & Feedback Capture
+description: Build idea quick-capture from conversation and anywhere, idea inbox, promotion workflows, and duplicate detection.
 status: draft
 priority: P2
-milestone: MS-002
-pillars: [PILLAR-001, PILLAR-002]
-description: Build idea quick-capture from conversation and anywhere, idea inbox, promotion workflows, and duplicate detection.
 created: 2026-03-07
 updated: 2026-03-07
-docs-required: [docs/product/artifact-framework.md (idea schema), .orqa/plans/ (plan required before implementation)]
-docs-produced: [.orqa/plans/ (idea capture plan)]
-depends-on: [EPIC-005]
+milestone: MS-002
+pillars:
+  - PILLAR-001
+  - PILLAR-002
+depends-on:
+  - EPIC-005
 blocks: []
+docs-required:
+  - docs/product/artifact-framework.md (idea schema)
+  - .orqa/plans/ (plan required before implementation)
+docs-produced:
+  - .orqa/plans/ (idea capture plan)
 scoring:
   pillar: 5
   impact: 4
@@ -19,7 +25,6 @@ scoring:
   effort: 3
   score: 8.7
 ---
-
 ## Tasks
 
 - [ ] Idea artifact type in `.orqa/ideas/` with frontmatter

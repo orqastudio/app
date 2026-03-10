@@ -1,22 +1,19 @@
 ---
 id: IDEA-011
-title: "Reporting & Stakeholder Access"
+title: Reporting & Stakeholder Access
+description: |
+  Make understanding accessible to non-users through executive dashboards, shareable links, and formatted report exports.
 status: captured
-pillars:
-  - PILLAR-001
-description: >
-  Make understanding accessible to non-users through executive
-  dashboards, shareable links, and formatted report exports.
 created: 2026-03-07
 updated: 2026-03-07
+pillars:
+  - PILLAR-001
 research-needed:
   - Report template design
   - Shareable link architecture (local app constraint)
   - Export format priorities
 promoted-to: null
----
-
-## Candidate Items
+---## Candidate Items
 
 - Executive dashboards — project health, progress, risk summaries
 - Shareable artifact links — read-only access

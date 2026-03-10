@@ -1,22 +1,17 @@
 ---
 id: IDEA-030
-title: "Documentation as Navigation Group"
+title: Documentation as Navigation Group
+description: |
+  Convert the documentation artifact type from a single tree type to a group with child types (Architecture, Product, Development, Process, UI, Wireframes). This gives dual-level navigation like other sections instead of a single collapsible tree.
 status: archived
-pillars:
-  - PILLAR-001
-description: >
-  Convert the documentation artifact type from a single tree type
-  to a group with child types (Architecture, Product, Development,
-  Process, UI, Wireframes). This gives dual-level navigation like
-  other sections instead of a single collapsible tree.
 created: 2026-03-07
 updated: 2026-03-07
+pillars:
+  - PILLAR-001
 research-needed:
   - Verify config-only change works without code changes
   - Assess whether doc categories become their own governance concern
----
-
-## Motivation
+---## Motivation
 
 The collapsible tree navigation for documentation is harder to use
 than the dual-level navigation (group + type) that other sections

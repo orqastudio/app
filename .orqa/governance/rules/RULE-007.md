@@ -1,16 +1,13 @@
 ---
 id: RULE-007
-slug: development-commands
-layer: project
-status: active
-scope: project
 title: Development Commands
 description: All development commands must be invoked via make targets. Raw cargo and npm commands are forbidden.
+status: active
 created: 2026-03-07
 updated: 2026-03-07
+layer: project
+scope: project
 ---
-
-
 All development commands MUST be invoked via `make` targets. Raw `cargo` and `npm run` commands are forbidden for tasks that have a `make` equivalent.
 
 ## Command Mapping

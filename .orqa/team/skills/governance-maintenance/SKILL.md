@@ -10,7 +10,6 @@ description: |
   Use when: Auditing governance artifacts, promoting lessons to rules, maintaining
   agent/skill/rule consistency, or reviewing the governance framework.
 version: 1.0.0
-tags: [governance, maintenance, audit, lessons, promotion]
 user-invocable: true
 ---
 

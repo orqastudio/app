@@ -10,7 +10,6 @@ description: |
   Use when: Cleaning up architectural debt, reorganizing modules, consolidating
   patterns, or performing any structural code change.
 version: 1.0.0
-tags: [refactoring, restructuring, cleanup, methodology]
 user-invocable: true
 ---
 

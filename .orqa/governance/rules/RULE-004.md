@@ -1,16 +1,13 @@
 ---
 id: RULE-004
-slug: artifact-lifecycle
-layer: canon
-status: active
-scope: project
 title: Artifact Lifecycle
 description: Enforces creation standards, status transitions, promotion gates, and documentation gates for all .orqa/ artifacts.
+status: active
 created: 2026-03-07
 updated: 2026-03-07
+layer: canon
+scope: project
 ---
-
-
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
 
 **Source of Truth:** `.orqa/documentation/product/artifact-framework.md`

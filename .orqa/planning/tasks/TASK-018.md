@@ -1,17 +1,27 @@
 ---
 id: TASK-018
 title: Product rebrand to Orqa Studio
-status: done
-epic: EPIC-036
 description: Full product rebrand from Forge to Orqa Studio across all code, configuration, documentation, agent definitions, and brand assets.
+status: done
 created: 2026-03-04
 updated: 2026-03-09
+epic: EPIC-036
 assignee: frontend-engineer
-skills: [svelte5-best-practices, tailwind-design-system]
-scope: [ui/, src-tauri/, docs/, .claude/agents/]
-acceptance: [Product renamed to Orqa Studio throughout, src/ renamed to ui/, .forge/ config removed, Brand assets replaced, All 16 agent definitions updated]
+skills:
+  - svelte5-best-practices
+  - tailwind-design-system
+scope:
+  - ui/
+  - src-tauri/
+  - docs/
+  - .claude/agents/
+acceptance:
+  - Product renamed to Orqa Studio throughout
+  - src/ renamed to ui/
+  - .forge/ config removed
+  - Brand assets replaced
+  - All 16 agent definitions updated
 ---
-
 ## What
 
 Full product rebrand from Forge to Orqa Studio across all code, configuration,

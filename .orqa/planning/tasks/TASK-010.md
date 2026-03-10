@@ -1,17 +1,24 @@
 ---
 id: TASK-010
 title: Add Skills Field to Task Schema
-status: done
-epic: EPIC-033
 description: "Add the skills field to the task frontmatter schema in both the tasks README and the artifact-framework documentation. This enables full traceability: plan → task → agent → skills → implementation."
+status: done
 created: 2026-03-08
 updated: 2026-03-08
+epic: EPIC-033
 assignee: documentation-writer
-skills: [chunkhound, orqa-governance]
-scope: [.orqa/planning/tasks/README.md, .orqa/documentation/product/artifact-framework.md]
-acceptance: [Task frontmatter schema includes skills field (string array), artifact-framework.md task schema updated with skills field, Field documented with purpose (traceability from plan to implementation), Example task shown with assignee + skills combination]
+skills:
+  - chunkhound
+  - orqa-governance
+scope:
+  - .orqa/planning/tasks/README.md
+  - .orqa/documentation/product/artifact-framework.md
+acceptance:
+  - Task frontmatter schema includes skills field (string array)
+  - artifact-framework.md task schema updated with skills field
+  - Field documented with purpose (traceability from plan to implementation)
+  - Example task shown with assignee + skills combination
 ---
-
 ## What
 
 The task YAML frontmatter should include:

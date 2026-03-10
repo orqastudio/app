@@ -10,7 +10,6 @@ description: |
   Use when: Verifying features work end-to-end, checking acceptance criteria,
   tracing data through system layers, or producing QA verdicts.
 version: 1.0.0
-tags: [qa, verification, testing, e2e, functional]
 user-invocable: true
 ---
 

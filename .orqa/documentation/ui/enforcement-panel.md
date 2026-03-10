@@ -1,7 +1,6 @@
 ---
 title: "Enforcement Panel UI Spec"
 description: "UI specification for the enforcement panel that displays rule violations and compliance status."
-tags: []
 created: 2026-03-05
 updated: 2026-03-05
 ---

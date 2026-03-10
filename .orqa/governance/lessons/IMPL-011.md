@@ -1,17 +1,14 @@
 ---
 id: IMPL-011
-title: "Investigate systemically before fixing individual issues"
+title: Investigate systemically before fixing individual issues
+description: |
+  Collect all findings first, group by systemic theme, investigate the architecture, then design solutions at the system level. One fix addressing six findings is better than six independent fixes.
 status: promoted
-description: >
-  Collect all findings first, group by systemic theme, investigate the
-  architecture, then design solutions at the system level. One fix
-  addressing six findings is better than six independent fixes.
 created: 2026-03-07
 updated: 2026-03-07
 recurrence: 1
 promoted_to: RULE-030
 ---
-
 ## What Happened
 
 During UAT Round 1 (EPIC-043), multiple issues were identified across artifact display, status UX, null value handling, breadcrumbs, and memory leaks. The instinct was to fix each finding immediately as reported.

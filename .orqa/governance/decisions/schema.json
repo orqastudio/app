@@ -3,59 +3,20 @@
   "title": "Decision",
   "description": "Architecture decision record",
   "type": "object",
-  "required": [
-    "id",
-    "title",
-    "status",
-    "description",
-    "created",
-    "updated"
-  ],
+  "required": ["id", "title", "description", "status", "created", "updated"],
   "additionalProperties": false,
   "properties": {
-    "id": {
-      "type": "string",
-      "pattern": "^AD-\\d+$"
-    },
-    "title": {
-      "type": "string"
-    },
-    "status": {
-      "enum": [
-        "proposed",
-        "accepted",
-        "superseded",
-        "deprecated"
-      ]
-    },
-    "description": {
-      "type": "string"
-    },
-    "created": {
-      "type": "string",
-      "format": "date"
-    },
-    "updated": {
-      "type": "string",
-      "format": "date"
-    },
+    "id": { "type": "string", "pattern": "^AD-\\d+$" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "status": { "enum": ["proposed", "accepted", "superseded", "deprecated"] },
+    "created": { "type": "string", "format": "date" },
+    "updated": { "type": "string", "format": "date" },
     "research-refs": {
       "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "items": { "type": "string" }
     },
-    "supersedes": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "superseded-by": {
-      "type": [
-        "string",
-        "null"
-      ]
-    }
+    "supersedes": { "type": ["string", "null"] },
+    "superseded-by": { "type": ["string", "null"] }
   }
 }

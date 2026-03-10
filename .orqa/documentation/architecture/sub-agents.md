@@ -1,7 +1,6 @@
 ---
 title: "Sub-Agent Support Architecture"
 description: "Architecture for sub-agent support enabling nested agent delegation within conversations."
-tags: []
 created: 2026-03-05
 updated: 2026-03-05
 ---

@@ -1,17 +1,24 @@
 ---
 id: EPIC-012
 title: Process Visibility Dashboard
+description: Build scanner runner, scanner dashboard, metrics dashboard, and agent activity panel for richer process visibility.
 status: draft
 priority: P1
-milestone: MS-002
-pillars: [PILLAR-001]
-description: Build scanner runner, scanner dashboard, metrics dashboard, and agent activity panel for richer process visibility.
 created: 2026-03-07
 updated: 2026-03-07
-docs-required: [docs/wireframes/dashboard.md, docs/architecture/enforcement.md, .orqa/plans/ (plan required before implementation)]
-docs-produced: [.orqa/plans/ (dashboard plan), docs/wireframes/dashboard.md (update with scanner and metrics wireframes), docs/architecture/rust-modules.md (update with scanner runner module)]
+milestone: MS-002
+pillars:
+  - PILLAR-001
 depends-on: []
 blocks: []
+docs-required:
+  - docs/wireframes/dashboard.md
+  - docs/architecture/enforcement.md
+  - .orqa/plans/ (plan required before implementation)
+docs-produced:
+  - .orqa/plans/ (dashboard plan)
+  - docs/wireframes/dashboard.md (update with scanner and metrics wireframes)
+  - docs/architecture/rust-modules.md (update with scanner runner module)
 scoring:
   pillar: 5
   impact: 4
@@ -19,7 +26,6 @@ scoring:
   effort: 4
   score: 7.3
 ---
-
 ## Why P1
 
 Pillar 1 (Clarity Through Structure) — governance must be visible, not buried in terminal output.

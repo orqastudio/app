@@ -1,7 +1,6 @@
 ---
 title: "PlantUML Bundling Spike"
 description: "Investigation spike for bundling PlantUML diagram rendering within the desktop application."
-tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---

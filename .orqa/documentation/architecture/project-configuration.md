@@ -1,7 +1,6 @@
 ---
 title: "Project Configuration (`.orqa/project.json`)"
 description: "Schema and usage of the .orqa/project.json configuration file that defines project-level settings."
-tags: []
 created: 2026-03-03
 updated: 2026-03-09
 ---

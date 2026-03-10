@@ -1,7 +1,6 @@
 ---
 title: "Product Governance"
 description: "Product governance criteria defining how features are evaluated against the project's active pillars."
-tags: []
 created: 2026-03-02
 updated: 2026-03-07
 ---

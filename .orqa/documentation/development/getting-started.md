@@ -1,7 +1,6 @@
 ---
 title: "Getting Started"
 description: "Step-by-step guide to setting up the OrqaStudio development environment from scratch."
-tags: []
 created: 2026-03-02
 updated: 2026-03-09
 ---

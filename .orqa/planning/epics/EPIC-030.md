@@ -1,17 +1,27 @@
 ---
 id: EPIC-030
 title: Project Scaffold
+description: "The first working version: a Tauri v2 desktop app with Claude conversations via Agent SDK sidecar, streaming, SQLite, and conversation UI."
 status: done
 priority: P1
-milestone: MS-000
-pillars: [PILLAR-001]
-description: "The first working version: a Tauri v2 desktop app with Claude conversations via Agent SDK sidecar, streaming, SQLite, and conversation UI."
 created: 2026-03-02
 updated: 2026-03-07
-docs-required: [docs/architecture/decisions.md, docs/architecture/, docs/ui/]
+milestone: MS-000
+pillars:
+  - PILLAR-001
+depends-on:
+  - EPIC-025
+  - EPIC-026
+  - EPIC-027
+  - EPIC-028
+  - EPIC-029
+blocks:
+  - EPIC-031
+docs-required:
+  - docs/architecture/decisions.md
+  - docs/architecture/
+  - docs/ui/
 docs-produced: []
-depends-on: [EPIC-025, EPIC-026, EPIC-027, EPIC-028, EPIC-029]
-blocks: [EPIC-031]
 scoring:
   pillar: 3
   impact: 5
@@ -19,7 +29,6 @@ scoring:
   effort: 1
   score: 28
 ---
-
 ## Why P1
 
 Nothing works without the scaffold. Every subsequent feature is built on top of this foundation.

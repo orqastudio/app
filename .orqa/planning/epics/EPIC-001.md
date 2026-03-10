@@ -1,16 +1,20 @@
 ---
 id: EPIC-001
 title: AI Transparency Wiring
+description: Wire the emission logic that connects existing AI transparency types, components, and store handling into a working end-to-end pipeline.
 status: done
 priority: P1
-milestone: MS-001
-pillars: [PILLAR-001]
-description: Wire the emission logic that connects existing AI transparency types, components, and store handling into a working end-to-end pipeline.
 created: 2026-03-07
 updated: 2026-03-07
-research-refs: [epic-001-ai-transparency]
-docs-required: [docs/architecture/streaming-pipeline.md]
-docs-produced: [docs/architecture/streaming-pipeline.md (update with SystemPromptSent/ContextInjected emission)]
+milestone: MS-001
+pillars:
+  - PILLAR-001
+research-refs:
+  - epic-001-ai-transparency
+docs-required:
+  - docs/architecture/streaming-pipeline.md
+docs-produced:
+  - docs/architecture/streaming-pipeline.md (update with SystemPromptSent/ContextInjected emission)
 scoring:
   pillar: 5
   impact: 5
@@ -18,7 +22,6 @@ scoring:
   effort: 2
   score: 17.5
 ---
-
 ## Why P1
 
 Can't debug reasoning without seeing what's sent to the model. This is a reasoning platform — transparency into what the AI receives and thinks is foundational.

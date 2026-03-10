@@ -1,23 +1,20 @@
 ---
 id: IDEA-001
-title: "Multi-Provider Ecosystem"
+title: Multi-Provider Ecosystem
+description: |
+  Support additional AI providers through the provider-agnostic sidecar interface without changing the Rust core or Svelte UI.
 status: promoted
-pillars:
-  - PILLAR-001
-description: >
-  Support additional AI providers through the provider-agnostic sidecar
-  interface without changing the Rust core or Svelte UI.
 created: 2026-03-07
 updated: 2026-03-07
+pillars:
+  - PILLAR-001
 research-needed:
   - Provider SDK compatibility assessment (OpenRouter, Together AI, Fireworks, Replicate)
   - Cost model research and budget prediction
   - UX for provider switching and selection
   - Local LLM viability (Ollama, air-gapped use)
 promoted-to: EPIC-040
----
-
-## Candidate Items
+---## Candidate Items
 
 - Third-party AI cloud provider research — OpenRouter, Together AI, Fireworks, Replicate
 - Direct Anthropic API provider — Rust-native HTTP, pay-per-token

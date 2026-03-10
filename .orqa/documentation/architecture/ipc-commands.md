@@ -1,7 +1,6 @@
 ---
 title: "IPC Command Catalog"
 description: "Catalog of all Tauri IPC commands defining the frontend-backend communication contract."
-tags: []
 created: 2026-03-02
 updated: 2026-03-09
 ---

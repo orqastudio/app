@@ -1,14 +1,13 @@
 ---
 id: IDEA-024
-title: "Git Integration & Worktree-Aware Workspace"
+title: Git Integration & Worktree-Aware Workspace
+description: |
+  Git awareness for OrqaStudio including branch status, worktree visibility, and version control operations surfaced through the app UI.
 status: captured
-pillars:
-  - PILLAR-001
-description: >
-  Git awareness for OrqaStudio including branch status, worktree visibility,
-  and version control operations surfaced through the app UI.
 created: 2026-03-07
 updated: 2026-03-07
+pillars:
+  - PILLAR-001
 research-needed:
   - What git operations does the user need visibility into from the app?
   - How should branch status, diffs, and commit history surface in the UI?
@@ -17,9 +16,7 @@ research-needed:
   - How do branches/worktrees relate to the artifact lifecycle (tasks, epics)?
   - What git state is relevant for dogfooding (uncommitted changes, stale worktrees, merge conflicts)?
 promoted-to: null
----
-
-## Problem
+---## Problem
 
 The app has zero git awareness. During dogfooding, all version control operations happen in the terminal — branching, committing, worktree management, merge conflict resolution, stale worktree cleanup. This is a significant gap for the "use the app instead of the terminal" dogfooding goal.
 

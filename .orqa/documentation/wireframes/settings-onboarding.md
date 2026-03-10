@@ -1,7 +1,6 @@
 ---
 title: "Wireframe: Settings & Onboarding"
 description: "Wireframe specification for settings pages and the onboarding flow."
-tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---

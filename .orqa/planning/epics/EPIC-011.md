@@ -1,17 +1,23 @@
 ---
 id: EPIC-011
 title: Chat-Guided Onboarding
+description: Make the chat conversation itself guide new users through setup, with project state awareness and entry mode detection.
 status: draft
 priority: P1
-milestone: MS-002
-pillars: [PILLAR-001]
-description: Make the chat conversation itself guide new users through setup, with project state awareness and entry mode detection.
 created: 2026-03-07
 updated: 2026-03-07
-docs-required: [docs/product/personas.md, docs/product/journeys.md, .orqa/plans/ (plan required before implementation)]
-docs-produced: [.orqa/plans/ (onboarding plan), docs/architecture/project-configuration.md (update with project state awareness)]
+milestone: MS-002
+pillars:
+  - PILLAR-001
 depends-on: []
 blocks: []
+docs-required:
+  - docs/product/personas.md
+  - docs/product/journeys.md
+  - .orqa/plans/ (plan required before implementation)
+docs-produced:
+  - .orqa/plans/ (onboarding plan)
+  - docs/architecture/project-configuration.md (update with project state awareness)
 scoring:
   pillar: 4
   impact: 5
@@ -19,7 +25,6 @@ scoring:
   effort: 3
   score: 10.3
 ---
-
 ## Why P1
 
 The conversation IS the onboarding. Without this, new users don't know what to do.

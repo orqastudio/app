@@ -10,7 +10,6 @@ description: |
   Use when: Reviewing UI implementations against specifications, auditing accessibility,
   checking design system compliance, or verifying state coverage.
 version: 1.0.0
-tags: [ux, review, compliance, accessibility, design-system]
 user-invocable: true
 ---
 

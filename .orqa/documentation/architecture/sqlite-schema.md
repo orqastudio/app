@@ -1,7 +1,6 @@
 ---
 title: "SQLite Schema"
 description: "SQLite database schema covering sessions, messages, governance artifacts, and configuration tables."
-tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---

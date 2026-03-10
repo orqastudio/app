@@ -9,7 +9,6 @@ description: |
   create tasks at the system level, and encode process improvements as lessons.
   Use when: Running UAT rounds, triaging user-reported issues, planning fix sprints.
 version: 1.0.0
-tags: [uat, testing, process, systemic-thinking, learning-loop]
 user-invocable: false
 ---
 

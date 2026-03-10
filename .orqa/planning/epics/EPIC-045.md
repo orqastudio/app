@@ -1,16 +1,28 @@
 ---
 id: EPIC-045
 title: Portable Governance Framework
+description: Restructure agents from 16 software-specific roles to 7 universal roles, extract domain knowledge into skills, create project setup skills, update product documentation to reflect the PILLAR-001 engine identity and governance hub capability. Implements AD-029 and AD-030.
 status: done
 priority: P1
-milestone: MS-002
-pillars: [PILLAR-001]
-description: Restructure agents from 16 software-specific roles to 7 universal roles, extract domain knowledge into skills, create project setup skills, update product documentation to reflect the PILLAR-001 engine identity and governance hub capability. Implements AD-029 and AD-030.
 created: 2026-03-09
 updated: 2026-03-09
-research-refs: [.orqa/planning/research/universal-roles-ownership.md]
-docs-required: [.orqa/governance/decisions/AD-029.md, .orqa/governance/decisions/AD-030.md, .orqa/documentation/product/vision.md]
-docs-produced: [.orqa/documentation/product/governance.md, .orqa/documentation/product/governance-hub.md, .orqa/team/agents/researcher.md, .orqa/team/agents/planner.md, .orqa/team/agents/implementer.md, .orqa/team/agents/reviewer.md, .orqa/team/agents/writer.md]
+milestone: MS-002
+pillars:
+  - PILLAR-001
+research-refs:
+  - .orqa/planning/research/universal-roles-ownership.md
+docs-required:
+  - .orqa/governance/decisions/AD-029.md
+  - .orqa/governance/decisions/AD-030.md
+  - .orqa/documentation/product/vision.md
+docs-produced:
+  - .orqa/documentation/product/governance.md
+  - .orqa/documentation/product/governance-hub.md
+  - .orqa/team/agents/researcher.md
+  - .orqa/team/agents/planner.md
+  - .orqa/team/agents/implementer.md
+  - .orqa/team/agents/reviewer.md
+  - .orqa/team/agents/writer.md
 scoring:
   user-value: 5
   pillar-alignment: 5
@@ -19,7 +31,6 @@ scoring:
   risk: 3
   score: 18
 ---
-
 ## Context
 
 AD-029 established that agents should represent universal roles (Orchestrator, Researcher,

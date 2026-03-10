@@ -9,7 +9,6 @@ description: |
   Use when: Writing any new code, reviewing architecture, planning features, or refactoring
   existing modules. This is the meta-skill — it informs all other patterns.
 version: 1.0.0
-tags: [orqa, composability, architecture, pure-functions, pipeline, modularity]
 user-invocable: true
 ---
 

@@ -1,17 +1,33 @@
 ---
 id: TASK-004
 title: Audit product docs for vision alignment
-status: done
-epic: EPIC-033
 description: Audit all product documentation pages against the updated vision. Fix references to .claude/ as source of truth, Claude-specific identity language, and missing three-layer architecture concepts.
+status: done
 created: 2026-03-08
 updated: 2026-03-08
+epic: EPIC-033
 assignee: documentation-writer
-skills: [chunkhound, orqa-governance]
-scope: [.orqa/documentation/product/artifact-framework.md, .orqa/documentation/product/glossary.md, .orqa/documentation/product/system-artifacts.md, .orqa/documentation/product/mvp-specification.md, .orqa/documentation/product/roadmap.md, .orqa/documentation/product/information-architecture.md, .orqa/documentation/product/personas.md, .orqa/documentation/product/journeys.md]
-acceptance: [Every product doc checked against 5 audit criteria from plan, No .claude/ referenced as source of truth (only as optional symlink layer), No Claude-as-product-identity language (provider-agnostic framing), Three-layer architecture (canon/project/plugin) referenced where governance discussed, Pillar names consistent (Clarity Through Structure, Learning Through Reflection), Hardcoded artifact type lists note configurability via project.json]
+skills:
+  - chunkhound
+  - orqa-governance
+scope:
+  - .orqa/documentation/product/artifact-framework.md
+  - .orqa/documentation/product/glossary.md
+  - .orqa/documentation/product/system-artifacts.md
+  - .orqa/documentation/product/mvp-specification.md
+  - .orqa/documentation/product/roadmap.md
+  - .orqa/documentation/product/information-architecture.md
+  - .orqa/documentation/product/personas.md
+  - .orqa/documentation/product/journeys.md
+acceptance:
+  - Every product doc checked against 5 audit criteria from plan
+  - No .claude/ referenced as source of truth (only as optional symlink layer)
+  - No Claude-as-product-identity language (provider-agnostic framing)
+  - Three-layer architecture (canon/project/plugin) referenced where governance discussed
+  - Pillar names consistent (Clarity Through Structure
+  - Learning Through Reflection)
+  - Hardcoded artifact type lists note configurability via project.json
 ---
-
 ## What
 
 Read each product doc listed in scope. For each one, check the 5 audit criteria

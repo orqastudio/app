@@ -10,7 +10,6 @@ description: |
   Use when: Wiring multiple stores together, adding cross-store coordination,
   debugging state synchronization issues, or planning new multi-store features.
 version: 1.0.0
-tags: [orqa, svelte5, runes, stores, orchestration, coordination, state-management]
 user-invocable: true
 ---
 

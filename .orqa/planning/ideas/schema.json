@@ -3,62 +3,23 @@
   "title": "Idea",
   "description": "Candidate for future work, needs validation",
   "type": "object",
-  "required": [
-    "id",
-    "title",
-    "status",
-    "pillars",
-    "description",
-    "created",
-    "updated"
-  ],
+  "required": ["id", "title", "description", "status", "created", "updated", "pillars"],
   "additionalProperties": false,
   "properties": {
-    "id": {
-      "type": "string",
-      "pattern": "^IDEA-\\d+$"
-    },
-    "title": {
-      "type": "string"
-    },
-    "status": {
-      "enum": [
-        "captured",
-        "exploring",
-        "shaped",
-        "promoted",
-        "archived"
-      ]
-    },
+    "id": { "type": "string", "pattern": "^IDEA-\\d+$" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "status": { "enum": ["captured", "exploring", "shaped", "promoted", "archived"] },
+    "created": { "type": "string", "format": "date" },
+    "updated": { "type": "string", "format": "date" },
     "pillars": {
       "type": "array",
-      "items": {
-        "type": "string",
-        "pattern": "^PILLAR-\\d+$"
-      }
-    },
-    "description": {
-      "type": "string"
-    },
-    "created": {
-      "type": "string",
-      "format": "date"
-    },
-    "updated": {
-      "type": "string",
-      "format": "date"
+      "items": { "type": "string", "pattern": "^PILLAR-\\d+$" }
     },
     "research-needed": {
       "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "items": { "type": "string" }
     },
-    "promoted-to": {
-      "type": [
-        "string",
-        "null"
-      ]
-    }
+    "promoted-to": { "type": ["string", "null"] }
   }
 }

@@ -10,7 +10,6 @@ description: |
   Use when: Evaluating architectural compliance of plans or implementations,
   reviewing boundary integrity, mapping data flows, or assessing schema changes.
 version: 1.0.0
-tags: [architecture, evaluation, compliance, boundaries, data-flow]
 user-invocable: true
 ---
 

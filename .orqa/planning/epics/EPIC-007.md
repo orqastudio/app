@@ -1,24 +1,30 @@
 ---
 id: EPIC-007
 title: Composability Refactoring
+description: Refactor monolithic service files into composable units while preserving existing store, IPC, and component boundaries.
 status: draft
 priority: P2
-milestone: MS-001
-pillars: [PILLAR-001]
-description: Refactor monolithic service files into composable units while preserving existing store, IPC, and component boundaries.
 created: 2026-03-07
 updated: 2026-03-07
-research-refs: [RES-020]
-docs-required: [.orqa/plans/composability-gate.md, docs/architecture/rust-modules.md, docs/architecture/streaming-pipeline.md]
-docs-produced: [docs/architecture/rust-modules.md (update with refactored module structure), docs/architecture/streaming-pipeline.md (update with StreamOrchestrator)]
+milestone: MS-001
+pillars:
+  - PILLAR-001
+research-refs:
+  - RES-020
+docs-required:
+  - .orqa/plans/composability-gate.md
+  - docs/architecture/rust-modules.md
+  - docs/architecture/streaming-pipeline.md
+docs-produced:
+  - docs/architecture/rust-modules.md (update with refactored module structure)
+  - docs/architecture/streaming-pipeline.md (update with StreamOrchestrator)
 scoring:
   pillar: 3
   impact: 3
   dependency: 2
   effort: 4
-  score: 6.0
+  score: 6
 ---
-
 ## Why P2
 
 Code health for sustained velocity. Functions individually pass size limits, but file-level cohesion is poor. This is about practicing what we preach — composability is a platform principle.

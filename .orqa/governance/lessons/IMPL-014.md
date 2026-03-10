@@ -1,15 +1,13 @@
 ---
 id: IMPL-014
-title: "Epic titles should describe outcomes, not process"
+title: Epic titles should describe outcomes, not process
+description: |
+  Epic titles like "UAT Round 1" or "Phase 3 Implementation" describe process activities. Titles should describe what is achieved, not how the work is organised.
 status: active
-description: >
-  Epic titles like "UAT Round 1" or "Phase 3 Implementation" describe process
-  activities. Titles should describe what is achieved, not how the work is organised.
 created: 2026-03-07
 updated: 2026-03-07
 recurrence: 1
 ---
-
 ## What Happened
 
 During UAT Round 2 (EPIC-043), epics were found with process-oriented titles like "UAT Round 1 — Dogfood Readiness Verification". The title describes the testing activity rather than the outcome being verified.

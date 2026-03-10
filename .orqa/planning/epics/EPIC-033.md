@@ -1,16 +1,26 @@
 ---
 id: EPIC-033
 title: Vision Alignment & Schema Simplification
+description: "Align all documentation, governance rules, agent definitions, and code with the evolved vision: .orqa/ as sole source of truth, provider-agnostic AI integration, three-layer architecture (Canon/Project/Plugin), and simplified artifact schema where plans are merged into research and tasks trace cleanly to epics to milestones."
 status: in-progress
 priority: P1
-milestone: MS-001
-pillars: [PILLAR-001]
-description: "Align all documentation, governance rules, agent definitions, and code with the evolved vision: .orqa/ as sole source of truth, provider-agnostic AI integration, three-layer architecture (Canon/Project/Plugin), and simplified artifact schema where plans are merged into research and tasks trace cleanly to epics to milestones."
 created: 2026-03-08
 updated: 2026-03-08
-research-refs: [vision-alignment-and-config-artifacts, audits/product-docs-audit-2026-03-04, audits/architecture-docs-audit-2026-03-04, audits/ui-docs-audit-2026-03-04]
+milestone: MS-001
+pillars:
+  - PILLAR-001
+research-refs:
+  - vision-alignment-and-config-artifacts
+  - audits/product-docs-audit-2026-03-04
+  - audits/architecture-docs-audit-2026-03-04
+  - audits/ui-docs-audit-2026-03-04
 docs-required: []
-docs-produced: [.orqa/documentation/product/artifact-framework.md (Plan type removed, Research schema added), .orqa/governance/rules/artifact-lifecycle.md (plan transitions removed, research-refs added), .orqa/governance/rules/historical-artifacts.md (surpassed status for research/tasks)]
+docs-produced:
+  - .orqa/documentation/product/artifact-framework.md (Plan type removed
+  - Research schema added)
+  - .orqa/governance/rules/artifact-lifecycle.md (plan transitions removed
+  - research-refs added)
+  - .orqa/governance/rules/historical-artifacts.md (surpassed status for research/tasks)
 scoring:
   dogfood-value: 5
   foundation: 5
@@ -19,7 +29,6 @@ scoring:
   dependency-risk: 3
   score: 4.3
 ---
-
 ## Implementation Design
 
 ### Phase A: Schema Simplification (DONE)

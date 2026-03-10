@@ -1,17 +1,24 @@
 ---
 id: TASK-016
 title: Tool call display polish
-status: done
-epic: EPIC-035
 description: "Replaces raw tool call JSON with user-friendly presentation: human-readable names, Lucide icons, parameter summaries, and grouping of consecutive same-tool calls."
+status: done
 created: 2026-03-04
 updated: 2026-03-09
+epic: EPIC-035
 assignee: frontend-engineer
-skills: [svelte5-best-practices, tailwind-design-system]
-scope: [ui/lib/utils/tool-display.ts, ui/lib/components/tool/]
-acceptance: [Tool calls display friendly names (Read → "Reading file"), Each tool type has a Lucide icon, Consecutive same-tool calls grouped into summary, Collapsible detail view for tool input/output]
+skills:
+  - svelte5-best-practices
+  - tailwind-design-system
+scope:
+  - ui/lib/utils/tool-display.ts
+  - ui/lib/components/tool/
+acceptance:
+  - Tool calls display friendly names (Read → "Reading file")
+  - Each tool type has a Lucide icon
+  - Consecutive same-tool calls grouped into summary
+  - Collapsible detail view for tool input/output
 ---
-
 ## What
 
 Replace raw tool call JSON display with user-friendly presentation: human-readable

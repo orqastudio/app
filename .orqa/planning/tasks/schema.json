@@ -3,73 +3,32 @@
   "title": "Task",
   "description": "Individual implementation unit within an epic",
   "type": "object",
-  "required": [
-    "id",
-    "title",
-    "status",
-    "epic",
-    "description",
-    "created",
-    "updated"
-  ],
+  "required": ["id", "title", "description", "status", "created", "updated", "epic"],
   "additionalProperties": false,
   "properties": {
-    "id": {
-      "type": "string",
-      "pattern": "^TASK-\\d+$"
-    },
-    "title": {
-      "type": "string"
-    },
-    "status": {
-      "enum": [
-        "todo",
-        "in-progress",
-        "done"
-      ]
-    },
-    "epic": {
-      "type": "string",
-      "pattern": "^EPIC-\\d+$"
-    },
-    "description": {
-      "type": "string"
-    },
-    "created": {
-      "type": "string",
-      "format": "date"
-    },
-    "updated": {
-      "type": "string",
-      "format": "date"
-    },
+    "id": { "type": "string", "pattern": "^TASK-\\d+$" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "status": { "enum": ["todo", "in-progress", "done"] },
+    "created": { "type": "string", "format": "date" },
+    "updated": { "type": "string", "format": "date" },
+    "epic": { "type": "string", "pattern": "^EPIC-\\d+$" },
     "depends-on": {
       "type": "array",
-      "items": {
-        "type": "string",
-        "pattern": "^TASK-\\d+$"
-      }
+      "items": { "type": "string", "pattern": "^TASK-\\d+$" }
     },
-    "assignee": {
-      "type": "string"
-    },
+    "assignee": { "type": "string" },
     "skills": {
       "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "items": { "type": "string" }
     },
     "scope": {
       "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "items": { "type": "string" }
     },
     "acceptance": {
       "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "items": { "type": "string" }
     }
   }
 }

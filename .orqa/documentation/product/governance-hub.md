@@ -1,7 +1,6 @@
 ---
 title: "Governance Hub"
 description: "How OrqaStudio distributes governance to external AI tools and coexists with their native configurations."
-tags: [governance, hub, distribution, coexistence, claude-code, cursor, copilot]
 created: 2026-03-09
 updated: 2026-03-09
 ---

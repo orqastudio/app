@@ -10,7 +10,6 @@ description: |
   architecturally significant, reviewing implementation plans for architectural compliance,
   documenting architecture decisions.
 version: 1.0.0
-tags: [architecture, adr, design-patterns, desktop-app, layered-architecture]
 user-invocable: true
 ---
 

@@ -1,17 +1,22 @@
 ---
 id: EPIC-027
 title: Product Definition
+description: "The complete product specification: personas, user journeys, information architecture, glossary, and MVP feature set."
 status: done
 priority: P1
-milestone: MS-000
-pillars: [PILLAR-001]
-description: "The complete product specification: personas, user journeys, information architecture, glossary, and MVP feature set."
 created: 2026-03-02
 updated: 2026-03-07
+milestone: MS-000
+pillars:
+  - PILLAR-001
+depends-on:
+  - EPIC-025
+blocks:
+  - EPIC-028
+  - EPIC-030
 docs-required: []
-docs-produced: [docs/product/]
-depends-on: [EPIC-025]
-blocks: [EPIC-028, EPIC-030]
+docs-produced:
+  - docs/product/
 scoring:
   pillar: 3
   impact: 5
@@ -19,7 +24,6 @@ scoring:
   effort: 1
   score: 28
 ---
-
 ## Why P1
 
 UX design (Phase 0d) and technical design (Phase 0e) cannot proceed without knowing what the product is and who it serves.

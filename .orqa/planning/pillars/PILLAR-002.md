@@ -1,13 +1,16 @@
 ---
 id: PILLAR-002
 title: Learning Through Reflection
-status: active
 description: The system and its users improve over time through structured retrospection.
-test-questions: [Does this capture lessons, discoveries, or patterns?, Does it track metrics or outcomes that show improvement (or regression)?, Does it feed retrospectives back into the governance framework?, Does it accumulate knowledge across sessions so each cycle starts from a better position?]
+status: active
 created: 2026-03-09
 updated: 2026-03-09
+gate:
+  - Does this capture lessons, discoveries, or patterns?
+  - Does it track metrics or outcomes that show improvement (or regression)?
+  - Does it feed retrospectives back into the governance framework?
+  - Does it accumulate knowledge across sessions so each cycle starts from a better position?
 ---
-
 ## What This Pillar Means
 
 Learning Through Reflection is the principle that the system and its users get smarter with every cycle. Mistakes are documented, patterns are extracted, and governance artifacts are updated so the same problem doesn't recur.

@@ -1,16 +1,13 @@
 ---
 id: RULE-008
-slug: documentation-first
-layer: canon
-status: active
-scope: system
 title: Documentation-First Implementation
 description: Documentation is the source of truth. Verify docs exist before writing code; update docs before changing code.
+status: active
 created: 2026-03-07
 updated: 2026-03-07
+layer: canon
+scope: system
 ---
-
-
 ## Principle
 
 Documentation is the source of truth. Before writing ANY implementation code, verify that documentation exists for the feature area and read it. If documentation is missing or outdated, update the docs FIRST, get user approval, then implement.

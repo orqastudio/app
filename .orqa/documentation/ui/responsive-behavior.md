@@ -1,7 +1,6 @@
 ---
 title: "Responsive Behavior"
 description: "Responsive layout behavior across different window sizes and breakpoints."
-tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---

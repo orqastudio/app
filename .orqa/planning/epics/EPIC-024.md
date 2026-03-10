@@ -1,17 +1,18 @@
 ---
 id: EPIC-024
 title: Additional MVP Polish
+description: Nice-to-have polish items for MVP launch including search index UI, multi-window support, and sprint planning.
 status: draft
 priority: P3
-milestone: MS-002
-pillars: [PILLAR-001]
-description: Nice-to-have polish items for MVP launch including search index UI, multi-window support, and sprint planning.
 created: 2026-03-07
 updated: 2026-03-07
-docs-required: []
-docs-produced: []
+milestone: MS-002
+pillars:
+  - PILLAR-001
 depends-on: []
 blocks: []
+docs-required: []
+docs-produced: []
 scoring:
   pillar: 3
   impact: 2
@@ -19,7 +20,6 @@ scoring:
   effort: 3
   score: 5.3
 ---
-
 ## Tasks
 
 - [ ] Semantic search index management UI — trigger re-index, show status, configure patterns

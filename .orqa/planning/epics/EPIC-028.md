@@ -1,17 +1,24 @@
 ---
 id: EPIC-028
 title: UX Design
+description: "The complete UX specification: design system, wireframes, component inventory, interaction patterns, and responsive behaviour rules."
 status: done
 priority: P1
-milestone: MS-000
-pillars: [PILLAR-001]
-description: "The complete UX specification: design system, wireframes, component inventory, interaction patterns, and responsive behaviour rules."
 created: 2026-03-02
 updated: 2026-03-07
-docs-required: [docs/product/]
-docs-produced: [docs/ui/]
-depends-on: [EPIC-025, EPIC-027]
-blocks: [EPIC-029, EPIC-030]
+milestone: MS-000
+pillars:
+  - PILLAR-001
+depends-on:
+  - EPIC-025
+  - EPIC-027
+blocks:
+  - EPIC-029
+  - EPIC-030
+docs-required:
+  - docs/product/
+docs-produced:
+  - docs/ui/
 scoring:
   pillar: 3
   impact: 5
@@ -19,7 +26,6 @@ scoring:
   effort: 1
   score: 28
 ---
-
 ## Why P1
 
 Implementation agents build to UX specifications. Without the UX design, the scaffold (Phase 1) has no spec to follow.

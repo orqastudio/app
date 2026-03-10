@@ -9,7 +9,6 @@ description: |
   Use when: Working with governance artifacts (docs, research, lessons, rules),
   modifying scanning or enforcement, or maintaining the .orqa/ directory.
 version: 2.0.0
-tags: [orqa, governance, artifacts, scanning, lessons, rules, enforcement]
 user-invocable: true
 ---
 

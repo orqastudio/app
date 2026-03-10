@@ -1,13 +1,12 @@
 ---
 id: RULE-030
-slug: uat-process
-layer: canon
-status: active
-scope: system
 title: UAT Process
 description: User acceptance testing follows a collect-then-systematize approach. Findings are grouped by root cause before tasks are created.
+status: active
 created: 2026-03-07
 updated: 2026-03-07
+layer: canon
+scope: system
 ---
 
 User acceptance testing follows a structured process that prevents premature fixing and ensures systemic solutions.

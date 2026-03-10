@@ -1,16 +1,13 @@
 ---
 id: RULE-026
-slug: skill-enforcement
-layer: canon
-status: active
-scope: system
 title: Skill Enforcement
 description: "Three-tier skill loading: agent portable skills, orchestrator-injected project skills, and context-resolving wrappers."
+status: active
 created: 2026-03-07
 updated: 2026-03-07
+layer: canon
+scope: system
 ---
-
-
 Every agent MUST have a `skills:` list in its YAML frontmatter. Skills load in three tiers (AD-028).
 
 ## Three-Tier Model

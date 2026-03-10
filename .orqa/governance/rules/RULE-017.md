@@ -1,16 +1,13 @@
 ---
 id: RULE-017
-slug: lessons-learned
-layer: canon
-status: active
-scope: system
 title: Lessons Learned
 description: "Two learning loops: implementation lessons in .orqa/lessons/ and process retrospectives. Both are mandatory."
+status: active
 created: 2026-03-07
 updated: 2026-03-07
+layer: canon
+scope: system
 ---
-
-
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.
 
 ## Implementation Lessons

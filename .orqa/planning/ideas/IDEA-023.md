@@ -1,15 +1,14 @@
 ---
 id: IDEA-023
-title: "Community Inbox"
+title: Community Inbox
+description: |
+  Manage incoming communication from multiple channels in a structured way, applying OrqaStudio's structured thinking to community triage.
 status: captured
+created: 2026-03-07
+updated: 2026-03-07
 pillars:
   - PILLAR-001
   - PILLAR-002
-description: >
-  Manage incoming communication from multiple channels in a structured
-  way, applying OrqaStudio's structured thinking to community triage.
-created: 2026-03-07
-updated: 2026-03-07
 research-needed:
   - Channel integration architecture (GitHub, email, blog, social)
   - Artifact schema for communication signals
@@ -18,9 +17,7 @@ research-needed:
   - Signal classification taxonomy
   - Privacy and data handling for external messages
 promoted-to: null
----
-
-## Problem
+---## Problem
 
 When a project becomes public, communication can arrive from many sources simultaneously.
 

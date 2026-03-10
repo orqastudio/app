@@ -10,7 +10,6 @@ description: |
   Use when: Adding a new database entity, writing a new repository module,
   modifying persistence logic, writing migration SQL, or testing database code.
 version: 1.0.0
-tags: [orqa, rusqlite, sqlite, repository, persistence, migrations, database]
 user-invocable: true
 ---
 

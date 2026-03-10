@@ -1,22 +1,19 @@
 ---
 id: IDEA-021
-title: "Developer Experience Enhancements"
+title: Developer Experience Enhancements
+description: |
+  Developer experience improvements discovered through self-use, including wireframe browser, terminal, and git integration.
 status: captured
-pillars:
-  - PILLAR-001
-description: >
-  Developer experience improvements discovered through self-use,
-  including wireframe browser, terminal, and git integration.
 created: 2026-03-07
 updated: 2026-03-07
+pillars:
+  - PILLAR-001
 research-needed:
   - Wireframe rendering library evaluation
   - Terminal integration approach (xterm.js vs native)
   - Git panel scope and UX
 promoted-to: null
----
-
-## Candidate Items
+---## Candidate Items
 
 - Wireframe browser — browsable, interactive wireframe artifacts
 - Custom system prompt templates — pre-built prompts for common scenarios

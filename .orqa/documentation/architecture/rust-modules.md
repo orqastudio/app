@@ -1,7 +1,6 @@
 ---
 title: "Rust Module Architecture"
 description: "Module layout and dependency structure of the Rust backend crate."
-tags: []
 created: 2026-03-02
 updated: 2026-03-09
 ---

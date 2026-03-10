@@ -1,7 +1,6 @@
 ---
 title: "Design System"
 description: "Design system tokens, spacing scale, color themes, and component styling conventions."
-tags: []
 created: 2026-03-02
 updated: 2026-03-04
 ---

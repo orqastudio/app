@@ -1,7 +1,6 @@
 ---
 title: "Content Ownership: Docs, Agents, Skills, and Rules"
 description: "Ownership model for documentation, agent definitions, skills, and rules across the project."
-tags: []
 created: 2026-03-02
 updated: 2026-03-09
 ---

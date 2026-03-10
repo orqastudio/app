@@ -1,17 +1,24 @@
 ---
 id: EPIC-025
 title: Tech Stack Research
+description: Pre-build investigation that determined the technology choices underpinning the entire OrqaStudio platform.
 status: done
 priority: P1
-milestone: MS-000
-pillars: [PILLAR-001]
-description: Pre-build investigation that determined the technology choices underpinning the entire OrqaStudio platform.
 created: 2026-03-02
 updated: 2026-03-07
-docs-required: []
-docs-produced: [.orqa/research/mvp/]
+milestone: MS-000
+pillars:
+  - PILLAR-001
 depends-on: []
-blocks: [EPIC-026, EPIC-027, EPIC-028, EPIC-029, EPIC-030]
+blocks:
+  - EPIC-026
+  - EPIC-027
+  - EPIC-028
+  - EPIC-029
+  - EPIC-030
+docs-required: []
+docs-produced:
+  - .orqa/research/mvp/
 scoring:
   pillar: 3
   impact: 5
@@ -19,7 +26,6 @@ scoring:
   effort: 1
   score: 28
 ---
-
 ## Why P1
 
 All subsequent phases depend on these decisions. No architecture decisions, product definition, or scaffold can begin without knowing the tech stack.

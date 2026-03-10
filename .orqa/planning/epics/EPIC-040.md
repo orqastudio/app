@@ -1,16 +1,20 @@
 ---
 id: EPIC-040
 title: Provider Abstraction Layer
+description: Refactor sidecar from Claude-specific to provider-agnostic architecture. Provider interface, Claude adapter, sdk_session_id → provider_session_id rename across 13+ files including SQLite migration.
 status: done
 priority: P1
-milestone: MS-001
-pillars: [PILLAR-001]
-description: Refactor sidecar from Claude-specific to provider-agnostic architecture. Provider interface, Claude adapter, sdk_session_id → provider_session_id rename across 13+ files including SQLite migration.
 created: 2026-03-07
 updated: 2026-03-09
-research-refs: [provider-architecture, provider-abstraction]
+milestone: MS-001
+pillars:
+  - PILLAR-001
+research-refs:
+  - provider-architecture
+  - provider-abstraction
 docs-required: []
-docs-produced: [.orqa/governance/decisions/AD-025.md]
+docs-produced:
+  - .orqa/governance/decisions/AD-025.md
 scoring:
   user-value: 4
   pillar-alignment: 4
@@ -19,7 +23,6 @@ scoring:
   risk: 3
   score: 20
 ---
-
 ## Implementation Design
 
 ### Sidecar Changes

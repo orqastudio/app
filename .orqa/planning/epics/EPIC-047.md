@@ -1,13 +1,14 @@
 ---
 id: EPIC-047
 title: Git Workflow Enforcement Review
+description: Review and strengthen git commit discipline enforcement after discovering 237 files uncommitted across multiple sessions. Update session hooks, git-workflow rule, and create a software project-type skill for commit discipline. Addresses IMPL-015.
 status: done
 priority: P1
-milestone: MS-001
-pillars: [PILLAR-001]
-description: Review and strengthen git commit discipline enforcement after discovering 237 files uncommitted across multiple sessions. Update session hooks, git-workflow rule, and create a software project-type skill for commit discipline. Addresses IMPL-015.
 created: 2026-03-09
 updated: 2026-03-09
+milestone: MS-001
+pillars:
+  - PILLAR-001
 research-refs: []
 docs-required: []
 docs-produced: []
@@ -19,7 +20,6 @@ scoring:
   risk: 1
   score: 15
 ---
-
 ## Context
 
 IMPL-015 documents a governance gap: 237 files accumulated uncommitted across

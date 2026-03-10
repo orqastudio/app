@@ -1,17 +1,25 @@
 ---
 id: TASK-045
 title: Hooks display in governance section
-status: done
-epic: EPIC-043
 description: Fixes the hooks section of the governance panel showing empty by updating the scanner to surface hook files even when they are not markdown documents.
+status: done
 created: 2026-03-09
 updated: 2026-03-09
+epic: EPIC-043
 assignee: debugger
-skills: [code-search, orqa-composability]
-scope: [src-tauri/src/domain/artifact_reader.rs, .orqa/governance/hooks/, .claude/settings.json]
-acceptance: [Hooks section in governance displays existing hook files from .orqa/governance/hooks/, If hooks directory contains shell scripts (not .md files), they are still listed with their filename as label, Consider whether Claude hooks from .claude/settings.json should also surface here (may defer to IDEA-027)]
+skills:
+  - code-search
+  - orqa-composability
+scope:
+  - src-tauri/src/domain/artifact_reader.rs
+  - .orqa/governance/hooks/
+  - .claude/settings.json
+acceptance:
+  - Hooks section in governance displays existing hook files from .orqa/governance/hooks/
+  - If hooks directory contains shell scripts (not .md files)
+  - they are still listed with their filename as label
+  - Consider whether Claude hooks from .claude/settings.json should also surface here (may defer to IDEA-027)
 ---
-
 ## Findings Addressed
 
 - **F28**: Hooks section shows empty despite hook files existing

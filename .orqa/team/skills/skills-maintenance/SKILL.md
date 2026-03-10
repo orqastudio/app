@@ -9,7 +9,6 @@ description: |
   Use when: Adding, updating, removing, or auditing agent skills; evaluating whether to install
   a community skill or create a project-specific one; managing the .orqa/skills/ directory.
 version: 1.0.0
-tags: [skills, agent-skills, lifecycle, governance, skills-sh]
 user-invocable: true
 ---
 
