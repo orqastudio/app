@@ -2,7 +2,7 @@
 id: EPIC-048
 title: Artifact Graph SDK and Structural Integrity
 description: "Build a bidirectional artifact node graph with a typed frontend SDK, body template enforcement, markdown cross-linking, file watcher for live refresh, and plugin-ready subscription API — establishing the foundation for the plugin architecture."
-status: in-progress
+status: review
 priority: P1
 created: 2026-03-10
 updated: 2026-03-10

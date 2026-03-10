@@ -2,7 +2,7 @@
 id: TASK-080
 title: Write Artifact Graph SDK documentation
 description: "Create a development guide for the Artifact Graph SDK covering API reference, usage patterns, and plugin integration examples."
-status: todo
+status: done
 created: 2026-03-10
 updated: 2026-03-10
 epic: EPIC-048
