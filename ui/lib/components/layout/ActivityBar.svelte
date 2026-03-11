@@ -1,5 +1,6 @@
 <script lang="ts">
 	import LayoutDashboardIcon from "@lucide/svelte/icons/layout-dashboard";
+	import SearchIcon from "@lucide/svelte/icons/search";
 	import FileTextIcon from "@lucide/svelte/icons/file-text";
 	import ClipboardListIcon from "@lucide/svelte/icons/clipboard-list";
 	import UsersIcon from "@lucide/svelte/icons/users";
@@ -144,6 +145,18 @@
 	{/if}
 
 	<div class="flex-1"></div>
+
+	<!-- Search -->
+	<ActivityBarItem
+		icon={SearchIcon}
+		label="Search Artifacts (Ctrl+Space)"
+		active={false}
+		onclick={() => navigationStore.toggleSearch()}
+	/>
+
+	<div class="my-1 w-6">
+		<Separator />
+	</div>
 
 	<!-- Project Settings -->
 	<ActivityBarItem

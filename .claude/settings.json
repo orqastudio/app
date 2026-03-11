@@ -1,24 +1,6 @@
 {
-  "hooks": {
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.orqa/governance/hooks/session-start-hook.sh\""
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.orqa/governance/hooks/pre-commit-reminder.sh\""
-          }
-        ]
-      }
-    ]
+  "enabledPlugins": {
+    "agent-sdk-dev@claude-plugins-official": true,
+    "orqa-plugin@orqa-local": true
   }
 }

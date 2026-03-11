@@ -47,6 +47,7 @@ class NavigationStore {
 	selectedArtifactPath = $state<string | null>(null);
 	navPanelCollapsed = $state(false);
 	breadcrumbs = $state<string[]>([]);
+	searchOverlayOpen = $state(false);
 
 	/** Flat list of all artifact type keys from config (groups expanded to their children). */
 	get allArtifactKeys(): string[] {
@@ -378,6 +379,10 @@ class NavigationStore {
 
 	toggleNavPanel() {
 		this.navPanelCollapsed = !this.navPanelCollapsed;
+	}
+
+	toggleSearch() {
+		this.searchOverlayOpen = !this.searchOverlayOpen;
 	}
 }
 

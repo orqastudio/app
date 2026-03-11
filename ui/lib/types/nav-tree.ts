@@ -32,6 +32,9 @@ export interface NavType {
 	path: string;
 	readme_content: string;
 	nodes: DocNode[];
+	filterable_fields: FilterableField[];
+	sortable_fields: SortableField[];
+	navigation_config?: NavigationConfig;
 }
 
 /** A node in a NavType's file list */
@@ -48,4 +51,59 @@ export interface DocNode {
 	description?: string | null;
 	/** Icon name from README frontmatter, for directory nodes only. Null for leaf files. */
 	icon?: string | null;
+	/** Full YAML frontmatter parsed from the file. Null for directories. */
+	frontmatter?: Record<string, unknown>;
+}
+
+/** A filterable field derived from a JSON Schema enum property. */
+export interface FilterableField {
+	name: string;
+	values: string[];
+}
+
+/** A sortable field derived from a JSON Schema date or string property. */
+export interface SortableField {
+	name: string;
+	field_type: string;
+}
+
+/** Default sort configuration. */
+export interface SortConfig {
+	field: string;
+	direction: string;
+}
+
+/** A labelled section in a layout-based navigation view. */
+export interface LayoutSection {
+	label: string;
+	description?: string;
+	items: string[];
+}
+
+/** Layout configuration for a navigation type. */
+export interface NavigationLayout {
+	sections: LayoutSection[];
+	uncategorized?: string;
+}
+
+/** Default navigation behaviour for a type (sort, group, filters). */
+export interface NavigationDefaults {
+	sort?: SortConfig;
+	group?: string;
+	group_order?: Record<string, string[]>;
+	filters?: Record<string, string[]>;
+	collapsed_groups?: string[];
+}
+
+/** Navigation configuration loaded from _navigation.json in a type directory. */
+export interface NavigationConfig {
+	defaults?: NavigationDefaults;
+	layout?: NavigationLayout;
+}
+
+/** Client-side view state for an artifact type. */
+export interface ArtifactViewState {
+	sort: SortConfig;
+	filters: Record<string, string[]>;
+	group: string | null;
 }

@@ -2,6 +2,7 @@
 	import Breadcrumb from "./Breadcrumb.svelte";
 	import FrontmatterHeader from "./FrontmatterHeader.svelte";
 	import HookViewer from "./HookViewer.svelte";
+	import ReferencesPanel from "./ReferencesPanel.svelte";
 	import MarkdownRenderer from "$lib/components/content/MarkdownRenderer.svelte";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 	import ErrorDisplay from "$lib/components/shared/ErrorDisplay.svelte";
@@ -186,8 +187,9 @@
 			<ErrorDisplay message={artifactStore.activeContentError} />
 		</div>
 	{:else if content}
-		<!-- svelte-ignore a11y_click_events_have_key_events -->
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		{#if currentPath && !isReadme}
+			<ReferencesPanel artifactPath={currentPath} />
+		{/if}
 		<ScrollArea class="min-h-0 flex-1" onclick={handleContentClick}>
 			<div class="p-6">
 				{#if fileExtension === "sh"}
@@ -196,7 +198,7 @@
 					{#if hasMetadataFields}
 						<FrontmatterHeader
 							metadata={parsedContent.metadata}
-							artifactType={activity}
+							{artifactType}
 						/>
 					{:else if hasFrontmatterTitle}
 						<!-- Title + description only, no metadata card -->

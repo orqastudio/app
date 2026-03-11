@@ -5,7 +5,6 @@
 	import { Badge } from "$lib/components/ui/badge";
 	import CalendarPlusIcon from "@lucide/svelte/icons/calendar-plus";
 	import CalendarCheckIcon from "@lucide/svelte/icons/calendar-check";
-	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 
 	let {
 		metadata,
@@ -85,16 +84,16 @@
 		"promoted-from", "surpassed-by", "supersedes", "superseded-by",
 		"depends-on", "blocks", "research-refs",
 		"docs-required", "docs-produced",
-		"assignee", "skills",
+		"assignee", "scope", "skills",
 	]);
 
 	/**
 	 * CHIP_FIELDS: rendered as styled chips but NOT clickable links.
 	 */
-	const CHIP_FIELDS = new Set<string>(["layer", "scope", "model", "recurrence"]);
+	const CHIP_FIELDS = new Set<string>(["layer", "model", "recurrence"]);
 
 	/** CODE_FIELDS: rendered as monospace inline code badges (e.g. file paths). */
-	const CODE_FIELDS = new Set<string>(["scope"]);
+	const CODE_FIELDS = new Set<string>([]);
 
 	/** Classify a field key into its render type. */
 	type FieldType = "date" | "file-list" | "link" | "code" | "chip" | "generic";

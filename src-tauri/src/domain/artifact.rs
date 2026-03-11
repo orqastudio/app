@@ -192,6 +192,9 @@ pub struct NavigationDefaults {
     pub group_order: Option<HashMap<String, Vec<String>>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub filters: Option<HashMap<String, Vec<String>>>,
+    /// Group labels that should be collapsed by default in the UI.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub collapsed_groups: Option<Vec<String>>,
 }
 
 /// Navigation configuration loaded from `_navigation.json` in a type directory.

@@ -24,15 +24,17 @@
 	import EmptyState from "$lib/components/shared/EmptyState.svelte";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 	import ErrorDisplay from "$lib/components/shared/ErrorDisplay.svelte";
-	import SearchInput from "$lib/components/shared/SearchInput.svelte";
 	import ArtifactListItem from "$lib/components/shared/ArtifactListItem.svelte";
+	import ArtifactToolbar from "$lib/components/navigation/ArtifactToolbar.svelte";
 	import { artifactStore } from "$lib/stores/artifact.svelte";
 	import {
 		navigationStore,
 		type ActivityView,
 	} from "$lib/stores/navigation.svelte";
-	import type { DocNode } from "$lib/types/nav-tree";
+	import type { DocNode, ArtifactViewState, SortConfig } from "$lib/types/nav-tree";
 	import type { Component } from "svelte";
+	import { applyFilters, applySort, applyGrouping } from "$lib/utils/artifact-view";
+	import { SvelteMap } from "svelte/reactivity";
 
 	/** Map from icon name strings (as stored in README frontmatter) to Lucide icon components. */
 	const ICON_MAP: Record<string, Component> = {
@@ -66,7 +68,22 @@
 
 	let { category }: { category: ActivityView } = $props();
 
-	let filterText = $state("");
+	/** View states keyed by category path (one per artifact type). */
+	const viewStates = new SvelteMap<string, ArtifactViewState>();
+
+	function getViewState(cat: string): ArtifactViewState {
+		if (!viewStates.has(cat)) {
+			// Initialize from navigation config defaults
+			const navConfig = navigationStore.getNavType(cat as ActivityView)?.navigation_config;
+			const defaults = navConfig?.defaults;
+			viewStates.set(cat, {
+				sort: defaults?.sort ?? { field: "title", direction: "asc" },
+				filters: defaults?.filters ?? {},
+				group: defaults?.group ?? null,
+			});
+		}
+		return viewStates.get(cat)!;
+	}
 
 	/** Find the NavType for this category in the navTree. */
 	const currentNavType = $derived(navigationStore.getNavType(category));
@@ -97,34 +114,59 @@
 		allNodes.filter((n) => !isReadmePath(n.path)),
 	);
 
-	// ---- Filtering ----
-
-	function filterTree(nodes: DocNode[], query: string): DocNode[] {
-		if (!query) return nodes;
-		const q = query.toLowerCase();
-		const result: DocNode[] = [];
-		for (const node of nodes) {
-			if (node.children) {
-				const filteredChildren = filterTree(node.children, query);
-				if (filteredChildren.length > 0) {
-					result.push({ ...node, children: filteredChildren });
-				} else if (node.label.toLowerCase().includes(q)) {
-					result.push(node);
-				}
-			} else if (
-				node.label.toLowerCase().includes(q) ||
-				(node.description?.toLowerCase().includes(q) ?? false)
-			) {
-				result.push(node);
-			}
-		}
-		return result;
-	}
-
-	const filteredNodes = $derived(filterTree(rawNodes, filterText));
-
 	/** Whether nodes form a tree (have children) or a flat list. */
 	const isTree = $derived(rawNodes.some((n) => n.children !== null));
+
+	// ---- View state (reactive, per category) ----
+
+	let currentSort = $state<SortConfig>({ field: "title", direction: "asc" });
+	let currentFilters = $state<Record<string, string[]>>({});
+	let currentGroup = $state<string | null>(null);
+
+	// When category changes, load the view state for it
+	$effect(() => {
+		const state = getViewState(category);
+		currentSort = state.sort;
+		currentFilters = state.filters;
+		currentGroup = state.group;
+	});
+
+	function handleSortChange(sort: SortConfig) {
+		currentSort = sort;
+		const state = getViewState(category);
+		state.sort = sort;
+	}
+
+	function handleFilterChange(filters: Record<string, string[]>) {
+		currentFilters = filters;
+		const state = getViewState(category);
+		state.filters = filters;
+	}
+
+	function handleGroupChange(group: string | null) {
+		currentGroup = group;
+		const state = getViewState(category);
+		state.group = group;
+	}
+
+	// ---- Processed nodes (filter → sort) ----
+
+	const processedNodes = $derived.by(() => {
+		if (isTree) return rawNodes;
+		const filtered = applyFilters(rawNodes, currentFilters);
+		return applySort(filtered, currentSort);
+	});
+
+	/** Grouped sections, only used when currentGroup is set. */
+	const groupedNodes = $derived.by(() => {
+		if (isTree || !currentGroup) return null;
+		return applyGrouping(
+			processedNodes,
+			currentGroup,
+			currentNavType?.navigation_config?.defaults?.group_order?.[currentGroup],
+			currentNavType?.filterable_fields ?? [],
+		);
+	});
 
 	// ---- Breadcrumb helpers ----
 
@@ -152,9 +194,6 @@
 		}
 
 		// Add folder hierarchy for tree items.
-		// Strip the type root prefix so only the sub-path segments appear.
-		// e.g. type root ".orqa/documentation", node path ".orqa/documentation/architecture/decisions.md"
-		// → relative path "architecture/decisions.md" → folder segments ["architecture"]
 		if (isTree && node.path && currentNavType) {
 			const typeRoot = currentNavType.path.replace(/\\/g, "/").replace(/\/$/, "");
 			const normalizedPath = node.path.replace(/\\/g, "/");
@@ -182,13 +221,20 @@
 </script>
 
 <div class="flex h-full flex-col">
-	<div class="border-b border-border p-2">
-		<SearchInput
-			bind:value={filterText}
-			placeholder="Filter {categoryLabel.toLowerCase()}..."
-			size="xs"
+	{#if !isTree}
+		<ArtifactToolbar
+			sortableFields={currentNavType?.sortable_fields ?? []}
+			filterableFields={currentNavType?.filterable_fields ?? []}
+			navigationConfig={currentNavType?.navigation_config}
+			nodes={rawNodes}
+			{currentSort}
+			{currentFilters}
+			{currentGroup}
+			onSortChange={handleSortChange}
+			onFilterChange={handleFilterChange}
+			onGroupChange={handleGroupChange}
 		/>
-	</div>
+	{/if}
 
 	<ScrollArea.Root class="min-h-0 flex-1">
 		<div class="p-1">
@@ -208,18 +254,44 @@
 						description="No {categoryLabel.toLowerCase()} files found in this project."
 					/>
 				</div>
-			{:else if filteredNodes.length === 0}
+			{:else if processedNodes.length === 0}
 				<div class="px-2 py-4 text-center text-xs text-muted-foreground">
 					No matching items.
 				</div>
 			{:else if isTree}
 				<div class="space-y-0.5 p-1">
-					{#each filteredNodes as node (node.path ?? node.label)}
+					{#each processedNodes as node (node.path ?? node.label)}
 						{@render treeSection(node, 0)}
 					{/each}
 				</div>
+			{:else if groupedNodes !== null}
+				{@const collapsedDefaults = currentNavType?.navigation_config?.defaults?.collapsed_groups ?? []}
+				<div class="space-y-0.5">
+					{#each groupedNodes as group (group.label)}
+						<Collapsible.Root open={!collapsedDefaults.includes(group.label.toLowerCase())}>
+							<Collapsible.Trigger
+								class="flex w-full items-center gap-1.5 rounded px-2 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:bg-accent/50"
+							>
+								<ChevronRightIcon class="h-3 w-3 transition-transform [[data-state=open]_&]:rotate-90" />
+								{group.label}
+								<span class="ml-auto text-[10px] font-normal tabular-nums">{group.nodes.length}</span>
+							</Collapsible.Trigger>
+							<Collapsible.Content>
+								{#each group.nodes as node (node.path)}
+									<ArtifactListItem
+										label={node.label}
+										description={node.description ?? undefined}
+										status={node.status ?? undefined}
+										active={navigationStore.selectedArtifactPath === node.path}
+										onclick={() => handleLeafClick(node)}
+									/>
+								{/each}
+							</Collapsible.Content>
+						</Collapsible.Root>
+					{/each}
+				</div>
 			{:else}
-				{#each filteredNodes as node (node.path)}
+				{#each processedNodes as node (node.path)}
 					<ArtifactListItem
 						label={node.label}
 						description={node.description ?? undefined}

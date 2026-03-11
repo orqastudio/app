@@ -232,8 +232,8 @@ fn scan_skills_nodes(type_dir: &Path, type_path: &str) -> Result<Vec<DocNode>, O
             continue;
         }
 
-        let ft = entry.file_type()?;
-        if !ft.is_dir() {
+        // Use path().is_dir() instead of file_type().is_dir() to follow symlinks
+        if !entry.path().is_dir() {
             continue;
         }
 
@@ -284,8 +284,8 @@ fn scan_hooks_nodes(type_dir: &Path, type_path: &str) -> Result<Vec<DocNode>, Or
             continue;
         }
 
-        let ft = entry.file_type()?;
-        if !ft.is_file() {
+        // Use path() methods instead of file_type() to follow symlinks
+        if !entry.path().is_file() {
             continue;
         }
 
@@ -352,13 +352,14 @@ fn scan_recursive_nodes(dir: &Path, current_path: &str) -> Result<Vec<DocNode>, 
             continue;
         }
 
-        let ft = entry.file_type()?;
+        // Use path() methods instead of file_type() to follow symlinks
+        let entry_path = entry.path();
 
-        if ft.is_file() {
+        if entry_path.is_file() {
             if !name.ends_with(".md") {
                 continue;
             }
-            let content = std::fs::read_to_string(entry.path()).unwrap_or_default();
+            let content = std::fs::read_to_string(&entry_path).unwrap_or_default();
             let (_, title, status, description) = extract_basic_frontmatter(&content);
             let stem = name.trim_end_matches(".md");
             let label = title.unwrap_or_else(|| humanize_name(stem));
@@ -372,15 +373,15 @@ fn scan_recursive_nodes(dir: &Path, current_path: &str) -> Result<Vec<DocNode>, 
                 description,
                 icon: None,
             });
-        } else if ft.is_dir() {
+        } else if entry_path.is_dir() {
             let child_path = format!("{current_path}/{name}");
-            let children = scan_recursive_nodes(&entry.path(), &child_path)?;
+            let children = scan_recursive_nodes(&entry_path, &child_path)?;
             if children.is_empty() {
                 // Skip directories with no .md content anywhere inside.
                 continue;
             }
             // Enrich the directory node with README frontmatter if present.
-            let dir_readme = read_readme_frontmatter(&entry.path());
+            let dir_readme = read_readme_frontmatter(&entry_path);
             let dir_label = dir_readme
                 .as_ref()
                 .and_then(|fm| fm.label.clone())

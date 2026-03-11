@@ -15,6 +15,7 @@
 	import ProjectSetupWizard from "$lib/components/settings/ProjectSetupWizard.svelte";
 	import SetupWizard from "$lib/components/setup/SetupWizard.svelte";
 	import GovernanceBootstrapWizard from "$lib/components/governance/GovernanceBootstrapWizard.svelte";
+	import ArtifactSearchOverlay from "$lib/components/navigation/ArtifactSearchOverlay.svelte";
 
 	import ArtifactMasterDetail from "$lib/components/artifact/ArtifactMasterDetail.svelte";
 	import * as Resizable from "$lib/components/ui/resizable";
@@ -42,6 +43,14 @@
 	);
 	const setupNeeded = $derived(!setupStore.setupComplete);
 
+	function handleGlobalKeydown(e: KeyboardEvent) {
+		// Ctrl+Space (or Cmd+Space on Mac) toggles the search overlay
+		if (e.code === "Space" && (e.ctrlKey || e.metaKey)) {
+			e.preventDefault();
+			navigationStore.toggleSearch();
+		}
+	}
+
 	onMount(async () => {
 		settingsStore.initialize();
 		await setupStore.checkSetupStatus();
@@ -58,11 +67,14 @@
 				await projectStore.loadProjectSettings(projectStore.projectPath);
 			}
 		});
+
+		window.addEventListener("keydown", handleGlobalKeydown);
 	});
 
 	onDestroy(() => {
 		settingsStore.destroy();
 		unlistenArtifactChanged?.();
+		window.removeEventListener("keydown", handleGlobalKeydown);
 	});
 
 	// When a project becomes active, switch to the project dashboard
@@ -231,4 +243,7 @@
 
 	<!-- Status Bar -->
 	<StatusBar />
+
+	<!-- Global artifact search overlay -->
+	<ArtifactSearchOverlay />
 </div>

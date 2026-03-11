@@ -5,7 +5,7 @@
 CARGO_MANIFEST := src-tauri/Cargo.toml
 
 .PHONY: install install-sidecar \
-        dev dev-watch dev-frontend dev-sidecar stop restart \
+        dev start dev-frontend dev-sidecar stop kill restart-tauri restart-vite restart status \
         build build-frontend build-sidecar \
         check fmt fmt-check clippy lint check-frontend \
         test test-rust test-frontend test-watch test-e2e \
@@ -26,36 +26,29 @@ install-sidecar: ## Install sidecar dependencies
 
 # ── Development ──────────────────────────────────────────────────────────────
 
-dev: ## Run app without Rust file watcher (safe default for dogfooding)
-	cargo tauri dev --no-watch
+dev: ## Start dev environment (spawns controller, waits for ready, exits)
+	@node scripts/dev.mjs dev
 
-stop: ## Stop all Orqa Studio processes (app, Vite, cargo)
-	@echo "Stopping Orqa Studio processes..."
-ifeq ($(OS),Windows_NT)
-	-taskkill //F //IM orqa-studio.exe 2>/dev/null || true
-	@for pid in $$(netstat -ano 2>/dev/null | grep ':1420.*LISTENING' | awk '{print $$5}' | sort -u); do \
-		echo "Killing port 1420 (PID $$pid)"; \
-		taskkill //F //PID $$pid 2>/dev/null || true; \
-	done
-	@for pid in $$(netstat -ano 2>/dev/null | grep ':5173.*LISTENING' | awk '{print $$5}' | sort -u); do \
-		echo "Killing port 5173 (PID $$pid)"; \
-		taskkill //F //PID $$pid 2>/dev/null || true; \
-	done
-else
-	-pkill -f "orqa-studio" 2>/dev/null || true
-	-pkill -f "vite.*orqa" 2>/dev/null || true
-	-lsof -ti:1420 | xargs kill -9 2>/dev/null || true
-	-lsof -ti:5173 | xargs kill -9 2>/dev/null || true
-endif
-	@echo "Waiting for ports to release..."
-	@sleep 2
-	@echo "Done."
+start: ## Start dev controller in foreground (long-running, unified output)
+	@node scripts/dev.mjs start
 
-restart: stop ## Restart dev server (stop all, then start)
-	$(MAKE) dev
+stop: ## Stop controller gracefully (requires manual restart to resume)
+	@node scripts/dev.mjs stop
 
-dev-watch: ## Run app with auto-rebuild on Rust file changes
-	cargo tauri dev
+kill: ## Force-kill all OrqaStudio processes
+	@node scripts/dev.mjs kill
+
+restart-tauri: ## Restart Tauri app only — recompile Rust, Vite stays alive
+	@node scripts/dev.mjs restart-tauri
+
+restart-vite: ## Restart Vite dev server only
+	@node scripts/dev.mjs restart-vite
+
+restart: ## Restart Vite + Tauri (controller stays alive)
+	@node scripts/dev.mjs restart
+
+status: ## Show dev controller and process status
+	@node scripts/dev.mjs status
 
 dev-frontend: ## Run frontend only (Vite dev server)
 	npm run dev

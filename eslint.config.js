@@ -22,6 +22,12 @@ export default tseslint.config(
 				parser: tseslint.parser,
 			},
 		},
+		rules: {
+			// This is a Tauri desktop app, not a SvelteKit web app.
+			// Anchor href navigation is handled by Tauri shell or intercepted
+			// via onclick handlers — SvelteKit's resolve() does not apply.
+			"svelte/no-navigation-without-resolve": "off",
+		},
 	},
 	{
 		ignores: [
@@ -31,6 +37,10 @@ export default tseslint.config(
 			"src-tauri/",
 			"sidecar/",
 			"dist/",
+			"tmp/",
+			".githooks/",
+			".orqa/plugins/",
+			"scripts/",
 		],
 	},
 );
