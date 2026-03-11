@@ -8,7 +8,7 @@
   "propertyOrder": [
     "id", "title", "description", "status",
     "created", "updated",
-    "layer", "scope", "promoted-from"
+    "layer", "scope", "promoted-from", "enforcement"
   ],
   "properties": {
     "id": { "type": "string", "pattern": "^RULE-\\d+$" },
@@ -17,11 +17,35 @@
     "status": { "enum": ["active", "inactive"] },
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
-    "layer": { "enum": ["core", "project", "plugin", "community", "user"] },
-    "scope": { "enum": ["universal", "software", "governance"] },
+    "layer": { "enum": ["core", "setup", "project", "plugin", "community", "user"] },
+    "scope": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^AGENT-\\d+$" },
+      "description": "Agent IDs that must comply with this rule"
+    },
     "promoted-from": {
       "type": ["array", "null"],
       "items": { "type": "string", "pattern": "^IMPL-\\d+$" }
+    },
+    "enforcement": {
+      "type": "array",
+      "description": "Machine-enforceable patterns evaluated by the companion plugin or app enforcement engine",
+      "items": {
+        "type": "object",
+        "required": ["event", "pattern", "action", "message"],
+        "additionalProperties": false,
+        "properties": {
+          "event": { "enum": ["file", "bash", "prompt", "stop"] },
+          "pattern": { "type": "string", "description": "Regex pattern to match against the event context" },
+          "paths": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Glob patterns to restrict which file paths this enforcement applies to"
+          },
+          "action": { "enum": ["block", "warn"] },
+          "message": { "type": "string", "description": "Message shown when the pattern matches" }
+        }
+      }
     }
   },
   "bodyTemplate": {

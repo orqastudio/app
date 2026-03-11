@@ -5,8 +5,8 @@ description: Prefer semantic search over Grep/Glob for multi-file searches. Load
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: core
-scope: universal
+layer: project
+scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
 ---
 **Prefer semantic search over Grep/Glob for any search that spans more than one file or directory.**
 

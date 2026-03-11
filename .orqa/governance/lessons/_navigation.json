@@ -1,0 +1,7 @@
+{
+  "defaults": {
+    "group": "status",
+    "sort": { "field": "updated", "direction": "desc" },
+    "collapsed_groups": ["promoted"]
+  }
+}

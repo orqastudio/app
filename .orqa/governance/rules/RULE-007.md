@@ -6,7 +6,20 @@ status: active
 created: "2026-03-07"
 updated: "2026-03-07"
 layer: project
-scope: software
+scope: [AGENT-002, AGENT-003, AGENT-006]
+enforcement:
+  - event: bash
+    pattern: "^cargo (build|test|clippy|fmt|check)\\b"
+    action: warn
+    message: "Use make targets instead of raw cargo commands (RULE-007). See make help."
+  - event: bash
+    pattern: "^npm run\\b"
+    action: warn
+    message: "Use make targets instead of raw npm run commands (RULE-007). See make help."
+  - event: bash
+    pattern: "^cargo tauri\\b"
+    action: warn
+    message: "Use make dev/build/restart instead of raw cargo tauri commands (RULE-007)."
 ---
 All development commands MUST be invoked via `make` targets. Raw `cargo` and `npm run` commands are forbidden for tasks that have a `make` equivalent.
 
@@ -14,9 +27,13 @@ All development commands MUST be invoked via `make` targets. Raw `cargo` and `np
 
 | Action | Use This | NOT This |
 |--------|----------|----------|
-| Run app | `make dev` | `cargo tauri dev` |
-| Stop app | `make stop` | `taskkill` / manual process hunting |
-| Restart app | `make restart` | killing processes then `make dev` |
+| Start dev environment | `make dev` | `cargo tauri dev` |
+| Start controller (foreground) | `make start` | running dev.mjs directly |
+| Stop gracefully | `make stop` | `taskkill` / manual process hunting |
+| Force kill everything | `make kill` | `taskkill` / manual process hunting |
+| Restart Tauri app | `make restart-tauri` | killing processes then `make dev` |
+| Restart Vite | `make restart-vite` | killing Vite manually |
+| Restart Vite + Tauri | `make restart` | killing everything then `make dev` |
 | Run all checks | `make check` | `cargo clippy && npm run check && ...` |
 | Format Rust | `make fmt` | `cargo fmt` |
 | Check formatting | `make fmt-check` | `cargo fmt --check` |
@@ -39,25 +56,33 @@ All development commands MUST be invoked via `make` targets. Raw `cargo` and `np
 
 ## Dev Server (NON-NEGOTIABLE)
 
-Any session that modifies code (Rust, Svelte, TypeScript, CSS) MUST have `make dev` running as a background task. This provides:
+The dev environment must be running during any session that modifies code (Rust, Svelte, TypeScript, CSS). This provides:
 
 - **Frontend**: Vite HMR — instant reload, window stays open
 - **Rust**: Changes require manual restart (see below)
 
-**Dogfooding context:** OrqaStudio is developed using itself. The app you are running inside IS the codebase you are editing. `make dev` uses `--no-watch` so that editing `.rs` files does not kill the running app mid-conversation. Vite HMR still works for frontend changes.
+**`make dev` vs `make start`:** `make dev` spawns the controller as a detached process, waits for everything to be ready, then exits cleanly. `make start` runs the controller in the foreground. Agents should use `make dev` to start and `make kill` to tear down. `make start` is for humans who want the controller in their terminal.
 
-After Rust backend changes, use `make restart` to cleanly stop all processes and restart. This kills the Tauri app, Vite dev server, and any cargo builds, waits for ports to release, then starts fresh. **NEVER use `make dev-watch`** — it causes the app to restart on every Rust file save, which destroys the active session.
+**Dogfooding context:** OrqaStudio is developed using itself. The controller uses `--no-watch` so that editing `.rs` files does not kill the running app mid-conversation. Vite HMR still works for frontend changes.
+
+### Agent Restart Behaviour (NON-NEGOTIABLE)
+
+**During development or dogfooding, agents MUST ONLY use the restart commands** (`make restart-tauri`, `make restart-vite`, `make restart`) to manage the dev environment. Agents MUST NOT use `make dev`, `make start`, `make stop`, or `make kill` unless the user explicitly asks them to start or stop the controller.
+
+The assumption is that the dev environment is already running. If an agent needs to apply changes:
+
+- **Rust changes**: `make restart-tauri` — recompiles and relaunches the Tauri app, Vite stays alive
+- **Vite stuck**: `make restart-vite` — restarts the Vite dev server only
+- **Both need restart**: `make restart` — restarts Vite + Tauri, controller stays alive
+
+If the controller is not running, `make restart-tauri` and `make restart` will automatically start it.
 
 **Rules:**
 
-1. Start `make dev` as a background task at the beginning of any implementation session
-2. After completing changes, verify the dev server is still running and the app is open
-3. If `make dev` dies during work (compile error, crash), fix the issue and restart it
-4. Only sessions that are purely docs/planning are exempt
-5. After Rust changes: write session state, commit all work, then **offer to run `make restart`**. `make restart` is atomic — it stops, rebuilds, and relaunches in one command. The session ends when the app restarts; the next session resumes from `tmp/session-state.md`.
-6. **NEVER run `make dev-watch`** — it is for human use only, outside of dogfooding
-7. **NEVER break restart into multiple steps** (e.g., `make stop` then `make dev`). The app closes on stop, killing the session mid-sequence. Always use `make restart` as one atomic operation.
-8. **The orchestrator manages its own dev lifecycle.** Do not expect the user to run `make dev`, `make restart`, or `make stop`. Offer to run them and execute on approval.
+1. Only sessions that are purely docs/planning are exempt from needing the dev environment
+2. After Rust changes: commit all work, then **offer to run `make restart-tauri`**. The controller stays alive, Vite stays alive — only the Tauri app binary is killed, recompiled, and relaunched.
+3. **NEVER run `make dev-watch`** — it causes the app to restart on every Rust file save
+4. **The orchestrator manages its own dev lifecycle.** Do not expect the user to run restart commands. Offer to run them and execute on approval.
 
 ## Exceptions
 

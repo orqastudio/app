@@ -6,7 +6,7 @@ status: active
 created: "2026-03-07"
 updated: "2026-03-10"
 layer: core
-scope: universal
+scope: [AGENT-003, AGENT-006]
 ---
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.
 

@@ -5,8 +5,24 @@ description: "Rust and TypeScript coding standards: formatting, linting, error h
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: core
-scope: software
+layer: project
+scope: [AGENT-001, AGENT-002, AGENT-006]
+enforcement:
+  - event: file
+    pattern: "unwrap\\(\\)"
+    paths: ["src-tauri/src/**/*.rs"]
+    action: block
+    message: "No unwrap() in production Rust code (RULE-006). Use Result types with thiserror."
+  - event: file
+    pattern: "expect\\("
+    paths: ["src-tauri/src/**/*.rs"]
+    action: block
+    message: "No expect() in production Rust code (RULE-006). Use Result types with thiserror."
+  - event: file
+    pattern: "panic!\\("
+    paths: ["src-tauri/src/**/*.rs"]
+    action: block
+    message: "No panic!() in production Rust code (RULE-006). Use Result types with thiserror."
 ---
 **Source of Truth:** `.orqa/documentation/development/coding-standards.md`
 

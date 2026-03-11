@@ -6,7 +6,7 @@ status: active
 created: "2026-03-07"
 updated: "2026-03-07"
 layer: core
-scope: governance
+scope: [AGENT-003, AGENT-007]
 promoted-from:
   - IMPL-005
   - IMPL-006

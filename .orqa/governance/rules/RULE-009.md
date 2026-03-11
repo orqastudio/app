@@ -6,7 +6,7 @@ status: active
 created: "2026-03-07"
 updated: "2026-03-07"
 layer: project
-scope: software
+scope: [AGENT-002, AGENT-003]
 ---
 # Dogfood Mode (CONDITIONAL — only when `dogfood: true`)
 
@@ -43,7 +43,7 @@ The Enhanced Caution Rules below apply differently depending on whether you are 
 
 | Rule | App Context | CLI Context |
 |------|-------------|-------------|
-| Restart ends session | **YES** — `make restart` kills the app you're inside | **NO** — `make restart` just restarts the app externally |
+| Restart ends session | **YES** — `make restart-tauri` kills the app you're inside | **NO** — `make restart-tauri` just restarts the app externally |
 | Session state before restart | **MANDATORY** — session dies on restart | **NOT REQUIRED** — CLI session survives |
 | Sidecar self-edit warnings | **YES** — you communicate through it | **NO** — CLI doesn't use the sidecar |
 | Frontend mid-stream crash risk | **YES** — HMR in your own window | **NO** — CLI has no window |
@@ -55,9 +55,10 @@ The Enhanced Caution Rules below apply differently depending on whether you are 
 
 ### Dev Server
 
-- `make dev` uses `--no-watch` so editing `.rs` files does NOT auto-restart the app
+- The controller uses `--no-watch` so editing `.rs` files does NOT auto-restart the app
 - **NEVER use `make dev-watch`** — it causes the app to restart on every Rust file save
-- After Rust backend changes, `make restart` rebuilds and relaunches
+- After Rust backend changes, `make restart-tauri` rebuilds and relaunches (Vite stays alive)
+- **Agents MUST only use restart commands** (`make restart-tauri`, `make restart-vite`, `make restart`) during development. `make stop` kills the controller — the app goes down and requires `make dev` to come back up. `make dev`, `make start`, `make stop`, and `make kill` are only for when the user explicitly asks to start/stop the controller.
 
 ### Restart Protocol
 
@@ -65,14 +66,14 @@ The Enhanced Caution Rules below apply differently depending on whether you are 
 
 1. Write session state to `tmp/session-state.md` (tasks completed, in-progress work, what to resume)
 2. Commit all changes (so nothing is lost when the app closes)
-3. **Offer to restart**: "Backend changes need a restart. This will end the session. Shall I run `make restart`?"
-4. Run `make restart` as a single atomic command
+3. **Offer to restart**: "Backend changes need a restart. This will end the session. Shall I run `make restart-tauri`?"
+4. Run `make restart-tauri` — the controller and Vite stay alive, only the Tauri app restarts
 5. The session ends when the app restarts. The next session picks up from `tmp/session-state.md`.
 
 **CLI context (Claude Code):**
 
 1. Commit changes if appropriate
-2. Run `make restart` — the app restarts but the CLI session continues
+2. Run `make restart-tauri` — the Tauri app restarts but the CLI session continues
 3. No session state file needed
 
 ### Sidecar Self-Edit Warnings (App Context Only)
@@ -105,5 +106,5 @@ Check `.orqa/project.json` for `"dogfood": true` at task start. **Context detect
 ## Related Rules
 
 - [RULE-028](RULE-028) (systems-thinking) — universal rule that applies to all projects; dogfood mode heightens its urgency
-- [RULE-007](RULE-007) (development-commands) — `make dev` and `make restart` commands
+- [RULE-007](RULE-007) (development-commands) — `make dev` and `make restart-tauri` commands
 - [RULE-006](RULE-006) (coding-standards) — general coding standards apply regardless of dogfood mode

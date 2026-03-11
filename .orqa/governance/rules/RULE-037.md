@@ -6,25 +6,26 @@ status: active
 created: "2026-03-11"
 updated: "2026-03-11"
 layer: core
-scope: universal
+scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
 promoted-from: null
 ---
 
 Tool access per role enforces ownership boundaries defined in [RULE-001](RULE-001). A Reviewer that can Edit would be tempted to fix issues instead of reporting them. A Researcher that can Write would be tempted to create artifacts instead of investigating.
 
-## Role-to-Tool Matrix
+## Role-to-Capability Matrix
 
-| Tool | Orchestrator | Implementer | Researcher | Planner | Reviewer | Writer | Designer |
-|------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Read | Y | Y | Y | Y | Y | Y | Y |
-| Grep | Y | Y | Y | Y | Y | Y | Y |
-| Glob | Y | Y | Y | Y | Y | Y | Y |
-| Search* | Y | Y | Y | Y | Y | Y | Y |
-| Edit | Y | Y | — | — | — | Y | Y |
-| Write | Y | Y | — | — | — | Y | Y |
-| Bash | Y | Y | — | — | Y | — | — |
+| Capability | Orchestrator | Implementer | Researcher | Planner | Reviewer | Writer | Designer |
+|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| file_read | Y | Y | Y | Y | Y | Y | Y |
+| content_search | Y | Y | Y | Y | Y | Y | Y |
+| file_search | Y | Y | Y | Y | Y | Y | Y |
+| code_search_* | Y | Y | Y | Y | Y | Y | Y |
+| code_research | Y | Y | Y | Y | Y | Y | Y |
+| file_edit | Y | Y | — | — | — | Y | Y |
+| file_write | Y | Y | — | — | — | Y | Y |
+| shell_execute | Y | Y | — | — | Y | — | — |
 
-*Search = search_regex, search_semantic, code_research (all contexts)
+Capabilities resolve to provider-specific tools via [RULE-040](RULE-040).
 
 ## Key Restrictions
 
@@ -43,4 +44,5 @@ Tool access per role enforces ownership boundaries defined in [RULE-001](RULE-00
 ## Related Rules
 
 - [RULE-001](RULE-001) (agent-delegation) — ownership boundaries that tool restrictions enforce
-- [RULE-026](RULE-026) (skill-enforcement) — agent YAML defines the detailed tool lists
+- [RULE-026](RULE-026) (skill-enforcement) — skill loading complements capability resolution
+- [RULE-040](RULE-040) (provider-agnostic-capabilities) — resolves capabilities to concrete tool names per provider

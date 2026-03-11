@@ -6,9 +6,30 @@ status: active
 created: "2026-03-07"
 updated: "2026-03-07"
 layer: core
-scope: universal
+scope: [AGENT-002, AGENT-003, AGENT-006]
 promoted-from:
   - IMPL-015
+enforcement:
+  - event: bash
+    pattern: "git commit.*--no-verify"
+    action: block
+    message: "Never bypass pre-commit hooks with --no-verify (RULE-013)."
+  - event: bash
+    pattern: "git push.*--no-verify"
+    action: block
+    message: "Never bypass push hooks with --no-verify (RULE-013)."
+  - event: bash
+    pattern: "git reset --hard"
+    action: warn
+    message: "Destructive git operation. Verify with git status and git diff first (RULE-013)."
+  - event: bash
+    pattern: "git checkout \\."
+    action: warn
+    message: "Destructive git operation. Verify with git status and git diff first (RULE-013)."
+  - event: bash
+    pattern: "git clean -f"
+    action: warn
+    message: "Destructive git operation. Verify what will be removed first (RULE-013)."
 ---
 **Source of Truth:** `.orqa/documentation/process/workflow.md`
 
@@ -128,7 +149,7 @@ If pre-commit hooks fail, it's YOUR responsibility to fix the issues.
 
 ## Related Rules
 
-- [RULE-007](RULE-007) (development-commands) — `make dev` and `make restart` commands that interact with the worktree lifecycle
+- [RULE-007](RULE-007) (development-commands) — `make dev` and `make restart-tauri` commands that interact with the worktree lifecycle
 - [RULE-012](RULE-012) (error-ownership) — pre-commit hook enforcement; `--no-verify` is forbidden under both rules
 - [RULE-006](RULE-006) (coding-standards) — defines the quality checks the pre-commit hook enforces; commits must be clean
 - [RULE-009](RULE-009) (dogfood-mode) — restart protocol and session-ending behavior that intersects with commit discipline

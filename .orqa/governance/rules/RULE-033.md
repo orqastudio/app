@@ -6,7 +6,7 @@ status: active
 created: "2026-03-10"
 updated: "2026-03-10"
 layer: project
-scope: software
+scope: [AGENT-001, AGENT-002]
 promoted-from: null
 ---
 

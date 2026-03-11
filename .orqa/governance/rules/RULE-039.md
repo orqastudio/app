@@ -6,7 +6,7 @@ status: active
 created: "2026-03-11"
 updated: "2026-03-11"
 layer: core
-scope: universal
+scope: [AGENT-003]
 promoted-from: null
 ---
 

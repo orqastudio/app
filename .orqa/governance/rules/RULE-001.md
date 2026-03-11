@@ -6,7 +6,7 @@ status: active
 created: "2026-03-07"
 updated: "2026-03-07"
 layer: core
-scope: universal
+scope: [AGENT-003]
 ---
 The orchestrator coordinates. It does NOT implement. Every implementation task is delegated to a universal role with the appropriate skills loaded.
 
@@ -45,10 +45,11 @@ The orchestrator coordinates. It does NOT implement. Every implementation task i
 When delegating to a role:
 
 1. **Name the role** — Every delegation must explicitly state which universal role is being used
-2. **Specify skills** — List the skills to load (e.g., "Implementer with rust-async-patterns, tauri-v2, orqa-ipc-patterns")
-3. **Scope the task** — Clear description with acceptance criteria
-4. **Provide context** — File paths, relevant docs, constraints
-5. **Verify the result** — Check the agent's output against acceptance criteria before reporting to the user
+2. **Resolve capabilities** — Read the agent's `capabilities` field, determine the current context (CLI or App), and resolve to concrete tool names using [RULE-040](RULE-040) mapping tables. Include the resolved tool names in the delegation prompt.
+3. **Specify skills** — List the skills to load (e.g., "Implementer with rust-async-patterns, tauri-v2, orqa-ipc-patterns")
+4. **Scope the task** — Clear description with acceptance criteria
+5. **Provide context** — File paths, relevant docs, constraints
+6. **Verify the result** — Check the agent's output against acceptance criteria before reporting to the user
 
 ## Exceptions
 
@@ -98,3 +99,4 @@ Without this rule, the orchestrator accumulates implementation details in its co
 - [RULE-023](RULE-023) (required-reading) — agents must read governing docs before implementation
 - [RULE-015](RULE-015) (honest-reporting) — agents must report status accurately
 - [RULE-037](RULE-037) (tool-access-restrictions) — constrains which tools each role may use
+- [RULE-040](RULE-040) (provider-agnostic-capabilities) — capability → tool resolution at delegation time

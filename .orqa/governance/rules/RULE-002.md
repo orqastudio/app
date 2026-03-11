@@ -5,8 +5,8 @@ description: All code must comply with architecture decisions in .orqa/governanc
 status: active
 created: "2026-03-07"
 updated: "2026-03-10"
-layer: core
-scope: universal
+layer: project
+scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
 ---
 **Source of Truth:** `.orqa/governance/decisions/` — individual `AD-NNN.md` artifacts. Decisions are first-class artifacts browsable in the app's artifact navigation.
 

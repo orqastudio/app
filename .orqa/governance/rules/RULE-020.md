@@ -6,7 +6,13 @@ status: active
 created: "2026-03-07"
 updated: "2026-03-07"
 layer: core
-scope: universal
+scope: [AGENT-002, AGENT-006]
+enforcement:
+  - event: file
+    pattern: "TODO|FIXME|HACK|XXX"
+    paths: ["src-tauri/src/**/*.rs", "ui/**/*.ts", "ui/**/*.svelte", "sidecar/src/**/*.ts"]
+    action: warn
+    message: "TODO/FIXME/HACK comments are forbidden in production code (RULE-020). Track in TODO.md instead."
 ---
 ## What Counts as a Stub
 

@@ -6,15 +6,15 @@ status: active
 created: "2026-03-07"
 updated: "2026-03-07"
 layer: core
-scope: universal
+scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
 ---
-Every agent MUST have a `skills:` list in its YAML frontmatter. Skills load in three tiers [AD-028](AD-028).
+Every agent MUST have a `skills:` list in its YAML frontmatter. Agent tool access is declared via `capabilities:` and resolved per provider context — see [RULE-040](RULE-040). Skills load in three tiers [AD-028](AD-028).
 
 ## Three-Tier Model
 
 | Tier | What | Where Declared | Loaded By |
 |------|------|---------------|-----------|
-| **Tier 1** | Portable language/framework skills + wrappers | Agent YAML `skills:` frontmatter | Agent self-loads on task start |
+| **Tier 1** | Portable language/framework skills + wrappers | Agent YAML `skills:` frontmatter | Loaded on task start (by agent, plugin, or app) |
 | **Tier 2** | Project-specific `orqa-*` skills | Orchestrator injection table | Orchestrator adds to delegation prompt |
 | **Tier 3** | Context resolution (CLI vs App) | Wrapper skill logic | Wrapper skill auto-resolves |
 
@@ -35,18 +35,14 @@ Every skill carries a `layer` field in its SKILL.md frontmatter:
 
 | Layer | Meaning | Loading |
 |-------|---------|---------|
-| `core` | Platform skill — portable across projects, 1st-party official | Loaded based on agent YAML `skills:` list (Tier 1) |
-| `project` | Project-specific — captures THIS codebase's patterns | Injected by orchestrator based on task scope (Tier 2) |
+| `core` | Universal skill — applicable to all project types (governance, systems thinking, search usage) | Loaded based on agent YAML `skills:` list (Tier 1) |
+| `setup` | Project setup — used only during new project initialization, inference, and migration | Loaded by orchestrator during project setup workflows |
+| `project` | Project-specific — captures THIS project's patterns, conventions, and domain knowledge | Injected by orchestrator based on task scope (Tier 2) |
 | `plugin` | Ecosystem skill — installed from external source, 1st party official | Loaded same as core |
 | `community` | Community-contributed skill — reviewed but not 1st-party | Loaded same as core; treat with appropriate trust level |
 | `user` | Personal workflow skill — user's own private patterns | Loaded same as core; not shared or published |
 
-Agent `scope` determines which agents are loaded for a project type:
-
-| Scope | Loaded When |
-|-------|-------------|
-| `general` | Always — every project type |
-| `software-engineering` | Software projects only |
+Agent `scope` declares which agents should use a skill, using agent IDs:
 | `governance` | When governance work is needed |
 
 ## Universal Skills (Tier 1)
@@ -145,3 +141,4 @@ In OrqaStudio, skills are loaded via the `load_skill` tool and managed by the ap
 - [RULE-001](RULE-001) (agent-delegation) — orchestrator must delegate to agents, not implement directly
 - [RULE-037](RULE-037) (tool-access-restrictions) — constrains which tools each role may use
 - [RULE-038](RULE-038) (user-invocable-skills) — user-invocable skill field semantics
+- [RULE-040](RULE-040) (provider-agnostic-capabilities) — capability → tool mapping replaces tools in agent definitions

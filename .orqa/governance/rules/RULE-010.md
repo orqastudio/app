@@ -5,8 +5,8 @@ description: Every feature must be implemented across all layers (Rust command, 
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: core
-scope: universal
+layer: project
+scope: [AGENT-002, AGENT-004, AGENT-006]
 ---
 Every feature MUST be implemented across ALL layers in the same commit. Partial implementations that work in isolation but fail at runtime due to missing layers are forbidden.
 
