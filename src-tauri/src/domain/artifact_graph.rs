@@ -184,8 +184,8 @@ fn collect_node(
     };
 
     // Parse into a generic serde_yaml::Value first so we can extract any field.
-    let yaml_value: serde_yaml::Value = serde_yaml::from_str(&fm_text)
-        .unwrap_or(serde_yaml::Value::Null);
+    let yaml_value: serde_yaml::Value =
+        serde_yaml::from_str(&fm_text).unwrap_or(serde_yaml::Value::Null);
 
     // Require an `id` field — files without one are not typed artifacts.
     let id = match yaml_value.get("id").and_then(|v| v.as_str()) {
@@ -284,11 +284,7 @@ fn collect_forward_refs(yaml_value: &serde_yaml::Value, source_id: &str) -> Vec<
 pub fn graph_stats(graph: &ArtifactGraph) -> GraphStats {
     let node_count = graph.nodes.len();
 
-    let edge_count: usize = graph
-        .nodes
-        .values()
-        .map(|n| n.references_out.len())
-        .sum();
+    let edge_count: usize = graph.nodes.values().map(|n| n.references_out.len()).sum();
 
     let orphan_count = graph
         .nodes
@@ -414,7 +410,11 @@ mod tests {
     fn file_without_id_is_skipped() {
         let tmp = make_project();
         let epics_dir = tmp.path().join(".orqa/planning/epics");
-        write_artifact(&epics_dir, "EPIC-001.md", "---\ntitle: No ID\n---\n# Body\n");
+        write_artifact(
+            &epics_dir,
+            "EPIC-001.md",
+            "---\ntitle: No ID\n---\n# Body\n",
+        );
         let graph = build_artifact_graph(tmp.path()).expect("build");
         assert!(graph.nodes.is_empty());
     }
@@ -530,7 +530,11 @@ mod tests {
     fn readme_files_are_skipped() {
         let tmp = make_project();
         let epics_dir = tmp.path().join(".orqa/planning/epics");
-        write_artifact(&epics_dir, "README.md", "---\nid: SHOULD-SKIP\ntitle: Nav\n---\n");
+        write_artifact(
+            &epics_dir,
+            "README.md",
+            "---\nid: SHOULD-SKIP\ntitle: Nav\n---\n",
+        );
         let graph = build_artifact_graph(tmp.path()).expect("build");
         assert!(graph.nodes.is_empty());
     }
@@ -551,8 +555,14 @@ mod tests {
 
     #[test]
     fn infer_artifact_type_variants() {
-        assert_eq!(infer_artifact_type(".orqa/planning/epics/EPIC-001.md"), "epic");
-        assert_eq!(infer_artifact_type(".orqa/planning/tasks/TASK-001.md"), "task");
+        assert_eq!(
+            infer_artifact_type(".orqa/planning/epics/EPIC-001.md"),
+            "epic"
+        );
+        assert_eq!(
+            infer_artifact_type(".orqa/planning/tasks/TASK-001.md"),
+            "task"
+        );
         assert_eq!(
             infer_artifact_type(".orqa/planning/milestones/MS-001.md"),
             "milestone"

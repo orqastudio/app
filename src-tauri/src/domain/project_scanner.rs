@@ -368,11 +368,7 @@ mod tests {
 
         fs::write(orqa_dir.join("agents").join("backend.md"), "# Agent").expect("write");
         fs::write(orqa_dir.join("rules").join("no-stubs.md"), "# Rule").expect("write");
-        fs::write(
-            orqa_dir.join("hooks").join("pre-commit.sh"),
-            "#!/bin/bash",
-        )
-        .expect("write");
+        fs::write(orqa_dir.join("hooks").join("pre-commit.sh"), "#!/bin/bash").expect("write");
 
         // Create .claude/ for platform config (has_claude_config check)
         let claude_dir = dir.join(".claude");

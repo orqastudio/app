@@ -172,7 +172,8 @@ Test body.
 
     #[test]
     fn parse_valid_lesson() {
-        let lesson = parse_lesson(SAMPLE, ".orqa/governance/lessons/IMPL-001.md").expect("should parse");
+        let lesson =
+            parse_lesson(SAMPLE, ".orqa/governance/lessons/IMPL-001.md").expect("should parse");
         assert_eq!(lesson.id, "IMPL-001");
         assert_eq!(lesson.title, "Agent forgot to load skills");
         assert_eq!(lesson.category, "process");
@@ -207,16 +208,18 @@ Test body.
     #[test]
     fn parse_promoted_to_value() {
         let content = "---\nid: IMPL-002\ntitle: \"Test\"\ncategory: coding\nrecurrence: 3\nstatus: promoted\npromoted-to: \"RULE-001\"\ncreated: 2026-01-01\nupdated: 2026-01-02\n---\nbody\n";
-        let lesson = parse_lesson(content, ".orqa/governance/lessons/IMPL-002.md").expect("should parse");
+        let lesson =
+            parse_lesson(content, ".orqa/governance/lessons/IMPL-002.md").expect("should parse");
         assert_eq!(lesson.promoted_to, Some("RULE-001".to_string()));
     }
 
     #[test]
     fn render_round_trip() {
-        let lesson = parse_lesson(SAMPLE, ".orqa/governance/lessons/IMPL-001.md").expect("should parse");
+        let lesson =
+            parse_lesson(SAMPLE, ".orqa/governance/lessons/IMPL-001.md").expect("should parse");
         let rendered = render_lesson(&lesson);
-        let reparsed =
-            parse_lesson(&rendered, ".orqa/governance/lessons/IMPL-001.md").expect("should re-parse");
+        let reparsed = parse_lesson(&rendered, ".orqa/governance/lessons/IMPL-001.md")
+            .expect("should re-parse");
         assert_eq!(reparsed.id, lesson.id);
         assert_eq!(reparsed.title, lesson.title);
         assert_eq!(reparsed.recurrence, lesson.recurrence);

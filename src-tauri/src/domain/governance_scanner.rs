@@ -127,12 +127,7 @@ fn scan_directory_area(name: &str, source: &str, dir: &Path, ext: Option<&str>) 
 ///
 /// Descends into subdirectories. Files matching the extension filter (or all files if `ext` is
 /// `None`) at any depth below `dir` are included.
-fn scan_recursive_area(
-    name: &str,
-    source: &str,
-    dir: &Path,
-    ext: Option<&str>,
-) -> GovernanceArea {
+fn scan_recursive_area(name: &str, source: &str, dir: &Path, ext: Option<&str>) -> GovernanceArea {
     let mut files = Vec::new();
 
     if dir.is_dir() {

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
 
 use crate::error::OrqaError;
@@ -120,9 +122,9 @@ pub struct DocNode {
     pub path: Option<String>,
     /// Child nodes for directories. `None` for leaf files.
     pub children: Option<Vec<DocNode>>,
-    /// Frontmatter metadata extracted from the file. `None` for directories.
+    /// All scalar YAML frontmatter fields for filtering and sorting. `None` for directories.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub frontmatter: Option<DocFrontmatter>,
+    pub frontmatter: Option<HashMap<String, serde_json::Value>>,
     /// Status value from YAML frontmatter (e.g. `"draft"`, `"in-progress"`, `"done"`). `None` for
     /// directories and files without a `status` field.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -135,6 +137,70 @@ pub struct DocNode {
     /// and directories without a README.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub icon: Option<String>,
+}
+
+/// A filterable field derived from a JSON Schema enum property.
+///
+/// The `values` array preserves the original array order from the schema, which
+/// is intentional (e.g. lifecycle ordering for status fields).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FilterableField {
+    pub name: String,
+    pub values: Vec<String>,
+}
+
+/// A sortable field derived from a JSON Schema date or string property.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SortableField {
+    pub name: String,
+    /// `"date"` or `"string"`
+    pub field_type: String,
+}
+
+/// Default sort configuration for a navigation type.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SortConfig {
+    pub field: String,
+    pub direction: String,
+}
+
+/// A labelled section in a layout-based navigation view.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LayoutSection {
+    pub label: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    pub items: Vec<String>,
+}
+
+/// Layout configuration for a navigation type.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NavigationLayout {
+    pub sections: Vec<LayoutSection>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub uncategorized: Option<String>,
+}
+
+/// Default navigation behaviour for a type (sort, group, filters).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NavigationDefaults {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sort: Option<SortConfig>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub group: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub group_order: Option<HashMap<String, Vec<String>>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub filters: Option<HashMap<String, Vec<String>>>,
+}
+
+/// Navigation configuration loaded from `_navigation.json` in a type directory.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NavigationConfig {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub defaults: Option<NavigationDefaults>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub layout: Option<NavigationLayout>,
 }
 
 /// README frontmatter for navigation discovery.
@@ -195,6 +261,13 @@ pub struct NavType {
     pub readme_content: String,
     /// Artifact nodes within this type folder.
     pub nodes: Vec<DocNode>,
+    /// Enum-valued properties from this type's `schema.json`, suitable for filtering.
+    pub filterable_fields: Vec<FilterableField>,
+    /// Date and string properties from this type's `schema.json`, suitable for sorting.
+    pub sortable_fields: Vec<SortableField>,
+    /// Navigation defaults and layout loaded from `_navigation.json`, if present.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub navigation_config: Option<NavigationConfig>,
 }
 
 /// The full navigation tree returned by `artifact_scan_tree`.

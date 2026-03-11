@@ -3,7 +3,7 @@ use std::path::Path;
 use tauri::State;
 
 use crate::domain::artifact_graph::{
-    build_artifact_graph, graph_stats, ArtifactNode, ArtifactRef, ArtifactGraph, GraphStats,
+    build_artifact_graph, graph_stats, ArtifactGraph, ArtifactNode, ArtifactRef, GraphStats,
 };
 use crate::error::OrqaError;
 use crate::repo::project_repo;

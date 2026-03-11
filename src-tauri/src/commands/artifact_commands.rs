@@ -2,12 +2,12 @@ use std::path::{Path, PathBuf};
 
 use tauri::{AppHandle, Runtime, State};
 
+#[cfg(test)]
+use crate::domain::artifact::ArtifactType;
 use crate::domain::artifact::{
     derive_rel_path, infer_artifact_type_from_path, parse_artifact_type, Artifact, ArtifactSummary,
     NavTree,
 };
-#[cfg(test)]
-use crate::domain::artifact::ArtifactType;
 use crate::domain::artifact_fs::{artifact_from_file, now_iso, write_artifact_file};
 use crate::error::OrqaError;
 use crate::repo::{artifact_repo, project_repo};
@@ -189,10 +189,7 @@ pub fn artifact_delete(artifact_id: i64, state: State<'_, AppState>) -> Result<(
 ///
 /// This is the universal reader — works for all artifact types (.orqa/, docs/).
 #[tauri::command]
-pub fn read_artifact(
-    rel_path: String,
-    state: State<'_, AppState>,
-) -> Result<Artifact, OrqaError> {
+pub fn read_artifact(rel_path: String, state: State<'_, AppState>) -> Result<Artifact, OrqaError> {
     if rel_path.contains("..") {
         return Err(OrqaError::Validation(
             "path traversal not allowed".to_string(),

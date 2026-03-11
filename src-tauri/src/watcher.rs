@@ -87,7 +87,9 @@ pub fn start<R: Runtime>(
             // not inside a hidden sub-directory of `.orqa/` (i.e. a path
             // component *inside* `.orqa/` starting with `.` or `_`).
             let has_relevant_change = events.iter().any(|evt| {
-                evt.paths.iter().any(|p| is_relevant_path(p, &orqa_dir_for_closure))
+                evt.paths
+                    .iter()
+                    .any(|p| is_relevant_path(p, &orqa_dir_for_closure))
             });
 
             if !has_relevant_change {
@@ -129,10 +131,7 @@ pub fn start<R: Runtime>(
     // Dropping the previous handle stops the old watcher automatically.
     *guard = Some(handle);
 
-    tracing::info!(
-        "[watcher] watching {} for changes",
-        orqa_dir.display()
-    );
+    tracing::info!("[watcher] watching {} for changes", orqa_dir.display());
 
     Ok(())
 }
