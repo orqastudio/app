@@ -66,7 +66,7 @@ A reusable knowledge package that provides domain-specific context to agents. Sk
 
 A governance enforcement mechanism triggered automatically during development. OrqaStudio supports two types of hooks:
 
-**Lifecycle hooks** (`.orqa/hooks/`) — Shell scripts that execute in response to lifecycle events (session start, stop). Used for process reminders and checklists.
+**Lifecycle hooks** (`.orqa/governance/hooks/`) — Shell scripts that execute in response to lifecycle events (session start, stop). Used for process reminders and checklists.
 
 **Hookify rules** (`.orqa/hooks/hookify.*.local.md`) — Pattern-based enforcement files that block or warn in real-time when a file edit or bash command matches a forbidden pattern. Used for active prevention of code-level violations. For Claude Code CLI compatibility, these may be symlinked from `.claude/hookify.*.local.md`.
 

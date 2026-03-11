@@ -42,7 +42,7 @@ Schemas are discovered via `.orqa/project.json`'s `artifacts` array. The validat
 
 ## Enforcement
 
-1. **Pre-commit hook** — `.githooks/pre-commit` calls `.githooks/validate-schema.mjs` (Node + ajv) on staged `.orqa/**/*.md` files. Validation failures block the commit.
+1. **Pre-commit hook** — `.githooks/pre-commit` calls `.githooks/validate-artifacts.sh`, which delegates to `.githooks/validate-schema.mjs` (Node + ajv) on staged `.orqa/**/*.md` files. Validation failures block the commit.
 2. **Agent self-compliance** — agents read the schema before creating or modifying artifacts
 3. **Rust backend** (future) — the artifact scanner validates frontmatter using the `jsonschema` crate against the same `schema.json` files
 4. **TypeScript frontend** (future) — the artifact editor validates on save using `ajv` against the same `schema.json` files

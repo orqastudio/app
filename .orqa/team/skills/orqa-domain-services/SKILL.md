@@ -124,7 +124,7 @@ pub fn artifact_list(
 | Current location in stream_commands.rs | Should be |
 |---------------------------------------|-----------|
 | `build_system_prompt()` | `domain::system_prompt::build()` |
-| `load_context_messages()` | `domain::context::load_messages()` |
+| `load_context_summary()` | `domain::context::load_messages()` |
 | `translate_response()` | `domain::stream_translator::translate()` |
 | `read_rules()`, `list_skill_catalog()` | `domain::governance_scanner` or new module |
 

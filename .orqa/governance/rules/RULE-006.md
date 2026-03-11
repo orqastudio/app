@@ -34,7 +34,7 @@ scope: project
 ## Both Languages
 
 - **Coverage**: 80%+ test coverage. No exceptions without documented justification.
-- **No TODO comments**: If something isn't done, it's tracked in TODO.md, not scattered across the codebase. TODO comments in committed code are a build failure.
+- **No TODO comments**: If something isn't done, it's tracked in `.orqa/planning/tasks/`, not scattered across the codebase. TODO comments in committed code are a build failure.
 - **No commented-out code**: Delete it. Git history preserves it.
 - **No hardcoded fake data**: See [RULE-020](RULE-020) (no-stubs).
 - **MUST use shared components**: See [RULE-024](RULE-024) (reusable-components) for the shared component library.

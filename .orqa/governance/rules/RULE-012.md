@@ -8,8 +8,6 @@ updated: "2026-03-07"
 layer: canon
 scope: system
 ---
-**Source of Truth:** `TODO.md` -> "HOW TO WORK" section
-
 ## Rule (NON-NEGOTIABLE)
 
 **ALL errors are YOUR responsibility. No exceptions.**
@@ -25,7 +23,7 @@ scope: system
 
 ## Pre-Commit Hook Enforcement
 
-A git pre-commit hook (`.githooks/pre-commit`) runs `make check` automatically. This hook:
+A git pre-commit hook (`.githooks/pre-commit`) runs the relevant subset of quality checks based on which files are staged. This hook:
 
 - Runs Rust checks (fmt, clippy, tests) when `.rs` or `Cargo.*` files are staged
 - Runs frontend checks (svelte-check, ESLint, Vitest) when `.svelte`, `.ts`, `.js`, `.css`, or `.html` files are staged

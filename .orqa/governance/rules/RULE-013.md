@@ -10,7 +10,7 @@ updated: "2026-03-07"
 layer: canon
 scope: system
 ---
-**Source of Truth:** `.orqa/documentation/development/agentic-workflow.md`
+**Source of Truth:** `.orqa/documentation/process/workflow.md`
 
 ## Worktree Workflow (MANDATORY)
 

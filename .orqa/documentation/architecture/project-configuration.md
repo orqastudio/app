@@ -85,7 +85,7 @@ The `.orqa/` directory is created automatically when the user saves project sett
 | `agents` | `number` | Count of `.md` files in `.orqa/agents/` (or `.claude/agents/` as a CLI symlink layer) |
 | `rules` | `number` | Count of `.md` files in `.orqa/rules/` (or `.claude/rules/` as a CLI symlink layer) |
 | `skills` | `number` | Count of directories in `.orqa/skills/` (or `.claude/skills/` as a CLI symlink layer) |
-| `hooks` | `number` | Count of files in `.orqa/hooks/` (or `.claude/hooks/` as a CLI symlink layer) |
+| `hooks` | `number` | Count of files in `.orqa/governance/hooks/` (or `.claude/hooks/` as a CLI symlink layer) |
 | `has_orqa_config` | `boolean` | Whether `.orqa/project.json` exists |
 
 ---

@@ -341,8 +341,7 @@ orqa-studio/
 │   └── src/
 │       ├── commands/             # Tauri IPC command handlers
 │       ├── domain/               # Domain models
-│       ├── persistence/          # SQLite repositories
-│       └── tools/                # File system tools
+│       └── repo/                 # SQLite repositories
 │
 ├── ui/                           # Svelte 5 frontend
 │   └── lib/
@@ -533,8 +532,8 @@ Tool names are prefixed with `mcp__chunkhound__` in CLI context. In App context,
 
 | Hook | Trigger | Script | Purpose |
 |------|---------|--------|---------|
-| Session start | `UserPromptSubmit` (first) | `.orqa/hooks/session-start-hook.sh` | Check stashes, worktrees, session state |
-| Pre-commit reminder | `Stop` | `.orqa/hooks/pre-commit-reminder.sh` | Checklist before committing |
+| Session start | `UserPromptSubmit` (first) | `.orqa/governance/hooks/session-start-hook.sh` | Check stashes, worktrees, session state |
+| Pre-commit reminder | `Stop` | `.orqa/governance/hooks/pre-commit-reminder.sh` | Checklist before committing |
 
 ---
 

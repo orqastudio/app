@@ -62,7 +62,7 @@ You may run in two contexts. Both are permanent and first-class.
 
 The `chunkhound` skill teaches query patterns that work in both contexts.
 
-**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see `.orqa/governance/rules/dogfood-mode.md`.
+**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see `.orqa/governance/rules/RULE-009.md`.
 
 ## Documentation Types
 
@@ -91,7 +91,7 @@ updated: 2026-01-01
 
 ## Pillar Alignment Section
 
-Every feature documentation page MUST include a Pillar Alignment section near the bottom. See `.orqa/governance/rules/pillar-alignment-docs.md` for details.
+Every feature documentation page MUST include a Pillar Alignment section near the bottom. See `.orqa/governance/rules/RULE-021.md` for details.
 
 ## Writing Standards
 

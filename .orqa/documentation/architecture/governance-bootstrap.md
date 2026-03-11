@@ -293,7 +293,7 @@ pub struct AnalysisOutput {
 5. The AI analyzes the project's package.json, Cargo.toml, etc. to understand the tech stack
 6. The AI generates recommendations: coding standards rule, error handling rule, testing rule, pre-commit hook, etc.
 7. User reviews each recommendation — approves most, rejects one, edits another via chat
-8. User clicks "Apply" — files written to `.orqa/rules/`, `.orqa/hooks/`, etc.
+8. User clicks "Apply" — files written to `.orqa/rules/`, `.orqa/governance/hooks/`, etc.
 9. Dashboard shows governance health: "5 of 7 areas covered"
 
 **Existing project with Cursor rules:**

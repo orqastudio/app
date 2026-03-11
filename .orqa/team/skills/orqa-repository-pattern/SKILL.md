@@ -247,6 +247,8 @@ pub fn create(project_path: &Path, new: &NewLesson) -> Result<Lesson, OrqaError>
 | `governance_repo` | SQLite | `GovernanceAnalysis`, `Recommendation` |
 | `theme_repo` | SQLite | `ThemeRow`, `ThemeOverrideRow` |
 | `lesson_repo` | Filesystem | `Lesson` (markdown + YAML frontmatter) |
+| `enforcement_rules_repo` | SQLite | Enforcement rules and scan findings |
+| `project_settings_repo` | File (`.orqa/project.json`) | `ProjectSettings` (name, model, stack, governance counts) |
 
 ## Related Skills
 

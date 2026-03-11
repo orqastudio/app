@@ -196,7 +196,6 @@ An idea MUST NOT be promoted to an epic until:
    - Set `status: promoted`
    - Set `promoted-to: EPIC-NNN`
 3. Update `.orqa/documentation/product/roadmap.md` if the epic adds to or modifies the roadmap
-4. Update the parent `MS-NNN.md` milestone's `epic-count` if applicable
 
 ---
 
@@ -225,7 +224,6 @@ A milestone MUST NOT be marked `complete` until:
 
 1. **All P1 epics are `done`** — every epic with `priority: P1` in the milestone has `status: done`
 2. **The gate question can be answered "yes"** — the orchestrator presents the gate question to the user and gets explicit confirmation
-3. **Epic counts are accurate** — `epic-count` and `completed-epics` match the actual state of `.orqa/planning/epics/`
 
 P2 and P3 epics may remain in-progress or draft when a milestone is completed — they carry forward or are re-assigned to the next milestone.
 
@@ -258,10 +256,9 @@ The orchestrator SHOULD periodically verify:
 1. **No orphaned artifacts** — every epic references an existing milestone, every task references an existing epic
 2. **No broken references** — `depends-on`, `blocks`, `promoted-to`, `research-refs`, `supersedes`, `superseded-by` all point to existing artifacts
 3. **Status consistency** — a milestone marked `active` has at least one `in-progress` or `ready` epic
-4. **Count accuracy** — milestone `epic-count` and `completed-epics` match reality
-5. **Frontmatter completeness** — all required fields are present and non-empty
-6. **Research-refs / docs-required consistency** — every `RES-NNN` in `research-refs` either appears in `docs-required` or has a documented reason for omission
-7. **Promotion chain integrity** — every lesson with `promoted-to: RULE-NNN` points to an existing rule, and that rule's `promoted-from` points back to the lesson
+4. **Frontmatter completeness** — all required fields are present and non-empty
+5. **Research-refs / docs-required consistency** — every `RES-NNN` in `research-refs` either appears in `docs-required` or has a documented reason for omission
+6. **Promotion chain integrity** — every lesson with `promoted-to: RULE-NNN` points to an existing rule, and that rule's `promoted-from` points back to the lesson
 
 ---
 

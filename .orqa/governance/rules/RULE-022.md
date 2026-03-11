@@ -8,7 +8,7 @@ updated: "2026-03-07"
 layer: canon
 scope: system
 ---
-Every implementation plan — whether created in plan mode, written to TODO.md, or proposed in conversation — MUST satisfy two mandatory requirements before implementation begins.
+Every implementation plan — whether captured in an epic, a task, or proposed in conversation — MUST satisfy two mandatory requirements before implementation begins.
 
 ## 1. Architectural Compliance Verification
 
@@ -91,9 +91,9 @@ State "N/A — [reason]" for inapplicable ones.]
 
 ## Artifact Integration
 
-Plans exist within the artifact framework. When a plan is created:
+Plans exist within the artifact framework. When an implementation plan is created:
 
-1. **If the plan serves an epic:** The epic's `plan` field MUST reference the plan filename (without `.md`)
+1. **If the plan serves an epic:** The implementation design lives in the epic body, and the epic's `research-refs` field references any supporting research documents
 2. **If the plan serves an idea being shaped:** The plan is created during the `exploring → shaped` transition
 3. **Plans produce epics:** A plan that is approved should result in an `EPIC-NNN` being created (or updated) with `docs-required` and `docs-produced` fields populated from the plan's documentation sections
 4. **The plan's documentation section feeds the epic's gates:** Items in the plan's "Documentation" dimension of the Systems Architecture Checklist become the epic's `docs-required` and `docs-produced` lists
@@ -113,7 +113,7 @@ See [RULE-019](RULE-019) (no-deferred-deliverables) for the full enforcement rul
 
 ## When This Rule Applies
 
-- Creating a new implementation plan (plan mode or TODO.md)
+- Creating a new implementation plan (in an epic or task artifact)
 - Proposing a multi-phase feature
 - Any work that touches 3+ files or crosses the Rust/TypeScript boundary
 - Any work that adds or modifies user-facing functionality

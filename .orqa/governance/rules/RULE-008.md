@@ -17,12 +17,12 @@ Documentation is the source of truth. Before writing ANY implementation code, ve
 1. Check `.orqa/documentation/ui/` for existing designs related to the task
 2. Check `.orqa/documentation/architecture/` for relevant architecture decisions
 3. Check `.orqa/documentation/development/coding-standards.md` for implementation patterns
-4. Check `TODO.md` for phase requirements and constraints
+4. Check the relevant `EPIC-NNN.md` task list in `.orqa/planning/epics/` for phase requirements and constraints
 5. Check `.orqa/documentation/product/roadmap.md` to verify work is prioritized
 6. Check the relevant `EPIC-NNN.md` in `.orqa/planning/epics/` — verify `docs-required` gate is satisfied
 7. Check `.orqa/documentation/product/artifact-framework.md` if working with `.orqa/` artifacts
 
-**Documentation priorities ALWAYS come before implementation priorities in TODO.md.** Never reorder to put code changes ahead of documentation corrections.
+**Documentation priorities ALWAYS come before implementation priorities.** Never reorder to put code changes ahead of documentation corrections.
 
 **When an audit reveals gaps between docs and code:** Update the docs FIRST to define the correct target state. Code is then changed to match the docs. Never fix code without first verifying the docs describe the intended behavior.
 

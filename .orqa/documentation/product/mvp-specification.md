@@ -46,7 +46,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 *Directory and registration:*
 - [ ] "New Project" action is available alongside "Open Project" (toolbar or welcome state)
 - [ ] User provides a project name and selects a parent directory (or selects an existing empty directory)
-- [ ] OrqaStudio creates the project directory (if needed) with: `.orqa/project.json`, `.orqa/agents/`, `.orqa/rules/`, `.orqa/skills/`, `.orqa/hooks/`, `.orqa/documentation/`, `.gitignore` (with `orqa.db`)
+- [ ] OrqaStudio creates the project directory (if needed) with: `.orqa/project.json`, `.orqa/agents/`, `.orqa/rules/`, `.orqa/skills/`, `.orqa/governance/hooks/`, `.orqa/documentation/`, `.gitignore` (with `orqa.db`)
 - [ ] If the directory is not a git repo, OrqaStudio offers to run `git init`
 - [ ] Project is registered in SQLite and set as active
 - [ ] Nav Sub-Panel shows the new project with "New project, no code detected" status
@@ -190,7 +190,7 @@ Exactly what Phase 1 delivers, with acceptance criteria for each feature. Scoped
 - [ ] Activity Bar icons select the artifact category — no tab bar within the Explorer Panel
 - [ ] Each tab lists artifacts found in the corresponding `.orqa/` subdirectory (or `.orqa/documentation/` for documentation)
 - [ ] Each list entry shows: filename, brief description (from YAML frontmatter `description` or first paragraph)
-- [ ] The Hooks category displays both lifecycle hooks (from `.orqa/hooks/`) and hookify rules (from `.orqa/hooks/hookify.*.local.md`), distinguishable by a subtype indicator
+- [ ] The Hooks category displays both lifecycle hooks (from `.orqa/governance/hooks/`) and hookify rules (from `.orqa/governance/hooks/hookify.*.local.md`), distinguishable by a subtype indicator
 - [ ] Hookify rules display their event type (file edit / bash command), action (block / warn), and pattern summary
 - [ ] Users can filter the Hooks list by subtype: All, Lifecycle, Hookify
 - [ ] Clicking an artifact opens it in the Explorer Panel artifact viewer (conversation stays visible in Chat Panel)

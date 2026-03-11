@@ -72,7 +72,7 @@ These journeys inform UI design (Phase 0d) and the MVP feature specification.
 
 4. **Create a new artifact** — User clicks "New Agent" (or Rule, Skill, etc.). OrqaStudio creates a template file in the appropriate `.orqa/` subdirectory with standard frontmatter. The editor opens immediately.
 
-5. **Conversational governance (Phase 4)** — User describes what they want in conversation: "I need a rule that prevents agents from using unwrap in Rust code." The AI generates the rule file, the user reviews and approves it, and OrqaStudio writes it to `.orqa/rules/`. For pattern-matchable violations (e.g., specific strings or regex patterns in file edits or bash commands), the user can also create hookify rules — OrqaStudio generates an `.orqa/hooks/hookify.*.local.md` file with the appropriate `event`, `action`, and `conditions` fields.
+5. **Conversational governance (Phase 4)** — User describes what they want in conversation: "I need a rule that prevents agents from using unwrap in Rust code." The AI generates the rule file, the user reviews and approves it, and OrqaStudio writes it to `.orqa/rules/`. For pattern-matchable violations (e.g., specific strings or regex patterns in file edits or bash commands), the user can also create hookify rules — OrqaStudio generates an `.orqa/governance/hooks/hookify.*.local.md` file with the appropriate `event`, `action`, and `conditions` fields.
 
 6. **File watcher sync** — Any changes made to `.claude/` files outside OrqaStudio (e.g., in a text editor, via git pull, or via a Claude Code CLI session) are detected by the file watcher and reflected in the artifact browser within 500ms. This means artifacts edited in OrqaStudio are immediately available to Claude Code CLI sessions, and vice versa.
 
@@ -182,7 +182,7 @@ These journeys inform UI design (Phase 0d) and the MVP feature specification.
 
 4. **Promotion trigger** — When recurrence >= 2 (configurable), OrqaStudio suggests promotion: "This lesson has recurred. Would you like to promote it to a rule?" The user reviews and approves.
 
-5. **Governance artifact created** — OrqaStudio generates a rule file from the lesson and adds it to `.orqa/rules/`. Future sessions enforce the rule automatically. The IMPL entry is marked as "Promoted to rule-xyz." If the violation is pattern-matchable (a specific string or regex in file edits or bash commands), OrqaStudio also offers to create a hookify enforcement rule (`.orqa/hooks/hookify.*.local.md`) that blocks or warns on the pattern at the action boundary — providing immediate, automated enforcement alongside the instructional rule.
+5. **Governance artifact created** — OrqaStudio generates a rule file from the lesson and adds it to `.orqa/rules/`. Future sessions enforce the rule automatically. The IMPL entry is marked as "Promoted to rule-xyz." If the violation is pattern-matchable (a specific string or regex in file edits or bash commands), OrqaStudio also offers to create a hookify enforcement rule (`.orqa/governance/hooks/hookify.*.local.md`) that blocks or warns on the pattern at the action boundary — providing immediate, automated enforcement alongside the instructional rule.
 
 6. **Cross-project promotion** — When a lesson or promoted rule is broadly applicable (not project-specific), the user can promote it to global scope. OrqaStudio asks: "This rule seems generally useful. Should it apply to all your projects?" If approved, the lesson/rule is stored in the global knowledge base. New projects automatically inherit relevant global rules during onboarding (Journey 7).
 
@@ -248,7 +248,7 @@ These journeys inform UI design (Phase 0d) and the MVP feature specification.
 2. **Initialize project structure** — OrqaStudio creates:
    - The project directory (if it doesn't exist)
    - An `.orqa/` directory with `project.json` and a minimal project summary document
-   - Empty subdirectories: `.orqa/agents/`, `.orqa/rules/`, `.orqa/skills/`, `.orqa/hooks/`, `.orqa/documentation/`
+   - Empty subdirectories: `.orqa/agents/`, `.orqa/rules/`, `.orqa/skills/`, `.orqa/governance/hooks/`, `.orqa/documentation/`
    - A `.gitignore` with `orqa.db` entry
    - Optionally: `git init` if the directory isn't already a git repo
    - Optionally: CLI tool symlinks (e.g., `.claude/` pointing to `.orqa/`) if the user requests CLI compatibility

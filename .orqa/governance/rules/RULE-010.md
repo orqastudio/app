@@ -79,7 +79,7 @@ When changes are made, they are made fully and completely. Old code paths MUST b
 
 When adding a new feature (e.g., hardware info display):
 
-**1. Rust types (`src-tauri/src/types/`):**
+**1. Rust types (`src-tauri/src/domain/`):**
 
 ```rust
 #[derive(Debug, Serialize, Deserialize)]

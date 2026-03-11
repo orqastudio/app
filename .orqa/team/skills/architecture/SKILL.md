@@ -105,7 +105,7 @@ The domain layer depends only on the trait. Implementations are injected at star
 | Runes Stores | Client-side state, cache, optimistic updates | `ui/lib/stores/` |
 | IPC Commands | Validate input, orchestrate domain calls, serialize response | `src-tauri/src/commands/` |
 | Domain | Business logic, pure functions, type definitions | `src-tauri/src/domain/` |
-| Persistence | SQLite queries, file I/O, external API calls | `src-tauri/src/persistence/` |
+| Persistence | SQLite queries, file I/O, external API calls | `src-tauri/src/repo/` |
 
 ### Identifying Architectural Violations
 
