@@ -1,11 +1,11 @@
 ---
 id: EPIC-004
 title: Artifact Editing UI
-description: Build an editor component for governance artifacts, connecting existing backend CRUD commands to a CodeMirror-based editing UI.
-status: draft
+description: Build an editor component for governance artifacts, connecting existing backend CRUD commands to a CodeMirror-based editing UI. Absorbed into EPIC-005.
+status: done
 priority: P1
 created: "2026-03-07"
-updated: "2026-03-07"
+updated: "2026-03-11"
 milestone: MS-001
 pillars:
   - PILLAR-001
@@ -37,8 +37,8 @@ Can't manage governance in-app without editing. Currently requires switching to 
 
 ## Context
 
-This epic addresses a need identified during project development.
+This epic's scope has been absorbed into [EPIC-005](EPIC-005) (Artifact Browser — Sort, Filter, Search, Edit), which covers in-app artifact editing as Phase 3 alongside sort/group/filter, AI search, and the references panel. Marked done as the scope is now tracked under EPIC-005.
 
 ## Implementation Design
 
-Implementation approach to be defined during planning.
+N/A — scope absorbed into [EPIC-005](EPIC-005).
