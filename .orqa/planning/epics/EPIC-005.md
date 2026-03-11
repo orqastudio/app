@@ -48,9 +48,11 @@ The core app's job is to let users navigate, search, and edit artifacts. Navigat
 
 > The core app UI provides three capabilities: navigate, search, and edit. All system-level visualizations (roadmaps, dashboards, dependency graphs) are plugins. — [AD-033](AD-033)
 
-> Cross-artifact search is AI-driven, not keyword-based. The AI infers search intent and presents results in a structured way, giving infinite flexibility. — User direction, 2026-03-11
+> Cross-artifact search is AI-driven, not keyword-based. The AI infers search intent and presents results in a structured way, giving infinite flexibility. — [AD-037](AD-037)
 
-> Sorting, filtering, and default views are config-driven via `_navigation.json` per artifact group. The system is generic — no artifact-specific filter code. — User direction, 2026-03-11
+> Sorting and filtering are schema-driven — generated dynamically from each artifact type's `schema.json` enum fields. No hardcoded field lists. — [AD-034](AD-034)
+
+> Default views are config-driven via `_navigation.json` per artifact type directory. Supports sort/group/filter defaults, group ordering overrides, and custom curated layouts. — [AD-035](AD-035)
 
 ## Remaining Scope
 
