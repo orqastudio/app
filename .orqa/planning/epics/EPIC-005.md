@@ -11,6 +11,7 @@ pillars:
   - PILLAR-001
 research-refs:
   - RES-029
+  - RES-038
 docs-required: []
 docs-produced: []
 scoring:
@@ -49,31 +50,86 @@ The core app's job is to let users navigate, search, and edit artifacts. Navigat
 
 > Cross-artifact search is AI-driven, not keyword-based. The AI infers search intent and presents results in a structured way, giving infinite flexibility. — User direction, 2026-03-11
 
+> Sorting, filtering, and default views are config-driven via `_navigation.json` per artifact group. The system is generic — no artifact-specific filter code. — User direction, 2026-03-11
+
 ## Remaining Scope
 
-### 1. Sort, Group, and Filter in the Browser Panel
+### 1. Sort, Group, and Filter Toolbar
 
-The ArtifactNav currently supports text filtering only. Users need to:
+Replace the current text-only `SearchInput` in ArtifactNav with an icon-based toolbar:
 
-- **Sort** artifact lists by: title (alpha), created date, updated date, priority, status
-- **Group** artifacts by: status, priority, milestone, epic (for tasks)
-- **Filter** by: status (active/done/draft), priority (P1/P2/P3), layer (core/project)
-- **Persist** sort/group/filter preferences per artifact type across sessions
+- **Fixed height** — matches `h-10` of NavSubPanel headers and breadcrumb bars for visual consistency
+- **Two icon buttons** — Filter (funnel icon) and Sort (arrow-up-down icon), each opening a rich dropdown
+- **Generic, not artifact-specific** — the toolbar operates on frontmatter fields common across all artifact types (status, created, updated, title). It does NOT contain type-specific logic.
+- **Active indicator** — when filters or non-default sort are active, the icon shows a subtle visual indicator (dot badge or colour change)
 
-These controls live in the ArtifactNav panel alongside the existing search input. The UI should be compact — dropdown/chip selectors, not a full filter panel.
+#### Filter Dropdown (rich, sectioned)
 
-### 2. AI-Driven Cross-Artifact Search
+The filter dropdown is NOT a simple list. It is a structured panel with:
 
-A search experience that uses the AI provider to understand intent and return structured results:
+- **Section headers** — grouped by field (Status, Priority, Layer) with muted uppercase labels
+- **Checkbox items** — each value shown as a checkbox with status dot/badge matching the existing `StatusIndicator` colour system
+- **Count badges** — each filter option shows how many items match (e.g. "Draft (12)")
+- **Clear section** — each section has a "clear" action; bottom of dropdown has "Clear all filters"
+- **Only relevant sections shown** — if the current artifact type has no `priority` field, that section is hidden
 
-- **Search input** — prominent, always accessible (command palette style or dedicated panel)
-- **AI query routing** — search query sent to the AI with artifact graph context
-- **Structured results** — AI returns artifact IDs with relevance explanations, rendered as a navigable result list
-- **Examples of semantic queries**: "what's blocking the next milestone", "show me all rules about error handling", "which tasks depend on EPIC-005"
+#### Sort Dropdown (compact, single-select)
+
+- **Radio-style selection** — one active sort at a time
+- **Sort options**: Title (A-Z), Title (Z-A), Created (newest), Created (oldest), Updated (newest), Updated (oldest), Status, Priority
+- **Current sort indicated** with a check icon
+- **Default sort** comes from `_navigation.json` — if no user override, the configured default applies
+
+### 2. `_navigation.json` — Per-Group View Configuration
+
+Each artifact group directory (e.g. `.orqa/planning/`, `.orqa/governance/`) can contain a `_navigation.json` file that configures the default browsing experience for that group's artifact types.
+
+```jsonc
+{
+  "defaults": {
+    "sort": { "field": "created", "direction": "desc" },
+    "group": "status",
+    "filters": { "status": ["draft", "in-progress", "ready", "review"] }
+  },
+  "layout": null  // null = use standard sort/group/filter; object = custom layout
+}
+```
+
+**Default view** — pre-set grouping, sorting, and filter state that loads when the user first navigates to that artifact type. User can override interactively; overrides persist in the navigation store (not in the file).
+
+**Custom layout** — an alternative to sort/group/filter that arranges items in a curated order. When `layout` is non-null, the toolbar shows a "layout" indicator instead of sort/filter state. The layout is JSON-configured (UI builder is a future idea).
+
+```jsonc
+{
+  "defaults": null,
+  "layout": {
+    "sections": [
+      { "label": "Getting Started", "items": ["README", "vision", "governance"] },
+      { "label": "Architecture", "items": ["architecture/*"] },
+      { "label": "Development", "items": ["development/*"] }
+    ]
+  }
+}
+```
+
+This addresses the Documentation use case specifically — docs should read like a book's table of contents, not a date-sorted list.
+
+**Scanner integration** — the Rust artifact scanner reads `_navigation.json` alongside `README.md` when scanning a directory. The config is included in the `NavType` response so the frontend can apply defaults without an extra round-trip.
+
+### 3. AI-Driven Global Search
+
+Search is NOT in the artifact browser panel. It is a **global project search** in the ActivityBar, positioned above Settings:
+
+- **ActivityBar icon** — Search icon in the bottom section of the ActivityBar, above Settings
+- **Opens a search panel** — full-width panel (replaces the explorer content area) with a prominent search input
+- **AI query routing** — search query sent to the AI with artifact graph context as system prompt
+- **Structured results** — AI returns artifact IDs with relevance explanations, rendered as a navigable list with ArtifactLink chips
+- **Examples**: "what's blocking the next milestone", "show me all rules about error handling", "which tasks depend on EPIC-005"
+- **Keyboard shortcut** — Cmd+K / Ctrl+K opens search from anywhere
 
 The AI search builds on the existing artifact graph SDK — the AI has access to the full graph for context when answering queries.
 
-### 3. In-App Artifact Editing (absorbed from EPIC-004)
+### 4. In-App Artifact Editing (absorbed from EPIC-004)
 
 Edit artifacts without leaving the app:
 
@@ -84,7 +140,7 @@ Edit artifacts without leaving the app:
 - **Schema-aware validation** — frontmatter validated against the artifact type's schema.json on save
 - **Wire to backend** — connect to existing artifact_create, artifact_update, artifact_delete commands
 
-### 4. References Panel
+### 5. References Panel
 
 Surface the graph's cross-reference data in the viewer:
 
@@ -95,14 +151,38 @@ Surface the graph's cross-reference data in the viewer:
 
 ## Implementation Design
 
-### Phase 1: Sort, Group, Filter
+### Phase 1: `_navigation.json` + Sort/Group/Filter Toolbar
 
-Add controls to ArtifactNav:
-- Sort dropdown (title, date, priority, status)
-- Group dropdown (none, status, priority, milestone)
-- Filter chips (status, priority, layer) — toggle on/off
-- Store sort/group/filter state per artifact type key in the navigation store
-- Backend: may need a `artifact_list_filtered` command or do client-side sorting on the NavTree data
+**Backend:**
+- Extend the artifact scanner to read `_navigation.json` from each artifact type directory
+- Include navigation config in the `NavType` struct returned to the frontend
+- No new Tauri commands needed — data flows through the existing `artifact_scan_tree` response
+
+**Frontend — Toolbar:**
+- Replace `SearchInput` in `ArtifactNav` with `ArtifactToolbar.svelte` — fixed `h-10` bar
+- Two icon buttons: `FilterIcon` and `ArrowUpDownIcon` from Lucide
+- Each opens a `DropdownMenu` (shadcn) with rich content
+- Active state indicators on icons when non-default sort/filter is applied
+
+**Frontend — Filter dropdown:**
+- Sectioned layout using `DropdownMenu.Group` + `DropdownMenu.GroupHeading`
+- `DropdownMenu.CheckboxItem` for each filter value
+- Count badges derived from scanning the current node list
+- Sections dynamically built from available frontmatter fields in the current artifact type's nodes
+
+**Frontend — Sort dropdown:**
+- `DropdownMenu.RadioGroup` with `DropdownMenu.RadioItem` for each sort option
+- Check icon on active sort
+
+**Frontend — State:**
+- `ArtifactViewState` type: `{ sort: SortConfig; filters: FilterConfig; group: string | null }`
+- Defaults loaded from `_navigation.json` via the NavType response
+- User overrides stored in navigation store per artifact type key
+- Sorting/filtering applied client-side on the DocNode array before rendering
+
+**Frontend — Custom layout mode:**
+- When `_navigation.json` has `layout` instead of `defaults`, ArtifactNav renders sections from the layout config instead of the standard sorted/filtered list
+- Toolbar shows a "book" icon indicator instead of sort/filter controls
 
 ### Phase 2: References Panel
 
@@ -111,7 +191,17 @@ Add controls to ArtifactNav:
 - Calls `artifactGraphSDK.referencesFrom(id)` and `referencesTo(id)`
 - Renders two collapsible sections with ArtifactLink chips
 
-### Phase 3: Artifact Editing
+### Phase 3: Global AI Search
+
+- Add Search icon to ActivityBar bottom section (above Settings)
+- `ArtifactSearch.svelte` — full search panel with input + results area
+- Search query sent to AI provider with system prompt including artifact graph summary
+- AI responds with structured result (artifact IDs + explanations)
+- Results rendered as navigable list with ArtifactLink + explanation text
+- Keyboard shortcut: Cmd+K / Ctrl+K
+- Needs: search-specific Tauri command or reuse of conversation streaming for search queries
+
+### Phase 4: Artifact Editing
 
 - Add `codemirror` package + markdown/yaml language support
 - `ArtifactEditor.svelte` component wrapping CodeMirror
@@ -119,14 +209,6 @@ Add controls to ArtifactNav:
 - On save: validate frontmatter against schema, call `artifact_update`
 - Create flow: select type → pre-fill from schema → open editor
 - Delete flow: button → ConfirmDeleteDialog → `artifact_delete`
-
-### Phase 4: AI Search
-
-- `ArtifactSearch.svelte` — search dialog (command palette style, Cmd+K)
-- Search query sent to AI provider with system prompt including artifact graph summary
-- AI responds with structured result (artifact IDs + explanations)
-- Results rendered as navigable list with ArtifactLink + explanation text
-- Needs: search-specific Tauri command or reuse of conversation streaming for search queries
 
 ## Tasks
 
