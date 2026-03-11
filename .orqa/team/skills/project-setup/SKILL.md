@@ -11,6 +11,7 @@ status: active
 created: "2026-03-01"
 updated: "2026-03-10"
 layer: core
+scope: [AGENT-003]
 version: 1.0.0
 user-invocable: true
 ---
@@ -100,8 +101,8 @@ These files are copied during setup (core layer — non-editable by project):
 - `reviewer.md`, `writer.md`, `designer.md`
 
 ### Core Skills
-- `code-search`, `chunkhound` — Code search
-- `orqa-composability` — Composability philosophy
+- `orqa-code-search`, `chunkhound` — Code search
+- `composability` — Composability philosophy
 - `planning` — Planning methodology
 - `architecture` — ADR patterns
 - `diagnostic-methodology`, `restructuring-methodology` — Process skills

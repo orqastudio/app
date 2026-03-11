@@ -6,7 +6,7 @@ description: |
 status: active
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: core
+layer: orchestrator
 scope: general
 model: sonnet
 tools:
@@ -148,6 +148,8 @@ If implementation reveals the documentation is wrong, STOP implementation. Updat
 
 ### Definition of Ready (DoR) — Gates Task START
 
+**Full checklist:** [Definition of Ready](DOC-028)
+
 A task is NOT ready to start unless ALL of the following are true:
 
 - [ ] Task has a clear, scoped description
@@ -160,6 +162,8 @@ A task is NOT ready to start unless ALL of the following are true:
 **If DoR is not met, do NOT delegate. Complete the missing prerequisites first.**
 
 ### Definition of Done (DoD) — Gates Task COMPLETION
+
+**Full checklist:** [Definition of Done](DOC-027)
 
 A task is NOT done unless ALL of the following are true:
 
@@ -444,10 +448,16 @@ Universal roles map to Claude Code subagent types based on loaded skills:
 
 When running as a CLI agent (Claude Code), the dev server behaves differently from within the app:
 
-- **`make dev`** runs as a background task. It keeps running as long as the app is open. When the background task **completes**, it means the app has **exited** — the app is DOWN, not restarted.
-- **`make restart`** stops all processes, rebuilds, and relaunches. When run as a background task, completion means the app has **exited**. You must run `make dev` again to relaunch.
-- **After any `make restart` or `make dev` completion:** always start `make dev` as a new background task to bring the app back up.
-- **Do not confuse task completion with successful restart.** A completed background task = the process ended = the app is no longer running.
+- **`make dev`** spawns the dev controller as a detached process, waits for Vite + Tauri to be ready, then exits. Opens the dev dashboard. Partner to `make kill`.
+- **`make start`** starts the controller in the foreground (long-running). For human use or debugging.
+- **`make restart-tauri`** signals the controller to kill the Tauri app binary, recompile, and relaunch. Vite and the controller stay alive.
+- **`make restart-vite`** signals the controller to restart only the Vite dev server. Use when Vite gets stuck.
+- **`make restart`** signals the controller to restart everything — Vite + Tauri. The controller stays alive.
+- **`make stop`** gracefully stops the controller and all processes. Requires `make dev` to bring the environment back up. During dogfooding, this kills the app.
+- **`make kill`** force-kills all OrqaStudio processes. Partner to `make dev`.
+- **`make status`** shows controller PID, state, and child process PIDs.
+
+**Agent behaviour:** During development, agents MUST ONLY use the restart commands (`make restart-tauri`, `make restart-vite`, `make restart`) to manage the dev environment. Do NOT use `make dev`, `make start`, `make stop`, or `make kill` unless the user explicitly asks. Assume the dev environment is already running.
 
 ---
 
@@ -481,8 +491,8 @@ git worktree remove ../orqa-<task-name>
 
 | Skill | When to Load |
 |-------|-------------|
-| `code-search` | **ALWAYS** — mandatory code search wrapper |
-| `orqa-composability` | **ALWAYS** — mandatory composability philosophy |
+| `orqa-code-search` | **ALWAYS** — mandatory code search wrapper |
+| `composability` | **ALWAYS** — mandatory composability philosophy |
 | `planning` | When breaking down features or creating plans |
 | `architecture` | When working on architecture decisions |
 
@@ -490,18 +500,18 @@ git worktree remove ../orqa-<task-name>
 
 | Task Scope | Injected Skills |
 |-----------|----------------|
-| `src-tauri/` (any Rust backend work) | `rust-async-patterns`, `tauri-v2` |
+| `src-tauri/`, `sidecar/` (any backend work) | `backend-best-practices`, `rust-async-patterns`, `tauri-v2` |
 | `src-tauri/src/commands/` | `orqa-ipc-patterns`, `orqa-error-composition` |
 | `src-tauri/src/domain/` | `orqa-domain-services`, `orqa-error-composition` |
 | `src-tauri/src/repo/`, `db.rs` | `orqa-repository-pattern` |
-| `src-tauri/src/search/` | `orqa-native-search` |
+| `src-tauri/src/search/` | `orqa-search-architecture` |
 | `sidecar/src/` | `orqa-streaming` |
-| `ui/` (any frontend work) | `svelte5-best-practices`, `typescript-advanced-types` |
+| `ui/` (any frontend work) | `frontend-best-practices`, `svelte5-best-practices`, `typescript-advanced-types` |
 | `ui/` (styling work) | `tailwind-design-system` |
 | `ui/lib/components/` (component work) | `component-extraction` |
 | `ui/lib/stores/` | `orqa-store-patterns`, `orqa-store-orchestration` |
 | `.orqa/` | `orqa-governance`, `orqa-documentation` |
-| `.orqa/` (schema/artifact auditing) | `artifact-audit`, `schema-compliance` |
+| `.orqa/` (schema/artifact auditing) | `orqa-artifact-audit`, `orqa-schema-compliance` |
 | Test work | `orqa-testing` |
 
 ### MCP Tools (Code Search)

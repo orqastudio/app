@@ -33,13 +33,13 @@ All 7 universal roles are defined in `.orqa/team/agents/`. Each role is invoked 
 
 | Role | Purpose | Tier 1 Skills | When to Use |
 |------|---------|---------------|-------------|
-| **Orchestrator** | Coordinates work, enforces process, manages governance | `code-search`, `orqa-composability`, `planning`, `governance-maintenance` | Session coordination, task lifecycle, governance artifact management |
-| **Researcher** | Investigates questions, gathers information, analyses findings | `code-search`, `orqa-composability`, `planning` | Before planning, when understanding is needed; produces research documents |
-| **Planner** | Designs approaches, evaluates tradeoffs, maps dependencies | `code-search`, `orqa-composability`, `planning`, `architecture` | Before implementation; cross-boundary features; produces implementation plans in epics |
-| **Implementer** | Does the work — code, deliverables, whatever "work" means | `code-search`, `orqa-composability` + domain skills loaded by orchestrator | Rust backend, Svelte frontend, database, build, refactoring |
-| **Reviewer** | Checks quality, compliance, correctness | `code-search`, `orqa-composability` + review skills loaded by orchestrator | Code quality, QA, UX compliance, security audits |
-| **Writer** | Creates documentation, specifications, communications | `code-search`, `orqa-composability`, `planning` | Architecture docs, IPC contracts, component specs, process documentation |
-| **Designer** | Designs experiences, interfaces, and structures | `code-search`, `orqa-composability`, `svelte5-best-practices`, `tailwind-design-system` | UI components, styling, visual polish, design system |
+| **Orchestrator** | Coordinates work, enforces process, manages governance | `orqa-code-search`, `composability`, `planning`, `governance-maintenance` | Session coordination, task lifecycle, governance artifact management |
+| **Researcher** | Investigates questions, gathers information, analyses findings | `orqa-code-search`, `composability`, `planning` | Before planning, when understanding is needed; produces research documents |
+| **Planner** | Designs approaches, evaluates tradeoffs, maps dependencies | `orqa-code-search`, `composability`, `planning`, `architecture` | Before implementation; cross-boundary features; produces implementation plans in epics |
+| **Implementer** | Does the work — code, deliverables, whatever "work" means | `orqa-code-search`, `composability` + domain skills loaded by orchestrator | Rust backend, Svelte frontend, database, build, refactoring |
+| **Reviewer** | Checks quality, compliance, correctness | `orqa-code-search`, `composability` + review skills loaded by orchestrator | Code quality, QA, UX compliance, security audits |
+| **Writer** | Creates documentation, specifications, communications | `orqa-code-search`, `composability`, `planning` | Architecture docs, IPC contracts, component specs, process documentation |
+| **Designer** | Designs experiences, interfaces, and structures | `orqa-code-search`, `composability`, `svelte5-best-practices`, `tailwind-design-system` | UI components, styling, visual polish, design system |
 
 Orchestrator-injected Tier 2 skills narrow the Implementer and Reviewer roles to specific domains. See the delegation guide above and [AD-029](AD-029) for the full skill-loading model.
 
