@@ -61,11 +61,11 @@ Implementation approach to be defined during planning.
 
 ## Tasks
 
-- TASK-115: Design SQLite schema
-- TASK-116: Design IPC command catalogue
-- TASK-117: Design Rust module architecture
-- TASK-118: Design Svelte component tree
-- TASK-119: Design streaming pipeline
-- TASK-120: Define tool system and permission model
-- TASK-121: Design MCP host interface
-- TASK-122: Define error taxonomy
+- [TASK-115](TASK-115): Design SQLite schema
+- [TASK-116](TASK-116): Design IPC command catalogue
+- [TASK-117](TASK-117): Design Rust module architecture
+- [TASK-118](TASK-118): Design Svelte component tree
+- [TASK-119](TASK-119): Design streaming pipeline
+- [TASK-120](TASK-120): Define tool system and permission model
+- [TASK-121](TASK-121): Design MCP host interface
+- [TASK-122](TASK-122): Define error taxonomy

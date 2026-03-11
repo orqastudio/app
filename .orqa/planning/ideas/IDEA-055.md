@@ -35,4 +35,4 @@ If tools used a plugin interface:
 - Tool registry: runtime discovery from a tools directory, not compile-time registration
 - Security: capability-based permissions per tool (read-only tools vs write tools vs network tools)
 - Migration: existing Rust tools wrapped in the plugin interface, new tools can be either native or plugin
-- Relates to AD-010 (MCP tools), IDEA-038 (plugin system), IDEA-053 (tool-linked skills)
+- Relates to [AD-010](AD-010) (MCP tools), [IDEA-038](IDEA-038) (plugin system), [IDEA-053](IDEA-053) (tool-linked skills)

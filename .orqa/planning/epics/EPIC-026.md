@@ -63,7 +63,7 @@ Implementation approach to be defined during planning.
 
 ## Tasks
 
-- TASK-099: Record core architecture decisions (AD-007 through AD-010)
-- TASK-100: Record persistence and governance decisions (AD-011 through AD-014)
-- TASK-101: Record composability and integration decisions (AD-015 through AD-017)
-- TASK-102: Create architecture decisions index
+- [TASK-099](TASK-099): Record core architecture decisions (AD-007 through AD-010)
+- [TASK-100](TASK-100): Record persistence and governance decisions (AD-011 through AD-014)
+- [TASK-101](TASK-101): Record composability and integration decisions (AD-015 through AD-017)
+- [TASK-102](TASK-102): Create architecture decisions index

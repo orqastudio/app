@@ -20,7 +20,7 @@ acceptance:
 ---
 ## What
 
-RULE-020 (No Stubs) explicitly calls for a stub scanner as part of CI/quality checks. Currently there is no automated enforcement — agents self-police. Create a pre-commit hook that scans staged production files for TODO/FIXME/HACK comments and blocks the commit.
+[RULE-020](RULE-020) (No Stubs) explicitly calls for a stub scanner as part of CI/quality checks. Currently there is no automated enforcement — agents self-police. Create a pre-commit hook that scans staged production files for TODO/FIXME/HACK comments and blocks the commit.
 
 ## How
 
@@ -28,7 +28,7 @@ RULE-020 (No Stubs) explicitly calls for a stub scanner as part of CI/quality ch
 2. Grep for TODO, FIXME, HACK patterns in those files
 3. If matches found, print them and exit non-zero to block the commit
 4. Integrate into the existing `.githooks/pre-commit` pipeline or `.orqa/governance/hooks/`
-5. Update RULE-020 to reference the hook as enforcement mechanism
+5. Update [RULE-020](RULE-020) to reference the hook as enforcement mechanism
 
 ## Verification
 

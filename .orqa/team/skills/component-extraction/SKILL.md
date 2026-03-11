@@ -22,7 +22,7 @@ Before creating any new UI element, search for existing patterns:
 2. **`search_regex`** — known class patterns like `animate-spin`, `text-muted-foreground`, `rounded-full`
 3. **Grep for repeated markup** — `<Loader2`, `class="h-4 w-4 animate-spin"`, `{#if loading}`
 
-### Known Repeated Patterns (from TASK-147 audit)
+### Known Repeated Patterns (from [TASK-147](TASK-147) audit)
 
 | Pattern | Occurrences | Files | Extraction Priority |
 |---------|-------------|-------|-------------------|
@@ -104,16 +104,16 @@ Before creating ANY new component:
 
 - [ ] Searched `$lib/components/shared/` for existing equivalent
 - [ ] Searched with `search_semantic` for similar patterns across the codebase
-- [ ] Checked RULE-024 component inventory for matches
+- [ ] Checked [RULE-024](RULE-024) component inventory for matches
 - [ ] If the pattern exists inline in 3+ places, extract to shared instead of creating new
-- [ ] If creating a new shared component, add it to RULE-024's inventory
+- [ ] If creating a new shared component, add it to [RULE-024](RULE-024)'s inventory
 
-## Integration with RULE-024
+## Integration with [RULE-024](RULE-024)
 
-RULE-024 maintains the canonical component inventory. When extracting a new shared component:
+[RULE-024](RULE-024) maintains the canonical component inventory. When extracting a new shared component:
 
 1. Create the component in the correct location
-2. Update RULE-024's inventory table
+2. Update [RULE-024](RULE-024)'s inventory table
 3. Replace all inline occurrences with the new component
 4. Verify no inline implementations remain via `search_regex`
 

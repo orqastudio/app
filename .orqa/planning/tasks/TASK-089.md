@@ -31,7 +31,7 @@ Create a skill that captures the full artifact audit methodology so future audit
 
 ## How
 
-1. Review the audit process from EPIC-048 (planning artifacts) and EPIC-049 (team/enforcement)
+1. Review the audit process from [EPIC-048](EPIC-048) (planning artifacts) and [EPIC-049](EPIC-049) (team/enforcement)
 2. Extract the common patterns: status verification, cross-reference checks, path consistency, codebase alignment
 3. Organize into per-artifact-type checklists
 4. Write as a SKILL.md with clear sections for each audit dimension

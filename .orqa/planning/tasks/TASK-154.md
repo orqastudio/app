@@ -18,7 +18,7 @@ acceptance:
 ---
 ## What
 
-Five rules have a "Related Rules" heading with no content: RULE-002, RULE-013, RULE-021, RULE-025, RULE-028. These should either be populated with genuine cross-references or have the empty heading removed.
+Five rules have a "Related Rules" heading with no content: [RULE-002](RULE-002), [RULE-013](RULE-013), [RULE-021](RULE-021), [RULE-025](RULE-025), [RULE-028](RULE-028). These should either be populated with genuine cross-references or have the empty heading removed.
 
 ## How
 

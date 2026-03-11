@@ -55,8 +55,8 @@ Implementation approach to be defined during planning.
 
 ## Tasks
 
-- TASK-094: Claude Agent SDK sidecar research
-- TASK-095: Tauri v2 capability audit
-- TASK-096: Frontend library selection
-- TASK-097: SQLite persistence design
-- TASK-098: Onboarding strategy definition
+- [TASK-094](TASK-094): Claude Agent SDK sidecar research
+- [TASK-095](TASK-095): Tauri v2 capability audit
+- [TASK-096](TASK-096): Frontend library selection
+- [TASK-097](TASK-097): SQLite persistence design
+- [TASK-098](TASK-098): Onboarding strategy definition

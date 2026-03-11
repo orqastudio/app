@@ -24,7 +24,7 @@ Ensured cross-reference integrity across the newly created decision artifacts an
 
 ## How
 
-Searched all AD-NNN.md files for research-refs and supersession references. Fixed broken links. Updated roadmap.md and MS-001.md.
+Searched all AD-NNN.md files for research-refs and supersession references. Fixed broken links. Updated roadmap.md and [MS-001](MS-001).md.
 
 ## Verification
 

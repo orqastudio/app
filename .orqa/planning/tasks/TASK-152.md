@@ -24,7 +24,7 @@ acceptance:
 ---
 ## What
 
-RULE-032 requires all artifacts to validate against their directory's `schema.json`. The existing `.githooks/validate-schema.mjs` script does this but may not be properly integrated into the pre-commit pipeline. Ensure schema validation runs automatically on every commit that touches `.orqa/` files.
+[RULE-032](RULE-032) requires all artifacts to validate against their directory's `schema.json`. The existing `.githooks/validate-schema.mjs` script does this but may not be properly integrated into the pre-commit pipeline. Ensure schema validation runs automatically on every commit that touches `.orqa/` files.
 
 ## How
 
@@ -34,7 +34,7 @@ RULE-032 requires all artifacts to validate against their directory's `schema.js
 4. Output clear error messages: which file, which field, what's wrong
 5. Validate `propertyOrder` if defined in the schema — frontmatter fields must appear in the specified order
 6. Also validate body template sections (required headings) if defined in the schema's `bodyTemplate`
-6. Update RULE-032 to reference the hook as active enforcement
+6. Update [RULE-032](RULE-032) to reference the hook as active enforcement
 
 ## Verification
 

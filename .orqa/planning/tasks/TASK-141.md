@@ -22,18 +22,18 @@ Five skills have no current loading mechanism because the features they support 
 
 | Skill | Linked From |
 |-------|------------|
-| `project-inference` | EPIC-045, TASK-054 |
-| `project-migration` | EPIC-045, TASK-054 |
-| `project-setup` | EPIC-045, TASK-054 |
-| `project-type-software` | EPIC-045, TASK-054, TASK-067, EPIC-047 |
-| `plugin-development` | IDEA-038, TASK-081 |
+| `project-inference` | [EPIC-045](EPIC-045), [TASK-054](TASK-054) |
+| `project-migration` | [EPIC-045](EPIC-045), [TASK-054](TASK-054) |
+| `project-setup` | [EPIC-045](EPIC-045), [TASK-054](TASK-054) |
+| `project-type-software` | [EPIC-045](EPIC-045), [TASK-054](TASK-054), [TASK-067](TASK-067), [EPIC-047](EPIC-047) |
+| `plugin-development` | [IDEA-038](IDEA-038), [TASK-081](TASK-081) |
 
 Add a note to each skill's SKILL.md frontmatter or body indicating it is forward-looking and which epic/idea it supports. This prevents them from appearing to be active skills that should be loaded.
 
 ## How
 
 1. Open each of the five skill files in `.orqa/team/skills/`
-2. Add a `status: forward-looking` field or a note block at the top of the body (e.g., `> **Forward-looking:** This skill will be activated by EPIC-045 when project initialisation is implemented.`)
+2. Add a `status: forward-looking` field or a note block at the top of the body (e.g., `> **Forward-looking:** This skill will be activated by [EPIC-045](EPIC-045) when project initialisation is implemented.`)
 3. Reference the relevant epic or idea ID in the note
 4. Leave all skill content unchanged
 

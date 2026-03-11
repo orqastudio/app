@@ -53,8 +53,8 @@ Implementation approach to be defined during planning.
 
 ## Tasks
 
-- TASK-103: Define product glossary
-- TASK-104: Define user personas
-- TASK-105: Define user journeys
-- TASK-106: Define information architecture
-- TASK-107: Define MVP feature set
+- [TASK-103](TASK-103): Define product glossary
+- [TASK-104](TASK-104): Define user personas
+- [TASK-105](TASK-105): Define user journeys
+- [TASK-106](TASK-106): Define information architecture
+- [TASK-107](TASK-107): Define MVP feature set

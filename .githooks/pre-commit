@@ -29,9 +29,11 @@ if [ -n "$FRONTEND_CHANGED" ]; then
   make test-frontend
 fi
 
-# Artifact schema validation (only if .orqa/ markdown files changed)
+# Artifact auto-linking and schema validation (only if .orqa/ markdown files changed)
 ORQA_CHANGED=$(git diff --cached --name-only --diff-filter=ACMR -- '.orqa/**/*.md' | grep -v 'README\.md' || true)
 if [ -n "$ORQA_CHANGED" ]; then
+  echo "--- Artifacts: auto-link bare IDs ---"
+  node .githooks/autolink-artifacts.mjs $ORQA_CHANGED
   echo "--- Artifacts: schema validation ---"
   bash .githooks/validate-artifacts.sh $ORQA_CHANGED
 fi

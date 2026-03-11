@@ -37,7 +37,7 @@ Three deliverables:
 - Practical checklist agents use before creating any new UI element
 
 ### 3. Enforcement Rule Update
-- Update RULE-024 or create a companion rule that enforces component reuse as a composability requirement
+- Update [RULE-024](RULE-024) or create a companion rule that enforces component reuse as a composability requirement
 - Include the "search before creating" mandate with specific search patterns
 - FORBIDDEN section for inline implementations of things that have shared equivalents
 
@@ -46,13 +46,13 @@ Three deliverables:
 1. Use `search_semantic` to find all loading states, error displays, empty states, and toolbar patterns across `ui/lib/components/`
 2. For each pattern, count occurrences and note the files containing inline implementations
 3. Create the component extraction skill in `.orqa/team/skills/` covering when/how to extract, naming, prop design, and a pre-creation checklist
-4. Edit RULE-024 to add the search-before-creating mandate and FORBIDDEN section for known inline patterns
+4. Edit [RULE-024](RULE-024) to add the search-before-creating mandate and FORBIDDEN section for known inline patterns
 5. Create TASK-NNN follow-up artifacts for the top N patterns worth extracting
 
 ## Verification
 
 - [ ] Audit document listing all repeated patterns with occurrence counts
 - [ ] New skill for component extraction methodology created
-- [ ] RULE-024 updated or companion rule created for enforcement
+- [ ] [RULE-024](RULE-024) updated or companion rule created for enforcement
 - [ ] Follow-up tasks created for each shared component that should be extracted
-- [ ] Depends on TASK-139 (component inventory) completing first
+- [ ] Depends on [TASK-139](TASK-139) (component inventory) completing first

@@ -255,9 +255,9 @@ State "N/A — [reason]" for inapplicable ones.]
 
 ## See Also
 
-- `.orqa/governance/rules/RULE-022.md` — Plan mode requirements
-- `.orqa/governance/rules/RULE-002.md` — AD-XXX quick reference
-- `.orqa/governance/rules/RULE-031.md` — Two-Pillar framework and governance
+- `.orqa/governance/rules/[RULE-022](RULE-022).md` — Plan mode requirements
+- `.orqa/governance/rules/[RULE-002](RULE-002).md` — AD-XXX quick reference
+- `.orqa/governance/rules/[RULE-031](RULE-031).md` — Two-Pillar framework and governance
 - `.orqa/documentation/development/coding-standards.md` — Code quality standards
 
 ## Related Skills

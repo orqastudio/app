@@ -26,11 +26,11 @@ Three rule/skill pairs have significant content duplication. Apply the principle
 
 | Rule | Skill | Action |
 |------|-------|--------|
-| RULE-022 (Plan Mode Compliance) | `planning` | Move plan template from rule to skill. Rule keeps mandatory requirements and verification gates. Add "See `planning` skill for template and methodology." |
-| RULE-030 (UAT Process) | `uat-process` | Move 4-phase methodology detail from rule to skill. Rule keeps phase names, FORBIDDEN section, and process improvement encoding requirement. Add skill reference. |
-| RULE-010 (End-to-End Completeness) | `orqa-ipc-patterns` | Move 100+ lines of code examples from rule to skill. Rule keeps the 4-layer requirement, verification checklist, and FORBIDDEN patterns (keep these concise). Add skill reference. |
+| [RULE-022](RULE-022) (Plan Mode Compliance) | `planning` | Move plan template from rule to skill. Rule keeps mandatory requirements and verification gates. Add "See `planning` skill for template and methodology." |
+| [RULE-030](RULE-030) (UAT Process) | `uat-process` | Move 4-phase methodology detail from rule to skill. Rule keeps phase names, FORBIDDEN section, and process improvement encoding requirement. Add skill reference. |
+| [RULE-010](RULE-010) (End-to-End Completeness) | `orqa-ipc-patterns` | Move 100+ lines of code examples from rule to skill. Rule keeps the 4-layer requirement, verification checklist, and FORBIDDEN patterns (keep these concise). Add skill reference. |
 
-Also consider RULE-024 (Reusable Components) which has a component inventory that is knowledge, not constraint — after TASK-139 completes, evaluate whether the inventory belongs in a companion skill instead.
+Also consider [RULE-024](RULE-024) (Reusable Components) which has a component inventory that is knowledge, not constraint — after [TASK-139](TASK-139) completes, evaluate whether the inventory belongs in a companion skill instead.
 
 ## How
 
@@ -38,13 +38,13 @@ Also consider RULE-024 (Reusable Components) which has a component inventory tha
 2. Verify the skill now contains the full detail (nothing missing)
 3. Then remove the duplicated content from the rule, leaving only constraints, gates, and FORBIDDEN sections
 4. Add a "See `<skill-name>` skill for full methodology and examples" reference sentence in each rule
-5. For RULE-010, add the moved code examples to the `orqa-ipc-patterns` skill's existing content
+5. For [RULE-010](RULE-010), add the moved code examples to the `orqa-ipc-patterns` skill's existing content
 
 ## Verification
 
-- [ ] RULE-022 contains only constraints, gates, and FORBIDDEN — references planning skill
-- [ ] RULE-030 contains only phase structure, constraints, and FORBIDDEN — references uat-process skill
-- [ ] RULE-010 contains only layer requirements, checklist, and FORBIDDEN — references orqa-ipc-patterns skill
+- [ ] [RULE-022](RULE-022) contains only constraints, gates, and FORBIDDEN — references planning skill
+- [ ] [RULE-030](RULE-030) contains only phase structure, constraints, and FORBIDDEN — references uat-process skill
+- [ ] [RULE-010](RULE-010) contains only layer requirements, checklist, and FORBIDDEN — references orqa-ipc-patterns skill
 - [ ] Skills contain the full methodology, templates, and code examples
 - [ ] No content lost — everything moved, nothing deleted
 - [ ] Rules are significantly shorter after deduplication

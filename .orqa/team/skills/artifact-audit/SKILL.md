@@ -188,7 +188,7 @@ When an audit produces many findings, resist the urge to list each one individua
 
 After collecting all raw findings, identify which ones share the same underlying cause:
 
-- **Migration artifacts** — Multiple stale references all caused by a single rename or move event (e.g., 20 files referencing `dogfood-mode.md` after it was renamed to `RULE-009.md`)
+- **Migration artifacts** — Multiple stale references all caused by a single rename or move event (e.g., 20 files referencing `dogfood-mode.md` after it was renamed to `[RULE-009](RULE-009).md`)
 - **Schema drift** — Multiple artifacts with the same missing or wrong field, caused by a schema change that was not backfilled
 - **Orphaned content** — Multiple artifacts that reference a removed concept or type, caused by deleting that concept without updating its references
 - **Content duplication** — The same detailed information appears in both a rule and a skill, created because one was added without updating the other

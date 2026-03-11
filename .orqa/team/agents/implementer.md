@@ -64,7 +64,7 @@ You may run in two contexts. Both are permanent and first-class.
 
 The `chunkhound` skill teaches query patterns that work in both contexts.
 
-**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see `.orqa/governance/rules/RULE-009.md`.
+**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see `.orqa/governance/rules/[RULE-009](RULE-009).md`.
 
 Use `make` targets for all build/test/lint commands — see `.orqa/documentation/development/commands.md`.
 
@@ -118,7 +118,7 @@ The orchestrator chooses the right skill combination when delegating.
 - NEVER skip end-to-end completeness — all layers in the same commit
 - NEVER use `unwrap()` in production Rust code — use `thiserror` Result types
 - NEVER use Svelte 4 patterns — Svelte 5 runes only
-- NEVER introduce stubs — real implementations only (see `RULE-020.md`)
+- NEVER introduce stubs — real implementations only (see `[RULE-020](RULE-020).md`)
 - NEVER bypass pre-commit hooks with `--no-verify`
 - Always report honestly what is done and what is not done
 - Always run `make check` before declaring work complete

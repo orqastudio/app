@@ -30,4 +30,4 @@ A web research skill would be the counterpart to `code-search` (which teaches co
 
 - Skill covers: query strategies (exact phrases, site-scoped, date-filtered), source hierarchy (official docs > GitHub issues > blog posts > forums), synthesis patterns (extract key facts, note version constraints), citation format for research documents
 - Complements the `code-search` skill (internal) with external research capability
-- Could link to IDEA-053 (tool-linked skills) — the web search tool gets this skill as its documentation
+- Could link to [IDEA-053](IDEA-053) (tool-linked skills) — the web search tool gets this skill as its documentation

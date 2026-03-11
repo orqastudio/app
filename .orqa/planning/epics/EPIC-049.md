@@ -88,7 +88,7 @@ Audit the boundaries between governance artifact types:
 
 ### Phase 7: Create Artifact Audit Skill
 
-Encode the audit methodology from EPIC-048 and EPIC-049 into a reusable skill:
+Encode the audit methodology from [EPIC-048](EPIC-048) and [EPIC-049](EPIC-049) into a reusable skill:
 1. Per-artifact-type checklists (status, cross-references, paths, codebase alignment)
 2. Systemic pattern grouping approach
 3. Cross-layer consistency checks
@@ -96,13 +96,13 @@ Encode the audit methodology from EPIC-048 and EPIC-049 into a reusable skill:
 
 ## Tasks
 
-- TASK-084: Audit all agent definitions for accuracy
-- TASK-085: Audit all skill definitions against codebase
-- TASK-086: Audit all rules for enforcement accuracy
-- TASK-087: Audit hooks for correctness
-- TASK-088: Cross-layer consistency verification
-- TASK-089: Create artifact audit skill
-- TASK-093: Audit for missing and miscategorised governance artifacts
+- [TASK-084](TASK-084): Audit all agent definitions for accuracy
+- [TASK-085](TASK-085): Audit all skill definitions against codebase
+- [TASK-086](TASK-086): Audit all rules for enforcement accuracy
+- [TASK-087](TASK-087): Audit hooks for correctness
+- [TASK-088](TASK-088): Cross-layer consistency verification
+- [TASK-089](TASK-089): Create artifact audit skill
+- [TASK-093](TASK-093): Audit for missing and miscategorised governance artifacts
 
 ## Out of Scope
 

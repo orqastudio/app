@@ -107,7 +107,7 @@ The scanner recursively walks directories like a file explorer:
 
 ### Critical Rule: Config Paths Must Match Disk
 
-Every `path` in the config must resolve to an actual directory. Moving files on disk requires updating the config. See `.orqa/governance/rules/RULE-003.md`.
+Every `path` in the config must resolve to an actual directory. Moving files on disk requires updating the config. See `.orqa/governance/rules/[RULE-003](RULE-003).md`.
 
 ## Directory README Format
 

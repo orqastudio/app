@@ -37,7 +37,7 @@ Can't manage governance in-app without editing. Currently requires switching to 
 
 ## Context
 
-This epic's scope has been absorbed into [EPIC-005](EPIC-005) (Artifact Browser — Sort, Filter, Search, Edit), which covers in-app artifact editing as Phase 3 alongside sort/group/filter, AI search, and the references panel. Marked done as the scope is now tracked under EPIC-005.
+This epic's scope has been absorbed into [EPIC-005](EPIC-005) (Artifact Browser — Sort, Filter, Search, Edit), which covers in-app artifact editing as Phase 3 alongside sort/group/filter, AI search, and the references panel. Marked done as the scope is now tracked under [EPIC-005](EPIC-005).
 
 ## Implementation Design
 

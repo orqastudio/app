@@ -34,4 +34,4 @@ Tool access restrictions per role are currently defined only in each agent's YAM
 - [ ] Every universal role's tool restrictions documented
 - [ ] FORBIDDEN section with concrete violations
 - [ ] Consistent with agent YAML tools lists
-- [ ] References RULE-001 (agent delegation) for ownership boundary context
+- [ ] References [RULE-001](RULE-001) (agent delegation) for ownership boundary context

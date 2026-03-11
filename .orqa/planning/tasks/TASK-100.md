@@ -27,4 +27,4 @@ Authored each AD artifact with full context and rationale, ensuring the SQLite/f
 
 ## Verification
 
-AD-011 through AD-014 exist in `.orqa/governance/decisions/` with all required schema fields and are listed in the decisions index.
+[AD-011](AD-011) through [AD-014](AD-014) exist in `.orqa/governance/decisions/` with all required schema fields and are listed in the decisions index.

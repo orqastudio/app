@@ -25,7 +25,7 @@ Established the Decision artifact type as a first-class citizen in the governanc
 
 ## How
 
-Updated artifact-framework.md with Decision schema, artifact-workflow.md with creation workflow, RULE-004 with lifecycle enforcement, and RULE-002 with source-of-truth directive.
+Updated artifact-framework.md with Decision schema, artifact-workflow.md with creation workflow, [RULE-004](RULE-004) with lifecycle enforcement, and [RULE-002](RULE-002) with source-of-truth directive.
 
 ## Verification
 

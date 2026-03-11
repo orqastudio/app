@@ -27,4 +27,4 @@ Authored each AD with rationale linking back to the product pillars, explicitly 
 
 ## Verification
 
-AD-015 through AD-017 exist in `.orqa/governance/decisions/` with all required schema fields and are listed in the decisions index.
+[AD-015](AD-015) through [AD-017](AD-017) exist in `.orqa/governance/decisions/` with all required schema fields and are listed in the decisions index.

@@ -153,7 +153,7 @@ Lesson management backed by file-based storage in `.orqa/governance/lessons/`. L
 | Command | Signature | Description |
 |---------|-----------|-------------|
 | `lessons_list` | `(project_path: String) -> Vec<Lesson>` | List all lessons from `.orqa/governance/lessons/` |
-| `lessons_get` | `(project_path: String, id: String) -> Lesson` | Get a single lesson by ID (e.g. `IMPL-001`) |
+| `lessons_get` | `(project_path: String, id: String) -> Lesson` | Get a single lesson by ID (e.g. `[IMPL-001](IMPL-001)`) |
 | `lessons_create` | `(project_path: String, title: String, category: String, body: String) -> Lesson` | Create a new lesson with auto-assigned ID |
 | `lesson_increment_recurrence` | `(project_path: String, id: String) -> Lesson` | Increment recurrence count; used by review agents |
 | `lessons_scan_promotions` | `(project_path: String) -> Vec<Lesson>` | Return lessons with recurrence >= 2 that have not yet been promoted |
@@ -188,7 +188,7 @@ Bidirectional artifact reference graph. Built lazily from disk, cached in `AppSt
 
 | Command | Signature | Description |
 |---------|-----------|-------------|
-| `resolve_artifact` | `(id: String) -> Option<ArtifactNode>` | Resolve artifact by ID (e.g. `EPIC-048`) |
+| `resolve_artifact` | `(id: String) -> Option<ArtifactNode>` | Resolve artifact by ID (e.g. `[EPIC-048](EPIC-048)`) |
 | `resolve_artifact_path` | `(path: String) -> Option<ArtifactNode>` | Resolve artifact by relative file path |
 | `get_references_from` | `(id: String) -> Vec<ArtifactRef>` | Get all forward references (outgoing edges) from an artifact |
 | `get_references_to` | `(id: String) -> Vec<ArtifactRef>` | Get all backlinks (incoming edges) to an artifact |

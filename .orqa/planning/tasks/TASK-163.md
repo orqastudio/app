@@ -52,7 +52,7 @@ For every `layer: canon` artifact, answer:
 ### 3. Artifact Updates
 - Update every artifact's `layer` field from `canon` to `core` (or reclassify to `project`)
 - Update every artifact's `scope` field to use new standardised values
-- Update RULE-026, orchestrator, and other governance docs that reference layer values
+- Update [RULE-026](RULE-026), orchestrator, and other governance docs that reference layer values
 
 ### 4. Documentation Plan
 - Identify where user-facing docs should live
@@ -61,7 +61,7 @@ For every `layer: canon` artifact, answer:
 
 ## How
 
-1. Start with RES-037 proposals
+1. Start with [RES-037](RES-037) proposals
 2. Build a spreadsheet/table of every artifact with current layer, proposed layer, and rationale
 3. Update schemas first (so validation catches any misses)
 4. Batch-update all artifact frontmatter

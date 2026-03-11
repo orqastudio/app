@@ -22,7 +22,7 @@ Evaluated SQLite access libraries and established the persistence scope boundary
 
 ## How
 
-Compared rusqlite and sqlx for ergonomics and async compatibility in a Tauri context, then defined the data ownership boundary that became AD-032.
+Compared rusqlite and sqlx for ergonomics and async compatibility in a Tauri context, then defined the data ownership boundary that became [AD-032](AD-032).
 
 ## Verification
 

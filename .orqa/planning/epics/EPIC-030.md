@@ -64,13 +64,13 @@ Implementation approach to be defined during planning.
 
 ## Tasks
 
-- TASK-123: Initialize Tauri v2 + Svelte 5 project
-- TASK-124: Implement Rust backend sidecar and streaming
-- TASK-125: Implement SQLite database and migrations
-- TASK-126: Implement session and message CRUD
-- TASK-127: Implement remaining IPC commands across all domains
-- TASK-128: Implement four-zone layout and sidebar
-- TASK-129: Implement conversation UI with streaming
-- TASK-130: Implement tool call rendering
-- TASK-131: Implement session management UI
-- TASK-132: Implement settings view and semantic code search
+- [TASK-123](TASK-123): Initialize Tauri v2 + Svelte 5 project
+- [TASK-124](TASK-124): Implement Rust backend sidecar and streaming
+- [TASK-125](TASK-125): Implement SQLite database and migrations
+- [TASK-126](TASK-126): Implement session and message CRUD
+- [TASK-127](TASK-127): Implement remaining IPC commands across all domains
+- [TASK-128](TASK-128): Implement four-zone layout and sidebar
+- [TASK-129](TASK-129): Implement conversation UI with streaming
+- [TASK-130](TASK-130): Implement tool call rendering
+- [TASK-131](TASK-131): Implement session management UI
+- [TASK-132](TASK-132): Implement settings view and semantic code search
