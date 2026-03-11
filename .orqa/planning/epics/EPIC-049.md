@@ -2,7 +2,7 @@
 id: EPIC-049
 title: Agent, Skill, and Enforcement Artifact Audit
 description: Comprehensive audit of all agent definitions, skill definitions, and enforcement artifacts (rules, hooks) to verify accuracy against the current codebase, fix stale references, remove deprecated content, and ensure internal consistency.
-status: done
+status: in-progress
 priority: P1
 created: "2026-03-11"
 updated: "2026-03-11"
@@ -12,7 +12,7 @@ pillars:
   - PILLAR-001
 depends-on: []
 blocks: []
-research-refs: [RES-035, RES-036]
+research-refs: [RES-035, RES-036, RES-037]
 docs-required: []
 docs-produced: []
 scoring:
