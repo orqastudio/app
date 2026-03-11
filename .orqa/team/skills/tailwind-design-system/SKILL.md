@@ -5,7 +5,8 @@ description: Build scalable design systems with Tailwind CSS v4, design tokens, 
 status: active
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: core
+layer: project
+scope: [AGENT-001, AGENT-002, AGENT-006]
 user-invocable: false
 ---
 

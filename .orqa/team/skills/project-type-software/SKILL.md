@@ -9,7 +9,8 @@ description: |
 status: active
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: core
+layer: setup
+scope: [AGENT-003]
 version: 1.0.0
 user-invocable: true
 ---

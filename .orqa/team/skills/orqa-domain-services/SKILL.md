@@ -11,6 +11,7 @@ status: active
 created: "2026-03-01"
 updated: "2026-03-10"
 layer: project
+scope: [AGENT-002, AGENT-006]
 version: 1.0.0
 user-invocable: true
 ---
@@ -257,7 +258,7 @@ fn stream_event_roundtrip() {
 
 ## Related Skills
 
-- **orqa-composability** — the overarching philosophy this skill implements
+- **composability** — the overarching philosophy this skill implements
 - **orqa-ipc-patterns** — the full IPC request chain from frontend to backend
 - **orqa-error-composition** — how errors flow through domain services
 - **orqa-repository-pattern** — the persistence layer domain services delegate to

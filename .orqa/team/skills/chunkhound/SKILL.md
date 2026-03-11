@@ -9,7 +9,8 @@ description: |
 status: active
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: core
+layer: project
+scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
 version: 1.0.0
 user-invocable: true
 ---

@@ -11,6 +11,7 @@ status: active
 created: "2026-03-01"
 updated: "2026-03-10"
 layer: project
+scope: [AGENT-002, AGENT-006]
 version: 1.0.0
 user-invocable: true
 ---
@@ -196,6 +197,6 @@ Split by scope. AppLayout handles layout concerns. ConversationView handles conv
 ## Related Skills
 
 - **orqa-store-patterns** — single-store patterns (class structure, loading lifecycle)
-- **orqa-composability** — the overarching philosophy
+- **composability** — the overarching philosophy
 - **svelte5-best-practices** — runes syntax and reactivity rules
 - **orqa-ipc-patterns** — the invoke/Channel layer stores call

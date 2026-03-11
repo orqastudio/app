@@ -10,6 +10,7 @@ status: active
 created: "2026-03-01"
 updated: "2026-03-10"
 layer: project
+scope: [AGENT-003, AGENT-007]
 version: 2.0.0
 user-invocable: true
 ---
@@ -218,7 +219,6 @@ created: YYYY-MM-DD
 updated: YYYY-MM-DD
 assignee: agent-name
 skills: [skill1, skill2]
-scope:
   - file/paths
 acceptance:
   - criteria
@@ -251,7 +251,6 @@ status: active
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 layer: core | project
-scope: system | domain | project | role | artifact
 promoted-from: IMPL-NNN        # If promoted from a lesson, null otherwise
 ---
 ```

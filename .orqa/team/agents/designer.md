@@ -9,17 +9,14 @@ updated: "2026-03-10"
 layer: core
 scope: general
 model: sonnet
-tools:
-  - Read
-  - Edit
-  - Write
-  - Glob
-  - Grep
-  - mcp__chunkhound__search_regex
-  - mcp__chunkhound__search_semantic
-  - mcp__chunkhound__code_research
-  - search_regex
-  - search_semantic
+capabilities:
+  - file_read
+  - file_edit
+  - file_write
+  - file_search
+  - content_search
+  - code_search_regex
+  - code_search_semantic
   - code_research
 skills:
   - SKILL-005

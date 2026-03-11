@@ -18,8 +18,12 @@
     "status": { "enum": ["active", "inactive"] },
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
-    "layer": { "enum": ["core", "project", "plugin", "community", "user"] },
-    "scope": { "enum": ["general", "software-engineering", "governance"] },
+    "layer": { "enum": ["core", "setup", "project", "plugin", "community", "user"] },
+    "scope": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^AGENT-\\d+$" },
+      "description": "Agent IDs that should use this skill"
+    },
     "version": { "type": "string" },
     "user-invocable": { "type": "boolean" },
     "allowed-tools": { "type": "string" },

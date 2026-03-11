@@ -11,6 +11,7 @@ status: active
 created: "2026-03-01"
 updated: "2026-03-10"
 layer: project
+scope: [AGENT-002, AGENT-006]
 version: 1.0.0
 user-invocable: true
 ---
@@ -252,7 +253,7 @@ pub fn create(project_path: &Path, new: &NewLesson) -> Result<Lesson, OrqaError>
 
 ## Related Skills
 
-- **orqa-composability** — the overarching philosophy
+- **composability** — the overarching philosophy
 - **orqa-domain-services** — services that consume repositories
 - **orqa-error-composition** — how DB errors flow to frontend
 - **orqa-ipc-patterns** — the full chain from store to repo

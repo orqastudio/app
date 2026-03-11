@@ -6,7 +6,7 @@ status: active
 created: "2026-03-11"
 updated: "2026-03-11"
 layer: project
-scope: software-engineering
+scope: [AGENT-001, AGENT-002]
 user-invocable: false
 ---
 
@@ -119,6 +119,6 @@ Before creating ANY new component:
 
 ## Related Skills
 
-- `orqa-composability` — the philosophy this skill implements at the component level
+- `composability` — the philosophy this skill implements at the component level
 - `svelte5-best-practices` — Svelte 5 patterns for component props, snippets, and reactivity
 - `ux-compliance-review` — reviews check for shared component usage

@@ -12,6 +12,7 @@ status: active
 created: "2026-03-01"
 updated: "2026-03-10"
 layer: project
+scope: [AGENT-002, AGENT-006]
 version: 1.0.0
 user-invocable: true
 ---
@@ -303,7 +304,7 @@ std::fs::read_to_string(path)?;
 
 ## Related Skills
 
-- **orqa-composability** — error composition is a core composability principle
+- **composability** — error composition is a core composability principle
 - **orqa-ipc-patterns** — the IPC boundary errors cross
 - **orqa-domain-services** — how domain services propagate errors
 - **orqa-repository-pattern** — how DB errors are converted
