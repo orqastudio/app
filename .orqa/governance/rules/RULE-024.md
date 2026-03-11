@@ -4,56 +4,67 @@ title: Reusable Components
 description: Check shared component library before creating new UI elements. Use EmptyState, LoadingSpinner, ErrorDisplay, etc.
 status: active
 created: "2026-03-07"
-updated: "2026-03-07"
+updated: "2026-03-11"
 layer: canon
 scope: system
 ---
 ## Shared Component Library
 
-Before creating ANY new UI element, check `$lib/components/shared/`:
+Before creating ANY new UI element, check the reusable component locations below.
+
+### `$lib/components/shared/` — General-Purpose Components
 
 | Component | Purpose | Use When |
 |-----------|---------|----------|
-| `EmptyState` | Empty list/grid placeholder | ANY page with no data to show |
-| `LoadingSpinner` | Loading indicator | ANY async data fetch |
-| `ErrorDisplay` | Error message with retry | ANY error state |
-| `PageToolbar` | Filter/action toolbar | ALL list/library pages |
-| `StatusBadge` | Status indicator badge | ANY status display |
-| `ProgressBar` | Progress indication | ANY progress display |
-| `Panel` | Resizable side panel | ALL multi-panel layouts |
-| `CodeBlock` | Syntax-highlighted code display | ANY code rendering |
-| `MarkdownRenderer` | Markdown content display | ANY markdown rendering |
-| `ConversationMessage` | Chat message bubble | ALL conversation displays |
-| `ToolCallCard` | Tool call display with approval | ALL tool call rendering |
-| `ConfirmDeleteDialog` | Destructive action confirmation | ANY delete/remove action |
+| `EmptyState` | Empty list/grid placeholder with optional icon, title, description, action | ANY page with no data to show |
+| `LoadingSpinner` | Branded (logo-pulse) or minimal (CSS) loading indicator, 3 sizes | ANY async data fetch |
+| `ErrorDisplay` | Error message with destructive styling and optional retry | ANY error state |
+| `ConfirmDeleteDialog` | AlertDialog wrapper for destructive action confirmation | ANY delete/remove action |
+| `StatusIndicator` | Multi-mode status display (badge/dot/inline) with group-based color mapping | ANY artifact status display |
+| `SmallBadge` | Compact badge wrapper (11px text) | Metadata tags, skill badges |
+| `SearchInput` | Search input with icon prefix, sm/xs variants | ANY filterable list search |
+| `MetadataRow` | Icon + label + badge array row | Displaying tagged metadata |
+| `SelectMenu` | Dropdown select with check marks | ANY single-value selection |
+| `ThinkingBlock` | Collapsible AI thinking content with auto-collapse | AI reasoning display |
+| `ArtifactListItem` | Clickable list item with status dot, label, description | Artifact navigation lists |
+
+### `$lib/components/content/` — Content Rendering
+
+| Component | Purpose | Use When |
+|-----------|---------|----------|
+| `CodeBlock` | Syntax-highlighted code display with copy button | ANY code rendering |
+| `MarkdownRenderer` | Markdown content display with artifact links | ANY markdown rendering |
+
+### `$lib/components/tool/` — Tool Integration
+
+| Component | Purpose | Use When |
+|-----------|---------|----------|
+| `ToolCallCard` | Tool call display with approval UI | ALL tool call rendering |
+
+### `$lib/components/conversation/` — Conversation Components
+
+| Component | Purpose | Use When |
+|-----------|---------|----------|
+| `MessageBubble` | Base chat message bubble | Custom message rendering |
+| `UserMessage` / `AssistantMessage` / `SystemMessage` | Role-specific message wrappers | Conversation display |
 
 ## Rules
 
-1. **Search before creating** — Before writing a new component, search `$lib/components/shared/` for existing ones
+1. **Search before creating** — Before writing a new component, search `$lib/components/` for existing ones
 2. **No inline empty states** — NEVER write `<div class="py-12 text-center"><p>No items</p></div>`. Use `<EmptyState>`
 3. **No inline loading states** — NEVER write custom spinners. Use `<LoadingSpinner>`
 4. **No inline error states** — NEVER write custom error cards. Use `<ErrorDisplay>`
-5. **No custom toolbars on list pages** — ALWAYS use `<PageToolbar>`
-6. **Consistent page patterns** — All list pages follow: toolbar (conditional on data) -> loading -> empty -> grid
+5. **No inline status displays** — NEVER write custom status badges. Use `<StatusIndicator>`
+6. **Consistent page patterns** — All list pages follow: loading -> empty -> content
 7. **shadcn-svelte first** — Use shadcn-svelte primitives (Button, Card, Dialog, etc.) before building custom components
 
-## Page Template (List Pages)
+## Panel Layout
 
-Every list page MUST follow this exact pattern:
-
-```svelte
-{#if items.length > 0}<PageToolbar>...</PageToolbar>{/if}
-{#if loading}<LoadingSpinner />{:else if items.length === 0}<EmptyState ... />{:else}<grid>...</grid>{/if}
-```
-
-## Panel Layout Template
-
-OrqaStudio uses a multi-panel layout (conversation + artifact panels). Panel components MUST:
+OrqaStudio uses a multi-panel layout (conversation + artifact panels) built on shadcn `Resizable` components (`PaneGroup`, `Pane`, `Handle`). Panel layouts MUST:
 
 - Be resizable via drag handles
 - Support collapsed/expanded states
 - Maintain state across navigation
-- Use the shared `<Panel>` wrapper for consistent behavior
 
 ## ChunkHound Integration
 

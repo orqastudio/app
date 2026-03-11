@@ -36,9 +36,30 @@ if [ -n "$ORQA_CHANGED" ]; then
   bash .githooks/validate-artifacts.sh $ORQA_CHANGED
 fi
 
+# Stub scanner (only if production code files changed)
+PROD_CODE_CHANGED=$(git diff --cached --name-only --diff-filter=ACMR -- '*.rs' '*.ts' '*.svelte' '*.js' | head -1)
+if [ -n "$PROD_CODE_CHANGED" ]; then
+  echo "--- Code: stub scanner ---"
+  bash .githooks/scan-stubs.sh
+fi
+
+# Task dependency gate (only if task files changed)
+TASKS_CHANGED=$(git diff --cached --name-only --diff-filter=ACMR -- '.orqa/planning/tasks/TASK-*.md' | head -1)
+if [ -n "$TASKS_CHANGED" ]; then
+  echo "--- Artifacts: task dependency gate ---"
+  bash .githooks/validate-task-deps.sh
+fi
+
+# Epic readiness gate (only if epic files changed)
+EPICS_CHANGED=$(git diff --cached --name-only --diff-filter=ACMR -- '.orqa/planning/epics/EPIC-*.md' | head -1)
+if [ -n "$EPICS_CHANGED" ]; then
+  echo "--- Artifacts: epic readiness gate ---"
+  bash .githooks/validate-epic-readiness.sh
+fi
+
 # If nothing relevant changed, still confirm
-if [ -z "$RUST_CHANGED" ] && [ -z "$FRONTEND_CHANGED" ] && [ -z "$ORQA_CHANGED" ]; then
-  echo "No Rust, frontend, or artifact files changed — skipping quality checks."
+if [ -z "$RUST_CHANGED" ] && [ -z "$FRONTEND_CHANGED" ] && [ -z "$ORQA_CHANGED" ] && [ -z "$PROD_CODE_CHANGED" ] && [ -z "$TASKS_CHANGED" ] && [ -z "$EPICS_CHANGED" ]; then
+  echo "No Rust, frontend, artifact, or planning files changed — skipping quality checks."
 fi
 
 echo "=== Pre-commit: All checks passed ==="

@@ -2,7 +2,7 @@
 id: TASK-149
 title: Create stub scanner pre-commit hook
 description: Pre-commit hook that greps staged production files for TODO/FIXME/HACK comments and blocks the commit if found.
-status: todo
+status: done
 created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049

@@ -170,6 +170,7 @@ The [Coding Standards](DOC-021) require 80%+ test coverage.
 - The `title:` field is used as the display label in the app's navigation
 - Frontmatter must validate against the `schema.json` in the artifact's directory
 - IDs auto-increment per type — scan existing files to determine the next ID
+- **Field ordering is enforced** — frontmatter fields must appear in the order defined by `propertyOrder` in `schema.json`. Wrong order blocks the commit. The most common pattern across artifact types is: `id, title, description, status, created, updated` followed by type-specific fields. Always check the specific `schema.json` before writing frontmatter. See [SKILL-038](SKILL-038) for remediation patterns.
 
 ## What NOT to Document
 

@@ -2,7 +2,7 @@
 id: TASK-152
 title: Create schema validation pre-commit hook
 description: Pre-commit hook that validates YAML frontmatter of staged .orqa/ markdown files against their directory's schema.json before allowing the commit.
-status: todo
+status: done
 created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049

@@ -2,7 +2,7 @@
 id: TASK-157
 title: Create rule for context window management
 description: Formalize the orchestrator's context window management guidelines into a dedicated rule with enforceable constraints.
-status: todo
+status: done
 created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049

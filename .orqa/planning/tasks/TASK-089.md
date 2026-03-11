@@ -2,7 +2,7 @@
 id: TASK-089
 title: Create artifact audit skill
 description: Create a reusable skill that captures the methodology, checklists, and patterns for auditing .orqa/ artifacts — enabling future audits to be systematic and repeatable without rediscovering the process each time.
-status: todo
+status: done
 created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049

@@ -2,7 +2,7 @@
 id: TASK-160
 title: Create rule for session management and overnight mode
 description: Formalize the session management and overnight mode conventions from orchestrator.md into a dedicated rule with enforceable constraints.
-status: todo
+status: done
 created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049

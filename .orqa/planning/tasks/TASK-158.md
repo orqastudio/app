@@ -2,7 +2,7 @@
 id: TASK-158
 title: Create rule for tool access restrictions per role
 description: Formalize the tool access restrictions defined in agent YAML tools lists into a dedicated rule that enforces which tools each universal role may use.
-status: todo
+status: done
 created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049

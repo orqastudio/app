@@ -3,10 +3,10 @@ id: RULE-009
 title: Dogfood Mode
 description: "Project-level rule for when an app is editing itself. Provides agent context awareness, operational caution, and system prompt injection. Active when dogfood: true in project.json."
 status: active
-layer: project
-scope: system
 created: "2026-03-07"
 updated: "2026-03-07"
+layer: project
+scope: system
 ---
 # Dogfood Mode (CONDITIONAL — only when `dogfood: true`)
 

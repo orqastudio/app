@@ -2,7 +2,7 @@
 id: TASK-151
 title: Create epic readiness validator hook
 description: Validation hook that checks docs-required paths exist on disk before an epic can move to ready status.
-status: todo
+status: done
 created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049

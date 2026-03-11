@@ -2,7 +2,7 @@
 id: TASK-153
 title: Create schema compliance scanning skill and tools
 description: Create a skill for schema compliance scanning methodology and design tools that can validate artifact frontmatter against schemas at any time, not just at commit time.
-status: todo
+status: done
 created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049

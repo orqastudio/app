@@ -2,7 +2,7 @@
 id: TASK-142
 title: Replace React examples with Svelte 5 equivalents in tailwind-design-system skill
 description: Replace all React code examples in the tailwind-design-system skill with Svelte 5 equivalents using shadcn-svelte patterns.
-status: todo
+status: done
 created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049

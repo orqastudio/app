@@ -2,7 +2,7 @@
 id: TASK-145
 title: Create rule for skill portability constraints
 description: Extract skill portability constraints from the skills-maintenance skill into a new dedicated rule with rule-level enforcement.
-status: todo
+status: done
 created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049

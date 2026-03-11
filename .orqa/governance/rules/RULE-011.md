@@ -3,10 +3,10 @@ id: RULE-011
 title: Enforcement Before Code
 description: Enforcement artifacts (rules, skills, lessons) must be created before the implementation code that establishes the pattern.
 status: active
-layer: canon
-scope: system
 created: "2026-03-07"
 updated: "2026-03-07"
+layer: canon
+scope: system
 ---
 # Enforcement Before Code (NON-NEGOTIABLE)
 

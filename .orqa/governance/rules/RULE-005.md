@@ -3,10 +3,10 @@ id: RULE-005
 title: Code Search Usage
 description: Prefer semantic search over Grep/Glob for multi-file searches. Load the correct search skill for your context.
 status: active
-layer: canon
-scope: system
 created: "2026-03-07"
 updated: "2026-03-07"
+layer: canon
+scope: system
 ---
 **Prefer semantic search over Grep/Glob for any search that spans more than one file or directory.**
 

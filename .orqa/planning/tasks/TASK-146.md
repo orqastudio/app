@@ -2,7 +2,7 @@
 id: TASK-146
 title: Create systems-thinking companion skill for RULE-028
 description: Create a systems-thinking skill that provides practical methodology for applying RULE-028's systems-thinking principle to real codebases.
-status: todo
+status: done
 created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
