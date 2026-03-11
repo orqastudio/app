@@ -1,3 +1,4 @@
+use crate::domain::process_gates::evaluate_process_gates;
 use crate::domain::provider_event::StreamEvent;
 use crate::domain::tool_executor::{execute_tool, truncate_tool_output, READ_ONLY_TOOLS};
 use crate::sidecar::types::{SidecarRequest, SidecarResponse};
@@ -356,6 +357,10 @@ pub fn run_stream_loop(
         accumulate_response(&response, &mut acc);
 
         let terminal = is_terminal(&response);
+        // Evaluate stop-event process gates when the turn completes successfully.
+        if matches!(response, SidecarResponse::TurnComplete { .. }) {
+            evaluate_stop_gates(state);
+        }
         if let Some(event) = translate_response(&response) {
             let _ = on_event.send(event);
         }
@@ -403,6 +408,78 @@ fn track_process_state(tool_name: &str, input_json: &str, state: &tauri::State<'
         Err(e) => {
             tracing::warn!("[process] process_state mutex poisoned, skipping track: {e}");
         }
+    }
+    track_workflow(tool_name, &input, state);
+}
+
+/// Record a completed tool call in the workflow tracker and evaluate process gates.
+///
+/// Gate messages are logged at debug level. Callers that want to surface them
+/// to the agent should read the workflow tracker separately.
+fn track_workflow(tool_name: &str, input: &serde_json::Value, state: &tauri::State<'_, AppState>) {
+    let mut guard = match state.workflow_tracker.lock() {
+        Ok(g) => g,
+        Err(e) => {
+            tracing::warn!("[workflow] workflow_tracker mutex poisoned, skipping track: {e}");
+            return;
+        }
+    };
+
+    match tool_name {
+        "read_file" => {
+            if let Some(path) = input["path"].as_str() {
+                guard.record_read(path);
+            }
+        }
+        "write_file" | "edit_file" => {
+            if let Some(path) = input["path"].as_str() {
+                guard.record_write(path);
+                // Evaluate write-event gates
+                let results = evaluate_process_gates(&mut guard, "write", Some(path));
+                for gate in results.iter().filter(|r| r.fired) {
+                    tracing::debug!(
+                        "[process_gate] gate='{}' fired: {}",
+                        gate.gate_name,
+                        gate.message
+                    );
+                }
+            }
+        }
+        "bash" => {
+            if let Some(cmd) = input["command"].as_str() {
+                guard.record_command(cmd);
+            }
+        }
+        "search_regex" | "search_semantic" | "code_research" => {
+            guard.record_search();
+        }
+        "load_skill" => {
+            if let Some(name) = input["name"].as_str() {
+                guard.record_skill_loaded(name);
+            }
+        }
+        _ => {}
+    }
+}
+
+/// Evaluate stop-event process gates against the current workflow tracker.
+///
+/// Called at `TurnComplete`. Gate messages are logged at debug level.
+pub fn evaluate_stop_gates(state: &tauri::State<'_, AppState>) {
+    let mut guard = match state.workflow_tracker.lock() {
+        Ok(g) => g,
+        Err(e) => {
+            tracing::warn!("[workflow] workflow_tracker mutex poisoned, skipping stop gates: {e}");
+            return;
+        }
+    };
+    let results = evaluate_process_gates(&mut guard, "stop", None);
+    for gate in results.iter().filter(|r| r.fired) {
+        tracing::debug!(
+            "[process_gate] gate='{}' fired at stop: {}",
+            gate.gate_name,
+            gate.message
+        );
     }
 }
 

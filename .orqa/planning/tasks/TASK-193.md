@@ -5,9 +5,9 @@ description: |
   Add a new 'inject' action type to the enforcement schema, the plugin
   rule-engine.mjs, and the Rust enforcement engine. The inject action loads
   skill content and returns it as systemMessage instead of blocking or warning.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-052
 depends-on: []
 ---

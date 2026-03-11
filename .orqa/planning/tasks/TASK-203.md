@@ -5,9 +5,9 @@ description: |
   Simplify rules that currently regex-match code patterns (unwrap, TODO, etc.)
   to instead reference the linter configs that enforce them. Remove regex
   enforcement for patterns that linters already cover.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-052
 depends-on:
   - TASK-202

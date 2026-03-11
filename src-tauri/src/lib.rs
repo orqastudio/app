@@ -38,6 +38,7 @@ fn build_app_state(
         pending_approvals: std::sync::Mutex::new(std::collections::HashMap::new()),
         enforcement: std::sync::Mutex::new(None),
         process_state: std::sync::Mutex::new(domain::process_state::SessionProcessState::default()),
+        workflow_tracker: std::sync::Mutex::new(domain::workflow_tracker::WorkflowTracker::new()),
         artifact_watcher: std::sync::Arc::new(std::sync::Mutex::new(None)),
         artifact_graph: std::sync::Mutex::new(None),
     })

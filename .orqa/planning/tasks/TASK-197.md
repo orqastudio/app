@@ -4,9 +4,9 @@ title: Implement plan-before-build + structure-before-code gates
 description: |
   Process gates that fire when code is written without epic/task context or
   without a plan being referenced.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-052
 depends-on:
   - TASK-195

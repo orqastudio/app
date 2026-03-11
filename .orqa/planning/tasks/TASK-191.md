@@ -5,9 +5,9 @@ description: |
   Move the rule-enforcement SKILL.md from the plugin to .orqa/team/skills/ as a
   core skill. Rename the plugin's copy to reflect it's specifically about the
   Claude Code companion plugin setup.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-052
 depends-on: []
 ---

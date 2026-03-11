@@ -4,9 +4,9 @@ title: Implement evidence-before-done + learn-after-doing gates
 description: |
   Process gates that fire at task completion without verification evidence or
   lesson documentation.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-052
 depends-on:
   - TASK-195

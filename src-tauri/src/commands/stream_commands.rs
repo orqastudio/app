@@ -580,10 +580,25 @@ fn reset_process_state_if_new_session(state: &tauri::State<'_, AppState>, sessio
         Ok(mut ps) => {
             if ps.session_id != Some(session_id) {
                 ps.reset(session_id);
+                // Also reset the workflow tracker for the new session.
+                reset_workflow_tracker(state);
             }
         }
         Err(e) => {
             tracing::warn!("[process] process_state mutex poisoned, skipping reset: {e}");
+        }
+    }
+}
+
+/// Reset the workflow tracker to a clean state for a new session.
+fn reset_workflow_tracker(state: &tauri::State<'_, AppState>) {
+    use crate::domain::workflow_tracker::WorkflowTracker;
+    match state.workflow_tracker.lock() {
+        Ok(mut wt) => {
+            *wt = WorkflowTracker::new();
+        }
+        Err(e) => {
+            tracing::warn!("[workflow] workflow_tracker mutex poisoned, skipping reset: {e}");
         }
     }
 }

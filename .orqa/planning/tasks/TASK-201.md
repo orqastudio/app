@@ -5,9 +5,9 @@ description: |
   Add enforcement entries with action:inject to rules that govern specific
   code areas, mapping file path patterns to the skills that should be
   auto-loaded.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-052
 depends-on:
   - TASK-199
