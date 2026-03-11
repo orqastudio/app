@@ -15,7 +15,6 @@ The project root must stay lean. Every file in root must have a justification.
 | File/Dir | Reason |
 |----------|--------|
 | `README.md` | Project documentation (only user-facing doc in root) |
-| `TODO.md` | Project tracking |
 | `AGENTS.md` | Cross-agent instructions |
 | `Cargo.toml`, `Cargo.lock` | Rust project configuration (must be root) |
 | `package.json`, `package-lock.json` | Node.js/frontend dependencies |
@@ -43,7 +42,7 @@ The project root must stay lean. Every file in root must have a justification.
 ## Rules
 
 1. **Never write temporary files to root.** Use `tmp/` (gitignored) for all transient output.
-2. **Never create new .md documentation files in root.** README.md is the only documentation file. Project tracking files (TODO.md) and agent instructions (AGENTS) are the only other .md files permitted.
+2. **Never create new .md documentation files in root.** README.md is the only documentation file. AGENTS.md (cross-agent instructions) is the only other .md file permitted.
 3. **Before adding any file to root**, verify the tool requires root placement. If it supports a config path option, use it to place the file elsewhere.
 4. **Clean up after yourself.** If a task produces temporary files, delete them or ensure they are in `tmp/`.
 

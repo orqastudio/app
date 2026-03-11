@@ -6,6 +6,7 @@ status: active
 created: "2026-03-01"
 updated: "2026-03-10"
 layer: canon
+user-invocable: false
 license: MIT
 metadata:
   author: ejirocodes

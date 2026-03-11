@@ -5,7 +5,7 @@ description: |
   Full skills.sh lifecycle management: CLI reference, skill evaluation criteria, SKILL.md format,
   portability rules, provenance tracking, and skill audit protocol.
   Use when: Adding, updating, removing, or auditing agent skills; evaluating whether to install
-  a community skill or create a project-specific one; managing the .orqa/skills/ directory.
+  a community skill or create a project-specific one; managing the .orqa/team/skills/ directory.
 status: active
 created: "2026-03-01"
 updated: "2026-03-10"
@@ -46,7 +46,7 @@ npx skills init [skill-name]
 
 **Installation flags:**
 
-- `--copy`: Copy files to `.orqa/skills/` instead of symlinking (preferred for this project)
+- `--copy`: Copy files to `.orqa/team/skills/` instead of symlinking (preferred for this project)
 - `-y` or `--yes`: Skip confirmation prompts
 - `-g` or `--global`: Global scope — installs to `~/.claude/skills/`, available across all projects
 
@@ -57,16 +57,16 @@ Always use project scope (default) with `--copy` for skills relevant to the proj
 | Concept | Description |
 |---------|-------------|
 | Skill | A `SKILL.md` file with YAML frontmatter — portable domain knowledge for agents |
-| Project skill | In `.orqa/skills/` — committed with the codebase, shared by all agents |
+| Project skill | In `.orqa/team/skills/` — committed with the codebase, shared by all agents |
 | Global skill | In `~/.claude/skills/` — personal, not committed, available everywhere |
 | Registry skill | Installed from skills.sh ecosystem via `npx skills add` |
-| Custom skill | Created manually in `.orqa/skills/<name>/SKILL.md` |
+| Custom skill | Created manually in `.orqa/team/skills/<name>/SKILL.md` |
 | Provenance | Where a skill came from: skills.sh, custom-created, or downloaded+modified |
 | Portability | A skill is portable if it contains no project-specific paths, IDs, or rules |
 
 ## SKILL.md Format
 
-Every skill is a `SKILL.md` file in a directory under `.orqa/skills/`:
+Every skill is a `SKILL.md` file in a directory under `.orqa/team/skills/`:
 
 ```markdown
 ---
@@ -185,10 +185,10 @@ Run a full skills audit periodically (or when the agent-maintainer role is trigg
 
 ```bash
 npx skills list
-ls .orqa/skills/
+ls .orqa/team/skills/
 ```
 
-Verify: every directory in `.orqa/skills/` has a SKILL.md, and every entry in the skills log matches an installed skill.
+Verify: every directory in `.orqa/team/skills/` has a SKILL.md, and every entry in the skills log matches an installed skill.
 
 ### Step 2: Portability Check
 

@@ -18,7 +18,7 @@ OrqaStudio™ uses an agentic development model: one orchestrator coordinates, a
 |------|-------------|-----------------|
 | **Product Manager** | User (human) | Defines vision, pillars, priorities. Approves feature scope. Makes decisions when product principles conflict. |
 | **Tech Lead** | User (human) | Approves implementation plans before coding begins. Reviews architecture decisions. Provides technical oversight. Final authority on technical approach. |
-| **Scrum Master / Dev Lead** | Orchestrator (main AI session) | Reads TODO.md, creates worktrees, delegates to agents, gates on DoR/DoD, merges completed work, runs post-merge verification. |
+| **Scrum Master / Dev Lead** | Orchestrator (main AI session) | Reads task artifacts, creates worktrees, delegates to agents, gates on DoR/DoD, merges completed work, runs post-merge verification. |
 | **Implementation Team** | Specialized agents | Implement delegated tasks end-to-end. Load skills. Run quality checks. Report results. |
 
 The Product Manager and Tech Lead roles may be filled by the same person if they have the skillset. Both are human gates — no implementation proceeds without explicit user approval of the plan.

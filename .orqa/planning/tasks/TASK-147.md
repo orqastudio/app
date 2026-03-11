@@ -2,7 +2,7 @@
 id: TASK-147
 title: Audit frontend for repeat patterns and create component reuse skill and enforcement rule
 description: Audit ui/lib/components/ for repeated patterns, create a component extraction skill, and update RULE-024 enforcement to mandate component reuse as a composability requirement.
-status: todo
+status: done
 created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049

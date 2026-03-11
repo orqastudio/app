@@ -14,6 +14,25 @@
 set -euo pipefail
 
 VIOLATIONS=0
+HOOK_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# AWK program stored in a variable to avoid bash history-expansion of '!'.
+# Detects the start line of each Rust test module (marked with #[cfg(test)]).
+# The test module is assumed to run to EOF (standard Rust convention: test
+# modules are always the last thing in a file). If a file has multiple test
+# modules, the earliest start line is used — everything from there to EOF is
+# treated as test code.
+# Outputs a single line number: the line where the test module begins.
+read -r -d '' AWK_RUST_TEST_START <<'AWKEOF' || true
+BEGIN { pending=0; found=0 }
+/\[cfg\(test\)\]/ { pending=1; next }
+pending && /^[[:space:]]*mod[[:space:]]/ {
+    if (!found) { print NR; found=1 }
+    pending=0; next
+}
+pending && /^[[:space:]]*#/ { next }
+pending { pending=0 }
+AWKEOF
 
 # Determine which files to scan: args or all staged production files.
 if [ "$#" -gt 0 ]; then
@@ -25,24 +44,20 @@ fi
 # Returns 0 (true in bash) if the file should be EXCLUDED.
 is_excluded() {
   local file="$1"
-  # Exclude test files by name
   [[ "$file" == *test* ]] && return 0
   [[ "$file" == *spec* ]] && return 0
   [[ "$file" == *.test.* ]] && return 0
-  # Exclude test directories
   [[ "$file" == src-tauri/src/*/tests/* ]] && return 0
   [[ "$file" == src-tauri/src/tests/* ]] && return 0
   [[ "$file" == tests/* ]] && return 0
-  # Exclude governance and hook files
   [[ "$file" == .orqa/* ]] && return 0
   [[ "$file" == .githooks/* ]] && return 0
-  # Exclude build artifacts and deps
   [[ "$file" == node_modules/* ]] && return 0
   [[ "$file" == target/* ]] && return 0
   return 1
 }
 
-# Scan a file for a pattern, reporting violations.
+# Scan a file for a pattern, report violations.
 # Arguments: file grep-pattern label
 scan_pattern() {
   local file="$1"
@@ -57,11 +72,10 @@ scan_pattern() {
   done < <(grep -nP "$pattern" "$file" 2>/dev/null || true)
 }
 
-# Like scan_pattern but skips lines that fall inside Rust test modules.
-# Rust test modules begin with "#[cfg(test)]" or "mod tests {" / "mod test {".
-# They end when the matching closing brace for the module is reached.
-# We use a simple heuristic: skip lines between a test-module start and a
-# line that is just "}" at the same or lesser indentation.
+# Like scan_pattern but skips lines at or after the start of a Rust test module.
+# Rust test modules (marked with #[cfg(test)]) are conventionally placed at
+# the end of the file, so we find the first test module start line and skip
+# everything from that line onwards.
 scan_pattern_rust_skiptest() {
   local file="$1"
   local pattern="$2"
@@ -69,60 +83,17 @@ scan_pattern_rust_skiptest() {
 
   [ -f "$file" ] || return 0
 
-  # Collect test-module line ranges using awk.
-  # Handles both single-line and two-line forms:
-  #   Single:  #[cfg(test)]
-  #            mod tests {
-  #   Two-line is the common pattern in this codebase.
-  # Also handles: mod tests { (without prior cfg annotation).
-  # Counts braces to find the end of the module.
-  # Output: "start_line end_line" pairs, one per test module.
-  local test_ranges
-  test_ranges=$(awk '
-    BEGIN { pending_cfg=0; in_mod=0; depth=0; start=0 }
-    /#\[cfg\(test\)\]/ { pending_cfg=1 }
-    /^[[:space:]]*mod[[:space:]]+(tests?|test_[a-zA-Z0-9_]*)[[:space:]]*(;|\{)/ {
-      if (!in_mod) {
-        in_mod=1; start=NR; depth=0
-        # Count opening braces on this line
-        n=split($0,chars,"")
-        for(i=1;i<=n;i++){
-          if(chars[i]=="{") depth++
-          if(chars[i]=="}") depth--
-        }
-        if(depth==0 && index($0,"{")==0){ in_mod=0 }
-        pending_cfg=0
-        next
-      }
-    }
-    !/^[[:space:]]*#/ && !/^[[:space:]]*$/ && pending_cfg { pending_cfg=0 }
-    in_mod {
-      n=split($0,chars,"")
-      for(i=1;i<=n;i++){
-        if(chars[i]=="{") depth++
-        if(chars[i]=="}") depth--
-      }
-      if(depth<=0){ print start " " NR; in_mod=0; start=0; depth=0 }
-    }
-  ' "$file" 2>/dev/null || true)
+  # Find the first test module start line (0 means no test module found)
+  local test_start
+  test_start=$(awk "$AWK_RUST_TEST_START" "$file" 2>/dev/null | head -1 || true)
+  test_start="${test_start:-0}"
 
-  # Now scan for the pattern, skipping lines in test ranges.
   while IFS=: read -r lineno content; do
-    local in_test=0
-    while IFS= read -r range; do
-      [ -z "$range" ] && continue
-      local rs re
-      rs=$(echo "$range" | cut -d' ' -f1)
-      re=$(echo "$range" | cut -d' ' -f2)
-      if [ "$lineno" -ge "$rs" ] && [ "$lineno" -le "$re" ]; then
-        in_test=1
-        break
-      fi
-    done <<< "$test_ranges"
-    if [ "$in_test" -eq 0 ]; then
-      echo "STUB: $file:$lineno — $label found: $content"
-      VIOLATIONS=$((VIOLATIONS + 1))
+    if [ "$test_start" -gt 0 ] && [ "$lineno" -ge "$test_start" ]; then
+      continue
     fi
+    echo "STUB: $file:$lineno — $label found: $content"
+    VIOLATIONS=$((VIOLATIONS + 1))
   done < <(grep -nP "$pattern" "$file" 2>/dev/null || true)
 }
 
@@ -134,13 +105,11 @@ for file in "${FILES[@]}"; do
 
   case "$file" in
     *.rs)
-      # Rust production files — TODO/FIXME/HACK in comments (case-insensitive)
       scan_pattern "$file" '//[[:space:]]*(TODO|FIXME|HACK)\b' 'TODO/FIXME/HACK comment'
       scan_pattern_rust_skiptest "$file" '\bdbg!\s*\(' 'dbg! macro'
       scan_pattern_rust_skiptest "$file" '\.unwrap\s*\(' 'unwrap()'
       ;;
     *.ts|*.svelte|*.js)
-      # TypeScript/Svelte/JS production files
       scan_pattern "$file" '//[[:space:]]*(TODO|FIXME|HACK)\b' 'TODO/FIXME/HACK comment'
       scan_pattern "$file" '\bconsole\.log\s*\(' 'console.log'
       ;;

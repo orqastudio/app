@@ -9,6 +9,7 @@ status: active
 created: "2026-03-01"
 updated: "2026-03-10"
 layer: canon
+user-invocable: false
 allowed-tools: Read, Glob, Grep
 ---
 
@@ -46,7 +47,7 @@ For any non-trivial feature, follow this preferred workflow before writing the f
 
 - `.orqa/documentation/ui/` — Existing feature designs related to the task
 - `.orqa/governance/decisions/` — Relevant `AD-NNN.md` architecture decision artifacts
-- `TODO.md` — Task context, constraints, priorities
+- `.orqa/planning/tasks/` — Task artifacts with context, constraints, and priorities
 - `.orqa/documentation/product/roadmap.md` — Verify the work is prioritized and not scope creep
 
 ### Read When Modifying Backend

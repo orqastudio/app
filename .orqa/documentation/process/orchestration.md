@@ -19,7 +19,7 @@ The orchestrator is the main AI session coordinating the agentic development tea
 The orchestrator is the **Scrum Master and Dev Lead** of the agentic team. It:
 
 - Coordinates, delegates, and gates -- it does NOT implement
-- Reads `TODO.md` at session start to understand current priorities
+- Reads task artifacts in `.orqa/planning/tasks/` at session start to understand current priorities
 - Checks session state from `tmp/session-state.md` if resuming
 - Creates a git worktree for each task before delegating it
 - Verifies the Definition of Ready before delegating any task
@@ -118,7 +118,7 @@ All agents are universal roles (see [AD-029](AD-029)). Domain expertise is loade
 
 Every task follows this lifecycle without exception:
 
-1. **Session start** -- Read `TODO.md`, check `tmp/session-state.md`, check `git stash list`, check `git status --short`
+1. **Session start** -- Read task artifacts in `.orqa/planning/tasks/`, check `tmp/session-state.md`, check `git stash list`, check `git status --short`
 2. **Definition of Ready check** -- Verify all DoR items before delegating ([Definition of Ready](DOC-028))
 3. **Worktree creation** -- `git worktree add ../orqa-<task> -b <agent>/<task>`
 4. **Subagent dispatch** -- Task tool with `subagent_type` to the correct agent
@@ -128,7 +128,7 @@ Every task follows this lifecycle without exception:
 8. **Merge** -- `cd ../orqa && git merge <branch>`
 9. **Cleanup** -- Kill background processes, `git branch -d <branch>`, `git worktree remove ../orqa-<task>`
 10. **Post-merge verification** -- `cargo build && npm run build`
-11. **Mark complete** -- Update `TODO.md` with `[x]`
+11. **Mark complete** -- Update task artifact in `.orqa/planning/tasks/` to `status: done`
 
 ---
 
@@ -149,7 +149,7 @@ Each reviewer produces a PASS/FAIL verdict with evidence. On FAIL, the implement
 ## Session Start Checklist
 
 ```text
-[ ] Read TODO.md -- understand current phase and priorities
+[ ] Read task artifacts in `.orqa/planning/tasks/` -- understand current tasks and priorities
 [ ] Check tmp/session-state.md -- resume context from prior session
 [ ] git stash list -- investigate any stashes (commit or drop)
 [ ] git status --short -- commit any untracked/modified files before starting
@@ -168,8 +168,8 @@ Triggered by user saying "going to bed", "overnight", or "leaving".
 
 1. Keep going -- move to the next task immediately after completing the current one
 2. Follow the full task lifecycle for every task
-3. Record clarifications needed in `BLOCKERS.md` but do NOT wait for answers
-4. Tag plan deviations in `BLOCKERS.md` with `PLAN_DEVIATION` and document the deviation
+3. Record clarifications needed as blocked task artifacts in `.orqa/planning/tasks/` but do NOT wait for answers
+4. Tag plan deviations with `PLAN_DEVIATION` and document the deviation in the relevant task artifact
 5. Skip blocked tasks, pivot to unblocked work
 6. Update `PROGRESS.md` after each completed task
 7. Stop only when all work is done, or when hitting a true blocker with no workaround

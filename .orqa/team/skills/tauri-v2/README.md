@@ -140,9 +140,9 @@ tauri-v2/
 
 ## Related Skills
 
-- `tanstack-start-expert` - TanStack Router patterns for type-safe frontend routing
-- `react-component-architect` - React component patterns for Tauri frontends
-- `go-google-style-expert` - Alternative backend patterns (if using Go instead)
+- `svelte5-best-practices` - Svelte 5 runes patterns for Tauri frontends
+- `rust-async-patterns` - Rust async/await and error handling patterns
+- `orqa-ipc-patterns` - Project-specific IPC contracts and command registration patterns
 
 ---
 

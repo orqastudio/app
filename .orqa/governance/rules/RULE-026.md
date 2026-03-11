@@ -58,21 +58,29 @@ The orchestrator loads `code-search`, `orqa-composability`, and `planning` on ev
 
 ## Project Skills (Tier 2 — Orchestrator-Injected)
 
-These are NOT on agent YAML frontmatter. The orchestrator injects them based on task scope. All project skills have `layer: project` in their SKILL.md:
+These are NOT on agent YAML frontmatter. The orchestrator injects them based on task scope:
 
 | Skill | Domain | Injected When Task Touches |
 |-------|--------|---------------------------|
+| `rust-async-patterns` | Rust async/await, error handling | `src-tauri/` (any Rust backend work) |
+| `tauri-v2` | Tauri commands, plugins, security | `src-tauri/` (any Rust backend work) |
 | `orqa-ipc-patterns` | Tauri IPC, Channel<T>, command registration | `src-tauri/src/commands/` |
 | `orqa-domain-services` | Domain service anatomy, composition | `src-tauri/src/domain/` |
 | `orqa-repository-pattern` | SQLite repos, migrations, queries | `src-tauri/src/repo/`, `db.rs` |
 | `orqa-error-composition` | OrqaError flow, From impls | `src-tauri/src/commands/`, `src-tauri/src/domain/` |
+| `orqa-native-search` | Embedded DuckDB + ONNX search engine | `src-tauri/src/search/` |
 | `orqa-streaming` | Agent SDK → sidecar → Rust → Svelte pipeline | `sidecar/src/`, streaming code |
-| `orqa-store-patterns` | Svelte 5 rune stores, reactive data flow | `ui/lib/stores/`, `ui/lib/components/` |
+| `svelte5-best-practices` | Svelte 5 runes, components | `ui/` (any frontend work) |
+| `typescript-advanced-types` | Strict TypeScript patterns | `ui/` (any frontend work) |
+| `tailwind-design-system` | Tailwind CSS utilities | `ui/` (styling work) |
+| `component-extraction` | Shared component detection and extraction | `ui/lib/components/` |
+| `orqa-store-patterns` | Svelte 5 rune stores, reactive data flow | `ui/lib/stores/` |
 | `orqa-store-orchestration` | Multi-store coordination, $effect wiring | `ui/lib/stores/` |
 | `orqa-governance` | Artifacts, scanning, lessons, rules | `.orqa/` |
 | `orqa-documentation` | Internal link format, cross-referencing, content structure | `.orqa/` |
+| `artifact-audit` | Artifact reference integrity and codebase alignment | `.orqa/` (auditing work) |
+| `schema-compliance` | Schema validation and frontmatter compliance | `.orqa/` (auditing work) |
 | `orqa-testing` | Test commands, patterns, mock boundaries | Test-related work |
-| `orqa-native-search` | Embedded DuckDB + ONNX search engine | `src-tauri/src/search/` |
 
 When delegating, the orchestrator includes: "Load these project skills before starting: [list]"
 
@@ -104,11 +112,6 @@ The `code-search` wrapper skill detects the runtime context and resolves to the 
 | `ux-compliance-review` | UX compliance review | Reviewer/Designer (UX tasks) |
 | `test-engineering` | Test engineering methodology | Reviewer (testing tasks), Implementer (TDD) |
 | `architectural-evaluation` | Architectural compliance | Planner, Reviewer (architecture tasks) |
-| `rust-async-patterns` | Rust async/await, error handling | Implementer (backend), Reviewer (code quality) |
-| `svelte5-best-practices` | Svelte 5 runes, components | Implementer (frontend), Designer, Reviewer (code quality) |
-| `tailwind-design-system` | Tailwind CSS utilities | Designer, Reviewer (UX tasks) |
-| `typescript-advanced-types` | Strict TypeScript patterns | Implementer (frontend) |
-| `tauri-v2` | Tauri commands, plugins, security | Implementer (backend), Reviewer (security) |
 
 ## Rule Status Awareness
 
@@ -136,3 +139,5 @@ In OrqaStudio, skills are loaded via the `load_skill` tool and managed by the ap
 - [RULE-023](RULE-023) (required-reading) — docs that agents must load (complementary to skills)
 - [RULE-005](RULE-005) (chunkhound-usage) — code search usage and context detection
 - [RULE-001](RULE-001) (agent-delegation) — orchestrator must delegate to agents, not implement directly
+- [RULE-037](RULE-037) (tool-access-restrictions) — constrains which tools each role may use
+- [RULE-038](RULE-038) (user-invocable-skills) — user-invocable skill field semantics

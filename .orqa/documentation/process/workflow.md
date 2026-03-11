@@ -93,14 +93,14 @@ Merge conflicts are the primary source of lost work. Every conflict MUST be reso
 
 1. Check the [Definition of Ready](DOC-028) -- verify all applicable items
 2. Verify the artifact trail -- confirm an `EPIC-NNN` exists with `status: ready` and `docs-required` gate satisfied
-3. Check `BLOCKERS.md` -- ensure the task is not blocked
+3. Check task dependencies in `.orqa/planning/tasks/` -- ensure the task is not blocked
 4. Read the full task description including scope, action, and acceptance criteria
 5. Run `code_research` in ChunkHound to understand existing code you will modify
 
 ### During a Task
 
 1. Follow the plan exactly -- if the plan says "create file X with methods A, B, C", create all three
-2. If the plan doesn't work -- write the issue to `BLOCKERS.md` with tag `PLAN_DEVIATION`, do NOT silently change approach
+2. If the plan doesn't work -- document the issue in the task artifact with tag `PLAN_DEVIATION`, do NOT silently change approach
 3. Commit regularly -- every meaningful unit of work gets a commit
 
 ### After Completing a Task
@@ -108,7 +108,7 @@ Merge conflicts are the primary source of lost work. Every conflict MUST be reso
 1. Run acceptance criteria -- execute the specific checks listed for this task
 2. Verify the [Definition of Done](DOC-027) -- all applicable items must be satisfied
 3. Request review from `code-reviewer`, then `qa-tester`, then `ux-reviewer` (if UI-facing)
-4. Update `TODO.md` -- mark the task `[x]`
+4. Update the task artifact in `.orqa/planning/tasks/` -- set `status: done`
 5. Update the epic's task checklist and status in `.orqa/planning/epics/EPIC-NNN.md`
 6. Verify all `docs-produced` items from the epic have been created or updated
 7. Update the parent milestone's `completed-epics` count if the epic is now `done`
@@ -138,7 +138,7 @@ Format: `[task_id] Short description`
 
 When starting a new session, resuming after context compaction, or picking up a task with no prior context:
 
-1. **Read `TODO.md`** -- understand current phase, assigned tasks, and overall progress
+1. **Read task artifacts in `.orqa/planning/tasks/`** -- understand current tasks, priorities, and overall progress
 2. **Read `tmp/session-state.md`** -- recover context from the prior session
 3. **Read this document** -- understand all workflow rules
 4. **Run `code_research` in ChunkHound** -- understand relevant existing code before making changes
@@ -212,7 +212,7 @@ NO backwards compatibility shims. Fix ALL callers in the same commit. See `.orqa
 | [Definition of Done](DOC-027) | Task completion gate checklist |
 | [Orchestration](DOC-030) | Orchestrator responsibilities |
 | [Implementation Lessons](DOC-006) | Known patterns and gotchas |
-| `BLOCKERS.md` | Active blockers awaiting user clarification |
+| `.orqa/planning/tasks/` | Task artifacts with status, scope, and acceptance criteria |
 
 ---
 

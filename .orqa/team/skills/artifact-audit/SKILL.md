@@ -1,6 +1,5 @@
 ---
 id: SKILL-038
-name: artifact-audit
 title: Artifact Audit Methodology
 description: |
   Systematic audit of governance artifacts for reference integrity, cross-layer
@@ -152,7 +151,7 @@ Rules and skills often reference specific file paths as examples or as enforceme
 
 - Directory renames (e.g., `persistence/` renamed to `repo/`)
 - Module moves (e.g., a type moved from one file to another)
-- File deletions (e.g., `TODO.md` removed from root)
+- File deletions (e.g., a file removed from root that governance artifacts still reference)
 
 Use Grep to find all file path references in governance artifacts:
 

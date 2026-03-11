@@ -20,10 +20,10 @@ else
 fi
 
 # AWK program: extract frontmatter block (between first two --- delimiters).
-AWK_FM='BEGIN{d=0} /^---$/{d++;if(d==2){stop=1;next}} stop{next} d==1{print}'
+AWK_FM='BEGIN{d=0} /^---$/{d++;if(d==2){exit};next} d==1{print}'
 
 # AWK program: extract status from frontmatter.
-AWK_STATUS='BEGIN{d=0} /^---$/{d++;if(d==2){stop=1;next}} stop{next} d==1 && /^status:/{sub("^status:[[:space:]]*","");gsub("\"","");print;stop=1}'
+AWK_STATUS='BEGIN{d=0} /^---$/{d++;if(d==2){exit};next} d==1 && /^status:/{sub("^status:[[:space:]]*","");gsub("\"","");print;exit}'
 
 # Extract the frontmatter block from a file.
 extract_frontmatter() {

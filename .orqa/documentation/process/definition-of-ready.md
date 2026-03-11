@@ -53,8 +53,8 @@ Run this checklist for every task before delegating it. Check each item that app
 ### Dependencies and State
 
 - [ ] `.orqa/governance/lessons/` checked for known patterns in this area -- prevents repeating documented mistakes
-- [ ] No blocking dependencies -- all `blocked-by` tasks in `TODO.md` are marked `[x]`
-- [ ] `BLOCKERS.md` checked -- the task is not listed as blocked awaiting external resolution
+- [ ] No blocking dependencies -- all tasks listed in `depends-on` in `.orqa/planning/tasks/` have `status: done`
+- [ ] Task artifact checked -- the task is not in a blocked state awaiting external resolution
 - [ ] Working tree clean -- `git status --short` shows no untracked or modified files
 - [ ] No stale stashes -- `git stash list` is empty (or existing stashes are investigated and resolved)
 
@@ -68,7 +68,7 @@ The orchestrator works through this checklist before using the Task tool to dele
 
 **If one or more items cannot be satisfied:**
 
-1. Document the specific gap in `BLOCKERS.md` with the tag `DOC_READY_BLOCK` or `PLAN_READY_BLOCK`
+1. Document the specific gap in the task artifact in `.orqa/planning/tasks/` with the tag `DOC_READY_BLOCK` or `PLAN_READY_BLOCK`
 2. Ask the user how to proceed -- provide the specific gap and the options available
 3. Do NOT proceed with implementation until the gap is resolved
 

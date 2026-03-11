@@ -274,7 +274,7 @@ promoted-to: null
 ## Artifact Status Workflows
 
 ### Epic: `draft → ready → in-progress → review → done`
-### Task: `todo → in-progress → done` (or `→ surpassed`)
+### Task: `todo → in-progress → done`
 ### Research: `draft → complete → surpassed`
 ### Decision: `proposed → accepted → superseded` (or `→ deprecated`)
 ### Idea: `captured → exploring → shaped → promoted` (or `→ archived`)

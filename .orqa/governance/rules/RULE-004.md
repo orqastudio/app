@@ -280,6 +280,7 @@ The orchestrator SHOULD periodically verify:
 ## Related Rules
 
 - [RULE-008](RULE-008) (documentation-first) — documentation is the source of truth; artifacts enforce the documentation-first principle at the workflow level
+- [RULE-016](RULE-016) (artifact-id-semantics) — IDs are identifiers not rankings; priority comes from scoring
 - [RULE-031](RULE-031) (vision-alignment) — pillar alignment required for all artifacts
 - [RULE-017](RULE-017) (lessons-learned) — lesson lifecycle and promotion pipeline
 - [RULE-021](RULE-021) (pillar-alignment-docs) — pillar alignment in documentation pages

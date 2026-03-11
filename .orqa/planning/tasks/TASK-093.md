@@ -2,7 +2,7 @@
 id: TASK-093
 title: Audit for missing and miscategorised governance artifacts
 description: Identify governance concepts that lack artifacts (undocumented conventions, implicit rules) and artifacts that are miscategorised (rules that should be skills, skills that should be rules, lessons that should be promoted, patterns enforced but not captured).
-status: todo
+status: done
 created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049

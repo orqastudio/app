@@ -125,8 +125,8 @@ A UAT round that only produces bug fixes has failed Pillar 2.
 
 ## Related
 
-- `.orqa/governance/rules/uat-process.md` — enforcement rule
-- `.orqa/governance/rules/systems-thinking.md` — systemic analysis principle
-- `.orqa/governance/rules/lessons-learned.md` — lesson promotion pipeline
-- `.orqa/governance/lessons/[IMPL-011](IMPL-011).md` — origin lesson (systemic investigation)
-- `.orqa/governance/lessons/[IMPL-012](IMPL-012).md` — origin lesson (encode, don't just practice)
+- [RULE-030](RULE-030) — UAT process enforcement rule
+- [RULE-028](RULE-028) — systems thinking (systemic analysis principle)
+- [RULE-017](RULE-017) — lessons learned (lesson promotion pipeline)
+- `.orqa/governance/lessons/IMPL-011.md` — origin lesson (systemic investigation)
+- `.orqa/governance/lessons/IMPL-012.md` — origin lesson (encode, don't just practice)

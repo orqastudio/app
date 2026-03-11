@@ -97,3 +97,4 @@ Without this rule, the orchestrator accumulates implementation details in its co
 - [RULE-026](RULE-026) (skill-enforcement) — agents must load skills before starting work
 - [RULE-023](RULE-023) (required-reading) — agents must read governing docs before implementation
 - [RULE-015](RULE-015) (honest-reporting) — agents must report status accurately
+- [RULE-037](RULE-037) (tool-access-restrictions) — constrains which tools each role may use

@@ -250,8 +250,6 @@ orqa-studio/
 │   │   └── research/       # Research artifacts
 │   └── documentation/      # Architecture and process docs
 ├── .claude/                # Optional CLI symlink compatibility layer
-├── TODO.md                 # Active task tracking
-├── BLOCKERS.md             # Known blockers
 └── AGENTS.md               # Cross-agent instructions
 ```
 

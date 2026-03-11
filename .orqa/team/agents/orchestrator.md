@@ -404,20 +404,20 @@ Universal roles map to Claude Code subagent types based on loaded skills:
 
 | Role + Skills | Claude Code Subagent |
 |--------------|---------------------|
-| Researcher | `Explore` |
-| Planner | `Plan` or `Systems Architect` |
-| Implementer + backend skills | `Backend Engineer` |
-| Implementer + frontend skills | `Frontend Engineer` |
-| Implementer + database skills | `Data Engineer` |
-| Implementer + build/deploy skills | `DevOps Engineer` |
-| Implementer + restructuring skills | `Refactor Agent` |
-| Implementer + diagnostic skills | `Debugger` |
-| Reviewer + code quality skills | `Code Reviewer` |
-| Reviewer + test skills | `Test Engineer` |
-| Reviewer + QA skills | `QA Tester` |
-| Reviewer + UX skills | `UX Reviewer` |
-| Reviewer + security skills | `Security Engineer` |
-| Writer | `Documentation Writer` |
+| Researcher | `Researcher` or `Explore` |
+| Planner | `Planner` or `Plan` |
+| Implementer + backend skills | `Implementer` |
+| Implementer + frontend skills | `Implementer` |
+| Implementer + database skills | `Implementer` |
+| Implementer + build/deploy skills | `Implementer` |
+| Implementer + restructuring skills | `Implementer` |
+| Implementer + diagnostic skills | `Implementer` |
+| Reviewer + code quality skills | `Reviewer` |
+| Reviewer + test skills | `Reviewer` |
+| Reviewer + QA skills | `Reviewer` |
+| Reviewer + UX skills | `Reviewer` |
+| Reviewer + security skills | `Reviewer` |
+| Writer | `Writer` |
 | Designer | `Designer` |
 
 ---
@@ -494,11 +494,14 @@ git worktree remove ../orqa-<task-name>
 | `src-tauri/src/commands/` | `orqa-ipc-patterns`, `orqa-error-composition` |
 | `src-tauri/src/domain/` | `orqa-domain-services`, `orqa-error-composition` |
 | `src-tauri/src/repo/`, `db.rs` | `orqa-repository-pattern` |
+| `src-tauri/src/search/` | `orqa-native-search` |
 | `sidecar/src/` | `orqa-streaming` |
 | `ui/` (any frontend work) | `svelte5-best-practices`, `typescript-advanced-types` |
 | `ui/` (styling work) | `tailwind-design-system` |
+| `ui/lib/components/` (component work) | `component-extraction` |
 | `ui/lib/stores/` | `orqa-store-patterns`, `orqa-store-orchestration` |
 | `.orqa/` | `orqa-governance`, `orqa-documentation` |
+| `.orqa/` (schema/artifact auditing) | `artifact-audit`, `schema-compliance` |
 | Test work | `orqa-testing` |
 
 ### MCP Tools (Code Search)
