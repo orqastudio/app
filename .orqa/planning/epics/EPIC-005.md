@@ -198,6 +198,15 @@ Surface the graph's cross-reference data in the viewer:
 
 ## Tasks
 
+**Phase 1 — Sort/Group/Filter Toolbar:**
 - [TASK-164](TASK-164): Audit artifact group README files for accuracy
+- [TASK-165](TASK-165): Backend — extend DocNode with frontmatter, NavType with schema metadata
+- [TASK-166](TASK-166): Frontend — TypeScript types for schema metadata and navigation config
+- [TASK-167](TASK-167): Frontend — ArtifactToolbar with sort dropdown and filter popover
+- [TASK-168](TASK-168): Frontend — Client-side sorting, filtering, and grouping logic
 
-Full task breakdown to be created during planning.
+**Phase 2 — References Panel:**
+- [TASK-169](TASK-169): Frontend — References panel in artifact viewer
+
+**Phase 3 — AI Search:**
+- [TASK-170](TASK-170): Frontend — Spotlight-style AI search overlay
