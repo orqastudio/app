@@ -8,21 +8,18 @@ updated: "2026-03-07"
 layer: project
 scope: [AGENT-001, AGENT-002, AGENT-006]
 enforcement:
-  - event: file
-    pattern: "unwrap\\(\\)"
-    paths: ["src-tauri/src/**/*.rs"]
-    action: block
-    message: "No unwrap() in production Rust code (RULE-006). Use Result types with thiserror."
-  - event: file
-    pattern: "expect\\("
-    paths: ["src-tauri/src/**/*.rs"]
-    action: block
-    message: "No expect() in production Rust code (RULE-006). Use Result types with thiserror."
-  - event: file
-    pattern: "panic!\\("
-    paths: ["src-tauri/src/**/*.rs"]
-    action: block
-    message: "No panic!() in production Rust code (RULE-006). Use Result types with thiserror."
+  - event: lint
+    pattern: "clippy::unwrap_used"
+    action: warn
+    message: "No unwrap() in production Rust — enforced by clippy pedantic. Allowed in tests."
+  - event: lint
+    pattern: "clippy::expect_used"
+    action: warn
+    message: "No expect() in production Rust — enforced by clippy pedantic. Allowed in tests."
+  - event: lint
+    pattern: "clippy::panic"
+    action: warn
+    message: "No panic!() in production Rust — enforced by clippy pedantic. Allowed in tests."
 ---
 **Source of Truth:** `.orqa/documentation/development/coding-standards.md`
 
