@@ -8,6 +8,7 @@ updated: "2026-03-07"
 layer: project
 scope: [AGENT-001, AGENT-002, AGENT-006]
 enforcement:
+  # Rust error handling — clippy pedantic
   - event: lint
     pattern: "clippy::unwrap_used"
     action: warn
@@ -20,6 +21,40 @@ enforcement:
     pattern: "clippy::panic"
     action: warn
     message: "No panic!() in production Rust — enforced by clippy pedantic. Allowed in tests."
+  # Rust formatting — rustfmt
+  - event: lint
+    pattern: "rustfmt"
+    action: warn
+    message: "All Rust code must pass rustfmt — enforced by make fmt-check."
+  # Rust function size — clippy
+  - event: lint
+    pattern: "clippy::too_many_lines"
+    action: warn
+    message: "Functions must be <=50 lines — enforced by clippy."
+  # TypeScript strict mode — ESLint
+  - event: lint
+    pattern: "@typescript-eslint/no-explicit-any"
+    action: warn
+    message: "No 'any' types in TypeScript — enforced by typescript-eslint recommended."
+  - event: lint
+    pattern: "@typescript-eslint/no-unused-vars"
+    action: warn
+    message: "No unused variables — enforced by typescript-eslint recommended."
+  # Svelte 5 enforcement — eslint-plugin-svelte
+  - event: lint
+    pattern: "svelte/no-reactive-declaration"
+    action: warn
+    message: "No Svelte 4 reactive declarations ($:) — enforced by eslint-plugin-svelte."
+  # Frontend type checking — svelte-check
+  - event: lint
+    pattern: "svelte-check"
+    action: warn
+    message: "Strict TypeScript in Svelte — enforced by svelte-check via make check-frontend."
+  # Schema validation — pre-commit hook
+  - event: lint
+    pattern: "validate-schema.mjs"
+    action: warn
+    message: "Artifact frontmatter must validate against schema.json — enforced by pre-commit hook."
 ---
 **Source of Truth:** `.orqa/documentation/development/coding-standards.md`
 

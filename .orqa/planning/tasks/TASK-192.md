@@ -4,9 +4,9 @@ title: Update plugin README with installation docs
 description: |
   Update the companion plugin README.md with installation instructions,
   what the plugin provides, and how it integrates with OrqaStudio projects.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-052
 depends-on:
   - TASK-191
