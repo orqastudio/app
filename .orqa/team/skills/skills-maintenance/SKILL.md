@@ -136,6 +136,8 @@ When deciding whether to install a community skill or create a new one:
 
 ## Portability Rules (NON-NEGOTIABLE)
 
+See [RULE-035](RULE-035) for the full skill portability constraint and enforcement.
+
 A skill is portable if a different project could use it unchanged. Skills MUST NOT contain:
 
 - Project-specific file paths (e.g., `src-tauri/src/domain/sessions.rs`)

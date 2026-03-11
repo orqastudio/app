@@ -181,6 +181,75 @@ export type StreamEvent =
 
 **`serde(rename_all = "snake_case")` converts Rust PascalCase variants to snake_case in JSON.** The TypeScript union must use the snake_case names.
 
+## Full Four-Layer Feature Example
+
+When adding a new feature, all four layers must be created together. Below is a complete example (hardware info display) showing the canonical shape for each layer.
+
+**1. Rust types (`src-tauri/src/domain/`):**
+
+```rust
+#[derive(Debug, Serialize, Deserialize)]
+pub struct HardwareInfo {
+    pub cpu: String,
+    pub memory_gb: u64,
+    pub gpu: Option<String>,
+}
+```
+
+**2. Rust command (`src-tauri/src/commands/`):**
+
+```rust
+#[tauri::command]
+pub async fn get_hardware_info() -> Result<HardwareInfo, String> {
+    // Real implementation — no stubs
+    Ok(HardwareInfo { /* ... */ })
+}
+```
+
+**3. TypeScript types (`ui/lib/types/`):**
+
+```typescript
+export interface HardwareInfo {
+  cpu: string;
+  memory_gb: number;
+  gpu: string | null;
+}
+```
+
+**4. Svelte component (minimal, no shared state):**
+
+```svelte
+<script lang="ts">
+  import { invoke } from '@tauri-apps/api/core';
+  import type { HardwareInfo } from '$lib/types';
+
+  let info = $state<HardwareInfo | null>(null);
+  let error = $state<string | null>(null);
+
+  $effect(() => {
+    invoke<HardwareInfo>('get_hardware_info')
+      .then(r => info = r)
+      .catch(e => error = e.toString());
+  });
+</script>
+```
+
+**5. Store binding (when state is shared across components):**
+
+```typescript
+// $lib/stores/hardware.svelte.ts
+import { invoke } from '@tauri-apps/api/core';
+import type { HardwareInfo } from '$lib/types';
+
+let info = $state<HardwareInfo | null>(null);
+let loading = $state(false);
+let error = $state<string | null>(null);
+
+export function useHardware() {
+  // ...fetch, expose reactive state
+}
+```
+
 ## Anti-Patterns
 
 ### Missing command registration

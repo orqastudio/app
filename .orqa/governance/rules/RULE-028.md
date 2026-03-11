@@ -50,6 +50,8 @@ Every system should have ONE default behaviour applied uniformly to all members.
 
 If you find yourself writing `if (type === "X") { ... } else if (type === "Y") { ... }` for fundamental behaviour, you don't have a system — you have a collection of special cases.
 
+See the `systems-thinking` skill for practical methodology — how to identify systems, map boundaries, trace relationships, find patterns, and discover the uniform base.
+
 ## Enforcement
 
 - Plans that address symptoms without identifying the system are rejected

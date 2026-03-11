@@ -220,6 +220,38 @@ Phase 4: Documentation verification ← Confirm docs still match
 
 **NEVER proceed to the next phase with failing checks or undocumented drift.**
 
+## Plan Structure Template
+
+Use this template for every implementation plan. Sections must appear in this order:
+
+```markdown
+## Architectural Compliance
+[Verify each principle with specific patterns for this plan — show HOW, not just a list]
+
+## Systems Architecture Checklist
+[Address each dimension: Data Persistence, IPC Contract, State Management, Configuration,
+Health & Status, Error Handling, Testing Strategy, User Preferences, Documentation.
+State "N/A — [reason]" for inapplicable ones.]
+
+## Target UX
+[Wireframes/mockups/descriptions of what the user sees]
+
+## User Journeys
+[Every scenario: first-time, power user, error, edge cases]
+
+## Component States
+[Table: component x state -> what the user sees]
+
+## User-Facing Language
+[Internal key -> display label mapping]
+
+## Phase N: [Name]
+[Implementation details — backend derived from the above]
+
+## Verification
+[Measured by user-visible outcomes]
+```
+
 ## See Also
 
 - `.orqa/governance/rules/RULE-022.md` — Plan mode requirements

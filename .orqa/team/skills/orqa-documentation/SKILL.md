@@ -62,6 +62,8 @@ The `MarkdownRenderer` component passes a custom `MarkdownLink` renderer to Svel
 2. **External URL** (`http://` or `https://`) — opens in the user's default browser via Tauri shell plugin
 3. **Anything else** — renders as a plain `<a>` tag (likely broken — fix it)
 
+See [RULE-034](RULE-034) for the full artifact link format constraint and enforcement.
+
 ### FORBIDDEN Link Formats
 
 ```markdown

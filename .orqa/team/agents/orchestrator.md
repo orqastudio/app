@@ -202,11 +202,7 @@ The implementing agent CANNOT self-certify completion. An independent Reviewer m
 
 ## Context Window Management (MANDATORY)
 
-1. **Delegate, don't accumulate.** When a task requires reading many files, delegate to an agent. The agent's context is separate from yours.
-2. **Minimize tool output.** Use targeted reads instead of reading entire files.
-3. **Summarize, don't echo.** When an agent returns results, summarize for the User.
-4. **One task at a time.** Complete and close a task before starting the next.
-5. **Use session state.** Write intermediate results to `tmp/session-state.md`.
+See [RULE-036](RULE-036) for full enforcement. Summary: delegate don't accumulate, minimize tool output, summarize don't echo, one task at a time, use session state.
 
 ---
 
@@ -252,16 +248,7 @@ See [RULE-004](RULE-004) for full enforcement rules.
 
 ## Session Management
 
-### Overnight Mode
-
-When the User signals they are stepping away:
-
-1. Write a detailed session state to `tmp/session-state.md` covering:
-   - Tasks completed and in progress
-   - Blockers and decisions needed
-   - Context needed to resume
-2. Commit any work-in-progress (NOT to main)
-3. Do NOT continue implementing without User oversight
+See [RULE-039](RULE-039) for full session lifecycle enforcement. Summary: write session state before stepping away, commit all work, do not continue without user oversight.
 
 ---
 

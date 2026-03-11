@@ -39,7 +39,7 @@ Functions take inputs and return outputs. No hidden side effects, no global muta
 The enforcement engine is built entirely from pure functions. Each function takes explicit inputs and returns a value — no reading from `self`, no database, no filesystem hidden behind the call.
 
 ```rust
-// src-tauri/src/domain/enforcement_engine.rs
+// src/domain/engine.rs
 
 /// Pure function: takes a string, returns a string. No side effects.
 fn prose_excerpt(prose: &str) -> String {
@@ -54,7 +54,7 @@ fn prose_excerpt(prose: &str) -> String {
 /// Pure function: takes an entry + index, returns a compiled entry or None.
 /// The Option return type replaces exceptions — the caller decides what to do.
 fn compile_entry(
-    entry: &EnforcementEntry,
+    entry: &RuleEntry,
     rule_index: usize,
     rule_name: &str,
 ) -> Option<CompiledEntry> {
@@ -82,7 +82,7 @@ fn compile_entry(
 The `parse_frontmatter` function demonstrates generic composition — one function that works with any deserializable type:
 
 ```rust
-// src-tauri/src/domain/artifact.rs
+// src/domain/document.rs
 
 /// Parse YAML frontmatter into any deserializable type.
 /// Pure function — no filesystem access.
@@ -95,11 +95,11 @@ pub fn parse_frontmatter<T: serde::de::DeserializeOwned + Default>(content: &str
 }
 
 /// Typed entry points compose the generic function with specific types:
-pub fn parse_doc_frontmatter(content: &str) -> (DocFrontmatter, String) {
-    parse_frontmatter::<DocFrontmatter>(content)
+pub fn parse_page_frontmatter(content: &str) -> (PageFrontmatter, String) {
+    parse_frontmatter::<PageFrontmatter>(content)
 }
-pub fn parse_epic_frontmatter(content: &str) -> (EpicFrontmatter, String) {
-    parse_frontmatter::<EpicFrontmatter>(content)
+pub fn parse_record_frontmatter(content: &str) -> (RecordFrontmatter, String) {
+    parse_frontmatter::<RecordFrontmatter>(content)
 }
 ```
 
@@ -108,7 +108,7 @@ One generic core. Multiple typed entry points. Each frontmatter type is a separa
 ### Svelte: Prop-Driven Components
 
 ```svelte
-<!-- ui/lib/components/shared/EmptyState.svelte -->
+<!-- src/components/shared/EmptyState.svelte -->
 <script lang="ts">
     import type { Component } from "svelte";
 
@@ -154,8 +154,8 @@ Prefer 5 small functions over 1 large one. Each function has a single job.
 The `scan` method composes these small units:
 
 ```rust
-// src-tauri/src/domain/enforcement_engine.rs
-pub fn scan(&self, project_path: &Path) -> Result<Vec<ScanFinding>, OrqaError> {
+// src/domain/engine.rs
+pub fn scan(&self, project_path: &Path) -> Result<Vec<ScanFinding>, AppError> {
     let mut findings = Vec::new();
     for ce in &self.compiled {
         if ce.event != EventType::Scan { continue; }
@@ -179,19 +179,19 @@ Reading `scan` tells you *what* happens without drowning in *how*.
 ### Rust: Command Decomposition
 
 ```rust
-// src-tauri/src/commands/governance_commands.rs
-pub fn governance_analyze(...) -> Result<GovernanceAnalysis, OrqaError> {
-    let session_id = create_governance_session(project_id, &state)?;
+// src/commands/analysis_commands.rs
+pub fn run_analysis(...) -> Result<AnalysisResult, AppError> {
+    let session_id = create_analysis_session(project_id, &state)?;
     let prompt = build_analysis_prompt(&scan_result);
-    super::sidecar_commands::ensure_sidecar_running(&state)?;
+    super::provider_commands::ensure_provider_running(&state)?;
     let raw_response = send_and_collect(&state, session_id, &prompt)?;
-    let output = parse_claude_output(&raw_response)?;
+    let output = parse_provider_output(&raw_response)?;
     let now = current_timestamp();
     persist_analysis_and_recommendations(project_id, &analysis, &output, &now, &state)
 }
 ```
 
-Each helper is independently testable — `parse_claude_output`, `build_analysis_prompt`, etc. all have dedicated unit tests.
+Each helper is independently testable — `parse_provider_output`, `build_analysis_prompt`, etc. all have dedicated unit tests.
 
 ## Principle 3: Trait Boundaries and Interfaces
 
@@ -200,14 +200,14 @@ Define what something *does*, not what it *is*.
 ### Rust: Error Composition via From Traits
 
 ```rust
-// src-tauri/src/error.rs
-impl From<std::io::Error> for OrqaError {
+// src/error.rs
+impl From<std::io::Error> for AppError {
     fn from(err: std::io::Error) -> Self { Self::FileSystem(err.to_string()) }
 }
-impl From<rusqlite::Error> for OrqaError {
+impl From<rusqlite::Error> for AppError {
     fn from(err: rusqlite::Error) -> Self { Self::Database(err.to_string()) }
 }
-impl From<serde_json::Error> for OrqaError {
+impl From<serde_json::Error> for AppError {
     fn from(err: serde_json::Error) -> Self { Self::Serialization(err.to_string()) }
 }
 ```
@@ -217,9 +217,9 @@ This enables `?` propagation everywhere. A function that reads a file, parses JS
 ### TypeScript: Discriminated Unions
 
 ```typescript
-// ui/lib/stores/conversation.svelte.ts
+// src/stores/session.svelte.ts
 export type ContextEntry =
-    | { type: "system_prompt_sent"; customPrompt: string | null; governancePrompt: string; totalChars: number; }
+    | { type: "system_prompt_sent"; customPrompt: string | null; basePrompt: string; totalChars: number; }
     | { type: "context_injected"; messageCount: number; totalChars: number; messages: string; };
 ```
 
@@ -233,7 +233,7 @@ Every integration point is swappable. The system defines *what* it needs, and pr
 
 ```typescript
 // sidecar/src/provider.ts
-type ResponseSender = (response: SidecarResponse) => void;
+type ResponseSender = (response: ProviderResponse) => void;
 
 export async function streamMessage(
     sessionId: number,
@@ -252,9 +252,9 @@ The `ResponseSender` type is the contract. The Rust backend reads NDJSON lines f
 
 ```typescript
 // sidecar/src/provider.ts
-function createOrqaToolServer(sendResponse: ResponseSender) {
+function createAppToolServer(sendResponse: ResponseSender) {
     return createSdkMcpServer({
-        name: 'orqa-studio-tools',
+        name: 'app-tools',
         tools: [
             tool('read_file', 'Read a file', { path: z.string() },
                 async (args) => executeToolViaRust('read_file', args, sendResponse)),
@@ -275,8 +275,8 @@ Complex operations are chains of simple transforms, not monolithic functions.
 ### Rust: Functional Pipelines
 
 ```rust
-// src-tauri/src/commands/governance_commands.rs
-fn format_file_list(scan: &GovernanceScanResult) -> String {
+// src/commands/analysis_commands.rs
+fn format_file_list(scan: &ScanResult) -> String {
     scan.areas.iter()
         .filter(|a| a.covered)
         .flat_map(|a| a.files.iter().map(|f|
@@ -291,7 +291,7 @@ Data flows through `iter() -> filter() -> flat_map() -> collect()`. No intermedi
 ### Svelte: Event Pipeline in Store
 
 ```typescript
-// ui/lib/stores/conversation.svelte.ts
+// src/stores/conversation.svelte.ts
 private handleStreamEvent(event: StreamEvent) {
     switch (event.type) {
         case "stream_start":
@@ -320,11 +320,11 @@ A feature is a self-contained unit: domain logic + command handler + IPC type + 
 ### The Four-Layer Feature Structure
 
 ```
-src-tauri/src/domain/<feature>.rs              -- Pure domain logic and types
-src-tauri/src/commands/<feature>_commands.rs    -- Thin #[tauri::command] wrappers
-ui/lib/types/<feature>.ts                      -- TypeScript interfaces matching Rust types
-ui/lib/stores/<feature>.svelte.ts              -- Runes-based store calling invoke()
-ui/lib/components/<feature>/                   -- Svelte components receiving props
+src/domain/<feature>.rs              -- Pure domain logic and types
+src/commands/<feature>_commands.rs   -- Thin #[tauri::command] wrappers
+src/types/<feature>.ts               -- TypeScript interfaces matching Rust types
+src/stores/<feature>.svelte.ts       -- Runes-based store calling invoke()
+src/components/<feature>/            -- Svelte components receiving props
 ```
 
 The domain module knows nothing about Tauri. The command module knows nothing about the UI. The store knows nothing about the components. Dependency direction is strictly one-way: component -> store -> IPC -> command -> domain.
@@ -334,8 +334,8 @@ The domain module knows nothing about Tauri. The command module knows nothing ab
 Prefer `map`/`filter`/`collect` in Rust, derived state in Svelte, and data transformations over mutations.
 
 ```rust
-// src-tauri/src/commands/governance_commands.rs
-fn build_recommendations(project_id: i64, analysis_id: i64, output: &ClaudeAnalysisOutput, now: &str) -> Vec<Recommendation> {
+// src/commands/analysis_commands.rs
+fn build_recommendations(project_id: i64, analysis_id: i64, output: &AnalysisOutput, now: &str) -> Vec<Recommendation> {
     output.recommendations.iter()
         .map(|raw| {
             let priority = RecommendationPriority::parse(&raw.priority)
@@ -356,9 +356,9 @@ No mutations. No loop variables. Input data in, transformed data out.
 <!-- WRONG: component that fetches data, manages state, AND renders UI -->
 <script lang="ts">
   import { invoke } from '@tauri-apps/api/core';
-  let sessions = $state([]);
-  let messages = $state([]);
-  let artifacts = $state([]);
+  let items = $state([]);
+  let details = $state([]);
+  let related = $state([]);
   // 200 lines of data fetching, error handling, state management...
 </script>
 ```
@@ -370,7 +370,7 @@ No mutations. No loop variables. Input data in, transformed data out.
 ```rust
 // WRONG: business logic inside a #[tauri::command]
 #[tauri::command]
-pub fn analyze_project(...) -> Result<Analysis, OrqaError> {
+pub fn analyze_project(...) -> Result<Analysis, AppError> {
     // 150 lines of scanning, parsing, scoring...
 }
 ```
@@ -388,10 +388,10 @@ pub fn analyze_project(...) -> Result<Analysis, OrqaError> {
 ### Tightly Coupled Features
 
 ```rust
-// WRONG: artifact module directly calls enforcement module
-pub fn create_artifact(...) -> Result<Artifact, OrqaError> {
-    enforcement_engine.evaluate_file(&artifact.path, &artifact.content)?; // tight coupling
-    Ok(artifact)
+// WRONG: document module directly calls scanner module
+pub fn create_document(...) -> Result<Document, AppError> {
+    document_scanner.evaluate_file(&doc.path, &doc.content)?; // tight coupling
+    Ok(doc)
 }
 ```
 
@@ -417,8 +417,8 @@ Composability is not just for OrqaStudio's own codebase — it is a principle th
 ## See Also
 
 - [AD-017](AD-017) — defines the composability principle
-- `src-tauri/src/domain/enforcement_engine.rs` — canonical example of pure function composition
-- `src-tauri/src/error.rs` — canonical example of error composition via From traits
+- `src/domain/engine.rs` — canonical example of pure function composition
+- `src/error.rs` — canonical example of error composition via From traits
 - `sidecar/src/provider.ts` — canonical example of a pluggable integration boundary
 
 ## Related Skills

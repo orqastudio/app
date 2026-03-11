@@ -75,74 +75,7 @@ async function getHardwareInfo() {
 
 When changes are made, they are made fully and completely. Old code paths MUST be removed, not kept as fallbacks.
 
-## Required Pattern
-
-When adding a new feature (e.g., hardware info display):
-
-**1. Rust types (`src-tauri/src/domain/`):**
-
-```rust
-#[derive(Debug, Serialize, Deserialize)]
-pub struct HardwareInfo {
-    pub cpu: String,
-    pub memory_gb: u64,
-    pub gpu: Option<String>,
-}
-```
-
-**2. Rust command (`src-tauri/src/commands/`):**
-
-```rust
-#[tauri::command]
-pub async fn get_hardware_info() -> Result<HardwareInfo, String> {
-    // Real implementation — no stubs
-    Ok(HardwareInfo { /* ... */ })
-}
-```
-
-**3. TypeScript types (`ui/lib/types/`):**
-
-```typescript
-export interface HardwareInfo {
-  cpu: string;
-  memory_gb: number;
-  gpu: string | null;
-}
-```
-
-**4. Svelte component:**
-
-```svelte
-<script lang="ts">
-  import { invoke } from '@tauri-apps/api/core';
-  import type { HardwareInfo } from '$lib/types';
-
-  let info = $state<HardwareInfo | null>(null);
-  let error = $state<string | null>(null);
-
-  $effect(() => {
-    invoke<HardwareInfo>('get_hardware_info')
-      .then(r => info = r)
-      .catch(e => error = e.toString());
-  });
-</script>
-```
-
-**5. Store binding (if shared state):**
-
-```typescript
-// $lib/stores/hardware.svelte.ts
-import { invoke } from '@tauri-apps/api/core';
-import type { HardwareInfo } from '$lib/types';
-
-let info = $state<HardwareInfo | null>(null);
-let loading = $state(false);
-let error = $state<string | null>(null);
-
-export function useHardware() {
-  // ...fetch, expose reactive state
-}
-```
+See the `orqa-ipc-patterns` skill for full code examples and patterns for all four layers.
 
 ## Declaring a Task Complete
 

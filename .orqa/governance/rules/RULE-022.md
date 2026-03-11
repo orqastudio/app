@@ -59,35 +59,7 @@ Every plan that includes user-facing changes MUST be structured UX-first:
 
 **Measurement:** Every phase's success is measured by what the user can see and do, not by what the backend implements.
 
-## Plan Structure Template
-
-```markdown
-## Architectural Compliance
-[Verify each principle with specific patterns for this plan]
-
-## Systems Architecture Checklist
-[Address each dimension: Data Persistence, IPC Contract, State Management, Configuration,
-Health & Status, Error Handling, Testing Strategy, User Preferences, Documentation.
-State "N/A — [reason]" for inapplicable ones.]
-
-## Target UX
-[Wireframes/mockups/descriptions of what the user sees]
-
-## User Journeys
-[Every scenario: first-time, power user, error, edge cases]
-
-## Component States
-[Table: component x state -> what the user sees]
-
-## User-Facing Language
-[Internal key -> display label mapping]
-
-## Phase N: [Name]
-[Implementation details — backend derived from the above]
-
-## Verification
-[Measured by user-visible outcomes]
-```
+See the `planning` skill for the plan structure template and full methodology.
 
 ## Artifact Integration
 
