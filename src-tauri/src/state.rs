@@ -7,6 +7,7 @@ use rusqlite::Connection;
 use crate::domain::artifact_graph::ArtifactGraph;
 use crate::domain::enforcement_engine::EnforcementEngine;
 use crate::domain::process_state::SessionProcessState;
+use crate::domain::skill_injector::SkillInjector;
 use crate::domain::workflow_tracker::WorkflowTracker;
 use crate::search::SearchEngine;
 use crate::sidecar::manager::SidecarManager;
@@ -64,4 +65,10 @@ pub struct AppState {
     /// Invalidated (set to `None`) by the artifact watcher when `.orqa/` files change,
     /// so the next query triggers a fresh build from disk.
     pub artifact_graph: Mutex<Option<ArtifactGraph>>,
+    /// Prompt-based skill injector using semantic similarity.
+    ///
+    /// `None` until the embedder is ready and a project with skills is opened.
+    /// When available, the system prompt builder embeds the user's message and
+    /// injects the most relevant skills automatically.
+    pub skill_injector: Mutex<Option<SkillInjector>>,
 }

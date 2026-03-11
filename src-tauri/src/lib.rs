@@ -41,6 +41,7 @@ fn build_app_state(
         workflow_tracker: std::sync::Mutex::new(domain::workflow_tracker::WorkflowTracker::new()),
         artifact_watcher: std::sync::Arc::new(std::sync::Mutex::new(None)),
         artifact_graph: std::sync::Mutex::new(None),
+        skill_injector: std::sync::Mutex::new(None),
     })
 }
 
