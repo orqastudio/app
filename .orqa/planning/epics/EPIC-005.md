@@ -173,6 +173,7 @@ Surface the graph's cross-reference data in the viewer:
 - Sort options from NavType's `sortable_fields` plus universal fields (title)
 - Group-by options from `filterable_fields` (enum fields)
 - Collapsible group headers replace tree rendering
+- Group header ordering: `_navigation.json` `group_order` → schema enum order → alphabetical
 
 **Frontend — State:**
 - `ArtifactViewState`: `{ sort: SortConfig; filters: FilterConfig; group: string | null }`
