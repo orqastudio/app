@@ -8,7 +8,7 @@
   "propertyOrder": [
     "id", "title", "description", "status",
     "created", "updated",
-    "research-refs", "supersedes", "superseded-by"
+    "layer", "research-refs", "supersedes", "superseded-by"
   ],
   "properties": {
     "id": { "type": "string", "pattern": "^AD-\\d+$" },
@@ -17,6 +17,7 @@
     "status": { "enum": ["proposed", "accepted", "superseded", "deprecated"] },
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
+    "layer": { "enum": ["core", "project", "plugin", "community", "user"] },
     "research-refs": {
       "type": "array",
       "items": { "type": "string", "pattern": "^RES-\\d+$" }

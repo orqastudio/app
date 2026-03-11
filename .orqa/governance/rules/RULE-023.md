@@ -5,8 +5,8 @@ description: Every agent must read its required documentation before any impleme
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: canon
-scope: system
+layer: core
+scope: universal
 ---
 Every agent MUST read its Required Reading documentation before any implementation work begins. The Required Reading section in each agent definition lists the specific documentation pages that agent needs loaded into context.
 

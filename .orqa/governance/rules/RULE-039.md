@@ -5,8 +5,8 @@ description: Sessions must be managed with state persistence, clean handoffs, an
 status: active
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: canon
-scope: general
+layer: core
+scope: universal
 promoted-from: null
 ---
 

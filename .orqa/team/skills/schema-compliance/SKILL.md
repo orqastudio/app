@@ -51,7 +51,7 @@ The schema's `"required"` array lists fields that must be present.
 id: RULE-099
 title: My Rule
 status: active
-layer: canon
+layer: core
 ```
 
 ```yaml
@@ -62,7 +62,7 @@ description: One-line summary of what this rule enforces.
 status: active
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: canon
+layer: core
 scope: system
 ```
 
@@ -114,7 +114,7 @@ id: RULE-099
 title: My Rule
 description: ...
 status: active
-layer: canon
+layer: core
 scope: system
 created: "2026-03-11"
 updated: "2026-03-11"
@@ -128,7 +128,7 @@ description: ...
 status: active
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: canon
+layer: core
 scope: system
 ```
 

@@ -5,8 +5,8 @@ description: Report status accurately. Partial work reported as complete is wors
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: canon
-scope: system
+layer: core
+scope: universal
 ---
 ## The Core Rule
 

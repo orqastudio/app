@@ -10,7 +10,7 @@ description: |
 status: active
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: canon
+layer: core
 version: 1.0.0
 user-invocable: true
 ---
@@ -26,7 +26,7 @@ Maps existing agentic tool configurations into OrqaStudio's governance structure
 | Source | Content | Maps To |
 |--------|---------|---------|
 | `CLAUDE.md` | Project instructions | `.orqa/team/agents/orchestrator.md` + project rules |
-| `.claude/rules/*.md` | Rule files | `.orqa/governance/rules/` (if not already canon) |
+| `.claude/rules/*.md` | Rule files | `.orqa/governance/rules/` (if not already core) |
 | `.claude/settings.json` | Hooks, permissions | `.orqa/governance/hooks/` |
 | `AGENTS.md` | Cross-agent instructions | Agent skill content |
 
@@ -68,7 +68,7 @@ Maps existing agentic tool configurations into OrqaStudio's governance structure
    - Is this agent instructions? → Agent definition or skill content
    - Is this a hook/automation? → `.orqa/governance/hooks/`
    - Is this project settings? → `project.json`
-4. **Deduplicate** — Check if the content already exists in canon rules/skills
+4. **Deduplicate** — Check if the content already exists in core rules/skills
 5. **Create** — Write the extracted governance artifacts
 6. **Link** — Set up symlinks/generation for coexistence
 7. **Report** — Show the user what was migrated and what needs manual review

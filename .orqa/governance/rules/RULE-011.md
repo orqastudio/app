@@ -5,8 +5,8 @@ description: Enforcement artifacts (rules, skills, lessons) must be created befo
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: canon
-scope: system
+layer: core
+scope: universal
 ---
 # Enforcement Before Code (NON-NEGOTIABLE)
 

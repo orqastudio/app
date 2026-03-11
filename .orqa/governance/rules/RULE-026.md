@@ -5,8 +5,8 @@ description: "Three-tier skill loading: agent portable skills, orchestrator-inje
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: canon
-scope: system
+layer: core
+scope: universal
 ---
 Every agent MUST have a `skills:` list in its YAML frontmatter. Skills load in three tiers [AD-028](AD-028).
 
@@ -35,9 +35,11 @@ Every skill carries a `layer` field in its SKILL.md frontmatter:
 
 | Layer | Meaning | Loading |
 |-------|---------|---------|
-| `canon` | Platform skill — portable across projects | Loaded based on agent YAML `skills:` list (Tier 1) |
+| `core` | Platform skill — portable across projects, 1st-party official | Loaded based on agent YAML `skills:` list (Tier 1) |
 | `project` | Project-specific — captures THIS codebase's patterns | Injected by orchestrator based on task scope (Tier 2) |
-| `plugin` | Ecosystem skill — installed from external source | Loaded same as canon |
+| `plugin` | Ecosystem skill — installed from external source, 1st party official | Loaded same as core |
+| `community` | Community-contributed skill — reviewed but not 1st-party | Loaded same as core; treat with appropriate trust level |
+| `user` | Personal workflow skill — user's own private patterns | Loaded same as core; not shared or published |
 
 Agent `scope` determines which agents are loaded for a project type:
 
@@ -125,7 +127,7 @@ The orchestrator and all agents MUST check rule status before applying enforceme
 
 ## Audit
 
-- The orchestrator periodically audits that agent Tier 1 skill lists contain only portable skills + universal wrappers
+- The orchestrator periodically audits that agent Tier 1 skill lists contain only core/plugin/community/user portable skills + universal wrappers
 - No `orqa-*` skills (except `orqa-composability`) should appear in agent YAML frontmatter
 - The injection table in the orchestrator is the single source of truth for Tier 2 loading
 - All skill changes are documented in `.orqa/documentation/process/skills-log.md`

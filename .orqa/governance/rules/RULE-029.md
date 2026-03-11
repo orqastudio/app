@@ -5,8 +5,8 @@ description: Test organisation, coverage requirements, mock boundaries, and isol
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: canon
-scope: project
+layer: core
+scope: software
 ---
 **Source of Truth:** This file defines testing patterns. `.orqa/documentation/development/coding-standards.md` defines coverage requirements.
 

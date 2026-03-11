@@ -8,7 +8,7 @@ description: |
 status: active
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: canon
+layer: core
 user-invocable: false
 allowed-tools: Read, Glob, Grep
 ---

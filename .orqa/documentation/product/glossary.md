@@ -82,7 +82,7 @@ Structured project knowledge maintained in `.orqa/documentation/` (the canonical
 
 ### Governance Framework
 
-The complete set of artifacts (agents, rules, skills, hooks, hookify files, documentation) that define how a project operates. All governance artifacts live under `.orqa/` as the source of truth. The governance framework is the product that OrqaStudio makes visible and manageable. It is organized in three layers: **Canon** (app-managed, non-editable — provides the core systems thinking framework), **Project** (user-managed, additive — extends the canon for a specific context), and **Plugin** (extensible types and views registered by third-party integrations). Canon artifacts and project artifacts may be backed by `.orqa/` files; the plugin layer adds capability without file-system footprint.
+The complete set of artifacts (agents, rules, skills, hooks, hookify files, documentation) that define how a project operates. All governance artifacts live under `.orqa/` as the source of truth. The governance framework is the product that OrqaStudio makes visible and manageable. It is organized in four layers: **Core** (app-managed, non-editable — provides the core systems thinking framework), **Project** (user-managed, additive — extends the core for a specific context), **Plugin** (1st party official extensions), and **Community** (community-contributed extensions). Core artifacts and project artifacts may be backed by `.orqa/` files; the plugin and community layers add capability without file-system footprint.
 
 ### Two-Pillar Test
 

@@ -5,8 +5,8 @@ description: "Two learning loops: implementation lessons in .orqa/governance/les
 status: active
 created: "2026-03-07"
 updated: "2026-03-10"
-layer: canon
-scope: system
+layer: core
+scope: universal
 ---
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.
 

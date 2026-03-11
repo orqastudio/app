@@ -6,7 +6,7 @@ status: active
 created: "2026-03-07"
 updated: "2026-03-07"
 layer: project
-scope: system
+scope: software
 ---
 # Dogfood Mode (CONDITIONAL — only when `dogfood: true`)
 

@@ -5,8 +5,8 @@ description: All errors are your responsibility. Pre-existing errors must be fix
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: canon
-scope: system
+layer: core
+scope: universal
 ---
 ## Rule (NON-NEGOTIABLE)
 

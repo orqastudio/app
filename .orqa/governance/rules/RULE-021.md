@@ -5,8 +5,8 @@ description: Every documentation page describing a feature must include a Pillar
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: canon
-scope: project
+layer: core
+scope: universal
 ---
 Every documentation page that describes a feature, component, workflow, integration, or capability MUST include a "Pillar Alignment" section. This ensures all documented work traces back to the product vision and prevents scope creep from accumulating silently in the docs.
 

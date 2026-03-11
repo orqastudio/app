@@ -5,8 +5,8 @@ description: The orchestrator must protect its context window by delegating, min
 status: active
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: canon
-scope: general
+layer: core
+scope: universal
 promoted-from: null
 ---
 

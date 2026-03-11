@@ -3,14 +3,14 @@ id: SKILL-023
 title: Project Setup
 description: |
   Universal project scaffolding: creates the .orqa/ directory structure,
-  copies canon rules and skills, initialises project.json, and sets up
+  copies core rules and skills, initialises project.json, and sets up
   CLI symlinks. This is the base setup — project type presets layer on top.
   Use when: Initialising a new project with OrqaStudio governance, or
   repairing a broken .orqa/ structure.
 status: active
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: canon
+layer: core
 version: 1.0.0
 user-invocable: true
 ---
@@ -84,22 +84,22 @@ The base structure created by project setup:
 }
 ```
 
-## Canon Content
+## Core Content
 
-These files are copied during setup (canon layer — non-editable by project):
+These files are copied during setup (core layer — non-editable by project):
 
-### Canon Rules
+### Core Rules
 - `artifact-lifecycle.md` — Artifact status transitions and gates
 - `documentation-first.md` — Documentation before code
 - `honest-reporting.md` — No false completion claims
 - `no-stubs.md` — Real implementations only
 - `systems-thinking.md` — Think in systems, not patches
 
-### Canon Agents (7 Universal Roles)
+### Core Agents (7 Universal Roles)
 - `orchestrator.md`, `researcher.md`, `planner.md`, `implementer.md`
 - `reviewer.md`, `writer.md`, `designer.md`
 
-### Canon Skills
+### Core Skills
 - `code-search`, `chunkhound` — Code search
 - `orqa-composability` — Composability philosophy
 - `planning` — Planning methodology
@@ -125,7 +125,7 @@ For Claude Code compatibility, create symlinks in `.claude/`:
 
 1. Create the `.orqa/` directory tree
 2. Generate `project.json` with project name and default artifacts config
-3. Copy canon rules, agents, and skills
+3. Copy core rules, agents, and skills
 4. Create CLI symlinks (if Claude Code is detected)
 5. Run `project-inference` to detect project characteristics
 6. Apply appropriate project type preset (e.g., `project-type-software`)
@@ -135,5 +135,5 @@ For Claude Code compatibility, create symlinks in `.claude/`:
 
 - NEVER overwrite existing `.orqa/` content — setup is for NEW projects
 - If `.orqa/` already exists, offer repair/update instead of overwrite
-- Canon content is read-only for the project — updates come from OrqaStudio releases
-- Project-added rules and skills layer ON TOP of canon, never replace it
+- Core content is read-only for the project — updates come from OrqaStudio releases
+- Project-added rules and skills layer ON TOP of core, never replace it

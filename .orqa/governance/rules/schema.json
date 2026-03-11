@@ -17,8 +17,8 @@
     "status": { "enum": ["active", "inactive"] },
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
-    "layer": { "enum": ["canon", "project", "plugin"] },
-    "scope": { "type": "string" },
+    "layer": { "enum": ["core", "project", "plugin", "community", "user"] },
+    "scope": { "enum": ["universal", "software", "governance"] },
     "promoted-from": {
       "type": ["array", "null"],
       "items": { "type": "string", "pattern": "^IMPL-\\d+$" }

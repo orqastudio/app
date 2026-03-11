@@ -61,22 +61,25 @@ This means:
 - OrqaStudio adds a visual management layer on top of this file-based governance; it does not replace the file format with a proprietary one
 - For CLI compatibility (e.g., Claude Code), OrqaStudio can optionally create symlinks in `.claude/` that point to the corresponding `.orqa/` paths. This is a project configuration option, not a requirement. Future compatibility layers for other tools (Cursor, Continue, etc.) could follow the same symlink pattern.
 
-### Canon Artifacts vs Project Artifacts
+### Core Artifacts vs Project Artifacts
 
-Governance artifacts fall into two categories based on who manages them:
+Governance artifacts fall into categories based on who manages them and their origin layer:
 
 | Category | Managed By | Editable? | Behaviour on App Update |
 |----------|-----------|-----------|------------------------|
-| **Canon** | App (centrally) | No — warning comment at top of each file | Overwritten with latest version |
+| **Core** | App (centrally) | No — warning comment at top of each file | Overwritten with latest version |
 | **Project** | User (and AI) | Yes — fully editable | Preserved, never overwritten |
+| **Plugin** | Plugin author (1st party official) | No — managed by plugin | Updated with plugin version |
+| **Community** | Community contributors | Read-only by default | Updated from community source |
+| **User** | Individual user | Yes — fully editable | Preserved, never overwritten |
 
-**Canon artifacts** are installed into `.orqa/` when a project is set up and updated when the app updates. They encode the core systems thinking and agile planning philosophy that is OrqaStudio's value proposition. They carry a warning comment discouraging manual editing:
+**Core artifacts** are installed into `.orqa/` when a project is set up and updated when the app updates. They encode the core systems thinking and agile planning philosophy that is OrqaStudio's value proposition. They carry a warning comment discouraging manual editing:
 
 ```markdown
-<!-- CANON ARTIFACT — managed by OrqaStudio. Manual edits will be overwritten on app update. -->
+<!-- CORE ARTIFACT — managed by OrqaStudio. Manual edits will be overwritten on app update. -->
 ```
 
-**Project artifacts** are created and managed by the user and AI. They extend and customise the canon framework for the specific project context. They are additive — they can add new rules, new agent behaviours, and new artifact types, but they cannot weaken or override canon rules.
+**Project artifacts** are created and managed by the user and AI. They extend and customise the core framework for the specific project context. They are additive — they can add new rules, new agent behaviours, and new artifact types, but they cannot weaken or override core rules.
 
 ## Governance Concept Taxonomy
 
@@ -102,15 +105,15 @@ When adding new capability to the governance framework, use this decision tree:
 
 **Key principle:** Agents are portable across projects. Skills make agents domain-specific. A single Implementer agent becomes a Backend Engineer, Frontend Engineer, or Data Engineer depending on which skills are loaded.
 
-## Canon Governance Artifacts
+## Core Governance Artifacts
 
-The following artifacts are shipped with OrqaStudio as the canon layer. They are the same for every project and every industry:
+The following artifacts are shipped with OrqaStudio as the core layer. They are the same for every project and every industry:
 
 | Artifact | Path | Purpose |
 |----------|------|---------|
 | 7 universal agent definitions | `.orqa/team/agents/*.md` | Universal roles: Orchestrator, Researcher, Planner, Implementer, Reviewer, Writer, Designer |
-| Canon enforcement rules | `.orqa/governance/rules/*.md` | Behavioral constraints: no stubs, error ownership, documentation-first, etc. |
-| Canon skills | `.orqa/team/skills/` | Domain knowledge: diagnostic-methodology, code-quality-review, security-audit, etc. |
+| Core enforcement rules | `.orqa/governance/rules/*.md` | Behavioral constraints: no stubs, error ownership, documentation-first, etc. |
+| Core skills | `.orqa/team/skills/` | Domain knowledge: diagnostic-methodology, code-quality-review, security-audit, etc. |
 | Lifecycle hooks | `.orqa/governance/hooks/` | Process automation: session start, pre-commit |
 | Artifact framework | `.orqa/documentation/product/artifact-framework.md` | How artifacts are created, tracked, and promoted |
 
@@ -128,24 +131,24 @@ Universal roles load domain skills at runtime. The same 7 roles adapt to any pro
 | Reviewer | `security-audit` | Security reviewer |
 | Reviewer | `test-engineering` | Test engineer |
 
-Project-specific rules, additional skills, and domain-specific artifact configurations are project artifacts and live alongside the canon set, clearly separated.
+Project-specific rules, additional skills, and domain-specific artifact configurations are project artifacts and live alongside the core set, clearly separated.
 
 ## Bootstrap Phase — CLI-Only Governance
 
-> **This section documents the current state.** The governance framework uses native `.orqa/` artifacts managed through the Claude Code CLI. OrqaStudio will supplement this with a visual UI once the MVP is functional. The CLI-only phase is, by design, bootstrapping the canon layer — the same canon layer that will ship with the app and be installed into every new project.
+> **This section documents the current state.** The governance framework uses native `.orqa/` artifacts managed through the Claude Code CLI. OrqaStudio will supplement this with a visual UI once the MVP is functional. The CLI-only phase is, by design, bootstrapping the core layer — the same core layer that will ship with the app and be installed into every new project.
 
 The current process uses:
 
 - **Claude Code CLI** as the orchestrator (via `.claude/` symlinks to `.orqa/`)
 - **7 universal agent roles** defined as `.orqa/team/agents/*.md` files, specialised via skills
 - **20+ rules** enforced via `.orqa/governance/rules/*.md`
-- **30+ skills** in `.orqa/team/skills/` (canon + project-specific)
+- **30+ skills** in `.orqa/team/skills/` (core + project-specific)
 - **Hooks** in `.orqa/governance/hooks/` (session start, pre-commit)
 - **Git worktree workflow** for task isolation
 
 The governance works, but it is invisible — artifacts live in dotfiles and terminal output. This is exactly the problem OrqaStudio exists to solve: making governance visible and structured, and improving it over time through structured reflection. See `.orqa/planning/pillars/` for the active pillar definitions.
 
-Everything being developed in this bootstrap phase is destined to become the canon layer. The agents, rules, hooks, and artifact framework defined here are not OrqaStudio-specific — they represent the reusable, opinionated framework that ships with every new project OrqaStudio creates.
+Everything being developed in this bootstrap phase is destined to become the core layer. The agents, rules, hooks, and artifact framework defined here are not OrqaStudio-specific — they represent the reusable, opinionated framework that ships with every new project OrqaStudio creates.
 
 ### The Dogfooding Milestone
 
@@ -179,7 +182,7 @@ Until these criteria are met, governance is managed through direct file editing 
 
 ## Plugin Architecture
 
-Plugins extend OrqaStudio's artifact system and display system without modifying the canon layer. They allow the framework to serve different industries and use cases while keeping the core enforcement model intact.
+Plugins extend OrqaStudio's artifact system and display system without modifying the core layer. They allow the framework to serve different industries and use cases while keeping the core enforcement model intact.
 
 ### What Plugins Can Do
 
@@ -194,7 +197,7 @@ Plugins extend OrqaStudio's artifact system and display system without modifying
 
 ### What Plugins Cannot Do
 
-- Override or weaken canon rules
+- Override or weaken core rules
 - Modify the underlying enforcement model
 - Change how the agile learning loop operates
 
@@ -218,7 +221,7 @@ Plugins are how OrqaStudio adapts to different domains without forking the produ
 | Consulting | Engagement frameworks, stakeholder map artifact types |
 | Personal planning | Habit tracking views, journaling artifact types |
 
-The canon framework — structured thinking, agile learning loop, lesson capture, quality enforcement — applies to all of them. The plugin layer is what makes the experience feel native to each domain.
+The core framework — structured thinking, agile learning loop, lesson capture, quality enforcement — applies to all of them. The plugin layer is what makes the experience feel native to each domain.
 
 ## Decision Process
 

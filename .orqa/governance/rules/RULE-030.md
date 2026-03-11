@@ -5,8 +5,8 @@ description: User acceptance testing follows a collect-then-systematize approach
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: canon
-scope: system
+layer: core
+scope: universal
 promoted-from:
   - IMPL-011
   - IMPL-012

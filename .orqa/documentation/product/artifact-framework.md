@@ -91,13 +91,15 @@ Each level adds capability without replacing the previous one. A user who never 
 
 All governance artifacts (agents, skills, rules, hooks) carry a `layer` field that determines their scope and editability.
 
-### Three Layers
+### Five Layers
 
 | Layer | Meaning | Ships With | Editable By User |
 |-------|---------|------------|------------------|
-| `canon` | Platform principles — applies to ALL projects | The app | No (updated centrally) |
+| `core` | Platform principles — applies to ALL projects | The app / core templates repo | No (updated centrally) |
 | `project` | Project-specific enforcement and patterns | The project's `.orqa/` | Yes |
-| `plugin` | Ecosystem-extensible contributions | Installed via skills CLI or plugin system | Yes (but managed externally) |
+| `plugin` | 1st party official extensions | Installed via skills CLI or plugin system | Yes (but managed externally) |
+| `community` | Community-contributed extensions | Installed via community registry | Yes (but managed externally) |
+| `user` | User-only personal workflows | User's local config | Yes (private to user) |
 
 ### Governance Concept Definitions
 
@@ -139,24 +141,25 @@ Agents are portable roles that work across any project type. Domain-specific cap
 
 ```yaml
 # Agents
-layer: canon        # canon | project | plugin
+layer: core         # core | project | plugin | community | user
 scope: general      # general | software-engineering | governance
 
 # Skills
-layer: project      # canon | project | plugin
+layer: project      # core | project | plugin | community | user
 
 # Rules
-layer: canon        # canon | project
+layer: core         # core | project | plugin | community | user
+scope: universal    # universal | software | governance
 
 # Hooks
-layer: canon        # canon | project
+layer: core         # core | project | plugin | community | user
 ```
 
 ### Classification Decisions
 
-- **Canon skills** are portable (work across any project): `planning`, `architecture`, `svelte5-best-practices`, etc.
+- **Core skills** are portable (work across any project): `planning`, `architecture`, `svelte5-best-practices`, etc.
 - **Project skills** are project-specific (capture THIS codebase's patterns): `orqa-ipc-patterns`, `orqa-store-patterns`, etc.
-- **Canon rules** enforce platform principles: `documentation-first`, `honest-reporting`, `systems-thinking`, etc.
+- **Core rules** enforce platform principles: `documentation-first`, `honest-reporting`, `systems-thinking`, etc.
 - **Project rules** enforce project-specific conventions: `development-commands` (make targets), `dogfood-mode`.
 
 ---
@@ -518,7 +521,7 @@ Rules enforce coding standards, process requirements, and project conventions. T
 ```yaml
 ---
 id: RULE-006
-layer: canon
+layer: core
 status: active
 scope: domain                     # system | domain | project | role | artifact
 title: "Coding Standards"
@@ -532,7 +535,7 @@ promoted-from: null               # IMPL-NNN if promoted from a lesson, null oth
 | Field | Required | Type | Description |
 |-------|----------|------|-------------|
 | `id` | Yes | string | Auto-incrementing `RULE-NNN` identifier |
-| `layer` | Yes | enum | `canon` (platform), `project` (project-specific), `plugin` (ecosystem) |
+| `layer` | Yes | enum | `core` (platform), `project` (project-specific), `plugin` (1st party), `community` (community), `user` (personal) |
 | `status` | Yes | enum | `active` (enforced) or `inactive` (preserved but not enforced) |
 | `scope` | Yes | string | What the rule governs: `system`, `domain`, `project`, `role`, `artifact`. Temporary — will be replaced by structured enforcement model [IDEA-034](IDEA-034). |
 | `title` | Yes | string | Human-readable rule title |

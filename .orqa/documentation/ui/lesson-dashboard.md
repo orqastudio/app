@@ -175,7 +175,7 @@ A modal dialog that walks the user through promoting a lesson to a rule enforcem
    - `event` (file or bash)
    - `action` (block or warn)
    - `pattern` (regex)
-   - `scope` (canon, project, or plugin)
+   - `scope` (core, project, plugin, community, or user)
 4. **Confirm** — Shows a preview of the YAML that will be added to the rule's frontmatter.
 
 **States:**

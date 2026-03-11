@@ -5,7 +5,7 @@ description: Tauri v2 cross-platform app development with Rust backend. Use when
 status: active
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: canon
+layer: core
 user-invocable: false
 ---
 

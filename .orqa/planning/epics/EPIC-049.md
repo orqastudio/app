@@ -2,7 +2,7 @@
 id: EPIC-049
 title: Agent, Skill, and Enforcement Artifact Audit
 description: Comprehensive audit of all agent definitions, skill definitions, and enforcement artifacts (rules, hooks) to verify accuracy against the current codebase, fix stale references, remove deprecated content, and ensure internal consistency.
-status: in-progress
+status: done
 priority: P1
 created: "2026-03-11"
 updated: "2026-03-11"
@@ -49,7 +49,7 @@ For each skill in `.orqa/team/skills/`:
 2. Verify code patterns described match the actual codebase
 3. Verify file paths referenced in examples exist
 4. Check for stale module names, function signatures, or type definitions
-5. Verify the skill's `layer` field is correct (canon/project/plugin)
+5. Verify the skill's `layer` field is correct (core/project/plugin/community/user)
 6. Check that Related Skills references point to existing skills
 
 ### Phase 3: Rule Enforcement Audit

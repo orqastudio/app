@@ -78,7 +78,7 @@ When OrqaStudio is added to a project that already uses AI tools:
 
 1. **Detect** — `project-inference` skill scans for existing tool configurations
 2. **Import** — `project-migration` skill reads existing configs and maps them to `.orqa/` artifacts
-3. **Deduplicate** — Existing governance that matches canon rules is linked, not duplicated
+3. **Deduplicate** — Existing governance that matches core rules is linked, not duplicated
 4. **Link** — Symlinks and generation configs are set up
 5. **Verify** — User reviews the imported governance and confirms
 

@@ -250,7 +250,7 @@ description: "What this rule enforces"
 status: active
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
-layer: canon | project
+layer: core | project
 scope: system | domain | project | role | artifact
 promoted-from: IMPL-NNN        # If promoted from a lesson, null otherwise
 ---

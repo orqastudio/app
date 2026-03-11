@@ -5,8 +5,8 @@ description: Prefer semantic search over Grep/Glob for multi-file searches. Load
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: canon
-scope: system
+layer: core
+scope: universal
 ---
 **Prefer semantic search over Grep/Glob for any search that spans more than one file or directory.**
 

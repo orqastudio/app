@@ -5,8 +5,8 @@ description: Documentation is the source of truth. Verify docs exist before writ
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: canon
-scope: system
+layer: core
+scope: universal
 ---
 ## Principle
 

@@ -5,8 +5,8 @@ description: Check shared component library before creating new UI elements. Use
 status: active
 created: "2026-03-07"
 updated: "2026-03-11"
-layer: canon
-scope: system
+layer: core
+scope: universal
 ---
 ## Shared Component Library
 

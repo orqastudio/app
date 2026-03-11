@@ -5,8 +5,8 @@ description: Every artifact's YAML frontmatter must validate against the JSON Sc
 status: active
 created: "2026-03-10"
 updated: "2026-03-10"
-layer: canon
-scope: artifact
+layer: core
+scope: governance
 ---
 
 Every artifact in `.orqa/` must have YAML frontmatter that validates against the JSON Schema in its directory's `schema.json` file. Fields not defined in the schema are rejected. Required fields must be present. Enum fields must use valid values.

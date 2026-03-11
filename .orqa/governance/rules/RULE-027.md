@@ -5,8 +5,8 @@ description: No implementation work may begin without the full artifact structur
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: canon
-scope: system
+layer: core
+scope: universal
 ---
 
 ## The Rule (NON-NEGOTIABLE)

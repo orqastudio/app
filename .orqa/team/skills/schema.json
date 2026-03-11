@@ -18,7 +18,7 @@
     "status": { "enum": ["active", "inactive"] },
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
-    "layer": { "enum": ["canon", "project", "plugin"] },
+    "layer": { "enum": ["core", "project", "plugin", "community", "user"] },
     "scope": { "enum": ["general", "software-engineering", "governance"] },
     "version": { "type": "string" },
     "user-invocable": { "type": "boolean" },

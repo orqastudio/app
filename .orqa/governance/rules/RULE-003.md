@@ -5,8 +5,8 @@ description: Every path in project.json artifacts must resolve to an actual dire
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: canon
-scope: project
+layer: core
+scope: governance
 promoted-from:
   - IMPL-005
   - IMPL-006

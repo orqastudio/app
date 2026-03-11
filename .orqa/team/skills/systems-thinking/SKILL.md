@@ -5,7 +5,7 @@ description: Practical methodology for applying systems thinking to codebases â€
 status: active
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: canon
+layer: core
 scope: general
 user-invocable: true
 ---

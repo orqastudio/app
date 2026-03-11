@@ -107,28 +107,28 @@ A persistent chat panel acts as a **project-aware thinking partner**, allowing u
 
 ---
 
-## Three-Layer Enforcement Architecture
+## Five-Layer Enforcement Architecture
 
-The two pillars define *what* OrqaStudio achieves. The three-layer enforcement architecture is *how* it achieves them. This is the mechanism that makes OrqaStudio opinionated rather than generic — the philosophy is not just described in documentation, it is encoded in executable governance artifacts that agents follow.
+The two pillars define *what* OrqaStudio achieves. The five-layer enforcement architecture is *how* it achieves them. This is the mechanism that makes OrqaStudio opinionated rather than generic — the philosophy is not just described in documentation, it is encoded in executable governance artifacts that agents follow.
 
-### Layer 1: Canon (App-Managed Framework)
+### Layer 1: Core (App-Managed Framework)
 
-The canon layer is the opinionated agentic framework shipped with OrqaStudio. It encodes systems thinking and agile planning philosophy that is the product's core value proposition. Canon artifacts are installed into `.orqa/` on project setup and updated centrally when the app updates.
+The core layer is the opinionated agentic framework shipped with OrqaStudio. It encodes systems thinking and agile planning philosophy that is the product's core value proposition. Core artifacts are installed into `.orqa/` on project setup and updated centrally when the app updates.
 
-Canon artifacts are **not user-editable**. They include a warning comment at the top of each file discouraging manual modification. When the app updates, canon artifacts are overwritten with the latest version.
+Core artifacts are **not user-editable**. They include a warning comment at the top of each file discouraging manual modification. When the app updates, core artifacts are overwritten with the latest version.
 
-What canon encodes:
+What core encodes:
 - How to decompose problems into manageable, structured thinking
 - How to plan iteratively with explicit approval gates
 - How to track lessons and promote patterns into governance
 - How to enforce quality standards across agents
 - How to reflect on outcomes and feed improvements back into the next cycle
 
-The canon layer is identical across every project and every industry. A software development project, a healthcare planning initiative, and a personal goal-tracking project all get the same canon framework. This is the "opinionated" part: OrqaStudio has a point of view about how structured thinking works, and it ships that point of view as enforceable artifacts.
+The core layer is identical across every project and every industry. A software development project, a healthcare planning initiative, and a personal goal-tracking project all get the same core framework. This is the "opinionated" part: OrqaStudio has a point of view about how structured thinking works, and it ships that point of view as enforceable artifacts.
 
 ### Layer 2: Project (User-Managed)
 
-The project layer is where users customise the framework for their specific context. Project artifacts are layered on top of canon and are fully editable by the user and AI.
+The project layer is where users customise the framework for their specific context. Project artifacts are layered on top of core and are fully editable by the user and AI.
 
 Project artifacts encode:
 - Domain-specific rules and conventions (what "done" means for this project)
@@ -136,11 +136,11 @@ Project artifacts encode:
 - Industry-specific terminology and artifact types
 - Project-specific agent configurations and skill sets
 
-The project layer is **additive only**. Project artifacts can extend the canon framework — adding new rules, new agent behaviours, new artifact types — but they cannot override or weaken canon rules. If a canon rule says "all errors must be handled as Result types," no project rule can override that constraint. The canon layer defines the floor; the project layer raises it.
+The project layer is **additive only**. Project artifacts can extend the core framework — adding new rules, new agent behaviours, new artifact types — but they cannot override or weaken core rules. If a core rule says "all errors must be handled as Result types," no project rule can override that constraint. The core layer defines the floor; the project layer raises it.
 
-### Layer 3: Plugins (Extensible)
+### Layer 3: Plugin (1st Party Official Extensions)
 
-The plugin layer extends both the artifact system and the display system. Plugins allow the framework to serve radically different use cases — from software development to personal life management — without changing the underlying structure.
+The plugin layer extends both the artifact system and the display system with officially maintained extensions. Plugins allow the framework to serve radically different use cases — from software development to personal life management — without changing the underlying structure.
 
 Plugins can:
 - **Register new artifact types** — Define new types of structured knowledge beyond the built-in set (milestones, epics, tasks, ideas, lessons)
@@ -163,11 +163,19 @@ The artifact configuration in `project.json` drives what the app shows and scans
 }
 ```
 
-Each entry is either a direct type (has a `path`) or a group (has `children`). The app requires certain keys to exist — the canon types (`lessons`, `rules`, `decisions`, `milestones`, `epics`, `tasks`, `ideas`, `agents`) — but their paths, labels, icons, and grouping are configurable. A plugin can rename, regroup, and display these types differently without changing what they are.
+Each entry is either a direct type (has a `path`) or a group (has `children`). The app requires certain keys to exist — the core types (`lessons`, `rules`, `decisions`, `milestones`, `epics`, `tasks`, `ideas`, `agents`) — but their paths, labels, icons, and grouping are configurable. A plugin can rename, regroup, and display these types differently without changing what they are.
+
+### Layer 4: Community (Community-Contributed)
+
+The community layer consists of publicly shared extensions contributed by the OrqaStudio user community. Community artifacts extend the framework with domain-specific knowledge, workflow patterns, and display views that have been built and shared by other users. They follow the same structure as official plugins but are maintained by their contributors rather than the OrqaStudio team.
+
+### Layer 5: User (Personal Workflows)
+
+The user layer is where individuals build and maintain their own local extensions. User artifacts encode personal workflow patterns, custom artifact types, and private views that are not intended for sharing. They are the most dynamic layer — built through conversations with the AI and iterated on freely without any publishing or review process.
 
 ### The Core Thesis
 
-Systems thinking and agile project planning can be applied to any industry and any problem — if the underlying framework is sound and the principles are consistently followed. OrqaStudio automates doing it properly through the canon layer and enforces those principles so they cannot be shortcut. How users want to interact with the artifacts and use the framework is configurable through the project and plugin layers. This enables software development, healthcare, consulting, personal planning, and any other domain where complex work benefits from structured thinking.
+Systems thinking and agile project planning can be applied to any industry and any problem — if the underlying framework is sound and the principles are consistently followed. OrqaStudio automates doing it properly through the core layer and enforces those principles so they cannot be shortcut. How users want to interact with the artifacts and use the framework is configurable through the project, plugin, community, and user layers. This enables software development, healthcare, consulting, personal planning, and any other domain where complex work benefits from structured thinking.
 
 The framework that produces structured outcomes is not optional or configurable. How users experience and extend that framework is.
 
@@ -175,14 +183,14 @@ The framework that produces structured outcomes is not optional or configurable.
 
 OrqaStudio can build anything — including extensions of itself. A plugin is just a project, and OrqaStudio is a tool for turning messy ideas into structured, working output. When a user needs a capability the app doesn't have, they don't file a feature request and wait — they describe what they need, and the AI helps them build it as a plugin using the same structured thinking process the app provides for any other problem.
 
-This creates a flywheel: the app teaches structured thinking → the user applies structured thinking to extend the app → the extension makes the app more capable → the more capable app enables more ambitious extensions. The four plugin layers reflect this progression:
+This creates a flywheel: the app teaches structured thinking → the user applies structured thinking to extend the app → the extension makes the app more capable → the more capable app enables more ambitious extensions. The five layers reflect this progression:
 
 | Layer | What | Who |
 |-------|------|-----|
-| **Built-in** | Default views shipped with the app | OrqaStudio team |
-| **Official** | Curated plugins in the official repository | OrqaStudio team + community contributors |
-| **Community** | Publicly shared plugins | Anyone |
-| **User** | Local plugins built with the AI | The individual user |
+| **Core** | Platform principles and framework shipped with the app | OrqaStudio team |
+| **Plugin** | Curated extensions in the official repository | OrqaStudio team |
+| **Community** | Publicly shared extensions | Anyone |
+| **User** | Local extensions built with the AI | The individual user |
 
 The user layer is the most important. The barrier from "I had an idea" to "I have a working plugin" is a single conversation with the AI. The barrier from "working locally" to "shared with the world" is a git push. This means OrqaStudio can solve ANY problem and build ANY useful tool — not because the app ships with every possible feature, but because it ships with the ability to help users build whatever they need through structured thinking.
 
@@ -378,11 +386,11 @@ This is a contextual capability, not a requirement. If a user is not using any e
 
 ## Key Differentiators
 
-1. **Opinionated clarity engine** — Not a neutral chat interface but a system with a point of view about how thinking should work. The three-layer enforcement architecture (canon + project + plugins) means the philosophy is not just documented — it is enforced.
+1. **Opinionated clarity engine** — Not a neutral chat interface but a system with a point of view about how thinking should work. The five-layer enforcement architecture (core + project + plugin + community + user) means the philosophy is not just documented — it is enforced.
 2. **Structured thinking, not just task execution** — Designed to improve the quality of thinking that leads to action, not just generate output faster
 3. **Learning that compounds** — The system genuinely gets smarter over time through the reflection loop, not just accumulating conversation history
 4. **Three-layer interaction model** — Artifacts (canonical knowledge), Insights (aggregated views), and Reasoning (persistent thinking partner) work together as cognitive infrastructure
-5. **Three-layer enforcement architecture** — Canon (app-managed, non-negotiable principles), Project (user-managed, additive extensions), and Plugins (extensible artifact types and display views). The framework that produces structured outcomes is fixed; how users experience and extend it is configurable.
+5. **Five-layer enforcement architecture** — Core (app-managed, non-negotiable principles), Project (user-managed, additive extensions), Plugin (1st party official extensions), Community (community-contributed extensions), and User (personal workflows). The framework that produces structured outcomes is fixed; how users experience and extend it is configurable.
 6. **Governance made tangible** — What was invisible (standards, rules, decisions, quality trends) becomes a first-class, visual, manageable layer
 7. **Domain-agnostic core** — Software development is the first domain, but the clarity engine applies to any complex work: research, operations, consulting, personal management. The plugin layer is what makes domain adaptation practical.
 8. **Provider-agnostic architecture** — The AI provider is an implementation option, not a product dependency. The architecture supports multiple providers through a composable sidecar interface

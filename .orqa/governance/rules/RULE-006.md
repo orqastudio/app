@@ -5,8 +5,8 @@ description: "Rust and TypeScript coding standards: formatting, linting, error h
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: canon
-scope: project
+layer: core
+scope: software
 ---
 **Source of Truth:** `.orqa/documentation/development/coding-standards.md`
 

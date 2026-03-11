@@ -5,8 +5,8 @@ description: The project root must stay lean. Every file in root must have a jus
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: canon
-scope: system
+layer: core
+scope: universal
 ---
 The project root must stay lean. Every file in root must have a justification.
 

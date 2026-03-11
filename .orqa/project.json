@@ -44,7 +44,8 @@
         { "key": "development", "path": ".orqa/documentation/development" },
         { "key": "process", "path": ".orqa/documentation/process" },
         { "key": "ui", "path": ".orqa/documentation/ui" },
-        { "key": "wireframes", "path": ".orqa/documentation/wireframes" }
+        { "key": "wireframes", "path": ".orqa/documentation/wireframes" },
+        { "key": "guide", "path": ".orqa/documentation/guide" }
       ]
     },
     { "key": "planning",

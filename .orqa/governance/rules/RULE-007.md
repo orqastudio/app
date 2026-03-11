@@ -6,7 +6,7 @@ status: active
 created: "2026-03-07"
 updated: "2026-03-07"
 layer: project
-scope: project
+scope: software
 ---
 All development commands MUST be invoked via `make` targets. Raw `cargo` and `npm run` commands are forbidden for tasks that have a `make` equivalent.
 

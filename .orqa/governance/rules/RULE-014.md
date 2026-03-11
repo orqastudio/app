@@ -5,8 +5,8 @@ description: Documentation is deleted when outdated. Research and tasks are pres
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: canon
-scope: system
+layer: core
+scope: universal
 ---
 
 ## Two Categories of Written Artifacts
@@ -45,7 +45,7 @@ When a research document or task has been overtaken by newer work:
 ```yaml
 ---
 id: TASK-003
-layer: canon
+layer: core
 title: "Original nav implementation"
 status: surpassed
 surpassed-by: TASK-009

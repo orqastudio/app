@@ -5,8 +5,8 @@ description: All code must comply with architecture decisions in .orqa/governanc
 status: active
 created: "2026-03-07"
 updated: "2026-03-10"
-layer: canon
-scope: project
+layer: core
+scope: universal
 ---
 **Source of Truth:** `.orqa/governance/decisions/` — individual `AD-NNN.md` artifacts. Decisions are first-class artifacts browsable in the app's artifact navigation.
 

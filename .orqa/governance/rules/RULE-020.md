@@ -5,8 +5,8 @@ description: No hardcoded fake data, TODO functions, or scaffolded implementatio
 status: active
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: canon
-scope: system
+layer: core
+scope: universal
 ---
 ## What Counts as a Stub
 

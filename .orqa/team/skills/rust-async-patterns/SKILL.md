@@ -5,7 +5,7 @@ description: Master Rust async programming with Tokio, async traits, error handl
 status: active
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: canon
+layer: core
 user-invocable: false
 ---
 
