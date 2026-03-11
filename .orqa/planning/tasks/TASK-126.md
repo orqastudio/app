@@ -1,0 +1,30 @@
+---
+id: TASK-126
+title: "Implement session and message CRUD"
+description: "Built complete CRUD operations for sessions and messages including creation, listing, retrieval, updating, and deletion via IPC commands."
+status: done
+created: "2026-03-02"
+updated: "2026-03-02"
+epic: EPIC-030
+depends-on: []
+scope:
+  - Implement session create, list, get, update, delete commands
+  - Implement message create, list, get commands
+  - Wire domain logic through repository pattern
+  - Register all commands in Tauri app builder
+acceptance:
+  - All session CRUD operations work end-to-end
+  - All message operations work end-to-end
+  - Error cases return typed errors
+---
+## What
+
+Implemented full CRUD IPC commands for sessions and messages, wired through the repository pattern to SQLite.
+
+## How
+
+Created `#[tauri::command]` handlers for each operation, delegating to domain services and repository implementations. All commands are registered in the Tauri app builder and return `Result<T, OrqaError>`.
+
+## Verification
+
+All session and message operations execute end-to-end from the frontend, error cases return typed `OrqaError` variants, and data persists correctly across app restarts.

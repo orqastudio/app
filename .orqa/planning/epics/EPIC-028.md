@@ -54,4 +54,10 @@ Implementation approach to be defined during planning.
 
 ## Tasks
 
-Task breakdown to be defined.
+- TASK-108: Define design system
+- TASK-109: Design core layout wireframes
+- TASK-110: Design conversation view wireframes
+- TASK-111: Design artifact browser wireframes
+- TASK-112: Design settings and onboarding wireframes
+- TASK-113: Define component inventory
+- TASK-114: Define interaction patterns and responsive behaviour

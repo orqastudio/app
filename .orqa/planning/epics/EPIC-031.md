@@ -49,4 +49,9 @@ Implementation approach to be defined during planning.
 
 ## Tasks
 
-Task breakdown to be defined.
+- TASK-133: Implement governance filesystem scanner
+- TASK-134: Implement governance coverage analysis
+- TASK-135: Implement governance recommendations
+- TASK-136: Implement recommendation review UI
+- TASK-137: Implement governance coverage dashboard widget
+- TASK-138: Wire governance end-to-end integration
