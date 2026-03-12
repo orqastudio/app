@@ -1,12 +1,31 @@
 ---
-id: RULE-018
-title: No Aliases or Hacks
-description: Fix root causes of type mismatches between layers. Never paper over with aliases, shims, or duplicate mappings.
-status: active
+id: "RULE-018"
+title: "No Aliases or Hacks"
+description: "Fix root causes of type mismatches between layers. Never paper over with aliases, shims, or duplicate mappings."
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-12"
-layer: core
-scope: [AGENT-001, AGENT-002, AGENT-006]
+layer: "core"
+scope:
+  - "AGENT-001"
+  - "AGENT-002"
+  - "AGENT-006"
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "No aliases ensures structural consistency across type boundaries"
+  - target: "RULE-010"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-012"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-020"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-005"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 When a value or type mismatch exists between layers, fix the root cause. Never paper over it with aliases, shims, or duplicate mappings.
 

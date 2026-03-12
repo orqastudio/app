@@ -1,12 +1,35 @@
 ---
-id: RULE-004
-title: Artifact Lifecycle
-description: Enforces creation standards, status transitions, promotion gates, and documentation gates for all .orqa/ artifacts.
-status: active
+id: "RULE-004"
+title: "Artifact Lifecycle"
+description: "Enforces creation standards, status transitions, promotion gates, and documentation gates for all .orqa/ artifacts."
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: core
-scope: [AGENT-003]
+layer: "core"
+scope:
+  - "AGENT-003"
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Artifact lifecycle enforces structured progression from idea to completion"
+  - target: "RULE-008"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-016"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-031"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-017"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-021"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-015"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
 

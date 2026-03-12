@@ -1,31 +1,47 @@
 ---
-id: RULE-044
-title: Core Graph Firmware Protection
-description: Core graph artifacts (schemas, orchestrator, core skills, role definitions) are firmware — non-editable by agents or users except through the update system or in dogfood mode.
-status: active
+id: "RULE-044"
+title: "Core Graph Firmware Protection"
+description: "Core graph artifacts (schemas, orchestrator, core skills, role definitions) are firmware — non-editable by agents or users except through the update system or in dogfood mode."
+status: "active"
 created: "2026-03-12"
 updated: "2026-03-12"
-layer: core
+layer: "core"
 scope: []
 enforcement:
-  - event: file
+  - event: "file"
     pattern: ".*"
     paths:
       - ".orqa/planning/*/schema.json"
       - ".orqa/governance/*/schema.json"
       - ".orqa/team/agents/schema.json"
       - ".orqa/team/skills/schema.json"
-    action: block
+    action: "block"
     message: "BLOCKED: schema.json files are core graph firmware. They define artifact structure for all projects. Do not modify unless you are updating OrqaStudio itself (dogfood mode). See RULE-044."
-  - event: file
+  - event: "file"
     pattern: ".*"
     paths:
       - ".orqa/team/skills/composability/SKILL.md"
       - ".orqa/team/skills/research-methodology/SKILL.md"
       - ".orqa/team/skills/planning/SKILL.md"
       - ".orqa/team/skills/orqa-code-search/SKILL.md"
-    action: block
+    action: "block"
     message: "BLOCKED: Core skills are firmware. They define universal methodology for all projects. Do not modify unless you are updating OrqaStudio itself (dogfood mode). See RULE-044."
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Core graph protection preserves the fundamental structural integrity of the system"
+  - target: "RULE-003"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-032"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-035"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-009"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 
 Core graph artifacts define how the artifact graph works, how agents traverse it, and how the structured thinking process operates. They are **firmware** — they ship with OrqaStudio and are not modified during normal project use.

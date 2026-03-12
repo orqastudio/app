@@ -1,12 +1,23 @@
 ---
-id: RULE-005
-title: Code Search Usage
-description: Prefer semantic search over Grep/Glob for multi-file searches. Load the correct search skill for your context.
-status: active
+id: "RULE-005"
+title: "Code Search Usage"
+description: "Prefer semantic search over Grep/Glob for multi-file searches. Load the correct search skill for your context."
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: project
-scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
+layer: "project"
+scope:
+  - "AGENT-001"
+  - "AGENT-002"
+  - "AGENT-003"
+  - "AGENT-004"
+  - "AGENT-005"
+  - "AGENT-006"
+  - "AGENT-007"
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Semantic search enables structured knowledge discovery"
 ---
 **Prefer semantic search over Grep/Glob for any search that spans more than one file or directory.**
 

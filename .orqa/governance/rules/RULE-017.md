@@ -1,12 +1,24 @@
 ---
-id: RULE-017
-title: Lessons Learned
+id: "RULE-017"
+title: "Lessons Learned"
 description: "Two learning loops: implementation lessons in .orqa/governance/lessons/ and process retrospectives. Both are mandatory."
-status: active
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-10"
-layer: core
-scope: [AGENT-003, AGENT-006]
+layer: "core"
+scope:
+  - "AGENT-003"
+  - "AGENT-006"
+relationships:
+  - target: "PILLAR-002"
+    type: "grounded"
+    rationale: "Lessons learned is the core mechanism for learning through reflection"
+  - target: "RULE-015"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-022"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.
 

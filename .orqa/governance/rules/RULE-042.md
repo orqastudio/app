@@ -1,49 +1,82 @@
 ---
-id: RULE-042
-title: Automated Skill Injection
+id: "RULE-042"
+title: "Automated Skill Injection"
 description: "When agents touch specific code areas, relevant domain skills are auto-injected. Enforcement entries map file paths to skill names."
-status: active
+status: "active"
 created: "2026-03-11"
 updated: "2026-03-12"
-layer: project
-scope: [AGENT-003]
+layer: "project"
+scope:
+  - "AGENT-003"
 promoted-from: null
 enforcement:
-  - event: file
-    paths: ["backend/src-tauri/src/domain/**"]
-    action: inject
-    skills: [orqa-domain-services, orqa-error-composition]
+  - event: "file"
+    paths:
+      - "backend/src-tauri/src/domain/**"
+    action: "inject"
+    skills:
+      - "orqa-domain-services"
+      - "orqa-error-composition"
     message: "Injecting domain service and error composition patterns."
-  - event: file
-    paths: ["backend/src-tauri/src/commands/**"]
-    action: inject
-    skills: [orqa-ipc-patterns, orqa-error-composition]
+  - event: "file"
+    paths:
+      - "backend/src-tauri/src/commands/**"
+    action: "inject"
+    skills:
+      - "orqa-ipc-patterns"
+      - "orqa-error-composition"
     message: "Injecting IPC patterns and error composition."
-  - event: file
-    paths: ["backend/src-tauri/src/repo/**"]
-    action: inject
-    skills: [orqa-repository-pattern]
+  - event: "file"
+    paths:
+      - "backend/src-tauri/src/repo/**"
+    action: "inject"
+    skills:
+      - "orqa-repository-pattern"
     message: "Injecting repository pattern."
-  - event: file
-    paths: ["sidecar/src/**"]
-    action: inject
-    skills: [orqa-streaming]
+  - event: "file"
+    paths:
+      - "sidecar/src/**"
+    action: "inject"
+    skills:
+      - "orqa-streaming"
     message: "Injecting streaming patterns."
-  - event: file
-    paths: ["ui/src/lib/components/**"]
-    action: inject
-    skills: [component-extraction, svelte5-best-practices]
+  - event: "file"
+    paths:
+      - "ui/src/lib/components/**"
+    action: "inject"
+    skills:
+      - "component-extraction"
+      - "svelte5-best-practices"
     message: "Injecting component extraction and Svelte 5 patterns."
-  - event: file
-    paths: ["ui/src/lib/stores/**"]
-    action: inject
-    skills: [orqa-store-patterns, orqa-store-orchestration]
+  - event: "file"
+    paths:
+      - "ui/src/lib/stores/**"
+    action: "inject"
+    skills:
+      - "orqa-store-patterns"
+      - "orqa-store-orchestration"
     message: "Injecting store patterns and orchestration."
-  - event: file
-    paths: [".orqa/**"]
-    action: inject
-    skills: [orqa-governance, orqa-documentation]
+  - event: "file"
+    paths:
+      - ".orqa/**"
+    action: "inject"
+    skills:
+      - "orqa-governance"
+      - "orqa-documentation"
     message: "Injecting governance and documentation patterns."
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Skill injection automates knowledge structure loading at the right moments"
+  - target: "RULE-026"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-006"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-043"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 
 When agents write to specific code areas, the enforcement engine automatically injects

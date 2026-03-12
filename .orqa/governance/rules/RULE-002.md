@@ -1,12 +1,35 @@
 ---
-id: RULE-002
-title: Architecture Decisions
-description: All code must comply with architecture decisions in .orqa/governance/decisions/.
-status: active
+id: "RULE-002"
+title: "Architecture Decisions"
+description: "All code must comply with architecture decisions in .orqa/governance/decisions/."
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-10"
-layer: project
-scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
+layer: "project"
+scope:
+  - "AGENT-001"
+  - "AGENT-002"
+  - "AGENT-003"
+  - "AGENT-004"
+  - "AGENT-005"
+  - "AGENT-006"
+  - "AGENT-007"
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Architecture decisions document structural choices that create clarity"
+  - target: "RULE-022"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-008"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-031"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-010"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 **Source of Truth:** `.orqa/governance/decisions/` — individual `AD-NNN.md` artifacts. Decisions are first-class artifacts browsable in the app's artifact navigation.
 

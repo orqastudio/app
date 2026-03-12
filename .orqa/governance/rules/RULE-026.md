@@ -1,12 +1,41 @@
 ---
-id: RULE-026
-title: Skill Enforcement
+id: "RULE-026"
+title: "Skill Enforcement"
 description: "Three-tier skill loading: agent portable skills, orchestrator-injected project skills, and context-resolving wrappers."
-status: active
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-12"
-layer: core
-scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
+layer: "core"
+scope:
+  - "AGENT-001"
+  - "AGENT-002"
+  - "AGENT-003"
+  - "AGENT-004"
+  - "AGENT-005"
+  - "AGENT-006"
+  - "AGENT-007"
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Skill enforcement ensures domain knowledge is loaded before implementation"
+  - target: "RULE-023"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-005"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-001"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-037"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-038"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-040"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 Every agent MUST have a `skills:` list in its YAML frontmatter. Agent tool access is declared via `capabilities:` and resolved per provider context — see [RULE-040](RULE-040). Skills load in three tiers [AD-028](AD-028).
 

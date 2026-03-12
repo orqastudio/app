@@ -1,12 +1,32 @@
 ---
-id: RULE-028
-title: Systems Thinking First
-description: Every change must be evaluated as part of the whole system, not as an isolated fix. This is the foundational discipline that OrqaStudio exists to enable — it applies to every project the app manages.
-status: active
+id: "RULE-028"
+title: "Systems Thinking First"
+description: "Every change must be evaluated as part of the whole system, not as an isolated fix. This is the foundational discipline that OrqaStudio exists to enable — it applies to every project the app manages."
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: core
-scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
+layer: "core"
+scope:
+  - "AGENT-001"
+  - "AGENT-002"
+  - "AGENT-003"
+  - "AGENT-004"
+  - "AGENT-005"
+  - "AGENT-006"
+  - "AGENT-007"
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Systems thinking provides the core methodology for achieving clarity through structure"
+  - target: "RULE-022"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-010"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-009"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 # Systems Thinking First (NON-NEGOTIABLE)
 

@@ -1,12 +1,29 @@
 ---
-id: RULE-014
-title: Historical Artifact Preservation
-description: Documentation is deleted when outdated. Research and tasks are preserved and marked as surpassed for historical traceability.
-status: active
+id: "RULE-014"
+title: "Historical Artifact Preservation"
+description: "Documentation is deleted when outdated. Research and tasks are preserved and marked as surpassed for historical traceability."
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: core
-scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
+layer: "core"
+scope:
+  - "AGENT-001"
+  - "AGENT-002"
+  - "AGENT-003"
+  - "AGENT-004"
+  - "AGENT-005"
+  - "AGENT-006"
+  - "AGENT-007"
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Document lifecycle distinguishes current state docs from historical records"
+  - target: "RULE-008"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-004"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 
 ## Two Categories of Written Artifacts

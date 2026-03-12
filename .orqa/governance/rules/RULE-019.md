@@ -1,29 +1,47 @@
 ---
-id: RULE-019
-title: No Deferred Deliverables
-description: If a deliverable is in scope, it ships with the epic. Deferring scoped deliverables is forbidden.
-status: active
+id: "RULE-019"
+title: "No Deferred Deliverables"
+description: "If a deliverable is in scope, it ships with the epic. Deferring scoped deliverables is forbidden."
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: core
-scope: [AGENT-002, AGENT-003]
+layer: "core"
+scope:
+  - "AGENT-002"
+  - "AGENT-003"
 enforcement:
-  - event: file
-    action: warn
+  - event: "file"
+    action: "warn"
     conditions:
-      - field: file_path
+      - field: "file_path"
         pattern: "\\.orqa/"
-      - field: new_text
+      - field: "new_text"
         pattern: "(?i)(deferred to|will be (wired|handled|done|implemented) (in|by) EPIC|out of scope.*handled by|future epic|separate epic will)"
     message: "Deferral language detected. RULE-019: if a deliverable is in scope, it ships NOW. Never defer to a future epic without explicit user approval."
-  - event: file
-    action: warn
+  - event: "file"
+    action: "warn"
     conditions:
-      - field: file_path
+      - field: "file_path"
         pattern: "\\.orqa/planning/(tasks|epics)/"
-      - field: new_text
+      - field: "new_text"
         pattern: "status:\\s*done"
     message: "Task/epic being marked done. RULE-019: verify ALL acceptance criteria are met and no deliverables were silently deferred."
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "No deferred deliverables ensures scope clarity and completion integrity"
+  - target: "RULE-015"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-022"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-020"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-004"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 ## The Rule
 

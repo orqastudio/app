@@ -1,35 +1,54 @@
 ---
-id: RULE-013
-title: Git Workflow
-description: Worktree-based workflow with mandatory cleanup, stash policy, and data loss prevention rules.
-status: active
+id: "RULE-013"
+title: "Git Workflow"
+description: "Worktree-based workflow with mandatory cleanup, stash policy, and data loss prevention rules."
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: core
-scope: [AGENT-002, AGENT-003, AGENT-006]
+layer: "core"
+scope:
+  - "AGENT-002"
+  - "AGENT-003"
+  - "AGENT-006"
 promoted-from:
-  - IMPL-015
+  - "IMPL-015"
 enforcement:
-  - event: bash
+  - event: "bash"
     pattern: "git commit.*--no-verify"
-    action: block
+    action: "block"
     message: "Never bypass pre-commit hooks with --no-verify (RULE-013)."
-  - event: bash
+  - event: "bash"
     pattern: "git push.*--no-verify"
-    action: block
+    action: "block"
     message: "Never bypass push hooks with --no-verify (RULE-013)."
-  - event: bash
+  - event: "bash"
     pattern: "git reset --hard"
-    action: warn
+    action: "warn"
     message: "Destructive git operation. Verify with git status and git diff first (RULE-013)."
-  - event: bash
+  - event: "bash"
     pattern: "git checkout \\."
-    action: warn
+    action: "warn"
     message: "Destructive git operation. Verify with git status and git diff first (RULE-013)."
-  - event: bash
+  - event: "bash"
     pattern: "git clean -f"
-    action: warn
+    action: "warn"
     message: "Destructive git operation. Verify what will be removed first (RULE-013)."
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Git workflow creates structured, traceable version control practices"
+  - target: "RULE-007"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-012"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-006"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-009"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 **Source of Truth:** `.orqa/documentation/process/workflow.md`
 

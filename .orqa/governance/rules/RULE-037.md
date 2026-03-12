@@ -1,13 +1,33 @@
 ---
-id: RULE-037
-title: Tool Access Restrictions
-description: Each universal role has a defined set of permitted tools. Using tools outside a role's scope violates ownership boundaries.
-status: active
+id: "RULE-037"
+title: "Tool Access Restrictions"
+description: "Each universal role has a defined set of permitted tools. Using tools outside a role's scope violates ownership boundaries."
+status: "active"
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: core
-scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
+layer: "core"
+scope:
+  - "AGENT-001"
+  - "AGENT-002"
+  - "AGENT-003"
+  - "AGENT-004"
+  - "AGENT-005"
+  - "AGENT-006"
+  - "AGENT-007"
 promoted-from: null
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Tool access restrictions enforce role boundaries for structural clarity"
+  - target: "RULE-001"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-026"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-040"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 
 Tool access per role enforces ownership boundaries defined in [RULE-001](RULE-001). A Reviewer that can Edit would be tempted to fix issues instead of reporting them. A Researcher that can Write would be tempted to create artifacts instead of investigating.

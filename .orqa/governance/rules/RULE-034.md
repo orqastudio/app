@@ -1,13 +1,25 @@
 ---
-id: RULE-034
-title: Artifact Link Format
-description: All cross-references between artifacts must use markdown link syntax with artifact IDs. Bare IDs, file paths, and web-style paths are forbidden.
-status: active
+id: "RULE-034"
+title: "Artifact Link Format"
+description: "All cross-references between artifacts must use markdown link syntax with artifact IDs. Bare IDs, file paths, and web-style paths are forbidden."
+status: "active"
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: core
-scope: [AGENT-003, AGENT-007]
+layer: "core"
+scope:
+  - "AGENT-003"
+  - "AGENT-007"
 promoted-from: null
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Cross-reference format ensures navigable, structured artifact links"
+  - target: "RULE-032"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-003"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 
 All artifact cross-references MUST use the format `[Display Text](ARTIFACT-ID)` where the artifact ID matches the pattern `PREFIX-NNN`. The display text is typically the artifact ID itself: `[EPIC-001](EPIC-001)`.

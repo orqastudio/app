@@ -1,12 +1,32 @@
 ---
-id: RULE-011
-title: Enforcement Before Code
-description: Enforcement artifacts (rules, skills, lessons) must be created before the implementation code that establishes the pattern.
-status: active
+id: "RULE-011"
+title: "Enforcement Before Code"
+description: "Enforcement artifacts (rules, skills, lessons) must be created before the implementation code that establishes the pattern."
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: core
-scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
+layer: "core"
+scope:
+  - "AGENT-001"
+  - "AGENT-002"
+  - "AGENT-003"
+  - "AGENT-004"
+  - "AGENT-005"
+  - "AGENT-006"
+  - "AGENT-007"
+relationships:
+  - target: "PILLAR-002"
+    type: "grounded"
+    rationale: "Enforcement before code captures patterns as they emerge, enabling learning"
+  - target: "RULE-008"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-017"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-026"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 # Enforcement Before Code (NON-NEGOTIABLE)
 

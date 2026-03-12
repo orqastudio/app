@@ -1,18 +1,34 @@
 ---
-id: RULE-020
-title: No Stubs or Placeholders
-description: No hardcoded fake data, TODO functions, or scaffolded implementations in production code.
-status: active
+id: "RULE-020"
+title: "No Stubs or Placeholders"
+description: "No hardcoded fake data, TODO functions, or scaffolded implementations in production code."
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-12"
-layer: core
-scope: [AGENT-002, AGENT-006]
+layer: "core"
+scope:
+  - "AGENT-002"
+  - "AGENT-006"
 enforcement:
-  - event: file
+  - event: "file"
     pattern: "TODO|FIXME|HACK|XXX"
-    paths: ["src/**/*"]
-    action: warn
+    paths:
+      - "src/**/*"
+    action: "warn"
     message: "TODO/FIXME/HACK comments are forbidden in production code (RULE-020). Track in .orqa/planning/tasks/ instead."
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "No stubs ensures real implementations create genuine structural value"
+  - target: "RULE-010"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-012"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-005"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 ## What Counts as a Stub
 

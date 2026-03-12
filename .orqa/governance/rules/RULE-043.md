@@ -1,34 +1,49 @@
 ---
-id: RULE-043
-title: Tooling Ecosystem Management
+id: "RULE-043"
+title: "Tooling Ecosystem Management"
 description: "OrqaStudio manages linter configuration to match documented standards. Code quality enforcement belongs in linters, not in regex matching."
-status: active
+status: "active"
 created: "2026-03-11"
 updated: "2026-03-12"
-layer: project
-scope: [AGENT-002, AGENT-006]
+layer: "project"
+scope:
+  - "AGENT-002"
+  - "AGENT-006"
 promoted-from: null
 enforcement:
-  - event: lint
+  - event: "lint"
     pattern: "clippy::unwrap_used"
-    action: warn
+    action: "warn"
     message: "No unwrap() in production Rust — enforced by clippy pedantic."
-  - event: lint
+  - event: "lint"
     pattern: "clippy::expect_used"
-    action: warn
+    action: "warn"
     message: "No expect() in production Rust — enforced by clippy pedantic."
-  - event: lint
+  - event: "lint"
     pattern: "clippy::panic"
-    action: warn
+    action: "warn"
     message: "No panic!() in production Rust — enforced by clippy pedantic."
-  - event: lint
+  - event: "lint"
     pattern: "@typescript-eslint/no-explicit-any"
-    action: warn
+    action: "warn"
     message: "No 'any' types in TypeScript — enforced by ESLint strict."
-  - event: lint
+  - event: "lint"
     pattern: "svelte/no-reactive-declaration"
-    action: warn
+    action: "warn"
     message: "No Svelte 4 reactive declarations ($:) — enforced by ESLint svelte plugin."
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Tooling ecosystem manages the structural chain from standards to enforcement"
+  - target: "RULE-006"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-042"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-012"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 
 OrqaStudio delegates code quality enforcement to the appropriate linting tools. The

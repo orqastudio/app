@@ -1,15 +1,33 @@
 ---
-id: RULE-030
-title: UAT Process
-description: User acceptance testing follows a collect-then-systematize approach. Findings are grouped by root cause before tasks are created.
-status: active
+id: "RULE-030"
+title: "UAT Process"
+description: "User acceptance testing follows a collect-then-systematize approach. Findings are grouped by root cause before tasks are created."
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: core
-scope: [AGENT-003, AGENT-006]
+layer: "core"
+scope:
+  - "AGENT-003"
+  - "AGENT-006"
 promoted-from:
-  - IMPL-011
-  - IMPL-012
+  - "IMPL-011"
+  - "IMPL-012"
+relationships:
+  - target: "PILLAR-002"
+    type: "grounded"
+    rationale: "UAT process structures user feedback into systematic improvement"
+  - target: "RULE-028"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-017"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-015"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-027"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 
 User acceptance testing follows a structured process that prevents premature fixing and ensures systemic solutions.

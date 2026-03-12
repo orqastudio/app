@@ -1,12 +1,19 @@
 ---
-id: RULE-010
-title: End-to-End Completeness
-description: Every feature must be implemented across all layers (Rust command, IPC type, Svelte component, store) in the same commit.
-status: active
+id: "RULE-010"
+title: "End-to-End Completeness"
+description: "Every feature must be implemented across all layers (Rust command, IPC type, Svelte component, store) in the same commit."
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: project
-scope: [AGENT-002, AGENT-004, AGENT-006]
+layer: "project"
+scope:
+  - "AGENT-002"
+  - "AGENT-004"
+  - "AGENT-006"
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "End-to-end completeness ensures every feature is fully structured across all layers"
 ---
 Every feature MUST be implemented across ALL layers in the same commit. Partial implementations that work in isolation but fail at runtime due to missing layers are forbidden.
 

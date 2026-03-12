@@ -1,14 +1,26 @@
 ---
-id: RULE-041
-title: Data Persistence Boundaries
+id: "RULE-041"
+title: "Data Persistence Boundaries"
 description: "Defines which data belongs in SQLite, which in file-based artifacts, and which is ephemeral. Prevents misplaced persistence."
-status: active
+status: "active"
 created: "2026-03-11"
 updated: "2026-03-12"
-layer: project
-scope: [AGENT-002, AGENT-006]
+layer: "project"
+scope:
+  - "AGENT-002"
+  - "AGENT-006"
 promoted-from: null
 enforcement: []
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Data persistence boundaries create clear structural separation of concerns"
+  - target: "RULE-003"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-010"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 
 Data persistence in OrqaStudio follows three channels, each with clear boundaries.

@@ -1,13 +1,30 @@
 ---
-id: RULE-036
-title: Context Window Management
-description: The orchestrator must protect its context window by delegating, minimizing output, summarizing results, and using session state files.
-status: active
+id: "RULE-036"
+title: "Context Window Management"
+description: "The orchestrator must protect its context window by delegating, minimizing output, summarizing results, and using session state files."
+status: "active"
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: core
-scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
+layer: "core"
+scope:
+  - "AGENT-001"
+  - "AGENT-002"
+  - "AGENT-003"
+  - "AGENT-004"
+  - "AGENT-005"
+  - "AGENT-006"
+  - "AGENT-007"
 promoted-from: null
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Context window discipline keeps orchestration focused and structured"
+  - target: "RULE-001"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-005"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 
 The orchestrator's context window is a finite resource. Filling it with implementation details, full file contents, or raw agent output degrades coordination quality. These constraints are mandatory.

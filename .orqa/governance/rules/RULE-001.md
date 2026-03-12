@@ -1,12 +1,32 @@
 ---
-id: RULE-001
-title: Agent Delegation
-description: The orchestrator coordinates but does not implement. All implementation is delegated to universal roles with appropriate skills.
-status: active
+id: "RULE-001"
+title: "Agent Delegation"
+description: "The orchestrator coordinates but does not implement. All implementation is delegated to universal roles with appropriate skills."
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: core
-scope: [AGENT-003]
+layer: "core"
+scope:
+  - "AGENT-003"
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Agent delegation provides clarity through structured roles and boundaries"
+  - target: "RULE-026"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-023"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-015"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-037"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-040"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 The orchestrator coordinates. It does NOT implement. Every implementation task is delegated to a universal role with the appropriate skills loaded.
 

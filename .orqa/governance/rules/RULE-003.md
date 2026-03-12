@@ -1,15 +1,33 @@
 ---
-id: RULE-003
-title: Artifact Config Integrity
-description: Every path in project.json artifacts must resolve to an actual directory on disk. Config-driven scanning with no hardcoded paths.
-status: active
+id: "RULE-003"
+title: "Artifact Config Integrity"
+description: "Every path in project.json artifacts must resolve to an actual directory on disk. Config-driven scanning with no hardcoded paths."
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
-layer: core
-scope: [AGENT-003, AGENT-007]
+layer: "core"
+scope:
+  - "AGENT-003"
+  - "AGENT-007"
 promoted-from:
-  - IMPL-005
-  - IMPL-006
+  - "IMPL-005"
+  - "IMPL-006"
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Config integrity ensures artifact structure is reliable and predictable"
+  - target: "RULE-010"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-018"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-008"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-011"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 # Artifact Config Integrity (NON-NEGOTIABLE)
 

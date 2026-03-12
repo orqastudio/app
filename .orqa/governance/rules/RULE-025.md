@@ -1,12 +1,32 @@
 ---
-id: RULE-025
-title: Root Directory Cleanliness
-description: The project root must stay lean. Every file in root must have a justification.
-status: active
+id: "RULE-025"
+title: "Root Directory Cleanliness"
+description: "The project root must stay lean. Every file in root must have a justification."
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-12"
-layer: core
-scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
+layer: "core"
+scope:
+  - "AGENT-001"
+  - "AGENT-002"
+  - "AGENT-003"
+  - "AGENT-004"
+  - "AGENT-005"
+  - "AGENT-006"
+  - "AGENT-007"
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Root directory discipline maintains structural clarity at project level"
+  - target: "RULE-003"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-007"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
+  - target: "RULE-013"
+    type: "informs"
+    rationale: "Listed in Related Rules section"
 ---
 The project root must stay lean. Every file in root must have a justification.
 
