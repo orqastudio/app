@@ -51,8 +51,7 @@ fn run_migration_005(conn: &Connection) -> Result<(), OrqaError> {
             "SELECT COUNT(*) FROM pragma_table_info('sessions') WHERE name = 'title_manually_set'",
         )?
         .query_row([], |row| row.get::<_, i64>(0))
-        .map(|count| count > 0)
-        .unwrap_or(false);
+        .map(|count| count > 0)?;
 
     if !has_col {
         conn.execute_batch("ALTER TABLE sessions ADD COLUMN title_manually_set INTEGER DEFAULT 0")?;
@@ -70,16 +69,14 @@ fn run_migration_004(conn: &Connection) -> Result<(), OrqaError> {
             "SELECT COUNT(*) FROM pragma_table_info('sessions') WHERE name = 'sdk_session_id'",
         )?
         .query_row([], |row| row.get::<_, i64>(0))
-        .map(|count| count > 0)
-        .unwrap_or(false);
+        .map(|count| count > 0)?;
 
     let has_provider_col: bool = conn
         .prepare(
             "SELECT COUNT(*) FROM pragma_table_info('sessions') WHERE name = 'provider_session_id'",
         )?
         .query_row([], |row| row.get::<_, i64>(0))
-        .map(|count| count > 0)
-        .unwrap_or(false);
+        .map(|count| count > 0)?;
 
     // Only add the old-name column if neither the old nor new column exists.
     // Migration 005 will handle renaming it to provider_session_id.
@@ -99,8 +96,7 @@ fn run_migration_006(conn: &Connection) -> Result<(), OrqaError> {
             "SELECT COUNT(*) FROM pragma_table_info('sessions') WHERE name = 'sdk_session_id'",
         )?
         .query_row([], |row| row.get::<_, i64>(0))
-        .map(|count| count > 0)
-        .unwrap_or(false);
+        .map(|count| count > 0)?;
 
     if has_old_col {
         conn.execute_batch(
