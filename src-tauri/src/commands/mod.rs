@@ -12,4 +12,3 @@ pub mod settings_commands;
 pub mod setup_commands;
 pub mod sidecar_commands;
 pub mod stream_commands;
-pub mod theme_commands;

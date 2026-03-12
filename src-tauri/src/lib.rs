@@ -2,6 +2,7 @@ pub mod commands;
 pub mod db;
 pub mod domain;
 pub mod error;
+pub mod logging;
 pub mod repo;
 pub mod search;
 pub mod sidecar;
@@ -131,6 +132,9 @@ fn spawn_model_download(model_dir: std::path::PathBuf, tracker: Arc<startup::Sta
 pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
+            // Initialise tracing subscriber early — before any tracing macros fire.
+            logging::init_logging(app.handle());
+
             let app_dir = app
                 .path()
                 .app_data_dir()
@@ -178,11 +182,8 @@ pub fn run() {
             commands::stream_commands::stream_send_message,
             commands::stream_commands::stream_stop,
             commands::stream_commands::stream_tool_approval_respond,
-            commands::stream_commands::system_prompt_preview,
             // Project commands
             commands::project_commands::project_open,
-            commands::project_commands::project_create,
-            commands::project_commands::project_get,
             commands::project_commands::project_get_active,
             commands::project_commands::project_list,
             // Session commands
@@ -194,16 +195,7 @@ pub fn run() {
             commands::session_commands::session_delete,
             // Message commands
             commands::message_commands::message_list,
-            commands::message_commands::message_search,
-            // Artifact commands (DB-backed CRUD)
-            commands::artifact_commands::artifact_list,
-            commands::artifact_commands::artifact_get,
-            commands::artifact_commands::artifact_get_by_path,
-            commands::artifact_commands::artifact_create,
-            commands::artifact_commands::artifact_update,
-            commands::artifact_commands::artifact_delete,
             // Artifact commands (filesystem discovery)
-            commands::artifact_commands::read_artifact,
             commands::artifact_commands::artifact_scan_tree,
             commands::artifact_commands::artifact_watch_start,
             // Project settings commands (file-based)
@@ -213,19 +205,8 @@ pub fn run() {
             commands::project_settings_commands::project_icon_upload,
             commands::project_settings_commands::project_icon_read,
             // Settings commands
-            commands::settings_commands::settings_get,
             commands::settings_commands::settings_set,
             commands::settings_commands::settings_get_all,
-            // Theme commands
-            commands::theme_commands::theme_get_project,
-            commands::theme_commands::theme_set_override,
-            commands::theme_commands::theme_clear_overrides,
-            // Search commands
-            commands::search_commands::index_codebase,
-            commands::search_commands::search_regex,
-            commands::search_commands::search_semantic,
-            commands::search_commands::get_index_status,
-            commands::search_commands::init_embedder,
             // Startup commands
             commands::search_commands::get_startup_status,
             // Setup commands
@@ -237,10 +218,8 @@ pub fn run() {
             commands::setup_commands::reauthenticate_claude,
             // Lesson commands
             commands::lesson_commands::lessons_list,
-            commands::lesson_commands::lessons_get,
             commands::lesson_commands::lessons_create,
             commands::lesson_commands::lesson_increment_recurrence,
-            commands::lesson_commands::lessons_scan_promotions,
             // Governance commands
             commands::governance_commands::governance_scan,
             commands::governance_commands::governance_analyze,
@@ -252,12 +231,7 @@ pub fn run() {
             // Enforcement commands
             commands::enforcement_commands::enforcement_rules_list,
             commands::enforcement_commands::enforcement_rules_reload,
-            commands::enforcement_commands::enforcement_scan_governance,
             // Graph commands
-            commands::graph_commands::resolve_artifact,
-            commands::graph_commands::resolve_artifact_path,
-            commands::graph_commands::get_references_from,
-            commands::graph_commands::get_references_to,
             commands::graph_commands::get_artifacts_by_type,
             commands::graph_commands::read_artifact_content,
             commands::graph_commands::get_graph_stats,

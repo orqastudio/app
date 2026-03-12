@@ -1,6 +1,6 @@
 use tauri::State;
 
-use crate::domain::message::{Message, SearchResult};
+use crate::domain::message::Message;
 use crate::error::OrqaError;
 use crate::repo::message_repo;
 use crate::state::AppState;
@@ -36,35 +36,6 @@ pub fn message_list(
     message_repo::list(&conn, session_id, limit_val, offset_val)
 }
 
-/// Search messages across a project using full-text search.
-#[tauri::command]
-pub fn message_search(
-    project_id: i64,
-    query: String,
-    limit: Option<i64>,
-    state: State<'_, AppState>,
-) -> Result<Vec<SearchResult>, OrqaError> {
-    if query.trim().is_empty() {
-        return Err(OrqaError::Validation(
-            "search query cannot be empty".to_string(),
-        ));
-    }
-
-    let limit_val = limit.unwrap_or(20);
-    if limit_val < 0 {
-        return Err(OrqaError::Validation(
-            "limit cannot be negative".to_string(),
-        ));
-    }
-
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-
-    message_repo::search(&conn, project_id, query.trim(), limit_val)
-}
 
 #[cfg(test)]
 mod tests {

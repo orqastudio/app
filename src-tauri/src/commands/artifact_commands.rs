@@ -4,217 +4,11 @@ use tauri::{AppHandle, Runtime, State};
 
 #[cfg(test)]
 use crate::domain::artifact::ArtifactType;
-use crate::domain::artifact::{
-    derive_rel_path, infer_artifact_type_from_path, parse_artifact_type, Artifact, ArtifactSummary,
-    NavTree,
-};
-use crate::domain::artifact_fs::{artifact_from_file, now_iso, write_artifact_file};
+use crate::domain::artifact::NavTree;
 use crate::error::OrqaError;
-use crate::repo::{artifact_repo, project_repo};
+use crate::repo::project_repo;
 use crate::state::AppState;
 use crate::watcher;
-
-/// List artifacts for a project, optionally filtered by type.
-#[tauri::command]
-pub fn artifact_list(
-    project_id: i64,
-    artifact_type: Option<String>,
-    state: State<'_, AppState>,
-) -> Result<Vec<ArtifactSummary>, OrqaError> {
-    let type_filter = artifact_type
-        .as_deref()
-        .map(parse_artifact_type)
-        .transpose()?;
-
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-
-    artifact_repo::list(&conn, project_id, type_filter.as_ref())
-}
-
-/// Get an artifact by its ID.
-#[tauri::command]
-pub fn artifact_get(artifact_id: i64, state: State<'_, AppState>) -> Result<Artifact, OrqaError> {
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-
-    let mut artifact = artifact_repo::get(&conn, artifact_id)?;
-
-    // Load content from disk if the project path is available
-    if let Ok(project) = project_repo::get(&conn, artifact.project_id) {
-        let full_path = Path::new(&project.path).join(&artifact.rel_path);
-        if full_path.exists() {
-            artifact.content = std::fs::read_to_string(&full_path).unwrap_or_default();
-        }
-    }
-
-    Ok(artifact)
-}
-
-/// Get an artifact by project ID and relative path.
-#[tauri::command]
-pub fn artifact_get_by_path(
-    project_id: i64,
-    rel_path: String,
-    state: State<'_, AppState>,
-) -> Result<Artifact, OrqaError> {
-    if rel_path.trim().is_empty() {
-        return Err(OrqaError::Validation(
-            "relative path cannot be empty".to_string(),
-        ));
-    }
-
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-
-    let mut artifact = artifact_repo::get_by_path(&conn, project_id, &rel_path)?;
-
-    // Load content from disk
-    if let Ok(project) = project_repo::get(&conn, artifact.project_id) {
-        let full_path = Path::new(&project.path).join(&artifact.rel_path);
-        if full_path.exists() {
-            artifact.content = std::fs::read_to_string(&full_path).unwrap_or_default();
-        }
-    }
-
-    Ok(artifact)
-}
-
-/// Create a new artifact, writing the file to disk and indexing in the database.
-#[tauri::command]
-pub fn artifact_create(
-    project_id: i64,
-    artifact_type: String,
-    name: String,
-    content: String,
-    state: State<'_, AppState>,
-) -> Result<Artifact, OrqaError> {
-    if name.trim().is_empty() {
-        return Err(OrqaError::Validation(
-            "artifact name cannot be empty".to_string(),
-        ));
-    }
-
-    let parsed_type = parse_artifact_type(&artifact_type)?;
-    let rel_path = derive_rel_path(&parsed_type, name.trim());
-
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-
-    let project = project_repo::get(&conn, project_id)?;
-    let full_path = Path::new(&project.path).join(&rel_path);
-
-    write_artifact_file(&full_path, &content)?;
-    artifact_repo::index_artifact(
-        &conn,
-        project_id,
-        &parsed_type,
-        &rel_path,
-        name.trim(),
-        &content,
-    )
-}
-
-/// Update an artifact's content, writing to disk and updating the database.
-#[tauri::command]
-pub fn artifact_update(
-    artifact_id: i64,
-    content: String,
-    state: State<'_, AppState>,
-) -> Result<Artifact, OrqaError> {
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-
-    // Get the artifact to find its path
-    let artifact = artifact_repo::get(&conn, artifact_id)?;
-    let project = project_repo::get(&conn, artifact.project_id)?;
-    let full_path = Path::new(&project.path).join(&artifact.rel_path);
-
-    // Write updated content to disk
-    std::fs::write(&full_path, &content)?;
-
-    // Update file metadata in DB
-    let file_size = content.len() as i64;
-    let file_hash = format!("sha256:{:x}", compute_hash(&content));
-    let now = now_iso();
-
-    artifact_repo::update(&conn, artifact_id, &file_hash, file_size, &now)?;
-
-    // Update FTS index content
-    conn.execute(
-        "UPDATE artifacts_fts SET content = ?1 WHERE rowid = ?2",
-        rusqlite::params![content, artifact_id],
-    )?;
-
-    // Re-fetch and return with content
-    let mut updated = artifact_repo::get(&conn, artifact_id)?;
-    updated.content = content;
-
-    Ok(updated)
-}
-
-/// Delete an artifact, removing the file from disk and the database record.
-#[tauri::command]
-pub fn artifact_delete(artifact_id: i64, state: State<'_, AppState>) -> Result<(), OrqaError> {
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-
-    // Get the artifact to find its path
-    let artifact = artifact_repo::get(&conn, artifact_id)?;
-    let project = project_repo::get(&conn, artifact.project_id)?;
-    let full_path = Path::new(&project.path).join(&artifact.rel_path);
-
-    // Delete file from disk (ignore if already gone)
-    if full_path.exists() {
-        std::fs::remove_file(&full_path)?;
-    }
-
-    // Delete from database (handles FTS cleanup)
-    artifact_repo::delete(&conn, artifact_id)
-}
-
-/// Read any artifact from disk by its relative path.
-///
-/// This is the universal reader — works for all artifact types (.orqa/, docs/).
-#[tauri::command]
-pub fn read_artifact(rel_path: String, state: State<'_, AppState>) -> Result<Artifact, OrqaError> {
-    if rel_path.contains("..") {
-        return Err(OrqaError::Validation(
-            "path traversal not allowed".to_string(),
-        ));
-    }
-
-    let project_path = active_project_path(&state)?;
-    let full_path = Path::new(&project_path).join(&rel_path);
-
-    if !full_path.exists() {
-        return Err(OrqaError::NotFound(format!(
-            "artifact not found: {}",
-            rel_path
-        )));
-    }
-
-    let artifact_type = infer_artifact_type_from_path(&rel_path);
-    artifact_from_file(&full_path, rel_path, artifact_type)
-}
 
 /// Scan the active project and return a unified navigation tree.
 ///
@@ -249,15 +43,6 @@ fn active_project_path(state: &State<'_, AppState>) -> Result<String, OrqaError>
     Ok(project.path)
 }
 
-/// Simple non-cryptographic hash used locally for change detection in `artifact_update`.
-fn compute_hash(content: &str) -> u64 {
-    let mut hash: u64 = 5381;
-    for byte in content.bytes() {
-        hash = hash.wrapping_mul(33).wrapping_add(u64::from(byte));
-    }
-    hash
-}
-
 /// Start (or replace) the `.orqa/` file-system watcher for a project.
 ///
 /// Watches `<project_path>/.orqa/` recursively with a 500 ms debounce.
@@ -279,7 +64,7 @@ pub fn artifact_watch_start<R: Runtime>(
 mod tests {
     use super::*;
     use crate::db::init_memory_db;
-    use crate::repo::project_repo;
+    use crate::repo::{artifact_repo, project_repo};
 
     fn setup() -> rusqlite::Connection {
         let conn = init_memory_db().expect("db init");

@@ -242,12 +242,3 @@ pub fn stream_tool_approval_respond(
     }
 }
 
-/// Preview the auto-generated system prompt for the active project.
-#[tauri::command]
-pub fn system_prompt_preview(
-    state: tauri::State<'_, AppState>,
-) -> Result<Option<String>, OrqaError> {
-    Ok(project_root(&state)
-        .ok()
-        .and_then(|root| resolve_system_prompt(&root)))
-}

@@ -18,18 +18,6 @@ pub fn lessons_list(
     lesson_repo::list(Path::new(&project_path))
 }
 
-/// Get a single lesson by its ID (e.g. "IMPL-001").
-///
-/// Returns `OrqaError::NotFound` if the lesson does not exist.
-#[tauri::command]
-pub fn lessons_get(
-    project_path: String,
-    id: String,
-    _state: State<'_, AppState>,
-) -> Result<Lesson, OrqaError> {
-    lesson_repo::get(Path::new(&project_path), &id)
-}
-
 /// Create a new lesson in `.orqa/lessons/`.
 ///
 /// Assigns the next available IMPL-NNN ID, writes the file, and returns the lesson.
@@ -61,18 +49,3 @@ pub fn lesson_increment_recurrence(
     lesson_repo::increment_recurrence(Path::new(&project_path), &id)
 }
 
-/// Return all active lessons with recurrence >= 2 that have not yet been promoted.
-///
-/// These are candidates for promotion to rules or coding standards.
-#[tauri::command]
-pub fn lessons_scan_promotions(
-    project_path: String,
-    _state: State<'_, AppState>,
-) -> Result<Vec<Lesson>, OrqaError> {
-    let all = lesson_repo::list(Path::new(&project_path))?;
-    let candidates = all
-        .into_iter()
-        .filter(|l| l.recurrence >= 2 && l.status == "active")
-        .collect();
-    Ok(candidates)
-}

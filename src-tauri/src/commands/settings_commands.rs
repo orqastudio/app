@@ -6,32 +6,6 @@ use crate::error::OrqaError;
 use crate::repo::settings_repo;
 use crate::state::AppState;
 
-/// Get a single setting value by key and scope.
-///
-/// Scope defaults to "app" if not provided.
-#[tauri::command]
-pub fn settings_get(
-    key: String,
-    scope: Option<String>,
-    state: State<'_, AppState>,
-) -> Result<Option<serde_json::Value>, OrqaError> {
-    if key.trim().is_empty() {
-        return Err(OrqaError::Validation(
-            "settings key cannot be empty".to_string(),
-        ));
-    }
-
-    let scope_str = scope.unwrap_or_else(|| "app".to_string());
-
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-
-    settings_repo::get(&conn, key.trim(), &scope_str)
-}
-
 /// Set a setting value (upsert).
 ///
 /// Scope defaults to "app" if not provided.

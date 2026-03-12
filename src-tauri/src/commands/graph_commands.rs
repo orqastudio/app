@@ -3,7 +3,7 @@ use std::path::Path;
 use tauri::State;
 
 use crate::domain::artifact_graph::{
-    build_artifact_graph, graph_stats, ArtifactGraph, ArtifactNode, ArtifactRef, GraphStats,
+    build_artifact_graph, graph_stats, ArtifactGraph, ArtifactNode, GraphStats,
 };
 use crate::error::OrqaError;
 use crate::repo::project_repo;
@@ -62,77 +62,6 @@ fn get_or_build_graph(state: &State<'_, AppState>) -> Result<ArtifactGraph, Orqa
 // ---------------------------------------------------------------------------
 // Tauri commands
 // ---------------------------------------------------------------------------
-
-/// Resolve an artifact by its ID (e.g. "EPIC-048").
-///
-/// Returns `None` when no artifact with the given ID exists in the graph.
-#[tauri::command]
-pub fn resolve_artifact(
-    id: String,
-    state: State<'_, AppState>,
-) -> Result<Option<ArtifactNode>, OrqaError> {
-    if id.trim().is_empty() {
-        return Err(OrqaError::Validation("id cannot be empty".to_string()));
-    }
-    let graph = get_or_build_graph(&state)?;
-    Ok(graph.nodes.get(&id).cloned())
-}
-
-/// Resolve an artifact by its relative file path.
-///
-/// Returns `None` when no artifact at the given path exists in the graph.
-#[tauri::command]
-pub fn resolve_artifact_path(
-    path: String,
-    state: State<'_, AppState>,
-) -> Result<Option<ArtifactNode>, OrqaError> {
-    if path.trim().is_empty() {
-        return Err(OrqaError::Validation("path cannot be empty".to_string()));
-    }
-    if path.contains("..") {
-        return Err(OrqaError::Validation(
-            "path traversal not allowed".to_string(),
-        ));
-    }
-    let graph = get_or_build_graph(&state)?;
-    let normalised = path.replace('\\', "/");
-    let id = graph.path_index.get(&normalised).cloned();
-    Ok(id.and_then(|i| graph.nodes.get(&i).cloned()))
-}
-
-/// Get all forward references (outgoing edges) from an artifact.
-#[tauri::command]
-pub fn get_references_from(
-    id: String,
-    state: State<'_, AppState>,
-) -> Result<Vec<ArtifactRef>, OrqaError> {
-    if id.trim().is_empty() {
-        return Err(OrqaError::Validation("id cannot be empty".to_string()));
-    }
-    let graph = get_or_build_graph(&state)?;
-    Ok(graph
-        .nodes
-        .get(&id)
-        .map(|n| n.references_out.clone())
-        .unwrap_or_default())
-}
-
-/// Get all backlinks (incoming edges) to an artifact.
-#[tauri::command]
-pub fn get_references_to(
-    id: String,
-    state: State<'_, AppState>,
-) -> Result<Vec<ArtifactRef>, OrqaError> {
-    if id.trim().is_empty() {
-        return Err(OrqaError::Validation("id cannot be empty".to_string()));
-    }
-    let graph = get_or_build_graph(&state)?;
-    Ok(graph
-        .nodes
-        .get(&id)
-        .map(|n| n.references_in.clone())
-        .unwrap_or_default())
-}
 
 /// Get all artifact nodes of a given type (e.g. "epic", "task", "milestone").
 #[tauri::command]
