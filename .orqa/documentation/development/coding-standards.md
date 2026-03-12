@@ -92,11 +92,7 @@ updated: "2026-03-08"
 ## Enforcement
 
 ```bash
-# Rust
-cargo fmt --check && cargo clippy --all-targets -- -D warnings && cargo test
-
-# Frontend
-npm run check && npm run lint && npm run test
+make check
 ```
 
 ---

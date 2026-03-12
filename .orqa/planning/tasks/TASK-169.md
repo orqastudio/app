@@ -13,7 +13,7 @@ acceptance:
   - Sections are collapsible
   - Empty sections are hidden
   - Clicking a reference navigates to the target artifact
-  - make check-frontend passes
+  - make typecheck passes
 ---
 
 ## What
@@ -31,7 +31,7 @@ Surface the artifact graph's cross-reference data directly in the viewer so user
 
 ## Verification
 
-- [ ] `make check-frontend` passes
+- [ ] `make typecheck` passes
 - [ ] References panel appears below frontmatter header
 - [ ] Clicking a reference chip navigates to the target artifact
 - [ ] Sections with no references are hidden

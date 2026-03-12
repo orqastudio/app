@@ -28,7 +28,7 @@ make test-rust       # Rust unit + integration tests
 make test-frontend   # Vitest (frontend unit tests)
 make test-watch      # Vitest in watch mode
 make test-e2e        # Playwright E2E tests (requires running app)
-make check           # ALL checks: fmt + clippy + tests + svelte-check + lint
+make check           # ALL checks: format-check + lint + test-rust + typecheck + test-frontend
 ```
 
 ## Test File Organization

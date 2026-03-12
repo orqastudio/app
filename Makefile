@@ -5,11 +5,10 @@
 CARGO_MANIFEST := backend/src-tauri/Cargo.toml
 
 .PHONY: install install-sidecar \
-        dev start dev-frontend dev-sidecar stop kill restart-tauri restart-vite restart status \
+        dev start dev-frontend stop kill restart-tauri restart-vite restart status \
         build build-frontend build-sidecar \
-        check fmt fmt-check clippy lint check-frontend \
+        check format format-check lint lint-backend lint-frontend typecheck \
         test test-rust test-frontend test-watch test-e2e \
-        docs \
         index reindex calibrate \
         skills-list skills-update \
         clean help
@@ -53,9 +52,6 @@ status: ## Show dev controller and process status
 dev-frontend: ## Run frontend only (Vite dev server)
 	cd ui && npm run dev
 
-dev-sidecar: ## Build sidecar for development
-	cd sidecars/claude-agentsdk-sidecar && bun run build
-
 # ── Build ─────────────────────────────────────────────────────────────────────
 
 build: ## Production build (cargo tauri build)
@@ -69,21 +65,23 @@ build-sidecar: ## Build sidecar for production
 
 # ── Quality ──────────────────────────────────────────────────────────────────
 
-check: fmt-check clippy test-rust check-frontend lint test-frontend ## Run ALL checks (fmt-check + clippy + test-rust + check-frontend + lint + test-frontend)
+check: format-check lint test-rust typecheck test-frontend ## Run ALL checks (format-check + lint + test-rust + typecheck + test-frontend)
 
-fmt: ## Auto-format Rust code
+format: ## Auto-format Rust code
 	cargo fmt --manifest-path $(CARGO_MANIFEST)
 
-fmt-check: ## Check Rust formatting (no changes)
+format-check: ## Check Rust formatting (no changes)
 	cargo fmt --manifest-path $(CARGO_MANIFEST) --check
 
-clippy: ## Run Rust linter
+lint: lint-backend lint-frontend ## Run all linters (backend + frontend)
+
+lint-backend: ## Run Rust linter (clippy)
 	cargo clippy --manifest-path $(CARGO_MANIFEST) -- -D warnings
 
-lint: ## Run ESLint
+lint-frontend: ## Run ESLint
 	cd ui && npm run lint
 
-check-frontend: ## Run svelte-check + TypeScript checks
+typecheck: ## Run svelte-check + TypeScript checks
 	cd ui && npm run check
 
 # ── Testing ──────────────────────────────────────────────────────────────────
@@ -101,11 +99,6 @@ test-watch: ## Run frontend tests in watch mode
 
 test-e2e: ## Run E2E tests (Playwright)
 	cd ui && npx playwright test
-
-# ── Documentation ────────────────────────────────────────────────────────────
-
-docs: ## Serve documentation locally
-	cd ui && npx docsify serve ../docs/
 
 # ── Code Search ──────────────────────────────────────────────────────────────
 

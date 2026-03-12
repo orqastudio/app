@@ -15,7 +15,7 @@ acceptance:
   - Clicking a result navigates to the artifact
   - Escape dismisses the overlay
   - ActivityBar search icon opens the overlay
-  - make check-frontend passes
+  - make typecheck passes
 ---
 
 ## What
@@ -34,7 +34,7 @@ A Spotlight-style floating search overlay that provides AI-driven cross-artifact
 
 ## Verification
 
-- [ ] `make check-frontend` passes
+- [ ] `make typecheck` passes
 - [ ] Ctrl+Space opens and closes the overlay
 - [ ] Search input receives focus immediately on open
 - [ ] AI search returns relevant artifacts for test queries

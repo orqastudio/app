@@ -10,7 +10,7 @@ depends-on:
   - TASK-165
 acceptance:
   - All TypeScript interfaces match Rust struct shapes exactly
-  - make check-frontend passes
+  - make typecheck passes
 ---
 
 ## What
@@ -25,5 +25,5 @@ The frontend needs TypeScript types that match the new Rust backend types so the
 
 ## Verification
 
-- [ ] `make check-frontend` passes
+- [ ] `make typecheck` passes
 - [ ] Types match Rust struct shapes (field names, types, optionality)

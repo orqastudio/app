@@ -82,9 +82,9 @@ Every component that displays data MUST handle all states:
 Before committing frontend code:
 
 ```bash
-make check-frontend   # svelte-check (type errors)
-make lint             # ESLint (code quality)
-make test-frontend    # Vitest (unit tests)
+make typecheck       # svelte-check (type errors)
+make lint-frontend   # ESLint (code quality)
+make test-frontend   # Vitest (unit tests)
 ```
 
 All three must pass. See [RULE-012](RULE-012) — all errors are your responsibility.

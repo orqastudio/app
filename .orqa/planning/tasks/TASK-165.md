@@ -12,7 +12,7 @@ acceptance:
   - NavType includes filterable_fields, sortable_fields, navigation_config
   - schema.json enum properties are correctly extracted as FilterableField with ordered values
   - _navigation.json is parsed when present, None when absent
-  - make clippy and make test-rust pass
+  - make lint-backend and make test-rust pass
 ---
 
 ## What
@@ -37,7 +37,7 @@ All three flow through the existing `artifact_scan_tree` response. No new Tauri 
 
 ## Verification
 
-- [ ] `make clippy` passes with zero warnings
+- [ ] `make lint-backend` passes with zero warnings
 - [ ] `make test-rust` passes
 - [ ] NavType response includes filterable_fields derived from schema.json
 - [ ] DocNode frontmatter bag contains status, priority, created, updated values

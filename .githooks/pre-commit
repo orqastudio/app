@@ -10,10 +10,10 @@ echo "=== Pre-commit: Running quality checks ==="
 # Rust checks (only if Rust files changed)
 RUST_CHANGED=$(git diff --cached --name-only --diff-filter=ACMR -- '*.rs' 'Cargo.toml' 'Cargo.lock' | head -1)
 if [ -n "$RUST_CHANGED" ]; then
-  echo "--- Rust: fmt-check ---"
-  make fmt-check
-  echo "--- Rust: clippy ---"
-  make clippy
+  echo "--- Rust: format-check ---"
+  make format-check
+  echo "--- Rust: lint-backend ---"
+  make lint-backend
   echo "--- Rust: test ---"
   make test-rust
 fi
@@ -22,9 +22,9 @@ fi
 FRONTEND_CHANGED=$(git diff --cached --name-only --diff-filter=ACMR -- '*.svelte' '*.ts' '*.js' '*.css' '*.html' | head -1)
 if [ -n "$FRONTEND_CHANGED" ]; then
   echo "--- Frontend: svelte-check + TypeScript ---"
-  make check-frontend
-  echo "--- Frontend: ESLint ---"
-  make lint
+  make typecheck
+  echo "--- Frontend: lint-frontend ---"
+  make lint-frontend
   echo "--- Frontend: test ---"
   make test-frontend
 fi

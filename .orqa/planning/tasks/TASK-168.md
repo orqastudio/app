@@ -15,7 +15,7 @@ acceptance:
   - Defaults load from _navigation.json on first navigation to a type
   - User overrides persist in the store per type key within the session
   - Tree rendering is removed
-  - make check-frontend passes
+  - make typecheck passes
 ---
 
 ## What
@@ -36,7 +36,7 @@ The reactive logic that connects the toolbar controls to the artifact list rende
 
 ## Verification
 
-- [ ] `make check-frontend` passes
+- [ ] `make typecheck` passes
 - [ ] Filtering removes non-matching items from the list
 - [ ] Sorting reorders items correctly for each field type
 - [ ] Grouping creates collapsible sections in the correct order

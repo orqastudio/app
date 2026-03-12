@@ -73,11 +73,11 @@ Use `make` targets for all build/test/lint commands.
 Run all checks via `make check`, or the relevant subset:
 
 ```bash
-make fmt-check       # rustfmt check
-make clippy          # cargo clippy -- -D warnings
+make format-check    # rustfmt check
+make lint-backend    # cargo clippy -- -D warnings
 make test-rust       # cargo test
-make check-frontend  # svelte-check
-make lint            # ESLint
+make typecheck       # svelte-check
+make lint-frontend   # ESLint
 make test-frontend   # Vitest
 ```
 

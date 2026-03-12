@@ -25,7 +25,7 @@ enforcement:
   - event: lint
     pattern: "rustfmt"
     action: warn
-    message: "All Rust code must pass rustfmt — enforced by make fmt-check."
+    message: "All Rust code must pass rustfmt — enforced by make format-check."
   # Rust function size — clippy
   - event: lint
     pattern: "clippy::too_many_lines"
@@ -49,7 +49,7 @@ enforcement:
   - event: lint
     pattern: "svelte-check"
     action: warn
-    message: "Strict TypeScript in Svelte — enforced by svelte-check via make check-frontend."
+    message: "Strict TypeScript in Svelte — enforced by svelte-check via make typecheck."
   # Schema validation — pre-commit hook
   - event: lint
     pattern: "validate-schema.mjs"
@@ -95,7 +95,7 @@ Run before every commit:
 make check
 ```
 
-This single command runs: `fmt-check` + `clippy` + `test-rust` + `check-frontend` + `lint` + `test-frontend`.
+This single command runs: `format-check` + `lint` + `test-rust` + `typecheck` + `test-frontend`.
 
 A git pre-commit hook (`.githooks/pre-commit`) enforces this automatically. It runs the relevant subset of checks based on which files are staged. **NEVER bypass the hook with `--no-verify`.**
 

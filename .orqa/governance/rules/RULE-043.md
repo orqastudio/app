@@ -54,7 +54,7 @@ OrqaStudio's role is managing the full chain, not replicating any step.
 |----------|-----------|--------|
 | No unwrap/expect/panic | `clippy::unwrap_used`, `clippy::expect_used`, `clippy::panic` | Enabled via clippy pedantic |
 | Function size limits | `clippy::too_many_lines` | Configured per module guidelines |
-| Zero warnings | `-D warnings` flag | Passed in `make clippy` |
+| Zero warnings | `-D warnings` flag | Passed in `make lint-backend` |
 | rustfmt formatting | `cargo fmt --check` | Default rustfmt config |
 
 ### TypeScript/Svelte (ESLint + svelte-check)

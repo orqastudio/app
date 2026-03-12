@@ -13,7 +13,7 @@ acceptance:
   - "svelte.config.js src field updated"
   - "components.json css path updated"
   - "vite.config.ts allow list updated"
-  - "make check-frontend passes"
+  - "make typecheck passes"
   - "make test-frontend passes"
 ---
 
@@ -27,10 +27,10 @@ Nest frontend source one level deeper so Vite watches only `ui/src/`.
 2. Update `svelte.config.js`: `src: 'ui'` → `src: 'ui/src'`
 3. Update `components.json`: `"css": "ui/app.css"` → `"css": "ui/src/app.css"`
 4. Update `vite.config.ts`: `allow: ['ui', ...]` → `allow: ['ui/src', ...]`
-5. Verify with `make check-frontend && make test-frontend`
+5. Verify with `make typecheck && make test-frontend`
 
 ## Verification
 
-- [ ] `make check-frontend` passes
+- [ ] `make typecheck` passes
 - [ ] `make test-frontend` passes
 - [ ] `$lib` imports still resolve correctly

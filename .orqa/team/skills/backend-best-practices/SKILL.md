@@ -99,9 +99,9 @@ A backend change without the corresponding frontend wiring is incomplete.
 Before committing backend code:
 
 ```bash
-make fmt-check    # rustfmt (formatting)
-make clippy       # clippy pedantic (linting)
-make test-rust    # cargo test (unit + integration tests)
+make format-check    # rustfmt (formatting)
+make lint-backend    # clippy pedantic (linting)
+make test-rust       # cargo test (unit + integration tests)
 ```
 
 All three must pass. See [RULE-012](RULE-012) — all errors are your responsibility.

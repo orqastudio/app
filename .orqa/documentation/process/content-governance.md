@@ -42,7 +42,7 @@ Agent files define **process** — the workflow an agent follows to do its job. 
 
 ```text
 Read `.orqa/documentation/development/coding-standards.md` before writing any code.
-Run cargo clippy and cargo fmt before committing.
+Run make lint-backend and make format before committing.
 Delegate to the test-engineer agent after implementation.
 ```
 
@@ -104,13 +104,13 @@ Think of it this way: a rule says "you must do X", a hook makes sure X actually 
 |------|-------------------|---------|
 | `skill-enforcement.md` — Load relevant skills before coding | `skill-instructions-hook.sh` — Lists skills, requires LOAD/SKIP decision | `UserPromptSubmit` |
 | `required-reading.md` — Read governing docs before implementing | `session-start-hook.sh` — Checks for session state, stale worktrees, stashes | `UserPromptSubmit` (first) |
-| `testing-standards.md` — Run tests before committing | `pre-commit-reminder.sh` — Checklist: cargo test, clippy, npm check, no stubs | `Stop` |
+| `testing-standards.md` — Run tests before committing | `pre-commit-reminder.sh` — Checklist: make check, no stubs | `Stop` |
 
 **When to use a rule vs a hook:**
 
 | Use a Rule When | Use a Hook When |
 |----------------|-----------------|
-| The constraint is judgement-based ("ensure error handling is comprehensive") | The constraint is checkable at a lifecycle boundary ("run clippy before committing") |
+| The constraint is judgement-based ("ensure error handling is comprehensive") | The constraint is checkable at a lifecycle boundary ("run make lint-backend before committing") |
 | Compliance requires context the agent must evaluate | Compliance can be verified or prompted by a script |
 | The constraint applies situationally | The constraint should fire on every lifecycle event |
 | The constraint is about quality of work | The constraint is about process discipline |

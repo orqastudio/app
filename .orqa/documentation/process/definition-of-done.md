@@ -34,12 +34,12 @@ The orchestrator assigns a risk level at task start. The review gate matches the
 
 ### Code Quality (checked by `code-reviewer`)
 
-- [ ] `cargo fmt --check` passes -- zero formatting issues
-- [ ] `cargo clippy -- -D warnings` passes -- zero warnings
-- [ ] `cargo test` passes -- all Rust tests green
-- [ ] `npm run check` passes -- svelte-check + TypeScript zero errors
-- [ ] `npm run lint` passes -- ESLint zero errors
-- [ ] `npm run test` passes -- all frontend tests green
+- [ ] `make format-check` passes -- zero formatting issues
+- [ ] `make lint-backend` passes -- zero clippy warnings
+- [ ] `make test-rust` passes -- all Rust tests green
+- [ ] `make typecheck` passes -- svelte-check + TypeScript zero errors
+- [ ] `make lint-frontend` passes -- ESLint zero errors
+- [ ] `make test-frontend` passes -- all frontend tests green
 - [ ] Test coverage is 80%+ for all affected modules
 - [ ] No stubs, no hardcoded data, no TODO/FIXME comments
 - [ ] No backwards compatibility shims, no aliases, no workarounds (see [RULE-018](RULE-018))

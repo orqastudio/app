@@ -13,7 +13,7 @@ acceptance:
   - "Makefile CARGO_MANIFEST updated"
   - "tauri.conf.json frontendDist path updated"
   - ".gitignore target path updated"
-  - "make clippy passes"
+  - "make lint-backend passes"
   - "make test-rust passes"
 ---
 
@@ -27,10 +27,10 @@ Move the Rust backend directory and update all config references.
 2. Update Makefile: `CARGO_MANIFEST := backend/src-tauri/Cargo.toml`
 3. Update `backend/src-tauri/tauri.conf.json`: `frontendDist` from `../build` to `../../build`
 4. Update `.gitignore`: `/src-tauri/target/` to `/backend/src-tauri/target/`
-5. Verify with `make clippy && make test-rust`
+5. Verify with `make lint-backend && make test-rust`
 
 ## Verification
 
 - [ ] `cargo metadata --manifest-path backend/src-tauri/Cargo.toml` succeeds
-- [ ] `make clippy` passes
+- [ ] `make lint-backend` passes
 - [ ] `make test-rust` passes

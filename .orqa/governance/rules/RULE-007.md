@@ -35,14 +35,15 @@ All development commands MUST be invoked via `make` targets. Raw `cargo` and `np
 | Restart Vite | `make restart-vite` | killing Vite manually |
 | Restart Vite + Tauri | `make restart` | killing everything then `make dev` |
 | Run all checks | `make check` | `cargo clippy && npm run check && ...` |
-| Format Rust | `make fmt` | `cargo fmt` |
-| Check formatting | `make fmt-check` | `cargo fmt --check` |
-| Run Rust linter | `make clippy` | `cargo clippy -- -D warnings` |
+| Format Rust | `make format` | `cargo fmt` |
+| Check formatting | `make format-check` | `cargo fmt --check` |
+| Run all linters | `make lint` | `cargo clippy && npm run lint` |
+| Run Rust linter | `make lint-backend` | `cargo clippy -- -D warnings` |
+| Run ESLint | `make lint-frontend` | `npm run lint` |
 | Run all tests | `make test` | `cargo test && npm run test` |
 | Run Rust tests | `make test-rust` | `cargo test` |
 | Run frontend tests | `make test-frontend` | `npm run test` |
-| Run frontend checks | `make check-frontend` | `npm run check` |
-| Run ESLint | `make lint` | `npm run lint` |
+| Run frontend type checks | `make typecheck` | `npm run check` |
 | Build production | `make build` | `cargo tauri build` |
 | Install deps | `make install` | `npm install && cargo fetch` |
 | Index code search | `make index` | `uvx chunkhound index` |

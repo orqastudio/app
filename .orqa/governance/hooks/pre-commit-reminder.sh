@@ -22,7 +22,7 @@ fi
 cat <<'EOF'
 PRE-COMMIT CHECKLIST:
 
-□ All checks pass (cargo test, cargo clippy, npm run check)
+□ All checks pass (make check)
 □ No stub/mock/placeholder patterns in committed code
 □ No `any` types in TypeScript
 □ Working in worktree (not main)

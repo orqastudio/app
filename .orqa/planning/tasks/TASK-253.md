@@ -12,7 +12,7 @@ acceptance:
   - "sidecar/ moved to sidecars/claude-agentsdk-sidecar/"
   - "Makefile sidecar targets updated"
   - "sidecar_commands.rs path references updated (5 paths)"
-  - "make clippy passes"
+  - "make lint-backend passes"
   - "make test-rust passes"
 ---
 
@@ -25,10 +25,10 @@ Move the sidecar directory and update all references.
 1. `git mv sidecar sidecars/claude-agentsdk-sidecar`
 2. Update Makefile: `cd sidecar` → `cd sidecars/claude-agentsdk-sidecar` (3 changes)
 3. Update `src-tauri/src/commands/sidecar_commands.rs` (5 path references)
-4. Verify with `make clippy && make test-rust`
+4. Verify with `make lint-backend && make test-rust`
 
 ## Verification
 
 - [ ] `ls sidecars/claude-agentsdk-sidecar/dist/sidecar.js` succeeds after build
-- [ ] `make clippy` passes
+- [ ] `make lint-backend` passes
 - [ ] `make test-rust` passes

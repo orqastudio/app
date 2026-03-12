@@ -185,20 +185,6 @@ npm run dev
 
 ---
 
-### `make dev-sidecar`
-
-Build the Agent SDK sidecar for development.
-
-**Underlying command:**
-
-```bash
-cd sidecars/claude-agentsdk-sidecar && bun run build
-```
-
-**When to use:** When iterating on sidecar logic (streaming pipeline, NDJSON message format, tool output handling) to rebuild the sidecar without triggering a full production build.
-
----
-
 ## Quality
 
 ### `make check`
@@ -220,7 +206,7 @@ npm run test
 
 ---
 
-### `make fmt`
+### `make format`
 
 Auto-format all Rust source files with `rustfmt`.
 
@@ -230,11 +216,11 @@ Auto-format all Rust source files with `rustfmt`.
 cargo fmt --manifest-path backend/src-tauri/Cargo.toml
 ```
 
-**When to use:** Before committing Rust changes. Run once to apply formatting, then `make fmt-check` to verify.
+**When to use:** Before committing Rust changes. Run once to apply formatting, then `make format-check` to verify.
 
 ---
 
-### `make fmt-check`
+### `make format-check`
 
 Check Rust formatting without making changes. Fails if any file would be reformatted.
 
@@ -248,9 +234,24 @@ cargo fmt --check
 
 ---
 
-### `make clippy`
+### `make lint`
 
-Run the Rust linter with all warnings promoted to errors.
+Run all linters: backend (clippy) and frontend (ESLint).
+
+**Underlying commands:**
+
+```bash
+cargo clippy --manifest-path backend/src-tauri/Cargo.toml --all-targets -- -D warnings
+npm run lint
+```
+
+**When to use:** After any code change. Part of `make check`. Runs both `lint-backend` and `lint-frontend`.
+
+---
+
+### `make lint-backend`
+
+Run the Rust linter (clippy) with all warnings promoted to errors.
 
 **Underlying command:**
 
@@ -262,7 +263,7 @@ cargo clippy --manifest-path backend/src-tauri/Cargo.toml --all-targets -- -D wa
 
 ---
 
-### `make lint`
+### `make lint-frontend`
 
 Run ESLint across all frontend TypeScript and Svelte files.
 
@@ -272,11 +273,11 @@ Run ESLint across all frontend TypeScript and Svelte files.
 npm run lint
 ```
 
-**When to use:** After any TypeScript or Svelte change. Part of `make check`.
+**When to use:** After any TypeScript or Svelte change. Part of `make lint` and `make check`.
 
 ---
 
-### `make check-frontend`
+### `make typecheck`
 
 Run `svelte-check` and TypeScript type checking for the frontend.
 
@@ -407,22 +408,6 @@ bun build sidecars/claude-agentsdk-sidecar/index.ts --compile --outfile backend/
 
 ---
 
-## Documentation
-
-### `make docs`
-
-Serve the project documentation locally via Docsify.
-
-**Underlying command:**
-
-```bash
-npx docsify serve docs/
-```
-
-**When to use:** When reading or reviewing project documentation. Opens a local server (default: `http://localhost:3000`) with the rendered docs site.
-
----
-
 ## Code Search
 
 ### `make index`
@@ -538,7 +523,7 @@ Print a summary of all available `make` targets with one-line descriptions.
 |---------|----------|
 | `make check` | `cargo clippy` or `npm run lint` separately |
 | `make test` | `cargo test` alone |
-| `make fmt` | `rustfmt src/main.rs` |
+| `make format` | `rustfmt src/main.rs` |
 | `make build` | `cargo build --release` |
 | `make test-rust` | `cargo test --manifest-path backend/src-tauri/Cargo.toml` |
 

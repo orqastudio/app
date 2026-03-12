@@ -14,7 +14,7 @@ acceptance:
   - Filter popover shows sections dynamically from NavType filterable_fields
   - Active indicators appear when sort/filter differs from defaults
   - Clear-all resets to _navigation.json defaults
-  - make check-frontend and make lint pass
+  - make typecheck and make lint-frontend pass
 ---
 
 ## What
@@ -31,8 +31,8 @@ The core navigation toolbar that replaces the current text filter with rich sort
 
 ## Verification
 
-- [ ] `make check-frontend` passes
-- [ ] `make lint` passes
+- [ ] `make typecheck` passes
+- [ ] `make lint-frontend` passes
 - [ ] Toolbar visually matches h-10 height of breadcrumb and NavSubPanel headers
 - [ ] Sort/filter options are generated from schema, not hardcoded
 - [ ] Filter sections only appear for fields that exist in the current type's schema

@@ -43,11 +43,7 @@ cd ../orqa-<task-name>
 # 2. WORK -- Make changes, commit regularly
 
 # 3. VERIFY -- All checks must pass before review
-# Backend (Rust):
-cargo fmt --check && cargo clippy -- -D warnings && cargo test
-
-# Frontend:
-npm run check && npm run lint && npm run test
+make check
 
 # 4. REVIEW -- Request code-reviewer approval
 # Do NOT merge until approved
@@ -195,7 +191,7 @@ Before calling ANY existing function, Tauri command, or store method:
 
 1. Read the source -- check actual function signature
 2. Check the types -- verify parameter names and types
-3. Run `cargo clippy` and `npm run check` -- catch mismatches immediately
+3. Run `make lint-backend` and `make typecheck` -- catch mismatches immediately
 
 NO backwards compatibility shims. Fix ALL callers in the same commit. See `.orqa/governance/rules/error-ownership.md`.
 
