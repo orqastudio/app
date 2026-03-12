@@ -83,11 +83,11 @@ Confirmation screen.
 
 | File | Change |
 |------|--------|
-| `src-tauri/src/domain/setup.rs` | New — setup domain types |
-| `src-tauri/src/commands/setup_commands.rs` | New — setup Tauri commands |
-| `src-tauri/src/domain/mod.rs` | Add `pub mod setup;` |
-| `src-tauri/src/commands/mod.rs` | Add `pub mod setup_commands;` |
-| `src-tauri/src/lib.rs` | Register setup commands in the Tauri app builder; add `CURRENT_SETUP_VERSION` constant; check setup_version on launch |
+| `backend/src-tauri/src/domain/setup.rs` | New — setup domain types |
+| `backend/src-tauri/src/commands/setup_commands.rs` | New — setup Tauri commands |
+| `backend/src-tauri/src/domain/mod.rs` | Add `pub mod setup;` |
+| `backend/src-tauri/src/commands/mod.rs` | Add `pub mod setup_commands;` |
+| `backend/src-tauri/src/lib.rs` | Register setup commands in the Tauri app builder; add `CURRENT_SETUP_VERSION` constant; check setup_version on launch |
 
 ## Key Types
 
@@ -145,15 +145,15 @@ pub struct AgentCliInfo {
 
 | File | Change |
 |------|--------|
-| `ui/lib/types/setup.ts` | New — TypeScript interfaces matching Rust types |
-| `ui/lib/stores/setup.svelte.ts` | New — setup store with step state, detection results, actions |
-| `ui/lib/components/setup/SetupWizard.svelte` | New — full-screen overlay container, step navigation |
-| `ui/lib/components/setup/AgentCliStep.svelte` | New — CLI detection UI |
-| `ui/lib/components/setup/ProviderAuthStep.svelte` | New — auth detection + login flow |
-| `ui/lib/components/setup/SidecarStep.svelte` | New — sidecar startup with spinner |
-| `ui/lib/components/setup/EmbeddingModelStep.svelte` | New — model download with progress bar |
-| `ui/lib/components/setup/SetupComplete.svelte` | New — completion confirmation |
-| `ui/routes/+layout.svelte` (or AppLayout) | Mount SetupWizard when `setup_complete === false` |
+| `ui/src/lib/types/setup.ts` | New — TypeScript interfaces matching Rust types |
+| `ui/src/lib/stores/setup.svelte.ts` | New — setup store with step state, detection results, actions |
+| `ui/src/lib/components/setup/SetupWizard.svelte` | New — full-screen overlay container, step navigation |
+| `ui/src/lib/components/setup/AgentCliStep.svelte` | New — CLI detection UI |
+| `ui/src/lib/components/setup/ProviderAuthStep.svelte` | New — auth detection + login flow |
+| `ui/src/lib/components/setup/SidecarStep.svelte` | New — sidecar startup with spinner |
+| `ui/src/lib/components/setup/EmbeddingModelStep.svelte` | New — model download with progress bar |
+| `ui/src/lib/components/setup/SetupComplete.svelte` | New — completion confirmation |
+| `ui/src/routes/+layout.svelte` (or AppLayout) | Mount SetupWizard when `setup_complete === false` |
 
 ## Component State Table
 

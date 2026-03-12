@@ -4,10 +4,10 @@
   "version": "0.1.0",
   "identifier": "com.orqa.studio",
   "build": {
-    "frontendDist": "../build",
+    "frontendDist": "../../ui/build",
     "devUrl": "http://localhost:1420",
-    "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build"
+    "beforeDevCommand": "cd ../../ui && npm run dev",
+    "beforeBuildCommand": "cd ../../ui && npm run build"
   },
   "app": {
     "windows": [

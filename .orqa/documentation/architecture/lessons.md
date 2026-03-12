@@ -164,7 +164,7 @@ The promotion creates a traceable link between a documented lesson and a live en
 ## Rust Module Structure
 
 ```text
-src-tauri/src/
+backend/src-tauri/src/
   lessons/
     mod.rs             -- Lesson domain model, public API
     parser.rs          -- YAML frontmatter extraction from lesson files

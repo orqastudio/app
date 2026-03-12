@@ -25,14 +25,14 @@ OrqaStudio is a Tauri v2 desktop application with three main layers:
 │  IPC Boundary (Tauri invoke / Channel)  │
 ├─────────────────────────────────────────┤
 │  Backend (Rust)                         │
-│  src-tauri/src/                         │
+│  backend/src-tauri/src/                         │
 │    Commands, domain services, repos     │
 ├─────────────────────────────────────────┤
 │  Persistence (SQLite)                   │
-│  src-tauri/migrations/                  │
+│  backend/src-tauri/migrations/                  │
 ├─────────────────────────────────────────┤
 │  AI Sidecar (TypeScript / Bun)          │
-│  sidecar/                               │
+│  sidecars/orqa-sidecar/                 │
 │    Provider interface, NDJSON protocol  │
 └─────────────────────────────────────────┘
 ```
@@ -51,15 +51,15 @@ OrqaStudio is a Tauri v2 desktop application with three main layers:
 - `Channel<T>` for streaming (AI conversation events)
 - Frontend and backend types must match — Rust structs derive `Serialize`/`Deserialize`, TypeScript interfaces mirror them
 
-### Backend (`src-tauri/src/`)
+### Backend (`backend/src-tauri/src/`)
 
 - **Commands** (`commands/`): Thin `#[tauri::command]` handlers that delegate to domain services
 - **Domain** (`domain/`): Business logic, pure functions where possible
 - **Repositories** (`repo/`): SQLite persistence via `rusqlite`
-- **Sidecar management** (`sidecar/`): Protocol types and process control for the AI sidecar
+- **Sidecar management** (`sidecars/orqa-sidecar/`): Protocol types and process control for the AI sidecar
 - **Error handling:** All functions return `Result<T, OrqaError>`. No `unwrap()` in production.
 
-### AI Sidecar (`sidecar/`)
+### AI Sidecar (`sidecars/orqa-sidecar/`)
 
 A separate TypeScript process that bridges AI provider SDKs (currently Claude Agent SDK) with the Rust backend:
 
@@ -71,7 +71,7 @@ Agent SDK → Sidecar (Bun) → NDJSON stdout → Rust → Channel<T> → Svelte
 - Implements the `Provider` interface — new AI providers implement this interface
 - Compiled to a standalone binary with `bun build --compile`
 
-### Persistence (`src-tauri/migrations/`)
+### Persistence (`backend/src-tauri/migrations/`)
 
 - SQLite database for sessions, messages, projects, settings
 - Migrations are `.sql` files applied idempotently on startup
@@ -95,15 +95,15 @@ Agent SDK → Sidecar (Bun) → NDJSON stdout → Rust → Channel<T> → Svelte
 
 | Path | Contents |
 |------|----------|
-| `ui/lib/components/` | Svelte components (shared, layout, feature-specific) |
-| `ui/lib/stores/` | Rune stores (`.svelte.ts` files) |
-| `ui/lib/types/` | TypeScript type definitions |
-| `ui/routes/` | SvelteKit pages |
-| `src-tauri/src/commands/` | Tauri command handlers |
-| `src-tauri/src/domain/` | Domain logic and services |
-| `src-tauri/src/repo/` | Database repositories |
-| `src-tauri/src/sidecar/` | Sidecar protocol and types |
-| `sidecar/src/` | AI provider implementations |
+| `ui/src/lib/components/` | Svelte components (shared, layout, feature-specific) |
+| `ui/src/lib/stores/` | Rune stores (`.svelte.ts` files) |
+| `ui/src/lib/types/` | TypeScript type definitions |
+| `ui/src/routes/` | SvelteKit pages |
+| `backend/src-tauri/src/commands/` | Tauri command handlers |
+| `backend/src-tauri/src/domain/` | Domain logic and services |
+| `backend/src-tauri/src/repo/` | Database repositories |
+| `backend/src-tauri/src/sidecar/` | Sidecar protocol and types |
+| `sidecars/orqa-sidecar/src/` | AI provider implementations |
 | `.orqa/documentation/` | Project documentation (architecture, process, development, product) |
 | `.orqa/` | Governance framework source of truth (agents, rules, skills, hooks, decisions, documentation) |
 

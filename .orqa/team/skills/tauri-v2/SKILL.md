@@ -36,7 +36,7 @@ user-invocable: false
 ### Step 1: Create a Tauri Command
 
 ```rust
-// src-tauri/src/lib.rs
+// backend/src-tauri/src/lib.rs
 #[tauri::command]
 fn greet(name: String) -> String {
     format!("Hello, {}!", name)
@@ -66,7 +66,7 @@ console.log(greeting); // "Hello, World!"
 ### Step 3: Add Required Permissions
 
 ```json
-// src-tauri/capabilities/default.json
+// backend/src-tauri/capabilities/default.json
 {
     "$schema": "../gen/schemas/desktop-schema.json",
     "identifier": "default",
@@ -368,7 +368,7 @@ rustup target add aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim
 Before using this skill, verify:
 
 - [ ] `npx tauri info` shows correct Tauri v2 versions
-- [ ] `src-tauri/capabilities/default.json` exists with at least `core:default`
+- [ ] `backend/src-tauri/capabilities/default.json` exists with at least `core:default`
 - [ ] All commands registered in `generate_handler![]`
 - [ ] `lib.rs` contains shared code (for mobile support)
 - [ ] Required Rust targets installed for target platforms

@@ -168,10 +168,8 @@ mod tests {
     /// Helper to create a SearchEngine with a unique DuckDB file per test.
     fn temp_engine() -> SearchEngine {
         let id = TEST_COUNTER.fetch_add(1, Ordering::Relaxed);
-        let tmp_dir = std::env::temp_dir().join(format!(
-            "orqa_search_test_{}_{id}",
-            std::process::id()
-        ));
+        let tmp_dir =
+            std::env::temp_dir().join(format!("orqa_search_test_{}_{id}", std::process::id()));
         let _ = std::fs::create_dir_all(&tmp_dir);
         let db_path = tmp_dir.join("test.duckdb");
         let _ = std::fs::remove_file(&db_path);
@@ -216,7 +214,16 @@ mod tests {
         let search_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("src/search");
         // Exclude all files (everything starts with one of these prefixes in the search dir)
         let status = engine
-            .index(&search_dir, &["mod.rs".to_string(), "store.rs".to_string(), "chunker.rs".to_string(), "embedder.rs".to_string(), "types.rs".to_string()])
+            .index(
+                &search_dir,
+                &[
+                    "mod.rs".to_string(),
+                    "store.rs".to_string(),
+                    "chunker.rs".to_string(),
+                    "embedder.rs".to_string(),
+                    "types.rs".to_string(),
+                ],
+            )
             .unwrap();
         // Should have fewer chunks than without exclusions (or zero if all excluded)
         // At minimum, the index operation should succeed
@@ -231,7 +238,10 @@ mod tests {
 
         // Search for a pattern we know exists in the search module
         let results = engine.search_regex("SearchEngine", None, 10).unwrap();
-        assert!(!results.is_empty(), "should find SearchEngine in indexed files");
+        assert!(
+            !results.is_empty(),
+            "should find SearchEngine in indexed files"
+        );
     }
 
     #[test]

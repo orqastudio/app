@@ -35,7 +35,7 @@ change needed so that the implementation phase can proceed with confidence.
 3. **Watcher analysis** — Read Vite config and Cargo/Tauri watch config to understand
    current watcher scope and document needed changes.
 
-4. **Dev controller audit** — Read `scripts/dev.mjs` for hardcoded paths, process spawn
+4. **Dev controller audit** — Read `debugger/dev.mjs` for hardcoded paths, process spawn
    commands, and dashboard serving paths.
 
 5. **Documentation audit** — Search `.orqa/` for references to current directory paths.

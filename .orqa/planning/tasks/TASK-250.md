@@ -25,8 +25,8 @@ acceptance:
 Two distinct concerns that share infrastructure:
 
 **Concern 1 — Dev logging (dev mode only):** Stream info-level logs from all sources to the
-**existing OrqaDev web dashboard** (`scripts/dev-dashboard.html` served on port 3001 by the
-dev controller `scripts/dev.mjs`). The dashboard already captures Vite and Cargo stdout/stderr
+**existing OrqaDev web dashboard** (`debugger/dev-dashboard.html` served on port 3001 by the
+dev controller `debugger/dev.mjs`). The dashboard already captures Vite and Cargo stdout/stderr
 with source-tagged SSE events. This task extends it to also surface Rust tracing output,
 sidecar diagnostics, frontend console output, and file watcher events. No new UI is created
 inside the app — the OrqaDev dashboard IS the dev logging surface.
@@ -50,8 +50,8 @@ need to see when things go wrong — silent error swallowing is a bug.
 
 | Component | File | What It Does |
 |-----------|------|-------------|
-| Dev controller | `scripts/dev.mjs` | HTTP + SSE server on port 3001, manages Vite + Cargo processes |
-| Dashboard UI | `scripts/dev-dashboard.html` | Real-time log viewer with source filters and process controls |
+| Dev controller | `debugger/dev.mjs` | HTTP + SSE server on port 3001, manages Vite + Cargo processes |
+| Dashboard UI | `debugger/dev-dashboard.html` | Real-time log viewer with source filters and process controls |
 | SSE protocol | `GET /events` | Streams `log` events (`{ source, text, error }`) and `status` events |
 | Process control | `POST /command/{cmd}` | start, restart-tauri, restart-vite, restart, stop |
 
@@ -68,7 +68,7 @@ need to see when things go wrong — silent error swallowing is a bug.
 
 ### 2. Sidecar: Forward stderr to dev controller + app
 
-- The sidecar manager (`src-tauri/src/sidecar/manager.rs`) spawns the sidecar process
+- The sidecar manager (`backend/src-tauri/src/sidecar/manager.rs`) spawns the sidecar process
 - Capture sidecar stderr in the Rust backend:
   - **All modes**: parse for error patterns → emit `app-error` Tauri events
   - **Dev mode**: forward lines to the dev controller's SSE stream (either by writing to

@@ -8,14 +8,14 @@ updated: "2026-03-10"
 
 **References:** [Claude Integration](RES-002), [Tauri v2](RES-007), [Persistence](RES-006)
 
-Module tree, domain types, command handlers, and dependency graph for `src-tauri/src/`. Rust owns the domain model [AD-001](AD-001). All functions return `Result<T, E>` [AD-003](AD-003). No `unwrap()`, `expect()`, or `panic!()` in production code.
+Module tree, domain types, command handlers, and dependency graph for `backend/src-tauri/src/`. Rust owns the domain model [AD-001](AD-001). All functions return `Result<T, E>` [AD-003](AD-003). No `unwrap()`, `expect()`, or `panic!()` in production code.
 
 ---
 
 ## 1. Module Tree
 
 ```
-src-tauri/src/
+backend/src-tauri/src/
 ├── main.rs                          # Tauri entry point (calls lib::run())
 ├── lib.rs                           # App builder, plugin registration, command registration, startup
 ├── state.rs                         # AppState struct (Tauri managed state)
@@ -84,7 +84,7 @@ src-tauri/src/
 │   ├── stream_commands.rs           # 4 commands: stream_send_message, stream_stop, stream_tool_approval_respond, system_prompt_preview
 │   └── theme_commands.rs            # 3 commands: theme_get_project, theme_set_override, theme_clear_overrides
 │
-├── sidecar/                         # Sidecar process management
+├── sidecars/orqa-sidecar/                         # Sidecar process management
 │   ├── mod.rs                       # Re-exports
 │   ├── manager.rs                   # SidecarManager: spawn via std::process::Command, health check
 │   ├── protocol.rs                  # NDJSON serialization/deserialization, line framing
@@ -169,7 +169,7 @@ Note on dependencies: `tool_executor.rs` and `stream_loop.rs` import `AppState` 
 
 15 thin command modules, approximately 82 total commands. Each function is `#[tauri::command]`, receives `State<AppState>` and parameters, and calls the appropriate repo or domain service. No business logic in the handlers. See [IPC Commands](DOC-005) for the full command catalog with signatures.
 
-### `sidecar/`
+### `sidecars/orqa-sidecar/`
 
 Process lifecycle management for the Agent SDK sidecar. Uses `std::process::Command` (not `tauri-plugin-shell`) for process spawning. `SidecarManager` uses interior mutability with per-field Mutex locks. The NDJSON protocol in `protocol.rs` handles stdin/stdout framing. `types.rs` defines `SidecarRequest` (6 variants) and `SidecarResponse` (15 variants).
 
@@ -259,7 +259,7 @@ Arrows point from the dependent module to the module it depends on.
      │          │          │          │
      ▼          ▼          ▼          ▼
 ┌──────────┐ ┌─────────┐ ┌────────┐ ┌───────────┐
-│commands/ │ │sidecar/ │ │search/ │ │ startup.rs│
+│commands/ │ │sidecars/orqa-sidecar/ │ │search/ │ │ startup.rs│
 │ (15 mod) │ │         │ │        │ └───────────┘
 └────┬─────┘ └──┬──────┘ └───┬────┘
      │          │             │
@@ -301,8 +301,8 @@ Arrows point from the dependent module to the module it depends on.
 2. **`db.rs`** — depends on rusqlite and `error.rs`.
 3. **`domain/`** — most modules depend only on serde and `error.rs`. `tool_executor.rs` and `stream_loop.rs` are exceptions that take `AppState` as a parameter.
 4. **`repo/`** — depends on `domain/`, `error.rs`, rusqlite. File-based repos use std::fs.
-5. **`commands/`** — depends on `domain/`, `repo/`, `state.rs`, `error.rs`, `sidecar/`, `search/`, `startup.rs`.
-6. **`sidecar/`** — depends on `domain/` (for StreamEvent), `error.rs`, std::process.
+5. **`commands/`** — depends on `domain/`, `repo/`, `state.rs`, `error.rs`, `sidecars/orqa-sidecar/`, `search/`, `startup.rs`.
+6. **`sidecars/orqa-sidecar/`** — depends on `domain/` (for StreamEvent), `error.rs`, std::process.
 7. **`search/`** — depends on `domain/`, `error.rs`, duckdb, ort (ONNX Runtime), tokenizers.
 8. **`watcher.rs`** — depends on notify, `error.rs`, std::sync.
 9. **`startup.rs`** — depends on std only.

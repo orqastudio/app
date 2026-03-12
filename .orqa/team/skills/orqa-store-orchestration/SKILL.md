@@ -13,7 +13,7 @@ updated: "2026-03-10"
 layer: project
 scope: [AGENT-002, AGENT-006]
 file-patterns:
-  - "ui/lib/stores/**"
+  - "ui/src/lib/stores/**"
 version: 1.0.0
 user-invocable: true
 ---

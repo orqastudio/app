@@ -16,9 +16,9 @@ orqa.db-wal
 orqa.db-shm
 
 # Tauri
-/src-tauri/target/
-/src-tauri/WixTools/
-/src-tauri/icons/
+/backend/src-tauri/target/
+/backend/src-tauri/WixTools/
+/backend/src-tauri/icons/
 
 # IDE
 .vscode/
@@ -36,7 +36,7 @@ desktop.ini
 .env.local
 
 # Build output
-/build/
+/ui/build/
 
 # Temporary
 tmp/

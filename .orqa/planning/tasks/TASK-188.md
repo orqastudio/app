@@ -31,7 +31,7 @@ rules natively without depending on the CLI plugin.
 
 ## How
 
-1. Create `src-tauri/src/domain/enforcement.rs` module
+1. Create `backend/src-tauri/src/domain/enforcement.rs` module
 2. Implement rule loading from filesystem (reuse artifact scanner frontmatter parsing)
 3. Implement enforcement pattern evaluation using `regex` crate
 4. Implement decision logic (block/warn/allow)

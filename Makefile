@@ -2,7 +2,7 @@
 
 .DEFAULT_GOAL := help
 
-CARGO_MANIFEST := src-tauri/Cargo.toml
+CARGO_MANIFEST := backend/src-tauri/Cargo.toml
 
 .PHONY: install install-sidecar \
         dev start dev-frontend dev-sidecar stop kill restart-tauri restart-vite restart status \
@@ -17,55 +17,55 @@ CARGO_MANIFEST := src-tauri/Cargo.toml
 # ── Setup ────────────────────────────────────────────────────────────────────
 
 install: ## Install all dependencies (npm + sidecar + cargo)
-	npm install
-	cd sidecar && bun install
+	cd ui && npm install
+	cd sidecars/orqa-sidecar && bun install
 	cargo fetch --manifest-path $(CARGO_MANIFEST)
 
 install-sidecar: ## Install sidecar dependencies
-	cd sidecar && bun install
+	cd sidecars/orqa-sidecar && bun install
 
 # ── Development ──────────────────────────────────────────────────────────────
 
 dev: ## Start dev environment (spawns controller, waits for ready, exits)
-	@node scripts/dev.mjs dev
+	@node debugger/dev.mjs dev
 
 start: ## Start dev controller in foreground (long-running, unified output)
-	@node scripts/dev.mjs start
+	@node debugger/dev.mjs start
 
 stop: ## Stop controller gracefully (requires manual restart to resume)
-	@node scripts/dev.mjs stop
+	@node debugger/dev.mjs stop
 
 kill: ## Force-kill all OrqaStudio processes
-	@node scripts/dev.mjs kill
+	@node debugger/dev.mjs kill
 
 restart-tauri: ## Restart Tauri app only — recompile Rust, Vite stays alive
-	@node scripts/dev.mjs restart-tauri
+	@node debugger/dev.mjs restart-tauri
 
 restart-vite: ## Restart Vite dev server only
-	@node scripts/dev.mjs restart-vite
+	@node debugger/dev.mjs restart-vite
 
 restart: ## Restart Vite + Tauri (controller stays alive)
-	@node scripts/dev.mjs restart
+	@node debugger/dev.mjs restart
 
 status: ## Show dev controller and process status
-	@node scripts/dev.mjs status
+	@node debugger/dev.mjs status
 
 dev-frontend: ## Run frontend only (Vite dev server)
-	npm run dev
+	cd ui && npm run dev
 
 dev-sidecar: ## Build sidecar for development
-	cd sidecar && bun run build
+	cd sidecars/orqa-sidecar && bun run build
 
 # ── Build ─────────────────────────────────────────────────────────────────────
 
 build: ## Production build (cargo tauri build)
-	cargo tauri build
+	cd backend && cargo tauri build
 
 build-frontend: ## Build frontend only
-	npm run build
+	cd ui && npm run build
 
 build-sidecar: ## Build sidecar for production
-	cd sidecar && bun run build
+	cd sidecars/orqa-sidecar && bun run build
 
 # ── Quality ──────────────────────────────────────────────────────────────────
 
@@ -81,10 +81,10 @@ clippy: ## Run Rust linter
 	cargo clippy --manifest-path $(CARGO_MANIFEST) -- -D warnings
 
 lint: ## Run ESLint
-	npm run lint
+	cd ui && npm run lint
 
 check-frontend: ## Run svelte-check + TypeScript checks
-	npm run check
+	cd ui && npm run check
 
 # ── Testing ──────────────────────────────────────────────────────────────────
 
@@ -94,18 +94,18 @@ test-rust: ## Run Rust tests only
 	cargo test --manifest-path $(CARGO_MANIFEST)
 
 test-frontend: ## Run frontend tests (Vitest)
-	npm run test || if [ $$? -eq 1 ] && npx vitest run 2>&1 | grep -q "No test files found"; then echo "No test files found — skipping."; else exit 1; fi
+	cd ui && npm run test
 
 test-watch: ## Run frontend tests in watch mode
-	npm run test:watch
+	cd ui && npm run test:watch
 
 test-e2e: ## Run E2E tests (Playwright)
-	npx playwright test
+	cd ui && npx playwright test
 
 # ── Documentation ────────────────────────────────────────────────────────────
 
 docs: ## Serve documentation locally
-	npx docsify serve docs/
+	cd ui && npx docsify serve ../docs/
 
 # ── Code Search ──────────────────────────────────────────────────────────────
 
@@ -121,15 +121,15 @@ calibrate: ## Calibrate ChunkHound search
 # ── Skills ───────────────────────────────────────────────────────────────────
 
 skills-list: ## List installed skills
-	npx skills list
+	cd ui && npx skills list
 
 skills-update: ## Update all skills
-	npx skills update
+	cd ui && npx skills update
 
 # ── Utilities ────────────────────────────────────────────────────────────────
 
 clean: ## Remove build artifacts
-	rm -rf src-tauri/target node_modules/.vite ui/.svelte-kit build
+	rm -rf backend/src-tauri/target ui/node_modules/.vite ui/.svelte-kit ui/build
 
 help: ## Show all targets with descriptions
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'

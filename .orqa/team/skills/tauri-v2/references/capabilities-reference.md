@@ -6,7 +6,7 @@ Tauri v2 uses a capabilities-based security model. By default, **nothing is allo
 
 ## Capability File Structure
 
-Location: `src-tauri/capabilities/`
+Location: `backend/src-tauri/capabilities/`
 
 ```json
 {
@@ -242,7 +242,7 @@ Allow Tauri commands from remote URLs:
 
 ## Custom Permission Files
 
-Create custom permissions in `src-tauri/permissions/`:
+Create custom permissions in `backend/src-tauri/permissions/`:
 
 **`custom.toml`:**
 ```toml

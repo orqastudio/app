@@ -273,7 +273,7 @@ Tailwind's default 4px increment scale. Commonly used values:
 ### Implementation
 
 ```svelte
-<!-- ui/routes/+layout.svelte -->
+<!-- ui/src/routes/+layout.svelte -->
 <script lang="ts">
   import '../app.css';
   import { ModeWatcher } from 'mode-watcher';

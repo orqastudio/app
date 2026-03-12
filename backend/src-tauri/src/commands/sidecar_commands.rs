@@ -12,32 +12,32 @@ const SIDECAR_COMMAND: &str = "node";
 /// Path resolution tries CWD as project root first (cargo tauri dev),
 /// then CWD as src-tauri/ (cargo run).
 fn sidecar_args() -> Vec<String> {
-    // 1. Real Agent SDK sidecar (preferred)
-    let real_sidecar = std::path::Path::new("sidecar/dist/sidecar.js");
+    // 1. Real Agent SDK sidecar (preferred — CWD is project root)
+    let real_sidecar = std::path::Path::new("sidecars/orqa-sidecar/dist/sidecar.js");
     if real_sidecar.exists() {
         return vec![real_sidecar.to_string_lossy().to_string()];
     }
 
-    // 2. Real sidecar from src-tauri/ CWD
-    let real_alt = std::path::Path::new("../sidecar/dist/sidecar.js");
+    // 2. Real sidecar from backend/src-tauri/ CWD
+    let real_alt = std::path::Path::new("../../sidecars/orqa-sidecar/dist/sidecar.js");
     if real_alt.exists() {
         return vec![real_alt.to_string_lossy().to_string()];
     }
 
-    // 3. Test echo sidecar (fallback for development without Agent SDK)
-    let echo_path = std::path::Path::new("src-tauri/test-sidecar/echo.cjs");
+    // 3. Test echo sidecar (fallback — CWD is project root)
+    let echo_path = std::path::Path::new("backend/src-tauri/test-sidecar/echo.cjs");
     if echo_path.exists() {
         return vec![echo_path.to_string_lossy().to_string()];
     }
 
-    // 4. Test echo from src-tauri/ CWD
+    // 4. Test echo from backend/src-tauri/ CWD
     let echo_alt = std::path::Path::new("test-sidecar/echo.cjs");
     if echo_alt.exists() {
         return vec![echo_alt.to_string_lossy().to_string()];
     }
 
     // Last resort
-    vec!["sidecar/dist/sidecar.js".to_string()]
+    vec!["sidecars/orqa-sidecar/dist/sidecar.js".to_string()]
 }
 
 /// Ensure the sidecar is running, spawning it if necessary.

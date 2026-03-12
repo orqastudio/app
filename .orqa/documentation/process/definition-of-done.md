@@ -165,8 +165,8 @@ Store calls invoke('list_sessions') and populates reactive state.
 ```text
 EVIDENCE: End-to-end chain for save_session
 1. Component: SessionPanel.svelte calls sessionStore.save()
-2. Store: ui/lib/stores/session.svelte.ts calls invoke('save_session')
-3. Command: src-tauri/src/commands/session.rs -- #[tauri::command] fn save_session exists
+2. Store: ui/src/lib/stores/session.svelte.ts calls invoke('save_session')
+3. Command: backend/src-tauri/src/commands/session.rs -- #[tauri::command] fn save_session exists
 4. Persistence: session written to SQLite via repository
 Chain: COMPLETE
 ```

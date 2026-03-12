@@ -43,7 +43,7 @@ Analyses a project's folder structure and configuration files to infer its chara
 | `next.config.*`, `app/layout.tsx` | Next.js |
 | `nuxt.config.*` | Nuxt |
 | `angular.json` | Angular |
-| `tauri.conf.json`, `src-tauri/` | Tauri |
+| `tauri.conf.json`, `backend/src-tauri/` | Tauri |
 | `electron-builder.*`, `electron/` | Electron |
 | `Cargo.toml` with `actix-web`/`axum`/`rocket` | Rust web framework |
 | `django/`, `manage.py` | Django |
@@ -78,7 +78,7 @@ Analyses a project's folder structure and configuration files to infer its chara
 
 | Signals | Likely Type |
 |---------|-------------|
-| `src-tauri/` + `ui/` or `src/` + `Cargo.toml` + `package.json` | Desktop app (Tauri) |
+| `backend/src-tauri/` + `ui/` or `src/` + `Cargo.toml` + `package.json` | Desktop app (Tauri) |
 | `package.json` + framework config + no backend | Frontend web app |
 | `Cargo.toml` + no frontend | Rust library/service |
 | `package.json` + `server/` or `api/` | Full-stack web app |

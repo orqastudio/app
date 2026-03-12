@@ -8,7 +8,7 @@ updated: "2026-03-10"
 
 # Error Taxonomy
 
-All Tauri commands return `Result<T, OrqaError>`. `OrqaError` is a single flat enum defined in `src-tauri/src/error.rs`. There are no nested error enums.
+All Tauri commands return `Result<T, OrqaError>`. `OrqaError` is a single flat enum defined in `backend/src-tauri/src/error.rs`. There are no nested error enums.
 
 **Architecture References:** [AD-003](AD-003) (error propagation via Result types), [AD-002](AD-002) (IPC boundary design)
 
@@ -31,7 +31,7 @@ All Tauri commands return `Result<T, OrqaError>`. `OrqaError` is a single flat e
 ## 2. The OrqaError Enum
 
 ```rust
-// src-tauri/src/error.rs
+// backend/src-tauri/src/error.rs
 
 use serde::Serialize;
 
@@ -136,7 +136,7 @@ domain function  →  command handler  →  IPC boundary  →  TypeScript invoke
 
 ### Domain layer
 
-Domain functions in `src-tauri/src/domain/` return `Result<T, OrqaError>`. They construct variants directly or use `?` with the `From` impls:
+Domain functions in `backend/src-tauri/src/domain/` return `Result<T, OrqaError>`. They construct variants directly or use `?` with the `From` impls:
 
 ```rust
 // Direct construction — manual context
@@ -148,7 +148,7 @@ let content = std::fs::read_to_string(&path)?;  // io::Error → OrqaError::File
 
 ### Command layer
 
-Tauri command handlers in `src-tauri/src/commands/` return `Result<T, OrqaError>` and delegate to domain functions using `?`:
+Tauri command handlers in `backend/src-tauri/src/commands/` return `Result<T, OrqaError>` and delegate to domain functions using `?`:
 
 ```rust
 #[tauri::command]
@@ -249,7 +249,7 @@ try {
 
 ## 7. Testing
 
-`src-tauri/src/error.rs` contains unit tests covering:
+`backend/src-tauri/src/error.rs` contains unit tests covering:
 
 - Each variant serializes with the correct `code` value
 - Each variant serializes with a `string` in `message`
@@ -258,7 +258,7 @@ try {
 - `From<serde_json::Error>` produces `OrqaError::Serialization`
 - All variants serialize correctly in a round-trip check (`all_variants_serialize_as_tagged_json`)
 
-There is no test for `rusqlite::Error` conversion because constructing a `rusqlite::Error` in unit tests requires a database connection. The `From` impl is tested implicitly through integration tests in `src-tauri/tests/`.
+There is no test for `rusqlite::Error` conversion because constructing a `rusqlite::Error` in unit tests requires a database connection. The `From` impl is tested implicitly through integration tests in `backend/src-tauri/tests/`.
 
 ---
 
@@ -274,4 +274,4 @@ There is no test for `rusqlite::Error` conversion because constructing a `rusqli
 ## Related Documents
 
 - [AD-003](AD-003) (Result types, no unwrap in production), [AD-002](AD-002) (IPC boundary)
-- `src-tauri/src/error.rs` — canonical source of truth for all variant definitions and From impls
+- `backend/src-tauri/src/error.rs` — canonical source of truth for all variant definitions and From impls

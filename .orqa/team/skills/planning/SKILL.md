@@ -53,7 +53,7 @@ For any non-trivial feature, follow this preferred workflow before writing the f
 
 ### Read When Modifying Backend
 
-- `src-tauri/src/` — Existing Rust module structure, command handlers, domain types
+- `backend/src-tauri/src/` — Existing Rust module structure, command handlers, domain types
 
 ### Read When User-Facing Changes
 
@@ -98,7 +98,7 @@ Every implementation plan must include these sections in order:
 ```markdown
 ## Architectural Compliance
 
-**AD-001 (Thick backend):** Session management logic lives entirely in `src-tauri/src/domain/sessions.rs`.
+**AD-001 (Thick backend):** Session management logic lives entirely in `backend/src-tauri/src/domain/sessions.rs`.
 Frontend only displays session list and current conversation.
 
 **AD-002 (IPC boundary):** New commands `create_session` and `list_sessions` exposed via `#[tauri::command]`.

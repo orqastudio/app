@@ -141,7 +141,7 @@ When a failing scanner row is clicked, it expands to show individual violations 
         # | File | Violation | Severity
         1 | src/ui/api/direct-call.ts | UI layer imports core directly, must use service layer | Error
         2 | src/hooks/db-query.ts | Hook accesses database without repository abstraction | Error
-        3 | ui/lib/utils/sidecar.ts | Utility module depends on Tauri API; use adapter pattern | Warning
+        3 | ui/src/lib/utils/sidecar.ts | Utility module depends on Tauri API; use adapter pattern | Warning
       }
       ---
       { [Fix in Session] | [Dismiss] | . | 3 violations across 3 files }

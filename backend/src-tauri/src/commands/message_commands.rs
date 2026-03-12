@@ -36,7 +36,6 @@ pub fn message_list(
     message_repo::list(&conn, session_id, limit_val, offset_val)
 }
 
-
 #[cfg(test)]
 mod tests {
     use crate::db::init_memory_db;

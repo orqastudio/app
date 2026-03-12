@@ -201,7 +201,7 @@ Each platform's jlink output is built in CI and included in that platform's Taur
 The JRE is bundled as a sidecar resource:
 
 ```
-src-tauri/
+backend/src-tauri/
   resources/
     jre/          <-- jlink output (platform-specific, populated by CI)
       bin/

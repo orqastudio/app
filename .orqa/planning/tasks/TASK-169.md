@@ -22,7 +22,7 @@ Surface the artifact graph's cross-reference data directly in the viewer so user
 
 ## How
 
-1. Create `ReferencesPanel.svelte` in `ui/lib/components/artifact/`
+1. Create `ReferencesPanel.svelte` in `ui/src/lib/components/artifact/`
 2. Accept the current artifact ID as a prop
 3. Call `referencesFrom(id)` and `referencesTo(id)` from the graph SDK
 4. Render two collapsible sections: "Referenced by" (incoming) and "References" (outgoing)

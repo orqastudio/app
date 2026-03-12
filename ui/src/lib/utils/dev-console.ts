@@ -10,10 +10,8 @@
 
 const DEV_LOG_URL = "http://localhost:3001/log";
 
-/** Original console methods preserved for passthrough. */
-let origLog: typeof console.log | null = null;
-let origWarn: typeof console.warn | null = null;
-let origError: typeof console.error | null = null;
+/** Guard: true once patched. */
+let patched = false;
 
 function formatArgs(args: unknown[]): string {
 	return args
@@ -61,14 +59,12 @@ export function initDevConsole() {
 	if (!import.meta.env.DEV) return;
 
 	// Already patched — bail
-	if (origLog) return;
+	if (patched) return;
+	patched = true;
 
 	const savedLog = console.log.bind(console);
 	const savedWarn = console.warn.bind(console);
 	const savedError = console.error.bind(console);
-	origLog = savedLog;
-	origWarn = savedWarn;
-	origError = savedError;
 
 	console.log = (...args: unknown[]) => {
 		savedLog(...args);

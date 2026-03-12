@@ -24,7 +24,7 @@ A Spotlight-style floating search overlay that provides AI-driven cross-artifact
 
 ## How
 
-1. Create `ArtifactSearchOverlay.svelte` in `ui/lib/components/navigation/`
+1. Create `ArtifactSearchOverlay.svelte` in `ui/src/lib/components/navigation/`
 2. Use shadcn Dialog or a custom overlay with backdrop blur and dimming
 3. Register global keyboard shortcut (Ctrl+Space) via a Svelte action or window event listener
 4. On query submit, build a system prompt with artifact graph summary (types, counts, statuses, key references)

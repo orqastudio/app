@@ -26,10 +26,10 @@ scoring:
 ## Implementation Design
 
 ### Architecture
-- **Chunker** (`src-tauri/src/search/chunker.rs`) — Splits code at semantic boundaries (functions, classes, imports)
-- **Embedder** (`src-tauri/src/search/embedder.rs`) — ONNX Runtime with bge-small-en-v1.5, DirectML acceleration
-- **Store** (`src-tauri/src/search/store.rs`) — DuckDB vector storage and similarity search
-- **SearchEngine** (`src-tauri/src/search/mod.rs`) — Coordinator: regex, semantic, code_research
+- **Chunker** (`backend/src-tauri/src/search/chunker.rs`) — Splits code at semantic boundaries (functions, classes, imports)
+- **Embedder** (`backend/src-tauri/src/search/embedder.rs`) — ONNX Runtime with bge-small-en-v1.5, DirectML acceleration
+- **Store** (`backend/src-tauri/src/search/store.rs`) — DuckDB vector storage and similarity search
+- **SearchEngine** (`backend/src-tauri/src/search/mod.rs`) — Coordinator: regex, semantic, code_research
 
 ### IPC Commands
 - `search_regex` — Exact pattern matching via DuckDB full-text scan

@@ -14,9 +14,9 @@ acceptance:
   - Hook runs git status --short and counts uncommitted files
   - Warning displayed if count exceeds threshold (suggest 20)
   - Summary groups changes by directory (.orqa/
-  - src-tauri/
+  - backend/src-tauri/
   - ui/
-  - sidecar/)
+  - sidecars/orqa-sidecar/)
   - Warning includes instruction to commit before starting new work
 ---
 

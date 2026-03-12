@@ -7,11 +7,14 @@
 
 import { readFileSync } from "fs";
 import { resolve, dirname, relative } from "path";
-import Ajv from "ajv";
-import addFormats from "ajv-formats";
-import yaml from "yaml";
+import { createRequire } from "module";
 
 const ROOT = resolve(import.meta.dirname, "..");
+// npm packages live in ui/node_modules/ (monorepo layout)
+const require = createRequire(resolve(ROOT, "ui", "package.json"));
+const Ajv = require("ajv").default;
+const addFormats = require("ajv-formats").default;
+const yaml = require("yaml");
 const CONFIG_PATH = resolve(ROOT, ".orqa/project.json");
 
 // Parse YAML frontmatter from a markdown file (first --- block only)

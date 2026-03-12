@@ -106,7 +106,7 @@ Displays the full content of a single lesson, selected from the LessonList.
 │ Detection                                           │
 │                                                     │
 │ Search for `.unwrap()` or `.expect()` in            │
-│ `src-tauri/src/commands/`.                          │
+│ `backend/src-tauri/src/commands/`.                          │
 ├────────────────────────────────────────────────────┤
 │ Sessions where this occurred (2)                    │
 │  ● 2026-03-03  session-abc123...                    │

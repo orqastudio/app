@@ -29,7 +29,7 @@ All three are symptoms of not owning the process tree. A dev controller that IS 
 
 ## Vision
 
-A single persistent Node process (`scripts/dev.mjs`) that replaces `cargo tauri dev` entirely during development:
+A single persistent Node process (`debugger/dev.mjs`) that replaces `cargo tauri dev` entirely during development:
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -99,11 +99,11 @@ This means `make restart` becomes seamless — the app comes back exactly where 
 
 ## Interim Solution (Shipped)
 
-`scripts/dev.mjs` currently provides reliable `stop` and `restart` using Node's `process.kill()` and port verification. This works today and can evolve into the full controller. See [RES-016](RES-016) for the research that informed this approach.
+`debugger/dev.mjs` currently provides reliable `stop` and `restart` using Node's `process.kill()` and port verification. This works today and can evolve into the full controller. See [RES-016](RES-016) for the research that informed this approach.
 
 ## Research Needed
 
-1. **Bypassing `cargo tauri dev`** — Can we run `npm run dev` (Vite) and `cargo run --manifest-path src-tauri/Cargo.toml` independently and have the Tauri app connect to the existing Vite server? What Tauri config is needed?
+1. **Bypassing `cargo tauri dev`** — Can we run `npm run dev` (Vite) and `cargo run --manifest-path backend/src-tauri/Cargo.toml` independently and have the Tauri app connect to the existing Vite server? What Tauri config is needed?
 2. **IPC mechanism** — Named pipes, Unix domain sockets, HTTP on a local port, or a simple lockfile+signal approach? Must work on Windows + macOS + Linux.
 3. **Session state capture** — What state needs persisting? How to extract it from the running app before kill? Tauri IPC? SQLite read? Temp file?
 4. **Dev panel integration** — How to pipe controller output into the app's UI. WebSocket? Tauri event? File tail?

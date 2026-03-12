@@ -47,8 +47,8 @@ is_excluded() {
   [[ "$file" == *test* ]] && return 0
   [[ "$file" == *spec* ]] && return 0
   [[ "$file" == *.test.* ]] && return 0
-  [[ "$file" == src-tauri/src/*/tests/* ]] && return 0
-  [[ "$file" == src-tauri/src/tests/* ]] && return 0
+  [[ "$file" == backend/src-tauri/src/*/tests/* ]] && return 0
+  [[ "$file" == backend/src-tauri/src/tests/* ]] && return 0
   [[ "$file" == tests/* ]] && return 0
   [[ "$file" == .orqa/* ]] && return 0
   [[ "$file" == .githooks/* ]] && return 0

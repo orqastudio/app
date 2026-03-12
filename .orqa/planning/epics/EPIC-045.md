@@ -108,7 +108,7 @@ Create the four setup skills that replace templates:
   Launching agents that reference old/restructured definitions risks confusion.
   All tasks are executed by the orchestrator, not delegated.
 - **No code changes** — This epic is entirely governance artifacts (.orqa/ files).
-  No changes to src-tauri/, ui/, or sidecar/.
+  No changes to backend/src-tauri/, ui/, or sidecars/orqa-sidecar/.
 - **Backward compatible** — The orchestrator.md (which IS CLAUDE.md via symlink)
   must continue to work after restructuring. Agent references in rules must be
   updated to use new role names.

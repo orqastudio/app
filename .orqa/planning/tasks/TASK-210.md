@@ -15,7 +15,7 @@ acceptance:
 ---
 ## What
 
-Transfer the orchestrator's hardcoded Tier 2 skill injection table into graph edges on individual tasks. Instead of the orchestrator looking up "task touches src-tauri/ → inject backend-best-practices", the task itself declares `skills: [backend-best-practices, tauri-v2]`.
+Transfer the orchestrator's hardcoded Tier 2 skill injection table into graph edges on individual tasks. Instead of the orchestrator looking up "task touches backend/src-tauri/ → inject backend-best-practices", the task itself declares `skills: [backend-best-practices, tauri-v2]`.
 
 ## How
 
@@ -28,6 +28,6 @@ Transfer the orchestrator's hardcoded Tier 2 skill injection table into graph ed
 
 - All todo tasks have a `skills` field (array of strings or empty array)
 - All skill names resolve to directories in `.orqa/team/skills/`
-- Tasks touching `src-tauri/` have backend skills (backend-best-practices, etc.)
+- Tasks touching `backend/src-tauri/` have backend skills (backend-best-practices, etc.)
 - Tasks touching `ui/` have frontend skills (svelte5-best-practices, etc.)
 - Tasks touching `.orqa/` have governance skills (orqa-governance, etc.)

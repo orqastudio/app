@@ -20,7 +20,7 @@ The orchestrator (CLAUDE.md) lists `rust-async-patterns`, `svelte5-best-practice
 ## How
 
 1. Open the orchestrator's Skills section (CLAUDE.md / orchestrator.md)
-2. Move the five tech skills from the Tier 1 table into the Tier 2 injection table with appropriate scope triggers (e.g., `rust-async-patterns` when touching `src-tauri/`)
+2. Move the five tech skills from the Tier 1 table into the Tier 2 injection table with appropriate scope triggers (e.g., `rust-async-patterns` when touching `backend/src-tauri/`)
 3. Update the Tier 1 definition text to make clear it covers only universal, always-loaded skills
 4. Search agent YAML files in `.orqa/team/agents/` for any `skills:` list entries referencing the five tech skills and remove them
 

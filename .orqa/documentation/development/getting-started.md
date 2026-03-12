@@ -86,7 +86,7 @@ After initialization, the expected directory structure is:
 
 ```
 orqa-studio/
-├── src-tauri/
+├── backend/src-tauri/
 │   ├── src/
 │   │   └── main.rs              # Tauri entry point
 │   ├── capabilities/
@@ -117,9 +117,9 @@ OrqaStudio requires the following Tauri v2 plugins. All are official and maintai
 | `tauri-plugin-autostart` | Optional launch at system startup | |
 | `tauri-plugin-keyring` | API key storage in OS keychain | Community plugin |
 
-> **Note:** SQLite persistence is implemented via `rusqlite` directly in `src-tauri/src/db.rs`, not via `tauri-plugin-sql`. Do not add `tauri-plugin-sql` — it conflicts with the direct `rusqlite` approach ([AD-005](AD-005), [AD-014](AD-014)).
+> **Note:** SQLite persistence is implemented via `rusqlite` directly in `backend/src-tauri/src/db.rs`, not via `tauri-plugin-sql`. Do not add `tauri-plugin-sql` — it conflicts with the direct `rusqlite` approach ([AD-005](AD-005), [AD-014](AD-014)).
 
-**Install Rust-side plugins** (run from `src-tauri/`):
+**Install Rust-side plugins** (run from `backend/src-tauri/`):
 
 ```bash
 cd src-tauri
@@ -151,7 +151,7 @@ npm install @tauri-apps/plugin-autostart
 npm install tauri-plugin-keyring-api
 ```
 
-Each plugin must also be registered in the Tauri app builder (`src-tauri/src/main.rs`) and have its permissions declared in `src-tauri/capabilities/default.json`. See [AD-012](DOC-001) and [Tauri v2 Research](RES-007) for configuration details.
+Each plugin must also be registered in the Tauri app builder (`backend/src-tauri/src/main.rs`) and have its permissions declared in `backend/src-tauri/capabilities/default.json`. See [AD-012](DOC-001) and [Tauri v2 Research](RES-007) for configuration details.
 
 ### Frontend Dependencies [AD-013](AD-013)
 
@@ -224,7 +224,7 @@ See the root `.gitignore` file for the complete list, which also covers IDE file
 
 ```
 orqa-studio/
-├── src-tauri/              # Rust backend (Tauri v2)
+├── backend/src-tauri/              # Rust backend (Tauri v2)
 │   ├── src/                # Rust source code
 │   ├── capabilities/       # Tauri security permissions (JSON)
 │   ├── migrations/         # SQLite migrations (.sql files)
@@ -253,7 +253,7 @@ orqa-studio/
 └── AGENTS.md               # Cross-agent instructions
 ```
 
-`.orqa/` contains the governance framework and documentation. `src-tauri/` and `ui/` hold the application code. All directories shown above are present in the repository.
+`.orqa/` contains the governance framework and documentation. `backend/src-tauri/` and `ui/` hold the application code. All directories shown above are present in the repository.
 
 ---
 

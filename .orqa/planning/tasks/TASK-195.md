@@ -22,7 +22,7 @@ writing code?").
 
 ## How
 
-1. Create `src-tauri/src/domain/workflow_tracker.rs`
+1. Create `backend/src-tauri/src/domain/workflow_tracker.rs`
 2. Define `WorkflowTracker` with: files_read, files_written, searches_performed,
    docs_consulted, skills_loaded, commands_run, turn_count
 3. Add methods: `record_read()`, `record_write()`, `record_search()`, etc.

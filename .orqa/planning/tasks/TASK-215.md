@@ -32,7 +32,7 @@ This makes skill injection self-building: create a new skill with the right scop
 
 ## Verification
 
-- Writing to `src-tauri/src/domain/` triggers backend skill injection
-- Writing to `ui/lib/components/` triggers frontend skill injection
+- Writing to `backend/src-tauri/src/domain/` triggers backend skill injection
+- Writing to `ui/src/lib/components/` triggers frontend skill injection
 - Adding a new skill with scope auto-enables injection without config changes
 - No hardcoded injection table exists in the plugin or orchestrator

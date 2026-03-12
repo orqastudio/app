@@ -45,7 +45,7 @@ entries with `action: inject`. Path patterns map to skill names.
 ```yaml
 enforcement:
   - event: file
-    paths: ["src-tauri/src/domain/**"]
+    paths: ["backend/src-tauri/src/domain/**"]
     action: inject
     skills: [orqa-domain-services, orqa-error-composition]
     message: "Domain service and error composition patterns loaded."
@@ -120,7 +120,7 @@ enforcement:
 
 ## Implementation
 
-The app's Rust enforcement engine (`src-tauri/src/domain/enforcement_engine.rs`) is the
+The app's Rust enforcement engine (`backend/src-tauri/src/domain/enforcement_engine.rs`) is the
 primary implementation. It sits above the agent layer and applies uniformly regardless
 of which agent is running. The CLI companion plugin (`rule-engine.mjs`) is a compatibility
 port that brings the same enforcement to Claude Code CLI users.

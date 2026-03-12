@@ -23,7 +23,7 @@ The core navigation toolbar that replaces the current text filter with rich sort
 
 ## How
 
-1. Create `ArtifactToolbar.svelte` in `ui/lib/components/navigation/` — `h-10 flex items-center gap-1 px-2` with two ghost icon buttons
+1. Create `ArtifactToolbar.svelte` in `ui/src/lib/components/navigation/` — `h-10 flex items-center gap-1 px-2` with two ghost icon buttons
 2. Create `ArtifactSortDropdown.svelte` — uses shadcn DropdownMenu with RadioGroup for sort selection and group-by section
 3. Create `ArtifactFilterPopover.svelte` — uses shadcn Popover with dynamically generated checkbox sections
 4. Wire to ArtifactViewState in the navigation store

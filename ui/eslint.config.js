@@ -30,17 +30,17 @@ export default tseslint.config(
 		},
 	},
 	{
+		files: ["**/*.test.ts", "**/*.test.js", "**/__tests__/**"],
+		rules: {
+			"@typescript-eslint/no-unused-vars": "off",
+		},
+	},
+	{
 		ignores: [
 			"build/",
 			".svelte-kit/",
 			"node_modules/",
-			"src-tauri/",
-			"sidecar/",
 			"dist/",
-			"tmp/",
-			".githooks/",
-			".orqa/plugins/",
-			"scripts/",
 		],
 	},
 );

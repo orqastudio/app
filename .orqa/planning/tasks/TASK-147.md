@@ -1,7 +1,7 @@
 ---
 id: TASK-147
 title: Audit frontend for repeat patterns and create component reuse skill and enforcement rule
-description: Audit ui/lib/components/ for repeated patterns, create a component extraction skill, and update RULE-024 enforcement to mandate component reuse as a composability requirement.
+description: Audit ui/src/lib/components/ for repeated patterns, create a component extraction skill, and update RULE-024 enforcement to mandate component reuse as a composability requirement.
 status: done
 created: "2026-03-11"
 updated: "2026-03-11"
@@ -17,7 +17,7 @@ acceptance:
 ---
 ## What
 
-Component reuse is part of the composability principle (PILLAR-001). Audit the entire frontend (`ui/lib/components/`) to identify repeated patterns that should be extracted into shared components.
+Component reuse is part of the composability principle (PILLAR-001). Audit the entire frontend (`ui/src/lib/components/`) to identify repeated patterns that should be extracted into shared components.
 
 Three deliverables:
 
@@ -38,7 +38,7 @@ Three deliverables:
 
 ## How
 
-1. Use `search_semantic` to find all loading states, error displays, empty states, and toolbar patterns across `ui/lib/components/`
+1. Use `search_semantic` to find all loading states, error displays, empty states, and toolbar patterns across `ui/src/lib/components/`
 2. For each pattern, count occurrences and note the files containing inline implementations
 3. Create the component extraction skill in `.orqa/team/skills/` covering when/how to extract, naming, prop design, and a pre-creation checklist
 4. Edit [RULE-024](RULE-024) to add the search-before-creating mandate and FORBIDDEN section for known inline patterns

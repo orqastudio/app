@@ -103,14 +103,14 @@ The Rules tab shows rule artifacts with their applicable path scopes, helping us
       <&shield> <b>error-handling</b> | . | <&media-record> active
       Use Result types, no unwrap()
       in production code
-      <i><&folder> src-tauri/**/*.rs</i>
+      <i><&folder> backend/src-tauri/**/*.rs</i>
     }
     ---
     {
       <&shield> <b>component-patterns</b> | . | <&media-record> active
       Svelte 5 runes, $props(),
       snippet-based composition
-      <i><&folder> ui/lib/**/*.svelte</i>
+      <i><&folder> ui/src/lib/**/*.svelte</i>
     }
     ---
     {
@@ -124,7 +124,7 @@ The Rules tab shows rule artifacts with their applicable path scopes, helping us
       <&shield> <b>security-review</b> | . | <&media-record> active
       Auth and crypto require
       two-person review
-      <i><&folder> src-tauri/src/auth/**</i>
+      <i><&folder> backend/src-tauri/src/auth/**</i>
     }
     ---
     .
@@ -187,9 +187,9 @@ When clicking an artifact in the browser, the Explorer Panel switches from the l
     .
     <b>Context Files</b>
     .
-    - src-tauri/src/lib.rs
-    - src-tauri/src/database/mod.rs
-    - src-tauri/src/api/mod.rs
+    - backend/src-tauri/src/lib.rs
+    - backend/src-tauri/src/database/mod.rs
+    - backend/src-tauri/src/api/mod.rs
     .
     <b>Example Interactions</b>
     .
@@ -270,9 +270,9 @@ The source editing mode replaces the rendered view in the Explorer Panel with a 
       .
       # Context Files
       .
-      ""- src-tauri/src/lib.rs""
-      ""- src-tauri/src/database/mod.rs""
-      ""- src-tauri/src/api/mod.rs""
+      ""- backend/src-tauri/src/lib.rs""
+      ""- backend/src-tauri/src/database/mod.rs""
+      ""- backend/src-tauri/src/api/mod.rs""
       .
       .
     }

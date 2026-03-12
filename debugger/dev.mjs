@@ -1,18 +1,18 @@
 #!/usr/bin/env node
-// scripts/dev.mjs — OrqaStudio Dev Controller
+// debugger/dev.mjs — OrqaStudio Dev Controller
 //
 // A persistent process that owns the entire dev lifecycle.
 // Replaces `cargo tauri dev` with direct control over Vite and cargo.
 //
 // Commands:
-//   node scripts/dev.mjs dev            Start dev environment (detached, exits when ready)
-//   node scripts/dev.mjs start          Start the controller (long-running, stays in foreground)
-//   node scripts/dev.mjs stop           Gracefully stop the controller and all processes
-//   node scripts/dev.mjs kill           Force-kill all OrqaStudio processes
-//   node scripts/dev.mjs restart-tauri  Restart the Tauri app (Vite stays alive)
-//   node scripts/dev.mjs restart-vite   Restart the Vite dev server
-//   node scripts/dev.mjs restart        Restart everything (Vite + Tauri)
-//   node scripts/dev.mjs status         Show what's running
+//   node debugger/dev.mjs dev            Start dev environment (detached, exits when ready)
+//   node debugger/dev.mjs start          Start the controller (long-running, stays in foreground)
+//   node debugger/dev.mjs stop           Gracefully stop the controller and all processes
+//   node debugger/dev.mjs kill           Force-kill all OrqaStudio processes
+//   node debugger/dev.mjs restart-tauri  Restart the Tauri app (Vite stays alive)
+//   node debugger/dev.mjs restart-vite   Restart the Vite dev server
+//   node debugger/dev.mjs restart        Restart everything (Vite + Tauri)
+//   node debugger/dev.mjs status         Show what's running
 //
 // Why this exists:
 //   1. cargo tauri dev orphans Vite on crash (Tauri #10023, #2794, #1626)
@@ -40,7 +40,8 @@ import {
 const IS_WINDOWS = platform() === "win32";
 const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const CONTROL_FILE = join(PROJECT_ROOT, "tmp", "dev-controller.json");
-const DASHBOARD_HTML = join(PROJECT_ROOT, "scripts", "dev-dashboard.html");
+const DASHBOARD_HTML = join(PROJECT_ROOT, "debugger", "dev-dashboard.html");
+const UI_DIR = join(PROJECT_ROOT, "ui");
 const VITE_PORT = 1420;
 const DASHBOARD_PORT = 3001;
 const PORT_TIMEOUT_MS = 15_000;
@@ -560,7 +561,7 @@ async function start() {
       [
         "run",
         "--manifest-path",
-        "src-tauri/Cargo.toml",
+        "backend/src-tauri/Cargo.toml",
         "--no-default-features",
         "--color",
         "always",
@@ -959,7 +960,7 @@ switch (command) {
   default:
     console.log("OrqaStudio Dev Controller");
     console.log("");
-    console.log("Usage: node scripts/dev.mjs <command>");
+    console.log("Usage: node debugger/dev.mjs <command>");
     console.log("");
     console.log("Commands:");
     console.log("  dev            Start dev environment (spawn controller, wait for ready, exit)");

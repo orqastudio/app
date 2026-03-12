@@ -13,13 +13,13 @@ updated: "2026-03-10"
 layer: project
 scope: [AGENT-002, AGENT-006]
 file-patterns:
-  - "src-tauri/src/domain/**"
+  - "backend/src-tauri/src/domain/**"
 version: 1.0.0
 user-invocable: true
 ---
 
 
-Domain services live in `src-tauri/src/domain/`. They contain the business logic of OrqaStudio and are the heart of the thick-backend architecture [AD-001](AD-001). Commands in `src-tauri/src/commands/` are thin wrappers that delegate to domain services and repositories.
+Domain services live in `backend/src-tauri/src/domain/`. They contain the business logic of OrqaStudio and are the heart of the thick-backend architecture [AD-001](AD-001). Commands in `backend/src-tauri/src/commands/` are thin wrappers that delegate to domain services and repositories.
 
 ## Service Anatomy
 
@@ -36,7 +36,7 @@ A domain service is a Rust module that:
 **Shape 1: Stateless function module** — Free functions, no struct. Best for scanning, parsing, one-shot operations.
 
 ```rust
-// src-tauri/src/domain/governance_scanner.rs
+// backend/src-tauri/src/domain/governance_scanner.rs
 pub fn scan_governance(project_path: &Path) -> Result<GovernanceScanResult, OrqaError> {
     if !project_path.exists() || !project_path.is_dir() {
         return Err(OrqaError::Validation(format!(
@@ -54,7 +54,7 @@ pub fn scan_governance(project_path: &Path) -> Result<GovernanceScanResult, Orqa
 **Shape 2: Stateful struct** — Loads data once, provides multiple query methods. Best when initialization is expensive (regex compilation, file parsing).
 
 ```rust
-// src-tauri/src/domain/enforcement_engine.rs
+// backend/src-tauri/src/domain/enforcement_engine.rs
 pub struct EnforcementEngine {
     rules: Vec<EnforcementRule>,
     compiled: Vec<CompiledEntry>,  // Pre-compiled regexes
@@ -71,7 +71,7 @@ impl EnforcementEngine {
 **Shape 3: Data types with associated functions** — Types plus parsing/rendering functions. No struct holding state.
 
 ```rust
-// src-tauri/src/domain/lessons.rs
+// backend/src-tauri/src/domain/lessons.rs
 pub struct Lesson { /* fields */ }
 pub struct NewLesson { /* fields */ }
 
@@ -93,7 +93,7 @@ Commands are **thin wrappers**: extract parameters, acquire resources, delegate,
 ### Good: Thin command delegates to domain
 
 ```rust
-// src-tauri/src/commands/governance_commands.rs
+// backend/src-tauri/src/commands/governance_commands.rs
 #[tauri::command]
 pub fn governance_scan(
     project_id: i64,
@@ -107,7 +107,7 @@ pub fn governance_scan(
 ### Good: Command delegates to repo
 
 ```rust
-// src-tauri/src/commands/artifact_commands.rs
+// backend/src-tauri/src/commands/artifact_commands.rs
 #[tauri::command]
 pub fn artifact_list(
     project_id: i64,
@@ -138,7 +138,7 @@ pub fn artifact_list(
 Domain services use private helper functions to stay within function size limits:
 
 ```rust
-// src-tauri/src/domain/enforcement_engine.rs
+// backend/src-tauri/src/domain/enforcement_engine.rs
 
 /// Public API
 pub fn evaluate_file(&self, file_path: &str, new_text: &str) -> Vec<Verdict> { /* ... */ }
@@ -155,7 +155,7 @@ Private helpers are: not `pub`, pure, small (<20 lines), named for their purpose
 
 ## When to Create a New Service
 
-Create a new module in `src-tauri/src/domain/` when:
+Create a new module in `backend/src-tauri/src/domain/` when:
 
 1. A command file exceeds 200 lines — extract the non-framework logic
 2. Logic is reused across multiple commands — shared logic belongs in domain
@@ -164,8 +164,8 @@ Create a new module in `src-tauri/src/domain/` when:
 
 ### Checklist for a New Domain Module
 
-- [ ] File lives in `src-tauri/src/domain/`
-- [ ] Added to `src-tauri/src/domain/mod.rs`
+- [ ] File lives in `backend/src-tauri/src/domain/`
+- [ ] Added to `backend/src-tauri/src/domain/mod.rs`
 - [ ] No `tauri` imports
 - [ ] Public functions return `Result<T, OrqaError>` or are infallible
 - [ ] Domain types derive `Debug, Clone, Serialize, Deserialize`
@@ -245,18 +245,18 @@ fn stream_event_roundtrip() {
 
 | File | Purpose |
 |------|---------|
-| `src-tauri/src/domain/mod.rs` | Module declarations |
-| `src-tauri/src/domain/enforcement_engine.rs` | Stateful service: rule engine |
-| `src-tauri/src/domain/governance_scanner.rs` | Stateless service: filesystem scanning |
-| `src-tauri/src/domain/project_scanner.rs` | Stateless service: project detection |
-| `src-tauri/src/domain/lessons.rs` | Data type + parser/renderer |
-| `src-tauri/src/domain/artifact.rs` | Data types + frontmatter parsing |
-| `src-tauri/src/domain/provider_event.rs` | IPC event types (serde-tagged enum) |
-| `src-tauri/src/domain/enforcement.rs` | Domain types for enforcement |
-| `src-tauri/src/domain/process_state.rs` | Process compliance tracking |
-| `src-tauri/src/error.rs` | `OrqaError` — canonical error type |
-| `src-tauri/src/commands/governance_commands.rs` | Example thin command delegation |
-| `src-tauri/src/commands/stream_commands.rs` | Counter-example: thick command (debt) |
+| `backend/src-tauri/src/domain/mod.rs` | Module declarations |
+| `backend/src-tauri/src/domain/enforcement_engine.rs` | Stateful service: rule engine |
+| `backend/src-tauri/src/domain/governance_scanner.rs` | Stateless service: filesystem scanning |
+| `backend/src-tauri/src/domain/project_scanner.rs` | Stateless service: project detection |
+| `backend/src-tauri/src/domain/lessons.rs` | Data type + parser/renderer |
+| `backend/src-tauri/src/domain/artifact.rs` | Data types + frontmatter parsing |
+| `backend/src-tauri/src/domain/provider_event.rs` | IPC event types (serde-tagged enum) |
+| `backend/src-tauri/src/domain/enforcement.rs` | Domain types for enforcement |
+| `backend/src-tauri/src/domain/process_state.rs` | Process compliance tracking |
+| `backend/src-tauri/src/error.rs` | `OrqaError` — canonical error type |
+| `backend/src-tauri/src/commands/governance_commands.rs` | Example thin command delegation |
+| `backend/src-tauri/src/commands/stream_commands.rs` | Counter-example: thick command (debt) |
 
 ## Related Skills
 

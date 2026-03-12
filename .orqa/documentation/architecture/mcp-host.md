@@ -120,10 +120,10 @@ const agent = new Agent({
 
 ### Tool Execution in Rust
 
-Each tool is implemented natively in Rust within `src-tauri/src/domain/tools/`. No shelling out to external programs (except for `orqa_bash`, which executes user-specified commands under controlled scope).
+Each tool is implemented natively in Rust within `backend/src-tauri/src/domain/tools/`. No shelling out to external programs (except for `orqa_bash`, which executes user-specified commands under controlled scope).
 
 ```
-src-tauri/src/domain/tools/
+backend/src-tauri/src/domain/tools/
   mod.rs          // Tool dispatcher, MCP protocol handling
   read.rs         // File reading with line numbers
   write.rs        // File writing with backup

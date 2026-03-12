@@ -10,7 +10,7 @@ export default defineConfig({
     strictPort: true,
     allowedHosts: true,
     fs: {
-      allow: ['ui', '.svelte-kit', 'node_modules']
+      allow: ['src', '.svelte-kit', 'node_modules']
     },
     watch: {
       ignored: ['**/.orqa/**']

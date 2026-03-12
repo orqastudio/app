@@ -17,7 +17,7 @@ acceptance:
 ---
 ## What
 
-In `stream_send_message()` in `src-tauri/src/commands/stream_commands.rs`, after `resolve_system_prompt()` returns `Some(prompt)` and before `state.sidecar.send(&request)`, emit a `SystemPromptSent` event.
+In `stream_send_message()` in `backend/src-tauri/src/commands/stream_commands.rs`, after `resolve_system_prompt()` returns `Some(prompt)` and before `state.sidecar.send(&request)`, emit a `SystemPromptSent` event.
 
 ## Where
 

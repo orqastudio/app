@@ -9,7 +9,7 @@ const config = {
       fallback: 'index.html'
     }),
     files: {
-      src: 'ui'
+      src: 'src'
     }
   }
 };

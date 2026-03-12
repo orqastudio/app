@@ -192,7 +192,7 @@ Sub-agent tool calls pass through the same enforcement engine as parent tool cal
 ## Rust Module Structure
 
 ```text
-src-tauri/src/
+backend/src-tauri/src/
   agents/
     mod.rs             -- AgentRegistry struct, spawn_agent tool handler
     registry.rs        -- Reads .orqa/team/agents/*.md, builds role index

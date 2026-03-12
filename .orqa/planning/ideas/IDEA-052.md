@@ -30,7 +30,7 @@ A unified `search` tool with a `mode` parameter (or auto-detection) simplifies t
 search({
   query: "error handling in commands",
   mode: "semantic" | "regex" | "research" | "auto",
-  scope: "src-tauri/" | "ui/" | ".orqa/" | null,
+  scope: "backend/src-tauri/" | "ui/" | ".orqa/" | null,
   file_types: ["rs", "ts"] | null,
   limit: 20
 })

@@ -4,7 +4,7 @@ title: Orqa Search Architecture
 description: |
   Implementation details of OrqaStudio's embedded search engine: DuckDB storage,
   ONNX Runtime embeddings, DirectML acceleration, chunker design, and module layout.
-  Use when: Modifying or extending the search engine in src-tauri/src/search/.
+  Use when: Modifying or extending the search engine in backend/src-tauri/src/search/.
 status: active
 created: "2026-03-11"
 updated: "2026-03-11"
@@ -50,12 +50,12 @@ process via the `ort` crate.
 
 | Module | File | Purpose |
 |--------|------|---------|
-| Chunker | `src-tauri/src/search/chunker.rs` | Splits code at semantic boundaries (functions, classes, imports) |
-| Embedder | `src-tauri/src/search/embedder.rs` | ONNX Runtime + bge-small-en-v1.5 (384-dim vectors), DirectML acceleration |
-| Store | `src-tauri/src/search/store.rs` | DuckDB: chunk storage, full-text search, vector cosine similarity |
-| SearchEngine | `src-tauri/src/search/mod.rs` | Coordinator: initializes components, exposes search methods |
-| Commands | `src-tauri/src/commands/search_commands.rs` | Tauri IPC: `search_regex`, `search_semantic`, `index_codebase`, `get_index_status` |
-| Tool executor | `src-tauri/src/domain/tool_executor.rs` | Handles `search_regex`, `search_semantic`, `code_research` as agent tools |
+| Chunker | `backend/src-tauri/src/search/chunker.rs` | Splits code at semantic boundaries (functions, classes, imports) |
+| Embedder | `backend/src-tauri/src/search/embedder.rs` | ONNX Runtime + bge-small-en-v1.5 (384-dim vectors), DirectML acceleration |
+| Store | `backend/src-tauri/src/search/store.rs` | DuckDB: chunk storage, full-text search, vector cosine similarity |
+| SearchEngine | `backend/src-tauri/src/search/mod.rs` | Coordinator: initializes components, exposes search methods |
+| Commands | `backend/src-tauri/src/commands/search_commands.rs` | Tauri IPC: `search_regex`, `search_semantic`, `index_codebase`, `get_index_status` |
+| Tool executor | `backend/src-tauri/src/domain/tool_executor.rs` | Handles `search_regex`, `search_semantic`, `code_research` as agent tools |
 
 ## Hardware Acceleration
 

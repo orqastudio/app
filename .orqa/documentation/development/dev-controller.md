@@ -1,14 +1,14 @@
 ---
 id: DOC-063
 title: "Dev Controller and OrqaDev Dashboard"
-description: "Architecture of the dev controller (scripts/dev.mjs) and the OrqaDev web dashboard for unified process management and log streaming during development."
+description: "Architecture of the dev controller (debugger/dev.mjs) and the OrqaDev web dashboard for unified process management and log streaming during development."
 created: "2026-03-12"
 updated: "2026-03-12"
 ---
 
 ## Overview
 
-The dev controller (`scripts/dev.mjs`) is a persistent Node.js process that owns the
+The dev controller (`debugger/dev.mjs`) is a persistent Node.js process that owns the
 entire development lifecycle. It spawns and manages Vite and Tauri processes, captures
 their output, and serves the **OrqaDev web dashboard** — a real-time log viewer and
 process control panel accessible at `http://localhost:3001`.
@@ -21,7 +21,7 @@ crash, `taskkill` hangs on MSYS2/Git Bash, and no unified build visibility. See
 
 ```
 ┌─────────────────────────────────────────────┐
-│  Dev Controller (scripts/dev.mjs)           │
+│  Dev Controller (debugger/dev.mjs)           │
 │  Port 3001 — HTTP + SSE                     │
 │                                             │
 │  ┌──────────┐  ┌──────────┐                 │
@@ -119,8 +119,8 @@ See [commands reference](commands.md) for full details.
 
 | File | Purpose |
 |------|---------|
-| `scripts/dev.mjs` | Controller + HTTP/SSE server |
-| `scripts/dev-dashboard.html` | Self-contained dashboard UI (HTML/CSS/JS) |
+| `debugger/dev.mjs` | Controller + HTTP/SSE server |
+| `debugger/dev-dashboard.html` | Self-contained dashboard UI (HTML/CSS/JS) |
 | `tmp/dev-controller.json` | Runtime state (PIDs, status) — gitignored |
 
 ## Why Not `cargo tauri dev`

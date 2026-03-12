@@ -17,14 +17,14 @@ promoted-to: null
 
 ## Motivation
 
-The current OrqaDev dashboard (`scripts/dev-dashboard.html`) bundles the UI and the SSE server together. Separating these concerns — a pure SSE endpoint as the data layer, with multiple consumers — enables richer tooling without coupling to a single HTML page.
+The current OrqaDev dashboard (`debugger/dev-dashboard.html`) bundles the UI and the SSE server together. Separating these concerns — a pure SSE endpoint as the data layer, with multiple consumers — enables richer tooling without coupling to a single HTML page.
 
 ## Sketch
 
 ### Architecture
 
 ```
-Dev Controller (scripts/dev.mjs)
+Dev Controller (debugger/dev.mjs)
   └─ SSE endpoint: GET /events
        ├─ OrqaDev Companion App (dedicated window, richer UI)
        ├─ In-app debug overlay (toggle-on inside OrqaStudio itself)

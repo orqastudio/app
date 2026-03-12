@@ -157,8 +157,8 @@ Rules and skills often reference specific file paths as examples or as enforceme
 Use Grep to find all file path references in governance artifacts:
 
 ```
-grep -r "src-tauri/src/" .orqa/ --include="*.md" -l
-grep -r "ui/lib/" .orqa/ --include="*.md" -l
+grep -r "backend/src-tauri/src/" .orqa/ --include="*.md" -l
+grep -r "ui/src/lib/" .orqa/ --include="*.md" -l
 ```
 
 Then spot-check the referenced paths against disk reality.
@@ -168,14 +168,14 @@ Then spot-check the referenced paths against disk reality.
 Project skills (layer: project) describe actual codebase patterns. When a skill names a specific function, verify the function exists with that name:
 
 ```
-grep -r "fn function_name" src-tauri/src/
+grep -r "fn function_name" backend/src-tauri/src/
 ```
 
 Function renames are the most common source of stale skill content. Focus on skills that document domain services, repository patterns, and IPC commands — these change most frequently as the codebase evolves.
 
 ### Component Names in Rules
 
-Rules that reference specific Svelte component names (e.g., [RULE-024](RULE-024)'s shared component inventory) should be verified against the actual files in `ui/lib/components/`. Component names change as the UI is refactored. A rule pointing to a component that doesn't exist at the path it specifies creates confusion for implementers.
+Rules that reference specific Svelte component names (e.g., [RULE-024](RULE-024)'s shared component inventory) should be verified against the actual files in `ui/src/lib/components/`. Component names change as the UI is refactored. A rule pointing to a component that doesn't exist at the path it specifies creates confusion for implementers.
 
 ### Directory Structure Descriptions
 

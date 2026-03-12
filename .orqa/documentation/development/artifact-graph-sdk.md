@@ -24,7 +24,7 @@ The graph exists to make artifact relationships queryable without reading indivi
 
 The Artifact Graph SDK is a Svelte 5 rune-based module that maintains a local copy of this graph. After `initialize()` is called, all resolution and query methods operate synchronously against the cached data — no IPC round-trips are needed for lookups. Only `readContent()` makes a round-trip, because raw file content is never cached locally.
 
-The SDK lives at `ui/lib/sdk/artifact-graph.svelte.ts` and is exported as a singleton called `artifactGraphSDK`.
+The SDK lives at `ui/src/lib/sdk/artifact-graph.svelte.ts` and is exported as a singleton called `artifactGraphSDK`.
 
 ## Architecture
 
@@ -89,7 +89,7 @@ The app shell (`AppLayout.svelte`) calls `artifactGraphSDK.initialize()` once wh
 
 ### Types
 
-The types are defined in `ui/lib/types/artifact-graph.ts` and mirror the Rust structs in `src-tauri/src/domain/artifact_graph.rs`. Field names use `snake_case` to match the Rust serde serialization output.
+The types are defined in `ui/src/lib/types/artifact-graph.ts` and mirror the Rust structs in `backend/src-tauri/src/domain/artifact_graph.rs`. Field names use `snake_case` to match the Rust serde serialization output.
 
 ```typescript
 interface ArtifactNode {

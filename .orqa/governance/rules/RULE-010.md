@@ -18,7 +18,7 @@ Every feature MUST be implemented across ALL layers in the same commit. Partial 
 
 OrqaStudio is a Tauri desktop app. There is no API gateway — the Tauri IPC bridge IS the boundary between backend and frontend. When adding or modifying ANY feature, ALL of the following layers MUST be updated together:
 
-1. **Rust command** — the `#[tauri::command]` function in `src-tauri/src/` that implements the backend logic
+1. **Rust command** — the `#[tauri::command]` function in `backend/src-tauri/src/` that implements the backend logic
 2. **IPC type** — Rust structs with `Serialize`/`Deserialize` for the command's input/output, AND matching TypeScript interfaces in the frontend
 3. **Svelte component** — the Svelte 5 component that calls the Tauri command via `invoke()`
 4. **Store binding** — the Svelte store (runes-based) that manages the reactive state for this feature

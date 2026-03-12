@@ -97,7 +97,7 @@ Run `git status --short`. If untracked (`??`) or modified (`M`) files exist: com
 
 1. Verify replacement content exists and is committed: `git ls-tree HEAD -- <destination>`
 2. Check for stashed work: `git stash list`
-3. Never delete source-of-truth directories (.orqa/, src-tauri/, ui/, sidecar/, tests/) without explicit user approval
+3. Never delete source-of-truth directories (.orqa/, backend/src-tauri/, ui/, sidecars/orqa-sidecar/, tests/) without explicit user approval
 4. Never `git rm -r` on directories with >5 files without user confirmation
 5. If migrating content between directories, confirm destination is committed BEFORE deleting source
 

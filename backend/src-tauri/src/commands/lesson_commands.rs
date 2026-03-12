@@ -48,4 +48,3 @@ pub fn lesson_increment_recurrence(
 ) -> Result<Lesson, OrqaError> {
     lesson_repo::increment_recurrence(Path::new(&project_path), &id)
 }
-

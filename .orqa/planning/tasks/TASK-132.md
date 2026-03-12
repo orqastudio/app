@@ -18,7 +18,7 @@ Built the settings view for AI provider configuration and model selection, and i
 
 ## How
 
-Implemented the settings UI with form fields backed by settings commands, and set up the native search engine in `src-tauri/src/search/` using the `ort` crate for ONNX inference and DuckDB for vector storage.
+Implemented the settings UI with form fields backed by settings commands, and set up the native search engine in `backend/src-tauri/src/search/` using the `ort` crate for ONNX inference and DuckDB for vector storage.
 
 ## Verification
 

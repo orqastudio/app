@@ -51,13 +51,13 @@ Migrate from the current model (all skills on agent definitions) to three tiers:
 
 | Task Scope | Injected Skills |
 |-----------|----------------|
-| `src-tauri/src/commands/` | `orqa-ipc-patterns`, `orqa-error-composition` |
-| `src-tauri/src/domain/` | `orqa-domain-services`, `orqa-error-composition` |
-| `src-tauri/src/repo/`, `src-tauri/src/db.rs` | `orqa-repository-pattern` |
-| `src-tauri/src/search/` | `orqa-native-search` |
-| `sidecar/src/` | `orqa-streaming` |
-| `ui/lib/stores/` | `orqa-store-patterns`, `orqa-store-orchestration` |
-| `ui/lib/components/` | `orqa-store-patterns` |
+| `backend/src-tauri/src/commands/` | `orqa-ipc-patterns`, `orqa-error-composition` |
+| `backend/src-tauri/src/domain/` | `orqa-domain-services`, `orqa-error-composition` |
+| `backend/src-tauri/src/repo/`, `backend/src-tauri/src/db.rs` | `orqa-repository-pattern` |
+| `backend/src-tauri/src/search/` | `orqa-native-search` |
+| `sidecars/orqa-sidecar/src/` | `orqa-streaming` |
+| `ui/src/lib/stores/` | `orqa-store-patterns`, `orqa-store-orchestration` |
+| `ui/src/lib/components/` | `orqa-store-patterns` |
 | `.orqa/` | `orqa-governance` |
 | Any streaming work | `orqa-streaming` |
 | Any cross-boundary work | `composability` (always injected) |

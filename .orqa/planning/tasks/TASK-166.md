@@ -19,7 +19,7 @@ The frontend needs TypeScript types that match the new Rust backend types so the
 
 ## How
 
-1. Add new interfaces to `ui/lib/types/nav-tree.ts`
+1. Add new interfaces to `ui/src/lib/types/nav-tree.ts`
 2. Extend existing `DocNode` and `NavType` interfaces with the new fields
 3. Add `ArtifactViewState` interface for the navigation store
 

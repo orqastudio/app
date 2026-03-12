@@ -7,7 +7,7 @@ created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-055
 acceptance:
-  - "Every store in ui/lib/stores/ has a corresponding .test.ts file"
+  - "Every store in ui/src/lib/stores/ has a corresponding .test.ts file"
   - "Tests cover: initial state, successful operations, error states, reactive updates"
   - "make test-frontend passes"
   - "Coverage report shows >60% store coverage"
@@ -23,7 +23,7 @@ To be determined during implementation.
 
 ## Verification
 
-- [ ] Every store in ui/lib/stores/ has a corresponding .test.ts file
+- [ ] Every store in ui/src/lib/stores/ has a corresponding .test.ts file
 - [ ] Tests cover: initial state, successful operations, error states, reactive updates
 - [ ] make test-frontend passes
 - [ ] Coverage report shows >60% store coverage

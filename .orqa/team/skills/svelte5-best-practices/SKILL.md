@@ -8,8 +8,8 @@ updated: "2026-03-10"
 layer: project
 scope: [AGENT-001, AGENT-002, AGENT-006]
 file-patterns:
-  - "ui/lib/components/**"
-  - "ui/lib/stores/**"
+  - "ui/src/lib/components/**"
+  - "ui/src/lib/stores/**"
 user-invocable: false
 license: MIT
 metadata:

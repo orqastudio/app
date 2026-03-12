@@ -410,7 +410,13 @@ mod tests {
     }
 
     /// Helper to create a ChunkInfo for testing.
-    fn test_chunk(path: &str, start: u32, end: u32, content: &str, lang: Option<&str>) -> ChunkInfo {
+    fn test_chunk(
+        path: &str,
+        start: u32,
+        end: u32,
+        content: &str,
+        lang: Option<&str>,
+    ) -> ChunkInfo {
         ChunkInfo {
             file_path: path.to_string(),
             start_line: start,
@@ -474,9 +480,21 @@ mod tests {
     fn regex_search_finds_matching_chunks() {
         let store = in_memory_store();
         let chunks = vec![
-            test_chunk("src/main.rs", 1, 10, "fn main() {\n    println!(\"hello\");\n}", Some("rust")),
+            test_chunk(
+                "src/main.rs",
+                1,
+                10,
+                "fn main() {\n    println!(\"hello\");\n}",
+                Some("rust"),
+            ),
             test_chunk("src/lib.rs", 1, 5, "pub mod utils;", Some("rust")),
-            test_chunk("src/utils.rs", 1, 8, "fn helper() {\n    println!(\"world\");\n}", Some("rust")),
+            test_chunk(
+                "src/utils.rs",
+                1,
+                8,
+                "fn helper() {\n    println!(\"world\");\n}",
+                Some("rust"),
+            ),
         ];
         store.insert_chunks(&chunks).unwrap();
 
@@ -541,7 +559,13 @@ mod tests {
         let store = in_memory_store();
         let chunks = vec![
             test_chunk("few.rs", 1, 3, "fn a() {}", Some("rust")),
-            test_chunk("many.rs", 1, 5, "fn a() {}\nfn b() {}\nfn c() {}", Some("rust")),
+            test_chunk(
+                "many.rs",
+                1,
+                5,
+                "fn a() {}\nfn b() {}\nfn c() {}",
+                Some("rust"),
+            ),
         ];
         store.insert_chunks(&chunks).unwrap();
 
@@ -625,8 +649,12 @@ mod tests {
         let close_embedding = vec![1.0f32, 0.0, 0.0];
         let far_embedding = vec![0.0f32, 1.0, 0.0];
 
-        store.update_embedding(unembedded[0].0, &close_embedding).unwrap();
-        store.update_embedding(unembedded[1].0, &far_embedding).unwrap();
+        store
+            .update_embedding(unembedded[0].0, &close_embedding)
+            .unwrap();
+        store
+            .update_embedding(unembedded[1].0, &far_embedding)
+            .unwrap();
 
         let query_embedding = vec![1.0f32, 0.0, 0.0]; // identical to close_embedding
         let results = store.search_semantic(&query_embedding, 10).unwrap();
@@ -641,7 +669,15 @@ mod tests {
     fn semantic_search_respects_max_results() {
         let store = in_memory_store();
         let chunks: Vec<ChunkInfo> = (0..5)
-            .map(|i| test_chunk(&format!("f{i}.rs"), 1, 5, &format!("content {i}"), Some("rust")))
+            .map(|i| {
+                test_chunk(
+                    &format!("f{i}.rs"),
+                    1,
+                    5,
+                    &format!("content {i}"),
+                    Some("rust"),
+                )
+            })
             .collect();
         store.insert_chunks(&chunks).unwrap();
 
@@ -725,7 +761,7 @@ mod tests {
     fn extract_match_context_first_line() {
         let content = "line one\nline two\nline three\nline four";
         let ctx = extract_match_context(content, 0, 4); // match at start of line 1
-        // Should include line 1 and line 2 (no line before line 1)
+                                                        // Should include line 1 and line 2 (no line before line 1)
         assert!(ctx.contains("line one"));
         assert!(ctx.contains("line two"));
     }
@@ -766,9 +802,33 @@ mod tests {
     #[test]
     fn build_semantic_results_sorts_by_score_descending() {
         let rows: Vec<EmbeddedChunkRow> = vec![
-            (1, "low.rs".into(), 1, 5, "low score".into(), Some("rust".into()), vec![0.0, 1.0, 0.0]),
-            (2, "high.rs".into(), 1, 5, "high score".into(), Some("rust".into()), vec![1.0, 0.0, 0.0]),
-            (3, "mid.rs".into(), 1, 5, "mid score".into(), Some("rust".into()), vec![0.7, 0.7, 0.0]),
+            (
+                1,
+                "low.rs".into(),
+                1,
+                5,
+                "low score".into(),
+                Some("rust".into()),
+                vec![0.0, 1.0, 0.0],
+            ),
+            (
+                2,
+                "high.rs".into(),
+                1,
+                5,
+                "high score".into(),
+                Some("rust".into()),
+                vec![1.0, 0.0, 0.0],
+            ),
+            (
+                3,
+                "mid.rs".into(),
+                1,
+                5,
+                "mid score".into(),
+                Some("rust".into()),
+                vec![0.7, 0.7, 0.0],
+            ),
         ];
         let query = vec![1.0f32, 0.0, 0.0];
         let results = build_semantic_results(rows, &query, 10);

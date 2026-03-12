@@ -14,8 +14,8 @@ updated: "2026-03-10"
 layer: project
 scope: [AGENT-002, AGENT-006]
 file-patterns:
-  - "src-tauri/src/domain/**"
-  - "src-tauri/src/commands/**"
+  - "backend/src-tauri/src/domain/**"
+  - "backend/src-tauri/src/commands/**"
 version: 1.0.0
 user-invocable: true
 ---
@@ -26,7 +26,7 @@ OrqaStudio uses a single canonical error type (`OrqaError`) that flows from deep
 ## OrqaError Anatomy
 
 ```rust
-// src-tauri/src/error.rs
+// backend/src-tauri/src/error.rs
 #[derive(Debug, thiserror::Error, Serialize)]
 #[serde(tag = "code", content = "message")]
 pub enum OrqaError {
@@ -111,7 +111,7 @@ conn.execute("INSERT ...", params![...])?;               // rusqlite -> Database
 ### Layer 1: Repository
 
 ```rust
-// src-tauri/src/repo/session_repo.rs
+// backend/src-tauri/src/repo/session_repo.rs
 pub fn get(conn: &Connection, id: i64) -> Result<Session, OrqaError> {
     conn.query_row("SELECT ... WHERE id = ?1", params![id], |row| { Ok(Session { /* ... */ }) })
     .map_err(|e| match e {
@@ -148,7 +148,7 @@ pub fn governance_scan(project_id: i64, state: State<'_, AppState>) -> Result<Go
 ### Layer 5: Frontend Store
 
 ```typescript
-// ui/lib/stores/session.svelte.ts
+// ui/src/lib/stores/session.svelte.ts
 async selectSession(sessionId: number): Promise<void> {
     this.isLoading = true;
     this.error = null;
@@ -165,7 +165,7 @@ async selectSession(sessionId: number): Promise<void> {
 ### Layer 6: Component
 
 ```svelte
-<!-- ui/lib/components/shared/ErrorDisplay.svelte -->
+<!-- ui/src/lib/components/shared/ErrorDisplay.svelte -->
 <div class="flex flex-col items-center justify-center py-8 text-center">
     <CircleAlertIcon class="mb-3 h-10 w-10 text-destructive" />
     <p class="text-sm text-destructive">{message}</p>
@@ -207,7 +207,7 @@ OrqaError::FileSystem(e.to_string())  // What file? What operation?
 
 ## Adding New Error Variants
 
-1. Add the variant to `OrqaError` in `src-tauri/src/error.rs`
+1. Add the variant to `OrqaError` in `backend/src-tauri/src/error.rs`
 2. Add `From` implementation if there is a common external error type
 3. Add a serialization test
 4. Update this skill's variant selection guide
@@ -298,12 +298,12 @@ std::fs::read_to_string(path)?;
 
 | File | Purpose |
 |------|---------|
-| `src-tauri/src/error.rs` | `OrqaError` enum, `From` implementations |
-| `src-tauri/src/repo/*.rs` | Repository layer error conversion |
-| `src-tauri/src/domain/*.rs` | Domain services error propagation |
-| `src-tauri/src/commands/*.rs` | Command handlers returning `Result<T, OrqaError>` |
-| `ui/lib/stores/*.svelte.ts` | Frontend error state |
-| `ui/lib/components/shared/ErrorDisplay.svelte` | Shared error display |
+| `backend/src-tauri/src/error.rs` | `OrqaError` enum, `From` implementations |
+| `backend/src-tauri/src/repo/*.rs` | Repository layer error conversion |
+| `backend/src-tauri/src/domain/*.rs` | Domain services error propagation |
+| `backend/src-tauri/src/commands/*.rs` | Command handlers returning `Result<T, OrqaError>` |
+| `ui/src/lib/stores/*.svelte.ts` | Frontend error state |
+| `ui/src/lib/components/shared/ErrorDisplay.svelte` | Shared error display |
 
 ## Related Skills
 

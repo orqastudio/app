@@ -302,7 +302,10 @@ mod tests {
         let abs = Path::new("C:\\Users\\test\\project\\src\\lib.rs");
         let root = Path::new("C:\\Users\\test\\project");
         let result = rel_path_str(abs, root);
-        assert!(!result.contains('\\'), "should not contain backslashes: {result}");
+        assert!(
+            !result.contains('\\'),
+            "should not contain backslashes: {result}"
+        );
         assert!(result.contains("src"));
     }
 
@@ -416,7 +419,9 @@ mod tests {
 
     #[test]
     fn split_exactly_target_lines() {
-        let lines: Vec<String> = (1..=TARGET_CHUNK_LINES).map(|i| format!("line {i}")).collect();
+        let lines: Vec<String> = (1..=TARGET_CHUNK_LINES)
+            .map(|i| format!("line {i}"))
+            .collect();
         let content = lines.join("\n");
         let chunks = split_into_chunks(&content, "exact.rs", None);
         assert_eq!(chunks.len(), 1);

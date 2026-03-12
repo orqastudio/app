@@ -323,7 +323,7 @@ Features that serve no active pillar are out of scope.
 | `.orqa/team/agents/` | Agent definitions |
 | `.orqa/team/skills/` | Skill definitions |
 | `.orqa/documentation/` | Documentation tree (subdirs: architecture, product, etc.) |
-| `src-tauri/src/domain/artifact.rs` | Frontmatter parsing, artifact types |
-| `src-tauri/src/domain/artifact_reader.rs` | Config-driven recursive scanner |
-| `src-tauri/src/commands/artifact_commands.rs` | Tree scan and read commands |
-| `src-tauri/src/domain/project_settings.rs` | Project settings + ArtifactEntry config types |
+| `backend/src-tauri/src/domain/artifact.rs` | Frontmatter parsing, artifact types |
+| `backend/src-tauri/src/domain/artifact_reader.rs` | Config-driven recursive scanner |
+| `backend/src-tauri/src/commands/artifact_commands.rs` | Tree scan and read commands |
+| `backend/src-tauri/src/domain/project_settings.rs` | Project settings + ArtifactEntry config types |

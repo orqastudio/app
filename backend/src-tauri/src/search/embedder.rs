@@ -298,7 +298,10 @@ mod tests {
         // Mean of [1,0,0,0], [0,1,0,0], [0,0,1,0] = [1/3, 1/3, 1/3, 0]
         // After L2 normalization: each nonzero component = 1/sqrt(3) * (1/3) / (1/3 * sqrt(3))
         let norm: f32 = embeddings[0].iter().map(|x| x * x).sum::<f32>().sqrt();
-        assert!((norm - 1.0).abs() < 1e-5, "embedding should be unit length, got norm={norm}");
+        assert!(
+            (norm - 1.0).abs() < 1e-5,
+            "embedding should be unit length, got norm={norm}"
+        );
     }
 
     #[test]

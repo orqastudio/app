@@ -41,7 +41,7 @@ User types query → Claude uses search tool
 ## 2. Module Structure
 
 ```
-src-tauri/src/search/
+backend/src-tauri/src/search/
 ├── mod.rs           # Public API: SearchEngine struct, init, re-exports
 ├── store.rs         # DuckDB connection, schema creation, queries
 ├── chunker.rs       # File walking (.gitignore-aware), code splitting
@@ -222,7 +222,7 @@ pub fn search_semantic(
 
 Combines regex and semantic search, merging the top results from both into a single response. The query is used as-is for semantic search; for the regex pass the query is treated as a literal pattern (special regex characters are escaped). Results from both modes are returned together so Claude can synthesise a coherent analysis of the codebase.
 
-Implemented in `src-tauri/src/domain/tool_executor.rs` as `tool_code_research()` and in `src-tauri/src/commands/stream_commands.rs`. Available as the `code_research` MCP tool registered in the sidecar.
+Implemented in `backend/src-tauri/src/domain/tool_executor.rs` as `tool_code_research()` and in `backend/src-tauri/src/commands/stream_commands.rs`. Available as the `code_research` MCP tool registered in the sidecar.
 
 ---
 
@@ -270,7 +270,7 @@ All search commands return `Result<T, OrqaError>`. Tauri serialises `OrqaError` 
 
 ## 8. Sidecar Tool Integration
 
-Tools are registered in the orqa-studio MCP server (`sidecar/src/provider.ts`):
+Tools are registered in the orqa-studio MCP server (`sidecars/orqa-sidecar/src/provider.ts`):
 
 | Tool | Sidecar Name | Auto-approve | Description |
 |------|-------------|--------------|-------------|

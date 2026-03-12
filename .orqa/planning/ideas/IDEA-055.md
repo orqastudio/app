@@ -8,7 +8,7 @@ updated: "2026-03-11"
 pillars:
   - PILLAR-001
 research-needed:
-  - How are tools currently implemented? (Rust functions in src-tauri/src/tools/, registered in the tool registry)
+  - How are tools currently implemented? (Rust functions in backend/src-tauri/src/tools/, registered in the tool registry)
   - What is the current tool registration mechanism? (compile-time or runtime?)
   - Could tools be defined as WASM modules, external scripts, or MCP servers instead of Rust functions?
   - How does MCP's tool protocol relate to this? (MCP already defines a tool interface — could native tools use the same protocol?)

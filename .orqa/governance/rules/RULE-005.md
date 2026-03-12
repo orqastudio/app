@@ -19,7 +19,7 @@ OrqaStudio has two independent search implementations that provide the same thre
 | **CLI** (Claude Code terminal) | `chunkhound` | External MCP server, localhost:11435, OpenAI-compatible embedding API | `mcp__chunkhound__search_regex`, `mcp__chunkhound__search_semantic`, `mcp__chunkhound__code_research` |
 | **App** (OrqaStudio UI) | `orqa-native-search` | Embedded Rust engine, ONNX Runtime + DuckDB, no HTTP server | `search_regex`, `search_semantic`, `code_research` |
 
-**These are completely independent implementations.** ChunkHound is an external Python tool accessed via MCP protocol. The native search engine is Rust code in `src-tauri/src/search/` using the `ort` crate for ONNX and DuckDB for storage. They share the same tool names and query patterns but have no code in common.
+**These are completely independent implementations.** ChunkHound is an external Python tool accessed via MCP protocol. The native search engine is Rust code in `backend/src-tauri/src/search/` using the `ort` crate for ONNX and DuckDB for storage. They share the same tool names and query patterns but have no code in common.
 
 ## How to Determine Your Context
 

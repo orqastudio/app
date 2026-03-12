@@ -15,10 +15,10 @@ Full table definitions, indexes, FTS5 configuration, and migration strategy for 
 
 ## Database Configuration
 
-PRAGMAs are set by `db::init_db()` in `src-tauri/src/db.rs` using `rusqlite` (NOT `tauri-plugin-sql`). The database is opened directly via `rusqlite::Connection::open()` and wrapped in `Mutex<Connection>` inside `AppState`.
+PRAGMAs are set by `db::init_db()` in `backend/src-tauri/src/db.rs` using `rusqlite` (NOT `tauri-plugin-sql`). The database is opened directly via `rusqlite::Connection::open()` and wrapped in `Mutex<Connection>` inside `AppState`.
 
 ```rust
-// src-tauri/src/db.rs — init_db()
+// backend/src-tauri/src/db.rs — init_db()
 conn.execute_batch("
     PRAGMA journal_mode = WAL;
     PRAGMA foreign_keys = ON;
@@ -401,10 +401,10 @@ CREATE VIRTUAL TABLE IF NOT EXISTS artifacts_fts USING fts5(
 
 ### Approach
 
-Numbered SQL migration files in `src-tauri/migrations/`, executed by `db::init_db()` using `rusqlite` directly (NOT `tauri-plugin-sql`). Migrations 001–003 are loaded via `include_str!()` and are fully idempotent. Migrations 004–006 are implemented as Rust functions in `src-tauri/src/db.rs` using `pragma_table_info` guards because SQLite does not support `ALTER TABLE ADD/RENAME COLUMN IF NOT EXISTS`.
+Numbered SQL migration files in `backend/src-tauri/migrations/`, executed by `db::init_db()` using `rusqlite` directly (NOT `tauri-plugin-sql`). Migrations 001–003 are loaded via `include_str!()` and are fully idempotent. Migrations 004–006 are implemented as Rust functions in `backend/src-tauri/src/db.rs` using `pragma_table_info` guards because SQLite does not support `ALTER TABLE ADD/RENAME COLUMN IF NOT EXISTS`.
 
 ```
-src-tauri/migrations/
+backend/src-tauri/migrations/
   001_initial_schema.sql         # Core tables, indexes, FTS5 virtual tables, stream recovery
   002_governance_bootstrap.sql   # governance_analyses, governance_recommendations
   003_enforcement.sql            # enforcement_violations
@@ -419,7 +419,7 @@ Migration 006 (rename `sdk_session_id` → `provider_session_id`) has no corresp
 `db::init_db()` opens the database with `rusqlite::Connection::open()`, applies PRAGMAs, then runs all migrations in order:
 
 ```rust
-// src-tauri/src/db.rs
+// backend/src-tauri/src/db.rs
 pub fn init_db(path: &str) -> Result<Connection, OrqaError> {
     let conn = Connection::open(path)?;
     conn.execute_batch("PRAGMA journal_mode = WAL; ...");

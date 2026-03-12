@@ -10,32 +10,32 @@ scope: [AGENT-003]
 promoted-from: null
 enforcement:
   - event: file
-    paths: ["src-tauri/src/domain/**"]
+    paths: ["backend/src-tauri/src/domain/**"]
     action: inject
     skills: [orqa-domain-services, orqa-error-composition]
     message: "Injecting domain service and error composition patterns."
   - event: file
-    paths: ["src-tauri/src/commands/**"]
+    paths: ["backend/src-tauri/src/commands/**"]
     action: inject
     skills: [orqa-ipc-patterns, orqa-error-composition]
     message: "Injecting IPC patterns and error composition."
   - event: file
-    paths: ["src-tauri/src/repo/**"]
+    paths: ["backend/src-tauri/src/repo/**"]
     action: inject
     skills: [orqa-repository-pattern]
     message: "Injecting repository pattern."
   - event: file
-    paths: ["sidecar/src/**"]
+    paths: ["sidecars/orqa-sidecar/src/**"]
     action: inject
     skills: [orqa-streaming]
     message: "Injecting streaming patterns."
   - event: file
-    paths: ["ui/lib/components/**"]
+    paths: ["ui/src/lib/components/**"]
     action: inject
     skills: [component-extraction, svelte5-best-practices]
     message: "Injecting component extraction and Svelte 5 patterns."
   - event: file
-    paths: ["ui/lib/stores/**"]
+    paths: ["ui/src/lib/stores/**"]
     action: inject
     skills: [orqa-store-patterns, orqa-store-orchestration]
     message: "Injecting store patterns and orchestration."
@@ -61,18 +61,18 @@ agent's context.
 
 | File Path Pattern | Injected Skills | Why |
 |------------------|-----------------|-----|
-| `src-tauri/src/domain/**` | `orqa-domain-services`, `orqa-error-composition` | Domain logic needs service anatomy and error flow |
-| `src-tauri/src/commands/**` | `orqa-ipc-patterns`, `orqa-error-composition` | IPC boundary needs contract discipline |
-| `src-tauri/src/repo/**` | `orqa-repository-pattern` | Data access has specific patterns |
-| `sidecar/src/**` | `orqa-streaming` | Sidecar protocol is fragile |
-| `ui/lib/components/**` | `component-extraction`, `svelte5-best-practices` | Components need purity discipline |
-| `ui/lib/stores/**` | `orqa-store-patterns`, `orqa-store-orchestration` | Reactive state needs specific patterns |
+| `backend/src-tauri/src/domain/**` | `orqa-domain-services`, `orqa-error-composition` | Domain logic needs service anatomy and error flow |
+| `backend/src-tauri/src/commands/**` | `orqa-ipc-patterns`, `orqa-error-composition` | IPC boundary needs contract discipline |
+| `backend/src-tauri/src/repo/**` | `orqa-repository-pattern` | Data access has specific patterns |
+| `sidecars/orqa-sidecar/src/**` | `orqa-streaming` | Sidecar protocol is fragile |
+| `ui/src/lib/components/**` | `component-extraction`, `svelte5-best-practices` | Components need purity discipline |
+| `ui/src/lib/stores/**` | `orqa-store-patterns`, `orqa-store-orchestration` | Reactive state needs specific patterns |
 | `.orqa/**` | `orqa-governance`, `orqa-documentation` | Artifacts need structural consistency |
 
 ## Deduplication
 
-Skills are injected once per session. If an agent writes to `src-tauri/src/domain/foo.rs`
-and then `src-tauri/src/domain/bar.rs`, the domain skills are only injected on the first
+Skills are injected once per session. If an agent writes to `backend/src-tauri/src/domain/foo.rs`
+and then `backend/src-tauri/src/domain/bar.rs`, the domain skills are only injected on the first
 write. The enforcement engine tracks injected skills per session and skips re-injection.
 
 ## Adding New Injection Mappings

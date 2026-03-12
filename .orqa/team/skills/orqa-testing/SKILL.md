@@ -16,7 +16,7 @@ user-invocable: true
 ---
 
 
-OrqaStudio uses `make` targets for all test commands. Tests are organized by layer: Rust unit tests inline with source, Rust integration tests in `src-tauri/tests/`, frontend unit tests alongside components, and E2E tests in `tests/`.
+OrqaStudio uses `make` targets for all test commands. Tests are organized by layer: Rust unit tests inline with source, Rust integration tests in `backend/src-tauri/tests/`, frontend unit tests alongside components, and E2E tests in `tests/`.
 
 ## Test Commands (MANDATORY)
 
@@ -34,7 +34,7 @@ make check           # ALL checks: fmt + clippy + tests + svelte-check + lint
 ## Test File Organization
 
 ```
-src-tauri/
+backend/src-tauri/
   src/
     domain/
       project.rs          # Domain logic
@@ -64,7 +64,7 @@ tests/                         # E2E tests (Playwright)
 ### Unit Test (Inline)
 
 ```rust
-// src-tauri/src/domain/artifact.rs
+// backend/src-tauri/src/domain/artifact.rs
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -97,7 +97,7 @@ mod tests {
 ### Integration Test
 
 ```rust
-// src-tauri/tests/session_integration.rs
+// backend/src-tauri/tests/session_integration.rs
 use orqa_studio::domain::project::Project;
 use orqa_studio::repo::{project_repo, session_repo};
 
@@ -127,7 +127,7 @@ fn create_session_with_valid_project() {
 ### Store Test
 
 ```typescript
-// ui/lib/stores/session.test.ts
+// ui/src/lib/stores/session.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock the invoke wrapper
@@ -167,7 +167,7 @@ describe('SessionStore', () => {
 ### Component Test
 
 ```typescript
-// ui/lib/components/layout/StatusBar.test.ts
+// ui/src/lib/components/layout/StatusBar.test.ts
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/svelte';
 import StatusBar from './StatusBar.svelte';
@@ -248,8 +248,8 @@ it('handles load failure', async () => {
 | File | Purpose |
 |------|---------|
 | `Makefile` | All test targets (test, test-rust, test-frontend, etc.) |
-| `src-tauri/src/` | Rust unit tests (inline `#[cfg(test)]` modules) |
-| `src-tauri/tests/` | Rust integration tests |
+| `backend/src-tauri/src/` | Rust unit tests (inline `#[cfg(test)]` modules) |
+| `backend/src-tauri/tests/` | Rust integration tests |
 | `ui/**/*.test.ts` | Frontend unit tests (Vitest) |
 | `tests/` | E2E tests (Playwright) |
 | `vitest.config.ts` | Vitest configuration |

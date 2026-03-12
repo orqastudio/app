@@ -22,7 +22,7 @@ Populate the `docs` field on existing tasks so that agents implementing those ta
 1. For each todo task, read its `scope` and `epic` fields
 2. Determine relevant documentation based on:
    - Epic's `docs-required` and `docs-produced`
-   - File paths in scope (e.g., `src-tauri/` → architecture/rust-modules.md, architecture/ipc-commands.md)
+   - File paths in scope (e.g., `backend/src-tauri/` → architecture/rust-modules.md, architecture/ipc-commands.md)
    - Git history showing which docs were read before similar past implementations
 3. Add `docs:` array to task frontmatter
 
@@ -30,5 +30,5 @@ Populate the `docs` field on existing tasks so that agents implementing those ta
 
 - All todo tasks have a `docs` field (array of strings or empty array)
 - Referenced documentation paths exist on disk
-- Tasks touching `src-tauri/` reference coding-standards.md
+- Tasks touching `backend/src-tauri/` reference coding-standards.md
 - Tasks touching `.orqa/` reference artifact-framework.md where relevant

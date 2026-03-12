@@ -35,7 +35,7 @@ enforcement:
         pattern: "regex pattern"
     pattern: "regex pattern"              # bash/prompt events: single pattern
     paths:                                # file events: glob patterns restricting scope
-      - "src-tauri/**/*.rs"
+      - "backend/src-tauri/**/*.rs"
     scope: "glob pattern"                 # scan events: files to scan
     skills:                               # inject action: skill names to load
       - skill-name
@@ -79,7 +79,7 @@ Process gates enforce the structured thinking sequence at workflow transitions. 
 
 ### WorkflowTracker
 
-The `WorkflowTracker` (`src-tauri/src/domain/workflow_tracker.rs`) tracks session-level events:
+The `WorkflowTracker` (`backend/src-tauri/src/domain/workflow_tracker.rs`) tracks session-level events:
 
 | Event Category | Tracked Data | Purpose |
 |----------------|-------------|---------|
@@ -98,7 +98,7 @@ The tracker is stored in `AppState` behind a `Mutex<WorkflowTracker>` and shared
 
 ### Gate Definitions
 
-Gates are evaluated by `evaluate_process_gates()` (`src-tauri/src/domain/process_gates.rs`). Each gate returns a `GateResult` with a thinking prompt message when fired.
+Gates are evaluated by `evaluate_process_gates()` (`backend/src-tauri/src/domain/process_gates.rs`). Each gate returns a `GateResult` with a thinking prompt message when fired.
 
 | Gate | Fires When | Checks | Injected Prompt |
 |------|-----------|--------|-----------------|
@@ -140,12 +140,12 @@ When agents touch specific code areas, the enforcement system automatically inje
 
 | Path Pattern | Injected Skills | Purpose |
 |-------------|----------------|---------|
-| `src-tauri/src/domain/**/*.rs` | `orqa-domain-services`, `orqa-error-composition` | Domain logic patterns |
-| `src-tauri/src/commands/**/*.rs` | `orqa-ipc-patterns`, `orqa-error-composition` | IPC boundary discipline |
-| `src-tauri/src/repo/**/*.rs` | `orqa-repository-pattern` | Data access patterns |
-| `sidecar/src/**` | `orqa-streaming` | Streaming pipeline protocol |
-| `ui/lib/components/**/*.svelte` | `component-extraction`, `svelte5-best-practices` | Component purity |
-| `ui/lib/stores/**/*.svelte.ts` | `orqa-store-patterns`, `orqa-store-orchestration` | Reactive state patterns |
+| `backend/src-tauri/src/domain/**/*.rs` | `orqa-domain-services`, `orqa-error-composition` | Domain logic patterns |
+| `backend/src-tauri/src/commands/**/*.rs` | `orqa-ipc-patterns`, `orqa-error-composition` | IPC boundary discipline |
+| `backend/src-tauri/src/repo/**/*.rs` | `orqa-repository-pattern` | Data access patterns |
+| `sidecars/orqa-sidecar/src/**` | `orqa-streaming` | Streaming pipeline protocol |
+| `ui/src/lib/components/**/*.svelte` | `component-extraction`, `svelte5-best-practices` | Component purity |
+| `ui/src/lib/stores/**/*.svelte.ts` | `orqa-store-patterns`, `orqa-store-orchestration` | Reactive state patterns |
 | `.orqa/**` | `orqa-governance`, `orqa-documentation` | Artifact consistency |
 
 ### Deduplication
@@ -249,7 +249,7 @@ The CLI plugin uses keyword-based intent classification via `prompt-injector.mjs
 
 ### App Implementation (Native)
 
-The app uses semantic similarity via the `SkillInjector` (`src-tauri/src/domain/skill_injector.rs`):
+The app uses semantic similarity via the `SkillInjector` (`backend/src-tauri/src/domain/skill_injector.rs`):
 
 1. On startup, all skills are discovered from `.orqa/team/skills/*/SKILL.md`
 2. Each skill's `description:` frontmatter field is extracted
@@ -272,7 +272,7 @@ The app uses semantic similarity via the `SkillInjector` (`src-tauri/src/domain/
 ## Rust Module Structure
 
 ```text
-src-tauri/src/domain/
+backend/src-tauri/src/domain/
   enforcement.rs            -- Type definitions: EventType, RuleAction, EnforcementEntry,
                                EnforcementRule, Verdict, ScanFinding, Condition
   enforcement_parser.rs     -- YAML frontmatter parsing: split_frontmatter(),
@@ -289,7 +289,7 @@ src-tauri/src/domain/
 ### Supporting Modules
 
 ```text
-src-tauri/src/
+backend/src-tauri/src/
   repo/
     enforcement_rules_repo.rs -- load_rules(): reads .orqa/governance/rules/*.md from disk
   state.rs                    -- AppState: holds EnforcementEngine, WorkflowTracker,

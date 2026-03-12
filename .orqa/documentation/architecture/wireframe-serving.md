@@ -153,7 +153,7 @@ The `image_path` column stores the path relative to the project root (e.g., `.or
 This table is added as a new migration file:
 
 ```sql
--- src-tauri/migrations/003_wireframe_cache.sql
+-- backend/src-tauri/migrations/003_wireframe_cache.sql
 CREATE TABLE IF NOT EXISTS wireframe_cache (
     -- (full definition as above)
 );
@@ -460,7 +460,7 @@ The rendered wireframe images must be accessible to Tauri's WebView for display 
 Register a custom protocol handler in Tauri that serves files from the cache directory:
 
 ```rust
-// src-tauri/src/lib.rs
+// backend/src-tauri/src/lib.rs
 tauri::Builder::default()
     .register_asynchronous_uri_scheme_protocol("orqa", |_ctx, request, responder| {
         // Parse: orqa://wireframe/core-layout?theme=dark&format=png

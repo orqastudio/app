@@ -24,7 +24,7 @@ A skill's `layer` field declares its portability scope. Content within the skill
 
 Core skills (`layer: core`) MUST NOT contain:
 
-- Project-specific file paths (e.g., `src-tauri/src/domain/sessions.rs`)
+- Project-specific file paths (e.g., `backend/src-tauri/src/domain/sessions.rs`)
 - Architecture decision references from this project (e.g., [AD-001](AD-001), [AD-005](AD-005))
 - Project-specific config values (hardcoded URLs, service names, environment variables)
 - Enforcement rules that belong in `.orqa/governance/rules/`

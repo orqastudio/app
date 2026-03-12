@@ -29,7 +29,7 @@ Verify all enforcement layers work end-to-end:
 
 ## How
 
-1. Gate test: Write to `src-tauri/` with no prior reads → understand-first warning
+1. Gate test: Write to `backend/src-tauri/` with no prior reads → understand-first warning
 2. Gate test: Read docs first, then write → no warning
 3. Injection test: Edit domain file → skills injected as systemMessage
 4. Injection test: Second edit same area → skills NOT re-injected

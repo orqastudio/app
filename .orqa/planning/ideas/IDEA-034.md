@@ -26,7 +26,7 @@ Build a structured enforcement model where rules declare **when they apply** usi
 
 ```yaml
 applies-to:
-  paths: ["src-tauri/src/**/*.rs"]       # file path globs
+  paths: ["backend/src-tauri/src/**/*.rs"]       # file path globs
   artifacts: ["EPIC-*", "TASK-*"]        # artifact type patterns
   agents: ["implementer", "reviewer"]     # agent roles
   events: ["pre-commit", "task-start"]    # lifecycle events

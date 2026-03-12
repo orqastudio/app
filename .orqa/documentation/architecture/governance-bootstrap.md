@@ -101,15 +101,15 @@ The governance bootstrap wizard appears when a project is opened and meets one o
 
 | File | Change |
 |------|--------|
-| `src-tauri/src/domain/governance.rs` | New — governance domain types (scan results, recommendations, analysis) |
-| `src-tauri/src/domain/governance_scanner.rs` | New — filesystem walk to collect governance files |
-| `src-tauri/src/domain/mod.rs` | Add `pub mod governance;` and `pub mod governance_scanner;` |
-| `src-tauri/src/repo/governance_repo.rs` | New — CRUD for analyses and recommendations (SQLite) |
-| `src-tauri/src/repo/mod.rs` | Add `pub mod governance_repo;` |
-| `src-tauri/src/commands/governance_commands.rs` | New — Tauri commands for scan, analyze, list, update, apply |
-| `src-tauri/src/commands/mod.rs` | Add `pub mod governance_commands;` |
-| `src-tauri/src/lib.rs` | Register governance commands in Tauri app builder |
-| `src-tauri/migrations/002_governance_bootstrap.sql` | New — governance tables |
+| `backend/src-tauri/src/domain/governance.rs` | New — governance domain types (scan results, recommendations, analysis) |
+| `backend/src-tauri/src/domain/governance_scanner.rs` | New — filesystem walk to collect governance files |
+| `backend/src-tauri/src/domain/mod.rs` | Add `pub mod governance;` and `pub mod governance_scanner;` |
+| `backend/src-tauri/src/repo/governance_repo.rs` | New — CRUD for analyses and recommendations (SQLite) |
+| `backend/src-tauri/src/repo/mod.rs` | Add `pub mod governance_repo;` |
+| `backend/src-tauri/src/commands/governance_commands.rs` | New — Tauri commands for scan, analyze, list, update, apply |
+| `backend/src-tauri/src/commands/mod.rs` | Add `pub mod governance_commands;` |
+| `backend/src-tauri/src/lib.rs` | Register governance commands in Tauri app builder |
+| `backend/src-tauri/migrations/002_governance_bootstrap.sql` | New — governance tables |
 
 ## SQLite Schema (Migration 002)
 
@@ -265,13 +265,13 @@ pub struct AnalysisOutput {
 
 | File | Change |
 |------|--------|
-| `ui/lib/types/governance.ts` | New — TypeScript interfaces matching Rust types |
-| `ui/lib/stores/governance.svelte.ts` | New — governance store: scan state, analysis state, recommendations list, actions |
-| `ui/lib/components/governance/GovernanceBootstrapWizard.svelte` | New — wizard overlay container with step navigation |
-| `ui/lib/components/governance/GovernanceScanPanel.svelte` | New — scan results display with coverage indicator |
-| `ui/lib/components/governance/RecommendationList.svelte` | New — scrollable list of recommendation cards |
-| `ui/lib/components/governance/RecommendationCard.svelte` | New — individual recommendation with approve/reject/preview |
-| `ui/lib/components/governance/CoverageIndicator.svelte` | New — visual indicator of governance area coverage |
+| `ui/src/lib/types/governance.ts` | New — TypeScript interfaces matching Rust types |
+| `ui/src/lib/stores/governance.svelte.ts` | New — governance store: scan state, analysis state, recommendations list, actions |
+| `ui/src/lib/components/governance/GovernanceBootstrapWizard.svelte` | New — wizard overlay container with step navigation |
+| `ui/src/lib/components/governance/GovernanceScanPanel.svelte` | New — scan results display with coverage indicator |
+| `ui/src/lib/components/governance/RecommendationList.svelte` | New — scrollable list of recommendation cards |
+| `ui/src/lib/components/governance/RecommendationCard.svelte` | New — individual recommendation with approve/reject/preview |
+| `ui/src/lib/components/governance/CoverageIndicator.svelte` | New — visual indicator of governance area coverage |
 | Project dashboard component | Add governance health badge and "Re-analyze" button |
 
 ## Component State Table

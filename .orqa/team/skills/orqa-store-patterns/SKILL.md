@@ -12,13 +12,13 @@ updated: "2026-03-10"
 layer: project
 scope: [AGENT-002, AGENT-006]
 file-patterns:
-  - "ui/lib/stores/**"
+  - "ui/src/lib/stores/**"
 version: 1.0.0
 user-invocable: true
 ---
 
 
-OrqaStudio uses Svelte 5 rune-based stores exclusively. All stores live in `ui/lib/stores/*.svelte.ts` files and use class-based patterns with `$state` and `$derived`.
+OrqaStudio uses Svelte 5 rune-based stores exclusively. All stores live in `ui/src/lib/stores/*.svelte.ts` files and use class-based patterns with `$state` and `$derived`.
 
 ## Patterns
 
@@ -27,7 +27,7 @@ OrqaStudio uses Svelte 5 rune-based stores exclusively. All stores live in `ui/l
 Orqa stores use a class instantiated as a module-level singleton:
 
 ```typescript
-// ui/lib/stores/navigation.svelte.ts
+// ui/src/lib/stores/navigation.svelte.ts
 export type ActivityView = "chat" | "project" | "docs" | "research" | "plans" | "agents" | "rules" | "lessons" | "skills" | "hooks" | "settings" | "configure";
 
 class NavigationStore {
@@ -66,7 +66,7 @@ export const navigationStore = new NavigationStore();
 Stores that fetch from the Rust backend MUST handle three states: loading, loaded, error.
 
 ```typescript
-// ui/lib/stores/conversation.svelte.ts
+// ui/src/lib/stores/conversation.svelte.ts
 class ConversationStore {
     messages = $state<Message[]>([]);
     isLoading = $state(false);
@@ -260,9 +260,9 @@ $: filteredItems = items.filter(i => i.active);
 
 | File | Purpose |
 |------|---------|
-| `ui/lib/stores/conversation.svelte.ts` | Conversation/streaming state (most complex store) |
-| `ui/lib/stores/navigation.svelte.ts` | Activity view, nav panel, artifact selection |
-| `ui/lib/stores/session.svelte.ts` | Session lifecycle (create, list, select, delete) |
-| `ui/lib/stores/artifact.svelte.ts` | Document/research/plan tree scanning and content |
-| `ui/lib/stores/project.svelte.ts` | Project settings and status |
-| `ui/lib/ipc/invoke.ts` | Typed invoke wrapper used by all stores |
+| `ui/src/lib/stores/conversation.svelte.ts` | Conversation/streaming state (most complex store) |
+| `ui/src/lib/stores/navigation.svelte.ts` | Activity view, nav panel, artifact selection |
+| `ui/src/lib/stores/session.svelte.ts` | Session lifecycle (create, list, select, delete) |
+| `ui/src/lib/stores/artifact.svelte.ts` | Document/research/plan tree scanning and content |
+| `ui/src/lib/stores/project.svelte.ts` | Project settings and status |
+| `ui/src/lib/ipc/invoke.ts` | Typed invoke wrapper used by all stores |

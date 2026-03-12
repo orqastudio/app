@@ -29,6 +29,6 @@ Two process gates:
 
 ## Verification
 
-- Write to `src-tauri/` with no prior reads → warning fires
+- Write to `backend/src-tauri/` with no prior reads → warning fires
 - Read docs first, then write → no warning
 - Warning only fires once per session

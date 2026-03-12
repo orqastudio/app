@@ -26,7 +26,7 @@ The reactive logic that connects the toolbar controls to the artifact list rende
 
 1. Add `viewStates: Record<string, ArtifactViewState>` to NavigationStore
 2. On `navigateToPath`, initialise the view state from `_navigation.json` defaults if not already set
-3. Create utility functions in a new `ui/lib/utils/artifact-view.ts`:
+3. Create utility functions in a new `ui/src/lib/utils/artifact-view.ts`:
    - `applyFilters(nodes, filters)` — filter DocNode array by frontmatter values
    - `applySort(nodes, sort)` — sort DocNode array by field with direction
    - `applyGrouping(nodes, groupField, groupOrder, filterableFields)` — partition into ordered groups

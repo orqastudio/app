@@ -1,7 +1,7 @@
 ---
 id: TASK-075
 title: Build frontend Artifact Graph SDK with subscription API
-description: Create a typed Svelte 5 rune store at ui/lib/sdk/artifact-graph.svelte.ts wrapping the Tauri commands with synchronous in-memory lookups and a plugin subscription API.
+description: Create a typed Svelte 5 rune store at ui/src/lib/sdk/artifact-graph.svelte.ts wrapping the Tauri commands with synchronous in-memory lookups and a plugin subscription API.
 status: done
 created: "2026-03-10"
 updated: "2026-03-10"

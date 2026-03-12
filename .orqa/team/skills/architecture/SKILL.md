@@ -101,12 +101,12 @@ The domain layer depends only on the trait. Implementations are injected at star
 
 | Layer | Responsibility | Location |
 |-------|---------------|----------|
-| UI Components | Render data, capture user input | `ui/lib/components/` |
-| Pages/Containers | Fetch data via `invoke()`, manage loading states | `ui/routes/` |
-| Runes Stores | Client-side state, cache, optimistic updates | `ui/lib/stores/` |
-| IPC Commands | Validate input, orchestrate domain calls, serialize response | `src-tauri/src/commands/` |
-| Domain | Business logic, pure functions, type definitions | `src-tauri/src/domain/` |
-| Persistence | SQLite queries, file I/O, external API calls | `src-tauri/src/repo/` |
+| UI Components | Render data, capture user input | `ui/src/lib/components/` |
+| Pages/Containers | Fetch data via `invoke()`, manage loading states | `ui/src/routes/` |
+| Runes Stores | Client-side state, cache, optimistic updates | `ui/src/lib/stores/` |
+| IPC Commands | Validate input, orchestrate domain calls, serialize response | `backend/src-tauri/src/commands/` |
+| Domain | Business logic, pure functions, type definitions | `backend/src-tauri/src/domain/` |
+| Persistence | SQLite queries, file I/O, external API calls | `backend/src-tauri/src/repo/` |
 
 ### Identifying Architectural Violations
 

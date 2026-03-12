@@ -102,7 +102,7 @@ ArtifactRef { target_id, field, source_id }
 
 ### Part 3: Frontend Artifact Graph SDK [RES-034](RES-034)
 
-Typed Svelte 5 rune store at `ui/lib/sdk/artifact-graph.svelte.ts`:
+Typed Svelte 5 rune store at `ui/src/lib/sdk/artifact-graph.svelte.ts`:
 
 ```typescript
 class ArtifactGraphSDK {
@@ -236,15 +236,15 @@ This protects production governance data during development. The skill reference
 | [TASK-070](TASK-070) | Document body templates in artifact-framework.md and schema.json | .orqa/documentation/, .orqa/**/schema.json |
 | [TASK-071](TASK-071) | Add body template linting to pre-commit hook | .githooks/validate-schema.mjs |
 | [TASK-072](TASK-072) | Backfill existing artifacts to match body templates | .orqa/planning/, .orqa/governance/ |
-| [TASK-073](TASK-073) | Build backend artifact node graph with bidirectional references | src-tauri/src/domain/ |
-| [TASK-074](TASK-074) | Add artifact graph Tauri commands | src-tauri/src/commands/ |
-| [TASK-075](TASK-075) | Build frontend Artifact Graph SDK with subscription API | ui/lib/sdk/ |
-| [TASK-076](TASK-076) | Migrate stores to SDK: replace artifact/navigation store ad-hoc patterns | ui/lib/stores/ |
-| [TASK-082](TASK-082) | Migrate viewer components to SDK: frontmatter from graph, link handling | ui/lib/components/artifact/*Viewer.svelte |
-| [TASK-083](TASK-083) | Migrate nav and linking to SDK: ArtifactLink, ArtifactNav, FrontmatterHeader, AppLayout | ui/lib/components/ |
-| [TASK-077](TASK-077) | Broken link styling and path validation | ui/lib/components/artifact/ |
-| [TASK-078](TASK-078) | Markdown cross-linking in MarkdownRenderer | ui/lib/components/shared/ |
-| [TASK-079](TASK-079) | File watcher for .orqa/ with graph rebuild and event emission | src-tauri/src/ |
+| [TASK-073](TASK-073) | Build backend artifact node graph with bidirectional references | backend/src-tauri/src/domain/ |
+| [TASK-074](TASK-074) | Add artifact graph Tauri commands | backend/src-tauri/src/commands/ |
+| [TASK-075](TASK-075) | Build frontend Artifact Graph SDK with subscription API | ui/src/lib/sdk/ |
+| [TASK-076](TASK-076) | Migrate stores to SDK: replace artifact/navigation store ad-hoc patterns | ui/src/lib/stores/ |
+| [TASK-082](TASK-082) | Migrate viewer components to SDK: frontmatter from graph, link handling | ui/src/lib/components/artifact/*Viewer.svelte |
+| [TASK-083](TASK-083) | Migrate nav and linking to SDK: ArtifactLink, ArtifactNav, FrontmatterHeader, AppLayout | ui/src/lib/components/ |
+| [TASK-077](TASK-077) | Broken link styling and path validation | ui/src/lib/components/artifact/ |
+| [TASK-078](TASK-078) | Markdown cross-linking in MarkdownRenderer | ui/src/lib/components/shared/ |
+| [TASK-079](TASK-079) | File watcher for .orqa/ with graph rebuild and event emission | backend/src-tauri/src/ |
 | [TASK-080](TASK-080) | Write Artifact Graph SDK documentation | .orqa/documentation/development/ |
 | [TASK-081](TASK-081) | Create orqa-plugin-development skill (new project + seed data approach) | .orqa/team/skills/ |
 

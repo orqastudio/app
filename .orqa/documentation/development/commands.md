@@ -22,11 +22,11 @@ Install all project dependencies: frontend Node.js packages, sidecar Bun package
 
 ```bash
 npm install
-cd sidecar && bun install
-cargo fetch --manifest-path src-tauri/Cargo.toml
+cd sidecars/orqa-sidecar && bun install
+cargo fetch --manifest-path backend/src-tauri/Cargo.toml
 ```
 
-**When to use:** After cloning the repository for the first time, or after pulling changes that modify `package.json`, `sidecar/package.json`, or `Cargo.toml`.
+**When to use:** After cloning the repository for the first time, or after pulling changes that modify `package.json`, `sidecars/orqa-sidecar/package.json`, or `Cargo.toml`.
 
 ---
 
@@ -37,7 +37,7 @@ Build the Agent SDK sidecar binary.
 **Underlying command:**
 
 ```bash
-bun build sidecar/index.ts --compile --outfile src-tauri/binaries/sidecar
+bun build sidecars/orqa-sidecar/index.ts --compile --outfile backend/src-tauri/binaries/sidecar
 ```
 
 **When to use:** After cloning the repository for the first time, after pulling changes to the sidecar source, or when the sidecar binary is missing or stale. Requires Bun 1.0+.
@@ -53,7 +53,7 @@ Start the full dev environment. Spawns the dev controller as a detached backgrou
 **Underlying command:**
 
 ```bash
-node scripts/dev.mjs dev
+node debugger/dev.mjs dev
 ```
 
 **What it does:**
@@ -72,7 +72,7 @@ Start the dev controller in the foreground — a persistent Node process that ow
 **Underlying command:**
 
 ```bash
-node scripts/dev.mjs start
+node debugger/dev.mjs start
 ```
 
 **What it does:**
@@ -94,7 +94,7 @@ Signal the dev controller to kill the Tauri app binary, recompile, and relaunch.
 **Underlying command:**
 
 ```bash
-node scripts/dev.mjs restart-tauri
+node debugger/dev.mjs restart-tauri
 ```
 
 **When to use:** After Rust backend changes that require a recompile. The dashboard shows rebuild progress live.
@@ -108,7 +108,7 @@ Signal the dev controller to restart only the Vite dev server. The Tauri app sta
 **Underlying command:**
 
 ```bash
-node scripts/dev.mjs restart-vite
+node debugger/dev.mjs restart-vite
 ```
 
 **When to use:** When the Vite dev server gets stuck, HMR stops working, or port 1420 needs to be recycled.
@@ -122,7 +122,7 @@ Signal the dev controller to restart everything — kills Vite and the Tauri app
 **Underlying command:**
 
 ```bash
-node scripts/dev.mjs restart
+node debugger/dev.mjs restart
 ```
 
 **When to use:** When both Vite and Rust need a clean restart.
@@ -136,7 +136,7 @@ Gracefully signal the dev controller to stop all processes and exit. The dashboa
 **Underlying command:**
 
 ```bash
-node scripts/dev.mjs stop
+node debugger/dev.mjs stop
 ```
 
 **When to use:** When you intentionally want to shut everything down and don't need it running. Prefer `make restart` commands during active development — they keep the controller alive.
@@ -150,7 +150,7 @@ Force-kill all OrqaStudio processes regardless of controller state. Does not wai
 **Underlying command:**
 
 ```bash
-node scripts/dev.mjs kill
+node debugger/dev.mjs kill
 ```
 
 **When to use:** When `make stop` doesn't work, processes are stuck, or you need to tear down the entire dev environment. Partner to `make dev`.
@@ -164,7 +164,7 @@ Show the dev controller's state: controller PID, child process PIDs, and whether
 **Underlying command:**
 
 ```bash
-node scripts/dev.mjs status
+node debugger/dev.mjs status
 ```
 
 **When to use:** To check what's running without opening the dashboard.
@@ -192,7 +192,7 @@ Build the Agent SDK sidecar for development.
 **Underlying command:**
 
 ```bash
-cd sidecar && bun run build
+cd sidecars/orqa-sidecar && bun run build
 ```
 
 **When to use:** When iterating on sidecar logic (streaming pipeline, NDJSON message format, tool output handling) to rebuild the sidecar without triggering a full production build.
@@ -209,8 +209,8 @@ Run all quality checks in sequence. This is the standard pre-commit gate. All ch
 
 ```bash
 cargo fmt --check
-cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings
-cargo test --manifest-path src-tauri/Cargo.toml
+cargo clippy --manifest-path backend/src-tauri/Cargo.toml --all-targets -- -D warnings
+cargo test --manifest-path backend/src-tauri/Cargo.toml
 npm run check
 npm run lint
 npm run test
@@ -227,7 +227,7 @@ Auto-format all Rust source files with `rustfmt`.
 **Underlying command:**
 
 ```bash
-cargo fmt --manifest-path src-tauri/Cargo.toml
+cargo fmt --manifest-path backend/src-tauri/Cargo.toml
 ```
 
 **When to use:** Before committing Rust changes. Run once to apply formatting, then `make fmt-check` to verify.
@@ -255,7 +255,7 @@ Run the Rust linter with all warnings promoted to errors.
 **Underlying command:**
 
 ```bash
-cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings
+cargo clippy --manifest-path backend/src-tauri/Cargo.toml --all-targets -- -D warnings
 ```
 
 **When to use:** After any Rust change. Zero-warning policy is enforced — this command must exit cleanly.
@@ -299,7 +299,7 @@ Run all tests: Rust backend tests and frontend Vitest tests.
 **Underlying commands:**
 
 ```bash
-cargo test --manifest-path src-tauri/Cargo.toml
+cargo test --manifest-path backend/src-tauri/Cargo.toml
 npm run test
 ```
 
@@ -314,7 +314,7 @@ Run only the Rust backend tests.
 **Underlying command:**
 
 ```bash
-cargo test --manifest-path src-tauri/Cargo.toml
+cargo test --manifest-path backend/src-tauri/Cargo.toml
 ```
 
 **When to use:** When iterating on backend changes and you want fast feedback without running frontend tests.
@@ -375,7 +375,7 @@ Build a production-ready distributable application for the current platform.
 cargo tauri build
 ```
 
-**When to use:** When preparing a release artifact. Produces a platform-appropriate installer or executable in `src-tauri/target/release/`.
+**When to use:** When preparing a release artifact. Produces a platform-appropriate installer or executable in `backend/src-tauri/target/release/`.
 
 ---
 
@@ -400,7 +400,7 @@ Compile the Agent SDK sidecar TypeScript into a standalone binary.
 **Underlying command:**
 
 ```bash
-bun build sidecar/index.ts --compile --outfile src-tauri/binaries/sidecar
+bun build sidecars/orqa-sidecar/index.ts --compile --outfile backend/src-tauri/binaries/sidecar
 ```
 
 **When to use:** Before `make build` if sidecar source has changed, or to update the sidecar binary independently of a full release build.
@@ -540,7 +540,7 @@ Print a summary of all available `make` targets with one-line descriptions.
 | `make test` | `cargo test` alone |
 | `make fmt` | `rustfmt src/main.rs` |
 | `make build` | `cargo build --release` |
-| `make test-rust` | `cargo test --manifest-path src-tauri/Cargo.toml` |
+| `make test-rust` | `cargo test --manifest-path backend/src-tauri/Cargo.toml` |
 
 The only exception is when a target does not yet exist for a specific operation. In that case, use the raw command and note in the task summary that a Makefile target should be added.
 

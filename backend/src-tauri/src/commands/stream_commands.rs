@@ -241,4 +241,3 @@ pub fn stream_tool_approval_respond(
         ))),
     }
 }
-

@@ -112,7 +112,7 @@ frontmatter:
 enforcement:
   - event: file
     pattern: "unwrap\\(\\)"
-    paths: ["src-tauri/src/**/*.rs"]
+    paths: ["backend/src-tauri/src/**/*.rs"]
     action: block
     message: "No unwrap() in production code (RULE-006)"
   - event: bash

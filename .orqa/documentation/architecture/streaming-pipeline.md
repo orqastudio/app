@@ -52,8 +52,8 @@ Both sides of the protocol are defined in two mirrored files:
 
 | Layer | File |
 |-------|------|
-| Rust | `src-tauri/src/sidecar/types.rs` — `SidecarRequest` and `SidecarResponse` enums |
-| TypeScript | `sidecar/src/protocol.ts` — matching interfaces and union types |
+| Rust | `backend/src-tauri/src/sidecar/types.rs` — `SidecarRequest` and `SidecarResponse` enums |
+| TypeScript | `sidecars/orqa-sidecar/src/protocol.ts` — matching interfaces and union types |
 
 These files must stay in sync. A change to one requires a matching change to the other.
 
@@ -112,7 +112,7 @@ Rust writes `SidecarRequest` objects to the sidecar's stdin.
 
 ## 5. StreamEvent (Frontend-Facing Type)
 
-`StreamEvent` is the Rust enum defined in `src-tauri/src/domain/provider_event.rs`. It is what flows over `Channel<StreamEvent>` to the Svelte frontend. It is a filtered, transformed subset of `SidecarResponse`.
+`StreamEvent` is the Rust enum defined in `backend/src-tauri/src/domain/provider_event.rs`. It is what flows over `Channel<StreamEvent>` to the Svelte frontend. It is a filtered, transformed subset of `SidecarResponse`.
 
 `StreamEvent` has 15 variants:
 
@@ -140,7 +140,7 @@ Rust writes `SidecarRequest` objects to the sidecar's stdin.
 
 ## 6. Stream Loop
 
-The stream loop is implemented in `src-tauri/src/domain/stream_loop.rs`. It is the central Rust component that drives a conversation turn.
+The stream loop is implemented in `backend/src-tauri/src/domain/stream_loop.rs`. It is the central Rust component that drives a conversation turn.
 
 ### Entry point
 
@@ -188,11 +188,11 @@ The `stream_cancel` Tauri command sends a `SidecarRequest::CancelStream` to the 
 
 ## 7. Sidecar Implementation
 
-The sidecar is a Bun-compiled binary (`sidecar/`) that wraps the Claude Agent SDK.
+The sidecar is a Bun-compiled binary (`sidecars/orqa-sidecar/`) that wraps the Claude Agent SDK.
 
 ### Provider interface
 
-`sidecar/src/provider-interface.ts` defines the `Provider` interface. `ClaudeAgentProvider` in `sidecar/src/providers/claude-agent.ts` is the current implementation. Adding a new AI provider means implementing this interface without changing Rust or Svelte code.
+`sidecars/orqa-sidecar/src/provider-interface.ts` defines the `Provider` interface. `ClaudeAgentProvider` in `sidecars/orqa-sidecar/src/providers/claude-agent.ts` is the current implementation. Adding a new AI provider means implementing this interface without changing Rust or Svelte code.
 
 ### Tool routing via MCP
 

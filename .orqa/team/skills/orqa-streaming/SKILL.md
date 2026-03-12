@@ -12,7 +12,7 @@ updated: "2026-03-10"
 layer: project
 scope: [AGENT-002, AGENT-006]
 file-patterns:
-  - "sidecar/src/**"
+  - "sidecars/orqa-sidecar/src/**"
 version: 1.0.0
 user-invocable: true
 ---
@@ -27,23 +27,23 @@ Claude API (Anthropic)
     ↑↓
 Agent SDK (in sidecar process)
     ↓ events
-Sidecar (Bun-compiled binary: sidecar/src/)
+Sidecar (Bun-compiled binary: sidecars/orqa-sidecar/src/)
     ↓ NDJSON over stdout
-Rust (src-tauri/src/sidecar/ + src-tauri/src/commands/stream_commands.rs)
+Rust (backend/src-tauri/src/sidecar/ + backend/src-tauri/src/commands/stream_commands.rs)
     ↓ Channel<T> (Tauri streaming)
-Svelte (ui/lib/stores/conversation.svelte.ts)
+Svelte (ui/src/lib/stores/conversation.svelte.ts)
     ↓ reactive state
 UI Components (ConversationView, StreamingIndicator, etc.)
 ```
 
 ## Layer 1: Sidecar (TypeScript/Bun)
 
-The sidecar is a Bun-compiled binary in `sidecar/`. It communicates with Rust via NDJSON over stdin/stdout.
+The sidecar is a Bun-compiled binary in `sidecars/orqa-sidecar/`. It communicates with Rust via NDJSON over stdin/stdout.
 
 ### Protocol Types
 
 ```typescript
-// sidecar/src/protocol.ts
+// sidecars/orqa-sidecar/src/protocol.ts
 export interface SendMessageRequest {
     type: 'send_message';
     session_id: number;
@@ -72,7 +72,7 @@ export interface ToolApprovalRequest {
 ### Provider (Agent SDK Integration)
 
 ```typescript
-// sidecar/src/provider.ts — simplified pattern
+// sidecars/orqa-sidecar/src/provider.ts — simplified pattern
 const response = await query({
     model: request.model,
     system: request.system_prompt ? [{ text: request.system_prompt }] : undefined,
@@ -93,7 +93,7 @@ for await (const event of response) {
 ### NDJSON Communication
 
 ```typescript
-// sidecar/src/index.ts — stdin/stdout protocol
+// sidecars/orqa-sidecar/src/index.ts — stdin/stdout protocol
 // Read requests from stdin (one JSON object per line)
 for await (const line of readLines(process.stdin)) {
     const request = JSON.parse(line);
@@ -113,7 +113,7 @@ Rust spawns the sidecar as a child process and parses NDJSON from its stdout.
 ### Sidecar Types (Mirror TypeScript)
 
 ```rust
-// src-tauri/src/sidecar/types.rs
+// backend/src-tauri/src/sidecar/types.rs
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type")]
 #[serde(rename_all = "snake_case")]
@@ -161,7 +161,7 @@ The Rust stream command receives `Channel<StreamEvent>` from Tauri and forwards 
 ### StreamEvent Enum (Rust)
 
 ```rust
-// src-tauri/src/domain/provider_event.rs
+// backend/src-tauri/src/domain/provider_event.rs
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", content = "data")]
 #[serde(rename_all = "snake_case")]
@@ -186,7 +186,7 @@ pub enum StreamEvent {
 ### StreamEvent Union (TypeScript)
 
 ```typescript
-// ui/lib/types/streaming.ts
+// ui/src/lib/types/streaming.ts
 export type StreamEvent =
     | { type: "stream_start"; data: { message_id: number; resolved_model: string | null } }
     | { type: "text_delta"; data: { content: string } }
@@ -208,7 +208,7 @@ export type StreamEvent =
 The conversation store processes streaming events via a switch statement:
 
 ```typescript
-// ui/lib/stores/conversation.svelte.ts
+// ui/src/lib/stores/conversation.svelte.ts
 private handleStreamEvent(event: StreamEvent) {
     switch (event.type) {
         case "stream_start":
@@ -259,7 +259,7 @@ Read-only tools (auto-approved): `read_file`, `glob`, `grep`, `search_regex`, `s
 If you add a new variant to the Rust `StreamEvent` enum, you MUST also add the matching entry to the TypeScript `StreamEvent` union AND handle it in `handleStreamEvent()`.
 
 ### Parsing streaming data in the frontend
-All response parsing happens in Rust (`src-tauri/src/sidecar/`). The frontend receives pre-parsed `StreamEvent` objects. Never parse raw API responses in Svelte.
+All response parsing happens in Rust (`backend/src-tauri/src/sidecar/`). The frontend receives pre-parsed `StreamEvent` objects. Never parse raw API responses in Svelte.
 
 ### Blocking the stream loop
 The Rust stream command runs a synchronous loop reading from sidecar stdout. Tool execution blocks this loop until the tool completes. Long-running tools should be async.
@@ -268,12 +268,12 @@ The Rust stream command runs a synchronous loop reading from sidecar stdout. Too
 
 | File | Purpose |
 |------|---------|
-| `sidecar/src/provider.ts` | Agent SDK integration, event streaming |
-| `sidecar/src/protocol.ts` | NDJSON protocol types |
-| `sidecar/src/index.ts` | stdin/stdout communication loop |
-| `src-tauri/src/sidecar/types.rs` | Rust-side sidecar protocol types |
-| `src-tauri/src/sidecar/protocol.rs` | NDJSON parsing and sidecar process management |
-| `src-tauri/src/commands/stream_commands.rs` | Stream command handler, tool execution, Channel<T> |
-| `src-tauri/src/domain/provider_event.rs` | StreamEvent enum definition |
-| `ui/lib/types/streaming.ts` | TypeScript StreamEvent union |
-| `ui/lib/stores/conversation.svelte.ts` | Frontend event handling and state management |
+| `sidecars/orqa-sidecar/src/provider.ts` | Agent SDK integration, event streaming |
+| `sidecars/orqa-sidecar/src/protocol.ts` | NDJSON protocol types |
+| `sidecars/orqa-sidecar/src/index.ts` | stdin/stdout communication loop |
+| `backend/src-tauri/src/sidecar/types.rs` | Rust-side sidecar protocol types |
+| `backend/src-tauri/src/sidecar/protocol.rs` | NDJSON parsing and sidecar process management |
+| `backend/src-tauri/src/commands/stream_commands.rs` | Stream command handler, tool execution, Channel<T> |
+| `backend/src-tauri/src/domain/provider_event.rs` | StreamEvent enum definition |
+| `ui/src/lib/types/streaming.ts` | TypeScript StreamEvent union |
+| `ui/src/lib/stores/conversation.svelte.ts` | Frontend event handling and state management |
