@@ -154,25 +154,20 @@
     .filter-btn {
       background: transparent;
       border: 1px solid transparent;
-      padding: 3px 8px;
-      border-radius: 3px;
-      font-family: inherit;
-      font-size: 11px;
+      padding: 4px;
+      border-radius: 4px;
       cursor: pointer;
-      opacity: 0.5;
+      opacity: 0.3;
       transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
     }
 
-    .filter-btn.active { opacity: 1; border-color: currentColor; }
-    .filter-btn[data-source="ctrl"] { color: #f0a500; }
-    .filter-btn[data-source="vite"] { color: #4ecca3; }
-    .filter-btn[data-source="rust"] { color: #c77dff; }
-    .filter-btn[data-source="sidecar"] { color: #ff6b6b; }
-    .filter-btn[data-source="frontend"] { color: #74b9ff; }
-
-    .filter-btn[data-level="info"] { color: #a0a0b0; }
-    .filter-btn[data-level="warn"] { color: #f0a500; }
-    .filter-btn[data-level="error"] { color: #e94560; }
+    .filter-btn svg { width: 14px; height: 14px; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .filter-btn.active { opacity: 1; background: rgba(255,255,255,0.06); }
 
     .log-line.level-warn .log-text { color: #f0a500; }
     .log-line.level-error .log-text { color: #e94560; }
@@ -302,19 +297,37 @@
     <div class="separator"></div>
 
     <div class="filter-group">
-      <button class="filter-btn active" data-source="ctrl" onclick="toggleFilter(this)">ctrl</button>
-      <button class="filter-btn active" data-source="vite" onclick="toggleFilter(this)">vite</button>
-      <button class="filter-btn active" data-source="rust" onclick="toggleFilter(this)">rust</button>
-      <button class="filter-btn active" data-source="sidecar" onclick="toggleFilter(this)">sidecar</button>
-      <button class="filter-btn active" data-source="frontend" onclick="toggleFilter(this)">frontend</button>
+      <!-- Source filters: colored circle icons -->
+      <button class="filter-btn active" data-source="ctrl" onclick="toggleFilter(this)" title="Controller">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="#f0a500" stroke="none"/></svg>
+      </button>
+      <button class="filter-btn active" data-source="vite" onclick="toggleFilter(this)" title="Vite">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="#4ecca3" stroke="none"/></svg>
+      </button>
+      <button class="filter-btn active" data-source="rust" onclick="toggleFilter(this)" title="Rust">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="#c77dff" stroke="none"/></svg>
+      </button>
+      <button class="filter-btn active" data-source="sidecar" onclick="toggleFilter(this)" title="Sidecar">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="#ff6b6b" stroke="none"/></svg>
+      </button>
+      <button class="filter-btn active" data-source="frontend" onclick="toggleFilter(this)" title="Frontend">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="#74b9ff" stroke="none"/></svg>
+      </button>
     </div>
 
     <div class="separator"></div>
 
     <div class="filter-group">
-      <button class="filter-btn active" data-level="info" onclick="toggleLevelFilter(this)">info</button>
-      <button class="filter-btn active" data-level="warn" onclick="toggleLevelFilter(this)">warn</button>
-      <button class="filter-btn active" data-level="error" onclick="toggleLevelFilter(this)">error</button>
+      <!-- Level filters: Lucide icons -->
+      <button class="filter-btn active" data-level="info" onclick="toggleLevelFilter(this)" title="Info">
+        <svg viewBox="0 0 24 24" stroke="#a0a0b0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      </button>
+      <button class="filter-btn active" data-level="warn" onclick="toggleLevelFilter(this)" title="Warnings">
+        <svg viewBox="0 0 24 24" stroke="#f0a500"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
+      <button class="filter-btn active" data-level="error" onclick="toggleLevelFilter(this)" title="Errors">
+        <svg viewBox="0 0 24 24" stroke="#e94560"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      </button>
     </div>
   </div>
 
