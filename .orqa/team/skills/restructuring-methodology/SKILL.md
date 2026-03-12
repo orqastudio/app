@@ -1,19 +1,28 @@
 ---
-id: SKILL-026
-title: Restructuring Methodology
-description: |
-  Safe, incremental refactoring methodology: one change at a time, verify after
+id: "SKILL-026"
+title: "Restructuring Methodology"
+description: "Safe, incremental refactoring methodology: one change at a time, verify after
+
   each step, preserve behavior, no temporary files. Covers module extraction,
+
   type unification, store consolidation, and scope assessment.
+
   Use when: Cleaning up architectural debt, reorganizing modules, consolidating
-  patterns, or performing any structural code change.
-status: active
+
+  patterns, or performing any structural code change.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: project
-scope: [AGENT-002]
-version: 1.0.0
+layer: "project"
+scope:
+  - "AGENT-002"
+category: "methodology"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Restructuring methodology ensures structural changes are safe and incremental"
 ---
 
 

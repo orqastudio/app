@@ -1,17 +1,25 @@
 ---
-id: SKILL-044
-title: Orqa Search Architecture
-description: |
-  Implementation details of OrqaStudio's embedded search engine: DuckDB storage,
+id: "SKILL-044"
+title: "Orqa Search Architecture"
+description: "Implementation details of OrqaStudio's embedded search engine: DuckDB storage,
+
   ONNX Runtime embeddings, DirectML acceleration, chunker design, and module layout.
-  Use when: Modifying or extending the search engine in backend/src-tauri/src/search/.
-status: active
+
+  Use when: Modifying or extending the search engine in backend/src-tauri/src/search/.\n"
+status: "active"
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: project
-scope: [AGENT-002, AGENT-006]
-version: 1.0.0
+layer: "project"
+scope:
+  - "AGENT-002"
+  - "AGENT-006"
+category: "domain"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Search architecture enables structured knowledge discovery"
 ---
 
 This skill covers the implementation architecture of OrqaStudio's native search engine.

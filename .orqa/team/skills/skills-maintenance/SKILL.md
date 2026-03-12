@@ -1,18 +1,26 @@
 ---
-id: SKILL-029
-title: Skills Maintenance
-description: |
-  Full skills.sh lifecycle management: CLI reference, skill evaluation criteria, SKILL.md format,
+id: "SKILL-029"
+title: "Skills Maintenance"
+description: "Full skills.sh lifecycle management: CLI reference, skill evaluation criteria, SKILL.md format,
+
   portability rules, provenance tracking, and skill audit protocol.
+
   Use when: Adding, updating, removing, or auditing agent skills; evaluating whether to install
-  a community skill or create a project-specific one; managing the .orqa/team/skills/ directory.
-status: active
+
+  a community skill or create a project-specific one; managing the .orqa/team/skills/ directory.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: core
-scope: [AGENT-003]
-version: 1.0.0
+layer: "core"
+scope:
+  - "AGENT-003"
+category: "methodology"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Skills lifecycle management maintains structural consistency of knowledge"
 ---
 
 

@@ -1,18 +1,27 @@
 ---
-id: SKILL-018
-title: Orqa Testing Patterns
-description: |
-  OrqaStudio testing patterns: make test commands, Rust unit/integration tests,
+id: "SKILL-018"
+title: "Orqa Testing Patterns"
+description: "OrqaStudio testing patterns: make test commands, Rust unit/integration tests,
+
   Vitest frontend tests, mock boundaries, and test file organization.
+
   Use when: Writing tests, fixing test failures, setting up test infrastructure,
-  or verifying test coverage.
-status: active
+
+  or verifying test coverage.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: project
-scope: [AGENT-002, AGENT-006]
-version: 1.0.0
+layer: "project"
+scope:
+  - "AGENT-002"
+  - "AGENT-006"
+category: "domain"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-002"
+    type: "grounded"
+    rationale: "Testing patterns enable learning through automated verification"
 ---
 
 

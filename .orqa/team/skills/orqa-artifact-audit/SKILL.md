@@ -1,20 +1,31 @@
 ---
-id: SKILL-038
-title: Artifact Audit Methodology
-description: |
-  Systematic audit of governance artifacts for reference integrity, cross-layer
+id: "SKILL-038"
+title: "Artifact Audit Methodology"
+description: "Systematic audit of governance artifacts for reference integrity, cross-layer
+
   consistency, and codebase alignment. Covers the artifact graph as a primary tool,
+
   known graph limitations, per-type checklists, cross-layer checks, evidence
+
   requirements, and output format for audit findings documents.
+
   Use when: Auditing .orqa/ artifacts for broken references, stale paths, content
-  inaccuracies, or structural drift from the codebase.
-status: active
+
+  inaccuracies, or structural drift from the codebase.\n"
+status: "active"
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: project
-scope: [AGENT-003, AGENT-006]
-version: 1.0.0
+layer: "project"
+scope:
+  - "AGENT-003"
+  - "AGENT-006"
+category: "methodology"
+version: "1.0.0"
 user-invocable: false
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Artifact auditing verifies structural integrity of governance"
 ---
 
 Methodology for auditing `.orqa/` governance artifacts. An audit answers the question: "Does everything in `.orqa/` still describe reality?" This skill provides a repeatable process for finding broken references, stale paths, content inaccuracies, and drift from the codebase — and for structuring findings so they can be fixed efficiently.

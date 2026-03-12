@@ -1,18 +1,26 @@
 ---
-id: SKILL-024
+id: "SKILL-024"
 title: "Project Type: Software"
-description: |
-  Software development governance preset: adds worktree workflow rules,
+description: "Software development governance preset: adds worktree workflow rules,
+
   code quality standards, testing requirements, CI/CD patterns, and
+
   development-specific agent skills to the base OrqaStudio setup.
-  Use when: The project being set up is a software development project.
-status: active
+
+  Use when: The project being set up is a software development project.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: setup
-scope: [AGENT-003]
-version: 1.0.0
+layer: "setup"
+scope:
+  - "AGENT-003"
+category: "tool"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Software presets create structured development governance"
 ---
 
 > **Forward-looking:** This skill will be activated when project initialisation and software project type support are implemented. See [EPIC-045](EPIC-045) and [EPIC-047](EPIC-047) for context.

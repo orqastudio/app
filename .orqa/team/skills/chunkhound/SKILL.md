@@ -1,18 +1,32 @@
 ---
-id: SKILL-003
-title: ChunkHound
-description: |
-  ChunkHound semantic code search: three search modes (regex, semantic, code_research),
+id: "SKILL-003"
+title: "ChunkHound"
+description: "ChunkHound semantic code search: three search modes (regex, semantic, code_research),
+
   tool selection guide, query patterns, and anti-patterns.
+
   Use when: Searching a codebase before creating new code, verifying endpoints exist,
-  understanding how a system works, finding all callers before refactoring.
-status: active
+
+  understanding how a system works, finding all callers before refactoring.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: project
-scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
-version: 1.0.0
+layer: "project"
+scope:
+  - "AGENT-001"
+  - "AGENT-002"
+  - "AGENT-003"
+  - "AGENT-004"
+  - "AGENT-005"
+  - "AGENT-006"
+  - "AGENT-007"
+category: "tool"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "ChunkHound enables structured code search and discovery"
 ---
 
 

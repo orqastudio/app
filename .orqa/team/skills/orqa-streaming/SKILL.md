@@ -1,20 +1,29 @@
 ---
-id: SKILL-017
-title: Orqa Streaming Pipeline
-description: |
-  OrqaStudio streaming pipeline: Agent SDK → sidecar (Bun) → NDJSON → Rust Channel<T> → Svelte.
+id: "SKILL-017"
+title: "Orqa Streaming Pipeline"
+description: "OrqaStudio streaming pipeline: Agent SDK → sidecar (Bun) → NDJSON → Rust Channel<T> → Svelte.
+
   Covers ProviderEvent types, StreamEvent types, sidecar protocol, error handling, and tool approval.
+
   Use when: Modifying the streaming pipeline, adding new event types, debugging streaming issues,
-  or working with the sidecar.
-status: active
+
+  or working with the sidecar.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: project
-scope: [AGENT-002, AGENT-006]
+layer: "project"
+scope:
+  - "AGENT-002"
+  - "AGENT-006"
+category: "domain"
 file-patterns:
   - "sidecar/src/**"
-version: 1.0.0
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Streaming patterns create structured data flow from AI to UI"
 ---
 
 

@@ -1,23 +1,34 @@
 ---
-id: SKILL-010
-title: Orqa Error Composition
-description: |
-  OrqaStudio error composition and flow: OrqaError anatomy, From implementations,
+id: "SKILL-010"
+title: "Orqa Error Composition"
+description: "OrqaStudio error composition and flow: OrqaError anatomy, From implementations,
+
   error propagation through domain/repo/command layers, IPC serialization, and
+
   frontend error handling patterns.
+
   Use when: Adding new error variants, implementing error handling in commands or
+
   domain services, wiring error states in Svelte stores, or debugging error flow
-  across the Tauri boundary.
-status: active
+
+  across the Tauri boundary.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: project
-scope: [AGENT-002, AGENT-006]
+layer: "project"
+scope:
+  - "AGENT-002"
+  - "AGENT-006"
+category: "domain"
 file-patterns:
   - "backend/src-tauri/src/domain/**"
   - "backend/src-tauri/src/commands/**"
-version: 1.0.0
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Error composition creates structured error propagation"
 ---
 
 

@@ -1,13 +1,20 @@
 ---
-id: SKILL-032
-title: Tauri v2 Development
-description: Tauri v2 cross-platform app development with Rust backend. Use when configuring tauri.conf.json, implementing Rust commands (#[tauri::command]), setting up IPC patterns (invoke, emit, channels), configuring permissions/capabilities, troubleshooting build issues, or deploying desktop/mobile apps. Triggers on Tauri, src-tauri, invoke, emit, capabilities.json.
-status: active
+id: "SKILL-032"
+title: "Tauri v2 Development"
+description: "Tauri v2 cross-platform app development with Rust backend. Use when configuring tauri.conf.json, implementing Rust commands (#[tauri::command]), setting up IPC patterns (invoke, emit, channels), configuring permissions/capabilities, troubleshooting build issues, or deploying desktop/mobile apps. Triggers on Tauri, src-tauri, invoke, emit, capabilities.json."
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: project
-scope: [AGENT-002, AGENT-006]
+layer: "project"
+scope:
+  - "AGENT-002"
+  - "AGENT-006"
+category: "domain"
 user-invocable: false
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Tauri v2 knowledge enables structured desktop app development"
 ---
 
 

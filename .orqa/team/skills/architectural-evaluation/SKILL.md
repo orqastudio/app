@@ -1,19 +1,29 @@
 ---
-id: SKILL-001
-title: Architectural Evaluation
-description: |
-  Architectural compliance evaluation methodology: boundary verification,
+id: "SKILL-001"
+title: "Architectural Evaluation"
+description: "Architectural compliance evaluation methodology: boundary verification,
+
   domain model integrity checks, data flow mapping, schema evolution review,
+
   and structured compliance report format.
+
   Use when: Evaluating architectural compliance of plans or implementations,
-  reviewing boundary integrity, mapping data flows, or assessing schema changes.
-status: active
+
+  reviewing boundary integrity, mapping data flows, or assessing schema changes.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: project
-scope: [AGENT-004, AGENT-006]
-version: 1.0.0
+layer: "project"
+scope:
+  - "AGENT-004"
+  - "AGENT-006"
+category: "methodology"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Architectural evaluation creates structural clarity through systematic compliance checking"
 ---
 
 

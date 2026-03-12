@@ -1,20 +1,29 @@
 ---
-id: SKILL-011
-title: Orqa Governance Patterns
-description: |
-  OrqaStudio governance patterns: artifact types, scanning pipeline, lesson promotion,
+id: "SKILL-011"
+title: "Orqa Governance Patterns"
+description: "OrqaStudio governance patterns: artifact types, scanning pipeline, lesson promotion,
+
   rule enforcement, frontmatter schemas, and .orqa/ directory structure.
+
   Use when: Working with governance artifacts (docs, research, lessons, rules),
-  modifying scanning or enforcement, or maintaining the .orqa/ directory.
-status: active
+
+  modifying scanning or enforcement, or maintaining the .orqa/ directory.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: project
-scope: [AGENT-003, AGENT-007]
+layer: "project"
+scope:
+  - "AGENT-003"
+  - "AGENT-007"
+category: "domain"
 file-patterns:
   - ".orqa/**"
-version: 2.0.0
+version: "2.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Governance patterns maintain structural consistency of the framework"
 ---
 
 

@@ -1,19 +1,28 @@
 ---
-id: SKILL-022
-title: Project Migration
-description: |
-  Reads existing agentic tool configurations (Claude Code, Cursor, Copilot, Aider)
+id: "SKILL-022"
+title: "Project Migration"
+description: "Reads existing agentic tool configurations (Claude Code, Cursor, Copilot, Aider)
+
   and maps their rules, instructions, and settings into OrqaStudio's governance
+
   structure. Preserves existing governance while adding OrqaStudio's layer.
+
   Use when: Setting up OrqaStudio on a project that already uses other AI tools,
-  or syncing governance between OrqaStudio and external tools.
-status: active
+
+  or syncing governance between OrqaStudio and external tools.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: setup
-scope: [AGENT-003]
-version: 1.0.0
+layer: "setup"
+scope:
+  - "AGENT-003"
+category: "tool"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Project migration creates structured governance adoption"
 ---
 
 > **Forward-looking:** This skill will be activated when project initialisation is implemented. See [EPIC-045](EPIC-045) for context.

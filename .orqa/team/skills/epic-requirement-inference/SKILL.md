@@ -1,18 +1,25 @@
 ---
-id: SKILL-047
-title: Epic Requirement Inference
-description: |
-  Evaluates project context to recommend whether epics should be required
+id: "SKILL-047"
+title: "Epic Requirement Inference"
+description: "Evaluates project context to recommend whether epics should be required
+
   for task creation. Analyses directory structure, build tooling, and
+
   project type signals to determine the workflow.epics-required setting.
-  Use when: Running project setup or configuring workflow enforcement.
-status: active
-layer: setup
+
+  Use when: Running project setup or configuring workflow enforcement.\n"
+status: "active"
+layer: "setup"
 scope:
-  - AGENT-003
-  - AGENT-001
-version: 1.0.0
+  - "AGENT-003"
+  - "AGENT-001"
+category: "tool"
+version: "1.0.0"
 user-invocable: false
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Epic requirement inference structures project workflow decisions"
 ---
 
 Determines whether a project should require epic linkage for all tasks

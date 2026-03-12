@@ -1,19 +1,28 @@
 ---
-id: SKILL-004
-title: Code Quality Review
-description: |
-  Code review methodology: automated checks, manual review checklists, forbidden
+id: "SKILL-004"
+title: "Code Quality Review"
+description: "Code review methodology: automated checks, manual review checklists, forbidden
+
   pattern detection, function size limits, and structured review output format.
+
   Portable across any codebase with linting and testing infrastructure.
+
   Use when: Reviewing code for quality, running compliance checks, or producing
-  structured review verdicts.
-status: active
+
+  structured review verdicts.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: project
-scope: [AGENT-006]
-version: 1.0.0
+layer: "project"
+scope:
+  - "AGENT-006"
+category: "methodology"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-002"
+    type: "grounded"
+    rationale: "Code review enables learning from implementation patterns"
 ---
 
 

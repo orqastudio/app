@@ -1,18 +1,27 @@
 ---
-id: SKILL-043
-title: Backend Best Practices
-description: |
-  Umbrella skill for all backend implementation work. Establishes composability,
+id: "SKILL-043"
+title: "Backend Best Practices"
+description: "Umbrella skill for all backend implementation work. Establishes composability,
+
   coding standards, and error handling as always-in-mind principles, then
+
   references deeper skills for Rust, Tauri, and persistence specifics.
-  Use when: Any agent is about to write or modify backend code (backend/src-tauri/, sidecar/).
-status: active
+
+  Use when: Any agent is about to write or modify backend code (backend/src-tauri/, sidecar/).\n"
+status: "active"
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: project
-scope: [AGENT-002, AGENT-006]
-version: 1.0.0
+layer: "project"
+scope:
+  - "AGENT-002"
+  - "AGENT-006"
+category: "domain"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Backend standards create structural consistency in Rust code"
 ---
 
 This skill ensures every backend agent has the right mental model before writing code. It does not duplicate content from deeper skills — it establishes principles and points to the right references.

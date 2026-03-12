@@ -1,19 +1,34 @@
 ---
-id: SKILL-005
-title: Orqa Code Search
-description: |
-  Context-aware code search wrapper. Detects whether you are in CLI (ChunkHound MCP)
+id: "SKILL-005"
+title: "Orqa Code Search"
+description: "Context-aware code search wrapper. Detects whether you are in CLI (ChunkHound MCP)
+
   or App (native DuckDB+ONNX) context and provides the appropriate search patterns.
+
   Three tools: search_regex, search_semantic, code_research.
+
   Use when: Searching the codebase before creating new code, verifying endpoints exist,
-  understanding how a system works, finding all callers before refactoring.
-status: active
+
+  understanding how a system works, finding all callers before refactoring.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-12"
-layer: core
-scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
-version: 1.1.0
+layer: "core"
+scope:
+  - "AGENT-001"
+  - "AGENT-002"
+  - "AGENT-003"
+  - "AGENT-004"
+  - "AGENT-005"
+  - "AGENT-006"
+  - "AGENT-007"
+category: "tool"
+version: "1.1.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Code search wrapper provides structured context-aware search"
 ---
 
 Context-aware code search wrapper. Detects your runtime context and provides the right

@@ -1,18 +1,28 @@
 ---
-id: SKILL-042
-title: Frontend Best Practices
-description: |
-  Umbrella skill for all frontend implementation work. Establishes composability,
+id: "SKILL-042"
+title: "Frontend Best Practices"
+description: "Umbrella skill for all frontend implementation work. Establishes composability,
+
   coding standards, and component conventions as always-in-mind principles, then
+
   references deeper skills for Svelte 5, TypeScript, and Tailwind specifics.
-  Use when: Any agent is about to write or modify frontend code (ui/, components, stores).
-status: active
+
+  Use when: Any agent is about to write or modify frontend code (ui/, components, stores).\n"
+status: "active"
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: project
-scope: [AGENT-001, AGENT-002, AGENT-006]
-version: 1.0.0
+layer: "project"
+scope:
+  - "AGENT-001"
+  - "AGENT-002"
+  - "AGENT-006"
+category: "domain"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Frontend standards create structural consistency in Svelte code"
 ---
 
 This skill ensures every frontend agent has the right mental model before writing code. It does not duplicate content from deeper skills — it establishes principles and points to the right references.

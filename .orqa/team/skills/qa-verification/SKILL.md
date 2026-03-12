@@ -1,19 +1,28 @@
 ---
-id: SKILL-025
-title: QA Verification
-description: |
-  End-to-end functional verification methodology: the "Would It Work" protocol,
+id: "SKILL-025"
+title: "QA Verification"
+description: "End-to-end functional verification methodology: the \"Would It Work\" protocol,
+
   verification path tracing, persistence verification, common QA failure patterns,
+
   and structured QA report format.
+
   Use when: Verifying features work end-to-end, checking acceptance criteria,
-  tracing data through system layers, or producing QA verdicts.
-status: active
+
+  tracing data through system layers, or producing QA verdicts.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: project
-scope: [AGENT-006]
-version: 1.0.0
+layer: "project"
+scope:
+  - "AGENT-006"
+category: "methodology"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-002"
+    type: "grounded"
+    rationale: "QA verification enables learning through systematic testing"
 ---
 
 

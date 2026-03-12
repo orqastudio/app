@@ -1,18 +1,32 @@
 ---
-id: SKILL-008
-title: Composability
-description: |
-  Universal composability philosophy: building systems from small, pure, swappable units.
+id: "SKILL-008"
+title: "Composability"
+description: "Universal composability philosophy: building systems from small, pure, swappable units.
+
   Shapes how agents think about code structure at both the function level and the feature level.
+
   Use when: Writing any new code, reviewing architecture, planning features, or refactoring
-  existing modules. This is the meta-skill — it informs all other patterns.
-status: active
+
+  existing modules. This is the meta-skill — it informs all other patterns.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-12"
-layer: core
-scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
-version: 1.0.0
+layer: "core"
+scope:
+  - "AGENT-001"
+  - "AGENT-002"
+  - "AGENT-003"
+  - "AGENT-004"
+  - "AGENT-005"
+  - "AGENT-006"
+  - "AGENT-007"
+category: "methodology"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Composability is the core structural principle — build from small, pure, swappable units"
 ---
 
 Software is built from small, composable units at every level: functions, modules, features, and integrations. This skill teaches the composability philosophy that shapes all code in a well-structured project.

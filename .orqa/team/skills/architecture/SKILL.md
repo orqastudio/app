@@ -1,19 +1,29 @@
 ---
-id: SKILL-002
-title: Architecture
-description: |
-  Portable software architecture knowledge: ADR patterns, data flow mapping, adapter pattern,
+id: "SKILL-002"
+title: "Architecture"
+description: "Portable software architecture knowledge: ADR patterns, data flow mapping, adapter pattern,
+
   violation detection, and vocabulary for layered desktop applications.
+
   Use when: Planning features that cross layer boundaries, evaluating whether a change is
+
   architecturally significant, reviewing implementation plans for architectural compliance,
-  documenting architecture decisions.
-status: active
+
+  documenting architecture decisions.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: project
-scope: [AGENT-004, AGENT-006]
-version: 1.0.0
+layer: "project"
+scope:
+  - "AGENT-004"
+  - "AGENT-006"
+category: "methodology"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Architecture knowledge enables structured design decisions"
 ---
 
 

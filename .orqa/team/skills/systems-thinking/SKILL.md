@@ -1,13 +1,25 @@
 ---
-id: SKILL-040
-title: Systems Thinking
-description: Practical methodology for applying systems thinking to codebases — identifying systems, mapping boundaries, tracing relationships, finding patterns, and discovering the uniform base.
-status: active
+id: "SKILL-040"
+title: "Systems Thinking"
+description: "Practical methodology for applying systems thinking to codebases — identifying systems, mapping boundaries, tracing relationships, finding patterns, and discovering the uniform base."
+status: "active"
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: core
-scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
+layer: "core"
+scope:
+  - "AGENT-001"
+  - "AGENT-002"
+  - "AGENT-003"
+  - "AGENT-004"
+  - "AGENT-005"
+  - "AGENT-006"
+  - "AGENT-007"
+category: "methodology"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Systems thinking is the foundational methodology for clarity through structure"
 ---
 
 # Systems Thinking

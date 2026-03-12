@@ -1,17 +1,30 @@
 ---
-id: SKILL-013
-title: Orqa Native Search
-description: |
-  How to use Orqa's embedded search tools in the app context: tool names,
+id: "SKILL-013"
+title: "Orqa Native Search"
+description: "How to use Orqa's embedded search tools in the app context: tool names,
+
   query patterns, tool selection guide, and fallback behavior.
-  Use when: Any agent needs to search code or artifacts from within the OrqaStudio app.
-status: active
+
+  Use when: Any agent needs to search code or artifacts from within the OrqaStudio app.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-12"
-layer: project
-scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
-version: 2.0.0
+layer: "project"
+scope:
+  - "AGENT-001"
+  - "AGENT-002"
+  - "AGENT-003"
+  - "AGENT-004"
+  - "AGENT-005"
+  - "AGENT-006"
+  - "AGENT-007"
+category: "tool"
+version: "2.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Native search enables structured knowledge discovery in the app"
 ---
 
 Orqa provides three search tools accessible from within the app. This skill covers

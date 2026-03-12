@@ -1,19 +1,29 @@
 ---
-id: SKILL-050
-title: Migration and Link Verification Tooling
-description: |
-  How to use the backfill-relationships and verify-links tools for governance
+id: "SKILL-050"
+title: "Migration and Link Verification Tooling"
+description: "How to use the backfill-relationships and verify-links tools for governance
+
   artifact migrations. Covers relationship proposal workflow, link verification,
+
   bidirectional consistency checks, and safe frontmatter updates.
+
   Use when: Performing schema migrations, backfilling new fields across artifacts,
-  auditing cross-references, or verifying bidirectional relationship integrity.
-status: active
+
+  auditing cross-references, or verifying bidirectional relationship integrity.\n"
+status: "active"
 created: "2026-03-12"
 updated: "2026-03-12"
-layer: project
-scope: [AGENT-001, AGENT-003]
-version: 1.0.0
+layer: "project"
+scope:
+  - "AGENT-001"
+  - "AGENT-003"
+category: "tool"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Migration tooling enables structured schema evolution"
 ---
 
 Tools for governance artifact migrations and link integrity verification. These tools live in `tools/` at the project root and are designed for CLI use by agents or humans.

@@ -1,19 +1,27 @@
 ---
-id: SKILL-049
-title: Rule Enforcement (Full Architecture)
-description: |
-  Understands how OrqaStudio governance rules are mechanically enforced via the
+id: "SKILL-049"
+title: "Rule Enforcement (Full Architecture)"
+description: "Understands how OrqaStudio governance rules are mechanically enforced via the
+
   native enforcement engine and CLI companion plugin. Covers all four enforcement
+
   layers: process gates, knowledge injection, tooling ecosystem, and prompt-based
+
   injection. This is the comprehensive version covering the Rust engine and all layers;
-  SKILL-045 covers CLI plugin enforcement only.
-status: active
+
+  SKILL-045 covers CLI plugin enforcement only.\n"
+status: "active"
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: project
+layer: "project"
 scope: []
-version: 0.2.0
+category: "domain"
+version: "0.2.0"
 user-invocable: false
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Rule enforcement creates structured compliance mechanisms"
 ---
 
 # Rule Enforcement

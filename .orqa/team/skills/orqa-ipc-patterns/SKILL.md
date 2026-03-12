@@ -1,20 +1,29 @@
 ---
-id: SKILL-012
-title: Orqa IPC Patterns
-description: |
-  OrqaStudio IPC patterns: Tauri invoke() calls, #[tauri::command] handlers,
+id: "SKILL-012"
+title: "Orqa IPC Patterns"
+description: "OrqaStudio IPC patterns: Tauri invoke() calls, #[tauri::command] handlers,
+
   Channel<T> streaming, command registration, and IPC type contracts.
+
   Use when: Adding or modifying Tauri commands, wiring frontend to backend,
-  implementing streaming features, or debugging IPC boundary issues.
-status: active
+
+  implementing streaming features, or debugging IPC boundary issues.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: project
-scope: [AGENT-002, AGENT-006]
+layer: "project"
+scope:
+  - "AGENT-002"
+  - "AGENT-006"
+category: "domain"
 file-patterns:
   - "backend/src-tauri/src/commands/**"
-version: 1.0.0
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "IPC patterns enforce structured communication across layers"
 ---
 
 

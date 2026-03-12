@@ -1,21 +1,31 @@
 ---
-id: SKILL-014
-title: Orqa Repository Pattern
-description: |
-  OrqaStudio's persistence layer using the repository pattern with rusqlite.
+id: "SKILL-014"
+title: "Orqa Repository Pattern"
+description: "OrqaStudio's persistence layer using the repository pattern with rusqlite.
+
   Covers repository anatomy, connection management, query patterns, migrations,
+
   error handling, and testing.
+
   Use when: Adding a new database entity, writing a new repository module,
-  modifying persistence logic, writing migration SQL, or testing database code.
-status: active
+
+  modifying persistence logic, writing migration SQL, or testing database code.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: project
-scope: [AGENT-002, AGENT-006]
+layer: "project"
+scope:
+  - "AGENT-002"
+  - "AGENT-006"
+category: "domain"
 file-patterns:
   - "backend/src-tauri/src/repo/**"
-version: 1.0.0
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Repository pattern creates structured data access"
 ---
 
 

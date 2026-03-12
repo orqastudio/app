@@ -1,19 +1,28 @@
 ---
-id: SKILL-007
-title: Governance Maintenance
-description: |
-  Governance framework custodianship: auditing agent definitions, maintaining
+id: "SKILL-007"
+title: "Governance Maintenance"
+description: "Governance framework custodianship: auditing agent definitions, maintaining
+
   rules and skills, processing lesson promotions, verifying reading list currency,
+
   and ensuring internal consistency across the governance layer.
+
   Use when: Auditing governance artifacts, promoting lessons to rules, maintaining
-  agent/skill/rule consistency, or reviewing the governance framework.
-status: active
+
+  agent/skill/rule consistency, or reviewing the governance framework.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: core
-scope: [AGENT-003]
-version: 1.0.0
+layer: "core"
+scope:
+  - "AGENT-003"
+category: "methodology"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Governance maintenance ensures structural consistency of the framework"
 ---
 
 

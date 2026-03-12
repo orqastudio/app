@@ -2,7 +2,7 @@
 id: TASK-275
 title: "Backfill skills with category and relationships"
 description: "Use backfill tooling to add category (methodology/domain/tool) and grounded relationships to all 48 skills."
-status: todo
+status: done
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-058

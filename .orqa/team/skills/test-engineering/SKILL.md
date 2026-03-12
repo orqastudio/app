@@ -1,19 +1,29 @@
 ---
-id: SKILL-033
-title: Test Engineering
-description: |
-  Test engineering methodology: test organisation, coverage requirements, mock
+id: "SKILL-033"
+title: "Test Engineering"
+description: "Test engineering methodology: test organisation, coverage requirements, mock
+
   boundaries, test writing standards, and the discipline of testing behavior
+
   not implementation. Portable across backend and frontend test frameworks.
+
   Use when: Writing tests, setting up test infrastructure, defining mock
-  boundaries, or enforcing test coverage requirements.
-status: active
+
+  boundaries, or enforcing test coverage requirements.\n"
+status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: project
-scope: [AGENT-002, AGENT-006]
-version: 1.0.0
+layer: "project"
+scope:
+  - "AGENT-002"
+  - "AGENT-006"
+category: "methodology"
+version: "1.0.0"
 user-invocable: true
+relationships:
+  - target: "PILLAR-002"
+    type: "grounded"
+    rationale: "Test engineering creates feedback loops for learning"
 ---
 
 
