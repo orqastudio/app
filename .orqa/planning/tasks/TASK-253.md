@@ -2,7 +2,7 @@
 id: TASK-253
 title: "Move sidecar to sidecars/claude-agentsdk-sidecar/"
 description: "Relocate sidecar/ to sidecars/claude-agentsdk-sidecar/ and update all references in Makefile and Rust source."
-status: todo
+status: done
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-056

@@ -5,7 +5,7 @@ description: |
   Restructure the repository so that frontend, backend, sidecar, and debugger code
   each live in their own top-level directory. Watchers then target only their specific
   directory, eliminating unnecessary rebuilds when unrelated files change.
-status: in-progress
+status: done
 priority: P1
 created: "2026-03-12"
 updated: "2026-03-12"

@@ -2,7 +2,7 @@
 id: TASK-254
 title: "Move backend to backend/src-tauri/"
 description: "Relocate src-tauri/ to backend/src-tauri/ and update Makefile, tauri.conf.json, and .gitignore."
-status: todo
+status: done
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-056

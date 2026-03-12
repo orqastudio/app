@@ -2,7 +2,7 @@
 id: TASK-255
 title: "Nest frontend source into ui/src/"
 description: "Move ui/ contents into ui/src/ and update svelte.config.js, components.json, and vite.config.ts."
-status: todo
+status: done
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-056

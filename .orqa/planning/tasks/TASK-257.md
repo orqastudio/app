@@ -2,7 +2,7 @@
 id: TASK-257
 title: "Full integration test of reorganised repository"
 description: "Run all quality gates, dev lifecycle, and production build to verify the reorganisation is complete and correct."
-status: todo
+status: done
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-056

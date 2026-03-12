@@ -2,7 +2,7 @@
 id: TASK-256
 title: "Move dev controller to debugger/"
 description: "Relocate scripts/dev.mjs and scripts/dev-dashboard.html to debugger/ and update Makefile and internal paths."
-status: todo
+status: done
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-056
