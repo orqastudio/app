@@ -24,6 +24,8 @@ Tool access per role enforces ownership boundaries defined in [RULE-001](RULE-00
 | file_edit | Y | Y | — | — | — | Y | Y |
 | file_write | Y | Y | — | — | — | Y | Y |
 | shell_execute | Y | Y | — | — | Y | — | — |
+| web_fetch | Y | Y | Y | Y | — | Y | — |
+| web_search | Y | Y | Y | Y | — | Y | — |
 
 Capabilities resolve to provider-specific tools via [RULE-040](RULE-040).
 

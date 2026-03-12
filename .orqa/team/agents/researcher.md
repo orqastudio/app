@@ -16,10 +16,13 @@ capabilities:
   - code_search_regex
   - code_search_semantic
   - code_research
+  - web_fetch
+  - web_search
 skills:
   - SKILL-005
   - SKILL-008
   - SKILL-019
+  - SKILL-046
 subagent_mapping:
   default: Explore
 ---

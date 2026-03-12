@@ -1,14 +1,14 @@
 {
   "$id": "orqa://schemas/task",
   "title": "Task",
-  "description": "Individual implementation unit within an epic",
+  "description": "Individual implementation unit, optionally linked to an epic",
   "type": "object",
-  "required": ["id", "title", "description", "status", "created", "updated", "epic"],
+  "required": ["id", "title", "description", "status", "created", "updated"],
   "additionalProperties": false,
   "propertyOrder": [
     "id", "title", "description", "status",
     "created", "updated",
-    "epic", "depends-on", "assignee", "skills",
+    "epic", "depends-on", "assignee", "docs", "skills",
     "scope", "acceptance"
   ],
   "properties": {
@@ -24,9 +24,15 @@
       "items": { "type": "string", "pattern": "^TASK-\\d+$" }
     },
     "assignee": { "type": "string", "pattern": "^AGENT-\\d+$" },
+    "docs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Documentation paths to load into agent context during implementation"
+    },
     "skills": {
       "type": "array",
-      "items": { "type": "string", "pattern": "^SKILL-\\d+$" }
+      "items": { "type": "string" },
+      "description": "Skill directory names to load into agent context during implementation"
     },
     "scope": {
       "type": "array",

@@ -346,7 +346,7 @@ Tasks are individual implementation units. Most tasks live as checklist items in
 id: TASK-001
 title: "Emit SystemPromptSent event from stream_commands.rs"
 status: todo                      # todo | in-progress | done
-epic: EPIC-001
+epic: EPIC-001                    # optional — see workflow.epics-required in project.json
 description: >
   Add SystemPromptSent event emission before the sidecar call so the
   frontend can display system prompt content in the conversation.
@@ -354,7 +354,9 @@ created: 2026-03-07
 updated: 2026-03-07
 depends-on: []                    # Task IDs that must be done before this can start
 assignee: backend-engineer
-skills: [orqa-ipc-patterns, orqa-streaming]
+docs:                             # Documentation to load during implementation
+  - ".orqa/documentation/architecture/streaming.md"
+skills: [orqa-ipc-patterns, orqa-streaming]  # Skills to load during implementation
 scope:                            # Files/directories affected
   - src-tauri/src/commands/stream_commands.rs
 acceptance:                       # What "done" looks like
@@ -369,17 +371,18 @@ acceptance:                       # What "done" looks like
 | `id` | Yes | string | Auto-incrementing `TASK-NNN` identifier |
 | `title` | Yes | string | Concise task description |
 | `status` | Yes | enum | `todo`, `in-progress`, `done` |
-| `epic` | Yes | string | Parent epic ID |
+| `epic` | Configurable | string | Parent epic ID. Required when `workflow.epics-required: true` in `project.json`, optional otherwise ([AD-040](AD-040)) |
 | `description` | Yes | string | What this task does and why |
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
 | `depends-on` | No | string[] | Task IDs that must be `done` before this task can move to `in-progress` |
 | `assignee` | No | string | Agent name |
-| `skills` | No | string[] | Skills the assignee should load before starting — enables traceability from plan → task → agent → skills → implementation |
+| `docs` | No | string[] | Documentation paths to load into agent context during implementation — creates graph edges from task to its knowledge requirements |
+| `skills` | No | string[] | Skill directory names to load into agent context during implementation — creates graph edges from task to required domain knowledge |
 | `scope` | No | string[] | Files/directories affected |
 | `acceptance` | No | string[] | Acceptance criteria |
 
-**The `skills` field and traceability:** The `skills` field closes the loop from epic to execution. The chain is: **Epic** defines what needs doing → **Task** specifies who does it (`assignee`) and what knowledge they need (`skills`) → **Agent** loads those skills before starting → **Implementation** is done with the right context. Populating `skills` when creating a task ensures no agent picks up work without the codebase knowledge needed to do it well.
+**The `docs` and `skills` fields as graph edges:** These fields create explicit relationships in the artifact graph. When an agent picks up a task, it reads the `docs` paths and loads the `skills` listed — ensuring the right context is available before implementation begins. This replaces hardcoded injection tables in the orchestrator prompt ([AD-038](AD-038)). The chain is: **Epic** defines what needs doing → **Task** specifies what knowledge is needed (`docs`, `skills`) → **Agent** loads that knowledge before starting → **Implementation** happens with the right context. The graph gets richer with every task, and future sessions benefit from better context injection.
 
 ### Idea (`IDEA-NNN`)
 
@@ -469,6 +472,10 @@ description: >
 created: 2026-03-07
 updated: 2026-03-07
 surpassed-by: null                # RES-NNN of the doc that supersedes this, or null
+sources:                          # External sources that informed this research
+  - url: "https://docs.rs/tauri/latest/tauri/ipc/struct.Channel.html"
+    description: "Tauri Channel<T> official documentation"
+    tier: T1
 ---
 ```
 
@@ -481,6 +488,7 @@ surpassed-by: null                # RES-NNN of the doc that supersedes this, or 
 | `created` | Yes | date | ISO date of creation |
 | `updated` | Yes | date | ISO date of last update |
 | `surpassed-by` | No | string | `RES-NNN` of the research doc that supersedes this, or null |
+| `sources` | No | object[] | External sources that informed this research. Each entry has `url` (required), `description` (required), and `tier` (T1-T4, optional). See `research-methodology` skill for credibility tiers. |
 
 The research body follows the structure: **Question** (what is being investigated), **Research Findings** (what was discovered), **Options Evaluated** (alternatives considered), **Recommendation** (what to do and why).
 
@@ -619,7 +627,7 @@ YAML frontmatter fields follow a consistent content hierarchy across all artifac
 2. **Classification** — `layer`, `status`, `priority`, `scope`, `milestone`, `epic`, `pillars` (what kind of thing is it?)
 3. **Description** — `description`, `gate` (what is it about?)
 4. **Lifecycle** — `created`, `updated`, `deadline` (when?)
-5. **Relationships** — `depends-on`, `blocks`, `research-refs`, `docs-required`, `docs-produced`, `research-needed`, `promoted-to`, `supersedes`, `superseded-by`, `surpassed-by`, `promoted-from` (what connects to what?)
+5. **Relationships** — `depends-on`, `blocks`, `research-refs`, `docs-required`, `docs-produced`, `research-needed`, `promoted-to`, `supersedes`, `superseded-by`, `surpassed-by`, `promoted-from`, `docs`, `sources` (what connects to what?)
 6. **Scoring** — `scoring` block (how important?)
 7. **Operational** — `assignee`, `skills`, `scope`, `acceptance`, `gate`, `recurrence`, `promoted-to` (how is it managed?)
 
@@ -630,12 +638,12 @@ YAML frontmatter fields follow a consistent content hierarchy across all artifac
 | **Milestone** | id, title, status, description, created, updated, deadline, gate |
 | **Pillar** | id, title, status, description, gate, created, updated |
 | **Epic** | id, title, status, priority, milestone, pillars, description, created, updated, research-refs, docs-required, docs-produced, depends-on, blocks, deadline, scoring |
-| **Task** | id, title, status, epic, description, created, updated, depends-on, assignee, skills, scope, acceptance |
+| **Task** | id, title, status, epic, description, created, updated, depends-on, assignee, docs, skills, scope, acceptance |
 | **Idea** | id, title, status, pillars, description, created, updated, research-needed, promoted-to |
 | **Lesson** | id, title, status, description, created, updated, recurrence, promoted-to |
 | **Rule** | id, title, description, status, created, updated, layer, scope, promoted-from |
 | **Decision** | id, title, description, status, category, created, updated, research-refs, supersedes, superseded-by |
-| **Research** | id, title, status, description, created, updated, surpassed-by |
+| **Research** | id, title, status, description, created, updated, surpassed-by, sources |
 
 ---
 

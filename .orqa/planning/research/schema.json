@@ -8,7 +8,7 @@
   "propertyOrder": [
     "id", "title", "description", "status",
     "created", "updated",
-    "surpassed-by"
+    "surpassed-by", "sources"
   ],
   "properties": {
     "id": { "type": "string", "pattern": "^RES-\\d+$" },
@@ -17,7 +17,24 @@
     "status": { "enum": ["draft", "complete", "surpassed"] },
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
-    "surpassed-by": { "type": ["string", "null"], "pattern": "^RES-\\d+$" }
+    "surpassed-by": { "type": ["string", "null"], "pattern": "^RES-\\d+$" },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["url", "description"],
+        "properties": {
+          "url": { "type": "string", "format": "uri" },
+          "description": { "type": "string" },
+          "tier": {
+            "enum": ["T1", "T2", "T3", "T4"],
+            "description": "Credibility tier: T1=Authoritative, T2=Established, T3=Community, T4=Unverified"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "External sources that informed this research"
+    }
   },
   "bodyTemplate": null
 }
