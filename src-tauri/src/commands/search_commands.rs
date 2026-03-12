@@ -31,7 +31,7 @@ pub async fn index_codebase(
         .map_err(|e| OrqaError::Search(e.to_string()))?;
 
     // Initialize or replace the search engine
-    let engine = SearchEngine::new(&db_path).map_err(OrqaError::Search)?;
+    let engine = SearchEngine::new(&db_path)?;
     *search_guard = Some(engine);
 
     // Index the codebase
@@ -39,7 +39,6 @@ pub async fn index_codebase(
         .as_mut()
         .ok_or_else(|| OrqaError::Search("search engine not initialized".to_string()))?
         .index(&project_path_buf, &excluded_paths)
-        .map_err(OrqaError::Search)
 }
 
 /// Search the indexed codebase using a regex pattern.
@@ -60,9 +59,7 @@ pub async fn search_regex(
     let engine = search_guard.as_ref().ok_or_else(|| {
         OrqaError::Search("search index not initialized — index the codebase first".to_string())
     })?;
-    engine
-        .search_regex(&pattern, path.as_deref(), max_results.unwrap_or(20))
-        .map_err(OrqaError::Search)
+    engine.search_regex(&pattern, path.as_deref(), max_results.unwrap_or(20))
 }
 
 /// Search the indexed codebase using semantic similarity.
@@ -82,9 +79,7 @@ pub async fn search_semantic(
     let engine = search_guard.as_mut().ok_or_else(|| {
         OrqaError::Search("search index not initialized — index the codebase first".to_string())
     })?;
-    engine
-        .search_semantic(&query, max_results.unwrap_or(10))
-        .map_err(OrqaError::Search)
+    engine.search_semantic(&query, max_results.unwrap_or(10))
 }
 
 /// Get the current status of the search index for a project.
@@ -102,7 +97,7 @@ pub async fn get_index_status(
         .map_err(|e| OrqaError::Search(e.to_string()))?;
 
     if let Some(engine) = search_guard.as_ref() {
-        return engine.get_status().map_err(OrqaError::Search);
+        return engine.get_status();
     }
 
     // If no engine loaded, check if a search DB exists on disk
@@ -115,8 +110,8 @@ pub async fn get_index_status(
             .search
             .lock()
             .map_err(|e| OrqaError::Search(e.to_string()))?;
-        let engine = SearchEngine::new(&db_path).map_err(OrqaError::Search)?;
-        let status = engine.get_status().map_err(OrqaError::Search)?;
+        let engine = SearchEngine::new(&db_path)?;
+        let status = engine.get_status()?;
         *search_guard = Some(engine);
         Ok(status)
     } else {
@@ -156,9 +151,7 @@ pub async fn init_embedder(state: State<'_, AppState>, model_dir: String) -> Res
         .lock()
         .map_err(|e| OrqaError::Search(e.to_string()))?;
     if let Some(engine) = search_guard.as_mut() {
-        engine
-            .init_embedder_sync(&model_path)
-            .map_err(OrqaError::Search)?;
+        engine.init_embedder_sync(&model_path)?;
     }
 
     Ok(())
