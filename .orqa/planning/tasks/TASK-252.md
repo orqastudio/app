@@ -9,7 +9,7 @@ epic: EPIC-056
 depends-on: []
 acceptance:
   - "All src-tauri/ references updated to backend/src-tauri/"
-  - "All sidecar/ references updated to sidecars/orqa-sidecar/"
+  - "All sidecar/ references updated to sidecars/claude-agentsdk-sidecar/"
   - "All scripts/dev.mjs references updated to debugger/dev.mjs"
   - "All ui/lib/ references updated to ui/src/lib/"
   - "All ui/routes/ references updated to ui/src/routes/"
@@ -25,7 +25,7 @@ new directory structure before any code moves happen.
 
 Automated find-replace on all `.md` files in `.orqa/`:
 - `src-tauri/` → `backend/src-tauri/`
-- `sidecar/` → `sidecars/orqa-sidecar/`
+- `sidecar/` → `sidecars/claude-agentsdk-sidecar/`
 - `scripts/dev.mjs` → `debugger/dev.mjs`
 - `scripts/dev-dashboard.html` → `debugger/dev-dashboard.html`
 - `ui/lib/` → `ui/src/lib/`

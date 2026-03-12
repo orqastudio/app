@@ -33,7 +33,7 @@ The orchestrator coordinates. It does NOT implement. Every implementation task i
 
 - Any change to `backend/src-tauri/` (Rust backend code) — delegate to Implementer with backend skills
 - Any change to `ui/` (Svelte frontend code) — delegate to Implementer with frontend skills, or Designer
-- Any change to `sidecars/orqa-sidecar/` (Agent SDK sidecar) — delegate to Implementer with backend skills
+- Any change to `sidecars/claude-agentsdk-sidecar/` (Agent SDK sidecar) — delegate to Implementer with backend skills
 - Running and interpreting test suites — delegate to Reviewer with test-engineering skills
 - Code review and compliance checks — delegate to Reviewer with code-quality-review skills
 - UX compliance reviews — delegate to Reviewer with ux-compliance-review skills

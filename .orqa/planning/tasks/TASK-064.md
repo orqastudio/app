@@ -16,7 +16,7 @@ acceptance:
   - Summary groups changes by directory (.orqa/
   - backend/src-tauri/
   - ui/
-  - sidecars/orqa-sidecar/)
+  - sidecars/claude-agentsdk-sidecar/)
   - Warning includes instruction to commit before starting new work
 ---
 

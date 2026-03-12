@@ -32,7 +32,7 @@ OrqaStudio is a Tauri v2 desktop application with three main layers:
 │  backend/src-tauri/migrations/                  │
 ├─────────────────────────────────────────┤
 │  AI Sidecar (TypeScript / Bun)          │
-│  sidecars/orqa-sidecar/                 │
+│  sidecars/claude-agentsdk-sidecar/                 │
 │    Provider interface, NDJSON protocol  │
 └─────────────────────────────────────────┘
 ```
@@ -56,10 +56,10 @@ OrqaStudio is a Tauri v2 desktop application with three main layers:
 - **Commands** (`commands/`): Thin `#[tauri::command]` handlers that delegate to domain services
 - **Domain** (`domain/`): Business logic, pure functions where possible
 - **Repositories** (`repo/`): SQLite persistence via `rusqlite`
-- **Sidecar management** (`sidecars/orqa-sidecar/`): Protocol types and process control for the AI sidecar
+- **Sidecar management** (`sidecars/claude-agentsdk-sidecar/`): Protocol types and process control for the AI sidecar
 - **Error handling:** All functions return `Result<T, OrqaError>`. No `unwrap()` in production.
 
-### AI Sidecar (`sidecars/orqa-sidecar/`)
+### AI Sidecar (`sidecars/claude-agentsdk-sidecar/`)
 
 A separate TypeScript process that bridges AI provider SDKs (currently Claude Agent SDK) with the Rust backend:
 
@@ -103,7 +103,7 @@ Agent SDK → Sidecar (Bun) → NDJSON stdout → Rust → Channel<T> → Svelte
 | `backend/src-tauri/src/domain/` | Domain logic and services |
 | `backend/src-tauri/src/repo/` | Database repositories |
 | `backend/src-tauri/src/sidecar/` | Sidecar protocol and types |
-| `sidecars/orqa-sidecar/src/` | AI provider implementations |
+| `sidecars/claude-agentsdk-sidecar/src/` | AI provider implementations |
 | `.orqa/documentation/` | Project documentation (architecture, process, development, product) |
 | `.orqa/` | Governance framework source of truth (agents, rules, skills, hooks, decisions, documentation) |
 

@@ -12,7 +12,7 @@ updated: "2026-03-10"
 layer: project
 scope: [AGENT-002, AGENT-006]
 file-patterns:
-  - "sidecars/orqa-sidecar/src/**"
+  - "sidecars/claude-agentsdk-sidecar/src/**"
 version: 1.0.0
 user-invocable: true
 ---
@@ -27,7 +27,7 @@ Claude API (Anthropic)
     ↑↓
 Agent SDK (in sidecar process)
     ↓ events
-Sidecar (Bun-compiled binary: sidecars/orqa-sidecar/src/)
+Sidecar (Bun-compiled binary: sidecars/claude-agentsdk-sidecar/src/)
     ↓ NDJSON over stdout
 Rust (backend/src-tauri/src/sidecar/ + backend/src-tauri/src/commands/stream_commands.rs)
     ↓ Channel<T> (Tauri streaming)
@@ -38,12 +38,12 @@ UI Components (ConversationView, StreamingIndicator, etc.)
 
 ## Layer 1: Sidecar (TypeScript/Bun)
 
-The sidecar is a Bun-compiled binary in `sidecars/orqa-sidecar/`. It communicates with Rust via NDJSON over stdin/stdout.
+The sidecar is a Bun-compiled binary in `sidecars/claude-agentsdk-sidecar/`. It communicates with Rust via NDJSON over stdin/stdout.
 
 ### Protocol Types
 
 ```typescript
-// sidecars/orqa-sidecar/src/protocol.ts
+// sidecars/claude-agentsdk-sidecar/src/protocol.ts
 export interface SendMessageRequest {
     type: 'send_message';
     session_id: number;
@@ -72,7 +72,7 @@ export interface ToolApprovalRequest {
 ### Provider (Agent SDK Integration)
 
 ```typescript
-// sidecars/orqa-sidecar/src/provider.ts — simplified pattern
+// sidecars/claude-agentsdk-sidecar/src/provider.ts — simplified pattern
 const response = await query({
     model: request.model,
     system: request.system_prompt ? [{ text: request.system_prompt }] : undefined,
@@ -93,7 +93,7 @@ for await (const event of response) {
 ### NDJSON Communication
 
 ```typescript
-// sidecars/orqa-sidecar/src/index.ts — stdin/stdout protocol
+// sidecars/claude-agentsdk-sidecar/src/index.ts — stdin/stdout protocol
 // Read requests from stdin (one JSON object per line)
 for await (const line of readLines(process.stdin)) {
     const request = JSON.parse(line);
@@ -268,9 +268,9 @@ The Rust stream command runs a synchronous loop reading from sidecar stdout. Too
 
 | File | Purpose |
 |------|---------|
-| `sidecars/orqa-sidecar/src/provider.ts` | Agent SDK integration, event streaming |
-| `sidecars/orqa-sidecar/src/protocol.ts` | NDJSON protocol types |
-| `sidecars/orqa-sidecar/src/index.ts` | stdin/stdout communication loop |
+| `sidecars/claude-agentsdk-sidecar/src/provider.ts` | Agent SDK integration, event streaming |
+| `sidecars/claude-agentsdk-sidecar/src/protocol.ts` | NDJSON protocol types |
+| `sidecars/claude-agentsdk-sidecar/src/index.ts` | stdin/stdout communication loop |
 | `backend/src-tauri/src/sidecar/types.rs` | Rust-side sidecar protocol types |
 | `backend/src-tauri/src/sidecar/protocol.rs` | NDJSON parsing and sidecar process management |
 | `backend/src-tauri/src/commands/stream_commands.rs` | Stream command handler, tool execution, Channel<T> |

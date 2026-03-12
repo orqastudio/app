@@ -55,7 +55,7 @@ orqa-studio/
   ui/
     src/              # Frontend source (current ui/ contents nested)
   sidecars/
-    orqa-sidecar/     # Sidecar (moved from sidecar/)
+    claude-agentsdk-sidecar/     # Sidecar (moved from sidecar/)
   debugger/
     dev.mjs           # Dev controller (moved from scripts/)
     dev-dashboard.html
@@ -98,7 +98,7 @@ after each step.
 | ID | Title |
 |----|-------|
 | [TASK-252](TASK-252) | Update documentation paths for directory reorganisation |
-| [TASK-253](TASK-253) | Move sidecar to sidecars/orqa-sidecar/ |
+| [TASK-253](TASK-253) | Move sidecar to sidecars/claude-agentsdk-sidecar/ |
 | [TASK-254](TASK-254) | Move backend to backend/src-tauri/ |
 | [TASK-255](TASK-255) | Nest frontend source into ui/src/ |
 | [TASK-256](TASK-256) | Move dev controller to debugger/ |

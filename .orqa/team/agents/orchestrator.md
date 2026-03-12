@@ -123,7 +123,7 @@ Every feature follows: **Understand → Plan → Document → Implement → Revi
 
 ### What You MUST Delegate
 
-- Any change to `backend/src-tauri/`, `ui/`, `sidecars/orqa-sidecar/` — delegate to Implementer
+- Any change to `backend/src-tauri/`, `ui/`, `sidecars/claude-agentsdk-sidecar/` — delegate to Implementer
 - Running tests and quality checks — delegate to Reviewer
 - Code review — delegate to Reviewer
 - Architecture assessment — delegate to Planner or Researcher

@@ -18,11 +18,11 @@ CARGO_MANIFEST := backend/src-tauri/Cargo.toml
 
 install: ## Install all dependencies (npm + sidecar + cargo)
 	cd ui && npm install
-	cd sidecars/orqa-sidecar && bun install
+	cd sidecars/claude-agentsdk-sidecar && bun install
 	cargo fetch --manifest-path $(CARGO_MANIFEST)
 
 install-sidecar: ## Install sidecar dependencies
-	cd sidecars/orqa-sidecar && bun install
+	cd sidecars/claude-agentsdk-sidecar && bun install
 
 # ── Development ──────────────────────────────────────────────────────────────
 
@@ -54,7 +54,7 @@ dev-frontend: ## Run frontend only (Vite dev server)
 	cd ui && npm run dev
 
 dev-sidecar: ## Build sidecar for development
-	cd sidecars/orqa-sidecar && bun run build
+	cd sidecars/claude-agentsdk-sidecar && bun run build
 
 # ── Build ─────────────────────────────────────────────────────────────────────
 
@@ -65,7 +65,7 @@ build-frontend: ## Build frontend only
 	cd ui && npm run build
 
 build-sidecar: ## Build sidecar for production
-	cd sidecars/orqa-sidecar && bun run build
+	cd sidecars/claude-agentsdk-sidecar && bun run build
 
 # ── Quality ──────────────────────────────────────────────────────────────────
 

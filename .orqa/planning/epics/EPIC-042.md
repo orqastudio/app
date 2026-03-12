@@ -55,7 +55,7 @@ Migrate from the current model (all skills on agent definitions) to three tiers:
 | `backend/src-tauri/src/domain/` | `orqa-domain-services`, `orqa-error-composition` |
 | `backend/src-tauri/src/repo/`, `backend/src-tauri/src/db.rs` | `orqa-repository-pattern` |
 | `backend/src-tauri/src/search/` | `orqa-native-search` |
-| `sidecars/orqa-sidecar/src/` | `orqa-streaming` |
+| `sidecars/claude-agentsdk-sidecar/src/` | `orqa-streaming` |
 | `ui/src/lib/stores/` | `orqa-store-patterns`, `orqa-store-orchestration` |
 | `ui/src/lib/components/` | `orqa-store-patterns` |
 | `.orqa/` | `orqa-governance` |

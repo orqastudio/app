@@ -13,13 +13,13 @@ const SIDECAR_COMMAND: &str = "node";
 /// then CWD as src-tauri/ (cargo run).
 fn sidecar_args() -> Vec<String> {
     // 1. Real Agent SDK sidecar (preferred — CWD is project root)
-    let real_sidecar = std::path::Path::new("sidecars/orqa-sidecar/dist/sidecar.js");
+    let real_sidecar = std::path::Path::new("sidecars/claude-agentsdk-sidecar/dist/sidecar.js");
     if real_sidecar.exists() {
         return vec![real_sidecar.to_string_lossy().to_string()];
     }
 
     // 2. Real sidecar from backend/src-tauri/ CWD
-    let real_alt = std::path::Path::new("../../sidecars/orqa-sidecar/dist/sidecar.js");
+    let real_alt = std::path::Path::new("../../sidecars/claude-agentsdk-sidecar/dist/sidecar.js");
     if real_alt.exists() {
         return vec![real_alt.to_string_lossy().to_string()];
     }
@@ -37,7 +37,7 @@ fn sidecar_args() -> Vec<String> {
     }
 
     // Last resort
-    vec!["sidecars/orqa-sidecar/dist/sidecar.js".to_string()]
+    vec!["sidecars/claude-agentsdk-sidecar/dist/sidecar.js".to_string()]
 }
 
 /// Ensure the sidecar is running, spawning it if necessary.

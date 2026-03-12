@@ -5,7 +5,7 @@ description: |
   Umbrella skill for all backend implementation work. Establishes composability,
   coding standards, and error handling as always-in-mind principles, then
   references deeper skills for Rust, Tauri, and persistence specifics.
-  Use when: Any agent is about to write or modify backend code (backend/src-tauri/, sidecars/orqa-sidecar/).
+  Use when: Any agent is about to write or modify backend code (backend/src-tauri/, sidecars/claude-agentsdk-sidecar/).
 status: active
 created: "2026-03-11"
 updated: "2026-03-11"

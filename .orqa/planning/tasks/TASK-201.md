@@ -26,7 +26,7 @@ Add enforcement entries to appropriate rules mapping path patterns to skills:
 - `backend/src-tauri/src/domain/**` → `orqa-domain-services`, `orqa-error-composition`
 - `backend/src-tauri/src/commands/**` → `orqa-ipc-patterns`, `orqa-error-composition`
 - `backend/src-tauri/src/repo/**` → `orqa-repository-pattern`
-- `sidecars/orqa-sidecar/src/**` → `orqa-streaming`
+- `sidecars/claude-agentsdk-sidecar/src/**` → `orqa-streaming`
 - `ui/src/lib/components/**` → `component-extraction`, `svelte5-best-practices`
 - `ui/src/lib/stores/**` → `orqa-store-patterns`, `orqa-store-orchestration`
 - `.orqa/**` → `orqa-governance`, `orqa-documentation`

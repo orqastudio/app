@@ -270,7 +270,7 @@ All search commands return `Result<T, OrqaError>`. Tauri serialises `OrqaError` 
 
 ## 8. Sidecar Tool Integration
 
-Tools are registered in the orqa-studio MCP server (`sidecars/orqa-sidecar/src/provider.ts`):
+Tools are registered in the orqa-studio MCP server (`sidecars/claude-agentsdk-sidecar/src/provider.ts`):
 
 | Tool | Sidecar Name | Auto-approve | Description |
 |------|-------------|--------------|-------------|
