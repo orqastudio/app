@@ -2,7 +2,7 @@
 id: TASK-276
 title: "Backfill decisions with relationships"
 description: "Use backfill tooling to add practices and enforces relationships to all 42 decisions, connecting to skills and rules already backfilled."
-status: todo
+status: done
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-058
