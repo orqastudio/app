@@ -16,10 +16,8 @@ depends-on:
 assignee: AGENT-006
 docs: []
 skills:
-  - orqa-plugin-development
-  - orqa-testing
-scope:
-  - orqa-plugin/
+  - SKILL-020
+  - SKILL-018
 acceptance:
   - Plugin loads all 39+ rules from .orqa/governance/rules/
   - Plugin loads all 7 agents from .orqa/team/agents/

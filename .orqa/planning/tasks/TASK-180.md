@@ -2,19 +2,17 @@
 id: TASK-180
 title: Implement PreToolUse hook (file + bash event enforcement)
 description: Plugin PreToolUse hook evaluates active rules against tool calls and blocks/warns on violations.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-050
 depends-on:
   - TASK-178
 assignee: AGENT-002
 docs: []
 skills:
-  - orqa-plugin-development
-  - rule-enforcement
-scope:
-  - orqa-plugin/hooks/
+  - SKILL-020
+  - SKILL-045
 acceptance:
   - PreToolUse hook fires before Edit, Write, and Bash tool calls
   - Hook loads active rules with enforcement entries

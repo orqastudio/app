@@ -10,11 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-017
   - SKILL-032
-scope:
-  - sidecar/src/provider-interface.ts
-  - sidecar/src/providers/claude-agent.ts
-  - sidecar/src/providers/index.ts
-  - sidecar/src/provider.ts
 acceptance:
   - Provider interface defined with query/resume/cancel/health methods
   - ClaudeAgentProvider implements the interface

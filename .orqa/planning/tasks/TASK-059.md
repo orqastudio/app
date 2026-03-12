@@ -11,8 +11,6 @@ depends-on:
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/project.json
 acceptance:
   - Pillars path added to project.json artifacts array under Planning group
   - App artifact scanner discovers pillar files

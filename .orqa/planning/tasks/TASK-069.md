@@ -12,13 +12,11 @@ skills:
   - SKILL-030
   - SKILL-031
 docs:
-  - .orqa/documentation/development/coding-standards.md
+  - DOC-021
 skills:
-  - svelte5-best-practices
-  - tailwind-design-system
-  - component-extraction
-scope:
-  - ui/lib/components/navigation/
+  - SKILL-030
+  - SKILL-031
+  - SKILL-041
 acceptance:
   - Hover state on navigation items has noticeably stronger visual feedback
   - Active/selected state is clearly distinguishable from default and hover

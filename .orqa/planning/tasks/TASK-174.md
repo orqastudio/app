@@ -2,21 +2,18 @@
 id: TASK-174
 title: Update delegation rules for capability resolution
 description: Update RULE-001 and RULE-026 to reference capability-based delegation and skill loading.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-051
 depends-on:
   - TASK-171
 assignee: AGENT-003
 docs:
-  - .orqa/documentation/product/artifact-framework.md
+  - DOC-036
 skills:
-  - orqa-governance
-  - orqa-documentation
-scope:
-  - .orqa/governance/rules/RULE-001.md
-  - .orqa/governance/rules/RULE-026.md
+  - SKILL-011
+  - SKILL-037
 acceptance:
   - RULE-001 delegation protocol includes capability resolution step
   - RULE-026 skill loading references capability-based tool access

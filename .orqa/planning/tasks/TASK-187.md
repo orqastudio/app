@@ -2,20 +2,17 @@
 id: TASK-187
 title: Document plugin installation and configuration
 description: Write documentation for installing, configuring, and using the orqa companion plugin.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-050
 depends-on:
   - TASK-185
 assignee: AGENT-007
 docs: []
 skills:
-  - orqa-plugin-development
-  - orqa-documentation
-scope:
-  - orqa-plugin/README.md
-  - .orqa/documentation/
+  - SKILL-020
+  - SKILL-037
 acceptance:
   - Plugin README covers installation steps
   - README covers configuration options

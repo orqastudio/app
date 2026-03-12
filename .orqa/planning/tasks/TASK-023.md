@@ -10,10 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-030
   - SKILL-017
-scope:
-  - ui/lib/components/conversation/
-  - ui/lib/stores/conversation.svelte.ts
-  - sidecar/src/
 acceptance:
   - NDJSON streaming handles partial messages correctly
   - Tool output truncated at 500 chars with "Show more"

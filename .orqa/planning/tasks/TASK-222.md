@@ -8,18 +8,10 @@ updated: "2026-03-12"
 epic: EPIC-053
 depends-on: []
 docs:
-  - .orqa/documentation/product/artifact-framework.md
+  - DOC-036
 skills:
-  - orqa-governance
-  - orqa-artifact-audit
-scope:
-  - Read every AD from AD-001 through AD-037
-  - For each, evaluate whether AD-038, AD-039, or AD-040 supersedes, modifies, or renders it irrelevant
-  - Mark truly superseded decisions with status superseded and superseded-by field
-  - Update decisions that are partially affected (add notes about what changed)
-  - Leave decisions that are unaffected as-is
-  - Ensure all supersession pairs are updated in the same commit (both old and new)
-  - Document findings in a summary table
+  - SKILL-011
+  - SKILL-038
 acceptance:
   - Every AD from AD-001 to AD-037 has been reviewed
   - Superseded decisions have status superseded and superseded-by set

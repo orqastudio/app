@@ -49,7 +49,7 @@ Steps 2-5 may happen in parallel. Step 6 is a gate — no implementation without
 | Artifact | Minimum Required Fields |
 |----------|----------------------|
 | Epic | `id`, `title`, `status`, `milestone`, `description`, implementation design in body |
-| Task | `id`, `title`, `status`, `epic`, `scope`, `acceptance` |
+| Task | `id`, `title`, `status`, `epic`, `acceptance` |
 | Research | `title`, `type`, `status`, `category`, `description` |
 | Decision | `id`, `title`, `status`, `category`, `description`, Decision + Rationale + Consequences sections |
 

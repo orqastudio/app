@@ -11,13 +11,6 @@ depends-on:
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/team/agents/researcher.md
-  - .orqa/team/agents/planner.md
-  - .orqa/team/agents/implementer.md
-  - .orqa/team/agents/reviewer.md
-  - .orqa/team/agents/writer.md
-  - .orqa/team/agents/designer.md
 acceptance:
   - researcher.md exists with universal investigation role definition
   - planner.md exists with universal approach design role definition

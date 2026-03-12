@@ -7,11 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Replace all OrqaStudio-specific file paths in examples with generic equivalents
-  - Replace OrqaStudio module/component names in examples with generic names
-  - Preserve all composability principles unchanged
-  - Skill must remain layer canon
 acceptance:
   - No OrqaStudio-specific file paths in examples
   - No OrqaStudio module/component names in examples

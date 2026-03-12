@@ -2,20 +2,18 @@
 id: TASK-173
 title: Migrate agent definitions from tools to capabilities
 description: Update all 7 agent definitions to declare capabilities instead of concrete tool names.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-051
 depends-on:
   - TASK-171
   - TASK-172
 assignee: AGENT-003
 docs:
-  - .orqa/documentation/product/artifact-framework.md
+  - DOC-036
 skills:
-  - orqa-governance
-scope:
-  - .orqa/team/agents/
+  - SKILL-011
 acceptance:
   - All 7 agent definitions have a capabilities field
   - Capabilities map correctly to the vocabulary defined in RULE-040

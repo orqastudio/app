@@ -5,10 +5,10 @@ description: |
   Build a two-context rule enforcement engine: a Claude Code companion plugin
   (separate repo) that enforces .orqa/ rules in the CLI, then integrate the same
   enforcement logic into the OrqaStudio app for dogfooding parity.
-status: draft
+status: in-progress
 priority: P1
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 deadline: null
 milestone: MS-002
 pillars:
@@ -243,17 +243,17 @@ Everything else comes from `.orqa/` via the plugin. The symlinks are deleted.
 
 ### Phase 1: Companion Plugin
 
-- [ ] [TASK-183](TASK-183): Add `enforcement` field to rule schema + add entries to key rules
-- [ ] [TASK-177](TASK-177): Create `orqa-plugin` repository with Claude Code plugin scaffold
-- [ ] [TASK-178](TASK-178): Implement rule engine core (loader, parser, pattern matcher)
-- [ ] [TASK-179](TASK-179): Implement agent & skill loading from `.orqa/team/`
-- [ ] [TASK-180](TASK-180): Implement PreToolUse hook (file + bash event enforcement)
-- [ ] [TASK-181](TASK-181): Implement SessionStart hook (orchestrator injection + session checks)
-- [ ] [TASK-182](TASK-182): Implement Stop hook (replaces pre-commit-reminder.sh)
+- [x] [TASK-183](TASK-183): Add `enforcement` field to rule schema + add entries to key rules
+- [x] [TASK-177](TASK-177): Create `orqa-plugin` repository with Claude Code plugin scaffold
+- [x] [TASK-178](TASK-178): Implement rule engine core (loader, parser, pattern matcher)
+- [x] [TASK-179](TASK-179): Implement agent & skill loading from `.orqa/team/`
+- [x] [TASK-180](TASK-180): Implement PreToolUse hook (file + bash event enforcement)
+- [x] [TASK-181](TASK-181): Implement SessionStart hook (orchestrator injection + session checks)
+- [x] [TASK-182](TASK-182): Implement Stop hook (replaces pre-commit-reminder.sh)
 - [ ] [TASK-184](TASK-184): Implement `/orqa`, `/orqa:rules`, `/orqa:status` commands
 - [ ] [TASK-185](TASK-185): Test plugin against OrqaStudio's `.orqa/` governance artifacts
 - [ ] [TASK-186](TASK-186): Remove `.claude/` symlinks and update [RULE-003](RULE-003) symlink documentation
-- [ ] [TASK-187](TASK-187): Document plugin installation and configuration
+- [x] [TASK-187](TASK-187): Document plugin installation and configuration
 
 ### Phase 2: App-Native Enforcement
 

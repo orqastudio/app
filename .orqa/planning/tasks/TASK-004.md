@@ -10,15 +10,6 @@ assignee: AGENT-007
 skills:
   - SKILL-003
   - SKILL-011
-scope:
-  - .orqa/documentation/product/artifact-framework.md
-  - .orqa/documentation/product/glossary.md
-  - .orqa/documentation/product/system-artifacts.md
-  - .orqa/documentation/product/mvp-specification.md
-  - .orqa/documentation/product/roadmap.md
-  - .orqa/documentation/product/information-architecture.md
-  - .orqa/documentation/product/personas.md
-  - .orqa/documentation/product/journeys.md
 acceptance:
   - Every product doc checked against 5 audit criteria from plan
   - No .claude/ referenced as source of truth (only as optional symlink layer)

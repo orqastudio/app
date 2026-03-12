@@ -7,11 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Create new RULE-NNN for artifact link format enforcement
-  - Remove constraint from orqa-documentation skill FORBIDDEN section
-  - Update skill to reference the new rule
-  - Include valid/invalid examples and FORBIDDEN section in the new rule
 acceptance:
   - New RULE-NNN created for artifact link format enforcement
   - Constraint removed from orqa-documentation skill FORBIDDEN section

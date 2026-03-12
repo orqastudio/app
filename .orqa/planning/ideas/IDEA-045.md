@@ -3,9 +3,9 @@ id: IDEA-045
 title: Document Browser Sorting, Filtering & Navigation Config
 description: |
   Enhance the artifact navigation pane with sorting and filtering controls. Include manual sort order that persists to a _navigation.json config file alongside the README in each artifact group directory. Filter and sort state also persists to this file so it is properly retained across sessions.
-status: captured
+status: archived
 created: "2026-03-10"
-updated: "2026-03-10"
+updated: "2026-03-12"
 pillars:
   - PILLAR-001
 research-needed:
@@ -16,6 +16,10 @@ research-needed:
   - Scanner changes to read/write _navigation.json alongside README.md
   - Performance of re-sorting large artifact directories
 ---
+## Archived
+
+Document browser sorting, filtering, and navigation config was absorbed by [EPIC-005](EPIC-005) (Artifact Browser -- Sort, Filter, Search), which is the active epic implementing this functionality. The research in [RES-038](RES-038) provides the detailed design.
+
 ## Motivation
 
 The artifact navigation pane currently displays items in a fixed order (scanner default, typically alphabetical or by file modification time). Users working with large artifact directories (50+ epics, 70+ tasks) need the ability to sort and filter to find what they need quickly.

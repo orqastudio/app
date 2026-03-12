@@ -10,14 +10,7 @@ depends-on:
   - TASK-211
 docs: []
 skills:
-  - orqa-governance
-scope:
-  - Define the list of core artifact paths (schema.json files, orchestrator.md, core skills, agent definitions)
-  - Add a check to .githooks/pre-commit that detects staged core files
-  - Block with a clear warning explaining the risk
-  - Allow override via ORQA_CORE_OVERRIDE=1 environment variable
-  - Skip the check entirely when project.json has dogfood true
-  - Complements RULE-044 which blocks agents; this hook blocks git commits
+  - SKILL-011
 acceptance:
   - Committing changes to schema.json in any artifact directory is blocked with warning
   - Committing changes to orchestrator.md is blocked with warning

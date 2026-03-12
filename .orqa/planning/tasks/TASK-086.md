@@ -7,13 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Read every rule in .orqa/governance/rules/
-  - Verify Related Rules cross-references point to existing rules
-  - Verify code patterns in FORBIDDEN sections match reality
-  - Check enforcement mechanisms are still applicable
-  - Identify rules that need updating for codebase evolution
-  - Check rule status field (active/inactive) is accurate
 acceptance:
   - All Related Rules references point to existing rule files
   - No rules describe enforcement of patterns that no longer exist

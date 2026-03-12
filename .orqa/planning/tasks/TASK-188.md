@@ -10,14 +10,12 @@ depends-on:
   - TASK-185
 assignee: AGENT-002
 docs:
-  - .orqa/documentation/development/coding-standards.md
+  - DOC-021
 skills:
-  - backend-best-practices
-  - orqa-domain-services
-  - orqa-error-composition
-  - rule-enforcement
-scope:
-  - src-tauri/src/domain/
+  - SKILL-043
+  - SKILL-009
+  - SKILL-010
+  - SKILL-045
 acceptance:
   - Rust module loads rules from .orqa/governance/rules/
   - Module parses YAML frontmatter including enforcement array

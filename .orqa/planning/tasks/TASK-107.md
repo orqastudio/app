@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-027
 depends-on: []
-scope:
-  - List MVP-required features with acceptance criteria
-  - Identify features explicitly excluded from MVP
-  - Map MVP features to pillars for alignment verification
-  - Define MVP completion criteria
 acceptance:
   - MVP scope is clearly bounded
   - Every MVP feature traces to at least one pillar

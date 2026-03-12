@@ -11,10 +11,8 @@ depends-on:
 assignee: AGENT-002
 docs: []
 skills:
-  - orqa-plugin-development
-  - orqa-governance
-scope:
-  - orqa-plugin/commands/
+  - SKILL-020
+  - SKILL-011
 acceptance:
   - /orqa shows governance summary (active rules, recent violations, health)
   - /orqa:rules lists all active rules with enforcement status

@@ -7,10 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Review each of the 5 rules and identify which other rules are genuinely related
-  - Populate Related Rules sections with accurate cross-references
-  - Remove empty heading if no related rules exist (unlikely for these)
 acceptance:
   - RULE-002, RULE-013, RULE-021, RULE-025, RULE-028 all have populated Related Rules sections
   - Each cross-reference is bidirectional where appropriate

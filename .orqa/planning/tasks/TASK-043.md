@@ -10,10 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-005
   - SKILL-008
-scope:
-  - src-tauri/src/domain/artifact_reader.rs
-  - ui/lib/types/nav-tree.ts
-  - ui/lib/components/navigation/ArtifactNav.svelte
 acceptance:
   - DocNode struct includes optional status field populated from YAML frontmatter
   - DocNode label always uses frontmatter title when available (never raw filename like TASK-002)

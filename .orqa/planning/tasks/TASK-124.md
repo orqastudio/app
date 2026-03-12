@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-030
 depends-on: []
-scope:
-  - Implement sidecar process spawning and lifecycle management
-  - Implement NDJSON line parsing from sidecar stdout
-  - Implement Channel<T> event emission to frontend
-  - Handle sidecar errors, timeouts, and process death
 acceptance:
   - Sidecar process starts and communicates via NDJSON
   - Streaming events reach the frontend via Channel<T>

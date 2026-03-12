@@ -7,12 +7,6 @@ created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-053
 depends-on: []
-scope:
-  - Add `docs` field (array of strings) to `.orqa/planning/tasks/schema.json`
-  - Add `skills` field (array of strings) to `.orqa/planning/tasks/schema.json`
-  - Both fields are optional
-  - Update artifact-framework.md Task schema section
-  - Update pre-commit schema validator if needed
 acceptance:
   - Task schema accepts `docs` and `skills` arrays
   - Existing tasks without these fields still validate

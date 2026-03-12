@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-029
 depends-on: []
-scope:
-  - Define file tools (read, write, glob, search)
-  - Define governance tools (scan, analyse, recommend)
-  - Design permission model for tool execution
-  - Define tool result format and error handling
 acceptance:
   - All tool types are catalogued with input/output schemas
   - Permission model is specified

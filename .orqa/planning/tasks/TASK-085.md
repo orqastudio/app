@@ -7,13 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Read every SKILL.md in .orqa/team/skills/
-  - Verify code patterns match actual codebase implementations
-  - Verify file paths in examples exist
-  - Verify function signatures and type definitions are current
-  - Check layer field accuracy (canon/project/plugin)
-  - Check Related Skills references point to existing skills
 acceptance:
   - All file paths in skill examples resolve to existing files
   - Code patterns described match actual implementations

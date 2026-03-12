@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-030
 depends-on: []
-scope:
-  - Initialize Tauri v2 project with Svelte 5 template
-  - Configure Tauri plugins (shell, fs, dialog)
-  - Set up Vite, Tailwind CSS, PostCSS, and TypeScript configs
-  - Create Makefile with development commands
 acceptance:
   - make dev launches the app successfully
   - Hot module replacement works for Svelte changes

@@ -9,11 +9,7 @@ epic: EPIC-010
 depends-on: []
 docs: []
 skills:
-  - orqa-documentation
-scope:
-  - Find all instances of artifact links wrapped in outer parentheses like ([ID](ID))
-  - Remove the outer wrapping parentheses while preserving the markdown link intact
-  - Cover all artifact ID prefixes (EPIC, TASK, AD, IDEA, RULE, RES, MS, PILLAR, IMPL, RETRO)
+  - SKILL-037
 acceptance:
   - No artifact links are wrapped in outer parentheses like ([ID](ID))
   - All markdown links [ID](ID) remain intact and functional

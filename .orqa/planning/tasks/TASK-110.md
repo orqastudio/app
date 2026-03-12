@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-028
 depends-on: []
-scope:
-  - Wireframe message bubble layout (user vs assistant)
-  - Design streaming token display during response generation
-  - Design tool call card with collapsible input/output
-  - Wireframe message input area with send button
 acceptance:
   - Conversation wireframe covers all message types
   - Streaming state is visually distinct

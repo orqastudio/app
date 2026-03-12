@@ -8,15 +8,10 @@ updated: "2026-03-12"
 epic: EPIC-053
 depends-on: []
 docs:
-  - .orqa/documentation/product/artifact-framework.md
+  - DOC-036
 skills:
-  - orqa-plugin-development
-  - orqa-governance
-scope:
-  - Detect when Write/Edit creates or modifies .orqa/ artifacts
-  - Check if required relationship fields are populated
-  - Warn via additionalContext if graph edges are missing
-  - Suggest appropriate relationships based on context
+  - SKILL-020
+  - SKILL-011
 acceptance:
   - New artifacts without relationship fields trigger a warning
   - Warnings suggest specific relationships to add

@@ -10,13 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-009
   - SKILL-008
-scope:
-  - src-tauri/src/commands/setup_commands.rs
-  - src-tauri/src/commands/governance_commands.rs
-  - src-tauri/src/commands/artifact_commands.rs
-  - src-tauri/src/domain/setup.rs
-  - src-tauri/src/domain/governance_analysis.rs
-  - src-tauri/src/domain/artifact_reader.rs
 acceptance:
   - All command files follow thin-handler pattern
   - Domain logic in domain/ modules

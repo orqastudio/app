@@ -10,14 +10,6 @@ assignee: AGENT-003
 skills:
   - SKILL-011
   - SKILL-029
-scope:
-  - .orqa/governance/lessons/
-  - .orqa/governance/rules/
-  - .orqa/governance/decisions/
-  - .orqa/planning/research/
-  - .orqa/planning/milestones/MS-000.md
-  - .orqa/planning/epics/
-  - .orqa/planning/tasks/
 acceptance:
   - All lessons have human-readable titles (no code references) and descriptions
   - All rules have descriptions in their frontmatter

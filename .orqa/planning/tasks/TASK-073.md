@@ -11,8 +11,6 @@ skills:
   - SKILL-027
   - SKILL-032
   - SKILL-009
-scope:
-  - src-tauri/src/domain/
 acceptance:
   - ArtifactGraph struct with nodes HashMap and path_index HashMap exists
   - ArtifactNode contains id, path, artifact_type, title, status, frontmatter as JSON, references_out and references_in

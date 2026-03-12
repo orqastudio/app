@@ -7,11 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Catalogue every .svelte file under ui/lib/components/ with its purpose
-  - Map against RULE-024's current 12-item list and identify name mismatches, wrong locations, missing components
-  - Update RULE-024 with accurate inventory reflecting actual disk state
-  - Create follow-up tasks for missing-but-useful components
 acceptance:
   - Every .svelte file under ui/lib/components/ catalogued with purpose
   - RULE-024 inventory reflects actual disk state

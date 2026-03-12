@@ -7,12 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-005
 depends-on: []
-scope:
-  - Create ReferencesPanel.svelte component
-  - Place below FrontmatterHeader in ArtifactViewer
-  - Call artifactGraphSDK referencesFrom and referencesTo
-  - Render two collapsible sections with ArtifactLink chips
-  - Handle empty state (no references)
 acceptance:
   - Incoming references shown as clickable ArtifactLink chips
   - Outgoing references shown as clickable ArtifactLink chips

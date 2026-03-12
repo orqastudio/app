@@ -7,10 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Extract session management conventions from orchestrator.md
-  - Cover session state file requirements, overnight mode protocol, session resume expectations
-  - Define FORBIDDEN patterns (ending sessions with uncommitted changes, leaving stale session state)
 acceptance:
   - New rule created covering session management lifecycle
   - Overnight mode protocol formalized with enforceable steps

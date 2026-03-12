@@ -7,10 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Move five tech skills from Tier 1 to Tier 2 injection table in orchestrator (CLAUDE.md)
-  - Clarify Tier 1 definition to universal skills only (code-search, composability)
-  - Verify no agent YAML files reference these five skills in their skills frontmatter
 acceptance:
   - Orchestrator Tier 1 table contains only universal skills
   - Five tech skills moved to Tier 2 injection table with appropriate scope triggers

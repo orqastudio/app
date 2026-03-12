@@ -10,8 +10,6 @@ depends-on: []
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/governance/hooks/pre-commit-reminder.sh
 acceptance:
   - Stop hook checks for uncommitted changes
   - If uncommitted changes exist

@@ -10,10 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-005
   - SKILL-008
-scope:
-  - ui/lib/components/content/MarkdownRenderer.svelte
-  - ui/lib/stores/artifact.svelte.ts
-  - ui/lib/stores/navigation.svelte.ts
 acceptance:
   - MarkdownRenderer cleans up event listeners on content change and unmount
   - Artifact viewer cache has an eviction policy (e.g.

@@ -7,10 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-028
 depends-on: []
-scope:
-  - Wireframe settings page layout (provider config, model selection)
-  - Design API key entry and validation flow
-  - Wireframe first-run onboarding sequence
 acceptance:
   - Settings wireframe covers all configurable options
   - Onboarding flow is clear and sequential

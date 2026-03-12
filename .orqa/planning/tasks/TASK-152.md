@@ -7,12 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Create or update hook that validates staged .orqa/**/*.md files against schema.json
-  - Hook discovers schema via directory (each artifact type dir has a schema.json)
-  - Validates required fields, field types, enum values, pattern constraints
-  - Validates propertyOrder — frontmatter fields must appear in the order defined by schema
-  - Integrates with existing pre-commit pipeline
 acceptance:
   - Staged .orqa/ markdown files are validated against their schema.json
   - Missing required fields block the commit with clear error messages

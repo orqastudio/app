@@ -9,9 +9,6 @@ epic: EPIC-045
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/documentation/product/artifact-framework.md
-  - .orqa/governance/rules/artifact-lifecycle.md
 acceptance:
   - depends-on field defined in the Task schema (artifact-framework.md)
   - Task lifecycle rule updated with dependency gate (todo → in-progress blocked if deps not done)

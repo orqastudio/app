@@ -10,12 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-009
   - SKILL-008
-scope:
-  - src-tauri/src/commands/stream_commands.rs
-  - src-tauri/src/domain/tool_executor.rs
-  - src-tauri/src/domain/system_prompt.rs
-  - src-tauri/src/domain/stream_loop.rs
-  - src-tauri/src/domain/session_title.rs
 acceptance:
   - stream_commands.rs reduced from 2
   - 425 to ~280 lines

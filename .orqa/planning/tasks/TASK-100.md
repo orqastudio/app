@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-026
 depends-on: []
-scope:
-  - Write AD-011 (persistence strategy / SQLite scope)
-  - Write AD-012 (governance format / file-based artifacts)
-  - Write AD-013 (data ownership boundaries)
-  - Write AD-014 (configuration management)
 acceptance:
   - Each AD follows the decision schema with all required sections
   - Persistence and governance boundaries are clearly delineated

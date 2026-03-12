@@ -7,7 +7,7 @@ description: |
   the relationship map and read nodes on demand. The plugin architecture layers on
   top, making the system self-building. Web search parity ensures research and
   skills can be informed by external knowledge.
-status: draft
+status: in-progress
 priority: P1
 created: "2026-03-12"
 updated: "2026-03-12"

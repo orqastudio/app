@@ -8,11 +8,6 @@ updated: "2026-03-08"
 epic: EPIC-032
 depends-on:
   - TASK-091
-scope:
-  - Validate all research-refs in decision artifacts
-  - Verify supersedes/superseded-by bidirectionality
-  - Update roadmap completed-work section with MS-000 breakdown
-  - Update MS-001 completed-epics count
 acceptance:
   - Every research-refs entry points to an existing research file
   - Every supersedes/superseded-by pair is bidirectional

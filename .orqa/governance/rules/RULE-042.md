@@ -4,9 +4,9 @@ title: Automated Skill Injection
 description: "When agents touch specific code areas, relevant domain skills are auto-injected. Enforcement entries map file paths to skill names."
 status: active
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 layer: project
-scope: []
+scope: [AGENT-003]
 promoted-from: null
 enforcement:
   - event: file

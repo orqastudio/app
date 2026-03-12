@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-030
 depends-on: []
-scope:
-  - Implement settings view with provider config fields
-  - Implement model selection dropdown
-  - Set up ONNX embeddings engine for code search
-  - Integrate DuckDB for vector similarity search
 acceptance:
   - Settings view allows provider configuration and model selection
   - Code search produces relevant results via semantic similarity

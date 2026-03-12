@@ -7,13 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Read every agent file in .orqa/team/agents/
-  - Verify skills list references exist in .orqa/team/skills/
-  - Verify Required Reading paths resolve to existing files
-  - Check role descriptions match AD-029 universal role model
-  - Fix stale references (old names, deprecated concepts, wrong paths)
-  - Verify delegation instructions match available subagent types
 acceptance:
   - All agent skills references point to existing skill directories
   - All Required Reading paths resolve to existing files

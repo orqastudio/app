@@ -20,3 +20,8 @@ Architecture decisions capture the reasoning behind key technical choices. They 
 ## Structure
 
 Each decision includes context (the problem), the decision itself, consequences (what follows from the choice), and alternatives that were considered. Decisions are permanent records — they are not updated when circumstances change. Instead, a new decision supersedes the old one.
+
+## Key Fields
+
+- **`status`**: `proposed` (under review), `accepted` (approved), `superseded` (replaced by a newer decision), `deprecated` (no longer relevant)
+- **`layer`**: `core` (platform-level decisions shipping with OrqaStudio) or `project` (project-specific decisions)

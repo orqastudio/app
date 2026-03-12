@@ -3,7 +3,7 @@ id: DOC-035
 title: Development Workflow
 description: Development workflow covering worktree lifecycle, branch strategy, and merge procedures.
 created: "2026-03-02"
-updated: "2026-03-04"
+updated: "2026-03-12"
 ---
 
 **Date:** 2026-03-02
@@ -20,7 +20,7 @@ Copy and complete at the start of every implementation session:
 [ ] Created worktree: git worktree add ../orqa-<task> -b <branch>
 [ ] Working in worktree (NOT main)
 [ ] Re-read relevant implementation plan and governing docs
-[ ] Loaded relevant skills (Skill tool) including chunkhound
+[ ] Loaded relevant skills (Skill tool) including orqa-code-search
 [ ] Checked `.orqa/governance/lessons/` for known patterns in this area
 [ ] Ready to write tests FIRST
 ```
@@ -95,7 +95,7 @@ Merge conflicts are the primary source of lost work. Every conflict MUST be reso
 2. Verify the artifact trail -- confirm an `EPIC-NNN` exists with `status: ready` and `docs-required` gate satisfied
 3. Check task dependencies in `.orqa/planning/tasks/` -- ensure the task is not blocked
 4. Read the full task description including scope, action, and acceptance criteria
-5. Run `code_research` in ChunkHound to understand existing code you will modify
+5. Run `code_research` via context-aware search to understand existing code you will modify
 
 ### During a Task
 
@@ -141,7 +141,7 @@ When starting a new session, resuming after context compaction, or picking up a 
 1. **Read task artifacts in `.orqa/planning/tasks/`** -- understand current tasks, priorities, and overall progress
 2. **Read `tmp/session-state.md`** -- recover context from the prior session
 3. **Read this document** -- understand all workflow rules
-4. **Run `code_research` in ChunkHound** -- understand relevant existing code before making changes
+4. **Run `code_research`** -- understand relevant existing code before making changes (uses `orqa-code-search` to resolve the right tool for your context)
 5. **Read referenced docs** -- any documentation mentioned in the task description
 6. **Then begin implementation** -- you now have full context to work without diverging from the plan
 

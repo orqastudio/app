@@ -9,8 +9,6 @@ epic: EPIC-044
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/team/agents/
 acceptance:
   - All 16 agent definitions have `layer:` field (canon/project/plugin)
   - All 16 agent definitions have `scope:` changed from `system` to one of software-engineering, governance, general

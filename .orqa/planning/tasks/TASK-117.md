@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-029
 depends-on: []
-scope:
-  - Define module boundaries (commands, domain, persistence, tools)
-  - Design service interfaces and trait boundaries
-  - Document the repository pattern for data access
-  - Define dependency direction rules between modules
 acceptance:
   - Module boundaries are clear and enforce separation of concerns
   - Repository pattern is defined with trait interfaces

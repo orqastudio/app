@@ -11,9 +11,6 @@ depends-on:
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/governance/rules/vision-alignment.md
-  - .orqa/governance/rules/pillar-alignment-docs.md
 acceptance:
   - vision-alignment.md references pillar artifacts by path
   - not hardcoded names

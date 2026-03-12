@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-031
 depends-on: []
-scope:
-  - Implement recommendation list view with filtering
-  - Add approve/dismiss actions for each recommendation
-  - Display recommendation details with context
-  - Wire actions to backend commands
 acceptance:
   - Users can browse and filter recommendations
   - Approve/dismiss actions update recommendation status

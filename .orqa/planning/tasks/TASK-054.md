@@ -12,27 +12,25 @@ assignee: AGENT-003
 skills:
   - SKILL-011
   - SKILL-029
-scope:
-  - .orqa/team/skills/
 acceptance:
-  - project-setup skill created (universal scaffolding — .orqa/ structure
+  - SKILL-023 skill created (universal scaffolding — .orqa/ structure
   - canon rules
   - canon skills)
-  - project-inference skill created (reads folder
+  - SKILL-021 skill created (reads folder
   - produces project profile YAML)
-  - project-migration skill created (reads existing agentic config
+  - SKILL-022 skill created (reads existing agentic config
   - maps to OrqaStudio)
-  - project-type-software skill created (software development governance preset)
+  - SKILL-024 skill created (software development governance preset)
   - Each skill follows SKILL.md format with proper frontmatter
-  - project-setup knows how to create .orqa/ directory structure
-  - project-inference knows file patterns for languages
+  - SKILL-023 knows how to create .orqa/ directory structure
+  - SKILL-021 knows file patterns for languages
   - frameworks
   - existing governance
-  - project-migration knows config formats for Claude Code
+  - SKILL-022 knows config formats for Claude Code
   - Cursor
   - Copilot
   - Aider
-  - project-type-software knows worktree rules
+  - SKILL-024 knows worktree rules
   - code quality
   - testing standards
 ---

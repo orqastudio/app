@@ -10,10 +10,6 @@ assignee: AGENT-006
 skills:
   - SKILL-011
   - SKILL-018
-scope:
-  - .orqa/team/agents/
-  - .orqa/team/skills/
-  - .orqa/governance/rules/skill-enforcement.md
 acceptance:
   - Dry-run a backend task delegation — confirm Tier 1, 2, 3 all load
   - Dry-run a frontend task delegation — confirm correct Tier 2 skills injected

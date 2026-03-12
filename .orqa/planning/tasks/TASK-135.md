@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-031
 depends-on: []
-scope:
-  - Generate recommendations from coverage gaps
-  - Categorize recommendations by priority and type
-  - Structure recommendations with title, description, and action
-  - Persist recommendations to SQLite
 acceptance:
   - Recommendations are generated from analysis results
   - Each recommendation has priority, category, and actionable text

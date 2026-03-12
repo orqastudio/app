@@ -7,17 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-005
 depends-on: []
-scope:
-  - Create ArtifactSearchOverlay.svelte — centred floating modal with search input and results area
-  - Auto-focus search input on open
-  - Keyboard shortcut Ctrl+Space to toggle overlay
-  - Add Search icon to ActivityBar above Settings as alternative trigger
-  - Build search query prompt with artifact graph summary context
-  - Send query to AI provider and stream response
-  - Parse structured results (artifact IDs + relevance explanations)
-  - Render results as navigable list with ArtifactLink chips
-  - Selecting a result navigates to the artifact and closes the overlay
-  - Escape or click-outside dismisses the overlay
 acceptance:
   - Ctrl+Space opens the search overlay from anywhere in the app
   - Search input is auto-focused on open

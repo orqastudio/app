@@ -8,14 +8,6 @@ updated: "2026-03-11"
 epic: EPIC-005
 depends-on:
   - TASK-167
-scope:
-  - Add ArtifactViewState to navigation store, keyed per artifact type
-  - Load defaults from _navigation.json via NavType navigation_config on first render
-  - Implement applyFilters, applySort, applyGrouping utility functions
-  - Group ordering logic with three-tier priority (group_order config, schema enum order, alphabetical)
-  - Collapsible group headers replacing tree rendering
-  - Remove tree rendering mode from ArtifactNav
-  - Custom layout rendering when _navigation.json has layout instead of defaults
 acceptance:
   - Filtering by any enum field works correctly
   - Sorting by title, created, updated, and type-specific fields works

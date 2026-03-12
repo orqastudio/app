@@ -7,10 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Replace React code examples (React.ButtonHTMLAttributes, forwardRef, Radix UI) with Svelte 5 equivalents
-  - Preserve all design system principles, token documentation, and Tailwind guidance
-  - Use shadcn-svelte component patterns and Svelte 5 runes in examples
 acceptance:
   - All React code examples replaced with Svelte 5 equivalents
   - Examples use shadcn-svelte component patterns (not Radix UI)

@@ -2,9 +2,9 @@
 id: TASK-179
 title: Implement agent and skill loading from .orqa/team/
 description: Plugin loads agent definitions and skills directly from .orqa/team/, replacing .claude/ symlinks.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-050
 depends-on:
   - TASK-177
@@ -12,12 +12,8 @@ depends-on:
 assignee: AGENT-002
 docs: []
 skills:
-  - orqa-plugin-development
-  - orqa-governance
-scope:
-  - orqa-plugin/hooks/
-  - orqa-plugin/agents/
-  - orqa-plugin/skills/
+  - SKILL-020
+  - SKILL-011
 acceptance:
   - Plugin exposes .orqa/team/agents/ as plugin agents directory
   - Plugin exposes .orqa/team/skills/ as plugin skills directory

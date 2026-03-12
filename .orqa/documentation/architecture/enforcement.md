@@ -1,25 +1,25 @@
 ---
 id: DOC-002
-title: Enforcement Engine Architecture
-description: Architecture of the enforcement engine that evaluates agent tool calls against behavioral rules in real time.
+title: Enforcement Architecture
+description: Architecture of OrqaStudio's four-layer enforcement system — process gates, knowledge injection, tooling ecosystem delegation, and prompt-based skill injection.
 created: "2026-03-05"
-updated: "2026-03-05"
+updated: "2026-03-12"
 ---
 
-**Date:** 2026-03-05
+OrqaStudio's enforcement system ensures agents follow the structured thinking process — understand, plan, document, implement, review, learn — at every stage of work. It operates across four layers, each addressing a different enforcement concern.
 
-The enforcement engine is OrqaStudio™'s mechanism for evaluating agent tool calls against behavioral rules in real time. Rules carry machine-readable YAML frontmatter declaring enforcement entries. The engine loads entries, evaluates patterns against every file write and bash command, records violations, and surfaces them in the UI. The same frontmatter auto-generates CLI-compatible hookify files so enforcement works in CLI-only agent sessions too.
+The system runs in two contexts: the **Rust backend** (native enforcement engine within the Tauri app) and the **CLI plugin** (JavaScript hooks for Claude Code compatibility). Both implement the same logic from the same rule frontmatter.
 
 ---
 
 ## Single Source of Truth
 
-Rule files in `.orqa/governance/rules/` are the single source of truth for both:
+Rule files in `.orqa/governance/rules/` are the single source of truth for:
 
 1. **Human-readable behavioral constraints** — injected into agent context as rule text
-2. **Machine-readable enforcement entries** — YAML frontmatter declaring patterns to evaluate
+2. **Machine-readable enforcement entries** — YAML frontmatter declaring patterns, actions, and skill injections
 
-There is no separate enforcement configuration file. Adding an enforcement entry to a rule's frontmatter activates it in both the app and (via generation) in the CLI. In CLI-only environments, `.claude/rules/` may be used as a compatibility symlink layer.
+There is no separate enforcement configuration file. Adding an enforcement entry to a rule's frontmatter activates it in both the app and in the CLI plugin.
 
 ---
 
@@ -28,169 +28,349 @@ There is no separate enforcement configuration file. Adding an enforcement entry
 ```yaml
 ---
 enforcement:
-  - id: RULE-NNN-001
-    description: "What this entry enforces"
-    event: file | bash
-    action: block | warn
-    pattern: "regex pattern"
-    scope: system | project
+  - event: file | bash | scan | lint | prompt
+    action: block | warn | inject
+    conditions:                           # file/scan events: AND-matched conditions
+      - field: file_path | new_text | content
+        pattern: "regex pattern"
+    pattern: "regex pattern"              # bash/prompt events: single pattern
+    paths:                                # file events: glob patterns restricting scope
+      - "src-tauri/**/*.rs"
+    scope: "glob pattern"                 # scan events: files to scan
+    skills:                               # inject action: skill names to load
+      - skill-name
+    message: "Human-readable message"     # Required: displayed when entry matches
 ---
 ```
 
-**Fields:**
+### Event Types
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Unique identifier. Format: `RULE-<rule-number>-<entry-number>`. Used for violation persistence and display. |
-| `description` | string | Human-readable description shown in the enforcement panel. |
-| `event` | `file` or `bash` | `file`: evaluates against file content on every write. `bash`: evaluates against the command string before execution. |
-| `action` | `block` or `warn` | `block`: prevents the action, records a violation. `warn`: allows the action, records a violation with severity=warn. |
-| `pattern` | string | Regular expression evaluated against the target (file content or bash command). |
-| `scope` | `system` or `project` | `system`: applies to all projects. `project`: applies only to the current project's files. |
+| Event | Trigger | Evaluation Target |
+|-------|---------|-------------------|
+| `file` | File write or edit tool call | File path + new content, via `conditions` array |
+| `bash` | Bash tool call | Command string, via `pattern` field |
+| `scan` | On-demand governance scan | Project files matching `scope` glob, via `conditions` |
+| `lint` | Declarative only | Not executed by the engine — documents linter delegation |
+| `prompt` | User prompt submission (CLI only) | User message text, via keyword matching or embedding similarity |
 
-A rule file may declare zero or more enforcement entries. Rules with no frontmatter (or no `enforcement` key) are context-only — injected as text but not pattern-evaluated.
+### Action Types
+
+| Action | Behavior | Use Case |
+|--------|----------|----------|
+| `block` | Rejects the tool call, returns error to the model | Hard constraints (no `unwrap()`, no `--no-verify`) |
+| `warn` | Allows the tool call, records a warning | Soft constraints (force push, large file writes) |
+| `inject` | Non-blocking, injects skill content into agent context | Knowledge injection (load domain skills when touching specific code) |
+
+### Condition Fields
+
+| Field | Used In | Matches Against |
+|-------|---------|-----------------|
+| `file_path` | `file` events | The path of the file being written |
+| `new_text` | `file` events | The content being written to the file |
+| `content` | `scan` events | Each line of scanned file content |
+
+All conditions within an entry are AND-matched — every condition must match for the entry to trigger.
 
 ---
 
-## Engine Design
+## Layer 1: Process Gates
 
-### Startup
+Process gates enforce the structured thinking sequence at workflow transitions. They fire when an agent attempts actions without completing prerequisite thinking steps.
 
-On app launch (and on project open), the enforcement engine:
+### WorkflowTracker
 
-1. Reads all `.md` files in `.orqa/governance/rules/`
-2. Parses YAML frontmatter from each file using `yaml-front-matter`
-3. Extracts the `enforcement` array from each parsed frontmatter block
-4. Compiles all entries into an in-memory enforcement set, keyed by `id`
+The `WorkflowTracker` (`src-tauri/src/domain/workflow_tracker.rs`) tracks session-level events:
 
-The compiled enforcement set is stored in `AppState` and shared across all Tauri command handlers.
+| Event Category | Tracked Data | Purpose |
+|----------------|-------------|---------|
+| Files read | Paths of all files read | Detect whether research was done |
+| Files written | Paths of all files written | Detect code writes vs governance writes |
+| Searches | Count of search tool calls | Detect codebase exploration |
+| Docs consulted | Reads from `.orqa/documentation/` | Detect documentation review |
+| Planning consulted | Reads from `.orqa/planning/` | Detect planning artifact review |
+| Skills loaded | Names of loaded skills | Detect skill loading |
+| Commands run | Bash commands executed | Detect `make check`/`make test` runs |
+| Verification run | Boolean flag | Set when `make check`/`make test` detected |
+| Lessons checked | Boolean flag | Set when `.orqa/governance/lessons/` read |
+| Injected skills | Deduplication set | Prevent injecting the same skill twice per session |
 
-### Evaluation
+The tracker is stored in `AppState` behind a `Mutex<WorkflowTracker>` and shared across all tool execution handlers.
 
-Every tool call that writes a file or executes a bash command passes through the enforcement engine before execution.
+### Gate Definitions
+
+Gates are evaluated by `evaluate_process_gates()` (`src-tauri/src/domain/process_gates.rs`). Each gate returns a `GateResult` with a thinking prompt message when fired.
+
+| Gate | Fires When | Checks | Injected Prompt |
+|------|-----------|--------|-----------------|
+| **understand-first** | First code write in session | No files read, no searches, no docs consulted | "What is the system? What are the boundaries? What depends on this?" |
+| **docs-before-code** | Code write without reading documentation | No `.orqa/documentation/` files read | "What documentation defines this area? Read the governing docs first." |
+| **plan-before-build** | Code write without planning context | No `.orqa/planning/` files read | "What's the plan? Read the epic and task context before building." |
+| **evidence-before-done** | Session ending (stop event) | No `make check`/`make test` run + code was written | "Show evidence. Run verification. What would a user see?" |
+| **learn-after-doing** | Session ending (stop event) | No lessons checked + code was written | "What was unexpected? Check lessons. Should we know something for next time?" |
+
+Gates fire at most once per trigger — the tracker records when each gate has already fired to prevent repeated injection.
+
+### Evaluation Flow
 
 ```text
-Agent issues tool call
-  → Tauri command handler receives the call
-    → Enforcement engine evaluates the call:
-        for each entry in enforcement_set where entry.event matches:
-          if pattern matches target:
-            record violation
-            if action == block:
-              return Err(EnforcementBlock { id, description, matched_text })
-            if action == warn:
-              emit EnforcementWarning event to frontend
-        if no block: proceed with the tool call
+Tool call arrives
+  → WorkflowTracker records the event (read/write/search/command)
+  → evaluate_process_gates(tracker, event_type, file_path)
+    → Each gate checks tracker state
+    → If prerequisites not met → gate fires, returns thinking prompt
+  → Fired gate messages are prepended to the tool output as injected content
 ```
 
-**File evaluation:** The pattern is evaluated against the full file content after the write is staged but before it is committed to disk. This allows the pattern to see the complete modified file.
-
-**Bash evaluation:** The pattern is evaluated against the raw command string before the process is spawned.
-
-### Verdict Types
-
-| Verdict | Action | User Sees |
-|---------|--------|-----------|
-| `block` | Tool call is rejected. File is not written. Command is not executed. | Error in tool call card: "Blocked by [rule description]" |
-| `warn` | Tool call proceeds. Warning recorded. | Amber badge on tool call card: "Warning: [rule description]" |
-| `pass` | No match. Tool call proceeds silently. | Nothing |
-
 ---
 
-## Violation Persistence
+## Layer 2: Knowledge Injection
 
-Every block and warn verdict is written to the `violations` table in SQLite.
+When agents touch specific code areas, the enforcement system automatically injects relevant domain knowledge as skill content.
 
-```sql
-CREATE TABLE violations (
-    id          TEXT PRIMARY KEY,       -- UUID
-    rule_id     TEXT NOT NULL,          -- e.g. "RULE-004"
-    entry_id    TEXT NOT NULL,          -- e.g. "RULE-004-001"
-    session_id  TEXT NOT NULL,
-    verdict     TEXT NOT NULL,          -- "block" | "warn"
-    matched_text TEXT NOT NULL,         -- snippet that matched the pattern
-    file_path   TEXT,                   -- for file events
-    command     TEXT,                   -- for bash events
-    created_at  TEXT NOT NULL
-);
+### How It Works
+
+1. Rule frontmatter declares `action: inject` entries with `conditions` matching file paths and `skills` listing skill names
+2. When a file write matches, the `Verdict` carries the skill names
+3. The tool executor reads each skill's `SKILL.md` from `.orqa/team/skills/{name}/SKILL.md`
+4. YAML frontmatter is stripped; the skill body content is returned
+5. Content is deduplicated per session via the `WorkflowTracker`'s `injected_skills` set
+6. The combined skill content is prepended to the tool output
+
+### Injection Table (Current Entries)
+
+| Path Pattern | Injected Skills | Purpose |
+|-------------|----------------|---------|
+| `src-tauri/src/domain/**/*.rs` | `orqa-domain-services`, `orqa-error-composition` | Domain logic patterns |
+| `src-tauri/src/commands/**/*.rs` | `orqa-ipc-patterns`, `orqa-error-composition` | IPC boundary discipline |
+| `src-tauri/src/repo/**/*.rs` | `orqa-repository-pattern` | Data access patterns |
+| `sidecar/src/**` | `orqa-streaming` | Streaming pipeline protocol |
+| `ui/lib/components/**/*.svelte` | `component-extraction`, `svelte5-best-practices` | Component purity |
+| `ui/lib/stores/**/*.svelte.ts` | `orqa-store-patterns`, `orqa-store-orchestration` | Reactive state patterns |
+| `.orqa/**` | `orqa-governance`, `orqa-documentation` | Artifact consistency |
+
+### Deduplication
+
+Both the Rust engine and CLI plugin track which skills have been injected in the current session:
+
+- **Rust**: `WorkflowTracker.injected_skills: HashSet<String>` — `mark_skill_injected()` returns `true` only for newly-added skills
+- **CLI plugin**: `tmp/.injected-skills.json` — JSON array persisted to disk per session, checked before each injection
+
+A skill is only injected once per session, regardless of how many matching file writes occur.
+
+### Skill Content Format
+
+When skills are injected, they are formatted as:
+
+```text
+[Enforcement: the following skills have been loaded for context]
+
+## Skill: {skill-name}
+
+{stripped SKILL.md content}
+
+[End of injected skills]
+
+{original tool output}
 ```
 
-Violations are queryable by session, rule, entry, verdict, and time range. The enforcement panel reads this table directly via Tauri commands.
-
 ---
 
-## CLI Backwards Compatibility
+## Layer 3: Tooling Ecosystem Delegation
 
-The app auto-generates hookify-compatible files from rule frontmatter so enforcement also works in plain Claude Code CLI sessions.
+OrqaStudio does not replicate linters — it ensures the right linters are configured and triggered to match documented standards.
 
-### Generated File Format
+### The `lint` Event Type
 
-For each enforcement entry, the generator produces a file at `.orqa/governance/hookify.<rule-id>-<entry-id>.local.md` (or `.claude/hookify.<rule-id>-<entry-id>.local.md` for CLI compatibility):
+The `lint` event type in enforcement entries is **declarative only**. It is never evaluated by the engine at runtime. Its purpose is to document which external tool enforces a given standard, creating a traceable chain from rule → linter config → hook trigger.
 
-```markdown
----
-event: file
-action: block
-conditions:
-  - file_pattern: "**/*.ts"
-    content_pattern: ": any"
----
-Blocked by RULE-004-001: No `any` type in TypeScript files. Use proper types instead.
+```yaml
+enforcement:
+  - event: lint
+    action: warn
+    pattern: "clippy::unwrap_used"
+    message: "Enforced by clippy pedantic lint group"
 ```
 
-### Generation Rules
+### Documented Linter Delegation
 
-- Generated files are derived artifacts. Do not edit them directly.
-- Edit the source rule's frontmatter; the generator re-creates the hookify files.
-- Generated files are committed alongside their source rule — they are not gitignored.
-- If a rule's enforcement entries are removed, the corresponding generated files are deleted.
+| Standard | Linter | Config Location | Hook Trigger |
+|----------|--------|-----------------|--------------|
+| No `unwrap()`/`expect()` in production | `cargo clippy` (pedantic) | `Cargo.toml` lint config | Pre-commit + `make check` |
+| Rust formatting | `rustfmt` | `rustfmt.toml` | Pre-commit |
+| No `any` types | ESLint `@typescript-eslint/no-explicit-any` | `eslint.config.js` | Pre-commit + `make check` |
+| No Svelte 4 patterns | ESLint `svelte/no-reactive-declaration` | `eslint.config.js` | Pre-commit |
+| Strict TypeScript in Svelte | `svelte-check --tsconfig tsconfig.json` | `tsconfig.json` | Pre-commit + `make check` |
+| Artifact frontmatter validation | `.githooks/validate-schema.mjs` | Schema files per artifact type | Pre-commit |
+| Function size limits | `clippy::too_many_lines` | `Cargo.toml` lint config | `make check` |
 
-### Hookify File Naming
+### The Full Chain
 
-`hookify.<lowercase-rule-id>-<lowercase-entry-id>.local.md`
-
-Example: rule `[RULE-004](RULE-004)-001` produces `hookify.rule-004-001.local.md`.
+```text
+Documented standard (.orqa/governance/rules/RULE-NNN.md)
+  → lint enforcement entry (documents which linter enforces this)
+  → Linter config (eslint.config.js, Cargo.toml, etc.)
+  → Pre-commit hook (.githooks/pre-commit) or make check
+  → Violation surfaces in terminal output
+  → Relevant skill already in context (via Layer 2 injection)
+```
 
 ---
 
-## System vs Project Scope
+## Layer 4: Prompt-Based Skill Injection
 
-| Scope | Meaning | Example |
-|-------|---------|---------|
-| `system` | Applies to all projects, all files | No `: any` in TypeScript — applies everywhere |
-| `project` | Applies only to the currently open project | Project-specific naming conventions |
+Beyond path-based injection (Layer 2), OrqaStudio interprets the user's **prompt** to determine what knowledge is needed before work begins.
 
-System-scoped entries are compiled unconditionally. Project-scoped entries are compiled when a project is open and their patterns are evaluated only against files within the project root.
+### CLI Implementation (Plugin)
 
----
+The CLI plugin uses keyword-based intent classification via `prompt-injector.mjs`:
 
-## IPC Commands
+1. The `UserPromptSubmit` hook fires when the user sends a message
+2. The prompt is classified against an intent map (13 categories)
+3. Matching skills are collected and deduplicated against prior injections
+4. Skill content is returned as `systemMessage` in the hook response
 
-| Command | Input | Output | Description |
-|---------|-------|--------|-------------|
-| `list_violations` | `session_id?`, `rule_id?`, `verdict?` | `Vec<Violation>` | Query violations with optional filters |
-| `get_violation` | `id: String` | `Violation` | Get a single violation by ID |
-| `dismiss_violation` | `id: String` | `()` | Mark a violation as dismissed (soft delete) |
-| `list_enforcement_entries` | — | `Vec<EnforcementEntry>` | List all compiled enforcement entries with their source rule |
-| `get_enforcement_status` | — | `EnforcementStatus` | Summary: total entries, active violations, dismissed |
+**Intent Map (Current Categories):**
+
+| Intent | Keywords | Injected Skills |
+|--------|----------|----------------|
+| IPC boundary work | tauri command, ipc, invoke, #[tauri::command] | `orqa-ipc-patterns`, `orqa-error-composition` |
+| Store architecture | store, reactive, $state, $derived, $effect, rune | `orqa-store-patterns`, `orqa-store-orchestration` |
+| Component work | component, svelte component, ui component | `component-extraction`, `svelte5-best-practices` |
+| Domain logic | domain, domain service, business logic | `orqa-domain-services`, `orqa-error-composition` |
+| Data access | repository, database, sqlite, migration, query | `orqa-repository-pattern` |
+| Streaming pipeline | stream, sidecar, ndjson, provider, streaming | `orqa-streaming` |
+| Planning phase | plan, approach, design, architect, tradeoff | `planning`, `architecture`, `systems-thinking` |
+| Review phase | review, check, audit, verify, quality | `code-quality-review`, `qa-verification` |
+| Diagnostic work | debug, fix, broken, error, failing, crash, bug | `diagnostic-methodology`, `systems-thinking` |
+| Testing work | test, testing, vitest, cargo test, coverage | `orqa-testing`, `test-engineering` |
+| Code search | search, find, where is, locate | `orqa-code-search` |
+| Governance work | governance, rule, skill, artifact, enforcement | `orqa-governance`, `orqa-documentation` |
+| Refactoring | refactor, restructur, reorganiz, extract | `restructuring-methodology`, `systems-thinking` |
+
+### App Implementation (Native)
+
+The app uses semantic similarity via the `SkillInjector` (`src-tauri/src/domain/skill_injector.rs`):
+
+1. On startup, all skills are discovered from `.orqa/team/skills/*/SKILL.md`
+2. Each skill's `description:` frontmatter field is extracted
+3. Descriptions are embedded using the ONNX embedder (bge-small-en-v1.5, 384-dim vectors)
+4. When a user prompt arrives, it is embedded and compared against all skill embeddings
+5. Skills with cosine similarity above the threshold (default 0.3) are returned, sorted by score
+6. Top-N results (default 3) are injected into the agent context
+
+**Key Functions:**
+
+| Function | Purpose |
+|----------|---------|
+| `SkillInjector::new(project_dir, embedder)` | Discover skills, embed descriptions, cache results |
+| `SkillInjector::match_prompt(embedding, top_n, threshold)` | Find top-N skills by cosine similarity |
+| `cosine_similarity(a, b)` | Dot product / (norm_a * norm_b), returns 0.0 for zero/mismatched vectors |
+| `discover_skill_descriptions(skills_dir)` | Walk skill directories, extract `description:` from YAML |
 
 ---
 
 ## Rust Module Structure
 
 ```text
-src-tauri/src/
-  enforcement/
-    mod.rs              -- EnforcementEngine struct, public API
-    parser.rs           -- YAML frontmatter extraction from rule files
-    evaluator.rs        -- Pattern matching against file content and commands
-    generator.rs        -- Hookify file generation from frontmatter
-    types.rs            -- EnforcementEntry, Violation, EnforcementVerdict
-  commands/
-    enforcement.rs      -- Tauri command handlers for enforcement queries
-  persistence/
-    violations.rs       -- SQLite repository for the violations table
+src-tauri/src/domain/
+  enforcement.rs            -- Type definitions: EventType, RuleAction, EnforcementEntry,
+                               EnforcementRule, Verdict, ScanFinding, Condition
+  enforcement_parser.rs     -- YAML frontmatter parsing: split_frontmatter(),
+                               parse_rule_content(), parse_entry()
+  enforcement_engine.rs     -- EnforcementEngine: compile entries, evaluate_file(),
+                               evaluate_bash(), scan()
+  workflow_tracker.rs       -- WorkflowTracker: session event tracking, skill dedup
+  process_gates.rs          -- evaluate_process_gates(): five gate evaluations
+  skill_injector.rs         -- SkillInjector: ONNX embedding + cosine similarity matching
+  tool_executor.rs          -- Tool execution with enforcement integration (non-streaming)
+  stream_loop.rs            -- Streaming tool execution with enforcement integration
 ```
+
+### Supporting Modules
+
+```text
+src-tauri/src/
+  repo/
+    enforcement_rules_repo.rs -- load_rules(): reads .orqa/governance/rules/*.md from disk
+  state.rs                    -- AppState: holds EnforcementEngine, WorkflowTracker,
+                                 SkillInjector behind Mutex
+  search/
+    embedder.rs               -- ONNX Runtime embedder used by SkillInjector
+```
+
+---
+
+## CLI Plugin Structure
+
+```text
+.orqa/plugins/orqastudio-claude-plugin/
+  hooks/
+    hooks.json                    -- Hook registration (PreToolUse, Stop, UserPromptSubmit)
+    scripts/
+      rule-engine.mjs             -- Enforcement engine: loads rules, evaluates patterns,
+                                     handles inject/block/warn actions with skill reading
+      prompt-injector.mjs         -- Prompt-based skill injection: intent classification,
+                                     skill reading, session deduplication
+```
+
+### Plugin Hook Registration
+
+| Hook Event | Script | Purpose |
+|-----------|--------|---------|
+| `PreToolUse` | `rule-engine.mjs` | Evaluate enforcement entries on file/bash tool calls |
+| `Stop` | `rule-engine.mjs` | Evaluate process gates at turn end |
+| `UserPromptSubmit` | `prompt-injector.mjs` | Classify prompt intent and inject skills |
+
+---
+
+## Enforcement Result Flow
+
+Both streaming and non-streaming tool execution follow the same pattern:
+
+```text
+Tool call received
+  ├── Enforcement engine evaluates (evaluate_file / evaluate_bash)
+  │   ├── Block verdicts → return error, tool call rejected
+  │   ├── Warn verdicts → log warning, tool call proceeds
+  │   └── Inject verdicts → collect skill names
+  │
+  ├── Process gates evaluate (evaluate_process_gates)
+  │   └── Fired gates → collect thinking prompt messages
+  │
+  ├── Skill injection (collect_injected_skills)
+  │   ├── Deduplicate against WorkflowTracker.injected_skills
+  │   ├── Read SKILL.md files, strip frontmatter
+  │   └── Combine into injected content string
+  │
+  ├── Execute tool call
+  │
+  └── Return result
+      └── Prepend injected content (skills + gate messages) to tool output
+```
+
+The `EnforcementResult` struct carries both components:
+
+```rust
+pub struct EnforcementResult {
+    pub block_message: Option<String>,     // Set when action is block
+    pub injected_content: Option<String>,  // Combined skills + gate messages
+}
+```
+
+---
+
+## Testing
+
+The enforcement system has comprehensive test coverage:
+
+| Module | Test Count | What's Tested |
+|--------|-----------|---------------|
+| `enforcement_engine.rs` | 15 | File/bash/scan evaluation, inject/block/warn verdicts, lint skipping, multi-rule matching |
+| `enforcement_parser.rs` | 10 | Frontmatter splitting, entry parsing, event/action validation, condition parsing |
+| `workflow_tracker.rs` | 34 | Event recording, auto-categorization, research detection, skill dedup, verification detection |
+| `process_gates.rs` | 30 | All five gates, firing conditions, one-shot behavior, edge cases |
+| `skill_injector.rs` | 21 | Cosine similarity, frontmatter extraction, prompt matching, threshold/top-N filtering |
+| **Total** | **110** | |
 
 ---
 
@@ -198,14 +378,15 @@ src-tauri/src/
 
 | Pillar | Alignment |
 |--------|-----------|
-| Clarity Through Structure | The enforcement engine is the primary mechanism through which governance rules become active constraints on agent behavior — making governance enforceable, not just documented. |
-| Learning Through Reflection | Violations are persisted and queryable over time, enabling recurrence tracking that feeds into the lesson promotion pipeline. |
+| Clarity Through Structure | The enforcement engine makes governance constraints active and enforceable — rules become executable process gates and automated skill injection, not just documentation to read. |
+| Learning Through Reflection | Process gates inject reflective thinking prompts at workflow transitions. The evidence-before-done and learn-after-doing gates ensure agents reflect on outcomes before marking work complete. |
 
 ---
 
 ## Related Documents
 
-- `.orqa/documentation/process/rules.md` — Rule inventory, frontmatter schema reference, when to create rules
-- `.orqa/documentation/ui/enforcement-panel.md` — UI spec for the enforcement sidebar and violation display
+- [RULE-006](RULE-006) — Coding standards with lint enforcement entries
+- [RULE-013](RULE-013) — Git workflow with `--no-verify` blocking
+- [RULE-026](RULE-026) — Skill enforcement and three-tier loading model
+- [EPIC-052](EPIC-052) — Structured Thinking Enforcement epic (design + implementation)
 - [AD-015](AD-015) — Governance artifact format
-- `.orqa/documentation/process/content-governance.md` — Content ownership model (rules vs docs vs hooks)

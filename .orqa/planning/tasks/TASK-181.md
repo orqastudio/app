@@ -2,18 +2,16 @@
 id: TASK-181
 title: Implement SessionStart hook (orchestrator injection + session checks)
 description: Plugin SessionStart hook injects orchestrator context and runs session-start checks.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-050
 depends-on:
   - TASK-177
 assignee: AGENT-002
 docs: []
 skills:
-  - orqa-plugin-development
-scope:
-  - orqa-plugin/hooks/
+  - SKILL-020
 acceptance:
   - SessionStart hook reads .orqa/team/agents/orchestrator.md
   - Hook injects orchestrator content as additionalContext

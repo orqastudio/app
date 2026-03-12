@@ -12,8 +12,6 @@ depends-on:
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/team/agents/orchestrator.md
 acceptance:
   - Orchestrator instructions reference pillar artifacts directory
   - System prompt guidance reads pillar titles and test-questions from artifacts

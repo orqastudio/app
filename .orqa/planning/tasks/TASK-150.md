@@ -7,10 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Validate that all tasks in depends-on array have status done
-  - Run before task status transitions to in-progress
-  - Can be a hook script or an orchestrator-enforced check
 acceptance:
   - Starting a task with unfinished dependencies produces a clear warning
   - Lists which dependencies are not done

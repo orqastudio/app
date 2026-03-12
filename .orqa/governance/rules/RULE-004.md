@@ -189,7 +189,7 @@ An idea MUST NOT be promoted to an epic until:
 1. Create `EPIC-NNN.md` in `.orqa/planning/epics/` with:
    - `milestone` set to the appropriate milestone
    - `status: draft`
-   - `priority` computed from scoring dimensions
+   - `priority` assessed per project criteria (see [DOC-062](DOC-062))
    - `docs-required` populated based on what documentation needs to exist
    - `docs-produced` populated based on what documentation the work will create
 2. Update the source `IDEA-NNN.md`:
@@ -199,22 +199,23 @@ An idea MUST NOT be promoted to an epic until:
 
 ---
 
-## Priority Scoring Enforcement
+## Priority Assessment
 
-### When to Score
+### How Priority Is Determined
 
-Every epic MUST have a `scoring` block with all dimensions defined in `.orqa/project.json`. The `score` field is computed from the scoring formula. The `priority` field (P1/P2/P3) is derived from the score using the bands in `project.json`.
+Priority is an inference-based judgement, not a formula. Each project defines its priority criteria in `.orqa/documentation/product/priority-assessment.md` ([DOC-062](DOC-062)). Agents read the criteria and assign a priority band (P1/P2/P3) based on how the epic serves the active milestone and whether it blocks other work.
+
+The `scoring` field on epics is optional rationale — freeform dimensions that capture the agent's reasoning. Projects choose their own dimension names. What matters is that the `priority` band is defensible and the rationale is readable.
 
 ### Validation
 
-- All dimension keys in the epic's `scoring` block must match the keys in `project.json`
-- All dimension values must be within their defined scale
-- The `score` field must match the computed result of the formula
-- The `priority` band must match the score against the defined bands
+- Every epic MUST have a `priority` field (P1/P2/P3)
+- The `scoring` field is optional but recommended for traceability
+- Priority should be reassessed when milestones change or significant scope shifts occur
 
 ### Deadline Override
 
-A P2 or P3 epic with an imminent deadline (within 2 weeks) should be treated as effectively P1 for scheduling purposes. The priority field stays as computed, but the orchestrator factors the deadline into work ordering.
+A P2 or P3 epic with an imminent deadline (within 2 weeks) should be treated as effectively P1 for scheduling purposes. The priority field stays as assessed, but the orchestrator factors the deadline into work ordering.
 
 ---
 

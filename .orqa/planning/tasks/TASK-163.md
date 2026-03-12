@@ -7,13 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Audit all layer:canon artifacts and classify as truly-core vs OrqaStudio-specific
-  - Rename layer enum from canon/project/plugin to core/project/community (with future user)
-  - Standardise scope values across all artifact types
-  - Add layer field to decision and other schemas where missing
-  - Identify which artifacts need generalisation for template distribution
-  - Document user-facing documentation gaps and plan structure
 acceptance:
   - Every artifact has been evaluated and correctly classified
   - Layer enum renamed in all schemas and all artifact frontmatter

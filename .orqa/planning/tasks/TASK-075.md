@@ -13,10 +13,6 @@ skills:
   - SKILL-030
   - SKILL-034
   - SKILL-016
-scope:
-  - ui/lib/sdk/
-  - ui/lib/components/shared/StatusBar.svelte
-  - ui/lib/components/dashboard/ProjectDashboard.svelte
 acceptance:
   - ArtifactGraphSDK class with reactive graph state
   - Synchronous resolve, resolveByPath, referencesFrom, referencesTo, children, byType, byStatus methods

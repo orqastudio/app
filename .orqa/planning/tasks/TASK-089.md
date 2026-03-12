@@ -12,13 +12,6 @@ depends-on:
   - TASK-086
   - TASK-087
   - TASK-088
-scope:
-  - Encode the audit methodology used across EPIC-048 and EPIC-049 into a portable skill
-  - Include checklists for each artifact type (research, epics, tasks, ideas, decisions, lessons, agents, skills, rules, hooks, pillars, milestones, READMEs)
-  - Include cross-reference verification patterns
-  - Include status accuracy verification patterns
-  - Include path and naming consistency checks
-  - Include the systemic pattern grouping approach from RES-035
 acceptance:
   - SKILL.md exists in .orqa/team/skills/orqa-artifact-audit/
   - Skill covers all artifact types in .orqa/

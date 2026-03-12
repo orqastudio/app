@@ -4,9 +4,9 @@ title: Data Persistence Boundaries
 description: "Defines which data belongs in SQLite, which in file-based artifacts, and which is ephemeral. Prevents misplaced persistence."
 status: active
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 layer: project
-scope: []
+scope: [AGENT-002, AGENT-006]
 promoted-from: null
 enforcement: []
 ---

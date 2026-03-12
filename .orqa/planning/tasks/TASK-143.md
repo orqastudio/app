@@ -7,11 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Move plan template from RULE-022 to planning skill; rule keeps mandatory requirements and verification gates
-  - Move 4-phase methodology detail from RULE-030 to uat-process skill; rule keeps phase names and FORBIDDEN section
-  - Move 100+ lines of code examples from RULE-010 to orqa-ipc-patterns skill; rule keeps layer requirements and checklist
-  - Add skill references in each rule where content was removed
 acceptance:
   - RULE-022 contains only constraints, gates, and FORBIDDEN — references planning skill
   - RULE-030 contains only phase structure, constraints, and FORBIDDEN — references uat-process skill

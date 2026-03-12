@@ -41,9 +41,8 @@ make dev
 
 ## Documentation Sections
 
-- [Product](/product/) — Vision, pillars, governance, roadmap
-- [Architecture](/architecture/) — Decisions, IPC design, module structure
-- [User Interface](/ui/) — UX specs, component library, layout patterns
-- [Development](/development/) — Coding standards, setup guide, lessons learned
-- [Research](/research/) — Tech stack decisions, Phase 0 investigations
-- [Process](/process/) — Governance framework, team model, workflows
+- Product — Vision, pillars, governance, roadmap
+- Architecture — Decisions, IPC design, module structure
+- User Interface — UX specs, component library, layout patterns
+- Development — Coding standards, setup guide, lessons learned
+- Process — Governance framework, team model, workflows

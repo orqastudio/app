@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-029
 depends-on: []
-scope:
-  - Map wireframes to component tree structure
-  - Classify components as page, container, or display
-  - Define component-to-store relationships
-  - Document prop flow and data fetching boundaries
 acceptance:
   - Component tree maps to every wireframe
   - Component purity rule is reflected in the tree

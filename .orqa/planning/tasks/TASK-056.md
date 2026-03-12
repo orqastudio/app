@@ -12,11 +12,6 @@ depends-on:
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/governance/rules/agent-delegation.md
-  - .orqa/governance/rules/skill-enforcement.md
-  - .orqa/governance/rules/lessons-learned.md
-  - .orqa/governance/rules/honest-reporting.md
 acceptance:
   - agent-delegation.md rewritten for 7 universal roles instead of 16 agents
   - Delegation table uses role + skill pattern (e.g. "Implementer + backend skills")

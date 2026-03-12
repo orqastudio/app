@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-028
 depends-on: []
-scope:
-  - Define navigation interaction patterns (sidebar, breadcrumbs)
-  - Define CRUD interaction patterns for artifacts
-  - Document responsive behaviour rules for window resizing
-  - Specify keyboard shortcuts and accessibility basics
 acceptance:
   - Interaction patterns are consistent across all content types
   - Responsive behaviour is specified with breakpoints

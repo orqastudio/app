@@ -12,11 +12,6 @@ assignee: AGENT-002
 skills:
   - SKILL-030
   - SKILL-016
-scope:
-  - ui/lib/components/artifact/ArtifactLink.svelte
-  - ui/lib/components/navigation/ArtifactNav.svelte
-  - ui/lib/components/artifact/FrontmatterHeader.svelte
-  - ui/lib/components/layout/AppLayout.svelte
 acceptance:
   - ArtifactLink uses artifactGraph.resolve(id) for navigation
   - ArtifactNav removes isTree guard — auto-select works for flat AND tree types

@@ -9,8 +9,6 @@ epic: EPIC-039
 assignee: AGENT-006
 skills:
   - SKILL-032
-scope:
-  - src-tauri/capabilities/default.json
 acceptance:
   - fs:default, shell:default, dialog:default, notification:default removed
   - Only dialog:allow-open retained

@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-031
 depends-on: []
-scope:
-  - Wire scanner to analysis to recommendation pipeline
-  - Create Svelte stores for governance state management
-  - Connect frontend components to stores via invoke()
-  - Verify end-to-end flow from scan trigger to dashboard update
 acceptance:
   - Triggering a scan produces analysis and recommendations
   - Dashboard widget updates with fresh data after each scan

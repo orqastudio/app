@@ -11,14 +11,8 @@ depends-on:
   - TASK-215
 docs: []
 skills:
-  - orqa-plugin-development
-  - orqa-testing
-scope:
-  - Create a test task with docs and skills fields
-  - Start a session referencing that task
-  - Verify the plugin injects the listed docs and skills
-  - Verify deduplication works
-  - Verify epic context is also loaded
+  - SKILL-020
+  - SKILL-018
 acceptance:
   - Docs listed in task.docs are injected into agent context
   - Skills listed in task.skills are loaded

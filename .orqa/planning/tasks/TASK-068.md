@@ -14,8 +14,6 @@ depends-on:
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/governance/lessons/IMPL-015.md
 acceptance:
   - IMPL-015 promoted-to field updated with references to updated rule and skill
   - Verification that all root causes identified in IMPL-015 are addressed

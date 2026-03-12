@@ -10,8 +10,6 @@ assignee: AGENT-003
 skills:
   - SKILL-029
   - SKILL-011
-scope:
-  - .orqa/team/skills/code-search/SKILL.md
 acceptance:
   - Wrapper skill exists at .orqa/team/skills/code-search/SKILL.md
   - Documents context detection logic (check for mcp__chunkhound__* vs search_regex availability)

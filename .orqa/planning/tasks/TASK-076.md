@@ -13,9 +13,6 @@ skills:
   - SKILL-030
   - SKILL-016
   - SKILL-015
-scope:
-  - ui/lib/stores/artifact.svelte.ts
-  - ui/lib/stores/navigation.svelte.ts
 acceptance:
   - artifact.svelte.ts uses artifactGraph.readContent() instead of invoke('read_artifact')
   - viewerCache removed — SDK reads from disk, no frontend caching

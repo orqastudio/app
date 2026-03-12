@@ -9,20 +9,12 @@ epic: EPIC-053
 depends-on: []
 docs: []
 skills:
-  - project-inference
-  - project-setup
-  - skills-maintenance
-scope:
-  - Create a new skill (or extend project-inference) that evaluates project context to recommend epics-required setting
-  - Heuristics include presence of src/ directories, build tooling, package managers (suggests implementation-heavy → epics required)
-  - Heuristics include prevalence of docs/, research/, notes/ directories (suggests research/planning → epics optional)
-  - Provide fallback questions for ambiguous cases ("Is this project primarily implementation work or research/planning?")
-  - Integrate with project-setup skill so the setting is offered during initial setup
-  - Add workflow.epics-required to project.json schema
-  - Update project-setup skill to consume this inference and set the config value
+  - SKILL-021
+  - SKILL-023
+  - SKILL-029
 acceptance:
   - A skill exists that can recommend epics-required true or false based on project signals
-  - project-setup skill uses this recommendation during setup
+  - SKILL-023 skill uses this recommendation during setup
   - project.json has a workflow.epics-required field after setup
   - Software-like projects default to true
   - Research/planning projects default to false

@@ -10,15 +10,9 @@ depends-on:
   - TASK-208
 docs: []
 skills:
-  - orqa-plugin-development
-  - rule-enforcement
-  - orqa-governance
-scope:
-  - Plugin SessionStart/PreToolUse reads current task from session state
-  - Parse task's docs field → read each doc and inject as context
-  - Parse task's skills field → load each skill
-  - Follow task.epic edge → load epic context
-  - Dedup injection per session
+  - SKILL-020
+  - SKILL-045
+  - SKILL-011
 acceptance:
   - Plugin loads docs listed in task.docs into agent context
   - Plugin loads skills listed in task.skills

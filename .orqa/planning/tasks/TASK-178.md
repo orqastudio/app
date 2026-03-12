@@ -2,9 +2,9 @@
 id: TASK-178
 title: Implement rule engine core (loader, parser, pattern matcher)
 description: Build the core engine that loads .orqa/governance/rules/, parses frontmatter, and evaluates enforcement patterns.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-050
 depends-on:
   - TASK-177
@@ -12,11 +12,9 @@ depends-on:
 assignee: AGENT-002
 docs: []
 skills:
-  - orqa-plugin-development
-  - rule-enforcement
-  - orqa-governance
-scope:
-  - orqa-plugin/core/
+  - SKILL-020
+  - SKILL-045
+  - SKILL-011
 acceptance:
   - Engine loads all .md files from .orqa/governance/rules/
   - Engine parses YAML frontmatter including enforcement array

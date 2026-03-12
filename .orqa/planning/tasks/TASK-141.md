@@ -7,10 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Add status note to project-inference, project-migration, project-setup, project-type-software, and orqa-plugin-development skills
-  - Each note references the parent epic/idea that will activate the skill
-  - No changes to skill content — status clarity only
 acceptance:
   - Each of the 5 skills has a clear note that it is forward-looking
   - Each note references the parent epic/idea it will be activated by

@@ -10,9 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-030
   - SKILL-032
-scope:
-  - ui/lib/components/settings/ProjectSetupWizard.svelte
-  - ui/lib/components/settings/
 acceptance:
   - Claude CLI detection (binary on PATH)
   - Auth status verification

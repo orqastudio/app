@@ -8,12 +8,6 @@ updated: "2026-03-11"
 epic: EPIC-005
 depends-on:
   - TASK-165
-scope:
-  - Add FilterableField, SortableField interfaces to nav-tree.ts
-  - Add NavigationConfig, NavigationDefaults, NavigationLayout, SortConfig interfaces
-  - Extend DocNode with frontmatter field
-  - Extend NavType with filterable_fields, sortable_fields, navigation_config
-  - Add ArtifactViewState interface for per-type sort/filter/group state
 acceptance:
   - All TypeScript interfaces match Rust struct shapes exactly
   - make check-frontend passes

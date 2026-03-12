@@ -12,9 +12,6 @@ assignee: AGENT-002
 skills:
   - SKILL-030
   - SKILL-031
-scope:
-  - ui/lib/components/artifact/ArtifactLink.svelte
-  - ui/lib/components/artifact/FrontmatterHeader.svelte
 acceptance:
   - ArtifactLink renders broken state when artifactGraph.resolve(id) returns undefined
   - Broken links use broken-link Lucide icon and app warning colour token

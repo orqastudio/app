@@ -7,15 +7,9 @@ created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-053
 depends-on: []
-scope:
-  - Add web_fetch and web_search to Researcher capabilities in agent definition
-  - Add web_fetch and web_search to Planner capabilities in agent definition
-  - Add research-methodology to Researcher and Planner skills lists
-  - Verify RULE-040 mapping table includes these capabilities
-  - Update RULE-037 tool access matrix if needed
 acceptance:
   - Researcher and Planner agents can use WebSearch and WebFetch in CLI context
-  - research-methodology skill is in Researcher and Planner agent definitions
+  - SKILL-046 skill is in Researcher and Planner agent definitions
   - Capability mappings are correct in RULE-040
   - Tool access restrictions in RULE-037 are updated
 ---

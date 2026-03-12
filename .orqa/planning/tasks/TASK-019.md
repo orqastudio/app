@@ -9,9 +9,6 @@ epic: EPIC-037
 assignee: AGENT-002
 skills:
   - SKILL-011
-scope:
-  - .orqa/
-  - src-tauri/src/commands/
 acceptance:
   - Hook paths use $CLAUDE_PROJECT_DIR
   - Governance artifacts match codebase state

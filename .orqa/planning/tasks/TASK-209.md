@@ -8,10 +8,6 @@ updated: "2026-03-12"
 epic: EPIC-053
 depends-on:
   - TASK-208
-scope:
-  - Review all tasks with status todo
-  - For each task, determine which documentation files are relevant based on scope, epic context, and git history
-  - Add docs field with relevant documentation paths
 acceptance:
   - All todo tasks have a docs field (may be empty array if no docs apply)
   - docs entries point to existing documentation files

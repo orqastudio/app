@@ -7,10 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Determine the correct scope value for RULE-033 (shadcn Tooltip usage) from the valid set
-  - "Valid values per artifact-framework: system, domain, project, role, artifact"
-  - Update the frontmatter
 acceptance:
   - RULE-033 scope field uses a documented valid value
   - Value accurately reflects the rule's scope (likely project or domain)

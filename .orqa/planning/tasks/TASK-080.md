@@ -11,8 +11,6 @@ depends-on:
 assignee: AGENT-007
 skills:
   - SKILL-011
-scope:
-  - .orqa/documentation/development/artifact-graph-sdk.md
 acceptance:
   - API reference for all SDK methods with TypeScript signatures
   - Usage examples for resolution, relationships, content reading, and subscriptions

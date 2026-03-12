@@ -10,11 +10,6 @@ assignee: AGENT-003
 skills:
   - SKILL-011
   - SKILL-029
-scope:
-  - .orqa/documentation/product/artifact-framework.md
-  - .orqa/planning/research/
-  - .orqa/planning/ideas/
-  - .orqa/governance/rules/artifact-lifecycle.md
 acceptance:
   - Each artifact type has a clear one-paragraph definition of its purpose and when to use it
   - Definitions include 'use this, NOT that' guidance

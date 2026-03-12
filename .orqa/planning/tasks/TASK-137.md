@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-031
 depends-on: []
-scope:
-  - Design coverage indicator widget (progress bars or badges)
-  - Display coverage percentage per governance area
-  - Show overall governance health score
-  - Link to detailed analysis view
 acceptance:
   - Dashboard widget renders governance coverage visually
   - Coverage percentages reflect actual scan results

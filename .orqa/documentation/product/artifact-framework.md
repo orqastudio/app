@@ -189,7 +189,7 @@ Artifact types fall into three management layers. **Canon** artifacts are manage
 | **Pillar** | Defining a guiding principle that the project evaluates all work against. Every feature must serve at least one active pillar. | Don't use for specific constraints — that's a rule. Pillars are strategic principles, not enforcement. |
 | **Milestone** | Defining a strategic goal that groups related epics. Has a gate question that must be answerable "yes" when complete. | Don't use for individual features — that's an epic. |
 | **Epic** | Scoping a trackable body of work with clear deliverables, acceptance criteria, and documentation gates. Titles describe outcomes, not process. | Don't use for investigation — that's research. Don't use for one-off tasks. |
-| **Task** | Tracking an individual implementation unit within an epic. Has a specific assignee, acceptance criteria, and scope. | Don't use for standalone work — tasks always belong to an epic. |
+| **Task** | Tracking an individual implementation unit within an epic. Has a specific assignee and acceptance criteria. | Don't use for standalone work — tasks always belong to an epic. |
 | **Idea** | Capturing a future possibility that needs investigation before committing. Must go through the shaped→promoted lifecycle. | Don't use for approved work — promote to epic first. |
 | **Research** | Investigating a question, exploring options, auditing existing state. Produces findings that inform decisions or epics. Flat directory, related via YAML fields. | Don't use for implementation plans — that goes in the epic body. Don't use subdirectories — use `milestone:` and `epic-ref:` fields. |
 | **Decision** | Recording an architectural or process choice with rationale. Captures what was decided and why, enabling future understanding. | Don't use for investigation — that's research. Decisions are conclusions, not explorations. |
@@ -357,8 +357,6 @@ assignee: backend-engineer
 docs:                             # Documentation to load during implementation
   - ".orqa/documentation/architecture/streaming.md"
 skills: [orqa-ipc-patterns, orqa-streaming]  # Skills to load during implementation
-scope:                            # Files/directories affected
-  - src-tauri/src/commands/stream_commands.rs
 acceptance:                       # What "done" looks like
   - SystemPromptSent event emitted before sidecar call
   - Event carries custom_prompt and governance_prompt
@@ -379,7 +377,6 @@ acceptance:                       # What "done" looks like
 | `assignee` | No | string | Agent name |
 | `docs` | No | string[] | Documentation paths to load into agent context during implementation — creates graph edges from task to its knowledge requirements |
 | `skills` | No | string[] | Skill directory names to load into agent context during implementation — creates graph edges from task to required domain knowledge |
-| `scope` | No | string[] | Files/directories affected |
 | `acceptance` | No | string[] | Acceptance criteria |
 
 **The `docs` and `skills` fields as graph edges:** These fields create explicit relationships in the artifact graph. When an agent picks up a task, it reads the `docs` paths and loads the `skills` listed — ensuring the right context is available before implementation begins. This replaces hardcoded injection tables in the orchestrator prompt ([AD-038](AD-038)). The chain is: **Epic** defines what needs doing → **Task** specifies what knowledge is needed (`docs`, `skills`) → **Agent** loads that knowledge before starting → **Implementation** happens with the right context. The graph gets richer with every task, and future sessions benefit from better context injection.
@@ -629,7 +626,7 @@ YAML frontmatter fields follow a consistent content hierarchy across all artifac
 4. **Lifecycle** — `created`, `updated`, `deadline` (when?)
 5. **Relationships** — `depends-on`, `blocks`, `research-refs`, `docs-required`, `docs-produced`, `research-needed`, `promoted-to`, `supersedes`, `superseded-by`, `surpassed-by`, `promoted-from`, `docs`, `sources` (what connects to what?)
 6. **Scoring** — `scoring` block (how important?)
-7. **Operational** — `assignee`, `skills`, `scope`, `acceptance`, `gate`, `recurrence`, `promoted-to` (how is it managed?)
+7. **Operational** — `assignee`, `skills`, `acceptance`, `gate`, `recurrence`, `promoted-to` (how is it managed?)
 
 ### Per-Type Field Order
 
@@ -638,7 +635,7 @@ YAML frontmatter fields follow a consistent content hierarchy across all artifac
 | **Milestone** | id, title, status, description, created, updated, deadline, gate |
 | **Pillar** | id, title, status, description, gate, created, updated |
 | **Epic** | id, title, status, priority, milestone, pillars, description, created, updated, research-refs, docs-required, docs-produced, depends-on, blocks, deadline, scoring |
-| **Task** | id, title, status, epic, description, created, updated, depends-on, assignee, docs, skills, scope, acceptance |
+| **Task** | id, title, status, epic, description, created, updated, depends-on, assignee, docs, skills, acceptance |
 | **Idea** | id, title, status, pillars, description, created, updated, research-needed, promoted-to |
 | **Lesson** | id, title, status, description, created, updated, recurrence, promoted-to |
 | **Rule** | id, title, description, status, created, updated, layer, scope, promoted-from |

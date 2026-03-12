@@ -8,14 +8,6 @@ updated: "2026-03-11"
 epic: EPIC-005
 depends-on:
   - TASK-166
-scope:
-  - Create ArtifactToolbar.svelte — fixed h-10 bar with ArrowUpDownIcon and FilterIcon buttons
-  - Create ArtifactSortDropdown.svelte — DropdownMenu with sort options from sortable_fields and group-by from filterable_fields
-  - Create ArtifactFilterPopover.svelte — Popover with checkbox sections generated from filterable_fields
-  - Visual decorators by field name (status dots for status, priority colours for priority)
-  - Active state indicators on toolbar icons when non-default sort/filter is applied
-  - Clear actions per filter section and global clear-all
-  - Replace SearchInput in ArtifactNav with ArtifactToolbar
 acceptance:
   - Toolbar renders at h-10 matching NavSubPanel header height
   - Sort dropdown shows options dynamically from NavType sortable_fields

@@ -9,14 +9,9 @@ epic: EPIC-053
 depends-on: []
 docs: []
 skills:
-  - orqa-plugin-development
-  - rule-enforcement
-  - skills-maintenance
-scope:
-  - Plugin scans .orqa/team/skills/*/SKILL.md for scope fields
-  - Build a path → skill mapping from skill metadata
-  - On file write/edit, match paths against skill scope
-  - Inject matching skills that haven't been loaded yet
+  - SKILL-020
+  - SKILL-045
+  - SKILL-029
 acceptance:
   - Skills with matching scope are auto-injected on file operations
   - No hardcoded path→skill table in plugin or orchestrator

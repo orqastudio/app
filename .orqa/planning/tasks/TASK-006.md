@@ -11,11 +11,6 @@ skills:
   - SKILL-003
   - SKILL-011
   - SKILL-029
-scope:
-  - .claude/rules/
-  - .claude/agents/
-  - .orqa/documentation/ui/brand-identity.md
-  - .orqa/documentation/ui/design-system.md
 acceptance:
   - Every rule file checked for .claude/ as source-of-truth references
   - Every agent definition checked for .claude/ path references

@@ -7,10 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Validate that all items in docs-required array resolve to existing artifacts
-  - Run before epic status transitions to ready
-  - Report which required docs are missing
 acceptance:
   - Epic with missing docs-required items produces clear error
   - Epic with all docs-required items present passes validation

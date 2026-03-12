@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-027
 depends-on: []
-scope:
-  - Map first-run onboarding journey
-  - Map conversation workflow (create, send, stream, review)
-  - Map artifact browsing and navigation journey
-  - Map governance review and recommendation workflow
 acceptance:
   - All primary use cases have documented journeys
   - Journeys cover happy path and error states

@@ -10,8 +10,6 @@ depends-on: []
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/governance/hooks/session-start-hook.sh
 acceptance:
   - Hook runs git status --short and counts uncommitted files
   - Warning displayed if count exceeds threshold (suggest 20)

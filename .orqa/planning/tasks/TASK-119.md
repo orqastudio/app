@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-029
 depends-on: []
-scope:
-  - Design sidecar-to-Rust NDJSON line protocol
-  - Define Rust Channel<T> event types for streaming
-  - Design frontend event handling and state transitions
-  - Document the full pipeline from SDK to Svelte
 acceptance:
   - Pipeline is documented end-to-end with event types at each boundary
   - NDJSON protocol is specified with all message types

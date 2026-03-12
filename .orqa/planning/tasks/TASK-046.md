@@ -9,9 +9,6 @@ epic: EPIC-043
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/planning/epics/
-  - .orqa/governance/rules/artifact-lifecycle.md
 acceptance:
   - All epic titles describe outcomes/content
   - not process activities

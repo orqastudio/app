@@ -2,7 +2,7 @@
 id: EPIC-005
 title: Artifact Browser — Sort, Filter, Search
 description: Complete the core artifact browsing experience with sorting/grouping/filtering in the browser panel, AI-driven cross-artifact search, and a references panel.
-status: draft
+status: in-progress
 priority: P1
 created: "2026-03-07"
 updated: "2026-03-11"

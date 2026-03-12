@@ -12,10 +12,6 @@ depends-on:
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/documentation/product/governance.md
-  - .orqa/documentation/product/governance-hub.md
-  - .orqa/documentation/product/artifact-framework.md
 acceptance:
   - governance.md updated with concept taxonomy (agent/skill/rule/hook/lesson definitions)
   - governance.md updated with agent vs skill decision framework

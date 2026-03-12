@@ -9,8 +9,6 @@ epic: EPIC-044
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/team/skills/
 acceptance:
   - All skill SKILL.md files have `layer:` field (canon/project/plugin)
   - Canon skills are portable platform skills

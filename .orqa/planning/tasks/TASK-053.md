@@ -13,18 +13,16 @@ assignee: AGENT-003
 skills:
   - SKILL-011
   - SKILL-029
-scope:
-  - .orqa/team/skills/
 acceptance:
-  - diagnostic-methodology skill created (from debugger)
-  - restructuring-methodology skill created (from refactor-agent)
-  - security-audit skill created (from security-engineer)
-  - governance-maintenance skill created (from agent-maintainer)
-  - code-quality-review skill created (from code-reviewer)
-  - qa-verification skill created (from qa-tester)
-  - ux-compliance-review skill created (from ux-reviewer)
-  - test-engineering skill created (from test-engineer)
-  - architectural-evaluation skill created (from systems-architect)
+  - SKILL-006 skill created (from debugger)
+  - SKILL-026 skill created (from refactor-agent)
+  - SKILL-028 skill created (from security-engineer)
+  - SKILL-007 skill created (from agent-maintainer)
+  - SKILL-004 skill created (from code-reviewer)
+  - SKILL-025 skill created (from qa-tester)
+  - SKILL-036 skill created (from ux-reviewer)
+  - SKILL-033 skill created (from test-engineer)
+  - SKILL-001 skill created (from systems-architect)
   - Each skill captures the domain knowledge from its source agent
   - Each skill follows the SKILL.md format with proper frontmatter
 ---

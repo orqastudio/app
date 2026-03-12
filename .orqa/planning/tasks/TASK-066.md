@@ -10,8 +10,6 @@ depends-on: []
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/governance/rules/git-workflow.md
 acceptance:
   - Rule addresses governance-only work patterns explicitly
   - Commit-at-boundaries principle documented (end of task

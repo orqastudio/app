@@ -2,19 +2,17 @@
 id: TASK-175
 title: Implement capability resolution in companion plugin SubagentStart hook
 description: The companion plugin resolves agent capabilities to Claude Code tool names when subagents spawn.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-051
 depends-on:
   - TASK-173
 assignee: AGENT-002
 docs: []
 skills:
-  - orqa-plugin-development
-  - rule-enforcement
-scope:
-  - orqa-plugin/hooks/
+  - SKILL-020
+  - SKILL-045
 acceptance:
   - SubagentStart hook reads agent definition capabilities
   - Hook resolves capabilities to Claude Code CLI tool names

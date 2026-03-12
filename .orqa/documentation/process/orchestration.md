@@ -3,7 +3,7 @@ id: DOC-030
 title: Orchestration
 description: How the orchestrator coordinates work across specialized agents using delegation and verification.
 created: "2026-03-02"
-updated: "2026-03-10"
+updated: "2026-03-12"
 ---
 
 **Date:** 2026-03-02
@@ -16,7 +16,7 @@ The orchestrator is the main AI session coordinating the agentic development tea
 
 ## The Orchestrator's Role
 
-The orchestrator is the **Scrum Master and Dev Lead** of the agentic team. It:
+The orchestrator is the **process coordinator** of the agentic team. It:
 
 - Coordinates, delegates, and gates -- it does NOT implement
 - Reads task artifacts in `.orqa/planning/tasks/` at session start to understand current priorities
@@ -41,7 +41,7 @@ graph TD
 
 ## What the Orchestrator Does NOT Do
 
-- Read large files directly -- delegates reading to subagents or uses ChunkHound
+- Read large files directly -- delegates reading to subagents or uses context-aware search (`orqa-code-search`)
 - Run verbose commands whose output fills context -- uses `--short`/`--oneline` flags
 - Iterate on implementation -- the full edit-test-fix cycle belongs in the subagent
 - Work directly on main -- every change goes through a worktree
@@ -72,24 +72,17 @@ The orchestrator's context window is finite. Filling it causes session death.
 
 The orchestrator loads the following skills at session start:
 
-- `chunkhound` -- ALWAYS loaded (mandatory for code search)
+- `orqa-code-search` -- ALWAYS loaded (context-aware search wrapper; resolves to `chunkhound` in CLI or `orqa-native-search` in App)
+- `composability` -- ALWAYS loaded (composability philosophy)
 - `planning` -- ALWAYS loaded (task planning methodology)
 
-The orchestrator triggers additional skills when specific conditions arise:
-
-| Skill | When to Load |
-|-------|-------------|
-| `svelte` | When planning or reviewing any frontend feature |
-| `typescript` | When planning or reviewing TypeScript code |
-| `tailwind` | When planning or reviewing any UI styling |
-
-Note: the `architecture` skill is loaded by the Planner role, not the orchestrator directly.
+Additional skills are injected by the orchestrator based on task scope per [RULE-026](RULE-026). The orchestrator reads the task's `skills` field and includes them in the delegation prompt. See the Tier 2 injection table in [RULE-026](RULE-026) for the full mapping.
 
 ---
 
 ## Agent Delegation Guide
 
-All agents are universal roles (see [AD-029](AD-029)). Domain expertise is loaded via skills — the role + skills combination determines capability.
+All agents are universal roles (see [AD-029](AD-029)). Agent definitions declare **capabilities** (not tools); these are resolved to provider-specific tool names at delegation time per [RULE-040](RULE-040). Domain expertise is loaded via skills — the role + skills combination determines capability.
 
 | Task Type | Role | Skills to Load |
 |-----------|------|----------------|
@@ -122,7 +115,7 @@ Every task follows this lifecycle without exception:
 2. **Definition of Ready check** -- Verify all DoR items before delegating ([Definition of Ready](DOC-028))
 3. **Worktree creation** -- `git worktree add ../orqa-<task> -b <agent>/<task>`
 4. **Subagent dispatch** -- Task tool with `subagent_type` to the correct agent
-5. **Subagent implements** -- Skills loaded, ChunkHound research, implementation, quality checks, commit
+5. **Subagent implements** -- Skills loaded, code search research, implementation, quality checks, commit
 6. **Review gate** -- `code-reviewer` then `qa-tester` then `ux-reviewer` (if UI-facing)
 7. **Definition of Done verification** -- All DoD items satisfied ([Definition of Done](DOC-027))
 8. **Merge** -- `cd ../orqa && git merge <branch>`
@@ -154,7 +147,7 @@ Each reviewer produces a PASS/FAIL verdict with evidence. On FAIL, the implement
 [ ] git stash list -- investigate any stashes (commit or drop)
 [ ] git status --short -- commit any untracked/modified files before starting
 [ ] git worktree list -- verify no stale worktrees from prior sessions
-[ ] Load chunkhound and planning skills
+[ ] Load orqa-code-search, composability, and planning skills
 [ ] Check process/retrospectives.md for known process mistakes
 ```
 

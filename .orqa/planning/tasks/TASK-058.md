@@ -10,10 +10,6 @@ depends-on: []
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/planning/pillars/PILLAR-001.md
-  - .orqa/planning/pillars/PILLAR-002.md
-  - .orqa/documentation/product/artifact-framework.md
 acceptance:
   - Pillar schema defined in artifact-framework.md (id
   - title

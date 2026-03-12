@@ -10,8 +10,6 @@ assignee: AGENT-003
 skills:
   - SKILL-029
   - SKILL-011
-scope:
-  - .orqa/team/agents/orchestrator.md
 acceptance:
   - Orchestrator's delegation protocol includes skill injection step
   - Delegation prompts to agents include project skill injection instructions

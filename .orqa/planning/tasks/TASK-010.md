@@ -10,9 +10,6 @@ assignee: AGENT-007
 skills:
   - SKILL-003
   - SKILL-011
-scope:
-  - .orqa/planning/tasks/README.md
-  - .orqa/documentation/product/artifact-framework.md
 acceptance:
   - Task frontmatter schema includes skills field (string array)
   - artifact-framework.md task schema updated with skills field

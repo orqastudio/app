@@ -2,23 +2,23 @@
 id: SKILL-005
 title: Orqa Code Search
 description: |
-  Context-aware code search wrapper for the OrqaStudio codebase. Detects whether you
-  are in CLI (ChunkHound MCP) or App (native DuckDB+ONNX) context and provides the
-  appropriate search patterns. Three tools: search_regex, search_semantic, code_research.
-  Use when: Searching the OrqaStudio codebase before creating new code, verifying
-  endpoints exist, understanding how a system works, finding all callers before refactoring.
+  Context-aware code search wrapper. Detects whether you are in CLI (ChunkHound MCP)
+  or App (native DuckDB+ONNX) context and provides the appropriate search patterns.
+  Three tools: search_regex, search_semantic, code_research.
+  Use when: Searching the codebase before creating new code, verifying endpoints exist,
+  understanding how a system works, finding all callers before refactoring.
 status: active
 created: "2026-03-01"
-updated: "2026-03-11"
-layer: project
+updated: "2026-03-12"
+layer: core
 scope: [AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-006, AGENT-007]
 version: 1.1.0
 user-invocable: true
 ---
 
-Code search wrapper skill. Detects your runtime context and provides the right tool names
-and patterns. **You do not need to load `chunkhound` or `orqa-native-search` directly —
-this skill handles context resolution.**
+Context-aware code search wrapper. Detects your runtime context and provides the right
+tool names and patterns. **You do not need to load `chunkhound` or `orqa-native-search`
+directly — this skill handles context resolution.**
 
 ## Context Detection
 
@@ -36,9 +36,9 @@ Check which tools are available to determine your context:
 DuckDB index and an OpenAI-compatible embedding server at localhost:11435. See the
 `chunkhound` skill for implementation-specific details (health checks, server prerequisites).
 
-**App context:** Search is provided by OrqaStudio's native Rust engine in `src-tauri/src/search/`.
-It uses embedded DuckDB and ONNX Runtime with DirectML acceleration — no external server needed.
-See the `orqa-native-search` skill for implementation-specific details (indexing, model loading).
+**App context:** Search is provided by the app's native Rust engine using embedded DuckDB and
+ONNX Runtime — no external server needed. See the `orqa-native-search` skill for
+implementation-specific details (indexing, model loading).
 
 ## Tool Selection Guide
 

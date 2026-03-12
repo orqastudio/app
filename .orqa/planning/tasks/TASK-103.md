@@ -7,10 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-027
 depends-on: []
-scope:
-  - Define key terms (session, artifact, governance, pillar, etc.)
-  - Distinguish internal terms from user-facing language
-  - Ensure consistency across all documentation
 acceptance:
   - Glossary covers all domain-specific terms
   - Terms are unambiguous and internally consistent

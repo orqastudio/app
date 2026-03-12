@@ -9,9 +9,6 @@ epic: EPIC-044
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/documentation/product/artifact-framework.md
-  - .orqa/governance/rules/skill-enforcement.md
 acceptance:
   - artifact-framework.md documents the three-layer classification (canon/project/plugin)
   - artifact-framework.md documents agent scope categories

@@ -7,12 +7,6 @@ created: "2026-03-08"
 updated: "2026-03-08"
 epic: EPIC-032
 depends-on: []
-scope:
-  - Define Decision type schema in artifact-framework.md
-  - Add Decision creation section to artifact-workflow.md
-  - Add Decision lifecycle to RULE-004 (status transitions, supersession rules)
-  - Update RULE-002 to reference individual AD artifacts
-  - Add .orqa/governance/decisions/ to CLAUDE.md resources
 acceptance:
   - artifact-framework.md defines the Decision type with schema and status workflow
   - artifact-workflow.md includes Decision creation guidance

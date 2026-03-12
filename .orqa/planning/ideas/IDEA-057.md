@@ -6,9 +6,9 @@ description: |
   "code_search"), not concrete tool names. A rule governs how abstract capabilities
   map to provider-specific tools at runtime, making agent definitions portable
   across AI providers.
-status: shaped
+status: promoted
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 pillars:
   - PILLAR-001
   - PILLAR-002

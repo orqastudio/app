@@ -2,21 +2,18 @@
 id: TASK-183
 title: Add enforcement field to rule schema and key rules
 description: Add the enforcement array to the rule schema and add enforcement entries to key mechanically-enforceable rules.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-050
 depends-on: []
 assignee: AGENT-003
 docs:
-  - .orqa/documentation/product/artifact-framework.md
+  - DOC-036
 skills:
-  - orqa-governance
-  - orqa-schema-compliance
-  - rule-enforcement
-scope:
-  - .orqa/governance/rules/schema.json
-  - .orqa/governance/rules/
+  - SKILL-011
+  - SKILL-039
+  - SKILL-045
 acceptance:
   - Rule schema includes enforcement field (array of objects with event, pattern, action, message)
   - At least 5 key rules have enforcement entries added

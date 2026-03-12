@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-030
 depends-on: []
-scope:
-  - Implement database creation and connection management
-  - Create initial schema (sessions, messages, tool calls)
-  - Implement migration runner for schema evolution
-  - Create repository traits and implementations
 acceptance:
   - Database is created on first app launch
   - Schema matches the technical design specification

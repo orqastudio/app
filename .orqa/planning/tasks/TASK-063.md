@@ -11,9 +11,6 @@ depends-on:
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/documentation/product/governance.md
-  - .orqa/documentation/product/vision.md
 acceptance:
   - governance.md references pillar artifacts instead of inline definitions
   - vision.md points to .orqa/planning/pillars/ as the source of truth for pillars

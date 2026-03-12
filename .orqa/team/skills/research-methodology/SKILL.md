@@ -1,5 +1,5 @@
 ---
-id: SKILL-046
+id: SKILL-048
 title: Research Methodology
 description: |
   Research best practices for agents investigating external sources: source

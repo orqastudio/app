@@ -11,11 +11,8 @@ depends-on:
 assignee: AGENT-003
 docs: []
 skills:
-  - orqa-governance
-  - orqa-documentation
-scope:
-  - .claude/
-  - .orqa/governance/rules/RULE-003.md
+  - SKILL-011
+  - SKILL-037
 acceptance:
   - .claude/rules/ symlink removed
   - .claude/agents/ symlink removed

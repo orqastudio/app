@@ -10,10 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-003
   - SKILL-027
-scope:
-  - src-tauri/src/search/embedder.rs
-  - src-tauri/src/search/mod.rs
-  - src-tauri/src/commands/search_commands.rs
 acceptance:
   - ONNX Runtime loads bge-small-en-v1.5 model
   - DirectML acceleration works (GPU/NPU with CPU fallback)

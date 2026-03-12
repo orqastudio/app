@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-025
 depends-on: []
-scope:
-  - Audit Tauri v2 security model (capabilities, permissions, scopes)
-  - Evaluate IPC command system for frontend-backend communication
-  - Survey plugin ecosystem for needed capabilities
-  - Assess cross-platform build and distribution support
 acceptance:
   - Tauri v2 confirmed as suitable for desktop app requirements
   - Security model documented with capability patterns

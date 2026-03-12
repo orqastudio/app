@@ -16,16 +16,6 @@ skills:
   - SKILL-015
   - SKILL-030
   - SKILL-031
-scope:
-  - ui/lib/types/project.ts
-  - ui/lib/stores/navigation.svelte.ts
-  - ui/lib/stores/artifact.svelte.ts
-  - ui/lib/components/layout/ActivityBar.svelte
-  - ui/lib/components/layout/NavSubPanel.svelte
-  - ui/lib/components/layout/AppLayout.svelte
-  - ui/lib/components/artifact/ArtifactMasterDetail.svelte
-  - ui/lib/components/artifact/ArtifactLanding.svelte
-  - ui/lib/components/navigation/ArtifactNav.svelte
 acceptance:
   - TypeScript types for ArtifactEntry / ArtifactTypeConfig added
   - Navigation store derives all state from config (no hardcoded constants)

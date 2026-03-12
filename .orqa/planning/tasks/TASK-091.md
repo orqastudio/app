@@ -8,10 +8,6 @@ updated: "2026-03-08"
 epic: EPIC-032
 depends-on:
   - TASK-090
-scope:
-  - Convert monolithic decisions.md to index table
-  - Create 20 individual AD-NNN.md files with YAML frontmatter
-  - Populate cross-references (research-refs, supersedes, superseded-by)
 acceptance:
   - 20 individual AD-NNN.md files exist with complete frontmatter
   - Each decision has id, title, status, created, updated fields

@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-031
 depends-on: []
-scope:
-  - Define governance coverage areas (agents, rules, skills, hooks, docs)
-  - Implement coverage calculation per area
-  - Identify gaps and missing artifacts
-  - Produce structured analysis results
 acceptance:
   - Coverage analysis identifies which governance areas are covered
   - Gaps are reported with specific missing artifact types

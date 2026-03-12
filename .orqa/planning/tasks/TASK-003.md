@@ -7,8 +7,6 @@ created: "2026-03-07"
 updated: "2026-03-07"
 epic: EPIC-001
 assignee: AGENT-007
-scope:
-  - .orqa/documentation/architecture/streaming-pipeline.md
 acceptance:
   - SystemPromptSent emission point documented in event sequence
   - Emission location noted (after resolve_system_prompt

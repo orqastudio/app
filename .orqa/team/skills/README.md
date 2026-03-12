@@ -17,4 +17,4 @@ Skills are reusable knowledge packages that agents load before starting work. Ea
 
 ## Loading
 
-Agents declare their required skills in YAML frontmatter. Skills are loaded at task start, before any implementation begins. The `chunkhound` and `composability` skills are universal — required by every agent.
+Agents declare their required skills in YAML frontmatter. Skills are loaded at task start, before any implementation begins. The `orqa-code-search` and `composability` skills are universal — required by every agent.

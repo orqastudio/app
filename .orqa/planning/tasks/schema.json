@@ -9,7 +9,7 @@
     "id", "title", "description", "status",
     "created", "updated",
     "epic", "depends-on", "assignee", "docs", "skills",
-    "scope", "acceptance"
+    "acceptance"
   ],
   "properties": {
     "id": { "type": "string", "pattern": "^TASK-\\d+$" },
@@ -26,17 +26,13 @@
     "assignee": { "type": "string", "pattern": "^AGENT-\\d+$" },
     "docs": {
       "type": "array",
-      "items": { "type": "string" },
-      "description": "Documentation paths to load into agent context during implementation"
+      "items": { "type": "string", "pattern": "^DOC-\\d+$" },
+      "description": "Documentation IDs (DOC-NNN) to load into agent context during implementation"
     },
     "skills": {
       "type": "array",
-      "items": { "type": "string" },
-      "description": "Skill directory names to load into agent context during implementation"
-    },
-    "scope": {
-      "type": "array",
-      "items": { "type": "string" }
+      "items": { "type": "string", "pattern": "^SKILL-\\d+$" },
+      "description": "Skill IDs (SKILL-NNN) to load into agent context during implementation"
     },
     "acceptance": {
       "type": "array",

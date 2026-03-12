@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-030
 depends-on: []
-scope:
-  - Implement message bubble components (user, assistant, system)
-  - Implement streaming token display with live updates
-  - Build message input area with send button
-  - Wire streaming events from store to display components
 acceptance:
   - Messages display correctly with role-based styling
   - Streaming tokens appear in real-time

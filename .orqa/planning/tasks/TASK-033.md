@@ -10,8 +10,6 @@ assignee: AGENT-003
 skills:
   - SKILL-029
   - SKILL-011
-scope:
-  - .orqa/team/agents/*.md
 acceptance:
   - "All agent skills: lists contain ONLY Tier 1 portable skills + code-search wrapper"
   - No agent lists chunkhound, orqa-native-search, or any orqa-* skill directly

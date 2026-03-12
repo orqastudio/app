@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-026
 depends-on: []
-scope:
-  - Write AD-015 (tool execution model)
-  - Write AD-016 (provider-agnostic design)
-  - Write AD-017 (composability principle)
-  - Document how decisions interrelate
 acceptance:
   - Each AD follows the decision schema
   - Composability principle is established as a platform concern

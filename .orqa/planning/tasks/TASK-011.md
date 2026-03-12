@@ -10,12 +10,6 @@ assignee: AGENT-007
 skills:
   - SKILL-003
   - SKILL-011
-scope:
-  - .orqa/governance/decisions/
-  - .orqa/governance/lessons/
-  - .orqa/planning/research/
-  - .orqa/planning/tasks/
-  - .orqa/planning/epics/
 acceptance:
   - At least 3 decisions have surpassed predecessors (showing evolution chains)
   - At least 2 research docs marked as surpassed with surpassed-by references

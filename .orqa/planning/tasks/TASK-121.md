@@ -7,10 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-029
 depends-on: []
-scope:
-  - Define MCP host connection lifecycle (discover, connect, list tools)
-  - Design tool routing between built-in and MCP tools
-  - Document configuration format for external MCP servers
 acceptance:
   - MCP host interface is designed for future implementation
   - Tool routing strategy accommodates both built-in and external tools

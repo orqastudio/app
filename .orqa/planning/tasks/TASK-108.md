@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-028
 depends-on: []
-scope:
-  - Define typography scale (font families, sizes, weights)
-  - Define colour palette (theme tokens, semantic colours)
-  - Define spacing scale and grid system
-  - Define iconography conventions (Lucide icons, no emoji in UI)
 acceptance:
   - Design system is documented and self-consistent
   - All tokens map to Tailwind configuration

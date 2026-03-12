@@ -3,9 +3,9 @@ id: IDEA-025
 title: Agent task ownership review
 description: |
   Audit agent definitions for process vs execution knowledge placement, define clear task ownership boundaries between orchestrator and specialist agents.
-status: captured
+status: archived
 created: "2026-03-07"
-updated: "2026-03-07"
+updated: "2026-03-12"
 pillars:
   - PILLAR-001
 research-needed:
@@ -15,6 +15,14 @@ research-needed:
   - Review whether any orchestrator responsibilities are missing from its definition
 promoted-to: null
 ---
+## Motivation
+
+Agent task ownership boundaries between orchestrator and specialist agents were unclear, causing process knowledge to leak into execution agents.
+
+## Archived
+
+This concern was resolved by [EPIC-045](EPIC-045) (Portable Governance Framework), which replaced the 15 specialist agent definitions with 7 universal roles and established clear orchestrator-vs-agent ownership boundaries via [RULE-001](RULE-001). Process knowledge now lives in skills loaded by the orchestrator, and execution knowledge in skills loaded by implementers.
+
 ## Problem
 
 During UAT Round 1 [EPIC-043](EPIC-043), we discovered that process knowledge (UAT methodology) was embedded in a specialist agent (qa-tester) rather than at the orchestrator level where it belongs. This suggests a broader pattern: task ownership between the orchestrator and specialist agents may not be clearly defined across all agent definitions.

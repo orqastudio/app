@@ -7,12 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-030
 depends-on: []
-scope:
-  - Implement settings commands (get/set provider config, model selection)
-  - Implement governance commands (scan, analyse, recommend)
-  - Implement tool execution commands (file read, write, glob)
-  - Implement system info commands (hardware, environment)
-  - Register all commands in Tauri app builder
 acceptance:
   - All commands are registered and callable from the frontend
   - Each command returns typed results

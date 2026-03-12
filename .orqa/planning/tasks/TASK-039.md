@@ -10,11 +10,6 @@ assignee: AGENT-001
 skills:
   - SKILL-005
   - SKILL-008
-scope:
-  - ui/lib/components/shared/
-  - ui/lib/components/navigation/ArtifactNav.svelte
-  - ui/lib/components/artifact/ArtifactLanding.svelte
-  - ui/lib/components/artifact/FrontmatterHeader.svelte
 acceptance:
   - A shared StatusIndicator component exists with semantic colours and icons per status value
   - StatusIndicator works in list items

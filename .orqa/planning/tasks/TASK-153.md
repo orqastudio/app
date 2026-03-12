@@ -8,12 +8,6 @@ updated: "2026-03-11"
 epic: EPIC-049
 depends-on:
   - TASK-152
-scope:
-  - Create a orqa-schema-compliance skill covering validation methodology, common violations, and remediation patterns
-  - Design a validation tool (Tauri command or script) that scans all artifacts for schema compliance on demand
-  - Tool reports all violations across the entire .orqa/ directory in one pass
-  - Includes propertyOrder enforcement — flags fields out of schema-defined order
-  - Supports both CLI usage (script) and app usage (Tauri command)
 acceptance:
   - Schema compliance skill created in .orqa/team/skills/
   - On-demand validation tool exists that scans all .orqa/ artifacts

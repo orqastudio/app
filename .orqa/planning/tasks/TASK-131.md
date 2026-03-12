@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-030
 depends-on: []
-scope:
-  - Implement session dropdown/selector component
-  - Add session search and filtering
-  - Implement session creation and deletion from UI
-  - Wire session navigation to conversation view
 acceptance:
   - Users can browse, search, and switch between sessions
   - New session creation works from the UI

@@ -11,8 +11,6 @@ depends-on:
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .githooks/validate-schema.mjs
 acceptance:
   - Pre-commit hook reads bodyTemplate from schema.json for each artifact type
   - Hook checks that required headings exist in the markdown body

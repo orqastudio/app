@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-029
 depends-on: []
-scope:
-  - Define OrqaError enum with all error variants
-  - Define From trait implementations for error composition
-  - Design error serialization across the IPC boundary
-  - Define TypeScript error handling patterns
 acceptance:
   - Error taxonomy covers all domain error cases
   - From implementations enable propagation across module boundaries

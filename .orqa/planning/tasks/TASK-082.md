@@ -12,10 +12,6 @@ assignee: AGENT-002
 skills:
   - SKILL-030
   - SKILL-016
-scope:
-  - ui/lib/components/artifact/ArtifactViewer.svelte
-  - ui/lib/components/artifact/AgentViewer.svelte
-  - ui/lib/components/artifact/SkillViewer.svelte
 acceptance:
   - ArtifactViewer reads metadata from artifactGraph.resolve() or resolveByPath()
   - AgentViewer and SkillViewer read metadata from graph instead of parsing frontmatter

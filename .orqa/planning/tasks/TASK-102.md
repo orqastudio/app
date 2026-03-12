@@ -7,10 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-026
 depends-on: []
-scope:
-  - Create decisions.md index in .orqa/documentation/architecture/
-  - List all AD records with summary, status, and category
-  - Cross-reference related decisions
 acceptance:
   - Index page lists all architecture decisions
   - Each entry has ID, title, status, and category

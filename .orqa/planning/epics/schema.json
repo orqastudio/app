@@ -5,7 +5,7 @@
   "type": "object",
   "required": [
     "id", "title", "description", "status", "priority",
-    "created", "updated", "milestone", "pillars", "scoring"
+    "created", "updated", "milestone", "pillars"
   ],
   "additionalProperties": false,
   "propertyOrder": [
@@ -51,8 +51,7 @@
     },
     "scoring": {
       "type": "object",
-      "required": ["score"],
-      "properties": { "score": { "type": "number" } },
+      "description": "Optional rationale for priority assessment. Freeform dimensions — projects choose their own. See DOC-062 for assessment criteria.",
       "additionalProperties": { "type": "number" }
     }
   },

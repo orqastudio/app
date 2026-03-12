@@ -12,8 +12,6 @@ assignee: AGENT-003
 skills:
   - SKILL-029
   - SKILL-011
-scope:
-  - .orqa/team/skills/orqa-plugin-development/SKILL.md
 acceptance:
   - Skill instructs AI to always create plugins in a new standalone project
   - Skill includes seed data generation guidance (mock .orqa/ directory)

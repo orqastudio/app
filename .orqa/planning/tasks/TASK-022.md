@@ -10,9 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-017
   - SKILL-032
-scope:
-  - src-tauri/src/commands/stream_commands.rs
-  - sidecar/src/provider.ts
 acceptance:
   - Sessions resume across app restarts
   - code_research tool implemented natively

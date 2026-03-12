@@ -8,11 +8,6 @@ updated: "2026-03-11"
 epic: EPIC-049
 depends-on:
   - TASK-139
-scope:
-  - Scan all components for repeated markup/logic patterns and quantify occurrence counts
-  - Create a skill teaching agents how to identify candidates for shared components
-  - Update RULE-024 or create companion rule enforcing component reuse with search-before-creating mandate
-  - Create follow-up tasks for each repeated pattern worth extracting into a shared component
 acceptance:
   - Audit document listing all repeated patterns with occurrence counts
   - New skill for component extraction methodology created

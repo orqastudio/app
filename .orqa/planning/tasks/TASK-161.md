@@ -8,14 +8,10 @@ updated: "2026-03-11"
 epic: EPIC-010
 depends-on: []
 docs:
-  - .orqa/documentation/development/coding-standards.md
+  - DOC-021
 skills:
-  - svelte5-best-practices
-  - tailwind-design-system
-scope:
-  - Identify the viewer panel scrollbar CSS as the reference style
-  - Audit all other panels (conversation, artifact list, settings, etc.) for scrollbar inconsistencies
-  - Apply the reference scrollbar style to all panels
+  - SKILL-030
+  - SKILL-031
 acceptance:
   - All panels use the same scrollbar styling as the viewer panel
   - Scrollbar width, track colour, thumb colour, and border radius are consistent

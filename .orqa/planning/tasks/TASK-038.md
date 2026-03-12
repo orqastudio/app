@@ -10,9 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-005
   - SKILL-008
-scope:
-  - ui/lib/components/artifact/FrontmatterHeader.svelte
-  - ui/lib/utils/frontmatter.ts
 acceptance:
   - Null, empty string, and undefined YAML values are not displayed in read views
   - Invalid Date never shown for null/missing date fields

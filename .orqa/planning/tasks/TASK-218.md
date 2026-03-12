@@ -7,11 +7,6 @@ created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-053
 depends-on: []
-scope:
-  - Add `sources` field to .orqa/planning/research/schema.json
-  - Sources is an array of objects with url and description
-  - Optional field — not all research uses external sources
-  - Update artifact-framework.md Research schema section
 acceptance:
   - Research schema accepts sources array
   - Existing research docs without sources still validate

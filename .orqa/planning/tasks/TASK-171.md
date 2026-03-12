@@ -2,19 +2,17 @@
 id: TASK-171
 title: Create capability vocabulary rule (RULE-040)
 description: Create a rule defining the abstract capability vocabulary, provider mapping tables, and delegation resolution protocol.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-051
 depends-on: []
 assignee: AGENT-003
 docs:
-  - .orqa/documentation/product/artifact-framework.md
+  - DOC-036
 skills:
-  - orqa-governance
-  - orqa-documentation
-scope:
-  - .orqa/governance/rules/
+  - SKILL-011
+  - SKILL-037
 acceptance:
   - Rule defines the canonical capability vocabulary (file_read, file_write, etc.)
   - Rule contains provider mapping tables for Claude Code CLI and OrqaStudio App

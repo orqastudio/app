@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-027
 depends-on: []
-scope:
-  - Define top-level navigation zones (sidebar, toolbar, panels)
-  - Map content types to navigation locations
-  - Design artifact hierarchy and browsing patterns
-  - Define URL/route structure
 acceptance:
   - Navigation structure covers all content types
   - Hierarchy is consistent and predictable

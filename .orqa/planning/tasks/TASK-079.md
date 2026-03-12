@@ -12,8 +12,6 @@ assignee: AGENT-002
 skills:
   - SKILL-027
   - SKILL-032
-scope:
-  - src-tauri/src/
 acceptance:
   - File watcher monitors .orqa/ for create, modify, delete, rename events
   - Graph rebuild is debounced (500ms)

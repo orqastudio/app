@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-029
 depends-on: []
-scope:
-  - Define tables for sessions, messages, tool calls, metrics
-  - Define column types, constraints, and defaults
-  - Design indexes for common query patterns
-  - Define foreign key relationships and cascade rules
 acceptance:
   - Schema covers all persistence needs for conversations
   - Indexes support the IPC command query patterns

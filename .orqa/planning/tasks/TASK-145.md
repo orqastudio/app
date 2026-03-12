@@ -7,11 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Create new RULE-NNN for skill portability enforcement
-  - Remove constraints from skills-maintenance NON-NEGOTIABLE section
-  - Update skill to reference the new rule
-  - Rule covers canon vs project vs plugin layer requirements with FORBIDDEN section
 acceptance:
   - New RULE-NNN created for skill portability enforcement
   - Constraints removed from skills-maintenance NON-NEGOTIABLE section

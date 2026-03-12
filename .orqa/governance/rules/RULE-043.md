@@ -4,9 +4,9 @@ title: Tooling Ecosystem Management
 description: "OrqaStudio manages linter configuration to match documented standards. Code quality enforcement belongs in linters, not in regex matching."
 status: active
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 layer: project
-scope: []
+scope: [AGENT-002, AGENT-006]
 promoted-from: null
 enforcement:
   - event: lint

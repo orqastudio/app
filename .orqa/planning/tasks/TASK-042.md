@@ -10,9 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-005
   - SKILL-008
-scope:
-  - ui/lib/components/artifact/ArtifactViewer.svelte
-  - ui/lib/components/shared/LoadingSpinner.svelte
 acceptance:
   - Loading spinner in main artifact viewer uses "lg" size variant
   - Animated logo pulse is clearly visible and not lost at display size

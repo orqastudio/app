@@ -13,9 +13,6 @@ skills:
   - SKILL-003
   - SKILL-012
   - SKILL-009
-scope:
-  - src-tauri/src/domain/artifact_reader.rs
-  - src-tauri/src/commands/artifact_commands.rs
 acceptance:
   - artifact_scan_tree reads artifacts config from project.json
   - For each Type entry

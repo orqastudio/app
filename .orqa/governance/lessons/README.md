@@ -21,6 +21,14 @@ documented → recurrence tracked → promoted → enforcement verified
 - **Promoted**: At recurrence >= 2, the lesson is promoted to a rule, coding standard, or skill
 - **Enforcement verified**: After promotion, recurrence is re-tracked to verify the fix works
 
+## Status Values
+
+| Status | Meaning |
+|--------|---------|
+| `active` | Unpromoted lesson, normal state |
+| `recurring` | Recurrence >= 2, pending promotion review |
+| `promoted` | Promoted to a rule, coding standard, or skill |
+
 ## Promotion
 
 Lessons that keep recurring are promoted to stronger enforcement: rule, hook, scanner, or hard block. The promotion target is recorded in the lesson's `promoted-to` field.

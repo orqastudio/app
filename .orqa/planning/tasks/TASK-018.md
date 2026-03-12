@@ -10,11 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-030
   - SKILL-031
-scope:
-  - ui/
-  - src-tauri/
-  - docs/
-  - .claude/agents/
 acceptance:
   - Product renamed to Orqa Studio throughout
   - src/ renamed to ui/

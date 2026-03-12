@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-028
 depends-on: []
-scope:
-  - Wireframe artifact navigation tree (sidebar)
-  - Design artifact content panel with markdown rendering
-  - Design frontmatter metadata display
-  - Wireframe empty states and loading states
 acceptance:
   - Artifact browser wireframe covers tree and content views
   - All component states are specified

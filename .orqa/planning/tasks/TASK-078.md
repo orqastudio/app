@@ -12,8 +12,6 @@ assignee: AGENT-002
 skills:
   - SKILL-030
   - SKILL-034
-scope:
-  - ui/lib/components/shared/MarkdownRenderer.svelte
 acceptance:
   - "Regex matches all known artifact ID patterns: EPIC-NNN, TASK-NNN, AD-NNN, MS-NNN, IDEA-NNN, IMPL-NNN, RES-NNN, PILLAR-NNN, RULE-NNN"
   - Matched IDs wrapped in clickable elements calling navigateToArtifact

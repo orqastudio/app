@@ -11,9 +11,6 @@ depends-on:
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/planning/
-  - .orqa/governance/
 acceptance:
   - All artifacts pass body template linting via pre-commit hook
   - No empty placeholder sections — each section has meaningful content or a brief note

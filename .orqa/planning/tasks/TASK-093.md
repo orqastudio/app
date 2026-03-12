@@ -10,14 +10,6 @@ depends-on:
   - TASK-084
   - TASK-085
   - TASK-086
-scope:
-  - Identify implicit conventions enforced in practice but not captured as rules
-  - Identify rules that are actually skills (knowledge/methodology vs constraint)
-  - Identify skills that are actually rules (binary compliance vs domain knowledge)
-  - Check if concepts need BOTH a rule and a skill with different framing
-  - Identify lessons that should have been promoted to rules or skills
-  - Identify agent behaviours documented nowhere
-  - Check for missing hooks (enforcement gaps where automated checks would help)
 acceptance:
   - Report listing all missing artifacts with suggested type and content outline
   - Report listing all miscategorised artifacts with recommended reclassification

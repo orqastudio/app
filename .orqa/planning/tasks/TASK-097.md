@@ -7,10 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-025
 depends-on: []
-scope:
-  - Evaluate rusqlite vs sqlx for SQLite access from Rust
-  - Design persistence scope (conversations only, not governance)
-  - Assess migration strategy for schema evolution
 acceptance:
   - SQLite selected for conversation persistence with documented rationale
   - Scope boundary established

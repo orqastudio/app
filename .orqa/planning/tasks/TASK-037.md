@@ -10,13 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-005
   - SKILL-008
-scope:
-  - ui/lib/components/layout/AppLayout.svelte
-  - ui/lib/components/layout/NavSubPanel.svelte
-  - ui/lib/components/layout/ActivityBar.svelte
-  - ui/lib/components/navigation/ArtifactNav.svelte
-  - ui/lib/components/artifact/Breadcrumb.svelte
-  - ui/lib/stores/navigation.svelte.ts
 acceptance:
   - Documentation section visible and navigable when clicking the docs icon in ActivityBar
   - Sidebar populates with documentation tree when a direct-type artifact is selected

@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-029
 depends-on: []
-scope:
-  - List all IPC commands by domain
-  - Define input/output Rust structs for each command
-  - Document error cases and error type mappings
-  - Map commands to the domain modules that implement them
 acceptance:
   - Every planned IPC command is listed with full type signatures
   - Input/output types are defined as Rust structs

@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-025
 depends-on: []
-scope:
-  - Evaluate Agent SDK capabilities for conversation management
-  - Assess sidecar process model (Bun child process spawned by Rust)
-  - Investigate NDJSON streaming protocol between sidecar and host
-  - Document findings on SDK limitations and workarounds
 acceptance:
   - Research document captures Agent SDK sidecar architecture decision
   - Streaming protocol design is validated as feasible

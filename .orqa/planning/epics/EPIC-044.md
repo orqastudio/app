@@ -21,6 +21,8 @@ scoring:
   risk: 1
   score: 18
 ---
+Note: This epic used 'canon' terminology which has since been renamed to 'core'.
+
 ## Findings Addressed
 
 - **F25**: Agent scope needs categorisation (software-engineering vs governance vs general)
@@ -33,7 +35,7 @@ scoring:
 
 | Layer | Meaning | Ships With |
 |-------|---------|------------|
-| `canon` | Platform principles — applies to ALL projects managed by OrqaStudio | The app |
+| `core` | Platform principles — applies to ALL projects managed by OrqaStudio | The app |
 | `project` | Project-specific — additive enforcement for this particular project | The project's `.orqa/` |
 | `plugin` | Ecosystem-extensible — third-party or community contributions | Installed via skills CLI or plugin system |
 
@@ -47,9 +49,9 @@ scoring:
 
 ### Classification
 
-All current agents are `layer: canon` (generic roles shipping with the platform).
-All `orqa-*` skills are `layer: project`. Portable skills are `layer: canon`.
-Most rules are `layer: canon` (platform principles). Project-specific rules are `layer: project`.
+All current agents are `layer: core` (generic roles shipping with the platform).
+All `orqa-*` skills are `layer: project`. Portable skills are `layer: core`.
+Most rules are `layer: core` (platform principles). Project-specific rules are `layer: project`.
 
 ### Tasks
 

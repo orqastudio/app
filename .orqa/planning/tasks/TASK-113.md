@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-028
 depends-on: []
-scope:
-  - List all shared components (EmptyState, LoadingSpinner, ErrorDisplay, etc.)
-  - Define component variants and props
-  - Specify all component states
-  - Document composition patterns
 acceptance:
   - Component inventory covers all shared components
   - Each component has defined variants and states

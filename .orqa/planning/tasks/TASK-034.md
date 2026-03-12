@@ -10,9 +10,6 @@ assignee: AGENT-003
 skills:
   - SKILL-029
   - SKILL-011
-scope:
-  - .orqa/team/agents/orchestrator.md
-  - .orqa/governance/rules/skill-enforcement.md
 acceptance:
   - Orchestrator agent definition includes a skill injection table mapping scope → skills
   - skill-enforcement.md updated to document the three-tier model

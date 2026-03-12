@@ -7,14 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-005
 depends-on: []
-scope:
-  - Add frontmatter HashMap to DocNode in artifact_reader.rs
-  - Read schema.json per artifact type directory and extract FilterableField (enum properties) and SortableField (date/string properties)
-  - Add filterable_fields, sortable_fields, and navigation_config to NavType
-  - Read _navigation.json from each type directory if present
-  - Define NavigationConfig, NavigationDefaults, NavigationLayout, SortConfig Rust types
-  - Include group_order in NavigationDefaults
-  - Update artifact_scan_tree response to carry the new data
 acceptance:
   - DocNode includes frontmatter as Option<HashMap<String, serde_json::Value>>
   - NavType includes filterable_fields, sortable_fields, navigation_config

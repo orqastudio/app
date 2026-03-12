@@ -2,20 +2,18 @@
 id: TASK-172
 title: Update agent schema to support capabilities field
 description: Replace the tools field in the agent schema with capabilities. The rule owns the tool mapping, not the agent.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-051
 depends-on:
   - TASK-171
 assignee: AGENT-003
 docs:
-  - .orqa/documentation/product/artifact-framework.md
+  - DOC-036
 skills:
-  - orqa-governance
-  - orqa-schema-compliance
-scope:
-  - .orqa/team/agents/schema.json
+  - SKILL-011
+  - SKILL-039
 acceptance:
   - Agent schema includes a capabilities field (array of strings)
   - Schema validates against existing agent definitions (backwards compatible)

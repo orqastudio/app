@@ -11,12 +11,6 @@ skills:
   - SKILL-003
   - SKILL-027
   - SKILL-032
-scope:
-  - src-tauri/src/search/store.rs
-  - src-tauri/src/search/chunker.rs
-  - src-tauri/src/search/types.rs
-  - src-tauri/src/search/mod.rs
-  - src-tauri/src/commands/search_commands.rs
 acceptance:
   - DuckDB database stores code chunks with file path
   - content

@@ -7,11 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Create systems-thinking skill in .orqa/team/skills/ as layer canon
-  - Cover system identification, boundary mapping, relationship tracing, pattern recognition, uniform base discovery
-  - Include practical examples showing the methodology applied to real scenarios
-  - Update RULE-028 to reference the companion skill
 acceptance:
   - New skill systems-thinking created in .orqa/team/skills/
   - Covers system identification, boundary mapping, relationship tracing, pattern recognition, uniform base discovery

@@ -9,14 +9,9 @@ epic: EPIC-053
 depends-on: []
 docs: []
 skills:
-  - orqa-governance
-  - orqa-documentation
-  - skills-maintenance
-scope:
-  - Identify content in orchestrator.md that is project-specific operational knowledge
-  - Create or update skills for dev server lifecycle, worktree workflow
-  - Ensure these are discoverable via graph (skill scope fields, task skills fields)
-  - Remove this content from the orchestrator prompt
+  - SKILL-011
+  - SKILL-037
+  - SKILL-029
 acceptance:
   - Dev server lifecycle content exists as a skill or doc
   - Worktree workflow content exists as a skill or doc

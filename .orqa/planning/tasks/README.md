@@ -29,41 +29,9 @@ todo → in-progress → done
 
 ## Frontmatter Schema
 
-Most tasks live as markdown checklist items in their parent epic. A task graduates to a separate `TASK-NNN.md` file when it needs its own detailed tracking — acceptance criteria, agent assignment, scope list, or discussion thread.
+Most tasks live as markdown checklist items in their parent epic. A task graduates to a separate `TASK-NNN.md` file when it needs its own detailed tracking — acceptance criteria, agent assignment, or discussion thread.
 
-```yaml
----
-id: TASK-001
-title: "Implement session persistence"
-description: "Wire session CRUD to SQLite so sessions persist across app restarts."
-status: todo                          # todo | in-progress | done
-epic: EPIC-001
-created: 2026-03-07
-updated: 2026-03-07
-assignee: AGENT-005                   # Agent ID or null
-skills: [SKILL-001, SKILL-012]        # Skill IDs the assignee should load
-scope:                                # Files/directories affected
-  - src-tauri/src/repo/session_repo.rs
-acceptance:                           # What "done" looks like
-  - Sessions persist to SQLite
-  - Sessions restore on app restart
----
-```
-
-| Field | Required | Type | Description |
-|-------|----------|------|-------------|
-| `id` | Yes | string | Auto-incrementing `TASK-NNN` identifier |
-| `title` | Yes | string | Concise task description |
-| `description` | Yes | string | Brief explanation of the task's purpose |
-| `status` | Yes | enum | `todo`, `in-progress`, `done` |
-| `epic` | Yes | string | Parent epic ID |
-| `created` | Yes | date | ISO date of creation |
-| `updated` | Yes | date | ISO date of last update |
-| `assignee` | No | string | Agent ID (AGENT-NNN format) |
-| `depends-on` | No | string[] | Task IDs that must be done before this one |
-| `skills` | No | string[] | Skill IDs (SKILL-NNN format) the assignee should load |
-| `scope` | No | string[] | Files/directories affected |
-| `acceptance` | No | string[] | Acceptance criteria |
+See `schema.json` in this directory for the complete field reference.
 
 ## The Skills Field
 
@@ -80,11 +48,11 @@ Common skill combinations by domain:
 
 | Domain | Typical Skills |
 |--------|---------------|
-| Rust backend | `chunkhound`, `orqa-ipc-patterns`, `orqa-repository-pattern`, `rust-async-patterns` |
-| Svelte frontend | `chunkhound`, `orqa-store-patterns`, `orqa-ipc-patterns`, `svelte5-best-practices` |
-| Streaming pipeline | `chunkhound`, `orqa-streaming`, `orqa-ipc-patterns` |
-| Data / SQLite | `chunkhound`, `orqa-repository-pattern`, `orqa-domain-services` |
-| Governance / agents | `chunkhound`, `orqa-governance` |
+| Rust backend | `orqa-code-search`, `orqa-ipc-patterns`, `orqa-repository-pattern`, `rust-async-patterns` |
+| Svelte frontend | `orqa-code-search`, `orqa-store-patterns`, `orqa-ipc-patterns`, `svelte5-best-practices` |
+| Streaming pipeline | `orqa-code-search`, `orqa-streaming`, `orqa-ipc-patterns` |
+| Data / SQLite | `orqa-code-search`, `orqa-repository-pattern`, `orqa-domain-services` |
+| Governance / agents | `orqa-code-search`, `orqa-governance` |
 
 ## Related
 

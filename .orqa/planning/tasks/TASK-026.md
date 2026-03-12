@@ -11,11 +11,6 @@ skills:
   - SKILL-030
   - SKILL-031
   - SKILL-016
-scope:
-  - ui/lib/components/settings/
-  - ui/lib/components/layout/
-  - ui/lib/stores/
-  - ui/app.css
 acceptance:
   - SettingsView decomposed into focused sub-components
   - Toolbar decomposed into focused sub-components

@@ -7,11 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Read every hook script in .orqa/governance/hooks/
-  - Verify paths referenced in scripts are correct
-  - Verify trigger events are still valid
-  - Test hook execution
 acceptance:
   - All hook scripts exist and have correct permissions
   - All paths in hook scripts resolve to existing files

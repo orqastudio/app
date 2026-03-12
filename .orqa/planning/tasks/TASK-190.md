@@ -10,17 +10,13 @@ depends-on:
   - TASK-189
 assignee: AGENT-002
 docs:
-  - .orqa/documentation/development/coding-standards.md
+  - DOC-021
 skills:
-  - backend-best-practices
-  - orqa-ipc-patterns
-  - svelte5-best-practices
-  - orqa-store-patterns
-  - component-extraction
-scope:
-  - src-tauri/src/commands/
-  - ui/lib/components/
-  - ui/lib/stores/
+  - SKILL-043
+  - SKILL-012
+  - SKILL-030
+  - SKILL-016
+  - SKILL-041
 acceptance:
   - Governance UI shows violation history
   - Violations are filterable by rule, agent, and time

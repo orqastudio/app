@@ -7,10 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Document which tools each universal role (Researcher, Planner, Implementer, Reviewer, Writer, Designer) may access
-  - Extract from agent YAML tools lists into a rule
-  - Define FORBIDDEN patterns (e.g., Reviewer must not use Edit/Write)
 acceptance:
   - New rule created mapping roles to permitted tool sets
   - FORBIDDEN section lists role-tool violations

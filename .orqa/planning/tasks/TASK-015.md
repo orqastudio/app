@@ -10,9 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-027
   - SKILL-032
-scope:
-  - src-tauri/src/search/embedder.rs
-  - src-tauri/src/commands/search_commands.rs
 acceptance:
   - Model auto-downloads from Hugging Face on first use
   - Pre-download at app startup with progress tracking

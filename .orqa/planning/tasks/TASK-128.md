@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-030
 depends-on: []
-scope:
-  - Implement four-zone layout structure (toolbar, sidebar, main, status)
-  - Build sidebar navigation with session list and artifact links
-  - Implement panel resizing with drag handles
-  - Apply Tailwind design system tokens
 acceptance:
   - Four-zone layout renders correctly at all supported sizes
   - Sidebar navigation is functional

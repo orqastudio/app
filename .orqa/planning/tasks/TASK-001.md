@@ -7,8 +7,6 @@ created: "2026-03-07"
 updated: "2026-03-07"
 epic: EPIC-001
 assignee: AGENT-002
-scope:
-  - src-tauri/src/commands/stream_commands.rs
 acceptance:
   - SystemPromptSent event is emitted via on_event channel before sidecar request is sent
   - Event carries governance_prompt (full text) and total_chars (correct length)

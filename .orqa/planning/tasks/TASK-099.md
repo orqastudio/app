@@ -7,12 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-026
 depends-on: []
-scope:
-  - Write AD-007 (sidecar integration pattern)
-  - Write AD-008 (streaming pipeline design)
-  - Write AD-009 (security model)
-  - Write AD-010 (MCP host approach)
-  - Include context, decision, consequences, and status for each
 acceptance:
   - Each AD follows the decision schema with all required sections
   - Decisions are internally consistent and cross-referenced

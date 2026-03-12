@@ -12,9 +12,6 @@ skills:
   - SKILL-012
   - SKILL-009
   - SKILL-027
-scope:
-  - .orqa/project.json
-  - src-tauri/src/domain/project_settings.rs
 acceptance:
   - project.json has artifacts array with all current groups and types
   - ArtifactEntry enum (Group | Type) added to project_settings.rs

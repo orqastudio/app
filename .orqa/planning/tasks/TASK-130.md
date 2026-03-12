@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-030
 depends-on: []
-scope:
-  - Implement ToolCallCard component with collapsible body
-  - Display tool name, input JSON, and output result
-  - Handle tool approval UI when approval is required
-  - Integrate tool call cards into the conversation message flow
 acceptance:
   - Tool calls render inline within conversation messages
   - Cards are collapsible with input/output visible when expanded

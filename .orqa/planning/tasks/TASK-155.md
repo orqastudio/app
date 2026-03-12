@@ -8,11 +8,6 @@ updated: "2026-03-11"
 epic: EPIC-049
 depends-on:
   - TASK-152
-scope:
-  - Add propertyOrder validation to the schema validation hook (TASK-152)
-  - Ensure agents creating artifacts write fields in schema-defined order
-  - Fix existing rule files that are out of order as a one-time cleanup
-  - Do not add frontend reformatting — enforce at creation and commit time
 acceptance:
   - Schema validation hook checks field ordering against propertyOrder
   - Out-of-order fields produce a warning or error at commit time

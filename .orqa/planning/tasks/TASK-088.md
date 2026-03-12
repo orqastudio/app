@@ -11,12 +11,6 @@ depends-on:
   - TASK-085
   - TASK-086
   - TASK-087
-scope:
-  - Verify orchestrator skill injection table matches available skills
-  - Verify agent-to-subagent mapping is current
-  - Find orphaned skills (not referenced by any agent)
-  - Find orphaned rules (not referenced by any other artifact)
-  - Verify orchestrator (CLAUDE.md) is consistent with all active rules
 acceptance:
   - Orchestrator skill injection table lists only skills that exist
   - Agent-to-subagent mapping matches available Claude Code subagent types

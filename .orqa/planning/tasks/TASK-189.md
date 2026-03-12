@@ -10,15 +10,12 @@ depends-on:
   - TASK-188
 assignee: AGENT-002
 docs:
-  - .orqa/documentation/development/coding-standards.md
+  - DOC-021
 skills:
-  - backend-best-practices
-  - orqa-domain-services
-  - orqa-ipc-patterns
-  - orqa-error-composition
-scope:
-  - src-tauri/src/commands/
-  - src-tauri/src/domain/
+  - SKILL-043
+  - SKILL-009
+  - SKILL-012
+  - SKILL-010
 acceptance:
   - Tool approval pipeline calls enforcement engine before each tool execution
   - Blocked tools return enforcement message to the agent

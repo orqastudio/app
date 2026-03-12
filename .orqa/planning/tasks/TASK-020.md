@@ -11,10 +11,6 @@ skills:
   - SKILL-012
   - SKILL-017
   - SKILL-032
-scope:
-  - src-tauri/src/domain/governance_analysis.rs
-  - src-tauri/src/commands/governance_commands.rs
-  - ui/lib/components/dashboard/
 acceptance:
   - Governance scanner runs and produces results
   - Tool approval workflow via Channel<T>

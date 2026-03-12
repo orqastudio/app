@@ -12,10 +12,8 @@ assignee: AGENT-003
 skills:
   - SKILL-011
   - SKILL-029
-scope:
-  - .orqa/team/skills/project-type-software/SKILL.md
 acceptance:
-  - project-type-software skill includes commit discipline section
+  - SKILL-024 skill includes commit discipline section
   - Covers when to commit during governance work
   - Covers how to group changes into logical commits
   - Covers commit message conventions for governance vs code

@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-025
 depends-on: []
-scope:
-  - Compare frontend framework options (Svelte 5, React, Vue)
-  - Evaluate Svelte 5 runes system for reactive state management
-  - Select component library (shadcn-svelte) and assess maturity
-  - Validate Tailwind CSS integration with Svelte 5 and Tauri
 acceptance:
   - Svelte 5 selected with documented rationale
   - shadcn-svelte confirmed as component library

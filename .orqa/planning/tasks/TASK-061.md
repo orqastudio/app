@@ -11,8 +11,6 @@ depends-on:
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/documentation/product/artifact-framework.md
 acceptance:
   - Epic schema includes optional pillars field (list of PILLAR-NNN IDs)
   - Idea schema includes optional pillars field

@@ -11,19 +11,11 @@ depends-on:
   - TASK-209
   - TASK-210
 docs:
-  - .orqa/documentation/product/artifact-framework.md
+  - DOC-036
 skills:
-  - orqa-governance
-  - orqa-documentation
-  - planning
-scope:
-  - Rewrite .orqa/team/agents/orchestrator.md
-  - Remove inlined rules, skill injection tables, detailed delegation protocols
-  - Replace with graph navigation instructions
-  - Keep core process (understand → plan → document → implement → review → learn)
-  - Keep role definitions (minimal)
-  - Keep NON-NEGOTIABLE safety constraints
-  - Target ~200 lines
+  - SKILL-011
+  - SKILL-037
+  - SKILL-019
 acceptance:
   - Orchestrator prompt is <=250 lines
   - Agents can navigate the graph to find rules, skills, docs

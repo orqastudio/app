@@ -8,11 +8,6 @@ updated: "2026-03-12"
 epic: EPIC-053
 depends-on:
   - TASK-208
-scope:
-  - Review all tasks with status todo
-  - For each task, determine which skills are relevant based on scope and file paths
-  - Use the current Tier 2 injection table as the source mapping
-  - Add skills field with relevant skill names
 acceptance:
   - All todo tasks have a skills field (may be empty array if no specific skills needed)
   - Skills entries match existing skill names in .orqa/team/skills/

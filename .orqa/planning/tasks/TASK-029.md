@@ -10,14 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-012
   - SKILL-014
-scope:
-  - sidecar/src/protocol.ts
-  - sidecar/src/index.ts
-  - src-tauri/src/sidecar/types.rs
-  - src-tauri/src/commands/stream_commands.rs
-  - src-tauri/src/domain/session.rs
-  - src-tauri/src/repo/session_repo.rs
-  - src-tauri/src/db.rs
 acceptance:
   - All sdk_session_id references renamed to provider_session_id
   - SQLite migration 005 renames column

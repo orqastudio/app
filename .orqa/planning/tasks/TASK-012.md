@@ -10,8 +10,6 @@ assignee: AGENT-007
 skills:
   - SKILL-003
   - SKILL-011
-scope:
-  - .orqa/documentation/product/artifact-framework.md
 acceptance:
   - No Plan type definition in artifact-framework.md
   - Research schema added with draft/complete/surpassed workflow

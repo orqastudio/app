@@ -7,10 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-027
 depends-on: []
-scope:
-  - Define primary persona(s) with goals and context
-  - Identify pain points and motivations
-  - Map personas to product pillars
 acceptance:
   - At least one primary persona is fully defined
   - Persona goals trace to product pillars

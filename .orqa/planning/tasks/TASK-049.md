@@ -9,9 +9,6 @@ epic: EPIC-044
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/governance/rules/
-  - .orqa/governance/hooks/
 acceptance:
   - All rule files have `layer:` field in YAML frontmatter
   - All hook files have classification documented

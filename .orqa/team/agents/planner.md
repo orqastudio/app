@@ -23,7 +23,7 @@ skills:
   - SKILL-008
   - SKILL-019
   - SKILL-002
-  - SKILL-046
+  - SKILL-048
 subagent_mapping:
   default: Plan
 ---

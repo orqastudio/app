@@ -7,11 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Create hook script in .orqa/governance/hooks/ or .githooks/
-  - Hook greps staged files for TODO, FIXME, HACK in production code (not tests)
-  - Integrate with existing pre-commit hook pipeline
-  - RULE-020 explicitly calls for this enforcement
 acceptance:
   - Hook blocks commits containing TODO/FIXME/HACK in production source files
   - Test files are excluded from scanning

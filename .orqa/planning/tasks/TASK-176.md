@@ -2,23 +2,20 @@
 id: TASK-176
 title: Implement capability resolution in app agent execution pipeline
 description: The Rust backend resolves agent capabilities to Tauri tool names when building agent execution context.
-status: todo
+status: done
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-03-12"
 epic: EPIC-051
 depends-on:
   - TASK-173
 assignee: AGENT-002
 docs:
-  - .orqa/documentation/development/coding-standards.md
+  - DOC-021
 skills:
-  - backend-best-practices
-  - orqa-domain-services
-  - orqa-ipc-patterns
-  - orqa-error-composition
-scope:
-  - src-tauri/src/domain/
-  - src-tauri/src/commands/
+  - SKILL-043
+  - SKILL-009
+  - SKILL-012
+  - SKILL-010
 acceptance:
   - Rust backend reads agent capabilities from agent definition
   - Capabilities are resolved to Tauri command tool names

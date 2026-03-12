@@ -7,11 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Define what user-invocable means (skill can be triggered directly by user vs only loaded by agents)
-  - Define when to set true vs false
-  - Define how the system uses this field (UI exposure, slash command generation)
-  - Create enforcement rule
 acceptance:
   - New rule created defining user-invocable semantics
   - Clear criteria for when a skill should be user-invocable

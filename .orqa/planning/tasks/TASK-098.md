@@ -7,10 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-025
 depends-on: []
-scope:
-  - Design first-run experience for new users
-  - Define Claude API key configuration flow
-  - Plan project initialization and .orqa directory setup
 acceptance:
   - Onboarding flow documented
   - API key configuration approach decided

@@ -7,10 +7,6 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
-scope:
-  - Extract context window management guidelines from orchestrator.md Section 1
-  - Create a new RULE-NNN with enforceable constraints
-  - Cover delegation over accumulation, minimizing tool output, summarize-don't-echo, one task at a time, session state usage
 acceptance:
   - New rule created covering context window management
   - Guidelines extracted from orchestrator into the rule

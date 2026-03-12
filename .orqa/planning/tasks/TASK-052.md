@@ -12,10 +12,6 @@ depends-on:
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/team/agents/
-  - .orqa/governance/rules/
-  - .orqa/team/skills/
 acceptance:
   - 14 old agent files deleted (backend-engineer
   - frontend-engineer

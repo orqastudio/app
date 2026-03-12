@@ -13,8 +13,6 @@ skills:
   - SKILL-027
   - SKILL-032
   - SKILL-012
-scope:
-  - src-tauri/src/commands/
 acceptance:
   - resolve_artifact command returns ArtifactNode for a given ID
   - resolve_path command returns ArtifactNode for a given file path

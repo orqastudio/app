@@ -10,9 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-030
   - SKILL-031
-scope:
-  - ui/lib/utils/tool-display.ts
-  - ui/lib/components/tool/
 acceptance:
   - Tool calls display friendly names (Read → "Reading file")
   - Each tool type has a Lucide icon

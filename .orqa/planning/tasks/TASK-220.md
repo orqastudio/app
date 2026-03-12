@@ -11,13 +11,7 @@ depends-on:
   - TASK-214
 docs: []
 skills:
-  - orqa-governance
-scope:
-  - Start a session with the new ~200-line orchestrator prompt
-  - Attempt a typical workflow (research → plan → implement → review)
-  - Verify agents read graph nodes on demand
-  - Verify agents extend the graph when creating artifacts
-  - Document any missing context that needs to be added back
+  - SKILL-011
 acceptance:
   - A full workflow completes successfully with the simplified prompt
   - Agents find rules, skills, and docs via graph navigation

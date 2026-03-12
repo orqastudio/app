@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-028
 depends-on: []
-scope:
-  - Wireframe the four-zone layout structure
-  - Define panel resizing behaviour and constraints
-  - Design collapsed/expanded states for sidebar and panels
-  - Document minimum window sizes and breakpoints
 acceptance:
   - Layout wireframe covers all four zones
   - Panel resize behaviour is specified

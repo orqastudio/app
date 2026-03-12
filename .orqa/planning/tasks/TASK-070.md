@@ -9,9 +9,6 @@ epic: EPIC-048
 assignee: AGENT-003
 skills:
   - SKILL-011
-scope:
-  - .orqa/documentation/product/artifact-framework.md
-  - .orqa/**/schema.json
 acceptance:
   - Each schema.json (except research) has a bodyTemplate key listing required section headings
   - artifact-framework.md updated with body template documentation for all 9 types

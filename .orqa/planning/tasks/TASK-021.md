@@ -10,9 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-011
   - SKILL-012
-scope:
-  - src-tauri/src/domain/
-  - ui/lib/components/
 acceptance:
   - IMPL entries created and tracked
   - Recurrence count incremented on match

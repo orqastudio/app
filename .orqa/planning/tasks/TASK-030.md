@@ -9,10 +9,6 @@ epic: EPIC-041
 assignee: AGENT-007
 skills:
   - SKILL-011
-scope:
-  - .orqa/documentation/product/vision.md
-  - .orqa/documentation/product/governance.md
-  - .orqa/documentation/product/roadmap.md
 acceptance:
   - Pillars renamed (Process Governance → Clarity Through Structure
   - Self-Learning Loop → Learning Through Reflection)

@@ -59,7 +59,7 @@ When starting ANY task:
 
 When creating artifacts, always populate relationship fields:
 
-- **Tasks**: Set `epic`, `docs`, `skills`, `depends-on`, `scope`, `acceptance`
+- **Tasks**: Set `epic`, `docs`, `skills`, `depends-on`, `acceptance`
 - **Epics**: Set `milestone`, `research-refs`, `docs-required`, `docs-produced`
 - **Decisions**: Set `supersedes` / `superseded-by` when replacing existing decisions
 

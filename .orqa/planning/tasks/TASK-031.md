@@ -8,12 +8,6 @@ updated: "2026-03-09"
 epic: EPIC-041
 assignee: AGENT-007
 skills: []
-scope:
-  - LICENSE
-  - NOTICE
-  - THIRD_PARTY_NOTICES.md
-  - CONTRIBUTING.md
-  - README.md
 acceptance:
   - Apache License 2.0 applied
   - NOTICE file with project attribution

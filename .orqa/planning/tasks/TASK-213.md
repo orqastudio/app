@@ -9,14 +9,8 @@ epic: EPIC-053
 depends-on: []
 docs: []
 skills:
-  - orqa-governance
-  - orqa-documentation
-scope:
-  - Move tech stack table to project.json or a project metadata artifact
-  - Move naming conventions to coding-standards.md (may already exist there)
-  - Move verification gates to a skill or process doc
-  - Move role-to-subagent mapping to agent definitions or a skill
-  - Ensure all moved content is discoverable via graph relationships
+  - SKILL-011
+  - SKILL-037
 acceptance:
   - Project-specific content removed from orchestrator prompt
   - Content exists in appropriate artifacts

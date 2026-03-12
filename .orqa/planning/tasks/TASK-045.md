@@ -10,10 +10,6 @@ assignee: AGENT-002
 skills:
   - SKILL-005
   - SKILL-008
-scope:
-  - src-tauri/src/domain/artifact_reader.rs
-  - .orqa/governance/hooks/
-  - .claude/settings.json
 acceptance:
   - Hooks section in governance displays existing hook files from .orqa/governance/hooks/
   - If hooks directory contains shell scripts (not .md files)

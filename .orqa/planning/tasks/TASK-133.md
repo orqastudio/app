@@ -7,11 +7,6 @@ created: "2026-03-02"
 updated: "2026-03-02"
 epic: EPIC-031
 depends-on: []
-scope:
-  - Implement recursive directory walk for governance artifacts
-  - Parse YAML frontmatter from markdown files
-  - Classify artifacts by type (agent, rule, skill, hook)
-  - Return structured scan results to the frontend
 acceptance:
   - Scanner discovers all governance artifacts in the project
   - Frontmatter is parsed correctly for each artifact type
