@@ -104,8 +104,7 @@ fn scan_group_from_config(
     let group_dir = project_path.join(
         children
             .first()
-            .map(|c| c.path.as_str())
-            .unwrap_or(key)
+            .map_or(key, |c| c.path.as_str())
             .split('/')
             .take(2)
             .collect::<Vec<_>>()
@@ -578,12 +577,11 @@ fn extract_sortable_field(name: &str, prop: &serde_json::Value, out: &mut Vec<So
     // Accept {"type": "string", "format": "date"} or {"type": ["string", "null"], "format": "date"}
     let is_string_type = prop
         .get("type")
-        .map(|t| {
+        .is_some_and(|t| {
             (t.as_str() == Some("string"))
                 || t.as_array()
                     .is_some_and(|arr| arr.iter().any(|v| v.as_str() == Some("string")))
-        })
-        .unwrap_or(false);
+        });
 
     let is_date_format = prop.get("format").and_then(|f| f.as_str()) == Some("date");
 

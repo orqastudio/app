@@ -202,7 +202,6 @@ fn parse_session_status(s: &str) -> SessionStatus {
         "active" => SessionStatus::Active,
         "completed" => SessionStatus::Completed,
         "abandoned" => SessionStatus::Abandoned,
-        "error" => SessionStatus::Error,
         _ => SessionStatus::Error,
     }
 }

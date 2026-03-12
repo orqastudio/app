@@ -49,7 +49,7 @@ pub fn ensure_sidecar_running(state: &AppState) -> Result<(), OrqaError> {
     }
 
     let args = sidecar_args();
-    let arg_refs: Vec<&str> = args.iter().map(|s| s.as_str()).collect();
+    let arg_refs: Vec<&str> = args.iter().map(String::as_str).collect();
     state
         .sidecar
         .manager
@@ -77,7 +77,7 @@ pub fn sidecar_status(state: tauri::State<'_, AppState>) -> Result<SidecarStatus
 #[tauri::command]
 pub fn sidecar_restart(state: tauri::State<'_, AppState>) -> Result<SidecarStatus, OrqaError> {
     let args = sidecar_args();
-    let arg_refs: Vec<&str> = args.iter().map(|s| s.as_str()).collect();
+    let arg_refs: Vec<&str> = args.iter().map(String::as_str).collect();
     state.sidecar.manager.restart(SIDECAR_COMMAND, &arg_refs)
 }
 

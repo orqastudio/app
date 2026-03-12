@@ -53,7 +53,7 @@ Both sides of the protocol are defined in two mirrored files:
 | Layer | File |
 |-------|------|
 | Rust | `backend/src-tauri/src/sidecar/types.rs` — `SidecarRequest` and `SidecarResponse` enums |
-| TypeScript | `sidecars/claude-agentsdk-sidecar/src/protocol.ts` — matching interfaces and union types |
+| TypeScript | `sidecar/src/protocol.ts` — matching interfaces and union types |
 
 These files must stay in sync. A change to one requires a matching change to the other.
 
@@ -188,11 +188,11 @@ The `stream_cancel` Tauri command sends a `SidecarRequest::CancelStream` to the 
 
 ## 7. Sidecar Implementation
 
-The sidecar is a Bun-compiled binary (`sidecars/claude-agentsdk-sidecar/`) that wraps the Claude Agent SDK.
+The sidecar is a Bun-compiled binary (`sidecar/`) that wraps the Claude Agent SDK.
 
 ### Provider interface
 
-`sidecars/claude-agentsdk-sidecar/src/provider-interface.ts` defines the `Provider` interface. `ClaudeAgentProvider` in `sidecars/claude-agentsdk-sidecar/src/providers/claude-agent.ts` is the current implementation. Adding a new AI provider means implementing this interface without changing Rust or Svelte code.
+`sidecar/src/provider-interface.ts` defines the `Provider` interface. `ClaudeAgentProvider` in `sidecar/src/providers/claude-agent.ts` is the current implementation. Adding a new AI provider means implementing this interface without changing Rust or Svelte code.
 
 ### Tool routing via MCP
 

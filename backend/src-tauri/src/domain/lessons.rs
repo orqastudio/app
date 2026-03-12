@@ -135,8 +135,7 @@ pub fn render_lesson(lesson: &Lesson) -> String {
     let promoted_to = lesson
         .promoted_to
         .as_deref()
-        .map(|v| format!("\"{v}\""))
-        .unwrap_or_else(|| "null".to_string());
+        .map_or_else(|| "null".to_string(), |v| format!("\"{v}\""));
 
     format!(
         "---\nid: {}\ntitle: \"{}\"\ncategory: {}\nrecurrence: {}\nstatus: {}\npromoted-to: {}\ncreated: {}\nupdated: {}\n---\n{}",

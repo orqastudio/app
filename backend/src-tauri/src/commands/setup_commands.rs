@@ -60,8 +60,7 @@ pub fn get_setup_status(state: tauri::State<'_, AppState>) -> Result<SetupStatus
 
     let stored_version = stored
         .and_then(|v| v.as_u64())
-        .map(|v| v as u32)
-        .unwrap_or(0);
+        .map_or(0, |v| v as u32);
 
     let setup_complete = stored_version >= CURRENT_SETUP_VERSION;
 

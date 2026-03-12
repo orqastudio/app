@@ -146,8 +146,10 @@ fn read_lesson_file(file_path: &Path, project_path: &Path) -> Result<Lesson, Orq
     let content = std::fs::read_to_string(file_path)?;
     let relative = file_path
         .strip_prefix(project_path)
-        .map(|p| p.to_string_lossy().replace('\\', "/"))
-        .unwrap_or_else(|_| file_path.to_string_lossy().replace('\\', "/"));
+        .map_or_else(
+            |_| file_path.to_string_lossy().replace('\\', "/"),
+            |p| p.to_string_lossy().replace('\\', "/"),
+        );
     parse_lesson(&content, &relative).map_err(|e| {
         OrqaError::Serialization(format!("failed to parse {}: {e}", file_path.display()))
     })

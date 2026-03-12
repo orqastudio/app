@@ -2,7 +2,7 @@
 id: TASK-259
 title: "Update rust-modules.md module tree"
 description: "Bring the Rust module tree documentation in line with current codebase structure."
-status: todo
+status: done
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-057

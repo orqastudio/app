@@ -22,6 +22,19 @@ fn is_code_file(path: &str) -> bool {
     !path.starts_with(".orqa/") && !path.contains("/.orqa/")
 }
 
+/// Create a `GateResult` that fired with the given message, or an unfired result.
+fn gate(name: &str, fired: bool, message: &str) -> GateResult {
+    GateResult {
+        gate_name: name.to_string(),
+        message: if fired {
+            message.to_string()
+        } else {
+            String::new()
+        },
+        fired,
+    }
+}
+
 /// Evaluate all process gates against the current session workflow state.
 ///
 /// # Parameters
@@ -45,115 +58,64 @@ pub fn evaluate_process_gates(
 
     match event_type {
         "write" => {
-            let writing_code = file_path.map(is_code_file).unwrap_or(false);
+            let writing_code = file_path.is_some_and(is_code_file);
 
             // Gate: understand-first
             // Fires once per session, on the first code write, when no research has been done.
-            let understand_first = if writing_code
+            let uf_fired = writing_code
                 && !tracker.has_done_any_research()
-                && !tracker.first_code_write_gated
-            {
+                && !tracker.first_code_write_gated;
+            if uf_fired {
                 tracker.first_code_write_gated = true;
-                GateResult {
-                    gate_name: "understand-first".to_string(),
-                    message: "THINK FIRST: What is the system you're modifying? \
-                        What are its boundaries? What depends on this? What could break? \
-                        Read the governing docs and understand the context before writing code."
-                        .to_string(),
-                    fired: true,
-                }
-            } else {
-                GateResult {
-                    gate_name: "understand-first".to_string(),
-                    message: String::new(),
-                    fired: false,
-                }
-            };
-            results.push(understand_first);
+            }
+            results.push(gate(
+                "understand-first",
+                uf_fired,
+                "THINK FIRST: What is the system you're modifying? \
+                 What are its boundaries? What depends on this? What could break? \
+                 Read the governing docs and understand the context before writing code.",
+            ));
 
             // Gate: docs-before-code
             // Fires on any code write when no docs have been read this session.
-            let docs_before_code = if writing_code && !tracker.has_read_any_docs() {
-                GateResult {
-                    gate_name: "docs-before-code".to_string(),
-                    message: "DOCUMENTATION CHECK: Have you read the documentation that defines \
-                        this area? Check .orqa/documentation/ for specs, patterns, and constraints \
-                        before implementing."
-                        .to_string(),
-                    fired: true,
-                }
-            } else {
-                GateResult {
-                    gate_name: "docs-before-code".to_string(),
-                    message: String::new(),
-                    fired: false,
-                }
-            };
-            results.push(docs_before_code);
+            results.push(gate(
+                "docs-before-code",
+                writing_code && !tracker.has_read_any_docs(),
+                "DOCUMENTATION CHECK: Have you read the documentation that defines \
+                 this area? Check .orqa/documentation/ for specs, patterns, and constraints \
+                 before implementing.",
+            ));
 
             // Gate: plan-before-build
             // Fires on any code write when no planning artifacts have been consulted.
-            let plan_before_build = if writing_code && !tracker.has_read_any_planning() {
-                GateResult {
-                    gate_name: "plan-before-build".to_string(),
-                    message: "PLANNING CHECK: Is there an epic or task that defines this work? \
-                        Check .orqa/planning/ for the scope, acceptance criteria, and \
-                        implementation design."
-                        .to_string(),
-                    fired: true,
-                }
-            } else {
-                GateResult {
-                    gate_name: "plan-before-build".to_string(),
-                    message: String::new(),
-                    fired: false,
-                }
-            };
-            results.push(plan_before_build);
+            results.push(gate(
+                "plan-before-build",
+                writing_code && !tracker.has_read_any_planning(),
+                "PLANNING CHECK: Is there an epic or task that defines this work? \
+                 Check .orqa/planning/ for the scope, acceptance criteria, and \
+                 implementation design.",
+            ));
         }
 
         "stop" => {
             // Gate: evidence-before-done
             // Fires at turn end when code was written but no verification command was run.
-            let evidence_before_done =
-                if tracker.has_written_code() && !tracker.has_run_verification() {
-                    GateResult {
-                        gate_name: "evidence-before-done".to_string(),
-                        message:
-                            "VERIFICATION CHECK: You wrote code but didn't run make check \
-                            or make test. Show evidence that the work is correct before completing."
-                                .to_string(),
-                        fired: true,
-                    }
-                } else {
-                    GateResult {
-                        gate_name: "evidence-before-done".to_string(),
-                        message: String::new(),
-                        fired: false,
-                    }
-                };
-            results.push(evidence_before_done);
+            results.push(gate(
+                "evidence-before-done",
+                tracker.has_written_code() && !tracker.has_run_verification(),
+                "VERIFICATION CHECK: You wrote code but didn't run make check \
+                 or make test. Show evidence that the work is correct before completing.",
+            ));
 
             // Gate: learn-after-doing
             // Fires at turn end when significant code was written but lessons were not checked.
-            let learn_after_doing =
-                if tracker.code_write_count() > 3 && !tracker.has_checked_lessons() {
-                    GateResult {
-                        gate_name: "learn-after-doing".to_string(),
-                        message: "LEARNING CHECK: Significant work was done this session. \
-                            Check .orqa/governance/lessons/ for known patterns and consider \
-                            if anything unexpected should be recorded."
-                            .to_string(),
-                        fired: true,
-                    }
-                } else {
-                    GateResult {
-                        gate_name: "learn-after-doing".to_string(),
-                        message: String::new(),
-                        fired: false,
-                    }
-                };
-            results.push(learn_after_doing);
+            results.push(gate(
+                "learn-after-doing",
+                tracker.code_write_count() > 3 && !tracker.has_checked_lessons(),
+                "LEARNING CHECK: Significant work was done this session. \
+                 Check .orqa/governance/lessons/ for known patterns and consider \
+                 if anything unexpected should be recorded.",
+            ));
         }
 
         other => {

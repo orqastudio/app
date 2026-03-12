@@ -22,11 +22,11 @@ Install all project dependencies: frontend Node.js packages, sidecar Bun package
 
 ```bash
 npm install
-cd sidecars/claude-agentsdk-sidecar && bun install
+cd sidecar && bun install
 cargo fetch --manifest-path backend/src-tauri/Cargo.toml
 ```
 
-**When to use:** After cloning the repository for the first time, or after pulling changes that modify `package.json`, `sidecars/claude-agentsdk-sidecar/package.json`, or `Cargo.toml`.
+**When to use:** After cloning the repository for the first time, or after pulling changes that modify `package.json`, `sidecar/package.json`, or `Cargo.toml`.
 
 ---
 
@@ -37,7 +37,7 @@ Build the Agent SDK sidecar binary.
 **Underlying command:**
 
 ```bash
-bun build sidecars/claude-agentsdk-sidecar/index.ts --compile --outfile backend/src-tauri/binaries/sidecar
+bun build sidecar/index.ts --compile --outfile backend/src-tauri/binaries/sidecar
 ```
 
 **When to use:** After cloning the repository for the first time, after pulling changes to the sidecar source, or when the sidecar binary is missing or stale. Requires Bun 1.0+.
@@ -401,7 +401,7 @@ Compile the Agent SDK sidecar TypeScript into a standalone binary.
 **Underlying command:**
 
 ```bash
-bun build sidecars/claude-agentsdk-sidecar/index.ts --compile --outfile backend/src-tauri/binaries/sidecar
+bun build sidecar/index.ts --compile --outfile backend/src-tauri/binaries/sidecar
 ```
 
 **When to use:** Before `make build` if sidecar source has changed, or to update the sidecar binary independently of a full release build.

@@ -106,7 +106,7 @@ impl SearchStore {
     ) -> Result<Vec<SearchResult>, StoreError> {
         let re = Regex::new(pattern).map_err(|e| StoreError::InvalidRegex(e.to_string()))?;
         let rows = self.fetch_regex_rows(path_filter)?;
-        let results = build_regex_results(rows, &re, max_results)?;
+        let results = build_regex_results(rows, &re, max_results);
         Ok(results)
     }
 
@@ -243,7 +243,7 @@ fn build_regex_results(
     rows: Vec<ChunkRow>,
     re: &Regex,
     max_results: u32,
-) -> Result<Vec<SearchResult>, StoreError> {
+) -> Vec<SearchResult> {
     let mut results = Vec::new();
     for (file_path, start_line, end_line, content, language) in rows {
         if let Some(mat) = re.find(&content) {
@@ -268,7 +268,7 @@ fn build_regex_results(
             .partial_cmp(&a.score)
             .unwrap_or(std::cmp::Ordering::Equal)
     });
-    Ok(results)
+    results
 }
 
 /// Build `SearchResult` entries from embedded chunk rows, sorted by cosine similarity.
@@ -789,7 +789,7 @@ mod tests {
     #[test]
     fn build_regex_results_empty_rows() {
         let re = Regex::new("test").unwrap();
-        let results = build_regex_results(vec![], &re, 10).unwrap();
+        let results = build_regex_results(vec![], &re, 10);
         assert!(results.is_empty());
     }
 

@@ -24,8 +24,8 @@ The orchestrator coordinates. It does NOT implement. Every implementation task i
 ## What the Orchestrator May Do Directly
 
 - Read files for planning and coordination
-- Write plans, documentation, and session state
-- Create and update governance files in `.orqa/` (rules, agents, skills, hooks)
+- Create and update artifact structure (frontmatter, status, references) in `.orqa/`
+- Create and update governance files (rules, agents, skills, hooks)
 - Single-line fixes, typo corrections, config file edits
 - Coordinate across agents, report status, manage worktrees
 
@@ -33,7 +33,7 @@ The orchestrator coordinates. It does NOT implement. Every implementation task i
 
 - Any change to `backend/src-tauri/` (Rust backend code) — delegate to Implementer with backend skills
 - Any change to `ui/` (Svelte frontend code) — delegate to Implementer with frontend skills, or Designer
-- Any change to `sidecars/claude-agentsdk-sidecar/` (Agent SDK sidecar) — delegate to Implementer with backend skills
+- Any change to `sidecar/` (Agent SDK sidecar) — delegate to Implementer with backend skills
 - Running and interpreting test suites — delegate to Reviewer with test-engineering skills
 - Code review and compliance checks — delegate to Reviewer with code-quality-review skills
 - UX compliance reviews — delegate to Reviewer with ux-compliance-review skills
@@ -58,7 +58,7 @@ The orchestrator may bypass delegation for:
 - Governance artifacts (`.orqa/governance/rules/`, `.orqa/team/agents/`, `.orqa/team/skills/`) — these ARE the orchestrator's domain
 - Process documentation (`.orqa/documentation/process/`) — orchestration is a process concern
 - Session state (`tmp/session-state.md`) — coordination artifact
-- Planning artifacts (`.orqa/planning/`) — planning is an orchestrator responsibility
+- Planning artifact **structure** (`.orqa/planning/`) — creating/updating frontmatter, status transitions, cross-references. Content authoring (research findings, documentation pages) is delegated to Writer.
 
 ## Resource Safety (NON-NEGOTIABLE)
 

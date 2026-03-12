@@ -77,11 +77,8 @@ pub fn handle_sidecar_response(
         SidecarResponse::StreamCancelled => Err(OrqaError::Sidecar(
             "governance analysis stream cancelled".to_string(),
         )),
-        SidecarResponse::ToolExecute { tool_call_id, .. } => {
-            approve_tool_call(sidecar, tool_call_id)?;
-            Ok(false)
-        }
-        SidecarResponse::ToolApprovalRequest { tool_call_id, .. } => {
+        SidecarResponse::ToolExecute { tool_call_id, .. }
+        | SidecarResponse::ToolApprovalRequest { tool_call_id, .. } => {
             approve_tool_call(sidecar, tool_call_id)?;
             Ok(false)
         }

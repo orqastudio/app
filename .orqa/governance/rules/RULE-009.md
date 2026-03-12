@@ -78,9 +78,9 @@ The Enhanced Caution Rules below apply differently depending on whether you are 
 
 ### Sidecar Self-Edit Warnings (App Context Only)
 
-The sidecar (`sidecars/claude-agentsdk-sidecar/src/`) is the communication bridge between the Agent SDK and the Rust backend. **In app context**, you are communicating THROUGH it while potentially editing it.
+The sidecar (`sidecar/src/`) is the communication bridge between the Agent SDK and the Rust backend. **In app context**, you are communicating THROUGH it while potentially editing it.
 
-- Before modifying `sidecars/claude-agentsdk-sidecar/src/protocol.ts`, `sidecars/claude-agentsdk-sidecar/src/provider.ts`, or `sidecars/claude-agentsdk-sidecar/src/index.ts`: warn the user that this may affect the active connection
+- Before modifying `sidecar/src/protocol.ts`, `sidecar/src/provider.ts`, or `sidecar/src/index.ts`: warn the user that this may affect the active connection
 - After sidecar changes: the sidecar must be rebuilt (`cd sidecar && bun run build`) and the app restarted
 - Never change the NDJSON protocol format mid-session without a restart
 

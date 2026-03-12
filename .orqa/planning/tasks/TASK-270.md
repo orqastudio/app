@@ -2,7 +2,7 @@
 id: TASK-270
 title: "Resolve AD-032 SQLite scoping violation"
 description: "Governance scan results should produce research artifacts (.orqa/ files), not SQLite rows. Migrate governance tables out of SQLite."
-status: todo
+status: in-progress
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-057

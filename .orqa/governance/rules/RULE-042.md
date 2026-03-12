@@ -25,7 +25,7 @@ enforcement:
     skills: [orqa-repository-pattern]
     message: "Injecting repository pattern."
   - event: file
-    paths: ["sidecars/claude-agentsdk-sidecar/src/**"]
+    paths: ["sidecar/src/**"]
     action: inject
     skills: [orqa-streaming]
     message: "Injecting streaming patterns."
@@ -64,7 +64,7 @@ agent's context.
 | `backend/src-tauri/src/domain/**` | `orqa-domain-services`, `orqa-error-composition` | Domain logic needs service anatomy and error flow |
 | `backend/src-tauri/src/commands/**` | `orqa-ipc-patterns`, `orqa-error-composition` | IPC boundary needs contract discipline |
 | `backend/src-tauri/src/repo/**` | `orqa-repository-pattern` | Data access has specific patterns |
-| `sidecars/claude-agentsdk-sidecar/src/**` | `orqa-streaming` | Sidecar protocol is fragile |
+| `sidecar/src/**` | `orqa-streaming` | Sidecar protocol is fragile |
 | `ui/src/lib/components/**` | `component-extraction`, `svelte5-best-practices` | Components need purity discipline |
 | `ui/src/lib/stores/**` | `orqa-store-patterns`, `orqa-store-orchestration` | Reactive state needs specific patterns |
 | `.orqa/**` | `orqa-governance`, `orqa-documentation` | Artifacts need structural consistency |

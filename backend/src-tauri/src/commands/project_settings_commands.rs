@@ -45,7 +45,7 @@ pub fn project_icon_upload(project_path: String, source_path: String) -> Result<
     let ext = source
         .extension()
         .and_then(|e| e.to_str())
-        .map(|e| e.to_lowercase())
+        .map(str::to_lowercase)
         .unwrap_or_default();
 
     let allowed = ["png", "jpg", "jpeg", "svg", "ico"];
@@ -96,7 +96,7 @@ pub fn project_icon_read(project_path: String, icon_filename: String) -> Result<
     let mime = match icon_path
         .extension()
         .and_then(|e| e.to_str())
-        .map(|e| e.to_lowercase())
+        .map(str::to_lowercase)
         .as_deref()
     {
         Some("png") => "image/png",

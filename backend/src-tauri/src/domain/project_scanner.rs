@@ -93,9 +93,8 @@ fn walk_for_languages(
         return;
     }
 
-    let entries = match std::fs::read_dir(dir) {
-        Ok(entries) => entries,
-        Err(_) => return,
+    let Ok(entries) = std::fs::read_dir(dir) else {
+        return;
     };
 
     for entry in entries.flatten() {
@@ -106,9 +105,8 @@ fn walk_for_languages(
             continue;
         }
 
-        let file_type = match entry.file_type() {
-            Ok(ft) => ft,
-            Err(_) => continue,
+        let Ok(file_type) = entry.file_type() else {
+            continue;
         };
 
         if file_type.is_dir() {
@@ -220,16 +218,14 @@ fn count_md_recursive_inner(dir: &Path, depth: usize) -> u32 {
         return 0;
     }
 
-    let entries = match std::fs::read_dir(dir) {
-        Ok(e) => e,
-        Err(_) => return 0,
+    let Ok(entries) = std::fs::read_dir(dir) else {
+        return 0;
     };
 
     let mut count = 0u32;
     for entry in entries.flatten() {
-        let ft = match entry.file_type() {
-            Ok(ft) => ft,
-            Err(_) => continue,
+        let Ok(ft) = entry.file_type() else {
+            continue;
         };
 
         if ft.is_file() {
@@ -249,15 +245,14 @@ fn count_md_files_in_dir(dir: &Path) -> u32 {
     if !dir.is_dir() {
         return 0;
     }
-    let entries = match std::fs::read_dir(dir) {
-        Ok(e) => e,
-        Err(_) => return 0,
+    let Ok(entries) = std::fs::read_dir(dir) else {
+        return 0;
     };
 
     entries
         .flatten()
         .filter(|e| {
-            e.file_type().map(|ft| ft.is_file()).unwrap_or(false)
+            e.file_type().is_ok_and(|ft| ft.is_file())
                 && e.file_name().to_string_lossy().ends_with(".md")
         })
         .count() as u32
@@ -268,14 +263,13 @@ fn count_subdirs(dir: &Path) -> u32 {
     if !dir.is_dir() {
         return 0;
     }
-    let entries = match std::fs::read_dir(dir) {
-        Ok(e) => e,
-        Err(_) => return 0,
+    let Ok(entries) = std::fs::read_dir(dir) else {
+        return 0;
     };
 
     entries
         .flatten()
-        .filter(|e| e.file_type().map(|ft| ft.is_dir()).unwrap_or(false))
+        .filter(|e| e.file_type().is_ok_and(|ft| ft.is_dir()))
         .count() as u32
 }
 
@@ -284,14 +278,13 @@ fn count_files_in_dir(dir: &Path) -> u32 {
     if !dir.is_dir() {
         return 0;
     }
-    let entries = match std::fs::read_dir(dir) {
-        Ok(e) => e,
-        Err(_) => return 0,
+    let Ok(entries) = std::fs::read_dir(dir) else {
+        return 0;
     };
 
     entries
         .flatten()
-        .filter(|e| e.file_type().map(|ft| ft.is_file()).unwrap_or(false))
+        .filter(|e| e.file_type().is_ok_and(|ft| ft.is_file()))
         .count() as u32
 }
 

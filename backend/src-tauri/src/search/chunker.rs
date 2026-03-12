@@ -113,8 +113,7 @@ pub fn chunk_codebase(
 fn is_binary_extension(path: &Path) -> bool {
     path.extension()
         .and_then(|ext| ext.to_str())
-        .map(|ext| BINARY_EXTENSIONS.contains(&ext.to_lowercase().as_str()))
-        .unwrap_or(false)
+        .is_some_and(|ext| BINARY_EXTENSIONS.contains(&ext.to_lowercase().as_str()))
 }
 
 /// Detect the programming language from a file's extension.

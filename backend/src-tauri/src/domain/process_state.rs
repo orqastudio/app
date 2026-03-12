@@ -59,7 +59,11 @@ impl SessionProcessState {
             "load_skill" => self.skills_loaded = true,
             "write_file" | "edit_file" => {
                 if let Some(path) = input["path"].as_str() {
-                    if path.ends_with(".rs") || path.ends_with(".ts") || path.ends_with(".svelte") {
+                    if std::path::Path::new(path)
+                        .extension()
+                        .and_then(|e| e.to_str())
+                        .is_some_and(|ext| ext.eq_ignore_ascii_case("rs") || ext.eq_ignore_ascii_case("ts") || ext.eq_ignore_ascii_case("svelte"))
+                    {
                         self.code_written = true;
                     }
                 }

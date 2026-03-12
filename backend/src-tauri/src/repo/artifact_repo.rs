@@ -240,7 +240,6 @@ fn parse_artifact_type(s: &str) -> ArtifactType {
         "rule" => ArtifactType::Rule,
         "skill" => ArtifactType::Skill,
         "hook" => ArtifactType::Hook,
-        "doc" => ArtifactType::Doc,
         _ => ArtifactType::Doc,
     }
 }
@@ -249,7 +248,6 @@ fn parse_compliance_status(s: &str) -> ComplianceStatus {
     match s {
         "compliant" => ComplianceStatus::Compliant,
         "non_compliant" => ComplianceStatus::NonCompliant,
-        "unknown" => ComplianceStatus::Unknown,
         "error" => ComplianceStatus::Error,
         _ => ComplianceStatus::Unknown,
     }

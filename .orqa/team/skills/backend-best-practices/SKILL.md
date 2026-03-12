@@ -5,7 +5,7 @@ description: |
   Umbrella skill for all backend implementation work. Establishes composability,
   coding standards, and error handling as always-in-mind principles, then
   references deeper skills for Rust, Tauri, and persistence specifics.
-  Use when: Any agent is about to write or modify backend code (backend/src-tauri/, sidecars/claude-agentsdk-sidecar/).
+  Use when: Any agent is about to write or modify backend code (backend/src-tauri/, sidecar/).
 status: active
 created: "2026-03-11"
 updated: "2026-03-11"
@@ -67,7 +67,7 @@ Tauri `invoke()` is the ONLY frontend-backend interface. Every backend capabilit
 |-------|---------------|
 | `backend/src-tauri/src/commands/` | Thin command handlers — validate, delegate to domain, serialize response |
 | `backend/src-tauri/src/domain/` | Business logic — pure functions, no framework dependencies |
-| `backend/src-tauri/src/persistence/` | Data access — repository pattern, SQLite via rusqlite |
+| `backend/src-tauri/src/repo/` | Data access — repository pattern, SQLite via rusqlite |
 
 Command handlers should be thin — delegate to domain services, don't contain business logic.
 

@@ -143,7 +143,7 @@ When agents touch specific code areas, the enforcement system automatically inje
 | `backend/src-tauri/src/domain/**/*.rs` | `orqa-domain-services`, `orqa-error-composition` | Domain logic patterns |
 | `backend/src-tauri/src/commands/**/*.rs` | `orqa-ipc-patterns`, `orqa-error-composition` | IPC boundary discipline |
 | `backend/src-tauri/src/repo/**/*.rs` | `orqa-repository-pattern` | Data access patterns |
-| `sidecars/claude-agentsdk-sidecar/src/**` | `orqa-streaming` | Streaming pipeline protocol |
+| `sidecar/src/**` | `orqa-streaming` | Streaming pipeline protocol |
 | `ui/src/lib/components/**/*.svelte` | `component-extraction`, `svelte5-best-practices` | Component purity |
 | `ui/src/lib/stores/**/*.svelte.ts` | `orqa-store-patterns`, `orqa-store-orchestration` | Reactive state patterns |
 | `.orqa/**` | `orqa-governance`, `orqa-documentation` | Artifact consistency |

@@ -100,8 +100,7 @@ fn scan_directory_area(name: &str, source: &str, dir: &Path, ext: Option<&str>) 
                     let matches = path
                         .extension()
                         .and_then(|e| e.to_str())
-                        .map(|e| format!(".{e}") == required_ext)
-                        .unwrap_or(false);
+                        .is_some_and(|e| format!(".{e}") == required_ext);
                     if !matches {
                         continue;
                     }
@@ -158,8 +157,7 @@ fn collect_files_recursive(dir: &Path, ext: Option<&str>, out: &mut Vec<Governan
                 let matches = path
                     .extension()
                     .and_then(|e| e.to_str())
-                    .map(|e| format!(".{e}") == required_ext)
-                    .unwrap_or(false);
+                    .is_some_and(|e| format!(".{e}") == required_ext);
                 if !matches {
                     continue;
                 }
@@ -228,8 +226,7 @@ fn read_governance_file_relative(path: &Path, root: &Path) -> Option<GovernanceF
     let content_preview = read_preview(path);
     let display_path = path
         .strip_prefix(root)
-        .map(|p| p.to_string_lossy().to_string())
-        .unwrap_or_else(|_| path.to_string_lossy().to_string());
+        .map_or_else(|_| path.to_string_lossy().to_string(), |p| p.to_string_lossy().to_string());
     Some(GovernanceFile {
         path: display_path,
         size_bytes,

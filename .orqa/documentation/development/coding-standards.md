@@ -33,7 +33,7 @@ updated: "2026-03-08"
 - One module per domain concept
 - Public API via `mod.rs` or `lib.rs`
 - Keep `main.rs` minimal — it wires things together
-- Commands in `commands/`, domain logic in `domain/`, persistence in `persistence/`
+- Commands in `commands/`, domain logic in `domain/`, data access in `repo/`
 
 ### Function Size
 

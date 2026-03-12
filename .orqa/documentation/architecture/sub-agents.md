@@ -201,7 +201,7 @@ backend/src-tauri/src/
     types.rs           -- AgentRole, SpawnAgentInput, SpawnAgentResult, SubAgentTurn
   commands/
     agents.rs          -- Tauri command handlers
-  persistence/
+  repo/
     sub_agent_turns.rs -- SQLite repository for sub_agent_turns table
 ```
 

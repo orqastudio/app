@@ -12,6 +12,7 @@ pub fn maybe_auto_title(
     session_id: i64,
     on_event: &tauri::ipc::Channel<StreamEvent>,
 ) {
+    use crate::domain::message::MessageRole;
     use crate::repo::{message_repo, session_repo};
 
     let needs_title = match state.db.conn.lock() {
@@ -34,7 +35,6 @@ pub fn maybe_auto_title(
         Err(_) => return,
     };
 
-    use crate::domain::message::MessageRole;
     let message_summaries: Vec<crate::sidecar::types::MessageSummary> = messages
         .iter()
         .filter_map(|m| {

@@ -163,8 +163,7 @@ fn is_relevant_path(path: &Path, orqa_root: &Path) -> bool {
     let is_md = path
         .extension()
         .and_then(|ext| ext.to_str())
-        .map(|ext| ext.eq_ignore_ascii_case("md"))
-        .unwrap_or(false);
+        .is_some_and(|ext| ext.eq_ignore_ascii_case("md"));
 
     if !is_md {
         return false;

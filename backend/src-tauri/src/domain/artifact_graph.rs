@@ -136,10 +136,9 @@ fn walk_directory(
     project_root: &Path,
     graph: &mut ArtifactGraph,
 ) -> Result<(), OrqaError> {
-    let entries = match std::fs::read_dir(dir) {
-        Ok(e) => e,
-        // Directory doesn't exist — skip silently (some sub-paths may be optional).
-        Err(_) => return Ok(()),
+    // Directory doesn't exist — skip silently (some sub-paths may be optional).
+    let Ok(entries) = std::fs::read_dir(dir) else {
+        return Ok(());
     };
 
     for entry in entries {
@@ -204,8 +203,7 @@ fn collect_node(
     let title = yaml_value
         .get("title")
         .and_then(|v| v.as_str())
-        .map(str::to_owned)
-        .unwrap_or_else(|| humanize_stem(file_path));
+        .map_or_else(|| humanize_stem(file_path), str::to_owned);
 
     let description = yaml_value
         .get("description")
@@ -374,7 +372,7 @@ fn humanize_stem(file_path: &Path) -> String {
                 None => String::new(),
                 Some(first) => {
                     let mut s = first.to_uppercase().to_string();
-                    s.extend(chars.flat_map(|c| c.to_lowercase()));
+                    s.extend(chars.flat_map(char::to_lowercase));
                     s
                 }
             }

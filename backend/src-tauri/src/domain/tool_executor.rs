@@ -2,6 +2,7 @@ use crate::domain::enforcement::RuleAction;
 use crate::error::OrqaError;
 use crate::state::AppState;
 
+use std::fmt::Write;
 use std::path::{Path, PathBuf};
 use std::sync::mpsc;
 
@@ -66,7 +67,7 @@ pub fn resolve_path(raw: &str, root: &Path) -> Result<PathBuf, String> {
     let root_canon = root.canonicalize().unwrap_or_else(|_| root.to_path_buf());
 
     if !resolved.starts_with(&root_canon) {
-        return Err(format!("path '{}' is outside the project root", raw));
+        return Err(format!("path '{raw}' is outside the project root"));
     }
     Ok(resolved)
 }
@@ -87,7 +88,7 @@ pub fn resolve_write_path(raw: &str, root: &Path) -> Result<PathBuf, String> {
             .canonicalize()
             .unwrap_or_else(|_| parent.to_path_buf());
         if !parent_resolved.starts_with(&root_canon) {
-            return Err(format!("path '{}' is outside the project root", raw));
+            return Err(format!("path '{raw}' is outside the project root"));
         }
     }
     Ok(candidate)
@@ -204,14 +205,11 @@ pub fn enforce_file(
         }
     };
 
-    let engine = match guard.as_ref() {
-        Some(e) => e,
-        None => {
-            return EnforcementResult {
-                block_message: None,
-                injected_content: None,
-            }
-        }
+    let Some(engine) = guard.as_ref() else {
+        return EnforcementResult {
+            block_message: None,
+            injected_content: None,
+        };
     };
 
     let verdicts = engine.evaluate_file(file_path, new_text);
@@ -279,14 +277,11 @@ pub fn enforce_bash(
         }
     };
 
-    let engine = match guard.as_ref() {
-        Some(e) => e,
-        None => {
-            return EnforcementResult {
-                block_message: None,
-                injected_content: None,
-            }
-        }
+    let Some(engine) = guard.as_ref() else {
+        return EnforcementResult {
+            block_message: None,
+            injected_content: None,
+        };
     };
 
     let verdicts = engine.evaluate_bash(command);
@@ -432,9 +427,8 @@ pub fn execute_tool(
 /// If the file contains more lines than the effective limit, a truncation notice
 /// is appended so the caller knows additional lines exist.
 pub fn tool_read_file(input: &serde_json::Value, root: &Path) -> (String, bool) {
-    let raw_path = match input["path"].as_str() {
-        Some(p) => p,
-        None => return ("missing 'path' parameter".to_string(), true),
+    let Some(raw_path) = input["path"].as_str() else {
+        return ("missing 'path' parameter".to_string(), true);
     };
 
     let path = match resolve_path(raw_path, root) {
@@ -450,8 +444,7 @@ pub fn tool_read_file(input: &serde_json::Value, root: &Path) -> (String, bool) 
     let offset = input["offset"].as_u64().unwrap_or(0) as usize;
     let limit = input["limit"]
         .as_u64()
-        .map(|n| n as usize)
-        .unwrap_or(DEFAULT_READ_FILE_MAX_LINES);
+        .map_or(DEFAULT_READ_FILE_MAX_LINES, |n| n as usize);
 
     let all_lines: Vec<&str> = contents.lines().collect();
     let total_lines = all_lines.len();
@@ -484,13 +477,11 @@ pub fn tool_read_file(input: &serde_json::Value, root: &Path) -> (String, bool) 
 
 /// Write content to a file, creating parent directories as needed.
 pub fn tool_write_file(input: &serde_json::Value, root: &Path) -> (String, bool) {
-    let raw_path = match input["path"].as_str() {
-        Some(p) => p,
-        None => return ("missing 'path' parameter".to_string(), true),
+    let Some(raw_path) = input["path"].as_str() else {
+        return ("missing 'path' parameter".to_string(), true);
     };
-    let content = match input["content"].as_str() {
-        Some(c) => c,
-        None => return ("missing 'content' parameter".to_string(), true),
+    let Some(content) = input["content"].as_str() else {
+        return ("missing 'content' parameter".to_string(), true);
     };
 
     let path = match resolve_write_path(raw_path, root) {
@@ -515,17 +506,14 @@ pub fn tool_write_file(input: &serde_json::Value, root: &Path) -> (String, bool)
 
 /// Edit a file by replacing old_string with new_string.
 pub fn tool_edit_file(input: &serde_json::Value, root: &Path) -> (String, bool) {
-    let raw_path = match input["path"].as_str() {
-        Some(p) => p,
-        None => return ("missing 'path' parameter".to_string(), true),
+    let Some(raw_path) = input["path"].as_str() else {
+        return ("missing 'path' parameter".to_string(), true);
     };
-    let old_string = match input["old_string"].as_str() {
-        Some(s) => s,
-        None => return ("missing 'old_string' parameter".to_string(), true),
+    let Some(old_string) = input["old_string"].as_str() else {
+        return ("missing 'old_string' parameter".to_string(), true);
     };
-    let new_string = match input["new_string"].as_str() {
-        Some(s) => s,
-        None => return ("missing 'new_string' parameter".to_string(), true),
+    let Some(new_string) = input["new_string"].as_str() else {
+        return ("missing 'new_string' parameter".to_string(), true);
     };
 
     let path = match resolve_path(raw_path, root) {
@@ -592,9 +580,8 @@ pub fn tool_bash(input: &serde_json::Value, root: &Path) -> (String, bool) {
     /// Maximum bytes to read from stdout/stderr each to prevent OOM.
     const MAX_PIPE_BYTES: usize = 512_000;
 
-    let command = match input["command"].as_str() {
-        Some(c) => c,
-        None => return ("missing 'command' parameter".to_string(), true),
+    let Some(command) = input["command"].as_str() else {
+        return ("missing 'command' parameter".to_string(), true);
     };
 
     let mut child = match std::process::Command::new("bash")
@@ -683,9 +670,8 @@ pub fn tool_bash(input: &serde_json::Value, root: &Path) -> (String, bool) {
 
 /// Find files matching a glob pattern.
 pub fn tool_glob(input: &serde_json::Value, root: &Path) -> (String, bool) {
-    let pattern = match input["pattern"].as_str() {
-        Some(p) => p,
-        None => return ("missing 'pattern' parameter".to_string(), true),
+    let Some(pattern) = input["pattern"].as_str() else {
+        return ("missing 'pattern' parameter".to_string(), true);
     };
 
     let search_root = match input["path"].as_str() {
@@ -726,9 +712,8 @@ pub fn tool_glob(input: &serde_json::Value, root: &Path) -> (String, bool) {
 
 /// Search file contents with a regex pattern.
 pub fn tool_grep(input: &serde_json::Value, root: &Path) -> (String, bool) {
-    let pattern = match input["pattern"].as_str() {
-        Some(p) => p,
-        None => return ("missing 'pattern' parameter".to_string(), true),
+    let Some(pattern) = input["pattern"].as_str() else {
+        return ("missing 'pattern' parameter".to_string(), true);
     };
 
     let search_path = match input["path"].as_str() {
@@ -788,10 +773,11 @@ fn format_search_results(results: &[crate::search::types::SearchResult]) -> Stri
     }
     let mut out = String::new();
     for result in results {
-        out.push_str(&format!(
+        let _ = write!(
+            out,
             "{}:{}-{}\n{}\n---\n",
             result.file_path, result.start_line, result.end_line, result.content,
-        ));
+        );
     }
     out
 }
@@ -801,28 +787,23 @@ pub fn tool_search_regex(
     input: &serde_json::Value,
     state: &tauri::State<'_, AppState>,
 ) -> (String, bool) {
-    let pattern = match input["pattern"].as_str() {
-        Some(p) => p,
-        None => return ("missing 'pattern' parameter".to_string(), true),
+    let Some(pattern) = input["pattern"].as_str() else {
+        return ("missing 'pattern' parameter".to_string(), true);
     };
     let path_filter = input["path"].as_str();
     let max_results = input["max_results"]
         .as_u64()
-        .map(|n| n as u32)
-        .unwrap_or(20);
+        .map_or(20, |n| n as u32);
 
     let search_guard = match state.search.engine.lock() {
         Ok(g) => g,
         Err(e) => return (format!("search lock error: {e}"), true),
     };
-    let engine = match search_guard.as_ref() {
-        Some(e) => e,
-        None => {
-            return (
-                "search index not initialized — index the codebase first".to_string(),
-                true,
-            )
-        }
+    let Some(engine) = search_guard.as_ref() else {
+        return (
+            "search index not initialized — index the codebase first".to_string(),
+            true,
+        );
     };
 
     match engine.search_regex(pattern, path_filter, max_results) {
@@ -836,27 +817,22 @@ pub fn tool_search_semantic(
     input: &serde_json::Value,
     state: &tauri::State<'_, AppState>,
 ) -> (String, bool) {
-    let query = match input["query"].as_str() {
-        Some(q) => q,
-        None => return ("missing 'query' parameter".to_string(), true),
+    let Some(query) = input["query"].as_str() else {
+        return ("missing 'query' parameter".to_string(), true);
     };
     let max_results = input["max_results"]
         .as_u64()
-        .map(|n| n as u32)
-        .unwrap_or(10);
+        .map_or(10, |n| n as u32);
 
     let mut search_guard = match state.search.engine.lock() {
         Ok(g) => g,
         Err(e) => return (format!("search lock error: {e}"), true),
     };
-    let engine = match search_guard.as_mut() {
-        Some(e) => e,
-        None => {
-            return (
-                "search index not initialized — index the codebase first".to_string(),
-                true,
-            )
-        }
+    let Some(engine) = search_guard.as_mut() else {
+        return (
+            "search index not initialized — index the codebase first".to_string(),
+            true,
+        );
     };
 
     match engine.search_semantic(query, max_results) {
@@ -874,14 +850,12 @@ pub fn tool_code_research(
     input: &serde_json::Value,
     state: &tauri::State<'_, AppState>,
 ) -> (String, bool) {
-    let query = match input["query"].as_str() {
-        Some(q) => q,
-        None => return ("missing 'query' parameter".to_string(), true),
+    let Some(query) = input["query"].as_str() else {
+        return ("missing 'query' parameter".to_string(), true);
     };
     let max_results = input["max_results"]
         .as_u64()
-        .map(|n| n as u32)
-        .unwrap_or(10);
+        .map_or(10, |n| n as u32);
 
     let half = max_results / 2 + 1;
     let mut out = String::new();
@@ -902,7 +876,7 @@ pub fn tool_code_research(
                     }
                 }
                 Err(e) => {
-                    out.push_str(&format!("(semantic search unavailable: {e})\n\n"));
+                    let _ = write!(out, "(semantic search unavailable: {e})\n\n");
                 }
             }
         }
@@ -924,7 +898,7 @@ pub fn tool_code_research(
                     }
                 }
                 Err(e) => {
-                    out.push_str(&format!("(regex search unavailable: {e})\n\n"));
+                    let _ = write!(out, "(regex search unavailable: {e})\n\n");
                 }
             }
         }
@@ -944,9 +918,8 @@ pub fn tool_code_research(
 
 /// Load the full content of a skill from `.orqa/skills/{name}/SKILL.md`.
 pub fn tool_load_skill(input: &serde_json::Value, root: &Path) -> (String, bool) {
-    let name = match input["name"].as_str() {
-        Some(n) => n,
-        None => return ("missing 'name' parameter".to_string(), true),
+    let Some(name) = input["name"].as_str() else {
+        return ("missing 'name' parameter".to_string(), true);
     };
 
     // Validate skill name: must be a simple directory name with no path separators

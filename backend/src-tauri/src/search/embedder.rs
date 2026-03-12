@@ -181,7 +181,7 @@ impl Embedder {
 
         outputs[0]
             .try_extract_array::<f32>()
-            .map(|a| a.into_owned())
+            .map(ndarray::ArrayBase::into_owned)
             .map_err(|e| EmbedError::Ort(e.to_string()))
     }
 }

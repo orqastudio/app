@@ -2,7 +2,7 @@
 id: TASK-260
 title: "Enable clippy pedantic in Cargo.toml"
 description: "Explicitly configure clippy pedantic lints in Cargo.toml and fix resulting warnings."
-status: todo
+status: done
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-057

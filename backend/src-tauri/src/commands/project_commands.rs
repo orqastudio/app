@@ -119,7 +119,7 @@ fn validate_directory_path(path: &str) -> Result<String, OrqaError> {
         )));
     }
     p.to_str()
-        .map(|s| s.to_string())
+        .map(std::string::ToString::to_string)
         .ok_or_else(|| OrqaError::Validation("path is not valid UTF-8".to_string()))
 }
 

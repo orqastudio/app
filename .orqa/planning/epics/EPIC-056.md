@@ -112,6 +112,6 @@ after each step.
 ## Out of Scope
 
 - Changing the Tauri app name or package identity
-- Restructuring code within `src-tauri/src/` (internal Rust module layout stays as-is)
+- Restructuring code within `backend/src-tauri/src/` (internal Rust module layout stays as-is)
 - Restructuring code within `ui/lib/` (internal frontend layout stays as-is)
 - CI/CD pipeline changes (no CI exists yet)

@@ -155,7 +155,7 @@ pub fn extract_oauth_details(oauth: &serde_json::Value) -> CredentialDetails {
         })
         .unwrap_or_default();
 
-    let expires_at = oauth.get("expiresAt").and_then(|v| v.as_u64());
+    let expires_at = oauth.get("expiresAt").and_then(serde_json::Value::as_u64);
 
     CredentialDetails {
         authenticated: true,
@@ -178,9 +178,8 @@ pub fn parse_credentials(path: &std::path::Path) -> CredentialDetails {
         expires_at: None,
     };
 
-    let contents = match std::fs::read_to_string(path) {
-        Ok(c) => c,
-        Err(_) => return not_found,
+    let Ok(contents) = std::fs::read_to_string(path) else {
+        return not_found;
     };
 
     let json: serde_json::Value = match serde_json::from_str(&contents) {

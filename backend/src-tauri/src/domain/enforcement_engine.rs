@@ -246,8 +246,7 @@ impl EnforcementEngine {
             let matches = ce
                 .compiled_bash_pattern
                 .as_ref()
-                .map(|re| re.is_match(command))
-                .unwrap_or(false);
+                .is_some_and(|re| re.is_match(command));
 
             if matches {
                 let rule = &self.rules[ce.rule_index];
@@ -279,15 +278,12 @@ impl EnforcementEngine {
                 continue;
             }
 
-            let scope = match &ce.scope {
-                Some(s) => s,
-                None => {
-                    tracing::warn!(
-                        "[enforcement] scan entry in rule '{}' has no scope — skipping",
-                        self.rules[ce.rule_index].name
-                    );
-                    continue;
-                }
+            let Some(scope) = &ce.scope else {
+                tracing::warn!(
+                    "[enforcement] scan entry in rule '{}' has no scope — skipping",
+                    self.rules[ce.rule_index].name
+                );
+                continue;
             };
 
             let glob_pattern = project_path.join(scope);

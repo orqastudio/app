@@ -192,14 +192,12 @@ fn parse_role(s: &str) -> MessageRole {
     match s {
         "user" => MessageRole::User,
         "assistant" => MessageRole::Assistant,
-        "system" => MessageRole::System,
         _ => MessageRole::System,
     }
 }
 
 fn parse_content_type(s: &str) -> ContentType {
     match s {
-        "text" => ContentType::Text,
         "tool_use" => ContentType::ToolUse,
         "tool_result" => ContentType::ToolResult,
         "thinking" => ContentType::Thinking,
@@ -212,7 +210,6 @@ fn parse_stream_status(s: &str) -> StreamStatus {
     match s {
         "pending" => StreamStatus::Pending,
         "complete" => StreamStatus::Complete,
-        "error" => StreamStatus::Error,
         _ => StreamStatus::Error,
     }
 }

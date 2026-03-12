@@ -8,7 +8,7 @@ updated: "2026-03-10"
 
 **Date:** 2026-03-02 | **References:** [AD-010](AD-010), [AD-011](AD-011)
 
-This document defines the 10 tools that OrqaStudio exposes to the Claude Agent SDK. Tools are implemented in Rust in `backend/src-tauri/src/domain/tool_executor.rs` and registered in the sidecar's in-process MCP server (`sidecars/claude-agentsdk-sidecar/src/providers/claude-agent.ts`). Tool names use no prefix — the agent sees them as `read_file`, `write_file`, etc.
+This document defines the 10 tools that OrqaStudio exposes to the Claude Agent SDK. Tools are implemented in Rust in `backend/src-tauri/src/domain/tool_executor.rs` and registered in the sidecar's in-process MCP server (`sidecar/src/providers/claude-agent.ts`). Tool names use no prefix — the agent sees them as `read_file`, `write_file`, etc.
 
 ---
 

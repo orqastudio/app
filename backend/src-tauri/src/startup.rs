@@ -36,9 +36,9 @@ pub struct StartupTracker {
 }
 
 /// Acquire a mutex lock, mapping a poison error to `OrqaError::Database`.
-fn lock_tasks<'a>(
-    mutex: &'a Mutex<Vec<StartupTask>>,
-) -> Result<MutexGuard<'a, Vec<StartupTask>>, OrqaError> {
+fn lock_tasks(
+    mutex: &Mutex<Vec<StartupTask>>,
+) -> Result<MutexGuard<'_, Vec<StartupTask>>, OrqaError> {
     mutex.lock().map_err(|_: PoisonError<_>| {
         OrqaError::Database("startup tracker mutex poisoned".to_string())
     })

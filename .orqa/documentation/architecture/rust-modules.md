@@ -20,6 +20,7 @@ backend/src-tauri/src/
 ├── lib.rs                           # App builder, plugin registration, command registration, startup
 ├── state.rs                         # AppState struct (Tauri managed state)
 ├── error.rs                         # OrqaError enum (thiserror + serde), Result type alias
+├── logging.rs                       # Tracing subscriber setup (stdout + file, env-filter)
 ├── db.rs                            # Database initialization (rusqlite, PRAGMAs, migrations)
 ├── startup.rs                       # StartupTracker: async task status for frontend polling
 ├── watcher.rs                       # File-system watcher for .orqa/ changes (notify crate)
@@ -39,6 +40,7 @@ backend/src-tauri/src/
 │   ├── lessons.rs                   # Lesson, NewLesson types
 │   ├── message.rs                   # Message, MessageRole, ContentType, StreamStatus
 │   ├── paths.rs                     # Path constants (ORQA_DIR, SEARCH_DB, etc.)
+│   ├── process_gates.rs             # Process compliance gates: understand-first, docs-before-code, evidence-before-done
 │   ├── process_state.rs             # SessionProcessState: tracks docs-read/skills-loaded per session
 │   ├── project.rs                   # Project, ProjectSummary, DetectedStack
 │   ├── project_scanner.rs           # ProjectScanResult: language/framework detection
@@ -48,10 +50,12 @@ backend/src-tauri/src/
 │   ├── session_title.rs             # Heuristics for deriving session titles from first message
 │   ├── settings.rs                  # Setting, SidecarStatus, SidecarState, ResolvedTheme, ThemeToken
 │   ├── setup.rs                     # SetupStatus, SetupStepStatus, StepStatus, ClaudeCliInfo
+│   ├── skill_injector.rs            # Path-to-skill injection engine (RULE-042): maps file patterns to skills
 │   ├── stream_loop.rs               # Stream loop orchestration: sidecar -> DB -> channel
 │   ├── system_prompt.rs             # System prompt assembly from governance context
 │   ├── time_utils.rs                # Timestamp formatting helpers
-│   └── tool_executor.rs             # Tool execution dispatch (read_file, glob, grep, write_file, etc.)
+│   ├── tool_executor.rs             # Tool execution dispatch (read_file, glob, grep, write_file, etc.)
+│   └── workflow_tracker.rs          # Session event tracking for process gates (reads, writes, skills loaded)
 │
 ├── repo/                            # Repository layer — database access
 │   ├── mod.rs                       # Re-exports
@@ -81,10 +85,9 @@ backend/src-tauri/src/
 │   ├── settings_commands.rs         # 3 commands: get, set, get_all
 │   ├── setup_commands.rs            # 6 commands: get_status, check_cli, check_auth, reauthenticate, check_model, complete
 │   ├── sidecar_commands.rs          # 2 commands: sidecar_status, sidecar_restart
-│   ├── stream_commands.rs           # 4 commands: stream_send_message, stream_stop, stream_tool_approval_respond, system_prompt_preview
-│   └── theme_commands.rs            # 3 commands: theme_get_project, theme_set_override, theme_clear_overrides
+│   └── stream_commands.rs           # 4 commands: stream_send_message, stream_stop, stream_tool_approval_respond, system_prompt_preview
 │
-├── sidecars/claude-agentsdk-sidecar/                         # Sidecar process management
+├── sidecar/                         # Sidecar process management
 │   ├── mod.rs                       # Re-exports
 │   ├── manager.rs                   # SidecarManager: spawn via std::process::Command, health check
 │   ├── protocol.rs                  # NDJSON serialization/deserialization, line framing
@@ -151,15 +154,20 @@ File-system watcher using the `notify` crate. Watches `.orqa/` recursively with 
 
 ### `domain/`
 
-27 modules covering the full domain model and business logic. Modules with significant complexity have dedicated sub-modules:
+30 modules covering the full domain model and business logic. Modules with significant complexity have dedicated sub-modules:
 
 - **Artifact subsystem**: `artifact.rs` (types), `artifact_fs.rs` (file I/O), `artifact_reader.rs` (config-driven tree scanning), `artifact_graph.rs` (bidirectional reference graph)
 - **Enforcement subsystem**: `enforcement.rs` (types), `enforcement_engine.rs` (regex compilation and scanning), `enforcement_parser.rs` (YAML frontmatter parsing)
 - **Governance subsystem**: `governance.rs` (types), `governance_analysis.rs` (Claude integration helpers), `governance_scanner.rs` (filesystem walker)
 - **Stream subsystem**: `stream_loop.rs` (orchestration), `provider_event.rs` (protocol types), `tool_executor.rs` (tool dispatch)
+- **Process subsystem**: `process_gates.rs` (compliance gates), `process_state.rs` (session state), `workflow_tracker.rs` (event tracking), `skill_injector.rs` (path-to-skill mapping)
 - **Project subsystem**: `project.rs` (types), `project_scanner.rs` (language detection), `project_settings.rs` (file-based config)
 
 Note on dependencies: `tool_executor.rs` and `stream_loop.rs` import `AppState` and call repos directly, meaning `domain/` is not a pure leaf in the dependency graph. These modules are boundary orchestrators that live in `domain/` for cohesion but accept runtime dependencies as parameters.
+
+### `logging.rs`
+
+Tracing subscriber setup. Configures `tracing-subscriber` with stdout and optional file output, filtered by `RUST_LOG` / `ORQA_LOG` env vars.
 
 ### `repo/`
 
@@ -167,9 +175,9 @@ Note on dependencies: `tool_executor.rs` and `stream_loop.rs` import `AppState` 
 
 ### `commands/`
 
-15 thin command modules, approximately 82 total commands. Each function is `#[tauri::command]`, receives `State<AppState>` and parameters, and calls the appropriate repo or domain service. No business logic in the handlers. See [IPC Commands](DOC-005) for the full command catalog with signatures.
+14 thin command modules, approximately 79 total commands. Each function is `#[tauri::command]`, receives `State<AppState>` and parameters, and calls the appropriate repo or domain service. No business logic in the handlers. See [IPC Commands](DOC-005) for the full command catalog with signatures.
 
-### `sidecars/claude-agentsdk-sidecar/`
+### `sidecar/`
 
 Process lifecycle management for the Agent SDK sidecar. Uses `std::process::Command` (not `tauri-plugin-shell`) for process spawning. `SidecarManager` uses interior mutability with per-field Mutex locks. The NDJSON protocol in `protocol.rs` handles stdin/stdout framing. `types.rs` defines `SidecarRequest` (6 variants) and `SidecarResponse` (15 variants).
 
@@ -259,7 +267,7 @@ Arrows point from the dependent module to the module it depends on.
      │          │          │          │
      ▼          ▼          ▼          ▼
 ┌──────────┐ ┌─────────┐ ┌────────┐ ┌───────────┐
-│commands/ │ │sidecars/claude-agentsdk-sidecar/ │ │search/ │ │ startup.rs│
+│commands/ │ │ sidecar/ │ │search/ │ │ startup.rs│
 │ (15 mod) │ │         │ │        │ └───────────┘
 └────┬─────┘ └──┬──────┘ └───┬────┘
      │          │             │
@@ -275,12 +283,14 @@ Arrows point from the dependent module to the module it depends on.
      ▼         ▼       ▼
 ┌─────────────────────────────────┐     ┌──────────┐
 │          domain/                │     │ error.rs │
-│          (27 modules)           │◄────│(OrqaErr) │
+│          (30 modules)           │◄────│(OrqaErr) │
 │                                 │     └──────────┘
 │ artifact*  enforcement*         │          ▲
 │ governance* lessons             │          │
 │ message    paths                │     (all modules
-│ process_state  project*         │      depend on
+│ process_gates process_state     │
+│ skill_injector workflow_tracker │
+│ project*                        │      depend on
 │ provider_event session*         │      error.rs)
 │ settings   setup                │
 │ stream_loop  system_prompt      │
@@ -301,8 +311,8 @@ Arrows point from the dependent module to the module it depends on.
 2. **`db.rs`** — depends on rusqlite and `error.rs`.
 3. **`domain/`** — most modules depend only on serde and `error.rs`. `tool_executor.rs` and `stream_loop.rs` are exceptions that take `AppState` as a parameter.
 4. **`repo/`** — depends on `domain/`, `error.rs`, rusqlite. File-based repos use std::fs.
-5. **`commands/`** — depends on `domain/`, `repo/`, `state.rs`, `error.rs`, `sidecars/claude-agentsdk-sidecar/`, `search/`, `startup.rs`.
-6. **`sidecars/claude-agentsdk-sidecar/`** — depends on `domain/` (for StreamEvent), `error.rs`, std::process.
+5. **`commands/`** — depends on `domain/`, `repo/`, `state.rs`, `error.rs`, `sidecar/`, `search/`, `startup.rs`.
+6. **`sidecar/`** — depends on `domain/` (for StreamEvent), `error.rs`, std::process.
 7. **`search/`** — depends on `domain/`, `error.rs`, duckdb, ort (ONNX Runtime), tokenizers.
 8. **`watcher.rs`** — depends on notify, `error.rs`, std::sync.
 9. **`startup.rs`** — depends on std only.

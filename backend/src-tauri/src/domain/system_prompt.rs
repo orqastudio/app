@@ -26,9 +26,8 @@ pub fn list_skill_catalog(project_path: &Path) -> Vec<(String, String)> {
     let skills_dir = project_path.join(".orqa").join("skills");
     let mut catalog = Vec::new();
 
-    let read_dir = match std::fs::read_dir(&skills_dir) {
-        Ok(rd) => rd,
-        Err(_) => return catalog,
+    let Ok(read_dir) = std::fs::read_dir(&skills_dir) else {
+        return catalog;
     };
 
     for entry in read_dir.flatten() {
@@ -60,9 +59,8 @@ pub fn read_rules(project_path: &Path) -> Vec<(String, String)> {
     let rules_dir = project_path.join(".orqa").join("rules");
     let mut rules = Vec::new();
 
-    let read_dir = match std::fs::read_dir(&rules_dir) {
-        Ok(rd) => rd,
-        Err(_) => return rules,
+    let Ok(read_dir) = std::fs::read_dir(&rules_dir) else {
+        return rules;
     };
 
     for entry in read_dir.flatten() {

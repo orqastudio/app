@@ -102,12 +102,11 @@ pub fn translate_response(response: &SidecarResponse) -> Option<StreamEvent> {
             })
         }
         SidecarResponse::StreamCancelled => Some(StreamEvent::StreamCancelled),
-        // Non-streaming responses — not forwarded to the frontend channel
+        // Non-streaming responses and synchronous tool execution — not forwarded to frontend
         SidecarResponse::HealthOk { .. }
         | SidecarResponse::SummaryResult { .. }
-        | SidecarResponse::SessionInitialized { .. } => None,
-        // ToolExecute is handled synchronously in the read loop — not forwarded to frontend
-        SidecarResponse::ToolExecute { .. } => None,
+        | SidecarResponse::SessionInitialized { .. }
+        | SidecarResponse::ToolExecute { .. } => None,
         // ToolApprovalRequest for write/execute tools is forwarded to the frontend
         SidecarResponse::ToolApprovalRequest {
             tool_call_id,

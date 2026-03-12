@@ -2,7 +2,7 @@
 id: TASK-258
 title: "Fix post-restructure path references in docs"
 description: "Update all documentation files that reference pre-restructure paths."
-status: todo
+status: done
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-057
