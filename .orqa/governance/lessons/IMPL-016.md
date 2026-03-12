@@ -7,7 +7,6 @@ created: "2026-03-12"
 updated: "2026-03-12"
 maturity: "understanding"
 recurrence: 1
-promoted-to: null
 relationships:
   - target: "PILLAR-001"
     type: "grounded"

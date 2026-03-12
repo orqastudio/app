@@ -9,9 +9,6 @@ layer: "core"
 scope:
   - "AGENT-003"
   - "AGENT-006"
-promoted-from:
-  - "IMPL-011"
-  - "IMPL-012"
 relationships:
   - target: "PILLAR-002"
     type: "grounded"
@@ -28,6 +25,12 @@ relationships:
   - target: "RULE-027"
     type: "informs"
     rationale: "Listed in Related Rules section"
+  - target: "IMPL-011"
+    type: "observes"
+    rationale: "Rule promoted from lesson IMPL-011"
+  - target: "IMPL-012"
+    type: "observes"
+    rationale: "Rule promoted from lesson IMPL-012"
 ---
 
 User acceptance testing follows a structured process that prevents premature fixing and ensures systemic solutions.

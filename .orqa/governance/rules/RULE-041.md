@@ -9,7 +9,6 @@ layer: "project"
 scope:
   - "AGENT-002"
   - "AGENT-006"
-promoted-from: null
 enforcement: []
 relationships:
   - target: "PILLAR-001"

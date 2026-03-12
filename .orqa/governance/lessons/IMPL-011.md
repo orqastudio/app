@@ -7,11 +7,13 @@ created: "2026-03-07"
 updated: "2026-03-07"
 maturity: "understanding"
 recurrence: 1
-promoted-to: "RULE-030"
 relationships:
   - target: "PILLAR-002"
     type: "grounded"
     rationale: "Systemic investigation is the core learning methodology"
+  - target: "RULE-030"
+    type: "grounded-by"
+    rationale: "Lesson promoted to RULE-030"
 ---
 ## What Happened
 

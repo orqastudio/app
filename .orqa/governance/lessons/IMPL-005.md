@@ -7,11 +7,13 @@ created: "2026-03-07"
 updated: "2026-03-07"
 maturity: "understanding"
 recurrence: 1
-promoted-to: "RULE-003"
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
     rationale: "Config-disk alignment is fundamental structural integrity"
+  - target: "RULE-003"
+    type: "grounded-by"
+    rationale: "Lesson promoted to RULE-003"
 ---
 ## What Happened
 

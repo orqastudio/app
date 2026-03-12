@@ -8,7 +8,7 @@
   "propertyOrder": [
     "id", "title", "description", "status",
     "created", "updated",
-    "layer", "research-refs", "supersedes", "superseded-by",
+    "layer", "supersedes", "superseded-by",
     "relationships"
   ],
   "properties": {
@@ -19,10 +19,6 @@
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
     "layer": { "enum": ["core", "project", "plugin", "community", "user"] },
-    "research-refs": {
-      "type": "array",
-      "items": { "type": "string", "pattern": "^RES-\\d+$" }
-    },
     "supersedes": {
       "oneOf": [
         { "type": "null" },

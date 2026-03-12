@@ -10,8 +10,6 @@ scope:
   - "AGENT-002"
   - "AGENT-003"
   - "AGENT-006"
-promoted-from:
-  - "IMPL-015"
 enforcement:
   - event: "bash"
     pattern: "git commit.*--no-verify"
@@ -49,6 +47,9 @@ relationships:
   - target: "RULE-009"
     type: "informs"
     rationale: "Listed in Related Rules section"
+  - target: "IMPL-015"
+    type: "observes"
+    rationale: "Rule promoted from lesson IMPL-015"
 ---
 **Source of Truth:** `.orqa/documentation/process/workflow.md`
 

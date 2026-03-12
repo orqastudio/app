@@ -9,7 +9,6 @@ layer: "project"
 scope:
   - "AGENT-001"
   - "AGENT-002"
-promoted-from: null
 relationships:
   - target: "PILLAR-001"
     type: "grounded"

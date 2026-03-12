@@ -14,7 +14,6 @@ scope:
   - "AGENT-005"
   - "AGENT-006"
   - "AGENT-007"
-promoted-from: null
 relationships:
   - target: "PILLAR-001"
     type: "grounded"

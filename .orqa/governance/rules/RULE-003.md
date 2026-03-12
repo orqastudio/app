@@ -9,9 +9,6 @@ layer: "core"
 scope:
   - "AGENT-003"
   - "AGENT-007"
-promoted-from:
-  - "IMPL-005"
-  - "IMPL-006"
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
@@ -28,6 +25,12 @@ relationships:
   - target: "RULE-011"
     type: "informs"
     rationale: "Listed in Related Rules section"
+  - target: "IMPL-005"
+    type: "observes"
+    rationale: "Rule promoted from lesson IMPL-005"
+  - target: "IMPL-006"
+    type: "observes"
+    rationale: "Rule promoted from lesson IMPL-006"
 ---
 # Artifact Config Integrity (NON-NEGOTIABLE)
 

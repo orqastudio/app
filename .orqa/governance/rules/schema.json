@@ -8,7 +8,7 @@
   "propertyOrder": [
     "id", "title", "description", "status",
     "created", "updated",
-    "layer", "scope", "promoted-from", "enforcement",
+    "layer", "scope", "enforcement",
     "relationships"
   ],
   "properties": {
@@ -23,10 +23,6 @@
       "type": "array",
       "items": { "type": "string", "pattern": "^AGENT-\\d+$" },
       "description": "Agent IDs that must comply with this rule"
-    },
-    "promoted-from": {
-      "type": ["array", "null"],
-      "items": { "type": "string", "pattern": "^IMPL-\\d+$" }
     },
     "enforcement": {
       "type": "array",

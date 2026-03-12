@@ -9,7 +9,6 @@ layer: "project"
 scope:
   - "AGENT-002"
   - "AGENT-006"
-promoted-from: null
 enforcement:
   - event: "lint"
     pattern: "clippy::unwrap_used"

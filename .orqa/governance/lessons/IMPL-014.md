@@ -7,11 +7,13 @@ created: "2026-03-07"
 updated: "2026-03-07"
 maturity: "understanding"
 recurrence: 1
-promoted-to: "RULE-004"
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
     rationale: "Outcome-oriented naming creates structural clarity in planning"
+  - target: "RULE-004"
+    type: "grounded-by"
+    rationale: "Lesson promoted to RULE-004"
 ---
 ## What Happened
 

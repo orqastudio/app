@@ -8,7 +8,6 @@ updated: "2026-03-11"
 layer: "core"
 scope:
   - "AGENT-003"
-promoted-from: null
 relationships:
   - target: "PILLAR-001"
     type: "grounded"

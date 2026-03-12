@@ -8,7 +8,7 @@
   "propertyOrder": [
     "id", "title", "description", "status",
     "created", "updated",
-    "maturity", "recurrence", "promoted-to", "relationships"
+    "maturity", "recurrence", "relationships"
   ],
   "properties": {
     "id": { "type": "string", "pattern": "^IMPL-\\d+$" },
@@ -22,11 +22,6 @@
       "description": "Pipeline stage: observation (raw capture) or understanding (root cause identified)"
     },
     "recurrence": { "type": "integer", "minimum": 0 },
-    "promoted-to": {
-      "type": ["string", "null"],
-      "pattern": "^RULE-\\d+$",
-      "description": "Rule ID this lesson was promoted to, or null if not yet promoted"
-    },
     "relationships": {
       "type": "array",
       "description": "Pipeline connections. When maturity is 'understanding', must include at least one 'grounded' relationship.",

@@ -8,7 +8,6 @@ updated: "2026-03-12"
 layer: "project"
 scope:
   - "AGENT-003"
-promoted-from: null
 enforcement:
   - event: "file"
     paths:

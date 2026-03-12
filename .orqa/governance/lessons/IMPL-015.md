@@ -7,11 +7,13 @@ created: "2026-03-09"
 updated: "2026-03-09"
 maturity: "understanding"
 recurrence: 1
-promoted-to: "RULE-013"
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
     rationale: "Commit discipline maintains structural integrity of version history"
+  - target: "RULE-013"
+    type: "grounded-by"
+    rationale: "Lesson promoted to RULE-013"
 ---
 ## What Happened
 
