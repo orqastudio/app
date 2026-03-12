@@ -5,8 +5,11 @@ description: Strip surrounding parentheses/brackets from artifact links across a
 status: todo
 created: "2026-03-11"
 updated: "2026-03-11"
-epic: EPIC-038
+epic: EPIC-010
 depends-on: []
+docs: []
+skills:
+  - orqa-documentation
 scope:
   - Find all instances of artifact links wrapped in outer parentheses like ([ID](ID))
   - Remove the outer wrapping parentheses while preserving the markdown link intact

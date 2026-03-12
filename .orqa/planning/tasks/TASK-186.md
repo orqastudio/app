@@ -9,7 +9,10 @@ epic: EPIC-050
 depends-on:
   - TASK-185
 assignee: AGENT-003
-skills: []
+docs: []
+skills:
+  - orqa-governance
+  - orqa-documentation
 scope:
   - .claude/
   - .orqa/governance/rules/RULE-003.md

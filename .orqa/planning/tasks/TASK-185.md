@@ -14,7 +14,10 @@ depends-on:
   - TASK-182
   - TASK-184
 assignee: AGENT-006
-skills: []
+docs: []
+skills:
+  - orqa-plugin-development
+  - orqa-testing
 scope:
   - orqa-plugin/
 acceptance:

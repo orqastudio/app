@@ -8,7 +8,11 @@ updated: "2026-03-11"
 epic: EPIC-051
 depends-on: []
 assignee: AGENT-003
-skills: []
+docs:
+  - .orqa/documentation/product/artifact-framework.md
+skills:
+  - orqa-governance
+  - orqa-documentation
 scope:
   - .orqa/governance/rules/
 acceptance:

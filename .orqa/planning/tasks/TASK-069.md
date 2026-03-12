@@ -11,6 +11,12 @@ assignee: AGENT-002
 skills:
   - SKILL-030
   - SKILL-031
+docs:
+  - .orqa/documentation/development/coding-standards.md
+skills:
+  - svelte5-best-practices
+  - tailwind-design-system
+  - component-extraction
 scope:
   - ui/lib/components/navigation/
 acceptance:

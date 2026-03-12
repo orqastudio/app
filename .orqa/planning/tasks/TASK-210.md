@@ -1,0 +1,38 @@
+---
+id: TASK-210
+title: Backfill skills field on existing tasks from injection table
+description: Populate the skills field on existing todo tasks using the orchestrator's current Tier 2 injection table, transferring injection logic from the prompt to the graph.
+status: done
+created: "2026-03-12"
+updated: "2026-03-12"
+epic: EPIC-053
+depends-on:
+  - TASK-208
+scope:
+  - Review all tasks with status todo
+  - For each task, determine which skills are relevant based on scope and file paths
+  - Use the current Tier 2 injection table as the source mapping
+  - Add skills field with relevant skill names
+acceptance:
+  - All todo tasks have a skills field (may be empty array if no specific skills needed)
+  - Skills entries match existing skill names in .orqa/team/skills/
+  - Injection table knowledge is now encoded in the graph, not the prompt
+---
+## What
+
+Transfer the orchestrator's hardcoded Tier 2 skill injection table into graph edges on individual tasks. Instead of the orchestrator looking up "task touches src-tauri/ → inject backend-best-practices", the task itself declares `skills: [backend-best-practices, tauri-v2]`.
+
+## How
+
+1. Read the current Tier 2 injection table from `orchestrator.md`
+2. For each todo task, match its `scope` file paths against the injection table
+3. Add matching skills to the task's `skills:` array
+4. Verify all skill names resolve to existing skills in `.orqa/team/skills/`
+
+## Verification
+
+- All todo tasks have a `skills` field (array of strings or empty array)
+- All skill names resolve to directories in `.orqa/team/skills/`
+- Tasks touching `src-tauri/` have backend skills (backend-best-practices, etc.)
+- Tasks touching `ui/` have frontend skills (svelte5-best-practices, etc.)
+- Tasks touching `.orqa/` have governance skills (orqa-governance, etc.)

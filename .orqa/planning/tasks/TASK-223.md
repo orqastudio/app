@@ -7,6 +7,11 @@ created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-053
 depends-on: []
+docs: []
+skills:
+  - project-inference
+  - project-setup
+  - skills-maintenance
 scope:
   - Create a new skill (or extend project-inference) that evaluates project context to recommend epics-required setting
   - Heuristics include presence of src/ directories, build tooling, package managers (suggests implementation-heavy → epics required)

@@ -10,7 +10,10 @@ depends-on:
   - TASK-171
   - TASK-172
 assignee: AGENT-003
-skills: []
+docs:
+  - .orqa/documentation/product/artifact-framework.md
+skills:
+  - orqa-governance
 scope:
   - .orqa/team/agents/
 acceptance:

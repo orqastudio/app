@@ -7,6 +7,12 @@ created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-005
 depends-on: []
+docs:
+  - .orqa/documentation/product/artifact-framework.md
+skills:
+  - orqa-governance
+  - orqa-documentation
+  - orqa-artifact-audit
 scope:
   - Audit every README.md in .orqa/ artifact directories (planning/, governance/, team/, documentation/)
   - Verify description text accurately reflects the group's current contents and purpose

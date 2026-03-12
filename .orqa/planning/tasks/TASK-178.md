@@ -10,7 +10,11 @@ depends-on:
   - TASK-177
   - TASK-183
 assignee: AGENT-002
-skills: []
+docs: []
+skills:
+  - orqa-plugin-development
+  - rule-enforcement
+  - orqa-governance
 scope:
   - orqa-plugin/core/
 acceptance:

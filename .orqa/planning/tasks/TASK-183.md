@@ -8,7 +8,12 @@ updated: "2026-03-11"
 epic: EPIC-050
 depends-on: []
 assignee: AGENT-003
-skills: []
+docs:
+  - .orqa/documentation/product/artifact-framework.md
+skills:
+  - orqa-governance
+  - orqa-schema-compliance
+  - rule-enforcement
 scope:
   - .orqa/governance/rules/schema.json
   - .orqa/governance/rules/

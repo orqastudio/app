@@ -7,6 +7,11 @@ created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-053
 depends-on: []
+docs:
+  - .orqa/documentation/product/artifact-framework.md
+skills:
+  - orqa-governance
+  - orqa-artifact-audit
 scope:
   - Read every AD from AD-001 through AD-037
   - For each, evaluate whether AD-038, AD-039, or AD-040 supersedes, modifies, or renders it irrelevant

@@ -5,8 +5,13 @@ description: Make scrollbar appearance consistent across all panels — use the 
 status: todo
 created: "2026-03-11"
 updated: "2026-03-11"
-epic: EPIC-038
+epic: EPIC-010
 depends-on: []
+docs:
+  - .orqa/documentation/development/coding-standards.md
+skills:
+  - svelte5-best-practices
+  - tailwind-design-system
 scope:
   - Identify the viewer panel scrollbar CSS as the reference style
   - Audit all other panels (conversation, artifact list, settings, etc.) for scrollbar inconsistencies

@@ -9,7 +9,10 @@ epic: EPIC-050
 depends-on:
   - TASK-178
 assignee: AGENT-002
-skills: []
+docs: []
+skills:
+  - orqa-plugin-development
+  - orqa-governance
 scope:
   - orqa-plugin/commands/
 acceptance:

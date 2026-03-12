@@ -9,7 +9,13 @@ epic: EPIC-050
 depends-on:
   - TASK-188
 assignee: AGENT-002
-skills: []
+docs:
+  - .orqa/documentation/development/coding-standards.md
+skills:
+  - backend-best-practices
+  - orqa-domain-services
+  - orqa-ipc-patterns
+  - orqa-error-composition
 scope:
   - src-tauri/src/commands/
   - src-tauri/src/domain/

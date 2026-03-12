@@ -9,7 +9,10 @@ epic: EPIC-051
 depends-on:
   - TASK-173
 assignee: AGENT-002
-skills: []
+docs: []
+skills:
+  - orqa-plugin-development
+  - rule-enforcement
 scope:
   - orqa-plugin/hooks/
 acceptance:

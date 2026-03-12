@@ -9,7 +9,11 @@ epic: EPIC-051
 depends-on:
   - TASK-171
 assignee: AGENT-003
-skills: []
+docs:
+  - .orqa/documentation/product/artifact-framework.md
+skills:
+  - orqa-governance
+  - orqa-schema-compliance
 scope:
   - .orqa/team/agents/schema.json
 acceptance:

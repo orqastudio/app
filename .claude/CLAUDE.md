@@ -36,8 +36,8 @@ Work through these in dependency order. Tasks without dependencies can be parall
 | Task | Title | Depends On | Status |
 |------|-------|-----------|--------|
 | TASK-208 | Add `docs` and `skills` fields to task schema | — | done |
-| TASK-209 | Backfill `docs` field on existing tasks | TASK-208 | todo |
-| TASK-210 | Backfill `skills` field on existing tasks | TASK-208 | todo |
+| TASK-209 | Backfill `docs` field on existing tasks | TASK-208 | done |
+| TASK-210 | Backfill `skills` field on existing tasks | TASK-208 | done |
 
 ### Phase 2: Content Extraction (can start in parallel with Phase 1)
 
