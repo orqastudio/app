@@ -115,6 +115,12 @@ Add tests where gaps are highest-risk:
 | [TASK-248](TASK-248) | Audit backend-only commands — identify and remove orphaned code |
 | [TASK-249](TASK-249) | Decompose AppState into grouped sub-structs |
 
+### Phase 5: Dev Tooling
+
+| ID | Title |
+|----|-------|
+| [TASK-250](TASK-250) | Unified dev logging — stream all info/error logs to OrqaDev Compose UI |
+
 ---
 
 ## Out of Scope
