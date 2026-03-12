@@ -89,8 +89,8 @@ Work through these in dependency order. Tasks without dependencies can be parall
 
 | Task | Title | Depends On | Status |
 |------|-------|-----------|--------|
-| TASK-219 | E2E test: task with docs/skills → correct injection | TASK-214, 215 | todo |
-| TASK-220 | Dogfood session with ~200-line prompt | TASK-211, 214 | todo |
+| TASK-219 | E2E test: task with docs/skills → correct injection | TASK-214, 215 | done |
+| TASK-220 | Dogfood session with ~200-line prompt | TASK-211, 214 | done |
 
 ## Key Files
 

@@ -2,7 +2,7 @@
 id: TASK-219
 title: End-to-end test — task with docs/skills triggers correct context injection
 description: Verify that a task with docs and skills fields causes the plugin to inject the correct documentation and skills into agent context.
-status: todo
+status: done
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-053
