@@ -2,7 +2,7 @@
 id: TASK-216
 title: Plugin extends graph on artifact creation
 description: Add PostToolUse logic that detects when new artifacts are created and prompts for proper graph relationships (docs, skills, epic, depends-on fields).
-status: todo
+status: done
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-053

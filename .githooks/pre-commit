@@ -59,6 +59,47 @@ if [ -n "$EPICS_CHANGED" ]; then
   bash .githooks/validate-epic-readiness.sh
 fi
 
+# Core graph artifact protection (skip for dogfood projects)
+DOGFOOD=$(node -e "try{const p=JSON.parse(require('fs').readFileSync('.orqa/project.json','utf8'));console.log(p.dogfood?'true':'false')}catch{console.log('false')}" 2>/dev/null || echo "false")
+if [ "$DOGFOOD" != "true" ] && [ "${ORQA_CORE_OVERRIDE:-}" != "1" ]; then
+  CORE_PATHS=(
+    ".orqa/planning/pillars/schema.json"
+    ".orqa/planning/milestones/schema.json"
+    ".orqa/planning/epics/schema.json"
+    ".orqa/planning/tasks/schema.json"
+    ".orqa/planning/ideas/schema.json"
+    ".orqa/planning/research/schema.json"
+    ".orqa/governance/lessons/schema.json"
+    ".orqa/governance/decisions/schema.json"
+    ".orqa/governance/rules/schema.json"
+    ".orqa/team/agents/schema.json"
+    ".orqa/team/skills/schema.json"
+    ".orqa/team/agents/orchestrator.md"
+    ".orqa/team/skills/composability/SKILL.md"
+    ".orqa/team/skills/research-methodology/SKILL.md"
+    ".orqa/team/skills/planning/SKILL.md"
+    ".orqa/team/skills/orqa-code-search/SKILL.md"
+  )
+  CORE_MODIFIED=""
+  for core_path in "${CORE_PATHS[@]}"; do
+    if git diff --cached --name-only | grep -qF "$core_path"; then
+      CORE_MODIFIED="$CORE_MODIFIED  $core_path"$'\n'
+    fi
+  done
+  if [ -n "$CORE_MODIFIED" ]; then
+    echo ""
+    echo "WARNING: CORE GRAPH ARTIFACTS MODIFIED"
+    echo ""
+    echo "The following files define OrqaStudio's thinking structure:"
+    echo "$CORE_MODIFIED"
+    echo "Changing these risks breaking graph traversal and context injection."
+    echo "Core artifacts are updated through OrqaStudio releases."
+    echo ""
+    echo "To proceed: ORQA_CORE_OVERRIDE=1 git commit ..."
+    exit 1
+  fi
+fi
+
 # If nothing relevant changed, still confirm
 if [ -z "$RUST_CHANGED" ] && [ -z "$FRONTEND_CHANGED" ] && [ -z "$ORQA_CHANGED" ] && [ -z "$PROD_CODE_CHANGED" ] && [ -z "$TASKS_CHANGED" ] && [ -z "$EPICS_CHANGED" ]; then
   echo "No Rust, frontend, artifact, or planning files changed — skipping quality checks."

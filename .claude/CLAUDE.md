@@ -56,9 +56,9 @@ Work through these in dependency order. Tasks without dependencies can be parall
 
 | Task | Title | Depends On | Status |
 |------|-------|-----------|--------|
-| TASK-214 | Plugin reads task `docs` and `skills` for injection | TASK-208 | todo |
-| TASK-215 | Plugin reads skill `scope` fields for path-based injection | — | todo |
-| TASK-216 | Plugin extends graph on artifact creation | — | todo |
+| TASK-214 | Plugin reads task `docs` and `skills` for injection | TASK-208 | done |
+| TASK-215 | Plugin reads skill `scope` fields for path-based injection | — | done |
+| TASK-216 | Plugin extends graph on artifact creation | — | done |
 
 ### Phase 5: Web Search & Research Parity
 
@@ -71,13 +71,13 @@ Work through these in dependency order. Tasks without dependencies can be parall
 
 | Task | Title | Depends On | Status |
 |------|-------|-----------|--------|
-| TASK-221 | Pre-commit hook blocks core artifact modifications | TASK-211 | todo |
+| TASK-221 | Pre-commit hook blocks core artifact modifications | TASK-211 | done |
 
 ### Phase 6b: Decision Audit
 
 | Task | Title | Depends On | Status |
 |------|-------|-----------|--------|
-| TASK-222 | Audit existing ADs (AD-001–AD-037) against AD-038/039/040 | — | todo |
+| TASK-222 | Audit existing ADs (AD-001–AD-037) against AD-038/039/040 | — | done |
 
 ### Phase 6c: Project Setup Integration
 

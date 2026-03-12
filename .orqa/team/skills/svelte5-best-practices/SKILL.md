@@ -7,6 +7,9 @@ created: "2026-03-01"
 updated: "2026-03-10"
 layer: project
 scope: [AGENT-001, AGENT-002, AGENT-006]
+file-patterns:
+  - "ui/lib/components/**"
+  - "ui/lib/stores/**"
 user-invocable: false
 license: MIT
 metadata:

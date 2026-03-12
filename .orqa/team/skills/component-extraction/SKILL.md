@@ -7,6 +7,8 @@ created: "2026-03-11"
 updated: "2026-03-11"
 layer: project
 scope: [AGENT-001, AGENT-002]
+file-patterns:
+  - "ui/lib/components/**"
 user-invocable: false
 ---
 

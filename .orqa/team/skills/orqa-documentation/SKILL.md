@@ -11,6 +11,8 @@ created: "2026-03-10"
 updated: "2026-03-10"
 layer: project
 scope: [AGENT-003, AGENT-007]
+file-patterns:
+  - ".orqa/**"
 version: 1.0.0
 user-invocable: true
 ---
