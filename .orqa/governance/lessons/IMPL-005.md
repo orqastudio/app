@@ -1,13 +1,17 @@
 ---
-id: IMPL-005
-title: Config paths must match disk paths exactly
-description: |
-  Every path in project.json artifacts must resolve to an actual directory on disk. Mismatches cause silent empty results with no error.
-status: promoted
+id: "IMPL-005"
+title: "Config paths must match disk paths exactly"
+description: "Every path in project.json artifacts must resolve to an actual directory on disk. Mismatches cause silent empty results with no error.\n"
+status: "promoted"
 created: "2026-03-07"
 updated: "2026-03-07"
+maturity: "understanding"
 recurrence: 1
-promoted-to: RULE-003
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Config-disk alignment is fundamental structural integrity"
+promoted-to: "RULE-003"
 ---
 ## What Happened
 

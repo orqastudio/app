@@ -1,12 +1,16 @@
 ---
-id: IMPL-007
-title: Do not refactor agentic structure while delegating to agents
-description: |
-  When modifying rules, skills, or agent definitions, the orchestrator must handle changes directly. Delegating to agents that read the same artifacts being modified causes stale-context conflicts.
-status: active
+id: "IMPL-007"
+title: "Do not refactor agentic structure while delegating to agents"
+description: "When modifying rules, skills, or agent definitions, the orchestrator must handle changes directly. Delegating to agents that read the same artifacts being modified causes stale-context conflicts.\n"
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
+maturity: "understanding"
 recurrence: 1
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Self-referential modification requires structural awareness"
 ---
 ## What Happened
 

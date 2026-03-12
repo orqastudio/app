@@ -2,7 +2,7 @@
 id: TASK-277
 title: "Backfill lessons with maturity and relationships"
 description: "Use backfill tooling to add maturity (observation/understanding) and grounded relationships to all 16 lessons."
-status: todo
+status: done
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-058

@@ -1,12 +1,19 @@
 ---
-id: IMPL-003
-title: Orchestrator must manage the dev environment lifecycle automatically
-description: |
-  The orchestrator should automatically manage dev server restart instead of telling the user to do it manually.
-status: active
+id: "IMPL-003"
+title: "Orchestrator must manage the dev environment lifecycle automatically"
+description: "The orchestrator should automatically manage dev server restart instead of telling the user to do it manually.\n"
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
+maturity: "understanding"
 recurrence: 1
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Automated lifecycle management provides structural predictability"
+  - target: "IMPL-002"
+    type: "informs"
+    rationale: "Both address dev server lifecycle management"
 ---
 ## Pattern
 After making code changes, the orchestrator reported what needed to happen ("you'll need to restart") but left the user to do it manually. The user should not need to run terminal commands.

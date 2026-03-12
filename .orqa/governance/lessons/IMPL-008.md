@@ -1,12 +1,16 @@
 ---
-id: IMPL-008
-title: Extract domain logic before command files become monolithic
-description: |
-  Command files grow incrementally during feature work. Extract domain logic into focused service modules as soon as a command file exceeds 300 lines. Thin commands delegate to domain services.
-status: active
+id: "IMPL-008"
+title: "Extract domain logic before command files become monolithic"
+description: "Command files grow incrementally during feature work. Extract domain logic into focused service modules as soon as a command file exceeds 300 lines. Thin commands delegate to domain services.\n"
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
+maturity: "understanding"
 recurrence: 1
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Domain service extraction creates structural clarity"
 ---
 ## What Happened
 

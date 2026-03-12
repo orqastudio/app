@@ -1,13 +1,17 @@
 ---
-id: IMPL-014
-title: Epic titles should describe outcomes, not process
-description: |
-  Epic titles like "UAT Round 1" or "Phase 3 Implementation" describe process activities. Titles should describe what is achieved, not how the work is organised.
-status: promoted
+id: "IMPL-014"
+title: "Epic titles should describe outcomes, not process"
+description: "Epic titles like \"UAT Round 1\" or \"Phase 3 Implementation\" describe process activities. Titles should describe what is achieved, not how the work is organised.\n"
+status: "promoted"
 created: "2026-03-07"
 updated: "2026-03-07"
+maturity: "understanding"
 recurrence: 1
-promoted-to: RULE-004
+relationships:
+  - target: "PILLAR-001"
+    type: "grounded"
+    rationale: "Outcome-oriented naming creates structural clarity in planning"
+promoted-to: "RULE-004"
 ---
 ## What Happened
 
