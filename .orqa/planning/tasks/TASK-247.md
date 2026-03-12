@@ -2,7 +2,7 @@
 id: TASK-247
 title: "Fix db.rs migration error handling (.unwrap_or patterns)"
 description: "db.rs lines 55,74,82,103 use .unwrap_or(false) in migration code, silently swallowing query errors when checking column existence."
-status: todo
+status: done
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-055

@@ -2,7 +2,7 @@
 id: TASK-246
 title: "Add From<duckdb::Error> to OrqaError and fix search error propagation"
 description: "Search errors use .map_err(|e| e.to_string()) which loses type info. Add proper From impl and propagate typed errors."
-status: todo
+status: done
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-055
