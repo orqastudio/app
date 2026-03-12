@@ -534,7 +534,7 @@ async function start() {
 
   const npmCmd = IS_WINDOWS ? "npm.cmd" : "npm";
   const vite = new ChildProcess("vite", COLOURS.cyan);
-  vite.spawn(npmCmd, ["run", "dev"]);
+  vite.spawn(npmCmd, ["run", "dev"], { cwd: UI_DIR });
 
   // Wait for Vite to be ready (port occupied = listening)
   logCtrl(`Waiting for Vite on port ${VITE_PORT}...`);
@@ -625,7 +625,7 @@ async function start() {
       // Re-launch processes when controller is alive but processes are stopped
       if (!vite.running) {
         logCtrl("Starting Vite dev server...");
-        vite.spawn(npmCmd, ["run", "dev"]);
+        vite.spawn(npmCmd, ["run", "dev"], { cwd: UI_DIR });
         const viteReady = await waitForPort(VITE_PORT, 30_000, false);
         if (!viteReady) {
           logError("ctrl", "Vite failed to start within 30s");
@@ -646,7 +646,7 @@ async function start() {
       await waitForPort(VITE_PORT, PORT_TIMEOUT_MS, true);
 
       logCtrl("Restarting Vite...");
-      vite.spawn(npmCmd, ["run", "dev"]);
+      vite.spawn(npmCmd, ["run", "dev"], { cwd: UI_DIR });
       const viteReady = await waitForPort(VITE_PORT, 30_000, false);
       if (!viteReady) {
         logError("ctrl", "Vite failed to restart within 30s");
@@ -674,7 +674,7 @@ async function start() {
 
       // Restart Vite
       logCtrl("Restarting Vite...");
-      vite.spawn(npmCmd, ["run", "dev"]);
+      vite.spawn(npmCmd, ["run", "dev"], { cwd: UI_DIR });
       await waitForPort(VITE_PORT, 30_000, false);
       logSuccess(`Vite ready on http://localhost:${VITE_PORT}`);
       sseStatus(true, "building");
