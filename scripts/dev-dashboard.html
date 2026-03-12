@@ -142,6 +142,8 @@
     .filter-btn[data-source="ctrl"] { color: #f0a500; }
     .filter-btn[data-source="vite"] { color: #4ecca3; }
     .filter-btn[data-source="rust"] { color: #c77dff; }
+    .filter-btn[data-source="sidecar"] { color: #ff6b6b; }
+    .filter-btn[data-source="frontend"] { color: #74b9ff; }
 
     /* ── Log Output ─────────────────────────────────────── */
 
@@ -181,6 +183,8 @@
     .log-source.ctrl { color: #f0a500; }
     .log-source.vite { color: #4ecca3; }
     .log-source.rust { color: #c77dff; }
+    .log-source.sidecar { color: #ff6b6b; }
+    .log-source.frontend { color: #74b9ff; }
 
     .log-text {
       flex: 1;
@@ -248,6 +252,8 @@
       <button class="filter-btn active" data-source="ctrl" onclick="toggleFilter(this)">ctrl</button>
       <button class="filter-btn active" data-source="vite" onclick="toggleFilter(this)">vite</button>
       <button class="filter-btn active" data-source="rust" onclick="toggleFilter(this)">rust</button>
+      <button class="filter-btn active" data-source="sidecar" onclick="toggleFilter(this)">sidecar</button>
+      <button class="filter-btn active" data-source="frontend" onclick="toggleFilter(this)">frontend</button>
     </div>
   </div>
 
@@ -275,7 +281,7 @@
 
     let lines = 0;
     let autoScroll = true;
-    const filters = { ctrl: true, vite: true, rust: true };
+    const filters = { ctrl: true, vite: true, rust: true, sidecar: true, frontend: true };
 
     // Track process state for button enabling
     let state = { vite: false, rust: false };

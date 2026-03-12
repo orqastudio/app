@@ -43,6 +43,7 @@ reqwest = { version = "0.12", features = ["stream"] }
 futures-util = "0.3"
 sha2 = "0.10"
 tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt", "json"] }
 notify = "8"
 notify-debouncer-full = "0.6"
 

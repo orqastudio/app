@@ -16,6 +16,9 @@
 	import SetupWizard from "$lib/components/setup/SetupWizard.svelte";
 	import GovernanceBootstrapWizard from "$lib/components/governance/GovernanceBootstrapWizard.svelte";
 	import ArtifactSearchOverlay from "$lib/components/navigation/ArtifactSearchOverlay.svelte";
+	import ErrorToast from "$lib/components/shared/ErrorToast.svelte";
+	import { errorStore } from "$lib/stores/errors.svelte";
+	import { initDevConsole } from "$lib/utils/dev-console";
 
 	import ArtifactMasterDetail from "$lib/components/artifact/ArtifactMasterDetail.svelte";
 	import * as Resizable from "$lib/components/ui/resizable";
@@ -53,6 +56,8 @@
 
 	onMount(async () => {
 		settingsStore.initialize();
+		errorStore.initialize();
+		initDevConsole();
 		await setupStore.checkSetupStatus();
 		if (setupStore.setupComplete) {
 			projectStore.loadActiveProject();
@@ -73,6 +78,7 @@
 
 	onDestroy(() => {
 		settingsStore.destroy();
+		errorStore.destroy();
 		unlistenArtifactChanged?.();
 		window.removeEventListener("keydown", handleGlobalKeydown);
 	});
@@ -246,4 +252,7 @@
 
 	<!-- Global artifact search overlay -->
 	<ArtifactSearchOverlay />
+
+	<!-- Global error toast — surfaces backend, sidecar, and frontend errors -->
+	<ErrorToast />
 </div>

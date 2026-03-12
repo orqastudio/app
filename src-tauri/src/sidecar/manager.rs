@@ -79,7 +79,9 @@ impl SidecarManager {
     ///
     /// If a process is already running, it is killed first.
     /// The process is started with stdin and stdout piped for NDJSON communication.
-    /// Stderr is inherited so sidecar debug output appears in the Tauri console.
+    /// Stderr is captured and forwarded: lines are written to the Rust process
+    /// stderr (so the dev controller picks them up) and error patterns emit
+    /// `app-error` Tauri events for the frontend toast.
     pub fn spawn(&self, command: &str, args: &[&str]) -> Result<(), OrqaError> {
         // Kill any existing process first
         self.kill_inner()?;
@@ -91,7 +93,7 @@ impl SidecarManager {
             .args(args)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .stderr(Stdio::inherit())
+            .stderr(Stdio::piped())
             .spawn()
             .map_err(|e| OrqaError::Sidecar(format!("failed to spawn sidecar: {e}")))?;
 
@@ -106,6 +108,35 @@ impl SidecarManager {
             .stdout
             .take()
             .ok_or_else(|| OrqaError::Sidecar("failed to capture sidecar stdout".to_string()))?;
+
+        // Capture sidecar stderr on a background thread.
+        // Each line is forwarded to our stderr (for the dev controller) and
+        // parsed for error patterns to emit `app-error` Tauri events.
+        if let Some(child_stderr) = child.stderr.take() {
+            std::thread::spawn(move || {
+                let reader = BufReader::new(child_stderr);
+                for line in reader.lines() {
+                    match line {
+                        Ok(text) => {
+                            // Forward to our stderr so the dev controller captures it
+                            // with [sidecar] prefix via tracing.
+                            tracing::info!(target: "sidecar", "{}", text);
+
+                            // Detect error patterns and emit app-error events
+                            let lower = text.to_lowercase();
+                            if lower.contains("error")
+                                || lower.contains("fatal")
+                                || lower.contains("panic")
+                                || lower.contains("unhandled")
+                            {
+                                crate::logging::emit_app_error("sidecar", &text);
+                            }
+                        }
+                        Err(_) => break,
+                    }
+                }
+            });
+        }
 
         // Store everything
         *lock_mutex(&self.child)? = Some(child);

@@ -164,6 +164,38 @@ function startDashboardServer() {
       return;
     }
 
+    // Frontend console log forwarding endpoint (dev mode only).
+    // The frontend monkey-patches console.log/warn/error to POST here.
+    if (req.method === "POST" && req.url === "/log") {
+      let body = "";
+      req.on("data", (chunk) => { body += chunk; });
+      req.on("end", () => {
+        try {
+          const data = JSON.parse(body);
+          const source = "frontend";
+          const level = data.level || "log";
+          const text = `[${level}] ${data.message || ""}`;
+          const isError = level === "error";
+          sseLog(source, text, isError);
+          prefixLines(source, COLOURS.blue, text, isError);
+        } catch {
+          // Malformed JSON — ignore silently
+        }
+        res.writeHead(204);
+        res.end();
+      });
+      return;
+    }
+
+    if (req.method === "OPTIONS" && req.url === "/log") {
+      // CORS preflight for /log
+      res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+      res.writeHead(204);
+      res.end();
+      return;
+    }
+
     if (req.method === "POST" && req.url?.startsWith("/command/")) {
       const cmd = req.url.replace("/command/", "");
       if (signalHandler && ["start", "restart-tauri", "restart-vite", "restart", "stop"].includes(cmd)) {
