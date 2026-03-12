@@ -2,7 +2,7 @@
 id: TASK-248
 title: "Audit backend-only commands — identify and remove orphaned code"
 description: "29 of 75 registered commands have no frontend callers. Some are used by sidecar tool loop, others may be orphaned. Audit and clean up."
-status: todo
+status: done
 created: "2026-03-12"
 updated: "2026-03-12"
 epic: EPIC-055
