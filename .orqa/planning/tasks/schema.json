@@ -9,7 +9,7 @@
     "id", "title", "description", "status",
     "created", "updated",
     "epic", "depends-on", "assignee", "docs", "skills",
-    "acceptance"
+    "acceptance", "rule-overrides"
   ],
   "properties": {
     "id": { "type": "string", "pattern": "^TASK-\\d+$" },
@@ -37,6 +37,19 @@
     "acceptance": {
       "type": "array",
       "items": { "type": "string" }
+    },
+    "rule-overrides": {
+      "type": "array",
+      "description": "Rules scoped-suspended for this task. Agents see the rule but know it is deliberately suspended with rationale.",
+      "items": {
+        "type": "object",
+        "required": ["rule", "reason"],
+        "additionalProperties": false,
+        "properties": {
+          "rule": { "type": "string", "pattern": "^RULE-\\d+$" },
+          "reason": { "type": "string", "description": "Why this rule is suspended for this task" }
+        }
+      }
     }
   },
   "bodyTemplate": {

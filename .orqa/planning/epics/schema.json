@@ -13,7 +13,8 @@
     "created", "updated", "deadline",
     "milestone", "pillars",
     "depends-on", "blocks", "research-refs",
-    "docs-required", "docs-produced", "scoring"
+    "docs-required", "docs-produced", "scoring",
+    "rule-overrides"
   ],
   "properties": {
     "id": { "type": "string", "pattern": "^EPIC-\\d+$" },
@@ -53,6 +54,19 @@
       "type": "object",
       "description": "Optional rationale for priority assessment. Freeform dimensions — projects choose their own. See DOC-062 for assessment criteria.",
       "additionalProperties": { "type": "number" }
+    },
+    "rule-overrides": {
+      "type": "array",
+      "description": "Rules scoped-suspended for this epic. Inherited by tasks that have no rule-overrides of their own. Tasks with their own rule-overrides replace this list entirely.",
+      "items": {
+        "type": "object",
+        "required": ["rule", "reason"],
+        "additionalProperties": false,
+        "properties": {
+          "rule": { "type": "string", "pattern": "^RULE-\\d+$" },
+          "reason": { "type": "string", "description": "Why this rule is suspended for this epic" }
+        }
+      }
     }
   },
   "bodyTemplate": {

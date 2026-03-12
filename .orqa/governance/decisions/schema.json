@@ -8,7 +8,8 @@
   "propertyOrder": [
     "id", "title", "description", "status",
     "created", "updated",
-    "layer", "research-refs", "supersedes", "superseded-by"
+    "layer", "research-refs", "supersedes", "superseded-by",
+    "relationships"
   ],
   "properties": {
     "id": { "type": "string", "pattern": "^AD-\\d+$" },
@@ -29,7 +30,33 @@
         { "type": "array", "items": { "type": "string", "pattern": "^AD-\\d+$" }, "minItems": 1 }
       ]
     },
-    "superseded-by": { "type": ["string", "null"], "pattern": "^AD-\\d+$" }
+    "superseded-by": { "type": ["string", "null"], "pattern": "^AD-\\d+$" },
+    "relationships": {
+      "type": "array",
+      "description": "Pipeline connections. Decisions (Principle stage) should include 'practices' and 'enforces' relationships.",
+      "items": {
+        "type": "object",
+        "required": ["type", "target", "rationale"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "enum": ["observes", "observed-by", "grounded", "grounded-by", "practices", "practiced-by", "enforces", "enforced-by", "verifies", "verified-by", "informs", "informed-by"]
+          },
+          "target": {
+            "type": ["string", "null"],
+            "pattern": "^(IMPL|AD|RULE|SKILL|PILLAR|RES|VER)-\\d+$"
+          },
+          "rationale": {
+            "type": "string",
+            "description": "Why this relationship exists"
+          },
+          "intended": {
+            "type": "boolean",
+            "description": "When target is null: true = human confirmed the gap is deliberate, any other value = unresolved tension"
+          }
+        }
+      }
+    }
   },
   "bodyTemplate": {
     "description": "Required body sections for decision artifacts",

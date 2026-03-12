@@ -1,0 +1,19 @@
+---
+id: IDEA-067
+title: "AI-assisted plugin generation"
+description: "When the plugin system is mature, OrqaStudio should be able to generate tooling plugins automatically. The structure (skill + hooks + data collection) is well-defined enough that AI can scaffold a working plugin from a tool description."
+status: captured
+created: "2026-03-12"
+updated: "2026-03-12"
+pillars: [PILLAR-001]
+research-needed:
+  - "Plugin template structure — what's fixed vs what varies per tool"
+  - "How much tool-specific knowledge does the AI need to generate a working plugin"
+  - "Quality gates — how to verify a generated plugin actually works"
+  - "Depends on plugin architecture maturity (IDEA-061)"
+promoted-to: null
+---
+
+## Motivation
+
+[AD-042](AD-042) notes that the structure and requirements for a tooling plugin (skill + hooks + data collection) are well-defined. During project initialization, if no existing plugin matches detected tooling, the system could offer to generate one. This is a natural extension of the plugin architecture once it matures.
