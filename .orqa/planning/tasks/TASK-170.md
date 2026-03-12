@@ -2,7 +2,7 @@
 id: TASK-170
 title: "Frontend: Spotlight-style AI search overlay"
 description: Build a floating search overlay (Ctrl+Space) that sends queries to the AI provider with artifact graph context and renders structured results.
-status: done
+status: in-progress
 created: "2026-03-11"
 updated: "2026-03-11"
 epic: EPIC-005

@@ -3,12 +3,12 @@
   "title": "Agent",
   "description": "Universal agent role definition",
   "type": "object",
-  "required": ["id", "title", "description", "status", "layer", "scope"],
+  "required": ["id", "title", "description", "status", "layer"],
   "additionalProperties": false,
   "propertyOrder": [
     "id", "title", "description", "status",
     "created", "updated",
-    "layer", "scope", "model",
+    "layer", "model",
     "capabilities", "skills", "subagent_mapping"
   ],
   "properties": {
@@ -19,7 +19,6 @@
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
     "layer": { "enum": ["orchestrator", "core", "project", "plugin", "community", "user"] },
-    "scope": { "enum": ["general", "software-engineering", "governance"] },
     "capabilities": {
       "type": "array",
       "items": { "type": "string" },

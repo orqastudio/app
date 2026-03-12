@@ -7,7 +7,6 @@ status: active
 created: "2026-03-01"
 updated: "2026-03-12"
 layer: orchestrator
-scope: general
 model: sonnet
 capabilities:
   - file_read

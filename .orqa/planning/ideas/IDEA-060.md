@@ -1,0 +1,37 @@
+---
+id: IDEA-060
+title: "Open-Source Licensing and IP Protection"
+description: "Choose licensing strategy that protects OrqaStudio from big tech absorption while enabling open-source community participation."
+status: shaped
+created: "2026-03-12"
+updated: "2026-03-12"
+pillars: [PILLAR-001, PILLAR-002]
+research-needed:
+  - "FSL vs AGPL vs BSL — which fits best?"
+  - "Trademark registration process and cost"
+  - "CLA requirements if accepting contributions"
+promoted-to: null
+---
+
+## Description
+
+OrqaStudio currently ships with Apache 2.0 which offers zero protection against big tech absorption. [RES-045](RES-045) investigated options and recommends **FSL (Functional Source License) + Trademark**.
+
+Key findings from research:
+- **FSL**: Source-available, prohibits competing commercially, auto-converts to Apache 2.0 after 2 years. Backed by Sentry consortium. No "betrayal" narrative if set from the start.
+- **AGPL v3 + Dual License**: True OSI open source but weaker against big tech (internal use allowed). More complex for a solo developer.
+- **Trademark**: "OrqaStudio" should be trademarked regardless of code license choice.
+
+## Decision Needed
+
+This idea is shaped and ready for a decision ([AD-NNN](AD-NNN)). The user should choose:
+1. FSL + Trademark (recommended)
+2. AGPL v3 + Dual License + Trademark
+3. Stay with Apache 2.0 (not recommended)
+
+## Action Items After Decision
+
+1. Replace LICENSE file with chosen license
+2. Add `license` field to `Cargo.toml` and `package.json`
+3. Register "OrqaStudio" trademark
+4. If dual licensing: draft CLA before accepting contributions
