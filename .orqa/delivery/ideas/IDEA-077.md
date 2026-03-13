@@ -27,3 +27,10 @@ Dashboard widget showing:
 - Categorised issues: broken links, missing relationships, schema violations, reconciliation gaps
 - Click-through to the affected artifact
 - Optional: trend over time (are we improving or accumulating debt?)
+
+### Two Actions
+
+1. **Scan** — run integrity checks and display results. Read-only, no changes.
+2. **Fix** — two-tier resolution:
+   - **Auto-fix**: deterministic fixes the tool can apply without judgement (null targets with obvious candidates, missing bidirectional inverses, schema field corrections). Applied immediately, results shown.
+   - **Agent delegation**: issues requiring judgement (ambiguous targets, content gaps, reconciliation mismatches) are packaged as a task and delegated to an agent. The dashboard shows delegation status and results when the agent completes.
