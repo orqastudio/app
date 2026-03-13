@@ -2,7 +2,7 @@
 id: TASK-389
 title: "Add typed traversal methods to artifactGraphSDK"
 description: "Add traverse(), pipelineChain(), missingInverses(), and relationship-filtered query methods to the artifact graph SDK so components can follow typed edges without parsing frontmatter."
-status: todo
+status: done
 created: "2026-03-13"
 updated: "2026-03-13"
 epic: EPIC-060

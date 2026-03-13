@@ -202,6 +202,154 @@ class ArtifactGraphSDK {
     }
 
     // -----------------------------------------------------------------------
+    // Relationship traversal — synchronous
+    // -----------------------------------------------------------------------
+
+    /** Follow outgoing edges of a specific relationship type from an artifact. */
+    traverse(id: string, relationshipType: string): ArtifactNode[] {
+        const node = this.graph.get(id);
+        if (!node) return [];
+        const result: ArtifactNode[] = [];
+        for (const ref of node.references_out) {
+            if (ref.relationship_type === relationshipType) {
+                const target = this.graph.get(ref.target_id);
+                if (target) result.push(target);
+            }
+        }
+        return result;
+    }
+
+    /** Follow incoming edges of a specific relationship type to an artifact. */
+    traverseIncoming(id: string, relationshipType: string): ArtifactNode[] {
+        const node = this.graph.get(id);
+        if (!node) return [];
+        const result: ArtifactNode[] = [];
+        for (const ref of node.references_in) {
+            if (ref.relationship_type === relationshipType) {
+                const source = this.graph.get(ref.source_id);
+                if (source) result.push(source);
+            }
+        }
+        return result;
+    }
+
+    /** Return enriched relationship data from an artifact's outgoing relationship edges. */
+    relationshipsFrom(id: string): { target: ArtifactNode; type: string; rationale?: string }[] {
+        const node = this.graph.get(id);
+        if (!node) return [];
+        const result: { target: ArtifactNode; type: string; rationale?: string }[] = [];
+
+        // Get rationales from frontmatter relationships array
+        const fmRelationships = (node.frontmatter as Record<string, unknown>)?.relationships;
+        const rationales = new Map<string, string>();
+        if (Array.isArray(fmRelationships)) {
+            for (const rel of fmRelationships) {
+                const r = rel as Record<string, unknown>;
+                if (typeof r.target === "string" && typeof r.rationale === "string") {
+                    rationales.set(`${r.target}:${r.type}`, r.rationale);
+                }
+            }
+        }
+
+        for (const ref of node.references_out) {
+            if (ref.relationship_type) {
+                const target = this.graph.get(ref.target_id);
+                if (target) {
+                    const rationale = rationales.get(`${ref.target_id}:${ref.relationship_type}`);
+                    result.push({
+                        target,
+                        type: ref.relationship_type,
+                        ...(rationale ? { rationale } : {}),
+                    });
+                }
+            }
+        }
+        return result;
+    }
+
+    /** Walk the pipeline chain upstream and downstream from an artifact. */
+    pipelineChain(id: string): { upstream: ArtifactNode[]; downstream: ArtifactNode[] } {
+        const upstream: ArtifactNode[] = [];
+        const downstream: ArtifactNode[] = [];
+        const visited = new Set<string>();
+
+        // Upstream: follow grounded/grounded-by, informed-by, observed-by
+        const upstreamTypes = ["grounded", "informed-by", "observed-by"];
+        const walkUp = (currentId: string) => {
+            if (visited.has(currentId)) return;
+            visited.add(currentId);
+            for (const type of upstreamTypes) {
+                for (const node of this.traverse(currentId, type)) {
+                    if (!visited.has(node.id)) {
+                        upstream.push(node);
+                        walkUp(node.id);
+                    }
+                }
+            }
+        };
+        walkUp(id);
+
+        // Downstream: follow enforced-by, practiced-by, verified-by
+        visited.clear();
+        visited.add(id);
+        const downstreamTypes = ["enforced-by", "practiced-by", "verified-by"];
+        const walkDown = (currentId: string) => {
+            if (visited.has(currentId) && currentId !== id) return;
+            visited.add(currentId);
+            for (const type of downstreamTypes) {
+                for (const node of this.traverse(currentId, type)) {
+                    if (!visited.has(node.id)) {
+                        downstream.push(node);
+                        walkDown(node.id);
+                    }
+                }
+            }
+        };
+        walkDown(id);
+
+        return { upstream, downstream };
+    }
+
+    /** Find relationship edges where A→B exists but the expected inverse B→A is missing. */
+    missingInverses(): { ref: ArtifactRef; expectedInverse: string }[] {
+        const INVERSE_MAP: Record<string, string> = {
+            "observes": "observed-by",
+            "observed-by": "observes",
+            "grounded": "grounded-by",
+            "grounded-by": "grounded",
+            "practices": "practiced-by",
+            "practiced-by": "practices",
+            "enforces": "enforced-by",
+            "enforced-by": "enforces",
+            "verifies": "verified-by",
+            "verified-by": "verifies",
+            "informs": "informed-by",
+            "informed-by": "informs",
+        };
+
+        const result: { ref: ArtifactRef; expectedInverse: string }[] = [];
+        for (const node of this.graph.values()) {
+            for (const ref of node.references_out) {
+                if (!ref.relationship_type) continue;
+                const expectedInverse = INVERSE_MAP[ref.relationship_type];
+                if (!expectedInverse) continue;
+
+                // Check if the target has the inverse relationship pointing back
+                const target = this.graph.get(ref.target_id);
+                if (!target) continue;
+
+                const hasInverse = target.references_out.some(
+                    (r) => r.relationship_type === expectedInverse && r.target_id === node.id
+                );
+                if (!hasInverse) {
+                    result.push({ ref, expectedInverse });
+                }
+            }
+        }
+        return result;
+    }
+
+    // -----------------------------------------------------------------------
     // Subscriptions — plugin API
     // -----------------------------------------------------------------------
 
