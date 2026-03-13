@@ -91,6 +91,16 @@ Every feature follows: **Understand → Plan → Document → Implement → Revi
 5. **Review**: Independent Reviewer verifies. Implementer cannot self-certify.
 6. **Learn**: Log lessons in `.orqa/process/lessons/` for patterns that recur
 
+### Research Trigger (MANDATORY)
+
+When any request requires investigation — gathering information, comparing options, auditing existing state, or exploring unknowns — the orchestrator MUST create a `RES-NNN.md` artifact in `.orqa/delivery/research/` BEFORE delegating the investigation to a Researcher agent. The research artifact defines the scope, questions, and expected outputs. Investigation results are written into the research artifact, not held only in conversation context.
+
+Signals that indicate a research trigger:
+- "Let's investigate...", "What are the options for...", "Audit the current state of..."
+- Any task whose first step is gathering information rather than building something
+- Epic planning that requires understanding the current state before defining scope
+- User questions that need multi-file analysis or cross-system investigation
+
 ## Delegation
 
 ### Universal Roles

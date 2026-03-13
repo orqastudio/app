@@ -310,20 +310,35 @@ An idea MUST NOT be promoted to an epic until:
 1. **Status is `shaped`** — the idea has been through `exploring` and has clear scope
 2. **All `research-needed` items are investigated** — research artifacts exist in `.orqa/delivery/research/` or the research question has been answered and documented in the idea body
 3. **Pillar alignment confirmed** — at least one pillar is listed and justified
-4. **User approves promotion** — the orchestrator presents the shaped idea and asks for explicit approval
+4. **Related ideas scanned** — before creating the epic, scan all ideas for thematic overlap. Related ideas may be bundled into the same epic or explicitly noted as separate scope
+5. **User approves promotion** — the orchestrator presents the shaped idea, any related ideas found, and asks for explicit approval
+
+### Related Idea Scan (MANDATORY)
+
+Before creating the promotion epic, the orchestrator MUST:
+
+1. Scan all `IDEA-NNN.md` files in `.orqa/delivery/ideas/` with status `captured`, `exploring`, or `shaped`
+2. Identify ideas with thematic overlap (similar title, description, or pillar alignment)
+3. Present related ideas to the user with a recommendation: bundle into the same epic, or note as separate scope
+4. If the user chooses to bundle, include the related ideas' scope in the epic and set their `promoted-to` fields
+5. If the user chooses to keep separate, document the relationship in the epic body for future reference
+
+This prevents the pattern where multiple ideas addressing the same capability are promoted as separate epics that could have been a single coherent effort.
 
 ### Promotion Procedure
 
-1. Create `EPIC-NNN.md` in `.orqa/delivery/epics/` with:
+1. **Scan for related ideas** (see Related Idea Scan above)
+2. Create `EPIC-NNN.md` in `.orqa/delivery/epics/` with:
    - `milestone` set to the appropriate milestone
    - `status: draft`
    - `priority` assessed per project criteria (see DOC-062)
    - `docs-required` populated based on what documentation needs to exist
    - `docs-produced` populated based on what documentation the work will create
-2. Update the source `IDEA-NNN.md`:
+3. Update the source `IDEA-NNN.md`:
    - Set `status: promoted`
    - Set `promoted-to: EPIC-NNN`
-3. Update `.orqa/documentation/product/roadmap.md` if the epic adds to or modifies the roadmap
+4. Update any bundled ideas (set `status: promoted`, `promoted-to: EPIC-NNN`)
+5. Update `.orqa/documentation/product/roadmap.md` if the epic adds to or modifies the roadmap
 
 ---
 
