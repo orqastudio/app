@@ -2,7 +2,7 @@
 id: EPIC-059
 title: "Philosophy Alignment & Data Integrity"
 description: "Content migration and directory reorganization to express the Knowledge Maturity Pipeline philosophy. Moves artifacts to process/delivery/documentation structure, audits all content, integrates integrity checks, and ensures app layout picks up the new structure."
-status: done
+status: in-progress
 priority: P1
 created: "2026-03-13"
 updated: "2026-03-13"
@@ -11,7 +11,7 @@ milestone: MS-001
 pillars: [PILLAR-001, PILLAR-002]
 depends-on: [EPIC-058]
 blocks: []
-research-refs: [RES-048, RES-049]
+research-refs: [RES-048, RES-049, RES-052]
 docs-required: [AD-042]
 docs-produced: [AD-043, AD-044, RES-049, RULE-045]
 scoring:
@@ -144,10 +144,24 @@ Broken links and missing inverses mean the graph is lying. Nothing else starts u
 | [TASK-300](TASK-300) | Update all path references across codebase | [TASK-292](TASK-292) | 3 |
 | [TASK-301](TASK-301) | Research: relationship and metadata display UX (RES-049) | [TASK-292](TASK-292) | 3 |
 
+### Phase 4: Open Items & Process Gaps (discovered during implementation)
+
+| ID | Title | Depends On | Phase |
+|----|-------|-----------|-------|
+| [TASK-302](TASK-302) | Complete RES-051: behavioral directives research | — | 4 |
+| [TASK-303](TASK-303) | Clean up Claude memory files that duplicate artifact knowledge | [TASK-302](TASK-302) | 4 |
+| [TASK-304](TASK-304) | Remove ArtifactType::Hook dead code | — | 4 |
+| [TASK-305](TASK-305) | Fix broken forward-references to non-existent artifacts | — | 4 |
+| [TASK-306](TASK-306) | Investigate configurable .orqa/ paths (IMPL-018) | — | 4 |
+| [TASK-307](TASK-307) | Design plugin-sidecar pairing mechanism (IMPL-019, IMPL-020) | — | 4 |
+| [TASK-308](TASK-308) | Establish learning loop and completion discipline (IMPL-021 through 025) | — | 4 |
+| [TASK-309](TASK-309) | Triage EPIC-059 observations (IMPL-018 through IMPL-025) | [TASK-308](TASK-308) | 4 |
+
 ## Out of Scope
 
 - Populating VER-NNN verification artifacts (this epic creates the type)
 - Building pipeline visualization in the app
-- Plugin ecosystem work
+- Plugin ecosystem implementation (TASK-307 covers the design only, not implementation)
 - App UI changes for new directory structure (scanner handles it via config)
 - Implementing any UX changes from [RES-049](RES-049) (that's a future epic)
+- Implementing configurable paths runtime cache (TASK-306 investigates, implementation is a future epic if Option C is chosen)

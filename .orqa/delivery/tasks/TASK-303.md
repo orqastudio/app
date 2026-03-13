@@ -1,0 +1,30 @@
+---
+id: TASK-303
+title: "Clean up Claude memory files that duplicate artifact knowledge"
+description: "6 of 10 Claude memory files are fully covered by artifacts in .orqa/. Per user directive, project memory should be empty when artifacts contain the knowledge. Delete duplicated memory files and verify remaining files are genuinely additive."
+status: todo
+created: "2026-03-13"
+updated: "2026-03-13"
+epic: EPIC-059
+depends-on: [TASK-302]
+acceptance:
+  - "Memory files that duplicate artifact knowledge are deleted"
+  - "Remaining memory files contain only genuinely additive information"
+  - "MEMORY.md index is updated to reflect remaining files"
+---
+
+## What
+
+Audit all Claude memory files in `C:\Users\Bobbi\.claude\projects\C--Users-Bobbi-code-orqa-studio\memory\` and delete those whose content is fully captured in `.orqa/` artifacts.
+
+## How
+
+1. Read each memory file
+2. Cross-reference against `.orqa/` artifacts (rules, skills, decisions, documentation)
+3. Delete files where the artifact system has full coverage
+4. Update MEMORY.md index
+
+## Verification
+
+- `ls` memory directory shows only genuinely additive files
+- MEMORY.md is accurate and concise

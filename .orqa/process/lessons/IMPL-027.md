@@ -1,0 +1,42 @@
+---
+id: IMPL-027
+title: "Plugin requirements are shaped by plugin type, not universal"
+description: "Not all plugins integrate with AI providers. A plugin could be a frontend visualisation, a data transformer, or a governance extension. The requires object in plugin.json should be determined by the plugin's type — different types have different requirement shapes. 'sidecar' is an implementation term; 'ai-providers' or similar is more human-readable."
+status: active
+created: "2026-03-13"
+updated: "2026-03-13"
+maturity: observation
+recurrence: 1
+relationships:
+  - target: IMPL-019
+    type: informed-by
+    rationale: "The original observation assumed all plugins need sidecar pairing — this refines it: only AI provider integration plugins need it"
+  - target: IMPL-020
+    type: informed-by
+    rationale: "Plugin scoping is type-dependent, not universal"
+---
+
+## Pattern
+
+The initial design assumed `requires.sidecar` as a universal plugin field. But plugins have different types:
+
+- **AI provider integration** — hooks, skills, agents designed for a specific AI tool (Claude Code, Cursor, etc.). These need `requires.ai-providers`.
+- **Frontend visualisation** — custom views, dashboards, data rendering. No AI provider dependency.
+- **Governance extension** — additional rules, schemas, artifact types. No AI provider dependency.
+- **Data transformer** — processing pipelines, import/export. May or may not need an AI provider.
+
+Key design decisions (user-approved):
+- `type` is an array — a single plugin can be `["ai-provider-integration", "visualisation"]`
+- The type enum is extendable — new types can be added without breaking existing plugins
+- The `requires` shape is the union of all declared types
+
+The `requires` object should be shaped by the plugin type. An AI provider integration plugin has `requires.ai-providers: { any-of: ["claude-code-cli"] }`. A visualisation plugin has no such field because it doesn't interact with AI providers at all.
+
+Additionally:
+- The array semantics matter: `any-of` (plugin works with any listed provider, only one needs to be active) vs `all` (all listed providers must be available)
+- Adding a new AI provider to the ecosystem should trigger a review of existing plugins and surface to plugin developers
+- "sidecar" is an internal implementation term — user-facing config should use "ai-providers" or similar
+
+## Fix
+
+Design plugin type system where each type defines its own `requires` shape. The plugin schema validates `requires` fields against the declared type.
