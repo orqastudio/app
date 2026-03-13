@@ -19,6 +19,7 @@
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import { ARTIFACT_TYPES } from "$lib/types/artifact-graph";
 	import IntegrityWidget from "./IntegrityWidget.svelte";
+	import PipelineWidget from "./PipelineWidget.svelte";
 	import type { Component } from "svelte";
 	import { SvelteMap } from "svelte/reactivity";
 
@@ -233,6 +234,9 @@
 
 			<!-- Pipeline Health -->
 			<IntegrityWidget />
+
+			<!-- Knowledge Pipeline -->
+			<PipelineWidget />
 
 			<!-- Governance artifacts -->
 			<Card.Root class="mb-4">
