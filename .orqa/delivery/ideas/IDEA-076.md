@@ -22,7 +22,7 @@ promoted-to: null
 Current artifact structure requires: Task → Epic → Milestone. But bugs and small polish items don't fit this model well:
 
 - **Bugs** are discovered during use, not planned as features. Creating an epic for each bug adds overhead without value. But bugs still need to be prioritised and assigned to milestones so they can block completion if needed.
-- **UI tweaks** (like IDEA-073's favicon/titlebar fixes) are similar — small, concrete, not part of a feature epic.
+- **UI tweaks** (like [IDEA-073](IDEA-073)'s favicon/titlebar fixes) are similar — small, concrete, not part of a feature epic.
 - **Both** need milestone assignment so milestone completion gates can include them ("all P1 bugs fixed" as a gate).
 
 The current workaround is either creating a catch-all "bug fix" epic (loses traceability) or skipping the epic entirely (loses milestone assignment).

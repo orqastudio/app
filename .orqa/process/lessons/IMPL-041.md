@@ -38,4 +38,4 @@ Not yet determined. Possible approaches:
 
 ## Triage
 
-Promoted — extends RULE-031's 'questioning misaligned instructions' requirement. Orchestrator should evaluate all user suggestions against system principles and offer independent analysis, not just accept.
+Promoted — extends [RULE-031](RULE-031)'s 'questioning misaligned instructions' requirement. Orchestrator should evaluate all user suggestions against system principles and offer independent analysis, not just accept.

@@ -18,9 +18,9 @@ acceptance:
 
 ## What
 
-Design how plugins declare which sidecar they require and how the system enforces that pairing. This covers IMPL-019 (declaration) and IMPL-020 (enforcement) as two sides of the same design.
+Design how plugins declare which sidecar they require and how the system enforces that pairing. This covers [IMPL-019](IMPL-019) (declaration) and [IMPL-020](IMPL-020) (enforcement) as two sides of the same design.
 
-Implementation is out of scope for EPIC-059 — deferred to [IDEA-071](IDEA-071).
+Implementation is out of scope for [EPIC-059](EPIC-059) — deferred to [IDEA-071](IDEA-071).
 
 ## How
 
@@ -28,11 +28,11 @@ Implementation is out of scope for EPIC-059 — deferred to [IDEA-071](IDEA-071)
 2. Define sidecar identity strings and detection mechanism
 3. Design load-time filtering for the plugin loader
 4. Design UI behaviour (greyed-out plugins for non-active sidecars)
-5. Document interaction with RULE-040 capability resolution
-6. Update IMPL-019 and IMPL-020 to understanding
+5. Document interaction with [RULE-040](RULE-040) capability resolution
+6. Update [IMPL-019](IMPL-019) and [IMPL-020](IMPL-020) to understanding
 
 ## Verification
 
 - Design documented and user-approved
 - Plugin schema extension is concrete (not conceptual)
-- IMPL-019 and IMPL-020 have maturity: understanding
+- [IMPL-019](IMPL-019) and [IMPL-020](IMPL-020) have maturity: understanding

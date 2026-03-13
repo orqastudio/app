@@ -58,7 +58,7 @@ The schema's `"required"` array lists fields that must be present.
 
 ```yaml
 # WRONG — missing required fields 'created', 'updated', 'scope'
-id: RULE-099
+id: RULE-NNN
 title: My Rule
 status: active
 layer: core
@@ -66,7 +66,7 @@ layer: core
 
 ```yaml
 # CORRECT
-id: RULE-099
+id: RULE-NNN
 title: My Rule
 description: One-line summary of what this rule enforces.
 status: active
@@ -97,8 +97,8 @@ Every artifact type has an ID pattern enforced by regex.
 
 ```yaml
 # WRONG — wrong zero-padding
-id: EPIC-1
-id: TASK-05
+id: EPIC-N
+id: TASK-NN
 
 # CORRECT — three-digit minimum
 id: EPIC-001
@@ -119,7 +119,7 @@ Frontmatter fields must appear in the order defined by `propertyOrder` in `schem
 
 ```yaml
 # WRONG — 'layer' and 'scope' appear before 'created'/'updated'
-id: RULE-099
+id: RULE-NNN
 title: My Rule
 description: ...
 status: active
@@ -130,7 +130,7 @@ updated: "2026-03-11"
 
 ```yaml
 # CORRECT — follows rule propertyOrder: id, title, description, status, created, updated, layer, scope
-id: RULE-099
+id: RULE-NNN
 title: My Rule
 description: ...
 status: active

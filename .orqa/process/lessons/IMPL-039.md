@@ -37,4 +37,4 @@ Observation: when an observation needs recording, the orchestrator should launch
 
 ## Triage
 
-Promoted — extends RULE-001 delegation principle. Observation creation delegated to background Writer agents to keep orchestrator focused on coordination.
+Promoted — extends [RULE-001](RULE-001) delegation principle. Observation creation delegated to background Writer agents to keep orchestrator focused on coordination.

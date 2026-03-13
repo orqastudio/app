@@ -180,34 +180,34 @@ The tooling built in phases 1-7 produces output. Phase 8 runs it all, reviews th
 
 | ID | Title | Phase | Depends On |
 |----|-------|-------|------------|
-| TASK-350 | Backfill AD → Rule enforcement relationships (37 ADs) | 1 | — |
-| TASK-351 | Backfill lesson promoted-to targets (22 lessons) | 1 | — |
-| TASK-362 | Extend pipeline integrity tool with enforcement chain checks | 1 | TASK-350, TASK-351 |
-| TASK-363 | ESLint rules: component purity, tooltip usage, reusable components, alias detection, root cleanliness | 2 | — |
-| TASK-364 | Clippy/custom check: function size limits | 2 | — |
-| TASK-365 | Hook checks: status transitions, config-disk consistency, pillar alignment, historical preservation, E2E completeness | 2 | — |
-| TASK-366 | Tooling checks: skill portability, capability-not-tools, persistence boundaries | 2 | — |
-| TASK-367 | Wire all new checks into pre-commit hook | 2 | TASK-363, TASK-364, TASK-365, TASK-366 |
-| TASK-368 | Recurrence auto-tracking and promotion readiness detection | 3 | TASK-362 |
-| TASK-369 | Pipeline stage transition health checks | 3 | TASK-362 |
-| TASK-370 | Update RULE-004: related idea surfacing during promotion | 4 | — |
-| TASK-371 | Plugin prompt-submit hook for observation capture | 4 | — |
-| TASK-372 | Research trigger: orchestrator creates RES-NNN before investigation | 4 | — |
-| TASK-379 | Behavioral enforcement plan: prompt injection rules | 5 | — |
-| TASK-380 | Behavioral enforcement plan: output validation rules | 5 | — |
-| TASK-381 | Behavioral enforcement plan: skill injection rules | 5 | — |
-| TASK-382 | Behavioral enforcement plan: session hook rules | 5 | — |
-| TASK-383 | Implement behavioral enforcement mechanisms | 5 | TASK-379, TASK-380, TASK-381, TASK-382 |
-| TASK-384 | Scope drift detection tooling | 6 | TASK-362 |
-| TASK-385 | Decision persistence tooling | 6 | — |
-| TASK-386 | Mid-cycle orientation tooling | 6 | — |
-| TASK-387 | Cognitive load indicators | 6 | — |
-| TASK-373 | Define priority dimensions and auto-classification rules | 7 | TASK-362 |
-| TASK-374 | Automated gap audit tool (repeatable RES-054) | 7 | TASK-362, TASK-368, TASK-369 |
-| TASK-376 | Run all enforcement tooling and review output | 8 | TASK-367, TASK-369, TASK-374, TASK-383, TASK-387 |
-| TASK-377 | Create follow-up epics/tasks to address findings | 8 | TASK-376 |
-| TASK-378 | Update RULE-022: loop-closure + scope verification requirements | 8 | TASK-376 |
-| TASK-375 | Reconcile EPIC-061 | — | all above |
+| [TASK-350](TASK-350) | Backfill AD → Rule enforcement relationships (37 ADs) | 1 | — |
+| [TASK-351](TASK-351) | Backfill lesson promoted-to targets (22 lessons) | 1 | — |
+| [TASK-362](TASK-362) | Extend pipeline integrity tool with enforcement chain checks | 1 | [TASK-350](TASK-350), [TASK-351](TASK-351) |
+| [TASK-363](TASK-363) | ESLint rules: component purity, tooltip usage, reusable components, alias detection, root cleanliness | 2 | — |
+| [TASK-364](TASK-364) | Clippy/custom check: function size limits | 2 | — |
+| [TASK-365](TASK-365) | Hook checks: status transitions, config-disk consistency, pillar alignment, historical preservation, E2E completeness | 2 | — |
+| [TASK-366](TASK-366) | Tooling checks: skill portability, capability-not-tools, persistence boundaries | 2 | — |
+| [TASK-367](TASK-367) | Wire all new checks into pre-commit hook | 2 | [TASK-363](TASK-363), [TASK-364](TASK-364), [TASK-365](TASK-365), [TASK-366](TASK-366) |
+| [TASK-368](TASK-368) | Recurrence auto-tracking and promotion readiness detection | 3 | [TASK-362](TASK-362) |
+| [TASK-369](TASK-369) | Pipeline stage transition health checks | 3 | [TASK-362](TASK-362) |
+| [TASK-370](TASK-370) | Update [RULE-004](RULE-004): related idea surfacing during promotion | 4 | — |
+| [TASK-371](TASK-371) | Plugin prompt-submit hook for observation capture | 4 | — |
+| [TASK-372](TASK-372) | Research trigger: orchestrator creates RES-NNN before investigation | 4 | — |
+| [TASK-379](TASK-379) | Behavioral enforcement plan: prompt injection rules | 5 | — |
+| [TASK-380](TASK-380) | Behavioral enforcement plan: output validation rules | 5 | — |
+| [TASK-381](TASK-381) | Behavioral enforcement plan: skill injection rules | 5 | — |
+| [TASK-382](TASK-382) | Behavioral enforcement plan: session hook rules | 5 | — |
+| [TASK-383](TASK-383) | Implement behavioral enforcement mechanisms | 5 | [TASK-379](TASK-379), [TASK-380](TASK-380), [TASK-381](TASK-381), [TASK-382](TASK-382) |
+| [TASK-384](TASK-384) | Scope drift detection tooling | 6 | [TASK-362](TASK-362) |
+| [TASK-385](TASK-385) | Decision persistence tooling | 6 | — |
+| [TASK-386](TASK-386) | Mid-cycle orientation tooling | 6 | — |
+| [TASK-387](TASK-387) | Cognitive load indicators | 6 | — |
+| [TASK-373](TASK-373) | Define priority dimensions and auto-classification rules | 7 | [TASK-362](TASK-362) |
+| [TASK-374](TASK-374) | Automated gap audit tool (repeatable RES-054) | 7 | [TASK-362](TASK-362), [TASK-368](TASK-368), [TASK-369](TASK-369) |
+| [TASK-376](TASK-376) | Run all enforcement tooling and review output | 8 | [TASK-367](TASK-367), [TASK-369](TASK-369), [TASK-374](TASK-374), [TASK-383](TASK-383), [TASK-387](TASK-387) |
+| [TASK-377](TASK-377) | Create follow-up epics/tasks to address findings | 8 | [TASK-376](TASK-376) |
+| [TASK-378](TASK-378) | Update [RULE-022](RULE-022): loop-closure + scope verification requirements | 8 | [TASK-376](TASK-376) |
+| [TASK-375](TASK-375) | Reconcile [EPIC-061](EPIC-061) | — | all above |
 
 ## Out of Scope
 

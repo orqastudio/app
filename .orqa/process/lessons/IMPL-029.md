@@ -21,9 +21,9 @@ relationships:
 
 ## Pattern
 
-During the EPIC-059 design discussion, the orchestrator has created 12 artifacts (IMPL-018 through IMPL-029, IDEA-069, TASK-302 through TASK-309) directly. Each creation blocks the conversation for the time it takes to write the file. A Writer agent could handle artifact creation in parallel while the orchestrator continues the design discussion with the user.
+During the [EPIC-059](EPIC-059) design discussion, the orchestrator has created 12 artifacts (IMPL-018 through [IMPL-029](IMPL-029), [IDEA-069](IDEA-069), [TASK-302](TASK-302) through TASK-309) directly. Each creation blocks the conversation for the time it takes to write the file. A Writer agent could handle artifact creation in parallel while the orchestrator continues the design discussion with the user.
 
-The RULE-001 exception for governance artifacts was designed for occasional, lightweight edits — not for a session where artifact creation IS the primary output.
+The [RULE-001](RULE-001) exception for governance artifacts was designed for occasional, lightweight edits — not for a session where artifact creation IS the primary output.
 
 ## Fix
 
@@ -35,4 +35,4 @@ When multiple artifacts need creating during a design discussion:
 
 ## Triage
 
-Promoted — RULE-001 already enforces this. At recurrence 2, the pattern is confirmed: when creating multiple artifacts during a design session, delegate to a background Writer agent.
+Promoted — [RULE-001](RULE-001) already enforces this. At recurrence 2, the pattern is confirmed: when creating multiple artifacts during a design session, delegate to a background Writer agent.

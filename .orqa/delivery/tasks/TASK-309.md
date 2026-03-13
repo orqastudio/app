@@ -17,18 +17,18 @@ acceptance:
 
 ## What
 
-Triage each observation from EPIC-059 into one of three outcomes:
+Triage each observation from [EPIC-059](EPIC-059) into one of three outcomes:
 
 | Outcome | Action | When |
 |---------|--------|------|
-| **Implement now** | Create task in EPIC-059, do the work | Observation reveals a gap that blocks or undermines epic goals |
+| **Implement now** | Create task in [EPIC-059](EPIC-059), do the work | Observation reveals a gap that blocks or undermines epic goals |
 | **Promote** | Update to understanding, create rule/skill/AD | Observation is mature enough to become enforcement |
 | **Defer to idea** | Create IDEA-NNN, add deferred-to relationship | Valid but out of scope for this epic |
 
 ## How
 
-1. Read each IMPL-018 through IMPL-025
-2. For each, determine: does this need to be resolved for EPIC-059 to be honestly complete?
+1. Read each [IMPL-018](IMPL-018) through [IMPL-025](IMPL-025)
+2. For each, determine: does this need to be resolved for [EPIC-059](EPIC-059) to be honestly complete?
 3. Apply the appropriate triage outcome
 4. Present triage results to user for approval before executing
 

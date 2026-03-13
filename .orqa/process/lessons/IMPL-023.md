@@ -28,7 +28,7 @@ The Knowledge Maturity Pipeline has an automated observation-to-enforcement path
 
 1. **Observation creation is manual.** When an agent hits a surprising failure (e.g., stale paths after a directory move), it fixes the problem but doesn't create an IMPL entry unless specifically prompted by the user or a review agent.
 
-2. **Recurrence tracking is manual.** Even when a lesson exists (e.g., IMPL-017 about stale paths), the next agent that hits the same pattern doesn't search lessons and increment the count. The recurrence counter stays at 1 forever.
+2. **Recurrence tracking is manual.** Even when a lesson exists (e.g., [IMPL-017](IMPL-017) about stale paths), the next agent that hits the same pattern doesn't search lessons and increment the count. The recurrence counter stays at 1 forever.
 
 3. **The promotion threshold is never reached.** Because recurrence isn't tracked, lessons never hit the >= 2 threshold that triggers promotion to rules or skills. The pipeline stalls at the observation stage.
 
@@ -45,4 +45,4 @@ Learning checkpoint at task completion: orchestrator asks "what observations wer
 
 ## Triage
 
-Promoted — three-tier observation logging discipline (blocking/non-blocking/borderline) promoted to RULE-017 update. Learning checkpoint at task completion encoded as process requirement.
+Promoted — three-tier observation logging discipline (blocking/non-blocking/borderline) promoted to [RULE-017](RULE-017) update. Learning checkpoint at task completion encoded as process requirement.

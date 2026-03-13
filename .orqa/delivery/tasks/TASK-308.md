@@ -28,7 +28,7 @@ Address four related process gaps:
 
 ## How
 
-1. Update RULE-004 epic completion gate to require explicit user approval
+1. Update [RULE-004](RULE-004) epic completion gate to require explicit user approval
 2. Add learning checkpoint to task completion — orchestrator asks "what observations were logged?" before accepting done
 3. Update task schema bodyTemplate to include a Lessons section
 4. Document the epic readiness surfacing approach
@@ -36,7 +36,7 @@ Address four related process gaps:
 
 ## Verification
 
-- RULE-004 updated with human gate for epic completion
+- [RULE-004](RULE-004) updated with human gate for epic completion
 - Task schema bodyTemplate includes Lessons section
 - Process documented and enforceable
 - All four IMPL entries have maturity: understanding

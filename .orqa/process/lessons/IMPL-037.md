@@ -30,4 +30,4 @@ Not yet determined. Possible approaches:
 
 ## Triage
 
-Deferred to IDEA-075 — app bug requiring validation before save. Out of scope for EPIC-059 (philosophy alignment epic, not app bug fix).
+Deferred to [IDEA-075](IDEA-075) — app bug requiring validation before save. Out of scope for [EPIC-059](EPIC-059) (philosophy alignment epic, not app bug fix).

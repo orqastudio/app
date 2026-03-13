@@ -15,16 +15,16 @@ acceptance:
 
 ## What
 
-Complete the draft research document RES-051 which audits Claude memory files, categorizes what's duplicated vs genuinely missing from the artifact system, and proposes where behavioral directives should live in the Knowledge Maturity Pipeline.
+Complete the draft research document [RES-051](RES-051) which audits Claude memory files, categorizes what's duplicated vs genuinely missing from the artifact system, and proposes where behavioral directives should live in the Knowledge Maturity Pipeline.
 
 ## How
 
-1. Read RES-051 current state
+1. Read [RES-051](RES-051) current state
 2. Investigate the 6 research questions identified in the document
 3. Propose concrete recommendations
 4. Present to user for discussion
 
 ## Verification
 
-- RES-051 has status: complete
+- [RES-051](RES-051) has status: complete
 - User has provided direction on next steps

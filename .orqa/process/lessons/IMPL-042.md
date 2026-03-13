@@ -21,7 +21,7 @@ relationships:
 
 ## Pattern
 
-During EPIC-059, work emerged mid-epic (TASK-310 for AD memory injection, PILLAR-003 creation). These were completed as tasks but the epic body wasn't updated — the task table was missing TASK-310 and the pillars array didn't include PILLAR-003. This was only caught during the manual completion review. The pattern: epic bodies drift as work evolves, and nothing enforces sync until someone notices at the end.
+During [EPIC-059](EPIC-059), work emerged mid-epic (TASK-310 for AD memory injection, [PILLAR-003](PILLAR-003) creation). These were completed as tasks but the epic body wasn't updated — the task table was missing [TASK-310](TASK-310) and the pillars array didn't include [PILLAR-003](PILLAR-003). This was only caught during the manual completion review. The pattern: epic bodies drift as work evolves, and nothing enforces sync until someone notices at the end.
 
 ## Fix
 

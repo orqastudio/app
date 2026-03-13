@@ -42,4 +42,4 @@ Load-time filtering (Option A from RES-052). When the system detects the active 
 
 ## Triage
 
-Design completed in TASK-307 as part of sidecar pairing. Implementation deferred to IDEA-071.
+Design completed in [TASK-307](TASK-307) as part of sidecar pairing. Implementation deferred to [IDEA-071](IDEA-071).

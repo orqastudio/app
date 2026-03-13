@@ -24,6 +24,6 @@ When creating relationship edges where the target artifact doesn't exist yet, ag
 
 When a relationship target doesn't exist yet:
 1. Check if an IDEA, TASK, or EPIC tracks the planned creation
-2. If yes: point the target to the tracking artifact (e.g., `target: IDEA-071`)
+2. If yes: point the target to the tracking artifact (e.g., `target: [IDEA-071](IDEA-071)`)
 3. If no: create the tracking artifact first, then link to it
 4. `null` targets should only exist when there is genuinely no plan to create the target — and in that case, set `intended: true` to suppress the warning

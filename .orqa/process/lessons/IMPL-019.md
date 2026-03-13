@@ -39,14 +39,14 @@ The pairing is implicit — nothing in `plugin.json` declares "I require the Cla
 
 ## Fix
 
-Design is in progress via RES-052. Key decisions made:
+Design is in progress via [RES-052](RES-052). Key decisions made:
 - Plugins declare `requires.ai-providers` with `any-of`/`all` semantics
 - Provider definitions live in `.orqa/providers/<name>.json` (app-native, identity + detection + required plugins)
 - Plugin type determines requires shape — only `ai-provider-integration` type has `requires.ai-providers`
 - Capability fulfilment is user-configurable per-project (native vs app-MCP), with plugin-provided defaults
 - Plugin installation wires capabilities, skills, and agent updates as a complete package
-- Provider-side plugin requirements are a pragmatic bridge until IDEA-069 (sidecar-as-plugin)
+- Provider-side plugin requirements are a pragmatic bridge until [IDEA-069](IDEA-069) (sidecar-as-plugin)
 
 ## Triage
 
-Design completed in TASK-307. Implementation deferred to IDEA-071.
+Design completed in [TASK-307](TASK-307). Implementation deferred to [IDEA-071](IDEA-071).

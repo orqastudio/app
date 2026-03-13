@@ -27,9 +27,9 @@ relationships:
 
 ## Pattern
 
-During EPIC-059 implementation, several items were identified but never formalized as tasks:
+During [EPIC-059](EPIC-059) implementation, several items were identified but never formalized as tasks:
 
-1. **RES-051** (draft research) — behavioral directives in the pipeline. Research doc exists but no task tracks its completion.
+1. **[RES-051](RES-051)** (draft research) — behavioral directives in the pipeline. Research doc exists but no task tracks its completion.
 2. **Claude memory cleanup** — 6 of 10 memory files duplicate artifact knowledge. No task to clean them up.
 3. **ArtifactType::Hook dead code** — Hook is no longer a governance artifact. No task to remove the enum variant.
 4. **Broken forward-references** — 9 broken-link errors to artifacts that don't exist yet (SKILL-045, AGENT-003/004/005, VER-001). No task to create these artifacts or remove the references.
@@ -49,4 +49,4 @@ Three mechanisms (user-approved via RES-052):
 
 ## Triage
 
-Promoted — observation triage protocol in RULE-004 ensures open items are tracked and triaged.
+Promoted — observation triage protocol in [RULE-004](RULE-004) ensures open items are tracked and triaged.

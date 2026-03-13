@@ -35,8 +35,8 @@ If a project needs a different directory structure (e.g., no `process/` level, o
 
 ## Fix
 
-Option C from RES-052: Runtime config cache. Load `project.json` once at startup, build a `ProjectPaths` struct, pass through the call chain. Remove `paths.rs` constants (keep only `ORQA_DIR` and `SETTINGS_FILE` as bootstrap constants needed to find the config file itself). User-approved decision.
+Option C from [RES-052](RES-052): Runtime config cache. Load `project.json` once at startup, build a `ProjectPaths` struct, pass through the call chain. Remove `paths.rs` constants (keep only `ORQA_DIR` and `SETTINGS_FILE` as bootstrap constants needed to find the config file itself). User-approved decision.
 
 ## Triage
 
-Resolved by TASK-306 — ProjectPaths runtime config cache replaced all hardcoded path constants.
+Resolved by [TASK-306](TASK-306) — ProjectPaths runtime config cache replaced all hardcoded path constants.

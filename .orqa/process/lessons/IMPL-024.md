@@ -28,7 +28,7 @@ Currently, task artifacts have three body sections: What, How, Verification. Whe
 
 The user has to read conversation history to discover what observations were logged, what existing lessons had recurrence incremented, or what surprises occurred. This information is ephemeral — lost when the context window compacts.
 
-If the task artifact itself recorded "Lessons: created IMPL-017 (stale paths), incremented IMPL-003 recurrence to 3", the learning loop becomes visible and auditable from the artifact graph alone.
+If the task artifact itself recorded "Lessons: created [IMPL-017](IMPL-017) (stale paths), incremented [IMPL-003](IMPL-003) recurrence to 3", the learning loop becomes visible and auditable from the artifact graph alone.
 
 ## Fix
 

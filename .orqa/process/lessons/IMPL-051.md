@@ -18,7 +18,7 @@ relationships:
 
 ## Pattern
 
-The orchestrator asked whether EPIC-061 should be split because of its size (28 tasks, 8 phases). The implicit assumption was that smaller epics are better. But epic size is not the relevant measure — goal completeness is. An epic that achieves half its goal is not "two epics done" — it's one incomplete epic.
+The orchestrator asked whether [EPIC-061](EPIC-061) should be split because of its size (28 tasks, 8 phases). The implicit assumption was that smaller epics are better. But epic size is not the relevant measure — goal completeness is. An epic that achieves half its goal is not "two epics done" — it's one incomplete epic.
 
 ## Fix
 

@@ -85,7 +85,7 @@ Plugin hooks that trigger at session boundaries (start, end, stop) to enforce wo
 |----------|-----------|----------|
 | Prompt injection | 8 rules | Delegation template + plugin injector |
 | Output validation | 4 rules | Stop hook + orchestrator self-check |
-| Skill injection | 5 rules | RULE-042 enforcement entries + plugin PostToolUse |
+| Skill injection | 5 rules | [RULE-042](RULE-042) enforcement entries + plugin PostToolUse |
 | Session hooks | 2 rules | Plugin SessionStart + Stop hooks |
 | **Total behavioral** | **19 rules** | |
 

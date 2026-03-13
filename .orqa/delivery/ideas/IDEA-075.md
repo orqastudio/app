@@ -15,7 +15,7 @@ promoted-to: null
 
 ## Motivation
 
-During EPIC-059, clicking save in the app UI overwrote a valid project.json with blank defaults — null description, empty artifacts array, empty frameworks. Required `git checkout` to recover. The pre-commit hook didn't catch this because it happened in-app, not through git.
+During [EPIC-059](EPIC-059), clicking save in the app UI overwrote a valid project.json with blank defaults — null description, empty artifacts array, empty frameworks. Required `git checkout` to recover. The pre-commit hook didn't catch this because it happened in-app, not through git.
 
 This is a data integrity bug. The app should never write destructive changes to its own config file without validation.
 

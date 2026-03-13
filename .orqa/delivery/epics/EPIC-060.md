@@ -125,21 +125,21 @@ Each issue row: artifact ID (clickable → navigates to artifact), message, seve
 
 | ID | Title | Phase | Depends On |
 |----|-------|-------|------------|
-| TASK-352 | Native integrity checks in artifact_graph.rs | 1 | — |
-| TASK-353 | Auto-fix engine for deterministic integrity issues | 1 | TASK-352 |
-| TASK-354 | IPC commands for integrity scan, auto-fix, and agent delegation | 1 | TASK-352, TASK-353 |
-| TASK-355 | Dashboard integrity widget — health score and issue list | 2 | TASK-354 |
-| TASK-356 | Fix flow — auto-fix application and agent delegation UI | 2 | TASK-354, TASK-355 |
-| TASK-357 | Pipeline thread visualization | 3 | TASK-354 |
-| TASK-358 | Bottleneck detection and flow analysis | 3 | TASK-357 |
-| TASK-359 | Graph snapshot storage and trend data | 4 | TASK-352 |
-| TASK-360 | Dashboard trend widgets — sparklines, velocity, staleness | 4 | TASK-355, TASK-359 |
-| TASK-361 | Reconcile EPIC-060 | — | all above |
+| TASK-TBD-1 | Native integrity checks in artifact_graph.rs | 1 | — |
+| TASK-TBD-2 | Auto-fix engine for deterministic integrity issues | 1 | TASK-TBD-1 |
+| TASK-TBD-3 | IPC commands for integrity scan, auto-fix, and agent delegation | 1 | TASK-TBD-1, TASK-TBD-2 |
+| TASK-TBD-4 | Dashboard integrity widget — health score and issue list | 2 | TASK-TBD-3 |
+| TASK-TBD-5 | Fix flow — auto-fix application and agent delegation UI | 2 | TASK-TBD-3, TASK-TBD-4 |
+| TASK-TBD-6 | Pipeline thread visualization | 3 | TASK-TBD-3 |
+| TASK-TBD-7 | Bottleneck detection and flow analysis | 3 | TASK-TBD-6 |
+| TASK-TBD-8 | Graph snapshot storage and trend data | 4 | TASK-TBD-1 |
+| TASK-TBD-9 | Dashboard trend widgets — sparklines, velocity, staleness | 4 | TASK-TBD-4, TASK-TBD-8 |
+| TASK-TBD-10 | Reconcile [EPIC-060](EPIC-060) | — | all above |
 
 ## Out of Scope
 
 - Replacing the Node-based CLI tools (they continue to work for CLI users)
-- Full graph visualization (node-link diagram) — covered by EPIC-048
+- Full graph visualization (node-link diagram) — covered by [EPIC-048](EPIC-048)
 - Plugin ecosystem for custom integrity checks (future)
 - Notification system for integrity degradation (future idea)
 - Process automation (related idea surfacing, observation capture) — moved to [EPIC-061](EPIC-061)

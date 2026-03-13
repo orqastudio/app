@@ -27,7 +27,7 @@ relationships:
 
 ## Pattern
 
-EPIC-059 has accumulated 8 observations (IMPL-018 through IMPL-025) during implementation. None of them have been triaged. Some may need implementation within this epic to complete the work (e.g., IMPL-021 about tracking open items — that process gap is actively causing problems right now). Others could be deferred to future ideas (e.g., IMPL-018 about configurable paths is a non-trivial refactor).
+[EPIC-059](EPIC-059) has accumulated 8 observations (IMPL-018 through IMPL-025) during implementation. None of them have been triaged. Some may need implementation within this epic to complete the work (e.g., [IMPL-021](IMPL-021) about tracking open items — that process gap is actively causing problems right now). Others could be deferred to future ideas (e.g., [IMPL-018](IMPL-018) about configurable paths is a non-trivial refactor).
 
 Without a triage step, observations accumulate indefinitely at `maturity: observation` with `recurrence: 1`. The promotion pipeline never fires. The learning loop captures input but produces no output.
 
@@ -50,4 +50,4 @@ Auto-created triage task (user-approved via RES-052). When the first observation
 
 ## Triage
 
-Promoted — RULE-004 observation triage protocol ensures a triage task exists when observations accumulate during an epic.
+Promoted — [RULE-004](RULE-004) observation triage protocol ensures a triage task exists when observations accumulate during an epic.

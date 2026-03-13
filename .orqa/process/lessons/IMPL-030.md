@@ -18,7 +18,7 @@ relationships:
 
 ## Pattern
 
-Currently RULE-040 defines a fixed capability-to-tool mapping per provider. Claude Code CLI maps `file_read` → `Read` (native tool). But there's a choice the user should be able to make:
+Currently [RULE-040](RULE-040) defines a fixed capability-to-tool mapping per provider. Claude Code CLI maps `file_read` → `Read` (native tool). But there's a choice the user should be able to make:
 
 - **Native**: `file_read` → provider's built-in `Read` tool (fast, provider-controlled)
 - **App MCP**: `file_read` → app's MCP server `orqa_read` (app-controlled, consistent behaviour, additional governance)

@@ -16,14 +16,14 @@ acceptance:
 
 ## What
 
-Standing reconciliation task for EPIC-054. Ensures the epic body stays accurate as work evolves.
+Standing reconciliation task for [EPIC-054](EPIC-054). Ensures the epic body stays accurate as work evolves.
 
 ## Verification
 
-- Epic body task table matches actual tasks with `epic: EPIC-054`
+- Epic body task table matches actual tasks with `epic: [EPIC-054](EPIC-054)`
 - Pillars array is accurate
 - docs-produced entries exist on disk
 
 ## Lessons
 
-- Backfilled per RULE-004 epic reconciliation requirement
+- Backfilled per [RULE-004](RULE-004) epic reconciliation requirement

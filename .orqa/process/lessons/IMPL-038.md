@@ -35,4 +35,4 @@ Observation: capture should be automatic and ungatekept. Scope decisions are mad
 
 ## Triage
 
-Promoted — encoded in RULE-004 observation triage protocol. Recording is never scope creep. Triage determines disposition.
+Promoted — encoded in [RULE-004](RULE-004) observation triage protocol. Recording is never scope creep. Triage determines disposition.

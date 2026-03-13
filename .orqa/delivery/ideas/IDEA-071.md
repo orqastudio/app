@@ -18,7 +18,7 @@ promoted-to: null
 
 ## Motivation
 
-RES-052 established the design decisions for plugin-provider pairing, capability fulfilment, and plugin type taxonomy. These decisions need implementation:
+[RES-052](RES-052) established the design decisions for plugin-provider pairing, capability fulfilment, and plugin type taxonomy. These decisions need implementation:
 
 - Plugin type system (array of types, extendable enum, type-specific requires shape)
 - AI provider definitions in `.orqa/providers/` (identity, detection, required plugins)
@@ -27,4 +27,4 @@ RES-052 established the design decisions for plugin-provider pairing, capability
 - Load-time filtering of non-matching plugins based on active AI provider
 - Bidirectional provider-plugin relationship (providers declare required plugins, plugins declare supported providers)
 
-This is the implementation companion to IDEA-069 (sidecar-as-plugin), which would eventually merge provider definitions into plugins themselves.
+This is the implementation companion to [IDEA-069](IDEA-069) (sidecar-as-plugin), which would eventually merge provider definitions into plugins themselves.

@@ -33,7 +33,7 @@ An AI provider schema might declare:
 - Required plugins (must be installed for the provider to work)
 - Optional plugins (enhance the experience)
 - Detection mechanism (how the system knows this provider is active)
-- Capability profile (what tools/features this provider supports — feeds into RULE-040 capability resolution)
+- Capability profile (what tools/features this provider supports — feeds into [RULE-040](RULE-040) capability resolution)
 
 ## Fix
 

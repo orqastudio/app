@@ -37,8 +37,8 @@ Beyond integrity, the pipeline dashboard should show the flow of knowledge throu
 ## Scope
 
 ### Phase 0: Process Automation (Precursors)
-- Promote IMPL-044: update RULE-004 with a mandatory "scan related ideas" step in the promotion procedure
-- Promote IMPL-045: create a `user-prompt-submit` hook in the plugin that infers observation intent and auto-creates IMPL entries
+- Promote [IMPL-044](IMPL-044): update [RULE-004](RULE-004) with a mandatory "scan related ideas" step in the promotion procedure
+- Promote [IMPL-045](IMPL-045): create a `user-prompt-submit` hook in the plugin that infers observation intent and auto-creates IMPL entries
 
 ### Phase 1: Integrity Engine (Backend)
 - Native Rust integrity checks in the backend (link verification, relationship validation, reconciliation checks, schema compliance)

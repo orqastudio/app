@@ -144,8 +144,8 @@ node tools/verify-links.mjs --json
 
 ```
 === ERRORS ===
-  broken-link: Linked reference RULE-099 points to non-existent artifact
-  broken-frontmatter-ref: Frontmatter field 'depends-on' references non-existent artifact TASK-999
+  broken-link: Linked reference RULE-NNN points to non-existent artifact
+  broken-frontmatter-ref: Frontmatter field 'depends-on' references non-existent artifact TASK-NNN
 
 === WARNINGS ===
   bare-id: Bare artifact ID EPIC-045 should use link syntax [EPIC-045](EPIC-045)

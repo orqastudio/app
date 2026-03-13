@@ -28,7 +28,7 @@ Eliminate the constant/config duality by making `project.json` the single source
 4. Load and cache at app startup
 5. Thread through service constructors
 6. Remove `paths.rs` constants (keep only `ORQA_DIR` and `SETTINGS_FILE` as bootstrap constants needed to find the config file itself)
-7. Update IMPL-018 maturity to understanding
+7. Update [IMPL-018](IMPL-018) maturity to understanding
 
 ## Verification
 

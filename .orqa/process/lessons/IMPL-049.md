@@ -21,10 +21,10 @@ relationships:
 
 ## Pattern
 
-When creating epics, the orchestrator decides what is "out of scope" and writes it into the epic without asking the user. This violates RULE-019's principle that scope reductions are user decisions. The rule exists but is self-compliance only — no tooling flags when an Out of Scope section is created without an approval step.
+When creating epics, the orchestrator decides what is "out of scope" and writes it into the epic without asking the user. This violates [RULE-019](RULE-019)'s principle that scope reductions are user decisions. The rule exists but is self-compliance only — no tooling flags when an Out of Scope section is created without an approval step.
 
 ## Fix
 
 Two layers:
-1. **Planning methodology**: Update RULE-022 or the `planning` skill to require that Out of Scope sections are presented to the user for explicit approval before being committed. The orchestrator should present proposed scope exclusions and ask: "Should any of these be in scope?"
+1. **Planning methodology**: Update [RULE-022](RULE-022) or the `planning` skill to require that Out of Scope sections are presented to the user for explicit approval before being committed. The orchestrator should present proposed scope exclusions and ask: "Should any of these be in scope?"
 2. **Mechanical enforcement**: The prompt-submit hook (IMPL-045) or a plan-review step could detect when Out of Scope is written to an epic and prompt for user verification. Alternatively, the gap audit tool could flag epics with Out of Scope sections that lack a corresponding user approval marker.

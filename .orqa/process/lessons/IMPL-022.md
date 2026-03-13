@@ -34,4 +34,4 @@ Automatic surfacing (user-approved via RES-052). When all tasks under an epic ha
 
 ## Triage
 
-Promoted — epic readiness surfacing added to RULE-004. Human gate ensures epics don't languish when all tasks done.
+Promoted — epic readiness surfacing added to [RULE-004](RULE-004). Human gate ensures epics don't languish when all tasks done.

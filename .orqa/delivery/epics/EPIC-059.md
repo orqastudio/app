@@ -148,14 +148,14 @@ Broken links and missing inverses mean the graph is lying. Nothing else starts u
 
 | ID | Title | Depends On | Phase |
 |----|-------|-----------|-------|
-| [TASK-302](TASK-302) | Complete RES-051: behavioral directives research | — | 4 |
+| [TASK-302](TASK-302) | Complete [RES-051](RES-051): behavioral directives research | — | 4 |
 | [TASK-303](TASK-303) | Clean up Claude memory files that duplicate artifact knowledge | [TASK-302](TASK-302) | 4 |
 | [TASK-304](TASK-304) | Remove ArtifactType::Hook dead code | — | 4 |
 | [TASK-305](TASK-305) | Fix broken forward-references to non-existent artifacts | — | 4 |
 | [TASK-306](TASK-306) | Investigate configurable .orqa/ paths (IMPL-018) | — | 4 |
 | [TASK-307](TASK-307) | Design plugin-sidecar pairing mechanism (IMPL-019, IMPL-020) | — | 4 |
 | [TASK-308](TASK-308) | Establish learning loop and completion discipline (IMPL-021 through 025) | — | 4 |
-| [TASK-309](TASK-309) | Triage EPIC-059 observations (IMPL-018 through IMPL-025) | [TASK-308](TASK-308) | 4 |
+| [TASK-309](TASK-309) | Triage [EPIC-059](EPIC-059) observations (IMPL-018 through IMPL-025) | [TASK-308](TASK-308) | 4 |
 | [TASK-310](TASK-310) | Plugin: maintain memory entries for unimplemented ADs | — | 4 |
 
 ## Out of Scope

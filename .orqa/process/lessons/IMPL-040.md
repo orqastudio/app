@@ -39,4 +39,4 @@ Not yet determined. Possible approaches:
 
 ## Triage
 
-Resolved by TASK-310 — unimplemented ADs maintained as memory entries, surviving context compaction. Decisions no longer lost when scrolled out of view.
+Resolved by [TASK-310](TASK-310) — unimplemented ADs maintained as memory entries, surviving context compaction. Decisions no longer lost when scrolled out of view.
