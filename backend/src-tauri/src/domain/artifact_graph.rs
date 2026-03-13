@@ -344,6 +344,7 @@ pub enum IntegrityCategory {
     BrokenLink,
     MissingInverse,
     NullTarget,
+    ResearchGap,
 }
 
 /// Severity of an integrity finding.
@@ -454,7 +455,64 @@ pub fn check_integrity(graph: &ArtifactGraph) -> Vec<IntegrityCheck> {
         }
     }
 
+    // 3. Research gaps — delivered/partially-delivered ideas with unresolved research-needed
+    check_research_gaps(graph, &mut checks);
+
     checks
+}
+
+/// Check that delivered ideas have their research-needed items tracked as tasks.
+fn check_research_gaps(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
+    for node in graph.nodes.values() {
+        if node.artifact_type != "idea" {
+            continue;
+        }
+
+        let status = match &node.status {
+            Some(s) => s.as_str(),
+            None => continue,
+        };
+
+        if status != "delivered" && status != "partially-delivered" {
+            continue;
+        }
+
+        let research_needed = match node.frontmatter.get("research-needed") {
+            Some(serde_json::Value::Array(arr)) if !arr.is_empty() => arr,
+            _ => continue,
+        };
+
+        // Check if any tasks reference this idea (by ID appearing in task descriptions
+        // or via backlinks from tasks)
+        let has_related_tasks = node.references_in.iter().any(|r| {
+            graph
+                .nodes
+                .get(&r.source_id)
+                .map(|n| n.artifact_type == "task")
+                .unwrap_or(false)
+        });
+
+        if !has_related_tasks {
+            checks.push(IntegrityCheck {
+                category: IntegrityCategory::ResearchGap,
+                severity: IntegritySeverity::Warning,
+                artifact_id: node.id.clone(),
+                message: format!(
+                    "{} is {} with {} research-needed items but no tasks reference it — \
+                     research questions may be unresolved",
+                    node.id,
+                    status,
+                    research_needed.len()
+                ),
+                auto_fixable: false,
+                fix_description: Some(
+                    "Create tasks to resolve the remaining research questions, \
+                     or document answers in the idea body"
+                        .to_string(),
+                ),
+            });
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------

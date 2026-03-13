@@ -2,7 +2,7 @@
 id: TASK-397
 title: "Reconcile EPIC-060 — verify all deliverables and update status"
 description: "Final reconciliation of EPIC-060: verify all tasks are done, update task table with real IDs, confirm epic deliverables match implementation, and set epic to review status pending UAT."
-status: todo
+status: done
 created: "2026-03-13"
 updated: "2026-03-13"
 epic: EPIC-060

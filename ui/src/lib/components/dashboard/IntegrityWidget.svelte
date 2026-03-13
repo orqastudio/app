@@ -47,6 +47,7 @@
 		BrokenLink: "Broken Links",
 		MissingInverse: "Missing Inverses",
 		NullTarget: "Null Targets",
+		ResearchGap: "Research Gaps",
 	};
 
 	let expandedCategories = $state<Set<IntegrityCategory>>(new Set());
