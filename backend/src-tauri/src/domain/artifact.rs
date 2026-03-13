@@ -26,7 +26,9 @@ pub fn derive_rel_path(artifact_type: &ArtifactType, name: &str) -> String {
         ArtifactType::Agent => format!(".orqa/process/agents/{sanitized}.md"),
         ArtifactType::Rule => format!(".orqa/process/rules/{sanitized}.md"),
         ArtifactType::Skill => format!(".orqa/process/skills/{sanitized}/SKILL.md"),
-        ArtifactType::Hook => format!(".orqa/process/hooks/{sanitized}.sh"),
+        // Hooks are plugin implementation, not scannable artifacts.
+        // This path is a placeholder — hook CRUD is not currently used.
+        ArtifactType::Hook => format!("hooks/{sanitized}.sh"),
         ArtifactType::Doc => format!("docs/{sanitized}.md"),
     }
 }
@@ -39,7 +41,7 @@ pub fn infer_artifact_type_from_path(rel_path: &str) -> ArtifactType {
         ArtifactType::Rule
     } else if rel_path.starts_with(".orqa/process/skills") {
         ArtifactType::Skill
-    } else if rel_path.starts_with(".orqa/process/hooks") {
+    } else if rel_path.contains("/hooks/") {
         ArtifactType::Hook
     } else {
         ArtifactType::Doc

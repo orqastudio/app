@@ -7,8 +7,8 @@ pub const SETTINGS_FILE: &str = ".orqa/project.json";
 /// Directory containing research documents, relative to the project root.
 pub const RESEARCH_DIR: &str = ".orqa/delivery/research";
 
-/// Directory containing implementation plans, relative to the project root.
-pub const PLANS_DIR: &str = ".orqa/delivery/plans";
+/// Directory containing pillar definitions, relative to the project root.
+pub const PILLARS_DIR: &str = ".orqa/process/pillars";
 
 /// Directory containing implementation lessons, relative to the project root.
 pub const LESSONS_DIR: &str = ".orqa/process/lessons";

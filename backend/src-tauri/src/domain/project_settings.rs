@@ -42,11 +42,17 @@ pub enum ArtifactEntry {
 /// Governance artifact counts for a project.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GovernanceCounts {
-    pub docs: u32,
+    #[serde(default)]
+    pub lessons: u32,
+    #[serde(default)]
+    pub decisions: u32,
+    #[serde(default)]
     pub agents: u32,
+    #[serde(default)]
     pub rules: u32,
+    #[serde(default)]
     pub skills: u32,
-    pub hooks: u32,
+    #[serde(default)]
     pub has_claude_config: bool,
 }
 
@@ -110,11 +116,11 @@ mod tests {
                 has_design_tokens: false,
             }),
             governance: Some(GovernanceCounts {
-                docs: 10,
-                agents: 3,
-                rules: 5,
-                skills: 2,
-                hooks: 1,
+                lessons: 16,
+                decisions: 44,
+                agents: 7,
+                rules: 45,
+                skills: 49,
                 has_claude_config: true,
             }),
             icon: None,
@@ -139,8 +145,8 @@ mod tests {
         assert!(deserialized.governance.is_some());
 
         let gov = deserialized.governance.as_ref().expect("governance");
-        assert_eq!(gov.docs, 10);
-        assert_eq!(gov.agents, 3);
+        assert_eq!(gov.lessons, 16);
+        assert_eq!(gov.agents, 7);
         assert!(gov.has_claude_config);
     }
 

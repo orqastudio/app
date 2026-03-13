@@ -105,6 +105,12 @@ node tools/verify-links.mjs
 # Include bidirectional consistency checks
 node tools/verify-links.mjs --check-bidirectional
 
+# Include source code path verification (uses tools/path-manifest.json)
+node tools/verify-links.mjs --check-paths
+
+# Full scan (bidirectional + source paths) — same as `make verify-links`
+node tools/verify-links.mjs --check-bidirectional --check-paths
+
 # JSON output for agent processing
 node tools/verify-links.mjs --json
 ```
@@ -131,6 +137,8 @@ node tools/verify-links.mjs --json
 | `broken-relationship` | error | Relationship target doesn't exist |
 | `bare-id` | warning | Artifact ID in body without link syntax |
 | `missing-inverse` | warning | Bidirectional relationship is one-sided |
+| `stale-source-path` | error | Source code references a retired `.orqa/` path |
+| `broken-source-path` | error | Source code references a `.orqa/` path that doesn't exist on disk |
 
 ### Output Format
 
@@ -162,6 +170,25 @@ The backfill tool's `updateFrontmatter()` function:
 - Preserves markdown body content exactly
 - Follows schema `propertyOrder` for field ordering
 - Never uses regex replacement on frontmatter
+
+## Path Manifest
+
+**Location:** `tools/path-manifest.json`
+
+The path manifest is the single source of truth for all canonical `.orqa/` paths used across the codebase. It has two sections:
+
+- **`paths`** — every valid `.orqa/` directory and file path, with type and description
+- **`retired`** — paths that were replaced by directory reorganizations, with the replacement path and date
+
+When `--check-paths` is enabled, verify-links scans source code (`.rs`, `.ts`, `.mjs`, `.js`, `.svelte`) for hardcoded `.orqa/` path references and checks them against the manifest:
+
+- References to **retired** paths produce errors (they will break at runtime)
+- References to paths that **don't exist on disk** and aren't in the manifest produce warnings
+
+### Maintaining the Manifest
+
+When adding a new `.orqa/` directory: add it to the `paths` array.
+When moving a directory: update the `paths` entry to the new path and add the old path to `retired`.
 
 ## Adding New Relationship Types
 

@@ -128,8 +128,8 @@ skills-update: ## Update all skills
 
 # ── Verification ─────────────────────────────────────────────────────────────
 
-verify-links: ## Verify all .orqa/ cross-references resolve
-	node tools/verify-links.mjs --check-bidirectional
+verify-links: ## Verify all .orqa/ cross-references and source code paths resolve
+	node tools/verify-links.mjs --check-bidirectional --check-paths
 
 verify-integrity: ## Check pipeline integrity (relationships, deprecated fields)
 	node tools/verify-pipeline-integrity.mjs

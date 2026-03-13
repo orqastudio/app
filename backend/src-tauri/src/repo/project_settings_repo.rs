@@ -59,11 +59,11 @@ mod tests {
                 has_design_tokens: false,
             }),
             governance: Some(GovernanceCounts {
-                docs: 10,
+                lessons: 10,
+                decisions: 5,
                 agents: 3,
                 rules: 5,
                 skills: 2,
-                hooks: 1,
                 has_claude_config: true,
             }),
             icon: None,

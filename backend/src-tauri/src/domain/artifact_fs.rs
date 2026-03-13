@@ -59,11 +59,10 @@ pub fn artifact_from_file(
 /// Returns `None` for `Doc` — docs live in `docs/`, not in `.orqa/`.
 pub fn governance_dir(root: &Path, artifact_type: &ArtifactType) -> Option<PathBuf> {
     match artifact_type {
-        ArtifactType::Agent => Some(root.join(".orqa").join("team").join("agents")),
-        ArtifactType::Rule => Some(root.join(".orqa").join("governance").join("rules")),
-        ArtifactType::Skill => Some(root.join(".orqa").join("team").join("skills")),
-        ArtifactType::Hook => Some(root.join(".orqa").join("governance").join("hooks")),
-        ArtifactType::Doc => None,
+        ArtifactType::Agent => Some(root.join(".orqa").join("process").join("agents")),
+        ArtifactType::Rule => Some(root.join(".orqa").join("process").join("rules")),
+        ArtifactType::Skill => Some(root.join(".orqa").join("process").join("skills")),
+        ArtifactType::Hook | ArtifactType::Doc => None,
     }
 }
 
@@ -296,6 +295,6 @@ mod tests {
         let root = Path::new("/tmp/project");
         let dir = governance_dir(root, &ArtifactType::Agent);
         assert!(dir.is_some());
-        assert!(dir.unwrap().ends_with("team/agents"));
+        assert!(dir.unwrap().ends_with("process/agents"));
     }
 }

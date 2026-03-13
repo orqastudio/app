@@ -188,56 +188,22 @@ fn detect_package_manager(root: &Path) -> Option<String> {
 
 /// Count governance artifacts in the project.
 fn scan_governance(root: &Path) -> GovernanceCounts {
-    let docs = count_md_files_recursive(&root.join("docs"));
-    let agents = count_md_files_in_dir(&root.join(".orqa").join("agents"));
-    let rules = count_md_files_in_dir(&root.join(".orqa").join("rules"));
-    let skills = count_subdirs(&root.join(".orqa").join("skills"));
-    let hooks = count_files_in_dir(&root.join(".orqa").join("hooks"));
+    let process_dir = root.join(".orqa").join("process");
+    let lessons = count_md_files_in_dir(&process_dir.join("lessons"));
+    let decisions = count_md_files_in_dir(&process_dir.join("decisions"));
+    let agents = count_md_files_in_dir(&process_dir.join("agents"));
+    let rules = count_md_files_in_dir(&process_dir.join("rules"));
+    let skills = count_subdirs(&process_dir.join("skills"));
     let has_claude_config = root.join(".claude").join("CLAUDE.md").exists();
 
     GovernanceCounts {
-        docs,
+        lessons,
+        decisions,
         agents,
         rules,
         skills,
-        hooks,
         has_claude_config,
     }
-}
-
-/// Count `.md` files recursively in a directory.
-fn count_md_files_recursive(dir: &Path) -> u32 {
-    if !dir.is_dir() {
-        return 0;
-    }
-    count_md_recursive_inner(dir, 0)
-}
-
-fn count_md_recursive_inner(dir: &Path, depth: usize) -> u32 {
-    if depth > MAX_SCAN_DEPTH {
-        return 0;
-    }
-
-    let Ok(entries) = std::fs::read_dir(dir) else {
-        return 0;
-    };
-
-    let mut count = 0u32;
-    for entry in entries.flatten() {
-        let Ok(ft) = entry.file_type() else {
-            continue;
-        };
-
-        if ft.is_file() {
-            let name = entry.file_name();
-            if name.to_string_lossy().ends_with(".md") {
-                count = count.saturating_add(1);
-            }
-        } else if ft.is_dir() {
-            count = count.saturating_add(count_md_recursive_inner(&entry.path(), depth + 1));
-        }
-    }
-    count
 }
 
 /// Count `.md` files in a single directory (not recursive).
@@ -273,21 +239,6 @@ fn count_subdirs(dir: &Path) -> u32 {
         .count() as u32
 }
 
-/// Count all files in a directory (not recursive).
-fn count_files_in_dir(dir: &Path) -> u32 {
-    if !dir.is_dir() {
-        return 0;
-    }
-    let Ok(entries) = std::fs::read_dir(dir) else {
-        return 0;
-    };
-
-    entries
-        .flatten()
-        .filter(|e| e.file_type().is_ok_and(|ft| ft.is_file()))
-        .count() as u32
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -314,7 +265,7 @@ mod tests {
         assert!(result.stack.frameworks.is_empty());
         assert!(result.stack.package_manager.is_none());
         assert!(!result.stack.has_claude_config);
-        assert_eq!(result.governance.docs, 0);
+        assert_eq!(result.governance.lessons, 0);
         assert_eq!(result.governance.agents, 0);
 
         cleanup(&dir);
@@ -346,22 +297,22 @@ mod tests {
     fn detects_governance_artifacts() {
         let dir = create_test_dir("governance");
 
-        // Create docs/ with markdown files
-        let docs_dir = dir.join("docs");
-        fs::create_dir_all(docs_dir.join("sub")).expect("mkdir");
-        fs::write(docs_dir.join("readme.md"), "# Docs").expect("write");
-        fs::write(docs_dir.join("sub").join("page.md"), "# Page").expect("write");
+        // Create .orqa/process/ structure (current directory layout)
+        let process_dir = dir.join(".orqa").join("process");
+        fs::create_dir_all(process_dir.join("agents")).expect("mkdir");
+        fs::create_dir_all(process_dir.join("rules")).expect("mkdir");
+        fs::create_dir_all(process_dir.join("lessons")).expect("mkdir");
+        fs::create_dir_all(process_dir.join("decisions")).expect("mkdir");
+        fs::create_dir_all(process_dir.join("skills").join("chunkhound")).expect("mkdir");
 
-        // Create .orqa/ structure for governance artifacts
-        let orqa_dir = dir.join(".orqa");
-        fs::create_dir_all(orqa_dir.join("agents")).expect("mkdir");
-        fs::create_dir_all(orqa_dir.join("rules")).expect("mkdir");
-        fs::create_dir_all(orqa_dir.join("skills").join("chunkhound")).expect("mkdir");
-        fs::create_dir_all(orqa_dir.join("hooks")).expect("mkdir");
-
-        fs::write(orqa_dir.join("agents").join("backend.md"), "# Agent").expect("write");
-        fs::write(orqa_dir.join("rules").join("no-stubs.md"), "# Rule").expect("write");
-        fs::write(orqa_dir.join("hooks").join("pre-commit.sh"), "#!/bin/bash").expect("write");
+        fs::write(process_dir.join("agents").join("backend.md"), "# Agent").expect("write");
+        fs::write(process_dir.join("rules").join("no-stubs.md"), "# Rule").expect("write");
+        fs::write(process_dir.join("lessons").join("IMPL-001.md"), "# Lesson").expect("write");
+        fs::write(
+            process_dir.join("decisions").join("AD-001.md"),
+            "# Decision",
+        )
+        .expect("write");
 
         // Create .claude/ for platform config (has_claude_config check)
         let claude_dir = dir.join(".claude");
@@ -372,11 +323,11 @@ mod tests {
         let excluded = vec![".git".to_string()];
         let result = scan_project(dir_str, &excluded).expect("scan");
 
-        assert_eq!(result.governance.docs, 2);
         assert_eq!(result.governance.agents, 1);
         assert_eq!(result.governance.rules, 1);
+        assert_eq!(result.governance.lessons, 1);
+        assert_eq!(result.governance.decisions, 1);
         assert_eq!(result.governance.skills, 1);
-        assert_eq!(result.governance.hooks, 1);
         assert!(result.governance.has_claude_config);
 
         cleanup(&dir);

@@ -797,7 +797,7 @@ mod tests {
         assert_eq!(tree.groups.len(), 1);
         let group = &tree.groups[0];
         // Label and icon come from group directory README frontmatter.
-        assert_eq!(group.label, "Planning");
+        assert_eq!(group.label, "Delivery");
         assert_eq!(group.icon, "target");
         assert_eq!(group.types.len(), 2);
         assert_eq!(group.types[0].label, "Ideas");

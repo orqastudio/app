@@ -12,10 +12,11 @@
 //    - Reports relationship type mismatches
 //
 // Usage:
-//   node tools/verify-links.mjs [--fix-bare-ids] [--check-bidirectional] [--json] [--staged]
+//   node tools/verify-links.mjs [--fix-bare-ids] [--check-bidirectional] [--check-paths] [--json] [--staged]
 //
 // Flags:
-//   --staged    Only check files staged in git (for pre-commit hook)
+//   --staged        Only check files staged in git (for pre-commit hook)
+//   --check-paths   Scan source code for stale .orqa/ paths (uses tools/path-manifest.json)
 //
 // Output: structured report of broken, missing, and suspect links.
 
@@ -291,10 +292,112 @@ function findAllMarkdown(dir) {
   return results;
 }
 
+// ── Source Code Path Verification ────────────────────────────────────────────
+
+/**
+ * Scan source code files for hardcoded .orqa/ paths and verify them against
+ * the path manifest. Catches stale references after directory reorganizations.
+ */
+function checkSourcePaths() {
+  const manifestPath = resolve(ROOT, "tools/path-manifest.json");
+  if (!existsSync(manifestPath)) return [];
+
+  const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
+  const validPaths = new Set(manifest.paths.map((p) => p.path));
+  const retiredPrefixes = manifest.retired.map((r) => r.path);
+
+  const issues = [];
+
+  // Source file extensions to scan
+  const sourceExts = [".rs", ".ts", ".mjs", ".js", ".svelte"];
+
+  // Directories to scan (skip node_modules, target, dist, .git)
+  const scanDirs = ["backend/src-tauri/src", "ui/src", "tools", ".githooks"];
+
+  // Test fixture paths — paths used in unit tests as pattern-matching inputs,
+  // not as real file references. Listed in path-manifest.json under "test_fixtures".
+  const testFixtures = new Set((manifest.test_fixtures || []).map((t) => t.path));
+
+  // Pattern to find .orqa/ path references in source code.
+  // Matches directory paths and file paths (with extensions like .md, .json, .sh).
+  const pathPattern = /["'`]?(\.orqa\/[a-z_/.-]+[a-z])/g;
+
+  for (const scanDir of scanDirs) {
+    const fullDir = resolve(ROOT, scanDir);
+    if (!existsSync(fullDir)) continue;
+    const files = findSourceFiles(fullDir, sourceExts);
+
+    for (const file of files) {
+      const relFile = relative(ROOT, file).replace(/\\/g, "/");
+      const content = readFileSync(file, "utf-8");
+
+      for (const match of content.matchAll(pathPattern)) {
+        const foundPath = match[1].replace(/\/+$/, ""); // strip trailing slash
+
+        // Strip trailing file extension for directory-level matching
+        const dirPath = foundPath.replace(/\/[^/]+\.[a-z]+$/, "");
+
+        // Skip if it's a valid path, a prefix of one, or a known test fixture
+        if (validPaths.has(foundPath)) continue;
+        if (validPaths.has(dirPath)) continue;
+        if ([...validPaths].some((vp) => vp.startsWith(foundPath + "/"))) continue;
+        if ([...validPaths].some((vp) => vp.startsWith(dirPath + "/"))) continue;
+        if (testFixtures.has(foundPath)) continue;
+
+        // Check if it matches a retired path prefix
+        const retiredMatch = retiredPrefixes.find((rp) => foundPath.startsWith(rp));
+        if (retiredMatch) {
+          const replacement = manifest.retired.find((r) => r.path === retiredMatch);
+          issues.push({
+            type: "stale-source-path",
+            severity: "error",
+            file: relFile,
+            reference: foundPath,
+            message: `Stale path "${foundPath}" in ${relFile} — "${retiredMatch}" was replaced by "${replacement.replaced_by}" (${replacement.reason})`,
+          });
+        } else {
+          // Check if the path actually exists on disk
+          const fullPath = resolve(ROOT, foundPath);
+          if (!existsSync(fullPath)) {
+            // Only flag if it looks like a specific artifact path (not a generic .orqa/ comment)
+            const segments = foundPath.split("/").length;
+            if (segments >= 3) {
+              issues.push({
+                type: "broken-source-path",
+                severity: "error",
+                file: relFile,
+                reference: foundPath,
+                message: `Path "${foundPath}" referenced in ${relFile} does not exist on disk`,
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return issues;
+}
+
+function findSourceFiles(dir, exts) {
+  const results = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name.startsWith(".") || entry.name === "node_modules" || entry.name === "target") continue;
+    const fullPath = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results.push(...findSourceFiles(fullPath, exts));
+    } else if (exts.some((ext) => entry.name.endsWith(ext))) {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
+
 // ── Main ────────────────────────────────────────────────────────────────────
 
 const args = process.argv.slice(2);
 const checkBidir = args.includes("--check-bidirectional");
+const checkPaths = args.includes("--check-paths");
 const jsonOutput = args.includes("--json");
 const stagedOnly = args.includes("--staged");
 
@@ -336,6 +439,12 @@ for (const file of allFiles) {
 if (checkBidir) {
   const bidirIssues = checkBidirectional(allArtifactData);
   allIssues.push(...bidirIssues);
+}
+
+// Source code path verification
+if (checkPaths) {
+  const pathIssues = checkSourcePaths();
+  allIssues.push(...pathIssues);
 }
 
 // Output
