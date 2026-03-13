@@ -13,6 +13,7 @@ acceptance:
   - Tier 1 definition updated to clarify purpose (universal principles, not domain tech)
   - No agent YAML skills lists contain tech stack skills
 ---
+
 ## What
 
 The orchestrator (CLAUDE.md) lists `rust-async-patterns`, `svelte5-best-practices`, `tailwind-design-system`, `typescript-advanced-types`, and `tauri-v2` as Tier 1 ("declared in agent YAML, loaded automatically"). They are actually Tier 2 — injected by the orchestrator based on task scope, not auto-loaded by agents.

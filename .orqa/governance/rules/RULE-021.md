@@ -1,28 +1,34 @@
 ---
-id: "RULE-021"
-title: "Pillar Alignment in Documentation"
-description: "Every documentation page describing a feature must include a Pillar Alignment section."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-07"
-layer: "core"
+id: RULE-021
+title: Pillar Alignment in Documentation
+description: Every documentation page describing a feature must include a Pillar Alignment section.
+status: active
+created: 2026-03-07
+updated: 2026-03-07
+layer: core
 scope:
-  - "AGENT-003"
-  - "AGENT-004"
-  - "AGENT-007"
+  - AGENT-003
+  - AGENT-004
+  - AGENT-007
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Pillar alignment in docs ensures documentation serves the product vision"
-  - target: "RULE-031"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-008"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-004"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Pillar alignment in docs ensures documentation serves the product vision
+  - target: RULE-031
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-008
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-004
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-004
+    rationale: Inverse of informs relationship from RULE-004
+  - type: informed-by
+    target: RULE-031
+    rationale: Inverse of informs relationship from RULE-031
 ---
 Every documentation page that describes a feature, component, workflow, integration, or capability MUST include a "Pillar Alignment" section. This ensures all documented work traces back to the product vision and prevents scope creep from accumulating silently in the docs.
 

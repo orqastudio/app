@@ -19,7 +19,8 @@ scoring:
   dependency: 2
   effort: 3
   score: 9.7
----## Why P1
+---
+## Why P1
 
 Pillar 2 (Learning Through Reflection) — the system must get smarter with each cycle.
 

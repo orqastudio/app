@@ -21,7 +21,8 @@ scoring:
   dependency: 3
   effort: 3
   score: 10.3
----## Why P1
+---
+## Why P1
 
 Without this, non-software users encounter software-specific features that don't apply to them. Domain-agnostic thinking is a core principle.
 

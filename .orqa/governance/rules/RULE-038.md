@@ -1,25 +1,27 @@
 ---
-id: "RULE-038"
-title: "User-Invocable Skill Semantics"
-description: "The user-invocable field in skill frontmatter controls whether a skill can be triggered directly by users as a slash command or from the UI."
-status: "active"
-created: "2026-03-11"
-updated: "2026-03-11"
-layer: "core"
+id: RULE-038
+title: User-Invocable Skill Semantics
+description: The user-invocable field in skill frontmatter controls whether a skill can be triggered directly by users as a slash command or from the UI.
+status: active
+created: 2026-03-11
+updated: 2026-03-11
+layer: core
 scope:
-  - "AGENT-003"
+  - AGENT-003
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "User-invocable field creates clear structure for skill surfacing"
-  - target: "RULE-026"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-035"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-001
+    type: grounded
+    rationale: User-invocable field creates clear structure for skill surfacing
+  - target: RULE-026
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-035
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-026
+    rationale: Inverse of informs relationship from RULE-026
 ---
-
 Every skill MUST have a `user-invocable` field in its YAML frontmatter. This field determines how the skill surfaces to users.
 
 ## Field Values

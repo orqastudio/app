@@ -1,31 +1,33 @@
 ---
-id: "RULE-016"
-title: "IDs Are Not Priority"
-description: "Artifact IDs are sequential identifiers for uniqueness and reference. They carry no information about priority, importance, or execution order."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-07"
-layer: "core"
+id: RULE-016
+title: IDs Are Not Priority
+description: Artifact IDs are sequential identifiers for uniqueness and reference. They carry no information about priority, importance, or execution order.
+status: active
+created: 2026-03-07
+updated: 2026-03-07
+layer: core
 scope:
-  - "AGENT-001"
-  - "AGENT-002"
-  - "AGENT-003"
-  - "AGENT-004"
-  - "AGENT-005"
-  - "AGENT-006"
-  - "AGENT-007"
+  - AGENT-001
+  - AGENT-002
+  - AGENT-003
+  - AGENT-004
+  - AGENT-005
+  - AGENT-006
+  - AGENT-007
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Artifact ID semantics prevents confusion between identity and priority"
-  - target: "RULE-004"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-031"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Artifact ID semantics prevents confusion between identity and priority
+  - target: RULE-004
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-031
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-004
+    rationale: Inverse of informs relationship from RULE-004
 ---
-
 Artifact IDs ([EPIC-045](EPIC-045), [TASK-051](TASK-051), [AD-029](AD-029), etc.) are sequential identifiers for uniqueness and reference. They carry NO information about priority, importance, or execution order.
 
 ## Rule

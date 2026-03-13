@@ -1,32 +1,38 @@
 ---
-id: "RULE-023"
-title: "Required Reading"
-description: "Every agent must read its required documentation before any implementation work begins."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-07"
-layer: "core"
+id: RULE-023
+title: Required Reading
+description: Every agent must read its required documentation before any implementation work begins.
+status: active
+created: 2026-03-07
+updated: 2026-03-07
+layer: core
 scope:
-  - "AGENT-001"
-  - "AGENT-002"
-  - "AGENT-003"
-  - "AGENT-004"
-  - "AGENT-005"
-  - "AGENT-006"
-  - "AGENT-007"
+  - AGENT-001
+  - AGENT-002
+  - AGENT-003
+  - AGENT-004
+  - AGENT-005
+  - AGENT-006
+  - AGENT-007
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Required reading ensures agents have governing context loaded before work"
-  - target: "RULE-008"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-006"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-002"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Required reading ensures agents have governing context loaded before work
+  - target: RULE-008
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-006
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-002
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-001
+    rationale: Inverse of informs relationship from RULE-001
+  - type: informed-by
+    target: RULE-026
+    rationale: Inverse of informs relationship from RULE-026
 ---
 Every agent MUST read its Required Reading documentation before any implementation work begins. The Required Reading section in each agent definition lists the specific documentation pages that agent needs loaded into context.
 

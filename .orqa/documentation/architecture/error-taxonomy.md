@@ -6,6 +6,7 @@ created: "2026-03-02"
 updated: "2026-03-10"
 ---
 
+
 # Error Taxonomy
 
 All Tauri commands return `Result<T, OrqaError>`. `OrqaError` is a single flat enum defined in `backend/src-tauri/src/error.rs`. There are no nested error enums.
@@ -13,6 +14,7 @@ All Tauri commands return `Result<T, OrqaError>`. `OrqaError` is a single flat e
 **Architecture References:** [AD-003](AD-003) (error propagation via Result types), [AD-002](AD-002) (IPC boundary design)
 
 ---
+
 
 ## 1. Design Principles
 
@@ -27,6 +29,7 @@ All Tauri commands return `Result<T, OrqaError>`. `OrqaError` is a single flat e
 5. **No user-facing message separation.** There is no `user_message()` method. The frontend receives the single string from the variant and decides how to present it.
 
 ---
+
 
 ## 2. The OrqaError Enum
 
@@ -97,6 +100,7 @@ pub enum OrqaError {
 
 ---
 
+
 ## 3. From Conversions
 
 Three standard library error types convert to `OrqaError` automatically via `From` impls. All conversions call `.to_string()` on the source error and wrap the message in the appropriate variant.
@@ -124,6 +128,7 @@ impl From<rusqlite::Error> for OrqaError {
 These `From` impls enable `?` propagation throughout the codebase. A function that reads a file, parses JSON, and queries SQLite can use `?` on all three operations without any explicit error mapping.
 
 ---
+
 
 ## 4. Propagation Pattern
 
@@ -171,6 +176,7 @@ Tauri serializes `Err(OrqaError)` using the `Serialize` derive. The `#[serde(tag
 
 ---
 
+
 ## 5. IPC Serialization Format
 
 Every `OrqaError` variant serializes to the same two-field JSON shape:
@@ -205,6 +211,7 @@ Every `OrqaError` variant serializes to the same two-field JSON shape:
 The `message` value is always the raw string passed to the variant constructor — it is the `Display` output of the original error (via `.to_string()`) for converted errors, or a hand-written message for directly constructed ones.
 
 ---
+
 
 ## 6. TypeScript Interface
 
@@ -247,6 +254,7 @@ try {
 
 ---
 
+
 ## 7. Testing
 
 `backend/src-tauri/src/error.rs` contains unit tests covering:
@@ -262,6 +270,7 @@ There is no test for `rusqlite::Error` conversion because constructing a `rusqli
 
 ---
 
+
 ## Pillar Alignment
 
 | Pillar | Alignment |
@@ -270,6 +279,7 @@ There is no test for `rusqlite::Error` conversion because constructing a `rusqli
 | Learning Through Reflection | N/A — error taxonomy is infrastructure, not a learning or retrospection feature. |
 
 ---
+
 
 ## Related Documents
 

@@ -14,6 +14,7 @@ research-needed:
   - What backward compatibility is needed for existing tool calls in skills and rules?
   - How does this relate to MCP tool naming conventions?
 ---
+
 ## Motivation
 
 Currently agents must choose between three separate tools (`search_regex`, `search_semantic`, `code_research`) and two context-dependent implementations (ChunkHound MCP for CLI, native ONNX+DuckDB for app). This creates friction:

@@ -13,6 +13,7 @@ acceptance:
   - make typecheck passes
 ---
 
+
 ## What
 
 The frontend needs TypeScript types that match the new Rust backend types so the IPC boundary is type-safe.

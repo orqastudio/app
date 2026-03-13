@@ -14,6 +14,7 @@ acceptance:
   - Examples still clearly illustrate each principle (small units, pure functions, swappable parts)
   - Skill remains layer canon
 ---
+
 ## What
 
 The `composability` skill is `layer: canon` (portable across all projects) but currently contains OrqaStudio-specific file paths and code examples. The composability principles are universal and essential for plugin development — the examples need to be generic.

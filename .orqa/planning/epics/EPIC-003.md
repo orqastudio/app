@@ -18,7 +18,8 @@ scoring:
   dependency: 3
   effort: 3
   score: 11
----## Why P1
+---
+## Why P1
 
 Can't restart the app during development without losing conversation context. Every Rust change requires a restart, so this directly blocks dogfooding workflow.
 

@@ -18,7 +18,8 @@ scoring:
   dependency: 2
   effort: 1
   score: 26
----## Why P1
+---
+## Why P1
 
 Can't control reasoning behaviour without these toggles. The custom system prompt is how dogfooding context reaches the AI.
 

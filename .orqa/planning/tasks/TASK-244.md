@@ -13,6 +13,7 @@ acceptance:
   - "Coverage report shows >60% store coverage"
 ---
 
+
 ## What
 
 Zero frontend tests exist. Add Vitest unit tests for all 10 Svelte 5 rune stores covering state transitions, error handling, and invoke mock patterns.

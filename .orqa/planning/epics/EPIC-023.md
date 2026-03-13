@@ -20,7 +20,8 @@ scoring:
   dependency: 1
   effort: 2
   score: 10
----## Tasks
+---
+## Tasks
 
 - [ ] Audit first-run setup wizard — verify each step is clear and skippable
 - [ ] New Project flow — scaffold sensible project structure with optional templates

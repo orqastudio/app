@@ -1,41 +1,53 @@
 ---
-id: "RULE-007"
-title: "Development Commands"
-description: "All development commands must be invoked via make targets. Raw cargo and npm commands are forbidden."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-07"
-layer: "project"
+id: RULE-007
+title: Development Commands
+description: All development commands must be invoked via make targets. Raw cargo and npm commands are forbidden.
+status: active
+created: 2026-03-07
+updated: 2026-03-07
+layer: project
 scope:
-  - "AGENT-002"
-  - "AGENT-003"
-  - "AGENT-006"
+  - AGENT-002
+  - AGENT-003
+  - AGENT-006
 enforcement:
-  - event: "bash"
-    pattern: "^cargo (build|test|clippy|fmt|check)\\b"
-    action: "warn"
-    message: "Use make targets instead of raw cargo commands (RULE-007). See make help."
-  - event: "bash"
-    pattern: "^npm run\\b"
-    action: "warn"
-    message: "Use make targets instead of raw npm run commands (RULE-007). See make help."
-  - event: "bash"
-    pattern: "^cargo tauri\\b"
-    action: "warn"
-    message: "Use make dev/build/restart instead of raw cargo tauri commands (RULE-007)."
+  - event: bash
+    pattern: ^cargo (build|test|clippy|fmt|check)\b
+    action: warn
+    message: Use make targets instead of raw cargo commands (RULE-007). See make help.
+  - event: bash
+    pattern: ^npm run\b
+    action: warn
+    message: Use make targets instead of raw npm run commands (RULE-007). See make help.
+  - event: bash
+    pattern: ^cargo tauri\b
+    action: warn
+    message: Use make dev/build/restart instead of raw cargo tauri commands (RULE-007).
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Make targets provide a single structured interface for development commands"
-  - target: "RULE-006"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-029"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-013"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Make targets provide a single structured interface for development commands
+  - target: RULE-006
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-029
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-013
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-009
+    rationale: Inverse of informs relationship from RULE-009
+  - type: informed-by
+    target: RULE-013
+    rationale: Inverse of informs relationship from RULE-013
+  - type: informed-by
+    target: RULE-025
+    rationale: Inverse of informs relationship from RULE-025
+  - type: informed-by
+    target: RULE-039
+    rationale: Inverse of informs relationship from RULE-039
 ---
 All development commands MUST be invoked via `make` targets. Raw `cargo` and `npm run` commands are forbidden for tasks that have a `make` equivalent.
 

@@ -16,6 +16,7 @@ research-needed:
   - How does this relate to AD-010 (Tool Implementation as MCP) and the existing plugin system ideas (IDEA-038)?
   - What's the migration path from hardcoded tools to plugin tools without breaking existing functionality?
 ---
+
 ## Motivation
 
 Currently tools are Rust functions compiled into the app binary. Adding a new tool requires modifying Rust source code, recompiling, and shipping an app update. This is the opposite of the composability principle — tools are the least pluggable part of the system.

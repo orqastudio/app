@@ -19,7 +19,8 @@ scoring:
   dependency: 2
   effort: 4
   score: 5.8
----## Tasks
+---
+## Tasks
 
 - [ ] Agent registry — reads `.orqa/agents/*.md`, indexes capabilities
 - [ ] `spawn_agent` tool — spawns sub-agent with role and instructions

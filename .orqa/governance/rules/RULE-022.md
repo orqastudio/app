@@ -1,33 +1,51 @@
 ---
-id: "RULE-022"
-title: "Plan Mode Compliance"
-description: "Every implementation plan must have architectural compliance verification and UX-first design."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-12"
-layer: "core"
+id: RULE-022
+title: Plan Mode Compliance
+description: Every implementation plan must have architectural compliance verification and UX-first design.
+status: active
+created: 2026-03-07
+updated: 2026-03-12
+layer: core
 scope:
-  - "AGENT-003"
-  - "AGENT-004"
+  - AGENT-003
+  - AGENT-004
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Plan compliance creates structured verification before and during implementation"
-  - target: "RULE-004"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-031"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-002"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-006"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-010"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Plan compliance creates structured verification before and during implementation
+  - target: RULE-004
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-031
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-002
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-006
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-010
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-002
+    rationale: Inverse of informs relationship from RULE-002
+  - type: informed-by
+    target: RULE-008
+    rationale: Inverse of informs relationship from RULE-008
+  - type: informed-by
+    target: RULE-015
+    rationale: Inverse of informs relationship from RULE-015
+  - type: informed-by
+    target: RULE-017
+    rationale: Inverse of informs relationship from RULE-017
+  - type: informed-by
+    target: RULE-019
+    rationale: Inverse of informs relationship from RULE-019
+  - type: informed-by
+    target: RULE-028
+    rationale: Inverse of informs relationship from RULE-028
 ---
 Every implementation plan — whether captured in an epic, a task, or proposed in conversation — MUST satisfy two mandatory requirements before implementation begins.
 

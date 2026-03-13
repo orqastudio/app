@@ -19,7 +19,8 @@ scoring:
   dependency: 3
   effort: 3
   score: 10.3
----## Why P1
+---
+## Why P1
 
 The conversation IS the onboarding. Without this, new users don't know what to do.
 

@@ -1,41 +1,65 @@
 ---
-id: "RULE-008"
-title: "Documentation-First Implementation"
-description: "Documentation is the source of truth. Verify docs exist before writing code; update docs before changing code."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-12"
-layer: "core"
+id: RULE-008
+title: Documentation-First Implementation
+description: Documentation is the source of truth. Verify docs exist before writing code; update docs before changing code.
+status: active
+created: 2026-03-07
+updated: 2026-03-12
+layer: core
 scope:
-  - "AGENT-001"
-  - "AGENT-002"
-  - "AGENT-003"
-  - "AGENT-004"
-  - "AGENT-005"
-  - "AGENT-006"
-  - "AGENT-007"
+  - AGENT-001
+  - AGENT-002
+  - AGENT-003
+  - AGENT-004
+  - AGENT-005
+  - AGENT-006
+  - AGENT-007
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Documentation-first ensures knowledge is captured before implementation"
-  - target: "RULE-004"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-022"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-005"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-031"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-002"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-006"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Documentation-first ensures knowledge is captured before implementation
+  - target: RULE-004
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-022
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-005
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-031
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-002
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-006
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-002
+    rationale: Inverse of informs relationship from RULE-002
+  - type: informed-by
+    target: RULE-003
+    rationale: Inverse of informs relationship from RULE-003
+  - type: informed-by
+    target: RULE-004
+    rationale: Inverse of informs relationship from RULE-004
+  - type: informed-by
+    target: RULE-011
+    rationale: Inverse of informs relationship from RULE-011
+  - type: informed-by
+    target: RULE-014
+    rationale: Inverse of informs relationship from RULE-014
+  - type: informed-by
+    target: RULE-021
+    rationale: Inverse of informs relationship from RULE-021
+  - type: informed-by
+    target: RULE-023
+    rationale: Inverse of informs relationship from RULE-023
+  - type: informed-by
+    target: RULE-027
+    rationale: Inverse of informs relationship from RULE-027
 ---
 ## Principle
 

@@ -20,7 +20,8 @@ scoring:
   dependency: 2
   effort: 4
   score: 6.8
----**Note:** Two deliverables from this epic were deferred:
+---
+**Note:** Two deliverables from this epic were deferred:
 - **Visual compliance dashboard** -- not delivered; should be tracked in a future epic when dashboard UI work is prioritised.
 - **Session handoff and continuity** -- not delivered; depends on SDK session resume capabilities. Should be tracked in a separate epic.
 

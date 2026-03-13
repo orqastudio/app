@@ -1,18 +1,24 @@
 ---
-id: "RULE-029"
-title: "Testing Standards"
-description: "Test organisation, coverage requirements, mock boundaries, and isolation rules."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-07"
-layer: "project"
+id: RULE-029
+title: Testing Standards
+description: Test organisation, coverage requirements, mock boundaries, and isolation rules.
+status: active
+created: 2026-03-07
+updated: 2026-03-07
+layer: project
 scope:
-  - "AGENT-002"
-  - "AGENT-006"
+  - AGENT-002
+  - AGENT-006
 relationships:
-  - target: "PILLAR-002"
-    type: "grounded"
-    rationale: "Testing standards create feedback loops that enable learning from failures"
+  - target: PILLAR-002
+    type: grounded
+    rationale: Testing standards create feedback loops that enable learning from failures
+  - type: informed-by
+    target: RULE-006
+    rationale: Inverse of informs relationship from RULE-006
+  - type: informed-by
+    target: RULE-007
+    rationale: Inverse of informs relationship from RULE-007
 ---
 **Source of Truth:** This file defines testing patterns. `.orqa/documentation/development/coding-standards.md` defines coverage requirements.
 

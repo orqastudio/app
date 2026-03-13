@@ -27,6 +27,7 @@ scoring:
   score: 4.5
 ---
 
+
 ## Context
 
 OrqaStudio has 39 rules in `.orqa/governance/rules/` with structured frontmatter

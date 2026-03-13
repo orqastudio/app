@@ -21,7 +21,8 @@ scoring:
   dependency: 2
   effort: 4
   score: 7.3
----## Why P1
+---
+## Why P1
 
 OrqaStudio is a structured thinking tool. Prioritisation is a core structured thinking capability. The dimensions and weights are configurable per project — different projects have different prioritisation needs.
 

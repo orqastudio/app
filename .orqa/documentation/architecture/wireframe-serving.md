@@ -6,12 +6,14 @@ created: "2026-03-02"
 updated: "2026-03-04"
 ---
 
+
 **Date:** 2026-03-02 | **Status:** Phase 0e specification
 **References:** [Wireframing Research](RES-008) (Q1 verdict: PlantUML Salt), SQLite Schema, Design System
 
 How OrqaStudio™ stores, renders, caches, and serves PlantUML Salt wireframes as themed images within its Tauri WebView.
 
 ---
+
 
 ## Overview
 
@@ -35,6 +37,7 @@ Salt source file (.puml)
 ```
 
 ---
+
 
 ## Salt Source File Storage
 
@@ -99,6 +102,7 @@ The Rust backend discovers wireframe sources by scanning for `*.puml` files that
 
 ---
 
+
 ## SQLite Image Cache
 
 Rendered wireframe images are cached in SQLite to avoid re-rendering unchanged sources. This table is added to `orqa.db` alongside the existing schema.
@@ -160,6 +164,7 @@ CREATE TABLE IF NOT EXISTS wireframe_cache (
 ```
 
 ---
+
 
 ## Style Variants
 
@@ -252,6 +257,7 @@ fn generate_style_block(variant: StyleVariant, theme: Option<&ProjectTheme>) -> 
 
 ---
 
+
 ## On-Demand Generation
 
 Wireframes are rendered lazily. No background batch processing. The rendering pipeline is triggered when a wireframe image is requested (via the custom markdown syntax or the UI) and a valid cache entry does not exist.
@@ -281,6 +287,7 @@ Wireframes are rendered lazily. No background batch processing. The rendering pi
 If multiple requests arrive for the same uncached wireframe simultaneously, the Rust backend uses a per-wireframe mutex (keyed by `(source_path, variant, format)`) to ensure only one render executes. Subsequent requests wait for the first render to complete and then serve from cache.
 
 ---
+
 
 ## Custom Markdown Rendering Block
 
@@ -328,6 +335,7 @@ The `MarkdownRenderer` Svelte component (from the design system's custom compone
 If the source `.puml` file does not exist, the renderer displays a placeholder with the text "Wireframe not found: {name}" styled as `text-muted-foreground`.
 
 ---
+
 
 ## PlantUML Execution
 
@@ -400,6 +408,7 @@ echo "@startsalt ... @endsalt" | java -jar plantuml.jar -pipe -tpng > output.png
 
 ---
 
+
 ## Cache Invalidation
 
 The cache is invalidated when the inputs to rendering change: either the source file or the theme tokens.
@@ -451,6 +460,7 @@ fn clear_wireframe_cache(project_id: i64, name: Option<String>) -> Result<(), Er
 
 ---
 
+
 ## Image Serving to WebView
 
 The rendered wireframe images must be accessible to Tauri's WebView for display in `<img>` tags.
@@ -496,6 +506,7 @@ Direct `file://` URLs to the cache directory. Simplest but may face Content Secu
 Use Tauri's custom protocol handler (Option A). It is the idiomatic approach for serving local resources in Tauri applications, respects the CSP, and unifies the `orqa://wireframe/` URL scheme between the markdown syntax and the serving mechanism.
 
 ---
+
 
 ## Summary
 

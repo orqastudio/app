@@ -19,7 +19,8 @@ scoring:
   dependency: 3
   effort: 2
   score: 17.5
----## Why P1
+---
+## Why P1
 
 Can't debug reasoning without seeing what's sent to the model. This is a reasoning platform — transparency into what the AI receives and thinks is foundational.
 

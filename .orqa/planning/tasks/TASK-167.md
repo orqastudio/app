@@ -17,6 +17,7 @@ acceptance:
   - make typecheck and make lint-frontend pass
 ---
 
+
 ## What
 
 The core navigation toolbar that replaces the current text filter with rich sort and filter controls. This is the primary interaction point for artifact browsing.

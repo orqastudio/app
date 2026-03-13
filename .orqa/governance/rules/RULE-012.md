@@ -1,32 +1,50 @@
 ---
-id: "RULE-012"
-title: "Error Ownership"
-description: "All errors are your responsibility. Pre-existing errors must be fixed. Never skip or ignore failures."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-12"
-layer: "core"
+id: RULE-012
+title: Error Ownership
+description: All errors are your responsibility. Pre-existing errors must be fixed. Never skip or ignore failures.
+status: active
+created: 2026-03-07
+updated: 2026-03-12
+layer: core
 scope:
-  - "AGENT-001"
-  - "AGENT-002"
-  - "AGENT-003"
-  - "AGENT-004"
-  - "AGENT-005"
-  - "AGENT-006"
-  - "AGENT-007"
+  - AGENT-001
+  - AGENT-002
+  - AGENT-003
+  - AGENT-004
+  - AGENT-005
+  - AGENT-006
+  - AGENT-007
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Error ownership ensures problems are resolved, not deferred"
-  - target: "RULE-006"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-005"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-010"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Error ownership ensures problems are resolved, not deferred
+  - target: RULE-006
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-005
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-010
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-006
+    rationale: Inverse of informs relationship from RULE-006
+  - type: informed-by
+    target: RULE-013
+    rationale: Inverse of informs relationship from RULE-013
+  - type: informed-by
+    target: RULE-015
+    rationale: Inverse of informs relationship from RULE-015
+  - type: informed-by
+    target: RULE-018
+    rationale: Inverse of informs relationship from RULE-018
+  - type: informed-by
+    target: RULE-020
+    rationale: Inverse of informs relationship from RULE-020
+  - type: informed-by
+    target: RULE-043
+    rationale: Inverse of informs relationship from RULE-043
 ---
 ## Rule (NON-NEGOTIABLE)
 

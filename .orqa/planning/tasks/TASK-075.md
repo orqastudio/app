@@ -25,6 +25,7 @@ acceptance:
   - "Dashboard Graph Insights card showing: node count, edge count, orphan count, broken ref count, artifacts-by-type breakdown, and status distribution"
 ---
 
+
 ## What
 
 See task description and acceptance criteria in frontmatter.

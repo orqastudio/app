@@ -6,17 +6,20 @@ created: "2026-03-05"
 updated: "2026-03-05"
 ---
 
+
 **Date:** 2026-03-05
 
 The lesson dashboard provides navigation and display for implementation lessons captured in `.orqa/governance/lessons/`. Users can browse lessons, filter by category and status, see recurrence trends, and promote lessons to rule enforcement entries when recurrence reaches the threshold.
 
 ---
 
+
 ## Purpose
 
 The lesson dashboard makes the learning loop visible and actionable. Review agents add new lessons through the API; the dashboard surfaces them to users so they can track recurring mistakes, understand why they happen, and promote patterns into enforceable rules when they've recurred enough times.
 
 ---
+
 
 ## Components
 
@@ -64,6 +67,7 @@ Each lesson item shows:
 | Loaded | Filtered list with load-more pagination |
 
 ---
+
 
 ### LessonViewer
 
@@ -128,6 +132,7 @@ Displays the full content of a single lesson, selected from the LessonList.
 
 ---
 
+
 ### Recurrence Badges
 
 Recurrence badges appear in both the LessonList and within the LessonViewer metadata row. They communicate urgency at a glance.
@@ -140,6 +145,7 @@ Recurrence badges appear in both the LessonList and within the LessonViewer meta
 | Promoted | Green with checkmark | Converted to enforcement rule |
 
 ---
+
 
 ### Promotion Candidates Section
 
@@ -162,6 +168,7 @@ A dedicated section at the top of the lesson list (or as a dashboard card) highl
 This section is hidden when no lessons have recurrence >= 2.
 
 ---
+
 
 ### Promotion Dialog
 
@@ -189,6 +196,7 @@ A modal dialog that walks the user through promoting a lesson to a rule enforcem
 
 ---
 
+
 ## Component States Summary
 
 | Component | States |
@@ -200,6 +208,7 @@ A modal dialog that walks the user through promoting a lesson to a rule enforcem
 | `PromotionDialog` | step-1, step-2, step-3, step-4, submitting, error, success |
 
 ---
+
 
 ## User-Facing Language
 
@@ -214,6 +223,7 @@ A modal dialog that walks the user through promoting a lesson to a rule enforcem
 
 ---
 
+
 ## Pillar Alignment
 
 | Pillar | Alignment |
@@ -222,6 +232,7 @@ A modal dialog that walks the user through promoting a lesson to a rule enforcem
 | Clarity Through Structure | Lesson promotion converts documented mistakes into rule enforcement entries, directly strengthening governance. The dashboard tracks the pipeline from observed mistake to enforced standard. |
 
 ---
+
 
 ## Related Documents
 

@@ -1,30 +1,35 @@
 ---
-id: "RULE-032"
-title: "Artifact Schema Compliance"
-description: "Every artifact's YAML frontmatter must validate against the JSON Schema defined in its artifact directory's schema.json file."
-status: "active"
-created: "2026-03-10"
-updated: "2026-03-10"
-layer: "core"
+id: RULE-032
+title: Artifact Schema Compliance
+description: Every artifact's YAML frontmatter must validate against the JSON Schema defined in its artifact directory's schema.json file.
+status: active
+created: 2026-03-10
+updated: 2026-03-10
+layer: core
 scope:
-  - "AGENT-003"
-  - "AGENT-006"
-  - "AGENT-007"
+  - AGENT-003
+  - AGENT-006
+  - AGENT-007
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Schema validation enforces structural consistency in artifact frontmatter"
-  - target: "RULE-004"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-003"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-027"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Schema validation enforces structural consistency in artifact frontmatter
+  - target: RULE-004
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-003
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-027
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-034
+    rationale: Inverse of informs relationship from RULE-034
+  - type: informed-by
+    target: RULE-044
+    rationale: Inverse of informs relationship from RULE-044
 ---
-
 Every artifact in `.orqa/` must have YAML frontmatter that validates against the JSON Schema in its directory's `schema.json` file. Fields not defined in the schema are rejected. Required fields must be present. Enum fields must use valid values.
 
 ## Source of Truth

@@ -22,7 +22,8 @@ scoring:
   effort: 3
   risk: 1
   score: 16
----## Implementation Design
+---
+## Implementation Design
 
 ### Vision Evolution
 - "Forge" → "OrqaStudio" (product identity, earlier rebrand)

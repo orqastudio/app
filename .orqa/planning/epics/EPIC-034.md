@@ -21,7 +21,8 @@ scoring:
   effort: 5
   risk: 3
   score: 22
----## Implementation Design
+---
+## Implementation Design
 
 ### Architecture
 - **Chunker** (`backend/src-tauri/src/search/chunker.rs`) — Splits code at semantic boundaries (functions, classes, imports)

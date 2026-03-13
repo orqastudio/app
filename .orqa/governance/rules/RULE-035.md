@@ -1,19 +1,24 @@
 ---
-id: "RULE-035"
-title: "Skill Portability"
-description: "Skills must be portable within their declared layer. Core skills must work on any project unchanged. Project skills must declare their scope."
-status: "active"
-created: "2026-03-11"
-updated: "2026-03-11"
-layer: "core"
+id: RULE-035
+title: Skill Portability
+description: Skills must be portable within their declared layer. Core skills must work on any project unchanged. Project skills must declare their scope.
+status: active
+created: 2026-03-11
+updated: 2026-03-11
+layer: core
 scope:
-  - "AGENT-003"
+  - AGENT-003
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Skill portability ensures clean separation between core and project content"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Skill portability ensures clean separation between core and project content
+  - type: informed-by
+    target: RULE-038
+    rationale: Inverse of informs relationship from RULE-038
+  - type: informed-by
+    target: RULE-044
+    rationale: Inverse of informs relationship from RULE-044
 ---
-
 A skill's `layer` field declares its portability scope. Content within the skill MUST be portable within that scope. A core skill that contains project-specific paths is broken — it will give wrong guidance on other projects.
 
 ## Layer Requirements

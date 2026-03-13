@@ -27,7 +27,8 @@ scoring:
   effort: 5
   risk: 3
   score: 17
----## Context
+---
+## Context
 
 Three systemic gaps identified during dogfooding prevent the artifact system from being self-consistent and extensible:
 

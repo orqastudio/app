@@ -1,38 +1,56 @@
 ---
-id: "RULE-015"
-title: "Honest Reporting"
-description: "Report status accurately. Partial work reported as complete is worse than reporting it as incomplete."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-07"
-layer: "core"
+id: RULE-015
+title: Honest Reporting
+description: Report status accurately. Partial work reported as complete is worse than reporting it as incomplete.
+status: active
+created: 2026-03-07
+updated: 2026-03-07
+layer: core
 scope:
-  - "AGENT-001"
-  - "AGENT-002"
-  - "AGENT-003"
-  - "AGENT-004"
-  - "AGENT-005"
-  - "AGENT-006"
-  - "AGENT-007"
+  - AGENT-001
+  - AGENT-002
+  - AGENT-003
+  - AGENT-004
+  - AGENT-005
+  - AGENT-006
+  - AGENT-007
 relationships:
-  - target: "PILLAR-002"
-    type: "grounded"
-    rationale: "Honest reporting enables accurate reflection on work quality"
-  - target: "RULE-020"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-019"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-022"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-012"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-017"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-002
+    type: grounded
+    rationale: Honest reporting enables accurate reflection on work quality
+  - target: RULE-020
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-019
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-022
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-012
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-017
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-001
+    rationale: Inverse of informs relationship from RULE-001
+  - type: informed-by
+    target: RULE-004
+    rationale: Inverse of informs relationship from RULE-004
+  - type: informed-by
+    target: RULE-017
+    rationale: Inverse of informs relationship from RULE-017
+  - type: informed-by
+    target: RULE-019
+    rationale: Inverse of informs relationship from RULE-019
+  - type: informed-by
+    target: RULE-027
+    rationale: Inverse of informs relationship from RULE-027
+  - type: informed-by
+    target: RULE-030
+    rationale: Inverse of informs relationship from RULE-030
 ---
 ## The Core Rule
 

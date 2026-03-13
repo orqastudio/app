@@ -22,7 +22,8 @@ scoring:
   effort: 4
   risk: 3
   score: 18
----## Context
+---
+## Context
 
 [AD-029](AD-029) established that agents should represent universal roles (Orchestrator, Researcher,
 Planner, Implementer, Reviewer, Writer, Designer) that work across any project type.

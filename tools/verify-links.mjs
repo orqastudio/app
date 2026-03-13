@@ -306,10 +306,15 @@ for (const file of allFiles) {
   const { fm, issues } = scanFile(file, knownArtifacts);
   allIssues.push(...issues);
 
-  // Extract artifact ID from filename for bidirectional checks
+  // Extract artifact ID for bidirectional checks
+  // Standard artifacts: PREFIX-NNN.md filename pattern
   const match = file.match(/([A-Z]+-\d+)\.md$/);
   if (match && fm) {
     allArtifactData.set(match[1], { fm, path: file });
+  }
+  // Skills: subdirectory pattern with SKILL.md, ID is in frontmatter
+  if (file.endsWith("SKILL.md") && fm?.id) {
+    allArtifactData.set(fm.id, { fm, path: file });
   }
 }
 

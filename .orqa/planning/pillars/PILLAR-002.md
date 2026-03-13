@@ -3,13 +3,68 @@ id: PILLAR-002
 title: Learning Through Reflection
 description: The system and its users improve over time through structured retrospection.
 status: active
-created: "2026-03-09"
-updated: "2026-03-09"
+created: 2026-03-09
+updated: 2026-03-09
 gate:
   - Does this capture lessons, discoveries, or patterns?
   - Does it track metrics or outcomes that show improvement (or regression)?
   - Does it feed retrospectives back into the governance framework?
   - Does it accumulate knowledge across sessions so each cycle starts from a better position?
+relationships:
+  - type: grounded-by
+    target: RULE-009
+    rationale: Inverse of grounded relationship from RULE-009
+  - type: grounded-by
+    target: RULE-011
+    rationale: Inverse of grounded relationship from RULE-011
+  - type: grounded-by
+    target: RULE-015
+    rationale: Inverse of grounded relationship from RULE-015
+  - type: grounded-by
+    target: RULE-017
+    rationale: Inverse of grounded relationship from RULE-017
+  - type: grounded-by
+    target: RULE-029
+    rationale: Inverse of grounded relationship from RULE-029
+  - type: grounded-by
+    target: RULE-030
+    rationale: Inverse of grounded relationship from RULE-030
+  - type: grounded-by
+    target: AD-016
+    rationale: Inverse of grounded relationship from AD-016
+  - type: grounded-by
+    target: AD-027
+    rationale: Inverse of grounded relationship from AD-027
+  - type: grounded-by
+    target: AD-042
+    rationale: Inverse of grounded relationship from AD-042
+  - type: grounded-by
+    target: IMPL-011
+    rationale: Inverse of grounded relationship from IMPL-011
+  - type: grounded-by
+    target: IMPL-012
+    rationale: Inverse of grounded relationship from IMPL-012
+  - type: grounded-by
+    target: SKILL-004
+    rationale: Inverse of grounded relationship from SKILL-004
+  - type: grounded-by
+    target: SKILL-006
+    rationale: Inverse of grounded relationship from SKILL-006
+  - type: grounded-by
+    target: SKILL-018
+    rationale: Inverse of grounded relationship from SKILL-018
+  - type: grounded-by
+    target: SKILL-025
+    rationale: Inverse of grounded relationship from SKILL-025
+  - type: grounded-by
+    target: SKILL-048
+    rationale: Inverse of grounded relationship from SKILL-048
+  - type: grounded-by
+    target: SKILL-033
+    rationale: Inverse of grounded relationship from SKILL-033
+  - type: grounded-by
+    target: SKILL-035
+    rationale: Inverse of grounded relationship from SKILL-035
 ---
 ## What This Pillar Means
 

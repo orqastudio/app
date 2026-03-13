@@ -1,22 +1,26 @@
 ---
-id: "IMPL-012"
-title: "Encode Improvements in Artifacts"
-description: "If a process improvement exists only in conversation history, it is lost in the next session. Every improvement must be recorded as a lesson and encoded in the relevant agent, rule, or skill.\n"
-status: "promoted"
-created: "2026-03-07"
-updated: "2026-03-07"
-maturity: "understanding"
+id: IMPL-012
+title: Encode Improvements in Artifacts
+description: |
+  If a process improvement exists only in conversation history, it is lost in the next session. Every improvement must be recorded as a lesson and encoded in the relevant agent, rule, or skill.
+status: promoted
+created: 2026-03-07
+updated: 2026-03-07
+maturity: understanding
 recurrence: 1
 relationships:
-  - target: "PILLAR-002"
-    type: "grounded"
-    rationale: "Encoding improvements closes the learning loop"
-  - target: "IMPL-011"
-    type: "informs"
-    rationale: "Both address the learning process — investigation and encoding"
-  - target: "RULE-030"
-    type: "grounded-by"
-    rationale: "Lesson promoted to RULE-030"
+  - target: PILLAR-002
+    type: grounded
+    rationale: Encoding improvements closes the learning loop
+  - target: IMPL-011
+    type: informs
+    rationale: Both address the learning process — investigation and encoding
+  - target: RULE-030
+    type: grounded-by
+    rationale: Lesson promoted to RULE-030
+  - type: observed-by
+    target: RULE-030
+    rationale: Inverse of observes relationship from RULE-030
 ---
 ## What Happened
 

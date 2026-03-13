@@ -6,11 +6,13 @@ created: "2026-03-02"
 updated: "2026-03-04"
 ---
 
+
 **Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-004), MVP Spec F-007, F-008
 
 The artifact browser surfaces governance artifacts as a navigation list in the Nav Sub-Panel and as a rendered/editable view in the Explorer Panel. Artifact categories are defined by the `artifacts` array in `.orqa/project.json` — the default set includes Docs, Agents, Rules, Skills, and Hooks, but this is configurable per project. The artifact list and viewer are split across two zones so the conversation remains visible in the Chat Panel — the core workflow is collaborating with the AI *on* artifacts. Artifacts are Markdown files with YAML frontmatter stored under `.orqa/`.
 
 ---
+
 
 ## 1. Nav Sub-Panel + Explorer: Artifact Browser (Docs — Default)
 
@@ -80,6 +82,7 @@ The default view when the Docs icon is active. The Nav Sub-Panel shows the struc
 
 ---
 
+
 ## 2. Nav Sub-Panel + Explorer: Rules (via Activity Bar)
 
 The Rules tab shows rule artifacts with their applicable path scopes, helping users understand which rules apply where.
@@ -141,6 +144,7 @@ The Rules tab shows rule artifacts with their applicable path scopes, helping us
 Rules include a `globs` field in frontmatter that controls where the rule applies. The path scope is shown in italics below the description as a folder icon followed by the glob pattern. Rules with `**/*` (global scope) may optionally hide the path indicator to reduce noise.
 
 ---
+
 
 ## 3. Explorer Panel: Artifact Viewer (Rendered)
 
@@ -228,6 +232,7 @@ Metadata fields vary by category. The viewer dynamically renders whatever frontm
 
 ---
 
+
 ## 4. Explorer Panel: Artifact Editor (Source)
 
 The source editing mode replaces the rendered view in the Explorer Panel with a CodeMirror 6 editor. YAML frontmatter and Markdown syntax highlighting are provided. An unsaved changes indicator appears when the buffer differs from disk.
@@ -304,6 +309,7 @@ The source editing mode replaces the rendered view in the Explorer Panel with a 
 
 ---
 
+
 ## 5. Nav Sub-Panel + Explorer: Empty State
 
 Shown when a category has no artifacts yet. Provides guidance and a clear call to action.
@@ -351,6 +357,7 @@ Shown when a category has no artifacts yet. Provides guidance and a clear call t
 
 ---
 
+
 ## Keyboard Navigation
 
 | Shortcut | Context | Action |
@@ -365,6 +372,7 @@ Shown when a category has no artifacts yet. Provides guidance and a clear call t
 
 ---
 
+
 ## Responsive Behavior
 
 | Condition | Behavior |
@@ -375,6 +383,7 @@ Shown when a category has no artifacts yet. Provides guidance and a clear call t
 | Nav Sub-Panel collapsed | When Nav Sub-Panel is collapsed, the Explorer Panel shows the full artifact list as fallback. |
 
 ---
+
 
 ## File Watching
 

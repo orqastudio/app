@@ -18,7 +18,8 @@ scoring:
   dependency: 2
   effort: 2
   score: 10.5
----## Why P2
+---
+## Why P2
 
 Without this, CLI edits to governance files and `.orqa/` artifacts aren't reflected in the app until manual refresh. Important for dogfooding where both the CLI and app are used simultaneously.
 

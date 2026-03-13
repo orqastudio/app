@@ -14,6 +14,7 @@ acceptance:
   - Components in wrong locations identified with recommended moves
   - Follow-up tasks created for missing-but-useful components
 ---
+
 ## What
 
 Audit all `.svelte` components under `ui/src/lib/components/` to produce a complete inventory of reusable/shared components. Map each against [RULE-024](RULE-024)'s current 12-item list. Identify:

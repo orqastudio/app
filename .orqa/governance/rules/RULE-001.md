@@ -1,32 +1,44 @@
 ---
-id: "RULE-001"
-title: "Agent Delegation"
-description: "The orchestrator coordinates but does not implement. All implementation is delegated to universal roles with appropriate skills."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-07"
-layer: "core"
+id: RULE-001
+title: Agent Delegation
+description: The orchestrator coordinates but does not implement. All implementation is delegated to universal roles with appropriate skills.
+status: active
+created: 2026-03-07
+updated: 2026-03-07
+layer: core
 scope:
-  - "AGENT-003"
+  - AGENT-003
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Agent delegation provides clarity through structured roles and boundaries"
-  - target: "RULE-026"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-023"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-015"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-037"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-040"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Agent delegation provides clarity through structured roles and boundaries
+  - target: RULE-026
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-023
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-015
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-037
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-040
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-026
+    rationale: Inverse of informs relationship from RULE-026
+  - type: informed-by
+    target: RULE-036
+    rationale: Inverse of informs relationship from RULE-036
+  - type: informed-by
+    target: RULE-037
+    rationale: Inverse of informs relationship from RULE-037
+  - type: informed-by
+    target: RULE-040
+    rationale: Inverse of informs relationship from RULE-040
 ---
 The orchestrator coordinates. It does NOT implement. Every implementation task is delegated to a universal role with the appropriate skills loaded.
 

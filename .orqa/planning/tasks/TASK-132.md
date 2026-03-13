@@ -12,6 +12,7 @@ acceptance:
   - Code search produces relevant results via semantic similarity
   - Settings persist across app restarts
 ---
+
 ## What
 
 Built the settings view for AI provider configuration and model selection, and integrated the ONNX embeddings engine with DuckDB for semantic code search.

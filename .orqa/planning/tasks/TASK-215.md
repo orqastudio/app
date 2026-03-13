@@ -17,6 +17,7 @@ acceptance:
   - No hardcoded path→skill table in plugin or orchestrator
   - Skill discovery is dynamic — adding a new skill with scope auto-enables injection
 ---
+
 ## What
 
 Instead of the orchestrator prompt containing a hardcoded table mapping file paths to skills, the plugin reads skill metadata directly. Each skill's SKILL.md frontmatter already has scope information — the plugin just needs to use it.

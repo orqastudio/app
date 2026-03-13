@@ -20,7 +20,8 @@ scoring:
   dependency: 2
   effort: 5
   score: 4.6
----## Tasks
+---
+## Tasks
 
 - [ ] MCP host module — JSON-RPC protocol handler, connection state machine
 - [ ] stdio transport — spawn external MCP servers, process lifecycle management

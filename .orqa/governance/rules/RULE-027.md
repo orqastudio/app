@@ -1,35 +1,43 @@
 ---
-id: "RULE-027"
-title: "Structure Before Work"
-description: "No implementation work may begin without the full artifact structure in place first."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-07"
-layer: "core"
+id: RULE-027
+title: Structure Before Work
+description: No implementation work may begin without the full artifact structure in place first.
+status: active
+created: 2026-03-07
+updated: 2026-03-07
+layer: core
 scope:
-  - "AGENT-002"
-  - "AGENT-003"
+  - AGENT-002
+  - AGENT-003
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Structure before work ensures artifacts exist before implementation begins"
-  - target: "RULE-008"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-004"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-011"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-019"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-015"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Structure before work ensures artifacts exist before implementation begins
+  - target: RULE-008
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-004
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-011
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-019
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-015
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-030
+    rationale: Inverse of informs relationship from RULE-030
+  - type: informed-by
+    target: RULE-032
+    rationale: Inverse of informs relationship from RULE-032
+  - type: enforces
+    target: AD-040
+    rationale: Inverse of enforced-by relationship from AD-040
 ---
-
 ## The Rule (NON-NEGOTIABLE)
 
 **No implementation work may begin until the artifact structure for that work exists.**

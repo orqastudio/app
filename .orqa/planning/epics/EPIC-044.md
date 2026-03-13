@@ -19,7 +19,8 @@ scoring:
   effort: 2
   risk: 1
   score: 18
----Note: This epic used 'canon' terminology which has since been renamed to 'core'.
+---
+Note: This epic used 'canon' terminology which has since been renamed to 'core'.
 
 ## Findings Addressed
 

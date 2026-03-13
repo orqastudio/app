@@ -6,12 +6,14 @@ created: "2026-03-02"
 updated: "2026-03-10"
 ---
 
+
 **Date:** 2026-03-02 | **Updated:** 2026-03-10 | **Status:** Current
 **References:** [Persistence Research](RES-006) [AD-014](AD-014), [Design Tokens Research](RES-003)
 
 Full table definitions, indexes, FTS5 configuration, and migration strategy for `orqa.db`.
 
 ---
+
 
 ## Database Configuration
 
@@ -32,6 +34,7 @@ conn.execute_batch("
 **WAL mode** is essential for streaming — it allows the UI to read session data while new tokens are being written.
 
 ---
+
 
 ## Core Tables (9 implemented + 3 planned)
 
@@ -347,6 +350,7 @@ CREATE TABLE IF NOT EXISTS enforcement_violations (
 
 ---
 
+
 ## FTS5 Virtual Tables (2)
 
 ### messages_fts
@@ -396,6 +400,7 @@ CREATE VIRTUAL TABLE IF NOT EXISTS artifacts_fts USING fts5(
 ```
 
 ---
+
 
 ## Migration Strategy
 
@@ -478,6 +483,7 @@ Renames `sdk_session_id` → `provider_session_id` on the `sessions` table. Impl
 
 ---
 
+
 ## Streaming Write Pattern
 
 During active streaming, tokens are buffered in Rust and flushed to SQLite periodically:
@@ -495,6 +501,7 @@ WHERE stream_status = 'pending';
 ```
 
 ---
+
 
 ## Query Patterns
 
@@ -547,6 +554,7 @@ WHERE pt.project_id = ? AND pt.is_active = 1;
 
 ---
 
+
 ## Global Store (Phase 5)
 
 Cross-project learning requires app-level storage outside any per-project `orqa.db` database. A global SQLite database (e.g., `~/.orqa/global.db`) would store:
@@ -561,6 +569,7 @@ This database is separate from per-project `orqa.db` files. Global lessons refer
 Schema design for `global.db` will be specified when Phase 5 implementation begins. The key constraint is that per-project databases remain self-contained; the global store is additive.
 
 ---
+
 
 ## Table Summary
 

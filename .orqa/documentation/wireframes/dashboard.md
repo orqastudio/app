@@ -6,6 +6,7 @@ created: "2026-03-02"
 updated: "2026-03-04"
 ---
 
+
 **Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-004)
 
 Dashboard views appear in the Explorer Panel and provide operational visibility into scanning, metrics, and the learning loop. These are Phase 3-5 features designed early to validate the information architecture and panel system.
@@ -25,6 +26,7 @@ Dashboard views are Explorer Panel views, accessed the same way as the artifact 
 All dashboards share the Explorer Panel — switching to a dashboard replaces the current Explorer view. The conversation always remains visible in the Chat Panel.
 
 ---
+
 
 ## 1. Scanner Dashboard (Mixed Pass/Fail Results)
 
@@ -112,6 +114,7 @@ The scanner dashboard shows all configured scanners with their current status, a
 
 ---
 
+
 ## 2. Scanner Dashboard -- Violation Detail Expanded
 
 When a failing scanner row is clicked, it expands to show individual violations with file locations and descriptions.
@@ -190,6 +193,7 @@ When a failing scanner row is clicked, it expands to show individual violations 
 | **Run Scanner** | Re-runs just this individual scanner. |
 
 ---
+
 
 ## 3. Metrics Dashboard with KPI Cards and Chart
 
@@ -299,6 +303,7 @@ The metrics dashboard provides operational KPIs with trend indicators and sparkl
 | **Promoted entries** | Promoted lessons have been converted into active rules or agent instructions. |
 
 ---
+
 
 ## 4. Learning Loop -- IMPL/RETRO Cards
 
@@ -412,6 +417,7 @@ Draft --> Review --> Promoted
 | **New Entry** | Opens a form to create a new IMPL or RETRO entry manually. |
 
 ---
+
 
 ## Keyboard Navigation
 

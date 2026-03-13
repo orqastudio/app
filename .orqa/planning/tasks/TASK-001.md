@@ -15,6 +15,7 @@ acceptance:
   - Emission failure does not prevent message from being sent
   - No unwrap() or expect() in the new code
 ---
+
 ## What
 
 In `stream_send_message()` in `backend/src-tauri/src/commands/stream_commands.rs`, after `resolve_system_prompt()` returns `Some(prompt)` and before `state.sidecar.send(&request)`, emit a `SystemPromptSent` event.

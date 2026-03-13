@@ -1,27 +1,36 @@
 ---
-id: "RULE-009"
-title: "Dogfood Mode"
+id: RULE-009
+title: Dogfood Mode
 description: "Project-level rule for when an app is editing itself. Provides agent context awareness, operational caution, and system prompt injection. Active when dogfood: true in project.json."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-07"
-layer: "project"
+status: active
+created: 2026-03-07
+updated: 2026-03-07
+layer: project
 scope:
-  - "AGENT-002"
-  - "AGENT-003"
+  - AGENT-002
+  - AGENT-003
 relationships:
-  - target: "PILLAR-002"
-    type: "grounded"
-    rationale: "Dogfood mode enforces awareness of self-modifying systems"
-  - target: "RULE-028"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-007"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-006"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-002
+    type: grounded
+    rationale: Dogfood mode enforces awareness of self-modifying systems
+  - target: RULE-028
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-007
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-006
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-013
+    rationale: Inverse of informs relationship from RULE-013
+  - type: informed-by
+    target: RULE-028
+    rationale: Inverse of informs relationship from RULE-028
+  - type: informed-by
+    target: RULE-044
+    rationale: Inverse of informs relationship from RULE-044
 ---
 # Dogfood Mode (CONDITIONAL — only when `dogfood: true`)
 

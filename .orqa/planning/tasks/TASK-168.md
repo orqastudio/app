@@ -18,6 +18,7 @@ acceptance:
   - make typecheck passes
 ---
 
+
 ## What
 
 The reactive logic that connects the toolbar controls to the artifact list rendering. When the user changes sort/filter/group settings, the list updates immediately via client-side transformations.

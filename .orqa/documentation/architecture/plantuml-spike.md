@@ -6,12 +6,14 @@ created: "2026-03-02"
 updated: "2026-03-04"
 ---
 
+
 **Date:** 2026-03-02 | **Status:** Phase 0e specification
 **References:** [Wireframing Research](RES-008) (OQ1: Java Runtime Dependency), Wireframe Serving Infrastructure
 
 A time-boxed investigation into eliminating or bundling PlantUML's Java dependency so that wireframe rendering works out of the box for all OrqaStudio™ users.
 
 ---
+
 
 ## The Problem
 
@@ -27,6 +29,7 @@ PlantUML is a Java application distributed as a JAR file (~10MB). It requires a 
 This spike evaluates four options for resolving the dependency, determines which to prototype first, and defines acceptance criteria for the spike.
 
 ---
+
 
 ## Option A: GraalVM Native Image
 
@@ -144,6 +147,7 @@ Salt uses the same AWT rendering pipeline as other PlantUML diagrams. Salt-speci
 
 ---
 
+
 ## Option B: Bundled Minimal JRE
 
 Ship a stripped-down Java runtime alongside OrqaStudio. Use `jlink` to create a custom JRE containing only the modules PlantUML requires.
@@ -247,6 +251,7 @@ Use Java 21 LTS (Eclipse Temurin). LTS ensures long-term availability of securit
 
 ---
 
+
 ## Option C: Detect System JRE
 
 Use whatever `java` binary is available on the user's PATH. No bundling.
@@ -310,6 +315,7 @@ This is not a primary distribution strategy. It serves as:
 
 ---
 
+
 ## Option D: WebAssembly (WASM)
 
 Compile PlantUML (or a PlantUML-compatible renderer) to WebAssembly and run it directly in Tauri's WebView.
@@ -365,6 +371,7 @@ This would be attractive because:
 
 ---
 
+
 ## Recommendation
 
 ### Primary Strategy: Try Option A First, Fall Back to Option B
@@ -406,6 +413,7 @@ Runtime fallback chain (regardless of primary):
 4. **Option D (WASM) is deferred.** The ecosystem is not mature enough for production use with PlantUML Salt. If the WASM situation improves (particularly if an official PlantUML WASM build emerges with Salt support), it can be reconsidered.
 
 ---
+
 
 ## Spike Acceptance Criteria
 

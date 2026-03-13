@@ -18,7 +18,8 @@ scoring:
   dependency: 1
   effort: 3
   score: 6.3
----## Why P2
+---
+## Why P2
 
 Can't credibly enforce quality on managed projects if our own code has violations. The audit is also a learning loop input — findings feed into lessons and coding standards.
 

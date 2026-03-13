@@ -6,11 +6,13 @@ created: "2026-03-05"
 updated: "2026-03-05"
 ---
 
+
 **Date:** 2026-03-05
 
 Sub-agent support allows the orchestrator agent to delegate tasks to specialized sub-agents within a single OrqaStudio™ session. The `spawn_agent` tool spawns a sub-agent with a declared role and instructions. The agent registry reads `.orqa/team/agents/*.md` to discover available roles. Child tool calls are aggregated and not surfaced individually in the conversation view. Turn limits prevent runaway sub-agent loops.
 
 ---
+
 
 ## `spawn_agent` Tool
 
@@ -78,6 +80,7 @@ The `spawn_agent` tool is an OrqaStudio MCP tool, implemented in Rust, exposed t
 
 ---
 
+
 ## Agent Registry
 
 The agent registry reads `.orqa/team/agents/*.md` at startup and indexes available roles.
@@ -96,6 +99,7 @@ For each agent definition file, the registry extracts:
 
 ```yaml
 ---
+
 name: backend-engineer
 description: "Rust / Tauri v2, IPC commands, domain logic, SQLite persistence"
 skills:
@@ -109,9 +113,11 @@ capabilities:
   - write_files
   - run_commands
 ---
+
 ```
 
 ---
+
 
 ## Explore Mode
 
@@ -125,6 +131,7 @@ Explore mode is a lightweight variant of `spawn_agent` optimized for codebase re
 Use explore mode when the orchestrator needs to gather information before deciding on an implementation approach. The result is a structured summary, not a set of file changes.
 
 ---
+
 
 ## Output Aggregation
 
@@ -154,6 +161,7 @@ CREATE TABLE sub_agent_turns (
 
 ---
 
+
 ## Turn Limits
 
 Turn limits prevent runaway sub-agent loops. When a sub-agent reaches its `max_turns` limit:
@@ -173,11 +181,13 @@ Turn limits are enforced by the Rust runtime, not by the sidecar. The sidecar re
 
 ---
 
+
 ## Enforcement in Sub-Agents
 
 Sub-agent tool calls pass through the same enforcement engine as parent tool calls. A sub-agent writing a file with `: any` in TypeScript will be blocked by [RULE-004](RULE-004)-001, the same as if the orchestrator wrote it directly. Sub-agent violations are recorded in the `violations` table with the `session_id` of the parent session and a `sub_agent_spawn_id` reference.
 
 ---
+
 
 ## IPC Commands
 
@@ -188,6 +198,7 @@ Sub-agent tool calls pass through the same enforcement engine as parent tool cal
 | `get_sub_agent_turns` | `spawn_call_id: String` | `Vec<SubAgentTurn>` | Get the full turn log for a spawn_agent call |
 
 ---
+
 
 ## Rust Module Structure
 
@@ -207,6 +218,7 @@ backend/src-tauri/src/
 
 ---
 
+
 ## Pillar Alignment
 
 | Pillar | Alignment |
@@ -215,6 +227,7 @@ backend/src-tauri/src/
 | Clarity Through Structure | Sub-agents execute within the enforcement engine boundary — all agent tool calls are evaluated against active rules. Delegation to specialized roles (code-reviewer, test-engineer) implements the governance review gates described in the process docs. |
 
 ---
+
 
 ## Related Documents
 

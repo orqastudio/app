@@ -1,25 +1,31 @@
 ---
-id: "RULE-024"
-title: "Reusable Components"
-description: "Check shared component library before creating new UI elements. Use EmptyState, LoadingSpinner, ErrorDisplay, etc."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-11"
-layer: "project"
+id: RULE-024
+title: Reusable Components
+description: Check shared component library before creating new UI elements. Use EmptyState, LoadingSpinner, ErrorDisplay, etc.
+status: active
+created: 2026-03-07
+updated: 2026-03-11
+layer: project
 scope:
-  - "AGENT-001"
-  - "AGENT-002"
-  - "AGENT-006"
+  - AGENT-001
+  - AGENT-002
+  - AGENT-006
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Reusable components enforce structural consistency in the UI layer"
-  - target: "RULE-006"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-005"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Reusable components enforce structural consistency in the UI layer
+  - target: RULE-006
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-005
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-006
+    rationale: Inverse of informs relationship from RULE-006
+  - type: informed-by
+    target: RULE-033
+    rationale: Inverse of informs relationship from RULE-033
 ---
 ## Shared Component Library
 

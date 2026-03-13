@@ -13,6 +13,7 @@ acceptance:
   - docs entries point to existing documentation files
   - Documentation selection matches task scope and epic context
 ---
+
 ## What
 
 Populate the `docs` field on existing tasks so that agents implementing those tasks automatically receive the right documentation context via graph traversal.

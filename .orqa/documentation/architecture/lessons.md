@@ -6,11 +6,13 @@ created: "2026-03-05"
 updated: "2026-03-05"
 ---
 
+
 **Date:** 2026-03-05
 
 The lesson promotion pipeline captures implementation mistakes, tracks their recurrence across sessions, and promotes recurring patterns into enforceable governance artifacts. Lessons are individual markdown files with YAML frontmatter. SQLite caches metadata for fast queries and dashboard display. Promoted lessons become enforcement entries in rule files.
 
 ---
+
 
 ## Storage: `.orqa/governance/lessons/`
 
@@ -28,6 +30,7 @@ Example: `.orqa/governance/lessons/[IMPL-001](IMPL-001).md`
 
 ```yaml
 ---
+
 id: IMPL-001
 title: "Brief title describing the mistake"
 tags:
@@ -43,6 +46,7 @@ session_ids:
   - "session-uuid-2"
   - "session-uuid-3"
 ---
+
 ```
 
 **Fields:**
@@ -84,6 +88,7 @@ The markdown body follows this structure:
 
 ---
 
+
 ## SQLite Metadata Cache
 
 The `.orqa/governance/lessons/*.md` files are the authoritative source. SQLite caches metadata for fast queries, filtering, and dashboard aggregation.
@@ -106,6 +111,7 @@ CREATE TABLE lessons (
 **Cache synchronization:** The cache is rebuilt from disk on app startup and whenever a lesson file changes (file watcher). The cache is never the source of truth — the `.md` files are.
 
 ---
+
 
 ## Lesson Lifecycle
 
@@ -131,6 +137,7 @@ Threshold reached (recurrence >= 2)
 
 ---
 
+
 ## Promotion Flow
 
 When a lesson is promoted to a rule:
@@ -148,6 +155,7 @@ The promotion creates a traceable link between a documented lesson and a live en
 
 ---
 
+
 ## IPC Commands
 
 | Command | Input | Output | Description |
@@ -160,6 +168,7 @@ The promotion creates a traceable link between a documented lesson and a live en
 | `promote_lesson` | `PromoteLessonInput` | `Lesson` | Promote a lesson to a rule enforcement entry |
 
 ---
+
 
 ## Rust Module Structure
 
@@ -178,6 +187,7 @@ backend/src-tauri/src/
 
 ---
 
+
 ## Pillar Alignment
 
 | Pillar | Alignment |
@@ -186,6 +196,7 @@ backend/src-tauri/src/
 | Clarity Through Structure | Promoted lessons become enforcement entries that actively block or warn on the patterns that caused past mistakes. The promotion pipeline connects learning directly to governance. |
 
 ---
+
 
 ## Related Documents
 

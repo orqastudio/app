@@ -15,6 +15,7 @@ acceptance:
   - Follow-up tasks created for each shared component that should be extracted
   - Depends on TASK-139 (component inventory) completing first
 ---
+
 ## What
 
 Component reuse is part of the composability principle (PILLAR-001). Audit the entire frontend (`ui/src/lib/components/`) to identify repeated patterns that should be extracted into shared components.

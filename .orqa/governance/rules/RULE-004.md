@@ -1,35 +1,68 @@
 ---
-id: "RULE-004"
-title: "Artifact Lifecycle"
-description: "Enforces creation standards, status transitions, promotion gates, and documentation gates for all .orqa/ artifacts."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-07"
-layer: "core"
+id: RULE-004
+title: Artifact Lifecycle
+description: Enforces creation standards, status transitions, promotion gates, and documentation gates for all .orqa/ artifacts.
+status: active
+created: 2026-03-07
+updated: 2026-03-07
+layer: core
 scope:
-  - "AGENT-003"
+  - AGENT-003
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Artifact lifecycle enforces structured progression from idea to completion"
-  - target: "RULE-008"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-016"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-031"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-017"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-021"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-015"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Artifact lifecycle enforces structured progression from idea to completion
+  - target: RULE-008
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-016
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-031
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-017
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-021
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-015
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-008
+    rationale: Inverse of informs relationship from RULE-008
+  - type: informed-by
+    target: RULE-014
+    rationale: Inverse of informs relationship from RULE-014
+  - type: informed-by
+    target: RULE-016
+    rationale: Inverse of informs relationship from RULE-016
+  - type: informed-by
+    target: RULE-019
+    rationale: Inverse of informs relationship from RULE-019
+  - type: informed-by
+    target: RULE-021
+    rationale: Inverse of informs relationship from RULE-021
+  - type: informed-by
+    target: RULE-022
+    rationale: Inverse of informs relationship from RULE-022
+  - type: informed-by
+    target: RULE-027
+    rationale: Inverse of informs relationship from RULE-027
+  - type: informed-by
+    target: RULE-031
+    rationale: Inverse of informs relationship from RULE-031
+  - type: informed-by
+    target: RULE-032
+    rationale: Inverse of informs relationship from RULE-032
+  - type: enforces
+    target: AD-040
+    rationale: Inverse of enforced-by relationship from AD-040
+  - type: grounded
+    target: IMPL-014
+    rationale: Inverse of grounded-by relationship from IMPL-014
 ---
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
 

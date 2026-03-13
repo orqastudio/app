@@ -1,35 +1,53 @@
 ---
-id: "RULE-031"
-title: "Vision Alignment"
-description: "Every feature must serve at least one active pillar defined in .orqa/planning/pillars/."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-12"
-layer: "core"
+id: RULE-031
+title: Vision Alignment
+description: Every feature must serve at least one active pillar defined in .orqa/planning/pillars/.
+status: active
+created: 2026-03-07
+updated: 2026-03-12
+layer: core
 scope:
-  - "AGENT-001"
-  - "AGENT-002"
-  - "AGENT-003"
-  - "AGENT-004"
-  - "AGENT-005"
-  - "AGENT-006"
-  - "AGENT-007"
+  - AGENT-001
+  - AGENT-002
+  - AGENT-003
+  - AGENT-004
+  - AGENT-005
+  - AGENT-006
+  - AGENT-007
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Vision alignment ensures all features serve the structural pillars"
-  - target: "RULE-004"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-021"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-002"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-020"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Vision alignment ensures all features serve the structural pillars
+  - target: RULE-004
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-021
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-002
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-020
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-002
+    rationale: Inverse of informs relationship from RULE-002
+  - type: informed-by
+    target: RULE-004
+    rationale: Inverse of informs relationship from RULE-004
+  - type: informed-by
+    target: RULE-008
+    rationale: Inverse of informs relationship from RULE-008
+  - type: informed-by
+    target: RULE-016
+    rationale: Inverse of informs relationship from RULE-016
+  - type: informed-by
+    target: RULE-021
+    rationale: Inverse of informs relationship from RULE-021
+  - type: informed-by
+    target: RULE-022
+    rationale: Inverse of informs relationship from RULE-022
 ---
 Every feature, command, and UI element must serve the project's guiding principles. These principles are defined as **pillar artifacts** in `.orqa/planning/pillars/`. Read the active pillars before implementing any new capability.
 

@@ -26,7 +26,8 @@ scoring:
   scope: 3
   dependency-risk: 2
   score: 4.1
----## Workstreams
+---
+## Workstreams
 
 ### WS-1: Framework & Rules (DONE)
 - [x] Add Decision (AD-NNN) type to `artifact-framework.md`

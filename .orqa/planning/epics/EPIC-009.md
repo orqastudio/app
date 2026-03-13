@@ -18,7 +18,8 @@ scoring:
   dependency: 1
   effort: 3
   score: 5
----## Why P2
+---
+## Why P2
 
 465 Rust tests exist but zero frontend tests. Changes to stores break components silently. This is a learning gap — without tests, regression patterns can't be detected.
 

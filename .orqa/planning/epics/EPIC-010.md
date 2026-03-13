@@ -18,7 +18,8 @@ scoring:
   dependency: 1
   effort: 2
   score: 4.5
----## Why P3
+---
+## Why P3
 
 Quality of life improvements for dogfooding. Not blocking but make daily use more pleasant.
 

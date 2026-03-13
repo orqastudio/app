@@ -6,11 +6,13 @@ created: "2026-03-02"
 updated: "2026-03-08"
 ---
 
+
 **Date:** 2026-03-02
 
 The Definition of Done (DoD) is the gate checklist that must be satisfied before any task is marked complete. It is used by the three review agents -- `code-reviewer`, `qa-tester`, and `ux-reviewer` -- as their verification checklist.
 
 ---
+
 
 ## Review Level
 
@@ -24,11 +26,13 @@ The orchestrator assigns a risk level at task start. The review gate matches the
 
 ---
 
+
 ## Why a Definition of Done?
 
 "Done" means the user can use the feature right now, as a real user would. Not "it compiles". Not "the types check". Not "tests pass". Actually works.
 
 ---
+
 
 ## The Checklist
 
@@ -121,6 +125,7 @@ The orchestrator assigns a risk level at task start. The review gate matches the
 
 ---
 
+
 ## How to Use This Checklist
 
 **Implementing agent:** After completing work, review the checklist. Do NOT self-certify -- request the appropriate reviewer(s).
@@ -137,6 +142,7 @@ The orchestrator assigns a risk level at task start. The review gate matches the
 > The orchestrator MUST NOT mark a task complete without all applicable DoD items checked.
 
 ---
+
 
 ## Evidence Requirements
 
@@ -173,6 +179,7 @@ Chain: COMPLETE
 
 ---
 
+
 ## Pillar Alignment
 
 | Pillar | Alignment |
@@ -181,6 +188,7 @@ Chain: COMPLETE
 | Learning Through Reflection | The Learning Loops section of the checklist ensures that review failures feed the lesson promotion pipeline, so each completed task improves the process for future tasks. |
 
 ---
+
 
 ## Related Documents
 

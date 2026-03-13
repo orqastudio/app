@@ -6,11 +6,13 @@ created: "2026-03-02"
 updated: "2026-03-09"
 ---
 
+
 **Date:** 2026-03-02
 
 Prerequisites, installation, and development commands for working on OrqaStudio™.
 
 ---
+
 
 ## Prerequisites
 
@@ -33,6 +35,7 @@ Tauri v2 requires platform-specific build tools. See the [Tauri prerequisites gu
 
 ---
 
+
 ## Verify Installation
 
 ```bash
@@ -46,6 +49,7 @@ claude --version      # any
 ```
 
 ---
+
 
 ## Project Setup
 
@@ -220,6 +224,7 @@ See the root `.gitignore` file for the complete list, which also covers IDE file
 
 ---
 
+
 ## Project Structure
 
 ```
@@ -257,6 +262,7 @@ orqa-studio/
 
 ---
 
+
 ## Pillar Alignment
 
 | Pillar | Alignment |
@@ -265,6 +271,7 @@ orqa-studio/
 | Clarity Through Structure | Defines the development environment and commands that all agents and contributors use — standardizing the build/test/lint workflow that governance enforcement depends on. |
 
 ---
+
 
 ## Related Documents
 

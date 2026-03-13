@@ -19,7 +19,8 @@ scoring:
   dependency: 3
   effort: 4
   score: 6.3
----## Why P1
+---
+## Why P1
 
 Can't ship to users without a build pipeline and update mechanism.
 

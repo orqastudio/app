@@ -1,32 +1,41 @@
 ---
-id: "RULE-040"
-title: "Provider-Agnostic Tool Capabilities"
-description: "Agent definitions declare abstract capabilities. A provider mapping table resolves capabilities to concrete tool names per context."
-status: "active"
-created: "2026-03-11"
-updated: "2026-03-11"
-layer: "core"
+id: RULE-040
+title: Provider-Agnostic Tool Capabilities
+description: Agent definitions declare abstract capabilities. A provider mapping table resolves capabilities to concrete tool names per context.
+status: active
+created: 2026-03-11
+updated: 2026-03-11
+layer: core
 scope:
-  - "AGENT-001"
-  - "AGENT-002"
-  - "AGENT-003"
-  - "AGENT-004"
-  - "AGENT-005"
-  - "AGENT-006"
-  - "AGENT-007"
+  - AGENT-001
+  - AGENT-002
+  - AGENT-003
+  - AGENT-004
+  - AGENT-005
+  - AGENT-006
+  - AGENT-007
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Provider-agnostic capabilities create a structured abstraction for tool resolution"
-  - target: "RULE-026"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-001"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-005"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Provider-agnostic capabilities create a structured abstraction for tool resolution
+  - target: RULE-026
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-001
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-005
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-001
+    rationale: Inverse of informs relationship from RULE-001
+  - type: informed-by
+    target: RULE-026
+    rationale: Inverse of informs relationship from RULE-026
+  - type: informed-by
+    target: RULE-037
+    rationale: Inverse of informs relationship from RULE-037
 ---
 Agent definitions declare **capabilities** (what they can do), not **tools** (how they
 do it). The mapping from capabilities to provider-specific tool names is defined in this

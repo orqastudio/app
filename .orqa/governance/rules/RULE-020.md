@@ -1,34 +1,46 @@
 ---
-id: "RULE-020"
-title: "No Stubs or Placeholders"
-description: "No hardcoded fake data, TODO functions, or scaffolded implementations in production code."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-12"
-layer: "core"
+id: RULE-020
+title: No Stubs or Placeholders
+description: No hardcoded fake data, TODO functions, or scaffolded implementations in production code.
+status: active
+created: 2026-03-07
+updated: 2026-03-12
+layer: core
 scope:
-  - "AGENT-002"
-  - "AGENT-006"
+  - AGENT-002
+  - AGENT-006
 enforcement:
-  - event: "file"
-    pattern: "TODO|FIXME|HACK|XXX"
+  - event: file
+    pattern: TODO|FIXME|HACK|XXX
     paths:
-      - "src/**/*"
-    action: "warn"
-    message: "TODO/FIXME/HACK comments are forbidden in production code (RULE-020). Track in .orqa/planning/tasks/ instead."
+      - src/**/*
+    action: warn
+    message: TODO/FIXME/HACK comments are forbidden in production code (RULE-020). Track in .orqa/planning/tasks/ instead.
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "No stubs ensures real implementations create genuine structural value"
-  - target: "RULE-010"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-012"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-005"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
+  - target: PILLAR-001
+    type: grounded
+    rationale: No stubs ensures real implementations create genuine structural value
+  - target: RULE-010
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-012
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-005
+    type: informs
+    rationale: Listed in Related Rules section
+  - type: informed-by
+    target: RULE-015
+    rationale: Inverse of informs relationship from RULE-015
+  - type: informed-by
+    target: RULE-018
+    rationale: Inverse of informs relationship from RULE-018
+  - type: informed-by
+    target: RULE-019
+    rationale: Inverse of informs relationship from RULE-019
+  - type: informed-by
+    target: RULE-031
+    rationale: Inverse of informs relationship from RULE-031
 ---
 ## What Counts as a Stub
 

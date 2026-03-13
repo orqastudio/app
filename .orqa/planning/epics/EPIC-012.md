@@ -19,7 +19,8 @@ scoring:
   dependency: 2
   effort: 4
   score: 7.3
----## Why P1
+---
+## Why P1
 
 Pillar 1 (Clarity Through Structure) — governance must be visible, not buried in terminal output.
 

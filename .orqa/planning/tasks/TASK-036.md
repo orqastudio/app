@@ -16,6 +16,7 @@ acceptance:
   - Dry-run a governance task delegation — confirm orqa-governance injected
   - Verify no agent definition still contains orqa-* or chunkhound/orqa-native-search
 ---
+
 ## What
 
 Verify the three-tier skill loading works end-to-end by dry-running several delegation

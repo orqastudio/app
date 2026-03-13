@@ -22,7 +22,8 @@ scoring:
   dependency: 1
   effort: 4
   score: 6
----## Tasks
+---
+## Tasks
 
 - [ ] Research artifact type — structured, queryable, filterable
 - [ ] Decision traceability graph (research -> AD -> feature -> implementation)

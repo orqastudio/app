@@ -1,22 +1,26 @@
 ---
-id: "IMPL-006"
-title: "Symlinks Prevent Governance Divergence"
-description: "When .claude/ contains copies instead of symlinks to .orqa/, agents writing to .claude/ bypass the source of truth and the two directories silently diverge.\n"
-status: "promoted"
-created: "2026-03-07"
-updated: "2026-03-07"
-maturity: "understanding"
+id: IMPL-006
+title: Symlinks Prevent Governance Divergence
+description: |
+  When .claude/ contains copies instead of symlinks to .orqa/, agents writing to .claude/ bypass the source of truth and the two directories silently diverge.
+status: promoted
+created: 2026-03-07
+updated: 2026-03-07
+maturity: understanding
 recurrence: 1
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Single source of truth prevents structural divergence"
-  - target: "IMPL-005"
-    type: "informs"
-    rationale: "Both address source-of-truth alignment"
-  - target: "RULE-003"
-    type: "grounded-by"
-    rationale: "Lesson promoted to RULE-003"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Single source of truth prevents structural divergence
+  - target: IMPL-005
+    type: informs
+    rationale: Both address source-of-truth alignment
+  - target: RULE-003
+    type: grounded-by
+    rationale: Lesson promoted to RULE-003
+  - type: observed-by
+    target: RULE-003
+    rationale: Inverse of observes relationship from RULE-003
 ---
 ## What Happened
 

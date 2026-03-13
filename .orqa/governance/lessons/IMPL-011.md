@@ -1,19 +1,26 @@
 ---
-id: "IMPL-011"
-title: "Investigate systemically before fixing individual issues"
-description: "Collect all findings first, group by systemic theme, investigate the architecture, then design solutions at the system level. One fix addressing six findings is better than six independent fixes.\n"
-status: "promoted"
-created: "2026-03-07"
-updated: "2026-03-07"
-maturity: "understanding"
+id: IMPL-011
+title: Investigate systemically before fixing individual issues
+description: |
+  Collect all findings first, group by systemic theme, investigate the architecture, then design solutions at the system level. One fix addressing six findings is better than six independent fixes.
+status: promoted
+created: 2026-03-07
+updated: 2026-03-07
+maturity: understanding
 recurrence: 1
 relationships:
-  - target: "PILLAR-002"
-    type: "grounded"
-    rationale: "Systemic investigation is the core learning methodology"
-  - target: "RULE-030"
-    type: "grounded-by"
-    rationale: "Lesson promoted to RULE-030"
+  - target: PILLAR-002
+    type: grounded
+    rationale: Systemic investigation is the core learning methodology
+  - target: RULE-030
+    type: grounded-by
+    rationale: Lesson promoted to RULE-030
+  - type: observed-by
+    target: RULE-030
+    rationale: Inverse of observes relationship from RULE-030
+  - type: informed-by
+    target: IMPL-012
+    rationale: Inverse of informs relationship from IMPL-012
 ---
 ## What Happened
 

@@ -1,23 +1,50 @@
 ---
-id: "RULE-005"
-title: "Code Search Usage"
-description: "Prefer semantic search over Grep/Glob for multi-file searches. Load the correct search skill for your context."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-07"
-layer: "project"
+id: RULE-005
+title: Code Search Usage
+description: Prefer semantic search over Grep/Glob for multi-file searches. Load the correct search skill for your context.
+status: active
+created: 2026-03-07
+updated: 2026-03-07
+layer: project
 scope:
-  - "AGENT-001"
-  - "AGENT-002"
-  - "AGENT-003"
-  - "AGENT-004"
-  - "AGENT-005"
-  - "AGENT-006"
-  - "AGENT-007"
+  - AGENT-001
+  - AGENT-002
+  - AGENT-003
+  - AGENT-004
+  - AGENT-005
+  - AGENT-006
+  - AGENT-007
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Semantic search enables structured knowledge discovery"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Semantic search enables structured knowledge discovery
+  - type: informed-by
+    target: RULE-006
+    rationale: Inverse of informs relationship from RULE-006
+  - type: informed-by
+    target: RULE-008
+    rationale: Inverse of informs relationship from RULE-008
+  - type: informed-by
+    target: RULE-012
+    rationale: Inverse of informs relationship from RULE-012
+  - type: informed-by
+    target: RULE-018
+    rationale: Inverse of informs relationship from RULE-018
+  - type: informed-by
+    target: RULE-020
+    rationale: Inverse of informs relationship from RULE-020
+  - type: informed-by
+    target: RULE-024
+    rationale: Inverse of informs relationship from RULE-024
+  - type: informed-by
+    target: RULE-026
+    rationale: Inverse of informs relationship from RULE-026
+  - type: informed-by
+    target: RULE-036
+    rationale: Inverse of informs relationship from RULE-036
+  - type: informed-by
+    target: RULE-040
+    rationale: Inverse of informs relationship from RULE-040
 ---
 **Prefer semantic search over Grep/Glob for any search that spans more than one file or directory.**
 

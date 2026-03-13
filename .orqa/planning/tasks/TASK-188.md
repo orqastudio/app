@@ -24,6 +24,7 @@ acceptance:
   - Unit tests cover loading, parsing, and pattern matching
 ---
 
+
 ## What
 
 Port the companion plugin's rule engine logic to Rust so the app can enforce

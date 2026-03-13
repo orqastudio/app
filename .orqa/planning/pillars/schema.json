@@ -23,6 +23,21 @@
         { "type": "array", "items": { "type": "string" } }
       ],
       "description": "Gate question(s) to evaluate whether work serves this pillar"
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "target", "rationale"],
+        "additionalProperties": false,
+        "properties": {
+          "type": { "type": "string" },
+          "target": { "type": ["string", "null"] },
+          "rationale": { "type": "string" },
+          "intended": { "type": "boolean" }
+        }
+      },
+      "description": "Bidirectional relationships to other artifacts in the knowledge maturity pipeline"
     }
   },
   "bodyTemplate": {

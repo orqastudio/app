@@ -21,7 +21,8 @@ scoring:
   dependency: 1
   effort: 3
   score: 8.7
----## Tasks
+---
+## Tasks
 
 - [ ] Idea artifact type in `.orqa/planning/ideas/` with frontmatter
 - [ ] Quick-capture from conversation — slash command or highlight to create idea

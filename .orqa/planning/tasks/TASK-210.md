@@ -13,6 +13,7 @@ acceptance:
   - Skills entries match existing skill names in .orqa/team/skills/
   - Injection table knowledge is now encoded in the graph, not the prompt
 ---
+
 ## What
 
 Transfer the orchestrator's hardcoded Tier 2 skill injection table into graph edges on individual tasks. Instead of the orchestrator looking up "task touches backend/src-tauri/ → inject backend-best-practices", the task itself declares `skills: [backend-best-practices, tauri-v2]`.

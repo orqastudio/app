@@ -1,55 +1,67 @@
 ---
-id: "RULE-013"
-title: "Git Workflow"
-description: "Worktree-based workflow with mandatory cleanup, stash policy, and data loss prevention rules."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-07"
-layer: "core"
+id: RULE-013
+title: Git Workflow
+description: Worktree-based workflow with mandatory cleanup, stash policy, and data loss prevention rules.
+status: active
+created: 2026-03-07
+updated: 2026-03-07
+layer: core
 scope:
-  - "AGENT-002"
-  - "AGENT-003"
-  - "AGENT-006"
+  - AGENT-002
+  - AGENT-003
+  - AGENT-006
 enforcement:
-  - event: "bash"
-    pattern: "git commit.*--no-verify"
-    action: "block"
-    message: "Never bypass pre-commit hooks with --no-verify (RULE-013)."
-  - event: "bash"
-    pattern: "git push.*--no-verify"
-    action: "block"
-    message: "Never bypass push hooks with --no-verify (RULE-013)."
-  - event: "bash"
-    pattern: "git reset --hard"
-    action: "warn"
-    message: "Destructive git operation. Verify with git status and git diff first (RULE-013)."
-  - event: "bash"
-    pattern: "git checkout \\."
-    action: "warn"
-    message: "Destructive git operation. Verify with git status and git diff first (RULE-013)."
-  - event: "bash"
-    pattern: "git clean -f"
-    action: "warn"
-    message: "Destructive git operation. Verify what will be removed first (RULE-013)."
+  - event: bash
+    pattern: git commit.*--no-verify
+    action: block
+    message: Never bypass pre-commit hooks with --no-verify (RULE-013).
+  - event: bash
+    pattern: git push.*--no-verify
+    action: block
+    message: Never bypass push hooks with --no-verify (RULE-013).
+  - event: bash
+    pattern: git reset --hard
+    action: warn
+    message: Destructive git operation. Verify with git status and git diff first (RULE-013).
+  - event: bash
+    pattern: git checkout \.
+    action: warn
+    message: Destructive git operation. Verify with git status and git diff first (RULE-013).
+  - event: bash
+    pattern: git clean -f
+    action: warn
+    message: Destructive git operation. Verify what will be removed first (RULE-013).
 relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Git workflow creates structured, traceable version control practices"
-  - target: "RULE-007"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-012"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-006"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "RULE-009"
-    type: "informs"
-    rationale: "Listed in Related Rules section"
-  - target: "IMPL-015"
-    type: "observes"
-    rationale: "Rule promoted from lesson IMPL-015"
+  - target: PILLAR-001
+    type: grounded
+    rationale: Git workflow creates structured, traceable version control practices
+  - target: RULE-007
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-012
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-006
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: RULE-009
+    type: informs
+    rationale: Listed in Related Rules section
+  - target: IMPL-015
+    type: observes
+    rationale: Rule promoted from lesson IMPL-015
+  - type: informed-by
+    target: RULE-007
+    rationale: Inverse of informs relationship from RULE-007
+  - type: informed-by
+    target: RULE-025
+    rationale: Inverse of informs relationship from RULE-025
+  - type: informed-by
+    target: RULE-039
+    rationale: Inverse of informs relationship from RULE-039
+  - type: grounded
+    target: IMPL-015
+    rationale: Inverse of grounded-by relationship from IMPL-015
 ---
 **Source of Truth:** `.orqa/documentation/process/workflow.md`
 

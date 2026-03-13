@@ -21,7 +21,8 @@ scoring:
   dependency: 1
   effort: 4
   score: 5.8
----## Tasks
+---
+## Tasks
 
 - [ ] Epic -> Task hierarchy with interactive views
 - [ ] Plan-to-backlog breakdown with Claude assistance

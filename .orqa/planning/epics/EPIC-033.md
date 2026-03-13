@@ -23,7 +23,8 @@ scoring:
   scope: 4
   dependency-risk: 3
   score: 4.3
----## Implementation Design
+---
+## Implementation Design
 
 ### Phase A: Schema Simplification (DONE)
 - Removed Plan type from artifact-framework.md

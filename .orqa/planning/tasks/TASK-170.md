@@ -18,6 +18,7 @@ acceptance:
   - make typecheck passes
 ---
 
+
 ## What
 
 A Spotlight-style floating search overlay that provides AI-driven cross-artifact search without losing the user's current browsing context.

@@ -6,6 +6,7 @@ created: "2026-03-02"
 updated: "2026-03-04"
 ---
 
+
 **Date:** 2026-03-02 | **Status:** Phase 0e specification
 
 How OrqaStudio™ discovers, connects to, and manages MCP servers. OrqaStudio plays two MCP roles simultaneously: it is an **MCP server** (exposing its native tools to the Agent SDK sidecar) and an **MCP host** (connecting to external user-installed MCP servers and aggregating their tools for the sidecar).
@@ -13,6 +14,7 @@ How OrqaStudio™ discovers, connects to, and manages MCP servers. OrqaStudio pl
 **Architecture References:** [AD-007](AD-007) (sidecar integration), [AD-010](AD-010) (tool implementation as MCP), [AD-011](AD-011) (security model), [AD-017](AD-017) (composability principle)
 
 ---
+
 
 ## 1. Architecture Overview
 
@@ -66,6 +68,7 @@ How OrqaStudio™ discovers, connects to, and manages MCP servers. OrqaStudio pl
 | **MCP Host** | OrqaStudio connects to external MCP servers (user-installed) and proxies their tool definitions to the sidecar. Tool calls from Claude are routed through OrqaStudio to the appropriate external MCP server. |
 
 ---
+
 
 ## 2. Built-in OrqaStudio MCP Server
 
@@ -137,6 +140,7 @@ All tool functions return `Result<ToolOutput, ToolError>`. See the [Error Taxono
 
 ---
 
+
 ## 3. Tool Call Routing
 
 The full lifecycle of a tool call:
@@ -179,6 +183,7 @@ The full lifecycle of a tool call:
 | Rust to Svelte UI (Channel) | ~0.1ms |
 
 ---
+
 
 ## 4. MCP Host: External Server Discovery
 
@@ -244,6 +249,7 @@ OrqaStudio discovers external MCP servers from a configuration file at the proje
 
 ---
 
+
 ## 5. MCP Host: Connection Transports
 
 ### 5.1 stdio Transport
@@ -286,6 +292,7 @@ For MCP servers running as HTTP services (remote or local).
 
 ---
 
+
 ## 6. External Tool Aggregation
 
 When the sidecar starts a conversation, OrqaStudio provides it with the complete list of available tools from all connected MCP servers (built-in + external).
@@ -318,6 +325,7 @@ When Claude calls a namespaced tool:
 4. OrqaStudio wraps the result in the Agent SDK's expected format and returns it to the sidecar.
 
 ---
+
 
 ## 7. User-Facing MCP Management
 
@@ -357,6 +365,7 @@ The Settings view in the Explorer Panel includes an "MCP Servers" section:
 The built-in OrqaStudio MCP server always appears first in the list with trust level `builtin`. It cannot be disabled or removed. Its tools are not editable.
 
 ---
+
 
 ## 8. Security Model
 
@@ -406,6 +415,7 @@ When a project-level MCP server is encountered for the first time:
 - Secrets should use OS keychain storage (via `tauri-plugin-keyring`) and be referenced by variable name.
 
 ---
+
 
 ## 9. Server Lifecycle Events
 
@@ -466,6 +476,7 @@ Clear connection state
 
 ---
 
+
 ## 10. Configuration File Examples
 
 ### Minimal Project Configuration
@@ -518,6 +529,7 @@ Clear connection state
 The `projectOverrides` section stores per-project trust decisions for project-level MCP servers, so the user is not re-prompted on every project open.
 
 ---
+
 
 ## Related Documents
 
