@@ -2,13 +2,13 @@
 id: EPIC-059
 title: "Philosophy Alignment & Data Integrity"
 description: "Content migration and directory reorganization to express the Knowledge Maturity Pipeline philosophy. Moves artifacts to process/delivery/documentation structure, audits all content, integrates integrity checks, and ensures app layout picks up the new structure."
-status: in-progress
+status: done
 priority: P1
 created: "2026-03-13"
 updated: "2026-03-13"
 deadline: null
 milestone: MS-001
-pillars: [PILLAR-001, PILLAR-002]
+pillars: [PILLAR-001, PILLAR-002, PILLAR-003]
 depends-on: [EPIC-058]
 blocks: []
 research-refs: [RES-048, RES-049, RES-052]
@@ -156,6 +156,7 @@ Broken links and missing inverses mean the graph is lying. Nothing else starts u
 | [TASK-307](TASK-307) | Design plugin-sidecar pairing mechanism (IMPL-019, IMPL-020) | — | 4 |
 | [TASK-308](TASK-308) | Establish learning loop and completion discipline (IMPL-021 through 025) | — | 4 |
 | [TASK-309](TASK-309) | Triage EPIC-059 observations (IMPL-018 through IMPL-025) | [TASK-308](TASK-308) | 4 |
+| [TASK-310](TASK-310) | Plugin: maintain memory entries for unimplemented ADs | — | 4 |
 
 ## Out of Scope
 
