@@ -2,7 +2,7 @@
 id: IDEA-065
 title: "Friction is the feature — evaluate as foundational principle or pillar"
 description: "The purposeful friction of mandatory relationships (forcing connection to purpose before creation) may be significant enough to become a pillar. AI makes the friction nearly free, but the friction itself is non-negotiable."
-status: partially-delivered
+status: delivered
 created: "2026-03-12"
 updated: "2026-03-13"
 horizon: null
@@ -20,10 +20,6 @@ Emerged during the [AD-042](AD-042) design conversation. The insight: OrqaStudio
 
 ## Delivery Status
 
-**Delivered**: The pillar question was resolved — friction-as-feature was absorbed into [PILLAR-003](PILLAR-003) (Purpose Through Continuity) and the mandatory relationship schema in [AD-042](AD-042). It's a property of the system, not a separate pillar.
+Delivered. The core question — "does friction stand as its own pillar?" — was resolved: friction-as-feature was absorbed into [PILLAR-003](PILLAR-003) (Purpose Through Continuity) and the mandatory relationship schema in [AD-042](AD-042). It's a property of the system, not a separate pillar.
 
-**Not delivered**: UX research questions remain open:
-- How does purposeful friction interact with UX-first design? (friction in the right places vs friction-free experience)
-- User testing: does mandatory-relationships-with-AI-assist feel like value or bureaucracy?
-
-These should be answered during UAT / dogfooding observation.
+Remaining UX questions (does mandatory-relationships-with-AI-assist feel like value or bureaucracy?) are verification concerns on the implementing epics, not undelivered idea scope.
