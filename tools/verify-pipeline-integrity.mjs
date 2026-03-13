@@ -278,6 +278,84 @@ for (const [id, artifact] of allArtifacts) {
   }
 }
 
+// ── Pipeline health checks ─────────────────────────────────────────────────
+// Stage transition gaps: ADs without skills, skills without rules, etc.
+
+const pipelineHealth = {
+  adsWithoutPractice: 0,
+  skillsWithoutEnforcement: 0,
+  rulesWithoutVerification: 0,
+  stuckObservations: 0,
+  recurringUnpromoted: 0,
+};
+
+console.log("\n=== PIPELINE HEALTH ===");
+
+// Build reverse lookup: which ADs are practiced by skills?
+const adsPracticedBy = new Set();
+for (const [id, artifact] of allArtifacts) {
+  const rels = artifact.fm.relationships || [];
+  for (const rel of rels) {
+    if (rel.type === "practices" && rel.target) adsPracticedBy.add(rel.target);
+    if (rel.type === "practiced-by" && rel.target) adsPracticedBy.add(id);
+  }
+}
+
+// Build reverse lookup: which skills are enforced by rules?
+const skillsEnforcedBy = new Set();
+for (const [id, artifact] of allArtifacts) {
+  const rels = artifact.fm.relationships || [];
+  for (const rel of rels) {
+    if (rel.type === "enforces" && rel.target) skillsEnforcedBy.add(rel.target);
+    if (rel.type === "enforced-by" && rel.target) skillsEnforcedBy.add(id);
+  }
+}
+
+// Check: Accepted ADs without corresponding skills (practices relationship)
+for (const [id, artifact] of allArtifacts) {
+  if (artifact.type !== "decisions") continue;
+  if (artifact.fm.status !== "accepted") continue;
+  if (!adsPracticedBy.has(id)) {
+    const hasEnforcement = (artifact.fm.relationships || []).some(
+      (r) => r.type === "enforced-by" || r.type === "practiced-by"
+    );
+    if (!hasEnforcement) {
+      // Already warned in enforcement chain checks, skip duplicate
+    }
+  }
+}
+
+// Check: Lessons with recurrence >= 2 that haven't been promoted
+for (const [id, artifact] of allArtifacts) {
+  if (artifact.type !== "lessons") continue;
+  const fm = artifact.fm;
+  if (fm.status === "promoted") continue;
+  if ((fm.recurrence || 0) >= 2) {
+    warn(`${id}: recurrence=${fm.recurrence} but status="${fm.status}" — should be reviewed for promotion`);
+    pipelineHealth.recurringUnpromoted++;
+  }
+}
+
+// Check: Lessons stuck at observation maturity for a long time
+// (created > 14 days ago, still maturity: observation, no advancement signals)
+const now = new Date();
+for (const [id, artifact] of allArtifacts) {
+  if (artifact.type !== "lessons") continue;
+  const fm = artifact.fm;
+  if (fm.maturity !== "observation") continue;
+  if (fm.status === "promoted") continue;
+
+  const created = new Date(fm.created);
+  const ageDays = Math.floor((now - created) / (1000 * 60 * 60 * 24));
+  if (ageDays > 14) {
+    warn(`${id}: observation for ${ageDays} days — consider advancing to understanding or archiving`);
+    pipelineHealth.stuckObservations++;
+  }
+}
+
+console.log(`  Recurring unpromoted lessons: ${pipelineHealth.recurringUnpromoted}`);
+console.log(`  Stuck observations (>14 days): ${pipelineHealth.stuckObservations}`);
+
 // ── Epic reconciliation ────────────────────────────────────────────────────
 
 const EPIC_DIR = ".orqa/delivery/epics";
@@ -364,6 +442,10 @@ console.log(`\nEnforcement chains:`);
 console.log(`  Accepted ADs without enforcement: ${enforcementStats.adsWithoutEnforcement}`);
 console.log(`  Promoted lessons without grounded-by: ${enforcementStats.lessonsWithoutPromotion}`);
 console.log(`  Rule→AD body refs without enforces: ${enforcementStats.rulesWithoutEnforces}`);
+
+console.log(`\nPipeline health:`);
+console.log(`  Recurring unpromoted lessons: ${pipelineHealth.recurringUnpromoted}`);
+console.log(`  Stuck observations (>14 days): ${pipelineHealth.stuckObservations}`);
 
 console.log(`\nEpic reconciliation:`);
 console.log(`  Epics scanned: ${epicStats.scanned}`);
