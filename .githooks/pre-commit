@@ -55,6 +55,24 @@ if [ -n "$ORQA_CHANGED" ]; then
   node tools/verify-links.mjs --staged --check-bidirectional
   echo "--- Artifacts: pipeline integrity ---"
   node tools/verify-pipeline-integrity.mjs --staged
+  echo "--- Artifacts: status transition validation ---"
+  node .githooks/validate-status-transitions.mjs
+  echo "--- Artifacts: pillar alignment in docs ---"
+  node .githooks/validate-pillar-alignment.mjs
+fi
+
+# Historical preservation (block deletion of research/task/idea/lesson files)
+HISTORICAL_DELETED=$(git diff --cached --name-only --diff-filter=D -- '.orqa/delivery/research/RES-*.md' '.orqa/delivery/tasks/TASK-*.md' '.orqa/delivery/ideas/IDEA-*.md' '.orqa/process/lessons/IMPL-*.md' | head -1 || true)
+if [ -n "$HISTORICAL_DELETED" ]; then
+  echo "--- Artifacts: historical preservation ---"
+  bash .githooks/validate-historical-preservation.sh
+fi
+
+# Config-disk consistency (only if project.json changed)
+CONFIG_CHANGED=$(git diff --cached --name-only --diff-filter=ACMR -- '.orqa/project.json' | head -1 || true)
+if [ -n "$CONFIG_CHANGED" ]; then
+  echo "--- Config: disk consistency ---"
+  node .githooks/validate-config-disk.mjs
 fi
 
 # Stub scanner (only if production code files changed)
