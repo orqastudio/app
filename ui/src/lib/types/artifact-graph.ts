@@ -73,3 +73,19 @@ export const ARTIFACT_TYPES = [
 ] as const;
 
 export type ArtifactGraphType = (typeof ARTIFACT_TYPES)[number];
+
+/** Category of integrity issue found in the artifact graph. */
+export type IntegrityCategory = "BrokenLink" | "MissingInverse" | "NullTarget";
+
+/** Severity of an integrity finding. */
+export type IntegritySeverity = "Error" | "Warning";
+
+/** A single integrity finding from the graph. */
+export interface IntegrityCheck {
+    category: IntegrityCategory;
+    severity: IntegritySeverity;
+    artifact_id: string;
+    message: string;
+    auto_fixable: boolean;
+    fix_description: string | null;
+}

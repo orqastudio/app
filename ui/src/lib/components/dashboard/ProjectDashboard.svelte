@@ -18,6 +18,7 @@
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import { ARTIFACT_TYPES } from "$lib/types/artifact-graph";
+	import IntegrityWidget from "./IntegrityWidget.svelte";
 	import type { Component } from "svelte";
 	import { SvelteMap } from "svelte/reactivity";
 
@@ -229,6 +230,9 @@
 					{/if}
 				</Card.Content>
 			</Card.Root>
+
+			<!-- Pipeline Health -->
+			<IntegrityWidget />
 
 			<!-- Governance artifacts -->
 			<Card.Root class="mb-4">
