@@ -136,13 +136,26 @@ function scanFile(filePath, knownArtifacts) {
   }
 
   // Check for bare artifact IDs (should be linked)
+  // Build a set of line indices that are inside fenced code blocks
+  const bodyLines = body.split("\n");
+  const codeBlockLines = new Set();
+  let inFencedBlock = false;
+  for (let bi = 0; bi < bodyLines.length; bi++) {
+    if (bodyLines[bi].trimStart().startsWith("```")) {
+      inFencedBlock = !inFencedBlock;
+      codeBlockLines.add(bi);
+      continue;
+    }
+    if (inFencedBlock) codeBlockLines.add(bi);
+  }
+
   for (const match of body.matchAll(BARE_ID_PATTERN)) {
     const id = match[1];
-    // Skip if it appears inside a code block
-    const lineIdx = body.slice(0, match.index).split("\n").length;
-    const line = lines[bodyStart + lineIdx - 1] || "";
-    if (line.trimStart().startsWith("```") || line.trimStart().startsWith("`")) continue;
+    // Skip if it appears inside a fenced code block
+    const lineIdx = body.slice(0, match.index).split("\n").length - 1;
+    if (codeBlockLines.has(lineIdx)) continue;
 
+    const line = lines[bodyStart + lineIdx] || "";
     issues.push({
       type: "bare-id",
       severity: "warning",
