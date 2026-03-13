@@ -68,6 +68,12 @@
 		try {
 			checks = await artifactGraphSDK.runIntegrityScan();
 			scanned = true;
+			// Store a health snapshot after each scan
+			const errors = checks.filter((c) => c.severity === "Error").length;
+			const warnings = checks.filter((c) => c.severity === "Warning").length;
+			await artifactGraphSDK.storeHealthSnapshot(errors, warnings).catch(() => {
+				// Non-critical — don't block the UI if snapshot storage fails
+			});
 		} catch (err: unknown) {
 			error = err instanceof Error ? err.message : String(err);
 		} finally {

@@ -96,3 +96,16 @@ export interface AppliedFix {
     description: string;
     file_path: string;
 }
+
+/** A point-in-time snapshot of graph health metrics. */
+export interface HealthSnapshot {
+    id: number;
+    project_id: number;
+    node_count: number;
+    edge_count: number;
+    orphan_count: number;
+    broken_ref_count: number;
+    error_count: number;
+    warning_count: number;
+    created_at: string;
+}

@@ -14,7 +14,7 @@ import { SvelteMap } from "svelte/reactivity";
 import { listen } from "@tauri-apps/api/event";
 import type { UnlistenFn } from "@tauri-apps/api/event";
 import { invoke, extractErrorMessage } from "$lib/ipc/invoke";
-import type { ArtifactNode, ArtifactRef, GraphStats, IntegrityCheck, AppliedFix } from "$lib/types/artifact-graph";
+import type { ArtifactNode, ArtifactRef, GraphStats, IntegrityCheck, AppliedFix, HealthSnapshot } from "$lib/types/artifact-graph";
 import { ARTIFACT_TYPES } from "$lib/types/artifact-graph";
 
 // ---------------------------------------------------------------------------
@@ -361,6 +361,23 @@ class ArtifactGraphSDK {
     /** Apply auto-fixes for the given integrity checks and return what was changed. */
     async applyAutoFixes(checks: IntegrityCheck[]): Promise<AppliedFix[]> {
         return invoke<AppliedFix[]>("apply_auto_fixes", { checks });
+    }
+
+    // -----------------------------------------------------------------------
+    // Health snapshots — async (requires backend storage)
+    // -----------------------------------------------------------------------
+
+    /** Store a health snapshot with the current graph metrics. */
+    async storeHealthSnapshot(errorCount: number, warningCount: number): Promise<HealthSnapshot> {
+        return invoke<HealthSnapshot>("store_health_snapshot", {
+            errorCount,
+            warningCount,
+        });
+    }
+
+    /** Get the most recent health snapshots for trend display. */
+    async getHealthSnapshots(limit?: number): Promise<HealthSnapshot[]> {
+        return invoke<HealthSnapshot[]>("get_health_snapshots", { limit: limit ?? null });
     }
 
     // -----------------------------------------------------------------------

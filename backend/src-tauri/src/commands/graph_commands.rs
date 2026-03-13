@@ -6,8 +6,9 @@ use crate::domain::artifact_graph::{
     apply_fixes, build_artifact_graph, check_integrity, graph_stats, ArtifactGraph, ArtifactNode,
     AppliedFix, GraphStats, IntegrityCheck,
 };
+use crate::domain::health_snapshot::{HealthSnapshot, NewHealthSnapshot};
 use crate::error::OrqaError;
-use crate::repo::project_repo;
+use crate::repo::{health_snapshot_repo, project_repo};
 use crate::state::AppState;
 
 // ---------------------------------------------------------------------------
@@ -168,6 +169,59 @@ pub fn apply_auto_fixes(state: State<'_, AppState>) -> Result<Vec<AppliedFix>, O
     }
 
     Ok(applied)
+}
+
+/// Store a health snapshot with the current graph metrics and integrity counts.
+#[tauri::command]
+pub fn store_health_snapshot(
+    error_count: i64,
+    warning_count: i64,
+    state: State<'_, AppState>,
+) -> Result<HealthSnapshot, OrqaError> {
+    let graph = get_or_build_graph(&state)?;
+    let health = graph_stats(&graph);
+
+    let conn = state
+        .db
+        .conn
+        .lock()
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
+
+    let project = project_repo::get_active(&conn)?.ok_or_else(|| {
+        OrqaError::NotFound("no active project".to_string())
+    })?;
+
+    health_snapshot_repo::create(
+        &conn,
+        project.id,
+        &NewHealthSnapshot {
+            node_count: health.node_count as i64,
+            edge_count: health.edge_count as i64,
+            orphan_count: health.orphan_count as i64,
+            broken_ref_count: health.broken_ref_count as i64,
+            error_count,
+            warning_count,
+        },
+    )
+}
+
+/// Get the most recent health snapshots for the active project.
+#[tauri::command]
+pub fn get_health_snapshots(
+    limit: Option<i64>,
+    state: State<'_, AppState>,
+) -> Result<Vec<HealthSnapshot>, OrqaError> {
+    let conn = state
+        .db
+        .conn
+        .lock()
+        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
+
+    let project = project_repo::get_active(&conn)?.ok_or_else(|| {
+        OrqaError::NotFound("no active project".to_string())
+    })?;
+
+    health_snapshot_repo::get_recent(&conn, project.id, limit.unwrap_or(30))
 }
 
 #[cfg(test)]

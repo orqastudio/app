@@ -1,5 +1,6 @@
 pub mod artifact_repo;
 pub mod enforcement_rules_repo;
+pub mod health_snapshot_repo;
 pub mod lesson_repo;
 pub mod message_repo;
 pub mod project_repo;

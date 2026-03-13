@@ -20,6 +20,7 @@
 	import { ARTIFACT_TYPES } from "$lib/types/artifact-graph";
 	import IntegrityWidget from "./IntegrityWidget.svelte";
 	import PipelineWidget from "./PipelineWidget.svelte";
+	import HealthTrendWidget from "./HealthTrendWidget.svelte";
 	import type { Component } from "svelte";
 	import { SvelteMap } from "svelte/reactivity";
 
@@ -237,6 +238,9 @@
 
 			<!-- Knowledge Pipeline -->
 			<PipelineWidget />
+
+			<!-- Health Trends -->
+			<HealthTrendWidget />
 
 			<!-- Governance artifacts -->
 			<Card.Root class="mb-4">

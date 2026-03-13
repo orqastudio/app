@@ -148,10 +148,8 @@ Each issue row: artifact ID (clickable → navigates to artifact), message, seve
 | ~~TASK-TBD-3~~ | ~~IPC commands~~ (merged into [TASK-390](TASK-390) + [TASK-392](TASK-392)) | — | — |
 | [TASK-391](TASK-391) | Dashboard integrity widget — health score and issue list | 2 | [TASK-390](TASK-390) |
 | [TASK-393](TASK-393) | Fix flow — auto-fix button and results display in IntegrityWidget | 2 | [TASK-391](TASK-391), [TASK-392](TASK-392) |
-| TASK-TBD-6 | Pipeline thread visualization | 3 | TASK-TBD-3 |
-| TASK-TBD-7 | Bottleneck detection and flow analysis | 3 | TASK-TBD-6 |
-| TASK-TBD-8 | Graph snapshot storage and trend data | 4 | TASK-TBD-1 |
-| TASK-TBD-9 | Dashboard trend widgets — sparklines, velocity, staleness | 4 | TASK-TBD-4, TASK-TBD-8 |
+| [TASK-394](TASK-394) | Pipeline stage visualization widget | 3 | [TASK-389](TASK-389) |
+| [TASK-395](TASK-395) | Graph health snapshot storage and trend sparklines | 4 | [TASK-390](TASK-390) |
 | TASK-TBD-10 | Reconcile [EPIC-060](EPIC-060) | — | all above |
 
 ## Out of Scope
