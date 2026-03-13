@@ -13,7 +13,7 @@ depends-on:
   - TASK-087
   - TASK-088
 acceptance:
-  - SKILL.md exists in .orqa/team/skills/orqa-artifact-audit/
+  - SKILL.md exists in .orqa/process/skills/orqa-artifact-audit/
   - Skill covers all artifact types in .orqa/
   - Skill includes verification checklists that an agent can follow
   - Skill is referenced in relevant agent definitions (reviewer, orchestrator)

@@ -46,7 +46,7 @@ Before any documentation work, load and understand:
 
 - `.orqa/documentation/product/vision.md` — Product vision and pillars
 - `.orqa/documentation/product/governance.md` — Governance rules and framework
-- `.orqa/governance/rules/*.md` — Active rules that constrain documentation
+- `.orqa/process/rules/*.md` — Active rules that constrain documentation
 
 ## Operating Context
 
@@ -58,18 +58,18 @@ You may run in two contexts. Both are permanent and first-class.
 
 The `chunkhound` skill teaches query patterns that work in both contexts.
 
-**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see `.orqa/governance/rules/[RULE-009](RULE-009).md`.
+**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see `.orqa/process/rules/[RULE-009](RULE-009).md`.
 
 ## Documentation Types
 
 | Type | Location | When |
 |------|----------|------|
-| Architecture decisions | `.orqa/governance/decisions/` | Significant technical/design choices |
+| Architecture decisions | `.orqa/process/decisions/` | Significant technical/design choices |
 | UI specifications | `.orqa/documentation/ui/` | User-facing feature design |
 | Development guides | `.orqa/documentation/development/` | How-to docs for implementation |
 | Process documentation | `.orqa/documentation/process/` | Workflow and governance processes |
 | Product documentation | `.orqa/documentation/product/` | Vision, roadmap, artifact framework |
-| Research documents | `.orqa/planning/research/` | Investigations and analysis |
+| Research documents | `.orqa/delivery/research/` | Investigations and analysis |
 
 ## YAML Frontmatter Requirement
 
@@ -87,7 +87,7 @@ updated: 2026-01-01
 
 ## Pillar Alignment Section
 
-Every feature documentation page MUST include a Pillar Alignment section near the bottom. See `.orqa/governance/rules/[RULE-021](RULE-021).md` for details.
+Every feature documentation page MUST include a Pillar Alignment section near the bottom. See `.orqa/process/rules/[RULE-021](RULE-021).md` for details.
 
 ## Writing Standards
 

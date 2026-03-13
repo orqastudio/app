@@ -25,8 +25,8 @@ relationships:
 ## What Happened
 
 All artifact categories showed empty content in the app. The scanner was working correctly, but `project.json` had wrong paths:
-- Config said `.orqa/milestones/` — disk had `.orqa/planning/milestones/`
-- Config said `.orqa/lessons/` — disk had `.orqa/governance/lessons/`
+- Config said `.orqa/milestones/` — disk had `.orqa/delivery/milestones/`
+- Config said `.orqa/lessons/` — disk had `.orqa/process/lessons/`
 - Six paths total were wrong
 
 ## Why It Was Unexpected

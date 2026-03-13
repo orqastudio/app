@@ -45,10 +45,10 @@ This applies to:
 Research and tasks are historical records of thinking, investigation, and decisions. They have lasting value for understanding *why* the project evolved the way it did. When they are no longer current, they are marked as `status: surpassed` — never deleted.
 
 This applies to:
-- Research (`.orqa/planning/research/`)
-- Tasks (`.orqa/planning/tasks/`)
-- Ideas (`.orqa/planning/ideas/`) — use `status: archived` per existing lifecycle
-- Lessons (`.orqa/governance/lessons/`) — use `promoted_to` field per existing lifecycle
+- Research (`.orqa/delivery/research/`)
+- Tasks (`.orqa/delivery/tasks/`)
+- Ideas (`.orqa/delivery/ideas/`) — use `status: archived` per existing lifecycle
+- Lessons (`.orqa/process/lessons/`) — use `promoted_to` field per existing lifecycle
 
 ## The `surpassed` Status
 

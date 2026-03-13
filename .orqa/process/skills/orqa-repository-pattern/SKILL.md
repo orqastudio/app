@@ -240,7 +240,7 @@ fn setup() -> Connection {
 
 ## Non-SQLite Repositories
 
-The `lesson_repo` reads/writes markdown files from `.orqa/governance/lessons/`. Same interface pattern (list, get, create) but operates on `Path` instead of `Connection`:
+The `lesson_repo` reads/writes markdown files from `.orqa/process/lessons/`. Same interface pattern (list, get, create) but operates on `Path` instead of `Connection`:
 
 ```rust
 pub fn list(project_path: &Path) -> Result<Vec<Lesson>, OrqaError> { ... }

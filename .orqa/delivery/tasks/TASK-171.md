@@ -39,7 +39,7 @@ integrations will consume.
 
 ## Verification
 
-- Rule file exists at `.orqa/governance/rules/[RULE-040](RULE-040).md`
+- Rule file exists at `.orqa/process/rules/[RULE-040](RULE-040).md`
 - Frontmatter passes schema validation
 - All current agent tool lists can be expressed using the capability vocabulary
 - No capability is ambiguous or overlapping

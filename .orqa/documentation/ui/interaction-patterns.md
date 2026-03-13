@@ -117,7 +117,7 @@ Tool call received → Card appears with "Pending" badge (amber)
 
 ### Enforcement Rule Editing
 
-Enforcement rules (`.orqa/governance/rules/*.md`) use YAML frontmatter with structured fields: `event` (FileEdit or Bash), `action` (block or warn), and `conditions` (including `pattern` for regex matching). Editing enforcement rule files follows the same view/edit/save flow as other artifacts, but the editor should validate YAML frontmatter structure on save — malformed `event`, `action`, or `conditions` fields produce a warning toast before writing.
+Enforcement rules (`.orqa/process/rules/*.md`) use YAML frontmatter with structured fields: `event` (FileEdit or Bash), `action` (block or warn), and `conditions` (including `pattern` for regex matching). Editing enforcement rule files follows the same view/edit/save flow as other artifacts, but the editor should validate YAML frontmatter structure on save — malformed `event`, `action`, or `conditions` fields produce a warning toast before writing.
 
 ### Session Title Editing
 
@@ -286,7 +286,7 @@ Every empty container has a meaningful message and a single clear call to action
 | Empty Nav Sub-Panel | "No docs found" or "No {category} defined" | "Add items to get started" |
 | Nav Sub-Panel (Hooks, no enforcement rules) | "No enforcement rules configured" | "Create enforcement rule" button |
 | Empty artifact category | "No {agents/rules/skills} defined" | "Create new {type}" button |
-| Empty hooks view | "No hooks configured. Add lifecycle hooks to .orqa/governance/hooks/ or enforcement rules to .orqa/governance/rules/" | "Create lifecycle hook" / "Create enforcement rule" buttons |
+| Empty hooks view | "No hooks configured. Add lifecycle hooks to .orqa/process/hooks/ or enforcement rules to .orqa/process/rules/" | "Create lifecycle hook" / "Create enforcement rule" buttons |
 | Empty search results | "No results for '{query}'" | Suggest broader search terms |
 | No scanner results | "No scanner results yet" | "Scanners run during implementation" |
 | No metrics | "Not enough data for metrics" | "Metrics populate as you use OrqaStudio" |

@@ -175,7 +175,7 @@ with YAML frontmatter that define nodes and relationships.
    - task.epic → read the epic for design context
    - epic.docs-required → prerequisite docs
    - epic.research-refs → background research
-3. Check applicable rules: read `.orqa/governance/rules/` for active rules
+3. Check applicable rules: read `.orqa/process/rules/` for active rules
    matching your scope
 4. Load skills matching the file paths you'll touch (see skill `scope` fields)
 

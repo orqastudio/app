@@ -16,7 +16,7 @@ Every feature, task, and implementation must pass the Pillar Alignment Test befo
 
 ### Pillar Alignment Test
 
-Active pillars are defined as structured artifacts in `.orqa/planning/pillars/PILLAR-NNN.md`. Each pillar has:
+Active pillars are defined as structured artifacts in `.orqa/process/pillars/PILLAR-NNN.md`. Each pillar has:
 
 - **`title`** — The principle name
 - **`description`** — What the pillar means
@@ -41,7 +41,7 @@ When pillars conflict, the pillar with the lower `priority` number takes precede
 
 The following are immutable without explicit user approval:
 
-1. **Pillar framework** — Every feature serves at least one active pillar defined in `.orqa/planning/pillars/`
+1. **Pillar framework** — Every feature serves at least one active pillar defined in `.orqa/process/pillars/`
 2. **Primary audience** — Structured thinkers: product managers, tech leads, and anyone who needs to turn complex situations into structured understanding
 3. **Human approval gate** — Plans must be approved by a human before execution begins. AI assists and executes, but humans authorise.
 4. **Technology stack** — Tauri v2 + Svelte 5 + Rust + SQLite
@@ -111,10 +111,10 @@ The following artifacts are shipped with OrqaStudio as the core layer. They are 
 
 | Artifact | Path | Purpose |
 |----------|------|---------|
-| 7 universal agent definitions | `.orqa/team/agents/*.md` | Universal roles: Orchestrator, Researcher, Planner, Implementer, Reviewer, Writer, Designer |
-| Core enforcement rules | `.orqa/governance/rules/*.md` | Behavioral constraints: no stubs, error ownership, documentation-first, etc. |
-| Core skills | `.orqa/team/skills/` | Domain knowledge: diagnostic-methodology, code-quality-review, security-audit, etc. |
-| Lifecycle hooks | `.orqa/governance/hooks/` | Process automation: session start, pre-commit |
+| 7 universal agent definitions | `.orqa/process/agents/*.md` | Universal roles: Orchestrator, Researcher, Planner, Implementer, Reviewer, Writer, Designer |
+| Core enforcement rules | `.orqa/process/rules/*.md` | Behavioral constraints: no stubs, error ownership, documentation-first, etc. |
+| Core skills | `.orqa/process/skills/` | Domain knowledge: diagnostic-methodology, code-quality-review, security-audit, etc. |
+| Lifecycle hooks | `.orqa/process/hooks/` | Process automation: session start, pre-commit |
 | Artifact framework | `.orqa/documentation/product/artifact-framework.md` | How artifacts are created, tracked, and promoted |
 
 These artifacts collectively implement the agile learning loop (chaos → clarity → execution → reflection → improved clarity) as executable, enforceable governance.
@@ -140,13 +140,13 @@ Project-specific rules, additional skills, and domain-specific artifact configur
 The current process uses:
 
 - **Claude Code CLI** as the orchestrator (via `.claude/` symlinks to `.orqa/`)
-- **7 universal agent roles** defined as `.orqa/team/agents/*.md` files, specialised via skills
-- **20+ rules** enforced via `.orqa/governance/rules/*.md`
-- **30+ skills** in `.orqa/team/skills/` (core + project-specific)
-- **Hooks** in `.orqa/governance/hooks/` (session start, pre-commit)
+- **7 universal agent roles** defined as `.orqa/process/agents/*.md` files, specialised via skills
+- **20+ rules** enforced via `.orqa/process/rules/*.md`
+- **30+ skills** in `.orqa/process/skills/` (core + project-specific)
+- **Hooks** in `.orqa/process/hooks/` (session start, pre-commit)
 - **Git worktree workflow** for task isolation
 
-The governance works, but it is invisible — artifacts live in dotfiles and terminal output. This is exactly the problem OrqaStudio exists to solve: making governance visible and structured, and improving it over time through structured reflection. See `.orqa/planning/pillars/` for the active pillar definitions.
+The governance works, but it is invisible — artifacts live in dotfiles and terminal output. This is exactly the problem OrqaStudio exists to solve: making governance visible and structured, and improving it over time through structured reflection. See `.orqa/process/pillars/` for the active pillar definitions.
 
 Everything being developed in this bootstrap phase is destined to become the core layer. The agents, rules, hooks, and artifact framework defined here are not OrqaStudio-specific — they represent the reusable, opinionated framework that ships with every new project OrqaStudio creates.
 

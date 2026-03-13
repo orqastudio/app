@@ -17,7 +17,7 @@ OrqaStudio can act as a **governance hub** for such projects: a single source of
 ## How It Works
 
 ```
-.orqa/governance/rules/       ← Single source of truth
+.orqa/process/rules/       ← Single source of truth
     │
     ├── .claude/rules/        ← Symlinks (Claude Code reads these)
     ├── .cursorrules          ← Generated (Cursor reads this)
@@ -37,20 +37,20 @@ OrqaStudio does not replace other AI tools. It coexists with them, adding a gove
 | Tool | Native Config | Integration Method |
 |------|-------------|-------------------|
 | **Claude Code** | `.claude/`, `CLAUDE.md`, `AGENTS.md` | Symlinks: `.claude/` → `.orqa/` |
-| **Cursor** | `.cursorrules`, `.cursor/rules/` | Generated from `.orqa/governance/rules/` |
-| **GitHub Copilot** | `.github/copilot-instructions.md` | Generated from `.orqa/governance/rules/` |
-| **Aider** | `.aider.conf.yml`, `CONVENTIONS.md` | Generated from `.orqa/governance/rules/` |
+| **Cursor** | `.cursorrules`, `.cursor/rules/` | Generated from `.orqa/process/rules/` |
+| **GitHub Copilot** | `.github/copilot-instructions.md` | Generated from `.orqa/process/rules/` |
+| **Aider** | `.aider.conf.yml`, `CONVENTIONS.md` | Generated from `.orqa/process/rules/` |
 
 ### Symlink Strategy (Claude Code)
 
 Claude Code is the deepest integration because both tools use the same markdown-based governance format:
 
 ```
-.claude/rules/    → .orqa/governance/rules/
-.claude/agents/   → .orqa/team/agents/
-.claude/skills/   → .orqa/team/skills/
-.claude/hooks/    → .orqa/governance/hooks/
-.claude/CLAUDE.md → .orqa/team/agents/orchestrator.md
+.claude/rules/    → .orqa/process/rules/
+.claude/agents/   → .orqa/process/agents/
+.claude/skills/   → .orqa/process/skills/
+.claude/hooks/    → .orqa/process/hooks/
+.claude/CLAUDE.md → .orqa/process/agents/orchestrator.md
 ```
 
 Both Claude Code and OrqaStudio read the same files. No generation step needed.
@@ -59,7 +59,7 @@ Both Claude Code and OrqaStudio read the same files. No generation step needed.
 
 For tools that use different configuration formats, OrqaStudio generates their native config from `.orqa/` content:
 
-1. Read all active rules from `.orqa/governance/rules/`
+1. Read all active rules from `.orqa/process/rules/`
 2. Transform into the tool's expected format
 3. Write to the tool's config location
 4. Track the generated file so it can be regenerated on changes

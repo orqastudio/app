@@ -8,7 +8,17 @@ sort: 3
 
 # Rules
 
-Rules enforce coding standards, process requirements, and project conventions. They are automatically loaded and applied based on file path context. Each rule defines what is required, what is forbidden, and how compliance is verified.
+Rules enforce coding standards, process requirements, and project conventions. Each rule defines what is required, what is forbidden, and how compliance is verified.
+
+## Pipeline Role
+
+Rules are **Enforcement** — the fifth stage of the knowledge maturity pipeline:
+
+```
+Observation → Understanding → Principle → Practice → Enforcement → Verification
+```
+
+A rule is what a decision becomes when the decision needs active policing, not just documentation. Rules are applied at multiple levels: agent self-compliance, code reviewer verification, pre-commit hooks, and automated scanners. When enforcement is insufficient, it escalates: rule → hook → scanner → hard block.
 
 ## Rule Categories
 
@@ -17,6 +27,6 @@ Rules enforce coding standards, process requirements, and project conventions. T
 - **Architecture rules**: Enforce structural boundaries (IPC patterns, component purity, end-to-end completeness)
 - **Governance rules**: Enforce the governance framework itself (artifact lifecycle, vision alignment)
 
-## Enforcement
+## Rule Status
 
-Rules are enforced at multiple levels: agent self-compliance, code reviewer verification, pre-commit hooks, and automated scanners. Repeated violations trigger escalation through the lesson promotion pipeline.
+Rules carry `status: active` or `status: inactive`. Inactive rules are preserved as historical record but not enforced. Missing status is treated as active.

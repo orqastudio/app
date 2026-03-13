@@ -55,8 +55,8 @@ For any non-trivial feature, follow this preferred workflow before writing the f
 ### Always Read
 
 - `.orqa/documentation/ui/` — Existing feature designs related to the task
-- `.orqa/governance/decisions/` — Relevant `AD-NNN.md` architecture decision artifacts
-- `.orqa/planning/tasks/` — Task artifacts with context, constraints, and priorities
+- `.orqa/process/decisions/` — Relevant `AD-NNN.md` architecture decision artifacts
+- `.orqa/delivery/tasks/` — Task artifacts with context, constraints, and priorities
 - `.orqa/documentation/product/roadmap.md` — Verify the work is prioritized and not scope creep
 
 ### Read When Modifying Backend
@@ -178,7 +178,7 @@ Every plan MUST explicitly address each dimension below. For each, state either 
 - `npm run check` passes
 
 **Documentation Compliance:**
-- IPC command signatures match the relevant `AD-NNN.md` decisions in `.orqa/governance/decisions/`
+- IPC command signatures match the relevant `AD-NNN.md` decisions in `.orqa/process/decisions/`
 - Component states match the plan's component state table
 - Error types match documented error propagation strategy
 ```
@@ -264,9 +264,9 @@ State "N/A — [reason]" for inapplicable ones.]
 
 ## See Also
 
-- `.orqa/governance/rules/[RULE-022](RULE-022).md` — Plan mode requirements
-- `.orqa/governance/rules/[RULE-002](RULE-002).md` — AD-XXX quick reference
-- `.orqa/governance/rules/[RULE-031](RULE-031).md` — Two-Pillar framework and governance
+- `.orqa/process/rules/[RULE-022](RULE-022).md` — Plan mode requirements
+- `.orqa/process/rules/[RULE-002](RULE-002).md` — AD-XXX quick reference
+- `.orqa/process/rules/[RULE-031](RULE-031).md` — Two-Pillar framework and governance
 - `.orqa/documentation/development/coding-standards.md` — Code quality standards
 
 ## Related Skills

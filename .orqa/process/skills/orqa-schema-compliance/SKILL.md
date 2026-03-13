@@ -32,17 +32,17 @@ Each artifact type directory contains a `schema.json` (JSON Schema format). The 
 
 | Directory | Schema governs |
 |-----------|---------------|
-| `.orqa/governance/rules/` | Rules (RULE-NNN) |
-| `.orqa/governance/decisions/` | Architecture decisions (AD-NNN) |
-| `.orqa/governance/lessons/` | Implementation lessons (IMPL-NNN) |
-| `.orqa/planning/epics/` | Epics (EPIC-NNN) |
-| `.orqa/planning/tasks/` | Tasks (TASK-NNN) |
-| `.orqa/planning/ideas/` | Ideas (IDEA-NNN) |
-| `.orqa/planning/research/` | Research docs (RES-NNN) |
-| `.orqa/planning/milestones/` | Milestones (MS-NNN) |
-| `.orqa/planning/pillars/` | Pillars (PILLAR-NNN) |
-| `.orqa/team/agents/` | Agent definitions |
-| `.orqa/team/skills/` | Skill definitions |
+| `.orqa/process/rules/` | Rules (RULE-NNN) |
+| `.orqa/process/decisions/` | Architecture decisions (AD-NNN) |
+| `.orqa/process/lessons/` | Implementation lessons (IMPL-NNN) |
+| `.orqa/delivery/epics/` | Epics (EPIC-NNN) |
+| `.orqa/delivery/tasks/` | Tasks (TASK-NNN) |
+| `.orqa/delivery/ideas/` | Ideas (IDEA-NNN) |
+| `.orqa/delivery/research/` | Research docs (RES-NNN) |
+| `.orqa/delivery/milestones/` | Milestones (MS-NNN) |
+| `.orqa/process/pillars/` | Pillars (PILLAR-NNN) |
+| `.orqa/process/agents/` | Agent definitions |
+| `.orqa/process/skills/` | Skill definitions |
 
 Before creating any artifact, read the `schema.json` in its target directory for:
 - Required fields (`"required"` array)
@@ -110,7 +110,7 @@ id: TASK-153
 
 To find the next available ID, scan existing files:
 ```bash
-ls .orqa/planning/tasks/TASK-*.md | sort | tail -1
+ls .orqa/delivery/tasks/TASK-*.md | sort | tail -1
 ```
 
 ### 4. Field Ordering Violations (propertyOrder)
@@ -209,10 +209,10 @@ Run the validator manually to check files before committing:
 
 ```bash
 # Validate a single file
-node .githooks/validate-schema.mjs .orqa/planning/tasks/TASK-153.md
+node .githooks/validate-schema.mjs .orqa/delivery/tasks/TASK-153.md
 
 # Validate all files in a directory
-find .orqa/governance/rules -name '*.md' -not -name 'README.md' | \
+find .orqa/process/rules -name '*.md' -not -name 'README.md' | \
   xargs node .githooks/validate-schema.mjs
 
 # Validate all .orqa/ artifacts at once

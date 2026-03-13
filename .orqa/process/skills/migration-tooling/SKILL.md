@@ -38,13 +38,13 @@ Tools for governance artifact migrations and link integrity verification. These 
 
 ```bash
 # Dry run — see proposals without applying
-node tools/backfill-relationships.mjs .orqa/governance/rules --dry-run
+node tools/backfill-relationships.mjs .orqa/process/rules --dry-run
 
 # Single artifact
-node tools/backfill-relationships.mjs .orqa/governance/rules --filter=RULE-006
+node tools/backfill-relationships.mjs .orqa/process/rules --filter=RULE-006
 
 # Machine-readable output (for agent consumption)
-node tools/backfill-relationships.mjs .orqa/governance/rules
+node tools/backfill-relationships.mjs .orqa/process/rules
 ```
 
 ### Workflow
@@ -77,7 +77,7 @@ The tool uses artifact type pairs to infer the most likely relationship:
 {
   "id": "RULE-006",
   "title": "Coding Standards",
-  "path": ".orqa/governance/rules/RULE-006.md",
+  "path": ".orqa/process/rules/RULE-006.md",
   "existing": [],
   "proposals": [
     {

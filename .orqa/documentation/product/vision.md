@@ -155,8 +155,8 @@ The artifact configuration in `project.json` drives what the app shows and scans
     { "key": "docs", "label": "Documentation", "icon": "file-text", "path": ".orqa/documentation" },
     { "key": "planning", "label": "Planning", "icon": "target",
       "children": [
-        { "key": "ideas", "label": "Ideas", "path": ".orqa/planning/ideas" },
-        { "key": "milestones", "label": "Milestones", "path": ".orqa/planning/milestones" }
+        { "key": "ideas", "label": "Ideas", "path": ".orqa/delivery/ideas" },
+        { "key": "milestones", "label": "Milestones", "path": ".orqa/delivery/milestones" }
       ]
     }
   ]
@@ -252,7 +252,7 @@ OrqaStudio does not only generate outputs; it helps users reflect on their think
 
 ## Product Pillars
 
-> **Source of truth:** Active pillars are defined as structured artifacts in `.orqa/planning/pillars/PILLAR-NNN.md`. The narrative below provides context; the pillar artifacts are authoritative for gate questions and conflict resolution.
+> **Source of truth:** Active pillars are defined as structured artifacts in `.orqa/process/pillars/PILLAR-NNN.md`. The narrative below provides context; the pillar artifacts are authoritative for gate questions and conflict resolution.
 
 ### Pillar 1: Clarity Through Structure
 
@@ -288,7 +288,7 @@ The two pillars are complementary and deeply intertwined:
 - **Clarity Through Structure** provides the foundation — you cannot improve a process that isn't visible and structured
 - **Learning Through Reflection** operates on that foundation — structured artifacts can be measured, compared, and evolved
 
-The pillars are equal in importance. When they appear to conflict, the conflict is flagged to the user for resolution rather than one pillar automatically taking precedence. See the pillar artifacts in `.orqa/planning/pillars/` for authoritative conflict resolution guidance.
+The pillars are equal in importance. When they appear to conflict, the conflict is flagged to the user for resolution rather than one pillar automatically taking precedence. See the pillar artifacts in `.orqa/process/pillars/` for authoritative conflict resolution guidance.
 
 ---
 

@@ -62,7 +62,7 @@ backend/src-tauri/src/
 │   ├── artifact_repo.rs             # ArtifactRepo: CRUD + FTS for artifacts table
 │   ├── enforcement_rules_repo.rs    # EnforcementRulesRepo: load rules from .orqa/rules/
 │   ├── governance_repo.rs           # GovernanceRepo: analyses + recommendations tables
-│   ├── lesson_repo.rs               # LessonRepo: file-based IMPL-NNN.md in .orqa/governance/lessons/
+│   ├── lesson_repo.rs               # LessonRepo: file-based IMPL-NNN.md in .orqa/process/lessons/
 │   ├── message_repo.rs              # MessageRepo: insert, update stream, FTS queries
 │   ├── project_repo.rs              # ProjectRepo: CRUD for projects table
 │   ├── project_settings_repo.rs     # ProjectSettingsRepo: read/write .orqa/project.json
@@ -171,7 +171,7 @@ Tracing subscriber setup. Configures `tracing-subscriber` with stdout and option
 
 ### `repo/`
 
-10 repositories, one per concern. Each repo is stateless — it borrows a connection reference for each operation and returns domain types, never raw SQL rows. Two repos are file-based rather than SQLite-backed: `lesson_repo` reads/writes `IMPL-NNN.md` files in `.orqa/governance/lessons/`, and `project_settings_repo` reads/writes `.orqa/project.json`.
+10 repositories, one per concern. Each repo is stateless — it borrows a connection reference for each operation and returns domain types, never raw SQL rows. Two repos are file-based rather than SQLite-backed: `lesson_repo` reads/writes `IMPL-NNN.md` files in `.orqa/process/lessons/`, and `project_settings_repo` reads/writes `.orqa/project.json`.
 
 ### `commands/`
 
@@ -200,8 +200,8 @@ DuckDB-based code indexer with ONNX embeddings for semantic search. `SearchEngin
 | `SettingsRepo` | SQLite `settings` | Key-value with scope, get/set/get_all |
 | `ThemeRepo` | SQLite `project_themes`, `project_theme_overrides` | Active theme tokens, set/clear overrides |
 | `GovernanceRepo` | SQLite `governance_analyses`, `recommendations` | Save analysis, list/update/apply recommendations |
-| `EnforcementRulesRepo` | Files (`.orqa/governance/rules/*.md`) | Load and parse YAML-fronmatted rule files |
-| `LessonRepo` | Files (`.orqa/governance/lessons/IMPL-NNN.md`) | List, get, create, increment recurrence |
+| `EnforcementRulesRepo` | Files (`.orqa/process/rules/*.md`) | Load and parse YAML-fronmatted rule files |
+| `LessonRepo` | Files (`.orqa/process/lessons/IMPL-NNN.md`) | List, get, create, increment recurrence |
 | `ProjectSettingsRepo` | File (`.orqa/project.json`) | Read/write project settings and artifacts config |
 
 ---

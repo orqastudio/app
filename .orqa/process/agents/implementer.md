@@ -60,7 +60,7 @@ You may run in two contexts. Both are permanent and first-class.
 
 The `chunkhound` skill teaches query patterns that work in both contexts.
 
-**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see `.orqa/governance/rules/[RULE-009](RULE-009).md`.
+**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see `.orqa/process/rules/[RULE-009](RULE-009).md`.
 
 Use `make` targets for all build/test/lint commands — see `.orqa/documentation/development/commands.md`.
 
@@ -77,7 +77,7 @@ Use `make` targets for all build/test/lint commands — see `.orqa/documentation
 
 - Use `search_regex` to find existing implementations before creating new ones
 - Use `code_research` to understand how the affected system currently works
-- Check `.orqa/governance/lessons/` for known patterns in this area
+- Check `.orqa/process/lessons/` for known patterns in this area
 
 ### 3. Implement
 

@@ -148,11 +148,11 @@ First-run setup wizard. Checks prerequisites before the app is usable.
 
 ## 12. Lesson Commands (`lesson_commands.rs`)
 
-Lesson management backed by file-based storage in `.orqa/governance/lessons/`. Lessons are stored as `IMPL-NNN.md` files.
+Lesson management backed by file-based storage in `.orqa/process/lessons/`. Lessons are stored as `IMPL-NNN.md` files.
 
 | Command | Signature | Description |
 |---------|-----------|-------------|
-| `lessons_list` | `(project_path: String) -> Vec<Lesson>` | List all lessons from `.orqa/governance/lessons/` |
+| `lessons_list` | `(project_path: String) -> Vec<Lesson>` | List all lessons from `.orqa/process/lessons/` |
 | `lessons_get` | `(project_path: String, id: String) -> Lesson` | Get a single lesson by ID (e.g. `[IMPL-001](IMPL-001)`) |
 | `lessons_create` | `(project_path: String, title: String, category: String, body: String) -> Lesson` | Create a new lesson with auto-assigned ID |
 | `lesson_increment_recurrence` | `(project_path: String, id: String) -> Lesson` | Increment recurrence count; used by review agents |

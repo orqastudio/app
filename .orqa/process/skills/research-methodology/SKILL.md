@@ -63,7 +63,7 @@ achieve it.
 
 ### Research Document Format
 
-When creating research artifacts (`.orqa/planning/research/RES-NNN.md`):
+When creating research artifacts (`.orqa/delivery/research/RES-NNN.md`):
 
 ```yaml
 sources:

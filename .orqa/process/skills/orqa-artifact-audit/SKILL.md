@@ -80,7 +80,7 @@ Run these checklists after the graph pass has identified broken ID references. E
 
 - `status` is one of `draft | ready | in-progress | review | done`
 - `milestone` exists as an MS-NNN file
-- `research-refs` entries exist as RES-NNN files in `.orqa/planning/research/`
+- `research-refs` entries exist as RES-NNN files in `.orqa/delivery/research/`
 - `docs-required` file paths resolve to existing files on disk (not artifact IDs — verify on disk)
 - `docs-produced` file paths resolve to existing files on disk
 - `scoring` dimensions match the keys defined in `project.json`'s scoring section
@@ -90,8 +90,8 @@ Run these checklists after the graph pass has identified broken ID references. E
 
 - `epic` field exists and references an existing EPIC-NNN
 - `depends-on` tasks exist and their `status` is `done` if this task is `in-progress`
-- `assignee` is a valid agent name (exists in `.orqa/team/agents/`)
-- `skills` entries exist in `.orqa/team/skills/`
+- `assignee` is a valid agent name (exists in `.orqa/process/agents/`)
+- `skills` entries exist in `.orqa/process/skills/`
 
 ### Ideas
 
@@ -130,25 +130,25 @@ These checks verify that governance artifacts agree with each other and with the
 
 ### Agent Skills Lists
 
-For each agent in `.orqa/team/agents/`, read its `skills:` YAML list. Every entry must correspond to a directory in `.orqa/team/skills/` containing a `SKILL.md`. Skills listed on agent YAML should be Tier 1 portable skills only — project-specific `orqa-*` skills (except `composability`) should not appear on agent frontmatter; they are orchestrator-injected at task time per [RULE-026](RULE-026).
+For each agent in `.orqa/process/agents/`, read its `skills:` YAML list. Every entry must correspond to a directory in `.orqa/process/skills/` containing a `SKILL.md`. Skills listed on agent YAML should be Tier 1 portable skills only — project-specific `orqa-*` skills (except `composability`) should not appear on agent frontmatter; they are orchestrator-injected at task time per [RULE-026](RULE-026).
 
 ### Agent Required Reading
 
 For each agent, read the Required Reading section. Every file path listed must resolve to an existing file on disk. Use Grep to check:
 
 ```
-grep -r "Required Reading" .orqa/team/agents/ --include="*.md" -A 20
+grep -r "Required Reading" .orqa/process/agents/ --include="*.md" -A 20
 ```
 
 Then verify each listed path with a file existence check. Broken Required Reading paths silently fail at task start — agents proceed without the governing documentation.
 
 ### Orchestrator Skill Injection Table
 
-The orchestrator's skill injection table (in `orchestrator.md` / `CLAUDE.md`) lists which project skills are injected for which task scopes. Verify that every skill name in this table has a corresponding directory in `.orqa/team/skills/`. Missing skills will cause injection failures at delegation time.
+The orchestrator's skill injection table (in `orchestrator.md` / `CLAUDE.md`) lists which project skills are injected for which task scopes. Verify that every skill name in this table has a corresponding directory in `.orqa/process/skills/`. Missing skills will cause injection failures at delegation time.
 
 ### Rule Related Rules Sections
 
-For each rule, read the Related Rules section. Every rule ID referenced (e.g., `[RULE-004](RULE-004)`) must correspond to an existing `.orqa/governance/rules/RULE-NNN.md` file. Also check that the referenced rule's `status` is `active` — linking to an `inactive` rule is misleading.
+For each rule, read the Related Rules section. Every rule ID referenced (e.g., `[RULE-004](RULE-004)`) must correspond to an existing `.orqa/process/rules/RULE-NNN.md` file. Also check that the referenced rule's `status` is `active` — linking to an `inactive` rule is misleading.
 
 ### Milestone Epic Counts
 
@@ -222,7 +222,7 @@ Every finding must be documented with enough information to locate and fix it wi
 
 | Field | Content |
 |-------|---------|
-| **Source file** | Full path relative to project root (e.g., `.orqa/team/agents/implementer.md`) |
+| **Source file** | Full path relative to project root (e.g., `.orqa/process/agents/implementer.md`) |
 | **Field or line** | The specific frontmatter field or section heading where the issue appears |
 | **Expected value** | What the field or content should contain |
 | **Actual value** | What it currently contains |
@@ -232,7 +232,7 @@ For grouped findings, document the pattern once and list the affected files. Do 
 
 ## Output Format
 
-Audit findings are recorded as a research document (RES-NNN) in `.orqa/planning/research/`. The document serves as both the findings record and the implementation guide for the fix tasks.
+Audit findings are recorded as a research document (RES-NNN) in `.orqa/delivery/research/`. The document serves as both the findings record and the implementation guide for the fix tasks.
 
 ```markdown
 ---

@@ -48,7 +48,7 @@ Epic → reads docs-required → prerequisite documentation
 
 When starting ANY task:
 
-1. Read the task file: `.orqa/planning/tasks/TASK-NNN.md`
+1. Read the task file: `.orqa/delivery/tasks/TASK-NNN.md`
 2. Follow `task.epic` → read the epic for design context
 3. Follow `task.docs` → load each documentation file into context
 4. Follow `task.skills` → load each skill for domain knowledge
@@ -66,15 +66,15 @@ When creating artifacts, always populate relationship fields:
 
 | What | Where | Schema |
 |------|-------|--------|
-| Tasks | `.orqa/planning/tasks/` | `schema.json` in same directory |
-| Epics | `.orqa/planning/epics/` | `schema.json` |
-| Ideas | `.orqa/planning/ideas/` | `schema.json` |
-| Research | `.orqa/planning/research/` | `schema.json` |
-| Decisions | `.orqa/governance/decisions/` | `schema.json` |
-| Rules | `.orqa/governance/rules/` | `schema.json` |
-| Lessons | `.orqa/governance/lessons/` | `schema.json` |
-| Skills | `.orqa/team/skills/*/SKILL.md` | `schema.json` |
-| Agents | `.orqa/team/agents/` | `schema.json` |
+| Tasks | `.orqa/delivery/tasks/` | `schema.json` in same directory |
+| Epics | `.orqa/delivery/epics/` | `schema.json` |
+| Ideas | `.orqa/delivery/ideas/` | `schema.json` |
+| Research | `.orqa/delivery/research/` | `schema.json` |
+| Decisions | `.orqa/process/decisions/` | `schema.json` |
+| Rules | `.orqa/process/rules/` | `schema.json` |
+| Lessons | `.orqa/process/lessons/` | `schema.json` |
+| Skills | `.orqa/process/skills/*/SKILL.md` | `schema.json` |
+| Agents | `.orqa/process/agents/` | `schema.json` |
 | Documentation | `.orqa/documentation/` | (tree structure) |
 | Project config | `.orqa/project.json` | — |
 
@@ -89,7 +89,7 @@ Every feature follows: **Understand → Plan → Document → Implement → Revi
 3. **Document**: Write target-state docs BEFORE implementation ([RULE-008](RULE-008))
 4. **Implement**: Delegate to agents with the right skills loaded
 5. **Review**: Independent Reviewer verifies. Implementer cannot self-certify.
-6. **Learn**: Log lessons in `.orqa/governance/lessons/` for patterns that recur
+6. **Learn**: Log lessons in `.orqa/process/lessons/` for patterns that recur
 
 ## Delegation
 
@@ -107,7 +107,7 @@ Every feature follows: **Understand → Plan → Document → Implement → Revi
 ### Delegation Steps
 
 1. Determine the **role** needed
-2. Read the agent definition in `.orqa/team/agents/` for capabilities and skills
+2. Read the agent definition in `.orqa/process/agents/` for capabilities and skills
 3. Resolve capabilities to tools using [RULE-040](RULE-040) mapping tables
 4. Read the task's `docs` and `skills` fields — include them in delegation prompt
 5. Scope the task with clear acceptance criteria
@@ -161,7 +161,7 @@ Do NOT investigate without user approval.
 
 ## Rules and Governance
 
-Rules in `.orqa/governance/rules/` are loaded as context. Check `status` field:
+Rules in `.orqa/process/rules/` are loaded as context. Check `status` field:
 - `active` — enforced, agents must comply
 - `inactive` — not enforced, historical reference
 
@@ -186,12 +186,12 @@ When delegating, inject skills based on what the task touches:
 
 - Read the task's `skills` field — these are the primary skills to load
 - Read [RULE-026](RULE-026) for the full three-tier skill model
-- Skills live in `.orqa/team/skills/<name>/SKILL.md`
+- Skills live in `.orqa/process/skills/<name>/SKILL.md`
 
 ## Learning Loop
 
 When a Reviewer reports a FAIL:
-1. Check `.orqa/governance/lessons/` for matching patterns
+1. Check `.orqa/process/lessons/` for matching patterns
 2. If new: create `IMPL-NNN.md` before the fix cycle
 3. If existing: increment recurrence count
 4. At recurrence >= 2: promote to rule or skill update

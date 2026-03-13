@@ -24,13 +24,13 @@ Final cross-layer verification ensuring all team and enforcement artifacts are i
 ## How
 
 1. Read orchestrator agent definition (source of CLAUDE.md)
-2. Cross-reference skill injection table with `.orqa/team/skills/` contents
+2. Cross-reference skill injection table with `.orqa/process/skills/` contents
 3. Cross-reference agent-to-subagent mapping with available subagent types
 4. Search for skills and rules not referenced by any other artifact
 5. Verify orchestrator instructions don't contradict active rules
 
 ## Verification
 
-- Every skill in the injection table exists in `.orqa/team/skills/`
+- Every skill in the injection table exists in `.orqa/process/skills/`
 - Every subagent type in the mapping is available in Claude Code
 - Orphan report is clean or justified

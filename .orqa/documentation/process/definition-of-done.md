@@ -87,16 +87,16 @@ The orchestrator assigns a risk level at task start. The review gate matches the
 
 ### Learning Loops
 
-- [ ] Any new implementation patterns discovered during this task logged in `.orqa/governance/lessons/` as `IMPL-NNN` files
+- [ ] Any new implementation patterns discovered during this task logged in `.orqa/process/lessons/` as `IMPL-NNN` files
 - [ ] Any review failures that revealed new patterns added as IMPL-NNN entries
 - [ ] If a pattern appeared for the second or more time, recurrence count updated
 
 ### Artifact Updates
 
-- [ ] Epic `status` updated to `done` in `.orqa/planning/epics/EPIC-NNN.md`
-- [ ] All task statuses updated to `done` in `.orqa/planning/tasks/TASK-NNN.md`
-- [ ] Epic task checkboxes all checked in `.orqa/planning/epics/EPIC-NNN.md`
-- [ ] Parent milestone `completed-epics` count updated in `.orqa/planning/milestones/MS-NNN.md`
+- [ ] Epic `status` updated to `done` in `.orqa/delivery/epics/EPIC-NNN.md`
+- [ ] All task statuses updated to `done` in `.orqa/delivery/tasks/TASK-NNN.md`
+- [ ] Epic task checkboxes all checked in `.orqa/delivery/epics/EPIC-NNN.md`
+- [ ] Parent milestone `completed-epics` count updated in `.orqa/delivery/milestones/MS-NNN.md`
 - [ ] If all P1 epics in the milestone are done — check whether milestone gate is satisfied
 - [ ] Roadmap entry updated to reflect completion (items checked, status noted)
 

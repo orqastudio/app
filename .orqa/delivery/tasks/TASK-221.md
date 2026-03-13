@@ -46,15 +46,15 @@ To proceed anyway: ORQA_CORE_OVERRIDE=1 git commit ...
 ## Core Artifact Paths
 
 ```
-.orqa/planning/*/schema.json
-.orqa/governance/*/schema.json
-.orqa/team/agents/schema.json
-.orqa/team/skills/schema.json
-.orqa/team/agents/orchestrator.md
-.orqa/team/skills/composability/SKILL.md
-.orqa/team/skills/research-methodology/SKILL.md
-.orqa/team/skills/planning/SKILL.md
-.orqa/team/skills/orqa-code-search/SKILL.md
+.orqa/delivery/*/schema.json
+.orqa/process/*/schema.json
+.orqa/process/agents/schema.json
+.orqa/process/skills/schema.json
+.orqa/process/agents/orchestrator.md
+.orqa/process/skills/composability/SKILL.md
+.orqa/process/skills/research-methodology/SKILL.md
+.orqa/process/skills/planning/SKILL.md
+.orqa/process/skills/orqa-code-search/SKILL.md
 ```
 
 This list is maintained in the pre-commit hook itself. Adding new core artifacts

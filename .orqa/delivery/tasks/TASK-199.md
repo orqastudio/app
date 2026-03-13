@@ -15,13 +15,13 @@ depends-on:
 ## What
 
 When the rule engine encounters an enforcement entry with `action: inject` and
-a `skills` array, it reads the specified SKILL.md files from `.orqa/team/skills/`
+a `skills` array, it reads the specified SKILL.md files from `.orqa/process/skills/`
 and returns their content as `systemMessage`.
 
 ## How
 
 1. In `rule-engine.mjs`, add inject action handling alongside block/warn
-2. Read SKILL.md files from `$projectDir/.orqa/team/skills/<name>/SKILL.md`
+2. Read SKILL.md files from `$projectDir/.orqa/process/skills/<name>/SKILL.md`
 3. Concatenate skill content into a single systemMessage
 4. Track injected skills per session via a state file to prevent re-injection
 5. Return systemMessage via stdout (exit 0, like warn)

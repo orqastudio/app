@@ -36,17 +36,17 @@ enforceable skill for commit discipline.
 
 ### 1. Session Hook Updates
 
-Update `.orqa/governance/hooks/session-start-hook.sh` to:
+Update `.orqa/process/hooks/session-start-hook.sh` to:
 - Run `git status --short | wc -l` and warn if uncommitted changes exceed threshold
 - Display a summary of what's uncommitted (by directory group)
 
-Update `.orqa/governance/hooks/pre-commit-reminder.sh` (Stop hook) to:
+Update `.orqa/process/hooks/pre-commit-reminder.sh` (Stop hook) to:
 - Check for uncommitted changes and prompt to commit
 - Suggest logical commit groupings based on changed file paths
 
 ### 2. Git Workflow Rule Update
 
-Update `.orqa/governance/rules/git-workflow.md` to address:
+Update `.orqa/process/rules/git-workflow.md` to address:
 - Governance-only work patterns (no worktree, but still requires regular commits)
 - Commit-at-boundaries principle: end of task, end of epic, end of session
 - Maximum uncommitted file threshold before work is blocked

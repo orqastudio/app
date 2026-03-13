@@ -14,7 +14,7 @@ The system runs in two contexts: the **Rust backend** (native enforcement engine
 
 ## Single Source of Truth
 
-Rule files in `.orqa/governance/rules/` are the single source of truth for:
+Rule files in `.orqa/process/rules/` are the single source of truth for:
 
 1. **Human-readable behavioral constraints** — injected into agent context as rule text
 2. **Machine-readable enforcement entries** — YAML frontmatter declaring patterns, actions, and skill injections
@@ -87,11 +87,11 @@ The `WorkflowTracker` (`backend/src-tauri/src/domain/workflow_tracker.rs`) track
 | Files written | Paths of all files written | Detect code writes vs governance writes |
 | Searches | Count of search tool calls | Detect codebase exploration |
 | Docs consulted | Reads from `.orqa/documentation/` | Detect documentation review |
-| Planning consulted | Reads from `.orqa/planning/` | Detect planning artifact review |
+| Planning consulted | Reads from `.orqa/delivery/` | Detect planning artifact review |
 | Skills loaded | Names of loaded skills | Detect skill loading |
 | Commands run | Bash commands executed | Detect `make check`/`make test` runs |
 | Verification run | Boolean flag | Set when `make check`/`make test` detected |
-| Lessons checked | Boolean flag | Set when `.orqa/governance/lessons/` read |
+| Lessons checked | Boolean flag | Set when `.orqa/process/lessons/` read |
 | Injected skills | Deduplication set | Prevent injecting the same skill twice per session |
 
 The tracker is stored in `AppState` behind a `Mutex<WorkflowTracker>` and shared across all tool execution handlers.
@@ -104,7 +104,7 @@ Gates are evaluated by `evaluate_process_gates()` (`backend/src-tauri/src/domain
 |------|-----------|--------|-----------------|
 | **understand-first** | First code write in session | No files read, no searches, no docs consulted | "What is the system? What are the boundaries? What depends on this?" |
 | **docs-before-code** | Code write without reading documentation | No `.orqa/documentation/` files read | "What documentation defines this area? Read the governing docs first." |
-| **plan-before-build** | Code write without planning context | No `.orqa/planning/` files read | "What's the plan? Read the epic and task context before building." |
+| **plan-before-build** | Code write without planning context | No `.orqa/delivery/` files read | "What's the plan? Read the epic and task context before building." |
 | **evidence-before-done** | Session ending (stop event) | No `make check`/`make test` run + code was written | "Show evidence. Run verification. What would a user see?" |
 | **learn-after-doing** | Session ending (stop event) | No lessons checked + code was written | "What was unexpected? Check lessons. Should we know something for next time?" |
 
@@ -131,7 +131,7 @@ When agents touch specific code areas, the enforcement system automatically inje
 
 1. Rule frontmatter declares `action: inject` entries with `conditions` matching file paths and `skills` listing skill names
 2. When a file write matches, the `Verdict` carries the skill names
-3. The tool executor reads each skill's `SKILL.md` from `.orqa/team/skills/{name}/SKILL.md`
+3. The tool executor reads each skill's `SKILL.md` from `.orqa/process/skills/{name}/SKILL.md`
 4. YAML frontmatter is stripped; the skill body content is returned
 5. Content is deduplicated per session via the `WorkflowTracker`'s `injected_skills` set
 6. The combined skill content is prepended to the tool output
@@ -206,7 +206,7 @@ enforcement:
 ### The Full Chain
 
 ```text
-Documented standard (.orqa/governance/rules/RULE-NNN.md)
+Documented standard (.orqa/process/rules/RULE-NNN.md)
   → lint enforcement entry (documents which linter enforces this)
   → Linter config (eslint.config.js, Cargo.toml, etc.)
   → Pre-commit hook (.githooks/pre-commit) or make check
@@ -251,7 +251,7 @@ The CLI plugin uses keyword-based intent classification via `prompt-injector.mjs
 
 The app uses semantic similarity via the `SkillInjector` (`backend/src-tauri/src/domain/skill_injector.rs`):
 
-1. On startup, all skills are discovered from `.orqa/team/skills/*/SKILL.md`
+1. On startup, all skills are discovered from `.orqa/process/skills/*/SKILL.md`
 2. Each skill's `description:` frontmatter field is extracted
 3. Descriptions are embedded using the ONNX embedder (bge-small-en-v1.5, 384-dim vectors)
 4. When a user prompt arrives, it is embedded and compared against all skill embeddings
@@ -291,7 +291,7 @@ backend/src-tauri/src/domain/
 ```text
 backend/src-tauri/src/
   repo/
-    enforcement_rules_repo.rs -- load_rules(): reads .orqa/governance/rules/*.md from disk
+    enforcement_rules_repo.rs -- load_rules(): reads .orqa/process/rules/*.md from disk
   state.rs                    -- AppState: holds EnforcementEngine, WorkflowTracker,
                                  SkillInjector behind Mutex
   search/

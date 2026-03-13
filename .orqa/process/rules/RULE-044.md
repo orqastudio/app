@@ -11,19 +11,19 @@ enforcement:
   - event: file
     pattern: .*
     paths:
-      - .orqa/planning/*/schema.json
-      - .orqa/governance/*/schema.json
-      - .orqa/team/agents/schema.json
-      - .orqa/team/skills/schema.json
+      - .orqa/delivery/*/schema.json
+      - .orqa/process/*/schema.json
+      - .orqa/process/agents/schema.json
+      - .orqa/process/skills/schema.json
     action: block
     message: "BLOCKED: schema.json files are core graph firmware. They define artifact structure for all projects. Do not modify unless you are updating OrqaStudio itself (dogfood mode). See RULE-044."
   - event: file
     pattern: .*
     paths:
-      - .orqa/team/skills/composability/SKILL.md
-      - .orqa/team/skills/research-methodology/SKILL.md
-      - .orqa/team/skills/planning/SKILL.md
-      - .orqa/team/skills/orqa-code-search/SKILL.md
+      - .orqa/process/skills/composability/SKILL.md
+      - .orqa/process/skills/research-methodology/SKILL.md
+      - .orqa/process/skills/planning/SKILL.md
+      - .orqa/process/skills/orqa-code-search/SKILL.md
     action: block
     message: "BLOCKED: Core skills are firmware. They define universal methodology for all projects. Do not modify unless you are updating OrqaStudio itself (dogfood mode). See RULE-044."
 relationships:
@@ -57,8 +57,8 @@ Core graph artifacts define how the artifact graph works, how agents traverse it
 |----------|------|--------------------|
 | **Artifact schemas** | `schema.json` in every artifact directory | Define what fields exist, what edges connect artifact types |
 | **Core skills** | `composability`, `planning`, `research-methodology`, `orqa-code-search` | Define universal methodology all agents use |
-| **Orchestrator prompt** | `.orqa/team/agents/orchestrator.md` | Defines graph traversal and process model |
-| **Role definitions** | `.orqa/team/agents/*.md` + `schema.json` | Define the 7 universal roles and boundaries |
+| **Orchestrator prompt** | `.orqa/process/agents/orchestrator.md` | Defines graph traversal and process model |
+| **Role definitions** | `.orqa/process/agents/*.md` + `schema.json` | Define the 7 universal roles and boundaries |
 
 ## What Is NOT Core (User-Editable)
 

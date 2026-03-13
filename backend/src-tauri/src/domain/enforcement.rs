@@ -58,7 +58,7 @@ pub struct EnforcementEntry {
     pub scope: Option<String>,
     /// Skills to inject when action is `inject`.
     ///
-    /// Lists skill names (directory names under `.orqa/team/skills/`) that
+    /// Lists skill names (directory names under `.orqa/process/skills/`) that
     /// should be loaded into agent context when this entry matches.
     #[serde(default)]
     pub skills: Vec<String>,

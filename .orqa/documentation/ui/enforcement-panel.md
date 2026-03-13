@@ -170,7 +170,7 @@ Displays the output of a governance scan, including enforcement coverage — how
 |-------|---------|
 | Loading | `LoadingSpinner` |
 | Error | `ErrorDisplay` with retry |
-| Empty (no rules found) | "No rule files found in .orqa/governance/rules/" |
+| Empty (no rules found) | "No rule files found in .orqa/process/rules/" |
 | Loaded | Coverage bar and rule list |
 
 ---
@@ -212,4 +212,4 @@ Displays the output of a governance scan, including enforcement coverage — how
 - `.orqa/documentation/architecture/enforcement.md` — Enforcement engine architecture (patterns, verdicts, persistence)
 - `.orqa/documentation/ui/component-inventory.md` — Full component inventory
 - `.orqa/documentation/wireframes/dashboard.md` — Dashboard wireframes including governance scan results
-- `.orqa/governance/rules/` — Rule inventory and frontmatter schema
+- `.orqa/process/rules/` — Rule inventory and frontmatter schema

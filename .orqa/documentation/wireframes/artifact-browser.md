@@ -387,4 +387,4 @@ Shown when a category has no artifacts yet. Provides guidance and a clear call t
 
 ## File Watching
 
-Artifacts are stored as files on disk under `.orqa/` path locations defined by the `artifacts` array in `.orqa/project.json` (e.g., `.orqa/team/agents/*.md`, `.orqa/governance/rules/*.md`). Hooks watch two source paths: `.orqa/governance/hooks/` for lifecycle hooks and `.orqa/governance/rules/` for enforcement rules. The Nav Sub-Panel list and Explorer Panel fallback list use Tauri's `fs.watch` API to live-reload when files change externally (e.g., via git pull or direct editing). A brief fade animation indicates a refresh.
+Artifacts are stored as files on disk under `.orqa/` path locations defined by the `artifacts` array in `.orqa/project.json` (e.g., `.orqa/process/agents/*.md`, `.orqa/process/rules/*.md`). Hooks watch two source paths: `.orqa/process/hooks/` for lifecycle hooks and `.orqa/process/rules/` for enforcement rules. The Nav Sub-Panel list and Explorer Panel fallback list use Tauri's `fs.watch` API to live-reload when files change externally (e.g., via git pull or direct editing). A brief fade animation indicates a refresh.

@@ -33,10 +33,10 @@ The governance scanner walks the filesystem to collect governance files from mul
 
 | Source | Path Pattern | Description |
 |--------|-------------|-------------|
-| OrqaStudio rules | `.orqa/governance/rules/*.md` | Enforcement rules (canonical location) |
-| OrqaStudio agents | `.orqa/team/agents/*.md` | Agent role definitions (canonical location) |
-| OrqaStudio skills | `.orqa/team/skills/*/SKILL.md` | Skill definitions (canonical location) |
-| OrqaStudio hooks | `.orqa/governance/hooks/*` | Session hooks (canonical location) |
+| OrqaStudio rules | `.orqa/process/rules/*.md` | Enforcement rules (canonical location) |
+| OrqaStudio agents | `.orqa/process/agents/*.md` | Agent role definitions (canonical location) |
+| OrqaStudio skills | `.orqa/process/skills/*/SKILL.md` | Skill definitions (canonical location) |
+| OrqaStudio hooks | `.orqa/process/hooks/*` | Session hooks (canonical location) |
 | OrqaStudio settings | `.orqa/settings.json` | Hook configuration, permissions (canonical location) |
 | CLI compat rules | `.claude/rules/*.md` | Symlink layer for CLI tools (if present) |
 | CLI compat agents | `.claude/agents/*.md` | Symlink layer for CLI tools (if present) |
@@ -55,10 +55,10 @@ The governance bootstrap writes governance artifacts to `.orqa/` — the source 
 
 | Artifact Type | Output Path | Description |
 |---------------|-------------|-------------|
-| Rules | `.orqa/governance/rules/*.md` | Enforcement rules |
-| Hooks | `.orqa/governance/hooks/*.sh` | Session and pre-commit hooks |
-| Agents | `.orqa/team/agents/*.md` | Agent role definitions |
-| Skills | `.orqa/team/skills/*/SKILL.md` | Skill definitions |
+| Rules | `.orqa/process/rules/*.md` | Enforcement rules |
+| Hooks | `.orqa/process/hooks/*.sh` | Session and pre-commit hooks |
+| Agents | `.orqa/process/agents/*.md` | Agent role definitions |
+| Skills | `.orqa/process/skills/*/SKILL.md` | Skill definitions |
 | Settings | `.orqa/settings.json` | Hook registration and permissions |
 | Project instructions | `.orqa/INSTRUCTIONS.md` | Project-level AI instructions |
 | Cross-agent instructions | `AGENTS.md` | Cross-agent instructions (root, tool-agnostic) |
@@ -294,7 +294,7 @@ pub struct AnalysisOutput {
 5. The AI analyzes the project's package.json, Cargo.toml, etc. to understand the tech stack
 6. The AI generates recommendations: coding standards rule, error handling rule, testing rule, pre-commit hook, etc.
 7. User reviews each recommendation — approves most, rejects one, edits another via chat
-8. User clicks "Apply" — files written to `.orqa/rules/`, `.orqa/governance/hooks/`, etc.
+8. User clicks "Apply" — files written to `.orqa/rules/`, `.orqa/process/hooks/`, etc.
 9. Dashboard shows governance health: "5 of 7 areas covered"
 
 **Existing project with Cursor rules:**

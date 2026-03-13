@@ -28,7 +28,7 @@ Add a note to each skill's SKILL.md frontmatter or body indicating it is forward
 
 ## How
 
-1. Open each of the five skill files in `.orqa/team/skills/`
+1. Open each of the five skill files in `.orqa/process/skills/`
 2. Add a `status: forward-looking` field or a note block at the top of the body (e.g., `> **Forward-looking:** This skill will be activated by [EPIC-045](EPIC-045) when project initialisation is implemented.`)
 3. Reference the relevant epic or idea ID in the note
 4. Leave all skill content unchanged

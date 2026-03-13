@@ -3,12 +3,22 @@ role: artifacts
 label: "Ideas"
 description: "Candidate features that need research and validation before promotion."
 icon: "lightbulb"
-sort: 4
+sort: 1
 ---
 
 # Ideas
 
-Ideas are candidate features that need research and validation before they can become epics. They capture "what if we..." and "we should eventually..." moments.
+Ideas capture "what if we..." and "we should eventually..." moments. They are the entry point to the delivery pipeline — unvalidated candidates that need research before they can become epics.
+
+## Pipeline Role
+
+Ideas are the **intake stage** of the delivery pipeline:
+
+```
+Idea → Research → Epic → Task → Verification
+```
+
+An idea cannot skip directly to an epic. It must pass through `exploring` (investigation) and `shaped` (clear scope and approach) before promotion. This gate prevents half-formed ideas from consuming implementation capacity.
 
 ## Lifecycle
 
@@ -16,18 +26,7 @@ Ideas are candidate features that need research and validation before they can b
 captured → exploring → shaped → promoted (or archived)
 ```
 
-- **Captured**: Initial idea recorded with pillar alignment
+- **Captured**: Initial idea recorded with pillar alignment and `research-needed` items
 - **Exploring**: User approves investigation; research begins
-- **Shaped**: Research complete; scope and approach defined
-- **Promoted**: Graduated to an epic for implementation
-
-## What Makes a Good Idea
-
-- Traces to at least one product pillar
-- Has clear `research-needed` items identifying what to investigate
-- Includes enough context to evaluate without the original conversation
-
-## Related
-
-- Promoted ideas become epics in the **Epics** section
-- Research artifacts live in **Research** under Planning
+- **Shaped**: Research complete; scope and approach clearly defined
+- **Promoted**: Graduated to an `EPIC-NNN`; `promoted-to` field set

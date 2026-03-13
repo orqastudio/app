@@ -35,19 +35,19 @@ Maps existing agentic tool configurations into OrqaStudio's governance structure
 
 | Source | Content | Maps To |
 |--------|---------|---------|
-| `CLAUDE.md` | Project instructions | `.orqa/team/agents/orchestrator.md` + project rules |
-| `.claude/rules/*.md` | Rule files | `.orqa/governance/rules/` (if not already core) |
-| `.claude/settings.json` | Hooks, permissions | `.orqa/governance/hooks/` |
+| `CLAUDE.md` | Project instructions | `.orqa/process/agents/orchestrator.md` + project rules |
+| `.claude/rules/*.md` | Rule files | `.orqa/process/rules/` (if not already core) |
+| `.claude/settings.json` | Hooks, permissions | `.orqa/process/hooks/` |
 | `AGENTS.md` | Cross-agent instructions | Agent skill content |
 
-**Coexistence strategy:** `.claude/` becomes a symlink layer pointing to `.orqa/`. Claude Code reads `.claude/CLAUDE.md` which symlinks to `.orqa/team/agents/orchestrator.md`. Both tools read the same source of truth.
+**Coexistence strategy:** `.claude/` becomes a symlink layer pointing to `.orqa/`. Claude Code reads `.claude/CLAUDE.md` which symlinks to `.orqa/process/agents/orchestrator.md`. Both tools read the same source of truth.
 
 ### Cursor
 
 | Source | Content | Maps To |
 |--------|---------|---------|
-| `.cursorrules` | Project-wide instructions | `.orqa/governance/rules/` (extracted as individual rules) |
-| `.cursor/rules/*.md` | Rule files | `.orqa/governance/rules/` |
+| `.cursorrules` | Project-wide instructions | `.orqa/process/rules/` (extracted as individual rules) |
+| `.cursor/rules/*.md` | Rule files | `.orqa/process/rules/` |
 
 **Coexistence strategy:** OrqaStudio can generate `.cursorrules` from its governance rules. The `.cursorrules` file becomes a generated artifact, not a source of truth.
 
@@ -55,7 +55,7 @@ Maps existing agentic tool configurations into OrqaStudio's governance structure
 
 | Source | Content | Maps To |
 |--------|---------|---------|
-| `.github/copilot-instructions.md` | Instructions | `.orqa/governance/rules/` (extracted as individual rules) |
+| `.github/copilot-instructions.md` | Instructions | `.orqa/process/rules/` (extracted as individual rules) |
 
 **Coexistence strategy:** OrqaStudio can generate `copilot-instructions.md` from its governance rules.
 
@@ -65,7 +65,7 @@ Maps existing agentic tool configurations into OrqaStudio's governance structure
 |--------|---------|---------|
 | `.aider.conf.yml` | Configuration | Project settings in `project.json` |
 | `.aider.model.settings.yml` | Model config | Model settings in `project.json` |
-| `CONVENTIONS.md` | Conventions | `.orqa/governance/rules/` (extracted as individual rules) |
+| `CONVENTIONS.md` | Conventions | `.orqa/process/rules/` (extracted as individual rules) |
 
 **Coexistence strategy:** OrqaStudio can generate convention files from its governance rules.
 
@@ -74,9 +74,9 @@ Maps existing agentic tool configurations into OrqaStudio's governance structure
 1. **Detect** — Run `project-inference` to find which tools are configured
 2. **Read** — Parse each tool's configuration files
 3. **Classify** — For each piece of content, determine:
-   - Is this a rule? → `.orqa/governance/rules/`
+   - Is this a rule? → `.orqa/process/rules/`
    - Is this agent instructions? → Agent definition or skill content
-   - Is this a hook/automation? → `.orqa/governance/hooks/`
+   - Is this a hook/automation? → `.orqa/process/hooks/`
    - Is this project settings? → `project.json`
 4. **Deduplicate** — Check if the content already exists in core rules/skills
 5. **Create** — Write the extracted governance artifacts

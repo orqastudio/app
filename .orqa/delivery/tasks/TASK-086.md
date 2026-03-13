@@ -1,7 +1,7 @@
 ---
 id: TASK-086
 title: Audit all rules for enforcement accuracy
-description: Verify every rule in .orqa/governance/rules/ has accurate enforcement mechanisms, valid cross-references, current code patterns in FORBIDDEN sections, and no stale content.
+description: Verify every rule in .orqa/process/rules/ has accurate enforcement mechanisms, valid cross-references, current code patterns in FORBIDDEN sections, and no stale content.
 status: done
 created: "2026-03-11"
 updated: "2026-03-11"
@@ -19,12 +19,12 @@ Systematic audit of all governance rules to ensure enforcement accuracy and inte
 
 ## How
 
-1. List all rule files in `.orqa/governance/rules/`
+1. List all rule files in `.orqa/process/rules/`
 2. For each rule, verify cross-references, code patterns, and enforcement mechanisms
 3. Check FORBIDDEN sections against actual codebase for accuracy
 4. Fix stale content
 
 ## Verification
 
-- `grep -r "RULE-" .orqa/governance/rules/` cross-references all resolve
+- `grep -r "RULE-" .orqa/process/rules/` cross-references all resolve
 - No rules reference non-existent files, commands, or patterns

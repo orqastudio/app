@@ -36,11 +36,11 @@ The initial setup created `.claude/` as copies of `.orqa/` files. When agent del
 
 | Symlink | Target |
 |---------|--------|
-| `.claude/rules/` | → `.orqa/governance/rules/` |
-| `.claude/agents/` | → `.orqa/team/agents/` |
-| `.claude/skills/` | → `.orqa/team/skills/` |
-| `.claude/hooks/` | → `.orqa/governance/hooks/` |
-| `.claude/CLAUDE.md` | → `.orqa/team/agents/orchestrator.md` |
+| `.claude/rules/` | → `.orqa/process/rules/` |
+| `.claude/agents/` | → `.orqa/process/agents/` |
+| `.claude/skills/` | → `.orqa/process/skills/` |
+| `.claude/hooks/` | → `.orqa/process/hooks/` |
+| `.claude/CLAUDE.md` | → `.orqa/process/agents/orchestrator.md` |
 
 All writes go to `.orqa/`; symlinks ensure CLI reads the same content.
 

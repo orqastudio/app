@@ -79,7 +79,7 @@ Rule (RULE-NNN)   --observes-->    Lesson (IMPL-NNN)
 ### FORBIDDEN
 
 - `plan:` field on any artifact — this field is deprecated and removed
-- Creating files in `.orqa/planning/plans/` — this directory no longer exists
+- Creating files in `.orqa/delivery/plans/` — this directory no longer exists
 - Tasks without an `epic:` field
 - Epics without a `milestone:` field
 
@@ -96,9 +96,9 @@ The `artifacts` array in `project.json` is the SINGLE SOURCE OF TRUTH for what g
   // Group — renders as expandable group, each child scanned independently
   { "key": "planning", "label": "Planning", "icon": "target",
     "children": [
-      { "key": "ideas", "label": "Ideas", "path": ".orqa/planning/ideas" },
-      { "key": "research", "label": "Research", "path": ".orqa/planning/research" },
-      { "key": "epics", "label": "Epics", "path": ".orqa/planning/epics" }
+      { "key": "ideas", "label": "Ideas", "path": ".orqa/delivery/ideas" },
+      { "key": "research", "label": "Research", "path": ".orqa/delivery/research" },
+      { "key": "epics", "label": "Epics", "path": ".orqa/delivery/epics" }
     ]
   }
 ]
@@ -119,7 +119,7 @@ The scanner recursively walks directories like a file explorer:
 
 ### Critical Rule: Config Paths Must Match Disk
 
-Every `path` in the config must resolve to an actual directory. Moving files on disk requires updating the config. See `.orqa/governance/rules/[RULE-003](RULE-003).md`.
+Every `path` in the config must resolve to an actual directory. Moving files on disk requires updating the config. See `.orqa/process/rules/[RULE-003](RULE-003).md`.
 
 ## Directory README Format
 
@@ -309,7 +309,7 @@ relationships:
 ## Lesson Pipeline
 
 ```
-Lesson documented (.orqa/governance/lessons/IMPL-NNN.md)
+Lesson documented (.orqa/process/lessons/IMPL-NNN.md)
     → Recurrence tracked (frontmatter count field incremented)
     → Promoted at threshold (recurrence >= 2)
     → Becomes rule or coding standard addition
@@ -318,7 +318,7 @@ Lesson documented (.orqa/governance/lessons/IMPL-NNN.md)
 
 ## Pillar Alignment
 
-Active pillars are defined in `.orqa/planning/pillars/PILLAR-NNN.md`. Every governance artifact and feature must serve at least one active pillar. To evaluate alignment, read each pillar's `gate` questions and check if the work can answer "yes" to at least one question from at least one pillar.
+Active pillars are defined in `.orqa/process/pillars/PILLAR-NNN.md`. Every governance artifact and feature must serve at least one active pillar. To evaluate alignment, read each pillar's `gate` questions and check if the work can answer "yes" to at least one question from at least one pillar.
 
 Pillars are equal in importance — when they conflict, flag the conflict to the user and ask for direction.
 
@@ -329,18 +329,18 @@ Features that serve no active pillar are out of scope.
 | File | Purpose |
 |------|---------|
 | `.orqa/project.json` | Project configuration (includes `artifacts` array) |
-| `.orqa/planning/pillars/` | Product pillars (PILLAR-NNN.md) — guiding principles |
-| `.orqa/governance/lessons/` | Implementation lessons (IMPL-NNN.md) |
-| `.orqa/governance/decisions/` | Architecture decisions (AD-NNN.md) |
-| `.orqa/governance/rules/` | Governance rules |
-| `.orqa/governance/hooks/` | Hook scripts |
-| `.orqa/planning/ideas/` | Ideas (IDEA-NNN.md) |
-| `.orqa/planning/research/` | Research documents (investigations, designs, spikes) |
-| `.orqa/planning/milestones/` | Milestones (MS-NNN.md) |
-| `.orqa/planning/epics/` | Epics (EPIC-NNN.md) — contain implementation design |
-| `.orqa/planning/tasks/` | Tasks (TASK-NNN.md) — always reference an epic |
-| `.orqa/team/agents/` | Agent definitions |
-| `.orqa/team/skills/` | Skill definitions |
+| `.orqa/process/pillars/` | Product pillars (PILLAR-NNN.md) — guiding principles |
+| `.orqa/process/lessons/` | Implementation lessons (IMPL-NNN.md) |
+| `.orqa/process/decisions/` | Architecture decisions (AD-NNN.md) |
+| `.orqa/process/rules/` | Governance rules |
+| `.orqa/process/hooks/` | Hook scripts |
+| `.orqa/delivery/ideas/` | Ideas (IDEA-NNN.md) |
+| `.orqa/delivery/research/` | Research documents (investigations, designs, spikes) |
+| `.orqa/delivery/milestones/` | Milestones (MS-NNN.md) |
+| `.orqa/delivery/epics/` | Epics (EPIC-NNN.md) — contain implementation design |
+| `.orqa/delivery/tasks/` | Tasks (TASK-NNN.md) — always reference an epic |
+| `.orqa/process/agents/` | Agent definitions |
+| `.orqa/process/skills/` | Skill definitions |
 | `.orqa/documentation/` | Documentation tree (subdirs: architecture, product, etc.) |
 | `backend/src-tauri/src/domain/artifact.rs` | Frontmatter parsing, artifact types |
 | `backend/src-tauri/src/domain/artifact_reader.rs` | Config-driven recursive scanner |

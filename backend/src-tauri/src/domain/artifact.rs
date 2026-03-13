@@ -23,23 +23,23 @@ pub fn derive_rel_path(artifact_type: &ArtifactType, name: &str) -> String {
     let sanitized = name.replace(' ', "-").to_lowercase();
 
     match artifact_type {
-        ArtifactType::Agent => format!(".orqa/team/agents/{sanitized}.md"),
-        ArtifactType::Rule => format!(".orqa/governance/rules/{sanitized}.md"),
-        ArtifactType::Skill => format!(".orqa/team/skills/{sanitized}/SKILL.md"),
-        ArtifactType::Hook => format!(".orqa/governance/hooks/{sanitized}.sh"),
+        ArtifactType::Agent => format!(".orqa/process/agents/{sanitized}.md"),
+        ArtifactType::Rule => format!(".orqa/process/rules/{sanitized}.md"),
+        ArtifactType::Skill => format!(".orqa/process/skills/{sanitized}/SKILL.md"),
+        ArtifactType::Hook => format!(".orqa/process/hooks/{sanitized}.sh"),
         ArtifactType::Doc => format!("docs/{sanitized}.md"),
     }
 }
 
 /// Infer an `ArtifactType` from a `.orqa/` relative path prefix.
 pub fn infer_artifact_type_from_path(rel_path: &str) -> ArtifactType {
-    if rel_path.starts_with(".orqa/team/agents") {
+    if rel_path.starts_with(".orqa/process/agents") {
         ArtifactType::Agent
-    } else if rel_path.starts_with(".orqa/governance/rules") {
+    } else if rel_path.starts_with(".orqa/process/rules") {
         ArtifactType::Rule
-    } else if rel_path.starts_with(".orqa/team/skills") {
+    } else if rel_path.starts_with(".orqa/process/skills") {
         ArtifactType::Skill
-    } else if rel_path.starts_with(".orqa/governance/hooks") {
+    } else if rel_path.starts_with(".orqa/process/hooks") {
         ArtifactType::Hook
     } else {
         ArtifactType::Doc
@@ -258,7 +258,7 @@ pub struct NavType {
     pub icon: String,
     /// Numeric sort order (lower = first).
     pub sort: i64,
-    /// Relative path to the type folder (e.g. ".orqa/planning/milestones").
+    /// Relative path to the type folder (e.g. ".orqa/delivery/milestones").
     pub path: String,
     /// Raw content of the type's README.md.
     pub readme_content: String,
@@ -482,7 +482,7 @@ mod tests {
     fn derive_rel_path_agent() {
         assert_eq!(
             derive_rel_path(&ArtifactType::Agent, "backend-engineer"),
-            ".orqa/team/agents/backend-engineer.md"
+            ".orqa/process/agents/backend-engineer.md"
         );
     }
 
@@ -490,7 +490,7 @@ mod tests {
     fn derive_rel_path_skill() {
         assert_eq!(
             derive_rel_path(&ArtifactType::Skill, "chunkhound"),
-            ".orqa/team/skills/chunkhound/SKILL.md"
+            ".orqa/process/skills/chunkhound/SKILL.md"
         );
     }
 
@@ -498,14 +498,14 @@ mod tests {
     fn derive_rel_path_sanitizes_spaces() {
         assert_eq!(
             derive_rel_path(&ArtifactType::Rule, "No Stubs Rule"),
-            ".orqa/governance/rules/no-stubs-rule.md"
+            ".orqa/process/rules/no-stubs-rule.md"
         );
     }
 
     #[test]
     fn infer_artifact_type_agents() {
         assert_eq!(
-            infer_artifact_type_from_path(".orqa/team/agents/foo.md"),
+            infer_artifact_type_from_path(".orqa/process/agents/foo.md"),
             ArtifactType::Agent
         );
     }
@@ -584,13 +584,13 @@ mod tests {
     fn artifact_relationship_uses_type_field() {
         let rel = ArtifactRelationship {
             relationship_type: "references".to_string(),
-            target: ".orqa/governance/rules/coding-standards.md".to_string(),
+            target: ".orqa/process/rules/coding-standards.md".to_string(),
         };
 
         let json = serde_json::to_value(&rel).expect("serialization should succeed");
         // Serde renames relationship_type -> "type" in JSON
         assert_eq!(json["type"], "references");
-        assert_eq!(json["target"], ".orqa/governance/rules/coding-standards.md");
+        assert_eq!(json["target"], ".orqa/process/rules/coding-standards.md");
     }
 
     #[test]
@@ -599,7 +599,7 @@ mod tests {
             id: 1,
             project_id: 1,
             artifact_type: ArtifactType::Rule,
-            rel_path: ".orqa/governance/rules/no-stubs.md".to_string(),
+            rel_path: ".orqa/process/rules/no-stubs.md".to_string(),
             name: "no-stubs".to_string(),
             description: Some("No stubs or placeholders".to_string()),
             content: "# No Stubs\n\nContent here.".to_string(),
@@ -609,7 +609,7 @@ mod tests {
             compliance_status: ComplianceStatus::Compliant,
             relationships: Some(vec![ArtifactRelationship {
                 relationship_type: "references".to_string(),
-                target: ".orqa/governance/rules/error-ownership.md".to_string(),
+                target: ".orqa/process/rules/error-ownership.md".to_string(),
             }]),
             metadata: Some(serde_json::json!({"priority": "high"})),
             created_at: "2026-03-03T00:00:00Z".to_string(),
@@ -639,7 +639,7 @@ mod tests {
         let summary = ArtifactSummary {
             id: 1,
             artifact_type: ArtifactType::Agent,
-            rel_path: ".orqa/team/agents/backend-engineer.md".to_string(),
+            rel_path: ".orqa/process/agents/backend-engineer.md".to_string(),
             name: "backend-engineer".to_string(),
             description: Some("Rust backend agent".to_string()),
             compliance_status: ComplianceStatus::Unknown,

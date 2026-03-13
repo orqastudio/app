@@ -76,16 +76,16 @@ Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enf
 
 | Trigger | Artifact Type | Action |
 |---------|--------------|--------|
-| User mentions a future feature or "we should eventually..." | `IDEA-NNN` | Create in `.orqa/planning/ideas/` with `status: captured` |
+| User mentions a future feature or "we should eventually..." | `IDEA-NNN` | Create in `.orqa/delivery/ideas/` with `status: captured` |
 | User approves an idea for investigation | Update existing `IDEA-NNN` | Set `status: exploring`, begin research |
-| Research validates an idea for implementation | `EPIC-NNN` | Create in `.orqa/planning/epics/` with `status: draft`, update idea `promoted-to` |
-| An epic needs investigation work before implementation | Research file | Create in `.orqa/planning/research/`; reference from epic `research-refs` field. Implementation design goes in the epic body. |
+| Research validates an idea for implementation | `EPIC-NNN` | Create in `.orqa/delivery/epics/` with `status: draft`, update idea `promoted-to` |
+| An epic needs investigation work before implementation | Research file | Create in `.orqa/delivery/research/`; reference from epic `research-refs` field. Implementation design goes in the epic body. |
 | An epic is approved and scoped for implementation | Update `EPIC-NNN` | Set `status: ready` (requires `docs-required` gate satisfied) |
-| A task within an epic needs detailed tracking | `TASK-NNN` | Create in `.orqa/planning/tasks/` with `epic:` reference |
-| A strategic goal is defined | `MS-NNN` | Create in `.orqa/planning/milestones/` |
-| An implementation reveals a reusable pattern | `IMPL-NNN` | Create in `.orqa/governance/lessons/` (see [RULE-017](RULE-017) (lessons-learned)) |
-| A question needs investigation before a decision | Research file | Create in `.orqa/planning/research/` |
-| Research produces an architectural choice | `AD-NNN` | Create in `.orqa/governance/decisions/` |
+| A task within an epic needs detailed tracking | `TASK-NNN` | Create in `.orqa/delivery/tasks/` with `epic:` reference |
+| A strategic goal is defined | `MS-NNN` | Create in `.orqa/delivery/milestones/` |
+| An implementation reveals a reusable pattern | `IMPL-NNN` | Create in `.orqa/process/lessons/` (see [RULE-017](RULE-017) (lessons-learned)) |
+| A question needs investigation before a decision | Research file | Create in `.orqa/delivery/research/` |
+| Research produces an architectural choice | `AD-NNN` | Create in `.orqa/process/decisions/` |
 
 ### ID Assignment
 
@@ -121,7 +121,7 @@ draft ──> ready ──> in-progress ──> review ──> done
 - `in-progress → review`: Implementation complete, submitted for verification gates
 - `review → done`: All verification gates passed (code-reviewer, qa-tester, ux-reviewer), all `docs-produced` items verified as created/updated
 
-The epic body contains the implementation design — data model, IPC contracts, component breakdown, and approach. For investigation-heavy work, the epic may carry a `research-refs` field listing research documents in `.orqa/planning/research/` that informed the design.
+The epic body contains the implementation design — data model, IPC contracts, component breakdown, and approach. For investigation-heavy work, the epic may carry a `research-refs` field listing research documents in `.orqa/delivery/research/` that informed the design.
 
 ### Task
 
@@ -186,7 +186,7 @@ proposed ──> accepted ──> superseded
 - `accepted → superseded`: A new decision replaces this one — both the new and old artifacts MUST be updated in the same commit
 - `accepted → deprecated`: Decision is no longer relevant (technology removed, context changed) — reason documented in the decision body
 
-**Creation rule:** When research produces an architectural choice, an `AD-NNN.md` MUST be created in `.orqa/governance/decisions/` following the Decision schema in `.orqa/documentation/product/artifact-framework.md`.
+**Creation rule:** When research produces an architectural choice, an `AD-NNN.md` MUST be created in `.orqa/process/decisions/` following the Decision schema in `.orqa/documentation/product/artifact-framework.md`.
 
 **Supersession rule:** When a new decision replaces an accepted decision, both the new artifact (`supersedes: AD-<old>`) and the old artifact (`status: superseded`, `superseded-by: AD-<new>`) MUST be updated in the same commit. A one-sided supersession is an integrity violation.
 
@@ -236,13 +236,13 @@ Every epic's `docs-produced` field lists documentation that this work creates or
 An idea MUST NOT be promoted to an epic until:
 
 1. **Status is `shaped`** — the idea has been through `exploring` and has clear scope
-2. **All `research-needed` items are investigated** — research artifacts exist in `.orqa/planning/research/` or the research question has been answered and documented in the idea body
+2. **All `research-needed` items are investigated** — research artifacts exist in `.orqa/delivery/research/` or the research question has been answered and documented in the idea body
 3. **Pillar alignment confirmed** — at least one pillar is listed and justified
 4. **User approves promotion** — the orchestrator presents the shaped idea and asks for explicit approval
 
 ### Promotion Procedure
 
-1. Create `EPIC-NNN.md` in `.orqa/planning/epics/` with:
+1. Create `EPIC-NNN.md` in `.orqa/delivery/epics/` with:
    - `milestone` set to the appropriate milestone
    - `status: draft`
    - `priority` assessed per project criteria (see DOC-062)
@@ -328,7 +328,7 @@ The orchestrator SHOULD periodically verify:
 - Leaving `promoted-to` null on an idea with `status: promoted`
 - Creating duplicate IDs (two artifacts with the same ID)
 - Modifying artifact IDs after creation
-- Recording an architecture decision without a corresponding `AD-NNN.md` file in `.orqa/governance/decisions/`
+- Recording an architecture decision without a corresponding `AD-NNN.md` file in `.orqa/process/decisions/`
 - Updating one side of a decision supersession without updating the other
 - Using process words (UAT, Phase, Sprint, Round, Audit) in epic titles unless they describe the actual deliverable content — epic titles describe what is achieved, not how work is organised
 

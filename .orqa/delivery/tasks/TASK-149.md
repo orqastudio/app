@@ -22,7 +22,7 @@ acceptance:
 1. Create a hook script that filters staged files to production code (exclude tests/, tmp/)
 2. Grep for TODO, FIXME, HACK patterns in those files
 3. If matches found, print them and exit non-zero to block the commit
-4. Integrate into the existing `.githooks/pre-commit` pipeline or `.orqa/governance/hooks/`
+4. Integrate into the existing `.githooks/pre-commit` pipeline or `.orqa/process/hooks/`
 5. Update [RULE-020](RULE-020) to reference the hook as enforcement mechanism
 
 ## Verification

@@ -212,7 +212,7 @@ Sidecar canUseTool callback fires → emit tool_approval_request NDJSON
 
 ### Overview
 
-The enforcement pipeline loads rules from `.orqa/governance/rules/`, compiles their enforcement entries into regex patterns, and evaluates them at tool execution time (file writes, bash commands) and governance scan time.
+The enforcement pipeline loads rules from `.orqa/process/rules/`, compiles their enforcement entries into regex patterns, and evaluates them at tool execution time (file writes, bash commands) and governance scan time.
 
 ### Entry Points
 
@@ -227,7 +227,7 @@ The enforcement pipeline loads rules from `.orqa/governance/rules/`, compiles th
 ### Processing Pipeline
 
 1. **Rule loading** (`enforcement_parser.rs`):
-   - Read `.orqa/governance/rules/*.md` files
+   - Read `.orqa/process/rules/*.md` files
    - Split frontmatter from prose body
    - Parse YAML frontmatter via serde: extract `scope`, `enforcement[]` entries
    - Each entry has: `event` (File/Bash/Scan/Lint), `action` (Block/Warn/Inject), `conditions[]` (field+pattern), optional `pattern`, optional `scope` (glob), optional `skills[]`
@@ -269,7 +269,7 @@ Process gates (`process_gates.rs`) fire at tool execution time and turn completi
 
 ### Persistence
 
-- Enforcement rules are loaded from disk (`.orqa/governance/rules/*.md`)
+- Enforcement rules are loaded from disk (`.orqa/process/rules/*.md`)
 - Compiled engine cached in `AppState.enforcement: Mutex<Option<EnforcementEngine>>`
 - WorkflowTracker is ephemeral (per-session, lost on restart)
 
@@ -327,7 +327,7 @@ The system prompt is assembled from governance artifacts at message-send time an
 
 4. **Skill loading** (on demand via `load_skill` tool):
    - Agent calls `load_skill` tool with skill name
-   - `tool_executor.rs::tool_load_skill` reads `.orqa/team/skills/<name>/SKILL.md`
+   - `tool_executor.rs::tool_load_skill` reads `.orqa/process/skills/<name>/SKILL.md`
    - Returns full skill content to the agent
    - WorkflowTracker records `record_skill_loaded(name)`
 
@@ -378,7 +378,7 @@ The learning loop captures implementation lessons as markdown files, tracks recu
    - Scan existing `IMPL-NNN.md` files to determine next ID
    - Create `Lesson` struct with `recurrence: 1`, `status: active`
    - Render to markdown via `render_lesson()` (YAML frontmatter + body)
-   - Write to `.orqa/governance/lessons/IMPL-NNN.md`
+   - Write to `.orqa/process/lessons/IMPL-NNN.md`
 
 2. **Lesson parsing** (`lessons.rs::parse_lesson`):
    - Split frontmatter from body via `---` delimiters
@@ -396,11 +396,11 @@ The learning loop captures implementation lessons as markdown files, tracks recu
 
 5. **Process gate integration**:
    - `learn-after-doing` gate fires at turn end when >3 code writes but lessons not checked
-   - WorkflowTracker detects reads of `.orqa/governance/lessons/` to suppress the gate
+   - WorkflowTracker detects reads of `.orqa/process/lessons/` to suppress the gate
 
 ### Persistence
 
-- **File-based**: `.orqa/governance/lessons/IMPL-NNN.md` (YAML frontmatter + markdown body)
+- **File-based**: `.orqa/process/lessons/IMPL-NNN.md` (YAML frontmatter + markdown body)
 - **NOT in SQLite** — lessons are governance artifacts, not conversation data
 
 ### Display

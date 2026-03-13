@@ -92,7 +92,7 @@ pub fn evaluate_process_gates(
                 "plan-before-build",
                 writing_code && !tracker.has_read_any_planning(),
                 "PLANNING CHECK: Is there an epic or task that defines this work? \
-                 Check .orqa/planning/ for the scope, acceptance criteria, and \
+                 Check .orqa/delivery/ for the scope, acceptance criteria, and \
                  implementation design.",
             ));
         }
@@ -113,7 +113,7 @@ pub fn evaluate_process_gates(
                 "learn-after-doing",
                 tracker.code_write_count() > 3 && !tracker.has_checked_lessons(),
                 "LEARNING CHECK: Significant work was done this session. \
-                 Check .orqa/governance/lessons/ for known patterns and consider \
+                 Check .orqa/process/lessons/ for known patterns and consider \
                  if anything unexpected should be recorded.",
             ));
         }
@@ -169,13 +169,13 @@ mod tests {
 
     #[test]
     fn is_code_file_returns_false_for_orqa_relative_path() {
-        assert!(!is_code_file(".orqa/governance/rules/RULE-042.md"));
+        assert!(!is_code_file(".orqa/process/rules/RULE-042.md"));
     }
 
     #[test]
     fn is_code_file_returns_false_for_orqa_absolute_path() {
         assert!(!is_code_file(
-            "/home/user/project/.orqa/planning/tasks/TASK-001.md"
+            "/home/user/project/.orqa/delivery/tasks/TASK-001.md"
         ));
     }
 
@@ -215,7 +215,7 @@ mod tests {
     fn write_event_no_gates_fire_for_orqa_file() {
         let mut t = fresh_tracker();
         let results =
-            evaluate_process_gates(&mut t, "write", Some(".orqa/planning/tasks/TASK-001.md"));
+            evaluate_process_gates(&mut t, "write", Some(".orqa/delivery/tasks/TASK-001.md"));
         let fired = gates_fired(&results);
         assert!(fired.is_empty(), "no gates should fire for .orqa/ writes");
     }
@@ -267,7 +267,7 @@ mod tests {
     #[test]
     fn plan_before_build_does_not_fire_when_planning_read() {
         let mut t = fresh_tracker();
-        t.record_read(".orqa/planning/epics/EPIC-042.md");
+        t.record_read(".orqa/delivery/epics/EPIC-042.md");
         let results = evaluate_process_gates(&mut t, "write", Some("src-tauri/src/foo.rs"));
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"plan-before-build"));
@@ -277,7 +277,7 @@ mod tests {
     fn all_write_gates_silent_when_fully_prepared() {
         let mut t = fresh_tracker();
         t.record_read(".orqa/documentation/architecture/overview.md");
-        t.record_read(".orqa/planning/epics/EPIC-042.md");
+        t.record_read(".orqa/delivery/epics/EPIC-042.md");
         t.record_search();
         let results = evaluate_process_gates(&mut t, "write", Some("src-tauri/src/foo.rs"));
         let fired = gates_fired(&results);
@@ -321,7 +321,7 @@ mod tests {
     fn evidence_before_done_does_not_fire_when_no_code_written() {
         let mut t = fresh_tracker();
         // Only wrote to .orqa/ (governance artifact, not code)
-        t.record_write(".orqa/governance/rules/RULE-042.md");
+        t.record_write(".orqa/process/rules/RULE-042.md");
         let results = evaluate_process_gates(&mut t, "stop", None);
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"evidence-before-done"));
@@ -365,7 +365,7 @@ mod tests {
         for i in 0..5 {
             t.record_write(&format!("src-tauri/src/file{i}.rs"));
         }
-        t.record_read(".orqa/governance/lessons/IMPL-001.md");
+        t.record_read(".orqa/process/lessons/IMPL-001.md");
         let results = evaluate_process_gates(&mut t, "stop", None);
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"learn-after-doing"));

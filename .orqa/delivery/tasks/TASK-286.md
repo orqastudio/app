@@ -11,7 +11,7 @@ assignee: null
 docs: []
 skills: []
 acceptance:
-  - "AD-043 exists in .orqa/governance/decisions/"
+  - "AD-043 exists in .orqa/process/decisions/"
   - "Documents the three-level structure with rationale"
   - "Defines the first-class artifact principle"
   - "Maps current structure to target structure"
@@ -24,7 +24,7 @@ Create an architecture decision documenting the directory reorganization from go
 
 ## How
 
-1. Create `.orqa/governance/decisions/AD-043.md`
+1. Create `.orqa/process/decisions/AD-043.md`
 2. Document: current structure, target structure, rationale, migration approach
 3. Define the first-class artifact principle formally
 

@@ -3,18 +3,27 @@ description: "Reusable knowledge packages that agents load before working."
 role: artifacts
 label: "Skills"
 icon: "zap"
-sort: 2
+sort: 4
 ---
 
 # Skills
 
-Skills are reusable knowledge packages that agents load before starting work. Each skill teaches patterns, anti-patterns, and domain-specific conventions that help agents write better code for this project.
+Skills are reusable knowledge packages that agents load before starting work. Each skill encodes patterns, anti-patterns, and domain-specific conventions — the accumulated knowledge of what works in this codebase.
 
-## Skill Types
+## Pipeline Role
 
-- **Generic skills**: Portable knowledge about languages, frameworks, and tools (Rust async, Svelte 5, Tailwind)
-- **Project skills**: Patterns specific to this codebase (IPC patterns, store patterns, streaming pipeline)
+Skills are **Practice** — the fourth stage of the knowledge maturity pipeline:
 
-## Loading
+```
+Observation → Understanding → Principle → Practice → Enforcement → Verification
+```
 
-Agents declare their required skills in YAML frontmatter. Skills are loaded at task start, before any implementation begins. The `orqa-code-search` and `composability` skills are universal — required by every agent.
+A decision (understanding) answers "what should we do?" A skill answers "how do we do it correctly?" Skills turn architectural decisions into actionable guidance that agents can load at runtime. When a skill is insufficient to prevent violations, it escalates into a rule (enforcement).
+
+## Skill Layers
+
+- **`core`**: Portable across all projects — general methodology, language patterns, search usage
+- **`project`**: Specific to this codebase — IPC patterns, store patterns, streaming pipeline
+- **`plugin`**: Installed from external source; portable like core skills
+
+Skills are loaded in two tiers: Tier 1 (declared in agent YAML frontmatter) and Tier 2 (injected by orchestrator based on task scope). The `orqa-code-search` and `composability` skills are universal — required by every agent.

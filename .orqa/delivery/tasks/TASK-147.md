@@ -41,7 +41,7 @@ Three deliverables:
 
 1. Use `search_semantic` to find all loading states, error displays, empty states, and toolbar patterns across `ui/src/lib/components/`
 2. For each pattern, count occurrences and note the files containing inline implementations
-3. Create the component extraction skill in `.orqa/team/skills/` covering when/how to extract, naming, prop design, and a pre-creation checklist
+3. Create the component extraction skill in `.orqa/process/skills/` covering when/how to extract, naming, prop design, and a pre-creation checklist
 4. Edit [RULE-024](RULE-024) to add the search-before-creating mandate and FORBIDDEN section for known inline patterns
 5. Create TASK-NNN follow-up artifacts for the top N patterns worth extracting
 

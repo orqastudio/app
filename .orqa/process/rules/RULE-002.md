@@ -1,7 +1,7 @@
 ---
 id: RULE-002
 title: Architecture Decisions
-description: All code must comply with architecture decisions in .orqa/governance/decisions/.
+description: All code must comply with architecture decisions in .orqa/process/decisions/.
 status: active
 created: 2026-03-07
 updated: 2026-03-10
@@ -43,7 +43,7 @@ relationships:
     target: RULE-031
     rationale: Inverse of informs relationship from RULE-031
 ---
-**Source of Truth:** `.orqa/governance/decisions/` — individual `AD-NNN.md` artifacts. Decisions are first-class artifacts browsable in the app's artifact navigation.
+**Source of Truth:** `.orqa/process/decisions/` — individual `AD-NNN.md` artifacts. Decisions are first-class artifacts browsable in the app's artifact navigation.
 
 ## Critical Decisions (violations = immediate rejection)
 
@@ -60,9 +60,9 @@ relationships:
 
 ## Before Writing Code
 
-1. Check if your change affects any existing decision — browse decisions in the app or search `.orqa/governance/decisions/` for the relevant `AD-NNN.md`
+1. Check if your change affects any existing decision — browse decisions in the app or search `.orqa/process/decisions/` for the relevant `AD-NNN.md`
 2. Read the relevant decision artifact(s) for full context
-3. If proposing a new decision, create an `AD-NNN.md` in `.orqa/governance/decisions/` following the framework schema (see `.orqa/documentation/product/artifact-framework.md` — Decision schema).
+3. If proposing a new decision, create an `AD-NNN.md` in `.orqa/process/decisions/` following the framework schema (see `.orqa/documentation/product/artifact-framework.md` — Decision schema).
 
 ## Before Writing Plans
 

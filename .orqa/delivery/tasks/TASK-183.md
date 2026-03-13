@@ -28,7 +28,7 @@ Then add enforcement entries to rules that have clear, pattern-matchable violati
 
 ## How
 
-1. Add `enforcement` to `.orqa/governance/rules/schema.json` as an optional array
+1. Add `enforcement` to `.orqa/process/rules/schema.json` as an optional array
 2. Each entry: `{ event, pattern, paths (optional), action, message }`
 3. Identify rules with mechanically enforceable patterns:
    - [RULE-006](RULE-006): `unwrap()` in production code → file event

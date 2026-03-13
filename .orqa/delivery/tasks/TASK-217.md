@@ -17,7 +17,7 @@ acceptance:
 
 Web search is a first-class research tool. Researchers should be able to search the web during investigation, and Planners should be able to look up external references. This connects external knowledge to the artifact graph through research documents that cite their sources.
 
-The `research-methodology` skill (`.orqa/team/skills/research-methodology/SKILL.md`) provides source verification protocol, credibility tiers (T1-T4), cross-referencing rules, and confidence levels to ensure research findings are verified to an acceptable level of certainty.
+The `research-methodology` skill (`.orqa/process/skills/research-methodology/SKILL.md`) provides source verification protocol, credibility tiers (T1-T4), cross-referencing rules, and confidence levels to ensure research findings are verified to an acceptable level of certainty.
 
 ## How
 

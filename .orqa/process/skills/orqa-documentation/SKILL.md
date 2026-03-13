@@ -54,17 +54,17 @@ Every artifact type has a typed ID prefix:
 | Prefix | Type | Location |
 |--------|------|----------|
 | `DOC-NNN` | Documentation page | `.orqa/documentation/**/*.md` |
-| `EPIC-NNN` | Epic | `.orqa/planning/epics/` |
-| `TASK-NNN` | Task | `.orqa/planning/tasks/` |
-| `MS-NNN` | Milestone | `.orqa/planning/milestones/` |
-| `IDEA-NNN` | Idea | `.orqa/planning/ideas/` |
-| `RES-NNN` | Research | `.orqa/planning/research/` |
-| `PILLAR-NNN` | Pillar | `.orqa/planning/pillars/` |
-| `AD-NNN` | Architecture Decision | `.orqa/governance/decisions/` |
-| `RULE-NNN` | Rule | `.orqa/governance/rules/` |
-| `IMPL-NNN` | Lesson | `.orqa/governance/lessons/` |
-| `SKILL-NNN` | Skill | `.orqa/team/skills/` |
-| `AGENT-NNN` | Agent | `.orqa/team/agents/` |
+| `EPIC-NNN` | Epic | `.orqa/delivery/epics/` |
+| `TASK-NNN` | Task | `.orqa/delivery/tasks/` |
+| `MS-NNN` | Milestone | `.orqa/delivery/milestones/` |
+| `IDEA-NNN` | Idea | `.orqa/delivery/ideas/` |
+| `RES-NNN` | Research | `.orqa/delivery/research/` |
+| `PILLAR-NNN` | Pillar | `.orqa/process/pillars/` |
+| `AD-NNN` | Architecture Decision | `.orqa/process/decisions/` |
+| `RULE-NNN` | Rule | `.orqa/process/rules/` |
+| `IMPL-NNN` | Lesson | `.orqa/process/lessons/` |
+| `SKILL-NNN` | Skill | `.orqa/process/skills/` |
+| `AGENT-NNN` | Agent | `.orqa/process/agents/` |
 
 ### How It Works
 

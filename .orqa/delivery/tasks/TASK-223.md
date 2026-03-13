@@ -63,7 +63,7 @@ The `project-setup` skill calls this inference during the setup flow:
 
 ## How
 
-1. Create a new skill directory `.orqa/team/skills/epic-requirement-inference/`
+1. Create a new skill directory `.orqa/process/skills/epic-requirement-inference/`
 2. Write SKILL.md with heuristics for determining epic requirement
 3. Update project-setup skill to consume the inference
 4. Add `workflow` section to project.json schema

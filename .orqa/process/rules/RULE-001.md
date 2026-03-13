@@ -87,10 +87,10 @@ When delegating to a role:
 
 The orchestrator may bypass delegation for:
 
-- Governance artifacts (`.orqa/governance/rules/`, `.orqa/team/agents/`, `.orqa/team/skills/`) — these ARE the orchestrator's domain
+- Governance artifacts (`.orqa/process/rules/`, `.orqa/process/agents/`, `.orqa/process/skills/`) — these ARE the orchestrator's domain
 - Process documentation (`.orqa/documentation/process/`) — orchestration is a process concern
 - Session state (`tmp/session-state.md`) — coordination artifact
-- Planning artifact **structure** (`.orqa/planning/`) — creating/updating frontmatter, status transitions, cross-references. Content authoring (research findings, documentation pages) is delegated to Writer.
+- Planning artifact **structure** (`.orqa/delivery/`) — creating/updating frontmatter, status transitions, cross-references. Content authoring (research findings, documentation pages) is delegated to Writer.
 
 ## Resource Safety (NON-NEGOTIABLE)
 

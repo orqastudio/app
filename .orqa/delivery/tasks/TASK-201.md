@@ -33,6 +33,6 @@ Add enforcement entries to appropriate rules mapping path patterns to skills:
 
 ## Verification
 
-- Each mapping corresponds to an existing skill in `.orqa/team/skills/`
+- Each mapping corresponds to an existing skill in `.orqa/process/skills/`
 - Writing to a mapped path triggers skill injection
 - Skills are returned as systemMessage content

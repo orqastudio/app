@@ -60,7 +60,7 @@ Fix incorrect task statuses on active epics, remove dead `scope` field reference
 | [TASK-266](TASK-266) | Write core architecture documentation | 3 | End-to-end map of artifact system, knowledge graph, prompt injection, enforcement, learning loop |
 | [TASK-267](TASK-267) | Document plugin architecture and SDK extraction plan | 3 | Component library extraction, view registration API, theme tokens, plugin distribution |
 | [TASK-268](TASK-268) | Fix EPIC-005 task statuses | 4 | Revert TASK-170 to in-progress, update TASK-164 |
-| [TASK-269](TASK-269) | Tighten RULE-001 orchestrator content boundary | 4 | Clarify `.orqa/planning/` exception: structure = orchestrator, content = Writer |
+| [TASK-269](TASK-269) | Tighten RULE-001 orchestrator content boundary | 4 | Clarify `.orqa/delivery/` exception: structure = orchestrator, content = Writer |
 | [TASK-270](TASK-270) | Resolve AD-032 SQLite scoping violation | 4 | Governance tables in SQLite violate AD-032. Decide: ephemeral cache or file-based. |
 
 ## Out of Scope

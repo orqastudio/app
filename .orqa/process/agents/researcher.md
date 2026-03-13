@@ -46,8 +46,8 @@ Before any research work, load relevant context:
 
 - `.orqa/documentation/product/vision.md` — Product vision and pillars
 - `.orqa/documentation/product/artifact-framework.md` — Artifact schemas and connections
-- `.orqa/planning/research/` — Existing research (check for prior work on your topic)
-- `.orqa/governance/lessons/` — Known patterns and past findings
+- `.orqa/delivery/research/` — Existing research (check for prior work on your topic)
+- `.orqa/process/lessons/` — Known patterns and past findings
 
 ## Operating Context
 
@@ -59,7 +59,7 @@ You may run in two contexts. Both are permanent and first-class.
 
 The `chunkhound` skill teaches query patterns that work in both contexts.
 
-**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see `.orqa/governance/rules/[RULE-009](RULE-009).md`.
+**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see `.orqa/process/rules/[RULE-009](RULE-009).md`.
 
 ## Research Process
 
@@ -115,6 +115,6 @@ Structure findings as a research document:
 - NEVER make changes — you produce findings, not implementations
 - NEVER present a single option as the only choice — always show alternatives
 - NEVER assume — verify every claim with evidence from code or docs
-- Always check `.orqa/planning/research/` for existing research on your topic
-- Always check `.orqa/governance/lessons/` for known patterns
+- Always check `.orqa/delivery/research/` for existing research on your topic
+- Always check `.orqa/process/lessons/` for known patterns
 - State your confidence level: high (verified), medium (inferred), low (speculative)

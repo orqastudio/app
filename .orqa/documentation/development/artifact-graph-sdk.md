@@ -96,7 +96,7 @@ The types are defined in `ui/src/lib/types/artifact-graph.ts` and mirror the Rus
 interface ArtifactNode {
     /** Frontmatter `id` field (e.g. "EPIC-048"). */
     id: string;
-    /** Relative path from the project root (e.g. ".orqa/planning/epics/EPIC-048.md"). */
+    /** Relative path from the project root (e.g. ".orqa/delivery/epics/EPIC-048.md"). */
     path: string;
     /** Inferred category string (e.g. "epic", "task", "milestone", "idea", "decision"). */
     artifact_type: string;
@@ -167,7 +167,7 @@ Resolve an artifact node by its frontmatter ID (e.g. `"[EPIC-048](EPIC-048)"`). 
 resolveByPath(path: string): ArtifactNode | undefined
 ```
 
-Resolve an artifact node by its relative file path (e.g. `".orqa/planning/epics/[EPIC-048](EPIC-048).md"`). Returns `undefined` when no artifact at that path has been indexed.
+Resolve an artifact node by its relative file path (e.g. `".orqa/delivery/epics/[EPIC-048](EPIC-048).md"`). Returns `undefined` when no artifact at that path has been indexed.
 
 ### Relationship Methods
 
@@ -205,7 +205,7 @@ Both methods iterate the full in-memory graph and return a new array on each cal
 async readContent(path: string): Promise<string>
 ```
 
-Read the raw markdown content of an artifact file from disk. This is always an async IPC call — the SDK does not cache file content. Pass the relative path from the project root (e.g. `".orqa/planning/epics/[EPIC-048](EPIC-048).md"`).
+Read the raw markdown content of an artifact file from disk. This is always an async IPC call — the SDK does not cache file content. Pass the relative path from the project root (e.g. `".orqa/delivery/epics/[EPIC-048](EPIC-048).md"`).
 
 ### Graph Health
 
@@ -385,8 +385,8 @@ The old approach used a hardcoded map from artifact ID prefix to directory path:
 ```typescript
 // OLD — fragile, misses types without prefix entries
 const ARTIFACT_PREFIX_MAP: Record<string, string> = {
-    "EPIC": ".orqa/planning/epics",
-    "TASK": ".orqa/planning/tasks",
+    "EPIC": ".orqa/delivery/epics",
+    "TASK": ".orqa/delivery/tasks",
     // ...
 };
 ```

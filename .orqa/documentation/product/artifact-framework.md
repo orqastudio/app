@@ -172,15 +172,15 @@ Artifact types fall into three management layers. **Canon** artifacts are manage
 
 | Type | ID Pattern | Directory | Layer | Purpose |
 |------|-----------|-----------|-------|---------|
-| **Pillar** | `PILLAR-NNN` | `.orqa/planning/pillars/` | Project | Guiding principle that features are evaluated against |
-| **Milestone** | `MS-NNN` | `.orqa/planning/milestones/` | Project | Strategic goal with gate question |
-| **Epic** | `EPIC-NNN` | `.orqa/planning/epics/` | Project | Trackable work unit within a milestone |
-| **Task** | `TASK-NNN` | `.orqa/planning/tasks/` | Project | Individual implementation unit within an epic |
-| **Idea** | `IDEA-NNN` | `.orqa/planning/ideas/` | Project | Candidate for future work, needs validation |
-| **Lesson** | `IMPL-NNN` | `.orqa/governance/lessons/` | Project | Learning capture from implementation |
-| **Research** | `RES-NNN` | `.orqa/planning/research/` | Project | Investigation, design exploration, or implementation plan — produces decisions |
-| **Rule** | `RULE-NNN` | `.orqa/governance/rules/` | Canon/Project | Constraint that must be followed — binary: compliant or not |
-| **Decision** | `AD-NNN` | `.orqa/governance/decisions/` | Project | Architecture decision record — captures what was decided and why |
+| **Pillar** | `PILLAR-NNN` | `.orqa/process/pillars/` | Project | Guiding principle that features are evaluated against |
+| **Milestone** | `MS-NNN` | `.orqa/delivery/milestones/` | Project | Strategic goal with gate question |
+| **Epic** | `EPIC-NNN` | `.orqa/delivery/epics/` | Project | Trackable work unit within a milestone |
+| **Task** | `TASK-NNN` | `.orqa/delivery/tasks/` | Project | Individual implementation unit within an epic |
+| **Idea** | `IDEA-NNN` | `.orqa/delivery/ideas/` | Project | Candidate for future work, needs validation |
+| **Lesson** | `IMPL-NNN` | `.orqa/process/lessons/` | Project | Learning capture from implementation |
+| **Research** | `RES-NNN` | `.orqa/delivery/research/` | Project | Investigation, design exploration, or implementation plan — produces decisions |
+| **Rule** | `RULE-NNN` | `.orqa/process/rules/` | Canon/Project | Constraint that must be followed — binary: compliant or not |
+| **Decision** | `AD-NNN` | `.orqa/process/decisions/` | Project | Architecture decision record — captures what was decided and why |
 
 ### Type Definitions (When to Use Each)
 
@@ -335,7 +335,7 @@ scoring:                          # Priority dimension scores
 | `deadline` | No | date/null | ISO date for time-constrained epics, null otherwise |
 | `scoring` | Yes | object | Dimension scores for priority calculation (includes computed `score` field). Required for now — see [IDEA-035](IDEA-035) for configurable scoring. |
 
-**Task checklists in epics:** Tasks are listed as markdown checklists in the epic body. When a task needs its own detailed tracking (acceptance criteria, agent assignment, discussion), it graduates to a separate `TASK-NNN.md` file in `.orqa/planning/tasks/`.
+**Task checklists in epics:** Tasks are listed as markdown checklists in the epic body. When a task needs its own detailed tracking (acceptance criteria, agent assignment, discussion), it graduates to a separate `TASK-NNN.md` file in `.orqa/delivery/tasks/`.
 
 ### Task (`TASK-NNN`)
 
@@ -602,15 +602,15 @@ All schema.json files live alongside their artifact type's directory:
 
 | Type | Schema Path |
 |------|-------------|
-| Pillar | `.orqa/planning/pillars/schema.json` |
-| Milestone | `.orqa/planning/milestones/schema.json` |
-| Epic | `.orqa/planning/epics/schema.json` |
-| Task | `.orqa/planning/tasks/schema.json` |
-| Idea | `.orqa/planning/ideas/schema.json` |
-| Research | `.orqa/planning/research/schema.json` |
-| Decision | `.orqa/governance/decisions/schema.json` |
-| Lesson | `.orqa/governance/lessons/schema.json` |
-| Rule | `.orqa/governance/rules/schema.json` |
+| Pillar | `.orqa/process/pillars/schema.json` |
+| Milestone | `.orqa/delivery/milestones/schema.json` |
+| Epic | `.orqa/delivery/epics/schema.json` |
+| Task | `.orqa/delivery/tasks/schema.json` |
+| Idea | `.orqa/delivery/ideas/schema.json` |
+| Research | `.orqa/delivery/research/schema.json` |
+| Decision | `.orqa/process/decisions/schema.json` |
+| Lesson | `.orqa/process/lessons/schema.json` |
+| Rule | `.orqa/process/rules/schema.json` |
 
 ---
 
@@ -851,13 +851,13 @@ Every stage of work self-documents its decisions:
 
 ```
 Idea captured
-  → Research investigates (produces .orqa/planning/research/ artifact)
-  → Research resolves → Architecture Decision recorded (`.orqa/governance/decisions/AD-NNN.md`)
+  → Research investigates (produces .orqa/delivery/research/ artifact)
+  → Research resolves → Architecture Decision recorded (`.orqa/process/decisions/AD-NNN.md`)
   → Idea promoted → Epic created (references research-refs, lists docs-required)
   → Epic body written with implementation design (docs-required gate satisfied)
   → Implementation begins (produces code + docs-produced artifacts)
   → Completion updates architecture docs, component specs, schemas
-  → Lessons captured (.orqa/governance/lessons/) → promoted to rules/skills
+  → Lessons captured (.orqa/process/lessons/) → promoted to rules/skills
 ```
 
 At any point, you can trace backwards: "Why does this rule exist?" → lesson → epic → research → original idea. This is the automated documentation process — the system records what was decided at each stage and why.

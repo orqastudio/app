@@ -24,7 +24,7 @@ to inject when the entry matches.
 
 ## How
 
-1. Update `.orqa/governance/rules/schema.json`: add `inject` to action enum, add `skills` field
+1. Update `.orqa/process/rules/schema.json`: add `inject` to action enum, add `skills` field
 2. Update plugin `rule-engine.mjs`: handle `inject` action — read SKILL.md files, return as systemMessage
 3. Update Rust enforcement engine: handle `Inject` action variant
 4. Add deduplication: track which skills have been injected per turn to prevent flooding

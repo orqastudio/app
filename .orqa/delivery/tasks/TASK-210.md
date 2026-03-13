@@ -10,7 +10,7 @@ depends-on:
   - TASK-208
 acceptance:
   - All todo tasks have a skills field (may be empty array if no specific skills needed)
-  - Skills entries match existing skill names in .orqa/team/skills/
+  - Skills entries match existing skill names in .orqa/process/skills/
   - Injection table knowledge is now encoded in the graph, not the prompt
 ---
 
@@ -23,12 +23,12 @@ Transfer the orchestrator's hardcoded Tier 2 skill injection table into graph ed
 1. Read the current Tier 2 injection table from `orchestrator.md`
 2. For each todo task, match its `scope` file paths against the injection table
 3. Add matching skills to the task's `skills:` array
-4. Verify all skill names resolve to existing skills in `.orqa/team/skills/`
+4. Verify all skill names resolve to existing skills in `.orqa/process/skills/`
 
 ## Verification
 
 - All todo tasks have a `skills` field (array of strings or empty array)
-- All skill names resolve to directories in `.orqa/team/skills/`
+- All skill names resolve to directories in `.orqa/process/skills/`
 - Tasks touching `backend/src-tauri/` have backend skills (backend-best-practices, etc.)
 - Tasks touching `ui/` have frontend skills (svelte5-best-practices, etc.)
 - Tasks touching `.orqa/` have governance skills (orqa-governance, etc.)

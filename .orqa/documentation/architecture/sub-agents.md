@@ -9,7 +9,7 @@ updated: "2026-03-05"
 
 **Date:** 2026-03-05
 
-Sub-agent support allows the orchestrator agent to delegate tasks to specialized sub-agents within a single OrqaStudio™ session. The `spawn_agent` tool spawns a sub-agent with a declared role and instructions. The agent registry reads `.orqa/team/agents/*.md` to discover available roles. Child tool calls are aggregated and not surfaced individually in the conversation view. Turn limits prevent runaway sub-agent loops.
+Sub-agent support allows the orchestrator agent to delegate tasks to specialized sub-agents within a single OrqaStudio™ session. The `spawn_agent` tool spawns a sub-agent with a declared role and instructions. The agent registry reads `.orqa/process/agents/*.md` to discover available roles. Child tool calls are aggregated and not surfaced individually in the conversation view. Turn limits prevent runaway sub-agent loops.
 
 ---
 
@@ -83,7 +83,7 @@ The `spawn_agent` tool is an OrqaStudio MCP tool, implemented in Rust, exposed t
 
 ## Agent Registry
 
-The agent registry reads `.orqa/team/agents/*.md` at startup and indexes available roles.
+The agent registry reads `.orqa/process/agents/*.md` at startup and indexes available roles.
 
 ### Registry Entry
 
@@ -107,7 +107,7 @@ skills:
   - rust-async-patterns
   - tauri-v2
 required_reading:
-  - .orqa/governance/decisions/
+  - .orqa/process/decisions/
   - .orqa/documentation/development/coding-standards.md
 capabilities:
   - write_files
@@ -206,7 +206,7 @@ Sub-agent tool calls pass through the same enforcement engine as parent tool cal
 backend/src-tauri/src/
   agents/
     mod.rs             -- AgentRegistry struct, spawn_agent tool handler
-    registry.rs        -- Reads .orqa/team/agents/*.md, builds role index
+    registry.rs        -- Reads .orqa/process/agents/*.md, builds role index
     runner.rs          -- Sub-agent execution: skill loading, turn management, result aggregation
     explore.rs         -- Explore mode: read-only tool set, no approval required
     types.rs           -- AgentRole, SpawnAgentInput, SpawnAgentResult, SubAgentTurn

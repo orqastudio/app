@@ -24,7 +24,7 @@ These fields create explicit graph edges from tasks to their implementation cont
 
 ## How
 
-1. Edit `.orqa/planning/tasks/schema.json` — add both fields as optional string arrays
+1. Edit `.orqa/delivery/tasks/schema.json` — add both fields as optional string arrays
 2. Update `.orqa/documentation/product/artifact-framework.md` — add fields to Task schema
 3. Verify existing tasks still validate with `node .githooks/validate-schema.mjs`
 

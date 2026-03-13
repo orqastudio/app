@@ -78,7 +78,7 @@ For software projects, the orchestrator's Tier 2 injection table is populated:
 ## Setup Procedure
 
 1. Read the project profile from `project-inference`
-2. Copy software-specific rules to `.orqa/governance/rules/`
+2. Copy software-specific rules to `.orqa/process/rules/`
 3. Generate coding standards from detected languages/frameworks
 4. Create documentation templates
 5. Configure the orchestrator's skill injection table based on detected stack

@@ -11,7 +11,7 @@ skills:
   - SKILL-005
   - SKILL-008
 acceptance:
-  - Hooks section in governance displays existing hook files from .orqa/governance/hooks/
+  - Hooks section in governance displays existing hook files from .orqa/process/hooks/
   - If hooks directory contains shell scripts (not .md files)
   - they are still listed with their filename as label
   - Consider whether Claude hooks from .claude/settings.json should also surface here (may defer to IDEA-027)
@@ -22,12 +22,12 @@ acceptance:
 
 ## Investigation Needed
 
-The scanner in `artifact_reader.rs` scans for `.md` files. If `.orqa/governance/hooks/` contains `.sh` files (shell scripts), they won't be found. Need to either:
+The scanner in `artifact_reader.rs` scans for `.md` files. If `.orqa/process/hooks/` contains `.sh` files (shell scripts), they won't be found. Need to either:
 1. Scan for all file types in hooks directory, or
 2. Create `.md` wrapper files for each hook with frontmatter describing the hook, or
 3. Defer hooks display to [IDEA-027](IDEA-027) (hooks system research)
 
-Check what files actually exist in `.orqa/governance/hooks/` first.
+Check what files actually exist in `.orqa/process/hooks/` first.
 
 ## What
 

@@ -26,7 +26,7 @@ Final sweep to update every path reference across the entire codebase after dire
 ## How
 
 1. Run `node tools/verify-links.mjs` to find remaining broken references
-2. Search Rust code for old paths (.orqa/governance/, .orqa/team/, .orqa/planning/)
+2. Search Rust code for old paths (.orqa/process/, .orqa/process/, .orqa/delivery/)
 3. Search TypeScript code for old paths
 4. Search all .orqa/ artifacts for old paths
 5. Fix each reference

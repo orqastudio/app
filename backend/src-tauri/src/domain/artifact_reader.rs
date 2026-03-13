@@ -682,7 +682,7 @@ mod tests {
             key: "ideas".to_string(),
             label: None,
             icon: None,
-            path: ".orqa/planning/ideas".to_string(),
+            path: ".orqa/delivery/ideas".to_string(),
         })];
         let tree = artifact_scan_tree(tmp.path(), &entries).expect("scan");
         // Directory doesn't exist — type has no nodes, so the group is dropped.
@@ -692,7 +692,7 @@ mod tests {
     #[test]
     fn type_entry_with_md_files_produces_nodes() {
         let tmp = make_temp_project();
-        let type_dir = tmp.path().join(".orqa/planning/ideas");
+        let type_dir = tmp.path().join(".orqa/delivery/ideas");
         fs::create_dir_all(&type_dir).expect("create dir");
         fs::write(
             type_dir.join("IDEA-001.md"),
@@ -711,7 +711,7 @@ mod tests {
             key: "ideas".to_string(),
             label: None,
             icon: None,
-            path: ".orqa/planning/ideas".to_string(),
+            path: ".orqa/delivery/ideas".to_string(),
         })];
 
         let tree = artifact_scan_tree(tmp.path(), &entries).expect("scan");
@@ -731,7 +731,7 @@ mod tests {
     #[test]
     fn type_entry_label_falls_back_to_humanized_key() {
         let tmp = make_temp_project();
-        let type_dir = tmp.path().join(".orqa/planning/ideas");
+        let type_dir = tmp.path().join(".orqa/delivery/ideas");
         fs::create_dir_all(&type_dir).expect("create dir");
         fs::write(
             type_dir.join("IDEA-001.md"),
@@ -744,7 +744,7 @@ mod tests {
             key: "my-ideas".to_string(),
             label: None,
             icon: None,
-            path: ".orqa/planning/ideas".to_string(),
+            path: ".orqa/delivery/ideas".to_string(),
         })];
 
         let tree = artifact_scan_tree(tmp.path(), &entries).expect("scan");
@@ -756,8 +756,8 @@ mod tests {
     fn group_entry_produces_multi_type_group() {
         let tmp = make_temp_project();
 
-        let ideas_dir = tmp.path().join(".orqa/planning/ideas");
-        let epics_dir = tmp.path().join(".orqa/planning/epics");
+        let ideas_dir = tmp.path().join(".orqa/delivery/ideas");
+        let epics_dir = tmp.path().join(".orqa/delivery/epics");
         fs::create_dir_all(&ideas_dir).expect("ideas dir");
         fs::create_dir_all(&epics_dir).expect("epics dir");
         // Write README with frontmatter for the group directory.
@@ -782,13 +782,13 @@ mod tests {
                     key: "ideas".to_string(),
                     label: None,
                     icon: None,
-                    path: ".orqa/planning/ideas".to_string(),
+                    path: ".orqa/delivery/ideas".to_string(),
                 },
                 ArtifactTypeConfig {
                     key: "epics".to_string(),
                     label: None,
                     icon: None,
-                    path: ".orqa/planning/epics".to_string(),
+                    path: ".orqa/delivery/epics".to_string(),
                 },
             ],
         }];

@@ -118,7 +118,7 @@ CREATE INDEX IF NOT EXISTS idx_messages_stream ON messages(stream_status) WHERE 
 
 Governance artifact metadata. Content lives on disk as markdown.
 
-Hookify rules (`.orqa/governance/hookify.*.local.md`) share `artifact_type = 'hook'` with lifecycle hooks (`.orqa/governance/hooks/`). The `hook_kind` column distinguishes them. This mirrors the UI where both subtypes appear under the single "Hooks" Activity Bar icon. In CLI-only environments, these may reside under `.claude/` as a compatibility layer.
+Hookify rules (`.orqa/process/hookify.*.local.md`) share `artifact_type = 'hook'` with lifecycle hooks (`.orqa/process/hooks/`). The `hook_kind` column distinguishes them. This mirrors the UI where both subtypes appear under the single "Hooks" Activity Bar icon. In CLI-only environments, these may reside under `.claude/` as a compatibility layer.
 
 ```sql
 CREATE TABLE IF NOT EXISTS artifacts (

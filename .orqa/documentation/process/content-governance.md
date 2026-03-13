@@ -17,10 +17,10 @@ OrqaStudio™ uses five distinct layers for governance knowledge: documentation,
 | Layer | Owns | Examples | Source of Truth For |
 |-------|------|----------|---------------------|
 | **Documentation (`.orqa/documentation/`)** | Functional and product knowledge: architecture decisions, coding standards, IPC contracts, UI specs | Architecture decisions, function size limits, IPC response format, component state tables | Yes — code that doesn't match docs is wrong |
-| **Agent Instructions (`.orqa/team/agents/`)** | Process: how the agent works, which tools it uses, which docs to read first, when to delegate, verification steps | "Run clippy before committing", "Read relevant `AD-NNN.md` decisions first", "Delegate to test-engineer after implementation" | Process only — agents reference docs, not restate them |
-| **Skills (`.orqa/team/skills/`)** | Domain knowledge: how a technology works, general patterns, reusable techniques not specific to OrqaStudio | How Svelte 5 runes work, how to structure a Rust module, how to write a cargo test | Technology patterns only — skills must not contain OrqaStudio-specific architectural rules |
-| **Rules (`.orqa/governance/rules/`)** | Enforcement: automated checks and behavioral constraints that apply across all agents | "No stubs", "Error ownership", "End-to-end completeness" | Behavioral constraints — rules reference docs for the standards they enforce |
-| **Hooks (`.orqa/governance/hooks/`)** | Automated rule implementation: shell scripts triggered by lifecycle events that enforce rules programmatically | Session-start checklist, skill loading protocol, pre-commit verification | Executable enforcement — hooks are the mechanism through which rules are actively enforced at key lifecycle points |
+| **Agent Instructions (`.orqa/process/agents/`)** | Process: how the agent works, which tools it uses, which docs to read first, when to delegate, verification steps | "Run clippy before committing", "Read relevant `AD-NNN.md` decisions first", "Delegate to test-engineer after implementation" | Process only — agents reference docs, not restate them |
+| **Skills (`.orqa/process/skills/`)** | Domain knowledge: how a technology works, general patterns, reusable techniques not specific to OrqaStudio | How Svelte 5 runes work, how to structure a Rust module, how to write a cargo test | Technology patterns only — skills must not contain OrqaStudio-specific architectural rules |
+| **Rules (`.orqa/process/rules/`)** | Enforcement: automated checks and behavioral constraints that apply across all agents | "No stubs", "Error ownership", "End-to-end completeness" | Behavioral constraints — rules reference docs for the standards they enforce |
+| **Hooks (`.orqa/process/hooks/`)** | Automated rule implementation: shell scripts triggered by lifecycle events that enforce rules programmatically | Session-start checklist, skill loading protocol, pre-commit verification | Executable enforcement — hooks are the mechanism through which rules are actively enforced at key lifecycle points |
 
 ---
 
@@ -32,9 +32,9 @@ Documentation is the source of truth for **what** the system does and **how** it
 
 - When a standard changes, change it **here**. Agent instructions that reference the doc pick up the change automatically.
 - Never copy a rule from `.orqa/documentation/` into an agent file or skill — reference the doc instead.
-- Every architecture decision lives in `.orqa/governance/decisions/` as an individual `AD-NNN.md` artifact. Agent files do not define decisions; they cite them.
+- Every architecture decision lives in `.orqa/process/decisions/` as an individual `AD-NNN.md` artifact. Agent files do not define decisions; they cite them.
 
-### Agent Instructions (`.orqa/team/agents/`)
+### Agent Instructions (`.orqa/process/agents/`)
 
 Agent files define **process** — the workflow an agent follows to do its job. They do not define the standards themselves.
 
@@ -51,10 +51,10 @@ Delegate to the test-engineer agent after implementation.
 ```text
 Functions must be <= 50 lines.          <- Belongs in .orqa/documentation/development/coding-standards.md
 No backwards compatibility shims.      <- Belongs in .orqa/documentation/development/coding-standards.md
-IPC boundary: only invoke()...         <- Belongs in `.orqa/governance/decisions/AD-NNN.md`
+IPC boundary: only invoke()...         <- Belongs in `.orqa/process/decisions/AD-NNN.md`
 ```
 
-### Skills (`.orqa/team/skills/`)
+### Skills (`.orqa/process/skills/`)
 
 Skills teach **how a technology works** -- patterns, idioms, and examples from the technology's own documentation and best practices. They are intentionally portable: a Svelte skill should be useful on any Svelte project, not just OrqaStudio.
 
@@ -74,7 +74,7 @@ EmptyState component from $lib/components/    <- OrqaStudio-specific, not portab
 All Rust functions must return Result.        <- Project architecture rule
 ```
 
-### Rules (`.orqa/governance/rules/`)
+### Rules (`.orqa/process/rules/`)
 
 Rules enforce behavioral constraints across all agents. They describe **how agents must behave**, not what the product does. Rules reference documentation for the standards they enforce -- they do not duplicate those standards.
 
@@ -88,11 +88,11 @@ All errors are your responsibility -- fix them, don't claim they pre-existed.
 **Forbidden rule content:**
 
 ```text
-The IPC response format is: Result<T, String>    <- Belongs in `.orqa/governance/decisions/AD-NNN.md`
+The IPC response format is: Result<T, String>    <- Belongs in `.orqa/process/decisions/AD-NNN.md`
 Functions must be <= 50 lines.                    <- Belongs in .orqa/documentation/development/coding-standards.md
 ```
 
-### Hooks (`.orqa/governance/hooks/`)
+### Hooks (`.orqa/process/hooks/`)
 
 Hooks are **the mechanism through which rules are actively enforced**. Where rules define behavioral constraints as written instructions that agents should follow, hooks implement those constraints as executable shell scripts triggered at specific lifecycle events.
 
@@ -170,7 +170,7 @@ Never call invoke() directly in display components. Use stores.
 # CORRECT: Technology pattern in skill, project rule in docs
 ## See Also
 This skill covers Svelte 5 technology patterns. For OrqaStudio-specific
-architectural constraints, see the relevant `AD-NNN.md` in `.orqa/governance/decisions/`.
+architectural constraints, see the relevant `AD-NNN.md` in `.orqa/process/decisions/`.
 ```
 
 ### Multiple agent files containing the same rule
@@ -223,12 +223,12 @@ When the Writer role makes changes to any documentation page, the orchestrator r
 
 ### Rule → Hook Promotion
 
-When a rule is repeatedly violated (recurrence >= 2 in `.orqa/governance/lessons/`), consider whether it can be enforced by a hook. The promotion path:
+When a rule is repeatedly violated (recurrence >= 2 in `.orqa/process/lessons/`), consider whether it can be enforced by a hook. The promotion path:
 
 1. Rule violation captured as an IMPL lesson
 2. Lesson recurrence reaches threshold
 3. The `orchestrator` evaluates: can this be enforced at a lifecycle boundary?
-4. If yes: write a hook script in `.orqa/governance/hooks/` that implements the rule
+4. If yes: write a hook script in `.orqa/process/hooks/` that implements the rule
 5. If no: strengthen the rule's language, add to more agents' required reading
 
 Hooks are for enforcement that requires running a script at a lifecycle boundary (session start, stop). Rules remain for constraints that require judgement or context.
@@ -243,5 +243,5 @@ This loop ensures the governance system stays consistent as documentation evolve
 - Rules Reference -- All enforcement rules and their purposes
 - Skills Log -- Full skill inventory with provenance
 - `.orqa/documentation/development/coding-standards.md` -- The standards all agents must follow
-- `.orqa/governance/decisions/` -- Individual AD-NNN architecture decision artifacts
-- `.orqa/governance/rules/documentation-first.md` — Documentation as source of truth for implementation
+- `.orqa/process/decisions/` -- Individual AD-NNN architecture decision artifacts
+- `.orqa/process/rules/documentation-first.md` — Documentation as source of truth for implementation

@@ -40,7 +40,7 @@ The following RETRO entries are imported from the Alvarez project. They represen
 
 - **Context:** In Alvarez, direct work on main caused merge conflicts and data loss risks. A stash-related incident (RETRO-001 in Alvarez) resulted in the loss of 145 documentation files. Worktree discipline was retrofitted, but establishing it earlier would have prevented the incident entirely.
 - **Root cause:** Working directly on `main` means uncommitted changes are exposed to every git operation. Worktrees provide isolation by default.
-- **Action taken (OrqaStudio):** Git worktree workflow established as mandatory from project start. Rules defined in `.orqa/governance/rules/git-workflow.md` including data loss prevention, stash policy, and background process discipline.
+- **Action taken (OrqaStudio):** Git worktree workflow established as mandatory from project start. Rules defined in `.orqa/process/rules/git-workflow.md` including data loss prevention, stash policy, and background process discipline.
 - **Outcome:** Pending -- no incidents yet. Framework is in place.
 - **Status:** Active
 
@@ -52,7 +52,7 @@ The following RETRO entries are imported from the Alvarez project. They represen
 
 - **Context:** In Alvarez, implementation lessons were not documented until the self-learning loop was established late in the project. Patterns were much harder to document retroactively. Early sessions repeated the same mistakes because no lesson log existed.
 - **Root cause:** No structured learning loop between review failures and process improvement from the start.
-- **Action taken (OrqaStudio):** Created `.orqa/governance/rules/lessons-learned.md` and `.orqa/documentation/development/lessons.md` structure at project start. Review agents required to log failures immediately. Promotion pipeline defined (recurrence >= 2 -> rules/standards).
+- **Action taken (OrqaStudio):** Created `.orqa/process/rules/lessons-learned.md` and `.orqa/documentation/development/lessons.md` structure at project start. Review agents required to log failures immediately. Promotion pipeline defined (recurrence >= 2 -> rules/standards).
 - **Outcome:** Pending -- system established, awaiting first implementation sessions.
 - **Status:** Active
 
@@ -64,7 +64,7 @@ The following RETRO entries are imported from the Alvarez project. They represen
 
 - **Context:** Every Alvarez session that used ChunkHound instead of manual grepping saved significant time and context budget. Sessions without ChunkHound consumed context on manual file exploration that could have been delegated.
 - **Root cause:** Manual code search fills orchestrator context with raw file contents. ChunkHound delegates the search to an MCP tool that returns targeted results.
-- **Action taken (OrqaStudio):** `chunkhound` skill listed as mandatory in every agent's YAML frontmatter. `.orqa/governance/rules/chunkhound-usage.md` enforces ChunkHound preference over Grep/Glob. `.mcp.json` configured for ChunkHound from project start.
+- **Action taken (OrqaStudio):** `chunkhound` skill listed as mandatory in every agent's YAML frontmatter. `.orqa/process/rules/chunkhound-usage.md` enforces ChunkHound preference over Grep/Glob. `.mcp.json` configured for ChunkHound from project start.
 - **Outcome:** Pending -- awaiting first implementation sessions.
 - **Status:** Active
 

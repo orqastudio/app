@@ -84,7 +84,7 @@ The filter dropdown is NOT a simple list. It is a structured panel with:
 
 ### 2. `_navigation.json` — Per-Group View Configuration
 
-Each artifact group directory (e.g. `.orqa/planning/`, `.orqa/governance/`) can contain a `_navigation.json` file that configures the default browsing experience for that group's artifact types.
+Each artifact group directory (e.g. `.orqa/delivery/`, `.orqa/process/`) can contain a `_navigation.json` file that configures the default browsing experience for that group's artifact types.
 
 ```jsonc
 {

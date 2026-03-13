@@ -39,7 +39,7 @@ All subsequent phases depend on these decisions. No architecture decisions, prod
 
 ## Output
 
-All research findings documented in `.orqa/planning/research/`.
+All research findings documented in `.orqa/delivery/research/`.
 
 ## Notes
 

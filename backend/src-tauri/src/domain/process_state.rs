@@ -51,7 +51,7 @@ impl SessionProcessState {
         match tool_name {
             "read_file" => {
                 if let Some(path) = input["path"].as_str() {
-                    if path.contains("docs/") || path.contains(".orqa/governance/rules/") {
+                    if path.contains("docs/") || path.contains(".orqa/process/rules/") {
                         self.docs_read = true;
                     }
                 }
@@ -128,7 +128,7 @@ mod tests {
         let mut ps = SessionProcessState::default();
         ps.track_tool_call(
             "read_file",
-            &make_path_input(".orqa/governance/rules/coding-standards.md"),
+            &make_path_input(".orqa/process/rules/coding-standards.md"),
         );
         assert!(ps.docs_read);
     }

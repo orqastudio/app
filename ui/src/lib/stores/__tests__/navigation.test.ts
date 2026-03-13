@@ -34,8 +34,8 @@ const sampleConfig: ArtifactEntry[] = [
 		label: "Planning",
 		icon: "target",
 		children: [
-			{ key: "epics", label: "Epics", path: ".orqa/planning/epics" },
-			{ key: "tasks", label: "Tasks", path: ".orqa/planning/tasks" },
+			{ key: "epics", label: "Epics", path: ".orqa/delivery/epics" },
+			{ key: "tasks", label: "Tasks", path: ".orqa/delivery/tasks" },
 		],
 	},
 	{
@@ -54,26 +54,26 @@ const sampleNavTree: NavTree = {
 			types: [
 				{
 					label: "Epics",
-					path: ".orqa/planning/epics",
+					path: ".orqa/delivery/epics",
 					icon: "rocket",
 					description: "Epic artifacts",
 					nodes: [
 						{
 							label: "EPIC-001",
-							path: ".orqa/planning/epics/EPIC-001.md",
+							path: ".orqa/delivery/epics/EPIC-001.md",
 							description: "First epic",
 						},
 					],
 				},
 				{
 					label: "Tasks",
-					path: ".orqa/planning/tasks",
+					path: ".orqa/delivery/tasks",
 					icon: "check",
 					description: "Task artifacts",
 					nodes: [
 						{
 							label: "TASK-001",
-							path: ".orqa/planning/tasks/TASK-001.md",
+							path: ".orqa/delivery/tasks/TASK-001.md",
 							description: "First task",
 						},
 					],
@@ -286,8 +286,8 @@ describe("NavigationStore", () => {
 
 	describe("openArtifact / closeArtifact", () => {
 		it("opens artifact with path and breadcrumbs", () => {
-			navigationStore.openArtifact(".orqa/planning/epics/EPIC-001.md", ["Epics", "EPIC-001"]);
-			expect(navigationStore.selectedArtifactPath).toBe(".orqa/planning/epics/EPIC-001.md");
+			navigationStore.openArtifact(".orqa/delivery/epics/EPIC-001.md", ["Epics", "EPIC-001"]);
+			expect(navigationStore.selectedArtifactPath).toBe(".orqa/delivery/epics/EPIC-001.md");
 			expect(navigationStore.explorerView).toBe("artifact-viewer");
 			expect(navigationStore.breadcrumbs).toEqual(["Epics", "EPIC-001"]);
 		});
@@ -325,7 +325,7 @@ describe("NavigationStore", () => {
 		});
 
 		it("returns path for group child", () => {
-			expect(navigationStore.getConfiguredPath("epics")).toBe(".orqa/planning/epics");
+			expect(navigationStore.getConfiguredPath("epics")).toBe(".orqa/delivery/epics");
 		});
 
 		it("returns null for unknown key", () => {
@@ -337,7 +337,7 @@ describe("NavigationStore", () => {
 		it("resolves ID via SDK and navigates to path", () => {
 			(artifactStore as { navTree: NavTree | null }).navTree = sampleNavTree;
 			vi.mocked(artifactGraphSDK.resolve).mockReturnValue({
-				path: ".orqa/planning/epics/EPIC-001.md",
+				path: ".orqa/delivery/epics/EPIC-001.md",
 				id: "EPIC-001",
 				title: "First epic",
 			});
@@ -345,7 +345,7 @@ describe("NavigationStore", () => {
 			navigationStore.navigateToArtifact("EPIC-001");
 
 			expect(artifactGraphSDK.resolve).toHaveBeenCalledWith("EPIC-001");
-			expect(navigationStore.selectedArtifactPath).toBe(".orqa/planning/epics/EPIC-001.md");
+			expect(navigationStore.selectedArtifactPath).toBe(".orqa/delivery/epics/EPIC-001.md");
 			expect(navigationStore.activeActivity).toBe("epics");
 			expect(navigationStore.activeGroup).toBe("planning");
 			expect(navigationStore.activeSubCategory).toBe("epics");
@@ -367,12 +367,12 @@ describe("NavigationStore", () => {
 		it("navigates to a grouped artifact path", () => {
 			(artifactStore as { navTree: NavTree | null }).navTree = sampleNavTree;
 
-			navigationStore.navigateToPath(".orqa/planning/epics/EPIC-001.md");
+			navigationStore.navigateToPath(".orqa/delivery/epics/EPIC-001.md");
 
 			expect(navigationStore.activeActivity).toBe("epics");
 			expect(navigationStore.activeGroup).toBe("planning");
 			expect(navigationStore.activeSubCategory).toBe("epics");
-			expect(navigationStore.selectedArtifactPath).toBe(".orqa/planning/epics/EPIC-001.md");
+			expect(navigationStore.selectedArtifactPath).toBe(".orqa/delivery/epics/EPIC-001.md");
 			expect(navigationStore.explorerView).toBe("artifact-viewer");
 		});
 
@@ -391,7 +391,7 @@ describe("NavigationStore", () => {
 		it("warns when navTree is null", () => {
 			const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
-			navigationStore.navigateToPath(".orqa/planning/epics/EPIC-001.md");
+			navigationStore.navigateToPath(".orqa/delivery/epics/EPIC-001.md");
 
 			expect(warnSpy).toHaveBeenCalled();
 			expect(navigationStore.selectedArtifactPath).toBeNull();

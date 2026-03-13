@@ -28,7 +28,7 @@ using the mapping from [RULE-040](RULE-040).
 
 ## How
 
-1. In the plugin's SubagentStart hook, read agent definition from `.orqa/team/agents/`
+1. In the plugin's SubagentStart hook, read agent definition from `.orqa/process/agents/`
 2. Extract `capabilities` array
 3. Resolve each capability to the CLI tool name using the mapping table
 4. Return resolved tool names as `additionalContext`

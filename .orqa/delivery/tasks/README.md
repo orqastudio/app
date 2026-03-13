@@ -1,14 +1,24 @@
 ---
 role: artifacts
 label: "Tasks"
-description: "Scoped work items within an epic."
+description: "Atomic work items assigned to a single agent with clear acceptance criteria."
 icon: "check-square"
-sort: 3
+sort: 5
 ---
 
 # Tasks
 
-Tasks are scoped work items within an epic. They represent individual units of work that can be assigned to a single agent.
+Tasks are atomic work items within an epic — the smallest unit of tracked delivery. Each task is scoped to a single agent, carries acceptance criteria, and specifies the skills the agent must load before starting.
+
+## Pipeline Role
+
+Tasks are the execution layer of the delivery pipeline:
+
+```
+Epic (design) → Tasks (execution) → Verification (proof)
+```
+
+A task cannot start until all its `depends-on` tasks are done. It cannot be marked done until acceptance criteria are met and verified by a reviewer — the implementing agent cannot self-certify.
 
 ## Lifecycle
 
@@ -16,45 +26,10 @@ Tasks are scoped work items within an epic. They represent individual units of w
 todo → in-progress → done
 ```
 
-- **Todo**: Task defined with acceptance criteria
-- **In-progress**: Agent assigned and working
+- **Todo**: Defined with acceptance criteria; dependencies not yet complete
+- **In-progress**: Agent assigned; `depends-on` tasks all done
 - **Done**: Acceptance criteria met and verified
-
-## What Makes a Good Task
-
-- Belongs to a parent epic
-- Has clear, testable acceptance criteria
-- Can be completed by a single agent in one session
-- Does not overlap with other tasks in the same epic
-
-## Frontmatter Schema
-
-Most tasks live as markdown checklist items in their parent epic. A task graduates to a separate `TASK-NNN.md` file when it needs its own detailed tracking — acceptance criteria, agent assignment, or discussion thread.
-
-See `schema.json` in this directory for the complete field reference.
 
 ## The Skills Field
 
-The `skills` field creates a traceability chain from plan to execution:
-
-- **Plan** defines what needs doing
-- **Task** specifies who does it (`assignee`) and what knowledge they need (`skills`)
-- **Agent** loads those skills before starting
-- **Implementation** is done with the right context loaded
-
-When an orchestrator creates a task, it populates `skills` based on the domains the task touches. An agent that picks up the task loads every skill listed before reading any code.
-
-Common skill combinations by domain:
-
-| Domain | Typical Skills |
-|--------|---------------|
-| Rust backend | `orqa-code-search`, `orqa-ipc-patterns`, `orqa-repository-pattern`, `rust-async-patterns` |
-| Svelte frontend | `orqa-code-search`, `orqa-store-patterns`, `orqa-ipc-patterns`, `svelte5-best-practices` |
-| Streaming pipeline | `orqa-code-search`, `orqa-streaming`, `orqa-ipc-patterns` |
-| Data / SQLite | `orqa-code-search`, `orqa-repository-pattern`, `orqa-domain-services` |
-| Governance / agents | `orqa-code-search`, `orqa-governance` |
-
-## Related
-
-- Tasks belong to epics in the **Epics** section
-- See `.orqa/documentation/product/artifact-framework.md` for the full task schema and lifecycle rules
+The `skills` field is a traceability chain: the orchestrator populates it based on the domains the task touches; the assigned agent loads every listed skill before reading any code. This bridges the plan (what needs doing) to the execution (how it gets done correctly).

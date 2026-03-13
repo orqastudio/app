@@ -17,7 +17,7 @@ skills:
   - SKILL-010
   - SKILL-045
 acceptance:
-  - Rust module loads rules from .orqa/governance/rules/
+  - Rust module loads rules from .orqa/process/rules/
   - Module parses YAML frontmatter including enforcement array
   - Module evaluates patterns against tool call context
   - Module returns block/warn/allow decisions

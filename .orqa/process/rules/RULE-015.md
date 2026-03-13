@@ -101,9 +101,9 @@ See [RULE-020](RULE-020) (no-stubs) > "Agent Completion Reports" for the mandato
 
 Completion reports from review agents (`code-reviewer`, `qa-tester`, `ux-reviewer`) MUST include lesson documentation status:
 
-- Were any new IMPL entries added to `.orqa/governance/lessons/`?
+- Were any new IMPL entries added to `.orqa/process/lessons/`?
 - Were any existing IMPL entries updated with recurrence increments?
-- Was `.orqa/governance/lessons/` checked for known patterns before reporting findings?
+- Was `.orqa/process/lessons/` checked for known patterns before reporting findings?
 
 Review agents that skip lesson documentation are in violation of this rule AND [RULE-017](RULE-017) (lessons-learned).
 

@@ -88,7 +88,7 @@ of the structured thinking enforcement system.
 
 Enforcement entries with `action: inject` and a `skills` array are evaluated on every
 Write/Edit tool call. When a file path matches, the specified skills are read from
-`.orqa/team/skills/<name>/SKILL.md` and returned as `systemMessage` to inject into the
+`.orqa/process/skills/<name>/SKILL.md` and returned as `systemMessage` to inject into the
 agent's context.
 
 ## Path-to-Skill Map
@@ -119,13 +119,13 @@ To add a new path-to-skill mapping:
 4. Set `skills` to the skill directory names
 5. Set `message` to a brief description
 
-Ensure the referenced skills exist in `.orqa/team/skills/`.
+Ensure the referenced skills exist in `.orqa/process/skills/`.
 
 ## FORBIDDEN
 
 - Injection entries that block tool calls (inject is always non-blocking)
 - Injection entries without a `skills` field
-- Referencing skills that don't exist in `.orqa/team/skills/`
+- Referencing skills that don't exist in `.orqa/process/skills/`
 
 ## Related Rules
 

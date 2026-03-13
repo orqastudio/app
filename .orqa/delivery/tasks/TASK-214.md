@@ -26,7 +26,7 @@ The companion plugin becomes the primary consumer of graph edges. When an agent 
 ## How
 
 1. On SessionStart, check session state for current task ID
-2. Read the task's frontmatter from `.orqa/planning/tasks/TASK-NNN.md`
+2. Read the task's frontmatter from `.orqa/delivery/tasks/TASK-NNN.md`
 3. For each entry in `docs`: read the file and inject as `systemMessage`
 4. For each entry in `skills`: load the skill via the plugin's skill mechanism
 5. Follow `task.epic` → read epic for design context

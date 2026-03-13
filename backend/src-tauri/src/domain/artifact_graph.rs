@@ -28,7 +28,7 @@ pub struct ArtifactGraph {
 pub struct ArtifactNode {
     /// Frontmatter `id` field (e.g. "EPIC-048").
     pub id: String,
-    /// Relative path from the project root (e.g. ".orqa/planning/epics/EPIC-048.md").
+    /// Relative path from the project root (e.g. ".orqa/delivery/epics/EPIC-048.md").
     pub path: String,
     /// Inferred category string (e.g. "epic", "task", "milestone", "idea", "decision").
     pub artifact_type: String,
@@ -407,7 +407,7 @@ mod tests {
     #[test]
     fn file_without_id_is_skipped() {
         let tmp = make_project();
-        let epics_dir = tmp.path().join(".orqa/planning/epics");
+        let epics_dir = tmp.path().join(".orqa/delivery/epics");
         write_artifact(
             &epics_dir,
             "EPIC-001.md",
@@ -420,7 +420,7 @@ mod tests {
     #[test]
     fn file_with_id_creates_node() {
         let tmp = make_project();
-        let epics_dir = tmp.path().join(".orqa/planning/epics");
+        let epics_dir = tmp.path().join(".orqa/delivery/epics");
         write_artifact(
             &epics_dir,
             "EPIC-001.md",
@@ -438,7 +438,7 @@ mod tests {
     #[test]
     fn single_ref_field_creates_forward_ref() {
         let tmp = make_project();
-        let tasks_dir = tmp.path().join(".orqa/planning/tasks");
+        let tasks_dir = tmp.path().join(".orqa/delivery/tasks");
         write_artifact(
             &tasks_dir,
             "TASK-001.md",
@@ -455,8 +455,8 @@ mod tests {
     #[test]
     fn backlinks_are_computed_in_pass_two() {
         let tmp = make_project();
-        let epics_dir = tmp.path().join(".orqa/planning/epics");
-        let tasks_dir = tmp.path().join(".orqa/planning/tasks");
+        let epics_dir = tmp.path().join(".orqa/delivery/epics");
+        let tasks_dir = tmp.path().join(".orqa/delivery/tasks");
         write_artifact(
             &epics_dir,
             "EPIC-001.md",
@@ -478,7 +478,7 @@ mod tests {
     #[test]
     fn array_ref_field_creates_multiple_forward_refs() {
         let tmp = make_project();
-        let tasks_dir = tmp.path().join(".orqa/planning/tasks");
+        let tasks_dir = tmp.path().join(".orqa/delivery/tasks");
         write_artifact(
             &tasks_dir,
             "TASK-002.md",
@@ -492,7 +492,7 @@ mod tests {
     #[test]
     fn broken_refs_counted_in_stats() {
         let tmp = make_project();
-        let tasks_dir = tmp.path().join(".orqa/planning/tasks");
+        let tasks_dir = tmp.path().join(".orqa/delivery/tasks");
         write_artifact(
             &tasks_dir,
             "TASK-001.md",
@@ -508,7 +508,7 @@ mod tests {
     #[test]
     fn path_index_maps_path_to_id() {
         let tmp = make_project();
-        let epics_dir = tmp.path().join(".orqa/planning/epics");
+        let epics_dir = tmp.path().join(".orqa/delivery/epics");
         write_artifact(
             &epics_dir,
             "EPIC-001.md",
@@ -527,7 +527,7 @@ mod tests {
     #[test]
     fn readme_files_are_skipped() {
         let tmp = make_project();
-        let epics_dir = tmp.path().join(".orqa/planning/epics");
+        let epics_dir = tmp.path().join(".orqa/delivery/epics");
         write_artifact(
             &epics_dir,
             "README.md",
@@ -540,7 +540,7 @@ mod tests {
     #[test]
     fn graph_stats_orphan_count() {
         let tmp = make_project();
-        let epics_dir = tmp.path().join(".orqa/planning/epics");
+        let epics_dir = tmp.path().join(".orqa/delivery/epics");
         write_artifact(
             &epics_dir,
             "EPIC-001.md",
@@ -554,23 +554,23 @@ mod tests {
     #[test]
     fn infer_artifact_type_variants() {
         assert_eq!(
-            infer_artifact_type(".orqa/planning/epics/EPIC-001.md"),
+            infer_artifact_type(".orqa/delivery/epics/EPIC-001.md"),
             "epic"
         );
         assert_eq!(
-            infer_artifact_type(".orqa/planning/tasks/TASK-001.md"),
+            infer_artifact_type(".orqa/delivery/tasks/TASK-001.md"),
             "task"
         );
         assert_eq!(
-            infer_artifact_type(".orqa/planning/milestones/MS-001.md"),
+            infer_artifact_type(".orqa/delivery/milestones/MS-001.md"),
             "milestone"
         );
         assert_eq!(
-            infer_artifact_type(".orqa/governance/decisions/AD-001.md"),
+            infer_artifact_type(".orqa/process/decisions/AD-001.md"),
             "decision"
         );
         assert_eq!(
-            infer_artifact_type(".orqa/governance/lessons/IMPL-001.md"),
+            infer_artifact_type(".orqa/process/lessons/IMPL-001.md"),
             "lesson"
         );
         assert_eq!(

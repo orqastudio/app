@@ -423,7 +423,7 @@ When the AI generates frontend code, OrqaStudio injects a compact `<design-syste
 The design system context is injected when:
 1. Files with frontend extensions are in the conversation (`.svelte`, `.tsx`, `.jsx`, `.css`, etc.)
 2. User intent suggests frontend work ("build a component", "create a page", etc.)
-3. `.orqa/governance/rules/design-system.md` exists and has matching path patterns
+3. `.orqa/process/rules/design-system.md` exists and has matching path patterns
 
 ### System Prompt Format (~500 tokens)
 
@@ -454,7 +454,7 @@ The design system context is injected when:
 
 ### Governance Artifact
 
-Auto-generated as `.orqa/governance/rules/design-system.md` during codebase scan if design tokens are detected. Path-scoped to frontend files via `paths:` frontmatter. User approval required before writing. See [branding research Q2](RES-001) for full specification.
+Auto-generated as `.orqa/process/rules/design-system.md` during codebase scan if design tokens are detected. Path-scoped to frontend files via `paths:` frontmatter. User approval required before writing. See [branding research Q2](RES-001) for full specification.
 
 ---
 

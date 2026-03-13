@@ -23,7 +23,7 @@ Extract the link format constraints from `orqa-documentation` skill into a new r
 ## How
 
 1. Read the `orqa-documentation` skill and locate the artifact link format constraint in the FORBIDDEN section
-2. Determine the next available RULE number by scanning `.orqa/governance/rules/`
+2. Determine the next available RULE number by scanning `.orqa/process/rules/`
 3. Create the new rule file with: description of the constraint, valid examples, invalid examples, FORBIDDEN section, and related rules references
 4. Remove the extracted constraint from the `orqa-documentation` skill's FORBIDDEN section
 5. Add a "See RULE-NNN for link format requirements" reference in the skill

@@ -61,8 +61,8 @@ The `artifacts` array in `.orqa/project.json` is the single source of truth for 
 
 The artifact scanner (`artifact_reader.rs`) does NOT guess directory structure. It reads the `artifacts` config and scans exactly what's configured. This means:
 
-1. **Config paths must match disk** — If the config says `.orqa/planning/milestones`, the directory `.orqa/planning/milestones/` must exist
-2. **Disk changes require config updates** — Moving `.orqa/lessons/` to `.orqa/governance/lessons/` requires updating the config path
+1. **Config paths must match disk** — If the config says `.orqa/delivery/milestones`, the directory `.orqa/delivery/milestones/` must exist
+2. **Disk changes require config updates** — Moving `.orqa/lessons/` to `.orqa/process/lessons/` requires updating the config path
 3. **No hardcoded paths in Rust or TypeScript** — All artifact paths come from config, never from constants
 
 ## Recursive File Explorer Pattern
@@ -123,8 +123,8 @@ Before committing any change that affects artifact paths or structure:
 // icon: "target" overrides the README's "clipboard-list"
 { "key": "planning", "label": "Planning", "icon": "target",
   "children": [
-    { "key": "ideas", "label": "Ideas", "path": ".orqa/planning/ideas" },
-    { "key": "epics", "label": "Epics", "path": ".orqa/planning/epics" }
+    { "key": "ideas", "label": "Ideas", "path": ".orqa/delivery/ideas" },
+    { "key": "epics", "label": "Epics", "path": ".orqa/delivery/epics" }
   ]
 }
 ```
@@ -135,11 +135,11 @@ Before committing any change that affects artifact paths or structure:
 
 | Symlink | Target (source of truth) |
 |---------|-------------------------|
-| `.claude/rules/` | → `.orqa/governance/rules/` |
-| `.claude/agents/` | → `.orqa/team/agents/` |
-| `.claude/skills/` | → `.orqa/team/skills/` |
-| `.claude/hooks/` | → `.orqa/governance/hooks/` |
-| `.claude/CLAUDE.md` | → `.orqa/team/agents/orchestrator.md` |
+| `.claude/rules/` | → `.orqa/process/rules/` |
+| `.claude/agents/` | → `.orqa/process/agents/` |
+| `.claude/skills/` | → `.orqa/process/skills/` |
+| `.claude/hooks/` | → `.orqa/process/hooks/` |
+| `.claude/CLAUDE.md` | → `.orqa/process/agents/orchestrator.md` |
 
 **Real files in `.claude/`** (not symlinks):
 - `settings.json` — CLI-specific configuration
@@ -150,7 +150,7 @@ Before committing any change that affects artifact paths or structure:
 1. **NEVER write directly to `.claude/` directories** — always write to `.orqa/` source of truth
 2. **NEVER create separate copies** — if a symlink is broken, fix the symlink, don't create a duplicate file
 3. **All agents writing governance artifacts** must target `.orqa/` paths, not `.claude/` paths
-4. **New rules** go in `.orqa/governance/rules/`, new agents in `.orqa/team/agents/`, new skills in `.orqa/team/skills/`
+4. **New rules** go in `.orqa/process/rules/`, new agents in `.orqa/process/agents/`, new skills in `.orqa/process/skills/`
 5. **If symlinks don't exist**, create them — they're the compatibility layer, not the source
 
 ## FORBIDDEN

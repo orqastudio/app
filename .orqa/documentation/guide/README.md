@@ -1,19 +1,13 @@
 ---
-icon: book-open
-label: User Guide
-description: How to use OrqaStudio — getting started, core concepts, customisation, and reference.
-sort: 100
+icon: "book-open"
+label: "User Guide"
+description: "How to use OrqaStudio — getting started, core concepts, customisation, and reference."
+sort: 6
+role: artifacts
 ---
 
 # User Guide
 
-Documentation for OrqaStudio users. Covers installation, setup, core concepts, and customisation.
+Documentation for OrqaStudio users. Covers installation, setup, core concepts, and how to customise the system for your project.
 
-## Planned Pages
-
-- **Getting Started** — Install OrqaStudio, set up your first project, understand the basics
-- **Core Concepts** — Pillars, artifacts, layers, governance model explained for users
-- **Layer System** — What core/project/plugin/community/user mean, how to manage them
-- **Artifact Types** — What each artifact type is for, when to create one
-- **Customisation** — How to add project-specific rules, skills, and agents
-- **Template System** — How core artifacts are injected and how to override them
+Planned pages: Getting Started, Core Concepts, Layer System, Artifact Types, Customisation, and Template System.

@@ -18,7 +18,7 @@ Research documents often reference external sources (library docs, GitHub issues
 
 ## How
 
-1. Add `sources` array to `.orqa/planning/research/schema.json`
+1. Add `sources` array to `.orqa/delivery/research/schema.json`
 2. Each source has required `url` and `description`, optional `tier` (T1-T4)
 3. Update artifact-framework.md Research schema section
 

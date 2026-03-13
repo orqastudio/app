@@ -1,7 +1,7 @@
 ---
 id: TASK-085
 title: Audit all skill definitions against codebase
-description: Verify every skill in .orqa/team/skills/ has accurate code patterns, valid file paths in examples, correct layer classification, and no stale module/function references.
+description: Verify every skill in .orqa/process/skills/ has accurate code patterns, valid file paths in examples, correct layer classification, and no stale module/function references.
 status: done
 created: "2026-03-11"
 updated: "2026-03-11"
@@ -19,7 +19,7 @@ Systematic audit of all skill definition files to ensure the patterns, examples,
 
 ## How
 
-1. List all skill directories in `.orqa/team/skills/`
+1. List all skill directories in `.orqa/process/skills/`
 2. For each skill, read SKILL.md and any supporting files
 3. For code patterns: search codebase to verify they match reality
 4. For file paths: verify they exist on disk

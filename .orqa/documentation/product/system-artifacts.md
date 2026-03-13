@@ -35,11 +35,11 @@ Project artifacts describe the specific codebase the agents are working on. They
 
 | Artifact | Location | What It Contains |
 |----------|----------|-----------------|
-| Architecture decisions | `.orqa/governance/decisions/` | Technology stack choices and architecture decision records (AD-NNN) for this project |
+| Architecture decisions | `.orqa/process/decisions/` | Technology stack choices and architecture decision records (AD-NNN) for this project |
 | Product docs | `.orqa/documentation/product/` | Vision, personas, roadmap, MVP specification — specific to this product |
 | Development docs | `.orqa/documentation/development/` | Coding standards, getting-started guide — specific to this stack |
 | UI specs | `.orqa/documentation/ui/` | Component inventory, design system, interaction patterns — specific to this app |
-| Lessons | `.orqa/governance/lessons/*.md` | Mistakes observed in this codebase, not universal |
+| Lessons | `.orqa/process/lessons/*.md` | Mistakes observed in this codebase, not universal |
 | SQLite schema | `.orqa/documentation/architecture/sqlite-schema.md` | This project's database design |
 | Project config | `.orqa/project.json` | Per-project OrqaStudio settings (scan paths, artifact types, priority dimensions, promotion threshold, etc.) |
 
@@ -141,11 +141,11 @@ OrqaStudio governance artifacts live under `.orqa/` as the source of truth. When
 
 | Artifact | Works in Claude Code CLI |
 |----------|--------------------------|
-| `.orqa/governance/rules/*.md` | Yes — via `.claude/rules/` symlinks |
-| `.orqa/team/agents/*.md` | Yes — via `.claude/agents/` symlinks |
-| `.orqa/governance/hooks/*.sh` | Yes — via `.claude/hooks/` symlinks |
-| `.orqa/governance/hooks/hookify.*.local.md` | Yes — via `.claude/hookify.*.local.md` symlinks |
-| `.orqa/governance/lessons/*.md` | Yes — readable by agents via file tools |
+| `.orqa/process/rules/*.md` | Yes — via `.claude/rules/` symlinks |
+| `.orqa/process/agents/*.md` | Yes — via `.claude/agents/` symlinks |
+| `.orqa/process/hooks/*.sh` | Yes — via `.claude/hooks/` symlinks |
+| `.orqa/process/hooks/hookify.*.local.md` | Yes — via `.claude/hookify.*.local.md` symlinks |
+| `.orqa/process/lessons/*.md` | Yes — readable by agents via file tools |
 | `.orqa/documentation/` | Yes — readable by agents via file tools |
 
 Symlink creation is a project configuration option, not a requirement. If a user is not using external CLI tools, no symlinks are necessary — OrqaStudio handles all enforcement natively.

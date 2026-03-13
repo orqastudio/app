@@ -19,9 +19,9 @@ skills:
   - SKILL-020
   - SKILL-018
 acceptance:
-  - Plugin loads all 39+ rules from .orqa/governance/rules/
-  - Plugin loads all 7 agents from .orqa/team/agents/
-  - Plugin loads all 44+ skills from .orqa/team/skills/
+  - Plugin loads all 39+ rules from .orqa/process/rules/
+  - Plugin loads all 7 agents from .orqa/process/agents/
+  - Plugin loads all 44+ skills from .orqa/process/skills/
   - PreToolUse enforcement blocks known violation patterns
   - SessionStart injects orchestrator context
   - Slash commands return accurate governance data

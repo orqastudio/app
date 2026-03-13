@@ -10,7 +10,7 @@
 export interface ArtifactNode {
     /** Frontmatter `id` field (e.g. "EPIC-048"). */
     id: string;
-    /** Relative path from the project root (e.g. ".orqa/planning/epics/EPIC-048.md"). */
+    /** Relative path from the project root (e.g. ".orqa/delivery/epics/EPIC-048.md"). */
     path: string;
     /** Inferred category string (e.g. "epic", "task", "milestone", "idea", "decision"). */
     artifact_type: string;

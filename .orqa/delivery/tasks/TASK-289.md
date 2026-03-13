@@ -13,7 +13,7 @@ skills: []
 acceptance:
   - ".orqa/process/pillars/ exists with all pillar files"
   - ".orqa/delivery/ exists with ideas, research, milestones, epics, tasks"
-  - ".orqa/planning/ directory no longer exists"
+  - ".orqa/delivery/ directory no longer exists"
   - "project.json paths updated"
 rule-overrides:
   - rule: RULE-003
@@ -26,8 +26,8 @@ Move pillars to `process/` (they're pipeline artifacts, not delivery items). Ren
 
 ## How
 
-1. `git mv .orqa/planning/pillars/ .orqa/process/pillars/`
-2. `git mv .orqa/planning/ .orqa/delivery/`
+1. `git mv .orqa/process/pillars/ .orqa/process/pillars/`
+2. `git mv .orqa/delivery/ .orqa/delivery/`
 3. Update `project.json` artifact paths
 4. Search and update all references
 
@@ -35,4 +35,4 @@ Move pillars to `process/` (they're pipeline artifacts, not delivery items). Ren
 
 - All files accessible at new paths
 - `project.json` paths resolve correctly
-- No references to old `.orqa/planning/` paths remain
+- No references to old `.orqa/delivery/` paths remain

@@ -18,11 +18,11 @@ Schema validation found 106 artifacts missing the required `description` field:
 
 | Type | Count | Directory |
 |------|-------|-----------|
-| Ideas | 38 | `.orqa/planning/ideas/` |
-| Decisions | 32 | `.orqa/governance/decisions/` |
-| Tasks | 17 | `.orqa/planning/tasks/` |
-| Lessons | 15 | `.orqa/governance/lessons/` |
-| Epics | 4 | `.orqa/planning/epics/` |
+| Ideas | 38 | `.orqa/delivery/ideas/` |
+| Decisions | 32 | `.orqa/process/decisions/` |
+| Tasks | 17 | `.orqa/delivery/tasks/` |
+| Lessons | 15 | `.orqa/process/lessons/` |
+| Epics | 4 | `.orqa/delivery/epics/` |
 
 These artifacts were created before `description` became a required schema field.
 

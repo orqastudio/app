@@ -26,7 +26,7 @@ Run this checklist for every task before delegating it. Check each item that app
 
 ### Artifact Trail
 
-- [ ] An artifact exists for this work -- either an `EPIC-NNN` in `.orqa/planning/epics/` or a task within one
+- [ ] An artifact exists for this work -- either an `EPIC-NNN` in `.orqa/delivery/epics/` or a task within one
 - [ ] Epic `docs-required` gate is satisfied -- all listed documents exist and are current
 - [ ] Epic status is `ready` or later -- not still `draft`
 - [ ] If promoted from an idea -- the source `IDEA-NNN` has `status: shaped` or `promoted`, and `research-needed` items have been addressed
@@ -52,8 +52,8 @@ Run this checklist for every task before delegating it. Check each item that app
 
 ### Dependencies and State
 
-- [ ] `.orqa/governance/lessons/` checked for known patterns in this area -- prevents repeating documented mistakes
-- [ ] No blocking dependencies -- all tasks listed in `depends-on` in `.orqa/planning/tasks/` have `status: done`
+- [ ] `.orqa/process/lessons/` checked for known patterns in this area -- prevents repeating documented mistakes
+- [ ] No blocking dependencies -- all tasks listed in `depends-on` in `.orqa/delivery/tasks/` have `status: done`
 - [ ] Task artifact checked -- the task is not in a blocked state awaiting external resolution
 - [ ] Working tree clean -- `git status --short` shows no untracked or modified files
 - [ ] No stale stashes -- `git stash list` is empty (or existing stashes are investigated and resolved)
@@ -68,7 +68,7 @@ The orchestrator works through this checklist before using the Task tool to dele
 
 **If one or more items cannot be satisfied:**
 
-1. Document the specific gap in the task artifact in `.orqa/planning/tasks/` with the tag `DOC_READY_BLOCK` or `PLAN_READY_BLOCK`
+1. Document the specific gap in the task artifact in `.orqa/delivery/tasks/` with the tag `DOC_READY_BLOCK` or `PLAN_READY_BLOCK`
 2. Ask the user how to proceed -- provide the specific gap and the options available
 3. Do NOT proceed with implementation until the gap is resolved
 

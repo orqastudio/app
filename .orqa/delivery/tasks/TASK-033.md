@@ -23,7 +23,7 @@ skills and context-specific search skills.
 
 ## Scope
 
-All agents in `.orqa/team/agents/`:
+All agents in `.orqa/process/agents/`:
 - orchestrator, backend-engineer, frontend-engineer, designer, debugger
 - test-engineer, code-reviewer, data-engineer, devops-engineer
 - documentation-writer, security-engineer, refactor-agent

@@ -46,11 +46,11 @@ Code without enforcement drifts. If a pattern is important enough to implement, 
 
 | Artifact | When to Create | Location |
 |----------|---------------|----------|
-| **Rule** | When establishing a new convention, fixing a recurring mistake, or introducing a constraint | `.orqa/governance/rules/` |
-| **Skill** | When capturing reusable domain knowledge that agents need to implement correctly | `.orqa/team/skills/` |
-| **Skill update** | When existing skill knowledge is incomplete or incorrect | Update existing skill in `.orqa/team/skills/` |
-| **Lesson** | When a bug or mistake reveals a non-obvious pattern | `.orqa/governance/lessons/` |
-| **Agent update** | When an agent's skills list or required reading needs to change | `.orqa/team/agents/` |
+| **Rule** | When establishing a new convention, fixing a recurring mistake, or introducing a constraint | `.orqa/process/rules/` |
+| **Skill** | When capturing reusable domain knowledge that agents need to implement correctly | `.orqa/process/skills/` |
+| **Skill update** | When existing skill knowledge is incomplete or incorrect | Update existing skill in `.orqa/process/skills/` |
+| **Lesson** | When a bug or mistake reveals a non-obvious pattern | `.orqa/process/lessons/` |
+| **Agent update** | When an agent's skills list or required reading needs to change | `.orqa/process/agents/` |
 
 ## The Sequence (MANDATORY)
 

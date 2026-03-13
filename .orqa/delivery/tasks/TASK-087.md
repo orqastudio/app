@@ -1,7 +1,7 @@
 ---
 id: TASK-087
 title: Audit hooks for correctness
-description: Verify all hook scripts in .orqa/governance/hooks/ exist, are executable, reference correct paths, and function as intended.
+description: Verify all hook scripts in .orqa/process/hooks/ exist, are executable, reference correct paths, and function as intended.
 status: done
 created: "2026-03-11"
 updated: "2026-03-11"
@@ -18,7 +18,7 @@ Verify all governance hooks are functional and reference correct paths.
 
 ## How
 
-1. List all files in `.orqa/governance/hooks/`
+1. List all files in `.orqa/process/hooks/`
 2. Read each hook script
 3. Verify file paths and commands referenced
 4. Run hooks in test mode if possible

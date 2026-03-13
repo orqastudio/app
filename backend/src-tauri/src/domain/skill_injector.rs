@@ -11,7 +11,7 @@ struct SkillEmbedding {
 
 /// Manages skill embeddings and prompt-based matching.
 ///
-/// Loads all skills from `.orqa/team/skills/*/SKILL.md`, extracts their
+/// Loads all skills from `.orqa/process/skills/*/SKILL.md`, extracts their
 /// `description:` frontmatter field, embeds them with the ONNX embedder,
 /// and caches the results for fast cosine-similarity lookups at prompt time.
 pub struct SkillInjector {
@@ -29,7 +29,7 @@ pub enum SkillInjectorError {
 }
 
 impl SkillInjector {
-    /// Load all skills from the project's `.orqa/team/skills/` directory
+    /// Load all skills from the project's `.orqa/process/skills/` directory
     /// and pre-compute their description embeddings.
     ///
     /// Skills without a `description:` frontmatter field are silently skipped.

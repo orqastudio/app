@@ -20,7 +20,7 @@ For enforcement rules, see [RULE-004](RULE-004).
 ```
 User has an idea
   → Idea captured (IDEA-NNN, status: captured)
-  → Research investigates (status: exploring, .orqa/planning/research/ artifacts created)
+  → Research investigates (status: exploring, .orqa/delivery/research/ artifacts created)
   → Idea scoped and validated (status: shaped)
   → User approves promotion (status: promoted, EPIC-NNN created)
 
@@ -31,7 +31,7 @@ Epic implementation
   → Verification gates passed, docs-produced verified (status: done)
 
 Lessons along the way
-  → Implementation patterns captured (IMPL-NNN in .orqa/governance/lessons/)
+  → Implementation patterns captured (IMPL-NNN in .orqa/process/lessons/)
   → Recurring patterns promoted to rules/skills
 
 Milestone completion
@@ -50,7 +50,7 @@ Whenever the user mentions a future feature, enhancement, or "we should eventual
 
 ### How
 
-1. Scan `.orqa/planning/ideas/` to determine the next ID
+1. Scan `.orqa/delivery/ideas/` to determine the next ID
 2. Create `IDEA-NNN.md` with:
    - `status: captured`
    - `pillar` alignment (at least one pillar must apply)
@@ -75,10 +75,10 @@ Triggered when the user approves investigation of a captured idea.
 
 1. Update `IDEA-NNN.md`: set `status: exploring`
 2. For each item in `research-needed`:
-   - Create or update research artifacts in `.orqa/planning/research/`
+   - Create or update research artifacts in `.orqa/delivery/research/`
    - Investigate technical feasibility, UX implications, architectural fit
    - Document findings in the research artifacts
-3. If research produces an architectural choice, create an `AD-NNN.md` in `.orqa/governance/decisions/` (see Decision Creation below)
+3. If research produces an architectural choice, create an `AD-NNN.md` in `.orqa/process/decisions/` (see Decision Creation below)
 
 ### Shaping (exploring → shaped)
 
@@ -103,7 +103,7 @@ The idea MUST be `shaped` before promotion. The user MUST explicitly approve.
 ### Procedure
 
 1. Compute priority score using `.orqa/project.json` dimensions
-2. Create `EPIC-NNN.md` in `.orqa/planning/epics/` with:
+2. Create `EPIC-NNN.md` in `.orqa/delivery/epics/` with:
    - `status: draft`
    - `milestone` assignment
    - `priority` derived from score
@@ -141,9 +141,9 @@ Before an epic can begin implementation:
 
 1. Follow the implementation design in the epic body
 2. Tasks are tracked as checklist items in the epic body
-3. If a task needs its own tracking, graduate it to `TASK-NNN.md` in `.orqa/planning/tasks/`
+3. If a task needs its own tracking, graduate it to `TASK-NNN.md` in `.orqa/delivery/tasks/`
 4. Commit regularly to the worktree branch
-5. Capture implementation lessons in `.orqa/governance/lessons/`
+5. Capture implementation lessons in `.orqa/process/lessons/`
 
 ### Review (in-progress → review)
 
@@ -165,7 +165,7 @@ When all verification gates pass:
 2. Merge worktree to main
 3. Clean up worktree and branch
 4. Update parent milestone `completed-epics` count
-5. Log any new lessons in `.orqa/governance/lessons/`
+5. Log any new lessons in `.orqa/process/lessons/`
 
 ---
 
@@ -190,7 +190,7 @@ A task graduates to a separate `TASK-NNN.md` file when it needs:
 
 ### Creating a Graduated Task
 
-1. Scan `.orqa/planning/tasks/` for the next ID
+1. Scan `.orqa/delivery/tasks/` for the next ID
 2. Create `TASK-NNN.md` with `epic` reference
 3. Replace the checklist item with a reference: `- [ ] [TASK-NNN] Emit SystemPromptSent event`
 
@@ -238,7 +238,7 @@ When research produces an architectural choice that affects the system — a tec
 
 ### How
 
-1. Scan `.orqa/governance/decisions/` to determine the next ID (`AD-NNN`)
+1. Scan `.orqa/process/decisions/` to determine the next ID (`AD-NNN`)
 2. Create `AD-NNN.md` with required frontmatter:
    - `status: proposed` initially; advance to `accepted` once the user has reviewed and approved
    - `category` set to the appropriate domain (`ipc`, `data`, `ui`, `security`, `tooling`, `process`)
@@ -257,7 +257,7 @@ When a new decision replaces an existing accepted decision:
 
 ### What NOT to Do
 
-- Every decision MUST be an individual `AD-NNN.md` artifact in `.orqa/governance/decisions/`
+- Every decision MUST be an individual `AD-NNN.md` artifact in `.orqa/process/decisions/`
 - Do not modify an accepted decision in place — supersede it with a new decision instead
 - Do not leave a decision at `proposed` indefinitely — either accept it or archive it with a reason
 
@@ -285,7 +285,7 @@ The orchestrator periodically verifies:
 - Every task's `epic` points to an existing `EPIC-NNN.md`
 - Every epic's `depends-on` and `blocks` point to existing epics
 - Every idea's `promoted-to` (when set) points to an existing epic
-- Every epic's `research-refs` (when set) point to existing research files in `.orqa/planning/research/`
+- Every epic's `research-refs` (when set) point to existing research files in `.orqa/delivery/research/`
 - Every decision's `supersedes` (when set) points to an existing `AD-NNN.md`
 - Every decision's `superseded-by` (when set) points to an existing `AD-NNN.md`
 - Milestone `epic-count` matches the actual number of epics referencing it

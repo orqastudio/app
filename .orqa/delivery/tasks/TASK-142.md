@@ -22,7 +22,7 @@ Preserve the design system principles (tokens, variants, responsive patterns) â€
 
 ## How
 
-1. Open the `tailwind-design-system` skill file in `.orqa/team/skills/`
+1. Open the `tailwind-design-system` skill file in `.orqa/process/skills/`
 2. Read through every code block and identify which use React patterns
 3. For each React example, write an equivalent Svelte 5 version using `$props()`, `$derived()`, and shadcn-svelte component patterns
 4. Replace Radix UI primitive references with bits-ui equivalents where applicable

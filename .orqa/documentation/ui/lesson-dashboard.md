@@ -9,7 +9,7 @@ updated: "2026-03-05"
 
 **Date:** 2026-03-05
 
-The lesson dashboard provides navigation and display for implementation lessons captured in `.orqa/governance/lessons/`. Users can browse lessons, filter by category and status, see recurrence trends, and promote lessons to rule enforcement entries when recurrence reaches the threshold.
+The lesson dashboard provides navigation and display for implementation lessons captured in `.orqa/process/lessons/`. Users can browse lessons, filter by category and status, see recurrence trends, and promote lessons to rule enforcement entries when recurrence reaches the threshold.
 
 ---
 
@@ -177,7 +177,7 @@ A modal dialog that walks the user through promoting a lesson to a rule enforcem
 **Steps:**
 
 1. **Confirm the lesson** — Summarizes the lesson being promoted.
-2. **Choose the target rule** — Dropdown of rule files in `.orqa/governance/rules/`. Suggests the most relevant based on category.
+2. **Choose the target rule** — Dropdown of rule files in `.orqa/process/rules/`. Suggests the most relevant based on category.
 3. **Configure the enforcement entry** — Pre-fills `description` from the lesson title. User provides:
    - `event` (file or bash)
    - `action` (block or warn)

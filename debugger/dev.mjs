@@ -19,7 +19,7 @@
 //   2. taskkill from MSYS2/Git Bash hangs (path mangling)
 //   3. No visibility into build output during development
 //   4. Restart kills everything — no way to keep Vite alive
-//   See: .orqa/planning/research/RES-016-tauri-dev-process-management.md
+//   See: .orqa/delivery/research/RES-016-tauri-dev-process-management.md
 
 import { execSync, spawn } from "node:child_process";
 import { createServer as createNetServer } from "node:net";

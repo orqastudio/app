@@ -84,7 +84,7 @@ updated: "2026-03-08"
 ## Both Languages
 
 - **Coverage:** 80%+ test coverage, no exceptions without documented justification
-- **No TODO comments:** Track as task artifacts in `.orqa/planning/tasks/`, not scattered across the codebase
+- **No TODO comments:** Track as task artifacts in `.orqa/delivery/tasks/`, not scattered across the codebase
 - **No commented-out code:** Delete it. Git history preserves it.
 - **No hardcoded fake data:** See [RULE-020](RULE-020)
 - **Documentation-first:** Read governing docs before implementing

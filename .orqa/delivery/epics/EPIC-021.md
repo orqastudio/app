@@ -24,7 +24,7 @@ scoring:
 ---
 ## Tasks
 
-- [ ] Idea artifact type in `.orqa/planning/ideas/` with frontmatter
+- [ ] Idea artifact type in `.orqa/delivery/ideas/` with frontmatter
 - [ ] Quick-capture from conversation — slash command or highlight to create idea
 - [ ] Quick-capture from anywhere — global shortcut or status bar button
 - [ ] Idea inbox — uncategorised ideas, sortable

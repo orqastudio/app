@@ -28,7 +28,7 @@ OrqaStudio currently relies on Claude Code hooks (`.claude/settings.json`) for p
 3. Supports richer hook types (pre-delegation, post-delegation, artifact-change, etc.)
 4. Is visible and manageable through the app's governance UI
 
-The hooks section in the UI currently shows "no hooks yet" because it only scans `.orqa/governance/hooks/` which contains shell scripts, not a structured hooks config. Claude hooks in `.claude/settings.json` are invisible to the app.
+The hooks section in the UI currently shows "no hooks yet" because it only scans `.orqa/process/hooks/` which contains shell scripts, not a structured hooks config. Claude hooks in `.claude/settings.json` are invisible to the app.
 
 ## Inspiration
 

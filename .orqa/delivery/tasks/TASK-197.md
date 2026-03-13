@@ -17,12 +17,12 @@ depends-on:
 Two process gates:
 - **plan-before-build**: Fires on code write without any epic/task artifacts
   being read in the session. Injects planning prompt.
-- **structure-before-code**: Fires on code write without `.orqa/planning/` files
+- **structure-before-code**: Fires on code write without `.orqa/delivery/` files
   being read. Injects structure prompt.
 
 ## How
 
-1. Add gate logic checking WorkflowTracker for `.orqa/planning/` reads
+1. Add gate logic checking WorkflowTracker for `.orqa/delivery/` reads
 2. Return `systemMessage` with planning prompts
 3. Gate fires once per session
 

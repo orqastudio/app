@@ -70,24 +70,24 @@ The base structure created by project setup:
     { "key": "docs", "label": "Documentation", "icon": "file-text", "path": ".orqa/documentation" },
     { "key": "planning", "label": "Planning", "icon": "target",
       "children": [
-        { "key": "ideas", "label": "Ideas", "path": ".orqa/planning/ideas" },
-        { "key": "research", "label": "Research", "path": ".orqa/planning/research" },
-        { "key": "milestones", "label": "Milestones", "path": ".orqa/planning/milestones" },
-        { "key": "epics", "label": "Epics", "path": ".orqa/planning/epics" },
-        { "key": "tasks", "label": "Tasks", "path": ".orqa/planning/tasks" }
+        { "key": "ideas", "label": "Ideas", "path": ".orqa/delivery/ideas" },
+        { "key": "research", "label": "Research", "path": ".orqa/delivery/research" },
+        { "key": "milestones", "label": "Milestones", "path": ".orqa/delivery/milestones" },
+        { "key": "epics", "label": "Epics", "path": ".orqa/delivery/epics" },
+        { "key": "tasks", "label": "Tasks", "path": ".orqa/delivery/tasks" }
       ]
     },
     { "key": "governance", "label": "Governance", "icon": "shield",
       "children": [
-        { "key": "lessons", "label": "Lessons", "path": ".orqa/governance/lessons" },
-        { "key": "decisions", "label": "Decisions", "path": ".orqa/governance/decisions" },
-        { "key": "rules", "label": "Rules", "path": ".orqa/governance/rules" }
+        { "key": "lessons", "label": "Lessons", "path": ".orqa/process/lessons" },
+        { "key": "decisions", "label": "Decisions", "path": ".orqa/process/decisions" },
+        { "key": "rules", "label": "Rules", "path": ".orqa/process/rules" }
       ]
     },
     { "key": "team", "label": "Team", "icon": "users",
       "children": [
-        { "key": "agents", "label": "Agents", "path": ".orqa/team/agents" },
-        { "key": "skills", "label": "Skills", "path": ".orqa/team/skills" }
+        { "key": "agents", "label": "Agents", "path": ".orqa/process/agents" },
+        { "key": "skills", "label": "Skills", "path": ".orqa/process/skills" }
       ]
     }
   ]
@@ -124,11 +124,11 @@ These files are copied during setup (core layer — non-editable by project):
 For Claude Code compatibility, create symlinks in `.claude/`:
 
 ```
-.claude/rules/    → .orqa/governance/rules/
-.claude/agents/   → .orqa/team/agents/
-.claude/skills/   → .orqa/team/skills/
-.claude/hooks/    → .orqa/governance/hooks/
-.claude/CLAUDE.md → .orqa/team/agents/orchestrator.md
+.claude/rules/    → .orqa/process/rules/
+.claude/agents/   → .orqa/process/agents/
+.claude/skills/   → .orqa/process/skills/
+.claude/hooks/    → .orqa/process/hooks/
+.claude/CLAUDE.md → .orqa/process/agents/orchestrator.md
 ```
 
 ## Setup Procedure

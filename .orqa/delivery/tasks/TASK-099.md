@@ -22,4 +22,4 @@ Authored each AD artifact with context, decision rationale, consequences, and st
 
 ## Verification
 
-[AD-007](AD-007) through [AD-010](AD-010) exist in `.orqa/governance/decisions/` with all required schema fields and are listed in the decisions index.
+[AD-007](AD-007) through [AD-010](AD-010) exist in `.orqa/process/decisions/` with all required schema fields and are listed in the decisions index.

@@ -16,7 +16,7 @@ acceptance:
 
 ## What
 
-The orchestrator exception list says `.orqa/planning/` is orchestrator territory, but writing research findings is content creation (Writer role). Tighten the boundary.
+The orchestrator exception list says `.orqa/delivery/` is orchestrator territory, but writing research findings is content creation (Writer role). Tighten the boundary.
 
 ## How
 

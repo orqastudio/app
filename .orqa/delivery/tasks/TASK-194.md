@@ -22,7 +22,7 @@ doesn't execute anything, but it closes the gap between "documented standard" an
 
 ## How
 
-1. Update `.orqa/governance/rules/schema.json`: add `lint` to event enum
+1. Update `.orqa/process/rules/schema.json`: add `lint` to event enum
 2. Document the convention: `lint` entries carry `pattern` (the linter rule name),
    `message` (what it enforces), and optionally `paths` (which files it applies to)
 3. No changes needed to rule-engine.mjs — it ignores events it doesn't handle

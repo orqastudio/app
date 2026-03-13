@@ -232,7 +232,7 @@ This protects production governance data during development. The skill reference
 |------|-------|-------|
 | [TASK-070](TASK-070) | Document body templates in artifact-framework.md and schema.json | .orqa/documentation/, .orqa/**/schema.json |
 | [TASK-071](TASK-071) | Add body template linting to pre-commit hook | .githooks/validate-schema.mjs |
-| [TASK-072](TASK-072) | Backfill existing artifacts to match body templates | .orqa/planning/, .orqa/governance/ |
+| [TASK-072](TASK-072) | Backfill existing artifacts to match body templates | .orqa/delivery/, .orqa/process/ |
 | [TASK-073](TASK-073) | Build backend artifact node graph with bidirectional references | backend/src-tauri/src/domain/ |
 | [TASK-074](TASK-074) | Add artifact graph Tauri commands | backend/src-tauri/src/commands/ |
 | [TASK-075](TASK-075) | Build frontend Artifact Graph SDK with subscription API | ui/src/lib/sdk/ |
@@ -243,7 +243,7 @@ This protects production governance data during development. The skill reference
 | [TASK-078](TASK-078) | Markdown cross-linking in MarkdownRenderer | ui/src/lib/components/shared/ |
 | [TASK-079](TASK-079) | File watcher for .orqa/ with graph rebuild and event emission | backend/src-tauri/src/ |
 | [TASK-080](TASK-080) | Write Artifact Graph SDK documentation | .orqa/documentation/development/ |
-| [TASK-081](TASK-081) | Create orqa-plugin-development skill (new project + seed data approach) | .orqa/team/skills/ |
+| [TASK-081](TASK-081) | Create orqa-plugin-development skill (new project + seed data approach) | .orqa/process/skills/ |
 
 ## Dependency Chain
 

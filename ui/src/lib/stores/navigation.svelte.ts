@@ -259,7 +259,7 @@ class NavigationStore {
 
 	/**
 	 * Navigate to an artifact by its relative file path
-	 * (e.g. ".orqa/planning/epics/EPIC-048.md").
+	 * (e.g. ".orqa/delivery/epics/EPIC-048.md").
 	 *
 	 * Walks the full NavTree — including tree children — to find the node
 	 * that matches the path, then sets the activity, group, and sub-category

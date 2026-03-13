@@ -23,7 +23,7 @@ Extract portability constraints from `skills-maintenance` skill into a new rule.
 ## How
 
 1. Read the `skills-maintenance` skill and locate the portability constraints in the NON-NEGOTIABLE section
-2. Determine the next available RULE number by scanning `.orqa/governance/rules/`
+2. Determine the next available RULE number by scanning `.orqa/process/rules/`
 3. Create the new rule file with: the portability requirements for each layer (canon, project, plugin), valid and invalid examples, FORBIDDEN section, and related rules references
 4. Remove the portability constraints from the `skills-maintenance` skill's NON-NEGOTIABLE section
 5. Add a "See RULE-NNN for skill portability requirements" reference in the skill

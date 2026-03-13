@@ -1,22 +1,22 @@
 ---
 id: DOC-032
 title: Enforcement Rules Reference
-description: Reference index of all enforcement rules in .orqa/governance/rules/ with their purpose and scope.
+description: Reference index of all enforcement rules in .orqa/process/rules/ with their purpose and scope.
 created: "2026-03-02"
 updated: "2026-03-08"
 ---
 
 **Date:** 2026-03-05
 
-This page describes the rule enforcement model, lists all active rules in `.orqa/governance/rules/`, and explains how rules, frontmatter, and generated hooks relate to each other.
+This page describes the rule enforcement model, lists all active rules in `.orqa/process/rules/`, and explains how rules, frontmatter, and generated hooks relate to each other.
 
 ---
 
 ## How Rules Work
 
-Rule files in `.orqa/governance/rules/` serve two purposes simultaneously:
+Rule files in `.orqa/process/rules/` serve two purposes simultaneously:
 
-1. **Context injection** — Every `.md` file in `.orqa/governance/rules/` is automatically injected into every agent session as part of the system context. Rules describe behavioral constraints that agents must follow.
+1. **Context injection** — Every `.md` file in `.orqa/process/rules/` is automatically injected into every agent session as part of the system context. Rules describe behavioral constraints that agents must follow.
 
 2. **Enforcement definitions** — Each rule file carries YAML frontmatter that declares machine-readable enforcement entries. The app reads this frontmatter to power the enforcement engine (pattern evaluation, block/warn verdicts, violation persistence) and to auto-generate CLI-compatible hook scripts for use with any agent provider.
 
@@ -44,7 +44,7 @@ A single rule file can declare multiple enforcement entries — one per pattern 
 
 ## Enforcement Engine
 
-When the app loads a project, it reads YAML frontmatter from all rule files in `.orqa/governance/rules/` and compiles them into an in-memory enforcement set.
+When the app loads a project, it reads YAML frontmatter from all rule files in `.orqa/process/rules/` and compiles them into an in-memory enforcement set.
 
 **Evaluation flow:**
 
@@ -69,7 +69,7 @@ The same frontmatter that drives the app's enforcement engine also generates hoo
 
 **Generation:** When rule frontmatter changes, the app re-generates the corresponding hookify files. The generated files are named `hookify.<rule-id>-<entry-id>.local.md`.
 
-**The hookify files are derived artifacts** — they are generated from rule frontmatter in `.orqa/governance/rules/` and should not be edited directly. Edit the rule's frontmatter; the hookify files update automatically.
+**The hookify files are derived artifacts** — they are generated from rule frontmatter in `.orqa/process/rules/` and should not be edited directly. Edit the rule's frontmatter; the hookify files update automatically.
 
 ---
 
@@ -115,7 +115,7 @@ Context-only rules require judgment that pattern matching cannot provide. They a
 Create a new rule when:
 
 1. A behavioral constraint applies to all agents universally, not just one agent's process
-2. An implementation lesson has recurred enough times to warrant automatic enforcement (recurrence >= 2 per `.orqa/governance/lessons/`)
+2. An implementation lesson has recurred enough times to warrant automatic enforcement (recurrence >= 2 per `.orqa/process/lessons/`)
 3. A process change is significant enough that agents would violate it without automatic reminders
 
 When creating a rule, also decide whether the constraint is pattern-enforceable. If the violation is a specific pattern in file content or a banned command flag, add frontmatter enforcement entries. The generated hookify files will be created automatically.
@@ -154,5 +154,5 @@ The `code-reviewer` includes rule compliance in every code review:
 - [Content Governance](content-governance.md) — The six-layer ownership model (docs, agents, skills, rules, hooks, enforcement)
 - [Team Overview](team.md) — Which agents load which skills and follow which rules
 - [Process Retrospectives](retrospectives.md) — History of rule creation and governance changes
-- `.orqa/governance/lessons/` — Individual patterns that may be promoted to rules
+- `.orqa/process/lessons/` — Individual patterns that may be promoted to rules
 - `.orqa/documentation/architecture/enforcement.md` — Technical architecture of the enforcement engine

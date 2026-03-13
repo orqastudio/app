@@ -8,20 +8,23 @@ sort: 1
 
 # Decisions
 
-Architecture decisions capture the reasoning behind key technical choices. They record what was decided, why, what alternatives were considered, and what trade-offs were accepted.
+Architecture decisions capture the reasoning behind key technical choices — what was decided, why, what alternatives were considered, and what trade-offs were accepted. They are permanent records; when circumstances change, a new decision supersedes the old one rather than overwriting it.
+
+## Pipeline Role
+
+Decisions are **Understanding** — the second stage of the knowledge maturity pipeline:
+
+```
+Observation → Understanding → Principle → Practice → Enforcement → Verification
+```
+
+A lesson (observation) that recurs enough produces a decision: a definitive answer to "how should we handle this?" Decisions then inform skills (practice) and rules (enforcement). When multiple related decisions converge, they may crystallise into a pillar (principle).
 
 ## When to Create a Decision
 
-- A technology or framework choice that affects multiple modules
-- A design pattern adopted project-wide
-- A trade-off between competing approaches
-- Any choice that future contributors might question
-
-## Structure
-
-Each decision includes context (the problem), the decision itself, consequences (what follows from the choice), and alternatives that were considered. Decisions are permanent records — they are not updated when circumstances change. Instead, a new decision supersedes the old one.
+Create an `AD-NNN.md` when research produces an architectural choice, when a technology or design pattern is adopted project-wide, or whenever a future contributor might reasonably ask "why did they do it this way?"
 
 ## Key Fields
 
-- **`status`**: `proposed` (under review), `accepted` (approved), `superseded` (replaced by a newer decision), `deprecated` (no longer relevant)
-- **`layer`**: `core` (platform-level decisions shipping with OrqaStudio) or `project` (project-specific decisions)
+- **`status`**: `proposed` → `accepted` → `superseded` / `deprecated`
+- **`layer`**: `core` (platform-level, ships with OrqaStudio) or `project` (project-specific)

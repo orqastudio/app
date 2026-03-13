@@ -220,7 +220,7 @@ mod tests {
 ```rust
 #[test]
 fn parse_valid_lesson() {
-    let lesson = parse_lesson(SAMPLE_CONTENT, ".orqa/governance/lessons/IMPL-001.md").expect("should parse");
+    let lesson = parse_lesson(SAMPLE_CONTENT, ".orqa/process/lessons/IMPL-001.md").expect("should parse");
     assert_eq!(lesson.id, "IMPL-001");
 }
 

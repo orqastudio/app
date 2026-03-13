@@ -547,10 +547,10 @@ After discovery (or when the AI has gathered enough context), it proposes artifa
           ---
           {SI
             [X] .orqa/project.json (project configuration)
-            [X] .orqa/team/agents/backend-api.md
-            [X] .orqa/team/agents/frontend-ui.md
-            [X] .orqa/governance/rules/conventions.md
-            [X] .orqa/governance/rules/testing.md
+            [X] .orqa/process/agents/backend-api.md
+            [X] .orqa/process/agents/frontend-ui.md
+            [X] .orqa/process/rules/conventions.md
+            [X] .orqa/process/rules/testing.md
           }
           ---
           Uncheck any files you don't want created.

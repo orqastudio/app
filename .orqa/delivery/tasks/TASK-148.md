@@ -23,7 +23,7 @@ Replace OrqaStudio-specific references (file paths, module names, component name
 
 ## How
 
-1. Open `composability.md` in `.orqa/team/skills/`
+1. Open `composability.md` in `.orqa/process/skills/`
 2. Identify every code block that references OrqaStudio-specific paths (e.g., `backend/src-tauri/src/domain/enforcement_engine.rs`) or module names
 3. For each such block: rewrite using generic names (e.g., `src/domain/engine.rs`, `MyService`, `UserStore`) that convey the same structural lesson
 4. Verify every composability principle section (Pure Over Stateful, Small Composable Units, Trait Boundaries, etc.) still has a clear illustrative example after the rename

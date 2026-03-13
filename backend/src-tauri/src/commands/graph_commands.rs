@@ -162,7 +162,7 @@ mod tests {
             "EPIC-001".to_string(),
             ArtifactNode {
                 id: "EPIC-001".to_string(),
-                path: ".orqa/planning/epics/EPIC-001.md".to_string(),
+                path: ".orqa/delivery/epics/EPIC-001.md".to_string(),
                 artifact_type: "epic".to_string(),
                 title: "Test Epic".to_string(),
                 description: None,

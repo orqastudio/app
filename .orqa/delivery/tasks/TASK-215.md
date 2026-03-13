@@ -26,7 +26,7 @@ This makes skill injection self-building: create a new skill with the right scop
 
 ## How
 
-1. On plugin load, scan `.orqa/team/skills/*/SKILL.md` for scope fields
+1. On plugin load, scan `.orqa/process/skills/*/SKILL.md` for scope fields
 2. Build a map of path patterns → skill names from skill metadata
 3. On PreToolUse (Write/Edit), match the file path against the map
 4. Inject matching skills that haven't been loaded yet this session

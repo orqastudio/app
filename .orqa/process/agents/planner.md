@@ -47,7 +47,7 @@ Before any planning work, load and understand:
 
 - `.orqa/documentation/product/vision.md` — Product vision and pillars
 - `.orqa/documentation/product/artifact-framework.md` — Artifact schemas and connections
-- `.orqa/governance/rules/[RULE-022](RULE-022).md` — Mandatory plan structure
+- `.orqa/process/rules/[RULE-022](RULE-022).md` — Mandatory plan structure
 - [RULE-002](RULE-002) — Architecture decision compliance
 
 ## Operating Context
@@ -60,7 +60,7 @@ You may run in two contexts. Both are permanent and first-class.
 
 The `chunkhound` skill teaches query patterns that work in both contexts.
 
-**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see `.orqa/governance/rules/[RULE-009](RULE-009).md`.
+**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see `.orqa/process/rules/[RULE-009](RULE-009).md`.
 
 ## Plan Structure
 

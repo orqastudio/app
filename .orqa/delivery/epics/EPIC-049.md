@@ -34,9 +34,9 @@ This epic applies the same audit methodology used for planning artifacts to the 
 
 ### Phase 1: Agent Definition Audit
 
-For each agent in `.orqa/team/agents/`:
+For each agent in `.orqa/process/agents/`:
 1. Read the agent definition
-2. Verify `skills:` list — do all referenced skills exist in `.orqa/team/skills/`?
+2. Verify `skills:` list — do all referenced skills exist in `.orqa/process/skills/`?
 3. Verify Required Reading paths — do all referenced documents exist?
 4. Verify role description matches current universal role model (AD-029)
 5. Check for stale references (old app names, deprecated concepts, wrong paths)
@@ -44,7 +44,7 @@ For each agent in `.orqa/team/agents/`:
 
 ### Phase 2: Skill Definition Audit
 
-For each skill in `.orqa/team/skills/`:
+For each skill in `.orqa/process/skills/`:
 1. Read the SKILL.md and any supporting files
 2. Verify code patterns described match the actual codebase
 3. Verify file paths referenced in examples exist
@@ -54,7 +54,7 @@ For each skill in `.orqa/team/skills/`:
 
 ### Phase 3: Rule Enforcement Audit
 
-For each rule in `.orqa/governance/rules/`:
+For each rule in `.orqa/process/rules/`:
 1. Verify the rule's enforcement mechanisms still apply
 2. Check for stale path references (already partially done in prior audit)
 3. Verify Related Rules cross-references point to existing rules
@@ -63,7 +63,7 @@ For each rule in `.orqa/governance/rules/`:
 
 ### Phase 4: Hook Audit
 
-For each hook in `.orqa/governance/hooks/`:
+For each hook in `.orqa/process/hooks/`:
 1. Verify the hook script exists and is executable
 2. Check that paths referenced in the script are correct
 3. Verify the hook's trigger event is still valid

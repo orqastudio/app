@@ -295,7 +295,7 @@ mod tests {
             &conn,
             1,
             &ArtifactType::Rule,
-            ".orqa/governance/rules/no-stubs.md",
+            ".orqa/process/rules/no-stubs.md",
             "no-stubs",
             "# No Stubs",
             Some("No stubs or placeholders"),
@@ -325,7 +325,7 @@ mod tests {
             &conn,
             1,
             &ArtifactType::Agent,
-            ".orqa/team/agents/backend-engineer.md",
+            ".orqa/process/agents/backend-engineer.md",
             "backend-engineer",
             "# Backend Engineer",
             None,
@@ -333,7 +333,7 @@ mod tests {
         .expect("create");
 
         let record =
-            get_by_path(&conn, 1, ".orqa/team/agents/backend-engineer.md").expect("get_by_path");
+            get_by_path(&conn, 1, ".orqa/process/agents/backend-engineer.md").expect("get_by_path");
         assert_eq!(record.name, "backend-engineer");
     }
 

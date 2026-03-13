@@ -1,7 +1,7 @@
 ---
 id: TASK-178
 title: Implement rule engine core (loader, parser, pattern matcher)
-description: Build the core engine that loads .orqa/governance/rules/, parses frontmatter, and evaluates enforcement patterns.
+description: Build the core engine that loads .orqa/process/rules/, parses frontmatter, and evaluates enforcement patterns.
 status: done
 created: "2026-03-11"
 updated: "2026-03-12"
@@ -16,7 +16,7 @@ skills:
   - SKILL-045
   - SKILL-011
 acceptance:
-  - Engine loads all .md files from .orqa/governance/rules/
+  - Engine loads all .md files from .orqa/process/rules/
   - Engine parses YAML frontmatter including enforcement array
   - Engine filters by status (only active rules)
   - Engine filters by scope (agent ID matching)
@@ -32,7 +32,7 @@ tool call context.
 
 ## How
 
-1. Implement rule loader: scan `.orqa/governance/rules/*.md`, parse YAML frontmatter
+1. Implement rule loader: scan `.orqa/process/rules/*.md`, parse YAML frontmatter
 2. Implement filters: status=active, layer matching, scope (agent ID) matching
 3. Implement pattern matcher: regex patterns against event context fields
 4. Implement enforcement evaluation: for each rule with enforcement entries, match

@@ -1,34 +1,35 @@
 ---
 role: artifacts
 label: "Lessons"
-description: "Implementation discoveries that prevent recurring mistakes."
+description: "Implementation observations that feed the knowledge maturity pipeline."
 icon: "book-open"
 sort: 2
 ---
 
 # Lessons
 
-Lessons record implementation discoveries and prevent recurring mistakes. When a code reviewer, QA tester, or UX reviewer finds an issue, the pattern is captured here so it isn't repeated.
+Lessons capture implementation observations — patterns discovered during code review, QA, or debugging that reveal something non-obvious about the codebase or process. They are the raw material that feeds the knowledge maturity pipeline.
+
+## Pipeline Role
+
+Lessons are **Observations** — the first stage of the knowledge maturity pipeline:
+
+```
+Observation → Understanding → Principle → Practice → Enforcement → Verification
+```
+
+A single lesson is a data point. When the same pattern recurs, it becomes **Understanding** — a decision or architectural insight. When it recurs enough, it hardens into **Practice** (a skill) or **Enforcement** (a rule).
 
 ## Lifecycle
 
 ```
-documented → recurrence tracked → promoted → enforcement verified
+active → recurring → promoted
 ```
 
-- **Documented**: The lesson is captured with context, the correct approach, and tags
-- **Recurrence tracked**: Each time the same pattern is found again, the count increments
-- **Promoted**: At recurrence >= 2, the lesson is promoted to a rule, coding standard, or skill
-- **Enforcement verified**: After promotion, recurrence is re-tracked to verify the fix works
-
-## Status Values
-
-| Status | Meaning |
-|--------|---------|
-| `active` | Unpromoted lesson, normal state |
-| `recurring` | Recurrence >= 2, pending promotion review |
-| `promoted` | Promoted to a rule, coding standard, or skill |
+- **Active**: Lesson documented; recurrence tracked
+- **Recurring**: Recurrence >= 2; pending promotion review by orchestrator
+- **Promoted**: Elevated to a rule, coding standard, or skill — `promoted-to` field set
 
 ## Promotion
 
-Lessons that keep recurring are promoted to stronger enforcement: rule, hook, scanner, or hard block. The promotion target is recorded in the lesson's `promoted-to` field.
+At recurrence >= 2, the orchestrator is triggered to promote the lesson. Escalation path: lesson → rule → pre-commit hook → hard scanner block. The weaker the enforcement, the more likely recurrence continues.

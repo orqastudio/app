@@ -8,7 +8,7 @@ updated: "2026-03-11"
 epic: EPIC-049
 depends-on: []
 acceptance:
-  - New skill systems-thinking created in .orqa/team/skills/
+  - New skill systems-thinking created in .orqa/process/skills/
   - Covers system identification, boundary mapping, relationship tracing, pattern recognition, uniform base discovery
   - Practical examples showing the methodology applied to real scenarios
   - RULE-028 updated to reference the companion skill
@@ -22,14 +22,14 @@ Create a `systems-thinking` skill that provides the practical methodology. [RULE
 
 ## How
 
-1. Create `.orqa/team/skills/systems-thinking.md` with `layer: canon`
+1. Create `.orqa/process/skills/systems-thinking.md` with `layer: canon`
 2. Write sections covering: system identification (what is the system?), boundary mapping (where does it start/end?), relationship tracing (what depends on what?), pattern recognition (is there an existing pattern?), uniform base discovery (where is the one default behaviour?)
 3. Include concrete before/after examples — e.g., "patching a symptom vs. finding the root cause in a data pipeline"
 4. Add a "See `systems-thinking` skill for practical methodology" line to [RULE-028](RULE-028)
 
 ## Verification
 
-- [ ] New skill systems-thinking created in .orqa/team/skills/
+- [ ] New skill systems-thinking created in .orqa/process/skills/
 - [ ] Covers system identification, boundary mapping, relationship tracing, pattern recognition, uniform base discovery
 - [ ] Practical examples showing the methodology applied to real scenarios
 - [ ] [RULE-028](RULE-028) updated to reference the companion skill

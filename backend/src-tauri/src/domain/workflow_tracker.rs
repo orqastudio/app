@@ -14,7 +14,7 @@ pub struct WorkflowTracker {
     searches_performed: u32,
     /// Files read from `.orqa/documentation/`.
     docs_consulted: Vec<String>,
-    /// Files read from `.orqa/planning/`.
+    /// Files read from `.orqa/delivery/`.
     planning_consulted: Vec<String>,
     /// Skills loaded via `load_skill` during this session.
     skills_loaded: HashSet<String>,
@@ -22,7 +22,7 @@ pub struct WorkflowTracker {
     commands_run: Vec<String>,
     /// True after any `make check` or `make test` command is detected.
     verification_run: bool,
-    /// True after any read of `.orqa/governance/lessons/`.
+    /// True after any read of `.orqa/process/lessons/`.
     lessons_checked: bool,
     /// Deduplication set for skill injection — prevents injecting the same skill twice.
     injected_skills: HashSet<String>,
@@ -39,18 +39,18 @@ impl WorkflowTracker {
     /// Record a file read and auto-categorize it.
     ///
     /// - Paths containing `.orqa/documentation/` are added to `docs_consulted`.
-    /// - Paths containing `.orqa/planning/` are added to `planning_consulted`.
-    /// - Paths containing `.orqa/governance/lessons/` set `lessons_checked`.
+    /// - Paths containing `.orqa/delivery/` are added to `planning_consulted`.
+    /// - Paths containing `.orqa/process/lessons/` set `lessons_checked`.
     pub fn record_read(&mut self, path: &str) {
         self.files_read.push(path.to_string());
 
         if path.contains(".orqa/documentation/") {
             self.docs_consulted.push(path.to_string());
         }
-        if path.contains(".orqa/planning/") {
+        if path.contains(".orqa/delivery/") {
             self.planning_consulted.push(path.to_string());
         }
-        if path.contains(".orqa/governance/lessons/") {
+        if path.contains(".orqa/process/lessons/") {
             self.lessons_checked = true;
         }
     }
@@ -102,7 +102,7 @@ impl WorkflowTracker {
         !self.docs_consulted.is_empty()
     }
 
-    /// True if any file in `.orqa/planning/` has been read this session.
+    /// True if any file in `.orqa/delivery/` has been read this session.
     pub fn has_read_any_planning(&self) -> bool {
         !self.planning_consulted.is_empty()
     }
@@ -124,7 +124,7 @@ impl WorkflowTracker {
         self.verification_run
     }
 
-    /// True if `.orqa/governance/lessons/` was read this session.
+    /// True if `.orqa/process/lessons/` was read this session.
     pub fn has_checked_lessons(&self) -> bool {
         self.lessons_checked
     }
@@ -173,7 +173,7 @@ mod tests {
     #[test]
     fn record_read_planning_path_sets_planning_consulted() {
         let mut t = WorkflowTracker::new();
-        t.record_read(".orqa/planning/epics/EPIC-042.md");
+        t.record_read(".orqa/delivery/epics/EPIC-042.md");
         assert!(t.has_read_any_planning());
         assert!(!t.has_read_any_docs());
     }
@@ -181,7 +181,7 @@ mod tests {
     #[test]
     fn record_read_lessons_path_sets_lessons_checked() {
         let mut t = WorkflowTracker::new();
-        t.record_read(".orqa/governance/lessons/IMPL-001.md");
+        t.record_read(".orqa/process/lessons/IMPL-001.md");
         assert!(t.has_checked_lessons());
     }
 
@@ -198,7 +198,7 @@ mod tests {
     #[test]
     fn record_write_orqa_file_is_not_code_write() {
         let mut t = WorkflowTracker::new();
-        t.record_write(".orqa/governance/rules/RULE-042.md");
+        t.record_write(".orqa/process/rules/RULE-042.md");
         assert!(!t.has_written_code());
         assert_eq!(t.code_write_count(), 0);
     }
@@ -222,7 +222,7 @@ mod tests {
     #[test]
     fn code_write_count_counts_only_non_orqa_writes() {
         let mut t = WorkflowTracker::new();
-        t.record_write(".orqa/planning/tasks/TASK-001.md");
+        t.record_write(".orqa/delivery/tasks/TASK-001.md");
         t.record_write("src-tauri/src/main.rs");
         t.record_write("ui/App.svelte");
         assert_eq!(t.code_write_count(), 2);
@@ -375,7 +375,7 @@ mod tests {
     #[test]
     fn has_done_any_research_true_when_planning_read() {
         let mut t = WorkflowTracker::new();
-        t.record_read(".orqa/planning/tasks/TASK-001.md");
+        t.record_read(".orqa/delivery/tasks/TASK-001.md");
         assert!(t.has_done_any_research());
     }
 
@@ -392,14 +392,14 @@ mod tests {
     #[test]
     fn absolute_path_with_orqa_planning_detected_as_planning() {
         let mut t = WorkflowTracker::new();
-        t.record_read("/home/user/project/.orqa/planning/epics/EPIC-001.md");
+        t.record_read("/home/user/project/.orqa/delivery/epics/EPIC-001.md");
         assert!(t.has_read_any_planning());
     }
 
     #[test]
     fn orqa_write_via_absolute_path_is_not_code() {
         let mut t = WorkflowTracker::new();
-        t.record_write("/home/user/project/.orqa/governance/rules/RULE-042.md");
+        t.record_write("/home/user/project/.orqa/process/rules/RULE-042.md");
         assert!(!t.has_written_code());
     }
 }

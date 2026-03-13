@@ -51,8 +51,8 @@ This framework will be built into OrqaStudio itself as an MVP feature (see Miles
 
 All pre-build phases are complete. Each phase is tracked as a retroactive epic for full traceability.
 
-- [x] **[EPIC-025](EPIC-025): Phase 0a — Tech Stack Research** — AI provider integration research (Agent SDK sidecar pattern), Tauri v2 capability audit, frontend library selection, persistence design, onboarding strategy. All findings documented in `.orqa/planning/research/`.
-- [x] **[EPIC-026](EPIC-026): Phase 0b — Architecture Decisions** — [AD-001](AD-001) through [AD-020](AD-020) recorded. Covers thick backend architecture, IPC boundary, error propagation, Svelte 5 runes, SQLite persistence, component purity, sidecar integration, streaming pipeline, security model, MCP host, persistence, governance format, composability principle, layout decisions, and documentation browsing model. See individual AD artifacts in `.orqa/governance/decisions/`.
+- [x] **[EPIC-025](EPIC-025): Phase 0a — Tech Stack Research** — AI provider integration research (Agent SDK sidecar pattern), Tauri v2 capability audit, frontend library selection, persistence design, onboarding strategy. All findings documented in `.orqa/delivery/research/`.
+- [x] **[EPIC-026](EPIC-026): Phase 0b — Architecture Decisions** — [AD-001](AD-001) through [AD-020](AD-020) recorded. Covers thick backend architecture, IPC boundary, error propagation, Svelte 5 runes, SQLite persistence, component purity, sidecar integration, streaming pipeline, security model, MCP host, persistence, governance format, composability principle, layout decisions, and documentation browsing model. See individual AD artifacts in `.orqa/process/decisions/`.
 - [x] **[EPIC-027](EPIC-027): Phase 0c — Product Definition** — Glossary, personas, user journeys, information architecture, MVP feature specification. All in `.orqa/documentation/product/`.
 - [x] **[EPIC-028](EPIC-028): Phase 0d — UX Design** — Design system, wireframes (core layout, conversation, artifact browser, settings/onboarding, dashboard), component inventory, interaction patterns, responsive behaviour. All in `.orqa/documentation/ui/`.
 - [x] **[EPIC-029](EPIC-029): Phase 0e — Technical Design** — SQLite schema, IPC command catalogue, Rust module architecture, Svelte component tree, streaming pipeline, tool definitions, MCP host interface, error taxonomy. All in `.orqa/documentation/architecture/`.
@@ -255,7 +255,7 @@ Governance coverage exists. Missing: richer process visibility.
 
 Lesson management exists (CRUD, UI). Missing: the automated capture and promotion pipeline.
 
-- [ ] Post-session hooks that capture lessons automatically to `.orqa/governance/lessons/`
+- [ ] Post-session hooks that capture lessons automatically to `.orqa/process/lessons/`
 - [ ] Rules enforcing lesson checking before implementation
 - [ ] Automated promotion suggestions when recurrence >= threshold
 - [ ] Lesson dashboard with recurrence trends (LayerChart)
@@ -343,7 +343,7 @@ Richer experience and broader use cases.
 
 #### M11. Idea & Feedback Capture
 
-- [ ] Idea artifact type in `.orqa/planning/ideas/` with frontmatter
+- [ ] Idea artifact type in `.orqa/delivery/ideas/` with frontmatter
 - [ ] Quick-capture from conversation — slash command or highlight to create idea
 - [ ] Quick-capture from anywhere — global shortcut or status bar button
 - [ ] Idea inbox — uncategorised ideas, sortable

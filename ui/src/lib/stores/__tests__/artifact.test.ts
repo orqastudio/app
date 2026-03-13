@@ -22,11 +22,11 @@ const fakeNavTree: NavTree = {
 			types: [
 				{
 					label: "Epics",
-					path: ".orqa/planning/epics",
+					path: ".orqa/delivery/epics",
 					icon: "rocket",
 					description: "Epic artifacts",
 					nodes: [
-						{ label: "EPIC-001", path: ".orqa/planning/epics/EPIC-001.md", description: "First epic" },
+						{ label: "EPIC-001", path: ".orqa/delivery/epics/EPIC-001.md", description: "First epic" },
 					],
 				},
 			],
@@ -97,9 +97,9 @@ describe("ArtifactStore", () => {
 		it("loads content via SDK", async () => {
 			vi.mocked(artifactGraphSDK.readContent).mockResolvedValueOnce("# Hello\nContent here");
 
-			await artifactStore.loadContent(".orqa/planning/epics/EPIC-001.md");
+			await artifactStore.loadContent(".orqa/delivery/epics/EPIC-001.md");
 
-			expect(artifactGraphSDK.readContent).toHaveBeenCalledWith(".orqa/planning/epics/EPIC-001.md");
+			expect(artifactGraphSDK.readContent).toHaveBeenCalledWith(".orqa/delivery/epics/EPIC-001.md");
 			expect(artifactStore.activeContent).toBe("# Hello\nContent here");
 			expect(artifactStore.activeContentLoading).toBe(false);
 		});

@@ -13,7 +13,7 @@ docs: []
 skills:
   - SKILL-020
 acceptance:
-  - SessionStart hook reads .orqa/team/agents/orchestrator.md
+  - SessionStart hook reads .orqa/process/agents/orchestrator.md
   - Hook injects orchestrator content as additionalContext
   - Hook runs session-start checks (stashes, worktrees, uncommitted files)
   - Hook replaces the current .claude/hooks/session-start-hook.sh functionality
@@ -28,7 +28,7 @@ definition and injects it as system context, then runs session health checks.
 ## How
 
 1. Create `hooks/session-start.md` hook definition
-2. On SessionStart, read `.orqa/team/agents/orchestrator.md`
+2. On SessionStart, read `.orqa/process/agents/orchestrator.md`
 3. Return orchestrator content as `additionalContext`
 4. Run session checks: `git stash list`, `git worktree list`, `git status`
 5. Include check results in additionalContext

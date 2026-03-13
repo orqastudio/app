@@ -1,9 +1,9 @@
 ---
 role: group
-label: "Planning"
-description: "Strategic planning artifacts — pillars, ideas, research, milestones, epics, and tasks."
-icon: "target"
+label: "Delivery"
+description: "The work pipeline — from raw idea through research, scoping, implementation, and verification."
+icon: "package"
 sort: 2
 ---
 
-Planning artifacts define what to build and why. They flow from pillars through milestones and epics to concrete tasks. Ideas capture future possibilities; research validates them; epics document the implementation design.
+The delivery layer is where ideas become working software. Candidate features flow from ideas through research and scoping into epics and tasks, and are closed out by verification records. Each stage has defined gates — work cannot advance until the preceding stage is complete.

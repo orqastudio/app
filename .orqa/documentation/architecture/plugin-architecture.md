@@ -54,7 +54,7 @@ skills/
 | `PreToolUse` | `rule-engine.mjs` | `Write`, `Edit`, `Bash` | Loads active rules with `enforcement` frontmatter entries. Evaluates conditions against tool input. Block verdicts deny the tool call; warn verdicts emit a system message; inject verdicts emit skill IDs for the agent to read. |
 | `UserPromptSubmit` | `prompt-injector.mjs` | Every user message | Detects artifact references (TASK-NNN, EPIC-NNN) in the prompt. Crawls artifact graph edges (task.epic, task.skills, task.docs, epic.research-refs, epic.docs-required) and emits referenced IDs as a system message. |
 | `PostToolUse` | `graph-guardian.mjs` | `Write`, `Edit` to `.orqa/` | Checks newly written artifacts for missing relationship fields (e.g., task without `docs`, epic without `research-refs`). Advisory only — warns but never blocks. |
-| `SessionStart` | `session-start.sh` | Session begins | Sets up `.claude/` symlinks to `.orqa/` source of truth. Installs plugin skills into `.orqa/team/skills/`. Runs health checks: stashes, worktrees, orphaned directories, uncommitted file count, previous session state, dogfood mode detection. |
+| `SessionStart` | `session-start.sh` | Session begins | Sets up `.claude/` symlinks to `.orqa/` source of truth. Installs plugin skills into `.orqa/process/skills/`. Runs health checks: stashes, worktrees, orphaned directories, uncommitted file count, previous session state, dogfood mode detection. |
 | `Stop` | `stop-checklist.sh` | Session ending | Reminds the agent to commit changes, update session state, and clean up. |
 
 ### Session Deduplication
@@ -72,12 +72,12 @@ The session-start hook manages the `.claude/` compatibility layer. Claude Code d
 
 | Symlink | Target |
 |---------|--------|
-| `.claude/CLAUDE.md` | `.orqa/team/agents/orchestrator.md` |
-| `.claude/rules/` | `.orqa/governance/rules/` |
-| `.claude/agents/` | `.orqa/team/agents/` |
-| `.claude/skills/` | `.orqa/team/skills/` |
+| `.claude/CLAUDE.md` | `.orqa/process/agents/orchestrator.md` |
+| `.claude/rules/` | `.orqa/process/rules/` |
+| `.claude/agents/` | `.orqa/process/agents/` |
+| `.claude/skills/` | `.orqa/process/skills/` |
 
-Plugin-bundled skills (e.g., `plugin-setup`, `rule-enforcement`) are symlinked into `.orqa/team/skills/` so the artifact scanner and app can discover them alongside core skills.
+Plugin-bundled skills (e.g., `plugin-setup`, `rule-enforcement`) are symlinked into `.orqa/process/skills/` so the artifact scanner and app can discover them alongside core skills.
 
 ### Relationship to App Enforcement
 
@@ -86,7 +86,7 @@ The CLI plugin and the app's built-in enforcement engine are **independent imple
 | Aspect | CLI Plugin | App (Built-in) |
 |--------|-----------|----------------|
 | Language | JavaScript (Node.js) | Rust |
-| Rule source | Same `.orqa/governance/rules/*.md` files | Same `.orqa/governance/rules/*.md` files |
+| Rule source | Same `.orqa/process/rules/*.md` files | Same `.orqa/process/rules/*.md` files |
 | YAML parsing | Custom lightweight parser | `serde_yaml` |
 | Pattern matching | JavaScript `RegExp` | Rust `regex` crate |
 | Skill injection | Emits skill IDs as `systemMessage` | Reads SKILL.md content, prepends to tool output |
@@ -137,7 +137,7 @@ OrqaStudio's extension architecture follows four trust layers. Each layer has di
 **Official (plugin):**
 - Discovered via the `.claude-plugin/marketplace.json` local marketplace or `settings.json` plugin configuration
 - Installed as git submodules in `.orqa/plugins/`
-- Plugin skills symlinked into `.orqa/team/skills/` at session start
+- Plugin skills symlinked into `.orqa/process/skills/` at session start
 - Hooks registered via `hooks.json` in the plugin directory
 
 **Community:**
@@ -146,8 +146,8 @@ OrqaStudio's extension architecture follows four trust layers. Each layer has di
 - Skills carry `layer: community` for trust distinction
 
 **User:**
-- Files directly in `.orqa/team/skills/` with `layer: user`
-- Rules in `.orqa/governance/rules/`
+- Files directly in `.orqa/process/skills/` with `layer: user`
+- Rules in `.orqa/process/rules/`
 - No installation step — the artifact scanner picks them up automatically
 
 ### Trust and Isolation

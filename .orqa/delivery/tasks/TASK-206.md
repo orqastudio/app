@@ -25,9 +25,9 @@ Three new governance rules:
 
 ## How
 
-1. Create `.orqa/governance/rules/[RULE-041](RULE-041).md` with proper frontmatter
-2. Create `.orqa/governance/rules/[RULE-042](RULE-042).md` with proper frontmatter
-3. Create `.orqa/governance/rules/[RULE-043](RULE-043).md` with proper frontmatter
+1. Create `.orqa/process/rules/[RULE-041](RULE-041).md` with proper frontmatter
+2. Create `.orqa/process/rules/[RULE-042](RULE-042).md` with proper frontmatter
+3. Create `.orqa/process/rules/[RULE-043](RULE-043).md` with proper frontmatter
 4. Follow existing rule format (schema-compliant frontmatter, body sections)
 
 ## Verification
