@@ -2,7 +2,7 @@
 id: EPIC-060
 title: "Pipeline health dashboard"
 description: "Surface pipeline integrity on the app dashboard with scan/fix actions, add pipeline visualization and temporal analytics."
-status: draft
+status: in-progress
 priority: P1
 created: "2026-03-13"
 updated: "2026-03-13"
@@ -140,10 +140,10 @@ Each issue row: artifact ID (clickable → navigates to artifact), message, seve
 
 | ID | Title | Phase | Depends On |
 |----|-------|-------|------------|
-| TASK-TBD-0a | Extend ArtifactRef with relationship_type in Rust backend | 0 | — |
-| TASK-TBD-0b | Add traverse/pipelineChain/missingInverses to graph SDK | 0 | TASK-TBD-0a |
-| TASK-TBD-0c | Migrate components from invoke() to SDK lookups | 0 | TASK-TBD-0b |
-| TASK-TBD-1 | Native integrity checks in artifact_graph.rs | 1 | TASK-TBD-0b |
+| [TASK-388](TASK-388) | Extend ArtifactRef with relationship_type in Rust backend | 0 | — |
+| [TASK-389](TASK-389) | Add traverse/pipelineChain/missingInverses to graph SDK | 0 | [TASK-388](TASK-388) |
+| TASK-TBD-0c | Migrate components from invoke() to SDK lookups | 0 | [TASK-389](TASK-389) |
+| TASK-TBD-1 | Native integrity checks in artifact_graph.rs | 1 | [TASK-389](TASK-389) |
 | TASK-TBD-2 | Auto-fix engine for deterministic integrity issues | 1 | TASK-TBD-1 |
 | TASK-TBD-3 | IPC commands for integrity scan, auto-fix, and agent delegation | 1 | TASK-TBD-1, TASK-TBD-2 |
 | TASK-TBD-4 | Dashboard integrity widget — health score and issue list | 2 | TASK-TBD-3 |
