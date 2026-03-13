@@ -4,8 +4,8 @@ title: Artifact Graph SDK and Structural Integrity
 description: Build a bidirectional artifact node graph with a typed frontend SDK, body template enforcement, markdown cross-linking, file watcher for live refresh, and plugin-ready subscription API — establishing the foundation for the plugin architecture.
 status: done
 priority: P1
-created: "2026-03-10"
-updated: "2026-03-10"
+created: 2026-03-10
+updated: 2026-03-10
 milestone: MS-001
 pillars:
   - PILLAR-001
@@ -18,10 +18,7 @@ docs-required:
   - RES-032
   - RES-033
   - RES-034
-  - DOC-036
 docs-produced:
-  - DOC-036
-  - DOC-020
   - SKILL-020
 scoring:
   user-value: 5
@@ -30,8 +27,7 @@ scoring:
   effort: 5
   risk: 3
   score: 17
----
-## Context
+---## Context
 
 Three systemic gaps identified during dogfooding prevent the artifact system from being self-consistent and extensible:
 

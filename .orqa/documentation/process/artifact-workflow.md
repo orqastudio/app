@@ -304,8 +304,8 @@ The orchestrator periodically verifies:
 
 ## Related Documents
 
-- [Artifact Framework](DOC-036) — Schemas, field definitions, design principles
-- [Definition of Ready](DOC-028) — Gate checklist before task/epic implementation starts
-- [Definition of Done](DOC-027) — Gate checklist before task/epic is marked complete
-- [Workflow](DOC-035) — General development workflow and task lifecycle
-- [Orchestration](DOC-030) — Orchestrator responsibilities
+- Artifact Framework — Schemas, field definitions, design principles
+- Definition of Ready — Gate checklist before task/epic implementation starts
+- Definition of Done — Gate checklist before task/epic is marked complete
+- Workflow — General development workflow and task lifecycle
+- Orchestration — Orchestrator responsibilities

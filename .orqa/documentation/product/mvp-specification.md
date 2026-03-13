@@ -362,7 +362,7 @@ After Phase 1 is complete, OrqaStudio must pass these checks to transition from 
 
 ## Related Documents
 
-- [User Journeys](DOC-041) — Workflows that these features support
-- [Information Architecture](DOC-040) — UI structure for these features
-- [Roadmap](DOC-044) — Phase 1 in the context of all phases
-- [Product Governance — Transition Criteria](DOC-039) — Dogfooding milestone
+- User Journeys — Workflows that these features support
+- Information Architecture — UI structure for these features
+- Roadmap — Phase 1 in the context of all phases
+- Product Governance — Transition Criteria — Dogfooding milestone

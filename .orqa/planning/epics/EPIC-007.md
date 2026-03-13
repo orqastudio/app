@@ -4,27 +4,22 @@ title: Composability Refactoring
 description: Refactor monolithic service files into composable units while preserving existing store, IPC, and component boundaries.
 status: done
 priority: P2
-created: "2026-03-07"
-updated: "2026-03-12"
+created: 2026-03-07
+updated: 2026-03-12
 milestone: MS-001
 pillars:
   - PILLAR-001
 research-refs:
   - RES-020
-docs-required:
-  - DOC-010
-  - DOC-014
-docs-produced:
-  - DOC-010
-  - DOC-014
+docs-required: []
+docs-produced: []
 scoring:
   pillar: 3
   impact: 3
   dependency: 2
   effort: 4
   score: 6
----
-**Note:** This epic was superseded by [EPIC-039](EPIC-039), which completed the composability refactoring. The status remains `done` because the work was delivered through [EPIC-039](EPIC-039). The tasks listed below were not completed under this epic directly -- they were subsumed by [EPIC-039](EPIC-039)'s broader scope.
+---**Note:** This epic was superseded by [EPIC-039](EPIC-039), which completed the composability refactoring. The status remains `done` because the work was delivered through [EPIC-039](EPIC-039). The tasks listed below were not completed under this epic directly -- they were subsumed by [EPIC-039](EPIC-039)'s broader scope.
 
 ## Why P2
 

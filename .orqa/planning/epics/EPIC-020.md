@@ -4,8 +4,8 @@ title: Discovery & Research Artifacts
 description: Build structured research artifacts, decision traceability graph, research-to-AD promotion, and conversational research workflow.
 status: draft
 priority: P2
-created: "2026-03-07"
-updated: "2026-03-07"
+created: 2026-03-07
+updated: 2026-03-07
 milestone: MS-002
 pillars:
   - PILLAR-001
@@ -13,8 +13,7 @@ pillars:
 depends-on:
   - EPIC-005
 blocks: []
-docs-required:
-  - DOC-036
+docs-required: []
 docs-produced:
   - AD-023
 scoring:
@@ -23,8 +22,7 @@ scoring:
   dependency: 1
   effort: 4
   score: 6
----
-## Tasks
+---## Tasks
 
 - [ ] Research artifact type — structured, queryable, filterable
 - [ ] Decision traceability graph (research -> AD -> feature -> implementation)

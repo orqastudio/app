@@ -7,7 +7,7 @@ updated: "2026-03-04"
 ---
 
 **Date:** 2026-03-02 | **Status:** Phase 0e specification
-**References:** [Wireframing Research](RES-008) (OQ1: Java Runtime Dependency), [Wireframe Serving Infrastructure](DOC-018)
+**References:** [Wireframing Research](RES-008) (OQ1: Java Runtime Dependency), Wireframe Serving Infrastructure
 
 A time-boxed investigation into eliminating or bundling PlantUML's Java dependency so that wireframe rendering works out of the box for all OrqaStudio™ users.
 

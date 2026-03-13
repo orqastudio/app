@@ -217,7 +217,7 @@ This reuses the data collected during setup. The Settings view calls the same `c
 
 ## Related Documents
 
-- [Roadmap — Phase 2a](DOC-044)
-- [Streaming Pipeline](DOC-014)
-- [IPC Commands](DOC-005)
-- [Settings & Onboarding Wireframes](DOC-061)
+- Roadmap — Phase 2a
+- Streaming Pipeline
+- IPC Commands
+- Settings & Onboarding Wireframes

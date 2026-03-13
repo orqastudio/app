@@ -6,7 +6,7 @@ created: "2026-03-02"
 updated: "2026-03-04"
 ---
 
-**Date:** 2026-03-02 | **Informed by:** [Information Architecture](DOC-040), [Frontend Research](RES-004)
+**Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-004)
 
 How OrqaStudio™'s layout adapts to different window sizes. OrqaStudio is a desktop application — there is no mobile viewport — but windows can be resized from ultrawide monitors down to fairly small sizes.
 

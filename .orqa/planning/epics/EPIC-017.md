@@ -4,27 +4,23 @@ title: Enforcement & Continuity
 description: Add real-time violation detection during streaming, hook-based rule injection, compliance dashboard, and session handoff continuity.
 status: done
 priority: P2
-created: "2026-03-07"
-updated: "2026-03-12"
+created: 2026-03-07
+updated: 2026-03-12
 milestone: MS-002
 pillars:
   - PILLAR-001
   - PILLAR-002
 depends-on: []
 blocks: []
-docs-required:
-  - DOC-002
-  - DOC-014
-docs-produced:
-  - DOC-002
+docs-required: []
+docs-produced: []
 scoring:
   pillar: 5
   impact: 3
   dependency: 2
   effort: 4
   score: 6.8
----
-**Note:** Two deliverables from this epic were deferred:
+---**Note:** Two deliverables from this epic were deferred:
 - **Visual compliance dashboard** -- not delivered; should be tracked in a future epic when dashboard UI work is prioritised.
 - **Session handoff and continuity** -- not delivered; depends on SDK session resume capabilities. Should be tracked in a separate epic.
 

@@ -212,7 +212,7 @@ An idea MUST NOT be promoted to an epic until:
 1. Create `EPIC-NNN.md` in `.orqa/planning/epics/` with:
    - `milestone` set to the appropriate milestone
    - `status: draft`
-   - `priority` assessed per project criteria (see [DOC-062](DOC-062))
+   - `priority` assessed per project criteria (see DOC-062)
    - `docs-required` populated based on what documentation needs to exist
    - `docs-produced` populated based on what documentation the work will create
 2. Update the source `IDEA-NNN.md`:
@@ -226,7 +226,7 @@ An idea MUST NOT be promoted to an epic until:
 
 ### How Priority Is Determined
 
-Priority is an inference-based judgement, not a formula. Each project defines its priority criteria in `.orqa/documentation/product/priority-assessment.md` ([DOC-062](DOC-062)). Agents read the criteria and assign a priority band (P1/P2/P3) based on how the epic serves the active milestone and whether it blocks other work.
+Priority is an inference-based judgement, not a formula. Each project defines its priority criteria in `.orqa/documentation/product/priority-assessment.md` (DOC-062). Agents read the criteria and assign a priority band (P1/P2/P3) based on how the epic serves the active milestone and whether it blocks other work.
 
 The `scoring` field on epics is optional rationale — freeform dimensions that capture the agent's reasoning. Projects choose their own dimension names. What matters is that the `priority` band is defensible and the rationale is readable.
 

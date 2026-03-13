@@ -175,7 +175,7 @@ Tracing subscriber setup. Configures `tracing-subscriber` with stdout and option
 
 ### `commands/`
 
-14 thin command modules, approximately 79 total commands. Each function is `#[tauri::command]`, receives `State<AppState>` and parameters, and calls the appropriate repo or domain service. No business logic in the handlers. See [IPC Commands](DOC-005) for the full command catalog with signatures.
+14 thin command modules, approximately 79 total commands. Each function is `#[tauri::command]`, receives `State<AppState>` and parameters, and calls the appropriate repo or domain service. No business logic in the handlers. See IPC Commands for the full command catalog with signatures.
 
 ### `sidecar/`
 
@@ -337,7 +337,7 @@ Arrows point from the dependent module to the module it depends on.
 
 ## Related Documents
 
-- [IPC Commands](DOC-005) — full command catalog with signatures
+- IPC Commands — full command catalog with signatures
 - [AD-001](AD-001) — thick backend principle
 - [AD-003](AD-003) — error propagation via Result + thiserror
 - [AD-014](AD-014) — repository pattern

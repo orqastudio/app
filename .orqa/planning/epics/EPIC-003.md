@@ -4,25 +4,21 @@ title: Context Injection on Failed Resume
 description: Add fallback context injection when SDK session resume fails due to app restart or cleared storage.
 status: draft
 priority: P1
-created: "2026-03-07"
-updated: "2026-03-07"
+created: 2026-03-07
+updated: 2026-03-07
 milestone: MS-001
 pillars:
   - PILLAR-001
 research-refs: []
-docs-required:
-  - DOC-014
-  - DOC-013
-docs-produced:
-  - DOC-014
+docs-required: []
+docs-produced: []
 scoring:
   pillar: 4
   impact: 5
   dependency: 3
   effort: 3
   score: 11
----
-## Why P1
+---## Why P1
 
 Can't restart the app during development without losing conversation context. Every Rust change requires a restart, so this directly blocks dogfooding workflow.
 

@@ -10,7 +10,7 @@ updated: "2026-03-12"
 
 The orchestrator is the main AI session coordinating the agentic development team. It reads user requests, manages the task lifecycle, delegates implementation to specialized agents, and gates completion on review. This page is the source of truth for orchestrator behaviour — `AGENTS.md` and project-level AI instruction files reference this page rather than duplicating its content.
 
-> **Temporary process.** This CLI-based orchestration model serves as scaffolding until OrqaStudio™'s MVP can manage its own development. See [Product Governance — Bootstrap Phase](DOC-039) for transition criteria.
+> **Temporary process.** This CLI-based orchestration model serves as scaffolding until OrqaStudio™'s MVP can manage its own development. See Product Governance — Bootstrap Phase for transition criteria.
 
 ---
 
@@ -112,12 +112,12 @@ All agents are universal roles (see [AD-029](AD-029)). Agent definitions declare
 Every task follows this lifecycle without exception:
 
 1. **Session start** -- Read task artifacts in `.orqa/planning/tasks/`, check `tmp/session-state.md`, check `git stash list`, check `git status --short`
-2. **Definition of Ready check** -- Verify all DoR items before delegating ([Definition of Ready](DOC-028))
+2. **Definition of Ready check** -- Verify all DoR items before delegating (Definition of Ready)
 3. **Worktree creation** -- `git worktree add ../orqa-<task> -b <agent>/<task>`
 4. **Subagent dispatch** -- Task tool with `subagent_type` to the correct agent
 5. **Subagent implements** -- Skills loaded, code search research, implementation, quality checks, commit
 6. **Review gate** -- `code-reviewer` then `qa-tester` then `ux-reviewer` (if UI-facing)
-7. **Definition of Done verification** -- All DoD items satisfied ([Definition of Done](DOC-027))
+7. **Definition of Done verification** -- All DoD items satisfied (Definition of Done)
 8. **Merge** -- `cd ../orqa && git merge <branch>`
 9. **Cleanup** -- Kill background processes, `git branch -d <branch>`, `git worktree remove ../orqa-<task>`
 10. **Post-merge verification** -- `cargo build && npm run build`
@@ -172,8 +172,8 @@ Triggered by user saying "going to bed", "overnight", or "leaving".
 
 ## Related Documents
 
-- [Team Overview](DOC-034) -- Agent directory, skill directory, review gate overview
-- [Workflow](DOC-035) -- Full development workflow including merge conflicts and commit conventions
-- [Definition of Ready](DOC-028) -- Gate checklist before implementation starts
-- [Definition of Done](DOC-027) -- Gate checklist before task is marked complete
-- [Content Governance](DOC-026) -- Content layer ownership model
+- Team Overview -- Agent directory, skill directory, review gate overview
+- Workflow -- Full development workflow including merge conflicts and commit conventions
+- Definition of Ready -- Gate checklist before implementation starts
+- Definition of Done -- Gate checklist before task is marked complete
+- Content Governance -- Content layer ownership model

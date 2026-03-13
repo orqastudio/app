@@ -6,7 +6,7 @@ created: "2026-03-02"
 updated: "2026-03-04"
 ---
 
-**Date:** 2026-03-02 | **Informed by:** [Information Architecture](DOC-040), [Frontend Research](RES-004), [MVP Spec F-007, F-008](DOC-042)
+**Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-004), MVP Spec F-007, F-008
 
 The artifact browser surfaces governance artifacts as a navigation list in the Nav Sub-Panel and as a rendered/editable view in the Explorer Panel. Artifact categories are defined by the `artifacts` array in `.orqa/project.json` — the default set includes Docs, Agents, Rules, Skills, and Hooks, but this is configurable per project. The artifact list and viewer are split across two zones so the conversation remains visible in the Chat Panel — the core workflow is collaborating with the AI *on* artifacts. Artifacts are Markdown files with YAML frontmatter stored under `.orqa/`.
 

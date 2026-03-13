@@ -4,24 +4,21 @@ title: Frontend Test Suite
 description: Establish a frontend test suite using Vitest for Svelte stores and components, covering the gap left by zero frontend tests.
 status: draft
 priority: P2
-created: "2026-03-07"
-updated: "2026-03-07"
+created: 2026-03-07
+updated: 2026-03-07
 milestone: MS-001
 pillars:
   - PILLAR-001
 research-refs: []
-docs-required:
-  - DOC-021
-docs-produced:
-  - DOC-021
+docs-required: []
+docs-produced: []
 scoring:
   pillar: 3
   impact: 3
   dependency: 1
   effort: 3
   score: 5
----
-## Why P2
+---## Why P2
 
 465 Rust tests exist but zero frontend tests. Changes to stores break components silently. This is a learning gap — without tests, regression patterns can't be detected.
 

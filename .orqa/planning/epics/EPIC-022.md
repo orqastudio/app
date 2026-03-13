@@ -4,8 +4,8 @@ title: Implementation Breakdown & Work Management
 description: Build epic-to-task hierarchy, plan-to-backlog breakdown, unified backlog view, status workflow, and progress dashboard.
 status: draft
 priority: P2
-created: "2026-03-07"
-updated: "2026-03-07"
+created: 2026-03-07
+updated: 2026-03-07
 milestone: MS-002
 pillars:
   - PILLAR-001
@@ -13,8 +13,7 @@ depends-on:
   - EPIC-005
   - EPIC-016
 blocks: []
-docs-required:
-  - DOC-036
+docs-required: []
 docs-produced: []
 scoring:
   pillar: 4
@@ -22,8 +21,7 @@ scoring:
   dependency: 1
   effort: 4
   score: 5.8
----
-## Tasks
+---## Tasks
 
 - [ ] Epic -> Task hierarchy with interactive views
 - [ ] Plan-to-backlog breakdown with Claude assistance

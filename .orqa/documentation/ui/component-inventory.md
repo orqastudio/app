@@ -6,7 +6,7 @@ created: "2026-03-02"
 updated: "2026-03-04"
 ---
 
-**Date:** 2026-03-02 | **Informed by:** [Frontend Research](RES-004), [Design System](DOC-049), [Information Architecture](DOC-040), [Wireframes](/wireframes/)
+**Date:** 2026-03-02 | **Informed by:** [Frontend Research](RES-004), Design System, Information Architecture, [Wireframes](/wireframes/)
 
 Complete inventory of UI components needed for Phase 1. Split into shadcn-svelte library components (use as-is), custom application components (must be built), and custom markdown rendering blocks.
 

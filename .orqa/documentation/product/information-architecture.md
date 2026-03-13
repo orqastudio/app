@@ -477,9 +477,9 @@ This design means the AI provider status shown in the status bar is meaningful c
 
 ## Related Documents
 
-- [User Journeys](DOC-041) — Workflows that this architecture supports
-- [User Personas](DOC-043) — Who navigates this UI
-- [MVP Feature Specification](DOC-042) — What's included in Phase 1
+- User Journeys — Workflows that this architecture supports
+- User Personas — Who navigates this UI
+- MVP Feature Specification — What's included in Phase 1
 - [AD-013](AD-013): Frontend library selections — shadcn-svelte, PaneForge, CodeMirror 6
 - [AD-019](AD-019): Three-zone + Nav Sub-Panel layout — layout architecture decision
 - [AD-014](AD-014): Persistence architecture — SQLite for session/artifact storage

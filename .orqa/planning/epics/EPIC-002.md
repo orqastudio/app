@@ -4,25 +4,21 @@ title: Settings UI for Thinking & Custom Prompt
 description: Add UI controls for show_thinking toggle and custom system prompt fields that already exist in the backend.
 status: draft
 priority: P1
-created: "2026-03-07"
-updated: "2026-03-07"
+created: 2026-03-07
+updated: 2026-03-07
 milestone: MS-001
 pillars:
   - PILLAR-001
 research-refs: []
-docs-required:
-  - DOC-061
-  - DOC-009
-docs-produced:
-  - DOC-061
+docs-required: []
+docs-produced: []
 scoring:
   pillar: 4
   impact: 4
   dependency: 2
   effort: 1
   score: 26
----
-## Why P1
+---## Why P1
 
 Can't control reasoning behaviour without these toggles. The custom system prompt is how dogfooding context reaches the AI.
 

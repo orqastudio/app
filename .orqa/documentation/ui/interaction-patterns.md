@@ -6,7 +6,7 @@ created: "2026-03-02"
 updated: "2026-03-04"
 ---
 
-**Date:** 2026-03-02 | **Informed by:** [Information Architecture](DOC-040), [Frontend Research](RES-004), [AI Integration Research](RES-002), [Design System](DOC-049)
+**Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-004), [AI Integration Research](RES-002), Design System
 
 How OrqaStudio™'s UI responds to user actions. Covers streaming display, tool call approval, inline editing, panel behavior, and keyboard shortcuts.
 

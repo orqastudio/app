@@ -4,26 +4,22 @@ title: Sub-Agent Support
 description: Build agent registry, spawn_agent tool, explore mode, output aggregation, and turn limits for sub-agent delegation.
 status: draft
 priority: P2
-created: "2026-03-07"
-updated: "2026-03-07"
+created: 2026-03-07
+updated: 2026-03-07
 milestone: MS-002
 pillars:
   - PILLAR-001
 depends-on: []
 blocks: []
-docs-required:
-  - DOC-015
-docs-produced:
-  - DOC-015
-  - DOC-005
+docs-required: []
+docs-produced: []
 scoring:
   pillar: 3
   impact: 4
   dependency: 2
   effort: 4
   score: 5.8
----
-## Tasks
+---## Tasks
 
 - [ ] Agent registry — reads `.orqa/agents/*.md`, indexes capabilities
 - [ ] `spawn_agent` tool — spawns sub-agent with role and instructions

@@ -4,18 +4,15 @@ title: Project Type System
 description: Add a project type system so OrqaStudio adapts its agents, tools, and scanning to the domain (software, research, product, personal).
 status: draft
 priority: P1
-created: "2026-03-07"
-updated: "2026-03-07"
+created: 2026-03-07
+updated: 2026-03-07
 milestone: MS-002
 pillars:
   - PILLAR-001
 depends-on: []
 blocks: []
-docs-required:
-  - DOC-046
-  - DOC-009
+docs-required: []
 docs-produced:
-  - DOC-009
   - AD-029
   - AD-030
 scoring:
@@ -24,8 +21,7 @@ scoring:
   dependency: 3
   effort: 3
   score: 10.3
----
-## Why P1
+---## Why P1
 
 Without this, non-software users encounter software-specific features that don't apply to them. Domain-agnostic thinking is a core principle.
 

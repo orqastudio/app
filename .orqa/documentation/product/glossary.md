@@ -86,7 +86,7 @@ The complete set of artifacts (agents, rules, skills, hooks, hookify files, docu
 
 ### Two-Pillar Test
 
-The feature acceptance gate: every feature must serve at least one of (1) Clarity Through Structure or (2) Learning Through Reflection. Features that serve neither are rejected. When pillars conflict, Pillar 1 takes priority — you cannot improve a process that isn't visible and structured. See [Product Governance](DOC-039).
+The feature acceptance gate: every feature must serve at least one of (1) Clarity Through Structure or (2) Learning Through Reflection. Features that serve neither are rejected. When pillars conflict, Pillar 1 takes priority — you cannot improve a process that isn't visible and structured. See Product Governance.
 
 ### Clarity Through Structure (Pillar 1)
 
@@ -290,7 +290,7 @@ The coordinating intelligence in the agentic team. In the bootstrap phase, this 
 
 ## Related Documents
 
-- [Product Vision](DOC-046) — Problem statement, solution, pillars
-- [Product Governance](DOC-039) — Two-Pillar Test, foundational principles
-- [Architecture Decisions](DOC-001) — Formal technical decisions
-- [Orchestration](DOC-030) — Current (bootstrap) process model
+- Product Vision — Problem statement, solution, pillars
+- Product Governance — Two-Pillar Test, foundational principles
+- Architecture Decisions — Formal technical decisions
+- Orchestration — Current (bootstrap) process model

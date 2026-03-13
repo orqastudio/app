@@ -6,7 +6,7 @@ created: "2026-03-02"
 updated: "2026-03-04"
 ---
 
-**Date:** 2026-03-02 | **Informed by:** [Information Architecture](DOC-040), [Frontend Research](RES-004)
+**Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-004)
 
 Dashboard views appear in the Explorer Panel and provide operational visibility into scanning, metrics, and the learning loop. These are Phase 3-5 features designed early to validate the information architecture and panel system.
 

@@ -136,7 +136,7 @@ node tools/verify-links.mjs --json
 
 ```
 === ERRORS ===
-  broken-link: Linked reference [RULE-099](RULE-099) points to non-existent artifact
+  broken-link: Linked reference RULE-099 points to non-existent artifact
   broken-frontmatter-ref: Frontmatter field 'depends-on' references non-existent artifact TASK-999
 
 === WARNINGS ===

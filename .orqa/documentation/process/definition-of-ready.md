@@ -100,9 +100,9 @@ A plan that omits any of these is not approved, and the task does not meet DoR.
 
 ## Related Documents
 
-- [Artifact Workflow](DOC-025) -- How artifacts flow through the development process
-- [Artifact Framework](DOC-036) -- Artifact schemas and design principles
-- [Definition of Done](DOC-027) -- The gate checklist before a task is marked complete
-- [Orchestration](DOC-030) -- Full orchestrator responsibilities and delegation guide
-- [Workflow](DOC-035) -- Task lifecycle protocol including the before-starting checklist
+- Artifact Workflow -- How artifacts flow through the development process
+- Artifact Framework -- Artifact schemas and design principles
+- Definition of Done -- The gate checklist before a task is marked complete
+- Orchestration -- Full orchestrator responsibilities and delegation guide
+- Workflow -- Task lifecycle protocol including the before-starting checklist
 - [Implementation Lessons](lessons) -- Known patterns to check before starting

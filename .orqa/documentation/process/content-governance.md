@@ -239,9 +239,9 @@ This loop ensures the governance system stays consistent as documentation evolve
 
 ## Related Documents
 
-- [Team Overview](DOC-034) -- Agent directory and skill directory
-- [Rules Reference](DOC-032) -- All enforcement rules and their purposes
-- [Skills Log](DOC-033) -- Full skill inventory with provenance
+- Team Overview -- Agent directory and skill directory
+- Rules Reference -- All enforcement rules and their purposes
+- Skills Log -- Full skill inventory with provenance
 - `.orqa/documentation/development/coding-standards.md` -- The standards all agents must follow
 - `.orqa/governance/decisions/` -- Individual AD-NNN architecture decision artifacts
 - `.orqa/governance/rules/documentation-first.md` — Documentation as source of truth for implementation

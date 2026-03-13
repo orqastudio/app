@@ -43,7 +43,7 @@ All cross-references between artifacts use **artifact IDs as markdown links**. T
 ```markdown
 See [RULE-004](RULE-004) for artifact lifecycle rules.
 This was decided in [AD-032](AD-032).
-Refer to the [Streaming Pipeline](DOC-014) for the full architecture.
+Refer to the Streaming Pipeline for the full architecture.
 The [Frontend Research](RES-004) covers component library selection.
 ```
 
@@ -92,7 +92,7 @@ See RULE-004 for details.
 
 <!-- CORRECT -->
 See [RULE-004](RULE-004) for details.
-[Product Governance](DOC-039)
+Product Governance
 [Frontend Research](RES-004)
 ```
 
@@ -160,9 +160,9 @@ Most documentation pages end with a "Related Documents" section. Use artifact ID
 ```markdown
 ## Related Documents
 
-- [IPC Command Catalog](DOC-005) — Full parameter and return type documentation
-- [Architecture Decisions](DOC-001) — [AD-002](AD-002) (IPC boundary), [AD-003](AD-003) (errors)
-- [MVP Specification](DOC-042) — Features F-001 through F-013
+- IPC Command Catalog — Full parameter and return type documentation
+- Architecture Decisions — [AD-002](AD-002) (IPC boundary), [AD-003](AD-003) (errors)
+- MVP Specification — Features F-001 through F-013
 ```
 
 ### Inline References
@@ -172,7 +172,7 @@ When referencing artifacts inline, always use the link format:
 ```markdown
 Per [RULE-004](RULE-004), epics must have a milestone reference.
 This was investigated in [RES-004](RES-004) and decided in [AD-013](AD-013).
-The [Coding Standards](DOC-021) require 80%+ test coverage.
+The Coding Standards require 80%+ test coverage.
 ```
 
 ## Frontmatter Conventions

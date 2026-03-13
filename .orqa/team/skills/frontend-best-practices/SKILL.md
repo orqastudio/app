@@ -40,7 +40,7 @@ Every component, store, and utility follows OrqaStudio's composability philosoph
 
 Load the full `composability` skill for the complete philosophy and anti-patterns.
 
-### Coding Standards ([DOC-021](DOC-021))
+### Coding Standards (DOC-021)
 
 Read `.orqa/documentation/development/coding-standards.md` before writing any code. Key frontend standards:
 

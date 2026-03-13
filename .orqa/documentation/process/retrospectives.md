@@ -10,7 +10,7 @@ updated: "2026-03-08"
 
 A living record of process-level lessons: how the agentic development system was shaped by real failures and deliberate improvements. Each entry documents a problem, its root cause, the change made, and whether the change worked.
 
-For implementation-specific lessons (coding mistakes, architectural gotchas), see [Implementation Lessons](DOC-006).
+For implementation-specific lessons (coding mistakes, architectural gotchas), see Implementation Lessons.
 
 New entries are added by the `agent-maintainer` when process changes are made.
 
@@ -117,8 +117,8 @@ The following RETRO entries are imported from the Alvarez project. They represen
 
 ## Related Documents
 
-- [Implementation Lessons](DOC-006) -- Implementation-level patterns (coding mistakes, architectural gotchas)
-- [Rules Reference](DOC-032) -- Rules created as a result of retrospective actions
-- [Content Governance](DOC-026) -- Framework established in response to Alvarez lessons
-- [Definition of Done](DOC-027) -- Review gate informed by Alvarez experience
-- [Metrics](DOC-029) -- Quantitative tracking of process health
+- Implementation Lessons -- Implementation-level patterns (coding mistakes, architectural gotchas)
+- Rules Reference -- Rules created as a result of retrospective actions
+- Content Governance -- Framework established in response to Alvarez lessons
+- Definition of Done -- Review gate informed by Alvarez experience
+- Metrics -- Quantitative tracking of process health

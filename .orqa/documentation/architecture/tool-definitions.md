@@ -308,8 +308,8 @@ For write operations, where the file may not yet exist, `resolve_write_path()` c
 
 ## Related Documents
 
-- [Architecture Decisions](DOC-001) — [AD-010](AD-010) (tool execution model), [AD-011](AD-011) (security model)
-- [Streaming Pipeline](DOC-014) — How tool events flow through the NDJSON protocol
+- Architecture Decisions — [AD-010](AD-010) (tool execution model), [AD-011](AD-011) (security model)
+- Streaming Pipeline — How tool events flow through the NDJSON protocol
 
 ---
 

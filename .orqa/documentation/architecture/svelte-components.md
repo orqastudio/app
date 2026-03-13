@@ -8,7 +8,7 @@ created: "2026-03-02"
 updated: "2026-03-10"
 ---
 
-**References:** [Frontend Research](RES-004), [Information Architecture](DOC-040)
+**References:** [Frontend Research](RES-004), Information Architecture
 
 Describes the Svelte component directory structure, store architecture, IPC wrapper pattern, and data flow for the OrqaStudio frontend.
 
@@ -322,6 +322,6 @@ File-system changes, sidecar lifecycle, and scan-complete notifications use Taur
 
 ## Related Documents
 
-- [Information Architecture](DOC-040) — Layout model and navigation
-- [Architecture Decisions](DOC-001) — [AD-004](AD-004) (runes), [AD-006](AD-006) (purity), [AD-009](AD-009) (streaming)
-- [SQLite Schema](DOC-013) — Database tables backing the stores
+- Information Architecture — Layout model and navigation
+- Architecture Decisions — [AD-004](AD-004) (runes), [AD-006](AD-006) (purity), [AD-009](AD-009) (streaming)
+- SQLite Schema — Database tables backing the stores

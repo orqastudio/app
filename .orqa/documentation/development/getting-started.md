@@ -151,11 +151,11 @@ npm install @tauri-apps/plugin-autostart
 npm install tauri-plugin-keyring-api
 ```
 
-Each plugin must also be registered in the Tauri app builder (`backend/src-tauri/src/main.rs`) and have its permissions declared in `backend/src-tauri/capabilities/default.json`. See [AD-012](DOC-001) and [Tauri v2 Research](RES-007) for configuration details.
+Each plugin must also be registered in the Tauri app builder (`backend/src-tauri/src/main.rs`) and have its permissions declared in `backend/src-tauri/capabilities/default.json`. See AD-012 and [Tauri v2 Research](RES-007) for configuration details.
 
 ### Frontend Dependencies [AD-013](AD-013)
 
-OrqaStudio's frontend depends on these libraries, selected in [AD-013](DOC-001):
+OrqaStudio's frontend depends on these libraries, selected in AD-013:
 
 | Library | Purpose |
 |---------|---------|
@@ -269,7 +269,7 @@ orqa-studio/
 ## Related Documents
 
 - [Development Commands](commands.md) — All Makefile targets with descriptions and underlying commands
-- [Coding Standards](DOC-021) — Code quality rules and patterns
-- [Agentic Workflow](DOC-035) — Task lifecycle and agent coordination
+- Coding Standards — Code quality rules and patterns
+- Agentic Workflow — Task lifecycle and agent coordination
 - [Tauri v2 Research](RES-007) — Platform capabilities and plugin selections
 - [Frontend Research](RES-004) — Library selections and patterns

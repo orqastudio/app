@@ -250,9 +250,9 @@ Context overflow errors are intercepted in `translate_response()` and given a us
 
 ## Related Documents
 
-- [Architecture Decisions](DOC-001) — [AD-007](AD-007) (sidecar architecture), [AD-009](AD-009) (Channel<T> for streaming)
-- [Tool Definitions](DOC-017) — Tool schemas, security model, and in-process execution
-- [Streaming Pipeline](DOC-014) — this document
+- Architecture Decisions — [AD-007](AD-007) (sidecar architecture), [AD-009](AD-009) (Channel<T> for streaming)
+- Tool Definitions — Tool schemas, security model, and in-process execution
+- Streaming Pipeline — this document
 
 ---
 

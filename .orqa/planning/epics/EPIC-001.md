@@ -4,25 +4,22 @@ title: AI Transparency Wiring
 description: Wire the emission logic that connects existing AI transparency types, components, and store handling into a working end-to-end pipeline.
 status: done
 priority: P1
-created: "2026-03-07"
-updated: "2026-03-07"
+created: 2026-03-07
+updated: 2026-03-07
 milestone: MS-001
 pillars:
   - PILLAR-001
 research-refs:
   - RES-026
-docs-required:
-  - DOC-014
-docs-produced:
-  - DOC-014
+docs-required: []
+docs-produced: []
 scoring:
   pillar: 5
   impact: 5
   dependency: 3
   effort: 2
   score: 17.5
----
-## Why P1
+---## Why P1
 
 Can't debug reasoning without seeing what's sent to the model. This is a reasoning platform — transparency into what the AI receives and thinks is foundational.
 

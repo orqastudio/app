@@ -100,7 +100,7 @@ The `agent-maintainer` updates this table during retrospective entries:
 
 ## Related Documents
 
-- [Process Retrospectives](DOC-031) -- Where metrics are updated
-- [Implementation Lessons](DOC-006) -- Source data for lesson promotion rate
-- [Definition of Ready](DOC-028) -- DoR compliance source
-- [Definition of Done](DOC-027) -- DoD compliance source
+- Process Retrospectives -- Where metrics are updated
+- Implementation Lessons -- Source data for lesson promotion rate
+- Definition of Ready -- DoR compliance source
+- Definition of Done -- DoD compliance source

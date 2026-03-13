@@ -4,24 +4,21 @@ title: Code Quality Audit
 description: Audit the codebase against coding standards, fix violations, and feed findings into the PILLAR-002 loop as lessons.
 status: draft
 priority: P2
-created: "2026-03-07"
-updated: "2026-03-07"
+created: 2026-03-07
+updated: 2026-03-07
 milestone: MS-001
 pillars:
   - PILLAR-001
 research-refs: []
-docs-required:
-  - DOC-021
-docs-produced:
-  - DOC-021
+docs-required: []
+docs-produced: []
 scoring:
   pillar: 4
   impact: 3
   dependency: 1
   effort: 3
   score: 6.3
----
-## Why P2
+---## Why P2
 
 Can't credibly enforce quality on managed projects if our own code has violations. The audit is also a learning loop input — findings feed into lessons and coding standards.
 

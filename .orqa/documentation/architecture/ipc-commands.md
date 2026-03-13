@@ -6,7 +6,7 @@ created: "2026-03-02"
 updated: "2026-03-10"
 ---
 
-**References:** [Tauri v2 Research](RES-007), [AD-002](AD-002), [AD-009](AD-009), [Rust Module Architecture](DOC-010)
+**References:** [Tauri v2 Research](RES-007), [AD-002](AD-002), [AD-009](AD-009), Rust Module Architecture
 
 Complete catalog of `#[tauri::command]` functions. Every frontend-to-backend call crosses the IPC boundary through one of these commands. Streaming data uses `Channel<T>` [AD-009](AD-009) rather than `invoke()`.
 
@@ -215,7 +215,7 @@ Tool calls that require approval park on a sync channel. The frontend calls `str
 
 ## Related Documents
 
-- [Rust Module Architecture](DOC-010) — module structure, AppState, dependency graph
+- Rust Module Architecture — module structure, AppState, dependency graph
 - [AD-002](AD-002) — IPC boundary principle
 - [AD-009](AD-009) — streaming via Channel\<T\>
 - [AD-003](AD-003) — error propagation via Result + thiserror

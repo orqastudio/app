@@ -4,17 +4,15 @@ title: MCP Host — External Servers
 description: Implement MCP host with JSON-RPC protocol handler, stdio and SSE transports, tool aggregation, and settings UI for external servers.
 status: draft
 priority: P2
-created: "2026-03-07"
-updated: "2026-03-07"
+created: 2026-03-07
+updated: 2026-03-07
 milestone: MS-002
 pillars:
   - PILLAR-001
 depends-on: []
 blocks: []
-docs-required:
-  - DOC-007
+docs-required: []
 docs-produced:
-  - DOC-007
   - AD-010
 scoring:
   pillar: 3
@@ -22,8 +20,7 @@ scoring:
   dependency: 2
   effort: 5
   score: 4.6
----
-## Tasks
+---## Tasks
 
 - [ ] MCP host module — JSON-RPC protocol handler, connection state machine
 - [ ] stdio transport — spawn external MCP servers, process lifecycle management

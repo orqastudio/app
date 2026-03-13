@@ -4,8 +4,8 @@ title: Artifact System Migration
 description: "Make the artifact system self-sustaining: correct default creation, historical content linkage, and framework coverage for all 8 types."
 status: done
 priority: P1
-created: "2026-03-08"
-updated: "2026-03-08"
+created: 2026-03-08
+updated: 2026-03-08
 milestone: MS-001
 pillars:
   - PILLAR-001
@@ -16,8 +16,6 @@ docs-required:
   - RES-028
   - RES-025
 docs-produced:
-  - DOC-036
-  - DOC-025
   - AD-021
   - AD-022
   - AD-023
@@ -28,8 +26,7 @@ scoring:
   scope: 3
   dependency-risk: 2
   score: 4.1
----
-## Workstreams
+---## Workstreams
 
 ### WS-1: Framework & Rules (DONE)
 - [x] Add Decision (AD-NNN) type to `artifact-framework.md`

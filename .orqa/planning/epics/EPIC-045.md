@@ -4,8 +4,8 @@ title: Portable Governance Framework
 description: Restructure agents from 16 software-specific roles to 7 universal roles, extract domain knowledge into skills, create project setup skills, update product documentation to reflect the PILLAR-001 engine identity and governance hub capability. Implements AD-029 and AD-030.
 status: done
 priority: P1
-created: "2026-03-09"
-updated: "2026-03-09"
+created: 2026-03-09
+updated: 2026-03-09
 milestone: MS-002
 pillars:
   - PILLAR-001
@@ -14,15 +14,7 @@ research-refs:
 docs-required:
   - AD-029
   - AD-030
-  - DOC-046
-docs-produced:
-  - DOC-039
-  - DOC-038
-  - AGENT-005
-  - AGENT-004
-  - AGENT-002
-  - AGENT-006
-  - AGENT-007
+docs-produced: []
 scoring:
   user-value: 5
   pillar-alignment: 5
@@ -30,8 +22,7 @@ scoring:
   effort: 4
   risk: 3
   score: 18
----
-## Context
+---## Context
 
 [AD-029](AD-029) established that agents should represent universal roles (Orchestrator, Researcher,
 Planner, Implementer, Reviewer, Writer, Designer) that work across any project type.

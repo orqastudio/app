@@ -4,8 +4,8 @@ title: Native Search Engine
 description: "Implement native code search engine using DuckDB for storage, ONNX Runtime for embeddings, and DirectML for hardware acceleration. Three search modes: regex, semantic, and code_research."
 status: done
 priority: P1
-created: "2026-03-04"
-updated: "2026-03-09"
+created: 2026-03-04
+updated: 2026-03-09
 milestone: MS-001
 pillars:
   - PILLAR-001
@@ -13,8 +13,7 @@ research-refs:
   - RES-016
   - RES-006
 docs-required: []
-docs-produced:
-  - DOC-011
+docs-produced: []
 scoring:
   user-value: 5
   pillar-alignment: 5
@@ -22,8 +21,7 @@ scoring:
   effort: 5
   risk: 3
   score: 22
----
-## Implementation Design
+---## Implementation Design
 
 ### Architecture
 - **Chunker** (`backend/src-tauri/src/search/chunker.rs`) — Splits code at semantic boundaries (functions, classes, imports)

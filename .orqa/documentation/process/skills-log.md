@@ -87,5 +87,5 @@ For full lifecycle management guidance, load the `skills-maintenance` skill.
 
 ## Related Documents
 
-- [Team Overview](DOC-034) -- Which agents load which skills
-- [Content Governance](DOC-026) -- Skills vs docs vs agent instructions vs rules
+- Team Overview -- Which agents load which skills
+- Content Governance -- Skills vs docs vs agent instructions vs rules

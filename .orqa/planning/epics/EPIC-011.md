@@ -4,26 +4,22 @@ title: Chat-Guided Onboarding
 description: Make the chat conversation itself guide new users through setup, with project state awareness and entry mode detection.
 status: draft
 priority: P1
-created: "2026-03-07"
-updated: "2026-03-07"
+created: 2026-03-07
+updated: 2026-03-07
 milestone: MS-002
 pillars:
   - PILLAR-001
 depends-on: []
 blocks: []
-docs-required:
-  - DOC-043
-  - DOC-041
-docs-produced:
-  - DOC-009
+docs-required: []
+docs-produced: []
 scoring:
   pillar: 4
   impact: 5
   dependency: 3
   effort: 3
   score: 10.3
----
-## Why P1
+---## Why P1
 
 The conversation IS the onboarding. Without this, new users don't know what to do.
 
