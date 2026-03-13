@@ -4,7 +4,7 @@ title: "Epic titles should describe outcomes, not process"
 description: "Epic titles like \"UAT Round 1\" or \"Phase 3 Implementation\" describe process activities. Titles should describe what is achieved, not how the work is organised.\n"
 status: "promoted"
 created: "2026-03-07"
-updated: "2026-03-07"
+updated: "2026-03-13"
 maturity: "understanding"
 recurrence: 1
 relationships:
@@ -14,6 +14,9 @@ relationships:
   - target: "RULE-004"
     type: "grounded-by"
     rationale: "Lesson promoted to RULE-004"
+  - target: "RULE-004"
+    type: "observed-by"
+    rationale: "RULE-004 codified the outcome-oriented naming requirement first observed in this lesson"
 ---
 ## What Happened
 

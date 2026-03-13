@@ -20,6 +20,12 @@ relationships:
   - type: informs
     target: RULE-013
     rationale: Pre-commit enforcement is the mechanism for commit-time integrity checks
+  - type: enforces
+    target: AD-036
+    rationale: Bidirectional link verification ensures every cross-link target resolves — directly enforcing cross-linking as a reliable default
+  - type: enforces
+    target: AD-042
+    rationale: verify-pipeline-integrity.mjs enforces that knowledge pipeline stage transitions have proper bidirectional relationship edges
 ---
 
 All artifact cross-references must resolve to existing artifacts. Pipeline relationships must have bidirectional inverses. These constraints are enforced at commit time and can be verified manually.

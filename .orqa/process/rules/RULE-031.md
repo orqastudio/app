@@ -4,7 +4,7 @@ title: Vision Alignment
 description: Every feature must serve at least one active pillar defined in .orqa/process/pillars/.
 status: active
 created: 2026-03-07
-updated: 2026-03-12
+updated: 2026-03-13
 layer: core
 scope:
   - AGENT-001
@@ -48,6 +48,18 @@ relationships:
   - type: informed-by
     target: RULE-022
     rationale: Plans must serve active pillars — the architectural compliance section verifies this
+  - target: IMPL-041
+    type: observes
+    rationale: Rule updated from lesson IMPL-041 (orchestrator should think critically about user suggestions)
+  - type: grounded
+    target: IMPL-041
+    rationale: Lesson IMPL-041 extended the questioning requirement from principle violations to all design suggestions
+  - type: enforces
+    target: AD-027
+    rationale: Requiring every feature to trace to active pillars enforces that the vision remains consistent — foundational principles are immutable without explicit user approval
+  - type: enforces
+    target: AD-031
+    rationale: Reading pillars by artifact ID depends on pillars being first-class artifacts — this rule implements the pillar alignment requirement that AD-031 enables
 ---
 Every feature, command, and UI element must serve the project's guiding principles. These principles are defined as **pillar artifacts** in `.orqa/process/pillars/`. Read the active pillars before implementing any new capability.
 

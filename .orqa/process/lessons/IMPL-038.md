@@ -18,8 +18,11 @@ relationships:
     type: observes
     rationale: "Observation triage section in RULE-004 separates capture from scoping — this lesson reinforces that separation"
   - target: RULE-004
-    type: promoted-to
-    rationale: "Recording observations is mandatory — scope decisions happen at triage per RULE-004 observation triage protocol"
+    type: grounded-by
+    rationale: "Lesson promoted to RULE-004 — observation capture is mandatory, scope decisions at triage"
+  - target: RULE-004
+    type: observed-by
+    rationale: "RULE-004 codified the capture-vs-scope separation (observations always captured, scoped at triage) first observed in this lesson"
 ---
 
 ## Pattern

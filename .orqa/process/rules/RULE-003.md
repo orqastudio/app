@@ -4,7 +4,7 @@ title: Artifact Config Integrity
 description: Every path in project.json artifacts must resolve to an actual directory on disk. Config-driven scanning with no hardcoded paths.
 status: active
 created: 2026-03-07
-updated: 2026-03-07
+updated: 2026-03-13
 layer: core
 scope:
   - AGENT-003
@@ -52,6 +52,24 @@ relationships:
   - type: grounded
     target: IMPL-006
     rationale: Recursive scanning lesson grounds the directory traversal requirement
+  - target: IMPL-018
+    type: observes
+    rationale: Rule updated from lesson IMPL-018 (hardcoded .orqa/ paths in source code should be project-configurable)
+  - type: grounded
+    target: IMPL-018
+    rationale: Lesson IMPL-018 identified that hardcoded path constants violate the config-driven scanning principle
+  - type: enforces
+    target: AD-020
+    rationale: Requiring config paths to match disk structure enforces filesystem-driven doc browsing
+  - type: enforces
+    target: AD-021
+    rationale: Requiring .orqa/ as source of truth and forbidding duplicate files in .claude/ enforces the single source of truth decision
+  - type: enforces
+    target: AD-022
+    rationale: Mandating config-driven scanning with no hardcoded paths directly implements the config-driven artifact scanning decision
+  - type: enforces
+    target: AD-043
+    rationale: Three-level directory structure requires config paths to accurately reflect the process/delivery/documentation layout on disk
 ---
 # Artifact Config Integrity (NON-NEGOTIABLE)
 

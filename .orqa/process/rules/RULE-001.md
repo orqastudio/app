@@ -4,7 +4,7 @@ title: Agent Delegation
 description: The orchestrator coordinates but does not implement. All implementation is delegated to universal roles with appropriate skills.
 status: active
 created: 2026-03-07
-updated: 2026-03-07
+updated: 2026-03-13
 layer: core
 scope:
   - AGENT-003
@@ -39,6 +39,21 @@ relationships:
   - type: informed-by
     target: RULE-040
     rationale: Capability-to-tool mapping makes delegation provider-agnostic
+  - target: IMPL-029
+    type: observes
+    rationale: Rule updated from lesson IMPL-029 (orchestrator creating artifacts directly instead of delegating to Writer)
+  - type: grounded
+    target: IMPL-029
+    rationale: Lesson IMPL-029 confirmed the delegation boundary for batch artifact creation during design sessions
+  - target: IMPL-039
+    type: observes
+    rationale: Rule updated from lesson IMPL-039 (observation creation should be delegated to background Writer agents)
+  - type: grounded
+    target: IMPL-039
+    rationale: Lesson IMPL-039 extended the delegation principle specifically to observation creation workflows
+  - type: enforces
+    target: AD-029
+    rationale: This rule defines the seven universal roles and the delegation protocol that prevents the orchestrator from implementing — directly enforcing the universal-roles architecture decision
 ---
 The orchestrator coordinates. It does NOT implement. Every implementation task is delegated to a universal role with the appropriate skills loaded.
 

@@ -4,7 +4,7 @@ title: Lessons Learned
 description: "Two learning loops: implementation lessons in .orqa/process/lessons/ and process retrospectives. Both are mandatory."
 status: active
 created: 2026-03-07
-updated: 2026-03-10
+updated: 2026-03-13
 layer: core
 scope:
   - AGENT-003
@@ -31,6 +31,12 @@ relationships:
   - type: informed-by
     target: RULE-030
     rationale: UAT rounds must produce lessons alongside bug fixes to exercise the learning loop
+  - target: IMPL-023
+    type: observes
+    rationale: Rule updated from lesson IMPL-023 (observation logging and recurrence tracking should be automated)
+  - type: grounded
+    target: IMPL-023
+    rationale: Lesson IMPL-023 identified the three-tier logging discipline that makes the learning loop self-sustaining
 ---
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.
 

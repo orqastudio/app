@@ -15,8 +15,11 @@ relationships:
     type: observes
     rationale: "Artifact lifecycle defines epic completion gates but has no mechanism for surfacing epics that are ready for the gate check"
   - target: RULE-004
-    type: promoted-to
-    rationale: "Epic readiness surfacing section added to RULE-004"
+    type: grounded-by
+    rationale: "Lesson promoted to RULE-004 — epic readiness surfacing requirement added to artifact lifecycle"
+  - target: RULE-004
+    type: observed-by
+    rationale: "RULE-004 codified the epic completion visibility requirement first observed in this lesson"
 ---
 
 ## Pattern

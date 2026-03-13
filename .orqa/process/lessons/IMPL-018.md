@@ -15,8 +15,14 @@ relationships:
     type: observes
     rationale: "Artifact config integrity says paths come from config, not hardcoded — but source code (paths.rs, project_scanner.rs, artifact_fs.rs) still uses constants"
   - target: TASK-306
-    type: resolved-by
-    rationale: "ProjectPaths struct replaced hardcoded constants"
+    type: enforces
+    rationale: "TASK-306 implemented the ProjectPaths struct that replaced hardcoded constants"
+  - target: RULE-003
+    type: grounded-by
+    rationale: "Lesson promoted to RULE-003 — config-disk alignment and no-hardcoded-paths constraints"
+  - target: RULE-003
+    type: observed-by
+    rationale: "RULE-003 codified the no-hardcoded-paths requirement first observed in this lesson"
 ---
 
 ## Pattern

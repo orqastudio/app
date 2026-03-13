@@ -4,7 +4,7 @@ title: Skill Enforcement
 description: "Three-tier skill loading: agent portable skills, orchestrator-injected project skills, and context-resolving wrappers."
 status: active
 created: 2026-03-07
-updated: 2026-03-12
+updated: 2026-03-13
 layer: core
 scope:
   - AGENT-001
@@ -54,6 +54,9 @@ relationships:
   - type: informed-by
     target: RULE-042
     rationale: Skill injection automates Tier 2 loading based on file paths being edited
+  - type: enforces
+    target: AD-028
+    rationale: This rule directly implements the three-tier skill loading architecture — Tier 1 on agent frontmatter, Tier 2 via orchestrator injection, Tier 3 via wrapper resolution
 ---
 Every agent MUST have a `skills:` list in its YAML frontmatter. Agent tool access is declared via `capabilities:` and resolved per provider context — see [RULE-040](RULE-040). Skills load in three tiers [AD-028](AD-028).
 

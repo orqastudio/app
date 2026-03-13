@@ -4,7 +4,7 @@ title: "Data Persistence Boundaries"
 description: "Defines which data belongs in SQLite, which in file-based artifacts, and which is ephemeral. Prevents misplaced persistence."
 status: "active"
 created: "2026-03-11"
-updated: "2026-03-12"
+updated: "2026-03-13"
 layer: "project"
 scope:
   - "AGENT-002"
@@ -20,6 +20,9 @@ relationships:
   - target: "RULE-010"
     type: "informs"
     rationale: "End-to-end completeness requires all layers to agree on which persistence channel stores each type of data"
+  - type: "enforces"
+    target: "AD-032"
+    rationale: "This rule implements AD-032 — it defines the three channels, explicitly scopes SQLite to conversations, and forbids storing governance data in SQLite"
 ---
 
 Data persistence in OrqaStudio follows three channels, each with clear boundaries.

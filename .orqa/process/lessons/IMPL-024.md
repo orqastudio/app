@@ -15,8 +15,8 @@ relationships:
     type: observes
     rationale: "Honest reporting requires completion reports to include lesson documentation status — this extends that to the task artifact itself, not just conversation output"
   - target: TASK-308
-    type: resolved-by
-    rationale: "Task schema updated with mandatory Lessons body section"
+    type: enforces
+    rationale: "TASK-308 updated the task schema with the mandatory Lessons body section that addresses this lesson"
 ---
 
 ## Pattern

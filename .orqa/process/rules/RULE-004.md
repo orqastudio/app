@@ -63,6 +63,45 @@ relationships:
   - type: grounded
     target: IMPL-014
     rationale: Lesson IMPL-014 identified recurring lifecycle gate violations that shaped the non-negotiable transition rules
+  - target: IMPL-014
+    type: observes
+    rationale: Rule promoted from lesson IMPL-014 (epic titles should describe outcomes not process)
+  - target: IMPL-021
+    type: observes
+    rationale: Rule updated from lesson IMPL-021 (open items discovered during implementation need tracking)
+  - type: grounded
+    target: IMPL-021
+    rationale: Lesson IMPL-021 identified the structure-during-work gap and observation triage protocol
+  - target: IMPL-022
+    type: observes
+    rationale: Rule updated from lesson IMPL-022 (epics with all tasks done should surface for user review)
+  - type: grounded
+    target: IMPL-022
+    rationale: Lesson IMPL-022 identified that epic completion visibility requires automatic surfacing
+  - target: IMPL-025
+    type: observes
+    rationale: Rule updated from lesson IMPL-025 (observations must flow forward via triage task)
+  - type: grounded
+    target: IMPL-025
+    rationale: Lesson IMPL-025 identified that every epic producing observations needs a triage task
+  - target: IMPL-038
+    type: observes
+    rationale: Rule updated from lesson IMPL-038 (observation capture is not scope creep — scope at triage)
+  - type: grounded
+    target: IMPL-038
+    rationale: Lesson IMPL-038 clarified that capture and scope decisions must be separated in the triage protocol
+  - target: IMPL-042
+    type: observes
+    rationale: Rule updated from lesson IMPL-042 (epic body drifts from actual work without standing reconciliation task)
+  - type: grounded
+    target: IMPL-042
+    rationale: Lesson IMPL-042 identified the epic body drift pattern and standing reconciliation task solution
+  - target: IMPL-044
+    type: observes
+    rationale: Rule updated from lesson IMPL-044 (idea promotion should scan for related ideas to bundle)
+  - type: grounded
+    target: IMPL-044
+    rationale: Lesson IMPL-044 identified that idea promotion should include a related-ideas scan step
 ---
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
 

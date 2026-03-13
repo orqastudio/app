@@ -12,8 +12,11 @@ relationships:
     type: observes
     rationale: "RULE-004 governs epic lifecycle but doesn't enforce epic body maintenance during the epic"
   - target: RULE-004
-    type: promoted-to
-    rationale: "Epic reconciliation task requirement added to RULE-004 after observing drift in EPIC-059 (TASK-310 and PILLAR-003 not reflected in epic body)"
+    type: grounded-by
+    rationale: "Lesson promoted to RULE-004 — standing reconciliation task requirement added to epic lifecycle"
+  - target: RULE-004
+    type: observed-by
+    rationale: "RULE-004 codified the epic body reconciliation task requirement first observed in this lesson"
 ---
 
 ## Pattern

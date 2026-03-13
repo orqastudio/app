@@ -15,11 +15,11 @@ relationships:
     type: enforces
     rationale: "Context filtering designed in TASK-307, implementation tracked by IDEA-071"
   - target: TASK-307
-    type: resolved-by
-    rationale: "Plugin context filtering designed as part of sidecar pairing"
+    type: enforces
+    rationale: "TASK-307 designed the plugin context filtering mechanism that addresses this lesson"
   - target: IDEA-071
-    type: deferred-to
-    rationale: "Implementation deferred to IDEA-071"
+    type: informs
+    rationale: "Lesson informs IDEA-071 — implementation of context-scoped plugin activation"
 ---
 
 ## Pattern

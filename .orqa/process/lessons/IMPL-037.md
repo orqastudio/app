@@ -12,8 +12,8 @@ relationships:
     type: observes
     rationale: "RULE-003 requires artifact config integrity — this incident violated it by blanking the artifacts array and other required config fields"
   - target: IDEA-075
-    type: deferred-to
-    rationale: "App bug — out of scope for EPIC-059, tracked as idea"
+    type: informs
+    rationale: "App bug — out of scope for EPIC-059, tracked as idea for future implementation"
 ---
 
 ## Pattern

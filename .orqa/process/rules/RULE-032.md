@@ -4,7 +4,7 @@ title: Artifact Schema Compliance
 description: Every artifact's YAML frontmatter must validate against the JSON Schema defined in its artifact directory's schema.json file.
 status: active
 created: 2026-03-10
-updated: 2026-03-10
+updated: 2026-03-13
 layer: core
 scope:
   - AGENT-003
@@ -29,6 +29,9 @@ relationships:
   - type: informed-by
     target: RULE-044
     rationale: Core graph protection includes protecting the schema.json files themselves
+  - type: enforces
+    target: AD-031
+    rationale: Pillar schema validation ensures pillar artifacts conform to their schema — validating the structured fields that AD-031 establishes (id, title, description, gate)
 ---
 Every artifact in `.orqa/` must have YAML frontmatter that validates against the JSON Schema in its directory's `schema.json` file. Fields not defined in the schema are rejected. Required fields must be present. Enum fields must use valid values.
 

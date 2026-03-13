@@ -12,8 +12,11 @@ relationships:
     type: observes
     rationale: "RULE-001 permits orchestrator to write governance artifacts, but the intent is lightweight coordination — not sustained artifact creation that blocks the conversation"
   - target: RULE-001
-    type: promoted-to
-    rationale: "RULE-001 already enforces delegation — this observation confirms the boundary. Batch artifact creation should be delegated to Writer agents."
+    type: grounded-by
+    rationale: "Lesson promoted to RULE-001 — batch artifact creation should be delegated to Writer agents"
+  - target: RULE-001
+    type: observed-by
+    rationale: "RULE-001 codified the delegation boundary for batch artifact creation first observed in this lesson"
 ---
 
 ## Pattern

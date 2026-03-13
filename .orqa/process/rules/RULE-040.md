@@ -4,7 +4,7 @@ title: Provider-Agnostic Tool Capabilities
 description: Agent definitions declare abstract capabilities. A provider mapping table resolves capabilities to concrete tool names per context.
 status: active
 created: 2026-03-11
-updated: 2026-03-11
+updated: 2026-03-13
 layer: core
 scope:
   - AGENT-001
@@ -36,6 +36,9 @@ relationships:
   - type: informed-by
     target: RULE-037
     rationale: Role-based tool restrictions constrain which resolved capabilities each role may actually use
+  - type: enforces
+    target: AD-025
+    rationale: Provider-agnostic capability declarations generalise the AI provider-agnosticism decision to all agent tooling — no agent binds to provider-specific tool names
 ---
 Agent definitions declare **capabilities** (what they can do), not **tools** (how they
 do it). The mapping from capabilities to provider-specific tool names is defined in this

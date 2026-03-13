@@ -4,7 +4,7 @@ title: Coding Standards
 description: "Rust and TypeScript coding standards: formatting, linting, error handling, component patterns, and coverage requirements."
 status: active
 created: 2026-03-07
-updated: 2026-03-07
+updated: 2026-03-13
 layer: project
 scope:
   - AGENT-001
@@ -100,6 +100,18 @@ relationships:
   - type: informed-by
     target: RULE-043
     rationale: Tooling ecosystem maps these standards to linter configurations
+  - type: enforces
+    target: AD-003
+    rationale: Clippy lint entries (unwrap_used, expect_used, panic) mechanically enforce the Result-based error propagation decision
+  - type: enforces
+    target: AD-004
+    rationale: ESLint svelte/no-reactive-declaration and svelte-check enforce Svelte 5 runes-only decision
+  - type: enforces
+    target: AD-006
+    rationale: Component purity standard (no invoke() in $lib/components/) is a coding standard enforced by this rule
+  - type: enforces
+    target: AD-026
+    rationale: Function size limits (clippy::too_many_lines, <=50 lines) mechanically prevent command handlers from becoming monolithic — forcing domain service extraction
 ---
 **Source of Truth:** `.orqa/documentation/development/coding-standards.md`
 

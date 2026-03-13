@@ -4,7 +4,7 @@ title: End-to-End Completeness
 description: Every feature must be implemented across all layers (Rust command, IPC type, Svelte component, store) in the same commit.
 status: active
 created: 2026-03-07
-updated: 2026-03-07
+updated: 2026-03-13
 layer: project
 scope:
   - AGENT-002
@@ -47,6 +47,12 @@ relationships:
   - type: informed-by
     target: RULE-041
     rationale: Persistence boundaries must be consistent across all layers in the same commit
+  - type: enforces
+    target: AD-001
+    rationale: Requiring a Rust command layer for every feature enforces the thick-backend principle that domain logic stays in Rust
+  - type: enforces
+    target: AD-002
+    rationale: Requiring invoke() as the only frontend-backend interface enforces the IPC boundary decision
 ---
 Every feature MUST be implemented across ALL layers in the same commit. Partial implementations that work in isolation but fail at runtime due to missing layers are forbidden.
 

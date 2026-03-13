@@ -15,8 +15,11 @@ relationships:
     type: observes
     rationale: "Lessons-learned rule requires agents to check and update lessons, but enforcement is purely procedural — agents forget under task pressure"
   - target: RULE-017
-    type: promoted-to
-    rationale: "Three-tier logging discipline encoded in lessons-learned rule"
+    type: grounded-by
+    rationale: "Lesson promoted to RULE-017 — three-tier observation logging discipline encoded in lessons-learned rule"
+  - target: RULE-017
+    type: observed-by
+    rationale: "RULE-017 codified the three-tier logging discipline (blocking/non-blocking/borderline) first observed in this lesson"
 ---
 
 ## Pattern

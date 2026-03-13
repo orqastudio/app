@@ -18,8 +18,8 @@ relationships:
     type: observes
     rationale: "The human gate on epic completion requires user attention — decisions that scroll away undermine this gate"
   - target: TASK-310
-    type: resolved-by
-    rationale: "Memory-based AD injection ensures decisions persist across context compaction"
+    type: enforces
+    rationale: "TASK-310 implemented memory-based AD injection ensuring decisions persist across context compaction"
 ---
 
 ## Pattern

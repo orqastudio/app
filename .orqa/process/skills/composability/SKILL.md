@@ -10,7 +10,7 @@ description: "Universal composability philosophy: building systems from small, p
   existing modules. This is the meta-skill — it informs all other patterns.\n"
 status: "active"
 created: "2026-03-01"
-updated: "2026-03-12"
+updated: "2026-03-13"
 layer: "core"
 scope:
   - "AGENT-001"
@@ -27,6 +27,9 @@ relationships:
   - target: "PILLAR-001"
     type: "grounded"
     rationale: "Small, pure, swappable units make system boundaries visible and each piece independently understandable"
+  - target: "AD-017"
+    type: "practiced-by"
+    rationale: "AD-017 (Composability Principle) is the architectural decision that this skill operationalises — agents load this skill to apply the composability decision in their work"
 ---
 
 Software is built from small, composable units at every level: functions, modules, features, and integrations. This skill teaches the composability philosophy that shapes all code in a well-structured project.

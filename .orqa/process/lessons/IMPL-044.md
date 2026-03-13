@@ -11,6 +11,12 @@ relationships:
   - target: RULE-004
     type: observes
     rationale: "RULE-004 defines the idea promotion gate but doesn't include a step for scanning related ideas"
+  - target: RULE-004
+    type: grounded-by
+    rationale: "Lesson promoted to RULE-004 — related idea scan step added to idea promotion procedure"
+  - target: RULE-004
+    type: observed-by
+    rationale: "RULE-004 codified the related-idea scanning step at promotion time first observed in this lesson"
   - target: IDEA-077
     type: informed-by
     rationale: "Observed during IDEA-077 promotion when user manually asked to check for related dashboard ideas"

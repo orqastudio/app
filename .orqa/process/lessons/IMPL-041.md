@@ -18,8 +18,11 @@ relationships:
     type: observes
     rationale: "Learning through reflection requires honest assessment, not agreement"
   - target: RULE-031
-    type: promoted-to
-    rationale: "RULE-031 already requires questioning misaligned instructions — this extends to all design suggestions, not just principle violations"
+    type: grounded-by
+    rationale: "Lesson promoted to RULE-031 — extends questioning requirement to all design suggestions, not just principle violations"
+  - target: RULE-031
+    type: observed-by
+    rationale: "RULE-031 codified the critical thinking requirement for user design suggestions first observed in this lesson"
 ---
 
 ## Pattern

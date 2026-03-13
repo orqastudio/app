@@ -18,8 +18,11 @@ relationships:
     type: observes
     rationale: "Agent delegation rule — the orchestrator coordinates, it does not implement. Artifact creation is implementation even for governance artifacts when it can be parallelized"
   - target: RULE-001
-    type: promoted-to
-    rationale: "Extends delegation rule to observation creation — background Writer agents handle artifact writes"
+    type: grounded-by
+    rationale: "Lesson promoted to RULE-001 — observation creation should be delegated to background Writer agents"
+  - target: RULE-001
+    type: observed-by
+    rationale: "RULE-001 codified the delegation of observation creation to Writer agents first observed in this lesson"
 ---
 
 ## Pattern

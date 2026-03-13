@@ -18,8 +18,11 @@ relationships:
     type: observes
     rationale: "Artifact lifecycle — the epic completion gate should verify no untracked open items remain"
   - target: RULE-004
-    type: promoted-to
-    rationale: "Observation triage protocol added to RULE-004"
+    type: grounded-by
+    rationale: "Lesson promoted to RULE-004 — observation triage protocol added to artifact lifecycle"
+  - target: RULE-004
+    type: observed-by
+    rationale: "RULE-004 codified the open-item tracking and triage protocol first observed in this lesson"
 ---
 
 ## Pattern

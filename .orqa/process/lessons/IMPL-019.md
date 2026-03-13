@@ -15,11 +15,11 @@ relationships:
     type: enforces
     rationale: "Enforcement mechanism designed in TASK-307, implementation tracked by IDEA-071"
   - target: TASK-307
-    type: resolved-by
-    rationale: "Plugin-sidecar pairing mechanism designed"
+    type: enforces
+    rationale: "TASK-307 designed the plugin-sidecar pairing mechanism that addresses this lesson"
   - target: IDEA-071
-    type: deferred-to
-    rationale: "Implementation deferred to IDEA-071"
+    type: informs
+    rationale: "Lesson informs IDEA-071 — implementation of the plugin-sidecar pairing mechanism"
 ---
 
 ## Pattern
