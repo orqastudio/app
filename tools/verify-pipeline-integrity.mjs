@@ -165,6 +165,77 @@ function checkArtifact(filePath, id, type, config) {
   }
 }
 
+// ── Epic reconciliation ────────────────────────────────────────────────────
+
+const EPIC_DIR = ".orqa/delivery/epics";
+const TASK_DIR = ".orqa/delivery/tasks";
+const epicDirPath = resolve(ROOT, EPIC_DIR);
+const taskDirPath = resolve(ROOT, TASK_DIR);
+
+const epicStats = { scanned: 0, withReconciliation: 0, missingReconciliation: 0 };
+
+if (existsSync(epicDirPath) && existsSync(taskDirPath)) {
+  console.log("\n=== EPIC RECONCILIATION ===");
+
+  // Read all tasks once
+  const allTasks = [];
+  for (const file of readdirSync(taskDirPath).sort()) {
+    if (!file.endsWith(".md") || file === "README.md" || !file.startsWith("TASK-")) continue;
+    const relPath = join(TASK_DIR, file);
+    if (stagedFiles && !stagedFiles.has(relPath)) continue;
+    const content = readFileSync(join(taskDirPath, file), "utf-8");
+    const fm = parseFrontmatter(content);
+    if (fm) allTasks.push(fm);
+  }
+
+  const checkStatuses = new Set(["ready", "in-progress", "review", "done"]);
+
+  for (const file of readdirSync(epicDirPath).sort()) {
+    if (!file.endsWith(".md") || file === "README.md" || !file.startsWith("EPIC-")) continue;
+    const relPath = join(EPIC_DIR, file);
+    if (stagedFiles && !stagedFiles.has(relPath)) continue;
+
+    const content = readFileSync(join(epicDirPath, file), "utf-8");
+    const fm = parseFrontmatter(content);
+    if (!fm || !checkStatuses.has(fm.status)) continue;
+
+    epicStats.scanned++;
+    const epicId = fm.id;
+
+    // Find all tasks for this epic
+    const epicTasks = allTasks.filter((t) => t.epic === epicId);
+    const reconciliationTask = epicTasks.find((t) => t.title && t.title.startsWith("Reconcile"));
+
+    if (!reconciliationTask) {
+      if (fm.status === "done") {
+        warn(`${epicId}: completed without reconciliation task`);
+      } else {
+        error(`${epicId}: no reconciliation task found (status: ${fm.status})`);
+      }
+      epicStats.missingReconciliation++;
+    } else {
+      epicStats.withReconciliation++;
+
+      // Check reconciliation task is done if epic is done
+      if (fm.status === "done" && reconciliationTask.status !== "done") {
+        error(`${epicId}: epic is done but reconciliation task ${reconciliationTask.id} is ${reconciliationTask.status}`);
+      }
+
+      // Check that reconciliation task depends on all other epic tasks
+      const otherTaskIds = epicTasks
+        .filter((t) => t.id !== reconciliationTask.id)
+        .map((t) => t.id);
+      const dependsOn = new Set(reconciliationTask["depends-on"] || []);
+
+      for (const taskId of otherTaskIds) {
+        if (!dependsOn.has(taskId)) {
+          warn(`${epicId}: reconciliation task ${reconciliationTask.id} missing depends-on for ${taskId}`);
+        }
+      }
+    }
+  }
+}
+
 // ── Summary ─────────────────────────────────────────────────────────────────
 
 console.log("\n" + "=".repeat(60));
@@ -175,6 +246,11 @@ console.log(`\nArtifacts scanned: ${stats.total}`);
 console.log(`  With relationships: ${stats.withRelationships}`);
 console.log(`  Empty relationships: ${stats.emptyRelationships}`);
 console.log(`  Deprecated fields found: ${stats.deprecatedFields}`);
+
+console.log(`\nEpic reconciliation:`);
+console.log(`  Epics scanned: ${epicStats.scanned}`);
+console.log(`  With reconciliation task: ${epicStats.withReconciliation}`);
+console.log(`  Missing reconciliation task: ${epicStats.missingReconciliation}`);
 
 console.log(`\nPipeline stage distribution:`);
 console.log(`  Observation:    ${stageCount.observation} lessons`);
