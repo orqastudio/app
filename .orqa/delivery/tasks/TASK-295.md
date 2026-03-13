@@ -2,7 +2,7 @@
 id: TASK-295
 title: "Agents content audit (7 agents)"
 description: "Audit all 7 agent definitions: expand Tier 1 skills where gaps exist, match capabilities to RULE-037 role matrix, update orchestrator prompt for pipeline philosophy."
-status: todo
+status: done
 created: "2026-03-13"
 updated: "2026-03-13"
 epic: EPIC-059

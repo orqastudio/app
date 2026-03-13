@@ -20,7 +20,7 @@ relationships:
     rationale: Lesson promoted to RULE-003
   - type: observed-by
     target: RULE-003
-    rationale: Inverse of observes relationship from RULE-003
+    rationale: RULE-003 codified the symlink architecture pattern first observed in this lesson
 ---
 ## What Happened
 

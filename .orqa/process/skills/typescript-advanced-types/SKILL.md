@@ -5,7 +5,7 @@ description: "Master TypeScript's advanced type system including generics, condi
 status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: "project"
+layer: "core"
 scope:
   - "AGENT-001"
   - "AGENT-002"
@@ -15,7 +15,7 @@ user-invocable: false
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Advanced types create structural type safety"
+    rationale: "Generics, conditional types, and mapped types encode domain constraints at compile time, making invalid states unrepresentable"
 ---
 
 

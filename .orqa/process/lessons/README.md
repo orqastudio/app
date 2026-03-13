@@ -12,13 +12,13 @@ Lessons capture implementation observations — patterns discovered during code 
 
 ## Pipeline Role
 
-Lessons are **Observations** — the first stage of the knowledge maturity pipeline:
+Lessons span **Observation** and **Understanding** — the first two stages of the knowledge maturity pipeline:
 
 ```
 Observation → Understanding → Principle → Practice → Enforcement → Verification
 ```
 
-A single lesson is a data point. When the same pattern recurs, it becomes **Understanding** — a decision or architectural insight. When it recurs enough, it hardens into **Practice** (a skill) or **Enforcement** (a rule).
+A single lesson is an observation — a data point. When the same pattern recurs, the lesson matures into understanding. Understanding that solidifies into a definitive architectural choice becomes a decision (principle). Understanding that produces actionable guidance becomes a skill (practice) or a rule (enforcement).
 
 ## Lifecycle
 

@@ -5,7 +5,7 @@ description: "Build scalable design systems with Tailwind CSS v4, design tokens,
 status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: "project"
+layer: "core"
 scope:
   - "AGENT-001"
   - "AGENT-002"
@@ -15,7 +15,7 @@ user-invocable: false
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Design system patterns create structural visual consistency"
+    rationale: "Design tokens and variant patterns codify visual decisions as reusable, inspectable constraints rather than ad-hoc inline styles"
 ---
 
 

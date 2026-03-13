@@ -2,7 +2,7 @@
 id: TASK-294
 title: "Skills content audit (48 skills)"
 description: "Audit all 48 skills: fix layer classifications, resolve overlaps, establish naming convention (orqa-* = project-specific), remove stale content references, verify category accuracy."
-status: todo
+status: done
 created: "2026-03-13"
 updated: "2026-03-13"
 epic: EPIC-059

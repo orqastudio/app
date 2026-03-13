@@ -20,7 +20,7 @@ relationships:
     rationale: Lesson promoted to RULE-030
   - type: observed-by
     target: RULE-030
-    rationale: Inverse of observes relationship from RULE-030
+    rationale: RULE-030 codified the process improvement encoding requirement first observed in this lesson
 ---
 ## What Happened
 

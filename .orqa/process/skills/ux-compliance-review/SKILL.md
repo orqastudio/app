@@ -23,7 +23,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "UX compliance ensures structural consistency in user experience"
+    rationale: "Label auditing, state coverage checks, and shared component usage verification make UX standards enforceable against documented specs"
 ---
 
 

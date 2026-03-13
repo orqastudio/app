@@ -5,7 +5,7 @@ description: "Tauri v2 cross-platform app development with Rust backend. Use whe
 status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: "project"
+layer: "core"
 scope:
   - "AGENT-002"
   - "AGENT-006"
@@ -14,7 +14,7 @@ user-invocable: false
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Tauri v2 knowledge enables structured desktop app development"
+    rationale: "Tauri command patterns, permission capabilities, and IPC channels define explicit boundaries between frontend and backend layers"
 ---
 
 

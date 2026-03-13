@@ -2,7 +2,7 @@
 id: TASK-297
 title: "Documentation inventory"
 description: "Audit documentation/: what docs NEED to exist vs what IS there. Identify stale content. Every remaining doc must be human-consumption content. Flag placeholder directories."
-status: todo
+status: done
 created: "2026-03-13"
 updated: "2026-03-13"
 epic: EPIC-059

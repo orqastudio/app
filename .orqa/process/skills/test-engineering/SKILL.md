@@ -23,7 +23,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-002"
     type: "grounded"
-    rationale: "Test engineering creates feedback loops for learning"
+    rationale: "Behavior-focused tests with clear mock boundaries produce repeatable verification, turning each test failure into a documented regression signal"
 ---
 
 

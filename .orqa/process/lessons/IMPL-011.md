@@ -17,10 +17,10 @@ relationships:
     rationale: Lesson promoted to RULE-030
   - type: observed-by
     target: RULE-030
-    rationale: Inverse of observes relationship from RULE-030
+    rationale: RULE-030 codified the systemic investigation methodology first observed in this lesson
   - type: informed-by
     target: IMPL-012
-    rationale: Inverse of informs relationship from IMPL-012
+    rationale: IMPL-012's insight about encoding improvements complemented this lesson by ensuring systemic findings are captured as artifacts, not just applied
 ---
 ## What Happened
 

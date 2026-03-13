@@ -12,13 +12,13 @@ Architecture decisions capture the reasoning behind key technical choices — wh
 
 ## Pipeline Role
 
-Decisions are **Understanding** — the second stage of the knowledge maturity pipeline:
+Decisions are **Principle** — the third stage of the knowledge maturity pipeline:
 
 ```
 Observation → Understanding → Principle → Practice → Enforcement → Verification
 ```
 
-A lesson (observation) that recurs enough produces a decision: a definitive answer to "how should we handle this?" Decisions then inform skills (practice) and rules (enforcement). When multiple related decisions converge, they may crystallise into a pillar (principle).
+Decisions codify architectural choices into durable principles. A lesson (observation) that recurs enough produces understanding; understanding that solidifies into a definitive "how should we handle this?" becomes a decision. Decisions then inform skills (practice) and rules (enforcement).
 
 ## When to Create a Decision
 

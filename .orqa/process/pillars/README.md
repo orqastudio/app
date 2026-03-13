@@ -12,13 +12,15 @@ Pillars are the guiding principles that define what this project cares about. Ev
 
 ## Pipeline Role
 
-Pillars are **Principles** — the third stage of the knowledge maturity pipeline:
+Pillars are the **guiding principles that ground the entire pipeline**. They are not a stage in the pipeline — they are the foundation that every stage serves:
 
 ```
 Observation → Understanding → Principle → Practice → Enforcement → Verification
+                                 ↑
+                           Pillars ground this
 ```
 
-They distil accumulated understanding (decisions) into durable commitments about what matters. A pillar answers: "what kind of product do we want to be?" Decisions answer specific "what should we do?" questions. Rules enforce the day-to-day consequences of both.
+Pillars answer "what kind of product do we want to be?" while decisions (principles) answer specific "what should we do?" questions. Every lesson, decision, skill, and rule traces back to at least one pillar. If work cannot connect to a pillar, it is out of scope.
 
 ## How Pillars Work
 

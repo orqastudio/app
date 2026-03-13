@@ -2,7 +2,7 @@
 id: TASK-291
 title: "Scope documentation to human-consumption content"
 description: "Audit documentation/ contents. Process-defining docs (DoD, DoR) get absorbed into rules. Human-consumption docs stay. Move/delete/consolidate as needed."
-status: todo
+status: done
 created: "2026-03-13"
 updated: "2026-03-13"
 epic: EPIC-059

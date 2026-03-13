@@ -17,7 +17,7 @@ relationships:
     rationale: Lesson promoted to RULE-013
   - type: observed-by
     target: RULE-013
-    rationale: Inverse of observes relationship from RULE-013
+    rationale: RULE-013 codified the commit discipline and governance work patterns first observed in this lesson
 ---
 ## What Happened
 

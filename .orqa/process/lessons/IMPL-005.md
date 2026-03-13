@@ -17,10 +17,10 @@ relationships:
     rationale: Lesson promoted to RULE-003
   - type: observed-by
     target: RULE-003
-    rationale: Inverse of observes relationship from RULE-003
+    rationale: RULE-003 codified the config-disk alignment pattern first observed in this lesson
   - type: informed-by
     target: IMPL-006
-    rationale: Inverse of informs relationship from IMPL-006
+    rationale: IMPL-006's symlink divergence findings reinforced that source-of-truth alignment requires config-disk consistency
 ---
 ## What Happened
 
