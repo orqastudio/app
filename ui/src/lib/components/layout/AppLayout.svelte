@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte";
-	import { invoke } from "@tauri-apps/api/core";
 	import { listen } from "@tauri-apps/api/event";
 	import type { UnlistenFn } from "@tauri-apps/api/event";
 	import ActivityBar from "./ActivityBar.svelte";
@@ -96,22 +95,13 @@
 		}
 	});
 
-	// Start the .orqa/ file watcher when a project becomes active so the nav
-	// tree refreshes automatically when files change on disk.
-	$effect(() => {
-		const project = projectStore.activeProject;
-		if (!project || needsSetup) return;
-		invoke("artifact_watch_start", { projectPath: project.path }).catch((err: unknown) => {
-			console.warn("[artifact-watcher] failed to start:", err);
-		});
-	});
-
 	// Initialize the artifact graph SDK when a project becomes active.
-	// The SDK listens for "artifact-graph-updated" events and auto-refreshes.
+	// The SDK starts the file watcher, builds the graph, and listens for
+	// "artifact-graph-updated" events for auto-refresh.
 	$effect(() => {
 		const project = projectStore.activeProject;
 		if (!project || needsSetup) return;
-		void artifactGraphSDK.initialize();
+		void artifactGraphSDK.initialize({ projectPath: project.path });
 	});
 
 	// Load enforcement rules when the rules activity is active

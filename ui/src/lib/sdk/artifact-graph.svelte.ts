@@ -24,6 +24,16 @@ import { ARTIFACT_TYPES } from "$lib/types/artifact-graph";
 type NodeCallback = (node: ArtifactNode) => void;
 type TypeCallback = (nodes: ArtifactNode[]) => void;
 
+/** Configuration for SDK initialization. */
+export interface ArtifactGraphConfig {
+    /** Project root path — used to start the file watcher. */
+    projectPath: string;
+    /** Whether to start the .orqa/ file watcher for auto-refresh. Default: true. */
+    watchFiles?: boolean;
+    /** Maximum health snapshots to retain when fetching trends. Default: 30. */
+    snapshotLimit?: number;
+}
+
 // ---------------------------------------------------------------------------
 // SDK class
 // ---------------------------------------------------------------------------
@@ -71,17 +81,30 @@ class ArtifactGraphSDK {
     // Lifecycle
     // -----------------------------------------------------------------------
 
+    /** Stored config from initialization. */
+    private config: ArtifactGraphConfig | null = null;
+
     /**
-     * Initialize the SDK: fetch the full graph from the backend and register
-     * for auto-refresh on backend `"artifact-graph-updated"` events.
+     * Initialize the SDK: start the file watcher, fetch the full graph from
+     * the backend, and register for auto-refresh on backend
+     * `"artifact-graph-updated"` events.
      *
      * Safe to call multiple times — subsequent calls are no-ops if already
      * initialized. Uses a non-reactive flag to avoid $effect dependency
      * tracking on reactive state (which would cause infinite retry loops).
      */
-    async initialize(): Promise<void> {
+    async initialize(config: ArtifactGraphConfig): Promise<void> {
         if (this._initCalled) return;
         this._initCalled = true;
+        this.config = config;
+
+        // Start the .orqa/ file watcher so the graph auto-refreshes on disk changes.
+        if (config.watchFiles !== false) {
+            await invoke<void>("artifact_watch_start", { projectPath: config.projectPath }).catch((err: unknown) => {
+                console.warn("[artifact-graph-sdk] watcher failed to start:", err);
+            });
+        }
+
         await this._loadAll();
         if (!this.unlistenFn) {
             this.unlistenFn = await listen("artifact-graph-updated", () => {
@@ -377,7 +400,8 @@ class ArtifactGraphSDK {
 
     /** Get the most recent health snapshots for trend display. */
     async getHealthSnapshots(limit?: number): Promise<HealthSnapshot[]> {
-        return invoke<HealthSnapshot[]>("get_health_snapshots", { limit: limit ?? null });
+        const effectiveLimit = limit ?? this.config?.snapshotLimit ?? 30;
+        return invoke<HealthSnapshot[]>("get_health_snapshots", { limit: effectiveLimit });
     }
 
     // -----------------------------------------------------------------------

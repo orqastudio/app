@@ -2,7 +2,7 @@
 id: EPIC-060
 title: "Pipeline health dashboard"
 description: "Surface pipeline integrity on the app dashboard with scan/fix actions, add pipeline visualization and temporal analytics."
-status: in-progress
+status: review
 priority: P1
 created: "2026-03-13"
 updated: "2026-03-13"
@@ -142,7 +142,7 @@ Each issue row: artifact ID (clickable → navigates to artifact), message, seve
 |----|-------|-------|------------|
 | [TASK-388](TASK-388) | Extend ArtifactRef with relationship_type in Rust backend | 0 | — |
 | [TASK-389](TASK-389) | Add traverse/pipelineChain/missingInverses to graph SDK | 0 | [TASK-388](TASK-388) |
-| TASK-TBD-0c | Migrate components from invoke() to SDK lookups | 0 | [TASK-389](TASK-389) |
+| [TASK-396](TASK-396) | Audit components for invoke()-to-SDK migration | 0 | [TASK-389](TASK-389) |
 | [TASK-390](TASK-390) | Native integrity checks in artifact_graph.rs | 1 | [TASK-389](TASK-389) |
 | [TASK-392](TASK-392) | Auto-fix engine for deterministic integrity issues | 1 | [TASK-390](TASK-390) |
 | ~~TASK-TBD-3~~ | ~~IPC commands~~ (merged into [TASK-390](TASK-390) + [TASK-392](TASK-392)) | — | — |
@@ -150,7 +150,7 @@ Each issue row: artifact ID (clickable → navigates to artifact), message, seve
 | [TASK-393](TASK-393) | Fix flow — auto-fix button and results display in IntegrityWidget | 2 | [TASK-391](TASK-391), [TASK-392](TASK-392) |
 | [TASK-394](TASK-394) | Pipeline stage visualization widget | 3 | [TASK-389](TASK-389) |
 | [TASK-395](TASK-395) | Graph health snapshot storage and trend sparklines | 4 | [TASK-390](TASK-390) |
-| TASK-TBD-10 | Reconcile [EPIC-060](EPIC-060) | — | all above |
+| [TASK-397](TASK-397) | Reconcile [EPIC-060](EPIC-060) | — | all above |
 
 ## Out of Scope
 
