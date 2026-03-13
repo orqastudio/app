@@ -189,6 +189,23 @@ Claims without evidence are not verification. The reviewer MUST collect and incl
 - Classify its own findings as "minor" or "can be done later"
 - Skip the reviewer step for "simple" changes
 
+## Loop Closure Phase (MANDATORY for enforcement/audit epics)
+
+Any epic that produces enforcement tooling, audit tooling, or governance automation MUST include a loop closure phase as its final phase. This phase:
+
+1. **Runs all tooling** produced by the epic against the full codebase
+2. **Triages findings** — immediate fixes vs items to reconcile
+3. **Reconciles findings** — findings are added to the epic's task list for resolution within the same epic, not deferred to future work
+4. **Updates this rule** if the epic reveals planning methodology gaps
+
+Without loop closure, enforcement tooling is created but never run against the codebase that prompted its creation. The findings that motivated the epic go unaddressed. Deferring findings to future epics violates [RULE-019](RULE-019) — if the tooling is in scope, its findings are in scope.
+
+## Scope Verification (MANDATORY)
+
+Before any epic moves to `done`, the orchestrator MUST present the Out of Scope section to the user for explicit approval. Out of Scope sections are user decisions — the orchestrator proposes exclusions, the user approves or rejects them.
+
+**FORBIDDEN:** Writing an Out of Scope section and committing it without user verification. Every scope reduction must be an explicit user decision, not an orchestrator assumption.
+
 ## Enforcement
 
 Plans that omit architectural compliance or UX-first design are rejected. The orchestrator MUST verify both sections exist and are substantive (not just boilerplate) before delegating implementation to subagents.
