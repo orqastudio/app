@@ -36,10 +36,10 @@ function parseFrontmatter(content) {
 }
 
 const ARTIFACT_DIRS = {
-  lessons: { dir: ".orqa/governance/lessons", prefix: "IMPL-", stage: "Observation/Understanding" },
-  decisions: { dir: ".orqa/governance/decisions", prefix: "AD-", stage: "Principle" },
-  rules: { dir: ".orqa/governance/rules", prefix: "RULE-", stage: "Enforcement" },
-  skills: { dir: ".orqa/team/skills", prefix: null, stage: "Practice" },
+  lessons: { dir: ".orqa/process/lessons", prefix: "IMPL-", stage: "Observation/Understanding" },
+  decisions: { dir: ".orqa/process/decisions", prefix: "AD-", stage: "Principle" },
+  rules: { dir: ".orqa/process/rules", prefix: "RULE-", stage: "Enforcement" },
+  skills: { dir: ".orqa/process/skills", prefix: null, stage: "Practice" },
 };
 
 const stagedOnly = process.argv.includes("--staged");

@@ -8,7 +8,7 @@ const ROOT = resolve(import.meta.dirname, "..");
 const require = createRequire(resolve(ROOT, "ui", "package.json"));
 const yaml = require("yaml");
 
-const lessonsDir = resolve(ROOT, ".orqa/governance/lessons");
+const lessonsDir = resolve(ROOT, ".orqa/process/lessons");
 const schema = JSON.parse(readFileSync(join(lessonsDir, "schema.json"), "utf-8"));
 const propertyOrder = schema.propertyOrder;
 

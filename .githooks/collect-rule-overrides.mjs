@@ -62,7 +62,7 @@ function readOverridesFromFile(filePath) {
 // Collect overrides from all staged tasks (and their epics as fallback)
 const overrides = new Map();
 
-const stagedTasks = getStagedFiles(".orqa/planning/tasks/TASK-*.md");
+const stagedTasks = getStagedFiles(".orqa/delivery/tasks/TASK-*.md");
 for (const taskFile of stagedTasks) {
   const taskPath = resolve(ROOT, taskFile);
   const taskOverrides = readOverridesFromFile(taskPath);
@@ -77,7 +77,7 @@ for (const taskFile of stagedTasks) {
     const content = readFileSync(taskPath, "utf-8");
     const fm = parseFrontmatter(content);
     if (fm?.epic) {
-      const epicPath = resolve(ROOT, ".orqa", "planning", "epics", `${fm.epic}.md`);
+      const epicPath = resolve(ROOT, ".orqa", "delivery", "epics", `${fm.epic}.md`);
       if (existsSync(epicPath)) {
         const epicOverrides = readOverridesFromFile(epicPath);
         for (const o of epicOverrides) {
@@ -89,7 +89,7 @@ for (const taskFile of stagedTasks) {
 }
 
 // Also check staged epic files directly (for epic-level commits without task files)
-const stagedEpics = getStagedFiles(".orqa/planning/epics/EPIC-*.md");
+const stagedEpics = getStagedFiles(".orqa/delivery/epics/EPIC-*.md");
 for (const epicFile of stagedEpics) {
   const epicPath = resolve(ROOT, epicFile);
   const epicOverrides = readOverridesFromFile(epicPath);

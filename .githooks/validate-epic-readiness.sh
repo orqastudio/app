@@ -18,7 +18,7 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 if [ "$#" -gt 0 ]; then
   FILES=("$@")
 else
-  mapfile -t FILES < <(git diff --cached --name-only --diff-filter=ACMR -- '.orqa/planning/epics/EPIC-*.md' 2>/dev/null || true)
+  mapfile -t FILES < <(git diff --cached --name-only --diff-filter=ACMR -- '.orqa/delivery/epics/EPIC-*.md' 2>/dev/null || true)
 fi
 
 # AWK program: extract frontmatter block (between first two --- delimiters).
@@ -100,7 +100,7 @@ for file in "${FILES[@]}"; do
   file="${file//\\//}"
 
   # Only process epic files in the epics directory
-  [[ "$file" == .orqa/planning/epics/EPIC-*.md ]] || continue
+  [[ "$file" == .orqa/delivery/epics/EPIC-*.md ]] || continue
 
   local_file="$REPO_ROOT/$file"
   [ -f "$local_file" ] || continue

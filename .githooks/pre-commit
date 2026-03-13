@@ -65,14 +65,14 @@ if [ -n "$PROD_CODE_CHANGED" ]; then
 fi
 
 # Task dependency gate (only if task files changed)
-TASKS_CHANGED=$(git diff --cached --name-only --diff-filter=ACMR -- '.orqa/planning/tasks/TASK-*.md' | head -1)
+TASKS_CHANGED=$(git diff --cached --name-only --diff-filter=ACMR -- '.orqa/delivery/tasks/TASK-*.md' | head -1)
 if [ -n "$TASKS_CHANGED" ]; then
   echo "--- Artifacts: task dependency gate ---"
   bash .githooks/validate-task-deps.sh
 fi
 
 # Epic readiness gate (only if epic files changed)
-EPICS_CHANGED=$(git diff --cached --name-only --diff-filter=ACMR -- '.orqa/planning/epics/EPIC-*.md' | head -1)
+EPICS_CHANGED=$(git diff --cached --name-only --diff-filter=ACMR -- '.orqa/delivery/epics/EPIC-*.md' | head -1)
 if [ -n "$EPICS_CHANGED" ]; then
   echo "--- Artifacts: epic readiness gate ---"
   bash .githooks/validate-epic-readiness.sh
@@ -82,22 +82,22 @@ fi
 DOGFOOD=$(node -e "try{const p=JSON.parse(require('fs').readFileSync('.orqa/project.json','utf8'));console.log(p.dogfood?'true':'false')}catch{console.log('false')}" 2>/dev/null || echo "false")
 if [ "$DOGFOOD" != "true" ] && [ "${ORQA_CORE_OVERRIDE:-}" != "1" ]; then
   CORE_PATHS=(
-    ".orqa/planning/pillars/schema.json"
-    ".orqa/planning/milestones/schema.json"
-    ".orqa/planning/epics/schema.json"
-    ".orqa/planning/tasks/schema.json"
-    ".orqa/planning/ideas/schema.json"
-    ".orqa/planning/research/schema.json"
-    ".orqa/governance/lessons/schema.json"
-    ".orqa/governance/decisions/schema.json"
-    ".orqa/governance/rules/schema.json"
-    ".orqa/team/agents/schema.json"
-    ".orqa/team/skills/schema.json"
-    ".orqa/team/agents/orchestrator.md"
-    ".orqa/team/skills/composability/SKILL.md"
-    ".orqa/team/skills/research-methodology/SKILL.md"
-    ".orqa/team/skills/planning/SKILL.md"
-    ".orqa/team/skills/orqa-code-search/SKILL.md"
+    ".orqa/process/pillars/schema.json"
+    ".orqa/delivery/milestones/schema.json"
+    ".orqa/delivery/epics/schema.json"
+    ".orqa/delivery/tasks/schema.json"
+    ".orqa/delivery/ideas/schema.json"
+    ".orqa/delivery/research/schema.json"
+    ".orqa/process/lessons/schema.json"
+    ".orqa/process/decisions/schema.json"
+    ".orqa/process/rules/schema.json"
+    ".orqa/process/agents/schema.json"
+    ".orqa/process/skills/schema.json"
+    ".orqa/process/agents/orchestrator.md"
+    ".orqa/process/skills/composability/SKILL.md"
+    ".orqa/process/skills/research-methodology/SKILL.md"
+    ".orqa/process/skills/planning/SKILL.md"
+    ".orqa/process/skills/orqa-code-search/SKILL.md"
   )
   CORE_MODIFIED=""
   for core_path in "${CORE_PATHS[@]}"; do

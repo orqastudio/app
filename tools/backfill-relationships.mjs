@@ -9,9 +9,9 @@
 //   node tools/backfill-relationships.mjs <artifact-dir> [--dry-run] [--filter=ID]
 //
 // Examples:
-//   node tools/backfill-relationships.mjs .orqa/governance/rules
-//   node tools/backfill-relationships.mjs .orqa/governance/lessons --filter=IMPL-005
-//   node tools/backfill-relationships.mjs .orqa/team/skills --dry-run
+//   node tools/backfill-relationships.mjs .orqa/process/rules
+//   node tools/backfill-relationships.mjs .orqa/process/lessons --filter=IMPL-005
+//   node tools/backfill-relationships.mjs .orqa/process/skills --dry-run
 //
 // Output: JSON proposals to stdout, one per artifact.
 // The orchestrator or agent reads proposals, presents to user, and applies approved ones.
@@ -142,11 +142,11 @@ function loadSchema(fileOrDir) {
 function buildArtifactIndex() {
   const index = new Map();
   const dirs = [
-    { path: ".orqa/governance/rules", prefix: "RULE" },
-    { path: ".orqa/governance/decisions", prefix: "AD" },
-    { path: ".orqa/governance/lessons", prefix: "IMPL" },
-    { path: ".orqa/team/skills", prefix: "SKILL", isSkill: true },
-    { path: ".orqa/planning/pillars", prefix: "PILLAR" },
+    { path: ".orqa/process/rules", prefix: "RULE" },
+    { path: ".orqa/process/decisions", prefix: "AD" },
+    { path: ".orqa/process/lessons", prefix: "IMPL" },
+    { path: ".orqa/process/skills", prefix: "SKILL", isSkill: true },
+    { path: ".orqa/process/pillars", prefix: "PILLAR" },
   ];
 
   for (const { path, prefix, isSkill } of dirs) {

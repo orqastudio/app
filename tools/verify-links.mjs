@@ -54,15 +54,16 @@ function discoverAllArtifacts() {
   const artifacts = new Map(); // id → { path, type }
 
   const dirs = [
-    { path: ".orqa/governance/rules", prefix: "RULE" },
-    { path: ".orqa/governance/decisions", prefix: "AD" },
-    { path: ".orqa/governance/lessons", prefix: "IMPL" },
-    { path: ".orqa/planning/pillars", prefix: "PILLAR" },
-    { path: ".orqa/planning/milestones", prefix: "MS" },
-    { path: ".orqa/planning/epics", prefix: "EPIC" },
-    { path: ".orqa/planning/tasks", prefix: "TASK" },
-    { path: ".orqa/planning/ideas", prefix: "IDEA" },
-    { path: ".orqa/planning/research", prefix: "RES" },
+    { path: ".orqa/process/rules", prefix: "RULE" },
+    { path: ".orqa/process/decisions", prefix: "AD" },
+    { path: ".orqa/process/lessons", prefix: "IMPL" },
+    { path: ".orqa/process/pillars", prefix: "PILLAR" },
+    { path: ".orqa/delivery/milestones", prefix: "MS" },
+    { path: ".orqa/delivery/epics", prefix: "EPIC" },
+    { path: ".orqa/delivery/tasks", prefix: "TASK" },
+    { path: ".orqa/delivery/ideas", prefix: "IDEA" },
+    { path: ".orqa/delivery/research", prefix: "RES" },
+    { path: ".orqa/delivery/verification", prefix: "VER" },
   ];
 
   for (const { path, prefix } of dirs) {
@@ -76,7 +77,7 @@ function discoverAllArtifacts() {
   }
 
   // Skills (subdirectory pattern)
-  const skillsPath = resolve(ROOT, ".orqa/team/skills");
+  const skillsPath = resolve(ROOT, ".orqa/process/skills");
   if (existsSync(skillsPath)) {
     for (const subdir of readdirSync(skillsPath)) {
       const skillFile = join(skillsPath, subdir, "SKILL.md");
@@ -84,7 +85,7 @@ function discoverAllArtifacts() {
       const content = readFileSync(skillFile, "utf-8");
       const fm = parseFrontmatter(content);
       if (fm?.id) {
-        artifacts.set(fm.id, { path: join(".orqa/team/skills", subdir, "SKILL.md"), type: "skill" });
+        artifacts.set(fm.id, { path: join(".orqa/process/skills", subdir, "SKILL.md"), type: "skill" });
       }
     }
   }
@@ -94,9 +95,9 @@ function discoverAllArtifacts() {
 
 // ── Reference Scanning ──────────────────────────────────────────────────────
 
-const ARTIFACT_ID_PATTERN = /\b(RULE-\d+|AD-\d+|IMPL-\d+|PILLAR-\d+|MS-\d+|EPIC-\d+|TASK-\d+|IDEA-\d+|RES-\d+)\b/g;
+const ARTIFACT_ID_PATTERN = /\b(RULE-\d+|AD-\d+|IMPL-\d+|PILLAR-\d+|MS-\d+|EPIC-\d+|TASK-\d+|IDEA-\d+|RES-\d+|VER-\d+)\b/g;
 const LINKED_REF_PATTERN = /\[([^\]]*)\]\(([A-Z]+-\d+)\)/g;
-const BARE_ID_PATTERN = /(?<!\[)(?<!\()(?<!\w)\b(RULE-\d+|AD-\d+|IMPL-\d+|PILLAR-\d+|MS-\d+|EPIC-\d+|TASK-\d+|IDEA-\d+|RES-\d+)\b(?!\))(?!\])/g;
+const BARE_ID_PATTERN = /(?<!\[)(?<!\()(?<!\w)\b(RULE-\d+|AD-\d+|IMPL-\d+|PILLAR-\d+|MS-\d+|EPIC-\d+|TASK-\d+|IDEA-\d+|RES-\d+|VER-\d+)\b(?!\))(?!\])/g;
 
 function scanFile(filePath, knownArtifacts) {
   const content = readFileSync(resolve(ROOT, filePath), "utf-8");

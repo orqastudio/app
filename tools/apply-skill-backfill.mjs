@@ -203,7 +203,7 @@ const SKILL_GROUNDINGS = {
 
 // ── Main ────────────────────────────────────────────────────────────────────
 
-const skillsDir = resolve(ROOT, ".orqa/team/skills");
+const skillsDir = resolve(ROOT, ".orqa/process/skills");
 let updated = 0;
 
 for (const subdir of readdirSync(skillsDir).sort()) {

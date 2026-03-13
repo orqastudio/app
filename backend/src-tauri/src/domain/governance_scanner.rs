@@ -8,19 +8,18 @@ const CONTENT_PREVIEW_CHARS: usize = 500;
 
 /// Total number of canonical governance areas checked for coverage ratio.
 ///
-/// The 7 areas map directly to the governance sub-directories declared in `.orqa/project.json`:
-/// rules, agents, skills, hooks, lessons, decisions, documentation.
-const TOTAL_AREAS: usize = 7;
+/// The 6 areas map directly to the process/documentation directories in `.orqa/`:
+/// rules, agents, skills, lessons, decisions, documentation.
+const TOTAL_AREAS: usize = 6;
 
 /// Scan a project directory for governance files across the 7 canonical OrqaStudio governance areas.
 ///
 /// The areas correspond to the artifact config in `.orqa/project.json`:
-/// - `.orqa/governance/rules` — enforcement rules (`.md` files)
-/// - `.orqa/team/agents` — agent definitions (`.md` files)
-/// - `.orqa/team/skills` — skill definitions (subdirectories with `SKILL.md`)
-/// - `.orqa/governance/hooks` — lifecycle hooks (any files)
-/// - `.orqa/governance/lessons` — implementation lessons (`.md` files)
-/// - `.orqa/governance/decisions` — architecture decisions (`.md` files)
+/// - `.orqa/process/rules` — enforcement rules (`.md` files)
+/// - `.orqa/process/agents` — agent definitions (`.md` files)
+/// - `.orqa/process/skills` — skill definitions (subdirectories with `SKILL.md`)
+/// - `.orqa/process/lessons` — implementation lessons (`.md` files)
+/// - `.orqa/process/decisions` — architecture decisions (`.md` files)
 /// - `.orqa/documentation` — project documentation (`.md` files, recursive)
 ///
 /// The `coverage_ratio` is computed as covered areas / `TOTAL_AREAS`.
@@ -53,24 +52,22 @@ pub fn scan_governance(project_path: &Path) -> Result<GovernanceScanResult, Orqa
 /// Scan all 7 canonical governance areas from the `.orqa/` directory tree.
 fn scan_orqa_areas(project_path: &Path) -> Vec<GovernanceArea> {
     let orqa_dir = project_path.join(".orqa");
-    let governance_dir = orqa_dir.join("governance");
-    let team_dir = orqa_dir.join("team");
+    let process_dir = orqa_dir.join("process");
 
     vec![
-        scan_directory_area("rules", "orqa", &governance_dir.join("rules"), Some(".md")),
-        scan_directory_area("agents", "orqa", &team_dir.join("agents"), Some(".md")),
-        scan_skills_area(project_path, &team_dir.join("skills")),
-        scan_directory_area("hooks", "orqa", &governance_dir.join("hooks"), None),
+        scan_directory_area("rules", "orqa", &process_dir.join("rules"), Some(".md")),
+        scan_directory_area("agents", "orqa", &process_dir.join("agents"), Some(".md")),
+        scan_skills_area(project_path, &process_dir.join("skills")),
         scan_directory_area(
             "lessons",
             "orqa",
-            &governance_dir.join("lessons"),
+            &process_dir.join("lessons"),
             Some(".md"),
         ),
         scan_directory_area(
             "decisions",
             "orqa",
-            &governance_dir.join("decisions"),
+            &process_dir.join("decisions"),
             Some(".md"),
         ),
         scan_recursive_area(
@@ -274,7 +271,7 @@ mod tests {
         let result = scan_governance(&dir).expect("scan");
 
         assert_eq!(result.coverage_ratio, 0.0);
-        assert_eq!(result.areas.len(), 7);
+        assert_eq!(result.areas.len(), 6);
         for area in &result.areas {
             assert!(!area.covered);
         }
@@ -285,46 +282,37 @@ mod tests {
     #[test]
     fn full_orqa_governance_has_full_coverage() {
         let dir = create_test_dir("full");
-        let governance_dir = dir.join(".orqa").join("governance");
-        let team_dir = dir.join(".orqa").join("team");
+        let process_dir = dir.join(".orqa").join("process");
         let doc_dir = dir.join(".orqa").join("documentation");
 
         // rules
-        fs::create_dir_all(governance_dir.join("rules")).expect("mkdir");
-        fs::write(governance_dir.join("rules").join("no-stubs.md"), "# Rule").expect("write");
+        fs::create_dir_all(process_dir.join("rules")).expect("mkdir");
+        fs::write(process_dir.join("rules").join("no-stubs.md"), "# Rule").expect("write");
 
         // agents
-        fs::create_dir_all(team_dir.join("agents")).expect("mkdir");
-        fs::write(team_dir.join("agents").join("backend.md"), "# Agent").expect("write");
+        fs::create_dir_all(process_dir.join("agents")).expect("mkdir");
+        fs::write(process_dir.join("agents").join("backend.md"), "# Agent").expect("write");
 
         // skills (subdirectory with SKILL.md)
-        fs::create_dir_all(team_dir.join("skills").join("chunkhound")).expect("mkdir");
+        fs::create_dir_all(process_dir.join("skills").join("chunkhound")).expect("mkdir");
         fs::write(
-            team_dir.join("skills").join("chunkhound").join("SKILL.md"),
+            process_dir.join("skills").join("chunkhound").join("SKILL.md"),
             "# Skill",
         )
         .expect("write");
 
-        // hooks
-        fs::create_dir_all(governance_dir.join("hooks")).expect("mkdir");
-        fs::write(
-            governance_dir.join("hooks").join("pre-commit.sh"),
-            "#!/bin/bash",
-        )
-        .expect("write");
-
         // lessons
-        fs::create_dir_all(governance_dir.join("lessons")).expect("mkdir");
+        fs::create_dir_all(process_dir.join("lessons")).expect("mkdir");
         fs::write(
-            governance_dir.join("lessons").join("IMPL-001.md"),
+            process_dir.join("lessons").join("IMPL-001.md"),
             "# Lesson",
         )
         .expect("write");
 
         // decisions
-        fs::create_dir_all(governance_dir.join("decisions")).expect("mkdir");
+        fs::create_dir_all(process_dir.join("decisions")).expect("mkdir");
         fs::write(
-            governance_dir.join("decisions").join("AD-001.md"),
+            process_dir.join("decisions").join("AD-001.md"),
             "# Decision",
         )
         .expect("write");
@@ -334,7 +322,7 @@ mod tests {
         fs::write(doc_dir.join("architecture").join("overview.md"), "# Arch").expect("write");
 
         let result = scan_governance(&dir).expect("scan");
-        assert_eq!(result.areas.len(), 7);
+        assert_eq!(result.areas.len(), 6);
         assert_eq!(result.coverage_ratio, 1.0);
 
         cleanup(&dir);
@@ -343,18 +331,17 @@ mod tests {
     #[test]
     fn partial_coverage_computed_correctly() {
         let dir = create_test_dir("partial");
-        let governance_dir = dir.join(".orqa").join("governance");
-        let team_dir = dir.join(".orqa").join("team");
+        let process_dir = dir.join(".orqa").join("process");
 
-        // Only rules and agents covered (2 of 7)
-        fs::create_dir_all(governance_dir.join("rules")).expect("mkdir");
-        fs::write(governance_dir.join("rules").join("rule.md"), "# Rule").expect("write");
+        // Only rules and agents covered (2 of 6)
+        fs::create_dir_all(process_dir.join("rules")).expect("mkdir");
+        fs::write(process_dir.join("rules").join("rule.md"), "# Rule").expect("write");
 
-        fs::create_dir_all(team_dir.join("agents")).expect("mkdir");
-        fs::write(team_dir.join("agents").join("agent.md"), "# Agent").expect("write");
+        fs::create_dir_all(process_dir.join("agents")).expect("mkdir");
+        fs::write(process_dir.join("agents").join("agent.md"), "# Agent").expect("write");
 
         let result = scan_governance(&dir).expect("scan");
-        let expected = 2.0 / 7.0;
+        let expected = 2.0 / 6.0;
         assert!(
             (result.coverage_ratio - expected).abs() < 1e-9,
             "expected ratio ~{expected:.4}, got {:.4}",
@@ -367,7 +354,7 @@ mod tests {
     #[test]
     fn content_preview_truncated_at_500_chars() {
         let dir = create_test_dir("preview");
-        let rules_dir = dir.join(".orqa").join("governance").join("rules");
+        let rules_dir = dir.join(".orqa").join("process").join("rules");
         fs::create_dir_all(&rules_dir).expect("mkdir");
 
         let long_content = "x".repeat(1000);
@@ -434,7 +421,6 @@ mod tests {
                 "rules",
                 "agents",
                 "skills",
-                "hooks",
                 "lessons",
                 "decisions",
                 "documentation"

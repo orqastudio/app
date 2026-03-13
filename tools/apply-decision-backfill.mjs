@@ -249,7 +249,7 @@ function extractRelatedDecisions(body, selfId) {
 
 // ── Main ─────────────────────────────────────────────────────────────────────
 
-const decisionsDir = resolve(ROOT, ".orqa/governance/decisions");
+const decisionsDir = resolve(ROOT, ".orqa/process/decisions");
 let updated = 0;
 
 for (const file of readdirSync(decisionsDir).sort()) {

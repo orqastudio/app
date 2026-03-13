@@ -167,7 +167,7 @@ function extractRelatedRules(body) {
 
 // ── Main ────────────────────────────────────────────────────────────────────
 
-const rulesDir = resolve(ROOT, ".orqa/governance/rules");
+const rulesDir = resolve(ROOT, ".orqa/process/rules");
 let updated = 0;
 
 for (const file of readdirSync(rulesDir).sort()) {

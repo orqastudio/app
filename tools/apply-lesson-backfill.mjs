@@ -167,7 +167,7 @@ const LESSON_RELATIONSHIPS = {
 
 // ── Main ────────────────────────────────────────────────────────────────────
 
-const lessonsDir = resolve(ROOT, ".orqa/governance/lessons");
+const lessonsDir = resolve(ROOT, ".orqa/process/lessons");
 let updated = 0;
 
 for (const file of readdirSync(lessonsDir).sort()) {

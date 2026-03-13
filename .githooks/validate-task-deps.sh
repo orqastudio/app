@@ -10,13 +10,13 @@ set -euo pipefail
 
 ERRORS=0
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-TASKS_DIR="$REPO_ROOT/.orqa/planning/tasks"
+TASKS_DIR="$REPO_ROOT/.orqa/delivery/tasks"
 
 # Determine which task files to check: args or all staged task files.
 if [ "$#" -gt 0 ]; then
   FILES=("$@")
 else
-  mapfile -t FILES < <(git diff --cached --name-only --diff-filter=ACMR -- '.orqa/planning/tasks/TASK-*.md' 2>/dev/null || true)
+  mapfile -t FILES < <(git diff --cached --name-only --diff-filter=ACMR -- '.orqa/delivery/tasks/TASK-*.md' 2>/dev/null || true)
 fi
 
 # AWK program: extract frontmatter block (between first two --- delimiters).
@@ -88,7 +88,7 @@ for file in "${FILES[@]}"; do
   file="${file//\\//}"
 
   # Only process task files in the tasks directory
-  [[ "$file" == .orqa/planning/tasks/TASK-*.md ]] || continue
+  [[ "$file" == .orqa/delivery/tasks/TASK-*.md ]] || continue
 
   local_file="$REPO_ROOT/$file"
   [ -f "$local_file" ] || continue

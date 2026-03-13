@@ -81,7 +81,7 @@ function rewriteFrontmatter(filePath, mutator) {
 // ── 1. Lessons: promoted-to → grounded-by relationship ──────────────────────
 
 console.log("=== Lessons: migrating promoted-to ===");
-const lessonsDir = resolve(ROOT, ".orqa/governance/lessons");
+const lessonsDir = resolve(ROOT, ".orqa/process/lessons");
 let lessonCount = 0;
 
 for (const file of readdirSync(lessonsDir).sort()) {
@@ -123,7 +123,7 @@ console.log(`${lessonCount} lesson(s) migrated.\n`);
 // ── 2. Rules: promoted-from → observes relationship ─────────────────────────
 
 console.log("=== Rules: migrating promoted-from ===");
-const rulesDir = resolve(ROOT, ".orqa/governance/rules");
+const rulesDir = resolve(ROOT, ".orqa/process/rules");
 let ruleCount = 0;
 
 for (const file of readdirSync(rulesDir).sort()) {
@@ -172,7 +172,7 @@ console.log(`${ruleCount} rule(s) migrated.\n`);
 // ── 3. Decisions: research-refs → informed-by relationship ──────────────────
 
 console.log("=== Decisions: migrating research-refs ===");
-const decisionsDir = resolve(ROOT, ".orqa/governance/decisions");
+const decisionsDir = resolve(ROOT, ".orqa/process/decisions");
 let decisionCount = 0;
 
 for (const file of readdirSync(decisionsDir).sort()) {

@@ -40,39 +40,35 @@
   "show_thinking": true,
   "custom_system_prompt": "You are running inside OrqaStudio — the same app you are helping develop. Your responses flow through the Agent SDK sidecar (sidecar/dist/sidecar.js) → Rust Channel<T> → this Svelte UI.\n\nKey constraints of this environment:\n  - Rust backend changes require a manual app restart (no hot reload)\n  - Frontend changes hot-reload via Vite HMR — but editing components mid-stream can crash the window\n  - The sidecar must be rebuilt (`cd sidecar && bun run build`) after any changes to sidecar source\n  - You have 6 file tools available: read, write, edit, bash, glob, grep\n\nProject conventions:\n  - Svelte 5 runes only — no $:, no export let, no let:\n  - All Rust functions return Result — no unwrap() in production\n  - Use `make` targets, not raw cargo/npm commands\n  - shadcn-svelte for UI components, Tailwind for styling\n  - SQLite for all structured persistence, not localStorage\n\nCurrent codebase: Tauri v2 + Svelte 5 + Rust + SQLite desktop app at C:\\Users\\Bobbi\\code\\orqa-studio.",
   "artifacts": [
+    { "key": "process",
+      "children": [
+        { "key": "pillars", "path": ".orqa/process/pillars" },
+        { "key": "lessons", "path": ".orqa/process/lessons" },
+        { "key": "decisions", "path": ".orqa/process/decisions" },
+        { "key": "rules", "path": ".orqa/process/rules" },
+        { "key": "skills", "path": ".orqa/process/skills" },
+        { "key": "agents", "path": ".orqa/process/agents" }
+      ]
+    },
+    { "key": "delivery",
+      "children": [
+        { "key": "ideas", "path": ".orqa/delivery/ideas" },
+        { "key": "research", "path": ".orqa/delivery/research" },
+        { "key": "milestones", "path": ".orqa/delivery/milestones" },
+        { "key": "epics", "path": ".orqa/delivery/epics" },
+        { "key": "tasks", "path": ".orqa/delivery/tasks" },
+        { "key": "verification", "path": ".orqa/delivery/verification" }
+      ]
+    },
     { "key": "docs",
       "children": [
-        { "key": "architecture", "path": ".orqa/documentation/architecture" },
+        { "key": "guide", "path": ".orqa/documentation/guide" },
         { "key": "product", "path": ".orqa/documentation/product" },
+        { "key": "architecture", "path": ".orqa/documentation/architecture" },
         { "key": "development", "path": ".orqa/documentation/development" },
         { "key": "process", "path": ".orqa/documentation/process" },
         { "key": "ui", "path": ".orqa/documentation/ui" },
-        { "key": "wireframes", "path": ".orqa/documentation/wireframes" },
-        { "key": "guide", "path": ".orqa/documentation/guide" }
-      ]
-    },
-    { "key": "planning",
-      "children": [
-        { "key": "pillars", "path": ".orqa/planning/pillars" },
-        { "key": "ideas", "path": ".orqa/planning/ideas" },
-        { "key": "research", "path": ".orqa/planning/research" },
-        { "key": "milestones", "path": ".orqa/planning/milestones" },
-        { "key": "epics", "path": ".orqa/planning/epics" },
-        { "key": "tasks", "path": ".orqa/planning/tasks" }
-      ]
-    },
-    { "key": "governance",
-      "children": [
-        { "key": "decisions", "path": ".orqa/governance/decisions" },
-        { "key": "rules", "path": ".orqa/governance/rules" },
-        { "key": "lessons", "path": ".orqa/governance/lessons" },
-        { "key": "hooks", "path": ".orqa/governance/hooks" }
-      ]
-    },
-    { "key": "team",
-      "children": [
-        { "key": "agents", "path": ".orqa/team/agents" },
-        { "key": "skills", "path": ".orqa/team/skills" }
+        { "key": "wireframes", "path": ".orqa/documentation/wireframes" }
       ]
     }
   ]

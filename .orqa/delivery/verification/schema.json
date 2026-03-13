@@ -1,0 +1,62 @@
+{
+  "$id": "orqa://schemas/verification",
+  "title": "Verification",
+  "description": "Verification record proving compliance with a standard or rule",
+  "type": "object",
+  "required": ["id", "title", "description", "status", "created", "updated", "verifies", "evidence-type"],
+  "additionalProperties": false,
+  "propertyOrder": [
+    "id", "title", "description", "status",
+    "created", "updated",
+    "verifies", "evidence-type", "frequency",
+    "relationships"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^VER-\\d+$" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "status": { "enum": ["draft", "active", "passing", "failing", "retired"] },
+    "created": { "type": "string", "format": "date" },
+    "updated": { "type": "string", "format": "date" },
+    "verifies": {
+      "type": "string",
+      "pattern": "^(RULE|AD|SKILL)-\\d+$",
+      "description": "The rule, decision, or skill this verification checks"
+    },
+    "evidence-type": {
+      "enum": ["automated", "manual", "review", "metric"],
+      "description": "How verification evidence is collected"
+    },
+    "frequency": {
+      "enum": ["per-commit", "per-session", "per-epic", "on-demand"],
+      "description": "How often this verification runs"
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "target", "rationale"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "enum": ["observes", "observed-by", "grounded", "grounded-by", "practices", "practiced-by", "enforces", "enforced-by", "verifies", "verified-by", "informs", "informed-by"]
+          },
+          "target": {
+            "type": ["string", "null"],
+            "pattern": "^(IMPL|AD|RULE|SKILL|PILLAR|RES|VER)-\\d+$"
+          },
+          "rationale": { "type": "string" },
+          "intended": { "type": "boolean" }
+        }
+      }
+    }
+  },
+  "bodyTemplate": {
+    "description": "Required body sections for verification artifacts",
+    "sections": [
+      { "heading": "What Is Verified", "required": true },
+      { "heading": "How", "required": true },
+      { "heading": "Evidence", "required": false }
+    ]
+  }
+}

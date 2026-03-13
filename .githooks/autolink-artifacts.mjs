@@ -20,15 +20,16 @@ import { execSync } from "child_process";
 
 // Artifact ID patterns and their directory mappings
 const ARTIFACT_PATTERNS = [
-  { prefix: "EPIC", dir: ".orqa/planning/epics" },
-  { prefix: "TASK", dir: ".orqa/planning/tasks" },
-  { prefix: "AD", dir: ".orqa/governance/decisions" },
-  { prefix: "RES", dir: ".orqa/planning/research" },
-  { prefix: "RULE", dir: ".orqa/governance/rules" },
-  { prefix: "PILLAR", dir: ".orqa/planning/pillars" },
-  { prefix: "MS", dir: ".orqa/planning/milestones" },
-  { prefix: "IDEA", dir: ".orqa/planning/ideas" },
-  { prefix: "IMPL", dir: ".orqa/governance/lessons" },
+  { prefix: "EPIC", dir: ".orqa/delivery/epics" },
+  { prefix: "TASK", dir: ".orqa/delivery/tasks" },
+  { prefix: "AD", dir: ".orqa/process/decisions" },
+  { prefix: "RES", dir: ".orqa/delivery/research" },
+  { prefix: "RULE", dir: ".orqa/process/rules" },
+  { prefix: "PILLAR", dir: ".orqa/process/pillars" },
+  { prefix: "MS", dir: ".orqa/delivery/milestones" },
+  { prefix: "IDEA", dir: ".orqa/delivery/ideas" },
+  { prefix: "IMPL", dir: ".orqa/process/lessons" },
+  { prefix: "VER", dir: ".orqa/delivery/verification" },
   { prefix: "DOC", dir: ".orqa/documentation" },
 ];
 
