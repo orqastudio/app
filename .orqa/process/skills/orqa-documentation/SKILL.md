@@ -23,7 +23,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Documentation conventions create structural consistency in written artifacts"
+    rationale: "Consistent link formats and cross-referencing conventions make artifact relationships navigable and machine-parseable"
 ---
 
 How to write documentation and artifact content in OrqaStudio. Covers the internal link format, cross-referencing conventions, markdown rendering pipeline, and content structure patterns.

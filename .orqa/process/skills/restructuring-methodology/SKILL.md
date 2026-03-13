@@ -13,7 +13,7 @@ description: "Safe, incremental refactoring methodology: one change at a time, v
 status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: "project"
+layer: "core"
 scope:
   - "AGENT-002"
 category: "methodology"
@@ -22,7 +22,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Restructuring methodology ensures structural changes are safe and incremental"
+    rationale: "One-change-at-a-time refactoring with verification after each step preserves system clarity during architectural evolution"
 ---
 
 

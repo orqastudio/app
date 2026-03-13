@@ -23,7 +23,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "IPC patterns enforce structured communication across layers"
+    rationale: "Tauri invoke() contracts with matching Rust and TypeScript types make the frontend-backend boundary explicit and type-safe"
 ---
 
 

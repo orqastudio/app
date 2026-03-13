@@ -20,7 +20,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Software presets create structured development governance"
+    rationale: "Software preset layers worktree rules, testing standards, and CI patterns onto base governance, making dev workflow expectations explicit"
 ---
 
 > **Forward-looking:** This skill will be activated when project initialisation and software project type support are implemented. See [EPIC-045](EPIC-045) and [EPIC-047](EPIC-047) for context.

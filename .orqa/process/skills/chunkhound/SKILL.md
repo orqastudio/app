@@ -11,7 +11,7 @@ description: "ChunkHound semantic code search: three search modes (regex, semant
 status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: "project"
+layer: "core"
 scope:
   - "AGENT-001"
   - "AGENT-002"
@@ -26,7 +26,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "ChunkHound enables structured code search and discovery"
+    rationale: "Semantic search surfaces hidden relationships in code, making architecture and data flows visible before changes"
 ---
 
 

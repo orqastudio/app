@@ -13,7 +13,7 @@ description: "Security auditing methodology: secret management, capability/permi
 status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: "project"
+layer: "core"
 scope:
   - "AGENT-006"
 category: "methodology"
@@ -22,7 +22,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Security auditing provides structured assessment of system safety"
+    rationale: "Systematic permission, secret, and dependency audits surface hidden risks as documented findings with severity classifications"
 ---
 
 

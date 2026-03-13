@@ -17,7 +17,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-002"
     type: "grounded"
-    rationale: "Research methodology structures the process of learning from investigation"
+    rationale: "Source verification and confidence-leveled findings turn ad-hoc investigation into reusable knowledge that compounds across sessions"
 ---
 
 # Research Methodology

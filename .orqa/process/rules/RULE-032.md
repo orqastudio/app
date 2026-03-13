@@ -16,19 +16,19 @@ relationships:
     rationale: Schema validation enforces structural consistency in artifact frontmatter
   - target: RULE-004
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Status transitions and required fields are enforced by schema validation at each lifecycle stage
   - target: RULE-003
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Config paths must match disk; schemas are discovered via the same artifacts config
   - target: RULE-027
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Artifacts must be correctly formed before implementation begins
   - type: informed-by
     target: RULE-034
-    rationale: Inverse of informs relationship from RULE-034
+    rationale: Cross-reference format rules apply within the schema-validated frontmatter fields
   - type: informed-by
     target: RULE-044
-    rationale: Inverse of informs relationship from RULE-044
+    rationale: Core graph protection includes protecting the schema.json files themselves
 ---
 Every artifact in `.orqa/` must have YAML frontmatter that validates against the JSON Schema in its directory's `schema.json` file. Fields not defined in the schema are rejected. Required fields must be present. Enum fields must use valid values.
 

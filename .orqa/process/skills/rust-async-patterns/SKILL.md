@@ -5,7 +5,7 @@ description: "Master Rust async programming with Tokio, async traits, error hand
 status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: "project"
+layer: "core"
 scope:
   - "AGENT-002"
   - "AGENT-006"
@@ -14,7 +14,7 @@ user-invocable: false
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Async patterns create structured concurrency"
+    rationale: "Tokio task, channel, and stream patterns make concurrent data flows explicit and their error paths traceable"
 ---
 
 

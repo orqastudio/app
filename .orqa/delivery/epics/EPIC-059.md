@@ -2,7 +2,7 @@
 id: EPIC-059
 title: "Philosophy Alignment & Data Integrity"
 description: "Content migration and directory reorganization to express the Knowledge Maturity Pipeline philosophy. Moves artifacts to process/delivery/documentation structure, audits all content, integrates integrity checks, and ensures app layout picks up the new structure."
-status: draft
+status: in-progress
 priority: P1
 created: "2026-03-13"
 updated: "2026-03-13"

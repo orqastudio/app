@@ -13,7 +13,7 @@ description: "Architectural compliance evaluation methodology: boundary verifica
 status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: "project"
+layer: "core"
 scope:
   - "AGENT-004"
   - "AGENT-006"
@@ -23,7 +23,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Architectural evaluation creates structural clarity through systematic compliance checking"
+    rationale: "Teaches boundary verification and compliance checklists that make architectural decisions visible and enforceable"
 ---
 
 

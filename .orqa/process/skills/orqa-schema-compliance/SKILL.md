@@ -21,7 +21,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Schema compliance enforces structural consistency in artifacts"
+    rationale: "JSON Schema validation of frontmatter ensures every artifact conforms to its type contract, preventing malformed graph edges"
 ---
 
 How to create valid `.orqa/` artifacts and fix schema validation failures. Enforced by [RULE-032](RULE-032) via the pre-commit hook at `.githooks/validate-schema.mjs`.

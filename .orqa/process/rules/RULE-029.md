@@ -13,12 +13,21 @@ relationships:
   - target: PILLAR-002
     type: grounded
     rationale: Testing standards create feedback loops that enable learning from failures
+  - target: RULE-006
+    type: informs
+    rationale: Function size limits in coding standards apply to test helpers too
+  - target: RULE-020
+    type: informs
+    rationale: Test doubles are not stubs — they implement real traits at mock boundaries
+  - target: RULE-012
+    type: informs
+    rationale: Failing tests are your responsibility to fix — error ownership applies to the test suite
   - type: informed-by
     target: RULE-006
-    rationale: Inverse of informs relationship from RULE-006
+    rationale: Coding standards define the 80% coverage floor and function size limits for tests
   - type: informed-by
     target: RULE-007
-    rationale: Inverse of informs relationship from RULE-007
+    rationale: Make targets are the required way to run all test variants
 ---
 **Source of Truth:** This file defines testing patterns. `.orqa/documentation/development/coding-standards.md` defines coverage requirements.
 

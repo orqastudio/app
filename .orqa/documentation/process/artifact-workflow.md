@@ -131,7 +131,7 @@ Before an epic can begin implementation:
 
 ### Starting Work (ready → in-progress)
 
-1. Verify the epic meets the Definition of Ready (`.orqa/documentation/process/definition-of-ready.md`)
+1. Verify the epic meets the Definition of Ready (see [RULE-004](RULE-004) epic gates)
 2. Create a worktree: `git worktree add ../orqa-<epic-name> -b <branch>`
 3. Assign the appropriate agent(s)
 4. Set `status: in-progress`

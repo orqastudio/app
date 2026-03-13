@@ -21,7 +21,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Backend standards create structural consistency in Rust code"
+    rationale: "Establishes composability and error handling principles that make backend code consistent and reviewable"
 ---
 
 This skill ensures every backend agent has the right mental model before writing code. It does not duplicate content from deeper skills — it establishes principles and points to the right references.

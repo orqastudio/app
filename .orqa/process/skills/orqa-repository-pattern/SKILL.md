@@ -25,7 +25,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Repository pattern creates structured data access"
+    rationale: "Repository trait abstraction isolates persistence from domain logic, making data access patterns explicit and testable"
 ---
 
 

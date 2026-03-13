@@ -19,7 +19,7 @@ user-invocable: false
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Epic requirement inference structures project workflow decisions"
+    rationale: "Automatically configures task-to-epic linkage requirements based on project signals, ensuring workflow governance matches project complexity"
 ---
 
 Determines whether a project should require epic linkage for all tasks

@@ -13,7 +13,7 @@ description: "Test engineering methodology: test organisation, coverage requirem
 status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: "project"
+layer: "core"
 scope:
   - "AGENT-002"
   - "AGENT-006"

@@ -46,13 +46,13 @@ When `code-reviewer`, `qa-tester`, or `ux-reviewer` reports a FAIL verdict:
 4. **When an IMPL entry reaches recurrence >= 2:** the `orchestrator` (with `governance-maintenance` skills) is triggered to promote it to a rule, coding standard addition, or skill update
 5. **After promotion:** the lesson file's "promoted-to" frontmatter field is updated with the target artifact
 
-## Process Retrospectives (`.orqa/documentation/process/retrospectives.md`)
+## Process Retrospectives
 
-When a process-level change occurs:
+Process-level learnings are captured as lessons (`IMPL-NNN`) in `.orqa/process/lessons/`:
 
-1. **Process changes** (new rule, new agent, workflow change, governance update) — the `orchestrator` adds a `RETRO-NNN` entry
-2. **Ineffective rules** (violations continue despite the rule) — the `orchestrator` adds a RETRO entry and proposes stronger enforcement
-3. **Session start** — the orchestrator checks `.orqa/documentation/process/retrospectives.md` to load current process context and avoid repeating known mistakes
+1. **Process changes** (new rule, new agent, workflow change, governance update) — the `orchestrator` creates or updates a lesson
+2. **Ineffective rules** (violations continue despite the rule) — the `orchestrator` creates a lesson and proposes stronger enforcement
+3. **Session start** — the orchestrator checks `.orqa/process/lessons/` for known patterns and recurring issues
 
 ## Promotion Pipeline
 

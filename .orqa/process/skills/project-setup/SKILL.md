@@ -22,7 +22,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Project setup creates structured scaffolding"
+    rationale: "Scaffolding .orqa/ with core rules, skills, and project.json gives a new project a visible governance baseline from day one"
 ---
 
 > **Forward-looking:** This skill will be activated when project initialisation is implemented. See [EPIC-045](EPIC-045) for context.

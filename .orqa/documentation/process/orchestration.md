@@ -148,7 +148,7 @@ Each reviewer produces a PASS/FAIL verdict with evidence. On FAIL, the implement
 [ ] git status --short -- commit any untracked/modified files before starting
 [ ] git worktree list -- verify no stale worktrees from prior sessions
 [ ] Load orqa-code-search, composability, and planning skills
-[ ] Check process/retrospectives.md for known process mistakes
+[ ] Check .orqa/process/lessons/ for known patterns and recurring issues
 ```
 
 ---

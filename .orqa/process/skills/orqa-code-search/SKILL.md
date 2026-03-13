@@ -28,7 +28,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Code search wrapper provides structured context-aware search"
+    rationale: "Context-aware search makes codebase knowledge discoverable before changes, preventing blind modifications"
 ---
 
 Context-aware code search wrapper. Detects your runtime context and provides the right

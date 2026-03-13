@@ -15,28 +15,28 @@ relationships:
     rationale: Structure before work ensures artifacts exist before implementation begins
   - target: RULE-008
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Documentation before code extends to all artifacts — documentation must exist before implementation
   - target: RULE-004
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Artifact creation standards and status transitions define the required structure
   - target: RULE-011
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Enforcement artifacts must exist before the implementation they govern
   - target: RULE-019
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Acceptance criteria defined in the structure prevent silent scope reduction
   - target: RULE-015
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Structure provides acceptance criteria that prevent ambiguous completion claims
   - type: informed-by
     target: RULE-030
-    rationale: Inverse of informs relationship from RULE-030
+    rationale: UAT tasks require artifact structure before implementation of fixes
   - type: informed-by
     target: RULE-032
-    rationale: Inverse of informs relationship from RULE-032
+    rationale: Schema validation ensures the structure that must exist is correctly formed
   - type: enforces
     target: AD-040
-    rationale: Inverse of enforced-by relationship from AD-040
+    rationale: AD-040 established the structure-before-work principle that this rule implements as a non-negotiable gate
 ---
 ## The Rule (NON-NEGOTIABLE)
 

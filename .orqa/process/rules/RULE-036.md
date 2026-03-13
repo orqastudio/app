@@ -20,10 +20,10 @@ relationships:
     rationale: "Context window discipline keeps orchestration focused and structured"
   - target: "RULE-001"
     type: "informs"
-    rationale: "Listed in Related Rules section"
+    rationale: "Delegation is the primary strategy for protecting the orchestrator's context window — implementation belongs in agent contexts"
   - target: "RULE-005"
     type: "informs"
-    rationale: "Listed in Related Rules section"
+    rationale: "Semantic search tools reduce context consumption by returning targeted results instead of requiring full file reads"
 ---
 
 The orchestrator's context window is a finite resource. Filling it with implementation details, full file contents, or raw agent output degrades coordination quality. These constraints are mandatory.

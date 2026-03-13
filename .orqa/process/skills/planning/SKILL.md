@@ -19,7 +19,7 @@ allowed-tools: "Read, Glob, Grep"
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Planning methodology creates structured approaches before implementation"
+    rationale: "Documentation-first workflow with approval gates ensures designs are explicit and reviewed before code exists"
 ---
 
 

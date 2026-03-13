@@ -20,7 +20,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Skills lifecycle management maintains structural consistency of knowledge"
+    rationale: "Skill evaluation, portability rules, and provenance tracking ensure domain knowledge is curated, versioned, and discoverable"
 ---
 
 
@@ -141,7 +141,7 @@ When deciding whether to install a community skill or create a new one:
 
 - The domain is adequately covered by an existing skill
 - The knowledge belongs in project documentation (not portable enough)
-- The skill would duplicate content already in `.orqa/rules/` or docs
+- The skill would duplicate content already in `.orqa/process/rules/` or docs
 
 ## Portability Rules (NON-NEGOTIABLE)
 
@@ -160,7 +160,7 @@ A skill is portable if a different project could use it unchanged. Skills MUST N
 
 ## Provenance Tracking
 
-Every installed skill must be tracked in `.orqa/documentation/process/skills-log.md` with:
+Every installed skill is tracked through its SKILL.md frontmatter (YAML metadata including layer, category, relationships). Key tracking fields:
 
 | Field | Description |
 |-------|-------------|

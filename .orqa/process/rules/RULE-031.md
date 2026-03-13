@@ -20,34 +20,34 @@ relationships:
     rationale: Vision alignment ensures all features serve the structural pillars
   - target: RULE-004
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Pillar alignment is required at artifact creation and promotion gates
   - target: RULE-021
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Vision alignment for features extends to requiring pillar alignment sections in documentation
   - target: RULE-002
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Architecture decisions must implement foundational principles defined by the pillars
   - target: RULE-020
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Real implementations are required — fake demos do not serve any pillar
   - type: informed-by
     target: RULE-002
-    rationale: Inverse of informs relationship from RULE-002
+    rationale: Architecture decisions implement the foundational principles that pillars define
   - type: informed-by
     target: RULE-004
-    rationale: Inverse of informs relationship from RULE-004
+    rationale: Artifact lifecycle enforces pillar alignment at creation and promotion gates
   - type: informed-by
     target: RULE-008
-    rationale: Inverse of informs relationship from RULE-008
+    rationale: Documentation must verify pillar alignment before features are implemented
   - type: informed-by
     target: RULE-016
-    rationale: Inverse of informs relationship from RULE-016
+    rationale: Pillar alignment drives priority — ID sequence must not be mistaken for priority order
   - type: informed-by
     target: RULE-021
-    rationale: Inverse of informs relationship from RULE-021
+    rationale: Pillar alignment in documentation extends vision alignment to all feature docs
   - type: informed-by
     target: RULE-022
-    rationale: Inverse of informs relationship from RULE-022
+    rationale: Plans must serve active pillars — the architectural compliance section verifies this
 ---
 Every feature, command, and UI element must serve the project's guiding principles. These principles are defined as **pillar artifacts** in `.orqa/process/pillars/`. Read the active pillars before implementing any new capability.
 

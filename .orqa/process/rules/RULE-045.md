@@ -73,6 +73,6 @@ make verify            # Both
 
 ## Related Rules
 
-- [RULE-032](RULE-032) — Schema validation is complementary to link verification
-- [RULE-034](RULE-034) — Cross-reference format rules
-- [RULE-013](RULE-013) — Pre-commit hook enforcement mechanism
+- [RULE-032](RULE-032) (schema-validation) — schema validation is complementary to link verification
+- [RULE-034](RULE-034) (artifact-cross-references) — cross-reference format rules enforced by link verification
+- [RULE-013](RULE-013) (git-workflow) — pre-commit hook enforcement mechanism

@@ -22,7 +22,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Project inference creates structured project understanding"
+    rationale: "Automated detection of languages, frameworks, and build tools produces an explicit project profile that drives governance decisions"
 ---
 
 > **Forward-looking:** This skill will be activated when project initialisation is implemented. See [EPIC-045](EPIC-045) for context.

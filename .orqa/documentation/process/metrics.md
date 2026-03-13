@@ -31,7 +31,7 @@ KPIs tracked by the team to measure process health and improvement over time. Up
 
 The `agent-maintainer` updates this table during retrospective entries:
 
-1. When adding a `RETRO-NNN` entry to `.orqa/documentation/process/retrospectives.md`, also update the relevant metrics
+1. When reviewing lessons in `.orqa/process/lessons/`, also update the relevant metrics
 2. Fill in the Period column with the date range being measured
 3. Update the Value column with the current measurement
 4. Set the Trend column to one of: improving, stable, declining, or -- (insufficient data)

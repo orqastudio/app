@@ -32,22 +32,22 @@ relationships:
     rationale: Core graph protection preserves the fundamental structural integrity of the system
   - target: RULE-003
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Config paths rely on stable schema.json files — firmware protection ensures config-driven scanning remains consistent
   - target: RULE-032
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Schema validation depends on schema.json files that this rule protects from accidental modification
   - target: RULE-035
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Core skills are firmware — this protection prevents project-specific contamination of portable skills
   - target: RULE-009
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Dogfood mode is the only exception where core graph artifacts become editable
   - type: enforces
     target: AD-038
-    rationale: Inverse of enforced-by relationship from AD-038
+    rationale: AD-038 established the five-layer architecture whose core layer this rule protects as firmware
   - type: enforces
     target: AD-039
-    rationale: Inverse of enforced-by relationship from AD-039
+    rationale: AD-039 defined the core graph firmware concept that this rule implements through file-level blocking
 ---
 Core graph artifacts define how the artifact graph works, how agents traverse it, and how the structured thinking process operates. They are **firmware** — they ship with OrqaStudio and are not modified during normal project use.
 

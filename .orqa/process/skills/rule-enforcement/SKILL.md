@@ -21,7 +21,7 @@ user-invocable: false
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Rule enforcement creates structured compliance mechanisms"
+    rationale: "Four-layer enforcement (process gates, skill injection, linter delegation, prompt injection) makes rule compliance mechanically verifiable"
 ---
 
 # Rule Enforcement

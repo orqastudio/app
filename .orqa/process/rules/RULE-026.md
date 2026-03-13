@@ -20,40 +20,40 @@ relationships:
     rationale: Skill enforcement ensures domain knowledge is loaded before implementation
   - target: RULE-023
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Skills load domain knowledge; required reading loads governing docs — both complement each other
   - target: RULE-005
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Code search skills are universal requirements that every agent must declare in their skills list
   - target: RULE-001
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Delegation protocol requires skills to be loaded before agents start implementation
   - target: RULE-037
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Tool access per role complements skill loading — both restrict agent capabilities appropriately
   - target: RULE-038
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: User-invocable field determines how skills surface to users vs. being loaded automatically
   - target: RULE-040
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Capability vocabulary replaces tools in agent definitions — skill loading and capability resolution work together
   - type: informed-by
     target: RULE-001
-    rationale: Inverse of informs relationship from RULE-001
+    rationale: Delegation model requires agents to be equipped with skills before starting work
   - type: informed-by
     target: RULE-011
-    rationale: Inverse of informs relationship from RULE-011
+    rationale: Skills are enforcement artifacts that must exist before agents implement a pattern
   - type: informed-by
     target: RULE-037
-    rationale: Inverse of informs relationship from RULE-037
+    rationale: Tool access restrictions define which capabilities each role may use, informing skill design
   - type: informed-by
     target: RULE-038
-    rationale: Inverse of informs relationship from RULE-038
+    rationale: User-invocable field semantics define how skill loading decisions are surfaced
   - type: informed-by
     target: RULE-040
-    rationale: Inverse of informs relationship from RULE-040
+    rationale: Capability-to-tool mapping defines which tools skill-loaded agents may invoke
   - type: informed-by
     target: RULE-042
-    rationale: Inverse of informs relationship from RULE-042
+    rationale: Skill injection automates Tier 2 loading based on file paths being edited
 ---
 Every agent MUST have a `skills:` list in its YAML frontmatter. Agent tool access is declared via `capabilities:` and resolved per provider context — see [RULE-040](RULE-040). Skills load in three tiers [AD-028](AD-028).
 
@@ -148,7 +148,7 @@ The orchestrator and all agents MUST check rule status before applying enforceme
 - The orchestrator periodically audits that agent Tier 1 skill lists contain only core/plugin/community/user portable skills + universal wrappers
 - No project-specific skills should appear in agent YAML frontmatter
 - The injection table in the orchestrator is the single source of truth for Tier 2 loading
-- All skill changes are documented in `.orqa/documentation/process/skills-log.md`
+- All skill changes are tracked through the artifact graph (skill YAML frontmatter + relationships)
 
 ## App-Managed Loading
 

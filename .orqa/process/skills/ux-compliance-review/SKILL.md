@@ -13,7 +13,7 @@ description: "UX compliance review methodology: label auditing, state coverage v
 status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: "project"
+layer: "core"
 scope:
   - "AGENT-001"
   - "AGENT-006"

@@ -23,7 +23,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Streaming patterns create structured data flow from AI to UI"
+    rationale: "NDJSON protocol with typed ProviderEvent/StreamEvent makes every stage of the LLM-to-UI pipeline observable and debuggable"
 ---
 
 

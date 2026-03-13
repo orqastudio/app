@@ -20,19 +20,19 @@ relationships:
     rationale: Tool access restrictions enforce role boundaries for structural clarity
   - target: RULE-001
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Ownership boundaries defined in agent delegation are enforced by restricting tool access per role
   - target: RULE-026
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Skill loading complements capability restriction — both define what agents may do
   - target: RULE-040
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Capabilities resolve to provider-specific tools that are then subject to role-based restrictions
   - type: informed-by
     target: RULE-001
-    rationale: Inverse of informs relationship from RULE-001
+    rationale: Agent delegation defines the role boundaries that tool restrictions implement
   - type: informed-by
     target: RULE-026
-    rationale: Inverse of informs relationship from RULE-026
+    rationale: Skill enforcement and tool restrictions together constrain agent capabilities
 ---
 Tool access per role enforces ownership boundaries defined in [RULE-001](RULE-001). A Reviewer that can Edit would be tempted to fix issues instead of reporting them. A Researcher that can Write would be tempted to create artifacts instead of investigating.
 

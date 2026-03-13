@@ -5,7 +5,7 @@ description: "Svelte 5 runes, snippets, SvelteKit patterns, and modern best prac
 status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: "project"
+layer: "core"
 scope:
   - "AGENT-001"
   - "AGENT-002"
@@ -22,7 +22,7 @@ metadata:
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Svelte 5 patterns create structured component architecture"
+    rationale: "Rune patterns, snippet APIs, and TypeScript prop typing enforce explicit component contracts that are visible in code and reviewable"
 ---
 
 

@@ -69,16 +69,16 @@ relationships:
     rationale: Skill injection automates knowledge structure loading at the right moments
   - target: RULE-026
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Automated injection implements the skill loading model by triggering Tier 2 skills based on file paths
   - target: RULE-006
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Injected skills help agents comply with coding standards specific to the code area they are editing
   - target: RULE-043
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Skill injection complements linter delegation — skills provide knowledge while linters enforce patterns
   - type: informed-by
     target: RULE-043
-    rationale: Inverse of informs relationship from RULE-043
+    rationale: Linter delegation defines which enforcement belongs in tooling vs skill injection, preventing duplication
 ---
 When agents write to specific code areas, the enforcement engine automatically injects
 relevant domain skills as system context. This implements Layer 2 (Knowledge Injection)

@@ -22,7 +22,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Project migration creates structured governance adoption"
+    rationale: "Mapping existing AI tool configs into .orqa/ governance preserves prior decisions while making them visible and editable"
 ---
 
 > **Forward-looking:** This skill will be activated when project initialisation is implemented. See [EPIC-045](EPIC-045) for context.

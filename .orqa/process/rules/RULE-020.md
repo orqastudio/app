@@ -39,6 +39,9 @@ relationships:
     target: RULE-019
     rationale: Scaffolded implementations that defer real wiring are a deferral violation
   - type: informed-by
+    target: RULE-029
+    rationale: Test doubles implement real traits and are not stubs — this distinction matters for coverage
+  - type: informed-by
     target: RULE-031
     rationale: Real implementations are required — fake demos do not serve any pillar
 ---

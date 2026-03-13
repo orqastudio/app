@@ -14,10 +14,10 @@ relationships:
     rationale: "Session management ensures structured handoffs between sessions"
   - target: "RULE-013"
     type: "informs"
-    rationale: "Listed in Related Rules section"
+    rationale: "Session management requires clean git state — stash policy and commit discipline apply at session boundaries"
   - target: "RULE-007"
     type: "informs"
-    rationale: "Listed in Related Rules section"
+    rationale: "Session management requires dev server lifecycle control using make targets"
 ---
 
 Every session that performs work must leave the codebase in a clean, resumable state. Session state bridges the gap between context windows.

@@ -23,7 +23,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Migration tooling enables structured schema evolution"
+    rationale: "Backfill and verification tools ensure schema changes propagate consistently across all artifacts, keeping frontmatter trustworthy"
 ---
 
 Tools for governance artifact migrations and link integrity verification. These tools live in `tools/` at the project root and are designed for CLI use by agents or humans.

@@ -25,7 +25,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Store orchestration creates structured state management"
+    rationale: "Component-level orchestration via $derived and $effect keeps store dependencies visible and prevents hidden coupling"
 ---
 
 

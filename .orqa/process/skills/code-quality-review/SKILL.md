@@ -13,7 +13,7 @@ description: "Code review methodology: automated checks, manual review checklist
 status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: "project"
+layer: "core"
 scope:
   - "AGENT-006"
 category: "methodology"
@@ -22,7 +22,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-002"
     type: "grounded"
-    rationale: "Code review enables learning from implementation patterns"
+    rationale: "Review verdicts and forbidden-pattern detection feed findings back into lessons and rules, closing the improvement loop"
 ---
 
 

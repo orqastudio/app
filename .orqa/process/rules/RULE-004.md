@@ -59,10 +59,10 @@ relationships:
     rationale: Schema validation enforces required field completeness at each lifecycle stage
   - type: enforces
     target: AD-040
-    rationale: Inverse of enforced-by relationship from AD-040
+    rationale: AD-040 established the structure-before-work principle that artifact lifecycle gates enforce mechanically
   - type: grounded
     target: IMPL-014
-    rationale: Inverse of grounded-by relationship from IMPL-014
+    rationale: Lesson IMPL-014 identified recurring lifecycle gate violations that shaped the non-negotiable transition rules
 ---
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
 

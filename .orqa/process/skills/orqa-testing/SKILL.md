@@ -21,7 +21,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-002"
     type: "grounded"
-    rationale: "Testing patterns enable learning through automated verification"
+    rationale: "Test organisation by layer with mock boundaries at adapters catches regressions early, feeding failures back as lessons"
 ---
 
 

@@ -36,16 +36,16 @@ relationships:
     rationale: Tooling ecosystem manages the structural chain from standards to enforcement
   - target: RULE-006
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Documented coding standards must have corresponding linter rules — this rule maps standards to their automated enforcement
   - target: RULE-042
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Linter delegation and skill injection are complementary enforcement layers — linters catch patterns, skills provide knowledge
   - target: RULE-012
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Pre-commit hook enforcement runs the linter chain managed by this rule to catch errors before commits
   - type: informed-by
     target: RULE-042
-    rationale: Inverse of informs relationship from RULE-042
+    rationale: Skill injection defines the knowledge layer that complements the linter enforcement managed here
 ---
 OrqaStudio delegates code quality enforcement to the appropriate linting tools. The
 enforcement engine does NOT regex-match patterns that linters already catch. Instead,

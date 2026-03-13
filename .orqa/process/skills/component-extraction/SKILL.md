@@ -5,7 +5,7 @@ description: "Methodology for identifying repeated UI patterns and extracting th
 status: "active"
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: "project"
+layer: "core"
 scope:
   - "AGENT-001"
   - "AGENT-002"
@@ -16,7 +16,7 @@ user-invocable: false
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Component extraction creates structural reuse"
+    rationale: "Extracting repeated UI patterns into shared components makes design decisions explicit and consistent across pages"
 ---
 
 # Component Extraction

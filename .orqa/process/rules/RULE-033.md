@@ -15,10 +15,10 @@ relationships:
     rationale: "Tooltip consistency enforces structural UI patterns"
   - target: "RULE-006"
     type: "informs"
-    rationale: "Listed in Related Rules section"
+    rationale: "Tooltip usage is a specific component standard within the broader coding standards"
   - target: "RULE-024"
     type: "informs"
-    rationale: "Listed in Related Rules section"
+    rationale: "shadcn Tooltip is a shared component — use it consistently rather than reinventing hover hints"
 ---
 
 All interactive elements that need hover hints MUST use the shadcn `Tooltip` component (`$lib/components/ui/tooltip`) instead of the native HTML `title` attribute.

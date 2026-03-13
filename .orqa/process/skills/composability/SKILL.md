@@ -26,7 +26,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Composability is the core structural principle — build from small, pure, swappable units"
+    rationale: "Small, pure, swappable units make system boundaries visible and each piece independently understandable"
 ---
 
 Software is built from small, composable units at every level: functions, modules, features, and integrations. This skill teaches the composability philosophy that shapes all code in a well-structured project.

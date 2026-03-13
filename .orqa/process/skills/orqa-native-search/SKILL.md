@@ -24,7 +24,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Native search enables structured knowledge discovery in the app"
+    rationale: "Embedded ONNX+DuckDB search lets in-app agents discover code relationships and documentation without external tools"
 ---
 
 Orqa provides three search tools accessible from within the app. This skill covers

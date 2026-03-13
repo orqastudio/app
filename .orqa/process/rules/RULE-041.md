@@ -16,10 +16,10 @@ relationships:
     rationale: "Data persistence boundaries create clear structural separation of concerns"
   - target: "RULE-003"
     type: "informs"
-    rationale: "Listed in Related Rules section"
+    rationale: "File-based artifact scanning depends on correct config paths — persistence boundaries define which data lives in scanned .orqa/ files vs SQLite"
   - target: "RULE-010"
     type: "informs"
-    rationale: "Listed in Related Rules section"
+    rationale: "End-to-end completeness requires all layers to agree on which persistence channel stores each type of data"
 ---
 
 Data persistence in OrqaStudio follows three channels, each with clear boundaries.

@@ -25,7 +25,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Domain service patterns create structural clarity in backend architecture"
+    rationale: "Service anatomy and command delegation patterns enforce clear separation between business logic and framework wiring"
 ---
 
 

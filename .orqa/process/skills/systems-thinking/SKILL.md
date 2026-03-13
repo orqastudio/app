@@ -19,7 +19,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Systems thinking is the foundational methodology for clarity through structure"
+    rationale: "Mapping boundaries, relationships, and the uniform base before changing code prevents special-case proliferation and makes architecture intentional"
 ---
 
 # Systems Thinking

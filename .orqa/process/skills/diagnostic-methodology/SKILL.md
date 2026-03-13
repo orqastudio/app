@@ -22,7 +22,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-002"
     type: "grounded"
-    rationale: "Diagnostics systematise learning from failures"
+    rationale: "Root cause analysis captures failure patterns as reusable knowledge, turning each bug into a lesson that prevents recurrence"
 ---
 
 

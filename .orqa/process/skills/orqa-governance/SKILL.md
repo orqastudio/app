@@ -23,7 +23,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Governance patterns maintain structural consistency of the framework"
+    rationale: "Artifact types, frontmatter schemas, and scanning pipelines make governance decisions browsable and enforceable in the app"
 ---
 
 

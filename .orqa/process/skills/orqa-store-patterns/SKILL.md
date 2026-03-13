@@ -23,7 +23,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Store patterns create structured reactive state"
+    rationale: "Class-based rune stores with explicit loading/error/empty states make frontend data flow predictable and inspectable"
 ---
 
 

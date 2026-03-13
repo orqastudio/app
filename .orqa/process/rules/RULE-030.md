@@ -15,16 +15,16 @@ relationships:
     rationale: UAT process structures user feedback into systematic improvement
   - target: RULE-028
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: UAT systemic analysis phase applies systems thinking to group findings by root cause
   - target: RULE-017
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: UAT rounds must create lessons alongside bug fixes to exercise the learning loop
   - target: RULE-015
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: UAT findings must be reported accurately before being grouped into systemic tasks
   - target: RULE-027
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: UAT tasks require artifact structure (task + acceptance criteria) before fixes are implemented
   - target: IMPL-011
     type: observes
     rationale: Rule promoted from lesson IMPL-011
@@ -33,10 +33,10 @@ relationships:
     rationale: Rule promoted from lesson IMPL-012
   - type: grounded
     target: IMPL-011
-    rationale: Inverse of grounded-by relationship from IMPL-011
+    rationale: Lesson IMPL-011 identified that premature fixing during testing leads to incomplete root cause analysis
   - type: grounded
     target: IMPL-012
-    rationale: Inverse of grounded-by relationship from IMPL-012
+    rationale: Lesson IMPL-012 identified that UAT rounds without process improvement encoding fail to exercise the learning loop
 ---
 User acceptance testing follows a structured process that prevents premature fixing and ensures systemic solutions.
 

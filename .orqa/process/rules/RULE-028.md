@@ -20,19 +20,19 @@ relationships:
     rationale: Systems thinking provides the core methodology for achieving clarity through structure
   - target: RULE-022
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Systems Architecture Checklist operationalises systems thinking in every implementation plan
   - target: RULE-010
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Full-stack thinking is systems thinking applied to the four-layer feature structure
   - target: RULE-009
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Dogfood mode heightens systems-thinking urgency when editing a live system from within
   - type: informed-by
     target: RULE-009
-    rationale: Inverse of informs relationship from RULE-009
+    rationale: Dogfood mode provides the specific operational constraints for self-modifying systems
   - type: informed-by
     target: RULE-030
-    rationale: Inverse of informs relationship from RULE-030
+    rationale: UAT systemic analysis phase is systems thinking applied to quality assurance
 ---
 # Systems Thinking First (NON-NEGOTIABLE)
 

@@ -20,22 +20,22 @@ relationships:
     rationale: Provider-agnostic capabilities create a structured abstraction for tool resolution
   - target: RULE-026
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Skill loading complements capability resolution — both define what an agent brings to a task
   - target: RULE-001
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: The delegation protocol includes resolving capabilities to concrete tools for each provider context
   - target: RULE-005
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: Code search capabilities resolve to either ChunkHound MCP tools or native search tools depending on context
   - type: informed-by
     target: RULE-001
-    rationale: Inverse of informs relationship from RULE-001
+    rationale: Agent delegation defines the roles whose capabilities this rule maps to provider-specific tools
   - type: informed-by
     target: RULE-026
-    rationale: Inverse of informs relationship from RULE-026
+    rationale: The skill tier model defines which skills load per role, complementing the capability-to-tool mapping
   - type: informed-by
     target: RULE-037
-    rationale: Inverse of informs relationship from RULE-037
+    rationale: Role-based tool restrictions constrain which resolved capabilities each role may actually use
 ---
 Agent definitions declare **capabilities** (what they can do), not **tools** (how they
 do it). The mapping from capabilities to provider-specific tool names is defined in this

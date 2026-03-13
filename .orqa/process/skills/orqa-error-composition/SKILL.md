@@ -28,7 +28,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Error composition creates structured error propagation"
+    rationale: "Canonical error types with From impls make every failure path traceable from domain logic through IPC to the user"
 ---
 
 

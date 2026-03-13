@@ -13,7 +13,7 @@ description: "End-to-end functional verification methodology: the \"Would It Wor
 status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
-layer: "project"
+layer: "core"
 scope:
   - "AGENT-006"
 category: "methodology"
@@ -22,7 +22,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-002"
     type: "grounded"
-    rationale: "QA verification enables learning through systematic testing"
+    rationale: "The 'Would It Work' protocol traces features end-to-end, turning verification failures into documented patterns that prevent recurrence"
 ---
 
 

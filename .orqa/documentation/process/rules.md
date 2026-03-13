@@ -153,6 +153,5 @@ The `code-reviewer` includes rule compliance in every code review:
 
 - [Content Governance](content-governance.md) — The six-layer ownership model (docs, agents, skills, rules, hooks, enforcement)
 - [Team Overview](team.md) — Which agents load which skills and follow which rules
-- [Process Retrospectives](retrospectives.md) — History of rule creation and governance changes
 - `.orqa/process/lessons/` — Individual patterns that may be promoted to rules
 - `.orqa/documentation/architecture/enforcement.md` — Technical architecture of the enforcement engine

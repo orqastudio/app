@@ -26,11 +26,11 @@
     "has_design_tokens": false
   },
   "governance": {
-    "docs": 59,
-    "agents": 16,
-    "rules": 30,
-    "skills": 22,
-    "hooks": 2,
+    "rules": 45,
+    "agents": 7,
+    "skills": 49,
+    "lessons": 16,
+    "decisions": 44,
     "has_claude_config": true
   },
   "icon": "icon.svg",

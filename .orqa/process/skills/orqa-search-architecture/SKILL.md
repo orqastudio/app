@@ -19,7 +19,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Search architecture enables structured knowledge discovery"
+    rationale: "DuckDB + ONNX embedding pipeline indexes the codebase so architectural relationships are queryable, not just file-browsable"
 ---
 
 This skill covers the implementation architecture of OrqaStudio's native search engine.

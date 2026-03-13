@@ -20,7 +20,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Plugin development creates structured extensibility"
+    rationale: "Plugin architecture with the Artifact Graph SDK makes governance extensible while keeping the core framework stable"
 ---
 
 > **Forward-looking:** This skill will be activated when the plugin system is implemented. See [IDEA-038](IDEA-038) for context.

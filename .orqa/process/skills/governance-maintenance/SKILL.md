@@ -22,7 +22,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Governance maintenance ensures structural consistency of the framework"
+    rationale: "Auditing and maintaining rules, agents, and skills keeps the governance framework internally consistent and its standards visible"
 ---
 
 

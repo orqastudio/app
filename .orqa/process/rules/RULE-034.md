@@ -15,10 +15,10 @@ relationships:
     rationale: "Cross-reference format ensures navigable, structured artifact links"
   - target: "RULE-032"
     type: "informs"
-    rationale: "Listed in Related Rules section"
+    rationale: "Frontmatter field values that reference artifacts must use valid IDs in the correct link format"
   - target: "RULE-003"
     type: "informs"
-    rationale: "Listed in Related Rules section"
+    rationale: "Artifact link format must use IDs, not file paths — config paths and link targets are separate concerns"
 ---
 
 All artifact cross-references MUST use the format `[Display Text](ARTIFACT-ID)` where the artifact ID matches the pattern `PREFIX-NNN`. The display text is typically the artifact ID itself: `[EPIC-001](EPIC-001)`.

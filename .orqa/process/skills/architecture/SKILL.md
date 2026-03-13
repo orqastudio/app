@@ -1,9 +1,9 @@
 ---
 id: "SKILL-002"
 title: "Architecture"
-description: "Portable software architecture knowledge: ADR patterns, data flow mapping, adapter pattern,
+description: "OrqaStudio architecture knowledge: ADR patterns, data flow mapping, layer responsibilities,
 
-  violation detection, and vocabulary for layered desktop applications.
+  violation detection, and IPC boundary design for the Tauri+Svelte+Rust stack.
 
   Use when: Planning features that cross layer boundaries, evaluating whether a change is
 
@@ -23,7 +23,7 @@ user-invocable: true
 relationships:
   - target: "PILLAR-001"
     type: "grounded"
-    rationale: "Architecture knowledge enables structured design decisions"
+    rationale: "ADR patterns and layer responsibility mapping make design decisions explicit and traceable rather than implicit"
 ---
 
 

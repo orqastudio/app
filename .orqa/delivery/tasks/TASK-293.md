@@ -2,7 +2,7 @@
 id: TASK-293
 title: "Rules content audit (44 rules)"
 description: "Audit all 44 rules: fix deprecated references, ensure rules state constraints not methodology, review relationship rationales, ensure Related Rules sections match relationships arrays, absorb operational standards."
-status: todo
+status: done
 created: "2026-03-13"
 updated: "2026-03-13"
 epic: EPIC-059

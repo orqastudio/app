@@ -43,6 +43,9 @@ relationships:
     target: RULE-020
     rationale: No-stubs extends error ownership to runtime behaviour — stubs hide real errors
   - type: informed-by
+    target: RULE-029
+    rationale: Failing tests are your responsibility — testing standards are subject to error ownership
+  - type: informed-by
     target: RULE-043
     rationale: Tooling ecosystem channels error ownership through configured linters and hooks
 ---

@@ -14,13 +14,13 @@ relationships:
     rationale: User-invocable field creates clear structure for skill surfacing
   - target: RULE-026
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: User-invocable field is required in skill frontmatter as part of the skill loading model
   - target: RULE-035
     type: informs
-    rationale: Listed in Related Rules section
+    rationale: User-invocable field is part of the portability contract each skill must declare
   - type: informed-by
     target: RULE-026
-    rationale: Inverse of informs relationship from RULE-026
+    rationale: Skill enforcement defines the three-tier loading model that user-invocable determines surfacing for
 ---
 Every skill MUST have a `user-invocable` field in its YAML frontmatter. This field determines how the skill surfaces to users.
 
