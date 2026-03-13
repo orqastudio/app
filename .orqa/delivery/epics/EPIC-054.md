@@ -92,7 +92,7 @@ audited 476+ artifacts across all layers. Critical findings:
 
 **Data Integrity:**
 - [SKILL-046](SKILL-046) ID assigned to 3 different skills (graph traversal breaks)
-- [SKILL-045](SKILL-045) exists as divergent copies (not symlinked)
+- SKILL-045 exists as divergent copies (not symlinked)
 - 20+ epics reference DOC-NNN phantom IDs (unresolvable graph edges)
 - 4 different scoring dimension sets across epics (priority comparison meaningless)
 - [EPIC-051](EPIC-051) fully complete but all tasks marked todo
@@ -150,7 +150,7 @@ scoring dimensions.
 | ID | Title |
 |----|-------|
 | [TASK-225](TASK-225) | Fix [SKILL-046](SKILL-046) ID collision — assign unique IDs |
-| [TASK-226](TASK-226) | Fix [SKILL-045](SKILL-045) rule-enforcement duplication — symlink or split |
+| [TASK-226](TASK-226) | Fix SKILL-045 rule-enforcement duplication — symlink or split |
 | [TASK-227](TASK-227) | Fix epic/task status mismatches (EPIC-051, [EPIC-053](EPIC-053), EPIC-007) |
 | [TASK-228](TASK-228) | Audit [EPIC-050](EPIC-050) tasks against plugin codebase |
 | [TASK-229](TASK-229) | Resolve DOC-NNN phantom references across all epics |

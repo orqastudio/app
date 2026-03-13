@@ -6,7 +6,7 @@ status: active
 created: "2026-03-13"
 updated: "2026-03-13"
 maturity: observation
-recurrence: 1
+recurrence: 2
 relationships:
   - target: RULE-001
     type: observes

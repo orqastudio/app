@@ -10,10 +10,9 @@ pub fn parse_artifact_type(s: &str) -> Result<ArtifactType, OrqaError> {
         "agent" => Ok(ArtifactType::Agent),
         "rule" => Ok(ArtifactType::Rule),
         "skill" => Ok(ArtifactType::Skill),
-        "hook" => Ok(ArtifactType::Hook),
         "doc" => Ok(ArtifactType::Doc),
         other => Err(OrqaError::Validation(format!(
-            "unknown artifact type: {other} (valid: agent, rule, skill, hook, doc)"
+            "unknown artifact type: {other} (valid: agent, rule, skill, doc)"
         ))),
     }
 }
@@ -26,9 +25,6 @@ pub fn derive_rel_path(artifact_type: &ArtifactType, name: &str) -> String {
         ArtifactType::Agent => format!(".orqa/process/agents/{sanitized}.md"),
         ArtifactType::Rule => format!(".orqa/process/rules/{sanitized}.md"),
         ArtifactType::Skill => format!(".orqa/process/skills/{sanitized}/SKILL.md"),
-        // Hooks are plugin implementation, not scannable artifacts.
-        // This path is a placeholder — hook CRUD is not currently used.
-        ArtifactType::Hook => format!("hooks/{sanitized}.sh"),
         ArtifactType::Doc => format!("docs/{sanitized}.md"),
     }
 }
@@ -41,8 +37,6 @@ pub fn infer_artifact_type_from_path(rel_path: &str) -> ArtifactType {
         ArtifactType::Rule
     } else if rel_path.starts_with(".orqa/process/skills") {
         ArtifactType::Skill
-    } else if rel_path.contains("/hooks/") {
-        ArtifactType::Hook
     } else {
         ArtifactType::Doc
     }
@@ -84,7 +78,6 @@ pub enum ArtifactType {
     Agent,
     Rule,
     Skill,
-    Hook,
     Doc,
 }
 
@@ -467,10 +460,6 @@ mod tests {
             parse_artifact_type("skill"),
             Ok(ArtifactType::Skill)
         ));
-        assert!(matches!(
-            parse_artifact_type("hook"),
-            Ok(ArtifactType::Hook)
-        ));
         assert!(matches!(parse_artifact_type("doc"), Ok(ArtifactType::Doc)));
     }
 
@@ -539,12 +528,6 @@ mod tests {
                 .expect("serialization should succeed")
                 .as_str(),
             Some("skill")
-        );
-        assert_eq!(
-            serde_json::to_value(ArtifactType::Hook)
-                .expect("serialization should succeed")
-                .as_str(),
-            Some("hook")
         );
         assert_eq!(
             serde_json::to_value(ArtifactType::Doc)

@@ -2,7 +2,7 @@
 id: TASK-304
 title: "Remove ArtifactType::Hook dead code"
 description: "ArtifactType::Hook is dead code — hooks are plugin implementation, not governance artifacts. Remove the enum variant and all handling code (parse_artifact_type, derive_rel_path, infer_artifact_type_from_path, governance_dir)."
-status: todo
+status: done
 created: "2026-03-13"
 updated: "2026-03-13"
 epic: EPIC-059

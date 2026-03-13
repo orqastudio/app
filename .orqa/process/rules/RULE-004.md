@@ -4,7 +4,7 @@ title: Artifact Lifecycle
 description: Enforces creation standards, status transitions, promotion gates, and documentation gates for all .orqa/ artifacts.
 status: active
 created: 2026-03-07
-updated: 2026-03-07
+updated: 2026-03-13
 layer: core
 scope:
   - AGENT-003
@@ -119,7 +119,7 @@ draft ──> ready ──> in-progress ──> review ──> done
 - `draft → ready`: All `docs-required` items exist and are approved (Documentation Gate — see below)
 - `ready → in-progress`: Epic meets Definition of Ready, worktree created, agent assigned
 - `in-progress → review`: Implementation complete, submitted for verification gates
-- `review → done`: All verification gates passed (code-reviewer, qa-tester, ux-reviewer), all `docs-produced` items verified as created/updated
+- `review → done`: **Human gate (NON-NEGOTIABLE)** — the orchestrator presents a completion summary to the user and receives explicit approval. The summary must include: tasks completed, docs-produced verification, lessons logged during implementation, and any scope changes. The orchestrator MUST NOT mark an epic as done without user confirmation. All verification gates must also have passed (code-reviewer, qa-tester, ux-reviewer), and all `docs-produced` items verified as created/updated
 
 The epic body contains the implementation design — data model, IPC contracts, component breakdown, and approach. For investigation-heavy work, the epic may carry a `research-refs` field listing research documents in `.orqa/delivery/research/` that informed the design.
 
@@ -306,6 +306,32 @@ The following changes MUST be reflected in `.orqa/documentation/product/roadmap.
 
 ---
 
+## Epic Readiness Surfacing
+
+When all tasks in an epic have `status: done` but the epic itself is not yet `status: done`, the orchestrator MUST proactively surface this to the user. This prevents epics from silently stalling between task completion and formal closure.
+
+The surfacing must include:
+1. List of completed tasks
+2. Any observations logged during implementation (IMPL entries)
+3. A prompt asking the user to review and approve epic completion
+
+In the app, this should be surfaced via a dashboard notification or tool output. In the CLI, the orchestrator raises it in conversation.
+
+---
+
+## Observation Triage During Epics
+
+When observations (IMPL entries) are created during an epic's implementation, a triage task MUST be auto-created on the first observation. Subsequent observations accumulate under the same triage task. The triage task is completed as part of epic closure.
+
+For each observation, the triage outcome MUST be one of:
+1. **Implement now** — the observation reveals a gap that blocks or undermines the epic's goals. Create a task within this epic.
+2. **Promote** — the observation is mature enough to become a rule, skill update, or architectural decision. Do it in this epic or create a task.
+3. **Defer to idea** — the observation is valid but out of scope. Create an `IDEA-NNN` with a relationship edge so it enters the planning pipeline.
+
+"Leave it sitting" is NOT a valid triage outcome for an epic that is trying to close.
+
+---
+
 ## Artifact Integrity Checks
 
 The orchestrator SHOULD periodically verify:
@@ -331,6 +357,8 @@ The orchestrator SHOULD periodically verify:
 - Recording an architecture decision without a corresponding `AD-NNN.md` file in `.orqa/process/decisions/`
 - Updating one side of a decision supersession without updating the other
 - Using process words (UAT, Phase, Sprint, Round, Audit) in epic titles unless they describe the actual deliverable content — epic titles describe what is achieved, not how work is organised
+- Marking an epic as `done` without explicit user approval (human gate violation)
+- Closing an epic with untriaged observations — every IMPL entry created during the epic must have a forward path
 
 ---
 

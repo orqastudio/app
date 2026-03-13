@@ -57,7 +57,8 @@
     "sections": [
       { "heading": "What", "required": true },
       { "heading": "How", "required": true },
-      { "heading": "Verification", "required": true }
+      { "heading": "Verification", "required": true },
+      { "heading": "Lessons", "required": true }
     ]
   }
 }

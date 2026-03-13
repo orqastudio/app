@@ -229,7 +229,6 @@ fn serialize_artifact_type(t: &ArtifactType) -> &'static str {
         ArtifactType::Agent => "agent",
         ArtifactType::Rule => "rule",
         ArtifactType::Skill => "skill",
-        ArtifactType::Hook => "hook",
         ArtifactType::Doc => "doc",
     }
 }
@@ -239,7 +238,6 @@ fn parse_artifact_type(s: &str) -> ArtifactType {
         "agent" => ArtifactType::Agent,
         "rule" => ArtifactType::Rule,
         "skill" => ArtifactType::Skill,
-        "hook" => ArtifactType::Hook,
         _ => ArtifactType::Doc,
     }
 }

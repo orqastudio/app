@@ -196,7 +196,6 @@ fn scan_type_from_config(
 /// Scan artifact files within a type directory and return sorted `DocNode` entries.
 ///
 /// Skills are special: they are subdirectories containing `SKILL.md`.
-/// Hooks are special: they may contain `.sh` files in addition to `.md` files.
 /// All other types recursively walk subdirectories, building a tree of `DocNode`
 /// entries. Directory nodes have `children` set; file nodes have `path` set.
 /// Hidden files (starting with `.` or `_`) are skipped at every level.

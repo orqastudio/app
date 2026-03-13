@@ -12,6 +12,8 @@ research-needed:
   - "Should items auto-clear when the artifact is created, or require manual dismissal?"
   - "How does this interact with context compaction — does it survive as injected context?"
   - "CLI equivalent — is tmp/session-state.md sufficient or does it need structure?"
+  - "Should this hook into the provider's built-in task/memory capability (e.g., Claude Code tasks) rather than reimplementing?"
+  - "In-memory task lists as a capability — how does this fit the capability model?"
 promoted-to: null
 ---
 
