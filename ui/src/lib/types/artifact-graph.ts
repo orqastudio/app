@@ -89,3 +89,10 @@ export interface IntegrityCheck {
     auto_fixable: boolean;
     fix_description: string | null;
 }
+
+/** A fix that was applied to resolve an integrity issue. */
+export interface AppliedFix {
+    artifact_id: string;
+    description: string;
+    file_path: string;
+}

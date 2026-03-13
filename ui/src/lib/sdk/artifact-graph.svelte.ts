@@ -14,7 +14,7 @@ import { SvelteMap } from "svelte/reactivity";
 import { listen } from "@tauri-apps/api/event";
 import type { UnlistenFn } from "@tauri-apps/api/event";
 import { invoke, extractErrorMessage } from "$lib/ipc/invoke";
-import type { ArtifactNode, ArtifactRef, GraphStats, IntegrityCheck } from "$lib/types/artifact-graph";
+import type { ArtifactNode, ArtifactRef, GraphStats, IntegrityCheck, AppliedFix } from "$lib/types/artifact-graph";
 import { ARTIFACT_TYPES } from "$lib/types/artifact-graph";
 
 // ---------------------------------------------------------------------------
@@ -356,6 +356,11 @@ class ArtifactGraphSDK {
     /** Run integrity checks via the backend and return all findings. */
     async runIntegrityScan(): Promise<IntegrityCheck[]> {
         return invoke<IntegrityCheck[]>("run_integrity_scan");
+    }
+
+    /** Apply auto-fixes for the given integrity checks and return what was changed. */
+    async applyAutoFixes(checks: IntegrityCheck[]): Promise<AppliedFix[]> {
+        return invoke<AppliedFix[]>("apply_auto_fixes", { checks });
     }
 
     // -----------------------------------------------------------------------

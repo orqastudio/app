@@ -147,7 +147,7 @@ Each issue row: artifact ID (clickable → navigates to artifact), message, seve
 | [TASK-392](TASK-392) | Auto-fix engine for deterministic integrity issues | 1 | [TASK-390](TASK-390) |
 | ~~TASK-TBD-3~~ | ~~IPC commands~~ (merged into [TASK-390](TASK-390) + [TASK-392](TASK-392)) | — | — |
 | [TASK-391](TASK-391) | Dashboard integrity widget — health score and issue list | 2 | [TASK-390](TASK-390) |
-| TASK-TBD-5 | Fix flow — auto-fix application and agent delegation UI | 2 | TASK-TBD-3, TASK-TBD-4 |
+| [TASK-393](TASK-393) | Fix flow — auto-fix button and results display in IntegrityWidget | 2 | [TASK-391](TASK-391), [TASK-392](TASK-392) |
 | TASK-TBD-6 | Pipeline thread visualization | 3 | TASK-TBD-3 |
 | TASK-TBD-7 | Bottleneck detection and flow analysis | 3 | TASK-TBD-6 |
 | TASK-TBD-8 | Graph snapshot storage and trend data | 4 | TASK-TBD-1 |
