@@ -2,7 +2,7 @@
 id: TASK-307
 title: "Design plugin-sidecar pairing mechanism (IMPL-019, IMPL-020)"
 description: "Design the plugin type taxonomy, AI provider schema, and capability fulfilment model schemas. Design only — implementation is deferred to IDEA-071. Covers plugin.json schema extension, provider definition schema, and capability routing configuration shape."
-status: todo
+status: done
 created: "2026-03-13"
 updated: "2026-03-13"
 epic: EPIC-059

@@ -2,7 +2,7 @@
 id: TASK-306
 title: "Replace hardcoded path constants with runtime config cache (IMPL-018)"
 description: "Remove paths.rs constants and all hardcoded .orqa/ paths. Load project.json once at startup, build a ProjectPaths struct, pass it through the call chain. Decision: Option C from RES-052, approved by user."
-status: todo
+status: done
 created: "2026-03-13"
 updated: "2026-03-13"
 epic: EPIC-059

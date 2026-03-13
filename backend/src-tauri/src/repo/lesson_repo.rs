@@ -1,30 +1,60 @@
 use std::path::{Path, PathBuf};
 
 use crate::domain::lessons::{parse_lesson, render_lesson, Lesson, NewLesson};
-use crate::domain::paths;
+use crate::domain::paths::ProjectPaths;
 use crate::domain::time_utils;
 use crate::error::OrqaError;
 
-/// List all lessons from `.orqa/lessons/` in the given project directory.
+/// Resolve the lessons directory from the project paths config.
+///
+/// Falls back to `None` if the "lessons" key is not in the config.
+fn lessons_dir_from_config(paths: &ProjectPaths) -> Option<PathBuf> {
+    paths.artifact_dir("lessons")
+}
+
+/// Resolve the lessons directory, returning an error if not configured.
+fn require_lessons_dir(paths: &ProjectPaths) -> Result<PathBuf, OrqaError> {
+    lessons_dir_from_config(paths).ok_or_else(|| {
+        OrqaError::Validation("no 'lessons' artifact path configured in project.json".to_string())
+    })
+}
+
+/// Get the relative path prefix for lessons from config.
+fn lessons_relative_path(paths: &ProjectPaths) -> Result<String, OrqaError> {
+    paths
+        .artifact_relative_path("lessons")
+        .map(String::from)
+        .ok_or_else(|| {
+            OrqaError::Validation(
+                "no 'lessons' artifact path configured in project.json".to_string(),
+            )
+        })
+}
+
+/// List all lessons from the configured lessons directory.
 ///
 /// Reads every `.md` file in the directory and parses its frontmatter.
 /// Files that fail to parse are skipped and a warning is logged.
 /// Returns lessons sorted by ID ascending.
-pub fn list(project_path: &Path) -> Result<Vec<Lesson>, OrqaError> {
-    let lessons_dir = lessons_dir(project_path);
+pub fn list(paths: &ProjectPaths) -> Result<Vec<Lesson>, OrqaError> {
+    let Some(lessons_dir) = lessons_dir_from_config(paths) else {
+        return Ok(vec![]);
+    };
+
     if !lessons_dir.exists() {
         return Ok(vec![]);
     }
 
     let entries = std::fs::read_dir(&lessons_dir)?;
     let mut lessons = Vec::new();
+    let project_root = paths.project_root();
 
     for entry in entries.flatten() {
         let path = entry.path();
         if path.extension().and_then(|e| e.to_str()) != Some("md") {
             continue;
         }
-        match read_lesson_file(&path, project_path) {
+        match read_lesson_file(&path, project_root) {
             Ok(lesson) => lessons.push(lesson),
             Err(e) => {
                 tracing::warn!("skipping unparseable lesson file {}: {}", path.display(), e);
@@ -36,27 +66,29 @@ pub fn list(project_path: &Path) -> Result<Vec<Lesson>, OrqaError> {
     Ok(lessons)
 }
 
-/// Get a single lesson by ID from `.orqa/lessons/`.
+/// Get a single lesson by ID from the configured lessons directory.
 ///
 /// Returns `OrqaError::NotFound` if no lesson with the given ID exists.
-pub fn get(project_path: &Path, id: &str) -> Result<Lesson, OrqaError> {
-    let file_path = lesson_file_path(project_path, id);
+pub fn get(paths: &ProjectPaths, id: &str) -> Result<Lesson, OrqaError> {
+    let lessons_dir = require_lessons_dir(paths)?;
+    let file_path = lessons_dir.join(format!("{id}.md"));
     if !file_path.exists() {
         return Err(OrqaError::NotFound(format!("lesson not found: {id}")));
     }
-    read_lesson_file(&file_path, project_path)
+    read_lesson_file(&file_path, paths.project_root())
 }
 
-/// Create a new lesson file in `.orqa/lessons/`.
+/// Create a new lesson file in the configured lessons directory.
 ///
 /// Generates the next available IMPL-NNN ID, writes the markdown file
 /// with YAML frontmatter, and returns the created lesson.
-pub fn create(project_path: &Path, new_lesson: &NewLesson) -> Result<Lesson, OrqaError> {
-    let lessons_dir = lessons_dir(project_path);
+pub fn create(paths: &ProjectPaths, new_lesson: &NewLesson) -> Result<Lesson, OrqaError> {
+    let lessons_dir = require_lessons_dir(paths)?;
     std::fs::create_dir_all(&lessons_dir)?;
 
-    let id = next_id(project_path)?;
+    let id = next_id(paths)?;
     let today = time_utils::today_date_string();
+    let rel_prefix = lessons_relative_path(paths)?;
 
     let lesson = Lesson {
         id: id.clone(),
@@ -68,11 +100,11 @@ pub fn create(project_path: &Path, new_lesson: &NewLesson) -> Result<Lesson, Orq
         created: today.clone(),
         updated: today,
         body: new_lesson.body.clone(),
-        file_path: relative_file_path(&id),
+        file_path: format!("{rel_prefix}/{id}.md"),
     };
 
     let content = render_lesson(&lesson);
-    let file_path = lesson_file_path(project_path, &id);
+    let file_path = lessons_dir.join(format!("{id}.md"));
     std::fs::write(&file_path, content)?;
 
     Ok(lesson)
@@ -82,13 +114,14 @@ pub fn create(project_path: &Path, new_lesson: &NewLesson) -> Result<Lesson, Orq
 ///
 /// Reads the existing file, increments the count, writes it back,
 /// and returns the updated lesson.
-pub fn increment_recurrence(project_path: &Path, id: &str) -> Result<Lesson, OrqaError> {
-    let file_path = lesson_file_path(project_path, id);
+pub fn increment_recurrence(paths: &ProjectPaths, id: &str) -> Result<Lesson, OrqaError> {
+    let lessons_dir = require_lessons_dir(paths)?;
+    let file_path = lessons_dir.join(format!("{id}.md"));
     if !file_path.exists() {
         return Err(OrqaError::NotFound(format!("lesson not found: {id}")));
     }
 
-    let mut lesson = read_lesson_file(&file_path, project_path)?;
+    let mut lesson = read_lesson_file(&file_path, paths.project_root())?;
     lesson.recurrence += 1;
     lesson.updated = time_utils::today_date_string();
 
@@ -99,8 +132,8 @@ pub fn increment_recurrence(project_path: &Path, id: &str) -> Result<Lesson, Orq
 }
 
 /// Determine the next available IMPL-NNN ID by scanning existing lesson files.
-fn next_id(project_path: &Path) -> Result<String, OrqaError> {
-    let lessons_dir = lessons_dir(project_path);
+fn next_id(paths: &ProjectPaths) -> Result<String, OrqaError> {
+    let lessons_dir = require_lessons_dir(paths)?;
     let mut max_num: u32 = 0;
 
     if lessons_dir.exists() {
@@ -126,30 +159,13 @@ fn parse_impl_number(filename: &str) -> Option<u32> {
     num_str.parse::<u32>().ok()
 }
 
-/// Resolve the absolute path to the lessons directory.
-fn lessons_dir(project_path: &Path) -> PathBuf {
-    project_path.join(paths::LESSONS_DIR)
-}
-
-/// Resolve the absolute path to a specific lesson file.
-fn lesson_file_path(project_path: &Path, id: &str) -> PathBuf {
-    lessons_dir(project_path).join(format!("{id}.md"))
-}
-
-/// Compute the relative file path for a lesson ID, for storage in the struct.
-fn relative_file_path(id: &str) -> String {
-    format!("{}/{id}.md", paths::LESSONS_DIR)
-}
-
 /// Read and parse a lesson file, computing its relative path from the project root.
-fn read_lesson_file(file_path: &Path, project_path: &Path) -> Result<Lesson, OrqaError> {
+fn read_lesson_file(file_path: &Path, project_root: &Path) -> Result<Lesson, OrqaError> {
     let content = std::fs::read_to_string(file_path)?;
-    let relative = file_path
-        .strip_prefix(project_path)
-        .map_or_else(
-            |_| file_path.to_string_lossy().replace('\\', "/"),
-            |p| p.to_string_lossy().replace('\\', "/"),
-        );
+    let relative = file_path.strip_prefix(project_root).map_or_else(
+        |_| file_path.to_string_lossy().replace('\\', "/"),
+        |p| p.to_string_lossy().replace('\\', "/"),
+    );
     parse_lesson(&content, &relative).map_err(|e| {
         OrqaError::Serialization(format!("failed to parse {}: {e}", file_path.display()))
     })
@@ -158,7 +174,34 @@ fn read_lesson_file(file_path: &Path, project_path: &Path) -> Result<Lesson, Orq
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::domain::project_settings::{ArtifactEntry, ArtifactTypeConfig, ProjectSettings};
     use tempfile::TempDir;
+
+    fn make_project_paths(tmp: &TempDir) -> ProjectPaths {
+        let settings = ProjectSettings {
+            name: "test".to_string(),
+            description: None,
+            default_model: "auto".to_string(),
+            excluded_paths: vec![],
+            stack: None,
+            governance: None,
+            icon: None,
+            show_thinking: false,
+            custom_system_prompt: None,
+            artifacts: vec![ArtifactEntry::Group {
+                key: "process".to_string(),
+                label: None,
+                icon: None,
+                children: vec![ArtifactTypeConfig {
+                    key: "lessons".to_string(),
+                    label: None,
+                    icon: None,
+                    path: ".orqa/process/lessons".to_string(),
+                }],
+            }],
+        };
+        ProjectPaths::from_settings(tmp.path(), &settings)
+    }
 
     fn make_project() -> TempDir {
         tempfile::tempdir().expect("tempdir")
@@ -167,40 +210,47 @@ mod tests {
     #[test]
     fn list_empty_when_no_lessons_dir() {
         let dir = make_project();
-        let lessons = list(dir.path()).expect("list should succeed");
+        let paths = make_project_paths(&dir);
+        let lessons = list(&paths).expect("list should succeed");
         assert!(lessons.is_empty());
     }
 
     #[test]
     fn create_writes_file_and_returns_lesson() {
         let dir = make_project();
+        let paths = make_project_paths(&dir);
         let new = NewLesson {
             title: "Test lesson".to_string(),
             category: "process".to_string(),
             body: "## Description\nSome content.\n".to_string(),
         };
-        let lesson = create(dir.path(), &new).expect("create should succeed");
+        let lesson = create(&paths, &new).expect("create should succeed");
         assert_eq!(lesson.id, "IMPL-001");
         assert_eq!(lesson.title, "Test lesson");
         assert_eq!(lesson.category, "process");
         assert_eq!(lesson.recurrence, 1);
         assert_eq!(lesson.status, "active");
+        assert_eq!(lesson.file_path, ".orqa/process/lessons/IMPL-001.md");
 
-        let file = lesson_file_path(dir.path(), "IMPL-001");
+        let file = paths
+            .artifact_dir("lessons")
+            .expect("lessons dir")
+            .join("IMPL-001.md");
         assert!(file.exists(), "lesson file should be created on disk");
     }
 
     #[test]
     fn create_sequential_ids() {
         let dir = make_project();
+        let paths = make_project_paths(&dir);
         let new = |title: &str| NewLesson {
             title: title.to_string(),
             category: "coding".to_string(),
             body: "body".to_string(),
         };
-        let l1 = create(dir.path(), &new("First")).expect("create first");
-        let l2 = create(dir.path(), &new("Second")).expect("create second");
-        let l3 = create(dir.path(), &new("Third")).expect("create third");
+        let l1 = create(&paths, &new("First")).expect("create first");
+        let l2 = create(&paths, &new("Second")).expect("create second");
+        let l3 = create(&paths, &new("Third")).expect("create third");
         assert_eq!(l1.id, "IMPL-001");
         assert_eq!(l2.id, "IMPL-002");
         assert_eq!(l3.id, "IMPL-003");
@@ -209,35 +259,38 @@ mod tests {
     #[test]
     fn get_existing_lesson() {
         let dir = make_project();
+        let paths = make_project_paths(&dir);
         let new = NewLesson {
             title: "My lesson".to_string(),
             category: "architecture".to_string(),
             body: "body".to_string(),
         };
-        create(dir.path(), &new).expect("create");
-        let lesson = get(dir.path(), "IMPL-001").expect("get should succeed");
+        create(&paths, &new).expect("create");
+        let lesson = get(&paths, "IMPL-001").expect("get should succeed");
         assert_eq!(lesson.title, "My lesson");
     }
 
     #[test]
     fn get_missing_lesson_returns_not_found() {
         let dir = make_project();
-        let result = get(dir.path(), "IMPL-999");
+        let paths = make_project_paths(&dir);
+        let result = get(&paths, "IMPL-999");
         assert!(matches!(result, Err(OrqaError::NotFound(_))));
     }
 
     #[test]
     fn list_returns_lessons_sorted_by_id() {
         let dir = make_project();
+        let paths = make_project_paths(&dir);
         let new = |title: &str| NewLesson {
             title: title.to_string(),
             category: "process".to_string(),
             body: "body".to_string(),
         };
-        create(dir.path(), &new("C")).expect("c");
-        create(dir.path(), &new("A")).expect("a");
-        create(dir.path(), &new("B")).expect("b");
-        let lessons = list(dir.path()).expect("list");
+        create(&paths, &new("C")).expect("c");
+        create(&paths, &new("A")).expect("a");
+        create(&paths, &new("B")).expect("b");
+        let lessons = list(&paths).expect("list");
         assert_eq!(lessons.len(), 3);
         assert_eq!(lessons[0].id, "IMPL-001");
         assert_eq!(lessons[1].id, "IMPL-002");
@@ -247,24 +300,26 @@ mod tests {
     #[test]
     fn increment_recurrence_updates_count() {
         let dir = make_project();
+        let paths = make_project_paths(&dir);
         let new = NewLesson {
             title: "Recurring".to_string(),
             category: "process".to_string(),
             body: "body".to_string(),
         };
-        create(dir.path(), &new).expect("create");
-        let updated = increment_recurrence(dir.path(), "IMPL-001").expect("increment");
+        create(&paths, &new).expect("create");
+        let updated = increment_recurrence(&paths, "IMPL-001").expect("increment");
         assert_eq!(updated.recurrence, 2);
 
         // Verify it persisted
-        let reloaded = get(dir.path(), "IMPL-001").expect("reload");
+        let reloaded = get(&paths, "IMPL-001").expect("reload");
         assert_eq!(reloaded.recurrence, 2);
     }
 
     #[test]
     fn increment_recurrence_missing_id_returns_not_found() {
         let dir = make_project();
-        let result = increment_recurrence(dir.path(), "IMPL-999");
+        let paths = make_project_paths(&dir);
+        let result = increment_recurrence(&paths, "IMPL-999");
         assert!(matches!(result, Err(OrqaError::NotFound(_))));
     }
 
@@ -278,5 +333,26 @@ mod tests {
     fn parse_impl_number_invalid() {
         assert_eq!(parse_impl_number("README.md"), None);
         assert_eq!(parse_impl_number("IMPL-.md"), None);
+    }
+
+    #[test]
+    fn list_returns_empty_when_no_config() {
+        let dir = make_project();
+        // Create ProjectPaths with NO artifacts configured
+        let settings = ProjectSettings {
+            name: "empty".to_string(),
+            description: None,
+            default_model: "auto".to_string(),
+            excluded_paths: vec![],
+            stack: None,
+            governance: None,
+            icon: None,
+            show_thinking: false,
+            custom_system_prompt: None,
+            artifacts: vec![],
+        };
+        let paths = ProjectPaths::from_settings(dir.path(), &settings);
+        let lessons = list(&paths).expect("list should succeed");
+        assert!(lessons.is_empty());
     }
 }
