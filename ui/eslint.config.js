@@ -3,6 +3,26 @@ import tseslint from "typescript-eslint";
 import svelte from "eslint-plugin-svelte";
 import globals from "globals";
 
+// Shared restriction objects for no-restricted-syntax rule.
+// Defined here so they can be composed into multiple config blocks
+// without duplication (flat config merges by last-match, so overlapping
+// file globs need combined rule arrays).
+
+/** RULE-006 / Component purity: No invoke() in $lib/components/ */
+const noInvokeInComponents = {
+	selector: "CallExpression[callee.name='invoke']",
+	message:
+		"Component purity violation (RULE-006): invoke() must not be called in components. Move the invoke() call to a store or page, and pass data via props.",
+};
+
+/** RULE-033: No HTML title attribute — use shadcn Tooltip instead */
+const noHtmlTitleAttribute = {
+	selector:
+		"SvelteElement[kind='html'] > SvelteStartTag > SvelteAttribute[key.name='title']",
+	message:
+		"Tooltip violation (RULE-033): Use shadcn <Tooltip.Root> instead of HTML title attribute. Exempt: alt on images, title on <svg>.",
+};
+
 export default tseslint.config(
 	js.configs.recommended,
 	...tseslint.configs.recommended,
@@ -37,40 +57,37 @@ export default tseslint.config(
 			"@typescript-eslint/no-explicit-any": "error",
 		},
 	},
-	// RULE-006 / Component purity: No invoke() calls in $lib/components/.
-	// Components receive data via props; only stores and pages call invoke().
-	// Exceptions: ui/components (shadcn primitives) are excluded.
+	// RULE-006 / Component purity + RULE-033 / Tooltip usage for component files.
+	// Component .svelte files get BOTH restrictions in one block because flat
+	// config merges no-restricted-syntax by last-match — separate blocks would
+	// cause the later one to override the earlier one.
 	{
-		files: ["src/lib/components/**/*.svelte", "src/lib/components/**/*.ts"],
+		files: ["src/lib/components/**/*.svelte"],
 		ignores: ["src/lib/components/ui/**"],
 		rules: {
 			"no-restricted-syntax": [
 				"warn",
-				{
-					selector: "CallExpression[callee.name='invoke']",
-					message:
-						"Component purity violation (RULE-006): invoke() must not be called in components. Move the invoke() call to a store or page, and pass data via props.",
-				},
+				noInvokeInComponents,
+				noHtmlTitleAttribute,
 			],
 		},
 	},
-	// RULE-033: No HTML title attribute on interactive elements.
-	// Use shadcn Tooltip component instead of native browser tooltips.
-	// This targets <button title="...">, <a title="...">, etc.
-	// Component props named "title" (e.g. <EmptyState title="...">) are NOT
-	// flagged because they use SvelteComponent AST nodes, not SvelteHTMLElement.
+	// RULE-006 / Component purity for non-Svelte component files (.ts helpers).
+	// Only the invoke() restriction applies here (no HTML templates in .ts).
+	{
+		files: ["src/lib/components/**/*.ts"],
+		ignores: ["src/lib/components/ui/**"],
+		rules: {
+			"no-restricted-syntax": ["warn", noInvokeInComponents],
+		},
+	},
+	// RULE-033: No HTML title attribute in Svelte files outside components.
+	// (Component files get this via the combined block above.)
 	{
 		files: ["**/*.svelte"],
+		ignores: ["src/lib/components/**/*.svelte"],
 		rules: {
-			"no-restricted-syntax": [
-				"warn",
-				{
-					selector:
-						"SvelteElement[kind='html'] > SvelteStartTag > SvelteAttribute[key.name='title']",
-					message:
-						"Tooltip violation (RULE-033): Use shadcn <Tooltip.Root> instead of HTML title attribute. Exempt: alt on images, title on <svg>.",
-				},
-			],
+			"no-restricted-syntax": ["warn", noHtmlTitleAttribute],
 		},
 	},
 	{
