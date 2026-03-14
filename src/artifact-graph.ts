@@ -20,6 +20,8 @@ export interface ArtifactNode {
     description: string | null;
     /** Frontmatter `status` field. */
     status: string | null;
+    /** Frontmatter `priority` field (e.g. "P1", "P2", "P3"). */
+    priority: string | null;
     /** Full YAML frontmatter parsed into a generic JSON object. */
     frontmatter: Record<string, unknown>;
     /** Forward references declared in this node's frontmatter. */
