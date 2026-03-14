@@ -259,6 +259,7 @@
 					<HookViewer {content} />
 				{:else if parsedContent}
 					{#if hasMetadataFields}
+						<ActionsNeeded {artifactType} metadata={parsedContent.metadata} />
 						{#if artifactStatus && pipelineStages.length > 0}
 							<PipelineStepper stages={pipelineStages} status={artifactStatus} />
 						{/if}
@@ -266,7 +267,6 @@
 							metadata={parsedContent.metadata}
 							{artifactType}
 						/>
-						<ActionsNeeded {artifactType} metadata={parsedContent.metadata} />
 					{:else if hasFrontmatterTitle}
 						<!-- Title + description only, no metadata card -->
 						{@const title = parsedContent.metadata["title"] as string}
@@ -278,10 +278,10 @@
 							<div class="mb-6"></div>
 						{/if}
 					{/if}
-					<MarkdownRenderer content={bodyToRender ?? parsedContent.body} />
 					{#if acceptanceCriteria.length > 0}
 						<AcceptanceCriteria criteria={acceptanceCriteria} />
 					{/if}
+					<MarkdownRenderer content={bodyToRender ?? parsedContent.body} />
 				{:else}
 					<MarkdownRenderer content={content} />
 				{/if}

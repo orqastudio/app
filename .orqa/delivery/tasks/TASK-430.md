@@ -2,7 +2,7 @@
 id: TASK-430
 title: "Reorder artifact viewer layout — actions needed, pipeline, metadata, acceptance, body"
 description: "Change the ArtifactViewer component ordering so the most actionable information appears first."
-status: todo
+status: done
 priority: P1
 created: "2026-03-14"
 updated: "2026-03-14"
