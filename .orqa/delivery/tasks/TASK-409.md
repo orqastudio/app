@@ -2,10 +2,10 @@
 id: TASK-409
 title: "Research document relationship schema update and data backfill"
 description: "Add relationships array to research schema. Backfill existing research documents with relationship data. Backfill epic horizon fields."
-status: todo
+status: done
 priority: P2
 created: "2026-03-13"
-updated: "2026-03-13"
+updated: "2026-03-14"
 epic: EPIC-063
 depends-on: []
 assignee: null

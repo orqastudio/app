@@ -13,6 +13,7 @@ created: "2026-03-12"
 updated: "2026-03-12"
 deadline: null
 milestone: MS-002
+horizon: null
 pillars:
   - PILLAR-001
   - PILLAR-002

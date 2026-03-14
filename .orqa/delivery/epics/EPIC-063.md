@@ -2,10 +2,10 @@
 id: EPIC-063
 title: "Dashboard & artifact viewer UAT fixes"
 description: "UAT round covering the full dashboard and artifact viewer experience. Fixes navigation bugs, redesigns dashboard widgets for actionable insight, enhances artifact viewer with relationship consolidation and pipeline position, and improves search UX."
-status: ready
+status: in-progress
 priority: P1
 created: "2026-03-13"
-updated: "2026-03-13"
+updated: "2026-03-14"
 deadline: null
 milestone: MS-001
 pillars:

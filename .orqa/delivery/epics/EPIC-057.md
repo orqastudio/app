@@ -8,6 +8,7 @@ created: "2026-03-12"
 updated: "2026-03-12"
 deadline: null
 milestone: MS-001
+horizon: null
 pillars: [PILLAR-001, PILLAR-002]
 depends-on: []
 blocks: []

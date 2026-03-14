@@ -7,6 +7,7 @@ priority: P2
 created: 2026-03-07
 updated: 2026-03-13
 milestone: MS-001
+horizon: next
 pillars:
   - PILLAR-001
   - PILLAR-002

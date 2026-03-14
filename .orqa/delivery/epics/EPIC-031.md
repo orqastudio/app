@@ -7,6 +7,7 @@ priority: P1
 created: "2026-03-02"
 updated: "2026-03-07"
 milestone: MS-000
+horizon: null
 pillars:
   - PILLAR-001
   - PILLAR-002
