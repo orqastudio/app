@@ -2,7 +2,7 @@
 id: TASK-312
 title: "Reconcile EPIC-005"
 description: "Standing reconciliation task — verify epic body accuracy: task table, pillars, docs-produced, scope."
-status: in-progress
+status: todo
 created: "2026-03-13"
 updated: "2026-03-13"
 epic: EPIC-005

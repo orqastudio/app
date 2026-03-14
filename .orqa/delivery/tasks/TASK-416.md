@@ -11,9 +11,9 @@ depends-on:
   - TASK-415
 assignee: null
 skills:
-  - tauri-v2
-  - orqa-domain-services
-  - restructuring-methodology
+  - SKILL-032
+  - SKILL-009
+  - SKILL-026
 acceptance:
   - "Enforcement entries can declare workflow state conditions (e.g., 'fire only if code was written this session')"
   - "Process gates are expressed as enforcement entries on rules, not hardcoded in process_gates.rs"

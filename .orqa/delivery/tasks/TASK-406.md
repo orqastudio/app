@@ -10,9 +10,9 @@ epic: EPIC-065
 depends-on: []
 assignee: null
 skills:
-  - svelte5-best-practices
-  - frontend-best-practices
-  - orqa-governance
+  - SKILL-030
+  - SKILL-042
+  - SKILL-011
 acceptance:
   - "ALL relationship data across ALL artifact types renders in the relationships viewer, not the metadata box"
   - "Relationships viewer organizes relationships by category/type"

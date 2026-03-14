@@ -13,8 +13,8 @@ depends-on:
   - TASK-413
 assignee: null
 skills:
-  - test-engineering
-  - orqa-governance
+  - SKILL-033
+  - SKILL-011
 acceptance:
   - "Every enforcement entry with event: file is evaluated by rule-engine.mjs PreToolUse hook"
   - "Every enforcement entry with event: bash is evaluated by rule-engine.mjs PreToolUse hook"

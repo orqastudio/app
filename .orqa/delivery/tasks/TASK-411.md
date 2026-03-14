@@ -10,8 +10,8 @@ epic: EPIC-064
 depends-on: []
 assignee: null
 skills:
-  - orqa-governance
-  - orqa-plugin-development
+  - SKILL-011
+  - SKILL-020
 acceptance:
   - "rule-engine.mjs accepts and evaluates stop event context"
   - "Hard filter on line 199 expanded to include stop events"

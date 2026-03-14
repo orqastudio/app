@@ -10,8 +10,8 @@ epic: EPIC-063
 depends-on: []
 assignee: null
 skills:
-  - svelte5-best-practices
-  - frontend-best-practices
+  - SKILL-030
+  - SKILL-042
 acceptance:
   - "Agent capabilities displayed with human-readable labels (e.g., 'Read Files' not 'file_read')"
   - "Capability label mapping is centralized and reusable"

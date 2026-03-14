@@ -10,8 +10,8 @@ epic: EPIC-064
 depends-on: []
 assignee: null
 skills:
-  - orqa-governance
-  - orqa-plugin-development
+  - SKILL-011
+  - SKILL-020
 acceptance:
   - "collectSkillIds() resolves skill names to .orqa/process/skills/{name}/SKILL.md paths"
   - "Skill file content is read, YAML frontmatter stripped, body returned as systemMessage"

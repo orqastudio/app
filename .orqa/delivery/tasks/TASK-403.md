@@ -10,8 +10,8 @@ epic: EPIC-063
 depends-on: []
 assignee: null
 skills:
-  - svelte5-best-practices
-  - frontend-best-practices
+  - SKILL-030
+  - SKILL-042
 acceptance:
   - "Process, Delivery, Docs, Milestones, and Verification all show correct icons in sidebar nav"
   - "No Svelte duplicate key error on any artifact page — ReferencesPanel keys include direction prefix"

@@ -10,8 +10,8 @@ epic: EPIC-063
 depends-on: []
 assignee: null
 skills:
-  - svelte5-best-practices
-  - frontend-best-practices
+  - SKILL-030
+  - SKILL-042
 acceptance:
   - "Documentation artifacts excluded from orphan count in artifact graph"
   - "Single combined widget shows per-artifact-type cards with total count and status breakdown"

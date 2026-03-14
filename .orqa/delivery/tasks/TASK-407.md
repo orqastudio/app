@@ -10,9 +10,9 @@ epic: EPIC-063
 depends-on: []
 assignee: null
 skills:
-  - svelte5-best-practices
-  - frontend-best-practices
-  - orqa-search-architecture
+  - SKILL-030
+  - SKILL-042
+  - SKILL-044
 acceptance:
   - "Artifact search uses semantic/AI matching, not just substring regex"
   - "Search results do not overflow their widget container"

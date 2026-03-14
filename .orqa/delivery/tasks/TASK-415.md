@@ -11,9 +11,9 @@ depends-on:
   - TASK-414
 assignee: null
 skills:
-  - tauri-v2
-  - orqa-domain-services
-  - orqa-ipc-patterns
+  - SKILL-032
+  - SKILL-009
+  - SKILL-012
 acceptance:
   - "EnforcementEngine.evaluate_file() called before file write operations in agent loop"
   - "EnforcementEngine.evaluate_bash() called before bash executions in agent loop"

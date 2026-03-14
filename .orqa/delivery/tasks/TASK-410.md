@@ -10,8 +10,8 @@ epic: EPIC-063
 depends-on: []
 assignee: null
 skills:
-  - tauri-v2
-  - diagnostic-methodology
+  - SKILL-032
+  - SKILL-006
 acceptance:
   - "Root cause of tao NewEvents/RedrawEventsCleared warnings understood and documented"
   - "Warnings either fixed at source or filtered from dev output with documented justification"

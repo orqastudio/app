@@ -10,9 +10,9 @@ epic: EPIC-063
 depends-on: []
 assignee: null
 skills:
-  - orqa-governance
-  - orqa-schema-compliance
-  - migration-tooling
+  - SKILL-011
+  - SKILL-039
+  - SKILL-050
 acceptance:
   - "Research schema includes relationships array matching the standard relationship pattern"
   - "All research documents have relationship data backfilled (at minimum, informs edges to epics that reference them)"

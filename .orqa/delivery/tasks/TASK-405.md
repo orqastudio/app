@@ -10,8 +10,8 @@ epic: EPIC-063
 depends-on: []
 assignee: null
 skills:
-  - svelte5-best-practices
-  - frontend-best-practices
+  - SKILL-030
+  - SKILL-042
 acceptance:
   - "Pipeline visualization fills surrounding card width — stages expand responsively"
   - "Stuck and bottleneck labels include reasoning (e.g., '5 of 12 lessons have no downstream research link')"

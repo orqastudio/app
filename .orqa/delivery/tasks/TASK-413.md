@@ -10,8 +10,8 @@ epic: EPIC-064
 depends-on: []
 assignee: null
 skills:
-  - orqa-governance
-  - orqa-plugin-development
+  - SKILL-011
+  - SKILL-020
 acceptance:
   - "After Write/Edit on .orqa/**/*.md files, graph-guardian checks for bidirectional inverses"
   - "For each relationship A --type--> B, checks if B has inverse-type --> A"
