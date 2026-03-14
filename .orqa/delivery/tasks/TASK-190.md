@@ -2,7 +2,7 @@
 id: TASK-190
 title: Surface violations in governance UI
 description: Display enforcement violations in the app's governance view with history and filtering.
-status: todo
+status: done
 created: 2026-03-11
 updated: 2026-03-14
 epic: EPIC-064

@@ -6,6 +6,7 @@
 	import GitBranchIcon from "@lucide/svelte/icons/git-branch";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 	import ErrorDisplay from "$lib/components/shared/ErrorDisplay.svelte";
+	import ViolationsPanel from "$lib/components/governance/ViolationsPanel.svelte";
 	import { Badge } from "$lib/components/ui/badge";
 	import { artifactStore } from "$lib/stores/artifact.svelte";
 	import { enforcementStore } from "$lib/stores/enforcement.svelte";
@@ -184,6 +185,18 @@
 								</Card.Root>
 							</button>
 						{/each}
+					</div>
+				{/if}
+
+				<!-- Violation history panel (rules category only) -->
+				{#if category === "rules"}
+					<div class="mt-2 h-72 overflow-hidden rounded-md border border-border">
+						<ViolationsPanel
+							violations={enforcementStore.violationHistory}
+							loading={enforcementStore.historyLoading}
+							error={enforcementStore.historyError}
+							onRetry={() => enforcementStore.loadViolationHistory()}
+						/>
 					</div>
 				{/if}
 			</div>

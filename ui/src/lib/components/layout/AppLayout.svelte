@@ -105,11 +105,12 @@
 		void artifactGraphSDK.initialize({ projectPath: project.path });
 	});
 
-	// Load enforcement rules when the rules activity is active
+	// Load enforcement rules and violation history when the rules activity is active
 	$effect(() => {
 		const activity = navigationStore.activeActivity;
 		if (hasProject && !needsSetup && activity === "rules") {
 			enforcementStore.loadRules();
+			enforcementStore.loadViolationHistory();
 		}
 	});
 

@@ -3,14 +3,21 @@ import { mockInvoke } from "./setup";
 
 // Must import after mocks are set up
 import { enforcementStore } from "../enforcement.svelte";
-import type { EnforcementRule, EnforcementViolation } from "$lib/types/enforcement";
+import type {
+	EnforcementRule,
+	EnforcementViolation,
+	StoredEnforcementViolation,
+} from "$lib/types/enforcement";
 
 beforeEach(() => {
 	mockInvoke.mockReset();
 	// Reset store state between tests
 	enforcementStore.rules = [];
 	enforcementStore.violations = [];
+	enforcementStore.violationHistory = [];
 	enforcementStore.loading = false;
+	enforcementStore.historyLoading = false;
+	enforcementStore.historyError = null;
 	enforcementStore.error = null;
 });
 
@@ -121,6 +128,70 @@ describe("EnforcementStore", () => {
 
 			expect(enforcementStore.blockCount).toBe(2);
 			expect(enforcementStore.warnCount).toBe(1);
+		});
+	});
+
+	describe("loadViolationHistory", () => {
+		it("loads violation history from backend", async () => {
+			const mockHistory: StoredEnforcementViolation[] = [
+				{
+					id: 1,
+					project_id: 42,
+					rule_name: "RULE-006",
+					action: "block",
+					tool_name: "write_file",
+					detail: "/some/path.ts",
+					created_at: "2026-03-14T10:00:00",
+				},
+				{
+					id: 2,
+					project_id: 42,
+					rule_name: "RULE-007",
+					action: "warn",
+					tool_name: "bash",
+					detail: null,
+					created_at: "2026-03-14T09:00:00",
+				},
+			];
+			mockInvoke.mockResolvedValueOnce(mockHistory);
+
+			await enforcementStore.loadViolationHistory();
+
+			expect(mockInvoke).toHaveBeenCalledWith("enforcement_violations_list", undefined);
+			expect(enforcementStore.violationHistory).toEqual(mockHistory);
+			expect(enforcementStore.historyLoading).toBe(false);
+			expect(enforcementStore.historyError).toBeNull();
+		});
+
+		it("sets historyLoading during load", async () => {
+			let loadingDuringInvoke = false;
+			mockInvoke.mockImplementation(() => {
+				loadingDuringInvoke = enforcementStore.historyLoading;
+				return Promise.resolve([]);
+			});
+
+			await enforcementStore.loadViolationHistory();
+
+			expect(loadingDuringInvoke).toBe(true);
+			expect(enforcementStore.historyLoading).toBe(false);
+		});
+
+		it("sets historyError on failure", async () => {
+			mockInvoke.mockRejectedValueOnce(new Error("DB unavailable"));
+
+			await enforcementStore.loadViolationHistory();
+
+			expect(enforcementStore.historyError).toBe("DB unavailable");
+			expect(enforcementStore.historyLoading).toBe(false);
+		});
+
+		it("clears previous historyError on successful reload", async () => {
+			enforcementStore.historyError = "old error";
+			mockInvoke.mockResolvedValueOnce([]);
+
+			await enforcementStore.loadViolationHistory();
+
+			expect(enforcementStore.historyError).toBeNull();
 		});
 	});
 });

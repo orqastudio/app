@@ -1,10 +1,18 @@
 import { invoke, extractErrorMessage } from "$lib/ipc/invoke";
-import type { EnforcementRule, EnforcementViolation } from "$lib/types/enforcement";
+import type {
+	EnforcementRule,
+	EnforcementViolation,
+	StoredEnforcementViolation,
+} from "$lib/types/enforcement";
 
 class EnforcementStore {
 	rules = $state<EnforcementRule[]>([]);
 	violations = $state<EnforcementViolation[]>([]);
+	/** Violation history loaded from SQLite (persistent across sessions). */
+	violationHistory = $state<StoredEnforcementViolation[]>([]);
 	loading = $state(false);
+	historyLoading = $state(false);
+	historyError = $state<string | null>(null);
 	error = $state<string | null>(null);
 
 	blockCount = $derived(this.violations.filter((v) => v.action === "Block").length);
@@ -41,6 +49,20 @@ class EnforcementStore {
 
 	clearViolations(): void {
 		this.violations = [];
+	}
+
+	async loadViolationHistory(): Promise<void> {
+		this.historyLoading = true;
+		this.historyError = null;
+		try {
+			this.violationHistory = await invoke<StoredEnforcementViolation[]>(
+				"enforcement_violations_list",
+			);
+		} catch (err) {
+			this.historyError = extractErrorMessage(err);
+		} finally {
+			this.historyLoading = false;
+		}
 	}
 }
 

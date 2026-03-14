@@ -1,4 +1,5 @@
-use crate::domain::process_gates::evaluate_process_gates;
+use crate::domain::enforcement::Verdict;
+use crate::domain::process_gates::{evaluate_stop_verdicts, evaluate_write_verdicts};
 use crate::domain::provider_event::StreamEvent;
 use crate::domain::tool_executor::{execute_tool, truncate_tool_output, READ_ONLY_TOOLS};
 use crate::sidecar::types::{SidecarRequest, SidecarResponse};
@@ -452,6 +453,49 @@ pub fn accumulate_response(response: &SidecarResponse, acc: &mut StreamAccumulat
     }
 }
 
+/// Evaluate both the enforcement engine and process gates for a file write event,
+/// returning merged verdicts from both systems.
+///
+/// This is the unified evaluation pipeline for write/edit tool calls. It calls:
+/// 1. Process gates (workflow state conditions) → fired gates as `Verdict`s
+/// 2. Enforcement engine (rule pattern matching) → `Verdict`s from matched rules
+///
+/// Results are merged into a single `Vec<Verdict>`. Gate verdicts come first so
+/// they appear at the top of any injected context.
+fn evaluate_unified_write(
+    tracker: &mut crate::domain::workflow_tracker::WorkflowTracker,
+    file_path: &str,
+    state: &tauri::State<'_, AppState>,
+) -> Vec<Verdict> {
+    let mut verdicts = evaluate_write_verdicts(tracker, file_path);
+
+    // Append enforcement engine verdicts for this file write.
+    let engine_guard = match state.enforcement.engine.lock() {
+        Ok(g) => g,
+        Err(e) => {
+            tracing::warn!("[enforcement] lock poisoned in unified write eval: {e}");
+            return verdicts;
+        }
+    };
+    if let Some(engine) = engine_guard.as_ref() {
+        verdicts.extend(engine.evaluate_file(file_path, ""));
+    }
+
+    verdicts
+}
+
+/// Evaluate both the enforcement engine and process gates for a turn-complete (stop) event,
+/// returning merged verdicts from both systems.
+///
+/// Process gates check workflow state at turn end (evidence-before-done,
+/// learn-after-doing). The enforcement engine has no stop-event entries currently,
+/// but this unified path ensures both systems share the same output channel.
+fn evaluate_unified_stop(
+    tracker: &crate::domain::workflow_tracker::WorkflowTracker,
+) -> Vec<Verdict> {
+    evaluate_stop_verdicts(tracker)
+}
+
 /// Record a completed tool call in the session process state.
 ///
 /// Parses `input_json` into a `serde_json::Value`; silently skips tracking
@@ -492,13 +536,14 @@ fn track_workflow(tool_name: &str, input: &serde_json::Value, state: &tauri::Sta
         "write_file" | "edit_file" => {
             if let Some(path) = input["path"].as_str() {
                 guard.record_write(path);
-                // Evaluate write-event gates
-                let results = evaluate_process_gates(&mut guard, "write", Some(path));
-                for gate in results.iter().filter(|r| r.fired) {
+                // Evaluate unified write pipeline: process gates + enforcement engine
+                let verdicts = evaluate_unified_write(&mut guard, path, state);
+                for v in &verdicts {
                     tracing::debug!(
-                        "[process_gate] gate='{}' fired: {}",
-                        gate.gate_name,
-                        gate.message
+                        "[enforcement] rule='{}' action={:?} fired at write: {}",
+                        v.rule_name,
+                        v.action,
+                        v.message
                     );
                 }
             }
@@ -520,23 +565,24 @@ fn track_workflow(tool_name: &str, input: &serde_json::Value, state: &tauri::Sta
     }
 }
 
-/// Evaluate stop-event process gates against the current workflow tracker.
+/// Evaluate the unified stop pipeline (process gates) against the current workflow tracker.
 ///
-/// Called at `TurnComplete`. Gate messages are logged at debug level.
+/// Called at `TurnComplete`. Verdict messages are logged at debug level.
 pub fn evaluate_stop_gates(state: &tauri::State<'_, AppState>) {
-    let mut guard = match state.session.workflow_tracker.lock() {
+    let guard = match state.session.workflow_tracker.lock() {
         Ok(g) => g,
         Err(e) => {
             tracing::warn!("[workflow] workflow_tracker mutex poisoned, skipping stop gates: {e}");
             return;
         }
     };
-    let results = evaluate_process_gates(&mut guard, "stop", None);
-    for gate in results.iter().filter(|r| r.fired) {
+    let verdicts = evaluate_unified_stop(&guard);
+    for v in &verdicts {
         tracing::debug!(
-            "[process_gate] gate='{}' fired at stop: {}",
-            gate.gate_name,
-            gate.message
+            "[enforcement] rule='{}' action={:?} fired at stop: {}",
+            v.rule_name,
+            v.action,
+            v.message
         );
     }
 }

@@ -5,6 +5,7 @@ pub mod artifact_reader;
 pub mod enforcement;
 pub mod enforcement_engine;
 pub mod enforcement_parser;
+pub mod enforcement_violation;
 pub mod governance;
 pub mod governance_scanner;
 pub mod health_snapshot;

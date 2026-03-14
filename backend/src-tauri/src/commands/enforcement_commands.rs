@@ -4,9 +4,11 @@ use tauri::State;
 
 use crate::domain::enforcement::EnforcementRule;
 use crate::domain::enforcement_engine::EnforcementEngine;
+use crate::domain::enforcement_violation::EnforcementViolation;
 use crate::error::OrqaError;
 use crate::repo::enforcement_rules_repo;
 use crate::repo::project_repo;
+use crate::repo::violations_repo;
 use crate::state::AppState;
 
 /// List the enforcement rules currently loaded for the active project.
@@ -64,6 +66,27 @@ pub fn enforcement_rules_reload(state: State<'_, AppState>) -> Result<usize, Orq
         rules_dir.display()
     );
     Ok(count)
+}
+
+/// List enforcement violation history for the active project.
+///
+/// Returns all recorded violations ordered by most recent first. Use this to
+/// surface historical enforcement events in the governance UI rather than relying
+/// on the in-memory session-only violations in the enforcement store.
+#[tauri::command]
+pub fn enforcement_violations_list(
+    state: State<'_, AppState>,
+) -> Result<Vec<EnforcementViolation>, OrqaError> {
+    let conn = state
+        .db
+        .conn
+        .lock()
+        .map_err(|e| OrqaError::Database(format!("db lock poisoned: {e}")))?;
+
+    let project = project_repo::get_active(&conn)?
+        .ok_or_else(|| OrqaError::NotFound("no active project".to_string()))?;
+
+    violations_repo::list_for_project(&conn, project.id, None)
 }
 
 /// Resolve the active project's path from the database.

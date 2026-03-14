@@ -1,3 +1,5 @@
+use crate::domain::enforcement::RuleAction;
+use crate::domain::enforcement::Verdict;
 use crate::domain::workflow_tracker::WorkflowTracker;
 
 /// The result of a single process gate evaluation.
@@ -135,6 +137,43 @@ fn evaluate_stop_gates(tracker: &WorkflowTracker) -> Vec<GateResult> {
 /// Convenience helper for callers that only care about actionable gates.
 pub fn fired_gates(results: Vec<GateResult>) -> Vec<GateResult> {
     results.into_iter().filter(|r| r.fired).collect()
+}
+
+/// Convert a fired `GateResult` into a `Verdict` with `RuleAction::Warn`.
+///
+/// Process gates are surfaced as warnings — they guide the agent toward
+/// correct process but do not block tool execution.
+fn gate_as_verdict(gate: GateResult) -> Verdict {
+    Verdict {
+        rule_name: gate.gate_name,
+        action: RuleAction::Warn,
+        message: gate.message,
+        skills: Vec::new(),
+    }
+}
+
+/// Evaluate write-event process gates and return only fired ones as `Verdict`s.
+///
+/// This is the enforcement-compatible output path. Callers that need to merge
+/// gate results with `EnforcementEngine` verdicts use this instead of
+/// `evaluate_process_gates`.
+pub fn evaluate_write_verdicts(tracker: &mut WorkflowTracker, file_path: &str) -> Vec<Verdict> {
+    evaluate_write_gates(tracker, Some(file_path))
+        .into_iter()
+        .filter(|r| r.fired)
+        .map(gate_as_verdict)
+        .collect()
+}
+
+/// Evaluate stop-event process gates and return only fired ones as `Verdict`s.
+///
+/// This is the enforcement-compatible output path for turn-complete events.
+pub fn evaluate_stop_verdicts(tracker: &WorkflowTracker) -> Vec<Verdict> {
+    evaluate_stop_gates(tracker)
+        .into_iter()
+        .filter(|r| r.fired)
+        .map(gate_as_verdict)
+        .collect()
 }
 
 #[cfg(test)]

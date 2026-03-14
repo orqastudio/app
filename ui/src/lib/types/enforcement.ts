@@ -24,3 +24,15 @@ export interface EnforcementViolation {
 	detail: string;
 	timestamp: string;
 }
+
+/** A violation record loaded from the SQLite `enforcement_violations` table. */
+export interface StoredEnforcementViolation {
+	id: number;
+	project_id: number;
+	rule_name: string;
+	/** Lower-case: "block" or "warn" (as stored in SQLite). */
+	action: string;
+	tool_name: string;
+	detail: string | null;
+	created_at: string;
+}
