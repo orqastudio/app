@@ -20,7 +20,6 @@
 	import MilestoneContextCard from "./MilestoneContextCard.svelte";
 	import IntegrityWidget from "./IntegrityWidget.svelte";
 	import PipelineWidget from "./PipelineWidget.svelte";
-	import HealthTrendWidget from "./HealthTrendWidget.svelte";
 	import ImprovementTrendsWidget from "./ImprovementTrendsWidget.svelte";
 	import GraphHealthWidget from "./GraphHealthWidget.svelte";
 	import LessonVelocityWidget from "./LessonVelocityWidget.svelte";
@@ -41,6 +40,8 @@
 
 	// Collapsible state for Power User Details
 	let detailsOpen = $state(false);
+	// Collapsible state for Knowledge Pipeline
+	let pipelineOpen = $state(false);
 
 	// Graph health widget state (shared scan results for the Clarity column)
 	let healthChecks = $state<IntegrityCheck[]>([]);
@@ -252,9 +253,6 @@
 						<Collapsible.Content>
 							<div class="border-t border-border p-4">
 								<div class="grid grid-cols-1 gap-4 xl:grid-cols-2">
-									<!-- Health Trends -->
-									<HealthTrendWidget />
-
 									<!-- Pipeline Health -->
 									<IntegrityWidget />
 
@@ -293,9 +291,6 @@
 											</Card.Content>
 										</Card.Root>
 									{/if}
-
-									<!-- Knowledge Pipeline -->
-									<PipelineWidget />
 
 									<!-- Artifacts summary -->
 									<Card.Root class="xl:col-span-2">
@@ -378,6 +373,27 @@
 										</Card.Content>
 									</Card.Root>
 								</div>
+							</div>
+						</Collapsible.Content>
+					</div>
+				</Collapsible.Root>
+
+				<!-- Row 4: Knowledge Pipeline (collapsible) -->
+				<Collapsible.Root bind:open={pipelineOpen}>
+					<div class="rounded-lg border border-border">
+						<Collapsible.Trigger class="w-full">
+							<div class="flex items-center justify-between px-4 py-3 text-sm font-medium hover:bg-accent/30 rounded-lg transition-colors">
+								<span class="text-muted-foreground">Knowledge Pipeline</span>
+								{#if pipelineOpen}
+									<ChevronDownIcon class="h-4 w-4 text-muted-foreground" />
+								{:else}
+									<ChevronRightIcon class="h-4 w-4 text-muted-foreground" />
+								{/if}
+							</div>
+						</Collapsible.Trigger>
+						<Collapsible.Content>
+							<div class="border-t border-border p-4">
+								<PipelineWidget />
 							</div>
 						</Collapsible.Content>
 					</div>
