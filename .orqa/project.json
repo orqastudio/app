@@ -61,8 +61,8 @@
       "children": [
         { "key": "guide", "path": ".orqa/documentation/guide" },
         { "key": "about", "path": ".orqa/documentation/about" },
-        { "key": "architecture", "path": ".orqa/documentation/architecture" },
         { "key": "development", "path": ".orqa/documentation/development" },
+        { "key": "reference", "path": ".orqa/documentation/reference" },
         { "key": "process", "path": ".orqa/documentation/process" },
         { "key": "ui", "path": ".orqa/documentation/ui" },
         { "key": "wireframes", "path": ".orqa/documentation/wireframes" }

@@ -1,13 +1,14 @@
 ---
 role: artifacts
 label: "Architecture"
-description: "System design, IPC contracts, and module structure."
+description: "Moved — architecture files now live in Development and Reference."
 icon: "layers"
 sort: 2
 ---
 
-# Architecture
+# Architecture (Moved)
 
-Architecture documentation describes the structure of the OrqaStudio system — how modules are organised, how the frontend and backend communicate, and how data flows through the application. It is the reference layer for anyone implementing a new feature that crosses a service boundary.
+Architecture documentation has been reorganised:
 
-Architecture pages describe the current target state. When an architecture decision changes the system design, the relevant pages here are updated first, then code is updated to match.
+- Implementation guides, module docs, and pipeline documentation moved to **Development**
+- Reference material (IPC commands, error taxonomy, schemas, configuration) moved to **Reference**
