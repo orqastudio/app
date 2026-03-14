@@ -302,7 +302,7 @@
 </script>
 
 {#if hasData}
-	<Card.Root class="mb-4">
+	<Card.Root>
 		<Card.Header class="pb-3">
 			<Card.Title class="text-base">
 				<div class="flex items-center gap-2">

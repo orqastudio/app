@@ -158,131 +158,144 @@
 				</div>
 			</div>
 
-			<!-- Detected stack -->
-			{#if project.detected_stack}
-				<Card.Root class="mb-4">
-					<Card.Header class="pb-3">
-						<Card.Title class="text-base">
-							<div class="flex items-center gap-2">
-								<LayersIcon class="h-4 w-4" />
-								Detected Stack
-							</div>
-						</Card.Title>
-					</Card.Header>
-					<Card.Content>
-						<div class="grid grid-cols-2 gap-3 text-sm">
-							<div>
-								<span class="text-muted-foreground">Languages:</span>
-								<span class="ml-1 font-medium">{project.detected_stack.languages.join(", ") || "None detected"}</span>
-							</div>
-							<div>
-								<span class="text-muted-foreground">Frameworks:</span>
-								<span class="ml-1 font-medium">{project.detected_stack.frameworks.join(", ") || "None detected"}</span>
-							</div>
-							{#if project.detected_stack.package_manager}
-								<div>
-									<span class="text-muted-foreground">Package Manager:</span>
-									<span class="ml-1 font-medium">{project.detected_stack.package_manager}</span>
-								</div>
-							{/if}
-							<div>
-								<span class="text-muted-foreground">Claude Config:</span>
-								<span class="ml-1 font-medium">{project.detected_stack.has_claude_config ? "Yes" : "No"}</span>
-							</div>
-						</div>
-					</Card.Content>
-				</Card.Root>
-			{/if}
+			<!-- Dashboard grid -->
+			<div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+				<!-- Health Trends — prominent, spans 2 cols on wide screens -->
+				<div class="xl:col-span-2">
+					<HealthTrendWidget />
+				</div>
 
-			<!-- Artifacts -->
-			<Card.Root class="mb-4">
-				<Card.Header class="pb-3">
-					<div class="flex items-center justify-between">
-						<Card.Title class="text-base">
-							<div class="flex items-center gap-2">
-								<NetworkIcon class="h-4 w-4" />
-								Artifacts
-								{#if graphLoading}
-									<LoadingSpinner size="sm" />
-								{/if}
-							</div>
-						</Card.Title>
-					</div>
-				</Card.Header>
-				<Card.Content>
-					{#if graphLoading && !hasGraphData}
-						<div class="flex items-center justify-center py-4">
-							<LoadingSpinner />
-						</div>
-					{:else if graphError && !hasGraphData}
-						<ErrorDisplay
-							message={graphError}
-							onRetry={() => artifactGraphSDK.refresh()}
-						/>
-					{:else if !hasGraphData}
-						<p class="text-sm text-muted-foreground">
-							No artifact graph data. Use Re-index in the status bar to build the index.
-						</p>
-					{:else}
-						<!-- Summary stats row -->
-						{#if graphStats}
-							<div class="mb-4 grid grid-cols-4 gap-3 text-sm">
-								<div class="text-center">
-									<div class="text-lg font-semibold tabular-nums">{graphStats.node_count}</div>
-									<div class="text-xs text-muted-foreground">Nodes</div>
-								</div>
-								<div class="text-center">
-									<div class="text-lg font-semibold tabular-nums">{graphStats.edge_count}</div>
-									<div class="text-xs text-muted-foreground">Edges</div>
-								</div>
-								<div class="text-center">
-									<div class="text-lg font-semibold tabular-nums {graphStats.orphan_count > 0 ? 'text-warning' : ''}">{graphStats.orphan_count}</div>
-									<div class="text-xs text-muted-foreground">Orphans</div>
-								</div>
-								<div class="text-center">
-									<div class="text-lg font-semibold tabular-nums {graphStats.broken_ref_count > 0 ? 'text-destructive' : ''}">{graphStats.broken_ref_count}</div>
-									<div class="text-xs text-muted-foreground">Broken Refs</div>
-								</div>
-							</div>
-						{/if}
+				<!-- Pipeline Health — compact when clear, expands with errors -->
+				<div>
+					<IntegrityWidget />
+				</div>
 
-						<!-- Per-type cards -->
-						<div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-							{#each typeCards as card (card.type)}
-								<button
-									class="flex flex-col gap-1.5 rounded-lg border border-border p-3 text-left transition-colors hover:bg-accent/50"
-									onclick={() => navigateToType(card.type)}
-								>
-									<div class="flex items-baseline justify-between">
-										<span class="text-sm font-medium">{card.label}</span>
-										<span class="text-xs tabular-nums text-muted-foreground">{card.count}</span>
+				<!-- Detected stack -->
+				{#if project.detected_stack}
+					<div>
+						<Card.Root>
+							<Card.Header class="pb-3">
+								<Card.Title class="text-base">
+									<div class="flex items-center gap-2">
+										<LayersIcon class="h-4 w-4" />
+										Detected Stack
 									</div>
-									{#if card.statuses.length > 0}
-										<div class="flex flex-wrap gap-1">
-											{#each card.statuses as s (s.status)}
-												<span class="flex items-center gap-1 text-[10px] text-muted-foreground">
-													<span class="inline-block h-1.5 w-1.5 rounded-full {s.dotClass}"></span>
-													{s.status}
-													<span class="tabular-nums">({s.count})</span>
-												</span>
-											{/each}
+								</Card.Title>
+							</Card.Header>
+							<Card.Content>
+								<div class="grid grid-cols-2 gap-3 text-sm">
+									<div>
+										<span class="text-muted-foreground">Languages:</span>
+										<span class="ml-1 font-medium">{project.detected_stack.languages.join(", ") || "None detected"}</span>
+									</div>
+									<div>
+										<span class="text-muted-foreground">Frameworks:</span>
+										<span class="ml-1 font-medium">{project.detected_stack.frameworks.join(", ") || "None detected"}</span>
+									</div>
+									{#if project.detected_stack.package_manager}
+										<div>
+											<span class="text-muted-foreground">Package Manager:</span>
+											<span class="ml-1 font-medium">{project.detected_stack.package_manager}</span>
 										</div>
 									{/if}
-								</button>
-							{/each}
-						</div>
-					{/if}
-				</Card.Content>
-			</Card.Root>
+									<div>
+										<span class="text-muted-foreground">Claude Config:</span>
+										<span class="ml-1 font-medium">{project.detected_stack.has_claude_config ? "Yes" : "No"}</span>
+									</div>
+								</div>
+							</Card.Content>
+						</Card.Root>
+					</div>
+				{/if}
 
-			<!-- Pipeline Health -->
-			<IntegrityWidget />
+				<!-- Knowledge Pipeline -->
+				<div>
+					<PipelineWidget />
+				</div>
 
-			<!-- Knowledge Pipeline -->
-			<PipelineWidget />
+				<!-- Artifacts summary -->
+				<div class="md:col-span-2 xl:col-span-1">
+					<Card.Root>
+						<Card.Header class="pb-3">
+							<div class="flex items-center justify-between">
+								<Card.Title class="text-base">
+									<div class="flex items-center gap-2">
+										<NetworkIcon class="h-4 w-4" />
+										Artifacts
+										{#if graphLoading}
+											<LoadingSpinner size="sm" />
+										{/if}
+									</div>
+								</Card.Title>
+							</div>
+						</Card.Header>
+						<Card.Content>
+							{#if graphLoading && !hasGraphData}
+								<div class="flex items-center justify-center py-4">
+									<LoadingSpinner />
+								</div>
+							{:else if graphError && !hasGraphData}
+								<ErrorDisplay
+									message={graphError}
+									onRetry={() => artifactGraphSDK.refresh()}
+								/>
+							{:else if !hasGraphData}
+								<p class="text-sm text-muted-foreground">
+									No artifact graph data. Use Re-index in the status bar to build the index.
+								</p>
+							{:else}
+								<!-- Summary stats row -->
+								{#if graphStats}
+									<div class="mb-4 grid grid-cols-4 gap-3 text-sm">
+										<div class="text-center">
+											<div class="text-lg font-semibold tabular-nums">{graphStats.node_count}</div>
+											<div class="text-xs text-muted-foreground">Nodes</div>
+										</div>
+										<div class="text-center">
+											<div class="text-lg font-semibold tabular-nums">{graphStats.edge_count}</div>
+											<div class="text-xs text-muted-foreground">Edges</div>
+										</div>
+										<div class="text-center">
+											<div class="text-lg font-semibold tabular-nums {graphStats.orphan_count > 0 ? 'text-warning' : ''}">{graphStats.orphan_count}</div>
+											<div class="text-xs text-muted-foreground">Orphans</div>
+										</div>
+										<div class="text-center">
+											<div class="text-lg font-semibold tabular-nums {graphStats.broken_ref_count > 0 ? 'text-destructive' : ''}">{graphStats.broken_ref_count}</div>
+											<div class="text-xs text-muted-foreground">Broken Refs</div>
+										</div>
+									</div>
+								{/if}
 
-			<!-- Health Trends -->
-			<HealthTrendWidget />
+								<!-- Per-type cards -->
+								<div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+									{#each typeCards as card (card.type)}
+										<button
+											class="flex flex-col gap-1.5 rounded-lg border border-border p-3 text-left transition-colors hover:bg-accent/50"
+											onclick={() => navigateToType(card.type)}
+										>
+											<div class="flex items-baseline justify-between">
+												<span class="text-sm font-medium">{card.label}</span>
+												<span class="text-xs tabular-nums text-muted-foreground">{card.count}</span>
+											</div>
+											{#if card.statuses.length > 0}
+												<div class="flex flex-wrap gap-1">
+													{#each card.statuses as s (s.status)}
+														<span class="flex items-center gap-1 text-[10px] text-muted-foreground">
+															<span class="inline-block h-1.5 w-1.5 rounded-full {s.dotClass}"></span>
+															{s.status}
+															<span class="tabular-nums">({s.count})</span>
+														</span>
+													{/each}
+												</div>
+											{/if}
+										</button>
+									{/each}
+								</div>
+							{/if}
+						</Card.Content>
+					</Card.Root>
+				</div>
+			</div>
 		{/if}
 	</div>
 </ScrollArea.Root>

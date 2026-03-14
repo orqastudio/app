@@ -2,6 +2,7 @@
 	import "../app.css";
 	import "svelte-highlight/styles/github-dark-dimmed.css";
 	import * as Tooltip from "$lib/components/ui/tooltip";
+	import ToastContainer from "$lib/components/shared/ToastContainer.svelte";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 
 	let { children } = $props();
@@ -23,3 +24,5 @@
 <Tooltip.Provider>
 	{@render children()}
 </Tooltip.Provider>
+
+<ToastContainer />

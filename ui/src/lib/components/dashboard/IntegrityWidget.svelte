@@ -163,7 +163,7 @@
 		{/if}
 	</div>
 {:else}
-<Card.Root class="mb-4">
+<Card.Root>
 	<Card.Header class="pb-3">
 		<div class="flex items-center justify-between">
 			<Card.Title class="text-base">
