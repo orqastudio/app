@@ -3,11 +3,14 @@
 	import { untrack } from "svelte";
 	import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
 	import * as ScrollArea from "$lib/components/ui/scroll-area";
+	import { Badge } from "$lib/components/ui/badge";
 	import { cn } from "$lib/utils";
 
 	let {
 		title,
 		count,
+		doneCount,
+		totalCount,
 		collapsed = true,
 		isDone = false,
 		onDragOver,
@@ -16,6 +19,8 @@
 	}: {
 		title: string;
 		count: number;
+		doneCount?: number;
+		totalCount?: number;
 		collapsed?: boolean;
 		isDone?: boolean;
 		onDragOver?: (e: DragEvent) => void;
@@ -101,17 +106,12 @@
 		<!-- Column header -->
 		<div class="flex items-center justify-between border-b border-border px-3 py-2">
 			<div class="flex items-center gap-2">
-				<span class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+				<Badge variant="outline" class="text-xs font-semibold capitalize">
 					{title}
-				</span>
-				{#if count > 0}
-					<span
-						class={cn(
-							"flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-semibold tabular-nums",
-							isDone ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-muted text-muted-foreground",
-						)}
-					>
-						{count}
+				</Badge>
+				{#if doneCount !== undefined && totalCount !== undefined}
+					<span class="text-[10px] tabular-nums text-muted-foreground">
+						{doneCount}/{totalCount} Done
 					</span>
 				{/if}
 			</div>
@@ -128,7 +128,13 @@
 
 		<!-- Column content -->
 		<ScrollArea.Root class="min-h-0 flex-1" orientation="vertical">
-			<div class="flex flex-col gap-2 p-2">
+			<div
+				class="flex flex-col gap-2 p-2"
+				role="list"
+				ondragover={handleDragOver}
+				ondragleave={handleDragLeave}
+				ondrop={handleDrop}
+			>
 				{@render children()}
 			</div>
 		</ScrollArea.Root>

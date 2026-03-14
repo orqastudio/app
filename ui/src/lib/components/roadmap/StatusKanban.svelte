@@ -5,6 +5,7 @@
 	import SelectMenu from "$lib/components/shared/SelectMenu.svelte";
 	import EmptyState from "$lib/components/shared/EmptyState.svelte";
 	import LayersIcon from "@lucide/svelte/icons/layers";
+	import CircleCheckBigIcon from "@lucide/svelte/icons/circle-check-big";
 	import * as ScrollArea from "$lib/components/ui/scroll-area";
 
 	type ColumnDef = {
@@ -40,6 +41,9 @@
 	// Drag state
 	let dragNodeId = $state<string | null>(null);
 
+	// All-done view: whether the user has clicked "View board" to override the all-done state
+	let showBoardOverride = $state(false);
+
 	function nodesForColumn(colKey: string): ArtifactNode[] {
 		if (groupBy === "priority") {
 			// Remap priority columns to P1/P2/P3/none
@@ -64,9 +68,7 @@
 		if (!node) return;
 
 		const currentValue =
-			groupBy === "priority"
-				? (node.priority ?? "")
-				: (node.status ?? "");
+			groupBy === "priority" ? (node.priority ?? "") : (node.status ?? "");
 
 		if (currentValue === colKey) return;
 
@@ -85,6 +87,28 @@
 	const activeColumns = $derived(groupBy === "priority" ? PRIORITY_COLUMNS : columns);
 
 	const totalNodes = $derived(nodes.length);
+
+	// Count nodes that are NOT in a done column (status mode only)
+	const nonDoneCount = $derived(
+		nodes.filter((n) => {
+			if (groupBy === "priority") return false; // priority mode has no "done" semantics
+			const doneKeys = activeColumns
+				.filter((c) => c.isDone)
+				.map((c) => c.key.toLowerCase());
+			return !doneKeys.includes((n.status ?? "").toLowerCase());
+		}).length,
+	);
+
+	// All-done: items exist, none are in non-done columns, status grouping, user hasn't overridden
+	const isAllDone = $derived(
+		totalNodes > 0 && nonDoneCount === 0 && groupBy === "status" && !showBoardOverride,
+	);
+
+	// Done column is collapsed only when there are non-done items present
+	function doneColumnCollapsed(col: ColumnDef): boolean {
+		if (!col.isDone) return false;
+		return nonDoneCount > 0;
+	}
 </script>
 
 <div class="flex h-full flex-col gap-3">
@@ -96,52 +120,76 @@
 		<SelectMenu
 			items={GROUP_OPTIONS}
 			selected={groupBy}
-			onSelect={(v) => { groupBy = v; }}
+			onSelect={(v) => {
+				groupBy = v;
+				showBoardOverride = false;
+			}}
 			triggerLabel={groupByLabel}
 			triggerSize="sm"
 		/>
 	</div>
 
-	<!-- Kanban columns -->
-	<ScrollArea.Root class="min-h-0 flex-1" orientation="horizontal">
-	<div class="flex h-full min-w-max gap-3 pb-2">
-		{#if totalNodes === 0}
-			<div class="flex flex-1 items-center justify-center">
-				<EmptyState
-					icon={LayersIcon}
-					title="No items"
-					description="Nothing to show here yet."
-				/>
+	<!-- All-done state -->
+	{#if isAllDone}
+		<div class="flex flex-1 items-center justify-center">
+			<EmptyState
+				icon={CircleCheckBigIcon}
+				title="All completed"
+				description="Every item at this level is done."
+				action={{
+					label: "View board",
+					onclick: () => {
+						showBoardOverride = true;
+					},
+				}}
+			/>
+		</div>
+	{:else}
+		<!-- Kanban columns -->
+		<ScrollArea.Root class="min-h-0 flex-1" orientation="horizontal">
+			<div class="flex h-full min-w-max gap-3 pb-2">
+				{#if totalNodes === 0}
+					<div class="flex flex-1 items-center justify-center">
+						<EmptyState
+							icon={LayersIcon}
+							title="No items"
+							description="Nothing to show here yet."
+						/>
+					</div>
+				{:else}
+					{#each activeColumns as col (col.key)}
+						{@const colNodes = nodesForColumn(col.key)}
+						<CollapsibleColumn
+							title={col.label}
+							count={colNodes.length}
+							doneCount={col.isDone && totalNodes > 0 ? colNodes.length : undefined}
+							totalCount={col.isDone && totalNodes > 0 ? totalNodes : undefined}
+							collapsed={doneColumnCollapsed(col)}
+							isDone={col.isDone}
+							onDrop={(e) => handleDrop(e, col.key)}
+						>
+							{#if colNodes.length === 0}
+								<div
+									class="rounded border border-dashed border-border p-3 text-center text-xs text-muted-foreground"
+								>
+									No items
+								</div>
+							{:else}
+								{#each colNodes as node (node.id)}
+									<KanbanCard
+										{node}
+										taskCount={getTaskCount?.(node.id)}
+										onClick={onCardClick ? () => onCardClick(node) : undefined}
+										onDragStart={onFieldChange
+											? (e) => handleDragStart(e, node)
+											: undefined}
+									/>
+								{/each}
+							{/if}
+						</CollapsibleColumn>
+					{/each}
+				{/if}
 			</div>
-		{:else}
-			{#each activeColumns as col (col.key)}
-				{@const colNodes = nodesForColumn(col.key)}
-				<CollapsibleColumn
-					title={col.label}
-					count={colNodes.length}
-					collapsed={col.isDone === true && colNodes.length > 0}
-					isDone={col.isDone}
-					onDrop={(e) => handleDrop(e, col.key)}
-				>
-					{#if colNodes.length === 0}
-						<div class="rounded border border-dashed border-border p-3 text-center text-xs text-muted-foreground">
-							No items
-						</div>
-					{:else}
-						{#each colNodes as node (node.id)}
-							<KanbanCard
-								{node}
-								taskCount={getTaskCount?.(node.id)}
-								onClick={onCardClick ? () => onCardClick(node) : undefined}
-								onDragStart={onFieldChange
-									? (e) => handleDragStart(e, node)
-									: undefined}
-							/>
-						{/each}
-					{/if}
-				</CollapsibleColumn>
-			{/each}
-		{/if}
-	</div>
-	</ScrollArea.Root>
+		</ScrollArea.Root>
+	{/if}
 </div>

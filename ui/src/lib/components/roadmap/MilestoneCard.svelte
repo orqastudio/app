@@ -68,7 +68,7 @@
 			<div class="flex flex-col gap-1">
 				{#each inProgressEpics.slice(0, 2) as epic (epic.id)}
 					<div class="flex items-center gap-1.5 text-xs">
-						<span class="h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500"></span>
+						<span class="block h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500"></span>
 						<span class="truncate text-muted-foreground">{epic.title}</span>
 					</div>
 				{/each}
