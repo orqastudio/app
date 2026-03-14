@@ -4,6 +4,7 @@
 	import MarkdownRenderer from "$lib/components/content/MarkdownRenderer.svelte";
 	import { parseFrontmatter } from "$lib/utils/frontmatter";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
+	import { getCapabilityLabel } from "$lib/utils/tool-display";
 	import WrenchIcon from "@lucide/svelte/icons/wrench";
 	import SparklesIcon from "@lucide/svelte/icons/sparkles";
 	import CpuIcon from "@lucide/svelte/icons/cpu";
@@ -35,8 +36,12 @@
 	const description = $derived(
 		typeof metadata.description === "string" ? metadata.description : null,
 	);
-	const tools = $derived(
-		Array.isArray(metadata.tools) ? (metadata.tools as string[]) : [],
+	const capabilities = $derived(
+		Array.isArray(metadata.capabilities)
+			? (metadata.capabilities as string[]).map(getCapabilityLabel)
+			: Array.isArray(metadata.tools)
+				? (metadata.tools as string[]).map(getCapabilityLabel)
+				: [],
 	);
 	const skills = $derived(
 		Array.isArray(metadata.skills) ? (metadata.skills as string[]) : [],
@@ -53,7 +58,7 @@
 			<p class="text-sm text-muted-foreground">{description}</p>
 		{/if}
 
-		<MetadataRow icon={WrenchIcon} label="Tools" items={tools} badgeVariant="secondary" />
+		<MetadataRow icon={WrenchIcon} label="Capabilities" items={capabilities} badgeVariant="secondary" />
 		<MetadataRow icon={SparklesIcon} label="Skills" items={skills} badgeVariant="outline" />
 		{#if model}
 			<div class="flex items-center gap-1.5">

@@ -1,7 +1,10 @@
 <script lang="ts">
+	import AcceptanceCriteria from "./AcceptanceCriteria.svelte";
+	import ActionsNeeded from "./ActionsNeeded.svelte";
 	import Breadcrumb from "./Breadcrumb.svelte";
 	import FrontmatterHeader from "./FrontmatterHeader.svelte";
 	import HookViewer from "./HookViewer.svelte";
+	import PipelineStepper from "./PipelineStepper.svelte";
 	import ReferencesPanel from "./ReferencesPanel.svelte";
 	import MarkdownRenderer from "$lib/components/content/MarkdownRenderer.svelte";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
@@ -129,6 +132,19 @@
 	 */
 	const artifactType = $derived(graphNode?.artifact_type ?? activity);
 
+	/** Current status from frontmatter for pipeline stepper. */
+	const artifactStatus = $derived(
+		parsedContent ? String(parsedContent.metadata["status"] ?? "") : "",
+	);
+
+	/** Acceptance criteria array for tasks. */
+	const acceptanceCriteria = $derived.by((): string[] => {
+		if (!parsedContent) return [];
+		const raw = parsedContent.metadata["acceptance"];
+		if (Array.isArray(raw)) return raw.map(String).filter(Boolean);
+		return [];
+	});
+
 	/**
 	 * Pattern matching artifact IDs like EPIC-048, TASK-001, AD-017, MS-001, etc.
 	 * These are all-uppercase prefix + hyphen + digits.
@@ -200,6 +216,10 @@
 							metadata={parsedContent.metadata}
 							{artifactType}
 						/>
+						{#if artifactStatus}
+							<PipelineStepper {artifactType} status={artifactStatus} />
+						{/if}
+						<ActionsNeeded {artifactType} metadata={parsedContent.metadata} />
 					{:else if hasFrontmatterTitle}
 						<!-- Title + description only, no metadata card -->
 						{@const title = parsedContent.metadata["title"] as string}
@@ -212,6 +232,9 @@
 						{/if}
 					{/if}
 					<MarkdownRenderer content={bodyToRender ?? parsedContent.body} />
+					{#if acceptanceCriteria.length > 0}
+						<AcceptanceCriteria criteria={acceptanceCriteria} />
+					{/if}
 				{:else}
 					<MarkdownRenderer content={content} />
 				{/if}

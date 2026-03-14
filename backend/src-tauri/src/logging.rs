@@ -84,17 +84,19 @@ pub fn init_logging(app: &AppHandle<Wry>) {
         .with_target(false)
         .with_level(false)
         .without_time()
-        .with_filter(EnvFilter::new("error"));
+        .with_filter(EnvFilter::new("error,tao=off,wry=off"));
 
     #[cfg(debug_assertions)]
     {
         // Dev mode: info+ to stderr (captured by dev controller).
+        // tao/wry warnings suppressed — benign event loop noise on Windows.
         let stderr_layer = fmt::layer()
             .with_writer(std::io::stderr)
             .with_target(true)
             .with_level(true)
             .with_filter(
-                EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")),
+                EnvFilter::try_from_default_env()
+                    .unwrap_or_else(|_| EnvFilter::new("info,tao=off,wry=off")),
             );
 
         tracing_subscriber::registry()

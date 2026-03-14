@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { SvelteMap } from "svelte/reactivity";
 	import ArtifactLink from "./ArtifactLink.svelte";
 	import { Badge } from "$lib/components/ui/badge";
 	import * as Tooltip from "$lib/components/ui/tooltip";
@@ -22,7 +23,7 @@
 
 	/** Group relationships by type for compact display. */
 	const grouped = $derived.by(() => {
-		const groups = new Map<string, Relationship[]>();
+		const groups = new SvelteMap<string, Relationship[]>();
 		for (const rel of relationships) {
 			const existing = groups.get(rel.type);
 			if (existing) {

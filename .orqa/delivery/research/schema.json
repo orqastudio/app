@@ -8,7 +8,7 @@
   "propertyOrder": [
     "id", "title", "description", "status",
     "created", "updated",
-    "surpassed-by", "sources"
+    "surpassed-by", "sources", "relationships"
   ],
   "properties": {
     "id": { "type": "string", "pattern": "^RES-\\d+$" },
@@ -34,6 +34,28 @@
         "additionalProperties": false
       },
       "description": "External sources that informed this research"
+    }
+  },
+    "relationships": {
+      "type": "array",
+      "description": "Cross-references to other artifacts in the knowledge graph",
+      "items": {
+        "type": "object",
+        "required": ["type", "target", "rationale"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "enum": ["observes", "observed-by", "grounded", "grounded-by", "practices", "practiced-by", "enforces", "enforced-by", "verifies", "verified-by", "informs", "informed-by", "delivers", "delivered-by"]
+          },
+          "target": {
+            "type": ["string", "null"],
+            "pattern": "^(IMPL|AD|RULE|SKILL|PILLAR|RES|VER|EPIC|TASK|IDEA|MS)-\\d+$"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        }
+      }
     }
   },
   "bodyTemplate": null

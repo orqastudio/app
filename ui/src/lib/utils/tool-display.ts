@@ -43,6 +43,38 @@ export const TOOL_DISPLAY: Record<string, { label: string; icon: typeof WrenchIc
 };
 
 /**
+ * Human-friendly labels for agent capability identifiers.
+ *
+ * Capabilities are declared in agent YAML frontmatter (e.g. `file_read`,
+ * `shell_execute`) and resolved to provider-specific tool names at delegation
+ * time. This map provides display labels for the capability identifiers
+ * themselves, used in the artifact viewer UI.
+ */
+export const CAPABILITY_LABELS: Record<string, string> = {
+	file_read: "Read Files",
+	file_write: "Create Files",
+	file_edit: "Edit Files",
+	file_search: "Find Files",
+	content_search: "Search Content",
+	code_search_regex: "Regex Code Search",
+	code_search_semantic: "Semantic Code Search",
+	code_research: "Code Research",
+	shell_execute: "Run Commands",
+	skill_load: "Load Skills",
+	web_fetch: "Fetch URLs",
+	web_search: "Web Search",
+	notebook_edit: "Edit Notebooks",
+};
+
+/**
+ * Returns the human-friendly label for a capability identifier.
+ * Falls back to a humanized version of the raw identifier.
+ */
+export function getCapabilityLabel(capability: string): string {
+	return CAPABILITY_LABELS[capability] ?? capability.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/**
  * Returns the display label and icon for a tool name.
  *
  * Automatically strips any MCP server prefix before performing the lookup so

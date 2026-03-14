@@ -4,6 +4,7 @@
 	import RelationshipsList from "./RelationshipsList.svelte";
 	import StatusIndicator from "$lib/components/shared/StatusIndicator.svelte";
 	import { Badge } from "$lib/components/ui/badge";
+	import { getCapabilityLabel } from "$lib/utils/tool-display";
 	import CalendarPlusIcon from "@lucide/svelte/icons/calendar-plus";
 	import CalendarCheckIcon from "@lucide/svelte/icons/calendar-check";
 
@@ -68,8 +69,9 @@
 	 */
 	const SKIP_FIELDS = new Set([
 		"id", "title", "description", "status", "priority", "scoring",
-		"bodyTemplate", "tools", "created", "updated",
+		"bodyTemplate", "tools", "capabilities", "created", "updated",
 		"relationships", "enforcement", "rule-overrides",
+		"acceptance",
 	]);
 
 	const DATE_FIELDS = new Set(["created", "updated", "deadline"]);
@@ -92,7 +94,7 @@
 	/**
 	 * CHIP_FIELDS: rendered as styled chips but NOT clickable links.
 	 */
-	const CHIP_FIELDS = new Set<string>(["layer", "model", "recurrence"]);
+	const CHIP_FIELDS = new Set<string>(["layer", "model", "recurrence", "horizon"]);
 
 	/** CODE_FIELDS: rendered as monospace inline code badges (e.g. file paths). */
 	const CODE_FIELDS = new Set<string>([]);
@@ -151,27 +153,19 @@
 		isPresent(metadata["gate"]) ? asArray(metadata["gate"]).filter(Boolean) : [],
 	);
 
-	/** Human-friendly labels for app-context tools. CLI-only tools (mcp__*) are omitted. */
-	const TOOL_LABELS: Record<string, string> = {
-		Read: "Read Files",
-		Edit: "Edit Files",
-		Write: "Write Files",
-		Glob: "Find Files",
-		Grep: "Search Content",
-		Bash: "Run Commands",
-		search_regex: "Regex Search",
-		search_semantic: "Semantic Search",
-		code_research: "Code Research",
-	};
-
-	/** Tools filtered for app context with human-friendly names. */
-	const appTools = $derived(
-		isPresent(metadata["tools"])
-			? asArray(metadata["tools"])
-					.filter((t) => !t.startsWith("mcp__"))
-					.map((t) => TOOL_LABELS[t] ?? humanizeKey(t))
-			: [],
-	);
+	/** Capabilities (or legacy tools) with human-friendly names for display. */
+	const appTools = $derived.by(() => {
+		// Prefer capabilities field (current); fall back to tools (legacy)
+		if (isPresent(metadata["capabilities"])) {
+			return asArray(metadata["capabilities"]).map(getCapabilityLabel);
+		}
+		if (isPresent(metadata["tools"])) {
+			return asArray(metadata["tools"])
+				.filter((t) => !t.startsWith("mcp__"))
+				.map(getCapabilityLabel);
+		}
+		return [];
+	});
 
 	/**
 	 * The ordered body entries from the metadata object, skipping:
@@ -348,11 +342,11 @@
 		{/if}
 	{/each}
 
-	<!-- Tools (app-context only, human-friendly names) -->
+	<!-- Capabilities (human-friendly names) -->
 	{#if appTools.length > 0}
 		<div class="flex items-baseline gap-2">
 			<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-				Tools
+				Capabilities
 			</span>
 			<div class="flex min-w-0 flex-1 flex-wrap gap-1">
 				{#each appTools as tool, i (i)}

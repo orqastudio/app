@@ -5,6 +5,7 @@
 		CollapsibleTrigger,
 	} from "$lib/components/ui/collapsible";
 	import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
+	import { SvelteMap } from "svelte/reactivity";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import ArtifactLink from "./ArtifactLink.svelte";
 	import type { ArtifactRef } from "$lib/types/artifact-graph";
@@ -27,6 +28,32 @@
 
 	const totalRefs = $derived(incomingRefs.length + outgoingRefs.length);
 
+	/** Humanize a relationship type or field name. */
+	function humanizeLabel(value: string): string {
+		return value
+			.replace(/-/g, " ")
+			.replace(/_/g, " ")
+			.replace(/\b\w/g, (c) => c.toUpperCase());
+	}
+
+	/** Group refs by relationship_type (or field as fallback). */
+	function groupRefs(refs: ArtifactRef[]): SvelteMap<string, ArtifactRef[]> {
+		const groups = new SvelteMap<string, ArtifactRef[]>();
+		for (const ref of refs) {
+			const key = ref.relationship_type ?? ref.field;
+			const existing = groups.get(key);
+			if (existing) {
+				existing.push(ref);
+			} else {
+				groups.set(key, [ref]);
+			}
+		}
+		return groups;
+	}
+
+	const incomingGrouped = $derived(groupRefs(incomingRefs));
+	const outgoingGrouped = $derived(groupRefs(outgoingRefs));
+
 	let panelOpen = $state(false);
 </script>
 
@@ -45,24 +72,38 @@
 			<CollapsibleContent>
 				<div class="space-y-2 pt-1.5 pl-4">
 					{#if incomingRefs.length > 0}
-						<div>
+						<div class="space-y-1.5">
 							<span class="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Referenced by</span>
-							<div class="flex flex-wrap gap-1 pt-0.5">
-								{#each incomingRefs as ref ("in:" + ref.source_id + ref.field)}
-									<ArtifactLink id={ref.source_id} />
-								{/each}
-							</div>
+							{#each [...incomingGrouped] as [groupKey, refs] (groupKey)}
+								<div class="flex items-baseline gap-2">
+									<span class="shrink-0 rounded border border-muted-foreground/20 bg-muted px-1.5 py-0.5 text-[10px] font-medium capitalize text-muted-foreground">
+										{humanizeLabel(groupKey)}
+									</span>
+									<div class="flex flex-wrap gap-1">
+										{#each refs as ref ("in:" + ref.source_id + ref.field)}
+											<ArtifactLink id={ref.source_id} />
+										{/each}
+									</div>
+								</div>
+							{/each}
 						</div>
 					{/if}
 
 					{#if outgoingRefs.length > 0}
-						<div>
+						<div class="space-y-1.5">
 							<span class="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">References</span>
-							<div class="flex flex-wrap gap-1 pt-0.5">
-								{#each outgoingRefs as ref ("out:" + ref.target_id + ref.field)}
-									<ArtifactLink id={ref.target_id} />
-								{/each}
-							</div>
+							{#each [...outgoingGrouped] as [groupKey, refs] (groupKey)}
+								<div class="flex items-baseline gap-2">
+									<span class="shrink-0 rounded border border-muted-foreground/20 bg-muted px-1.5 py-0.5 text-[10px] font-medium capitalize text-muted-foreground">
+										{humanizeLabel(groupKey)}
+									</span>
+									<div class="flex flex-wrap gap-1">
+										{#each refs as ref ("out:" + ref.target_id + ref.field)}
+											<ArtifactLink id={ref.target_id} />
+										{/each}
+									</div>
+								</div>
+							{/each}
 						</div>
 					{/if}
 				</div>
