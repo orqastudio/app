@@ -324,7 +324,6 @@
 						</tbody>
 					</table>
 				</div>
-			{/if}
 		{/if}
 	</Card.Content>
 </Card.Root>
