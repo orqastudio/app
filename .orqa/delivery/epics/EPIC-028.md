@@ -70,7 +70,7 @@ Implementation agents build to UX specifications. Without the UX design, the sca
 
 ## Output
 
-All UX design documentation in `.orqa/documentation/ui/`.
+All UX design documentation in `.orqa/documentation/reference/`.
 
 ## Notes
 

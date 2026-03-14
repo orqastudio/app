@@ -163,7 +163,7 @@ This was promoted from [IMPL-052](IMPL-052) after 3 recurrences.
 The orchestrator may bypass delegation for:
 
 - Governance artifacts (`.orqa/process/rules/`, `.orqa/process/agents/`, `.orqa/process/skills/`) — these ARE the orchestrator's domain
-- Process documentation (`.orqa/documentation/process/`) — orchestration is a process concern
+- Process documentation (`.orqa/documentation/guide/`) — orchestration is a process concern
 - Session state (`tmp/session-state.md`) — coordination artifact
 - Planning artifact **structure** (`.orqa/delivery/`) — creating/updating frontmatter, status transitions, cross-references. Content authoring (research findings, documentation pages) is delegated to Writer.
 

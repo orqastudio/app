@@ -61,7 +61,7 @@ The graph is a useful first pass, but it has three significant blind spots that 
 
 **1. `docs-required` and `docs-produced` are treated as artifact ID refs.**
 
-These fields often contain file paths (e.g., `.orqa/documentation/ui/scanner-dashboard.md`) rather than artifact IDs. The graph will report these as broken references because they do not match any artifact ID. They are not broken — they are file paths that need to be verified on disk separately. Filter these out before counting broken ref findings.
+These fields often contain file paths (e.g., `.orqa/documentation/reference/scanner-dashboard.md`) rather than artifact IDs. The graph will report these as broken references because they do not match any artifact ID. They are not broken — they are file paths that need to be verified on disk separately. Filter these out before counting broken ref findings.
 
 **2. SINGLE_REF_FIELDS that contain arrays are silently skipped.**
 
@@ -108,7 +108,7 @@ Run these checklists after the graph pass has identified broken ID references. E
 
 - `supersedes` and `superseded-by` are both set when a decision is superseded — the relationship must be bidirectional and updated in the same commit
 - `status` is one of `proposed | accepted | superseded | deprecated`
-- Decisions index at `.orqa/documentation/architecture/decisions.md` has an entry for this AD-NNN
+- Decisions index at `.orqa/documentation/development/decisions.md` has an entry for this AD-NNN
 
 ### Rules
 

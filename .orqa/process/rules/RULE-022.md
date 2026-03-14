@@ -118,7 +118,7 @@ Plans exist within the artifact framework. When an implementation plan is create
 3. **Plans produce epics:** A plan that is approved should result in an `EPIC-NNN` being created (or updated) with `docs-required` and `docs-produced` fields populated from the plan's documentation sections
 4. **The plan's documentation section feeds the epic's gates:** Items in the plan's "Documentation" dimension of the Systems Architecture Checklist become the epic's `docs-required` and `docs-produced` lists
 
-See [RULE-004](RULE-004) (artifact-lifecycle) for the full artifact lifecycle and `.orqa/documentation/process/artifact-workflow.md` for day-to-day workflow.
+See [RULE-004](RULE-004) (artifact-lifecycle) for the full artifact lifecycle and `.orqa/documentation/guide/artifact-workflow.md` for day-to-day workflow.
 
 ## Roadmap Reconciliation (MANDATORY)
 

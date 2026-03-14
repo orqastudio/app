@@ -158,7 +158,7 @@ relationships:
 ---
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
 
-**Source of Truth:** `.orqa/documentation/product/artifact-framework.md`
+**Source of Truth:** `.orqa/documentation/about/artifact-framework.md`
 
 ---
 
@@ -186,7 +186,7 @@ IDs auto-increment per type. To determine the next ID, scan existing files in th
 
 ### Required Fields
 
-Every artifact MUST have all fields marked "Required" in the schema defined in `.orqa/documentation/product/artifact-framework.md`. Missing required fields are a review FAIL.
+Every artifact MUST have all fields marked "Required" in the schema defined in `.orqa/documentation/about/artifact-framework.md`. Missing required fields are a review FAIL.
 
 ---
 
@@ -328,7 +328,7 @@ proposed ──> accepted ──> superseded
 - `accepted → superseded`: A new decision replaces this one — both the new and old artifacts MUST be updated in the same commit
 - `accepted → deprecated`: Decision is no longer relevant (technology removed, context changed) — reason documented in the decision body
 
-**Creation rule:** When research produces an architectural choice, an `AD-NNN.md` MUST be created in `.orqa/process/decisions/` following the Decision schema in `.orqa/documentation/product/artifact-framework.md`.
+**Creation rule:** When research produces an architectural choice, an `AD-NNN.md` MUST be created in `.orqa/process/decisions/` following the Decision schema in `.orqa/documentation/about/artifact-framework.md`.
 
 **Supersession rule:** When a new decision replaces an accepted decision, both the new artifact (`supersedes: AD-<old>`) and the old artifact (`status: superseded`, `superseded-by: AD-<new>`) MUST be updated in the same commit. A one-sided supersession is an integrity violation.
 
@@ -408,7 +408,7 @@ This prevents the pattern where multiple ideas addressing the same capability ar
    - Set `status: promoted`
    - Set `promoted-to: EPIC-NNN`
 4. Update any bundled ideas (set `status: promoted`, `promoted-to: EPIC-NNN`)
-5. Update `.orqa/documentation/product/roadmap.md` if the epic adds to or modifies the roadmap
+5. Update `.orqa/documentation/about/roadmap.md` if the epic adds to or modifies the roadmap
 
 ---
 
@@ -416,7 +416,7 @@ This prevents the pattern where multiple ideas addressing the same capability ar
 
 ### How Priority Is Determined
 
-Priority is an inference-based judgement, not a formula. Each project defines its priority criteria in `.orqa/documentation/product/priority-assessment.md` (DOC-062). Agents read the criteria and assign a priority band (P1/P2/P3) based on how the epic serves the active milestone and whether it blocks other work.
+Priority is an inference-based judgement, not a formula. Each project defines its priority criteria in `.orqa/documentation/about/priority-assessment.md` (DOC-062). Agents read the criteria and assign a priority band (P1/P2/P3) based on how the epic serves the active milestone and whether it blocks other work.
 
 The `scoring` field on epics is optional rationale — freeform dimensions that capture the agent's reasoning. Projects choose their own dimension names. What matters is that the `priority` band is defensible and the rationale is readable.
 
@@ -447,7 +447,7 @@ P2 and P3 epics may remain in-progress or draft when a milestone is completed �
 
 ### When Artifacts Change
 
-The following changes MUST be reflected in `.orqa/documentation/product/roadmap.md`:
+The following changes MUST be reflected in `.orqa/documentation/about/roadmap.md`:
 
 - New epic added to a milestone → add to roadmap under the milestone section
 - Epic priority changes → update roadmap ordering

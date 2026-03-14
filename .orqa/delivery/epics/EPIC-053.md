@@ -259,7 +259,7 @@ Add `docs` to task schema:
 
 ```yaml
 docs:
-  - ".orqa/documentation/architecture/ipc-commands.md"
+  - ".orqa/documentation/reference/ipc-commands.md"
   - ".orqa/documentation/development/coding-standards.md"
 ```
 

@@ -21,7 +21,7 @@ relationships:
 
 ## What
 
-Update `.orqa/documentation/architecture/rust-modules.md` to reflect the actual module structure.
+Update `.orqa/documentation/development/rust-modules.md` to reflect the actual module structure.
 
 ## How
 

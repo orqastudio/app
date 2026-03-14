@@ -46,12 +46,12 @@ relationships:
 Documentation pages in `.orqa/documentation/` describe the **current target state**. When a feature, concept, or architecture changes, the old documentation is deleted and replaced. Git history preserves the old version if anyone needs it.
 
 This applies to:
-- Architecture docs (`.orqa/documentation/architecture/`)
-- Product docs (`.orqa/documentation/product/`)
+- Architecture docs (`.orqa/documentation/development/`)
+- Product docs (`.orqa/documentation/about/`)
 - Development docs (`.orqa/documentation/development/`)
-- Process docs (`.orqa/documentation/process/`)
-- UI specs (`.orqa/documentation/ui/`)
-- Wireframes (`.orqa/documentation/wireframes/`)
+- Process docs (`.orqa/documentation/guide/`) and (`.orqa/documentation/about/`)
+- UI specs (`.orqa/documentation/reference/`)
+- Wireframes (`.orqa/documentation/reference/wireframes/`)
 
 ### Research & Task Artifacts (PRESERVE, mark as surpassed)
 

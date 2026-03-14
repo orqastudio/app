@@ -209,7 +209,7 @@ Displays the output of a governance scan, including enforcement coverage — how
 
 ## Related Documents
 
-- `.orqa/documentation/architecture/enforcement.md` — Enforcement engine architecture (patterns, verdicts, persistence)
-- `.orqa/documentation/architecture/svelte-components.md` — Full component inventory
-- `.orqa/documentation/wireframes/dashboard.md` — Dashboard wireframes including governance scan results
+- `.orqa/documentation/development/enforcement.md` — Enforcement engine architecture (patterns, verdicts, persistence)
+- `.orqa/documentation/development/svelte-components.md` — Full component inventory
+- `.orqa/documentation/reference/wireframes/dashboard.md` — Dashboard wireframes including governance scan results
 - `.orqa/process/rules/` — Rule inventory and frontmatter schema

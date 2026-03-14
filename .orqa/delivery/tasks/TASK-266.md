@@ -14,7 +14,7 @@ acceptance:
   - "Architecture doc covers: artifact system, knowledge graph, prompt injection, rule enforcement, learning loop"
   - Every module in the codebase appears in the architecture map
   - Data flow diagrams trace end-to-end paths
-  - Document lives in .orqa/documentation/architecture/
+  - Document lives in .orqa/documentation/development/
 relationships:
   - target: EPIC-057
     type: belongs-to

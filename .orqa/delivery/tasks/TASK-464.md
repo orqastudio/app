@@ -14,7 +14,7 @@ skills:
   - SKILL-037
   - SKILL-011
 acceptance:
-  - documentation/process/delegation.md created with frontmatter and graph relationships
+  - documentation/reference/delegation.md created with frontmatter and graph relationships
   - Every work type in the project mapped to agent role, skills, and grounding doc
   - "Orchestrator Direct" column explicitly marks what the orchestrator may do (coordination only)
   - Document states clearly that the orchestrator writing anything other than coordination output is a system failure
@@ -33,7 +33,7 @@ relationships:
 
 ## Scope
 
-Create `documentation/process/delegation.md` as the orchestrator's delegation source of truth.
+Create `documentation/reference/delegation.md` as the orchestrator's delegation source of truth.
 
 ### Content
 

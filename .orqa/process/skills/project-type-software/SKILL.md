@@ -56,7 +56,7 @@ Adds software development governance to a base OrqaStudio setup. This is a proje
 | Template | Path | Purpose |
 |----------|------|---------|
 | Coding Standards | `.orqa/documentation/development/coding-standards.md` | Populated from inference + user input |
-| Architecture Decisions | `.orqa/documentation/architecture/decisions.md` | Index of architecture decisions |
+| Architecture Decisions | `.orqa/documentation/development/decisions.md` | Index of architecture decisions |
 | Development Commands | `.orqa/documentation/development/commands.md` | Build/test/lint command reference |
 
 ### Agent Skill Injection Rules

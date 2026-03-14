@@ -56,10 +56,10 @@ For any non-trivial feature, follow this preferred workflow before writing the f
 
 ### Always Read
 
-- `.orqa/documentation/ui/` — Existing feature designs related to the task
+- `.orqa/documentation/reference/` — Existing feature designs related to the task
 - `.orqa/process/decisions/` — Relevant `AD-NNN.md` architecture decision artifacts
 - `.orqa/delivery/tasks/` — Task artifacts with context, constraints, and priorities
-- `.orqa/documentation/product/roadmap.md` — Verify the work is prioritized and not scope creep
+- `.orqa/documentation/about/roadmap.md` — Verify the work is prioritized and not scope creep
 
 ### Read When Modifying Backend
 
@@ -67,8 +67,8 @@ For any non-trivial feature, follow this preferred workflow before writing the f
 
 ### Read When User-Facing Changes
 
-- `.orqa/documentation/product/vision.md` — Two-Pillar framework and product vision
-- `.orqa/documentation/product/governance.md` — Governance rules and decision-making process
+- `.orqa/documentation/about/vision.md` — Two-Pillar framework and product vision
+- `.orqa/documentation/about/governance.md` — Governance rules and decision-making process
 
 ### Use ChunkHound First
 

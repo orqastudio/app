@@ -18,7 +18,7 @@ promoted-to: null
 ---
 ## Problem
 
-The roadmap document (`.orqa/documentation/product/roadmap.md`) is a manually maintained markdown file that lists milestones, epics, and their statuses. It drifts constantly — every time an epic status changes, the roadmap must be manually updated. This violates the single-source-of-truth principle: the real status lives in epic/milestone frontmatter, but the roadmap is a stale copy.
+The roadmap document (`.orqa/documentation/about/roadmap.md`) is a manually maintained markdown file that lists milestones, epics, and their statuses. It drifts constantly — every time an epic status changes, the roadmap must be manually updated. This violates the single-source-of-truth principle: the real status lives in epic/milestone frontmatter, but the roadmap is a stale copy.
 
 ## Concept
 

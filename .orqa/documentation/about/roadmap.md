@@ -114,9 +114,9 @@ All pre-build phases are complete. Each phase is tracked as a retroactive epic f
 
 - [x] **[EPIC-025](EPIC-025): Phase 0a — Tech Stack Research** — AI provider integration research (Agent SDK sidecar pattern), Tauri v2 capability audit, frontend library selection, persistence design, onboarding strategy. All findings documented in `.orqa/delivery/research/`.
 - [x] **[EPIC-026](EPIC-026): Phase 0b — Architecture Decisions** — [AD-001](AD-001) through [AD-020](AD-020) recorded. Covers thick backend architecture, IPC boundary, error propagation, Svelte 5 runes, SQLite persistence, component purity, sidecar integration, streaming pipeline, security model, MCP host, persistence, governance format, composability principle, layout decisions, and documentation browsing model. See individual AD artifacts in `.orqa/process/decisions/`.
-- [x] **[EPIC-027](EPIC-027): Phase 0c — Product Definition** — Glossary, personas, user journeys, information architecture, MVP feature specification. All in `.orqa/documentation/product/`.
-- [x] **[EPIC-028](EPIC-028): Phase 0d — UX Design** — Design system, wireframes (core layout, conversation, artifact browser, settings/onboarding, dashboard), component inventory, interaction patterns, responsive behaviour. All in `.orqa/documentation/ui/`.
-- [x] **[EPIC-029](EPIC-029): Phase 0e — Technical Design** — SQLite schema, IPC command catalogue, Rust module architecture, Svelte component tree, streaming pipeline, tool definitions, MCP host interface, error taxonomy. All in `.orqa/documentation/architecture/`.
+- [x] **[EPIC-027](EPIC-027): Phase 0c — Product Definition** — Glossary, personas, user journeys, information architecture, MVP feature specification. All in `.orqa/documentation/about/`.
+- [x] **[EPIC-028](EPIC-028): Phase 0d — UX Design** — Design system, wireframes (core layout, conversation, artifact browser, settings/onboarding, dashboard), component inventory, interaction patterns, responsive behaviour. All in `.orqa/documentation/reference/`.
+- [x] **[EPIC-029](EPIC-029): Phase 0e — Technical Design** — SQLite schema, IPC command catalogue, Rust module architecture, Svelte component tree, streaming pipeline, tool definitions, MCP host interface, error taxonomy. All in `.orqa/documentation/development/`.
 - [x] **[EPIC-030](EPIC-030): Phase 1 — Scaffold** — Working Tauri v2 app with AI conversations via Agent SDK sidecar. Includes:
   - Tauri v2 + Svelte 5 project with configured plugins
   - Rust backend: Agent SDK sidecar with streaming (Channel<T>)

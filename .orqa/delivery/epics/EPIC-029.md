@@ -80,7 +80,7 @@ Implementation cannot begin without knowing the data model, the IPC surface, and
 
 ## Output
 
-All technical design documentation in `.orqa/documentation/architecture/`.
+All technical design documentation in `.orqa/documentation/development/`.
 
 ## Notes
 

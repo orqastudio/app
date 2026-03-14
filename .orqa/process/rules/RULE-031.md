@@ -151,7 +151,7 @@ If the user gives an instruction that appears to conflict with a foundational pr
 2. **Ask for clarification** — The user may have a valid reason, or the instruction may be a misunderstanding
 3. **Document the outcome** — If the user confirms a change to a foundational principle:
    - Update the relevant documentation
-   - Update `.orqa/documentation/product/vision.md` and/or `.orqa/documentation/product/governance.md` if the pillars or governance rules change
+   - Update `.orqa/documentation/about/vision.md` and/or `.orqa/documentation/about/governance.md` if the pillars or governance rules change
    - Update this rule file ([RULE-031](RULE-031) (vision-alignment)) to reflect the new principle
    - Update all affected agent definitions in `.orqa/process/agents/`
 4. **Never silently comply** — If an instruction contradicts a principle, do NOT just implement it without flagging the conflict first
@@ -165,7 +165,7 @@ If the user gives an instruction that appears to conflict with a foundational pr
 
 ## Governance References
 
-- Vision: `.orqa/documentation/product/vision.md`
-- Governance: `.orqa/documentation/product/governance.md`
-- Artifact Framework: `.orqa/documentation/product/artifact-framework.md`
-- Artifact Workflow: `.orqa/documentation/process/artifact-workflow.md`
+- Vision: `.orqa/documentation/about/vision.md`
+- Governance: `.orqa/documentation/about/governance.md`
+- Artifact Framework: `.orqa/documentation/about/artifact-framework.md`
+- Artifact Workflow: `.orqa/documentation/guide/artifact-workflow.md`

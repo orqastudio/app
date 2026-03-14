@@ -128,7 +128,7 @@ The following artifacts are shipped with OrqaStudio as the core layer. They are 
 | Core enforcement rules | `.orqa/process/rules/*.md` | Behavioral constraints: no stubs, error ownership, documentation-first, etc. |
 | Core skills | `.orqa/process/skills/` | Domain knowledge: diagnostic-methodology, code-quality-review, security-audit, etc. |
 | Lifecycle hooks | `.orqa/process/hooks/` | Process automation: session start, pre-commit |
-| Artifact framework | `.orqa/documentation/product/artifact-framework.md` | How artifacts are created, tracked, and promoted |
+| Artifact framework | `.orqa/documentation/about/artifact-framework.md` | How artifacts are created, tracked, and promoted |
 
 These artifacts collectively implement the agile learning loop (chaos → clarity → execution → reflection → improved clarity) as executable, enforceable governance.
 

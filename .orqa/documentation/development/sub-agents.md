@@ -239,6 +239,6 @@ backend/src-tauri/src/
 ## Related Documents
 
 - [AD-010](AD-010) — Tool implementation as MCP (orqa_ tool namespace)
-- `.orqa/documentation/architecture/enforcement.md` — Enforcement engine that sub-agent calls pass through
-- `.orqa/documentation/architecture/tool-definitions.md` — Built-in tool definitions and approval matrix
-- `.orqa/documentation/process/orchestration.md` — Orchestration model and task delegation workflow
+- `.orqa/documentation/development/enforcement.md` — Enforcement engine that sub-agent calls pass through
+- `.orqa/documentation/development/tool-definitions.md` — Built-in tool definitions and approval matrix
+- `.orqa/documentation/development/orchestration.md` — Orchestration model and task delegation workflow

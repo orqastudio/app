@@ -89,7 +89,7 @@ graph LR
 |----------|-----------|
 | `code-reviewer` | clippy/rustfmt/ESLint/svelte-check zero errors; no stubs; 80%+ coverage; doc layer compliance; DoD code items |
 | `qa-tester` | End-to-end functional correctness from a user perspective; smoke test; DoD smoke test items |
-| `ux-reviewer` | Labels match UI specs in `.orqa/documentation/ui/`; all component states handled; shared components used; no jargon in UI; DoD UI items |
+| `ux-reviewer` | Labels match UI specs in `.orqa/documentation/reference/`; all component states handled; shared components used; no jargon in UI; DoD UI items |
 
 Review failures generate entries in Implementation Lessons. The orchestrator promotes recurring failures to rules or standards.
 

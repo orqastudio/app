@@ -23,7 +23,7 @@ relationships:
 ---
 ## What
 
-Update `.orqa/documentation/architecture/streaming-pipeline.md` to reflect the new `SystemPromptSent` emission point added by [TASK-001](TASK-001).
+Update `.orqa/documentation/development/streaming-pipeline.md` to reflect the new `SystemPromptSent` emission point added by [TASK-001](TASK-001).
 
 ## Sections to Update
 

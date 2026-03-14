@@ -102,7 +102,7 @@ OrqaStudio has 39 rules in `.orqa/process/rules/` with structured frontmatter
 
 - **App context**: The app scans `.orqa/process/rules/` for display but doesn't
   enforce rules during agent execution. The enforcement architecture doc
-  (`.orqa/documentation/architecture/enforcement.md`) describes a pattern-matching
+  (`.orqa/documentation/development/enforcement.md`) describes a pattern-matching
   engine that evaluates rules against file writes and bash commands, but it's not
   yet connected to the agent execution pipeline.
 

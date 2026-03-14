@@ -81,7 +81,7 @@ relationships:
 
 1. Check if your change affects any existing decision — browse decisions in the app or search `.orqa/process/decisions/` for the relevant `AD-NNN.md`
 2. Read the relevant decision artifact(s) for full context
-3. If proposing a new decision, create an `AD-NNN.md` in `.orqa/process/decisions/` following the framework schema (see `.orqa/documentation/product/artifact-framework.md` — Decision schema).
+3. If proposing a new decision, create an `AD-NNN.md` in `.orqa/process/decisions/` following the framework schema (see `.orqa/documentation/about/artifact-framework.md` — Decision schema).
 
 ## Before Writing Plans
 

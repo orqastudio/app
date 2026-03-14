@@ -114,8 +114,8 @@ You are the Researcher. You investigate questions, gather information, analyse f
 
 Before any research work, load relevant context:
 
-- `.orqa/documentation/product/vision.md` — Product vision and pillars
-- `.orqa/documentation/product/artifact-framework.md` — Artifact schemas and connections
+- `.orqa/documentation/about/vision.md` — Product vision and pillars
+- `.orqa/documentation/about/artifact-framework.md` — Artifact schemas and connections
 - `.orqa/delivery/research/` — Existing research (check for prior work on your topic)
 - `.orqa/process/lessons/` — Known patterns and past findings
 

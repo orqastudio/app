@@ -21,7 +21,7 @@ the agent's assessment, not a mechanical calculation.
 ## How It Works
 
 Each project defines its priority criteria in this document (or the equivalent in their
-`.orqa/documentation/product/` directory). When an agent needs to assess an epic's
+`.orqa/documentation/about/` directory). When an agent needs to assess an epic's
 priority, it:
 
 1. Reads this document to understand what matters right now

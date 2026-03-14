@@ -77,7 +77,7 @@ relationships:
     type: documented-by
     rationale: workflow.md is the source-of-truth document for the git workflow this rule enforces
 ---
-**Source of Truth:** `.orqa/documentation/process/workflow.md`
+**Source of Truth:** `.orqa/documentation/guide/workflow.md`
 
 ## Worktree Workflow (MANDATORY)
 

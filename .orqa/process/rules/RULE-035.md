@@ -47,7 +47,7 @@ Core skills (`layer: core`) MUST NOT contain:
 - Architecture decision references from this project (e.g., [AD-001](AD-001), [AD-005](AD-005))
 - Project-specific config values (hardcoded URLs, service names, environment variables)
 - Enforcement rules that belong in `.orqa/process/rules/`
-- Product decisions that belong in `.orqa/documentation/product/`
+- Product decisions that belong in `.orqa/documentation/about/`
 - Implementation patterns specific to this codebase's conventions
 
 ## Project Layer Constraints

@@ -12,7 +12,7 @@ assignee: AGENT-007
 acceptance:
   - "Document covers: current plugin capabilities, component library extraction plan, view registration API, theme tokens"
   - Built-in vs plugin boundary documented with decision framework
-  - Document lives in .orqa/documentation/architecture/
+  - Document lives in .orqa/documentation/development/
 relationships:
   - target: EPIC-057
     type: belongs-to

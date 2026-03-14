@@ -404,9 +404,9 @@ created: 2026-03-07
 updated: 2026-03-07
 research-refs: []                 # RES-NNN identifiers of research docs that informed this epic
 docs-required:                    # Documentation that must exist before work begins
-  - .orqa/documentation/architecture/streaming-pipeline.md
+  - .orqa/documentation/development/streaming-pipeline.md
 docs-produced:                    # Documentation this work creates or updates
-  - .orqa/documentation/architecture/streaming-pipeline.md (update with new events)
+  - .orqa/documentation/development/streaming-pipeline.md (update with new events)
 depends-on: []                    # EPIC-NNN IDs that must be done before this can start
 blocks: []                        # EPIC-NNN IDs that this epic blocks
 deadline: null                    # ISO date or null
@@ -458,7 +458,7 @@ updated: 2026-03-07
 depends-on: []                    # Task IDs that must be done before this can start
 assignee: backend-engineer
 docs:                             # Documentation to load during implementation
-  - ".orqa/documentation/architecture/streaming.md"
+  - ".orqa/documentation/development/streaming.md"
 skills: [orqa-ipc-patterns, orqa-streaming]  # Skills to load during implementation
 acceptance:                       # What "done" looks like
   - SystemPromptSent event emitted before sidecar call

@@ -206,7 +206,7 @@ Create grounding documents distilled from restructured docs. Create the orchestr
 Each is 30-50 lines. Answers three questions: why this role exists, what "good" looks like, what goes wrong under pressure.
 
 #### Delegation Reference
-A new doc in `documentation/process/delegation.md` — the orchestrator's lookup table:
+A new doc in `documentation/reference/delegation.md` — the orchestrator's lookup table:
 - Maps every work type to: agent role, required skills, grounding document
 - Connected to orchestrator via `grounded-by`
 - Makes "if the orchestrator is writing anything other than coordination output, the system has failed" explicit and actionable

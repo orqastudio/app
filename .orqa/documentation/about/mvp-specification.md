@@ -98,7 +98,7 @@ The MVP feature specification with acceptance criteria for each feature. Scoped 
 - [ ] User can say "that's enough" or "skip" at any point to end discovery early
 - [ ] At the end of discovery, Claude proposes governance artifacts based on the conversation
 - [ ] User reviews and approves, modifies, or rejects each proposed artifact before it is written to disk
-- [ ] Generated project summary document (`.orqa/documentation/product/overview.md`) contains a project summary derived from the conversation (product description, tech stack, team, key decisions). If CLI tool compatibility is requested, a corresponding `CLAUDE.md` or similar tool-specific file is also written.
+- [ ] Generated project summary document (`.orqa/documentation/about/overview.md`) contains a project summary derived from the conversation (product description, tech stack, team, key decisions). If CLI tool compatibility is requested, a corresponding `CLAUDE.md` or similar tool-specific file is also written.
 - [ ] Generated agents are tailored to the stated tech stack (not generic defaults)
 - [ ] Generated rules reflect stated conventions and preferences
 - [ ] The discovery conversation is saved as a regular session (appears in session history, is searchable and resumable)

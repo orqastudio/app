@@ -47,7 +47,7 @@ relationships:
 
 - **Rust backend**: >=80% per module (`cargo tarpaulin --fail-under 80` or equivalent coverage tool)
 - **Frontend**: Run `npm run test` — all tests must pass (Vitest)
-- **E2E**: All user flows in `.orqa/documentation/ui/` must have Playwright coverage
+- **E2E**: All user flows in `.orqa/documentation/reference/` must have Playwright coverage
 
 ## Mock Boundaries
 

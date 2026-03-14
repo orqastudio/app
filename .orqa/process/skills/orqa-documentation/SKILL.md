@@ -85,8 +85,8 @@ See [RULE-034](RULE-034) for the full artifact link format constraint and enforc
 [Frontend Research](/research/frontend)
 
 <!-- WRONG: file paths — use artifact IDs instead -->
-[Governance](.orqa/documentation/product/governance.md)
-[Governance](../product/governance.md)
+[Governance](.orqa/documentation/about/governance.md)
+[Governance](../about/governance.md)
 
 <!-- WRONG: bare IDs without markdown link syntax — won't be detected -->
 See RULE-004 for details.
@@ -102,7 +102,7 @@ Product Governance
 Every artifact has an `id:` field in its YAML frontmatter. To find the ID for a documentation page:
 
 ```bash
-grep "^id:" .orqa/documentation/product/governance.md
+grep "^id:" .orqa/documentation/about/governance.md
 # id: DOC-039
 ```
 

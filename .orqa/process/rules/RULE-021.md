@@ -62,8 +62,8 @@ Active pillars are defined as structured artifacts in `.orqa/process/pillars/PIL
 
 ## Pages That REQUIRE a Pillar Alignment Section
 
-- Feature pages (.orqa/documentation/ui/)
-- Architecture pages (.orqa/documentation/architecture/)
+- Feature pages (.orqa/documentation/reference/)
+- Architecture pages (.orqa/documentation/development/)
 - Component and module documentation
 - Workflow and process pages
 - Any page describing a capability, component, or system behavior
@@ -77,7 +77,7 @@ The following page categories are exempt because they define or govern the pilla
 | Research pages | `.orqa/delivery/research/` | Historical investigations, not features |
 | Development guidelines | Coding standards, agentic workflow, library guides | Internal process docs |
 | Pillar definitions | `.orqa/process/pillars/` | These ARE the pillars |
-| High-level overview pages | `.orqa/documentation/product/vision.md`, `.orqa/documentation/product/governance.md` | These reference the pillars |
+| High-level overview pages | `.orqa/documentation/about/vision.md`, `.orqa/documentation/about/governance.md` | These reference the pillars |
 | Architecture decisions | `.orqa/process/decisions/` | Individual decisions already have context |
 
 ## Alignment Descriptions

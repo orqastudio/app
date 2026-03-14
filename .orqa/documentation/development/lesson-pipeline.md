@@ -204,6 +204,6 @@ backend/src-tauri/src/
 
 ## Related Documents
 
-- `.orqa/documentation/ui/lesson-dashboard.md` — UI spec for the lesson navigation and viewer
-- `.orqa/documentation/architecture/enforcement.md` — Enforcement engine that consumes promoted lessons
+- `.orqa/documentation/reference/lesson-dashboard.md` — UI spec for the lesson navigation and viewer
+- `.orqa/documentation/development/enforcement.md` — Enforcement engine that consumes promoted lessons
 - `.orqa/process/lessons/` — Current lesson log (the actual lesson content, not this architecture doc)

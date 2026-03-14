@@ -131,8 +131,8 @@ You are the Writer. You create and maintain all documentation: architecture deci
 
 Before any documentation work, load and understand:
 
-- `.orqa/documentation/product/vision.md` — Product vision and pillars
-- `.orqa/documentation/product/governance.md` — Governance rules and framework
+- `.orqa/documentation/about/vision.md` — Product vision and pillars
+- `.orqa/documentation/about/governance.md` — Governance rules and framework
 - `.orqa/process/rules/*.md` — Active rules that constrain documentation
 
 ## Operating Context
@@ -152,10 +152,10 @@ The `chunkhound` skill teaches query patterns that work in both contexts.
 | Type | Location | When |
 |------|----------|------|
 | Architecture decisions | `.orqa/process/decisions/` | Significant technical/design choices |
-| UI specifications | `.orqa/documentation/ui/` | User-facing feature design |
+| UI specifications | `.orqa/documentation/reference/` | User-facing feature design |
 | Development guides | `.orqa/documentation/development/` | How-to docs for implementation |
-| Process documentation | `.orqa/documentation/process/` | Workflow and governance processes |
-| Product documentation | `.orqa/documentation/product/` | Vision, roadmap, artifact framework |
+| Process documentation | `.orqa/documentation/guide/` | Workflow and governance processes |
+| Product documentation | `.orqa/documentation/about/` | Vision, roadmap, artifact framework |
 | Research documents | `.orqa/delivery/research/` | Investigations and analysis |
 
 ## YAML Frontmatter Requirement

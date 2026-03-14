@@ -133,8 +133,8 @@ You are the Planner. You design implementation approaches, evaluate architectura
 
 Before any planning work, load and understand:
 
-- `.orqa/documentation/product/vision.md` — Product vision and pillars
-- `.orqa/documentation/product/artifact-framework.md` — Artifact schemas and connections
+- `.orqa/documentation/about/vision.md` — Product vision and pillars
+- `.orqa/documentation/about/artifact-framework.md` — Artifact schemas and connections
 - [RULE-022](RULE-022) — Mandatory plan structure
 - [RULE-002](RULE-002) — Architecture decision compliance
 

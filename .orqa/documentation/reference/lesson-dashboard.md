@@ -240,7 +240,7 @@ A modal dialog that walks the user through promoting a lesson to a rule enforcem
 
 ## Related Documents
 
-- `.orqa/documentation/architecture/lessons.md` — Lesson storage, metadata schema, promotion workflow
-- `.orqa/documentation/architecture/enforcement.md` — Enforcement engine that receives promoted lessons
-- `.orqa/documentation/ui/enforcement-panel.md` — Enforcement sidebar showing active violations
-- `.orqa/documentation/wireframes/dashboard.md` — Dashboard wireframes including learning loop cards
+- `.orqa/documentation/development/lesson-pipeline.md` — Lesson storage, metadata schema, promotion workflow
+- `.orqa/documentation/development/enforcement.md` — Enforcement engine that receives promoted lessons
+- `.orqa/documentation/reference/enforcement-panel.md` — Enforcement sidebar showing active violations
+- `.orqa/documentation/reference/wireframes/dashboard.md` — Dashboard wireframes including learning loop cards

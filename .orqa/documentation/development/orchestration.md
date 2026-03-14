@@ -120,7 +120,7 @@ All agents are universal roles (see [AD-029](AD-029)). Agent definitions declare
 | Governance, agent files, skill governance, process docs | Orchestrator | `governance-maintenance`, `skills-maintenance` |
 | Planning tasks crossing the IPC boundary or changing contracts | Planner | `architecture`, `planning`, `tauri-v2` |
 | Functional QA, smoke testing, end-to-end verification | Reviewer | `qa-verification`, `svelte5-best-practices` |
-| UI compliance review against `.orqa/documentation/ui/` specs | Reviewer | `ux-compliance-review`, `svelte5-best-practices` |
+| UI compliance review against `.orqa/documentation/reference/` specs | Reviewer | `ux-compliance-review`, `svelte5-best-practices` |
 
 > [!IMPORTANT]
 > For any planning task that crosses the Rust/TypeScript IPC boundary, changes data models, or introduces new persistent state, delegate to a Planner with `architecture` skills for compliance review BEFORE delegating implementation.

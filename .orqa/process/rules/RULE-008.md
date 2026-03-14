@@ -88,10 +88,10 @@ Documentation is the source of truth. Before writing ANY implementation code, ve
 ## Before ANY Code Changes (MANDATORY)
 
 1. Check `.orqa/documentation/` for existing designs related to the task
-2. Check `.orqa/documentation/architecture/` for relevant architecture decisions
+2. Check `.orqa/documentation/development/` for relevant architecture decisions
 3. Check the relevant `EPIC-NNN.md` in `.orqa/delivery/epics/` for phase requirements and constraints
 4. Verify the epic's `docs-required` gate is satisfied before starting implementation
-5. Check `.orqa/documentation/product/artifact-framework.md` if working with `.orqa/` artifacts
+5. Check `.orqa/documentation/about/artifact-framework.md` if working with `.orqa/` artifacts
 
 **Documentation priorities ALWAYS come before implementation priorities.** Never reorder to put code changes ahead of documentation corrections.
 
@@ -99,8 +99,8 @@ Documentation is the source of truth. Before writing ANY implementation code, ve
 
 ## For New Features
 
-1. Read `.orqa/documentation/product/vision.md` — verify feature serves at least one active pillar
-2. Read `.orqa/documentation/product/governance.md` — verify feature passes governance criteria
+1. Read `.orqa/documentation/about/vision.md` — verify feature serves at least one active pillar
+2. Read `.orqa/documentation/about/governance.md` — verify feature passes governance criteria
 3. Verify the feature has an artifact trail — an `IDEA-NNN` that was shaped and promoted to an `EPIC-NNN`, or an `EPIC-NNN` created directly with user approval
 4. Verify the epic's `docs-required` gate is satisfied before starting implementation
 
@@ -154,7 +154,7 @@ The artifact framework enforces documentation at two points:
 
 These fields are defined on every epic. The orchestrator checks `docs-required` before starting work, and the code-reviewer verifies `docs-produced` during the review gate.
 
-See [RULE-004](RULE-004) (artifact-lifecycle) for enforcement details and `.orqa/documentation/process/artifact-workflow.md` for the full workflow.
+See [RULE-004](RULE-004) (artifact-lifecycle) for enforcement details and `.orqa/documentation/guide/artifact-workflow.md` for the full workflow.
 
 ## Related Rules
 

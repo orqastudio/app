@@ -18,7 +18,7 @@ relationships:
 ---
 ## What
 
-Created the architecture decisions index at `.orqa/documentation/architecture/decisions.md`, listing all AD records with their status, category, and brief summaries.
+Created the architecture decisions index at `.orqa/documentation/development/decisions.md`, listing all AD records with their status, category, and brief summaries.
 
 ## How
 

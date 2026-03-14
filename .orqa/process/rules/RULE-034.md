@@ -70,8 +70,8 @@ See RULE-004 for details.
 [Governance](/product/governance)
 
 <!-- File paths — use artifact IDs instead -->
-[Governance](.orqa/documentation/product/governance.md)
-[Governance](../product/governance.md)
+[Governance](.orqa/documentation/about/governance.md)
+[Governance](../about/governance.md)
 
 <!-- Wrapping links in outer parentheses — visual noise -->
 ([EPIC-001](EPIC-001))

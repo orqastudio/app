@@ -273,7 +273,7 @@ These journeys inform UI design and the MVP feature specification.
 
 5. **Tailored governance generation** — When the user signals they're done (or the AI has enough context), the AI proposes governance artifacts based on the conversation — not generic templates, but artifacts informed by everything discussed:
 
-   - A **project summary document** (`.orqa/documentation/product/overview.md`) derived from the conversation (product description, tech stack, team structure, key decisions). If CLI compatibility is requested, a corresponding tool-specific summary file (e.g., `CLAUDE.md`) is also written.
+   - A **project summary document** (`.orqa/documentation/about/overview.md`) derived from the conversation (product description, tech stack, team structure, key decisions). If CLI compatibility is requested, a corresponding tool-specific summary file (e.g., `CLAUDE.md`) is also written.
    - **Agents** tailored to the tech stack and team structure (e.g., a Rust backend agent and a Svelte frontend agent, rather than a generic "default" agent)
    - **Rules** based on stated conventions (e.g., "always use Result instead of unwrap" if the user mentioned Rust error handling preferences)
    - **Initial architecture decisions** captured from the conversation (e.g., "monorepo with separate crates" or "API-first design")

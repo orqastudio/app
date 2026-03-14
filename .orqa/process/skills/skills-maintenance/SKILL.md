@@ -152,7 +152,7 @@ A skill is portable if a different project could use it unchanged. Skills MUST N
 - Architecture decision numbers from this project (e.g., `[AD-001](AD-001)`, `[AD-005](AD-005)`)
 - Project-specific config values (hardcoded URLs, service names, environment variables)
 - Enforcement rules (those belong in `.orqa/process/rules/`)
-- Product decisions (those belong in `.orqa/documentation/product/`)
+- Product decisions (those belong in `.orqa/documentation/about/`)
 - Implementation patterns specific to this codebase's conventions
 
 **Test:** Would this skill be useful on a different project? If yes, it's portable. If no, move the content to project docs or rules.

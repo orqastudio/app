@@ -62,8 +62,10 @@
         { "key": "guide", "path": ".orqa/documentation/guide" },
         { "key": "about", "path": ".orqa/documentation/about" },
         { "key": "development", "path": ".orqa/documentation/development" },
+        { "key": "how-to", "path": ".orqa/documentation/how-to" },
         { "key": "reference", "path": ".orqa/documentation/reference" },
-        { "key": "wireframes", "path": ".orqa/documentation/reference/wireframes" }
+        { "key": "wireframes", "path": ".orqa/documentation/reference/wireframes" },
+        { "key": "grounding", "path": ".orqa/documentation/grounding" }
       ]
     },
     { "key": "process", "label": "Process", "icon": "workflow",

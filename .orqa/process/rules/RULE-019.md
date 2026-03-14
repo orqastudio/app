@@ -65,7 +65,7 @@ Deferring a scoped deliverable to a future epic is forbidden. It creates invisib
 
 A deliverable is any item that appears in:
 
-- The epic's roadmap entry (e.g., D1 items in `.orqa/documentation/product/roadmap.md`)
+- The epic's roadmap entry (e.g., D1 items in `.orqa/documentation/about/roadmap.md`)
 - The epic's task list in `.orqa/delivery/epics/EPIC-NNN.md`
 - The epic's implementation design (in the epic body)
 - The epic's `docs-produced` list

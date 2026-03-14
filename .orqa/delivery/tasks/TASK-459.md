@@ -26,7 +26,7 @@ relationships:
 
 ## Scope
 
-Priority assessment criteria live in `.orqa/documentation/product/priority-assessment.md` (DOC-062). Currently, epics have an optional `scoring` field with freeform rationale, but this isn't enforced or surfaced prominently.
+Priority assessment criteria live in `.orqa/documentation/about/priority-assessment.md` (DOC-062). Currently, epics have an optional `scoring` field with freeform rationale, but this isn't enforced or surfaced prominently.
 
 - Display scoring/justification alongside priority in the metadata box
 - If an epic/task has `priority` but no `scoring` or justification content, flag as action needed

@@ -25,7 +25,7 @@ Thank you for your interest in contributing to OrqaStudio. This guide covers the
 
 - **Issues:** Check the [GitHub Issues](https://github.com/orqastudio/orqastudio-app/issues) for open tasks. Issues labelled `good first issue` are suitable for new contributors.
 - **Discussions:** Open a [GitHub Discussion](https://github.com/orqastudio/orqastudio-app/discussions) if you have an idea but are unsure how it fits the project.
-- **Roadmap:** See `.orqa/documentation/product/roadmap.md` for the project direction. Features not on the roadmap should be discussed before implementation.
+- **Roadmap:** See `.orqa/documentation/about/roadmap.md` for the project direction. Features not on the roadmap should be discussed before implementation.
 
 ---
 

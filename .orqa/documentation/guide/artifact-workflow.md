@@ -17,7 +17,7 @@ relationships:
 
 This document describes how artifacts flow through the OrqaStudio™ development process day-to-day. It covers when artifacts are created, how they transition between states, and the gates that govern each transition.
 
-For artifact schemas and field definitions, see `.orqa/documentation/product/artifact-framework.md`.
+For artifact schemas and field definitions, see `.orqa/documentation/about/artifact-framework.md`.
 For enforcement rules, see [RULE-004](RULE-004).
 
 ---
@@ -63,7 +63,7 @@ Whenever the user mentions a future feature, enhancement, or "we should eventual
    - `pillar` alignment (at least one pillar must apply)
    - `research-needed` listing what needs investigation
    - `tags` for discoverability
-3. Add a brief entry in `.orqa/documentation/product/roadmap.md` if the idea is significant enough for roadmap visibility
+3. Add a brief entry in `.orqa/documentation/about/roadmap.md` if the idea is significant enough for roadmap visibility
 4. Inform the user the idea has been captured
 
 ### What NOT to Do
@@ -120,7 +120,7 @@ The idea MUST be `shaped` before promotion. The user MUST explicitly approve.
 3. Update `IDEA-NNN.md`:
    - Set `status: promoted`
    - Set `promoted-to: EPIC-NNN`
-4. Update `.orqa/documentation/product/roadmap.md` to include the new epic
+4. Update `.orqa/documentation/about/roadmap.md` to include the new epic
 5. Update the parent milestone's `epic-count`
 
 ---
@@ -272,7 +272,7 @@ When a new decision replaces an existing accepted decision:
 
 ## Roadmap Synchronisation
 
-The roadmap (`.orqa/documentation/product/roadmap.md`) must stay in sync with artifacts:
+The roadmap (`.orqa/documentation/about/roadmap.md`) must stay in sync with artifacts:
 
 | Event | Roadmap Update |
 |-------|----------------|
