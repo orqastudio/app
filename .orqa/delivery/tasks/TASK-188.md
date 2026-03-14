@@ -2,7 +2,8 @@
 id: TASK-188
 title: Port enforcement engine to Rust backend
 description: Implement the rule enforcement engine in Rust for app-native enforcement.
-status: todo
+status: surpassed
+surpassed-by: TASK-415
 created: 2026-03-11
 updated: 2026-03-11
 epic: EPIC-050

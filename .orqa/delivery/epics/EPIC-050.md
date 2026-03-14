@@ -5,7 +5,7 @@ description: |
   Build a two-context rule enforcement engine: a Claude Code companion plugin
   (separate repo) that enforces .orqa/ rules in the CLI, then integrate the same
   enforcement logic into the OrqaStudio app for dogfooding parity.
-status: in-progress
+status: done
 priority: P1
 created: 2026-03-11
 updated: 2026-03-12
@@ -303,7 +303,7 @@ Everything else comes from `.orqa/` via the plugin. The symlinks are deleted.
 
 ## Tasks
 
-### Phase 1: Companion Plugin
+### Phase 1: Companion Plugin (COMPLETE)
 
 - [x] [TASK-183](TASK-183): Add `enforcement` field to rule schema + add entries to key rules
 - [x] [TASK-177](TASK-177): Create `orqa-plugin` repository with Claude Code plugin scaffold
@@ -312,16 +312,16 @@ Everything else comes from `.orqa/` via the plugin. The symlinks are deleted.
 - [x] [TASK-180](TASK-180): Implement PreToolUse hook (file + bash event enforcement)
 - [x] [TASK-181](TASK-181): Implement SessionStart hook (orchestrator injection + session checks)
 - [x] [TASK-182](TASK-182): Implement Stop hook (replaces pre-commit-reminder.sh)
-- [ ] [TASK-184](TASK-184): Implement `/orqa`, `/orqa:rules`, `/orqa:status` commands
-- [ ] [TASK-185](TASK-185): Test plugin against OrqaStudio's `.orqa/` governance artifacts
-- [ ] [TASK-186](TASK-186): Remove `.claude/` symlinks and update [RULE-003](RULE-003) symlink documentation
+- [x] [TASK-184](TASK-184): Implement `/orqa` command (basic version shipped)
 - [x] [TASK-187](TASK-187): Document plugin installation and configuration
 
-### Phase 2: App-Native Enforcement
+### Absorbed into EPIC-064 (Enforcement Bootstrapping)
 
-- [ ] [TASK-188](TASK-188): Port enforcement engine to Rust backend
-- [ ] [TASK-189](TASK-189): Integrate with agent tool approval pipeline
-- [ ] [TASK-190](TASK-190): Surface violations in governance UI
+- [TASK-185](TASK-185): Integration testing → surpassed by [TASK-414](TASK-414)
+- [TASK-186](TASK-186): Symlink removal → surpassed (premature, symlinks still needed alongside plugin)
+- [TASK-188](TASK-188): Rust enforcement engine → surpassed by [TASK-415](TASK-415) (engine already exists)
+- [TASK-189](TASK-189): Agent pipeline integration → surpassed by [TASK-415](TASK-415)
+- [TASK-190](TASK-190): Governance UI violations → absorbed into [EPIC-064](EPIC-064)
 
 ## Out of Scope
 

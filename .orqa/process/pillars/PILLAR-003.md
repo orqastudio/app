@@ -33,6 +33,9 @@ relationships:
   - target: IMPL-065
     type: observed-by
     rationale: "Auto-generated inverse of observed-by relationship from IMPL-065"
+  - target: AGENT-003
+    type: grounded
+    rationale: Orchestrator is grounded by this pillar — Purpose Through Continuity is injected as foundational context
 ---
 ## What This Pillar Means
 

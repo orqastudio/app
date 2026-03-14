@@ -435,6 +435,9 @@ relationships:
   - target: DOC-036
     type: documented-by
     rationale: Referenced in documentation page Artifact Framework
+  - target: AGENT-003
+    type: grounded
+    rationale: Orchestrator is grounded by this pillar — Clarity Through Structure is injected as foundational context
 ---
 ## What This Pillar Means
 

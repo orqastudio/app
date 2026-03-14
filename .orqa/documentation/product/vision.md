@@ -8,6 +8,9 @@ relationships:
   - target: AD-030
     type: documents
     rationale: Documentation page references AD-030
+  - target: AGENT-003
+    type: grounded
+    rationale: Orchestrator is grounded by this document — product vision is injected as foundational context
 ---
 
 **Date:** 2026-03-07

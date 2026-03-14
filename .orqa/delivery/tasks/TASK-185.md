@@ -2,7 +2,8 @@
 id: TASK-185
 title: Test plugin against OrqaStudio governance artifacts
 description: Integration testing of the plugin against the real .orqa/ directory in orqa-studio.
-status: todo
+status: surpassed
+surpassed-by: TASK-414
 created: 2026-03-11
 updated: 2026-03-11
 epic: EPIC-050

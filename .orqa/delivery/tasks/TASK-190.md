@@ -4,10 +4,10 @@ title: Surface violations in governance UI
 description: Display enforcement violations in the app's governance view with history and filtering.
 status: todo
 created: 2026-03-11
-updated: 2026-03-11
-epic: EPIC-050
+updated: 2026-03-14
+epic: EPIC-064
 depends-on:
-  - TASK-189
+  - TASK-415
 assignee: AGENT-002
 docs:
   - DOC-021
@@ -23,9 +23,12 @@ acceptance:
   - Each violation shows the rule, the blocked action, and the enforcement message
   - Violation count is visible in the governance nav
 relationships:
-  - target: EPIC-050
+  - target: EPIC-064
+    type: delivers
+    rationale: Absorbed from EPIC-050 — surface violations in governance UI
+  - target: EPIC-064
     type: belongs-to
-    rationale: Task belongs to this epic
+    rationale: Task belongs to this epic (absorbed from EPIC-050)
 ---
 
 ## What

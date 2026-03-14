@@ -2,7 +2,7 @@
 id: TASK-340
 title: Reconcile EPIC-050
 description: "Standing reconciliation task — verify epic body accuracy: task table, pillars, docs-produced, scope."
-status: todo
+status: done
 created: 2026-03-13
 updated: 2026-03-13
 epic: EPIC-050

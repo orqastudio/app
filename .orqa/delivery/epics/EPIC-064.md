@@ -7,8 +7,8 @@
 
 id: EPIC-064
 title: Close enforcement bootstrapping gap
-description: The enforcement system is half-complete across all layers — rules declare enforcement entries but critical event types (stop) and actions (skill content injection) are not consumed by the plugin, and the Rust engine is disconnected from agent execution. This epic closes every gap so the system can enforce itself during its own development.
-status: draft
+description: "The enforcement system can't enforce the project's principles because: (1) documentation is isolated from the artifact graph — agents can't traverse to the knowledge they need, (2) no grounding mechanism exists — agents lose purpose under implementation pressure, (3) the orchestrator has no delegation reference — work types aren't mapped to roles and skills, and (4) mechanical enforcement gaps remain — stop events, skill injection, and write-time integrity aren't wired. This epic closes all four gaps so the system can enforce itself during its own development."
+status: ready
 priority: P1
 created: 2026-03-14
 updated: 2026-03-14
@@ -18,13 +18,14 @@ horizon: active
 pillars:
   - PILLAR-001
   - PILLAR-002
-depends-on:
-  - EPIC-050
+depends-on: []
 blocks: []
 research-refs:
   - RES-056
+  - RES-062
 docs-required:
   - RES-056
+  - RES-062
 docs-produced: []
 scoring:
   dogfood-value: 5 — OrqaStudio cannot dogfood until the enforcement system enforces itself
@@ -96,97 +97,133 @@ relationships:
   - target: TASK-413
     type: delivered-by
     rationale: "Auto-generated inverse of delivered-by relationship from TASK-413"
+  - target: TASK-190
+    type: contains
+    rationale: Absorbed from EPIC-050 — surface violations in governance UI
+  - target: TASK-190
+    type: delivered-by
+    rationale: Absorbed from EPIC-050 — surface violations in governance UI
 ---
 ## Context
 
-OrqaStudio's enforcement system (EPIC-050) built the infrastructure: a Claude Code plugin with rule-engine.mjs handling file/bash events, a Rust EnforcementEngine with full pattern matching, and process gates tracking workflow state. But critical gaps remain:
+During a heavy implementation session (31 tasks across 6 epics), the orchestrator lost awareness of the project's core principles — pillars, vision, architectural constraints. Investigation revealed four structural gaps:
 
-1. **Stop events**: 3 enforcement entries declared (RULE-001, RULE-044), none evaluated by the plugin
-2. **Skill injection**: Plugin returns skill names, not content — agents get a list of IDs instead of actual knowledge
-3. **Graph integrity at write-time**: RULE-045 declared enforcement entries but PostToolUse hook doesn't run integrity checks
-4. **App-agent pipeline**: Rust enforcement engine is complete but not wired to agent execution
-5. **Process gate / enforcement engine separation**: Two enforcement systems in Rust that don't compose
+1. **Documentation is isolated from the graph.** 55% of docs have zero relationships. Agents can't traverse from a skill to its deeper documentation. 8 significant duplications exist. 23 files contain stale phase references. ([RES-062](RES-062))
+2. **No grounding mechanism exists.** Agent prompts are 100% procedural — they describe how to work but not why the work matters. Under implementation pressure, purpose evaporates because it was never anchored.
+3. **The orchestrator has no delegation reference.** Work types aren't mapped to roles, skills, and grounding. Delegation is a judgement call instead of a lookup. The orchestrator doing implementation work is a sign of system failure, but nothing enforces this.
+4. **Mechanical enforcement gaps remain.** Stop events aren't evaluated, skill injection returns names not content, write-time graph integrity isn't checked. ([RES-056](RES-056))
 
-The consequence: **the orchestrator repeatedly violates behavioral rules** (IMPL-052 permission-seeking, IMPL-054 bypassing enforcement, IMPL-055 missing graph integrity) because the enforcement that should catch these violations isn't consuming the entries that declare them.
+The consequence: **the system's principles are lost during implementation because the knowledge infrastructure that should maintain them is disconnected, ungrounded, and mechanically incomplete.**
 
 ## Implementation Design
 
-### Phase 1: Plugin Enforcement Completeness (CLI Context)
+### Phase 1: Documentation Restructuring
 
-Close all gaps in the Claude Code plugin so enforcement entries are fully consumed.
+Fix the documentation so it's worth connecting to the graph. Delete duplicates, merge overlaps, remove stale content, clarify unfocused docs.
+
+#### Deletions
+- DOC-019 (architecture-overview) — stub, duplicates DOC-001
+- DOC-054 (launch-timeline) — entirely outdated
+- DOC-032 (process/rules) — duplicates RULE-026
+
+#### Merges
+- DOC-038 (governance-hub) → DOC-039 (governance)
+- DOC-082 (guide/workflow) → DOC-035 (process/workflow)
+- DOC-048 (component-inventory) → DOC-016 (svelte-components)
+- DOC-081 (artifact-types) → DOC-036 (artifact-framework)
+
+#### Restructures
+- DOC-021 (coding-standards) — restructure as principles doc, not rule restatement
+- DOC-030 (orchestration) — add purpose, reduce to delegation reference
+- Remove all "Phase 2a/2b" references across 23 files
+- Clarify or delete: DOC-051 (engagement-infrastructure), DOC-029 (metrics), DOC-045 (system-artifacts)
+
+### Phase 2: Grounding Documents and Delegation Reference
+
+Create grounding documents distilled from restructured docs. Create the orchestrator's delegation reference. Connect everything to the graph.
+
+#### Grounding Documents (one per role area)
+- `grounding/product-purpose.md` — mission, pillars, identity (grounds: Orchestrator, Planner, Writer)
+- `grounding/code-principles.md` — what "good code" means (grounds: Implementer, Reviewer)
+- `grounding/artifact-principles.md` — what "good artifacts" look like (grounds: Orchestrator, Writer, Researcher)
+- `grounding/design-principles.md` — UX principles (grounds: Designer)
+- `grounding/research-principles.md` — evidence standards (grounds: Researcher)
+
+Each is 30-50 lines. Answers three questions: why this role exists, what "good" looks like, what goes wrong under pressure.
+
+#### Delegation Reference
+A new doc in `documentation/process/delegation.md` — the orchestrator's lookup table:
+- Maps every work type to: agent role, required skills, grounding document
+- Connected to orchestrator via `grounded-by`
+- Makes "the orchestrator doing work itself is a failure" explicit and actionable
+
+#### Graph Connectivity
+- Add `grounded-by` relationships on all agent definitions → their grounding docs
+- Add `informs`/`informed-by` relationships between skills and their documentation
+- Add `documented-by` relationships from rules/decisions to their documentation pages
+- Link wireframe docs to epics via `docs-required`
+- Add pillar alignment sections to UI and wireframe docs per RULE-021
+
+### Phase 3: Mechanical Enforcement (CLI Plugin)
+
+Close gaps in the Claude Code plugin so enforcement entries are fully consumed.
 
 #### Stop Event Support
-
-Currently: Stop hook → stop-checklist.sh (static checklist, no rule evaluation)
-Target: Stop hook → rule-engine.mjs (evaluates `event: stop` entries) + stop-checklist.sh (operational checklist)
-
-**Approach**: Add stop event handling to rule-engine.mjs:
-- Accept stop event context (no file_path — session-level context only)
-- Evaluate enforcement entries with `event: stop` against session state
-- Return warn/inject verdicts alongside stop-checklist.sh output
-- Stop hook calls both scripts, merges output
+Stop hook → rule-engine.mjs (evaluates `event: stop` entries) + stop-checklist.sh
 
 #### Full Skill Content Injection
-
-Currently: Returns `"**Read before implementing:**\n- skill-name-1\n- skill-name-2"`
-Target: Reads skill SKILL.md files and returns their body content as systemMessage
-
-**Approach**: In rule-engine.mjs `collectSkillIds()`:
-- Resolve skill name → `.orqa/process/skills/{name}/SKILL.md`
-- Read file, strip YAML frontmatter
-- Return body content as systemMessage
-- Deduplication already works via `.injected-skills.json`
+rule-engine.mjs reads SKILL.md files and returns body content as systemMessage, not just names.
 
 #### Graph Integrity on PostToolUse
+graph-guardian.mjs checks bidirectional relationship inverses after `.orqa/**/*.md` writes.
 
-Currently: graph-guardian.mjs does basic checks
-Target: After `.orqa/**/*.md` writes, run targeted bidirectional relationship verification
+#### Grounding Injection
+Plugin resolves `grounded-by` relationships on agent definitions and injects target content at session initialization. This is the mechanical implementation of the grounding pattern.
 
-**Approach**: In graph-guardian.mjs:
-- When modified file matches `.orqa/**/*.md`: parse frontmatter relationships
-- For each relationship, check if target artifact has the inverse
-- Return warning if inverses are missing (don't block — inform)
-- Lightweight: single-file check, no full scan
+### Phase 4: App Enforcement Pipeline
 
-### Phase 2: App Enforcement Pipeline (App Context)
-
-Wire the Rust EnforcementEngine to agent execution so app-context enforcement achieves parity with CLI.
-
-#### Connect Engine to Agent Tool Approval
-
-The EnforcementEngine exists in `backend/src-tauri/src/domain/enforcement_engine.rs`. It needs to be called:
-- Before tool execution in the agent loop (pre-tool-use evaluation)
-- After tool execution (post-tool-use evaluation)
-- At session boundaries (stop event evaluation)
-
-#### Unify Process Gates and Enforcement Engine
-
-Process gates (`process_gates.rs`) track workflow state. Enforcement engine (`enforcement_engine.rs`) evaluates patterns. Compose them:
-- Enforcement entries can reference workflow state conditions
-- Process gates can evaluate enforcement entries instead of hardcoded conditions
-- Single evaluation pipeline: workflow state → enforcement entries → verdicts
+Wire the Rust EnforcementEngine to agent execution for app-context enforcement parity.
 
 ## Tasks
 
-### Phase 1: Plugin Completeness
+### Phase 1: Documentation Restructuring
+
+- [ ] TASK-NEW-1: Delete duplicate and stale documentation (DOC-019, DOC-054, DOC-032)
+- [ ] TASK-NEW-2: Merge overlapping documentation (4 merge pairs)
+- [ ] TASK-NEW-3: Restructure unfocused documentation (DOC-021, DOC-030, phase references)
+- [ ] TASK-NEW-4: Clarify or delete ambiguous documentation (DOC-051, DOC-029, DOC-045)
+
+### Phase 2: Grounding and Graph Connectivity
+
+- [ ] TASK-NEW-5: Create grounding documents (5 role-area docs)
+- [ ] TASK-NEW-6: Create delegation reference document
+- [ ] TASK-NEW-7: Connect documentation to graph (relationships on docs, skills, agents)
+- [ ] TASK-NEW-8: Wire agent definitions to grounding via `grounded-by` relationships
+
+### Phase 3: Mechanical Enforcement (CLI Plugin)
 
 - [ ] [TASK-411](TASK-411): Add stop event handling to rule-engine.mjs
 - [ ] [TASK-412](TASK-412): Implement full skill content injection in rule-engine.mjs
 - [ ] [TASK-413](TASK-413): Add bidirectional relationship checking to graph-guardian.mjs
-- [ ] [TASK-414](TASK-414): Integration test — verify all declared enforcement entries are consumed
+- [ ] TASK-NEW-9: Add grounding injection to plugin — resolve `grounded-by` on agent, inject content
+- [ ] [TASK-414](TASK-414): Integration test — verify all enforcement entries are consumed
 
-### Phase 2: App Enforcement Pipeline
+### Phase 4: App Enforcement Pipeline
 
 - [ ] [TASK-415](TASK-415): Wire EnforcementEngine to agent tool approval pipeline
 - [ ] [TASK-416](TASK-416): Unify process gates and enforcement engine evaluation
+- [ ] [TASK-190](TASK-190): Surface violations in governance UI
 
 ## Verification
 
-1. All `event: stop` entries on RULE-001 and RULE-044 fire when the plugin's Stop hook runs
-2. Skill injection returns actual skill content, not just skill names
-3. Writing an `.orqa/` artifact with a one-sided relationship triggers a PostToolUse warning
-4. Rust enforcement engine evaluates tool calls during agent execution in app context
-5. `make verify` passes clean after all changes
+1. Documentation tree has zero duplicates, zero stale phase references, zero orphaned docs
+2. Every agent definition has `grounded-by` relationships to its grounding documents
+3. The orchestrator prompt includes purpose, pillars, and delegation reference
+4. The plugin injects grounding content at session initialization
+5. Skill injection returns actual content, not just names
+6. Writing an `.orqa/` artifact with a one-sided relationship triggers a PostToolUse warning
+7. All `event: stop` enforcement entries fire during the Stop hook
+8. `make verify` passes clean after all changes
 
 ## Out of Scope
 
@@ -194,3 +231,4 @@ Process gates (`process_gates.rs`) track workflow state. Enforcement engine (`en
 - Scan/lint event types in plugin (declarative only, handled by linters)
 - Plugin distribution or registry
 - Cross-project rule sharing
+- App-native grounding injection (plugin handles CLI; app will follow in a later epic)
