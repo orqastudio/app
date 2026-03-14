@@ -991,6 +991,58 @@ fn check_idea_delivery_tracking(graph: &ArtifactGraph, checks: &mut Vec<Integrit
 // ---------------------------------------------------------------------------
 
 /// Apply auto-fixable integrity checks by modifying artifact files on disk.
+/// Update a single scalar frontmatter field in an artifact file.
+///
+/// Reads the file, finds the field in the YAML block, replaces its value,
+/// and writes the file back to disk. The YAML frontmatter must be delimited
+/// by `---` markers.
+///
+/// Only simple `key: value` scalar fields are supported. The field must already
+/// exist in the frontmatter — this function does not add new fields.
+///
+/// Returns `OrqaError::Validation` if the field is not found or the file has
+/// no valid frontmatter block.
+pub fn update_artifact_field(full_path: &Path, field: &str, value: &str) -> Result<(), OrqaError> {
+    let content =
+        std::fs::read_to_string(full_path).map_err(|e| OrqaError::FileSystem(e.to_string()))?;
+
+    let (fm_opt, body) = crate::domain::artifact::extract_frontmatter(&content);
+    let fm_text = fm_opt.ok_or_else(|| {
+        OrqaError::Validation(format!("no frontmatter block in '{}'", full_path.display()))
+    })?;
+
+    // Replace the line `field: old_value` with `field: new_value`.
+    // We match on the field name at the start of a line (with optional leading spaces).
+    let field_prefix = format!("{field}:");
+    let mut found = false;
+    let new_fm = fm_text
+        .lines()
+        .map(|line| {
+            let trimmed = line.trim_start();
+            if let Some(_rest) = trimmed.strip_prefix(field_prefix.as_str()) {
+                found = true;
+                // Preserve leading whitespace from the original line.
+                let indent: String = line.chars().take_while(|c| c.is_whitespace()).collect();
+                return format!("{indent}{field}: {value}");
+            }
+            line.to_string()
+        })
+        .collect::<Vec<_>>()
+        .join("\n");
+
+    if !found {
+        return Err(OrqaError::Validation(format!(
+            "field '{field}' not found in frontmatter of '{}'",
+            full_path.display()
+        )));
+    }
+
+    let new_content = format!("---\n{new_fm}\n---\n{body}");
+    std::fs::write(full_path, new_content).map_err(|e| OrqaError::FileSystem(e.to_string()))?;
+
+    Ok(())
+}
+
 ///
 /// Currently supports:
 /// - `MissingInverse`: adds the inverse relationship entry to the target artifact's

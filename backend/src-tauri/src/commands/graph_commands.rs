@@ -3,8 +3,9 @@ use std::path::Path;
 use tauri::State;
 
 use crate::domain::artifact_graph::{
-    apply_fixes, build_artifact_graph, check_integrity, graph_stats, AppliedFix, ArtifactGraph,
-    ArtifactNode, GraphStats, IntegrityCheck,
+    apply_fixes, build_artifact_graph, check_integrity, graph_stats,
+    update_artifact_field as domain_update_artifact_field, AppliedFix, ArtifactGraph, ArtifactNode,
+    GraphStats, IntegrityCheck,
 };
 use crate::domain::health_snapshot::{HealthSnapshot, NewHealthSnapshot};
 use crate::error::OrqaError;
@@ -202,6 +203,58 @@ pub fn store_health_snapshot(
             warning_count,
         },
     )
+}
+
+/// Update a single YAML frontmatter field in an artifact file on disk.
+///
+/// Reads the file, replaces the field value in the YAML block, writes it back,
+/// then refreshes the artifact graph cache. The path must be relative to the
+/// project root. Path traversal is rejected.
+///
+/// Only simple scalar fields (strings) are supported. The `field` must already
+/// exist in the frontmatter — this command updates values, it does not add
+/// new fields.
+#[tauri::command]
+pub fn update_artifact_field(
+    path: String,
+    field: String,
+    value: String,
+    state: State<'_, AppState>,
+) -> Result<(), OrqaError> {
+    if path.trim().is_empty() {
+        return Err(OrqaError::Validation("path cannot be empty".to_string()));
+    }
+    if path.contains("..") {
+        return Err(OrqaError::Validation(
+            "path traversal not allowed".to_string(),
+        ));
+    }
+    if field.trim().is_empty() {
+        return Err(OrqaError::Validation("field cannot be empty".to_string()));
+    }
+
+    let project_path = active_project_path(&state)?;
+    let full_path = Path::new(&project_path).join(path.replace('\\', "/"));
+
+    if !full_path.exists() {
+        return Err(OrqaError::NotFound(format!(
+            "artifact not found: {}",
+            full_path.display()
+        )));
+    }
+
+    domain_update_artifact_field(&full_path, &field, &value)?;
+
+    // Refresh the graph cache so subsequent queries reflect the change.
+    let new_graph = build_artifact_graph(Path::new(&project_path))?;
+    let mut guard = state
+        .artifacts
+        .graph
+        .lock()
+        .map_err(|e| OrqaError::Database(format!("graph lock poisoned: {e}")))?;
+    *guard = Some(new_graph);
+
+    Ok(())
 }
 
 /// Get the most recent health snapshots for the active project.

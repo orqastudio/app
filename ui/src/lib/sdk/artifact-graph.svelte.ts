@@ -196,6 +196,19 @@ class ArtifactGraphSDK {
         return invoke<string>("read_artifact_content", { path });
     }
 
+    /**
+     * Update a single YAML frontmatter field in an artifact file on disk,
+     * then refresh the in-memory graph.
+     *
+     * @param path  Relative file path from the project root.
+     * @param field Frontmatter key to update (must already exist in the file).
+     * @param value New string value for the field.
+     */
+    async updateField(path: string, field: string, value: string): Promise<void> {
+        await invoke<void>("update_artifact_field", { path, field, value });
+        await this.refresh();
+    }
+
     // -----------------------------------------------------------------------
     // Graph health — synchronous
     // -----------------------------------------------------------------------

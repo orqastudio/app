@@ -225,6 +225,7 @@ fn register_commands(builder: tauri::Builder<tauri::Wry>) -> tauri::Builder<taur
         commands::graph_commands::apply_auto_fixes,
         commands::graph_commands::store_health_snapshot,
         commands::graph_commands::get_health_snapshots,
+        commands::graph_commands::update_artifact_field,
     ])
 }
 
