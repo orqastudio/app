@@ -2,7 +2,7 @@
 id: TASK-421
 title: "Extract stores into SDK — session, project, artifact, conversation"
 description: "Move the four primary data stores into @orqastudio/sdk. Fix conversationStore's DEFAULT_MODEL dependency by making it a config parameter."
-status: todo
+status: done
 priority: P1
 created: "2026-03-14"
 updated: "2026-03-14"

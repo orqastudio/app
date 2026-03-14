@@ -2,7 +2,7 @@
 id: TASK-422
 title: "Extract stores into SDK — enforcement, lessons, setup, settings, errors"
 description: "Move the five secondary stores into @orqastudio/sdk. Fix settingsStore theme application and errorStore browser handlers to be injectable/opt-in."
-status: todo
+status: done
 priority: P1
 created: "2026-03-14"
 updated: "2026-03-14"
