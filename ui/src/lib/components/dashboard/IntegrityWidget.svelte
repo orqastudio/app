@@ -1,9 +1,9 @@
 <script lang="ts">
+	import { SvelteSet } from "svelte/reactivity";
 	import * as Card from "$lib/components/ui/card";
 	import { Button } from "$lib/components/ui/button";
 	import ShieldCheckIcon from "@lucide/svelte/icons/shield-check";
 	import ShieldAlertIcon from "@lucide/svelte/icons/shield-alert";
-	import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
 	import WrenchIcon from "@lucide/svelte/icons/wrench";
 	import CircleAlertIcon from "@lucide/svelte/icons/circle-alert";
 	import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
@@ -56,7 +56,7 @@
 
 	/** Unique categories present in current checks, for the filter dropdown. */
 	const presentCategories = $derived.by(() => {
-		const cats = new Set<IntegrityCategory>();
+		const cats = new SvelteSet<IntegrityCategory>();
 		for (const c of checks) cats.add(c.category);
 		return [...cats].sort();
 	});

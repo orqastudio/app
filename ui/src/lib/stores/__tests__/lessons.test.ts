@@ -11,8 +11,10 @@ const makeFakeLesson = (overrides: Partial<Lesson> = {}): Lesson => ({
 	status: "active",
 	recurrence: 0,
 	promoted_to: null,
-	tags: [],
+	created: "2026-01-01T00:00:00Z",
+	updated: "2026-01-01T00:00:00Z",
 	body: "Lesson body",
+	file_path: ".orqa/process/lessons/IMPL-001.md",
 	...overrides,
 });
 

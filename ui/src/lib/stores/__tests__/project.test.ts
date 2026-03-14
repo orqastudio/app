@@ -8,7 +8,8 @@ const fakeProject: Project = {
 	id: 1,
 	path: "/home/user/my-project",
 	name: "My Project",
-	stack: "typescript",
+	description: null,
+	detected_stack: null,
 	created_at: "2026-01-01T00:00:00Z",
 	updated_at: "2026-01-01T00:00:00Z",
 };
@@ -17,17 +18,22 @@ const fakeSummary: ProjectSummary = {
 	id: 1,
 	name: "My Project",
 	path: "/home/user/my-project",
-	stack: "typescript",
+	detected_stack: null,
+	session_count: 0,
 	artifact_count: 42,
-	created_at: "2026-01-01T00:00:00Z",
+	updated_at: "2026-01-01T00:00:00Z",
 };
 
 const fakeSettings: ProjectSettings = {
 	name: "My Project",
 	description: "A test project",
-	dogfood: false,
+	default_model: "auto",
+	excluded_paths: [],
+	stack: null,
+	governance: null,
 	icon: null,
-	model: "auto",
+	show_thinking: false,
+	custom_system_prompt: null,
 	artifacts: [
 		{ key: "docs", label: "Documentation", path: ".orqa/documentation" },
 	],
@@ -186,10 +192,9 @@ describe("ProjectStore", () => {
 	describe("scanProject", () => {
 		it("returns scan result", async () => {
 			const result: ProjectScanResult = {
-				detected_stack: ["rust", "typescript"],
-				has_git: true,
-				has_orqa: true,
-				governance_maturity: "managed",
+				stack: { languages: ["rust", "typescript"], frameworks: [], package_manager: null, has_claude_config: true, has_design_tokens: false },
+				governance: { docs: 5, agents: 2, rules: 10, skills: 3, hooks: 1, has_claude_config: true },
+				scan_duration_ms: 42,
 			};
 			mockInvoke.mockResolvedValueOnce(result);
 

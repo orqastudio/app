@@ -18,7 +18,7 @@
 	let { relationships }: { relationships: Relationship[] } = $props();
 
 	/** Per-type expanded state for overflow toggle. */
-	const expandedTypes = $state<SvelteMap<string, boolean>>(new SvelteMap());
+	const expandedTypes = new SvelteMap<string, boolean>();
 
 	/** Humanize a relationship type for display (e.g. "grounded-by" → "Grounded By"). */
 	function humanizeType(type: string): string {

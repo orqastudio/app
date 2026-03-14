@@ -255,8 +255,9 @@ describe("ConversationStore", () => {
 			await sendPromise;
 
 			// Now simulate stream events via the captured callback
-			if (capturedCallback) {
-				capturedCallback({
+			const cb = capturedCallback as ((e: StreamEvent) => void) | null;
+			if (cb) {
+				cb({
 					type: "stream_start",
 					data: { message_id: 100, resolved_model: "claude-opus-4-6" },
 				} as StreamEvent);
@@ -277,18 +278,19 @@ describe("ConversationStore", () => {
 
 			await conversationStore.sendMessage(10, "test");
 
-			if (capturedCallback) {
-				capturedCallback({
+			const cb = capturedCallback as ((e: StreamEvent) => void) | null;
+			if (cb) {
+				cb({
 					type: "stream_start",
 					data: { message_id: 100, resolved_model: null },
 				} as StreamEvent);
 
-				capturedCallback({
+				cb({
 					type: "text_delta",
 					data: { content: "Hello " },
 				} as StreamEvent);
 
-				capturedCallback({
+				cb({
 					type: "text_delta",
 					data: { content: "world" },
 				} as StreamEvent);
@@ -308,13 +310,14 @@ describe("ConversationStore", () => {
 
 			await conversationStore.sendMessage(10, "test");
 
-			if (capturedCallback) {
-				capturedCallback({
+			const cb = capturedCallback as ((e: StreamEvent) => void) | null;
+			if (cb) {
+				cb({
 					type: "stream_start",
 					data: { message_id: 100, resolved_model: null },
 				} as StreamEvent);
 
-				capturedCallback({
+				cb({
 					type: "thinking_delta",
 					data: { content: "Let me think..." },
 				} as StreamEvent);
@@ -334,8 +337,9 @@ describe("ConversationStore", () => {
 
 			await conversationStore.sendMessage(10, "test");
 
-			if (capturedCallback) {
-				capturedCallback({
+			const cb = capturedCallback as ((e: StreamEvent) => void) | null;
+			if (cb) {
+				cb({
 					type: "tool_use_start",
 					data: { tool_call_id: "tc-1", tool_name: "read_file" },
 				} as StreamEvent);
@@ -358,13 +362,14 @@ describe("ConversationStore", () => {
 
 			await conversationStore.sendMessage(10, "test");
 
-			if (capturedCallback) {
-				capturedCallback({
+			const cb = capturedCallback as ((e: StreamEvent) => void) | null;
+			if (cb) {
+				cb({
 					type: "tool_use_start",
 					data: { tool_call_id: "tc-1", tool_name: "read_file" },
 				} as StreamEvent);
 
-				capturedCallback({
+				cb({
 					type: "tool_result",
 					data: { tool_call_id: "tc-1", result: "file contents", is_error: false },
 				} as StreamEvent);
@@ -387,8 +392,9 @@ describe("ConversationStore", () => {
 
 			await conversationStore.sendMessage(10, "test");
 
-			if (capturedCallback) {
-				capturedCallback({
+			const cb = capturedCallback as ((e: StreamEvent) => void) | null;
+			if (cb) {
+				cb({
 					type: "stream_error",
 					data: { message: "Provider error" },
 				} as StreamEvent);
@@ -409,11 +415,12 @@ describe("ConversationStore", () => {
 
 			await conversationStore.sendMessage(10, "test");
 
-			if (capturedCallback) {
+			const cb = capturedCallback as ((e: StreamEvent) => void) | null;
+			if (cb) {
 				conversationStore.isStreaming = true; // Ensure it's streaming
-				capturedCallback({
+				cb({
 					type: "stream_cancelled",
-					data: {},
+					data: null,
 				} as StreamEvent);
 
 				expect(conversationStore.isStreaming).toBe(false);
@@ -431,8 +438,9 @@ describe("ConversationStore", () => {
 
 			await conversationStore.sendMessage(10, "test");
 
-			if (capturedCallback) {
-				capturedCallback({
+			const cb = capturedCallback as ((e: StreamEvent) => void) | null;
+			if (cb) {
+				cb({
 					type: "tool_approval_request",
 					data: { tool_call_id: "tc-1", tool_name: "write_file", input: '{"path":"test.txt"}' },
 				} as StreamEvent);
@@ -456,8 +464,9 @@ describe("ConversationStore", () => {
 
 			await conversationStore.sendMessage(10, "test");
 
-			if (capturedCallback) {
-				capturedCallback({
+			const cb = capturedCallback as ((e: StreamEvent) => void) | null;
+			if (cb) {
+				cb({
 					type: "process_violation",
 					data: { check: "no-unwrap", message: "Found unwrap() usage" },
 				} as StreamEvent);
@@ -478,8 +487,9 @@ describe("ConversationStore", () => {
 
 			await conversationStore.sendMessage(10, "test");
 
-			if (capturedCallback) {
-				capturedCallback({
+			const cb = capturedCallback as ((e: StreamEvent) => void) | null;
+			if (cb) {
+				cb({
 					type: "session_title_updated",
 					data: { session_id: 10, title: "Auto-generated title" },
 				} as StreamEvent);
@@ -502,8 +512,9 @@ describe("ConversationStore", () => {
 
 			await conversationStore.sendMessage(10, "test");
 
-			if (capturedCallback) {
-				capturedCallback({
+			const cb = capturedCallback as ((e: StreamEvent) => void) | null;
+			if (cb) {
+				cb({
 					type: "system_prompt_sent",
 					data: {
 						custom_prompt: "You are helpful",
@@ -528,8 +539,9 @@ describe("ConversationStore", () => {
 
 			await conversationStore.sendMessage(10, "test");
 
-			if (capturedCallback) {
-				capturedCallback({
+			const cb = capturedCallback as ((e: StreamEvent) => void) | null;
+			if (cb) {
+				cb({
 					type: "context_injected",
 					data: {
 						message_count: 3,
@@ -563,13 +575,14 @@ describe("ConversationStore", () => {
 			await conversationStore.sendMessage(10, "test");
 			const callCountBefore = invokeCallCount;
 
-			if (capturedCallback) {
-				capturedCallback({
+			const cb = capturedCallback as ((e: StreamEvent) => void) | null;
+			if (cb) {
+				cb({
 					type: "stream_start",
 					data: { message_id: 100, resolved_model: null },
 				} as StreamEvent);
 
-				capturedCallback({
+				cb({
 					type: "turn_complete",
 					data: {},
 				} as StreamEvent);

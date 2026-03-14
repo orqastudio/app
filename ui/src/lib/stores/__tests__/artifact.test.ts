@@ -16,17 +16,24 @@ import type { NavTree } from "$lib/types/nav-tree";
 const fakeNavTree: NavTree = {
 	groups: [
 		{
-			key: "planning",
 			label: "Planning",
+			description: "",
 			icon: "target",
+			sort: 0,
+			path: ".orqa/delivery",
+			readme_content: "",
 			types: [
 				{
 					label: "Epics",
 					path: ".orqa/delivery/epics",
 					icon: "rocket",
 					description: "Epic artifacts",
+					sort: 0,
+					readme_content: "",
+					filterable_fields: [],
+					sortable_fields: [],
 					nodes: [
-						{ label: "EPIC-001", path: ".orqa/delivery/epics/EPIC-001.md", description: "First epic" },
+						{ label: "EPIC-001", path: ".orqa/delivery/epics/EPIC-001.md", description: "First epic", children: null },
 					],
 				},
 			],

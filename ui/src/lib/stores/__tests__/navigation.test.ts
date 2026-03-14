@@ -48,20 +48,28 @@ const sampleConfig: ArtifactEntry[] = [
 const sampleNavTree: NavTree = {
 	groups: [
 		{
-			key: "planning",
 			label: "Planning",
+			description: "",
 			icon: "target",
+			sort: 0,
+			path: ".orqa/delivery",
+			readme_content: "",
 			types: [
 				{
 					label: "Epics",
 					path: ".orqa/delivery/epics",
 					icon: "rocket",
 					description: "Epic artifacts",
+					sort: 0,
+					readme_content: "",
+					filterable_fields: [],
+					sortable_fields: [],
 					nodes: [
 						{
 							label: "EPIC-001",
 							path: ".orqa/delivery/epics/EPIC-001.md",
 							description: "First epic",
+							children: null,
 						},
 					],
 				},
@@ -70,26 +78,38 @@ const sampleNavTree: NavTree = {
 					path: ".orqa/delivery/tasks",
 					icon: "check",
 					description: "Task artifacts",
+					sort: 1,
+					readme_content: "",
+					filterable_fields: [],
+					sortable_fields: [],
 					nodes: [
 						{
 							label: "TASK-001",
 							path: ".orqa/delivery/tasks/TASK-001.md",
 							description: "First task",
+							children: null,
 						},
 					],
 				},
 			],
 		},
 		{
-			key: "docs",
 			label: "Documentation",
+			description: "",
 			icon: "book",
+			sort: 1,
+			path: ".orqa/documentation",
+			readme_content: "",
 			types: [
 				{
 					label: "Documentation",
 					path: ".orqa/documentation",
 					icon: "book",
 					description: "Docs",
+					sort: 0,
+					readme_content: "",
+					filterable_fields: [],
+					sortable_fields: [],
 					nodes: [
 						{
 							label: "Architecture",
@@ -100,6 +120,7 @@ const sampleNavTree: NavTree = {
 									label: "Overview",
 									path: ".orqa/documentation/architecture/overview.md",
 									description: "Arch overview",
+									children: null,
 								},
 							],
 						},
@@ -340,6 +361,13 @@ describe("NavigationStore", () => {
 				path: ".orqa/delivery/epics/EPIC-001.md",
 				id: "EPIC-001",
 				title: "First epic",
+				artifact_type: "epic",
+				description: null,
+				status: null,
+				priority: null,
+				frontmatter: {},
+				references_out: [],
+				references_in: [],
 			});
 
 			navigationStore.navigateToArtifact("EPIC-001");
@@ -352,7 +380,7 @@ describe("NavigationStore", () => {
 		});
 
 		it("warns and does nothing if ID cannot be resolved", () => {
-			vi.mocked(artifactGraphSDK.resolve).mockReturnValue(null);
+			vi.mocked(artifactGraphSDK.resolve).mockReturnValue(undefined);
 			const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
 			navigationStore.navigateToArtifact("NONEXISTENT-999");

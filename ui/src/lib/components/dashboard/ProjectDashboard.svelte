@@ -1,11 +1,10 @@
 <script lang="ts">
+	import { SvelteMap } from "svelte/reactivity";
 	import * as Card from "$lib/components/ui/card";
 	import * as ScrollArea from "$lib/components/ui/scroll-area";
-	import { Button } from "$lib/components/ui/button";
 	import FolderOpenIcon from "@lucide/svelte/icons/folder-open";
 	import LayersIcon from "@lucide/svelte/icons/layers";
 	import NetworkIcon from "@lucide/svelte/icons/network";
-	import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
 	import EmptyState from "$lib/components/shared/EmptyState.svelte";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 	import ErrorDisplay from "$lib/components/shared/ErrorDisplay.svelte";
@@ -73,7 +72,7 @@
 			if (nodes.length === 0) continue;
 
 			// Compute status breakdown
-			const statusMap = new Map<string, number>();
+			const statusMap = new SvelteMap<string, number>();
 			for (const node of nodes) {
 				const s = node.status ?? "(none)";
 				statusMap.set(s, (statusMap.get(s) ?? 0) + 1);

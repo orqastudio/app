@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { SvelteMap } from "svelte/reactivity";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import { statusColor } from "$lib/components/shared/StatusIndicator.svelte";
@@ -81,7 +82,7 @@
 		edgeType: string;
 		ids: string[];
 	}[] {
-		const map = new Map<string, { direction: "in" | "out"; edgeType: string; ids: string[] }>();
+		const map = new SvelteMap<string, { direction: "in" | "out"; edgeType: string; ids: string[] }>();
 
 		for (const ref of incomingRefs) {
 			const edgeType = ref.relationship_type ?? ref.field;

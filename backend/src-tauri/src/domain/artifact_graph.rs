@@ -173,6 +173,48 @@ fn walk_directory(
     Ok(())
 }
 
+/// Build an `ArtifactNode` from parsed frontmatter YAML and markdown body.
+fn build_node(
+    id: String,
+    rel_path: String,
+    file_path: &Path,
+    yaml_value: &serde_yaml::Value,
+    body: &str,
+) -> ArtifactNode {
+    let title = yaml_value
+        .get("title")
+        .and_then(|v| v.as_str())
+        .map_or_else(|| humanize_stem(file_path), str::to_owned);
+    let description = yaml_value
+        .get("description")
+        .and_then(|v| v.as_str())
+        .map(str::to_owned);
+    let status = yaml_value
+        .get("status")
+        .and_then(|v| v.as_str())
+        .map(str::to_owned);
+    let priority = yaml_value
+        .get("priority")
+        .and_then(|v| v.as_str())
+        .map(str::to_owned);
+    let artifact_type = infer_artifact_type(&rel_path);
+    let frontmatter = yaml_to_json(yaml_value);
+    let mut references_out = collect_forward_refs(yaml_value, &id);
+    references_out.extend(collect_body_refs(body, &id));
+    ArtifactNode {
+        id,
+        path: rel_path,
+        artifact_type,
+        title,
+        description,
+        status,
+        priority,
+        frontmatter,
+        references_out,
+        references_in: Vec::new(),
+    }
+}
+
 /// Parse a single `.md` file and add an `ArtifactNode` to the graph if it has
 /// a YAML `id` field.
 fn collect_node(
@@ -181,78 +223,24 @@ fn collect_node(
     graph: &mut ArtifactGraph,
 ) -> Result<(), OrqaError> {
     let content = std::fs::read_to_string(file_path)?;
-
-    // Extract the raw YAML frontmatter text.
     let (fm_text, body) = crate::domain::artifact::extract_frontmatter(&content);
     let Some(fm_text) = fm_text else {
         return Ok(());
     };
-
-    // Parse into a generic serde_yaml::Value first so we can extract any field.
     let yaml_value: serde_yaml::Value =
         serde_yaml::from_str(&fm_text).unwrap_or(serde_yaml::Value::Null);
-
-    // Require an `id` field — files without one are not typed artifacts.
     let id = match yaml_value.get("id").and_then(|v| v.as_str()) {
         Some(s) if !s.trim().is_empty() => s.to_owned(),
         _ => return Ok(()),
     };
-
-    // Compute the relative path from the project root.
     let rel_path = file_path
         .strip_prefix(project_root)
         .unwrap_or(file_path)
         .to_string_lossy()
-        // Normalise Windows path separators.
         .replace('\\', "/");
-
-    let title = yaml_value
-        .get("title")
-        .and_then(|v| v.as_str())
-        .map_or_else(|| humanize_stem(file_path), str::to_owned);
-
-    let description = yaml_value
-        .get("description")
-        .and_then(|v| v.as_str())
-        .map(str::to_owned);
-
-    let status = yaml_value
-        .get("status")
-        .and_then(|v| v.as_str())
-        .map(str::to_owned);
-
-    let priority = yaml_value
-        .get("priority")
-        .and_then(|v| v.as_str())
-        .map(str::to_owned);
-
-    let artifact_type = infer_artifact_type(&rel_path);
-
-    // Convert frontmatter to serde_json::Value for generic storage.
-    let frontmatter_json = yaml_to_json(&yaml_value);
-
-    // Collect forward references from well-known fields.
-    let mut references_out = collect_forward_refs(&yaml_value, &id);
-
-    // Also extract references from markdown body text (informational edges).
-    references_out.extend(collect_body_refs(&body, &id));
-
-    let node = ArtifactNode {
-        id: id.clone(),
-        path: rel_path.clone(),
-        artifact_type,
-        title,
-        description,
-        status,
-        priority,
-        frontmatter: frontmatter_json,
-        references_out,
-        references_in: Vec::new(),
-    };
-
+    let node = build_node(id.clone(), rel_path.clone(), file_path, &yaml_value, &body);
     graph.nodes.insert(id.clone(), node);
     graph.path_index.insert(rel_path, id);
-
     Ok(())
 }
 
@@ -300,7 +288,10 @@ fn collect_forward_refs(yaml_value: &serde_yaml::Value, source_id: &str) -> Vec<
 
 /// Extract forward references from the `relationships` YAML array.
 fn collect_relationship_refs(yaml_value: &serde_yaml::Value, source_id: &str) -> Vec<ArtifactRef> {
-    let Some(seq) = yaml_value.get("relationships").and_then(|v| v.as_sequence()) else {
+    let Some(seq) = yaml_value
+        .get("relationships")
+        .and_then(|v| v.as_sequence())
+    else {
         return Vec::new();
     };
     let mut refs = Vec::new();
@@ -371,9 +362,7 @@ pub fn graph_stats(graph: &ArtifactGraph) -> GraphStats {
         .nodes
         .values()
         .filter(|n| {
-            n.artifact_type != "doc"
-                && n.references_out.is_empty()
-                && n.references_in.is_empty()
+            n.artifact_type != "doc" && n.references_out.is_empty() && n.references_in.is_empty()
         })
         .count();
 
@@ -477,70 +466,81 @@ fn check_broken_refs(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
     }
 }
 
+/// Bidirectional inverse relationship pairs.
+const INVERSE_MAP: &[(&str, &str)] = &[
+    ("observes", "observed-by"),
+    ("observed-by", "observes"),
+    ("grounded", "grounded-by"),
+    ("grounded-by", "grounded"),
+    ("practices", "practiced-by"),
+    ("practiced-by", "practices"),
+    ("enforces", "enforced-by"),
+    ("enforced-by", "enforces"),
+    ("verifies", "verified-by"),
+    ("verified-by", "verifies"),
+    ("informs", "informed-by"),
+    ("informed-by", "informs"),
+    ("scoped-to", "scoped-by"),
+    ("scoped-by", "scoped-to"),
+    ("documents", "documented-by"),
+    ("documented-by", "documents"),
+    ("belongs-to", "contains"),
+    ("contains", "belongs-to"),
+    ("delivers", "delivered-by"),
+    ("delivered-by", "delivers"),
+];
+
+/// Check a single outgoing reference for a missing bidirectional inverse.
+///
+/// Appends an `IntegrityCheck` to `checks` when the inverse is absent.
+fn check_ref_inverse(
+    node: &ArtifactNode,
+    ref_entry: &ArtifactRef,
+    graph: &ArtifactGraph,
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    let rel_type = match &ref_entry.relationship_type {
+        Some(t) => t.as_str(),
+        None => return,
+    };
+    let expected_inverse = match INVERSE_MAP.iter().find(|(t, _)| *t == rel_type) {
+        Some((_, inv)) => *inv,
+        None => return,
+    };
+    let Some(target) = graph.nodes.get(&ref_entry.target_id) else {
+        return; // broken ref, already caught above
+    };
+    let has_inverse = target.references_out.iter().any(|r| {
+        r.relationship_type.as_deref() == Some(expected_inverse) && r.target_id == node.id
+    });
+    if !has_inverse {
+        checks.push(IntegrityCheck {
+            category: IntegrityCategory::MissingInverse,
+            severity: IntegritySeverity::Warning,
+            artifact_id: node.id.clone(),
+            message: format!(
+                "{} --{}--> {} but {} has no {} edge back to {}",
+                node.id,
+                rel_type,
+                ref_entry.target_id,
+                ref_entry.target_id,
+                expected_inverse,
+                node.id
+            ),
+            auto_fixable: true,
+            fix_description: Some(format!(
+                "Add {{ target: \"{}\", type: \"{}\" }} to {}'s relationships array",
+                node.id, expected_inverse, ref_entry.target_id
+            )),
+        });
+    }
+}
+
 /// Check for missing bidirectional inverses on relationship edges.
 fn check_missing_inverses(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
-    let inverse_map: &[(&str, &str)] = &[
-        ("observes", "observed-by"),
-        ("observed-by", "observes"),
-        ("grounded", "grounded-by"),
-        ("grounded-by", "grounded"),
-        ("practices", "practiced-by"),
-        ("practiced-by", "practices"),
-        ("enforces", "enforced-by"),
-        ("enforced-by", "enforces"),
-        ("verifies", "verified-by"),
-        ("verified-by", "verifies"),
-        ("informs", "informed-by"),
-        ("informed-by", "informs"),
-        ("scoped-to", "scoped-by"),
-        ("scoped-by", "scoped-to"),
-        ("documents", "documented-by"),
-        ("documented-by", "documents"),
-        ("belongs-to", "contains"),
-        ("contains", "belongs-to"),
-        ("delivers", "delivered-by"),
-        ("delivered-by", "delivers"),
-    ];
-
     for node in graph.nodes.values() {
         for ref_entry in &node.references_out {
-            let rel_type = match &ref_entry.relationship_type {
-                Some(t) => t.as_str(),
-                None => continue,
-            };
-
-            let expected_inverse = match inverse_map.iter().find(|(t, _)| *t == rel_type) {
-                Some((_, inv)) => *inv,
-                None => continue,
-            };
-
-            // Check if target has the inverse pointing back
-            let Some(target) = graph.nodes.get(&ref_entry.target_id) else {
-                continue; // broken ref, already caught above
-            };
-
-            let has_inverse = target.references_out.iter().any(|r| {
-                r.relationship_type.as_deref() == Some(expected_inverse)
-                    && r.target_id == node.id
-            });
-
-            if !has_inverse {
-                checks.push(IntegrityCheck {
-                    category: IntegrityCategory::MissingInverse,
-                    severity: IntegritySeverity::Warning,
-                    artifact_id: node.id.clone(),
-                    message: format!(
-                        "{} --{}--> {} but {} has no {} edge back to {}",
-                        node.id, rel_type, ref_entry.target_id,
-                        ref_entry.target_id, expected_inverse, node.id
-                    ),
-                    auto_fixable: true,
-                    fix_description: Some(format!(
-                        "Add {{ target: \"{}\", type: \"{}\" }} to {}'s relationships array",
-                        node.id, expected_inverse, ref_entry.target_id
-                    )),
-                });
-            }
+            check_ref_inverse(node, ref_entry, graph, checks);
         }
     }
 }
@@ -569,10 +569,10 @@ fn check_research_gaps(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) 
         // Check if any artifacts reference this idea via relationships —
         // tasks, research docs, rules, decisions, or epics all count as evidence
         // that the research questions were addressed.
-        let has_related_artifacts = node.references_in.iter().any(|r| {
-            r.field == "relationships"
-                && graph.nodes.contains_key(&r.source_id)
-        });
+        let has_related_artifacts = node
+            .references_in
+            .iter()
+            .any(|r| r.field == "relationships" && graph.nodes.contains_key(&r.source_id));
 
         if !has_related_artifacts {
             checks.push(IntegrityCheck {
@@ -793,14 +793,15 @@ fn check_circular_dependencies(graph: &ArtifactGraph, checks: &mut Vec<Integrity
 }
 
 /// Extract supersession target IDs from a frontmatter field (handles both string and array).
-fn extract_supersession_targets(
-    frontmatter: &serde_json::Value,
-    field: &str,
-) -> Vec<String> {
+fn extract_supersession_targets(frontmatter: &serde_json::Value, field: &str) -> Vec<String> {
     match frontmatter.get(field) {
         Some(serde_json::Value::String(s)) => {
             let trimmed = s.trim();
-            if trimmed.is_empty() { vec![] } else { vec![trimmed.to_owned()] }
+            if trimmed.is_empty() {
+                vec![]
+            } else {
+                vec![trimmed.to_owned()]
+            }
         }
         Some(serde_json::Value::Array(arr)) => arr
             .iter()
@@ -1081,10 +1082,7 @@ fn insert_relationship_entry(fm_text: &str, body: &str, new_entry: &str) -> Stri
             }
             format!("---\n{}\n---\n{}", new_lines.join("\n"), body)
         } else {
-            let new_fm = fm_text.replace(
-                "relationships:",
-                &format!("relationships:\n{new_entry}"),
-            );
+            let new_fm = fm_text.replace("relationships:", &format!("relationships:\n{new_entry}"));
             format!("---\n{new_fm}\n---\n{body}")
         }
     } else {
@@ -1099,8 +1097,7 @@ fn apply_missing_inverse_fix(
     check: &IntegrityCheck,
     project_path: &Path,
 ) -> Result<Option<AppliedFix>, OrqaError> {
-    let Some((source_id, target_id, inverse_type)) =
-        parse_missing_inverse_message(&check.message)
+    let Some((source_id, target_id, inverse_type)) = parse_missing_inverse_message(&check.message)
     else {
         return Ok(None);
     };
@@ -1120,10 +1117,14 @@ fn apply_missing_inverse_fix(
         return Ok(None);
     };
 
-    let yaml_value: serde_yaml::Value = serde_yaml::from_str(&fm_text)
-        .map_err(|e| OrqaError::Validation(format!("YAML parse error in {}: {e}", target_node.path)))?;
+    let yaml_value: serde_yaml::Value = serde_yaml::from_str(&fm_text).map_err(|e| {
+        OrqaError::Validation(format!("YAML parse error in {}: {e}", target_node.path))
+    })?;
 
-    if let Some(rels) = yaml_value.get("relationships").and_then(|v| v.as_sequence()) {
+    if let Some(rels) = yaml_value
+        .get("relationships")
+        .and_then(|v| v.as_sequence())
+    {
         for rel in rels {
             let existing_target = rel.get("target").and_then(|v| v.as_str());
             let existing_type = rel.get("type").and_then(|v| v.as_str());
@@ -1528,8 +1529,7 @@ mod tests {
         assert_eq!(applied[0].artifact_id, "AD-001");
 
         // Verify the file was updated
-        let updated_content =
-            fs::read_to_string(decisions_dir.join("AD-001.md")).expect("read");
+        let updated_content = fs::read_to_string(decisions_dir.join("AD-001.md")).expect("read");
         assert!(
             updated_content.contains("enforced-by"),
             "should contain inverse relationship type"
@@ -1596,7 +1596,10 @@ mod tests {
         assert_eq!(applied.len(), 1);
 
         let updated = fs::read_to_string(pillars_dir.join("PILLAR-001.md")).expect("read");
-        assert!(updated.contains("relationships:"), "should have relationships key");
+        assert!(
+            updated.contains("relationships:"),
+            "should have relationships key"
+        );
         assert!(updated.contains("grounded-by"), "should have inverse type");
         assert!(updated.contains("RULE-001"), "should reference source");
     }

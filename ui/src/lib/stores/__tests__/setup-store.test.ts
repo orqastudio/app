@@ -34,7 +34,7 @@ describe("SetupStore", () => {
 
 	describe("checkSetupStatus", () => {
 		it("updates setupComplete from backend", async () => {
-			const status: SetupStatus = { setup_complete: false };
+			const status: SetupStatus = { setup_complete: false, current_version: 1, stored_version: 1, steps: [] };
 			mockInvoke.mockResolvedValueOnce(status);
 
 			await setupStore.checkSetupStatus();
@@ -59,8 +59,12 @@ describe("SetupStore", () => {
 			const info: ClaudeCliInfo = {
 				installed: true,
 				version: "1.0.0",
+				path: null,
 				authenticated: true,
-				auth_status: "valid",
+				subscription_type: null,
+				rate_limit_tier: null,
+				scopes: [],
+				expires_at: null,
 			};
 			mockInvoke.mockResolvedValueOnce(info);
 
@@ -85,8 +89,12 @@ describe("SetupStore", () => {
 			const info: ClaudeCliInfo = {
 				installed: true,
 				version: "1.0.0",
+				path: null,
 				authenticated: true,
-				auth_status: "valid",
+				subscription_type: null,
+				rate_limit_tier: null,
+				scopes: [],
+				expires_at: null,
 			};
 			mockInvoke.mockResolvedValueOnce(info);
 
@@ -99,7 +107,7 @@ describe("SetupStore", () => {
 
 	describe("checkEmbeddingModel", () => {
 		it("sets embeddingStatus on success", async () => {
-			const status: SetupStepStatus = { ready: true, message: "Model loaded" };
+			const status: SetupStepStatus = { id: "embedding", label: "Embedding Model", status: "complete", detail: "Model loaded" };
 			mockInvoke.mockResolvedValueOnce(status);
 
 			await setupStore.checkEmbeddingModel();

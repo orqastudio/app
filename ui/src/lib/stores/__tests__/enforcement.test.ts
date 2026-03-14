@@ -32,7 +32,7 @@ describe("EnforcementStore", () => {
 	describe("loadRules", () => {
 		it("loads rules from backend", async () => {
 			const mockRules: EnforcementRule[] = [
-				{ id: "r1", source_rule: "RULE-001", event: "file", action: "Block", paths: ["src/**"], pattern: null, message: "blocked", skills: null },
+				{ name: "RULE-001", scope: "project", entries: [], prose: "blocked" },
 			];
 			mockInvoke.mockResolvedValueOnce(mockRules);
 
@@ -70,7 +70,7 @@ describe("EnforcementStore", () => {
 	describe("reloadRules", () => {
 		it("calls reload then list", async () => {
 			const mockRules: EnforcementRule[] = [
-				{ id: "r1", source_rule: "RULE-001", event: "file", action: "Warn", paths: [], pattern: null, message: "warning", skills: null },
+				{ name: "RULE-001", scope: "project", entries: [], prose: "warning" },
 			];
 			mockInvoke
 				.mockResolvedValueOnce(5) // enforcement_rules_reload returns count
@@ -96,7 +96,7 @@ describe("EnforcementStore", () => {
 
 	describe("violations", () => {
 		it("addViolation appends to the list", () => {
-			const v: EnforcementViolation = { rule_id: "r1", action: "Block", message: "blocked", path: "src/foo.ts" };
+			const v: EnforcementViolation = { rule_name: "r1", action: "Block", tool_name: "write_file", detail: "blocked", timestamp: "2026-01-01T00:00:00Z" };
 			enforcementStore.addViolation(v);
 
 			expect(enforcementStore.violations).toHaveLength(1);
@@ -104,8 +104,8 @@ describe("EnforcementStore", () => {
 		});
 
 		it("clearViolations resets the list", () => {
-			enforcementStore.addViolation({ rule_id: "r1", action: "Block", message: "x", path: "a.ts" });
-			enforcementStore.addViolation({ rule_id: "r2", action: "Warn", message: "y", path: "b.ts" });
+			enforcementStore.addViolation({ rule_name: "r1", action: "Block", tool_name: "write_file", detail: "x", timestamp: "2026-01-01T00:00:00Z" });
+			enforcementStore.addViolation({ rule_name: "r2", action: "Warn", tool_name: "write_file", detail: "y", timestamp: "2026-01-01T00:00:00Z" });
 
 			enforcementStore.clearViolations();
 
@@ -114,9 +114,9 @@ describe("EnforcementStore", () => {
 
 		it("blockCount counts Block violations", () => {
 			enforcementStore.violations = [
-				{ rule_id: "r1", action: "Block", message: "x", path: "a.ts" },
-				{ rule_id: "r2", action: "Warn", message: "y", path: "b.ts" },
-				{ rule_id: "r3", action: "Block", message: "z", path: "c.ts" },
+				{ rule_name: "r1", action: "Block", tool_name: "write_file", detail: "x", timestamp: "2026-01-01T00:00:00Z" },
+				{ rule_name: "r2", action: "Warn", tool_name: "write_file", detail: "y", timestamp: "2026-01-01T00:00:00Z" },
+				{ rule_name: "r3", action: "Block", tool_name: "write_file", detail: "z", timestamp: "2026-01-01T00:00:00Z" },
 			];
 
 			expect(enforcementStore.blockCount).toBe(2);

@@ -182,9 +182,9 @@ describe("SettingsStore", () => {
 			settingsStore.startupStatus = {
 				all_done: false,
 				tasks: [
-					{ id: "t1", label: "Task 1", status: "done" },
-					{ id: "t2", label: "Task 2", status: "in_progress" },
-					{ id: "t3", label: "Task 3", status: "pending" },
+					{ id: "t1", label: "Task 1", status: "done", detail: null },
+					{ id: "t2", label: "Task 2", status: "in_progress", detail: null },
+					{ id: "t3", label: "Task 3", status: "pending", detail: null },
 				],
 			};
 
@@ -194,7 +194,7 @@ describe("SettingsStore", () => {
 		it("returns null when no task is in progress", () => {
 			settingsStore.startupStatus = {
 				all_done: true,
-				tasks: [{ id: "t1", label: "Task 1", status: "done" }],
+				tasks: [{ id: "t1", label: "Task 1", status: "done", detail: null }],
 			};
 
 			expect(settingsStore.activeStartupTask).toBeNull();

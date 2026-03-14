@@ -10,7 +10,7 @@
  * automatically refreshes its cache when the backend rebuilds the graph.
  */
 
-import { SvelteMap } from "svelte/reactivity";
+import { SvelteMap, SvelteSet } from "svelte/reactivity";
 import { listen } from "@tauri-apps/api/event";
 import type { UnlistenFn } from "@tauri-apps/api/event";
 import { invoke, extractErrorMessage } from "$lib/ipc/invoke";
@@ -264,7 +264,7 @@ class ArtifactGraphSDK {
 
         // Get rationales from frontmatter relationships array
         const fmRelationships = (node.frontmatter as Record<string, unknown>)?.relationships;
-        const rationales = new Map<string, string>();
+        const rationales = new SvelteMap<string, string>();
         if (Array.isArray(fmRelationships)) {
             for (const rel of fmRelationships) {
                 const r = rel as Record<string, unknown>;
@@ -294,7 +294,7 @@ class ArtifactGraphSDK {
     pipelineChain(id: string): { upstream: ArtifactNode[]; downstream: ArtifactNode[] } {
         const upstream: ArtifactNode[] = [];
         const downstream: ArtifactNode[] = [];
-        const visited = new Set<string>();
+        const visited = new SvelteSet<string>();
 
         // Upstream: follow grounded/grounded-by, informed-by, observed-by
         const upstreamTypes = ["grounded", "informed-by", "observed-by"];

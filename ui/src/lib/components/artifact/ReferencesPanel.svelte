@@ -65,7 +65,7 @@
 	let viewMode = $state<"list" | "graph">("list");
 
 	/** Per-group expanded state for overflow toggle. */
-	const expandedGroups = $state<SvelteMap<string, boolean>>(new SvelteMap());
+	const expandedGroups = new SvelteMap<string, boolean>();
 
 	function isExpanded(key: string): boolean {
 		return expandedGroups.get(key) ?? false;
