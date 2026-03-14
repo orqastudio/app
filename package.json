@@ -1,0 +1,43 @@
+{
+  "name": "@orqastudio/sdk",
+  "version": "0.1.0",
+  "description": "Frontend-to-backend connection SDK for OrqaStudio apps and plugins",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" },
+    "./graph": { "import": "./dist/graph/artifact-graph.svelte.js", "types": "./dist/graph/artifact-graph.svelte.d.ts" },
+    "./ipc": { "import": "./dist/ipc/invoke.js", "types": "./dist/ipc/invoke.d.ts" },
+    "./utils": { "import": "./dist/utils/frontmatter.js", "types": "./dist/utils/frontmatter.d.ts" }
+  },
+  "publishConfig": { "registry": "https://npm.pkg.github.com" },
+  "repository": { "type": "git", "url": "git+https://github.com/orqastudio/orqastudio-sdk.git" },
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "check": "tsc --noEmit && vitest run"
+  },
+  "files": ["dist/"],
+  "dependencies": {
+    "@orqastudio/types": "file:../orqa-types"
+  },
+  "peerDependencies": {
+    "svelte": ">=5.0.0",
+    "@tauri-apps/api": ">=2.0.0"
+  },
+  "devDependencies": {
+    "@orqastudio/eslint-config": "file:../orqa-eslint-config",
+    "@orqastudio/test-config": "file:../orqa-test-config",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "@types/node": "^22.0.0",
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "svelte": "^5.0.0",
+    "@tauri-apps/api": "^2.0.0",
+    "typescript-eslint": "^8.0.0",
+    "eslint": "^9.0.0"
+  },
+  "engines": { "node": ">=20" }
+}
