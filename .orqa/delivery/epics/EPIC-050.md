@@ -16,7 +16,15 @@ pillars:
   - PILLAR-002
 depends-on: []
 blocks: []
-research-refs: []
+research-refs:
+  - RES-056
+relationships:
+  - target: EPIC-064
+    type: informed-by
+    rationale: "EPIC-064 closes the enforcement gaps this epic left — stop events, skill injection, app pipeline"
+  - target: RES-056
+    type: informed-by
+    rationale: "Research analyzing what this epic built vs. what remains incomplete"
 docs-required: []
 docs-produced: []
 scoring:
