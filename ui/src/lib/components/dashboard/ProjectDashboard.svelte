@@ -21,6 +21,12 @@
 	import IntegrityWidget from "./IntegrityWidget.svelte";
 	import PipelineWidget from "./PipelineWidget.svelte";
 	import HealthTrendWidget from "./HealthTrendWidget.svelte";
+	import ImprovementTrendsWidget from "./ImprovementTrendsWidget.svelte";
+	import GraphHealthWidget from "./GraphHealthWidget.svelte";
+	import LessonVelocityWidget from "./LessonVelocityWidget.svelte";
+	import DecisionQueueWidget from "./DecisionQueueWidget.svelte";
+	import { toast } from "$lib/stores/toast.svelte";
+	import type { IntegrityCheck } from "$lib/types/artifact-graph";
 
 	const project = $derived(projectStore.activeProject);
 	const projectName = $derived(
@@ -35,6 +41,36 @@
 
 	// Collapsible state for Power User Details
 	let detailsOpen = $state(false);
+
+	// Graph health widget state (shared scan results for the Clarity column)
+	let healthChecks = $state<IntegrityCheck[]>([]);
+	let healthLoading = $state(false);
+	let healthScanned = $state(false);
+
+	// Auto-scan when the graph is ready
+	$effect(() => {
+		if (artifactGraphSDK.graph.size > 0 && !healthScanned && !healthLoading) {
+			void runHealthScan();
+		}
+	});
+
+	async function runHealthScan(): Promise<void> {
+		healthLoading = true;
+		try {
+			await artifactGraphSDK.refresh();
+			healthChecks = await artifactGraphSDK.runIntegrityScan();
+			healthScanned = true;
+			const errors = healthChecks.filter((c) => c.severity === "Error").length;
+			const warnings = healthChecks.filter((c) => c.severity === "Warning").length;
+			await artifactGraphSDK.storeHealthSnapshot(errors, warnings).catch(() => {
+				// Non-critical — don't block the UI if snapshot storage fails
+			});
+		} catch (err: unknown) {
+			toast.error(err instanceof Error ? err.message : String(err));
+		} finally {
+			healthLoading = false;
+		}
+	}
 
 	/** Humanize an artifact type string (e.g. "epic" → "Epics"). */
 	function humanizeType(t: string): string {
@@ -177,41 +213,27 @@
 							<p class="text-xs text-muted-foreground">Clarity</p>
 						</Card.Header>
 						<Card.Content class="flex-1">
-							<p class="text-sm text-muted-foreground italic">
-								Clarity widgets will appear here — active epics, task status, recent activity.
-							</p>
+							<GraphHealthWidget
+								checks={healthChecks}
+								loading={healthLoading}
+								scanned={healthScanned}
+								onScan={runHealthScan}
+							/>
 						</Card.Content>
 					</Card.Root>
 
 					<!-- Column 2: How You're Improving (Learning) -->
-					<Card.Root class="flex flex-col">
-						<Card.Header class="pb-2">
-							<Card.Title class="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-								How You're Improving
-							</Card.Title>
-							<p class="text-xs text-muted-foreground">Learning</p>
-						</Card.Header>
-						<Card.Content class="flex-1">
-							<p class="text-sm text-muted-foreground italic">
-								Learning widgets will appear here — lesson trends, knowledge pipeline health, recurrence patterns.
-							</p>
-						</Card.Content>
-					</Card.Root>
+					<ImprovementTrendsWidget />
 
 					<!-- Column 3: What's Next (Purpose) -->
-					<Card.Root class="flex flex-col">
-						<Card.Header class="pb-2">
-							<Card.Title class="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-								What's Next
-							</Card.Title>
+					<div class="flex flex-col gap-4">
+						<div class="px-0">
+							<p class="text-sm font-semibold text-muted-foreground uppercase tracking-wide">What's Next</p>
 							<p class="text-xs text-muted-foreground">Purpose</p>
-						</Card.Header>
-						<Card.Content class="flex-1">
-							<p class="text-sm text-muted-foreground italic">
-								Purpose widgets will appear here — upcoming milestones, ideas in shaping, roadmap horizon.
-							</p>
-						</Card.Content>
-					</Card.Root>
+						</div>
+						<LessonVelocityWidget />
+						<DecisionQueueWidget />
+					</div>
 				</div>
 
 				<!-- Row 3: Power User Details (collapsible) -->
