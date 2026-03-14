@@ -1,9 +1,11 @@
 import { mergeConfig, defineConfig } from "vitest/config";
-import { baseVitestConfig } from "@orqastudio/test-config/config";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { svelteVitestConfig } from "@orqastudio/test-config/config";
 
 export default mergeConfig(
-	baseVitestConfig,
+	svelteVitestConfig,
 	defineConfig({
+		plugins: [svelte()],
 		test: {
 			include: ["__tests__/**/*.test.ts"],
 		},
