@@ -168,7 +168,7 @@
 			{ key: "superseded", label: "Superseded" },
 		],
 		lesson: [
-			{ key: "active", label: "Active" },
+			{ key: "active", label: "Captured" },
 			{ key: "recurring", label: "Recurring" },
 			{ key: "promoted", label: "Promoted" },
 		],
@@ -259,10 +259,10 @@
 					<HookViewer {content} />
 				{:else if parsedContent}
 					{#if hasMetadataFields}
-						<ActionsNeeded {artifactType} metadata={parsedContent.metadata} />
 						{#if artifactStatus && pipelineStages.length > 0}
 							<PipelineStepper stages={pipelineStages} status={artifactStatus} />
 						{/if}
+						<ActionsNeeded {artifactType} metadata={parsedContent.metadata} />
 						<FrontmatterHeader
 							metadata={parsedContent.metadata}
 							{artifactType}

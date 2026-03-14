@@ -126,11 +126,11 @@
 				description="Create milestones in .orqa/delivery/milestones/ to see them here."
 			/>
 		{:else}
-			<!-- Kanban board: horizontal scroll of milestone columns -->
+			<!-- Kanban board: columns expand to fill available space, scroll if too many -->
 			<div class="flex gap-4 overflow-x-auto pb-4">
 				{#each sortedMilestones as milestone (milestone.id)}
 					{@const msEpics = epicsForMilestone(milestone.id)}
-					<div class="flex w-80 shrink-0 flex-col">
+					<div class="flex min-w-64 flex-1 flex-col">
 						<!-- Column header -->
 						<Card.Root class="mb-3">
 							<Card.Header class="pb-2">
@@ -200,7 +200,7 @@
 
 				<!-- Unassigned epics column -->
 				{#if unassignedEpicsList.length > 0}
-					<div class="flex w-80 shrink-0 flex-col">
+					<div class="flex min-w-64 flex-1 flex-col">
 						<Card.Root class="mb-3">
 							<Card.Header class="pb-2">
 								<Card.Title class="text-sm font-semibold text-muted-foreground">
