@@ -5,7 +5,7 @@ description: "Currently sidecars (AI provider integrations like the Claude Code 
 status: captured
 created: "2026-03-13"
 updated: "2026-03-13"
-horizon: null
+horizon: someday
 pillars: [PILLAR-001]
 research-needed:
   - "What parts of the current sidecar are app-native vs extractable?"

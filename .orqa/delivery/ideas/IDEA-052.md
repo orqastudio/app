@@ -5,7 +5,7 @@ description: Combine the app's three search tools (search_regex, search_semantic
 status: captured
 created: "2026-03-11"
 updated: "2026-03-13"
-horizon: null
+horizon: someday
 pillars:
   - PILLAR-001
 research-needed:

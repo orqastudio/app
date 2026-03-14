@@ -8,7 +8,7 @@ updated: "2026-03-13"
 pillars:
   - PILLAR-001
 milestone: null
-horizon: null
+horizon: someday
 research-needed:
   - "How should sidecar-specific configuration be separated from the universal agent model?"
   - "Should subagent mappings live in a sidecar config file rather than agent frontmatter?"

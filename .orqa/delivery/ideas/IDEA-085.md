@@ -7,7 +7,7 @@ created: "2026-03-13"
 updated: "2026-03-13"
 pillars:
   - PILLAR-001
-horizon: null
+horizon: someday
 research-needed:
   - "How do git submodules map to .orqa/ artifact consumption? Can the artifact scanner recurse into submodules?"
   - "What permissions hierarchy is needed? Read-only .orqa/ vs read-write .orqa/ vs code access outside .orqa/"

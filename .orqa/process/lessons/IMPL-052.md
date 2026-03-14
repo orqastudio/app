@@ -10,7 +10,6 @@ created: "2026-03-13"
 updated: "2026-03-14"
 maturity: observation
 recurrence: 3
-promoted-to: RULE-001
 relationships:
   - target: RULE-004
     type: observes

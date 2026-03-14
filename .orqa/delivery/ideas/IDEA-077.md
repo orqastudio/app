@@ -9,6 +9,7 @@ description: "Surface pipeline integrity checks on the app dashboard with scan/f
 status: promoted
 created: "2026-03-13"
 updated: "2026-03-13"
+horizon: active
 pillars:
   - PILLAR-001
   - PILLAR-002

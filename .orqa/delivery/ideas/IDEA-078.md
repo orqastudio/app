@@ -5,6 +5,7 @@ description: "When the integrity tool finds null relationship targets, it should
 status: promoted
 created: "2026-03-13"
 updated: "2026-03-13"
+horizon: active
 pillars:
   - PILLAR-001
   - PILLAR-003

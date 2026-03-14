@@ -5,7 +5,7 @@ description: "Extract the dev controller into its own Tauri app in a standalone 
 status: captured
 created: "2026-03-13"
 updated: "2026-03-13"
-horizon: null
+horizon: someday
 pillars:
   - PILLAR-001
   - PILLAR-002

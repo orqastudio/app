@@ -5,6 +5,7 @@ description: "Dashboard rendering emergent threads by traversing relationships, 
 status: promoted
 created: "2026-03-12"
 updated: "2026-03-12"
+horizon: active
 pillars: [PILLAR-001, PILLAR-002]
 research-needed:
   - "Graph traversal algorithm for emergent thread rendering"

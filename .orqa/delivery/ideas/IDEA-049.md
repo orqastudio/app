@@ -5,6 +5,7 @@ description: Combine artifact graph relationship data with created/updated times
 status: promoted
 created: "2026-03-11"
 updated: "2026-03-11"
+horizon: active
 pillars:
   - PILLAR-001
   - PILLAR-002

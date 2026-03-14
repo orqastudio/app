@@ -3,15 +3,10 @@ id: IMPL-053
 title: "Dashboard widgets need actionable context, not just metrics"
 description: "UAT revealed that showing counts and status labels without reasoning or suggested actions creates noise rather than insight. Metrics without actionability are decoration."
 status: active
-category: ux
 recurrence: 1
 created: "2026-03-13"
-updated: "2026-03-13"
-tags:
-  - dashboard
-  - ux
-  - actionability
-promoted-to: null
+updated: "2026-03-14"
+maturity: understanding
 relationships:
   - target: EPIC-063
     type: observes

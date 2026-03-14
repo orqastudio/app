@@ -7,7 +7,7 @@ created: "2026-03-13"
 updated: "2026-03-13"
 pillars:
   - PILLAR-001
-horizon: null
+horizon: someday
 research-needed:
   - "What is the clippy plugin API? Can custom lints validate comments adjacent to #[allow] annotations?"
   - "What is the ESLint plugin API for validating eslint-disable comments?"

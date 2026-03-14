@@ -6,6 +6,7 @@ description: |
 status: promoted
 created: "2026-03-07"
 updated: "2026-03-07"
+horizon: active
 pillars:
   - PILLAR-001
 research-needed:

@@ -5,7 +5,7 @@ description: Route different agent roles to different AI providers/models based 
 status: captured
 created: "2026-03-11"
 updated: "2026-03-13"
-horizon: null
+horizon: someday
 pillars:
   - PILLAR-001
 research-needed:

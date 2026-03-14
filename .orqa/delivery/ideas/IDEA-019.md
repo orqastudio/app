@@ -6,7 +6,7 @@ description: |
 status: captured
 created: "2026-03-07"
 updated: "2026-03-13"
-horizon: null
+horizon: someday
 pillars:
   - PILLAR-001
   - PILLAR-002

@@ -5,7 +5,7 @@ description: Expand the artifact graph beyond .orqa/ to include source code file
 status: captured
 created: "2026-03-10"
 updated: "2026-03-13"
-horizon: null
+horizon: someday
 pillars:
   - PILLAR-001
   - PILLAR-002

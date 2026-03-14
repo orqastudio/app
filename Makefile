@@ -9,7 +9,7 @@ CARGO_MANIFEST := backend/src-tauri/Cargo.toml
         build build-frontend build-sidecar \
         check format format-check lint lint-backend lint-frontend typecheck \
         test test-rust test-frontend coverage-rust coverage-frontend test-watch test-e2e \
-        verify verify-links verify-integrity \
+        verify verify-links verify-integrity verify-schema verify-enforcement \
         index reindex calibrate \
         skills-list skills-update \
         clean help
@@ -134,7 +134,14 @@ verify-links: ## Verify all .orqa/ cross-references and source code paths resolv
 verify-integrity: ## Check pipeline integrity (relationships, deprecated fields)
 	node tools/verify-pipeline-integrity.mjs
 
-verify: verify-links verify-integrity ## Run all verification checks (links + integrity)
+verify-schema: ## Validate all .orqa/ artifact schemas
+	@echo "--- Schema validation ---"
+	@bash .githooks/validate-artifacts.sh $$(find .orqa -name '*.md' ! -name 'README.md' ! -path '*/_*' | sort)
+
+verify-enforcement: ## Check enforcement rule coverage
+	node tools/verify-enforcement-rules.mjs
+
+verify: verify-links verify-integrity verify-schema verify-enforcement ## Run all verification checks
 
 # ── Utilities ────────────────────────────────────────────────────────────────
 

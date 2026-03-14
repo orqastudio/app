@@ -5,7 +5,7 @@ description: "The AI should offer alternative perspectives when users are making
 status: captured
 created: "2026-03-12"
 updated: "2026-03-13"
-horizon: null
+horizon: someday
 pillars: [PILLAR-002]
 research-needed:
   - "When should the AI offer to reframe vs just answer the question?"

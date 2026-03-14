@@ -9,7 +9,7 @@ pillars:
   - PILLAR-001
   - PILLAR-002
 milestone: null
-horizon: null
+horizon: someday
 research-needed:
   - "What widget configuration model works best? Grid-based (like Grafana) or column-based (like Notion)?"
   - "How should plugin widgets register? Manifest declaration with a component entry point?"

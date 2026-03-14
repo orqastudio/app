@@ -5,7 +5,7 @@ description: "When the plugin system is mature, OrqaStudio should be able to gen
 status: captured
 created: "2026-03-12"
 updated: "2026-03-13"
-horizon: null
+horizon: someday
 pillars: [PILLAR-001]
 research-needed:
   - "Plugin template structure — what's fixed vs what varies per tool"

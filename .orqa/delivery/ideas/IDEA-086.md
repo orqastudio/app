@@ -9,7 +9,7 @@ updated: "2026-03-13"
 pillars:
   - PILLAR-001
   - PILLAR-002
-horizon: null
+horizon: someday
 research-needed:
   - "What coverage tool outputs can be parsed? tarpaulin JSON, Vitest JSON, lcov, cobertura?"
   - "How should thresholds be configured — per-project in project.json, per-milestone, per-epic?"
