@@ -1,0 +1,170 @@
+<script lang="ts">
+	import * as Card from "$lib/components/ui/card";
+	import * as Tooltip from "$lib/components/ui/tooltip";
+	import { Button } from "$lib/components/ui/button";
+	import TargetIcon from "@lucide/svelte/icons/target";
+	import CalendarIcon from "@lucide/svelte/icons/calendar";
+	import MapIcon from "@lucide/svelte/icons/map";
+	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
+	import { navigationStore } from "$lib/stores/navigation.svelte";
+	import type { ArtifactNode } from "$lib/types/artifact-graph";
+
+	// -------------------------------------------------------------------------
+	// Derive active milestone and its P1 epic progress
+	// -------------------------------------------------------------------------
+
+	interface MilestoneProgress {
+		node: ArtifactNode;
+		gate: string | null;
+		deadline: string | null;
+		p1Total: number;
+		p1Done: number;
+	}
+
+	const activeMilestone = $derived.by((): MilestoneProgress | null => {
+		const milestones = artifactGraphSDK.byType("milestone");
+		const active = milestones.find((m) => m.status === "active");
+		if (!active) return null;
+
+		// Collect epic IDs referenced by this milestone via "contains" relationships
+		const epicIds = active.references_out
+			.filter((ref) => ref.relationship_type === "contains")
+			.map((ref) => ref.target_id);
+
+		// For each epic ID, resolve and count P1 epics
+		let p1Total = 0;
+		let p1Done = 0;
+
+		for (const epicId of epicIds) {
+			const epic = artifactGraphSDK.resolve(epicId);
+			if (!epic || epic.artifact_type !== "epic") continue;
+			if (epic.priority === "P1") {
+				p1Total++;
+				if (epic.status === "done") p1Done++;
+			}
+		}
+
+		const fm = active.frontmatter as Record<string, unknown>;
+		const gate = typeof fm.gate === "string" ? fm.gate : null;
+		const deadline = typeof fm.deadline === "string" ? fm.deadline : null;
+
+		return { node: active, gate, deadline, p1Total, p1Done };
+	});
+
+	const graphReady = $derived(artifactGraphSDK.graph.size > 0);
+
+	// -------------------------------------------------------------------------
+	// Progress bar helpers
+	// -------------------------------------------------------------------------
+
+	const progressPercent = $derived.by((): number => {
+		if (!activeMilestone || activeMilestone.p1Total === 0) return 0;
+		return Math.round((activeMilestone.p1Done / activeMilestone.p1Total) * 100);
+	});
+
+	// -------------------------------------------------------------------------
+	// Navigation
+	// -------------------------------------------------------------------------
+
+	function openMilestone() {
+		if (!activeMilestone) return;
+		navigationStore.navigateToArtifact(activeMilestone.node.id);
+	}
+
+	function openRoadmap() {
+		navigationStore.setGroup("delivery");
+	}
+</script>
+
+<Card.Root class="w-full">
+	<Card.Header class="pb-3">
+		<div class="flex items-center justify-between">
+			<Card.Title class="text-base">
+				<div class="flex items-center gap-2">
+					<TargetIcon class="h-4 w-4 text-muted-foreground" />
+					Active Milestone
+				</div>
+			</Card.Title>
+			{#if activeMilestone}
+				<Button variant="ghost" size="sm" onclick={openMilestone} class="h-7 text-xs">
+					View
+				</Button>
+			{:else}
+				<Button variant="ghost" size="sm" onclick={openRoadmap} class="h-7 text-xs">
+					<MapIcon class="mr-1 h-3.5 w-3.5" />
+					Roadmap
+				</Button>
+			{/if}
+		</div>
+	</Card.Header>
+
+	<Card.Content>
+		{#if !graphReady}
+			<p class="text-sm text-muted-foreground">Loading artifact graph&hellip;</p>
+		{:else if !activeMilestone}
+			<p class="text-sm text-muted-foreground">
+				No active milestone.
+				<button
+					class="ml-1 underline underline-offset-2 hover:text-foreground"
+					onclick={openRoadmap}
+				>Open Roadmap</button> to plan one.
+			</p>
+		{:else}
+			<!-- Title + deadline row -->
+			<div class="mb-3 flex items-start justify-between gap-4">
+				<div>
+					<h2 class="text-lg font-semibold leading-tight">{activeMilestone.node.title}</h2>
+					{#if activeMilestone.node.description}
+						<p class="mt-0.5 text-sm text-muted-foreground line-clamp-2">
+							{activeMilestone.node.description}
+						</p>
+					{/if}
+				</div>
+				{#if activeMilestone.deadline}
+					<div class="flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
+						<CalendarIcon class="h-3.5 w-3.5" />
+						{activeMilestone.deadline}
+					</div>
+				{/if}
+			</div>
+
+			<!-- Gate question -->
+			{#if activeMilestone.gate}
+				<div class="mb-4 rounded-md bg-muted/50 px-3 py-2">
+					<p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Gate question</p>
+					<p class="text-sm italic">"{activeMilestone.gate}"</p>
+				</div>
+			{/if}
+
+			<!-- P1 epic progress -->
+			{#if activeMilestone.p1Total > 0}
+				<div class="space-y-1.5">
+					<div class="flex items-center justify-between text-xs">
+						<span class="text-muted-foreground">P1 Epics</span>
+						<Tooltip.Root>
+							<Tooltip.Trigger>
+								{#snippet child({ props })}
+									<span {...props} class="font-medium tabular-nums">
+										{activeMilestone.p1Done}/{activeMilestone.p1Total} done
+									</span>
+								{/snippet}
+							</Tooltip.Trigger>
+							<Tooltip.Content side="top">
+								<p>{progressPercent}% of P1 epics complete</p>
+							</Tooltip.Content>
+						</Tooltip.Root>
+					</div>
+					<!-- Progress bar (custom — no shadcn Progress component installed) -->
+					<div class="h-2 w-full overflow-hidden rounded-full bg-muted">
+						<div
+							class="h-full rounded-full bg-primary transition-all duration-500"
+							style="width: {progressPercent}%"
+						></div>
+					</div>
+				</div>
+			{:else}
+				<p class="text-xs text-muted-foreground">No P1 epics defined for this milestone.</p>
+			{/if}
+		{/if}
+	</Card.Content>
+</Card.Root>

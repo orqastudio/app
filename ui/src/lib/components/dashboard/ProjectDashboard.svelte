@@ -1,10 +1,14 @@
 <script lang="ts">
 	import { SvelteMap } from "svelte/reactivity";
 	import * as Card from "$lib/components/ui/card";
+	import * as Collapsible from "$lib/components/ui/collapsible";
 	import * as ScrollArea from "$lib/components/ui/scroll-area";
+	import { Button } from "$lib/components/ui/button";
 	import FolderOpenIcon from "@lucide/svelte/icons/folder-open";
 	import LayersIcon from "@lucide/svelte/icons/layers";
 	import NetworkIcon from "@lucide/svelte/icons/network";
+	import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
+	import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
 	import EmptyState from "$lib/components/shared/EmptyState.svelte";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 	import ErrorDisplay from "$lib/components/shared/ErrorDisplay.svelte";
@@ -13,6 +17,7 @@
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import { ARTIFACT_TYPES } from "$lib/types/artifact-graph";
 	import type { ArtifactGraphType } from "$lib/types/artifact-graph";
+	import MilestoneContextCard from "./MilestoneContextCard.svelte";
 	import IntegrityWidget from "./IntegrityWidget.svelte";
 	import PipelineWidget from "./PipelineWidget.svelte";
 	import HealthTrendWidget from "./HealthTrendWidget.svelte";
@@ -22,23 +27,24 @@
 		projectStore.projectSettings?.name ?? project?.name ?? "",
 	);
 
-	// Derived graph data for the insights card.
+	// Graph data for the Artifacts summary card
 	const graphStats = $derived(artifactGraphSDK.stats);
 	const graphLoading = $derived(artifactGraphSDK.loading);
 	const graphError = $derived(artifactGraphSDK.error);
+	const hasGraphData = $derived(artifactGraphSDK.graph.size > 0);
+
+	// Collapsible state for Power User Details
+	let detailsOpen = $state(false);
 
 	/** Humanize an artifact type string (e.g. "epic" → "Epics"). */
 	function humanizeType(t: string): string {
 		const singular = t.charAt(0).toUpperCase() + t.slice(1);
-		// Pluralize
 		if (singular.endsWith("s") || singular.endsWith("ch")) return singular + "es";
 		return singular + "s";
 	}
 
 	/**
 	 * Map artifact graph type to navigation activity key.
-	 * The navigation keys are plural (e.g. "epics", "tasks") while
-	 * graph types are singular (e.g. "epic", "task").
 	 */
 	function typeToNavKey(t: ArtifactGraphType): string | null {
 		const mapping: Record<string, string> = {
@@ -71,7 +77,6 @@
 			const nodes = artifactGraphSDK.byType(t);
 			if (nodes.length === 0) continue;
 
-			// Compute status breakdown
 			const statusMap = new SvelteMap<string, number>();
 			for (const node of nodes) {
 				const s = node.status ?? "(none)";
@@ -124,8 +129,6 @@
 			navigationStore.setActivity(key);
 		}
 	}
-
-	const hasGraphData = $derived(artifactGraphSDK.graph.size > 0);
 </script>
 
 <ScrollArea.Root class="h-full">
@@ -157,143 +160,207 @@
 				</div>
 			</div>
 
-			<!-- Dashboard grid -->
-			<div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-				<!-- Health Trends — prominent, spans 2 cols on wide screens -->
-				<div class="xl:col-span-2">
-					<HealthTrendWidget />
-				</div>
+			<!-- Narrative layout -->
+			<div class="flex flex-col gap-4">
 
-				<!-- Pipeline Health — compact when clear, expands with errors -->
-				<div>
-					<IntegrityWidget />
-				</div>
+				<!-- Row 1: MilestoneContextCard — full width -->
+				<MilestoneContextCard />
 
-				<!-- Detected stack -->
-				{#if project.detected_stack}
-					<div>
-						<Card.Root>
-							<Card.Header class="pb-3">
-								<Card.Title class="text-base">
-									<div class="flex items-center gap-2">
-										<LayersIcon class="h-4 w-4" />
-										Detected Stack
-									</div>
-								</Card.Title>
-							</Card.Header>
-							<Card.Content>
-								<div class="grid grid-cols-2 gap-3 text-sm">
-									<div>
-										<span class="text-muted-foreground">Languages:</span>
-										<span class="ml-1 font-medium">{project.detected_stack.languages.join(", ") || "None detected"}</span>
-									</div>
-									<div>
-										<span class="text-muted-foreground">Frameworks:</span>
-										<span class="ml-1 font-medium">{project.detected_stack.frameworks.join(", ") || "None detected"}</span>
-									</div>
-									{#if project.detected_stack.package_manager}
-										<div>
-											<span class="text-muted-foreground">Package Manager:</span>
-											<span class="ml-1 font-medium">{project.detected_stack.package_manager}</span>
-										</div>
-									{/if}
-									<div>
-										<span class="text-muted-foreground">Claude Config:</span>
-										<span class="ml-1 font-medium">{project.detected_stack.has_claude_config ? "Yes" : "No"}</span>
-									</div>
-								</div>
-							</Card.Content>
-						</Card.Root>
-					</div>
-				{/if}
-
-				<!-- Knowledge Pipeline -->
-				<div>
-					<PipelineWidget />
-				</div>
-
-				<!-- Artifacts summary -->
-				<div class="md:col-span-2 xl:col-span-1">
-					<Card.Root>
-						<Card.Header class="pb-3">
-							<div class="flex items-center justify-between">
-								<Card.Title class="text-base">
-									<div class="flex items-center gap-2">
-										<NetworkIcon class="h-4 w-4" />
-										Artifacts
-										{#if graphLoading}
-											<LoadingSpinner size="sm" />
-										{/if}
-									</div>
-								</Card.Title>
-							</div>
+				<!-- Row 2: Three pillar columns -->
+				<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+					<!-- Column 1: Where You Are (Clarity) -->
+					<Card.Root class="flex flex-col">
+						<Card.Header class="pb-2">
+							<Card.Title class="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+								Where You Are
+							</Card.Title>
+							<p class="text-xs text-muted-foreground">Clarity</p>
 						</Card.Header>
-						<Card.Content>
-							{#if graphLoading && !hasGraphData}
-								<div class="flex items-center justify-center py-4">
-									<LoadingSpinner />
-								</div>
-							{:else if graphError && !hasGraphData}
-								<ErrorDisplay
-									message={graphError}
-									onRetry={() => artifactGraphSDK.refresh()}
-								/>
-							{:else if !hasGraphData}
-								<p class="text-sm text-muted-foreground">
-									No artifact graph data. Use Re-index in the status bar to build the index.
-								</p>
-							{:else}
-								<!-- Summary stats row -->
-								{#if graphStats}
-									<div class="mb-4 grid grid-cols-4 gap-3 text-sm">
-										<div class="text-center">
-											<div class="text-lg font-semibold tabular-nums">{graphStats.node_count}</div>
-											<div class="text-xs text-muted-foreground">Nodes</div>
-										</div>
-										<div class="text-center">
-											<div class="text-lg font-semibold tabular-nums">{graphStats.edge_count}</div>
-											<div class="text-xs text-muted-foreground">Edges</div>
-										</div>
-										<div class="text-center">
-											<div class="text-lg font-semibold tabular-nums {graphStats.orphan_count > 0 ? 'text-warning' : ''}">{graphStats.orphan_count}</div>
-											<div class="text-xs text-muted-foreground">Orphans</div>
-										</div>
-										<div class="text-center">
-											<div class="text-lg font-semibold tabular-nums {graphStats.broken_ref_count > 0 ? 'text-destructive' : ''}">{graphStats.broken_ref_count}</div>
-											<div class="text-xs text-muted-foreground">Broken Refs</div>
-										</div>
-									</div>
-								{/if}
+						<Card.Content class="flex-1">
+							<p class="text-sm text-muted-foreground italic">
+								Clarity widgets will appear here — active epics, task status, recent activity.
+							</p>
+						</Card.Content>
+					</Card.Root>
 
-								<!-- Per-type cards -->
-								<div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-									{#each typeCards as card (card.type)}
-										<button
-											class="flex flex-col gap-1.5 rounded-lg border border-border p-3 text-left transition-colors hover:bg-accent/50"
-											onclick={() => navigateToType(card.type)}
-										>
-											<div class="flex items-baseline justify-between">
-												<span class="text-sm font-medium">{card.label}</span>
-												<span class="text-xs tabular-nums text-muted-foreground">{card.count}</span>
-											</div>
-											{#if card.statuses.length > 0}
-												<div class="flex flex-wrap gap-1">
-													{#each card.statuses as s (s.status)}
-														<span class="flex items-center gap-1 text-[10px] text-muted-foreground">
-															<span class="inline-block h-1.5 w-1.5 rounded-full {s.dotClass}"></span>
-															{s.status}
-															<span class="tabular-nums">({s.count})</span>
-														</span>
-													{/each}
-												</div>
-											{/if}
-										</button>
-									{/each}
-								</div>
-							{/if}
+					<!-- Column 2: How You're Improving (Learning) -->
+					<Card.Root class="flex flex-col">
+						<Card.Header class="pb-2">
+							<Card.Title class="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+								How You're Improving
+							</Card.Title>
+							<p class="text-xs text-muted-foreground">Learning</p>
+						</Card.Header>
+						<Card.Content class="flex-1">
+							<p class="text-sm text-muted-foreground italic">
+								Learning widgets will appear here — lesson trends, knowledge pipeline health, recurrence patterns.
+							</p>
+						</Card.Content>
+					</Card.Root>
+
+					<!-- Column 3: What's Next (Purpose) -->
+					<Card.Root class="flex flex-col">
+						<Card.Header class="pb-2">
+							<Card.Title class="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+								What's Next
+							</Card.Title>
+							<p class="text-xs text-muted-foreground">Purpose</p>
+						</Card.Header>
+						<Card.Content class="flex-1">
+							<p class="text-sm text-muted-foreground italic">
+								Purpose widgets will appear here — upcoming milestones, ideas in shaping, roadmap horizon.
+							</p>
 						</Card.Content>
 					</Card.Root>
 				</div>
+
+				<!-- Row 3: Power User Details (collapsible) -->
+				<Collapsible.Root bind:open={detailsOpen}>
+					<div class="rounded-lg border border-border">
+						<Collapsible.Trigger class="w-full">
+							<div class="flex items-center justify-between px-4 py-3 text-sm font-medium hover:bg-accent/30 rounded-lg transition-colors">
+								<span class="text-muted-foreground">Power User Details</span>
+								{#if detailsOpen}
+									<ChevronDownIcon class="h-4 w-4 text-muted-foreground" />
+								{:else}
+									<ChevronRightIcon class="h-4 w-4 text-muted-foreground" />
+								{/if}
+							</div>
+						</Collapsible.Trigger>
+						<Collapsible.Content>
+							<div class="border-t border-border p-4">
+								<div class="grid grid-cols-1 gap-4 xl:grid-cols-2">
+									<!-- Health Trends -->
+									<HealthTrendWidget />
+
+									<!-- Pipeline Health -->
+									<IntegrityWidget />
+
+									<!-- Detected stack -->
+									{#if project.detected_stack}
+										<Card.Root>
+											<Card.Header class="pb-3">
+												<Card.Title class="text-base">
+													<div class="flex items-center gap-2">
+														<LayersIcon class="h-4 w-4" />
+														Detected Stack
+													</div>
+												</Card.Title>
+											</Card.Header>
+											<Card.Content>
+												<div class="grid grid-cols-2 gap-3 text-sm">
+													<div>
+														<span class="text-muted-foreground">Languages:</span>
+														<span class="ml-1 font-medium">{project.detected_stack.languages.join(", ") || "None detected"}</span>
+													</div>
+													<div>
+														<span class="text-muted-foreground">Frameworks:</span>
+														<span class="ml-1 font-medium">{project.detected_stack.frameworks.join(", ") || "None detected"}</span>
+													</div>
+													{#if project.detected_stack.package_manager}
+														<div>
+															<span class="text-muted-foreground">Package Manager:</span>
+															<span class="ml-1 font-medium">{project.detected_stack.package_manager}</span>
+														</div>
+													{/if}
+													<div>
+														<span class="text-muted-foreground">Claude Config:</span>
+														<span class="ml-1 font-medium">{project.detected_stack.has_claude_config ? "Yes" : "No"}</span>
+													</div>
+												</div>
+											</Card.Content>
+										</Card.Root>
+									{/if}
+
+									<!-- Knowledge Pipeline -->
+									<PipelineWidget />
+
+									<!-- Artifacts summary -->
+									<Card.Root class="xl:col-span-2">
+										<Card.Header class="pb-3">
+											<div class="flex items-center justify-between">
+												<Card.Title class="text-base">
+													<div class="flex items-center gap-2">
+														<NetworkIcon class="h-4 w-4" />
+														Artifacts
+														{#if graphLoading}
+															<LoadingSpinner size="sm" />
+														{/if}
+													</div>
+												</Card.Title>
+											</div>
+										</Card.Header>
+										<Card.Content>
+											{#if graphLoading && !hasGraphData}
+												<div class="flex items-center justify-center py-4">
+													<LoadingSpinner />
+												</div>
+											{:else if graphError && !hasGraphData}
+												<ErrorDisplay
+													message={graphError}
+													onRetry={() => artifactGraphSDK.refresh()}
+												/>
+											{:else if !hasGraphData}
+												<p class="text-sm text-muted-foreground">
+													No artifact graph data. Use Re-index in the status bar to build the index.
+												</p>
+											{:else}
+												<!-- Summary stats row -->
+												{#if graphStats}
+													<div class="mb-4 grid grid-cols-4 gap-3 text-sm">
+														<div class="text-center">
+															<div class="text-lg font-semibold tabular-nums">{graphStats.node_count}</div>
+															<div class="text-xs text-muted-foreground">Nodes</div>
+														</div>
+														<div class="text-center">
+															<div class="text-lg font-semibold tabular-nums">{graphStats.edge_count}</div>
+															<div class="text-xs text-muted-foreground">Edges</div>
+														</div>
+														<div class="text-center">
+															<div class="text-lg font-semibold tabular-nums {graphStats.orphan_count > 0 ? 'text-warning' : ''}">{graphStats.orphan_count}</div>
+															<div class="text-xs text-muted-foreground">Orphans</div>
+														</div>
+														<div class="text-center">
+															<div class="text-lg font-semibold tabular-nums {graphStats.broken_ref_count > 0 ? 'text-destructive' : ''}">{graphStats.broken_ref_count}</div>
+															<div class="text-xs text-muted-foreground">Broken Refs</div>
+														</div>
+													</div>
+												{/if}
+
+												<!-- Per-type cards -->
+												<div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6">
+													{#each typeCards as card (card.type)}
+														<button
+															class="flex flex-col gap-1.5 rounded-lg border border-border p-3 text-left transition-colors hover:bg-accent/50"
+															onclick={() => navigateToType(card.type)}
+														>
+															<div class="flex items-baseline justify-between">
+																<span class="text-sm font-medium">{card.label}</span>
+																<span class="text-xs tabular-nums text-muted-foreground">{card.count}</span>
+															</div>
+															{#if card.statuses.length > 0}
+																<div class="flex flex-wrap gap-1">
+																	{#each card.statuses as s (s.status)}
+																		<span class="flex items-center gap-1 text-[10px] text-muted-foreground">
+																			<span class="inline-block h-1.5 w-1.5 rounded-full {s.dotClass}"></span>
+																			{s.status}
+																			<span class="tabular-nums">({s.count})</span>
+																		</span>
+																	{/each}
+																</div>
+															{/if}
+														</button>
+													{/each}
+												</div>
+											{/if}
+										</Card.Content>
+									</Card.Root>
+								</div>
+							</div>
+						</Collapsible.Content>
+					</div>
+				</Collapsible.Root>
+
 			</div>
 		{/if}
 	</div>
