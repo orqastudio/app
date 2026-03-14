@@ -12,6 +12,10 @@ export const INVERSE_MAP: ReadonlyMap<string, string> = new Map([
   ["verified-by", "verifies"],
   ["informs", "informed-by"],
   ["informed-by", "informs"],
+  ["scoped-to", "scoped-by"],
+  ["scoped-by", "scoped-to"],
+  ["documents", "documented-by"],
+  ["documented-by", "documents"],
 ]);
 
 /** Frontmatter fields that hold a single artifact reference. */
