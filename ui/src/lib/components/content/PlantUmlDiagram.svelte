@@ -8,7 +8,7 @@
 	let loading = $state(true);
 
 	/** Simple SVG cache keyed by diagram source text. */
-	const svgCache = new Map<string, string>();
+	const svgCache: Record<string, string> = {};
 
 	/** Detect whether the app is currently in dark mode. */
 	function isDark(): boolean {
@@ -134,7 +134,7 @@
 		const themed = withTheme(text);
 		const cacheKey = themed;
 
-		const cached = svgCache.get(cacheKey);
+		const cached = svgCache[cacheKey];
 		if (cached) {
 			svgContent = cached;
 			loading = false;
@@ -151,7 +151,7 @@
 			}
 
 			const svg = await response.text();
-			svgCache.set(cacheKey, svg);
+			svgCache[cacheKey] = svg;
 			svgContent = svg;
 		} catch (err: unknown) {
 			error = err instanceof Error ? err.message : String(err);
@@ -196,6 +196,7 @@
 		</div>
 	{:else if svgContent}
 		<div class="flex justify-center [&_svg]:max-w-full">
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -- PlantUML server returns SVG content that must be rendered as HTML -->
 			{@html svgContent}
 		</div>
 	{/if}

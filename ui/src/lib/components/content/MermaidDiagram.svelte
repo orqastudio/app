@@ -4,7 +4,7 @@
 
 	let { text }: { text: string } = $props();
 
-	let containerEl: HTMLDivElement | undefined = $state();
+	let svgContent = $state<string | null>(null);
 	let error = $state<string | null>(null);
 	let rendering = $state(true);
 
@@ -20,7 +20,6 @@
 	}
 
 	async function renderDiagram(): Promise<void> {
-		if (!containerEl) return;
 		rendering = true;
 		error = null;
 
@@ -34,10 +33,10 @@
 
 		try {
 			const { svg } = await mermaid.render(diagramId(), text.trim());
-			containerEl.innerHTML = svg;
+			svgContent = svg;
 		} catch (err: unknown) {
 			error = err instanceof Error ? err.message : String(err);
-			containerEl.innerHTML = "";
+			svgContent = null;
 		} finally {
 			rendering = false;
 		}
@@ -49,11 +48,8 @@
 
 	// Re-render when text changes.
 	$effect(() => {
-		// Track `text` reactively.
 		void text;
-		if (containerEl) {
-			renderDiagram();
-		}
+		renderDiagram();
 	});
 
 	// Re-render when theme changes (observe the `dark` class on <html>).
@@ -70,7 +66,7 @@
 </script>
 
 <div class="mermaid-diagram overflow-x-auto rounded border border-border bg-muted/30 p-4">
-	{#if rendering && !error}
+	{#if rendering && !error && !svgContent}
 		<div class="flex items-center justify-center py-8 text-xs text-muted-foreground">
 			Rendering diagram...
 		</div>
@@ -80,6 +76,10 @@
 			<p class="font-semibold">Mermaid render error</p>
 			<pre class="mt-1 whitespace-pre-wrap">{error}</pre>
 		</div>
+	{:else if svgContent}
+		<div class="flex justify-center [&_svg]:max-w-full">
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -- Mermaid produces sanitized SVG via its own securityLevel setting -->
+			{@html svgContent}
+		</div>
 	{/if}
-	<div bind:this={containerEl} class="flex justify-center [&_svg]:max-w-full"></div>
 </div>
