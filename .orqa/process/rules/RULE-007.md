@@ -6,10 +6,6 @@ status: active
 created: 2026-03-07
 updated: 2026-03-07
 layer: project
-scope:
-  - AGENT-002
-  - AGENT-003
-  - AGENT-006
 enforcement:
   - event: bash
     pattern: ^cargo (build|test|clippy|fmt|check)\b

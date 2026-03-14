@@ -9,9 +9,6 @@ status: active
 created: 2026-03-11
 updated: 2026-03-11
 layer: project
-scope:
-  - AGENT-002
-  - AGENT-006
 category: domain
 version: 1.0.0
 user-invocable: true

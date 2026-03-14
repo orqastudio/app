@@ -11,14 +11,6 @@ status: active
 created: 2026-03-01
 updated: 2026-03-12
 layer: core
-scope:
-  - AGENT-001
-  - AGENT-002
-  - AGENT-003
-  - AGENT-004
-  - AGENT-005
-  - AGENT-006
-  - AGENT-007
 category: tool
 version: 1.1.0
 user-invocable: true

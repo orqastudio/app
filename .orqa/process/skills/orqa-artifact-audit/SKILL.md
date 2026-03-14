@@ -12,9 +12,6 @@ status: active
 created: 2026-03-11
 updated: 2026-03-11
 layer: project
-scope:
-  - AGENT-003
-  - AGENT-006
 category: methodology
 version: 1.0.0
 user-invocable: false

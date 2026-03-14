@@ -8,7 +8,7 @@
   "propertyOrder": [
     "id", "title", "description", "status",
     "created", "updated",
-    "layer", "scope", "category", "file-patterns", "version",
+    "layer", "category", "file-patterns", "version",
     "user-invocable", "allowed-tools", "license", "metadata",
     "relationships"
   ],
@@ -20,11 +20,6 @@
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
     "layer": { "enum": ["core", "setup", "project", "plugin", "community", "user"] },
-    "scope": {
-      "type": "array",
-      "items": { "type": "string", "pattern": "^AGENT-\\d+$" },
-      "description": "Agent IDs that should use this skill"
-    },
     "file-patterns": {
       "type": "array",
       "items": { "type": "string" },

@@ -7,8 +7,6 @@ status: active
 created: 2026-03-13
 updated: 2026-03-14
 layer: core
-scope:
-  - AGENT-003
 enforcement:
   - event: file
     paths:

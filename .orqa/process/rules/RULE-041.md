@@ -6,9 +6,6 @@ status: active
 created: 2026-03-11
 updated: 2026-03-13
 layer: project
-scope:
-  - AGENT-002
-  - AGENT-006
 enforcement: []
 relationships:
   - target: PILLAR-001

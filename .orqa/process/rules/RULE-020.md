@@ -6,9 +6,6 @@ status: active
 created: 2026-03-07
 updated: 2026-03-12
 layer: core
-scope:
-  - AGENT-002
-  - AGENT-006
 enforcement:
   - event: file
     pattern: TODO|FIXME|HACK|XXX

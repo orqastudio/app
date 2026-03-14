@@ -3,12 +3,12 @@
   "title": "Rule",
   "description": "Constraint that must be followed",
   "type": "object",
-  "required": ["id", "title", "description", "status", "created", "updated", "layer", "scope", "relationships"],
+  "required": ["id", "title", "description", "status", "created", "updated", "layer", "relationships"],
   "additionalProperties": false,
   "propertyOrder": [
     "id", "title", "description", "status",
     "created", "updated",
-    "layer", "scope", "enforcement",
+    "layer", "enforcement",
     "relationships"
   ],
   "properties": {
@@ -19,11 +19,6 @@
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
     "layer": { "enum": ["core", "setup", "project", "plugin", "community", "user"] },
-    "scope": {
-      "type": "array",
-      "items": { "type": "string", "pattern": "^AGENT-\\d+$" },
-      "description": "Agent IDs that must comply with this rule"
-    },
     "enforcement": {
       "type": "array",
       "description": "Machine-enforceable patterns evaluated by the companion plugin or app enforcement engine",

@@ -6,9 +6,6 @@ status: active
 created: 2026-03-11
 updated: 2026-03-12
 layer: project
-scope:
-  - AGENT-002
-  - AGENT-006
 enforcement:
   - event: lint
     pattern: clippy::unwrap_used

@@ -7,10 +7,6 @@ description: |
   documentation of findings with confidence levels.
 status: active
 layer: core
-scope:
-  - AGENT-005
-  - AGENT-004
-  - AGENT-001
 category: methodology
 user-invocable: true
 relationships:

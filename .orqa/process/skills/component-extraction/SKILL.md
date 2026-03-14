@@ -6,9 +6,6 @@ status: active
 created: 2026-03-11
 updated: 2026-03-11
 layer: core
-scope:
-  - AGENT-001
-  - AGENT-002
 category: methodology
 file-patterns:
   - ui/src/lib/components/**

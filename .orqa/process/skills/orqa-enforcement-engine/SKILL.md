@@ -14,7 +14,6 @@ status: "active"
 created: "2026-03-11"
 updated: "2026-03-11"
 layer: "project"
-scope: []
 category: "domain"
 version: "0.2.0"
 user-invocable: false

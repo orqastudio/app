@@ -8,9 +8,6 @@ description: |
   Use when: Running project setup or configuring workflow enforcement.
 status: active
 layer: setup
-scope:
-  - AGENT-003
-  - AGENT-001
 category: tool
 version: 1.0.0
 user-invocable: false

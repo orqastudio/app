@@ -199,6 +199,7 @@ mod tests {
                     path: ".orqa/process/lessons".to_string(),
                 }],
             }],
+            artifact_links: Default::default(),
         };
         ProjectPaths::from_settings(tmp.path(), &settings)
     }
@@ -350,6 +351,7 @@ mod tests {
             show_thinking: false,
             custom_system_prompt: None,
             artifacts: vec![],
+            artifact_links: Default::default(),
         };
         let paths = ProjectPaths::from_settings(dir.path(), &settings);
         let lessons = list(&paths).expect("list should succeed");

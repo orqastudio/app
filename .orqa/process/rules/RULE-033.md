@@ -6,9 +6,6 @@ status: active
 created: 2026-03-10
 updated: 2026-03-10
 layer: project
-scope:
-  - AGENT-001
-  - AGENT-002
 relationships:
   - target: PILLAR-001
     type: grounded

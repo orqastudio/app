@@ -11,9 +11,6 @@ status: active
 created: 2026-03-12
 updated: 2026-03-12
 layer: project
-scope:
-  - AGENT-001
-  - AGENT-003
 category: tool
 version: 1.0.0
 user-invocable: true

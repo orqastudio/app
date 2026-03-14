@@ -135,6 +135,7 @@ mod tests {
                     path: ".orqa/documentation".to_string(),
                 }),
             ],
+            artifact_links: Default::default(),
         }
     }
 
@@ -194,6 +195,7 @@ mod tests {
             show_thinking: false,
             custom_system_prompt: None,
             artifacts: vec![],
+            artifact_links: Default::default(),
         };
         let paths = ProjectPaths::from_settings(root, &settings);
 
