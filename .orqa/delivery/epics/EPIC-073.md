@@ -165,8 +165,8 @@ UAT round 3 collected 30 findings across the app after implementing 31 tasks in 
 
 All findings re-tested after implementation. Each theme verified independently.
 
-## Out of Scope
+## Deferred with User Awareness
 
-- F1 (dashboard holistic redesign) — needs its own research and epic, not a task in this round
+- F1 (dashboard holistic redesign) — research created ([RES-064](RES-064)), needs its own epic after research is complete
 - F2 (agent artifact discipline) — addressed by EPIC-064
 - IDEA-096 (exploration whiteboard) — captured as idea, not in scope for implementation
