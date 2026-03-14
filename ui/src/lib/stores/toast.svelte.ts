@@ -21,12 +21,14 @@ export interface Toast {
 	duration: number;
 }
 
+import { SvelteMap } from "svelte/reactivity";
+
 const DEFAULT_DURATION_MS = 4000;
 const MAX_TOASTS = 10;
 
 let nextId = 0;
 let toasts = $state<Toast[]>([]);
-const dismissTimers = new Map<string, ReturnType<typeof setTimeout>>();
+const dismissTimers = new SvelteMap<string, ReturnType<typeof setTimeout>>();
 
 function generateId(): string {
 	return `toast-${nextId++}-${Date.now()}`;
