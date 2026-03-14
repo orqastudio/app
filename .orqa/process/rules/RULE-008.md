@@ -1,4 +1,5 @@
 ---
+
 id: RULE-008
 title: Documentation-First Implementation
 description: Documentation is the source of truth. Verify docs exist before writing code; update docs before changing code.
@@ -84,6 +85,9 @@ relationships:
   - type: scoped-to
     target: AGENT-007
     rationale: Migrated from scope field
+  - target: AGENT-008
+    type: scoped-to
+    rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
 ---
 ## Principle
 

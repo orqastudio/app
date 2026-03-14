@@ -1,4 +1,5 @@
 ---
+
 id: TASK-462
 title: "Restructure unfocused documentation and remove stale phase references"
 description: "Restructure DOC-021 (coding-standards) as a principles doc, add purpose to DOC-030 (orchestration), and remove all stale Phase 2a/2b references across 23 documentation files."
@@ -29,8 +30,10 @@ relationships:
   - target: RES-062
     type: informed-by
     rationale: Documentation audit identified these issues
+  - target: TASK-463
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from TASK-463"
 ---
-
 ## Scope
 
 ### Restructure DOC-021 (coding-standards.md)

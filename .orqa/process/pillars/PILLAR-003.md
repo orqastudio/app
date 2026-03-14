@@ -2,6 +2,7 @@
 
 
 
+
 id: PILLAR-003
 title: Purpose Through Continuity
 description: The system actively maintains coherence between intention and action. It prevents drift between what the user set out to do and what is actually being done, ensuring purpose is never lost during implementation.
@@ -39,6 +40,9 @@ relationships:
   - target: DOC-064
     type: informs
     rationale: Purpose Through Continuity pillar is distilled into the product-purpose grounding document — inverse of informed-by on DOC-064
+  - target: IDEA-096
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from IDEA-096"
 ---
 ## What This Pillar Means
 

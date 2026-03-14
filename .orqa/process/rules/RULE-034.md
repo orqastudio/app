@@ -1,4 +1,5 @@
 ---
+
 id: RULE-034
 title: Artifact Link Format
 description: All cross-references between artifacts must use markdown link syntax with artifact IDs. Bare IDs, file paths, and web-style paths are forbidden.
@@ -34,6 +35,9 @@ relationships:
   - type: scoped-to
     target: AGENT-007
     rationale: Migrated from scope field
+  - target: AGENT-008
+    type: scoped-to
+    rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
 ---
 All artifact cross-references MUST use the format `[Display Text](ARTIFACT-ID)` where the artifact ID matches the pattern `PREFIX-NNN`. The display text is typically the artifact ID itself: `[EPIC-001](EPIC-001)`.
 

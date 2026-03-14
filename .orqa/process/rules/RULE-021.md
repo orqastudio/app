@@ -1,4 +1,5 @@
 ---
+
 id: RULE-021
 title: Pillar Alignment in Documentation
 description: Every documentation page describing a feature must include a Pillar Alignment section.
@@ -38,6 +39,9 @@ relationships:
   - type: scoped-to
     target: AGENT-007
     rationale: Migrated from scope field
+  - target: AGENT-008
+    type: scoped-to
+    rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
 ---
 Every documentation page that describes a feature, component, workflow, integration, or capability MUST include a "Pillar Alignment" section. This ensures all documented work traces back to the product vision and prevents scope creep from accumulating silently in the docs.
 

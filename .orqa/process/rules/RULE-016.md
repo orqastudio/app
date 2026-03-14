@@ -1,4 +1,5 @@
 ---
+
 id: RULE-016
 title: IDs Are Not Priority
 description: Artifact IDs are sequential identifiers for uniqueness and reference. They carry no information about priority, importance, or execution order.
@@ -51,6 +52,9 @@ relationships:
   - type: scoped-to
     target: AGENT-007
     rationale: Migrated from scope field
+  - target: AGENT-008
+    type: scoped-to
+    rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
 ---
 Artifact IDs ([EPIC-045](EPIC-045), [TASK-051](TASK-051), [AD-029](AD-029), etc.) are sequential identifiers for uniqueness and reference. They carry NO information about priority, importance, or execution order.
 

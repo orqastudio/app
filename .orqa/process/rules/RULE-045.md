@@ -1,4 +1,5 @@
 ---
+
 id: RULE-045
 title: Data Integrity
 description: All artifact cross-references must resolve, pipeline relationships must have bidirectional inverses, and integrity checks run on every commit.
@@ -55,6 +56,9 @@ relationships:
   - type: scoped-to
     target: AGENT-003
     rationale: Migrated from scope field
+  - target: AGENT-008
+    type: scoped-to
+    rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
 ---
 All artifact cross-references must resolve to existing artifacts. Pipeline relationships must have bidirectional inverses. These constraints are enforced at commit time and can be verified manually.
 

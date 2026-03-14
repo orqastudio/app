@@ -1,4 +1,5 @@
 ---
+
 id: TASK-412
 title: Implement full skill content injection in rule-engine.mjs
 description: Currently skill injection returns skill names as a list. Change it to read the actual SKILL.md file content and inject it as systemMessage so agents receive the knowledge, not just a reference.
@@ -28,8 +29,10 @@ relationships:
   - target: EPIC-064
     type: belongs-to
     rationale: Task belongs to this epic
+  - target: TASK-467
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from TASK-467"
 ---
-
 ## Scope
 
 ### rule-engine.mjs Changes (lines 156-177)

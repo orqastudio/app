@@ -1,4 +1,5 @@
 ---
+
 id: RULE-004
 title: Artifact Lifecycle
 description: Enforces creation standards, status transitions, promotion gates, and documentation gates for all .orqa/ artifacts.
@@ -153,6 +154,9 @@ relationships:
   - target: DOC-036
     type: documented-by
     rationale: artifact-framework.md is the source-of-truth document for artifact lifecycle this rule enforces
+  - target: AGENT-008
+    type: scoped-to
+    rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
 ---
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
 

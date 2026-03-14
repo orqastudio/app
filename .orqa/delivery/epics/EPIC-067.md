@@ -11,6 +11,7 @@
 
 
 
+
 id: EPIC-067
 title: Artifact viewer redesign — layout, relationships, and graph enrichment
 description: Redesign the artifact viewer information hierarchy, relationships panel, and pipeline stepper. Enrich graph nodes with metadata for display. The largest systemic theme from UAT round 2.
@@ -125,6 +126,9 @@ relationships:
   - target: TASK-438
     type: delivered-by
     rationale: "Auto-generated inverse of delivered-by relationship from TASK-438"
+  - target: EPIC-073
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from EPIC-073"
 ---
 ## Context
 

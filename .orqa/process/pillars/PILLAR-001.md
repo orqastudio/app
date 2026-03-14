@@ -1,4 +1,5 @@
 ---
+
 id: PILLAR-001
 title: Clarity Through Structure
 description: Making thinking, standards, and decisions visible and structured.
@@ -441,6 +442,9 @@ relationships:
   - target: DOC-064
     type: informs
     rationale: Clarity Through Structure pillar is distilled into the product-purpose grounding document — inverse of informed-by on DOC-064
+  - target: IDEA-096
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from IDEA-096"
 ---
 ## What This Pillar Means
 

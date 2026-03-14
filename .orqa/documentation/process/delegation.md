@@ -1,4 +1,5 @@
 ---
+
 id: DOC-069
 title: "Delegation Reference"
 description: "Orchestrator's source of truth for delegation — maps work types to roles, skills, and grounding. If the orchestrator is writing anything other than coordination output, the system has failed."
@@ -17,8 +18,10 @@ relationships:
   - type: grounded
     target: AGENT-003
     rationale: Grounds the Orchestrator role — delegation reference is the orchestrator's lookup table for all delegation decisions
+  - target: RULE-001
+    type: documents
+    rationale: "Auto-generated inverse of documents relationship from RULE-001"
 ---
-
 # Delegation Reference
 
 ## The Orchestrator's Job

@@ -1,4 +1,5 @@
 ---
+
 id: TASK-190
 title: Surface violations in governance UI
 description: Display enforcement violations in the app's governance view with history and filtering.
@@ -29,8 +30,10 @@ relationships:
   - target: EPIC-064
     type: belongs-to
     rationale: Task belongs to this epic (absorbed from EPIC-050)
+  - target: EPIC-050
+    type: belongs-to
+    rationale: "Auto-generated inverse of belongs-to relationship from EPIC-050"
 ---
-
 ## What
 
 The governance UI surfaces enforcement violations so users can see what was

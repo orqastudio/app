@@ -4,6 +4,7 @@
 
 
 
+
 id: EPIC-068
 title: Dashboard redesign — layout, widgets, and plugin extensibility
 description: Redesign the dashboard from a vertical card stack to an information-dense layout. Architecture must support drag-and-drop positioning and plugin-provided custom widgets.
@@ -71,6 +72,9 @@ relationships:
   - target: TASK-441
     type: delivered-by
     rationale: "Auto-generated inverse of delivered-by relationship from TASK-441"
+  - target: EPIC-073
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from EPIC-073"
 ---
 ## Context
 

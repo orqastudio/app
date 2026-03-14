@@ -2,6 +2,7 @@
 
 
 
+
 id: IMPL-055
 title: "Orchestrator creates artifacts without maintaining bidirectional relationships"
 description: "When creating or modifying artifacts (AD-048, RULE-001, RULE-017), the orchestrator added content links in body text but failed to add bidirectional relationship entries in frontmatter. This happened repeatedly across multiple artifacts in the same session despite RULE-045 requiring bidirectional inverses."
@@ -29,6 +30,9 @@ relationships:
   - target: TASK-413
     type: informs
     rationale: "Auto-generated inverse of informs relationship from TASK-413"
+  - target: TASK-465
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from TASK-465"
 ---
 ## Pattern
 
