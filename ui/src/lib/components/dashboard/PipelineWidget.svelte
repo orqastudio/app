@@ -328,10 +328,9 @@
 										<span class="text-lg font-semibold tabular-nums text-foreground">
 											{data.count}
 										</span>
-										{@const label = statusLabel(data)}
-										{#if label !== null}
+										{#if statusLabel(data) !== null}
 											<span class="text-[10px] font-medium {statusLabelClass(data.status)}">
-												{label}
+												{statusLabel(data)}
 											</span>
 										{/if}
 									</div>
