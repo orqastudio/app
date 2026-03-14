@@ -2,7 +2,7 @@
 id: TASK-477
 title: "Documentation reorg research and redundant badge removal"
 description: "Complete RES-063 research (doc chapter structure, migration plan, missing how-to content). Remove redundant category badge from doc list panel."
-status: todo
+status: done
 priority: P2
 created: 2026-03-14
 updated: 2026-03-14

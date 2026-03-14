@@ -2,7 +2,7 @@
 id: TASK-472
 title: "Roadmap columns fill space and basic layout fixes"
 description: "Roadmap kanban columns expand to fill available horizontal space."
-status: todo
+status: done
 priority: P1
 created: 2026-03-14
 updated: 2026-03-14

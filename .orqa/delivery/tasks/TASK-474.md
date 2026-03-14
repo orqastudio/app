@@ -2,7 +2,7 @@
 id: TASK-474
 title: "Migrate rule/skill scope fields to relationship types"
 description: "Migrate the scope field on rules and skills from a standalone frontmatter array to scoped-to/scoped-by relationship types on the graph. Update schemas, existing artifacts, and any code that reads the scope field."
-status: todo
+status: done
 priority: P1
 created: 2026-03-14
 updated: 2026-03-14

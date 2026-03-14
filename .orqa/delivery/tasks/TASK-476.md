@@ -2,7 +2,7 @@
 id: TASK-476
 title: "Dashboard components use shared library"
 description: "Replace native elements in dashboard with shared components: ScrollArea for pipeline health table, SelectMenu for category dropdown, proper toggle pattern for filter buttons."
-status: todo
+status: done
 priority: P1
 created: 2026-03-14
 updated: 2026-03-14

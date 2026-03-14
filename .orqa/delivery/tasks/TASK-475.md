@@ -2,7 +2,7 @@
 id: TASK-475
 title: "Fix lesson status vocabulary and viewer layout"
 description: "Fix lessons showing Active instead of Captured. Move actions below status pipeline. Fix status pipeline connector line centering on circle."
-status: todo
+status: done
 priority: P1
 created: 2026-03-14
 updated: 2026-03-14

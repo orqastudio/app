@@ -2,7 +2,7 @@
 id: TASK-470
 title: "Rework ArtifactLink component — status dot inside, ellipsis, hover popover"
 description: "Systematic rework of the ArtifactLink component: move status dot inside the chip, add max-width with text-overflow ellipsis for title display, add hover popover showing artifact metadata from the graph."
-status: todo
+status: done
 priority: P1
 created: 2026-03-14
 updated: 2026-03-14
