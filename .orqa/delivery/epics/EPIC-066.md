@@ -1,4 +1,16 @@
 ---
+
+
+
+
+
+
+
+
+
+
+
+
 id: EPIC-066
 title: Package ecosystem extraction for plugin portability
 description: Extract types, integrity validator, eslint config, and SDK into standalone @orqastudio/ npm packages hosted on GitHub Packages. Gives plugins parity access to the frontend-backend connection, artifact graph, and code standards.
@@ -76,6 +88,42 @@ relationships:
   - target: TASK-428
     type: contains
     rationale: Epic contains this task
+  - target: TASK-425
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-425"
+  - target: TASK-419
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-419"
+  - target: TASK-427
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-427"
+  - target: TASK-421
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-421"
+  - target: TASK-424
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-424"
+  - target: TASK-420
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-420"
+  - target: TASK-417
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-417"
+  - target: TASK-418
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-418"
+  - target: TASK-423
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-423"
+  - target: TASK-428
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-428"
+  - target: TASK-426
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-426"
+  - target: TASK-422
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-422"
 ---
 ## Context
 

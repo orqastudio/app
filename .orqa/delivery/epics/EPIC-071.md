@@ -1,4 +1,9 @@
 ---
+
+
+
+
+
 id: EPIC-071
 title: Documentation improvements — content, ordering, rendering
 description: Fix docs navigation (no status for docs), populate Guide section, audit doc ordering for reading flow, add mermaid/PlantUML rendering, and review doc-to-artifact relationships.
@@ -38,8 +43,22 @@ relationships:
   - target: TASK-455
     type: contains
     rationale: Epic contains this task
+  - target: TASK-452
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-452"
+  - target: TASK-451
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-451"
+  - target: TASK-454
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-454"
+  - target: TASK-455
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-455"
+  - target: TASK-453
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-453"
 ---
-
 ## Context
 
 UAT round 2 found documentation navigation shows status (irrelevant for docs), Guide section is empty, doc ordering is arbitrary, and the markdown renderer lacks diagram support. Documentation pages also need proper graph relationships.

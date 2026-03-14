@@ -1,4 +1,11 @@
 ---
+
+
+
+
+
+
+
 id: EPIC-063
 title: Dashboard & artifact viewer UAT fixes
 description: UAT round covering the full dashboard and artifact viewer experience. Fixes navigation bugs, redesigns dashboard widgets for actionable insight, enhances artifact viewer with relationship consolidation and pipeline position, and improves search UX.
@@ -81,6 +88,27 @@ relationships:
   - target: TASK-410
     type: contains
     rationale: Epic contains this task
+  - target: TASK-403
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-403"
+  - target: TASK-404
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-404"
+  - target: TASK-408
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-408"
+  - target: TASK-410
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-410"
+  - target: TASK-409
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-409"
+  - target: TASK-405
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-405"
+  - target: TASK-407
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-407"
 ---
 ## UAT Findings Summary
 

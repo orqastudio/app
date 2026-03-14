@@ -1,4 +1,10 @@
 ---
+
+
+
+
+
+
 id: EPIC-064
 title: Close enforcement bootstrapping gap
 description: The enforcement system is half-complete across all layers — rules declare enforcement entries but critical event types (stop) and actions (skill content injection) are not consumed by the plugin, and the Rust engine is disconnected from agent execution. This epic closes every gap so the system can enforce itself during its own development.
@@ -72,6 +78,24 @@ relationships:
   - target: TASK-416
     type: contains
     rationale: Epic contains this task
+  - target: TASK-411
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-411"
+  - target: TASK-415
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-415"
+  - target: TASK-412
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-412"
+  - target: TASK-416
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-416"
+  - target: TASK-414
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-414"
+  - target: TASK-413
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-413"
 ---
 ## Context
 

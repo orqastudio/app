@@ -1,4 +1,6 @@
 ---
+
+
 id: EPIC-072
 title: Roadmap kanban view
 description: Replace the static roadmap documentation page with a dynamic kanban board view under Process. Milestone-level board with drill-down into epics and tasks, all data from the graph.
@@ -36,6 +38,12 @@ relationships:
   - target: TASK-457
     type: contains
     rationale: Epic contains this task
+  - target: TASK-457
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-457"
+  - target: TASK-456
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-456"
 ---
 ## Context
 

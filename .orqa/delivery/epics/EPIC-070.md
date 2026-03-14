@@ -1,4 +1,8 @@
 ---
+
+
+
+
 id: EPIC-070
 title: Dynamic artifact tables and schema validation enhancements
 description: Injectable dynamic tables in markdown (tasks table on epics, epics on milestones), body template validation, and schema evolution (new relationship types, personas).
@@ -39,8 +43,19 @@ relationships:
   - target: TASK-450
     type: contains
     rationale: Epic contains this task
+  - target: TASK-448
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-448"
+  - target: TASK-450
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-450"
+  - target: TASK-449
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-449"
+  - target: TASK-447
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-447"
 ---
-
 ## Context
 
 UAT round 2 identified the need for dynamic graph-driven tables in markdown rendering (e.g. tasks table on epics showing live status), body template validation with required headings, and potential new artifact types (personas).

@@ -1,4 +1,5 @@
 ---
+
 id: EPIC-065
 title: Artifact viewer enhancements
 description: Enhance the artifact viewer with unified relationships display, actions needed inference, pipeline position stepper, horizon display, and acceptance criteria checkboxes. Originated from UAT Theme D findings.
@@ -32,6 +33,9 @@ relationships:
   - target: TASK-406
     type: contains
     rationale: Epic contains this task
+  - target: TASK-406
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-406"
 ---
 ## Context
 

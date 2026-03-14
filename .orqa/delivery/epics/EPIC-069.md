@@ -1,4 +1,7 @@
 ---
+
+
+
 id: EPIC-069
 title: Notification system — toast, in-app panel, desktop
 description: Design and implement a notification strategy covering toast messages, in-app notification panel, and desktop notifications. Determine which events use which channel.
@@ -34,6 +37,15 @@ relationships:
   - target: TASK-446
     type: contains
     rationale: Epic contains this task
+  - target: TASK-445
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-445"
+  - target: TASK-444
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-444"
+  - target: TASK-446
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-446"
 ---
 ## Context
 

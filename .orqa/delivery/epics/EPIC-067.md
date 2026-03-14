@@ -1,4 +1,16 @@
 ---
+
+
+
+
+
+
+
+
+
+
+
+
 id: EPIC-067
 title: Artifact viewer redesign — layout, relationships, and graph enrichment
 description: Redesign the artifact viewer information hierarchy, relationships panel, and pipeline stepper. Enrich graph nodes with metadata for display. The largest systemic theme from UAT round 2.
@@ -77,6 +89,42 @@ relationships:
   - target: TASK-459
     type: contains
     rationale: Epic contains this task
+  - target: TASK-436
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-436"
+  - target: TASK-431
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-431"
+  - target: TASK-430
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-430"
+  - target: TASK-437
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-437"
+  - target: TASK-459
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-459"
+  - target: TASK-433
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-433"
+  - target: TASK-458
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-458"
+  - target: TASK-434
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-434"
+  - target: TASK-435
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-435"
+  - target: TASK-432
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-432"
+  - target: TASK-429
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-429"
+  - target: TASK-438
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-438"
 ---
 ## Context
 
