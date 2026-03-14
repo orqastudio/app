@@ -2,7 +2,7 @@
 id: TASK-439
 title: "Fix rescan stale data — refresh graph before integrity scan"
 description: "Ensure the rescan button refreshes the artifact graph before running integrity checks so findings reflect current disk state."
-status: todo
+status: done
 priority: P1
 created: "2026-03-14"
 updated: "2026-03-14"

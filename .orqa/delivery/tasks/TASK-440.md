@@ -2,7 +2,7 @@
 id: TASK-440
 title: "Pipeline health: collapse all-clear, remove Refresh, auto-rescan after refresh"
 description: "Streamline the pipeline health display — collapse all-clear state, remove redundant Refresh button, auto-run integrity scan after graph refresh."
-status: todo
+status: done
 priority: P1
 created: "2026-03-14"
 updated: "2026-03-14"
