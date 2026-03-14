@@ -9,6 +9,7 @@
 	import CalendarCheckIcon from "@lucide/svelte/icons/calendar-check";
 	import CheckIcon from "@lucide/svelte/icons/check";
 	import XIcon from "@lucide/svelte/icons/x";
+	import ScaleIcon from "@lucide/svelte/icons/scale";
 
 	let {
 		metadata,
@@ -134,6 +135,15 @@
 		isPresent(metadata["priority"]) ? String(metadata["priority"]) : undefined,
 	);
 
+	/** Scoring dimensions as key-value pairs for inline display. */
+	const scoringEntries = $derived.by(() => {
+		const raw = metadata["scoring"];
+		if (raw === null || raw === undefined || typeof raw !== "object" || Array.isArray(raw)) return [];
+		return Object.entries(raw as Record<string, unknown>).filter(
+			([, v]) => v !== null && v !== undefined,
+		);
+	});
+
 	/** Short date format for the header chip (e.g. "Jan 5"). */
 	function shortDate(value: unknown): string | null {
 		if (value === null || value === undefined || value === "" || value === "null") return null;
@@ -216,7 +226,7 @@
 	);
 
 	/** True when the card has content below the header row. */
-	const hasBody = $derived(bodyEntries.length > 0 || appTools.length > 0 || gateQuestions.length > 0 || relationships.length > 0);
+	const hasBody = $derived(bodyEntries.length > 0 || appTools.length > 0 || gateQuestions.length > 0 || relationships.length > 0 || scoringEntries.length > 0);
 </script>
 
 <!-- Title -->
@@ -263,6 +273,24 @@
 				{#if status && isPresent(status)}
 					<StatusIndicator {status} mode="badge" />
 				{/if}
+			</div>
+		</div>
+	{/if}
+
+	<!-- Scoring dimensions (shown near priority when present) -->
+	{#if priority && scoringEntries.length > 0}
+		<div class="flex items-baseline gap-2">
+			<span class="w-[7rem] shrink-0 text-xs font-medium text-muted-foreground">
+				<span class="inline-flex items-center gap-1">
+					<ScaleIcon class="h-3 w-3" />Scoring
+				</span>
+			</span>
+			<div class="flex min-w-0 flex-1 flex-wrap gap-1">
+				{#each scoringEntries as [key, val] (key)}
+					<Badge variant="secondary" class="font-normal">
+						<span class="text-muted-foreground">{humanizeKey(key)}:</span> {String(val)}
+					</Badge>
+				{/each}
 			</div>
 		</div>
 	{/if}

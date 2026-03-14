@@ -6,11 +6,11 @@
   "required": ["id", "title", "description", "status", "created", "updated"],
   "additionalProperties": false,
   "propertyOrder": [
-    "id", "title", "description", "status",
+    "id", "title", "description", "status", "priority",
     "created", "updated",
     "epic", "milestone", "horizon",
     "depends-on", "assignee", "docs", "skills",
-    "acceptance", "rule-overrides", "relationships"
+    "acceptance", "scoring", "rule-overrides", "relationships"
   ],
   "properties": {
     "id": { "type": "string", "pattern": "^TASK-\\d+$" },
@@ -21,6 +21,7 @@
     "updated": { "type": "string", "format": "date" },
     "epic": { "type": ["string", "null"], "pattern": "^EPIC-\\d+$" },
     "milestone": { "type": ["string", "null"], "pattern": "^MS-\\d+$" },
+    "priority": { "enum": ["P1", "P2", "P3", null] },
     "horizon": { "enum": ["active", "next", "later", "someday", null] },
     "depends-on": {
       "type": "array",
@@ -40,6 +41,11 @@
     "acceptance": {
       "type": "array",
       "items": { "type": "string" }
+    },
+    "scoring": {
+      "type": "object",
+      "description": "Optional rationale for priority assessment. Freeform dimensions — projects choose their own.",
+      "additionalProperties": { "type": "number" }
     },
     "rule-overrides": {
       "type": "array",
