@@ -46,6 +46,9 @@ relationships:
   - target: EPIC-050
     type: informs
     rationale: "Auto-generated inverse of informs relationship from EPIC-050"
+  - target: RES-057
+    type: informed-by
+    rationale: "Integrity check alignment audit informed enforcement bootstrapping scope"
 ---
 ## Context
 

@@ -18,6 +18,9 @@ relationships:
   - target: EPIC-063
     type: informed-by
     rationale: "UAT revealed the CLI tool misses errors the app catches"
+  - target: RES-057
+    type: informed-by
+    rationale: "Integrity check alignment audit identified the parity gap"
 ---
 
 ## Motivation
