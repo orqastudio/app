@@ -2,7 +2,7 @@
 id: TASK-428
 title: "Switch orqa-studio from file: to published package versions"
 description: "Update the main app to consume published @orqastudio packages from GitHub Packages instead of file: references to sibling directories."
-status: todo
+status: done
 priority: P1
 created: "2026-03-14"
 updated: "2026-03-14"
