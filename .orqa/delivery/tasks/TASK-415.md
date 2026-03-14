@@ -2,7 +2,7 @@
 id: TASK-415
 title: Wire Rust EnforcementEngine to agent tool approval pipeline
 description: Connect the existing EnforcementEngine in the Rust backend to the agent execution pipeline so that enforcement entries are evaluated before tool execution in app context.
-status: todo
+status: done
 priority: P2
 created: 2026-03-14
 updated: 2026-03-14
