@@ -2,8 +2,45 @@
 id: DOC-042
 title: MVP Feature Specification
 description: Feature specification for the minimum viable product release of OrqaStudio.
-created: "2026-03-02"
-updated: "2026-03-08"
+created: 2026-03-02
+updated: 2026-03-08
+relationships:
+  - target: AD-016
+    type: documents
+    rationale: Documentation page references AD-016
+  - target: AD-014
+    type: documents
+    rationale: Documentation page references AD-014
+  - target: AD-012
+    type: documents
+    rationale: Documentation page references AD-012
+  - target: AD-015
+    type: documents
+    rationale: Documentation page references AD-015
+  - target: AD-007
+    type: documents
+    rationale: Documentation page references AD-007
+  - target: AD-008
+    type: documents
+    rationale: Documentation page references AD-008
+  - target: AD-009
+    type: documents
+    rationale: Documentation page references AD-009
+  - target: AD-013
+    type: documents
+    rationale: Documentation page references AD-013
+  - target: AD-010
+    type: documents
+    rationale: Documentation page references AD-010
+  - target: AD-005
+    type: documents
+    rationale: Documentation page references AD-005
+  - target: AD-019
+    type: documents
+    rationale: Documentation page references AD-019
+  - target: AD-011
+    type: documents
+    rationale: Documentation page references AD-011
 ---
 
 **Date:** 2026-03-02

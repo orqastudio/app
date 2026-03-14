@@ -2,8 +2,18 @@
 id: DOC-030
 title: Orchestration
 description: How the orchestrator coordinates work across specialized agents using delegation and verification.
-created: "2026-03-02"
-updated: "2026-03-12"
+created: 2026-03-02
+updated: 2026-03-12
+relationships:
+  - target: RULE-026
+    type: documents
+    rationale: Documentation page references RULE-026
+  - target: AD-029
+    type: documents
+    rationale: Documentation page references AD-029
+  - target: RULE-040
+    type: documents
+    rationale: Documentation page references RULE-040
 ---
 
 **Date:** 2026-03-02

@@ -2,8 +2,69 @@
 id: DOC-044
 title: Roadmap
 description: Product roadmap organized by milestones with prioritized epics and future ideas.
-created: "2026-03-02"
-updated: "2026-03-07"
+created: 2026-03-02
+updated: 2026-03-07
+relationships:
+  - target: MS-001
+    type: documents
+    rationale: Documentation page references MS-001
+  - target: MS-002
+    type: documents
+    rationale: Documentation page references MS-002
+  - target: IDEA-001
+    type: documents
+    rationale: Documentation page references IDEA-001
+  - target: IDEA-022
+    type: documents
+    rationale: Documentation page references IDEA-022
+  - target: MS-000
+    type: documents
+    rationale: Documentation page references MS-000
+  - target: EPIC-025
+    type: documents
+    rationale: Documentation page references EPIC-025
+  - target: EPIC-026
+    type: documents
+    rationale: Documentation page references EPIC-026
+  - target: AD-001
+    type: documents
+    rationale: Documentation page references AD-001
+  - target: AD-020
+    type: documents
+    rationale: Documentation page references AD-020
+  - target: EPIC-027
+    type: documents
+    rationale: Documentation page references EPIC-027
+  - target: EPIC-028
+    type: documents
+    rationale: Documentation page references EPIC-028
+  - target: EPIC-029
+    type: documents
+    rationale: Documentation page references EPIC-029
+  - target: EPIC-030
+    type: documents
+    rationale: Documentation page references EPIC-030
+  - target: EPIC-031
+    type: documents
+    rationale: Documentation page references EPIC-031
+  - target: EPIC-001
+    type: documents
+    rationale: Documentation page references EPIC-001
+  - target: TASK-001
+    type: documents
+    rationale: Documentation page references TASK-001
+  - target: TASK-002
+    type: documents
+    rationale: Documentation page references TASK-002
+  - target: TASK-003
+    type: documents
+    rationale: Documentation page references TASK-003
+  - target: TASK-004
+    type: documents
+    rationale: Documentation page references TASK-004
+  - target: EPIC-003
+    type: documents
+    rationale: Documentation page references EPIC-003
 ---
 
 **Date:** 2026-03-07

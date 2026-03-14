@@ -86,6 +86,12 @@ relationships:
   - target: TASK-338
     type: contains
     rationale: Epic contains this task
+  - target: DOC-005
+    type: documented-by
+    rationale: Referenced in documentation page IPC Command Catalog
+  - target: DOC-020
+    type: documented-by
+    rationale: Referenced in documentation page Artifact Graph SDK
 ---
 ## Context
 

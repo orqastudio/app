@@ -2,8 +2,12 @@
 id: DOC-011
 title: Search Engine Architecture
 description: Architecture of the embedded semantic and regex search engine using ONNX embeddings and DuckDB.
-created: "2026-03-04"
-updated: "2026-03-10"
+created: 2026-03-04
+updated: 2026-03-10
+relationships:
+  - target: AD-003
+    type: documents
+    rationale: Documentation page references AD-003
 ---
 
 **Date:** 2026-03-04 | **Updated:** 2026-03-10 | **Status:** Current | **References:** Rust Modules, IPC Commands, Tool Definitions

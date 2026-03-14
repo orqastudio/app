@@ -2,8 +2,12 @@
 id: DOC-048
 title: Component Inventory
 description: Inventory of all UI components with their status, variants, and usage guidelines.
-created: "2026-03-02"
-updated: "2026-03-04"
+created: 2026-03-02
+updated: 2026-03-04
+relationships:
+  - target: RES-004
+    type: documents
+    rationale: Documentation page references RES-004
 ---
 
 **Date:** 2026-03-02 | **Informed by:** [Frontend Research](RES-004), Design System, Information Architecture, [Wireframes](/wireframes/)

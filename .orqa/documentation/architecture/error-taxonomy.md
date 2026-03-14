@@ -2,8 +2,15 @@
 id: DOC-003
 title: Error Taxonomy
 description: The flat OrqaError enum — its variants, From conversions, serde serialization format, and propagation through domain → command → IPC → frontend.
-created: "2026-03-02"
-updated: "2026-03-10"
+created: 2026-03-02
+updated: 2026-03-10
+relationships:
+  - target: AD-003
+    type: documents
+    rationale: Documentation page references AD-003
+  - target: AD-002
+    type: documents
+    rationale: Documentation page references AD-002
 ---
 
 

@@ -38,6 +38,9 @@ relationships:
   - type: scoped-to
     target: AGENT-006
     rationale: Migrated from scope field
+  - target: DOC-016
+    type: documented-by
+    rationale: Referenced in documentation page Svelte Component Tree
 ---
 ## Shared Component Library
 

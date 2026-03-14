@@ -90,6 +90,12 @@ relationships:
   - type: scoped-to
     target: AGENT-007
     rationale: Migrated from scope field
+  - target: DOC-002
+    type: documented-by
+    rationale: Referenced in documentation page Enforcement Architecture
+  - target: DOC-030
+    type: documented-by
+    rationale: Referenced in documentation page Orchestration
 ---
 Every agent MUST have a `skills:` list in its YAML frontmatter. Agent tool access is declared via `capabilities:` and resolved per provider context — see [RULE-040](RULE-040). Skills load in three tiers [AD-028](AD-028).
 

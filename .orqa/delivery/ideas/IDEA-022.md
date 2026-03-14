@@ -4,8 +4,8 @@ title: Platform Access
 description: |
   Expand beyond desktop with web companion, mobile companion, API access, and CLI companion.
 status: captured
-created: "2026-03-07"
-updated: "2026-03-13"
+created: 2026-03-07
+updated: 2026-03-13
 horizon: someday
 pillars:
   - PILLAR-001
@@ -14,6 +14,10 @@ research-needed:
   - Mobile companion scope
   - API design for programmatic access
 promoted-to: null
+relationships:
+  - target: DOC-044
+    type: documented-by
+    rationale: Referenced in documentation page Roadmap
 ---
 ## Candidate Items
 

@@ -1,9 +1,13 @@
 ---
 id: DOC-063
-title: "Dev Controller and OrqaDev Dashboard"
-description: "Architecture of the dev controller (debugger/dev.mjs) and the OrqaDev web dashboard for unified process management and log streaming during development."
-created: "2026-03-12"
-updated: "2026-03-12"
+title: Dev Controller and OrqaDev Dashboard
+description: Architecture of the dev controller (debugger/dev.mjs) and the OrqaDev web dashboard for unified process management and log streaming during development.
+created: 2026-03-12
+updated: 2026-03-12
+relationships:
+  - target: RES-039
+    type: documents
+    rationale: Documentation page references RES-039
 ---
 
 ## Overview

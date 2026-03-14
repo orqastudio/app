@@ -2,8 +2,8 @@
 id: DOC-020
 title: Artifact Graph SDK
 description: Development guide for the Artifact Graph SDK — the typed frontend interface to the bidirectional artifact node graph.
-created: "2026-03-10"
-updated: "2026-03-10"
+created: 2026-03-10
+updated: 2026-03-10
 category: development
 tags:
   - artifact-graph
@@ -12,6 +12,10 @@ tags:
   - svelte5
   - ipc
   - plugins
+relationships:
+  - target: EPIC-048
+    type: documents
+    rationale: Documentation page references EPIC-048
 ---
 
 

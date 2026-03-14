@@ -2,8 +2,12 @@
 id: DOC-061
 title: "Wireframe: Settings & Onboarding"
 description: Wireframe specification for settings pages and the onboarding flow.
-created: "2026-03-02"
-updated: "2026-03-04"
+created: 2026-03-02
+updated: 2026-03-04
+relationships:
+  - target: RES-005
+    type: documents
+    rationale: Documentation page references RES-005
 ---
 
 **Date:** 2026-03-02 | **Informed by:** [Onboarding Research](RES-005), MVP Spec F-001, F-001b, F-009

@@ -75,6 +75,9 @@ relationships:
   - type: scoped-to
     target: AGENT-003
     rationale: Migrated from scope field
+  - target: DOC-036
+    type: documented-by
+    rationale: Referenced in documentation page Artifact Framework
 enforcement:
   - event: stop
     action: warn

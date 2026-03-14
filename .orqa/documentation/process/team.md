@@ -2,8 +2,12 @@
 id: DOC-034
 title: The Agentic Development Team
 description: Roster of specialized agents in the agentic development team with their roles and responsibilities.
-created: "2026-03-02"
-updated: "2026-03-10"
+created: 2026-03-02
+updated: 2026-03-10
+relationships:
+  - target: AD-029
+    type: documents
+    rationale: Documentation page references AD-029
 ---
 
 **Date:** 2026-03-02

@@ -4,8 +4,8 @@ title: Structured Rule Enforcement Engine
 description: |
   Replace freeform rule scope strings with a structured enforcement model that maps rules to file paths, artifact types, and agent contexts — enabling the app to automatically load only relevant rules.
 status: promoted
-created: "2026-03-07"
-updated: "2026-03-07"
+created: 2026-03-07
+updated: 2026-03-07
 horizon: active
 pillars:
   - PILLAR-001
@@ -16,6 +16,10 @@ research-needed:
   - UI for rule management (browse, enable/disable, see enforcement coverage)
   - Migration path from current freeform scope field to structured model
 promoted-to: EPIC-050
+relationships:
+  - target: DOC-036
+    type: documented-by
+    rationale: Referenced in documentation page Artifact Framework
 ---
 
 ## Motivation

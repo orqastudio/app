@@ -2,8 +2,87 @@
 id: DOC-036
 title: Artifact Framework
 description: Schema definitions, lifecycle rules, and governance for all structured artifacts in .orqa/.
-created: "2026-03-07"
-updated: "2026-03-10"
+created: 2026-03-07
+updated: 2026-03-10
+relationships:
+  - target: AD-029
+    type: documents
+    rationale: Documentation page references AD-029
+  - target: PILLAR-001
+    type: documents
+    rationale: Documentation page references PILLAR-001
+  - target: PILLAR-002
+    type: documents
+    rationale: Documentation page references PILLAR-002
+  - target: IDEA-035
+    type: documents
+    rationale: Documentation page references IDEA-035
+  - target: AD-040
+    type: documents
+    rationale: Documentation page references AD-040
+  - target: AD-038
+    type: documents
+    rationale: Documentation page references AD-038
+  - target: IDEA-032
+    type: documents
+    rationale: Documentation page references IDEA-032
+  - target: IDEA-034
+    type: documents
+    rationale: Documentation page references IDEA-034
+  - target: EPIC-004
+    type: documents
+    rationale: Documentation page references EPIC-004
+  - target: MS-001
+    type: documents
+    rationale: Documentation page references MS-001
+  - target: MS-002
+    type: documents
+    rationale: Documentation page references MS-002
+  - target: EPIC-001
+    type: documents
+    rationale: Documentation page references EPIC-001
+  - target: EPIC-002
+    type: documents
+    rationale: Documentation page references EPIC-002
+  - target: TASK-001
+    type: documents
+    rationale: Documentation page references TASK-001
+  - target: TASK-002
+    type: documents
+    rationale: Documentation page references TASK-002
+  - target: IDEA-001
+    type: documents
+    rationale: Documentation page references IDEA-001
+  - target: IDEA-002
+    type: documents
+    rationale: Documentation page references IDEA-002
+  - target: IMPL-001
+    type: documents
+    rationale: Documentation page references IMPL-001
+  - target: IMPL-002
+    type: documents
+    rationale: Documentation page references IMPL-002
+  - target: AD-001
+    type: documents
+    rationale: Documentation page references AD-001
+  - target: AD-002
+    type: documents
+    rationale: Documentation page references AD-002
+  - target: RES-001
+    type: documents
+    rationale: Documentation page references RES-001
+  - target: RES-002
+    type: documents
+    rationale: Documentation page references RES-002
+  - target: RULE-001
+    type: documents
+    rationale: Documentation page references RULE-001
+  - target: RULE-002
+    type: documents
+    rationale: Documentation page references RULE-002
+  - target: EPIC-005
+    type: documents
+    rationale: Documentation page references EPIC-005
 ---
 
 **Date:** 2026-03-07

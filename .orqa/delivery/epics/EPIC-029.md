@@ -59,6 +59,9 @@ relationships:
   - target: TASK-319
     type: contains
     rationale: Epic contains this task
+  - target: DOC-044
+    type: documented-by
+    rationale: Referenced in documentation page Roadmap
 ---
 ## Why P1
 

@@ -55,6 +55,9 @@ relationships:
   - type: scoped-to
     target: AGENT-006
     rationale: Migrated from scope field
+  - target: DOC-025
+    type: documented-by
+    rationale: Referenced in documentation page Artifact Workflow
 ---
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.
 

@@ -2,8 +2,12 @@
 id: DOC-058
 title: "Wireframe: Conversation View"
 description: Wireframe specification for the conversation view including message display and input area.
-created: "2026-03-02"
-updated: "2026-03-04"
+created: 2026-03-02
+updated: 2026-03-04
+relationships:
+  - target: RES-004
+    type: documents
+    rationale: Documentation page references RES-004
 ---
 
 **Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-004), MVP Spec F-003, F-004

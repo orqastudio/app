@@ -2,8 +2,12 @@
 id: DOC-045
 title: System vs Project Artifacts
 description: Distinction between system-level and project-level artifacts and their management boundaries.
-created: "2026-03-05"
-updated: "2026-03-08"
+created: 2026-03-05
+updated: 2026-03-08
+relationships:
+  - target: RULE-002
+    type: documents
+    rationale: Documentation page references RULE-002
 ---
 
 **Date:** 2026-03-05

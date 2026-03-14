@@ -4,8 +4,8 @@ title: Multi-Provider Ecosystem
 description: |
   Support additional AI providers through the provider-agnostic sidecar interface without changing the Rust core or Svelte UI.
 status: delivered
-created: "2026-03-07"
-updated: "2026-03-13"
+created: 2026-03-07
+updated: 2026-03-13
 pillars:
   - PILLAR-001
 research-needed:
@@ -17,10 +17,16 @@ promoted-to: EPIC-040
 relationships:
   - target: RES-009
     type: informed-by
-    rationale: "Provider architecture research informed multi-provider ecosystem design"
+    rationale: Provider architecture research informed multi-provider ecosystem design
   - target: RES-027
     type: informed-by
-    rationale: "Provider abstraction layer research informed sidecar refactoring approach"
+    rationale: Provider abstraction layer research informed sidecar refactoring approach
+  - target: DOC-036
+    type: documented-by
+    rationale: Referenced in documentation page Artifact Framework
+  - target: DOC-044
+    type: documented-by
+    rationale: Referenced in documentation page Roadmap
 ---
 ## Candidate Items
 

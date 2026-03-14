@@ -56,6 +56,9 @@ relationships:
   - type: scoped-to
     target: AGENT-006
     rationale: Migrated from scope field
+  - target: DOC-021
+    type: documented-by
+    rationale: Referenced in documentation page Coding Standards
 ---
 ## What Counts as a Stub
 

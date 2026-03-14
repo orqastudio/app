@@ -15,6 +15,9 @@ relationships:
   - type: informed-by
     target: IMPL-003
     rationale: IMPL-003's orchestrator lifecycle management pattern informed the process cleanup approach in this lesson
+  - target: DOC-036
+    type: documented-by
+    rationale: Referenced in documentation page Artifact Framework
 ---
 ## Pattern
 Starting `cargo tauri dev` while a previous instance is still running (or its port is held by a lingering process) causes a `Port 1420 is already in use` error. This happens when the previous window was closed but the process wasn't fully terminated, or when restarting after code changes.

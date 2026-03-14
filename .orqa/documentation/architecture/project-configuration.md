@@ -2,8 +2,12 @@
 id: DOC-009
 title: Project Configuration (`.orqa/project.json`)
 description: Schema and usage of the .orqa/project.json configuration file that defines project-level settings.
-created: "2026-03-03"
-updated: "2026-03-09"
+created: 2026-03-03
+updated: 2026-03-09
+relationships:
+  - target: AD-019
+    type: documents
+    rationale: Documentation page references AD-019
 ---
 
 **Date:** 2026-03-03 | **Status:** Active | **Decision:** [AD-019](AD-019) — File-based project settings

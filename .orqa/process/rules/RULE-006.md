@@ -133,6 +133,9 @@ relationships:
   - type: scoped-to
     target: AGENT-006
     rationale: Migrated from scope field
+  - target: DOC-002
+    type: documented-by
+    rationale: Referenced in documentation page Enforcement Architecture
 ---
 **Source of Truth:** `.orqa/documentation/development/coding-standards.md`
 

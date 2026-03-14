@@ -3,9 +3,33 @@ id: DOC-016
 title: Svelte Component Tree
 description: Component tree structure and hierarchy of the Svelte 5 frontend application.
 category: architecture
-tags: [frontend, svelte, components, stores, architecture]
-created: "2026-03-02"
-updated: "2026-03-10"
+tags:
+  - frontend
+  - svelte
+  - components
+  - stores
+  - architecture
+created: 2026-03-02
+updated: 2026-03-10
+relationships:
+  - target: RES-004
+    type: documents
+    rationale: Documentation page references RES-004
+  - target: AD-004
+    type: documents
+    rationale: Documentation page references AD-004
+  - target: AD-006
+    type: documents
+    rationale: Documentation page references AD-006
+  - target: RULE-024
+    type: documents
+    rationale: Documentation page references RULE-024
+  - target: AD-013
+    type: documents
+    rationale: Documentation page references AD-013
+  - target: AD-009
+    type: documents
+    rationale: Documentation page references AD-009
 ---
 
 **References:** [Frontend Research](RES-004), Information Architecture

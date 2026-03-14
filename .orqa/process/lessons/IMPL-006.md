@@ -21,6 +21,9 @@ relationships:
   - type: observed-by
     target: RULE-003
     rationale: RULE-003 codified the symlink architecture pattern first observed in this lesson
+  - target: DOC-055
+    type: documented-by
+    rationale: Referenced in documentation page Lesson Dashboard UI Spec
 ---
 ## What Happened
 

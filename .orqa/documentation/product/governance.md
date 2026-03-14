@@ -2,8 +2,12 @@
 id: DOC-039
 title: Product Governance
 description: Product governance criteria defining how features are evaluated against the project's active pillars.
-created: "2026-03-02"
-updated: "2026-03-07"
+created: 2026-03-02
+updated: 2026-03-07
+relationships:
+  - target: IMPL-001
+    type: documents
+    rationale: Documentation page references IMPL-001
 ---
 
 **Date:** 2026-03-07

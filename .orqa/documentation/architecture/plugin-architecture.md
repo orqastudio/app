@@ -1,6 +1,31 @@
 ---
-title: "Plugin Architecture"
-description: "How plugins extend OrqaStudio — current CLI companion plugin, four-layer model, component SDK extraction plan, and built-in vs plugin decision framework."
+title: Plugin Architecture
+description: How plugins extend OrqaStudio — current CLI companion plugin, four-layer model, component SDK extraction plan, and built-in vs plugin decision framework.
+relationships:
+  - target: RULE-044
+    type: documents
+    rationale: Documentation page references RULE-044
+  - target: EPIC-048
+    type: documents
+    rationale: Documentation page references EPIC-048
+  - target: IDEA-059
+    type: documents
+    rationale: Documentation page references IDEA-059
+  - target: RES-046
+    type: documents
+    rationale: Documentation page references RES-046
+  - target: IDEA-038
+    type: documents
+    rationale: Documentation page references IDEA-038
+  - target: IDEA-009
+    type: documents
+    rationale: Documentation page references IDEA-009
+  - target: RULE-042
+    type: documents
+    rationale: Documentation page references RULE-042
+  - target: RULE-026
+    type: documents
+    rationale: Documentation page references RULE-026
 ---
 
 # Plugin Architecture

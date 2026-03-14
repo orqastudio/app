@@ -2,8 +2,24 @@
 id: DOC-002
 title: Enforcement Architecture
 description: Architecture of OrqaStudio's four-layer enforcement system — process gates, knowledge injection, tooling ecosystem delegation, and prompt-based skill injection.
-created: "2026-03-05"
-updated: "2026-03-12"
+created: 2026-03-05
+updated: 2026-03-12
+relationships:
+  - target: RULE-006
+    type: documents
+    rationale: Documentation page references RULE-006
+  - target: RULE-013
+    type: documents
+    rationale: Documentation page references RULE-013
+  - target: RULE-026
+    type: documents
+    rationale: Documentation page references RULE-026
+  - target: EPIC-052
+    type: documents
+    rationale: Documentation page references EPIC-052
+  - target: AD-015
+    type: documents
+    rationale: Documentation page references AD-015
 ---
 
 OrqaStudio's enforcement system ensures agents follow the structured thinking process — understand, plan, document, implement, review, learn — at every stage of work. It operates across four layers, each addressing a different enforcement concern.

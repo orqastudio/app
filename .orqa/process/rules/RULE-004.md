@@ -141,6 +141,12 @@ relationships:
   - type: scoped-to
     target: AGENT-003
     rationale: Migrated from scope field
+  - target: DOC-015
+    type: documented-by
+    rationale: Referenced in documentation page Sub-Agent Support Architecture
+  - target: DOC-025
+    type: documented-by
+    rationale: Referenced in documentation page Artifact Workflow
 ---
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
 

@@ -2,8 +2,15 @@
 id: DOC-053
 title: Interaction Patterns
 description: Standard interaction patterns for navigation, selection, editing, and feedback across the UI.
-created: "2026-03-02"
-updated: "2026-03-04"
+created: 2026-03-02
+updated: 2026-03-04
+relationships:
+  - target: RES-004
+    type: documents
+    rationale: Documentation page references RES-004
+  - target: RES-002
+    type: documents
+    rationale: Documentation page references RES-002
 ---
 
 **Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-004), [AI Integration Research](RES-002), Design System

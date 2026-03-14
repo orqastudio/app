@@ -22,6 +22,9 @@ relationships:
   - target: EPIC-033
     type: belongs-to
     rationale: Task belongs to this epic
+  - target: DOC-044
+    type: documented-by
+    rationale: Referenced in documentation page Roadmap
 ---
 ## What
 

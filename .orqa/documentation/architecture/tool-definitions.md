@@ -2,8 +2,15 @@
 id: DOC-017
 title: Tool Definitions
 description: Definitions, parameters, and execution model for tools available to the AI agent within OrqaStudio sessions.
-created: "2026-03-02"
-updated: "2026-03-10"
+created: 2026-03-02
+updated: 2026-03-10
+relationships:
+  - target: AD-010
+    type: documents
+    rationale: Documentation page references AD-010
+  - target: AD-011
+    type: documents
+    rationale: Documentation page references AD-011
 ---
 
 **Date:** 2026-03-02 | **References:** [AD-010](AD-010), [AD-011](AD-011)

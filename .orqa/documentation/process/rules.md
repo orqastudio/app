@@ -2,8 +2,12 @@
 id: DOC-032
 title: Enforcement Rules Reference
 description: Reference index of all enforcement rules in .orqa/process/rules/ with their purpose and scope.
-created: "2026-03-02"
-updated: "2026-03-08"
+created: 2026-03-02
+updated: 2026-03-08
+relationships:
+  - target: RULE-002
+    type: documents
+    rationale: Documentation page references RULE-002
 ---
 
 **Date:** 2026-03-05

@@ -2,8 +2,18 @@
 id: DOC-049
 title: Design System
 description: Design system tokens, spacing scale, color themes, and component styling conventions.
-created: "2026-03-02"
-updated: "2026-03-04"
+created: 2026-03-02
+updated: 2026-03-04
+relationships:
+  - target: RES-003
+    type: documents
+    rationale: Documentation page references RES-003
+  - target: RES-001
+    type: documents
+    rationale: Documentation page references RES-001
+  - target: RES-004
+    type: documents
+    rationale: Documentation page references RES-004
 ---
 
 **Date:** 2026-03-02 | **Status:** Phase 0d specification

@@ -2,8 +2,15 @@
 id: DOC-021
 title: Coding Standards
 description: Coding standards for Rust and TypeScript/Svelte covering formatting, linting, error handling, and component patterns.
-created: "2026-03-02"
-updated: "2026-03-08"
+created: 2026-03-02
+updated: 2026-03-08
+relationships:
+  - target: AD-004
+    type: documents
+    rationale: Documentation page references AD-004
+  - target: RULE-020
+    type: documents
+    rationale: Documentation page references RULE-020
 ---
 
 **Date:** 2026-03-02

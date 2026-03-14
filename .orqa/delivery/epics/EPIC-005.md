@@ -55,6 +55,9 @@ relationships:
   - target: TASK-312
     type: contains
     rationale: Epic contains this task
+  - target: DOC-036
+    type: documented-by
+    rationale: Referenced in documentation page Artifact Framework
 ---
 ## Why P1
 

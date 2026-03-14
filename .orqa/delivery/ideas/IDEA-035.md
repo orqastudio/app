@@ -4,8 +4,8 @@ title: Configurable Priority Scoring
 description: |
   Make the epic scoring/prioritisation system configurable per project — custom dimensions, formulas, and priority bands — with the ability to disable scoring entirely for projects that don't need it.
 status: captured
-created: "2026-03-07"
-updated: "2026-03-13"
+created: 2026-03-07
+updated: 2026-03-13
 horizon: later
 pillars:
   - PILLAR-001
@@ -16,6 +16,10 @@ research-needed:
   - UI for configuring scoring dimensions and previewing priority distribution
   - Migration path for existing epics when scoring config changes
 promoted-to: null
+relationships:
+  - target: DOC-036
+    type: documented-by
+    rationale: Referenced in documentation page Artifact Framework
 ---
 ## Problem
 

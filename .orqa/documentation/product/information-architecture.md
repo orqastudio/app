@@ -2,8 +2,21 @@
 id: DOC-040
 title: Information Architecture
 description: Information architecture defining how content is organized and navigated within the application.
-created: "2026-03-02"
-updated: "2026-03-08"
+created: 2026-03-02
+updated: 2026-03-08
+relationships:
+  - target: AD-018
+    type: documents
+    rationale: Documentation page references AD-018
+  - target: AD-013
+    type: documents
+    rationale: Documentation page references AD-013
+  - target: AD-019
+    type: documents
+    rationale: Documentation page references AD-019
+  - target: AD-014
+    type: documents
+    rationale: Documentation page references AD-014
 ---
 
 **Date:** 2026-03-02

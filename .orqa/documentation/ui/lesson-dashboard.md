@@ -2,8 +2,12 @@
 id: DOC-055
 title: Lesson Dashboard UI Spec
 description: UI specification for the lesson dashboard that visualizes implementation lessons and promotion status.
-created: "2026-03-05"
-updated: "2026-03-05"
+created: 2026-03-05
+updated: 2026-03-05
+relationships:
+  - target: IMPL-006
+    type: documents
+    rationale: Documentation page references IMPL-006
 ---
 
 

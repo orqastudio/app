@@ -91,6 +91,9 @@ relationships:
   - target: TASK-342
     type: contains
     rationale: Epic contains this task
+  - target: DOC-002
+    type: documented-by
+    rationale: Referenced in documentation page Enforcement Architecture
 ---
 
 ## Context

@@ -2,8 +2,12 @@
 id: DOC-056
 title: Responsive Behavior
 description: Responsive layout behavior across different window sizes and breakpoints.
-created: "2026-03-02"
-updated: "2026-03-04"
+created: 2026-03-02
+updated: 2026-03-04
+relationships:
+  - target: RES-004
+    type: documents
+    rationale: Documentation page references RES-004
 ---
 
 **Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-004)

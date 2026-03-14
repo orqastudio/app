@@ -23,6 +23,9 @@ relationships:
   - target: MS-001
     type: belongs-to
     rationale: Epic belongs to this milestone
+  - target: DOC-044
+    type: documented-by
+    rationale: Referenced in documentation page Roadmap
 ---
 ## Why P1
 

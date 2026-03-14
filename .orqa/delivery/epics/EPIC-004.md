@@ -24,6 +24,9 @@ relationships:
   - target: MS-001
     type: belongs-to
     rationale: Epic belongs to this milestone
+  - target: DOC-036
+    type: documented-by
+    rationale: Referenced in documentation page Artifact Framework
 ---
 
 ## Why P1

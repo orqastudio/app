@@ -39,6 +39,12 @@ relationships:
   - target: TASK-311
     type: contains
     rationale: Epic contains this task
+  - target: DOC-036
+    type: documented-by
+    rationale: Referenced in documentation page Artifact Framework
+  - target: DOC-044
+    type: documented-by
+    rationale: Referenced in documentation page Roadmap
 ---
 ## Why P1
 

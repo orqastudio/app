@@ -2,8 +2,21 @@
 id: DOC-007
 title: MCP Host Interface
 description: Design for OrqaStudio's Model Context Protocol host interface for tool integration.
-created: "2026-03-02"
-updated: "2026-03-04"
+created: 2026-03-02
+updated: 2026-03-04
+relationships:
+  - target: AD-007
+    type: documents
+    rationale: Documentation page references AD-007
+  - target: AD-010
+    type: documents
+    rationale: Documentation page references AD-010
+  - target: AD-011
+    type: documents
+    rationale: Documentation page references AD-011
+  - target: AD-017
+    type: documents
+    rationale: Documentation page references AD-017
 ---
 
 
