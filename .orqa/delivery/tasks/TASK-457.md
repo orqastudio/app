@@ -2,7 +2,7 @@
 id: TASK-457
 title: "Register roadmap view under Process navigation"
 description: "Make the roadmap kanban view accessible under Process in navigation and handle the static roadmap.md."
-status: todo
+status: done
 priority: P2
 created: "2026-03-14"
 updated: "2026-03-14"

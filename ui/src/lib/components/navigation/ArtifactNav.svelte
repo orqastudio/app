@@ -93,6 +93,9 @@
 	/** Nodes for this category — either from navTree or empty. */
 	const allNodes = $derived(currentNavType ? currentNavType.nodes : []);
 
+	/** Whether this category is a documentation type (show category badge instead of status). */
+	const isDocType = $derived(currentNavType?.path.includes("/documentation/") ?? false);
+
 	/** Label for this category. */
 	const categoryLabel = $derived(
 		currentNavType?.label ?? navigationStore.getLabelForKey(category),

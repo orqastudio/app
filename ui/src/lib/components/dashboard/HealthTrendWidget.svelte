@@ -45,13 +45,25 @@
 		{ label: "Broken Refs", key: "broken_ref_count", color: "text-muted-foreground", strokeColor: "#6b7280" },
 	];
 
+	const SPARKLINE_WIDTH = 120;
+	const SPARKLINE_HEIGHT = 80;
+
 	function sparklinePath(data: HealthSnapshot[], key: keyof HealthSnapshot, width: number, height: number): string {
 		if (data.length < 2) return "";
 		const values = data.map((s) => Number(s[key]));
 		const max = Math.max(...values, 1); // At least 1 to avoid division by zero
+		const padding = 4; // Vertical padding so line doesn't touch edges
+		const usableHeight = height - padding * 2;
 		const stepX = width / (values.length - 1);
-		const points = values.map((v, i) => `${i * stepX},${height - (v / max) * height}`);
+		const points = values.map((v, i) => `${i * stepX},${padding + usableHeight - (v / max) * usableHeight}`);
 		return `M${points.join(" L")}`;
+	}
+
+	/** Compute the max value for the y-axis scale label. */
+	function maxValue(key: keyof HealthSnapshot): number {
+		if (chronological.length === 0) return 0;
+		const values = chronological.map((s) => Number(s[key]));
+		return Math.max(...values, 1);
 	}
 
 	function latestValue(key: keyof HealthSnapshot): number {
@@ -59,29 +71,37 @@
 		return Number(snapshots[0][key]);
 	}
 
-	function trend(key: keyof HealthSnapshot): "up" | "down" | "flat" {
-		if (snapshots.length < 2) return "flat";
+	function trendPercent(key: keyof HealthSnapshot): number | null {
+		if (snapshots.length < 2) return null;
 		const current = Number(snapshots[0][key]);
 		const previous = Number(snapshots[1][key]);
-		if (current > previous) return "up";
-		if (current < previous) return "down";
-		return "flat";
+		if (previous === 0) {
+			if (current === 0) return 0;
+			return 100; // Went from 0 to something
+		}
+		return Math.round(((current - previous) / previous) * 100);
 	}
 
 	function trendIndicator(key: keyof HealthSnapshot): string {
-		const t = trend(key);
-		// For error/warning metrics, "down" is good, "up" is bad
-		if (t === "down") return "↓";
-		if (t === "up") return "↑";
-		return "—";
+		const pct = trendPercent(key);
+		if (pct === null) return "";
+		if (pct === 0) return "0%";
+		const sign = pct > 0 ? "+" : "";
+		return `${sign}${pct}%`;
+	}
+
+	function trendArrow(key: keyof HealthSnapshot): string {
+		const pct = trendPercent(key);
+		if (pct === null || pct === 0) return "";
+		return pct > 0 ? "\u2191" : "\u2193";
 	}
 
 	function trendColor(key: keyof HealthSnapshot): string {
-		const t = trend(key);
+		const pct = trendPercent(key);
+		if (pct === null || pct === 0) return "text-muted-foreground";
 		// For these metrics, lower is better
-		if (t === "down") return "text-green-500";
-		if (t === "up") return "text-destructive";
-		return "text-muted-foreground";
+		if (pct < 0) return "text-green-500";
+		return "text-destructive";
 	}
 </script>
 
@@ -101,43 +121,70 @@
 					<LoadingSpinner />
 				</div>
 			{:else}
-				<div class="grid grid-cols-2 gap-4">
+				<div class="grid grid-cols-2 gap-6">
 					{#each sparklines as config (config.key)}
-						<div class="flex items-center gap-3">
-							<!-- Sparkline SVG -->
-							<svg
-								width="64"
-								height="24"
-								viewBox="0 0 64 24"
-								class="shrink-0"
-								fill="none"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<path
-									d={sparklinePath(chronological, config.key, 64, 24)}
-									stroke={config.strokeColor}
-									stroke-width="1.5"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									fill="none"
-								/>
-							</svg>
-							<!-- Label + value -->
-							<div class="min-w-0">
-								<div class="text-xs text-muted-foreground">{config.label}</div>
-								<div class="flex items-center gap-1">
-									<span class="text-sm font-semibold tabular-nums {config.color}">
+						<div class="space-y-1">
+							<!-- Header: label + latest value -->
+							<div class="flex items-baseline justify-between">
+								<span class="text-xs text-muted-foreground">{config.label}</span>
+								<div class="flex items-center gap-1.5">
+									<span class="text-lg font-semibold tabular-nums {config.color}">
 										{latestValue(config.key)}
 									</span>
-									<span class="text-xs {trendColor(config.key)}">
-										{trendIndicator(config.key)}
-									</span>
+									{#if trendPercent(config.key) !== null}
+										<span class="text-xs font-medium {trendColor(config.key)}">
+											{trendArrow(config.key)} {trendIndicator(config.key)}
+										</span>
+									{/if}
 								</div>
+							</div>
+							<!-- Sparkline with y-axis scale -->
+							<div class="flex items-start gap-1">
+								<div class="flex flex-col justify-between text-[9px] tabular-nums text-muted-foreground/60" style="height: {SPARKLINE_HEIGHT}px;">
+									<span>{maxValue(config.key)}</span>
+									<span>0</span>
+								</div>
+								<svg
+									width={SPARKLINE_WIDTH}
+									height={SPARKLINE_HEIGHT}
+									viewBox="0 0 {SPARKLINE_WIDTH} {SPARKLINE_HEIGHT}"
+									class="shrink-0"
+									fill="none"
+									xmlns="http://www.w3.org/2000/svg"
+								>
+									<!-- Faint baseline at y=0 -->
+									<line
+										x1="0"
+										y1={SPARKLINE_HEIGHT - 4}
+										x2={SPARKLINE_WIDTH}
+										y2={SPARKLINE_HEIGHT - 4}
+										stroke="currentColor"
+										stroke-width="0.5"
+										class="text-muted-foreground/20"
+									/>
+									<!-- Area fill under the sparkline -->
+									{@const pathD = sparklinePath(chronological, config.key, SPARKLINE_WIDTH, SPARKLINE_HEIGHT)}
+									{#if pathD}
+										<path
+											d="{pathD} L{SPARKLINE_WIDTH},{SPARKLINE_HEIGHT - 4} L0,{SPARKLINE_HEIGHT - 4} Z"
+											fill={config.strokeColor}
+											fill-opacity="0.08"
+										/>
+										<path
+											d={pathD}
+											stroke={config.strokeColor}
+											stroke-width="1.5"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											fill="none"
+										/>
+									{/if}
+								</svg>
 							</div>
 						</div>
 					{/each}
 				</div>
-				<p class="mt-2 text-[10px] text-muted-foreground">
+				<p class="mt-3 text-[10px] text-muted-foreground">
 					Based on {snapshots.length} scan{snapshots.length !== 1 ? "s" : ""}
 				</p>
 			{/if}

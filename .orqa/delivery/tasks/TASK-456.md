@@ -2,7 +2,7 @@
 id: TASK-456
 title: "Roadmap kanban view"
 description: "Create a dynamic kanban board showing milestones as columns with epic cards, with drill-down capability."
-status: todo
+status: done
 priority: P2
 created: "2026-03-14"
 updated: "2026-03-14"

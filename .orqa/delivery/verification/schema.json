@@ -39,7 +39,7 @@
         "additionalProperties": false,
         "properties": {
           "type": {
-            "enum": ["observes", "observed-by", "grounded", "grounded-by", "practices", "practiced-by", "enforces", "enforced-by", "verifies", "verified-by", "informs", "informed-by", "documents", "documented-by"]
+            "enum": ["belongs-to", "contains", "delivers", "delivered-by", "observes", "observed-by", "grounded", "grounded-by", "practices", "practiced-by", "enforces", "enforced-by", "verifies", "verified-by", "informs", "informed-by", "documents", "documented-by"]
           },
           "target": {
             "type": ["string", "null"],
