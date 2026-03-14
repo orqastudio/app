@@ -2,7 +2,7 @@
 id: TASK-413
 title: Add bidirectional relationship checking to graph-guardian.mjs
 description: Extend the PostToolUse graph-guardian hook to check for missing bidirectional relationship inverses when .orqa/ artifacts are written. Return warnings for one-sided relationships so the agent can fix them immediately.
-status: todo
+status: done
 priority: P1
 created: 2026-03-14
 updated: 2026-03-14

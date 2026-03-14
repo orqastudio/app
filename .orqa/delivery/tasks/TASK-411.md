@@ -2,7 +2,7 @@
 id: TASK-411
 title: Add stop event handling to rule-engine.mjs
 description: "Extend the plugin's rule engine to evaluate enforcement entries with event: stop. Currently only file/bash events are processed. Stop events need different context (session-level, no file path) and must fire when the Stop hook runs."
-status: todo
+status: done
 priority: P1
 created: 2026-03-14
 updated: 2026-03-14
