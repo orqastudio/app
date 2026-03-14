@@ -2,7 +2,7 @@
 id: TASK-461
 title: "Merge overlapping documentation"
 description: "Consolidate 4 pairs of overlapping docs into single authoritative sources. Merge governance-hub into governance, guide/workflow into process/workflow, component-inventory into svelte-components, artifact-types into artifact-framework."
-status: todo
+status: done
 priority: P1
 created: 2026-03-14
 updated: 2026-03-14

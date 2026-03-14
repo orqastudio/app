@@ -2,7 +2,7 @@
 id: TASK-462
 title: "Restructure unfocused documentation and remove stale phase references"
 description: "Restructure DOC-021 (coding-standards) as a principles doc, add purpose to DOC-030 (orchestration), and remove all stale Phase 2a/2b references across 23 documentation files."
-status: todo
+status: done
 priority: P1
 created: 2026-03-14
 updated: 2026-03-14
