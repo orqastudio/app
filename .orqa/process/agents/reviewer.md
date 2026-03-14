@@ -27,6 +27,9 @@ subagent_mapping:
   with_ux_skills: UX Reviewer
   with_security_skills: Security Engineer
 relationships:
+  - type: grounded-by
+    target: DOC-065
+    rationale: Code principles grounding — what good code means, boundaries that must not be crossed, and what to check in review
   - type: scoped-by
     target: RULE-002
     rationale: Inverse of scoped-to — migrated from scope field

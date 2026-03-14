@@ -14,6 +14,9 @@ relationships:
   - target: DOC-043
     type: informed-by
     rationale: Distilled from the personas document
+  - type: grounded
+    target: AGENT-001
+    rationale: Grounds the Designer role with design principles
 ---
 
 ## Who You Are Designing For

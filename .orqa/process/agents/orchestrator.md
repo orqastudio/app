@@ -198,6 +198,12 @@ relationships:
   - type: grounded-by
     target: DOC-046
     rationale: Product vision — the orchestrator must understand the mission and identity of OrqaStudio to make aligned decisions
+  - type: grounded-by
+    target: DOC-064
+    rationale: Product purpose grounding — concise summary of what OrqaStudio is and what the pillars demand from coordination work
+  - type: grounded-by
+    target: DOC-069
+    rationale: Delegation reference — the orchestrator's source of truth for which role to delegate to, which skills to load, and which grounding docs to include
 ---
 
 # OrqaStudio Orchestrator

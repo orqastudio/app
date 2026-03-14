@@ -20,6 +20,18 @@ relationships:
   - target: PILLAR-003
     type: informed-by
     rationale: Distilled from the Purpose Through Continuity pillar
+  - type: informs
+    target: DOC-069
+    rationale: Product purpose grounding informs the delegation reference — inverse of informed-by on DOC-069
+  - type: grounded
+    target: AGENT-003
+    rationale: Grounds the Orchestrator role with product purpose
+  - type: grounded
+    target: AGENT-004
+    rationale: Grounds the Planner role with product purpose
+  - type: grounded
+    target: AGENT-008
+    rationale: Grounds the Governance Steward role with product purpose (already declared on AGENT-008)
 ---
 
 ## What OrqaStudio Is

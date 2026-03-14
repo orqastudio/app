@@ -11,6 +11,9 @@ relationships:
   - target: RES-002
     type: documents
     rationale: Documentation page references RES-002
+  - target: DOC-067
+    type: informs
+    rationale: Interaction patterns are distilled into the design-principles grounding document — inverse of informed-by on DOC-067
 ---
 
 **Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-004), [AI Integration Research](RES-002), Design System

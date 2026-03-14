@@ -3,7 +3,11 @@ id: DOC-043
 title: User Personas
 description: User personas describing target users, their goals, pain points, and usage patterns.
 created: "2026-03-02"
-updated: "2026-03-08"
+updated: "2026-03-14"
+relationships:
+  - target: DOC-067
+    type: informs
+    rationale: User personas are distilled into the design-principles grounding document — inverse of informed-by on DOC-067
 ---
 
 **Date:** 2026-03-07

@@ -11,6 +11,9 @@ relationships:
   - target: AGENT-003
     type: grounded
     rationale: Orchestrator is grounded by this document — product vision is injected as foundational context
+  - target: DOC-064
+    type: informs
+    rationale: Product vision is distilled into the product-purpose grounding document — inverse of informed-by on DOC-064
 ---
 
 **Date:** 2026-03-07

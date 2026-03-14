@@ -26,6 +26,9 @@ relationships:
   - type: scoped-to
     target: AGENT-001
     rationale: Migrated from scope field
+  - type: informs
+    target: DOC-068
+    rationale: Research methodology skill is distilled into the research-principles grounding document — inverse of informed-by on DOC-068
 ---
 
 # Research Methodology

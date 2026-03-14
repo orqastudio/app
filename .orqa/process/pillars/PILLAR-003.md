@@ -36,6 +36,9 @@ relationships:
   - target: AGENT-003
     type: grounded
     rationale: Orchestrator is grounded by this pillar — Purpose Through Continuity is injected as foundational context
+  - target: DOC-064
+    type: informs
+    rationale: Purpose Through Continuity pillar is distilled into the product-purpose grounding document — inverse of informed-by on DOC-064
 ---
 ## What This Pillar Means
 

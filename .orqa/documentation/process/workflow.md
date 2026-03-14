@@ -3,7 +3,14 @@ id: DOC-035
 title: Development Workflow
 description: Development workflow covering worktree lifecycle, branch strategy, and merge procedures.
 created: "2026-03-02"
-updated: "2026-03-12"
+updated: "2026-03-14"
+relationships:
+  - target: RULE-013
+    type: documents
+    rationale: This document is the source-of-truth for the git workflow and worktree lifecycle that RULE-013 enforces
+  - target: RULE-004
+    type: documents
+    rationale: This document covers the task process and status transitions governed by RULE-004
 ---
 
 **Date:** 2026-03-02

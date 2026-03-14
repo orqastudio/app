@@ -93,6 +93,9 @@ relationships:
   - target: AGENT-003
     type: grounded
     rationale: Orchestrator is grounded by this pillar — Learning Through Reflection is injected as foundational context
+  - target: DOC-064
+    type: informs
+    rationale: Learning Through Reflection pillar is distilled into the product-purpose grounding document — inverse of informed-by on DOC-064
 ---
 ## What This Pillar Means
 

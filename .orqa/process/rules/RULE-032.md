@@ -50,6 +50,9 @@ relationships:
   - type: scoped-to
     target: AGENT-007
     rationale: Migrated from scope field
+  - target: DOC-036
+    type: documented-by
+    rationale: artifact-framework.md defines the artifact schemas and frontmatter contracts this rule validates
 ---
 Every artifact in `.orqa/` must have YAML frontmatter that validates against the JSON Schema in its directory's `schema.json` file. Fields not defined in the schema are rejected. Required fields must be present. Enum fields must use valid values.
 

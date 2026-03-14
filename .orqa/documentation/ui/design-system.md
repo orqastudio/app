@@ -14,6 +14,9 @@ relationships:
   - target: RES-004
     type: documents
     rationale: Documentation page references RES-004
+  - target: DOC-067
+    type: informs
+    rationale: Design system is distilled into the design-principles grounding document — inverse of informed-by on DOC-067
 ---
 
 **Date:** 2026-03-02

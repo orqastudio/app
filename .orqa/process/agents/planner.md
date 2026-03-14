@@ -26,6 +26,9 @@ skills:
 subagent_mapping:
   default: Plan
 relationships:
+  - type: grounded-by
+    target: DOC-064
+    rationale: Product purpose grounding — what OrqaStudio is, what the pillars demand, and what good planning looks like
   - type: scoped-by
     target: RULE-002
     rationale: Inverse of scoped-to — migrated from scope field

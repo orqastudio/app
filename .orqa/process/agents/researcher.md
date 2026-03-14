@@ -25,6 +25,9 @@ skills:
 subagent_mapping:
   default: Explore
 relationships:
+  - type: grounded-by
+    target: DOC-068
+    rationale: Research principles grounding — what good research means, source credibility, confidence levels, and artifact creation
   - type: scoped-by
     target: RULE-002
     rationale: Inverse of scoped-to — migrated from scope field

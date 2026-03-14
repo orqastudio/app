@@ -14,6 +14,12 @@ relationships:
   - target: RULE-040
     type: documents
     rationale: Documentation page references RULE-040
+  - target: RULE-001
+    type: documents
+    rationale: This document is the source-of-truth for orchestrator behaviour and agent delegation that RULE-001 enforces
+  - target: DOC-069
+    type: informs
+    rationale: Orchestration documentation provides procedural context for the delegation reference — inverse of informed-by on DOC-069
 ---
 
 ## Purpose

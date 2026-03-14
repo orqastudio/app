@@ -14,6 +14,9 @@ relationships:
   - target: RULE-001
     type: enforces
     rationale: This document operationalises the delegation rule
+  - type: grounded
+    target: AGENT-003
+    rationale: Grounds the Orchestrator role — delegation reference is the orchestrator's lookup table for all delegation decisions
 ---
 
 # Delegation Reference

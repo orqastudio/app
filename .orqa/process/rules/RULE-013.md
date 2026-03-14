@@ -77,6 +77,9 @@ relationships:
   - target: DOC-002
     type: documented-by
     rationale: Referenced in documentation page Enforcement Architecture
+  - target: DOC-035
+    type: documented-by
+    rationale: workflow.md is the source-of-truth document for the git workflow this rule enforces
 ---
 **Source of Truth:** `.orqa/documentation/process/workflow.md`
 

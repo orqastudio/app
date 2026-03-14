@@ -84,6 +84,9 @@ relationships:
   - type: scoped-to
     target: AGENT-007
     rationale: Migrated from scope field
+  - target: DOC-039
+    type: documented-by
+    rationale: governance.md defines the feature governance framework and pillar alignment criteria this rule enforces
 ---
 Every feature, command, and UI element must serve the project's guiding principles. These principles are defined as **pillar artifacts** in `.orqa/process/pillars/`. Read the active pillars before implementing any new capability.
 

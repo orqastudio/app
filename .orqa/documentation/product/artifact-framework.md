@@ -83,6 +83,15 @@ relationships:
   - target: EPIC-005
     type: documents
     rationale: Documentation page references EPIC-005
+  - target: RULE-004
+    type: documents
+    rationale: This document is the source-of-truth for artifact lifecycle that RULE-004 enforces
+  - target: RULE-032
+    type: documents
+    rationale: This document defines the artifact schemas and frontmatter contracts that RULE-032's validation enforces
+  - target: DOC-066
+    type: informs
+    rationale: Artifact framework is distilled into the artifact-principles grounding document — inverse of informed-by on DOC-066
 ---
 
 **Date:** 2026-03-07

@@ -27,6 +27,9 @@ skills:
 subagent_mapping:
   default: Documentation Writer
 relationships:
+  - type: grounded-by
+    target: DOC-066
+    rationale: Artifact principles grounding — what good artifacts look like, graph discipline, creating artifacts with purpose
   - type: scoped-by
     target: RULE-002
     rationale: Inverse of scoped-to — migrated from scope field

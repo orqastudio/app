@@ -25,6 +25,9 @@ subagent_mapping:
   with_frontend_skills: Frontend Engineer
   with_ux_skills: UX Reviewer
 relationships:
+  - type: grounded-by
+    target: DOC-067
+    rationale: Design principles grounding — who we design for, UX-first principle, design language, and common failure patterns
   - type: scoped-by
     target: RULE-002
     rationale: Inverse of scoped-to — migrated from scope field

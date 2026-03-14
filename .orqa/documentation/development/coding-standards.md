@@ -11,6 +11,12 @@ relationships:
   - target: RULE-020
     type: documents
     rationale: Documentation page references RULE-020
+  - target: RULE-006
+    type: documents
+    rationale: This document is the source-of-truth referenced by RULE-006 — it defines the specific standards that rule enforces
+  - target: DOC-065
+    type: informs
+    rationale: Coding standards are distilled into the code-principles grounding document — inverse of informed-by on DOC-065
 ---
 
 ## Purpose

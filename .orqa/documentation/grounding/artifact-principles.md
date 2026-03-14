@@ -11,6 +11,12 @@ relationships:
   - target: DOC-039
     type: informed-by
     rationale: Distilled from the product governance document
+  - type: grounded
+    target: AGENT-007
+    rationale: Grounds the Writer role with artifact principles
+  - type: grounded
+    target: AGENT-008
+    rationale: Grounds the Governance Steward role with artifact principles (already declared on AGENT-008)
 ---
 
 ## What Good Artifacts Look Like

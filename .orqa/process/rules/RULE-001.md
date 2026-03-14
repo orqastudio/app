@@ -78,6 +78,15 @@ relationships:
   - target: DOC-036
     type: documented-by
     rationale: Referenced in documentation page Artifact Framework
+  - target: DOC-030
+    type: documented-by
+    rationale: orchestration.md is the source-of-truth document for orchestrator behaviour that this rule enforces
+  - target: DOC-069
+    type: documented-by
+    rationale: delegation.md operationalises this rule as the orchestrator's lookup table for delegation decisions
+  - target: DOC-069
+    type: enforced-by
+    rationale: delegation.md operationalises the delegation rule — inverse of enforces on DOC-069
 enforcement:
   - event: stop
     action: warn

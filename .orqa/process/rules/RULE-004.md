@@ -147,6 +147,12 @@ relationships:
   - target: DOC-025
     type: documented-by
     rationale: Referenced in documentation page Artifact Workflow
+  - target: DOC-035
+    type: documented-by
+    rationale: workflow.md documents the task process and status transitions that this rule governs
+  - target: DOC-036
+    type: documented-by
+    rationale: artifact-framework.md is the source-of-truth document for artifact lifecycle this rule enforces
 ---
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
 

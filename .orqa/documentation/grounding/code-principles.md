@@ -23,6 +23,12 @@ relationships:
   - target: AD-006
     type: informed-by
     rationale: Distilled from the component purity decision
+  - type: grounded
+    target: AGENT-002
+    rationale: Grounds the Implementer role with code principles
+  - type: grounded
+    target: AGENT-006
+    rationale: Grounds the Reviewer role with code principles
 ---
 
 ## What Good Code Means Here

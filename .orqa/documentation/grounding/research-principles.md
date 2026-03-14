@@ -8,6 +8,9 @@ relationships:
   - target: SKILL-048
     type: informed-by
     rationale: Distilled from the research methodology skill
+  - type: grounded
+    target: AGENT-005
+    rationale: Grounds the Researcher role with research principles
 ---
 
 ## What Good Research Means

@@ -136,6 +136,9 @@ relationships:
   - target: DOC-002
     type: documented-by
     rationale: Referenced in documentation page Enforcement Architecture
+  - target: DOC-021
+    type: documented-by
+    rationale: coding-standards.md is the source-of-truth document this rule references and enforces
 ---
 **Source of Truth:** `.orqa/documentation/development/coding-standards.md`
 
