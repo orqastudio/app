@@ -1,0 +1,25 @@
+---
+id: IMPL-060
+title: "Dashboard widgets should be information-dense, not card-per-concern"
+description: "A vertical stack of full-width cards wastes space and creates false visual hierarchy. Dashboards need grid layouts where widget size reflects importance, and empty/healthy states collapse to minimal indicators."
+status: active
+recurrence: 1
+created: "2026-03-14"
+updated: "2026-03-14"
+maturity: understanding
+relationships:
+  - target: IMPL-053
+    type: informed-by
+    rationale: "IMPL-053 identified that metrics without actionability are decoration — this lesson extends to layout"
+  - target: EPIC-068
+    type: informs
+    rationale: "Dashboard redesign epic directly addresses this"
+---
+
+## Pattern
+
+The dashboard uses a single-column card layout. Each concern (pipeline health, knowledge pipeline, health trends, milestone progress) gets an equal-sized card regardless of importance or state. "All clear" takes as much space as "54 errors". This violates the principle that UI should surface problems prominently and be quiet when things are healthy.
+
+## Fix
+
+Grid layout where widget size reflects importance. Healthy/empty states collapse to a subtle indicator (a green dot with "All clear" text, not a full card). Error states expand to show details. Architecture should support future drag-drop positioning and plugin-provided widgets.
