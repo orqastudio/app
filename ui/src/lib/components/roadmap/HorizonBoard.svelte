@@ -154,7 +154,7 @@
 	<!-- Toolbar -->
 	<div class="flex items-center justify-between">
 		<span class="text-xs text-muted-foreground">
-			{allMilestones.length} milestone{allMilestones.length === 1 ? '' : 's'}
+			{allMilestones.filter(m => m.status === 'complete').length}/{allMilestones.length} Done
 		</span>
 		<SelectMenu
 			items={SORT_OPTIONS}
@@ -166,8 +166,8 @@
 	</div>
 
 	<!-- Horizon columns -->
-	<ScrollArea.Root class="min-h-0 flex-1" orientation="horizontal">
-		<div class="flex h-full min-w-max gap-4 pb-4">
+	<div class="min-h-0 flex-1">
+		<div class="flex h-full gap-4 pb-4">
 			{#each activeColumns as col (col.key)}
 				{@const isCollapsed = col.isDone === true && collapsedCols.has(col.key)}
 				{@const isDrop = dropTargetKey === col.key}
@@ -207,7 +207,7 @@
 					<!-- Expanded column -->
 					<div
 						class={cn(
-							"flex min-w-60 flex-1 flex-col rounded-xl border border-border bg-muted/5 transition-colors",
+							"flex min-w-[12rem] flex-1 flex-col rounded-xl border border-border bg-muted/5 transition-colors",
 							isDrop && "border-primary bg-primary/5",
 						)}
 						ondragover={(e) => handleDragOver(e, col.key)}
@@ -288,5 +288,5 @@
 				{/if}
 			{/each}
 		</div>
-	</ScrollArea.Root>
+	</div>
 </div>

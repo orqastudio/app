@@ -99,6 +99,8 @@
 		}).length,
 	);
 
+	const doneNodes = $derived(totalNodes - nonDoneCount);
+
 	// All-done: items exist, none are in non-done columns, status grouping, user hasn't overridden
 	const isAllDone = $derived(
 		totalNodes > 0 && nonDoneCount === 0 && groupBy === "status" && !showBoardOverride,
@@ -115,7 +117,7 @@
 	<!-- Toolbar -->
 	<div class="flex items-center justify-between">
 		<span class="text-xs text-muted-foreground">
-			{totalNodes} item{totalNodes === 1 ? "" : "s"}
+			{doneNodes}/{totalNodes} Done
 		</span>
 		<SelectMenu
 			items={GROUP_OPTIONS}
@@ -146,8 +148,8 @@
 		</div>
 	{:else}
 		<!-- Kanban columns -->
-		<ScrollArea.Root class="min-h-0 flex-1" orientation="horizontal">
-			<div class="flex h-full min-w-max gap-3 pb-2">
+		<div class="min-h-0 flex-1">
+			<div class="flex h-full gap-3 pb-2">
 				{#if totalNodes === 0}
 					<div class="flex flex-1 items-center justify-center">
 						<EmptyState
@@ -190,6 +192,6 @@
 					{/each}
 				{/if}
 			</div>
-		</ScrollArea.Root>
+		</div>
 	{/if}
 </div>
