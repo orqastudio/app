@@ -79,6 +79,20 @@ UAT round 3 collected 30 findings across the app after implementing 31 tasks in 
 | F31 | Toast notifications: animate in/out, top center, min-width | ux | notifications | UI polish |
 | F32 | Pipeline health category dropdown not using SelectMenu | bug | dashboard | Dashboard |
 | F33 | Pipeline health filter toggles need proper component pattern | ux | dashboard | Dashboard |
+| F34 | Roadmap columns no longer evenly fill panel width after ScrollArea migration | bug | roadmap | Roadmap |
+| F35 | ScrollArea inside roadmap columns doesn't scroll — cards clipped/hidden | bug | roadmap | Roadmap |
+| F36 | All-done state: show "All completed" screen with "View board" button instead of empty columns. Only collapse Done when non-done items exist | ux | roadmap | Roadmap |
+| F37 | Drag and drop between roadmap kanban columns not working | bug | roadmap | Roadmap |
+| F38 | No sort/group dropdown on roadmap kanban (was in acceptance criteria) | bug | roadmap | Roadmap |
+| F39 | Column headers: remove "X items", move "X/X done" into that spot, capitalize words, put in badge | ux | roadmap | Roadmap |
+| F40 | Progress bar circles on milestone cards not centered on label | ux | roadmap | Roadmap |
+| F41 | Roadmap still top-level nav — should be inside Delivery section as first item | bug | navigation | Navigation |
+| F42 | Relationship graph needs proper library (zoom, pan, dynamic layout, click-to-navigate) | ux | artifact-viewer | Graph viz |
+| F43 | Metadata panel: add icons to all fields (only scoring has one) | ux | artifact-viewer | Viewer layout |
+| F44 | Metadata panel still shows relationship-specific fields (epic, milestone, depends-on) duplicating relationships list | bug | artifact-viewer | Viewer layout |
+| F45 | Gap between metadata panel and acceptance criteria too large | ux | artifact-viewer | Viewer layout |
+| F46 | No gap between acceptance criteria and body content on tasks | ux | artifact-viewer | Viewer layout |
+| F47 | Artifact link display mode (ID vs title) should be per-type, not just global | ux | settings | Artifact links |
 
 ## Systemic Analysis
 
