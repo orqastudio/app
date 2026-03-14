@@ -12,6 +12,13 @@ research-needed:
   - "How does this interact with UX-first design — friction in the right places vs friction-free experience?"
   - "User testing — does mandatory-relationships-with-AI-assist feel like value or bureaucracy?"
 promoted-to: null
+relationships:
+  - target: PILLAR-003
+    type: informed-by
+    rationale: "Core question resolved — friction-as-feature absorbed into Purpose Through Continuity pillar"
+  - target: AD-042
+    type: informed-by
+    rationale: "Mandatory relationship schema implements the friction-is-the-feature principle"
 ---
 
 ## Motivation

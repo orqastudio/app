@@ -47,6 +47,9 @@ relationships:
   - target: IMPL-032
     type: observed-by
     rationale: "Auto-generated inverse of observed-by relationship from IMPL-032"
+  - target: IDEA-057
+    type: informs
+    rationale: "All 4 research questions from IDEA-057 resolved directly into this rule"
 ---
 Agent definitions declare **capabilities** (what they can do), not **tools** (how they
 do it). The mapping from capabilities to provider-specific tool names is defined in this

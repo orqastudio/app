@@ -26,6 +26,9 @@ relationships:
   - target: IMPL-050
     type: observed-by
     rationale: "Auto-generated inverse of observed-by relationship from IMPL-050"
+  - target: IDEA-065
+    type: informs
+    rationale: "Friction-as-feature question resolved — absorbed into this pillar rather than becoming a separate one"
 ---
 ## What This Pillar Means
 

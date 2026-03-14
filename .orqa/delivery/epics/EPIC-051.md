@@ -28,6 +28,10 @@ scoring:
   foundation: 5
   complexity: 2
   score: 4.0
+relationships:
+  - target: IDEA-057
+    type: informed-by
+    rationale: "Promoted from IDEA-057 — provider-agnostic tool abstraction"
 ---
 
 ## Context

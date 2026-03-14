@@ -18,6 +18,13 @@ research-needed:
   - Design the capability → tool resolution mechanism
   - Determine where the mapping lives (rule, skill, or config)
 promoted-to: EPIC-051
+relationships:
+  - target: RULE-040
+    type: informed-by
+    rationale: "All 4 research questions resolved directly into RULE-040 — capability vocabulary, provider mappings, context detection, and resolution protocol"
+  - target: EPIC-051
+    type: informs
+    rationale: "Promoted to epic for implementation"
 ---
 
 ## Motivation
