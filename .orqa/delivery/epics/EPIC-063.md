@@ -3,6 +3,12 @@
 
 
 
+
+
+
+
+
+
 id: EPIC-063
 title: "Dashboard & artifact viewer UAT fixes"
 description: "UAT round covering the full dashboard and artifact viewer experience. Fixes navigation bugs, redesigns dashboard widgets for actionable insight, enhances artifact viewer with relationship consolidation and pipeline position, and improves search UX."
@@ -43,6 +49,24 @@ relationships:
   - target: IDEA-092
     type: informs
     rationale: "Auto-generated inverse of informs relationship from IDEA-092"
+  - target: EPIC-072
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from EPIC-072"
+  - target: EPIC-070
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from EPIC-070"
+  - target: EPIC-071
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from EPIC-071"
+  - target: EPIC-068
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from EPIC-068"
+  - target: EPIC-067
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from EPIC-067"
+  - target: EPIC-069
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from EPIC-069"
 ---
 ## UAT Findings Summary
 

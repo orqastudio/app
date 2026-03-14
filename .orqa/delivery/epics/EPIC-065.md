@@ -1,4 +1,5 @@
 ---
+
 id: EPIC-065
 title: "Artifact viewer enhancements"
 description: "Enhance the artifact viewer with unified relationships display, actions needed inference, pipeline position stepper, horizon display, and acceptance criteria checkboxes. Originated from UAT Theme D findings."
@@ -23,8 +24,10 @@ relationships:
   - target: EPIC-060
     type: informs
     rationale: "Enhances artifact viewer built in EPIC-060"
+  - target: EPIC-067
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from EPIC-067"
 ---
-
 ## Context
 
 During UAT of the dashboard and artifact viewer (EPIC-063), Theme D identified 8 findings related to artifact viewer enhancements. These were substantial enough to warrant their own epic rather than being a task within the UAT fixes epic.

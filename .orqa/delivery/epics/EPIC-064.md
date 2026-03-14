@@ -1,5 +1,6 @@
 ---
 
+
 id: EPIC-064
 title: "Close enforcement bootstrapping gap"
 description: "The enforcement system is half-complete across all layers — rules declare enforcement entries but critical event types (stop) and actions (skill content injection) are not consumed by the plugin, and the Rust engine is disconnected from agent execution. This epic closes every gap so the system can enforce itself during its own development."
@@ -49,6 +50,9 @@ relationships:
   - target: RES-057
     type: informed-by
     rationale: "Integrity check alignment audit informed enforcement bootstrapping scope"
+  - target: EPIC-066
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from EPIC-066"
 ---
 ## Context
 

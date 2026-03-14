@@ -1,6 +1,7 @@
 ---
 
 
+
 id: PILLAR-003
 title: Purpose Through Continuity
 description: The system actively maintains coherence between intention and action. It prevents drift between what the user set out to do and what is actually being done, ensuring purpose is never lost during implementation.
@@ -29,6 +30,9 @@ relationships:
   - target: IDEA-065
     type: informs
     rationale: "Friction-as-feature question resolved — absorbed into this pillar rather than becoming a separate one"
+  - target: IMPL-065
+    type: observed-by
+    rationale: "Auto-generated inverse of observed-by relationship from IMPL-065"
 ---
 ## What This Pillar Means
 

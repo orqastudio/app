@@ -1,4 +1,5 @@
 ---
+
 id: EPIC-066
 title: "Package ecosystem extraction for plugin portability"
 description: "Extract types, integrity validator, eslint config, and SDK into standalone @orqastudio/ npm packages hosted on GitHub Packages. Gives plugins parity access to the frontend-backend connection, artifact graph, and code standards."
@@ -34,8 +35,10 @@ relationships:
   - target: EPIC-064
     type: informs
     rationale: "Enforcement bootstrapping benefits from the portable integrity validator"
+  - target: RES-059
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from RES-059"
 ---
-
 ## Context
 
 OrqaStudio plugins need to import shared code — types, validation, the artifact graph SDK, and code standards. Currently everything lives inside the monolith. Three research documents confirmed:

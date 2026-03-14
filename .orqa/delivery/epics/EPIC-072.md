@@ -1,4 +1,5 @@
 ---
+
 id: EPIC-072
 title: "Roadmap kanban view"
 description: "Replace the static roadmap documentation page with a dynamic kanban board view under Process. Milestone-level board with drill-down into epics and tasks, all data from the graph."
@@ -24,8 +25,10 @@ relationships:
   - target: EPIC-063
     type: informed-by
     rationale: "UAT round 2 finding F29"
+  - target: IMPL-065
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from IMPL-065"
 ---
-
 ## Context
 
 The roadmap is currently a manually maintained markdown page. It should be an inferred dynamic view showing milestones as kanban columns with epic cards, drillable to task level.

@@ -7,6 +7,7 @@
 
 
 
+
 id: PILLAR-001
 title: Clarity Through Structure
 description: Making thinking, standards, and decisions visible and structured.
@@ -437,6 +438,9 @@ relationships:
   - target: IMPL-057
     type: observed-by
     rationale: "Auto-generated inverse of observed-by relationship from IMPL-057"
+  - target: IMPL-064
+    type: observed-by
+    rationale: "Auto-generated inverse of observed-by relationship from IMPL-064"
 ---
 ## What This Pillar Means
 

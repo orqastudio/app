@@ -1,4 +1,7 @@
 ---
+
+
+
 id: EPIC-068
 title: "Dashboard redesign — layout, widgets, and plugin extensibility"
 description: "Redesign the dashboard from a vertical card stack to an information-dense layout. Architecture must support drag-and-drop positioning and plugin-provided custom widgets."
@@ -24,8 +27,16 @@ relationships:
   - target: IDEA-091
     type: informed-by
     rationale: "Pipeline flow model rethinking feeds into dashboard widget design"
+  - target: IMPL-062
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from IMPL-062"
+  - target: IMPL-060
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from IMPL-060"
+  - target: IMPL-063
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from IMPL-063"
 ---
-
 ## Context
 
 UAT round 2 found the dashboard is a column of cards, not a dashboard. Health trends are underutilised, "all clear" wastes space, and refresh/re-index are duplicated. The knowledge pipeline flow model needs rethinking (IDEA-091).

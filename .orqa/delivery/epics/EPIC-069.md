@@ -1,4 +1,5 @@
 ---
+
 id: EPIC-069
 title: "Notification system — toast, in-app panel, desktop"
 description: "Design and implement a notification strategy covering toast messages, in-app notification panel, and desktop notifications. Determine which events use which channel."
@@ -19,8 +20,10 @@ relationships:
   - target: EPIC-063
     type: informed-by
     rationale: "UAT round 2 identified missing notification strategy"
+  - target: IMPL-061
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from IMPL-061"
 ---
-
 ## Context
 
 No notification strategy exists. Auto-fix confirmations are verbose and inline. Need to decide on toast messages, in-app notification panel, desktop notifications, and which events use which channel.

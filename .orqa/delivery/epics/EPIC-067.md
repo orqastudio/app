@@ -1,4 +1,9 @@
 ---
+
+
+
+
+
 id: EPIC-067
 title: "Artifact viewer redesign — layout, relationships, and graph enrichment"
 description: "Redesign the artifact viewer information hierarchy, relationships panel, and pipeline stepper. Enrich graph nodes with metadata for display. The largest systemic theme from UAT round 2."
@@ -23,8 +28,22 @@ relationships:
   - target: EPIC-063
     type: informed-by
     rationale: "UAT round 2 findings drive this epic's scope"
+  - target: EPIC-072
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from EPIC-072"
+  - target: IMPL-064
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from IMPL-064"
+  - target: EPIC-070
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from EPIC-070"
+  - target: IMPL-058
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from IMPL-058"
+  - target: IMPL-059
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from IMPL-059"
 ---
-
 ## Context
 
 UAT round 2 produced 30 findings. Themes C, D, and E converge on the artifact viewer — wrong information hierarchy, relationships panel needing redesign, and graph nodes lacking metadata for display. These are interdependent and must be addressed together.

@@ -1,4 +1,6 @@
 ---
+
+
 id: IDEA-093
 title: "OrqaStudio package ecosystem for plugin portability"
 description: "Extract shared code into scoped npm packages hosted on GitHub Packages so that plugins can import types, validation, SDK, and UI components without depending on the full app."
@@ -21,8 +23,13 @@ relationships:
   - target: IDEA-092
     type: informed-by
     rationale: "CLI scanner parity led to extracting the integrity validator, which revealed the broader package need"
+  - target: EPIC-066
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from EPIC-066"
+  - target: RES-058
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from RES-058"
 ---
-
 ## Motivation
 
 OrqaStudio plugins need to import shared code — types, validation, the artifact graph SDK, and eventually UI components. Currently everything lives inside the monolith. Extracting into scoped packages enables:

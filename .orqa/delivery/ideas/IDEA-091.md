@@ -1,4 +1,5 @@
 ---
+
 id: IDEA-091
 title: "Rethink knowledge pipeline flow model"
 description: "The current pipeline widget assumes strict left-to-right flow (lesson→research→decision→skill→rule) but real knowledge flows in multiple directions based on context. Needs a new model that reflects how artifacts actually connect rather than enforcing a single pipeline direction."
@@ -20,8 +21,10 @@ relationships:
   - target: EPIC-060
     type: informed-by
     rationale: "Pipeline widget was built in EPIC-060, UAT revealed the flow model is wrong"
+  - target: EPIC-068
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from EPIC-068"
 ---
-
 ## Motivation
 
 The knowledge pipeline widget shows stages (Observation → Understanding → Principle → Practice → Enforcement → Verification) with flow rates between them. The flow rate is calculated by checking if each artifact has a relationship to an artifact in the next stage's type.

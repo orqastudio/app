@@ -1,4 +1,5 @@
 ---
+
 id: IDEA-092
 title: "Improve CLI integrity scanner to match app's Rust checks"
 description: "The CLI verify-links.mjs only checks markdown link syntax and relationship entries. The app's Rust integrity scan checks all frontmatter reference fields (skills, docs-required, docs-produced, milestone, epic, etc.), dependency violations, supersession symmetry, research gaps, and planning placement. The CLI should have parity."
@@ -24,8 +25,10 @@ relationships:
   - target: EPIC-066
     type: informs
     rationale: "CLI scanner parity idea drove the integrity validator package extraction"
+  - target: IDEA-093
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from IDEA-093"
 ---
-
 ## Motivation
 
 During UAT, the app's integrity scan found 54 errors that the CLI `verify-links.mjs` reported as 0 errors. The gap is significant:

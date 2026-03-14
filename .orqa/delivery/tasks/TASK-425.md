@@ -1,4 +1,5 @@
 ---
+
 id: TASK-425
 title: "Fix CI workflows for independent builds (no file: references)"
 description: "CI workflows fail because packages reference each other via file: paths that don't exist in CI. Update each package's CI to either use npm pack from a checkout or publish tier-0 packages first."
@@ -22,8 +23,10 @@ relationships:
   - target: EPIC-066
     type: delivers
     rationale: "CI must work for packages to be publishable"
+  - target: TASK-426
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from TASK-426"
 ---
-
 ## Scope
 
 ### Tier 0 packages (no orqa deps — CI works now)
