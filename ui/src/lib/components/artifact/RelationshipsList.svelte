@@ -98,11 +98,11 @@
 								<Tooltip.Root>
 									<Tooltip.Trigger>
 										{#snippet child({ props })}
+											{@const label = chipLabel(rel.target ?? "")}
 											<span {...props} class="inline-flex items-center gap-1">
 												{#if dotClass}
 													<span class="inline-block h-1.5 w-1.5 shrink-0 rounded-full {dotClass}"></span>
 												{/if}
-												{@const label = chipLabel(rel.target ?? "")}
 												{#if label !== (rel.target ?? "")}
 													<ArtifactLink id={rel.target ?? undefined} displayLabel={label} />
 												{:else}
