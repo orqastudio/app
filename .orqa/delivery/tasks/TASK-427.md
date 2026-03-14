@@ -2,7 +2,7 @@
 id: TASK-427
 title: "Switch tier-1 packages from file: to published deps + publish"
 description: "Update integrity-validator and SDK to depend on published @orqastudio/types instead of file: references. Fix CI, verify, then publish both."
-status: todo
+status: done
 priority: P1
 created: "2026-03-14"
 updated: "2026-03-14"
