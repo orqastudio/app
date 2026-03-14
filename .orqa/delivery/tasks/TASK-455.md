@@ -2,7 +2,7 @@
 id: TASK-455
 title: Documentation relationship audit — documents/documented-by edges
 description: Audit all documentation pages and populate documents/documented-by relationship edges across all docs.
-status: todo
+status: done
 priority: P2
 created: 2026-03-14
 updated: 2026-03-14
