@@ -2,7 +2,7 @@
 id: TASK-485
 title: "Move architecture/ → development/ and reference/ (18 files) + assign missing DOC IDs"
 description: "Split the architecture/ chapter: move 13 files to development/ and 5 files to reference/. Assign DOC IDs to core-architecture.md and plugin-architecture.md which currently lack them. Remove the architecture key from project.json."
-status: todo
+status: done
 priority: P1
 created: 2026-03-14
 updated: 2026-03-14

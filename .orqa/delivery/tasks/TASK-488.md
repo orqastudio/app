@@ -2,7 +2,7 @@
 id: TASK-488
 title: "Write P1 how-to guides (plugin SDK, Rust testing, frontend testing)"
 description: "Author the three P1 how-to guides that are new content deliverables for the reorganised documentation structure. Each guide must have complete frontmatter with a DOC ID, proper relationships, and substantive content."
-status: todo
+status: done
 priority: P1
 created: 2026-03-14
 updated: 2026-03-14

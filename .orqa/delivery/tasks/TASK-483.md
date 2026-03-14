@@ -2,7 +2,7 @@
 id: TASK-483
 title: "Refactor KnowledgePipelineWidget as collapsible bottom section"
 description: "Move the knowledge pipeline widget into the collapsible bottom section of the new dashboard layout. The section collapses by default. When expanded, the widget shows the 6-stage pipeline with connectivity health indicators."
-status: todo
+status: done
 priority: P2
 created: 2026-03-14
 updated: 2026-03-14
