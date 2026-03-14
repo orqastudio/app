@@ -89,7 +89,7 @@
 </script>
 
 <ScrollArea.Root class="h-full" orientation="horizontal">
-	<div class="flex h-full gap-4 pb-4">
+	<div class="flex h-full min-w-max gap-4 pb-4">
 		{#each columns as col (col.key)}
 			{@const isCollapsed = col.isDone === true && collapsedCols.has(col.key)}
 			{@const isDrop = dropTargetKey === col.key}
@@ -162,7 +162,7 @@
 					</div>
 
 					<!-- Milestone cards -->
-					<ScrollArea.Root class="flex-1" orientation="vertical">
+					<ScrollArea.Root class="min-h-0 flex-1" orientation="vertical">
 						<div class="flex flex-col gap-3 p-3">
 							{#if col.milestones.length === 0}
 								<div class="flex flex-1 items-center justify-center rounded-lg border border-dashed border-border p-6 text-center text-xs text-muted-foreground">

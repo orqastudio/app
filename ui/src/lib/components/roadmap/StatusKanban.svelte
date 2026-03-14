@@ -103,8 +103,8 @@
 	</div>
 
 	<!-- Kanban columns -->
-	<ScrollArea.Root class="flex-1" orientation="horizontal">
-	<div class="flex gap-3 pb-2">
+	<ScrollArea.Root class="min-h-0 flex-1" orientation="horizontal">
+	<div class="flex h-full min-w-max gap-3 pb-2">
 		{#if totalNodes === 0}
 			<div class="flex flex-1 items-center justify-center">
 				<EmptyState

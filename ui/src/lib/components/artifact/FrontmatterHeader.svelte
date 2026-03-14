@@ -9,6 +9,18 @@
 	import CheckIcon from "@lucide/svelte/icons/check";
 	import XIcon from "@lucide/svelte/icons/x";
 	import ScaleIcon from "@lucide/svelte/icons/scale";
+	import ClockIcon from "@lucide/svelte/icons/clock";
+	import LayersIcon from "@lucide/svelte/icons/layers";
+	import CompassIcon from "@lucide/svelte/icons/compass";
+	import CpuIcon from "@lucide/svelte/icons/cpu";
+	import BookOpenIcon from "@lucide/svelte/icons/book-open";
+	import TagIcon from "@lucide/svelte/icons/tag";
+	import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
+	import RepeatIcon from "@lucide/svelte/icons/repeat";
+	import ShieldIcon from "@lucide/svelte/icons/shield";
+	import UserIcon from "@lucide/svelte/icons/user";
+	import WrenchIcon from "@lucide/svelte/icons/wrench";
+	import type { Component } from "svelte";
 
 	let {
 		metadata,
@@ -65,8 +77,20 @@
 	}
 
 	/**
+	 * Relationship-specific fields that duplicate data shown in RelationshipsList.
+	 * These are excluded from the metadata panel entirely.
+	 */
+	const RELATIONSHIP_FIELDS = new Set([
+		"epic", "milestone", "depends-on", "blocks",
+		"research-refs", "docs-required", "docs-produced",
+		"promoted-to", "supersedes", "superseded-by",
+		"pillars", "spun-off-from", "surpassed-by",
+	]);
+
+	/**
 	 * Fields always rendered in the fixed header row (ID, status, priority)
-	 * or handled outside the metadata card (title, description).
+	 * or handled outside the metadata card (title, description),
+	 * or excluded because they are relationship fields shown in RelationshipsList.
 	 * These are skipped in the dynamic body loop.
 	 */
 	const SKIP_FIELDS = new Set([
@@ -74,6 +98,8 @@
 		"bodyTemplate", "tools", "capabilities", "created", "updated",
 		"relationships", "enforcement", "rule-overrides",
 		"acceptance",
+		// Relationship fields — shown in RelationshipsList, not here
+		...RELATIONSHIP_FIELDS,
 	]);
 
 	const DATE_FIELDS = new Set(["created", "updated", "deadline"]);
@@ -103,6 +129,26 @@
 
 	/** BOOLEAN_FIELDS: rendered as check/x icons instead of "true"/"false" text. */
 	const BOOLEAN_FIELDS = new Set<string>(["user-invocable"]);
+
+	/**
+	 * Icon map: field key → Lucide icon component.
+	 * Fields not listed here render without an icon.
+	 */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const FIELD_ICONS: Record<string, Component<any>> = {
+		deadline: ClockIcon,
+		horizon: CompassIcon,
+		layer: LayersIcon,
+		model: CpuIcon,
+		maturity: BookOpenIcon,
+		category: TagIcon,
+		version: RefreshCwIcon,
+		recurrence: RepeatIcon,
+		"user-invocable": ShieldIcon,
+		assignee: UserIcon,
+		scope: WrenchIcon,
+		skills: WrenchIcon,
+	};
 
 	/** Classify a field key into its render type. */
 	type FieldType = "date" | "file-list" | "link" | "code" | "chip" | "boolean" | "generic";
@@ -292,13 +338,14 @@
 	<!-- Dynamic body — YAML source order, type-dispatched -->
 	{#each bodyEntries as [key, value] (key)}
 		{@const type = fieldType(key, value)}
+		{@const FieldIcon = FIELD_ICONS[key] ?? null}
 
 		{#if type === "date"}
 			{@const formatted = formatDate(value)}
 			{#if formatted}
 				<div class="flex items-baseline gap-2">
-					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-						{humanizeKey(key)}
+					<span class="inline-flex w-[7rem] shrink-0 items-center gap-1 text-xs font-medium capitalize text-muted-foreground">
+						{#if FieldIcon}<FieldIcon class="h-3 w-3 shrink-0" />{/if}{humanizeKey(key)}
 					</span>
 					<span class="text-xs text-foreground">{formatted}</span>
 				</div>
@@ -308,8 +355,8 @@
 			{@const items = asArray(value).filter(Boolean)}
 			{#if items.length > 0}
 				<div class="flex items-baseline gap-2">
-					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-						{humanizeKey(key)}
+					<span class="inline-flex w-[7rem] shrink-0 items-center gap-1 text-xs font-medium capitalize text-muted-foreground">
+						{#if FieldIcon}<FieldIcon class="h-3 w-3 shrink-0" />{/if}{humanizeKey(key)}
 					</span>
 					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
 						{#each items as item, i (i)}
@@ -323,8 +370,8 @@
 			{@const vals = asArray(value).filter(Boolean)}
 			{#if vals.length > 0}
 				<div class="flex items-baseline gap-2">
-					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-						{humanizeKey(key)}
+					<span class="inline-flex w-[7rem] shrink-0 items-center gap-1 text-xs font-medium capitalize text-muted-foreground">
+						{#if FieldIcon}<FieldIcon class="h-3 w-3 shrink-0" />{/if}{humanizeKey(key)}
 					</span>
 					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
 						{#each vals as val, i (i)}
@@ -338,8 +385,8 @@
 			{@const items = asArray(value).filter(Boolean)}
 			{#if items.length > 0}
 				<div class="flex items-baseline gap-2">
-					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-						{humanizeKey(key)}
+					<span class="inline-flex w-[7rem] shrink-0 items-center gap-1 text-xs font-medium capitalize text-muted-foreground">
+						{#if FieldIcon}<FieldIcon class="h-3 w-3 shrink-0" />{/if}{humanizeKey(key)}
 					</span>
 					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
 						{#each items as item, i (i)}
@@ -353,8 +400,8 @@
 			{@const items = asArray(value).filter(Boolean)}
 			{#if items.length > 0}
 				<div class="flex items-baseline gap-2">
-					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-						{humanizeKey(key)}
+					<span class="inline-flex w-[7rem] shrink-0 items-center gap-1 text-xs font-medium capitalize text-muted-foreground">
+						{#if FieldIcon}<FieldIcon class="h-3 w-3 shrink-0" />{/if}{humanizeKey(key)}
 					</span>
 					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
 						{#each items as item, i (i)}
@@ -366,8 +413,8 @@
 
 		{:else if type === "boolean"}
 			<div class="flex items-center gap-2">
-				<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-					{humanizeKey(key)}
+				<span class="inline-flex w-[7rem] shrink-0 items-center gap-1 text-xs font-medium capitalize text-muted-foreground">
+					{#if FieldIcon}<FieldIcon class="h-3 w-3 shrink-0" />{/if}{humanizeKey(key)}
 				</span>
 				{#if value}
 					<CheckIcon class="h-4 w-4 text-green-500" />
@@ -379,8 +426,8 @@
 		{:else}
 			<!-- generic -->
 			<div class="flex items-baseline gap-2">
-				<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-					{humanizeKey(key)}
+				<span class="inline-flex w-[7rem] shrink-0 items-center gap-1 text-xs font-medium capitalize text-muted-foreground">
+					{#if FieldIcon}<FieldIcon class="h-3 w-3 shrink-0" />{/if}{humanizeKey(key)}
 				</span>
 				{#if Array.isArray(value)}
 					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
@@ -406,8 +453,8 @@
 	<!-- Capabilities (human-friendly names) -->
 	{#if appTools.length > 0}
 		<div class="flex items-baseline gap-2">
-			<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-				Capabilities
+			<span class="inline-flex w-[7rem] shrink-0 items-center gap-1 text-xs font-medium capitalize text-muted-foreground">
+				<WrenchIcon class="h-3 w-3 shrink-0" />Capabilities
 			</span>
 			<div class="flex min-w-0 flex-1 flex-wrap gap-1">
 				{#each appTools as tool, i (i)}

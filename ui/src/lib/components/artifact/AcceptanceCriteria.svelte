@@ -9,7 +9,7 @@
 </script>
 
 {#if criteria.length > 0}
-	<div class="mt-6 rounded-lg border border-border bg-muted/30 px-4 py-3">
+	<div class="mt-3 rounded-lg border border-border bg-muted/30 px-4 py-3">
 		<p class="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
 			Acceptance Criteria
 		</p>

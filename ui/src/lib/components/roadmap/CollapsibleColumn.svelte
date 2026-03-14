@@ -127,7 +127,7 @@
 		</div>
 
 		<!-- Column content -->
-		<ScrollArea.Root class="flex-1" orientation="vertical">
+		<ScrollArea.Root class="min-h-0 flex-1" orientation="vertical">
 			<div class="flex flex-col gap-2 p-2">
 				{@render children()}
 			</div>

@@ -24,6 +24,7 @@
 	import ShieldCheckIcon from "@lucide/svelte/icons/shield-check";
 	import RocketIcon from "@lucide/svelte/icons/rocket";
 	import WorkflowIcon from "@lucide/svelte/icons/workflow";
+	import KanbanIcon from "@lucide/svelte/icons/kanban";
 	import * as Tooltip from "$lib/components/ui/tooltip";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import { projectStore } from "$lib/stores/project.svelte";
@@ -100,6 +101,26 @@
 </script>
 
 <div class="flex flex-col">
+	{#if group === "delivery"}
+		{@const isRoadmapActive = activeSubCategory === "roadmap"}
+		<Tooltip.Root>
+			<Tooltip.Trigger class="w-full">
+				{#snippet child({ props })}
+					<button
+						{...props}
+						class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors
+							{isRoadmapActive
+							? 'bg-accent text-accent-foreground font-medium'
+							: 'text-muted-foreground hover:bg-accent/40 hover:text-foreground'}"
+						onclick={() => navigationStore.setSubCategory("roadmap")}
+					>
+						<KanbanIcon class="h-4 w-4 shrink-0" />
+						<span class="truncate">Roadmap</span>
+					</button>
+				{/snippet}
+			</Tooltip.Trigger>
+		</Tooltip.Root>
+	{/if}
 	{#each subCategories as sub (sub.key)}
 		{@const SubIcon = resolveIcon(getSubCategoryIcon(sub.key))}
 		{@const isActive = activeSubCategory === sub.key}

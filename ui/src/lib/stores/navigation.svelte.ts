@@ -195,6 +195,11 @@ class NavigationStore {
 
 	setGroup(group: string) {
 		this.activeGroup = group;
+		// Roadmap is the first item in the Delivery group (built-in, not config-driven)
+		if (group === "delivery") {
+			this.setSubCategory("roadmap");
+			return;
+		}
 		const children = this.getGroupChildren(group);
 		if (children.length > 0) {
 			this.setSubCategory(children[0].key);
@@ -217,10 +222,19 @@ class NavigationStore {
 			this.explorerView = "project-dashboard";
 			this.navPanelCollapsed = true;
 		} else if (view === "roadmap") {
-			this.activeGroup = null;
-			this.activeSubCategory = null;
-			this.explorerView = "roadmap";
-			this.navPanelCollapsed = true;
+			// When accessed via the Delivery group sub-panel, keep group/panel state.
+			// When accessed directly (e.g. legacy call), clear group and collapse.
+			if (this.activeGroup === "delivery") {
+				this.explorerView = "roadmap";
+				if (this.navPanelCollapsed) {
+					this.navPanelCollapsed = false;
+				}
+			} else {
+				this.activeGroup = null;
+				this.activeSubCategory = null;
+				this.explorerView = "roadmap";
+				this.navPanelCollapsed = true;
+			}
 		} else if (view === "settings" || view === "configure") {
 			this.activeGroup = null;
 			this.activeSubCategory = null;
