@@ -1,7 +1,6 @@
 <script lang="ts">
 	import ArtifactLink from "./ArtifactLink.svelte";
 	import GateQuestions from "./GateQuestions.svelte";
-	import RelationshipsList from "./RelationshipsList.svelte";
 	import StatusIndicator from "$lib/components/shared/StatusIndicator.svelte";
 	import { Badge } from "$lib/components/ui/badge";
 	import { getCapabilityLabel } from "$lib/utils/tool-display";
@@ -220,13 +219,8 @@
 		});
 	});
 
-	/** Relationships array from frontmatter (array of {type, target, rationale, intended?}). */
-	const relationships = $derived(
-		Array.isArray(metadata["relationships"]) ? metadata["relationships"] : [],
-	);
-
 	/** True when the card has content below the header row. */
-	const hasBody = $derived(bodyEntries.length > 0 || appTools.length > 0 || gateQuestions.length > 0 || relationships.length > 0 || scoringEntries.length > 0);
+	const hasBody = $derived(bodyEntries.length > 0 || appTools.length > 0 || gateQuestions.length > 0 || scoringEntries.length > 0);
 </script>
 
 <!-- Title -->
@@ -422,9 +416,6 @@
 			</div>
 		</div>
 	{/if}
-
-	<!-- Relationships -->
-	<RelationshipsList {relationships} />
 
 	<!-- Gate question(s) — always last -->
 	<GateQuestions questions={gateQuestions} />
