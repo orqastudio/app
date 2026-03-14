@@ -2,7 +2,7 @@
 id: TASK-443
 title: "Knowledge pipeline flow model rethink"
 description: "Revise the pipeline widget algorithm to accurately represent knowledge flow through the artifact graph."
-status: todo
+status: done
 priority: P2
 created: "2026-03-14"
 updated: "2026-03-14"

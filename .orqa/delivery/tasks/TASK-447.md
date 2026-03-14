@@ -2,7 +2,7 @@
 id: TASK-447
 title: "Body template validation in integrity validator"
 description: "Add integrity checks that validate artifact body sections against bodyTemplate in schema.json."
-status: todo
+status: done
 priority: P2
 created: "2026-03-14"
 updated: "2026-03-14"

@@ -2,7 +2,7 @@
 id: TASK-442
 title: "Health trend widget redesign"
 description: "Make health trends more prominent in the dashboard grid with better sparkline rendering."
-status: todo
+status: done
 priority: P1
 created: "2026-03-14"
 updated: "2026-03-14"

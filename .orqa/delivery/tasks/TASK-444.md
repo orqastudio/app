@@ -2,7 +2,7 @@
 id: TASK-444
 title: "Research notification strategy"
 description: "Research toast library choice, desktop notification API, in-app panel design, and event-to-channel mapping for the notification system."
-status: todo
+status: done
 priority: P2
 created: "2026-03-14"
 updated: "2026-03-14"

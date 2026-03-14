@@ -2,7 +2,7 @@
 id: TASK-459
 title: "Surface prioritisation criteria and require justification on epics/tasks"
 description: "Prioritisation criteria should be visible in the UI. Every epic and task with a priority value must have justification against the defined criteria as part of its content."
-status: todo
+status: done
 priority: P1
 created: "2026-03-14"
 updated: "2026-03-14"

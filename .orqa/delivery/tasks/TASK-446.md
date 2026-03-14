@@ -2,7 +2,7 @@
 id: TASK-446
 title: "Wire auto-fix and confirmations to toast"
 description: "Replace inline confirmation banners with toast notifications for auto-fix success and other confirmations."
-status: todo
+status: done
 priority: P2
 created: "2026-03-14"
 updated: "2026-03-14"

@@ -2,7 +2,7 @@
 id: TASK-449
 title: "Research personas as top-level artifact type"
 description: "Investigate whether personas should be a first-class artifact type with their own schema, lifecycle, and relationships."
-status: todo
+status: done
 priority: P2
 created: "2026-03-14"
 updated: "2026-03-14"

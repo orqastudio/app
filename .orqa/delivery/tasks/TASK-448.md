@@ -2,7 +2,7 @@
 id: TASK-448
 title: "Dynamic artifact table component"
 description: "Support live artifact tables in markdown that show status, title, and priority from the graph."
-status: todo
+status: done
 priority: P2
 created: "2026-03-14"
 updated: "2026-03-14"

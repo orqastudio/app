@@ -296,6 +296,7 @@
 										label={node.label}
 										description={node.description ?? undefined}
 										status={node.status ?? undefined}
+										badge={isDocType && !node.status ? categoryLabel : undefined}
 										actionsNeeded={nodeHasActions(node)}
 										active={navigationStore.selectedArtifactPath === node.path}
 										onclick={() => handleLeafClick(node)}

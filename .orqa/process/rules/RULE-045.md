@@ -72,6 +72,8 @@ For every relationship `A --type--> B`, the artifact `B` must have the correspon
 
 | Type | Inverse |
 |------|---------|
+| `belongs-to` | `contains` |
+| `delivers` | `delivered-by` |
 | `observes` | `observed-by` |
 | `grounded` | `grounded-by` |
 | `practices` | `practiced-by` |

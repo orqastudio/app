@@ -2,7 +2,7 @@
 id: TASK-451
 title: "Fix docs nav — show categories instead of status"
 description: "Update documentation navigation to show top-level categories (Architecture, Product, Development, etc.) instead of status values."
-status: todo
+status: done
 priority: P2
 created: "2026-03-14"
 updated: "2026-03-14"
