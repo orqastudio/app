@@ -17,8 +17,7 @@ Thank you for your interest in contributing to OrqaStudio. This guide covers the
 ## Before You Start
 
 1. Read the [Getting Started](getting-started.md) guide to set up your development environment
-2. Read the [Architecture Overview](architecture-overview.md) to understand how the system fits together
-3. Read the [Coding Standards](coding-standards.md) to understand the quality expectations
+2. Read the [Coding Standards](coding-standards.md) to understand the quality expectations
 
 ---
 
@@ -161,6 +160,5 @@ Be respectful, constructive, and collaborative. We are building a tool to bring 
 ## Related Documents
 
 - [Getting Started](getting-started.md) — Environment setup
-- [Architecture Overview](architecture-overview.md) — System design
 - [Coding Standards](coding-standards.md) — Quality rules
 - [Development Commands](commands.md) — Build, test, and lint commands

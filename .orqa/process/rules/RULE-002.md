@@ -66,9 +66,6 @@ relationships:
   - type: scoped-to
     target: AGENT-007
     rationale: Migrated from scope field
-  - target: DOC-032
-    type: documented-by
-    rationale: Referenced in documentation page Enforcement Rules Reference
   - target: DOC-036
     type: documented-by
     rationale: Referenced in documentation page Artifact Framework
