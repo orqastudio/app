@@ -118,7 +118,6 @@
 							onScan={runHealthScan}
 							onAutoFix={runHealthAutoFix}
 						/>
-						<LessonVelocityWidget />
 					</div>
 
 					<!-- Column 2: How You're Improving (Learning) -->
@@ -140,8 +139,15 @@
 					</div>
 				</div>
 
-				<!-- Row 3: Knowledge Pipeline — full width, not collapsible -->
-				<PipelineWidget />
+				<!-- Row 3: Knowledge Pipeline + Lesson Velocity — shared row -->
+				<div class="grid grid-cols-3 gap-4">
+					<div class="col-span-2">
+						<PipelineWidget />
+					</div>
+					<div class="col-span-1">
+						<LessonVelocityWidget />
+					</div>
+				</div>
 
 				<!-- Row 4: Pipeline Health — full width at bottom -->
 				<IntegrityWidget />

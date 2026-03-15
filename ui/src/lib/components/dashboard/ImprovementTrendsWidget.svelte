@@ -160,7 +160,7 @@
 			{@const colorClass = trendColorClass(m)}
 			{@const stroke = strokeColor(m)}
 			{@const path = hasTrend ? sparklinePath(values, m.lowerIsBetter) : ""}
-			<Card.Root class="overflow-hidden">
+			<Card.Root class="overflow-hidden py-3 gap-1">
 				<Card.Header class="pb-1 pt-3 px-4">
 					<div class="flex items-center justify-between">
 						<Card.Title class="text-xs font-medium text-muted-foreground">
@@ -217,10 +217,5 @@
 				</Card.Content>
 			</Card.Root>
 		{/each}
-		{#if hasTrend}
-			<p class="text-[10px] text-muted-foreground px-1">
-				Based on {snapshots.length} scan{snapshots.length !== 1 ? "s" : ""}
-			</p>
-		{/if}
 	</div>
 {/if}

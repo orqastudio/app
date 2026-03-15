@@ -85,23 +85,12 @@
 					<div class="flex min-w-0 flex-wrap items-center gap-1">
 						{#each visibleRels(type, rels) as rel, i (i)}
 							{#if rel.target}
-								<Tooltip.Root>
-									<Tooltip.Trigger>
-										{#snippet child({ props })}
-											{@const label = chipLabel(rel.target ?? "")}
-											<span {...props} class="inline-flex items-center">
-												{#if label !== (rel.target ?? "")}
-													<ArtifactLink id={rel.target ?? undefined} displayLabel={label} />
-												{:else}
-													<ArtifactLink id={rel.target ?? undefined} />
-												{/if}
-											</span>
-										{/snippet}
-									</Tooltip.Trigger>
-									<Tooltip.Content side="top" class="max-w-xs">
-										<p class="text-xs">{rel.rationale}</p>
-									</Tooltip.Content>
-								</Tooltip.Root>
+								{@const label = chipLabel(rel.target ?? "")}
+								{#if label !== (rel.target ?? "")}
+									<ArtifactLink id={rel.target ?? undefined} displayLabel={label} />
+								{:else}
+									<ArtifactLink id={rel.target ?? undefined} />
+								{/if}
 							{:else}
 								<Tooltip.Root>
 									<Tooltip.Trigger>
