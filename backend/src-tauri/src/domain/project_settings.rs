@@ -65,6 +65,40 @@ pub enum ArtifactEntry {
     Type(ArtifactTypeConfig),
 }
 
+/// The parent relationship config for a delivery type.
+///
+/// `parent_type` is the key of the parent delivery type.
+/// `field` is the frontmatter field on this type that references the parent.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DeliveryParentConfig {
+    #[serde(rename = "type")]
+    pub parent_type: String,
+    pub field: String,
+}
+
+/// A single delivery type defined in `project.json`.
+///
+/// Delivery types form a hierarchy (e.g. milestone → epic → task).
+/// `parent` is `None` for the root type.
+/// `gate_field` names the frontmatter field that acts as the completion gate question.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DeliveryTypeConfig {
+    pub key: String,
+    pub label: String,
+    pub path: String,
+    #[serde(default)]
+    pub parent: Option<DeliveryParentConfig>,
+    #[serde(default)]
+    pub gate_field: Option<String>,
+}
+
+/// The delivery configuration block from `project.json`.
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct DeliveryConfig {
+    #[serde(default)]
+    pub types: Vec<DeliveryTypeConfig>,
+}
+
 /// Display mode for artifact link chips.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "lowercase")]
@@ -139,6 +173,11 @@ pub struct ProjectSettings {
     /// When absent, the app falls back to built-in defaults.
     #[serde(default)]
     pub statuses: Vec<StatusDefinition>,
+    /// Delivery type hierarchy (milestone → epic → task) from `project.json`.
+    ///
+    /// When absent, defaults to an empty hierarchy.
+    #[serde(default)]
+    pub delivery: DeliveryConfig,
 }
 
 fn default_model() -> String {
@@ -189,6 +228,7 @@ mod tests {
                 colors: std::collections::HashMap::new(),
             },
             statuses: vec![],
+            delivery: DeliveryConfig::default(),
         }
     }
 

@@ -172,14 +172,11 @@
 
 	/** Generate last 7 days as ISO date strings. */
 	const last7Days = $derived.by((): string[] => {
-		const days: string[] = [];
-		const now = new Date();
-		for (let i = 6; i >= 0; i--) {
-			const d = new Date(now);
-			d.setDate(d.getDate() - i);
-			days.push(d.toISOString().slice(0, 10));
-		}
-		return days;
+		const nowMs = Date.now();
+		return Array.from({ length: 7 }, (_, i) => {
+			const ms = nowMs - (6 - i) * 86_400_000;
+			return new Date(ms).toISOString().slice(0, 10);
+		});
 	});
 
 	/** Filter snapshots to last 7 days only. */

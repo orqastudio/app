@@ -387,55 +387,6 @@ fn collect_depends_on(frontmatter: &serde_json::Value) -> Vec<String> {
 
 /// Proposes `target` when any child artifact has a status matching `child_status`.
 ///
-/// "Children" are artifacts that reference this node via `epic` or `milestone`
-/// frontmatter fields, or via a `delivers` relationship edge.
-///
-/// This enforces the principle: a parent can't be behind its children in the
-/// thought progression. If a child is exploring, the parent should be at least
-/// exploring. If a child is active, the parent should be active.
-fn check_child_has_status(
-    graph: &ArtifactGraph,
-    node: &crate::domain::artifact_graph::ArtifactNode,
-    current_status: &str,
-    target: &str,
-    child_status: &str,
-) -> Option<ProposedTransition> {
-    let has_child_with_status = graph.nodes.values().any(|n| {
-        if n.id == node.id {
-            return false;
-        }
-        let status_match = n.status.as_deref() == Some(child_status);
-        if !status_match {
-            return false;
-        }
-        // Check frontmatter references
-        let fm = &n.frontmatter;
-        let refs_epic = fm.get("epic").and_then(|v| v.as_str()) == Some(&node.id);
-        let refs_milestone = fm.get("milestone").and_then(|v| v.as_str()) == Some(&node.id);
-        // Check relationship edges
-        let refs_delivers = n
-            .references_out
-            .iter()
-            .any(|r| r.target_id == node.id && r.relationship_type.as_deref() == Some("delivers"));
-        refs_epic || refs_milestone || refs_delivers
-    });
-
-    if has_child_with_status {
-        Some(ProposedTransition {
-            artifact_id: node.id.clone(),
-            artifact_path: node.path.clone(),
-            current_status: current_status.to_owned(),
-            proposed_status: target.to_owned(),
-            reason: format!(
-                "A child artifact is '{}' — parent should advance to '{}'",
-                child_status, target
-            ),
-            auto_apply: true, // Parent following children is unambiguous
-        })
-    } else {
-        None
-    }
-}
 
 // ---------------------------------------------------------------------------
 // Tests

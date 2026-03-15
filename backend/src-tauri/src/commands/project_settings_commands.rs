@@ -158,6 +158,7 @@ mod tests {
             artifacts: vec![],
             artifact_links: crate::domain::project_settings::ArtifactLinksConfig::default(),
             statuses: vec![],
+            delivery: Default::default(),
         };
 
         project_settings_repo::write(path, &settings).expect("write");

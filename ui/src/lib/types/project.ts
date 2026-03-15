@@ -34,6 +34,26 @@ export interface ScanResult {
 	scan_duration_ms: number;
 }
 
+/** The parent relationship config for a delivery type. */
+export interface DeliveryParentConfig {
+	type: string;
+	field: string;
+}
+
+/** A single delivery type defined in project.json (e.g. milestone, epic, task). */
+export interface DeliveryTypeConfig {
+	key: string;
+	label: string;
+	path: string;
+	parent?: DeliveryParentConfig | null;
+	gate_field?: string | null;
+}
+
+/** The delivery configuration block from project.json. */
+export interface DeliveryConfig {
+	types: DeliveryTypeConfig[];
+}
+
 /** Controls how relationship chips display artifact references. */
 export interface RelationshipDisplayConfig {
 	/** Which field to show on chips: "title" or "id". Default: "title". */
@@ -113,6 +133,7 @@ export interface ProjectSettings {
 	statuses?: StatusDefinition[];
 	relationshipDisplay?: RelationshipDisplayConfig;
 	artifactLinks?: ArtifactLinksConfig;
+	delivery?: DeliveryConfig;
 }
 
 export interface GovernanceCounts {

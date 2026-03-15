@@ -1137,6 +1137,29 @@ fn check_invalid_statuses(
 ///
 /// "Children" are artifacts referencing a parent via `epic` or `milestone`
 /// frontmatter fields.
+/// Push a `ParentChildInconsistency` finding when a child is further along than its parent.
+fn push_parent_child_inconsistency(
+    checks: &mut Vec<IntegrityCheck>,
+    child_id: &str,
+    child_status: &str,
+    parent_id: &str,
+    parent_status: &str,
+    parent_label: &str,
+) {
+    checks.push(IntegrityCheck {
+        artifact_id: child_id.to_owned(),
+        category: IntegrityCategory::ParentChildInconsistency,
+        severity: IntegritySeverity::Warning,
+        message: format!(
+            "{child_id} is '{child_status}' but {parent_label} {parent_id} is '{parent_status}' — child is further along than parent",
+        ),
+        auto_fixable: false,
+        fix_description: Some(format!(
+            "Either advance {parent_id} to at least '{child_status}', or move {child_id} to a different {parent_label}",
+        )),
+    });
+}
+
 fn check_parent_child_consistency(
     graph: &ArtifactGraph,
     valid_statuses: &[String],
@@ -1150,13 +1173,11 @@ fn check_parent_child_consistency(
         .collect();
 
     for node in graph.nodes.values() {
-        let child_status = match &node.status {
-            Some(s) => s.as_str(),
-            None => continue,
+        let Some(child_status) = node.status.as_deref() else {
+            continue;
         };
-        let child_pos = match status_pos.get(child_status) {
-            Some(&p) => p,
-            None => continue, // invalid status, caught elsewhere
+        let Some(&child_pos) = status_pos.get(child_status) else {
+            continue; // invalid status, caught elsewhere
         };
 
         // Check epic parent
@@ -1165,21 +1186,14 @@ fn check_parent_child_consistency(
                 if let Some(parent_status) = &parent.status {
                     if let Some(&parent_pos) = status_pos.get(parent_status.as_str()) {
                         if child_pos > parent_pos {
-                            checks.push(IntegrityCheck {
-                                artifact_id: node.id.clone(),
-                                artifact_path: node.path.clone(),
-                                category: IntegrityCategory::ParentChildInconsistency,
-                                severity: IntegritySeverity::Warning,
-                                message: format!(
-                                    "{} is '{}' but parent {} is '{}' — child is further along than parent",
-                                    node.id, child_status, parent_id, parent_status
-                                ),
-                                auto_fixable: false,
-                                fix_description: Some(format!(
-                                    "Either advance {} to at least '{}', or move {} to a different parent",
-                                    parent_id, child_status, node.id
-                                )),
-                            });
+                            push_parent_child_inconsistency(
+                                checks,
+                                &node.id,
+                                child_status,
+                                parent_id,
+                                parent_status,
+                                "parent",
+                            );
                         }
                     }
                 }
@@ -1192,21 +1206,14 @@ fn check_parent_child_consistency(
                 if let Some(parent_status) = &parent.status {
                     if let Some(&parent_pos) = status_pos.get(parent_status.as_str()) {
                         if child_pos > parent_pos {
-                            checks.push(IntegrityCheck {
-                                artifact_id: node.id.clone(),
-                                artifact_path: node.path.clone(),
-                                category: IntegrityCategory::ParentChildInconsistency,
-                                severity: IntegritySeverity::Warning,
-                                message: format!(
-                                    "{} is '{}' but milestone {} is '{}' — child is further along than parent",
-                                    node.id, child_status, parent_id, parent_status
-                                ),
-                                auto_fixable: false,
-                                fix_description: Some(format!(
-                                    "Either advance {} to at least '{}', or move {} to a different milestone",
-                                    parent_id, child_status, node.id
-                                )),
-                            });
+                            push_parent_child_inconsistency(
+                                checks,
+                                &node.id,
+                                child_status,
+                                parent_id,
+                                parent_status,
+                                "milestone",
+                            );
                         }
                     }
                 }

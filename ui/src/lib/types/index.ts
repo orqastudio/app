@@ -11,6 +11,9 @@ export type {
 	ArtifactEntry,
 	ArtifactLinkDisplayMode,
 	ArtifactLinksConfig,
+	DeliveryParentConfig,
+	DeliveryTypeConfig,
+	DeliveryConfig,
 } from "./project";
 export { isArtifactGroup, DEFAULT_ARTIFACT_LINK_COLORS } from "./project";
 export type { StatusDefinition, ArtifactStatus } from "./project";

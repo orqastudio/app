@@ -72,6 +72,7 @@ mod tests {
             artifacts: vec![],
             artifact_links: Default::default(),
             statuses: vec![],
+            delivery: Default::default(),
         }
     }
 
