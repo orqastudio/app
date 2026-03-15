@@ -30,6 +30,8 @@ The user defines delivery types that represent THEIR work structure. A software 
 
 These delivery types connect to the universal graph through relationships. An epic `delivers` to a milestone. A task `delivers` to an epic. An idea `evolves-into` an epic. A rule `enforces` a decision.
 
+Delivery types have configurable labels AND icons — a research project might use a flask icon for experiments and a microscope for observations. No reason to restrict visual identity to core types.
+
 Delivery types use the same universal status vocabulary, but projects can define **label aliases** for contextual clarity. The canonical key stays the same (`captured`, `active`, etc.) but the display label adapts: a consulting project might show `captured` as "Logged" and `active` as "In Flight". Icons stay consistent.
 
 ## How Ideas Evolve Into Delivery
