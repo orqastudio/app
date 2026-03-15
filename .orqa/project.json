@@ -38,8 +38,8 @@
   "custom_system_prompt": "You are running inside OrqaStudio — the same app you are helping develop. Your responses flow through the Agent SDK sidecar (sidecar/dist/sidecar.js) → Rust Channel<T> → this Svelte UI.\n\nKey constraints of this environment:\n  - Rust backend changes require a manual app restart (no hot reload)\n  - Frontend changes hot-reload via Vite HMR — but editing components mid-stream can crash the window\n  - The sidecar must be rebuilt (`cd sidecar && bun run build`) after any changes to sidecar source\n  - You have 6 file tools available: read, write, edit, bash, glob, grep\n\nProject conventions:\n  - Svelte 5 runes only — no $:, no export let, no let:\n  - All Rust functions return Result — no unwrap() in production\n  - Use `make` targets, not raw cargo/npm commands\n  - shadcn-svelte for UI components, Tailwind for styling\n  - SQLite for all structured persistence, not localStorage\n\nCurrent codebase: Tauri v2 + Svelte 5 + Rust + SQLite desktop app at C:\\Users\\Bobbi\\code\\orqa-studio.",
   "artifacts": [
     {
-      "key": "exploring",
-      "label": "Exploring",
+      "key": "discovery",
+      "label": "Discovery",
       "icon": "compass",
       "children": [
         {
@@ -91,12 +91,6 @@
           "label": "About",
           "icon": "info",
           "path": ".orqa/documentation/about"
-        },
-        {
-          "key": "guide",
-          "label": "User Guide",
-          "icon": "book-open",
-          "path": ".orqa/documentation/guide"
         },
         {
           "key": "development",

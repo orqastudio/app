@@ -1,0 +1,24 @@
+---
+id: IDEA-099
+title: "Personas as first-class artifacts"
+description: "Personas (Alex, Sam, Jordan) should be a first-class artifact type with their own schema, frontmatter, and relationships — not a static documentation page."
+status: captured
+created: "2026-03-15"
+updated: "2026-03-15"
+pillars:
+  - PILLAR-001
+milestone: null
+horizon: next
+research-needed: []
+promoted-to: null
+spun-off-from: null
+relationships: []
+---
+
+## Motivation
+
+Personas (Alex, Sam, Jordan) are currently defined as a static documentation page. They cannot be referenced in the artifact graph, cannot have relationships to epics or features, and are not browsable as structured artifacts. Elevating personas to first-class artifacts would allow features and epics to declare which persona they serve, making pillar alignment and user-centredness traceable through the graph rather than implied by prose.
+
+## Sketch
+
+A new artifact type `PERSONA-NNN` in `.orqa/delivery/personas/` with a schema covering name, role, goals, frustrations, and pillar alignment. Epics and ideas gain an optional `personas` field listing which personas the work serves. The artifact browser gains a Personas section. The Designer role gains persona-awareness when generating UI plans.
