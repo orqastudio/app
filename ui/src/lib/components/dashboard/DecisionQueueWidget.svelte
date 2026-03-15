@@ -297,8 +297,8 @@
 				</div>
 			</Card.Action>
 		</Card.Header>
-		<Card.Content class="p-0 overflow-hidden">
-			<div class="max-h-[280px] overflow-y-auto px-6 pb-4">
+		<Card.Content class="p-0">
+			<ScrollArea.Root class="h-[280px] px-6 pb-4">
 			{#if activeTab === "actions"}
 				<!-- ---------------------------------------------------------- -->
 				<!-- Actions tab: all artifacts needing attention               -->
@@ -393,7 +393,7 @@
 					</button>
 				{/if}
 			{/if}
-			</div>
+			</ScrollArea.Root>
 		</Card.Content>
 	</Card.Root>
 {/if}
