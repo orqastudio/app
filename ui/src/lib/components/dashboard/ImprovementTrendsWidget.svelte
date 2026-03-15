@@ -7,12 +7,23 @@
 	let loading = $state(false);
 	let loaded = $state(false);
 
-	/** Live count of governance artifacts (rules + lessons + decisions). */
-	const governanceCount = $derived(
-		artifactGraphSDK.byType("rule").length +
-		artifactGraphSDK.byType("lesson").length +
-		artifactGraphSDK.byType("decision").length
-	);
+	/** All governance artifacts with their created dates. */
+	const governanceArtifacts = $derived([
+		...artifactGraphSDK.byType("rule"),
+		...artifactGraphSDK.byType("lesson"),
+		...artifactGraphSDK.byType("decision"),
+	]);
+
+	const governanceCount = $derived(governanceArtifacts.length);
+
+	/** Build cumulative governance count over time, aligned to snapshot dates. */
+	function governanceAtDate(dateStr: string): number {
+		return governanceArtifacts.filter((a) => {
+			const created = (a.frontmatter as Record<string, unknown>)["created"];
+			if (typeof created !== "string") return true; // no date = assume existed
+			return created <= dateStr;
+		}).length;
+	}
 
 	$effect(() => {
 		if (artifactGraphSDK.graph.size > 0 && !loaded && !loading) {
@@ -92,7 +103,7 @@
 		{
 			label: "Governance",
 			lowerIsBetter: false,
-			getValue: () => governanceCount,
+			getValue: (s) => governanceAtDate(s.created_at),
 		},
 		{
 			label: "Integrity",
