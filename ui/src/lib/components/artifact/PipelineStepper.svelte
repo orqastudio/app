@@ -1,5 +1,6 @@
 <script lang="ts">
 	import CheckIcon from "@lucide/svelte/icons/check";
+	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 
 	interface Stage {
 		key: string;
@@ -9,14 +10,52 @@
 	let {
 		stages,
 		status,
+		path = "",
 	}: {
 		stages: Stage[];
 		status: string;
+		/** Relative path from project root — required for status transitions. */
+		path?: string;
 	} = $props();
 
 	const currentIndex = $derived(
 		stages.findIndex((s) => s.key === status?.toLowerCase()),
 	);
+
+	/**
+	 * Simplified transition map for UI convenience.
+	 * The authoritative transition engine is in Rust; this is advisory/shortcut only.
+	 */
+	const TRANSITIONS: Record<string, string[]> = {
+		captured: ["exploring", "ready", "prioritised"],
+		exploring: ["ready", "prioritised"],
+		ready: ["prioritised", "active"],
+		prioritised: ["active"],
+		active: ["hold", "blocked", "review"],
+		hold: ["active"],
+		blocked: ["active", "ready"],
+		review: ["completed", "active"],
+		completed: ["surpassed"],
+		surpassed: [],
+		recurring: ["review", "completed"],
+	};
+
+	/** Keys reachable from the current status. */
+	const reachableKeys = $derived(
+		TRANSITIONS[status?.toLowerCase()] ?? [],
+	);
+
+	let transitioning = $state(false);
+
+	async function handleTransition(targetKey: string) {
+		if (!path || transitioning) return;
+		transitioning = true;
+		try {
+			await artifactGraphSDK.updateField(path, "status", targetKey);
+		} finally {
+			transitioning = false;
+		}
+	}
 </script>
 
 {#if stages.length > 0 && currentIndex >= 0}
@@ -26,6 +65,7 @@
 			{#each stages as stage, i (stage.key)}
 				{@const isPast = i < currentIndex}
 				{@const isCurrent = i === currentIndex}
+				{@const isReachable = path && reachableKeys.includes(stage.key)}
 
 				<!-- Connector line before this stage (not before the first) -->
 				{#if i > 0}
@@ -36,9 +76,16 @@
 					></div>
 				{/if}
 
-				<!-- Circle indicator only -->
+				<!-- Circle indicator -->
 				<div class="flex items-center justify-center">
-					{#if isPast}
+					{#if isReachable}
+						<button
+							onclick={() => handleTransition(stage.key)}
+							disabled={transitioning}
+							title="Transition to {stage.label}"
+							class="flex h-4 w-4 items-center justify-center rounded-full border border-primary/50 bg-primary/5 transition-colors hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50"
+						></button>
+					{:else if isPast}
 						<div
 							class="flex h-4 w-4 items-center justify-center rounded-full bg-primary/20"
 						>
@@ -64,6 +111,7 @@
 			{#each stages as stage, i (stage.key)}
 				{@const isPast = i < currentIndex}
 				{@const isCurrent = i === currentIndex}
+				{@const isReachable = path && reachableKeys.includes(stage.key)}
 
 				<!-- Spacer matching connector line width -->
 				{#if i > 0}
@@ -76,6 +124,14 @@
 						<span class="text-[10px] font-semibold leading-tight whitespace-nowrap text-primary">
 							{stage.label}
 						</span>
+					{:else if isReachable}
+						<button
+							onclick={() => handleTransition(stage.key)}
+							disabled={transitioning}
+							class="text-[9px] leading-tight whitespace-nowrap text-primary/60 underline-offset-2 hover:underline disabled:pointer-events-none disabled:opacity-50"
+						>
+							{stage.label}
+						</button>
 					{:else if isPast}
 						<span class="text-[9px] leading-tight whitespace-nowrap text-muted-foreground/60">
 							{stage.label}

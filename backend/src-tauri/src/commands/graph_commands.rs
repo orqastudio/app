@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use tauri::State;
+use tauri::{Emitter, Runtime, State};
 
 use crate::domain::artifact_graph::{
     apply_fixes, build_artifact_graph, check_integrity, graph_stats,
@@ -8,9 +8,13 @@ use crate::domain::artifact_graph::{
     GraphStats, IntegrityCheck,
 };
 use crate::domain::health_snapshot::{HealthSnapshot, NewHealthSnapshot};
+use crate::domain::status_transitions::{evaluate_transitions, ProposedTransition};
 use crate::error::OrqaError;
 use crate::repo::{health_snapshot_repo, project_repo};
 use crate::state::AppState;
+
+/// Tauri event name emitted when non-auto-apply transitions are pending.
+const STATUS_TRANSITIONS_AVAILABLE_EVENT: &str = "status-transitions-available";
 
 // ---------------------------------------------------------------------------
 // Internal helpers
@@ -122,21 +126,92 @@ pub fn get_graph_stats(state: State<'_, AppState>) -> Result<GraphStats, OrqaErr
     Ok(graph_stats(&graph))
 }
 
+/// Apply a single auto-apply transition by writing the new status to disk.
+///
+/// Returns `true` if the write succeeded, `false` on error (already logged).
+fn apply_auto_transition(proposal: &ProposedTransition, project_root: &Path) -> bool {
+    if proposal.artifact_path.contains("..") {
+        tracing::warn!(
+            "[transitions] skipping unsafe path: {}",
+            proposal.artifact_path
+        );
+        return false;
+    }
+    let full_path = project_root.join(proposal.artifact_path.replace('\\', "/"));
+    match domain_update_artifact_field(&full_path, "status", &proposal.proposed_status) {
+        Ok(()) => {
+            tracing::info!(
+                "[transitions] auto-applied: {} {} → {}",
+                proposal.artifact_id,
+                proposal.current_status,
+                proposal.proposed_status
+            );
+            true
+        }
+        Err(e) => {
+            tracing::warn!(
+                "[transitions] failed to auto-apply {} → {}: {e}",
+                proposal.artifact_id,
+                proposal.proposed_status
+            );
+            false
+        }
+    }
+}
+
 /// Rebuild the artifact graph from disk and replace the cached copy.
 ///
-/// Called by the artifact watcher when `.orqa/` files change, and exposed as
-/// a command so the frontend can trigger an explicit refresh when needed.
+/// Runs the status-transition engine after rebuilding:
+/// - `auto_apply: true` transitions (blocked/unblocked tasks) are written to
+///   disk immediately and the graph is rebuilt once more to reflect them.
+/// - `auto_apply: false` transitions are emitted as
+///   `"status-transitions-available"` for the frontend to surface to the user.
 #[tauri::command]
-pub fn refresh_artifact_graph(state: State<'_, AppState>) -> Result<(), OrqaError> {
+pub fn refresh_artifact_graph<R: Runtime>(
+    app: tauri::AppHandle<R>,
+    state: State<'_, AppState>,
+) -> Result<(), OrqaError> {
     let project_path = active_project_path(&state)?;
-    let new_graph = build_artifact_graph(Path::new(&project_path))?;
+    let project_root = Path::new(&project_path);
 
-    let mut guard = state
-        .artifacts
-        .graph
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("graph lock poisoned: {e}")))?;
-    *guard = Some(new_graph);
+    let graph = build_artifact_graph(project_root)?;
+    let (auto_apply, pending): (Vec<ProposedTransition>, Vec<ProposedTransition>) =
+        evaluate_transitions(&graph)
+            .into_iter()
+            .partition(|p| p.auto_apply);
+
+    // Apply every auto-apply transition; track whether at least one succeeded.
+    let any_applied = auto_apply.iter().fold(false, |acc, p| {
+        apply_auto_transition(p, project_root) || acc
+    });
+
+    // Rebuild after auto-applies so the cached graph reflects new statuses.
+    let (final_graph, pending_for_event) = if any_applied {
+        let updated = build_artifact_graph(project_root)?;
+        let updated_pending = evaluate_transitions(&updated)
+            .into_iter()
+            .filter(|p| !p.auto_apply)
+            .collect();
+        (updated, updated_pending)
+    } else {
+        (graph, pending)
+    };
+
+    {
+        let mut guard = state
+            .artifacts
+            .graph
+            .lock()
+            .map_err(|e| OrqaError::Database(format!("graph lock poisoned: {e}")))?;
+        *guard = Some(final_graph);
+    }
+
+    if !pending_for_event.is_empty() {
+        if let Err(e) = app.emit(STATUS_TRANSITIONS_AVAILABLE_EVENT, &pending_for_event) {
+            tracing::warn!("[transitions] failed to emit pending transitions event: {e}");
+        }
+    }
+
     Ok(())
 }
 

@@ -110,6 +110,22 @@ export interface AppliedFix {
     file_path: string;
 }
 
+/** A status transition proposed by the backend transition engine. */
+export interface ProposedTransition {
+    /** Artifact identifier, e.g. `"EPIC-048"`. */
+    artifact_id: string;
+    /** Relative path from the project root, e.g. `".orqa/delivery/epics/EPIC-048.md"`. */
+    artifact_path: string;
+    /** Current `status` frontmatter value. */
+    current_status: string;
+    /** Status value to transition to. */
+    proposed_status: string;
+    /** Human-readable explanation of why this transition is proposed. */
+    reason: string;
+    /** When `true` the backend already applied this transition automatically. */
+    auto_apply: boolean;
+}
+
 /** A point-in-time snapshot of graph health metrics. */
 export interface HealthSnapshot {
     id: number;

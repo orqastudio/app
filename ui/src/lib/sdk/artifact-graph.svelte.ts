@@ -14,7 +14,7 @@ import { SvelteMap, SvelteSet } from "svelte/reactivity";
 import { listen } from "@tauri-apps/api/event";
 import type { UnlistenFn } from "@tauri-apps/api/event";
 import { invoke, extractErrorMessage } from "$lib/ipc/invoke";
-import type { ArtifactNode, ArtifactRef, GraphStats, IntegrityCheck, AppliedFix, HealthSnapshot } from "$lib/types/artifact-graph";
+import type { ArtifactNode, ArtifactRef, GraphStats, IntegrityCheck, AppliedFix, HealthSnapshot, ProposedTransition } from "$lib/types/artifact-graph";
 import { ARTIFACT_TYPES } from "$lib/types/artifact-graph";
 import cytoscape from "cytoscape";
 import { graphLayoutService } from "$lib/services/graph-layout.svelte";
@@ -137,6 +137,19 @@ class ArtifactGraphSDK {
     error = $state<string | null>(null);
 
     /**
+     * Pending status transitions proposed by the backend engine.
+     *
+     * Populated whenever the backend emits `"status-transitions-available"`.
+     * These are transitions where `auto_apply: false` — they require human
+     * confirmation before being applied. Auto-apply transitions are written
+     * to disk by the backend and never appear here.
+     *
+     * Consumers (e.g. DecisionQueueWidget) can read this to surface actionable
+     * items. Call `clearPendingTransitions()` after the user has acted.
+     */
+    pendingTransitions = $state<ProposedTransition[]>([]);
+
+    /**
      * Cached node positions from the last completed full-graph layout.
      * Visualization components write positions here after layout completes so
      * subsequent renders can use `preset` layout instead of re-running cose-bilkent.
@@ -155,8 +168,11 @@ class ArtifactGraphSDK {
     /** Per-type subscribers: artifact_type → list of callbacks. */
     private typeSubscribers = new Map<string, TypeCallback[]>();
 
-    /** Tauri event unlisten function, set after initialize(). */
+    /** Tauri event unlisten function for `artifact-graph-updated`, set after initialize(). */
     private unlistenFn: UnlistenFn | null = null;
+
+    /** Tauri event unlisten function for `status-transitions-available`, set after initialize(). */
+    private unlistenTransitionsFn: UnlistenFn | null = null;
 
     /** Non-reactive flag to prevent $effect re-triggering on error. */
     private _initCalled = false;
@@ -326,6 +342,29 @@ class ArtifactGraphSDK {
                 void this.refresh();
             });
         }
+        if (!this.unlistenTransitionsFn) {
+            this.unlistenTransitionsFn = await listen<ProposedTransition[]>(
+                "status-transitions-available",
+                (event) => {
+                    console.log(
+                        "[artifact-graph-sdk] pending transitions received:",
+                        event.payload.length,
+                        event.payload.map((t) => `${t.artifact_id}: ${t.current_status} → ${t.proposed_status}`),
+                    );
+                    this.pendingTransitions = event.payload;
+                },
+            );
+        }
+    }
+
+    /**
+     * Clear the list of pending status transitions.
+     *
+     * Call this after the user has reviewed and acted on the transitions,
+     * or when you want to dismiss the notification.
+     */
+    clearPendingTransitions(): void {
+        this.pendingTransitions = [];
     }
 
     /**

@@ -263,7 +263,7 @@
 				{:else if parsedContent}
 					{#if hasMetadataFields}
 						{#if artifactStatus && pipelineStages.length > 0}
-							<PipelineStepper stages={pipelineStages} status={artifactStatus} />
+							<PipelineStepper stages={pipelineStages} status={artifactStatus} path={currentPath ?? ""} />
 						{/if}
 						<FrontmatterHeader
 							metadata={parsedContent.metadata}
