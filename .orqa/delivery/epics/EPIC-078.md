@@ -1,0 +1,92 @@
+---
+id: EPIC-078
+title: "Configuration-driven delivery pipeline"
+description: "Replace hardcoded delivery artifact types (milestones, epics, tasks) with project-configurable type definitions in project.json. The code becomes a generic enforcement engine for whatever delivery pipeline the project defines. Core artifacts (ideas, research, rules, lessons, decisions, skills, agents, pillars) remain hardcoded as firmware."
+status: captured
+priority: P1
+created: 2026-03-15
+updated: 2026-03-15
+deadline: null
+milestone: MS-002
+horizon: active
+pillars:
+  - PILLAR-001
+  - PILLAR-003
+depends-on: []
+blocks: []
+research-refs: []
+docs-required: []
+docs-produced: []
+relationships:
+  - target: AD-051
+    type: enforces
+    rationale: Implements the config-driven delivery pipeline decision
+  - target: MS-002
+    type: belongs-to
+    rationale: Epic belongs to this milestone
+---
+
+## Context
+
+Currently the codebase hardcodes knowledge of delivery artifact types:
+- Rust integrity checks reference "epic", "milestone", "task" field names directly
+- Roadmap components have hardcoded EPIC_COLUMNS, TASK_COLUMNS
+- Parent-child relationships (task→epic→milestone) are hardcoded
+- The StatusKanban groups by hardcoded status values
+
+Per AD-051, the delivery pipeline should be configurable. A software project defines milestones/epics/tasks. A different project might define phases/workstreams/actions.
+
+## Implementation Design
+
+### Phase 1: Define delivery type configuration schema
+
+Add a `delivery` section to `project.json`:
+```json
+{
+  "delivery": {
+    "types": [
+      {
+        "key": "milestone",
+        "label": "Milestone",
+        "path": ".orqa/delivery/milestones",
+        "parent": null
+      },
+      {
+        "key": "epic",
+        "label": "Epic",
+        "path": ".orqa/delivery/epics",
+        "parent": { "type": "milestone", "field": "milestone" }
+      },
+      {
+        "key": "task",
+        "label": "Task",
+        "path": ".orqa/delivery/tasks",
+        "parent": { "type": "epic", "field": "epic" }
+      }
+    ]
+  }
+}
+```
+
+### Phase 2: Make integrity checks config-driven
+
+Replace hardcoded field references in `artifact_graph.rs` with lookups against the delivery type config. The parent-child consistency check reads the hierarchy from config, not from hardcoded "epic"/"milestone" strings.
+
+### Phase 3: Make roadmap components config-driven
+
+Roadmap reads delivery types from config to determine:
+- Which type is the top level (milestones)
+- Which type is the second level (epics)
+- Which type is the third level (tasks)
+- Column definitions derived from configured statuses
+
+### Phase 4: Validate current artifacts against configuration
+
+Ensure all existing delivery artifacts conform to the configured type definitions.
+
+## Tasks
+
+- [ ] [TASK-509](TASK-509): Define delivery type schema in project.json and Rust/TS types
+- [ ] [TASK-510](TASK-510): Replace hardcoded parent-child field references in integrity checks
+- [ ] [TASK-511](TASK-511): Make roadmap components read type hierarchy from config
+- [ ] [TASK-512](TASK-512): Validate existing artifacts against delivery type configuration
