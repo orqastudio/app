@@ -11,11 +11,27 @@
 
 	let container = $state<HTMLDivElement | undefined>(undefined);
 	let network: Network | null = null;
+
+	// Suppress ResizeObserver loop error — vis-network triggers resize during
+	// layout which fires before the browser can deliver all notifications.
+	// This is harmless and expected with any physics-based graph renderer.
+	if (typeof window !== "undefined") {
+		const origError = window.onerror;
+		window.onerror = (msg, ...args) => {
+			if (typeof msg === "string" && msg.includes("ResizeObserver")) return true;
+			if (origError) return origError(msg, ...args) as boolean;
+			return false;
+		};
+	}
 	let stabilizing = $state(false);
 	let stabilizationProgress = $state(0);
 
 	/** Cached graph size — only rebuild when this changes. */
 	let lastGraphSize = 0;
+
+	/** Debounced resize handler to avoid ResizeObserver loop. */
+	let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+	let resizeObserver: ResizeObserver | null = null;
 
 	/** Cached node positions from previous stabilization. */
 	let cachedPositions: Record<string, { x: number; y: number }> = {};
@@ -125,6 +141,7 @@
 		const edgeDataset = new DataSet<Edge>(edgeList);
 
 		const options: Options = {
+			autoResize: false,
 			physics: {
 				enabled: !hasCachedPositions, // Disable physics if positions are cached
 				stabilization: {
@@ -193,6 +210,17 @@
 			stabilizing = false;
 			network.fit({ animation: { duration: 200, easingFunction: "easeInOutQuad" } });
 		}
+
+		// Manual debounced resize (autoResize disabled to prevent loop)
+		if (resizeObserver) resizeObserver.disconnect();
+		resizeObserver = new ResizeObserver(() => {
+			if (resizeTimer) clearTimeout(resizeTimer);
+			resizeTimer = setTimeout(() => {
+				network?.redraw();
+				network?.fit();
+			}, 150);
+		});
+		resizeObserver.observe(el);
 	}
 
 	$effect(() => {
@@ -207,8 +235,12 @@
 	});
 
 	onDestroy(() => {
+		if (resizeObserver) {
+			resizeObserver.disconnect();
+			resizeObserver = null;
+		}
+		if (resizeTimer) clearTimeout(resizeTimer);
 		if (network) {
-			// Save positions before destroy
 			try {
 				cachedPositions = network.getPositions();
 			} catch {
