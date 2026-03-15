@@ -1,5 +1,4 @@
 ---
-
 id: TASK-312
 title: Reconcile EPIC-005
 description: "Standing reconciliation task — verify epic body accuracy: task table, pillars, docs-produced, scope."

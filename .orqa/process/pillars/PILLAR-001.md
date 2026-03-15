@@ -1,7 +1,4 @@
 ---
-
-
-
 id: PILLAR-001
 title: Clarity Through Structure
 description: Making thinking, standards, and decisions visible and structured.

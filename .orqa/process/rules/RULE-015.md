@@ -1,5 +1,4 @@
 ---
-
 id: RULE-015
 title: Honest Reporting
 description: Report status accurately. Partial work reported as complete is worse than reporting it as incomplete.

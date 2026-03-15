@@ -1,5 +1,4 @@
 ---
-
 id: PILLAR-002
 title: Learning Through Reflection
 description: The system and its users improve over time through structured retrospection.

@@ -1,7 +1,4 @@
 ---
-
-
-
 id: IMPL-054
 title: "Orchestrator bypassed OrqaStudio's enforcement system in favor of raw platform hooks"
 description: "When adding enforcement for RULE-001, the orchestrator created a raw Claude Code Stop hook in .claude/hooks/ instead of using the artifact graph enforcement system. This bypasses the very system we're building."

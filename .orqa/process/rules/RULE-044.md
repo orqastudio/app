@@ -1,6 +1,4 @@
 ---
-
-
 id: RULE-044
 title: Core Graph Firmware Protection
 description: Core graph artifacts (schemas, orchestrator, core skills, role definitions) are firmware — non-editable by agents or users except through the update system or in dogfood mode.

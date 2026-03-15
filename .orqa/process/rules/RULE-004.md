@@ -1,5 +1,4 @@
 ---
-
 id: RULE-004
 title: Artifact Lifecycle
 description: Enforces creation standards, status transitions, promotion gates, and documentation gates for all .orqa/ artifacts.

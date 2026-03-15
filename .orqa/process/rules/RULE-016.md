@@ -1,5 +1,4 @@
 ---
-
 id: RULE-016
 title: IDs Are Not Priority
 description: Artifact IDs are sequential identifiers for uniqueness and reference. They carry no information about priority, importance, or execution order.

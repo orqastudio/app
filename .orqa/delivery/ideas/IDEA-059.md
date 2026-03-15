@@ -1,5 +1,4 @@
 ---
-
 id: IDEA-059
 title: "Component Library SDK for Plugin Views"
 description: "Extract shared components into an importable SDK so plugins can create dynamic views that match the design system."

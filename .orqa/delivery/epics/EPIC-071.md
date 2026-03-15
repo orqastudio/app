@@ -1,9 +1,4 @@
 ---
-
-
-
-
-
 id: EPIC-071
 title: Documentation improvements — content, ordering, rendering
 description: Fix docs navigation (no status for docs), populate Guide section, audit doc ordering for reading flow, add mermaid/PlantUML rendering, and review doc-to-artifact relationships.

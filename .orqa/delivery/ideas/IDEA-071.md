@@ -1,10 +1,4 @@
 ---
-
-
-
-
-
-
 id: IDEA-071
 title: "Plugin ecosystem: type system, provider integration, capability routing"
 description: "Implement the plugin type taxonomy, AI provider schema, capability fulfilment model, and plugin installation wiring designed in RES-052. Covers plugin.json schema extension, .orqa/providers/ definitions, per-project capability routing, and load-time plugin filtering."

@@ -1,6 +1,4 @@
 ---
-
-
 id: RULE-006
 title: Coding Standards
 description: "Rust and TypeScript coding standards: formatting, linting, error handling, component patterns, and coverage requirements."

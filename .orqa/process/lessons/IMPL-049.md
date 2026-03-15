@@ -1,7 +1,4 @@
 ---
-
-
-
 id: IMPL-049
 title: "Out of Scope sections created without user verification — RULE-019 violated"
 description: "The orchestrator wrote Out of Scope sections on epics without presenting them to the user for approval. RULE-019 requires every scope reduction to be a user decision. This is a self-compliance-only rule (no mechanical enforcement) and was violated twice in the same session — first on EPIC-060, then on EPIC-061."

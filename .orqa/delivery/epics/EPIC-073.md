@@ -1,44 +1,4 @@
 ---
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 id: EPIC-073
 title: "UAT round 3 — navigation architecture, artifact links, roadmap drill-down, doc reorg"
 description: "30 UAT findings grouped into 10 systemic themes. Largest themes: navigation architecture overhaul (Exploring/Delivery/Documentation/Process), artifact link component rework with settings, roadmap hierarchical drill-down, documentation reorganisation into book chapters, and schema migrations for scope → relationship."
@@ -77,62 +37,32 @@ relationships:
     type: belongs-to
     rationale: Epic belongs to this milestone
   - target: TASK-490
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-490"
-  - target: TASK-490
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-490"
-  - target: TASK-497
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-497"
   - target: TASK-497
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-497"
   - target: TASK-478
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-478"
-  - target: TASK-478
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-478"
-  - target: TASK-476
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-476"
   - target: TASK-476
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-476"
   - target: TASK-494
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-494"
-  - target: TASK-494
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-494"
-  - target: TASK-491
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-491"
   - target: TASK-491
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-491"
   - target: TASK-492
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-492"
-  - target: TASK-492
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-492"
-  - target: TASK-471
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-471"
   - target: TASK-471
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-471"
   - target: TASK-477
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-477"
-  - target: TASK-477
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-477"
-  - target: TASK-475
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-475"
   - target: TASK-475
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-475"
@@ -143,56 +73,29 @@ relationships:
     type: informs
     rationale: "Auto-generated inverse of informs relationship from EPIC-074"
   - target: TASK-493
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-493"
-  - target: TASK-493
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-493"
-  - target: TASK-469
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-469"
   - target: TASK-469
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-469"
   - target: TASK-496
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-496"
-  - target: TASK-496
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-496"
-  - target: TASK-472
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-472"
   - target: TASK-472
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-472"
   - target: TASK-474
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-474"
-  - target: TASK-474
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-474"
-  - target: TASK-470
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-470"
   - target: TASK-470
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-470"
   - target: TASK-468
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-468"
-  - target: TASK-468
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-468"
   - target: TASK-495
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-495"
-  - target: TASK-495
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-495"
-  - target: TASK-473
-    type: delivered-by
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-473"
   - target: TASK-473
     type: contains
     rationale: "Auto-generated inverse of contains relationship from TASK-473"

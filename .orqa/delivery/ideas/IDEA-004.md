@@ -1,5 +1,4 @@
 ---
-
 id: IDEA-004
 title: Structured Thinking Tools
 description: |

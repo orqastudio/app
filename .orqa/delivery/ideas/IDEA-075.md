@@ -1,5 +1,4 @@
 ---
-
 id: IDEA-075
 title: "App UI save should validate before overwriting project.json"
 description: "Clicking save in the OrqaStudio app UI can overwrite a valid project.json with blank/default values. Need validation before write, or dirty-checking to only save modified fields."

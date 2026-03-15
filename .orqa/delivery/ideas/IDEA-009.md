@@ -1,5 +1,4 @@
 ---
-
 id: IDEA-009
 title: Integration Ecosystem
 description: |

@@ -1,5 +1,4 @@
 ---
-
 id: IDEA-025
 title: Agent task ownership review
 description: |

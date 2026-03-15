@@ -1,6 +1,4 @@
 ---
-
-
 id: RULE-042
 title: Automated Skill Injection
 description: When agents touch specific code areas, relevant domain skills are auto-injected. Enforcement entries map file paths to skill names.

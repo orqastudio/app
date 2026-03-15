@@ -174,92 +174,177 @@
       ]
     }
   ],
-  "statuses": [
-    {
-      "key": "captured", "label": "Captured", "icon": "circle",
-      "transitions": ["exploring", "ready", "prioritised"]
-    },
-    {
-      "key": "exploring", "label": "Exploring", "icon": "compass",
-      "transitions": ["ready", "prioritised", "hold"]
-    },
-    {
-      "key": "ready", "label": "Ready", "icon": "circle-dot",
-      "transitions": ["prioritised", "active", "review"],
-      "auto_rules": [
-        { "condition": "dependency-blocked", "target": "blocked" }
-      ]
-    },
-    {
-      "key": "prioritised", "label": "Prioritised", "icon": "circle-star",
-      "transitions": ["active", "ready"]
-    },
-    {
-      "key": "active", "label": "Active", "icon": "circle-dot-dashed", "spin": true,
-      "transitions": ["hold", "blocked", "review"],
-      "auto_rules": [
-        { "condition": "all-children-completed", "target": "review" }
-      ]
-    },
-    {
-      "key": "hold", "label": "On Hold", "icon": "circle-pause",
-      "transitions": ["active", "ready"]
-    },
-    {
-      "key": "blocked", "label": "Blocked", "icon": "circle-stop",
-      "transitions": ["active", "ready"],
-      "auto_rules": [
-        { "condition": "dependencies-met", "target": "ready" }
-      ]
-    },
-    {
-      "key": "review", "label": "Review", "icon": "circle-user-round",
-      "transitions": ["completed", "active"]
-    },
-    {
-      "key": "completed", "label": "Completed", "icon": "circle-check-big",
-      "transitions": ["surpassed"]
-    },
-    {
-      "key": "surpassed", "label": "Surpassed", "icon": "circle-minus",
-      "transitions": []
-    },
-    {
-      "key": "recurring", "label": "Recurring", "icon": "circle-fading-arrow-up",
-      "transitions": ["review", "completed"],
-      "auto_rules": [
-        { "condition": "recurrence-threshold", "target": "review" }
-      ]
-    }
-  ],
   "artifactLinks": {
     "displayModes": {
-      "AD": "title",
-      "DOC": "title",
-      "PILLAR": "title",
-      "AGENT": "title",
       "RULE": "title",
       "IMPL": "title",
-      "RES": "title",
-      "TASK": "title",
-      "EPIC": "title",
-      "IDEA": "title",
+      "PILLAR": "title",
       "SKILL": "title",
-      "MS": "title"
+      "AGENT": "title",
+      "IDEA": "title",
+      "TASK": "title",
+      "MS": "title",
+      "AD": "title",
+      "RES": "title",
+      "EPIC": "title",
+      "DOC": "title"
     },
     "colors": {
-      "EPIC": "#3b82f6",
-      "TASK": "#06b6d4",
-      "RULE": "#a78bfa",
+      "MS": "#38bdf8",
       "AD": "#8b5cf6",
+      "EPIC": "#3b82f6",
+      "AGENT": "#f472b6",
+      "RES": "#6366f1",
+      "PILLAR": "#818cf8",
+      "RULE": "#a78bfa",
+      "SKILL": "#2dd4bf",
+      "TASK": "#06b6d4",
       "IDEA": "#c084fc",
       "IMPL": "#67e8f9",
-      "SKILL": "#2dd4bf",
-      "PILLAR": "#818cf8",
-      "RES": "#6366f1",
-      "MS": "#38bdf8",
-      "DOC": "#94a3b8",
-      "AGENT": "#f472b6"
+      "DOC": "#94a3b8"
     }
-  }
+  },
+  "statuses": [
+    {
+      "key": "captured",
+      "label": "Captured",
+      "icon": "circle",
+      "spin": false,
+      "transitions": [
+        "exploring",
+        "ready",
+        "prioritised"
+      ],
+      "auto_rules": []
+    },
+    {
+      "key": "exploring",
+      "label": "Exploring",
+      "icon": "compass",
+      "spin": false,
+      "transitions": [
+        "ready",
+        "prioritised",
+        "hold"
+      ],
+      "auto_rules": []
+    },
+    {
+      "key": "ready",
+      "label": "Ready",
+      "icon": "circle-dot",
+      "spin": false,
+      "transitions": [
+        "prioritised",
+        "active",
+        "review"
+      ],
+      "auto_rules": [
+        {
+          "condition": "dependency-blocked",
+          "target": "blocked"
+        }
+      ]
+    },
+    {
+      "key": "prioritised",
+      "label": "Prioritised",
+      "icon": "circle-star",
+      "spin": false,
+      "transitions": [
+        "active",
+        "ready"
+      ],
+      "auto_rules": []
+    },
+    {
+      "key": "active",
+      "label": "Active",
+      "icon": "circle-dot-dashed",
+      "spin": true,
+      "transitions": [
+        "hold",
+        "blocked",
+        "review"
+      ],
+      "auto_rules": [
+        {
+          "condition": "all-children-completed",
+          "target": "review"
+        }
+      ]
+    },
+    {
+      "key": "hold",
+      "label": "On Hold",
+      "icon": "circle-pause",
+      "spin": false,
+      "transitions": [
+        "active",
+        "ready"
+      ],
+      "auto_rules": []
+    },
+    {
+      "key": "blocked",
+      "label": "Blocked",
+      "icon": "circle-stop",
+      "spin": false,
+      "transitions": [
+        "active",
+        "ready"
+      ],
+      "auto_rules": [
+        {
+          "condition": "dependencies-met",
+          "target": "ready"
+        }
+      ]
+    },
+    {
+      "key": "review",
+      "label": "Review",
+      "icon": "circle-user-round",
+      "spin": false,
+      "transitions": [
+        "completed",
+        "active"
+      ],
+      "auto_rules": []
+    },
+    {
+      "key": "completed",
+      "label": "Completed",
+      "icon": "circle-check-big",
+      "spin": false,
+      "transitions": [
+        "surpassed"
+      ],
+      "auto_rules": []
+    },
+    {
+      "key": "surpassed",
+      "label": "Surpassed",
+      "icon": "circle-minus",
+      "spin": false,
+      "transitions": [],
+      "auto_rules": []
+    },
+    {
+      "key": "recurring",
+      "label": "Recurring",
+      "icon": "circle-fading-arrow-up",
+      "spin": false,
+      "transitions": [
+        "review",
+        "completed"
+      ],
+      "auto_rules": [
+        {
+          "condition": "recurrence-threshold",
+          "target": "review"
+        }
+      ]
+    }
+  ]
 }

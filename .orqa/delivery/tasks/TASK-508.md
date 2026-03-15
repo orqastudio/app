@@ -1,5 +1,4 @@
 ---
-
 id: TASK-508
 title: "Update PipelineStepper to show valid transitions"
 description: "Extend the PipelineStepper component to display which status transitions are valid from the artifact's current state, and make those transitions clickable so users can apply them directly from the stepper without manually editing the artifact file."

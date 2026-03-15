@@ -1,11 +1,4 @@
 ---
-
-
-
-
-
-
-
 id: PILLAR-003
 title: Purpose Through Continuity
 description: The system actively maintains coherence between intention and action. It prevents drift between what the user set out to do and what is actually being done, ensuring purpose is never lost during implementation.

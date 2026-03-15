@@ -1,5 +1,4 @@
 ---
-
 id: IDEA-007
 title: Spaces & Organisational Structure
 description: |

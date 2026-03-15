@@ -1,5 +1,4 @@
 ---
-
 id: IDEA-092
 title: "Improve CLI integrity scanner to match app's Rust checks"
 description: "The CLI verify-links.mjs only checks markdown link syntax and relationship entries. The app's Rust integrity scan checks all frontmatter reference fields (skills, docs-required, docs-produced, milestone, epic, etc.), dependency violations, supersession symmetry, research gaps, and planning placement. The CLI should have parity."

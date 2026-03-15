@@ -5,7 +5,7 @@ description: "UAT verification of the friction-as-feature principle from IDEA-06
 status: ready
 created: "2026-03-13"
 updated: "2026-03-13"
-epic: null
+epic: EPIC-073
 milestone: MS-001
 horizon: active
 depends-on: []

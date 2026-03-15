@@ -1,6 +1,4 @@
 ---
-
-
 id: RULE-029
 title: Testing Standards
 description: Test organisation, coverage requirements, mock boundaries, and isolation rules.

@@ -1,5 +1,4 @@
 ---
-
 id: RULE-045
 title: Data Integrity
 description: All artifact cross-references must resolve, pipeline relationships must have bidirectional inverses, and integrity checks run on every commit.

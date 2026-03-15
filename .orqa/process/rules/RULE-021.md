@@ -1,5 +1,4 @@
 ---
-
 id: RULE-021
 title: Pillar Alignment in Documentation
 description: Every documentation page describing a feature must include a Pillar Alignment section.

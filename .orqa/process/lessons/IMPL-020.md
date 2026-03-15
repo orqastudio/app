@@ -1,5 +1,4 @@
 ---
-
 id: IMPL-020
 title: "Plugins from other sidecars should be disabled when not in their sidecar context"
 description: "When multiple sidecar-specific plugins are installed, only the plugin matching the active sidecar should be loaded. Plugins from other sidecars should be disabled or scoped to prevent cross-context interference (wrong hooks firing, incompatible tool references)."

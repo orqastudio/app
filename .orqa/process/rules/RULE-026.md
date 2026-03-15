@@ -1,6 +1,4 @@
 ---
-
-
 id: RULE-026
 title: Skill Enforcement
 description: "Three-tier skill loading: agent portable skills, orchestrator-injected project skills, and context-resolving wrappers."

@@ -1,6 +1,4 @@
 ---
-
-
 id: IDEA-093
 title: "OrqaStudio package ecosystem for plugin portability"
 description: "Extract shared code into scoped npm packages hosted on GitHub Packages so that plugins can import types, validation, SDK, and UI components without depending on the full app."

@@ -1,5 +1,4 @@
 ---
-
 id: RULE-034
 title: Artifact Link Format
 description: All cross-references between artifacts must use markdown link syntax with artifact IDs. Bare IDs, file paths, and web-style paths are forbidden.

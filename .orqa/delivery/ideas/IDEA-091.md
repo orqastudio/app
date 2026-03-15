@@ -1,5 +1,4 @@
 ---
-
 id: IDEA-091
 title: "Rethink knowledge pipeline flow model"
 description: "The current pipeline widget assumes strict left-to-right flow (lesson→research→decision→skill→rule) but real knowledge flows in multiple directions based on context. Needs a new model that reflects how artifacts actually connect rather than enforcing a single pipeline direction."

@@ -1,6 +1,4 @@
 ---
-
-
 id: IMPL-021
 title: "Open items discovered during implementation are not tracked as tasks"
 description: "When work reveals open items (dead code, cleanup needed, research questions, follow-up fixes), these get reported in conversation but are not formalized as tasks in the artifact system. When the session ends, they exist only in conversation history and Claude memory — both lossy stores. The epic gets marked done while untracked work remains."
