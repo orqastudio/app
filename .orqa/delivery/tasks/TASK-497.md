@@ -2,7 +2,7 @@
 id: TASK-497
 title: "Per-type artifact link display mode in settings (F47)"
 description: "Extend the artifact link display mode setting from a single global toggle to per-artifact-type configuration. Each artifact type prefix (EPIC, TASK, AD, etc.) gets its own ID vs title display toggle. Update the settings UI to show the per-type controls."
-status: todo
+status: done
 priority: P2
 created: 2026-03-14
 updated: 2026-03-14
