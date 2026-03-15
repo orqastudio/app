@@ -7,23 +7,19 @@
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import { statusColor } from "$lib/components/shared/StatusIndicator.svelte";
+	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 
-	/** Container div bound by the template. */
 	let container = $state<HTMLDivElement | undefined>(undefined);
-
-	/** The vis-network instance, cleaned up on destroy. */
 	let network: Network | null = null;
-
-	/** Whether the graph is still stabilizing. */
 	let stabilizing = $state(false);
-
-	/** Stabilization progress 0-100. */
 	let stabilizationProgress = $state(0);
 
-	/** Cached graph size to avoid re-stabilizing when nothing changed. */
+	/** Cached graph size — only rebuild when this changes. */
 	let lastGraphSize = 0;
 
-	/** Map Tailwind dot class to a hex color for vis-network. */
+	/** Cached node positions from previous stabilization. */
+	let cachedPositions: Record<string, { x: number; y: number }> = {};
+
 	function hexFromDotClass(dotClass: string): string {
 		if (dotClass.includes("blue-500")) return "#3b82f6";
 		if (dotClass.includes("emerald-500")) return "#10b981";
@@ -33,13 +29,11 @@
 		return "#6b7280";
 	}
 
-	/** Resolve node color by status. */
 	function resolveNodeColor(status: string | null): string {
 		if (!status) return "#6b7280";
 		return hexFromDotClass(statusColor(status));
 	}
 
-	/** Per-type fallback colors when status is not meaningful. */
 	const TYPE_COLORS: Record<string, string> = {
 		epic: "#3b82f6",
 		task: "#10b981",
@@ -60,24 +54,36 @@
 		return TYPE_COLORS[artifactType] ?? "#6b7280";
 	}
 
-	/** Build the vis-network from the current graph state. */
 	function buildNetwork(el: HTMLDivElement): void {
 		if (network) {
+			// Save positions before destroying
+			try {
+				const positions = network.getPositions();
+				cachedPositions = positions;
+			} catch {
+				// Network may not be ready
+			}
 			network.destroy();
 			network = null;
 		}
 
 		const graphNodes = [...artifactGraphSDK.graph.values()];
-
 		if (graphNodes.length === 0) return;
 
-		stabilizing = true;
+		const hasCachedPositions = Object.keys(cachedPositions).length > 0;
+
+		// Only show stabilizing overlay if we don't have cached positions
+		if (!hasCachedPositions) {
+			stabilizing = true;
+			stabilizationProgress = 0;
+		}
 
 		const nodeDataset = new DataSet<Node>(
 			graphNodes.map((node): Node => {
 				const color = node.status
 					? resolveNodeColor(node.status)
 					: typeColor(node.artifact_type);
+				const cached = cachedPositions[node.id];
 				return {
 					id: node.id,
 					label: node.id,
@@ -92,17 +98,17 @@
 					size: 12,
 					borderWidth: 1,
 					shape: "dot",
+					// Use cached position if available — skips physics
+					...(cached ? { x: cached.x, y: cached.y, fixed: false } : {}),
 				};
 			}),
 		);
 
-		// Deduplicate edges: use "source->target" as key to avoid multi-edges
 		const edgeKeys = new SvelteSet<string>();
 		const edgeList: Edge[] = [];
 
 		for (const node of graphNodes) {
 			for (const ref of node.references_out) {
-				// Only add edges where the target also exists in the graph
 				if (!artifactGraphSDK.graph.has(ref.target_id)) continue;
 				const key = `${ref.source_id}->${ref.target_id}`;
 				if (edgeKeys.has(key)) continue;
@@ -120,9 +126,9 @@
 
 		const options: Options = {
 			physics: {
-				enabled: true,
+				enabled: !hasCachedPositions, // Disable physics if positions are cached
 				stabilization: {
-					enabled: true,
+					enabled: !hasCachedPositions,
 					iterations: 150,
 					updateInterval: 25,
 					fit: true,
@@ -136,7 +142,7 @@
 				},
 			},
 			layout: {
-				improvedLayout: graphNodes.length < 100,
+				improvedLayout: !hasCachedPositions && graphNodes.length < 100,
 			},
 			interaction: {
 				hover: true,
@@ -166,7 +172,6 @@
 		});
 
 		network.on("stabilizationProgress", (params) => {
-			stabilizing = true;
 			stabilizationProgress = Math.round((params.iterations / params.total) * 100);
 		});
 
@@ -175,21 +180,26 @@
 			stabilizationProgress = 100;
 			network?.setOptions({ physics: { enabled: false } });
 			network?.fit({ animation: { duration: 400, easingFunction: "easeInOutQuad" } });
+			// Cache positions for next render
+			try {
+				if (network) cachedPositions = network.getPositions();
+			} catch {
+				// Ignore
+			}
 		});
 
-		network.on("stabilized", () => {
+		// If we used cached positions, fit immediately
+		if (hasCachedPositions && network) {
 			stabilizing = false;
-		});
+			network.fit({ animation: { duration: 200, easingFunction: "easeInOutQuad" } });
+		}
 	}
 
-	// Rebuild only when the container mounts or the graph data actually changes
 	$effect(() => {
 		const el = container;
 		const currentSize = artifactGraphSDK.graph.size;
 
 		if (!el) return;
-
-		// Skip rebuild if graph size hasn't changed (cache the render)
 		if (network && currentSize === lastGraphSize) return;
 
 		lastGraphSize = currentSize;
@@ -198,6 +208,12 @@
 
 	onDestroy(() => {
 		if (network) {
+			// Save positions before destroy
+			try {
+				cachedPositions = network.getPositions();
+			} catch {
+				// Ignore
+			}
 			network.destroy();
 			network = null;
 		}
@@ -205,7 +221,6 @@
 </script>
 
 <div class="relative flex h-full flex-col">
-	<!-- Header -->
 	<div class="flex items-center justify-between border-b border-border px-4 py-2">
 		<div class="flex items-center gap-2">
 			<span class="text-sm font-medium">Artifact Graph</span>
@@ -217,10 +232,9 @@
 		</div>
 	</div>
 
-	<!-- Graph container -->
 	{#if artifactGraphSDK.loading}
-		<div class="flex flex-1 items-center justify-center text-sm text-muted-foreground">
-			Loading graph…
+		<div class="flex flex-1 items-center justify-center">
+			<LoadingSpinner size="lg" />
 		</div>
 	{:else if artifactGraphSDK.graph.size === 0}
 		<div class="flex flex-1 items-center justify-center text-sm text-muted-foreground">
@@ -235,8 +249,11 @@
 				aria-label="Full artifact relationship graph"
 			></div>
 			{#if stabilizing}
-				<div class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/80 backdrop-blur-sm">
-					<p class="text-sm font-medium text-muted-foreground">Laying out {artifactGraphSDK.graph.size} nodes…</p>
+				<div class="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-background/80 backdrop-blur-sm">
+					<LoadingSpinner size="lg" />
+					<p class="text-sm font-medium text-muted-foreground">
+						Laying out {artifactGraphSDK.graph.size} nodes…
+					</p>
 					<div class="h-1.5 w-48 overflow-hidden rounded-full bg-muted">
 						<div
 							class="h-full rounded-full bg-primary transition-[width] duration-200"
