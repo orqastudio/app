@@ -105,7 +105,7 @@
 					onclick={handleClick}
 				>
 					{#if StatusIcon}
-						<StatusIcon class="h-3 w-3 shrink-0 text-muted-foreground {spinning ? 'status-spin' : ''}" />
+						<StatusIcon class="h-3 w-3 shrink-0 {spinning ? 'status-spin' : ''}" />
 					{/if}
 					{#if showingTitle}
 						<span class="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">{chipLabel}</span>
@@ -122,7 +122,7 @@
 				<div class="space-y-1 text-xs">
 					<div class="flex items-center gap-1.5">
 						{#if StatusIcon}
-							<StatusIcon class="h-3 w-3 shrink-0 text-muted-foreground {spinning ? 'status-spin' : ''}" />
+							<StatusIcon class="h-3 w-3 shrink-0 {spinning ? 'status-spin' : ''}" />
 						{/if}
 						<span class="font-mono font-semibold">{node.id}</span>
 						{#if node.status}
