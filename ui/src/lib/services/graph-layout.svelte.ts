@@ -49,6 +49,7 @@ class GraphLayoutService {
             const msg = event.data;
 
             if (msg.type === "positions") {
+                console.log(`[graph-layout-service] Received ${msg.positions.length} positions from worker`);
                 this.positions = msg.positions;
                 this.layoutRunning = false;
                 this.layoutProgress = 100;
@@ -94,6 +95,10 @@ class GraphLayoutService {
             group: el.group ?? "nodes",
             data: { ...(el.data ?? {}) },
         }));
+
+        const nodeElements = plainElements.filter(e => e.group === "nodes");
+        const edgeElements = plainElements.filter(e => e.group === "edges");
+        console.log(`[graph-layout-service] Sending ${nodeElements.length} nodes, ${edgeElements.length} edges to worker`);
 
         const request: WorkerRequest = { type: "layout", elements: plainElements };
         this.worker.postMessage(request);

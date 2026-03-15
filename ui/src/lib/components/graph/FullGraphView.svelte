@@ -28,8 +28,11 @@
 		const elements = artifactGraphSDK.graphElements;
 		const positions = graphLayoutService.positions;
 
-		if (elements.filter((e) => e.group === "nodes").length === 0) return;
+		const nodeCount = elements.filter((e) => e.group === "nodes").length;
+		const edgeCount = elements.filter((e) => e.group === "edges").length;
+		if (nodeCount === 0) return;
 		if (positions.length === 0) return; // Still computing — wait for positions
+		console.log(`[FullGraphView] Rendering ${nodeCount} nodes, ${edgeCount} edges, ${positions.length} positions`);
 
 		// Apply worker-computed positions to node element definitions.
 		const positionMap = new Map(positions.map((p) => [p.id, { x: p.x, y: p.y }]));
