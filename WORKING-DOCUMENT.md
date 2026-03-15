@@ -147,6 +147,16 @@ They cover the same knowledge but are authored differently. You can't make one m
 
 The graph ensures they stay aligned. When documentation changes, the connected skill is flagged for review. When a skill is updated, its documentation is flagged too.
 
+**But skills are broader than documentation.** Not every skill has a corresponding doc page. Skills fall into three categories:
+
+| Category | Example | Synchronised with docs? |
+|---|---|---|
+| **Project skills** | "How our artifact statuses work" | Yes — same knowledge, two renderings |
+| **Domain skills** | Rust patterns, Svelte 5, testing methodology | No — portable expertise, not project-specific |
+| **Platform skills** | How OrqaStudio works | No — shipped with the app, uneditable |
+
+Documentation is always about THIS project. Skills can be generic expertise applied to how the project delivers. A Rust coding patterns skill has nothing to do with the project's content — it's domain knowledge the agent needs to write good code.
+
 ## Key Design Principles
 
 1. **The graph is the only data structure.** No standalone fields, no side channels.
