@@ -43,6 +43,7 @@ System knowledge should be:
 - How the learning loop works (lesson → recurrence → promotion)
 
 ### What stays as project-level skills/rules:
+- **Project state machine skill** — required skill, editable at project level. Teaches agents how THIS project uses the state machine (when to use each status, project-specific conventions like "we use hold for client-waiting states"). The app generates a default version from the state machine config; the project can customise it.
 - Coding standards (project-specific)
 - Architecture decisions (project-specific)
 - Domain knowledge (project-specific)
