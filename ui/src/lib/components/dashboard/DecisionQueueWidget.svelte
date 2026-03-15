@@ -31,17 +31,17 @@
 		priority: string | null;
 	}
 
-	/** Human-readable action description based on artifact type. */
+	/** Human-readable action required based on artifact type. */
 	function actionLabel(type: string): string {
 		switch (type) {
-			case "task": return "Task needs review";
-			case "epic": return "Epic needs review";
-			case "idea": return "Idea needs review";
-			case "decision": return "Decision needs review";
-			case "lesson": return "Lesson needs review";
-			case "research": return "Research needs review";
-			case "milestone": return "Milestone needs review";
-			default: return "Needs review";
+			case "task": return "Verify task completion";
+			case "epic": return "Review epic deliverables";
+			case "idea": return "Decide on promotion";
+			case "decision": return "Accept or reject decision";
+			case "lesson": return "Promote to rule or skill";
+			case "research": return "Review research findings";
+			case "milestone": return "Verify milestone gate";
+			default: return "Review required";
 		}
 	}
 
@@ -63,10 +63,10 @@
 	interface EpicEntry {
 		id: string;
 		title: string;
+		description: string | null;
 		status: string;
 		priority: string | null;
 		path: string;
-		/** Fraction of done tasks out of total tasks linked to this epic (0–1). */
 		taskProgress: number | null;
 		taskDone: number;
 		taskTotal: number;
@@ -96,16 +96,17 @@
 
 		for (const node of artifactGraphSDK.byType("epic")) {
 			const status = node.status ?? "";
-			if (status !== "in-progress" && status !== "ready") continue;
+			if (status !== "active" && status !== "ready" && status !== "prioritised") continue;
 
 			const tasks = tasksByEpic.get(node.id) ?? [];
 			const taskTotal = tasks.length;
-			const taskDone = tasks.filter((t) => t.status === "done").length;
+			const taskDone = tasks.filter((t) => t.status === "completed").length;
 			const taskProgress = taskTotal > 0 ? taskDone / taskTotal : null;
 
 			entries.push({
 				id: node.id,
 				title: node.title,
+				description: node.description ?? null,
 				status,
 				priority: node.priority,
 				path: node.path,
@@ -115,9 +116,9 @@
 			});
 		}
 
-		// in-progress first, then ready; within each group sort by priority
+		// active first, then ready; within each group sort by priority
 		return entries.sort((a, b) => {
-			const statusOrder: Record<string, number> = { "in-progress": 0, ready: 1 };
+			const statusOrder: Record<string, number> = { active: 0, prioritised: 1, ready: 2 };
 			const sa = statusOrder[a.status] ?? 2;
 			const sb = statusOrder[b.status] ?? 2;
 			if (sa !== sb) return sa - sb;
@@ -151,8 +152,9 @@
 		<Card.Header class="pb-1">
 			<Card.Title class="flex items-center gap-1.5 text-sm font-semibold">
 				<CompassIcon class="h-4 w-4 text-muted-foreground" />
-				What's Next
+				Purpose
 			</Card.Title>
+			<Card.Description class="text-xs">What's Next</Card.Description>
 			<!-- Tab buttons in Card.Action -->
 			<Card.Action>
 				<div class="flex items-center gap-0">
@@ -192,8 +194,8 @@
 						{#each pendingActions as action (action.id)}
 							<div class="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-accent/50">
 								<div class="min-w-0 flex-1">
-									<p class="truncate text-xs font-medium">{action.title}</p>
-									<p class="text-[10px] text-muted-foreground">{action.action}</p>
+									<p class="truncate text-xs font-medium">{action.action}</p>
+									<p class="truncate text-[10px] text-muted-foreground">{action.title}</p>
 								</div>
 								<div class="shrink-0">
 									<ArtifactLink id={action.id} displayLabel={action.id} />
@@ -214,27 +216,13 @@
 				{:else}
 					<div class="space-y-1">
 						{#each epicEntries as epic (epic.id)}
-							<button
-								class="flex w-full items-start justify-between gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-accent/50"
-								onclick={openRoadmap}
-							>
-								<div class="flex min-w-0 flex-col gap-0.5 flex-1">
-									<div class="flex items-center gap-2">
-										<Badge
-											variant={epic.status === "in-progress" ? "default" : "outline"}
-											class="text-[10px] px-1.5 py-0 h-4 shrink-0"
-										>
-											{epic.status === "in-progress" ? "Active" : "Ready"}
-										</Badge>
-										{#if epic.priority}
-											<span class="text-[10px] font-medium {priorityBadgeClass(epic.priority)} shrink-0">
-												{epic.priority}
-											</span>
-										{/if}
-									</div>
+							<div class="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-accent/50">
+								<div class="min-w-0 flex-1">
 									<p class="truncate text-xs font-medium">{epic.title}</p>
+									{#if epic.description}
+										<p class="truncate text-[10px] text-muted-foreground">{epic.description}</p>
+									{/if}
 									{#if epic.taskProgress !== null}
-										<!-- Progress bar -->
 										<div class="flex items-center gap-1.5 mt-0.5">
 											<div class="h-1 flex-1 rounded-full bg-muted overflow-hidden">
 												<div
@@ -248,7 +236,10 @@
 										</div>
 									{/if}
 								</div>
-							</button>
+								<div class="shrink-0">
+									<ArtifactLink id={epic.id} displayLabel={epic.id} />
+								</div>
+							</div>
 						{/each}
 					</div>
 
