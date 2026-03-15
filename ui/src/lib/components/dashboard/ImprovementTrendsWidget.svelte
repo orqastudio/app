@@ -43,20 +43,21 @@
 
 	const SPARKLINE_HEIGHT = 40;
 
-	/** Build an SVG polyline path from an array of values. */
-	function sparklinePath(values: number[], invert: boolean = false): string {
+	/** Build an SVG polyline path from an array of values.
+	 *  fixedMin/fixedMax: use a fixed scale (e.g. 0-100 for percentages)
+	 *  instead of auto-scaling to data range. */
+	function sparklinePath(values: number[], invert: boolean = false, fixedMin?: number, fixedMax?: number): string {
 		if (values.length < 2) return "";
-		const min = Math.min(...values);
-		const max = Math.max(...values);
-		const range = max - min || 1;
+		const min = fixedMin ?? Math.min(...values);
+		const max = fixedMax ?? Math.max(...values);
+		const range = max - min;
 		const pad = 2;
 		const h = SPARKLINE_HEIGHT - pad * 2;
-		// We use 100 as viewBox width and scale via preserveAspectRatio
 		const totalWidth = 100;
 		const stepX = totalWidth / (values.length - 1);
 		const points = values.map((v, i) => {
-			// If invert=true (lower=better), we flip so visually "good" is up
-			const normalised = invert ? 1 - (v - min) / range : (v - min) / range;
+			// When range is 0 (all values equal), render at middle
+			const normalised = range === 0 ? 0.5 : (invert ? 1 - (v - min) / range : (v - min) / range);
 			return `${i * stepX},${pad + h - normalised * h}`;
 		});
 		return `M${points.join(" L")}`;
@@ -67,6 +68,8 @@
 		lowerIsBetter: boolean;
 		getValue: (s: HealthSnapshot) => number;
 		unit?: string;
+		fixedMin?: number;
+		fixedMax?: number;
 	}
 
 	const metrics: MetricConfig[] = [
@@ -74,22 +77,27 @@
 			label: "Errors",
 			lowerIsBetter: true,
 			getValue: (s) => s.error_count,
+			fixedMin: 0,
 		},
 		{
 			label: "Warnings",
 			lowerIsBetter: true,
 			getValue: (s) => s.warning_count,
+			fixedMin: 0,
 		},
 		{
 			label: "Artifacts",
 			lowerIsBetter: false,
 			getValue: (s) => s.node_count,
+			fixedMin: 0,
 		},
 		{
 			label: "Integrity",
 			lowerIsBetter: false,
 			getValue: (s) => integrityScore(s),
 			unit: "%",
+			fixedMin: 0,
+			fixedMax: 100,
 		},
 	];
 
@@ -134,15 +142,19 @@
 	}
 
 	/**
-	 * Sparkline stroke colour:
-	 * - Contextually positive trend (errors going DOWN, integrity going UP) → green
-	 * - Contextually negative trend → red
-	 * - No trend / neutral → grey
+	 * Sparkline stroke colour based on overall trend (first vs last value):
+	 * - Contextually positive → green
+	 * - Contextually negative → red
+	 * - No trend / flat → cyan (neutral)
 	 */
 	function strokeColor(m: MetricConfig): string {
-		const pct = percentChange(m);
-		if (pct === null || pct === 0) return "#06b6d4";
-		return isImprovement(m, pct) ? "#22c55e" : "#ef4444";
+		if (chronological.length < 2) return "#06b6d4";
+		const first = m.getValue(chronological[0]);
+		const last = m.getValue(chronological[chronological.length - 1]);
+		const diff = last - first;
+		if (diff === 0) return "#06b6d4";
+		const improving = m.lowerIsBetter ? diff < 0 : diff > 0;
+		return improving ? "#22c55e" : "#ef4444";
 	}
 
 	function sparklineValues(m: MetricConfig): number[] {
@@ -165,7 +177,7 @@
 			{@const label = trendLabel(m)}
 			{@const colorClass = trendColorClass(m)}
 			{@const stroke = strokeColor(m)}
-			{@const path = hasTrend ? sparklinePath(values, m.lowerIsBetter) : ""}
+			{@const path = hasTrend ? sparklinePath(values, m.lowerIsBetter, m.fixedMin, m.fixedMax) : ""}
 			{@const isLeft = idx % 2 === 0}
 			{@const isTop = idx < 2}
 			<div class="flex min-h-0 flex-col overflow-hidden {isLeft && 'border-r border-border'} {isTop && 'border-t border-border'}">
