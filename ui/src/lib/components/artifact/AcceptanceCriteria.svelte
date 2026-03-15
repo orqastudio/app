@@ -10,7 +10,7 @@
 		status?: string;
 	} = $props();
 
-	const isDone = $derived(status === "done");
+	const isDone = $derived(status === "completed");
 </script>
 
 {#if criteria.length > 0}

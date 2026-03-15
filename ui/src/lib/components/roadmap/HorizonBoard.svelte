@@ -83,9 +83,11 @@
 	}
 
 	function inferHorizon(ms: ArtifactNode): string {
-		const s = ms.status ?? "planning";
+		const s = ms.status ?? "captured";
 		if (s === "active") return "now";
-		if (s === "complete") return "done";
+		if (s === "completed" || s === "surpassed") return "done";
+		if (s === "captured") return "later";
+		if (s === "exploring") return "next";
 		return "next";
 	}
 
@@ -106,9 +108,12 @@
 
 	// When grouping by status, derive columns from milestone statuses
 	const STATUS_COLUMNS = [
-		{ key: "planning", label: "Planning", isDone: false },
+		{ key: "captured", label: "Captured", isDone: false },
+		{ key: "exploring", label: "Exploring", isDone: false },
+		{ key: "ready", label: "Ready", isDone: false },
 		{ key: "active", label: "Active", isDone: false },
-		{ key: "complete", label: "Complete", isDone: true },
+		{ key: "review", label: "Review", isDone: false },
+		{ key: "completed", label: "Completed", isDone: true },
 	];
 
 	// When grouping by priority, derive columns from milestone priorities
@@ -262,10 +267,10 @@
 								{:else}
 									{#each col.milestones as ms (ms.id)}
 										{@const msEpics = epicsForMilestone(ms.id)}
-										{@const doneCount = msEpics.filter((e) => e.status === "done").length}
-										{@const inProgress = msEpics.filter((e) => e.status === "in-progress")}
+										{@const doneCount = msEpics.filter((e) => e.status === "completed").length}
+										{@const inProgress = msEpics.filter((e) => e.status === "active")}
 										{@const critical = msEpics.filter(
-											(e) => e.priority === "P1" && e.status !== "done",
+											(e) => e.priority === "P1" && e.status !== "completed",
 										)}
 										<div
 											draggable={onHorizonChange !== undefined && sortBy === "horizon"}

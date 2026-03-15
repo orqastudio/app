@@ -79,9 +79,10 @@
 	function milestoneHorizon(ms: ArtifactNode): string {
 		const fm = ms.frontmatter;
 		if (typeof fm["horizon"] === "string") return fm["horizon"];
-		const s = ms.status ?? "planning";
+		const s = ms.status ?? "captured";
 		if (s === "active") return "now";
-		if (s === "complete") return "done";
+		if (s === "completed" || s === "surpassed") return "done";
+		if (s === "captured" || s === "exploring") return "later";
 		return "next";
 	}
 
@@ -127,11 +128,11 @@
 	// ---------------------------------------------------------------------------
 
 	const EPIC_COLUMNS = [
-		{ key: "draft", label: "Draft" },
+		{ key: "captured", label: "Captured" },
 		{ key: "ready", label: "Ready" },
-		{ key: "in-progress", label: "In Progress" },
+		{ key: "active", label: "Active" },
 		{ key: "review", label: "Review" },
-		{ key: "done", label: "Done", isDone: true },
+		{ key: "completed", label: "Completed", isDone: true },
 	];
 
 	const epicColumns = $derived.by(() => {
@@ -150,9 +151,11 @@
 	// ---------------------------------------------------------------------------
 
 	const TASK_COLUMNS = [
-		{ key: "todo", label: "Todo" },
-		{ key: "in-progress", label: "In Progress" },
-		{ key: "done", label: "Done", isDone: true },
+		{ key: "captured", label: "Captured" },
+		{ key: "ready", label: "Ready" },
+		{ key: "active", label: "Active" },
+		{ key: "review", label: "Review" },
+		{ key: "completed", label: "Completed", isDone: true },
 	];
 
 	/** Tasks that belong to the selected epic. */
@@ -170,7 +173,7 @@
 		epicId: string,
 	): { done: number; total: number } {
 		const epicTaskList = tasks.filter((t) => t.frontmatter["epic"] === epicId);
-		const done = epicTaskList.filter((t) => t.status === "done").length;
+		const done = epicTaskList.filter((t) => t.status === "completed").length;
 		return { done, total: epicTaskList.length };
 	}
 
@@ -284,7 +287,7 @@
 							{/if}
 							{#if milestoneEpics.length > 0}
 								{@const doneCount = milestoneEpics.filter(
-									(e) => e.status === "done",
+									(e) => e.status === "completed",
 								).length}
 								<p class="mt-1 text-xs text-muted-foreground">
 									{doneCount}/{milestoneEpics.length} epics done
@@ -323,7 +326,7 @@
 						{/if}
 						{#if epicTasks.length > 0}
 							{@const doneCount = epicTasks.filter(
-								(t) => t.status === "done",
+								(t) => t.status === "completed",
 							).length}
 							<p class="mt-1 text-xs text-muted-foreground">
 								{doneCount}/{epicTasks.length} tasks done

@@ -400,6 +400,7 @@ pub enum IntegrityCategory {
     IdeaPromotionValidity,
     IdeaDeliveryTracking,
     InvalidStatus,
+    BodyTextRefWithoutRelationship,
 }
 
 /// Severity of an integrity finding.
@@ -445,6 +446,7 @@ pub fn check_integrity(graph: &ArtifactGraph, valid_statuses: &[String]) -> Vec<
     check_milestone_gate(graph, &mut checks);
     check_idea_promotion_validity(graph, &mut checks);
     check_idea_delivery_tracking(graph, &mut checks);
+    check_body_text_refs_without_relationships(graph, &mut checks);
     if !valid_statuses.is_empty() {
         check_invalid_statuses(graph, valid_statuses, &mut checks);
     }
@@ -993,6 +995,54 @@ fn check_idea_delivery_tracking(graph: &ArtifactGraph, checks: &mut Vec<Integrit
     }
 }
 
+/// Check that every artifact ID found in body text has a corresponding relationship
+/// (either in the `relationships` array or as a frontmatter reference field).
+///
+/// Body references to IDs that appear only as prose citations with no graph edge are
+/// flagged as `BodyTextRefWithoutRelationship` warnings. The suggested auto-fix is to
+/// add an `informed-by` relationship, which is the most generic relationship type.
+///
+/// Implementation note: body text references are already extracted during graph
+/// construction by `collect_body_refs` and stored as `references_out` entries with
+/// `field == "body"`. All frontmatter field references (including `relationships`,
+/// `depends-on`, `epic`, `pillars`, etc.) are stored with their respective field names.
+/// A body ref is "covered" when any non-body outgoing edge targets the same artifact ID.
+fn check_body_text_refs_without_relationships(
+    graph: &ArtifactGraph,
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    for node in graph.nodes.values() {
+        // Collect body-text refs (field == "body") and check each one for a covering edge.
+        for body_ref in node.references_out.iter().filter(|r| r.field == "body") {
+            let target_id = &body_ref.target_id;
+
+            // A body ref is "covered" if any non-body outgoing edge points to the same target.
+            // This covers: relationships array, all SINGLE_REF_FIELDS, all ARRAY_REF_FIELDS.
+            let has_relationship = node
+                .references_out
+                .iter()
+                .any(|r| r.field != "body" && &r.target_id == target_id);
+
+            if !has_relationship {
+                checks.push(IntegrityCheck {
+                    category: IntegrityCategory::BodyTextRefWithoutRelationship,
+                    severity: IntegritySeverity::Warning,
+                    artifact_id: node.id.clone(),
+                    message: format!(
+                        "{} references {} in body text but has no relationship edge to it",
+                        node.id, target_id
+                    ),
+                    auto_fixable: true,
+                    fix_description: Some(format!(
+                        "Add {{ target: \"{}\", type: \"informed-by\" }} to {}'s relationships array",
+                        target_id, node.id
+                    )),
+                });
+            }
+        }
+    }
+}
+
 /// Mapping of commonly seen legacy status values to their canonical replacements.
 ///
 /// Used to produce auto-fix suggestions when a status value is invalid.
@@ -1163,6 +1213,11 @@ pub fn apply_fixes(
                     applied.push(fix);
                 }
             }
+            IntegrityCategory::BodyTextRefWithoutRelationship => {
+                if let Some(fix) = apply_body_text_ref_fix(graph, check, project_path)? {
+                    applied.push(fix);
+                }
+            }
             _ => {}
         }
     }
@@ -1244,6 +1299,77 @@ fn parse_missing_inverse_message(message: &str) -> Option<(&str, &str, &str)> {
     let inverse_type = edge_parts[0].trim();
 
     Some((source_id, target_id, inverse_type))
+}
+
+/// Fix a body-text ref without relationship by adding an `informed-by` relationship entry
+/// to the source artifact's own frontmatter.
+///
+/// The fix description encodes the target ID in the form:
+/// `Add { target: "TARGET-ID", type: "informed-by" } to SOURCE-ID's relationships array`
+fn apply_body_text_ref_fix(
+    graph: &ArtifactGraph,
+    check: &IntegrityCheck,
+    project_path: &Path,
+) -> Result<Option<AppliedFix>, OrqaError> {
+    // Parse the target ID from the fix description.
+    // Pattern: `Add { target: "TARGET-ID", type: "informed-by" } to ...`
+    let target_id = check.fix_description.as_deref().and_then(|desc| {
+        let after = desc.strip_prefix("Add { target: \"")?;
+        let end = after.find('"')?;
+        Some(after[..end].to_owned())
+    });
+
+    let Some(target_id) = target_id else {
+        return Ok(None);
+    };
+
+    let Some(source_node) = graph.nodes.get(&check.artifact_id) else {
+        return Ok(None);
+    };
+
+    let file_path = project_path.join(&source_node.path);
+    if !file_path.exists() {
+        return Ok(None);
+    }
+
+    let content =
+        std::fs::read_to_string(&file_path).map_err(|e| OrqaError::FileSystem(e.to_string()))?;
+    let (fm_text, body) = crate::domain::artifact::extract_frontmatter(&content);
+    let Some(fm_text) = fm_text else {
+        return Ok(None);
+    };
+
+    // Guard: don't add a duplicate entry.
+    let yaml_value: serde_yaml::Value =
+        serde_yaml::from_str(&fm_text).unwrap_or(serde_yaml::Value::Null);
+    if let Some(rels) = yaml_value
+        .get("relationships")
+        .and_then(|v| v.as_sequence())
+    {
+        let already_present = rels.iter().any(|rel| {
+            rel.get("target").and_then(|v| v.as_str()) == Some(&target_id)
+                && rel.get("type").and_then(|v| v.as_str()) == Some("informed-by")
+        });
+        if already_present {
+            return Ok(None);
+        }
+    }
+
+    let new_entry = format!(
+        "  - target: {target_id}\n    type: informed-by\n    rationale: \"Auto-generated from body text reference\""
+    );
+
+    let new_content = insert_relationship_entry(&fm_text, &body, &new_entry);
+    std::fs::write(&file_path, new_content).map_err(|e| OrqaError::FileSystem(e.to_string()))?;
+
+    Ok(Some(AppliedFix {
+        artifact_id: check.artifact_id.clone(),
+        description: format!(
+            "Added {{ target: \"{}\", type: \"informed-by\" }} to {}'s relationships",
+            target_id, check.artifact_id
+        ),
+        file_path: source_node.path.clone(),
+    }))
 }
 
 /// Insert a new relationship entry into frontmatter text, returning the full reconstructed file.

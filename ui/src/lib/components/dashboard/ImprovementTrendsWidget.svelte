@@ -14,8 +14,6 @@
 		...artifactGraphSDK.byType("decision"),
 	]);
 
-	const governanceCount = $derived(governanceArtifacts.length);
-
 	/** Build cumulative governance count over time, aligned to snapshot dates. */
 	function governanceAtDate(dateStr: string): number {
 		return governanceArtifacts.filter((a) => {

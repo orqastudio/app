@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Card from "$lib/components/ui/card";
 	import * as ScrollArea from "$lib/components/ui/scroll-area";
-	import { Badge } from "$lib/components/ui/badge";
+
 	import CheckCircle2Icon from "@lucide/svelte/icons/check-circle-2";
 	import ArtifactLink from "$lib/components/artifact/ArtifactLink.svelte";
 	import CompassIcon from "@lucide/svelte/icons/compass";
@@ -125,12 +125,6 @@
 			return priorityRank(a.priority) - priorityRank(b.priority);
 		});
 	});
-
-	function priorityBadgeClass(p: string | null): string {
-		if (p === "P1") return "text-destructive";
-		if (p === "P2") return "text-amber-600 dark:text-amber-400";
-		return "text-muted-foreground";
-	}
 
 	// -------------------------------------------------------------------------
 	// General state

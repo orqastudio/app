@@ -22,11 +22,16 @@
 
 	/** Status sort order for secondary sorting. */
 	const STATUS_ORDER: Record<string, number> = {
-		"in-progress": 0,
-		"todo": 1,
-		"ready": 2,
-		"draft": 3,
-		"done": 4,
+		active: 0,
+		review: 1,
+		ready: 2,
+		prioritised: 3,
+		exploring: 4,
+		captured: 5,
+		blocked: 6,
+		hold: 7,
+		completed: 8,
+		surpassed: 9,
 	};
 
 	/** Find all artifacts of childType where frontmatter[refField] matches parentId. */

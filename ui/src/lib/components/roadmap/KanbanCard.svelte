@@ -33,7 +33,7 @@
 	<!-- Title row -->
 	<div class="flex items-start justify-between gap-2">
 		<div class="flex min-w-0 items-center gap-2">
-			<StatusIndicator status={node.status ?? "draft"} mode="dot" />
+			<StatusIndicator status={node.status ?? "captured"} mode="dot" />
 			<span class="truncate text-sm font-medium">{node.title}</span>
 		</div>
 		{#if node.priority}

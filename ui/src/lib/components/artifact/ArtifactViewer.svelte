@@ -11,6 +11,7 @@
 	import ErrorDisplay from "$lib/components/shared/ErrorDisplay.svelte";
 	import { ScrollArea } from "$lib/components/ui/scroll-area";
 	import { artifactStore } from "$lib/stores/artifact.svelte";
+	import { projectStore } from "$lib/stores/project.svelte";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import { parseFrontmatter } from "$lib/utils/frontmatter";
@@ -137,52 +138,28 @@
 		parsedContent ? String(parsedContent.metadata["status"] ?? "") : "",
 	);
 
-	/** Lifecycle stages per artifact type — built as {key, label} for PipelineStepper. */
-	const LIFECYCLE_STAGES: Record<string, Array<{ key: string; label: string }>> = {
-		task: [
-			{ key: "todo", label: "To Do" },
-			{ key: "in-progress", label: "In Progress" },
-			{ key: "done", label: "Done" },
-		],
-		epic: [
-			{ key: "draft", label: "Draft" },
-			{ key: "ready", label: "Ready" },
-			{ key: "in-progress", label: "In Progress" },
-			{ key: "review", label: "Review" },
-			{ key: "done", label: "Done" },
-		],
-		idea: [
+	/** Lifecycle stages — unified across all artifact types, read from project config. */
+	const pipelineStages = $derived.by((): Array<{ key: string; label: string }> => {
+		const statuses = projectStore.projectSettings?.statuses;
+		if (statuses && statuses.length > 0) {
+			return statuses.map((s) => ({ key: s.key, label: s.label }));
+		}
+		// Fallback if config not loaded
+		return [
 			{ key: "captured", label: "Captured" },
 			{ key: "exploring", label: "Exploring" },
-			{ key: "shaped", label: "Shaped" },
-			{ key: "promoted", label: "Promoted" },
-		],
-		milestone: [
-			{ key: "planning", label: "Planning" },
+			{ key: "ready", label: "Ready" },
+			{ key: "prioritised", label: "Prioritised" },
 			{ key: "active", label: "Active" },
-			{ key: "complete", label: "Complete" },
-		],
-		decision: [
-			{ key: "proposed", label: "Proposed" },
-			{ key: "accepted", label: "Accepted" },
-			{ key: "superseded", label: "Superseded" },
-		],
-		lesson: [
-			{ key: "active", label: "Captured" },
-			{ key: "recurring", label: "Recurring" },
-			{ key: "promoted", label: "Promoted" },
-		],
-		research: [
-			{ key: "draft", label: "Draft" },
-			{ key: "complete", label: "Complete" },
+			{ key: "hold", label: "On Hold" },
+			{ key: "blocked", label: "Blocked" },
+			{ key: "review", label: "Review" },
+			{ key: "completed", label: "Completed" },
 			{ key: "surpassed", label: "Surpassed" },
-		],
-	};
+			{ key: "recurring", label: "Recurring" },
+		];
+	});
 
-	/** Resolved stages for the current artifact type. */
-	const pipelineStages = $derived(
-		LIFECYCLE_STAGES[artifactType?.toLowerCase()] ?? [],
-	);
 
 	/** Acceptance criteria array for tasks. */
 	const acceptanceCriteria = $derived.by((): string[] => {

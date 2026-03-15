@@ -41,7 +41,7 @@
 			if (!epic || epic.artifact_type !== "epic") continue;
 			if (epic.priority === "P1") {
 				p1Total++;
-				if (epic.status === "done") p1Done++;
+				if (epic.status === "completed") p1Done++;
 			}
 		}
 

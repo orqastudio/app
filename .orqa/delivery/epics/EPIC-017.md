@@ -6,7 +6,7 @@ status: completed
 priority: P2
 created: 2026-03-07
 updated: 2026-03-12
-milestone: MS-002
+milestone: MS-001
 horizon: null
 pillars:
   - PILLAR-001
