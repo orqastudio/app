@@ -140,11 +140,23 @@ pub fn refresh_artifact_graph(state: State<'_, AppState>) -> Result<(), OrqaErro
     Ok(())
 }
 
+/// Load the valid status keys for the active project from `project.json`.
+///
+/// Returns an empty `Vec` if settings are unavailable or have no statuses defined.
+fn load_valid_statuses(project_path: &str) -> Vec<String> {
+    crate::repo::project_settings_repo::read(project_path)
+        .unwrap_or(None)
+        .map(|s| s.statuses.into_iter().map(|sd| sd.key).collect())
+        .unwrap_or_default()
+}
+
 /// Run integrity checks on the artifact graph and return all findings.
 #[tauri::command]
 pub fn run_integrity_scan(state: State<'_, AppState>) -> Result<Vec<IntegrityCheck>, OrqaError> {
     let graph = get_or_build_graph(&state)?;
-    Ok(check_integrity(&graph))
+    let project_path = active_project_path(&state)?;
+    let valid_statuses = load_valid_statuses(&project_path);
+    Ok(check_integrity(&graph, &valid_statuses))
 }
 
 /// Apply auto-fixable integrity checks and return the list of applied fixes.
@@ -154,8 +166,9 @@ pub fn run_integrity_scan(state: State<'_, AppState>) -> Result<Vec<IntegrityChe
 #[tauri::command]
 pub fn apply_auto_fixes(state: State<'_, AppState>) -> Result<Vec<AppliedFix>, OrqaError> {
     let graph = get_or_build_graph(&state)?;
-    let checks = check_integrity(&graph);
     let project_path = active_project_path(&state)?;
+    let valid_statuses = load_valid_statuses(&project_path);
+    let checks = check_integrity(&graph, &valid_statuses);
     let applied = apply_fixes(&graph, &checks, Path::new(&project_path))?;
 
     // Refresh the graph if any fixes were applied.

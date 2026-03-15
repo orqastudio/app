@@ -399,6 +399,7 @@ pub enum IntegrityCategory {
     MilestoneGate,
     IdeaPromotionValidity,
     IdeaDeliveryTracking,
+    InvalidStatus,
 }
 
 /// Severity of an integrity finding.
@@ -428,7 +429,10 @@ pub struct AppliedFix {
 }
 
 /// Run integrity checks on the artifact graph and return all findings.
-pub fn check_integrity(graph: &ArtifactGraph) -> Vec<IntegrityCheck> {
+///
+/// `valid_statuses` is the list of status keys defined in `project.json`.
+/// Pass an empty slice to skip status validation (e.g. when settings are unavailable).
+pub fn check_integrity(graph: &ArtifactGraph, valid_statuses: &[String]) -> Vec<IntegrityCheck> {
     let mut checks = Vec::new();
 
     check_broken_refs(graph, &mut checks);
@@ -441,6 +445,9 @@ pub fn check_integrity(graph: &ArtifactGraph) -> Vec<IntegrityCheck> {
     check_milestone_gate(graph, &mut checks);
     check_idea_promotion_validity(graph, &mut checks);
     check_idea_delivery_tracking(graph, &mut checks);
+    if !valid_statuses.is_empty() {
+        check_invalid_statuses(graph, valid_statuses, &mut checks);
+    }
 
     checks
 }
@@ -986,6 +993,89 @@ fn check_idea_delivery_tracking(graph: &ArtifactGraph, checks: &mut Vec<Integrit
     }
 }
 
+/// Mapping of commonly seen legacy status values to their canonical replacements.
+///
+/// Used to produce auto-fix suggestions when a status value is invalid.
+const LEGACY_STATUS_MAP: &[(&str, &str)] = &[
+    ("draft", "captured"),
+    ("todo", "ready"),
+    ("done", "completed"),
+    ("in-progress", "active"),
+    ("wip", "active"),
+    ("complete", "completed"),
+    ("open", "captured"),
+    ("closed", "completed"),
+    ("pending", "ready"),
+    ("backlog", "captured"),
+];
+
+/// Suggest a canonical replacement for a legacy status value.
+///
+/// Returns `Some(canonical)` when a well-known mapping exists,
+/// `None` when no heuristic applies.
+fn suggest_status_fix<'a>(invalid: &str, valid: &'a [String]) -> Option<&'a str> {
+    // Direct match in valid list (case-insensitive) — return canonical casing.
+    if let Some(v) = valid.iter().find(|s| s.eq_ignore_ascii_case(invalid)) {
+        return Some(v.as_str());
+    }
+    // Check legacy-to-canonical map.
+    let canonical_hint = LEGACY_STATUS_MAP
+        .iter()
+        .find(|(old, _)| old.eq_ignore_ascii_case(invalid))
+        .map(|(_, new)| *new);
+
+    let hint = canonical_hint?;
+    valid
+        .iter()
+        .find(|s| s.eq_ignore_ascii_case(hint))
+        .map(String::as_str)
+}
+
+/// Check that every artifact's `status` field is in the project's valid status list.
+fn check_invalid_statuses(
+    graph: &ArtifactGraph,
+    valid_statuses: &[String],
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    for node in graph.nodes.values() {
+        let Some(status) = &node.status else {
+            continue;
+        };
+
+        if valid_statuses.iter().any(|s| s == status) {
+            continue;
+        }
+
+        let valid_list = valid_statuses.join(", ");
+        let suggestion = suggest_status_fix(status, valid_statuses);
+        let (auto_fixable, fix_description) = if let Some(replacement) = suggestion {
+            (
+                true,
+                Some(format!("Change status from '{status}' to '{replacement}'")),
+            )
+        } else {
+            (
+                false,
+                Some(format!(
+                    "Set status to one of the valid values: {valid_list}"
+                )),
+            )
+        };
+
+        checks.push(IntegrityCheck {
+            category: IntegrityCategory::InvalidStatus,
+            severity: IntegritySeverity::Warning,
+            artifact_id: node.id.clone(),
+            message: format!(
+                "{} has invalid status '{}'. Valid values: {}",
+                node.id, status, valid_list
+            ),
+            auto_fixable,
+            fix_description,
+        });
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Auto-fix engine
 // ---------------------------------------------------------------------------
@@ -1047,6 +1137,7 @@ pub fn update_artifact_field(full_path: &Path, field: &str, value: &str) -> Resu
 /// Currently supports:
 /// - `MissingInverse`: adds the inverse relationship entry to the target artifact's
 ///   frontmatter `relationships` array.
+/// - `InvalidStatus`: rewrites the `status` field to the suggested canonical value.
 ///
 /// Returns a list of fixes that were successfully applied.
 pub fn apply_fixes(
@@ -1061,14 +1152,64 @@ pub fn apply_fixes(
             continue;
         }
 
-        if matches!(check.category, IntegrityCategory::MissingInverse) {
-            if let Some(fix) = apply_missing_inverse_fix(graph, check, project_path)? {
-                applied.push(fix);
+        match &check.category {
+            IntegrityCategory::MissingInverse => {
+                if let Some(fix) = apply_missing_inverse_fix(graph, check, project_path)? {
+                    applied.push(fix);
+                }
             }
+            IntegrityCategory::InvalidStatus => {
+                if let Some(fix) = apply_invalid_status_fix(graph, check, project_path)? {
+                    applied.push(fix);
+                }
+            }
+            _ => {}
         }
     }
 
     Ok(applied)
+}
+
+/// Fix an invalid status by rewriting the `status` field to its suggested replacement.
+///
+/// The fix description is expected to contain the replacement value in the form
+/// `"Change status from 'old' to 'new'"`, which is parsed to extract the target value.
+fn apply_invalid_status_fix(
+    graph: &ArtifactGraph,
+    check: &IntegrityCheck,
+    project_path: &Path,
+) -> Result<Option<AppliedFix>, OrqaError> {
+    // Extract the replacement value from the fix description.
+    let replacement = check
+        .fix_description
+        .as_deref()
+        .and_then(|desc| {
+            // Pattern: "Change status from 'old' to 'new'"
+            let after_to = desc.split(" to '").nth(1)?;
+            after_to.strip_suffix('\'')
+        })
+        .map(str::to_owned);
+
+    let Some(replacement) = replacement else {
+        return Ok(None);
+    };
+
+    let Some(node) = graph.nodes.get(&check.artifact_id) else {
+        return Ok(None);
+    };
+
+    let file_path = project_path.join(&node.path);
+    if !file_path.exists() {
+        return Ok(None);
+    }
+
+    update_artifact_field(&file_path, "status", &replacement)?;
+
+    Ok(Some(AppliedFix {
+        artifact_id: check.artifact_id.clone(),
+        description: format!("Updated status to '{}' in {}", replacement, node.path),
+        file_path: node.path.clone(),
+    }))
 }
 
 /// Parse the missing-inverse check message to extract source_id, target_id, and inverse_type.
@@ -1491,7 +1632,7 @@ mod tests {
             "---\nid: TASK-001\ntitle: Task\nepic: EPIC-MISSING\n---\n",
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph);
+        let checks = check_integrity(&graph, &[]);
         let broken: Vec<_> = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::BrokenLink))
@@ -1517,7 +1658,7 @@ mod tests {
             "---\nid: AD-001\ntitle: Decision\n---\n",
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph);
+        let checks = check_integrity(&graph, &[]);
         let missing = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::MissingInverse))
@@ -1543,7 +1684,7 @@ mod tests {
             "---\nid: AD-001\ntitle: Decision\nrelationships:\n  - target: RULE-001\n    type: enforced-by\n---\n",
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph);
+        let checks = check_integrity(&graph, &[]);
         let missing = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::MissingInverse))
@@ -1568,7 +1709,7 @@ mod tests {
         );
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph);
+        let checks = check_integrity(&graph, &[]);
 
         let missing: Vec<_> = checks
             .iter()
@@ -1593,7 +1734,7 @@ mod tests {
 
         // Rebuild graph and verify no more missing inverses
         let graph2 = build_artifact_graph(tmp.path()).expect("rebuild");
-        let checks2 = check_integrity(&graph2);
+        let checks2 = check_integrity(&graph2, &[]);
         let missing2: Vec<_> = checks2
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::MissingInverse))
@@ -1621,7 +1762,7 @@ mod tests {
         );
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph);
+        let checks = check_integrity(&graph, &[]);
         let applied = apply_fixes(&graph, &checks, tmp.path()).expect("apply");
         assert!(applied.is_empty(), "should not add duplicate inverse");
     }
@@ -1643,7 +1784,7 @@ mod tests {
         );
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph);
+        let checks = check_integrity(&graph, &[]);
         let applied = apply_fixes(&graph, &checks, tmp.path()).expect("apply");
         assert_eq!(applied.len(), 1);
 
@@ -1654,6 +1795,132 @@ mod tests {
         );
         assert!(updated.contains("grounded-by"), "should have inverse type");
         assert!(updated.contains("RULE-001"), "should reference source");
+    }
+
+    #[test]
+    fn check_integrity_flags_invalid_status() {
+        let tmp = make_project();
+        let epics_dir = tmp.path().join(".orqa/delivery/epics");
+        write_artifact(
+            &epics_dir,
+            "EPIC-001.md",
+            "---\nid: EPIC-001\ntitle: My Epic\nstatus: wip\n---\n",
+        );
+        let graph = build_artifact_graph(tmp.path()).expect("build");
+        let valid = vec!["active".to_string(), "completed".to_string()];
+        let checks = check_integrity(&graph, &valid);
+        let invalid: Vec<_> = checks
+            .iter()
+            .filter(|c| matches!(c.category, IntegrityCategory::InvalidStatus))
+            .collect();
+        assert_eq!(invalid.len(), 1);
+        assert_eq!(invalid[0].artifact_id, "EPIC-001");
+        assert!(
+            invalid[0].auto_fixable,
+            "wip maps to active — should be auto-fixable"
+        );
+        assert!(invalid[0].message.contains("wip"));
+        assert!(invalid[0].message.contains("active"));
+    }
+
+    #[test]
+    fn check_integrity_no_findings_for_valid_status() {
+        let tmp = make_project();
+        let epics_dir = tmp.path().join(".orqa/delivery/epics");
+        write_artifact(
+            &epics_dir,
+            "EPIC-001.md",
+            "---\nid: EPIC-001\ntitle: My Epic\nstatus: active\n---\n",
+        );
+        let graph = build_artifact_graph(tmp.path()).expect("build");
+        let valid = vec!["active".to_string(), "completed".to_string()];
+        let checks = check_integrity(&graph, &valid);
+        let invalid: Vec<_> = checks
+            .iter()
+            .filter(|c| matches!(c.category, IntegrityCategory::InvalidStatus))
+            .collect();
+        assert!(
+            invalid.is_empty(),
+            "valid status should produce no findings"
+        );
+    }
+
+    #[test]
+    fn check_integrity_skips_status_check_when_no_valid_list() {
+        let tmp = make_project();
+        let epics_dir = tmp.path().join(".orqa/delivery/epics");
+        write_artifact(
+            &epics_dir,
+            "EPIC-001.md",
+            "---\nid: EPIC-001\ntitle: My Epic\nstatus: anything-goes\n---\n",
+        );
+        let graph = build_artifact_graph(tmp.path()).expect("build");
+        // Empty valid list — status check should be skipped entirely.
+        let checks = check_integrity(&graph, &[]);
+        let invalid: Vec<_> = checks
+            .iter()
+            .filter(|c| matches!(c.category, IntegrityCategory::InvalidStatus))
+            .collect();
+        assert!(
+            invalid.is_empty(),
+            "empty valid_statuses should suppress status validation"
+        );
+    }
+
+    #[test]
+    fn check_integrity_unknown_status_not_auto_fixable() {
+        let tmp = make_project();
+        let epics_dir = tmp.path().join(".orqa/delivery/epics");
+        write_artifact(
+            &epics_dir,
+            "EPIC-001.md",
+            "---\nid: EPIC-001\ntitle: My Epic\nstatus: xyzzy\n---\n",
+        );
+        let graph = build_artifact_graph(tmp.path()).expect("build");
+        let valid = vec!["active".to_string(), "completed".to_string()];
+        let checks = check_integrity(&graph, &valid);
+        let invalid: Vec<_> = checks
+            .iter()
+            .filter(|c| matches!(c.category, IntegrityCategory::InvalidStatus))
+            .collect();
+        assert_eq!(invalid.len(), 1);
+        assert!(
+            !invalid[0].auto_fixable,
+            "unknown status without mapping should not be auto-fixable"
+        );
+    }
+
+    #[test]
+    fn apply_fixes_rewrites_invalid_status() {
+        let tmp = make_project();
+        let epics_dir = tmp.path().join(".orqa/delivery/epics");
+        write_artifact(
+            &epics_dir,
+            "EPIC-001.md",
+            "---\nid: EPIC-001\ntitle: My Epic\nstatus: draft\n---\n# Body\n",
+        );
+        let graph = build_artifact_graph(tmp.path()).expect("build");
+        let valid = vec!["captured".to_string(), "active".to_string()];
+        let checks = check_integrity(&graph, &valid);
+        let invalid: Vec<_> = checks
+            .iter()
+            .filter(|c| matches!(c.category, IntegrityCategory::InvalidStatus))
+            .collect();
+        assert_eq!(invalid.len(), 1, "draft should be flagged");
+        assert!(
+            invalid[0].auto_fixable,
+            "draft→captured should be auto-fixable"
+        );
+
+        let applied = apply_fixes(&graph, &checks, tmp.path()).expect("apply fixes");
+        assert_eq!(applied.len(), 1);
+        assert_eq!(applied[0].artifact_id, "EPIC-001");
+
+        let updated = fs::read_to_string(epics_dir.join("EPIC-001.md")).expect("read updated");
+        assert!(
+            updated.contains("status: captured"),
+            "status should be rewritten to canonical value"
+        );
     }
 
     #[test]
