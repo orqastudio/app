@@ -4,7 +4,7 @@
 	import * as Tooltip from "$lib/components/ui/tooltip";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
-	import { statusIcon } from "$lib/components/shared/StatusIndicator.svelte";
+	import { statusIcon, statusIsSpinning } from "$lib/components/shared/StatusIndicator.svelte";
 	import { projectStore } from "$lib/stores/project.svelte";
 	import { DEFAULT_ARTIFACT_LINK_COLORS } from "$lib/types";
 
@@ -72,6 +72,11 @@
 		resolved.node?.status ? statusIcon(resolved.node.status) : null,
 	);
 
+	/** Whether the status icon should spin (active/in-progress). */
+	const spinning = $derived(
+		resolved.node?.status ? statusIsSpinning(resolved.node.status) : false,
+	);
+
 	/** First line of the description for use in the popover. */
 	const descriptionSnippet = $derived.by(() => {
 		const desc = resolved.node?.description;
@@ -100,7 +105,7 @@
 					onclick={handleClick}
 				>
 					{#if StatusIcon}
-						<StatusIcon class="h-3 w-3 shrink-0 text-muted-foreground" />
+						<StatusIcon class="h-3 w-3 shrink-0 text-muted-foreground {spinning ? 'status-spin' : ''}" />
 					{/if}
 					{#if showingTitle}
 						<span class="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">{chipLabel}</span>
@@ -117,7 +122,7 @@
 				<div class="space-y-1 text-xs">
 					<div class="flex items-center gap-1.5">
 						{#if StatusIcon}
-							<StatusIcon class="h-3 w-3 shrink-0 text-muted-foreground" />
+							<StatusIcon class="h-3 w-3 shrink-0 text-muted-foreground {spinning ? 'status-spin' : ''}" />
 						{/if}
 						<span class="font-mono font-semibold">{node.id}</span>
 						{#if node.status}
