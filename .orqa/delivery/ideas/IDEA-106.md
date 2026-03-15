@@ -27,7 +27,7 @@ relationships:
 Pillars are currently under Process alongside rules, lessons, and decisions. But pillars aren't process artifacts — they're foundational principles that determine what the project IS, what ideas fit, and what work matters. They belong with the product vision and grounding documents, not with enforcement rules and implementation lessons.
 
 The split:
-- **Principles**: Pillars, vision, grounding docs (first-class artifact) — what the project believes and why
+- **Principles**: Pillars, vision, personas (first-class artifact), grounding docs (first-class artifact) — what the project believes, who it serves, and why
 - **Learning** (renamed from Process): Rules, lessons, decisions, skills, agents — how the project improves
 - **Discovery**: Ideas, research, wireframes (first-class artifact) — what the project is exploring
 
