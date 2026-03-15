@@ -111,7 +111,7 @@
 				</button>
 			{/snippet}
 		</Tooltip.Trigger>
-		<Tooltip.Content side="top" class="max-w-xs bg-popover-foreground text-popover dark:bg-zinc-900 dark:text-zinc-100">
+		<Tooltip.Content side="top" class="max-w-xs">
 			{#if resolved.node}
 				{@const node = resolved.node}
 				<div class="space-y-1 text-xs">
