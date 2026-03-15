@@ -17,6 +17,9 @@ relationships:
   - type: grounded
     target: AGENT-008
     rationale: Grounds the Governance Steward role with artifact principles (already declared on AGENT-008)
+  - type: informs
+    target: SKILL-011
+    rationale: Artifact principles grounding distills into the governance skill for agent injection
 ---
 
 ## What Good Artifacts Look Like

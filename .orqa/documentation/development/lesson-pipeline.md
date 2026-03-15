@@ -9,6 +9,12 @@ relationships:
   - target: IMPL-001
     type: documents
     rationale: Documentation page references IMPL-001
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 
@@ -189,16 +195,6 @@ backend/src-tauri/src/
   commands/
     lessons.rs         -- Tauri command handlers
 ```
-
----
-
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Learning Through Reflection | Lessons are the core mechanism through which mistakes are captured, tracked across sessions, and promoted into enforced standards — making the system progressively smarter. |
-| Clarity Through Structure | Promoted lessons become enforcement entries that actively block or warn on the patterns that caused past mistakes. The promotion pipeline connects learning directly to governance. |
 
 ---
 

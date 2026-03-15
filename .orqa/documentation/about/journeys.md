@@ -5,6 +5,13 @@ description: User journey maps covering key workflows from project creation thro
 created: "2026-03-02"
 updated: "2026-03-08"
 sort: 4
+relationships:
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 **Date:** 2026-03-02
@@ -364,15 +371,6 @@ Journey 1 (First-Time Setup)
 | 6. Onboard Existing | Codebase scan only | Post-MVP (conversational backfill) |
 | 7. New Project | Directory creation + .orqa/ scaffold + project discovery conversation | MVP (full discovery flow) |
 | 8. CLI User Discovers OrqaStudio | Full (artifact detection + display) | MVP |
-
----
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | Journey 2 (Define Governance), Journey 6 (Onboard Existing), and Journey 8 (CLI User Discovers OrqaStudio) are entirely about making invisible governance structure visible and manageable. |
-| Learning Through Reflection | Journey 5 (Learning Loop) directly operationalises Pillar 2 — capturing lessons, tracking recurrence, and promoting patterns into governance artifacts. Every journey feeds session history that the learning loop draws from. |
 
 ---
 

@@ -28,6 +28,12 @@ relationships:
   - target: RULE-026
     type: documents
     rationale: Documentation page references RULE-026
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 # Plugin Architecture
@@ -385,13 +391,6 @@ The boundary between built-in and plugin is maintained by architectural constrai
 When evaluating whether a new feature should be built-in or a plugin, apply the criteria table above and discuss with the user if the answer is ambiguous. Err toward plugin — it is easier to promote a plugin to built-in than to extract a built-in feature into a plugin.
 
 ---
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | The plugin architecture makes governance enforcement visible and extensible. Plugin hooks surface what rules are being checked, what skills are injected, and what graph integrity issues exist. The four-layer model provides a clear trust hierarchy. |
-| Learning Through Reflection | Plugin skills and the graph guardian hook capture domain knowledge and feed it back into agent context. The session-start health checks surface accumulated state (stashes, worktrees, session state) so each session starts from a better position. |
 
 ## Related Documents
 

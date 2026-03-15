@@ -12,6 +12,12 @@ relationships:
   - target: AD-002
     type: documents
     rationale: Documentation page references AD-002
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: SKILL-010
+    rationale: Error composition skill defines the OrqaError type hierarchy that this document catalogs
 ---
 
 
@@ -275,16 +281,6 @@ try {
 - All variants serialize correctly in a round-trip check (`all_variants_serialize_as_tagged_json`)
 
 There is no test for `rusqlite::Error` conversion because constructing a `rusqlite::Error` in unit tests requires a database connection. The `From` impl is tested implicitly through integration tests in `backend/src-tauri/tests/`.
-
----
-
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | The flat `OrqaError` enum with typed `code` values makes all error categories explicit and visible — both in Rust source and in the JSON that crosses the IPC boundary. Developers and agents reading command signatures immediately know what can go wrong. |
-| Learning Through Reflection | N/A — error taxonomy is infrastructure, not a learning or retrospection feature. |
 
 ---
 

@@ -9,6 +9,12 @@ relationships:
   - target: AD-003
     type: documents
     rationale: Documentation page references AD-003
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 **Date:** 2026-03-04 | **Updated:** 2026-03-10 | **Status:** Current | **References:** Rust Modules, IPC Commands, Tool Definitions
@@ -338,15 +344,6 @@ When building the OrqaStudio installer for distribution:
 5. **Test on clean install** — verify the model loads from the bundled location without network access
 
 This is a build-time concern, not a runtime concern. The application code checks both the resource directory and the app data directory for the model.
-
----
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Learning Through Reflection | Semantic search enables Claude to understand the codebase contextually, improving the quality of suggestions and reducing repeated mistakes by finding relevant patterns and precedents. |
-| Clarity Through Structure | Regex search enables rule scanners and compliance checks to verify code patterns programmatically across the entire codebase. |
 
 ---
 

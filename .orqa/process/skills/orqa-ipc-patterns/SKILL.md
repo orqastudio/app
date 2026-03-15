@@ -28,6 +28,9 @@ relationships:
   - type: scoped-to
     target: AGENT-006
     rationale: Migrated from scope field
+  - type: informs
+    target: DOC-005
+    rationale: IPC patterns skill defines the Tauri invoke contract that the IPC command catalog documents
 ---
 OrqaStudio uses Tauri v2's `invoke()` as the ONLY interface between the Svelte frontend and the Rust backend. There are no HTTP servers, no direct FFI calls, and no side channels.
 

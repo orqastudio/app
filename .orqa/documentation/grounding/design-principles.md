@@ -17,6 +17,12 @@ relationships:
   - type: grounded
     target: AGENT-001
     rationale: Grounds the Designer role with design principles
+  - type: informs
+    target: SKILL-041
+    rationale: Design principles grounding distills into the component extraction skill for agent injection
+  - type: informs
+    target: SKILL-030
+    rationale: Design principles grounding distills into the Svelte 5 best practices skill for agent injection
 ---
 
 ## Who You Are Designing For

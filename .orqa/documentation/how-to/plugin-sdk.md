@@ -15,6 +15,15 @@ relationships:
   - target: RULE-043
     type: informed-by
     rationale: Linter delegation pattern that plugins follow for enforcement entries
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
+  - type: informed-by
+    target: PILLAR-003
+    rationale: This document describes features or patterns that serve the Purpose Through Continuity pillar
 ---
 
 ## What a Plugin Is
@@ -229,11 +238,3 @@ patterns working together:
 - `skills/rule-enforcement/SKILL.md` — teaches agents how enforcement entries work
 
 ---
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | Plugins make governance concrete: hooks enforce rules in the tool call pipeline, commands surface state on demand. |
-| Learning Through Reflection | Skills injected by plugins carry institutional knowledge forward across sessions without requiring agents to rediscover it. |
-| Purpose Through Continuity | Plugin hooks ensure enforcement is continuous — not a one-off check but a persistent gate on every tool call. |

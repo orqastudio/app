@@ -20,6 +20,9 @@ relationships:
   - type: scoped-to
     target: AGENT-002
     rationale: Migrated from scope field
+  - type: informed-by
+    target: DOC-067
+    rationale: Design principles grounding document distills into this skill for agent injection
 ---
 
 # Component Extraction

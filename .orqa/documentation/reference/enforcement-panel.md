@@ -5,6 +5,10 @@ description: UI specification for the enforcement panel that displays rule viola
 created: "2026-03-05"
 updated: "2026-03-05"
 sort: 8
+relationships:
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
 ---
 
 **Date:** 2026-03-05
@@ -196,15 +200,6 @@ Displays the output of a governance scan, including enforcement coverage — how
 | enforcement entry | "Rule" |
 | `matched_text` | "Matched" |
 | `entry_id` | Not shown directly — shown as rule description |
-
----
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | The enforcement panel makes rule violations visible in the conversation UI, turning abstract governance standards into concrete, actionable feedback on agent tool calls. |
-| Learning Through Reflection | N/A |
 
 ---
 

@@ -12,6 +12,12 @@ relationships:
   - target: AD-011
     type: documents
     rationale: Documentation page references AD-011
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 **Date:** 2026-03-02 | **References:** [AD-010](AD-010), [AD-011](AD-011)
@@ -320,10 +326,3 @@ For write operations, where the file may not yet exist, `resolve_write_path()` c
 - Streaming Pipeline — How tool events flow through the NDJSON protocol
 
 ---
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | Tool calls and results are surfaced as visible events in the conversation stream (`tool_use_start`, `tool_result`). The approval gate makes tool execution explicit rather than silent. The enforcement layer makes governance rules tangible by blocking non-compliant file writes. |
-| Learning Through Reflection | Tool call sequences are recorded in `process_state` for post-turn compliance checks. Enforcement violations are surfaced as `ProcessViolation` events that feed into the lesson pipeline. |

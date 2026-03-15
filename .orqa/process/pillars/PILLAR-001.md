@@ -453,6 +453,93 @@ relationships:
   - target: IDEA-095
     type: informs
     rationale: "Auto-generated inverse of informs relationship from IDEA-095"
+  - target: DOC-036
+    type: informs
+    rationale: Artifact framework describes the structure that directly implements Clarity Through Structure
+  - target: DOC-040
+    type: informs
+    rationale: Information architecture makes governance artifacts browsable, a direct implementation of Clarity Through Structure
+  - target: DOC-041
+    type: informs
+    rationale: User journeys describe workflows that surface governance structure to users
+  - target: DOC-043
+    type: informs
+    rationale: Persona research defines which governance visibility features matter most
+  - target: DOC-020
+    type: informs
+    rationale: The artifact graph SDK provides typed access to governance relationships making structure queryable
+  - target: DOC-021
+    type: informs
+    rationale: Coding standards make expected code form explicit and machine-verifiable
+  - target: DOC-022
+    type: informs
+    rationale: Standardised make targets make development commands visible and discoverable
+  - target: DOC-002
+    type: informs
+    rationale: The enforcement engine makes governance constraints active and enforceable
+  - target: DOC-024
+    type: informs
+    rationale: Development setup defines the standard environment all contributors use
+  - target: DOC-004
+    type: informs
+    rationale: Governance bootstrap creates structured governance artifacts from the start
+  - target: DOC-006
+    type: informs
+    rationale: Promoted lessons become enforcement entries that strengthen governance structure
+  - target: DOC-071
+    type: informs
+    rationale: Plugin architecture makes governance enforcement visible and extensible
+  - target: DOC-010
+    type: informs
+    rationale: Domain module structure makes the data model explicit and auditable
+  - target: DOC-011
+    type: informs
+    rationale: Regex search enables rule scanners to verify code patterns programmatically
+  - target: DOC-012
+    type: informs
+    rationale: Setup wizard ensures prerequisites for governance enforcement are in place
+  - target: DOC-014
+    type: informs
+    rationale: Streaming pipeline makes AI responses visible as structured events
+  - target: DOC-015
+    type: informs
+    rationale: Sub-agents execute within the enforcement engine boundary making governance tangible
+  - target: DOC-016
+    type: informs
+    rationale: Component architecture makes governance artifacts visible and browsable
+  - target: DOC-017
+    type: informs
+    rationale: Tool calls surface as visible events with an explicit approval gate
+  - target: DOC-025
+    type: informs
+    rationale: Artifact workflow makes the entire development process visible and navigable
+  - target: DOC-072
+    type: informs
+    rationale: Plugins make governance hooks concrete and enforce rules in the tool call pipeline
+  - target: DOC-074
+    type: informs
+    rationale: Typed test fixtures and explicit mock configuration make test intent readable
+  - target: DOC-073
+    type: informs
+    rationale: In-memory SQLite and trait-based mocking give tests clear repeatable structure
+  - target: DOC-069
+    type: informs
+    rationale: Delegation reference makes role boundaries and responsibilities explicit
+  - target: DOC-050
+    type: informs
+    rationale: Enforcement panel makes rule violations visible and actionable
+  - target: DOC-003
+    type: informs
+    rationale: Flat OrqaError enum makes all error categories explicit and visible
+  - target: DOC-005
+    type: informs
+    rationale: IPC command catalog makes the frontend-backend contract explicit and auditable
+  - target: DOC-055
+    type: informs
+    rationale: Lesson promotion converts mistakes into enforcement entries strengthening governance
+  - target: DOC-009
+    type: informs
+    rationale: project.json makes project configuration visible and versionable
 ---
 ## What This Pillar Means
 

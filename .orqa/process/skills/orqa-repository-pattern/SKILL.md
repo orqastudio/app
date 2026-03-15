@@ -26,6 +26,9 @@ relationships:
   - type: scoped-to
     target: AGENT-006
     rationale: Migrated from scope field
+  - type: informs
+    target: DOC-013
+    rationale: Repository pattern skill defines the data access conventions that the SQLite schema document supports
 ---
 
 

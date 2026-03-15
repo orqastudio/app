@@ -93,6 +93,12 @@ relationships:
   - target: DOC-066
     type: informs
     rationale: Artifact framework is distilled into the artifact-principles grounding document — inverse of informed-by on DOC-066
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 **Date:** 2026-03-07
@@ -975,10 +981,3 @@ This enables:
 - **Documentation completeness** — "Did we update all the docs?" (check `docs-produced` output)
 
 ---
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | The artifact framework makes thinking visible and structured. Every idea, research document, and work unit is a first-class, browsable, connected document — not hidden in terminal output or chat history. |
-| Learning Through Reflection | Ideas, lessons, and research feed the learning loop. Promotion pipelines (idea→epic, lesson→rule, research→decision) ensure knowledge compounds over time. |

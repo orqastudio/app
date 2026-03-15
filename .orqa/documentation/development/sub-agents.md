@@ -12,6 +12,12 @@ relationships:
   - target: AD-010
     type: documents
     rationale: Documentation page references AD-010
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 
@@ -223,16 +229,6 @@ backend/src-tauri/src/
   repo/
     sub_agent_turns.rs -- SQLite repository for sub_agent_turns table
 ```
-
----
-
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Learning Through Reflection | Sub-agent turn logs are persisted and contribute to session analytics. Explore mode enables the system to gather codebase context that feeds into more accurate governance recommendations. |
-| Clarity Through Structure | Sub-agents execute within the enforcement engine boundary — all agent tool calls are evaluated against active rules. Delegation to specialized roles (code-reviewer, test-engineer) implements the governance review gates described in the process docs. |
 
 ---
 

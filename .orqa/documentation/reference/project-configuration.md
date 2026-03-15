@@ -9,6 +9,12 @@ relationships:
   - target: AD-019
     type: documents
     rationale: Documentation page references AD-019
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 **Date:** 2026-03-03 | **Status:** Active | **Decision:** [AD-019](AD-019) — File-based project settings
@@ -141,15 +147,6 @@ Three commands manage project settings:
 - `project_scan(path, excluded_paths?)` — scans filesystem for stack detection and governance counts
 
 See [IPC Command Catalog](./ipc-commands.md) for full parameter tables.
-
----
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Learning Through Reflection | Project settings store detected governance artifact counts, giving the system awareness of its own governance maturity per project. |
-| Clarity Through Structure | The `.orqa/project.json` file makes project configuration visible, versionable, and portable — governance artifacts are counted and surfaced in the UI. |
 
 ---
 

@@ -18,6 +18,9 @@ relationships:
   - target: AD-014
     type: documents
     rationale: Documentation page references AD-014
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
 ---
 
 **Date:** 2026-03-02
@@ -477,15 +480,6 @@ All artifact changes in OrqaStudio are bidirectional with external tools:
 - **No sync layer** — There is no synchronization protocol. All tools read and write the same files on disk. `.orqa/` is the shared source of truth.
 
 This design means the AI provider status shown in the status bar is meaningful context: it tells the user whether AI-powered features are available, and it confirms that their governance artifacts are being read by the same provider their agents use.
-
----
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Learning Through Reflection | N/A |
-| Clarity Through Structure | Defines the navigation structure that makes governance artifacts (agents, rules, skills, hooks) browsable, editable, and first-class destinations in the UI — making governance tangible and manageable. |
 
 ---
 

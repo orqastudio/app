@@ -12,6 +12,12 @@ relationships:
   - target: AD-009
     type: documents
     rationale: Documentation page references AD-009
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 **Date:** 2026-03-02 | **References:** [AD-007](AD-007), [AD-009](AD-009)
@@ -263,10 +269,3 @@ Context overflow errors are intercepted in `translate_response()` and given a us
 - Streaming Pipeline — this document
 
 ---
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | The streaming pipeline makes AI responses, tool calls, approval requests, and system prompt content visible to the user as structured events. `SystemPromptSent` and `ContextInjected` events surface what the AI receives, directly serving the transparency goal of this pillar. |
-| Learning Through Reflection | Token counts from `TurnComplete` feed session metrics. Process compliance violations detected after each turn feed the lesson and enforcement pipeline. Tool call sequences recorded via `track_process_state` support retrospective analysis. |

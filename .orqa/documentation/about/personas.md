@@ -9,6 +9,12 @@ relationships:
   - target: DOC-067
     type: informs
     rationale: User personas are distilled into the design-principles grounding document — inverse of informed-by on DOC-067
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 **Date:** 2026-03-07
@@ -208,15 +214,6 @@ Jordan ships quality work at a pace that would normally require a small team. Th
 2. **Governance upfront vs. organic** — Alex will configure governance before starting. Jordan needs it to grow organically. Resolution: conversation-first with auto-scanning and progressive feature gates. Alex can skip ahead; Jordan discovers features naturally.
 
 3. **Detail level** — Sam wants full tool call details and streaming visibility. Alex wants summaries with drill-down. Resolution: collapsible detail panels. Summary by default, expand for full context.
-
----
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | Persona research defines which governance visibility features matter most to each user type — ensuring the artifact browser, compliance dashboards, and rule management serve real user needs rather than abstract governance ideals. |
-| Learning Through Reflection | Persona pain points (ephemeral thinking, repeated mistakes, context loss) are precisely what the learning loop addresses. The personas ground the learning loop features in tangible user problems. |
 
 ---
 

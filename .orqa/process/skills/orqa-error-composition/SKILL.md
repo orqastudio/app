@@ -28,6 +28,9 @@ relationships:
   - type: scoped-to
     target: AGENT-006
     rationale: Migrated from scope field
+  - type: informs
+    target: DOC-003
+    rationale: Error composition skill defines the OrqaError type hierarchy that the error taxonomy document catalogs
 ---
 
 

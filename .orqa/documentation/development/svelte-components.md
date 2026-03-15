@@ -31,6 +31,12 @@ relationships:
   - target: AD-009
     type: documents
     rationale: Documentation page references AD-009
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 **References:** [Frontend Research](RES-004), Information Architecture
@@ -333,15 +339,6 @@ File-system changes, sidecar lifecycle, and scan-complete notifications use Taur
 | Store files | `.svelte.ts` extension, class-based with `$state` fields, exported singleton. | [AD-004](AD-004) |
 | Streaming | `Channel<T>` for token streams; `emit/listen` for app-level events. | [AD-009](AD-009) |
 | Snippets over slots | Use `{#snippet}` and `{@render}` for composition; never `<slot>`. | [AD-004](AD-004) |
-
----
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | The component architecture makes governance artifacts visible and browsable — rules, agents, skills, and hooks all have dedicated viewer components. The `artifact/`, `governance/`, `enforcement/`, and `lessons/` directories exist specifically to surface `.orqa/` content as structured, navigable documents. |
-| Learning Through Reflection | The `lessons/` directory and `LessonStore` make the lessons pipeline tangible in the UI. The `governance/` components surface AI analysis and recommendations, feeding the reflection loop back into governance artifacts. |
 
 ---
 

@@ -5,6 +5,13 @@ description: How governance artifacts are loaded and initialized when a project 
 created: "2026-03-04"
 updated: "2026-03-09"
 sort: 13
+relationships:
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 
@@ -321,13 +328,6 @@ pub struct AnalysisOutput {
 4. **Approve/reject:** Recommendation status changes persist in SQLite
 5. **Apply writes files:** Approved recommendations create real files on disk at the specified paths
 6. **Re-analyze detects changes:** After applying recommendations, re-scanning detects the new files
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Learning Through Reflection | Governance bootstrap is the first turn of the learning loop — the AI provider reads what exists and improves it. Each re-analysis captures what changed and suggests further improvements, building knowledge over time. |
-| Clarity Through Structure | Creates native OrqaStudio governance artifacts from scratch or by translating from other tools, making governance visible and enforceable from the moment a project is opened in OrqaStudio. |
 
 ## Related Documents
 

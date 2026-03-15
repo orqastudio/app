@@ -26,6 +26,12 @@ relationships:
   - target: DOC-073
     type: informs
     rationale: "Auto-generated inverse of informs relationship from DOC-073"
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-003
+    rationale: This document describes features or patterns that serve the Purpose Through Continuity pillar
 ---
 ## Purpose
 
@@ -127,11 +133,3 @@ make check
 ```
 
 ---
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | Coding standards make the expected form of all code explicit and checkable — removing ambiguity about what "correct" looks like and making compliance visible through automated linting. |
-| Learning Through Reflection | N/A |
-| Purpose Through Continuity | Consistent standards allow agents across many sessions to work in the same codebase without re-learning local customs — continuity through convention. |

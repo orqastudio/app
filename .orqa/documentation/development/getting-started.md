@@ -24,6 +24,9 @@ relationships:
   - target: RES-004
     type: documents
     rationale: Documentation page references RES-004
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
 ---
 
 
@@ -279,16 +282,6 @@ orqa-studio/
 ```
 
 `.orqa/` contains the governance framework and documentation. `backend/src-tauri/` and `ui/` hold the application code. All directories shown above are present in the repository.
-
----
-
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Learning Through Reflection | N/A |
-| Clarity Through Structure | Defines the development environment and commands that all agents and contributors use — standardizing the build/test/lint workflow that governance enforcement depends on. |
 
 ---
 

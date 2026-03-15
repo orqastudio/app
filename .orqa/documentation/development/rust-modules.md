@@ -24,6 +24,12 @@ relationships:
   - target: AD-014
     type: documents
     rationale: Documentation page references AD-014
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 **References:** [Claude Integration](RES-002), [Tauri v2](RES-007), [Persistence](RES-006)
@@ -363,10 +369,3 @@ Arrows point from the dependent module to the module it depends on.
 - [AD-014](AD-014) — repository pattern
 
 ---
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | The domain module structure makes the data model explicit and auditable. The enforcement engine, governance scanner, and artifact graph are the backend mechanisms that surface governance structure in the UI. |
-| Learning Through Reflection | `domain/lessons.rs`, `repo/lesson_repo.rs`, and `domain/governance_analysis.rs` implement the lesson capture and analysis pipeline that feeds the learning loop. `domain/process_state.rs` tracks session-level compliance signals. |

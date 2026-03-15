@@ -21,6 +21,9 @@ relationships:
   - type: scoped-to
     target: AGENT-006
     rationale: Migrated from scope field
+  - type: informs
+    target: DOC-049
+    rationale: Tailwind design system skill defines the token and variant patterns that the design system document specifies
 ---
 
 

@@ -9,6 +9,12 @@ relationships:
   - target: IMPL-006
     type: documents
     rationale: Documentation page references IMPL-006
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 
@@ -225,16 +231,6 @@ A modal dialog that walks the user through promoting a lesson to a rule enforcem
 | `recurrence` | Shows the count directly (e.g., "3") — no label |
 | IMPL number | "[IMPL-006](IMPL-006)" — shown as-is |
 | Promotion threshold | Not exposed directly; surfaced as "meets the threshold" |
-
----
-
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Learning Through Reflection | The lesson dashboard is the primary UI for the learning loop — it makes lesson capture, recurrence tracking, and pattern promotion visible and actionable to the user. |
-| Clarity Through Structure | Lesson promotion converts documented mistakes into rule enforcement entries, directly strengthening governance. The dashboard tracks the pipeline from observed mistake to enforced standard. |
 
 ---
 

@@ -25,6 +25,9 @@ relationships:
   - type: scoped-to
     target: AGENT-007
     rationale: Migrated from scope field
+  - type: informed-by
+    target: DOC-066
+    rationale: Artifact principles grounding document distills into this skill for agent injection
 ---
 
 

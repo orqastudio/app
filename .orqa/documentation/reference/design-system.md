@@ -18,6 +18,9 @@ relationships:
   - target: DOC-067
     type: informs
     rationale: Design system is distilled into the design-principles grounding document — inverse of informed-by on DOC-067
+  - type: informed-by
+    target: SKILL-031
+    rationale: Tailwind design system skill defines the token and variant patterns that this document specifies
 ---
 
 **Date:** 2026-03-02

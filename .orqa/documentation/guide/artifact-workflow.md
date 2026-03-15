@@ -12,6 +12,12 @@ relationships:
   - target: RULE-017
     type: documents
     rationale: Documentation page references RULE-017
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 **Date:** 2026-03-07
@@ -298,15 +304,6 @@ The orchestrator periodically verifies:
 - Every decision's `superseded-by` (when set) points to an existing `AD-NNN.md`
 - Milestone `epic-count` matches the actual number of epics referencing it
 - Milestone `completed-epics` matches the count of epics with `status: done`
-
----
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | The artifact workflow makes the entire development process visible and navigable — from initial idea through research, planning, implementation, and completion. Every decision is recorded in a structured, browsable format. |
-| Learning Through Reflection | Ideas, research, and lessons form a learning loop. The promotion pipeline (idea→epic, lesson→rule, research→decision) ensures knowledge compounds and mistakes are not repeated. |
 
 ---
 

@@ -15,6 +15,9 @@ relationships:
   - target: RES-003
     type: documents
     rationale: Documentation page references RES-003
+  - type: informed-by
+    target: SKILL-014
+    rationale: Repository pattern skill defines the data access conventions that this schema supports
 ---
 
 

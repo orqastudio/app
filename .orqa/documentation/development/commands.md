@@ -5,6 +5,10 @@ description: Reference for all development commands available via make targets.
 created: "2026-03-05"
 updated: "2026-03-10"
 sort: 4
+relationships:
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
 ---
 
 **Date:** 2026-03-05
@@ -557,15 +561,6 @@ Print a summary of all available `make` targets with one-line descriptions.
 | `make test-rust` | `cargo test --manifest-path backend/src-tauri/Cargo.toml` |
 
 The only exception is when a target does not yet exist for a specific operation. In that case, use the raw command and note in the task summary that a Makefile target should be added.
-
----
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Learning Through Reflection | N/A |
-| Clarity Through Structure | Standardizes development commands into a single discoverable interface, reducing process friction and ensuring consistent quality checks across all contributors and agents. |
 
 ---
 

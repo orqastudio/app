@@ -100,6 +100,66 @@ relationships:
   - target: IDEA-095
     type: informs
     rationale: "Auto-generated inverse of informs relationship from IDEA-095"
+  - target: DOC-036
+    type: informs
+    rationale: Artifact promotion pipelines ensure knowledge compounds over time
+  - target: DOC-041
+    type: informs
+    rationale: Journey 5 (Learning Loop) directly operationalises the learning loop
+  - target: DOC-043
+    type: informs
+    rationale: Persona pain points (repeated mistakes, context loss) are what the learning loop addresses
+  - target: DOC-020
+    type: informs
+    rationale: brokenRefs and orphans methods surface structural integrity issues for ongoing monitoring
+  - target: DOC-002
+    type: informs
+    rationale: Process gates inject reflective thinking prompts at workflow transitions
+  - target: DOC-004
+    type: informs
+    rationale: Governance bootstrap is the first turn of the learning loop
+  - target: DOC-006
+    type: informs
+    rationale: Lessons are the core mechanism for capturing mistakes and promoting them to rules
+  - target: DOC-029
+    type: informs
+    rationale: Process metrics quantify whether the learning loops are working
+  - target: DOC-071
+    type: informs
+    rationale: Plugin skills carry institutional knowledge forward across sessions
+  - target: DOC-010
+    type: informs
+    rationale: Lesson pipeline modules implement the learning loop in the backend
+  - target: DOC-011
+    type: informs
+    rationale: Semantic search enables contextual understanding to reduce repeated mistakes
+  - target: DOC-014
+    type: informs
+    rationale: Token counts and compliance violations feed session metrics and lesson pipeline
+  - target: DOC-015
+    type: informs
+    rationale: Sub-agent turn logs contribute to session analytics and improvement
+  - target: DOC-016
+    type: informs
+    rationale: Lessons directory and LessonStore make the lessons pipeline tangible in the UI
+  - target: DOC-017
+    type: informs
+    rationale: Tool call sequences feed into the lesson pipeline via process_state
+  - target: DOC-025
+    type: informs
+    rationale: Promotion pipeline ensures knowledge compounds and mistakes are not repeated
+  - target: DOC-072
+    type: informs
+    rationale: Skills injected by plugins carry institutional knowledge forward across sessions
+  - target: DOC-005
+    type: informs
+    rationale: Lesson commands implement the lesson capture and promotion pipeline
+  - target: DOC-055
+    type: informs
+    rationale: Lesson dashboard is the primary UI for the learning loop
+  - target: DOC-009
+    type: informs
+    rationale: Project settings track governance artifact counts showing governance maturity
 ---
 ## What This Pillar Means
 

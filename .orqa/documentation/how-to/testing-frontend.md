@@ -15,6 +15,12 @@ relationships:
   - target: DOC-021
     type: informed-by
     rationale: Coding standards document is the source of truth for TypeScript strictness requirements
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-003
+    rationale: This document describes features or patterns that serve the Purpose Through Continuity pillar
 ---
 
 ## Test Framework
@@ -239,11 +245,3 @@ const fakeSession: Session = {
 ```
 
 ---
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | Typed test fixtures and explicit mock configuration make test intent readable without running the tests. |
-| Purpose Through Continuity | Resetting store state in `beforeEach` ensures tests remain independent across sessions and agents — no hidden coupling through shared state. |
-| Learning Through Reflection | N/A |

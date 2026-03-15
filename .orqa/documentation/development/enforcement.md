@@ -21,6 +21,12 @@ relationships:
   - target: AD-015
     type: documents
     rationale: Documentation page references AD-015
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 OrqaStudio's enforcement system ensures agents follow the structured thinking process — understand, plan, document, implement, review, learn — at every stage of work. It operates across four layers, each addressing a different enforcement concern.
@@ -388,15 +394,6 @@ The enforcement system has comprehensive test coverage:
 | `process_gates.rs` | 30 | All five gates, firing conditions, one-shot behavior, edge cases |
 | `skill_injector.rs` | 21 | Cosine similarity, frontmatter extraction, prompt matching, threshold/top-N filtering |
 | **Total** | **110** | |
-
----
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | The enforcement engine makes governance constraints active and enforceable — rules become executable process gates and automated skill injection, not just documentation to read. |
-| Learning Through Reflection | Process gates inject reflective thinking prompts at workflow transitions. The evidence-before-done and learn-after-doing gates ensure agents reflect on outcomes before marking work complete. |
 
 ---
 

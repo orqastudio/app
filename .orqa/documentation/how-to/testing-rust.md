@@ -15,6 +15,12 @@ relationships:
   - target: DOC-021
     type: informed-by
     rationale: Coding standards document defines the coverage requirements referenced here
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-003
+    rationale: This document describes features or patterns that serve the Purpose Through Continuity pillar
 ---
 
 ## Test Organisation
@@ -227,11 +233,3 @@ Coverage failures block CI. If a function is genuinely untestable (e.g., Tauri
 framework wiring), document why in a comment — don't silently omit tests.
 
 ---
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | In-memory SQLite and trait-based mocking give tests a clear, repeatable structure with no hidden state. |
-| Purpose Through Continuity | 80%+ coverage ensures the test suite remains meaningful as agents across sessions add features — new code cannot silently escape scrutiny. |
-| Learning Through Reflection | N/A |

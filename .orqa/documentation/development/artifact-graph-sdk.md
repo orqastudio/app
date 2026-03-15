@@ -17,6 +17,12 @@ relationships:
   - target: EPIC-048
     type: documents
     rationale: Documentation page references EPIC-048
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 
@@ -511,10 +517,3 @@ Pass 2: Invert every `references_out` entry into a `references_in` backlink on t
 Files without an `id` field are silently skipped — these are documentation pages, not typed governance artifacts. `README.md` files are also skipped regardless of content.
 
 Artifact type is inferred from the directory path segment (e.g. a file under `/epics/` becomes `artifact_type: "epic"`). Files that do not match any known directory pattern become `artifact_type: "doc"`.
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | The SDK provides a single typed interface to all artifact metadata and relationships, replacing scattered ad-hoc patterns (hardcoded prefix maps, manual IPC calls, frontend caches). Every frontmatter link is resolved against the graph and surfaced as either a navigable link or a broken-link indicator, making the structure of the artifact system visible and inspectable. |
-| Learning Through Reflection | The `brokenRefs()` and `orphans()` methods surface structural integrity issues in the artifact graph — broken links indicate deleted or missing artifacts, orphans indicate artifacts disconnected from the traceability chain. The `GraphStats` type exposes these counts for display, enabling continuous monitoring of governance health. |

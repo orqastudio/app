@@ -29,6 +29,12 @@ relationships:
   - type: grounded
     target: AGENT-006
     rationale: Grounds the Reviewer role with code principles
+  - type: informs
+    target: SKILL-043
+    rationale: Code principles grounding distills into the backend best practices skill for agent injection
+  - type: informs
+    target: SKILL-042
+    rationale: Code principles grounding distills into the frontend best practices skill for agent injection
 ---
 
 ## What Good Code Means Here

@@ -5,6 +5,10 @@ description: Design of the first-run setup wizard that guides users through init
 created: "2026-03-04"
 updated: "2026-03-04"
 sort: 14
+relationships:
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
 ---
 
 
@@ -209,13 +213,6 @@ This reuses the data collected during setup. The Settings view calls the same `c
 4. **Version increment:** Wizard re-triggers for new steps only
 5. **Error recovery:** Each step handles errors gracefully with retry options
 6. **Settings reflect setup:** Provider section shows correct CLI version, auth status
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | The setup wizard ensures the Agent SDK CLI and sidecar are properly configured — prerequisites for all governance enforcement features. Without a working sidecar, no governance analysis, no rule enforcement, and no learning loop can operate. |
-| Learning Through Reflection | N/A |
 
 ## Related Documents
 

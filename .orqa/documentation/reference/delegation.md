@@ -22,6 +22,12 @@ relationships:
   - target: RULE-001
     type: documents
     rationale: "Auto-generated inverse of documents relationship from RULE-001"
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-003
+    rationale: This document describes features or patterns that serve the Purpose Through Continuity pillar
 ---
 # Delegation Reference
 
@@ -69,10 +75,3 @@ These signals indicate that delegation has broken down and must be corrected imm
 - **The orchestrator is creating `.orqa/` artifacts with complex frontmatter.** Governance artifacts with multi-field frontmatter, relationship arrays, or schema-constrained content belong to the Governance Steward role.
 - **The orchestrator's context is filling with implementation details.** If the orchestrator is holding function signatures, error messages, or test output across multiple turns, it should be delegating and summarising — not accumulating.
 - **The orchestrator is running `make check` or `cargo test`.** Quality verification is the Reviewer's job. The orchestrator delegates the check and receives a verdict.
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure ([PILLAR-001](PILLAR-001)) | Makes delegation visible and systematic — the table replaces implicit judgement with explicit lookup, so every agent and the orchestrator share the same model of who does what. |
-| Purpose Through Continuity ([PILLAR-003](PILLAR-003)) | Prevents the orchestrator from losing its coordination purpose by accumulating implementation details. When the orchestrator delegates correctly, it stays focused on the decisions and verifications that only it can do. |

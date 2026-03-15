@@ -5,6 +5,10 @@ description: Process metrics tracked across development including pass/fail rate
 created: "2026-03-02"
 updated: "2026-03-08"
 sort: 19
+relationships:
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
 ---
 
 **Date:** 2026-03-02
@@ -87,15 +91,6 @@ The `agent-maintainer` updates this table during retrospective entries:
 **Formula:** Number of skills actually loaded per session / total available skills
 
 **Why it matters:** Skills that are never loaded may be unnecessary or poorly targeted. Skills that are always loaded may need to be made universal.
-
----
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | N/A |
-| Learning Through Reflection | Process metrics quantify whether the learning loops are working — tracking lesson promotion rates, review failure trends, and DoR/DoD compliance over time to surface where governance improvements are needed. |
 
 ---
 

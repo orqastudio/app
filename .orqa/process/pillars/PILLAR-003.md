@@ -55,6 +55,21 @@ relationships:
   - target: IDEA-095
     type: informs
     rationale: "Auto-generated inverse of informs relationship from IDEA-095"
+  - target: DOC-021
+    type: informs
+    rationale: Consistent standards allow agents across sessions to work without re-learning customs
+  - target: DOC-072
+    type: informs
+    rationale: Plugin hooks ensure enforcement is continuous across every tool call
+  - target: DOC-074
+    type: informs
+    rationale: Resetting store state in beforeEach ensures tests remain independent across sessions
+  - target: DOC-073
+    type: informs
+    rationale: 80%+ coverage ensures the test suite remains meaningful as agents add features
+  - target: DOC-069
+    type: informs
+    rationale: Correct delegation keeps the orchestrator focused on coordination across sessions
 ---
 ## What This Pillar Means
 

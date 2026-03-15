@@ -24,6 +24,15 @@ relationships:
   - target: EPIC-048
     type: documents
     rationale: Documentation page references EPIC-048
+  - type: informed-by
+    target: PILLAR-001
+    rationale: This document describes architecture or practices that serve the Clarity Through Structure pillar
+  - type: informed-by
+    target: PILLAR-002
+    rationale: This document describes features or patterns that serve the Learning Through Reflection pillar
+  - type: informed-by
+    target: SKILL-012
+    rationale: IPC patterns skill defines the Tauri invoke contract that this command catalog implements
 ---
 
 **References:** [Tauri v2 Research](RES-007), [AD-002](AD-002), [AD-009](AD-009), Rust Module Architecture
@@ -241,10 +250,3 @@ Tool calls that require approval park on a sync channel. The frontend calls `str
 - [AD-003](AD-003) — error propagation via Result + thiserror
 
 ---
-
-## Pillar Alignment
-
-| Pillar | Alignment |
-|--------|-----------|
-| Clarity Through Structure | The IPC command catalog is the contract that makes the frontend-backend boundary explicit and auditable. Commands for governance scanning, enforcement rules, and the artifact graph directly surface structured knowledge in the UI. |
-| Learning Through Reflection | Lesson commands (`lessons_list`, `lessons_create`, `lesson_increment_recurrence`, `lessons_scan_promotions`) and governance analysis commands (`governance_analyze`, `recommendations_list`) implement the lesson capture and promotion pipeline. |
