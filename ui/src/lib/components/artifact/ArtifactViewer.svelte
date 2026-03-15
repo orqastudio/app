@@ -2,6 +2,7 @@
 	import AcceptanceCriteria from "./AcceptanceCriteria.svelte";
 	import ActionsNeeded from "./ActionsNeeded.svelte";
 	import Breadcrumb from "./Breadcrumb.svelte";
+	import ChainTrace from "./ChainTrace.svelte";
 	import FrontmatterHeader from "./FrontmatterHeader.svelte";
 	import HookViewer from "./HookViewer.svelte";
 	import PipelineStepper from "./PipelineStepper.svelte";
@@ -252,6 +253,9 @@
 	{:else if content}
 		{#if currentPath && !isReadme}
 			<ReferencesPanel artifactPath={currentPath} />
+			{#if graphNode?.id}
+				<ChainTrace artifactId={graphNode.id} />
+			{/if}
 		{/if}
 		<ScrollArea class="min-h-0 flex-1" onclick={handleContentClick}>
 			<div class="p-6">

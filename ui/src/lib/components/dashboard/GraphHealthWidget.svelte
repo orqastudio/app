@@ -4,6 +4,8 @@
 	import CircleAlertIcon from "@lucide/svelte/icons/circle-alert";
 	import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
 	import UnlinkIcon from "@lucide/svelte/icons/unlink";
+	import NetworkIcon from "@lucide/svelte/icons/network";
+	import GitBranchIcon from "@lucide/svelte/icons/git-branch";
 	import ScanIcon from "@lucide/svelte/icons/scan";
 	import WrenchIcon from "@lucide/svelte/icons/wrench";
 	import ActivityIcon from "@lucide/svelte/icons/activity";
@@ -22,28 +24,19 @@
 
 	const { checks, loading, fixing = false, scanned, onScan, onAutoFix }: Props = $props();
 
-	const errorCount = $derived(checks.filter((c) => c.severity === "Error").length);
-	const warningCount = $derived(checks.filter((c) => c.severity === "Warning").length);
-	const orphanCount = $derived(artifactGraphSDK.stats?.orphan_count ?? 0);
-	const fixableCount = $derived(checks.filter((c) => c.auto_fixable).length);
+	// Graph-theoretic metrics — reactive, no scan needed.
+	const health = $derived(artifactGraphSDK.graphHealth);
 
-	/** Health score: 100% minus weighted penalty for errors and warnings. */
-	const healthScore = $derived.by(() => {
-		if (!scanned) return null;
-		const total = artifactGraphSDK.graph.size;
-		if (total === 0) return 100;
-		const penalty = errorCount * 3 + warningCount;
-		const raw = Math.max(0, 100 - Math.round((penalty / Math.max(total, 1)) * 100));
-		return Math.min(100, raw);
-	});
+	// Score: percentage of graph in the largest connected component.
+	const healthScore = $derived(Math.round(health.largestComponentRatio * 100));
 
-	/** Traffic-light status based on error/warning thresholds. */
-	type HealthStatus = "green" | "amber" | "red" | "unknown";
+	// Traffic light based on largestComponentRatio thresholds.
+	type HealthStatus = "green" | "amber" | "red" | "empty";
 	const status = $derived.by((): HealthStatus => {
-		if (!scanned) return "unknown";
-		if (errorCount > 20 || warningCount > 30) return "red";
-		if (errorCount >= 5 || warningCount >= 10) return "amber";
-		return "green";
+		if (health.totalNodes === 0) return "empty";
+		if (health.largestComponentRatio > 0.9) return "green";
+		if (health.largestComponentRatio > 0.7) return "amber";
+		return "red";
 	});
 
 	const circleClass = $derived.by(() => {
@@ -54,10 +47,14 @@
 	});
 
 	const scoreLabel = $derived.by(() => {
-		if (!scanned) return "Not scanned";
-		if (healthScore === null) return "—";
+		if (health.totalNodes === 0) return "—";
 		return `${healthScore}%`;
 	});
+
+	// Integrity scan counters (complementary to graph metrics).
+	const errorCount = $derived(checks.filter((c) => c.severity === "Error").length);
+	const warningCount = $derived(checks.filter((c) => c.severity === "Warning").length);
+	const fixableCount = $derived(checks.filter((c) => c.auto_fixable).length);
 </script>
 
 <Card.Root>
@@ -80,32 +77,54 @@
 				<span class="absolute h-8 w-8 rounded-full {circleClass}"></span>
 			</div>
 			<div>
-				<p class="text-xl font-semibold tabular-nums">
-					{#if !scanned && loading}
-						—
-					{:else}
-						{scoreLabel}
-					{/if}
-				</p>
+				<p class="text-xl font-semibold tabular-nums">{scoreLabel}</p>
 				<p class="text-xs text-muted-foreground">
-					{#if !scanned && loading}
-						Scanning…
+					{#if status === "empty"}
+						No graph data yet
 					{:else if status === "green"}
-						No significant issues
+						Well connected
 					{:else if status === "amber"}
-						Some issues found
-					{:else if status === "red"}
-						Needs attention
+						Fragmented — some clusters
 					{:else}
-						Run a scan to assess
+						Highly fragmented
 					{/if}
 				</p>
 			</div>
 		</div>
 
-		<!-- Breakdown -->
+		<!-- Graph-theoretic metrics (always visible once graph has nodes) -->
+		{#if health.totalNodes > 0}
+			<div class="grid grid-cols-4 gap-2 text-center text-xs">
+				<div class="flex flex-col items-center gap-1 rounded-md bg-muted/50 py-2">
+					<NetworkIcon class="h-3.5 w-3.5 {health.componentCount > 1 ? 'text-warning' : 'text-muted-foreground'}" />
+					<span class="{health.componentCount > 1 ? 'text-warning font-semibold' : 'text-muted-foreground'} tabular-nums">
+						{health.componentCount}
+					</span>
+					<span class="text-muted-foreground">Cluster{health.componentCount !== 1 ? "s" : ""}</span>
+				</div>
+				<div class="flex flex-col items-center gap-1 rounded-md bg-muted/50 py-2">
+					<UnlinkIcon class="h-3.5 w-3.5 {health.orphanCount > 0 ? 'text-warning' : 'text-muted-foreground'}" />
+					<span class="{health.orphanCount > 0 ? 'text-warning font-semibold' : 'text-muted-foreground'} tabular-nums">
+						{health.orphanCount}
+					</span>
+					<span class="text-muted-foreground">Orphan{health.orphanCount !== 1 ? "s" : ""}</span>
+				</div>
+				<div class="flex flex-col items-center gap-1 rounded-md bg-muted/50 py-2">
+					<UnlinkIcon class="h-3.5 w-3.5 text-muted-foreground" />
+					<span class="tabular-nums text-muted-foreground">{health.orphanPercentage}%</span>
+					<span class="text-muted-foreground">Orphan %</span>
+				</div>
+				<div class="flex flex-col items-center gap-1 rounded-md bg-muted/50 py-2">
+					<GitBranchIcon class="h-3.5 w-3.5 text-muted-foreground" />
+					<span class="tabular-nums text-muted-foreground">{health.avgDegree}</span>
+					<span class="text-muted-foreground">Avg degree</span>
+				</div>
+			</div>
+		{/if}
+
+		<!-- Integrity scan results (shown only after a scan) -->
 		{#if scanned}
-			<div class="grid grid-cols-3 gap-2 text-center text-xs">
+			<div class="grid grid-cols-2 gap-2 text-center text-xs">
 				<div class="flex flex-col items-center gap-1 rounded-md bg-muted/50 py-2">
 					<CircleAlertIcon class="h-3.5 w-3.5 {errorCount > 0 ? 'text-destructive' : 'text-muted-foreground'}" />
 					<span class="{errorCount > 0 ? 'text-destructive font-semibold' : 'text-muted-foreground'} tabular-nums">
@@ -119,13 +138,6 @@
 						{warningCount}
 					</span>
 					<span class="text-muted-foreground">Warning{warningCount !== 1 ? "s" : ""}</span>
-				</div>
-				<div class="flex flex-col items-center gap-1 rounded-md bg-muted/50 py-2">
-					<UnlinkIcon class="h-3.5 w-3.5 {orphanCount > 0 ? 'text-warning' : 'text-muted-foreground'}" />
-					<span class="{orphanCount > 0 ? 'text-warning font-semibold' : 'text-muted-foreground'} tabular-nums">
-						{orphanCount}
-					</span>
-					<span class="text-muted-foreground">Orphan{orphanCount !== 1 ? "s" : ""}</span>
 				</div>
 			</div>
 		{/if}
