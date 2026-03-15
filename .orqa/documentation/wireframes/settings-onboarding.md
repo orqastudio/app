@@ -3,13 +3,25 @@ id: DOC-061
 title: "Wireframe: Settings & Onboarding"
 description: Wireframe specification for settings pages and the onboarding flow.
 created: 2026-03-02
-updated: 2026-03-04
+updated: 2026-03-15
 sort: 5
 relationships:
   - target: RES-005
     type: documents
     rationale: Documentation page references RES-005
+  - target: EPIC-028
+    type: informed-by
+    rationale: UX Design epic produced these wireframes as deliverables
+  - target: EPIC-035
+    type: informed-by
+    rationale: Native Tool UX & First-Run Setup implemented the first-run setup wizard and provider CLI configuration
+  - target: EPIC-023
+    type: informed-by
+    rationale: Onboarding Flow Review epic covers audit and improvement of the onboarding experience (draft)
 ---
+
+<!-- FRESHNESS NOTE (2026-03-15): The onboarding wizard (Sections 2-5) is partially outdated. The actual SetupWizard has more steps than the wireframe shows: ClaudeCliStep, ClaudeAuthStep, SidecarStep, EmbeddingModelStep, and SetupComplete — the wireframe only shows CLI setup and project selection. The "Project Discovery conversation" flow (Sections 5a/5b) and governance artifact confirmation dialog (5c) are not yet implemented. The Settings view (Section 1) is largely accurate — Provider, Project, Appearance, and Shortcuts sections all exist. Settings now lives in a `SettingsView` component rendered in the Explorer Panel, matching the wireframe. The "Model" settings section is not shown in the wireframe but exists in the implementation. -->
+
 
 **Date:** 2026-03-02 | **Informed by:** [Onboarding Research](RES-005), MVP Spec F-001, F-001b, F-009
 

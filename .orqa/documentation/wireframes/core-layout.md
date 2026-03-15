@@ -3,7 +3,7 @@ id: DOC-059
 title: "Wireframe: Core Layout"
 description: Wireframe specification for the core application layout with sidebar, panels, and toolbar.
 created: 2026-03-02
-updated: 2026-03-04
+updated: 2026-03-15
 sort: 1
 relationships:
   - target: RES-004
@@ -12,7 +12,22 @@ relationships:
   - target: AD-019
     type: documents
     rationale: Documentation page references AD-019
+  - target: EPIC-028
+    type: informed-by
+    rationale: UX Design epic produced these wireframes as deliverables
+  - target: EPIC-030
+    type: informed-by
+    rationale: Project Scaffold implemented the initial three-zone layout with Activity Bar, Explorer, and Chat panels
+  - target: EPIC-038
+    type: informed-by
+    rationale: UX Polish Sprint refined layout details and added the custom titlebar/window controls
+  - target: EPIC-039
+    type: informed-by
+    rationale: Composability Refactoring restructured layout components and established semantic design tokens
 ---
+
+<!-- FRESHNESS NOTE (2026-03-15): The "Zone Relationship to PaneForge" section is stale — the implementation uses shadcn-svelte Resizable (PaneGroup/Pane/Handle) not PaneForge. The three-zone structure, Activity Bar, Nav Sub-Panel, and Status Bar descriptions remain accurate. The Project Dashboard section in the wireframe (shown as a wireframe view) reflects an earlier vision — the actual dashboard is now the narrative flow layout (see EPIC-074 and the dashboard wireframe). -->
+
 
 **Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-004), Design System
 

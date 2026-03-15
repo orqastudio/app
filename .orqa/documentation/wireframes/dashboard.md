@@ -3,13 +3,31 @@ id: DOC-060
 title: "Wireframe: Dashboard Views"
 description: Wireframe specification for dashboard views including metrics, status, and activity summaries.
 created: 2026-03-02
-updated: 2026-03-04
+updated: 2026-03-15
 sort: 4
 relationships:
   - target: RES-004
     type: documents
     rationale: Documentation page references RES-004
+  - target: EPIC-028
+    type: informed-by
+    rationale: UX Design epic produced these wireframes as deliverables
+  - target: EPIC-031
+    type: informed-by
+    rationale: Governance Bootstrap added the first governance coverage indicator to the dashboard
+  - target: EPIC-060
+    type: informed-by
+    rationale: Pipeline Health Dashboard built the current scanner/integrity widgets in the Explorer Panel
+  - target: EPIC-063
+    type: informed-by
+    rationale: Dashboard & Artifact Viewer UAT redesigned dashboard widgets for actionable insight
+  - target: EPIC-074
+    type: informed-by
+    rationale: Dashboard Redesign replaced the metrics-dump layout with the pillar-aligned narrative flow now shipping
 ---
+
+<!-- FRESHNESS NOTE (2026-03-15): This wireframe is significantly outdated. The Scanner Dashboard, Metrics Dashboard, and Learning Loop views shown here were the original design vision but were never built as described. The implemented dashboard (EPIC-074) uses a narrative flow layout with pillar-aligned columns: MilestoneContextCard, IntegrityWidget, PipelineWidget, GraphHealthWidget, LessonVelocityWidget, DecisionQueueWidget, and ImprovementTrendsWidget. The scanner dashboard and metrics KPI cards do not exist as standalone Explorer Panel views — their data surfaces as widgets on the unified dashboard. The learning loop view corresponds to the artifact browser's Lessons category, not a separate dashboard. This wireframe should be rewritten to reflect the current dashboard architecture if it is to remain authoritative. -->
+
 
 
 **Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-004)
