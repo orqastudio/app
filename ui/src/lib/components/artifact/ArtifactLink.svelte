@@ -111,7 +111,7 @@
 				</button>
 			{/snippet}
 		</Tooltip.Trigger>
-		<Tooltip.Content side="top" class="max-w-xs">
+		<Tooltip.Content side="top" class="max-w-xs" avoidCollisions={true} collisionPadding={8} sideOffset={4}>
 			{#if resolved.node}
 				{@const node = resolved.node}
 				<div class="space-y-1 text-xs">
@@ -126,9 +126,6 @@
 					</div>
 					{#if node.title && node.title !== node.id}
 						<p class="font-medium leading-snug">{node.title}</p>
-					{/if}
-					{#if node.artifact_type}
-						<p class="capitalize text-muted-foreground">{node.artifact_type}</p>
 					{/if}
 					{#if descriptionSnippet}
 						<p class="text-muted-foreground">{descriptionSnippet}</p>

@@ -72,7 +72,7 @@
 	</Card.Header>
 	<Card.Content class="space-y-3">
 		<!-- Column headers -->
-		<div class="grid grid-cols-[6rem_1fr_auto] items-center gap-x-4 px-1">
+		<div class="grid grid-cols-[6rem_1fr_8rem] items-center gap-x-4 px-1">
 			<span class="text-xs font-medium text-muted-foreground">Type</span>
 			<span class="text-xs font-medium text-muted-foreground">Display</span>
 			<span class="text-xs font-medium text-muted-foreground">Colour</span>
@@ -87,7 +87,7 @@
 				{@const isDefault = color === DEFAULT_ARTIFACT_LINK_COLORS[prefix]}
 				{@const mode = getDisplayMode(prefix)}
 
-				<div class="grid grid-cols-[6rem_1fr_auto] items-center gap-x-4">
+				<div class="grid grid-cols-[6rem_1fr_8rem] items-center gap-x-4">
 					<!-- Type label -->
 					<span class="font-mono text-xs font-semibold">{prefix}</span>
 

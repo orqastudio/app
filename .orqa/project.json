@@ -87,45 +87,45 @@
       "icon": "book-open",
       "children": [
         {
-          "key": "guide",
-          "label": null,
-          "icon": null,
-          "path": ".orqa/documentation/guide"
-        },
-        {
           "key": "about",
-          "label": null,
-          "icon": null,
+          "label": "About",
+          "icon": "info",
           "path": ".orqa/documentation/about"
         },
         {
+          "key": "guide",
+          "label": "User Guide",
+          "icon": "book-open",
+          "path": ".orqa/documentation/guide"
+        },
+        {
           "key": "development",
-          "label": null,
-          "icon": null,
+          "label": "Development",
+          "icon": "code",
           "path": ".orqa/documentation/development"
         },
         {
           "key": "how-to",
-          "label": null,
-          "icon": null,
+          "label": "How-To Guides",
+          "icon": "book-open-check",
           "path": ".orqa/documentation/how-to"
         },
         {
           "key": "reference",
-          "label": null,
-          "icon": null,
+          "label": "Reference",
+          "icon": "book-marked",
           "path": ".orqa/documentation/reference"
         },
         {
-          "key": "wireframes",
-          "label": null,
-          "icon": null,
-          "path": ".orqa/documentation/reference/wireframes"
+          "key": "marketing",
+          "label": "Marketing",
+          "icon": "megaphone",
+          "path": ".orqa/documentation/marketing"
         },
         {
           "key": "grounding",
-          "label": null,
-          "icon": null,
+          "label": "Grounding",
+          "icon": "anchor",
           "path": ".orqa/documentation/grounding"
         }
       ]
@@ -175,20 +175,33 @@
     }
   ],
   "artifactLinks": {
-    "display_mode": "id",
+    "displayModes": {
+      "AD": "title",
+      "DOC": "title",
+      "PILLAR": "title",
+      "AGENT": "title",
+      "RULE": "title",
+      "IMPL": "title",
+      "RES": "title",
+      "TASK": "title",
+      "EPIC": "title",
+      "IDEA": "title",
+      "SKILL": "title",
+      "MS": "title"
+    },
     "colors": {
-      "DOC": "#64748b",
-      "RULE": "#f59e0b",
       "EPIC": "#3b82f6",
+      "TASK": "#06b6d4",
+      "RULE": "#a78bfa",
       "AD": "#8b5cf6",
-      "SKILL": "#14b8a6",
-      "AGENT": "#e11d48",
-      "PILLAR": "#f97316",
-      "TASK": "#22c55e",
-      "IDEA": "#ec4899",
-      "IMPL": "#06b6d4",
-      "MS": "#84cc16",
-      "RES": "#6366f1"
+      "IDEA": "#c084fc",
+      "IMPL": "#67e8f9",
+      "SKILL": "#2dd4bf",
+      "PILLAR": "#818cf8",
+      "RES": "#6366f1",
+      "MS": "#38bdf8",
+      "DOC": "#94a3b8",
+      "AGENT": "#f472b6"
     }
   }
 }

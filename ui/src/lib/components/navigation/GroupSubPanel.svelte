@@ -25,6 +25,11 @@
 	import RocketIcon from "@lucide/svelte/icons/rocket";
 	import WorkflowIcon from "@lucide/svelte/icons/workflow";
 	import KanbanIcon from "@lucide/svelte/icons/kanban";
+	import InfoIcon from "@lucide/svelte/icons/info";
+	import BookOpenCheckIcon from "@lucide/svelte/icons/book-open-check";
+	import BookMarkedIcon from "@lucide/svelte/icons/book-marked";
+	import MegaphoneIcon from "@lucide/svelte/icons/megaphone";
+	import AnchorIcon from "@lucide/svelte/icons/anchor";
 	import * as Tooltip from "$lib/components/ui/tooltip";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import { projectStore } from "$lib/stores/project.svelte";
@@ -61,6 +66,11 @@
 		"shield-check": ShieldCheckIcon,
 		rocket: RocketIcon,
 		workflow: WorkflowIcon,
+		info: InfoIcon,
+		"book-open-check": BookOpenCheckIcon,
+		"book-marked": BookMarkedIcon,
+		megaphone: MegaphoneIcon,
+		anchor: AnchorIcon,
 	};
 
 	function resolveIcon(iconName: string | undefined): Component {
