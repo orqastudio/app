@@ -189,8 +189,8 @@
 				Waiting for artifact graph...
 			</p>
 		{:else}
-			<!-- Filters -->
-			<div class="mb-3 flex items-center gap-3">
+			<!-- Filters: category selector left, severity pills right-aligned -->
+			<div class="mb-3 flex items-center justify-between gap-3">
 				<SelectMenu
 					items={[
 						{ value: "all", label: "All categories" },
@@ -202,24 +202,24 @@
 					triggerSize="sm"
 					align="start"
 				/>
-				<!-- Severity filter pills — "All" active uses cyan -->
+				<!-- Severity filter pills — active uses colored text + subtle bg, not solid fill -->
 				<div class="flex items-center gap-1">
 					<Button
-						variant={severityFilter === "all" ? "default" : "ghost"}
+						variant={severityFilter === "all" ? "secondary" : "ghost"}
 						size="sm"
-						class="h-7 px-2 text-xs {severityFilter === 'all' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-transparent' : ''}"
+						class="h-7 px-2 text-xs {severityFilter === 'all' ? 'text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-950/40 hover:bg-cyan-100 dark:hover:bg-cyan-950/60' : ''}"
 						onclick={() => (severityFilter = "all")}
 					>All</Button>
 					<Button
 						variant={severityFilter === "Error" ? "secondary" : "ghost"}
 						size="sm"
-						class="h-7 px-2 text-xs {severityFilter === 'Error' ? 'text-destructive' : ''}"
+						class="h-7 px-2 text-xs {severityFilter === 'Error' ? 'text-destructive bg-destructive/10 hover:bg-destructive/15' : ''}"
 						onclick={() => (severityFilter = "Error")}
 					>Errors</Button>
 					<Button
 						variant={severityFilter === "Warning" ? "secondary" : "ghost"}
 						size="sm"
-						class="h-7 px-2 text-xs {severityFilter === 'Warning' ? 'text-warning' : ''}"
+						class="h-7 px-2 text-xs {severityFilter === 'Warning' ? 'text-warning bg-warning/10 hover:bg-warning/15' : ''}"
 						onclick={() => (severityFilter = "Warning")}
 					>Warnings</Button>
 				</div>

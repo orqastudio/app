@@ -10,7 +10,7 @@
 		key: string;
 		label: string;
 		count: number;
-		/** Tailwind color class for the dot indicator (e.g. "bg-blue-500"). */
+		/** Tailwind color class for the inner dot of the radio-button indicator (e.g. "bg-blue-500"). */
 		dotColorClass?: string;
 		/** Icon component rendered above the label (takes precedence over dotColorClass). */
 		icon?: Component;
@@ -70,10 +70,15 @@
 	}
 </script>
 
-<div class="flex items-stretch gap-2">
+<!--
+	Layout: stages have a fixed width; arrows (flex-1) fill the remaining space.
+	This keeps all stage pills the same size regardless of label length, and lets
+	the arrows stretch proportionally between them.
+-->
+<div class="flex items-stretch">
 	{#each stages as stage, i (stage.key)}
 		<!-- ------------------------------------------------------------------ -->
-		<!-- Stage pill — wrapped in Tooltip when tooltipTitle is set            -->
+		<!-- Stage pill — fixed width, wrapped in Tooltip when tooltipTitle set  -->
 		<!-- ------------------------------------------------------------------ -->
 		{#if stage.tooltipTitle}
 			<Tooltip.Root>
@@ -82,7 +87,7 @@
 						{#if onStageClick}
 							<button
 								{...props}
-								class="flex min-w-0 flex-1 flex-col items-center gap-1.5 rounded-lg border px-3 py-3 transition-colors hover:bg-accent/50 {stage.borderClass ?? 'border-border'} {stage.bgClass ?? 'bg-muted/30'}"
+								class="flex w-[72px] shrink-0 flex-col items-center gap-1.5 rounded-lg border px-2 py-3 transition-colors hover:bg-accent/50 {stage.borderClass ?? 'border-border'} {stage.bgClass ?? 'bg-muted/30'}"
 								onclick={() => onStageClick?.(stage.key)}
 							>
 								{@render stageInner(stage)}
@@ -90,7 +95,7 @@
 						{:else}
 							<div
 								{...props}
-								class="flex min-w-0 flex-1 flex-col items-center gap-1.5 rounded-lg border px-3 py-3 {stage.borderClass ?? 'border-border'} {stage.bgClass ?? 'bg-muted/30'}"
+								class="flex w-[72px] shrink-0 flex-col items-center gap-1.5 rounded-lg border px-2 py-3 {stage.borderClass ?? 'border-border'} {stage.bgClass ?? 'bg-muted/30'}"
 							>
 								{@render stageInner(stage)}
 							</div>
@@ -110,7 +115,7 @@
 					{#snippet child({ props })}
 						<button
 							{...props}
-							class="flex min-w-0 flex-1 flex-col items-center gap-1.5 rounded-lg border px-3 py-3 transition-colors hover:bg-accent/50 {stage.borderClass ?? 'border-border'} {stage.bgClass ?? 'bg-muted/30'}"
+							class="flex w-[72px] shrink-0 flex-col items-center gap-1.5 rounded-lg border px-2 py-3 transition-colors hover:bg-accent/50 {stage.borderClass ?? 'border-border'} {stage.bgClass ?? 'bg-muted/30'}"
 							onclick={() => onStageClick?.(stage.key)}
 						>
 							{@render stageInner(stage)}
@@ -123,37 +128,37 @@
 			</Tooltip.Root>
 		{:else}
 			<div
-				class="flex min-w-0 flex-1 flex-col items-center gap-1.5 rounded-lg border px-3 py-3 {stage.borderClass ?? 'border-border'} {stage.bgClass ?? 'bg-muted/30'}"
+				class="flex w-[72px] shrink-0 flex-col items-center gap-1.5 rounded-lg border px-2 py-3 {stage.borderClass ?? 'border-border'} {stage.bgClass ?? 'bg-muted/30'}"
 			>
 				{@render stageInner(stage)}
 			</div>
 		{/if}
 
 		<!-- ------------------------------------------------------------------ -->
-		<!-- Connector between stages                                            -->
+		<!-- Connector between stages — flex-1 so it fills available space      -->
 		<!-- ------------------------------------------------------------------ -->
 		{#if i < stages.length - 1}
 			{#if hasEdges && edges}
-				<!-- Rich arrow connector with edge count -->
-				<div class="flex shrink-0 flex-col items-center justify-center gap-0.5 px-1">
+				<!-- Rich arrow connector with edge count — stretches between pills -->
+				<div class="flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5">
 					<svg
-						width="32"
+						class="w-full max-w-[48px] {defaultColorClass(edges[i])}"
 						height="16"
-						viewBox="0 0 32 16"
-						class={defaultColorClass(edges[i])}
+						viewBox="0 0 48 16"
+						preserveAspectRatio="xMidYMid meet"
 						fill="none"
 						xmlns="http://www.w3.org/2000/svg"
 					>
-						<line x1="0" y1="8" x2="24" y2="8" stroke="currentColor" stroke-width="1.5" />
-						<polyline points="20,4 26,8 20,12" stroke="currentColor" stroke-width="1.5" fill="none" />
+						<line x1="0" y1="8" x2="38" y2="8" stroke="currentColor" stroke-width="1.5" />
+						<polyline points="34,4 42,8 34,12" stroke="currentColor" stroke-width="1.5" fill="none" />
 					</svg>
 					<span class="text-[10px] tabular-nums {defaultColorClass(edges[i])}">
 						{edges[i].count}
 					</span>
 				</div>
 			{:else}
-				<!-- Simple chevron connector -->
-				<div class="flex shrink-0 items-center text-muted-foreground/40">
+				<!-- Simple chevron connector — stretches between pills -->
+				<div class="flex min-w-0 flex-1 items-center justify-center text-muted-foreground/40">
 					<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<polyline points="4,4 10,8 4,12" stroke="currentColor" stroke-width="1.5" fill="none" />
 					</svg>
@@ -170,9 +175,16 @@
 	{#if stage.icon}
 		<stage.icon class="h-5 w-5 {stage.iconClass ?? 'text-muted-foreground'}" />
 	{:else if stage.dotColorClass}
-		<span class="flex h-2.5 w-2.5 rounded-full {stage.dotColorClass}"></span>
+		<!--
+			Radio-button style: outer ring + inner filled dot.
+			The outer ring is always border-current (inherits from the pill context),
+			the inner dot uses dotColorClass for the status colour.
+		-->
+		<span class="flex h-4 w-4 items-center justify-center rounded-full border-2 border-muted-foreground/40">
+			<span class="h-2 w-2 rounded-full {stage.dotColorClass}"></span>
+		</span>
 	{/if}
-	<span class="text-xs font-medium text-foreground">{stage.label}</span>
+	<span class="text-[10px] font-medium text-foreground leading-tight text-center">{stage.label}</span>
 	<span class="text-lg font-semibold tabular-nums text-foreground">{stage.count}</span>
 	{#if stage.statusLabel}
 		<span class="text-[10px] font-medium {stage.statusLabelClass ?? 'text-muted-foreground'}">
