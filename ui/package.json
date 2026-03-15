@@ -27,6 +27,7 @@
     "@tailwindcss/vite": "^4.0.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/svelte": "^5.3.1",
+    "@types/cytoscape": "^3.21.9",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "@vitest/coverage-v8": "^3.2.4",
@@ -62,10 +63,10 @@
     "@tauri-apps/plugin-notification": "^2.0.0",
     "@tauri-apps/plugin-shell": "^2.0.0",
     "@tauri-apps/plugin-store": "^2.0.0",
+    "cytoscape": "^3.33.1",
+    "cytoscape-cose-bilkent": "^4.1.0",
     "lucide-svelte": "^0.400.0",
     "mermaid": "^11.13.0",
-    "svelte-highlight": "^7.0.0",
-    "vis-data": "^8.0.3",
-    "vis-network": "^10.0.2"
+    "svelte-highlight": "^7.0.0"
   }
 }

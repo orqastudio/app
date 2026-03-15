@@ -1,54 +1,29 @@
 <script lang="ts">
 	import { onDestroy } from "svelte";
-	import { SvelteSet } from "svelte/reactivity";
-	import { Network } from "vis-network";
-	import type { Node, Edge, Options } from "vis-network";
-	import { DataSet } from "vis-data";
+	import cytoscape from "cytoscape";
+	// @ts-expect-error — no type declarations for cytoscape-cose-bilkent
+	import coseBilkent from "cytoscape-cose-bilkent";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import { statusColor } from "$lib/components/shared/StatusIndicator.svelte";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 
-	let container = $state<HTMLDivElement | undefined>(undefined);
-	let network: Network | null = null;
+	// Register layout extension once (safe to call multiple times — cytoscape deduplicates)
+	cytoscape.use(coseBilkent);
 
-	// Suppress ResizeObserver loop error — vis-network triggers resize during
-	// layout which fires before the browser can deliver all notifications.
-	// This is harmless and expected with any physics-based graph renderer.
-	if (typeof window !== "undefined") {
-		const origError = window.onerror;
-		window.onerror = (msg, ...args) => {
-			if (typeof msg === "string" && msg.includes("ResizeObserver")) return true;
-			if (origError) return origError(msg, ...args) as boolean;
-			return false;
-		};
-	}
+	let container = $state<HTMLDivElement | undefined>(undefined);
+	let cy: cytoscape.Core | null = null;
+
 	let stabilizing = $state(false);
-	let stabilizationProgress = $state(0);
 
 	/** Cached graph size — only rebuild when this changes. */
 	let lastGraphSize = 0;
 
-	/** Debounced resize handler to avoid ResizeObserver loop. */
-	let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+	/** Cached node positions from previous layout run. */
+	let cachedPositions: Array<{ id: string; x: number; y: number }> = [];
+
 	let resizeObserver: ResizeObserver | null = null;
-
-	/** Cached node positions from previous stabilization. */
-	let cachedPositions: Record<string, { x: number; y: number }> = {};
-
-	function hexFromDotClass(dotClass: string): string {
-		if (dotClass.includes("blue-500")) return "#3b82f6";
-		if (dotClass.includes("emerald-500")) return "#10b981";
-		if (dotClass.includes("amber-500")) return "#f59e0b";
-		if (dotClass.includes("purple-500")) return "#a855f7";
-		if (dotClass.includes("destructive") || dotClass.includes("red")) return "#ef4444";
-		return "#6b7280";
-	}
-
-	function resolveNodeColor(status: string | null): string {
-		if (!status) return "#6b7280";
-		return hexFromDotClass(statusColor(status));
-	}
+	let resizeTimer: ReturnType<typeof setTimeout> | null = null;
 
 	const TYPE_COLORS: Record<string, string> = {
 		epic: "#3b82f6",
@@ -66,62 +41,63 @@
 		doc: "#9ca3af",
 	};
 
-	function typeColor(artifactType: string): string {
+	function hexFromDotClass(dotClass: string): string {
+		if (dotClass.includes("blue-500")) return "#3b82f6";
+		if (dotClass.includes("emerald-500")) return "#10b981";
+		if (dotClass.includes("amber-500")) return "#f59e0b";
+		if (dotClass.includes("purple-500")) return "#a855f7";
+		if (dotClass.includes("destructive") || dotClass.includes("red")) return "#ef4444";
+		return "#6b7280";
+	}
+
+	function resolveNodeColor(status: string | null, artifactType: string): string {
+		if (status) return hexFromDotClass(statusColor(status));
 		return TYPE_COLORS[artifactType] ?? "#6b7280";
 	}
 
-	function buildNetwork(el: HTMLDivElement): void {
-		if (network) {
-			// Save positions before destroying
-			try {
-				const positions = network.getPositions();
-				cachedPositions = positions;
-			} catch {
-				// Network may not be ready
-			}
-			network.destroy();
-			network = null;
+	function buildGraph(el: HTMLDivElement): void {
+		// Save positions and destroy existing instance
+		if (cy) {
+			cachedPositions = cy.nodes().map((n) => ({
+				id: n.id(),
+				x: n.position().x,
+				y: n.position().y,
+			}));
+			cy.destroy();
+			cy = null;
 		}
 
 		const graphNodes = [...artifactGraphSDK.graph.values()];
 		if (graphNodes.length === 0) return;
 
-		const hasCachedPositions = Object.keys(cachedPositions).length > 0;
+		const positionMap = new Map(cachedPositions.map((p) => [p.id, { x: p.x, y: p.y }]));
+		const hasCachedPositions = cachedPositions.length > 0;
 
-		// Only show stabilizing overlay if we don't have cached positions
 		if (!hasCachedPositions) {
 			stabilizing = true;
-			stabilizationProgress = 0;
 		}
 
-		const nodeDataset = new DataSet<Node>(
-			graphNodes.map((node): Node => {
-				const color = node.status
-					? resolveNodeColor(node.status)
-					: typeColor(node.artifact_type);
-				const cached = cachedPositions[node.id];
-				return {
+		// Build elements
+		const edgeKeys = new Set<string>();
+		const elements: cytoscape.ElementDefinition[] = [];
+
+		for (const node of graphNodes) {
+			const color = resolveNodeColor(node.status ?? null, node.artifact_type);
+			const cached = positionMap.get(node.id);
+			const elementDef: cytoscape.ElementDefinition = {
+				group: "nodes",
+				data: {
 					id: node.id,
 					label: node.id,
-					title: `${node.title}\n${node.artifact_type}${node.status ? ` · ${node.status}` : ""}`,
-					color: {
-						background: color,
-						border: color,
-						highlight: { background: color, border: "#ffffff" },
-						hover: { background: color, border: "#ffffff" },
-					},
-					font: { color: "#ffffff", size: 10, face: "monospace" },
-					size: 12,
-					borderWidth: 1,
-					shape: "dot",
-					// Use cached position if available — skips physics
-					...(cached ? { x: cached.x, y: cached.y, fixed: false } : {}),
-				};
-			}),
-		);
-
-		const edgeKeys = new SvelteSet<string>();
-		const edgeList: Edge[] = [];
+					color,
+					tooltip: `${node.title}\n${node.artifact_type}${node.status ? ` · ${node.status}` : ""}`,
+				},
+			};
+			if (cached) {
+				elementDef.position = { x: cached.x, y: cached.y };
+			}
+			elements.push(elementDef);
+		}
 
 		for (const node of graphNodes) {
 			for (const ref of node.references_out) {
@@ -129,89 +105,109 @@
 				const key = `${ref.source_id}->${ref.target_id}`;
 				if (edgeKeys.has(key)) continue;
 				edgeKeys.add(key);
-				edgeList.push({
-					from: ref.source_id,
-					to: ref.target_id,
-					arrows: "to",
-					color: { color: "#4b5563", opacity: 0.5 },
+				elements.push({
+					group: "edges",
+					data: {
+						id: key,
+						source: ref.source_id,
+						target: ref.target_id,
+					},
 				});
 			}
 		}
 
-		const edgeDataset = new DataSet<Edge>(edgeList);
-
-		const options: Options = {
-			autoResize: false,
-			physics: {
-				enabled: !hasCachedPositions,
-				// Never use synchronous stabilization — it blocks the main thread
-				// and freezes the chat panel. Let physics run frame-by-frame instead.
-				stabilization: false,
-				barnesHut: {
-					gravitationalConstant: -4000,
-					centralGravity: 0.3,
-					springLength: 100,
-					springConstant: 0.04,
-					damping: 0.09,
+		cy = cytoscape({
+			container: el,
+			elements,
+			style: [
+				{
+					selector: "node",
+					style: {
+						label: "data(label)",
+						"background-color": "data(color)",
+						color: "#fff",
+						"text-valign": "center",
+						"text-halign": "center",
+						"font-size": "10px",
+						"font-family": "monospace",
+						width: 24,
+						height: 24,
+						"text-outline-width": 2,
+						"text-outline-color": "data(color)",
+					},
 				},
-			},
-			layout: {
-				improvedLayout: !hasCachedPositions && graphNodes.length < 100,
-			},
-			interaction: {
-				hover: true,
-				tooltipDelay: 200,
-				navigationButtons: true,
-				keyboard: true,
-				zoomView: true,
-			},
-			nodes: {
-				shape: "dot",
-				scaling: { min: 8, max: 20 },
-			},
-			edges: {
-				smooth: { enabled: true, type: "dynamic", roundness: 0.5 },
-				width: 1,
-				arrows: { to: { enabled: true, scaleFactor: 0.5 } },
-			},
-		};
-
-		network = new Network(el, { nodes: nodeDataset, edges: edgeDataset }, options);
-
-		network.on("click", (params) => {
-			if (params.nodes.length > 0) {
-				const clickedId = String(params.nodes[0]);
-				navigationStore.navigateToArtifact(clickedId);
-			}
+				{
+					selector: "node:selected",
+					style: {
+						"border-width": 2,
+						"border-color": "#ffffff",
+					},
+				},
+				{
+					selector: "edge",
+					style: {
+						width: 1,
+						"line-color": "#4b5563",
+						"target-arrow-color": "#4b5563",
+						"target-arrow-shape": "triangle",
+						"curve-style": "bezier",
+						opacity: 0.5,
+					},
+				},
+			],
+			layout: hasCachedPositions
+				? { name: "preset" }
+				: ({
+						name: "cose-bilkent",
+						animate: "end",
+						animationDuration: 500,
+						randomize: true,
+						nodeRepulsion: 4500,
+						idealEdgeLength: 100,
+						edgeElasticity: 0.45,
+						nestingFactor: 0.1,
+						gravity: 0.25,
+						numIter: 2500,
+						tile: true,
+						tilingPaddingVertical: 10,
+						tilingPaddingHorizontal: 10,
+					} as cytoscape.LayoutOptions),
+			minZoom: 0.1,
+			maxZoom: 4,
+			wheelSensitivity: 0.3,
 		});
 
-		// Physics runs frame-by-frame (non-blocking). When it settles, freeze and cache.
-		network.on("stabilized", () => {
-			if (!stabilizing) return; // Already handled
-			stabilizing = false;
-			stabilizationProgress = 100;
-			network?.setOptions({ physics: { enabled: false } });
-			network?.fit({ animation: { duration: 400, easingFunction: "easeInOutQuad" } });
-			try {
-				if (network) cachedPositions = network.getPositions();
-			} catch {
-				// Ignore
-			}
+		// Click handler — navigate to clicked artifact
+		cy.on("tap", "node", (evt) => {
+			const nodeId = evt.target.id() as string;
+			navigationStore.navigateToArtifact(nodeId);
 		});
 
-		// If we used cached positions, fit immediately
-		if (hasCachedPositions && network) {
+		if (hasCachedPositions) {
 			stabilizing = false;
-			network.fit({ animation: { duration: 200, easingFunction: "easeInOutQuad" } });
+			cy.fit(undefined, 40);
+		} else {
+			// cose-bilkent fires layoutstop when done
+			cy.one("layoutstop", () => {
+				stabilizing = false;
+				cy?.fit(undefined, 40);
+				// Cache positions after layout
+				if (cy) {
+					cachedPositions = cy.nodes().map((n) => ({
+						id: n.id(),
+						x: n.position().x,
+						y: n.position().y,
+					}));
+				}
+			});
 		}
 
-		// Manual debounced resize (autoResize disabled to prevent loop)
+		// Debounced resize observer
 		if (resizeObserver) resizeObserver.disconnect();
 		resizeObserver = new ResizeObserver(() => {
 			if (resizeTimer) clearTimeout(resizeTimer);
 			resizeTimer = setTimeout(() => {
-				network?.redraw();
-				network?.fit();
+				cy?.resize();
 			}, 150);
 		});
 		resizeObserver.observe(el);
@@ -222,10 +218,10 @@
 		const currentSize = artifactGraphSDK.graph.size;
 
 		if (!el) return;
-		if (network && currentSize === lastGraphSize) return;
+		if (cy && currentSize === lastGraphSize) return;
 
 		lastGraphSize = currentSize;
-		buildNetwork(el);
+		buildGraph(el);
 	});
 
 	onDestroy(() => {
@@ -234,14 +230,15 @@
 			resizeObserver = null;
 		}
 		if (resizeTimer) clearTimeout(resizeTimer);
-		if (network) {
-			try {
-				cachedPositions = network.getPositions();
-			} catch {
-				// Ignore
-			}
-			network.destroy();
-			network = null;
+		if (cy) {
+			// Save final positions before destroy
+			cachedPositions = cy.nodes().map((n) => ({
+				id: n.id(),
+				x: n.position().x,
+				y: n.position().y,
+			}));
+			cy.destroy();
+			cy = null;
 		}
 	});
 </script>
