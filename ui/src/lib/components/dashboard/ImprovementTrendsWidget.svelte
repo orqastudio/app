@@ -141,7 +141,7 @@
 	 */
 	function strokeColor(m: MetricConfig): string {
 		const pct = percentChange(m);
-		if (pct === null || pct === 0) return "#6b7280";
+		if (pct === null || pct === 0) return "#06b6d4";
 		return isImprovement(m, pct) ? "#22c55e" : "#ef4444";
 	}
 
@@ -158,15 +158,17 @@
 		Card title / description are injected by ProjectDashboard.
 		Dividers between cells via border-r / border-b on each cell.
 	-->
-	<div class="grid grid-cols-2 border-t border-l border-border rounded-none overflow-hidden">
-		{#each metrics as m (m.label)}
+	<div class="grid grid-cols-2 overflow-hidden">
+		{#each metrics as m, idx (m.label)}
 			{@const values = sparklineValues(m)}
 			{@const arrow = trendArrow(m)}
 			{@const label = trendLabel(m)}
 			{@const colorClass = trendColorClass(m)}
 			{@const stroke = strokeColor(m)}
 			{@const path = hasTrend ? sparklinePath(values, m.lowerIsBetter) : ""}
-			<div class="flex flex-col border-r border-b border-border overflow-hidden">
+			{@const isLeft = idx % 2 === 0}
+			{@const isTop = idx < 2}
+			<div class="flex flex-1 flex-col overflow-hidden {isLeft && 'border-r border-border'} {isTop && 'border-b border-border'}">
 				<!-- Metric header -->
 				<div class="flex items-center justify-between px-3 pt-3 pb-1">
 					<span class="text-xs font-medium text-muted-foreground">{m.label}</span>
@@ -188,8 +190,7 @@
 					</div>
 				{:else if path}
 					<svg
-						width="100%"
-						height={SPARKLINE_HEIGHT}
+						class="flex-1 w-full min-h-0"
 						viewBox="0 0 100 {SPARKLINE_HEIGHT}"
 						preserveAspectRatio="none"
 						fill="none"

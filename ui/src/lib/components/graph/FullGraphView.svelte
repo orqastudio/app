@@ -8,8 +8,12 @@
 	import { statusColor } from "$lib/components/shared/StatusIndicator.svelte";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 
-	// Register layout extension once (safe to call multiple times — cytoscape deduplicates)
-	cytoscape.use(coseBilkent);
+	// Register layout extension once
+	try {
+		cytoscape.use(coseBilkent);
+	} catch {
+		// Already registered — safe to ignore
+	}
 
 	let container = $state<HTMLDivElement | undefined>(undefined);
 	let cy: cytoscape.Core | null = null;
@@ -221,7 +225,12 @@
 		if (cy && currentSize === lastGraphSize) return;
 
 		lastGraphSize = currentSize;
-		buildGraph(el);
+		try {
+			buildGraph(el);
+		} catch (err) {
+			console.error("Graph build failed:", err);
+			stabilizing = false;
+		}
 	});
 
 	onDestroy(() => {
