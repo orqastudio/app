@@ -69,6 +69,28 @@ export const DEFAULT_ARTIFACT_LINK_COLORS: Record<string, string> = {
 	AGENT: "#f472b6",
 };
 
+/** A single status definition from project config — source of truth for status vocabulary. */
+export interface StatusDefinition {
+	key: string;
+	label: string;
+	icon: string;
+	spin?: boolean;
+}
+
+/** The canonical status values. Project config is the source of truth. */
+export type ArtifactStatus =
+	| "captured"
+	| "exploring"
+	| "ready"
+	| "prioritised"
+	| "active"
+	| "hold"
+	| "blocked"
+	| "review"
+	| "completed"
+	| "surpassed"
+	| "recurring";
+
 export interface ProjectSettings {
 	name: string;
 	description: string | null;
@@ -80,6 +102,7 @@ export interface ProjectSettings {
 	show_thinking: boolean;
 	custom_system_prompt: string | null;
 	artifacts?: ArtifactEntry[];
+	statuses?: StatusDefinition[];
 	relationshipDisplay?: RelationshipDisplayConfig;
 	artifactLinks?: ArtifactLinksConfig;
 }

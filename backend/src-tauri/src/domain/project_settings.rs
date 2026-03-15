@@ -2,6 +2,16 @@ use serde::{Deserialize, Serialize};
 
 use crate::domain::project::DetectedStack;
 
+/// A status definition loaded from `project.json`.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StatusDefinition {
+    pub key: String,
+    pub label: String,
+    pub icon: String,
+    #[serde(default)]
+    pub spin: bool,
+}
+
 /// A single artifact type with a filesystem path to scan.
 ///
 /// `label` and `icon` are optional — the scanner reads them from the directory's
@@ -108,6 +118,11 @@ pub struct ProjectSettings {
     /// Artifact link chip display settings (display mode and per-type colours).
     #[serde(rename = "artifactLinks", default)]
     pub artifact_links: ArtifactLinksConfig,
+    /// Status definitions loaded from `project.json`.
+    ///
+    /// When absent, the app falls back to built-in defaults.
+    #[serde(default)]
+    pub statuses: Vec<StatusDefinition>,
 }
 
 fn default_model() -> String {
@@ -157,6 +172,7 @@ mod tests {
                 display_modes: std::collections::HashMap::new(),
                 colors: std::collections::HashMap::new(),
             },
+            statuses: vec![],
         }
     }
 

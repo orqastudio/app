@@ -621,7 +621,7 @@ class ArtifactGraphSDK {
         if (startNode.empty()) return [];
 
         const visited: string[] = [];
-        const seen = new Set<string>([id]);
+        const seen = new SvelteSet<string>([id]);
         const queue: string[] = [id];
 
         while (queue.length > 0) {
@@ -659,7 +659,7 @@ class ArtifactGraphSDK {
         if (startNode.empty()) return { total: 0, artifacts: [] };
 
         const results: Array<{ id: string; type: string; distance: number }> = [];
-        const seen = new Set<string>([id]);
+        const seen = new SvelteSet<string>([id]);
 
         // BFS level by level so we track distance accurately.
         let frontier: string[] = [id];
@@ -884,7 +884,7 @@ class ArtifactGraphSDK {
     private _buildVisualizationElements(): cytoscape.ElementDefinition[] {
         // Nodes are colored by artifact type only — status is communicated via icons, not color.
         const elements: cytoscape.ElementDefinition[] = [];
-        const edgeKeys = new Set<string>();
+        const edgeKeys = new SvelteSet<string>();
 
         for (const node of this.graph.values()) {
             const color = ARTIFACT_TYPE_COLORS[node.artifact_type] ?? "#6b7280";

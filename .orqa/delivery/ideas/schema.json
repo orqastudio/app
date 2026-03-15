@@ -14,7 +14,7 @@
     "id": { "type": "string", "pattern": "^IDEA-\\d+$" },
     "title": { "type": "string" },
     "description": { "type": "string" },
-    "status": { "enum": ["captured", "exploring", "shaped", "promoted", "delivered", "partially-delivered", "discarded", "archived"] },
+    "status": { "enum": ["captured", "exploring", "ready", "prioritised", "active", "hold", "blocked", "review", "completed", "surpassed", "recurring"] },
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
     "pillars": {

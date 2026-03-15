@@ -15,7 +15,7 @@
     "id": { "type": "string", "pattern": "^AGENT-\\d+$" },
     "title": { "type": "string" },
     "description": { "type": "string" },
-    "status": { "enum": ["active", "inactive"] },
+    "status": { "enum": ["captured", "exploring", "ready", "prioritised", "active", "hold", "blocked", "review", "completed", "surpassed", "recurring"] },
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
     "layer": { "enum": ["orchestrator", "core", "project", "plugin", "community", "user"] },

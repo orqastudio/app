@@ -136,6 +136,7 @@ mod tests {
                 }),
             ],
             artifact_links: Default::default(),
+            statuses: vec![],
         }
     }
 
@@ -196,6 +197,7 @@ mod tests {
             custom_system_prompt: None,
             artifacts: vec![],
             artifact_links: Default::default(),
+            statuses: vec![],
         };
         let paths = ProjectPaths::from_settings(root, &settings);
 

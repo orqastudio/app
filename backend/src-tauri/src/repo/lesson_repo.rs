@@ -200,6 +200,7 @@ mod tests {
                 }],
             }],
             artifact_links: Default::default(),
+            statuses: vec![],
         };
         ProjectPaths::from_settings(tmp.path(), &settings)
     }
@@ -352,6 +353,7 @@ mod tests {
             custom_system_prompt: None,
             artifacts: vec![],
             artifact_links: Default::default(),
+            statuses: vec![],
         };
         let paths = ProjectPaths::from_settings(dir.path(), &settings);
         let lessons = list(&paths).expect("list should succeed");

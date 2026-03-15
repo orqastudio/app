@@ -14,7 +14,7 @@
     "id": { "type": "string", "pattern": "^RES-\\d+$" },
     "title": { "type": "string" },
     "description": { "type": "string" },
-    "status": { "enum": ["draft", "complete", "surpassed"] },
+    "status": { "enum": ["captured", "exploring", "ready", "prioritised", "active", "hold", "blocked", "review", "completed", "surpassed", "recurring"] },
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
     "surpassed-by": { "type": ["string", "null"], "pattern": "^RES-\\d+$" },

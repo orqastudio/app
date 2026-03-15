@@ -16,7 +16,7 @@
     "id": { "type": "string", "pattern": "^TASK-\\d+$" },
     "title": { "type": "string" },
     "description": { "type": "string" },
-    "status": { "enum": ["todo", "in-progress", "done"] },
+    "status": { "enum": ["captured", "exploring", "ready", "prioritised", "active", "hold", "blocked", "review", "completed", "surpassed", "recurring"] },
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
     "epic": { "type": ["string", "null"], "pattern": "^EPIC-\\d+$" },

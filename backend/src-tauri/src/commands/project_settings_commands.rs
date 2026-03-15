@@ -157,6 +157,7 @@ mod tests {
             custom_system_prompt: None,
             artifacts: vec![],
             artifact_links: crate::domain::project_settings::ArtifactLinksConfig::default(),
+            statuses: vec![],
         };
 
         project_settings_repo::write(path, &settings).expect("write");

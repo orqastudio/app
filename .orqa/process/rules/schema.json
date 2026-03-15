@@ -15,7 +15,7 @@
     "id": { "type": "string", "pattern": "^RULE-\\d+$" },
     "title": { "type": "string" },
     "description": { "type": "string" },
-    "status": { "enum": ["active", "inactive"] },
+    "status": { "enum": ["captured", "exploring", "ready", "prioritised", "active", "hold", "blocked", "review", "completed", "surpassed", "recurring"] },
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },
     "layer": { "enum": ["core", "setup", "project", "plugin", "community", "user"] },

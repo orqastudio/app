@@ -71,6 +71,7 @@ mod tests {
             custom_system_prompt: None,
             artifacts: vec![],
             artifact_links: Default::default(),
+            statuses: vec![],
         }
     }
 

@@ -20,7 +20,7 @@
     "id": { "type": "string", "pattern": "^EPIC-\\d+$" },
     "title": { "type": "string" },
     "description": { "type": "string" },
-    "status": { "enum": ["draft", "ready", "in-progress", "review", "done"] },
+    "status": { "enum": ["captured", "exploring", "ready", "prioritised", "active", "hold", "blocked", "review", "completed", "surpassed", "recurring"] },
     "priority": { "enum": ["P1", "P2", "P3"] },
     "created": { "type": "string", "format": "date" },
     "updated": { "type": "string", "format": "date" },

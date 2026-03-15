@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onDestroy } from "svelte";
+	import { SvelteSet } from "svelte/reactivity";
 	import cytoscape from "cytoscape";
 	// @ts-expect-error — no type declarations for cytoscape-cose-bilkent
 	import coseBilkent from "cytoscape-cose-bilkent";
@@ -55,7 +56,7 @@
 		}
 
 		// Collect unique node IDs from incoming and outgoing refs
-		const nodeIds = new Set<string>();
+		const nodeIds = new SvelteSet<string>();
 		nodeIds.add(artifactId);
 		for (const ref of incomingRefs) nodeIds.add(ref.source_id);
 		for (const ref of outgoingRefs) nodeIds.add(ref.target_id);

@@ -217,14 +217,6 @@
 		}
 	}
 
-	function statusIconClass(status: StageData["status"]): string {
-		switch (status) {
-			case "isolated":  return "text-red-500";
-			case "attention": return "text-amber-500";
-			default:          return "text-muted-foreground";
-		}
-	}
-
 	function computeStatusLabel(data: StageData): string | null {
 		if (data.count === 0) return null;
 		const pct = Math.round(data.connectivity * 100);

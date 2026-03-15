@@ -4,43 +4,42 @@ import StatusIndicator from "../StatusIndicator.svelte";
 
 describe("StatusIndicator", () => {
 	it("renders in badge mode by default", () => {
-		const { container } = render(StatusIndicator, {
+		render(StatusIndicator, {
 			props: { status: "active" },
 		});
-		// Badge mode renders a Badge component (span with badge classes)
-		// and displays the status text
-		expect(screen.getByText("active")).toBeInTheDocument();
+		// Badge mode renders the status label (resolved via FALLBACK_STATUSES: "Active")
+		expect(screen.getByText("Active")).toBeInTheDocument();
 	});
 
-	it("renders in dot mode", () => {
+	it("renders in dot mode with an svg icon", () => {
 		const { container } = render(StatusIndicator, {
-			props: { status: "done", mode: "dot" },
+			props: { status: "completed", mode: "dot" },
 		});
-		// Dot mode renders a span with rounded-full class
-		const dot = container.querySelector(".rounded-full");
-		expect(dot).toBeInTheDocument();
+		// Dot mode renders an SVG icon (Lucide component)
+		const svg = container.querySelector("svg");
+		expect(svg).toBeInTheDocument();
 	});
 
-	it("renders in inline mode with status text", () => {
+	it("renders in inline mode with status label", () => {
 		render(StatusIndicator, {
-			props: { status: "in-progress", mode: "inline" },
+			props: { status: "active", mode: "inline" },
 		});
-		expect(screen.getByText("in-progress")).toBeInTheDocument();
+		// Inline mode shows resolved label, not raw key
+		expect(screen.getByText("Active")).toBeInTheDocument();
 	});
 
-	it("applies success group styling for done status", () => {
-		const { container } = render(StatusIndicator, {
-			props: { status: "done", mode: "dot" },
+	it("renders a known status with its resolved label", () => {
+		render(StatusIndicator, {
+			props: { status: "completed", mode: "badge" },
 		});
-		const dot = container.querySelector(".rounded-full");
-		expect(dot?.className).toContain("bg-emerald-500");
+		expect(screen.getByText("Completed")).toBeInTheDocument();
 	});
 
-	it("falls back to blue group for unknown statuses", () => {
-		const { container } = render(StatusIndicator, {
-			props: { status: "unknown-status", mode: "dot" },
+	it("falls back to raw key for unknown statuses", () => {
+		render(StatusIndicator, {
+			props: { status: "unknown-status", mode: "badge" },
 		});
-		const dot = container.querySelector(".rounded-full");
-		expect(dot?.className).toContain("bg-blue-500");
+		// Unknown status: label falls back to the raw status string
+		expect(screen.getByText("unknown-status")).toBeInTheDocument();
 	});
 });

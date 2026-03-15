@@ -6,6 +6,7 @@
 	import ArtifactLink from "$lib/components/artifact/ArtifactLink.svelte";
 	import CompassIcon from "@lucide/svelte/icons/compass";
 	import MapIcon from "@lucide/svelte/icons/map";
+	import { SvelteMap } from "svelte/reactivity";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import type { ArtifactNode } from "$lib/types/artifact-graph";
@@ -181,7 +182,7 @@
 		const entries: EpicEntry[] = [];
 
 		// Pre-index tasks by epic reference (frontmatter `epic` field)
-		const tasksByEpic = new Map<string, ArtifactNode[]>();
+		const tasksByEpic = new SvelteMap<string, ArtifactNode[]>();
 		for (const task of artifactGraphSDK.byType("task")) {
 			const fm = task.frontmatter as Record<string, unknown>;
 			const epicId = typeof fm.epic === "string" ? fm.epic : null;
@@ -222,27 +223,6 @@
 		});
 	});
 
-	// -------------------------------------------------------------------------
-	// Type badge colours
-	// -------------------------------------------------------------------------
-
-	function typeBadgeVariant(type: string): "default" | "secondary" | "destructive" | "outline" {
-		switch (type) {
-			case "decision": return "destructive";
-			case "idea":     return "default";
-			case "lesson":   return "secondary";
-			default:         return "outline";
-		}
-	}
-
-	function typeBadgeLabel(type: string): string {
-		const labels: Record<string, string> = {
-			task: "Task", epic: "Epic", idea: "Idea",
-			decision: "Decision", lesson: "Lesson",
-		};
-		return labels[type] ?? type;
-	}
-
 	function priorityBadgeClass(p: string | null): string {
 		if (p === "P1") return "text-destructive";
 		if (p === "P2") return "text-amber-600 dark:text-amber-400";
@@ -258,10 +238,6 @@
 	// -------------------------------------------------------------------------
 	// Navigation
 	// -------------------------------------------------------------------------
-
-	function openArtifact(path: string) {
-		navigationStore.navigateToPath(path);
-	}
 
 	function openRoadmap() {
 		navigationStore.setActivity("roadmap");
