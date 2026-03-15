@@ -49,7 +49,7 @@
           },
           "target": {
             "type": ["string", "null"],
-            "pattern": "^(IMPL|AD|RULE|SKILL|PILLAR|RES|VER|EPIC|TASK|IDEA|MS)-\\d+$"
+            "pattern": "^(IMPL|AD|RULE|SKILL|PILLAR|RES|VER|EPIC|TASK|IDEA|MS|DOC|AGENT)-\\d+$"
           },
           "rationale": {
             "type": "string"

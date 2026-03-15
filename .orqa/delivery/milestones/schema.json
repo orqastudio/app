@@ -32,7 +32,7 @@
           },
           "target": {
             "type": ["string", "null"],
-            "pattern": "^(EPIC|TASK|MS|IMPL|AD|RULE|SKILL|PILLAR|RES|VER|IDEA|AGENT)-\\d+$"
+            "pattern": "^(EPIC|TASK|MS|IMPL|AD|RULE|SKILL|PILLAR|RES|VER|IDEA|AGENT|DOC)-\\d+$"
           },
           "rationale": {
             "type": "string",

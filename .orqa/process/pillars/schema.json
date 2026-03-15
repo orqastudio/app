@@ -32,7 +32,7 @@
         "additionalProperties": false,
         "properties": {
           "type": { "type": "string" },
-          "target": { "type": ["string", "null"] },
+          "target": { "type": ["string", "null"], "pattern": "^(EPIC|TASK|MS|IMPL|AD|RULE|SKILL|PILLAR|RES|VER|IDEA|AGENT|DOC)-\\d+$" },
           "rationale": { "type": "string" },
           "intended": { "type": "boolean" }
         }
