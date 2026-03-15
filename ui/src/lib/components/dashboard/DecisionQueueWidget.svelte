@@ -2,6 +2,7 @@
 	import * as Card from "$lib/components/ui/card";
 	import CheckCircle2Icon from "@lucide/svelte/icons/check-circle-2";
 	import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
+	import CompassIcon from "@lucide/svelte/icons/compass";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 
@@ -74,8 +75,11 @@
 {#if hasData}
 	<Card.Root class="min-h-[220px] gap-2">
 		<Card.Header class="pb-2">
-			<Card.Title class="text-sm font-semibold">What's Next</Card.Title>
-			<Card.Description class="text-xs">Purpose</Card.Description>
+			<Card.Title class="flex items-center gap-1.5 text-sm font-semibold">
+				<CompassIcon class="h-4 w-4 text-muted-foreground" />
+				Purpose
+			</Card.Title>
+			<Card.Description class="text-xs">What's Next</Card.Description>
 			{#if isWarning}
 				<Card.Action>
 					<TriangleAlertIcon class="h-4 w-4 text-amber-500" />

@@ -79,13 +79,11 @@
 
 <Card.Root class="w-full">
 	<Card.Header class="pb-3">
-		<div class="flex items-center justify-between">
-			<Card.Title class="text-base">
-				<div class="flex items-center gap-2">
-					<TargetIcon class="h-4 w-4 text-muted-foreground" />
-					Active Milestone
-				</div>
-			</Card.Title>
+		<Card.Title class="flex items-center gap-2 text-base">
+			<TargetIcon class="h-4 w-4 text-muted-foreground" />
+			Active Milestone
+		</Card.Title>
+		<Card.Action>
 			{#if activeMilestone}
 				<Button variant="ghost" size="sm" onclick={openMilestone} class="h-7 text-xs">
 					<KanbanIcon class="mr-1 h-3.5 w-3.5" />
@@ -97,7 +95,7 @@
 					Roadmap
 				</Button>
 			{/if}
-		</div>
+		</Card.Action>
 	</Card.Header>
 
 	<Card.Content>

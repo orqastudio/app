@@ -8,6 +8,7 @@
 	import GitBranchIcon from "@lucide/svelte/icons/git-branch";
 	import ScanIcon from "@lucide/svelte/icons/scan";
 	import WrenchIcon from "@lucide/svelte/icons/wrench";
+	import EyeIcon from "@lucide/svelte/icons/eye";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import type { IntegrityCheck } from "$lib/types/artifact-graph";
@@ -58,36 +59,33 @@
 
 <Card.Root class="gap-2">
 	<Card.Header class="pb-2">
-		<Card.Title class="text-sm font-semibold">Where You Are</Card.Title>
-		<Card.Description class="text-xs">Clarity</Card.Description>
+		<Card.Title class="flex items-center gap-1.5 text-sm font-semibold">
+			<EyeIcon class="h-4 w-4 text-muted-foreground" />
+			Clarity
+		</Card.Title>
+		<Card.Description class="text-xs">Where You Are</Card.Description>
 		<!-- Status dot + score go in Card.Action (right side of header) -->
 		<Card.Action>
 			{#if loading}
 				<LoadingSpinner size="sm" />
 			{:else}
 				<div class="flex items-center gap-2">
+					<span class="text-sm font-semibold tabular-nums">{scoreLabel}</span>
 					<span class="relative flex h-3 w-3 shrink-0 items-center justify-center">
 						<span class="absolute h-3 w-3 rounded-full {circleClass} opacity-30"></span>
 						<span class="h-1.5 w-1.5 rounded-full {circleClass}"></span>
 					</span>
-					<span class="text-sm font-semibold tabular-nums">{scoreLabel}</span>
 				</div>
 			{/if}
 		</Card.Action>
 	</Card.Header>
 	<Card.Content class="flex flex-col gap-4 pt-0">
-		<!-- Status description -->
-		<p class="text-xs text-muted-foreground">
-			{#if status === "empty"}
-				No graph data yet
-			{:else if status === "green"}
-				Well connected
-			{:else if status === "amber"}
-				Fragmented — some clusters
-			{:else}
-				Highly fragmented
-			{/if}
-		</p>
+		<!-- Status description (fragmented states only — no text for green/empty) -->
+		{#if status === "amber"}
+			<p class="text-xs text-muted-foreground">Fragmented — some clusters</p>
+		{:else if status === "red"}
+			<p class="text-xs text-muted-foreground">Highly fragmented</p>
+		{/if}
 
 		<!-- Graph-theoretic metrics (always visible once graph has nodes) -->
 		{#if health.totalNodes > 0}

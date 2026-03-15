@@ -12,6 +12,7 @@
 	import GraphHealthWidget from "./GraphHealthWidget.svelte";
 	import LessonVelocityWidget from "./LessonVelocityWidget.svelte";
 	import DecisionQueueWidget from "./DecisionQueueWidget.svelte";
+	import TrendingUpIcon from "@lucide/svelte/icons/trending-up";
 	import { toast } from "$lib/stores/toast.svelte";
 	import type { IntegrityCheck } from "$lib/types/artifact-graph";
 
@@ -115,13 +116,16 @@
 						onAutoFix={runHealthAutoFix}
 					/>
 
-					<!-- Column 2: How You're Improving (Learning) — ImprovementTrendsWidget wrapped in a card -->
+					<!-- Column 2: Learning — ImprovementTrendsWidget wrapped in a card -->
 					<Card.Root class="gap-2 overflow-hidden">
 						<Card.Header class="pb-2">
-							<Card.Title class="text-sm font-semibold">How You're Improving</Card.Title>
-							<Card.Description class="text-xs">Learning</Card.Description>
+							<Card.Title class="flex items-center gap-1.5 text-sm font-semibold">
+								<TrendingUpIcon class="h-4 w-4 text-muted-foreground" />
+								Learning
+							</Card.Title>
+							<Card.Description class="text-xs">How You're Improving</Card.Description>
 						</Card.Header>
-						<Card.Content class="px-0 pt-0 pb-0">
+						<Card.Content class="flex flex-col px-0 pt-0 pb-0">
 							<ImprovementTrendsWidget />
 						</Card.Content>
 					</Card.Root>
