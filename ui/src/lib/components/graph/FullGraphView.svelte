@@ -17,6 +17,12 @@
 	/** Whether the graph is still stabilizing. */
 	let stabilizing = $state(false);
 
+	/** Stabilization progress 0-100. */
+	let stabilizationProgress = $state(0);
+
+	/** Cached graph size to avoid re-stabilizing when nothing changed. */
+	let lastGraphSize = 0;
+
 	/** Map Tailwind dot class to a hex color for vis-network. */
 	function hexFromDotClass(dotClass: string): string {
 		if (dotClass.includes("blue-500")) return "#3b82f6";
@@ -117,7 +123,8 @@
 				enabled: true,
 				stabilization: {
 					enabled: true,
-					iterations: 300,
+					iterations: 150,
+					updateInterval: 25,
 					fit: true,
 				},
 				barnesHut: {
@@ -158,12 +165,14 @@
 			}
 		});
 
-		network.on("stabilizationProgress", () => {
+		network.on("stabilizationProgress", (params) => {
 			stabilizing = true;
+			stabilizationProgress = Math.round((params.iterations / params.total) * 100);
 		});
 
 		network.on("stabilizationIterationsDone", () => {
 			stabilizing = false;
+			stabilizationProgress = 100;
 			network?.setOptions({ physics: { enabled: false } });
 			network?.fit({ animation: { duration: 400, easingFunction: "easeInOutQuad" } });
 		});
@@ -173,14 +182,17 @@
 		});
 	}
 
-	// Rebuild whenever the container mounts or the graph data changes
+	// Rebuild only when the container mounts or the graph data actually changes
 	$effect(() => {
 		const el = container;
-		// Track graph size as a reactive dependency
-		void artifactGraphSDK.graph.size;
+		const currentSize = artifactGraphSDK.graph.size;
 
 		if (!el) return;
 
+		// Skip rebuild if graph size hasn't changed (cache the render)
+		if (network && currentSize === lastGraphSize) return;
+
+		lastGraphSize = currentSize;
 		buildNetwork(el);
 	});
 
@@ -203,9 +215,6 @@
 				</span>
 			{/if}
 		</div>
-		{#if stabilizing}
-			<span class="text-xs text-muted-foreground">Stabilizing layout…</span>
-		{/if}
 	</div>
 
 	<!-- Graph container -->
@@ -218,11 +227,25 @@
 			No artifacts found. Open a project to explore its graph.
 		</div>
 	{:else}
-		<div
-			bind:this={container}
-			class="flex-1"
-			role="img"
-			aria-label="Full artifact relationship graph"
-		></div>
+		<div class="relative flex-1">
+			<div
+				bind:this={container}
+				class="h-full w-full"
+				role="img"
+				aria-label="Full artifact relationship graph"
+			></div>
+			{#if stabilizing}
+				<div class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/80 backdrop-blur-sm">
+					<p class="text-sm font-medium text-muted-foreground">Laying out {artifactGraphSDK.graph.size} nodes…</p>
+					<div class="h-1.5 w-48 overflow-hidden rounded-full bg-muted">
+						<div
+							class="h-full rounded-full bg-primary transition-[width] duration-200"
+							style="width: {stabilizationProgress}%"
+						></div>
+					</div>
+					<p class="text-xs text-muted-foreground tabular-nums">{stabilizationProgress}%</p>
+				</div>
+			{/if}
+		</div>
 	{/if}
 </div>
