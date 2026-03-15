@@ -185,7 +185,7 @@
     },
     {
       "key": "ready", "label": "Ready", "icon": "circle-dot",
-      "transitions": ["prioritised", "active"],
+      "transitions": ["prioritised", "active", "review"],
       "auto_rules": [
         { "condition": "dependency-blocked", "target": "blocked" }
       ]
