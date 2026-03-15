@@ -7,6 +7,13 @@
 	let loading = $state(false);
 	let loaded = $state(false);
 
+	/** Live count of governance artifacts (rules + lessons + decisions). */
+	const governanceCount = $derived(
+		artifactGraphSDK.byType("rule").length +
+		artifactGraphSDK.byType("lesson").length +
+		artifactGraphSDK.byType("decision").length
+	);
+
 	$effect(() => {
 		if (artifactGraphSDK.graph.size > 0 && !loaded && !loading) {
 			void loadSnapshots();
@@ -83,9 +90,9 @@
 			getValue: (s) => s.warning_count,
 		},
 		{
-			label: "Artifacts",
+			label: "Governance",
 			lowerIsBetter: false,
-			getValue: (s) => s.node_count,
+			getValue: () => governanceCount,
 		},
 		{
 			label: "Integrity",
