@@ -318,7 +318,7 @@
 									<p class="text-[10px] text-muted-foreground">{action.action}</p>
 								</div>
 								<div class="shrink-0">
-									<ArtifactLink id={action.id} />
+									<ArtifactLink id={action.id} displayLabel={action.id} />
 								</div>
 							</div>
 						{/each}
