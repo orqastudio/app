@@ -86,7 +86,8 @@ Ensure all existing delivery artifacts conform to the configured type definition
 
 ## Tasks
 
-- [ ] [TASK-509](TASK-509): Define delivery type schema in project.json and Rust/TS types
-- [ ] [TASK-510](TASK-510): Replace hardcoded parent-child field references in integrity checks
-- [ ] [TASK-511](TASK-511): Make roadmap components read type hierarchy from config
+- [x] [TASK-509](TASK-509): Define delivery type schema in project.json and Rust/TS types
+- [x] [TASK-510](TASK-510): Replace hardcoded parent-child field references in integrity checks
+- [x] [TASK-511](TASK-511): Make roadmap components read type hierarchy from config
 - [ ] [TASK-512](TASK-512): Validate existing artifacts against delivery type configuration
+- [ ] [TASK-513](TASK-513): Project settings UI for managing delivery types and state machine
