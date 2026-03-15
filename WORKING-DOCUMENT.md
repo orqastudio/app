@@ -59,6 +59,35 @@ Relationships are the ONLY way artifacts connect. Each has a clear semantic:
 
 No standalone frontmatter fields for connections. No `epic: EPIC-045`. Only relationships.
 
+### Relationship types to review
+
+Existing types NOT in the vocabulary above that need decisions:
+
+| Current Type | Keep / Rename / Remove | Notes |
+|---|---|---|
+| `scoped-to` / `scoped-by` | Review | Was for rule→agent scope. Still needed? |
+| `contains` / `belongs-to` | Review | Was for epic→task containment. Replaced by `delivers`? |
+| `documents` / `documented-by` | Review | Docs↔rules linkage. Still needed or covered by `informs`? |
+| `practices` / `practiced-by` | Review | Skill→agent linkage. Still needed? |
+| `verifies` / `verified-by` | Review | Review gate linkage. Still needed? |
+| `synchronised-with` | New | Docs↔skills synchronisation |
+
+### Standalone fields to migrate
+
+All of these become relationships:
+
+| Field | On Type | Becomes Relationship |
+|---|---|---|
+| `epic` | Tasks | `delivers → EPIC-NNN` |
+| `milestone` | Epics | `belongs-to → MS-NNN` (or `delivers`) |
+| `depends-on` | Tasks | New relationship type (e.g., `blocked-by`) |
+| `promoted-to` | Ideas/Lessons | `evolves-into → RULE-NNN` |
+| `surpassed-by` | Research | `surpassed-by` relationship |
+| `supersedes` / `superseded-by` | Decisions | Relationship |
+| `pillars` | Ideas/Epics | `grounded-by → PILLAR-NNN` (already migrated) |
+| `research-refs` | Epics | `informed-by → RES-NNN` |
+| `docs-required` / `docs-produced` | Epics | Relationships to doc artifacts |
+
 ## How Ideas Evolve
 
 An idea doesn't "promote" — it **evolves**. And it can evolve in multiple directions:
