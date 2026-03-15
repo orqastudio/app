@@ -128,6 +128,24 @@ The process is enforced by app code, not AI instructions. Invalid graph states a
 
 This is not behavioral guidance for AI. This is the app refusing to accept invalid state — like a database rejecting bad SQL. If enforcement depends on AI remembering rules, enforcement fails under pressure (proven this session).
 
+### Three Enforcement Layers
+
+| Layer | When | What it does | Example |
+|---|---|---|---|
+| **App enforcement** | At action time | Prevents invalid states mechanically | Can't save invalid status transition |
+| **Integrity checks** | On scan/refresh | Flags problems that need human judgment | "Child further along than parent — advance parent or move child?" |
+| **Git hooks** | At commit time | Safety net for edits that bypassed the app | Text editor changes, CLI agent edits |
+
+**App enforcement** makes invalid states impossible. You can't create them.
+
+**Integrity checks** detect states that are technically valid but semantically wrong — situations where code can identify the problem but only a human can decide the fix. Examples:
+- Body text references an artifact with no corresponding relationship
+- Lesson has recurred 3 times (promote to rule?)
+- All tasks completed on an epic (move to review?)
+- Child artifact further along than parent (advance parent or move child?)
+
+**Git hooks** are the last line of defence for when changes happen outside the app — text editors, CLI agents, manual file editing. They run the same integrity checks at commit time.
+
 AI rules/skills become documentation: they teach agents HOW to work with the system, not how to ENFORCE it. The app enforces. The agent operates within the enforced boundaries.
 
 ## Documentation and Skills Are Separate But Synchronised
