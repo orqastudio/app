@@ -79,7 +79,7 @@
 						"text-valign": "center",
 						"text-halign": "center",
 						"font-size": "11px",
-						"font-family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+						"font-family": "'JetBrains Mono', monospace",
 						"font-weight": "500",
 						shape: "round-rectangle",
 						width: "label",
