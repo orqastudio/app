@@ -4,6 +4,7 @@ title: IPC Command Catalog
 description: Catalog of all Tauri IPC commands defining the frontend-backend communication contract.
 created: 2026-03-02
 updated: 2026-03-10
+sort: 1
 relationships:
   - target: RES-007
     type: documents

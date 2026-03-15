@@ -4,6 +4,7 @@ title: Artifact Graph SDK
 description: Development guide for the Artifact Graph SDK — the typed frontend interface to the bidirectional artifact node graph.
 created: 2026-03-10
 updated: 2026-03-10
+sort: 21
 category: development
 tags:
   - artifact-graph

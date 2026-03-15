@@ -4,6 +4,7 @@ title: Development Workflow
 description: Development workflow covering worktree lifecycle, branch strategy, and merge procedures.
 created: "2026-03-02"
 updated: "2026-03-14"
+sort: 2
 relationships:
   - target: RULE-013
     type: documents

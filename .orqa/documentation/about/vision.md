@@ -4,6 +4,7 @@ title: Product Vision
 description: Product vision defining OrqaStudio as an AI-assisted clarity engine built on two pillars.
 created: 2026-03-02
 updated: 2026-03-07
+sort: 1
 relationships:
   - target: AD-030
     type: documents

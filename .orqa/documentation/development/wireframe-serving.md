@@ -4,6 +4,7 @@ title: Wireframe Serving Infrastructure
 description: Infrastructure for serving and rendering wireframe assets within the application.
 created: 2026-03-02
 updated: 2026-03-04
+sort: 17
 relationships:
   - target: RES-008
     type: documents

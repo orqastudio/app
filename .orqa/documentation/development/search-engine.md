@@ -4,6 +4,7 @@ title: Search Engine Architecture
 description: Architecture of the embedded semantic and regex search engine using ONNX embeddings and DuckDB.
 created: 2026-03-04
 updated: 2026-03-10
+sort: 10
 relationships:
   - target: AD-003
     type: documents

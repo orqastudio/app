@@ -4,6 +4,7 @@ title: Contributing
 description: Guide for contributors covering setup, workflow, and conventions for the OrqaStudio codebase.
 created: "2026-03-07"
 updated: "2026-03-07"
+sort: 6
 ---
 
 # Contributing to OrqaStudio™

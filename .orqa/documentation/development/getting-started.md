@@ -4,6 +4,7 @@ title: Getting Started
 description: Step-by-step guide to setting up the OrqaStudio development environment from scratch.
 created: 2026-03-02
 updated: 2026-03-09
+sort: 1
 relationships:
   - target: AD-012
     type: documents

@@ -4,6 +4,7 @@ title: Orchestration
 description: How the orchestrator coordinates work across specialized agents using delegation and verification.
 created: 2026-03-02
 updated: 2026-03-12
+sort: 20
 relationships:
   - target: RULE-026
     type: documents

@@ -11,6 +11,7 @@ tags:
   - architecture
 created: 2026-03-02
 updated: 2026-03-10
+sort: 8
 relationships:
   - target: RES-004
     type: documents

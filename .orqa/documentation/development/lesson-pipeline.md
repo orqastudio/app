@@ -4,6 +4,7 @@ title: Lesson Promotion Pipeline Architecture
 description: Architecture of the lesson promotion pipeline that converts implementation lessons into enforced rules.
 created: 2026-03-05
 updated: 2026-03-05
+sort: 18
 relationships:
   - target: IMPL-001
     type: documents

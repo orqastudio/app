@@ -4,6 +4,7 @@ title: Glossary & Domain Model
 description: Domain model and glossary of key terms used throughout OrqaStudio documentation and code.
 created: 2026-03-02
 updated: 2026-03-08
+sort: 10
 relationships:
   - target: AD-018
     type: documents

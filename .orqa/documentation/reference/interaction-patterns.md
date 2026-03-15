@@ -4,6 +4,7 @@ title: Interaction Patterns
 description: Standard interaction patterns for navigation, selection, editing, and feedback across the UI.
 created: 2026-03-02
 updated: 2026-03-04
+sort: 6
 relationships:
   - target: RES-004
     type: documents

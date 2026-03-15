@@ -4,6 +4,7 @@ title: Streaming Pipeline
 description: End-to-end streaming architecture from Agent SDK through sidecar NDJSON to Rust Channel<T> to Svelte.
 created: 2026-03-02
 updated: 2026-03-10
+sort: 9
 relationships:
   - target: AD-007
     type: documents

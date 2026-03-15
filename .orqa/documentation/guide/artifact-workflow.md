@@ -4,6 +4,7 @@ title: Artifact Workflow
 description: Day-to-day workflow for creating, transitioning, and managing artifacts through their lifecycle.
 created: 2026-03-07
 updated: 2026-03-09
+sort: 3
 relationships:
   - target: RULE-004
     type: documents

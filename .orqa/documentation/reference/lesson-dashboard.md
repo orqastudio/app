@@ -4,6 +4,7 @@ title: Lesson Dashboard UI Spec
 description: UI specification for the lesson dashboard that visualizes implementation lessons and promotion status.
 created: 2026-03-05
 updated: 2026-03-05
+sort: 9
 relationships:
   - target: IMPL-006
     type: documents

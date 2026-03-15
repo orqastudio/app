@@ -4,6 +4,7 @@ title: "Wireframe: Conversation View"
 description: Wireframe specification for the conversation view including message display and input area.
 created: 2026-03-02
 updated: 2026-03-04
+sort: 2
 relationships:
   - target: RES-004
     type: documents

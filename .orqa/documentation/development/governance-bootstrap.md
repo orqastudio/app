@@ -4,6 +4,7 @@ title: Governance Bootstrap
 description: How governance artifacts are loaded and initialized when a project is first opened.
 created: "2026-03-04"
 updated: "2026-03-09"
+sort: 13
 ---
 
 

@@ -4,6 +4,7 @@ title: "How To: Build an OrqaStudio Plugin"
 description: "Step-by-step guide for building a Claude Code companion plugin that adds hooks, commands, and skills to an OrqaStudio project."
 created: 2026-03-14
 updated: 2026-03-14
+sort: 1
 relationships:
   - target: RULE-026
     type: informed-by

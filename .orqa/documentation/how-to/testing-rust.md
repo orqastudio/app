@@ -4,6 +4,7 @@ title: "How To: Write Rust Tests in OrqaStudio"
 description: "Practical guide for writing unit and integration tests for the OrqaStudio Rust backend."
 created: 2026-03-14
 updated: 2026-03-14
+sort: 2
 relationships:
   - target: RULE-029
     type: informed-by

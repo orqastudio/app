@@ -4,6 +4,7 @@ title: MVP Feature Specification
 description: Feature specification for the minimum viable product release of OrqaStudio.
 created: 2026-03-02
 updated: 2026-03-08
+sort: 5
 relationships:
   - target: AD-016
     type: documents

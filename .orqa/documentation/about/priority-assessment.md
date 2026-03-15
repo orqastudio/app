@@ -2,6 +2,7 @@
 id: DOC-062
 title: Priority Assessment
 description: How agents assess epic priority — project-flexible, inference-based, not formula-driven
+sort: 9
 relationships:
   - target: MS-001
     type: documents

@@ -4,6 +4,7 @@ title: "Wireframe: Settings & Onboarding"
 description: Wireframe specification for settings pages and the onboarding flow.
 created: 2026-03-02
 updated: 2026-03-04
+sort: 5
 relationships:
   - target: RES-005
     type: documents

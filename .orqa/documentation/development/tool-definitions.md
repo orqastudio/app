@@ -4,6 +4,7 @@ title: Tool Definitions
 description: Definitions, parameters, and execution model for tools available to the AI agent within OrqaStudio sessions.
 created: 2026-03-02
 updated: 2026-03-10
+sort: 16
 relationships:
   - target: AD-010
     type: documents

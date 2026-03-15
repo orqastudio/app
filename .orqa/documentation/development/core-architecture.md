@@ -2,6 +2,7 @@
 id: DOC-070
 title: "Core Application Architecture"
 description: "End-to-end architecture map of OrqaStudio — every system traced from entry point to persistence/display."
+sort: 2
 ---
 
 # Core Application Architecture

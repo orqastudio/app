@@ -5,6 +5,7 @@ title: "Delegation Reference"
 description: "Orchestrator's source of truth for delegation — maps work types to roles, skills, and grounding. If the orchestrator is writing anything other than coordination output, the system has failed."
 created: 2026-03-14
 updated: 2026-03-14
+sort: 10
 relationships:
   - target: DOC-064
     type: informed-by

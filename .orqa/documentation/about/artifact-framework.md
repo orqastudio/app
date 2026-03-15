@@ -4,6 +4,7 @@ title: Artifact Framework
 description: Schema definitions, lifecycle rules, and governance for all structured artifacts in .orqa/.
 created: 2026-03-07
 updated: 2026-03-10
+sort: 11
 relationships:
   - target: AD-029
     type: documents

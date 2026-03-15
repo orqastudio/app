@@ -4,6 +4,7 @@ title: SQLite Schema
 description: SQLite database schema covering sessions, messages, governance artifacts, and configuration tables.
 created: 2026-03-02
 updated: 2026-03-10
+sort: 4
 relationships:
   - target: RES-006
     type: documents

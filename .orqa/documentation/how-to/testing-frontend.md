@@ -4,6 +4,7 @@ title: "How To: Write Frontend Tests in OrqaStudio"
 description: "Practical guide for writing Vitest tests for Svelte 5 stores and components in OrqaStudio."
 created: 2026-03-14
 updated: 2026-03-14
+sort: 3
 relationships:
   - target: RULE-029
     type: informed-by

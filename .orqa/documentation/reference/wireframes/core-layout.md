@@ -4,6 +4,7 @@ title: "Wireframe: Core Layout"
 description: Wireframe specification for the core application layout with sidebar, panels, and toolbar.
 created: 2026-03-02
 updated: 2026-03-04
+sort: 1
 relationships:
   - target: RES-004
     type: documents
