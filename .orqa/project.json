@@ -111,6 +111,12 @@
           "path": ".orqa/documentation/reference"
         },
         {
+          "key": "wireframes",
+          "label": "Wireframes",
+          "icon": "layout",
+          "path": ".orqa/documentation/wireframes"
+        },
+        {
           "key": "marketing",
           "label": "Marketing",
           "icon": "megaphone",

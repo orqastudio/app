@@ -1,12 +1,10 @@
 ---
-role: artifacts
-label: "Wireframes"
-description: "Visual wireframes and mockups."
-icon: "palette"
-sort: 7
+icon: layout
+label: Wireframes
+description: UI layout specifications and component wireframes
+sort: 5
 ---
 
 # Wireframes
 
-Content from this directory has been migrated to reference/wireframes/ per RES-063.
-This directory is no longer scanned by the artifact reader.
+UI layout specifications and component wireframes for OrqaStudio.
