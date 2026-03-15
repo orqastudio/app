@@ -8,7 +8,7 @@ use crate::domain::artifact_graph::{
     GraphStats, IntegrityCheck,
 };
 use crate::domain::health_snapshot::{HealthSnapshot, NewHealthSnapshot};
-use crate::domain::project_settings::StatusDefinition;
+use crate::domain::project_settings::{DeliveryConfig, StatusDefinition};
 use crate::domain::status_transitions::{evaluate_transitions, ProposedTransition};
 use crate::error::OrqaError;
 use crate::repo::{health_snapshot_repo, project_repo};
@@ -237,13 +237,24 @@ fn load_valid_statuses(project_path: &str) -> Vec<String> {
         .collect()
 }
 
+/// Load the delivery-type hierarchy for the active project from `project.json`.
+///
+/// Returns an empty `DeliveryConfig` if settings are unavailable.
+fn load_delivery_config(project_path: &str) -> DeliveryConfig {
+    crate::repo::project_settings_repo::read(project_path)
+        .unwrap_or(None)
+        .map(|s| s.delivery)
+        .unwrap_or_default()
+}
+
 /// Run integrity checks on the artifact graph and return all findings.
 #[tauri::command]
 pub fn run_integrity_scan(state: State<'_, AppState>) -> Result<Vec<IntegrityCheck>, OrqaError> {
     let graph = get_or_build_graph(&state)?;
     let project_path = active_project_path(&state)?;
     let valid_statuses = load_valid_statuses(&project_path);
-    Ok(check_integrity(&graph, &valid_statuses))
+    let delivery = load_delivery_config(&project_path);
+    Ok(check_integrity(&graph, &valid_statuses, &delivery))
 }
 
 /// Apply auto-fixable integrity checks and return the list of applied fixes.
@@ -255,7 +266,8 @@ pub fn apply_auto_fixes(state: State<'_, AppState>) -> Result<Vec<AppliedFix>, O
     let graph = get_or_build_graph(&state)?;
     let project_path = active_project_path(&state)?;
     let valid_statuses = load_valid_statuses(&project_path);
-    let checks = check_integrity(&graph, &valid_statuses);
+    let delivery = load_delivery_config(&project_path);
+    let checks = check_integrity(&graph, &valid_statuses, &delivery);
     let applied = apply_fixes(&graph, &checks, Path::new(&project_path))?;
 
     // Refresh the graph if any fixes were applied.

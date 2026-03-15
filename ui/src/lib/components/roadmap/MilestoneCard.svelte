@@ -9,6 +9,7 @@
 		doneEpicCount,
 		inProgressEpics,
 		criticalEpics,
+		epicLabel = "Epic",
 		onClick,
 	}: {
 		milestone: ArtifactNode;
@@ -16,8 +17,12 @@
 		doneEpicCount: number;
 		inProgressEpics: ArtifactNode[];
 		criticalEpics: ArtifactNode[];
+		/** Display label for the level-1 type (e.g. "Epic"). Used in progress text. */
+		epicLabel?: string;
 		onClick: () => void;
 	} = $props();
+
+	const epicLabelPlural = $derived(`${epicLabel.toLowerCase()}s`);
 
 	const progressPct = $derived(
 		epicCount > 0 ? (doneEpicCount / epicCount) * 100 : 0,
@@ -47,7 +52,7 @@
 			<div class="mb-1 flex items-center justify-between">
 				<span class="text-[10px] text-muted-foreground uppercase tracking-wide">Progress</span>
 				<span class="text-[10px] tabular-nums text-muted-foreground">
-					{doneEpicCount}/{epicCount} epics
+					{doneEpicCount}/{epicCount} {epicLabelPlural}
 				</span>
 			</div>
 			<div class="h-1.5 rounded-full bg-muted">
@@ -58,7 +63,7 @@
 			</div>
 		</div>
 	{:else}
-		<p class="mt-3 text-[10px] text-muted-foreground">No epics yet</p>
+		<p class="mt-3 text-[10px] text-muted-foreground">No {epicLabelPlural} yet</p>
 	{/if}
 
 	<!-- In-progress epics -->

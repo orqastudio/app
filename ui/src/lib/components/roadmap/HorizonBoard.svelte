@@ -18,11 +18,20 @@
 	let {
 		columns,
 		epics,
+		epicParentField = "milestone",
+		epicLabel = "Epic",
+		rootLabel = "Milestone",
 		onMilestoneClick,
 		onHorizonChange,
 	}: {
 		columns: HorizonColumn[];
 		epics: ArtifactNode[];
+		/** The frontmatter field on epics that points to the parent milestone. Defaults to "milestone". */
+		epicParentField?: string;
+		/** Display label for the level-1 type (e.g. "Epic"). Used in card counts. */
+		epicLabel?: string;
+		/** Display label for the root type (e.g. "Milestone"). Used in empty state text. */
+		rootLabel?: string;
 		onMilestoneClick: (milestone: ArtifactNode) => void;
 		onHorizonChange?: (milestone: ArtifactNode, newHorizon: string) => Promise<void>;
 	} = $props();
@@ -92,7 +101,7 @@
 	}
 
 	function epicsForMilestone(msId: string): ArtifactNode[] {
-		return epics.filter((e) => e.frontmatter["milestone"] === msId);
+		return epics.filter((e) => e.frontmatter[epicParentField] === msId);
 	}
 
 	// Sort/group options for the horizon board
@@ -262,7 +271,7 @@
 							>
 								{#if col.milestones.length === 0}
 									<div class="flex flex-1 items-center justify-center rounded-lg border border-dashed border-border p-6 text-center text-xs text-muted-foreground">
-										No milestones
+										No {rootLabel.toLowerCase()}s
 									</div>
 								{:else}
 									{#each col.milestones as ms (ms.id)}
@@ -284,6 +293,7 @@
 												doneEpicCount={doneCount}
 												inProgressEpics={inProgress}
 												criticalEpics={critical}
+												{epicLabel}
 												onClick={() => onMilestoneClick(ms)}
 											/>
 										</div>

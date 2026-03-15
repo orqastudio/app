@@ -5,18 +5,51 @@
 	import ErrorDisplay from "$lib/components/shared/ErrorDisplay.svelte";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
+	import { projectStore } from "$lib/stores/project.svelte";
 	import type { ArtifactNode } from "$lib/types/artifact-graph";
 	import HorizonBoard from "./HorizonBoard.svelte";
 	import StatusKanban from "./StatusKanban.svelte";
 	import DrilldownBreadcrumbs from "./DrilldownBreadcrumbs.svelte";
 
 	// ---------------------------------------------------------------------------
+	// Delivery type hierarchy from project config (with fallback to hardcoded keys)
+	// ---------------------------------------------------------------------------
+
+	const deliveryTypes = $derived(projectStore.projectSettings?.delivery?.types ?? []);
+
+	/** Level 0: root type — no parent (e.g. milestone). */
+	const rootType = $derived(deliveryTypes.find((t) => !t.parent) ?? null);
+	/** Level 1: child of root (e.g. epic). */
+	const level1Type = $derived(
+		deliveryTypes.find((t) => t.parent?.type === (rootType?.key ?? "milestone")) ?? null,
+	);
+	/** Level 2: child of level1 (e.g. task). */
+	const level2Type = $derived(
+		deliveryTypes.find((t) => t.parent?.type === (level1Type?.key ?? "epic")) ?? null,
+	);
+
+	/** Keys used for byType() lookups — fall back to well-known names. */
+	const rootKey = $derived(rootType?.key ?? "milestone");
+	const level1Key = $derived(level1Type?.key ?? "epic");
+	const level2Key = $derived(level2Type?.key ?? "task");
+
+	/** Field on level-1 artifacts that points to the root (e.g. "milestone"). */
+	const level1ParentField = $derived(level1Type?.parent?.field ?? rootKey);
+	/** Field on level-2 artifacts that points to level-1 (e.g. "epic"). */
+	const level2ParentField = $derived(level2Type?.parent?.field ?? level1Key);
+
+	/** Labels for UI display. */
+	const rootLabel = $derived(rootType?.label ?? "Milestone");
+	const level1Label = $derived(level1Type?.label ?? "Epic");
+	const level2Label = $derived(level2Type?.label ?? "Task");
+
+	// ---------------------------------------------------------------------------
 	// Data from graph SDK
 	// ---------------------------------------------------------------------------
 
-	const milestones = $derived(artifactGraphSDK.byType("milestone"));
-	const epics = $derived(artifactGraphSDK.byType("epic"));
-	const tasks = $derived(artifactGraphSDK.byType("task"));
+	const milestones = $derived(artifactGraphSDK.byType(rootKey));
+	const epics = $derived(artifactGraphSDK.byType(level1Key));
+	const tasks = $derived(artifactGraphSDK.byType(level2Key));
 	const graphLoading = $derived(artifactGraphSDK.loading);
 	const graphError = $derived(artifactGraphSDK.error);
 	const hasData = $derived(milestones.length > 0 || epics.length > 0);
@@ -139,11 +172,11 @@
 		return EPIC_COLUMNS;
 	});
 
-	/** Epics that belong to the selected milestone. */
+	/** Level-1 items (epics) that belong to the selected root item (milestone). */
 	const milestoneEpics = $derived.by((): ArtifactNode[] => {
 		const ms = selectedMilestone;
 		if (!ms) return [];
-		return epics.filter((e) => e.frontmatter["milestone"] === ms.id);
+		return epics.filter((e) => e.frontmatter[level1ParentField] === ms.id);
 	});
 
 	// ---------------------------------------------------------------------------
@@ -158,21 +191,21 @@
 		{ key: "completed", label: "Completed", isDone: true },
 	];
 
-	/** Tasks that belong to the selected epic. */
+	/** Level-2 items (tasks) that belong to the selected level-1 item (epic). */
 	const epicTasks = $derived.by((): ArtifactNode[] => {
 		const ep = selectedEpic;
 		if (!ep) return [];
-		return tasks.filter((t) => t.frontmatter["epic"] === ep.id);
+		return tasks.filter((t) => t.frontmatter[level2ParentField] === ep.id);
 	});
 
 	// ---------------------------------------------------------------------------
 	// Task count helper (used for epic cards)
 	// ---------------------------------------------------------------------------
 
-	function taskCountForEpic(
-		epicId: string,
-	): { done: number; total: number } {
-		const epicTaskList = tasks.filter((t) => t.frontmatter["epic"] === epicId);
+	function taskCountForEpic(epicId: string): { done: number; total: number } {
+		const epicTaskList = tasks.filter(
+			(t) => t.frontmatter[level2ParentField] === epicId,
+		);
 		const done = epicTaskList.filter((t) => t.status === "completed").length;
 		return { done, total: epicTaskList.length };
 	}
@@ -241,8 +274,8 @@
 			<div class="flex flex-1 items-center justify-center">
 				<EmptyState
 					icon={KanbanIcon}
-					title="No milestones found"
-					description="Create milestones in .orqa/delivery/milestones/ to see them here."
+					title="No {rootLabel.toLowerCase()}s found"
+					description="Create {rootLabel.toLowerCase()}s to see them here."
 				/>
 			</div>
 		{:else if drillLevel === 0}
@@ -254,7 +287,7 @@
 						<div>
 							<h1 class="text-xl font-bold">Roadmap</h1>
 							<p class="text-xs text-muted-foreground">
-								Click a milestone to drill into its epics.
+								Click a {rootLabel.toLowerCase()} to drill into its {level1Label.toLowerCase()}s.
 							</p>
 						</div>
 					</div>
@@ -263,6 +296,9 @@
 					<HorizonBoard
 						columns={horizonColumns}
 						{epics}
+						epicParentField={level1ParentField}
+						epicLabel={level1Label}
+						{rootLabel}
 						onMilestoneClick={handleMilestoneClick}
 						onHorizonChange={async (ms, horizon) =>
 							updateField(ms, "horizon", horizon)}
@@ -290,7 +326,7 @@
 									(e) => e.status === "completed",
 								).length}
 								<p class="mt-1 text-xs text-muted-foreground">
-									{doneCount}/{milestoneEpics.length} epics done
+									{doneCount}/{milestoneEpics.length} {level1Label.toLowerCase()}s done
 								</p>
 							{/if}
 						</div>
@@ -329,7 +365,7 @@
 								(t) => t.status === "completed",
 							).length}
 							<p class="mt-1 text-xs text-muted-foreground">
-								{doneCount}/{epicTasks.length} tasks done
+								{doneCount}/{epicTasks.length} {level2Label.toLowerCase()}s done
 							</p>
 						{/if}
 					</div>

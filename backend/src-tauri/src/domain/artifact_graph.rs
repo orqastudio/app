@@ -4,6 +4,7 @@ use std::path::Path;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 
+use crate::domain::project_settings::DeliveryConfig;
 use crate::error::OrqaError;
 
 // ---------------------------------------------------------------------------
@@ -434,7 +435,14 @@ pub struct AppliedFix {
 ///
 /// `valid_statuses` is the list of status keys defined in `project.json`.
 /// Pass an empty slice to skip status validation (e.g. when settings are unavailable).
-pub fn check_integrity(graph: &ArtifactGraph, valid_statuses: &[String]) -> Vec<IntegrityCheck> {
+///
+/// `delivery` is the delivery-type hierarchy from `project.json`. Pass
+/// `&DeliveryConfig::default()` to use only hardcoded fallback behaviour.
+pub fn check_integrity(
+    graph: &ArtifactGraph,
+    valid_statuses: &[String],
+    delivery: &DeliveryConfig,
+) -> Vec<IntegrityCheck> {
     let mut checks = Vec::new();
 
     check_broken_refs(graph, &mut checks);
@@ -444,13 +452,13 @@ pub fn check_integrity(graph: &ArtifactGraph, valid_statuses: &[String]) -> Vec<
     check_dependency_violations(graph, &mut checks);
     check_circular_dependencies(graph, &mut checks);
     check_supersession_symmetry(graph, &mut checks);
-    check_milestone_gate(graph, &mut checks);
+    check_milestone_gate(graph, delivery, &mut checks);
     check_idea_promotion_validity(graph, &mut checks);
     check_idea_delivery_tracking(graph, &mut checks);
     check_body_text_refs_without_relationships(graph, &mut checks);
     if !valid_statuses.is_empty() {
         check_invalid_statuses(graph, valid_statuses, &mut checks);
-        check_parent_child_consistency(graph, valid_statuses, &mut checks);
+        check_parent_child_consistency(graph, valid_statuses, delivery, &mut checks);
     }
 
     checks
@@ -867,8 +875,141 @@ fn check_supersession_symmetry(graph: &ArtifactGraph, checks: &mut Vec<Integrity
     }
 }
 
-/// Check milestone gates — active milestones should not have incomplete P1 epics marked done.
-fn check_milestone_gate(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
+/// Check milestone gates — completed gate-type artifacts should not have incomplete P1 children.
+///
+/// Uses `delivery.types` to find types with a `gate_field` configured. Falls back to
+/// the hardcoded milestone → epic check when `delivery.types` is empty.
+fn check_milestone_gate(
+    graph: &ArtifactGraph,
+    delivery: &DeliveryConfig,
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    if delivery.types.is_empty() {
+        check_milestone_gate_hardcoded(graph, checks);
+        return;
+    }
+
+    for gate_type in delivery.types.iter().filter(|t| t.gate_field.is_some()) {
+        let child_type_keys: Vec<&str> = delivery
+            .types
+            .iter()
+            .filter(|t| {
+                t.parent
+                    .as_ref()
+                    .is_some_and(|p| p.parent_type == gate_type.key)
+            })
+            .map(|t| t.key.as_str())
+            .collect();
+
+        // The frontmatter field on child types that points to this gate type.
+        let parent_field = delivery
+            .types
+            .iter()
+            .find(|t| {
+                t.parent
+                    .as_ref()
+                    .is_some_and(|p| p.parent_type == gate_type.key)
+            })
+            .and_then(|t| t.parent.as_ref())
+            .map_or("milestone", |p| p.field.as_str());
+
+        check_gate_type_nodes(graph, gate_type, &child_type_keys, parent_field, checks);
+    }
+}
+
+/// Check all complete nodes of a gate type for incomplete P1 children.
+fn check_gate_type_nodes(
+    graph: &ArtifactGraph,
+    gate_type: &crate::domain::project_settings::DeliveryTypeConfig,
+    child_type_keys: &[&str],
+    parent_field: &str,
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    let child_label = if child_type_keys.len() == 1 {
+        child_type_keys[0].to_owned()
+    } else {
+        "child".to_owned()
+    };
+
+    for node in graph
+        .nodes
+        .values()
+        .filter(|n| n.artifact_type == gate_type.key)
+    {
+        let status = match &node.status {
+            Some(s) if s == "complete" => s.as_str(),
+            _ => continue,
+        };
+
+        let incomplete_p1 =
+            collect_incomplete_p1_children(graph, node, child_type_keys, parent_field);
+
+        if !incomplete_p1.is_empty() {
+            push_milestone_gate_finding(
+                checks,
+                &node.id,
+                status,
+                &incomplete_p1,
+                &child_label,
+                &gate_type.key,
+            );
+        }
+    }
+}
+
+/// Collect IDs of P1 child artifacts that are not yet `done`.
+fn collect_incomplete_p1_children<'g>(
+    graph: &'g ArtifactGraph,
+    parent_node: &ArtifactNode,
+    child_type_keys: &[&str],
+    parent_field: &str,
+) -> Vec<&'g str> {
+    graph
+        .nodes
+        .values()
+        .filter(|n| {
+            child_type_keys.contains(&n.artifact_type.as_str())
+                && n.frontmatter
+                    .get(parent_field)
+                    .and_then(|v| v.as_str())
+                    .is_some_and(|m| m == parent_node.id)
+                && n.frontmatter
+                    .get("priority")
+                    .and_then(|v| v.as_str())
+                    .is_some_and(|p| p == "P1")
+                && n.status.as_deref() != Some("done")
+        })
+        .map(|n| n.id.as_str())
+        .collect()
+}
+
+/// Push a `MilestoneGate` finding for a complete parent with incomplete P1 children.
+fn push_milestone_gate_finding(
+    checks: &mut Vec<IntegrityCheck>,
+    parent_id: &str,
+    parent_status: &str,
+    incomplete_p1: &[&str],
+    child_label: &str,
+    gate_type_key: &str,
+) {
+    checks.push(IntegrityCheck {
+        category: IntegrityCategory::MilestoneGate,
+        severity: IntegritySeverity::Error,
+        artifact_id: parent_id.to_owned(),
+        message: format!(
+            "{parent_id} is {parent_status} but has {} incomplete P1 {child_label}(s): {}",
+            incomplete_p1.len(),
+            incomplete_p1.join(", ")
+        ),
+        auto_fixable: false,
+        fix_description: Some(format!(
+            "Complete all P1 {child_label}s before marking {gate_type_key} as complete",
+        )),
+    });
+}
+
+/// Hardcoded fallback for `check_milestone_gate` when no delivery config is present.
+fn check_milestone_gate_hardcoded(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
     for node in graph.nodes.values() {
         if node.artifact_type != "milestone" {
             continue;
@@ -879,7 +1020,6 @@ fn check_milestone_gate(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>)
             _ => continue,
         };
 
-        // Find all epics that reference this milestone
         let incomplete_p1: Vec<&str> = graph
             .nodes
             .values()
@@ -1163,24 +1303,99 @@ fn push_parent_child_inconsistency(
 fn check_parent_child_consistency(
     graph: &ArtifactGraph,
     valid_statuses: &[String],
+    delivery: &DeliveryConfig,
     checks: &mut Vec<IntegrityCheck>,
 ) {
-    // Build status → position map from config order
+    // Build status → position map from config order.
     let status_pos: HashMap<&str, usize> = valid_statuses
         .iter()
         .enumerate()
         .map(|(i, s)| (s.as_str(), i))
         .collect();
 
-    for node in graph.nodes.values() {
+    if delivery.types.is_empty() {
+        // Fallback: hardcoded epic/milestone field checks.
+        check_parent_child_consistency_hardcoded(graph, &status_pos, checks);
+        return;
+    }
+
+    // Config-driven: for each delivery type that declares a parent, check all
+    // artifacts of that type against their parent field.
+    for dtype in &delivery.types {
+        let Some(parent_cfg) = &dtype.parent else {
+            continue;
+        };
+        check_child_type_consistency(
+            graph,
+            &dtype.key,
+            &parent_cfg.field,
+            &parent_cfg.parent_type,
+            &status_pos,
+            checks,
+        );
+    }
+}
+
+/// Check all artifacts of `child_type` for parent-child status inconsistencies.
+fn check_child_type_consistency(
+    graph: &ArtifactGraph,
+    child_type: &str,
+    parent_field: &str,
+    parent_label: &str,
+    status_pos: &HashMap<&str, usize>,
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    for node in graph
+        .nodes
+        .values()
+        .filter(|n| n.artifact_type == child_type)
+    {
         let Some(child_status) = node.status.as_deref() else {
             continue;
         };
         let Some(&child_pos) = status_pos.get(child_status) else {
             continue; // invalid status, caught elsewhere
         };
+        let Some(parent_id) = node.frontmatter.get(parent_field).and_then(|v| v.as_str()) else {
+            continue;
+        };
+        let Some(parent) = graph.nodes.get(parent_id) else {
+            continue; // broken ref, caught by check_broken_refs
+        };
+        let Some(parent_status) = &parent.status else {
+            continue;
+        };
+        let Some(&parent_pos) = status_pos.get(parent_status.as_str()) else {
+            continue;
+        };
+        if child_pos > parent_pos {
+            push_parent_child_inconsistency(
+                checks,
+                &node.id,
+                child_status,
+                parent_id,
+                parent_status,
+                parent_label,
+            );
+        }
+    }
+}
 
-        // Check epic parent
+/// Hardcoded fallback for `check_parent_child_consistency` when no delivery config is present.
+fn check_parent_child_consistency_hardcoded(
+    graph: &ArtifactGraph,
+    status_pos: &HashMap<&str, usize>,
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    for node in graph.nodes.values() {
+        let Some(child_status) = node.status.as_deref() else {
+            continue;
+        };
+        let Some(&child_pos) = status_pos.get(child_status) else {
+            continue;
+        };
+
+        // Check epic parent.
         if let Some(parent_id) = node.frontmatter.get("epic").and_then(|v| v.as_str()) {
             if let Some(parent) = graph.nodes.get(parent_id) {
                 if let Some(parent_status) = &parent.status {
@@ -1192,7 +1407,7 @@ fn check_parent_child_consistency(
                                 child_status,
                                 parent_id,
                                 parent_status,
-                                "parent",
+                                "epic",
                             );
                         }
                     }
@@ -1200,7 +1415,7 @@ fn check_parent_child_consistency(
             }
         }
 
-        // Check milestone parent
+        // Check milestone parent.
         if let Some(parent_id) = node.frontmatter.get("milestone").and_then(|v| v.as_str()) {
             if let Some(parent) = graph.nodes.get(parent_id) {
                 if let Some(parent_status) = &parent.status {
@@ -1854,7 +2069,7 @@ mod tests {
             "---\nid: TASK-001\ntitle: Task\nepic: EPIC-MISSING\n---\n",
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph, &[]);
+        let checks = check_integrity(&graph, &[], &DeliveryConfig::default());
         let broken: Vec<_> = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::BrokenLink))
@@ -1880,7 +2095,7 @@ mod tests {
             "---\nid: AD-001\ntitle: Decision\n---\n",
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph, &[]);
+        let checks = check_integrity(&graph, &[], &DeliveryConfig::default());
         let missing = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::MissingInverse))
@@ -1906,7 +2121,7 @@ mod tests {
             "---\nid: AD-001\ntitle: Decision\nrelationships:\n  - target: RULE-001\n    type: enforced-by\n---\n",
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph, &[]);
+        let checks = check_integrity(&graph, &[], &DeliveryConfig::default());
         let missing = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::MissingInverse))
@@ -1931,7 +2146,7 @@ mod tests {
         );
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph, &[]);
+        let checks = check_integrity(&graph, &[], &DeliveryConfig::default());
 
         let missing: Vec<_> = checks
             .iter()
@@ -1956,7 +2171,7 @@ mod tests {
 
         // Rebuild graph and verify no more missing inverses
         let graph2 = build_artifact_graph(tmp.path()).expect("rebuild");
-        let checks2 = check_integrity(&graph2, &[]);
+        let checks2 = check_integrity(&graph2, &[], &DeliveryConfig::default());
         let missing2: Vec<_> = checks2
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::MissingInverse))
@@ -1984,7 +2199,7 @@ mod tests {
         );
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph, &[]);
+        let checks = check_integrity(&graph, &[], &DeliveryConfig::default());
         let applied = apply_fixes(&graph, &checks, tmp.path()).expect("apply");
         assert!(applied.is_empty(), "should not add duplicate inverse");
     }
@@ -2006,7 +2221,7 @@ mod tests {
         );
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph, &[]);
+        let checks = check_integrity(&graph, &[], &DeliveryConfig::default());
         let applied = apply_fixes(&graph, &checks, tmp.path()).expect("apply");
         assert_eq!(applied.len(), 1);
 
@@ -2030,7 +2245,7 @@ mod tests {
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
         let valid = vec!["active".to_string(), "completed".to_string()];
-        let checks = check_integrity(&graph, &valid);
+        let checks = check_integrity(&graph, &valid, &DeliveryConfig::default());
         let invalid: Vec<_> = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::InvalidStatus))
@@ -2056,7 +2271,7 @@ mod tests {
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
         let valid = vec!["active".to_string(), "completed".to_string()];
-        let checks = check_integrity(&graph, &valid);
+        let checks = check_integrity(&graph, &valid, &DeliveryConfig::default());
         let invalid: Vec<_> = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::InvalidStatus))
@@ -2078,7 +2293,7 @@ mod tests {
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
         // Empty valid list — status check should be skipped entirely.
-        let checks = check_integrity(&graph, &[]);
+        let checks = check_integrity(&graph, &[], &DeliveryConfig::default());
         let invalid: Vec<_> = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::InvalidStatus))
@@ -2100,7 +2315,7 @@ mod tests {
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
         let valid = vec!["active".to_string(), "completed".to_string()];
-        let checks = check_integrity(&graph, &valid);
+        let checks = check_integrity(&graph, &valid, &DeliveryConfig::default());
         let invalid: Vec<_> = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::InvalidStatus))
@@ -2123,7 +2338,7 @@ mod tests {
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
         let valid = vec!["captured".to_string(), "active".to_string()];
-        let checks = check_integrity(&graph, &valid);
+        let checks = check_integrity(&graph, &valid, &DeliveryConfig::default());
         let invalid: Vec<_> = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::InvalidStatus))
