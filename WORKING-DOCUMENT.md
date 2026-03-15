@@ -55,6 +55,7 @@ Relationships are the ONLY way artifacts connect. Each has a clear semantic:
 | `enforces` | `enforced-by` | Mechanical enforcement | Rule enforces a standard |
 | `grounded` | `grounded-by` | Foundational anchor | Agent grounded by a pillar |
 | `observes` | `observed-by` | Learning captured | Lesson observes a pattern |
+| `merged-into` | `merged-from` | Ideas converged | Idea merged into a new idea |
 
 No standalone frontmatter fields for connections. No `epic: EPIC-045`. Only relationships.
 
@@ -145,6 +146,39 @@ This is not behavioral guidance for AI. This is the app refusing to accept inval
 - Child artifact further along than parent (advance parent or move child?)
 
 **Git hooks** are the last line of defence for when changes happen outside the app — text editors, CLI agents, manual file editing. They run the same integrity checks at commit time.
+
+### Fourth Layer: Automated Scanners
+
+A fourth enforcement layer that sits between app enforcement and integrity checks:
+
+**Automated scanners** run on file watcher events. When an artifact changes on disk, the scanner:
+1. Reads the changed file's relationships
+2. Evaluates connected nodes for objective state changes
+3. Auto-applies transitions that are unambiguous (no human judgment needed)
+
+Examples:
+- All tasks on an epic are `completed` → scanner auto-moves epic to `review`
+- A dependency completes → scanner auto-unblocks the waiting task
+- A lesson hits recurrence threshold → scanner auto-moves to `review`
+
+These are the configurable auto_rules from the state machine, triggered by file watcher events rather than manual scans. The file watcher detects the change, the scanner evaluates the graph query, and the transition happens automatically.
+
+| Layer | When | Human needed? |
+|---|---|---|
+| **App enforcement** | At action time | No — invalid states impossible |
+| **Automated scanners** | On file change (watcher) | No — objective transitions auto-applied |
+| **Integrity checks** | On scan/refresh | Yes — flags judgment-required issues |
+| **Git hooks** | At commit time | Yes — last line of defence |
+
+### Idea Merging
+
+Ideas should be mergeable. When multiple ideas converge into one concept:
+1. A new idea is created
+2. The source ideas connect to the new idea via `merged-into` / `merged-from` relationships
+3. Source ideas move to `surpassed` status (thinking evolved, originals preserved)
+4. The new idea inherits context through the relationships — the full provenance chain is visible
+
+This preserves change history. You can always trace back to the original ideas that led to the merged concept.
 
 AI rules/skills become documentation: they teach agents HOW to work with the system, not how to ENFORCE it. The app enforces. The agent operates within the enforced boundaries.
 
