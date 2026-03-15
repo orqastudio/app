@@ -64,6 +64,8 @@
     "@tauri-apps/plugin-store": "^2.0.0",
     "lucide-svelte": "^0.400.0",
     "mermaid": "^11.13.0",
-    "svelte-highlight": "^7.0.0"
+    "svelte-highlight": "^7.0.0",
+    "vis-data": "^8.0.3",
+    "vis-network": "^10.0.2"
   }
 }

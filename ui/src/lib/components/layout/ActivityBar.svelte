@@ -27,6 +27,7 @@
 	import ShieldCheckIcon from "@lucide/svelte/icons/shield-check";
 	import RocketIcon from "@lucide/svelte/icons/rocket";
 	import WorkflowIcon from "@lucide/svelte/icons/workflow";
+	import NetworkIcon from "@lucide/svelte/icons/network";
 	import { Separator } from "$lib/components/ui/separator";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import { settingsStore } from "$lib/stores/settings.svelte";
@@ -157,6 +158,14 @@
 	{/if}
 
 	<div class="flex-1"></div>
+
+	<!-- Artifact Graph -->
+	<ActivityBarItem
+		icon={NetworkIcon}
+		label="Artifact Graph"
+		active={navigationStore.activeActivity === "artifact-graph"}
+		onclick={() => { navigationStore.activeGroup = null; navigationStore.setActivity("artifact-graph"); }}
+	/>
 
 	<!-- Search -->
 	<ActivityBarItem

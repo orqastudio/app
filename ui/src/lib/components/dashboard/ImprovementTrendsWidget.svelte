@@ -152,7 +152,7 @@
 </script>
 
 {#if loaded}
-	<div class="flex flex-col gap-3">
+	<div class="grid grid-cols-2 gap-3">
 		{#each metrics as m (m.label)}
 			{@const values = sparklineValues(m)}
 			{@const arrow = trendArrow(m)}

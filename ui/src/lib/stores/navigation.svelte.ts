@@ -221,6 +221,10 @@ class NavigationStore {
 			this.activeSubCategory = null;
 			this.explorerView = "project-dashboard";
 			this.navPanelCollapsed = true;
+		} else if (view === "artifact-graph") {
+			this.activeGroup = null;
+			this.activeSubCategory = null;
+			this.navPanelCollapsed = true;
 		} else if (view === "roadmap") {
 			// When accessed via the Delivery group sub-panel, keep group/panel state.
 			// When accessed directly (e.g. legacy call), clear group and collapse.

@@ -1,5 +1,8 @@
 <script lang="ts">
-	import { SvelteMap } from "svelte/reactivity";
+	import { onDestroy } from "svelte";
+	import { Network } from "vis-network";
+	import type { Node, Edge, Options } from "vis-network";
+	import { DataSet } from "vis-data";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import { statusColor } from "$lib/components/shared/StatusIndicator.svelte";
@@ -15,36 +18,36 @@
 		outgoingRefs: ArtifactRef[];
 	} = $props();
 
-	/** Layout constants */
-	const WIDTH = 600;
-	const HEIGHT = 400;
-	const CX = WIDTH / 2;
-	const CY = HEIGHT / 2;
-	const INNER_RADIUS = 120;
-	const OUTER_RADIUS = 170;
-	const NODE_RADIUS = 6;
-	const CENTER_RADIUS = 10;
+	/** Container div bound by the template. */
+	let container = $state<HTMLDivElement | undefined>(undefined);
 
-	interface GraphNode {
-		id: string;
-		label: string;
-		title: string;
-		x: number;
-		y: number;
-		fillColor: string;
-		direction: "in" | "out";
-		edgeType: string;
+	/** The vis-network instance, cleaned up on destroy. */
+	let network: Network | null = null;
+
+	/** Map Tailwind dot class to a hex color for vis-network. */
+	function hexFromDotClass(dotClass: string): string {
+		if (dotClass.includes("blue-500")) return "#3b82f6";
+		if (dotClass.includes("emerald-500")) return "#10b981";
+		if (dotClass.includes("amber-500")) return "#f59e0b";
+		if (dotClass.includes("purple-500")) return "#a855f7";
+		if (dotClass.includes("destructive") || dotClass.includes("red")) return "#ef4444";
+		return "#6b7280";
 	}
 
-	interface GraphGroup {
-		label: string;
-		direction: "in" | "out";
-		midAngle: number;
-		labelX: number;
-		labelY: number;
+	/** Resolve a node color from its status. */
+	function resolveNodeColor(id: string): string {
+		const node = artifactGraphSDK.resolve(id);
+		if (!node?.status) return "#6b7280";
+		return hexFromDotClass(statusColor(node.status));
 	}
 
-	/** Humanize a relationship type. */
+	/** Resolve the display title for an artifact. */
+	function resolveTitle(id: string): string {
+		const node = artifactGraphSDK.resolve(id);
+		return node?.title ?? id;
+	}
+
+	/** Humanize a relationship type label. */
 	function humanizeLabel(value: string): string {
 		return value
 			.replace(/-/g, " ")
@@ -52,224 +55,151 @@
 			.replace(/\b\w/g, (c) => c.toUpperCase());
 	}
 
-	/** Map Tailwind bg class to an SVG fill color. */
-	function svgFillFromClass(dotClass: string): string {
-		if (dotClass.includes("blue-500")) return "#3b82f6";
-		if (dotClass.includes("emerald-500")) return "#10b981";
-		if (dotClass.includes("amber-500")) return "#f59e0b";
-		if (dotClass.includes("purple-500")) return "#a855f7";
-		if (dotClass.includes("destructive")) return "#ef4444";
-		return "#6b7280";
-	}
-
-	/** Resolve SVG fill color for an artifact ID based on its status. */
-	function resolveNodeColor(targetId: string): string {
-		const node = artifactGraphSDK.resolve(targetId);
-		if (!node?.status) return "#6b7280";
-		return svgFillFromClass(statusColor(node.status));
-	}
-
-	/** Resolve display title for an artifact ID. */
-	function resolveTitle(targetId: string): string {
-		const node = artifactGraphSDK.resolve(targetId);
-		return node?.title ?? targetId;
-	}
-
-	/** Collect unique related IDs grouped by (direction, edgeType). */
-	function buildGroups(): {
-		key: string;
-		direction: "in" | "out";
-		edgeType: string;
-		ids: string[];
-	}[] {
-		const map = new SvelteMap<string, { direction: "in" | "out"; edgeType: string; ids: string[] }>();
-
-		for (const ref of incomingRefs) {
-			const edgeType = ref.relationship_type ?? ref.field;
-			const key = `in:${edgeType}`;
-			const group = map.get(key);
-			if (group) {
-				if (!group.ids.includes(ref.source_id)) group.ids.push(ref.source_id);
-			} else {
-				map.set(key, { direction: "in", edgeType, ids: [ref.source_id] });
-			}
+	/** Build and (re)initialize the vis-network instance. */
+	function buildNetwork(el: HTMLDivElement): void {
+		// Tear down any existing instance before rebuilding
+		if (network) {
+			network.destroy();
+			network = null;
 		}
+
+		// Collect unique node IDs from incoming and outgoing refs
+		const nodeIds = new Set<string>();
+		nodeIds.add(artifactId);
+		for (const ref of incomingRefs) nodeIds.add(ref.source_id);
+		for (const ref of outgoingRefs) nodeIds.add(ref.target_id);
+
+		const nodes = new DataSet<Node>(
+			[...nodeIds].map((id): Node => {
+				const isCenter = id === artifactId;
+				const color = resolveNodeColor(id);
+				return {
+					id,
+					label: id,
+					title: resolveTitle(id),
+					color: {
+						background: color,
+						border: isCenter ? "#ffffff" : color,
+						highlight: {
+							background: color,
+							border: "#ffffff",
+						},
+					},
+					font: {
+						color: "#ffffff",
+						size: isCenter ? 14 : 11,
+						face: "monospace",
+					},
+					size: isCenter ? 22 : 14,
+					borderWidth: isCenter ? 3 : 1,
+					shape: "dot",
+				};
+			}),
+		);
+
+		const edgeList: Edge[] = [];
 
 		for (const ref of outgoingRefs) {
 			const edgeType = ref.relationship_type ?? ref.field;
-			const key = `out:${edgeType}`;
-			const group = map.get(key);
-			if (group) {
-				if (!group.ids.includes(ref.target_id)) group.ids.push(ref.target_id);
-			} else {
-				map.set(key, { direction: "out", edgeType, ids: [ref.target_id] });
-			}
+			edgeList.push({
+				from: artifactId,
+				to: ref.target_id,
+				label: humanizeLabel(edgeType),
+				dashes: false,
+				color: { color: "#3b82f6", opacity: 0.7 },
+				arrows: "to",
+			});
 		}
 
-		return [...map.entries()].map(([key, val]) => ({ key, ...val }));
-	}
-
-	/** Compute node positions in a radial layout. */
-	const layout = $derived.by(() => {
-		const groups = buildGroups();
-		const totalGroups = groups.length;
-		if (totalGroups === 0) return { nodes: [] as GraphNode[], groups: [] as GraphGroup[] };
-
-		const sectorAngle = (2 * Math.PI) / totalGroups;
-		const nodes: GraphNode[] = [];
-		const groupLabels: GraphGroup[] = [];
-
-		groups.forEach((group, gi) => {
-			const startAngle = gi * sectorAngle - Math.PI / 2;
-			const midAngle = startAngle + sectorAngle / 2;
-
-			// Group label position
-			const labelR = OUTER_RADIUS + 22;
-			groupLabels.push({
-				label: humanizeLabel(group.edgeType),
-				direction: group.direction,
-				midAngle,
-				labelX: CX + labelR * Math.cos(midAngle),
-				labelY: CY + labelR * Math.sin(midAngle),
+		for (const ref of incomingRefs) {
+			const edgeType = ref.relationship_type ?? ref.field;
+			edgeList.push({
+				from: ref.source_id,
+				to: artifactId,
+				label: humanizeLabel(edgeType),
+				dashes: true,
+				color: { color: "#a855f7", opacity: 0.7 },
+				arrows: "to",
 			});
+		}
 
-			// Place nodes along the sector arc
-			const count = group.ids.length;
-			for (let ni = 0; ni < count; ni++) {
-				const t = count === 1 ? 0.5 : ni / (count - 1);
-				const angle = startAngle + sectorAngle * 0.15 + t * sectorAngle * 0.7;
-				const r = count === 1 ? INNER_RADIUS : INNER_RADIUS + (ni % 2 === 0 ? 0 : 20);
+		const edges = new DataSet<Edge>(edgeList);
 
-				const targetId = group.ids[ni];
+		const options: Options = {
+			physics: {
+				enabled: true,
+				stabilization: { iterations: 150, fit: true },
+				barnesHut: {
+					gravitationalConstant: -3000,
+					springLength: 120,
+					damping: 0.4,
+				},
+			},
+			layout: {
+				improvedLayout: true,
+			},
+			interaction: {
+				hover: true,
+				tooltipDelay: 200,
+				navigationButtons: false,
+				keyboard: false,
+			},
+			nodes: {
+				shape: "dot",
+				scaling: { min: 10, max: 28 },
+			},
+			edges: {
+				font: {
+					size: 9,
+					color: "#9ca3af",
+					align: "middle",
+					strokeWidth: 0,
+				},
+				smooth: { enabled: true, type: "dynamic", roundness: 0.5 },
+				width: 1.5,
+			},
+		};
 
-				nodes.push({
-					id: targetId,
-					label: targetId,
-					title: resolveTitle(targetId),
-					x: CX + r * Math.cos(angle),
-					y: CY + r * Math.sin(angle),
-					fillColor: resolveNodeColor(targetId),
-					direction: group.direction,
-					edgeType: group.edgeType,
-				});
+		network = new Network(el, { nodes, edges }, options);
+
+		network.on("click", (params) => {
+			if (params.nodes.length > 0) {
+				const clickedId = String(params.nodes[0]);
+				if (clickedId !== artifactId) {
+					navigationStore.navigateToArtifact(clickedId);
+				}
 			}
 		});
 
-		return { nodes, groups: groupLabels };
+		network.on("stabilizationIterationsDone", () => {
+			network?.setOptions({ physics: { enabled: false } });
+		});
+	}
+
+	// Re-initialize the network whenever container or data changes
+	$effect(() => {
+		const el = container;
+		// Access reactive dependencies so the effect re-runs on data changes
+		const _id = artifactId;
+		const _in = incomingRefs;
+		const _out = outgoingRefs;
+
+		if (!el) return;
+
+		buildNetwork(el);
 	});
 
-	/** Center node fill color. */
-	const centerFill = $derived(resolveNodeColor(artifactId));
-
-	function handleNodeClick(id: string): void {
-		navigationStore.navigateToArtifact(id);
-	}
-
-	/** Compute text-anchor for a label based on its angle. */
-	function textAnchor(angle: number): string {
-		const deg = ((angle * 180) / Math.PI + 360) % 360;
-		if (deg > 100 && deg < 260) return "end";
-		if (deg >= 80 && deg <= 100) return "middle";
-		if (deg >= 260 && deg <= 280) return "middle";
-		return "start";
-	}
+	onDestroy(() => {
+		if (network) {
+			network.destroy();
+			network = null;
+		}
+	});
 </script>
 
-<svg
-	viewBox="0 0 {WIDTH} {HEIGHT}"
+<div
+	bind:this={container}
 	class="h-full w-full"
 	role="img"
 	aria-label="Relationship graph for {artifactId}"
->
-	<!-- Edges from center to each node -->
-	{#each layout.nodes as node (node.id + node.direction + node.edgeType)}
-		<line
-			x1={CX}
-			y1={CY}
-			x2={node.x}
-			y2={node.y}
-			stroke={node.direction === "out" ? "#3b82f650" : "#a855f750"}
-			stroke-width="1"
-			stroke-dasharray={node.direction === "in" ? "4 3" : "none"}
-		/>
-	{/each}
-
-	<!-- Group type labels -->
-	{#each layout.groups as group (group.label + group.direction)}
-		<text
-			x={group.labelX}
-			y={group.labelY}
-			text-anchor={textAnchor(group.midAngle)}
-			dominant-baseline="central"
-			class="fill-muted-foreground"
-			font-size="9"
-			font-weight="500"
-			style="text-transform: uppercase"
-		>
-			{group.direction === "in" ? "\u2190 " : ""}{group.label}{group.direction === "out" ? " \u2192" : ""}
-		</text>
-	{/each}
-
-	<!-- Related artifact nodes -->
-	{#each layout.nodes as node (node.id + node.direction + node.edgeType)}
-		<g
-			class="cursor-pointer"
-			role="button"
-			tabindex="0"
-			onclick={() => handleNodeClick(node.id)}
-			onkeydown={(e) => {
-				if (e.key === "Enter" || e.key === " ") handleNodeClick(node.id);
-			}}
-		>
-			<title>{node.title} ({node.id})</title>
-			<circle
-				cx={node.x}
-				cy={node.y}
-				r={NODE_RADIUS}
-				fill={node.fillColor}
-				stroke="var(--border)"
-				stroke-width="0.5"
-				opacity="0.9"
-			/>
-			<!-- Invisible larger hit area for easier clicking -->
-			<circle
-				cx={node.x}
-				cy={node.y}
-				r={NODE_RADIUS + 4}
-				fill="transparent"
-			/>
-			<text
-				x={node.x}
-				y={node.y + NODE_RADIUS + 11}
-				text-anchor="middle"
-				class="fill-foreground"
-				font-size="9"
-				font-family="monospace"
-			>
-				{node.label}
-			</text>
-		</g>
-	{/each}
-
-	<!-- Center node (focused artifact) -->
-	<circle
-		cx={CX}
-		cy={CY}
-		r={CENTER_RADIUS}
-		fill={centerFill}
-		stroke="var(--foreground)"
-		stroke-width="1.5"
-		opacity="0.95"
-	/>
-	<text
-		x={CX}
-		y={CY + CENTER_RADIUS + 14}
-		text-anchor="middle"
-		class="fill-foreground"
-		font-size="11"
-		font-family="monospace"
-		font-weight="600"
-	>
-		{artifactId}
-	</text>
-</svg>
+></div>

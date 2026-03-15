@@ -20,6 +20,7 @@
 	import { initDevConsole } from "$lib/utils/dev-console";
 
 	import ArtifactMasterDetail from "$lib/components/artifact/ArtifactMasterDetail.svelte";
+	import FullGraphView from "$lib/components/graph/FullGraphView.svelte";
 	import * as Resizable from "$lib/components/ui/resizable";
 	import setupBackground from "$lib/assets/setup-background.png";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
@@ -175,6 +176,8 @@
 						<div class="h-full overflow-hidden">
 							{#if navigationStore.activeActivity === "project"}
 								<ProjectDashboard />
+							{:else if navigationStore.activeActivity === "artifact-graph"}
+								<FullGraphView />
 							{:else if navigationStore.activeActivity === "roadmap"}
 								<RoadmapView />
 							{:else if navigationStore.activeActivity === "chat"}

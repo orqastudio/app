@@ -5,6 +5,7 @@
 	import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
 	import UnlinkIcon from "@lucide/svelte/icons/unlink";
 	import ScanIcon from "@lucide/svelte/icons/scan";
+	import WrenchIcon from "@lucide/svelte/icons/wrench";
 	import ActivityIcon from "@lucide/svelte/icons/activity";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
@@ -13,15 +14,18 @@
 	interface Props {
 		checks: IntegrityCheck[];
 		loading: boolean;
+		fixing?: boolean;
 		scanned: boolean;
 		onScan: () => void;
+		onAutoFix?: () => void;
 	}
 
-	const { checks, loading, scanned, onScan }: Props = $props();
+	const { checks, loading, fixing = false, scanned, onScan, onAutoFix }: Props = $props();
 
 	const errorCount = $derived(checks.filter((c) => c.severity === "Error").length);
 	const warningCount = $derived(checks.filter((c) => c.severity === "Warning").length);
 	const orphanCount = $derived(artifactGraphSDK.stats?.orphan_count ?? 0);
+	const fixableCount = $derived(checks.filter((c) => c.auto_fixable).length);
 
 	/** Health score: 100% minus weighted penalty for errors and warnings. */
 	const healthScore = $derived.by(() => {
@@ -126,20 +130,37 @@
 			</div>
 		{/if}
 
-		<!-- Action -->
-		<Button
-			variant="outline"
-			size="sm"
-			onclick={onScan}
-			disabled={loading}
-			class="w-full"
-		>
-			{#if loading}
-				<span class="mr-2"><LoadingSpinner size="sm" /></span>
-			{:else}
-				<ScanIcon class="mr-2 h-3.5 w-3.5" />
+		<!-- Actions -->
+		<div class="flex gap-2">
+			<Button
+				variant="outline"
+				size="sm"
+				onclick={onScan}
+				disabled={loading || fixing}
+				class="flex-1"
+			>
+				{#if loading}
+					<span class="mr-2"><LoadingSpinner size="sm" /></span>
+				{:else}
+					<ScanIcon class="mr-2 h-3.5 w-3.5" />
+				{/if}
+				Run integrity scan
+			</Button>
+			{#if scanned && fixableCount > 0 && onAutoFix}
+				<Button
+					variant="outline"
+					size="sm"
+					onclick={onAutoFix}
+					disabled={loading || fixing}
+				>
+					{#if fixing}
+						<span class="mr-2"><LoadingSpinner size="sm" /></span>
+					{:else}
+						<WrenchIcon class="mr-1.5 h-3.5 w-3.5" />
+					{/if}
+					Auto-fix ({fixableCount})
+				</Button>
 			{/if}
-			Run integrity scan
-		</Button>
+		</div>
 	</Card.Content>
 </Card.Root>

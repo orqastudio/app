@@ -22,6 +22,7 @@
 	// Graph health widget state (shared scan results for the Clarity column)
 	let healthChecks = $state<IntegrityCheck[]>([]);
 	let healthLoading = $state(false);
+	let healthFixing = $state(false);
 	let healthScanned = $state(false);
 
 	// Auto-scan when the graph is ready
@@ -46,6 +47,22 @@
 			toast.error(err instanceof Error ? err.message : String(err));
 		} finally {
 			healthLoading = false;
+		}
+	}
+
+	async function runHealthAutoFix(): Promise<void> {
+		healthFixing = true;
+		try {
+			const fixableChecks = healthChecks.filter((c) => c.auto_fixable);
+			const appliedFixes = await artifactGraphSDK.applyAutoFixes(fixableChecks);
+			toast.success(`${appliedFixes.length} fix${appliedFixes.length !== 1 ? "es" : ""} applied`);
+			// Refresh graph after fixes wrote to disk, then re-scan
+			await artifactGraphSDK.refresh();
+			healthChecks = await artifactGraphSDK.runIntegrityScan();
+		} catch (err: unknown) {
+			toast.error(err instanceof Error ? err.message : String(err));
+		} finally {
+			healthFixing = false;
 		}
 	}
 </script>
@@ -96,8 +113,10 @@
 						<GraphHealthWidget
 							checks={healthChecks}
 							loading={healthLoading}
+							fixing={healthFixing}
 							scanned={healthScanned}
 							onScan={runHealthScan}
+							onAutoFix={runHealthAutoFix}
 						/>
 						<LessonVelocityWidget />
 					</div>
