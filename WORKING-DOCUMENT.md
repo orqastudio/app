@@ -114,6 +114,32 @@ The state machine isn't a separate system — it's rules about which transitions
 | **Artifact viewer** | Single node with its relationships |
 | **Full graph** | Everything |
 
+## Enforcement
+
+The process is enforced by app code, not AI instructions. Invalid graph states are mechanically impossible.
+
+| Constraint | Enforcement |
+|---|---|
+| Delivery artifact must connect to parent | App rejects creation without relationship |
+| Status transition must be in valid list | App won't allow invalid transitions |
+| Child can't be further along than parent | App flags immediately, blocks until resolved |
+| Relationships must be bidirectional | App creates inverse automatically |
+| Statuses must be from configured vocabulary | App rejects invalid values |
+
+This is not behavioral guidance for AI. This is the app refusing to accept invalid state — like a database rejecting bad SQL. If enforcement depends on AI remembering rules, enforcement fails under pressure (proven this session).
+
+AI rules/skills become documentation: they teach agents HOW to work with the system, not how to ENFORCE it. The app enforces. The agent operates within the enforced boundaries.
+
+## Documentation and Skills Are One Thing
+
+A skill is "knowledge an agent needs." Documentation is "knowledge a human needs." The underlying knowledge is the same — two audiences, one source of truth.
+
+Rather than maintaining separate documentation pages and skill files that describe the same concepts, documentation IS the skill. The app injects relevant documentation into agent context based on what the agent is working on. No separate skill files — agents read the same knowledge humans read.
+
+A "skill" becomes a pointer: "when working in this area, load these documentation pages into context." The knowledge lives in one place. The rendering adapts to the audience (browsable page for humans, injected context for agents).
+
+This eliminates the drift between documentation and skills that we've been fighting — they're the same artifact.
+
 ## Key Design Principles
 
 1. **The graph is the only data structure.** No standalone fields, no side channels.
