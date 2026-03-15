@@ -2,7 +2,7 @@
 id: IDEA-068
 title: "AI-assisted artifact backfill tooling"
 description: "Tooling that reads artifacts, analyses content against other artifacts, proposes relationship connections, presents for human review, and batch-updates frontmatter. Built as a precursor to the AD-042 migration, reusable for any future schema evolution."
-status: ready
+status: review
 created: "2026-03-12"
 updated: "2026-03-13"
 horizon: active

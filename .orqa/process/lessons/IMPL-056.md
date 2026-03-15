@@ -2,7 +2,7 @@
 id: IMPL-056
 title: "Svelte keyed each blocks produce duplicate key errors from concatenated strings"
 description: "Keyed {#each} blocks that construct keys by concatenating data fields (e.g. artifact_id + message) crash when two items produce the same concatenation. This is a recurring frontend pattern — always include the index as a uniqueness suffix."
-status: recurring
+status: review
 created: "2026-03-14"
 updated: "2026-03-14"
 maturity: understanding

@@ -2,7 +2,7 @@
 id: IDEA-060
 title: "Open-Source Licensing and IP Protection"
 description: "Choose licensing strategy that protects OrqaStudio from big tech absorption while enabling open-source community participation."
-status: ready
+status: review
 created: "2026-03-12"
 updated: "2026-03-13"
 horizon: later

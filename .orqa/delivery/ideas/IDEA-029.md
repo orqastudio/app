@@ -3,7 +3,7 @@ id: IDEA-029
 title: Git-Based Artifact Change Tracking
 description: |
   Use git as the change tracking layer for all governance artifacts. Git is initialised as part of project setup (not optional). Remote origins are optional for multi-user/multi-device portability. The UI provides a focused artifact history viewer — not a git client.
-status: ready
+status: review
 created: "2026-03-09"
 updated: "2026-03-13"
 horizon: active
