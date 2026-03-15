@@ -4,114 +4,93 @@
 
 ---
 
-## The Universal Layer (What OrqaStudio IS)
+## The Foundation
 
-Everything is a node on a graph. Nodes connect through typed relationships. That's it. The graph is the product.
+Everything is a node on a graph. Nodes connect through typed relationships. The graph IS the thinking made visible. That's the product.
 
-The app ships with core node types that represent universal stages of structured thinking:
+## Core Types (Universal, Always Exist)
 
-**Core types (always exist):**
-- Pillars, Vision, Personas, Grounding — principles
-- Ideas, Research — discovery
-- Rules, Lessons, Decisions, Skills, Agents — learning
+These represent universal concepts in structured thinking. Every project has them regardless of domain.
 
-These are universal across domains. A software project, a consulting engagement, a personal goal tracker — all use ideas, research, rules, lessons, and decisions. The types are the framework.
+| Type | Purpose |
+|---|---|
+| Pillars | What we believe — guiding principles |
+| Vision | Where we're going |
+| Personas | Who we serve |
+| Grounding | What anchors agent behavior |
+| Ideas | Entry point for any change — to the project, process, or principles |
+| Decisions | Resolutions that direct work and authorise enforcement |
+| Rules | Standards we enforce |
+| Lessons | What we've learned |
+| Skills | Knowledge we teach |
+| Agents | Roles that do work |
 
-**Plugin-contributed discovery types (domain-specific):**
-- Wireframes — software-specific, not universal. Should be contributed by a software development plugin, not hardcoded in core. Still part of discovery, but installed, not built-in.
+**Ideas** are the universal entry point. Where an idea goes depends on what it is — it might evolve into delivery work, or drive a decision that governs a rule. The idea is always preserved as the record of original thinking.
 
-Statuses represent stages of thought: captured → exploring → ready → prioritised → active → hold → blocked → review → completed → surpassed → recurring.
+**Decisions** are the bridge. They appear in multiple views because they serve multiple roles.
 
-The app enforces graph integrity: relationships are bidirectional, nodes have valid statuses, parent-child consistency holds. This is mechanical — the app reads config and enforces it.
+Labels and icons on core types are configurable per project for contextual clarity. A consulting project might call "Rules" → "Standards" and "Lessons" → "Insights." The canonical type key stays the same.
 
-## The Project Layer (What the User Is Working On)
+## Project Types (Configurable)
 
-The user defines delivery types that represent THEIR work structure. A software project: milestone → epic → task. A research project: hypothesis → experiment → observation. A consulting project: phase → workstream → deliverable.
+Everything beyond the core is project-specific:
 
-These delivery types connect to the universal graph through relationships. An epic `delivers` to a milestone. A task `delivers` to an epic. An idea `evolves-into` an epic. A rule `enforces` a decision.
+**Discovery types** — ways of informing ideas and decisions. Software: research, wireframes. Consulting: client discovery, stakeholder maps. Research: literature review, experiments.
 
-Delivery types have configurable labels AND icons — a research project might use a flask icon for experiments and a microscope for observations. No reason to restrict visual identity to core types.
+**Delivery types** — ways of acting on ideas and decisions. Software: milestones, epics, tasks. Consulting: phases, workstreams, deliverables. Personal: goals, actions.
 
-Delivery types use the same universal status vocabulary, but projects can define **label aliases** for contextual clarity. The canonical key stays the same (`captured`, `active`, etc.) but the display label adapts: a consulting project might show `captured` as "Logged" and `active` as "In Flight". Icons stay consistent.
+Labels, icons, hierarchy depth, and status aliases are all project-configurable. A research project might use a flask icon for experiments and a microscope for observations.
 
-## How Ideas Evolve Into Delivery
+## Relationship Vocabulary
 
-An idea doesn't "promote" — it **evolves**. The idea is the record of the original thinking. When the thinking matures into action:
+Relationships are the ONLY way artifacts connect. Each has a clear semantic:
 
-1. The idea reaches `ready` or `prioritised` status (shaped, understood)
-2. A delivery artifact (epic, hypothesis, phase) is created
-3. The idea connects to the delivery artifact via an `evolves-into` relationship
-4. The idea's status moves to `completed` (the thinking is done)
-5. The delivery artifact inherits the idea's context through the relationship
+| Relationship | Inverse | Meaning | Example |
+|---|---|---|---|
+| `informs` | `informed-by` | Supplementary context | Research informs an idea |
+| `evolves-into` | `evolves-from` | Thinking becomes action | Idea evolves into an epic |
+| `drives` | `driven-by` | Decision directs work | Decision drives an epic's design |
+| `governs` | `governed-by` | Decision authorises enforcement | Decision governs a rule |
+| `delivers` | `delivered-by` | Work contributes to a goal | Task delivers to an epic |
+| `enforces` | `enforced-by` | Mechanical enforcement | Rule enforces a standard |
+| `grounded` | `grounded-by` | Foundational anchor | Agent grounded by a pillar |
+| `observes` | `observed-by` | Learning captured | Lesson observes a pattern |
 
-The idea is preserved as the historical record of WHY the delivery artifact exists. The relationship is the provenance chain.
+No standalone frontmatter fields for connections. No `epic: EPIC-045`. Only relationships.
 
-Research works similarly: research `informs` ideas, and research `informs` delivery artifacts directly when investigation feeds implementation.
+## How Ideas Evolve
 
-## How Views Work
+An idea doesn't "promote" — it **evolves**. And it can evolve in multiple directions:
 
-The roadmap is a view of the graph filtered to delivery types, grouped by the hierarchy the user configured, with status as the column dimension. It's not a separate data structure — it's a graph query rendered as a kanban.
+1. Idea → `evolves-into` → delivery artifact (epic, task, experiment)
+2. Idea → `evolves-into` → decision → `governs` → rule
+3. Idea → `evolves-into` → decision → `drives` → delivery artifact
+4. Idea → status moves to `completed` (the thinking is done, the output is connected)
 
-**Scratchpad / Ideation Canvas:** The discovery equivalent of the roadmap. A spatial canvas where ideas and research are created, grouped, and connected visually. Each item on the canvas IS a node on the graph. The spatial layout (position, grouping) is metadata on the node. The scratchpad IS the graph rendered as a canvas instead of a list. Connections drawn on the canvas create relationships on the graph.
+Research and other discovery types `inform` ideas and decisions. They're supplementary input, not the driver.
 
-The dashboard is aggregate queries on graph state: how connected is the graph, what's the status distribution, what needs attention (nodes in `review` state), what's improving (trend of governance node count over time).
+## Sections Are Graph Filters
 
-The artifact viewer is a single node with its relationships visible.
+The nav sections don't categorise artifacts. They filter the graph by relationship patterns. An artifact appears in every section its relationships qualify it for.
 
-The full graph view is the whole thing.
+| Section | Shows | Label for Decisions |
+|---|---|---|
+| **Principles** | Pillars, Vision, Personas, Grounding | — |
+| **Discovery** | Ideas, Decisions, project discovery types | "Decisions" (all) |
+| **Learning** | Rules, Lessons, Skills, Agents, + decisions with `governs` edges | "Governing Decisions" |
+| **Delivery** | Project delivery types + decisions with `drives` edges | "Driving Decisions" |
 
-## Where State Machines Fit
+Decisions appear in Discovery (where they're made), Learning (when they govern rules), and Delivery (when they drive work). The contextual label explains WHY the decision appears in each section.
 
-The state machine isn't a separate system. It's a set of rules about which status transitions are valid for which relationship configurations. "A node with incoming `delivers` relationships can move to `review` when all its `delivers` sources are `completed`." That's a graph query that gates a status change.
+## State Machine
 
-The state machine config defines:
+Status is a property of each node. Transitions are graph queries.
 
-- Valid statuses (with icons, labels, optional project-level label aliases)
-- Valid transitions per status
-- Auto-rules that are graph queries: "relationship type X, all sources in status Y → transition to Z"
+**Universal statuses**: captured → exploring → ready → prioritised → active → hold → blocked → review → completed → surpassed → recurring
 
-## Resolved Questions
+Projects can define **label aliases** for display (key stays canonical). Icons are configurable per status.
 
-### 1. Status vocabulary
-One universal vocabulary. Projects can alias the display labels for contextual clarity, but the canonical keys are the same everywhere. This ensures the graph analysis, transition engine, and views all speak the same language regardless of how the project displays statuses to users.
-
-### 2. Hierarchy depth
-The delivery config supports any depth because each type declares its parent type and the relationship that connects them. Practical examples:
-- **2 levels**: Goals → actions (personal project, no middle layer)
-- **3 levels**: Milestone → epic → task (software development)
-- **4 levels**: Program → project → workstream → deliverable (enterprise)
-- **5 levels**: Portfolio → program → project → phase → task (large org)
-
-The roadmap view supports N-level drill-down via breadcrumbs. Each level is a graph query filtering by type and parent relationship.
-
-### 3. Ideas connecting to delivery
-Ideas **evolve into** delivery artifacts via an `evolves-into` relationship. The idea is preserved. Research `informs` both ideas and delivery artifacts. The relationship crosses sections — that's fine, the graph doesn't care about sections. Sections are view-level grouping, not data-level boundaries.
-
-## Three Core Principles Being Aligned
-
-1. **Artifacts linked through relationships** — powers the knowledge graph, the ONLY connection mechanism
-2. **Systems thinking enforced at app level** — the app's structure teaches and enforces structured thinking
-3. **Progress insight via state machine** — users see where things are via status on nodes, transitions driven by graph state
-
-## The Alignment
-
-```
-Artifacts exist as nodes
-    ↓
-Relationships connect them (the ONLY connection mechanism)
-    ↓
-Each node has a status (where in the thought journey)
-    ↓
-Transition rules query relationship state
-    ("all nodes connected via 'delivers' are completed → move to review")
-    ↓
-Views (roadmap, dashboard, scratchpad) render graph + state
-    ↓
-The user sees their thinking structure and its progress
-```
-
-Auto-rules as graph queries:
-
+**Auto-rules are graph queries:**
 ```json
 {
   "condition": "all-related-in-status",
@@ -121,19 +100,44 @@ Auto-rules as graph queries:
 }
 ```
 
+"When all nodes connected via `delivers` relationships are in `completed` status → propose transitioning this node to `review`."
+
+The state machine isn't a separate system — it's rules about which transitions are valid given the current graph state.
+
+## Views Are Graph Queries
+
+| View | What it renders |
+|---|---|
+| **Roadmap** | Graph filtered to delivery types, grouped by hierarchy, status as columns |
+| **Dashboard** | Aggregate queries: health, status distribution, attention needed, trends |
+| **Scratchpad** | Ideas and discovery types on a spatial canvas — each item IS a graph node |
+| **Artifact viewer** | Single node with its relationships |
+| **Full graph** | Everything |
+
+## Key Design Principles
+
+1. **The graph is the only data structure.** No standalone fields, no side channels.
+2. **Sections are views, not categories.** The graph doesn't have sections. Views filter by relationship patterns.
+3. **Core types are universal thinking concepts.** They exist in every project, every domain.
+4. **Project types are configurable.** Discovery and delivery types adapt to the domain.
+5. **The app enforces structure.** State machine rules, graph integrity, and status transitions are app-level enforcement, not AI rules.
+6. **AI knows the system through app-shipped docs.** Uneditable conventions, loaded into agent context.
+7. **Project rules are project-specific.** Editable by the project, enforce project standards.
+
+---
+
 ## Key Architectural Decisions Made This Session
 
 - **AD-049**: Status represented by icons, colors reserved for artifact types
-- **AD-050**: Status transitions are config-driven (project.json)
-- **AD-051**: Three-layer configurability — core types hardcoded, instances project-specific, delivery fully configurable
+- **AD-050**: Status transitions are config-driven
+- **AD-051**: Three-layer configurability — core types universal, instances project-specific, delivery fully configurable
 - **IDEA-105**: Delivery pipeline as a future plugin
-- **IDEA-106**: Principles/Discovery/Learning section split, grounding + personas as first-class artifacts
-- **IDEA-107**: App-shipped system docs (conventions) vs project-level rules, required project state machine skill
+- **IDEA-106**: Principles/Discovery/Learning section split
+- **IDEA-107**: App-shipped conventions vs project-level rules
 
 ## Session Artifacts Created
 
 ### Epics Completed
-
 - EPIC-064: Enforcement bootstrapping (15 tasks)
 - EPIC-073: UAT round 3 (19+ tasks)
 - EPIC-074: Dashboard redesign (5 tasks)
@@ -142,16 +146,10 @@ Auto-rules as graph queries:
 - EPIC-078: Configuration-driven delivery pipeline (5 tasks)
 
 ### Epics Created (not started)
-
 - EPIC-076: Graph analysis with Cytoscape.js (6 tasks)
 
 ### Ideas Captured
-
 - IDEA-095 through IDEA-107 (13 ideas)
-
-### Architecture Decisions
-
-- AD-049 through AD-051
 
 ---
 
