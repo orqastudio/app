@@ -105,14 +105,15 @@
 				? { name: "preset" }
 				: ({
 						name: "cose-bilkent",
-						animate: false,
+						animate: "end",
+						animationDuration: 500,
 						randomize: true,
 						nodeRepulsion: 4500,
 						idealEdgeLength: 100,
 						edgeElasticity: 0.45,
 						nestingFactor: 0.1,
 						gravity: 0.25,
-						numIter: 500,
+						numIter: 2500,
 						tile: true,
 						tilingPaddingVertical: 10,
 						tilingPaddingHorizontal: 10,
