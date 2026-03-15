@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as ScrollArea from "$lib/components/ui/scroll-area";
+	import * as Card from "$lib/components/ui/card";
 	import FolderOpenIcon from "@lucide/svelte/icons/folder-open";
 	import EmptyState from "$lib/components/shared/EmptyState.svelte";
 	import { projectStore } from "$lib/stores/project.svelte";
@@ -102,50 +103,44 @@
 				<!-- Row 1: MilestoneContextCard — full width -->
 				<MilestoneContextCard />
 
-				<!-- Row 2: Three pillar columns -->
+				<!-- Row 2: Three pillar columns — each card carries its own title -->
 				<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-					<!-- Column 1: Where You Are (Clarity) -->
-					<div class="flex flex-col gap-4">
-						<div class="px-0">
-							<p class="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Where You Are</p>
-							<p class="text-xs text-muted-foreground">Clarity</p>
-						</div>
-						<GraphHealthWidget
-							checks={healthChecks}
-							loading={healthLoading}
-							fixing={healthFixing}
-							scanned={healthScanned}
-							onScan={runHealthScan}
-							onAutoFix={runHealthAutoFix}
-						/>
-					</div>
+					<!-- Column 1: Where You Are (Clarity) — title lives inside GraphHealthWidget -->
+					<GraphHealthWidget
+						checks={healthChecks}
+						loading={healthLoading}
+						fixing={healthFixing}
+						scanned={healthScanned}
+						onScan={runHealthScan}
+						onAutoFix={runHealthAutoFix}
+					/>
 
-					<!-- Column 2: How You're Improving (Learning) -->
-					<div class="flex flex-col gap-4">
-						<div class="px-0">
-							<p class="text-sm font-semibold text-muted-foreground uppercase tracking-wide">How You're Improving</p>
-							<p class="text-xs text-muted-foreground">Learning</p>
-						</div>
-						<ImprovementTrendsWidget />
-					</div>
+					<!-- Column 2: How You're Improving (Learning) — ImprovementTrendsWidget wrapped in a card -->
+					<Card.Root class="gap-2 overflow-hidden">
+						<Card.Header class="pb-2">
+							<Card.Title class="text-sm font-semibold">How You're Improving</Card.Title>
+							<Card.Description class="text-xs">Learning</Card.Description>
+						</Card.Header>
+						<Card.Content class="px-0 pt-0 pb-0">
+							<ImprovementTrendsWidget />
+						</Card.Content>
+					</Card.Root>
 
-					<!-- Column 3: What's Next (Purpose) -->
-					<div class="flex flex-col gap-4">
-						<div class="px-0">
-							<p class="text-sm font-semibold text-muted-foreground uppercase tracking-wide">What's Next</p>
-							<p class="text-xs text-muted-foreground">Purpose</p>
-						</div>
-						<DecisionQueueWidget />
-					</div>
+					<!-- Column 3: What's Next (Purpose) — title lives inside DecisionQueueWidget -->
+					<DecisionQueueWidget />
 				</div>
 
-				<!-- Row 3: Knowledge Pipeline + Lesson Velocity — shared row -->
-				<div class="grid grid-cols-3 gap-4">
-					<div class="col-span-2">
-						<PipelineWidget />
+				<!-- Row 3: Knowledge Pipeline + Lesson Velocity — same height via h-full on both cards -->
+				<div class="grid grid-cols-3 gap-4 items-stretch">
+					<div class="col-span-2 flex">
+						<div class="w-full">
+							<PipelineWidget />
+						</div>
 					</div>
-					<div class="col-span-1">
-						<LessonVelocityWidget />
+					<div class="col-span-1 flex">
+						<div class="w-full">
+							<LessonVelocityWidget />
+						</div>
 					</div>
 				</div>
 

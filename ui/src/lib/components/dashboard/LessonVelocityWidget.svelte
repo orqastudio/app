@@ -8,6 +8,7 @@
 
 	// -------------------------------------------------------------------------
 	// Lesson pipeline stage definitions
+	// Uses the same dot-with-center visual as PipelineWidget (dotColorClass).
 	// -------------------------------------------------------------------------
 
 	const stageDefinitions = [
@@ -68,16 +69,16 @@
 </script>
 
 {#if hasData}
-	<Card.Root>
-		<Card.Header class="pb-3">
-			<Card.Title class="text-base">
+	<Card.Root class="gap-2 h-full">
+		<Card.Header class="pb-2">
+			<Card.Title class="text-sm font-semibold">
 				<div class="flex items-center gap-2">
 					<TrendingUpIcon class="h-4 w-4 text-muted-foreground" />
 					Lesson Velocity
 				</div>
 			</Card.Title>
 		</Card.Header>
-		<Card.Content>
+		<Card.Content class="pt-0">
 			<PipelineStages
 				stages={pipelineStages}
 				onStageClick={(key) => navigateToLessons(key)}

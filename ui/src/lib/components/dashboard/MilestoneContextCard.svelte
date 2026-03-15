@@ -5,6 +5,7 @@
 	import TargetIcon from "@lucide/svelte/icons/target";
 	import CalendarIcon from "@lucide/svelte/icons/calendar";
 	import MapIcon from "@lucide/svelte/icons/map";
+	import KanbanIcon from "@lucide/svelte/icons/kanban";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
 	import type { ArtifactNode } from "$lib/types/artifact-graph";
@@ -67,8 +68,8 @@
 	// -------------------------------------------------------------------------
 
 	function openMilestone() {
-		if (!activeMilestone) return;
-		navigationStore.navigateToArtifact(activeMilestone.node.id);
+		// Navigate to the roadmap view, not the artifact entry
+		navigationStore.setGroup("delivery");
 	}
 
 	function openRoadmap() {
@@ -87,7 +88,8 @@
 			</Card.Title>
 			{#if activeMilestone}
 				<Button variant="ghost" size="sm" onclick={openMilestone} class="h-7 text-xs">
-					View
+					<KanbanIcon class="mr-1 h-3.5 w-3.5" />
+					View Roadmap
 				</Button>
 			{:else}
 				<Button variant="ghost" size="sm" onclick={openRoadmap} class="h-7 text-xs">
@@ -130,7 +132,7 @@
 
 			<!-- Gate question -->
 			{#if activeMilestone.gate}
-				<div class="mb-4 rounded-md bg-muted/50 px-3 py-2">
+				<div class="mb-4 rounded-md bg-muted/50 py-2">
 					<p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Gate question</p>
 					<p class="text-sm italic">"{activeMilestone.gate}"</p>
 				</div>

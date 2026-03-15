@@ -1,5 +1,4 @@
 <script lang="ts">
-	import * as Card from "$lib/components/ui/card";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import type { HealthSnapshot } from "$lib/types/artifact-graph";
@@ -149,10 +148,17 @@
 	function sparklineValues(m: MetricConfig): number[] {
 		return chronological.map((s) => m.getValue(s));
 	}
+
+
 </script>
 
 {#if loaded}
-	<div class="grid grid-cols-2 gap-3">
+	<!--
+		Single card containing a 2x2 grid of trend cells.
+		Card title / description are injected by ProjectDashboard.
+		Dividers between cells via border-r / border-b on each cell.
+	-->
+	<div class="grid grid-cols-2 border-t border-l border-border rounded-none overflow-hidden">
 		{#each metrics as m (m.label)}
 			{@const values = sparklineValues(m)}
 			{@const arrow = trendArrow(m)}
@@ -160,62 +166,57 @@
 			{@const colorClass = trendColorClass(m)}
 			{@const stroke = strokeColor(m)}
 			{@const path = hasTrend ? sparklinePath(values, m.lowerIsBetter) : ""}
-			<Card.Root class="overflow-hidden py-3 gap-1">
-				<Card.Header class="pb-1 pt-3 px-4">
-					<div class="flex items-center justify-between">
-						<Card.Title class="text-xs font-medium text-muted-foreground">
-							{m.label}
-						</Card.Title>
-						<div class="flex items-baseline gap-1.5">
-							<span class="text-base font-semibold tabular-nums">
-								{currentValue(m)}{m.unit ?? ""}
+			<div class="flex flex-col border-r border-b border-border overflow-hidden">
+				<!-- Metric header -->
+				<div class="flex items-center justify-between px-3 pt-3 pb-1">
+					<span class="text-xs font-medium text-muted-foreground">{m.label}</span>
+					<div class="flex items-baseline gap-1.5">
+						<span class="text-base font-semibold tabular-nums">
+							{currentValue(m)}{m.unit ?? ""}
+						</span>
+						{#if arrow}
+							<span class="text-[10px] font-medium {colorClass}">
+								{arrow} {label}
 							</span>
-							{#if arrow}
-								<span class="text-[10px] font-medium {colorClass}">
-									{arrow} {label}
-								</span>
-							{/if}
-						</div>
+						{/if}
 					</div>
-				</Card.Header>
-				<Card.Content class="px-0 pb-0 pt-1">
-					{#if loading}
-						<div class="flex items-center justify-center py-3">
-							<LoadingSpinner size="sm" />
-						</div>
-					{:else if path}
-						<!-- Sparkline flush to card edges — no horizontal padding -->
-						<svg
-							width="100%"
-							height={SPARKLINE_HEIGHT}
-							viewBox="0 0 100 {SPARKLINE_HEIGHT}"
-							preserveAspectRatio="none"
-							fill="none"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<!-- Area fill -->
-							<path
-								d="{path} L100,{SPARKLINE_HEIGHT - 2} L0,{SPARKLINE_HEIGHT - 2} Z"
-								fill={stroke}
-								fill-opacity="0.12"
-							/>
-							<!-- Line -->
-							<path
-								d={path}
-								stroke={stroke}
-								stroke-width="1.5"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								vector-effect="non-scaling-stroke"
-							/>
-						</svg>
-					{:else}
-						<div class="px-4 pb-3">
-							<p class="text-[10px] text-muted-foreground">No trend data yet</p>
-						</div>
-					{/if}
-				</Card.Content>
-			</Card.Root>
+				</div>
+				<!-- Sparkline — flush to cell edges -->
+				{#if loading}
+					<div class="flex items-center justify-center py-3">
+						<LoadingSpinner size="sm" />
+					</div>
+				{:else if path}
+					<svg
+						width="100%"
+						height={SPARKLINE_HEIGHT}
+						viewBox="0 0 100 {SPARKLINE_HEIGHT}"
+						preserveAspectRatio="none"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<!-- Area fill -->
+						<path
+							d="{path} L100,{SPARKLINE_HEIGHT - 2} L0,{SPARKLINE_HEIGHT - 2} Z"
+							fill={stroke}
+							fill-opacity="0.12"
+						/>
+						<!-- Line -->
+						<path
+							d={path}
+							stroke={stroke}
+							stroke-width="1.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							vector-effect="non-scaling-stroke"
+						/>
+					</svg>
+				{:else}
+					<div class="px-3 pb-3">
+						<p class="text-[10px] text-muted-foreground">No trend data yet</p>
+					</div>
+				{/if}
+			</div>
 		{/each}
 	</div>
 {/if}

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import * as Card from "$lib/components/ui/card";
 	import CheckCircle2Icon from "@lucide/svelte/icons/check-circle-2";
-	import ScaleIcon from "@lucide/svelte/icons/scale";
 	import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import { navigationStore } from "$lib/stores/navigation.svelte";
@@ -73,21 +72,17 @@
 </script>
 
 {#if hasData}
-	<Card.Root class="min-h-[220px]">
-		<Card.Header class="pb-3">
-			<div class="flex items-center justify-between">
-				<Card.Title class="text-base">
-					<div class="flex items-center gap-2">
-						<ScaleIcon class="h-4 w-4 text-muted-foreground" />
-						Decision Queue
-					</div>
-				</Card.Title>
-				{#if isWarning}
+	<Card.Root class="min-h-[220px] gap-2">
+		<Card.Header class="pb-2">
+			<Card.Title class="text-sm font-semibold">What's Next</Card.Title>
+			<Card.Description class="text-xs">Purpose</Card.Description>
+			{#if isWarning}
+				<Card.Action>
 					<TriangleAlertIcon class="h-4 w-4 text-amber-500" />
-				{/if}
-			</div>
+				</Card.Action>
+			{/if}
 		</Card.Header>
-		<Card.Content>
+		<Card.Content class="pt-0">
 			{#if pendingDecisions.length === 0}
 				<div class="flex items-center gap-2 py-4 text-sm text-muted-foreground">
 					<CheckCircle2Icon class="h-4 w-4 text-emerald-500 shrink-0" />

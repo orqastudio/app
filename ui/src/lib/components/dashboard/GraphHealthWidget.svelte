@@ -8,7 +8,6 @@
 	import GitBranchIcon from "@lucide/svelte/icons/git-branch";
 	import ScanIcon from "@lucide/svelte/icons/scan";
 	import WrenchIcon from "@lucide/svelte/icons/wrench";
-	import ActivityIcon from "@lucide/svelte/icons/activity";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 	import { artifactGraphSDK } from "$lib/sdk/artifact-graph.svelte";
 	import type { IntegrityCheck } from "$lib/types/artifact-graph";
@@ -57,40 +56,38 @@
 	const fixableCount = $derived(checks.filter((c) => c.auto_fixable).length);
 </script>
 
-<Card.Root>
+<Card.Root class="gap-2">
 	<Card.Header class="pb-2">
-		<div class="flex items-center justify-between">
-			<Card.Title class="flex items-center gap-2 text-sm">
-				<ActivityIcon class="h-4 w-4 text-muted-foreground" />
-				Graph Health
-			</Card.Title>
+		<Card.Title class="text-sm font-semibold">Where You Are</Card.Title>
+		<Card.Description class="text-xs">Clarity</Card.Description>
+		<!-- Status dot + score go in Card.Action (right side of header) -->
+		<Card.Action>
 			{#if loading}
 				<LoadingSpinner size="sm" />
+			{:else}
+				<div class="flex items-center gap-2">
+					<span class="relative flex h-3 w-3 shrink-0 items-center justify-center">
+						<span class="absolute h-3 w-3 rounded-full {circleClass} opacity-30"></span>
+						<span class="h-1.5 w-1.5 rounded-full {circleClass}"></span>
+					</span>
+					<span class="text-sm font-semibold tabular-nums">{scoreLabel}</span>
+				</div>
 			{/if}
-		</div>
+		</Card.Action>
 	</Card.Header>
-	<Card.Content class="flex flex-col gap-4">
-		<!-- Status circle + score -->
-		<div class="flex items-center gap-4">
-			<div class="relative flex h-12 w-12 shrink-0 items-center justify-center">
-				<span class="h-12 w-12 rounded-full {circleClass} opacity-20"></span>
-				<span class="absolute h-8 w-8 rounded-full {circleClass}"></span>
-			</div>
-			<div>
-				<p class="text-xl font-semibold tabular-nums">{scoreLabel}</p>
-				<p class="text-xs text-muted-foreground">
-					{#if status === "empty"}
-						No graph data yet
-					{:else if status === "green"}
-						Well connected
-					{:else if status === "amber"}
-						Fragmented — some clusters
-					{:else}
-						Highly fragmented
-					{/if}
-				</p>
-			</div>
-		</div>
+	<Card.Content class="flex flex-col gap-4 pt-0">
+		<!-- Status description -->
+		<p class="text-xs text-muted-foreground">
+			{#if status === "empty"}
+				No graph data yet
+			{:else if status === "green"}
+				Well connected
+			{:else if status === "amber"}
+				Fragmented — some clusters
+			{:else}
+				Highly fragmented
+			{/if}
+		</p>
 
 		<!-- Graph-theoretic metrics (always visible once graph has nodes) -->
 		{#if health.totalNodes > 0}
@@ -142,37 +139,34 @@
 			</div>
 		{/if}
 
-		<!-- Actions -->
-		<div class="flex gap-2">
+		<!-- Actions — equal-width buttons in a 2-column grid -->
+		<div class="grid grid-cols-2 gap-2">
 			<Button
 				variant="outline"
 				size="sm"
 				onclick={onScan}
 				disabled={loading || fixing}
-				class="flex-1"
 			>
 				{#if loading}
 					<span class="mr-2"><LoadingSpinner size="sm" /></span>
 				{:else}
 					<ScanIcon class="mr-2 h-3.5 w-3.5" />
 				{/if}
-				Run integrity scan
+				Scan
 			</Button>
-			{#if scanned && fixableCount > 0 && onAutoFix}
-				<Button
-					variant="outline"
-					size="sm"
-					onclick={onAutoFix}
-					disabled={loading || fixing}
-				>
-					{#if fixing}
-						<span class="mr-2"><LoadingSpinner size="sm" /></span>
-					{:else}
-						<WrenchIcon class="mr-1.5 h-3.5 w-3.5" />
-					{/if}
-					Auto-fix ({fixableCount})
-				</Button>
-			{/if}
+			<Button
+				variant="outline"
+				size="sm"
+				onclick={onAutoFix}
+				disabled={loading || fixing || !scanned || fixableCount === 0 || !onAutoFix}
+			>
+				{#if fixing}
+					<span class="mr-2"><LoadingSpinner size="sm" /></span>
+				{:else}
+					<WrenchIcon class="mr-1.5 h-3.5 w-3.5" />
+				{/if}
+				Auto-fix{scanned && fixableCount > 0 ? ` (${fixableCount})` : ""}
+			</Button>
 		</div>
 	</Card.Content>
 </Card.Root>

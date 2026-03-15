@@ -242,15 +242,24 @@
 		}
 	}
 
+	// Map status to dot color class — matches LessonVelocityWidget's visual pattern
+	function statusDotColorClass(status: StageData["status"]): string {
+		switch (status) {
+			case "isolated":  return "bg-red-500";
+			case "attention": return "bg-amber-500";
+			default:          return "bg-muted-foreground/50";
+		}
+	}
+
 	const pipelineStages = $derived.by((): PipelineStage[] =>
 		stageDataList.map((data) => ({
 			key: data.def.key,
 			label: data.def.label,
 			count: data.count,
-			icon: data.def.icon,
+			// Use dotColorClass (coloured circle) to match LessonVelocityWidget pattern
+			dotColorClass: statusDotColorClass(data.status),
 			borderClass: statusBorderClass(data.status),
 			bgClass: statusBgClass(data.status),
-			iconClass: statusIconClass(data.status),
 			statusLabel: computeStatusLabel(data),
 			statusLabelClass: statusLabelClass(data.status),
 			tooltipTitle: data.reason,
@@ -264,16 +273,16 @@
 </script>
 
 {#if hasData}
-	<Card.Root>
-		<Card.Header class="pb-3">
-			<Card.Title class="text-base">
+	<Card.Root class="gap-2 h-full">
+		<Card.Header class="pb-2">
+			<Card.Title class="text-sm font-semibold">
 				<div class="flex items-center gap-2">
 					<WorkflowIcon class="h-4 w-4 text-muted-foreground" />
 					Knowledge Pipeline
 				</div>
 			</Card.Title>
 		</Card.Header>
-		<Card.Content>
+		<Card.Content class="pt-0">
 			<div class="pb-2">
 				<PipelineStages stages={pipelineStages} edges={pipelineEdges} />
 			</div>
