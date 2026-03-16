@@ -15,7 +15,7 @@ import { listen } from "@tauri-apps/api/event";
 import type { UnlistenFn } from "@tauri-apps/api/event";
 import { invoke, extractErrorMessage } from "../ipc/invoke.js";
 import type { ArtifactNode, ArtifactRef, GraphStats, IntegrityCheck, AppliedFix, HealthSnapshot } from "@orqastudio/types";
-import { ARTIFACT_TYPES } from "@orqastudio/types";
+import { ARTIFACT_TYPES, INVERSE_MAP } from "@orqastudio/types";
 
 // ---------------------------------------------------------------------------
 // Subscription callback types
@@ -290,14 +290,21 @@ class ArtifactGraphSDK {
         return result;
     }
 
-    /** Walk the pipeline chain upstream and downstream from an artifact. */
+    /**
+     * Walk the pipeline chain upstream and downstream from an artifact.
+     *
+     * Upstream: follow `grounded`, `informed-by`, `observed-by`, `driven-by`
+     * (toward principles, decisions, research).
+     *
+     * Downstream: follow `enforced-by`, `delivered-by`, `governed-by`
+     * (toward rules, tasks, delivery artifacts).
+     */
     pipelineChain(id: string): { upstream: ArtifactNode[]; downstream: ArtifactNode[] } {
         const upstream: ArtifactNode[] = [];
         const downstream: ArtifactNode[] = [];
         const visited = new Set<string>();
 
-        // Upstream: follow grounded/grounded-by, informed-by, observed-by
-        const upstreamTypes = ["grounded", "informed-by", "observed-by"];
+        const upstreamTypes = ["grounded", "informed-by", "observed-by", "driven-by"];
         const walkUp = (currentId: string) => {
             if (visited.has(currentId)) return;
             visited.add(currentId);
@@ -312,10 +319,9 @@ class ArtifactGraphSDK {
         };
         walkUp(id);
 
-        // Downstream: follow enforced-by, practiced-by, verified-by
         visited.clear();
         visited.add(id);
-        const downstreamTypes = ["enforced-by", "practiced-by", "verified-by"];
+        const downstreamTypes = ["enforced-by", "delivered-by", "governed-by"];
         const walkDown = (currentId: string) => {
             if (visited.has(currentId) && currentId !== id) return;
             visited.add(currentId);
@@ -333,31 +339,19 @@ class ArtifactGraphSDK {
         return { upstream, downstream };
     }
 
-    /** Find relationship edges where A→B exists but the expected inverse B→A is missing. */
+    /**
+     * Find relationship edges where A→B exists but the expected inverse B→A is missing.
+     *
+     * Uses the canonical INVERSE_MAP from @orqastudio/types as the source of truth.
+     */
     missingInverses(): { ref: ArtifactRef; expectedInverse: string }[] {
-        const INVERSE_MAP: Record<string, string> = {
-            "observes": "observed-by",
-            "observed-by": "observes",
-            "grounded": "grounded-by",
-            "grounded-by": "grounded",
-            "practices": "practiced-by",
-            "practiced-by": "practices",
-            "enforces": "enforced-by",
-            "enforced-by": "enforces",
-            "verifies": "verified-by",
-            "verified-by": "verifies",
-            "informs": "informed-by",
-            "informed-by": "informs",
-        };
-
         const result: { ref: ArtifactRef; expectedInverse: string }[] = [];
         for (const node of this.graph.values()) {
             for (const ref of node.references_out) {
                 if (!ref.relationship_type) continue;
-                const expectedInverse = INVERSE_MAP[ref.relationship_type];
+                const expectedInverse = INVERSE_MAP.get(ref.relationship_type);
                 if (!expectedInverse) continue;
 
-                // Check if the target has the inverse relationship pointing back
                 const target = this.graph.get(ref.target_id);
                 if (!target) continue;
 
