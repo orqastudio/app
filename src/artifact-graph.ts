@@ -76,6 +76,26 @@ export const ARTIFACT_TYPES = [
 
 export type ArtifactGraphType = (typeof ARTIFACT_TYPES)[number];
 
+/**
+ * The 12 canonical artifact statuses.
+ *
+ * Projects define these in `project.json` with labels, icons, and auto-transition
+ * rules. This type constrains the valid status values.
+ */
+export type CanonicalStatus =
+    | "captured"
+    | "exploring"
+    | "ready"
+    | "prioritised"
+    | "active"
+    | "hold"
+    | "blocked"
+    | "review"
+    | "completed"
+    | "surpassed"
+    | "archived"
+    | "recurring";
+
 /** Category of integrity issue found in the artifact graph. */
 export type IntegrityCategory =
     | "BrokenLink"

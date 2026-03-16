@@ -9,6 +9,7 @@ export type {
 	ArtifactTypeConfig,
 	ArtifactGroupConfig,
 	ArtifactEntry,
+	ProjectRelationshipConfig,
 } from "./project.js";
 export { isArtifactGroup } from "./project.js";
 
@@ -86,6 +87,7 @@ export type {
 	ArtifactRef,
 	GraphStats,
 	ArtifactGraphType,
+	CanonicalStatus,
 	IntegrityCategory,
 	IntegritySeverity,
 	IntegrityCheck,

@@ -93,3 +93,20 @@ export type ArtifactEntry = ArtifactTypeConfig | ArtifactGroupConfig;
 export function isArtifactGroup(entry: ArtifactEntry): entry is ArtifactGroupConfig {
 	return "children" in entry;
 }
+
+/**
+ * A project-level relationship type defined in `project.json`.
+ *
+ * Extends the canonical relationship vocabulary with project-specific pairs
+ * (e.g. `depends-on` / `depended-on-by`).
+ */
+export interface ProjectRelationshipConfig {
+	/** The forward relationship key (e.g. "depends-on"). */
+	key: string;
+	/** The inverse relationship key (e.g. "depended-on-by"). */
+	inverse: string;
+	/** Human-readable label for the forward direction. */
+	label?: string;
+	/** Human-readable label for the inverse direction. */
+	inverse_label?: string;
+}
