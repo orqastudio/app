@@ -6,13 +6,11 @@
 	let {
 		side = "top",
 		delayDuration,
-		class: contentClass,
 		trigger,
 		children,
 	}: {
 		side?: "top" | "bottom" | "left" | "right";
 		delayDuration?: number;
-		class?: string;
 		trigger: Snippet<[{ props: Record<string, unknown> }]>;
 		children: Snippet;
 	} = $props();
@@ -24,7 +22,7 @@
 			{@render trigger({ props })}
 		{/snippet}
 	</TooltipPrimitive.Trigger>
-	<TooltipContent {side} class={contentClass}>
+	<TooltipContent {side}>
 		{@render children()}
 	</TooltipContent>
 </TooltipPrimitive.Root>

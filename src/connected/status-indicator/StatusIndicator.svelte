@@ -6,11 +6,9 @@
 	let {
 		status,
 		mode = "badge",
-		class: className,
 	}: {
 		status: string;
 		mode?: "badge" | "dot" | "inline";
-		class?: string;
 	} = $props();
 
 	// Resolve statuses from the store's project config
@@ -25,4 +23,4 @@
 	);
 </script>
 
-<Status {status} {statuses} {mode} class={className} />
+<Status {status} {statuses} {mode} />

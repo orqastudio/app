@@ -4,7 +4,6 @@
 	type AlertDialogBaseProps = {
 		open: boolean;
 		trigger?: Snippet<[{ props: Record<string, unknown> }]>;
-		class?: string;
 	};
 
 	type AlertDialogWithTitle = AlertDialogBaseProps & {
@@ -55,7 +54,6 @@
 		onCancel,
 		header,
 		footer,
-		class: contentClass,
 		children,
 	}: AlertDialogProps = $props();
 </script>
@@ -68,7 +66,7 @@
 			{/snippet}
 		</AlertDialogPrimitive.Trigger>
 	{/if}
-	<AlertDialogContent class={contentClass}>
+	<AlertDialogContent>
 		{#if header}
 			{@render header()}
 		{:else if title}

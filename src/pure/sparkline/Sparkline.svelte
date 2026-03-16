@@ -12,7 +12,6 @@
 		padding = 4,
 		fixedMin,
 		fixedMax,
-		class: className = "",
 	}: {
 		/** Numeric values to plot (left-to-right) */
 		values: number[];
@@ -28,7 +27,6 @@
 		padding?: number;
 		fixedMin?: number;
 		fixedMax?: number;
-		class?: string;
 	} = $props();
 
 	const path = $derived(sparklinePath(values, width, height, { padding, fixedMin, fixedMax }));
@@ -40,7 +38,7 @@
 		{width}
 		{height}
 		viewBox="0 0 {width} {height}"
-		class="shrink-0 {className}"
+		class="shrink-0"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
 	>

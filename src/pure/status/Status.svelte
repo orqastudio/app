@@ -1,13 +1,11 @@
 <script lang="ts">
 	import { resolveStatus, statusColorClass, type StatusConfig } from "./status-utils.js";
 	import { resolveIcon } from "../icon/icon-utils.js";
-	import { cn } from "../../utils/cn.js";
 
 	let {
 		status,
 		statuses,
 		mode = "badge",
-		class: className,
 	}: {
 		/** Status key to render (e.g. "active", "completed", "blocked") */
 		status: string;
@@ -15,7 +13,6 @@
 		statuses?: StatusConfig[];
 		/** Rendering mode */
 		mode?: "badge" | "dot" | "inline";
-		class?: string;
 	} = $props();
 
 	const config = $derived(resolveStatus(status, statuses));
@@ -25,18 +22,15 @@
 </script>
 
 {#if mode === "dot"}
-	<Icon class={cn("inline-block h-3.5 w-3.5 shrink-0", colorClass, isSpinning && "status-spin", className)} />
+	<Icon class="inline-block h-3.5 w-3.5 shrink-0 {colorClass} {isSpinning ? 'status-spin' : ''}" />
 {:else if mode === "inline"}
-	<span class={cn("inline-flex items-center gap-1 text-xs", colorClass, className)}>
-		<Icon class={cn("h-3.5 w-3.5 shrink-0", isSpinning && "status-spin")} />
+	<span class="inline-flex items-center gap-1 text-xs {colorClass}">
+		<Icon class="h-3.5 w-3.5 shrink-0 {isSpinning ? 'status-spin' : ''}" />
 		<span>{config.label}</span>
 	</span>
 {:else}
-	<span class={cn(
-		"inline-flex items-center gap-1.5 rounded border border-border bg-muted/30 px-1.5 py-0.5 text-xs text-muted-foreground",
-		className,
-	)}>
-		<Icon class={cn("h-3 w-3 shrink-0", colorClass, isSpinning && "status-spin")} />{config.label}
+	<span class="inline-flex items-center gap-1.5 rounded border border-border bg-muted/30 px-1.5 py-0.5 text-xs text-muted-foreground">
+		<Icon class="h-3 w-3 shrink-0 {colorClass} {isSpinning ? 'status-spin' : ''}" />{config.label}
 	</span>
 {/if}
 

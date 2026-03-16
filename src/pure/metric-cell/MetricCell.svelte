@@ -2,15 +2,23 @@
 	import type { Component, Snippet } from "svelte";
 	import { formatTrend, trendArrow, trendColorClass } from "../sparkline/sparkline-utils.js";
 
+	const VALUE_COLOR_MAP = {
+		default: "text-foreground",
+		muted: "text-muted-foreground",
+		primary: "text-primary",
+		success: "text-success",
+		warning: "text-warning",
+		destructive: "text-destructive",
+	} as const;
+
 	let {
 		label,
 		value,
 		trend,
 		lowerIsBetter = true,
 		icon: Icon,
-		valueClass,
+		valueColor = "default",
 		children,
-		class: className = "",
 	}: {
 		/** Metric label text */
 		label: string;
@@ -22,17 +30,16 @@
 		lowerIsBetter?: boolean;
 		/** Optional icon displayed with the label */
 		icon?: Component;
-		/** Custom class for the value text */
-		valueClass?: string;
+		/** Semantic colour for the value */
+		valueColor?: keyof typeof VALUE_COLOR_MAP;
 		/** Optional content below the value (e.g. a Sparkline) */
 		children?: Snippet;
-		class?: string;
 	} = $props();
 
 	const trendClass = $derived(trendColorClass(trend ?? null, lowerIsBetter));
 </script>
 
-<div class="space-y-1 {className}">
+<div class="space-y-1">
 	<div class="flex items-baseline justify-between">
 		<span class="flex items-center gap-1 text-xs text-muted-foreground">
 			{#if Icon}
@@ -41,7 +48,7 @@
 			{label}
 		</span>
 		<div class="flex items-center gap-1.5">
-			<span class="text-lg font-semibold tabular-nums {valueClass ?? 'text-foreground'}">
+			<span class="text-lg font-semibold tabular-nums {VALUE_COLOR_MAP[valueColor]}">
 				{value}
 			</span>
 			{#if trend !== undefined && trend !== null}

@@ -10,6 +10,10 @@ const meta = {
 			control: "select",
 			options: ["target", "shield", "zap", "lightbulb", "flag", "bot", "brain", "rocket", "workflow", "network"],
 		},
+		size: {
+			control: "select",
+			options: ["xs", "sm", "md", "lg", "xl"],
+		},
 	},
 } satisfies Meta;
 
@@ -17,19 +21,23 @@ export default meta;
 type Story = StoryObj;
 
 export const Default: Story = {
-	args: { name: "target" },
+	args: { name: "target", size: "md" },
+};
+
+export const ExtraSmall: Story = {
+	args: { name: "shield", size: "xs" },
 };
 
 export const Small: Story = {
-	args: { name: "shield", class: "h-3 w-3" },
+	args: { name: "shield", size: "sm" },
 };
 
 export const Large: Story = {
-	args: { name: "rocket", class: "h-8 w-8" },
+	args: { name: "rocket", size: "lg" },
 };
 
-export const StatusIcon: Story = {
-	args: { name: "circle-check-big", class: "h-5 w-5 text-success" },
+export const ExtraLarge: Story = {
+	args: { name: "brain", size: "xl" },
 };
 
 export const UnknownFallback: Story = {

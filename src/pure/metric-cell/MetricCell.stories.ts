@@ -15,7 +15,7 @@ export const WithPositiveTrend: Story = {
 		label: "Errors",
 		value: 12,
 		trend: 25,
-		valueClass: "text-destructive",
+		valueColor: "destructive",
 	},
 };
 
@@ -24,7 +24,7 @@ export const WithNegativeTrend: Story = {
 		label: "Warnings",
 		value: 3,
 		trend: -40,
-		valueClass: "text-warning",
+		valueColor: "warning",
 	},
 };
 

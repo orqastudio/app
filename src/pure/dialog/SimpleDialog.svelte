@@ -6,7 +6,6 @@
 		trigger?: Snippet<[{ props: Record<string, unknown> }]>;
 		children: Snippet;
 		footer?: Snippet;
-		class?: string;
 	};
 
 	type DialogWithTitle = DialogBaseProps & {
@@ -39,7 +38,6 @@
 		description,
 		header,
 		footer,
-		class: contentClass,
 		children,
 	}: DialogProps = $props();
 </script>
@@ -52,7 +50,7 @@
 			{/snippet}
 		</DialogPrimitive.Trigger>
 	{/if}
-	<DialogContent class={contentClass}>
+	<DialogContent>
 		{#if header}
 			{@render header()}
 		{:else if title}

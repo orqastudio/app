@@ -3,10 +3,8 @@
 
 	let {
 		artifactId,
-		class: className = "",
 	}: {
 		artifactId: string;
-		class?: string;
 	} = $props();
 
 	const stores = getStores();
@@ -14,7 +12,7 @@
 </script>
 
 <button
-	class="text-primary hover:underline underline-offset-2 text-sm {className}"
+	class="text-primary hover:underline underline-offset-2 text-sm"
 	onclick={() => stores.navigationStore.navigate("artifact", artifactId)}
 >
 	{artifact?.title ?? artifactId}
