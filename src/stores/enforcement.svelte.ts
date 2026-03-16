@@ -5,7 +5,7 @@ import type {
 	StoredEnforcementViolation,
 } from "@orqastudio/types";
 
-class EnforcementStore {
+export class EnforcementStore {
 	rules = $state<EnforcementRule[]>([]);
 	violations = $state<EnforcementViolation[]>([]);
 	/** Violation history loaded from SQLite (persistent across sessions). */
@@ -65,5 +65,3 @@ class EnforcementStore {
 		}
 	}
 }
-
-export const enforcementStore = new EnforcementStore();

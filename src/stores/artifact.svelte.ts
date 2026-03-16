@@ -1,8 +1,8 @@
 import { invoke, extractErrorMessage } from "../ipc/invoke.js";
-import { artifactGraphSDK } from "../graph/artifact-graph.svelte.js";
+import { getStores } from "../registry.svelte.js";
 import type { NavTree } from "@orqastudio/types";
 
-class ArtifactStore {
+export class ArtifactStore {
 	// The full navigation tree — loaded once, refreshed by file watcher
 	navTree = $state<NavTree | null>(null);
 	navTreeLoading = $state(false);
@@ -34,7 +34,7 @@ class ArtifactStore {
 		this.activeContentLoading = true;
 		this.activeContentError = null;
 		try {
-			const content = await artifactGraphSDK.readContent(path);
+			const content = await getStores().artifactGraphSDK.readContent(path);
 			this.activeContent = content;
 		} catch (err: unknown) {
 			const message = extractErrorMessage(err);
@@ -60,5 +60,3 @@ class ArtifactStore {
 		this.activeContentError = null;
 	}
 }
-
-export const artifactStore = new ArtifactStore();

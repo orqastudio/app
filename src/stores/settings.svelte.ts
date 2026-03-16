@@ -22,7 +22,7 @@ function defaultApplyTheme(mode: ThemeMode): void {
 	}
 }
 
-class SettingsStore {
+export class SettingsStore {
 	themeMode = $state<ThemeMode>("system");
 	defaultModel = $state<DefaultModel>("auto");
 	fontSize = $state<number>(14);
@@ -275,5 +275,3 @@ class SettingsStore {
 		return this.sidecarStatus.state === "connected";
 	}
 }
-
-export const settingsStore = new SettingsStore();

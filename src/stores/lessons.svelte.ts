@@ -1,7 +1,7 @@
 import { invoke, extractErrorMessage } from "../ipc/invoke.js";
 import type { Lesson } from "@orqastudio/types";
 
-class LessonStore {
+export class LessonStore {
 	lessons = $state<Lesson[]>([]);
 	loading = $state(false);
 	error = $state<string | null>(null);
@@ -53,5 +53,3 @@ class LessonStore {
 		}
 	}
 }
-
-export const lessonStore = new LessonStore();

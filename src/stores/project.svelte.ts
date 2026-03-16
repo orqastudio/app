@@ -7,7 +7,7 @@ import type {
 	ArtifactEntry,
 } from "@orqastudio/types";
 
-class ProjectStore {
+export class ProjectStore {
 	activeProject = $state<Project | null>(null);
 	projects = $state<ProjectSummary[]>([]);
 	loading = $state(false);
@@ -235,5 +235,3 @@ class ProjectStore {
 		this.error = null;
 	}
 }
-
-export const projectStore = new ProjectStore();

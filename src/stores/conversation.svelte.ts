@@ -36,7 +36,7 @@ export interface PendingApproval {
 /** Default model used when no explicit model is configured. */
 const DEFAULT_MODEL_FALLBACK = "auto";
 
-class ConversationStore {
+export class ConversationStore {
 	messages = $state<Message[]>([]);
 	streamingContent = $state("");
 	streamingThinking = $state("");
@@ -324,5 +324,3 @@ class ConversationStore {
 		}
 	}
 }
-
-export const conversationStore = new ConversationStore();

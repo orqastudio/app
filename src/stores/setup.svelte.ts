@@ -3,7 +3,7 @@ import type { ClaudeCliInfo, SetupStatus, SetupStepStatus } from "@orqastudio/ty
 
 const STEP_IDS = ["claude_cli", "claude_auth", "sidecar", "embedding_model", "complete"] as const;
 
-class SetupStore {
+export class SetupStore {
 	setupComplete = $state(true);
 	currentStep = $state(0);
 	loading = $state(false);
@@ -107,5 +107,3 @@ class SetupStore {
 		this.sidecarStarted = false;
 	}
 }
-
-export const setupStore = new SetupStore();

@@ -1,12 +1,17 @@
-export { sessionStore } from "./session.svelte.js";
-export { projectStore } from "./project.svelte.js";
-export { artifactStore } from "./artifact.svelte.js";
-export { conversationStore } from "./conversation.svelte.js";
+// Store classes (for registry construction)
+export { SessionStore } from "./session.svelte.js";
+export { ProjectStore } from "./project.svelte.js";
+export { ArtifactStore } from "./artifact.svelte.js";
+export { ConversationStore } from "./conversation.svelte.js";
 export type { ToolCallState, ContextEntry, PendingApproval } from "./conversation.svelte.js";
-export { enforcementStore } from "./enforcement.svelte.js";
-export { lessonStore } from "./lessons.svelte.js";
-export { setupStore } from "./setup.svelte.js";
-export { settingsStore } from "./settings.svelte.js";
+export { EnforcementStore } from "./enforcement.svelte.js";
+export { LessonStore } from "./lessons.svelte.js";
+export { SetupStore } from "./setup.svelte.js";
+export { SettingsStore } from "./settings.svelte.js";
 export type { ThemeMode, DefaultModel } from "./settings.svelte.js";
-export { errorStore, initBrowserHandlers } from "./errors.svelte.js";
+export { ErrorStoreImpl, initBrowserHandlers } from "./errors.svelte.js";
 export type { AppError } from "./errors.svelte.js";
+export { NavigationStore } from "./navigation.svelte.js";
+export type { ActivityView, ActivityGroup, ExplorerView, SubCategoryConfig } from "./navigation.svelte.js";
+export { ToastStore, createToastConvenience } from "./toast.svelte.js";
+export type { Toast, ToastType } from "./toast.svelte.js";

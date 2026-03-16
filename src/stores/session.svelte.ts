@@ -1,7 +1,7 @@
 import type { Session, SessionSummary } from "@orqastudio/types";
 import { invoke, extractErrorMessage } from "../ipc/invoke.js";
 
-class SessionStore {
+export class SessionStore {
 	sessions = $state<SessionSummary[]>([]);
 	activeSession = $state<Session | null>(null);
 	isLoading = $state(false);
@@ -170,5 +170,3 @@ class SessionStore {
 		}
 	}
 }
-
-export const sessionStore = new SessionStore();
