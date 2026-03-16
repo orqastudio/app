@@ -44,8 +44,7 @@
     "dist/"
   ],
   "dependencies": {
-    "@orqastudio/types": "^0.1.0",
-    "cytoscape": "^3.33.1"
+    "@orqastudio/types": "^0.1.0"
   },
   "peerDependencies": {
     "@tauri-apps/api": ">=2.0.0",

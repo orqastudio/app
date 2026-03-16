@@ -3,8 +3,8 @@ export { initializeStores, getStores } from "./registry.svelte.js";
 export type { OrqaStores } from "./registry.svelte.js";
 
 // Graph SDK class + types
-export { ArtifactGraphSDK, ARTIFACT_TYPE_COLORS } from "./graph/artifact-graph.svelte.js";
-export type { ArtifactGraphConfig, NodePosition, GraphHealth, BackboneArtifact, KnowledgeGaps } from "./graph/artifact-graph.svelte.js";
+export { ArtifactGraphSDK } from "./graph/artifact-graph.svelte.js";
+export type { ArtifactGraphConfig } from "./graph/artifact-graph.svelte.js";
 
 // IPC utilities
 export { invoke, extractErrorMessage, createStreamChannel } from "./ipc/invoke.js";
