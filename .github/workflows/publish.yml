@@ -17,8 +17,7 @@ jobs:
           node-version: "22"
           registry-url: "https://npm.pkg.github.com"
           scope: "@orqastudio"
-          cache: npm
-      - run: npm ci
+      - run: npm install
       - run: npm run build
       - run: npm publish
         env:
