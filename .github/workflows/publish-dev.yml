@@ -29,7 +29,8 @@ jobs:
       - name: Set dev version
         run: |
           SHA=$(git rev-parse --short HEAD)
-          npm version "0.0.0-dev.${SHA}" --no-git-tag-version
+          BASE=$(node -p "require('./package.json').version")
+          npm version "${BASE}.${SHA}" --no-git-tag-version
 
       - name: Publish with dev tag
         run: npm publish --tag dev
