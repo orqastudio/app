@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/graph-visualiser",
-  "version": "0.1.0",
+  "version": "0.1.0-pre",
   "description": "Graph visualisation, topology analysis, and layout engine for OrqaStudio",
   "type": "module",
   "main": "dist/index.js",
