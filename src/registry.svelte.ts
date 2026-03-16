@@ -24,6 +24,7 @@ import { SettingsStore } from "./stores/settings.svelte.js";
 import { ErrorStoreImpl } from "./stores/errors.svelte.js";
 import { NavigationStore } from "./stores/navigation.svelte.js";
 import { ToastStore, createToastConvenience } from "./stores/toast.svelte.js";
+import { PluginRegistry } from "./plugins/plugin-registry.svelte.js";
 
 /** The full set of SDK store instances. */
 export interface OrqaStores {
@@ -39,6 +40,7 @@ export interface OrqaStores {
     errorStore: ErrorStoreImpl;
     navigationStore: NavigationStore;
     toastStore: ToastStore;
+    pluginRegistry: PluginRegistry;
     /** Convenience functions: toast.success(), toast.error(), etc. */
     toast: ReturnType<typeof createToastConvenience>;
 }
@@ -77,6 +79,7 @@ export function initializeStores(): OrqaStores {
     const errorStore = new ErrorStoreImpl();
     const navigationStore = new NavigationStore();
     const toastStore = new ToastStore();
+    const pluginRegistry = new PluginRegistry();
     const toast = createToastConvenience(toastStore);
 
     const stores: OrqaStores = {
@@ -92,6 +95,7 @@ export function initializeStores(): OrqaStores {
         errorStore,
         navigationStore,
         toastStore,
+        pluginRegistry,
         toast,
     };
 

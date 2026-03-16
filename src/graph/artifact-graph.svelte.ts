@@ -20,6 +20,12 @@ import { invoke, extractErrorMessage } from "../ipc/invoke.js";
 import type { ArtifactNode, ArtifactRef, GraphStats, IntegrityCheck, AppliedFix, HealthSnapshot, ProposedTransition } from "@orqastudio/types";
 import { ARTIFACT_TYPES, INVERSE_MAP } from "@orqastudio/types";
 
+/** Options for project-filtered queries. */
+export interface QueryOptions {
+    /** Filter to a specific child project. Omit to include all projects. */
+    project?: string;
+}
+
 // ---------------------------------------------------------------------------
 // Subscription callback types
 // ---------------------------------------------------------------------------
@@ -153,14 +159,46 @@ export class ArtifactGraphSDK {
     // Resolution — synchronous in-memory lookups
     // -----------------------------------------------------------------------
 
-    resolve(id: string): ArtifactNode | undefined {
-        return this.graph.get(id);
+    resolve(id: string, options?: QueryOptions): ArtifactNode | undefined {
+        // Direct key lookup (handles both qualified "sdk::EPIC-001" and plain "EPIC-001").
+        const direct = this.graph.get(id);
+        if (direct) return direct;
+
+        // If a project is specified, try qualified key.
+        if (options?.project) {
+            const qualified = `${options.project}::${id}`;
+            return this.graph.get(qualified);
+        }
+
+        // Fallback: scan for matching id field (org mode, unqualified lookup).
+        for (const node of this.graph.values()) {
+            if (node.id === id) return node;
+        }
+        return undefined;
     }
 
     resolveByPath(path: string): ArtifactNode | undefined {
         const id = this.pathIndex.get(path);
         if (!id) return undefined;
         return this.graph.get(id);
+    }
+
+    // -----------------------------------------------------------------------
+    // Organisation-mode getters
+    // -----------------------------------------------------------------------
+
+    /** Unique project names from the graph. Empty in single-project mode. */
+    get projects(): string[] {
+        const names = new Set<string>();
+        for (const node of this.graph.values()) {
+            if (node.project) names.add(node.project);
+        }
+        return [...names];
+    }
+
+    /** Whether this graph contains nodes from multiple projects. */
+    get isOrganisation(): boolean {
+        return this.projects.length > 0;
     }
 
     // -----------------------------------------------------------------------
@@ -179,18 +217,24 @@ export class ArtifactGraphSDK {
     // Bulk queries — synchronous
     // -----------------------------------------------------------------------
 
-    byType(type: string): ArtifactNode[] {
+    byType(type: string, options?: QueryOptions): ArtifactNode[] {
         const result: ArtifactNode[] = [];
         for (const node of this.graph.values()) {
-            if (node.artifact_type === type) result.push(node);
+            if (node.artifact_type === type) {
+                if (options?.project && node.project !== options.project) continue;
+                result.push(node);
+            }
         }
         return result;
     }
 
-    byStatus(status: string): ArtifactNode[] {
+    byStatus(status: string, options?: QueryOptions): ArtifactNode[] {
         const result: ArtifactNode[] = [];
         for (const node of this.graph.values()) {
-            if (node.status === status) result.push(node);
+            if (node.status === status) {
+                if (options?.project && node.project !== options.project) continue;
+                result.push(node);
+            }
         }
         return result;
     }

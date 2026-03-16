@@ -5,10 +5,14 @@
  * resolved lazily via `getStores()` so there are no circular import issues.
  * By the time any method or getter is called, `initializeStores()` has
  * already run.
+ *
+ * Supports both the new navigation model (project.json `navigation` array)
+ * and the legacy `artifacts` config. When `navigation` is present, the new
+ * model takes precedence.
  */
 
 import { getStores } from "../registry.svelte.js";
-import type { NavDocNode, NavType } from "@orqastudio/types";
+import type { NavDocNode, NavType, NavigationItem } from "@orqastudio/types";
 import { isArtifactGroup } from "@orqastudio/types";
 
 /**
@@ -35,12 +39,25 @@ export type ExplorerView =
 	| "artifact-viewer"
 	| "project-dashboard"
 	| "roadmap"
+	| "plugin-view"
 	| "settings";
 
 /** Sub-category display config. */
 export interface SubCategoryConfig {
 	key: string;
 	label: string;
+	icon?: string;
+	type?: NavigationItem["type"];
+	pluginSource?: string;
+}
+
+/** The resolved active navigation item for routing. */
+export interface ActiveNavItem {
+	key: string;
+	type: NavigationItem["type"];
+	icon: string;
+	label?: string;
+	pluginSource?: string;
 }
 
 export class NavigationStore {
@@ -53,8 +70,69 @@ export class NavigationStore {
 	breadcrumbs = $state<string[]>([]);
 	searchOverlayOpen = $state(false);
 
+	/** The currently active navigation item for routing. */
+	activeNavItem = $state<ActiveNavItem | null>(null);
+
+	// -----------------------------------------------------------------------
+	// Navigation tree accessors (new model)
+	// -----------------------------------------------------------------------
+
+	/** The navigation tree — from project.json or null for legacy projects. */
+	private get _navTree(): NavigationItem[] | null {
+		const { projectStore } = getStores();
+		return projectStore.navigation;
+	}
+
+	/** Whether the project uses the new navigation model. */
+	private get _useNewNav(): boolean {
+		return this._navTree !== null;
+	}
+
+	/**
+	 * Find a NavigationItem by key in the navigation tree (recursive).
+	 */
+	findNavItem(key: string): NavigationItem | null {
+		const tree = this._navTree;
+		if (!tree) return null;
+		return this._findInNavTree(tree, key);
+	}
+
+	private _findInNavTree(items: NavigationItem[], key: string): NavigationItem | null {
+		for (const item of items) {
+			if (item.key === key) return item;
+			if (item.children) {
+				const found = this._findInNavTree(item.children, key);
+				if (found) return found;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Find the parent group for a given nav item key.
+	 */
+	private _findParentGroup(key: string): NavigationItem | null {
+		const tree = this._navTree;
+		if (!tree) return null;
+		for (const item of tree) {
+			if (item.type === "group" && item.children) {
+				for (const child of item.children) {
+					if (child.key === key) return item;
+				}
+			}
+		}
+		return null;
+	}
+
+	// -----------------------------------------------------------------------
+	// Getters (work with both old and new nav model)
+	// -----------------------------------------------------------------------
+
 	/** Flat list of all artifact type keys from config (groups expanded to their children). */
 	get allArtifactKeys(): string[] {
+		if (this._useNewNav) {
+			return this._allNavLeafKeys();
+		}
 		const { projectStore } = getStores();
 		const config = projectStore.artifactConfig;
 		const keys: string[] = [];
@@ -70,8 +148,30 @@ export class NavigationStore {
 		return keys;
 	}
 
+	/** Get all leaf keys from the navigation tree. */
+	private _allNavLeafKeys(): string[] {
+		const tree = this._navTree;
+		if (!tree) return [];
+		const keys: string[] = [];
+		const collect = (items: NavigationItem[]) => {
+			for (const item of items) {
+				if (item.type === "group" && item.children) {
+					collect(item.children);
+				} else if (item.type !== "group") {
+					keys.push(item.key);
+				}
+			}
+		};
+		collect(tree);
+		return keys;
+	}
+
 	/** Keys of entries that are groups (have children). */
 	get groupKeys(): string[] {
+		if (this._useNewNav) {
+			const tree = this._navTree!;
+			return tree.filter((i) => i.type === "group").map((i) => i.key);
+		}
 		const { projectStore } = getStores();
 		return projectStore.artifactConfig
 			.filter(isArtifactGroup)
@@ -85,6 +185,15 @@ export class NavigationStore {
 
 	/** Whether the current activity is an artifact activity (not a built-in view). */
 	get isArtifactActivity(): boolean {
+		// In new nav model, check if the active nav item is a builtin artifact list
+		if (this._useNewNav && this.activeNavItem) {
+			const builtinViews = ["project", "artifact-graph", "settings", "configure", "chat"];
+			if (builtinViews.includes(this.activeNavItem.key)) return false;
+			// Plugin views are not artifact activities
+			if (this.activeNavItem.type === "plugin") return false;
+			// Builtin items that aren't special views are artifact lists
+			return this.activeNavItem.type === "builtin";
+		}
 		return this.allArtifactKeys.includes(this.activeActivity);
 	}
 
@@ -100,10 +209,21 @@ export class NavigationStore {
 	}
 
 	/**
-	 * Get label for a given key from the artifact config.
+	 * Get label for a given key from the navigation tree or artifact config.
 	 * Falls back to humanized key.
 	 */
 	getLabelForKey(key: string): string {
+		if (this._useNewNav) {
+			const item = this.findNavItem(key);
+			if (item?.label) return item.label;
+			// Try plugin registry
+			const { pluginRegistry } = getStores();
+			if (item?.type === "plugin" && item.pluginSource) {
+				const resolved = pluginRegistry.resolveNavigationItem(item);
+				return resolved.label;
+			}
+			return humanizeKey(key);
+		}
 		const { projectStore } = getStores();
 		const config = projectStore.artifactConfig;
 		for (const entry of config) {
@@ -119,6 +239,20 @@ export class NavigationStore {
 
 	/** Sub-categories (children) for a given group key. */
 	getGroupChildren(groupKey: string): SubCategoryConfig[] {
+		if (this._useNewNav) {
+			const tree = this._navTree!;
+			const group = tree.find((i) => i.key === groupKey && i.type === "group");
+			if (!group?.children) return [];
+			return group.children
+				.filter((c) => !c.hidden)
+				.map((c) => ({
+					key: c.key,
+					label: c.label ?? humanizeKey(c.key),
+					icon: c.icon,
+					type: c.type,
+					pluginSource: c.pluginSource,
+				}));
+		}
 		const { projectStore } = getStores();
 		const config = projectStore.artifactConfig;
 		for (const entry of config) {
@@ -131,6 +265,16 @@ export class NavigationStore {
 
 	/** All group sub-categories, keyed by group key. */
 	get groupSubCategories(): Record<string, string[]> {
+		if (this._useNewNav) {
+			const tree = this._navTree!;
+			const result: Record<string, string[]> = {};
+			for (const item of tree) {
+				if (item.type === "group" && item.children) {
+					result[item.key] = item.children.filter((c) => !c.hidden).map((c) => c.key);
+				}
+			}
+			return result;
+		}
 		const { projectStore } = getStores();
 		const config = projectStore.artifactConfig;
 		const result: Record<string, string[]> = {};
@@ -140,6 +284,15 @@ export class NavigationStore {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Get top-level navigation items for the ActivityBar.
+	 * In new nav model, returns the navigation tree items.
+	 * In legacy mode, returns null (ActivityBar uses artifactConfig).
+	 */
+	get topLevelNavItems(): NavigationItem[] | null {
+		return this._navTree;
 	}
 
 	/**
@@ -167,6 +320,12 @@ export class NavigationStore {
 
 	/** Return the configured `path` for the given artifact key, or null if not found. */
 	getConfiguredPath(key: string): string | null {
+		// In new nav model, check plugin schemas for paths
+		if (this._useNewNav) {
+			const { pluginRegistry } = getStores();
+			const schema = pluginRegistry.getSchema(key);
+			if (schema) return schema.defaultPath;
+		}
 		const { projectStore } = getStores();
 		const config = projectStore.artifactConfig;
 		for (const entry of config) {
@@ -181,12 +340,12 @@ export class NavigationStore {
 		return null;
 	}
 
+	// -----------------------------------------------------------------------
+	// Navigation actions
+	// -----------------------------------------------------------------------
+
 	setGroup(group: string) {
 		this.activeGroup = group;
-		if (group === "delivery") {
-			this.setSubCategory("roadmap");
-			return;
-		}
 		const children = this.getGroupChildren(group);
 		const first = children[0];
 		if (first) {
@@ -204,6 +363,27 @@ export class NavigationStore {
 		this.selectedArtifactPath = null;
 		this.breadcrumbs = [];
 
+		// Update activeNavItem for routing
+		if (this._useNewNav) {
+			const navItem = this.findNavItem(view);
+			if (navItem && navItem.type !== "group") {
+				this.activeNavItem = {
+					key: navItem.key,
+					type: navItem.type,
+					icon: navItem.icon,
+					label: navItem.label,
+					pluginSource: navItem.pluginSource,
+				};
+			} else {
+				// Built-in views not in the tree (chat, configure, etc.)
+				this.activeNavItem = {
+					key: view,
+					type: "builtin",
+					icon: "circle",
+				};
+			}
+		}
+
 		if (view === "project") {
 			this.activeGroup = null;
 			this.activeSubCategory = null;
@@ -213,22 +393,15 @@ export class NavigationStore {
 			this.activeGroup = null;
 			this.activeSubCategory = null;
 			this.navPanelCollapsed = true;
-		} else if (view === "roadmap") {
-			if (this.activeGroup === "delivery") {
-				this.explorerView = "roadmap";
-				if (this.navPanelCollapsed) {
-					this.navPanelCollapsed = false;
-				}
-			} else {
-				this.activeGroup = null;
-				this.activeSubCategory = null;
-				this.explorerView = "roadmap";
-				this.navPanelCollapsed = true;
-			}
 		} else if (view === "settings" || view === "configure") {
 			this.activeGroup = null;
 			this.activeSubCategory = null;
 			this.explorerView = "settings";
+			if (this.navPanelCollapsed) {
+				this.navPanelCollapsed = false;
+			}
+		} else if (this._useNewNav && this.activeNavItem?.type === "plugin") {
+			this.explorerView = "plugin-view";
 			if (this.navPanelCollapsed) {
 				this.navPanelCollapsed = false;
 			}
@@ -331,6 +504,16 @@ export class NavigationStore {
 	}
 
 	private _resolveKeyForNavTypePath(navTypePath: string): string | null {
+		// In new nav model, also check plugin schemas
+		if (this._useNewNav) {
+			const { pluginRegistry } = getStores();
+			const normalized = navTypePath.replace(/\\/g, "/").replace(/\/$/, "");
+			for (const schema of pluginRegistry.allSchemas) {
+				if (schema.defaultPath.replace(/\\/g, "/").replace(/\/$/, "") === normalized) {
+					return schema.key;
+				}
+			}
+		}
 		const { projectStore } = getStores();
 		const config = projectStore.artifactConfig;
 		const normalized = navTypePath.replace(/\\/g, "/").replace(/\/$/, "");
@@ -351,6 +534,18 @@ export class NavigationStore {
 	}
 
 	private _resolveGroupKeyForNavTypePath(navTypePath: string): string | null {
+		// In new nav model, check navigation tree
+		if (this._useNewNav) {
+			const normalized = navTypePath.replace(/\\/g, "/").replace(/\/$/, "");
+			const { pluginRegistry } = getStores();
+			// Find which schema matches this path, then find its parent group in nav tree
+			for (const schema of pluginRegistry.allSchemas) {
+				if (schema.defaultPath.replace(/\\/g, "/").replace(/\/$/, "") === normalized) {
+					const parent = this._findParentGroup(schema.key);
+					if (parent) return parent.key;
+				}
+			}
+		}
 		const { projectStore } = getStores();
 		const config = projectStore.artifactConfig;
 		const normalized = navTypePath.replace(/\\/g, "/").replace(/\/$/, "");

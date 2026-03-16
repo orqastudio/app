@@ -12,6 +12,6 @@ export type { ThemeMode, DefaultModel } from "./settings.svelte.js";
 export { ErrorStoreImpl, initBrowserHandlers } from "./errors.svelte.js";
 export type { AppError } from "./errors.svelte.js";
 export { NavigationStore } from "./navigation.svelte.js";
-export type { ActivityView, ActivityGroup, ExplorerView, SubCategoryConfig } from "./navigation.svelte.js";
+export type { ActivityView, ActivityGroup, ExplorerView, SubCategoryConfig, ActiveNavItem } from "./navigation.svelte.js";
 export { ToastStore, createToastConvenience } from "./toast.svelte.js";
 export type { Toast, ToastType } from "./toast.svelte.js";
