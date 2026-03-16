@@ -12,9 +12,6 @@ relationships:
   - target: MS-001
     type: delivers
     rationale: Epic belongs to this milestone
-  - target: DOC-044
-    type: informed-by
-    rationale: Referenced in documentation page Roadmap
   - target: PILLAR-001
     type: grounded-by
 ---

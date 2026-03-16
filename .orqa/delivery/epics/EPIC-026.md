@@ -27,9 +27,6 @@ relationships:
   - target: TASK-316
     type: delivered-by
     rationale: Epic contains this task
-  - target: DOC-044
-    type: informed-by
-    rationale: Referenced in documentation page Roadmap
   - target: EPIC-025
     type: depends-on
   - target: EPIC-029

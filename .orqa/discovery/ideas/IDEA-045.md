@@ -15,6 +15,8 @@ research-needed:
 relationships:
   - target: PILLAR-001
     type: grounded-by
+  - target: EPIC-005
+    type: merged-into
 ---
 ## Archived
 

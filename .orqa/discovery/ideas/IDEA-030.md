@@ -11,6 +11,8 @@ research-needed:
 relationships:
   - target: PILLAR-001
     type: grounded-by
+  - target: EPIC-080
+    type: merged-into
 ---
 ## Motivation
 

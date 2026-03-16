@@ -11,9 +11,6 @@ research-needed:
   - Mobile companion scope
   - API design for programmatic access
 relationships:
-  - target: DOC-044
-    type: informed-by
-    rationale: Referenced in documentation page Roadmap
   - target: PILLAR-001
     type: grounded-by
 ---

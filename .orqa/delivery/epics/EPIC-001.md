@@ -30,9 +30,6 @@ relationships:
   - target: DOC-036
     type: informed-by
     rationale: Referenced in documentation page Artifact Framework
-  - target: DOC-044
-    type: informed-by
-    rationale: Referenced in documentation page Roadmap
   - target: PILLAR-001
     type: grounded-by
   - target: IDEA-013

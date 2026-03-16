@@ -16,9 +16,6 @@ relationships:
   - target: EPIC-001
     type: delivers
     rationale: Task belongs to this epic
-  - target: DOC-044
-    type: informed-by
-    rationale: Referenced in documentation page Roadmap
   - target: TASK-311
     type: depended-on-by
 ---

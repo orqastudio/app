@@ -18,9 +18,6 @@ relationships:
   - target: EPIC-033
     type: delivers
     rationale: Task belongs to this epic
-  - target: DOC-044
-    type: informed-by
-    rationale: Referenced in documentation page Roadmap
   - target: SKILL-003
     type: grounded-by
   - target: SKILL-011

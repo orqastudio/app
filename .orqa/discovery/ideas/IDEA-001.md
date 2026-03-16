@@ -20,9 +20,6 @@ relationships:
   - target: DOC-036
     type: informed-by
     rationale: Referenced in documentation page Artifact Framework
-  - target: DOC-044
-    type: informed-by
-    rationale: Referenced in documentation page Roadmap
   - target: EPIC-040
     type: evolves-into
   - target: PILLAR-001

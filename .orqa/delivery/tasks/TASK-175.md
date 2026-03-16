@@ -20,8 +20,6 @@ relationships:
     type: depends-on
   - target: SKILL-020
     type: grounded-by
-  - target: SKILL-045
-    type: grounded-by
   - target: TASK-341
     type: depended-on-by
 ---

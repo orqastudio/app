@@ -18,6 +18,8 @@ relationships:
     type: grounded-by
   - target: PILLAR-002
     type: grounded-by
+  - target: EPIC-048
+    type: evolves-into
 ---
 ## Motivation
 

@@ -16,8 +16,6 @@ relationships:
     rationale: Task belongs to this epic
   - target: SKILL-020
     type: grounded-by
-  - target: SKILL-045
-    type: grounded-by
   - target: SKILL-029
     type: grounded-by
   - target: TASK-219

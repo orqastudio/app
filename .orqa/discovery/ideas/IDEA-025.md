@@ -16,6 +16,8 @@ relationships:
     rationale: "Auto-generated inverse of informed-by relationship from TASK-406"
   - target: PILLAR-001
     type: grounded-by
+  - target: EPIC-045
+    type: evolves-into
 ---
 ## Motivation
 
