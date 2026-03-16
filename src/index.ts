@@ -4,6 +4,7 @@ export type {
 	DetectedStack,
 	ScanResult,
 	ProjectSettings,
+	ChildProjectConfig,
 	GovernanceCounts,
 	ProjectScanResult,
 	ArtifactTypeConfig,
@@ -19,7 +20,14 @@ export type {
 	StatusAutoRule,
 	StatusDefinition,
 } from "./project.js";
-export { isArtifactGroup, DEFAULT_ARTIFACT_LINK_COLORS } from "./project.js";
+export {
+	isArtifactGroup,
+	DEFAULT_ARTIFACT_LINK_COLORS,
+	PLATFORM_ARTIFACT_TYPES,
+	PLATFORM_RELATIONSHIPS,
+	PLATFORM_NAVIGATION,
+} from "./project.js";
+export type { PlatformArtifactType } from "./project.js";
 
 export type {
 	Session,
@@ -108,3 +116,19 @@ export type {
 export { ARTIFACT_TYPES } from "./artifact-graph.js";
 
 export { INVERSE_MAP, SINGLE_REF_FIELDS, ARRAY_REF_FIELDS } from "./constants.js";
+
+// Plugin types
+export type {
+	PluginManifest,
+	PluginProvides,
+	ArtifactSchema,
+	ArtifactSchemaFrontmatter,
+	ViewRegistration,
+	WidgetRegistration,
+	RelationshipType,
+	SettingsRegistration,
+	DefaultNavItem,
+	NavItemType,
+	NavigationItem,
+	PluginProjectConfig,
+} from "./plugin.js";

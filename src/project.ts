@@ -118,8 +118,18 @@ export interface StatusDefinition {
 	auto_rules?: StatusAutoRule[];
 }
 
+/** A child project reference in an organisation-mode project. */
+export interface ChildProjectConfig {
+	name: string;
+	path: string;
+}
+
 export interface ProjectSettings {
 	name: string;
+	/** When true, this project aggregates child projects into a single graph. */
+	organisation?: boolean;
+	/** Child project paths (relative to project root or absolute). */
+	projects?: ChildProjectConfig[];
 	description: string | null;
 	default_model: string;
 	excluded_paths: string[];
@@ -129,6 +139,10 @@ export interface ProjectSettings {
 	show_thinking: boolean;
 	custom_system_prompt: string | null;
 	artifacts?: ArtifactEntry[];
+	/** Navigation tree — typed, ordered array. Replaces artifacts for view routing when present. */
+	navigation?: import("./plugin.js").NavigationItem[];
+	/** Per-plugin configuration and overrides. */
+	plugins?: Record<string, import("./plugin.js").PluginProjectConfig>;
 	statuses?: StatusDefinition[];
 	relationshipDisplay?: RelationshipDisplayConfig;
 	artifactLinks?: ArtifactLinksConfig;
@@ -182,3 +196,164 @@ export type ArtifactEntry = ArtifactTypeConfig | ArtifactGroupConfig;
 export function isArtifactGroup(entry: ArtifactEntry): entry is ArtifactGroupConfig {
 	return "children" in entry;
 }
+
+// ---------------------------------------------------------------------------
+// Platform Constants
+// ---------------------------------------------------------------------------
+
+import type { RelationshipType, NavigationItem } from "./plugin.js";
+
+/**
+ * Artifact types that ship with the platform — every project has these.
+ * Ideas are platform-level (every project captures ideas).
+ * How ideas become delivery artifacts is plugin domain.
+ */
+export const PLATFORM_ARTIFACT_TYPES = [
+	"pillar",
+	"vision",
+	"persona",
+	"grounding",
+	"decision",
+	"rule",
+	"lesson",
+	"skill",
+	"agent",
+	"idea",
+] as const;
+
+export type PlatformArtifactType = (typeof PLATFORM_ARTIFACT_TYPES)[number];
+
+/**
+ * Canonical platform relationships using the same RelationshipType structure
+ * as plugin relationships. The integrity validator merges both into one vocabulary.
+ *
+ * Empty `from`/`to` arrays mean "any artifact type".
+ */
+export const PLATFORM_RELATIONSHIPS: readonly RelationshipType[] = [
+	{
+		key: "informs",
+		inverse: "informed-by",
+		label: "Informs",
+		inverseLabel: "Informed By",
+		from: [],
+		to: [],
+		description: "Knowledge flows downstream",
+	},
+	{
+		key: "evolves-into",
+		inverse: "evolves-from",
+		label: "Evolves Into",
+		inverseLabel: "Evolves From",
+		from: [],
+		to: [],
+		description: "Artifact lineage",
+	},
+	{
+		key: "drives",
+		inverse: "driven-by",
+		label: "Drives",
+		inverseLabel: "Driven By",
+		from: ["decision"],
+		to: [],
+		description: "Decision motivates work",
+	},
+	{
+		key: "governs",
+		inverse: "governed-by",
+		label: "Governs",
+		inverseLabel: "Governed By",
+		from: ["decision"],
+		to: [],
+		description: "Decision governs standards",
+	},
+	{
+		key: "enforces",
+		inverse: "enforced-by",
+		label: "Enforces",
+		inverseLabel: "Enforced By",
+		from: ["rule"],
+		to: ["decision"],
+		description: "Rule enforces decision",
+	},
+	{
+		key: "grounded",
+		inverse: "grounded-by",
+		label: "Grounded",
+		inverseLabel: "Grounded By",
+		from: [],
+		to: ["pillar"],
+		description: "Artifact anchored to principle",
+	},
+	{
+		key: "observes",
+		inverse: "observed-by",
+		label: "Observes",
+		inverseLabel: "Observed By",
+		from: ["agent"],
+		to: [],
+		description: "Agent watches artifact",
+	},
+	{
+		key: "merged-into",
+		inverse: "merged-from",
+		label: "Merged Into",
+		inverseLabel: "Merged From",
+		from: [],
+		to: [],
+		description: "Artifact consolidation",
+	},
+	{
+		key: "synchronised-with",
+		inverse: "synchronised-with",
+		label: "Synchronised With",
+		inverseLabel: "Synchronised With",
+		from: [],
+		to: [],
+		description: "Paired content (self-inverse)",
+	},
+] as const;
+
+/**
+ * Default platform navigation groups (principles, learning, discovery).
+ * These are the builtin groups that every project starts with.
+ * Plugins add their own groups/items via defaultNavigation.
+ */
+export const PLATFORM_NAVIGATION: readonly NavigationItem[] = [
+	{ key: "project", type: "builtin", icon: "layout-dashboard" },
+	{
+		key: "principles",
+		type: "group",
+		icon: "landmark",
+		label: "Principles",
+		children: [
+			{ key: "pillars", type: "builtin", icon: "columns-3" },
+			{ key: "vision", type: "builtin", icon: "eye" },
+			{ key: "personas", type: "builtin", icon: "users" },
+			{ key: "grounding", type: "builtin", icon: "anchor" },
+		],
+	},
+	{
+		key: "discovery",
+		type: "group",
+		icon: "compass",
+		label: "Discovery",
+		children: [
+			{ key: "ideas", type: "builtin", icon: "lightbulb" },
+		],
+	},
+	{
+		key: "learning",
+		type: "group",
+		icon: "brain",
+		label: "Learning",
+		children: [
+			{ key: "decisions", type: "builtin", icon: "scale" },
+			{ key: "rules", type: "builtin", icon: "shield" },
+			{ key: "lessons", type: "builtin", icon: "book-open" },
+			{ key: "skills", type: "builtin", icon: "zap" },
+			{ key: "agents", type: "builtin", icon: "bot" },
+		],
+	},
+	{ key: "artifact-graph", type: "builtin", icon: "network" },
+	{ key: "settings", type: "builtin", icon: "settings" },
+] as const;

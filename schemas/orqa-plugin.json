@@ -4,7 +4,7 @@
   "title": "OrqaStudio Plugin Manifest",
   "description": "Schema for orqa-plugin.json — the manifest that defines an OrqaStudio plugin's identity, compatibility, capabilities, and entry points.",
   "type": "object",
-  "required": ["name", "version", "description", "compatibility", "provides"],
+  "required": ["name", "version", "provides"],
   "additionalProperties": false,
   "properties": {
     "$schema": {
@@ -50,10 +50,15 @@
       "description": "SPDX license identifier."
     },
 
+    "requires": {
+      "type": "array",
+      "description": "Plugin dependencies — names of plugins that must be loaded first.",
+      "items": { "type": "string" }
+    },
+
     "compatibility": {
       "type": "object",
       "description": "Minimum versions required for this plugin to function.",
-      "required": ["app"],
       "additionalProperties": false,
       "properties": {
         "app": {
@@ -76,12 +81,12 @@
       "description": "Capabilities this plugin registers with the app at runtime.",
       "additionalProperties": false,
       "properties": {
-        "artifactTypes": {
+        "schemas": {
           "type": "array",
-          "description": "Artifact types this plugin introduces.",
+          "description": "Artifact type schemas this plugin introduces.",
           "items": {
             "type": "object",
-            "required": ["key", "label", "icon", "path"],
+            "required": ["key", "label", "icon", "defaultPath", "idPrefix", "frontmatter"],
             "additionalProperties": false,
             "properties": {
               "key": {
@@ -89,21 +94,27 @@
                 "pattern": "^[a-z][a-z0-9-]*$",
                 "description": "Unique artifact type key (lowercase, hyphenated)."
               },
-              "label": {
-                "type": "string",
-                "description": "Singular display label."
+              "label": { "type": "string", "description": "Singular display label." },
+              "plural": { "type": "string", "description": "Plural display label." },
+              "icon": { "type": "string", "description": "Lucide icon name." },
+              "defaultPath": { "type": "string", "description": "Default relative path within .orqa/." },
+              "idPrefix": { "type": "string", "description": "ID prefix for this type (e.g. 'EPIC')." },
+              "frontmatter": {
+                "type": "object",
+                "required": ["required", "optional"],
+                "additionalProperties": false,
+                "properties": {
+                  "required": { "type": "array", "items": { "type": "string" } },
+                  "optional": { "type": "array", "items": { "type": "string" } }
+                }
               },
-              "plural": {
-                "type": "string",
-                "description": "Plural display label."
-              },
-              "icon": {
-                "type": "string",
-                "description": "Icon key to register (must also appear in provides.icons)."
-              },
-              "path": {
-                "type": "string",
-                "description": "Relative path within .orqa/ where artifacts of this type are stored."
+              "statusTransitions": {
+                "type": "object",
+                "description": "Status transition rules specific to this type.",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
               }
             }
           }
@@ -114,140 +125,99 @@
           "description": "Custom views this plugin adds to the app.",
           "items": {
             "type": "object",
-            "required": ["key", "label", "entrypoint"],
+            "required": ["key", "label", "icon"],
             "additionalProperties": false,
             "properties": {
-              "key": {
-                "type": "string",
-                "pattern": "^[a-z][a-z0-9-]*$",
-                "description": "Unique view key used in navigation."
-              },
-              "label": {
-                "type": "string",
-                "description": "Display label for the view."
-              },
-              "icon": {
-                "type": "string",
-                "description": "Icon key for the activity bar / navigation."
-              },
-              "entrypoint": {
-                "type": "string",
-                "description": "Relative path to the Svelte component."
-              }
+              "key": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+              "label": { "type": "string" },
+              "icon": { "type": "string" }
             }
           }
         },
 
-        "icons": {
-          "type": "object",
-          "description": "Icon registrations. Keys are icon names, values are import paths or component references.",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-
-        "statuses": {
+        "widgets": {
           "type": "array",
-          "description": "Custom statuses beyond the 12 canonical ones.",
+          "description": "Dashboard widgets this plugin provides.",
           "items": {
             "type": "object",
             "required": ["key", "label", "icon"],
             "additionalProperties": false,
             "properties": {
-              "key": {
-                "type": "string",
-                "pattern": "^[a-z][a-z0-9-]*$"
-              },
+              "key": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
               "label": { "type": "string" },
               "icon": { "type": "string" },
-              "color": {
-                "type": "string",
-                "enum": ["primary", "success", "warning", "destructive", "muted"],
-                "description": "Semantic color for status rendering."
+              "defaultPosition": {
+                "type": "object",
+                "properties": {
+                  "row": { "type": "integer" },
+                  "col": { "type": "integer" }
+                }
               },
-              "spin": {
-                "type": "boolean",
-                "description": "Whether the status icon should animate."
+              "defaultSpan": {
+                "type": "object",
+                "properties": {
+                  "rows": { "type": "integer" },
+                  "cols": { "type": "integer" }
+                }
               }
             }
           }
         },
 
-        "relationshipTypes": {
+        "relationships": {
           "type": "array",
           "description": "Relationship types this plugin introduces.",
           "items": {
             "type": "object",
-            "required": ["forward", "inverse", "semantic"],
+            "required": ["key", "inverse", "label", "inverseLabel", "from", "to", "description"],
             "additionalProperties": false,
             "properties": {
-              "forward": {
-                "type": "string",
-                "pattern": "^[a-z][a-z0-9-]*$",
-                "description": "Forward relationship name (e.g. 'delivers')."
-              },
-              "inverse": {
-                "type": "string",
-                "pattern": "^[a-z][a-z0-9-]*$",
-                "description": "Inverse relationship name (e.g. 'delivered-by')."
-              },
-              "semantic": {
-                "type": "string",
-                "description": "Human-readable description of the relationship."
-              }
-            }
-          }
-        },
-
-        "hooks": {
-          "type": "array",
-          "description": "Lifecycle hooks this plugin listens to.",
-          "items": {
-            "type": "object",
-            "required": ["event", "handler"],
-            "additionalProperties": false,
-            "properties": {
-              "event": {
-                "type": "string",
-                "enum": [
-                  "plugin:register",
-                  "plugin:unregister",
-                  "artifact:created",
-                  "artifact:updated",
-                  "artifact:deleted",
-                  "artifact:status-changed",
-                  "graph:refreshed",
-                  "project:opened",
-                  "project:closed"
-                ],
-                "description": "Lifecycle event to listen for."
-              },
-              "handler": {
-                "type": "string",
-                "description": "Relative path to the handler module."
-              }
+              "key": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+              "inverse": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+              "label": { "type": "string" },
+              "inverseLabel": { "type": "string" },
+              "from": { "type": "array", "items": { "type": "string" } },
+              "to": { "type": "array", "items": { "type": "string" } },
+              "description": { "type": "string" }
             }
           }
         }
       }
     },
 
-    "entrypoints": {
+    "settings": {
       "type": "object",
-      "description": "File paths for plugin initialisation and runtime loading.",
+      "description": "Settings panel registration for this plugin.",
       "additionalProperties": false,
       "properties": {
-        "register": {
+        "entrypoint": {
           "type": "string",
-          "description": "Module that exports a register() function called at plugin load time."
-        },
-        "views": {
-          "type": "string",
-          "description": "Barrel module exporting all view components."
-        },
-        "styles": {
-          "type": "string",
-          "description": "CSS file with plugin-specific styles."
+          "description": "Relative path to the Svelte settings component."
+        }
+      }
+    },
+
+    "defaultNavigation": {
+      "type": "array",
+      "description": "Recommended navigation tree additions from this plugin.",
+      "items": { "$ref": "#/$defs/defaultNavItem" }
+    }
+  },
+
+  "$defs": {
+    "defaultNavItem": {
+      "type": "object",
+      "required": ["key", "type", "icon"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "type": "string" },
+        "type": { "type": "string", "enum": ["plugin", "group"] },
+        "icon": { "type": "string" },
+        "label": { "type": "string" },
+        "pluginSource": { "type": "string" },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/defaultNavItem" }
         }
       }
     }
