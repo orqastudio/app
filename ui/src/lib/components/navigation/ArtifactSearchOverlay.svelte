@@ -143,7 +143,7 @@
 								>
 									<!-- Status icon -->
 									{#if node.status}
-										{@const StatusIcon = resolveIcon(statusIconName(node.status)}
+										{@const StatusIcon = resolveIcon(statusIconName(node.status))}
 										<StatusIcon class="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
 									{:else}
 										<FileTextIcon class="h-3.5 w-3.5 shrink-0 text-muted-foreground" />

@@ -91,7 +91,7 @@
 						<!-- Status dot -->
 						<td class="px-3 py-2">
 							{#if child.status}
-								{@const StatusIcon = resolveIcon(statusIconName(child.status)}
+								{@const StatusIcon = resolveIcon(statusIconName(child.status))}
 								<StatusIcon class="h-3.5 w-3.5 text-muted-foreground" />
 							{/if}
 						</td>

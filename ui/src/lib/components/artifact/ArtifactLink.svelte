@@ -69,7 +69,7 @@
 
 	/** Status icon component for the resolved node, or null if no status. */
 	const StatusIcon = $derived(
-		resolved.node?.status ? resolveIcon(statusIconName(resolved.node.status) : null,
+		resolved.node?.status ? resolveIcon(statusIconName(resolved.node.status)) : null,
 	);
 
 	/** Whether the status icon should spin (active/in-progress). */

@@ -1,11 +1,15 @@
 <script lang="ts">
-	import { DropdownMenuRoot, DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuGroup, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent } from "@orqastudio/svelte-components/pure";
-	import * as Popover from "@orqastudio/svelte-components/pure";
-	import { Button } from "@orqastudio/svelte-components/pure";
+	import {
+		DropdownMenuRoot, DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent,
+		DropdownMenuSeparator, DropdownMenuGroup, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent,
+		DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem,
+		PopoverRoot as Popover, PopoverTrigger, PopoverContent,
+		Button,
+		statusIconName, resolveIcon,
+	} from "@orqastudio/svelte-components/pure";
 	import ArrowUpDownIcon from "@lucide/svelte/icons/arrow-up-down";
 	import FilterIcon from "@lucide/svelte/icons/filter";
 	import CheckIcon from "@lucide/svelte/icons/check";
-	import { statusIconName, resolveIcon } from "@orqastudio/svelte-components/pure";
 	import { countFieldValues } from "$lib/utils/artifact-view";
 	import type {
 		FilterableField,
@@ -141,18 +145,18 @@
 				{/snippet}
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="start" class="w-52">
-				<DropdownMenu.Label class="text-xs text-muted-foreground">Sort by</DropdownMenu.Label>
-				<DropdownMenu.RadioGroup value={sortValue} onValueChange={setSortFromValue}>
+				<DropdownMenuLabel class="text-xs text-muted-foreground">Sort by</DropdownMenuLabel>
+				<DropdownMenuRadioGroup value={sortValue} onValueChange={setSortFromValue}>
 					{#each sortOptions as option (option.value)}
-						<DropdownMenu.RadioItem value={option.value}>
+						<DropdownMenuRadioItem value={option.value}>
 							{option.label}
-						</DropdownMenu.RadioItem>
+						</DropdownMenuRadioItem>
 					{/each}
-				</DropdownMenu.RadioGroup>
+				</DropdownMenuRadioGroup>
 
 				{#if filterableFields.length > 0}
 					<DropdownMenuSeparator />
-					<DropdownMenu.Label class="text-xs text-muted-foreground">Group by</DropdownMenu.Label>
+					<DropdownMenuLabel class="text-xs text-muted-foreground">Group by</DropdownMenuLabel>
 					<DropdownMenuItem onclick={() => onGroupChange(null)}>
 						<span class="flex items-center gap-2">
 							{#if currentGroup === null}
