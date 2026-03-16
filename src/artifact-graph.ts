@@ -96,6 +96,9 @@ export type CanonicalStatus =
     | "archived"
     | "recurring";
 
+/** Alias for CanonicalStatus — used by the frontend. */
+export type ArtifactStatus = CanonicalStatus;
+
 /** Category of integrity issue found in the artifact graph. */
 export type IntegrityCategory =
     | "BrokenLink"

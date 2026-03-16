@@ -42,7 +42,6 @@ export type {
 	ArtifactType,
 	ComplianceStatus,
 	ArtifactRelationship,
-	DocNode,
 } from "./artifact.js";
 
 export type {
@@ -51,6 +50,7 @@ export type {
 	NavGroup,
 	NavType,
 	NavDocNode,
+	DocNode,
 	FilterableField,
 	SortableField,
 	SortConfig,
@@ -97,6 +97,7 @@ export type {
 	GraphStats,
 	ArtifactGraphType,
 	CanonicalStatus,
+	ArtifactStatus,
 	IntegrityCategory,
 	IntegritySeverity,
 	IntegrityCheck,

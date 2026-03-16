@@ -55,6 +55,9 @@ export interface NavDocNode {
 	frontmatter?: Record<string, unknown>;
 }
 
+/** Alias for NavDocNode — used by the frontend nav-tree types. */
+export type DocNode = NavDocNode;
+
 /** A filterable field derived from a JSON Schema enum property. */
 export interface FilterableField {
 	name: string;
