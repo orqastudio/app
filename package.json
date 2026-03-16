@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/sdk",
-  "version": "0.1.0",
+  "version": "0.1.0-pre",
   "description": "Frontend-to-backend connection SDK for OrqaStudio apps and plugins",
   "type": "module",
   "main": "dist/index.js",
