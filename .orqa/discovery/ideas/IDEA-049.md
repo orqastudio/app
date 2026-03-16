@@ -1,0 +1,43 @@
+---
+id: IDEA-049
+title: Graph-Powered Dashboard Insights and Trend Analysis
+description: "Combine artifact graph relationship data with created/updated timestamps to surface trends, velocity metrics, and structural health insights over time. Move the dashboard beyond static counts into a temporal, relational analytics layer."
+status: completed
+created: 2026-03-11
+updated: 2026-03-11
+horizon: active
+research-needed:
+  - "What temporal patterns are most useful? (velocity, staleness, bottleneck detection)"
+  - "How to compute graph metrics efficiently as the artifact count grows?"
+  - "What visualisation library fits Svelte 5 best for time-series and network graphs?"
+  - "How should historical snapshots work — rebuild from git history or store periodic snapshots?"
+  - "What reference relationship patterns indicate health vs dysfunction? (orphan clusters, dependency chains, circular refs)"
+relationships:
+  - target: EPIC-060
+    type: evolves-into
+  - target: PILLAR-001
+    type: grounded-by
+  - target: PILLAR-002
+    type: grounded-by
+---
+## Motivation
+
+The artifact graph already captures structural relationships (epic→task, task→depends-on, idea→promoted-to) and every artifact carries `created` and `updated` timestamps. Combining these two dimensions unlocks insights that neither alone can provide:
+
+1. **Velocity trends** — how many artifacts move through status transitions per week/month
+2. **Staleness detection** — artifacts that haven't been updated relative to their dependents
+3. **Bottleneck identification** — tasks with many blocked dependents, epics with stalled prerequisites
+4. **Structural health** — orphan count trends, broken ref count over time, graph density evolution
+5. **Milestone progress curves** — actual completion trajectory vs planned (burn-up/burn-down style)
+6. **Decision freshness** — how many accepted ADs haven't been reviewed since their dependents evolved
+
+This turns the dashboard from a static status board into a living health monitor that surfaces what needs attention without the user having to hunt for it.
+
+## Sketch
+
+- Time-series charts (artifact creation rate, status transition velocity, staleness distribution)
+- Graph health sparklines (broken refs, orphans, density over the last N snapshots)
+- Bottleneck heatmap — nodes with highest "blocked by this" count highlighted
+- Milestone burn-up chart using epic status transitions as data points
+- "Attention needed" feed — ranked list of artifacts that metrics suggest need review
+- All backed by the existing `ArtifactGraph` and frontmatter timestamps — no new data collection required beyond periodic graph snapshots

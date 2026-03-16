@@ -1,0 +1,18 @@
+[submodule "app"]
+	path = app
+	url = git@github.com:orqastudio/orqastudio-app.git
+[submodule "libs/types"]
+	path = libs/types
+	url = git@github.com:orqastudio/orqastudio-types.git
+[submodule "libs/sdk"]
+	path = libs/sdk
+	url = git@github.com:orqastudio/orqastudio-sdk.git
+[submodule "libs/integrity-validator"]
+	path = libs/integrity-validator
+	url = git@github.com:orqastudio/orqastudio-integrity-validator.git
+[submodule "libs/svelte-components"]
+	path = libs/svelte-components
+	url = git@github.com:orqastudio/orqastudio-svelte-components.git
+[submodule "libs/graph-visualiser"]
+	path = libs/graph-visualiser
+	url = git@github.com:orqastudio/orqastudio-graph-visualiser.git

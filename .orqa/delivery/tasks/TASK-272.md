@@ -1,0 +1,42 @@
+---
+id: TASK-272
+title: Implement rule-overrides in pre-commit hook
+description: "Pre-commit hook checks if the commit references a task with rule-overrides that suspend a failing validation rule. If so, warn but don't block."
+status: completed
+created: 2026-03-12
+updated: 2026-03-12
+assignee: null
+docs: []
+acceptance:
+  - Pre-commit hook reads rule-overrides from referenced task/epic
+  - Suspended validation rules produce warnings instead of blocking
+  - Non-suspended validation rules still block on failure
+  - Clear output distinguishing warnings (suspended) from errors (blocking)
+rule-overrides: []
+relationships:
+  - target: EPIC-058
+    type: delivers
+    rationale: Task belongs to this epic
+  - target: TASK-273
+    type: depended-on-by
+  - target: TASK-348
+    type: depended-on-by
+---
+
+## What
+
+Extend the pre-commit hook to be aware of scoped rule suspensions. When a validation fails for a rule that is suspended on the active task/epic, emit a warning instead of blocking the commit.
+
+## How
+
+1. Determine active task from commit message or `tmp/session-state.md`
+2. Read task's `rule-overrides` (fall back to epic's)
+3. When schema validation or other rule-based checks fail, check if the failing rule is suspended
+4. Suspended: print warning with reason, continue
+5. Not suspended: block as normal
+
+## Verification
+
+- Stage an artifact that would fail [RULE-032](RULE-032) validation
+- Commit with a message referencing a task that suspends [RULE-032](RULE-032) — commit succeeds with warning
+- Commit without task reference — commit blocked as normal

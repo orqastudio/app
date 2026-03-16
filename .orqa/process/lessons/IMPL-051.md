@@ -1,0 +1,29 @@
+---
+id: IMPL-051
+title: Epics are goal-completion units — never split for progress optics
+description: "Epics exist to achieve a goal. Until that goal is met to the best of current understanding, the epic isn't complete. Big epics should not be split just to feel like progress is being made. Scope is a user decision — the orchestrator should never unilaterally split an epic."
+status: active
+created: 2026-03-13
+updated: 2026-03-13
+maturity: understanding
+recurrence: 1
+relationships:
+  - target: RULE-004
+    type: observes
+    rationale: "RULE-004 defines epic lifecycle but doesn't explicitly prohibit splitting for progress optics"
+  - target: IMPL-049
+    type: informed-by
+    rationale: "Same principle — scope decisions are user decisions, not orchestrator decisions"
+---
+
+## Pattern
+
+The orchestrator asked whether [EPIC-061](EPIC-061) should be split because of its size (28 tasks, 8 phases). The implicit assumption was that smaller epics are better. But epic size is not the relevant measure — goal completeness is. An epic that achieves half its goal is not "two epics done" — it's one incomplete epic.
+
+## Fix
+
+Update [RULE-004](RULE-004) or the `planning` skill to state explicitly:
+- Epics are goal-completion units, not progress-tracking units
+- Epic scope is determined by the goal, not by a task count threshold
+- Splitting an epic is a user decision, never an orchestrator suggestion driven by size alone
+- An epic is complete when its goal is met, not when a comfortable number of tasks are done

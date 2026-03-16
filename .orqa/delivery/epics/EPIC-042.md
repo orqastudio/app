@@ -1,0 +1,94 @@
+---
+id: EPIC-042
+title: Three-Tier Skill Loading
+description: "Implement AD-028: restructure skill loading into three tiers — portable agent skills (Tier 1), orchestrator-injected project skills (Tier 2), and wrapper skills that resolve context-dependent implementations (Tier 3)."
+status: completed
+priority: P1
+created: 2026-03-09
+updated: 2026-03-09
+horizon: null
+scoring: null
+relationships:
+  - target: MS-001
+    type: delivers
+    rationale: Epic belongs to this milestone
+  - target: TASK-032
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-033
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-034
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-035
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-036
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-332
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: PILLAR-001
+    type: grounded-by
+  - target: AD-028
+    type: informed-by
+---
+## Implementation Design
+
+### Overview
+
+Migrate from the current model (all skills on agent definitions) to three tiers:
+- **Tier 1 (Agent):** Portable language/framework skills + wrapper skills in agent YAML
+- **Tier 2 (Orchestrator):** Project-specific `orqa-*` skills injected at task creation
+- **Tier 3 (Wrapper):** `code-search` wrapper that detects CLI vs App and loads the right skill
+
+### Task Breakdown
+
+1. Create `code-search` wrapper skill with context detection logic
+2. Update all agent definitions: remove `orqa-*` and `chunkhound`/`orqa-native-search`, add `code-search`
+3. Create orchestrator skill injection table mapping task scope → project skills
+4. Update orchestrator to inject Tier 2 skills in delegation prompts
+5. Update `skill-enforcement.md` to reflect three-tier model
+6. Verify: dry-run a delegation to confirm all three tiers load correctly
+
+### Skill Classification
+
+| Tier | Skills |
+|------|--------|
+| Tier 1 (Agent) | `code-search`, `architecture`, `rust-async-patterns`, `svelte5-best-practices`, `typescript-advanced-types`, `tailwind-design-system`, `planning`, `skills-maintenance` |
+| Tier 2 (Orchestrator) | `composability`, `orqa-ipc-patterns`, `orqa-store-patterns`, `orqa-store-orchestration`, `orqa-streaming`, `orqa-domain-services`, `orqa-repository-pattern`, `orqa-error-composition`, `orqa-governance`, `orqa-testing`, `orqa-native-search` |
+| Tier 3 (Wrapper) | `code-search` → resolves to `chunkhound` (CLI) or `orqa-native-search` (App) |
+
+### Orchestrator Injection Table
+
+| Task Scope | Injected Skills |
+|-----------|----------------|
+| `backend/src-tauri/src/commands/` | `orqa-ipc-patterns`, `orqa-error-composition` |
+| `backend/src-tauri/src/domain/` | `orqa-domain-services`, `orqa-error-composition` |
+| `backend/src-tauri/src/repo/`, `backend/src-tauri/src/db.rs` | `orqa-repository-pattern` |
+| `backend/src-tauri/src/search/` | `orqa-native-search` |
+| `sidecars/claude-agentsdk-sidecar/src/` | `orqa-streaming` |
+| `ui/src/lib/stores/` | `orqa-store-patterns`, `orqa-store-orchestration` |
+| `ui/src/lib/components/` | `orqa-store-patterns` |
+| `.orqa/` | `orqa-governance` |
+| Any streaming work | `orqa-streaming` |
+| Any cross-boundary work | `composability` (always injected) |
+| Any test work | `orqa-testing` |
+
+## Acceptance Criteria
+
+- [ ] `code-search` wrapper skill exists and resolves correctly in both CLI and App
+- [ ] No agent definition contains `chunkhound`, `orqa-native-search`, or any `orqa-*` skill directly
+- [ ] Orchestrator delegation prompts include Tier 2 skill injection based on task scope
+- [ ] `skill-enforcement.md` documents the three-tier model
+- [ ] A test delegation (dry-run) confirms all three tiers load
+
+## Context
+
+This epic addresses a need identified during project development.
+
+## Tasks
+
+Task breakdown to be defined.

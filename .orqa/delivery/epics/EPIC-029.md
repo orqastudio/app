@@ -1,0 +1,101 @@
+---
+id: EPIC-029
+title: Technical Design
+description: "The complete technical blueprint: database schema, IPC commands, Rust modules, streaming pipeline, tool definitions, and error taxonomy."
+status: completed
+priority: P1
+created: 2026-03-02
+updated: 2026-03-07
+horizon: null
+scoring: null
+relationships:
+  - target: MS-000
+    type: delivers
+    rationale: Epic belongs to this milestone
+  - target: TASK-115
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-116
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-117
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-118
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-119
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-120
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-121
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-122
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-319
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: EPIC-025
+    type: depends-on
+  - target: EPIC-026
+    type: depends-on
+  - target: EPIC-028
+    type: depends-on
+  - target: EPIC-030
+    type: depended-on-by
+  - target: PILLAR-001
+    type: grounded-by
+  - target: AD-001
+    type: informs
+  - target: AD-002
+    type: informs
+  - target: AD-003
+    type: informs
+  - target: AD-007
+    type: informs
+---
+## Why P1
+
+Implementation cannot begin without knowing the data model, the IPC surface, and the module boundaries. This phase converts the architecture decisions and UX design into implementable specifications.
+
+## What Was Done
+
+- SQLite schema — all tables, columns, indexes, and foreign key constraints
+- IPC command catalogue — every Tauri command with its input/output types
+- Rust module architecture — domain boundaries, service interfaces, repository pattern
+- Svelte component tree — component hierarchy mapped to the UX wireframes
+- Streaming pipeline — Agent SDK to Svelte event flow, Channel<T> protocol
+- Tool definitions — file tools, search tools, governance tools with permission model
+- MCP host interface — design for future external MCP server support
+- Error taxonomy — typed errors across the Rust/IPC/TypeScript boundary
+
+## Output
+
+All technical design documentation in `.orqa/documentation/development/`.
+
+## Notes
+
+Retroactively captured. Work preceded the artifact framework. These specifications are the source of truth for all implementation.
+
+## Context
+
+This epic addresses a need identified during project development.
+
+## Implementation Design
+
+Implementation approach to be defined during planning.
+
+## Tasks
+
+- [TASK-115](TASK-115): Design SQLite schema
+- [TASK-116](TASK-116): Design IPC command catalogue
+- [TASK-117](TASK-117): Design Rust module architecture
+- [TASK-118](TASK-118): Design Svelte component tree
+- [TASK-119](TASK-119): Design streaming pipeline
+- [TASK-120](TASK-120): Define tool system and permission model
+- [TASK-121](TASK-121): Design MCP host interface
+- [TASK-122](TASK-122): Define error taxonomy

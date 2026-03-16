@@ -1,0 +1,28 @@
+---
+id: IMPL-070
+title: Epic status must be constrained by milestone status
+description: "Active or completed epics should not exist on milestones that haven't started. A completed milestone should only contain completed epics. An exploring milestone should not have active work."
+status: captured
+created: 2026-03-15
+updated: 2026-03-15
+maturity: observation
+recurrence: 1
+relationships:
+  - target: RULE-004
+    type: observes
+    rationale: Artifact lifecycle should enforce milestone-epic status consistency
+---
+
+## Pattern
+
+Epics are assigned to milestones via the `milestone` frontmatter field. When epics complete or start work, they can end up on milestones whose status doesn't support that work state.
+
+## Rules
+
+- Completed milestone → all epics must be completed/surpassed
+- Active milestone → epics can be any status (this is where work happens)
+- Non-active milestone (captured/exploring/ready) → epics should only be captured/exploring/ready
+
+## Fix
+
+When an epic's status changes, validate against its milestone's status. When a milestone status changes, validate all its epics. The transition engine should enforce this as a validation rule.

@@ -1,0 +1,35 @@
+---
+id: EPIC-019
+title: MCP Host — External Servers
+description: "Implement MCP host with JSON-RPC protocol handler, stdio and SSE transports, tool aggregation, and settings UI for external servers."
+status: captured
+priority: P2
+created: 2026-03-07
+updated: 2026-03-07
+horizon: next
+scoring: null
+relationships:
+  - target: MS-002
+    type: delivers
+    rationale: Epic belongs to this milestone
+  - target: PILLAR-001
+    type: grounded-by
+  - target: AD-010
+    type: informed-by
+---
+## Tasks
+
+- [ ] MCP host module — JSON-RPC protocol handler, connection state machine
+- [ ] stdio transport — spawn external MCP servers, process lifecycle management
+- [ ] SSE transport — HTTP client for remote MCP servers
+- [ ] Config loader — merge project + user MCP server configs
+- [ ] Tool aggregator — merge built-in + external tools, namespace external tools
+- [ ] MCP Servers section in Settings — server list, add/remove, test connection, trust levels
+
+## Context
+
+This epic addresses a need identified during project development.
+
+## Implementation Design
+
+Implementation approach to be defined during planning.

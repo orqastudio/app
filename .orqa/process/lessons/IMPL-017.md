@@ -1,0 +1,42 @@
+---
+id: IMPL-017
+title: Directory reorganizations leave stale paths in source code
+description: "When .orqa/ directories are moved, hardcoded path references in Rust, TypeScript, and test fixtures are not caught by verify-links because it only scans markdown artifacts. Requires a maintained path manifest and source code scanning."
+status: active
+created: 2026-03-13
+updated: 2026-03-13
+maturity: understanding
+recurrence: 1
+relationships:
+  - target: RULE-003
+    type: observes
+    rationale: "Artifact config integrity requires config paths to match disk — this lesson extends that to source code paths"
+  - target: RULE-010
+    type: observes
+    rationale: "End-to-end completeness means all layers updated together — stale paths in Rust while config is correct is a partial update"
+  - target: IMPL-018
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from IMPL-018"
+---
+## Pattern
+
+When directory structure changes (e.g., `.orqa/governance/` → `.orqa/process/`, `.orqa/planning/` → `.orqa/delivery/`), the following get updated:
+
+- `project.json` artifacts array (config)
+- `verify-links.mjs` artifact discovery paths (tooling)
+- Markdown cross-references (artifacts)
+
+But these do NOT get caught:
+
+- Rust scanner paths (`project_scanner.rs` → `scan_governance()`)
+- Rust repo test fixtures (`project_settings_repo.rs` test helpers)
+- Rust reader test assertions (`artifact_reader.rs` expected labels)
+- Any TypeScript code that references `.orqa/` subdirectories directly
+
+The gap exists because `verify-links.mjs` only scans `.orqa/**/*.md` files for artifact cross-references. It does not scan source code for hardcoded `.orqa/` paths.
+
+## Fix
+
+1. Maintain a path manifest (`tools/path-manifest.json`) listing all known `.orqa/` paths used in the system — both in artifacts and in source code
+2. Extend `verify-links.mjs` to also scan source files (`.rs`, `.ts`, `.mjs`) for references to `.orqa/` paths and verify them against the manifest
+3. When a directory moves, updating the manifest is the single action that makes all stale references visible

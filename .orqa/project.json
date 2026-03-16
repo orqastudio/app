@@ -1,0 +1,109 @@
+{
+  "name": "OrqaStudio Dev",
+  "description": "Organisation-mode development environment for the OrqaStudio ecosystem",
+  "organisation": true,
+  "projects": [
+    { "name": "app", "path": "app" },
+    { "name": "types", "path": "libs/types" },
+    { "name": "sdk", "path": "libs/sdk" },
+    { "name": "integrity", "path": "libs/integrity-validator" },
+    { "name": "components", "path": "libs/svelte-components" },
+    { "name": "visualiser", "path": "libs/graph-visualiser" }
+  ],
+  "default_model": "auto",
+  "excluded_paths": ["node_modules", ".git", "target", "dist", "build"],
+  "artifacts": [
+    {
+      "key": "principles",
+      "label": "Principles",
+      "icon": "landmark",
+      "children": [
+        { "key": "pillar", "label": "Pillars", "icon": "columns-3", "path": ".orqa/principles/pillars" },
+        { "key": "vision", "label": "Vision", "icon": "eye", "path": ".orqa/principles/vision" },
+        { "key": "persona", "label": "Personas", "icon": "users", "path": ".orqa/principles/personas" },
+        { "key": "grounding", "label": "Grounding", "icon": "anchor", "path": ".orqa/principles/grounding" }
+      ]
+    },
+    {
+      "key": "discovery",
+      "label": "Discovery",
+      "icon": "compass",
+      "children": [
+        { "key": "idea", "label": "Ideas", "icon": "lightbulb", "path": ".orqa/discovery/ideas" },
+        { "key": "research", "label": "Research", "icon": "book-open", "path": ".orqa/discovery/research" },
+        { "key": "wireframe", "label": "Wireframes", "icon": "layout", "path": ".orqa/discovery/wireframes" }
+      ]
+    },
+    {
+      "key": "learning",
+      "label": "Learning",
+      "icon": "brain",
+      "children": [
+        { "key": "decision", "label": "Decisions", "icon": "scale", "path": ".orqa/process/decisions" },
+        { "key": "rule", "label": "Rules", "icon": "shield", "path": ".orqa/process/rules" },
+        { "key": "lesson", "label": "Lessons", "icon": "book-open", "path": ".orqa/process/lessons" },
+        { "key": "skill", "label": "Skills", "icon": "zap", "path": ".orqa/process/skills" },
+        { "key": "agent", "label": "Agents", "icon": "bot", "path": ".orqa/process/agents" }
+      ]
+    },
+    {
+      "key": "delivery",
+      "label": "Delivery",
+      "icon": "package",
+      "children": [
+        { "key": "milestone", "label": "Milestones", "icon": "flag", "path": ".orqa/delivery/milestones" },
+        { "key": "epic", "label": "Epics", "icon": "layers", "path": ".orqa/delivery/epics" },
+        { "key": "task", "label": "Tasks", "icon": "check-square", "path": ".orqa/delivery/tasks" }
+      ]
+    },
+    {
+      "key": "documentation",
+      "label": "Documentation",
+      "icon": "file-text",
+      "children": [
+        { "key": "doc", "label": "Project Docs", "icon": "file-text", "path": ".orqa/documentation/project" }
+      ]
+    }
+  ],
+  "statuses": [
+    { "key": "captured", "label": "Captured", "icon": "circle-dot", "transitions": ["exploring", "ready", "archived"] },
+    { "key": "exploring", "label": "Exploring", "icon": "search", "transitions": ["ready", "captured", "archived"] },
+    { "key": "ready", "label": "Ready", "icon": "check-circle", "transitions": ["prioritised", "exploring", "archived"] },
+    { "key": "prioritised", "label": "Prioritised", "icon": "arrow-up-circle", "transitions": ["active", "ready", "archived"] },
+    { "key": "active", "label": "Active", "icon": "loader", "spin": true, "transitions": ["review", "hold", "blocked"], "auto_rules": [] },
+    { "key": "hold", "label": "Hold", "icon": "pause-circle", "transitions": ["active", "archived"] },
+    { "key": "blocked", "label": "Blocked", "icon": "x-circle", "transitions": ["active", "archived"], "auto_rules": [{ "condition": "all-dependencies-completed", "target": "active" }] },
+    { "key": "review", "label": "Review", "icon": "eye", "transitions": ["completed", "active"] },
+    { "key": "completed", "label": "Completed", "icon": "check-circle-2", "transitions": ["archived"] },
+    { "key": "surpassed", "label": "Surpassed", "icon": "fast-forward", "transitions": ["archived"] },
+    { "key": "archived", "label": "Archived", "icon": "archive", "transitions": [] },
+    { "key": "recurring", "label": "Recurring", "icon": "repeat", "transitions": ["archived"] }
+  ],
+  "delivery": {
+    "types": [
+      { "key": "milestone", "label": "Milestone", "path": ".orqa/delivery/milestones", "gate_field": "gate" },
+      { "key": "epic", "label": "Epic", "path": ".orqa/delivery/epics", "parent": { "type": "milestone", "relationship": "delivers" } },
+      { "key": "task", "label": "Task", "path": ".orqa/delivery/tasks", "parent": { "type": "epic", "relationship": "delivers" } }
+    ]
+  },
+  "relationships": [
+    { "key": "depends-on", "inverse": "depended-on-by", "label": "Depends On", "inverse_label": "Depended On By" }
+  ],
+  "artifactLinks": {
+    "displayModes": {},
+    "colors": {
+      "EPIC": "#3b82f6",
+      "TASK": "#06b6d4",
+      "RULE": "#a78bfa",
+      "AD": "#8b5cf6",
+      "IDEA": "#c084fc",
+      "IMPL": "#67e8f9",
+      "SKILL": "#2dd4bf",
+      "PILLAR": "#818cf8",
+      "RES": "#6366f1",
+      "MS": "#38bdf8",
+      "DOC": "#94a3b8",
+      "AGENT": "#f472b6"
+    }
+  }
+}

@@ -1,0 +1,145 @@
+---
+id: RULE-009
+title: Dogfood Mode
+description: "Project-level rule for when an app is editing itself. Provides agent context awareness, operational caution, and system prompt injection. Active when dogfood: true in project.json."
+status: active
+created: 2026-03-07
+updated: 2026-03-07
+layer: project
+relationships:
+  - target: PILLAR-002
+    type: grounded
+    rationale: Dogfood mode enforces awareness of self-modifying systems
+  - target: RULE-028
+    type: informs
+    rationale: Dogfood mode heightens systems-thinking urgency when editing the app you run inside
+  - target: RULE-007
+    type: informs
+    rationale: Dogfood mode specifies which make restart commands agents must use in each context
+  - target: RULE-006
+    type: informs
+    rationale: General coding standards apply regardless of dogfood mode
+  - target: EPIC-037
+    type: informs
+  - target: RULE-013
+    type: informed-by
+  - target: RULE-028
+    type: informed-by
+  - target: RULE-044
+    type: informed-by
+---
+# Dogfood Mode (CONDITIONAL — only when `dogfood: true`)
+
+This rule applies ONLY when `.orqa/project.json` contains `"dogfood": true`. For non-dogfood projects, ignore this rule entirely. This is a **project-level** rule, not a universal rule.
+
+## What Dogfooding Means
+
+You are editing the app you are running inside. The codebase IS the running instance. This creates unique constraints that don't apply to normal projects.
+
+## Agent Context Awareness
+
+When the dogfood flag is set, the project's system prompt injection tells orchestrating agents their operational context. Agents must always know:
+
+| Question | Answer in Dogfood Mode |
+|----------|----------------------|
+| **What am I?** | An orchestrating agent coordinating implementation work |
+| **Where am I?** | CLI (Claude Code) or App (OrqaStudio) — determines which tools and governance are available |
+| **Am I dogfooding?** | Yes — my changes affect my own runtime environment |
+| **What does that mean practically?** | Extra caution on restarts, protocol changes, and structural modifications. The systems-thinking rule applies with heightened urgency because I am modifying the system I am operating within. |
+
+**This is NOT recursive reasoning about reasoning.** The agent needs one clear signal: "you are editing the app you are running inside." The project system prompt provides that signal. This rule provides the operational specifics.
+
+### System Prompt Injection (App Only)
+
+When `dogfood: true`, the app's system prompt builder injects dogfood behavioral context:
+
+> You are working on a project that is dogfooding — the app you are building IS the app you are running inside. Changes to the backend require a restart that will end this session. Changes to the sidecar protocol affect your active connection. Frontend changes apply via HMR but can crash mid-stream. Apply the systems-thinking rule with awareness that you are part of the system you are modifying.
+
+This injection is what transitions an agent from "building an app" to "building the app I'm running in." **Only the app injects this context.** The CLI does NOT — from the CLI, you are editing the app externally, not running inside it.
+
+## Context-Specific Behavior (CRITICAL)
+
+The Enhanced Caution Rules below apply differently depending on whether you are running inside the app or from the CLI:
+
+| Rule | App Context | CLI Context |
+|------|-------------|-------------|
+| Restart ends session | **YES** — `make restart-tauri` kills the app you're inside | **NO** — `make restart-tauri` just restarts the app externally |
+| Session state before restart | **MANDATORY** — session dies on restart | **NOT REQUIRED** — CLI session survives |
+| Sidecar self-edit warnings | **YES** — you communicate through it | **NO** — CLI doesn't use the sidecar |
+| Frontend mid-stream crash risk | **YES** — HMR in your own window | **NO** — CLI has no window |
+| Dev server management | **YES** — orchestrator manages lifecycle | **YES** — still useful to manage via CLI |
+
+**How to determine your context:** If you were launched by the OrqaStudio app (system prompt contains dogfood injection), you are in app context. If you are Claude Code CLI, you are in CLI context. When in doubt, you are CLI.
+
+## Enhanced Caution Rules
+
+### Dev Server
+
+- The controller uses `--no-watch` so editing `.rs` files does NOT auto-restart the app
+- **NEVER use `make dev-watch`** — it causes the app to restart on every Rust file save
+- After Rust backend changes, `make restart-tauri` rebuilds and relaunches (Vite stays alive)
+- **Agents MUST only use restart commands** (`make restart-tauri`, `make restart-vite`, `make restart`) during development. `make stop` kills the controller — the app goes down and requires `make dev` to come back up. `make dev`, `make start`, `make stop`, and `make kill` are only for when the user explicitly asks to start/stop the controller.
+
+### Restart Protocol
+
+**App context (running inside OrqaStudio):**
+
+1. Write session state to `tmp/session-state.md` (tasks completed, in-progress work, what to resume)
+2. Commit all changes (so nothing is lost when the app closes)
+3. **Offer to restart**: "Backend changes need a restart. This will end the session. Shall I run `make restart-tauri`?"
+4. Run `make restart-tauri` — the controller and Vite stay alive, only the Tauri app restarts
+5. The session ends when the app restarts. The next session picks up from `tmp/session-state.md`.
+
+**CLI context (Claude Code):**
+
+1. Commit changes if appropriate
+2. Run `make restart-tauri` — the Tauri app restarts but the CLI session continues
+3. No session state file needed
+
+### Sidecar Self-Edit Warnings (App Context Only)
+
+The sidecar (`sidecar/src/`) is the communication bridge between the Agent SDK and the Rust backend. **In app context**, you are communicating THROUGH it while potentially editing it.
+
+- Before modifying `sidecar/src/protocol.ts`, `sidecar/src/provider.ts`, or `sidecar/src/index.ts`: warn the user that this may affect the active connection
+- After sidecar changes: the sidecar must be rebuilt (`cd sidecar && bun run build`) and the app restarted
+- Never change the NDJSON protocol format mid-session without a restart
+
+In CLI context, sidecar changes are just normal file edits with no live-session risk.
+
+### Frontend Hot Reload (App Context Only)
+
+- Vite HMR handles frontend changes live — Svelte/TypeScript/CSS changes appear immediately
+- BUT editing components mid-stream (while a response is streaming) can crash the window
+- Avoid editing conversation-related components (`ConversationView`, `StreamingIndicator`, `MessageInput`) while a conversation is active
+
+In CLI context, frontend changes have no effect on the CLI session.
+
+### Preview Tooling
+
+- Dogfood projects cannot preview themselves (you can't render yourself inside yourself)
+- When preview tooling is added in the future, it should be disabled for dogfood projects
+
+## Enforcement Gap Priority (NON-NEGOTIABLE)
+
+When `dogfood: true`, the product enforces structured thinking through governance artifacts, rules, and pipeline automation. If the product's own governance has enforcement gaps, the product is not credible.
+
+**Any discovered enforcement gap is immediately CRITICAL.** It is never deferred, never scoped out, never "addressed in a future epic." When a gap is spotted — a rule with no mechanical enforcement, an AD with no enforcement chain, a pillar gate question with no tooling — it becomes an immediate task.
+
+This applies to:
+- Rules that exist but nothing mechanically checks them
+- Architecture decisions that are accepted but no rule enforces them
+- Pillar gate questions that can't be answered by current tooling
+- Lessons that recur but haven't been promoted to enforcement
+- Pipeline stage transitions that have no automation
+
+The orchestrator must not wait for the next planning cycle to address enforcement gaps. When spotted during any work, they are captured as CRITICAL tasks and prioritized above feature work.
+
+## Detection
+
+Check `.orqa/project.json` for `"dogfood": true` at task start. **Context detection**: if the system prompt contains dogfood injection text, you are in app context. Otherwise you are in CLI context. When in doubt, assume CLI.
+
+## Related Rules
+
+- [RULE-028](RULE-028) (systems-thinking) — universal rule that applies to all projects; dogfood mode heightens its urgency
+- [RULE-007](RULE-007) (development-commands) — `make dev` and `make restart-tauri` commands
+- [RULE-006](RULE-006) (coding-standards) — general coding standards apply regardless of dogfood mode

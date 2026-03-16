@@ -1,0 +1,46 @@
+---
+id: TASK-376
+title: Run all enforcement tooling and review output
+description: "Execute make verify, all new linter rules, gap audit tool, pipeline health checks, and behavioral enforcement mechanisms against the full codebase"
+status: completed
+created: 2026-03-13
+updated: 2026-03-13
+acceptance:
+  - All enforcement tooling has been run against the full codebase and output reviewed and triaged
+relationships:
+  - target: EPIC-061
+    type: delivers
+    rationale: Task belongs to this epic
+  - target: TASK-367
+    type: depends-on
+  - target: TASK-369
+    type: depends-on
+  - target: TASK-374
+    type: depends-on
+  - target: TASK-383
+    type: depends-on
+  - target: TASK-387
+    type: depends-on
+  - target: TASK-375
+    type: depended-on-by
+  - target: TASK-377
+    type: depended-on-by
+  - target: TASK-378
+    type: depended-on-by
+---
+
+## What
+
+Run all enforcement tooling built in Phases 1-7 and review the complete output.
+
+## How
+
+Execute make verify (extended), all new linter rules, the gap audit tool, pipeline health checks, and behavioral enforcement mechanisms. Capture and triage every finding.
+
+## Verification
+
+Completed as part of [EPIC-061](EPIC-061) Phase 8.
+
+## Lessons
+
+No new lessons.

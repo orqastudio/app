@@ -1,0 +1,112 @@
+---
+id: RULE-043
+title: Tooling Ecosystem Management
+description: "OrqaStudio manages linter configuration to match documented standards. Code quality enforcement belongs in linters, not in regex matching."
+status: active
+created: 2026-03-11
+updated: 2026-03-12
+layer: project
+enforcement:
+  - "event: lint"
+  - "event: lint"
+  - "event: lint"
+  - "event: lint"
+  - "event: lint"
+relationships:
+  - target: PILLAR-001
+    type: grounded
+    rationale: Tooling ecosystem manages the structural chain from standards to enforcement
+  - target: RULE-006
+    type: informs
+    rationale: Documented coding standards must have corresponding linter rules — this rule maps standards to their automated enforcement
+  - target: RULE-042
+    type: informs
+    rationale: Linter delegation and skill injection are complementary enforcement layers — linters catch patterns, skills provide knowledge
+  - target: RULE-012
+    type: informs
+    rationale: Pre-commit hook enforcement runs the linter chain managed by this rule to catch errors before commits
+  - target: AD-047
+    type: enforced-by
+    rationale: Auto-generated inverse of enforced-by relationship from AD-047
+  - target: DOC-072
+    type: informs
+    rationale: "Auto-generated inverse of informs relationship from DOC-072"
+  - target: EPIC-052
+    type: informs
+  - target: RULE-042
+    type: informed-by
+---
+OrqaStudio delegates code quality enforcement to the appropriate linting tools. The
+enforcement engine does NOT regex-match patterns that linters already catch. Instead,
+OrqaStudio ensures the tooling ecosystem is configured to match documented standards.
+
+## The Chain
+
+```
+Documented standard (RULE-006, skills)
+  → Linter configuration (clippy.toml, eslint.config.js)
+  → Hook trigger (.githooks/pre-commit, make check)
+  → Violation reported to developer
+```
+
+OrqaStudio's role is managing the full chain, not replicating any step.
+
+## Linter-to-Standard Mapping
+
+### Rust (clippy pedantic)
+
+| Standard | Linter Rule | Config |
+|----------|-----------|--------|
+| No unwrap/expect/panic | `clippy::unwrap_used`, `clippy::expect_used`, `clippy::panic` | Enabled via clippy pedantic |
+| Function size limits | `clippy::too_many_lines` | Configured per module guidelines |
+| Zero warnings | `-D warnings` flag | Passed in `make lint-backend` |
+| rustfmt formatting | `cargo fmt --check` | Default rustfmt config |
+
+### TypeScript/Svelte (ESLint + svelte-check)
+
+| Standard | Linter Rule | Config |
+|----------|-----------|--------|
+| No `any` types | `@typescript-eslint/no-explicit-any` | ESLint strict TS config |
+| No `@ts-ignore` | `@typescript-eslint/ban-ts-comment` | ESLint strict TS config |
+| No Svelte 4 patterns | svelte-check strict mode | Svelte 5 migration rules |
+| Strict TypeScript | `tsconfig.json` strict: true | TypeScript compiler config |
+
+### Pre-commit Hook Chain
+
+| File Types Staged | Checks Run |
+|------------------|-----------|
+| `.rs`, `Cargo.*` | rustfmt, clippy, cargo test |
+| `.svelte`, `.ts`, `.js`, `.css`, `.html` | svelte-check, ESLint, Vitest |
+| `.orqa/**/*.md` | Schema validation, artifact auto-linking |
+
+## Lint Event Entries
+
+Enforcement entries with `event: lint` are declarative — they document which linter
+rule enforces which standard. They don't execute anything. They exist for traceability:
+every documented standard should map to either a linter rule (lint event) or a process
+gate/skill injection (file/inject event).
+
+## When OrqaStudio Should NOT Regex-Match
+
+If a pattern is already caught by a configured linter:
+- Don't add a `file` enforcement entry that regex-matches the same pattern
+- Instead, add a `lint` entry documenting the delegation
+- The skill for that area should describe how to fix the violation
+
+If a pattern is NOT caught by any linter:
+- Consider adding a linter rule first
+- Only use `file` enforcement as a last resort for patterns no linter covers
+- `bash` enforcement for command-line safety (e.g., `--no-verify`) is appropriate since no linter covers shell commands
+
+## FORBIDDEN
+
+- Regex-matching code patterns that configured linters already catch
+- Adding `file` enforcement for patterns that clippy or ESLint enforce
+- Disabling linter rules instead of fixing violations
+- Standards without corresponding linter configuration
+
+## Related Rules
+
+- [RULE-006](RULE-006) (coding-standards) — the standards this rule maps to linters
+- [RULE-042](RULE-042) (skill-injection) — skill injection complements linter delegation
+- [RULE-012](RULE-012) (error-ownership) — pre-commit hook enforcement

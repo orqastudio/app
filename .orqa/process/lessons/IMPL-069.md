@@ -1,0 +1,22 @@
+---
+id: IMPL-069
+title: Artifacts mentioned in body text should have matching relationships
+description: "When an artifact ID appears in body text (e.g., EPIC-045 referenced in a task description), there should be a corresponding relationship in the frontmatter. Body text references without graph edges are invisible to traversal."
+status: captured
+created: 2026-03-15
+updated: 2026-03-15
+maturity: observation
+recurrence: 1
+relationships:
+  - target: PILLAR-001
+    type: observes
+    rationale: Structure requires that references are visible on the graph, not hidden in prose
+---
+
+## Pattern
+
+Artifacts reference other artifacts by ID in their body text but don't declare relationships in frontmatter. The graph can't traverse these connections — they're invisible to analysis, health checks, and the artifact graph visualization.
+
+## Fix
+
+The graph-guardian PostToolUse hook should detect artifact IDs in body text and warn when no corresponding relationship exists. The integrity scanner should flag body-text references without matching relationships.

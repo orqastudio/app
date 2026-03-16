@@ -1,0 +1,46 @@
+---
+id: TASK-274
+title: Backfill rules with relationships
+description: "Use backfill tooling to add grounded relationships to all 44 rules, connecting each to the decision or pillar it enforces."
+status: completed
+created: 2026-03-12
+updated: 2026-03-12
+assignee: null
+docs: []
+acceptance:
+  - All 44 rules have a relationships array
+  - Each rule has at least one grounded relationship (to a decision or pillar)
+  - Null targets have rationale and intended field
+  - All relationships have rationale explaining why the connection exists
+  - Human reviewed and approved all proposals
+rule-overrides:
+  - "rule: RULE-032"
+  - "rule: RULE-004"
+relationships:
+  - target: EPIC-058
+    type: delivers
+    rationale: Task belongs to this epic
+  - target: TASK-273
+    type: depends-on
+  - target: TASK-275
+    type: depended-on-by
+  - target: TASK-348
+    type: depended-on-by
+---
+
+## What
+
+First backfill batch — rules are the enforcement layer and the most impactful to connect. Each rule gets a `grounded` relationship pointing to the decision or pillar it serves.
+
+## How
+
+1. Run backfill tool against all rules
+2. Review proposals — for each rule, the tool proposes which decision/pillar it's grounded in
+3. Approve, reject, or edit each proposal
+4. Commit the batch
+
+## Verification
+
+- All 44 rules have `relationships` array in frontmatter
+- No rule has an empty relationships array (at minimum grounded, even if null with rationale)
+- Spot-check 5 rules for correct connections

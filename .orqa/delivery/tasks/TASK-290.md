@@ -1,0 +1,39 @@
+---
+id: TASK-290
+title: Create verification artifact type
+description: "Create the VER-NNN artifact type under delivery/verification/ with schema, README, and project.json registration."
+status: completed
+created: 2026-03-13
+updated: 2026-03-13
+assignee: null
+docs: []
+acceptance:
+  - .orqa/delivery/verification/ directory exists
+  - "schema.json defines VER-NNN format with id, title, description, status, verifies, evidence-type, frequency, relationships"
+  - "README.md has navigation frontmatter (icon, label, description)"
+  - Registered in project.json artifacts array
+rule-overrides: []
+relationships:
+  - target: EPIC-059
+    type: delivers
+    rationale: Task belongs to this epic
+  - target: TASK-349
+    type: depended-on-by
+---
+
+## What
+
+Create the verification artifact type for tracking verification records.
+
+## How
+
+1. Create `.orqa/delivery/verification/` directory
+2. Create `schema.json` with fields: id (VER-NNN), title, description, status, created, updated, verifies, evidence-type, frequency, relationships
+3. Create `README.md` with frontmatter for nav tree
+4. Add to `project.json` artifacts array
+
+## Verification
+
+- Directory exists with schema.json and README.md
+- Schema validates correctly
+- App scanner picks up the new artifact type

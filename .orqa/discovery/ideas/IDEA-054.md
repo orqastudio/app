@@ -1,0 +1,36 @@
+---
+id: IDEA-054
+title: Web Search Skill for Agent Research
+description: "A skill that teaches agents how to effectively use web search and web fetch tools for external research — query formulation, source evaluation, result synthesis, and citation practices."
+status: captured
+created: 2026-03-11
+updated: 2026-03-13
+horizon: later
+research-needed:
+  - "What web search/fetch tools are available in each context? (CLI MCP tools, app-embedded tools)"
+  - "What query patterns produce the best results for technical research?"
+  - "How should agents evaluate source credibility and recency?"
+  - "How should web research findings be captured in .orqa/ artifacts?"
+  - "Should web search results be cached/indexed for future sessions?"
+relationships:
+  - target: PILLAR-001
+    type: grounded-by
+  - target: PILLAR-002
+    type: grounded-by
+---
+## Motivation
+
+Agents currently have access to web search and web fetch tools but no structured methodology for using them effectively. Good web research requires:
+
+1. **Query formulation** — knowing how to phrase searches for technical topics, library docs, API references
+2. **Source evaluation** — prioritising official docs over blog posts, checking recency, cross-referencing
+3. **Result synthesis** — extracting the relevant information and discarding noise
+4. **Citation** — recording where information came from so findings are traceable
+
+A web research skill would be the counterpart to `code-search` (which teaches codebase search). Together they cover the two main research surfaces: internal code and external knowledge.
+
+## Sketch
+
+- Skill covers: query strategies (exact phrases, site-scoped, date-filtered), source hierarchy (official docs > GitHub issues > blog posts > forums), synthesis patterns (extract key facts, note version constraints), citation format for research documents
+- Complements the `code-search` skill (internal) with external research capability
+- Could link to [IDEA-053](IDEA-053) (tool-linked skills) — the web search tool gets this skill as its documentation

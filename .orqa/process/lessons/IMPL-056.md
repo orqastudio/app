@@ -1,0 +1,38 @@
+---
+id: IMPL-056
+title: Svelte keyed each blocks produce duplicate key errors from concatenated strings
+description: "Keyed {#each} blocks that construct keys by concatenating data fields (e.g. artifact_id + message) crash when two items produce the same concatenation. This is a recurring frontend pattern — always include the index as a uniqueness suffix."
+status: review
+created: 2026-03-14
+updated: 2026-03-14
+maturity: understanding
+recurrence: 2
+relationships:
+  - target: RULE-006
+    type: observes
+    rationale: "Coding standards should catch this pattern during review"
+---
+
+## Pattern
+
+When rendering lists with `{#each items as item (key)}`, developers construct keys by concatenating data fields:
+
+```svelte
+{#each checks as check (check.artifact_id + check.category + check.message)}
+```
+
+This crashes with `each_key_duplicate` when two items share the same field values — common with integrity checks, validation findings, or any list where multiple entries can reference the same artifact with the same category.
+
+Occurrences so far:
+- `IntegrityWidget.svelte` — two broken link findings for the same rule produced identical keys
+- This pattern appears in multiple list components across the frontend
+
+## Fix
+
+Always include the loop index as a uniqueness suffix:
+
+```svelte
+{#each checks as check, i (check.artifact_id + check.category + check.message + i)}
+```
+
+Or use a truly unique identifier (database ID, UUID) when available. The index suffix is the minimal fix when items don't carry unique IDs.

@@ -1,0 +1,46 @@
+---
+id: TASK-088
+title: Cross-layer consistency verification
+description: "Verify consistency across the orchestrator, agents, skills, and rules layers — skill injection tables, agent-to-subagent mappings, orphaned artifacts, and cross-references."
+status: completed
+created: 2026-03-11
+updated: 2026-03-11
+acceptance:
+  - Orchestrator skill injection table lists only skills that exist
+  - Agent-to-subagent mapping matches available Claude Code subagent types
+  - No orphaned skills or rules without justification
+  - Orchestrator instructions are consistent with active rule content
+relationships:
+  - target: EPIC-049
+    type: delivers
+    rationale: Task belongs to this epic
+  - target: TASK-084
+    type: depends-on
+  - target: TASK-085
+    type: depends-on
+  - target: TASK-086
+    type: depends-on
+  - target: TASK-087
+    type: depends-on
+  - target: TASK-089
+    type: depended-on-by
+  - target: TASK-339
+    type: depended-on-by
+---
+## What
+
+Final cross-layer verification ensuring all team and enforcement artifacts are internally consistent with each other and with the orchestrator definition.
+
+## How
+
+1. Read orchestrator agent definition (source of CLAUDE.md)
+2. Cross-reference skill injection table with `.orqa/process/skills/` contents
+3. Cross-reference agent-to-subagent mapping with available subagent types
+4. Search for skills and rules not referenced by any other artifact
+5. Verify orchestrator instructions don't contradict active rules
+
+## Verification
+
+- Every skill in the injection table exists in `.orqa/process/skills/`
+- Every subagent type in the mapping is available in Claude Code
+- Orphan report is clean or justified

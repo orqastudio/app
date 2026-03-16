@@ -1,0 +1,48 @@
+---
+id: TASK-200
+title: Implement skill injection in Rust enforcement engine
+description: |
+  Add inject action handling to the Rust enforcement engine for use in the
+  app's native enforcement pipeline.
+status: completed
+created: 2026-03-11
+updated: 2026-03-12
+acceptance:
+  - Rust enforcement engine handles Inject action variant
+  - Skill content returned in enforcement results
+  - Deduplication works across calls within a session
+relationships:
+  - target: EPIC-052
+    type: delivers
+    rationale: Task belongs to this epic
+  - target: TASK-193
+    type: depends-on
+  - target: TASK-195
+    type: depends-on
+  - target: TASK-205
+    type: depended-on-by
+  - target: TASK-207
+    type: depended-on-by
+  - target: TASK-342
+    type: depended-on-by
+---
+
+## What
+
+The Rust enforcement engine needs to handle `Inject` actions the same way the
+plugin does — read SKILL.md files and include their content in the enforcement
+result for the stream loop to inject as system context.
+
+## How
+
+1. Add `Inject` variant to the enforcement action enum in `enforcement.rs`
+2. Add `skills` field to enforcement entry struct
+3. When evaluating an inject entry, read skill files from project directory
+4. Return skill content in enforcement result
+5. Integrate with WorkflowTracker for deduplication
+
+## Verification
+
+- Rust enforcement engine handles Inject action without errors
+- Skill content is returned in enforcement results
+- Deduplication works across calls within a session

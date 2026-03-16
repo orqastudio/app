@@ -1,0 +1,106 @@
+---
+id: IDEA-057
+title: Provider-Agnostic Tool Abstraction for Agent Definitions
+description: |
+  Agent definitions should declare tool capabilities abstractly (e.g. "file_read",
+  "code_search"), not concrete tool names. A rule governs how abstract capabilities
+  map to provider-specific tools at runtime, making agent definitions portable
+  across AI providers.
+status: completed
+created: 2026-03-11
+updated: 2026-03-13
+research-needed:
+  - "Audit current tool availability per context (CLI Claude Code, App native, future providers)"
+  - Map concrete tools to abstract capabilities
+  - Design the capability → tool resolution mechanism
+  - "Determine where the mapping lives (rule, skill, or config)"
+relationships:
+  - target: RULE-040
+    type: informed-by
+    rationale: "All 4 research questions resolved directly into RULE-040 — capability vocabulary, provider mappings, context detection, and resolution protocol"
+  - target: EPIC-051
+    type: informs
+    rationale: "Promoted to epic for implementation"
+  - target: EPIC-051
+    type: evolves-into
+  - target: PILLAR-001
+    type: grounded-by
+  - target: PILLAR-002
+    type: grounded-by
+---
+
+## Motivation
+
+Agent definitions currently list concrete tool names from multiple providers in a flat
+array (`Read`, `mcp__chunkhound__search_regex`, `search_regex`). This causes three
+problems:
+
+1. **Context mismatch** — When agents are spawned in CLI context, they receive tool
+   names that only exist in the app context (and vice versa). Subagents fail silently
+   or use wrong tools.
+
+2. **Provider lock-in** — Tool names are Claude Code specific (`Read`, `Edit`, `Bash`,
+   `Glob`, `Grep`). If OrqaStudio adds support for another AI provider (Cursor, Copilot,
+   Aider), every agent definition would need rewriting.
+
+3. **No enforcement** — Nothing ensures the orchestrator passes the right tool context
+   when delegating. The "Operating Context" section in agent definitions is prose that
+   gets ignored in practice.
+
+The fix is to separate **what an agent can do** (abstract capabilities) from **how it
+does it** (provider-specific tool names). Agent definitions declare capabilities. A rule
+defines the mapping from capabilities to tools per provider context. The orchestrator
+(or plugin, or app) resolves at delegation time.
+
+## Sketch
+
+### Abstract Capability Model
+
+Agent definitions declare capabilities, not tools:
+
+```yaml
+capabilities:
+  - file_read
+  - file_write
+  - file_search
+  - content_search
+  - code_search_regex
+  - code_search_semantic
+  - code_research
+  - shell_execute
+```
+
+### Provider Tool Mappings (governed by rule)
+
+A rule defines the canonical mapping. Each provider context resolves differently:
+
+| Capability | Claude Code CLI | OrqaStudio App | Future Provider X |
+|-----------|----------------|----------------|------------------|
+| `file_read` | `Read` | `read` (Tauri) | provider-specific |
+| `file_write` | `Write` | `write` (Tauri) | provider-specific |
+| `file_edit` | `Edit` | `edit` (Tauri) | provider-specific |
+| `file_search` | `Glob` | `glob` (Tauri) | provider-specific |
+| `content_search` | `Grep` | `grep` (Tauri) | provider-specific |
+| `code_search_regex` | `mcp__chunkhound__search_regex` | `search_regex` | provider-specific |
+| `code_search_semantic` | `mcp__chunkhound__search_semantic` | `search_semantic` | provider-specific |
+| `code_research` | `mcp__chunkhound__code_research` | `code_research` | provider-specific |
+| `shell_execute` | `Bash` | `bash` (Tauri) | provider-specific |
+| `skill_load` | `Skill` | `load_skill` (Tauri) | provider-specific |
+
+### Resolution Points
+
+- **CLI (companion plugin)**: Plugin reads agent definitions, resolves capabilities
+  to Claude Code tool names, passes correct `tools:` list when spawning subagents
+- **App (native)**: Rust backend resolves capabilities to Tauri command names when
+  building the agent execution context
+- **Orchestrator (interim)**: Until the plugin exists, the orchestrator rule ensures
+  correct resolution in delegation prompts
+
+### Why a Rule
+
+The mapping is a constraint, not a feature. It governs how all agents interact with
+tools regardless of which provider runs them. Rules are:
+- Loaded by every agent automatically
+- Enforced mechanically (via the enforcement engine once [EPIC-050](EPIC-050) lands)
+- Visible in the governance UI
+- Extensible per provider without touching agent definitions

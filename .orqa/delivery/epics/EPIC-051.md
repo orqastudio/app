@@ -1,0 +1,231 @@
+---
+id: EPIC-051
+title: Provider-Agnostic Tool Abstraction Layer
+description: |
+  Replace concrete tool names in agent definitions with abstract capabilities.
+  Create a rule that maps capabilities to provider-specific tools per context
+  (CLI, App, future providers). Update all agent definitions and the delegation
+  protocol to use the abstraction.
+status: completed
+priority: P1
+created: 2026-03-11
+updated: 2026-03-12
+deadline: null
+horizon: null
+scoring: null
+relationships:
+  - target: IDEA-057
+    type: informed-by
+    rationale: Promoted from IDEA-057 — provider-agnostic tool abstraction
+  - target: MS-002
+    type: delivers
+    rationale: Epic belongs to this milestone
+  - target: TASK-171
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-172
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-173
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-174
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-175
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-176
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: TASK-341
+    type: delivered-by
+    rationale: Epic contains this task
+  - target: MS-001
+    type: delivers
+  - target: EPIC-050
+    type: depended-on-by
+  - target: PILLAR-001
+    type: grounded-by
+  - target: PILLAR-002
+    type: grounded-by
+  - target: IDEA-057
+    type: evolves-from
+---
+
+## Context
+
+Agent definitions currently list concrete tool names from multiple AI providers in a
+flat `tools:` array:
+
+```yaml
+tools:
+  - Read                                    # Claude Code CLI
+  - Grep                                    # Claude Code CLI
+  - mcp__chunkhound__search_regex           # CLI MCP server
+  - search_regex                            # OrqaStudio App (Tauri)
+```
+
+This creates three problems:
+
+1. **Context mismatch**: When the orchestrator spawns a subagent in CLI context, the
+   agent definition includes app-only tool names that don't exist. Subagents fail or
+   use wrong tools. This is happening now — every delegation attempt hits this issue
+   because we're always in CLI context (not dogfooding yet).
+
+2. **Provider lock-in**: Tool names (`Read`, `Edit`, `Bash`, `Glob`, `Grep`) are
+   Claude Code specific. Adding another AI provider would require rewriting every
+   agent definition.
+
+3. **No enforcement**: The "Operating Context" prose section in agent definitions
+   describes both contexts but nothing mechanically resolves the right tools at
+   delegation time.
+
+### Agent SDK Hook Discovery
+
+The Claude Agent SDK exposes 12 hook events that map to enforcement points. The key
+ones for tool resolution:
+
+| Hook Event | Use for Tool Abstraction |
+|-----------|------------------------|
+| `SessionStart` | Inject resolved tool list for current provider |
+| `SubagentStart` | Inject agent-specific resolved tools when subagent spawns |
+| `PreToolUse` | Validate tool access against agent's declared capabilities |
+
+The SDK also exposes `canUseTool` callback, `allowedTools`/`disallowedTools` lists,
+and `plugins` — all of which can consume the capability → tool mapping.
+
+## Implementation Design
+
+### Phase 1: Capability Rule (immediate, governs current CLI usage)
+
+Create RULE-NNN that defines:
+
+1. **The abstract capability vocabulary** — canonical names for what agents can do
+2. **The provider mapping table** — capabilities → concrete tools per context
+3. **The delegation protocol** — orchestrator MUST resolve capabilities to tools
+   before spawning any subagent
+4. **The detection mechanism** — how to determine current context (CLI vs App)
+
+This rule is immediately enforceable because the orchestrator reads rules before
+delegating.
+
+#### Capability Vocabulary
+
+| Capability | Description |
+|-----------|-------------|
+| `file_read` | Read file contents |
+| `file_write` | Create new files |
+| `file_edit` | Edit existing files |
+| `file_search` | Find files by name/pattern |
+| `content_search` | Search file contents by pattern |
+| `code_search_regex` | Exact pattern code search |
+| `code_search_semantic` | Meaning-based code search |
+| `code_research` | Architectural analysis |
+| `shell_execute` | Run shell commands |
+| `skill_load` | Load a skill into agent context |
+
+#### Provider Mapping: Claude Code CLI
+
+| Capability | Tool Name | Notes |
+|-----------|-----------|-------|
+| `file_read` | `Read` | Built-in |
+| `file_write` | `Write` | Built-in |
+| `file_edit` | `Edit` | Built-in |
+| `file_search` | `Glob` | Built-in |
+| `content_search` | `Grep` | Built-in |
+| `code_search_regex` | `mcp__chunkhound__search_regex` | MCP server required |
+| `code_search_semantic` | `mcp__chunkhound__search_semantic` | MCP server required |
+| `code_research` | `mcp__chunkhound__code_research` | MCP server required |
+| `shell_execute` | `Bash` | Built-in |
+| `skill_load` | `Skill` | Built-in |
+
+#### Provider Mapping: OrqaStudio App
+
+| Capability | Tool Name | Notes |
+|-----------|-----------|-------|
+| `file_read` | `read` | Tauri command |
+| `file_write` | `write` | Tauri command |
+| `file_edit` | `edit` | Tauri command |
+| `file_search` | `glob` | Tauri command |
+| `content_search` | `grep` | Tauri command |
+| `code_search_regex` | `search_regex` | Native ONNX+DuckDB |
+| `code_search_semantic` | `search_semantic` | Native ONNX+DuckDB |
+| `code_research` | `code_research` | Native ONNX+DuckDB |
+| `shell_execute` | `bash` | Tauri command |
+| `skill_load` | `load_skill` | Tauri command |
+
+### Phase 2: Agent Definition Migration
+
+Update all 7 agent definitions to use capabilities instead of concrete tools.
+Capabilities **replace** tools entirely — the rule (RULE-040) owns the mapping
+from capabilities to provider-specific tools. Agent definitions only declare
+what they need, never how it's provided.
+
+**Before:**
+```yaml
+tools:
+  - Read
+  - Edit
+  - Write
+  - Glob
+  - Grep
+  - Bash
+  - mcp__chunkhound__search_regex
+  - mcp__chunkhound__search_semantic
+  - mcp__chunkhound__code_research
+  - search_regex
+  - search_semantic
+  - code_research
+```
+
+**After:**
+```yaml
+capabilities:
+  - file_read
+  - file_write
+  - file_edit
+  - file_search
+  - content_search
+  - code_search_regex
+  - code_search_semantic
+  - code_research
+  - shell_execute
+```
+
+Update the agent schema: remove `tools` field, add `capabilities` (array of strings).
+
+### Phase 3: Companion Plugin Resolution (when [EPIC-050](EPIC-050) lands)
+
+The companion plugin reads agent `capabilities` and resolves them to Claude Code
+tool names automatically via `SubagentStart` hooks. This eliminates the need for
+the orchestrator to manually resolve in delegation prompts.
+
+### Phase 4: App-Native Resolution
+
+The Rust backend reads agent `capabilities` and resolves them to Tauri tool names
+when building agent execution context. Same mapping table, different consumer.
+
+## Tasks
+
+### Phase 1: Capability Rule
+- [ ] [TASK-171](TASK-171): Create [RULE-040](RULE-040) defining capability vocabulary and provider mappings
+- [ ] [TASK-174](TASK-174): Update [RULE-001](RULE-001) and [RULE-026](RULE-026) for capability-based delegation
+
+### Phase 2: Agent Definition Migration
+- [ ] [TASK-172](TASK-172): Update agent schema — replace `tools` with `capabilities`
+- [ ] [TASK-173](TASK-173): Migrate all 7 agent definitions from `tools` to `capabilities`
+- [ ] [TASK-174](TASK-174): Update [RULE-001](RULE-001) and [RULE-026](RULE-026) for capability-based delegation
+
+### Phase 3: Plugin Resolution (depends on EPIC-050)
+- [ ] [TASK-175](TASK-175): Implement capability resolution in companion plugin SubagentStart hook
+
+### Phase 4: App-Native Resolution
+- [ ] [TASK-176](TASK-176): Implement capability resolution in Rust agent execution pipeline
+
+## Out of Scope
+
+- **Capability discovery** — agents declare what they need, they don't discover what's available
+- **Dynamic capability negotiation** — no runtime capability checking between providers
+- **Cross-provider agent migration** — switching providers mid-session
+- **Tool versioning** — capabilities don't carry version constraints
