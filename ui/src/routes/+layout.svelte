@@ -4,9 +4,11 @@
 	import * as Tooltip from "$lib/components/ui/tooltip";
 	import ToastContainer from "$lib/components/shared/ToastContainer.svelte";
 	import { initializeStores, getStores } from "@orqastudio/sdk";
+	import { initializeGraphViz } from "$lib/graph-viz.svelte";
 
 	// Create all SDK store instances — must happen before any component accesses getStores().
 	initializeStores();
+	initializeGraphViz();
 
 	const { navigationStore } = getStores();
 

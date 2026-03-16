@@ -2,9 +2,11 @@
 	import { onDestroy } from "svelte";
 	import cytoscape from "cytoscape";
 	import { getStores } from "@orqastudio/sdk";
+	import { getGraphViz } from "$lib/graph-viz.svelte";
 	import { graphLayoutService } from "$lib/services/graph-layout.svelte";
 
 	const { artifactGraphSDK, navigationStore } = getStores();
+	const graphViz = getGraphViz();
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
 
 	// cose-bilkent is no longer needed here — layout runs in the worker.
@@ -26,15 +28,15 @@
 			cy = null;
 		}
 
-		const elements = artifactGraphSDK.graphElements;
+		const elements = graphViz.graphElements;
 		const positions = graphLayoutService.positions;
 
-		if (elements.filter((e) => e.group === "nodes").length === 0) return;
+		if (elements.filter((e: cytoscape.ElementDefinition) => e.group === "nodes").length === 0) return;
 		if (positions.length === 0) return;
 
 		// Apply worker-computed positions to node element definitions.
 		const positionMap = new Map(positions.map((p) => [p.id, { x: p.x, y: p.y }]));
-		const elementsWithPositions: cytoscape.ElementDefinition[] = elements.map((el) => {
+		const elementsWithPositions: cytoscape.ElementDefinition[] = elements.map((el: cytoscape.ElementDefinition) => {
 			if (el.group === "nodes" && el.data?.id) {
 				const pos = positionMap.get(el.data.id as string);
 				if (pos) return { ...el, position: pos };
@@ -115,11 +117,11 @@
 
 	$effect(() => {
 		const el = container;
-		const elements = artifactGraphSDK.graphElements;
+		const elements = graphViz.graphElements;
 		const positions = graphLayoutService.positions;
 		const running = graphLayoutService.layoutRunning;
 
-		const nodeCount = elements.filter((e) => e.group === "nodes").length;
+		const nodeCount = elements.filter((e: cytoscape.ElementDefinition) => e.group === "nodes").length;
 		const posCount = positions.length;
 
 		if (!el) return;

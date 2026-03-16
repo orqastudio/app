@@ -6,17 +6,17 @@
 	} from "$lib/components/ui/collapsible";
 	import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
 	import ArrowRightIcon from "@lucide/svelte/icons/arrow-right";
-	import { getStores } from "@orqastudio/sdk";
-
-	const { artifactGraphSDK } = getStores();
+	import { getGraphViz } from "$lib/graph-viz.svelte";
 	import ArtifactLink from "./ArtifactLink.svelte";
+
+	const graphViz = getGraphViz();
 
 	let { artifactId }: { artifactId: string } = $props();
 
 	let open = $state(false);
 
-	const upChain = $derived(artifactGraphSDK.traceChain(artifactId, "up"));
-	const downChain = $derived(artifactGraphSDK.traceChain(artifactId, "down"));
+	const upChain = $derived(graphViz.traceChain(artifactId, "up"));
+	const downChain = $derived(graphViz.traceChain(artifactId, "down"));
 
 	const hasChain = $derived(upChain.length > 0 || downChain.length > 0);
 </script>

@@ -4,7 +4,8 @@
 	import cytoscape from "cytoscape";
 	// @ts-expect-error — no type declarations for cytoscape-cose-bilkent
 	import coseBilkent from "cytoscape-cose-bilkent";
-	import { getStores, ARTIFACT_TYPE_COLORS } from "@orqastudio/sdk";
+	import { getStores } from "@orqastudio/sdk";
+	import { ARTIFACT_TYPE_COLORS } from "@orqastudio/graph-visualiser";
 
 	const { artifactGraphSDK, navigationStore } = getStores();
 	import type { ArtifactRef } from "@orqastudio/types";

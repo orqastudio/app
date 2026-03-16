@@ -11,10 +11,10 @@
 	import EyeIcon from "@lucide/svelte/icons/eye";
 	import * as Tooltip from "$lib/components/ui/tooltip";
 	import LoadingSpinner from "$lib/components/shared/LoadingSpinner.svelte";
-	import { getStores } from "@orqastudio/sdk";
-
-	const { artifactGraphSDK } = getStores();
+	import { getGraphViz } from "$lib/graph-viz.svelte";
 	import type { IntegrityCheck } from "@orqastudio/types";
+
+	const graphViz = getGraphViz();
 
 	interface Props {
 		checks: IntegrityCheck[];
@@ -28,7 +28,7 @@
 	const { checks, loading, fixing = false, scanned, onScan, onAutoFix }: Props = $props();
 
 	// Graph-theoretic metrics — reactive, no scan needed.
-	const health = $derived(artifactGraphSDK.graphHealth);
+	const health = $derived(graphViz.graphHealth);
 
 	// Score: percentage of graph in the largest connected component.
 	const healthScore = $derived(Math.round(health.largestComponentRatio * 100));
