@@ -57,6 +57,8 @@ relationships:
     type: depended-on-by
   - target: DOC-057
     type: informs
+  - target: IDEA-045
+    type: merged-from
 ---
 ## Why P1
 

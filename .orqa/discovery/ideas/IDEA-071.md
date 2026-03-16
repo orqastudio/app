@@ -36,6 +36,8 @@ relationships:
   - target: IMPL-019
     type: grounded
     rationale: "Auto-generated inverse of grounded relationship from IMPL-019"
+  - target: AD-055
+    type: merged-into
 ---
 
 > **Surpassed 2026-03-16**: Basic plugin ecosystem concept merged into EPIC-080 via AD-055. Provider-aware plugin system (provider detection, capability routing, load-time filtering) split into IDEA-111 as a distinct capability layer needed for multi-model AI support.

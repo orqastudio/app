@@ -688,6 +688,62 @@ relationships:
     type: grounded-by
   - target: SKILL-036
     type: grounded-by
+  - target: EPIC-073
+    type: grounded
+  - target: EPIC-082
+    type: grounded
+  - target: EPIC-083
+    type: grounded
+  - target: AD-021
+    type: grounded-by
+  - target: AD-022
+    type: grounded-by
+  - target: AD-023
+    type: grounded-by
+  - target: AD-024
+    type: grounded-by
+  - target: AD-025
+    type: grounded-by
+  - target: AD-026
+    type: grounded-by
+  - target: AD-027
+    type: grounded-by
+  - target: AD-028
+    type: grounded-by
+  - target: AD-032
+    type: grounded-by
+  - target: AD-036
+    type: grounded-by
+  - target: AD-037
+    type: grounded-by
+  - target: AD-039
+    type: grounded-by
+  - target: AD-041
+    type: grounded-by
+  - target: AD-042
+    type: grounded-by
+  - target: IMPL-003
+    type: grounded-by
+  - target: IMPL-004
+    type: grounded-by
+  - target: IMPL-007
+    type: grounded-by
+  - target: IMPL-008
+    type: grounded-by
+  - target: IMPL-009
+    type: grounded-by
+  - target: IMPL-010
+    type: grounded-by
+  - target: IMPL-013
+    type: grounded-by
+  - target: IMPL-014
+    type: grounded-by
+  - target: IMPL-016
+    type: grounded-by
+  - target: SKILL-046
+    type: grounded-by
+  - target: SKILL-049
+    type: grounded-by
 ---
 ## What This Pillar Means
 

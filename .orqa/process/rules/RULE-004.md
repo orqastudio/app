@@ -134,6 +134,8 @@ relationships:
     type: informed-by
   - target: RULE-032
     type: informed-by
+  - target: IMPL-014
+    type: grounded
 ---
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
 

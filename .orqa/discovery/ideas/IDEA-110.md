@@ -2,6 +2,7 @@
 id: IDEA-110
 title: "Tools as plugins — runtime tool registration"
 status: captured
+horizon: someday
 created: 2026-03-16
 relationships:
   - type: informed-by

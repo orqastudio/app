@@ -27,6 +27,8 @@ relationships:
     rationale: "Both use git submodules but for different purposes — plugins vs project aggregation"
   - target: PILLAR-001
     type: grounded-by
+  - target: AD-055
+    type: merged-into
 ---
 
 > **Surpassed 2026-03-16**: Multi-repo product overview merged into EPIC-081 via AD-055 (organisation mode with path-based project references, no nesting required). Security and integrity concepts (permissions hierarchy, agent scope boundaries, cross-project validation) split into IDEA-112.

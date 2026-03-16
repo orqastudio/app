@@ -91,6 +91,8 @@ relationships:
     type: evolves-from
   - target: DOC-057
     type: informs
+  - target: IDEA-032
+    type: evolves-from
 ---
 ## Context
 

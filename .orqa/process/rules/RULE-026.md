@@ -64,6 +64,8 @@ relationships:
     type: informed-by
   - target: RULE-042
     type: informed-by
+  - target: AD-028
+    type: enforces
 ---
 Every agent MUST have a `skills:` list in its YAML frontmatter. Agent tool access is declared via `capabilities:` and resolved per provider context — see [RULE-040](RULE-040). Skills load in three tiers [AD-028](AD-028).
 

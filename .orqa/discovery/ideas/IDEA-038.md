@@ -28,6 +28,8 @@ relationships:
     rationale: "Auto-generated inverse of documented-by relationship from DOC-071"
   - target: PILLAR-001
     type: grounded-by
+  - target: AD-055
+    type: merged-into
 ---
 
 > **Surpassed 2026-03-16**: Core plugin distribution mechanism merged into EPIC-080 via AD-055. Plugin catalogue/marketplace concept split into IDEA-108. User plugin development workflow split into IDEA-109.

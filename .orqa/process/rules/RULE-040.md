@@ -37,6 +37,8 @@ relationships:
     type: informed-by
   - target: RULE-037
     type: informed-by
+  - target: AD-025
+    type: enforces
 ---
 Agent definitions declare **capabilities** (what they can do), not **tools** (how they
 do it). The mapping from capabilities to provider-specific tool names is defined in this

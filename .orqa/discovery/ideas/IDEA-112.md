@@ -2,6 +2,7 @@
 id: IDEA-112
 title: "Multi-project security and integrity"
 status: captured
+horizon: someday
 created: 2026-03-16
 relationships:
   - type: informed-by

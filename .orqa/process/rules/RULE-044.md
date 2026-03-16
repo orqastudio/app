@@ -41,6 +41,8 @@ relationships:
     rationale: "Auto-generated inverse of documented-by relationship from DOC-071"
   - target: AD-038
     type: enforces
+  - target: AD-039
+    type: enforces
 ---
 Core graph artifacts define how the artifact graph works, how agents traverse it, and how the structured thinking process operates. They are **firmware** — they ship with OrqaStudio and are not modified during normal project use.
 

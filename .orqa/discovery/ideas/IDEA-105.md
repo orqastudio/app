@@ -17,6 +17,8 @@ relationships:
     type: grounded-by
   - target: PILLAR-003
     type: grounded-by
+  - target: AD-055
+    type: merged-into
 ---
 
 ## Motivation

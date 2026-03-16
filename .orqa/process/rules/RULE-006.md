@@ -85,6 +85,8 @@ relationships:
     type: informed-by
   - target: RULE-043
     type: informed-by
+  - target: AD-026
+    type: enforces
 ---
 **Source of Truth:** `.orqa/documentation/development/coding-standards.md`
 

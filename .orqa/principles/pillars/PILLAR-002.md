@@ -265,6 +265,10 @@ relationships:
     type: grounded-by
   - target: SKILL-035
     type: grounded-by
+  - target: AD-027
+    type: grounded-by
+  - target: AD-042
+    type: grounded-by
 ---
 ## What This Pillar Means
 

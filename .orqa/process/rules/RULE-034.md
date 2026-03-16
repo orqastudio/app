@@ -22,6 +22,8 @@ relationships:
   - target: AGENT-008
     type: enforces
     rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
+  - target: AD-036
+    type: enforces
 ---
 All artifact cross-references MUST use the format `[Display Text](ARTIFACT-ID)` where the artifact ID matches the pattern `PREFIX-NNN`. The display text is typically the artifact ID itself: `[EPIC-001](EPIC-001)`.
 

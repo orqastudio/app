@@ -19,6 +19,8 @@ relationships:
     rationale: End-to-end completeness requires all layers to agree on which persistence channel stores each type of data
   - target: EPIC-052
     type: informs
+  - target: AD-032
+    type: enforces
 ---
 
 Data persistence in OrqaStudio follows three channels, each with clear boundaries.

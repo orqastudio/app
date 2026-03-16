@@ -10,6 +10,20 @@ relationships:
     target: MS-002
   - type: depends-on
     target: EPIC-080
+  - target: EPIC-082
+    type: depended-on-by
+  - target: IDEA-112
+    type: informs
+  - target: IDEA-114
+    type: informs
+  - target: IDEA-115
+    type: informs
+  - target: IDEA-006
+    type: merged-from
+  - target: IDEA-007
+    type: merged-from
+  - target: IDEA-085
+    type: merged-from
 ---
 
 # EPIC-081: Organisation-mode multi-project support

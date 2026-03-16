@@ -45,6 +45,8 @@ relationships:
     type: informed-by
   - target: RULE-022
     type: informed-by
+  - target: AD-027
+    type: enforces
 ---
 Every feature, command, and UI element must serve the project's guiding principles. These principles are defined as **pillar artifacts** in `.orqa/process/pillars/`. Read the active pillars before implementing any new capability.
 

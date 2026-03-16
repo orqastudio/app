@@ -121,6 +121,8 @@ relationships:
     type: informed-by
   - target: PILLAR-002
     type: informed-by
+  - target: EPIC-073
+    type: grounded
 ---
 ## What This Pillar Means
 

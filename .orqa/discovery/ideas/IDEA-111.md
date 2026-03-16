@@ -2,6 +2,7 @@
 id: IDEA-111
 title: "Provider-aware plugin system"
 status: captured
+horizon: someday
 created: 2026-03-16
 relationships:
   - type: informed-by

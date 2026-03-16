@@ -25,6 +25,8 @@ relationships:
   - target: PILLAR-001
     type: grounded-by
     rationale: Schema-driven enforcement creates structural clarity
+  - target: EPIC-083
+    type: depended-on-by
 ---
 
 ## Objective

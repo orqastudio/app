@@ -67,6 +67,10 @@ relationships:
     type: informed-by
   - target: RULE-044
     type: informed-by
+  - target: AD-021
+    type: enforces
+  - target: AD-022
+    type: enforces
 ---
 # Artifact Config Integrity (NON-NEGOTIABLE)
 

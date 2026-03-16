@@ -2,6 +2,7 @@
 id: IDEA-113
 title: "Code-governance traceability"
 status: captured
+horizon: someday
 created: 2026-03-16
 relationships:
   - type: informed-by

@@ -2,6 +2,7 @@
 id: IDEA-108
 title: "Plugin catalogue and marketplace"
 status: captured
+horizon: someday
 created: 2026-03-16
 relationships:
   - type: informed-by

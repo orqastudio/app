@@ -8,6 +8,36 @@ relationships:
     target: AD-055
   - type: delivers
     target: MS-002
+  - target: EPIC-081
+    type: depended-on-by
+  - target: EPIC-082
+    type: depended-on-by
+  - target: EPIC-083
+    type: depended-on-by
+  - target: IDEA-108
+    type: informs
+  - target: IDEA-109
+    type: informs
+  - target: IDEA-110
+    type: informs
+  - target: IDEA-111
+    type: informs
+  - target: IDEA-113
+    type: informs
+  - target: IDEA-030
+    type: merged-from
+  - target: IDEA-038
+    type: merged-from
+  - target: IDEA-055
+    type: merged-from
+  - target: IDEA-071
+    type: merged-from
+  - target: IDEA-090
+    type: merged-from
+  - target: IDEA-100
+    type: merged-from
+  - target: IDEA-105
+    type: merged-from
 ---
 
 # EPIC-080: Plugin infrastructure and delivery plugin extraction

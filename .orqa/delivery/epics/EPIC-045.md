@@ -47,6 +47,8 @@ relationships:
     type: informs
   - target: AD-030
     type: informs
+  - target: IDEA-025
+    type: evolves-from
 ---
 ## Context
 

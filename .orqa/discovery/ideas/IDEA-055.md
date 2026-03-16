@@ -21,6 +21,8 @@ relationships:
     target: EPIC-080
   - target: PILLAR-001
     type: grounded-by
+  - target: AD-055
+    type: merged-into
 ---
 
 > **Surpassed 2026-03-16**: Plugin architecture concept merged into EPIC-080 via AD-055. Runtime tool registration (WASM/MCP/script formats, capability-based permissions) split into IDEA-110 as architecturally distinct from artifact/view plugins.

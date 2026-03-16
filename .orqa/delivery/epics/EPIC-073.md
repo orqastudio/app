@@ -96,6 +96,10 @@ relationships:
   - target: TASK-473
     type: delivered-by
     rationale: "Auto-generated inverse of contains relationship from TASK-473"
+  - target: TASK-398
+    type: delivered-by
+  - target: TASK-399
+    type: delivered-by
 ---
 ## Context
 

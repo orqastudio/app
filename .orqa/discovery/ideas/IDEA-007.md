@@ -20,6 +20,8 @@ relationships:
     rationale: "Auto-generated inverse of informed-by relationship from IDEA-085"
   - target: PILLAR-001
     type: grounded-by
+  - target: AD-055
+    type: merged-into
 ---
 n> **Surpassed 2026-03-16**: Flat organisation model merged into EPIC-081 via AD-055. Nested spaces and governance inheritance split into IDEA-115.
 

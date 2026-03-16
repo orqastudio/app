@@ -33,6 +33,8 @@ relationships:
     type: informed-by
   - target: RULE-031
     type: informed-by
+  - target: AD-032
+    type: enforces
 ---
 **Source of Truth:** `.orqa/process/decisions/` — individual `AD-NNN.md` artifacts. Decisions are first-class artifacts browsable in the app's artifact navigation.
 

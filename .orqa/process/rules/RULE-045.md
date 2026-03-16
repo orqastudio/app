@@ -39,6 +39,10 @@ relationships:
     type: informs
   - target: RULE-034
     type: informs
+  - target: AD-036
+    type: enforces
+  - target: AD-042
+    type: enforces
 ---
 All artifact cross-references must resolve to existing artifacts. Pipeline relationships must have bidirectional inverses. These constraints are enforced at commit time and can be verified manually.
 

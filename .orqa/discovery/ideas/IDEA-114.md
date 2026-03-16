@@ -2,6 +2,7 @@
 id: IDEA-114
 title: "Governance libraries and pattern detection"
 status: captured
+horizon: someday
 created: 2026-03-16
 relationships:
   - type: informed-by
