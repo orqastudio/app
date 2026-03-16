@@ -44,15 +44,15 @@
     "dist/"
   ],
   "dependencies": {
-    "@orqastudio/types": ">=0.1.0-pre"
+    "@orqastudio/types": "dev"
   },
   "peerDependencies": {
     "@tauri-apps/api": ">=2.0.0",
     "svelte": ">=5.0.0"
   },
   "devDependencies": {
-    "@orqastudio/eslint-config": ">=0.1.0-pre",
-    "@orqastudio/test-config": ">=0.1.0-pre",
+    "@orqastudio/eslint-config": "dev",
+    "@orqastudio/test-config": "dev",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
     "@tauri-apps/api": "^2.0.0",
     "@types/node": "^22.0.0",
