@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {
-		DropdownMenu,
+		DropdownMenuRoot,
 		DropdownMenuContent,
 		DropdownMenuItem,
 		DropdownMenuTrigger,
@@ -29,7 +29,7 @@
 	const buttonSize: ButtonSize = $derived(triggerSize === "sm" ? "sm" : "default");
 </script>
 
-<DropdownMenu>
+<DropdownMenuRoot>
 	<DropdownMenuTrigger>
 		<Button variant="outline" size={buttonSize} class="gap-1 text-xs">
 			{triggerLabel}
@@ -46,4 +46,4 @@
 			</DropdownMenuItem>
 		{/each}
 	</DropdownMenuContent>
-</DropdownMenu>
+</DropdownMenuRoot>

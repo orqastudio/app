@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import * as Resizable from "../../pure/resizable/index.js";
+	import { ResizablePaneGroup, ResizableHandle, ResizablePane } from "../../pure/resizable/index.js";
 
 	let {
 		toolbar,
@@ -44,19 +44,19 @@
 		{/if}
 
 		{#if showChatPanel && chatPanel}
-			<Resizable.PaneGroup direction="horizontal" class="flex-1">
-				<Resizable.Pane defaultSize={mainPanelSize} minSize={30}>
+			<ResizablePaneGroup direction="horizontal" class="flex-1">
+				<ResizablePane defaultSize={mainPanelSize} minSize={30}>
 					<div class="h-full overflow-hidden">
 						{@render mainContent()}
 					</div>
-				</Resizable.Pane>
-				<Resizable.Handle />
-				<Resizable.Pane defaultSize={chatPanelSize} minSize={20}>
+				</ResizablePane>
+				<ResizableHandle />
+				<ResizablePane defaultSize={chatPanelSize} minSize={20}>
 					<div class="flex h-full flex-col bg-chat">
 						{@render chatPanel()}
 					</div>
-				</Resizable.Pane>
-			</Resizable.PaneGroup>
+				</ResizablePane>
+			</ResizablePaneGroup>
 		{:else}
 			<div class="min-w-0 flex-1 overflow-hidden">
 				{@render mainContent()}

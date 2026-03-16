@@ -1,16 +1,8 @@
-import Root from "./tabs.svelte";
-import Content from "./tabs-content.svelte";
-import List from "./tabs-list.svelte";
-import Trigger from "./tabs-trigger.svelte";
+// Composed single-export (default usage)
+export { default as Tabs, type TabsProps, type TabDef } from "./SimpleTabs.svelte";
 
-export {
-	Root,
-	Content,
-	List,
-	Trigger,
-	//
-	Root as Tabs,
-	Content as TabsContent,
-	List as TabsList,
-	Trigger as TabsTrigger,
-};
+// Parts for custom composition
+export { default as TabsRoot } from "./tabs.svelte";
+export { default as TabsList } from "./tabs-list.svelte";
+export { default as TabsTrigger } from "./tabs-trigger.svelte";
+export { default as TabsContent } from "./tabs-content.svelte";

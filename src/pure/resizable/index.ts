@@ -1,13 +1,7 @@
-import { Pane } from "paneforge";
-import Handle from "./resizable-handle.svelte";
-import PaneGroup from "./resizable-pane-group.svelte";
+// Composed single-export (default usage)
+export { default as Resizable, type ResizableProps } from "./SimpleResizable.svelte";
 
-export {
-	PaneGroup,
-	Pane,
-	Handle,
-	//
-	PaneGroup as ResizablePaneGroup,
-	Pane as ResizablePane,
-	Handle as ResizableHandle,
-};
+// Parts for custom composition
+export { default as ResizablePaneGroup } from "./resizable-pane-group.svelte";
+export { default as ResizableHandle } from "./resizable-handle.svelte";
+export { Pane as ResizablePane } from "paneforge";

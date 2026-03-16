@@ -1,28 +1,12 @@
-import Root from "./dialog.svelte";
-import Content from "./dialog-content.svelte";
-import Description from "./dialog-description.svelte";
-import Footer from "./dialog-footer.svelte";
-import Header from "./dialog-header.svelte";
-import Overlay from "./dialog-overlay.svelte";
-import Portal from "./dialog-portal.svelte";
-import Title from "./dialog-title.svelte";
+// Composed single-export (default usage)
+export { default as Dialog, type DialogProps } from "./SimpleDialog.svelte";
 
-export {
-	Root,
-	Content,
-	Description,
-	Footer,
-	Header,
-	Overlay,
-	Portal,
-	Title,
-	//
-	Root as Dialog,
-	Content as DialogContent,
-	Description as DialogDescription,
-	Footer as DialogFooter,
-	Header as DialogHeader,
-	Overlay as DialogOverlay,
-	Portal as DialogPortal,
-	Title as DialogTitle,
-};
+// Parts for custom composition
+export { default as DialogRoot } from "./dialog.svelte";
+export { default as DialogContent } from "./dialog-content.svelte";
+export { default as DialogHeader } from "./dialog-header.svelte";
+export { default as DialogTitle } from "./dialog-title.svelte";
+export { default as DialogDescription } from "./dialog-description.svelte";
+export { default as DialogFooter } from "./dialog-footer.svelte";
+export { default as DialogOverlay } from "./dialog-overlay.svelte";
+export { default as DialogPortal } from "./dialog-portal.svelte";

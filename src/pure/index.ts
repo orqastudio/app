@@ -11,13 +11,13 @@ export { Tooltip, TooltipRoot, TooltipTrigger, TooltipContent, TooltipProvider, 
 export { Popover, PopoverRoot, PopoverTrigger, PopoverContent, PopoverClose, PopoverPortal } from "./popover/index.js";
 export { Collapsible, CollapsibleRoot, CollapsibleTrigger, CollapsibleContent } from "./collapsible/index.js";
 
-// Composed primitives — namespaced (genuinely need different composition)
-export * as Card from "./card/index.js";
-export * as Dialog from "./dialog/index.js";
-export * as AlertDialog from "./alert-dialog/index.js";
-export * as DropdownMenu from "./dropdown-menu/index.js";
-export * as Tabs from "./tabs/index.js";
-export * as Resizable from "./resizable/index.js";
+// Composed primitives (simple props or custom snippets, parts available)
+export { Card, type CardProps, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, CardAction } from "./card/index.js";
+export { Dialog, type DialogProps, DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogOverlay, DialogPortal } from "./dialog/index.js";
+export { AlertDialog, type AlertDialogProps, AlertDialogRoot, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction, AlertDialogCancel, AlertDialogOverlay, AlertDialogPortal, AlertDialogTrigger } from "./alert-dialog/index.js";
+export { DropdownMenu, type DropdownMenuProps, type DropdownMenuItemDef, type DropdownMenuEntry, DropdownMenuRoot, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuGroup, DropdownMenuGroupHeading, DropdownMenuLabel, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuCheckboxGroup, DropdownMenuCheckboxItem, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuPortal } from "./dropdown-menu/index.js";
+export { Tabs, type TabsProps, type TabDef, TabsRoot, TabsList, TabsTrigger, TabsContent } from "./tabs/index.js";
+export { Resizable, type ResizableProps, ResizablePaneGroup, ResizableHandle, ResizablePane } from "./resizable/index.js";
 
 // Shared pure components
 export { EmptyState } from "./empty-state/index.js";
