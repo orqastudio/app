@@ -1366,7 +1366,7 @@ fn check_idea_promotion_validity(graph: &ArtifactGraph, checks: &mut Vec<Integri
         let has_lineage = node.references_out.iter().any(|r| {
             matches!(
                 r.relationship_type.as_deref(),
-                Some("evolves-into") | Some("merged-into")
+                Some("evolves-into" | "merged-into")
             )
         });
 
