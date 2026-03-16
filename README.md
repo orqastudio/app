@@ -1,28 +1,16 @@
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+![License](https://img.shields.io/badge/license-BSL%201.1-blue)
+![Status](https://img.shields.io/badge/status-pre--release-orange)
 
-# OrqaStudio Types
+![OrqaStudio](https://github.com/orqastudio/orqastudio-brand/blob/main/assets/banners/banner-1680x240.png?raw=1)
 
-Shared TypeScript types for the OrqaStudio ecosystem. This package provides all the type definitions used across OrqaStudio packages, including artifact graph types, session/message types, project configuration types, and shared constants.
+# @orqastudio/types
 
-## Install
+> **Pre-release** — APIs and type definitions may change without notice until v1.0.0.
 
-```bash
-npm install @orqastudio/types
-```
+Shared TypeScript type definitions for the OrqaStudio ecosystem. Provides all types used across OrqaStudio packages including artifact graph types, project configuration, session/message types, and shared constants.
 
-## Usage
-
-```typescript
-import type { ArtifactNode, ArtifactRef, GraphStats } from "@orqastudio/types";
-import { ARTIFACT_TYPES, INVERSE_MAP, SINGLE_REF_FIELDS } from "@orqastudio/types";
-```
-
-Constants can also be imported from a dedicated subpath:
-
-```typescript
-import { INVERSE_MAP, SINGLE_REF_FIELDS, ARRAY_REF_FIELDS } from "@orqastudio/types/constants";
-```
+---
 
 ## License
 
-[Apache-2.0](LICENSE)
+[BSL 1.1](LICENSE) — converts to Apache 2.0 four years after each version release.
