@@ -1,10 +1,13 @@
 ![License](https://img.shields.io/badge/license-BSL%201.1-blue)
+![Status](https://img.shields.io/badge/status-pre--release-orange)
 
 ![OrqaStudio](https://github.com/orqastudio/orqastudio-brand/blob/main/assets/banners/banner-1680x240.png?raw=1)
 
 # @orqastudio/svelte-components
 
-> Svelte 5 component library for OrqaStudio apps and plugins. Ships the design system, UI primitives, and pattern abstractions that make OrqaStudio visually consistent.
+> **Pre-release** — APIs, component contracts, and design tokens may change without notice until v1.0.0.
+
+Svelte 5 component library for OrqaStudio apps and plugins. Ships the design system, UI primitives, and pattern abstractions that make OrqaStudio visually consistent.
 
 ---
 

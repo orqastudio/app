@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/svelte-components",
-  "version": "0.1.0",
+  "version": "0.1.0-pre",
   "type": "module",
   "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",
