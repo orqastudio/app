@@ -198,120 +198,39 @@ export function isArtifactGroup(entry: ArtifactEntry): entry is ArtifactGroupCon
 }
 
 // ---------------------------------------------------------------------------
-// Platform Constants
+// Platform Configuration — loaded from platform/core.json
 // ---------------------------------------------------------------------------
 
-import type { RelationshipType, NavigationItem } from "./plugin.js";
+import type { RelationshipType, NavigationItem, PlatformConfig, PlatformArtifactType as PlatformArtifactTypeInterface } from "./plugin.js";
+
+// Import the platform config data file. This is the single source of truth
+// for core artifact types and relationships. Plugins and project config
+// extend this at runtime — the platform config is not special-cased in code.
+import platformConfigData from "./platform/core.json" with { type: "json" };
+
+/** The loaded platform configuration. */
+export const PLATFORM_CONFIG: PlatformConfig = platformConfigData as PlatformConfig;
 
 /**
- * Artifact types that ship with the platform — every project has these.
- * Ideas are platform-level (every project captures ideas).
- * How ideas become delivery artifacts is plugin domain.
+ * Platform artifact type keys derived from core.json.
+ * Backwards-compatible: same shape as the old hardcoded array.
  */
-export const PLATFORM_ARTIFACT_TYPES = [
-	"pillar",
-	"vision",
-	"persona",
-	"grounding",
-	"decision",
-	"rule",
-	"lesson",
-	"skill",
-	"agent",
-	"idea",
-] as const;
+export const PLATFORM_ARTIFACT_TYPES: readonly string[] = PLATFORM_CONFIG.artifactTypes.map(t => t.key);
 
-export type PlatformArtifactType = (typeof PLATFORM_ARTIFACT_TYPES)[number];
+/** @deprecated Use `PLATFORM_CONFIG.artifactTypes[n].key` instead. */
+export type PlatformArtifactType = string;
 
 /**
- * Canonical platform relationships using the same RelationshipType structure
- * as plugin relationships. The integrity validator merges both into one vocabulary.
- *
- * Empty `from`/`to` arrays mean "any artifact type".
+ * Platform relationships derived from core.json.
+ * Backwards-compatible: same RelationshipType[] shape.
  */
-export const PLATFORM_RELATIONSHIPS: readonly RelationshipType[] = [
-	{
-		key: "informs",
-		inverse: "informed-by",
-		label: "Informs",
-		inverseLabel: "Informed By",
-		from: [],
-		to: [],
-		description: "Knowledge flows downstream",
-	},
-	{
-		key: "evolves-into",
-		inverse: "evolves-from",
-		label: "Evolves Into",
-		inverseLabel: "Evolves From",
-		from: [],
-		to: [],
-		description: "Artifact lineage",
-	},
-	{
-		key: "drives",
-		inverse: "driven-by",
-		label: "Drives",
-		inverseLabel: "Driven By",
-		from: ["decision"],
-		to: [],
-		description: "Decision motivates work",
-	},
-	{
-		key: "governs",
-		inverse: "governed-by",
-		label: "Governs",
-		inverseLabel: "Governed By",
-		from: ["decision"],
-		to: [],
-		description: "Decision governs standards",
-	},
-	{
-		key: "enforces",
-		inverse: "enforced-by",
-		label: "Enforces",
-		inverseLabel: "Enforced By",
-		from: ["rule"],
-		to: ["decision"],
-		description: "Rule enforces decision",
-	},
-	{
-		key: "grounded",
-		inverse: "grounded-by",
-		label: "Grounded",
-		inverseLabel: "Grounded By",
-		from: [],
-		to: ["pillar"],
-		description: "Artifact anchored to principle",
-	},
-	{
-		key: "observes",
-		inverse: "observed-by",
-		label: "Observes",
-		inverseLabel: "Observed By",
-		from: ["agent"],
-		to: [],
-		description: "Agent watches artifact",
-	},
-	{
-		key: "merged-into",
-		inverse: "merged-from",
-		label: "Merged Into",
-		inverseLabel: "Merged From",
-		from: [],
-		to: [],
-		description: "Artifact consolidation",
-	},
-	{
-		key: "synchronised-with",
-		inverse: "synchronised-with",
-		label: "Synchronised With",
-		inverseLabel: "Synchronised With",
-		from: [],
-		to: [],
-		description: "Paired content (self-inverse)",
-	},
-] as const;
+export const PLATFORM_RELATIONSHIPS: readonly RelationshipType[] = PLATFORM_CONFIG.relationships;
+
+/**
+ * Semantic categories from core.json.
+ * Used by checks to query relationship intent without hardcoding keys.
+ */
+export const PLATFORM_SEMANTICS = PLATFORM_CONFIG.semantics;
 
 /**
  * Default platform navigation groups (principles, learning, discovery).

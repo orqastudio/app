@@ -1,0 +1,144 @@
+{
+  "$schema": "https://orqastudio.dev/schemas/platform-config.json",
+  "description": "Core platform configuration — artifact types and relationships that ship with every OrqaStudio installation. Identical in structure to what a plugin provides.",
+
+  "artifactTypes": [
+    { "key": "pillar", "label": "Pillar", "icon": "columns-3", "idPrefix": "PILLAR" },
+    { "key": "vision", "label": "Vision", "icon": "eye", "idPrefix": "VISION" },
+    { "key": "persona", "label": "Persona", "icon": "users", "idPrefix": "PERSONA" },
+    { "key": "grounding", "label": "Grounding", "icon": "anchor", "idPrefix": "GROUNDING" },
+    { "key": "decision", "label": "Decision", "icon": "scale", "idPrefix": "AD" },
+    { "key": "rule", "label": "Rule", "icon": "shield", "idPrefix": "RULE" },
+    { "key": "lesson", "label": "Lesson", "icon": "book-open", "idPrefix": "IMPL" },
+    { "key": "skill", "label": "Skill", "icon": "zap", "idPrefix": "SKILL" },
+    { "key": "agent", "label": "Agent", "icon": "bot", "idPrefix": "AGENT" },
+    { "key": "idea", "label": "Idea", "icon": "lightbulb", "idPrefix": "IDEA" },
+    { "key": "doc", "label": "Document", "icon": "file-text", "idPrefix": "DOC" }
+  ],
+
+  "relationships": [
+    {
+      "key": "informs",
+      "inverse": "informed-by",
+      "label": "Informs",
+      "inverseLabel": "Informed By",
+      "from": [],
+      "to": [],
+      "description": "Knowledge flows downstream",
+      "semantic": "knowledge-flow"
+    },
+    {
+      "key": "evolves-into",
+      "inverse": "evolves-from",
+      "label": "Evolves Into",
+      "inverseLabel": "Evolves From",
+      "from": [],
+      "to": [],
+      "description": "Artifact lineage — one artifact becomes another",
+      "semantic": "lineage"
+    },
+    {
+      "key": "drives",
+      "inverse": "driven-by",
+      "label": "Drives",
+      "inverseLabel": "Driven By",
+      "from": ["decision"],
+      "to": [],
+      "description": "Decision motivates work",
+      "semantic": "motivation"
+    },
+    {
+      "key": "governs",
+      "inverse": "governed-by",
+      "label": "Governs",
+      "inverseLabel": "Governed By",
+      "from": ["decision"],
+      "to": [],
+      "description": "Decision governs standards",
+      "semantic": "governance"
+    },
+    {
+      "key": "delivers",
+      "inverse": "delivered-by",
+      "label": "Delivers",
+      "inverseLabel": "Delivered By",
+      "from": [],
+      "to": [],
+      "description": "Work delivers to parent in hierarchy",
+      "semantic": "hierarchy"
+    },
+    {
+      "key": "enforces",
+      "inverse": "enforced-by",
+      "label": "Enforces",
+      "inverseLabel": "Enforced By",
+      "from": ["rule"],
+      "to": ["decision"],
+      "description": "Rule enforces decision",
+      "semantic": "enforcement"
+    },
+    {
+      "key": "grounded",
+      "inverse": "grounded-by",
+      "label": "Grounded",
+      "inverseLabel": "Grounded By",
+      "from": [],
+      "to": ["pillar"],
+      "description": "Artifact anchored to principle",
+      "semantic": "grounding"
+    },
+    {
+      "key": "observes",
+      "inverse": "observed-by",
+      "label": "Observes",
+      "inverseLabel": "Observed By",
+      "from": ["agent"],
+      "to": [],
+      "description": "Agent watches artifact",
+      "semantic": "observation"
+    },
+    {
+      "key": "merged-into",
+      "inverse": "merged-from",
+      "label": "Merged Into",
+      "inverseLabel": "Merged From",
+      "from": [],
+      "to": [],
+      "description": "Artifact consolidation — multiple become one",
+      "semantic": "lineage"
+    },
+    {
+      "key": "synchronised-with",
+      "inverse": "synchronised-with",
+      "label": "Synchronised With",
+      "inverseLabel": "Synchronised With",
+      "from": [],
+      "to": [],
+      "description": "Paired content (self-inverse)",
+      "semantic": "synchronisation"
+    }
+  ],
+
+  "semantics": {
+    "lineage": {
+      "description": "Relationships that establish artifact succession — one thing becoming or being absorbed into another",
+      "keys": ["evolves-into", "evolves-from", "merged-into", "merged-from"]
+    },
+    "hierarchy": {
+      "description": "Relationships that establish parent-child delivery structure",
+      "keys": ["delivers", "delivered-by"]
+    },
+    "knowledge-flow": {
+      "description": "Relationships where knowledge or insight flows between artifacts",
+      "keys": ["informs", "informed-by"]
+    },
+    "governance": {
+      "description": "Relationships where decisions and rules govern behaviour",
+      "keys": ["governs", "governed-by", "enforces", "enforced-by", "drives", "driven-by"]
+    },
+    "grounding": {
+      "description": "Relationships anchoring artifacts to foundational principles",
+      "keys": ["grounded", "grounded-by"]
+    }
+  }
+}

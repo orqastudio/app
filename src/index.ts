@@ -23,8 +23,10 @@ export type {
 export {
 	isArtifactGroup,
 	DEFAULT_ARTIFACT_LINK_COLORS,
+	PLATFORM_CONFIG,
 	PLATFORM_ARTIFACT_TYPES,
 	PLATFORM_RELATIONSHIPS,
+	PLATFORM_SEMANTICS,
 	PLATFORM_NAVIGATION,
 } from "./project.js";
 export type { PlatformArtifactType } from "./project.js";
@@ -115,7 +117,7 @@ export type {
 } from "./artifact-graph.js";
 export { ARTIFACT_TYPES } from "./artifact-graph.js";
 
-export { INVERSE_MAP, SINGLE_REF_FIELDS, ARRAY_REF_FIELDS } from "./constants.js";
+export { INVERSE_MAP, SINGLE_REF_FIELDS, ARRAY_REF_FIELDS, buildInverseMap, hasSemantic, keysForSemantic } from "./constants.js";
 
 // Plugin types
 export type {
@@ -126,6 +128,9 @@ export type {
 	ViewRegistration,
 	WidgetRegistration,
 	RelationshipType,
+	PlatformArtifactType as PlatformArtifactTypeInterface,
+	RelationshipSemantic,
+	PlatformConfig,
 	SettingsRegistration,
 	DefaultNavItem,
 	NavItemType,

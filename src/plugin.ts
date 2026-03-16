@@ -91,6 +91,29 @@ export interface RelationshipType {
 	to: string[];
 	/** Human-readable description of the relationship. */
 	description: string;
+	/** Semantic category (e.g. "lineage", "hierarchy", "governance"). Used by checks to query relationship intent without hardcoding keys. */
+	semantic?: string;
+}
+
+/** A platform artifact type declaration. */
+export interface PlatformArtifactType {
+	key: string;
+	label: string;
+	icon: string;
+	idPrefix: string;
+}
+
+/** Semantic category grouping relationship keys by intent. */
+export interface RelationshipSemantic {
+	description: string;
+	keys: string[];
+}
+
+/** Platform core configuration — loaded from platform/core.json. */
+export interface PlatformConfig {
+	artifactTypes: PlatformArtifactType[];
+	relationships: RelationshipType[];
+	semantics: Record<string, RelationshipSemantic>;
 }
 
 // ---------------------------------------------------------------------------
