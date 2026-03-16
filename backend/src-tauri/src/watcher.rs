@@ -103,10 +103,7 @@ pub fn start<R: Runtime>(
                             );
                         }
                         Err(e) => {
-                            tracing::warn!(
-                                "[watcher] failed to watch child '{}': {e}",
-                                child.name
-                            );
+                            tracing::warn!("[watcher] failed to watch child '{}': {e}", child.name);
                         }
                     }
                 }

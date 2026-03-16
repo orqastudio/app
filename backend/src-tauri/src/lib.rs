@@ -178,6 +178,7 @@ fn register_plugins(builder: tauri::Builder<tauri::Wry>) -> tauri::Builder<tauri
 }
 
 /// Register all Tauri command handlers on the builder.
+#[allow(clippy::too_many_lines)]
 fn register_commands(builder: tauri::Builder<tauri::Wry>) -> tauri::Builder<tauri::Wry> {
     builder.invoke_handler(tauri::generate_handler![
         commands::sidecar_commands::sidecar_status,

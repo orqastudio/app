@@ -114,9 +114,7 @@ pub fn project_icon_read(project_path: String, icon_filename: String) -> Result<
 ///
 /// Returns a list of validation error strings (empty if all valid).
 #[tauri::command]
-pub fn validate_organisation_config(
-    project_path: String,
-) -> Result<Vec<String>, OrqaError> {
+pub fn validate_organisation_config(project_path: String) -> Result<Vec<String>, OrqaError> {
     let settings = project_settings_repo::read(&project_path)?
         .ok_or_else(|| OrqaError::NotFound("project settings not found".to_string()))?;
 

@@ -293,7 +293,12 @@ pub fn run_integrity_scan(state: State<'_, AppState>) -> Result<Vec<IntegrityChe
     let valid_statuses = load_valid_statuses(&project_path);
     let delivery = load_delivery_config(&project_path);
     let project_rels = load_project_relationships(&project_path);
-    Ok(check_integrity(&graph, &valid_statuses, &delivery, &project_rels))
+    Ok(check_integrity(
+        &graph,
+        &valid_statuses,
+        &delivery,
+        &project_rels,
+    ))
 }
 
 /// Apply auto-fixable integrity checks and return the list of applied fixes.

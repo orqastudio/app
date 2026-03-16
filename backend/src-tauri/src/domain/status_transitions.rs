@@ -421,7 +421,12 @@ mod tests {
     }
 
     /// Create a node with a `depends-on` relationship to the given target.
-    fn make_dependent(id: &str, artifact_type: &str, status: &str, depends_on: &str) -> ArtifactNode {
+    fn make_dependent(
+        id: &str,
+        artifact_type: &str,
+        status: &str,
+        depends_on: &str,
+    ) -> ArtifactNode {
         let mut node = make_node(id, artifact_type, status, serde_json::json!({}));
         node.references_out.push(ArtifactRef {
             target_id: depends_on.to_owned(),
@@ -433,8 +438,19 @@ mod tests {
     }
 
     /// Create a node with a `delivers` relationship and priority set.
-    fn make_child_with_priority(id: &str, artifact_type: &str, status: &str, delivers_to: &str, priority: &str) -> ArtifactNode {
-        let mut node = make_node(id, artifact_type, status, serde_json::json!({"priority": priority}));
+    fn make_child_with_priority(
+        id: &str,
+        artifact_type: &str,
+        status: &str,
+        delivers_to: &str,
+        priority: &str,
+    ) -> ArtifactNode {
+        let mut node = make_node(
+            id,
+            artifact_type,
+            status,
+            serde_json::json!({"priority": priority}),
+        );
         node.references_out.push(ArtifactRef {
             target_id: delivers_to.to_owned(),
             field: "relationships".to_owned(),

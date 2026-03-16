@@ -110,10 +110,8 @@ pub type TypeRegistry = Vec<(String, String)>;
 fn build_type_registry(project_path: &Path) -> TypeRegistry {
     use crate::domain::project_settings::ArtifactEntry;
 
-    let settings = crate::repo::project_settings_repo::read(
-        &project_path.to_string_lossy(),
-    )
-    .unwrap_or(None);
+    let settings =
+        crate::repo::project_settings_repo::read(&project_path.to_string_lossy()).unwrap_or(None);
 
     let Some(settings) = settings else {
         return Vec::new();
@@ -124,17 +122,11 @@ fn build_type_registry(project_path: &Path) -> TypeRegistry {
         match entry {
             ArtifactEntry::Group { children, .. } => {
                 for child in children {
-                    registry.push((
-                        child.path.replace('\\', "/"),
-                        child.key.clone(),
-                    ));
+                    registry.push((child.path.replace('\\', "/"), child.key.clone()));
                 }
             }
             ArtifactEntry::Type(type_config) => {
-                registry.push((
-                    type_config.path.replace('\\', "/"),
-                    type_config.key.clone(),
-                ));
+                registry.push((type_config.path.replace('\\', "/"), type_config.key.clone()));
             }
         }
     }
@@ -154,10 +146,8 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, OrqaEr
     walk_directory(&orqa_dir, project_path, &mut graph, &type_registry, None)?;
 
     // Pass 1b: if organisation mode, scan each child project.
-    let settings = crate::repo::project_settings_repo::read(
-        &project_path.to_string_lossy(),
-    )
-    .unwrap_or(None);
+    let settings =
+        crate::repo::project_settings_repo::read(&project_path.to_string_lossy()).unwrap_or(None);
 
     if let Some(ref settings) = settings {
         if settings.organisation {
@@ -263,13 +253,25 @@ fn walk_directory(
         let ft = entry.file_type()?;
 
         if ft.is_dir() {
-            walk_directory(&entry.path(), project_root, graph, type_registry, project_name)?;
+            walk_directory(
+                &entry.path(),
+                project_root,
+                graph,
+                type_registry,
+                project_name,
+            )?;
         } else if ft.is_file() && name.ends_with(".md") {
             // README files carry navigation metadata, not artifact identity.
             if name.eq_ignore_ascii_case("README.md") {
                 continue;
             }
-            collect_node(&entry.path(), project_root, graph, type_registry, project_name)?;
+            collect_node(
+                &entry.path(),
+                project_root,
+                graph,
+                type_registry,
+                project_name,
+            )?;
         }
     }
 
@@ -350,7 +352,15 @@ fn collect_node(
         .unwrap_or(file_path)
         .to_string_lossy()
         .replace('\\', "/");
-    let node = build_node(id.clone(), rel_path.clone(), file_path, &yaml_value, &body, type_registry, project_name);
+    let node = build_node(
+        id.clone(),
+        rel_path.clone(),
+        file_path,
+        &yaml_value,
+        &body,
+        type_registry,
+        project_name,
+    );
 
     // In org mode, qualify the graph key and path index to prevent ID collisions.
     let graph_key = match project_name {
@@ -640,6 +650,7 @@ fn check_delivery_node_type(
 }
 
 /// Validate the parent relationship for a delivery node that has a parent config.
+#[allow(clippy::too_many_lines)]
 fn check_delivery_node_parent(
     node: &ArtifactNode,
     dtype: &crate::domain::project_settings::DeliveryTypeConfig,
@@ -765,13 +776,7 @@ fn check_missing_inverses(
 ) {
     for node in graph.nodes.values() {
         for ref_entry in &node.references_out {
-            check_ref_inverse_with_project(
-                node,
-                ref_entry,
-                graph,
-                project_relationships,
-                checks,
-            );
+            check_ref_inverse_with_project(node, ref_entry, graph, project_relationships, checks);
         }
     }
 }
@@ -1134,7 +1139,12 @@ fn check_supersession_symmetry(graph: &ArtifactGraph, checks: &mut Vec<Integrity
                     artifact_id: node.id.clone(),
                     message: format!(
                         "{} {} {} but {} does not have {} back to {}",
-                        node.id, rel_type, ref_entry.target_id, ref_entry.target_id, expected_inverse, node.id
+                        node.id,
+                        rel_type,
+                        ref_entry.target_id,
+                        ref_entry.target_id,
+                        expected_inverse,
+                        node.id
                     ),
                     auto_fixable: false,
                     fix_description: Some(format!(
@@ -1185,7 +1195,13 @@ fn check_milestone_gate(
             .and_then(|t| t.parent.as_ref())
             .map_or("delivers", |p| p.relationship.as_str());
 
-        check_gate_type_nodes(graph, gate_type, &child_type_keys, parent_relationship, checks);
+        check_gate_type_nodes(
+            graph,
+            gate_type,
+            &child_type_keys,
+            parent_relationship,
+            checks,
+        );
     }
 }
 
@@ -1635,9 +1651,10 @@ fn check_child_type_consistency(
             continue; // invalid status, caught elsewhere
         };
         // Find parent via relationship edge
-        let parent_ref = node.references_out.iter().find(|r| {
-            r.relationship_type.as_deref() == Some(parent_relationship)
-        });
+        let parent_ref = node
+            .references_out
+            .iter()
+            .find(|r| r.relationship_type.as_deref() == Some(parent_relationship));
         let Some(parent_ref) = parent_ref else {
             continue;
         };
@@ -2691,9 +2708,8 @@ mod tests {
 
     #[test]
     fn infer_artifact_type_uses_registry() {
-        let registry: TypeRegistry = vec![
-            (".orqa/custom/widgets".to_string(), "widget".to_string()),
-        ];
+        let registry: TypeRegistry =
+            vec![(".orqa/custom/widgets".to_string(), "widget".to_string())];
         assert_eq!(
             infer_artifact_type(".orqa/custom/widgets/W-001.md", &registry),
             "widget"
