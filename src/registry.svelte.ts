@@ -1,12 +1,15 @@
 /**
  * Central store registry for the OrqaStudio SDK.
  *
- * The app calls `initializeStores()` once at startup to create all store
- * instances. Plugins and components call `getStores()` to access the same
- * instances — no matter how many copies of the SDK exist in the dependency
- * tree, the registry is resolved to a single module via the app's bundler.
+ * Store instances live on `globalThis.__orqa_stores` — NOT a module-level
+ * variable. This means the registry works across bundle boundaries:
  *
- * This guarantees a single set of stores across the app and all plugins.
+ * - The app calls `initializeStores()` → creates stores on globalThis
+ * - A runtime-loaded plugin imports `@orqastudio/sdk` (its own bundled copy)
+ *   and calls `getStores()` → reads from the same globalThis
+ *
+ * Both the app and every plugin resolve to the same store instances,
+ * regardless of how many copies of the SDK exist in memory.
  */
 
 import { ArtifactGraphSDK } from "./graph/artifact-graph.svelte.js";
@@ -18,12 +21,9 @@ import { EnforcementStore } from "./stores/enforcement.svelte.js";
 import { LessonStore } from "./stores/lessons.svelte.js";
 import { SetupStore } from "./stores/setup.svelte.js";
 import { SettingsStore } from "./stores/settings.svelte.js";
-import { ErrorStoreImpl, initBrowserHandlers } from "./stores/errors.svelte.js";
+import { ErrorStoreImpl } from "./stores/errors.svelte.js";
 import { NavigationStore } from "./stores/navigation.svelte.js";
 import { ToastStore, createToastConvenience } from "./stores/toast.svelte.js";
-
-import type { ArtifactGraphConfig } from "./graph/artifact-graph.svelte.js";
-import type { Toast } from "./stores/toast.svelte.js";
 
 /** The full set of SDK store instances. */
 export interface OrqaStores {
@@ -44,21 +44,26 @@ export interface OrqaStores {
 }
 
 // ---------------------------------------------------------------------------
-// Module-level singleton — one per bundled copy of the SDK
+// Global bridge key — shared across all bundles in the same window
 // ---------------------------------------------------------------------------
 
-let _stores: OrqaStores | null = null;
+const REGISTRY_KEY = "__orqa_stores";
+
+declare global {
+    // eslint-disable-next-line no-var
+    var __orqa_stores: OrqaStores | undefined;
+}
 
 /**
  * Create and register all SDK store instances.
  *
  * Call this exactly once during app startup (e.g. in the root +layout.svelte).
- * Subsequent calls return the same instances without re-creating.
+ * Subsequent calls — including from plugin bundles — return the existing instances.
  *
  * @returns The full set of store instances.
  */
 export function initializeStores(): OrqaStores {
-    if (_stores) return _stores;
+    if (globalThis[REGISTRY_KEY]) return globalThis[REGISTRY_KEY];
 
     const artifactGraphSDK = new ArtifactGraphSDK();
     const sessionStore = new SessionStore();
@@ -74,7 +79,7 @@ export function initializeStores(): OrqaStores {
     const toastStore = new ToastStore();
     const toast = createToastConvenience(toastStore);
 
-    _stores = {
+    const stores: OrqaStores = {
         artifactGraphSDK,
         sessionStore,
         projectStore,
@@ -90,22 +95,26 @@ export function initializeStores(): OrqaStores {
         toast,
     };
 
-    return _stores;
+    globalThis[REGISTRY_KEY] = stores;
+    return stores;
 }
 
 /**
  * Access the registered store instances.
  *
- * Throws if `initializeStores()` has not been called yet. Safe to call from
- * component code, store methods, and plugin modules — by the time any of
- * those execute, the app will have initialized the stores.
+ * Works across bundle boundaries — a runtime-loaded plugin calling
+ * `getStores()` from its own copy of the SDK will get the same
+ * instances the app created.
+ *
+ * Throws if `initializeStores()` has not been called yet.
  */
 export function getStores(): OrqaStores {
-    if (!_stores) {
+    const stores = globalThis[REGISTRY_KEY];
+    if (!stores) {
         throw new Error(
             "[OrqaStudio SDK] Stores not initialized. " +
-            "Call initializeStores() in your app's root layout before accessing stores."
+            "The host app must call initializeStores() before plugins can access stores."
         );
     }
-    return _stores;
+    return stores;
 }
