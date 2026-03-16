@@ -739,55 +739,32 @@ fn check_broken_refs(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
     }
 }
 
-/// Canonical bidirectional inverse relationship pairs.
-///
-/// 10 canonical pairs + self-inverse `synchronised-with`.
-/// Project relationships (e.g. `depends-on`/`depended-on-by`) are loaded at
-/// runtime from `project.json` and merged in `check_integrity`.
-const INVERSE_MAP: &[(&str, &str)] = &[
-    ("informs", "informed-by"),
-    ("informed-by", "informs"),
-    ("evolves-into", "evolves-from"),
-    ("evolves-from", "evolves-into"),
-    ("drives", "driven-by"),
-    ("driven-by", "drives"),
-    ("governs", "governed-by"),
-    ("governed-by", "governs"),
-    ("delivers", "delivered-by"),
-    ("delivered-by", "delivers"),
-    ("enforces", "enforced-by"),
-    ("enforced-by", "enforces"),
-    ("grounded", "grounded-by"),
-    ("grounded-by", "grounded"),
-    ("observes", "observed-by"),
-    ("observed-by", "observes"),
-    ("merged-into", "merged-from"),
-    ("merged-from", "merged-into"),
-    ("synchronised-with", "synchronised-with"),
-];
+// INVERSE_MAP removed — now derived at runtime from platform_config::PLATFORM
+// + project.json relationships via platform_config::build_merged_inverse_map().
 
 /// Check for missing bidirectional inverses on relationship edges.
 ///
-/// Builds a combined inverse map from canonical pairs + project relationships.
+/// Uses the merged inverse map from platform config + project relationships.
 fn check_missing_inverses(
     graph: &ArtifactGraph,
     project_relationships: &[crate::domain::project_settings::ProjectRelationshipConfig],
     checks: &mut Vec<IntegrityCheck>,
 ) {
+    let inverse_map =
+        crate::domain::platform_config::build_merged_inverse_map(project_relationships);
     for node in graph.nodes.values() {
         for ref_entry in &node.references_out {
-            check_ref_inverse_with_project(node, ref_entry, graph, project_relationships, checks);
+            check_ref_inverse(node, ref_entry, graph, &inverse_map, checks);
         }
     }
 }
 
-/// Check a single outgoing reference for a missing bidirectional inverse,
-/// considering both canonical and project relationship types.
-fn check_ref_inverse_with_project(
+/// Check a single outgoing reference for a missing bidirectional inverse.
+fn check_ref_inverse(
     node: &ArtifactNode,
     ref_entry: &ArtifactRef,
     graph: &ArtifactGraph,
-    project_relationships: &[crate::domain::project_settings::ProjectRelationshipConfig],
+    inverse_map: &std::collections::HashMap<String, String>,
     checks: &mut Vec<IntegrityCheck>,
 ) {
     let rel_type = match &ref_entry.relationship_type {
@@ -795,22 +772,7 @@ fn check_ref_inverse_with_project(
         None => return,
     };
 
-    // Look up inverse: first in canonical map, then in project relationships.
-    let expected_inverse = INVERSE_MAP
-        .iter()
-        .find(|(t, _)| *t == rel_type)
-        .map(|(_, inv)| *inv)
-        .or_else(|| {
-            project_relationships.iter().find_map(|pr| {
-                if pr.key == rel_type {
-                    Some(pr.inverse.as_str())
-                } else if pr.inverse == rel_type {
-                    Some(pr.key.as_str())
-                } else {
-                    None
-                }
-            })
-        });
+    let expected_inverse = inverse_map.get(rel_type).map(String::as_str);
 
     let Some(expected_inverse) = expected_inverse else {
         return;
@@ -1352,6 +1314,14 @@ fn check_milestone_gate_hardcoded(graph: &ArtifactGraph, checks: &mut Vec<Integr
 
 /// Check that promoted ideas were shaped before promotion.
 fn check_idea_promotion_validity(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
+    use crate::domain::platform_config::keys_for_semantic;
+
+    // Forward lineage keys (e.g. evolves-into, merged-into — not evolves-from)
+    let lineage_keys: Vec<String> = keys_for_semantic("lineage")
+        .into_iter()
+        .filter(|k| k.contains("into"))
+        .collect();
+
     for node in graph.nodes.values() {
         if node.artifact_type != "idea" {
             continue;
@@ -1361,42 +1331,46 @@ fn check_idea_promotion_validity(graph: &ArtifactGraph, checks: &mut Vec<Integri
             continue;
         }
 
-        // A surpassed idea should have lineage: evolves-into (single successor)
-        // or merged-into (consolidated with others into a larger artifact).
         let has_lineage = node.references_out.iter().any(|r| {
-            matches!(
-                r.relationship_type.as_deref(),
-                Some("evolves-into" | "merged-into")
-            )
+            r.relationship_type
+                .as_deref()
+                .is_some_and(|t| lineage_keys.iter().any(|k| k == t))
         });
 
         if !has_lineage {
+            let names = lineage_keys.join(" or ");
             checks.push(IntegrityCheck {
                 category: IntegrityCategory::IdeaPromotionValidity,
                 severity: IntegritySeverity::Error,
                 artifact_id: node.id.clone(),
                 message: format!(
-                    "{} has status surpassed but no evolves-into or merged-into relationship",
+                    "{} has status surpassed but no lineage relationship ({names})",
                     node.id
                 ),
                 auto_fixable: false,
                 fix_description: Some(
-                    "Add an evolves-into or merged-into relationship to the artifact this idea became"
-                        .to_string(),
+                    "Add a lineage relationship to the artifact this idea became".to_string(),
                 ),
             });
         }
     }
 }
 
-/// Check for promoted ideas whose epics are done but idea is still promoted (not delivered).
+/// Check that ideas with forward lineage targets that are completed should be terminal.
+#[allow(clippy::too_many_lines)]
 fn check_idea_delivery_tracking(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
+    use crate::domain::platform_config::keys_for_semantic;
+
+    let lineage_keys: Vec<String> = keys_for_semantic("lineage")
+        .into_iter()
+        .filter(|k| k.contains("into"))
+        .collect();
+
     for node in graph.nodes.values() {
         if node.artifact_type != "idea" {
             continue;
         }
 
-        // Skip ideas already in terminal states.
         let status = match &node.status {
             Some(s) => s.as_str(),
             None => continue,
@@ -1405,19 +1379,27 @@ fn check_idea_delivery_tracking(graph: &ArtifactGraph, checks: &mut Vec<Integrit
             continue;
         }
 
-        // Check evolves-into targets — if any are completed, the idea should be terminal.
-        let evolves_targets: Vec<&str> = node
+        let lineage_targets: Vec<(&str, &str)> = node
             .references_out
             .iter()
-            .filter(|r| r.relationship_type.as_deref() == Some("evolves-into"))
-            .map(|r| r.target_id.as_str())
+            .filter(|r| {
+                r.relationship_type
+                    .as_deref()
+                    .is_some_and(|t| lineage_keys.iter().any(|k| k == t))
+            })
+            .map(|r| {
+                (
+                    r.target_id.as_str(),
+                    r.relationship_type.as_deref().unwrap_or(""),
+                )
+            })
             .collect();
 
-        if evolves_targets.is_empty() {
+        if lineage_targets.is_empty() {
             continue;
         }
 
-        for target_id in evolves_targets {
+        for (target_id, rel_type) in lineage_targets {
             let target_completed = graph
                 .nodes
                 .get(target_id)
@@ -1430,7 +1412,7 @@ fn check_idea_delivery_tracking(graph: &ArtifactGraph, checks: &mut Vec<Integrit
                     severity: IntegritySeverity::Warning,
                     artifact_id: node.id.clone(),
                     message: format!(
-                        "{} evolves-into {} which is completed, but idea is still status: {} — should be surpassed or completed",
+                        "{} {rel_type} {} which is completed, but idea is still status: {} — should be surpassed or completed",
                         node.id, target_id, status
                     ),
                     auto_fixable: false,

@@ -12,6 +12,7 @@ pub mod health_snapshot;
 pub mod lessons;
 pub mod message;
 pub mod paths;
+pub mod platform_config;
 pub mod process_gates;
 pub mod process_state;
 pub mod project;
