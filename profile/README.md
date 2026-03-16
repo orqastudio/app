@@ -1,4 +1,5 @@
-![License](https://img.shields.io/badge/license-CC--BY--4.0-lightgrey)
+![License](https://img.shields.io/badge/license-BSL%201.1-blue)
+![Status](https://img.shields.io/badge/status-pre--release-orange)
 
 <p align="center">
   <img src="https://github.com/orqastudio/orqastudio-brand/blob/main/assets/banners/banner-1680x240.png?raw=1">
