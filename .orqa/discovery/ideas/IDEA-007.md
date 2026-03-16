@@ -11,6 +11,8 @@ research-needed:
   - Space-level governance inheritance
   - Multi-project aggregation UX
 relationships:
+  - type: evolves-into
+    target: IDEA-115
   - type: merged-into
     target: EPIC-081
   - target: IDEA-085
@@ -19,6 +21,8 @@ relationships:
   - target: PILLAR-001
     type: grounded-by
 ---
+n> **Surpassed 2026-03-16**: Flat organisation model merged into EPIC-081 via AD-055. Nested spaces and governance inheritance split into IDEA-115.
+
 ## Candidate Items
 
 - Spaces — named containers (organisations, teams, programs) grouping projects

@@ -14,6 +14,10 @@ research-needed:
   - Plugin isolation — how to prevent a broken plugin from affecting the app
   - Plugin signing/trust — how to verify plugins from the official repo vs third-party
 relationships:
+  - type: evolves-into
+    target: IDEA-108
+  - type: evolves-into
+    target: IDEA-109
   - type: merged-into
     target: EPIC-080
   - target: IDEA-085
@@ -25,6 +29,9 @@ relationships:
   - target: PILLAR-001
     type: grounded-by
 ---
+
+> **Surpassed 2026-03-16**: Core plugin distribution mechanism merged into EPIC-080 via AD-055. Plugin catalogue/marketplace concept split into IDEA-108. User plugin development workflow split into IDEA-109.
+
 ## Motivation
 
 Plugins need a distribution channel that supports independent versioning, safe installation, and automatic updates without shipping everything in the main app binary. Git submodules give us this naturally:

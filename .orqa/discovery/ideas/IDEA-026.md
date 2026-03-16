@@ -17,6 +17,8 @@ relationships:
   - target: PILLAR-001
     type: grounded-by
 ---
+n> **Surpassed 2026-03-16**: Core vs plugin artifact split fully captured in AD-055. Implementation details covered in EPIC-080 Phase 2.
+
 ## Problem
 
 The platform scans and displays artifacts from `.orqa/` but treats them all as generic markdown files with frontmatter. Some artifact types (milestones, epics, tasks) are core to the platform's purpose and should have richer support — lifecycle enforcement, status transitions, cross-referencing validation. Others may remain as plain documents.

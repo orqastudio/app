@@ -30,3 +30,5 @@ Requires plugin architecture to support:
 - Custom views (roadmap kanban is a plugin-contributed view)
 - Dashboard widget contribution (milestone context card, what's next)
 - Status transition rules contributed by plugins
+
+> **Surpassed 2026-03-16**: Delivery plugin extraction is EPIC-080 Phase 3. Status transition rules and domain-specific pipeline examples added to scope.

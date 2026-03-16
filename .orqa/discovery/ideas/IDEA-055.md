@@ -15,11 +15,15 @@ research-needed:
   - "How does this relate to AD-010 (Tool Implementation as MCP) and the existing plugin system ideas (IDEA-038)?"
   - "What's the migration path from hardcoded tools to plugin tools without breaking existing functionality?"
 relationships:
+  - type: evolves-into
+    target: IDEA-110
   - type: merged-into
     target: EPIC-080
   - target: PILLAR-001
     type: grounded-by
 ---
+
+> **Surpassed 2026-03-16**: Plugin architecture concept merged into EPIC-080 via AD-055. Runtime tool registration (WASM/MCP/script formats, capability-based permissions) split into IDEA-110 as architecturally distinct from artifact/view plugins.
 
 ## Motivation
 

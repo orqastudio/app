@@ -11,11 +11,15 @@ research-needed:
   - Privacy and data isolation concerns
   - Template format design
 relationships:
+  - type: evolves-into
+    target: IDEA-114
   - type: merged-into
     target: EPIC-081
   - target: PILLAR-002
     type: grounded-by
 ---
+> **Surpassed 2026-03-16**: Core multi-project traversal merged into EPIC-081 via AD-055. Unique concepts (governance libraries, pattern detection, benchmarking) split into IDEA-114.
+
 ## Candidate Items
 
 - Project templates — pre-configured governance for common project types

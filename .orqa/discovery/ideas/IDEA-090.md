@@ -34,3 +34,5 @@ The current dashboard has a fixed layout of widgets. UAT on EPIC-060 revealed th
 4. Built-in widgets serve as sensible defaults but can be removed or rearranged
 
 This aligns with the five-layer architecture — built-in widgets are core, official plugins provide recommended widgets, community/user plugins can add custom ones.
+
+> **Surpassed 2026-03-16**: Widget registration and configuration persistence folded into EPIC-080 Phase 1 via AD-055. Widget layout model (grid vs column) remains an implementation decision.
