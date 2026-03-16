@@ -1,6 +1,6 @@
 // Graph SDK
-export { artifactGraphSDK } from "./graph/artifact-graph.svelte.js";
-export type { ArtifactGraphConfig } from "./graph/artifact-graph.svelte.js";
+export { artifactGraphSDK, ARTIFACT_TYPE_COLORS } from "./graph/artifact-graph.svelte.js";
+export type { ArtifactGraphConfig, NodePosition, GraphHealth, BackboneArtifact, KnowledgeGaps } from "./graph/artifact-graph.svelte.js";
 
 // IPC utilities
 export { invoke, extractErrorMessage, createStreamChannel } from "./ipc/invoke.js";
