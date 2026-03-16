@@ -34,6 +34,90 @@ export interface ScanResult {
 	scan_duration_ms: number;
 }
 
+/** The parent relationship config for a delivery type. */
+export interface DeliveryParentConfig {
+	type: string;
+	/** The relationship type that connects child to parent (e.g. "delivers", "belongs-to"). */
+	relationship: string;
+}
+
+/** A single delivery type defined in project.json (e.g. milestone, epic, task). */
+export interface DeliveryTypeConfig {
+	key: string;
+	label: string;
+	path: string;
+	parent?: DeliveryParentConfig | null;
+	gate_field?: string | null;
+}
+
+/** The delivery configuration block from project.json. */
+export interface DeliveryConfig {
+	types: DeliveryTypeConfig[];
+}
+
+/** A project-level relationship type that extends the canonical vocabulary. */
+export interface ProjectRelationshipConfig {
+	/** The forward relationship key (e.g. "depends-on"). */
+	key: string;
+	/** The inverse relationship key (e.g. "depended-on-by"). */
+	inverse: string;
+	/** Human-readable label for the forward direction. */
+	label: string;
+	/** Human-readable label for the inverse direction. */
+	inverse_label: string;
+}
+
+/** Controls how relationship chips display artifact references. */
+export interface RelationshipDisplayConfig {
+	/** Which field to show on chips: "title" or "id". Default: "title". */
+	defaultField: "title" | "id";
+	/** Per-artifact-type overrides (e.g. { "task": "id", "epic": "title" }). */
+	overrides: Record<string, "title" | "id">;
+}
+
+/** Whether artifact link chips display the ID or the resolved title. */
+export type ArtifactLinkDisplayMode = "id" | "title";
+
+/** Per-type colour and display settings for artifact link chips. */
+export interface ArtifactLinksConfig {
+	/** Per-type display mode (e.g. { "EPIC": "title", "TASK": "id" }). Absent prefixes default to "id". */
+	displayModes: Record<string, ArtifactLinkDisplayMode>;
+	/** Optional per-type prefix hex colour (e.g. { "EPIC": "#3b82f6" }). */
+	colors: Record<string, string>;
+}
+
+/** Default per-type colours for artifact link chips. */
+export const DEFAULT_ARTIFACT_LINK_COLORS: Record<string, string> = {
+	EPIC: "#3b82f6",
+	TASK: "#06b6d4",
+	RULE: "#a78bfa",
+	AD: "#8b5cf6",
+	IDEA: "#c084fc",
+	IMPL: "#67e8f9",
+	SKILL: "#2dd4bf",
+	PILLAR: "#818cf8",
+	RES: "#6366f1",
+	MS: "#38bdf8",
+	DOC: "#94a3b8",
+	AGENT: "#f472b6",
+};
+
+/** An automatic transition rule on a status. */
+export interface StatusAutoRule {
+	condition: string;
+	target: string;
+}
+
+/** A single status definition from project config — source of truth for status vocabulary. */
+export interface StatusDefinition {
+	key: string;
+	label: string;
+	icon: string;
+	spin?: boolean;
+	transitions?: string[];
+	auto_rules?: StatusAutoRule[];
+}
+
 export interface ProjectSettings {
 	name: string;
 	description: string | null;
@@ -45,6 +129,11 @@ export interface ProjectSettings {
 	show_thinking: boolean;
 	custom_system_prompt: string | null;
 	artifacts?: ArtifactEntry[];
+	statuses?: StatusDefinition[];
+	relationshipDisplay?: RelationshipDisplayConfig;
+	artifactLinks?: ArtifactLinksConfig;
+	delivery?: DeliveryConfig;
+	relationships?: ProjectRelationshipConfig[];
 }
 
 export interface GovernanceCounts {
@@ -92,21 +181,4 @@ export type ArtifactEntry = ArtifactTypeConfig | ArtifactGroupConfig;
 /** Type guard: is this entry a group (has children)? */
 export function isArtifactGroup(entry: ArtifactEntry): entry is ArtifactGroupConfig {
 	return "children" in entry;
-}
-
-/**
- * A project-level relationship type defined in `project.json`.
- *
- * Extends the canonical relationship vocabulary with project-specific pairs
- * (e.g. `depends-on` / `depended-on-by`).
- */
-export interface ProjectRelationshipConfig {
-	/** The forward relationship key (e.g. "depends-on"). */
-	key: string;
-	/** The inverse relationship key (e.g. "depended-on-by"). */
-	inverse: string;
-	/** Human-readable label for the forward direction. */
-	label?: string;
-	/** Human-readable label for the inverse direction. */
-	inverse_label?: string;
 }

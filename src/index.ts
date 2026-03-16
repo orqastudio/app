@@ -10,8 +10,16 @@ export type {
 	ArtifactGroupConfig,
 	ArtifactEntry,
 	ProjectRelationshipConfig,
+	DeliveryConfig,
+	DeliveryTypeConfig,
+	DeliveryParentConfig,
+	RelationshipDisplayConfig,
+	ArtifactLinkDisplayMode,
+	ArtifactLinksConfig,
+	StatusAutoRule,
+	StatusDefinition,
 } from "./project.js";
-export { isArtifactGroup } from "./project.js";
+export { isArtifactGroup, DEFAULT_ARTIFACT_LINK_COLORS } from "./project.js";
 
 export type {
 	Session,
@@ -78,6 +86,7 @@ export type {
 	EnforcementEntry,
 	Condition,
 	EnforcementViolation,
+	StoredEnforcementViolation,
 } from "./enforcement.js";
 
 export type { Lesson, NewLesson, LessonStatus, LessonCategory } from "./lessons.js";
@@ -91,6 +100,7 @@ export type {
 	IntegrityCategory,
 	IntegritySeverity,
 	IntegrityCheck,
+	ProposedTransition,
 	AppliedFix,
 	HealthSnapshot,
 } from "./artifact-graph.js";
