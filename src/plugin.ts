@@ -134,10 +134,49 @@ export interface WidgetRegistration {
 // ---------------------------------------------------------------------------
 
 /**
+ * Validation constraints for a relationship type.
+ *
+ * These are evaluated generically by both the CLI and Rust validators —
+ * no custom check code per relationship type. The schema IS the rule.
+ */
+export interface RelationshipConstraints {
+	/** Whether at least one instance of this relationship is required on the source type. */
+	required?: boolean;
+	/** Minimum number of instances (defaults to 0 if not required, 1 if required). */
+	minCount?: number;
+	/** Maximum number of instances (defaults to unlimited). */
+	maxCount?: number;
+	/** If true, the inverse edge must exist on the target (defaults to true for all relationships). */
+	requireInverse?: boolean;
+	/** Status-dependent rules evaluated against the graph state. */
+	statusRules?: RelationshipStatusRule[];
+}
+
+/**
+ * A status-dependent constraint on a relationship.
+ *
+ * Example: "if a task has depends-on targets that are not completed,
+ * the task's status should be blocked."
+ */
+export interface RelationshipStatusRule {
+	/** When to evaluate: "source" checks the source artifact, "target" checks the target. */
+	evaluate: "source" | "target";
+	/** Condition on the related artifact's status. */
+	condition: "all-targets-in" | "any-target-in" | "no-targets-in";
+	/** Status values for the condition. */
+	statuses: string[];
+	/** What to propose for the evaluated artifact's status. */
+	proposedStatus: string;
+	/** Human-readable description of this rule. */
+	description: string;
+}
+
+/**
  * A typed relationship that can be used in artifact frontmatter.
  *
  * Used by both platform (canonical) relationships and plugin relationships.
- * The integrity validator merges them into one vocabulary.
+ * Both the CLI validator and the Rust validator evaluate these schemas
+ * generically — the schema IS the validation rule.
  */
 export interface RelationshipType {
 	/** Forward relationship key (e.g. "delivers"). */
@@ -148,14 +187,16 @@ export interface RelationshipType {
 	label: string;
 	/** Inverse display label (e.g. "Delivered By"). */
 	inverseLabel: string;
-	/** Artifact type keys that can be the source (empty = any). */
+	/** Artifact type keys that can be the source. */
 	from: string[];
-	/** Artifact type keys that can be the target (empty = any). */
+	/** Artifact type keys that can be the target. */
 	to: string[];
 	/** Human-readable description of the relationship. */
 	description: string;
-	/** Semantic category (e.g. "lineage", "hierarchy", "governance"). Used by checks to query relationship intent without hardcoding keys. */
+	/** Semantic category (e.g. "lineage", "hierarchy", "governance"). */
 	semantic?: string;
+	/** Validation constraints — evaluated generically by both validators. */
+	constraints?: RelationshipConstraints;
 }
 
 /** A platform artifact type declaration. */

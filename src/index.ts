@@ -135,6 +135,8 @@ export type {
 	DefaultNavItem,
 	NavItemType,
 	NavigationItem,
+	RelationshipConstraints,
+	RelationshipStatusRule,
 	PluginProjectConfig,
 	AliasMapping,
 	ConflictResolutionSuggestion,

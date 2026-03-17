@@ -1,6 +1,6 @@
 {
   "$schema": "https://orqastudio.dev/schemas/platform-config.json",
-  "description": "Core platform configuration — artifact types and relationships that ship with every OrqaStudio installation.",
+  "description": "Core platform configuration — artifact types, relationships, and validation constraints. Both the CLI validator and the Rust validator evaluate these schemas generically.",
 
   "artifactTypes": [
     { "key": "vision", "label": "Vision", "icon": "eye", "idPrefix": "VISION" },
@@ -26,7 +26,11 @@
       "from": ["pillar"],
       "to": ["vision"],
       "description": "Pillar supports the vision",
-      "semantic": "foundation"
+      "semantic": "foundation",
+      "constraints": {
+        "required": true,
+        "minCount": 1
+      }
     },
     {
       "key": "grounded",
@@ -36,7 +40,11 @@
       "from": ["idea"],
       "to": ["pillar"],
       "description": "Idea anchored to a foundational principle",
-      "semantic": "foundation"
+      "semantic": "foundation",
+      "constraints": {
+        "required": true,
+        "minCount": 1
+      }
     },
     {
       "key": "benefits",
@@ -46,7 +54,11 @@
       "from": ["idea"],
       "to": ["persona"],
       "description": "Idea serves a target persona",
-      "semantic": "foundation"
+      "semantic": "foundation",
+      "constraints": {
+        "required": true,
+        "minCount": 1
+      }
     },
     {
       "key": "crystallises",
@@ -96,7 +108,11 @@
       "from": ["rule"],
       "to": ["decision"],
       "description": "Rule enforces a decision",
-      "semantic": "governance"
+      "semantic": "governance",
+      "constraints": {
+        "required": true,
+        "minCount": 1
+      }
     },
     {
       "key": "codifies",
@@ -166,7 +182,11 @@
       "from": ["agent"],
       "to": ["skill"],
       "description": "Agent employs a skill capability",
-      "semantic": "observation"
+      "semantic": "observation",
+      "constraints": {
+        "required": true,
+        "minCount": 1
+      }
     },
     {
       "key": "documents",
@@ -206,7 +226,11 @@
       "from": ["pivot"],
       "to": ["vision", "persona", "pillar"],
       "description": "Pivot revises a foundational artifact",
-      "semantic": "foundation"
+      "semantic": "foundation",
+      "constraints": {
+        "required": true,
+        "minCount": 1
+      }
     }
   ],
 
