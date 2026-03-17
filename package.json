@@ -1,0 +1,39 @@
+{
+  "name": "@orqastudio/cli",
+  "version": "0.1.0-dev",
+  "description": "General-purpose CLI for OrqaStudio — plugin management, validation, and debugging.",
+  "type": "module",
+  "bin": {
+    "orqa": "dist/cli.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@orqastudio/types": "dev"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:orqastudio/orqastudio-cli.git"
+  },
+  "license": "BSL-1.1"
+}
