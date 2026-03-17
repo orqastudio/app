@@ -53,8 +53,6 @@ export interface RegistrationConflict {
 	detail: string;
 }
 
-/** @deprecated Use RegistrationConflict instead. */
-export type SchemaConflict = RegistrationConflict;
 
 // ---------------------------------------------------------------------------
 // Registry

@@ -67,7 +67,8 @@ declare global {
 export function initializeStores(): OrqaStores {
     if (globalThis[REGISTRY_KEY]) return globalThis[REGISTRY_KEY];
 
-    const artifactGraphSDK = new ArtifactGraphSDK();
+    const pluginRegistry = new PluginRegistry();
+    const artifactGraphSDK = new ArtifactGraphSDK(pluginRegistry);
     const sessionStore = new SessionStore();
     const projectStore = new ProjectStore();
     const artifactStore = new ArtifactStore();
@@ -79,7 +80,6 @@ export function initializeStores(): OrqaStores {
     const errorStore = new ErrorStoreImpl();
     const navigationStore = new NavigationStore();
     const toastStore = new ToastStore();
-    const pluginRegistry = new PluginRegistry();
     const toast = createToastConvenience(toastStore);
 
     const stores: OrqaStores = {
