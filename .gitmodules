@@ -52,3 +52,6 @@
 [submodule "plugins/software-project"]
 	path = plugins/software-project
 	url = git@github.com:orqastudio/orqastudio-plugin-software.git
+[submodule "plugins/cli"]
+	path = plugins/cli
+	url = git@github.com:orqastudio/orqastudio-plugin-cli.git
