@@ -316,6 +316,8 @@ relationships:
     type: grounded-by
   - target: SKILL-035
     type: grounded-by
+  - target: IDEA-116
+    type: grounded
 ---
 ## What This Pillar Means
 

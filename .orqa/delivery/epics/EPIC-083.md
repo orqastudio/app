@@ -29,6 +29,8 @@ relationships:
     type: informed-by
   - target: PILLAR-001
     type: grounded-by
+  - target: IDEA-116
+    type: informs
 ---
 
 ## Objective

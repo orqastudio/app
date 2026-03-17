@@ -1140,6 +1140,8 @@ relationships:
     type: grounded-by
   - target: SKILL-036
     type: grounded-by
+  - target: IDEA-116
+    type: grounded
 ---
 ## What This Pillar Means
 
