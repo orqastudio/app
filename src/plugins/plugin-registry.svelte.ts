@@ -240,19 +240,11 @@ export class PluginRegistry {
 	get allCliTools(): CliToolRegistration[] {
 		const tools: CliToolRegistration[] = [];
 		for (const [, plugin] of this.plugins) {
-			const cliTools = plugin.manifest.provides.cliTools ?? plugin.manifest.provides.tools;
-			if (cliTools) {
-				tools.push(...cliTools);
+			if (plugin.manifest.provides.cliTools) {
+				tools.push(...plugin.manifest.provides.cliTools);
 			}
 		}
 		return tools;
-	}
-
-	/**
-	 * @deprecated Use `allCliTools` instead.
-	 */
-	get allTools(): CliToolRegistration[] {
-		return this.allCliTools;
 	}
 
 	/**
