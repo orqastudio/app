@@ -4,7 +4,12 @@
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import { invoke } from "@orqastudio/sdk";
+	import { invoke, getStores } from "@orqastudio/sdk";
+	import type { RegistrationConflict } from "@orqastudio/sdk";
+	import type { PluginManifest } from "@orqastudio/types";
+	import ConflictResolutionDialog from "./ConflictResolutionDialog.svelte";
+
+	const { pluginRegistry } = getStores();
 
 	// -----------------------------------------------------------------------
 	// Types
@@ -58,6 +63,14 @@
 	let detailManifest = $state<PluginManifestData | null>(null);
 	let detailLoading = $state(false);
 
+	// Conflict resolution
+	let conflictDialog = $state<{
+		conflicts: RegistrationConflict[];
+		existingManifest: PluginManifest;
+		newManifest: PluginManifest;
+		pendingPlugin: PluginEntry;
+	} | null>(null);
+
 	// -----------------------------------------------------------------------
 	// Data Loading
 	// -----------------------------------------------------------------------
@@ -105,12 +118,74 @@
 		error = null;
 		try {
 			await invoke("plugin_install_github", { repo: plugin.repo });
+
+			// Read the installed manifest and check for conflicts before registering
+			const manifest = await invoke<PluginManifest>("plugin_get_manifest", { name: plugin.name });
+			const conflicts = pluginRegistry.checkConflicts(manifest);
+
+			if (conflicts.length > 0) {
+				// Find the existing plugin that owns the conflicting key
+				const existingName = conflicts[0].existingPlugin;
+				const existingPlugin = pluginRegistry.getPlugin(existingName);
+				const existingManifest = existingPlugin?.manifest ?? manifest;
+
+				conflictDialog = {
+					conflicts,
+					existingManifest,
+					newManifest: manifest,
+					pendingPlugin: plugin,
+				};
+				installing = null;
+				return;
+			}
+
+			// No conflicts — register directly
+			pluginRegistry.register(manifest, {});
 			await loadInstalled();
 		} catch (err: unknown) {
 			error = err instanceof Error ? err.message : String(err);
 		} finally {
 			installing = null;
 		}
+	}
+
+	async function handleConflictResolution(
+		resolutions: Record<string, { plugin: string; alias: string; label?: string }>,
+	) {
+		if (!conflictDialog) return;
+		error = null;
+
+		try {
+			// Apply aliases
+			for (const [key, resolution] of Object.entries(resolutions)) {
+				const isSchema = conflictDialog.conflicts.some(
+					(c) => c.key === key && c.type === "schema",
+				);
+				pluginRegistry.setAlias(
+					resolution.plugin,
+					isSchema ? "schema" : "relationship",
+					key,
+					resolution.alias,
+					resolution.label,
+				);
+			}
+
+			// Retry registration
+			pluginRegistry.register(conflictDialog.newManifest, {});
+			await loadInstalled();
+		} catch (err: unknown) {
+			error = err instanceof Error ? err.message : String(err);
+		} finally {
+			conflictDialog = null;
+		}
+	}
+
+	function handleConflictCancel() {
+		if (conflictDialog) {
+			// Uninstall the plugin that was downloaded but couldn't register
+			void uninstallPlugin(conflictDialog.pendingPlugin.name);
+		}
+		conflictDialog = null;
 	}
 
 	async function installManual() {
@@ -602,3 +677,14 @@
 		</CardRoot>
 	{/if}
 </div>
+
+<!-- Conflict Resolution Dialog (rendered outside main layout for overlay) -->
+{#if conflictDialog}
+	<ConflictResolutionDialog
+		conflicts={conflictDialog.conflicts}
+		existingManifest={conflictDialog.existingManifest}
+		newManifest={conflictDialog.newManifest}
+		onResolve={handleConflictResolution}
+		onCancel={handleConflictCancel}
+	/>
+{/if}
