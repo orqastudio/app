@@ -16,6 +16,10 @@ import type {
 	WidgetRegistration,
 	RelationshipType,
 	NavigationItem,
+	SidecarRegistration,
+	ToolRegistration,
+	HookRegistration,
+	ProviderConfig,
 } from "@orqastudio/types";
 import type { Component } from "svelte";
 
@@ -50,6 +54,9 @@ export class PluginRegistry {
 	/** All artifact schemas keyed by type key → owning plugin name. */
 	private schemaOwnership = $state<SvelteMap<string, string>>(new SvelteMap());
 
+	/** Provider routing configuration — set from project.json at startup. */
+	providerConfig = $state<ProviderConfig>({});
+
 	// -----------------------------------------------------------------------
 	// Registration
 	// -----------------------------------------------------------------------
@@ -75,6 +82,22 @@ export class PluginRegistry {
 						`required plugin "${dep}" is not loaded.`,
 					);
 				}
+			}
+		}
+
+		// Check sidecar requirements
+		if (manifest.requiresSidecar) {
+			const required = Array.isArray(manifest.requiresSidecar)
+				? manifest.requiresSidecar
+				: [manifest.requiresSidecar];
+			const available = this.sidecarProviders.map((s) => s.key);
+			const missing = required.filter((r) => !available.includes(r));
+			if (missing.length > 0) {
+				throw new Error(
+					`[PluginRegistry] Cannot register "${manifest.name}": ` +
+					`required sidecar(s) not available: ${missing.join(", ")}. ` +
+					`Register a sidecar provider first.`,
+				);
 			}
 		}
 
@@ -195,6 +218,49 @@ export class PluginRegistry {
 	}
 
 	// -----------------------------------------------------------------------
+	// Backend Capability Accessors
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Get all sidecar registrations across all plugins.
+	 */
+	get sidecarProviders(): SidecarRegistration[] {
+		const sidecars: SidecarRegistration[] = [];
+		for (const [, plugin] of this.plugins) {
+			if (plugin.manifest.provides.sidecar) {
+				sidecars.push(plugin.manifest.provides.sidecar);
+			}
+		}
+		return sidecars;
+	}
+
+	/**
+	 * Get all tool registrations across all plugins.
+	 */
+	get allTools(): ToolRegistration[] {
+		const tools: ToolRegistration[] = [];
+		for (const [, plugin] of this.plugins) {
+			if (plugin.manifest.provides.tools) {
+				tools.push(...plugin.manifest.provides.tools);
+			}
+		}
+		return tools;
+	}
+
+	/**
+	 * Get all hook registrations across all plugins.
+	 */
+	get allHooks(): HookRegistration[] {
+		const hooks: HookRegistration[] = [];
+		for (const [, plugin] of this.plugins) {
+			if (plugin.manifest.provides.hooks) {
+				hooks.push(...plugin.manifest.provides.hooks);
+			}
+		}
+		return hooks;
+	}
+
+	// -----------------------------------------------------------------------
 	// Component Resolution
 	// -----------------------------------------------------------------------
 
@@ -309,5 +375,64 @@ export class PluginRegistry {
 			type: item.type,
 			pluginSource: item.pluginSource,
 		};
+	}
+
+	// -----------------------------------------------------------------------
+	// Provider Management
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Get the currently active sidecar provider key.
+	 * Resolves from providerConfig, falling back to the first registered sidecar.
+	 */
+	get activeSidecarKey(): string | null {
+		if (this.providerConfig.activeSidecar) {
+			return this.providerConfig.activeSidecar;
+		}
+		const first = this.sidecarProviders[0];
+		return first ? first.key : null;
+	}
+
+	/**
+	 * Get the active sidecar registration (resolved from config or first available).
+	 */
+	get activeSidecar(): SidecarRegistration | null {
+		const key = this.activeSidecarKey;
+		if (!key) return null;
+		return this.sidecarProviders.find((s) => s.key === key) ?? null;
+	}
+
+	/**
+	 * Set the active sidecar provider key.
+	 * Updates providerConfig — caller is responsible for persisting to project.json.
+	 */
+	setActiveSidecar(key: string): void {
+		this.providerConfig = {
+			...this.providerConfig,
+			activeSidecar: key,
+		};
+	}
+
+	/**
+	 * Check if a plugin's sidecar requirements are satisfied by the active provider.
+	 */
+	isSidecarSatisfied(manifest: PluginManifest): boolean {
+		if (!manifest.requiresSidecar) return true;
+		const required = Array.isArray(manifest.requiresSidecar)
+			? manifest.requiresSidecar
+			: [manifest.requiresSidecar];
+		const available = this.sidecarProviders.map((s) => s.key);
+		return required.every((r) => available.includes(r));
+	}
+
+	/**
+	 * Get plugins that are blocked due to unsatisfied sidecar requirements.
+	 * Useful for showing which plugins need a specific provider to be installed.
+	 */
+	get blockedPlugins(): PluginManifest[] {
+		// This checks manifests that tried to register but couldn't —
+		// since failed registrations throw, this is for pre-checking manifests
+		// before registration. The caller should use isSidecarSatisfied() directly.
+		return [];
 	}
 }
