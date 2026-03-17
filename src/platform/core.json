@@ -1,40 +1,71 @@
 {
   "$schema": "https://orqastudio.dev/schemas/platform-config.json",
-  "description": "Core platform configuration — artifact types and relationships that ship with every OrqaStudio installation. Identical in structure to what a plugin provides.",
+  "description": "Core platform configuration — artifact types and relationships that ship with every OrqaStudio installation.",
 
   "artifactTypes": [
-    { "key": "pillar", "label": "Pillar", "icon": "columns-3", "idPrefix": "PILLAR" },
     { "key": "vision", "label": "Vision", "icon": "eye", "idPrefix": "VISION" },
+    { "key": "pillar", "label": "Pillar", "icon": "columns-3", "idPrefix": "PILLAR" },
     { "key": "persona", "label": "Persona", "icon": "users", "idPrefix": "PERSONA" },
-    { "key": "grounding", "label": "Grounding", "icon": "anchor", "idPrefix": "GROUNDING" },
+    { "key": "idea", "label": "Idea", "icon": "lightbulb", "idPrefix": "IDEA" },
     { "key": "decision", "label": "Decision", "icon": "scale", "idPrefix": "AD" },
     { "key": "rule", "label": "Rule", "icon": "shield", "idPrefix": "RULE" },
     { "key": "lesson", "label": "Lesson", "icon": "book-open", "idPrefix": "IMPL" },
     { "key": "skill", "label": "Skill", "icon": "zap", "idPrefix": "SKILL" },
     { "key": "agent", "label": "Agent", "icon": "bot", "idPrefix": "AGENT" },
-    { "key": "idea", "label": "Idea", "icon": "lightbulb", "idPrefix": "IDEA" },
-    { "key": "doc", "label": "Document", "icon": "file-text", "idPrefix": "DOC" }
+    { "key": "doc", "label": "Document", "icon": "file-text", "idPrefix": "DOC" },
+    { "key": "pivot", "label": "Pivot", "icon": "refresh-cw", "idPrefix": "PIVOT" },
+    { "key": "bug", "label": "Bug", "icon": "bug", "idPrefix": "BUG" }
   ],
 
   "relationships": [
     {
-      "key": "informs",
-      "inverse": "informed-by",
-      "label": "Informs",
-      "inverseLabel": "Informed By",
-      "from": [],
-      "to": [],
-      "description": "Knowledge flows downstream",
-      "semantic": "knowledge-flow"
+      "key": "upholds",
+      "inverse": "upheld-by",
+      "label": "Upholds",
+      "inverseLabel": "Upheld By",
+      "from": ["pillar"],
+      "to": ["vision"],
+      "description": "Pillar supports the vision",
+      "semantic": "foundation"
     },
     {
-      "key": "evolves-into",
-      "inverse": "evolves-from",
-      "label": "Evolves Into",
-      "inverseLabel": "Evolves From",
-      "from": [],
-      "to": [],
-      "description": "Artifact lineage — one artifact becomes another",
+      "key": "grounded",
+      "inverse": "grounded-by",
+      "label": "Grounded",
+      "inverseLabel": "Grounded By",
+      "from": ["idea"],
+      "to": ["pillar"],
+      "description": "Idea anchored to a foundational principle",
+      "semantic": "foundation"
+    },
+    {
+      "key": "benefits",
+      "inverse": "benefited-by",
+      "label": "Benefits",
+      "inverseLabel": "Benefited By",
+      "from": ["idea"],
+      "to": ["persona"],
+      "description": "Idea serves a target persona",
+      "semantic": "foundation"
+    },
+    {
+      "key": "crystallises",
+      "inverse": "crystallised-by",
+      "label": "Crystallises",
+      "inverseLabel": "Crystallised By",
+      "from": ["idea"],
+      "to": ["decision"],
+      "description": "Idea crystallises into an architecture decision",
+      "semantic": "lineage"
+    },
+    {
+      "key": "spawns",
+      "inverse": "spawned-by",
+      "label": "Spawns",
+      "inverseLabel": "Spawned By",
+      "from": ["idea"],
+      "to": ["research"],
+      "description": "Idea spawns an investigation",
       "semantic": "lineage"
     },
     {
@@ -43,9 +74,9 @@
       "label": "Drives",
       "inverseLabel": "Driven By",
       "from": ["decision"],
-      "to": [],
-      "description": "Decision motivates work",
-      "semantic": "motivation"
+      "to": ["epic"],
+      "description": "Decision motivates a body of delivery work",
+      "semantic": "governance"
     },
     {
       "key": "governs",
@@ -53,19 +84,9 @@
       "label": "Governs",
       "inverseLabel": "Governed By",
       "from": ["decision"],
-      "to": [],
-      "description": "Decision governs standards",
+      "to": ["rule"],
+      "description": "Decision establishes governance — leads into the learning loop",
       "semantic": "governance"
-    },
-    {
-      "key": "delivers",
-      "inverse": "delivered-by",
-      "label": "Delivers",
-      "inverseLabel": "Delivered By",
-      "from": [],
-      "to": [],
-      "description": "Work delivers to parent in hierarchy",
-      "semantic": "hierarchy"
     },
     {
       "key": "enforces",
@@ -74,18 +95,58 @@
       "inverseLabel": "Enforced By",
       "from": ["rule"],
       "to": ["decision"],
-      "description": "Rule enforces decision",
-      "semantic": "enforcement"
+      "description": "Rule enforces a decision",
+      "semantic": "governance"
     },
     {
-      "key": "grounded",
-      "inverse": "grounded-by",
-      "label": "Grounded",
-      "inverseLabel": "Grounded By",
-      "from": [],
-      "to": ["pillar"],
-      "description": "Artifact anchored to principle",
-      "semantic": "grounding"
+      "key": "codifies",
+      "inverse": "codified-by",
+      "label": "Codifies",
+      "inverseLabel": "Codified By",
+      "from": ["rule"],
+      "to": ["lesson"],
+      "description": "Rule codifies a lesson into enforceable governance",
+      "semantic": "governance"
+    },
+    {
+      "key": "informs",
+      "inverse": "informed-by",
+      "label": "Informs",
+      "inverseLabel": "Informed By",
+      "from": ["research"],
+      "to": ["decision"],
+      "description": "Research findings inform an architecture decision",
+      "semantic": "knowledge-flow"
+    },
+    {
+      "key": "teaches",
+      "inverse": "taught-by",
+      "label": "Teaches",
+      "inverseLabel": "Taught By",
+      "from": ["lesson"],
+      "to": ["decision"],
+      "description": "Lesson teaches a future decision",
+      "semantic": "knowledge-flow"
+    },
+    {
+      "key": "guides",
+      "inverse": "guided-by",
+      "label": "Guides",
+      "inverseLabel": "Guided By",
+      "from": ["research"],
+      "to": ["epic"],
+      "description": "Research guides a body of delivery work",
+      "semantic": "knowledge-flow"
+    },
+    {
+      "key": "cautions",
+      "inverse": "cautioned-by",
+      "label": "Cautions",
+      "inverseLabel": "Cautioned By",
+      "from": ["lesson"],
+      "to": ["epic"],
+      "description": "Lesson cautions a body of delivery work",
+      "semantic": "knowledge-flow"
     },
     {
       "key": "observes",
@@ -93,52 +154,86 @@
       "label": "Observes",
       "inverseLabel": "Observed By",
       "from": ["agent"],
-      "to": [],
-      "description": "Agent watches artifact",
+      "to": ["epic", "task", "decision", "rule", "milestone"],
+      "description": "Agent monitors an artifact",
       "semantic": "observation"
     },
     {
-      "key": "merged-into",
-      "inverse": "merged-from",
-      "label": "Merged Into",
-      "inverseLabel": "Merged From",
-      "from": [],
-      "to": [],
-      "description": "Artifact consolidation — multiple become one",
-      "semantic": "lineage"
+      "key": "employs",
+      "inverse": "employed-by",
+      "label": "Employs",
+      "inverseLabel": "Employed By",
+      "from": ["agent"],
+      "to": ["skill"],
+      "description": "Agent employs a skill capability",
+      "semantic": "observation"
+    },
+    {
+      "key": "documents",
+      "inverse": "documented-by",
+      "label": "Documents",
+      "inverseLabel": "Documented By",
+      "from": ["doc"],
+      "to": ["epic", "decision", "rule", "milestone"],
+      "description": "Document describes an artifact for human reference",
+      "semantic": "knowledge-flow"
     },
     {
       "key": "synchronised-with",
       "inverse": "synchronised-with",
       "label": "Synchronised With",
       "inverseLabel": "Synchronised With",
-      "from": [],
-      "to": [],
-      "description": "Paired content (self-inverse)",
+      "from": ["skill", "doc"],
+      "to": ["skill", "doc"],
+      "description": "Paired content kept in sync — agent-facing and human-facing versions",
       "semantic": "synchronisation"
+    },
+    {
+      "key": "merged-into",
+      "inverse": "merged-from",
+      "label": "Merged Into",
+      "inverseLabel": "Merged From",
+      "from": ["idea"],
+      "to": ["idea"],
+      "description": "Ideas consolidated — multiple become one",
+      "semantic": "lineage"
+    },
+    {
+      "key": "revises",
+      "inverse": "revised-by",
+      "label": "Revises",
+      "inverseLabel": "Revised By",
+      "from": ["pivot"],
+      "to": ["vision", "persona", "pillar"],
+      "description": "Pivot revises a foundational artifact",
+      "semantic": "foundation"
     }
   ],
 
   "semantics": {
+    "foundation": {
+      "description": "Relationships anchoring the foundational layer — vision, pillars, personas, and changes to them",
+      "keys": ["upholds", "upheld-by", "grounded", "grounded-by", "benefits", "benefited-by", "revises", "revised-by"]
+    },
     "lineage": {
-      "description": "Relationships that establish artifact succession — one thing becoming or being absorbed into another",
-      "keys": ["evolves-into", "evolves-from", "merged-into", "merged-from"]
-    },
-    "hierarchy": {
-      "description": "Relationships that establish parent-child delivery structure",
-      "keys": ["delivers", "delivered-by"]
-    },
-    "knowledge-flow": {
-      "description": "Relationships where knowledge or insight flows between artifacts",
-      "keys": ["informs", "informed-by"]
+      "description": "Relationships establishing artifact succession — one thing becoming or spawning another",
+      "keys": ["crystallises", "crystallised-by", "spawns", "spawned-by", "merged-into", "merged-from"]
     },
     "governance": {
-      "description": "Relationships where decisions and rules govern behaviour",
-      "keys": ["governs", "governed-by", "enforces", "enforced-by", "drives", "driven-by"]
+      "description": "Relationships where decisions and rules direct behaviour",
+      "keys": ["drives", "driven-by", "governs", "governed-by", "enforces", "enforced-by", "codifies", "codified-by"]
     },
-    "grounding": {
-      "description": "Relationships anchoring artifacts to foundational principles",
-      "keys": ["grounded", "grounded-by"]
+    "knowledge-flow": {
+      "description": "Relationships where knowledge flows between artifacts",
+      "keys": ["informs", "informed-by", "teaches", "taught-by", "guides", "guided-by", "cautions", "cautioned-by", "documents", "documented-by"]
+    },
+    "observation": {
+      "description": "Relationships where agents monitor and use capabilities",
+      "keys": ["observes", "observed-by", "employs", "employed-by"]
+    },
+    "synchronisation": {
+      "description": "Paired content kept in sync",
+      "keys": ["synchronised-with"]
     }
   }
 }

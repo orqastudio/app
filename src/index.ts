@@ -117,7 +117,7 @@ export type {
 } from "./artifact-graph.js";
 export { ARTIFACT_TYPES } from "./artifact-graph.js";
 
-export { INVERSE_MAP, SINGLE_REF_FIELDS, ARRAY_REF_FIELDS, buildInverseMap, hasSemantic, keysForSemantic } from "./constants.js";
+export { buildInverseMap, hasSemantic, keysForSemantic } from "./constants.js";
 
 // Plugin types
 export type {
@@ -139,12 +139,9 @@ export type {
 	SystemRequirement,
 	SidecarRegistration,
 	CliToolRegistration,
-	ToolRegistration,
 	HookRegistration,
 	CliToolRunResult,
-	ToolRunResult,
 	CliToolRunStatus,
-	ToolRunStatus,
 	HookGenerationResult,
 	ProviderConfig,
 	RegistryEntry,

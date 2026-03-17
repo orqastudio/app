@@ -86,8 +86,6 @@ export interface CliToolRegistration {
 	dataEndpoint?: string;
 }
 
-/** @deprecated Use `CliToolRegistration` instead. */
-export type ToolRegistration = CliToolRegistration;
 
 /** A hook provided by a plugin, triggered on specific events. */
 export interface HookRegistration {
@@ -255,8 +253,6 @@ export interface PluginProvides {
 	sidecar?: SidecarRegistration;
 	/** One-shot CLI tools (commands) this plugin provides. */
 	cliTools?: CliToolRegistration[];
-	/** @deprecated Use `cliTools` instead. */
-	tools?: CliToolRegistration[];
 	/** Hooks triggered on specific events. */
 	hooks?: HookRegistration[];
 }
@@ -334,8 +330,6 @@ export interface CliToolRunResult {
 	completed_at: number;
 }
 
-/** @deprecated Use `CliToolRunResult` instead. */
-export type ToolRunResult = CliToolRunResult;
 
 /** Status snapshot for a registered CLI tool. */
 export interface CliToolRunStatus {
@@ -355,8 +349,6 @@ export interface CliToolRunStatus {
 	summary: string | null;
 }
 
-/** @deprecated Use `CliToolRunStatus` instead. */
-export type ToolRunStatus = CliToolRunStatus;
 
 // ---------------------------------------------------------------------------
 // Plugin Registry & Distribution Types
