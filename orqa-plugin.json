@@ -1,0 +1,12 @@
+{
+  "name": "@orqastudio/plugin-software-project",
+  "version": "0.1.0-dev",
+  "displayName": "Software Project",
+  "description": "Software development artifact types and relationships — epics, tasks, milestones, decisions, rules, lessons, and the delivery hierarchy.",
+  "provides": {
+    "schemas": [],
+    "views": [],
+    "widgets": [],
+    "relationships": []
+  }
+}
