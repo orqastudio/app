@@ -12,6 +12,7 @@
 import { SvelteMap } from "svelte/reactivity";
 import type {
 	PluginManifest,
+	PluginProjectConfig,
 	ArtifactSchema,
 	ViewRegistration,
 	WidgetRegistration,
@@ -21,6 +22,7 @@ import type {
 	CliToolRegistration,
 	HookRegistration,
 	ProviderConfig,
+	AliasMapping,
 } from "@orqastudio/types";
 import type { Component } from "svelte";
 
@@ -71,6 +73,13 @@ export class PluginRegistry {
 	/** All registered relationships keyed by key → full definition. */
 	private relationshipDefs = $state<SvelteMap<string, RelationshipType>>(new SvelteMap());
 
+	/** Alias mappings: canonical key → project-local key. Bidirectional. */
+	private aliasToCanonical = $state<SvelteMap<string, string>>(new SvelteMap());
+	private canonicalToAlias = $state<SvelteMap<string, string>>(new SvelteMap());
+
+	/** Per-plugin project config (aliases, enabled, etc.). */
+	private pluginConfigs = $state<SvelteMap<string, PluginProjectConfig>>(new SvelteMap());
+
 	/** Provider routing configuration — set from project.json at startup. */
 	providerConfig = $state<ProviderConfig>({});
 
@@ -100,6 +109,93 @@ export class PluginRegistry {
 				semantic: rel.semantic,
 			});
 		}
+	}
+
+	// -----------------------------------------------------------------------
+	// Alias Resolution
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Load plugin project configs (from project.json).
+	 * Must be called before plugin registration so aliases are available.
+	 */
+	loadPluginConfigs(configs: Record<string, PluginProjectConfig>): void {
+		for (const [pluginName, config] of Object.entries(configs)) {
+			this.pluginConfigs.set(pluginName, config);
+
+			// Register schema aliases
+			if (config.schemaAliases) {
+				for (const [canonical, mapping] of Object.entries(config.schemaAliases)) {
+					this.aliasToCanonical.set(mapping.alias, canonical);
+					this.canonicalToAlias.set(canonical, mapping.alias);
+				}
+			}
+
+			// Register relationship aliases
+			if (config.relationshipAliases) {
+				for (const [canonical, mapping] of Object.entries(config.relationshipAliases)) {
+					this.aliasToCanonical.set(mapping.alias, canonical);
+					this.canonicalToAlias.set(canonical, mapping.alias);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Resolve a key — returns the canonical key if an alias was provided,
+	 * or the alias if a canonical key was provided and has one.
+	 */
+	resolveKey(key: string): string {
+		return this.aliasToCanonical.get(key) ?? key;
+	}
+
+	/**
+	 * Get the project-local alias for a canonical key, or the key itself if no alias.
+	 */
+	getAlias(canonicalKey: string): string {
+		return this.canonicalToAlias.get(canonicalKey) ?? canonicalKey;
+	}
+
+	/**
+	 * Set an alias for a conflict resolution. Updates the maps immediately.
+	 * Caller is responsible for persisting to project.json.
+	 */
+	setAlias(pluginName: string, type: "schema" | "relationship", canonicalKey: string, alias: string, label?: string): void {
+		// Update maps
+		this.aliasToCanonical.set(alias, canonicalKey);
+		this.canonicalToAlias.set(canonicalKey, alias);
+
+		// Update plugin config
+		let config = this.pluginConfigs.get(pluginName);
+		if (!config) {
+			config = { enabled: true };
+			this.pluginConfigs.set(pluginName, config);
+		}
+
+		const mapping: AliasMapping = { alias, label };
+		if (type === "schema") {
+			config.schemaAliases = { ...config.schemaAliases, [canonicalKey]: mapping };
+		} else {
+			config.relationshipAliases = { ...config.relationshipAliases, [canonicalKey]: mapping };
+		}
+	}
+
+	/**
+	 * Get the plugin project config for serialization back to project.json.
+	 */
+	getPluginConfig(pluginName: string): PluginProjectConfig | null {
+		return this.pluginConfigs.get(pluginName) ?? null;
+	}
+
+	/**
+	 * Get all plugin configs for serialization.
+	 */
+	get allPluginConfigs(): Record<string, PluginProjectConfig> {
+		const result: Record<string, PluginProjectConfig> = {};
+		for (const [name, config] of this.pluginConfigs) {
+			result[name] = config;
+		}
+		return result;
 	}
 
 	// -----------------------------------------------------------------------
