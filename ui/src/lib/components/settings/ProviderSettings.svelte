@@ -4,6 +4,7 @@
 	const { setupStore } = getStores();
 	import SidecarStatusCard from "./SidecarStatusCard.svelte";
 	import CliStatusCard from "./CliStatusCard.svelte";
+	import ProviderSwitcher from "./ProviderSwitcher.svelte";
 
 	let cliChecking = $state(false);
 	let reauthenticating = $state(false);
@@ -28,6 +29,8 @@
 		}
 	});
 </script>
+
+<ProviderSwitcher />
 
 <SidecarStatusCard />
 

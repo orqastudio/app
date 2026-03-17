@@ -10,6 +10,7 @@
 	import GraphHealthWidget from "./GraphHealthWidget.svelte";
 	import LessonVelocityWidget from "./LessonVelocityWidget.svelte";
 	import DecisionQueueWidget from "./DecisionQueueWidget.svelte";
+	import ToolStatusWidget from "./ToolStatusWidget.svelte";
 
 	const { projectStore, artifactGraphSDK, toast } = getStores();
 	import type { IntegrityCheck } from "@orqastudio/types";
@@ -182,6 +183,9 @@
 
 				<!-- Row 4: Pipeline Health — full width at bottom -->
 				<IntegrityWidget />
+
+				<!-- Row 5: Plugin Tools — shows registered tool statuses with Run buttons -->
+				<ToolStatusWidget />
 
 			</div>
 		{/if}

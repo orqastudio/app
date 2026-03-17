@@ -5,39 +5,80 @@ use crate::state::AppState;
 /// The sidecar is a Node.js process.
 const SIDECAR_COMMAND: &str = "node";
 
-/// Determine the sidecar script arguments.
+/// Config file written by the frontend/SDK when a sidecar plugin is registered.
+const SIDECAR_CONFIG_FILENAME: &str = "sidecar-config.json";
+
+/// Sidecar configuration loaded from `sidecar-config.json`.
+#[derive(serde::Deserialize, Debug)]
+struct SidecarConfig {
+    /// Runtime command (e.g. "node").
+    runtime: Option<String>,
+    /// Resolved path to the sidecar entrypoint.
+    entrypoint: String,
+    /// Additional CLI arguments.
+    args: Option<Vec<String>>,
+}
+
+/// Read sidecar configuration from `sidecar-config.json` in the project root.
 ///
-/// Prefers the real Agent SDK sidecar (`sidecar/dist/sidecar.js`) if built.
-/// Falls back to the test echo sidecar (`src-tauri/test-sidecar/echo.cjs`).
-/// Path resolution tries CWD as project root first (cargo tauri dev),
-/// then CWD as src-tauri/ (cargo run).
-fn sidecar_args() -> Vec<String> {
-    // 1. Real Agent SDK sidecar (preferred — CWD is project root)
-    let real_sidecar = std::path::Path::new("sidecars/claude-agentsdk-sidecar/dist/sidecar.js");
-    if real_sidecar.exists() {
-        return vec![real_sidecar.to_string_lossy().to_string()];
+/// Searches CWD (project root during `cargo tauri dev`) and two levels up
+/// (CWD is `backend/src-tauri/` during `cargo run`).
+fn read_sidecar_config() -> Option<SidecarConfig> {
+    let candidates = [
+        std::path::PathBuf::from(SIDECAR_CONFIG_FILENAME),
+        std::path::PathBuf::from("../../").join(SIDECAR_CONFIG_FILENAME),
+    ];
+
+    for path in &candidates {
+        if path.exists() {
+            if let Ok(contents) = std::fs::read_to_string(path) {
+                if let Ok(config) = serde_json::from_str::<SidecarConfig>(&contents) {
+                    return Some(config);
+                }
+            }
+        }
+    }
+    None
+}
+
+/// Determine the sidecar runtime command and script arguments.
+///
+/// Reads `sidecar-config.json` (written by the plugin system) if present.
+/// Falls back to the test echo sidecar when no config exists.
+fn resolve_sidecar() -> (String, Vec<String>) {
+    // 1. Config-driven: read from sidecar-config.json (written by plugin registry)
+    if let Some(config) = read_sidecar_config() {
+        let runtime = config.runtime.unwrap_or_else(|| SIDECAR_COMMAND.to_string());
+        let mut args = vec![config.entrypoint];
+        if let Some(extra) = config.args {
+            args.extend(extra);
+        }
+        return (runtime, args);
     }
 
-    // 2. Real sidecar from backend/src-tauri/ CWD
-    let real_alt = std::path::Path::new("../../sidecars/claude-agentsdk-sidecar/dist/sidecar.js");
-    if real_alt.exists() {
-        return vec![real_alt.to_string_lossy().to_string()];
-    }
-
-    // 3. Test echo sidecar (fallback — CWD is project root)
+    // 2. Test echo sidecar fallback (CWD is project root)
     let echo_path = std::path::Path::new("backend/src-tauri/test-sidecar/echo.cjs");
     if echo_path.exists() {
-        return vec![echo_path.to_string_lossy().to_string()];
+        return (
+            SIDECAR_COMMAND.to_string(),
+            vec![echo_path.to_string_lossy().to_string()],
+        );
     }
 
-    // 4. Test echo from backend/src-tauri/ CWD
+    // 3. Test echo from backend/src-tauri/ CWD
     let echo_alt = std::path::Path::new("test-sidecar/echo.cjs");
     if echo_alt.exists() {
-        return vec![echo_alt.to_string_lossy().to_string()];
+        return (
+            SIDECAR_COMMAND.to_string(),
+            vec![echo_alt.to_string_lossy().to_string()],
+        );
     }
 
-    // Last resort
-    vec!["sidecars/claude-agentsdk-sidecar/dist/sidecar.js".to_string()]
+    // Last resort — will fail at spawn time with a clear error
+    (
+        SIDECAR_COMMAND.to_string(),
+        vec!["sidecar-not-configured".to_string()],
+    )
 }
 
 /// Ensure the sidecar is running, spawning it if necessary.
@@ -48,16 +89,17 @@ pub fn ensure_sidecar_running(state: &AppState) -> Result<(), OrqaError> {
         return Ok(());
     }
 
-    let args = sidecar_args();
+    let (command, args) = resolve_sidecar();
     let arg_refs: Vec<&str> = args.iter().map(String::as_str).collect();
     state
         .sidecar
         .manager
-        .spawn(SIDECAR_COMMAND, &arg_refs)
+        .spawn(&command, &arg_refs)
         .map_err(|e| {
             OrqaError::Sidecar(format!(
                 "failed to auto-start sidecar: {e}. \
-                 Ensure Node.js is installed and in PATH."
+                 Ensure Node.js is installed and in PATH, \
+                 or check sidecar-config.json."
             ))
         })
 }
@@ -76,13 +118,15 @@ pub fn sidecar_status(state: tauri::State<'_, AppState>) -> Result<SidecarStatus
 /// Kills any existing sidecar process and spawns a new one.
 #[tauri::command]
 pub fn sidecar_restart(state: tauri::State<'_, AppState>) -> Result<SidecarStatus, OrqaError> {
-    let args = sidecar_args();
+    let (command, args) = resolve_sidecar();
     let arg_refs: Vec<&str> = args.iter().map(String::as_str).collect();
-    state.sidecar.manager.restart(SIDECAR_COMMAND, &arg_refs)
+    state.sidecar.manager.restart(&command, &arg_refs)
 }
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
     fn sidecar_status_not_started_without_tauri() {
         // Direct unit test of the manager — cannot test tauri::State in isolation
@@ -97,5 +141,34 @@ mod tests {
         assert!(!status.cli_detected);
         assert!(status.cli_version.is_none());
         assert!(status.error_message.is_none());
+    }
+
+    #[test]
+    fn resolve_sidecar_returns_fallback_when_no_config() {
+        // Without sidecar-config.json in CWD, should return a fallback
+        let (command, args) = resolve_sidecar();
+        assert_eq!(command, "node");
+        assert!(!args.is_empty());
+    }
+
+    #[test]
+    fn sidecar_config_deserialization() {
+        let json = r#"{"runtime": "node", "entrypoint": "plugins/claude-integration/sidecar/dist/sidecar.js"}"#;
+        let config: SidecarConfig = serde_json::from_str(json).unwrap();
+        assert_eq!(config.runtime, Some("node".to_string()));
+        assert_eq!(
+            config.entrypoint,
+            "plugins/claude-integration/sidecar/dist/sidecar.js"
+        );
+        assert!(config.args.is_none());
+    }
+
+    #[test]
+    fn sidecar_config_deserialization_with_args() {
+        let json = r#"{"entrypoint": "dist/sidecar.js", "args": ["--verbose"]}"#;
+        let config: SidecarConfig = serde_json::from_str(json).unwrap();
+        assert_eq!(config.runtime, None);
+        assert_eq!(config.entrypoint, "dist/sidecar.js");
+        assert_eq!(config.args, Some(vec!["--verbose".to_string()]));
     }
 }

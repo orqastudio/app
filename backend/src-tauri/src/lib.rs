@@ -2,12 +2,14 @@ pub mod commands;
 pub mod db;
 pub mod domain;
 pub mod error;
+pub mod hooks;
 pub mod logging;
 pub mod repo;
 pub mod search;
 pub mod sidecar;
 pub mod startup;
 pub mod state;
+pub mod tools;
 pub mod watcher;
 
 use std::sync::Arc;
@@ -60,6 +62,9 @@ fn build_app_state(
             watcher: std::sync::Arc::new(std::sync::Mutex::new(None)),
             graph: std::sync::Mutex::new(None),
             skill_injector: std::sync::Mutex::new(None),
+        },
+        tools: state::ToolState {
+            runner: tools::runner::ToolRunner::new(),
         },
     })
 }
@@ -230,6 +235,11 @@ fn register_commands(builder: tauri::Builder<tauri::Wry>) -> tauri::Builder<taur
         commands::graph_commands::update_artifact_field,
         commands::status_transition_commands::evaluate_status_transitions,
         commands::status_transition_commands::apply_status_transition,
+        commands::tool_commands::get_registered_tools,
+        commands::tool_commands::run_tool,
+        commands::tool_commands::tool_status,
+        commands::hook_commands::get_registered_hooks,
+        commands::hook_commands::generate_hook_dispatchers,
     ])
 }
 

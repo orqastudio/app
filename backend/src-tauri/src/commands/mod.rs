@@ -1,6 +1,7 @@
 pub mod artifact_commands;
 pub mod enforcement_commands;
 pub mod graph_commands;
+pub mod hook_commands;
 pub mod lesson_commands;
 pub mod message_commands;
 pub mod project_commands;
@@ -12,3 +13,4 @@ pub mod setup_commands;
 pub mod sidecar_commands;
 pub mod status_transition_commands;
 pub mod stream_commands;
+pub mod tool_commands;
