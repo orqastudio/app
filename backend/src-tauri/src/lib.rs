@@ -11,7 +11,6 @@ pub mod startup;
 pub mod state;
 pub mod cli_tools;
 pub mod plugins;
-pub mod tools;
 pub mod watcher;
 
 use std::sync::Arc;

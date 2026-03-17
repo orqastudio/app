@@ -1,6 +1,6 @@
 {
   "name": "orqa-studio",
-  "version": "0.1.0-pre",
+  "version": "0.1.0-dev",
   "private": true,
   "type": "module",
   "scripts": {
@@ -17,9 +17,9 @@
   },
   "devDependencies": {
     "@internationalized/date": "^3.11.0",
-    "@orqastudio/eslint-config": "dev",
-    "@orqastudio/integrity-validator": "dev",
-    "@orqastudio/test-config": "dev",
+    "@orqastudio/eslint-config": "0.1.0-dev",
+    "@orqastudio/integrity-validator": "0.1.0-dev",
+    "@orqastudio/test-config": "0.1.0-dev",
     "@sveltejs/adapter-static": "^3.0.0",
     "@sveltejs/kit": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
@@ -47,10 +47,10 @@
   },
   "dependencies": {
     "@humanspeak/svelte-markdown": "^0.8.0",
-    "@orqastudio/graph-visualiser": "^0.1.0-pre.8557d95",
-    "@orqastudio/sdk": "dev",
-    "@orqastudio/svelte-components": "dev",
-    "@orqastudio/types": "dev",
+    "@orqastudio/graph-visualiser": "0.1.0-dev",
+    "@orqastudio/sdk": "0.1.0-dev",
+    "@orqastudio/svelte-components": "0.1.0-dev",
+    "@orqastudio/types": "0.1.0-dev",
     "@tauri-apps/api": "^2.0.0",
     "@tauri-apps/plugin-dialog": "^2.0.0",
     "@tauri-apps/plugin-fs": "^2.0.0",
