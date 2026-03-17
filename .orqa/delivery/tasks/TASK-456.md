@@ -4,6 +4,11 @@ title: Roadmap kanban view
 description: "Create a dynamic kanban board showing milestones as columns with epic cards, with drill-down capability."
 status: completed
 priority: P2
+scoring:
+  impact: 4
+  urgency: 2
+  complexity: 4
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

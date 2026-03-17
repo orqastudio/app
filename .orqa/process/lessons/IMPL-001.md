@@ -23,6 +23,8 @@ relationships:
   - target: DOC-039
     type: informed-by
     rationale: Referenced in documentation page Product Governance
+  - target: PILLAR-001
+    type: informs
 ---
 ## Pattern
 After `npm install` or when Vite encounters new dependencies for the first time, `cargo tauri dev` launches the app but Vite triggers a dependency optimization reload. On Windows, the Tauri WebView2 webview fails to reconnect after this reload, leaving the app stuck on a white screen. The app only works after a full restart.

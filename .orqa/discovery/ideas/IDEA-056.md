@@ -14,6 +14,8 @@ relationships:
   - target: MS-001
     type: delivers
   - target: PILLAR-001
+    type: informed-by
+  - target: PILLAR-001
     type: grounded-by
 ---
 

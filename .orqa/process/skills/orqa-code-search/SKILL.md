@@ -19,35 +19,37 @@ relationships:
     type: grounded
     rationale: Context-aware search makes codebase knowledge discoverable before changes, preventing blind modifications
   - target: TASK-037
-    type: grounded
+    type: informs
   - target: TASK-038
-    type: grounded
+    type: informs
   - target: TASK-039
-    type: grounded
+    type: informs
   - target: TASK-041
-    type: grounded
+    type: informs
   - target: TASK-042
-    type: grounded
+    type: informs
   - target: TASK-043
-    type: grounded
+    type: informs
   - target: TASK-045
-    type: grounded
+    type: informs
   - target: AGENT-001
-    type: grounded
+    type: informs
   - target: AGENT-008
-    type: grounded
+    type: informs
   - target: AGENT-002
-    type: grounded
+    type: informs
   - target: AGENT-003
-    type: grounded
+    type: informs
   - target: AGENT-004
-    type: grounded
+    type: informs
   - target: AGENT-005
-    type: grounded
+    type: informs
   - target: AGENT-006
-    type: grounded
+    type: informs
   - target: AGENT-007
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 Context-aware code search wrapper. Detects your runtime context and provides the right

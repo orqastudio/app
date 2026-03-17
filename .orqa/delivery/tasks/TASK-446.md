@@ -4,6 +4,11 @@ title: Wire auto-fix and confirmations to toast
 description: Replace inline confirmation banners with toast notifications for auto-fix success and other confirmations.
 status: completed
 priority: P2
+scoring:
+  impact: 2
+  urgency: 2
+  complexity: 1
+  dependencies: 1
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

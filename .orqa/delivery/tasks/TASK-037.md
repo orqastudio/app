@@ -17,11 +17,15 @@ relationships:
     type: delivers
     rationale: Task belongs to this epic
   - target: SKILL-005
-    type: grounded-by
+    type: informed-by
   - target: SKILL-008
-    type: grounded-by
+    type: informed-by
   - target: TASK-333
     type: depended-on-by
+  - target: SKILL-005
+    type: informed-by
+  - target: SKILL-008
+    type: informed-by
 ---
 ## Findings Addressed
 

@@ -12,16 +12,16 @@ relationships:
     type: informed-by
     rationale: "Presenting decisions one at a time includes presenting the orchestrator's own analysis, not just options"
   - target: RULE-031
-    type: observes
+    type: informs
     rationale: "Vision alignment rule says to question misaligned instructions — this extends that to all design decisions, not just principle violations"
   - target: PILLAR-002
-    type: observes
+    type: informs
     rationale: "Learning through reflection requires honest assessment, not agreement"
   - target: RULE-031
-    type: grounded-by
+    type: informed-by
     rationale: "Lesson promoted to RULE-031 — extends questioning requirement to all design suggestions, not just principle violations"
   - target: RULE-031
-    type: observed-by
+    type: informed-by
     rationale: "RULE-031 codified the critical thinking requirement for user design suggestions first observed in this lesson"
 ---
 

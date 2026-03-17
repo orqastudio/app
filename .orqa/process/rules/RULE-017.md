@@ -17,24 +17,22 @@ relationships:
     type: informs
     rationale: Verification gates trigger lesson logging when findings reveal recurring patterns
   - target: IMPL-023
-    type: observes
+    type: informs
     rationale: Rule updated from lesson IMPL-023 (observation logging and recurrence tracking should be automated)
   - target: AD-044
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-044
   - target: IMPL-025
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-025
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-025
   - target: IMPL-023
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-023
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-023
   - target: DOC-025
     type: informed-by
     rationale: Referenced in documentation page Artifact Workflow
-  - target: AD-048
-    type: enforced-by
   - target: IMPL-023
-    type: grounded
+    type: informs
   - target: RULE-004
     type: informed-by
   - target: RULE-011
@@ -43,6 +41,10 @@ relationships:
     type: informed-by
   - target: RULE-030
     type: informed-by
+  - target: AD-048
+    type: enforces
+  - target: PILLAR-002
+    type: informs
 ---
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.
 

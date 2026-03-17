@@ -4,6 +4,11 @@ title: Replace GraphHealthWidget scoring with graph-theoretic metrics
 description: "Migrate GraphHealthWidget from file-based scan counts to graph-theoretic metrics sourced from the artifactGraphSDK's graphHealth property. Health score becomes largestComponentRatio; orphan count uses structural 0-degree detection; component count is displayed as disconnected clusters."
 status: blocked
 priority: P1
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 3
+  dependencies: 3
 created: 2026-03-15
 updated: 2026-03-15
 horizon: active

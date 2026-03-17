@@ -13,40 +13,48 @@ relationships:
     type: grounded
     rationale: Tauri command patterns, permission capabilities, and IPC channels define explicit boundaries between frontend and backend layers
   - target: AD-011
-    type: grounded-by
+    type: informs
     rationale: Auto-generated inverse of practices relationship from AD-011
   - target: AD-007
-    type: grounded-by
+    type: informs
     rationale: Auto-generated inverse of practices relationship from AD-007
   - target: AD-012
-    type: grounded-by
+    type: informs
     rationale: Auto-generated inverse of practices relationship from AD-012
   - target: TASK-013
-    type: grounded
+    type: informs
   - target: TASK-015
-    type: grounded
+    type: informs
   - target: TASK-017
-    type: grounded
+    type: informs
   - target: TASK-020
-    type: grounded
+    type: informs
   - target: TASK-022
-    type: grounded
+    type: informs
   - target: TASK-027
-    type: grounded
+    type: informs
   - target: TASK-028
-    type: grounded
+    type: informs
   - target: TASK-073
-    type: grounded
+    type: informs
   - target: TASK-074
-    type: grounded
+    type: informs
   - target: TASK-079
-    type: grounded
+    type: informs
   - target: TASK-410
-    type: grounded
+    type: informs
   - target: TASK-415
-    type: grounded
+    type: informs
   - target: TASK-416
-    type: grounded
+    type: informs
+  - target: AD-007
+    type: informed-by
+  - target: AD-011
+    type: informed-by
+  - target: AD-012
+    type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 > Build cross-platform desktop and mobile apps with web frontends and Rust backends.
 

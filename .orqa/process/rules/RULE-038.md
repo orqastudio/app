@@ -18,6 +18,8 @@ relationships:
     rationale: User-invocable field is part of the portability contract each skill must declare
   - target: RULE-026
     type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 Every skill MUST have a `user-invocable` field in its YAML frontmatter. This field determines how the skill surfaces to users.
 

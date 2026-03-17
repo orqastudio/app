@@ -21,9 +21,11 @@ relationships:
     type: grounded
     rationale: Component-level orchestration via $derived and $effect keeps store dependencies visible and prevents hidden coupling
   - target: TASK-009
-    type: grounded
+    type: informs
   - target: TASK-076
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 

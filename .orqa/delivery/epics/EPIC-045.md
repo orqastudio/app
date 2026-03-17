@@ -7,7 +7,11 @@ priority: P1
 created: 2026-03-09
 updated: 2026-03-09
 horizon: null
-scoring: null
+scoring:
+  impact: 5
+  urgency: 4
+  complexity: 4
+  dependencies: 4
 relationships:
   - target: RES-010
     type: informed-by
@@ -42,13 +46,15 @@ relationships:
   - target: MS-001
     type: delivers
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: AD-029
     type: informs
   - target: AD-030
     type: informs
   - target: IDEA-025
     type: evolves-from
+  - target: PILLAR-001
+    type: grounded-by
 ---
 ## Context
 

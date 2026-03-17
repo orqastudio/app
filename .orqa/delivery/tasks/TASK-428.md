@@ -4,6 +4,11 @@ title: "Switch orqa-studio from file: to published package versions"
 description: "Update the main app to consume published @orqastudio packages from GitHub Packages instead of file: references to sibling directories."
 status: completed
 priority: P1
+scoring:
+  impact: 5
+  urgency: 4
+  complexity: 2
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -22,9 +27,13 @@ relationships:
   - target: TASK-427
     type: depends-on
   - target: SKILL-030
-    type: grounded-by
+    type: informed-by
   - target: SKILL-034
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-030
+    type: informed-by
+  - target: SKILL-034
+    type: informed-by
 ---
 
 ## Scope

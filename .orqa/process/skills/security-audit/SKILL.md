@@ -19,8 +19,12 @@ relationships:
     type: grounded
     rationale: Systematic permission, secret, and dependency audits surface hidden risks as documented findings with severity classifications
   - target: AD-011
-    type: grounded-by
+    type: informed-by
+  - target: AD-011
+    type: informed-by
     rationale: Auto-generated inverse of practices relationship from AD-011
+  - target: PILLAR-001
+    type: informs
 ---
 Security auditing methodology for applications. This skill teaches *what to check and how* — the specific security mechanisms (e.g., Tauri capabilities, keyring APIs) come from the project's technology skills.
 

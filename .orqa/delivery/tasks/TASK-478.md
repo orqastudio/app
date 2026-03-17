@@ -4,6 +4,11 @@ title: "UI polish: toast notifications and keyboard shortcuts"
 description: Toast notifications animate in/out from top center with reasonable min-width. Add Ctrl+Space search shortcut to keyboard shortcuts config section.
 status: completed
 priority: P2
+scoring:
+  impact: 2
+  urgency: 2
+  complexity: 2
+  dependencies: 1
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -17,5 +22,7 @@ relationships:
     type: delivers
     rationale: UI polish and settings (F29, F31)
   - target: SKILL-030
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-030
+    type: informed-by
 ---

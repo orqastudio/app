@@ -9,13 +9,13 @@ maturity: understanding
 recurrence: 1
 relationships:
   - target: RULE-004
-    type: observes
+    type: informs
     rationale: "RULE-004 governs epic lifecycle but doesn't enforce epic body maintenance during the epic"
   - target: RULE-004
-    type: grounded-by
+    type: informed-by
     rationale: "Lesson promoted to RULE-004 — standing reconciliation task requirement added to epic lifecycle"
   - target: RULE-004
-    type: observed-by
+    type: informed-by
     rationale: "RULE-004 codified the epic body reconciliation task requirement first observed in this lesson"
 ---
 

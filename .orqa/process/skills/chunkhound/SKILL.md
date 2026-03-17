@@ -18,27 +18,29 @@ relationships:
     type: grounded
     rationale: Semantic search surfaces hidden relationships in code, making architecture and data flows visible before changes
   - target: TASK-004
-    type: grounded
+    type: informs
   - target: TASK-005
-    type: grounded
+    type: informs
   - target: TASK-006
-    type: grounded
+    type: informs
   - target: TASK-007
-    type: grounded
+    type: informs
   - target: TASK-008
-    type: grounded
+    type: informs
   - target: TASK-009
-    type: grounded
+    type: informs
   - target: TASK-010
-    type: grounded
+    type: informs
   - target: TASK-011
-    type: grounded
+    type: informs
   - target: TASK-012
-    type: grounded
+    type: informs
   - target: TASK-013
-    type: grounded
+    type: informs
   - target: TASK-014
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 

@@ -4,6 +4,11 @@ title: Build LessonVelocityWidget and DecisionQueueWidget
 description: "Build two widgets for the 'What's Next' column. LessonVelocityWidget shows the lesson pipeline stages (Draft, Review, Promoted, Active) with item counts per stage. DecisionQueueWidget shows pending decisions and blockers with context and days pending."
 status: completed
 priority: P1
+scoring:
+  impact: 3
+  urgency: 3
+  complexity: 3
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 acceptance:

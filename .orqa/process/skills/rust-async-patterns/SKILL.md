@@ -13,19 +13,21 @@ relationships:
     type: grounded
     rationale: Tokio task, channel, and stream patterns make concurrent data flows explicit and their error paths traceable
   - target: TASK-007
-    type: grounded
+    type: informs
   - target: TASK-013
-    type: grounded
+    type: informs
   - target: TASK-014
-    type: grounded
+    type: informs
   - target: TASK-015
-    type: grounded
+    type: informs
   - target: TASK-073
-    type: grounded
+    type: informs
   - target: TASK-074
-    type: grounded
+    type: informs
   - target: TASK-079
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 

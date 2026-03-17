@@ -29,7 +29,7 @@ relationships:
     type: informs
     rationale: Restart protocol and session-ending commit discipline intersect in dogfood mode
   - target: IMPL-015
-    type: observes
+    type: informs
     rationale: Rule promoted from lesson IMPL-015 (worktree cleanup discipline)
   - target: RULE-045
     type: informed-by
@@ -41,13 +41,15 @@ relationships:
     type: informed-by
     rationale: workflow.md is the source-of-truth document for the git workflow this rule enforces
   - target: IMPL-015
-    type: grounded
+    type: informs
   - target: RULE-007
     type: informed-by
   - target: RULE-025
     type: informed-by
   - target: RULE-039
     type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 **Source of Truth:** `.orqa/documentation/guide/workflow.md`
 

@@ -26,17 +26,19 @@ relationships:
     type: informs
     rationale: Structure provides acceptance criteria that prevent ambiguous completion claims
   - target: IMPL-021
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-021
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-021
   - target: IMPL-047
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-047
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-047
   - target: AD-040
     type: enforces
   - target: RULE-030
     type: informed-by
   - target: RULE-032
     type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 ## The Rule (NON-NEGOTIABLE)
 

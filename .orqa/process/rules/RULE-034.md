@@ -20,10 +20,16 @@ relationships:
     type: informed-by
     rationale: Auto-generated inverse of informed-by relationship from RULE-045
   - target: AGENT-008
-    type: enforces
+    type: informs
     rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
   - target: AD-036
     type: enforces
+  - target: AGENT-008
+    type: informs
+  - target: AGENT-008
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 All artifact cross-references MUST use the format `[Display Text](ARTIFACT-ID)` where the artifact ID matches the pattern `PREFIX-NNN`. The display text is typically the artifact ID itself: `[EPIC-001](EPIC-001)`.
 

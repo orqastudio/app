@@ -4,6 +4,11 @@ title: "Write P1 how-to guides (plugin SDK, Rust testing, frontend testing)"
 description: "Author the three P1 how-to guides that are new content deliverables for the reorganised documentation structure. Each guide must have complete frontmatter with a DOC ID, proper relationships, and substantive content."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 3
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 acceptance:

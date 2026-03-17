@@ -4,6 +4,11 @@ title: Relationships graph visualization view
 description: "Add a toggle between list and graph view in the relationships panel, with a radial graph showing the focused artifact at centre."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 4
+  dependencies: 1
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

@@ -9,7 +9,7 @@ maturity: understanding
 recurrence: 1
 relationships:
   - target: RULE-003
-    type: observes
+    type: informs
     rationale: "RULE-003 requires artifact config integrity — this incident violated it by blanking the artifacts array and other required config fields"
   - target: IDEA-075
     type: informs

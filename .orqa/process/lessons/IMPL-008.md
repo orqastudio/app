@@ -11,6 +11,8 @@ relationships:
   - target: "PILLAR-001"
     type: "grounded"
     rationale: "Domain service extraction creates structural clarity"
+  - target: PILLAR-001
+    type: informs
 ---
 ## What Happened
 

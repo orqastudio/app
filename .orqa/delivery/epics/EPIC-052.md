@@ -14,7 +14,11 @@ created: 2026-03-11
 updated: 2026-03-12
 deadline: null
 horizon: null
-scoring: null
+scoring:
+  impact: 5
+  urgency: 4
+  complexity: 4
+  dependencies: 4
 relationships:
   - target: MS-002
     type: delivers
@@ -81,7 +85,7 @@ relationships:
   - target: EPIC-050
     type: depends-on
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-002
     type: grounded-by
   - target: RULE-041
@@ -92,6 +96,8 @@ relationships:
     type: informed-by
   - target: EPIC-053
     type: depended-on-by
+  - target: PILLAR-001
+    type: grounded-by
 ---
 
 ## Context

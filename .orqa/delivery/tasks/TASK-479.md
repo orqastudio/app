@@ -4,6 +4,11 @@ title: Build MilestoneContextCard and new dashboard layout shell
 description: "Replace the existing dashboard layout with a narrative flow structure: milestone context at top, three columns (Where You Are, How You're Improving, What's Next), and a collapsible section at the bottom. Build the MilestoneContextCard component showing the active milestone."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 3
+  dependencies: 4
 created: 2026-03-14
 updated: 2026-03-14
 acceptance:

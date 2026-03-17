@@ -4,6 +4,11 @@ title: Enhance artifact search with semantic capability and UI fixes
 description: Integrate semantic/AI search for artifact discovery. Fix search results overflow and improve input contrast against modal overlay.
 status: active
 priority: P2
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 3
+  dependencies: 1
 created: 2026-03-13
 updated: 2026-03-13
 assignee: null
@@ -16,11 +21,17 @@ relationships:
     type: delivers
     rationale: Theme E — search enhancement from UAT
   - target: SKILL-030
-    type: grounded-by
+    type: informed-by
   - target: SKILL-042
-    type: grounded-by
+    type: informed-by
   - target: SKILL-044
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-030
+    type: informed-by
+  - target: SKILL-042
+    type: informed-by
+  - target: SKILL-044
+    type: informed-by
 ---
 
 ## Scope

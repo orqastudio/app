@@ -20,12 +20,14 @@ relationships:
     type: informs
     rationale: Dogfood mode heightens systems-thinking urgency when editing a live system from within
   - target: IMPL-034
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-034
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-034
   - target: RULE-009
     type: informed-by
   - target: RULE-030
     type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 # Systems Thinking First (NON-NEGOTIABLE)
 

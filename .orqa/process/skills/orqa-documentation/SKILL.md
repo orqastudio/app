@@ -20,41 +20,43 @@ relationships:
     type: grounded
     rationale: Consistent link formats and cross-referencing conventions make artifact relationships navigable and machine-parseable
   - target: TASK-162
-    type: grounded
+    type: informs
   - target: TASK-164
-    type: grounded
+    type: informs
   - target: TASK-171
-    type: grounded
+    type: informs
   - target: TASK-174
-    type: grounded
+    type: informs
   - target: TASK-186
-    type: grounded
+    type: informs
   - target: TASK-187
-    type: grounded
+    type: informs
   - target: TASK-211
-    type: grounded
+    type: informs
   - target: TASK-212
-    type: grounded
+    type: informs
   - target: TASK-213
-    type: grounded
+    type: informs
   - target: TASK-460
-    type: grounded
+    type: informs
   - target: TASK-461
-    type: grounded
+    type: informs
   - target: TASK-462
-    type: grounded
+    type: informs
   - target: TASK-463
-    type: grounded
+    type: informs
   - target: TASK-464
-    type: grounded
+    type: informs
   - target: TASK-465
-    type: grounded
+    type: informs
   - target: TASK-477
-    type: grounded
+    type: informs
   - target: AGENT-008
-    type: grounded
+    type: informs
   - target: AGENT-007
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 How to write documentation and artifact content in OrqaStudio. Covers the internal link format, cross-referencing conventions, markdown rendering pipeline, and content structure patterns.

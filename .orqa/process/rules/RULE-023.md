@@ -23,6 +23,8 @@ relationships:
     type: informed-by
   - target: RULE-026
     type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 Every agent MUST read its Required Reading documentation before any implementation work begins. The Required Reading section in each agent definition lists the specific documentation pages that agent needs loaded into context.
 

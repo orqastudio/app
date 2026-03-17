@@ -13,32 +13,29 @@ gate:
   - "Are discovered enforcement gaps acted on immediately, not deferred?"
 relationships:
   - target: AD-043
-    type: grounded-by
+    type: informed-by
     rationale: Auto-generated inverse of grounded-by relationship from AD-043
   - target: IMPL-041
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-041
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-041
   - target: AD-044
-    type: grounded-by
+    type: informed-by
     rationale: Auto-generated inverse of grounded-by relationship from AD-044
   - target: RULE-046
-    type: grounded-by
+    type: informed-by
     rationale: Auto-generated inverse of grounded-by relationship from RULE-046
   - target: IMPL-048
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-048
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-048
   - target: PILLAR-003
     type: informs
     rationale: Auto-generated inverse of informs relationship from PILLAR-003
   - target: IMPL-050
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-050
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-050
   - target: DOC-036
     type: informed-by
     rationale: Referenced in documentation page Artifact Framework
-  - target: AGENT-003
-    type: grounded
-    rationale: Orchestrator is grounded by this pillar — Learning Through Reflection is injected as foundational context
   - target: DOC-064
     type: informs
     rationale: Learning Through Reflection pillar is distilled into the product-purpose grounding document — inverse of informed-by on DOC-064
@@ -105,6 +102,48 @@ relationships:
   - target: DOC-009
     type: informs
     rationale: Project settings track governance artifact counts showing governance maturity
+  - target: EPIC-046
+    type: informs
+  - target: AD-016
+    type: informed-by
+  - target: AD-052
+    type: informed-by
+  - target: IMPL-011
+    type: informed-by
+  - target: IMPL-012
+    type: informed-by
+  - target: RULE-009
+    type: informed-by
+  - target: RULE-011
+    type: informed-by
+  - target: RULE-015
+    type: informed-by
+  - target: RULE-017
+    type: informed-by
+  - target: RULE-029
+    type: informed-by
+  - target: RULE-030
+    type: informed-by
+  - target: SKILL-004
+    type: informed-by
+  - target: SKILL-006
+    type: informed-by
+  - target: SKILL-018
+    type: informed-by
+  - target: SKILL-025
+    type: informed-by
+  - target: SKILL-048
+    type: informed-by
+  - target: SKILL-033
+    type: informed-by
+  - target: SKILL-035
+    type: informed-by
+  - target: AD-027
+    type: informed-by
+  - target: AD-042
+    type: informed-by
+  - target: AGENT-003
+    type: grounded
   - target: EPIC-004
     type: grounded
   - target: EPIC-009
@@ -123,8 +162,6 @@ relationships:
     type: grounded
   - target: EPIC-031
     type: grounded
-  - target: EPIC-046
-    type: informs
   - target: EPIC-048
     type: grounded
   - target: EPIC-050
@@ -231,7 +268,19 @@ relationships:
     type: grounded
   - target: IDEA-103
     type: grounded
+  - target: IDEA-006
+    type: informs
+  - target: IDEA-040
+    type: informs
   - target: AD-016
+    type: grounded-by
+  - target: AD-027
+    type: grounded-by
+  - target: AD-042
+    type: grounded-by
+  - target: AD-043
+    type: grounded-by
+  - target: AD-044
     type: grounded-by
   - target: AD-052
     type: grounded-by
@@ -251,6 +300,8 @@ relationships:
     type: grounded-by
   - target: RULE-030
     type: grounded-by
+  - target: RULE-046
+    type: grounded-by
   - target: SKILL-004
     type: grounded-by
   - target: SKILL-006
@@ -264,10 +315,6 @@ relationships:
   - target: SKILL-033
     type: grounded-by
   - target: SKILL-035
-    type: grounded-by
-  - target: AD-027
-    type: grounded-by
-  - target: AD-042
     type: grounded-by
 ---
 ## What This Pillar Means

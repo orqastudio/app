@@ -14,10 +14,7 @@ acceptance:
   - Task body template updated with Lessons section
 relationships:
   - target: IMPL-024
-    type: enforced-by
-    rationale: Auto-generated inverse of enforced-by relationship from IMPL-024
-  - target: IMPL-024
-    type: grounded
+    type: informed-by
     rationale: Auto-generated inverse of grounded relationship from IMPL-024
   - target: EPIC-059
     type: delivers
@@ -26,6 +23,8 @@ relationships:
     type: depended-on-by
   - target: TASK-349
     type: depended-on-by
+  - target: IMPL-024
+    type: informs
 ---
 ## What
 

@@ -11,7 +11,11 @@ created: 2026-03-12
 updated: 2026-03-12
 deadline: null
 horizon: null
-scoring: null
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 3
+  dependencies: 3
 relationships:
   - target: RES-042
     type: informed-by
@@ -88,8 +92,10 @@ relationships:
   - target: MS-001
     type: delivers
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-002
+    type: grounded-by
+  - target: PILLAR-001
     type: grounded-by
 ---
 ## Governing Principles

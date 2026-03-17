@@ -15,7 +15,7 @@ relationships:
     type: informed-by
     rationale: "Occurred while trying to enforce IMPL-052's promotion to RULE-001"
   - target: RULE-042
-    type: observes
+    type: informs
     rationale: "RULE-042 defines the skill injection enforcement system that should have been used"
   - target: AD-048
     type: informs

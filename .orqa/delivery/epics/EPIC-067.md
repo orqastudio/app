@@ -4,6 +4,11 @@ title: "Artifact viewer redesign — layout, relationships, and graph enrichment
 description: "Redesign the artifact viewer information hierarchy, relationships panel, and pipeline stepper. Enrich graph nodes with metadata for display. The largest systemic theme from UAT round 2."
 status: completed
 priority: P1
+scoring:
+  impact: 5
+  urgency: 4
+  complexity: 4
+  dependencies: 5
 created: 2026-03-14
 updated: 2026-03-14
 deadline: null

@@ -4,13 +4,18 @@ title: Configuration-driven delivery pipeline
 description: "Replace hardcoded delivery artifact types (milestones, epics, tasks) with project-configurable type definitions in project.json. The code becomes a generic enforcement engine for whatever delivery pipeline the project defines. Core artifacts (ideas, research, rules, lessons, decisions, skills, agents, pillars) remain hardcoded as firmware."
 status: completed
 priority: P1
+scoring:
+  impact: 5
+  urgency: 4
+  complexity: 4
+  dependencies: 4
 created: 2026-03-15
 updated: 2026-03-15
 deadline: null
 horizon: active
 relationships:
   - target: AD-051
-    type: enforces
+    type: delivers
     rationale: Implements the config-driven delivery pipeline decision
   - target: MS-002
     type: delivers

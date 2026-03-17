@@ -18,33 +18,35 @@ relationships:
     type: grounded
     rationale: Skill evaluation, portability rules, and provenance tracking ensure domain knowledge is curated, versioned, and discoverable
   - target: TASK-006
-    type: grounded
+    type: informs
   - target: TASK-032
-    type: grounded
+    type: informs
   - target: TASK-033
-    type: grounded
+    type: informs
   - target: TASK-034
-    type: grounded
+    type: informs
   - target: TASK-035
-    type: grounded
+    type: informs
   - target: TASK-040
-    type: grounded
+    type: informs
   - target: TASK-044
-    type: grounded
+    type: informs
   - target: TASK-053
-    type: grounded
+    type: informs
   - target: TASK-054
-    type: grounded
+    type: informs
   - target: TASK-067
-    type: grounded
+    type: informs
   - target: TASK-081
-    type: grounded
+    type: informs
   - target: TASK-212
-    type: grounded
+    type: informs
   - target: TASK-215
-    type: grounded
+    type: informs
   - target: TASK-223
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 

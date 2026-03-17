@@ -16,6 +16,8 @@ relationships:
   - target: RULE-004
     type: informs
     rationale: Status transitions define when research becomes surpassed and ideas become archived
+  - target: PILLAR-001
+    type: informs
 ---
 
 ## Two Categories of Written Artifacts

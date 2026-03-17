@@ -19,17 +19,23 @@ relationships:
   - target: TASK-075
     type: depends-on
   - target: SKILL-030
-    type: grounded-by
+    type: informed-by
   - target: SKILL-016
-    type: grounded-by
+    type: informed-by
   - target: SKILL-015
-    type: grounded-by
+    type: informed-by
   - target: TASK-082
     type: depended-on-by
   - target: TASK-083
     type: depended-on-by
   - target: TASK-338
     type: depended-on-by
+  - target: SKILL-015
+    type: informed-by
+  - target: SKILL-016
+    type: informed-by
+  - target: SKILL-030
+    type: informed-by
 ---
 
 ## What

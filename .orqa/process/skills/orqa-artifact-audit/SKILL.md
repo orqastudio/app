@@ -20,9 +20,11 @@ relationships:
     type: grounded
     rationale: Systematic auditing detects broken references, stale paths, and content drift, keeping the artifact graph accurate and navigable
   - target: TASK-164
-    type: grounded
+    type: informs
   - target: TASK-222
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 Methodology for auditing `.orqa/` governance artifacts. An audit answers the question: "Does everything in `.orqa/` still describe reality?" This skill provides a repeatable process for finding broken references, stale paths, content inaccuracies, and drift from the codebase — and for structuring findings so they can be fixed efficiently.

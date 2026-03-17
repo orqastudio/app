@@ -19,20 +19,32 @@ capabilities:
   - shell_execute
 relationships:
   - target: SKILL-005
-    type: grounded-by
+    type: informed-by
   - target: SKILL-008
-    type: grounded-by
+    type: informed-by
   - target: SKILL-019
-    type: grounded-by
+    type: informed-by
   - target: SKILL-035
-    type: grounded-by
+    type: informed-by
   - target: DOC-046
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-002
     type: grounded-by
   - target: PILLAR-003
+    type: grounded-by
+  - target: DOC-046
+    type: informed-by
+  - target: SKILL-005
+    type: informed-by
+  - target: SKILL-008
+    type: informed-by
+  - target: SKILL-019
+    type: informed-by
+  - target: SKILL-035
+    type: informed-by
+  - target: PILLAR-001
     type: grounded-by
 ---
 

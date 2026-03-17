@@ -4,6 +4,11 @@ title: Wire orqa-studio to import from packages + update pre-commit and make ver
 description: "Update the main orqa-studio app to import types, SDK, and stores from the extracted packages instead of local files. Replace verify-links.mjs and verify-pipeline-integrity.mjs with @orqastudio/integrity-validator. Update pre-commit hook and make targets."
 status: completed
 priority: P1
+scoring:
+  impact: 5
+  urgency: 4
+  complexity: 3
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -28,9 +33,13 @@ relationships:
   - target: TASK-422
     type: depends-on
   - target: SKILL-030
-    type: grounded-by
+    type: informed-by
   - target: SKILL-042
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-030
+    type: informed-by
+  - target: SKILL-042
+    type: informed-by
 ---
 
 ## Scope

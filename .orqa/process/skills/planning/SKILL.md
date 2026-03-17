@@ -17,15 +17,17 @@ relationships:
     type: grounded
     rationale: Documentation-first workflow with approval gates ensures designs are explicit and reviewed before code exists
   - target: TASK-211
-    type: grounded
+    type: informs
   - target: AGENT-003
-    type: grounded
+    type: informs
   - target: AGENT-004
-    type: grounded
+    type: informs
   - target: AGENT-005
-    type: grounded
+    type: informs
   - target: AGENT-007
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 

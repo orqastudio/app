@@ -9,7 +9,7 @@ maturity: observation
 recurrence: 2
 relationships:
   - target: RULE-019
-    type: observes
+    type: informs
     rationale: "RULE-019 requires user approval for scope decisions but has no mechanical enforcement — self-compliance only"
   - target: IMPL-048
     type: informed-by

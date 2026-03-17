@@ -26,14 +26,14 @@ relationships:
     type: informs
     rationale: Plans must specify all four layers in the implementation design
   - target: IMPL-035
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-035
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-035
   - target: IMPL-048
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-048
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-048
   - target: IMPL-066
-    type: observed-by
-    rationale: "Auto-generated inverse of observed-by relationship from IMPL-066"
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from IMPL-066"
   - target: RULE-002
     type: informed-by
   - target: RULE-008
@@ -46,6 +46,8 @@ relationships:
     type: informed-by
   - target: RULE-028
     type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 Every implementation plan — whether captured in an epic, a task, or proposed in conversation — MUST satisfy two mandatory requirements before implementation begins.
 

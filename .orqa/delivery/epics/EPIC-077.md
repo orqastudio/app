@@ -4,14 +4,18 @@ title: Automated status transitions — the system enforces its own lifecycle
 description: "Implement app-level automation that detects conditions requiring status changes and applies them. Validates all artifacts have valid statuses. The status process documented in DOC-075 and SKILL-051 is enforced mechanically, not just by convention."
 status: active
 priority: P1
+scoring:
+  impact: 5
+  urgency: 4
+  complexity: 4
+  dependencies: 2
 created: 2026-03-15
 updated: 2026-03-15
 deadline: null
 horizon: active
-scoring: null
 relationships:
   - target: AD-049
-    type: enforces
+    type: delivers
     rationale: Mechanically enforces the icon-based status system
   - target: MS-002
     type: delivers
@@ -19,7 +23,7 @@ relationships:
   - target: MS-001
     type: delivers
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-002
     type: grounded-by
   - target: PILLAR-003
@@ -36,6 +40,8 @@ relationships:
     type: delivered-by
   - target: TASK-508
     type: delivered-by
+  - target: PILLAR-001
+    type: grounded-by
 ---
 
 ## Context

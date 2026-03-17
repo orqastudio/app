@@ -20,28 +20,32 @@ relationships:
     type: grounded
     rationale: Tauri invoke() contracts with matching Rust and TypeScript types make the frontend-backend boundary explicit and type-safe
   - target: AD-010
-    type: grounded-by
+    type: informs
     rationale: Auto-generated inverse of practices relationship from AD-010
   - target: TASK-007
-    type: grounded
+    type: informs
   - target: TASK-008
-    type: grounded
+    type: informs
   - target: TASK-020
-    type: grounded
+    type: informs
   - target: TASK-021
-    type: grounded
+    type: informs
   - target: TASK-029
-    type: grounded
+    type: informs
   - target: TASK-074
-    type: grounded
+    type: informs
   - target: TASK-176
-    type: grounded
+    type: informs
   - target: TASK-189
-    type: grounded
+    type: informs
   - target: TASK-190
-    type: grounded
+    type: informs
   - target: TASK-415
-    type: grounded
+    type: informs
+  - target: AD-010
+    type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 OrqaStudio uses Tauri v2's `invoke()` as the ONLY interface between the Svelte frontend and the Rust backend. There are no HTTP servers, no direct FFI calls, and no side channels.
 

@@ -4,6 +4,11 @@ title: Migrate epic/milestone and task/epic references to relationship types
 description: "The epic field on tasks and milestone field on epics are frontmatter fields, not relationship edges. Migrate these to the relationships array with proper types (e.g. delivers/delivered-by, belongs-to/contains) so all graph edges are scannable as relationship types."
 status: completed
 priority: P1
+scoring:
+  impact: 5
+  urgency: 4
+  complexity: 3
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

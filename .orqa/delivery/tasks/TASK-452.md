@@ -4,6 +4,11 @@ title: Populate Guide section
 description: "Create a Guide section with user-facing documentation including SDK docs, moving articles from other categories where appropriate."
 status: completed
 priority: P2
+scoring:
+  impact: 2
+  urgency: 1
+  complexity: 1
+  dependencies: 1
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

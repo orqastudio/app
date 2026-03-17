@@ -11,6 +11,8 @@ relationships:
   - target: "PILLAR-001"
     type: "grounded"
     rationale: "Self-referential modification requires structural awareness"
+  - target: PILLAR-001
+    type: informs
 ---
 ## What Happened
 

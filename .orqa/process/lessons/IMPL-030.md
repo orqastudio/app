@@ -12,7 +12,7 @@ relationships:
     type: informed-by
     rationale: "Provider schema defines capabilities — this observation addresses HOW those capabilities are fulfilled"
   - target: RULE-040
-    type: observes
+    type: informs
     rationale: "Capability resolution currently assumes one fixed mapping per provider — this observation says the mapping should be configurable"
   - target: IMPL-031
     type: informs

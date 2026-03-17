@@ -4,6 +4,11 @@ title: Create delegation reference document
 description: "Create the orchestrator's single source of truth for delegation — a lookup table mapping every work type to agent role, required skills, and grounding document. Makes delegation a lookup, not a judgement call."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 2
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -23,9 +28,13 @@ relationships:
   - target: TASK-463
     type: depends-on
   - target: SKILL-037
-    type: grounded-by
+    type: informed-by
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-011
+    type: informed-by
+  - target: SKILL-037
+    type: informed-by
 ---
 
 ## Scope

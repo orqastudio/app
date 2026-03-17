@@ -20,11 +20,11 @@ relationships:
     type: informs
     rationale: Code search capabilities resolve to either ChunkHound MCP tools or native search tools depending on context
   - target: IMPL-030
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-030
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-030
   - target: IMPL-032
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-032
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-032
   - target: IDEA-057
     type: informs
     rationale: All 4 research questions from IDEA-057 resolved directly into this rule
@@ -39,6 +39,8 @@ relationships:
     type: informed-by
   - target: AD-025
     type: enforces
+  - target: PILLAR-001
+    type: informs
 ---
 Agent definitions declare **capabilities** (what they can do), not **tools** (how they
 do it). The mapping from capabilities to provider-specific tool names is defined in this

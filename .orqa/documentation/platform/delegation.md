@@ -13,7 +13,7 @@ relationships:
     type: informed-by
     rationale: Orchestration documentation provides procedural context
   - target: RULE-001
-    type: enforces
+    type: informs
     rationale: This document operationalises the delegation rule
   - target: RULE-001
     type: informs

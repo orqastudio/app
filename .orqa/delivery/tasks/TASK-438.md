@@ -4,6 +4,11 @@ title: Actions needed icon in artifact list + epics without tasks
 description: Show action-needed indicators in artifact list items and flag epics that have no tasks referencing them.
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 2
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

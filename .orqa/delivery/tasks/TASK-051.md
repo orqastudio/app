@@ -24,13 +24,15 @@ relationships:
   - target: TASK-057
     type: depends-on
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
   - target: TASK-052
     type: depended-on-by
   - target: TASK-053
     type: depended-on-by
   - target: TASK-335
     type: depended-on-by
+  - target: SKILL-011
+    type: informed-by
 ---
 ## Reference
 

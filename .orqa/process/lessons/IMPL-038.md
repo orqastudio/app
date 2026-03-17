@@ -15,13 +15,13 @@ relationships:
     type: informed-by
     rationale: "Lessons must flow forward — the triage task handles scope decisions, not the capture moment"
   - target: RULE-004
-    type: observes
+    type: informs
     rationale: "Observation triage section in RULE-004 separates capture from scoping — this lesson reinforces that separation"
   - target: RULE-004
-    type: grounded-by
+    type: informed-by
     rationale: "Lesson promoted to RULE-004 — observation capture is mandatory, scope decisions at triage"
   - target: RULE-004
-    type: observed-by
+    type: informed-by
     rationale: "RULE-004 codified the capture-vs-scope separation (observations always captured, scoped at triage) first observed in this lesson"
 ---
 

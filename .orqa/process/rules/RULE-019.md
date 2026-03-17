@@ -32,12 +32,14 @@ relationships:
     type: informed-by
     rationale: Auto-generated inverse of informed-by relationship from IMPL-016
   - target: IMPL-049
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-049
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-049
   - target: RULE-015
     type: informed-by
   - target: RULE-027
     type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 ## The Rule
 

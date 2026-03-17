@@ -9,19 +9,19 @@ maturity: understanding
 recurrence: 1
 relationships:
   - target: RULE-003
-    type: observes
+    type: informs
     rationale: "Plugin config integrity — a plugin that requires a specific sidecar has an implicit dependency that is not expressed in any config"
   - target: IDEA-071
-    type: enforces
+    type: informs
     rationale: "Enforcement mechanism designed in TASK-307, implementation tracked by IDEA-071"
   - target: TASK-307
-    type: enforces
+    type: informs
     rationale: "TASK-307 designed the plugin-sidecar pairing mechanism that addresses this lesson"
   - target: IDEA-071
     type: informs
     rationale: "Lesson informs IDEA-071 — implementation of the plugin-sidecar pairing mechanism"
   - target: IDEA-071
-    type: grounded-by
+    type: informed-by
     rationale: "Promoted to this idea for implementation of the plugin-sidecar pairing mechanism"
   - target: IMPL-027
     type: informs

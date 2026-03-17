@@ -20,12 +20,18 @@ relationships:
     type: informs
     rationale: Docs-produced gate requires produced documentation pages to include pillar alignment sections
   - target: AGENT-008
-    type: enforces
+    type: informs
     rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
   - target: RULE-004
     type: informed-by
   - target: RULE-031
     type: informed-by
+  - target: AGENT-008
+    type: informs
+  - target: AGENT-008
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 Every documentation page that describes a feature, component, workflow, integration, or capability MUST include a "Pillar Alignment" section. This ensures all documented work traces back to the product vision and prevents scope creep from accumulating silently in the docs.
 

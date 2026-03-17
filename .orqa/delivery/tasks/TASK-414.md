@@ -4,6 +4,11 @@ title: Integration test — verify all declared enforcement entries are consumed
 description: Audit all enforcement entries across all rules and verify each one is actually evaluated by the plugin (CLI) or app (Rust). Produce a coverage report showing declared vs. implemented enforcement.
 status: completed
 priority: P2
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 2
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -25,13 +30,17 @@ relationships:
   - target: TASK-413
     type: depends-on
   - target: SKILL-033
-    type: grounded-by
+    type: informed-by
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
   - target: TASK-185
     type: evolves-into
   - target: TASK-415
     type: depended-on-by
+  - target: SKILL-011
+    type: informed-by
+  - target: SKILL-033
+    type: informed-by
 ---
 
 ## Scope

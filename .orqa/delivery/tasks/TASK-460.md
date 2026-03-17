@@ -4,6 +4,11 @@ title: Delete duplicate and stale documentation
 description: "Remove documentation files that duplicate other docs or are entirely outdated. DOC-019 (architecture-overview) duplicates DOC-001, DOC-054 (launch-timeline) is outdated, DOC-032 (process/rules) duplicates RULE-026."
 status: completed
 priority: P1
+scoring:
+  impact: 3
+  urgency: 3
+  complexity: 1
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -24,11 +29,15 @@ relationships:
     type: informs
     rationale: "Auto-generated inverse of informs relationship from TASK-461"
   - target: SKILL-037
-    type: grounded-by
+    type: informed-by
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
   - target: TASK-461
     type: depended-on-by
+  - target: SKILL-011
+    type: informed-by
+  - target: SKILL-037
+    type: informed-by
 ---
 ## Scope
 

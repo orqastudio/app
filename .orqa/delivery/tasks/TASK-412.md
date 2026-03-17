@@ -4,6 +4,11 @@ title: Implement full skill content injection in rule-engine.mjs
 description: "Currently skill injection returns skill names as a list. Change it to read the actual SKILL.md file content and inject it as systemMessage so agents receive the knowledge, not just a reference."
 status: completed
 priority: P1
+scoring:
+  impact: 5
+  urgency: 5
+  complexity: 2
+  dependencies: 4
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -18,19 +23,23 @@ relationships:
     type: delivers
     rationale: Core task — makes skill injection meaningful instead of just naming skills
   - target: RULE-042
-    type: enforces
+    type: delivers
     rationale: RULE-042's path-to-skill injection depends on actual skill content being loaded
   - target: TASK-467
     type: informs
     rationale: "Auto-generated inverse of informs relationship from TASK-467"
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
   - target: SKILL-020
-    type: grounded-by
+    type: informed-by
   - target: TASK-414
     type: depended-on-by
   - target: TASK-467
     type: depended-on-by
+  - target: SKILL-011
+    type: informed-by
+  - target: SKILL-020
+    type: informed-by
 ---
 ## Scope
 

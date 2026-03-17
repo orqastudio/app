@@ -4,6 +4,11 @@ title: Redesign dashboard widgets for actionable artifact insight
 description: Merge artifact graph and governance widgets into per-type cards with count and status breakdown. Exclude documentation from orphan detection. Auto-scan integrity on navigation. Replace collapsible categories with sortable/filterable data table.
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 3
+  dependencies: 2
 created: 2026-03-13
 updated: 2026-03-13
 assignee: null
@@ -19,9 +24,13 @@ relationships:
     type: delivers
     rationale: Theme B — dashboard widget redesign from UAT
   - target: SKILL-030
-    type: grounded-by
+    type: informed-by
   - target: SKILL-042
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-030
+    type: informed-by
+  - target: SKILL-042
+    type: informed-by
 ---
 
 ## Scope

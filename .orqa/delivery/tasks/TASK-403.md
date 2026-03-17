@@ -4,6 +4,11 @@ title: Fix navigation and layout bugs
 description: "Fix 6 navigation/layout bugs: missing sidebar icons, duplicate key error in ReferencesPanel, settings secondary nav not rendering, and config modal double-rendering."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 5
+  complexity: 2
+  dependencies: 3
 created: 2026-03-13
 updated: 2026-03-13
 assignee: null
@@ -17,9 +22,13 @@ relationships:
     type: delivers
     rationale: Theme A — navigation and layout bug fixes from UAT
   - target: SKILL-030
-    type: grounded-by
+    type: informed-by
   - target: SKILL-042
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-030
+    type: informed-by
+  - target: SKILL-042
+    type: informed-by
 ---
 
 ## Scope

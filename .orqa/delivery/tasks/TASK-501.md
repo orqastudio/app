@@ -4,6 +4,11 @@ title: Build impact analysis panel for pre-edit preview
 description: "Before editing an artifact, show a non-blocking impact panel that lists artifacts reachable within 1-2 hops via relationship edges, grouped by relationship type. Uses neighborhood traversal from the artifactGraphSDK. Rendered as an expandable info panel, not a modal."
 status: blocked
 priority: P2
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 3
+  dependencies: 2
 created: 2026-03-15
 updated: 2026-03-15
 horizon: active

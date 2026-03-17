@@ -12,10 +12,12 @@ relationships:
     type: grounded
     rationale: Commit discipline maintains structural integrity of version history
   - target: RULE-013
-    type: grounded-by
+    type: informed-by
     rationale: Lesson promoted to RULE-013
   - target: RULE-013
-    type: observed-by
+    type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 ## What Happened
 

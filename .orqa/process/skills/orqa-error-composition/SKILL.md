@@ -23,11 +23,13 @@ relationships:
     type: grounded
     rationale: Canonical error types with From impls make every failure path traceable from domain logic through IPC to the user
   - target: TASK-176
-    type: grounded
+    type: informs
   - target: TASK-188
-    type: grounded
+    type: informs
   - target: TASK-189
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 

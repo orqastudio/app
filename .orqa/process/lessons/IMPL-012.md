@@ -15,10 +15,12 @@ relationships:
     type: informs
     rationale: Both address the learning process — investigation and encoding
   - target: RULE-030
-    type: grounded-by
+    type: informed-by
     rationale: Lesson promoted to RULE-030
   - target: RULE-030
-    type: observed-by
+    type: informed-by
+  - target: PILLAR-002
+    type: informs
 ---
 ## What Happened
 

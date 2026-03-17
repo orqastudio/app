@@ -25,9 +25,6 @@ relationships:
   - target: RULE-012
     type: informs
     rationale: Pre-commit hook enforcement runs the linter chain managed by this rule to catch errors before commits
-  - target: AD-047
-    type: enforced-by
-    rationale: Auto-generated inverse of enforced-by relationship from AD-047
   - target: DOC-072
     type: informs
     rationale: "Auto-generated inverse of informs relationship from DOC-072"
@@ -35,6 +32,10 @@ relationships:
     type: informs
   - target: RULE-042
     type: informed-by
+  - target: AD-047
+    type: enforces
+  - target: PILLAR-001
+    type: informs
 ---
 OrqaStudio delegates code quality enforcement to the appropriate linting tools. The
 enforcement engine does NOT regex-match patterns that linters already catch. Instead,

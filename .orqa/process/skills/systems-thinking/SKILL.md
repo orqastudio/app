@@ -12,6 +12,8 @@ relationships:
   - target: PILLAR-001
     type: grounded
     rationale: Mapping boundaries, relationships, and the uniform base before changing code prevents special-case proliferation and makes architecture intentional
+  - target: PILLAR-001
+    type: informs
 ---
 
 # Systems Thinking

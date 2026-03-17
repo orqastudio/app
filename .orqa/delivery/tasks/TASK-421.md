@@ -4,6 +4,11 @@ title: "Extract stores into SDK — session, project, artifact, conversation"
 description: "Move the four primary data stores into @orqastudio/sdk. Fix conversationStore's DEFAULT_MODEL dependency by making it a config parameter."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 3
+  dependencies: 4
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -25,11 +30,15 @@ relationships:
   - target: TASK-420
     type: depends-on
   - target: SKILL-030
-    type: grounded-by
+    type: informed-by
   - target: SKILL-016
-    type: grounded-by
+    type: informed-by
   - target: TASK-423
     type: depended-on-by
+  - target: SKILL-016
+    type: informed-by
+  - target: SKILL-030
+    type: informed-by
 ---
 
 ## Scope

@@ -12,13 +12,13 @@ relationships:
     type: informed-by
     rationale: "If observation logging is automated, the task completion record is where those observations become visible to the user"
   - target: RULE-015
-    type: observes
+    type: informs
     rationale: "Honest reporting requires completion reports to include lesson documentation status — this extends that to the task artifact itself, not just conversation output"
   - target: TASK-308
-    type: enforces
+    type: informs
     rationale: "TASK-308 updated the task schema with the mandatory Lessons body section that addresses this lesson"
   - target: TASK-308
-    type: grounded-by
+    type: informed-by
     rationale: "Promoted to this task which updated the task schema with the mandatory Lessons body section"
   - target: IMPL-025
     type: informs

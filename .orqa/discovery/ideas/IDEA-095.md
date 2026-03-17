@@ -26,7 +26,7 @@ relationships:
   - target: EPIC-064
     type: evolves-into
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-002
     type: grounded-by
   - target: PILLAR-003
@@ -41,6 +41,8 @@ relationships:
     type: informed-by
   - target: PILLAR-003
     type: informed-by
+  - target: PILLAR-001
+    type: grounded-by
 ---
 ## Motivation
 

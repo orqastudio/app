@@ -13,6 +13,8 @@ relationships:
   - target: "PILLAR-001"
     type: "grounded"
     rationale: "Automated detection and migration of .claude/ infrastructure ensures CLI governance is properly connected to the .orqa/ source of truth"
+  - target: PILLAR-001
+    type: informs
 ---
 
 # OrqaStudio Plugin Setup

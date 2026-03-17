@@ -4,6 +4,11 @@ title: Research notification strategy
 description: "Research toast library choice, desktop notification API, in-app panel design, and event-to-channel mapping for the notification system."
 status: completed
 priority: P2
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 2
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

@@ -4,6 +4,11 @@ title: Wire transition engine to artifact graph refresh cycle
 description: Integrate the transition engine into the artifact graph refresh pipeline so that proposed transitions are evaluated after every refresh and surfaced to the frontend via a Tauri event. Unambiguous transitions (e.g. dependency-blocked) apply automatically; human-judgement transitions (e.g. epic→review) are queued for approval.
 status: blocked
 priority: P1
+scoring:
+  impact: 5
+  urgency: 3
+  complexity: 4
+  dependencies: 4
 created: 2026-03-15
 updated: 2026-03-15
 horizon: active

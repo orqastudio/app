@@ -4,6 +4,11 @@ title: Register roadmap view under Process navigation
 description: Make the roadmap kanban view accessible under Process in navigation and handle the static roadmap.md.
 status: completed
 priority: P2
+scoring:
+  impact: 2
+  urgency: 2
+  complexity: 1
+  dependencies: 1
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

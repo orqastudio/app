@@ -8,14 +8,18 @@ updated: 2026-03-13
 layer: project
 relationships:
   - target: RES-056
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from RES-056
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from RES-056
   - target: IMPL-050
     type: informed-by
   - target: PILLAR-002
     type: grounded
   - target: PILLAR-003
     type: grounded
+  - target: PILLAR-002
+    type: informs
+  - target: PILLAR-003
+    type: informs
 ---
 Rules that cannot be enforced by linters, hooks, or automated tooling still need a defined enforcement mechanism. Every behavioral rule maps to one of four strategies, and each strategy has a concrete implementation path.
 

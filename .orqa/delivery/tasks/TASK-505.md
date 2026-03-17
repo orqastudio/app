@@ -4,6 +4,11 @@ title: Build automatic status transition engine in Rust
 description: Implement a Rust domain module that evaluates artifact transition conditions across the loaded graph and returns a list of proposed status transitions. The engine does not auto-apply — it returns proposals that callers can approve or queue for auto-apply.
 status: ready
 priority: P1
+scoring:
+  impact: 5
+  urgency: 4
+  complexity: 4
+  dependencies: 5
 created: 2026-03-15
 updated: 2026-03-15
 horizon: active

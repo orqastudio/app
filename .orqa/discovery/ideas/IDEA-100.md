@@ -13,11 +13,13 @@ relationships:
   - type: merged-into
     target: EPIC-080
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-003
     type: grounded-by
   - target: AD-055
     type: merged-into
+  - target: PILLAR-001
+    type: grounded-by
 ---
 
 > **Surpassed 2026-03-16**: Software project integration concept merged into EPIC-080 via AD-055 as part of plugin infrastructure. Code-governance traceability (comment syntax, code file nodes, unified search) split into IDEA-113 as a distinct feature requiring its own scanner plugin.

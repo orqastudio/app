@@ -22,6 +22,8 @@ relationships:
     type: informed-by
   - target: RULE-044
     type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 A skill's `layer` field declares its portability scope. Content within the skill MUST be portable within that scope. A core skill that contains project-specific paths is broken — it will give wrong guidance on other projects.
 

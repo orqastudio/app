@@ -41,6 +41,8 @@ relationships:
     type: informed-by
   - target: RULE-031
     type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 ## What Counts as a Stub
 

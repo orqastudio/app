@@ -18,6 +18,8 @@ relationships:
   - target: PILLAR-002
     type: grounded
     rationale: Review verdicts and forbidden-pattern detection feed findings back into lessons and rules, closing the improvement loop
+  - target: PILLAR-002
+    type: informs
 ---
 
 

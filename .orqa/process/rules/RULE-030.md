@@ -23,15 +23,17 @@ relationships:
     type: informs
     rationale: UAT tasks require artifact structure (task + acceptance criteria) before fixes are implemented
   - target: IMPL-011
-    type: observes
+    type: informs
     rationale: Rule promoted from lesson IMPL-011
   - target: IMPL-012
-    type: observes
+    type: informs
     rationale: Rule promoted from lesson IMPL-012
   - target: IMPL-011
-    type: grounded
+    type: informs
   - target: IMPL-012
-    type: grounded
+    type: informs
+  - target: PILLAR-002
+    type: informs
 ---
 User acceptance testing follows a structured process that prevents premature fixing and ensures systemic solutions.
 

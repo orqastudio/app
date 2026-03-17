@@ -4,6 +4,11 @@ title: Fix docs nav — show categories instead of status
 description: "Update documentation navigation to show top-level categories (Architecture, Product, Development, etc.) instead of status values."
 status: completed
 priority: P2
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 2
+  dependencies: 1
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

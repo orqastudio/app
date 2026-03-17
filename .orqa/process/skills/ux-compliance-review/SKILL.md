@@ -18,6 +18,8 @@ relationships:
   - target: PILLAR-001
     type: grounded
     rationale: Label auditing, state coverage checks, and shared component usage verification make UX standards enforceable against documented specs
+  - target: PILLAR-001
+    type: informs
 ---
 
 

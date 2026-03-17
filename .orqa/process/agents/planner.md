@@ -19,15 +19,25 @@ capabilities:
 subagent_mapping: null
 relationships:
   - target: SKILL-005
-    type: grounded-by
+    type: informed-by
   - target: SKILL-008
-    type: grounded-by
+    type: informed-by
   - target: SKILL-019
-    type: grounded-by
+    type: informed-by
   - target: SKILL-002
-    type: grounded-by
+    type: informed-by
   - target: SKILL-048
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-002
+    type: informed-by
+  - target: SKILL-005
+    type: informed-by
+  - target: SKILL-008
+    type: informed-by
+  - target: SKILL-019
+    type: informed-by
+  - target: SKILL-048
+    type: informed-by
 ---
 
 

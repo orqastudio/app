@@ -26,6 +26,8 @@ relationships:
     type: informed-by
   - target: RULE-033
     type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 ## Shared Component Library
 

@@ -23,16 +23,16 @@ relationships:
     type: informs
     rationale: Real implementations are required — fake demos do not serve any pillar
   - target: IMPL-041
-    type: observes
+    type: informs
     rationale: Rule updated from lesson IMPL-041 (orchestrator should think critically about user suggestions)
   - target: IMPL-041
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-041
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-041
   - target: DOC-039
     type: informed-by
     rationale: governance.md defines the feature governance framework and pillar alignment criteria this rule enforces
   - target: IMPL-041
-    type: grounded
+    type: informs
   - target: RULE-002
     type: informed-by
   - target: RULE-004
@@ -47,6 +47,8 @@ relationships:
     type: informed-by
   - target: AD-027
     type: enforces
+  - target: PILLAR-001
+    type: informs
 ---
 Every feature, command, and UI element must serve the project's guiding principles. These principles are defined as **pillar artifacts** in `.orqa/process/pillars/`. Read the active pillars before implementing any new capability.
 

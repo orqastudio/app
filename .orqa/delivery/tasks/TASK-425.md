@@ -4,6 +4,11 @@ title: "Fix CI workflows for independent builds (no file: references)"
 description: "CI workflows fail because packages reference each other via file: paths that don't exist in CI. Update each package's CI to either use npm pack from a checkout or publish tier-0 packages first."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 5
+  complexity: 2
+  dependencies: 4
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -22,9 +27,11 @@ relationships:
     type: informs
     rationale: Auto-generated inverse of informs relationship from TASK-426
   - target: SKILL-034
-    type: grounded-by
+    type: informed-by
   - target: TASK-426
     type: depended-on-by
+  - target: SKILL-034
+    type: informed-by
 ---
 ## Scope
 

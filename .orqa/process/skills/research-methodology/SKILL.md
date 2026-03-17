@@ -16,9 +16,11 @@ relationships:
   - target: DOC-068
     type: informs
   - target: AGENT-004
-    type: grounded
+    type: informs
   - target: AGENT-005
-    type: grounded
+    type: informs
+  - target: PILLAR-002
+    type: informs
 ---
 
 # Research Methodology

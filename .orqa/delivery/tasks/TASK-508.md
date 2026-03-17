@@ -4,6 +4,11 @@ title: Update PipelineStepper to show valid transitions
 description: "Extend the PipelineStepper component to display which status transitions are valid from the artifact's current state, and make those transitions clickable so users can apply them directly from the stepper without manually editing the artifact file."
 status: blocked
 priority: P2
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 2
+  dependencies: 2
 created: 2026-03-15
 updated: 2026-03-15
 horizon: active

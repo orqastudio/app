@@ -9,7 +9,7 @@ maturity: observation
 recurrence: 1
 relationships:
   - target: RULE-028
-    type: observes
+    type: informs
     rationale: "Systems thinking requires seeing the whole — the orchestrator was in detail mode without checking the system view"
   - target: IMPL-026
     type: informed-by

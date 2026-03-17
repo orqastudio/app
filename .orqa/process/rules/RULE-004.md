@@ -29,59 +29,59 @@ relationships:
     type: informs
     rationale: Artifact status must reflect reality — honest reporting is required for lifecycle transitions
   - target: IMPL-014
-    type: observes
+    type: informs
     rationale: Rule promoted from lesson IMPL-014 (epic titles should describe outcomes not process)
   - target: IMPL-021
-    type: observes
+    type: informs
     rationale: Rule updated from lesson IMPL-021 (open items discovered during implementation need tracking)
   - target: IMPL-022
-    type: observes
+    type: informs
     rationale: Rule updated from lesson IMPL-022 (epics with all tasks done should surface for user review)
   - target: IMPL-025
-    type: observes
+    type: informs
     rationale: Rule updated from lesson IMPL-025 (observations must flow forward via triage task)
   - target: IMPL-038
-    type: observes
+    type: informs
     rationale: Rule updated from lesson IMPL-038 (observation capture is not scope creep — scope at triage)
   - target: IMPL-042
-    type: observes
+    type: informs
     rationale: Rule updated from lesson IMPL-042 (epic body drifts from actual work without standing reconciliation task)
   - target: IMPL-044
-    type: observes
+    type: informs
     rationale: Rule updated from lesson IMPL-044 (idea promotion should scan for related ideas to bundle)
   - target: IMPL-044
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-044
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-044
   - target: IMPL-051
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-051
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-051
   - target: AD-044
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-044
   - target: IMPL-042
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-042
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-042
   - target: IMPL-043
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-043
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-043
   - target: IMPL-040
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-040
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-040
   - target: IMPL-022
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-022
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-022
   - target: IMPL-046
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-046
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-046
   - target: IMPL-038
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-038
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-038
   - target: IMPL-021
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-021
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-021
   - target: IMPL-052
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-052
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-052
   - target: AD-023
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-023
@@ -98,24 +98,24 @@ relationships:
     type: informed-by
     rationale: artifact-framework.md is the source-of-truth document for artifact lifecycle this rule enforces
   - target: AGENT-008
-    type: enforces
+    type: informs
     rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
   - target: AD-040
     type: enforces
   - target: IMPL-021
-    type: grounded
+    type: informs
   - target: IMPL-022
-    type: grounded
+    type: informs
   - target: IMPL-025
-    type: grounded
+    type: informs
   - target: IMPL-038
-    type: grounded
+    type: informs
   - target: IMPL-042
-    type: grounded
+    type: informs
   - target: IMPL-044
-    type: grounded
+    type: informs
   - target: IMPL-070
-    type: observed-by
+    type: informed-by
   - target: RULE-008
     type: informed-by
   - target: RULE-014
@@ -135,7 +135,15 @@ relationships:
   - target: RULE-032
     type: informed-by
   - target: IMPL-014
-    type: grounded
+    type: informs
+  - target: AGENT-008
+    type: informs
+  - target: AGENT-008
+    type: informs
+  - target: PILLAR-001
+    type: informs
+  - target: IMPL-014
+    type: informed-by
 ---
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
 

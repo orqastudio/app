@@ -4,6 +4,11 @@ title: "Extract stores into SDK — enforcement, lessons, setup, settings, error
 description: "Move the five secondary stores into @orqastudio/sdk. Fix settingsStore theme application and errorStore browser handlers to be injectable/opt-in."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 3
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -24,11 +29,15 @@ relationships:
   - target: TASK-420
     type: depends-on
   - target: SKILL-030
-    type: grounded-by
+    type: informed-by
   - target: SKILL-016
-    type: grounded-by
+    type: informed-by
   - target: TASK-423
     type: depended-on-by
+  - target: SKILL-016
+    type: informed-by
+  - target: SKILL-030
+    type: informed-by
 ---
 
 ## Scope

@@ -4,11 +4,15 @@ title: Documentation reorganisation — book-chapter structure with how-to guide
 description: "Reorganise .orqa/documentation/ from ad-hoc sections (architecture/, product/, process/, ui/, wireframes/) into book chapters (about/, guide/, development/, how-to/, reference/, grounding/). Write missing how-to guides for plugin SDK, testing, and linting. Migrate relationships and project.json paths."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 4
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 deadline: null
 horizon: active
-scoring: null
 relationships:
   - target: RES-063
     type: informed-by

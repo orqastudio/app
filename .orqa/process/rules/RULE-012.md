@@ -39,6 +39,8 @@ relationships:
     type: informed-by
   - target: RULE-043
     type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 ## Rule (NON-NEGOTIABLE)
 

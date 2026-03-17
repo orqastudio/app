@@ -13,19 +13,21 @@ relationships:
     type: grounded
     rationale: Design tokens and variant patterns codify visual decisions as reusable, inspectable constraints rather than ad-hoc inline styles
   - target: TASK-009
-    type: grounded
+    type: informs
   - target: TASK-016
-    type: grounded
+    type: informs
   - target: TASK-018
-    type: grounded
+    type: informs
   - target: TASK-026
-    type: grounded
+    type: informs
   - target: TASK-069
-    type: grounded
+    type: informs
   - target: TASK-077
-    type: grounded
+    type: informs
   - target: TASK-161
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 

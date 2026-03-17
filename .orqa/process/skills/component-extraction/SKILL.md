@@ -15,13 +15,15 @@ relationships:
     type: grounded
     rationale: Extracting repeated UI patterns into shared components makes design decisions explicit and consistent across pages
   - target: TASK-069
-    type: grounded
+    type: informs
   - target: TASK-190
-    type: grounded
+    type: informs
   - target: TASK-470
-    type: grounded
+    type: informs
   - target: TASK-476
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 # Component Extraction

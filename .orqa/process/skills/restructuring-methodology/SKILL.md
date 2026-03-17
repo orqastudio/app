@@ -19,7 +19,9 @@ relationships:
     type: grounded
     rationale: One-change-at-a-time refactoring with verification after each step preserves system clarity during architectural evolution
   - target: TASK-416
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 

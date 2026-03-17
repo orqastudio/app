@@ -13,38 +13,32 @@ gate:
   - "Does the system mechanically enforce its own structural rules?"
 relationships:
   - target: AD-043
-    type: grounded-by
+    type: informed-by
     rationale: Auto-generated inverse of grounded-by relationship from AD-043
   - target: RULE-045
-    type: grounded-by
+    type: informed-by
     rationale: Auto-generated inverse of grounded-by relationship from RULE-045
   - target: PILLAR-003
     type: informs
     rationale: Auto-generated inverse of informs relationship from PILLAR-003
-  - target: AD-046
-    type: grounded
-    rationale: Auto-generated inverse of grounded relationship from AD-046
   - target: IMPL-046
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-046
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-046
   - target: IMPL-050
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-050
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-050
   - target: IMPL-026
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-026
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-026
   - target: IMPL-057
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-057
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-057
   - target: IMPL-064
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-064
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-064
   - target: DOC-036
     type: informed-by
     rationale: Referenced in documentation page Artifact Framework
-  - target: AGENT-003
-    type: grounded
-    rationale: Orchestrator is grounded by this pillar — Clarity Through Structure is injected as foundational context
   - target: DOC-064
     type: informs
     rationale: Clarity Through Structure pillar is distilled into the product-purpose grounding document — inverse of informed-by on DOC-064
@@ -144,6 +138,292 @@ relationships:
   - target: DOC-009
     type: informs
     rationale: project.json makes project configuration visible and versionable
+  - target: EPIC-046
+    type: informs
+  - target: DOC-075
+    type: informed-by
+  - target: AD-001
+    type: informed-by
+  - target: AD-002
+    type: informed-by
+  - target: AD-003
+    type: informed-by
+  - target: AD-004
+    type: informed-by
+  - target: AD-006
+    type: informed-by
+  - target: AD-007
+    type: informed-by
+  - target: AD-008
+    type: informed-by
+  - target: AD-009
+    type: informed-by
+  - target: AD-010
+    type: informed-by
+  - target: AD-011
+    type: informed-by
+  - target: AD-012
+    type: informed-by
+  - target: AD-013
+    type: informed-by
+  - target: AD-017
+    type: informed-by
+  - target: AD-019
+    type: informed-by
+  - target: AD-020
+    type: informed-by
+  - target: AD-029
+    type: informed-by
+  - target: AD-030
+    type: informed-by
+  - target: AD-031
+    type: informed-by
+  - target: AD-033
+    type: informed-by
+  - target: AD-034
+    type: informed-by
+  - target: AD-035
+    type: informed-by
+  - target: AD-038
+    type: informed-by
+  - target: AD-040
+    type: informed-by
+  - target: AD-049
+    type: informed-by
+  - target: AD-050
+    type: informed-by
+  - target: AD-051
+    type: informed-by
+  - target: AD-052
+    type: informed-by
+  - target: AD-053
+    type: informed-by
+  - target: AD-054
+    type: informed-by
+  - target: IMPL-001
+    type: informed-by
+  - target: IMPL-002
+    type: informed-by
+  - target: IMPL-005
+    type: informed-by
+  - target: IMPL-006
+    type: informed-by
+  - target: IMPL-015
+    type: informed-by
+  - target: IMPL-069
+    type: informed-by
+  - target: RULE-001
+    type: informed-by
+  - target: RULE-002
+    type: informed-by
+  - target: RULE-003
+    type: informed-by
+  - target: RULE-004
+    type: informed-by
+  - target: RULE-005
+    type: informed-by
+  - target: RULE-006
+    type: informed-by
+  - target: RULE-007
+    type: informed-by
+  - target: RULE-008
+    type: informed-by
+  - target: RULE-010
+    type: informed-by
+  - target: RULE-012
+    type: informed-by
+  - target: RULE-013
+    type: informed-by
+  - target: RULE-014
+    type: informed-by
+  - target: RULE-016
+    type: informed-by
+  - target: RULE-018
+    type: informed-by
+  - target: RULE-019
+    type: informed-by
+  - target: RULE-020
+    type: informed-by
+  - target: RULE-021
+    type: informed-by
+  - target: RULE-022
+    type: informed-by
+  - target: RULE-023
+    type: informed-by
+  - target: RULE-024
+    type: informed-by
+  - target: RULE-025
+    type: informed-by
+  - target: RULE-026
+    type: informed-by
+  - target: RULE-027
+    type: informed-by
+  - target: RULE-028
+    type: informed-by
+  - target: RULE-031
+    type: informed-by
+  - target: RULE-032
+    type: informed-by
+  - target: RULE-033
+    type: informed-by
+  - target: RULE-034
+    type: informed-by
+  - target: RULE-035
+    type: informed-by
+  - target: RULE-036
+    type: informed-by
+  - target: RULE-037
+    type: informed-by
+  - target: RULE-038
+    type: informed-by
+  - target: RULE-039
+    type: informed-by
+  - target: RULE-040
+    type: informed-by
+  - target: RULE-041
+    type: informed-by
+  - target: RULE-042
+    type: informed-by
+  - target: RULE-043
+    type: informed-by
+  - target: RULE-044
+    type: informed-by
+  - target: SKILL-001
+    type: informed-by
+  - target: SKILL-051
+    type: informed-by
+  - target: SKILL-003
+    type: informed-by
+  - target: SKILL-041
+    type: informed-by
+  - target: SKILL-008
+    type: informed-by
+  - target: SKILL-047
+    type: informed-by
+  - target: SKILL-007
+    type: informed-by
+  - target: SKILL-002
+    type: informed-by
+  - target: SKILL-038
+    type: informed-by
+  - target: SKILL-043
+    type: informed-by
+  - target: SKILL-005
+    type: informed-by
+  - target: SKILL-037
+    type: informed-by
+  - target: SKILL-009
+    type: informed-by
+  - target: SKILL-010
+    type: informed-by
+  - target: SKILL-042
+    type: informed-by
+  - target: SKILL-011
+    type: informed-by
+  - target: SKILL-012
+    type: informed-by
+  - target: SKILL-050
+    type: informed-by
+  - target: SKILL-013
+    type: informed-by
+  - target: SKILL-020
+    type: informed-by
+  - target: SKILL-014
+    type: informed-by
+  - target: SKILL-039
+    type: informed-by
+  - target: SKILL-044
+    type: informed-by
+  - target: SKILL-015
+    type: informed-by
+  - target: SKILL-016
+    type: informed-by
+  - target: SKILL-017
+    type: informed-by
+  - target: SKILL-019
+    type: informed-by
+  - target: SKILL-021
+    type: informed-by
+  - target: SKILL-022
+    type: informed-by
+  - target: SKILL-023
+    type: informed-by
+  - target: SKILL-024
+    type: informed-by
+  - target: SKILL-026
+    type: informed-by
+  - target: SKILL-027
+    type: informed-by
+  - target: SKILL-028
+    type: informed-by
+  - target: SKILL-029
+    type: informed-by
+  - target: SKILL-030
+    type: informed-by
+  - target: SKILL-040
+    type: informed-by
+  - target: SKILL-031
+    type: informed-by
+  - target: SKILL-032
+    type: informed-by
+  - target: SKILL-034
+    type: informed-by
+  - target: SKILL-036
+    type: informed-by
+  - target: AD-021
+    type: informed-by
+  - target: AD-022
+    type: informed-by
+  - target: AD-023
+    type: informed-by
+  - target: AD-024
+    type: informed-by
+  - target: AD-025
+    type: informed-by
+  - target: AD-026
+    type: informed-by
+  - target: AD-027
+    type: informed-by
+  - target: AD-028
+    type: informed-by
+  - target: AD-032
+    type: informed-by
+  - target: AD-036
+    type: informed-by
+  - target: AD-037
+    type: informed-by
+  - target: AD-039
+    type: informed-by
+  - target: AD-041
+    type: informed-by
+  - target: AD-042
+    type: informed-by
+  - target: IMPL-003
+    type: informed-by
+  - target: IMPL-004
+    type: informed-by
+  - target: IMPL-007
+    type: informed-by
+  - target: IMPL-008
+    type: informed-by
+  - target: IMPL-009
+    type: informed-by
+  - target: IMPL-010
+    type: informed-by
+  - target: IMPL-013
+    type: informed-by
+  - target: IMPL-014
+    type: informed-by
+  - target: IMPL-016
+    type: informed-by
+  - target: SKILL-046
+    type: informed-by
+  - target: SKILL-049
+    type: informed-by
+  - target: AD-046
+    type: grounded
+  - target: AGENT-003
+    type: grounded
   - target: EPIC-001
     type: grounded
   - target: EPIC-002
@@ -234,8 +514,6 @@ relationships:
     type: grounded
   - target: EPIC-046
     type: grounded
-  - target: EPIC-046
-    type: informs
   - target: EPIC-047
     type: grounded
   - target: EPIC-048
@@ -288,6 +566,8 @@ relationships:
     type: grounded
   - target: EPIC-072
     type: grounded
+  - target: EPIC-073
+    type: grounded
   - target: EPIC-074
     type: grounded
   - target: EPIC-075
@@ -297,6 +577,10 @@ relationships:
   - target: EPIC-077
     type: grounded
   - target: EPIC-078
+    type: grounded
+  - target: EPIC-082
+    type: grounded
+  - target: EPIC-083
     type: grounded
   - target: IDEA-001
     type: grounded
@@ -458,8 +742,124 @@ relationships:
     type: grounded
   - target: IDEA-105
     type: grounded
-  - target: DOC-075
-    type: informed-by
+  - target: EPIC-016
+    type: informs
+  - target: EPIC-017
+    type: informs
+  - target: EPIC-020
+    type: informs
+  - target: EPIC-021
+    type: informs
+  - target: EPIC-022
+    type: informs
+  - target: EPIC-023
+    type: informs
+  - target: EPIC-025
+    type: informs
+  - target: EPIC-026
+    type: informs
+  - target: EPIC-027
+    type: informs
+  - target: EPIC-028
+    type: informs
+  - target: EPIC-029
+    type: informs
+  - target: EPIC-030
+    type: informs
+  - target: EPIC-031
+    type: informs
+  - target: EPIC-045
+    type: informs
+  - target: EPIC-050
+    type: informs
+  - target: EPIC-051
+    type: informs
+  - target: EPIC-052
+    type: informs
+  - target: EPIC-053
+    type: informs
+  - target: EPIC-054
+    type: informs
+  - target: EPIC-059
+    type: informs
+  - target: EPIC-060
+    type: informs
+  - target: EPIC-061
+    type: informs
+  - target: EPIC-063
+    type: informs
+  - target: EPIC-064
+    type: informs
+  - target: EPIC-065
+    type: informs
+  - target: EPIC-068
+    type: informs
+  - target: EPIC-070
+    type: informs
+  - target: EPIC-072
+    type: informs
+  - target: EPIC-077
+    type: informs
+  - target: EPIC-083
+    type: informs
+  - target: IDEA-001
+    type: informs
+  - target: IDEA-003
+    type: informs
+  - target: IDEA-013
+    type: informs
+  - target: IDEA-021
+    type: informs
+  - target: IDEA-024
+    type: informs
+  - target: IDEA-026
+    type: informs
+  - target: IDEA-027
+    type: informs
+  - target: IDEA-029
+    type: informs
+  - target: IDEA-031
+    type: informs
+  - target: IDEA-034
+    type: informs
+  - target: IDEA-037
+    type: informs
+  - target: IDEA-041
+    type: informs
+  - target: IDEA-042
+    type: informs
+  - target: IDEA-049
+    type: informs
+  - target: IDEA-055
+    type: informs
+  - target: IDEA-056
+    type: informs
+  - target: IDEA-057
+    type: informs
+  - target: IDEA-058
+    type: informs
+  - target: IDEA-075
+    type: informs
+  - target: IDEA-076
+    type: informs
+  - target: IDEA-077
+    type: informs
+  - target: IDEA-078
+    type: informs
+  - target: IDEA-083
+    type: informs
+  - target: IDEA-084
+    type: informs
+  - target: IDEA-088
+    type: informs
+  - target: IDEA-093
+    type: informs
+  - target: IDEA-100
+    type: informs
+  - target: IDEA-105
+    type: informs
+  - target: AGENT-003
+    type: informs
   - target: AD-001
     type: grounded-by
   - target: AD-002
@@ -490,11 +890,29 @@ relationships:
     type: grounded-by
   - target: AD-020
     type: grounded-by
+  - target: AD-021
+    type: grounded-by
+  - target: AD-022
+    type: grounded-by
+  - target: AD-023
+    type: grounded-by
+  - target: AD-024
+    type: grounded-by
+  - target: AD-025
+    type: grounded-by
+  - target: AD-026
+    type: grounded-by
+  - target: AD-027
+    type: grounded-by
+  - target: AD-028
+    type: grounded-by
   - target: AD-029
     type: grounded-by
   - target: AD-030
     type: grounded-by
   - target: AD-031
+    type: grounded-by
+  - target: AD-032
     type: grounded-by
   - target: AD-033
     type: grounded-by
@@ -502,9 +920,21 @@ relationships:
     type: grounded-by
   - target: AD-035
     type: grounded-by
+  - target: AD-036
+    type: grounded-by
+  - target: AD-037
+    type: grounded-by
   - target: AD-038
     type: grounded-by
+  - target: AD-039
+    type: grounded-by
   - target: AD-040
+    type: grounded-by
+  - target: AD-041
+    type: grounded-by
+  - target: AD-042
+    type: grounded-by
+  - target: AD-043
     type: grounded-by
   - target: AD-049
     type: grounded-by
@@ -522,14 +952,30 @@ relationships:
     type: grounded-by
   - target: IMPL-002
     type: grounded-by
+  - target: IMPL-003
+    type: grounded-by
+  - target: IMPL-004
+    type: grounded-by
   - target: IMPL-005
     type: grounded-by
   - target: IMPL-006
     type: grounded-by
+  - target: IMPL-007
+    type: grounded-by
+  - target: IMPL-008
+    type: grounded-by
+  - target: IMPL-009
+    type: grounded-by
+  - target: IMPL-010
+    type: grounded-by
+  - target: IMPL-013
+    type: grounded-by
+  - target: IMPL-014
+    type: grounded-by
   - target: IMPL-015
     type: grounded-by
-  - target: IMPL-069
-    type: observed-by
+  - target: IMPL-016
+    type: grounded-by
   - target: RULE-001
     type: grounded-by
   - target: RULE-002
@@ -606,6 +1052,8 @@ relationships:
     type: grounded-by
   - target: RULE-044
     type: grounded-by
+  - target: RULE-045
+    type: grounded-by
   - target: SKILL-001
     type: grounded-by
   - target: SKILL-051
@@ -631,6 +1079,8 @@ relationships:
   - target: SKILL-037
     type: grounded-by
   - target: SKILL-009
+    type: grounded-by
+  - target: SKILL-049
     type: grounded-by
   - target: SKILL-010
     type: grounded-by
@@ -660,6 +1110,8 @@ relationships:
     type: grounded-by
   - target: SKILL-019
     type: grounded-by
+  - target: SKILL-046
+    type: grounded-by
   - target: SKILL-021
     type: grounded-by
   - target: SKILL-022
@@ -687,62 +1139,6 @@ relationships:
   - target: SKILL-034
     type: grounded-by
   - target: SKILL-036
-    type: grounded-by
-  - target: EPIC-073
-    type: grounded
-  - target: EPIC-082
-    type: grounded
-  - target: EPIC-083
-    type: grounded
-  - target: AD-021
-    type: grounded-by
-  - target: AD-022
-    type: grounded-by
-  - target: AD-023
-    type: grounded-by
-  - target: AD-024
-    type: grounded-by
-  - target: AD-025
-    type: grounded-by
-  - target: AD-026
-    type: grounded-by
-  - target: AD-027
-    type: grounded-by
-  - target: AD-028
-    type: grounded-by
-  - target: AD-032
-    type: grounded-by
-  - target: AD-036
-    type: grounded-by
-  - target: AD-037
-    type: grounded-by
-  - target: AD-039
-    type: grounded-by
-  - target: AD-041
-    type: grounded-by
-  - target: AD-042
-    type: grounded-by
-  - target: IMPL-003
-    type: grounded-by
-  - target: IMPL-004
-    type: grounded-by
-  - target: IMPL-007
-    type: grounded-by
-  - target: IMPL-008
-    type: grounded-by
-  - target: IMPL-009
-    type: grounded-by
-  - target: IMPL-010
-    type: grounded-by
-  - target: IMPL-013
-    type: grounded-by
-  - target: IMPL-014
-    type: grounded-by
-  - target: IMPL-016
-    type: grounded-by
-  - target: SKILL-046
-    type: grounded-by
-  - target: SKILL-049
     type: grounded-by
 ---
 ## What This Pillar Means

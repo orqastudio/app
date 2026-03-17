@@ -15,13 +15,13 @@ relationships:
     type: informed-by
     rationale: "Recording lessons on tasks makes them visible — this lesson addresses ensuring they are acted on"
   - target: RULE-017
-    type: observes
+    type: informs
     rationale: "Lessons-learned rule defines the promotion pipeline but has no mechanism for ensuring observations are triaged during the epic that created them"
   - target: RULE-004
-    type: grounded-by
+    type: informed-by
     rationale: "Lesson promoted to RULE-004 — observation triage task auto-creation added to artifact lifecycle"
   - target: RULE-004
-    type: observed-by
+    type: informed-by
     rationale: "RULE-004 codified the observation triage task requirement first observed in this lesson"
   - target: IMPL-038
     type: informs

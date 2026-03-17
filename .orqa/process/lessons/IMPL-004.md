@@ -11,6 +11,8 @@ relationships:
   - target: "PILLAR-001"
     type: "grounded"
     rationale: "Correct reactive patterns ensure structural UI consistency"
+  - target: PILLAR-001
+    type: informs
 ---
 ## What Happened
 

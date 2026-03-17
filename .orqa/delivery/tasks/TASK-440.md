@@ -4,6 +4,11 @@ title: "Pipeline health: collapse all-clear, remove Refresh, auto-rescan after r
 description: "Streamline the pipeline health display — collapse all-clear state, remove redundant Refresh button, auto-run integrity scan after graph refresh."
 status: completed
 priority: P1
+scoring:
+  impact: 3
+  urgency: 3
+  complexity: 2
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

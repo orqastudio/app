@@ -14,6 +14,8 @@ relationships:
   - target: "IMPL-002"
     type: "informs"
     rationale: "Both address dev server lifecycle management"
+  - target: PILLAR-001
+    type: informs
 ---
 ## Pattern
 After making code changes, the orchestrator reported what needed to happen ("you'll need to restart") but left the user to do it manually. The user should not need to run terminal commands.

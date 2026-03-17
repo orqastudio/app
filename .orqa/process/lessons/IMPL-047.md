@@ -9,10 +9,10 @@ maturity: observation
 recurrence: 1
 relationships:
   - target: RULE-027
-    type: observes
+    type: informs
     rationale: "Structure-before-work was violated — investigation started without a research artifact"
   - target: RULE-008
-    type: observes
+    type: informs
     rationale: "Documentation-first was violated — no research doc created before the scan"
   - target: IMPL-045
     type: informed-by

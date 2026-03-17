@@ -8,7 +8,11 @@ created: 2026-03-13
 updated: 2026-03-13
 deadline: null
 horizon: active
-scoring: null
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 3
+  dependencies: 3
 rule-overrides: []
 relationships:
   - target: IDEA-091
@@ -68,7 +72,7 @@ relationships:
   - target: EPIC-061
     type: depends-on
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-002
     type: grounded-by
   - target: PILLAR-003
@@ -87,6 +91,8 @@ relationships:
     type: evolves-from
   - target: DOC-060
     type: informs
+  - target: PILLAR-001
+    type: grounded-by
 ---
 ## Context
 

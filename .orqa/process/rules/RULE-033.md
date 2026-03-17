@@ -16,6 +16,8 @@ relationships:
   - target: RULE-024
     type: informs
     rationale: shadcn Tooltip is a shared component — use it consistently rather than reinventing hover hints
+  - target: PILLAR-001
+    type: informs
 ---
 
 All interactive elements that need hover hints MUST use the shadcn `Tooltip` component (`$lib/components/ui/tooltip`) instead of the native HTML `title` attribute.

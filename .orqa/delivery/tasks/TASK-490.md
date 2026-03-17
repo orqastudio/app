@@ -4,6 +4,11 @@ title: "Fix roadmap column layout and ScrollArea scrolling (F34, F35)"
 description: "Fix two roadmap layout bugs: columns must evenly fill the panel width rather than collapsing to content width, and the ScrollArea inside each column must scroll correctly so cards are not clipped or hidden."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 2
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 acceptance:

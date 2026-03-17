@@ -15,16 +15,15 @@ acceptance:
   - Stdout AD injection block replaced with memory-based approach
 relationships:
   - target: IMPL-040
-    type: enforced-by
-    rationale: Auto-generated inverse of enforced-by relationship from IMPL-040
-  - target: IMPL-040
-    type: grounded
+    type: informed-by
     rationale: Auto-generated inverse of grounded relationship from IMPL-040
   - target: EPIC-059
     type: delivers
     rationale: Task belongs to this epic
   - target: TASK-349
     type: depended-on-by
+  - target: IMPL-040
+    type: informs
 ---
 ## What
 

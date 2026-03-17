@@ -9,7 +9,7 @@ recurrence: 3
 maturity: observation
 relationships:
   - target: RULE-045
-    type: observes
+    type: informs
     rationale: "RULE-045 requires bidirectional inverses but enforcement only fires at commit time — too late to catch the pattern during multi-artifact creation"
   - target: IMPL-054
     type: informed-by

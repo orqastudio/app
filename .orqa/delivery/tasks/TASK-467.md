@@ -4,6 +4,11 @@ title: "Add grounding injection to plugin — resolve grounded-by on agents, inj
 description: Extend the Claude Code plugin to resolve grounded-by relationships on agent definitions and inject the target document content as system-level context at session initialization.
 status: completed
 priority: P1
+scoring:
+  impact: 5
+  urgency: 4
+  complexity: 3
+  dependencies: 4
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -26,9 +31,13 @@ relationships:
   - target: TASK-412
     type: depends-on
   - target: SKILL-020
-    type: grounded-by
+    type: informed-by
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-011
+    type: informed-by
+  - target: SKILL-020
+    type: informed-by
 ---
 
 ## Scope

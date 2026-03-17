@@ -4,6 +4,11 @@ title: Add backbone artifacts widget to dashboard (PageRank)
 description: "Add a dashboard widget that shows the top 10 artifacts by PageRank score, computed from the artifact graph via the artifactGraphSDK. Each entry shows artifact ID, title, type, and score. Entries are clickable and navigate to the artifact. Widget is labeled 'Backbone Artifacts — most structurally important'."
 status: blocked
 priority: P2
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 3
+  dependencies: 1
 created: 2026-03-15
 updated: 2026-03-15
 horizon: active

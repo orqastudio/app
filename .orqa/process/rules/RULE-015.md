@@ -26,17 +26,17 @@ relationships:
     type: informs
     rationale: Review completion reports must include lesson documentation status
   - target: IMPL-024
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-024
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-024
   - target: IMPL-021
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-021
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-021
   - target: IMPL-026
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-026
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-026
   - target: IMPL-066
-    type: observed-by
-    rationale: "Auto-generated inverse of observed-by relationship from IMPL-066"
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from IMPL-066"
   - target: RULE-001
     type: informed-by
   - target: RULE-004
@@ -49,6 +49,8 @@ relationships:
     type: informed-by
   - target: RULE-030
     type: informed-by
+  - target: PILLAR-002
+    type: informs
 ---
 ## The Core Rule
 

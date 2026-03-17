@@ -4,6 +4,11 @@ title: Dynamic artifact table component
 description: "Support live artifact tables in markdown that show status, title, and priority from the graph."
 status: completed
 priority: P2
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 3
+  dependencies: 1
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

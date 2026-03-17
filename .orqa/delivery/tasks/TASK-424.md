@@ -4,6 +4,11 @@ title: "Create @orqastudio/test-config package — shared vitest + testing utili
 description: "Extract shared test configuration (vitest config, test utilities, fixture helpers) into a standalone package. All orqastudio repos and plugins use this for consistent testing with full CI/CD integration."
 status: completed
 priority: P1
+scoring:
+  impact: 3
+  urgency: 3
+  complexity: 2
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -19,9 +24,13 @@ relationships:
     type: delivers
     rationale: Shared testing framework for the package ecosystem
   - target: SKILL-033
-    type: grounded-by
+    type: informed-by
   - target: SKILL-034
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-033
+    type: informed-by
+  - target: SKILL-034
+    type: informed-by
 ---
 
 ## Scope

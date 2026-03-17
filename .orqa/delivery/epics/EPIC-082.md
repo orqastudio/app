@@ -7,6 +7,11 @@ description: >
   schema-driven rather than hardcoded.
 status: active
 priority: P1
+scoring:
+  impact: 5
+  urgency: 5
+  complexity: 5
+  dependencies: 5
 created: 2026-03-16
 updated: 2026-03-16
 horizon: now

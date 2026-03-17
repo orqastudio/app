@@ -7,7 +7,11 @@ priority: P1
 created: 2026-03-02
 updated: 2026-03-07
 horizon: null
-scoring: null
+scoring:
+  impact: 5
+  urgency: 5
+  complexity: 3
+  dependencies: 5
 relationships:
   - target: MS-000
     type: delivers
@@ -34,7 +38,7 @@ relationships:
   - target: EPIC-030
     type: depended-on-by
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-002
     type: grounded-by
   - target: AD-007
@@ -59,6 +63,8 @@ relationships:
     type: informed-by
   - target: AD-017
     type: informed-by
+  - target: PILLAR-001
+    type: grounded-by
 ---
 ## Why P1
 

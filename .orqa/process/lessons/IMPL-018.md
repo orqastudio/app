@@ -12,16 +12,16 @@ relationships:
     type: informed-by
     rationale: "The stale-paths lesson revealed the scope of hardcoded paths — this observation asks why they are hardcoded at all"
   - target: RULE-003
-    type: observes
+    type: informs
     rationale: "Artifact config integrity says paths come from config, not hardcoded — but source code (paths.rs, project_scanner.rs, artifact_fs.rs) still uses constants"
   - target: TASK-306
-    type: enforces
+    type: informs
     rationale: "TASK-306 implemented the ProjectPaths struct that replaced hardcoded constants"
   - target: RULE-003
-    type: grounded-by
+    type: informed-by
     rationale: "Lesson promoted to RULE-003 — config-disk alignment and no-hardcoded-paths constraints"
   - target: RULE-003
-    type: observed-by
+    type: informed-by
     rationale: "RULE-003 codified the no-hardcoded-paths requirement first observed in this lesson"
 ---
 

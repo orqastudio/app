@@ -4,6 +4,11 @@ title: Mermaid and PlantUML rendering in markdown
 description: "Render mermaid and plantuml code blocks as diagrams in the markdown renderer, styled to match the app theme."
 status: completed
 priority: P2
+scoring:
+  impact: 3
+  urgency: 1
+  complexity: 3
+  dependencies: 1
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

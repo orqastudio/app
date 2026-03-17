@@ -4,11 +4,15 @@ title: Dashboard redesign — narrative flow layout grounded in pillars
 description: "Replace the current metrics-dump dashboard with a narrative flow layout: milestone context at top, three pillar-aligned columns (clarity/learning/purpose), collapsible power user section. The dashboard answers what matters, not what exists."
 status: completed
 priority: P1
+scoring:
+  impact: 5
+  urgency: 4
+  complexity: 3
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 deadline: null
 horizon: active
-scoring: null
 relationships:
   - target: RES-064
     type: informed-by

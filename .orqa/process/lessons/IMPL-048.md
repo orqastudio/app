@@ -9,13 +9,13 @@ maturity: observation
 recurrence: 1
 relationships:
   - target: RULE-022
-    type: observes
+    type: informs
     rationale: "RULE-022 defines plan structure requirements but doesn't mandate a loop-closure phase for enforcement/tooling epics"
   - target: EPIC-061
     type: informed-by
     rationale: "Discovered when EPIC-061 was missing a phase to run its own tooling and act on results"
   - target: PILLAR-002
-    type: observes
+    type: informs
     rationale: "Learning Through Reflection — the epic builds reflection tooling but didn't include the reflection step itself"
   - target: IMPL-049
     type: informs

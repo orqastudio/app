@@ -4,6 +4,11 @@ title: Research personas as top-level artifact type
 description: "Investigate whether personas should be a first-class artifact type with their own schema, lifecycle, and relationships."
 status: completed
 priority: P2
+scoring:
+  impact: 2
+  urgency: 1
+  complexity: 2
+  dependencies: 1
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

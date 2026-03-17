@@ -4,6 +4,11 @@ title: Make roadmap components read type hierarchy from config
 description: "Refactor RoadmapView and its column definitions so they derive the three-level drill-down structure and column labels from the delivery type config in project settings, eliminating the hardcoded EPIC_COLUMNS and TASK_COLUMNS constants."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 3
+  dependencies: 3
 created: 2026-03-15
 updated: 2026-03-15
 horizon: active

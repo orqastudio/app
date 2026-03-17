@@ -11,6 +11,8 @@ relationships:
   - target: "PILLAR-001"
     type: "grounded"
     rationale: "Native rendering eliminates structural duplication"
+  - target: PILLAR-001
+    type: informs
 ---
 ## What Happened
 

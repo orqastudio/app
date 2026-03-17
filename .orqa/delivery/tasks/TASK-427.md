@@ -4,6 +4,11 @@ title: "Switch tier-1 packages from file: to published deps + publish"
 description: "Update integrity-validator and SDK to depend on published @orqastudio/types instead of file: references. Fix CI, verify, then publish both."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 5
+  complexity: 2
+  dependencies: 4
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -22,9 +27,11 @@ relationships:
   - target: TASK-426
     type: depends-on
   - target: SKILL-034
-    type: grounded-by
+    type: informed-by
   - target: TASK-428
     type: depended-on-by
+  - target: SKILL-034
+    type: informed-by
 ---
 
 ## Scope

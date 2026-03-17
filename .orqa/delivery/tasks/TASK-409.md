@@ -4,6 +4,11 @@ title: Research document relationship schema update and data backfill
 description: Add relationships array to research schema. Backfill existing research documents with relationship data. Backfill epic horizon fields.
 status: completed
 priority: P2
+scoring:
+  impact: 3
+  urgency: 3
+  complexity: 2
+  dependencies: 2
 created: 2026-03-13
 updated: 2026-03-14
 assignee: null
@@ -18,11 +23,17 @@ relationships:
     type: delivers
     rationale: Theme G — data integrity backfill from UAT
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
   - target: SKILL-039
-    type: grounded-by
+    type: informed-by
   - target: SKILL-050
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-011
+    type: informed-by
+  - target: SKILL-039
+    type: informed-by
+  - target: SKILL-050
+    type: informed-by
 ---
 
 ## Scope

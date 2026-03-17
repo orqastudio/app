@@ -11,6 +11,8 @@ relationships:
   - target: "PILLAR-001"
     type: "grounded"
     rationale: "Correct skill ownership creates structural clarity in agent roles"
+  - target: PILLAR-001
+    type: informs
 ---
 ## What Happened
 

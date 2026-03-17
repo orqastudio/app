@@ -4,6 +4,11 @@ title: "Field display improvements — badges, checkbox icons, display order"
 description: "Improve frontmatter field display with badges for maturity/category/version, checkbox icons for booleans, and better field ordering."
 status: completed
 priority: P1
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 2
+  dependencies: 1
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

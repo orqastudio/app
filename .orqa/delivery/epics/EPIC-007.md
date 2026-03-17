@@ -7,7 +7,11 @@ priority: P2
 created: 2026-03-07
 updated: 2026-03-12
 horizon: null
-scoring: null
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 3
+  dependencies: 2
 relationships:
   - target: RES-020
     type: informed-by

@@ -11,6 +11,8 @@ relationships:
   - target: "PILLAR-001"
     type: "grounded"
     rationale: "Domain-neutral naming creates stable structural interfaces"
+  - target: PILLAR-001
+    type: informs
 ---
 ## What Happened
 

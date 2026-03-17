@@ -52,6 +52,8 @@ relationships:
     type: informed-by
   - target: RULE-040
     type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 **Prefer semantic search over Grep/Glob for any search that spans more than one file or directory.**
 

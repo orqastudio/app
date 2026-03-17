@@ -22,7 +22,7 @@ relationships:
   - target: TASK-172
     type: depends-on
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
   - target: TASK-175
     type: depended-on-by
   - target: TASK-176
@@ -31,6 +31,8 @@ relationships:
     type: depended-on-by
   - target: TASK-341
     type: depended-on-by
+  - target: SKILL-011
+    type: informed-by
 ---
 
 ## What

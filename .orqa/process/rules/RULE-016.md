@@ -17,10 +17,16 @@ relationships:
     type: informs
     rationale: Pillar alignment drives priority; ID sequence must not be mistaken for priority order
   - target: AGENT-008
-    type: enforces
+    type: informs
     rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
   - target: RULE-004
     type: informed-by
+  - target: AGENT-008
+    type: informs
+  - target: AGENT-008
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 Artifact IDs ([EPIC-045](EPIC-045), [TASK-051](TASK-051), [AD-029](AD-029), etc.) are sequential identifiers for uniqueness and reference. They carry NO information about priority, importance, or execution order.
 

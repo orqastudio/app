@@ -9,7 +9,7 @@ recurrence: 1
 maturity: understanding
 relationships:
   - target: EPIC-063
-    type: observes
+    type: informs
     rationale: "Multiple UAT findings (#2, #8, #13) converge on this pattern"
   - target: IMPL-060
     type: informs

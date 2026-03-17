@@ -40,11 +40,8 @@ relationships:
     type: informed-by
     rationale: Auto-generated inverse of informed-by relationship from RULE-029
   - target: IMPL-056
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-056
-  - target: AD-047
-    type: enforced-by
-    rationale: Auto-generated inverse of enforced-by relationship from AD-047
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-056
   - target: DOC-002
     type: informed-by
     rationale: Referenced in documentation page Enforcement Architecture
@@ -87,6 +84,10 @@ relationships:
     type: informed-by
   - target: AD-026
     type: enforces
+  - target: AD-047
+    type: enforces
+  - target: PILLAR-001
+    type: informs
 ---
 **Source of Truth:** `.orqa/documentation/development/coding-standards.md`
 

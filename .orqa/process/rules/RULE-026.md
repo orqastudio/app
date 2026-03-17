@@ -38,8 +38,8 @@ relationships:
     type: informed-by
     rationale: Auto-generated inverse of informed-by relationship from RULE-005
   - target: IMPL-032
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-032
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-032
   - target: DOC-002
     type: informed-by
     rationale: Referenced in documentation page Enforcement Architecture
@@ -66,6 +66,8 @@ relationships:
     type: informed-by
   - target: AD-028
     type: enforces
+  - target: PILLAR-001
+    type: informs
 ---
 Every agent MUST have a `skills:` list in its YAML frontmatter. Agent tool access is declared via `capabilities:` and resolved per provider context — see [RULE-040](RULE-040). Skills load in three tiers [AD-028](AD-028).
 

@@ -21,6 +21,8 @@ relationships:
     type: informs
   - target: AD-032
     type: enforces
+  - target: PILLAR-001
+    type: informs
 ---
 
 Data persistence in OrqaStudio follows three channels, each with clear boundaries.

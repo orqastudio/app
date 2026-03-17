@@ -12,7 +12,11 @@ created: 2026-03-11
 updated: 2026-03-12
 deadline: null
 horizon: null
-scoring: null
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 3
+  dependencies: 3
 relationships:
   - target: IDEA-057
     type: informed-by
@@ -46,11 +50,13 @@ relationships:
   - target: EPIC-050
     type: depended-on-by
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-002
     type: grounded-by
   - target: IDEA-057
     type: evolves-from
+  - target: PILLAR-001
+    type: grounded-by
 ---
 
 ## Context

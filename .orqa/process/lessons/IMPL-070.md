@@ -9,7 +9,7 @@ maturity: observation
 recurrence: 1
 relationships:
   - target: RULE-004
-    type: observes
+    type: informs
     rationale: Artifact lifecycle should enforce milestone-epic status consistency
 ---
 

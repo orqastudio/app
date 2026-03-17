@@ -12,12 +12,14 @@ relationships:
     type: grounded
     rationale: Systemic investigation is the core learning methodology
   - target: RULE-030
-    type: grounded-by
+    type: informed-by
     rationale: Lesson promoted to RULE-030
   - target: IMPL-012
     type: informed-by
   - target: RULE-030
-    type: observed-by
+    type: informed-by
+  - target: PILLAR-002
+    type: informs
 ---
 ## What Happened
 

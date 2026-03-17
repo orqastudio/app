@@ -18,6 +18,8 @@ relationships:
   - target: PILLAR-001
     type: grounded
     rationale: Auditing and maintaining rules, agents, and skills keeps the governance framework internally consistent and its standards visible
+  - target: PILLAR-001
+    type: informs
 ---
 
 

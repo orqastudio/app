@@ -4,6 +4,11 @@ title: Add bidirectional relationship checking to graph-guardian.mjs
 description: Extend the PostToolUse graph-guardian hook to check for missing bidirectional relationship inverses when .orqa/ artifacts are written. Return warnings for one-sided relationships so the agent can fix them immediately.
 status: completed
 priority: P1
+scoring:
+  impact: 5
+  urgency: 5
+  complexity: 3
+  dependencies: 4
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -19,17 +24,21 @@ relationships:
     type: delivers
     rationale: Core task — write-time integrity enforcement for graph consistency
   - target: RULE-045
-    type: enforces
+    type: delivers
     rationale: RULE-045 declared write-time enforcement entries that this task implements mechanically
   - target: IMPL-055
     type: informed-by
     rationale: IMPL-055 identified the need for write-time integrity checking
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
   - target: SKILL-020
-    type: grounded-by
+    type: informed-by
   - target: TASK-414
     type: depended-on-by
+  - target: SKILL-011
+    type: informed-by
+  - target: SKILL-020
+    type: informed-by
 ---
 
 ## Scope

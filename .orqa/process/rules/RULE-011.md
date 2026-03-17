@@ -19,12 +19,14 @@ relationships:
   - target: RULE-026
     type: informs
     rationale: Skills are enforcement artifacts that must exist before agents implement a pattern
-  - target: AD-048
-    type: enforced-by
   - target: RULE-003
     type: informed-by
   - target: RULE-027
     type: informed-by
+  - target: AD-048
+    type: enforces
+  - target: PILLAR-002
+    type: informs
 ---
 # Enforcement Before Code (NON-NEGOTIABLE)
 

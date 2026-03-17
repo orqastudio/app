@@ -16,6 +16,8 @@ relationships:
     rationale: "Lesson documents a concrete compliance failure of RULE-019 (no deferred deliverables)"
   - target: RULE-019
     type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 ## Pattern

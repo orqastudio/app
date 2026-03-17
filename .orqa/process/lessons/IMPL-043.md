@@ -9,7 +9,7 @@ maturity: understanding
 recurrence: 1
 relationships:
   - target: RULE-004
-    type: observes
+    type: informs
     rationale: "Artifact lifecycle should enforce that relationships always resolve — null targets indicate a missing forward reference"
   - target: IMPL-019
     type: informed-by

@@ -16,9 +16,11 @@ relationships:
   - type: merged-into
     target: EPIC-081
   - target: PILLAR-002
-    type: grounded-by
+    type: informed-by
   - target: AD-055
     type: merged-into
+  - target: PILLAR-002
+    type: grounded-by
 ---
 > **Surpassed 2026-03-16**: Core multi-project traversal merged into EPIC-081 via AD-055. Unique concepts (governance libraries, pattern detection, benchmarking) split into IDEA-114.
 

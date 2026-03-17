@@ -9,16 +9,16 @@ maturity: observation
 recurrence: 4
 relationships:
   - target: RULE-004
-    type: observes
+    type: informs
     rationale: "Task dependency gates define when work is blocked. If no gate is blocking, work should continue."
   - target: IMPL-049
     type: informed-by
     rationale: "Same pattern of unnecessary user interaction — the orchestrator defers when it should act"
   - target: RULE-001
-    type: observed-by
-    rationale: "Auto-generated inverse of observed-by relationship from RULE-001"
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from RULE-001"
   - target: RULE-001
-    type: grounded-by
+    type: informed-by
     rationale: "Auto-generated inverse of grounded-by relationship from RULE-001"
   - target: IMPL-054
     type: informs

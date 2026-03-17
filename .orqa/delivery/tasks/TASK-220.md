@@ -20,9 +20,11 @@ relationships:
   - target: TASK-214
     type: depends-on
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
   - target: TASK-343
     type: depended-on-by
+  - target: SKILL-011
+    type: informed-by
 ---
 ## What
 

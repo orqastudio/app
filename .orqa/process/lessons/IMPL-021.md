@@ -9,19 +9,19 @@ maturity: understanding
 recurrence: 1
 relationships:
   - target: RULE-027
-    type: observes
+    type: informs
     rationale: "Structure-before-work says artifacts must exist before implementation — this lesson reveals the inverse gap: work products that emerge DURING implementation also need structure"
   - target: RULE-015
-    type: observes
+    type: informs
     rationale: "Honest reporting — marking an epic done while open items exist in conversation but not in the task system is a form of incomplete reporting"
   - target: RULE-004
-    type: observes
+    type: informs
     rationale: "Artifact lifecycle — the epic completion gate should verify no untracked open items remain"
   - target: RULE-004
-    type: grounded-by
+    type: informed-by
     rationale: "Lesson promoted to RULE-004 — observation triage protocol added to artifact lifecycle"
   - target: RULE-004
-    type: observed-by
+    type: informed-by
     rationale: "RULE-004 codified the open-item tracking and triage protocol first observed in this lesson"
   - target: IMPL-022
     type: informs

@@ -21,7 +21,9 @@ relationships:
     type: grounded
     rationale: Repository trait abstraction isolates persistence from domain logic, making data access patterns explicit and testable
   - target: TASK-029
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 

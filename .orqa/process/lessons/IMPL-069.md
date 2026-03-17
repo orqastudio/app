@@ -9,7 +9,7 @@ maturity: observation
 recurrence: 1
 relationships:
   - target: PILLAR-001
-    type: observes
+    type: informs
     rationale: Structure requires that references are visible on the graph, not hidden in prose
 ---
 

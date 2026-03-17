@@ -4,6 +4,11 @@ title: Humanize agent capability display and capture subagent mapping idea
 description: Display agent capabilities as human-readable labels instead of raw identifiers. Capture sidecar-specific subagent mapping as an idea.
 status: completed
 priority: P2
+scoring:
+  impact: 2
+  urgency: 2
+  complexity: 1
+  dependencies: 1
 created: 2026-03-13
 updated: 2026-03-13
 assignee: null
@@ -16,9 +21,13 @@ relationships:
     type: delivers
     rationale: Theme F — agent display improvements from UAT
   - target: SKILL-030
-    type: grounded-by
+    type: informed-by
   - target: SKILL-042
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-030
+    type: informed-by
+  - target: SKILL-042
+    type: informed-by
 ---
 
 ## Scope

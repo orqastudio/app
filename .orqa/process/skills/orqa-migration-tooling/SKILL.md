@@ -19,13 +19,15 @@ relationships:
     type: grounded
     rationale: Backfill and verification tools ensure schema changes propagate consistently across all artifacts, keeping frontmatter trustworthy
   - target: TASK-409
-    type: grounded
+    type: informs
   - target: TASK-466
-    type: grounded
+    type: informs
   - target: TASK-474
-    type: grounded
+    type: informs
   - target: AGENT-008
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 Tools for governance artifact migrations and link integrity verification. These tools live in `tools/` at the project root and are designed for CLI use by agents or humans.

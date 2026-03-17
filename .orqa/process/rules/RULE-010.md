@@ -23,8 +23,8 @@ relationships:
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-009
   - target: IMPL-017
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-017
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-017
   - target: AD-001
     type: enforces
   - target: AD-002
@@ -47,6 +47,8 @@ relationships:
     type: informed-by
   - target: RULE-041
     type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 Every feature MUST be implemented across ALL layers in the same commit. Partial implementations that work in isolation but fail at runtime due to missing layers are forbidden.
 

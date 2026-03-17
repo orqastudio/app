@@ -4,6 +4,11 @@ title: Artifact link settings — display mode and per-type colour coding
 description: Add project settings for artifact link display mode (ID vs title) and per-type colour configuration. Settings stored in project.json.
 status: completed
 priority: P1
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 2
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -19,7 +24,11 @@ relationships:
   - target: TASK-470
     type: depends-on
   - target: SKILL-030
-    type: grounded-by
+    type: informed-by
   - target: SKILL-016
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-016
+    type: informed-by
+  - target: SKILL-030
+    type: informed-by
 ---

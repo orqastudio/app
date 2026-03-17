@@ -22,15 +22,17 @@ relationships:
     type: informs
     rationale: "Auto-generated inverse of informs relationship from IMPL-045"
   - target: IMPL-045
-    type: grounded
+    type: informed-by
     rationale: "Auto-generated inverse of grounded relationship from IMPL-045"
   - target: EPIC-060
     type: evolves-into
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-002
     type: grounded-by
   - target: PILLAR-003
+    type: grounded-by
+  - target: PILLAR-001
     type: grounded-by
 ---
 ## Motivation

@@ -4,6 +4,11 @@ title: "Rework ArtifactLink component — status dot inside, ellipsis, hover pop
 description: "Systematic rework of the ArtifactLink component: move status dot inside the chip, add max-width with text-overflow ellipsis for title display, add hover popover showing artifact metadata from the graph."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 3
+  dependencies: 4
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -17,11 +22,17 @@ relationships:
     type: delivers
     rationale: Artifact link system rework (F6, F7, F9, F10)
   - target: SKILL-030
-    type: grounded-by
+    type: informed-by
   - target: SKILL-042
-    type: grounded-by
+    type: informed-by
   - target: SKILL-041
-    type: grounded-by
+    type: informed-by
   - target: TASK-471
     type: depended-on-by
+  - target: SKILL-030
+    type: informed-by
+  - target: SKILL-041
+    type: informed-by
+  - target: SKILL-042
+    type: informed-by
 ---

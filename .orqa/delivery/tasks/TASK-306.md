@@ -13,14 +13,13 @@ acceptance:
   - "make lint-backend && make test-rust pass"
   - IMPL-018 maturity updated to understanding
 relationships:
-  - target: IMPL-018
-    type: enforced-by
-    rationale: Auto-generated inverse of enforced-by relationship from IMPL-018
   - target: EPIC-059
     type: delivers
     rationale: Task belongs to this epic
   - target: TASK-349
     type: depended-on-by
+  - target: IMPL-018
+    type: informed-by
 ---
 ## What
 

@@ -4,6 +4,11 @@ title: "Reorder artifact viewer layout — actions needed, pipeline, metadata, a
 description: Change the ArtifactViewer component ordering so the most actionable information appears first.
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 2
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

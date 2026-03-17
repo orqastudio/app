@@ -4,6 +4,11 @@ title: Artifact viewer enhancements
 description: "Enhance the artifact viewer with unified relationships display, actions needed inference, pipeline position stepper, horizon display, and acceptance criteria checkboxes. Originated from UAT Theme D findings."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 3
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 deadline: null
@@ -27,9 +32,11 @@ relationships:
   - target: EPIC-060
     type: depends-on
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: DOC-057
     type: informs
+  - target: PILLAR-001
+    type: grounded-by
 ---
 ## Context
 

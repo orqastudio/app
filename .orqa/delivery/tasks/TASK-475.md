@@ -4,6 +4,11 @@ title: Fix lesson status vocabulary and viewer layout
 description: Fix lessons showing Active instead of Captured. Move actions below status pipeline. Fix status pipeline connector line centering on circle.
 status: completed
 priority: P1
+scoring:
+  impact: 3
+  urgency: 3
+  complexity: 2
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -16,7 +21,11 @@ relationships:
     type: delivers
     rationale: Schema fix and viewer layout (F11, F12, F13)
   - target: SKILL-030
-    type: grounded-by
+    type: informed-by
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-011
+    type: informed-by
+  - target: SKILL-030
+    type: informed-by
 ---

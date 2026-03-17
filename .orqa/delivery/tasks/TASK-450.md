@@ -4,6 +4,11 @@ title: Acceptance criteria audit and backfill
 description: Audit all tasks for acceptance criteria completeness and backfill missing criteria based on actual implementation review.
 status: completed
 priority: P2
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 3
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

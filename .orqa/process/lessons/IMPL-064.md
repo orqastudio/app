@@ -9,7 +9,7 @@ recurrence: 1
 maturity: understanding
 relationships:
   - target: PILLAR-001
-    type: observes
+    type: informs
     rationale: "Clarity through structure means priority is visible and reasoned, not asserted"
   - target: EPIC-067
     type: informs

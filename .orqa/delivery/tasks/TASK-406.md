@@ -4,6 +4,11 @@ title: "Enhance artifact viewer with unified relationships, actions needed, and 
 description: Move all relationships to the relationships viewer across all artifact types. Add inferred Actions Needed box. Add pipeline position stepper. Auto-embed child artifacts. Display horizon field. Implement acceptance criteria checkboxes.
 status: completed
 priority: P1
+scoring:
+  impact: 5
+  urgency: 4
+  complexity: 4
+  dependencies: 3
 created: 2026-03-13
 updated: 2026-03-13
 assignee: null
@@ -26,11 +31,17 @@ relationships:
     type: informs
     rationale: IDEA-025 (agent task ownership) relates to auto-embedded child artifact display
   - target: SKILL-030
-    type: grounded-by
+    type: informed-by
   - target: SKILL-042
-    type: grounded-by
+    type: informed-by
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-011
+    type: informed-by
+  - target: SKILL-030
+    type: informed-by
+  - target: SKILL-042
+    type: informed-by
 ---
 
 ## Scope

@@ -4,6 +4,11 @@ title: Knowledge gap detection in governance audit
 description: "Extend the governance audit (IntegrityWidget or dedicated panel) to surface per-type unlinked artifacts: rules without grounded-by, skills without practiced-by, decisions without enforces. Also detect disconnected components not reachable from the main graph. Each gap entry links directly to the artifact that needs fixing."
 status: blocked
 priority: P2
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 3
+  dependencies: 2
 created: 2026-03-15
 updated: 2026-03-15
 horizon: active

@@ -4,6 +4,11 @@ title: Dashboard grid layout system
 description: Replace the vertical card stack dashboard with a CSS grid layout that supports future drag-drop and plugin widgets.
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 3
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

@@ -15,11 +15,13 @@ relationships:
     type: informed-by
     rationale: "Emerged during the IDEA-077 promotion workflow when the user noted multiple observations that had to be manually triggered"
   - target: IDEA-077
-    type: grounded-by
+    type: informed-by
     rationale: "Promoted to IDEA-077 Phase 0 for implementation as a prompt-submit hook"
   - target: IMPL-047
     type: informs
     rationale: "Auto-generated inverse of informs relationship from IMPL-047"
+  - target: IDEA-077
+    type: informs
 ---
 ## Pattern
 

@@ -19,9 +19,11 @@ relationships:
     type: grounded
     rationale: ADR patterns and layer responsibility mapping make design decisions explicit and traceable rather than implicit
   - target: TASK-005
-    type: grounded
+    type: informs
   - target: AGENT-004
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 

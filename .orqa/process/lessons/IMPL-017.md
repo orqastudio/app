@@ -9,10 +9,10 @@ maturity: understanding
 recurrence: 1
 relationships:
   - target: RULE-003
-    type: observes
+    type: informs
     rationale: "Artifact config integrity requires config paths to match disk — this lesson extends that to source code paths"
   - target: RULE-010
-    type: observes
+    type: informs
     rationale: "End-to-end completeness means all layers updated together — stale paths in Rust while config is correct is a partial update"
   - target: IMPL-018
     type: informs

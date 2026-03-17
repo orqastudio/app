@@ -46,18 +46,12 @@ relationships:
   - target: RULE-043
     type: informs
     rationale: Skill injection complements linter delegation — skills provide knowledge while linters enforce patterns
-  - target: TASK-412
-    type: enforced-by
-    rationale: Auto-generated inverse of enforced-by relationship from TASK-412
   - target: AD-045
-    type: grounded
+    type: enforces
     rationale: Auto-generated inverse of practiced-by relationship from AD-045
-  - target: AD-048
-    type: enforced-by
-    rationale: Auto-generated inverse of enforced-by relationship from AD-048
   - target: RES-056
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from RES-056
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from RES-056
   - target: DOC-072
     type: informs
     rationale: "Auto-generated inverse of informs relationship from DOC-072"
@@ -67,9 +61,19 @@ relationships:
   - target: EPIC-052
     type: informs
   - target: IMPL-054
-    type: observed-by
+    type: informed-by
   - target: RULE-043
     type: informed-by
+  - target: AD-048
+    type: enforces
+  - target: TASK-412
+    type: delivered-by
+  - target: PILLAR-001
+    type: informs
+  - target: AD-045
+    type: practiced-by
+  - target: AD-045
+    type: informs
 ---
 When agents write to specific code areas, the enforcement engine automatically injects
 relevant domain skills as system context. This implements Layer 2 (Knowledge Injection)

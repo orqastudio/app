@@ -9,7 +9,7 @@ maturity: understanding
 recurrence: 2
 relationships:
   - target: RULE-006
-    type: observes
+    type: informs
     rationale: "Coding standards should catch this pattern during review"
 ---
 

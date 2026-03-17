@@ -12,12 +12,14 @@ relationships:
     type: grounded
     rationale: Config-disk alignment is fundamental structural integrity
   - target: RULE-003
-    type: grounded-by
+    type: informed-by
     rationale: Lesson promoted to RULE-003
   - target: IMPL-006
     type: informed-by
   - target: RULE-003
-    type: observed-by
+    type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 ## What Happened
 

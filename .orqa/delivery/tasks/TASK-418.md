@@ -4,6 +4,11 @@ title: "Create @orqastudio/eslint-config package"
 description: "Extract shared ESLint and TypeScript config from orqa-studio into a standalone @orqastudio/eslint-config package. All orqastudio repos and plugins use this for consistent code standards."
 status: completed
 priority: P1
+scoring:
+  impact: 3
+  urgency: 4
+  complexity: 2
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -19,9 +24,11 @@ relationships:
     type: delivers
     rationale: Shared code standards for all repos and plugins
   - target: SKILL-034
-    type: grounded-by
+    type: informed-by
   - target: TASK-419
     type: depended-on-by
+  - target: SKILL-034
+    type: informed-by
 ---
 
 ## Scope

@@ -12,13 +12,13 @@ relationships:
     type: informed-by
     rationale: "The open-item tracking gap is a specific instance of the broader problem — agents don't self-log learning moments"
   - target: RULE-017
-    type: observes
+    type: informs
     rationale: "Lessons-learned rule requires agents to check and update lessons, but enforcement is purely procedural — agents forget under task pressure"
   - target: RULE-017
-    type: grounded-by
+    type: informed-by
     rationale: "Lesson promoted to RULE-017 — three-tier observation logging discipline encoded in lessons-learned rule"
   - target: RULE-017
-    type: observed-by
+    type: informed-by
     rationale: "RULE-017 codified the three-tier logging discipline (blocking/non-blocking/borderline) first observed in this lesson"
   - target: IMPL-025
     type: informs

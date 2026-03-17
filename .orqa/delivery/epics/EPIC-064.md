@@ -8,13 +8,17 @@ created: 2026-03-14
 updated: 2026-03-14
 deadline: null
 horizon: active
-scoring: null
+scoring:
+  impact: 5
+  urgency: 5
+  complexity: 5
+  dependencies: 5
 relationships:
   - target: EPIC-050
     type: informed-by
     rationale: EPIC-050 built the enforcement engine; this epic closes the gaps it left
   - target: AD-048
-    type: enforces
+    type: delivers
     rationale: AD-048 requires enforcement to accompany rule promotion — this epic implements that requirement across all layers
   - target: RES-056
     type: informed-by
@@ -97,7 +101,7 @@ relationships:
   - target: MS-001
     type: delivers
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-002
     type: grounded-by
   - target: RES-056
@@ -106,6 +110,8 @@ relationships:
     type: informs
   - target: IDEA-095
     type: evolves-from
+  - target: PILLAR-001
+    type: grounded-by
 ---
 ## Context
 

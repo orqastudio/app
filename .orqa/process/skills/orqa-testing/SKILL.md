@@ -18,11 +18,13 @@ relationships:
     type: grounded
     rationale: Test organisation by layer with mock boundaries at adapters catches regressions early, feeding failures back as lessons
   - target: TASK-036
-    type: grounded
+    type: informs
   - target: TASK-185
-    type: grounded
+    type: informs
   - target: TASK-219
-    type: grounded
+    type: informs
+  - target: PILLAR-002
+    type: informs
 ---
 
 

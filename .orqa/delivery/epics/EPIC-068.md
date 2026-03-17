@@ -4,6 +4,11 @@ title: "Dashboard redesign — layout, widgets, and plugin extensibility"
 description: Redesign the dashboard from a vertical card stack to an information-dense layout. Architecture must support drag-and-drop positioning and plugin-provided custom widgets.
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 3
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 deadline: null
@@ -48,8 +53,10 @@ relationships:
   - target: EPIC-067
     type: depends-on
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-003
+    type: grounded-by
+  - target: PILLAR-001
     type: grounded-by
 ---
 ## Context

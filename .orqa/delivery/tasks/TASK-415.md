@@ -4,6 +4,11 @@ title: Wire Rust EnforcementEngine to agent tool approval pipeline
 description: Connect the existing EnforcementEngine in the Rust backend to the agent execution pipeline so that enforcement entries are evaluated before tool execution in app context.
 status: completed
 priority: P2
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 4
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -24,11 +29,11 @@ relationships:
   - target: TASK-414
     type: depends-on
   - target: SKILL-032
-    type: grounded-by
+    type: informed-by
   - target: SKILL-009
-    type: grounded-by
+    type: informed-by
   - target: SKILL-012
-    type: grounded-by
+    type: informed-by
   - target: TASK-188
     type: evolves-into
   - target: TASK-189
@@ -37,6 +42,12 @@ relationships:
     type: depended-on-by
   - target: TASK-416
     type: depended-on-by
+  - target: SKILL-009
+    type: informed-by
+  - target: SKILL-012
+    type: informed-by
+  - target: SKILL-032
+    type: informed-by
 ---
 
 ## Scope

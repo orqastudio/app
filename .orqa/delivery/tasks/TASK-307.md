@@ -13,17 +13,15 @@ acceptance:
   - "All schemas documented, user-approved"
   - IDEA-071 created to track implementation
 relationships:
-  - target: IMPL-020
-    type: enforced-by
-    rationale: Auto-generated inverse of enforced-by relationship from IMPL-020
-  - target: IMPL-019
-    type: enforced-by
-    rationale: Auto-generated inverse of enforced-by relationship from IMPL-019
   - target: EPIC-059
     type: delivers
     rationale: Task belongs to this epic
   - target: TASK-349
     type: depended-on-by
+  - target: IMPL-019
+    type: informed-by
+  - target: IMPL-020
+    type: informed-by
 ---
 ## What
 

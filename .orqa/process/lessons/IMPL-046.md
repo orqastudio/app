@@ -9,10 +9,10 @@ maturity: observation
 recurrence: 1
 relationships:
   - target: RULE-004
-    type: observes
+    type: informs
     rationale: "RULE-004 defines P1/P2/P3 priority bands but the criteria are assessed per-epic, not enforced by project-level principles"
   - target: PILLAR-001
-    type: observes
+    type: informs
     rationale: "Clarity Through Structure — priority itself needs structural enforcement, not ad-hoc assessment"
   - target: IDEA-077
     type: informed-by

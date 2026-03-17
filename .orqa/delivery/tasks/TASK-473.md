@@ -4,6 +4,11 @@ title: Roadmap hierarchical drill-down with breadcrumbs
 description: "Build roadmap drill-down navigation: top level Now/Next/Later/Completed+Archived with milestones → click milestone for epic kanban by status → click epic for task kanban. Breadcrumb bar, collapsible done columns, drag-drop between columns, configurable grouping/sorting."
 status: completed
 priority: P1
+scoring:
+  impact: 5
+  urgency: 4
+  complexity: 4
+  dependencies: 4
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -22,9 +27,15 @@ relationships:
   - target: TASK-472
     type: depends-on
   - target: SKILL-030
-    type: grounded-by
+    type: informed-by
   - target: SKILL-042
-    type: grounded-by
+    type: informed-by
   - target: SKILL-016
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-016
+    type: informed-by
+  - target: SKILL-030
+    type: informed-by
+  - target: SKILL-042
+    type: informed-by
 ---

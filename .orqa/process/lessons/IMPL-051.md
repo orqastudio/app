@@ -9,7 +9,7 @@ maturity: understanding
 recurrence: 1
 relationships:
   - target: RULE-004
-    type: observes
+    type: informs
     rationale: "RULE-004 defines epic lifecycle but doesn't explicitly prohibit splitting for progress optics"
   - target: IMPL-049
     type: informed-by

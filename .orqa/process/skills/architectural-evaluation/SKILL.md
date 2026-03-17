@@ -18,6 +18,8 @@ relationships:
   - target: PILLAR-001
     type: grounded
     rationale: Teaches boundary verification and compliance checklists that make architectural decisions visible and enforceable
+  - target: PILLAR-001
+    type: informs
 ---
 
 

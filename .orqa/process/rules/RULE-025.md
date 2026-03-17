@@ -19,6 +19,8 @@ relationships:
   - target: RULE-013
     type: informs
     rationale: tmp/ is gitignored; .gitignore and .gitattributes belong in root per this rule
+  - target: PILLAR-001
+    type: informs
 ---
 The project root must stay lean. Every file in root must have a justification.
 

@@ -4,6 +4,11 @@ title: Move architecture/ → development/ and reference/ (18 files) + assign mi
 description: "Split the architecture/ chapter: move 13 files to development/ and 5 files to reference/. Assign DOC IDs to core-architecture.md and plugin-architecture.md which currently lack them. Remove the architecture key from project.json."
 status: completed
 priority: P1
+scoring:
+  impact: 3
+  urgency: 4
+  complexity: 3
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 acceptance:

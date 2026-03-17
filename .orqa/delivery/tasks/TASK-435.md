@@ -4,6 +4,11 @@ title: Add documents/documented-by relationship types + body-text edge extractio
 description: Introduce documents/documented-by relationship types and extract artifact references from markdown body text as graph edges.
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 3
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

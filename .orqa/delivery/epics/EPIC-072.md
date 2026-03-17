@@ -4,6 +4,11 @@ title: Roadmap kanban view
 description: "Replace the static roadmap documentation page with a dynamic kanban board view under Process. Milestone-level board with drill-down into epics and tasks, all data from the graph."
 status: completed
 priority: P2
+scoring:
+  impact: 4
+  urgency: 2
+  complexity: 3
+  dependencies: 1
 created: 2026-03-14
 updated: 2026-03-14
 deadline: null
@@ -30,8 +35,10 @@ relationships:
   - target: EPIC-067
     type: depends-on
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-003
+    type: grounded-by
+  - target: PILLAR-001
     type: grounded-by
 ---
 ## Context

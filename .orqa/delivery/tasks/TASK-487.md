@@ -4,6 +4,11 @@ title: Sweep body-text path references across all .orqa/ files
 description: "After all file moves are complete, scan every .orqa/ file for body-text references to old documentation paths and update them to the new locations. Covers all 152 known references identified during the reorganisation planning."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 5
+  complexity: 2
+  dependencies: 4
 created: 2026-03-14
 updated: 2026-03-14
 acceptance:

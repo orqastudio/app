@@ -4,6 +4,11 @@ title: Create grounding documents for all agent roles
 description: "Create 5 concise grounding documents distilled from restructured documentation. Each answers: why this role exists, what good looks like, what goes wrong under pressure. Designed for agent injection, not human browsing."
 status: completed
 priority: P1
+scoring:
+  impact: 5
+  urgency: 4
+  complexity: 3
+  dependencies: 4
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -25,15 +30,19 @@ relationships:
   - target: TASK-462
     type: depends-on
   - target: SKILL-037
-    type: grounded-by
+    type: informed-by
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
   - target: TASK-464
     type: informs
   - target: TASK-464
     type: depended-on-by
   - target: TASK-465
     type: depended-on-by
+  - target: SKILL-011
+    type: informed-by
+  - target: SKILL-037
+    type: informed-by
 ---
 
 ## Scope

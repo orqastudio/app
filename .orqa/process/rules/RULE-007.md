@@ -33,6 +33,8 @@ relationships:
     type: informed-by
   - target: RULE-039
     type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 All development commands MUST be invoked via `make` targets. Raw `cargo` and `npm run` commands are forbidden for tasks that have a `make` equivalent.
 

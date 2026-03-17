@@ -16,6 +16,8 @@ relationships:
   - target: EPIC-001
     type: evolves-into
   - target: PILLAR-001
+    type: informed-by
+  - target: PILLAR-001
     type: grounded-by
 ---
 ## Candidate Items

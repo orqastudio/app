@@ -20,27 +20,29 @@ relationships:
     type: grounded
     rationale: Class-based rune stores with explicit loading/error/empty states make frontend data flow predictable and inspectable
   - target: TASK-009
-    type: grounded
+    type: informs
   - target: TASK-026
-    type: grounded
+    type: informs
   - target: TASK-075
-    type: grounded
+    type: informs
   - target: TASK-076
-    type: grounded
+    type: informs
   - target: TASK-082
-    type: grounded
+    type: informs
   - target: TASK-083
-    type: grounded
+    type: informs
   - target: TASK-190
-    type: grounded
+    type: informs
   - target: TASK-421
-    type: grounded
+    type: informs
   - target: TASK-422
-    type: grounded
+    type: informs
   - target: TASK-471
-    type: grounded
+    type: informs
   - target: TASK-473
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 

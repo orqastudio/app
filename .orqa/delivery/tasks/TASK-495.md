@@ -4,6 +4,11 @@ title: "Metadata panel icons, remove duplicate relationship fields, spacing (F43
 description: "Four metadata panel fixes: add icons to all metadata fields; exclude relationship-specific fields from the metadata panel (they belong only in the relationships section); reduce the gap between metadata and acceptance criteria; add a gap between acceptance criteria and body content."
 status: completed
 priority: P1
+scoring:
+  impact: 3
+  urgency: 3
+  complexity: 2
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 acceptance:

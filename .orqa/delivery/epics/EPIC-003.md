@@ -7,7 +7,11 @@ priority: P1
 created: 2026-03-07
 updated: 2026-03-07
 horizon: next
-scoring: null
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 3
+  dependencies: 2
 relationships:
   - target: MS-001
     type: delivers

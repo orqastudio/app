@@ -4,6 +4,11 @@ title: Fix rescan stale data — refresh graph before integrity scan
 description: Ensure the rescan button refreshes the artifact graph before running integrity checks so findings reflect current disk state.
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 1
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

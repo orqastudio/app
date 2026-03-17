@@ -16,6 +16,8 @@ relationships:
   - target: RULE-007
     type: informs
     rationale: Session management requires dev server lifecycle control using make targets
+  - target: PILLAR-001
+    type: informs
 ---
 
 Every session that performs work must leave the codebase in a clean, resumable state. Session state bridges the gap between context windows.

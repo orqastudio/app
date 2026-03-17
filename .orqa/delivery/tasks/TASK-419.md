@@ -4,6 +4,11 @@ title: Wire types + eslint-config into integrity validator + add tests
 description: "Update @orqastudio/integrity-validator to import types from @orqastudio/types, use @orqastudio/eslint-config, and add comprehensive unit tests for all 10 checks."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 3
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -26,11 +31,15 @@ relationships:
   - target: TASK-418
     type: depends-on
   - target: SKILL-033
-    type: grounded-by
+    type: informed-by
   - target: SKILL-034
-    type: grounded-by
+    type: informed-by
   - target: TASK-423
     type: depended-on-by
+  - target: SKILL-033
+    type: informed-by
+  - target: SKILL-034
+    type: informed-by
 ---
 
 ## Scope

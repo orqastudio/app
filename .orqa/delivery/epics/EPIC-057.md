@@ -8,7 +8,11 @@ created: 2026-03-12
 updated: 2026-03-12
 deadline: null
 horizon: null
-scoring: null
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 3
+  dependencies: 3
 relationships:
   - target: RES-047
     type: informed-by

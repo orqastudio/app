@@ -14,11 +14,13 @@ relationships:
   - type: merged-into
     target: EPIC-080
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-003
     type: grounded-by
   - target: AD-055
     type: merged-into
+  - target: PILLAR-001
+    type: grounded-by
 ---
 
 ## Motivation

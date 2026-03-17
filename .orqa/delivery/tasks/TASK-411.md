@@ -4,6 +4,11 @@ title: Add stop event handling to rule-engine.mjs
 description: "Extend the plugin's rule engine to evaluate enforcement entries with event: stop. Currently only file/bash events are processed. Stop events need different context (session-level, no file path) and must fire when the Stop hook runs."
 status: completed
 priority: P1
+scoring:
+  impact: 5
+  urgency: 5
+  complexity: 3
+  dependencies: 4
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -19,14 +24,18 @@ relationships:
     type: delivers
     rationale: Core task — enables stop event enforcement in CLI context
   - target: RULE-001
-    type: enforces
+    type: delivers
     rationale: RULE-001's permission-seeking enforcement entries depend on stop event support
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
   - target: SKILL-020
-    type: grounded-by
+    type: informed-by
   - target: TASK-414
     type: depended-on-by
+  - target: SKILL-011
+    type: informed-by
+  - target: SKILL-020
+    type: informed-by
 ---
 
 ## Scope

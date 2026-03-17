@@ -23,6 +23,8 @@ relationships:
     type: informed-by
   - target: RULE-026
     type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 Tool access per role enforces ownership boundaries defined in [RULE-001](RULE-001). A Reviewer that can Edit would be tempted to fix issues instead of reporting them. A Researcher that can Write would be tempted to create artifacts instead of investigating.
 

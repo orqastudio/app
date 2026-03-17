@@ -4,6 +4,11 @@ title: Investigate and suppress tao event loop warnings
 description: Investigate tao framework event loop warnings flooding the dev controller output. Determine if they indicate a real issue or can be safely filtered.
 status: completed
 priority: P3
+scoring:
+  impact: 1
+  urgency: 1
+  complexity: 1
+  dependencies: 1
 created: 2026-03-13
 updated: 2026-03-13
 assignee: null
@@ -15,9 +20,13 @@ relationships:
     type: delivers
     rationale: Theme H — framework warning noise from UAT
   - target: SKILL-032
-    type: grounded-by
+    type: informed-by
   - target: SKILL-006
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-006
+    type: informed-by
+  - target: SKILL-032
+    type: informed-by
 ---
 
 ## Scope

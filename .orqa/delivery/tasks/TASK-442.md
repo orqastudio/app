@@ -4,6 +4,11 @@ title: Health trend widget redesign
 description: Make health trends more prominent in the dashboard grid with better sparkline rendering.
 status: completed
 priority: P1
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 2
+  dependencies: 1
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

@@ -13,6 +13,8 @@ relationships:
   - target: "PILLAR-001"
     type: "grounded"
     rationale: "Four-layer enforcement (process gates, skill injection, linter delegation, prompt injection) makes rule compliance mechanically verifiable"
+  - target: PILLAR-001
+    type: informs
 ---
 
 # Rule Enforcement

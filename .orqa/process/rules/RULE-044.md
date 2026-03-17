@@ -43,6 +43,8 @@ relationships:
     type: enforces
   - target: AD-039
     type: enforces
+  - target: PILLAR-001
+    type: informs
 ---
 Core graph artifacts define how the artifact graph works, how agents traverse it, and how the structured thinking process operates. They are **firmware** — they ship with OrqaStudio and are not modified during normal project use.
 

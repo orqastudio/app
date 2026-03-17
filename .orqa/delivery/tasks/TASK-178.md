@@ -23,9 +23,9 @@ relationships:
   - target: TASK-183
     type: depends-on
   - target: SKILL-020
-    type: grounded-by
+    type: informed-by
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
   - target: TASK-180
     type: depended-on-by
   - target: TASK-184
@@ -34,6 +34,10 @@ relationships:
     type: depended-on-by
   - target: TASK-340
     type: depended-on-by
+  - target: SKILL-011
+    type: informed-by
+  - target: SKILL-020
+    type: informed-by
 ---
 
 ## What

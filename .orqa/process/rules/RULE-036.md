@@ -22,6 +22,8 @@ relationships:
   - target: AD-041
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-041
+  - target: PILLAR-001
+    type: informs
 ---
 The orchestrator's context window is a finite resource. Filling it with implementation details, full file contents, or raw agent output degrades coordination quality. These constraints are mandatory.
 

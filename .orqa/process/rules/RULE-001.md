@@ -30,20 +30,17 @@ relationships:
     type: informs
     rationale: Delegation protocol requires resolving agent capabilities to concrete tool names
   - target: IMPL-029
-    type: observes
+    type: informs
     rationale: Rule updated from lesson IMPL-029 (orchestrator creating artifacts directly instead of delegating to Writer)
   - target: IMPL-039
-    type: observes
+    type: informs
     rationale: Rule updated from lesson IMPL-039 (observation creation should be delegated to background Writer agents)
-  - target: TASK-411
-    type: enforced-by
-    rationale: Auto-generated inverse of enforced-by relationship from TASK-411
   - target: IMPL-039
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-039
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-039
   - target: IMPL-029
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-029
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-029
   - target: DOC-036
     type: informed-by
     rationale: Referenced in documentation page Artifact Framework
@@ -53,19 +50,14 @@ relationships:
   - target: DOC-069
     type: informed-by
     rationale: delegation.md operationalises this rule as the orchestrator's lookup table for delegation decisions
-  - target: DOC-069
-    type: enforced-by
-    rationale: delegation.md operationalises the delegation rule — inverse of enforces on DOC-069
-  - target: AD-048
-    type: enforced-by
   - target: IMPL-029
-    type: grounded
+    type: informs
   - target: IMPL-039
-    type: grounded
+    type: informs
   - target: IMPL-052
-    type: observes
+    type: informs
   - target: IMPL-052
-    type: grounded
+    type: informs
   - target: RULE-026
     type: informed-by
   - target: RULE-036
@@ -74,6 +66,12 @@ relationships:
     type: informed-by
   - target: RULE-040
     type: informed-by
+  - target: AD-048
+    type: enforces
+  - target: TASK-411
+    type: delivered-by
+  - target: PILLAR-001
+    type: informs
 ---
 The orchestrator coordinates. It does NOT implement. Every implementation task is delegated to a universal role with the appropriate skills loaded.
 

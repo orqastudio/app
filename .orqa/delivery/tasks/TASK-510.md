@@ -4,6 +4,11 @@ title: Replace hardcoded parent-child field references in integrity checks
 description: "Refactor the integrity check functions so they read the delivery type hierarchy from the project config instead of using hardcoded artifact type names such as 'epic' and 'milestone'. The checks must produce identical results for the current project while being driven entirely by config."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 3
+  dependencies: 3
 created: 2026-03-15
 updated: 2026-03-15
 horizon: active

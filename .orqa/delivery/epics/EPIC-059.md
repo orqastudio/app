@@ -8,7 +8,11 @@ created: 2026-03-13
 updated: 2026-03-13
 deadline: null
 horizon: null
-scoring: null
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 4
+  dependencies: 3
 rule-overrides:
   - "rule: RULE-003"
   - "rule: RULE-032"
@@ -121,7 +125,7 @@ relationships:
   - target: EPIC-058
     type: depends-on
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-002
     type: grounded-by
   - target: PILLAR-003
@@ -134,6 +138,8 @@ relationships:
     type: informed-by
   - target: RULE-045
     type: informed-by
+  - target: PILLAR-001
+    type: grounded-by
 ---
 ## Context
 

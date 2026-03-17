@@ -21,25 +21,27 @@ relationships:
     type: grounded
     rationale: Service anatomy and command delegation patterns enforce clear separation between business logic and framework wiring
   - target: TASK-007
-    type: grounded
+    type: informs
   - target: TASK-008
-    type: grounded
+    type: informs
   - target: TASK-024
-    type: grounded
+    type: informs
   - target: TASK-025
-    type: grounded
+    type: informs
   - target: TASK-073
-    type: grounded
+    type: informs
   - target: TASK-176
-    type: grounded
+    type: informs
   - target: TASK-188
-    type: grounded
+    type: informs
   - target: TASK-189
-    type: grounded
+    type: informs
   - target: TASK-415
-    type: grounded
+    type: informs
   - target: TASK-416
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 

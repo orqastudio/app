@@ -15,13 +15,13 @@ relationships:
     type: informed-by
     rationale: "Automated observation logging should not block the orchestrator — background delegation is the mechanism"
   - target: RULE-001
-    type: observes
+    type: informs
     rationale: "Agent delegation rule — the orchestrator coordinates, it does not implement. Artifact creation is implementation even for governance artifacts when it can be parallelized"
   - target: RULE-001
-    type: grounded-by
+    type: informed-by
     rationale: "Lesson promoted to RULE-001 — observation creation should be delegated to background Writer agents"
   - target: RULE-001
-    type: observed-by
+    type: informed-by
     rationale: "RULE-001 codified the delegation of observation creation to Writer agents first observed in this lesson"
 ---
 

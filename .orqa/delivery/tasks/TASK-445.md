@@ -4,6 +4,11 @@ title: Implement toast notification system
 description: "Install and configure a toast notification library with configurable position, duration, and severity levels."
 status: completed
 priority: P2
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 2
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

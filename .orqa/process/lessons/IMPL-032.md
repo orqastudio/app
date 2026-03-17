@@ -12,10 +12,10 @@ relationships:
     type: informed-by
     rationale: "Capability configuration defines WHAT is available — this observation addresses ensuring agents and skills know HOW to use what's available"
   - target: RULE-026
-    type: observes
+    type: informs
     rationale: "Skill enforcement requires agents to load skills — plugin installation must make provider-specific skills available for loading"
   - target: RULE-040
-    type: observes
+    type: informs
     rationale: "Capability resolution feeds into agent definitions — plugin installation must update agent capabilities"
 ---
 

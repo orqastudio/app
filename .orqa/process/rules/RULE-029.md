@@ -29,6 +29,8 @@ relationships:
     type: informed-by
   - target: RULE-007
     type: informed-by
+  - target: PILLAR-002
+    type: informs
 ---
 **Source of Truth:** This file defines testing patterns. `.orqa/documentation/development/coding-standards.md` defines coverage requirements.
 

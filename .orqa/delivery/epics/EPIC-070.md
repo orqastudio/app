@@ -4,6 +4,11 @@ title: Dynamic artifact tables and schema validation enhancements
 description: "Injectable dynamic tables in markdown (tasks table on epics, epics on milestones), body template validation, and schema evolution (new relationship types, personas)."
 status: completed
 priority: P2
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 3
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 deadline: null
@@ -33,8 +38,10 @@ relationships:
   - target: EPIC-067
     type: depends-on
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-003
+    type: grounded-by
+  - target: PILLAR-001
     type: grounded-by
 ---
 ## Context

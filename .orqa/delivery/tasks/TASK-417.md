@@ -4,6 +4,11 @@ title: "Create @orqastudio/types package"
 description: "Extract all 13 type files from ui/src/lib/types/ into a standalone @orqastudio/types package. Include shared constants (INVERSE_MAP, SINGLE_REF_FIELDS, ARRAY_REF_FIELDS). Set up GitHub repo, CI, and GitHub Packages publishing."
 status: completed
 priority: P1
+scoring:
+  impact: 5
+  urgency: 5
+  complexity: 3
+  dependencies: 5
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -21,11 +26,13 @@ relationships:
     type: informed-by
     rationale: Research confirmed all type files are fully portable
   - target: SKILL-034
-    type: grounded-by
+    type: informed-by
   - target: TASK-419
     type: depended-on-by
   - target: TASK-420
     type: depended-on-by
+  - target: SKILL-034
+    type: informed-by
 ---
 
 ## Scope

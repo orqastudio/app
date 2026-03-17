@@ -18,15 +18,17 @@ relationships:
     type: grounded
     rationale: JSON Schema validation of frontmatter ensures every artifact conforms to its type contract, preventing malformed graph edges
   - target: TASK-172
-    type: grounded
+    type: informs
   - target: TASK-183
-    type: grounded
+    type: informs
   - target: TASK-409
-    type: grounded
+    type: informs
   - target: TASK-474
-    type: grounded
+    type: informs
   - target: AGENT-008
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 How to create valid `.orqa/` artifacts and fix schema validation failures. Enforced by [RULE-032](RULE-032) via the pre-commit hook at `.githooks/validate-schema.mjs`.

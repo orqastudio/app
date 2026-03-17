@@ -29,10 +29,10 @@ relationships:
     type: informs
     rationale: Coding standards document is the source of truth that must be read before writing code
   - target: IMPL-047
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-047
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-047
   - target: AGENT-008
-    type: enforces
+    type: informs
     rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
   - target: RULE-002
     type: informed-by
@@ -50,6 +50,12 @@ relationships:
     type: informed-by
   - target: RULE-027
     type: informed-by
+  - target: AGENT-008
+    type: informs
+  - target: AGENT-008
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 ## Principle
 

@@ -9,7 +9,7 @@ maturity: observation
 recurrence: 1
 relationships:
   - target: RULE-045
-    type: observes
+    type: informs
     rationale: Bidirectional relationship system created duplicates instead of proper inverses
 ---
 

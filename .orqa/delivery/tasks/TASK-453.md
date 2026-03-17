@@ -4,6 +4,11 @@ title: Audit and reorder documentation for reading flow
 description: "Reorder documentation within each category for structured reading — fundamentals first, specifics later."
 status: completed
 priority: P2
+scoring:
+  impact: 2
+  urgency: 1
+  complexity: 2
+  dependencies: 1
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

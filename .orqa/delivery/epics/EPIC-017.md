@@ -7,7 +7,11 @@ priority: P2
 created: 2026-03-07
 updated: 2026-03-12
 horizon: null
-scoring: null
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 4
+  dependencies: 3
 relationships:
   - target: MS-002
     type: delivers
@@ -18,8 +22,10 @@ relationships:
   - target: MS-001
     type: delivers
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-002
+    type: grounded-by
+  - target: PILLAR-001
     type: grounded-by
 ---
 **Note:** Two deliverables from this epic were deferred:

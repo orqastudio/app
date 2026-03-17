@@ -9,10 +9,10 @@ maturity: observation
 recurrence: 1
 relationships:
   - target: RULE-015
-    type: observes
+    type: informs
     rationale: "Honest reporting includes respecting the user's capacity to process information — a wall of decisions is not honest communication, it's a context dump"
   - target: PILLAR-001
-    type: observes
+    type: informs
     rationale: "Clarity Through Structure — structuring decisions sequentially is clearer than presenting them all at once"
   - target: IMPL-041
     type: informs

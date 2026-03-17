@@ -8,6 +8,11 @@ description: >
   hardcoded scripts.
 status: captured
 priority: P2
+scoring:
+  impact: 3
+  urgency: 1
+  complexity: 3
+  dependencies: 1
 created: 2026-03-16
 updated: 2026-03-16
 horizon: next
@@ -20,6 +25,8 @@ relationships:
     rationale: Requires schema-driven enforcement infrastructure
   - target: MS-002
     type: delivers
+  - target: PILLAR-001
+    type: informed-by
   - target: PILLAR-001
     type: grounded-by
 ---

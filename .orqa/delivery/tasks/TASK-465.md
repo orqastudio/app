@@ -4,6 +4,11 @@ title: Define Governance Steward agent
 description: Create a specialist agent definition for all .orqa/ artifact creation and maintenance. The orchestrator delegates governance work to this agent instead of writing artifacts directly.
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 2
+  dependencies: 3
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -25,11 +30,15 @@ relationships:
   - target: TASK-463
     type: depends-on
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
   - target: SKILL-037
-    type: grounded-by
+    type: informed-by
   - target: TASK-466
     type: depended-on-by
+  - target: SKILL-011
+    type: informed-by
+  - target: SKILL-037
+    type: informed-by
 ---
 
 ## Scope

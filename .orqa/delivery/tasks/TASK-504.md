@@ -4,6 +4,11 @@ title: Add status validation to artifact graph integrity checks
 description: "Extend the artifact graph integrity scan to validate every artifact's status field against the valid enum values defined in project.json. Invalid statuses are reported as integrity errors with the artifact ID and the offending value. An auto-fix suggestion derives the closest valid status from a migration map."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 2
+  dependencies: 3
 created: 2026-03-15
 updated: 2026-03-15
 horizon: active

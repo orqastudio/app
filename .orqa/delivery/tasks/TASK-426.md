@@ -4,6 +4,11 @@ title: Initial publish of tier-0 packages to GitHub Packages
 description: "Create GitHub releases for types, eslint-config, and test-config to trigger the publish workflows. These have no orqa dependencies so they can be published first."
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 5
+  complexity: 1
+  dependencies: 4
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -22,9 +27,11 @@ relationships:
   - target: TASK-425
     type: depends-on
   - target: SKILL-034
-    type: grounded-by
+    type: informed-by
   - target: TASK-427
     type: depended-on-by
+  - target: SKILL-034
+    type: informed-by
 ---
 
 ## Scope

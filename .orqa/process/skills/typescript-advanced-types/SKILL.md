@@ -13,27 +13,29 @@ relationships:
     type: grounded
     rationale: Generics, conditional types, and mapped types encode domain constraints at compile time, making invalid states unrepresentable
   - target: TASK-075
-    type: grounded
+    type: informs
   - target: TASK-078
-    type: grounded
+    type: informs
   - target: TASK-417
-    type: grounded
+    type: informs
   - target: TASK-418
-    type: grounded
+    type: informs
   - target: TASK-419
-    type: grounded
+    type: informs
   - target: TASK-420
-    type: grounded
+    type: informs
   - target: TASK-424
-    type: grounded
+    type: informs
   - target: TASK-425
-    type: grounded
+    type: informs
   - target: TASK-426
-    type: grounded
+    type: informs
   - target: TASK-427
-    type: grounded
+    type: informs
   - target: TASK-428
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 

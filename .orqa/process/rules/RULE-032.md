@@ -32,14 +32,20 @@ relationships:
     type: informed-by
     rationale: artifact-framework.md defines the artifact schemas and frontmatter contracts this rule validates
   - target: AGENT-008
-    type: enforces
+    type: informs
     rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
   - target: IMPL-067
-    type: observed-by
+    type: informed-by
   - target: RULE-034
     type: informed-by
   - target: RULE-044
     type: informed-by
+  - target: AGENT-008
+    type: informs
+  - target: AGENT-008
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 Every artifact in `.orqa/` must have YAML frontmatter that validates against the JSON Schema in its directory's `schema.json` file. Fields not defined in the schema are rejected. Required fields must be present. Enum fields must use valid values.
 

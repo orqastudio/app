@@ -10,7 +10,7 @@ relationships:
     type: informs
     rationale: Documentation page references AD-030
   - target: AGENT-003
-    type: grounded
+    type: informs
     rationale: Orchestrator is grounded by this document — product vision is injected as foundational context
   - target: DOC-064
     type: informs

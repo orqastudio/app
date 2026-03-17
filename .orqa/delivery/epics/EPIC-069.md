@@ -4,6 +4,11 @@ title: "Notification system — toast, in-app panel, desktop"
 description: "Design and implement a notification strategy covering toast messages, in-app notification panel, and desktop notifications. Determine which events use which channel."
 status: completed
 priority: P2
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 2
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 deadline: null

@@ -4,6 +4,11 @@ title: Migrate scope fields to relationships array (rules + skills)
 description: Replace scope fields on rules and skills with relationships array entries using scoped-to/scoped-by types.
 status: completed
 priority: P1
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 3
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null

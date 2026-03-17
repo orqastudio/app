@@ -27,6 +27,8 @@ relationships:
     type: informed-by
   - target: RULE-044
     type: informed-by
+  - target: PILLAR-002
+    type: informs
 ---
 # Dogfood Mode (CONDITIONAL — only when `dogfood: true`)
 

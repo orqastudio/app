@@ -12,16 +12,16 @@ relationships:
     type: informed-by
     rationale: "This is the enforcement side of the plugin-sidecar pairing observation — once pairing is declared, the system must enforce it"
   - target: IDEA-071
-    type: enforces
+    type: informs
     rationale: "Context filtering designed in TASK-307, implementation tracked by IDEA-071"
   - target: TASK-307
-    type: enforces
+    type: informs
     rationale: "TASK-307 designed the plugin context filtering mechanism that addresses this lesson"
   - target: IDEA-071
     type: informs
     rationale: "Lesson informs IDEA-071 — implementation of context-scoped plugin activation"
   - target: IDEA-071
-    type: grounded-by
+    type: informed-by
     rationale: "Promoted to this idea for implementation of context-scoped plugin activation"
   - target: IMPL-027
     type: informs

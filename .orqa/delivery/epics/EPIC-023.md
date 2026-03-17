@@ -7,7 +7,11 @@ priority: P2
 created: 2026-03-07
 updated: 2026-03-07
 horizon: next
-scoring: null
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 2
+  dependencies: 2
 relationships:
   - target: MS-002
     type: delivers
@@ -15,9 +19,11 @@ relationships:
   - target: EPIC-011
     type: depends-on
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: DOC-061
     type: informs
+  - target: PILLAR-001
+    type: grounded-by
 ---
 ## Tasks
 

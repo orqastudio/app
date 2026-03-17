@@ -19,7 +19,9 @@ relationships:
     type: grounded
     rationale: Root cause analysis captures failure patterns as reusable knowledge, turning each bug into a lesson that prevents recurrence
   - target: TASK-410
-    type: grounded
+    type: informs
+  - target: PILLAR-002
+    type: informs
 ---
 
 

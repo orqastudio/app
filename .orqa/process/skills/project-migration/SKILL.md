@@ -18,6 +18,8 @@ relationships:
   - target: PILLAR-001
     type: grounded
     rationale: Mapping existing AI tool configs into .orqa/ governance preserves prior decisions while making them visible and editable
+  - target: PILLAR-001
+    type: informs
 ---
 
 > **Forward-looking:** This skill will be activated when project initialisation is implemented. See [EPIC-045](EPIC-045) for context.

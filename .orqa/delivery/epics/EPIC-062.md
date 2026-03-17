@@ -8,7 +8,11 @@ created: 2026-03-13
 updated: 2026-03-13
 deadline: null
 horizon: next
-scoring: null
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 3
+  dependencies: 2
 rule-overrides: []
 relationships:
   - target: RES-046

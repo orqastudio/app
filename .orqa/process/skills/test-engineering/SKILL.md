@@ -19,11 +19,13 @@ relationships:
     type: grounded
     rationale: Behavior-focused tests with clear mock boundaries produce repeatable verification, turning each test failure into a documented regression signal
   - target: TASK-414
-    type: grounded
+    type: informs
   - target: TASK-419
-    type: grounded
+    type: informs
   - target: TASK-424
-    type: grounded
+    type: informs
+  - target: PILLAR-002
+    type: informs
 ---
 
 

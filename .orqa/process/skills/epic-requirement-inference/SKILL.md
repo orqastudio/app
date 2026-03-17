@@ -15,6 +15,8 @@ relationships:
   - target: PILLAR-001
     type: grounded
     rationale: Automatically configures task-to-epic linkage requirements based on project signals, ensuring workflow governance matches project complexity
+  - target: PILLAR-001
+    type: informs
 ---
 
 Determines whether a project should require epic linkage for all tasks

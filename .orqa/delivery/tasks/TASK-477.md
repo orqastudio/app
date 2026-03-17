@@ -4,6 +4,11 @@ title: Documentation reorg research and redundant badge removal
 description: "Complete RES-063 research (doc chapter structure, migration plan, missing how-to content). Remove redundant category badge from doc list panel."
 status: completed
 priority: P2
+scoring:
+  impact: 2
+  urgency: 2
+  complexity: 2
+  dependencies: 2
 created: 2026-03-14
 updated: 2026-03-14
 assignee: null
@@ -19,7 +24,11 @@ relationships:
     type: informed-by
     rationale: Research doc drives the restructuring plan
   - target: SKILL-037
-    type: grounded-by
+    type: informed-by
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
+  - target: SKILL-011
+    type: informed-by
+  - target: SKILL-037
+    type: informed-by
 ---

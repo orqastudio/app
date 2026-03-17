@@ -4,6 +4,11 @@ title: "Documentation improvements — content, ordering, rendering"
 description: "Fix docs navigation (no status for docs), populate Guide section, audit doc ordering for reading flow, add mermaid/PlantUML rendering, and review doc-to-artifact relationships."
 status: completed
 priority: P2
+scoring:
+  impact: 3
+  urgency: 2
+  complexity: 2
+  dependencies: 1
 created: 2026-03-14
 updated: 2026-03-14
 deadline: null

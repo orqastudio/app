@@ -4,6 +4,11 @@ title: Package ecosystem extraction for plugin portability
 description: "Extract types, integrity validator, eslint config, and SDK into standalone @orqastudio/ npm packages hosted on GitHub Packages. Gives plugins parity access to the frontend-backend connection, artifact graph, and code standards."
 status: completed
 priority: P1
+scoring:
+  impact: 5
+  urgency: 4
+  complexity: 4
+  dependencies: 5
 created: 2026-03-14
 updated: 2026-03-14
 deadline: null

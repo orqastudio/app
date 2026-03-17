@@ -22,31 +22,57 @@ capabilities:
 subagent_mapping: null
 relationships:
   - target: SKILL-005
-    type: grounded-by
+    type: informed-by
   - target: SKILL-008
-    type: grounded-by
+    type: informed-by
   - target: SKILL-011
-    type: grounded-by
+    type: informed-by
   - target: SKILL-037
-    type: grounded-by
+    type: informed-by
   - target: SKILL-039
-    type: grounded-by
+    type: informed-by
   - target: SKILL-050
-    type: grounded-by
+    type: informed-by
   - target: RULE-004
-    type: enforced-by
+    type: informed-by
   - target: RULE-008
-    type: enforced-by
+    type: informed-by
   - target: RULE-016
-    type: enforced-by
+    type: informed-by
   - target: RULE-021
-    type: enforced-by
+    type: informed-by
   - target: RULE-032
-    type: enforced-by
+    type: informed-by
   - target: RULE-034
-    type: enforced-by
+    type: informed-by
   - target: RULE-045
-    type: enforced-by
+    type: informed-by
+  - target: RULE-004
+    type: informed-by
+  - target: RULE-008
+    type: informed-by
+  - target: RULE-016
+    type: informed-by
+  - target: RULE-021
+    type: informed-by
+  - target: RULE-032
+    type: informed-by
+  - target: RULE-034
+    type: informed-by
+  - target: RULE-045
+    type: informed-by
+  - target: SKILL-005
+    type: informed-by
+  - target: SKILL-008
+    type: informed-by
+  - target: SKILL-011
+    type: informed-by
+  - target: SKILL-037
+    type: informed-by
+  - target: SKILL-039
+    type: informed-by
+  - target: SKILL-050
+    type: informed-by
 ---
 
 ## Purpose

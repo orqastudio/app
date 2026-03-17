@@ -15,13 +15,15 @@ relationships:
     type: informs
     rationale: Both address source-of-truth alignment
   - target: RULE-003
-    type: grounded-by
+    type: informed-by
     rationale: Lesson promoted to RULE-003
   - target: DOC-055
     type: informed-by
     rationale: Referenced in documentation page Lesson Dashboard UI Spec
   - target: RULE-003
-    type: observed-by
+    type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 ## What Happened
 

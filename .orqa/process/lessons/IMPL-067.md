@@ -9,7 +9,7 @@ maturity: observation
 recurrence: 1
 relationships:
   - target: RULE-032
-    type: observes
+    type: informs
     rationale: Schema validation should catch malformed frontmatter structure
 ---
 

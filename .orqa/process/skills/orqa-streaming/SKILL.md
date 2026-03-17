@@ -20,19 +20,25 @@ relationships:
     type: grounded
     rationale: NDJSON protocol with typed ProviderEvent/StreamEvent makes every stage of the LLM-to-UI pipeline observable and debuggable
   - target: AD-009
-    type: grounded-by
+    type: informs
     rationale: Auto-generated inverse of practices relationship from AD-009
   - target: AD-007
-    type: grounded-by
+    type: informs
     rationale: Auto-generated inverse of practices relationship from AD-007
   - target: TASK-020
-    type: grounded
+    type: informs
   - target: TASK-022
-    type: grounded
+    type: informs
   - target: TASK-023
-    type: grounded
+    type: informs
   - target: TASK-028
-    type: grounded
+    type: informs
+  - target: AD-007
+    type: informed-by
+  - target: AD-009
+    type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 OrqaStudio streams Claude conversations through a multi-layer pipeline. Understanding this pipeline is critical for anyone touching streaming, tool execution, or the sidecar.
 

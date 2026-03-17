@@ -13,20 +13,17 @@ gate:
   - "Is the gap between declared intent and actual enforcement visible and shrinking?"
 relationships:
   - target: RULE-046
-    type: grounded-by
+    type: informed-by
     rationale: "Auto-generated inverse of grounded-by relationship from RULE-046"
   - target: IMPL-050
-    type: observed-by
-    rationale: "Auto-generated inverse of observed-by relationship from IMPL-050"
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from IMPL-050"
   - target: IDEA-065
     type: informs
     rationale: "Friction-as-feature question resolved — absorbed into this pillar rather than becoming a separate one"
   - target: IMPL-065
-    type: observed-by
-    rationale: "Auto-generated inverse of observed-by relationship from IMPL-065"
-  - target: AGENT-003
-    type: grounded
-    rationale: Orchestrator is grounded by this pillar — Purpose Through Continuity is injected as foundational context
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from IMPL-065"
   - target: DOC-064
     type: informs
     rationale: Purpose Through Continuity pillar is distilled into the product-purpose grounding document — inverse of informed-by on DOC-064
@@ -34,8 +31,8 @@ relationships:
     type: informs
     rationale: "Auto-generated inverse of informs relationship from IDEA-096"
   - target: IMPL-066
-    type: observed-by
-    rationale: "Auto-generated inverse of observed-by relationship from IMPL-066"
+    type: informed-by
+    rationale: "Auto-generated inverse of informed-by relationship from IMPL-066"
   - target: RES-064
     type: informs
     rationale: "Auto-generated inverse of informs relationship from RES-064"
@@ -57,6 +54,18 @@ relationships:
   - target: DOC-069
     type: informs
     rationale: Correct delegation keeps the orchestrator focused on coordination across sessions
+  - target: AD-050
+    type: informed-by
+  - target: AD-051
+    type: informed-by
+  - target: AD-054
+    type: informed-by
+  - target: PILLAR-001
+    type: informed-by
+  - target: PILLAR-002
+    type: informed-by
+  - target: AGENT-003
+    type: grounded
   - target: EPIC-059
     type: grounded
   - target: EPIC-060
@@ -72,6 +81,8 @@ relationships:
   - target: EPIC-070
     type: grounded
   - target: EPIC-072
+    type: grounded
+  - target: EPIC-073
     type: grounded
   - target: EPIC-074
     type: grounded
@@ -111,18 +122,16 @@ relationships:
     type: grounded
   - target: IDEA-105
     type: grounded
+  - target: IDEA-082
+    type: informs
   - target: AD-050
     type: grounded-by
   - target: AD-051
     type: grounded-by
   - target: AD-054
     type: grounded-by
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: informed-by
-  - target: EPIC-073
-    type: grounded
+  - target: RULE-046
+    type: grounded-by
 ---
 ## What This Pillar Means
 

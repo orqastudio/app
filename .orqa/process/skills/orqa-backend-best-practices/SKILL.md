@@ -18,13 +18,15 @@ relationships:
     type: grounded
     rationale: Establishes composability and error handling principles that make backend code consistent and reviewable
   - target: TASK-176
-    type: grounded
+    type: informs
   - target: TASK-188
-    type: grounded
+    type: informs
   - target: TASK-189
-    type: grounded
+    type: informs
   - target: TASK-190
-    type: grounded
+    type: informs
+  - target: PILLAR-001
+    type: informs
 ---
 
 This skill ensures every backend agent has the right mental model before writing code. It does not duplicate content from deeper skills — it establishes principles and points to the right references.

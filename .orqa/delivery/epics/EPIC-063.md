@@ -8,7 +8,11 @@ created: 2026-03-13
 updated: 2026-03-14
 deadline: null
 horizon: active
-scoring: null
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 3
+  dependencies: 3
 relationships:
   - target: EPIC-060
     type: informs
@@ -17,8 +21,8 @@ relationships:
     type: informs
     rationale: Theme D findings extracted into dedicated artifact viewer epic
   - target: IMPL-053
-    type: observed-by
-    rationale: Auto-generated inverse of observed-by relationship from IMPL-053
+    type: informed-by
+    rationale: Auto-generated inverse of informed-by relationship from IMPL-053
   - target: IDEA-089
     type: informed-by
     rationale: Auto-generated inverse of informed-by relationship from IDEA-089
@@ -73,11 +77,13 @@ relationships:
   - target: EPIC-060
     type: depends-on
   - target: PILLAR-001
-    type: grounded-by
+    type: informed-by
   - target: PILLAR-002
     type: grounded-by
   - target: DOC-060
     type: informs
+  - target: PILLAR-001
+    type: grounded-by
 ---
 ## UAT Findings Summary
 

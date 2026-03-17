@@ -24,6 +24,8 @@ relationships:
     rationale: Use search_regex to find all usages of an identifier before renaming or removing it
   - target: RULE-003
     type: informed-by
+  - target: PILLAR-001
+    type: informs
 ---
 When a value or type mismatch exists between layers, fix the root cause. Never paper over it with aliases, shims, or duplicate mappings.
 

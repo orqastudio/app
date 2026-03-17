@@ -15,6 +15,8 @@ relationships:
   - type: merged-into
     target: AD-055
   - target: PILLAR-001
+    type: informed-by
+  - target: PILLAR-001
     type: grounded-by
 ---
 n> **Surpassed 2026-03-16**: Core vs plugin artifact split fully captured in AD-055. Implementation details covered in EPIC-080 Phase 2.

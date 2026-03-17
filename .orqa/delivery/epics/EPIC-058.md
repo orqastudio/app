@@ -8,7 +8,11 @@ created: 2026-03-12
 updated: 2026-03-12
 deadline: null
 horizon: null
-scoring: null
+scoring:
+  impact: 5
+  urgency: 5
+  complexity: 4
+  dependencies: 4
 rule-overrides:
   - "rule: RULE-032"
   - "rule: RULE-004"

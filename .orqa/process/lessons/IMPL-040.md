@@ -15,13 +15,13 @@ relationships:
     type: informed-by
     rationale: "Periodic zoom-outs are related — both are about maintaining user orientation during extended sessions"
   - target: RULE-004
-    type: observes
+    type: informs
     rationale: "The human gate on epic completion requires user attention — decisions that scroll away undermine this gate"
   - target: TASK-310
-    type: enforces
+    type: informs
     rationale: "TASK-310 implemented memory-based AD injection ensuring decisions persist across context compaction"
   - target: TASK-310
-    type: grounded-by
+    type: informed-by
     rationale: "Promoted to this task which implemented memory-based AD injection for decision persistence"
 ---
 
