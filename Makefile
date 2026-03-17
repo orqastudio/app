@@ -4,7 +4,7 @@
 
 CARGO_MANIFEST := backend/src-tauri/Cargo.toml
 
-.PHONY: install install-sidecar \
+.PHONY: install \
         build build-frontend build-sidecar \
         check format format-check lint lint-backend lint-frontend typecheck \
         test test-rust test-frontend coverage-rust coverage-frontend test-watch test-e2e \
@@ -15,13 +15,9 @@ CARGO_MANIFEST := backend/src-tauri/Cargo.toml
 
 # ── Setup ────────────────────────────────────────────────────────────────────
 
-install: ## Install all dependencies (npm + sidecar + cargo)
+install: ## Install all dependencies (npm + cargo)
 	cd ui && npm install
-	cd sidecars/claude-agentsdk-sidecar && bun install
 	cargo fetch --manifest-path $(CARGO_MANIFEST)
-
-install-sidecar: ## Install sidecar dependencies
-	cd sidecars/claude-agentsdk-sidecar && bun install
 
 # ── Build ─────────────────────────────────────────────────────────────────────
 
@@ -31,8 +27,8 @@ build: ## Production build (cargo tauri build)
 build-frontend: ## Build frontend only
 	cd ui && npm run build
 
-build-sidecar: ## Build sidecar for production
-	cd sidecars/claude-agentsdk-sidecar && bun run build
+build-sidecar: ## Build sidecar from claude integration plugin
+	cd ../plugins/claude-integration/sidecar && bun install && bun run build
 
 # ── Quality ──────────────────────────────────────────────────────────────────
 
