@@ -66,8 +66,8 @@ export interface SidecarRegistration {
 	requires?: SystemRequirement[];
 }
 
-/** A one-shot tool (CLI command) provided by a plugin. */
-export interface ToolRegistration {
+/** A one-shot CLI tool (command) provided by a plugin. */
+export interface CliToolRegistration {
 	/** Unique tool key (e.g. "integrity-check", "eslint"). */
 	key: string;
 	/** Display label. */
@@ -85,6 +85,9 @@ export interface ToolRegistration {
 	/** Endpoint for AD-042 verification snapshots. */
 	dataEndpoint?: string;
 }
+
+/** @deprecated Use `CliToolRegistration` instead. */
+export type ToolRegistration = CliToolRegistration;
 
 /** A hook provided by a plugin, triggered on specific events. */
 export interface HookRegistration {
@@ -250,8 +253,10 @@ export interface PluginProvides {
 	relationships: RelationshipType[];
 	/** Long-running sidecar process (at most one per plugin). */
 	sidecar?: SidecarRegistration;
-	/** One-shot tools (CLI commands) this plugin provides. */
-	tools?: ToolRegistration[];
+	/** One-shot CLI tools (commands) this plugin provides. */
+	cliTools?: CliToolRegistration[];
+	/** @deprecated Use `cliTools` instead. */
+	tools?: CliToolRegistration[];
 	/** Hooks triggered on specific events. */
 	hooks?: HookRegistration[];
 }
@@ -308,11 +313,11 @@ export interface ProviderConfig {
 }
 
 // ---------------------------------------------------------------------------
-// Tool Runner Results (returned by Tauri commands)
+// CLI Tool Runner Results (returned by Tauri commands)
 // ---------------------------------------------------------------------------
 
-/** Result of executing a plugin-registered tool. */
-export interface ToolRunResult {
+/** Result of executing a plugin-registered CLI tool. */
+export interface CliToolRunResult {
 	/** Plugin that owns the tool. */
 	plugin: string;
 	/** Tool key. */
@@ -329,8 +334,11 @@ export interface ToolRunResult {
 	completed_at: number;
 }
 
-/** Status snapshot for a registered tool. */
-export interface ToolRunStatus {
+/** @deprecated Use `CliToolRunResult` instead. */
+export type ToolRunResult = CliToolRunResult;
+
+/** Status snapshot for a registered CLI tool. */
+export interface CliToolRunStatus {
 	/** Tool key. */
 	tool_key: string;
 	/** Plugin that owns the tool. */
@@ -345,6 +353,95 @@ export interface ToolRunStatus {
 	last_duration_ms: number | null;
 	/** Human-readable summary. */
 	summary: string | null;
+}
+
+/** @deprecated Use `CliToolRunStatus` instead. */
+export type ToolRunStatus = CliToolRunStatus;
+
+// ---------------------------------------------------------------------------
+// Plugin Registry & Distribution Types
+// ---------------------------------------------------------------------------
+
+/** A plugin entry in a registry catalog (official or community). */
+export interface RegistryEntry {
+	/** Package name (e.g. "@orqastudio/plugin-claude"). */
+	name: string;
+	/** Human-readable display name. */
+	displayName: string;
+	/** Short description. */
+	description: string;
+	/** GitHub repo (owner/repo format). */
+	repo: string;
+	/** Plugin category for browsing. */
+	category: string;
+	/** Lucide icon name. */
+	icon: string;
+	/** Capabilities this plugin provides. */
+	capabilities: string[];
+	/** System requirements. */
+	requires?: Record<string, string>;
+}
+
+/** A registry catalog fetched from GitHub. */
+export interface RegistryCatalog {
+	/** Schema version. */
+	version: number;
+	/** Source identifier ("official" or "community"). */
+	source: string;
+	/** Plugin entries. */
+	plugins: RegistryEntry[];
+}
+
+/** A locked plugin version in plugins.lock.json. */
+export interface PluginLockEntry {
+	/** Plugin name. */
+	name: string;
+	/** Installed version. */
+	version: string;
+	/** GitHub repo source. */
+	repo: string;
+	/** SHA-256 hash of the installed archive. */
+	sha256: string;
+	/** Installation timestamp (ISO 8601). */
+	installedAt: string;
+}
+
+/** Progress event during plugin installation. */
+export interface PluginInstallProgress {
+	/** Current phase. */
+	phase: "downloading" | "extracting" | "validating" | "complete" | "error";
+	/** Progress percentage (0-100). */
+	percent: number;
+	/** Human-readable message. */
+	message: string;
+}
+
+/** Available update for an installed plugin. */
+export interface PluginUpdate {
+	/** Plugin name. */
+	name: string;
+	/** Currently installed version. */
+	currentVersion: string;
+	/** Latest available version. */
+	latestVersion: string;
+	/** GitHub repo source. */
+	repo: string;
+}
+
+/** A discovered plugin from scanning the plugins/ directory. */
+export interface DiscoveredPlugin {
+	/** Plugin name from manifest. */
+	name: string;
+	/** Plugin version. */
+	version: string;
+	/** Display name. */
+	displayName?: string;
+	/** Description. */
+	description?: string;
+	/** Filesystem path to the plugin directory. */
+	path: string;
+	/** Whether this plugin is from a lock file (installed) or local. */
+	source: "installed" | "local";
 }
 
 // ---------------------------------------------------------------------------
