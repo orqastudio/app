@@ -31,3 +31,6 @@
 [submodule "plugins/claude-plugin"]
 	path = plugins/claude-plugin
 	url = git@github.com:orqastudio/orqastudio-claude-plugin.git
+[submodule "tools/debug-tool"]
+	path = tools/debug-tool
+	url = git@github.com:orqastudio/orqastudio-debug-tool.git
