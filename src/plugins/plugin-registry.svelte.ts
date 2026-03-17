@@ -4,8 +4,9 @@
  * Uses Svelte 5 `$state` so that any component reading from the registry
  * re-renders automatically when plugins are registered or unregistered.
  *
- * Schema ownership is per-plugin. Views are looked up by (pluginSource, viewKey).
- * Conflicts are detected at registration time and surfaced to the caller.
+ * Schema and relationship ownership is per-plugin. Conflicts are detected
+ * at registration time — duplicate keys or incompatible from/to constraints
+ * cause registration to fail.
  */
 
 import { SvelteMap } from "svelte/reactivity";
@@ -36,12 +37,22 @@ export interface RegisteredPlugin {
 	widgets: Map<string, Component>;
 }
 
-/** A schema conflict between two plugins. */
-export interface SchemaConflict {
+/** A conflict detected during plugin registration. */
+export interface RegistrationConflict {
+	/** What kind of conflict: schema key, relationship key, or relationship constraint mismatch. */
+	type: "schema" | "relationship-key" | "relationship-constraint";
+	/** The conflicting key. */
 	key: string;
+	/** The plugin that already owns this key. */
 	existingPlugin: string;
+	/** The plugin trying to register. */
 	newPlugin: string;
+	/** Human-readable detail. */
+	detail: string;
 }
+
+/** @deprecated Use RegistrationConflict instead. */
+export type SchemaConflict = RegistrationConflict;
 
 // ---------------------------------------------------------------------------
 // Registry
@@ -54,11 +65,45 @@ export class PluginRegistry {
 	/** All artifact schemas keyed by type key → owning plugin name. */
 	private schemaOwnership = $state<SvelteMap<string, string>>(new SvelteMap());
 
+	/** All relationships keyed by relationship key → owning source ("platform" or plugin name). */
+	private relationshipOwnership = $state<SvelteMap<string, string>>(new SvelteMap());
+
+	/** All registered relationships keyed by key → full definition. */
+	private relationshipDefs = $state<SvelteMap<string, RelationshipType>>(new SvelteMap());
+
 	/** Provider routing configuration — set from project.json at startup. */
 	providerConfig = $state<ProviderConfig>({});
 
 	// -----------------------------------------------------------------------
-	// Registration
+	// Platform Registration
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Register platform (core.json) relationships as the baseline.
+	 * Must be called before any plugin registration.
+	 * Platform relationships cannot be overridden by plugins.
+	 */
+	registerPlatformRelationships(relationships: RelationshipType[]): void {
+		for (const rel of relationships) {
+			this.relationshipOwnership.set(rel.key, "platform");
+			this.relationshipOwnership.set(rel.inverse, "platform");
+			this.relationshipDefs.set(rel.key, rel);
+			// Store inverse as a derived definition
+			this.relationshipDefs.set(rel.inverse, {
+				key: rel.inverse,
+				inverse: rel.key,
+				label: rel.inverseLabel,
+				inverseLabel: rel.label,
+				from: rel.to,
+				to: rel.from,
+				description: rel.description,
+				semantic: rel.semantic,
+			});
+		}
+	}
+
+	// -----------------------------------------------------------------------
+	// Plugin Registration
 	// -----------------------------------------------------------------------
 
 	/**
@@ -66,8 +111,7 @@ export class PluginRegistry {
 	 *
 	 * @param manifest - The plugin manifest.
 	 * @param components - Map of component keys to Svelte components.
-	 *                     Keys should match view/widget keys from the manifest.
-	 * @throws If a required dependency is not loaded, or if there are unresolved schema conflicts.
+	 * @throws If dependencies unmet, schemas conflict, or relationships conflict.
 	 */
 	register(
 		manifest: PluginManifest,
@@ -101,14 +145,12 @@ export class PluginRegistry {
 			}
 		}
 
-		// Check schema conflicts
+		// Check all conflicts (schemas + relationships)
 		const conflicts = this.checkConflicts(manifest);
 		if (conflicts.length > 0) {
-			const msgs = conflicts.map(
-				(c) => `schema key "${c.key}" already owned by "${c.existingPlugin}"`,
-			);
+			const msgs = conflicts.map((c) => c.detail);
 			throw new Error(
-				`[PluginRegistry] Cannot register "${manifest.name}": ${msgs.join(", ")}`,
+				`[PluginRegistry] Cannot register "${manifest.name}": ${msgs.join("; ")}`,
 			);
 		}
 
@@ -130,6 +172,23 @@ export class PluginRegistry {
 			this.schemaOwnership.set(schema.key, manifest.name);
 		}
 
+		// Register relationships
+		for (const rel of manifest.provides.relationships) {
+			this.relationshipOwnership.set(rel.key, manifest.name);
+			this.relationshipOwnership.set(rel.inverse, manifest.name);
+			this.relationshipDefs.set(rel.key, rel);
+			this.relationshipDefs.set(rel.inverse, {
+				key: rel.inverse,
+				inverse: rel.key,
+				label: rel.inverseLabel,
+				inverseLabel: rel.label,
+				from: rel.to,
+				to: rel.from,
+				description: rel.description,
+				semantic: rel.semantic,
+			});
+		}
+
 		// Store registration
 		this.plugins.set(manifest.name, {
 			manifest,
@@ -139,7 +198,7 @@ export class PluginRegistry {
 	}
 
 	/**
-	 * Unregister a plugin and remove its schema ownership.
+	 * Unregister a plugin and remove its schema/relationship ownership.
 	 */
 	unregister(pluginName: string): void {
 		const plugin = this.plugins.get(pluginName);
@@ -152,6 +211,16 @@ export class PluginRegistry {
 			}
 		}
 
+		// Remove relationship ownership
+		for (const rel of plugin.manifest.provides.relationships) {
+			if (this.relationshipOwnership.get(rel.key) === pluginName) {
+				this.relationshipOwnership.delete(rel.key);
+				this.relationshipOwnership.delete(rel.inverse);
+				this.relationshipDefs.delete(rel.key);
+				this.relationshipDefs.delete(rel.inverse);
+			}
+		}
+
 		this.plugins.delete(pluginName);
 	}
 
@@ -161,7 +230,6 @@ export class PluginRegistry {
 
 	/**
 	 * Get the artifact schema for a given type key.
-	 * Searches across all registered plugins.
 	 */
 	getSchema(key: string): ArtifactSchema | null {
 		const owner = this.schemaOwnership.get(key);
@@ -207,14 +275,59 @@ export class PluginRegistry {
 	}
 
 	/**
-	 * Get all relationship types across all plugins.
+	 * Get all relationship types across platform + all plugins.
 	 */
 	get allRelationships(): RelationshipType[] {
+		const seen = new Set<string>();
 		const rels: RelationshipType[] = [];
-		for (const [, plugin] of this.plugins) {
-			rels.push(...plugin.manifest.provides.relationships);
+		for (const [key, rel] of this.relationshipDefs) {
+			// Only include forward keys (not inverses) to avoid duplicates
+			if (!seen.has(key) && !seen.has(rel.inverse)) {
+				rels.push(rel);
+				seen.add(key);
+				seen.add(rel.inverse);
+			}
 		}
 		return rels;
+	}
+
+	// -----------------------------------------------------------------------
+	// Relationship Resolution
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Get a relationship definition by key (forward or inverse).
+	 */
+	getRelationship(key: string): RelationshipType | null {
+		return this.relationshipDefs.get(key) ?? null;
+	}
+
+	/**
+	 * Get the owner of a relationship key ("platform" or plugin name).
+	 */
+	getRelationshipOwner(key: string): string | null {
+		return this.relationshipOwnership.get(key) ?? null;
+	}
+
+	/**
+	 * Validate that a relationship between two artifact types is allowed.
+	 * Returns null if valid, or an error message if invalid.
+	 */
+	validateRelationship(relationshipKey: string, fromType: string, toType: string): string | null {
+		const rel = this.relationshipDefs.get(relationshipKey);
+		if (!rel) {
+			return `unknown relationship key: "${relationshipKey}"`;
+		}
+
+		if (rel.from.length > 0 && !rel.from.includes(fromType)) {
+			return `"${relationshipKey}" cannot originate from type "${fromType}" — allowed: ${rel.from.join(", ")}`;
+		}
+
+		if (rel.to.length > 0 && !rel.to.includes(toType)) {
+			return `"${relationshipKey}" cannot target type "${toType}" — allowed: ${rel.to.join(", ")}`;
+		}
+
+		return null;
 	}
 
 	// -----------------------------------------------------------------------
@@ -287,20 +400,71 @@ export class PluginRegistry {
 	// -----------------------------------------------------------------------
 
 	/**
-	 * Check for schema key conflicts between an incoming manifest and existing registrations.
+	 * Check for all conflicts: schema keys, relationship keys, and
+	 * relationship constraint mismatches.
 	 */
-	checkConflicts(manifest: PluginManifest): SchemaConflict[] {
-		const conflicts: SchemaConflict[] = [];
+	checkConflicts(manifest: PluginManifest): RegistrationConflict[] {
+		const conflicts: RegistrationConflict[] = [];
+
+		// Schema key conflicts
 		for (const schema of manifest.provides.schemas) {
 			const existingOwner = this.schemaOwnership.get(schema.key);
 			if (existingOwner && existingOwner !== manifest.name) {
 				conflicts.push({
+					type: "schema",
 					key: schema.key,
 					existingPlugin: existingOwner,
 					newPlugin: manifest.name,
+					detail: `schema key "${schema.key}" already owned by "${existingOwner}"`,
 				});
 			}
 		}
+
+		// Relationship conflicts
+		for (const rel of manifest.provides.relationships) {
+			// Check forward key
+			const forwardOwner = this.relationshipOwnership.get(rel.key);
+			if (forwardOwner && forwardOwner !== manifest.name) {
+				// Key collision — check if it's the same definition or a conflict
+				const existing = this.relationshipDefs.get(rel.key);
+				if (existing) {
+					if (existing.inverse !== rel.inverse) {
+						conflicts.push({
+							type: "relationship-key",
+							key: rel.key,
+							existingPlugin: forwardOwner,
+							newPlugin: manifest.name,
+							detail: `relationship key "${rel.key}" already registered by "${forwardOwner}" with inverse "${existing.inverse}" (new: "${rel.inverse}")`,
+						});
+					} else if (!arraysEqual(existing.from, rel.from) || !arraysEqual(existing.to, rel.to)) {
+						conflicts.push({
+							type: "relationship-constraint",
+							key: rel.key,
+							existingPlugin: forwardOwner,
+							newPlugin: manifest.name,
+							detail: `relationship "${rel.key}" has conflicting type constraints — ` +
+								`existing: from [${existing.from}] to [${existing.to}], ` +
+								`new: from [${rel.from}] to [${rel.to}]`,
+						});
+					}
+					// If key, inverse, from, and to all match — it's a duplicate, not a conflict.
+					// Silently skip (idempotent re-registration is fine).
+				}
+			}
+
+			// Check inverse key collision
+			const inverseOwner = this.relationshipOwnership.get(rel.inverse);
+			if (inverseOwner && inverseOwner !== manifest.name && inverseOwner !== forwardOwner) {
+				conflicts.push({
+					type: "relationship-key",
+					key: rel.inverse,
+					existingPlugin: inverseOwner,
+					newPlugin: manifest.name,
+					detail: `relationship inverse key "${rel.inverse}" already registered by "${inverseOwner}"`,
+				});
+			}
+		}
+
 		return conflicts;
 	}
 
@@ -330,8 +494,7 @@ export class PluginRegistry {
 	}
 
 	/**
-	 * Build merged artifact config from the navigation tree.
-	 * For each nav item, resolves label/icon from platform types or plugin registrations.
+	 * Resolve a navigation item's label and icon from plugin registrations.
 	 */
 	resolveNavigationItem(item: NavigationItem): {
 		key: string;
@@ -341,7 +504,6 @@ export class PluginRegistry {
 		pluginSource?: string;
 	} {
 		if (item.type === "plugin" && item.pluginSource) {
-			// Try to resolve label from the plugin's view registration
 			const plugin = this.plugins.get(item.pluginSource);
 			if (plugin) {
 				const view = plugin.manifest.provides.views.find((v) => v.key === item.key);
@@ -354,7 +516,6 @@ export class PluginRegistry {
 						pluginSource: item.pluginSource,
 					};
 				}
-				// Also check schemas for artifact list views
 				const schema = plugin.manifest.provides.schemas.find((s) => s.key === item.key);
 				if (schema) {
 					return {
@@ -381,10 +542,6 @@ export class PluginRegistry {
 	// Provider Management
 	// -----------------------------------------------------------------------
 
-	/**
-	 * Get the currently active sidecar provider key.
-	 * Resolves from providerConfig, falling back to the first registered sidecar.
-	 */
 	get activeSidecarKey(): string | null {
 		if (this.providerConfig.activeSidecar) {
 			return this.providerConfig.activeSidecar;
@@ -393,19 +550,12 @@ export class PluginRegistry {
 		return first ? first.key : null;
 	}
 
-	/**
-	 * Get the active sidecar registration (resolved from config or first available).
-	 */
 	get activeSidecar(): SidecarRegistration | null {
 		const key = this.activeSidecarKey;
 		if (!key) return null;
 		return this.sidecarProviders.find((s) => s.key === key) ?? null;
 	}
 
-	/**
-	 * Set the active sidecar provider key.
-	 * Updates providerConfig — caller is responsible for persisting to project.json.
-	 */
 	setActiveSidecar(key: string): void {
 		this.providerConfig = {
 			...this.providerConfig,
@@ -413,9 +563,6 @@ export class PluginRegistry {
 		};
 	}
 
-	/**
-	 * Check if a plugin's sidecar requirements are satisfied by the active provider.
-	 */
 	isSidecarSatisfied(manifest: PluginManifest): boolean {
 		if (!manifest.requiresSidecar) return true;
 		const required = Array.isArray(manifest.requiresSidecar)
@@ -425,14 +572,18 @@ export class PluginRegistry {
 		return required.every((r) => available.includes(r));
 	}
 
-	/**
-	 * Get plugins that are blocked due to unsatisfied sidecar requirements.
-	 * Useful for showing which plugins need a specific provider to be installed.
-	 */
 	get blockedPlugins(): PluginManifest[] {
-		// This checks manifests that tried to register but couldn't —
-		// since failed registrations throw, this is for pre-checking manifests
-		// before registration. The caller should use isSidecarSatisfied() directly.
 		return [];
 	}
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function arraysEqual(a: string[], b: string[]): boolean {
+	if (a.length !== b.length) return false;
+	const sortedA = [...a].sort();
+	const sortedB = [...b].sort();
+	return sortedA.every((v, i) => v === sortedB[i]);
 }
