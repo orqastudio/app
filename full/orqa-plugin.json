@@ -1,0 +1,44 @@
+{
+  "$schema": "https://github.com/orqastudio/orqastudio-types/blob/main/schemas/orqa-plugin.json",
+  "name": "@yourorg/plugin-name",
+  "version": "0.1.0-dev",
+  "displayName": "Your Full Plugin",
+  "description": "A full plugin providing views, sidecar, CLI tools, and hooks.",
+  "provides": {
+    "schemas": [],
+    "views": [
+      {
+        "key": "my-view",
+        "label": "My View",
+        "icon": "layout-dashboard"
+      }
+    ],
+    "widgets": [],
+    "relationships": [],
+    "sidecar": {
+      "key": "my-provider",
+      "label": "My Provider",
+      "runtime": "node",
+      "entrypoint": "sidecar/dist/sidecar.js",
+      "requires": [{ "binary": "node", "minVersion": "20.0.0" }]
+    },
+    "cliTools": [
+      {
+        "key": "my-tool",
+        "label": "My Tool",
+        "icon": "wrench",
+        "runtime": "node",
+        "entrypoint": "dist/cli-tool.js",
+        "category": "custom"
+      }
+    ],
+    "hooks": [
+      {
+        "key": "my-hook",
+        "event": "artifact-change",
+        "runtime": "node",
+        "entrypoint": "dist/hook.js"
+      }
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://github.com/orqastudio/orqastudio-types/blob/main/schemas/orqa-plugin.json",
+  "name": "@yourorg/plugin-name",
+  "version": "0.1.0-dev",
+  "displayName": "Your Sidecar Plugin",
+  "description": "A sidecar plugin providing a long-running AI provider process.",
+  "provides": {
+    "schemas": [],
+    "views": [],
+    "widgets": [],
+    "relationships": [],
+    "sidecar": {
+      "key": "my-provider",
+      "label": "My Provider",
+      "runtime": "node",
+      "entrypoint": "dist/sidecar.js",
+      "requires": [{ "binary": "node", "minVersion": "20.0.0" }]
+    }
+  }
+}

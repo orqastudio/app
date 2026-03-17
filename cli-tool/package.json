@@ -1,0 +1,15 @@
+{
+  "name": "@yourorg/plugin-name",
+  "version": "0.1.0-dev",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@orqastudio/types": "dev"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@yourorg/plugin-name",
+  "version": "0.1.0-dev",
+  "type": "module",
+  "scripts": {
+    "build": "svelte-package",
+    "dev": "svelte-package --watch"
+  },
+  "peerDependencies": {
+    "@orqastudio/types": "dev",
+    "@orqastudio/sdk": "dev",
+    "svelte": "^5.0.0"
+  },
+  "devDependencies": {
+    "svelte": "^5.0.0",
+    "@sveltejs/package": "^2.0.0",
+    "typescript": "^5.7.0"
+  }
+}
