@@ -2,7 +2,7 @@
   "name": "@orqastudio/plugin-software-project",
   "version": "0.1.0-dev",
   "displayName": "Software Project",
-  "description": "Software development delivery types and relationships — milestones, epics, tasks, dependency tracking, and the delivery hierarchy.",
+  "description": "Software development lifecycle — delivery planning with milestones, epics and tasks, research discovery, roadmap views, and delivery pipeline widgets.",
   "provides": {
     "schemas": [
       {
@@ -14,7 +14,7 @@
         "idPrefix": "MS",
         "frontmatter": {
           "required": ["id", "type", "status"],
-          "optional": ["name", "description", "gate", "priority", "relationships"]
+          "optional": ["name", "description", "gate", "priority", "target_date", "relationships"]
         },
         "statusTransitions": {
           "captured": ["exploring", "ready", "prioritised"],
@@ -72,10 +72,66 @@
           "review": ["completed", "active"],
           "completed": ["surpassed"]
         }
+      },
+      {
+        "key": "research",
+        "label": "Research",
+        "plural": "Research",
+        "icon": "flask-conical",
+        "defaultPath": ".orqa/discovery/research",
+        "idPrefix": "RES",
+        "frontmatter": {
+          "required": ["id", "type", "status"],
+          "optional": ["name", "description", "methodology", "relationships"]
+        },
+        "statusTransitions": {
+          "captured": ["exploring", "active"],
+          "exploring": ["active", "hold"],
+          "active": ["review", "hold"],
+          "hold": ["active", "exploring"],
+          "review": ["completed", "active"],
+          "completed": ["surpassed", "archived"]
+        }
+      },
+      {
+        "key": "wireframe",
+        "label": "Wireframe",
+        "plural": "Wireframes",
+        "icon": "layout",
+        "defaultPath": ".orqa/discovery/wireframes",
+        "idPrefix": "WF",
+        "frontmatter": {
+          "required": ["id", "type", "status"],
+          "optional": ["name", "description", "relationships"]
+        },
+        "statusTransitions": {
+          "captured": ["exploring", "active"],
+          "exploring": ["active", "review"],
+          "active": ["review", "hold"],
+          "review": ["completed", "active"],
+          "completed": ["surpassed", "archived"]
+        }
       }
     ],
-    "views": [],
-    "widgets": [],
+    "views": [
+      { "key": "roadmap", "label": "Roadmap", "icon": "kanban" }
+    ],
+    "widgets": [
+      {
+        "key": "pipeline",
+        "label": "Delivery Pipeline",
+        "icon": "git-branch",
+        "defaultPosition": { "row": 0, "col": 0 },
+        "defaultSpan": { "rows": 1, "cols": 2 }
+      },
+      {
+        "key": "milestone-context",
+        "label": "Milestone Context",
+        "icon": "flag",
+        "defaultPosition": { "row": 0, "col": 2 },
+        "defaultSpan": { "rows": 1, "cols": 1 }
+      }
+    ],
     "relationships": [
       {
         "key": "depends-on",
@@ -88,18 +144,27 @@
         "semantic": "dependency"
       }
     ],
-    "sidecar": null,
     "cliTools": [],
     "hooks": []
   },
-  "settings": null,
   "defaultNavigation": [
+    {
+      "key": "discovery",
+      "type": "group",
+      "icon": "compass",
+      "label": "Discovery",
+      "children": [
+        { "key": "research", "type": "plugin", "icon": "flask-conical", "pluginSource": "@orqastudio/plugin-software-project" },
+        { "key": "wireframes", "type": "plugin", "icon": "layout", "pluginSource": "@orqastudio/plugin-software-project" }
+      ]
+    },
     {
       "key": "delivery",
       "type": "group",
       "icon": "rocket",
       "label": "Delivery",
       "children": [
+        { "key": "roadmap", "type": "plugin", "icon": "kanban", "pluginSource": "@orqastudio/plugin-software-project" },
         { "key": "milestones", "type": "plugin", "icon": "flag", "pluginSource": "@orqastudio/plugin-software-project" },
         { "key": "epics", "type": "plugin", "icon": "layers", "pluginSource": "@orqastudio/plugin-software-project" },
         { "key": "tasks", "type": "plugin", "icon": "check-square", "pluginSource": "@orqastudio/plugin-software-project" }
@@ -133,12 +198,57 @@
     "displayModes": {
       "MS": "title",
       "EPIC": "title",
-      "TASK": "title"
+      "TASK": "title",
+      "RES": "title",
+      "WF": "title"
     },
     "colors": {
       "MS": "#38bdf8",
       "EPIC": "#3b82f6",
-      "TASK": "#06b6d4"
+      "TASK": "#06b6d4",
+      "RES": "#6366f1",
+      "WF": "#a78bfa"
     }
+  },
+  "coreRelationships": {
+    "_comment": "How plugin artifact types relate to core platform artifacts. These use canonical relationship keys from core.json — not plugin-defined relationships.",
+    "patterns": [
+      {
+        "from": ["milestone", "epic", "task"],
+        "relationship": "grounded-by",
+        "to": ["pillar"],
+        "description": "Delivery artifacts should trace back to at least one pillar."
+      },
+      {
+        "from": ["epic", "task"],
+        "relationship": "driven-by",
+        "to": ["decision"],
+        "description": "Work is motivated by architecture decisions."
+      },
+      {
+        "from": ["task"],
+        "relationship": "informed-by",
+        "to": ["research", "lesson"],
+        "description": "Tasks are informed by research findings and lessons learned."
+      },
+      {
+        "from": ["research"],
+        "relationship": "informs",
+        "to": ["idea", "decision", "epic"],
+        "description": "Research findings flow into ideas, decisions, and epics."
+      },
+      {
+        "from": ["wireframe"],
+        "relationship": "informs",
+        "to": ["epic", "task"],
+        "description": "Wireframes inform the work that implements them."
+      },
+      {
+        "from": ["epic"],
+        "relationship": "evolves-from",
+        "to": ["idea"],
+        "description": "Epics evolve from ideas that have been validated."
+      }
+    ]
   }
 }
