@@ -286,14 +286,40 @@ export interface NavigationItem {
 // Plugin Config (stored in project.json)
 // ---------------------------------------------------------------------------
 
+/** An alias mapping: canonical plugin key → project-local key. */
+export interface AliasMapping {
+	/** The project-local key used in frontmatter. */
+	alias: string;
+	/** Override display label (optional — defaults to plugin's label). */
+	label?: string;
+}
+
 /** Per-plugin configuration stored in project.json under `plugins.<name>`. */
 export interface PluginProjectConfig {
 	/** Whether this plugin is enabled. */
 	enabled: boolean;
 	/** Per-relationship overrides (key → enabled). */
 	relationships?: Record<string, boolean>;
+	/** Schema key aliases — resolves conflicts when multiple plugins register the same key. */
+	schemaAliases?: Record<string, AliasMapping>;
+	/** Relationship key aliases — resolves conflicts when multiple plugins register the same key. */
+	relationshipAliases?: Record<string, AliasMapping>;
 	/** Plugin-specific settings. */
 	config?: Record<string, unknown>;
+}
+
+/** AI-generated suggestion for resolving a plugin conflict. */
+export interface ConflictResolutionSuggestion {
+	/** The conflicting key. */
+	key: string;
+	/** Which plugin to rename ("existing", "new", or "both"). */
+	strategy: "rename-existing" | "rename-new" | "rename-both";
+	/** Suggested alias for the existing plugin's key. */
+	existingAlias?: string;
+	/** Suggested alias for the new plugin's key. */
+	newAlias?: string;
+	/** Human-readable explanation of why this suggestion makes sense. */
+	rationale: string;
 }
 
 /** AI provider routing configuration stored in project.json under `providers`. */

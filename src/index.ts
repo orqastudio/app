@@ -136,6 +136,8 @@ export type {
 	NavItemType,
 	NavigationItem,
 	PluginProjectConfig,
+	AliasMapping,
+	ConflictResolutionSuggestion,
 	SystemRequirement,
 	SidecarRegistration,
 	CliToolRegistration,
