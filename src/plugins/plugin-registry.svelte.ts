@@ -17,7 +17,7 @@ import type {
 	RelationshipType,
 	NavigationItem,
 	SidecarRegistration,
-	ToolRegistration,
+	CliToolRegistration,
 	HookRegistration,
 	ProviderConfig,
 } from "@orqastudio/types";
@@ -235,16 +235,24 @@ export class PluginRegistry {
 	}
 
 	/**
-	 * Get all tool registrations across all plugins.
+	 * Get all CLI tool registrations across all plugins.
 	 */
-	get allTools(): ToolRegistration[] {
-		const tools: ToolRegistration[] = [];
+	get allCliTools(): CliToolRegistration[] {
+		const tools: CliToolRegistration[] = [];
 		for (const [, plugin] of this.plugins) {
-			if (plugin.manifest.provides.tools) {
-				tools.push(...plugin.manifest.provides.tools);
+			const cliTools = plugin.manifest.provides.cliTools ?? plugin.manifest.provides.tools;
+			if (cliTools) {
+				tools.push(...cliTools);
 			}
 		}
 		return tools;
+	}
+
+	/**
+	 * @deprecated Use `allCliTools` instead.
+	 */
+	get allTools(): CliToolRegistration[] {
+		return this.allCliTools;
 	}
 
 	/**
