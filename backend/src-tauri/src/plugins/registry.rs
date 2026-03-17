@@ -29,7 +29,7 @@ pub struct RegistryEntry {
 }
 
 /// A registry catalog fetched from GitHub.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct RegistryCatalog {
     pub version: u32,
     pub source: String,

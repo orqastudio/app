@@ -98,6 +98,12 @@
 			icon: "workflow",
 			description: "Statuses, transitions, auto rules",
 		},
+		{
+			id: "project-plugins",
+			label: "Plugins",
+			icon: "puzzle",
+			description: "Browse, install, manage plugins",
+		},
 	];
 
 	const categories = $derived(mode === "app" ? appCategories : projectCategories);

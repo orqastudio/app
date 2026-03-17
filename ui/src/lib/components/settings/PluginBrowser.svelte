@@ -1,12 +1,17 @@
 <script lang="ts">
 	import { Icon } from "@orqastudio/svelte-components/pure";
-	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardAction } from "@orqastudio/svelte-components/pure";
+	import { CardRoot, CardHeader, CardTitle, CardContent, CardAction } from "@orqastudio/svelte-components/pure";
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { invoke } from "@orqastudio/sdk";
 
+	// -----------------------------------------------------------------------
+	// Types
+	// -----------------------------------------------------------------------
+
 	type Tab = "installed" | "official" | "community";
+	type DetailView = { type: "installed" | "registry"; plugin: PluginEntry } | null;
 
 	interface PluginEntry {
 		name: string;
@@ -22,6 +27,25 @@
 		capabilities?: string[];
 	}
 
+	interface PluginManifestData {
+		name: string;
+		version: string;
+		display_name?: string;
+		description?: string;
+		provides: {
+			schemas: Array<{ key: string; label: string; icon: string }>;
+			views: Array<{ key: string; label: string; icon: string }>;
+			widgets: Array<{ key: string; label: string; icon: string }>;
+			relationships: Array<{ key: string; inverse: string; label: string; description: string }>;
+			cli_tools: Array<{ key: string; label: string }>;
+			hooks: Array<{ key: string; event: string }>;
+		};
+	}
+
+	// -----------------------------------------------------------------------
+	// State
+	// -----------------------------------------------------------------------
+
 	let activeTab = $state<Tab>("installed");
 	let installed = $state<PluginEntry[]>([]);
 	let official = $state<PluginEntry[]>([]);
@@ -29,7 +53,14 @@
 	let loading = $state(false);
 	let error = $state<string | null>(null);
 	let manualSource = $state("");
-	let installing = $state(false);
+	let installing = $state<string | null>(null);
+	let detailView = $state<DetailView>(null);
+	let detailManifest = $state<PluginManifestData | null>(null);
+	let detailLoading = $state(false);
+
+	// -----------------------------------------------------------------------
+	// Data Loading
+	// -----------------------------------------------------------------------
 
 	$effect(() => {
 		void loadInstalled();
@@ -48,11 +79,8 @@
 		error = null;
 		try {
 			const result = await invoke<{ plugins: PluginEntry[] }>("plugin_registry_list", { source });
-			if (source === "official") {
-				official = result.plugins;
-			} else {
-				community = result.plugins;
-			}
+			if (source === "official") official = result.plugins;
+			else community = result.plugins;
 		} catch (err: unknown) {
 			error = err instanceof Error ? err.message : String(err);
 		} finally {
@@ -62,44 +90,106 @@
 
 	async function handleTabChange(tab: Tab) {
 		activeTab = tab;
-		if (tab === "official" && official.length === 0) {
-			await loadRegistry("official");
-		}
-		if (tab === "community" && community.length === 0) {
-			await loadRegistry("community");
+		detailView = null;
+		if (tab === "official" && official.length === 0) await loadRegistry("official");
+		if (tab === "community" && community.length === 0) await loadRegistry("community");
+	}
+
+	// -----------------------------------------------------------------------
+	// Install / Uninstall
+	// -----------------------------------------------------------------------
+
+	async function installFromRegistry(plugin: PluginEntry) {
+		if (!plugin.repo) return;
+		installing = plugin.name;
+		error = null;
+		try {
+			await invoke("plugin_install_github", { repo: plugin.repo });
+			await loadInstalled();
+		} catch (err: unknown) {
+			error = err instanceof Error ? err.message : String(err);
+		} finally {
+			installing = null;
 		}
 	}
 
 	async function installManual() {
 		if (!manualSource.trim()) return;
-		installing = true;
+		installing = "manual";
 		error = null;
 		try {
-			await invoke("plugin_install_local", { path: manualSource.trim() });
+			const source = manualSource.trim();
+			if (source.includes("/") && !source.includes("\\") && !source.includes(":")) {
+				// GitHub repo format: owner/repo or owner/repo@version
+				const [repo, version] = source.split("@");
+				await invoke("plugin_install_github", { repo, version: version ?? null });
+			} else {
+				await invoke("plugin_install_local", { path: source });
+			}
 			manualSource = "";
 			await loadInstalled();
 		} catch (err: unknown) {
 			error = err instanceof Error ? err.message : String(err);
 		} finally {
-			installing = false;
+			installing = null;
 		}
 	}
 
 	async function uninstallPlugin(name: string) {
+		error = null;
 		try {
 			await invoke("plugin_uninstall", { name });
 			await loadInstalled();
+			if (detailView?.plugin.name === name) detailView = null;
 		} catch (err: unknown) {
 			error = err instanceof Error ? err.message : String(err);
 		}
 	}
 
+	// -----------------------------------------------------------------------
+	// Detail View
+	// -----------------------------------------------------------------------
+
+	async function showDetail(plugin: PluginEntry, type: "installed" | "registry") {
+		detailView = { type, plugin };
+		detailManifest = null;
+
+		if (type === "installed") {
+			detailLoading = true;
+			try {
+				detailManifest = await invoke<PluginManifestData>("plugin_get_manifest", { name: plugin.name });
+			} catch {
+				detailManifest = null;
+			} finally {
+				detailLoading = false;
+			}
+		}
+	}
+
+	function closeDetail() {
+		detailView = null;
+		detailManifest = null;
+	}
+
+	// -----------------------------------------------------------------------
+	// Helpers
+	// -----------------------------------------------------------------------
+
 	function displayName(plugin: PluginEntry): string {
 		return plugin.displayName ?? plugin.display_name ?? plugin.name;
+	}
+
+	function isInstalled(name: string): boolean {
+		return installed.some((p) => p.name === name);
+	}
+
+	function installedVersion(name: string): string | undefined {
+		return installed.find((p) => p.name === name)?.version;
 	}
 </script>
 
 <div class="space-y-4">
+	<!-- Header -->
 	<CardRoot>
 		<CardHeader>
 			<CardTitle class="text-sm font-semibold">
@@ -116,174 +206,399 @@
 		</CardHeader>
 	</CardRoot>
 
-	<!-- Tab bar -->
-	<div class="flex gap-1 rounded-md border border-border p-1">
-		<button
-			class="flex-1 rounded px-3 py-1.5 text-xs font-medium transition-colors"
-			class:bg-primary={activeTab === "installed"}
-			class:text-primary-foreground={activeTab === "installed"}
-			class:text-muted-foreground={activeTab !== "installed"}
-			onclick={() => handleTabChange("installed")}
-		>
-			Installed
-		</button>
-		<button
-			class="flex-1 rounded px-3 py-1.5 text-xs font-medium transition-colors"
-			class:bg-primary={activeTab === "official"}
-			class:text-primary-foreground={activeTab === "official"}
-			class:text-muted-foreground={activeTab !== "official"}
-			onclick={() => handleTabChange("official")}
-		>
-			Official
-		</button>
-		<button
-			class="flex-1 rounded px-3 py-1.5 text-xs font-medium transition-colors"
-			class:bg-primary={activeTab === "community"}
-			class:text-primary-foreground={activeTab === "community"}
-			class:text-muted-foreground={activeTab !== "community"}
-			onclick={() => handleTabChange("community")}
-		>
-			Community
-		</button>
-	</div>
+	{#if detailView}
+		<!-- Detail View -->
+		<div class="space-y-3">
+			<button
+				class="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+				onclick={closeDetail}
+			>
+				<Icon name="arrow-left" size="sm" />
+				Back to {activeTab}
+			</button>
 
-	<!-- Tab content -->
-	{#if activeTab === "installed"}
-		<div class="space-y-2">
-			{#each installed as plugin}
-				<CardRoot class="gap-2">
-					<CardContent class="py-3">
-						<div class="flex items-center justify-between">
-							<div>
-								<p class="text-xs font-medium">{displayName(plugin)}</p>
-								<p class="text-[10px] text-muted-foreground">
-									{plugin.version ?? "unknown"} — {plugin.source ?? "local"}
-								</p>
-								{#if plugin.description}
-									<p class="mt-1 text-[10px] text-muted-foreground">{plugin.description}</p>
-								{/if}
-							</div>
+			<CardRoot>
+				<CardHeader>
+					<CardTitle class="text-sm font-semibold">
+						<div class="flex items-center gap-2">
+							<Icon name={detailView.plugin.icon ?? "puzzle"} size="md" />
+							{displayName(detailView.plugin)}
+						</div>
+					</CardTitle>
+					<CardAction>
+						{#if detailView.type === "installed"}
 							<Button
 								variant="ghost"
 								size="sm"
 								class="h-7 px-2 text-xs text-destructive"
-								onclick={() => uninstallPlugin(plugin.name)}
+								onclick={() => detailView && uninstallPlugin(detailView.plugin.name)}
 							>
 								Uninstall
 							</Button>
+						{:else if !isInstalled(detailView.plugin.name)}
+							<Button
+								variant="default"
+								size="sm"
+								class="h-7 px-3 text-xs"
+								disabled={installing !== null}
+								onclick={() => detailView && installFromRegistry(detailView.plugin)}
+							>
+								{#if installing === detailView.plugin.name}
+									<LoadingSpinner size="sm" />
+									Installing...
+								{:else}
+									Install
+								{/if}
+							</Button>
+						{:else}
+							<Badge variant="outline" class="text-[10px]">Installed</Badge>
+						{/if}
+					</CardAction>
+				</CardHeader>
+				<CardContent>
+					<p class="text-xs text-muted-foreground">{detailView.plugin.description ?? "No description"}</p>
+					<div class="mt-2 flex gap-2 text-[10px] text-muted-foreground">
+						{#if detailView.plugin.version}
+							<span>v{detailView.plugin.version}</span>
+						{/if}
+						{#if detailView.plugin.repo}
+							<span>{detailView.plugin.repo}</span>
+						{/if}
+						{#if detailView.plugin.source}
+							<span>{detailView.plugin.source}</span>
+						{/if}
+					</div>
+					{#if detailView.plugin.capabilities?.length}
+						<div class="mt-2 flex flex-wrap gap-1">
+							{#each detailView.plugin.capabilities as cap}
+								<Badge variant="outline" class="text-[9px] px-1.5 py-0">{cap}</Badge>
+							{/each}
 						</div>
-					</CardContent>
-				</CardRoot>
-			{:else}
-				<p class="py-4 text-center text-xs text-muted-foreground">
-					No plugins installed yet.
-				</p>
+					{/if}
+				</CardContent>
+			</CardRoot>
+
+			<!-- Manifest details (installed plugins only) -->
+			{#if detailLoading}
+				<div class="flex items-center justify-center py-6">
+					<LoadingSpinner size="md" />
+				</div>
+			{:else if detailManifest}
+				{#if detailManifest.provides.schemas.length > 0}
+					<CardRoot class="gap-1">
+						<CardHeader class="pb-1">
+							<CardTitle class="text-xs font-semibold">Artifact Schemas ({detailManifest.provides.schemas.length})</CardTitle>
+						</CardHeader>
+						<CardContent class="pt-0">
+							<div class="space-y-1">
+								{#each detailManifest.provides.schemas as schema}
+									<div class="flex items-center gap-2 text-xs">
+										<Icon name={schema.icon} size="sm" />
+										<span class="font-medium">{schema.label}</span>
+										<span class="text-muted-foreground">({schema.key})</span>
+									</div>
+								{/each}
+							</div>
+						</CardContent>
+					</CardRoot>
+				{/if}
+
+				{#if detailManifest.provides.relationships.length > 0}
+					<CardRoot class="gap-1">
+						<CardHeader class="pb-1">
+							<CardTitle class="text-xs font-semibold">Relationships ({detailManifest.provides.relationships.length})</CardTitle>
+						</CardHeader>
+						<CardContent class="pt-0">
+							<div class="space-y-1">
+								{#each detailManifest.provides.relationships as rel}
+									<div class="text-xs">
+										<span class="font-medium">{rel.label}</span>
+										<span class="text-muted-foreground"> / {rel.inverse}</span>
+										<p class="text-[10px] text-muted-foreground">{rel.description}</p>
+									</div>
+								{/each}
+							</div>
+						</CardContent>
+					</CardRoot>
+				{/if}
+
+				{#if detailManifest.provides.views.length > 0}
+					<CardRoot class="gap-1">
+						<CardHeader class="pb-1">
+							<CardTitle class="text-xs font-semibold">Views ({detailManifest.provides.views.length})</CardTitle>
+						</CardHeader>
+						<CardContent class="pt-0">
+							<div class="space-y-1">
+								{#each detailManifest.provides.views as view}
+									<div class="flex items-center gap-2 text-xs">
+										<Icon name={view.icon} size="sm" />
+										<span>{view.label}</span>
+									</div>
+								{/each}
+							</div>
+						</CardContent>
+					</CardRoot>
+				{/if}
+
+				{#if detailManifest.provides.widgets.length > 0}
+					<CardRoot class="gap-1">
+						<CardHeader class="pb-1">
+							<CardTitle class="text-xs font-semibold">Widgets ({detailManifest.provides.widgets.length})</CardTitle>
+						</CardHeader>
+						<CardContent class="pt-0">
+							<div class="space-y-1">
+								{#each detailManifest.provides.widgets as widget}
+									<div class="flex items-center gap-2 text-xs">
+										<Icon name={widget.icon} size="sm" />
+										<span>{widget.label}</span>
+									</div>
+								{/each}
+							</div>
+						</CardContent>
+					</CardRoot>
+				{/if}
+
+				{#if detailManifest.provides.cli_tools.length > 0 || detailManifest.provides.hooks.length > 0}
+					<CardRoot class="gap-1">
+						<CardHeader class="pb-1">
+							<CardTitle class="text-xs font-semibold">Backend Capabilities</CardTitle>
+						</CardHeader>
+						<CardContent class="pt-0">
+							<div class="space-y-1 text-xs">
+								{#each detailManifest.provides.cli_tools as tool}
+									<div class="flex items-center gap-2">
+										<Icon name="terminal" size="sm" />
+										<span>{tool.label}</span>
+									</div>
+								{/each}
+								{#each detailManifest.provides.hooks as hook}
+									<div class="flex items-center gap-2">
+										<Icon name="webhook" size="sm" />
+										<span>{hook.key}</span>
+										<span class="text-muted-foreground">({hook.event})</span>
+									</div>
+								{/each}
+							</div>
+						</CardContent>
+					</CardRoot>
+				{/if}
+			{/if}
+		</div>
+	{:else}
+		<!-- Tab bar -->
+		<div class="flex gap-1 rounded-md border border-border p-1">
+			{#each ["installed", "official", "community"] as tab}
+				<button
+					class="flex-1 rounded px-3 py-1.5 text-xs font-medium transition-colors"
+					class:bg-primary={activeTab === tab}
+					class:text-primary-foreground={activeTab === tab}
+					class:text-muted-foreground={activeTab !== tab}
+					onclick={() => handleTabChange(tab as Tab)}
+				>
+					{tab.charAt(0).toUpperCase() + tab.slice(1)}
+				</button>
 			{/each}
 		</div>
-	{:else if activeTab === "official"}
-		{#if loading}
-			<div class="flex items-center justify-center py-8">
-				<LoadingSpinner size="md" />
-			</div>
-		{:else}
+
+		<!-- Installed tab -->
+		{#if activeTab === "installed"}
 			<div class="space-y-2">
-				{#each official as plugin}
-					<CardRoot class="gap-2">
-						<CardContent class="py-3">
-							<div class="flex items-center justify-between">
-								<div>
-									<div class="flex items-center gap-2">
-										<Icon name={plugin.icon ?? "puzzle"} size="sm" />
+				{#each installed as plugin}
+					<button
+						class="w-full text-left"
+						onclick={() => showDetail(plugin, "installed")}
+					>
+						<CardRoot class="gap-2 transition-colors hover:bg-accent/30 cursor-pointer">
+							<CardContent class="py-3">
+								<div class="flex items-center justify-between">
+									<div>
 										<p class="text-xs font-medium">{displayName(plugin)}</p>
+										<p class="text-[10px] text-muted-foreground">
+											v{plugin.version ?? "?"} — {plugin.source ?? "local"}
+										</p>
+										{#if plugin.description}
+											<p class="mt-1 text-[10px] text-muted-foreground line-clamp-1">{plugin.description}</p>
+										{/if}
 									</div>
-									<p class="mt-1 text-[10px] text-muted-foreground">{plugin.description}</p>
-									{#if plugin.capabilities?.length}
-										<div class="mt-1 flex gap-1">
-											{#each plugin.capabilities as cap}
-												<Badge variant="outline" class="text-[9px] px-1 py-0">{cap}</Badge>
-											{/each}
+									<div class="flex items-center gap-2">
+										<Icon name="chevron-right" size="sm" />
+									</div>
+								</div>
+							</CardContent>
+						</CardRoot>
+					</button>
+				{:else}
+					<p class="py-4 text-center text-xs text-muted-foreground">
+						No plugins installed yet. Browse the Official tab or use Manual Install below.
+					</p>
+				{/each}
+			</div>
+
+		<!-- Official tab -->
+		{:else if activeTab === "official"}
+			{#if loading}
+				<div class="flex items-center justify-center py-8">
+					<LoadingSpinner size="md" />
+				</div>
+			{:else}
+				<div class="space-y-2">
+					{#each official as plugin}
+						<button
+							class="w-full text-left"
+							onclick={() => showDetail(plugin, "registry")}
+						>
+							<CardRoot class="gap-2 transition-colors hover:bg-accent/30 cursor-pointer">
+								<CardContent class="py-3">
+									<div class="flex items-center justify-between">
+										<div>
+											<div class="flex items-center gap-2">
+												<Icon name={plugin.icon ?? "puzzle"} size="sm" />
+												<p class="text-xs font-medium">{displayName(plugin)}</p>
+												{#if isInstalled(plugin.name)}
+													<Badge variant="outline" class="text-[9px] px-1 py-0">Installed</Badge>
+												{/if}
+											</div>
+											<p class="mt-1 text-[10px] text-muted-foreground line-clamp-1">{plugin.description}</p>
+											{#if plugin.capabilities?.length}
+												<div class="mt-1 flex gap-1">
+													{#each plugin.capabilities as cap}
+														<Badge variant="outline" class="text-[9px] px-1 py-0">{cap}</Badge>
+													{/each}
+												</div>
+											{/if}
 										</div>
-									{/if}
-								</div>
-								<Button variant="default" size="sm" class="h-7 px-3 text-xs">
-									Install
-								</Button>
-							</div>
-						</CardContent>
-					</CardRoot>
-				{:else}
-					<p class="py-4 text-center text-xs text-muted-foreground">
-						No official plugins available yet.
-					</p>
-				{/each}
-			</div>
-		{/if}
-	{:else if activeTab === "community"}
-		{#if loading}
-			<div class="flex items-center justify-center py-8">
-				<LoadingSpinner size="md" />
-			</div>
-		{:else}
-			<div class="space-y-2">
-				{#each community as plugin}
-					<CardRoot class="gap-2">
-						<CardContent class="py-3">
-							<div class="flex items-center justify-between">
-								<div>
-									<div class="flex items-center gap-2">
-										<Icon name={plugin.icon ?? "puzzle"} size="sm" />
-										<p class="text-xs font-medium">{displayName(plugin)}</p>
-										<Badge variant="destructive" class="text-[9px] px-1 py-0">Unverified</Badge>
+										<div class="flex items-center gap-2 shrink-0">
+											{#if !isInstalled(plugin.name)}
+												<Button
+													variant="default"
+													size="sm"
+													class="h-7 px-3 text-xs"
+													disabled={installing !== null}
+													onclick={(e: MouseEvent) => { e.stopPropagation(); installFromRegistry(plugin); }}
+												>
+													{#if installing === plugin.name}
+														<LoadingSpinner size="sm" />
+													{:else}
+														Install
+													{/if}
+												</Button>
+											{/if}
+											<Icon name="chevron-right" size="sm" />
+										</div>
 									</div>
-									<p class="mt-1 text-[10px] text-muted-foreground">{plugin.description}</p>
-								</div>
-								<Button variant="outline" size="sm" class="h-7 px-3 text-xs">
-									Install
-								</Button>
-							</div>
-						</CardContent>
-					</CardRoot>
-				{:else}
-					<p class="py-4 text-center text-xs text-muted-foreground">
-						No community plugins available yet.
-					</p>
-				{/each}
-			</div>
+								</CardContent>
+							</CardRoot>
+						</button>
+					{:else}
+						<p class="py-4 text-center text-xs text-muted-foreground">
+							No official plugins available yet.
+						</p>
+					{/each}
+				</div>
+			{/if}
+
+		<!-- Community tab -->
+		{:else if activeTab === "community"}
+			{#if loading}
+				<div class="flex items-center justify-center py-8">
+					<LoadingSpinner size="md" />
+				</div>
+			{:else}
+				<div class="space-y-2">
+					{#each community as plugin}
+						<button
+							class="w-full text-left"
+							onclick={() => showDetail(plugin, "registry")}
+						>
+							<CardRoot class="gap-2 transition-colors hover:bg-accent/30 cursor-pointer">
+								<CardContent class="py-3">
+									<div class="flex items-center justify-between">
+										<div>
+											<div class="flex items-center gap-2">
+												<Icon name={plugin.icon ?? "puzzle"} size="sm" />
+												<p class="text-xs font-medium">{displayName(plugin)}</p>
+												<Badge variant="secondary" class="text-[9px] px-1 py-0">Community</Badge>
+												{#if isInstalled(plugin.name)}
+													<Badge variant="outline" class="text-[9px] px-1 py-0">Installed</Badge>
+												{/if}
+											</div>
+											<p class="mt-1 text-[10px] text-muted-foreground line-clamp-1">{plugin.description}</p>
+										</div>
+										<div class="flex items-center gap-2 shrink-0">
+											{#if !isInstalled(plugin.name)}
+												<Button
+													variant="outline"
+													size="sm"
+													class="h-7 px-3 text-xs"
+													disabled={installing !== null}
+													onclick={(e: MouseEvent) => { e.stopPropagation(); installFromRegistry(plugin); }}
+												>
+													{#if installing === plugin.name}
+														<LoadingSpinner size="sm" />
+													{:else}
+														Install
+													{/if}
+												</Button>
+											{/if}
+											<Icon name="chevron-right" size="sm" />
+										</div>
+									</div>
+								</CardContent>
+							</CardRoot>
+						</button>
+					{:else}
+						<p class="py-4 text-center text-xs text-muted-foreground">
+							No community plugins available yet.
+						</p>
+					{/each}
+				</div>
+			{/if}
 		{/if}
+
+		<!-- Manual Install -->
+		<CardRoot class="gap-2">
+			<CardHeader class="pb-2">
+				<CardTitle class="text-xs font-semibold">Manual Install</CardTitle>
+			</CardHeader>
+			<CardContent class="pt-0">
+				<p class="mb-2 text-[10px] text-muted-foreground">
+					Enter a GitHub repo (owner/repo), a specific version (owner/repo@v0.2.0), or a local filesystem path.
+				</p>
+				<div class="flex gap-2">
+					<input
+						type="text"
+						class="flex-1 rounded border border-border bg-background px-3 py-1.5 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+						placeholder="orqastudio/orqastudio-plugin-claude"
+						bind:value={manualSource}
+						onkeydown={(e: KeyboardEvent) => { if (e.key === "Enter") installManual(); }}
+					/>
+					<Button
+						variant="default"
+						size="sm"
+						class="h-8 px-3 text-xs"
+						disabled={installing !== null || !manualSource.trim()}
+						onclick={installManual}
+					>
+						{#if installing === "manual"}
+							<LoadingSpinner size="sm" />
+						{:else}
+							Install
+						{/if}
+					</Button>
+				</div>
+			</CardContent>
+		</CardRoot>
 	{/if}
 
-	<!-- Manual Install -->
-	<CardRoot class="gap-2">
-		<CardHeader class="pb-2">
-			<CardTitle class="text-xs font-semibold">Manual Install</CardTitle>
-		</CardHeader>
-		<CardContent class="pt-0">
-			<div class="flex gap-2">
-				<input
-					type="text"
-					class="flex-1 rounded border border-border bg-background px-3 py-1.5 text-xs placeholder:text-muted-foreground"
-					placeholder="owner/repo, owner/repo@v0.2.0, or local path"
-					bind:value={manualSource}
-					onkeydown={(e: KeyboardEvent) => { if (e.key === "Enter") installManual(); }}
-				/>
-				<Button
-					variant="default"
-					size="sm"
-					class="h-8 px-3 text-xs"
-					disabled={installing || !manualSource.trim()}
-					onclick={installManual}
-				>
-					{#if installing}
-						<LoadingSpinner size="sm" />
-					{:else}
-						Install
-					{/if}
-				</Button>
-			</div>
-		</CardContent>
-	</CardRoot>
-
+	<!-- Error display -->
 	{#if error}
-		<p class="text-xs text-destructive">{error}</p>
+		<CardRoot class="border-destructive/50 bg-destructive/5">
+			<CardContent class="py-3">
+				<div class="flex items-start gap-2">
+					<Icon name="circle-x" size="sm" />
+					<p class="text-xs text-destructive">{error}</p>
+				</div>
+			</CardContent>
+		</CardRoot>
 	{/if}
 </div>
