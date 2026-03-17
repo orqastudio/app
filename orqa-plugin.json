@@ -211,14 +211,8 @@
     }
   },
   "coreRelationships": {
-    "_comment": "How plugin artifact types relate to core platform artifacts. These use canonical relationship keys from core.json — not plugin-defined relationships.",
+    "_comment": "How plugin artifact types relate to core platform artifacts. Pillars connect to ideas — traceability to pillars is transitive through the graph (idea → epic → task), not direct.",
     "patterns": [
-      {
-        "from": ["milestone", "epic", "task"],
-        "relationship": "grounded-by",
-        "to": ["pillar"],
-        "description": "Delivery artifacts should trace back to at least one pillar."
-      },
       {
         "from": ["epic", "task"],
         "relationship": "driven-by",

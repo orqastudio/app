@@ -111,17 +111,18 @@ Wireframes capture visual specifications — UI layouts, interaction flows, or c
 
 ## How Delivery Connects to Governance
 
-Every piece of work should trace back to your project's governance structure:
+Every piece of work traces back to your project's principles through the graph — not through direct links, but through the natural chain of relationships:
 
 ```
-Pillar  ←  grounded-by  ←  Milestone / Epic
+Pillar  ←  grounded-by  ←  Idea
+                              ↑ evolves-from
 Decision  ←  driven-by  ←  Epic
-Idea  ←  evolves-from  ←  Epic
+                              ↑ delivers
 Research  ←  informed-by  ←  Task
-Lesson  ←  informed-by  ←  Task
+Lesson    ←  informed-by  ←  Task
 ```
 
-This creates full traceability: you can always answer "why are we doing this?" by following the relationship chain from a task back through its epic, decision, and pillar.
+Traceability is transitive: to answer "why are we doing this task?", walk the graph: task → (delivers) → epic → (evolves-from) → idea → (grounded-by) → pillar. You don't need to connect every artifact directly to a pillar — the graph connects them naturally.
 
 ## Status Workflow
 
@@ -164,5 +165,5 @@ Navigate to **Delivery → Roadmap** in the sidebar to access it.
 2. **Connect epics to decisions** — if there's no decision driving the work, create one
 3. **Keep tasks atomic** — if a task takes more than one session, split it
 4. **Use research before deciding** — capture findings before making architecture decisions
-5. **Check traceability** — every epic should have at least `delivers`, `driven-by`, and `grounded-by`
+5. **Check traceability** — every epic should have `delivers` (to milestone) and `driven-by` (from decision) or `evolves-from` (from idea)
 6. **Run integrity checks** — `orqa validate` catches missing relationships and broken links

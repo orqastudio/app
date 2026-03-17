@@ -21,7 +21,7 @@ Top of the delivery hierarchy. Represents a significant project checkpoint or re
 - Path: `.orqa/delivery/milestones/`
 - Key fields: `gate` (optional conditions for milestone completion), `target_date`
 - Children: epics connect via `delivers` relationship
-- Grounding: every milestone should trace back to a pillar via `grounded-by`
+- Traceability: milestones trace to pillars transitively through the graph (pillar → idea → epic → milestone), not via direct `grounded-by` links
 
 ### Epic (EPIC-nnn)
 A body of work delivering a coherent capability. Groups related tasks.
@@ -107,17 +107,18 @@ Query the hierarchy:
 
 ## Connecting to Core Artifacts
 
-Every piece of delivery work should connect back to governance:
+Delivery artifacts connect to governance through the graph — traceability to pillars is transitive (pillar → idea → epic → task), not direct. Each artifact type connects to its nearest governance ancestor:
 
 | Delivery type | → Relationship | → Core type | Purpose |
 |---|---|---|---|
-| Milestone | `grounded-by` | Pillar | Traces to foundational principle |
 | Epic | `driven-by` | Decision | Motivated by architecture decision |
 | Epic | `evolves-from` | Idea | Validated idea became work |
 | Task | `informed-by` | Research | Research findings guide implementation |
 | Task | `informed-by` | Lesson | Past lessons prevent repeat mistakes |
 | Research | `informs` | Decision | Findings inform architecture choices |
 | Wireframe | `informs` | Epic/Task | Visual spec guides implementation |
+
+Pillars connect to ideas via `grounded-by` at the platform level. You can trace any task back to a pillar by walking: task → (delivers) → epic → (evolves-from) → idea → (grounded-by) → pillar.
 
 ## Validation
 
