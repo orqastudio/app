@@ -2,11 +2,143 @@
   "name": "@orqastudio/plugin-software-project",
   "version": "0.1.0-dev",
   "displayName": "Software Project",
-  "description": "Software development artifact types and relationships — epics, tasks, milestones, decisions, rules, lessons, and the delivery hierarchy.",
+  "description": "Software development delivery types and relationships — milestones, epics, tasks, dependency tracking, and the delivery hierarchy.",
   "provides": {
-    "schemas": [],
+    "schemas": [
+      {
+        "key": "milestone",
+        "label": "Milestone",
+        "plural": "Milestones",
+        "icon": "flag",
+        "defaultPath": ".orqa/delivery/milestones",
+        "idPrefix": "MS",
+        "frontmatter": {
+          "required": ["id", "type", "status"],
+          "optional": ["name", "description", "gate", "priority", "relationships"]
+        },
+        "statusTransitions": {
+          "captured": ["exploring", "ready", "prioritised"],
+          "exploring": ["ready", "prioritised", "hold"],
+          "ready": ["prioritised", "active", "review"],
+          "prioritised": ["active", "ready"],
+          "active": ["hold", "blocked", "review"],
+          "hold": ["active", "ready"],
+          "blocked": ["active", "ready"],
+          "review": ["completed", "active"],
+          "completed": ["surpassed"]
+        }
+      },
+      {
+        "key": "epic",
+        "label": "Epic",
+        "plural": "Epics",
+        "icon": "layers",
+        "defaultPath": ".orqa/delivery/epics",
+        "idPrefix": "EPIC",
+        "frontmatter": {
+          "required": ["id", "type", "status"],
+          "optional": ["name", "description", "priority", "relationships"]
+        },
+        "statusTransitions": {
+          "captured": ["exploring", "ready", "prioritised"],
+          "exploring": ["ready", "prioritised", "hold"],
+          "ready": ["prioritised", "active", "review"],
+          "prioritised": ["active", "ready"],
+          "active": ["hold", "blocked", "review"],
+          "hold": ["active", "ready"],
+          "blocked": ["active", "ready"],
+          "review": ["completed", "active"],
+          "completed": ["surpassed"]
+        }
+      },
+      {
+        "key": "task",
+        "label": "Task",
+        "plural": "Tasks",
+        "icon": "check-square",
+        "defaultPath": ".orqa/delivery/tasks",
+        "idPrefix": "TASK",
+        "frontmatter": {
+          "required": ["id", "type", "status"],
+          "optional": ["name", "description", "priority", "assignee", "relationships"]
+        },
+        "statusTransitions": {
+          "captured": ["ready", "prioritised"],
+          "ready": ["prioritised", "active"],
+          "prioritised": ["active", "ready"],
+          "active": ["hold", "blocked", "review"],
+          "hold": ["active", "ready"],
+          "blocked": ["active", "ready"],
+          "review": ["completed", "active"],
+          "completed": ["surpassed"]
+        }
+      }
+    ],
     "views": [],
     "widgets": [],
-    "relationships": []
+    "relationships": [
+      {
+        "key": "depends-on",
+        "inverse": "depended-on-by",
+        "label": "Depends On",
+        "inverseLabel": "Depended On By",
+        "from": ["task", "epic"],
+        "to": ["task", "epic"],
+        "description": "Delivery dependency — this artifact cannot proceed until the target is completed.",
+        "semantic": "dependency"
+      }
+    ],
+    "sidecar": null,
+    "cliTools": [],
+    "hooks": []
+  },
+  "settings": null,
+  "defaultNavigation": [
+    {
+      "key": "delivery",
+      "type": "group",
+      "icon": "rocket",
+      "label": "Delivery",
+      "children": [
+        { "key": "milestones", "type": "plugin", "icon": "flag", "pluginSource": "@orqastudio/plugin-software-project" },
+        { "key": "epics", "type": "plugin", "icon": "layers", "pluginSource": "@orqastudio/plugin-software-project" },
+        { "key": "tasks", "type": "plugin", "icon": "check-square", "pluginSource": "@orqastudio/plugin-software-project" }
+      ]
+    }
+  ],
+  "delivery": {
+    "types": [
+      {
+        "key": "milestone",
+        "label": "Milestone",
+        "path": ".orqa/delivery/milestones",
+        "parent": null,
+        "gate_field": "gate"
+      },
+      {
+        "key": "epic",
+        "label": "Epic",
+        "path": ".orqa/delivery/epics",
+        "parent": { "type": "milestone", "relationship": "delivers" }
+      },
+      {
+        "key": "task",
+        "label": "Task",
+        "path": ".orqa/delivery/tasks",
+        "parent": { "type": "epic", "relationship": "delivers" }
+      }
+    ]
+  },
+  "artifactLinks": {
+    "displayModes": {
+      "MS": "title",
+      "EPIC": "title",
+      "TASK": "title"
+    },
+    "colors": {
+      "MS": "#38bdf8",
+      "EPIC": "#3b82f6",
+      "TASK": "#06b6d4"
+    }
   }
 }

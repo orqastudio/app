@@ -2,7 +2,7 @@
   "name": "@orqastudio/plugin-software-project",
   "version": "0.1.0-dev",
   "private": true,
-  "description": "Software development artifact types and relationships for OrqaStudio.",
+  "description": "Software development delivery types for OrqaStudio — milestones, epics, tasks, dependency tracking, and the delivery hierarchy.",
   "dependencies": {
     "@orqastudio/types": "0.1.0-dev"
   }
