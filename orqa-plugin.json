@@ -171,7 +171,20 @@
         "from": ["task"],
         "to": ["epic"],
         "description": "Task delivers work to an epic",
-        "semantic": "hierarchy"
+        "semantic": "hierarchy",
+        "constraints": {
+          "required": true,
+          "minCount": 1,
+          "statusRules": [
+            {
+              "evaluate": "target",
+              "condition": "all-targets-in",
+              "statuses": ["completed"],
+              "proposedStatus": "review",
+              "description": "Epic moves to review when all delivering tasks are completed"
+            }
+          ]
+        }
       },
       {
         "key": "fulfils",
@@ -181,7 +194,18 @@
         "from": ["epic"],
         "to": ["milestone"],
         "description": "Epic fulfils a milestone checkpoint",
-        "semantic": "hierarchy"
+        "semantic": "hierarchy",
+        "constraints": {
+          "statusRules": [
+            {
+              "evaluate": "target",
+              "condition": "all-targets-in",
+              "statuses": ["completed"],
+              "proposedStatus": "review",
+              "description": "Milestone moves to review when all fulfilling epics are completed"
+            }
+          ]
+        }
       },
       {
         "key": "depends-on",
@@ -191,7 +215,25 @@
         "from": ["task"],
         "to": ["task"],
         "description": "Task cannot proceed until dependency is completed",
-        "semantic": "dependency"
+        "semantic": "dependency",
+        "constraints": {
+          "statusRules": [
+            {
+              "evaluate": "source",
+              "condition": "any-target-in",
+              "statuses": ["captured", "exploring", "ready", "prioritised", "active", "hold"],
+              "proposedStatus": "blocked",
+              "description": "Task is blocked when any dependency is not yet completed"
+            },
+            {
+              "evaluate": "source",
+              "condition": "all-targets-in",
+              "statuses": ["completed", "surpassed", "archived"],
+              "proposedStatus": "ready",
+              "description": "Task is unblocked when all dependencies are completed"
+            }
+          ]
+        }
       },
       {
         "key": "reports",
@@ -201,7 +243,11 @@
         "from": ["bug"],
         "to": ["epic", "task", "milestone"],
         "description": "Bug reports an issue against delivery work",
-        "semantic": "corrective"
+        "semantic": "corrective",
+        "constraints": {
+          "required": true,
+          "minCount": 1
+        }
       },
       {
         "key": "fixes",
