@@ -2,8 +2,8 @@
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, CardAction } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
-	const { artifactGraphSDK, projectStore } = getStores();
-	import type { ArtifactNode, ArtifactRef } from "@orqastudio/types";
+	const { artifactGraphSDK, projectStore, pluginRegistry } = getStores();
+	import type { ArtifactNode, ArtifactRef, RelationshipType } from "@orqastudio/types";
 
 	const projectFilter = $derived(
 		projectStore.activeChildProject
@@ -13,74 +13,111 @@
 	import { PipelineStages, type PipelineStage, type PipelineEdge } from "@orqastudio/svelte-components/pure";
 
 	// -------------------------------------------------------------------------
-	// Pipeline stage definitions
+	// Pipeline stage definitions — derived from registered relationships
 	// -------------------------------------------------------------------------
 
 	interface StageDef {
 		key: string;
 		label: string;
-		/** Plural noun for display in reason text (e.g. "lessons", "decisions"). */
 		artifactNoun: string;
-		artifactType: string | null;
+		artifactType: string;
 		icon: string;
-		/**
-		 * Relationship types that indicate flow FROM this stage to the next.
-		 * We include both directions of each pair so that we catch edges
-		 * regardless of which end authored the relationship.
-		 */
+		/** Relationship keys that flow FROM this stage's artifacts to the next stage. */
 		outboundRelationships: string[];
 	}
 
-	const stageDefs: StageDef[] = [
-		{
-			key: "observation",
-			label: "Observation",
-			artifactNoun: "lessons",
-			artifactType: "lesson",
-			icon: "eye",
-			outboundRelationships: ["informs", "informed-by", "grounded", "grounded-by"],
-		},
-		{
-			key: "understanding",
-			label: "Understanding",
-			artifactNoun: "research docs",
-			artifactType: "research",
-			icon: "book-open",
-			outboundRelationships: ["grounded", "grounded-by", "informs", "informed-by"],
-		},
-		{
-			key: "principle",
-			label: "Principle",
-			artifactNoun: "decisions",
-			artifactType: "decision",
-			icon: "scale",
-			outboundRelationships: ["practices", "practiced-by"],
-		},
-		{
-			key: "practice",
-			label: "Practice",
-			artifactNoun: "skills",
-			artifactType: "skill",
-			icon: "wrench",
-			outboundRelationships: ["enforces", "enforced-by"],
-		},
-		{
-			key: "enforcement",
-			label: "Enforcement",
-			artifactNoun: "rules",
-			artifactType: "rule",
-			icon: "shield",
-			outboundRelationships: ["verifies", "verified-by"],
-		},
-		{
-			key: "verification",
-			label: "Verification",
-			artifactNoun: "checks",
-			artifactType: null,
-			icon: "check-circle-2",
-			outboundRelationships: [],
-		},
-	];
+	/**
+	 * Build pipeline stages from the registry's governance semantic.
+	 *
+	 * The governance learning loop is:
+	 *   lesson →(teaches)→ decision →(governs)→ rule →(enforces)→ decision
+	 *   rule →(codifies)→ lesson (closing the loop)
+	 *
+	 * We also include knowledge-flow into decisions:
+	 *   research →(informs)→ decision
+	 *
+	 * Stages are built by finding which artifact types appear as `from`
+	 * in governance + knowledge-flow relationships.
+	 */
+	const stageDefs = $derived.by((): StageDef[] => {
+		const allRels = pluginRegistry.allRelationships;
+
+		// Find relationships by semantic that form the governance pipeline
+		const findRels = (semantic: string): RelationshipType[] =>
+			allRels.filter((r) => r.semantic === semantic);
+
+		const govRels = findRels("governance");
+		const knowledgeRels = findRels("knowledge-flow");
+
+		// Build stages from the types that participate in governance + knowledge flow
+		const stages: StageDef[] = [];
+
+		// Lesson stage — lessons teach decisions, lessons get codified into rules
+		const lessonOutbound = [
+			...knowledgeRels.filter((r) => r.from.includes("lesson")).map((r) => r.key),
+			...knowledgeRels.filter((r) => r.from.includes("lesson")).map((r) => r.inverse),
+		];
+		if (lessonOutbound.length > 0) {
+			stages.push({
+				key: "lesson",
+				label: "Learning",
+				artifactNoun: "lessons",
+				artifactType: "lesson",
+				icon: "book-open",
+				outboundRelationships: lessonOutbound,
+			});
+		}
+
+		// Research stage — research informs decisions and guides epics
+		const researchOutbound = [
+			...knowledgeRels.filter((r) => r.from.includes("research")).map((r) => r.key),
+			...knowledgeRels.filter((r) => r.from.includes("research")).map((r) => r.inverse),
+		];
+		if (researchOutbound.length > 0) {
+			stages.push({
+				key: "research",
+				label: "Research",
+				artifactNoun: "research docs",
+				artifactType: "research",
+				icon: "flask-conical",
+				outboundRelationships: researchOutbound,
+			});
+		}
+
+		// Decision stage — decisions drive epics and govern rules
+		const decisionOutbound = [
+			...govRels.filter((r) => r.from.includes("decision")).map((r) => r.key),
+			...govRels.filter((r) => r.from.includes("decision")).map((r) => r.inverse),
+		];
+		if (decisionOutbound.length > 0) {
+			stages.push({
+				key: "decision",
+				label: "Decisions",
+				artifactNoun: "decisions",
+				artifactType: "decision",
+				icon: "scale",
+				outboundRelationships: decisionOutbound,
+			});
+		}
+
+		// Rule stage — rules enforce decisions, codify lessons
+		const ruleOutbound = [
+			...govRels.filter((r) => r.from.includes("rule")).map((r) => r.key),
+			...govRels.filter((r) => r.from.includes("rule")).map((r) => r.inverse),
+		];
+		if (ruleOutbound.length > 0) {
+			stages.push({
+				key: "rule",
+				label: "Rules",
+				artifactNoun: "rules",
+				artifactType: "rule",
+				icon: "shield",
+				outboundRelationships: ruleOutbound,
+			});
+		}
+
+		return stages;
+	});
 
 	// -------------------------------------------------------------------------
 	// Computed pipeline data — connectivity model
@@ -90,15 +127,10 @@
 		def: StageDef;
 		artifacts: ArtifactNode[];
 		count: number;
-		/** How many artifacts have at least one relationship of ANY kind. */
 		connectedCount: number;
-		/** Ratio of connected to total (0-1). */
 		connectivity: number;
-		/** Connectivity status based on percentage with relationships. */
 		status: "healthy" | "attention" | "isolated";
-		/** Human-readable explanation for non-healthy status. */
 		reason: string | null;
-		/** Suggested action to improve connectivity. */
 		suggestion: string | null;
 	}
 
@@ -108,18 +140,16 @@
 		count: number;
 	}
 
-	function refConnectsToType(ref: ArtifactRef, targetType: string | null): boolean {
-		if (targetType === null) return false;
+	function refConnectsToType(ref: ArtifactRef, targetType: string): boolean {
 		const targetNode = artifactGraphSDK.resolve(ref.target_id);
 		return targetNode?.artifact_type === targetType;
 	}
 
 	function countEdgesBetween(
 		fromArtifacts: ArtifactNode[],
-		toType: string | null,
+		toType: string,
 		relationshipTypes: string[]
 	): number {
-		if (toType === null) return 0;
 		let count = 0;
 		for (const artifact of fromArtifacts) {
 			for (const ref of artifact.references_out) {
@@ -141,8 +171,7 @@
 
 	const stageDataList = $derived.by((): StageData[] => {
 		return stageDefs.map((def) => {
-			const artifacts =
-				def.artifactType !== null ? artifactGraphSDK.byType(def.artifactType, projectFilter) : [];
+			const artifacts = artifactGraphSDK.byType(def.artifactType, projectFilter);
 			const count = artifacts.length;
 
 			let connectedCount = 0;
@@ -181,10 +210,7 @@
 		for (let i = 0; i < stageDefs.length - 1; i++) {
 			const fromDef = stageDefs[i];
 			const toDef = stageDefs[i + 1];
-			const fromArtifacts =
-				fromDef.artifactType !== null
-					? artifactGraphSDK.byType(fromDef.artifactType, projectFilter)
-					: [];
+			const fromArtifacts = artifactGraphSDK.byType(fromDef.artifactType, projectFilter);
 			const count = countEdgesBetween(
 				fromArtifacts,
 				toDef.artifactType,
@@ -198,7 +224,7 @@
 	const hasData = $derived(artifactGraphSDK.graph.size > 0);
 
 	// -------------------------------------------------------------------------
-	// Visual helpers → PipelineStage prop mapping
+	// Visual helpers
 	// -------------------------------------------------------------------------
 
 	function statusBorderClass(status: StageData["status"]): string {
@@ -234,7 +260,6 @@
 		}
 	}
 
-	// Map status to dot color class — matches LessonVelocityWidget's visual pattern
 	function statusDotColorClass(status: StageData["status"]): string {
 		switch (status) {
 			case "isolated":  return "bg-red-500";
@@ -248,7 +273,6 @@
 			key: data.def.key,
 			label: data.def.label,
 			count: data.count,
-			// Use dotColorClass (coloured circle) to match LessonVelocityWidget pattern
 			dotColorClass: statusDotColorClass(data.status),
 			borderClass: statusBorderClass(data.status),
 			bgClass: statusBgClass(data.status),
@@ -270,7 +294,7 @@
 			<CardTitle class="text-sm font-semibold">
 				<div class="flex items-center gap-2">
 					<Icon name="workflow" size="md" />
-					Knowledge Pipeline
+					Governance Pipeline
 				</div>
 			</CardTitle>
 		</CardHeader>
