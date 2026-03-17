@@ -15,7 +15,13 @@ export type { FrontmatterResult } from "./utils/frontmatter.js";
 
 // Plugin registry
 export { PluginRegistry } from "./plugins/plugin-registry.svelte.js";
-export type { RegisteredPlugin, SchemaConflict } from "./plugins/plugin-registry.svelte.js";
+export type { RegisteredPlugin, RegistrationConflict } from "./plugins/plugin-registry.svelte.js";
+
+// Plugin conflict resolution
+export {
+	buildConflictResolutionPrompt,
+	parseConflictResolutionResponse,
+} from "./plugins/conflict-resolver.js";
 
 // Store classes (for advanced use / testing — prefer getStores() for access)
 export {
