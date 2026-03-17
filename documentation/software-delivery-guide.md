@@ -8,127 +8,97 @@ plugin: "@orqastudio/plugin-software-project"
 relationships:
   - target: SKILL-SW-001
     type: synchronised-with
-  - target: PILLAR-001
-    type: grounded-by
 ---
 
 # Software Delivery Guide
 
-This guide explains how to use OrqaStudio's software delivery system to plan, track, and deliver software projects. The delivery system provides structured artifact types that connect your work back to your project's principles, decisions, and research.
+This guide explains how OrqaStudio's software delivery system works — how to plan, track, and deliver software projects using structured artifacts that connect your work back to your project's principles.
 
 ## Overview
 
-The software delivery plugin adds five artifact types to your project:
+The software delivery plugin adds artifact types for the full development lifecycle:
 
 | Type | Prefix | Section | Purpose |
 |------|--------|---------|---------|
-| **Milestone** | MS | Delivery | Major project checkpoints and releases |
+| **Milestone** | MS | Delivery | Major checkpoints and releases |
 | **Epic** | EPIC | Delivery | Coherent bodies of work |
 | **Task** | TASK | Delivery | Atomic work units |
 | **Research** | RES | Discovery | Investigation and analysis |
 | **Wireframe** | WF | Discovery | Visual specifications |
+| **Bug** | BUG | Discovery | Functional and display issues |
 
 ## The Delivery Hierarchy
 
-Delivery flows downward through three levels:
+Work is structured in three levels:
 
 ```
 Milestone  →  defines the destination
-  └── Epic  →  defines the capability
-        └── Task  →  defines the work
+  ↑ fulfils
+Epic       →  defines the capability
+  ↑ delivers
+Task       →  defines the work
 ```
 
-Each level connects to its parent through the `delivers` relationship. A task "delivers to" an epic, which "delivers to" a milestone.
+A task **delivers** to an epic. An epic **fulfils** a milestone. Different verbs because the relationships are semantically different — a task contributes incremental work, an epic completes a checkpoint.
 
-### Milestones
+## How Everything Connects
 
-Milestones represent significant checkpoints — releases, demos, or phase completions. They sit at the top of the delivery hierarchy.
+Every artifact uses a specific relationship verb that describes the nature of the connection. The verb constrains what can connect to what.
 
-**When to create a milestone:**
-- You're planning a release or demo
-- Multiple epics converge on a single deadline
-- You need a gate (a set of conditions that must be met)
+### From Ideas to Delivery
 
-**Key fields:**
-- `gate` — optional conditions for completion (e.g. "all epics completed, QA sign-off")
-- `target_date` — when you aim to reach this milestone
-
-### Epics
-
-Epics are bodies of work that deliver a coherent capability. They group related tasks and connect upward to milestones and decisions.
-
-**When to create an epic:**
-- A decision requires implementation across multiple tasks
-- A capability needs planning before work begins
-- You want to track progress toward a coherent goal
-
-**Important connections:**
-- `delivers` → the milestone this epic contributes to
-- `driven-by` → the architecture decision motivating this work
-- `grounded-by` → the principle this epic traces back to
-- `evolves-from` → the idea that was validated into this epic
-
-### Tasks
-
-Tasks are atomic work units — small enough to complete in a single session.
-
-**When to create a task:**
-- You have a concrete piece of work to do
-- The scope is clear and bounded
-- You can describe what "done" looks like
-
-**Important connections:**
-- `delivers` → the epic this task belongs to
-- `depends-on` → other tasks that must complete before this one
-- `informed-by` → research or lessons that guide implementation
-
-## Discovery Artifacts
-
-### Research
-
-Research documents capture investigation, analysis, and findings. They exist in the discovery phase and flow their findings into the delivery system.
-
-**When to create research:**
-- You need to investigate options before deciding
-- You want to document analysis of a problem space
-- Technical spikes or prototyping results
-
-**Key connections:**
-- `informs` → decisions, ideas, or epics that use these findings
-- Research findings often lead to decisions (AD-nnn) which then drive epics
-
-### Wireframes
-
-Wireframes capture visual specifications — UI layouts, interaction flows, or component designs.
-
-**When to create wireframes:**
-- You're designing a new view or component
-- You need to communicate visual intent before building
-- UX decisions need to be documented
-
-**Key connections:**
-- `informs` → the epics and tasks that implement this design
-
-## How Delivery Connects to Governance
-
-Every piece of work traces back to your project's principles through the graph — not through direct links, but through the natural chain of relationships:
+Ideas are the seeds. They enter the graph, get grounded by a pillar and linked to a persona, then flow into work:
 
 ```
-Pillar  ←  grounded-by  ←  Idea
-                              ↑ evolves-from
-Decision  ←  driven-by  ←  Epic
-                              ↑ delivers
-Research  ←  informed-by  ←  Task
-Lesson    ←  informed-by  ←  Task
+Pillar ←(grounded-by)← Idea →(benefits)→ Persona
+                          │
+                ┌─────────┼──────────┐
+                ↓         ↓          ↓
+            Research   Decision     Epic
+           (spawns)  (crystallises) (realises)
 ```
 
-Traceability is transitive: to answer "why are we doing this task?", walk the graph: task → (delivers) → epic → (evolves-from) → idea → (grounded-by) → pillar. You don't need to connect every artifact directly to a pillar — the graph connects them naturally.
+- An idea **spawns** research (investigation)
+- An idea **crystallises** into a decision (a choice about how to proceed)
+- An idea is **realised** by an epic or task (the work that makes it real)
+
+### From Research to Implementation
+
+Research produces outputs and feeds knowledge forward:
+
+- Research **produces** wireframes (visual specifications)
+- Research **informs** decisions (findings shape choices)
+- Research **guides** epics (findings shape delivery work)
+
+### From Decisions to Work
+
+Decisions flow in two directions:
+
+- A decision **drives** an epic (motivates delivery work)
+- A decision **governs** a rule (establishes governance in the learning loop)
+
+### From Work to Learning
+
+Work produces learning that feeds back:
+
+- A task **yields** a lesson (something learned during execution)
+- A lesson **teaches** a decision (past experience shapes future choices)
+- A lesson **cautions** an epic (warnings about what to watch for)
+- When a lesson can be enforced, a rule **codifies** it
+
+### Bug Lifecycle
+
+Bugs are corrective — they report issues and get fixed:
+
+- A bug **reports** against an epic, task, or milestone (what's broken)
+- A bug **affects** a persona (who is impacted)
+- A task **fixes** a bug (the corrective work)
 
 ## Status Workflow
 
-All delivery artifacts progress through the same canonical statuses:
+All delivery artifacts progress through canonical statuses:
 
-1. **Captured** — recorded but not yet explored
+1. **Captured** — recorded but not explored
 2. **Exploring** — being investigated or scoped
 3. **Ready** — scoped and ready for prioritisation
 4. **Prioritised** — scheduled for work
@@ -138,32 +108,68 @@ All delivery artifacts progress through the same canonical statuses:
 
 Side states:
 - **Hold** — paused intentionally
-- **Blocked** — waiting on a dependency
+- **Blocked** — waiting on a dependency (inferred from `depends-on` relationships)
 - **Surpassed** — replaced by newer work
 - **Archived** — no longer relevant
 
 ### Automatic Transitions
 
-The system can automatically transition statuses:
-- When all tasks in an epic are completed → the epic moves to **review**
-- When a task's dependencies are unmet → the task becomes **blocked**
-- When blocked dependencies are resolved → the task returns to **ready**
+The system automatically transitions statuses based on the graph:
+
+- When **all tasks** delivering to an epic are `completed` → the epic moves to `review`
+- When a task's **depends-on** targets are not yet completed → the task becomes `blocked`
+- When all **depends-on** targets are completed → the blocked task returns to `ready`
+- When **all epics** fulfilling a milestone are `completed` → the milestone moves to `review`
+
+These transitions are computed from the graph state — you don't set them manually.
+
+## Traceability
+
+Any artifact traces back to the project's vision through the graph:
+
+```
+task →(delivers)→ epic →(realised-by)→ idea →(grounded-by)→ pillar →(upholds)→ vision
+```
+
+If you can't trace a task back to a pillar, it means either:
+- The epic is missing a `realised-by` link to an idea
+- The idea is missing a `grounded-by` link to a pillar
+- The idea doesn't fit the vision — consider a **pivot**
 
 ## Using the Roadmap View
 
-The Roadmap view provides a visual board for delivery planning:
+Navigate to **Delivery → Roadmap** in the sidebar:
 
 - **Horizon Board** — milestones grouped by Now / Next / Later / Completed
 - **Status Kanban** — epics or tasks in status columns
 - **Drill-down** — click a milestone to see its epics, click an epic to see its tasks
 
-Navigate to **Delivery → Roadmap** in the sidebar to access it.
+## Quick Reference: All Plugin Relationships
+
+| From | Verb | To | Meaning |
+|---|---|---|---|
+| idea | `realises` | epic, task | Idea becomes delivery work |
+| idea | `spawns` | research | Idea triggers investigation |
+| research | `produces` | wireframe | Investigation yields visual spec |
+| research | `informs` | decision | Findings inform a choice |
+| research | `guides` | epic | Findings shape delivery work |
+| lesson | `teaches` | decision | Past experience shapes choices |
+| lesson | `cautions` | epic | Past experience warns delivery |
+| decision | `drives` | epic | Choice motivates work |
+| task | `delivers` | epic | Work rolls up to parent |
+| epic | `fulfils` | milestone | Work completes checkpoint |
+| task | `depends-on` | task | Must complete first |
+| task | `yields` | lesson | Work produces learning |
+| task | `fixes` | bug | Work resolves issue |
+| bug | `reports` | epic, task, milestone | Issue against work |
+| bug | `affects` | persona | Issue impacts user type |
 
 ## Best Practices
 
-1. **Start with milestones** — define where you're going before planning how
-2. **Connect epics to decisions** — if there's no decision driving the work, create one
-3. **Keep tasks atomic** — if a task takes more than one session, split it
-4. **Use research before deciding** — capture findings before making architecture decisions
-5. **Check traceability** — every epic should have `delivers` (to milestone) and `driven-by` (from decision) or `evolves-from` (from idea)
-6. **Run integrity checks** — `orqa validate` catches missing relationships and broken links
+1. **Start with ideas** — every piece of work should trace back to an idea
+2. **Ground ideas in pillars** — if an idea can't ground to a pillar, question it
+3. **Link ideas to personas** — if an idea doesn't benefit a persona, question it
+4. **Connect epics to decisions** — if there's no decision driving the work, create one
+5. **Keep tasks atomic** — if a task takes more than one session, split it
+6. **Track bugs separately** — bugs enter as discovery, get fixed through delivery
+7. **Run integrity checks** — `orqa validate` catches missing relationships and type violations

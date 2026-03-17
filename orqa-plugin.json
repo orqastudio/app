@@ -2,7 +2,7 @@
   "name": "@orqastudio/plugin-software-project",
   "version": "0.1.0-dev",
   "displayName": "Software Project",
-  "description": "Software development lifecycle — delivery planning with milestones, epics and tasks, research discovery, roadmap views, and delivery pipeline widgets.",
+  "description": "Software development lifecycle — delivery planning with milestones, epics and tasks, research discovery, bug tracking, roadmap views, and delivery pipeline widgets.",
   "provides": {
     "schemas": [
       {
@@ -134,14 +134,94 @@
     ],
     "relationships": [
       {
+        "key": "realises",
+        "inverse": "realised-by",
+        "label": "Realises",
+        "inverseLabel": "Realised By",
+        "from": ["idea"],
+        "to": ["epic", "task"],
+        "description": "Idea realised through delivery work",
+        "semantic": "lineage"
+      },
+      {
+        "key": "produces",
+        "inverse": "produced-by",
+        "label": "Produces",
+        "inverseLabel": "Produced By",
+        "from": ["research"],
+        "to": ["wireframe"],
+        "description": "Research produces a visual specification",
+        "semantic": "lineage"
+      },
+      {
+        "key": "yields",
+        "inverse": "yielded-by",
+        "label": "Yields",
+        "inverseLabel": "Yielded By",
+        "from": ["task"],
+        "to": ["lesson"],
+        "description": "Task yields a lesson learned",
+        "semantic": "knowledge-flow"
+      },
+      {
+        "key": "delivers",
+        "inverse": "delivered-by",
+        "label": "Delivers",
+        "inverseLabel": "Delivered By",
+        "from": ["task"],
+        "to": ["epic"],
+        "description": "Task delivers work to an epic",
+        "semantic": "hierarchy"
+      },
+      {
+        "key": "fulfils",
+        "inverse": "fulfilled-by",
+        "label": "Fulfils",
+        "inverseLabel": "Fulfilled By",
+        "from": ["epic"],
+        "to": ["milestone"],
+        "description": "Epic fulfils a milestone checkpoint",
+        "semantic": "hierarchy"
+      },
+      {
         "key": "depends-on",
         "inverse": "depended-on-by",
         "label": "Depends On",
         "inverseLabel": "Depended On By",
-        "from": ["task", "epic"],
-        "to": ["task", "epic"],
-        "description": "Delivery dependency — this artifact cannot proceed until the target is completed.",
+        "from": ["task"],
+        "to": ["task"],
+        "description": "Task cannot proceed until dependency is completed",
         "semantic": "dependency"
+      },
+      {
+        "key": "reports",
+        "inverse": "reported-by",
+        "label": "Reports",
+        "inverseLabel": "Reported By",
+        "from": ["bug"],
+        "to": ["epic", "task", "milestone"],
+        "description": "Bug reports an issue against delivery work",
+        "semantic": "corrective"
+      },
+      {
+        "key": "fixes",
+        "inverse": "fixed-by",
+        "label": "Fixes",
+        "inverseLabel": "Fixed By",
+        "from": ["task"],
+        "to": ["bug"],
+        "description": "Task fixes a reported bug",
+        "semantic": "corrective"
+      },
+      {
+        "key": "affects",
+        "inverse": "affected-by",
+        "label": "Affects",
+        "inverseLabel": "Affected By",
+        "from": ["bug"],
+        "to": ["persona"],
+        "description": "Bug affects a target persona",
+        "semantic": "corrective"
       }
     ],
     "cliTools": [],
@@ -184,7 +264,7 @@
         "key": "epic",
         "label": "Epic",
         "path": ".orqa/delivery/epics",
-        "parent": { "type": "milestone", "relationship": "delivers" }
+        "parent": { "type": "milestone", "relationship": "fulfils" }
       },
       {
         "key": "task",
@@ -200,49 +280,30 @@
       "EPIC": "title",
       "TASK": "title",
       "RES": "title",
-      "WF": "title"
+      "WF": "title",
+      "BUG": "title"
     },
     "colors": {
       "MS": "#38bdf8",
       "EPIC": "#3b82f6",
       "TASK": "#06b6d4",
       "RES": "#6366f1",
-      "WF": "#a78bfa"
+      "WF": "#a78bfa",
+      "BUG": "#ef4444"
     }
   },
-  "coreRelationships": {
-    "_comment": "How plugin artifact types relate to core platform artifacts. Pillars connect to ideas — traceability to pillars is transitive through the graph (idea → epic → task), not direct.",
-    "patterns": [
-      {
-        "from": ["epic", "task"],
-        "relationship": "driven-by",
-        "to": ["decision"],
-        "description": "Work is motivated by architecture decisions."
-      },
-      {
-        "from": ["task"],
-        "relationship": "informed-by",
-        "to": ["research", "lesson"],
-        "description": "Tasks are informed by research findings and lessons learned."
-      },
-      {
-        "from": ["research"],
-        "relationship": "informs",
-        "to": ["idea", "decision", "epic"],
-        "description": "Research findings flow into ideas, decisions, and epics."
-      },
-      {
-        "from": ["wireframe"],
-        "relationship": "informs",
-        "to": ["epic", "task"],
-        "description": "Wireframes inform the work that implements them."
-      },
-      {
-        "from": ["epic"],
-        "relationship": "evolves-from",
-        "to": ["idea"],
-        "description": "Epics evolve from ideas that have been validated."
-      }
-    ]
+  "semantics": {
+    "hierarchy": {
+      "description": "Delivery hierarchy — work rolls up to parent artifacts",
+      "keys": ["delivers", "delivered-by", "fulfils", "fulfilled-by"]
+    },
+    "dependency": {
+      "description": "Task sequencing — blocked status inferred from unmet dependencies",
+      "keys": ["depends-on", "depended-on-by"]
+    },
+    "corrective": {
+      "description": "Bug tracking — reporting issues and fixing them",
+      "keys": ["reports", "reported-by", "fixes", "fixed-by", "affects", "affected-by"]
+    }
   }
 }
