@@ -1,3 +1,4 @@
+pub mod helpers;
 pub mod artifact_commands;
 pub mod enforcement_commands;
 pub mod graph_commands;

@@ -4,9 +4,10 @@ use tauri::{AppHandle, Runtime, State};
 
 use crate::domain::artifact::NavTree;
 use crate::error::OrqaError;
-use crate::repo::project_repo;
 use crate::state::AppState;
 use crate::watcher;
+
+use super::helpers::active_project_path;
 
 /// Scan the active project and return a unified navigation tree.
 ///
@@ -24,21 +25,6 @@ pub fn artifact_scan_tree(state: State<'_, AppState>) -> Result<NavTree, OrqaErr
         .unwrap_or_default();
 
     crate::domain::artifact_reader::artifact_scan_tree(Path::new(&project_path), &artifacts)
-}
-
-/// Look up the active project's filesystem path from the database.
-fn active_project_path(state: &State<'_, AppState>) -> Result<String, OrqaError> {
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-
-    let project = project_repo::get_active(&conn)?.ok_or_else(|| {
-        OrqaError::NotFound("no active project — open a project first".to_string())
-    })?;
-
-    Ok(project.path)
 }
 
 /// Start (or replace) the `.orqa/` file-system watcher for a project.

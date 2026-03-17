@@ -14,27 +14,14 @@ use crate::error::OrqaError;
 use crate::repo::{health_snapshot_repo, project_repo};
 use crate::state::AppState;
 
+use super::helpers::active_project_path;
+
 /// Tauri event name emitted when non-auto-apply transitions are pending.
 const STATUS_TRANSITIONS_AVAILABLE_EVENT: &str = "status-transitions-available";
 
 // ---------------------------------------------------------------------------
 // Internal helpers
 // ---------------------------------------------------------------------------
-
-/// Look up the active project's filesystem path from the database.
-fn active_project_path(state: &State<'_, AppState>) -> Result<String, OrqaError> {
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-
-    let project = project_repo::get_active(&conn)?.ok_or_else(|| {
-        OrqaError::NotFound("no active project — open a project first".to_string())
-    })?;
-
-    Ok(project.path)
-}
 
 /// Retrieve the cached graph from state, or build it fresh if absent.
 ///

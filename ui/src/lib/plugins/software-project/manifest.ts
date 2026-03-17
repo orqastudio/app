@@ -1,8 +1,11 @@
 /**
  * Plugin manifest for @orqastudio/plugin-software-project.
  *
- * Declares delivery artifact schemas (milestone, epic, task),
- * the roadmap view, delivery-related widgets, and relationships.
+ * This MUST match plugins/software/orqa-plugin.json exactly.
+ * The canonical source is the JSON file — this TypeScript version
+ * exists because bundled plugins need a static import for registration.
+ *
+ * When orqa-plugin.json changes, this file must be updated to match.
  */
 
 import type { PluginManifest } from "@orqastudio/types";
@@ -11,10 +14,10 @@ export const PLUGIN_NAME = "@orqastudio/plugin-software-project";
 
 export const manifest: PluginManifest = {
 	name: PLUGIN_NAME,
-	version: "0.1.0",
+	version: "0.1.0-dev",
 	displayName: "Software Project",
 	description:
-		"Delivery planning with milestones, epics, tasks, and roadmap views.",
+		"Software development lifecycle — delivery planning with milestones, epics and tasks, research discovery, bug tracking, roadmap views, and delivery pipeline widgets.",
 	provides: {
 		schemas: [
 			{
@@ -25,10 +28,20 @@ export const manifest: PluginManifest = {
 				defaultPath: ".orqa/delivery/milestones",
 				idPrefix: "MS",
 				frontmatter: {
-					required: ["title", "status"],
-					optional: ["description", "priority", "target_date"],
+					required: ["id", "type", "status"],
+					optional: ["name", "description", "gate", "priority", "target_date", "relationships"],
 				},
-				statusTransitions: {},
+				statusTransitions: {
+					captured: ["exploring", "ready", "prioritised"],
+					exploring: ["ready", "prioritised", "hold"],
+					ready: ["prioritised", "active", "review"],
+					prioritised: ["active", "ready"],
+					active: ["hold", "blocked", "review"],
+					hold: ["active", "ready"],
+					blocked: ["active", "ready"],
+					review: ["completed", "active"],
+					completed: ["surpassed"],
+				},
 			},
 			{
 				key: "epic",
@@ -38,10 +51,20 @@ export const manifest: PluginManifest = {
 				defaultPath: ".orqa/delivery/epics",
 				idPrefix: "EPIC",
 				frontmatter: {
-					required: ["title", "status"],
-					optional: ["description", "priority"],
+					required: ["id", "type", "status"],
+					optional: ["name", "description", "priority", "relationships"],
 				},
-				statusTransitions: {},
+				statusTransitions: {
+					captured: ["exploring", "ready", "prioritised"],
+					exploring: ["ready", "prioritised", "hold"],
+					ready: ["prioritised", "active", "review"],
+					prioritised: ["active", "ready"],
+					active: ["hold", "blocked", "review"],
+					hold: ["active", "ready"],
+					blocked: ["active", "ready"],
+					review: ["completed", "active"],
+					completed: ["surpassed"],
+				},
 			},
 			{
 				key: "task",
@@ -51,10 +74,19 @@ export const manifest: PluginManifest = {
 				defaultPath: ".orqa/delivery/tasks",
 				idPrefix: "TASK",
 				frontmatter: {
-					required: ["title", "status"],
-					optional: ["description", "priority", "assignee"],
+					required: ["id", "type", "status"],
+					optional: ["name", "description", "priority", "assignee", "relationships"],
 				},
-				statusTransitions: {},
+				statusTransitions: {
+					captured: ["ready", "prioritised"],
+					ready: ["prioritised", "active"],
+					prioritised: ["active", "ready"],
+					active: ["hold", "blocked", "review"],
+					hold: ["active", "ready"],
+					blocked: ["active", "ready"],
+					review: ["completed", "active"],
+					completed: ["surpassed"],
+				},
 			},
 			{
 				key: "research",
@@ -64,10 +96,17 @@ export const manifest: PluginManifest = {
 				defaultPath: ".orqa/discovery/research",
 				idPrefix: "RES",
 				frontmatter: {
-					required: ["title", "status"],
-					optional: ["description", "methodology"],
+					required: ["id", "type", "status"],
+					optional: ["name", "description", "methodology", "relationships"],
 				},
-				statusTransitions: {},
+				statusTransitions: {
+					captured: ["exploring", "active"],
+					exploring: ["active", "hold"],
+					active: ["review", "hold"],
+					hold: ["active", "exploring"],
+					review: ["completed", "active"],
+					completed: ["surpassed", "archived"],
+				},
 			},
 			{
 				key: "wireframe",
@@ -77,10 +116,16 @@ export const manifest: PluginManifest = {
 				defaultPath: ".orqa/discovery/wireframes",
 				idPrefix: "WF",
 				frontmatter: {
-					required: ["title", "status"],
-					optional: ["description"],
+					required: ["id", "type", "status"],
+					optional: ["name", "description", "relationships"],
 				},
-				statusTransitions: {},
+				statusTransitions: {
+					captured: ["exploring", "active"],
+					exploring: ["active", "review"],
+					active: ["review", "hold"],
+					review: ["completed", "active"],
+					completed: ["surpassed", "archived"],
+				},
 			},
 		],
 		views: [
@@ -104,48 +149,118 @@ export const manifest: PluginManifest = {
 		],
 		relationships: [
 			{
+				key: "realises",
+				inverse: "realised-by",
+				label: "Realises",
+				inverseLabel: "Realised By",
+				from: ["idea"],
+				to: ["epic", "task"],
+				description: "Idea realised through delivery work",
+				semantic: "lineage",
+			},
+			{
+				key: "produces",
+				inverse: "produced-by",
+				label: "Produces",
+				inverseLabel: "Produced By",
+				from: ["research"],
+				to: ["wireframe"],
+				description: "Research produces a visual specification",
+				semantic: "lineage",
+			},
+			{
+				key: "yields",
+				inverse: "yielded-by",
+				label: "Yields",
+				inverseLabel: "Yielded By",
+				from: ["task"],
+				to: ["lesson"],
+				description: "Task yields a lesson learned",
+				semantic: "knowledge-flow",
+			},
+			{
 				key: "delivers",
 				inverse: "delivered-by",
 				label: "Delivers",
 				inverseLabel: "Delivered By",
-				from: ["task", "epic"],
-				to: ["epic", "milestone"],
-				description:
-					"Work delivers to a parent planning artifact",
+				from: ["task"],
+				to: ["epic"],
+				description: "Task delivers work to an epic",
+				semantic: "hierarchy",
+			},
+			{
+				key: "fulfils",
+				inverse: "fulfilled-by",
+				label: "Fulfils",
+				inverseLabel: "Fulfilled By",
+				from: ["epic"],
+				to: ["milestone"],
+				description: "Epic fulfils a milestone checkpoint",
+				semantic: "hierarchy",
+			},
+			{
+				key: "depends-on",
+				inverse: "depended-on-by",
+				label: "Depends On",
+				inverseLabel: "Depended On By",
+				from: ["task"],
+				to: ["task"],
+				description: "Task cannot proceed until dependency is completed",
+				semantic: "dependency",
+			},
+			{
+				key: "reports",
+				inverse: "reported-by",
+				label: "Reports",
+				inverseLabel: "Reported By",
+				from: ["bug"],
+				to: ["epic", "task", "milestone"],
+				description: "Bug reports an issue against delivery work",
+				semantic: "corrective",
+			},
+			{
+				key: "fixes",
+				inverse: "fixed-by",
+				label: "Fixes",
+				inverseLabel: "Fixed By",
+				from: ["task"],
+				to: ["bug"],
+				description: "Task fixes a reported bug",
+				semantic: "corrective",
+			},
+			{
+				key: "affects",
+				inverse: "affected-by",
+				label: "Affects",
+				inverseLabel: "Affected By",
+				from: ["bug"],
+				to: ["persona"],
+				description: "Bug affects a target persona",
+				semantic: "corrective",
 			},
 		],
 	},
 	defaultNavigation: [
+		{
+			key: "discovery",
+			type: "group",
+			icon: "compass",
+			label: "Discovery",
+			children: [
+				{ key: "research", type: "plugin", icon: "flask-conical", pluginSource: PLUGIN_NAME },
+				{ key: "wireframes", type: "plugin", icon: "layout", pluginSource: PLUGIN_NAME },
+			],
+		},
 		{
 			key: "delivery",
 			type: "group",
 			icon: "rocket",
 			label: "Delivery",
 			children: [
-				{
-					key: "roadmap",
-					type: "plugin",
-					icon: "kanban",
-					pluginSource: PLUGIN_NAME,
-				},
-				{
-					key: "milestones",
-					type: "plugin",
-					icon: "flag",
-					pluginSource: PLUGIN_NAME,
-				},
-				{
-					key: "epics",
-					type: "plugin",
-					icon: "layers",
-					pluginSource: PLUGIN_NAME,
-				},
-				{
-					key: "tasks",
-					type: "plugin",
-					icon: "check-square",
-					pluginSource: PLUGIN_NAME,
-				},
+				{ key: "roadmap", type: "plugin", icon: "kanban", pluginSource: PLUGIN_NAME },
+				{ key: "milestones", type: "plugin", icon: "flag", pluginSource: PLUGIN_NAME },
+				{ key: "epics", type: "plugin", icon: "layers", pluginSource: PLUGIN_NAME },
+				{ key: "tasks", type: "plugin", icon: "check-square", pluginSource: PLUGIN_NAME },
 			],
 		},
 	],
