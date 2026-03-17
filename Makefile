@@ -5,7 +5,6 @@
 CARGO_MANIFEST := backend/src-tauri/Cargo.toml
 
 .PHONY: install install-sidecar \
-        dev start dev-frontend stop kill restart-tauri restart-vite restart status \
         build build-frontend build-sidecar \
         check format format-check lint lint-backend lint-frontend typecheck \
         test test-rust test-frontend coverage-rust coverage-frontend test-watch test-e2e \
@@ -23,35 +22,6 @@ install: ## Install all dependencies (npm + sidecar + cargo)
 
 install-sidecar: ## Install sidecar dependencies
 	cd sidecars/claude-agentsdk-sidecar && bun install
-
-# ── Development ──────────────────────────────────────────────────────────────
-
-dev: ## Start dev environment (spawns controller, waits for ready, exits)
-	@node ../tools/debug-tool/dev.mjs dev
-
-start: ## Start dev controller in foreground (long-running, unified output)
-	@node ../tools/debug-tool/dev.mjs start
-
-stop: ## Stop controller gracefully (requires manual restart to resume)
-	@node ../tools/debug-tool/dev.mjs stop
-
-kill: ## Force-kill all OrqaStudio processes
-	@node ../tools/debug-tool/dev.mjs kill
-
-restart-tauri: ## Restart Tauri app only — recompile Rust, Vite stays alive
-	@node ../tools/debug-tool/dev.mjs restart-tauri
-
-restart-vite: ## Restart Vite dev server only
-	@node ../tools/debug-tool/dev.mjs restart-vite
-
-restart: ## Restart Vite + Tauri (controller stays alive)
-	@node ../tools/debug-tool/dev.mjs restart
-
-status: ## Show dev controller and process status
-	@node ../tools/debug-tool/dev.mjs status
-
-dev-frontend: ## Run frontend only (Vite dev server)
-	cd ui && npm run dev
 
 # ── Build ─────────────────────────────────────────────────────────────────────
 
