@@ -28,9 +28,9 @@
 [submodule "libs/plugin-template"]
 	path = libs/plugin-template
 	url = git@github.com:orqastudio/orqastudio-plugin-template.git
-[submodule "plugins/claude-plugin"]
-	path = plugins/claude-plugin
-	url = git@github.com:orqastudio/orqastudio-claude-plugin.git
 [submodule "tools/debug-tool"]
 	path = tools/debug-tool
 	url = git@github.com:orqastudio/orqastudio-debug-tool.git
+[submodule "plugins/claude-integration"]
+	path = plugins/claude-integration
+	url = git@github.com:orqastudio/orqastudio-plugin-claude.git

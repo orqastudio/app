@@ -13,7 +13,7 @@ This document maps the entire OrqaStudio core application end-to-end. It covers 
 
 - **Backend**: Rust (Tauri v2) — `backend/src-tauri/src/`
 - **Frontend**: Svelte 5 + TypeScript — `ui/src/lib/`
-- **Sidecar**: Bun/Node TypeScript — `sidecars/claude-agentsdk-sidecar/src/`
+- **Sidecar**: Bun/Node TypeScript — `plugins/claude-integration/sidecar/src/`
 - **Database**: SQLite (rusqlite) — conversation persistence
 - **File System**: `.orqa/` directory tree — governance artifacts
 - **IPC**: Tauri `invoke()` — the ONLY frontend-backend interface
@@ -140,7 +140,7 @@ The streaming pipeline carries messages from the LLM provider through the sideca
 |-------|------------|------|
 | Frontend | `conversationStore.sendMessage()` | `ui/src/lib/stores/conversation.svelte.ts` |
 | Backend | `#[tauri::command] stream_send_message` | `backend/src-tauri/src/commands/stream_commands.rs` |
-| Sidecar | `handleRequest()` on stdin readline | `sidecars/claude-agentsdk-sidecar/src/index.ts` |
+| Sidecar | `handleRequest()` on stdin readline | `plugins/claude-integration/sidecar/src/index.ts` |
 
 ### Processing Pipeline
 
@@ -716,7 +716,7 @@ On app launch (`lib.rs`):
 | `navigation.svelte.ts` | 0 commands | UI navigation state (frontend-only) |
 | `errors.svelte.ts` | 0 commands | Error collection (event-driven) |
 
-### Sidecar (`sidecars/claude-agentsdk-sidecar/src/`)
+### Sidecar (`plugins/claude-integration/sidecar/src/`)
 
 | File | Purpose |
 |------|---------|
