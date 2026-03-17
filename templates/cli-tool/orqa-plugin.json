@@ -1,0 +1,24 @@
+{
+  "$schema": "https://github.com/orqastudio/orqastudio-types/blob/main/schemas/orqa-plugin.json",
+  "name": "@yourorg/plugin-name",
+  "version": "0.1.0-dev",
+  "displayName": "Your CLI Tool Plugin",
+  "description": "A CLI tool plugin providing one-shot commands.",
+  "provides": {
+    "schemas": [],
+    "views": [],
+    "widgets": [],
+    "relationships": [],
+    "cliTools": [
+      {
+        "key": "my-tool",
+        "label": "My Tool",
+        "icon": "wrench",
+        "runtime": "node",
+        "entrypoint": "dist/cli-tool.js",
+        "args": [],
+        "category": "custom"
+      }
+    ]
+  }
+}

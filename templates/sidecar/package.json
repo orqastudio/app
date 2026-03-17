@@ -1,0 +1,15 @@
+{
+  "name": "@yourorg/plugin-name",
+  "version": "0.1.0-dev",
+  "type": "module",
+  "scripts": {
+    "build": "bun build src/sidecar.ts --outfile dist/sidecar.js --target node",
+    "dev": "bun run --watch src/sidecar.ts"
+  },
+  "dependencies": {
+    "@orqastudio/types": "dev"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

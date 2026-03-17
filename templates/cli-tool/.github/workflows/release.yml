@@ -1,0 +1,42 @@
+name: Release Plugin
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Package plugin
+        run: |
+          PLUGIN_NAME=$(jq -r '.name' orqa-plugin.json | sed 's/@.*\///')
+          TAG=${GITHUB_REF#refs/tags/}
+          tar -czf "${PLUGIN_NAME}-${TAG}.tar.gz" \
+            orqa-plugin.json \
+            package.json \
+            dist/ \
+            sidecar/dist/ \
+            --exclude=node_modules \
+            --exclude=src
+          sha256sum "${PLUGIN_NAME}-${TAG}.tar.gz" > "${PLUGIN_NAME}-${TAG}.tar.gz.sha256"
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            *.tar.gz
+            *.sha256

@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "source": "official",
+  "plugins": [
+    {
+      "name": "@orqastudio/claude-integration",
+      "displayName": "Claude Integration",
+      "description": "Claude AI provider — Agent SDK sidecar + Claude Code governance hooks.",
+      "repo": "orqastudio/orqastudio-plugin-claude",
+      "category": "ai-provider",
+      "icon": "bot",
+      "capabilities": ["sidecar", "hooks"],
+      "requires": { "node": ">=20" }
+    }
+  ]
+}
