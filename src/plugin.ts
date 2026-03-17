@@ -39,6 +39,68 @@ export interface ArtifactSchema {
 }
 
 // ---------------------------------------------------------------------------
+// Backend Capability Registrations
+// ---------------------------------------------------------------------------
+
+/** A system binary requirement for a plugin capability. */
+export interface SystemRequirement {
+	/** Binary name (e.g. "node", "bun", "cargo"). */
+	binary: string;
+	/** Minimum semver version, if any. */
+	minVersion?: string;
+}
+
+/** A long-running sidecar process provided by a plugin. */
+export interface SidecarRegistration {
+	/** Unique sidecar key (e.g. "claude-agent"). */
+	key: string;
+	/** Display label. */
+	label: string;
+	/** Runtime used to execute the sidecar. */
+	runtime: "node";
+	/** Entrypoint path relative to the plugin root (e.g. "dist/sidecar.js"). */
+	entrypoint: string;
+	/** Additional CLI arguments. */
+	args?: string[];
+	/** System binaries required to run this sidecar. */
+	requires?: SystemRequirement[];
+}
+
+/** A one-shot tool (CLI command) provided by a plugin. */
+export interface ToolRegistration {
+	/** Unique tool key (e.g. "integrity-check", "eslint"). */
+	key: string;
+	/** Display label. */
+	label: string;
+	/** Lucide icon name. */
+	icon: string;
+	/** Runtime used to execute the tool. */
+	runtime: "node" | "system";
+	/** Entrypoint path relative to the plugin root. */
+	entrypoint: string;
+	/** Additional CLI arguments. */
+	args?: string[];
+	/** Tool category for grouping in the UI. */
+	category: "integrity" | "lint" | "test" | "build" | "custom";
+	/** Endpoint for AD-042 verification snapshots. */
+	dataEndpoint?: string;
+}
+
+/** A hook provided by a plugin, triggered on specific events. */
+export interface HookRegistration {
+	/** Unique hook key. */
+	key: string;
+	/** Event that triggers this hook. */
+	event: "pre-commit" | "post-commit" | "pre-push" | "artifact-change" | "session-start";
+	/** Runtime used to execute the hook. */
+	runtime: "node" | "system";
+	/** Entrypoint path relative to the plugin root. */
+	entrypoint: string;
+	/** Additional CLI arguments. */
+	args?: string[];
+}
+
+// ---------------------------------------------------------------------------
 // View & Widget Registrations
 // ---------------------------------------------------------------------------
 
@@ -162,6 +224,12 @@ export interface PluginManifest {
 	description?: string;
 	/** Plugin dependencies — other plugin names that must be loaded first. */
 	requires?: string[];
+	/**
+	 * Sidecar key(s) this plugin requires at runtime.
+	 * If specified, the plugin is only loaded when a matching sidecar provider
+	 * is registered and active. Used for capability routing.
+	 */
+	requiresSidecar?: string | string[];
 	/** Capabilities this plugin provides. */
 	provides: PluginProvides;
 	/** Settings panel registration. */
@@ -180,6 +248,12 @@ export interface PluginProvides {
 	widgets: WidgetRegistration[];
 	/** Relationship types this plugin introduces. */
 	relationships: RelationshipType[];
+	/** Long-running sidecar process (at most one per plugin). */
+	sidecar?: SidecarRegistration;
+	/** One-shot tools (CLI commands) this plugin provides. */
+	tools?: ToolRegistration[];
+	/** Hooks triggered on specific events. */
+	hooks?: HookRegistration[];
 }
 
 // ---------------------------------------------------------------------------
@@ -219,4 +293,70 @@ export interface PluginProjectConfig {
 	relationships?: Record<string, boolean>;
 	/** Plugin-specific settings. */
 	config?: Record<string, unknown>;
+}
+
+/** AI provider routing configuration stored in project.json under `providers`. */
+export interface ProviderConfig {
+	/** The active sidecar provider key (matches a SidecarRegistration.key). */
+	activeSidecar?: string;
+	/**
+	 * Per-capability routing overrides.
+	 * Maps capability names to provider keys.
+	 * project config > plugin defaults > app baseline.
+	 */
+	capabilities?: Record<string, string>;
+}
+
+// ---------------------------------------------------------------------------
+// Tool Runner Results (returned by Tauri commands)
+// ---------------------------------------------------------------------------
+
+/** Result of executing a plugin-registered tool. */
+export interface ToolRunResult {
+	/** Plugin that owns the tool. */
+	plugin: string;
+	/** Tool key. */
+	tool_key: string;
+	/** Exit code (0 = success). */
+	exit_code: number;
+	/** Captured stdout. */
+	stdout: string;
+	/** Captured stderr. */
+	stderr: string;
+	/** Execution duration in milliseconds. */
+	duration_ms: number;
+	/** Unix timestamp (seconds) when the run completed. */
+	completed_at: number;
+}
+
+/** Status snapshot for a registered tool. */
+export interface ToolRunStatus {
+	/** Tool key. */
+	tool_key: string;
+	/** Plugin that owns the tool. */
+	plugin: string;
+	/** Display label. */
+	label: string;
+	/** Whether the last run succeeded. */
+	success: boolean | null;
+	/** Unix timestamp (seconds) of the last run. */
+	last_run: number | null;
+	/** Duration of the last run in milliseconds. */
+	last_duration_ms: number | null;
+	/** Human-readable summary. */
+	summary: string | null;
+}
+
+// ---------------------------------------------------------------------------
+// Hook Generation Results (returned by Tauri commands)
+// ---------------------------------------------------------------------------
+
+/** Result of regenerating hook dispatcher scripts. */
+export interface HookGenerationResult {
+	/** Number of dispatcher scripts written. */
+	dispatchers_written: number;
+	/** Events that have dispatchers. */
+	events: string[];
+	/** Hook keys that were included (format: "plugin:hook_key"). */
+	hooks: string[];
 }

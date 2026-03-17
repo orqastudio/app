@@ -136,4 +136,12 @@ export type {
 	NavItemType,
 	NavigationItem,
 	PluginProjectConfig,
+	SystemRequirement,
+	SidecarRegistration,
+	ToolRegistration,
+	HookRegistration,
+	ToolRunResult,
+	ToolRunStatus,
+	HookGenerationResult,
+	ProviderConfig,
 } from "./plugin.js";
