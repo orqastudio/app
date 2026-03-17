@@ -1,3 +1,0 @@
-[submodule ".orqa/plugins/orqastudio-claude-plugin"]
-	path = .orqa/plugins/orqastudio-claude-plugin
-	url = git@github.com:orqastudio/orqastudio-claude-plugin.git
