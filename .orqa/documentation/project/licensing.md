@@ -1,0 +1,115 @@
+---
+id: DOC-088
+title: "Licensing & Ethics"
+description: "What the OrqaStudio license means for you — whether you're a user, contributor, charity, or business."
+category: concept
+created: 2026-03-18
+updated: 2026-03-18
+relationships:
+  - target: AD-056
+    type: documents
+    rationale: This doc explains the licensing decision for humans
+  - target: SKILL-CLI-006
+    type: synchronised-with
+  - target: SKILL-055
+    type: synchronised-with
+---
+
+# Licensing & Ethics
+
+OrqaStudio is source-available software licensed under BSL-1.1 (Business Source License 1.1). This page explains what that means for different types of users.
+
+## The Short Version
+
+- **Personal use**: Free, always
+- **Charities & non-profits** (aligned with our values): Free, always
+- **Education & research**: Free, always
+- **Open-source projects**: Free, always
+- **Commercial use**: Wait 4 years (each release converts to Apache 2.0), or contact us
+- **Hosting as a paid service**: Not permitted before the change date
+
+## What We Believe
+
+OrqaStudio exists to democratise AI-assisted structured thinking. We believe:
+
+- Everyone deserves free healthcare, free education, free travel, and free emergency services
+- Quality of life should be measured by disposable income per capita, not GDP
+- AI should be a tool that helps build a society where everyone is looked after and treated equally
+- Entrepreneurship and competitive innovation are good, but the baseline shouldn't be survival — it should be equal opportunity
+- Those who need help the most should receive it first
+
+The license is designed to serve these goals. People and organisations that share this philosophy can use OrqaStudio freely. Those who work against these goals cannot.
+
+## For Personal Users
+
+Use OrqaStudio for anything. Your personal projects, your learning, your side business, your freelance work. No restrictions, no cost, no signup. The source is open — you can read it, modify it, build on it.
+
+## For Charities & Non-Profits
+
+If your organisation is a registered non-profit, charity, or social enterprise, and your mission is consistent with the Universal Declaration of Human Rights — including equal treatment and dignity for all people — you can use OrqaStudio in production, free of charge. This includes:
+
+- Health charities and community health organisations
+- Educational institutions and training programmes
+- Housing and homelessness organisations
+- Environmental sustainability projects
+- Community empowerment and civic participation initiatives
+- Organisations democratising access to technology
+- LGBTQ+ rights organisations
+- Disability rights and accessibility organisations
+
+**The grant does not apply** to any organisation whose mission, activities, or funded advocacy actively works to restrict, diminish, or remove the rights of any person or group based on race, ethnicity, national origin, sex, gender, gender identity, gender expression, sexual orientation, disability, age, religion, or socioeconomic status.
+
+This includes organisations that fund, lobby for, or promote policies that deny equal access to healthcare, education, housing, or legal protections on any of these grounds.
+
+**To be explicit:** Trans rights are human rights. Gender identity and gender expression are named specifically in the license. This project was created by a trans woman and will not be a tool used against her community or any other marginalised group.
+
+## For Businesses
+
+OrqaStudio uses a 4-year rolling release model. Each tagged release starts a 4-year clock. After that date, the release becomes Apache 2.0 — fully open, no restrictions. Before the change date:
+
+- **Development, testing, evaluation**: Always permitted
+- **Internal production use**: Requires a commercial license
+- **Hosting as a paid service**: Not permitted
+
+We're not anti-business. We think competitive markets drive innovation. But we won't let someone take this work, wrap it in a subscription, and profit from it without contributing back.
+
+## For Contributors
+
+We use the **DCO (Developer Certificate of Origin)** model. When you submit a pull request, you add a `Signed-off-by` line to your commits, confirming:
+
+1. You have the right to submit this code
+2. You agree to the project's license terms
+3. Your contribution will be licensed under BSL-1.1
+
+You retain copyright of your contributions. No CLA (Contributor License Agreement) is required — we don't ask you to transfer rights.
+
+**Who can contribute?** Anyone who shares the philosophy. We welcome contributions from individuals, companies, and organisations worldwide, regardless of background, as long as the work serves the goal of democratising AI for equal opportunity.
+
+## For Sponsors
+
+We welcome sponsorship from aligned organisations. Sponsorship does not grant:
+
+- Exclusive control over the project
+- Governance rights or board seats
+- Ability to change the license
+- Priority access to features
+
+The project remains independent. We're beholden to the mission, not to any corporate entity.
+
+## The Change Date
+
+Every release starts a 4-year clock. When it expires, that release's code becomes **Apache 2.0** — the same license used by most of the open-source ecosystem. No restrictions, no grants needed, fully open.
+
+This means OrqaStudio is on a path to being fully open-source. The BSL-1.1 window protects the project's sustainability during active development while guaranteeing that everything eventually becomes free for everyone.
+
+## Summary Table
+
+| You are... | Can you use it in production? | Cost |
+|-----------|-------------------------------|------|
+| An individual | Yes | Free |
+| An aligned charity/non-profit | Yes | Free |
+| A school or university | Yes | Free |
+| An open-source project | Yes | Free |
+| A business (evaluation) | Yes | Free |
+| A business (production) | After 4 years, or with commercial license | Contact us |
+| Hosting as a paid service | No (before change date) | Not available |

@@ -6,6 +6,8 @@ status: active
 created: 2026-03-07
 updated: 2026-03-10
 relationships:
+  - target: AD-056
+    type: governed-by
   - target: AD-032
     type: enforces
   - target: DOC-036

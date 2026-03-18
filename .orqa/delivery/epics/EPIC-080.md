@@ -6,6 +6,8 @@ created: 2026-03-16
 relationships:
   - type: driven-by
     target: AD-055
+  - target: AD-056
+    type: driven-by
   - type: fulfils
     target: MS-002
   - target: IDEA-030
