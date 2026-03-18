@@ -11,139 +11,49 @@ AI-assisted clarity engine for structured thinking and adaptive action
 
 ---
 
-## Overview
+## What is OrqaStudio?
 
-OrqaStudio is an open platform exploring how AI can support **clear thinking, structured reasoning, and adaptive action**.
+OrqaStudio helps people turn messy situations into structured understanding and evolving plans. It's a domain-agnostic clarity engine — software development is the first domain, but the platform applies to any complex work.
 
-Rather than focusing purely on task automation or code generation, OrqaStudio focuses on helping people move from **messy situations to structured understanding and evolving plans**.
+**Core principles:**
+- **Clarity Through Structure** — making thinking visible and browsable
+- **Learning Through Reflection** — the system improves over time
+- **Purpose Through Continuity** — intent survives implementation pressure
 
-The project applies principles from **agile development, systems thinking, and reflective practice** to create tools that help individuals and teams:
-
-- explore complex problems  
-- structure ideas  
-- design experiments  
-- learn through iteration  
-- continuously refine their understanding  
+AI acts as a thinking partner. Humans make the decisions.
 
 ---
 
-## Core Philosophy
+## Getting Started
 
-OrqaStudio is built around a simple idea:
+All development happens through the dev environment:
 
-**Clear thinking leads to better action.**
-
-The platform supports a learning loop inspired by agile principles:
-
-Chaos → Clarity → Structured Understanding → Experiments → Reflection → Improved Understanding
-
-AI acts as a **thinking partner**, helping organise information, surface assumptions, and guide structured reflection.
-
-Humans remain responsible for judgement and decisions.
-
----
-
-## Key Concepts
-
-### Artifact-driven reasoning
-
-Knowledge is captured as **human-readable artifacts (markdown documents)** that represent the current state of understanding.
-
-Artifacts evolve over time and become inputs for future reasoning.
-
----
-
-### Reflective learning
-
-Iteration history is preserved so teams can reflect on:
-
-- how ideas evolved  
-- which assumptions changed  
-- what was learned through experimentation  
-
-Retrospection is treated as a **core capability**, not an afterthought.
-
----
-
-### Human-led AI
-
-OrqaStudio is designed to **support human thinking, not replace it**.
-
-The goal is to help people:
-
-- structure complexity  
-- explore possibilities  
-- learn faster than the problems they are trying to solve  
-
----
-
-## Ecosystem
-
-```text
-orqastudio
-│
-├── orqastudio-app → core reasoning engine and platform
-├── orqastudio-brand → visual identity and branding assets
-│
-├── orqastudio-site → project website (future)
-├── orqastudio-docs → extended documentation (future)
-├── orqastudio-plugins → ecosystem modules and integrations (future)
-└── orqastudio-examples → example workflows and templates (future)
+```bash
+git clone git@github.com:orqastudio/orqastudio-dev.git
+cd orqastudio-dev
+make install
 ```
 
----
-
-## Repositories
-
-### orqastudio-app
-
-The main application and reasoning engine.
-
-Responsible for:
-
-- artifact management  
-- reasoning workflows  
-- project environments  
-- retrospective analysis  
+One command installs prerequisites, builds everything, and verifies the setup.
 
 ---
 
-### orqastudio-brand
+## Contributing
 
-Canonical branding assets for OrqaStudio.
+Contributions to the core project and official plugins go through [orqastudio-dev](https://github.com/orqastudio/orqastudio-dev). See [CONTRIBUTING.md](https://github.com/orqastudio/orqastudio-dev/blob/main/CONTRIBUTING.md).
 
-Includes:
-
-- logos  
-- icons  
-- visual identity assets  
+Community plugins are maintained independently and submitted to the [community registry](https://github.com/orqastudio/orqastudio-registry-community) via PR.
 
 ---
 
 ## Project Status
 
-⚠️ OrqaStudio is currently under active development.
-
-Architecture, APIs, and internal structures may evolve as the platform is built and explored.
-
----
-
-## About the Project
-
-OrqaStudio is an independent open project exploring how AI can support **structured thinking, iterative learning, and meaningful problem solving**.
-
-The long-term goal is to make powerful thinking frameworks accessible beyond traditional software development teams, enabling individuals and organisations to approach complex challenges with clarity and adaptability.
+⚠️ Pre-release — under active development. APIs and interfaces may change until v1.0.0.
 
 ---
 
 ## License
 
-Each repository contains its own license file describing the terms under which its contents are released.
-
-- The core platform is released under an open-source license.  
-- Branding assets are maintained separately and may have additional usage restrictions.
-
-Content in this repository is licensed under the
-Creative Commons Attribution 4.0 International License.
+BSL-1.1 with Ethical Use Addendum. Free for personal use, aligned charities, education, and open-source. See [LICENSE](https://github.com/orqastudio/orqastudio-dev/blob/main/app/LICENSE) and [CHANGE-LICENSE](https://github.com/orqastudio/orqastudio-dev/blob/main/app/CHANGE-LICENSE).
 
 Copyright (c) 2026 Bobbi Byrne-Graham
