@@ -3,26 +3,72 @@ Business Source License 1.1
 Parameters
 
 Licensor:             Bobbi Byrne-Graham
-Licensed Work:        @orqastudio/sdk
+Licensed Work:        OrqaStudio
                       The Licensed Work is (c) 2026 Bobbi Byrne-Graham.
-                      This is pre-release software. APIs and store contracts
-                      may change without
+                      This is pre-release software. All APIs and
+                      interfaces may change without
                       notice until version 1.0.0.
-Additional Use Grant: You may make use of the Licensed Work, provided that
-                      you may not use the Licensed Work for a Commercial
-                      Purpose.
+Additional Use Grant: You may make production use of the Licensed Work,
+                      provided that such use does not constitute a
+                      Prohibited Purpose and is one of the following
+                      Permitted Uses.
 
-                      A "Commercial Purpose" means using the Licensed Work
-                      to create, offer, or operate a product or service that
-                      competes with OrqaStudio, or to provide the Licensed
-                      Work to third parties as a hosted or managed service.
+                      "Prohibited Purpose" means:
 
-                      The following uses are expressly permitted:
-                      - Internal business use (using OrqaStudio within your
-                        own organisation)
-                      - Non-commercial use (personal, educational, research)
-                      - Developing plugins or extensions for OrqaStudio
-                      - Evaluation and testing
+                      (a) offering the Licensed Work, or any derivative
+                      work, to third parties as a hosted or managed
+                      service (SaaS) for commercial gain; or
+
+                      (b) use by any organisation whose mission,
+                      activities, or funded advocacy actively works to
+                      restrict, diminish, or remove the rights of any
+                      person or group based on race, ethnicity, national
+                      origin, sex, gender, gender identity, gender
+                      expression, sexual orientation, disability, age,
+                      religion, or socioeconomic status. This includes
+                      organisations that fund, lobby for, or promote
+                      policies that deny equal access to healthcare,
+                      education, housing, or legal protections on any
+                      of these grounds.
+
+                      "Permitted Uses" (production use granted
+                      immediately, without waiting for the Change Date):
+
+                      (1) Personal use — any individual using the
+                      Licensed Work for their own projects, learning,
+                      work, or research, regardless of whether that
+                      work generates income.
+
+                      (2) Non-profit and charitable use — any
+                      organisation that (i) is registered as a
+                      non-profit, charity, or social enterprise in its
+                      jurisdiction, and (ii) whose mission and
+                      activities are consistent with the principles of
+                      the Universal Declaration of Human Rights,
+                      including equal treatment and dignity for all
+                      people regardless of the characteristics listed
+                      above.
+
+                      (3) Educational use — schools, universities,
+                      vocational training programmes, and research
+                      institutions.
+
+                      (4) Open-source use — projects that are themselves
+                      distributed under an OSI-approved open-source
+                      license or a license that provides equivalent
+                      freedoms.
+
+                      (5) Evaluation, development, and testing — any
+                      use that is not production use, including
+                      evaluation, prototyping, development, and testing.
+
+                      (6) Plugin and extension development — creating
+                      plugins, connectors, or extensions that
+                      interoperate with the Licensed Work.
+
+                      All other production use requires a commercial
+                      license from the Licensor.
+
 Change Date:          The earlier of (a) the date specified for a given
                       version in the VERSIONS file, or (b) the fourth
                       anniversary of the first public release of that
