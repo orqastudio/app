@@ -8,6 +8,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join, relative, basename, extname } from "node:path";
 import { parse as parseYaml } from "yaml";
 import type { ArtifactGraph, ArtifactNode, ArtifactRef, BodyTemplate, IntegrityConfig } from "./types.js";
+import { PLATFORM_CONFIG } from "./types.js";
 
 /** A type registry entry: path prefix → artifact type key. */
 interface TypeRegistryEntry {
@@ -78,7 +79,29 @@ function inferType(relPath: string, registry: TypeRegistryEntry[]): string {
     }
   }
 
-  return bestMatch?.key ?? "unknown";
+  if (bestMatch) return bestMatch.key;
+
+  // Fallback: infer type from the artifact ID prefix using core.json's
+  // artifactTypes. This handles artifacts in app/.orqa/ and plugins/ where
+  // the path-based registry (from project.json) has no mapping.
+  return "unknown"; // Will be resolved per-node after ID is parsed
+}
+
+/**
+ * Infer artifact type from an artifact ID prefix using core.json.
+ * E.g. "DOC-036" → "doc", "SKILL-011" → "skill", "EPIC-001" → "epic".
+ * Falls back to "unknown" if no match.
+ */
+function inferTypeFromId(id: string): string {
+  const platformAny = PLATFORM_CONFIG as unknown as Record<string, unknown>;
+  const types = platformAny["artifactTypes"] as Array<{ key: string; idPrefix: string }> | undefined;
+  if (!types) return "unknown";
+
+  const prefix = id.match(/^([A-Z]+)-/)?.[1];
+  if (!prefix) return "unknown";
+
+  const match = types.find((t) => t.idPrefix === prefix);
+  return match?.key ?? "unknown";
 }
 
 /** Extract YAML frontmatter from markdown content. Returns [frontmatter, body]. */
@@ -220,6 +243,31 @@ function walkDir(dir: string): string[] {
   return results;
 }
 
+/**
+ * Discover additional scan directories beyond .orqa/:
+ * app/.orqa/ (core artifacts), plugins/*, connectors/*.
+ */
+function discoverScanDirs(projectRoot: string): string[] {
+  const dirs: string[] = [];
+
+  // Core artifacts (shipped with the app)
+  const appOrqa = join(projectRoot, "app", ".orqa");
+  try { readdirSync(appOrqa); dirs.push(appOrqa); } catch { /* not present */ }
+
+  // Plugin and connector artifacts
+  for (const container of ["plugins", "connectors"]) {
+    const containerDir = join(projectRoot, container);
+    let entries;
+    try { entries = readdirSync(containerDir, { withFileTypes: true }); } catch { continue; }
+    for (const entry of entries) {
+      if (!entry.isDirectory() || entry.name.startsWith(".") || entry.name === "node_modules") continue;
+      dirs.push(join(containerDir, entry.name));
+    }
+  }
+
+  return dirs;
+}
+
 /** Build the artifact graph from disk. */
 export function buildGraph(config: IntegrityConfig): ArtifactGraph {
   const orqaDir = join(config.projectRoot, ".orqa");
@@ -231,7 +279,12 @@ export function buildGraph(config: IntegrityConfig): ArtifactGraph {
   // Load body templates from schema.json files
   const bodyTemplates = loadBodyTemplates(orqaDir, typeRegistry);
 
-  const files = walkDir(orqaDir);
+  // Scan project .orqa/ + core app/.orqa/ + plugins/ + connectors/
+  const additionalDirs = discoverScanDirs(config.projectRoot);
+  const files = [
+    ...walkDir(orqaDir),
+    ...additionalDirs.flatMap((dir) => walkDir(dir)),
+  ];
 
   // Pass 1: collect all nodes
   for (const file of files) {
@@ -254,10 +307,17 @@ export function buildGraph(config: IntegrityConfig): ArtifactGraph {
 
     const referencesOut = collectRefs(fm, id);
 
+    // Path-based inference first, fall back to ID prefix for artifacts
+    // outside the project.json path registry (app/.orqa/, plugins/)
+    let artifactType = inferType(relPath, typeRegistry);
+    if (artifactType === "unknown") {
+      artifactType = inferTypeFromId(id);
+    }
+
     nodes.set(id, {
       id,
       path: relPath,
-      artifactType: inferType(relPath, typeRegistry),
+      artifactType,
       title,
       status,
       frontmatter: fm,

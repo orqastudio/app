@@ -79,8 +79,58 @@ async function cmdInstall(args: string[]): Promise<void> {
 	const version = versionIdx >= 0 ? args[versionIdx + 1] : undefined;
 
 	const result = await installPlugin({ source, version });
-	console.log(`\nInstalled: ${result.name} @ ${result.version}`);
-	console.log(`Path: ${result.path}`);
+
+	if (result.collisions.length > 0) {
+		console.log(`\nInstalled: ${result.name} @ ${result.version}`);
+		console.log(`Path: ${result.path}`);
+		console.log(`\n⚠ ${result.collisions.length} relationship key collision(s) detected:\n`);
+
+		for (const c of result.collisions) {
+			console.log(`  Key: "${c.key}"`);
+			console.log(`    Existing (${c.existingSource}): ${c.existingDescription || "(no description)"}`);
+			console.log(`      semantic: ${c.existingSemantic ?? "none"}, from: [${c.existingFrom.join(", ")}], to: [${c.existingTo.join(", ")}]`);
+			console.log(`    Incoming: ${c.incomingDescription || "(no description)"}`);
+			console.log(`      semantic: ${c.incomingSemantic ?? "none"}, from: [${c.incomingFrom.join(", ")}], to: [${c.incomingTo.join(", ")}]`);
+			console.log(`    Intent match: ${c.semanticMatch ? "YES — same semantic, likely safe to merge" : "NO — different semantic, should rename"}`);
+			console.log();
+		}
+
+		// Interactive resolution
+		const readline = await import("node:readline");
+		const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+		const ask = (q: string): Promise<string> => new Promise((resolve) => rl.question(q, resolve));
+
+		const decisions: Array<{ key: string; decision: "merged" | "renamed"; existingSource: string; originalKey?: string }> = [];
+
+		for (const c of result.collisions) {
+			const suggestion = c.semanticMatch ? "merge" : "rename";
+			const answer = await ask(`  "${c.key}" — [m]erge or [r]ename? (suggested: ${suggestion}) `);
+			const choice = answer.trim().toLowerCase();
+
+			if (choice === "r" || choice === "rename") {
+				decisions.push({ key: c.key, decision: "renamed", existingSource: c.existingSource, originalKey: c.key });
+				console.log(`    → Will namespace as plugin-specific key\n`);
+			} else {
+				decisions.push({ key: c.key, decision: "merged", existingSource: c.existingSource });
+				console.log(`    → Will merge from/to constraints\n`);
+			}
+		}
+
+		rl.close();
+
+		// Write decisions to the installed manifest
+		if (decisions.length > 0) {
+			const fs = await import("node:fs");
+			const manifestPath = (await import("node:path")).join(result.path, "orqa-plugin.json");
+			const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
+			manifest.mergeDecisions = decisions;
+			fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
+			console.log(`Recorded ${decisions.length} merge decision(s) in plugin manifest.`);
+		}
+	} else {
+		console.log(`\nInstalled: ${result.name} @ ${result.version}`);
+		console.log(`Path: ${result.path}`);
+	}
 }
 
 async function cmdUninstall(args: string[]): Promise<void> {

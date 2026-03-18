@@ -10,6 +10,8 @@ import * as path from "node:path";
 import * as crypto from "node:crypto";
 import { readLockfile, writeLockfile, type LockfileData } from "./lockfile.js";
 import { readManifest, validateManifest } from "./manifest.js";
+import { PLATFORM_CONFIG } from "@orqastudio/types";
+import type { RelationshipType, PluginManifest } from "@orqastudio/types";
 
 export interface InstallOptions {
 	/** GitHub owner/repo or local filesystem path. */
@@ -25,6 +27,78 @@ export interface InstallResult {
 	version: string;
 	path: string;
 	source: "github" | "local";
+	/** Key collisions detected during installation. Empty when none. */
+	collisions: KeyCollisionResult[];
+}
+
+export interface KeyCollisionResult {
+	key: string;
+	existingSource: string;
+	existingDescription: string;
+	existingSemantic?: string;
+	existingFrom: string[];
+	existingTo: string[];
+	incomingDescription: string;
+	incomingSemantic?: string;
+	incomingFrom: string[];
+	incomingTo: string[];
+	semanticMatch: boolean;
+}
+
+/**
+ * Detect relationship key collisions between an incoming plugin and
+ * existing definitions (core.json + already-installed plugins).
+ */
+function detectCollisions(
+	manifest: PluginManifest,
+	projectRoot: string,
+): KeyCollisionResult[] {
+	const collisions: KeyCollisionResult[] = [];
+
+	// Build existing relationship map: key → { source, rel }
+	const existing: Array<{ source: string; rel: RelationshipType }> = [];
+
+	// Core relationships
+	for (const rel of PLATFORM_CONFIG.relationships) {
+		existing.push({ source: "core", rel });
+	}
+
+	// Already-installed plugin relationships
+	const dir = path.join(projectRoot, "plugins");
+	if (fs.existsSync(dir)) {
+		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+			if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+			try {
+				const installed = readManifest(path.join(dir, entry.name));
+				if (installed.name === manifest.name) continue; // Skip self
+				for (const rel of installed.provides.relationships) {
+					existing.push({ source: installed.name, rel });
+				}
+			} catch { /* skip invalid */ }
+		}
+	}
+
+	// Check incoming relationships against existing
+	for (const incoming of manifest.provides.relationships) {
+		const match = existing.find((e) => e.rel.key === incoming.key);
+		if (match) {
+			collisions.push({
+				key: incoming.key,
+				existingSource: match.source,
+				existingDescription: match.rel.description ?? "",
+				existingSemantic: match.rel.semantic,
+				existingFrom: match.rel.from ?? [],
+				existingTo: match.rel.to ?? [],
+				incomingDescription: incoming.description ?? "",
+				incomingSemantic: incoming.semantic,
+				incomingFrom: incoming.from ?? [],
+				incomingTo: incoming.to ?? [],
+				semanticMatch: match.rel.semantic === incoming.semantic,
+			});
+		}
+	}
+
+	return collisions;
 }
 
 /** Resolve the plugins directory for a project. */
@@ -59,11 +133,14 @@ export async function installPlugin(options: InstallOptions): Promise<InstallRes
 }
 
 async function installFromLocalPath(source: string, pluginsDirectory: string): Promise<InstallResult> {
+	const projectRoot = path.dirname(pluginsDirectory);
 	const manifest = readManifest(source);
 	const errors = validateManifest(manifest);
 	if (errors.length > 0) {
 		throw new Error(`Invalid plugin manifest:\n  ${errors.join("\n  ")}`);
 	}
+
+	const collisions = detectCollisions(manifest, projectRoot);
 
 	const targetDir = path.join(pluginsDirectory, manifest.name.replace(/^@[^/]+\//, ""));
 
@@ -71,7 +148,6 @@ async function installFromLocalPath(source: string, pluginsDirectory: string): P
 		fs.rmSync(targetDir, { recursive: true });
 	}
 
-	// Copy the directory
 	fs.cpSync(source, targetDir, { recursive: true });
 
 	return {
@@ -79,6 +155,7 @@ async function installFromLocalPath(source: string, pluginsDirectory: string): P
 		version: manifest.version,
 		path: targetDir,
 		source: "local",
+		collisions,
 	};
 }
 
@@ -141,6 +218,8 @@ async function installFromGitHub(
 		});
 		writeLockfile(projectRoot, lockfile);
 
+		const collisions = detectCollisions(manifest, projectRoot);
+
 		console.log(`Installed ${manifest.name}@${manifest.version}`);
 
 		return {
@@ -148,6 +227,7 @@ async function installFromGitHub(
 			version: manifest.version,
 			path: pluginDir,
 			source: "github",
+			collisions,
 		};
 	} finally {
 		if (fs.existsSync(tmpDir)) {
@@ -232,6 +312,7 @@ export function listInstalledPlugins(projectRoot?: string): InstallResult[] {
 				version: manifest.version,
 				path: pluginPath,
 				source: locked ? "github" : "local",
+				collisions: [],
 			});
 		} catch {
 			// Skip invalid plugins

@@ -7,33 +7,26 @@
  * intentionally local — the validator builds its own graph from disk, not from
  * IPC responses.
  *
- * INVERSE_MAP is imported from @orqastudio/types to keep a single source of truth.
+ * buildInverseMap is imported from @orqastudio/types to keep a single source of truth.
  */
 
 // Re-export from @orqastudio/types (single source of truth)
-export { INVERSE_MAP, buildInverseMap, hasSemantic, keysForSemantic, PLATFORM_CONFIG, PLATFORM_SEMANTICS } from "@orqastudio/types";
+export { buildInverseMap, hasSemantic, keysForSemantic, PLATFORM_CONFIG, PLATFORM_SEMANTICS } from "@orqastudio/types";
 export type { RelationshipType, PlatformConfig, RelationshipSemantic } from "@orqastudio/types";
 
-/** Categories of integrity findings. */
+/**
+ * Categories of integrity findings.
+ *
+ * All categories are schema-driven — no artifact-type or
+ * relationship-key specific categories.
+ */
 export type IntegrityCategory =
   | "BrokenLink"
   | "MissingInverse"
-  | "NullTarget"
-  | "ResearchGap"
-  | "PlanningPlacement"
-  | "DependencyViolation"
-  | "CircularDependency"
-  | "SupersessionSymmetry"
-  | "MilestoneGate"
-  | "IdeaPromotionValidity"
-  | "IdeaDeliveryTracking"
-  | "DeprecatedField"
-  | "StatusTransition"
+  | "RelationshipConstraint"
   | "SchemaViolation"
-  | "BareArtifactId"
-  | "BodyTemplate"
-  | "PriorityWithoutJustification"
-  | "RelationshipConstraint";
+  | "CircularDependency"
+  | "BodyTemplate";
 
 /** Severity of a finding. */
 export type IntegritySeverity = "error" | "warning";
