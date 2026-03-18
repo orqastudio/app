@@ -31,12 +31,17 @@ Add to the `plugins` array in `registry.json`:
   "displayName": "Your Plugin Name",
   "description": "What your plugin does.",
   "repo": "yourorg/your-repo",
+  "version": "1.0.0",
+  "releaseTag": "v1.0.0",
+  "sha256": "abc123...",
   "category": "ai-provider|workflow|integration|custom",
   "icon": "lucide-icon-name",
   "capabilities": ["sidecar", "hooks", "cli-tools", "views", "widgets"],
   "requires": { "node": ">=22" }
 }
 ```
+
+The `version`, `releaseTag`, and `sha256` fields pin the entry to a specific verified release. This is a security measure — without it, a plugin author could push arbitrary code to all users who installed via the registry. Updating to a new version requires a new PR for re-verification. The installer checks the SHA256 hash on download.
 
 ## Review Process
 
