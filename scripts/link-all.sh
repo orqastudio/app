@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # link-all.sh — Install deps, build libs, and npm link everything
 # Run from the orqastudio-dev root directory.
+#
+# Prefer `orqa setup link` if the CLI is available.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -42,26 +44,16 @@ npm link @orqastudio/types
 npx tsc
 npm link
 
-# 5. Install and build integrity-validator (depends on types)
-echo ""
-echo "--- libs/integrity-validator ---"
-cd "$ROOT/libs/integrity-validator"
-npm install
-npm link @orqastudio/types
-npx tsc
-npm link
-
-# 6. Install and build svelte-components (depends on types)
+# 5. Install and build svelte-components (depends on types)
 echo ""
 echo "--- libs/svelte-components ---"
 cd "$ROOT/libs/svelte-components"
 npm install
 npm link @orqastudio/types
 npm run build
-
 npm link
 
-# 7. Install and build graph-visualiser (depends on types)
+# 6. Install and build graph-visualiser (depends on types)
 echo ""
 echo "--- libs/graph-visualiser ---"
 cd "$ROOT/libs/graph-visualiser"
@@ -70,15 +62,15 @@ npm link @orqastudio/types
 npm run build
 npm link
 
-# 8. Install app UI and link all libs
+# 7. Install app UI and link all libs
 echo ""
 echo "--- app/ui ---"
 cd "$ROOT/app/ui"
 npm install
-npm link @orqastudio/types @orqastudio/sdk @orqastudio/cli @orqastudio/connector-claude-code @orqastudio/integrity-validator @orqastudio/svelte-components @orqastudio/graph-visualiser
+npm link @orqastudio/types @orqastudio/sdk @orqastudio/cli @orqastudio/connector-claude-code @orqastudio/svelte-components @orqastudio/graph-visualiser
 npx svelte-kit sync
 
-# 9. Build UI (needed for Rust compilation)
+# 8. Build UI (needed for Rust compilation)
 echo ""
 echo "--- app/ui build ---"
 npm run build
