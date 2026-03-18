@@ -2,12 +2,21 @@
   "name": "@orqastudio/plugin-cli",
   "version": "0.1.0-dev",
   "displayName": "CLI Tools",
-  "description": "Bundles the orqa CLI with skills for graph browsing, validation, plugin management, version management, and dev environment maintenance.",
+  "description": "Bundles the orqa CLI with skills for graph browsing, validation, plugin management, version management, license/readme auditing, and dev environment maintenance.",
   "provides": {
     "schemas": [],
     "views": [],
     "widgets": [],
     "relationships": [],
+    "skills": [
+      { "key": "cli-usage", "id": "SKILL-CLI-001", "label": "CLI Usage" },
+      { "key": "version-management", "id": "SKILL-CLI-002", "label": "Version Management" },
+      { "key": "plugin-management", "id": "SKILL-CLI-003", "label": "Plugin Management" },
+      { "key": "dev-environment", "id": "SKILL-CLI-004", "label": "Dev Environment" },
+      { "key": "self-maintenance", "id": "SKILL-CLI-005", "label": "Self-Maintenance" },
+      { "key": "license-management", "id": "SKILL-CLI-006", "label": "License Management" },
+      { "key": "readme-standards", "id": "SKILL-CLI-007", "label": "README Standards" }
+    ],
     "cliTools": [
       {
         "key": "orqa-validate",
@@ -26,8 +35,46 @@
         "entrypoint": "node_modules/@orqastudio/cli/dist/cli.js",
         "args": ["graph", "--stats", "--json"],
         "category": "custom"
+      },
+      {
+        "key": "orqa-version-check",
+        "label": "Version Drift Check",
+        "icon": "git-compare",
+        "runtime": "node",
+        "entrypoint": "node_modules/@orqastudio/cli/dist/cli.js",
+        "args": ["version", "check"],
+        "category": "integrity"
+      },
+      {
+        "key": "orqa-repo-license",
+        "label": "License Audit",
+        "icon": "scale",
+        "runtime": "node",
+        "entrypoint": "node_modules/@orqastudio/cli/dist/cli.js",
+        "args": ["repo", "license"],
+        "category": "integrity"
+      },
+      {
+        "key": "orqa-repo-readme",
+        "label": "README Audit",
+        "icon": "file-text",
+        "runtime": "node",
+        "entrypoint": "node_modules/@orqastudio/cli/dist/cli.js",
+        "args": ["repo", "readme"],
+        "category": "integrity"
       }
     ],
-    "hooks": []
+    "hooks": [
+      {
+        "event": "PreCommit",
+        "command": "node_modules/@orqastudio/cli/dist/cli.js validate .",
+        "description": "Run integrity validation before every commit"
+      },
+      {
+        "event": "SessionStart",
+        "command": "node_modules/@orqastudio/cli/dist/cli.js version check",
+        "description": "Check for version drift at session start"
+      }
+    ]
   }
 }

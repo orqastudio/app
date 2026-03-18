@@ -4,6 +4,9 @@ type: skill
 name: Version Management
 status: active
 plugin: "@orqastudio/plugin-cli"
+relationships:
+  - target: DOC-CLI-002
+    type: synchronised-with
 ---
 
 # Version Management

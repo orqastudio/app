@@ -4,6 +4,9 @@ type: skill
 name: Dev Environment Management
 status: active
 plugin: "@orqastudio/plugin-cli"
+relationships:
+  - target: DOC-CLI-005
+    type: synchronised-with
 ---
 
 # Dev Environment Management
