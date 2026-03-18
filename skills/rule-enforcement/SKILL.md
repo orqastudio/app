@@ -5,7 +5,6 @@ description: Understands how OrqaStudio governance rules are enforced in the Cla
 status: active
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: plugin
 scope: []
 user-invocable: false
 version: 0.1.0

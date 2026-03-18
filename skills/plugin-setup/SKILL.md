@@ -1,11 +1,10 @@
 ---
-id: SKILL-046
+id: SKILL-CC-001
 title: OrqaStudio Plugin Setup
 description: Installs the OrqaStudio companion plugin for Claude Code. Detects existing .claude/ infrastructure, migrates to .orqa/, registers the plugin, and sets up symlinks.
 status: active
 created: "2026-03-11"
 updated: "2026-03-11"
-layer: plugin
 scope: []
 user-invocable: true
 version: 0.1.0
@@ -108,7 +107,6 @@ id: RULE-NNN
 title: Rule Title
 description: What this rule enforces.
 status: active
-layer: project
 scope: []
 ---
 ```
