@@ -2,8 +2,8 @@
 id: DOC-SW-001
 type: doc
 name: Software Delivery Guide
+category: how-to
 status: active
-layer: plugin
 plugin: "@orqastudio/plugin-software-project"
 relationships:
   - target: SKILL-SW-001

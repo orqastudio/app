@@ -268,6 +268,58 @@
         "to": ["persona"],
         "description": "Bug affects a target persona",
         "semantic": "corrective"
+      },
+      {
+        "key": "merged-into",
+        "inverse": "merged-from",
+        "label": "Merged Into",
+        "inverseLabel": "Merged From",
+        "from": ["research"],
+        "to": ["research"],
+        "description": "Research consolidated — extends core merged-into to research artifacts. Source should transition to surpassed.",
+        "semantic": "lineage"
+      }
+    ],
+    "skills": [
+      {
+        "key": "software-delivery",
+        "id": "SKILL-SW-001",
+        "label": "Software Delivery Lifecycle"
+      },
+      {
+        "key": "code-quality-review",
+        "id": "SKILL-004",
+        "label": "Code Quality Review"
+      },
+      {
+        "key": "qa-verification",
+        "id": "SKILL-025",
+        "label": "QA Verification"
+      },
+      {
+        "key": "security-audit",
+        "id": "SKILL-028",
+        "label": "Security Audit"
+      },
+      {
+        "key": "test-engineering",
+        "id": "SKILL-033",
+        "label": "Test Engineering"
+      },
+      {
+        "key": "uat-process",
+        "id": "SKILL-035",
+        "label": "UAT Process"
+      },
+      {
+        "key": "ux-compliance-review",
+        "id": "SKILL-036",
+        "label": "UX Compliance Review"
+      },
+      {
+        "key": "component-extraction",
+        "id": "SKILL-041",
+        "label": "Component Extraction"
       }
     ],
     "cliTools": [],

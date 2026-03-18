@@ -3,7 +3,6 @@ id: SKILL-SW-001
 type: skill
 name: Software Delivery Management
 status: active
-layer: plugin
 plugin: "@orqastudio/plugin-software-project"
 relationships:
   - target: DOC-SW-001
