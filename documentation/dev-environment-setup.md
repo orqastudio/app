@@ -21,10 +21,15 @@ The OrqaStudio dev environment (`orqastudio-dev`) is an organisation-mode reposi
 git clone --recurse-submodules git@github.com:orqastudio/orqastudio-dev.git
 cd orqastudio-dev
 
-# Build libraries and create npm links
-orqa setup link
-# (or: bash scripts/link-all.sh)
+# Build libraries and create npm links (adds `orqa` to PATH)
+bash scripts/link-all.sh
+# (or: orqa setup link — if orqa is already on PATH)
+
+# Verify orqa is available
+orqa --version
 ```
+
+After `link-all.sh` completes, the `orqa` command is globally available via `npm link`. All hooks, scripts, and `make verify` targets use `orqa` directly — no `npx` or full paths needed.
 
 ## Repository Structure
 
