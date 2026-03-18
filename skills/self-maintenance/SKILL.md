@@ -3,7 +3,6 @@ id: SKILL-CLI-005
 type: skill
 name: CLI Plugin Self-Maintenance
 status: active
-layer: plugin
 plugin: "@orqastudio/plugin-cli"
 ---
 

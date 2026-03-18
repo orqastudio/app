@@ -3,7 +3,6 @@ id: SKILL-CLI-003
 type: skill
 name: Plugin Management
 status: active
-layer: plugin
 plugin: "@orqastudio/plugin-cli"
 ---
 

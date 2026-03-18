@@ -3,7 +3,6 @@ id: SKILL-CLI-004
 type: skill
 name: Dev Environment Management
 status: active
-layer: plugin
 plugin: "@orqastudio/plugin-cli"
 ---
 

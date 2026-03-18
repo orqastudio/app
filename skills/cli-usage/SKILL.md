@@ -3,8 +3,10 @@ id: SKILL-CLI-001
 type: skill
 name: OrqaStudio CLI Usage
 status: active
-layer: plugin
 plugin: "@orqastudio/plugin-cli"
+relationships:
+  - target: DOC-CLI-001
+    type: synchronised-with
 ---
 
 # OrqaStudio CLI Usage

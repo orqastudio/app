@@ -2,8 +2,8 @@
 id: DOC-CLI-001
 type: doc
 name: OrqaStudio CLI Reference
+category: reference
 status: active
-layer: plugin
 plugin: "@orqastudio/plugin-cli"
 relationships:
   - target: SKILL-CLI-001
