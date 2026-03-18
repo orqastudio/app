@@ -122,6 +122,8 @@ export { buildInverseMap, hasSemantic, keysForSemantic } from "./constants.js";
 // Plugin types
 export type {
 	PluginManifest,
+	MergeDecision,
+	KeyCollision,
 	PluginProvides,
 	ArtifactSchema,
 	ArtifactSchemaFrontmatter,

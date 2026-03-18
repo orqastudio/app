@@ -278,6 +278,59 @@ export interface PluginManifest {
 	settings?: SettingsRegistration;
 	/** Recommended navigation tree additions. */
 	defaultNavigation?: DefaultNavItem[];
+	/**
+	 * Recorded decisions from previous installations when relationship or
+	 * artifact type keys collided with core or other plugins.
+	 * Stored so that plugin updates can resolve automatically.
+	 */
+	mergeDecisions?: MergeDecision[];
+}
+
+/**
+ * A recorded decision about a key collision during plugin installation.
+ *
+ * The `semantic` and `description` fields of the colliding definitions are
+ * compared to assess intent but are NOT editable — they represent the
+ * plugin author's declared intent.
+ */
+export interface MergeDecision {
+	/** The relationship or schema key that collided. */
+	key: string;
+	/** What was decided: "merged" (union from/to) or "renamed" (key namespaced). */
+	decision: "merged" | "renamed";
+	/** The original key name if renamed (before namespacing). */
+	originalKey?: string;
+	/** The source that owns the existing definition ("core" or a plugin name). */
+	existingSource: string;
+}
+
+/**
+ * A detected collision between a plugin's key and an existing definition.
+ * Returned during installation so the UI/CLI can prompt the user.
+ */
+export interface KeyCollision {
+	/** The colliding key name. */
+	key: string;
+	/** Who owns the existing definition ("core" or a plugin name). */
+	existingSource: string;
+	/** The existing definition's description (read-only). */
+	existingDescription: string;
+	/** The existing definition's semantic category (read-only). */
+	existingSemantic?: string;
+	/** The existing definition's from types. */
+	existingFrom: string[];
+	/** The existing definition's to types. */
+	existingTo: string[];
+	/** The incoming plugin's description (read-only). */
+	incomingDescription: string;
+	/** The incoming plugin's semantic category (read-only). */
+	incomingSemantic?: string;
+	/** The incoming plugin's from types. */
+	incomingFrom: string[];
+	/** The incoming plugin's to types. */
+	incomingTo: string[];
+	/** Whether the semantic categories match (suggests same intent). */
+	semanticMatch: boolean;
 }
 
 /** The `provides` block of a plugin manifest. */
