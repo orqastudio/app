@@ -22,16 +22,9 @@ relationships:
     type: delivers
     rationale: First packages published — unblocks tier-1 publishing
   - target: TASK-425
-    type: informed-by
-    rationale: CI must pass before releases can be created
-  - target: TASK-425
     type: depends-on
-  - target: SKILL-034
-    type: informed-by
   - target: TASK-427
     type: depended-on-by
-  - target: SKILL-034
-    type: informed-by
 ---
 
 ## Scope

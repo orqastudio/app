@@ -12,10 +12,12 @@ research-needed:
   - "Does this overlap with the provider-agnostic capabilities model (RULE-040)?"
 relationships:
   - target: EPIC-063
-    type: informs
+    type: realises
     rationale: "Captured during EPIC-063 UAT as Finding #18"
-  - target: PILLAR-001
-    type: grounded-by
+  - target: PILLAR-003
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 
 ## Motivation

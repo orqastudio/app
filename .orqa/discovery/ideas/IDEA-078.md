@@ -12,13 +12,11 @@ research-needed:
   - "Should this extend to other integrity issues (broken links, missing inverses) or only null targets?"
 relationships:
   - target: EPIC-060
-    type: evolves-into
+    type: realises
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-003
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

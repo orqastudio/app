@@ -14,10 +14,10 @@ scoring:
   dependencies: 3
 relationships:
   - target: RES-026
-    type: informed-by
+    type: guided-by
     rationale: Auto-generated inverse of informed-by relationship from RES-026
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-001
     type: delivered-by
@@ -31,13 +31,12 @@ relationships:
   - target: TASK-311
     type: delivered-by
     rationale: Epic contains this task
-  - target: DOC-036
-    type: informed-by
-    rationale: Referenced in documentation page Artifact Framework
-  - target: PILLAR-001
-    type: grounded-by
   - target: IDEA-013
-    type: evolves-from
+    type: realised-by
+  - target: RES-026
+    type: guided-by
+  - target: DOC-036
+    type: documented-by
 ---
 ## Why P1
 

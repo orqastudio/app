@@ -21,7 +21,7 @@ scoring:
   dependencies: 4
 relationships:
   - target: MS-002
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-191
     type: delivered-by
@@ -77,27 +77,10 @@ relationships:
   - target: TASK-342
     type: delivered-by
     rationale: Epic contains this task
-  - target: DOC-002
-    type: informed-by
-    rationale: Referenced in documentation page Enforcement Architecture
   - target: MS-001
-    type: delivers
-  - target: EPIC-050
-    type: depends-on
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: RULE-041
-    type: informed-by
-  - target: RULE-042
-    type: informed-by
-  - target: RULE-043
-    type: informed-by
-  - target: EPIC-053
-    type: depended-on-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: fulfils
+  - target: DOC-002
+    type: documented-by
 ---
 
 ## Context

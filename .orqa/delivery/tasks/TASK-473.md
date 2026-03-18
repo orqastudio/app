@@ -26,16 +26,4 @@ relationships:
     rationale: Roadmap drill-down (F5)
   - target: TASK-472
     type: depends-on
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-042
-    type: informed-by
-  - target: SKILL-016
-    type: informed-by
-  - target: SKILL-016
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-042
-    type: informed-by
 ---

@@ -21,18 +21,6 @@ relationships:
   - target: EPIC-073
     type: delivers
     rationale: Artifact link system rework (F6, F7, F9, F10)
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-042
-    type: informed-by
-  - target: SKILL-041
-    type: informed-by
   - target: TASK-471
     type: depended-on-by
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-041
-    type: informed-by
-  - target: SKILL-042
-    type: informed-by
 ---

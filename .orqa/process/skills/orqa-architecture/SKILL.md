@@ -10,20 +10,12 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: project
 category: methodology
 version: 1.0.0
 user-invocable: true
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: ADR patterns and layer responsibility mapping make design decisions explicit and traceable rather than implicit
-  - target: TASK-005
-    type: informs
   - target: AGENT-004
-    type: informs
-  - target: PILLAR-001
-    type: informs
+    type: employed-by
 ---
 
 

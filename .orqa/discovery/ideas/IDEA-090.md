@@ -13,17 +13,17 @@ research-needed:
   - "What data contract do widgets need? Read-only access to artifact graph? Store subscriptions?"
   - "How does this interact with the five-layer architecture? Built-in widgets are core, plugin widgets are plugin/community layer"
 relationships:
-  - type: merged-into
+  - type: realises
     target: EPIC-080
   - target: EPIC-063
-    type: informs
+    type: realises
     rationale: "UAT revealed dashboard widget UX needs fundamental rethinking — configurable widgets is the long-term direction"
-  - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
   - target: AD-055
-    type: merged-into
+    type: crystallises
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

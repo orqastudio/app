@@ -1,31 +1,24 @@
 ---
 id: DOC-024
 title: Getting Started
+category: onboarding
 description: Step-by-step guide to setting up the OrqaStudio development environment from scratch.
 created: 2026-03-02
 updated: 2026-03-09
 sort: 1
 relationships:
   - target: AD-012
-    type: informs
+    type: documents
     rationale: Documentation page references AD-012
   - target: AD-005
-    type: informs
+    type: documents
     rationale: Documentation page references AD-005
   - target: AD-014
-    type: informs
+    type: documents
     rationale: Documentation page references AD-014
-  - target: RES-007
-    type: informs
-    rationale: Documentation page references RES-007
   - target: AD-013
-    type: informs
+    type: documents
     rationale: Documentation page references AD-013
-  - target: RES-004
-    type: informs
-    rationale: Documentation page references RES-004
-  - target: PILLAR-001
-    type: informed-by
 ---
 
 

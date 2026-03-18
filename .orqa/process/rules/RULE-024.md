@@ -5,29 +5,11 @@ description: "Check shared component library before creating new UI elements. Us
 status: active
 created: 2026-03-07
 updated: 2026-03-11
-layer: project
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Reusable components enforce structural consistency in the UI layer
-  - target: RULE-006
-    type: informs
-    rationale: Component size limits and variant patterns are part of the shared library standards
-  - target: RULE-005
-    type: informs
-    rationale: Use semantic search to find existing implementations before creating new components
-  - target: RULE-005
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from RULE-005
   - target: DOC-016
-    type: informed-by
-    rationale: Referenced in documentation page Svelte Component Tree
-  - target: RULE-006
-    type: informed-by
-  - target: RULE-033
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+    type: documented-by
+  - target: AD-006
+    type: enforces
 ---
 ## Shared Component Library
 

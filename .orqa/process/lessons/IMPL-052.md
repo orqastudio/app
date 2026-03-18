@@ -7,22 +7,7 @@ created: 2026-03-13
 updated: 2026-03-14
 maturity: observation
 recurrence: 4
-relationships:
-  - target: RULE-004
-    type: informs
-    rationale: "Task dependency gates define when work is blocked. If no gate is blocking, work should continue."
-  - target: IMPL-049
-    type: informed-by
-    rationale: "Same pattern of unnecessary user interaction — the orchestrator defers when it should act"
-  - target: RULE-001
-    type: informed-by
-    rationale: "Auto-generated inverse of informed-by relationship from RULE-001"
-  - target: RULE-001
-    type: informed-by
-    rationale: "Auto-generated inverse of grounded-by relationship from RULE-001"
-  - target: IMPL-054
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-054"
+relationships: []
 ---
 ## Pattern
 

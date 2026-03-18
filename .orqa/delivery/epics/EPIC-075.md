@@ -15,16 +15,10 @@ deadline: null
 horizon: active
 relationships:
   - target: RES-063
-    type: informed-by
+    type: guided-by
     rationale: Documentation audit and migration inventory drive this epic
-  - target: IDEA-095
-    type: informed-by
-    rationale: Documentation-as-graph-knowledge idea initiated this work
-  - target: EPIC-064
-    type: informed-by
-    rationale: Documentation restructuring started in EPIC-064 Phase 1
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-484
     type: delivered-by
@@ -44,12 +38,10 @@ relationships:
   - target: TASK-487
     type: delivered-by
     rationale: "Auto-generated inverse of delivered-by relationship from TASK-487"
-  - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
+  - target: IDEA-095
+    type: realised-by
   - target: RES-063
-    type: informs
+    type: guided-by
 ---
 ## Context
 

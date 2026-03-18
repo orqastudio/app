@@ -14,29 +14,11 @@ updated: "2026-03-14"
 deadline: null
 horizon: active
 relationships:
-  - target: EPIC-068
-    type: informed-by
-    rationale: "Dashboard grid layout was insufficient — needs holistic redesign"
-  - target: EPIC-067
-    type: informed-by
-    rationale: "Implementation round created integrity errors despite rules existing"
-  - target: EPIC-064
-    type: informed-by
-    rationale: "F2 (agent artifact discipline) addressed by EPIC-064 enforcement bootstrapping"
   - target: RES-063
-    type: informed-by
+    type: guided-by
     rationale: "Documentation reorganisation research informs the doc reorg tasks"
-  - target: IDEA-096
-    type: informed-by
-    rationale: "Exploration whiteboard idea captured during UAT"
-  - target: PILLAR-001
-    type: grounded-by
-    rationale: "Clarity Through Structure — navigation and viewer improvements make thinking visible"
-  - target: PILLAR-003
-    type: grounded-by
-    rationale: "Purpose Through Continuity — schema fixes and artifact links preserve intent across sessions"
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic delivers to this milestone
   - target: TASK-490
     type: delivered-by
@@ -68,12 +50,6 @@ relationships:
   - target: TASK-475
     type: delivered-by
     rationale: "Auto-generated inverse of contains relationship from TASK-475"
-  - target: RES-064
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from RES-064"
-  - target: EPIC-074
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from EPIC-074"
   - target: TASK-493
     type: delivered-by
     rationale: "Auto-generated inverse of contains relationship from TASK-493"
@@ -105,6 +81,10 @@ relationships:
     type: delivered-by
   - target: TASK-399
     type: delivered-by
+  - target: IDEA-096
+    type: realised-by
+  - target: RES-063
+    type: guided-by
 ---
 ## Context
 

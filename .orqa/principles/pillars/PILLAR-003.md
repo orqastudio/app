@@ -12,125 +12,35 @@ gate:
   - "Does this reduce the user's cognitive burden rather than adding to it?"
   - "Is the gap between declared intent and actual enforcement visible and shrinking?"
 relationships:
-  - target: RULE-046
-    type: informed-by
-    rationale: "Auto-generated inverse of grounded-by relationship from RULE-046"
-  - target: IMPL-050
-    type: informed-by
-    rationale: "Auto-generated inverse of informed-by relationship from IMPL-050"
-  - target: IDEA-065
-    type: informs
-    rationale: "Friction-as-feature question resolved — absorbed into this pillar rather than becoming a separate one"
-  - target: IMPL-065
-    type: informed-by
-    rationale: "Auto-generated inverse of informed-by relationship from IMPL-065"
-  - target: DOC-064
-    type: informs
-    rationale: Purpose Through Continuity pillar is distilled into the product-purpose grounding document — inverse of informed-by on DOC-064
-  - target: IDEA-096
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IDEA-096"
-  - target: IMPL-066
-    type: informed-by
-    rationale: "Auto-generated inverse of informed-by relationship from IMPL-066"
-  - target: RES-064
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from RES-064"
-  - target: IDEA-095
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IDEA-095"
-  - target: DOC-021
-    type: informs
-    rationale: Consistent standards allow agents across sessions to work without re-learning customs
-  - target: DOC-072
-    type: informs
-    rationale: Plugin hooks ensure enforcement is continuous across every tool call
-  - target: DOC-074
-    type: informs
-    rationale: Resetting store state in beforeEach ensures tests remain independent across sessions
-  - target: DOC-073
-    type: informs
-    rationale: 80%+ coverage ensures the test suite remains meaningful as agents add features
-  - target: DOC-069
-    type: informs
-    rationale: Correct delegation keeps the orchestrator focused on coordination across sessions
-  - target: AD-050
-    type: informed-by
-  - target: AD-051
-    type: informed-by
-  - target: AD-054
-    type: informed-by
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: informed-by
-  - target: AGENT-003
-    type: grounded
-  - target: EPIC-059
-    type: grounded
-  - target: EPIC-060
-    type: grounded
-  - target: EPIC-061
-    type: grounded
-  - target: EPIC-066
-    type: grounded
-  - target: EPIC-067
-    type: grounded
-  - target: EPIC-068
-    type: grounded
-  - target: EPIC-070
-    type: grounded
-  - target: EPIC-072
-    type: grounded
-  - target: EPIC-073
-    type: grounded
-  - target: EPIC-074
-    type: grounded
-  - target: EPIC-076
-    type: grounded
-  - target: EPIC-077
-    type: grounded
-  - target: EPIC-078
-    type: grounded
-  - target: IDEA-076
-    type: grounded
-  - target: IDEA-077
-    type: grounded
-  - target: IDEA-078
-    type: grounded
-  - target: IDEA-079
-    type: grounded
-  - target: IDEA-081
-    type: grounded
-  - target: IDEA-082
-    type: grounded
-  - target: IDEA-093
-    type: grounded
+  - target: VISION-001
+    type: upholds
+  - target: IDEA-001
+    type: grounded-by
+  - target: IDEA-003
+    type: grounded-by
+  - target: IDEA-012
+    type: grounded-by
+  - target: IDEA-022
+    type: grounded-by
+  - target: IDEA-042
+    type: grounded-by
+  - target: IDEA-047
+    type: grounded-by
+  - target: IDEA-057
+    type: grounded-by
+  - target: IDEA-089
+    type: grounded-by
   - target: IDEA-094
-    type: grounded
-  - target: IDEA-095
-    type: grounded
-  - target: IDEA-096
-    type: grounded
-  - target: IDEA-097
-    type: grounded
-  - target: IDEA-100
-    type: grounded
-  - target: IDEA-103
-    type: grounded
-  - target: IDEA-104
-    type: grounded
-  - target: IDEA-105
-    type: grounded
-  - target: IDEA-082
-    type: informs
-  - target: AD-050
     type: grounded-by
-  - target: AD-051
+  - target: IDEA-108
     type: grounded-by
-  - target: AD-054
+  - target: IDEA-109
     type: grounded-by
-  - target: RULE-046
+  - target: IDEA-110
+    type: grounded-by
+  - target: IDEA-111
+    type: grounded-by
+  - target: IDEA-112
     type: grounded-by
 ---
 ## What This Pillar Means

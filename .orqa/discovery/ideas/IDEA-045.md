@@ -13,10 +13,12 @@ research-needed:
   - Scanner changes to read/write _navigation.json alongside README.md
   - Performance of re-sorting large artifact directories
 relationships:
-  - target: PILLAR-001
-    type: grounded-by
   - target: EPIC-005
-    type: merged-into
+    type: realises
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Archived
 

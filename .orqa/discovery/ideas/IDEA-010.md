@@ -12,9 +12,9 @@ research-needed:
   - Tool and agent customisation per domain
 relationships:
   - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 # Domain Expansion
 

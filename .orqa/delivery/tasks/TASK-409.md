@@ -22,18 +22,6 @@ relationships:
   - target: EPIC-063
     type: delivers
     rationale: Theme G — data integrity backfill from UAT
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-039
-    type: informed-by
-  - target: SKILL-050
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-039
-    type: informed-by
-  - target: SKILL-050
-    type: informed-by
 ---
 
 ## Scope

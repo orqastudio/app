@@ -10,38 +10,12 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: project
 category: domain
 file-patterns:
   - "backend/src-tauri/src/domain/**"
 version: 1.0.0
 user-invocable: true
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Service anatomy and command delegation patterns enforce clear separation between business logic and framework wiring
-  - target: TASK-007
-    type: informs
-  - target: TASK-008
-    type: informs
-  - target: TASK-024
-    type: informs
-  - target: TASK-025
-    type: informs
-  - target: TASK-073
-    type: informs
-  - target: TASK-176
-    type: informs
-  - target: TASK-188
-    type: informs
-  - target: TASK-189
-    type: informs
-  - target: TASK-415
-    type: informs
-  - target: TASK-416
-    type: informs
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 

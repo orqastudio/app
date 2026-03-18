@@ -23,22 +23,8 @@ relationships:
   - target: EPIC-064
     type: delivers
     rationale: Core task — write-time integrity enforcement for graph consistency
-  - target: RULE-045
-    type: delivers
-    rationale: RULE-045 declared write-time enforcement entries that this task implements mechanically
-  - target: IMPL-055
-    type: informed-by
-    rationale: IMPL-055 identified the need for write-time integrity checking
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-020
-    type: informed-by
   - target: TASK-414
     type: depended-on-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-020
-    type: informed-by
 ---
 
 ## Scope

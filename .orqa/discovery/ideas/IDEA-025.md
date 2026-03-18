@@ -11,13 +11,12 @@ research-needed:
   - Define clear task ownership boundaries between orchestrator and agents
   - Review whether any orchestrator responsibilities are missing from its definition
 relationships:
-  - target: TASK-406
-    type: informed-by
-    rationale: "Auto-generated inverse of informed-by relationship from TASK-406"
-  - target: PILLAR-001
-    type: grounded-by
   - target: EPIC-045
-    type: evolves-into
+    type: realises
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Motivation
 

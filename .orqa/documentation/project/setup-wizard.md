@@ -1,13 +1,12 @@
 ---
 id: DOC-012
 title: First-Run Setup Wizard
+category: architecture
 description: Design of the first-run setup wizard that guides users through initial project configuration.
 created: 2026-03-04
 updated: 2026-03-04
 sort: 14
-relationships:
-  - target: PILLAR-001
-    type: informed-by
+relationships: []
 ---
 
 

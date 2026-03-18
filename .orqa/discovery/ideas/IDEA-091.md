@@ -11,16 +11,13 @@ research-needed:
   - "What dashboard signal would be most useful — coverage, connectivity, maturity distribution, or something else?"
   - "Should the pipeline be directional at all, or is it better modeled as a network?"
 relationships:
-  - target: EPIC-060
-    type: informed-by
-    rationale: "Pipeline widget was built in EPIC-060, UAT revealed the flow model is wrong"
   - target: EPIC-068
-    type: informs
+    type: realises
     rationale: "Auto-generated inverse of informs relationship from EPIC-068"
   - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 ## Motivation
 

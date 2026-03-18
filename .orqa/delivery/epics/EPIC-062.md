@@ -16,15 +16,15 @@ scoring:
 rule-overrides: []
 relationships:
   - target: RES-046
-    type: informed-by
+    type: guided-by
     rationale: Auto-generated inverse of informed-by relationship from RES-046
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
-  - target: PILLAR-001
-    type: grounded-by
   - target: IDEA-059
-    type: evolves-from
+    type: realised-by
+  - target: RES-046
+    type: guided-by
 ---
 ## Context
 

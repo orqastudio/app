@@ -1,13 +1,12 @@
 ---
 id: DOC-029
 title: Process Metrics
+category: reference
 description: "Process metrics tracked across development including pass/fail rates, coverage, and violation trends."
 created: 2026-03-02
 updated: 2026-03-08
 sort: 19
-relationships:
-  - target: PILLAR-002
-    type: informed-by
+relationships: []
 ---
 
 **Date:** 2026-03-02

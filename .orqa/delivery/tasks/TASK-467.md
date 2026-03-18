@@ -23,21 +23,10 @@ relationships:
   - target: EPIC-064
     type: delivers
     rationale: Phase 3 — mechanical implementation of grounding injection in CLI context
-  - target: TASK-412
-    type: informed-by
-    rationale: Skill injection implementation provides the pattern for grounding injection
   - target: TASK-466
     type: depends-on
   - target: TASK-412
     type: depends-on
-  - target: SKILL-020
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-020
-    type: informed-by
 ---
 
 ## Scope

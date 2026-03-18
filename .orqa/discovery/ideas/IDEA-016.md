@@ -11,8 +11,10 @@ research-needed:
   - Assumption challenge effectiveness
   - Learning cycle pattern recognition
 relationships:
-  - target: PILLAR-002
-    type: grounded-by
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Candidate Items
 

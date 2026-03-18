@@ -15,9 +15,9 @@ research-needed:
   - "What seed data format works for the plugin to consume from the Artifact Graph SDK?"
 relationships:
   - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Motivation
 

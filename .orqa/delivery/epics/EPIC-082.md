@@ -17,21 +17,10 @@ updated: 2026-03-16
 horizon: now
 relationships:
   - target: MS-002
-    type: delivers
-  - target: EPIC-081
-    type: depends-on
-    rationale: Organisation-mode infrastructure enables multi-project dev environment
-  - target: EPIC-080
-    type: depends-on
-    rationale: Plugin infrastructure needed for schema-driven type/relationship registration
+    type: fulfils
   - target: AD-055
     type: driven-by
     rationale: Organisation-mode architecture decision drives this work
-  - target: PILLAR-001
-    type: grounded-by
-    rationale: Schema-driven enforcement creates structural clarity
-  - target: EPIC-083
-    type: depended-on-by
 ---
 
 ## Objective

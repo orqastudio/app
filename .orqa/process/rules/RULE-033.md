@@ -5,19 +5,9 @@ description: "Use shadcn Tooltip components for hover hints instead of native HT
 status: active
 created: 2026-03-10
 updated: 2026-03-10
-layer: project
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Tooltip consistency enforces structural UI patterns
-  - target: RULE-006
-    type: informs
-    rationale: Tooltip usage is a specific component standard within the broader coding standards
-  - target: RULE-024
-    type: informs
-    rationale: shadcn Tooltip is a shared component — use it consistently rather than reinventing hover hints
-  - target: PILLAR-001
-    type: informs
+  - target: AD-004
+    type: enforces
 ---
 
 All interactive elements that need hover hints MUST use the shadcn `Tooltip` component (`$lib/components/ui/tooltip`) instead of the native HTML `title` attribute.

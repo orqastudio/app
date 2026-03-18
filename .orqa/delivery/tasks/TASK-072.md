@@ -16,12 +16,8 @@ relationships:
     rationale: Task belongs to this epic
   - target: TASK-071
     type: depends-on
-  - target: SKILL-011
-    type: informed-by
   - target: TASK-338
     type: depended-on-by
-  - target: SKILL-011
-    type: informed-by
 ---
 ## What
 

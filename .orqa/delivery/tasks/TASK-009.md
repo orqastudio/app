@@ -27,28 +27,8 @@ relationships:
     type: depends-on
   - target: TASK-008
     type: depends-on
-  - target: SKILL-003
-    type: informed-by
-  - target: SKILL-016
-    type: informed-by
-  - target: SKILL-015
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-031
-    type: informed-by
   - target: TASK-323
     type: depended-on-by
-  - target: SKILL-003
-    type: informed-by
-  - target: SKILL-015
-    type: informed-by
-  - target: SKILL-016
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-031
-    type: informed-by
 ---
 ## What
 

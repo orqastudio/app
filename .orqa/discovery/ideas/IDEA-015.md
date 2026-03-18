@@ -11,7 +11,9 @@ research-needed:
   - Audience-tailored output generation
 relationships:
   - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Candidate Items
 

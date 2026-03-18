@@ -15,21 +15,13 @@ deadline: null
 horizon: active
 relationships:
   - target: AD-049
-    type: delivers
+    type: driven-by
     rationale: Mechanically enforces the icon-based status system
   - target: MS-002
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: MS-001
-    type: delivers
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
-  - target: DOC-075
-    type: informs
+    type: fulfils
   - target: TASK-504
     type: delivered-by
   - target: TASK-505
@@ -40,8 +32,6 @@ relationships:
     type: delivered-by
   - target: TASK-508
     type: delivered-by
-  - target: PILLAR-001
-    type: grounded-by
 ---
 
 ## Context

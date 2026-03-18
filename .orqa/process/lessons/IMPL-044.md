@@ -7,22 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: observation
 recurrence: 1
-relationships:
-  - target: RULE-004
-    type: informs
-    rationale: "RULE-004 defines the idea promotion gate but doesn't include a step for scanning related ideas"
-  - target: RULE-004
-    type: informed-by
-    rationale: "Lesson promoted to RULE-004 — related idea scan step added to idea promotion procedure"
-  - target: RULE-004
-    type: informed-by
-    rationale: "RULE-004 codified the related-idea scanning step at promotion time first observed in this lesson"
-  - target: IDEA-077
-    type: informed-by
-    rationale: "Observed during IDEA-077 promotion when user manually asked to check for related dashboard ideas"
-  - target: IMPL-045
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-045"
+relationships: []
 ---
 ## Pattern
 

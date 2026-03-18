@@ -14,13 +14,11 @@ research-needed:
   - "What reference relationship patterns indicate health vs dysfunction? (orphan clusters, dependency chains, circular refs)"
 relationships:
   - target: EPIC-060
-    type: evolves-into
+    type: realises
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Motivation
 

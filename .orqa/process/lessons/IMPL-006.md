@@ -7,23 +7,7 @@ created: 2026-03-07
 updated: 2026-03-07
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Single source of truth prevents structural divergence
-  - target: IMPL-005
-    type: informs
-    rationale: Both address source-of-truth alignment
-  - target: RULE-003
-    type: informed-by
-    rationale: Lesson promoted to RULE-003
-  - target: DOC-055
-    type: informed-by
-    rationale: Referenced in documentation page Lesson Dashboard UI Spec
-  - target: RULE-003
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 ## What Happened
 

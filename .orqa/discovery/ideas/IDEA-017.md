@@ -12,7 +12,9 @@ research-needed:
   - Organisational PILLAR-002 aggregation
 relationships:
   - target: PILLAR-002
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Candidate Items
 

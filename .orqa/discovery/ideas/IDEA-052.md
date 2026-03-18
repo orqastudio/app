@@ -14,7 +14,9 @@ research-needed:
   - "How does this relate to MCP tool naming conventions?"
 relationships:
   - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 
 ## Motivation

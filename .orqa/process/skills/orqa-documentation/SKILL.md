@@ -9,54 +9,16 @@ description: |
 status: active
 created: 2026-03-10
 updated: 2026-03-10
-layer: project
 category: domain
 file-patterns:
   - ".orqa/**"
 version: 1.0.0
 user-invocable: true
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Consistent link formats and cross-referencing conventions make artifact relationships navigable and machine-parseable
-  - target: TASK-162
-    type: informs
-  - target: TASK-164
-    type: informs
-  - target: TASK-171
-    type: informs
-  - target: TASK-174
-    type: informs
-  - target: TASK-186
-    type: informs
-  - target: TASK-187
-    type: informs
-  - target: TASK-211
-    type: informs
-  - target: TASK-212
-    type: informs
-  - target: TASK-213
-    type: informs
-  - target: TASK-460
-    type: informs
-  - target: TASK-461
-    type: informs
-  - target: TASK-462
-    type: informs
-  - target: TASK-463
-    type: informs
-  - target: TASK-464
-    type: informs
-  - target: TASK-465
-    type: informs
-  - target: TASK-477
-    type: informs
   - target: AGENT-008
-    type: informs
+    type: employed-by
   - target: AGENT-007
-    type: informs
-  - target: PILLAR-001
-    type: informs
+    type: employed-by
 ---
 
 How to write documentation and artifact content in OrqaStudio. Covers the internal link format, cross-referencing conventions, markdown rendering pipeline, and content structure patterns.

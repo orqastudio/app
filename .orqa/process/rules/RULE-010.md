@@ -5,50 +5,17 @@ description: "Every feature must be implemented across all layers (Rust command,
 status: active
 created: 2026-03-07
 updated: 2026-03-13
-layer: project
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: End-to-end completeness ensures every feature is fully structured across all layers
-  - target: RULE-020
-    type: informs
-    rationale: All four layers must return real data — commands must not be stubs
-  - target: RULE-012
-    type: informs
-    rationale: The full chain must be verified before marking a feature complete
   - target: AD-017
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-017
   - target: AD-009
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-009
-  - target: IMPL-017
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-017
   - target: AD-001
     type: enforces
   - target: AD-002
     type: enforces
-  - target: RULE-002
-    type: informed-by
-  - target: RULE-003
-    type: informed-by
-  - target: RULE-005
-    type: informed-by
-  - target: RULE-012
-    type: informed-by
-  - target: RULE-018
-    type: informed-by
-  - target: RULE-020
-    type: informed-by
-  - target: RULE-022
-    type: informed-by
-  - target: RULE-028
-    type: informed-by
-  - target: RULE-041
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
 ---
 Every feature MUST be implemented across ALL layers in the same commit. Partial implementations that work in isolation but fail at runtime due to missing layers are forbidden.
 

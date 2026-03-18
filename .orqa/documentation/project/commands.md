@@ -1,13 +1,12 @@
 ---
 id: DOC-022
 title: Development Commands
+category: reference
 description: Reference for all development commands available via make targets.
 created: 2026-03-05
 updated: 2026-03-10
 sort: 4
-relationships:
-  - target: PILLAR-001
-    type: informed-by
+relationships: []
 ---
 
 **Date:** 2026-03-05

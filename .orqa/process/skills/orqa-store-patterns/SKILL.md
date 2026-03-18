@@ -9,40 +9,12 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: project
 category: domain
 file-patterns:
   - "ui/src/lib/stores/**"
 version: 1.0.0
 user-invocable: true
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Class-based rune stores with explicit loading/error/empty states make frontend data flow predictable and inspectable
-  - target: TASK-009
-    type: informs
-  - target: TASK-026
-    type: informs
-  - target: TASK-075
-    type: informs
-  - target: TASK-076
-    type: informs
-  - target: TASK-082
-    type: informs
-  - target: TASK-083
-    type: informs
-  - target: TASK-190
-    type: informs
-  - target: TASK-421
-    type: informs
-  - target: TASK-422
-    type: informs
-  - target: TASK-471
-    type: informs
-  - target: TASK-473
-    type: informs
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 

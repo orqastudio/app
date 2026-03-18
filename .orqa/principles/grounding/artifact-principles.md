@@ -4,13 +4,7 @@ title: Artifact Principles — Agent Grounding
 description: "Concise grounding document for Orchestrator, Writer, Researcher, and Governance Steward roles. Injected into agent context at initialization."
 created: 2026-03-14
 updated: 2026-03-14
-relationships:
-  - target: DOC-036
-    type: informed-by
-    rationale: Distilled from the artifact framework document
-  - target: DOC-039
-    type: informed-by
-    rationale: Distilled from the product governance document
+relationships: []
 ---
 
 ## What Good Artifacts Look Like

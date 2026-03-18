@@ -5,7 +5,6 @@ description: "Rust and TypeScript coding standards: formatting, linting, error h
 status: active
 created: 2026-03-07
 updated: 2026-03-13
-layer: project
 enforcement:
   - "event: lint"
   - "event: lint"
@@ -18,76 +17,23 @@ enforcement:
   - "event: lint"
   - "event: lint"
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Coding standards create structural consistency across the codebase
-  - target: RULE-012
-    type: informs
-    rationale: Coding standards define what must be verified before every function call
-  - target: RULE-024
-    type: informs
-    rationale: Coding standards mandate which shared component library to use
-  - target: RULE-029
-    type: informs
-    rationale: Coding standards set the 80% coverage floor that testing must satisfy
-  - target: RULE-005
-    type: informs
-    rationale: Coding standards mandate semantic search before creating new code
   - target: AD-013
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-013
-  - target: RULE-029
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from RULE-029
-  - target: IMPL-056
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-056
-  - target: DOC-002
-    type: informed-by
-    rationale: Referenced in documentation page Enforcement Architecture
-  - target: DOC-021
-    type: informed-by
-    rationale: coding-standards.md is the source-of-truth document this rule references and enforces
-  - target: DOC-074
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from DOC-074"
-  - target: DOC-073
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from DOC-073"
   - target: AD-003
     type: enforces
   - target: AD-004
     type: enforces
   - target: AD-006
     type: enforces
-  - target: RULE-007
-    type: informed-by
-  - target: RULE-008
-    type: informed-by
-  - target: RULE-009
-    type: informed-by
-  - target: RULE-012
-    type: informed-by
-  - target: RULE-013
-    type: informed-by
-  - target: RULE-022
-    type: informed-by
-  - target: RULE-023
-    type: informed-by
-  - target: RULE-024
-    type: informed-by
-  - target: RULE-033
-    type: informed-by
-  - target: RULE-042
-    type: informed-by
-  - target: RULE-043
-    type: informed-by
   - target: AD-026
     type: enforces
   - target: AD-047
     type: enforces
-  - target: PILLAR-001
-    type: informs
+  - target: DOC-021
+    type: documented-by
+  - target: DOC-002
+    type: documented-by
 ---
 **Source of Truth:** `.orqa/documentation/development/coding-standards.md`
 

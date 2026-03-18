@@ -6,38 +6,22 @@ created: 2026-03-16
 relationships:
   - type: driven-by
     target: AD-055
-  - type: delivers
+  - type: fulfils
     target: MS-002
-  - target: EPIC-081
-    type: depended-on-by
-  - target: EPIC-082
-    type: depended-on-by
-  - target: EPIC-083
-    type: depended-on-by
-  - target: IDEA-108
-    type: informs
-  - target: IDEA-109
-    type: informs
-  - target: IDEA-110
-    type: informs
-  - target: IDEA-111
-    type: informs
-  - target: IDEA-113
-    type: informs
   - target: IDEA-030
-    type: merged-from
+    type: realised-by
   - target: IDEA-038
-    type: merged-from
+    type: realised-by
   - target: IDEA-055
-    type: merged-from
+    type: realised-by
   - target: IDEA-071
-    type: merged-from
+    type: realised-by
   - target: IDEA-090
-    type: merged-from
+    type: realised-by
   - target: IDEA-100
-    type: merged-from
+    type: realised-by
   - target: IDEA-105
-    type: merged-from
+    type: realised-by
 ---
 
 # EPIC-080: Plugin infrastructure and delivery plugin extraction

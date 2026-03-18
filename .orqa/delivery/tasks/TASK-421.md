@@ -24,21 +24,10 @@ relationships:
   - target: EPIC-066
     type: delivers
     rationale: Primary stores — session, project, artifact, conversation
-  - target: RES-058
-    type: informed-by
-    rationale: Research confirmed all four are portable with one trivial fix
   - target: TASK-420
     type: depends-on
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-016
-    type: informed-by
   - target: TASK-423
     type: depended-on-by
-  - target: SKILL-016
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
 ---
 
 ## Scope

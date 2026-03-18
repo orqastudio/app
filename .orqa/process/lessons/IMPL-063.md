@@ -9,7 +9,7 @@ recurrence: 1
 maturity: observation
 relationships:
   - target: EPIC-068
-    type: informs
+    type: cautions
     rationale: "TASK-440 removes the duplicate Refresh button"
 ---
 

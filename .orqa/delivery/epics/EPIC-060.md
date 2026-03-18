@@ -15,20 +15,11 @@ scoring:
   dependencies: 3
 rule-overrides: []
 relationships:
-  - target: IDEA-091
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from IDEA-091
-  - target: EPIC-063
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from EPIC-063
-  - target: EPIC-065
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from EPIC-065
   - target: RES-055
-    type: informed-by
+    type: guided-by
     rationale: Auto-generated inverse of informed-by relationship from RES-055
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-388
     type: delivered-by
@@ -69,30 +60,16 @@ relationships:
   - target: TASK-402
     type: delivered-by
     rationale: Epic contains this task
-  - target: EPIC-061
-    type: depends-on
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
-  - target: EPIC-063
-    type: depended-on-by
-  - target: EPIC-065
-    type: depended-on-by
   - target: IDEA-049
-    type: evolves-from
+    type: realised-by
   - target: IDEA-064
-    type: evolves-from
+    type: realised-by
   - target: IDEA-077
-    type: evolves-from
+    type: realised-by
   - target: IDEA-078
-    type: evolves-from
-  - target: DOC-060
-    type: informs
-  - target: PILLAR-001
-    type: grounded-by
+    type: realised-by
+  - target: RES-055
+    type: guided-by
 ---
 ## Context
 

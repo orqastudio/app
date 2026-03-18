@@ -9,9 +9,9 @@ horizon: next
 research-needed: []
 relationships:
   - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

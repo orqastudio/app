@@ -14,14 +14,10 @@ research-needed:
   - "Should the graph store replace existing per-type stores (artifactStore, etc.) or layer on top of them?"
   - "How do edge traversals work in practice? e.g., 'show me all rules that enforce AD-029' = traverse enforced-by edges from AD-029"
 relationships:
-  - target: MS-001
-    type: delivers
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 
 ## Motivation

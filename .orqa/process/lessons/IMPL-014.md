@@ -10,22 +10,7 @@ created: 2026-03-07
 updated: 2026-03-13
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Outcome-oriented naming creates structural clarity in planning"
-  - target: "RULE-004"
-    type: "informed-by"
-    rationale: "Lesson promoted to RULE-004"
-  - target: RULE-004
-    type: informs
-  - target: "RULE-004"
-    type: "informed-by"
-    rationale: "RULE-004 codified the outcome-oriented naming requirement first observed in this lesson"
-  - target: RULE-004
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 ## What Happened
 

@@ -7,19 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: observation
 recurrence: 1
-relationships:
-  - target: IMPL-019
-    type: informed-by
-    rationale: "The original observation assumed all plugins need sidecar pairing — this refines it: only AI provider integration plugins need it"
-  - target: IMPL-020
-    type: informed-by
-    rationale: "Plugin scoping is type-dependent, not universal"
-  - target: IMPL-031
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-031"
-  - target: IMPL-028
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-028"
+relationships: []
 ---
 ## Pattern
 

@@ -1,21 +1,18 @@
 ---
 id: DOC-015
 title: Sub-Agent Support Architecture
+category: architecture
 description: Architecture for sub-agent support enabling nested agent delegation within conversations.
 created: 2026-03-05
 updated: 2026-03-05
 sort: 15
 relationships:
   - target: RULE-004
-    type: informs
+    type: documents
     rationale: Documentation page references RULE-004
   - target: AD-010
-    type: informs
+    type: documents
     rationale: Documentation page references AD-010
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: informed-by
 ---
 
 

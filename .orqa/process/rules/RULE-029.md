@@ -5,32 +5,9 @@ description: "Test organisation, coverage requirements, mock boundaries, and iso
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-layer: project
 relationships:
-  - target: PILLAR-002
-    type: grounded
-    rationale: Testing standards create feedback loops that enable learning from failures
-  - target: RULE-006
-    type: informs
-    rationale: Function size limits in coding standards apply to test helpers too
-  - target: RULE-020
-    type: informs
-    rationale: Test doubles are not stubs — they implement real traits at mock boundaries
-  - target: RULE-012
-    type: informs
-    rationale: Failing tests are your responsibility to fix — error ownership applies to the test suite
-  - target: DOC-074
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from DOC-074"
-  - target: DOC-073
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from DOC-073"
-  - target: RULE-006
-    type: informed-by
-  - target: RULE-007
-    type: informed-by
-  - target: PILLAR-002
-    type: informs
+  - target: AD-054
+    type: enforces
 ---
 **Source of Truth:** This file defines testing patterns. `.orqa/documentation/development/coding-standards.md` defines coverage requirements.
 

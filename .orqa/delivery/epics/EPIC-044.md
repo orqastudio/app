@@ -14,7 +14,7 @@ scoring:
   dependencies: 3
 relationships:
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-047
     type: delivered-by
@@ -31,8 +31,6 @@ relationships:
   - target: TASK-334
     type: delivered-by
     rationale: Epic contains this task
-  - target: PILLAR-001
-    type: grounded-by
 ---
 Note: This epic used 'canon' terminology which has since been renamed to 'core'.
 

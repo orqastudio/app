@@ -11,6 +11,11 @@ research-needed:
   - "How would a sidecar-as-plugin be loaded and initialised differently from a regular plugin?"
   - "What security/trust model applies to a plugin that controls AI provider communication?"
   - "How does this interact with the five-layer trust model (core/plugin/community/user)?"
+relationships:
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 
 ## Motivation

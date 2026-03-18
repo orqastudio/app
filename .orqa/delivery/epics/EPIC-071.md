@@ -14,11 +14,8 @@ updated: 2026-03-14
 deadline: null
 horizon: next
 relationships:
-  - target: EPIC-063
-    type: informed-by
-    rationale: UAT round 2 documentation findings
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-451
     type: delivered-by
@@ -35,10 +32,6 @@ relationships:
   - target: TASK-455
     type: delivered-by
     rationale: Epic contains this task
-  - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
 ---
 ## Context
 

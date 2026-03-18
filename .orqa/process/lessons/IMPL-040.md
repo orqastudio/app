@@ -8,21 +8,8 @@ updated: 2026-03-13
 maturity: understanding
 recurrence: 1
 relationships:
-  - target: IMPL-026
-    type: informed-by
-    rationale: "IMPL-026 is about presenting decisions one at a time — this observation adds that decisions must also survive being scrolled away by background work"
-  - target: IMPL-034
-    type: informed-by
-    rationale: "Periodic zoom-outs are related — both are about maintaining user orientation during extended sessions"
-  - target: RULE-004
-    type: informs
-    rationale: "The human gate on epic completion requires user attention — decisions that scroll away undermine this gate"
   - target: TASK-310
-    type: informs
-    rationale: "TASK-310 implemented memory-based AD injection ensuring decisions persist across context compaction"
-  - target: TASK-310
-    type: informed-by
-    rationale: "Promoted to this task which implemented memory-based AD injection for decision persistence"
+    type: yielded-by
 ---
 
 ## Pattern

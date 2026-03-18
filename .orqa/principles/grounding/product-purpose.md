@@ -4,24 +4,7 @@ title: Product Purpose — Agent Grounding
 description: "Concise grounding document for Orchestrator, Planner, and Writer roles. Injected into agent context at initialization."
 created: 2026-03-14
 updated: 2026-03-14
-relationships:
-  - target: DOC-046
-    type: informed-by
-    rationale: Distilled from the product vision document
-  - target: DOC-039
-    type: informed-by
-    rationale: Distilled from the product governance document
-  - target: PILLAR-001
-    type: informed-by
-    rationale: Distilled from the Clarity Through Structure pillar
-  - target: PILLAR-002
-    type: informed-by
-    rationale: Distilled from the Learning Through Reflection pillar
-  - target: PILLAR-003
-    type: informed-by
-    rationale: Distilled from the Purpose Through Continuity pillar
-  - target: DOC-069
-    type: informs
+relationships: []
 ---
 
 ## What OrqaStudio Is

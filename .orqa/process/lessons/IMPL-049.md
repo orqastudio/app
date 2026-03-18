@@ -7,25 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: observation
 recurrence: 2
-relationships:
-  - target: RULE-019
-    type: informs
-    rationale: "RULE-019 requires user approval for scope decisions but has no mechanical enforcement — self-compliance only"
-  - target: IMPL-048
-    type: informed-by
-    rationale: "Same pattern — planning process gaps that no tooling catches"
-  - target: EPIC-061
-    type: informed-by
-    rationale: "Discovered when user asked why Out of Scope wasn't verified during epic creation"
-  - target: IMPL-051
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-051"
-  - target: IMPL-052
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-052"
-  - target: IMPL-050
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-050"
+relationships: []
 ---
 ## Pattern
 

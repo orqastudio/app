@@ -1,20 +1,17 @@
 ---
-id: DOC-046
+id: VISION-001
 title: Product Vision
 description: Product vision defining OrqaStudio as an AI-assisted clarity engine built on two pillars.
 created: 2026-03-02
 updated: 2026-03-07
 sort: 1
 relationships:
-  - target: AD-030
-    type: informs
-    rationale: Documentation page references AD-030
-  - target: AGENT-003
-    type: informs
-    rationale: Orchestrator is grounded by this document — product vision is injected as foundational context
-  - target: DOC-064
-    type: informs
-    rationale: Product vision is distilled into the product-purpose grounding document — inverse of informed-by on DOC-064
+  - target: PILLAR-001
+    type: upheld-by
+  - target: PILLAR-002
+    type: upheld-by
+  - target: PILLAR-003
+    type: upheld-by
 ---
 
 **Date:** 2026-03-07

@@ -14,14 +14,8 @@ updated: 2026-03-14
 deadline: null
 horizon: next
 relationships:
-  - target: EPIC-067
-    type: informed-by
-    rationale: Graph enrichment from EPIC-067 enables dynamic table data
-  - target: EPIC-063
-    type: informed-by
-    rationale: UAT round 2 findings drive schema and validation work
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-447
     type: delivered-by
@@ -35,14 +29,6 @@ relationships:
   - target: TASK-450
     type: delivered-by
     rationale: Epic contains this task
-  - target: EPIC-067
-    type: depends-on
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-003
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
 ---
 ## Context
 

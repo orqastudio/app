@@ -23,23 +23,12 @@ relationships:
   - target: EPIC-066
     type: delivers
     rationale: Complete the integrity validator as a production-ready package
-  - target: RES-057
-    type: informed-by
-    rationale: Audit identified which checks need parity with Rust scanner
   - target: TASK-417
     type: depends-on
   - target: TASK-418
     type: depends-on
-  - target: SKILL-033
-    type: informed-by
-  - target: SKILL-034
-    type: informed-by
   - target: TASK-423
     type: depended-on-by
-  - target: SKILL-033
-    type: informed-by
-  - target: SKILL-034
-    type: informed-by
 ---
 
 ## Scope

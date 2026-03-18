@@ -7,16 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: observation
 recurrence: 1
-relationships:
-  - target: IMPL-027
-    type: informed-by
-    rationale: "Plugin type system defines the plugin side — this observation adds the provider side of the same relationship"
-  - target: IMPL-019
-    type: informed-by
-    rationale: "The original pairing observation was one-directional (plugin→provider). This completes the bidirectional picture."
-  - target: IMPL-030
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-030"
+relationships: []
 ---
 ## Pattern
 

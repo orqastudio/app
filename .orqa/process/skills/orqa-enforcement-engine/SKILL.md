@@ -5,16 +5,10 @@ description: Understands how OrqaStudio governance rules are mechanically enforc
 status: active
 created: 2026-03-11
 updated: 2026-03-11
-layer: project
 category: domain
 version: 0.2.0
 user-invocable: false
-relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Four-layer enforcement (process gates, skill injection, linter delegation, prompt injection) makes rule compliance mechanically verifiable"
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 # Rule Enforcement

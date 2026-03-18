@@ -12,14 +12,9 @@ created: 2026-03-17
 horizon: someday
 relationships:
   - target: PILLAR-001
-    type: grounded-by
-    rationale: "Using artifacts as memory makes agent reasoning visible and structured"
-  - target: PILLAR-002
-    type: grounded-by
-    rationale: "Agent learning persists as governance artifacts — lessons, rules, skills"
-  - target: EPIC-083
-    type: informed-by
-    rationale: "Plugin architecture for agent tooling informs how agents would access artifacts"
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

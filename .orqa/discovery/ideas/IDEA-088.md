@@ -16,16 +16,12 @@ research-needed:
   - "What does the dashboard widget look like? Aging constraints sorted by impact?"
 relationships:
   - target: AD-047
-    type: informs
+    type: crystallises
     rationale: "AD-047's scanner is acknowledged as a known constraint (stopgap before linter plugins)"
-  - target: MS-001
-    type: delivers
-  - target: PILLAR-001
-    type: informed-by
   - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

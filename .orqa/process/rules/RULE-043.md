@@ -5,7 +5,6 @@ description: "OrqaStudio manages linter configuration to match documented standa
 status: active
 created: 2026-03-11
 updated: 2026-03-12
-layer: project
 enforcement:
   - "event: lint"
   - "event: lint"
@@ -13,29 +12,8 @@ enforcement:
   - "event: lint"
   - "event: lint"
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Tooling ecosystem manages the structural chain from standards to enforcement
-  - target: RULE-006
-    type: informs
-    rationale: Documented coding standards must have corresponding linter rules — this rule maps standards to their automated enforcement
-  - target: RULE-042
-    type: informs
-    rationale: Linter delegation and skill injection are complementary enforcement layers — linters catch patterns, skills provide knowledge
-  - target: RULE-012
-    type: informs
-    rationale: Pre-commit hook enforcement runs the linter chain managed by this rule to catch errors before commits
-  - target: DOC-072
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from DOC-072"
-  - target: EPIC-052
-    type: informs
-  - target: RULE-042
-    type: informed-by
   - target: AD-047
     type: enforces
-  - target: PILLAR-001
-    type: informs
 ---
 OrqaStudio delegates code quality enforcement to the appropriate linting tools. The
 enforcement engine does NOT regex-match patterns that linters already catch. Instead,

@@ -9,23 +9,12 @@ research-needed:
   - Inter-artifact linking design (RES-033)
   - Graph SDK design (RES-034)
 relationships:
-  - target: RES-032
-    type: informed-by
-    rationale: "Research on consistent entity structure informed artifact graph design"
-  - target: RES-033
-    type: informed-by
-    rationale: "Research on inter-artifact linking design informed graph relationships"
-  - target: RES-034
-    type: informed-by
-    rationale: "Research on graph SDK design informed frontend SDK approach"
   - target: EPIC-048
-    type: evolves-into
+    type: realises
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Motivation
 

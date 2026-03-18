@@ -23,12 +23,8 @@ relationships:
   - target: EPIC-066
     type: delivers
     rationale: Shared code standards for all repos and plugins
-  - target: SKILL-034
-    type: informed-by
   - target: TASK-419
     type: depended-on-by
-  - target: SKILL-034
-    type: informed-by
 ---
 
 ## Scope

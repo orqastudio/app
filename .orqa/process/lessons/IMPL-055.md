@@ -8,30 +8,9 @@ updated: 2026-03-14
 recurrence: 3
 maturity: observation
 relationships:
-  - target: RULE-045
-    type: informs
-    rationale: "RULE-045 requires bidirectional inverses but enforcement only fires at commit time — too late to catch the pattern during multi-artifact creation"
-  - target: IMPL-054
-    type: informed-by
-    rationale: "Same session, same class of problem — orchestrator not following the system it maintains"
-  - target: AD-048
-    type: informed-by
-    rationale: "The artifacts created without proper relationships were AD-048 and its targets"
-  - target: RES-056
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from RES-056"
   - target: EPIC-064
-    type: informs
+    type: cautions
     rationale: "Auto-generated inverse of informs relationship from EPIC-064"
-  - target: TASK-413
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from TASK-413"
-  - target: TASK-465
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from TASK-465"
-  - target: IDEA-095
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IDEA-095"
 ---
 ## Pattern
 

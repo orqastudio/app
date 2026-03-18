@@ -14,14 +14,10 @@ research-needed:
   - "Auto-commit strategy — when should the app commit artifact changes?"
   - Remote origin discovery and optional sync UI
 relationships:
-  - target: MS-001
-    type: delivers
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Design Principles
 

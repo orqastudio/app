@@ -15,9 +15,9 @@ research-needed:
   - "How does this interact with IDEA-079 (unified logger)? The controller would be the log aggregation point."
 relationships:
   - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 
 ## Motivation

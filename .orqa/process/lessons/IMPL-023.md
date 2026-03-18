@@ -7,34 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: IMPL-021
-    type: informed-by
-    rationale: "The open-item tracking gap is a specific instance of the broader problem — agents don't self-log learning moments"
-  - target: RULE-017
-    type: informs
-    rationale: "Lessons-learned rule requires agents to check and update lessons, but enforcement is purely procedural — agents forget under task pressure"
-  - target: RULE-017
-    type: informed-by
-    rationale: "Lesson promoted to RULE-017 — three-tier observation logging discipline encoded in lessons-learned rule"
-  - target: RULE-017
-    type: informed-by
-    rationale: "RULE-017 codified the three-tier logging discipline (blocking/non-blocking/borderline) first observed in this lesson"
-  - target: IMPL-025
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-025"
-  - target: IMPL-024
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-024"
-  - target: IMPL-033
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-033"
-  - target: IMPL-039
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-039"
-  - target: IMPL-038
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-038"
+relationships: []
 ---
 ## Pattern
 

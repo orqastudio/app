@@ -10,6 +10,11 @@ research-needed:
   - "When should the AI offer to reframe vs just answer the question?"
   - "Domain-specific reframing skills (software, research, personal planning)"
   - How to detect that a reframe produced useful new understanding
+relationships:
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 
 ## Motivation

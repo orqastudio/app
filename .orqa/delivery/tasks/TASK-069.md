@@ -16,18 +16,6 @@ acceptance:
 relationships:
   - target: EPIC-010
     type: delivers
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-031
-    type: informed-by
-  - target: SKILL-041
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-031
-    type: informed-by
-  - target: SKILL-041
-    type: informed-by
 ---
 ## Notes
 

@@ -7,10 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: IMPL-035
-    type: informed-by
-    rationale: "IMPL-035 identified the need — this records the user's decision on implementation approach"
+relationships: []
 ---
 
 ## Pattern

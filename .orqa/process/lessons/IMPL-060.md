@@ -8,11 +8,8 @@ updated: 2026-03-14
 recurrence: 1
 maturity: understanding
 relationships:
-  - target: IMPL-053
-    type: informed-by
-    rationale: "IMPL-053 identified that metrics without actionability are decoration — this lesson extends to layout"
   - target: EPIC-068
-    type: informs
+    type: cautions
     rationale: "Dashboard redesign epic directly addresses this"
 ---
 

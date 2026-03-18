@@ -14,7 +14,7 @@ scoring:
   dependencies: 5
 relationships:
   - target: MS-000
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-103
     type: delivered-by
@@ -34,16 +34,6 @@ relationships:
   - target: TASK-317
     type: delivered-by
     rationale: Epic contains this task
-  - target: EPIC-025
-    type: depends-on
-  - target: EPIC-028
-    type: depended-on-by
-  - target: EPIC-030
-    type: depended-on-by
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
 ---
 ## Why P1
 

@@ -14,26 +14,17 @@ updated: 2026-03-14
 deadline: null
 horizon: active
 relationships:
-  - target: IDEA-093
-    type: informed-by
-    rationale: Promoted from IDEA-093 — package ecosystem for plugin portability
-  - target: IDEA-092
-    type: informed-by
-    rationale: CLI scanner parity idea drove the integrity validator extraction
   - target: RES-057
-    type: informed-by
+    type: guided-by
     rationale: Integrity check alignment audit identified the need for a single check library
   - target: RES-058
-    type: informed-by
+    type: guided-by
     rationale: SDK extraction research confirmed architecture is clean and extraction-ready
-  - target: EPIC-064
-    type: informs
-    rationale: Enforcement bootstrapping benefits from the portable integrity validator
   - target: RES-059
-    type: informed-by
+    type: guided-by
     rationale: Auto-generated inverse of informed-by relationship from RES-059
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-417
     type: delivered-by
@@ -71,12 +62,16 @@ relationships:
   - target: TASK-428
     type: delivered-by
     rationale: Epic contains this task
-  - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
   - target: IDEA-093
-    type: evolves-from
+    type: realised-by
+  - target: IDEA-092
+    type: realised-by
+  - target: RES-057
+    type: guided-by
+  - target: RES-058
+    type: guided-by
+  - target: RES-059
+    type: guided-by
 ---
 ## Context
 

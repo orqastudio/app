@@ -23,18 +23,6 @@ relationships:
     rationale: Phase 2 — unifies the two enforcement systems in the Rust backend
   - target: TASK-415
     type: depends-on
-  - target: SKILL-032
-    type: informed-by
-  - target: SKILL-009
-    type: informed-by
-  - target: SKILL-026
-    type: informed-by
-  - target: SKILL-009
-    type: informed-by
-  - target: SKILL-026
-    type: informed-by
-  - target: SKILL-032
-    type: informed-by
 ---
 
 ## Scope

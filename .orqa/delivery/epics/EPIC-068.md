@@ -14,23 +14,8 @@ updated: 2026-03-14
 deadline: null
 horizon: active
 relationships:
-  - target: EPIC-063
-    type: informed-by
-    rationale: UAT round 2 findings drive dashboard redesign
-  - target: IDEA-091
-    type: informed-by
-    rationale: Pipeline flow model rethinking feeds into dashboard widget design
-  - target: IMPL-062
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-062
-  - target: IMPL-060
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-060
-  - target: IMPL-063
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-063
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-439
     type: delivered-by
@@ -47,17 +32,14 @@ relationships:
   - target: TASK-443
     type: delivered-by
     rationale: Epic contains this task
-  - target: EPIC-073
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from EPIC-073"
-  - target: EPIC-067
-    type: depends-on
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-003
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
+  - target: IDEA-091
+    type: realised-by
+  - target: IMPL-060
+    type: cautioned-by
+  - target: IMPL-062
+    type: cautioned-by
+  - target: IMPL-063
+    type: cautioned-by
 ---
 ## Context
 

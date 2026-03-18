@@ -5,36 +5,13 @@ description: All development commands must be invoked via make targets. Raw carg
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-layer: project
 enforcement:
   - "event: bash"
   - "event: bash"
   - "event: bash"
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Make targets provide a single structured interface for development commands
-  - target: RULE-006
-    type: informs
-    rationale: Make targets are the required way to invoke coding standard checks (make check)
-  - target: RULE-029
-    type: informs
-    rationale: Make targets are the required way to run all test variants
-  - target: RULE-013
-    type: informs
-    rationale: Git commands remain raw — make does not wrap version control operations
-  - target: EPIC-037
-    type: informs
-  - target: RULE-009
-    type: informed-by
-  - target: RULE-013
-    type: informed-by
-  - target: RULE-025
-    type: informed-by
-  - target: RULE-039
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+  - target: AD-045
+    type: enforces
 ---
 All development commands MUST be invoked via `make` targets. Raw `cargo` and `npm run` commands are forbidden for tasks that have a `make` equivalent.
 

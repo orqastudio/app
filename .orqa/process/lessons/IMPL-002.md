@@ -7,17 +7,7 @@ created: 2026-03-07
 updated: 2026-03-07
 maturity: observation
 recurrence: 1
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Process cleanup prevents structural confusion
-  - target: DOC-036
-    type: informed-by
-    rationale: Referenced in documentation page Artifact Framework
-  - target: IMPL-003
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 ## Pattern
 Starting `cargo tauri dev` while a previous instance is still running (or its port is held by a lingering process) causes a `Port 1420 is already in use` error. This happens when the previous window was closed but the process wasn't fully terminated, or when restarting after code changes.

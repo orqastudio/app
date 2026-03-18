@@ -11,15 +11,12 @@ research-needed:
   - "Plugin API for consuming the graph (query interface, event hooks)"
   - "Visualization options (force-directed, hierarchical, timeline)"
 relationships:
-  - target: DOC-036
-    type: informed-by
-    rationale: Referenced in documentation page Artifact Framework
-  - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
   - target: EPIC-048
-    type: evolves-into
+    type: realises
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-003
+    type: benefits
 ---
 ## Motivation
 

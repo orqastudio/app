@@ -11,11 +11,10 @@ research-needed:
   - Bidirectional sync architecture
   - Import format support
 relationships:
-  - target: DOC-071
-    type: informed-by
-    rationale: "Auto-generated inverse of documented-by relationship from DOC-071"
-  - target: PILLAR-001
-    type: grounded-by
+  - target: PILLAR-002
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Candidate Items
 

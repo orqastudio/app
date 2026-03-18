@@ -18,10 +18,6 @@ relationships:
   - target: EPIC-073
     type: delivers
     rationale: Roadmap layout fix (F4)
-  - target: SKILL-030
-    type: informed-by
   - target: TASK-473
     type: depended-on-by
-  - target: SKILL-030
-    type: informed-by
 ---

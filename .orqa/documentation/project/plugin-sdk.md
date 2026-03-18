@@ -1,26 +1,12 @@
 ---
-id: DOC-072
+id: DOC-083
 title: "How To: Build an OrqaStudio Plugin"
+category: how-to
 description: "Step-by-step guide for building a Claude Code companion plugin that adds hooks, commands, and skills to an OrqaStudio project."
 created: 2026-03-14
 updated: 2026-03-14
 sort: 1
-relationships:
-  - target: RULE-026
-    type: informed-by
-    rationale: Skill loading model and tier system governs how plugin skills are loaded
-  - target: RULE-042
-    type: informed-by
-    rationale: Skill injection behaviour that plugins extend via PreToolUse hooks
-  - target: RULE-043
-    type: informed-by
-    rationale: Linter delegation pattern that plugins follow for enforcement entries
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: informed-by
-  - target: PILLAR-003
-    type: informed-by
+relationships: []
 ---
 
 ## What a Plugin Is
@@ -200,7 +186,6 @@ description: Describes specific patterns for working in the foo/ module.
 status: active
 created: "2026-03-14"
 updated: "2026-03-14"
-layer: plugin
 scope: []
 user-invocable: false
 version: 0.1.0

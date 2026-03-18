@@ -29,18 +29,8 @@ relationships:
     type: depends-on
   - target: TASK-413
     type: depends-on
-  - target: SKILL-033
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
-  - target: TASK-185
-    type: evolves-into
   - target: TASK-415
     type: depended-on-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-033
-    type: informed-by
 ---
 
 ## Scope

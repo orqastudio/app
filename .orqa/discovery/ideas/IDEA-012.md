@@ -11,8 +11,10 @@ research-needed:
   - Session branching data model
   - Proactive PILLAR-002 pattern matching
 relationships:
-  - target: PILLAR-002
-    type: grounded-by
+  - target: PILLAR-003
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Candidate Items
 

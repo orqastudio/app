@@ -20,12 +20,4 @@ relationships:
   - target: EPIC-073
     type: delivers
     rationale: Schema fix and viewer layout (F11, F12, F13)
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
 ---

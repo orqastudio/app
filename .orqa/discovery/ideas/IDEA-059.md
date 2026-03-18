@@ -12,13 +12,12 @@ research-needed:
   - "How do plugins access theme tokens?"
   - "What's the distribution mechanism (npm package, bundled, git submodule)?"
 relationships:
-  - target: DOC-071
-    type: informed-by
-    rationale: "Auto-generated inverse of documented-by relationship from DOC-071"
-  - target: MS-001
-    type: delivers
   - target: EPIC-062
-    type: evolves-into
+    type: realises
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 ## Description
 

@@ -13,14 +13,10 @@ research-needed:
   - Evaluate Svelte 5 error boundary patterns for component-level error catching
   - "Review Tauri event-based error propagation for backend errors that aren't invoke responses"
 relationships:
-  - target: MS-001
-    type: delivers
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 
 ## Motivation

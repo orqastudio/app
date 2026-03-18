@@ -7,10 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: observation
 recurrence: 1
-relationships:
-  - target: IMPL-023
-    type: informed-by
-    rationale: "Automated observation logging needs a decision framework for when to interrupt vs continue"
+relationships: []
 ---
 
 ## Pattern

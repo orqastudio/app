@@ -5,55 +5,13 @@ description: Prefer semantic search over Grep/Glob for multi-file searches. Load
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-layer: project
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Semantic search enables structured knowledge discovery
-  - target: RULE-026
-    type: informs
-    rationale: Search skills are universal and required for every agent
-  - target: RULE-012
-    type: informs
-    rationale: Use search_regex to find function signatures before calling them
-  - target: RULE-024
-    type: informs
-    rationale: Use search_semantic to find similar components before creating new ones
-  - target: RULE-010
-    type: informs
-    rationale: Use code_research to map the full request chain across all layers
-  - target: RULE-020
-    type: informs
-    rationale: Use search_regex to verify implementations exist before marking work done
-  - target: RULE-035
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from RULE-035
   - target: AD-024
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-024
   - target: AD-037
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-037
-  - target: RULE-006
-    type: informed-by
-  - target: RULE-008
-    type: informed-by
-  - target: RULE-012
-    type: informed-by
-  - target: RULE-018
-    type: informed-by
-  - target: RULE-020
-    type: informed-by
-  - target: RULE-024
-    type: informed-by
-  - target: RULE-026
-    type: informed-by
-  - target: RULE-036
-    type: informed-by
-  - target: RULE-040
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
 ---
 **Prefer semantic search over Grep/Glob for any search that spans more than one file or directory.**
 

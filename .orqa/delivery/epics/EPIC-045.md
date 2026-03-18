@@ -14,10 +14,10 @@ scoring:
   dependencies: 4
 relationships:
   - target: RES-010
-    type: informed-by
+    type: guided-by
     rationale: Auto-generated inverse of informed-by relationship from RES-010
   - target: MS-002
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-051
     type: delivered-by
@@ -44,17 +44,11 @@ relationships:
     type: delivered-by
     rationale: Epic contains this task
   - target: MS-001
-    type: delivers
-  - target: PILLAR-001
-    type: informed-by
-  - target: AD-029
-    type: informs
-  - target: AD-030
-    type: informs
+    type: fulfils
   - target: IDEA-025
-    type: evolves-from
-  - target: PILLAR-001
-    type: grounded-by
+    type: realised-by
+  - target: RES-010
+    type: guided-by
 ---
 ## Context
 

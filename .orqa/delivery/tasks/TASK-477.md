@@ -20,15 +20,4 @@ relationships:
   - target: EPIC-073
     type: delivers
     rationale: Documentation reorganisation (F25, F26)
-  - target: RES-063
-    type: informed-by
-    rationale: Research doc drives the restructuring plan
-  - target: SKILL-037
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-037
-    type: informed-by
 ---

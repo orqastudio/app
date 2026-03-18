@@ -24,21 +24,10 @@ relationships:
   - target: EPIC-064
     type: delivers
     rationale: Phase 2 — graph connectivity is the structural foundation for grounding injection
-  - target: RES-062
-    type: informed-by
-    rationale: Documentation audit identified 55% orphaned rate and missing relationships
   - target: TASK-465
     type: depends-on
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-050
-    type: informed-by
   - target: TASK-467
     type: depended-on-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-050
-    type: informed-by
 ---
 
 ## Scope

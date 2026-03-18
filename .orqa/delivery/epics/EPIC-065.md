@@ -14,29 +14,12 @@ updated: 2026-03-14
 deadline: null
 horizon: active
 relationships:
-  - target: EPIC-063
-    type: informed-by
-    rationale: UAT Theme D findings from EPIC-063 drove this epic's scope
-  - target: EPIC-060
-    type: informs
-    rationale: Enhances artifact viewer built in EPIC-060
-  - target: EPIC-067
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from EPIC-067
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-406
     type: delivered-by
     rationale: Epic contains this task
-  - target: EPIC-060
-    type: depends-on
-  - target: PILLAR-001
-    type: informed-by
-  - target: DOC-057
-    type: informs
-  - target: PILLAR-001
-    type: grounded-by
 ---
 ## Context
 

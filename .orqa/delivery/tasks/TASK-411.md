@@ -23,19 +23,8 @@ relationships:
   - target: EPIC-064
     type: delivers
     rationale: Core task — enables stop event enforcement in CLI context
-  - target: RULE-001
-    type: delivers
-    rationale: RULE-001's permission-seeking enforcement entries depend on stop event support
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-020
-    type: informed-by
   - target: TASK-414
     type: depended-on-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-020
-    type: informed-by
 ---
 
 ## Scope

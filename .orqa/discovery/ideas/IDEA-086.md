@@ -14,16 +14,10 @@ research-needed:
   - "Can coverage deltas be tracked per-commit to prevent regressions?"
   - "Plugin vs core feature: is this universal enough for core, or better as an official plugin?"
 relationships:
-  - target: IDEA-004
-    type: informs
-    rationale: "CI/CD integration would consume coverage data from the same pipeline"
-  - target: IDEA-087
-    type: informed-by
-    rationale: "Auto-generated inverse of informed-by relationship from IDEA-087"
   - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Motivation
 

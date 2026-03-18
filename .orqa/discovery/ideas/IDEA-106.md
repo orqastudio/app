@@ -6,6 +6,11 @@ status: exploring
 created: 2026-03-15
 updated: 2026-03-15
 horizon: next
+relationships:
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

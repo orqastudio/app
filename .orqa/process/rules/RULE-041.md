@@ -5,24 +5,10 @@ description: "Defines which data belongs in SQLite, which in file-based artifact
 status: active
 created: 2026-03-11
 updated: 2026-03-13
-layer: project
 enforcement: []
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Data persistence boundaries create clear structural separation of concerns
-  - target: RULE-003
-    type: informs
-    rationale: File-based artifact scanning depends on correct config paths — persistence boundaries define which data lives in scanned .orqa/ files vs SQLite
-  - target: RULE-010
-    type: informs
-    rationale: End-to-end completeness requires all layers to agree on which persistence channel stores each type of data
-  - target: EPIC-052
-    type: informs
   - target: AD-032
     type: enforces
-  - target: PILLAR-001
-    type: informs
 ---
 
 Data persistence in OrqaStudio follows three channels, each with clear boundaries.

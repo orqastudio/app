@@ -12,10 +12,10 @@ research-needed:
   - "How do agents subscribe to and react to the error stream?"
   - "Should errors trigger automatic fix attempts or just surface for human review?"
 relationships:
-  - target: PILLAR-001
-    type: grounded-by
   - target: PILLAR-003
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 
 ## Motivation

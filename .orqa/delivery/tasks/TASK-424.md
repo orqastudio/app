@@ -23,14 +23,6 @@ relationships:
   - target: EPIC-066
     type: delivers
     rationale: Shared testing framework for the package ecosystem
-  - target: SKILL-033
-    type: informed-by
-  - target: SKILL-034
-    type: informed-by
-  - target: SKILL-033
-    type: informed-by
-  - target: SKILL-034
-    type: informed-by
 ---
 
 ## Scope

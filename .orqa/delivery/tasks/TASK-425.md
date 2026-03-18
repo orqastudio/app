@@ -24,14 +24,7 @@ relationships:
     type: delivers
     rationale: CI must work for packages to be publishable
   - target: TASK-426
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from TASK-426
-  - target: SKILL-034
-    type: informed-by
-  - target: TASK-426
     type: depended-on-by
-  - target: SKILL-034
-    type: informed-by
 ---
 ## Scope
 

@@ -4,16 +4,7 @@ title: Design Principles — Agent Grounding
 description: Concise grounding document for the Designer role. Injected into agent context at initialization.
 created: 2026-03-14
 updated: 2026-03-14
-relationships:
-  - target: DOC-049
-    type: informed-by
-    rationale: Distilled from the design system document
-  - target: DOC-053
-    type: informed-by
-    rationale: Distilled from the interaction patterns document
-  - target: DOC-043
-    type: informed-by
-    rationale: Distilled from the personas document
+relationships: []
 ---
 
 ## Who You Are Designing For

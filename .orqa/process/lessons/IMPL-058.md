@@ -8,11 +8,8 @@ updated: 2026-03-14
 recurrence: 1
 maturity: understanding
 relationships:
-  - target: RULE-045
-    type: informs
-    rationale: "Bidirectional integrity checks can't enforce field-based references the same way as relationship edges"
   - target: EPIC-067
-    type: informs
+    type: cautions
     rationale: "TASK-434 (scope migration) and TASK-458 (epic/milestone migration) address this"
 ---
 

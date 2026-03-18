@@ -1,18 +1,12 @@
 ---
 id: DOC-006
 title: Lesson Promotion Pipeline Architecture
+category: architecture
 description: Architecture of the lesson promotion pipeline that converts implementation lessons into enforced rules.
 created: 2026-03-05
 updated: 2026-03-05
 sort: 18
-relationships:
-  - target: IMPL-001
-    type: informs
-    rationale: Documentation page references IMPL-001
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: informed-by
+relationships: []
 ---
 
 

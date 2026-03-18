@@ -5,30 +5,9 @@ description: "Project-level rule for when an app is editing itself. Provides age
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-layer: project
 relationships:
-  - target: PILLAR-002
-    type: grounded
-    rationale: Dogfood mode enforces awareness of self-modifying systems
-  - target: RULE-028
-    type: informs
-    rationale: Dogfood mode heightens systems-thinking urgency when editing the app you run inside
-  - target: RULE-007
-    type: informs
-    rationale: Dogfood mode specifies which make restart commands agents must use in each context
-  - target: RULE-006
-    type: informs
-    rationale: General coding standards apply regardless of dogfood mode
-  - target: EPIC-037
-    type: informs
-  - target: RULE-013
-    type: informed-by
-  - target: RULE-028
-    type: informed-by
-  - target: RULE-044
-    type: informed-by
-  - target: PILLAR-002
-    type: informs
+  - target: AD-021
+    type: enforces
 ---
 # Dogfood Mode (CONDITIONAL — only when `dogfood: true`)
 

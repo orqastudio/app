@@ -9,10 +9,12 @@ research-needed:
   - Verify config-only change works without code changes
   - Assess whether doc categories become their own governance concern
 relationships:
-  - target: PILLAR-001
-    type: grounded-by
   - target: EPIC-080
-    type: merged-into
+    type: realises
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 ## Motivation
 

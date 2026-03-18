@@ -11,16 +11,14 @@ research-needed:
   - How does a plugin register new artifact types and their hierarchy
   - How do plugins contribute to the roadmap/kanban view
 relationships:
-  - type: merged-into
+  - type: realises
     target: EPIC-080
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-003
-    type: grounded-by
   - target: AD-055
-    type: merged-into
+    type: crystallises
   - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

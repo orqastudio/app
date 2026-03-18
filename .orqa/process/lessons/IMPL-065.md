@@ -8,11 +8,8 @@ updated: 2026-03-14
 recurrence: 1
 maturity: understanding
 relationships:
-  - target: PILLAR-003
-    type: informs
-    rationale: "Purpose through continuity means the roadmap always reflects reality, not a point-in-time snapshot"
   - target: EPIC-072
-    type: informs
+    type: cautions
     rationale: "Roadmap kanban view replaces static doc with dynamic graph view"
 ---
 

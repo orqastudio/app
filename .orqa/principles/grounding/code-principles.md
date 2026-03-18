@@ -4,25 +4,7 @@ title: Code Principles — Agent Grounding
 description: Concise grounding document for Implementer and Reviewer roles. Injected into agent context at initialization.
 created: 2026-03-14
 updated: 2026-03-14
-relationships:
-  - target: DOC-021
-    type: informed-by
-    rationale: Distilled from the coding standards document
-  - target: AD-001
-    type: informed-by
-    rationale: Distilled from the thick backend architecture decision
-  - target: AD-002
-    type: informed-by
-    rationale: Distilled from the IPC boundary design decision
-  - target: AD-003
-    type: informed-by
-    rationale: Distilled from the error propagation decision
-  - target: AD-004
-    type: informed-by
-    rationale: Distilled from the Svelte 5 runes decision
-  - target: AD-006
-    type: informed-by
-    rationale: Distilled from the component purity decision
+relationships: []
 ---
 
 ## What Good Code Means Here

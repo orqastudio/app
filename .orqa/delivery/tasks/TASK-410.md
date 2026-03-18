@@ -19,14 +19,6 @@ relationships:
   - target: EPIC-063
     type: delivers
     rationale: Theme H — framework warning noise from UAT
-  - target: SKILL-032
-    type: informed-by
-  - target: SKILL-006
-    type: informed-by
-  - target: SKILL-006
-    type: informed-by
-  - target: SKILL-032
-    type: informed-by
 ---
 
 ## Scope

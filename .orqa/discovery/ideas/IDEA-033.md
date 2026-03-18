@@ -13,7 +13,9 @@ research-needed:
   - "What happens to the markdown roadmap doc — deprecate or auto-generate?"
 relationships:
   - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Problem
 

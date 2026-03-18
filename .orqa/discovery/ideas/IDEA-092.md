@@ -10,20 +10,13 @@ research-needed:
   - "Should the CLI scanner be a Node port of the Rust checks, or should we expose the Rust scanner via a CLI binary?"
   - "Which checks are most valuable to run at commit time vs full scan time?"
 relationships:
-  - target: EPIC-063
-    type: informed-by
-    rationale: "UAT revealed the CLI tool misses errors the app catches"
-  - target: RES-057
-    type: informed-by
-    rationale: "Integrity check alignment audit identified the parity gap"
   - target: EPIC-066
-    type: informs
+    type: realises
     rationale: "CLI scanner parity idea drove the integrity validator package extraction"
-  - target: IDEA-093
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IDEA-093"
   - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Motivation
 

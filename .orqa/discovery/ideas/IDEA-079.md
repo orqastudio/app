@@ -12,10 +12,10 @@ research-needed:
   - "What log viewer interfaces would consume these streams (terminal, app dev panel, external tools)?"
   - "How should log levels be configured per-context (dev vs production vs debug)?"
 relationships:
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

@@ -14,17 +14,8 @@ updated: 2026-03-14
 deadline: null
 horizon: next
 relationships:
-  - target: EPIC-067
-    type: informed-by
-    rationale: Graph enrichment from EPIC-067 provides the data model for kanban cards
-  - target: EPIC-063
-    type: informed-by
-    rationale: UAT round 2 finding F29
-  - target: IMPL-065
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-065
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-456
     type: delivered-by
@@ -32,14 +23,8 @@ relationships:
   - target: TASK-457
     type: delivered-by
     rationale: Epic contains this task
-  - target: EPIC-067
-    type: depends-on
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-003
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
+  - target: IMPL-065
+    type: cautioned-by
 ---
 ## Context
 

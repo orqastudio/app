@@ -16,9 +16,9 @@ research-needed:
   - "Skill-driven context injection — since skills load domain knowledge at the right time, does this compensate for smaller context windows?"
 relationships:
   - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Motivation
 

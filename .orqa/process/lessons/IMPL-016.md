@@ -7,17 +7,7 @@ created: 2026-03-12
 updated: 2026-03-12
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Scope integrity prevents structural gaps in deliverables"
-  - target: "RULE-019"
-    type: "informs"
-    rationale: "Lesson documents a concrete compliance failure of RULE-019 (no deferred deliverables)"
-  - target: RULE-019
-    type: informs
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 ## Pattern

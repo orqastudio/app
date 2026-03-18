@@ -7,13 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: RULE-004
-    type: informs
-    rationale: "Artifact lifecycle should enforce that relationships always resolve — null targets indicate a missing forward reference"
-  - target: IMPL-019
-    type: informed-by
-    rationale: "IMPL-019 and IMPL-020 had null enforces targets when IDEA-071 existed to track the planned work"
+relationships: []
 ---
 
 ## Pattern

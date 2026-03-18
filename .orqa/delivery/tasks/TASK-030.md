@@ -15,12 +15,8 @@ relationships:
   - target: EPIC-041
     type: delivers
     rationale: Task belongs to this epic
-  - target: SKILL-011
-    type: informed-by
   - target: TASK-331
     type: depended-on-by
-  - target: SKILL-011
-    type: informed-by
 ---
 ## What
 

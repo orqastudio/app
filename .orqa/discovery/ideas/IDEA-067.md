@@ -11,6 +11,11 @@ research-needed:
   - How much tool-specific knowledge does the AI need to generate a working plugin
   - Quality gates — how to verify a generated plugin actually works
   - Depends on plugin architecture maturity (IDEA-061)
+relationships:
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-003
+    type: benefits
 ---
 
 ## Motivation

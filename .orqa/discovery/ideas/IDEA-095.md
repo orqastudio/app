@@ -13,36 +13,22 @@ research-needed:
   - "Design the relationship pattern between docs, skills, agents, and grounding"
 relationships:
   - target: RES-063
-    type: informs
+    type: spawns
     rationale: "Auto-generated inverse of informs relationship from RES-063"
   - target: RES-062
-    type: informs
+    type: spawns
     rationale: "Auto-generated inverse of informs relationship from RES-062"
   - target: EPIC-075
-    type: informs
+    type: realises
     rationale: "Auto-generated inverse of informs relationship from EPIC-075"
-  - target: MS-002
-    type: delivers
   - target: EPIC-064
-    type: evolves-into
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
+    type: realises
   - target: EPIC-064
-    type: informs
-  - target: IMPL-055
-    type: informed-by
+    type: realises
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: informed-by
-  - target: PILLAR-003
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Motivation
 

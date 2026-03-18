@@ -5,38 +5,11 @@ description: All code must comply with architecture decisions in .orqa/process/d
 status: active
 created: 2026-03-07
 updated: 2026-03-10
-layer: project
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Architecture decisions document structural choices that create clarity
-  - target: RULE-022
-    type: informs
-    rationale: Plans must include an architectural compliance section verifying all decisions
-  - target: RULE-008
-    type: informs
-    rationale: Architecture decisions ARE documentation and define the source of truth for compliance
-  - target: RULE-031
-    type: informs
-    rationale: Decisions implement the foundational principles and must be aligned with pillars
-  - target: RULE-010
-    type: informs
-    rationale: Decisions define the layer requirements (IPC boundary, component purity, type safety) for every feature
-  - target: DOC-036
-    type: informed-by
-    rationale: Referenced in documentation page Artifact Framework
-  - target: RULE-008
-    type: informed-by
-  - target: RULE-022
-    type: informed-by
-  - target: RULE-023
-    type: informed-by
-  - target: RULE-031
-    type: informed-by
   - target: AD-032
     type: enforces
-  - target: PILLAR-001
-    type: informs
+  - target: DOC-036
+    type: documented-by
 ---
 **Source of Truth:** `.orqa/process/decisions/` — individual `AD-NNN.md` artifacts. Decisions are first-class artifacts browsable in the app's artifact navigation.
 

@@ -9,7 +9,7 @@ recurrence: 1
 maturity: observation
 relationships:
   - target: EPIC-069
-    type: informs
+    type: cautions
     rationale: "Notification system epic addresses the missing toast infrastructure"
 ---
 

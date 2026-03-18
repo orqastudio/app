@@ -7,10 +7,7 @@ created: 2026-03-15
 updated: 2026-03-15
 maturity: observation
 recurrence: 1
-relationships:
-  - target: RULE-045
-    type: informs
-    rationale: Bidirectional relationship system created duplicates instead of proper inverses
+relationships: []
 ---
 
 ## Pattern

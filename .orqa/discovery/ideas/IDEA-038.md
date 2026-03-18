@@ -14,22 +14,18 @@ research-needed:
   - Plugin isolation — how to prevent a broken plugin from affecting the app
   - Plugin signing/trust — how to verify plugins from the official repo vs third-party
 relationships:
-  - type: evolves-into
-    target: IDEA-108
-  - type: evolves-into
-    target: IDEA-109
   - type: merged-into
+    target: IDEA-108
+  - type: merged-into
+    target: IDEA-109
+  - type: realises
     target: EPIC-080
-  - target: IDEA-085
-    type: informed-by
-    rationale: "Auto-generated inverse of informed-by relationship from IDEA-085"
-  - target: DOC-071
-    type: informed-by
-    rationale: "Auto-generated inverse of documented-by relationship from DOC-071"
-  - target: PILLAR-001
-    type: grounded-by
   - target: AD-055
-    type: merged-into
+    type: crystallises
+  - target: PILLAR-002
+    type: grounded
+  - target: PERSONA-003
+    type: benefits
 ---
 
 > **Surpassed 2026-03-16**: Core plugin distribution mechanism merged into EPIC-080 via AD-055. Plugin catalogue/marketplace concept split into IDEA-108. User plugin development workflow split into IDEA-109.

@@ -7,19 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: IMPL-021
-    type: informed-by
-    rationale: "The open-item tracking gap includes the related problem of epic completion visibility — both are about surfacing state that currently exists only in agent context"
-  - target: RULE-004
-    type: informs
-    rationale: "Artifact lifecycle defines epic completion gates but has no mechanism for surfacing epics that are ready for the gate check"
-  - target: RULE-004
-    type: informed-by
-    rationale: "Lesson promoted to RULE-004 — epic readiness surfacing requirement added to artifact lifecycle"
-  - target: RULE-004
-    type: informed-by
-    rationale: "RULE-004 codified the epic completion visibility requirement first observed in this lesson"
+relationships: []
 ---
 
 ## Pattern

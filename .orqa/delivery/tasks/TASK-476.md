@@ -20,12 +20,4 @@ relationships:
   - target: EPIC-073
     type: delivers
     rationale: Dashboard polish (F30, F32, F33)
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-041
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-041
-    type: informed-by
 ---

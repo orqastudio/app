@@ -22,28 +22,8 @@ relationships:
     rationale: "Auto-generated inverse of belongs-to relationship from EPIC-050"
   - target: TASK-415
     type: depends-on
-  - target: SKILL-043
-    type: informed-by
-  - target: SKILL-012
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-016
-    type: informed-by
-  - target: SKILL-041
-    type: informed-by
   - target: TASK-340
     type: depended-on-by
-  - target: SKILL-012
-    type: informed-by
-  - target: SKILL-016
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-041
-    type: informed-by
-  - target: SKILL-043
-    type: informed-by
 ---
 ## What
 

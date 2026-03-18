@@ -1,14 +1,12 @@
 ---
 id: DOC-018
 title: Wireframe Serving Infrastructure
+category: architecture
 description: Infrastructure for serving and rendering wireframe assets within the application.
 created: 2026-03-02
 updated: 2026-03-04
 sort: 17
-relationships:
-  - target: RES-008
-    type: informs
-    rationale: Documentation page references RES-008
+relationships: []
 ---
 
 

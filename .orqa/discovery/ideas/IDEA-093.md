@@ -12,23 +12,15 @@ research-needed:
   - "Monorepo vs multi-repo — should packages live in separate repos or a monorepo with workspaces?"
   - "Versioning strategy — how do package versions relate to app versions?"
 relationships:
-  - target: IDEA-092
-    type: informed-by
-    rationale: "CLI scanner parity led to extracting the integrity validator, which revealed the broader package need"
   - target: EPIC-066
-    type: informs
+    type: realises
     rationale: "Auto-generated inverse of informs relationship from EPIC-066"
-  - target: RES-058
-    type: informed-by
-    rationale: "Auto-generated inverse of informed-by relationship from RES-058"
   - target: EPIC-066
-    type: evolves-into
+    type: realises
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-003
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 ## Motivation
 

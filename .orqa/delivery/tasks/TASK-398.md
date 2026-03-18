@@ -12,8 +12,6 @@ acceptance:
   - "If bureaucracy: specific friction points identified and improvement ideas captured"
   - "If value: what makes it work documented as a lesson (IMPL-NNN)"
 relationships:
-  - target: MS-001
-    type: delivers
   - target: EPIC-073
     type: delivers
   - target: TASK-399

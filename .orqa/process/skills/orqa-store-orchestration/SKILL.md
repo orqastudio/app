@@ -10,22 +10,12 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: project
 category: domain
 file-patterns:
   - "ui/src/lib/stores/**"
 version: 1.0.0
 user-invocable: true
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Component-level orchestration via $derived and $effect keeps store dependencies visible and prevents hidden coupling
-  - target: TASK-009
-    type: informs
-  - target: TASK-076
-    type: informs
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 

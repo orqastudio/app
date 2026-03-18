@@ -7,19 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: understanding
 recurrence: 2
-relationships:
-  - target: RULE-001
-    type: informs
-    rationale: "RULE-001 permits orchestrator to write governance artifacts, but the intent is lightweight coordination — not sustained artifact creation that blocks the conversation"
-  - target: RULE-001
-    type: informed-by
-    rationale: "Lesson promoted to RULE-001 — batch artifact creation should be delegated to Writer agents"
-  - target: RULE-001
-    type: informed-by
-    rationale: "RULE-001 codified the delegation boundary for batch artifact creation first observed in this lesson"
-  - target: IMPL-039
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-039"
+relationships: []
 ---
 ## Pattern
 

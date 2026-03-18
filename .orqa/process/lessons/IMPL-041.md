@@ -7,22 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: IMPL-026
-    type: informed-by
-    rationale: "Presenting decisions one at a time includes presenting the orchestrator's own analysis, not just options"
-  - target: RULE-031
-    type: informs
-    rationale: "Vision alignment rule says to question misaligned instructions — this extends that to all design decisions, not just principle violations"
-  - target: PILLAR-002
-    type: informs
-    rationale: "Learning through reflection requires honest assessment, not agreement"
-  - target: RULE-031
-    type: informed-by
-    rationale: "Lesson promoted to RULE-031 — extends questioning requirement to all design suggestions, not just principle violations"
-  - target: RULE-031
-    type: informed-by
-    rationale: "RULE-031 codified the critical thinking requirement for user design suggestions first observed in this lesson"
+relationships: []
 ---
 
 ## Pattern

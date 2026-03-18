@@ -5,10 +5,12 @@ status: captured
 horizon: someday
 created: 2026-03-16
 relationships:
-  - type: informed-by
-    target: EPIC-081
-  - type: evolves-from
+  - type: merged-from
     target: IDEA-007
+  - target: PILLAR-002
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 # IDEA-115: Hierarchical organisations with inherited governance

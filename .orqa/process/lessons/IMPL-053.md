@@ -9,11 +9,8 @@ recurrence: 1
 maturity: understanding
 relationships:
   - target: EPIC-063
-    type: informs
+    type: cautions
     rationale: "Multiple UAT findings (#2, #8, #13) converge on this pattern"
-  - target: IMPL-060
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-060"
 ---
 ## Observation
 

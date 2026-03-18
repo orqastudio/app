@@ -26,12 +26,8 @@ relationships:
     rationale: All packages published and consuming real versions
   - target: TASK-426
     type: depends-on
-  - target: SKILL-034
-    type: informed-by
   - target: TASK-428
     type: depended-on-by
-  - target: SKILL-034
-    type: informed-by
 ---
 
 ## Scope

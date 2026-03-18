@@ -9,7 +9,7 @@ recurrence: 1
 maturity: understanding
 relationships:
   - target: EPIC-067
-    type: informs
+    type: cautions
     rationale: "TASK-429 (graph node enrichment) is the direct fix"
 ---
 

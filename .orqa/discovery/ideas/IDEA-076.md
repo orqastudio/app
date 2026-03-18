@@ -13,14 +13,10 @@ research-needed:
   - "How do UI tweaks (IDEA-073) fit — are they bugs, tasks, or their own thing?"
   - "What changes to the task schema are needed (optional epic field, milestone field, category/type field)?"
 relationships:
-  - target: MS-001
-    type: delivers
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-003
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

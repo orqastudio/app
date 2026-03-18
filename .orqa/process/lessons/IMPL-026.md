@@ -7,25 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: observation
 recurrence: 1
-relationships:
-  - target: RULE-015
-    type: informs
-    rationale: "Honest reporting includes respecting the user's capacity to process information — a wall of decisions is not honest communication, it's a context dump"
-  - target: PILLAR-001
-    type: informs
-    rationale: "Clarity Through Structure — structuring decisions sequentially is clearer than presenting them all at once"
-  - target: IMPL-041
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-041"
-  - target: IMPL-035
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-035"
-  - target: IMPL-034
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-034"
-  - target: IMPL-040
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-040"
+relationships: []
 ---
 ## Pattern
 

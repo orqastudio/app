@@ -8,10 +8,10 @@ updated: 2026-03-15
 horizon: next
 research-needed: []
 relationships:
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 
 ## Motivation

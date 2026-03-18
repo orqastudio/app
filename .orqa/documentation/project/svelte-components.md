@@ -13,28 +13,21 @@ tags:
   - architecture
 sort: 8
 relationships:
-  - target: RES-004
-    type: informs
-    rationale: Documentation page references RES-004
   - target: AD-004
-    type: informs
+    type: documents
     rationale: Documentation page references AD-004
   - target: AD-006
-    type: informs
+    type: documents
     rationale: Documentation page references AD-006
   - target: RULE-024
-    type: informs
+    type: documents
     rationale: Documentation page references RULE-024
   - target: AD-013
-    type: informs
+    type: documents
     rationale: Documentation page references AD-013
   - target: AD-009
-    type: informs
+    type: documents
     rationale: Documentation page references AD-009
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: informed-by
 ---
 
 **References:** [Frontend Research](RES-004), Information Architecture

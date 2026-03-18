@@ -3,7 +3,7 @@ id: DOC-020
 title: Artifact Graph SDK
 description: Development guide for the Artifact Graph SDK — the typed frontend interface to the bidirectional artifact node graph.
 created: 2026-03-10
-updated: 2026-03-10
+updated: 2026-03-18
 sort: 21
 category: development
 tags:
@@ -15,12 +15,8 @@ tags:
   - plugins
 relationships:
   - target: EPIC-048
-    type: informs
+    type: documents
     rationale: Documentation page references EPIC-048
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: informed-by
 ---
 
 
@@ -28,7 +24,7 @@ relationships:
 
 ## Overview
 
-The artifact graph is a bidirectional in-memory graph of every governance artifact under `.orqa/`. Each `.md` file with a YAML `id` frontmatter field becomes a node. Frontmatter fields that reference other artifact IDs (such as `epic`, `milestone`, `depends-on`) become directed edges.
+The artifact graph is a bidirectional in-memory graph of every governance artifact across `.orqa/`, `app/.orqa/`, `plugins/`, and `connectors/`. Each `.md` file with a YAML `id` frontmatter field becomes a node. Entries in the `relationships` frontmatter array become directed edges — each entry has a `target` (the referenced artifact ID) and a `type` (a relationship key from core.json or a plugin manifest).
 
 The graph exists to make artifact relationships queryable without reading individual files. It replaces ad-hoc patterns — hardcoded prefix maps, direct `invoke("read_artifact")` calls, manual frontmatter parsing — with a single typed interface that any component, store, or plugin can use.
 

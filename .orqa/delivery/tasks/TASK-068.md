@@ -21,12 +21,8 @@ relationships:
     type: depends-on
   - target: TASK-067
     type: depends-on
-  - target: SKILL-011
-    type: informed-by
   - target: TASK-337
     type: depended-on-by
-  - target: SKILL-011
-    type: informed-by
 ---
 
 ## What

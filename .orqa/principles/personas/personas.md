@@ -5,14 +5,7 @@ description: "User personas describing target users, their goals, pain points, a
 created: 2026-03-02
 updated: 2026-03-14
 sort: 3
-relationships:
-  - target: DOC-067
-    type: informs
-    rationale: User personas are distilled into the design-principles grounding document — inverse of informed-by on DOC-067
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: informed-by
+relationships: []
 ---
 
 **Date:** 2026-03-07

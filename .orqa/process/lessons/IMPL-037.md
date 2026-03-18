@@ -7,13 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: RULE-003
-    type: informs
-    rationale: "RULE-003 requires artifact config integrity — this incident violated it by blanking the artifacts array and other required config fields"
-  - target: IDEA-075
-    type: informs
-    rationale: "App bug — out of scope for EPIC-059, tracked as idea for future implementation"
+relationships: []
 ---
 
 ## Pattern

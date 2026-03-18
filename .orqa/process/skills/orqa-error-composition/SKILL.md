@@ -11,25 +11,13 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: project
 category: domain
 file-patterns:
   - "backend/src-tauri/src/domain/**"
   - "backend/src-tauri/src/commands/**"
 version: 1.0.0
 user-invocable: true
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Canonical error types with From impls make every failure path traceable from domain logic through IPC to the user
-  - target: TASK-176
-    type: informs
-  - target: TASK-188
-    type: informs
-  - target: TASK-189
-    type: informs
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 

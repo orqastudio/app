@@ -14,19 +14,13 @@ scoring:
   dependencies: 3
 relationships:
   - target: MS-002
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-314
     type: delivered-by
     rationale: Epic contains this task
   - target: MS-001
-    type: delivers
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: fulfils
 ---
 **Note:** Two deliverables from this epic were deferred:
 - **Visual compliance dashboard** -- not delivered; should be tracked in a future epic when dashboard UI work is prioritised.

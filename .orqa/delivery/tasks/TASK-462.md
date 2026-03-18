@@ -22,24 +22,10 @@ relationships:
   - target: EPIC-064
     type: delivers
     rationale: Phase 1 — restructure docs to be fit for graph connection and agent grounding
-  - target: RES-062
-    type: informed-by
-    rationale: Documentation audit identified these issues
-  - target: TASK-463
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from TASK-463"
   - target: TASK-461
     type: depends-on
-  - target: SKILL-037
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
   - target: TASK-463
     type: depended-on-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-037
-    type: informed-by
 ---
 ## Scope
 

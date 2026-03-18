@@ -4,10 +4,7 @@ title: Research Principles — Agent Grounding
 description: Concise grounding document for the Researcher role. Injected into agent context at initialization.
 created: 2026-03-14
 updated: 2026-03-14
-relationships:
-  - target: SKILL-048
-    type: informed-by
-    rationale: Distilled from the research methodology skill
+relationships: []
 ---
 
 ## What Good Research Means

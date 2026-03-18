@@ -7,21 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: observation
 recurrence: 1
-relationships:
-  - target: IMPL-044
-    type: informed-by
-    rationale: "Both observations relate to the system automatically detecting and acting on implicit user intent rather than requiring explicit commands"
-  - target: IDEA-077
-    type: informed-by
-    rationale: "Emerged during the IDEA-077 promotion workflow when the user noted multiple observations that had to be manually triggered"
-  - target: IDEA-077
-    type: informed-by
-    rationale: "Promoted to IDEA-077 Phase 0 for implementation as a prompt-submit hook"
-  - target: IMPL-047
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-047"
-  - target: IDEA-077
-    type: informs
+relationships: []
 ---
 ## Pattern
 

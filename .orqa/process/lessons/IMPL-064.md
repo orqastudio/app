@@ -8,11 +8,8 @@ updated: 2026-03-14
 recurrence: 1
 maturity: understanding
 relationships:
-  - target: PILLAR-001
-    type: informs
-    rationale: "Clarity through structure means priority is visible and reasoned, not asserted"
   - target: EPIC-067
-    type: informs
+    type: cautions
     rationale: "TASK-459 surfaces prioritisation criteria and requires justification"
 ---
 

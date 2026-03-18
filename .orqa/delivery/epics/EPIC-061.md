@@ -15,17 +15,11 @@ scoring:
   dependencies: 5
 rule-overrides: []
 relationships:
-  - target: IMPL-048
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from IMPL-048
-  - target: IMPL-049
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from IMPL-049
   - target: RES-054
-    type: informed-by
+    type: guided-by
     rationale: Auto-generated inverse of informed-by relationship from RES-054
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-350
     type: delivered-by
@@ -111,16 +105,8 @@ relationships:
   - target: TASK-387
     type: delivered-by
     rationale: Epic contains this task
-  - target: EPIC-060
-    type: depended-on-by
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
+  - target: RES-054
+    type: guided-by
 ---
 ## Context
 

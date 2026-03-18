@@ -9,24 +9,10 @@ description: |
 status: active
 created: 2026-03-11
 updated: 2026-03-11
-layer: project
 category: domain
 version: 1.0.0
 user-invocable: true
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Establishes composability and error handling principles that make backend code consistent and reviewable
-  - target: TASK-176
-    type: informs
-  - target: TASK-188
-    type: informs
-  - target: TASK-189
-    type: informs
-  - target: TASK-190
-    type: informs
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 This skill ensures every backend agent has the right mental model before writing code. It does not duplicate content from deeper skills — it establishes principles and points to the right references.

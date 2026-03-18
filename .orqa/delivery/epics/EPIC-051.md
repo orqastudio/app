@@ -18,11 +18,8 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: IDEA-057
-    type: informed-by
-    rationale: Promoted from IDEA-057 — provider-agnostic tool abstraction
   - target: MS-002
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-171
     type: delivered-by
@@ -46,17 +43,9 @@ relationships:
     type: delivered-by
     rationale: Epic contains this task
   - target: MS-001
-    type: delivers
-  - target: EPIC-050
-    type: depended-on-by
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
+    type: fulfils
   - target: IDEA-057
-    type: evolves-from
-  - target: PILLAR-001
-    type: grounded-by
+    type: realised-by
 ---
 
 ## Context

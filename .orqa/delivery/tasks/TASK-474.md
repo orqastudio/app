@@ -23,16 +23,4 @@ relationships:
   - target: EPIC-073
     type: delivers
     rationale: Schema migration (F14, F15)
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-039
-    type: informed-by
-  - target: SKILL-050
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-039
-    type: informed-by
-  - target: SKILL-050
-    type: informed-by
 ---

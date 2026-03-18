@@ -10,6 +10,11 @@ research-needed:
   - "What metrics best represent learning pipeline health? (lessons/epic, lessons/week, recurrence velocity)"
   - "How should the dashboard visualise the trend — chart, sparkline, summary stat?"
   - "Should it also show promotion rate (observations → rules/skills)?"
+relationships:
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

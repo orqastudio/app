@@ -7,16 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: RULE-004
-    type: informs
-    rationale: "RULE-004 governs epic lifecycle but doesn't enforce epic body maintenance during the epic"
-  - target: RULE-004
-    type: informed-by
-    rationale: "Lesson promoted to RULE-004 — standing reconciliation task requirement added to epic lifecycle"
-  - target: RULE-004
-    type: informed-by
-    rationale: "RULE-004 codified the epic body reconciliation task requirement first observed in this lesson"
+relationships: []
 ---
 
 ## Pattern

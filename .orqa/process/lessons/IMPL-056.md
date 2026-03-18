@@ -7,10 +7,7 @@ created: 2026-03-14
 updated: 2026-03-14
 maturity: understanding
 recurrence: 2
-relationships:
-  - target: RULE-006
-    type: informs
-    rationale: "Coding standards should catch this pattern during review"
+relationships: []
 ---
 
 ## Pattern

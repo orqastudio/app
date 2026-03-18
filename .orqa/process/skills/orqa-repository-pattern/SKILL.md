@@ -10,20 +10,12 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: project
 category: domain
 file-patterns:
   - "backend/src-tauri/src/repo/**"
 version: 1.0.0
 user-invocable: true
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Repository trait abstraction isolates persistence from domain logic, making data access patterns explicit and testable
-  - target: TASK-029
-    type: informs
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 

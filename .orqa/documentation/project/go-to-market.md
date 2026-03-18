@@ -1,6 +1,7 @@
 ---
 id: DOC-052
 title: Go-To-Market Strategy
+category: concept
 description: "Go-to-market strategy covering positioning, channels, and launch sequencing."
 created: 2026-03-07
 updated: 2026-03-07

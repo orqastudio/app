@@ -9,46 +9,10 @@ description: |
 status: active
 created: 2026-03-11
 updated: 2026-03-11
-layer: project
 category: domain
 version: 1.0.0
 user-invocable: true
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Umbrella conventions for component purity, store patterns, and Svelte 5 runes ensure UI code follows visible, enforceable standards
-  - target: AD-013
-    type: informs
-    rationale: Auto-generated inverse of practices relationship from AD-013
-  - target: AD-019
-    type: informs
-    rationale: Auto-generated inverse of practices relationship from AD-019
-  - target: TASK-403
-    type: informs
-  - target: TASK-404
-    type: informs
-  - target: TASK-405
-    type: informs
-  - target: TASK-406
-    type: informs
-  - target: TASK-407
-    type: informs
-  - target: TASK-408
-    type: informs
-  - target: TASK-423
-    type: informs
-  - target: TASK-469
-    type: informs
-  - target: TASK-470
-    type: informs
-  - target: TASK-473
-    type: informs
-  - target: AD-013
-    type: informed-by
-  - target: AD-019
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 This skill ensures every frontend agent has the right mental model before writing code. It does not duplicate content from deeper skills — it establishes principles and points to the right references.
 

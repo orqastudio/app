@@ -11,6 +11,11 @@ research-needed:
   - "Scheduling mechanism — cron-like, project-start hooks, manual triggers"
   - VER-NNN storage strategy for different volume levels
   - Auto-creation of TASK-NNN from failed automated checks
+relationships:
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

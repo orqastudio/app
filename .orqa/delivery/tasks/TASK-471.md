@@ -23,12 +23,4 @@ relationships:
     rationale: Artifact link settings (F8, F27, F28)
   - target: TASK-470
     type: depends-on
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-016
-    type: informed-by
-  - target: SKILL-016
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
 ---

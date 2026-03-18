@@ -8,25 +8,10 @@ description: |
 status: active
 created: 2026-03-11
 updated: 2026-03-11
-layer: project
 category: domain
 version: 1.0.0
 user-invocable: true
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: DuckDB + ONNX embedding pipeline indexes the codebase so architectural relationships are queryable, not just file-browsable
-  - target: AD-024
-    type: informs
-    rationale: Auto-generated inverse of practices relationship from AD-024
-  - target: TASK-407
-    type: informs
-  - target: AD-024
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
-  - target: AD-024
-    type: practices
+relationships: []
 ---
 This skill covers the implementation architecture of OrqaStudio's native search engine.
 For how to USE the search tools, see `orqa-native-search`.

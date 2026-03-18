@@ -11,13 +11,10 @@ research-needed:
   - UX research for interactive decision matrices
   - Integration with artifact layer
 relationships:
-  - target: IDEA-086
-    type: informed-by
-    rationale: "Auto-generated inverse of informed-by relationship from IDEA-086"
   - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Candidate Items
 

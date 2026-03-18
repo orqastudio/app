@@ -7,10 +7,7 @@ created: 2026-03-15
 updated: 2026-03-15
 maturity: observation
 recurrence: 1
-relationships:
-  - target: RULE-032
-    type: informs
-    rationale: Schema validation should catch malformed frontmatter structure
+relationships: []
 ---
 
 ## Pattern

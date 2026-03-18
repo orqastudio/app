@@ -14,16 +14,16 @@ scoring:
   dependencies: 5
 relationships:
   - target: RES-034
-    type: informed-by
+    type: guided-by
     rationale: Auto-generated inverse of informed-by relationship from RES-034
   - target: RES-032
-    type: informed-by
+    type: guided-by
     rationale: Auto-generated inverse of informed-by relationship from RES-032
   - target: RES-033
-    type: informed-by
+    type: guided-by
     rationale: Auto-generated inverse of informed-by relationship from RES-033
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-070
     type: delivered-by
@@ -70,33 +70,22 @@ relationships:
   - target: TASK-338
     type: delivered-by
     rationale: Epic contains this task
-  - target: DOC-005
-    type: informed-by
-    rationale: Referenced in documentation page IPC Command Catalog
-  - target: DOC-020
-    type: informed-by
-    rationale: Referenced in documentation page Artifact Graph SDK
-  - target: DOC-071
-    type: informed-by
-    rationale: "Auto-generated inverse of documented-by relationship from DOC-071"
-  - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: RES-032
-    type: informs
-  - target: RES-033
-    type: informs
-  - target: RES-034
-    type: informs
-  - target: SKILL-020
-    type: informed-by
   - target: IDEA-037
-    type: evolves-from
-  - target: DOC-057
-    type: informs
+    type: realised-by
   - target: IDEA-032
-    type: evolves-from
+    type: realised-by
+  - target: RES-032
+    type: guided-by
+  - target: RES-033
+    type: guided-by
+  - target: RES-034
+    type: guided-by
+  - target: DOC-020
+    type: documented-by
+  - target: DOC-005
+    type: documented-by
+  - target: DOC-071
+    type: documented-by
 ---
 ## Context
 

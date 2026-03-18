@@ -11,8 +11,6 @@ acceptance:
   - Guidelines captured for when friction is appropriate vs when it should be invisible
   - "If guidelines are general enough: promoted to a rule or skill update"
 relationships:
-  - target: MS-001
-    type: delivers
   - target: EPIC-073
     type: delivers
   - target: TASK-398

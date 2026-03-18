@@ -7,16 +7,7 @@ created: 2026-03-14
 updated: 2026-03-14
 maturity: observation
 recurrence: 3
-relationships:
-  - target: RULE-015
-    type: informs
-    rationale: Honest reporting requires verifying acceptance criteria are actually met, not just that the task was attempted
-  - target: RULE-022
-    type: informs
-    rationale: Verification gate protocol requires independent review against acceptance criteria
-  - target: PILLAR-003
-    type: informs
-    rationale: Purpose through continuity — acceptance criteria ARE the stated intent, and they were lost during execution
+relationships: []
 ---
 
 ## Pattern

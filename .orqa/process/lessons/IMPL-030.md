@@ -7,16 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: observation
 recurrence: 1
-relationships:
-  - target: IMPL-028
-    type: informed-by
-    rationale: "Provider schema defines capabilities — this observation addresses HOW those capabilities are fulfilled"
-  - target: RULE-040
-    type: informs
-    rationale: "Capability resolution currently assumes one fixed mapping per provider — this observation says the mapping should be configurable"
-  - target: IMPL-031
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-031"
+relationships: []
 ---
 ## Pattern
 

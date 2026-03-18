@@ -22,22 +22,8 @@ relationships:
   - target: EPIC-064
     type: delivers
     rationale: Phase 1 — clean up documentation before connecting to graph
-  - target: RES-062
-    type: informed-by
-    rationale: Documentation audit identified these duplicates
-  - target: TASK-461
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from TASK-461"
-  - target: SKILL-037
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
   - target: TASK-461
     type: depended-on-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-037
-    type: informed-by
 ---
 ## Scope
 

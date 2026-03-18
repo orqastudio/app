@@ -6,24 +6,14 @@ created: 2026-03-16
 relationships:
   - type: driven-by
     target: AD-055
-  - type: delivers
+  - type: fulfils
     target: MS-002
-  - type: depends-on
-    target: EPIC-080
-  - target: EPIC-082
-    type: depended-on-by
-  - target: IDEA-112
-    type: informs
-  - target: IDEA-114
-    type: informs
-  - target: IDEA-115
-    type: informs
   - target: IDEA-006
-    type: merged-from
+    type: realised-by
   - target: IDEA-007
-    type: merged-from
+    type: realised-by
   - target: IDEA-085
-    type: merged-from
+    type: realised-by
 ---
 
 # EPIC-081: Organisation-mode multi-project support

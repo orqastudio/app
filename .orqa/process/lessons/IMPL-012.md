@@ -7,20 +7,7 @@ created: 2026-03-07
 updated: 2026-03-07
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: PILLAR-002
-    type: grounded
-    rationale: Encoding improvements closes the learning loop
-  - target: IMPL-011
-    type: informs
-    rationale: Both address the learning process — investigation and encoding
-  - target: RULE-030
-    type: informed-by
-    rationale: Lesson promoted to RULE-030
-  - target: RULE-030
-    type: informed-by
-  - target: PILLAR-002
-    type: informs
+relationships: []
 ---
 ## What Happened
 

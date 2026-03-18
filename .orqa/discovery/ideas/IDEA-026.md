@@ -12,12 +12,12 @@ research-needed:
   - Define the boundary between platform-managed and user-managed artifacts
   - "Consider the three-layer governance model (canon, project, plugin) and where each artifact type falls"
 relationships:
-  - type: merged-into
+  - type: crystallises
     target: AD-055
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 n> **Surpassed 2026-03-16**: Core vs plugin artifact split fully captured in AD-055. Implementation details covered in EPIC-080 Phase 2.
 

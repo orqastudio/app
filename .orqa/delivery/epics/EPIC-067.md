@@ -14,29 +14,8 @@ updated: 2026-03-14
 deadline: null
 horizon: active
 relationships:
-  - target: EPIC-065
-    type: informed-by
-    rationale: First pass at artifact viewer enhancements revealed deeper layout and relationship issues
-  - target: EPIC-063
-    type: informed-by
-    rationale: UAT round 2 findings drive this epic's scope
-  - target: EPIC-072
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from EPIC-072
-  - target: IMPL-064
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-064
-  - target: EPIC-070
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from EPIC-070
-  - target: IMPL-058
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-058
-  - target: IMPL-059
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-059
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-429
     type: delivered-by
@@ -74,19 +53,12 @@ relationships:
   - target: TASK-459
     type: delivered-by
     rationale: Epic contains this task
-  - target: EPIC-073
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from EPIC-073"
-  - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
-  - target: EPIC-068
-    type: depended-on-by
-  - target: EPIC-070
-    type: depended-on-by
-  - target: EPIC-072
-    type: depended-on-by
+  - target: IMPL-058
+    type: cautioned-by
+  - target: IMPL-059
+    type: cautioned-by
+  - target: IMPL-064
+    type: cautioned-by
 ---
 ## Context
 

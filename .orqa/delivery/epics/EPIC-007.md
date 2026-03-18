@@ -14,16 +14,16 @@ scoring:
   dependencies: 2
 relationships:
   - target: RES-020
-    type: informed-by
+    type: guided-by
     rationale: Auto-generated inverse of informed-by relationship from RES-020
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-313
     type: delivered-by
     rationale: Epic contains this task
-  - target: PILLAR-001
-    type: grounded-by
+  - target: RES-020
+    type: guided-by
 ---
 **Note:** This epic was superseded by [EPIC-039](EPIC-039), which completed the composability refactoring. The status remains `done` because the work was delivered through [EPIC-039](EPIC-039). The tasks listed below were not completed under this epic directly -- they were subsumed by [EPIC-039](EPIC-039)'s broader scope.
 

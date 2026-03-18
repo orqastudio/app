@@ -18,8 +18,6 @@ relationships:
     rationale: Task belongs to this epic
   - target: TASK-349
     type: depended-on-by
-  - target: IMPL-018
-    type: informed-by
 ---
 ## What
 

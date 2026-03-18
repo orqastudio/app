@@ -11,6 +11,11 @@ research-needed:
   - User interview flow design for metrics/monitoring tooling
   - Plugin marketplace/registry concept for matching detected tools to plugins
   - AI-assisted plugin generation feasibility — how much can be automated from the plugin template
+relationships:
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-003
+    type: benefits
 ---
 
 ## Motivation

@@ -18,16 +18,16 @@ rule-overrides:
   - "rule: RULE-032"
 relationships:
   - target: RES-049
-    type: informed-by
+    type: guided-by
     rationale: Auto-generated inverse of informed-by relationship from RES-049
   - target: RES-048
-    type: informed-by
+    type: guided-by
     rationale: Auto-generated inverse of informed-by relationship from RES-048
   - target: RES-052
-    type: informed-by
+    type: guided-by
     rationale: Auto-generated inverse of informed-by relationship from RES-052
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-281
     type: delivered-by
@@ -122,24 +122,20 @@ relationships:
   - target: TASK-349
     type: delivered-by
     rationale: Epic contains this task
-  - target: EPIC-058
-    type: depends-on
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
-  - target: AD-042
-    type: informs
   - target: AD-043
-    type: informed-by
+    type: driven-by
   - target: AD-044
-    type: informed-by
-  - target: RULE-045
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: driven-by
+  - target: RES-048
+    type: guided-by
+  - target: RES-049
+    type: guided-by
+  - target: RES-052
+    type: guided-by
+  - target: AD-043
+    type: driven-by
+  - target: AD-044
+    type: driven-by
 ---
 ## Context
 

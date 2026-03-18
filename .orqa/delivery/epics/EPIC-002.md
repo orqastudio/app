@@ -14,13 +14,10 @@ scoring:
   dependencies: 2
 relationships:
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: DOC-036
-    type: informed-by
-    rationale: Referenced in documentation page Artifact Framework
-  - target: PILLAR-001
-    type: grounded-by
+    type: documented-by
 ---
 ## Why P1
 

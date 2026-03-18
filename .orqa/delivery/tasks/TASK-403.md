@@ -21,14 +21,6 @@ relationships:
   - target: EPIC-063
     type: delivers
     rationale: Theme A — navigation and layout bug fixes from UAT
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-042
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-042
-    type: informed-by
 ---
 
 ## Scope

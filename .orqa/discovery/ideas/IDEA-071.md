@@ -14,28 +14,16 @@ research-needed:
   - Load-time filtering implementation for non-matching plugins
   - App MCP server baseline capabilities manifest
 relationships:
-  - type: evolves-into
-    target: IDEA-111
   - type: merged-into
+    target: IDEA-111
+  - type: realises
     target: EPIC-080
-  - target: IMPL-020
-    type: informed-by
-    rationale: "Auto-generated inverse of informed-by relationship from IMPL-020"
-  - target: IMPL-020
-    type: informed-by
-    rationale: "Auto-generated inverse of grounded relationship from IMPL-020"
-  - target: IMPL-019
-    type: informed-by
-    rationale: "Auto-generated inverse of informed-by relationship from IMPL-019"
-  - target: IMPL-019
-    type: informed-by
-    rationale: "Auto-generated inverse of grounded relationship from IMPL-019"
   - target: AD-055
-    type: merged-into
-  - target: IMPL-019
-    type: informs
-  - target: IMPL-020
-    type: informs
+    type: crystallises
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 
 > **Surpassed 2026-03-16**: Basic plugin ecosystem concept merged into EPIC-080 via AD-055. Provider-aware plugin system (provider detection, capability routing, load-time filtering) split into IDEA-111 as a distinct capability layer needed for multi-model AI support.

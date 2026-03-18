@@ -14,9 +14,9 @@ research-needed:
   - "What's the minimum viable skill for a tool? (parameters, examples, common patterns, anti-patterns)"
 relationships:
   - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Motivation
 

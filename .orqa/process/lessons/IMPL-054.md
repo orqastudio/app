@@ -8,27 +8,12 @@ updated: 2026-03-14
 recurrence: 1
 maturity: observation
 relationships:
-  - target: IMPL-050
-    type: informed-by
-    rationale: "Same class of problem — enforcement gap on a product that enforces its own principles"
-  - target: IMPL-052
-    type: informed-by
-    rationale: "Occurred while trying to enforce IMPL-052's promotion to RULE-001"
-  - target: RULE-042
-    type: informs
-    rationale: "RULE-042 defines the skill injection enforcement system that should have been used"
   - target: AD-048
-    type: informs
+    type: teaches
     rationale: "This lesson directly triggered the decision that rule promotion requires enforcement through the artifact graph"
-  - target: RES-056
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from RES-056"
   - target: EPIC-064
-    type: informs
+    type: cautions
     rationale: "Auto-generated inverse of informs relationship from EPIC-064"
-  - target: IMPL-055
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-055"
 ---
 ## Pattern
 

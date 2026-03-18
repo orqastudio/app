@@ -15,13 +15,10 @@ deadline: null
 horizon: active
 relationships:
   - target: RES-064
-    type: informed-by
+    type: guided-by
     rationale: Dashboard research drives the design
-  - target: EPIC-073
-    type: informed-by
-    rationale: UAT finding F1 identified the need
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-483
     type: delivered-by
@@ -35,18 +32,10 @@ relationships:
   - target: TASK-481
     type: delivered-by
     rationale: "Auto-generated inverse of delivered-by relationship from TASK-481"
-  - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
-  - target: RES-064
-    type: informs
   - target: TASK-480
     type: delivered-by
-  - target: DOC-060
-    type: informs
+  - target: RES-064
+    type: guided-by
 ---
 ## Context
 

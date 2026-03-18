@@ -13,14 +13,10 @@ research-needed:
   - "Should the app render these dynamically (query graph at display time) or should a tool generate them into the markdown?"
   - "How does ordering work? By dependency graph topological sort? By phase? By status?"
 relationships:
-  - target: MS-001
-    type: delivers
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

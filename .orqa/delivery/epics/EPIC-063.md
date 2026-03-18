@@ -14,44 +14,8 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: EPIC-060
-    type: informs
-    rationale: UAT findings from EPIC-060 review drive this epic's scope
-  - target: EPIC-065
-    type: informs
-    rationale: Theme D findings extracted into dedicated artifact viewer epic
-  - target: IMPL-053
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-053
-  - target: IDEA-089
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IDEA-089
-  - target: IDEA-090
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IDEA-090
-  - target: IDEA-092
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from IDEA-092
-  - target: EPIC-072
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from EPIC-072
-  - target: EPIC-070
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from EPIC-070
-  - target: EPIC-071
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from EPIC-071
-  - target: EPIC-068
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from EPIC-068
-  - target: EPIC-067
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from EPIC-067
-  - target: EPIC-069
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from EPIC-069
   - target: MS-001
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-403
     type: delivered-by
@@ -74,16 +38,12 @@ relationships:
   - target: TASK-410
     type: delivered-by
     rationale: Epic contains this task
-  - target: EPIC-060
-    type: depends-on
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: DOC-060
-    type: informs
-  - target: PILLAR-001
-    type: grounded-by
+  - target: IDEA-089
+    type: realised-by
+  - target: IDEA-090
+    type: realised-by
+  - target: IMPL-053
+    type: cautioned-by
 ---
 ## UAT Findings Summary
 

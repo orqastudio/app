@@ -10,15 +10,10 @@ research-needed:
   - "What fields does the settings editor currently write? Does it serialize the full model or only changed fields?"
   - "Should project.json have a JSON schema that the app validates against before saving?"
 relationships:
-  - target: IMPL-037
-    type: informed-by
-    rationale: "Auto-generated inverse of informed-by relationship from IMPL-037"
-  - target: MS-001
-    type: delivers
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Motivation
 

@@ -14,7 +14,7 @@ scoring:
   dependencies: 5
 relationships:
   - target: MS-000
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-099
     type: delivered-by
@@ -31,40 +31,50 @@ relationships:
   - target: TASK-316
     type: delivered-by
     rationale: Epic contains this task
-  - target: EPIC-025
-    type: depends-on
-  - target: EPIC-029
-    type: depended-on-by
-  - target: EPIC-030
-    type: depended-on-by
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
   - target: AD-007
-    type: informed-by
+    type: driven-by
   - target: AD-008
-    type: informed-by
+    type: driven-by
   - target: AD-009
-    type: informed-by
+    type: driven-by
   - target: AD-010
-    type: informed-by
+    type: driven-by
   - target: AD-011
-    type: informed-by
+    type: driven-by
   - target: AD-012
-    type: informed-by
+    type: driven-by
   - target: AD-013
-    type: informed-by
+    type: driven-by
   - target: AD-014
-    type: informed-by
+    type: driven-by
   - target: AD-015
-    type: informed-by
+    type: driven-by
   - target: AD-016
-    type: informed-by
+    type: driven-by
   - target: AD-017
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: driven-by
+  - target: AD-007
+    type: driven-by
+  - target: AD-008
+    type: driven-by
+  - target: AD-009
+    type: driven-by
+  - target: AD-010
+    type: driven-by
+  - target: AD-011
+    type: driven-by
+  - target: AD-012
+    type: driven-by
+  - target: AD-013
+    type: driven-by
+  - target: AD-014
+    type: driven-by
+  - target: AD-015
+    type: driven-by
+  - target: AD-016
+    type: driven-by
+  - target: AD-017
+    type: driven-by
 ---
 ## Why P1
 

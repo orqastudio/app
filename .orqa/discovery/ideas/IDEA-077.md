@@ -12,28 +12,12 @@ research-needed:
   - "Should the Rust backend call the existing Node scripts or reimplement the checks natively? → Native Rust implementation using the existing ArtifactGraph — the graph already tracks orphans and broken refs"
   - "How does this interact with the pre-commit hook — are they the same checks presented differently? → Same logical checks, different presentation. Hook blocks commits, dashboard shows current state."
 relationships:
-  - target: IMPL-044
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-044"
-  - target: IMPL-046
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-046"
-  - target: IMPL-045
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-045"
-  - target: IMPL-045
-    type: informed-by
-    rationale: "Auto-generated inverse of grounded relationship from IMPL-045"
   - target: EPIC-060
-    type: evolves-into
+    type: realises
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Motivation
 

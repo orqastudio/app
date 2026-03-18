@@ -14,12 +14,12 @@ scoring:
   dependencies: 2
 relationships:
   - target: MS-002
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
-  - target: PILLAR-001
-    type: grounded-by
   - target: AD-010
-    type: informed-by
+    type: driven-by
+  - target: AD-010
+    type: driven-by
 ---
 ## Tasks
 

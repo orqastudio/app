@@ -5,10 +5,12 @@ status: captured
 horizon: someday
 created: 2026-03-16
 relationships:
-  - type: informed-by
-    target: EPIC-080
-  - type: evolves-from
+  - type: merged-from
     target: IDEA-071
+  - target: PILLAR-003
+    type: grounded
+  - target: PERSONA-003
+    type: benefits
 ---
 
 # IDEA-111: Provider-aware plugin system

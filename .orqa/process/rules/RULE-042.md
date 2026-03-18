@@ -5,7 +5,6 @@ description: "When agents touch specific code areas, relevant domain skills are 
 status: active
 created: 2026-03-11
 updated: 2026-03-12
-layer: project
 enforcement:
   - "event: file"
   - "backend/src-tauri/src/domain/**"
@@ -34,46 +33,15 @@ enforcement:
   - orqa-governance
   - orqa-documentation
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Skill injection automates knowledge structure loading at the right moments
-  - target: RULE-026
-    type: informs
-    rationale: Automated injection implements the skill loading model by triggering Tier 2 skills based on file paths
-  - target: RULE-006
-    type: informs
-    rationale: Injected skills help agents comply with coding standards specific to the code area they are editing
-  - target: RULE-043
-    type: informs
-    rationale: Skill injection complements linter delegation — skills provide knowledge while linters enforce patterns
   - target: AD-045
     type: enforces
     rationale: Auto-generated inverse of practiced-by relationship from AD-045
-  - target: RES-056
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from RES-056
-  - target: DOC-072
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from DOC-072"
-  - target: DOC-071
-    type: informed-by
-    rationale: "Auto-generated inverse of documented-by relationship from DOC-071"
-  - target: EPIC-052
-    type: informs
-  - target: IMPL-054
-    type: informed-by
-  - target: RULE-043
-    type: informed-by
   - target: AD-048
     type: enforces
-  - target: TASK-412
-    type: delivered-by
-  - target: PILLAR-001
-    type: informs
   - target: AD-045
-    type: practiced-by
-  - target: AD-045
-    type: informs
+    type: enforces
+  - target: DOC-071
+    type: documented-by
 ---
 When agents write to specific code areas, the enforcement engine automatically injects
 relevant domain skills as system context. This implements Layer 2 (Knowledge Injection)

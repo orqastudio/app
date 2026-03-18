@@ -1,21 +1,18 @@
 ---
 id: DOC-014
 title: Streaming Pipeline
+category: architecture
 description: "End-to-end streaming architecture from Agent SDK through sidecar NDJSON to Rust Channel<T> to Svelte."
 created: 2026-03-02
 updated: 2026-03-10
 sort: 9
 relationships:
   - target: AD-007
-    type: informs
+    type: documents
     rationale: Documentation page references AD-007
   - target: AD-009
-    type: informs
+    type: documents
     rationale: Documentation page references AD-009
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: informed-by
 ---
 
 **Date:** 2026-03-02 | **References:** [AD-007](AD-007), [AD-009](AD-009)

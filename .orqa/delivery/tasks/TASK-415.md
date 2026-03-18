@@ -23,31 +23,12 @@ relationships:
   - target: EPIC-064
     type: delivers
     rationale: Phase 2 — app-context enforcement parity with CLI
-  - target: EPIC-050
-    type: informed-by
-    rationale: EPIC-050 built the Rust engine; this task wires it to execution
   - target: TASK-414
     type: depends-on
-  - target: SKILL-032
-    type: informed-by
-  - target: SKILL-009
-    type: informed-by
-  - target: SKILL-012
-    type: informed-by
-  - target: TASK-188
-    type: evolves-into
-  - target: TASK-189
-    type: evolves-into
   - target: TASK-190
     type: depended-on-by
   - target: TASK-416
     type: depended-on-by
-  - target: SKILL-009
-    type: informed-by
-  - target: SKILL-012
-    type: informed-by
-  - target: SKILL-032
-    type: informed-by
 ---
 
 ## Scope

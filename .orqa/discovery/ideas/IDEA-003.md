@@ -10,18 +10,12 @@ research-needed:
   - Domain-agnostic template design
   - Mode detection accuracy testing
 relationships:
-  - target: RES-013
-    type: informed-by
-    rationale: "Tool display research informed entry mode UX design"
-  - target: RES-012
-    type: informed-by
-    rationale: "First-run setup wizard research informed onboarding flow design"
   - target: EPIC-035
-    type: evolves-into
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: realises
+  - target: PILLAR-003
+    type: grounded
+  - target: PERSONA-003
+    type: benefits
 ---
 ## Candidate Items
 

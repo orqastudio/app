@@ -17,11 +17,11 @@ research-needed:
   - Design HOOK-NNN identifiers for app-managed hooks (completing the promotion chain IMPL → RULE → HOOK)
 relationships:
   - target: EPIC-050
-    type: evolves-into
+    type: realises
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 ## Motivation
 

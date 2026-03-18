@@ -1,24 +1,12 @@
 ---
-id: DOC-073
+id: DOC-084
 title: "How To: Write Rust Tests in OrqaStudio"
+category: how-to
 description: Practical guide for writing unit and integration tests for the OrqaStudio Rust backend.
 created: 2026-03-14
 updated: 2026-03-14
 sort: 2
-relationships:
-  - target: RULE-029
-    type: informed-by
-    rationale: Testing standards define organisation, coverage requirements, and mock boundaries
-  - target: RULE-006
-    type: informed-by
-    rationale: Coding standards apply to test helpers too (function size, error handling)
-  - target: DOC-021
-    type: informed-by
-    rationale: Coding standards document defines the coverage requirements referenced here
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-003
-    type: informed-by
+relationships: []
 ---
 
 ## Test Organisation

@@ -12,8 +12,10 @@ research-needed:
   - "Batch review UX — how does the human efficiently review and approve/reject proposals?"
   - Frontmatter update mechanism — safe in-place editing of YAML frontmatter without corrupting markdown body
 relationships:
-  - target: MS-001
-    type: delivers
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

@@ -7,25 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: IMPL-019
-    type: informed-by
-    rationale: "This is the enforcement side of the plugin-sidecar pairing observation — once pairing is declared, the system must enforce it"
-  - target: IDEA-071
-    type: informs
-    rationale: "Context filtering designed in TASK-307, implementation tracked by IDEA-071"
-  - target: TASK-307
-    type: informs
-    rationale: "TASK-307 designed the plugin context filtering mechanism that addresses this lesson"
-  - target: IDEA-071
-    type: informs
-    rationale: "Lesson informs IDEA-071 — implementation of context-scoped plugin activation"
-  - target: IDEA-071
-    type: informed-by
-    rationale: "Promoted to this idea for implementation of context-scoped plugin activation"
-  - target: IMPL-027
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-027"
+relationships: []
 ---
 ## Pattern
 

@@ -23,12 +23,4 @@ relationships:
   - target: EPIC-073
     type: delivers
     rationale: Navigation architecture overhaul (F17-F24)
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-042
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-042
-    type: informed-by
 ---

@@ -23,18 +23,7 @@ relationships:
     type: delivers
     rationale: Phase 2 — delegation reference grounds the orchestrator's coordination behavior
   - target: TASK-463
-    type: informed-by
-    rationale: Grounding docs must exist before the delegation reference can point to them
-  - target: TASK-463
     type: depends-on
-  - target: SKILL-037
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-037
-    type: informed-by
 ---
 
 ## Scope

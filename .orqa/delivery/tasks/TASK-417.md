@@ -22,17 +22,10 @@ relationships:
   - target: EPIC-066
     type: delivers
     rationale: Foundation package — everything depends on this
-  - target: RES-058
-    type: informed-by
-    rationale: Research confirmed all type files are fully portable
-  - target: SKILL-034
-    type: informed-by
   - target: TASK-419
     type: depended-on-by
   - target: TASK-420
     type: depended-on-by
-  - target: SKILL-034
-    type: informed-by
 ---
 
 ## Scope

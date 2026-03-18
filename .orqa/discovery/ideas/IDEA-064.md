@@ -13,7 +13,11 @@ research-needed:
   - Unresolved tension display (null targets with intended=false)
 relationships:
   - target: EPIC-060
-    type: evolves-into
+    type: realises
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

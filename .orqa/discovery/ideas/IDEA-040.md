@@ -13,12 +13,10 @@ research-needed:
   - Sidecar process naming — Bun process identification in task manager
   - "make stop reliability — why do zombie handles persist after taskkill on Windows?"
 relationships:
-  - target: MS-001
-    type: delivers
-  - target: PILLAR-002
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-003
+    type: benefits
 ---
 
 ## Motivation

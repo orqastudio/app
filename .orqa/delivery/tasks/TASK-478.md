@@ -21,8 +21,4 @@ relationships:
   - target: EPIC-073
     type: delivers
     rationale: UI polish and settings (F29, F31)
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
 ---

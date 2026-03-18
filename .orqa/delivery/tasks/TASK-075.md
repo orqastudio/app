@@ -22,22 +22,10 @@ relationships:
     rationale: Task belongs to this epic
   - target: TASK-074
     type: depends-on
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-034
-    type: informed-by
-  - target: SKILL-016
-    type: informed-by
   - target: TASK-076
     type: depended-on-by
   - target: TASK-338
     type: depended-on-by
-  - target: SKILL-016
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-034
-    type: informed-by
 ---
 
 

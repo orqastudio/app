@@ -10,6 +10,11 @@ research-needed:
   - Plugin data collection API design — how plugins expose metrics endpoints
   - VER-NNN record schema and storage (file vs SQLite based on volume)
   - Parameter comparison engine — how automated pass/fail works
+relationships:
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

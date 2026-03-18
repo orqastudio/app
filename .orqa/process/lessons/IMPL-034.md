@@ -7,19 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: observation
 recurrence: 1
-relationships:
-  - target: RULE-028
-    type: informs
-    rationale: "Systems thinking requires seeing the whole — the orchestrator was in detail mode without checking the system view"
-  - target: IMPL-026
-    type: informed-by
-    rationale: "Same pattern as batching decisions — accumulating without pausing to assess"
-  - target: IMPL-035
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-035"
-  - target: IMPL-040
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-040"
+relationships: []
 ---
 ## Pattern
 

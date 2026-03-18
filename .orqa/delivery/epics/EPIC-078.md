@@ -15,15 +15,11 @@ deadline: null
 horizon: active
 relationships:
   - target: AD-051
-    type: delivers
+    type: driven-by
     rationale: Implements the config-driven delivery pipeline decision
   - target: MS-002
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
-  - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
   - target: TASK-509
     type: delivered-by
   - target: TASK-510

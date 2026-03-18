@@ -15,7 +15,9 @@ research-needed:
   - "How does this relate to the full graph dashboard (IDEA-049) vs being a per-artifact contextual view?"
 relationships:
   - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Motivation
 

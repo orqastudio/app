@@ -7,13 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: RULE-004
-    type: informs
-    rationale: "RULE-004 defines epic lifecycle but doesn't explicitly prohibit splitting for progress optics"
-  - target: IMPL-049
-    type: informed-by
-    rationale: "Same principle — scope decisions are user decisions, not orchestrator decisions"
+relationships: []
 ---
 
 ## Pattern

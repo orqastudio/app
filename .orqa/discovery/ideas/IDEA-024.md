@@ -14,12 +14,10 @@ research-needed:
   - "How do branches/worktrees relate to the artifact lifecycle (tasks, epics)?"
   - "What git state is relevant for dogfooding (uncommitted changes, stale worktrees, merge conflicts)?"
 relationships:
-  - target: MS-001
-    type: delivers
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Problem
 

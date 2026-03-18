@@ -11,12 +11,10 @@ research-needed:
   - Terminal integration approach (xterm.js vs native)
   - Git panel scope and UX
 relationships:
-  - target: MS-001
-    type: delivers
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Candidate Items
 

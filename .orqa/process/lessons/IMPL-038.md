@@ -7,22 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: IMPL-023
-    type: informed-by
-    rationale: "Automated observation logging discipline defines when to log — this observation addresses the hesitation barrier that prevents logging"
-  - target: IMPL-025
-    type: informed-by
-    rationale: "Lessons must flow forward — the triage task handles scope decisions, not the capture moment"
-  - target: RULE-004
-    type: informs
-    rationale: "Observation triage section in RULE-004 separates capture from scoping — this lesson reinforces that separation"
-  - target: RULE-004
-    type: informed-by
-    rationale: "Lesson promoted to RULE-004 — observation capture is mandatory, scope decisions at triage"
-  - target: RULE-004
-    type: informed-by
-    rationale: "RULE-004 codified the capture-vs-scope separation (observations always captured, scoped at triage) first observed in this lesson"
+relationships: []
 ---
 
 ## Pattern

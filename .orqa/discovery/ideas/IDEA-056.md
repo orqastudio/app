@@ -11,12 +11,10 @@ research-needed:
   - "Storage mechanism — sessionStorage vs URL hash vs SQLite?"
   - "How does Vite HMR interact with Svelte store state — does $state survive HMR or reset?"
 relationships:
-  - target: MS-001
-    type: delivers
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

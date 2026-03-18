@@ -15,7 +15,9 @@ research-needed:
   - "How do other AI-assisted tools (Cursor, Copilot, Claude Code) handle prompt injection?"
 relationships:
   - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Motivation
 

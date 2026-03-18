@@ -9,7 +9,7 @@ recurrence: 1
 maturity: understanding
 relationships:
   - target: EPIC-068
-    type: informs
+    type: cautions
     rationale: "TASK-439 (refresh before rescan) is the direct fix"
 ---
 

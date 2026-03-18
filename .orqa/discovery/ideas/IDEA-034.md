@@ -13,15 +13,12 @@ research-needed:
   - "UI for rule management (browse, enable/disable, see enforcement coverage)"
   - Migration path from current freeform scope field to structured model
 relationships:
-  - target: DOC-036
-    type: informed-by
-    rationale: Referenced in documentation page Artifact Framework
   - target: EPIC-050
-    type: evolves-into
+    type: realises
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 
 ## Motivation

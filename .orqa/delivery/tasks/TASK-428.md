@@ -26,14 +26,6 @@ relationships:
     rationale: Main app fully consuming published packages — the loop is closed
   - target: TASK-427
     type: depends-on
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-034
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-034
-    type: informed-by
 ---
 
 ## Scope

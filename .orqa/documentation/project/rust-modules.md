@@ -1,33 +1,21 @@
 ---
 id: DOC-010
 title: Rust Module Architecture
+category: architecture
 description: Module layout and dependency structure of the Rust backend crate.
 created: 2026-03-02
 updated: 2026-03-10
 sort: 7
 relationships:
-  - target: RES-002
-    type: informs
-    rationale: Documentation page references RES-002
-  - target: RES-007
-    type: informs
-    rationale: Documentation page references RES-007
-  - target: RES-006
-    type: informs
-    rationale: Documentation page references RES-006
   - target: AD-001
-    type: informs
+    type: documents
     rationale: Documentation page references AD-001
   - target: AD-003
-    type: informs
+    type: documents
     rationale: Documentation page references AD-003
   - target: AD-014
-    type: informs
+    type: documents
     rationale: Documentation page references AD-014
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: informed-by
 ---
 
 **References:** [Claude Integration](RES-002), [Tauri v2](RES-007), [Persistence](RES-006)

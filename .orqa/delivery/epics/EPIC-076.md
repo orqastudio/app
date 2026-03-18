@@ -15,19 +15,11 @@ deadline: null
 horizon: active
 relationships:
   - target: RES-065
-    type: informed-by
+    type: guided-by
     rationale: Graph analysis research drives the design
   - target: MS-002
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
-  - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
-  - target: RES-065
-    type: informs
   - target: TASK-498
     type: delivered-by
   - target: TASK-499
@@ -40,6 +32,8 @@ relationships:
     type: delivered-by
   - target: TASK-503
     type: delivered-by
+  - target: RES-065
+    type: guided-by
 ---
 
 ## Context

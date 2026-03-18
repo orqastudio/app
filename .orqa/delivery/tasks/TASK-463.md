@@ -25,24 +25,11 @@ relationships:
     type: delivers
     rationale: Phase 2 — grounding docs are the foundation for agent purpose injection
   - target: TASK-462
-    type: informed-by
-    rationale: Grounding docs distill from restructured documentation
-  - target: TASK-462
     type: depends-on
-  - target: SKILL-037
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
-  - target: TASK-464
-    type: informs
   - target: TASK-464
     type: depended-on-by
   - target: TASK-465
     type: depended-on-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-037
-    type: informed-by
 ---
 
 ## Scope
@@ -58,7 +45,7 @@ Each document answers three questions:
 
 | File | Grounds | Distilled From |
 |------|---------|---------------|
-| product-purpose.md | Orchestrator, Planner, Writer | DOC-046 (vision), DOC-039 (governance), pillars |
+| product-purpose.md | Orchestrator, Planner, Writer | VISION-001 (vision), DOC-039 (governance), pillars |
 | code-principles.md | Implementer, Reviewer | DOC-021 (coding-standards), architecture decisions |
 | artifact-principles.md | Orchestrator, Writer, Researcher, Governance Steward | DOC-036 (artifact-framework), DOC-039 (governance) |
 | design-principles.md | Designer | DOC-049 (design-system), DOC-053 (interaction-patterns), DOC-043 (personas) |

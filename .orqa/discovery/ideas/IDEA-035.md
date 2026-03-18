@@ -13,11 +13,10 @@ research-needed:
   - UI for configuring scoring dimensions and previewing priority distribution
   - Migration path for existing epics when scoring config changes
 relationships:
-  - target: DOC-036
-    type: informed-by
-    rationale: Referenced in documentation page Artifact Framework
   - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Problem
 

@@ -11,21 +11,12 @@ research-needed:
   - UX for provider switching and selection
   - "Local LLM viability (Ollama, air-gapped use)"
 relationships:
-  - target: RES-009
-    type: informed-by
-    rationale: Provider architecture research informed multi-provider ecosystem design
-  - target: RES-027
-    type: informed-by
-    rationale: Provider abstraction layer research informed sidecar refactoring approach
-  - target: DOC-036
-    type: informed-by
-    rationale: Referenced in documentation page Artifact Framework
   - target: EPIC-040
-    type: evolves-into
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: realises
+  - target: PILLAR-003
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 ## Candidate Items
 

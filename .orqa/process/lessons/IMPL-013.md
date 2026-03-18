@@ -7,12 +7,7 @@ created: 2026-03-07
 updated: 2026-03-07
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Correct skill ownership creates structural clarity in agent roles"
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 ## What Happened
 

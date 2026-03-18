@@ -32,14 +32,6 @@ relationships:
     type: depends-on
   - target: TASK-422
     type: depends-on
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-042
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-042
-    type: informed-by
 ---
 
 ## Scope

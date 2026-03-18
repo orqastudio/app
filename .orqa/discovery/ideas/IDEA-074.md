@@ -15,8 +15,10 @@ research-needed:
   - "Should this hook into the provider's built-in task/memory capability (e.g., Claude Code tasks) rather than reimplementing?"
   - "In-memory task lists as a capability — how does this fit the capability model?"
 relationships:
-  - target: MS-001
-    type: delivers
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

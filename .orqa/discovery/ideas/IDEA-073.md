@@ -11,8 +11,10 @@ research-needed:
   - Audit close/minimize/maximize button hover states for spacing issues
   - "What other visual rough edges exist in the current dogfood build?"
 relationships:
-  - target: MS-001
-    type: delivers
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

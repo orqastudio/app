@@ -14,32 +14,17 @@ scoring:
   complexity: 5
   dependencies: 5
 relationships:
-  - target: EPIC-050
-    type: informed-by
-    rationale: EPIC-050 built the enforcement engine; this epic closes the gaps it left
   - target: AD-048
-    type: delivers
+    type: driven-by
     rationale: AD-048 requires enforcement to accompany rule promotion — this epic implements that requirement across all layers
   - target: RES-056
-    type: informed-by
+    type: guided-by
     rationale: Research document analyzing the bootstrapping gap drives this epic's scope
-  - target: IMPL-054
-    type: informed-by
-    rationale: Orchestrator bypassing enforcement system — symptom this epic prevents
-  - target: IMPL-055
-    type: informed-by
-    rationale: Missing graph integrity at write-time — symptom this epic prevents
-  - target: EPIC-050
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from EPIC-050
   - target: RES-057
-    type: informed-by
+    type: guided-by
     rationale: Integrity check alignment audit informed enforcement bootstrapping scope
-  - target: EPIC-066
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from EPIC-066
   - target: MS-002
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-411
     type: delivered-by
@@ -86,32 +71,23 @@ relationships:
   - target: TASK-467
     type: delivered-by
     rationale: Phase 3 — grounding injection in plugin
-  - target: IDEA-095
-    type: informed-by
-    rationale: Documentation-as-graph-knowledge idea drove the expanded scope
   - target: RES-062
-    type: informed-by
+    type: guided-by
     rationale: Documentation audit findings shaped the restructuring plan
-  - target: EPIC-073
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from EPIC-073"
-  - target: EPIC-075
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from EPIC-075"
   - target: MS-001
-    type: delivers
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: RES-056
-    type: informs
-  - target: RES-062
-    type: informs
+    type: fulfils
   - target: IDEA-095
-    type: evolves-from
-  - target: PILLAR-001
-    type: grounded-by
+    type: realised-by
+  - target: RES-056
+    type: guided-by
+  - target: RES-057
+    type: guided-by
+  - target: RES-062
+    type: guided-by
+  - target: IMPL-054
+    type: cautioned-by
+  - target: IMPL-055
+    type: cautioned-by
 ---
 ## Context
 

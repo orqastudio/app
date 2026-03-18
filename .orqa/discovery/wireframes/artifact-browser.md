@@ -5,25 +5,7 @@ description: Wireframe specification for the artifact browser view showing gover
 created: 2026-03-02
 updated: 2026-03-15
 sort: 3
-relationships:
-  - target: RES-004
-    type: informs
-    rationale: Documentation page references RES-004
-  - target: EPIC-028
-    type: informed-by
-    rationale: UX Design epic produced these wireframes as deliverables
-  - target: EPIC-031
-    type: informed-by
-    rationale: Governance Bootstrap built the initial filesystem scanner and artifact browser
-  - target: EPIC-048
-    type: informed-by
-    rationale: Artifact Graph SDK built the bidirectional node graph powering the browser and live file-watcher refresh
-  - target: EPIC-005
-    type: informed-by
-    rationale: Artifact Browser Sort/Filter/Search epic is extending the browser with filtering, grouping, and AI search
-  - target: EPIC-065
-    type: informed-by
-    rationale: Artifact Viewer Enhancements added relationships panel, pipeline stepper, acceptance criteria, and horizon display to the viewer
+relationships: []
 ---
 
 <!-- FRESHNESS NOTE (2026-03-15): Section 6 "File Watching" refers to Tauri's `fs.watch` API — the implementation uses Tauri event listeners via the artifact graph SDK, not a direct `fs.watch` call. The viewer (Section 3) now includes additional panels not shown here: RelationshipsList, ReferencesPanel, PipelineStepper, ActionsNeeded, and AcceptanceCriteria (added in EPIC-065). The list item anatomy and empty state sections remain accurate. -->

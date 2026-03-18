@@ -14,13 +14,12 @@ research-needed:
   - "How does this interact with IDE integration — can suppression violations show as warnings in the editor?"
 relationships:
   - target: AD-047
-    type: informs
+    type: crystallises
     rationale: "AD-047 defines the // AD-NNN pattern these plugins would consume"
-  - target: IDEA-086
-    type: informs
-    rationale: "Both are enforcement plugins for software projects"
-  - target: PILLAR-001
-    type: grounded-by
+  - target: PILLAR-002
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

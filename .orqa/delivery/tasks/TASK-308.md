@@ -13,9 +13,6 @@ acceptance:
   - Learning checkpoint defined for task completion
   - Task body template updated with Lessons section
 relationships:
-  - target: IMPL-024
-    type: informed-by
-    rationale: Auto-generated inverse of grounded relationship from IMPL-024
   - target: EPIC-059
     type: delivers
     rationale: Task belongs to this epic
@@ -24,7 +21,7 @@ relationships:
   - target: TASK-349
     type: depended-on-by
   - target: IMPL-024
-    type: informs
+    type: yields
 ---
 ## What
 

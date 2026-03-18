@@ -13,8 +13,10 @@ research-needed:
   - "How does the wrap-up protocol interact with the human gate on epic completion?"
   - "How does this work in the app vs CLI context?"
 relationships:
-  - target: MS-001
-    type: delivers
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 
 ## Motivation

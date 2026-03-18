@@ -26,23 +26,12 @@ relationships:
   - target: EPIC-066
     type: delivers
     rationale: Core SDK — graph, IPC, and utilities
-  - target: RES-058
-    type: informed-by
-    rationale: Research confirmed ArtifactGraphSDK is fully portable with zero app-specific logic
   - target: TASK-417
     type: depends-on
-  - target: SKILL-034
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
   - target: TASK-421
     type: depended-on-by
   - target: TASK-422
     type: depended-on-by
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-034
-    type: informed-by
 ---
 
 ## Scope

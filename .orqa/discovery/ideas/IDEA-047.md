@@ -13,8 +13,10 @@ research-needed:
   - "What model routing strategies exist (static per-role, dynamic based on task complexity)?"
   - "How to handle context sharing between models when different roles work on the same task?"
 relationships:
-  - target: PILLAR-001
-    type: grounded-by
+  - target: PILLAR-003
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 ## Motivation
 

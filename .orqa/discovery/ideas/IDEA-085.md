@@ -15,20 +15,16 @@ research-needed:
   - "How does this interact with IDEA-038 (Plugin Distribution via Git Submodules) — are plugins and project submodules the same mechanism?"
   - "What does the UX look like for a product owner viewing aggregated status across 5 team repos?"
 relationships:
-  - type: evolves-into
-    target: IDEA-112
   - type: merged-into
+    target: IDEA-112
+  - type: realises
     target: EPIC-081
-  - target: IDEA-007
-    type: informs
-    rationale: "Multi-repo management may be the implementation mechanism for the Spaces concept"
-  - target: IDEA-038
-    type: informs
-    rationale: "Both use git submodules but for different purposes — plugins vs project aggregation"
-  - target: PILLAR-001
-    type: grounded-by
   - target: AD-055
-    type: merged-into
+    type: crystallises
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 
 > **Surpassed 2026-03-16**: Multi-repo product overview merged into EPIC-081 via AD-055 (organisation mode with path-based project references, no nesting required). Security and integrity concepts (permissions hierarchy, agent scope boundaries, cross-project validation) split into IDEA-112.

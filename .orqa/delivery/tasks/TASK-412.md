@@ -22,24 +22,10 @@ relationships:
   - target: EPIC-064
     type: delivers
     rationale: Core task — makes skill injection meaningful instead of just naming skills
-  - target: RULE-042
-    type: delivers
-    rationale: RULE-042's path-to-skill injection depends on actual skill content being loaded
-  - target: TASK-467
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from TASK-467"
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-020
-    type: informed-by
   - target: TASK-414
     type: depended-on-by
   - target: TASK-467
     type: depended-on-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-020
-    type: informed-by
 ---
 ## Scope
 

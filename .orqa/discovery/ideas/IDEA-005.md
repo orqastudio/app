@@ -11,8 +11,10 @@ research-needed:
   - Knowledge graph representation
   - Staleness detection heuristics
 relationships:
-  - target: PILLAR-002
-    type: grounded-by
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 ## Candidate Items
 

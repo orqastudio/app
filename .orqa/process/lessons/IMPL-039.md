@@ -7,22 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: IMPL-029
-    type: informed-by
-    rationale: "IMPL-029 identified the pattern of orchestrator writing artifacts directly — this extends it specifically to observation creation"
-  - target: IMPL-023
-    type: informed-by
-    rationale: "Automated observation logging should not block the orchestrator — background delegation is the mechanism"
-  - target: RULE-001
-    type: informs
-    rationale: "Agent delegation rule — the orchestrator coordinates, it does not implement. Artifact creation is implementation even for governance artifacts when it can be parallelized"
-  - target: RULE-001
-    type: informed-by
-    rationale: "Lesson promoted to RULE-001 — observation creation should be delegated to background Writer agents"
-  - target: RULE-001
-    type: informed-by
-    rationale: "RULE-001 codified the delegation of observation creation to Writer agents first observed in this lesson"
+relationships: []
 ---
 
 ## Pattern

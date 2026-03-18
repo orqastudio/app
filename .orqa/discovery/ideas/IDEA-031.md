@@ -10,12 +10,10 @@ research-needed:
   - Evaluate Tauri fs watch plugin vs notify crate for file watching
   - Determine debounce strategy for bulk file changes
 relationships:
-  - target: MS-001
-    type: delivers
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Motivation
 

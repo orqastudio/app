@@ -1,33 +1,21 @@
 ---
 id: DOC-021
 title: Coding Standards
+category: reference
 description: "Coding standards for Rust and TypeScript/Svelte covering formatting, linting, error handling, and component patterns."
 created: 2026-03-02
 updated: 2026-03-08
 sort: 3
 relationships:
   - target: AD-004
-    type: informs
+    type: documents
     rationale: Documentation page references AD-004
   - target: RULE-020
-    type: informs
+    type: documents
     rationale: Documentation page references RULE-020
   - target: RULE-006
-    type: informs
+    type: documents
     rationale: This document is the source-of-truth referenced by RULE-006 — it defines the specific standards that rule enforces
-  - target: DOC-065
-    type: informs
-    rationale: Coding standards are distilled into the code-principles grounding document — inverse of informed-by on DOC-065
-  - target: DOC-074
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from DOC-074"
-  - target: DOC-073
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from DOC-073"
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-003
-    type: informed-by
 ---
 ## Purpose
 

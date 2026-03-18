@@ -10,15 +10,12 @@ research-needed:
   - Confidence indicator calibration
   - Decision log UX design
 relationships:
-  - target: RES-026
-    type: informed-by
-    rationale: "AI transparency wiring research informed reasoning transparency design"
   - target: EPIC-001
-    type: evolves-into
+    type: realises
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Candidate Items
 

@@ -17,20 +17,8 @@ created: 2026-03-16
 updated: 2026-03-16
 horizon: next
 relationships:
-  - target: EPIC-080
-    type: depends-on
-    rationale: Requires plugin discovery and runtime loading from EPIC-080
-  - target: EPIC-082
-    type: depends-on
-    rationale: Requires schema-driven enforcement infrastructure
   - target: MS-002
-    type: delivers
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
-  - target: IDEA-116
-    type: informs
+    type: fulfils
 ---
 
 ## Objective

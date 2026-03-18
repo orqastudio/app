@@ -13,14 +13,10 @@ research-needed:
   - "How to pipe controller output into OrqaStudio's own UI (dev panel)"
   - "Hot reload strategy — Vite HMR for frontend, controlled restart for Rust"
 relationships:
-  - target: MS-001
-    type: delivers
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-001
-    type: grounded-by
+  - target: PILLAR-003
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 
 

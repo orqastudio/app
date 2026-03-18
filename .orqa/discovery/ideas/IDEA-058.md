@@ -12,12 +12,10 @@ research-needed:
   - "In-app debug overlay UX — toggle mechanism, panel placement, performance impact"
   - Whether companion app should also expose process controls (start/restart/stop) or just observe
 relationships:
-  - target: MS-001
-    type: delivers
   - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

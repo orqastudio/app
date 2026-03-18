@@ -27,21 +27,6 @@ relationships:
   - target: EPIC-065
     type: delivers
     rationale: Artifact viewer enhancements — PipelineStepper, ActionsNeeded, AcceptanceCriteria, grouped relationships, horizon display
-  - target: IDEA-025
-    type: informs
-    rationale: IDEA-025 (agent task ownership) relates to auto-embedded child artifact display
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-042
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-030
-    type: informed-by
-  - target: SKILL-042
-    type: informed-by
 ---
 
 ## Scope

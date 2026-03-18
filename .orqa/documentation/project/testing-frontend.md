@@ -1,24 +1,12 @@
 ---
 id: DOC-074
 title: "How To: Write Frontend Tests in OrqaStudio"
+category: how-to
 description: Practical guide for writing Vitest tests for Svelte 5 stores and components in OrqaStudio.
 created: 2026-03-14
 updated: 2026-03-14
 sort: 3
-relationships:
-  - target: RULE-029
-    type: informed-by
-    rationale: Testing standards define organisation, coverage requirements, and mock boundaries
-  - target: RULE-006
-    type: informed-by
-    rationale: Coding standards (Svelte 5 runes, strict TypeScript) apply inside test files too
-  - target: DOC-021
-    type: informed-by
-    rationale: Coding standards document is the source of truth for TypeScript strictness requirements
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-003
-    type: informed-by
+relationships: []
 ---
 
 ## Test Framework

@@ -7,10 +7,7 @@ created: 2026-03-15
 updated: 2026-03-15
 maturity: observation
 recurrence: 1
-relationships:
-  - target: PILLAR-001
-    type: informs
-    rationale: Structure requires that references are visible on the graph, not hidden in prose
+relationships: []
 ---
 
 ## Pattern

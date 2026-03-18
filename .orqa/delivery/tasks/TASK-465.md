@@ -24,21 +24,10 @@ relationships:
   - target: EPIC-064
     type: delivers
     rationale: Phase 2 — specialist agent for governance integrity
-  - target: IMPL-055
-    type: informed-by
-    rationale: Missing graph integrity lesson drove the need for a specialist governance agent
   - target: TASK-463
     type: depends-on
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-037
-    type: informed-by
   - target: TASK-466
     type: depended-on-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-037
-    type: informed-by
 ---
 
 ## Scope

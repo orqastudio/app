@@ -24,23 +24,9 @@ relationships:
     type: delivers
     rationale: Phase 1 — consolidate documentation before connecting to graph
   - target: TASK-460
-    type: informed-by
-    rationale: Deletions must happen first to avoid merge conflicts with already-deleted content
-  - target: RES-062
-    type: informed-by
-    rationale: Documentation audit identified these overlaps
-  - target: TASK-460
     type: depends-on
-  - target: SKILL-037
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
   - target: TASK-462
     type: depended-on-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-037
-    type: informed-by
 ---
 
 ## Scope

@@ -12,7 +12,9 @@ research-needed:
   - Debounce/delay strategy to avoid flicker on fast mouse movement
 relationships:
   - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Motivation
 

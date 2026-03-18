@@ -5,22 +5,7 @@ description: Wireframe specification for the conversation view including message
 created: 2026-03-02
 updated: 2026-03-15
 sort: 2
-relationships:
-  - target: RES-004
-    type: informs
-    rationale: Documentation page references RES-004
-  - target: EPIC-028
-    type: informed-by
-    rationale: UX Design epic produced these wireframes as deliverables
-  - target: EPIC-030
-    type: informed-by
-    rationale: Project Scaffold built the initial conversation UI, message stream, and streaming pipeline
-  - target: EPIC-035
-    type: informed-by
-    rationale: Native Tool UX added friendly tool call display with Lucide icons, parameter extraction, and collapsible cards
-  - target: EPIC-038
-    type: informed-by
-    rationale: UX Polish Sprint fixed streaming behavior, added tool call grouping, and auto-naming sessions
+relationships: []
 ---
 
 <!-- FRESHNESS NOTE (2026-03-15): The Component Mapping table (Section 5) lists `DiffView.svelte` as a separate component — this does not exist; diff display is handled inline within `ToolCallCard.svelte`. `TypingIndicator.svelte` is implemented as `StreamingIndicator.svelte`. The tool call card status badges for "Approved/Denied/Pending" (post-MVP approval flow) are not yet implemented — only Completed and Error exist. The welcome state heading is "OrqaStudio" not a star icon in current implementation. All other component names and behavior descriptions remain accurate. -->

@@ -7,10 +7,7 @@ created: 2026-03-14
 updated: 2026-03-14
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: PILLAR-001
-    type: informs
-    rationale: "Clarity through structure means the structure must be correct, not just quiet"
+relationships: []
 ---
 
 ## Pattern

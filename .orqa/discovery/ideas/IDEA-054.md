@@ -14,9 +14,9 @@ research-needed:
   - "Should web search results be cached/indexed for future sessions?"
 relationships:
   - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 ## Motivation
 

@@ -7,19 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: observation
 recurrence: 1
-relationships:
-  - target: IMPL-034
-    type: informed-by
-    rationale: "Zoom-out sanity checks are one checkpoint — this observation asks for the full structured mode"
-  - target: IMPL-026
-    type: informed-by
-    rationale: "One decision at a time is another checkpoint that was missing"
-  - target: RULE-022
-    type: informs
-    rationale: "Plan compliance governs implementation plans — design discussions are a precursor that has no equivalent governance"
-  - target: IMPL-036
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-036"
+relationships: []
 ---
 ## Pattern
 

@@ -17,9 +17,6 @@ relationships:
   - target: EPIC-001
     type: delivers
     rationale: Task belongs to this epic
-  - target: DOC-036
-    type: informed-by
-    rationale: Referenced in documentation page Artifact Framework
   - target: TASK-311
     type: depended-on-by
 ---

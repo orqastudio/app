@@ -17,20 +17,11 @@ scoring:
   complexity: 5
   dependencies: 5
 relationships:
-  - target: EPIC-064
-    type: informed-by
-    rationale: EPIC-064 closes the enforcement gaps this epic left — stop events, skill injection, app pipeline
   - target: RES-056
-    type: informed-by
+    type: guided-by
     rationale: Research analyzing what this epic built vs. what remains incomplete
-  - target: EPIC-064
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from EPIC-064
-  - target: TASK-415
-    type: informs
-    rationale: Auto-generated inverse of informs relationship from TASK-415
   - target: MS-002
-    type: delivers
+    type: fulfils
     rationale: Epic belongs to this milestone
   - target: TASK-177
     type: delivered-by
@@ -78,23 +69,13 @@ relationships:
     type: delivered-by
     rationale: Epic contains this task
   - target: MS-001
-    type: delivers
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: EPIC-051
-    type: depends-on
-  - target: EPIC-052
-    type: depended-on-by
-  - target: EPIC-053
-    type: depended-on-by
+    type: fulfils
   - target: IDEA-027
-    type: evolves-from
+    type: realised-by
   - target: IDEA-034
-    type: evolves-from
-  - target: PILLAR-001
-    type: grounded-by
+    type: realised-by
+  - target: RES-056
+    type: guided-by
 ---
 ## Context
 

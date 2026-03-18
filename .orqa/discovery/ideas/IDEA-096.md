@@ -11,16 +11,12 @@ research-needed:
   - "How does the whiteboard relate to the artifact graph? Are items on the canvas just ideas/research with spatial metadata?"
 relationships:
   - target: EPIC-073
-    type: informs
+    type: realises
     rationale: "Auto-generated inverse of informs relationship from EPIC-073"
   - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-003
-    type: informed-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Motivation
 

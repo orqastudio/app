@@ -14,14 +14,10 @@ research-needed:
   - "What artifact ID prefix? SESSION-NNN? SS-NNN?"
   - "How does this interact with context compaction — should the app auto-write session state when context is about to be compressed?"
 relationships:
-  - target: MS-001
-    type: delivers
-  - target: PILLAR-003
-    type: informed-by
   - target: PILLAR-001
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

@@ -9,22 +9,10 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: project
 category: domain
 version: 1.0.0
 user-invocable: true
-relationships:
-  - target: PILLAR-002
-    type: grounded
-    rationale: Test organisation by layer with mock boundaries at adapters catches regressions early, feeding failures back as lessons
-  - target: TASK-036
-    type: informs
-  - target: TASK-185
-    type: informs
-  - target: TASK-219
-    type: informs
-  - target: PILLAR-002
-    type: informs
+relationships: []
 ---
 
 

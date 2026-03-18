@@ -7,16 +7,7 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: observation
 recurrence: 1
-relationships:
-  - target: IMPL-030
-    type: informed-by
-    rationale: "Capability fulfilment model needs a configuration layer — this decides where it lives and how defaults work"
-  - target: IMPL-027
-    type: informed-by
-    rationale: "Plugin type system — ai-provider-integration plugins are the source of capability defaults"
-  - target: IMPL-032
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from IMPL-032"
+relationships: []
 ---
 ## Pattern
 

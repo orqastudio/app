@@ -11,7 +11,9 @@ research-needed:
   - Domain-specific output templates
 relationships:
   - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-002
+    type: benefits
 ---
 ## Candidate Items
 

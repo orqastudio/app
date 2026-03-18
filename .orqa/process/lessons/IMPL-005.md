@@ -7,19 +7,7 @@ created: 2026-03-07
 updated: 2026-03-07
 maturity: understanding
 recurrence: 1
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Config-disk alignment is fundamental structural integrity
-  - target: RULE-003
-    type: informed-by
-    rationale: Lesson promoted to RULE-003
-  - target: IMPL-006
-    type: informed-by
-  - target: RULE-003
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 ## What Happened
 

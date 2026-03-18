@@ -10,10 +10,10 @@ research-needed:
   - How to implement client-side routing in a Tauri app without a URL bar
   - History stack design — what constitutes a navigation entry
 relationships:
-  - target: PILLAR-003
-    type: grounded-by
   - target: PILLAR-001
-    type: grounded-by
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Motivation

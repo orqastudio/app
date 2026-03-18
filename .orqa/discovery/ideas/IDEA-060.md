@@ -10,6 +10,11 @@ research-needed:
   - "FSL vs AGPL vs BSL — which fits best?"
   - Trademark registration process and cost
   - CLA requirements if accepting contributions
+relationships:
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 
 ## Description

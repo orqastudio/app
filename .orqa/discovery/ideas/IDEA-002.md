@@ -11,11 +11,10 @@ research-needed:
   - "Adapter pattern for .claude/, .continue/, .cursor/"
   - Migration tooling and backwards compatibility
 relationships:
-  - target: DOC-036
-    type: informed-by
-    rationale: Referenced in documentation page Artifact Framework
-  - target: PILLAR-001
-    type: grounded-by
+  - target: PILLAR-002
+    type: grounded
+  - target: PERSONA-001
+    type: benefits
 ---
 ## Candidate Items
 

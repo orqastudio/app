@@ -15,10 +15,10 @@ research-needed:
   - "How should the intent classifier output be structured? (graph traversal hints, artifact type weights, scope signals)"
   - "What is the fallback when the model is not available or not trained? (degrade gracefully to current prompt-injector)"
 relationships:
-  - target: PILLAR-003
-    type: grounded-by
-  - target: PILLAR-002
-    type: grounded-by
+  - target: PILLAR-001
+    type: grounded
+  - target: PERSONA-003
+    type: benefits
 ---
 
 ## Motivation
