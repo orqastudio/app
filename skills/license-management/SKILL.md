@@ -7,6 +7,8 @@ plugin: "@orqastudio/plugin-cli"
 relationships:
   - target: DOC-CLI-003
     type: synchronised-with
+  - target: DOC-088
+    type: synchronised-with
 ---
 
 # License Management
