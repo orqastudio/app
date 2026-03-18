@@ -10,16 +10,10 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: setup
 category: tool
 version: 1.0.0
 user-invocable: true
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Mapping existing AI tool configs into .orqa/ governance preserves prior decisions while making them visible and editable
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 > **Forward-looking:** This skill will be activated when project initialisation is implemented. See [EPIC-045](EPIC-045) for context.

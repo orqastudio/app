@@ -9,53 +9,26 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-13
-layer: core
 category: methodology
 version: 1.0.0
 user-invocable: true
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Small, pure, swappable units make system boundaries visible and each piece independently understandable
-  - target: AD-017
-    type: informs
-    rationale: AD-017 (Composability Principle) is the architectural decision that this skill operationalises — agents load this skill to apply the composability decision in their work
-  - target: TASK-024
-    type: informs
-  - target: TASK-025
-    type: informs
-  - target: TASK-037
-    type: informs
-  - target: TASK-038
-    type: informs
-  - target: TASK-039
-    type: informs
-  - target: TASK-041
-    type: informs
-  - target: TASK-042
-    type: informs
-  - target: TASK-043
-    type: informs
-  - target: TASK-045
-    type: informs
   - target: AGENT-001
-    type: informs
+    type: employed-by
   - target: AGENT-008
-    type: informs
+    type: employed-by
   - target: AGENT-002
-    type: informs
+    type: employed-by
   - target: AGENT-003
-    type: informs
+    type: employed-by
   - target: AGENT-004
-    type: informs
+    type: employed-by
   - target: AGENT-005
-    type: informs
+    type: employed-by
   - target: AGENT-006
-    type: informs
+    type: employed-by
   - target: AGENT-007
-    type: informs
-  - target: PILLAR-001
-    type: informs
+    type: employed-by
 ---
 
 Software is built from small, composable units at every level: functions, modules, features, and integrations. This skill teaches the composability philosophy that shapes all code in a well-structured project.

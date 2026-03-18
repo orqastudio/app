@@ -10,28 +10,10 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: setup
 category: tool
 version: 1.0.0
 user-invocable: true
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Scaffolding .orqa/ with core rules, skills, and project.json gives a new project a visible governance baseline from day one
-  - target: AD-030
-    type: informs
-    rationale: Auto-generated inverse of practices relationship from AD-030
-  - target: AD-016
-    type: informs
-    rationale: Auto-generated inverse of practices relationship from AD-016
-  - target: TASK-223
-    type: informs
-  - target: AD-016
-    type: informed-by
-  - target: AD-030
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 > **Forward-looking:** This skill will be activated when project initialisation is implemented. See [EPIC-045](EPIC-045) for context.
 

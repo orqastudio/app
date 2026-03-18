@@ -3,7 +3,6 @@ id: SKILL-052
 type: skill
 name: Schema Validation
 status: active
-layer: core
 relationships:
   - target: DOC-072
     type: synchronised-with

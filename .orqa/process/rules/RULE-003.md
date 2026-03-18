@@ -5,74 +5,19 @@ description: Every path in project.json artifacts must resolve to an actual dire
 status: active
 created: 2026-03-07
 updated: 2026-03-13
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Config integrity ensures artifact structure is reliable and predictable
-  - target: RULE-010
-    type: informs
-    rationale: Config changes must be reflected across all layers to maintain end-to-end integrity
-  - target: RULE-018
-    type: informs
-    rationale: No alias paths or fallback resolution — config paths must be canonical
-  - target: RULE-008
-    type: informs
-    rationale: Config schema must be documented before implementing scanner behaviour
-  - target: RULE-011
-    type: informs
-    rationale: New artifact types require config registration as an enforcement artifact before implementation
-  - target: IMPL-005
-    type: informs
-    rationale: Rule promoted from lesson IMPL-005 (config paths must match disk structure)
-  - target: IMPL-006
-    type: informs
-    rationale: Rule promoted from lesson IMPL-006 (scanner must recurse into subdirectories)
-  - target: IMPL-018
-    type: informs
-    rationale: Rule updated from lesson IMPL-018 (hardcoded .orqa/ paths in source code should be project-configurable)
-  - target: IMPL-018
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-018
-  - target: IMPL-037
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-037
   - target: AD-035
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-035
-  - target: IMPL-019
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-019
-  - target: IMPL-017
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-017
   - target: AD-041
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-041
   - target: AD-020
     type: enforces
-  - target: IMPL-005
-    type: informs
-  - target: IMPL-006
-    type: informs
-  - target: IMPL-018
-    type: informs
-  - target: RULE-025
-    type: informed-by
-  - target: RULE-032
-    type: informed-by
-  - target: RULE-034
-    type: informed-by
-  - target: RULE-041
-    type: informed-by
-  - target: RULE-044
-    type: informed-by
   - target: AD-021
     type: enforces
   - target: AD-022
     type: enforces
-  - target: PILLAR-001
-    type: informs
 ---
 # Artifact Config Integrity (NON-NEGOTIABLE)
 

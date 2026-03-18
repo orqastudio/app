@@ -1,109 +1,63 @@
 ---
 id: DOC-036
 title: Artifact Framework
+category: reference
 description: "Schema definitions, lifecycle rules, and governance for all structured artifacts in .orqa/."
 created: 2026-03-07
-updated: 2026-03-10
+updated: 2026-03-18
 sort: 11
 relationships:
-  - target: AD-029
-    type: informs
-    rationale: Documentation page references AD-029
-  - target: PILLAR-001
-    type: informs
-    rationale: Documentation page references PILLAR-001
-  - target: PILLAR-002
-    type: informs
-    rationale: Documentation page references PILLAR-002
-  - target: IDEA-035
-    type: informs
-    rationale: Documentation page references IDEA-035
-  - target: AD-040
-    type: informs
-    rationale: Documentation page references AD-040
-  - target: AD-038
-    type: informs
-    rationale: Documentation page references AD-038
-  - target: IDEA-032
-    type: informs
-    rationale: Documentation page references IDEA-032
-  - target: IDEA-034
-    type: informs
-    rationale: Documentation page references IDEA-034
-  - target: EPIC-004
-    type: informs
-    rationale: Documentation page references EPIC-004
-  - target: MS-001
-    type: informs
-    rationale: Documentation page references MS-001
-  - target: MS-002
-    type: informs
-    rationale: Documentation page references MS-002
-  - target: EPIC-001
-    type: informs
-    rationale: Documentation page references EPIC-001
-  - target: EPIC-002
-    type: informs
-    rationale: Documentation page references EPIC-002
-  - target: TASK-001
-    type: informs
-    rationale: Documentation page references TASK-001
-  - target: TASK-002
-    type: informs
-    rationale: Documentation page references TASK-002
-  - target: IDEA-001
-    type: informs
-    rationale: Documentation page references IDEA-001
-  - target: IDEA-002
-    type: informs
-    rationale: Documentation page references IDEA-002
-  - target: IMPL-001
-    type: informs
-    rationale: Documentation page references IMPL-001
-  - target: IMPL-002
-    type: informs
-    rationale: Documentation page references IMPL-002
-  - target: AD-001
-    type: informs
-    rationale: Documentation page references AD-001
-  - target: AD-002
-    type: informs
-    rationale: Documentation page references AD-002
-  - target: RES-001
-    type: informs
-    rationale: Documentation page references RES-001
-  - target: RES-002
-    type: informs
-    rationale: Documentation page references RES-002
-  - target: RULE-001
-    type: informs
-    rationale: Documentation page references RULE-001
-  - target: RULE-002
-    type: informs
-    rationale: Documentation page references RULE-002
-  - target: EPIC-005
-    type: informs
-    rationale: Documentation page references EPIC-005
+  - target: AD-051
+    type: documents
+    rationale: Documents the three-layer artifact model
+  - target: AD-052
+    type: documents
+    rationale: Documents the canonical relationship vocabulary
+  - target: AD-053
+    type: documents
+    rationale: Documents the canonical status model
+  - target: AD-054
+    type: documents
+    rationale: Documents the four enforcement layers
   - target: RULE-004
-    type: informs
-    rationale: This document is the source-of-truth for artifact lifecycle that RULE-004 enforces
+    type: documents
+    rationale: Source-of-truth for artifact lifecycle that RULE-004 enforces
   - target: RULE-032
-    type: informs
-    rationale: This document defines the artifact schemas and frontmatter contracts that RULE-032's validation enforces
-  - target: DOC-066
-    type: informs
-    rationale: Artifact framework is distilled into the artifact-principles grounding document — inverse of informed-by on DOC-066
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: informed-by
+    type: documents
+    rationale: Defines the artifact schemas and frontmatter contracts that RULE-032 validates
+  - target: EPIC-001
+    type: documents
+  - target: EPIC-002
+    type: documents
+  - target: EPIC-004
+    type: documents
+  - target: EPIC-005
+    type: documents
+  - target: MS-001
+    type: documents
+  - target: MS-002
+    type: documents
+  - target: AD-001
+    type: documents
+  - target: AD-002
+    type: documents
+  - target: AD-029
+    type: documents
+  - target: AD-038
+    type: documents
+  - target: AD-040
+    type: documents
+  - target: RULE-002
+    type: documents
+  - target: RULE-001
+    type: documents
 ---
 
-**Date:** 2026-03-07
+> OrqaStudio is an AI-assisted clarity engine that helps people turn messy situations into structured understanding and evolving plans through agile thinking and continuous retrospection.
 
-> OrqaStudio™ is an AI-assisted clarity engine that helps people turn messy situations into structured understanding and evolving plans through agile thinking and continuous retrospection.
+This document defines the artifact types, schemas, relationships, and lifecycle that form OrqaStudio's structured thinking layer. All artifacts are markdown documents with YAML frontmatter, stored in `.orqa/` and browsable in the UI.
 
-This document defines the artifact types, schemas, connections, and lifecycle that form OrqaStudio's structured thinking layer. All artifacts are markdown documents with YAML frontmatter, stored in `.orqa/` and browsable in the UI.
+The **single source of truth** for artifact types and relationships is `libs/types/src/platform/core.json`. No artifact types or relationship keys are hardcoded in any code path. Everything described here derives from that canonical config.
 
 ---
 
@@ -113,14 +67,14 @@ This document defines the artifact types, schemas, connections, and lifecycle th
 
 Artifacts are markdown documents. The underlying UX model is **browsable markdown with structured frontmatter**. Every artifact must be readable and useful in its raw form — in OrqaStudio's UI, in a text editor, or on GitHub.
 
-Richer views (kanban boards, dashboards, graph visualizations, priority matrices) are **optional layers built on top** of the markdown. They project different views of the same underlying data. The markdown is the source of truth.
+Richer views (kanban boards, dashboards, graph visualisations, priority matrices) are **optional layers built on top** of the markdown. They project different views of the same underlying data. The markdown is the source of truth.
 
 ### Frontmatter as Structured Data
 
 YAML frontmatter provides machine-parseable metadata that enables:
 
 - **Indexing** — OrqaStudio parses frontmatter into the artifact node graph for search, filtering, and relationship queries
-- **Connections** — Fields like `milestone`, `epic`, `depends-on` create a navigable web of relationships
+- **Connections** — The `relationships` array creates a navigable web of typed relationships
 - **Status tracking** — Workflow states are frontmatter fields, not separate databases
 - **Priority scoring** — Dimension scores in frontmatter feed the prioritisation framework
 
@@ -142,7 +96,6 @@ Artifact titles appear in sidebar navigation, list views, and breadcrumbs. They 
 |--------------------------|--------|
 | "Rename sdk_session_id to provider_session_id across stack" | "Provider-Neutral Session ID Naming" |
 | "Update all agent definitions for three-tier skill loading" | "Three-Tier Skill Loading for Agents" |
-| "Using copies instead of symlinks for .claude/ causes divergence" | "Symlinks Prevent Governance Divergence" |
 | "$derived(() => expr) causes infinite reactivity loops in Svelte 5" | "Derived Rune Infinite Loop Pitfall" |
 
 Descriptions can be longer and more technical — they appear in detail views, not navigation.
@@ -151,22 +104,10 @@ Descriptions can be longer and more technical — they appear in detail views, n
 
 Documentation is not an afterthought — it is a **gate for work**. Every epic declares:
 
-- **`docs-required`** — what documentation must exist and be approved before implementation begins
+- **`docs-required`** — what documentation must exist before implementation begins
 - **`docs-produced`** — what documentation this work will create or update on completion
 
-This creates an automated traceability chain: research validates ideas, epics capture implementation design, implementation produces architecture decisions and doc updates. At every stage, the system records what was decided and why, so you can trace back to understand how you got here and inform what comes next.
-
-This is a key differentiator of OrqaStudio as a platform. Projects built with OrqaStudio self-document their decision history through the artifact framework. The documentation isn't separate from the work — it IS part of the work.
-
-### Deadlines
-
-Some projects operate under time constraints. The artifact framework supports optional deadlines on milestones and epics. When a deadline is present:
-
-- It adds **urgency context** to prioritisation — a P2 item with an imminent deadline should be treated as effectively P1
-- It enables **time-based views** — timeline projections, deadline warnings, schedule risk analysis
-- It remains **optional** — projects without hard deadlines (like conceptual or research projects) simply omit the field
-
-Deadlines are a reality of commercial practice. The framework accommodates them without requiring them.
+This creates an automated traceability chain: research validates ideas, decisions capture architectural choices, implementation produces doc updates. At every stage, the system records what was decided and why.
 
 ### Progressive Enhancement
 
@@ -176,642 +117,281 @@ The same artifact works at three levels of sophistication:
 2. **Browsable in UI** — OrqaStudio renders the markdown with syntax highlighting and navigation
 3. **Interactive views** — dashboards, boards, and graphs project frontmatter data into richer interfaces
 
-Each level adds capability without replacing the previous one. A user who never opens the interactive views still has full access to all knowledge through the markdown.
+Each level adds capability without replacing the previous one.
 
 ---
 
 ## Governance Classification
 
-All governance artifacts (agents, skills, rules, hooks) carry a `layer` field that determines their scope and editability.
+All governance artifacts (agents, skills, rules) carry a `layer` field that determines their scope and editability.
 
 ### Five Layers
 
 | Layer | Meaning | Ships With | Editable By User |
 |-------|---------|------------|------------------|
-| `core` | Platform principles — applies to ALL projects | The app / core templates repo | No (updated centrally) |
+| `core` | Platform principles — applies to ALL projects | The app | No (updated centrally) |
 | `project` | Project-specific enforcement and patterns | The project's `.orqa/` | Yes |
-| `plugin` | 1st party official extensions | Installed via skills CLI or plugin system | Yes (but managed externally) |
+| `plugin` | 1st party official extensions | Installed via plugin system | Yes (but managed externally) |
 | `community` | Community-contributed extensions | Installed via community registry | Yes (but managed externally) |
 | `user` | User-only personal workflows | User's local config | Yes (private to user) |
 
 ### Governance Concept Definitions
-
-Each governance concept type has a distinct purpose. See [AD-029](AD-029) for the full decision.
 
 | Concept | Definition | Test |
 |---------|-----------|------|
 | **Agent** | A portable role you delegate work to. Has a distinct workflow and deliverable type. | "I need someone to do X" |
 | **Skill** | Domain knowledge or methodology loaded into an agent's context. Shapes how work is done. | "The person doing X needs to know Y" |
 | **Rule** | A constraint that must be followed. Binary: compliant or not. | "Anyone doing anything must follow Z" |
-| **Hook** | An automated action triggered by an event. Mechanical enforcement. | "When event E happens, automatically do A" |
 | **Lesson** | A learned pattern from experience. Promoted to rules/skills at recurrence threshold. | "We learned W the hard way" |
 
 ### Agent vs Skill Decision Framework
 
-| Question | If Yes → | If No → |
-|----------|----------|---------|
+| Question | If Yes | If No |
+|----------|--------|-------|
 | Would you hire a different person for this? | Agent | Skill |
 | Does it have a unique deliverable type? | Agent | Skill |
 | Does it work across any project domain? | Agent | Skill |
 | Is it a lens or methodology applied to existing work? | Skill | Agent |
 | Can it be loaded by multiple different roles? | Skill | Agent |
 
-### Universal Agent Roles
-
-Agents are portable roles that work across any project type. Domain-specific capability is loaded via skills. See [AD-029](AD-029).
-
-| Role | Purpose |
-|------|---------|
-| **Orchestrator** | Coordinates work, enforces process, manages governance |
-| **Researcher** | Investigates, gathers information, analyses findings |
-| **Planner** | Designs approaches, evaluates tradeoffs, maps structure |
-| **Implementer** | Does the work — whatever "work" means in this domain |
-| **Reviewer** | Checks quality, compliance, and correctness |
-| **Writer** | Creates documentation, communications, and records |
-| **Designer** | Designs experiences, interfaces, and structures |
-
-### Frontmatter Fields
-
-```yaml
-# Agents
-layer: core         # core | project | plugin | community | user
-scope: general      # general | software-engineering | governance
-
-# Skills
-layer: project      # core | project | plugin | community | user
-
-# Rules
-layer: core         # core | project | plugin | community | user
-scope: universal    # universal | software | governance
-
-# Hooks
-layer: core         # core | project | plugin | community | user
-```
-
-### Classification Decisions
-
-- **Core skills** are portable (work across any project): `planning`, `architecture`, `svelte5-best-practices`, etc.
-- **Project skills** are project-specific (capture THIS codebase's patterns): `orqa-ipc-patterns`, `orqa-store-patterns`, etc.
-- **Core rules** enforce platform principles: `documentation-first`, `honest-reporting`, `systems-thinking`, etc.
-- **Project rules** enforce project-specific conventions: `development-commands` (make targets), `dogfood-mode`.
-
 ---
 
 ## Artifact Types
 
-### Overview
+Artifact types are defined in `core.json`. They fall into three management layers per AD-051. **Platform** types ship with the app (immutable). **Project** types are created by the user and AI. **Plugin** types are installed from the ecosystem.
 
-Artifact types fall into three management layers. **Canon** artifacts are managed by the app (installed and updated centrally, not user-editable). **Project** artifacts are created and managed by the user and AI. **Plugin** artifacts are installed from the ecosystem. All artifact instances live under `.orqa/` regardless of layer.
+### Core Types (from core.json)
 
-| Type | ID Pattern | Directory | Layer | Purpose |
-|------|-----------|-----------|-------|---------|
-| **Pillar** | `PILLAR-NNN` | `.orqa/process/pillars/` | Project | Guiding principle that features are evaluated against |
-| **Milestone** | `MS-NNN` | `.orqa/delivery/milestones/` | Project | Strategic goal with gate question |
-| **Epic** | `EPIC-NNN` | `.orqa/delivery/epics/` | Project | Trackable work unit within a milestone |
-| **Task** | `TASK-NNN` | `.orqa/delivery/tasks/` | Project | Individual implementation unit within an epic |
-| **Idea** | `IDEA-NNN` | `.orqa/delivery/ideas/` | Project | Candidate for future work, needs validation |
-| **Lesson** | `IMPL-NNN` | `.orqa/process/lessons/` | Project | Learning capture from implementation |
-| **Research** | `RES-NNN` | `.orqa/delivery/research/` | Project | Investigation, design exploration, or implementation plan — produces decisions |
-| **Rule** | `RULE-NNN` | `.orqa/process/rules/` | Canon/Project | Constraint that must be followed — binary: compliant or not |
-| **Decision** | `AD-NNN` | `.orqa/process/decisions/` | Project | Architecture decision record — captures what was decided and why |
+| Type | ID Prefix | Icon | Purpose |
+|------|-----------|------|---------|
+| **Vision** | `VISION` | eye | The product vision — what OrqaStudio is and why it exists |
+| **Pillar** | `PILLAR` | columns-3 | Guiding principle that all work is evaluated against |
+| **Persona** | `PERSONA` | users | Target user archetype that ideas must benefit |
+| **Idea** | `IDEA` | lightbulb | Candidate for future work, needs validation |
+| **Decision** | `AD` | scale | Architecture decision record — what was decided and why |
+| **Rule** | `RULE` | shield | Constraint that must be followed — binary: compliant or not |
+| **Lesson** | `IMPL` | book-open | Learning capture from implementation |
+| **Skill** | `SKILL` | zap | Domain knowledge loaded into an agent's context |
+| **Agent** | `AGENT` | bot | Portable role that work is delegated to |
+| **Document** | `DOC` | file-text | Platform or project documentation |
+| **Pivot** | `PIVOT` | refresh-cw | Revision to a foundational artifact (vision, pillar, persona) |
+| **Bug** | `BUG` | bug | Defect requiring investigation and fix |
 
-### Type Definitions (When to Use Each)
+### Project Types (from project.json)
 
-| Type | Use This When | NOT This |
+These types are defined in the project's delivery hierarchy, not in core.json:
+
+| Type | ID Prefix | Purpose |
+|------|-----------|---------|
+| **Milestone** | `MS` | Strategic goal with a gate question |
+| **Epic** | `EPIC` | Trackable body of work within a milestone |
+| **Task** | `TASK` | Individual implementation unit within an epic |
+| **Research** | `RES` | Investigation, design exploration, or spike |
+
+### When to Use Each Type
+
+| Type | Use This When | Not This |
 |------|--------------|----------|
-| **Pillar** | Defining a guiding principle that the project evaluates all work against. Every feature must serve at least one active pillar. | Don't use for specific constraints — that's a rule. Pillars are strategic principles, not enforcement. |
-| **Milestone** | Defining a strategic goal that groups related epics. Has a gate question that must be answerable "yes" when complete. | Don't use for individual features — that's an epic. |
-| **Epic** | Scoping a trackable body of work with clear deliverables, acceptance criteria, and documentation gates. Titles describe outcomes, not process. | Don't use for investigation — that's research. Don't use for one-off tasks. |
-| **Task** | Tracking an individual implementation unit within an epic. Has a specific assignee and acceptance criteria. | Don't use for standalone work — tasks always belong to an epic. |
-| **Idea** | Capturing a future possibility that needs investigation before committing. Must go through the shaped→promoted lifecycle. | Don't use for approved work — promote to epic first. |
-| **Research** | Investigating a question, exploring options, auditing existing state. Produces findings that inform decisions or epics. Flat directory, related via YAML fields. | Don't use for implementation plans — that goes in the epic body. Don't use subdirectories — use `milestone:` and `epic-ref:` fields. |
-| **Decision** | Recording an architectural or process choice with rationale. Captures what was decided and why, enabling future understanding. | Don't use for investigation — that's research. Decisions are conclusions, not explorations. |
-| **Lesson** | Capturing a reusable pattern discovered during implementation. Tracks recurrence and promotes to rules/skills at threshold. | Don't use for process changes — that's a retrospective entry or rule update. |
-
-Lessons and Research already have established schemas (see their respective READMEs). This document defines the schemas for Milestones, Epics, Tasks, and Ideas, and the connections between all types.
-
-### Connections
-
-```mermaid
-graph LR
-    Pillar["Pillar (PILLAR-NNN)<br/>evaluated against gate questions"]
-    Milestone["Milestone (MS-NNN)"]
-    Epic["Epic (EPIC-NNN)"]
-    Task["Task (TASK-NNN)<br/>inline checklist or separate file"]
-    Research["Research<br/>design explorations"]
-    Idea["Idea (IDEA-NNN)"]
-    Lesson["Lesson (IMPL-NNN)"]
-    Rule["Rule / Skill / Coding Standard"]
-    Decision["Decision (AD-NNN)"]
-
-    Pillar -->|referenced-by| Epic
-    Pillar -->|referenced-by| Idea
-    Milestone --> Epic
-    Epic --> Task
-    Epic -->|research-refs| Research
-    Idea -->|promote when validated| Epic
-    Lesson -->|promote| Rule
-    Research -->|promote| Decision
-    Decision -->|supersedes| Decision
-```
-
-### Relationship Types
-
-Artifacts connect through typed relationships. Each relationship has a required bidirectional inverse. The integrity engine validates that all relationships are bidirectional and that targets resolve to existing artifacts.
-
-| Type | Inverse | Usage |
-|------|---------|-------|
-| `delivers` | `delivered-by` | Task/epic delivers a milestone/epic |
-| `depends-on` | `depended-on-by` | Task depends on another task |
-| `informs` | `informed-by` | Research informs a decision or epic |
-| `enforces` | `enforced-by` | Rule enforces a decision or standard |
-| `informs` | `informed-by` | Documentation page describes an artifact |
-| `observes` | `observed-by` | Lesson observes a pattern |
-| `evolves-into` | `evolves-from` | Decision replaces another |
-| `enforces` | `enforced-by` | Rule/skill scoped to an agent |
+| **Pillar** | Defining a guiding principle that all work is evaluated against | Don't use for specific constraints — that's a rule |
+| **Milestone** | Defining a strategic goal that groups related epics with a gate question | Don't use for individual features — that's an epic |
+| **Epic** | Scoping a trackable body of work with deliverables and acceptance criteria | Don't use for investigation — that's research |
+| **Task** | Tracking an individual implementation unit within an epic | Don't use for standalone work — tasks always belong to an epic |
+| **Idea** | Capturing a future possibility that needs investigation before committing | Don't use for approved work — promote to epic first |
+| **Research** | Investigating a question, exploring options, auditing existing state | Don't use for implementation plans — that goes in the epic body |
+| **Decision** | Recording an architectural or process choice with rationale | Don't use for investigation — that's research |
+| **Lesson** | Capturing a reusable pattern discovered during implementation | Don't use for process changes — that's a rule update |
 
 ---
 
-## Schemas
+## Directory Structure
 
-### Pillar (`PILLAR-NNN`)
+Navigation sections in `project.json` are views into the graph. The canonical directory layout:
 
-Pillars are the guiding principles that a project evaluates all work against. Every feature, epic, and idea must serve at least one active pillar. Pillars are project-configurable — different projects define different principles. All pillars are equal — when a task conflicts with one pillar while serving another, the agent asks the user for direction.
+```
+.orqa/
+├── project.json                    # Project config, navigation, statuses, delivery hierarchy
+├── principles/
+│   ├── pillars/                    # PILLAR-NNN — guiding principles
+│   ├── vision/                     # VISION-NNN — product vision
+│   ├── personas/                   # PERSONA-NNN — target user archetypes
+│   └── grounding/                  # Grounding artifacts
+├── discovery/
+│   ├── ideas/                      # IDEA-NNN — candidates for future work
+│   ├── research/                   # RES-NNN — investigations and explorations
+│   └── wireframes/                 # UI wireframes and sketches
+├── delivery/
+│   ├── milestones/                 # MS-NNN — strategic goals
+│   ├── epics/                      # EPIC-NNN — trackable work units
+│   └── tasks/                      # TASK-NNN — individual implementation units
+├── process/
+│   ├── decisions/                  # AD-NNN — architecture decision records
+│   ├── rules/                      # RULE-NNN — enforceable constraints
+│   ├── lessons/                    # IMPL-NNN — implementation learnings
+│   ├── skills/                     # SKILL-NNN — domain knowledge for agents
+│   └── agents/                     # AGENT-NNN — portable roles
+└── documentation/
+    ├── platform/                   # DOC-NNN — platform docs (ship with app)
+    └── project/                    # DOC-NNN — project-specific docs
+```
+
+Platform governance artifacts (core agents, core skills, core rules) ship in `app/.orqa/process/`. Project-scoped artifacts live in the project's `.orqa/`.
+
+---
+
+## Relationship Vocabulary
+
+All connections use the `relationships` frontmatter array with `target` and `type` fields. There are no standalone connection fields — no `milestone:`, `epic:`, `depends-on:`, `blocks:`, `research-refs:`, or `pillars:` fields. Everything is a typed relationship.
+
+### Connection Format
 
 ```yaml
----
-id: PILLAR-001
-title: "Clarity Through Structure"
-status: active                    # active | inactive
-description: >
-  Making thinking, standards, and decisions visible and structured.
-gate:
-  - Does this make governance artifacts visible and manageable?
-  - Does it produce structured knowledge (plans, decisions, rules)?
-  - Does it surface what would otherwise be hidden?
-created: 2026-03-09
-updated: 2026-03-09
----
+relationships:
+  - target: PILLAR-001
+    type: grounded
+    rationale: Anchored to Clarity Through Structure
+  - target: AD-051
+    type: driven-by
+    rationale: Motivated by the three-layer artifact model decision
 ```
 
-| Field | Required | Type | Description |
-|-------|----------|------|-------------|
-| `id` | Yes | string | Auto-incrementing `PILLAR-NNN` identifier |
-| `title` | Yes | string | Human-readable pillar name |
-| `status` | Yes | enum | `active` (enforced), `inactive` (preserved but not evaluated against) |
-| `description` | Yes | string | What this pillar means — used in system prompt injection |
-| `gate` | Yes | string or string[] | Gate question(s) to evaluate whether work serves this pillar |
-| `created` | Yes | date | ISO date of creation |
-| `updated` | Yes | date | ISO date of last update |
+### Platform Relationships (from core.json)
 
-The pillar body contains the full narrative: what the pillar means in practice, examples of work that serves it, anti-patterns that violate it. The `description` and `gate` fields are the machine-readable summary used for system prompt injection and scoring.
+Organised by semantic category. Every forward relationship has a defined inverse. The integrity engine validates that all relationships are bidirectional and that targets resolve to existing artifacts.
 
-### Milestone (`MS-NNN`)
+#### Foundation
 
-Milestones are strategic goals. Each has a gate question that determines when the milestone is complete.
+Relationships anchoring the foundational layer — vision, pillars, personas, and changes to them.
 
-```yaml
----
-id: MS-001
-title: "Dogfooding"
-status: active                    # planning | active | complete
-description: >
-  OrqaStudio is usable as a daily workspace for building OrqaStudio itself.
-created: 2026-03-07
-updated: 2026-03-07
-deadline: null                    # ISO date or null — optional time constraint
-gate: "Can we use this app instead of the terminal for governance management, conversation debugging, and structured thinking about the project?"
----
-```
+| Forward | Inverse | From | To | Description |
+|---------|---------|------|----|-------------|
+| `upholds` | `upheld-by` | pillar | vision | Pillar supports the vision |
+| `grounded` | `grounded-by` | idea | pillar | Idea anchored to a foundational principle |
+| `benefits` | `benefited-by` | idea | persona | Idea serves a target persona |
+| `revises` | `revised-by` | pivot | vision, persona, pillar | Pivot revises a foundational artifact |
 
-| Field | Required | Type | Description |
-|-------|----------|------|-------------|
-| `id` | Yes | string | Auto-incrementing `MS-NNN` identifier |
-| `title` | Yes | string | Human-readable milestone name |
-| `status` | Yes | enum | `planning`, `active`, `complete` |
-| `description` | Yes | string | What this milestone achieves |
-| `created` | Yes | date | ISO date of creation |
-| `updated` | Yes | date | ISO date of last update |
-| `deadline` | No | date/null | ISO date for time-constrained milestones, null otherwise |
-| `gate` | Yes | string | Question that determines completion |
+#### Lineage
 
-### Epic (`EPIC-NNN`)
+Relationships establishing artifact succession — one thing becoming or spawning another.
 
-Epics are trackable work units. Each belongs to a milestone, may reference research documents that informed its design, and contains tasks. The epic body holds the implementation design — the context, approach, and decisions that would previously have lived in a separate plan document.
+| Forward | Inverse | From | To | Description |
+|---------|---------|------|----|-------------|
+| `crystallises` | `crystallised-by` | idea | decision | Idea crystallises into an architecture decision |
+| `spawns` | `spawned-by` | idea | research | Idea spawns an investigation |
+| `merged-into` | `merged-from` | idea | idea | Ideas consolidated — multiple become one |
 
-```yaml
----
-id: EPIC-001
-title: "AI Transparency Wiring"
-status: draft                     # draft | ready | in-progress | review | done
-priority: P1                     # P1 | P2 | P3
-milestone: MS-001
-pillars: [PILLAR-001]
-description: >
-  Wire AI transparency events through the streaming pipeline so the
-  user can see system prompts, tool calls, and thinking in real time.
-created: 2026-03-07
-updated: 2026-03-07
-research-refs: []                 # RES-NNN identifiers of research docs that informed this epic
-docs-required:                    # Documentation that must exist before work begins
-  - .orqa/documentation/development/streaming-pipeline.md
-docs-produced:                    # Documentation this work creates or updates
-  - .orqa/documentation/development/streaming-pipeline.md (update with new events)
-depends-on: []                    # EPIC-NNN IDs that must be done before this can start
-blocks: []                        # EPIC-NNN IDs that this epic blocks
-deadline: null                    # ISO date or null
-scoring:                          # Priority dimension scores
-  pillar: 5
-  impact: 5
-  dependency: 3
-  effort: 2
-  score: 17.5                    # Computed: (pillar*3 + impact*2 + dependency*3) / effort
----
-```
+#### Governance
 
-| Field | Required | Type | Description |
-|-------|----------|------|-------------|
-| `id` | Yes | string | Auto-incrementing `EPIC-NNN` identifier |
-| `title` | Yes | string | Human-readable epic title |
-| `status` | Yes | enum | `draft`, `ready`, `in-progress`, `review`, `done` |
-| `priority` | Yes | enum | `P1`, `P2`, `P3` — derived from score |
-| `milestone` | Yes | string | Milestone ID this belongs to |
-| `pillars` | Yes | string[] | Pillar IDs this epic serves (e.g., `[[PILLAR-001](PILLAR-001), [PILLAR-002](PILLAR-002)]`) |
-| `description` | Yes | string | Brief description of the epic |
-| `created` | Yes | date | ISO date of creation |
-| `updated` | Yes | date | ISO date of last update |
-| `research-refs` | No | string[] | `RES-NNN` identifiers of research docs that informed this epic (traceability — "what shaped this design?") |
-| `docs-required` | No | string[] | Documentation that must exist before work begins (gate — "what blocks starting?"). Research docs in `research-refs` should also appear here unless they are context-only. May also include non-research docs (architecture specs, UI wireframes). |
-| `docs-produced` | No | string[] | Documentation this work will create or update |
-| `depends-on` | No | string[] | `EPIC-NNN` IDs that must be done before this can start |
-| `blocks` | No | string[] | `EPIC-NNN` IDs that this epic blocks |
-| `deadline` | No | date/null | ISO date for time-constrained epics, null otherwise |
-| `scoring` | Yes | object | Dimension scores for priority calculation (includes computed `score` field). Required for now — see [IDEA-035](IDEA-035) for configurable scoring. |
+Relationships where decisions and rules direct behaviour.
 
-**Task checklists in epics:** Tasks are listed as markdown checklists in the epic body. When a task needs its own detailed tracking (acceptance criteria, agent assignment, discussion), it graduates to a separate `TASK-NNN.md` file in `.orqa/delivery/tasks/`.
+| Forward | Inverse | From | To | Description |
+|---------|---------|------|----|-------------|
+| `drives` | `driven-by` | decision | epic | Decision motivates a body of delivery work |
+| `governs` | `governed-by` | decision | rule | Decision establishes governance |
+| `enforces` | `enforced-by` | rule | decision | Rule enforces a decision |
+| `codifies` | `codified-by` | rule | lesson | Rule codifies a lesson into enforceable governance |
 
-### Task (`TASK-NNN`)
+#### Knowledge-Flow
 
-Tasks are individual implementation units. Most tasks live as checklist items in their parent epic. Separate task files are created only when the task needs its own detailed tracking.
+Relationships where knowledge flows between artifacts.
 
-```yaml
----
-id: TASK-001
-title: "Emit SystemPromptSent event from stream_commands.rs"
-status: todo                      # todo | in-progress | done
-epic: EPIC-001                    # optional — see workflow.epics-required in project.json
-description: >
-  Add SystemPromptSent event emission before the sidecar call so the
-  frontend can display system prompt content in the conversation.
-created: 2026-03-07
-updated: 2026-03-07
-depends-on: []                    # Task IDs that must be done before this can start
-assignee: backend-engineer
-docs:                             # Documentation to load during implementation
-  - ".orqa/documentation/development/streaming.md"
-skills: [orqa-ipc-patterns, orqa-streaming]  # Skills to load during implementation
-acceptance:                       # What "done" looks like
-  - SystemPromptSent event emitted before sidecar call
-  - Event carries custom_prompt and governance_prompt
-  - Frontend receives and displays the event
----
-```
+| Forward | Inverse | From | To | Description |
+|---------|---------|------|----|-------------|
+| `informs` | `informed-by` | research | decision | Research findings inform an architecture decision |
+| `teaches` | `taught-by` | lesson | decision | Lesson teaches a future decision |
+| `guides` | `guided-by` | research | epic | Research guides a body of delivery work |
+| `cautions` | `cautioned-by` | lesson | epic | Lesson cautions a body of delivery work |
+| `documents` | `documented-by` | doc | epic, decision, rule, milestone | Document describes an artifact for human reference |
 
-| Field | Required | Type | Description |
-|-------|----------|------|-------------|
-| `id` | Yes | string | Auto-incrementing `TASK-NNN` identifier |
-| `title` | Yes | string | Concise task description |
-| `status` | Yes | enum | `todo`, `in-progress`, `done` |
-| `epic` | Configurable | string | Parent epic ID. Required when `workflow.epics-required: true` in `project.json`, optional otherwise ([AD-040](AD-040)) |
-| `description` | Yes | string | What this task does and why |
-| `created` | Yes | date | ISO date of creation |
-| `updated` | Yes | date | ISO date of last update |
-| `depends-on` | No | string[] | Task IDs that must be `done` before this task can move to `in-progress` |
-| `assignee` | No | string | Agent name |
-| `docs` | No | string[] | Documentation paths to load into agent context during implementation — creates graph edges from task to its knowledge requirements |
-| `skills` | No | string[] | Skill directory names to load into agent context during implementation — creates graph edges from task to required domain knowledge |
-| `acceptance` | No | string[] | Acceptance criteria |
+#### Observation
 
-**The `docs` and `skills` fields as graph edges:** These fields create explicit relationships in the artifact graph. When an agent picks up a task, it reads the `docs` paths and loads the `skills` listed — ensuring the right context is available before implementation begins. This replaces hardcoded injection tables in the orchestrator prompt ([AD-038](AD-038)). The chain is: **Epic** defines what needs doing → **Task** specifies what knowledge is needed (`docs`, `skills`) → **Agent** loads that knowledge before starting → **Implementation** happens with the right context. The graph gets richer with every task, and future sessions benefit from better context injection.
+Relationships where agents monitor and use capabilities.
 
-### Idea (`IDEA-NNN`)
+| Forward | Inverse | From | To | Description |
+|---------|---------|------|----|-------------|
+| `observes` | `observed-by` | agent | epic, task, decision, rule, milestone | Agent monitors an artifact |
+| `employs` | `employed-by` | agent | skill | Agent employs a skill capability |
 
-Ideas are candidates for future work. They need research, validation, and shaping before becoming epics. Each idea captures the concept, its alignment with the vision, and what investigation is needed.
+#### Synchronisation
 
-```yaml
----
-id: IDEA-001
-title: "Multi-Provider Ecosystem"
-status: captured                  # captured | exploring | shaped | promoted | archived
-pillars: [PILLAR-001]
-description: >
-  Support additional AI providers through the provider-agnostic sidecar
-  interface without changing the Rust core or Svelte UI.
-created: 2026-03-07
-updated: 2026-03-07
-research-needed:                  # What needs investigating before this becomes an epic
-  - Provider SDK compatibility assessment
-  - Cost model research
-  - UX for provider switching
-promoted-to: null                 # Epic ID if promoted, null otherwise
----
-```
+Paired content kept in sync.
 
-| Field | Required | Type | Description |
-|-------|----------|------|-------------|
-| `id` | Yes | string | Auto-incrementing `IDEA-NNN` identifier |
-| `title` | Yes | string | Human-readable idea name |
-| `status` | Yes | enum | `captured`, `exploring`, `shaped`, `promoted`, `archived` |
-| `pillars` | Yes | string[] | Pillar IDs this idea serves (e.g., `[[PILLAR-001](PILLAR-001), [PILLAR-002](PILLAR-002)]`) |
-| `description` | Yes | string | Brief description of the idea |
-| `created` | Yes | date | ISO date of creation |
-| `updated` | Yes | date | ISO date of last update |
-| `research-needed` | No | string[] | Questions to answer before promotion |
-| `evolves-into` | No | string | Epic ID if promoted, null otherwise |
+| Forward | Inverse | From | To | Description |
+|---------|---------|------|----|-------------|
+| `synchronised-with` | `synchronised-with` | skill, doc | skill, doc | Paired content — agent-facing and human-facing versions |
 
-### Decision (`AD-NNN`)
+### Project Relationships (from project.json)
 
-Decisions are architecture decision records. Each captures a significant technical or design choice that constrains future work — what was decided, why, and what the consequences are. Decisions are produced by research and supersede earlier decisions when the situation changes.
+Projects can define additional relationships beyond the platform vocabulary.
 
-```yaml
----
-id: AD-001
-title: "Use Tauri Channel<T> for streaming IPC"
-status: accepted                  # proposed | accepted | superseded | deprecated
-category: architecture            # Decision category (e.g., architecture, persistence, governance)
-description: >
-  Use Tauri's Channel<T> mechanism for streaming AI responses from the
-  Rust backend to the Svelte frontend.
-created: 2026-03-07
-updated: 2026-03-07
-research-refs: []                 # RES-NNN identifiers of research that informed this decision
-supersedes: null                  # AD-NNN of the decision this replaces, or null
-superseded-by: null               # AD-NNN of the decision that replaced this, or null
----
-```
+| Forward | Inverse | Description |
+|---------|---------|-------------|
+| `depends-on` | `depended-on-by` | Work item depends on another work item |
 
-| Field | Required | Type | Description |
-|-------|----------|------|-------------|
-| `id` | Yes | string | Auto-incrementing `AD-NNN` identifier |
-| `title` | Yes | string | Human-readable decision title |
-| `status` | Yes | enum | `proposed`, `accepted`, `superseded`, `deprecated` |
-| `category` | No | string | Decision category (e.g., `architecture`, `persistence`, `governance`) |
-| `description` | Yes | string | Brief description of the decision |
-| `created` | Yes | date | ISO date of creation |
-| `updated` | Yes | date | ISO date of last update |
-| `research-refs` | No | string[] | `RES-NNN` identifiers of research that informed this decision |
-| `evolves-into` | No | string | `AD-NNN` of the decision this replaces, or null |
-| `evolves-from` | No | string | `AD-NNN` of the decision that replaced this, or null |
+### Delivery Hierarchy Relationships
 
-The decision body follows the standard structure: **Context** (what situation prompted this decision), **Decision** (what was chosen and why), **Consequences** (what becomes easier, harder, or constrained).
+The delivery hierarchy uses the `delivers` / `delivered-by` relationship pair, configured in `project.json`:
 
-### Research (`RES-NNN`)
+- **Task** `delivers` **Epic**
+- **Epic** `delivers` **Milestone**
 
-Research documents cover investigations, design explorations, architecture spikes, and implementation plans. They replaced the Plan artifact type — the distinction between "investigating something" and "designing an implementation approach" was artificial; both are research activities that produce artifacts referenced by epics and decisions.
+### Constraint Summary
 
-Research documents are referenced via `research-refs` on epics, tasks, and decisions using their `RES-NNN` identifier. Traceability flows from consumers (epics, decisions) pointing at research — research docs do not maintain reverse links. See [IDEA-032](IDEA-032) for the planned traceability graph that will derive these relationships automatically.
+Several relationships carry type constraints enforced by the integrity engine:
 
-```yaml
----
-id: RES-001
-title: "Streaming IPC Options"
-status: complete                  # draft | complete | surpassed
-description: >
-  Investigation of streaming IPC mechanisms for real-time AI response
-  delivery from the Rust backend to the Svelte frontend.
-created: 2026-03-07
-updated: 2026-03-07
-surpassed-by: null                # RES-NNN of the doc that supersedes this, or null
-sources:                          # External sources that informed this research
-  - url: "https://docs.rs/tauri/latest/tauri/ipc/struct.Channel.html"
-    description: "Tauri Channel<T> official documentation"
-    tier: T1
----
-```
+| Constraint | Rule |
+|------------|------|
+| `grounded` / `grounded-by` | Only targets pillars |
+| `enforces` | Only from rules, only to decisions |
+| `drives` / `driven-by` | Only from decisions |
+| `observes` / `observed-by` | Only from agents |
+| `upholds` / `upheld-by` | Only from pillars to vision |
+| `benefits` / `benefited-by` | Only from ideas to personas |
+| `revises` / `revised-by` | Only from pivots to vision/persona/pillar |
 
-| Field | Required | Type | Description |
-|-------|----------|------|-------------|
-| `id` | Yes | string | Auto-incrementing `RES-NNN` identifier |
-| `title` | Yes | string | Human-readable research title |
-| `status` | Yes | enum | `draft`, `complete`, `surpassed` |
-| `description` | Yes | string | Brief description of what is being investigated |
-| `created` | Yes | date | ISO date of creation |
-| `updated` | Yes | date | ISO date of last update |
-| `surpassed-by` | No | string | `RES-NNN` of the research doc that supersedes this, or null |
-| `sources` | No | object[] | External sources that informed this research. Each entry has `url` (required), `description` (required), and `tier` (T1-T4, optional). See `research-methodology` skill for credibility tiers. |
-
-The research body follows the structure: **Question** (what is being investigated), **Research Findings** (what was discovered), **Options Evaluated** (alternatives considered), **Recommendation** (what to do and why).
-
-### Lesson (`IMPL-NNN`)
-
-Lessons capture implementation learnings — unexpected behaviours, non-obvious patterns, and mistakes that should not be repeated. Lessons feed the promotion pipeline: when a lesson recurs enough, it is promoted to a rule, skill update, or coding standard.
-
-```yaml
----
-id: IMPL-001
-title: "Use typed error enums instead of String errors in Tauri commands"
-status: active                    # active | recurring | promoted
-description: >
-  Tauri commands returning Result<T, String> lose error context.
-  Use thiserror-derived enums for structured error propagation.
-created: 2026-03-07
-updated: 2026-03-07
-recurrence: 0
-promoted-to: null
----
-```
-
-| Field | Required | Type | Description |
-|-------|----------|------|-------------|
-| `id` | Yes | string | Auto-incrementing `IMPL-NNN` identifier |
-| `title` | Yes | string | Human-readable lesson title (no code references) |
-| `status` | Yes | enum | `active`, `recurring`, `promoted` — reflects promotion pipeline state |
-| `description` | Yes | string | Brief description of the lesson |
-| `created` | Yes | date | ISO date of creation |
-| `updated` | Yes | date | ISO date of last update |
-| `recurrence` | Yes | integer | How many times this lesson has recurred (triggers promotion at threshold) |
-| `evolves-into` | No | string | Target artifact if promoted (rule name, skill name, etc.) |
-
-### Rule (`RULE-NNN`)
-
-Rules enforce coding standards, process requirements, and project conventions. They are loaded as context for agents and verified during code review. Rules may be promoted from lessons (`IMPL-NNN`) when a pattern recurs — the `promoted-from` field traces this lineage.
-
-```yaml
----
-id: RULE-006
-layer: core
-status: active
-scope: domain                     # system | domain | project | role | artifact
-title: "Coding Standards"
-description: "Enforces Rust and TypeScript coding standards including formatting, linting, error handling, and test coverage."
-created: 2026-03-07
-updated: 2026-03-07
-promoted-from: null               # IMPL-NNN if promoted from a lesson, null otherwise
----
-```
-
-| Field | Required | Type | Description |
-|-------|----------|------|-------------|
-| `id` | Yes | string | Auto-incrementing `RULE-NNN` identifier |
-| `layer` | Yes | enum | `core` (platform), `project` (project-specific), `plugin` (1st party), `community` (community), `user` (personal) |
-| `status` | Yes | enum | `active` (enforced) or `inactive` (preserved but not enforced) |
-| `scope` | Yes | string | What the rule governs: `system`, `domain`, `project`, `role`, `artifact`. Temporary — will be replaced by structured enforcement model [IDEA-034](IDEA-034). |
-| `title` | Yes | string | Human-readable rule title |
-| `description` | Yes | string | Brief description of what the rule enforces |
-| `created` | Yes | date | ISO date of creation |
-| `updated` | Yes | date | ISO date of last update |
-| `promoted-from` | No | string | `IMPL-NNN` if promoted from a lesson, null otherwise |
+Some relationships also carry **required** constraints (e.g., every rule must `enforces` at least one decision, every agent must `employs` at least one skill, every pillar must `upholds` the vision, every idea must be `grounded` and `benefits` a persona).
 
 ---
 
-## Body Templates
+## Status Model
 
-Body templates define the minimum required sections for each artifact type's markdown body (everything below the `---` frontmatter delimiter). Templates are defined in each type's `schema.json` file alongside the frontmatter schema, keeping all structural expectations in one place.
+All artifact types share the same 12-status vocabulary, defined in `project.json` (see AD-053). Types use subsets of these statuses appropriate to their lifecycle.
 
-### Template Format
+### The 12 Canonical Statuses
 
-Each `schema.json` includes a `bodyTemplate` key:
+| Status | Icon | Allowed Transitions |
+|--------|------|---------------------|
+| `captured` | circle-dot | exploring, ready, archived |
+| `exploring` | search | ready, captured, archived |
+| `ready` | check-circle | prioritised, exploring, archived |
+| `prioritised` | arrow-up-circle | active, ready, archived |
+| `active` | loader | review, hold, blocked |
+| `hold` | pause-circle | active, archived |
+| `blocked` | x-circle | active, archived |
+| `review` | eye | completed, active |
+| `completed` | check-circle-2 | archived |
+| `surpassed` | fast-forward | archived |
+| `archived` | archive | (terminal) |
+| `recurring` | repeat | archived |
 
-```json
-{
-  "bodyTemplate": {
-    "description": "Required body sections for this artifact type",
-    "sections": [
-      { "heading": "Section Name", "required": true },
-      { "heading": "Optional Section", "required": false }
-    ]
-  }
-}
-```
-
-A `null` value means the type is intentionally freeform (e.g., Research).
-
-### Templates by Type
-
-| Type | Required Sections | Optional Sections | Notes |
-|------|-------------------|-------------------|-------|
-| **Pillar** | What This Pillar Means, Examples of Work That Serves This Pillar, Anti-Patterns, Conflict Resolution | — | All 4 sections required |
-| **Milestone** | Context, Epics | Completion Criteria | Gate question is in frontmatter (`gate:`) |
-| **Epic** | Context, Implementation Design, Tasks | Out of Scope | Tasks section appears naturally as work is broken down |
-| **Task** | What, How, Verification | — | All 3 required; for UAT tasks, "What" contains the finding reference |
-| **Idea** | Motivation | Sketch | Sketch optional — some ideas captured before any thinking |
-| **Decision** | Decision, Rationale, Consequences | — | All 3 required; complex decisions may add subsections |
-| **Lesson** | Pattern, Fix | — | Both required; optional: Git Evidence for traceability |
-| **Rule** | Related Rules | FORBIDDEN | Must start with opening paragraph; domain-specific sections vary |
-| **Research** | — | — | Intentionally freeform (`bodyTemplate: null`) |
-
-### Enforcement
-
-Body templates are enforced at two levels:
-
-1. **Documentation** — this section and the schema.json files define the templates. Agents follow them when creating artifacts.
-2. **Linting** — the pre-commit hook checks for required `## Heading` patterns in artifact bodies, reading template definitions from each type's schema.json.
-
-A third level (app-assisted template pre-population in an artifact editor) is deferred to [EPIC-004](EPIC-004).
-
-### Schema Location
-
-All schema.json files live alongside their artifact type's directory:
-
-| Type | Schema Path |
-|------|-------------|
-| Pillar | `.orqa/process/pillars/schema.json` |
-| Milestone | `.orqa/delivery/milestones/schema.json` |
-| Epic | `.orqa/delivery/epics/schema.json` |
-| Task | `.orqa/delivery/tasks/schema.json` |
-| Idea | `.orqa/delivery/ideas/schema.json` |
-| Research | `.orqa/delivery/research/schema.json` |
-| Decision | `.orqa/process/decisions/schema.json` |
-| Lesson | `.orqa/process/lessons/schema.json` |
-| Rule | `.orqa/process/rules/schema.json` |
-
----
-
-## Field Ordering Convention
-
-YAML frontmatter fields follow a consistent content hierarchy across all artifact types. This ordering is not arbitrary — it reflects reading priority: identity first, then classification, then description, then lifecycle metadata, then relationships, then tags.
-
-### Ordering Principles
-
-1. **Identity** — `id`, `title` (who is this?)
-2. **Classification** — `layer`, `status`, `priority`, `scope`, `milestone`, `epic`, `pillars` (what kind of thing is it?)
-3. **Description** — `description`, `gate` (what is it about?)
-4. **Lifecycle** — `created`, `updated`, `deadline` (when?)
-5. **Relationships** — `depends-on`, `blocks`, `research-refs`, `docs-required`, `docs-produced`, `research-needed`, `evolves-into`, `evolves-into`, `evolves-from`, `surpassed-by`, `promoted-from`, `docs`, `sources` (what connects to what?)
-6. **Scoring** — `scoring` block (how important?)
-7. **Operational** — `assignee`, `skills`, `acceptance`, `gate`, `recurrence`, `evolves-into` (how is it managed?)
-
-### Per-Type Field Order
-
-| Type | Field Order |
-|------|------------|
-| **Milestone** | id, title, status, description, created, updated, deadline, gate |
-| **Pillar** | id, title, status, description, gate, created, updated |
-| **Epic** | id, title, status, priority, milestone, pillars, description, created, updated, research-refs, docs-required, docs-produced, depends-on, blocks, deadline, scoring |
-| **Task** | id, title, status, epic, description, created, updated, depends-on, assignee, docs, skills, acceptance |
-| **Idea** | id, title, status, pillars, description, created, updated, research-needed, promoted-to |
-| **Lesson** | id, title, status, description, created, updated, recurrence, promoted-to |
-| **Rule** | id, title, description, status, created, updated, layer, scope, promoted-from |
-| **Decision** | id, title, description, status, category, created, updated, research-refs, supersedes, superseded-by |
-| **Research** | id, title, status, description, created, updated, surpassed-by, sources |
-
----
-
-## Status Workflows
-
-These are defaults. OrqaStudio's long-term goal is configurable status workflows per project.
-
-### Milestone
+### Status Flow
 
 ```
-planning ──> active ──> complete
+captured → exploring → ready → prioritised → active → review → completed
+                                                ↓         ↑
+                                              hold ───────┘
+                                                ↓
+                                             blocked ─────┘
+
+completed → archived
+surpassed → archived
+recurring → archived
 ```
 
-### Epic
+### Auto-Transition Rules
 
-```
-draft ──> ready ──> in-progress ──> review ──> done
-```
+The status model supports graph-query-based auto-transitions. For example:
 
-### Task
-
-```
-todo ──> in-progress ──> done
-```
-
-### Idea
-
-```mermaid
-stateDiagram-v2
-    [*] --> captured
-    captured --> exploring
-    exploring --> shaped
-    shaped --> promoted : user approves
-    shaped --> archived : rejected or deferred
-    promoted --> [*] : becomes Epic
-```
-
-### Research
-
-```
-draft ──> complete ──> surpassed (when a newer doc supersedes it)
-```
-
-### Lesson (existing)
-
-```
-active ──> promoted (recurrence >= threshold)
-```
-
-### Decision
-
-```mermaid
-stateDiagram-v2
-    [*] --> proposed
-    proposed --> accepted
-    accepted --> superseded : replaced by newer decision
-    accepted --> deprecated : no longer relevant
-```
+- When all dependencies of a `blocked` artifact reach `completed`, the artifact automatically transitions to `active`.
 
 ---
 
@@ -819,16 +399,16 @@ stateDiagram-v2
 
 ### Dimensions
 
-Priority is computed from scored dimensions. Dimensions are configurable per project via `.orqa/project.json`.
+Priority is computed from scored dimensions. Dimensions are configurable per project via `project.json`.
 
 **Default dimensions for OrqaStudio:**
 
 | Dimension | Scale | Weight | What It Measures |
 |-----------|-------|--------|-----------------|
-| `pillar` | 0-5 | x3 | Alignment with product pillars. 0=neither, 3=one pillar, 5=both. |
-| `impact` | 1-5 | x2 | How much this changes the daily user experience. |
-| `dependency` | 1-3 | x3 | How many other items are blocked. 1=independent, 3=critical path. |
-| `effort` | 1-5 | divisor | Implementation size. Higher = lower score. |
+| `pillar` | 0-5 | x3 | Alignment with product pillars |
+| `impact` | 1-5 | x2 | How much this changes the daily user experience |
+| `dependency` | 1-3 | x3 | How many other items are blocked |
+| `effort` | 1-5 | divisor | Implementation size. Higher = lower score |
 
 ### Scoring Formula
 
@@ -844,126 +424,86 @@ score = (pillar * 3 + impact * 2 + dependency * 3) / effort
 | **P2** | 5.0 - 9.9 | High value — significant quality improvement |
 | **P3** | < 5.0 | Nice to have — improves experience but not blocking |
 
-### Configuration
-
-Priority dimensions, weights, and bands are stored in `.orqa/project.json` under the `priority` key. Different projects can define different dimensions and weights. The formula structure (weighted sum with divisor dimension) is fixed; the dimensions and their weights are configurable.
-
 ---
 
-## Directory Structure
+## ID Conventions
 
-```
-.orqa/
-├── project.json              # Project config including priority dimensions
-├── planning/
-│   └── pillars/
-│       ├── README.md            # What pillars are and how to create them
-│       ├── PILLAR-001.md        # Clarity Through Structure
-│       └── PILLAR-002.md        # Learning Through Reflection
-├── planning/
-│   ├── milestones/
-│   │   ├── MS-001.md             # Dogfooding
-│   │   └── MS-002.md             # MVP
-│   ├── epics/
-│   │   ├── EPIC-001.md           # AI Transparency Wiring
-│   │   ├── EPIC-002.md           # Settings UI
-│   │   └── ...
-│   ├── tasks/                    # Only for tasks that need separate files
-│   │   └── TASK-001.md
-│   ├── ideas/
-│   │   ├── IDEA-001.md           # Multi-Provider Ecosystem
-│   │   └── ...
-│   └── research/                 # Investigations, design explorations, spikes, implementation plans
-│       ├── README.md
-│       ├── RES-001.md
-│       └── ...
-├── governance/
-│   ├── lessons/                  # Already exists
-│   │   ├── IMPL-001.md
-│   │   └── ...
-│   └── decisions/                # Architecture decision records
-│       └── AD-001.md
-└── icon.svg
-```
+All artifact IDs use their type prefix followed by a zero-padded number that auto-increments within the type. The prefix is defined by `idPrefix` in `core.json`.
 
----
-
-## ID Assignment
-
-All artifact IDs auto-increment within their type:
-
-- `[PILLAR-001](PILLAR-001)`, `[PILLAR-002](PILLAR-002)`, ...
-- `[MS-001](MS-001)`, `[MS-002](MS-002)`, ...
-- `[EPIC-001](EPIC-001)`, `[EPIC-002](EPIC-002)`, ...
-- `[TASK-001](TASK-001)`, `[TASK-002](TASK-002)`, ...
-- `[IDEA-001](IDEA-001)`, `[IDEA-002](IDEA-002)`, ...
-- `[IMPL-001](IMPL-001)`, `[IMPL-002](IMPL-002)`, ...
-- `[AD-001](AD-001)`, `[AD-002](AD-002)`, ...
-- `[RES-001](RES-001)`, `[RES-002](RES-002)`, ...
-- `[RULE-001](RULE-001)`, `[RULE-002](RULE-002)`, ...
+| Type | Pattern | Examples |
+|------|---------|----------|
+| Vision | `VISION-NNN` | VISION-001 |
+| Pillar | `PILLAR-NNN` | PILLAR-001, PILLAR-002 |
+| Persona | `PERSONA-NNN` | PERSONA-001 |
+| Idea | `IDEA-NNN` | IDEA-001, IDEA-035 |
+| Decision | `AD-NNN` | AD-001, AD-055 |
+| Rule | `RULE-NNN` | RULE-001, RULE-032 |
+| Lesson | `IMPL-NNN` | IMPL-001, IMPL-042 |
+| Skill | `SKILL-NNN` | SKILL-001, SKILL-053 |
+| Agent | `AGENT-NNN` | AGENT-001, AGENT-008 |
+| Document | `DOC-NNN` | DOC-001, DOC-036 |
+| Pivot | `PIVOT-NNN` | PIVOT-001 |
+| Bug | `BUG-NNN` | BUG-001 |
+| Milestone | `MS-NNN` | MS-001, MS-002 |
+| Epic | `EPIC-NNN` | EPIC-001, EPIC-082 |
+| Task | `TASK-NNN` | TASK-001 |
+| Research | `RES-NNN` | RES-001 |
 
 IDs are stable — never reused after deletion. The next ID is determined by scanning existing files in the directory.
 
 ---
 
-## Artifact Visibility in OrqaStudio
+## Body Templates
 
-### Core UX Principle
+Body templates define the minimum required sections for each artifact type's markdown body (everything below the frontmatter delimiter).
 
-**Markdown documents browsable in the UI is the underlying UX model.** Every `.orqa/` artifact is rendered as a readable document within OrqaStudio's artifact browser. This is the foundational layer — all other interaction modes are optional enhancements built on top.
+| Type | Required Sections | Optional Sections |
+|------|-------------------|-------------------|
+| **Pillar** | What This Pillar Means, Examples of Work That Serves This Pillar, Anti-Patterns, Conflict Resolution | — |
+| **Milestone** | Context, Epics | Completion Criteria |
+| **Epic** | Context, Implementation Design, Tasks | Out of Scope |
+| **Task** | What, How, Verification | — |
+| **Idea** | Motivation | Sketch |
+| **Decision** | Decision, Rationale, Consequences | — |
+| **Lesson** | Pattern, Fix | Git Evidence |
+| **Rule** | Related Rules | FORBIDDEN |
+| **Research** | — | — (intentionally freeform) |
 
-### Visibility Layers
+---
 
-| Layer | What It Provides | When Built |
-|-------|-----------------|------------|
-| **Document browser** | Navigate and read `.orqa/` artifacts as rendered markdown | Dogfooding [EPIC-005](EPIC-005) |
-| **Frontmatter sidebar** | Structured metadata displayed alongside the document | Dogfooding [EPIC-005](EPIC-005) |
-| **Status filtering** | Filter artifacts by status, priority, milestone, type | MVP |
-| **Board views** | Kanban-style board projecting epic/task status | MVP |
-| **Priority dashboard** | Scored and ranked backlog with band indicators | MVP |
-| **Graph views** | Dependency and connection visualisation | Post-MVP |
+## Field Ordering Convention
 
-### What the Browser Shows
+YAML frontmatter fields follow a consistent content hierarchy across all artifact types:
 
-For each artifact type, the browser renders:
-
-- **Title and ID** from frontmatter
-- **Status badge** with colour coding
-- **Priority band** (P1/P2/P3) for epics
-- **Milestone membership** for epics
-- **Connection links** — clickable references to related artifacts
-- **Full markdown body** — the document content, rendered with syntax highlighting
+1. **Identity** — `id`, `title`
+2. **Classification** — `layer`, `status`, `priority`, `category`, `scope`
+3. **Description** — `description`, `gate`
+4. **Lifecycle** — `created`, `updated`, `deadline`
+5. **Relationships** — `relationships` array (the only connection mechanism)
+6. **Scoring** — `scoring` block
+7. **Operational** — `assignee`, `acceptance`, `recurrence`, `sources`
 
 ---
 
 ## Traceability Web
 
-The frontmatter fields create a navigable web across all artifact types:
+The `relationships` array creates a navigable web across all artifact types:
 
 ```
-Milestone ←── milestone ── Epic ←── epic ── Task
-                              │                │
-                              │                └── depends-on ──→ Other Tasks (execution order)
-                              │
-                              ├── research-refs ──→ Research (investigations, designs, plans)
-                              │
-                              ├── depends-on / blocks ──→ Other Epics
-                              │
-                              ├── docs-required ──→ Existing Docs (gate)
-                              │
-                              ├── docs-produced ──→ New/Updated Docs (output)
-                              │
-                              └── pillars ──→ Pillar (PILLAR-NNN)
-
-Pillar ←── pillars ── Idea
-Pillar ←── pillars ── Epic
-
-Idea ──research-needed──→ Research ──→ (validates) ──→ promoted-to ──→ Epic
-                                    └── docs-produced ──→ Research artifact
-
-Lesson (IMPL-NNN) ──promoted-to──→ Rule (RULE-NNN) / Skill
-
-Research ──produces──→ Decision (AD-NNN) ──supersedes──→ Earlier Decision
+Vision ←── upholds ── Pillar ←── grounded ── Idea ── benefits ──→ Persona
+                                                ↓
+                                          crystallises
+                                                ↓
+Research ←── spawns ── Idea          Decision ── drives ──→ Epic ── delivers ──→ Milestone
+    │                                    ↑                    ↑
+    └── informs ──→ Decision             │                    │
+                                    governs              guided-by ── Research
+                                         ↓                    │
+                                       Rule              cautioned-by ── Lesson
+                                         │
+                                    codifies
+                                         ↓
+                                       Lesson ── teaches ──→ Decision
 ```
 
 ### Documentation Traceability Chain
@@ -972,23 +512,32 @@ Every stage of work self-documents its decisions:
 
 ```
 Idea captured
-  → Research investigates (produces .orqa/delivery/research/ artifact)
-  → Research resolves → Architecture Decision recorded (`.orqa/process/decisions/AD-NNN.md`)
-  → Idea promoted → Epic created (references research-refs, lists docs-required)
-  → Epic body written with implementation design (docs-required gate satisfied)
-  → Implementation begins (produces code + docs-produced artifacts)
-  → Completion updates architecture docs, component specs, schemas
-  → Lessons captured (.orqa/process/lessons/) → promoted to rules/skills
+  → Idea spawns research (spawns / spawned-by)
+  → Research informs decision (informs / informed-by)
+  → Idea crystallises into decision (crystallises / crystallised-by)
+  → Decision drives epic (drives / driven-by)
+  → Research guides epic (guides / guided-by)
+  → Tasks deliver epic (delivers / delivered-by)
+  → Lessons teach future decisions (teaches / taught-by)
+  → Rules codify lessons (codifies / codified-by)
+  → Rules enforce decisions (enforces / enforced-by)
 ```
 
-At any point, you can trace backwards: "Why does this rule exist?" → lesson → epic → research → original idea. This is the automated documentation process — the system records what was decided at each stage and why.
+At any point, you can trace backwards: "Why does this rule exist?" follows `codifies` to lesson, `enforces` to decision, `driven-by` to epic, `crystallised-by` to idea. This is the automated documentation process — the system records what was decided at each stage and why.
 
-This enables:
-- **Impact analysis** — "What breaks if this epic is delayed?" (follow `blocks` links)
-- **Progress tracking** — "How far along is Milestone 1?" (count epic statuses)
-- **Decision traceability** — "Why did we build this?" (epic → research → decision)
-- **Learning loops** — "What did we learn?" (lesson → promoted rule)
-- **Documentation readiness** — "Can we start this work?" (check `docs-required` gate)
-- **Documentation completeness** — "Did we update all the docs?" (check `docs-produced` output)
+---
+
+## Key References
+
+| Artifact | What It Defines |
+|----------|----------------|
+| `libs/types/src/platform/core.json` | Canonical types, relationships, semantics, and constraints |
+| `project.json` | Navigation, statuses, delivery hierarchy, project relationships |
+| AD-051 | Three-layer artifact model (app-fixed, app-required, project-scoped) |
+| AD-052 | Canonical relationship vocabulary (relationships are the only connections) |
+| AD-053 | Canonical status model (12 universal statuses) |
+| AD-054 | Four enforcement layers (app, scanners, integrity, git hooks) |
+| RULE-004 | Artifact lifecycle enforcement |
+| RULE-032 | Artifact schema compliance validation |
 
 ---

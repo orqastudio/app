@@ -5,145 +5,25 @@ description: "Enforces creation standards, status transitions, promotion gates, 
 status: active
 created: 2026-03-07
 updated: 2026-03-13
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Artifact lifecycle enforces structured progression from idea to completion
-  - target: RULE-008
-    type: informs
-    rationale: Artifact lifecycle enforces documentation gates before and after implementation
-  - target: RULE-016
-    type: informs
-    rationale: IDs are identifiers not rankings — priority comes from scoring, not creation order
-  - target: RULE-031
-    type: informs
-    rationale: Pillar alignment is required for all artifacts as part of lifecycle validation
-  - target: RULE-017
-    type: informs
-    rationale: Lesson lifecycle (create, track recurrence, promote) is part of the artifact lifecycle
-  - target: RULE-021
-    type: informs
-    rationale: Documentation gates require pillar alignment sections in produced docs
-  - target: RULE-015
-    type: informs
-    rationale: Artifact status must reflect reality — honest reporting is required for lifecycle transitions
-  - target: IMPL-014
-    type: informs
-    rationale: Rule promoted from lesson IMPL-014 (epic titles should describe outcomes not process)
-  - target: IMPL-021
-    type: informs
-    rationale: Rule updated from lesson IMPL-021 (open items discovered during implementation need tracking)
-  - target: IMPL-022
-    type: informs
-    rationale: Rule updated from lesson IMPL-022 (epics with all tasks done should surface for user review)
-  - target: IMPL-025
-    type: informs
-    rationale: Rule updated from lesson IMPL-025 (observations must flow forward via triage task)
-  - target: IMPL-038
-    type: informs
-    rationale: Rule updated from lesson IMPL-038 (observation capture is not scope creep — scope at triage)
-  - target: IMPL-042
-    type: informs
-    rationale: Rule updated from lesson IMPL-042 (epic body drifts from actual work without standing reconciliation task)
-  - target: IMPL-044
-    type: informs
-    rationale: Rule updated from lesson IMPL-044 (idea promotion should scan for related ideas to bundle)
-  - target: IMPL-044
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-044
-  - target: IMPL-051
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-051
   - target: AD-044
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-044
-  - target: IMPL-042
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-042
-  - target: IMPL-043
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-043
-  - target: IMPL-040
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-040
-  - target: IMPL-022
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-022
-  - target: IMPL-046
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-046
-  - target: IMPL-038
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-038
-  - target: IMPL-021
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-021
-  - target: IMPL-052
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-052
   - target: AD-023
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-023
-  - target: DOC-015
-    type: informed-by
-    rationale: Referenced in documentation page Sub-Agent Support Architecture
-  - target: DOC-025
-    type: informed-by
-    rationale: Referenced in documentation page Artifact Workflow
-  - target: DOC-035
-    type: informed-by
-    rationale: workflow.md documents the task process and status transitions that this rule governs
-  - target: DOC-036
-    type: informed-by
-    rationale: artifact-framework.md is the source-of-truth document for artifact lifecycle this rule enforces
-  - target: AGENT-008
-    type: informs
-    rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
   - target: AD-040
     type: enforces
-  - target: IMPL-021
-    type: informs
-  - target: IMPL-022
-    type: informs
-  - target: IMPL-025
-    type: informs
-  - target: IMPL-038
-    type: informs
-  - target: IMPL-042
-    type: informs
-  - target: IMPL-044
-    type: informs
-  - target: IMPL-070
-    type: informed-by
-  - target: RULE-008
-    type: informed-by
-  - target: RULE-014
-    type: informed-by
-  - target: RULE-016
-    type: informed-by
-  - target: RULE-019
-    type: informed-by
-  - target: RULE-021
-    type: informed-by
-  - target: RULE-022
-    type: informed-by
-  - target: RULE-027
-    type: informed-by
-  - target: RULE-031
-    type: informed-by
-  - target: RULE-032
-    type: informed-by
-  - target: IMPL-014
-    type: informs
+  - target: DOC-015
+    type: documented-by
+  - target: DOC-035
+    type: documented-by
+  - target: DOC-036
+    type: documented-by
+  - target: DOC-025
+    type: documented-by
   - target: AGENT-008
-    type: informs
-  - target: AGENT-008
-    type: informs
-  - target: PILLAR-001
-    type: informs
-  - target: IMPL-014
-    type: informed-by
+    type: observed-by
 ---
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
 

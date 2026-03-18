@@ -1,0 +1,103 @@
+---
+id: DOC-073
+type: doc
+name: Tech Debt Management Guide
+category: how-to
+status: active
+relationships:
+  - target: SKILL-053
+    type: synchronised-with
+---
+
+# Tech Debt Management Guide
+
+## What is tech debt in OrqaStudio?
+
+Tech debt is the gap between what the code does and what the schemas define. OrqaStudio is schema-driven — `core.json` and plugin manifests are the source of truth for artifact types, relationships, and validation rules. Any code that hardcodes these values instead of reading them from the schema is debt.
+
+## The Zero-Debt Principle
+
+The project maintains zero tech debt as a baseline. This means:
+
+1. **Every architectural change is followed through completely** — no partial migrations
+2. **Schema changes propagate to all code in the same commit** — not "we'll fix that later"
+3. **Automated detection catches drift immediately** — before it compounds
+4. **Debt found is debt fixed** — it doesn't go on a backlog to age
+
+## Common Sources of Debt
+
+### 1. Schema Changes Without Code Follow-Through
+
+When you add a new relationship to `core.json`, every file that references relationship keys must be checked. The schema changed but the code didn't follow.
+
+**Prevention:** Before changing core.json, grep the entire codebase for affected values. Change everything in one commit.
+
+### 2. Duplicate Implementations
+
+Two files implementing the same logic. When one gets updated, the other drifts.
+
+**Prevention:** Extract shared logic to a common module. Use `include_str!` for config files instead of copies. The Rust backend should have ONE `active_project_path()`, not six.
+
+### 3. Hardcoded Values
+
+String literals in code that should come from the schema. When the schema changes, the code doesn't know.
+
+**Prevention:** Always read from the registry, schema, or config. Never write a relationship key as a string literal in application code.
+
+### 4. In-App Manifests Out of Sync
+
+The in-app plugin registration (`manifest.ts`) diverging from the canonical plugin manifest (`orqa-plugin.json`). Two sources of truth for the same thing.
+
+**Prevention:** The in-app manifest should import or mirror the canonical manifest exactly. Ideally, generate one from the other.
+
+### 5. Dead Dependencies
+
+Packages listed in `package.json` or `Cargo.toml` that are never imported. They bloat builds and create false assumptions about what's used.
+
+**Prevention:** Remove dependencies when you stop using them. Check with `npm ls` or `cargo tree`.
+
+## Detection
+
+### Automated
+
+Run these regularly (ideally as CI checks):
+
+```bash
+# Schema compliance — do all artifacts match the schema?
+orqa validate
+
+# Rust compilation — does the backend compile cleanly?
+cargo check && cargo clippy -- -D warnings
+
+# TypeScript compliance — do all libs typecheck?
+make verify-types && make verify-sdk && make verify-cli
+
+# Frontend compliance — does the app typecheck?
+make verify-app
+
+# Full test suite
+cargo test
+```
+
+### Manual Audit
+
+Run after any architectural change:
+
+1. Grep for old values that should have been renamed
+2. Diff in-app manifests against plugin manifests
+3. Check for duplicate helper functions
+4. Verify all paths reference current directory structure
+5. Check all dependencies are actually imported
+
+## Resolution
+
+1. Fix in isolation — one category per commit
+2. Don't mix debt fixes with feature work
+3. Verify with the full test suite before committing
+4. Update skills and documentation if the fix changes behaviour
+
+## This is a Governance Concern
+
+Tech debt undermines the "schema IS the rule" principle. If code hardcodes values that the schema defines, then changing the schema doesn't change the behaviour — it just creates a lie. The schema says one thing, the code does another.
+
+This is why tech debt is treated as a blocking issue, not a backlog item. It's not cosmetic — it's a governance failure.

@@ -5,19 +5,9 @@ description: Documentation is deleted when outdated. Research and tasks are pres
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Document lifecycle distinguishes current state docs from historical records
-  - target: RULE-008
-    type: informs
-    rationale: Documentation-first applies to docs (delete when outdated); research is preserved differently
-  - target: RULE-004
-    type: informs
-    rationale: Status transitions define when research becomes surpassed and ideas become archived
-  - target: PILLAR-001
-    type: informs
+  - target: AD-051
+    type: enforces
 ---
 
 ## Two Categories of Written Artifacts
@@ -56,7 +46,6 @@ When a research document or task has been overtaken by newer work:
 ```yaml
 ---
 id: TASK-003
-layer: core
 title: "Original nav implementation"
 status: surpassed
 surpassed-by: TASK-009

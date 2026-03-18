@@ -2,8 +2,8 @@
 id: DOC-072
 type: doc
 name: Schema Validation Reference
+category: reference
 status: active
-layer: core
 relationships:
   - target: SKILL-052
     type: synchronised-with

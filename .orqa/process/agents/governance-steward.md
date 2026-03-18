@@ -8,7 +8,6 @@ description: |
 status: active
 created: 2026-03-14
 updated: 2026-03-14
-layer: core
 model: sonnet
 capabilities:
   - file_read
@@ -22,57 +21,29 @@ capabilities:
 subagent_mapping: null
 relationships:
   - target: SKILL-005
-    type: informed-by
+    type: employs
   - target: SKILL-008
-    type: informed-by
+    type: employs
   - target: SKILL-011
-    type: informed-by
+    type: employs
   - target: SKILL-037
-    type: informed-by
-  - target: SKILL-039
-    type: informed-by
-  - target: SKILL-050
-    type: informed-by
+    type: employs
+  - target: SKILL-038
+    type: employs
   - target: RULE-004
-    type: informed-by
+    type: observes
   - target: RULE-008
-    type: informed-by
+    type: observes
   - target: RULE-016
-    type: informed-by
+    type: observes
   - target: RULE-021
-    type: informed-by
+    type: observes
   - target: RULE-032
-    type: informed-by
+    type: observes
   - target: RULE-034
-    type: informed-by
+    type: observes
   - target: RULE-045
-    type: informed-by
-  - target: RULE-004
-    type: informed-by
-  - target: RULE-008
-    type: informed-by
-  - target: RULE-016
-    type: informed-by
-  - target: RULE-021
-    type: informed-by
-  - target: RULE-032
-    type: informed-by
-  - target: RULE-034
-    type: informed-by
-  - target: RULE-045
-    type: informed-by
-  - target: SKILL-005
-    type: informed-by
-  - target: SKILL-008
-    type: informed-by
-  - target: SKILL-011
-    type: informed-by
-  - target: SKILL-037
-    type: informed-by
-  - target: SKILL-039
-    type: informed-by
-  - target: SKILL-050
-    type: informed-by
+    type: observes
 ---
 
 ## Purpose

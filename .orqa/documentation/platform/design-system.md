@@ -1,23 +1,12 @@
 ---
 id: DOC-049
 title: Design System
+category: reference
 description: "Design system tokens, spacing scale, color themes, and component styling conventions."
 created: 2026-03-02
 updated: 2026-03-04
 sort: 5
-relationships:
-  - target: RES-003
-    type: informs
-    rationale: Documentation page references RES-003
-  - target: RES-001
-    type: informs
-    rationale: Documentation page references RES-001
-  - target: RES-004
-    type: informs
-    rationale: Documentation page references RES-004
-  - target: DOC-067
-    type: informs
-    rationale: Design system is distilled into the design-principles grounding document — inverse of informed-by on DOC-067
+relationships: []
 ---
 
 **Date:** 2026-03-02

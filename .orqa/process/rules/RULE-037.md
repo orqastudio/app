@@ -5,26 +5,9 @@ description: "Each universal role has a defined set of permitted tools. Using to
 status: active
 created: 2026-03-11
 updated: 2026-03-11
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Tool access restrictions enforce role boundaries for structural clarity
-  - target: RULE-001
-    type: informs
-    rationale: Ownership boundaries defined in agent delegation are enforced by restricting tool access per role
-  - target: RULE-026
-    type: informs
-    rationale: Skill loading complements capability restriction — both define what agents may do
-  - target: RULE-040
-    type: informs
-    rationale: Capabilities resolve to provider-specific tools that are then subject to role-based restrictions
-  - target: RULE-001
-    type: informed-by
-  - target: RULE-026
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+  - target: AD-029
+    type: enforces
 ---
 Tool access per role enforces ownership boundaries defined in [RULE-001](RULE-001). A Reviewer that can Edit would be tempted to fix issues instead of reporting them. A Researcher that can Write would be tempted to create artifacts instead of investigating.
 

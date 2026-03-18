@@ -1,23 +1,15 @@
 ---
 id: DOC-039
 title: Product Governance
+category: concept
 description: "Product governance criteria defining how features are evaluated against the project's active pillars."
 created: 2026-03-02
 updated: 2026-03-07
 sort: 2
 relationships:
-  - target: IMPL-001
-    type: informs
-    rationale: Documentation page references IMPL-001
   - target: RULE-031
-    type: informs
+    type: documents
     rationale: This document defines the feature governance framework and pillar alignment criteria that RULE-031 enforces
-  - target: DOC-064
-    type: informs
-    rationale: Product governance is distilled into the product-purpose grounding document — inverse of informed-by on DOC-064
-  - target: DOC-066
-    type: informs
-    rationale: Product governance is distilled into the artifact-principles grounding document — inverse of informed-by on DOC-066
 ---
 
 **Date:** 2026-03-07

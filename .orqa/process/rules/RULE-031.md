@@ -5,50 +5,11 @@ description: Every feature must serve at least one active pillar defined in .orq
 status: active
 created: 2026-03-07
 updated: 2026-03-13
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Vision alignment ensures all features serve the structural pillars
-  - target: RULE-004
-    type: informs
-    rationale: Pillar alignment is required at artifact creation and promotion gates
-  - target: RULE-021
-    type: informs
-    rationale: Vision alignment for features extends to requiring pillar alignment sections in documentation
-  - target: RULE-002
-    type: informs
-    rationale: Architecture decisions must implement foundational principles defined by the pillars
-  - target: RULE-020
-    type: informs
-    rationale: Real implementations are required — fake demos do not serve any pillar
-  - target: IMPL-041
-    type: informs
-    rationale: Rule updated from lesson IMPL-041 (orchestrator should think critically about user suggestions)
-  - target: IMPL-041
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-041
-  - target: DOC-039
-    type: informed-by
-    rationale: governance.md defines the feature governance framework and pillar alignment criteria this rule enforces
-  - target: IMPL-041
-    type: informs
-  - target: RULE-002
-    type: informed-by
-  - target: RULE-004
-    type: informed-by
-  - target: RULE-008
-    type: informed-by
-  - target: RULE-016
-    type: informed-by
-  - target: RULE-021
-    type: informed-by
-  - target: RULE-022
-    type: informed-by
   - target: AD-027
     type: enforces
-  - target: PILLAR-001
-    type: informs
+  - target: DOC-039
+    type: documented-by
 ---
 Every feature, command, and UI element must serve the project's guiding principles. These principles are defined as **pillar artifacts** in `.orqa/process/pillars/`. Read the active pillars before implementing any new capability.
 

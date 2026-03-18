@@ -1,92 +1,145 @@
 ---
 id: SKILL-047
-title: Epic Requirement Inference
+title: Plugin Artifact Usage
 description: |
-  Evaluates project context to recommend whether epics should be required
-  for task creation. Analyses directory structure, build tooling, and
-  project type signals to determine the workflow.epics-required setting.
-  Use when: Running project setup or configuring workflow enforcement.
+  How plugin-provided artifact types and relationships work in the platform.
+  Teaches agents to discover what artifacts a plugin provides, what
+  relationships connect them, and what constraints exist. The framework
+  that every plugin's own skill+doc pair builds on.
+  Use when: Working with plugin-provided artifact types, setting up a project
+  with plugins, or understanding how plugins extend the artifact graph.
 status: active
-layer: setup
-category: tool
-version: 1.0.0
-user-invocable: false
+category: methodology
+version: 2.0.0
+user-invocable: true
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Automatically configures task-to-epic linkage requirements based on project signals, ensuring workflow governance matches project complexity
-  - target: PILLAR-001
-    type: informs
+  - target: DOC-085
+    type: synchronised-with
 ---
 
-Determines whether a project should require epic linkage for all tasks
-(`workflow.epics-required: true`) or allow standalone tasks
-(`workflow.epics-required: false`).
+Teaches agents how plugins extend OrqaStudio's artifact graph with new types,
+relationships, and views. This is the framework skill — each plugin provides
+its own skill+doc pair that builds on these concepts.
 
-## Decision Logic
+## How Plugins Extend the Artifact Graph
 
-### Strong signals for `epics-required: true`
+Plugins register artifact schemas (types), relationships, and views via their
+`orqa-plugin.json` manifest. At runtime, the platform merges three layers into
+a single configuration that agents and the UI consume:
 
-These indicate an implementation-heavy project where structured planning prevents scope creep:
+1. **Core types** (from `core.json`) — platform-shipped, immutable
+2. **Plugin types** (from each installed plugin's `orqa-plugin.json`) — plugin-shipped, versioned
+3. **Project config** (from `project.json`) — user-editable overrides and additions
 
-| Signal | Weight | Check |
-|--------|--------|-------|
-| Source code directories | High | `src/`, `lib/`, `app/`, `pkg/`, `cmd/` exist |
-| Build tooling | High | `Cargo.toml`, `package.json`, `pyproject.toml`, `go.mod`, `Makefile` exist |
-| CI/CD configuration | Medium | `.github/workflows/`, `Jenkinsfile`, `.gitlab-ci.yml` exist |
-| Test directories | Medium | `tests/`, `__tests__/`, `spec/`, `test/` exist |
-| Compiled output | Medium | `target/`, `dist/`, `build/` in `.gitignore` |
-| User describes "building" or "developing" | High | Natural language signal during setup |
+Agents discover available types by reading the merged config, never by
+hardcoding type keys or relationship names. If a type or relationship does not
+appear in the merged config, it does not exist.
 
-### Strong signals for `epics-required: false`
+## Discovering Plugin Artifacts
 
-These indicate a research/planning project where lightweight task tracking is appropriate:
+Read `orqa-plugin.json` in each plugin directory under `plugins/`. The manifest
+describes everything the plugin provides.
 
-| Signal | Weight | Check |
-|--------|--------|-------|
-| Documentation-dominant | High | >70% of files are `.md` |
-| Research/notes directories | High | `research/`, `notes/`, `docs/`, `journal/` exist without source code |
-| No build tooling | High | No `Cargo.toml`, `package.json`, etc. |
-| No compiled languages | Medium | No `.rs`, `.go`, `.java`, `.cs`, `.cpp` files |
-| User describes "researching", "planning", "exploring" | High | Natural language signal |
+### Artifact types — `provides.schemas`
 
-### Ambiguous cases
+Each entry in the `provides.schemas` array defines an artifact type:
 
-When signals are mixed (e.g., a software project with a heavy research phase), recommend asking the user:
+| Field | Purpose |
+|-------|---------|
+| `key` | Unique type identifier (e.g., `epic`, `task`, `milestone`) |
+| `label` | Human-readable name |
+| `idPrefix` | ID pattern prefix (e.g., `EPIC`, `TASK`) |
+| `defaultPath` | Where artifacts of this type live in the filesystem |
+| `frontmatter` | Required and optional frontmatter fields |
+| `statusTransitions` | Map of valid state transitions from each status |
 
-> "This project has both implementation and research characteristics.
-> Should tasks require epic linkage? (Recommended: yes for implementation-focused, no for research-focused)"
+### Relationships — `provides.relationships`
 
-## Integration with Project Setup
+Each entry in the `provides.relationships` array defines a relationship:
 
-The `project-setup` skill should call this inference after `project-inference` runs:
+| Field | Purpose |
+|-------|---------|
+| `key` | Forward relationship name (e.g., `delivers`) |
+| `inverse` | Inverse relationship name (e.g., `delivered-by`) |
+| `from` | Type constraint on the source artifact |
+| `to` | Type constraint on the target artifact |
+| `semanticCategory` | Category: lineage, hierarchy, governance, etc. |
+| `required` | Whether the relationship is required for the source type |
+| `minCount` | Minimum number of targets when required |
 
-```
-1. project-inference → project profile (languages, frameworks, type)
-2. epic-requirement-inference → recommended epics-required setting
-3. Present recommendation with rationale to user
-4. Set workflow.epics-required in project.json
-```
+### Navigation — `defaultNavigation`
 
-## project.json Schema Addition
+The `defaultNavigation` section describes how the plugin's artifacts appear in
+the sidebar. Navigation entries are graph filters, not filesystem paths — they
+query artifacts by type and relationship.
 
-Add a `workflow` section to `project.json`:
+## Working With Plugin Artifacts
 
-```json
-{
-  "workflow": {
-    "epics-required": true
-  }
-}
-```
+### Creating artifacts
 
-- `true` (default for software projects): Tasks without an `epic` field trigger a warning from the enforcement engine. The schema allows it, but the engine flags it.
-- `false` (default for research/planning): Tasks without an `epic` field are normal. No warning.
+Use the plugin's `defaultPath` to determine where to create files and the
+`idPrefix` to generate the correct ID pattern. For example, if a plugin defines
+`defaultPath: ".orqa/delivery/epics/"` and `idPrefix: "EPIC"`, then a new epic
+goes in that directory with an ID like `EPIC-001`.
 
-## Enforcement Behaviour
+Always include the required frontmatter fields defined in the plugin's schema.
 
-| `epics-required` | Task without `epic` | Enforcement |
-|-------------------|---------------------|-------------|
-| `true` | Created | Warn: "This task has no epic. Consider linking it to an epic for traceability." |
-| `false` | Created | No warning |
-| Not set | Created | Treat as `true` for software projects (detected by `project-inference`) |
+### Connecting artifacts
+
+Use the plugin's relationship definitions. Respect `from`/`to` constraints —
+these are enforced by the integrity layer. For example, if a relationship
+defines `from: "task"` and `to: "epic"`, do not use it from an idea to a
+milestone.
+
+Remember that relationships are bidirectional. When you add a forward
+relationship on artifact A targeting artifact B, you must also add the inverse
+relationship on artifact B targeting artifact A.
+
+### Status transitions
+
+Respect the plugin's `statusTransitions` map. Only transition an artifact to a
+status that is listed as a valid target from the artifact's current status. For
+example, if `statusTransitions.active` lists `["hold", "blocked", "review"]`,
+then an active artifact can only move to those three states — not directly to
+`completed`.
+
+### Constraints
+
+Some relationships have `required: true` and `minCount` values. These are
+enforcement checks — the integrity scanner will flag violations. For example,
+if tasks require at least one `delivers` relationship, every task must be linked
+to a parent before it passes integrity.
+
+## The Skill+Doc Pattern
+
+Every plugin that defines artifact types SHOULD ship a paired skill and doc:
+
+- A **skill** (e.g., `SKILL-SW-001`) explaining how agents should work with the
+  plugin's artifacts — creation workflows, relationship patterns, status
+  lifecycle, and common scenarios
+- A **doc** (e.g., `DOC-SW-001`) explaining how humans should understand the
+  plugin's artifacts — what they represent, when to use each type, and how they
+  relate to each other
+- The skill and doc are connected via a `synchronised-with` relationship so
+  changes to one prompt a review of the other
+
+This skill (SKILL-047) is the *framework* — it teaches the general mechanics of
+plugin artifacts. Each plugin's own skill provides the *content* — the specific
+types, workflows, and domain knowledge for that plugin.
+
+## Example: Software Plugin
+
+The software delivery plugin (`plugins/software/orqa-plugin.json`) demonstrates
+the full pattern:
+
+- **5 artifact types:** milestone, epic, task, research, wireframe
+- **9 relationships:** delivers, fulfils, depends-on, realises, produces,
+  yields, reports, fixes, affects
+- **SKILL-SW-001** teaches agents the software delivery lifecycle — how to
+  break milestones into epics, epics into tasks, and how status propagates
+  up the delivery hierarchy
+- **DOC-SW-001** teaches humans the same concepts in user-facing language
+
+Other plugins follow the same pattern: define types and relationships in
+`orqa-plugin.json`, then ship a skill+doc pair that teaches agents and humans
+how to use them.

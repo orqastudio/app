@@ -5,16 +5,10 @@ description: "Installs the OrqaStudio companion plugin for Claude Code. Detects 
 status: active
 created: 2026-03-11
 updated: 2026-03-11
-layer: plugin
 category: tool
 version: 0.1.0
 user-invocable: true
-relationships:
-  - target: "PILLAR-001"
-    type: "grounded"
-    rationale: "Automated detection and migration of .claude/ infrastructure ensures CLI governance is properly connected to the .orqa/ source of truth"
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 # OrqaStudio Plugin Setup
@@ -114,7 +108,6 @@ id: RULE-NNN
 title: Rule Title
 description: What this rule enforces.
 status: active
-layer: project
 ---
 ```
 

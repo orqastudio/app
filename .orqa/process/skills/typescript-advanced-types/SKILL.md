@@ -5,37 +5,9 @@ description: "Master TypeScript's advanced type system including generics, condi
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: core
 category: domain
 user-invocable: false
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Generics, conditional types, and mapped types encode domain constraints at compile time, making invalid states unrepresentable
-  - target: TASK-075
-    type: informs
-  - target: TASK-078
-    type: informs
-  - target: TASK-417
-    type: informs
-  - target: TASK-418
-    type: informs
-  - target: TASK-419
-    type: informs
-  - target: TASK-420
-    type: informs
-  - target: TASK-424
-    type: informs
-  - target: TASK-425
-    type: informs
-  - target: TASK-426
-    type: informs
-  - target: TASK-427
-    type: informs
-  - target: TASK-428
-    type: informs
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 

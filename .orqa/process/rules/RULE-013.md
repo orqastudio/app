@@ -5,7 +5,6 @@ description: "Worktree-based workflow with mandatory cleanup, stash policy, and 
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-layer: core
 enforcement:
   - "event: bash"
   - "event: bash"
@@ -13,43 +12,12 @@ enforcement:
   - "event: bash"
   - "event: bash"
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Git workflow creates structured, traceable version control practices
-  - target: RULE-007
-    type: informs
-    rationale: Git commands remain raw — make does not wrap version control operations
-  - target: RULE-012
-    type: informs
-    rationale: Pre-commit hooks enforce error ownership — bypassing with --no-verify is forbidden
-  - target: RULE-006
-    type: informs
-    rationale: Pre-commit hook runs coding standard checks that must pass before every commit
-  - target: RULE-009
-    type: informs
-    rationale: Restart protocol and session-ending commit discipline intersect in dogfood mode
-  - target: IMPL-015
-    type: informs
-    rationale: Rule promoted from lesson IMPL-015 (worktree cleanup discipline)
-  - target: RULE-045
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from RULE-045
-  - target: DOC-002
-    type: informed-by
-    rationale: Referenced in documentation page Enforcement Architecture
   - target: DOC-035
-    type: informed-by
-    rationale: workflow.md is the source-of-truth document for the git workflow this rule enforces
-  - target: IMPL-015
-    type: informs
-  - target: RULE-007
-    type: informed-by
-  - target: RULE-025
-    type: informed-by
-  - target: RULE-039
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+    type: documented-by
+  - target: DOC-002
+    type: documented-by
+  - target: AD-021
+    type: enforces
 ---
 **Source of Truth:** `.orqa/documentation/guide/workflow.md`
 
@@ -57,18 +25,18 @@ relationships:
 
 ```bash
 # 1. Create worktree at task start
-git worktree add ../orqa-<task> -b <agent>/<task>
-cd ../orqa-<task>
+git worktree add ../<project>-<task> -b <agent>/<task>
+cd ../<project>-<task>
 
 # 2. Work in isolation, commit regularly
 
 # 3. Request code-reviewer approval BEFORE merging
 
 # 4. Merge only after approval
-cd ../orqa-studio && git merge <branch>
+cd ../<project> && git merge <branch>
 
 # 5. MANDATORY CLEANUP — no stale worktrees
-git branch -d <branch> && git worktree remove ../orqa-<task>
+git branch -d <branch> && git worktree remove ../<project>-<task>
 ```
 
 ## Worktree Cleanup (NON-NEGOTIABLE)
@@ -117,7 +85,7 @@ Run `git status --short`. If untracked (`??`) or modified (`M`) files exist: com
 
 1. Verify replacement content exists and is committed: `git ls-tree HEAD -- <destination>`
 2. Check for stashed work: `git stash list`
-3. Never delete source-of-truth directories (.orqa/, backend/src-tauri/, ui/, sidecar/, tests/) without explicit user approval
+3. Never delete source-of-truth directories (.orqa/ and project source directories) without explicit user approval
 4. Never `git rm -r` on directories with >5 files without user confirmation
 5. If migrating content between directories, confirm destination is committed BEFORE deleting source
 

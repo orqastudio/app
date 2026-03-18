@@ -5,35 +5,9 @@ description: User acceptance testing follows a collect-then-systematize approach
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-layer: core
 relationships:
-  - target: PILLAR-002
-    type: grounded
-    rationale: UAT process structures user feedback into systematic improvement
-  - target: RULE-028
-    type: informs
-    rationale: UAT systemic analysis phase applies systems thinking to group findings by root cause
-  - target: RULE-017
-    type: informs
-    rationale: UAT rounds must create lessons alongside bug fixes to exercise the learning loop
-  - target: RULE-015
-    type: informs
-    rationale: UAT findings must be reported accurately before being grouped into systemic tasks
-  - target: RULE-027
-    type: informs
-    rationale: UAT tasks require artifact structure (task + acceptance criteria) before fixes are implemented
-  - target: IMPL-011
-    type: informs
-    rationale: Rule promoted from lesson IMPL-011
-  - target: IMPL-012
-    type: informs
-    rationale: Rule promoted from lesson IMPL-012
-  - target: IMPL-011
-    type: informs
-  - target: IMPL-012
-    type: informs
-  - target: PILLAR-002
-    type: informs
+  - target: AD-054
+    type: enforces
 ---
 User acceptance testing follows a structured process that prevents premature fixing and ensures systemic solutions.
 

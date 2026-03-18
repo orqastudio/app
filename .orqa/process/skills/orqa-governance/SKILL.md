@@ -1,250 +1,192 @@
 ---
 id: SKILL-011
-title: Orqa Governance Patterns
+title: Governance Patterns
 description: |
-  OrqaStudio governance patterns: artifact types, scanning pipeline, lesson promotion,
-  rule enforcement, frontmatter schemas, and .orqa/ directory structure.
-  Use when: Working with governance artifacts (docs, research, lessons, rules),
-  modifying scanning or enforcement, or maintaining the .orqa/ directory.
+  How the .orqa/ governance structure works: artifact layering, config-driven
+  discovery, relationship vocabulary, status lifecycle, lesson pipeline, and
+  directory conventions. Use when: creating or maintaining governance artifacts,
+  understanding how the three artifact layers merge, or working with the
+  relationship graph.
 status: active
 created: 2026-03-01
-updated: 2026-03-10
-layer: project
-category: domain
+updated: 2026-03-18
+category: methodology
 file-patterns:
   - ".orqa/**"
-version: 2.0.0
+version: 3.0.0
 user-invocable: true
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Artifact types, frontmatter schemas, and scanning pipelines make governance decisions browsable and enforceable in the app
-  - target: TASK-004
-    type: informs
-  - target: TASK-005
-    type: informs
-  - target: TASK-006
-    type: informs
-  - target: TASK-010
-    type: informs
-  - target: TASK-011
-    type: informs
-  - target: TASK-012
-    type: informs
-  - target: TASK-019
-    type: informs
-  - target: TASK-021
-    type: informs
-  - target: TASK-030
-    type: informs
-  - target: TASK-032
-    type: informs
-  - target: TASK-033
-    type: informs
-  - target: TASK-034
-    type: informs
-  - target: TASK-035
-    type: informs
-  - target: TASK-036
-    type: informs
-  - target: TASK-040
-    type: informs
-  - target: TASK-044
-    type: informs
-  - target: TASK-046
-    type: informs
-  - target: TASK-047
-    type: informs
-  - target: TASK-048
-    type: informs
-  - target: TASK-049
-    type: informs
-  - target: TASK-050
-    type: informs
-  - target: TASK-051
-    type: informs
-  - target: TASK-052
-    type: informs
-  - target: TASK-053
-    type: informs
-  - target: TASK-054
-    type: informs
-  - target: TASK-055
-    type: informs
-  - target: TASK-056
-    type: informs
-  - target: TASK-057
-    type: informs
-  - target: TASK-058
-    type: informs
-  - target: TASK-059
-    type: informs
-  - target: TASK-060
-    type: informs
-  - target: TASK-061
-    type: informs
-  - target: TASK-062
-    type: informs
-  - target: TASK-063
-    type: informs
-  - target: TASK-064
-    type: informs
-  - target: TASK-065
-    type: informs
-  - target: TASK-066
-    type: informs
-  - target: TASK-067
-    type: informs
-  - target: TASK-068
-    type: informs
-  - target: TASK-070
-    type: informs
-  - target: TASK-071
-    type: informs
-  - target: TASK-072
-    type: informs
-  - target: TASK-080
-    type: informs
-  - target: TASK-081
-    type: informs
-  - target: TASK-164
-    type: informs
-  - target: TASK-171
-    type: informs
-  - target: TASK-172
-    type: informs
-  - target: TASK-173
-    type: informs
-  - target: TASK-174
-    type: informs
-  - target: TASK-178
-    type: informs
-  - target: TASK-179
-    type: informs
-  - target: TASK-183
-    type: informs
-  - target: TASK-184
-    type: informs
-  - target: TASK-186
-    type: informs
-  - target: TASK-211
-    type: informs
-  - target: TASK-212
-    type: informs
-  - target: TASK-213
-    type: informs
-  - target: TASK-214
-    type: informs
-  - target: TASK-216
-    type: informs
-  - target: TASK-220
-    type: informs
-  - target: TASK-221
-    type: informs
-  - target: TASK-222
-    type: informs
-  - target: TASK-406
-    type: informs
-  - target: TASK-409
-    type: informs
-  - target: TASK-411
-    type: informs
-  - target: TASK-412
-    type: informs
-  - target: TASK-413
-    type: informs
-  - target: TASK-414
-    type: informs
-  - target: TASK-460
-    type: informs
-  - target: TASK-461
-    type: informs
-  - target: TASK-462
-    type: informs
-  - target: TASK-463
-    type: informs
-  - target: TASK-464
-    type: informs
-  - target: TASK-465
-    type: informs
-  - target: TASK-466
-    type: informs
-  - target: TASK-467
-    type: informs
-  - target: TASK-474
-    type: informs
-  - target: TASK-475
-    type: informs
-  - target: TASK-477
-    type: informs
   - target: AGENT-008
-    type: informs
-  - target: PILLAR-001
-    type: informs
+    type: employed-by
 ---
 
 
-OrqaStudio's governance layer manages documentation, research, lessons, rules, agents, skills, and hooks as browsable, scannable artifacts. Understanding this system is critical for anyone working on the governance features.
+Governance in OrqaStudio is the practice of making decisions, rules, lessons, and knowledge visible as first-class artifacts on a graph. Every governance artifact has typed relationships to other artifacts, a status drawn from a universal lifecycle, and frontmatter that machines can parse and humans can read. The `.orqa/` directory is the physical home for these artifacts, but the *meaning* of the structure — what types exist, how they connect, what statuses are valid — is defined entirely by configuration, not by convention or hardcoded logic.
 
 ## .orqa/ Directory Structure
 
+Every OrqaStudio project uses the same canonical directory layout:
+
 ```
 .orqa/
-  project.json              # Project config (name, artifacts array, default model, etc.)
-  icon.svg                  # Project icon
-  documentation/            # Documentation (tree structure with subdirectories)
-    architecture/           #   Architecture docs
-    development/            #   Development guides
-    process/                #   Process docs
-    product/                #   Product docs
-    ui/                     #   UI specs
-  planning/                 # Planning artifacts
-    pillars/                #   PILLAR-NNN.md (guiding principles)
-    ideas/                  #   IDEA-NNN.md
-    research/               #   Research documents (investigations, designs, spikes)
-    milestones/             #   MS-NNN.md
-    epics/                  #   EPIC-NNN.md (contain implementation design in body)
-    tasks/                  #   TASK-NNN.md
-  governance/               # Governance artifacts
-    lessons/                #   IMPL-NNN.md
-    decisions/              #   AD-NNN.md
-    rules/                  #   RULE-NNN.md
-    hooks/                  #   Hook scripts
-  team/                     # Team artifacts
-    agents/                 #   Agent definitions
-    skills/                 #   Skill directories (each has SKILL.md)
+  project.json                # Project config — artifact navigation, project relationships
+  principles/                 # Foundational artifacts (app-required layer)
+    pillars/                  #   PILLAR-NNN.md — guiding principles
+    vision/                   #   Vision statement
+    personas/                 #   PERSONA-NNN.md — target user profiles
+    grounding/                #   Grounding documents
+  discovery/                  # Exploration artifacts
+    ideas/                    #   IDEA-NNN.md — captured thoughts
+    research/                 #   RES-NNN.md — investigations, spikes, designs
+    wireframes/               #   Visual explorations
+  delivery/                   # Execution artifacts
+    milestones/               #   MS-NNN.md — time-boxed goals
+    epics/                    #   EPIC-NNN.md — bodies of work (contain implementation design)
+    tasks/                    #   TASK-NNN.md — individual work items
+  process/                    # Governance artifacts
+    decisions/                #   AD-NNN.md — architecture decisions
+    lessons/                  #   IMPL-NNN.md — implementation lessons
+    rules/                    #   RULE-NNN.md — enforceable standards
+    agents/                   #   AGENT-NNN/ — agent definitions
+    skills/                   #   skill-name/ — skill directories (each has SKILL.md)
+  documentation/              # Human-readable docs
+    platform/                 #   Platform documentation (ships with app)
+    project/                  #   Project-specific documentation
 ```
 
-## Artifact Traceability Chain
+## Three Artifact Homes
+
+Artifacts live in one of three places, each with a distinct role:
+
+### 1. Core (ships with the app — `app/.orqa/`)
+
+Platform-level artifacts that define how OrqaStudio itself works. These are immutable by projects.
+
+- `project.json` — canonical delivery hierarchy, project-level relationship types, status model
+- `documentation/platform/` — platform documentation
+- `process/agents/` — core agents (orchestrator, planner, implementer, etc.)
+- `process/rules/` — core rules (`layer: core`)
+- `process/skills/` — core and setup skills (`layer: core` or `setup`)
+
+### 2. Plugins (registered via `orqa-plugin.json`)
+
+Plugins extend the platform by registering new artifact types, relationship types, or navigation sections. Each plugin declares its contributions in its `orqa-plugin.json` manifest. Plugin-provided types and relationships merge into the runtime configuration alongside platform and project config.
+
+### 3. Project (user's workspace — `.orqa/`)
+
+Everything the user creates during a project's lifecycle:
+
+- `principles/` — pillars, vision, personas, grounding
+- `discovery/` — ideas, research, wireframes
+- `delivery/` — milestones, epics, tasks
+- `process/` — decisions, lessons, project-layer rules and skills
+- `documentation/project/` — project-specific docs
+
+## How Artifacts Are Discovered
+
+Artifact discovery is entirely config-driven. Nothing is inferred from filesystem paths or naming conventions.
+
+**`core.json`** (`libs/types/src/platform/core.json`) is the single source of truth for:
+- Platform artifact types (key, label, icon, ID prefix)
+- Platform relationship types (forward/inverse keys, type constraints, semantic categories)
+- Validation constraints (required relationships, minimum counts)
+
+**`project.json`** (in each `.orqa/` root) defines:
+- Navigation sections — which directories map to which artifact views
+- Project-level relationship types (e.g. `depends-on`/`depended-on-by`)
+- Delivery hierarchy configuration
+
+**`orqa-plugin.json`** (in each plugin) can register:
+- Additional artifact types
+- Additional relationship types
+- Additional navigation sections
+
+### Config Merging
+
+At runtime, all three layers merge:
 
 ```
-Task (TASK-NNN) → Epic (EPIC-NNN) → Milestone (MS-NNN)
-                       ↑
-                  research-refs → Research (RES-NNN)
-
-Lesson (IMPL-NNN) --grounded-by--> Rule (RULE-NNN)
-Rule (RULE-NNN)   --observes-->    Lesson (IMPL-NNN)
+platform defaults (core.json)
+  → project config (project.json)
+    → plugin provides (orqa-plugin.json per plugin)
 ```
 
-- **Tasks** always have `epic:` field referencing an existing EPIC-NNN
-- **Epics** always have `milestone:` field referencing an existing MS-NNN
-- **Epics** may have `research-refs:` array linking to RES-NNN documents
-- **Research** documents are investigations, design explorations, and spikes
-- **All governance artifacts** have a `relationships` array with bidirectional pipeline connections
-- **There is NO "Plan" artifact type** — epics contain implementation design in their body
+The scanner reads the merged config and walks exactly those paths. It does not guess or infer. Every `path` in the config must resolve to an actual directory on disk.
 
-### FORBIDDEN
+## Relationship Vocabulary
 
-- `plan:` field on any artifact — this field is deprecated and removed
-- Creating files in `.orqa/delivery/plans/` — this directory no longer exists
-- Tasks without an `epic:` field
-- Epics without a `milestone:` field
+All artifact connections use the `relationships` frontmatter array with `target` and `type` fields. The canonical vocabulary is defined in `core.json` — never hardcode relationship keys in logic.
+
+Relationships are grouped into semantic categories:
+
+| Category | What it means | Example relationships |
+|----------|---------------|----------------------|
+| **foundation** | Anchoring to vision, pillars, personas | `upholds`, `grounded`, `benefits`, `revises` |
+| **lineage** | One artifact becoming or spawning another | `crystallises`, `spawns`, `merged-into` |
+| **governance** | Decisions and rules directing behaviour | `drives`, `governs`, `enforces`, `codifies` |
+| **knowledge-flow** | Knowledge flowing between artifacts | `informs`, `teaches`, `guides`, `cautions`, `documents` |
+| **observation** | Agents monitoring and using capabilities | `observes`, `employs` |
+| **synchronisation** | Paired content kept in sync | `synchronised-with` |
+
+Every relationship in `core.json` declares:
+- **`from`/`to` type constraints** — which artifact types may appear on each end
+- **`semantic` category** — enables queries like "show all governance relationships" without naming specific keys
+- **`constraints`** (optional) — whether the relationship is required, minimum count
+
+Enforcement checks query by semantics, not by key name. For example, "does this idea have a foundation relationship?" rather than `if rel === "grounded"`.
+
+### Bidirectionality
+
+Every forward relationship has a declared inverse. When you create a forward edge, the inverse must also exist on the target artifact. The integrity scanner detects missing inverses.
+
+### Type Constraints
+
+Type constraints from `core.json` are enforced at validation time:
+- `enforces` — only FROM rule, only TO decision
+- `grounded`/`grounded-by` — only FROM idea, only TO pillar
+- `drives`/`driven-by` — only FROM decision, only TO epic
+- `observes`/`observed-by` — only FROM agent
+
+Project-level relationships (e.g. `depends-on`/`depended-on-by`) are defined in `project.json`, not `core.json`.
+
+## Artifact Lifecycle
+
+### Status Model
+
+The 12 canonical statuses are defined in `core.json` and `project.json`. They form a universal progression:
+
+```
+captured → exploring → ready → prioritised → active → hold / blocked
+    → review → completed → surpassed / archived / recurring
+```
+
+Not every artifact type uses every status. The valid transitions for each type are defined in configuration, not hardcoded.
+
+Status transitions can be graph-driven: when all nodes connected via `delivers` relationships reach `completed`, the parent node is proposed for `review`.
+
+### Lesson Pipeline
+
+Lessons follow a structured promotion path:
+
+```
+Lesson documented (.orqa/process/lessons/IMPL-NNN.md)
+    → Recurrence tracked (frontmatter count field incremented)
+    → Promoted at threshold (recurrence >= 2)
+    → Becomes rule or coding standard addition
+    → Enforcement verified
+```
+
+Lessons are never deleted. When a lesson is codified into a rule, the `codifies`/`codified-by` relationship makes the lineage traceable.
+
+### Historical Preservation
+
+- **Documentation** (`.orqa/documentation/`) — DELETE when outdated, replace with current
+- **Research, tasks, decisions** — PRESERVE, mark `status: surpassed` with a lineage relationship (e.g. `evolves-into`, `merged-into`) pointing to the successor
+- **Never delete** research, task, or decision files — they are historical records of reasoning
 
 ## Config-Driven Artifact Scanning
 
-The `artifacts` array in `project.json` is the SINGLE SOURCE OF TRUTH for what gets scanned and displayed. The scanner does NOT guess — it reads config and scans exactly those paths.
-
-### Config Schema
+The `artifacts` array in `project.json` is the single source of truth for what gets scanned and displayed. The scanner does NOT guess — it reads config and scans exactly those paths.
 
 ```jsonc
 "artifacts": [
@@ -253,30 +195,25 @@ The `artifacts` array in `project.json` is the SINGLE SOURCE OF TRUTH for what g
   // Group — renders as expandable group, each child scanned independently
   { "key": "planning", "label": "Planning", "icon": "target",
     "children": [
-      { "key": "ideas", "label": "Ideas", "path": ".orqa/delivery/ideas" },
-      { "key": "research", "label": "Research", "path": ".orqa/delivery/research" },
+      { "key": "ideas", "label": "Ideas", "path": ".orqa/discovery/ideas" },
+      { "key": "research", "label": "Research", "path": ".orqa/discovery/research" },
       { "key": "epics", "label": "Epics", "path": ".orqa/delivery/epics" }
     ]
   }
 ]
 ```
 
-### Scanning Behavior (File Explorer Pattern)
-
-The scanner recursively walks directories like a file explorer:
-
-1. **Flat directories** — Scans `.md` files directly (milestones, epics, etc.)
-2. **Tree directories** — Recurses into subdirectories, creating `DocNode` entries with `children` for folders
-3. **Frontmatter extraction** — Every `.md` file gets YAML frontmatter parsed for `title` (→ label) and `description`
-4. **Label priority**: frontmatter `title` > `humanize_name(filename)` > raw filename
-5. **Artifact IDs** (all-caps like `[EPIC-001](EPIC-001)`, `[AD-015](AD-015)`) are preserved as-is, not humanized
-6. **README.md** is navigation metadata, skipped as browsable artifact at all levels
+Scanning behaviour:
+1. **Flat directories** — scans `.md` files directly
+2. **Tree directories** — recurses into subdirectories, creating folder nodes with children
+3. **Frontmatter extraction** — every `.md` file gets YAML frontmatter parsed for `title` and `description`
+4. **Label priority**: frontmatter `title` > humanised filename > raw filename
+5. **Artifact IDs** (all-caps like `EPIC-001`, `AD-015`) are preserved as-is, not humanised
+6. **README.md** is navigation metadata, skipped as a browsable artifact at all levels
 7. **Hidden entries** (`.` or `_` prefix) skipped
 8. **Empty directories** omitted from tree
 
-### Critical Rule: Config Paths Must Match Disk
-
-Every `path` in the config must resolve to an actual directory. Moving files on disk requires updating the config. See `.orqa/process/rules/[RULE-003](RULE-003).md`.
+**Critical rule:** every `path` in the config must resolve to an actual directory. Moving files on disk requires updating the config.
 
 ## Directory README Format
 
@@ -332,174 +269,15 @@ Description, lifecycle diagram, key concepts, and Related section.
 
 ### When to Create/Update a README
 
-- **New artifact directory**: Create a README before adding any artifacts
-- **New artifact type registered in project.json**: Create matching README
-- **Renaming or moving a directory**: Update the README's label and description
-- **Changing the artifact's lifecycle or schema**: Update the README to match
-
-## Artifact Frontmatter Schemas
-
-All governance artifacts use YAML frontmatter parsed by a generic function.
-
-### Epic Frontmatter (key artifact)
-
-```yaml
----
-id: EPIC-NNN
-layer: project
-title: "Epic Title"
-status: draft | ready | in-progress | review | done
-milestone: MS-NNN
-priority: P1 | P2 | P3
-research-refs:          # Optional — links to research documents
-  - research-doc-name
-scoring:
-  pillar: 0-5
-  impact: 1-5
-  dependency: 1-3
-  effort: 1-5
-  score: computed
-docs-required: []       # Docs that must exist before implementation
-docs-produced: []       # Docs this work creates/updates
-depends-on: []
-blocks: []
-description: >
-  What this epic delivers.
-tags: []
----
-
-## Implementation Design
-
-[The epic body contains the implementation design that previously lived
-in a separate plan document. Data model, IPC contracts, component
-breakdown, and approach all go here.]
-```
-
-### Task Frontmatter
-
-```yaml
----
-id: TASK-NNN
-title: "Task Title"
-status: todo | in-progress | done
-epic: EPIC-NNN          # REQUIRED — always references an epic
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
-assignee: agent-name
-skills: [skill1, skill2]
-  - file/paths
-acceptance:
-  - criteria
-tags: []
----
-```
-
-### Research Frontmatter
-
-```yaml
----
-id: RES-NNN
-title: "Research Title"
-description: "Brief description"
-status: draft | complete | surpassed
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
-surpassed-by: RES-NNN          # Set when status: surpassed
----
-```
-
-### Rule Frontmatter
-
-```yaml
----
-id: RULE-NNN
-title: "Rule Title"
-description: "What this rule enforces"
-status: active
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
-layer: core | project
-relationships:
-  - type: grounded
-    target: PILLAR-NNN
-    rationale: "Why this rule serves this pillar"
-  - type: observes
-    target: IMPL-NNN
-    rationale: "Lesson that prompted this rule"
----
-```
-
-### Lesson Frontmatter
-
-```yaml
----
-id: IMPL-NNN
-title: "Lesson Title"
-description: "Brief description of the lesson"
-status: active
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
-maturity: observation | understanding
-recurrence: 0
-relationships:
-  - type: grounded
-    target: AD-NNN
-    rationale: "Decision this lesson informs"
----
-```
-
-## Artifact Status Workflows
-
-### Epic: `draft → ready → in-progress → review → done`
-### Task: `todo → in-progress → done`
-### Research: `draft → complete → surpassed`
-### Decision: `proposed → accepted → superseded` (or `→ deprecated`)
-### Idea: `captured → exploring → shaped → promoted` (or `→ archived`)
-### Milestone: `planning → active → complete`
-
-## Historical Artifact Preservation
-
-- **Documentation** (`.orqa/documentation/`) — DELETE when outdated, replace with current
-- **Research, tasks** — PRESERVE, mark `status: surpassed` with `surpassed-by` reference
-- **Never delete** research or task files — they are historical records
-
-## Lesson Pipeline
-
-```
-Lesson documented (.orqa/process/lessons/IMPL-NNN.md)
-    → Recurrence tracked (frontmatter count field incremented)
-    → Promoted at threshold (recurrence >= 2)
-    → Becomes rule or coding standard addition
-    → Enforcement verified
-```
+- **New artifact directory**: create a README before adding any artifacts
+- **New artifact type registered in project.json**: create matching README
+- **Renaming or moving a directory**: update the README's label and description
+- **Changing the artifact's lifecycle or schema**: update the README to match
 
 ## Pillar Alignment
 
-Active pillars are defined in `.orqa/process/pillars/PILLAR-NNN.md`. Every governance artifact and feature must serve at least one active pillar. To evaluate alignment, read each pillar's `gate` questions and check if the work can answer "yes" to at least one question from at least one pillar.
+Active pillars are defined in `.orqa/principles/pillars/PILLAR-NNN.md`. Every governance artifact and feature must serve at least one active pillar. To evaluate alignment, read each pillar's `gate` questions and check if the work can answer "yes" to at least one question from at least one pillar.
 
 Pillars are equal in importance — when they conflict, flag the conflict to the user and ask for direction.
 
 Features that serve no active pillar are out of scope.
-
-## Key Files
-
-| File | Purpose |
-|------|---------|
-| `.orqa/project.json` | Project configuration (includes `artifacts` array) |
-| `.orqa/process/pillars/` | Product pillars (PILLAR-NNN.md) — guiding principles |
-| `.orqa/process/lessons/` | Implementation lessons (IMPL-NNN.md) |
-| `.orqa/process/decisions/` | Architecture decisions (AD-NNN.md) |
-| `.orqa/process/rules/` | Governance rules |
-| `.orqa/process/hooks/` | Hook scripts |
-| `.orqa/delivery/ideas/` | Ideas (IDEA-NNN.md) |
-| `.orqa/delivery/research/` | Research documents (investigations, designs, spikes) |
-| `.orqa/delivery/milestones/` | Milestones (MS-NNN.md) |
-| `.orqa/delivery/epics/` | Epics (EPIC-NNN.md) — contain implementation design |
-| `.orqa/delivery/tasks/` | Tasks (TASK-NNN.md) — always reference an epic |
-| `.orqa/process/agents/` | Agent definitions |
-| `.orqa/process/skills/` | Skill definitions |
-| `.orqa/documentation/` | Documentation tree (subdirs: architecture, product, etc.) |
-| `backend/src-tauri/src/domain/artifact.rs` | Frontmatter parsing, artifact types |
-| `backend/src-tauri/src/domain/artifact_reader.rs` | Config-driven recursive scanner |
-| `backend/src-tauri/src/commands/artifact_commands.rs` | Tree scan and read commands |
-| `backend/src-tauri/src/domain/project_settings.rs` | Project settings + ArtifactEntry config types |

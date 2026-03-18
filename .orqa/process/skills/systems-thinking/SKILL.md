@@ -5,15 +5,9 @@ description: "Practical methodology for applying systems thinking to codebases â
 status: active
 created: 2026-03-11
 updated: 2026-03-11
-layer: core
 category: methodology
 user-invocable: true
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Mapping boundaries, relationships, and the uniform base before changing code prevents special-case proliferation and makes architecture intentional
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 # Systems Thinking

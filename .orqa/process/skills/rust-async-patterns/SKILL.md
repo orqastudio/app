@@ -5,29 +5,9 @@ description: "Master Rust async programming with Tokio, async traits, error hand
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: core
 category: domain
 user-invocable: false
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Tokio task, channel, and stream patterns make concurrent data flows explicit and their error paths traceable
-  - target: TASK-007
-    type: informs
-  - target: TASK-013
-    type: informs
-  - target: TASK-014
-    type: informs
-  - target: TASK-015
-    type: informs
-  - target: TASK-073
-    type: informs
-  - target: TASK-074
-    type: informs
-  - target: TASK-079
-    type: informs
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 

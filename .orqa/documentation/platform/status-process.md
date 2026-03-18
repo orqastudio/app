@@ -1,26 +1,22 @@
 ---
 id: DOC-075
 title: "Status & Workflow"
+category: reference
 description: "How the unified status system works — what each status means, when it changes, and who changes it."
 created: 2026-03-15
 updated: 2026-03-15
 sort: 11
 relationships:
   - target: AD-049
-    type: informs
+    type: documents
     rationale: This page explains the status vocabulary and icon system defined in AD-049
-  - target: PILLAR-001
-    type: informs
-    rationale: The status system makes artifact state of thought visible and structured
-  - target: EPIC-077
-    type: informed-by
 ---
 
 ## Overview
 
 Every artifact in OrqaStudio carries a `status` field. Status is not a pipeline stage — it is the artifact's current **state of thought**: how far along the idea, task, or decision has been developed, and whether it needs human attention.
 
-The same 11 statuses apply across all artifact types. A task, an epic, an idea, and a lesson all use the same vocabulary. This makes the entire artifact graph readable at a glance.
+The same 12 statuses apply across all artifact types. A task, an epic, an idea, and a lesson all use the same vocabulary. This makes the entire artifact graph readable at a glance. The authoritative status definitions live in `project.json`'s `statuses` array — including valid transitions and auto-rules.
 
 ---
 
@@ -38,6 +34,7 @@ The same 11 statuses apply across all artifact types. A task, an epic, an idea, 
 | `review` | Circle User Round | Needs a human. Work is complete enough for a person to verify, approve, or decide. |
 | `completed` | Circle Check | Done. A human has verified this and confirmed it is finished. |
 | `surpassed` | Circle Minus | No longer active. Superseded by newer thinking, or the need has passed. |
+| `archived` | Archive | Preserved for historical reference but no longer relevant to active work. |
 | `recurring` | Circle Fading Arrow Up | A pattern that keeps appearing. Typically used for lessons pending promotion to a rule or skill. |
 
 ---
@@ -50,7 +47,7 @@ Not every artifact passes through every status. The path depends on what the art
 captured → exploring → ready → prioritised → active → review → completed
 ```
 
-At any point an artifact may move to `hold` (paused), `blocked` (stuck), `surpassed` (superseded), or — for lessons — `recurring` (pattern detected).
+At any point an artifact may move to `hold` (paused), `blocked` (stuck), `surpassed` (superseded), `archived` (preserved but inactive), or — for lessons — `recurring` (pattern detected).
 
 ### A typical idea
 
@@ -121,3 +118,4 @@ The progression is not a conveyor belt. It is a map of how ideas and tasks matur
 |--------|-----------|
 | Clarity Through Structure | The unified status vocabulary makes every artifact's state of thought visible at a glance, across all types, without ambiguity. |
 | Learning Through Reflection | The `recurring` status creates a visible signal when patterns repeat, feeding directly into the lesson promotion pipeline. |
+| Purpose Through Continuity | Status tracking prevents intent drift — an artifact's journey from `captured` to `completed` is visible, so original purpose isn't lost during implementation. |

@@ -2,8 +2,8 @@
 id: DOC-070
 type: doc
 name: Artifact Relationships Reference
+category: reference
 status: active
-layer: core
 relationships:
   - target: SKILL-050
     type: synchronised-with

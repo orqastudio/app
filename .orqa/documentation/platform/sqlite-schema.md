@@ -1,20 +1,15 @@
 ---
 id: DOC-013
 title: SQLite Schema
+category: reference
 description: "SQLite database schema covering sessions, messages, governance artifacts, and configuration tables."
 created: 2026-03-02
 updated: 2026-03-10
 sort: 4
 relationships:
-  - target: RES-006
-    type: informs
-    rationale: Documentation page references RES-006
   - target: AD-014
-    type: informs
+    type: documents
     rationale: Documentation page references AD-014
-  - target: RES-003
-    type: informs
-    rationale: Documentation page references RES-003
 ---
 
 

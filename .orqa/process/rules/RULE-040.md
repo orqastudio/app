@@ -5,42 +5,11 @@ description: Agent definitions declare abstract capabilities. A provider mapping
 status: active
 created: 2026-03-11
 updated: 2026-03-13
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Provider-agnostic capabilities create a structured abstraction for tool resolution
-  - target: RULE-026
-    type: informs
-    rationale: Skill loading complements capability resolution — both define what an agent brings to a task
-  - target: RULE-001
-    type: informs
-    rationale: The delegation protocol includes resolving capabilities to concrete tools for each provider context
-  - target: RULE-005
-    type: informs
-    rationale: Code search capabilities resolve to either ChunkHound MCP tools or native search tools depending on context
-  - target: IMPL-030
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-030
-  - target: IMPL-032
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-032
-  - target: IDEA-057
-    type: informs
-    rationale: All 4 research questions from IDEA-057 resolved directly into this rule
-  - target: DOC-030
-    type: informed-by
-    rationale: Referenced in documentation page Orchestration
-  - target: RULE-001
-    type: informed-by
-  - target: RULE-026
-    type: informed-by
-  - target: RULE-037
-    type: informed-by
   - target: AD-025
     type: enforces
-  - target: PILLAR-001
-    type: informs
+  - target: DOC-030
+    type: documented-by
 ---
 Agent definitions declare **capabilities** (what they can do), not **tools** (how they
 do it). The mapping from capabilities to provider-specific tool names is defined in this

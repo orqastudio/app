@@ -1,6 +1,7 @@
 ---
 id: DOC-080
 title: Getting Started
+category: onboarding
 description: "Introduction to OrqaStudio, what it does, and how to set up your first project."
 created: 2026-03-14
 updated: 2026-03-14

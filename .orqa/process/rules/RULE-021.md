@@ -5,33 +5,11 @@ description: Every documentation page describing a feature must include a Pillar
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Pillar alignment in docs ensures documentation serves the product vision
-  - target: RULE-031
-    type: informs
-    rationale: Pillar alignment in docs extends vision alignment from features to documentation pages
-  - target: RULE-008
-    type: informs
-    rationale: Documentation is the source of truth and must trace to active pillars
-  - target: RULE-004
-    type: informs
-    rationale: Docs-produced gate requires produced documentation pages to include pillar alignment sections
   - target: AGENT-008
-    type: informs
-    rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
-  - target: RULE-004
-    type: informed-by
-  - target: RULE-031
-    type: informed-by
-  - target: AGENT-008
-    type: informs
-  - target: AGENT-008
-    type: informs
-  - target: PILLAR-001
-    type: informs
+    type: observed-by
+  - target: AD-031
+    type: enforces
 ---
 Every documentation page that describes a feature, component, workflow, integration, or capability MUST include a "Pillar Alignment" section. This ensures all documented work traces back to the product vision and prevents scope creep from accumulating silently in the docs.
 

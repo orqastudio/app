@@ -5,27 +5,9 @@ description: "Fix root causes of type mismatches between layers. Never paper ove
 status: active
 created: 2026-03-07
 updated: 2026-03-12
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: No aliases ensures structural consistency across type boundaries
-  - target: RULE-010
-    type: informs
-    rationale: Type consistency must hold across all layers — mismatches must be fixed at the source layer
-  - target: RULE-012
-    type: informs
-    rationale: A type mismatch is an error you own — fix it at the root, not with a workaround
-  - target: RULE-020
-    type: informs
-    rationale: Alias entries are a form of fake data hiding real gaps between layers
-  - target: RULE-005
-    type: informs
-    rationale: Use search_regex to find all usages of an identifier before renaming or removing it
-  - target: RULE-003
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+  - target: AD-017
+    type: enforces
 ---
 When a value or type mismatch exists between layers, fix the root cause. Never paper over it with aliases, shims, or duplicate mappings.
 

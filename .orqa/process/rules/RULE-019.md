@@ -5,7 +5,6 @@ description: "If a deliverable is in scope, it ships with the epic. Deferring sc
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-layer: core
 enforcement:
   - "event: file"
   - ".orqa/**"
@@ -13,33 +12,8 @@ enforcement:
   - ".orqa/delivery/tasks/**"
   - ".orqa/delivery/epics/**"
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: No deferred deliverables ensures scope clarity and completion integrity
-  - target: RULE-015
-    type: informs
-    rationale: Deferring scoped deliverables is a form of dishonest reporting
-  - target: RULE-022
-    type: informs
-    rationale: Plans must reconcile with roadmap scope before implementation begins
-  - target: RULE-020
-    type: informs
-    rationale: Scaffolded implementations that defer wiring are not deliverables — they are stubs
-  - target: RULE-004
-    type: informs
-    rationale: Epic status transitions require all deliverables to be complete before marking done
-  - target: IMPL-016
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-016
-  - target: IMPL-049
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-049
-  - target: RULE-015
-    type: informed-by
-  - target: RULE-027
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+  - target: AD-051
+    type: enforces
 ---
 ## The Rule
 

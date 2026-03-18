@@ -5,26 +5,9 @@ description: Every agent must read its required documentation before any impleme
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Required reading ensures agents have governing context loaded before work
-  - target: RULE-008
-    type: informs
-    rationale: Documentation is the specification; required reading ensures agents load it before coding
-  - target: RULE-006
-    type: informs
-    rationale: Coding standards document is required reading before any implementation work
-  - target: RULE-002
-    type: informs
-    rationale: Architecture decisions are required reading before any code that touches the IPC boundary
-  - target: RULE-001
-    type: informed-by
-  - target: RULE-026
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+  - target: AD-028
+    type: enforces
 ---
 Every agent MUST read its Required Reading documentation before any implementation work begins. The Required Reading section in each agent definition lists the specific documentation pages that agent needs loaded into context.
 

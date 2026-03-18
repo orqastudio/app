@@ -5,19 +5,9 @@ description: "Sessions must be managed with state persistence, clean handoffs, a
 status: active
 created: 2026-03-11
 updated: 2026-03-11
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Session management ensures structured handoffs between sessions
-  - target: RULE-013
-    type: informs
-    rationale: Session management requires clean git state — stash policy and commit discipline apply at session boundaries
-  - target: RULE-007
-    type: informs
-    rationale: Session management requires dev server lifecycle control using make targets
-  - target: PILLAR-001
-    type: informs
+  - target: AD-021
+    type: enforces
 ---
 
 Every session that performs work must leave the codebase in a clean, resumable state. Session state bridges the gap between context windows.

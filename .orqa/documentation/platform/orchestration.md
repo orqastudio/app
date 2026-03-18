@@ -1,26 +1,24 @@
 ---
 id: DOC-030
 title: Orchestration
+category: architecture
 description: How the orchestrator coordinates work across specialized agents using delegation and verification.
 created: 2026-03-02
 updated: 2026-03-12
 sort: 20
 relationships:
   - target: RULE-026
-    type: informs
+    type: documents
     rationale: Documentation page references RULE-026
   - target: AD-029
-    type: informs
+    type: documents
     rationale: Documentation page references AD-029
   - target: RULE-040
-    type: informs
+    type: documents
     rationale: Documentation page references RULE-040
   - target: RULE-001
-    type: informs
+    type: documents
     rationale: This document is the source-of-truth for orchestrator behaviour and agent delegation that RULE-001 enforces
-  - target: DOC-069
-    type: informs
-    rationale: Orchestration documentation provides procedural context for the delegation reference — inverse of informed-by on DOC-069
 ---
 
 ## Purpose

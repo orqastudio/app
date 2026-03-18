@@ -6,21 +6,13 @@ description: |
   verification, credibility assessment, cross-referencing, and structured
   documentation of findings with confidence levels.
 status: active
-layer: core
 category: methodology
 user-invocable: true
 relationships:
-  - target: PILLAR-002
-    type: grounded
-    rationale: Source verification and confidence-leveled findings turn ad-hoc investigation into reusable knowledge that compounds across sessions
-  - target: DOC-068
-    type: informs
   - target: AGENT-004
-    type: informs
+    type: employed-by
   - target: AGENT-005
-    type: informs
-  - target: PILLAR-002
-    type: informs
+    type: employed-by
 ---
 
 # Research Methodology
@@ -46,7 +38,7 @@ achieve it.
 
 | Tier | Source Type | Verification Required | Confidence |
 |------|-----------|----------------------|------------|
-| **T1 — Authoritative** | Official docs (docs.rs, svelte.dev, tauri.app), RFCs, language specs | Verify version matches our stack | High |
+| **T1 — Authoritative** | Official documentation, RFCs, language/framework specs, vendor docs | Verify version matches project stack | High |
 | **T2 — Reliable** | Well-maintained GitHub repos (>100 stars), established blogs (official team blogs), conference talks by core contributors | Cross-reference with T1 source | Medium-High |
 | **T3 — Community** | Stack Overflow (accepted + upvoted), GitHub issues/discussions, dev.to/Medium articles, tutorials | Cross-reference with T1 or T2, check date | Medium |
 | **T4 — Unverified** | Personal blogs, forum posts, AI-generated content, single-source claims | Must verify with T1/T2 before citing | Low |
@@ -58,7 +50,7 @@ achieve it.
 - **Contradicting sources**: Document both positions and the contradiction. Do not
   silently pick one.
 - **Version-specific information**: Always check which version the source applies to.
-  A Tauri v1 answer is wrong for Tauri v2. A Svelte 4 pattern is wrong for Svelte 5.
+  An answer for version N may be wrong for version N+1.
 - **Date-sensitive information**: Library APIs change. Check the publication date.
   Anything older than 12 months needs verification against current docs.
 
@@ -66,16 +58,16 @@ achieve it.
 
 ### Research Document Format
 
-When creating research artifacts (`.orqa/delivery/research/RES-NNN.md`):
+When creating research artifacts:
 
 ```yaml
 sources:
-  - url: "https://docs.rs/tauri/2.0.0/tauri/"
-    description: "Tauri v2 official API docs"
+  - url: "https://example.com/official-docs/v2/api"
+    description: "Official API documentation"
     tier: T1
     accessed: "2026-03-12"
-  - url: "https://github.com/tauri-apps/tauri/issues/10023"
-    description: "beforeDevCommand not killed with --no-watch"
+  - url: "https://github.com/example/project/issues/123"
+    description: "Known issue discussion"
     tier: T2
     accessed: "2026-03-12"
 ```
@@ -107,10 +99,10 @@ Every finding or recommendation should state its confidence:
 
 | Intent | Query Pattern | Example |
 |--------|-------------|---------|
-| Official docs | `site:docs.rs [crate] [function]` | `site:docs.rs tauri invoke` |
-| GitHub issues | `site:github.com [repo] [keyword]` | `site:github.com tauri-apps/tauri beforeDevCommand` |
-| Version-specific | `[library] v[version] [topic]` | `svelte 5 runes $derived` |
-| Comparison | `[A] vs [B] [context]` | `rusqlite vs sqlx tauri` |
+| Official docs | `site:[docs-domain] [library] [function]` | `site:docs.python.org asyncio gather` |
+| GitHub issues | `site:github.com [repo] [keyword]` | `site:github.com org/project connection-pool` |
+| Version-specific | `[library] v[version] [topic]` | `react 19 server components` |
+| Comparison | `[A] vs [B] [context]` | `SQLite vs PostgreSQL embedded use` |
 
 ### When to Search
 
@@ -128,13 +120,11 @@ Every finding or recommendation should state its confidence:
 
 ## Integration with Artifact Graph
 
-Research findings connect to the graph through:
+Research findings connect to the graph through typed relationships:
 
 1. **`sources` field** on research documents — structured external references
-2. **`research-refs` field** on epics — which research informed the design
-3. **`docs` field** on tasks — research docs loaded during implementation
-4. **Lessons** — when external information was wrong or misleading, capture it
+2. **Relationship links** to delivery artifacts — which research informed which work
+3. **Lessons** — when external information was wrong or misleading, capture it
 
 The graph makes research discoverable: when a future task touches the same area,
-the relevant research (with its verified sources) is automatically loaded via
-graph traversal.
+the relevant research (with its verified sources) is found via graph traversal.

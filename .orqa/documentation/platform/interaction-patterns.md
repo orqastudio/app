@@ -1,20 +1,12 @@
 ---
 id: DOC-053
 title: Interaction Patterns
+category: reference
 description: "Standard interaction patterns for navigation, selection, editing, and feedback across the UI."
 created: 2026-03-02
 updated: 2026-03-04
 sort: 6
-relationships:
-  - target: RES-004
-    type: informs
-    rationale: Documentation page references RES-004
-  - target: RES-002
-    type: informs
-    rationale: Documentation page references RES-002
-  - target: DOC-067
-    type: informs
-    rationale: Interaction patterns are distilled into the design-principles grounding document — inverse of informed-by on DOC-067
+relationships: []
 ---
 
 **Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-004), [AI Integration Research](RES-002), Design System

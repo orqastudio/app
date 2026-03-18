@@ -5,28 +5,9 @@ description: "Enforcement artifacts (rules, skills, lessons) must be created bef
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-layer: core
 relationships:
-  - target: PILLAR-002
-    type: grounded
-    rationale: Enforcement before code captures patterns as they emerge, enabling learning
-  - target: RULE-008
-    type: informs
-    rationale: Enforcement artifacts extend documentation-first to include rules, skills, and lessons
-  - target: RULE-017
-    type: informs
-    rationale: Lessons are one type of enforcement artifact that must be created before the fix cycle
-  - target: RULE-026
-    type: informs
-    rationale: Skills are enforcement artifacts that must exist before agents implement a pattern
-  - target: RULE-003
-    type: informed-by
-  - target: RULE-027
-    type: informed-by
   - target: AD-048
     type: enforces
-  - target: PILLAR-002
-    type: informs
 ---
 # Enforcement Before Code (NON-NEGOTIABLE)
 

@@ -5,29 +5,9 @@ description: "Every change must be evaluated as part of the whole system, not as
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Systems thinking provides the core methodology for achieving clarity through structure
-  - target: RULE-022
-    type: informs
-    rationale: Systems Architecture Checklist operationalises systems thinking in every implementation plan
-  - target: RULE-010
-    type: informs
-    rationale: Full-stack thinking is systems thinking applied to the four-layer feature structure
-  - target: RULE-009
-    type: informs
-    rationale: Dogfood mode heightens systems-thinking urgency when editing a live system from within
-  - target: IMPL-034
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-034
-  - target: RULE-009
-    type: informed-by
-  - target: RULE-030
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+  - target: AD-017
+    type: enforces
 ---
 # Systems Thinking First (NON-NEGOTIABLE)
 

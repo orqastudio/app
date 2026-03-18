@@ -5,57 +5,11 @@ description: Documentation is the source of truth. Verify docs exist before writ
 status: active
 created: 2026-03-07
 updated: 2026-03-12
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Documentation-first ensures knowledge is captured before implementation
-  - target: RULE-004
-    type: informs
-    rationale: Documentation gates on epics enforce the docs-required and docs-produced workflow
-  - target: RULE-022
-    type: informs
-    rationale: Plans must read and comply with existing documentation before implementation
-  - target: RULE-005
-    type: informs
-    rationale: Use code_research to discover existing documentation before implementing
-  - target: RULE-031
-    type: informs
-    rationale: Documentation must be checked for pillar alignment before new features are implemented
-  - target: RULE-002
-    type: informs
-    rationale: Architecture decisions are documentation and must be consulted before writing code
-  - target: RULE-006
-    type: informs
-    rationale: Coding standards document is the source of truth that must be read before writing code
-  - target: IMPL-047
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-047
   - target: AGENT-008
-    type: informs
-    rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
-  - target: RULE-002
-    type: informed-by
-  - target: RULE-003
-    type: informed-by
-  - target: RULE-004
-    type: informed-by
-  - target: RULE-011
-    type: informed-by
-  - target: RULE-014
-    type: informed-by
-  - target: RULE-021
-    type: informed-by
-  - target: RULE-023
-    type: informed-by
-  - target: RULE-027
-    type: informed-by
-  - target: AGENT-008
-    type: informs
-  - target: AGENT-008
-    type: informs
-  - target: PILLAR-001
-    type: informs
+    type: observed-by
+  - target: AD-017
+    type: enforces
 ---
 ## Principle
 

@@ -5,22 +5,9 @@ description: The project root must stay lean. Every file in root must have a jus
 status: active
 created: 2026-03-07
 updated: 2026-03-12
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Root directory discipline maintains structural clarity at project level
-  - target: RULE-003
-    type: informs
-    rationale: Root discipline keeps project.json config paths predictable and resolvable
-  - target: RULE-007
-    type: informs
-    rationale: Build commands in make targets reference root-level config files governed by this rule
-  - target: RULE-013
-    type: informs
-    rationale: tmp/ is gitignored; .gitignore and .gitattributes belong in root per this rule
-  - target: PILLAR-001
-    type: informs
+  - target: AD-043
+    type: enforces
 ---
 The project root must stay lean. Every file in root must have a justification.
 

@@ -1,21 +1,18 @@
 ---
 id: DOC-025
 title: Artifact Workflow
+category: how-to
 description: "Day-to-day workflow for creating, transitioning, and managing artifacts through their lifecycle."
 created: 2026-03-07
 updated: 2026-03-09
 sort: 3
 relationships:
   - target: RULE-004
-    type: informs
+    type: documents
     rationale: Documentation page references RULE-004
   - target: RULE-017
-    type: informs
+    type: documents
     rationale: Documentation page references RULE-017
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: informed-by
 ---
 
 **Date:** 2026-03-07

@@ -10,16 +10,10 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: core
 category: methodology
 version: 1.0.0
 user-invocable: true
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Teaches boundary verification and compliance checklists that make architectural decisions visible and enforceable
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 

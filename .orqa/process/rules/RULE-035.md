@@ -5,25 +5,9 @@ description: Skills must be portable within their declared layer. Core skills mu
 status: active
 created: 2026-03-11
 updated: 2026-03-11
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Skill portability ensures clean separation between core and project content
-  - target: RULE-026
-    type: informs
-    rationale: Skill loading model requires skills to be correctly layered and declared as portable or project-specific
-  - target: RULE-005
-    type: informs
-    rationale: Search skills are core-layer portable and demonstrate the context-resolved portability pattern
   - target: AD-001
     type: enforces
-  - target: RULE-038
-    type: informed-by
-  - target: RULE-044
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
 ---
 A skill's `layer` field declares its portability scope. Content within the skill MUST be portable within that scope. A core skill that contains project-specific paths is broken — it will give wrong guidance on other projects.
 

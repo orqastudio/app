@@ -5,7 +5,6 @@ description: "Designs implementation approaches, evaluates architectural tradeof
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: core
 model: inherit
 capabilities:
   - file_read
@@ -19,25 +18,15 @@ capabilities:
 subagent_mapping: null
 relationships:
   - target: SKILL-005
-    type: informed-by
+    type: employs
   - target: SKILL-008
-    type: informed-by
+    type: employs
   - target: SKILL-019
-    type: informed-by
+    type: employs
   - target: SKILL-002
-    type: informed-by
+    type: employs
   - target: SKILL-048
-    type: informed-by
-  - target: SKILL-002
-    type: informed-by
-  - target: SKILL-005
-    type: informed-by
-  - target: SKILL-008
-    type: informed-by
-  - target: SKILL-019
-    type: informed-by
-  - target: SKILL-048
-    type: informed-by
+    type: employs
 ---
 
 

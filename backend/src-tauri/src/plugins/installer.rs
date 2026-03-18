@@ -18,11 +18,33 @@ pub struct InstallResult {
     pub version: String,
     pub path: String,
     pub source: String, // "github" or "local"
+    /// Key collisions detected during installation. Empty when none.
+    /// When non-empty, the UI/CLI should prompt the user to merge or rename
+    /// each collision before completing installation.
+    pub collisions: Vec<super::collision::KeyCollision>,
 }
 
 /// Install a plugin from a local filesystem path.
+///
+/// Checks for relationship key collisions with core and other installed
+/// plugins. If collisions are detected, they are returned in the result
+/// so the caller can prompt the user to merge or rename before finalizing.
 pub fn install_from_path(source: &Path, project_root: &Path) -> Result<InstallResult, OrqaError> {
     let manifest = read_manifest(source)?;
+
+    // Parse incoming relationship schemas for collision detection
+    let incoming_rels: Vec<crate::domain::integrity_engine::RelationshipSchema> = manifest
+        .provides
+        .relationships
+        .iter()
+        .filter_map(|v| serde_json::from_value(v.clone()).ok())
+        .collect();
+
+    let collisions = super::collision::detect_relationship_collisions(
+        &incoming_rels,
+        project_root,
+        &manifest.name,
+    );
 
     let plugins_dir = project_root.join("plugins");
     std::fs::create_dir_all(&plugins_dir)?;
@@ -45,6 +67,7 @@ pub fn install_from_path(source: &Path, project_root: &Path) -> Result<InstallRe
         version: manifest.version,
         path: target.to_string_lossy().to_string(),
         source: "local".to_string(),
+        collisions,
     })
 }
 
@@ -124,6 +147,20 @@ pub async fn install_from_github(
         }
     };
 
+    // Collision detection
+    let incoming_rels: Vec<crate::domain::integrity_engine::RelationshipSchema> = manifest
+        .provides
+        .relationships
+        .iter()
+        .filter_map(|v| serde_json::from_value(v.clone()).ok())
+        .collect();
+
+    let collisions = super::collision::detect_relationship_collisions(
+        &incoming_rels,
+        project_root,
+        &manifest.name,
+    );
+
     let short_name = manifest
         .name
         .split('/')
@@ -155,6 +192,7 @@ pub async fn install_from_github(
         version: manifest.version,
         path: target.to_string_lossy().to_string(),
         source: "github".to_string(),
+        collisions,
     })
 }
 

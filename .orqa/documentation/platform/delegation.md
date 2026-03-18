@@ -1,27 +1,15 @@
 ---
 id: DOC-069
 title: Delegation Reference
+category: reference
 description: "Orchestrator's source of truth for delegation — maps work types to roles, skills, and grounding. If the orchestrator is writing anything other than coordination output, the system has failed."
 created: 2026-03-14
 updated: 2026-03-14
 sort: 10
 relationships:
-  - target: DOC-064
-    type: informed-by
-    rationale: Product purpose grounding informs the delegation philosophy
-  - target: DOC-030
-    type: informed-by
-    rationale: Orchestration documentation provides procedural context
   - target: RULE-001
-    type: enforces
+    type: documents
     rationale: This document operationalises the delegation rule
-  - target: RULE-001
-    type: informs
-    rationale: "Auto-generated inverse of documents relationship from RULE-001"
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-003
-    type: informed-by
 ---
 # Delegation Reference
 

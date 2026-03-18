@@ -1,11 +1,10 @@
 ---
-id: SKILL-051
+id: SKILL-054
 type: skill
 name: Naming Conventions
 status: active
-layer: core
 relationships:
-  - target: DOC-071
+  - target: DOC-082
     type: synchronised-with
 ---
 

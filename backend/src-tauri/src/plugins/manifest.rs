@@ -19,6 +19,26 @@ pub struct PluginManifest {
     pub display_name: Option<String>,
     pub description: Option<String>,
     pub provides: PluginProvides,
+    /// Recorded decisions from previous installations when relationship or
+    /// artifact type keys collided with core or other plugins.
+    /// Key: the relationship/schema key. Value: the decision made.
+    #[serde(default, rename = "mergeDecisions")]
+    pub merge_decisions: Vec<MergeDecision>,
+}
+
+/// A recorded decision about a key collision during plugin installation.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MergeDecision {
+    /// The relationship or schema key that collided.
+    pub key: String,
+    /// What was decided: "merged" (union from/to) or "renamed" (key namespaced).
+    pub decision: String,
+    /// The original key name if renamed (e.g. "merged-into" before becoming "sw-merged-into").
+    #[serde(rename = "originalKey", skip_serializing_if = "Option::is_none")]
+    pub original_key: Option<String>,
+    /// The source that owns the existing definition (e.g. "core" or a plugin name).
+    #[serde(rename = "existingSource")]
+    pub existing_source: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -115,6 +135,7 @@ mod tests {
                 tools: vec![],
                 hooks: vec![],
             },
+            merge_decisions: vec![],
         };
 
         let errors = validate_manifest(&manifest);

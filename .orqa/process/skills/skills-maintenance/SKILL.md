@@ -9,44 +9,10 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: core
 category: methodology
 version: 1.0.0
 user-invocable: true
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Skill evaluation, portability rules, and provenance tracking ensure domain knowledge is curated, versioned, and discoverable
-  - target: TASK-006
-    type: informs
-  - target: TASK-032
-    type: informs
-  - target: TASK-033
-    type: informs
-  - target: TASK-034
-    type: informs
-  - target: TASK-035
-    type: informs
-  - target: TASK-040
-    type: informs
-  - target: TASK-044
-    type: informs
-  - target: TASK-053
-    type: informs
-  - target: TASK-054
-    type: informs
-  - target: TASK-067
-    type: informs
-  - target: TASK-081
-    type: informs
-  - target: TASK-212
-    type: informs
-  - target: TASK-215
-    type: informs
-  - target: TASK-223
-    type: informs
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 

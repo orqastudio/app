@@ -9,19 +9,13 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: setup
 category: tool
 version: 1.0.0
 user-invocable: true
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Software preset layers worktree rules, testing standards, and CI patterns onto base governance, making dev workflow expectations explicit
-  - target: PILLAR-001
-    type: informs
+  - target: DOC-087
+    type: synchronised-with
 ---
-
-> **Forward-looking:** This skill will be activated when project initialisation and software project type support are implemented. See [EPIC-045](EPIC-045) and [EPIC-047](EPIC-047) for context.
 
 Adds software development governance to a base OrqaStudio setup. This is a project type preset — it layers development-specific rules, skills, and documentation templates on top of the core governance foundation.
 

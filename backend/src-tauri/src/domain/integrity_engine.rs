@@ -61,6 +61,8 @@ pub struct RelationshipSchema {
     pub key: String,
     pub inverse: String,
     #[serde(default)]
+    pub description: String,
+    #[serde(default)]
     pub from: Vec<String>,
     #[serde(default)]
     pub to: Vec<String>,
@@ -95,6 +97,7 @@ pub fn build_validation_context(
     valid_statuses: &[String],
     delivery: &DeliveryConfig,
     project_relationships: &[ProjectRelationshipConfig],
+    plugin_relationships: &[RelationshipSchema],
 ) -> ValidationContext {
     let mut relationships: Vec<RelationshipSchema> = Vec::new();
     let mut inverse_map: HashMap<String, String> = HashMap::new();
@@ -104,10 +107,11 @@ pub fn build_validation_context(
         relationships.push(RelationshipSchema {
             key: rel.key.clone(),
             inverse: rel.inverse.clone(),
+            description: rel.description.clone(),
             from: rel.from.clone(),
             to: rel.to.clone(),
             semantic: rel.semantic.clone(),
-            constraints: None, // Platform core.json doesn't have constraints yet
+            constraints: None,
         });
         inverse_map.insert(rel.key.clone(), rel.inverse.clone());
         if rel.inverse != rel.key {
@@ -115,13 +119,45 @@ pub fn build_validation_context(
         }
     }
 
-    // 2. Project relationships from project.json.
+    // 2. Plugin relationships — extend existing definitions or add new ones.
+    // When a plugin declares a key that already exists (e.g. extending core's
+    // `merged-into` to also allow research→research), the from/to arrays are
+    // unioned. Collision detection happens at plugin install time, not here.
+    for pr in plugin_relationships {
+        if let Some(existing) = relationships.iter_mut().find(|r| r.key == pr.key) {
+            // Extend from/to constraints (union)
+            for t in &pr.from {
+                if !existing.from.contains(t) {
+                    existing.from.push(t.clone());
+                }
+            }
+            for t in &pr.to {
+                if !existing.to.contains(t) {
+                    existing.to.push(t.clone());
+                }
+            }
+            // Merge constraints if plugin provides them and existing doesn't
+            if pr.constraints.is_some() && existing.constraints.is_none() {
+                existing.constraints = pr.constraints.clone();
+            }
+        } else {
+            // New relationship from plugin
+            relationships.push(pr.clone());
+        }
+        inverse_map.insert(pr.key.clone(), pr.inverse.clone());
+        if pr.inverse != pr.key {
+            inverse_map.insert(pr.inverse.clone(), pr.key.clone());
+        }
+    }
+
+    // 3. Project relationships from project.json.
     for pr in project_relationships {
-        // Only add if not already defined by platform.
+        // Only add if not already defined by platform or plugin.
         if !inverse_map.contains_key(&pr.key) {
             relationships.push(RelationshipSchema {
                 key: pr.key.clone(),
                 inverse: pr.inverse.clone(),
+                description: String::new(),
                 from: vec![],
                 to: vec![],
                 semantic: None,
@@ -134,14 +170,14 @@ pub fn build_validation_context(
         }
     }
 
-    // 3. Collect dependency keys from semantics.
+    // 4. Collect dependency keys from semantics.
     let mut dependency_keys = HashSet::new();
     if let Some(sem) = PLATFORM.semantics.get("dependency") {
         for k in &sem.keys {
             dependency_keys.insert(k.clone());
         }
     }
-    // Also check project-level semantics: any relationship with "dependency" semantic.
+    // Also check plugin/project semantics: any relationship with "dependency" semantic.
     for rel in &relationships {
         if rel.semantic.as_deref() == Some("dependency") {
             dependency_keys.insert(rel.key.clone());
@@ -1001,6 +1037,7 @@ mod tests {
             relationships: vec![RelationshipSchema {
                 key: key.to_string(),
                 inverse: inverse.to_string(),
+                description: String::new(),
                 from: vec![],
                 to: vec![],
                 semantic: None,
@@ -1101,6 +1138,7 @@ mod tests {
             relationships: vec![RelationshipSchema {
                 key: "enforces".to_string(),
                 inverse: "enforced-by".to_string(),
+                description: String::new(),
                 from: vec!["rule".to_string()],
                 to: vec!["decision".to_string()],
                 semantic: None,
@@ -1124,6 +1162,7 @@ mod tests {
             relationships: vec![RelationshipSchema {
                 key: "enforces".to_string(),
                 inverse: "enforced-by".to_string(),
+                description: String::new(),
                 from: vec!["rule".to_string()],
                 to: vec!["decision".to_string()],
                 semantic: None,
@@ -1163,6 +1202,7 @@ mod tests {
             relationships: vec![RelationshipSchema {
                 key: "delivers".to_string(),
                 inverse: "delivered-by".to_string(),
+                description: String::new(),
                 from: vec![],
                 to: vec![],
                 semantic: None,
@@ -1199,6 +1239,7 @@ mod tests {
             relationships: vec![RelationshipSchema {
                 key: "depends-on".to_string(),
                 inverse: "depended-on-by".to_string(),
+                description: String::new(),
                 from: vec![],
                 to: vec![],
                 semantic: Some("dependency".to_string()),
@@ -1271,7 +1312,7 @@ mod tests {
 
     #[test]
     fn build_context_includes_platform_relationships() {
-        let ctx = build_validation_context(&[], &DeliveryConfig::default(), &[]);
+        let ctx = build_validation_context(&[], &DeliveryConfig::default(), &[], &[]);
         assert!(!ctx.relationships.is_empty());
         assert!(ctx.inverse_map.contains_key("enforces"));
     }

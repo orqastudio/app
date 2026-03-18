@@ -5,7 +5,6 @@ description: "All artifact cross-references must resolve, pipeline relationships
 status: active
 created: 2026-03-13
 updated: 2026-03-14
-layer: core
 enforcement:
   - "event: file"
   - ".orqa/**/*.md"
@@ -13,41 +12,12 @@ enforcement:
   - ".orqa/**/*.md"
   - orqa-governance
 relationships:
-  - target: RES-056
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from RES-056
-  - target: IMPL-058
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-058
-  - target: AGENT-008
-    type: informs
-    rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
-  - target: EPIC-059
-    type: informs
-  - target: IMPL-055
-    type: informed-by
-  - target: IMPL-068
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded
-  - target: RULE-013
-    type: informs
-  - target: RULE-032
-    type: informs
-  - target: RULE-034
-    type: informs
   - target: AD-036
     type: enforces
   - target: AD-042
     type: enforces
   - target: AGENT-008
-    type: informs
-  - target: TASK-413
-    type: delivered-by
-  - target: AGENT-008
-    type: informs
-  - target: PILLAR-001
-    type: informs
+    type: observed-by
 ---
 All artifact cross-references must resolve to existing artifacts. Pipeline relationships must have bidirectional inverses. These constraints are enforced at commit time and can be verified manually.
 

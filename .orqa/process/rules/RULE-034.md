@@ -5,31 +5,11 @@ description: "All cross-references between artifacts must use markdown link synt
 status: active
 created: 2026-03-11
 updated: 2026-03-13
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Cross-reference format ensures navigable, structured artifact links
-  - target: RULE-032
-    type: informs
-    rationale: Frontmatter field values that reference artifacts must use valid IDs in the correct link format
-  - target: RULE-003
-    type: informs
-    rationale: Artifact link format must use IDs, not file paths — config paths and link targets are separate concerns
-  - target: RULE-045
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from RULE-045
-  - target: AGENT-008
-    type: informs
-    rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
   - target: AD-036
     type: enforces
   - target: AGENT-008
-    type: informs
-  - target: AGENT-008
-    type: informs
-  - target: PILLAR-001
-    type: informs
+    type: observed-by
 ---
 All artifact cross-references MUST use the format `[Display Text](ARTIFACT-ID)` where the artifact ID matches the pattern `PREFIX-NNN`. The display text is typically the artifact ID itself: `[EPIC-001](EPIC-001)`.
 

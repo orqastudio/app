@@ -5,7 +5,6 @@ description: "Builds things — code, deliverables, artifacts. Whatever \"work\"
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: core
 model: sonnet
 capabilities:
   - file_read
@@ -20,13 +19,9 @@ capabilities:
 subagent_mapping: null
 relationships:
   - target: SKILL-005
-    type: informed-by
+    type: employs
   - target: SKILL-008
-    type: informed-by
-  - target: SKILL-005
-    type: informed-by
-  - target: SKILL-008
-    type: informed-by
+    type: employs
 ---
 
 

@@ -5,42 +5,9 @@ description: All errors are your responsibility. Pre-existing errors must be fix
 status: active
 created: 2026-03-07
 updated: 2026-03-12
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Error ownership ensures problems are resolved, not deferred
-  - target: RULE-006
-    type: informs
-    rationale: Error ownership defines when to verify — always, before every function call
-  - target: RULE-005
-    type: informs
-    rationale: Use search_regex to find function signatures before calling them
-  - target: RULE-010
-    type: informs
-    rationale: The full chain must be verified — not just the code but the runtime connection
-  - target: RULE-010
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from RULE-010
-  - target: RULE-005
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from RULE-005
-  - target: RULE-006
-    type: informed-by
-  - target: RULE-013
-    type: informed-by
-  - target: RULE-015
-    type: informed-by
-  - target: RULE-018
-    type: informed-by
-  - target: RULE-020
-    type: informed-by
-  - target: RULE-029
-    type: informed-by
-  - target: RULE-043
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+  - target: AD-003
+    type: enforces
 ---
 ## Rule (NON-NEGOTIABLE)
 

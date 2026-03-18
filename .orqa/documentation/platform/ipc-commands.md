@@ -1,33 +1,24 @@
 ---
 id: DOC-005
 title: IPC Command Catalog
+category: reference
 description: Catalog of all Tauri IPC commands defining the frontend-backend communication contract.
 created: 2026-03-02
 updated: 2026-03-10
 sort: 1
 relationships:
-  - target: RES-007
-    type: informs
-    rationale: Documentation page references RES-007
   - target: AD-002
-    type: informs
+    type: documents
     rationale: Documentation page references AD-002
   - target: AD-009
-    type: informs
+    type: documents
     rationale: Documentation page references AD-009
   - target: AD-003
-    type: informs
+    type: documents
     rationale: Documentation page references AD-003
-  - target: IMPL-001
-    type: informs
-    rationale: Documentation page references IMPL-001
   - target: EPIC-048
-    type: informs
+    type: documents
     rationale: Documentation page references EPIC-048
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: informed-by
 ---
 
 **References:** [Tauri v2 Research](RES-007), [AD-002](AD-002), [AD-009](AD-009), Rust Module Architecture

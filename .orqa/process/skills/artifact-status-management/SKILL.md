@@ -9,21 +9,10 @@ description: |
 status: active
 created: 2026-03-15
 updated: 2026-03-15
-layer: core
 category: methodology
 version: 1.0.0
 user-invocable: false
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Accurate status keeps the artifact graph readable — making the state of all thinking visible and structured
-  - target: AD-049
-    type: informed-by
-  - target: AD-049
-    type: informed-by
-    rationale: This skill operationalises the unified status vocabulary and icon system defined in AD-049
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 ## Purpose

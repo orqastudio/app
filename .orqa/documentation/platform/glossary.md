@@ -1,13 +1,14 @@
 ---
 id: DOC-037
 title: "Glossary & Domain Model"
+category: reference
 description: Domain model and glossary of key terms used throughout OrqaStudio documentation and code.
 created: 2026-03-02
-updated: 2026-03-08
+updated: 2026-03-18
 sort: 10
 relationships:
   - target: AD-018
-    type: informs
+    type: documents
     rationale: Documentation page references AD-018
 ---
 
@@ -47,39 +48,33 @@ The runtime state of an open project in OrqaStudio: the active session, open pan
 
 ### Artifact
 
-Any structured document that defines how a project operates. Governance artifacts include agents, rules, skills, hooks, hookify files, and documentation. Artifacts live on disk in `.orqa/` (authoritative source of truth) and are indexed in SQLite (derived cache). For CLI tool compatibility, OrqaStudio can optionally create symlinks in `.claude/` or other tool-specific locations pointing to the corresponding `.orqa/` paths.
+A node on the artifact graph. Every artifact has typed relationships to other artifacts, a status from the universal 12-status vocabulary, and YAML frontmatter that machines can parse and humans can read. Artifacts live on disk as markdown files in three possible homes: `app/.orqa/` (core — ships with the platform), `plugins/` (domain-specific — installed per project), and `.orqa/` (project-scoped — unique to this project). The types, relationships, and constraints are defined by `core.json` (platform) and `orqa-plugin.json` (plugins) — not hardcoded.
 
 ### Agent
 
-A specialized AI persona with a defined role, skill set, and domain boundary. Agents are defined as markdown files (`.orqa/agents/*.md`) with YAML frontmatter specifying skills and capabilities. Agents are provider-agnostic definitions that the sidecar instantiates. In the current bootstrap process, agents are executed through the Claude Code CLI via `.claude/` symlinks pointing to `.orqa/agents/`.
+A specialized AI persona with a defined role, skill set, and domain boundary. Agents are defined as markdown files in `.orqa/process/agents/` (or `app/.orqa/process/agents/` for core agents) with YAML frontmatter specifying `employs` relationships to skills and `observes` relationships to monitored artifacts. Agents are provider-agnostic definitions.
 
-**Examples:** backend-engineer, frontend-engineer, code-reviewer, systems-architect.
+**Examples:** orchestrator, planner, implementer, reviewer, designer, researcher, writer, governance-steward.
 
 ### Rule
 
-A constraint that agents must follow during implementation. Rules are markdown files (`.orqa/rules/*.md`) that encode coding standards, workflow requirements, architectural constraints, and process gates. Rules are the primary mechanism for enforcing governance.
+A constraint that agents must follow during implementation. Rules are markdown files in `.orqa/process/rules/` (project) or `app/.orqa/process/rules/` (core) with YAML frontmatter including enforcement entries and an `enforces` relationship to the governing decision. Rules are the primary mechanism for enforcing governance.
 
 **Examples:** "All Rust code must use Result types, not unwrap," "Every task must pass through a review gate before completion."
 
 ### Skill
 
-A reusable knowledge package that provides domain-specific context to agents. Skills are loaded on demand and supply agents with framework-specific patterns, best practices, and reference material. Skills come from the skills.sh registry or custom project definitions.
+A reusable knowledge package that provides domain-specific context to agents. Skills are directories containing a `SKILL.md` file, living in `app/.orqa/process/skills/` (core), `plugins/*/skills/` (plugin), or `.orqa/process/skills/` (project). Each skill may have a paired documentation artifact connected via `synchronised-with`. Skills are loaded on demand based on agent `employs` relationships and file-pattern injection rules.
 
-**Examples:** svelte5-best-practices, rust-async-patterns, tauri-v2, chunkhound.
+**Examples:** composability, research-methodology, code-quality-review, plugin-artifact-usage.
 
 ### Hook
 
-A governance enforcement mechanism triggered automatically during development. OrqaStudio supports two types of hooks:
-
-**Lifecycle hooks** (`.orqa/process/hooks/`) — Shell scripts that execute in response to lifecycle events (session start, stop). Used for process reminders and checklists.
-
-**Hookify rules** (`.orqa/hooks/hookify.*.local.md`) — Pattern-based enforcement files that block or warn in real-time when a file edit or bash command matches a forbidden pattern. Used for active prevention of code-level violations. For Claude Code CLI compatibility, these may be symlinked from `.claude/hookify.*.local.md`.
-
-Both types appear in the Hooks view of the Activity Bar.
+An internal enforcement mechanism triggered automatically during development. Hooks fire on specific events (PreToolUse, PostToolUse, UserPromptSubmit, Stop) and are registered in plugin/connector manifests. They are an implementation detail not surfaced to users — the user sees rules and their effects, not the hook machinery beneath them.
 
 ### Documentation
 
-Structured project knowledge maintained in `.orqa/documentation/` (the canonical location). During the bootstrap phase, documentation is also maintained in `docs/` and will migrate to `.orqa/documentation/` as the artifact framework matures. Documentation covers architecture decisions, research findings, process definitions, UI specifications, and product definitions. Documentation is the foundation layer — agents, rules, and skills reference docs, not the other way around.
+Structured project knowledge in `.orqa/documentation/` (project) or `app/.orqa/documentation/platform/` (core). Docs use the `documents` relationship type to connect to the artifacts they describe (epics, decisions, rules, milestones). Paired with skills via `synchronised-with` — skills teach agents, docs teach humans.
 
 ---
 
@@ -87,19 +82,23 @@ Structured project knowledge maintained in `.orqa/documentation/` (the canonical
 
 ### Governance Framework
 
-The complete set of artifacts (agents, rules, skills, hooks, hookify files, documentation) that define how a project operates. All governance artifacts live under `.orqa/` as the source of truth. The governance framework is the product that OrqaStudio makes visible and manageable. It is organized in four layers: **Core** (app-managed, non-editable — provides the core systems thinking framework), **Project** (user-managed, additive — extends the core for a specific context), **Plugin** (1st party official extensions), and **Community** (community-contributed extensions). Core artifacts and project artifacts may be backed by `.orqa/` files; the plugin and community layers add capability without file-system footprint.
+The complete set of artifacts (agents, rules, skills, docs, decisions, lessons, ideas, and all other typed nodes) that define how a project operates. Organized in five layers: **Core** (`app/.orqa/` — ships with every install, non-editable), **Plugin** (`plugins/` — domain-specific bundles installed per project), **Project** (`.orqa/` — user-managed, project-specific), **Community** (shared publicly via registry), and **User** (local plugins created by the user). The artifact graph is the product that OrqaStudio makes visible and manageable.
 
-### Two-Pillar Test
+### Three-Pillar Test
 
-The feature acceptance gate: every feature must serve at least one of (1) Clarity Through Structure or (2) Learning Through Reflection. Features that serve neither are rejected. When pillars conflict, Pillar 1 takes priority — you cannot improve a process that isn't visible and structured. See Product Governance.
+The feature acceptance gate: every feature must serve at least one of the three pillars. Features that serve none are rejected. Pillars are equal in importance — when they conflict, flag the conflict and ask for direction.
 
 ### Clarity Through Structure (Pillar 1)
 
-Making governance artifacts visible and manageable. Producing structured knowledge (plans, decisions, rules). Surfacing what would otherwise be hidden in files or terminal output. Enforcing documentation-first workflows. Rule enforcement and visualisation, agent definition management, scanner execution and dashboards, quality gate enforcement. Governance is not a document collecting dust — it is a living, enforceable, visible layer that OrqaStudio makes tangible and manageable.
+Making thinking visible. If it's not structured and browsable, it doesn't exist yet. Governance artifacts, decisions, plans, and knowledge are first-class visible things — not hidden config files or terminal output.
 
 ### Learning Through Reflection (Pillar 2)
 
-The system and its users improving over time. Lesson capture, metric tracking (pass/fail rates, coverage trends, violation recurrence), retrospective generation, pattern promotion (lesson → rule → scanner → enforcement), session continuity and handoff, codebase scanning and re-scanning, knowledge accumulation over time. Mistakes are documented, patterns are extracted, and governance artifacts are updated automatically.
+The system improves over time. Mistakes are documented, patterns are extracted, and governance evolves. Every cycle produces not just output but insight that feeds the next cycle.
+
+### Purpose Through Continuity (Pillar 3)
+
+The user's original intent survives implementation pressure. When scope drifts, when decisions are lost between sessions, when execution diverges from intent — the system surfaces that drift before it compounds.
 
 ### Human Approval Gate
 
@@ -237,7 +236,7 @@ A dedicated Explorer Panel view showing project overview information: detected s
 
 ### Activity Bar
 
-A fixed 48px vertical icon rail on the far left of the window. The top icon is Project Dashboard (`Ctrl+0`). Below it are artifact categories (Docs, Agents, Rules, Skills, Hooks), then dashboards (Scanners, Metrics, Learning), and Settings at the bottom. Clicking an icon switches the Explorer Panel and Nav Sub-Panel to the corresponding view. The Activity Bar is always visible and not collapsible.
+A fixed 48px vertical icon rail on the far left of the window. The top icon is Project Dashboard (`Ctrl+0`). Below it are artifact categories and navigation sections driven by `project.json`, then Settings at the bottom. Clicking an icon switches the Explorer Panel and Nav Sub-Panel to the corresponding view. The Activity Bar is always visible and not collapsible.
 
 ### Explorer Panel
 
@@ -293,9 +292,45 @@ The coordinating intelligence in the agentic team. In the bootstrap phase, this 
 
 ---
 
+## Schema-Driven Architecture
+
+### core.json
+
+The single source of truth for platform artifact types, relationship definitions, and semantic categories. Located at `libs/types/src/platform/core.json`. Loaded at runtime by both the Rust backend (embedded via `include_str!()`) and TypeScript (imported as JSON). No artifact types or relationship keys are hardcoded in any code path.
+
+### Relationship Vocabulary
+
+The set of typed, bidirectional relationships defined in `core.json`. Each relationship has a forward key, inverse key, `from`/`to` type constraints, a semantic category, and optional constraints (required, minCount, statusRules). The canonical vocabulary includes 19 core relationships across 6 semantic categories: foundation, lineage, governance, knowledge-flow, observation, and synchronisation.
+
+### Semantic Category
+
+A grouping of relationship keys by intent. Used by the integrity engine to query relationships generically (e.g. "all lineage keys") without hardcoding specific key names. Categories: foundation, lineage, governance, knowledge-flow, observation, synchronisation, plus plugin-defined categories (hierarchy, dependency, corrective).
+
+### Integrity Engine
+
+The schema-driven validation engine (`integrity_engine.rs` in Rust, `validator/` in CLI). Reads constraints from the merged schema (core.json + plugin manifests + project.json) and validates every artifact against them. Zero hardcoded artifact types or relationship keys.
+
+### Plugin Manifest
+
+The `orqa-plugin.json` file at the root of every plugin. Declares what the plugin provides: artifact schemas, relationships, views, widgets, skills, hooks, and CLI tools. Relationships in plugin manifests can extend core definitions by declaring the same key with additional `from`/`to` types.
+
+### Connector
+
+A bridge between OrqaStudio's governance system and an external tool (e.g. Claude Code). Connectors live in `connectors/` and may provide skills, hooks, and rules that map between the tool's concepts and OrqaStudio's artifact model.
+
+### Artifact Graph
+
+The in-memory graph of all artifacts and their typed relationships. Built by scanning `.orqa/`, `app/.orqa/`, `plugins/`, and `connectors/` directories. Nodes are artifacts, edges are relationships. The graph is the data structure that the integrity engine validates and that views query.
+
+### ValidationContext
+
+The merged constraint set used by the integrity engine. Combines platform relationships (core.json), plugin relationships (orqa-plugin.json), and project relationships (project.json) into a single lookup. When a plugin extends an existing core key, the `from`/`to` arrays are unioned.
+
+---
+
 ## Related Documents
 
-- Product Vision — Problem statement, solution, pillars
-- Product Governance — Two-Pillar Test, foundational principles
-- Architecture Decisions — Formal technical decisions
-- Orchestration — Current (bootstrap) process model
+- [VISION-001](VISION-001) — Product vision and mission
+- Artifact Framework (DOC-036) — Comprehensive artifact type and relationship reference
+- Enforcement Architecture (DOC-002) — Five-layer enforcement system
+- Status & Workflow (DOC-075) — Unified 12-status vocabulary

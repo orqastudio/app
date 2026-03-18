@@ -5,7 +5,6 @@ description: "Svelte 5 runes, snippets, SvelteKit patterns, and modern best prac
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: core
 category: domain
 file-patterns:
   - "ui/src/lib/components/**"
@@ -13,80 +12,7 @@ file-patterns:
 user-invocable: false
 license: MIT
 metadata: null
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Rune patterns, snippet APIs, and TypeScript prop typing enforce explicit component contracts that are visible in code and reviewable
-  - target: TASK-009
-    type: informs
-  - target: TASK-016
-    type: informs
-  - target: TASK-017
-    type: informs
-  - target: TASK-018
-    type: informs
-  - target: TASK-023
-    type: informs
-  - target: TASK-026
-    type: informs
-  - target: TASK-069
-    type: informs
-  - target: TASK-075
-    type: informs
-  - target: TASK-076
-    type: informs
-  - target: TASK-077
-    type: informs
-  - target: TASK-078
-    type: informs
-  - target: TASK-082
-    type: informs
-  - target: TASK-083
-    type: informs
-  - target: TASK-161
-    type: informs
-  - target: TASK-190
-    type: informs
-  - target: TASK-403
-    type: informs
-  - target: TASK-404
-    type: informs
-  - target: TASK-405
-    type: informs
-  - target: TASK-406
-    type: informs
-  - target: TASK-407
-    type: informs
-  - target: TASK-408
-    type: informs
-  - target: TASK-420
-    type: informs
-  - target: TASK-421
-    type: informs
-  - target: TASK-422
-    type: informs
-  - target: TASK-423
-    type: informs
-  - target: TASK-428
-    type: informs
-  - target: TASK-469
-    type: informs
-  - target: TASK-470
-    type: informs
-  - target: TASK-471
-    type: informs
-  - target: TASK-472
-    type: informs
-  - target: TASK-473
-    type: informs
-  - target: TASK-475
-    type: informs
-  - target: TASK-476
-    type: informs
-  - target: TASK-478
-    type: informs
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 

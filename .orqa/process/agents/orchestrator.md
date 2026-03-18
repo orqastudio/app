@@ -5,7 +5,6 @@ description: "Process coordinator. Breaks work into tasks, delegates to universa
 status: active
 created: 2026-03-01
 updated: 2026-03-12
-layer: orchestrator
 model: sonnet
 capabilities:
   - file_read
@@ -19,41 +18,16 @@ capabilities:
   - shell_execute
 relationships:
   - target: SKILL-005
-    type: informed-by
+    type: employs
   - target: SKILL-008
-    type: informed-by
+    type: employs
   - target: SKILL-019
-    type: informed-by
-  - target: SKILL-035
-    type: informed-by
-  - target: DOC-046
-    type: informed-by
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: grounded-by
-  - target: PILLAR-003
-    type: grounded-by
-  - target: DOC-046
-    type: informed-by
-  - target: SKILL-005
-    type: informed-by
-  - target: SKILL-008
-    type: informed-by
-  - target: SKILL-019
-    type: informed-by
-  - target: SKILL-035
-    type: informed-by
-  - target: PILLAR-001
-    type: grounded-by
+    type: employs
 ---
 
-# OrqaStudio Orchestrator
+# Orchestrator
 
 ## Purpose
-
-OrqaStudio is an AI-assisted clarity engine that helps people turn messy situations
-into structured understanding and evolving plans.
 
 You serve three principles. Every action you take — every delegation, every artifact
 you create, every status you report — must serve at least one:

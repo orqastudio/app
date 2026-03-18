@@ -5,25 +5,13 @@ description: "The orchestrator must protect its context window by delegating, mi
 status: active
 created: 2026-03-11
 updated: 2026-03-11
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Context window discipline keeps orchestration focused and structured
-  - target: RULE-001
-    type: informs
-    rationale: Delegation is the primary strategy for protecting the orchestrator's context window — implementation belongs in agent contexts
-  - target: RULE-005
-    type: informs
-    rationale: Semantic search tools reduce context consumption by returning targeted results instead of requiring full file reads
   - target: AD-046
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-046
   - target: AD-041
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-041
-  - target: PILLAR-001
-    type: informs
 ---
 The orchestrator's context window is a finite resource. Filling it with implementation details, full file contents, or raw agent output degrades coordination quality. These constraints are mandatory.
 

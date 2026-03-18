@@ -10,46 +10,26 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-12
-layer: core
 category: tool
 version: 1.1.0
 user-invocable: true
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Context-aware search makes codebase knowledge discoverable before changes, preventing blind modifications
-  - target: TASK-037
-    type: informs
-  - target: TASK-038
-    type: informs
-  - target: TASK-039
-    type: informs
-  - target: TASK-041
-    type: informs
-  - target: TASK-042
-    type: informs
-  - target: TASK-043
-    type: informs
-  - target: TASK-045
-    type: informs
   - target: AGENT-001
-    type: informs
+    type: employed-by
   - target: AGENT-008
-    type: informs
+    type: employed-by
   - target: AGENT-002
-    type: informs
+    type: employed-by
   - target: AGENT-003
-    type: informs
+    type: employed-by
   - target: AGENT-004
-    type: informs
+    type: employed-by
   - target: AGENT-005
-    type: informs
+    type: employed-by
   - target: AGENT-006
-    type: informs
+    type: employed-by
   - target: AGENT-007
-    type: informs
-  - target: PILLAR-001
-    type: informs
+    type: employed-by
 ---
 
 Context-aware code search wrapper. Detects your runtime context and provides the right

@@ -5,21 +5,9 @@ description: The user-invocable field in skill frontmatter controls whether a sk
 status: active
 created: 2026-03-11
 updated: 2026-03-11
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: User-invocable field creates clear structure for skill surfacing
-  - target: RULE-026
-    type: informs
-    rationale: User-invocable field is required in skill frontmatter as part of the skill loading model
-  - target: RULE-035
-    type: informs
-    rationale: User-invocable field is part of the portability contract each skill must declare
-  - target: RULE-026
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+  - target: AD-028
+    type: enforces
 ---
 Every skill MUST have a `user-invocable` field in its YAML frontmatter. This field determines how the skill surfaces to users.
 

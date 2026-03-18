@@ -5,7 +5,6 @@ description: "Core graph artifacts (schemas, orchestrator, core skills, role def
 status: active
 created: 2026-03-12
 updated: 2026-03-12
-layer: core
 enforcement:
   - "event: file"
   - ".orqa/delivery/*/schema.json"
@@ -18,33 +17,15 @@ enforcement:
   - .orqa/process/skills/planning/SKILL.md
   - .orqa/process/skills/orqa-code-search/SKILL.md
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Core graph protection preserves the fundamental structural integrity of the system
-  - target: RULE-003
-    type: informs
-    rationale: Config paths rely on stable schema.json files — firmware protection ensures config-driven scanning remains consistent
-  - target: RULE-032
-    type: informs
-    rationale: Schema validation depends on schema.json files that this rule protects from accidental modification
-  - target: RULE-035
-    type: informs
-    rationale: Core skills are firmware — this protection prevents project-specific contamination of portable skills
-  - target: RULE-009
-    type: informs
-    rationale: Dogfood mode is the only exception where core graph artifacts become editable
   - target: AD-045
     type: enforces
     rationale: "Auto-generated inverse of enforces relationship from AD-045"
-  - target: DOC-071
-    type: informed-by
-    rationale: "Auto-generated inverse of documented-by relationship from DOC-071"
   - target: AD-038
     type: enforces
   - target: AD-039
     type: enforces
-  - target: PILLAR-001
-    type: informs
+  - target: DOC-071
+    type: documented-by
 ---
 Core graph artifacts define how the artifact graph works, how agents traverse it, and how the structured thinking process operates. They are **firmware** — they ship with OrqaStudio and are not modified during normal project use.
 

@@ -5,40 +5,9 @@ description: No implementation work may begin without the full artifact structur
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Structure before work ensures artifacts exist before implementation begins
-  - target: RULE-008
-    type: informs
-    rationale: Documentation before code extends to all artifacts — documentation must exist before implementation
-  - target: RULE-004
-    type: informs
-    rationale: Artifact creation standards and status transitions define the required structure
-  - target: RULE-011
-    type: informs
-    rationale: Enforcement artifacts must exist before the implementation they govern
-  - target: RULE-019
-    type: informs
-    rationale: Acceptance criteria defined in the structure prevent silent scope reduction
-  - target: RULE-015
-    type: informs
-    rationale: Structure provides acceptance criteria that prevent ambiguous completion claims
-  - target: IMPL-021
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-021
-  - target: IMPL-047
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-047
   - target: AD-040
     type: enforces
-  - target: RULE-030
-    type: informed-by
-  - target: RULE-032
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
 ---
 ## The Rule (NON-NEGOTIABLE)
 

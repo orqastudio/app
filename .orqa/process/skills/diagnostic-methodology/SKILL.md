@@ -10,18 +10,10 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: core
 category: methodology
 version: 1.0.0
 user-invocable: true
-relationships:
-  - target: PILLAR-002
-    type: grounded
-    rationale: Root cause analysis captures failure patterns as reusable knowledge, turning each bug into a lesson that prevents recurrence
-  - target: TASK-410
-    type: informs
-  - target: PILLAR-002
-    type: informs
+relationships: []
 ---
 
 

@@ -5,49 +5,9 @@ description: Every implementation plan must have architectural compliance verifi
 status: active
 created: 2026-03-07
 updated: 2026-03-12
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Plan compliance creates structured verification before and during implementation
-  - target: RULE-004
-    type: informs
-    rationale: Plan structure feeds directly into artifact lifecycle gates (docs-required, docs-produced)
-  - target: RULE-031
-    type: informs
-    rationale: Plans must serve the pillar framework — architectural compliance section verifies this
-  - target: RULE-002
-    type: informs
-    rationale: Plans must include an architectural compliance section verifying all relevant decisions
-  - target: RULE-006
-    type: informs
-    rationale: Implementations must meet coding standards defined in the plan's compliance section
-  - target: RULE-010
-    type: informs
-    rationale: Plans must specify all four layers in the implementation design
-  - target: IMPL-035
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-035
-  - target: IMPL-048
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-048
-  - target: IMPL-066
-    type: informed-by
-    rationale: "Auto-generated inverse of informed-by relationship from IMPL-066"
-  - target: RULE-002
-    type: informed-by
-  - target: RULE-008
-    type: informed-by
-  - target: RULE-015
-    type: informed-by
-  - target: RULE-017
-    type: informed-by
-  - target: RULE-019
-    type: informed-by
-  - target: RULE-028
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+  - target: AD-051
+    type: enforces
 ---
 Every implementation plan — whether captured in an epic, a task, or proposed in conversation — MUST satisfy two mandatory requirements before implementation begins.
 

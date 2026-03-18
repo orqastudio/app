@@ -8,26 +8,18 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: core
 category: methodology
 user-invocable: false
 allowed-tools: "Read, Glob, Grep"
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Documentation-first workflow with approval gates ensures designs are explicit and reviewed before code exists
-  - target: TASK-211
-    type: informs
   - target: AGENT-003
-    type: informs
+    type: employed-by
   - target: AGENT-004
-    type: informs
+    type: employed-by
   - target: AGENT-005
-    type: informs
+    type: employed-by
   - target: AGENT-007
-    type: informs
-  - target: PILLAR-001
-    type: informs
+    type: employed-by
 ---
 
 

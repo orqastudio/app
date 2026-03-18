@@ -5,52 +5,9 @@ description: Report status accurately. Partial work reported as complete is wors
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-layer: core
 relationships:
-  - target: PILLAR-002
-    type: grounded
-    rationale: Honest reporting enables accurate reflection on work quality
-  - target: RULE-020
-    type: informs
-    rationale: Honest reporting defines what counts as a stub and the mandatory output structure
-  - target: RULE-019
-    type: informs
-    rationale: Deferring scoped deliverables is a form of dishonest reporting
-  - target: RULE-022
-    type: informs
-    rationale: Verification gate protocol requires evidence-backed pass/fail verdicts, not vague claims
-  - target: RULE-012
-    type: informs
-    rationale: All errors are your responsibility — honest reporting includes pre-existing failures
-  - target: RULE-017
-    type: informs
-    rationale: Review completion reports must include lesson documentation status
-  - target: IMPL-024
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-024
-  - target: IMPL-021
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-021
-  - target: IMPL-026
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-026
-  - target: IMPL-066
-    type: informed-by
-    rationale: "Auto-generated inverse of informed-by relationship from IMPL-066"
-  - target: RULE-001
-    type: informed-by
-  - target: RULE-004
-    type: informed-by
-  - target: RULE-017
-    type: informed-by
-  - target: RULE-019
-    type: informed-by
-  - target: RULE-027
-    type: informed-by
-  - target: RULE-030
-    type: informed-by
-  - target: PILLAR-002
-    type: informs
+  - target: AD-046
+    type: enforces
 ---
 ## The Core Rule
 

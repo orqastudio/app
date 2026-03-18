@@ -5,56 +5,9 @@ description: "Tauri v2 cross-platform app development with Rust backend. Use whe
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: core
 category: domain
 user-invocable: false
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Tauri command patterns, permission capabilities, and IPC channels define explicit boundaries between frontend and backend layers
-  - target: AD-011
-    type: informs
-    rationale: Auto-generated inverse of practices relationship from AD-011
-  - target: AD-007
-    type: informs
-    rationale: Auto-generated inverse of practices relationship from AD-007
-  - target: AD-012
-    type: informs
-    rationale: Auto-generated inverse of practices relationship from AD-012
-  - target: TASK-013
-    type: informs
-  - target: TASK-015
-    type: informs
-  - target: TASK-017
-    type: informs
-  - target: TASK-020
-    type: informs
-  - target: TASK-022
-    type: informs
-  - target: TASK-027
-    type: informs
-  - target: TASK-028
-    type: informs
-  - target: TASK-073
-    type: informs
-  - target: TASK-074
-    type: informs
-  - target: TASK-079
-    type: informs
-  - target: TASK-410
-    type: informs
-  - target: TASK-415
-    type: informs
-  - target: TASK-416
-    type: informs
-  - target: AD-007
-    type: informed-by
-  - target: AD-011
-    type: informed-by
-  - target: AD-012
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 > Build cross-platform desktop and mobile apps with web frontends and Rust backends.
 

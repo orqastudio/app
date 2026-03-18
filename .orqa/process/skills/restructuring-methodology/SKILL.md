@@ -10,18 +10,10 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: core
 category: methodology
 version: 1.0.0
 user-invocable: true
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: One-change-at-a-time refactoring with verification after each step preserves system clarity during architectural evolution
-  - target: TASK-416
-    type: informs
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 

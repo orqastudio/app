@@ -3,7 +3,6 @@ id: SKILL-050
 type: skill
 name: Artifact Relationships
 status: active
-layer: core
 relationships:
   - target: DOC-070
     type: synchronised-with

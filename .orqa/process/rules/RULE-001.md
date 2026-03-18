@@ -5,73 +5,19 @@ description: The orchestrator coordinates but does not implement. All implementa
 status: active
 created: 2026-03-07
 updated: 2026-03-14
-layer: core
 enforcement:
   - "event: stop"
   - "event: stop"
   - governance-maintenance
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Agent delegation provides clarity through structured roles and boundaries
-  - target: RULE-026
-    type: informs
-    rationale: Delegation requires agents to load skills before starting work
-  - target: RULE-023
-    type: informs
-    rationale: Delegation requires agents to read governing docs before implementation
-  - target: RULE-015
-    type: informs
-    rationale: Agents receiving delegated tasks must report status honestly to the orchestrator
-  - target: RULE-037
-    type: informs
-    rationale: Role boundaries in delegation are enforced by restricting tool access per role
-  - target: RULE-040
-    type: informs
-    rationale: Delegation protocol requires resolving agent capabilities to concrete tool names
-  - target: IMPL-029
-    type: informs
-    rationale: Rule updated from lesson IMPL-029 (orchestrator creating artifacts directly instead of delegating to Writer)
-  - target: IMPL-039
-    type: informs
-    rationale: Rule updated from lesson IMPL-039 (observation creation should be delegated to background Writer agents)
-  - target: IMPL-039
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-039
-  - target: IMPL-029
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-029
-  - target: DOC-036
-    type: informed-by
-    rationale: Referenced in documentation page Artifact Framework
-  - target: DOC-030
-    type: informed-by
-    rationale: orchestration.md is the source-of-truth document for orchestrator behaviour that this rule enforces
-  - target: DOC-069
-    type: informed-by
-    rationale: delegation.md operationalises this rule as the orchestrator's lookup table for delegation decisions
-  - target: IMPL-029
-    type: informs
-  - target: IMPL-039
-    type: informs
-  - target: IMPL-052
-    type: informs
-  - target: IMPL-052
-    type: informs
-  - target: RULE-026
-    type: informed-by
-  - target: RULE-036
-    type: informed-by
-  - target: RULE-037
-    type: informed-by
-  - target: RULE-040
-    type: informed-by
   - target: AD-048
     type: enforces
-  - target: TASK-411
-    type: delivered-by
-  - target: PILLAR-001
-    type: informs
+  - target: DOC-036
+    type: documented-by
+  - target: DOC-069
+    type: documented-by
+  - target: DOC-030
+    type: documented-by
 ---
 The orchestrator coordinates. It does NOT implement. Every implementation task is delegated to a universal role with the appropriate skills loaded.
 

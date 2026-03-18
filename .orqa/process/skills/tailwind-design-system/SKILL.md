@@ -5,29 +5,9 @@ description: "Build scalable design systems with Tailwind CSS v4, design tokens,
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: core
 category: domain
 user-invocable: false
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Design tokens and variant patterns codify visual decisions as reusable, inspectable constraints rather than ad-hoc inline styles
-  - target: TASK-009
-    type: informs
-  - target: TASK-016
-    type: informs
-  - target: TASK-018
-    type: informs
-  - target: TASK-026
-    type: informs
-  - target: TASK-069
-    type: informs
-  - target: TASK-077
-    type: informs
-  - target: TASK-161
-    type: informs
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 

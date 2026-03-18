@@ -5,44 +5,14 @@ description: "No hardcoded fake data, TODO functions, or scaffolded implementati
 status: active
 created: 2026-03-07
 updated: 2026-03-12
-layer: core
 enforcement:
   - "event: file"
   - "src/**/*"
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: No stubs ensures real implementations create genuine structural value
-  - target: RULE-010
-    type: informs
-    rationale: All four layers must return real data — no layer may be a stub
-  - target: RULE-012
-    type: informs
-    rationale: If a function doesn't exist, create it — don't work around the gap
-  - target: RULE-005
-    type: informs
-    rationale: Use search_regex to verify implementations exist before marking features done
-  - target: RULE-010
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from RULE-010
-  - target: RULE-005
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from RULE-005
   - target: DOC-021
-    type: informed-by
-    rationale: Referenced in documentation page Coding Standards
-  - target: RULE-015
-    type: informed-by
-  - target: RULE-018
-    type: informed-by
-  - target: RULE-019
-    type: informed-by
-  - target: RULE-029
-    type: informed-by
-  - target: RULE-031
-    type: informed-by
-  - target: PILLAR-001
-    type: informs
+    type: documented-by
+  - target: AD-017
+    type: enforces
 ---
 ## What Counts as a Stub
 

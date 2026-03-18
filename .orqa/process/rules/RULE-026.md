@@ -5,69 +5,18 @@ description: "Three-tier skill loading: agent portable skills, orchestrator-inje
 status: active
 created: 2026-03-07
 updated: 2026-03-13
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Skill enforcement ensures domain knowledge is loaded before implementation
-  - target: RULE-023
-    type: informs
-    rationale: Skills load domain knowledge; required reading loads governing docs — both complement each other
-  - target: RULE-005
-    type: informs
-    rationale: Code search skills are universal requirements that every agent must declare in their skills list
-  - target: RULE-001
-    type: informs
-    rationale: Delegation protocol requires skills to be loaded before agents start implementation
-  - target: RULE-037
-    type: informs
-    rationale: Tool access per role complements skill loading — both restrict agent capabilities appropriately
-  - target: RULE-038
-    type: informs
-    rationale: User-invocable field determines how skills surface to users vs. being loaded automatically
-  - target: RULE-040
-    type: informs
-    rationale: Capability vocabulary replaces tools in agent definitions — skill loading and capability resolution work together
   - target: AD-030
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-030
-  - target: RULE-035
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from RULE-035
-  - target: RULE-005
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from RULE-005
-  - target: IMPL-032
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-032
-  - target: DOC-002
-    type: informed-by
-    rationale: Referenced in documentation page Enforcement Architecture
-  - target: DOC-030
-    type: informed-by
-    rationale: Referenced in documentation page Orchestration
-  - target: DOC-072
-    type: informs
-    rationale: "Auto-generated inverse of informs relationship from DOC-072"
-  - target: DOC-071
-    type: informed-by
-    rationale: "Auto-generated inverse of documented-by relationship from DOC-071"
-  - target: RULE-001
-    type: informed-by
-  - target: RULE-011
-    type: informed-by
-  - target: RULE-037
-    type: informed-by
-  - target: RULE-038
-    type: informed-by
-  - target: RULE-040
-    type: informed-by
-  - target: RULE-042
-    type: informed-by
   - target: AD-028
     type: enforces
-  - target: PILLAR-001
-    type: informs
+  - target: DOC-002
+    type: documented-by
+  - target: DOC-030
+    type: documented-by
+  - target: DOC-071
+    type: documented-by
 ---
 Every agent MUST have a `skills:` list in its YAML frontmatter. Agent tool access is declared via `capabilities:` and resolved per provider context — see [RULE-040](RULE-040). Skills load in three tiers [AD-028](AD-028).
 

@@ -1,30 +1,27 @@
 ---
 id: DOC-002
 title: Enforcement Architecture
-description: "Architecture of OrqaStudio's four-layer enforcement system — process gates, knowledge injection, tooling ecosystem delegation, and prompt-based skill injection."
+category: architecture
+description: "Architecture of OrqaStudio's five-layer enforcement system — process gates, knowledge injection, tooling ecosystem delegation, prompt-based skill injection, and the schema-driven integrity engine."
 created: 2026-03-05
-updated: 2026-03-12
+updated: 2026-03-18
 sort: 11
 relationships:
   - target: RULE-006
-    type: informs
+    type: documents
     rationale: Documentation page references RULE-006
   - target: RULE-013
-    type: informs
+    type: documents
     rationale: Documentation page references RULE-013
   - target: RULE-026
-    type: informs
+    type: documents
     rationale: Documentation page references RULE-026
   - target: EPIC-052
-    type: informs
+    type: documents
     rationale: Documentation page references EPIC-052
   - target: AD-015
-    type: informs
+    type: documents
     rationale: Documentation page references AD-015
-  - target: PILLAR-001
-    type: informed-by
-  - target: PILLAR-002
-    type: informed-by
 ---
 
 OrqaStudio's enforcement system ensures agents follow the structured thinking process — understand, plan, document, implement, review, learn — at every stage of work. It operates across four layers, each addressing a different enforcement concern.
@@ -307,6 +304,60 @@ The app uses semantic similarity via the `SkillInjector` (`backend/src-tauri/src
 
 ---
 
+## Layer 5: Schema-Driven Integrity Engine
+
+The integrity engine validates the artifact graph against constraints defined in the schema — not hardcoded check functions. It reads relationship definitions from three merged sources:
+
+1. **Platform** (`core.json`) — core types, relationships, and semantic categories
+2. **Plugins** (`orqa-plugin.json` per plugin) — domain-specific types and relationships
+3. **Project** (`project.json`) — project-level extensions and delivery hierarchy
+
+The `ValidationContext` merges all three into a single constraint set. When a plugin declares a relationship key that already exists in core, the `from`/`to` type constraints are unioned (extending, not replacing).
+
+### What It Checks
+
+Every check derives from schema metadata — zero hardcoded artifact types or relationship keys:
+
+| Check | What it validates | Source |
+|-------|-------------------|--------|
+| Broken references | Every relationship target resolves to a real artifact | Graph structure |
+| Missing inverses | Bidirectional edges exist for every relationship | Inverse map from schema |
+| Type constraints | Source and target types match the relationship's `from`/`to` arrays | Relationship definitions |
+| Vocabulary compliance | Every relationship `type` is a known key in the merged schema | Relationship definitions |
+| Required relationships | Artifacts satisfy `constraints.required` + `minCount` | Relationship constraints |
+| Circular dependencies | No cycles in dependency-semantic relationship chains | Semantic categories |
+| Body templates | Required body sections exist per artifact type | schema.json files |
+
+### Key Types
+
+```rust
+// The merged validation context
+pub struct ValidationContext {
+    pub relationships: Vec<RelationshipSchema>,
+    pub inverse_map: HashMap<String, String>,
+    pub valid_statuses: Vec<String>,
+    pub delivery: DeliveryConfig,
+    pub dependency_keys: HashSet<String>,
+}
+
+// A relationship schema entry (platform + plugin + project)
+pub struct RelationshipSchema {
+    pub key: String,
+    pub inverse: String,
+    pub description: String,
+    pub from: Vec<String>,
+    pub to: Vec<String>,
+    pub semantic: Option<String>,
+    pub constraints: Option<RelationshipConstraints>,
+}
+```
+
+### CLI Validator
+
+The CLI (`orqa validate`) runs the same schema-driven checks as the Rust engine. It also scans `app/.orqa/`, `plugins/`, and `connectors/` directories — not just `.orqa/`. Both implementations enforce the schema identically; different contexts (runtime vs CI).
+
+---
+
 ## Rust Module Structure
 
 ```text
@@ -317,6 +368,10 @@ backend/src-tauri/src/domain/
                                parse_rule_content(), parse_entry()
   enforcement_engine.rs     -- EnforcementEngine: compile entries, evaluate_file(),
                                evaluate_bash(), scan()
+  integrity_engine.rs       -- Schema-driven integrity: build_validation_context(),
+                               run_schema_checks(), RelationshipSchema, ValidationContext
+  platform_config.rs        -- Embedded core.json: PLATFORM static, relationship/type defs
+  artifact_graph.rs         -- ArtifactGraph: build, check_integrity(), apply_fixes()
   workflow_tracker.rs       -- WorkflowTracker: session event tracking, skill dedup
   process_gates.rs          -- evaluate_process_gates(): five gate evaluations
   skill_injector.rs         -- SkillInjector: ONNX embedding + cosine similarity matching
@@ -341,7 +396,7 @@ backend/src-tauri/src/
 ## CLI Plugin Structure
 
 ```text
-.orqa/plugins/orqastudio-claude-plugin/
+connectors/claude-code/
   hooks/
     hooks.json                    -- Hook registration (PreToolUse, Stop, UserPromptSubmit)
     scripts/
@@ -412,7 +467,8 @@ The enforcement system has comprehensive test coverage:
 | `workflow_tracker.rs` | 34 | Event recording, auto-categorization, research detection, skill dedup, verification detection |
 | `process_gates.rs` | 30 | All five gates, firing conditions, one-shot behavior, edge cases |
 | `skill_injector.rs` | 21 | Cosine similarity, frontmatter extraction, prompt matching, threshold/top-N filtering |
-| **Total** | **110** | |
+| `integrity_engine.rs` | 12 | Schema-driven checks: broken refs, missing inverses, type constraints, required rels, cardinality, circular deps |
+| **Total** | **122+** | *(counts approximate — run `cargo test` for exact)* |
 
 ---
 

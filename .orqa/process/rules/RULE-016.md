@@ -5,28 +5,11 @@ description: "Artifact IDs are sequential identifiers for uniqueness and referen
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-layer: core
 relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Artifact ID semantics prevents confusion between identity and priority
-  - target: RULE-004
-    type: informs
-    rationale: Priority scoring and status transitions depend on ID semantics being identifiers not rankings
-  - target: RULE-031
-    type: informs
-    rationale: Pillar alignment drives priority; ID sequence must not be mistaken for priority order
   - target: AGENT-008
-    type: informs
-    rationale: "Auto-generated inverse of scoped-to relationship from AGENT-008"
-  - target: RULE-004
-    type: informed-by
-  - target: AGENT-008
-    type: informs
-  - target: AGENT-008
-    type: informs
-  - target: PILLAR-001
-    type: informs
+    type: observed-by
+  - target: AD-022
+    type: enforces
 ---
 Artifact IDs ([EPIC-045](EPIC-045), [TASK-051](TASK-051), [AD-029](AD-029), etc.) are sequential identifiers for uniqueness and reference. They carry NO information about priority, importance, or execution order.
 

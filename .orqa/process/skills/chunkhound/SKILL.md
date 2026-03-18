@@ -9,38 +9,10 @@ description: |
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-layer: core
 category: tool
 version: 1.0.0
 user-invocable: true
-relationships:
-  - target: PILLAR-001
-    type: grounded
-    rationale: Semantic search surfaces hidden relationships in code, making architecture and data flows visible before changes
-  - target: TASK-004
-    type: informs
-  - target: TASK-005
-    type: informs
-  - target: TASK-006
-    type: informs
-  - target: TASK-007
-    type: informs
-  - target: TASK-008
-    type: informs
-  - target: TASK-009
-    type: informs
-  - target: TASK-010
-    type: informs
-  - target: TASK-011
-    type: informs
-  - target: TASK-012
-    type: informs
-  - target: TASK-013
-    type: informs
-  - target: TASK-014
-    type: informs
-  - target: PILLAR-001
-    type: informs
+relationships: []
 ---
 
 

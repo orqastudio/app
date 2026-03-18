@@ -558,11 +558,13 @@ pub fn check_integrity(
     valid_statuses: &[String],
     delivery: &DeliveryConfig,
     project_relationships: &[crate::domain::project_settings::ProjectRelationshipConfig],
+    plugin_relationships: &[crate::domain::integrity_engine::RelationshipSchema],
 ) -> Vec<IntegrityCheck> {
     let ctx = crate::domain::integrity_engine::build_validation_context(
         valid_statuses,
         delivery,
         project_relationships,
+        plugin_relationships,
     );
     crate::domain::integrity_engine::run_schema_checks(graph, &ctx)
 }
@@ -1211,7 +1213,7 @@ mod tests {
             "---\nid: TASK-001\ntitle: Task\nrelationships:\n  - target: EPIC-MISSING\n    type: delivers\n---\n",
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph, &[], &DeliveryConfig::default(), &[]);
+        let checks = check_integrity(&graph, &[], &DeliveryConfig::default(), &[], &[]);
         let broken: Vec<_> = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::BrokenLink))
@@ -1237,7 +1239,7 @@ mod tests {
             "---\nid: AD-001\ntitle: Decision\n---\n",
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph, &[], &DeliveryConfig::default(), &[]);
+        let checks = check_integrity(&graph, &[], &DeliveryConfig::default(), &[], &[]);
         let missing = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::MissingInverse))
@@ -1263,7 +1265,7 @@ mod tests {
             "---\nid: AD-001\ntitle: Decision\nrelationships:\n  - target: RULE-001\n    type: enforced-by\n---\n",
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph, &[], &DeliveryConfig::default(), &[]);
+        let checks = check_integrity(&graph, &[], &DeliveryConfig::default(), &[], &[]);
         let missing = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::MissingInverse))
@@ -1288,7 +1290,7 @@ mod tests {
         );
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph, &[], &DeliveryConfig::default(), &[]);
+        let checks = check_integrity(&graph, &[], &DeliveryConfig::default(), &[], &[]);
 
         let missing: Vec<_> = checks
             .iter()
@@ -1313,7 +1315,7 @@ mod tests {
 
         // Rebuild graph and verify no more missing inverses
         let graph2 = build_artifact_graph(tmp.path()).expect("rebuild");
-        let checks2 = check_integrity(&graph2, &[], &DeliveryConfig::default(), &[]);
+        let checks2 = check_integrity(&graph2, &[], &DeliveryConfig::default(), &[], &[]);
         let missing2: Vec<_> = checks2
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::MissingInverse))
@@ -1341,7 +1343,7 @@ mod tests {
         );
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph, &[], &DeliveryConfig::default(), &[]);
+        let checks = check_integrity(&graph, &[], &DeliveryConfig::default(), &[], &[]);
         let applied = apply_fixes(&graph, &checks, tmp.path()).expect("apply");
         assert!(applied.is_empty(), "should not add duplicate inverse");
     }
@@ -1363,7 +1365,7 @@ mod tests {
         );
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let checks = check_integrity(&graph, &[], &DeliveryConfig::default(), &[]);
+        let checks = check_integrity(&graph, &[], &DeliveryConfig::default(), &[], &[]);
         let applied = apply_fixes(&graph, &checks, tmp.path()).expect("apply");
         assert_eq!(applied.len(), 1);
 
@@ -1387,7 +1389,7 @@ mod tests {
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
         let valid = vec!["active".to_string(), "completed".to_string()];
-        let checks = check_integrity(&graph, &valid, &DeliveryConfig::default(), &[]);
+        let checks = check_integrity(&graph, &valid, &DeliveryConfig::default(), &[], &[]);
         let invalid: Vec<_> = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::InvalidStatus))
@@ -1413,7 +1415,7 @@ mod tests {
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
         let valid = vec!["active".to_string(), "completed".to_string()];
-        let checks = check_integrity(&graph, &valid, &DeliveryConfig::default(), &[]);
+        let checks = check_integrity(&graph, &valid, &DeliveryConfig::default(), &[], &[]);
         let invalid: Vec<_> = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::InvalidStatus))
@@ -1435,7 +1437,7 @@ mod tests {
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
         // Empty valid list — status check should be skipped entirely.
-        let checks = check_integrity(&graph, &[], &DeliveryConfig::default(), &[]);
+        let checks = check_integrity(&graph, &[], &DeliveryConfig::default(), &[], &[]);
         let invalid: Vec<_> = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::InvalidStatus))
@@ -1457,7 +1459,7 @@ mod tests {
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
         let valid = vec!["active".to_string(), "completed".to_string()];
-        let checks = check_integrity(&graph, &valid, &DeliveryConfig::default(), &[]);
+        let checks = check_integrity(&graph, &valid, &DeliveryConfig::default(), &[], &[]);
         let invalid: Vec<_> = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::InvalidStatus))
@@ -1480,7 +1482,7 @@ mod tests {
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
         let valid = vec!["captured".to_string(), "active".to_string()];
-        let checks = check_integrity(&graph, &valid, &DeliveryConfig::default(), &[]);
+        let checks = check_integrity(&graph, &valid, &DeliveryConfig::default(), &[], &[]);
         let invalid: Vec<_> = checks
             .iter()
             .filter(|c| matches!(c.category, IntegrityCategory::InvalidStatus))

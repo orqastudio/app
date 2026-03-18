@@ -3,7 +3,6 @@ id: SKILL-053
 type: skill
 name: Tech Debt Management
 status: active
-layer: core
 relationships:
   - target: DOC-073
     type: synchronised-with

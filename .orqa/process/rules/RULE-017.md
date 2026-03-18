@@ -5,46 +5,14 @@ description: "Two learning loops: implementation lessons in .orqa/process/lesson
 status: active
 created: 2026-03-07
 updated: 2026-03-14
-layer: core
 relationships:
-  - target: PILLAR-002
-    type: grounded
-    rationale: Lessons learned is the core mechanism for learning through reflection
-  - target: RULE-015
-    type: informs
-    rationale: Review completion reports must include lesson documentation status
-  - target: RULE-022
-    type: informs
-    rationale: Verification gates trigger lesson logging when findings reveal recurring patterns
-  - target: IMPL-023
-    type: informs
-    rationale: Rule updated from lesson IMPL-023 (observation logging and recurrence tracking should be automated)
   - target: AD-044
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-044
-  - target: IMPL-025
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-025
-  - target: IMPL-023
-    type: informed-by
-    rationale: Auto-generated inverse of informed-by relationship from IMPL-023
-  - target: DOC-025
-    type: informed-by
-    rationale: Referenced in documentation page Artifact Workflow
-  - target: IMPL-023
-    type: informs
-  - target: RULE-004
-    type: informed-by
-  - target: RULE-011
-    type: informed-by
-  - target: RULE-015
-    type: informed-by
-  - target: RULE-030
-    type: informed-by
   - target: AD-048
     type: enforces
-  - target: PILLAR-002
-    type: informs
+  - target: DOC-025
+    type: documented-by
 ---
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.
 
