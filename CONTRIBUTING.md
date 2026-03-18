@@ -40,7 +40,9 @@ Add to the `plugins` array in `registry.json`:
 
 ## Review Process
 
-- PRs are reviewed by the OrqaStudio team
+- PRs are reviewed by the OrqaStudio maintainers for compatibility and ecosystem value
 - Plugins must have a valid `orqa-plugin.json` manifest
-- Community plugins show an "Unverified" indicator in the app
 - Plugins that extend core relationship keys will be checked for intent alignment
+- Accepted plugins show a **Verified** indicator in the app — the registry is curated, not just a listing
+
+Users can always install their own plugins locally without going through the registry. The registry exists to surface plugins that the maintainers have confirmed are compatible and add value to the ecosystem.
