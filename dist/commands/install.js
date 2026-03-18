@@ -56,8 +56,7 @@ export async function runInstallCommand(args) {
             console.log();
             cmdLink(root);
             console.log();
-            console.log("Running verification...");
-            run("orqa verify", root);
+            cmdSmokeTest(root);
             console.log("\n=== Install complete. Run 'make dev' to start developing. ===");
             break;
         default:
@@ -353,5 +352,56 @@ function cmdLink(root) {
         console.error("  ✗ orqa not on PATH — try closing and reopening your terminal");
         process.exit(1);
     }
+}
+// ── Smoke Test ──────────────────────────────────────────────────────────────
+function cmdSmokeTest(root) {
+    console.log("Verifying install...");
+    let failed = false;
+    // CLI works
+    if (hasCommand("orqa")) {
+        console.log(`  ✓ orqa CLI responds`);
+    }
+    else {
+        console.error("  ✗ orqa CLI not on PATH");
+        failed = true;
+    }
+    // Artifact graph builds (validates all directories are scannable)
+    try {
+        runQuiet("orqa validate . --json");
+        console.log("  ✓ artifact graph builds");
+    }
+    catch {
+        console.error("  ✗ artifact graph failed to build");
+        failed = true;
+    }
+    // Rust compiles
+    const cargoDir = path.join(root, "app/backend/src-tauri");
+    if (fs.existsSync(cargoDir)) {
+        try {
+            execSync("cargo check --quiet", { cwd: cargoDir, stdio: ["pipe", "pipe", "pipe"] });
+            console.log("  ✓ cargo check passes");
+        }
+        catch {
+            console.error("  ✗ cargo check failed — Rust dependencies may not be resolved");
+            failed = true;
+        }
+    }
+    // Svelte-check
+    const appUi = path.join(root, "app/ui");
+    if (fs.existsSync(appUi)) {
+        try {
+            execSync("npx svelte-check --threshold error", { cwd: appUi, stdio: ["pipe", "pipe", "pipe"] });
+            console.log("  ✓ svelte-check passes");
+        }
+        catch {
+            console.error("  ✗ svelte-check failed — frontend dependencies may not be linked");
+            failed = true;
+        }
+    }
+    if (failed) {
+        console.error("\nInstall verification failed. Check the errors above.");
+        process.exit(1);
+    }
+    console.log("  ✓ install verified");
 }
 //# sourceMappingURL=install.js.map
