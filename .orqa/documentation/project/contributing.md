@@ -2,165 +2,54 @@
 id: DOC-023
 title: Contributing
 category: onboarding
-description: "Guide for contributors covering setup, workflow, and conventions for the OrqaStudio codebase."
+description: "Guide for contributors — dev environment setup, multi-repo PR workflow, quality standards, and ethical licensing."
 created: 2026-03-07
-updated: 2026-03-07
+updated: 2026-03-19
 sort: 6
+relationships:
+  - target: AD-056
+    type: documents
 ---
 
-# Contributing to OrqaStudio™
+# Contributing to OrqaStudio
 
-**Date:** 2026-03-07
+The canonical contribution guide lives at the dev repo root: [CONTRIBUTING.md](../../CONTRIBUTING.md). This doc covers the governance-specific aspects.
 
-Thank you for your interest in contributing to OrqaStudio. This guide covers the workflow, expectations, and quality standards for contributions.
+## Key Principles
 
----
+1. **All work goes through the dev repo** — never clone individual repos. Pre-commit hooks enforce integrity, version sync, licenses, and READMEs.
 
-## Before You Start
+2. **DCO, not CLA** — sign off commits with `git commit -s`. You retain copyright.
 
-1. Read the [Getting Started](getting-started.md) guide to set up your development environment
-2. Read the [Coding Standards](coding-standards.md) to understand the quality expectations
+3. **Three pillars** — features must serve at least one: Clarity Through Structure, Learning Through Reflection, or Purpose Through Continuity.
 
----
+4. **Ethical licensing** — contributions are licensed under BSL-1.1 with an Ethical Use Addendum that protects marginalised communities. See AD-056.
 
-## Finding Work
+## Contributing Governance Artifacts
 
-- **Issues:** Check the [GitHub Issues](https://github.com/orqastudio/orqastudio-app/issues) for open tasks. Issues labelled `good first issue` are suitable for new contributors.
-- **Discussions:** Open a [GitHub Discussion](https://github.com/orqastudio/orqastudio-app/discussions) if you have an idea but are unsure how it fits the project.
-- **Roadmap:** See `.orqa/documentation/about/roadmap.md` for the project direction. Features not on the roadmap should be discussed before implementation.
+When adding or modifying `.orqa/` artifacts:
 
----
+- Run `orqa verify` before committing — zero errors is the baseline
+- New artifacts need required relationships per the schema (`grounded`, `benefits`, `enforces`, `upholds`)
+- Use canonical relationship vocabulary from `core.json`
+- Doc/skill pairs must be connected via `synchronised-with`
+- Docs need a `category` field (reference, how-to, architecture, concept, onboarding)
 
-## Contribution Workflow
+## Multi-Repo PR Process
 
-### 1. Fork and Branch
+Changes often span multiple submodules. Submit PRs in dependency order:
 
-```bash
-# Fork the repository on GitHub, then clone your fork
-git clone https://github.com/<your-username>/orqastudio-app.git
-cd orqastudio-app
+1. **Types** (`libs/types`) — merge first if schema changes
+2. **CLI** (`libs/cli`) — merge after types if validator changes
+3. **App** (`app`) — merge after dependencies
+4. **Dev repo** — merge last, updates all submodule pointers
 
-# Create a branch from main
-git checkout -b <type>/<short-description>
-```
+Use the same branch name across all affected repos. The dev repo PR lists all submodule PRs.
 
-Branch naming convention:
+## Quality Gate
 
-| Prefix | Use for |
-|--------|---------|
-| `feat/` | New features |
-| `fix/` | Bug fixes |
-| `docs/` | Documentation changes |
-| `refactor/` | Code restructuring without behaviour change |
-| `test/` | Test additions or fixes |
-
-### 2. Make Changes
-
-- Keep commits focused — one logical change per commit
-- Write descriptive commit messages explaining *why*, not just *what*
-- Follow the [Coding Standards](coding-standards.md)
-
-### 3. Verify Quality
-
-Run the full check suite before pushing:
-
-```bash
-make check
-```
-
-This runs formatting, linting, type checking, and tests for both Rust and frontend. All checks must pass. See [Development Commands](commands.md) for individual targets.
-
-### 4. Submit a Pull Request
-
-- Push your branch to your fork
-- Open a pull request against `main` on the upstream repository
-- Fill in the PR template describing your changes, motivation, and how to test them
-- Link any related issues
-
-### 5. Review Process
-
-- A maintainer will review your PR for correctness, style, and alignment with project direction
-- Feedback is collaborative — we aim for constructive discussion
-- Once approved, a maintainer will merge your PR
-
----
-
-## Quality Standards
-
-All contributions must meet these standards:
-
-### Rust
-
-- `cargo fmt --check` passes (zero formatting issues)
-- `cargo clippy -- -D warnings` passes (zero warnings)
-- `cargo test` passes (all tests green)
-- No `unwrap()` or `expect()` in production code
-- Functions under 50 lines
-
-### Frontend
-
-- `npm run check` passes (svelte-check + TypeScript)
-- `npm run lint` passes (ESLint)
-- `npm run test` passes (Vitest)
-- Svelte 5 runes only — no Svelte 4 patterns
-- Strict TypeScript — no `any` types
-
-### Both
-
-- New functionality has tests
-- No TODO comments in committed code
-- No commented-out code
-
----
-
-## Types of Contributions
-
-### Bug Reports
-
-Open an issue with:
-
-- Steps to reproduce
-- Expected behaviour
-- Actual behaviour
-- Platform and version information
-
-### Feature Requests
-
-Open a discussion with:
-
-- Problem description — what are you trying to do?
-- Proposed solution — how do you think it should work?
-- Alternatives considered
-
-Feature requests that align with the [product vision](../product/vision.md) and serve at least one of the two pillars (Clarity Through Structure or Learning Through Reflection) are more likely to be accepted.
-
-### Documentation
-
-Documentation improvements are always welcome. Project documentation in `.orqa/documentation/` is licensed under CC BY 4.0. See `docs/LICENSE` for terms.
-
-### Code
-
-Code contributions should be discussed in an issue or discussion first for anything beyond small bug fixes. This avoids wasted effort on changes that may not align with the project direction.
-
----
-
-## Licensing
-
-By contributing to OrqaStudio, you agree that your contributions will be licensed under the project's existing licenses:
-
-- **Code:** Apache License 2.0 (see [LICENSE](../../LICENSE))
-- **Documentation:** Creative Commons Attribution 4.0 (see [docs/LICENSE](../LICENSE))
-
----
-
-## Code of Conduct
-
-Be respectful, constructive, and collaborative. We are building a tool to bring clarity to complex problems — we aim to practice the same clarity in our interactions.
-
----
-
-## Related Documents
-
-- [Getting Started](getting-started.md) — Environment setup
-- [Coding Standards](coding-standards.md) — Quality rules
-- [Development Commands](commands.md) — Build, test, and lint commands
+`orqa verify` must pass before any PR is mergeable:
+- `orqa validate` — artifact graph integrity
+- `orqa version check` — no version drift
+- `orqa repo license` — correct licenses per policy
+- `orqa repo readme` — banner, badges, sections present
