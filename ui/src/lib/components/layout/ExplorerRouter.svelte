@@ -45,8 +45,9 @@
 			return { type: "core" as const, component: CORE_VIEWS[activity] };
 		}
 
-		// Artifact detail — an artifact is selected in the nav panel
-		if (navigationStore.explorerView === "artifact-viewer" && navigationStore.selectedArtifactPath) {
+		// Artifact detail — show ArtifactViewer as soon as a path is selected.
+		// ArtifactViewer handles its own loading spinner internally.
+		if (navigationStore.selectedArtifactPath) {
 			return { type: "core" as const, component: ArtifactViewer };
 		}
 
