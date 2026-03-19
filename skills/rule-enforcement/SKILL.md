@@ -1,5 +1,5 @@
 ---
-id: SKILL-045
+id: SKILL-bcfeb64e
 title: Rule Enforcement (CLI Plugin)
 description: Understands how OrqaStudio governance rules are enforced in the Claude Code CLI via the companion plugin's PreToolUse hook.
 status: active
@@ -26,7 +26,7 @@ enforcement:
     pattern: "unwrap\\(\\)"
     paths: ["src-tauri/src/**/*.rs"]
     action: block
-    message: "No unwrap() in production Rust code (RULE-006)."
+    message: "No unwrap() in production Rust code (RULE-b49142be)."
 ```
 
 ## Event Types

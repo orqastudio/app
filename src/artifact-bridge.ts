@@ -191,19 +191,7 @@ export class ArtifactBridge {
 		const skillsDir = path.join(this.orqaDir, "process", "skills");
 		if (!fs.existsSync(skillsDir)) return [];
 
-		const results: Array<{ id: string; name: string; path: string }> = [];
-
-		for (const entry of fs.readdirSync(skillsDir, { withFileTypes: true })) {
-			if (entry.isDirectory()) {
-				const skillMd = path.join(skillsDir, entry.name, "SKILL.md");
-				if (fs.existsSync(skillMd)) {
-					const info = this.parseArtifactHeader(skillMd);
-					if (info) results.push(info);
-				}
-			}
-		}
-
-		return results;
+		return this.listArtifacts(skillsDir);
 	}
 
 	/**

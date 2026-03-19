@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "orqastudio": {
+      "type": "stdio",
+      "command": "orqa-studio",
+      "args": ["--mcp"],
+      "env": {}
+    }
+  }
+}

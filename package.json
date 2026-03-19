@@ -28,8 +28,10 @@
     "dist",
     "hooks",
     "skills",
+    "agents",
     "commands",
-    ".claude-plugin"
+    ".claude-plugin",
+    "orqa-plugin.json"
   ],
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
@@ -38,5 +40,5 @@
     "type": "git",
     "url": "git@github.com:orqastudio/claude-code-cli-plugin.git"
   },
-  "license": "BSL-1.1"
+  "license": "Apache-2.0"
 }

@@ -14,6 +14,7 @@ import { join } from "path";
 
 // Intent-to-skill mapping table
 // Each entry: { keywords: string[], skills: string[], description: string }
+// Skill names must match directory names under .orqa/process/skills/ or app/.orqa/process/skills/
 const INTENT_MAP = [
   {
     keywords: ["tauri command", "ipc", "invoke", "#[tauri::command]", "add a command", "new command"],
@@ -27,7 +28,7 @@ const INTENT_MAP = [
   },
   {
     keywords: ["component", "svelte component", "ui component", "create a component"],
-    skills: ["component-extraction", "svelte5-best-practices"],
+    skills: ["svelte5-best-practices", "tailwind-design-system"],
     description: "Component work",
   },
   {
@@ -47,12 +48,12 @@ const INTENT_MAP = [
   },
   {
     keywords: ["plan", "approach", "design", "architect", "tradeoff"],
-    skills: ["planning", "architecture", "systems-thinking"],
+    skills: ["planning", "systems-thinking"],
     description: "Planning phase",
   },
   {
     keywords: ["review", "check", "audit", "verify", "quality"],
-    skills: ["code-quality-review", "qa-verification"],
+    skills: ["orqa-governance"],
     description: "Review phase",
   },
   {
@@ -62,7 +63,7 @@ const INTENT_MAP = [
   },
   {
     keywords: ["test", "testing", "vitest", "cargo test", "coverage"],
-    skills: ["orqa-testing", "test-engineering"],
+    skills: ["orqa-testing"],
     description: "Testing work",
   },
   {
@@ -79,6 +80,11 @@ const INTENT_MAP = [
     keywords: ["refactor", "restructur", "reorganiz", "extract", "consolidat"],
     skills: ["restructuring-methodology", "systems-thinking"],
     description: "Refactoring work",
+  },
+  {
+    keywords: ["log", "logging", "logger", "console.log", "tracing"],
+    skills: ["centralized-logging"],
+    description: "Logging work",
   },
 ];
 
@@ -140,8 +146,13 @@ function collectSkillContent(projectDir, skillNames) {
   const injectedNow = [];
 
   for (const name of newSkills) {
-    const skillPath = join(projectDir, ".orqa", "team", "skills", name, "SKILL.md");
-    if (!existsSync(skillPath)) continue;
+    // Search project-level skills first, then app-level (for core skills)
+    const candidates = [
+      join(projectDir, ".orqa", "process", "skills", `${name}.md`),
+      join(projectDir, "app", ".orqa", "process", "skills", `${name}.md`),
+    ];
+    const skillPath = candidates.find((p) => existsSync(p));
+    if (!skillPath) continue;
     try {
       const raw = readFileSync(skillPath, "utf-8");
       const content = stripFrontmatter(raw);

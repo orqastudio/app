@@ -65,15 +65,21 @@ if [ -d "$ORQA_DIR" ]; then
   mkdir -p "$CLAUDE_DIR"
 
   # .claude/ symlinks — required by Claude Code's native discovery
+  # CLAUDE.md → orchestrator agent definition (project instructions)
+  # rules/ → governance rules with enforcement arrays
+  # agents/ → agent definitions for subagent delegation
+  # NOTE: skills/ is NOT symlinked — skills come through the plugin's skills/
+  # directory and are curated for the Claude Code context, not raw OrqaStudio artifacts
   setup_symlink "$CLAUDE_DIR/CLAUDE.md" "$ORQA_DIR/process/agents/orchestrator.md"
   setup_symlink "$CLAUDE_DIR/rules"     "$ORQA_DIR/process/rules"
   setup_symlink "$CLAUDE_DIR/agents"    "$ORQA_DIR/process/agents"
-  setup_symlink "$CLAUDE_DIR/skills"    "$ORQA_DIR/process/skills"
 fi
 
-# ─── Plugin Skill Installation ──────────────────────────────────────────────
-# Symlink plugin skills into .orqa/team/skills/ so they're discoverable by
+# ─── Plugin Skill Registration ───────────────────────────────────────────────
+# Register plugin skills in .orqa/process/skills/ so they're discoverable by
 # the artifact scanner and browsable in the app. Plugin skills have layer: plugin.
+# NOTE: Claude Code discovers skills natively via the plugin's skills/ directory.
+# This symlink is for the OrqaStudio app's artifact scanner only.
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"
 
 if [ -n "$PLUGIN_ROOT" ] && [ -d "$PLUGIN_ROOT/skills" ] && [ -d "$ORQA_DIR/process/skills" ]; then
@@ -83,6 +89,13 @@ if [ -n "$PLUGIN_ROOT" ] && [ -d "$PLUGIN_ROOT/skills" ] && [ -d "$ORQA_DIR/proc
     target_dir="$ORQA_DIR/process/skills/$skill_name"
     setup_symlink "$target_dir" "$skill_dir"
   done
+fi
+
+# ─── Skill Sync ──────────────────────────────────────────────────────────────
+# Sync OrqaStudio skills to Claude Code format in the plugin's skills/ directory.
+if [ -n "$PLUGIN_ROOT" ] && [ -f "$PLUGIN_ROOT/hooks/scripts/sync-skills.mjs" ]; then
+  CLAUDE_PROJECT_DIR="$PROJECT_DIR" CLAUDE_PLUGIN_ROOT="$PLUGIN_ROOT" \
+    node "$PLUGIN_ROOT/hooks/scripts/sync-skills.mjs" 2>/dev/null || true
 fi
 
 # ─── Session Guard ───────────────────────────────────────────────────────────
@@ -128,10 +141,20 @@ if [ "$CURRENT_BRANCH" = "main" ]; then
   fi
 fi
 
-# Check for session state from previous session
+# ─── Session Continuity ─────────────────────────────────────────────────────
+# Load previous session state for context recovery.
+# Also check for governance context saved before compaction.
 if [ -f "$PROJECT_DIR/tmp/session-state.md" ]; then
   SESSION_STATE=$(cat "$PROJECT_DIR/tmp/session-state.md")
-  OUTPUT="${OUTPUT}PREVIOUS SESSION STATE FOUND:\n${SESSION_STATE}\n\n"
+  OUTPUT="${OUTPUT}═══ PREVIOUS SESSION STATE ═══\n${SESSION_STATE}\n"
+  OUTPUT="${OUTPUT}═══ END SESSION STATE ═══\n\n"
+  OUTPUT="${OUTPUT}ACTION REQUIRED: Read the session state above. Resume where the previous session left off.\n"
+  OUTPUT="${OUTPUT}If the scope has changed, acknowledge the previous state and set a new scope.\n\n"
+fi
+
+if [ -f "$PROJECT_DIR/tmp/governance-context.md" ]; then
+  GOV_CONTEXT=$(cat "$PROJECT_DIR/tmp/governance-context.md")
+  OUTPUT="${OUTPUT}GOVERNANCE CONTEXT (from pre-compaction save):\n${GOV_CONTEXT}\n\n"
 fi
 
 # Dogfood detection
@@ -144,15 +167,22 @@ if [ -f "$ORQA_DIR/project.json" ]; then
   fi
 fi
 
-# Delegation reminder
+# Session management protocol
+OUTPUT="${OUTPUT}SESSION PROTOCOL:\n"
+OUTPUT="${OUTPUT}1. Read previous session state (above, if present)\n"
+OUTPUT="${OUTPUT}2. Set scope: which epic/task is the focus for this session?\n"
+OUTPUT="${OUTPUT}3. Work within scope — delegate to specialized agents\n"
+OUTPUT="${OUTPUT}4. Before stopping: write session state to tmp/session-state.md\n\n"
+
 OUTPUT="${OUTPUT}ORCHESTRATOR REMINDERS:\n"
 OUTPUT="${OUTPUT}- You coordinate. You do NOT implement. Delegate to specialized agents.\n"
-OUTPUT="${OUTPUT}- Universal roles: researcher, planner, implementer, reviewer, writer, designer\n"
+OUTPUT="${OUTPUT}- Universal roles: researcher, planner, implementer, reviewer, writer, designer, governance-steward\n"
 OUTPUT="${OUTPUT}- Roles are specialised via skills at runtime\n\n"
 
 OUTPUT="${OUTPUT}SESSION START CHECKLIST:\n"
-OUTPUT="${OUTPUT}- Check .orqa/delivery/tasks/ for current tasks\n"
+OUTPUT="${OUTPUT}- Check .orqa/delivery/tasks/ for active tasks\n"
 OUTPUT="${OUTPUT}- Check .orqa/delivery/epics/ for active epics\n"
+OUTPUT="${OUTPUT}- Read the active epic to understand context\n"
 
 if [ -n "$OUTPUT" ]; then
   echo -e "$OUTPUT"

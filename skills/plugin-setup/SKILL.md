@@ -1,5 +1,5 @@
 ---
-id: SKILL-CC-001
+id: SKILL-CC-5ebf82dc
 title: OrqaStudio Plugin Setup
 description: Installs the OrqaStudio companion plugin for Claude Code. Detects existing .claude/ infrastructure, migrates to .orqa/, registers the plugin, and sets up symlinks.
 status: active
@@ -67,7 +67,7 @@ Add orchestrator frontmatter if missing:
 
 ```yaml
 ---
-id: AGENT-003
+id: AGENT-1dab5ebe
 role: orchestrator
 title: Orchestrator
 description: Coordinates work, enforces process, delegates to agents.
@@ -203,9 +203,14 @@ Write `.claude/settings.json`:
 {
   "enabledPlugins": {
     "orqa-plugin@orqa-local": true
+  },
+  "env": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "70"
   }
 }
 ```
+
+The `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` triggers compaction at 70% context usage instead of the default 95%. This gives the PreCompact hook time to save governance context before the window fills completely.
 
 ### Step 5: Verify
 
@@ -245,9 +250,8 @@ After installation, `.claude/` contains only:
 | `CLAUDE.md` | Symlink | → `.orqa/process/agents/orchestrator.md` |
 | `rules/` | Symlink | → `.orqa/process/rules/` |
 | `agents/` | Symlink | → `.orqa/process/agents/` |
-| `skills/` | Symlink | → `.orqa/process/skills/` |
 
-Everything in `.orqa/` is the source of truth. The symlinks are managed by the plugin.
+Skills are NOT symlinked — they come through the plugin's `skills/` directory as Claude Code-native skills. Everything in `.orqa/` is the source of truth. The symlinks are managed by the plugin.
 
 ## Platform Notes
 

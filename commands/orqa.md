@@ -14,7 +14,7 @@ The `.claude/` directory is NOT a standalone configuration. It is a set of **sym
 | `skills/` | `process/skills/` | Skill definitions loaded by prompt injection |
 
 This means:
-- Editing a rule in `.claude/rules/RULE-001.md` edits the OrqaStudio artifact
+- Editing a rule in `.claude/rules/RULE-532100d9.md` edits the OrqaStudio artifact
 - Rules have structured YAML frontmatter with `enforcement` arrays
 - Agent definitions follow OrqaStudio's agent artifact schema
 - Skills follow OrqaStudio's skill artifact schema
@@ -31,10 +31,10 @@ orqa graph --stats
 orqa graph --type epic --status active
 
 # Show a specific artifact with all its relationships
-orqa graph --id EPIC-082
+orqa graph --id EPIC-2362adfc
 
 # Find artifacts related to a specific one
-orqa graph --related-to PILLAR-001
+orqa graph --related-to PILLAR-569581e0
 
 # Search by title
 orqa graph --search "plugin"

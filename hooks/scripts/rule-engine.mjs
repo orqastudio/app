@@ -254,8 +254,13 @@ function collectSkillContent(projectDir, injectViolations) {
   const parts = [];
   const injectedNow = [];
   for (const name of allSkillNames) {
-    const skillPath = join(projectDir, ".orqa", "team", "skills", name, "SKILL.md");
-    if (!existsSync(skillPath)) continue;
+    // Search project-level skills first, then app-level (for core skills)
+    const candidates = [
+      join(projectDir, ".orqa", "process", "skills", `${name}.md`),
+      join(projectDir, "app", ".orqa", "process", "skills", `${name}.md`),
+    ];
+    const skillPath = candidates.find((p) => existsSync(p));
+    if (!skillPath) continue;
     try {
       const raw = readFileSync(skillPath, "utf-8");
       const content = stripFrontmatter(raw);
