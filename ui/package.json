@@ -17,8 +17,6 @@
   },
   "devDependencies": {
     "@internationalized/date": "^3.11.0",
-    "@orqastudio/eslint-config": "0.1.0-dev",
-    "@orqastudio/test-config": "0.1.0-dev",
     "@sveltejs/adapter-static": "^3.0.0",
     "@sveltejs/kit": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
