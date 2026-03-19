@@ -25,6 +25,7 @@ import { runInstallCommand } from "./commands/install.js";
 import { runVerifyCommand } from "./commands/verify.js";
 import { runCheckCommand } from "./commands/check.js";
 import { runTestCommand } from "./commands/test.js";
+import { runDevCommand } from "./commands/dev.js";
 
 const USAGE = `
 OrqaStudio CLI v0.1.0-dev
@@ -32,6 +33,7 @@ OrqaStudio CLI v0.1.0-dev
 Usage: orqa <command> [options]
 
 Commands:
+  dev         Start the dev environment (Vite + Tauri)
   install     Full dev environment setup (prereqs, submodules, deps, link)
   verify      Governance checks (integrity, version, license, readme)
   check       Code quality checks (lint, typecheck, format)
@@ -66,6 +68,9 @@ async function main(): Promise<void> {
 	const commandArgs = args.slice(1);
 
 	switch (command) {
+		case "dev":
+			await runDevCommand(commandArgs);
+			break;
 		case "install":
 			await runInstallCommand(commandArgs);
 			break;

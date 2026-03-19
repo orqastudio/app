@@ -1,7 +1,13 @@
 /**
- * Dev environment commands — submodule management, git operations.
+ * Dev environment commands — delegates to the debug controller.
  *
- * orqa dev status|commit|push|pull|release-check
+ * orqa dev                Start the full dev environment (Vite + Tauri)
+ * orqa dev stop           Stop gracefully
+ * orqa dev kill           Force-kill all processes
+ * orqa dev restart        Restart Vite + Tauri (not the controller)
+ * orqa dev restart-tauri  Restart Tauri only
+ * orqa dev restart-vite   Restart Vite only
+ * orqa dev status         Show process status
  */
 export declare function runDevCommand(args: string[]): Promise<void>;
 //# sourceMappingURL=dev.d.ts.map
