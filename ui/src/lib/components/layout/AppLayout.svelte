@@ -7,9 +7,7 @@
 	import Toolbar from "./Toolbar.svelte";
 	import StatusBar from "./StatusBar.svelte";
 	import WelcomeScreen from "./WelcomeScreen.svelte";
-	import ProjectDashboard from "$lib/components/dashboard/ProjectDashboard.svelte";
-	import PluginViewContainer from "$lib/components/plugin/PluginViewContainer.svelte";
-	import ArtifactViewer from "$lib/components/artifact/ArtifactViewer.svelte";
+	import ExplorerRouter from "./ExplorerRouter.svelte";
 	import SettingsView from "$lib/components/settings/SettingsView.svelte";
 	import ConversationView from "$lib/components/conversation/ConversationView.svelte";
 	import ProjectSetupWizard from "$lib/components/settings/ProjectSetupWizard.svelte";
@@ -19,12 +17,10 @@
 	import { getStores } from "@orqastudio/sdk";
 	import { initDevConsole } from "$lib/utils/dev-console";
 
-	import ArtifactMasterDetail from "$lib/components/artifact/ArtifactMasterDetail.svelte";
-	import FullGraphView from "$lib/components/graph/FullGraphView.svelte";
 	import { ResizablePaneGroup, ResizableHandle, ResizablePane } from "@orqastudio/svelte-components/pure";
 	import setupBackground from "$lib/assets/setup-background.png";
 
-	const { errorStore, navigationStore, settingsStore, artifactStore, projectStore, setupStore, enforcementStore, artifactGraphSDK, pluginRegistry } = getStores();
+	const { errorStore, navigationStore, settingsStore, artifactStore, projectStore, setupStore, enforcementStore, artifactGraphSDK } = getStores();
 
 	/** Unlisten function for the artifact-changed event, cleaned up on destroy. */
 	let unlistenArtifactChanged: UnlistenFn | null = null;
@@ -39,13 +35,6 @@
 		navigationStore.activeActivity === "settings",
 	);
 	const setupNeeded = $derived(!setupStore.setupComplete);
-
-	// Resolve plugin view info for the active nav item
-	const activePluginView = $derived.by(() => {
-		const navItem = navigationStore.activeNavItem;
-		if (!navItem || navItem.type !== "plugin" || !navItem.pluginSource) return null;
-		return { pluginName: navItem.pluginSource, viewKey: navItem.key };
-	});
 
 	function handleGlobalKeydown(e: KeyboardEvent) {
 		// Ctrl+Space (or Cmd+Space on Mac) toggles the search overlay
@@ -175,37 +164,7 @@
 			{:else}
 				<ResizablePaneGroup direction="horizontal" class="flex-1">
 					<ResizablePane defaultSize={70} minSize={30}>
-						<div class="h-full overflow-hidden">
-							{#if activePluginView}
-								<!-- Plugin-provided view — loaded at runtime from plugin bundle -->
-								<PluginViewContainer
-									pluginName={activePluginView.pluginName}
-									viewKey={activePluginView.viewKey}
-								/>
-							{:else if navigationStore.activeActivity === "project"}
-								<ProjectDashboard />
-							{:else if navigationStore.activeActivity === "artifact-graph"}
-								<FullGraphView />
-							{:else if navigationStore.activeActivity === "chat"}
-								<WelcomeScreen />
-							{:else if navigationStore.activeGroup !== null}
-								{#if navigationStore.activeActivity === "orchestrator"}
-									<ArtifactViewer />
-								{:else}
-									<ArtifactMasterDetail activity={navigationStore.activeActivity} />
-								{/if}
-							{:else if navigationStore.isArtifactActivity}
-								{#if navigationStore.explorerView === "artifact-viewer"}
-									<ArtifactViewer />
-								{:else}
-									<div class="flex h-full items-center justify-center text-sm text-muted-foreground">
-										Select an item to view it
-									</div>
-								{/if}
-							{:else}
-								<WelcomeScreen />
-							{/if}
-						</div>
+						<ExplorerRouter />
 					</ResizablePane>
 					<ResizableHandle />
 					<ResizablePane defaultSize={30} minSize={20}>

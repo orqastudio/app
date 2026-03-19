@@ -29,13 +29,14 @@
 			}
 
 			// Mount the plugin view into our container
-			if (module.mount) {
-				// Plugin provides a mount function (preferred — framework agnostic)
-				cleanup = module.mount(container, { pluginName, viewKey });
+			if (typeof module.mount === "function") {
+				// Plugin provides a mount function (preferred)
+				cleanup = module.mount(container);
 			} else if (module.default) {
-				// Plugin exports a Svelte component constructor
-				const component = new module.default({ target: container });
-				cleanup = () => component.$destroy?.();
+				// Plugin exports a Svelte 5 component — use mount()
+				const { mount: svelteMount, unmount: svelteUnmount } = await import("svelte");
+				const instance = svelteMount(module.default, { target: container });
+				cleanup = () => svelteUnmount(instance);
 			}
 
 			loading = false;
