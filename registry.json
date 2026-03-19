@@ -13,8 +13,13 @@
       "image": "https://github.com/orqastudio/orqastudio-plugin-software/blob/main/thumbnail.png?raw=1",
       "category": "workflow",
       "icon": "layers",
-      "capabilities": ["views", "widgets"],
-      "requires": { "node": ">=22" }
+      "capabilities": [
+        "views",
+        "widgets"
+      ],
+      "requires": {
+        "node": ">=22"
+      }
     },
     {
       "name": "@orqastudio/plugin-cli",
@@ -27,8 +32,13 @@
       "image": "https://github.com/orqastudio/orqastudio-plugin-cli/blob/main/thumbnail.png?raw=1",
       "category": "workflow",
       "icon": "terminal",
-      "capabilities": ["cli-tools", "hooks"],
-      "requires": { "node": ">=22" }
+      "capabilities": [
+        "cli-tools",
+        "hooks"
+      ],
+      "requires": {
+        "node": ">=22"
+      }
     },
     {
       "name": "@orqastudio/plugin-claude",
@@ -41,8 +51,12 @@
       "image": "https://github.com/orqastudio/orqastudio-plugin-claude/blob/main/thumbnail.png?raw=1",
       "category": "ai-provider",
       "icon": "bot",
-      "capabilities": ["sidecar"],
-      "requires": { "node": ">=22" }
+      "capabilities": [
+        "sidecar"
+      ],
+      "requires": {
+        "node": ">=22"
+      }
     },
     {
       "name": "@orqastudio/plugin-svelte",
@@ -52,11 +66,16 @@
       "version": "0.1.0-dev",
       "releaseTag": "v0.1.0-dev",
       "sha256": "",
-      "image": "",
+      "image": "https://github.com/orqastudio/orqastudio-plugin-svelte/blob/main/thumbnail.png?raw=1",
       "category": "coding-standards",
       "icon": "code",
-      "capabilities": ["cli-tools", "hooks"],
-      "requires": { "node": ">=22" }
+      "capabilities": [
+        "cli-tools",
+        "hooks"
+      ],
+      "requires": {
+        "node": ">=22"
+      }
     },
     {
       "name": "@orqastudio/plugin-tauri",
@@ -66,10 +85,13 @@
       "version": "0.1.0-dev",
       "releaseTag": "v0.1.0-dev",
       "sha256": "",
-      "image": "",
+      "image": "https://github.com/orqastudio/orqastudio-plugin-tauri/blob/main/thumbnail.png?raw=1",
       "category": "coding-standards",
       "icon": "cpu",
-      "capabilities": ["cli-tools", "hooks"],
+      "capabilities": [
+        "cli-tools",
+        "hooks"
+      ],
       "requires": {}
     }
   ]
