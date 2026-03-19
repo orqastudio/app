@@ -138,7 +138,7 @@
 									</span>
 
 									<div class="flex min-w-0 flex-wrap items-center gap-1">
-										{#each visibleRefs(groupKey, "in", refs) as ref ("in:" + ref.source_id + ref.field)}
+										{#each visibleRefs(groupKey, "in", refs) as ref, i ("in:" + ref.source_id + ref.relationship_type + i)}
 											<ArtifactLink id={ref.source_id} />
 
 										{/each}
@@ -167,7 +167,7 @@
 									</span>
 
 									<div class="flex min-w-0 flex-wrap items-center gap-1">
-										{#each visibleRefs(groupKey, "out", refs) as ref ("out:" + ref.target_id + ref.field)}
+										{#each visibleRefs(groupKey, "out", refs) as ref, i ("out:" + ref.target_id + ref.relationship_type + i)}
 											<ArtifactLink id={ref.target_id} />
 										{/each}
 										{#if refs.length > 3}
