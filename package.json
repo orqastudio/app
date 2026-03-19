@@ -1,0 +1,7 @@
+{
+  "name": "@orqastudio/plugin-tauri",
+  "version": "0.1.0-dev",
+  "private": true,
+  "type": "module",
+  "description": "Rust and Tauri development infrastructure plugin for OrqaStudio"
+}

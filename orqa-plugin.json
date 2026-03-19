@@ -1,0 +1,57 @@
+{
+  "name": "@orqastudio/plugin-tauri",
+  "version": "0.1.0-dev",
+  "displayName": "Tauri Development",
+  "description": "Rust and Tauri development infrastructure — clippy, rustfmt, cargo test configuration and enforcement. Provides coding standards tooling that integrates with OrqaStudio rules.",
+  "provides": {
+    "schemas": [],
+    "views": [],
+    "widgets": [],
+    "relationships": [],
+    "skills": [
+      {
+        "key": "tauri-patterns",
+        "id": "SKILL-TAU-001",
+        "label": "Tauri v2 Patterns"
+      },
+      {
+        "key": "clippy-config-management",
+        "id": "SKILL-TAU-002",
+        "label": "Clippy Config Management"
+      },
+      {
+        "key": "rust-testing-patterns",
+        "id": "SKILL-TAU-003",
+        "label": "Rust Testing Patterns"
+      },
+      {
+        "key": "tauri-installation",
+        "id": "SKILL-TAU-004",
+        "label": "Tauri Plugin Installation"
+      }
+    ],
+    "tools": {
+      "clippy": {
+        "command": "cargo clippy",
+        "configFile": "clippy.toml",
+        "configFormat": "toml"
+      },
+      "rustfmt": {
+        "command": "cargo fmt --check",
+        "configFile": ".rustfmt.toml",
+        "configFormat": "toml"
+      },
+      "cargo-test": {
+        "command": "cargo test",
+        "configFile": null,
+        "configFormat": "cli-args"
+      }
+    },
+    "dependencies": {
+      "rustToolchain": "stable",
+      "cargoInstall": []
+    },
+    "cliTools": [],
+    "hooks": []
+  }
+}
