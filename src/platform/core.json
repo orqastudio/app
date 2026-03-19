@@ -206,7 +206,12 @@
       "from": ["skill", "doc"],
       "to": ["skill", "doc"],
       "description": "Paired content kept in sync — agent-facing and human-facing versions",
-      "semantic": "synchronisation"
+      "semantic": "synchronisation",
+      "constraints": {
+        "requiredWhenSourceType": "skill",
+        "minCount": 1,
+        "description": "Every skill must have at least one synchronised-with relationship to a human-facing doc (AD-058)"
+      }
     },
     {
       "key": "merged-into",
