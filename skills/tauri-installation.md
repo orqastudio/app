@@ -1,12 +1,14 @@
 ---
-id: SKILL-TAU-002
+id: SKILL-TAU-6f7f4da5
 type: skill
 name: Tauri Plugin Installation
 status: active
 plugin: "@orqastudio/plugin-tauri"
 relationships:
-  - target: DOC-TAU-002
+  - target: DOC-TAU-d0237b23
+    type: synchronised-with  - target: DOC-TAU-d9c0d1c7
     type: synchronised-with
+
 ---
 
 # Tauri Plugin Installation

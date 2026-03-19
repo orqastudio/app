@@ -1,11 +1,11 @@
 ---
-id: SKILL-TAU-001
+id: SKILL-TAU-de97219c
 type: skill
 name: Tauri v2 Patterns
 status: active
 plugin: "@orqastudio/plugin-tauri"
 relationships:
-  - target: DOC-TAU-001
+  - target: DOC-TAU-d9c0d1c7
     type: synchronised-with
 ---
 
