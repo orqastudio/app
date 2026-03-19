@@ -163,6 +163,45 @@ Each skill has a paired documentation artifact (`synchronised-with`) so humans c
 
 The developer runs one command. The governance system decides which tools run with which config.
 
+## Dependency Management
+
+When a plugin is installed, it ensures the target project has the required tool dependencies:
+
+1. **Check existing** — read `package.json` / `Cargo.toml` for already-installed deps
+2. **Add missing** — append any missing dev dependencies (e.g. `eslint`, `@typescript-eslint/parser`, `vitest`)
+3. **Install** — run `npm install` / `cargo fetch` to resolve
+4. **Idempotent** — if deps already exist, do nothing (existing project support)
+
+### Organisation Mode
+
+When installing to an org-mode project, the plugin asks which sub-projects it applies to:
+
+```
+Installing @orqastudio/plugin-svelte...
+
+This org has 7 sub-projects. Based on detected languages:
+
+  Recommended (TypeScript detected):
+  [x] app/ui          — Svelte + TypeScript
+  [x] libs/sdk        — TypeScript
+  [x] libs/cli        — TypeScript
+  [x] connectors/claude-code — TypeScript
+
+  Not recommended:
+  [ ] app/backend     — Rust only (use @orqastudio/plugin-tauri instead)
+  [ ] plugins/software — No source code (skills + docs only)
+  [ ] libs/brand      — Assets only
+
+Install to selected projects? [Y/n]
+```
+
+Each selected sub-project gets:
+- Tool dependencies added to its `package.json`
+- Config files generated from the org-level coding standards rules
+- Any sub-project-specific overrides preserved
+
+Sub-projects that aren't selected don't get the plugin's enforcement — the tools aren't installed and no config is generated. The org-level rule still exists but its enforcement entries for that plugin are inactive in unselected projects.
+
 ## Migration Path
 
 Current `libs/eslint-config` and `libs/test-config` become dependencies of the Svelte plugin. The standalone libraries are absorbed — their config becomes the default enforcement entries in the platform's core rules. Projects that use the Svelte plugin get the standards automatically. Projects that don't use Svelte don't get ESLint config they don't need.
