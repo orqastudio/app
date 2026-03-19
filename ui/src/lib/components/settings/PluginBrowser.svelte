@@ -4,7 +4,9 @@
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import { invoke, getStores } from "@orqastudio/sdk";
+	import { invoke, getStores, logger } from "@orqastudio/sdk";
+
+	const log = logger("plugin-browser");
 	import type { RegistrationConflict } from "@orqastudio/sdk";
 	import type { PluginManifest } from "@orqastudio/types";
 	import ConflictResolutionDialog from "./ConflictResolutionDialog.svelte";
@@ -82,7 +84,8 @@
 	async function loadInstalled() {
 		try {
 			installed = await invoke<PluginEntry[]>("plugin_list_installed");
-		} catch {
+		} catch (err) {
+			log.error("Failed to load installed plugins", { err });
 			installed = [];
 		}
 	}
@@ -233,7 +236,8 @@
 			detailLoading = true;
 			try {
 				detailManifest = await invoke<PluginManifestData>("plugin_get_manifest", { name: plugin.name });
-			} catch {
+			} catch (err) {
+				log.error("Failed to load plugin manifest for detail view", { pluginName: plugin.name, err });
 				detailManifest = null;
 			} finally {
 				detailLoading = false;

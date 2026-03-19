@@ -1,17 +1,17 @@
 ---
-id: RULE-034
+id: RULE-2f7b6a31
 title: Artifact Link Format
 description: "All cross-references between artifacts must use markdown link syntax with artifact IDs. Bare IDs, file paths, and web-style paths are forbidden."
 status: active
 created: 2026-03-11
 updated: 2026-03-13
 relationships:
-  - target: AD-036
+  - target: AD-d8ea4d2b
     type: enforces
-  - target: AGENT-008
+  - target: AGENT-ff44f841
     type: observed-by
 ---
-All artifact cross-references MUST use the format `[Display Text](ARTIFACT-ID)` where the artifact ID matches the pattern `PREFIX-NNN`. The display text is typically the artifact ID itself: `[EPIC-001](EPIC-001)`.
+All artifact cross-references MUST use the format `[Display Text](ARTIFACT-ID)` where the artifact ID matches the pattern `PREFIX-NNN`. The display text is typically the artifact ID itself: `[EPIC-e045ab6d](EPIC-e045ab6d)`.
 
 ## Valid Artifact ID Prefixes
 
@@ -30,16 +30,16 @@ All artifact cross-references MUST use the format `[Display Text](ARTIFACT-ID)` 
 ## Valid Formats
 
 ```markdown
-See [RULE-004](RULE-004) for details.
-This implements [EPIC-045](EPIC-045).
-Based on [AD-029](AD-029) and [RES-036](RES-036).
+See [RULE-7b770593](RULE-7b770593) for details.
+This implements [EPIC-be023ed2](EPIC-be023ed2).
+Based on [AD-774cc3d0](AD-774cc3d0) and [RES-a6311b1b](RES-a6311b1b).
 ```
 
 ## FORBIDDEN
 
 ```markdown
 <!-- Bare IDs without link syntax — won't be detected by the renderer -->
-See RULE-004 for details.
+See RULE-7b770593 for details.
 
 <!-- Web-style paths — don't resolve in the app -->
 [Governance](/product/governance)
@@ -49,7 +49,7 @@ See RULE-004 for details.
 [Governance](../about/governance.md)
 
 <!-- Wrapping links in outer parentheses — visual noise -->
-([EPIC-001](EPIC-001))
+([EPIC-e045ab6d](EPIC-e045ab6d))
 ```
 
 - Bare artifact IDs without markdown link syntax
@@ -64,5 +64,5 @@ See RULE-004 for details.
 
 ## Related Rules
 
-- [RULE-032](RULE-032) (schema-validation) — frontmatter field values that reference artifacts must use valid IDs
-- [RULE-003](RULE-003) (artifact-config-integrity) — artifact paths in config must match disk
+- [RULE-a764b2ae](RULE-a764b2ae) (schema-validation) — frontmatter field values that reference artifacts must use valid IDs
+- [RULE-6c0496e0](RULE-6c0496e0) (artifact-config-integrity) — artifact paths in config must match disk

@@ -1,5 +1,5 @@
 ---
-id: DOC-075
+id: DOC-94224b27
 title: "Status & Workflow"
 category: reference
 description: "How the unified status system works — what each status means, when it changes, and who changes it."
@@ -7,9 +7,9 @@ created: 2026-03-15
 updated: 2026-03-15
 sort: 11
 relationships:
-  - target: AD-049
+  - target: AD-6cea0c64
     type: documents
-    rationale: This page explains the status vocabulary and icon system defined in AD-049
+    rationale: This page explains the status vocabulary and icon system defined in AD-6cea0c64
 ---
 
 ## Overview

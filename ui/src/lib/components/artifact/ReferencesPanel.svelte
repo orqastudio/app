@@ -6,9 +6,10 @@
 	} from "@orqastudio/svelte-components/pure";
 	import { TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
 	import { SvelteMap } from "svelte/reactivity";
-	import { getStores } from "@orqastudio/sdk";
+	import { getStores, logger } from "@orqastudio/sdk";
 
 	const { artifactGraphSDK } = getStores();
+	const log = logger("references");
 	import ArtifactLink from "./ArtifactLink.svelte";
 	import RelationshipGraphView from "./RelationshipGraphView.svelte";
 	import type { ArtifactRef } from "@orqastudio/types";
@@ -23,13 +24,17 @@
 		return dotIndex !== -1 ? filename.slice(0, dotIndex) : filename;
 	});
 
-	// Ref counts are cheap — just check if any exist for the badge
-	const incomingCount = $derived(
-		artifactId ? artifactGraphSDK.referencesTo(artifactId).length : 0,
-	);
-	const outgoingCount = $derived(
-		artifactId ? artifactGraphSDK.referencesFrom(artifactId).length : 0,
-	);
+	// Ref counts — should be cheap graph lookups
+	const incomingCount = $derived.by(() => {
+		if (!artifactId) return 0;
+		const count = artifactGraphSDK.referencesTo(artifactId).length;
+		return count;
+	});
+	const outgoingCount = $derived.by(() => {
+		if (!artifactId) return 0;
+		const count = artifactGraphSDK.referencesFrom(artifactId).length;
+		return count;
+	});
 	const totalRefs = $derived(incomingCount + outgoingCount);
 
 	// Full refs only computed when the panel is open — deferred to avoid

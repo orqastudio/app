@@ -1,12 +1,12 @@
 ---
-id: RULE-027
+id: RULE-8035e176
 title: Structure Before Work
 description: No implementation work may begin without the full artifact structure in place first.
 status: active
 created: 2026-03-07
 updated: 2026-03-07
 relationships:
-  - target: AD-040
+  - target: AD-6dfbba70
     type: enforces
 ---
 ## The Rule (NON-NEGOTIABLE)
@@ -91,8 +91,8 @@ Agents receiving tasks MUST:
 
 ## Related Rules
 
-- [RULE-008](RULE-008) (documentation-first) — documentation before code (this rule extends it to ALL artifacts)
-- [RULE-004](RULE-004) (artifact-lifecycle) — artifact creation standards and status transitions
-- [RULE-011](RULE-011) (enforcement-before-code) — enforcement artifacts before implementation
-- [RULE-019](RULE-019) (no-deferred-deliverables) — if it's in scope, it ships
-- [RULE-015](RULE-015) (honest-reporting) — structure prevents ambiguous completion claims
+- [RULE-9daf29c0](RULE-9daf29c0) (documentation-first) — documentation before code (this rule extends it to ALL artifacts)
+- [RULE-7b770593](RULE-7b770593) (artifact-lifecycle) — artifact creation standards and status transitions
+- [RULE-3eccebf3](RULE-3eccebf3) (enforcement-before-code) — enforcement artifacts before implementation
+- [RULE-e120bb70](RULE-e120bb70) (no-deferred-deliverables) — if it's in scope, it ships
+- [RULE-878e5422](RULE-878e5422) (honest-reporting) — structure prevents ambiguous completion claims

@@ -1,5 +1,5 @@
 ---
-id: DOC-026
+id: DOC-3e7ea7d2
 title: "Content Ownership: Docs, Agents, Skills, and Rules"
 category: concept
 description: "Ownership model for documentation, agent definitions, skills, and rules across the project."

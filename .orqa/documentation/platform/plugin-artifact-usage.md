@@ -1,12 +1,12 @@
 ---
-id: DOC-085
+id: DOC-fadf0401
 title: Plugin Artifact Usage Guide
 description: "How plugin-provided artifact types and relationships extend the platform graph. Reference for understanding and working with any plugin's artifacts."
 category: concept
 created: 2026-03-18
 updated: 2026-03-18
 relationships:
-  - target: SKILL-047
+  - target: SKILL-8d1c4be6
     type: synchronised-with
 ---
 
@@ -39,7 +39,7 @@ Each entry defines an artifact type:
 | `label` / `plural` | Display names |
 | `icon` | Lucide icon name |
 | `defaultPath` | Where artifacts of this type live on disk |
-| `idPrefix` | ID pattern (e.g., `EPIC` → `EPIC-001`) |
+| `idPrefix` | ID pattern (e.g., `EPIC` → `EPIC-e045ab6d`) |
 | `frontmatter.required` | Fields that must be present |
 | `statusTransitions` | Valid status changes for this type |
 
@@ -85,7 +85,7 @@ The skill teaches agents; the doc teaches humans. They cover the same ground but
 
 The software plugin (`plugins/software/`) defines 5 types: milestone, epic, task, research, wireframe. It ships 9 custom relationships (delivers, fulfils, depends-on, realises, produces, yields, reports, fixes, affects).
 
-- **SKILL-SW-001** teaches agents the software delivery lifecycle
-- **DOC-SW-001** teaches humans the same concepts
+- **SKILL-SW-1d47d8d8** teaches agents the software delivery lifecycle
+- **DOC-SW-421219ce** teaches humans the same concepts
 
 Any new plugin should follow this pattern.

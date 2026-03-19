@@ -1,5 +1,5 @@
 ---
-id: AGENT-002
+id: AGENT-cc255bc8
 title: Implementer
 description: "Builds things — code, deliverables, artifacts. Whatever \"work\" means in the project domain. Takes plans and turns them into working implementations."
 status: active
@@ -18,9 +18,9 @@ capabilities:
   - shell_execute
 subagent_mapping: null
 relationships:
-  - target: SKILL-005
+  - target: SKILL-1c5e752e
     type: employs
-  - target: SKILL-008
+  - target: SKILL-f0c40eaf
     type: employs
 ---
 
@@ -53,7 +53,7 @@ You may run in two contexts. Both are permanent and first-class.
 
 The `chunkhound` skill teaches query patterns that work in both contexts.
 
-**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see [RULE-009](RULE-009).
+**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see [RULE-6083347d](RULE-6083347d).
 
 Use `make` targets for all build/test/lint commands — see `.orqa/documentation/development/commands.md`.
 
@@ -107,7 +107,7 @@ The orchestrator chooses the right skill combination when delegating.
 - NEVER skip end-to-end completeness — all layers in the same commit
 - NEVER use `unwrap()` in production Rust code — use `thiserror` Result types
 - NEVER use Svelte 4 patterns — Svelte 5 runes only
-- NEVER introduce stubs — real implementations only (see [RULE-020](RULE-020))
+- NEVER introduce stubs — real implementations only (see [RULE-e9c54567](RULE-e9c54567))
 - NEVER bypass pre-commit hooks with `--no-verify`
 - Always report honestly what is done and what is not done
 - Always run `make check` before declaring work complete

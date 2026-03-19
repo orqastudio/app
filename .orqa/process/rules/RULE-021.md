@@ -1,14 +1,14 @@
 ---
-id: RULE-021
+id: RULE-39169bcd
 title: Pillar Alignment in Documentation
 description: Every documentation page describing a feature must include a Pillar Alignment section.
 status: active
 created: 2026-03-07
 updated: 2026-03-07
 relationships:
-  - target: AGENT-008
+  - target: AGENT-ff44f841
     type: observed-by
-  - target: AD-031
+  - target: AD-47c41f0c
     type: enforces
 ---
 Every documentation page that describes a feature, component, workflow, integration, or capability MUST include a "Pillar Alignment" section. This ensures all documented work traces back to the product vision and prevents scope creep from accumulating silently in the docs.
@@ -87,7 +87,7 @@ Place the Pillar Alignment section near the bottom of the page, after the main c
 
 ## Related Rules
 
-- [RULE-031](RULE-031) (vision-alignment) — governs pillar alignment for features and implementation; this rule extends the same requirement to documentation pages
-- [RULE-008](RULE-008) (documentation-first) — documentation is the source of truth; this rule ensures docs remain aligned with the product vision
-- [RULE-004](RULE-004) (artifact-lifecycle) — documentation gates on epics (`docs-required`, `docs-produced`) produce pages that must include pillar alignment sections
+- [RULE-1e8a1914](RULE-1e8a1914) (vision-alignment) — governs pillar alignment for features and implementation; this rule extends the same requirement to documentation pages
+- [RULE-9daf29c0](RULE-9daf29c0) (documentation-first) — documentation is the source of truth; this rule ensures docs remain aligned with the product vision
+- [RULE-7b770593](RULE-7b770593) (artifact-lifecycle) — documentation gates on epics (`docs-required`, `docs-produced`) produce pages that must include pillar alignment sections
 

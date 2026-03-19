@@ -1,5 +1,5 @@
 ---
-id: AGENT-004
+id: AGENT-caff7bc1
 title: Planner
 description: "Designs implementation approaches, evaluates architectural tradeoffs, maps dependencies, and produces structured plans. Does not implement — plans inform the Implementer."
 status: active
@@ -17,15 +17,15 @@ capabilities:
   - web_search
 subagent_mapping: null
 relationships:
-  - target: SKILL-005
+  - target: SKILL-1c5e752e
     type: employs
-  - target: SKILL-008
+  - target: SKILL-f0c40eaf
     type: employs
-  - target: SKILL-019
+  - target: SKILL-6f33713e
     type: employs
-  - target: SKILL-002
+  - target: SKILL-025fc31d
     type: employs
-  - target: SKILL-048
+  - target: SKILL-f7476f0a
     type: employs
 ---
 
@@ -49,8 +49,8 @@ Before any planning work, load and understand:
 
 - `.orqa/documentation/about/vision.md` — Product vision and pillars
 - `.orqa/documentation/about/artifact-framework.md` — Artifact schemas and connections
-- [RULE-022](RULE-022) — Mandatory plan structure
-- [RULE-002](RULE-002) — Architecture decision compliance
+- [RULE-303c1cc8](RULE-303c1cc8) — Mandatory plan structure
+- [RULE-65973a88](RULE-65973a88) — Architecture decision compliance
 
 ## Operating Context
 
@@ -62,11 +62,11 @@ You may run in two contexts. Both are permanent and first-class.
 
 The `chunkhound` skill teaches query patterns that work in both contexts.
 
-**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see [RULE-009](RULE-009).
+**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see [RULE-6083347d](RULE-6083347d).
 
 ## Plan Structure
 
-Every plan MUST follow the structure defined in [RULE-022](RULE-022):
+Every plan MUST follow the structure defined in [RULE-303c1cc8](RULE-303c1cc8):
 
 1. **Architectural Compliance** — Verify each foundational principle
 2. **Systems Architecture Checklist** — Address every dimension (data, IPC, state, config, health, errors, testing, preferences, docs)

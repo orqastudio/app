@@ -1,5 +1,8 @@
 import { resolveIcon } from "@orqastudio/svelte-components/pure";
+import { logger } from "@orqastudio/sdk";
 import type { Component } from "svelte";
+
+const log = logger("tool-display");
 
 /**
  * Strips an MCP server prefix from a tool name.
@@ -130,7 +133,8 @@ export function getEphemeralLabel(toolName: string, input: string): string {
 			default:
 				return getToolDisplay(toolName).label;
 		}
-	} catch {
+	} catch (err) {
+		log.warn("Failed to parse tool input for ephemeral label", { toolName, err });
 		return getToolDisplay(toolName).label;
 	}
 }

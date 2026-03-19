@@ -1,12 +1,12 @@
 ---
-id: DOC-087
+id: DOC-87d9a929
 title: "Software Project Setup Guide"
 description: "How to set up OrqaStudio for a software development project — what the software preset adds, how stack detection works, and what to customise."
 category: onboarding
 created: 2026-03-18
 updated: 2026-03-18
 relationships:
-  - target: SKILL-024
+  - target: SKILL-819789ab
     type: synchronised-with
 ---
 

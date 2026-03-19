@@ -1,5 +1,5 @@
 ---
-id: DOC-053
+id: DOC-9c29d60c
 title: Interaction Patterns
 category: reference
 description: "Standard interaction patterns for navigation, selection, editing, and feedback across the UI."
@@ -9,7 +9,7 @@ sort: 6
 relationships: []
 ---
 
-**Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-004), [AI Integration Research](RES-002), Design System
+**Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-df5560cb), [AI Integration Research](RES-7f87b149), Design System
 
 How OrqaStudio™'s UI responds to user actions. Covers streaming display, tool call approval, inline editing, panel behavior, and keyboard shortcuts.
 

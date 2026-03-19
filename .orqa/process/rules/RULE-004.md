@@ -1,28 +1,28 @@
 ---
-id: RULE-004
+id: RULE-7b770593
 title: Artifact Lifecycle
 description: "Enforces creation standards, status transitions, promotion gates, and documentation gates for all .orqa/ artifacts."
 status: active
 created: 2026-03-07
 updated: 2026-03-13
 relationships:
-  - target: AD-044
+  - target: AD-8b3962f6
     type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-044
-  - target: AD-023
+    rationale: Auto-generated inverse of enforces relationship from AD-8b3962f6
+  - target: AD-c3700062
     type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-023
-  - target: AD-040
+    rationale: Auto-generated inverse of enforces relationship from AD-c3700062
+  - target: AD-6dfbba70
     type: enforces
-  - target: DOC-015
+  - target: DOC-e5ff4baf
     type: documented-by
-  - target: DOC-035
+  - target: DOC-7c66f103
     type: documented-by
-  - target: DOC-036
+  - target: DOC-01ddd8aa
     type: documented-by
-  - target: DOC-025
+  - target: DOC-c4b4b8b7
     type: documented-by
-  - target: AGENT-008
+  - target: AGENT-ff44f841
     type: observed-by
 ---
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
@@ -45,7 +45,7 @@ Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enf
 | A task within an epic needs detailed tracking | `TASK-NNN` | Create in `.orqa/delivery/tasks/` with `epic:` reference |
 | An epic is created or moves to `ready` | Reconciliation `TASK-NNN` | Auto-create a standing reconciliation task for the epic (see Epic Reconciliation Task below) |
 | A strategic goal is defined | `MS-NNN` | Create in `.orqa/delivery/milestones/` |
-| An implementation reveals a reusable pattern | `IMPL-NNN` | Create in `.orqa/process/lessons/` (see [RULE-017](RULE-017) (lessons-learned)) |
+| An implementation reveals a reusable pattern | `IMPL-NNN` | Create in `.orqa/process/lessons/` (see [RULE-551bde31](RULE-551bde31) (lessons-learned)) |
 | A question needs investigation before a decision | Research file | Create in `.orqa/delivery/research/` |
 | Research produces an architectural choice | `AD-NNN` | Create in `.orqa/process/decisions/` |
 
@@ -270,7 +270,7 @@ This prevents the pattern where multiple ideas addressing the same capability ar
 2. Create `EPIC-NNN.md` in `.orqa/delivery/epics/` with:
    - `milestone` set to the appropriate milestone
    - `status: draft`
-   - `priority` assessed per project criteria (see DOC-062)
+   - `priority` assessed per project criteria (see DOC-c8de180d)
    - `docs-required` populated based on what documentation needs to exist
    - `docs-produced` populated based on what documentation the work will create
 3. Update the source `IDEA-NNN.md`:
@@ -285,7 +285,7 @@ This prevents the pattern where multiple ideas addressing the same capability ar
 
 ### How Priority Is Determined
 
-Priority is an inference-based judgement, not a formula. Each project defines its priority criteria in `.orqa/documentation/about/priority-assessment.md` (DOC-062). Agents read the criteria and assign a priority band (P1/P2/P3) based on how the epic serves the active milestone and whether it blocks other work.
+Priority is an inference-based judgement, not a formula. Each project defines its priority criteria in `.orqa/documentation/about/priority-assessment.md` (DOC-c8de180d). Agents read the criteria and assign a priority band (P1/P2/P3) based on how the epic serves the active milestone and whether it blocks other work.
 
 The `scoring` field on epics is optional rationale — freeform dimensions that capture the agent's reasoning. Projects choose their own dimension names. What matters is that the `priority` band is defensible and the rationale is readable.
 
@@ -429,9 +429,9 @@ The orchestrator SHOULD periodically verify:
 
 ## Related Rules
 
-- [RULE-008](RULE-008) (documentation-first) — documentation is the source of truth; artifacts enforce the documentation-first principle at the workflow level
-- [RULE-016](RULE-016) (artifact-id-semantics) — IDs are identifiers not rankings; priority comes from scoring
-- [RULE-031](RULE-031) (vision-alignment) — pillar alignment required for all artifacts
-- [RULE-017](RULE-017) (lessons-learned) — lesson lifecycle and promotion pipeline
-- [RULE-021](RULE-021) (pillar-alignment-docs) — pillar alignment in documentation pages
-- [RULE-015](RULE-015) (honest-reporting) — artifact status must reflect reality
+- [RULE-9daf29c0](RULE-9daf29c0) (documentation-first) — documentation is the source of truth; artifacts enforce the documentation-first principle at the workflow level
+- [RULE-22783309](RULE-22783309) (artifact-id-semantics) — IDs are identifiers not rankings; priority comes from scoring
+- [RULE-1e8a1914](RULE-1e8a1914) (vision-alignment) — pillar alignment required for all artifacts
+- [RULE-551bde31](RULE-551bde31) (lessons-learned) — lesson lifecycle and promotion pipeline
+- [RULE-39169bcd](RULE-39169bcd) (pillar-alignment-docs) — pillar alignment in documentation pages
+- [RULE-878e5422](RULE-878e5422) (honest-reporting) — artifact status must reflect reality

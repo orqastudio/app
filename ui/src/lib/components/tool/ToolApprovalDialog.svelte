@@ -2,7 +2,10 @@
 	import { Icon, Button } from "@orqastudio/svelte-components/pure";
 	import { CardRoot as Card, CardContent, CardFooter, CardHeader, CardTitle } from "@orqastudio/svelte-components/pure";
 	import CodeBlock from "$lib/components/content/CodeBlock.svelte";
+	import { logger } from "@orqastudio/sdk";
 	import type { PendingApproval } from "@orqastudio/sdk";
+
+	const log = logger("tool-approval");
 	import { getToolDisplay, stripToolName } from "$lib/utils/tool-display";
 
 	let {
@@ -21,7 +24,8 @@
 	const formattedInput = $derived(() => {
 		try {
 			return JSON.stringify(JSON.parse(approval.input), null, 2);
-		} catch {
+		} catch (err) {
+			log.error("Failed to parse tool approval input as JSON", { toolName: approval.toolName, err });
 			return approval.input;
 		}
 	});

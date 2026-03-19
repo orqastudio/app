@@ -1,12 +1,12 @@
 ---
-id: RULE-028
+id: RULE-d90112d9
 title: Systems Thinking First
 description: "Every change must be evaluated as part of the whole system, not as an isolated fix. This is the foundational discipline that OrqaStudio exists to enable — it applies to every project the app manages."
 status: active
 created: 2026-03-07
 updated: 2026-03-07
 relationships:
-  - target: AD-017
+  - target: AD-1d928079
     type: enforces
 ---
 # Systems Thinking First (NON-NEGOTIABLE)
@@ -62,6 +62,6 @@ See the `systems-thinking` skill for practical methodology — how to identify s
 
 ## Related Rules
 
-- [RULE-022](RULE-022) (plan-mode-compliance) — plans must describe the system being modified; the Systems Architecture Checklist operationalises this principle
-- [RULE-010](RULE-010) (end-to-end-completeness) — full-stack thinking is systems thinking applied to the four-layer feature structure
-- [RULE-009](RULE-009) (dogfood-mode) — heightened systems awareness applies when editing the app you are running inside, as changes affect the live system
+- [RULE-303c1cc8](RULE-303c1cc8) (plan-mode-compliance) — plans must describe the system being modified; the Systems Architecture Checklist operationalises this principle
+- [RULE-1acb1602](RULE-1acb1602) (end-to-end-completeness) — full-stack thinking is systems thinking applied to the four-layer feature structure
+- [RULE-6083347d](RULE-6083347d) (dogfood-mode) — heightened systems awareness applies when editing the app you are running inside, as changes affect the live system

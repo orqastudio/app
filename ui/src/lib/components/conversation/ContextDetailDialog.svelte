@@ -7,7 +7,10 @@
 		CollapsibleContent,
 		CollapsibleTrigger,
 	} from "@orqastudio/svelte-components/pure";
+	import { logger } from "@orqastudio/sdk";
 	import type { ContextEntry as ContextEntryType } from "@orqastudio/sdk";
+
+	const log = logger("conversation");
 
 	let {
 		entry,
@@ -38,7 +41,8 @@
 				}
 				return { role: "unknown", content: String(m) };
 			});
-		} catch {
+		} catch (err) {
+			log.warn("Failed to parse injected context messages", { err });
 			return [];
 		}
 	});

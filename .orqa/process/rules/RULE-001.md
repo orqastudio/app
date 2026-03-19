@@ -1,5 +1,5 @@
 ---
-id: RULE-001
+id: RULE-532100d9
 title: Agent Delegation
 description: The orchestrator coordinates but does not implement. All implementation is delegated to universal roles with appropriate skills.
 status: active
@@ -10,13 +10,13 @@ enforcement:
   - "event: stop"
   - governance-maintenance
 relationships:
-  - target: AD-048
+  - target: AD-f9034c99
     type: enforces
-  - target: DOC-036
+  - target: DOC-01ddd8aa
     type: documented-by
-  - target: DOC-069
+  - target: DOC-c158f4a6
     type: documented-by
-  - target: DOC-030
+  - target: DOC-b10607c0
     type: documented-by
 ---
 The orchestrator coordinates. It does NOT implement. Every implementation task is delegated to a universal role with the appropriate skills loaded.
@@ -39,7 +39,7 @@ The orchestrator coordinates. It does NOT implement. Every implementation task i
 - Coordinate across agents, report status to the user
 - Write session state (`tmp/session-state.md`)
 
-**If the orchestrator is writing anything other than coordination output, the system has failed to delegate.** See the delegation reference (DOC-069) for the full work-type-to-role mapping.
+**If the orchestrator is writing anything other than coordination output, the system has failed to delegate.** See the delegation reference (DOC-c158f4a6) for the full work-type-to-role mapping.
 
 ## What the Orchestrator MUST Delegate
 
@@ -59,7 +59,7 @@ The orchestrator coordinates. It does NOT implement. Every implementation task i
 When delegating to a role:
 
 1. **Name the role** — Every delegation must explicitly state which universal role is being used
-2. **Resolve capabilities** — Read the agent's `capabilities` field, determine the current context (CLI or App), and resolve to concrete tool names using [RULE-040](RULE-040) mapping tables. Include the resolved tool names in the delegation prompt.
+2. **Resolve capabilities** — Read the agent's `capabilities` field, determine the current context (CLI or App), and resolve to concrete tool names using [RULE-92dba0cb](RULE-92dba0cb) mapping tables. Include the resolved tool names in the delegation prompt.
 3. **Specify skills** — List the skills to load (e.g., "Implementer with rust-async-patterns, tauri-v2, orqa-ipc-patterns")
 4. **Scope the task** — Clear description with acceptance criteria
 5. **Provide context** — File paths, relevant docs, constraints
@@ -80,7 +80,7 @@ When the orchestrator has approved tasks and no blocker exists, it MUST continue
 - "Ready for X?" when X is already planned and unblocked
 - Any variation of asking permission to execute an approved plan
 
-This was promoted from [IMPL-052](IMPL-052) after 3 recurrences.
+This was promoted from [IMPL-85add0f1](IMPL-85add0f1) after 3 recurrences.
 
 ## Exceptions
 
@@ -127,8 +127,8 @@ Without this rule, the orchestrator accumulates implementation details in its co
 
 ## Related Rules
 
-- [RULE-026](RULE-026) (skill-enforcement) — agents must load skills before starting work
-- [RULE-023](RULE-023) (required-reading) — agents must read governing docs before implementation
-- [RULE-015](RULE-015) (honest-reporting) — agents must report status accurately
-- [RULE-037](RULE-037) (tool-access-restrictions) — constrains which tools each role may use
-- [RULE-040](RULE-040) (provider-agnostic-capabilities) — capability → tool resolution at delegation time
+- [RULE-deab6ea7](RULE-deab6ea7) (skill-enforcement) — agents must load skills before starting work
+- [RULE-b2753bad](RULE-b2753bad) (required-reading) — agents must read governing docs before implementation
+- [RULE-878e5422](RULE-878e5422) (honest-reporting) — agents must report status accurately
+- [RULE-f809076f](RULE-f809076f) (tool-access-restrictions) — constrains which tools each role may use
+- [RULE-92dba0cb](RULE-92dba0cb) (provider-agnostic-capabilities) — capability → tool resolution at delegation time

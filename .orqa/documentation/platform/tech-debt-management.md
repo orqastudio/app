@@ -1,11 +1,11 @@
 ---
-id: DOC-073
+id: DOC-343aeb1f
 type: doc
 name: Tech Debt Management Guide
 category: how-to
 status: active
 relationships:
-  - target: SKILL-053
+  - target: SKILL-c7fb7c83
     type: synchronised-with
 ---
 

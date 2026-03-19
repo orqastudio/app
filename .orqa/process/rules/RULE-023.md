@@ -1,12 +1,12 @@
 ---
-id: RULE-023
+id: RULE-b2753bad
 title: Required Reading
 description: Every agent must read its required documentation before any implementation work begins.
 status: active
 created: 2026-03-07
 updated: 2026-03-07
 relationships:
-  - target: AD-028
+  - target: AD-53e80192
     type: enforces
 ---
 Every agent MUST read its Required Reading documentation before any implementation work begins. The Required Reading section in each agent definition lists the specific documentation pages that agent needs loaded into context.
@@ -33,6 +33,6 @@ In OrqaStudio, Required Reading compliance is enforced via process checks (Phase
 
 ## Related Rules
 
-- [RULE-008](RULE-008) (documentation-first) — documentation is the specification; code is the implementation
-- [RULE-006](RULE-006) (coding-standards) — standards that agents must read
-- [RULE-002](RULE-002) (architecture-decisions) — decisions that agents must comply with
+- [RULE-9daf29c0](RULE-9daf29c0) (documentation-first) — documentation is the specification; code is the implementation
+- [RULE-b49142be](RULE-b49142be) (coding-standards) — standards that agents must read
+- [RULE-65973a88](RULE-65973a88) (architecture-decisions) — decisions that agents must comply with

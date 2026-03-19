@@ -2,10 +2,13 @@
 	import { onMount, onDestroy } from "svelte";
 	import { invoke } from "@tauri-apps/api/core";
 	import { convertFileSrc } from "@tauri-apps/api/core";
+	import { logger } from "@orqastudio/sdk";
+
+	const log = logger("plugin-view");
 
 	let { pluginName, viewKey }: { pluginName: string; viewKey: string } = $props();
 
-	let container: HTMLDivElement;
+	let container = $state<HTMLDivElement>(undefined!);
 	let error: string | null = $state(null);
 	let loading = $state(true);
 	let cleanup: (() => void) | null = null;
@@ -41,6 +44,7 @@
 
 			loading = false;
 		} catch (err) {
+			log.error("Failed to load plugin view", { pluginName, viewKey, err });
 			error = `Failed to load plugin view: ${err instanceof Error ? err.message : String(err)}`;
 			loading = false;
 		}

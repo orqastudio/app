@@ -4,7 +4,9 @@
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import { invoke } from "@orqastudio/sdk";
+	import { invoke, logger } from "@orqastudio/sdk";
+
+	const log = logger("dashboard");
 	import type { CliToolRunResult, CliToolRunStatus } from "@orqastudio/types";
 
 	let statuses = $state<CliToolRunStatus[]>([]);
@@ -21,8 +23,8 @@
 	async function loadStatuses() {
 		try {
 			statuses = await invoke<CliToolRunStatus[]>("cli_tool_status");
-		} catch {
-			// No tools registered yet — this is normal
+		} catch (err) {
+			log.warn("Failed to load CLI tool statuses", { err });
 			statuses = [];
 		}
 	}
@@ -38,6 +40,7 @@
 			});
 			await loadStatuses();
 		} catch (err: unknown) {
+			log.warn("CLI tool run failed", { plugin, toolKey, err });
 			error = err instanceof Error ? err.message : String(err);
 		} finally {
 			running = null;

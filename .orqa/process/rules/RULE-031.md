@@ -1,14 +1,14 @@
 ---
-id: RULE-031
+id: RULE-1e8a1914
 title: Vision Alignment
 description: Every feature must serve at least one active pillar defined in .orqa/process/pillars/.
 status: active
 created: 2026-03-07
 updated: 2026-03-13
 relationships:
-  - target: AD-027
+  - target: AD-44a033cf
     type: enforces
-  - target: DOC-039
+  - target: DOC-1bc9d0b9
     type: documented-by
 ---
 Every feature, command, and UI element must serve the project's guiding principles. These principles are defined as **pillar artifacts** in `.orqa/process/pillars/`. Read the active pillars before implementing any new capability.
@@ -83,16 +83,16 @@ If the user gives an instruction that appears to conflict with a foundational pr
 3. **Document the outcome** — If the user confirms a change to a foundational principle:
    - Update the relevant documentation
    - Update `.orqa/documentation/about/vision.md` and/or `.orqa/documentation/about/governance.md` if the pillars or governance rules change
-   - Update this rule file ([RULE-031](RULE-031) (vision-alignment)) to reflect the new principle
+   - Update this rule file ([RULE-1e8a1914](RULE-1e8a1914) (vision-alignment)) to reflect the new principle
    - Update all affected agent definitions in `.orqa/process/agents/`
 4. **Never silently comply** — If an instruction contradicts a principle, do NOT just implement it without flagging the conflict first
 
 ## Related Rules
 
-- [RULE-004](RULE-004) (artifact-lifecycle) — artifact creation, status transitions, promotion gates, documentation gates
-- [RULE-021](RULE-021) (pillar-alignment-docs) — pillar alignment for *documentation* pages
-- [RULE-002](RULE-002) (architecture-decisions) — architecture decisions that implement the vision
-- [RULE-020](RULE-020) (no-stubs) — real implementations required, not fake demos
+- [RULE-7b770593](RULE-7b770593) (artifact-lifecycle) — artifact creation, status transitions, promotion gates, documentation gates
+- [RULE-39169bcd](RULE-39169bcd) (pillar-alignment-docs) — pillar alignment for *documentation* pages
+- [RULE-65973a88](RULE-65973a88) (architecture-decisions) — architecture decisions that implement the vision
+- [RULE-e9c54567](RULE-e9c54567) (no-stubs) — real implementations required, not fake demos
 
 ## Governance References
 

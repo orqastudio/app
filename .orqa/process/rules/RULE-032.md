@@ -1,20 +1,20 @@
 ---
-id: RULE-032
+id: RULE-a764b2ae
 title: Artifact Schema Compliance
 description: "Every artifact's YAML frontmatter must validate against the JSON Schema defined in its artifact directory's schema.json file."
 status: active
 created: 2026-03-10
 updated: 2026-03-13
 relationships:
-  - target: AD-034
+  - target: AD-89391ab6
     type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-034
-  - target: AD-023
+    rationale: Auto-generated inverse of enforces relationship from AD-89391ab6
+  - target: AD-c3700062
     type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-023
-  - target: DOC-036
+    rationale: Auto-generated inverse of enforces relationship from AD-c3700062
+  - target: DOC-01ddd8aa
     type: documented-by
-  - target: AGENT-008
+  - target: AGENT-ff44f841
     type: observed-by
 ---
 Every artifact in `.orqa/` must have YAML frontmatter that validates against the JSON Schema in its directory's `schema.json` file. Fields not defined in the schema are rejected. Required fields must be present. Enum fields must use valid values.
@@ -69,6 +69,6 @@ All three share the same `schema.json` files — one source of truth, three cons
 
 ## Related Rules
 
-- [RULE-004](RULE-004) (artifact-lifecycle) — status transitions and promotion gates
-- [RULE-003](RULE-003) (artifact-config-integrity) — config paths must match disk
-- [RULE-027](RULE-027) (structure-before-work) — artifacts must exist before implementation
+- [RULE-7b770593](RULE-7b770593) (artifact-lifecycle) — status transitions and promotion gates
+- [RULE-6c0496e0](RULE-6c0496e0) (artifact-config-integrity) — config paths must match disk
+- [RULE-8035e176](RULE-8035e176) (structure-before-work) — artifacts must exist before implementation

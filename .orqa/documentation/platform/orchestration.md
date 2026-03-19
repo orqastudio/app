@@ -1,5 +1,5 @@
 ---
-id: DOC-030
+id: DOC-b10607c0
 title: Orchestration
 category: architecture
 description: How the orchestrator coordinates work across specialized agents using delegation and verification.
@@ -7,18 +7,18 @@ created: 2026-03-02
 updated: 2026-03-12
 sort: 20
 relationships:
-  - target: RULE-026
+  - target: RULE-deab6ea7
     type: documents
-    rationale: Documentation page references RULE-026
-  - target: AD-029
+    rationale: Documentation page references RULE-deab6ea7
+  - target: AD-774cc3d0
     type: documents
-    rationale: Documentation page references AD-029
-  - target: RULE-040
+    rationale: Documentation page references AD-774cc3d0
+  - target: RULE-92dba0cb
     type: documents
-    rationale: Documentation page references RULE-040
-  - target: RULE-001
+    rationale: Documentation page references RULE-92dba0cb
+  - target: RULE-532100d9
     type: documents
-    rationale: This document is the source-of-truth for orchestrator behaviour and agent delegation that RULE-001 enforces
+    rationale: This document is the source-of-truth for orchestrator behaviour and agent delegation that RULE-532100d9 enforces
 ---
 
 ## Purpose
@@ -27,7 +27,7 @@ The orchestrator exists to maintain coherence between what the user intends and 
 
 Delegation is not a convenience — it is a structural requirement. When the orchestrator implements code directly, it accumulates context that crowds out coordination capacity, and it loses the independent perspective that makes review meaningful. An orchestrator that implements is a system that has lost its quality gate. Every implementation task goes to an agent precisely so the orchestrator can verify the result from the outside.
 
-This matters most for continuity. OrqaStudio is developed across many sessions, by agents that each start fresh. The orchestrator is what carries intent across that boundary — it reads task artifacts, checks session state, and ensures that the next session picks up where the last left off without losing coherence. That continuity is what [PILLAR-003](PILLAR-003) (Purpose Through Continuity) means in practice: not just preserving work, but preserving the understanding of why the work was done and what comes next.
+This matters most for continuity. OrqaStudio is developed across many sessions, by agents that each start fresh. The orchestrator is what carries intent across that boundary — it reads task artifacts, checks session state, and ensures that the next session picks up where the last left off without losing coherence. That continuity is what [PILLAR-94b281db](PILLAR-94b281db) (Purpose Through Continuity) means in practice: not just preserving work, but preserving the understanding of why the work was done and what comes next.
 
 This page is the source of truth for orchestrator behaviour. Agent instruction files reference this page rather than duplicating its content.
 
@@ -95,13 +95,13 @@ The orchestrator loads the following skills at session start:
 - `composability` -- ALWAYS loaded (composability philosophy)
 - `planning` -- ALWAYS loaded (task planning methodology)
 
-Additional skills are injected by the orchestrator based on task scope per [RULE-026](RULE-026). The orchestrator reads the task's `skills` field and includes them in the delegation prompt. See the Tier 2 injection table in [RULE-026](RULE-026) for the full mapping.
+Additional skills are injected by the orchestrator based on task scope per [RULE-deab6ea7](RULE-deab6ea7). The orchestrator reads the task's `skills` field and includes them in the delegation prompt. See the Tier 2 injection table in [RULE-deab6ea7](RULE-deab6ea7) for the full mapping.
 
 ---
 
 ## Agent Delegation Guide
 
-All agents are universal roles (see [AD-029](AD-029)). Agent definitions declare **capabilities** (not tools); these are resolved to provider-specific tool names at delegation time per [RULE-040](RULE-040). Domain expertise is loaded via skills — the role + skills combination determines capability.
+All agents are universal roles (see [AD-774cc3d0](AD-774cc3d0)). Agent definitions declare **capabilities** (not tools); these are resolved to provider-specific tool names at delegation time per [RULE-92dba0cb](RULE-92dba0cb). Domain expertise is loaded via skills — the role + skills combination determines capability.
 
 | Task Type | Role | Skills to Load |
 |-----------|------|----------------|

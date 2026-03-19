@@ -1,5 +1,5 @@
 ---
-id: RULE-045
+id: RULE-130f1f63
 title: Data Integrity
 description: "All artifact cross-references must resolve, pipeline relationships must have bidirectional inverses, and integrity checks run on every commit."
 status: active
@@ -12,11 +12,11 @@ enforcement:
   - ".orqa/**/*.md"
   - orqa-governance
 relationships:
-  - target: AD-036
+  - target: AD-d8ea4d2b
     type: enforces
-  - target: AD-042
+  - target: AD-a76663db
     type: enforces
-  - target: AGENT-008
+  - target: AGENT-ff44f841
     type: observed-by
 ---
 All artifact cross-references must resolve to existing artifacts. Pipeline relationships must have bidirectional inverses. These constraints are enforced at commit time and can be verified manually.
@@ -84,6 +84,6 @@ make verify            # Both
 
 ## Related Rules
 
-- [RULE-032](RULE-032) (schema-validation) — schema validation is complementary to link verification
-- [RULE-034](RULE-034) (artifact-cross-references) — cross-reference format rules enforced by link verification
-- [RULE-013](RULE-013) (git-workflow) — pre-commit hook enforcement mechanism
+- [RULE-a764b2ae](RULE-a764b2ae) (schema-validation) — schema validation is complementary to link verification
+- [RULE-2f7b6a31](RULE-2f7b6a31) (artifact-cross-references) — cross-reference format rules enforced by link verification
+- [RULE-633e636d](RULE-633e636d) (git-workflow) — pre-commit hook enforcement mechanism

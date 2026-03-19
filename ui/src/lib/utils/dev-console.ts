@@ -1,36 +1,24 @@
 /**
- * Dev-mode console forwarding.
+ * Dev-mode logging setup.
  *
- * Monkey-patches `console.log`, `console.warn`, and `console.error` to POST
- * messages to the OrqaDev dashboard at `http://localhost:3001/log`.
+ * Connects the SDK's centralized logger to the dev controller dashboard.
+ * In dev mode, all log entries are forwarded to http://localhost:3001/log.
  *
- * Gated by `import.meta.env.DEV` — stripped from production builds entirely.
  * Call `initDevConsole()` once at app startup.
  */
 
+import { subscribeToLogs, setLogLevel } from "@orqastudio/sdk";
+import type { LogEntry } from "@orqastudio/sdk";
+
 const DEV_LOG_URL = "http://localhost:3001/log";
 
-/** Guard: true once patched. */
-let patched = false;
-
-function formatArgs(args: unknown[]): string {
-	return args
-		.map((a) => {
-			if (typeof a === "string") return a;
-			try {
-				return JSON.stringify(a);
-			} catch {
-				return String(a);
-			}
-		})
-		.join(" ");
-}
-
-function postLog(level: string, message: string) {
-	// Fire-and-forget — never block console output
+function forwardEntry(entry: LogEntry) {
 	try {
-		const body = JSON.stringify({ level, message });
-		// Use sendBeacon for reliability, fallback to fetch
+		const body = JSON.stringify({
+			level: entry.level,
+			source: entry.source,
+			message: `[${entry.source}] ${entry.message}`,
+		});
 		if (navigator.sendBeacon) {
 			const blob = new Blob([body], { type: "application/json" });
 			navigator.sendBeacon(DEV_LOG_URL, blob);
@@ -40,44 +28,23 @@ function postLog(level: string, message: string) {
 				headers: { "Content-Type": "application/json" },
 				body,
 				keepalive: true,
-			}).catch(() => {
-				// Dev dashboard not running — ignore
-			});
+			}).catch(() => {});
 		}
 	} catch {
-		// Never fail console output
+		// Never fail
 	}
 }
 
 /**
  * Install dev console forwarding.
- *
  * Only call this when `import.meta.env.DEV` is true.
- * The function is a no-op if called multiple times.
  */
 export function initDevConsole() {
 	if (!import.meta.env.DEV) return;
 
-	// Already patched — bail
-	if (patched) return;
-	patched = true;
+	// Set log level to debug in dev mode
+	setLogLevel("debug");
 
-	const savedLog = console.log.bind(console);
-	const savedWarn = console.warn.bind(console);
-	const savedError = console.error.bind(console);
-
-	console.log = (...args: unknown[]) => {
-		savedLog(...args);
-		postLog("log", formatArgs(args));
-	};
-
-	console.warn = (...args: unknown[]) => {
-		savedWarn(...args);
-		postLog("warn", formatArgs(args));
-	};
-
-	console.error = (...args: unknown[]) => {
-		savedError(...args);
-		postLog("error", formatArgs(args));
-	};
+	// Forward all SDK log entries to the dev dashboard
+	subscribeToLogs(forwardEntry);
 }

@@ -1,22 +1,22 @@
 ---
-id: RULE-003
+id: RULE-6c0496e0
 title: Artifact Config Integrity
 description: Every path in project.json artifacts must resolve to an actual directory on disk. Config-driven scanning with no hardcoded paths.
 status: active
 created: 2026-03-07
 updated: 2026-03-13
 relationships:
-  - target: AD-035
+  - target: AD-2f1991c2
     type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-035
-  - target: AD-041
+    rationale: Auto-generated inverse of enforces relationship from AD-2f1991c2
+  - target: AD-20d6719d
     type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-041
-  - target: AD-020
+    rationale: Auto-generated inverse of enforces relationship from AD-20d6719d
+  - target: AD-8b7c4ac5
     type: enforces
-  - target: AD-021
+  - target: AD-6ce44025
     type: enforces
-  - target: AD-022
+  - target: AD-0c56aa90
     type: enforces
 ---
 # Artifact Config Integrity (NON-NEGOTIABLE)
@@ -62,7 +62,7 @@ Every `.md` file's display label follows this priority:
 1. **YAML frontmatter `title` field** — Use as the label if present
 2. **Humanized filename** — Fallback when no frontmatter title exists (e.g., `coding-standards.md` becomes "Coding Standards")
 
-Artifact IDs in all-caps format (e.g., `[EPIC-001](EPIC-001)`, `[IDEA-002](IDEA-002)`, `[AD-015](AD-015)`) are preserved as-is — they are NOT humanized.
+Artifact IDs in all-caps format (e.g., `[EPIC-e045ab6d](EPIC-e045ab6d)`, `[IDEA-3ff06133](IDEA-3ff06133)`, `[AD-69072318](AD-69072318)`) are preserved as-is — they are NOT humanized.
 
 The same applies to `description` — use frontmatter `description` when present, otherwise omit.
 
@@ -131,7 +131,7 @@ Before committing any change that affects artifact paths or structure:
 
 ## Related Rules
 
-- [RULE-010](RULE-010) (end-to-end-completeness) — config changes must be reflected across all layers
-- [RULE-018](RULE-018) (no-aliases-or-hacks) — no alias paths or fallback path resolution
-- [RULE-008](RULE-008) (documentation-first) — document the config schema before implementing
-- [RULE-011](RULE-011) (enforcement-before-code) — create enforcement artifacts before implementation
+- [RULE-1acb1602](RULE-1acb1602) (end-to-end-completeness) — config changes must be reflected across all layers
+- [RULE-9ba80a19](RULE-9ba80a19) (no-aliases-or-hacks) — no alias paths or fallback path resolution
+- [RULE-9daf29c0](RULE-9daf29c0) (documentation-first) — document the config schema before implementing
+- [RULE-3eccebf3](RULE-3eccebf3) (enforcement-before-code) — create enforcement artifacts before implementation

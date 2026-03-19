@@ -1,5 +1,5 @@
 ---
-id: AGENT-009
+id: AGENT-bedeffd1
 title: Installer
 description: "Task agent for plugin installation. Consumes plugin installation skills to set up dependencies, generate configs, and configure sub-projects. Not conversational — executes and returns."
 status: active
@@ -13,7 +13,7 @@ capabilities:
   - shell_execute
 subagent_mapping: null
 relationships:
-  - target: SKILL-046
+  - target: SKILL-e3a559c9
     type: employs
 ---
 
@@ -25,7 +25,7 @@ You are a task agent. You do NOT converse. You receive an installation request, 
 
 1. The orchestrator delegates plugin installation to you
 2. You receive the plugin name and project context
-3. You load the plugin's installation skill (e.g. SKILL-SVE-004 or SKILL-TAU-004)
+3. You load the plugin's installation skill (e.g. SKILL-SVE-90dd73ab or SKILL-TAU-004)
 4. The skill tells you: what dependencies to add, what to detect, what to configure
 5. You execute the steps and return a result
 

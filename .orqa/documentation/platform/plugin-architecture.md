@@ -1,22 +1,22 @@
 ---
-id: DOC-071
+id: DOC-e0042602
 title: Plugin Architecture
 category: architecture
 description: "How plugins extend OrqaStudio — current CLI companion plugin, four-layer model, component SDK extraction plan, and built-in vs plugin decision framework."
 sort: 12
 relationships:
-  - target: RULE-044
+  - target: RULE-98682b5e
     type: documents
-    rationale: Documentation page references RULE-044
-  - target: EPIC-048
+    rationale: Documentation page references RULE-98682b5e
+  - target: EPIC-0a8a5e72
     type: documents
-    rationale: Documentation page references EPIC-048
-  - target: RULE-042
+    rationale: Documentation page references EPIC-0a8a5e72
+  - target: RULE-f9d0279c
     type: documents
-    rationale: Documentation page references RULE-042
-  - target: RULE-026
+    rationale: Documentation page references RULE-f9d0279c
+  - target: RULE-deab6ea7
     type: documents
-    rationale: Documentation page references RULE-026
+    rationale: Documentation page references RULE-deab6ea7
 ---
 
 # Plugin Architecture
@@ -177,7 +177,7 @@ All layers share the same enforcement pipeline. The difference is in trust defau
 | Community | User approves per-hook | Yes, with notice | No |
 | User | Yes (user authored) | Yes | No |
 
-Core graph artifacts (schemas, orchestrator prompt, core skills) are protected by [RULE-044](RULE-044). Only the dogfood exception allows modification.
+Core graph artifacts (schemas, orchestrator prompt, core skills) are protected by [RULE-98682b5e](RULE-98682b5e). Only the dogfood exception allows modification.
 
 ---
 
@@ -194,7 +194,7 @@ The Artifact Graph SDK is a Svelte 5 rune-based client that maintains an in-memo
 |----------|--------|-------------|
 | **Lifecycle** | `initialize()` | Fetch full graph from backend, register for auto-refresh |
 | **Lifecycle** | `refresh()` | Rebuild graph from disk, re-fetch into cache |
-| **Resolution** | `resolve(id)` | Look up a node by artifact ID (e.g., "[EPIC-048](EPIC-048)") |
+| **Resolution** | `resolve(id)` | Look up a node by artifact ID (e.g., "[EPIC-0a8a5e72](EPIC-0a8a5e72)") |
 | **Resolution** | `resolveByPath(path)` | Look up a node by relative file path |
 | **Relationships** | `referencesFrom(id)` | All outgoing edges from a node |
 | **Relationships** | `referencesTo(id)` | All incoming edges (backlinks) to a node |
@@ -227,7 +227,7 @@ The subscription API (`subscribe`, `subscribeType`) is designed for plugin use. 
 
 ## Component Library Extraction Plan (Future)
 
-**Tracking:** [IDEA-059](IDEA-059)
+**Tracking:** [IDEA-53205849](IDEA-53205849)
 **Status:** Captured (not yet shaped)
 
 ### Current State
@@ -270,7 +270,7 @@ Additionally, the app uses shadcn-svelte components (`Button`, `Card`, `Dialog`,
 | **Git submodule** | Simple, version-pinned | Manual updates |
 | **Package alias** | Import from app's own `node_modules` | Tight coupling to app build |
 
-The distribution mechanism is an open research question listed in [IDEA-059](IDEA-059).
+The distribution mechanism is an open research question listed in [IDEA-53205849](IDEA-53205849).
 
 ---
 
@@ -330,7 +330,7 @@ Before the view registration API can be built:
 
 ## Built-in vs Plugin Decision Framework
 
-Based on findings from [RES-046](RES-046), this framework guides where new features belong.
+Based on findings from [RES-00ec6dd1](RES-00ec6dd1), this framework guides where new features belong.
 
 ### Decision Criteria
 
@@ -366,7 +366,7 @@ Based on findings from [RES-046](RES-046), this framework guides where new featu
 
 The boundary between built-in and plugin is maintained by architectural constraints:
 
-1. **Core graph protection** — [RULE-044](RULE-044) prevents plugins from modifying schemas, core skills, or the orchestrator prompt
+1. **Core graph protection** — [RULE-98682b5e](RULE-98682b5e) prevents plugins from modifying schemas, core skills, or the orchestrator prompt
 2. **Enforcement entry format** — Rules define enforcement declaratively in YAML frontmatter; both the built-in engine and CLI plugin consume the same format
 3. **IPC boundary** — Tauri `invoke()` is the only frontend-backend interface; plugins cannot bypass it
 4. **Skill layer field** — Every skill declares its layer (`core`, `project`, `plugin`, `community`, `user`), enabling trust-level filtering
@@ -377,10 +377,10 @@ When evaluating whether a new feature should be built-in or a plugin, apply the 
 
 ## Related Documents
 
-- [RES-046](RES-046) — Multi-provider AI integration and plugin architecture research
-- [IDEA-059](IDEA-059) — Component Library SDK for Plugin Views
-- [IDEA-038](IDEA-038) — Plugin distribution model
-- [IDEA-009](IDEA-009) — Integration ecosystem
-- [RULE-044](RULE-044) — Core graph firmware protection
-- [RULE-042](RULE-042) — Path-based skill injection
-- [RULE-026](RULE-026) — Skill enforcement and tier model
+- [RES-00ec6dd1](RES-00ec6dd1) — Multi-provider AI integration and plugin architecture research
+- [IDEA-53205849](IDEA-53205849) — Component Library SDK for Plugin Views
+- [IDEA-b77e2955](IDEA-b77e2955) — Plugin distribution model
+- [IDEA-9713910f](IDEA-9713910f) — Integration ecosystem
+- [RULE-98682b5e](RULE-98682b5e) — Core graph firmware protection
+- [RULE-f9d0279c](RULE-f9d0279c) — Path-based skill injection
+- [RULE-deab6ea7](RULE-deab6ea7) — Skill enforcement and tier model

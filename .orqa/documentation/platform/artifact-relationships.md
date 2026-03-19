@@ -1,11 +1,11 @@
 ---
-id: DOC-070
+id: DOC-da5d186a
 type: doc
 name: Artifact Relationships Reference
 category: reference
 status: active
 relationships:
-  - target: SKILL-050
+  - target: SKILL-82d32398
     type: synchronised-with
 ---
 
@@ -104,7 +104,7 @@ These move knowledge between artifacts.
 
 ## Plugin Relationships
 
-The software-project plugin adds delivery-specific relationships. See the Software Delivery Guide (DOC-SW-001) for the complete reference. Key additions:
+The software-project plugin adds delivery-specific relationships. See the Software Delivery Guide (DOC-SW-421219ce) for the complete reference. Key additions:
 
 | Relationship | Meaning |
 |---|---|

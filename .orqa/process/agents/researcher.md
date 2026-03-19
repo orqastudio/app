@@ -1,5 +1,5 @@
 ---
-id: AGENT-005
+id: AGENT-fb0ce261
 title: Researcher
 description: "Investigates questions, gathers information, evaluates options, and produces structured findings. Does not make changes — research informs decisions."
 status: active
@@ -17,13 +17,13 @@ capabilities:
   - web_search
 subagent_mapping: null
 relationships:
-  - target: SKILL-005
+  - target: SKILL-1c5e752e
     type: employs
-  - target: SKILL-008
+  - target: SKILL-f0c40eaf
     type: employs
-  - target: SKILL-019
+  - target: SKILL-6f33713e
     type: employs
-  - target: SKILL-048
+  - target: SKILL-f7476f0a
     type: employs
 ---
 
@@ -60,7 +60,7 @@ You may run in two contexts. Both are permanent and first-class.
 
 The `chunkhound` skill teaches query patterns that work in both contexts.
 
-**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see [RULE-009](RULE-009).
+**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see [RULE-6083347d](RULE-6083347d).
 
 ## Research Process
 

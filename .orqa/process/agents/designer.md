@@ -1,5 +1,5 @@
 ---
-id: AGENT-001
+id: AGENT-c5284fde
 title: Designer
 description: "Designs experiences, interfaces, and structures. Produces visual designs, interaction patterns, information architecture, and layout specifications. In software, builds UI. In other domains, designs how humans interact with the system."
 status: active
@@ -17,9 +17,9 @@ capabilities:
   - code_research
 subagent_mapping: null
 relationships:
-  - target: SKILL-005
+  - target: SKILL-1c5e752e
     type: employs
-  - target: SKILL-008
+  - target: SKILL-f0c40eaf
     type: employs
 ---
 
@@ -56,7 +56,7 @@ You may run in two contexts. Both are permanent and first-class.
 
 The `chunkhound` skill teaches query patterns that work in both contexts.
 
-**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see [RULE-009](RULE-009).
+**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see [RULE-6083347d](RULE-6083347d).
 
 ## Design Process
 

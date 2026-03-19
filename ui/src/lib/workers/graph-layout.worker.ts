@@ -18,8 +18,10 @@ import coseBilkent from "cytoscape-cose-bilkent";
 // Register the layout extension once for this worker's cytoscape scope.
 try {
     cytoscape.use(coseBilkent);
-} catch {
+} catch (err) {
     // Already registered — safe to ignore (shouldn't happen in a fresh worker).
+    // Cannot import logger in a web worker; log via postMessage if needed.
+    console.debug("[graph-layout-worker] cose-bilkent registration skipped (already registered)", err);
 }
 
 // ---------------------------------------------------------------------------
@@ -95,7 +97,8 @@ function runLayout(elements: WorkerRequest["elements"]): void {
         self.postMessage(doneResponse);
     } catch (err: unknown) {
         const message = err instanceof Error ? err.message : String(err);
-        const errorResponse: WorkerResponse = { type: "error", message };
+        console.error("[graph-layout-worker] Layout computation failed", { nodeCount: elements.length, err });
+        const errorResponse: WorkerResponse = { type: "error", message: `Graph layout failed (${elements.length} elements): ${message}` };
         self.postMessage(errorResponse);
     }
 }

@@ -1,5 +1,5 @@
 ---
-id: DOC-003
+id: DOC-dcf96a52
 title: Error Taxonomy
 category: reference
 description: "The flat OrqaError enum — its variants, From conversions, serde serialization format, and propagation through domain → command → IPC → frontend."
@@ -7,12 +7,12 @@ created: 2026-03-02
 updated: 2026-03-10
 sort: 2
 relationships:
-  - target: AD-003
+  - target: AD-1ad08e5f
     type: documents
-    rationale: Documentation page references AD-003
-  - target: AD-002
+    rationale: Documentation page references AD-1ad08e5f
+  - target: AD-a334623b
     type: documents
-    rationale: Documentation page references AD-002
+    rationale: Documentation page references AD-a334623b
 ---
 
 
@@ -20,7 +20,7 @@ relationships:
 
 All Tauri commands return `Result<T, OrqaError>`. `OrqaError` is a single flat enum defined in `backend/src-tauri/src/error.rs`. There are no nested error enums.
 
-**Architecture References:** [AD-003](AD-003) (error propagation via Result types), [AD-002](AD-002) (IPC boundary design)
+**Architecture References:** [AD-1ad08e5f](AD-1ad08e5f) (error propagation via Result types), [AD-a334623b](AD-a334623b) (IPC boundary design)
 
 ---
 
@@ -282,5 +282,5 @@ There is no test for `rusqlite::Error` conversion because constructing a `rusqli
 
 ## Related Documents
 
-- [AD-003](AD-003) (Result types, no unwrap in production), [AD-002](AD-002) (IPC boundary)
+- [AD-1ad08e5f](AD-1ad08e5f) (Result types, no unwrap in production), [AD-a334623b](AD-a334623b) (IPC boundary)
 - `backend/src-tauri/src/error.rs` — canonical source of truth for all variant definitions and From impls

@@ -14,10 +14,13 @@
 
 import type cytoscape from "cytoscape";
 import type { WorkerRequest, WorkerResponse } from "$lib/workers/graph-layout.worker";
+import { logger } from "@orqastudio/sdk";
 
 // ---------------------------------------------------------------------------
 // Service class
 // ---------------------------------------------------------------------------
+
+const log = logger("graph-layout");
 
 class GraphLayoutService {
     /** Computed node positions from the most recent layout run. */
@@ -55,14 +58,14 @@ class GraphLayoutService {
             } else if (msg.type === "progress") {
                 this.layoutProgress = msg.percent;
             } else if (msg.type === "error") {
-                console.error("[graph-layout-service] worker error:", msg.message);
+                log.error("worker error", msg.message);
                 this.layoutRunning = false;
                 this.layoutProgress = 0;
             }
         };
 
         this.worker.onerror = (err) => {
-            console.error("[graph-layout-service] worker uncaught error:", err);
+            log.error("worker uncaught error", err);
             this.layoutRunning = false;
             this.layoutProgress = 0;
         };

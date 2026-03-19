@@ -6,12 +6,22 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   plugins: [tailwindcss(), sveltekit(), svelteTesting()],
   clearScreen: false,
+  optimizeDeps: {
+    // Don't pre-bundle linked @orqastudio packages — read from dist directly
+    // so that library watcher rebuilds are picked up immediately by Vite HMR.
+    exclude: [
+      '@orqastudio/types',
+      '@orqastudio/sdk',
+      '@orqastudio/svelte-components',
+      '@orqastudio/graph-visualiser',
+    ]
+  },
   server: {
     port: 1420,
     strictPort: true,
     allowedHosts: true,
     fs: {
-      allow: ['src', '.svelte-kit', 'node_modules']
+      allow: ['src', '.svelte-kit', 'node_modules', '../../libs', '../../plugins', '../../connectors']
     },
     watch: {
       ignored: ['**/.orqa/**']

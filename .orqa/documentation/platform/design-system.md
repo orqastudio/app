@@ -1,5 +1,5 @@
 ---
-id: DOC-049
+id: DOC-03f1dff2
 title: Design System
 category: reference
 description: "Design system tokens, spacing scale, color themes, and component styling conventions."
@@ -11,7 +11,7 @@ relationships: []
 
 **Date:** 2026-03-02
 
-The authoritative design system specification for OrqaStudio™'s UI. Consolidates decisions from [design-tokens research](RES-003), [branding research](RES-001), [frontend research](RES-004), and brand identity guidelines into an implementation-ready reference.
+The authoritative design system specification for OrqaStudio™'s UI. Consolidates decisions from [design-tokens research](RES-27eb7333), [branding research](RES-4124820a), [frontend research](RES-df5560cb), and brand identity guidelines into an implementation-ready reference.
 
 ---
 
@@ -457,7 +457,7 @@ The design system context is injected when:
 
 ### Governance Artifact
 
-Auto-generated as `.orqa/process/rules/design-system.md` during codebase scan if design tokens are detected. Path-scoped to frontend files via `paths:` frontmatter. User approval required before writing. See [branding research Q2](RES-001) for full specification.
+Auto-generated as `.orqa/process/rules/design-system.md` during codebase scan if design tokens are detected. Path-scoped to frontend files via `paths:` frontmatter. User approval required before writing. See [branding research Q2](RES-4124820a) for full specification.
 
 ---
 
@@ -505,7 +505,7 @@ Icons inherit text color. Use semantic color classes: `text-foreground`, `text-m
 | Document | What It Covers |
 |----------|---------------|
 | Brand Identity Guidelines | Dual-mode identity, logo family, contextual spark colors, deliverables checklist |
-| [Design Tokens Research](RES-003) | Token format, runtime application, extraction pipeline, per-project persistence |
-| [Branding Research](RES-001) | Three-layer branding strategy, governance artifact, code generation, hierarchy |
-| [Frontend Research](RES-004) | Component library selection, markdown rendering, panel layout, charts |
+| [Design Tokens Research](RES-27eb7333) | Token format, runtime application, extraction pipeline, per-project persistence |
+| [Branding Research](RES-4124820a) | Three-layer branding strategy, governance artifact, code generation, hierarchy |
+| [Frontend Research](RES-df5560cb) | Component library selection, markdown rendering, panel layout, charts |
 | Information Architecture | Three-zone + nav sub-panel layout, navigation model, keyboard shortcuts, state management |

@@ -1,12 +1,12 @@
 ---
-id: RULE-038
+id: RULE-5ee43922
 title: User-Invocable Skill Semantics
 description: The user-invocable field in skill frontmatter controls whether a skill can be triggered directly by users as a slash command or from the UI.
 status: active
 created: 2026-03-11
 updated: 2026-03-11
 relationships:
-  - target: AD-028
+  - target: AD-53e80192
     type: enforces
 ---
 Every skill MUST have a `user-invocable` field in its YAML frontmatter. This field determines how the skill surfaces to users.
@@ -42,5 +42,5 @@ A skill should be `user-invocable: false` when:
 
 ## Related Rules
 
-- [RULE-026](RULE-026) (skill-enforcement) — skill loading model and tier system
-- [RULE-035](RULE-035) (skill-portability) — skill layer and portability requirements
+- [RULE-deab6ea7](RULE-deab6ea7) (skill-enforcement) — skill loading model and tier system
+- [RULE-11c29c9e](RULE-11c29c9e) (skill-portability) — skill layer and portability requirements

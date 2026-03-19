@@ -11,8 +11,9 @@
 	import ToolApprovalDialog from "$lib/components/tool/ToolApprovalDialog.svelte";
 	import ContextEntryComponent from "./ContextEntry.svelte";
 	import { ThinkingBlock } from "@orqastudio/svelte-components/pure";
-	import { getStores } from "@orqastudio/sdk";
+	import { getStores, logger } from "@orqastudio/sdk";
 
+	const log = logger("conversation");
 	const { conversationStore, sessionStore, projectStore, settingsStore } = getStores();
 	import type { Message } from "@orqastudio/types";
 	import { onMount } from "svelte";
@@ -69,8 +70,8 @@
 					if (sessionStore.hasActiveSession) {
 						showResumeBanner = true;
 					}
-				} catch {
-					// Non-critical — proceed without restoring
+				} catch (err) {
+					log.error("Failed to restore last session", { lastSessionId, err });
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 ---
-id: DOC-013
+id: DOC-f9c6149e
 title: SQLite Schema
 category: reference
 description: "SQLite database schema covering sessions, messages, governance artifacts, and configuration tables."
@@ -7,14 +7,14 @@ created: 2026-03-02
 updated: 2026-03-10
 sort: 4
 relationships:
-  - target: AD-014
+  - target: AD-8b91f5a4
     type: documents
-    rationale: Documentation page references AD-014
+    rationale: Documentation page references AD-8b91f5a4
 ---
 
 
 **Date:** 2026-03-02 | **Updated:** 2026-03-10 | **Status:** Current
-**References:** [Persistence Research](RES-006) [AD-014](AD-014), [Design Tokens Research](RES-003)
+**References:** [Persistence Research](RES-a68430ce) [AD-8b91f5a4](AD-8b91f5a4), [Design Tokens Research](RES-27eb7333)
 
 Full table definitions, indexes, FTS5 configuration, and migration strategy for `orqa.db`.
 
@@ -216,7 +216,7 @@ CREATE TABLE IF NOT EXISTS settings (
 
 ### project_themes
 
-Per-project design token storage. See [Design Tokens Research](RES-003) Q4.
+Per-project design token storage. See [Design Tokens Research](RES-27eb7333) Q4.
 
 ```sql
 CREATE TABLE IF NOT EXISTS project_themes (
@@ -438,7 +438,7 @@ Renames `sdk_session_id` → `provider_session_id` on the `sessions` table. Impl
 
 ### Migration 007: Drop Governance Tables
 
-Drops `governance_recommendations` and `governance_analyses`. These were added in migration 002 and removed per [AD-032](AD-032) (SQLite is for conversation persistence only).
+Drops `governance_recommendations` and `governance_analyses`. These were added in migration 002 and removed per [AD-2aa4d6db](AD-2aa4d6db) (SQLite is for conversation persistence only).
 
 ### Migration 008: Health Snapshots
 
@@ -446,7 +446,7 @@ Adds `health_snapshots` table for storing graph integrity metric trends over tim
 
 ### Migration 009: Drop Artifacts Table
 
-Drops `artifacts_fts` and `artifacts`. Artifacts are file-based (`.orqa/`) — SQLite persistence is not needed per [AD-032](AD-032).
+Drops `artifacts_fts` and `artifacts`. Artifacts are file-based (`.orqa/`) — SQLite persistence is not needed per [AD-2aa4d6db](AD-2aa4d6db).
 
 ### Rules
 

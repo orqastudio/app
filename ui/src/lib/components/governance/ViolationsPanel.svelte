@@ -5,7 +5,10 @@
 	import { SearchInput } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
+	import { logger } from "@orqastudio/sdk";
 	import type { StoredEnforcementViolation } from "@orqastudio/types";
+
+	const log = logger("governance");
 
 	let {
 		violations,
@@ -46,7 +49,8 @@
 				hour: "2-digit",
 				minute: "2-digit",
 			});
-		} catch {
+		} catch (err) {
+			log.error("Failed to format violation timestamp", { iso, err });
 			return iso;
 		}
 	}

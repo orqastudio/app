@@ -1,17 +1,17 @@
 ---
-id: RULE-017
+id: RULE-551bde31
 title: Lessons Learned
 description: "Two learning loops: implementation lessons in .orqa/process/lessons/ and process retrospectives. Both are mandatory."
 status: active
 created: 2026-03-07
 updated: 2026-03-14
 relationships:
-  - target: AD-044
+  - target: AD-8b3962f6
     type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-044
-  - target: AD-048
+    rationale: Auto-generated inverse of enforces relationship from AD-8b3962f6
+  - target: AD-f9034c99
     type: enforces
-  - target: DOC-025
+  - target: DOC-c4b4b8b7
     type: documented-by
 ---
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.
@@ -42,13 +42,13 @@ Process-level learnings are captured as lessons (`IMPL-NNN`) in `.orqa/process/l
 Lesson documented -> recurrence tracked -> promoted at threshold -> enforcement attempted -> promotion completed -> recurrence re-tracked
 ```
 
-### Enforcement Gate (NON-NEGOTIABLE — [AD-048](AD-048))
+### Enforcement Gate (NON-NEGOTIABLE — [AD-f9034c99](AD-f9034c99))
 
 A lesson MUST NOT be promoted to a rule without attempting enforcement. Rules without enforcement are just lessons with a label. Before setting `evolves-into` on a lesson:
 
 1. **Declare enforcement entries** on the target rule (event type, action, paths/patterns)
 2. **Attempt mechanical enforcement** — can a hook, scanner, validator, or gate catch violations?
-3. **If mechanical enforcement isn't possible** — use skill injection via [RULE-042](RULE-042) to inject context at the right moment
+3. **If mechanical enforcement isn't possible** — use skill injection via [RULE-f9d0279c](RULE-f9d0279c) to inject context at the right moment
 4. **All enforcement flows through the artifact graph** — never create raw platform hooks that bypass the system
 
 Enforcement layers in priority order: artifact graph declaration → Rust application layer → Claude plugin → pre-commit hooks. Not every rule can be enforced at every layer, but at least one layer must be attempted.
@@ -87,5 +87,5 @@ In the CLI, agents create lesson files manually in `.orqa/process/lessons/` foll
 
 ## Related Rules
 
-- [RULE-015](RULE-015) (honest-reporting) — completion reports must include lesson documentation status
-- [RULE-022](RULE-022) (plan-mode-compliance) — verification gate protocol that triggers lesson logging
+- [RULE-878e5422](RULE-878e5422) (honest-reporting) — completion reports must include lesson documentation status
+- [RULE-303c1cc8](RULE-303c1cc8) (plan-mode-compliance) — verification gate protocol that triggers lesson logging

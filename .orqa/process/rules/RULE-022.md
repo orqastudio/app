@@ -1,12 +1,12 @@
 ---
-id: RULE-022
+id: RULE-303c1cc8
 title: Plan Mode Compliance
 description: Every implementation plan must have architectural compliance verification and UX-first design.
 status: active
 created: 2026-03-07
 updated: 2026-03-12
 relationships:
-  - target: AD-051
+  - target: AD-c8535011
     type: enforces
 ---
 Every implementation plan — whether captured in an epic, a task, or proposed in conversation — MUST satisfy two mandatory requirements before implementation begins.
@@ -71,7 +71,7 @@ Plans exist within the artifact framework. When an implementation plan is create
 3. **Plans produce epics:** A plan that is approved should result in an `EPIC-NNN` being created (or updated) with `docs-required` and `docs-produced` fields populated from the plan's documentation sections
 4. **The plan's documentation section feeds the epic's gates:** Items in the plan's "Documentation" dimension of the Systems Architecture Checklist become the epic's `docs-required` and `docs-produced` lists
 
-See [RULE-004](RULE-004) (artifact-lifecycle) for the full artifact lifecycle and `.orqa/documentation/guide/artifact-workflow.md` for day-to-day workflow.
+See [RULE-7b770593](RULE-7b770593) (artifact-lifecycle) for the full artifact lifecycle and `.orqa/documentation/guide/artifact-workflow.md` for day-to-day workflow.
 
 ## Roadmap Reconciliation (MANDATORY)
 
@@ -82,7 +82,7 @@ Before a plan is approved, the orchestrator MUST reconcile the plan's task list 
 3. If any roadmap item is missing from the plan, either add it as a task or get explicit user approval to descope it
 4. No item may be silently moved to "Out of Scope" or deferred to another epic without user approval
 
-See [RULE-019](RULE-019) (no-deferred-deliverables) for the full enforcement rule.
+See [RULE-e120bb70](RULE-e120bb70) (no-deferred-deliverables) for the full enforcement rule.
 
 ## When This Rule Applies
 
@@ -160,7 +160,7 @@ Any epic that produces enforcement tooling, audit tooling, or governance automat
 3. **Reconciles findings** — findings are added to the epic's task list for resolution within the same epic, not deferred to future work
 4. **Updates this rule** if the epic reveals planning methodology gaps
 
-Without loop closure, enforcement tooling is created but never run against the codebase that prompted its creation. The findings that motivated the epic go unaddressed. Deferring findings to future epics violates [RULE-019](RULE-019) — if the tooling is in scope, its findings are in scope.
+Without loop closure, enforcement tooling is created but never run against the codebase that prompted its creation. The findings that motivated the epic go unaddressed. Deferring findings to future epics violates [RULE-e120bb70](RULE-e120bb70) — if the tooling is in scope, its findings are in scope.
 
 ## Scope Verification (MANDATORY)
 
@@ -176,8 +176,8 @@ After every phase implementation, the orchestrator MUST invoke the code-reviewer
 
 ## Related Rules
 
-- [RULE-004](RULE-004) (artifact-lifecycle) — artifact creation, status transitions, promotion gates
-- [RULE-031](RULE-031) (vision-alignment) — the pillar framework that plans must serve
-- [RULE-002](RULE-002) (architecture-decisions) — the architecture decisions plans must comply with
-- [RULE-006](RULE-006) (coding-standards) — the standards implementations must meet
-- [RULE-010](RULE-010) (end-to-end-completeness) — the full-stack requirement per feature
+- [RULE-7b770593](RULE-7b770593) (artifact-lifecycle) — artifact creation, status transitions, promotion gates
+- [RULE-1e8a1914](RULE-1e8a1914) (vision-alignment) — the pillar framework that plans must serve
+- [RULE-65973a88](RULE-65973a88) (architecture-decisions) — the architecture decisions plans must comply with
+- [RULE-b49142be](RULE-b49142be) (coding-standards) — the standards implementations must meet
+- [RULE-1acb1602](RULE-1acb1602) (end-to-end-completeness) — the full-stack requirement per feature

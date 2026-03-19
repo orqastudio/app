@@ -8,8 +8,11 @@
  */
 
 import type { PluginRegistry } from "@orqastudio/sdk";
+import { logger } from "@orqastudio/sdk";
 import type { PluginManifest } from "@orqastudio/types";
 import { invoke } from "@tauri-apps/api/core";
+
+const log = logger("plugins");
 
 interface DiscoveredPlugin {
 	name: string;
@@ -47,7 +50,7 @@ export async function registerInstalledPlugins(registry: PluginRegistry): Promis
 			// on demand via the plugin-view route, not compiled in.
 			registry.register(manifest, {});
 		} catch (err) {
-			console.error(`Failed to register plugin "${plugin.name}":`, err);
+			log.error(`Failed to register plugin "${plugin.name}"`, err);
 		}
 	}
 }

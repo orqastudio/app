@@ -1,12 +1,12 @@
 ---
-id: RULE-011
+id: RULE-3eccebf3
 title: Enforcement Before Code
 description: "Enforcement artifacts (rules, skills, lessons) must be created before the implementation code that establishes the pattern."
 status: active
 created: 2026-03-07
 updated: 2026-03-07
 relationships:
-  - target: AD-048
+  - target: AD-f9034c99
     type: enforces
 ---
 # Enforcement Before Code (NON-NEGOTIABLE)
@@ -58,6 +58,6 @@ Code without enforcement drifts. If a pattern is important enough to implement, 
 
 ## Related Rules
 
-- [RULE-008](RULE-008) (documentation-first) — documentation before code; this rule extends that to enforcement artifacts
-- [RULE-017](RULE-017) (lessons-learned) — lessons are one type of enforcement artifact
-- [RULE-026](RULE-026) (skill-enforcement) — skills must be loaded before implementation
+- [RULE-9daf29c0](RULE-9daf29c0) (documentation-first) — documentation before code; this rule extends that to enforcement artifacts
+- [RULE-551bde31](RULE-551bde31) (lessons-learned) — lessons are one type of enforcement artifact
+- [RULE-deab6ea7](RULE-deab6ea7) (skill-enforcement) — skills must be loaded before implementation

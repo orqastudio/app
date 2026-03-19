@@ -1,11 +1,11 @@
 ---
-id: DOC-072
+id: DOC-32c6f5a6
 type: doc
 name: Schema Validation Reference
 category: reference
 status: active
 relationships:
-  - target: SKILL-052
+  - target: SKILL-b08d355c
     type: synchronised-with
 ---
 

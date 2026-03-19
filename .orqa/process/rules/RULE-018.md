@@ -1,12 +1,12 @@
 ---
-id: RULE-018
+id: RULE-9ba80a19
 title: No Aliases or Hacks
 description: "Fix root causes of type mismatches between layers. Never paper over with aliases, shims, or duplicate mappings."
 status: active
 created: 2026-03-07
 updated: 2026-03-12
 relationships:
-  - target: AD-017
+  - target: AD-1d928079
     type: enforces
 ---
 When a value or type mismatch exists between layers, fix the root cause. Never paper over it with aliases, shims, or duplicate mappings.
@@ -48,7 +48,7 @@ If the same concept has two identifiers in any layer, that is a bug — not a fe
 
 ## Related Rules
 
-- [RULE-010](RULE-010) (end-to-end-completeness) — type consistency must hold across all layers in the same commit
-- [RULE-012](RULE-012) (error-ownership) — a type mismatch is an error you own; fix it, don't work around it
-- [RULE-020](RULE-020) (no-stubs) — alias entries are a form of fake data hiding real gaps
-- [RULE-005](RULE-005) (code-search-usage) — use `search_regex` to find all usages of an identifier before renaming or removing it
+- [RULE-1acb1602](RULE-1acb1602) (end-to-end-completeness) — type consistency must hold across all layers in the same commit
+- [RULE-57ccb4a3](RULE-57ccb4a3) (error-ownership) — a type mismatch is an error you own; fix it, don't work around it
+- [RULE-e9c54567](RULE-e9c54567) (no-stubs) — alias entries are a form of fake data hiding real gaps
+- [RULE-5e03e67b](RULE-5e03e67b) (code-search-usage) — use `search_regex` to find all usages of an identifier before renaming or removing it

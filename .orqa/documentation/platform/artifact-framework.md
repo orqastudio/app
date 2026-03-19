@@ -1,5 +1,5 @@
 ---
-id: DOC-036
+id: DOC-01ddd8aa
 title: Artifact Framework
 category: reference
 description: "Schema definitions, lifecycle rules, and governance for all structured artifacts in .orqa/."
@@ -7,49 +7,49 @@ created: 2026-03-07
 updated: 2026-03-18
 sort: 11
 relationships:
-  - target: AD-051
+  - target: AD-c8535011
     type: documents
     rationale: Documents the three-layer artifact model
-  - target: AD-052
+  - target: AD-21d35c1d
     type: documents
     rationale: Documents the canonical relationship vocabulary
-  - target: AD-053
+  - target: AD-10586f26
     type: documents
     rationale: Documents the canonical status model
-  - target: AD-054
+  - target: AD-e156310d
     type: documents
     rationale: Documents the four enforcement layers
-  - target: RULE-004
+  - target: RULE-7b770593
     type: documents
-    rationale: Source-of-truth for artifact lifecycle that RULE-004 enforces
-  - target: RULE-032
+    rationale: Source-of-truth for artifact lifecycle that RULE-7b770593 enforces
+  - target: RULE-a764b2ae
     type: documents
-    rationale: Defines the artifact schemas and frontmatter contracts that RULE-032 validates
-  - target: EPIC-001
+    rationale: Defines the artifact schemas and frontmatter contracts that RULE-a764b2ae validates
+  - target: EPIC-e045ab6d
     type: documents
-  - target: EPIC-002
+  - target: EPIC-642234ba
     type: documents
-  - target: EPIC-004
+  - target: EPIC-fe75b52c
     type: documents
-  - target: EPIC-005
+  - target: EPIC-6787bb93
     type: documents
-  - target: MS-001
+  - target: MS-654badde
     type: documents
-  - target: MS-002
+  - target: MS-eea45fa8
     type: documents
-  - target: AD-001
+  - target: AD-e513c9e4
     type: documents
-  - target: AD-002
+  - target: AD-a334623b
     type: documents
-  - target: AD-029
+  - target: AD-774cc3d0
     type: documents
-  - target: AD-038
+  - target: AD-2783985c
     type: documents
-  - target: AD-040
+  - target: AD-6dfbba70
     type: documents
-  - target: RULE-002
+  - target: RULE-65973a88
     type: documents
-  - target: RULE-001
+  - target: RULE-532100d9
     type: documents
 ---
 
@@ -158,7 +158,7 @@ All governance artifacts (agents, skills, rules) carry a `layer` field that dete
 
 ## Artifact Types
 
-Artifact types are defined in `core.json`. They fall into three management layers per AD-051. **Platform** types ship with the app (immutable). **Project** types are created by the user and AI. **Plugin** types are installed from the ecosystem.
+Artifact types are defined in `core.json`. They fall into three management layers per AD-c8535011. **Platform** types ship with the app (immutable). **Project** types are created by the user and AI. **Plugin** types are installed from the ecosystem.
 
 ### Core Types (from core.json)
 
@@ -246,10 +246,10 @@ All connections use the `relationships` frontmatter array with `target` and `typ
 
 ```yaml
 relationships:
-  - target: PILLAR-001
+  - target: PILLAR-569581e0
     type: grounded
     rationale: Anchored to Clarity Through Structure
-  - target: AD-051
+  - target: AD-c8535011
     type: driven-by
     rationale: Motivated by the three-layer artifact model decision
 ```
@@ -354,7 +354,7 @@ Some relationships also carry **required** constraints (e.g., every rule must `e
 
 ## Status Model
 
-All artifact types share the same 12-status vocabulary, defined in `project.json` (see AD-053). Types use subsets of these statuses appropriate to their lifecycle.
+All artifact types share the same 12-status vocabulary, defined in `project.json` (see AD-10586f26). Types use subsets of these statuses appropriate to their lifecycle.
 
 ### The 12 Canonical Statuses
 
@@ -433,21 +433,21 @@ All artifact IDs use their type prefix followed by a zero-padded number that aut
 | Type | Pattern | Examples |
 |------|---------|----------|
 | Vision | `VISION-NNN` | VISION-001 |
-| Pillar | `PILLAR-NNN` | PILLAR-001, PILLAR-002 |
-| Persona | `PERSONA-NNN` | PERSONA-001 |
-| Idea | `IDEA-NNN` | IDEA-001, IDEA-035 |
-| Decision | `AD-NNN` | AD-001, AD-055 |
-| Rule | `RULE-NNN` | RULE-001, RULE-032 |
-| Lesson | `IMPL-NNN` | IMPL-001, IMPL-042 |
-| Skill | `SKILL-NNN` | SKILL-001, SKILL-053 |
-| Agent | `AGENT-NNN` | AGENT-001, AGENT-008 |
-| Document | `DOC-NNN` | DOC-001, DOC-036 |
+| Pillar | `PILLAR-NNN` | PILLAR-569581e0, PILLAR-cdf756ff |
+| Persona | `PERSONA-NNN` | PERSONA-cda6edd6 |
+| Idea | `IDEA-NNN` | IDEA-7035530f, IDEA-14f3874c |
+| Decision | `AD-NNN` | AD-e513c9e4, AD-c6abc8e6 |
+| Rule | `RULE-NNN` | RULE-532100d9, RULE-a764b2ae |
+| Lesson | `IMPL-NNN` | IMPL-eb748de2, IMPL-f27a1550 |
+| Skill | `SKILL-NNN` | SKILL-30a419dd, SKILL-c7fb7c83 |
+| Agent | `AGENT-NNN` | AGENT-c5284fde, AGENT-ff44f841 |
+| Document | `DOC-NNN` | DOC-001, DOC-01ddd8aa |
 | Pivot | `PIVOT-NNN` | PIVOT-001 |
 | Bug | `BUG-NNN` | BUG-001 |
-| Milestone | `MS-NNN` | MS-001, MS-002 |
-| Epic | `EPIC-NNN` | EPIC-001, EPIC-082 |
-| Task | `TASK-NNN` | TASK-001 |
-| Research | `RES-NNN` | RES-001 |
+| Milestone | `MS-NNN` | MS-654badde, MS-eea45fa8 |
+| Epic | `EPIC-NNN` | EPIC-e045ab6d, EPIC-2362adfc |
+| Task | `TASK-NNN` | TASK-58a9d218 |
+| Research | `RES-NNN` | RES-4124820a |
 
 IDs are stable — never reused after deletion. The next ID is determined by scanning existing files in the directory.
 
@@ -533,11 +533,11 @@ At any point, you can trace backwards: "Why does this rule exist?" follows `codi
 |----------|----------------|
 | `libs/types/src/platform/core.json` | Canonical types, relationships, semantics, and constraints |
 | `project.json` | Navigation, statuses, delivery hierarchy, project relationships |
-| AD-051 | Three-layer artifact model (app-fixed, app-required, project-scoped) |
-| AD-052 | Canonical relationship vocabulary (relationships are the only connections) |
-| AD-053 | Canonical status model (12 universal statuses) |
-| AD-054 | Four enforcement layers (app, scanners, integrity, git hooks) |
-| RULE-004 | Artifact lifecycle enforcement |
-| RULE-032 | Artifact schema compliance validation |
+| AD-c8535011 | Three-layer artifact model (app-fixed, app-required, project-scoped) |
+| AD-21d35c1d | Canonical relationship vocabulary (relationships are the only connections) |
+| AD-10586f26 | Canonical status model (12 universal statuses) |
+| AD-e156310d | Four enforcement layers (app, scanners, integrity, git hooks) |
+| RULE-7b770593 | Artifact lifecycle enforcement |
+| RULE-a764b2ae | Artifact schema compliance validation |
 
 ---

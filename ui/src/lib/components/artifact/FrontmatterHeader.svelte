@@ -5,6 +5,9 @@
 	import { StatusIndicator } from "@orqastudio/svelte-components/connected";
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { getCapabilityLabel } from "$lib/utils/tool-display";
+	import { logger } from "@orqastudio/sdk";
+
+	const log = logger("frontmatter");
 
 	let {
 		metadata,
@@ -41,7 +44,8 @@
 				month: "short",
 				day: "numeric",
 			});
-		} catch {
+		} catch (err) {
+			log.debug("Failed to parse date in formatDate", { value, err });
 			return null;
 		}
 	}
@@ -152,7 +156,8 @@
 			const d = new Date(String(value));
 			if (isNaN(d.getTime())) return null;
 			return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
-		} catch {
+		} catch (err) {
+			log.debug("Failed to parse date in shortDate", { value, err });
 			return null;
 		}
 	}

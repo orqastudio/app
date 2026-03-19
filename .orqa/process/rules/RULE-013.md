@@ -1,5 +1,5 @@
 ---
-id: RULE-013
+id: RULE-633e636d
 title: Git Workflow
 description: "Worktree-based workflow with mandatory cleanup, stash policy, and data loss prevention rules."
 status: active
@@ -12,11 +12,11 @@ enforcement:
   - "event: bash"
   - "event: bash"
 relationships:
-  - target: DOC-035
+  - target: DOC-7c66f103
     type: documented-by
-  - target: DOC-002
+  - target: DOC-4db3a417
     type: documented-by
-  - target: AD-021
+  - target: AD-6ce44025
     type: enforces
 ---
 **Source of Truth:** `.orqa/documentation/guide/workflow.md`
@@ -137,8 +137,8 @@ If pre-commit hooks fail, it's YOUR responsibility to fix the issues.
 
 ## Related Rules
 
-- [RULE-007](RULE-007) (development-commands) — `make dev` and `make restart-tauri` commands that interact with the worktree lifecycle
-- [RULE-012](RULE-012) (error-ownership) — pre-commit hook enforcement; `--no-verify` is forbidden under both rules
-- [RULE-006](RULE-006) (coding-standards) — defines the quality checks the pre-commit hook enforces; commits must be clean
-- [RULE-009](RULE-009) (dogfood-mode) — restart protocol and session-ending behavior that intersects with commit discipline
+- [RULE-c71f1c3f](RULE-c71f1c3f) (development-commands) — `make dev` and `make restart-tauri` commands that interact with the worktree lifecycle
+- [RULE-57ccb4a3](RULE-57ccb4a3) (error-ownership) — pre-commit hook enforcement; `--no-verify` is forbidden under both rules
+- [RULE-b49142be](RULE-b49142be) (coding-standards) — defines the quality checks the pre-commit hook enforces; commits must be clean
+- [RULE-6083347d](RULE-6083347d) (dogfood-mode) — restart protocol and session-ending behavior that intersects with commit discipline
 

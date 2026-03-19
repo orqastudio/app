@@ -1,12 +1,12 @@
 ---
-id: RULE-030
+id: RULE-4d4f540d
 title: UAT Process
 description: User acceptance testing follows a collect-then-systematize approach. Findings are grouped by root cause before tasks are created.
 status: active
 created: 2026-03-07
 updated: 2026-03-07
 relationships:
-  - target: AD-054
+  - target: AD-e156310d
     type: enforces
 ---
 User acceptance testing follows a structured process that prevents premature fixing and ensures systemic solutions.
@@ -43,7 +43,7 @@ A UAT round that only produces bug fixes without process improvements has failed
 
 ## Related Rules
 
-- [RULE-028](RULE-028) (systems-thinking) — systemic analysis is systems thinking applied to QA
-- [RULE-017](RULE-017) (lessons-learned) — lesson creation and promotion pipeline
-- [RULE-015](RULE-015) (honest-reporting) — findings must be reported accurately
-- [RULE-027](RULE-027) (structure-before-work) — tasks require artifacts before implementation
+- [RULE-d90112d9](RULE-d90112d9) (systems-thinking) — systemic analysis is systems thinking applied to QA
+- [RULE-551bde31](RULE-551bde31) (lessons-learned) — lesson creation and promotion pipeline
+- [RULE-878e5422](RULE-878e5422) (honest-reporting) — findings must be reported accurately
+- [RULE-8035e176](RULE-8035e176) (structure-before-work) — tasks require artifacts before implementation

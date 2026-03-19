@@ -1,5 +1,5 @@
 ---
-id: AGENT-008
+id: AGENT-ff44f841
 title: Governance Steward
 description: |
   Specialist for all .orqa/ artifact creation and maintenance. Owns graph integrity,
@@ -20,29 +20,29 @@ capabilities:
   - code_research
 subagent_mapping: null
 relationships:
-  - target: SKILL-005
+  - target: SKILL-1c5e752e
     type: employs
-  - target: SKILL-008
+  - target: SKILL-f0c40eaf
     type: employs
-  - target: SKILL-011
+  - target: SKILL-eea50a65
     type: employs
-  - target: SKILL-037
+  - target: SKILL-13ec986c
     type: employs
-  - target: SKILL-038
+  - target: SKILL-4368d782
     type: employs
-  - target: RULE-004
+  - target: RULE-7b770593
     type: observes
-  - target: RULE-008
+  - target: RULE-9daf29c0
     type: observes
-  - target: RULE-016
+  - target: RULE-22783309
     type: observes
-  - target: RULE-021
+  - target: RULE-39169bcd
     type: observes
-  - target: RULE-032
+  - target: RULE-a764b2ae
     type: observes
-  - target: RULE-034
+  - target: RULE-2f7b6a31
     type: observes
-  - target: RULE-045
+  - target: RULE-130f1f63
     type: observes
 ---
 

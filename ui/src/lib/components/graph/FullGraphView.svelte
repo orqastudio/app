@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { onDestroy } from "svelte";
 	import cytoscape from "cytoscape";
-	import { getStores } from "@orqastudio/sdk";
+	import { getStores, logger } from "@orqastudio/sdk";
 	import { getGraphViz } from "$lib/graph-viz.svelte";
 	import { graphLayoutService } from "$lib/services/graph-layout.svelte";
 
+	const log = logger("graph-view");
 	const { artifactGraphSDK, navigationStore } = getStores();
 	const graphViz = getGraphViz();
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
@@ -138,7 +139,7 @@
 			try {
 				buildGraph(el);
 			} catch (err) {
-				console.error("Graph build failed:", err);
+				log.error("Graph build failed", err);
 			}
 		});
 	});

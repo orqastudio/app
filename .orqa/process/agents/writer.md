@@ -1,5 +1,5 @@
 ---
-id: AGENT-007
+id: AGENT-ec1b3785
 title: Writer
 description: "Creates documentation, communications, and records. Produces structured written artifacts that capture decisions, specifications, and knowledge."
 status: active
@@ -19,13 +19,13 @@ capabilities:
   - web_search
 subagent_mapping: null
 relationships:
-  - target: SKILL-005
+  - target: SKILL-1c5e752e
     type: employs
-  - target: SKILL-008
+  - target: SKILL-f0c40eaf
     type: employs
-  - target: SKILL-019
+  - target: SKILL-6f33713e
     type: employs
-  - target: SKILL-037
+  - target: SKILL-13ec986c
     type: employs
 ---
 
@@ -61,7 +61,7 @@ You may run in two contexts. Both are permanent and first-class.
 
 The `chunkhound` skill teaches query patterns that work in both contexts.
 
-**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see [RULE-009](RULE-009).
+**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see [RULE-6083347d](RULE-6083347d).
 
 ## Documentation Types
 
@@ -90,7 +90,7 @@ updated: 2026-01-01
 
 ## Pillar Alignment Section
 
-Every feature documentation page MUST include a Pillar Alignment section near the bottom. See [RULE-021](RULE-021) for details.
+Every feature documentation page MUST include a Pillar Alignment section near the bottom. See [RULE-39169bcd](RULE-39169bcd) for details.
 
 ## Writing Standards
 

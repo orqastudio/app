@@ -1,5 +1,5 @@
 ---
-id: AGENT-006
+id: AGENT-b0774726
 title: Reviewer
 description: "Checks quality, compliance, and correctness. Produces PASS/FAIL verdicts with evidence. Does not implement fixes — sends findings back to the Implementer."
 status: active
@@ -16,9 +16,9 @@ capabilities:
   - shell_execute
 subagent_mapping: null
 relationships:
-  - target: SKILL-005
+  - target: SKILL-1c5e752e
     type: employs
-  - target: SKILL-008
+  - target: SKILL-f0c40eaf
     type: employs
 ---
 
@@ -55,7 +55,7 @@ You may run in two contexts. Both are permanent and first-class.
 
 The `chunkhound` skill teaches query patterns that work in both contexts.
 
-**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see [RULE-009](RULE-009).
+**Dogfood mode:** If `.orqa/project.json` has `"dogfood": true`, apply enhanced caution — see [RULE-6083347d](RULE-6083347d).
 
 Use `make` targets for all build/test/lint commands.
 

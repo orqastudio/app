@@ -1,5 +1,5 @@
 ---
-id: RULE-019
+id: RULE-e120bb70
 title: No Deferred Deliverables
 description: "If a deliverable is in scope, it ships with the epic. Deferring scoped deliverables is forbidden."
 status: active
@@ -12,7 +12,7 @@ enforcement:
   - ".orqa/delivery/tasks/**"
   - ".orqa/delivery/epics/**"
 relationships:
-  - target: AD-051
+  - target: AD-c8535011
     type: enforces
 ---
 ## The Rule
@@ -107,13 +107,13 @@ Framing outstanding work as "none of these are blocking" or "these are minor cle
 
 ```text
 ## Out of Scope (handled by other epics)
-- `ContextInjected` emission — depends on EPIC-003
+- `ContextInjected` emission — depends on EPIC-1dcf5ffa
 ```
 ^ This is the orchestrator unilaterally removing a deliverable without user approval.
 
 ```text
 ## What Is NOT Done
-- custom_prompt is always None — EPIC-002 will populate this
+- custom_prompt is always None — EPIC-642234ba will populate this
 ```
 ^ This is deferring a deliverable. If custom_prompt is in scope, implement it. If it's genuinely out of scope, the user must have approved its removal.
 
@@ -127,7 +127,7 @@ Framing outstanding work as "none of these are blocking" or "these are minor cle
 
 ## Related Rules
 
-- [RULE-015](RULE-015) (honest-reporting) — deferring deliverables is a form of false "complete"
-- [RULE-022](RULE-022) (plan-mode-compliance) — plans must reconcile with roadmap scope
-- [RULE-020](RULE-020) (no-stubs) — scaffolded implementations are not deliverables
-- [RULE-004](RULE-004) (artifact-lifecycle) — epic status transitions require all deliverables complete
+- [RULE-878e5422](RULE-878e5422) (honest-reporting) — deferring deliverables is a form of false "complete"
+- [RULE-303c1cc8](RULE-303c1cc8) (plan-mode-compliance) — plans must reconcile with roadmap scope
+- [RULE-e9c54567](RULE-e9c54567) (no-stubs) — scaffolded implementations are not deliverables
+- [RULE-7b770593](RULE-7b770593) (artifact-lifecycle) — epic status transitions require all deliverables complete

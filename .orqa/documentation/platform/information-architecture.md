@@ -1,5 +1,5 @@
 ---
-id: DOC-040
+id: DOC-87d0a2de
 title: Information Architecture
 category: architecture
 description: Information architecture defining how content is organized and navigated within the application.
@@ -7,18 +7,18 @@ created: 2026-03-02
 updated: 2026-03-08
 sort: 6
 relationships:
-  - target: AD-018
+  - target: AD-40b3de0a
     type: documents
-    rationale: Documentation page references AD-018
-  - target: AD-013
+    rationale: Documentation page references AD-40b3de0a
+  - target: AD-afc78f6e
     type: documents
-    rationale: Documentation page references AD-013
-  - target: AD-019
+    rationale: Documentation page references AD-afc78f6e
+  - target: AD-4f5277f0
     type: documents
-    rationale: Documentation page references AD-019
-  - target: AD-014
+    rationale: Documentation page references AD-4f5277f0
+  - target: AD-8b91f5a4
     type: documents
-    rationale: Documentation page references AD-014
+    rationale: Documentation page references AD-8b91f5a4
 ---
 
 **Date:** 2026-03-02
@@ -349,7 +349,7 @@ Navigation uses the Activity Bar, Nav Sub-Panel, and contextual panel switching 
 | `Ctrl+S` | Save (in edit mode) |
 | `Escape` | Close overlay / exit edit mode |
 
-**Removed from [AD-018](AD-018):** `Ctrl+Shift+S` (Scanner dashboard), `Ctrl+Shift+M` (Metrics dashboard), `Ctrl+Shift+L` (Learning loop) — these are Activity Bar destinations, not keyboard shortcut targets. `Ctrl+B` repurposed from Sessions Panel toggle to Nav Sub-Panel toggle.
+**Removed from [AD-40b3de0a](AD-40b3de0a):** `Ctrl+Shift+S` (Scanner dashboard), `Ctrl+Shift+M` (Metrics dashboard), `Ctrl+Shift+L` (Learning loop) — these are Activity Bar destinations, not keyboard shortcut targets. `Ctrl+B` repurposed from Sessions Panel toggle to Nav Sub-Panel toggle.
 
 ---
 
@@ -486,6 +486,6 @@ This design means the AI provider status shown in the status bar is meaningful c
 - User Journeys — Workflows that this architecture supports
 - User Personas — Who navigates this UI
 - MVP Feature Specification — What the MVP includes
-- [AD-013](AD-013): Frontend library selections — shadcn-svelte, PaneForge, CodeMirror 6
-- [AD-019](AD-019): Three-zone + Nav Sub-Panel layout — layout architecture decision
-- [AD-014](AD-014): Persistence architecture — SQLite for session/artifact storage
+- [AD-afc78f6e](AD-afc78f6e): Frontend library selections — shadcn-svelte, PaneForge, CodeMirror 6
+- [AD-4f5277f0](AD-4f5277f0): Three-zone + Nav Sub-Panel layout — layout architecture decision
+- [AD-8b91f5a4](AD-8b91f5a4): Persistence architecture — SQLite for session/artifact storage

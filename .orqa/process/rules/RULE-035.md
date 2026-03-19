@@ -1,12 +1,12 @@
 ---
-id: RULE-035
+id: RULE-11c29c9e
 title: Skill Portability
 description: Skills must be portable within their declared layer. Core skills must work on any project unchanged. Project skills must declare their scope.
 status: active
 created: 2026-03-11
 updated: 2026-03-11
 relationships:
-  - target: AD-001
+  - target: AD-e513c9e4
     type: enforces
 ---
 A skill's `layer` field declares its portability scope. Content within the skill MUST be portable within that scope. A core skill that contains project-specific paths is broken — it will give wrong guidance on other projects.
@@ -24,7 +24,7 @@ A skill's `layer` field declares its portability scope. Content within the skill
 Core skills (`layer: core`) MUST NOT contain:
 
 - Project-specific file paths (e.g., `backend/src-tauri/src/domain/sessions.rs`)
-- Architecture decision references from this project (e.g., [AD-001](AD-001), [AD-005](AD-005))
+- Architecture decision references from this project (e.g., [AD-e513c9e4](AD-e513c9e4), [AD-dffc3d30](AD-dffc3d30))
 - Project-specific config values (hardcoded URLs, service names, environment variables)
 - Enforcement rules that belong in `.orqa/process/rules/`
 - Product decisions that belong in `.orqa/documentation/about/`
@@ -47,5 +47,5 @@ Project skills (`layer: project`) MUST:
 
 ## Related Rules
 
-- [RULE-026](RULE-026) (skill-enforcement) — skill loading and tier model
-- [RULE-005](RULE-005) (code-search-usage) — search skills as an example of context-resolved portability
+- [RULE-deab6ea7](RULE-deab6ea7) (skill-enforcement) — skill loading and tier model
+- [RULE-5e03e67b](RULE-5e03e67b) (code-search-usage) — search skills as an example of context-resolved portability

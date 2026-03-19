@@ -1,11 +1,11 @@
 ---
-id: DOC-082
+id: DOC-5d1eed43
 type: doc
 name: Repository and Package Naming Conventions
 category: reference
 status: active
 relationships:
-  - target: SKILL-054
+  - target: SKILL-250d5d6f
     type: synchronised-with
 ---
 

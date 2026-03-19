@@ -1,5 +1,5 @@
 ---
-id: DOC-002
+id: DOC-4db3a417
 title: Enforcement Architecture
 category: architecture
 description: "Architecture of OrqaStudio's five-layer enforcement system — process gates, knowledge injection, tooling ecosystem delegation, prompt-based skill injection, and the schema-driven integrity engine."
@@ -7,21 +7,21 @@ created: 2026-03-05
 updated: 2026-03-18
 sort: 11
 relationships:
-  - target: RULE-006
+  - target: RULE-b49142be
     type: documents
-    rationale: Documentation page references RULE-006
-  - target: RULE-013
+    rationale: Documentation page references RULE-b49142be
+  - target: RULE-633e636d
     type: documents
-    rationale: Documentation page references RULE-013
-  - target: RULE-026
+    rationale: Documentation page references RULE-633e636d
+  - target: RULE-deab6ea7
     type: documents
-    rationale: Documentation page references RULE-026
-  - target: EPIC-052
+    rationale: Documentation page references RULE-deab6ea7
+  - target: EPIC-4440cdd4
     type: documents
-    rationale: Documentation page references EPIC-052
-  - target: AD-015
+    rationale: Documentation page references EPIC-4440cdd4
+  - target: AD-69072318
     type: documents
-    rationale: Documentation page references AD-015
+    rationale: Documentation page references AD-69072318
 ---
 
 OrqaStudio's enforcement system ensures agents follow the structured thinking process — understand, plan, document, implement, review, learn — at every stage of work. It operates across four layers, each addressing a different enforcement concern.
@@ -474,8 +474,8 @@ The enforcement system has comprehensive test coverage:
 
 ## Related Documents
 
-- [RULE-006](RULE-006) — Coding standards with lint enforcement entries
-- [RULE-013](RULE-013) — Git workflow with `--no-verify` blocking
-- [RULE-026](RULE-026) — Skill enforcement and three-tier loading model
-- [EPIC-052](EPIC-052) — Structured Thinking Enforcement epic (design + implementation)
-- [AD-015](AD-015) — Governance artifact format
+- [RULE-b49142be](RULE-b49142be) — Coding standards with lint enforcement entries
+- [RULE-633e636d](RULE-633e636d) — Git workflow with `--no-verify` blocking
+- [RULE-deab6ea7](RULE-deab6ea7) — Skill enforcement and three-tier loading model
+- [EPIC-4440cdd4](EPIC-4440cdd4) — Structured Thinking Enforcement epic (design + implementation)
+- [AD-69072318](AD-69072318) — Governance artifact format

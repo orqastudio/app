@@ -1,16 +1,16 @@
 ---
-id: DOC-062
+id: DOC-c8de180d
 title: Priority Assessment
 category: concept
 description: "How agents assess epic priority — project-flexible, inference-based, not formula-driven"
 sort: 9
 relationships:
-  - target: MS-001
+  - target: MS-654badde
     type: documents
-    rationale: Documentation page references MS-001
-  - target: MS-002
+    rationale: Documentation page references MS-654badde
+  - target: MS-eea45fa8
     type: documents
-    rationale: Documentation page references MS-002
+    rationale: Documentation page references MS-eea45fa8
 ---
 
 ## Principle
@@ -44,15 +44,15 @@ What matters is that the rationale is readable and the priority band is defensib
 
 ## This Project's Criteria (OrqaStudio — current state)
 
-OrqaStudio is in alpha, working toward [MS-001](MS-001) (Dogfooding) and [MS-002](MS-002) (MVP). The
+OrqaStudio is in alpha, working toward [MS-654badde](MS-654badde) (Dogfooding) and [MS-eea45fa8](MS-eea45fa8) (MVP). The
 current priority criteria are:
 
 ### 1. Milestone Service
 
 Does this epic directly serve the active milestone's gate question?
 
-- **[MS-001](MS-001) gate**: "Can we use this app instead of the terminal?"
-- **[MS-002](MS-002) gate**: "Can a new user install this and get value within 10 minutes?"
+- **[MS-654badde](MS-654badde) gate**: "Can we use this app instead of the terminal?"
+- **[MS-eea45fa8](MS-eea45fa8) gate**: "Can a new user install this and get value within 10 minutes?"
 
 An epic that is essential for answering "yes" to the gate question is P1. An epic that
 improves the answer but isn't essential is P2. An epic that doesn't affect the gate
@@ -76,7 +76,7 @@ When assigning priority, consider:
   the development workflow is elevated because we experience it daily.
 
 Do not assign priority based on:
-- Artifact ID numbers (EPIC-001 is not more important than EPIC-050)
+- Artifact ID numbers (EPIC-e045ab6d is not more important than EPIC-3a8ad459)
 - Creation date (older ≠ more urgent)
 - Effort size (big ≠ important)
 - Technical interest (cool ≠ necessary)
@@ -85,7 +85,7 @@ Do not assign priority based on:
 
 These criteria change as the project matures. When a milestone is completed and a new
 one becomes active, reassess all epic priorities against the new gate question. An epic
-that was P3 under [MS-001](MS-001) may become P1 under [MS-002](MS-002).
+that was P3 under [MS-654badde](MS-654badde) may become P1 under [MS-eea45fa8](MS-eea45fa8).
 
 The orchestrator should trigger a priority reassessment when:
 - A milestone status changes

@@ -1,12 +1,12 @@
 ---
-id: RULE-015
+id: RULE-878e5422
 title: Honest Reporting
 description: Report status accurately. Partial work reported as complete is worse than reporting it as incomplete.
 status: active
 created: 2026-03-07
 updated: 2026-03-07
 relationships:
-  - target: AD-046
+  - target: AD-29b5eb06
     type: enforces
 ---
 ## The Core Rule
@@ -52,7 +52,7 @@ Use these precise terms — not vague language like "mostly done" or "almost com
 
 ## Agent Output Requirements
 
-See [RULE-020](RULE-020) (no-stubs) > "Agent Completion Reports" for the mandatory output structure.
+See [RULE-e9c54567](RULE-e9c54567) (no-stubs) > "Agent Completion Reports" for the mandatory output structure.
 
 ## Lesson Documentation Status
 
@@ -62,12 +62,12 @@ Completion reports from review agents (`code-reviewer`, `qa-tester`, `ux-reviewe
 - Were any existing IMPL entries updated with recurrence increments?
 - Was `.orqa/process/lessons/` checked for known patterns before reporting findings?
 
-Review agents that skip lesson documentation are in violation of this rule AND [RULE-017](RULE-017) (lessons-learned).
+Review agents that skip lesson documentation are in violation of this rule AND [RULE-551bde31](RULE-551bde31) (lessons-learned).
 
 ## Related Rules
 
-- [RULE-020](RULE-020) (no-stubs) — what counts as a stub + mandatory output structure
-- [RULE-019](RULE-019) (no-deferred-deliverables) — deferring scoped deliverables is dishonest reporting
-- [RULE-022](RULE-022) (plan-mode-compliance) — verification gate protocol + evidence requirements
-- [RULE-012](RULE-012) (error-ownership) — all errors are your responsibility
-- [RULE-017](RULE-017) (lessons-learned) — learning loop enforcement for review agents
+- [RULE-e9c54567](RULE-e9c54567) (no-stubs) — what counts as a stub + mandatory output structure
+- [RULE-e120bb70](RULE-e120bb70) (no-deferred-deliverables) — deferring scoped deliverables is dishonest reporting
+- [RULE-303c1cc8](RULE-303c1cc8) (plan-mode-compliance) — verification gate protocol + evidence requirements
+- [RULE-57ccb4a3](RULE-57ccb4a3) (error-ownership) — all errors are your responsibility
+- [RULE-551bde31](RULE-551bde31) (lessons-learned) — learning loop enforcement for review agents

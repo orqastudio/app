@@ -1,5 +1,5 @@
 ---
-id: DOC-037
+id: DOC-1b0a39a1
 title: "Glossary & Domain Model"
 category: reference
 description: Domain model and glossary of key terms used throughout OrqaStudio documentation and code.
@@ -7,9 +7,9 @@ created: 2026-03-02
 updated: 2026-03-18
 sort: 10
 relationships:
-  - target: AD-018
+  - target: AD-40b3de0a
     type: documents
-    rationale: Documentation page references AD-018
+    rationale: Documentation page references AD-40b3de0a
 ---
 
 **Date:** 2026-03-02
@@ -248,7 +248,7 @@ A collapsible 200px panel between the Activity Bar and Explorer Panel. Provides 
 
 ### Session Dropdown
 
-A dropdown control in the Chat Panel header for switching between sessions. Shows the active session title (clickable to open), a list of recent sessions with search filter, and a "New Session" button. Replaces the dedicated Sessions Panel from the previous four-zone layout [AD-018](AD-018). `Ctrl+N` creates a new session directly.
+A dropdown control in the Chat Panel header for switching between sessions. Shows the active session title (clickable to open), a list of recent sessions with search filter, and a "New Session" button. Replaces the dedicated Sessions Panel from the previous four-zone layout [AD-40b3de0a](AD-40b3de0a). `Ctrl+N` creates a new session directly.
 
 ### Chat Panel
 
@@ -331,6 +331,6 @@ The merged constraint set used by the integrity engine. Combines platform relati
 ## Related Documents
 
 - [VISION-001](VISION-001) — Product vision and mission
-- Artifact Framework (DOC-036) — Comprehensive artifact type and relationship reference
-- Enforcement Architecture (DOC-002) — Five-layer enforcement system
-- Status & Workflow (DOC-075) — Unified 12-status vocabulary
+- Artifact Framework (DOC-01ddd8aa) — Comprehensive artifact type and relationship reference
+- Enforcement Architecture (DOC-4db3a417) — Five-layer enforcement system
+- Status & Workflow (DOC-94224b27) — Unified 12-status vocabulary

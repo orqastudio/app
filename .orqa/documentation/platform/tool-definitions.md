@@ -1,5 +1,5 @@
 ---
-id: DOC-017
+id: DOC-a184e87f
 title: Tool Definitions
 category: reference
 description: "Definitions, parameters, and execution model for tools available to the AI agent within OrqaStudio sessions."
@@ -7,15 +7,15 @@ created: 2026-03-02
 updated: 2026-03-10
 sort: 16
 relationships:
-  - target: AD-010
+  - target: AD-0dbba717
     type: documents
-    rationale: Documentation page references AD-010
-  - target: AD-011
+    rationale: Documentation page references AD-0dbba717
+  - target: AD-5d9ac6bd
     type: documents
-    rationale: Documentation page references AD-011
+    rationale: Documentation page references AD-5d9ac6bd
 ---
 
-**Date:** 2026-03-02 | **References:** [AD-010](AD-010), [AD-011](AD-011)
+**Date:** 2026-03-02 | **References:** [AD-0dbba717](AD-0dbba717), [AD-5d9ac6bd](AD-5d9ac6bd)
 
 This document defines the 10 tools that OrqaStudio exposes to the Claude Agent SDK. Tools are implemented in Rust in `backend/src-tauri/src/domain/tool_executor.rs` and registered in the sidecar's in-process MCP server (`sidecar/src/providers/claude-agent.ts`). Tool names use no prefix — the agent sees them as `read_file`, `write_file`, etc.
 
@@ -317,7 +317,7 @@ For write operations, where the file may not yet exist, `resolve_write_path()` c
 
 ## Related Documents
 
-- Architecture Decisions — [AD-010](AD-010) (tool execution model), [AD-011](AD-011) (security model)
+- Architecture Decisions — [AD-0dbba717](AD-0dbba717) (tool execution model), [AD-5d9ac6bd](AD-5d9ac6bd) (security model)
 - Streaming Pipeline — How tool events flow through the NDJSON protocol
 
 ---

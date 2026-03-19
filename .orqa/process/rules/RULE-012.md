@@ -1,12 +1,12 @@
 ---
-id: RULE-012
+id: RULE-57ccb4a3
 title: Error Ownership
 description: All errors are your responsibility. Pre-existing errors must be fixed. Never skip or ignore failures.
 status: active
 created: 2026-03-07
 updated: 2026-03-12
 relationships:
-  - target: AD-003
+  - target: AD-1ad08e5f
     type: enforces
 ---
 ## Rule (NON-NEGOTIABLE)
@@ -47,6 +47,6 @@ Use `search_regex` to find function definitions before calling them — faster a
 
 ## Related Rules
 
-- [RULE-006](RULE-006) (coding-standards) — defines *what* to verify (specific checks and patterns)
-- [RULE-005](RULE-005) (code-search-usage) — tools for finding and verifying code before modifying it
-- [RULE-010](RULE-010) (end-to-end-completeness) — the full chain that must be verified
+- [RULE-b49142be](RULE-b49142be) (coding-standards) — defines *what* to verify (specific checks and patterns)
+- [RULE-5e03e67b](RULE-5e03e67b) (code-search-usage) — tools for finding and verifying code before modifying it
+- [RULE-1acb1602](RULE-1acb1602) (end-to-end-completeness) — the full chain that must be verified

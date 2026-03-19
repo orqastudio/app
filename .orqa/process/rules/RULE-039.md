@@ -1,12 +1,12 @@
 ---
-id: RULE-039
+id: RULE-e352fd0a
 title: Session Management
 description: "Sessions must be managed with state persistence, clean handoffs, and no unsaved work at session boundaries."
 status: active
 created: 2026-03-11
 updated: 2026-03-11
 relationships:
-  - target: AD-021
+  - target: AD-6ce44025
     type: enforces
 ---
 
@@ -49,5 +49,5 @@ When resuming from a previous session:
 
 ## Related Rules
 
-- [RULE-013](RULE-013) (git-workflow) — git stash policy and commit discipline
-- [RULE-007](RULE-007) (development-commands) — dev server lifecycle management
+- [RULE-633e636d](RULE-633e636d) (git-workflow) — git stash policy and commit discipline
+- [RULE-c71f1c3f](RULE-c71f1c3f) (development-commands) — dev server lifecycle management

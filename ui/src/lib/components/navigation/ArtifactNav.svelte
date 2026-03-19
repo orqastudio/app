@@ -235,7 +235,7 @@
 										label={node.label}
 										description={node.description ?? undefined}
 										status={node.status ?? undefined}
-														active={navigationStore.selectedArtifactPath === node.path}
+														path={node.path}
 										onclick={() => handleLeafClick(node)}
 									/>
 								{/each}
@@ -249,7 +249,7 @@
 						label={node.label}
 						description={node.description ?? undefined}
 						status={node.status ?? undefined}
-						active={navigationStore.selectedArtifactPath === node.path}
+						path={node.path}
 						onclick={() => handleLeafClick(node)}
 					/>
 				{/each}
@@ -282,7 +282,7 @@
 				label={node.label}
 				description={node.description ?? undefined}
 				status={node.status ?? undefined}
-				active={navigationStore.selectedArtifactPath === node.path}
+				path={node.path}
 				onclick={() => handleLeafClick(node)}
 			/>
 		</div>

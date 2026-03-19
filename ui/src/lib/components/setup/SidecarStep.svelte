@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Icon, Button } from "@orqastudio/svelte-components/pure";
-	import { extractErrorMessage } from "@orqastudio/sdk";
+	import { extractErrorMessage, logger } from "@orqastudio/sdk";
+
+	const log = logger("setup");
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -41,6 +43,7 @@
 				starting = false;
 			}
 		} catch (err) {
+			log.error("Sidecar start failed", { err });
 			setupStore.error = extractErrorMessage(err);
 			starting = false;
 		}

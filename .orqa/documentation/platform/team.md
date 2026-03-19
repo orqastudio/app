@@ -1,5 +1,5 @@
 ---
-id: DOC-034
+id: DOC-abd30340
 title: The Agentic Development Team
 category: reference
 description: Roster of specialized agents in the agentic development team with their roles and responsibilities.
@@ -7,9 +7,9 @@ created: 2026-03-02
 updated: 2026-03-10
 sort: 8
 relationships:
-  - target: AD-029
+  - target: AD-774cc3d0
     type: documents
-    rationale: Documentation page references AD-029
+    rationale: Documentation page references AD-774cc3d0
 ---
 
 **Date:** 2026-03-02
@@ -35,7 +35,7 @@ The orchestrator does NOT implement code directly. Its job is coordination, dele
 
 ## Agent Directory
 
-All 7 universal roles are defined in `.orqa/process/agents/`. Each role is invoked via the Task tool with the appropriate `subagent_type`, and domain capability is loaded via skills at delegation time (see [AD-029](AD-029)).
+All 7 universal roles are defined in `.orqa/process/agents/`. Each role is invoked via the Task tool with the appropriate `subagent_type`, and domain capability is loaded via skills at delegation time (see [AD-774cc3d0](AD-774cc3d0)).
 
 | Role | Purpose | Tier 1 Skills | When to Use |
 |------|---------|---------------|-------------|
@@ -47,7 +47,7 @@ All 7 universal roles are defined in `.orqa/process/agents/`. Each role is invok
 | **Writer** | Creates documentation, specifications, communications | `orqa-code-search`, `composability`, `planning` | Architecture docs, IPC contracts, component specs, process documentation |
 | **Designer** | Designs experiences, interfaces, and structures | `orqa-code-search`, `composability`, `svelte5-best-practices`, `tailwind-design-system` | UI components, styling, visual polish, design system |
 
-Orchestrator-injected Tier 2 skills narrow the Implementer and Reviewer roles to specific domains. See the delegation guide above and [AD-029](AD-029) for the full skill-loading model.
+Orchestrator-injected Tier 2 skills narrow the Implementer and Reviewer roles to specific domains. See the delegation guide above and [AD-774cc3d0](AD-774cc3d0) for the full skill-loading model.
 
 ---
 

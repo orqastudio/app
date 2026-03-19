@@ -1,5 +1,5 @@
 ---
-id: DOC-005
+id: DOC-3c65a1e3
 title: IPC Command Catalog
 category: reference
 description: Catalog of all Tauri IPC commands defining the frontend-backend communication contract.
@@ -7,25 +7,25 @@ created: 2026-03-02
 updated: 2026-03-10
 sort: 1
 relationships:
-  - target: AD-002
+  - target: AD-a334623b
     type: documents
-    rationale: Documentation page references AD-002
-  - target: AD-009
+    rationale: Documentation page references AD-a334623b
+  - target: AD-fcd55d44
     type: documents
-    rationale: Documentation page references AD-009
-  - target: AD-003
+    rationale: Documentation page references AD-fcd55d44
+  - target: AD-1ad08e5f
     type: documents
-    rationale: Documentation page references AD-003
-  - target: EPIC-048
+    rationale: Documentation page references AD-1ad08e5f
+  - target: EPIC-0a8a5e72
     type: documents
-    rationale: Documentation page references EPIC-048
+    rationale: Documentation page references EPIC-0a8a5e72
 ---
 
-**References:** [Tauri v2 Research](RES-007), [AD-002](AD-002), [AD-009](AD-009), Rust Module Architecture
+**References:** [Tauri v2 Research](RES-00c5dbc3), [AD-a334623b](AD-a334623b), [AD-fcd55d44](AD-fcd55d44), Rust Module Architecture
 
-Complete catalog of `#[tauri::command]` functions. Every frontend-to-backend call crosses the IPC boundary through one of these commands. Streaming data uses `Channel<T>` [AD-009](AD-009) rather than `invoke()`.
+Complete catalog of `#[tauri::command]` functions. Every frontend-to-backend call crosses the IPC boundary through one of these commands. Streaming data uses `Channel<T>` [AD-fcd55d44](AD-fcd55d44) rather than `invoke()`.
 
-All commands return `Result<T, OrqaError>` where `OrqaError` is a `thiserror`-derived enum serialized as `{"code": "<variant>", "message": "<detail>"}` [AD-003](AD-003).
+All commands return `Result<T, OrqaError>` where `OrqaError` is a `thiserror`-derived enum serialized as `{"code": "<variant>", "message": "<detail>"}` [AD-1ad08e5f](AD-1ad08e5f).
 
 There are currently **15 command modules** containing approximately **82 commands** in total.
 
@@ -168,7 +168,7 @@ Lesson management backed by file-based storage in `.orqa/process/lessons/`. Less
 | Command | Signature | Description |
 |---------|-----------|-------------|
 | `lessons_list` | `(project_path: String) -> Vec<Lesson>` | List all lessons from `.orqa/process/lessons/` |
-| `lessons_get` | `(project_path: String, id: String) -> Lesson` | Get a single lesson by ID (e.g. `[IMPL-001](IMPL-001)`) |
+| `lessons_get` | `(project_path: String, id: String) -> Lesson` | Get a single lesson by ID (e.g. `[IMPL-eb748de2](IMPL-eb748de2)`) |
 | `lessons_create` | `(project_path: String, title: String, category: String, body: String) -> Lesson` | Create a new lesson with auto-assigned ID |
 | `lesson_increment_recurrence` | `(project_path: String, id: String) -> Lesson` | Increment recurrence count; used by review agents |
 | `lessons_scan_promotions` | `(project_path: String) -> Vec<Lesson>` | Return lessons with recurrence >= 2 that have not yet been promoted |
@@ -203,7 +203,7 @@ Bidirectional artifact reference graph. Built lazily from disk, cached in `AppSt
 
 | Command | Signature | Description |
 |---------|-----------|-------------|
-| `resolve_artifact` | `(id: String) -> Option<ArtifactNode>` | Resolve artifact by ID (e.g. `[EPIC-048](EPIC-048)`) |
+| `resolve_artifact` | `(id: String) -> Option<ArtifactNode>` | Resolve artifact by ID (e.g. `[EPIC-0a8a5e72](EPIC-0a8a5e72)`) |
 | `resolve_artifact_path` | `(path: String) -> Option<ArtifactNode>` | Resolve artifact by relative file path |
 | `get_references_from` | `(id: String) -> Vec<ArtifactRef>` | Get all forward references (outgoing edges) from an artifact |
 | `get_references_to` | `(id: String) -> Vec<ArtifactRef>` | Get all backlinks (incoming edges) to an artifact |
@@ -231,8 +231,8 @@ Tool calls that require approval park on a sync channel. The frontend calls `str
 ## Related Documents
 
 - Rust Module Architecture — module structure, AppState, dependency graph
-- [AD-002](AD-002) — IPC boundary principle
-- [AD-009](AD-009) — streaming via Channel\<T\>
-- [AD-003](AD-003) — error propagation via Result + thiserror
+- [AD-a334623b](AD-a334623b) — IPC boundary principle
+- [AD-fcd55d44](AD-fcd55d44) — streaming via Channel\<T\>
+- [AD-1ad08e5f](AD-1ad08e5f) — error propagation via Result + thiserror
 
 ---

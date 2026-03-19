@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, CardAction } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import { getStores } from "@orqastudio/sdk";
+	import { getStores, logger } from "@orqastudio/sdk";
 
+	const log = logger("dashboard");
 	const { artifactGraphSDK } = getStores();
 	import type { HealthSnapshot } from "@orqastudio/types";
 
@@ -22,8 +23,8 @@
 		try {
 			snapshots = await artifactGraphSDK.getHealthSnapshots(20);
 			loaded = true;
-		} catch {
-			// Non-critical widget — silently degrade
+		} catch (err) {
+			log.warn("Failed to load health snapshots", { err });
 		} finally {
 			loading = false;
 		}

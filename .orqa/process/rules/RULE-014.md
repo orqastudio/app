@@ -1,12 +1,12 @@
 ---
-id: RULE-014
+id: RULE-6d1c8dc7
 title: Historical Artifact Preservation
 description: Documentation is deleted when outdated. Research and tasks are preserved and marked as surpassed for historical traceability.
 status: active
 created: 2026-03-07
 updated: 2026-03-07
 relationships:
-  - target: AD-051
+  - target: AD-c8535011
     type: enforces
 ---
 
@@ -45,10 +45,10 @@ When a research document or task has been overtaken by newer work:
 
 ```yaml
 ---
-id: TASK-003
+id: TASK-fa777da9
 title: "Original nav implementation"
 status: surpassed
-surpassed-by: TASK-009
+surpassed-by: TASK-614a6a45
 ---
 ```
 
@@ -75,5 +75,5 @@ Rules use `active` / `inactive` — NOT `surpassed`. Surpassed is for research a
 
 ## Related Rules
 
-- [RULE-008](RULE-008) (documentation-first) — documentation describes current state, deleted when outdated
-- [RULE-004](RULE-004) (artifact-lifecycle) — status transitions for ideas, epics, milestones
+- [RULE-9daf29c0](RULE-9daf29c0) (documentation-first) — documentation describes current state, deleted when outdated
+- [RULE-7b770593](RULE-7b770593) (artifact-lifecycle) — status transitions for ideas, epics, milestones

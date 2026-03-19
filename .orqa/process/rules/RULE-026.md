@@ -1,24 +1,24 @@
 ---
-id: RULE-026
+id: RULE-deab6ea7
 title: Skill Enforcement
 description: "Three-tier skill loading: agent portable skills, orchestrator-injected project skills, and context-resolving wrappers."
 status: active
 created: 2026-03-07
 updated: 2026-03-13
 relationships:
-  - target: AD-030
+  - target: AD-6f0dea5e
     type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-030
-  - target: AD-028
+    rationale: Auto-generated inverse of enforces relationship from AD-6f0dea5e
+  - target: AD-53e80192
     type: enforces
-  - target: DOC-002
+  - target: DOC-4db3a417
     type: documented-by
-  - target: DOC-030
+  - target: DOC-b10607c0
     type: documented-by
-  - target: DOC-071
+  - target: DOC-e0042602
     type: documented-by
 ---
-Every agent MUST have a `skills:` list in its YAML frontmatter. Agent tool access is declared via `capabilities:` and resolved per provider context — see [RULE-040](RULE-040). Skills load in three tiers [AD-028](AD-028).
+Every agent MUST have a `skills:` list in its YAML frontmatter. Agent tool access is declared via `capabilities:` and resolved per provider context — see [RULE-92dba0cb](RULE-92dba0cb). Skills load in three tiers [AD-53e80192](AD-53e80192).
 
 ## Three-Tier Model
 
@@ -119,9 +119,9 @@ In OrqaStudio, skills are loaded via the `load_skill` tool and managed by the ap
 
 ## Related Rules
 
-- [RULE-023](RULE-023) (required-reading) — docs that agents must load (complementary to skills)
-- [RULE-005](RULE-005) (code-search-usage) — code search usage and context detection
-- [RULE-001](RULE-001) (agent-delegation) — orchestrator must delegate to agents, not implement directly
-- [RULE-037](RULE-037) (tool-access-restrictions) — constrains which tools each role may use
-- [RULE-038](RULE-038) (user-invocable-skills) — user-invocable skill field semantics
-- [RULE-040](RULE-040) (provider-agnostic-capabilities) — capability → tool mapping replaces tools in agent definitions
+- [RULE-b2753bad](RULE-b2753bad) (required-reading) — docs that agents must load (complementary to skills)
+- [RULE-5e03e67b](RULE-5e03e67b) (code-search-usage) — code search usage and context detection
+- [RULE-532100d9](RULE-532100d9) (agent-delegation) — orchestrator must delegate to agents, not implement directly
+- [RULE-f809076f](RULE-f809076f) (tool-access-restrictions) — constrains which tools each role may use
+- [RULE-5ee43922](RULE-5ee43922) (user-invocable-skills) — user-invocable skill field semantics
+- [RULE-92dba0cb](RULE-92dba0cb) (provider-agnostic-capabilities) — capability → tool mapping replaces tools in agent definitions

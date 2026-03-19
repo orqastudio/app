@@ -1,12 +1,12 @@
 ---
-id: RULE-025
+id: RULE-1f30904a
 title: Root Directory Cleanliness
 description: The project root must stay lean. Every file in root must have a justification.
 status: active
 created: 2026-03-07
 updated: 2026-03-12
 relationships:
-  - target: AD-043
+  - target: AD-71d44f5c
     type: enforces
 ---
 The project root must stay lean. Every file in root must have a justification.
@@ -42,6 +42,6 @@ The project root must stay lean. Every file in root must have a justification.
 
 ## Related Rules
 
-- [RULE-003](RULE-003) (artifact-config-integrity) — config paths in `project.json` must match actual disk structure; root directory discipline keeps that structure predictable
-- [RULE-007](RULE-007) (development-commands) — build commands reference root-level config files whose placement this rule governs
-- [RULE-013](RULE-013) (git-workflow) — `.gitignore` and `.gitattributes` belong in root per this rule; `tmp/` is gitignored to keep temporary files out of commits
+- [RULE-6c0496e0](RULE-6c0496e0) (artifact-config-integrity) — config paths in `project.json` must match actual disk structure; root directory discipline keeps that structure predictable
+- [RULE-c71f1c3f](RULE-c71f1c3f) (development-commands) — build commands reference root-level config files whose placement this rule governs
+- [RULE-633e636d](RULE-633e636d) (git-workflow) — `.gitignore` and `.gitattributes` belong in root per this rule; `tmp/` is gitignored to keep temporary files out of commits

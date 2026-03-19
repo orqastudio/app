@@ -1,14 +1,14 @@
 ---
-id: RULE-040
+id: RULE-92dba0cb
 title: Provider-Agnostic Tool Capabilities
 description: Agent definitions declare abstract capabilities. A provider mapping table resolves capabilities to concrete tool names per context.
 status: active
 created: 2026-03-11
 updated: 2026-03-13
 relationships:
-  - target: AD-025
+  - target: AD-ff88ecea
     type: enforces
-  - target: DOC-030
+  - target: DOC-b10607c0
     type: documented-by
 ---
 Agent definitions declare **capabilities** (what they can do), not **tools** (how they
@@ -90,7 +90,7 @@ When the orchestrator delegates to an agent:
 5. If a capability has no mapping in the current context (e.g., semantic search
    unavailable), note the gap explicitly in the delegation prompt
 
-Until the companion plugin (EPIC-050) automates this resolution, the orchestrator
+Until the companion plugin (EPIC-3a8ad459) automates this resolution, the orchestrator
 performs it manually in every delegation.
 
 ## Agent Definition Format
@@ -134,6 +134,6 @@ No agent definitions change. The capability vocabulary stays the same.
 
 ## Related Rules
 
-- [RULE-026](RULE-026) (skill-enforcement) — skill loading complements capability resolution
-- [RULE-001](RULE-001) (agent-delegation) — delegation protocol includes capability resolution
-- [RULE-005](RULE-005) (code-search-usage) — code search capabilities and context detection
+- [RULE-deab6ea7](RULE-deab6ea7) (skill-enforcement) — skill loading complements capability resolution
+- [RULE-532100d9](RULE-532100d9) (agent-delegation) — delegation protocol includes capability resolution
+- [RULE-5e03e67b](RULE-5e03e67b) (code-search-usage) — code search capabilities and context detection

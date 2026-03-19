@@ -1,5 +1,5 @@
 ---
-id: RULE-020
+id: RULE-e9c54567
 title: No Stubs or Placeholders
 description: "No hardcoded fake data, TODO functions, or scaffolded implementations in production code."
 status: active
@@ -9,9 +9,9 @@ enforcement:
   - "event: file"
   - "src/**/*"
 relationships:
-  - target: DOC-021
+  - target: DOC-4b4fbc0f
     type: documented-by
-  - target: AD-017
+  - target: AD-1d928079
     type: enforces
 ---
 ## What Counts as a Stub
@@ -87,6 +87,6 @@ Every agent completing implementation work MUST include these sections in its fi
 
 ## Related Rules
 
-- [RULE-010](RULE-010) (end-to-end-completeness) — the full chain that must exist
-- [RULE-012](RULE-012) (error-ownership) — if the function doesn't exist, create it
-- [RULE-005](RULE-005) (code-search-usage) — tools for verifying implementations exist
+- [RULE-1acb1602](RULE-1acb1602) (end-to-end-completeness) — the full chain that must exist
+- [RULE-57ccb4a3](RULE-57ccb4a3) (error-ownership) — if the function doesn't exist, create it
+- [RULE-5e03e67b](RULE-5e03e67b) (code-search-usage) — tools for verifying implementations exist

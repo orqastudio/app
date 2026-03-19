@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import { getStores } from "@orqastudio/sdk";
+	import { getStores, logger } from "@orqastudio/sdk";
 
+	const log = logger("dashboard");
 	const { artifactGraphSDK, projectStore } = getStores();
 	import type { HealthSnapshot } from "@orqastudio/types";
 
@@ -42,8 +43,8 @@
 		try {
 			snapshots = await artifactGraphSDK.getHealthSnapshots(20);
 			loaded = true;
-		} catch {
-			// Non-critical widget — silently degrade
+		} catch (err) {
+			log.warn("Failed to load health snapshots for improvement trends", { err });
 			loaded = true;
 		} finally {
 			loading = false;

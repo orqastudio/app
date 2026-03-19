@@ -1,5 +1,5 @@
 ---
-id: RULE-044
+id: RULE-98682b5e
 title: Core Graph Firmware Protection
 description: "Core graph artifacts (schemas, orchestrator, core skills, role definitions) are firmware — non-editable by agents or users except through the update system or in dogfood mode."
 status: active
@@ -17,14 +17,14 @@ enforcement:
   - .orqa/process/skills/planning/SKILL.md
   - .orqa/process/skills/orqa-code-search/SKILL.md
 relationships:
-  - target: AD-045
+  - target: AD-ea4a5979
     type: enforces
-    rationale: "Auto-generated inverse of enforces relationship from AD-045"
-  - target: AD-038
+    rationale: "Auto-generated inverse of enforces relationship from AD-ea4a5979"
+  - target: AD-2783985c
     type: enforces
-  - target: AD-039
+  - target: AD-e8ab8572
     type: enforces
-  - target: DOC-071
+  - target: DOC-e0042602
     type: documented-by
 ---
 Core graph artifacts define how the artifact graph works, how agents traverse it, and how the structured thinking process operates. They are **firmware** — they ship with OrqaStudio and are not modified during normal project use.
@@ -76,7 +76,7 @@ In all other projects, core artifacts are read-only at three levels:
 
 ## Related Rules
 
-- [RULE-003](RULE-003) (artifact-config-integrity) — config paths must match disk; this rule protects the schemas that config relies on
-- [RULE-032](RULE-032) (schema-validation) — schemas validate frontmatter; this rule protects the schemas themselves
-- [RULE-035](RULE-035) (skill-portability) — core skills must be portable; this rule prevents project-specific contamination
-- [RULE-009](RULE-009) (dogfood-mode) — dogfood exception to this rule's protection
+- [RULE-6c0496e0](RULE-6c0496e0) (artifact-config-integrity) — config paths must match disk; this rule protects the schemas that config relies on
+- [RULE-a764b2ae](RULE-a764b2ae) (schema-validation) — schemas validate frontmatter; this rule protects the schemas themselves
+- [RULE-11c29c9e](RULE-11c29c9e) (skill-portability) — core skills must be portable; this rule prevents project-specific contamination
+- [RULE-6083347d](RULE-6083347d) (dogfood-mode) — dogfood exception to this rule's protection

@@ -1,14 +1,14 @@
 ---
-id: RULE-008
+id: RULE-9daf29c0
 title: Documentation-First Implementation
 description: Documentation is the source of truth. Verify docs exist before writing code; update docs before changing code.
 status: active
 created: 2026-03-07
 updated: 2026-03-12
 relationships:
-  - target: AGENT-008
+  - target: AGENT-ff44f841
     type: observed-by
-  - target: AD-017
+  - target: AD-1d928079
     type: enforces
 ---
 ## Principle
@@ -84,13 +84,13 @@ The artifact framework enforces documentation at two points:
 
 These fields are defined on every epic. The orchestrator checks `docs-required` before starting work, and the code-reviewer verifies `docs-produced` during the review gate.
 
-See [RULE-004](RULE-004) (artifact-lifecycle) for enforcement details and `.orqa/documentation/guide/artifact-workflow.md` for the full workflow.
+See [RULE-7b770593](RULE-7b770593) (artifact-lifecycle) for enforcement details and `.orqa/documentation/guide/artifact-workflow.md` for the full workflow.
 
 ## Related Rules
 
-- [RULE-004](RULE-004) (artifact-lifecycle) — artifact creation, status transitions, documentation gates
-- [RULE-022](RULE-022) (plan-mode-compliance) — plan structure requirements
-- [RULE-005](RULE-005) (code-search-usage) — using code_research for documentation discovery
-- [RULE-031](RULE-031) (vision-alignment) — pillar alignment and governance
-- [RULE-002](RULE-002) (architecture-decisions) — architecture decision compliance
-- [RULE-006](RULE-006) (coding-standards) — function size, typing, coverage requirements
+- [RULE-7b770593](RULE-7b770593) (artifact-lifecycle) — artifact creation, status transitions, documentation gates
+- [RULE-303c1cc8](RULE-303c1cc8) (plan-mode-compliance) — plan structure requirements
+- [RULE-5e03e67b](RULE-5e03e67b) (code-search-usage) — using code_research for documentation discovery
+- [RULE-1e8a1914](RULE-1e8a1914) (vision-alignment) — pillar alignment and governance
+- [RULE-65973a88](RULE-65973a88) (architecture-decisions) — architecture decision compliance
+- [RULE-b49142be](RULE-b49142be) (coding-standards) — function size, typing, coverage requirements

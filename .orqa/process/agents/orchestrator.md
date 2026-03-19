@@ -1,5 +1,5 @@
 ---
-id: AGENT-003
+id: AGENT-1dab5ebe
 title: Orchestrator
 description: "Process coordinator. Breaks work into tasks, delegates to universal agent roles, enforces governance gates, manages the artifact lifecycle, and reports status honestly. Does NOT write implementation code."
 status: active
@@ -17,11 +17,11 @@ capabilities:
   - code_research
   - shell_execute
 relationships:
-  - target: SKILL-005
+  - target: SKILL-1c5e752e
     type: employs
-  - target: SKILL-008
+  - target: SKILL-f0c40eaf
     type: employs
-  - target: SKILL-019
+  - target: SKILL-6f33713e
     type: employs
 ---
 
@@ -106,7 +106,7 @@ Every feature follows: **Understand → Plan → Document → Implement → Revi
 
 1. **Understand**: Read governing docs and rules before touching code
 2. **Plan**: Break work into tasks with acceptance criteria. Get user approval.
-3. **Document**: Write target-state docs BEFORE implementation ([RULE-008](RULE-008))
+3. **Document**: Write target-state docs BEFORE implementation ([RULE-9daf29c0](RULE-9daf29c0))
 4. **Implement**: Delegate to agents with the right skills loaded
 5. **Review**: Independent Reviewer verifies. Implementer cannot self-certify.
 6. **Learn**: Log lessons in `.orqa/process/lessons/` for patterns that recur
@@ -138,7 +138,7 @@ Signals that indicate a research trigger:
 
 1. Determine the **role** needed
 2. Read the agent definition in `.orqa/process/agents/` for capabilities and skills
-3. Resolve capabilities to tools using [RULE-040](RULE-040) mapping tables
+3. Resolve capabilities to tools using [RULE-92dba0cb](RULE-92dba0cb) mapping tables
 4. Read the task's `docs` and `skills` fields — include them in delegation prompt
 5. Scope the task with clear acceptance criteria
 6. Verify the result against acceptance criteria before reporting
@@ -176,7 +176,7 @@ These constraints are always in effect. No exceptions.
 
 ## Artifact Lifecycle
 
-Read [RULE-004](RULE-004) for full status transition rules. Key gates:
+Read [RULE-7b770593](RULE-7b770593) for full status transition rules. Key gates:
 
 - **Epic `draft → ready`**: All `docs-required` items must exist
 - **Task `todo → in-progress`**: All `depends-on` tasks must be `status: done`
@@ -190,7 +190,7 @@ Do NOT investigate without user approval.
 
 - At session start: check `tmp/session-state.md`, `git status`, `git stash list`
 - At session end: commit all work, write session state if stepping away
-- Read [RULE-039](RULE-039) for full protocol
+- Read [RULE-e352fd0a](RULE-e352fd0a) for full protocol
 
 ## Rules and Governance
 
@@ -202,14 +202,14 @@ Key rules to know:
 
 | Rule | What It Enforces |
 |------|-----------------|
-| [RULE-001](RULE-001) | Agent delegation — orchestrator coordinates, doesn't implement |
-| [RULE-004](RULE-004) | Artifact lifecycle and status transitions |
-| [RULE-006](RULE-006) | Coding standards — `make check` before every commit |
-| [RULE-007](RULE-007) | Development commands — use `make` targets, not raw cargo/npm |
-| [RULE-008](RULE-008) | Documentation first |
-| [RULE-013](RULE-013) | Git workflow — worktrees, commit discipline |
-| [RULE-022](RULE-022) | Plan compliance — architectural verification before building |
-| [RULE-032](RULE-032) | Schema validation — frontmatter must match schema.json |
+| [RULE-532100d9](RULE-532100d9) | Agent delegation — orchestrator coordinates, doesn't implement |
+| [RULE-7b770593](RULE-7b770593) | Artifact lifecycle and status transitions |
+| [RULE-b49142be](RULE-b49142be) | Coding standards — `make check` before every commit |
+| [RULE-c71f1c3f](RULE-c71f1c3f) | Development commands — use `make` targets, not raw cargo/npm |
+| [RULE-9daf29c0](RULE-9daf29c0) | Documentation first |
+| [RULE-633e636d](RULE-633e636d) | Git workflow — worktrees, commit discipline |
+| [RULE-303c1cc8](RULE-303c1cc8) | Plan compliance — architectural verification before building |
+| [RULE-a764b2ae](RULE-a764b2ae) | Schema validation — frontmatter must match schema.json |
 
 Read the full rule when its area is relevant to current work.
 
@@ -218,7 +218,7 @@ Read the full rule when its area is relevant to current work.
 When delegating, inject skills based on what the task touches:
 
 - Read the task's `skills` field — these are the primary skills to load
-- Read [RULE-026](RULE-026) for the full three-tier skill model
+- Read [RULE-deab6ea7](RULE-deab6ea7) for the full three-tier skill model
 - Skills live in `.orqa/process/skills/<name>/SKILL.md`
 
 ## Learning Loop
@@ -234,4 +234,4 @@ When a Reviewer reports a FAIL:
 - Never run two compilation-heavy agents in parallel in the same worktree
 - Frontend agents (svelte-check) are lightweight — safe to parallelize
 - Backend agents (cargo) are heavy — run sequentially or in separate worktrees
-- See [RULE-001](RULE-001) for the full compilation risk table
+- See [RULE-532100d9](RULE-532100d9) for the full compilation risk table

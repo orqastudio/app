@@ -1,5 +1,5 @@
 ---
-id: DOC-025
+id: DOC-c4b4b8b7
 title: Artifact Workflow
 category: how-to
 description: "Day-to-day workflow for creating, transitioning, and managing artifacts through their lifecycle."
@@ -7,12 +7,12 @@ created: 2026-03-07
 updated: 2026-03-09
 sort: 3
 relationships:
-  - target: RULE-004
+  - target: RULE-7b770593
     type: documents
-    rationale: Documentation page references RULE-004
-  - target: RULE-017
+    rationale: Documentation page references RULE-7b770593
+  - target: RULE-551bde31
     type: documents
-    rationale: Documentation page references RULE-017
+    rationale: Documentation page references RULE-551bde31
 ---
 
 **Date:** 2026-03-07
@@ -20,7 +20,7 @@ relationships:
 This document describes how artifacts flow through the OrqaStudio™ development process day-to-day. It covers when artifacts are created, how they transition between states, and the gates that govern each transition.
 
 For artifact schemas and field definitions, see `.orqa/documentation/about/artifact-framework.md`.
-For enforcement rules, see [RULE-004](RULE-004).
+For enforcement rules, see [RULE-7b770593](RULE-7b770593).
 
 ---
 
@@ -145,7 +145,7 @@ Before an epic can begin implementation:
 
 ### Starting Work (ready → in-progress)
 
-1. Verify the epic meets the Definition of Ready (see [RULE-004](RULE-004) epic gates)
+1. Verify the epic meets the Definition of Ready (see [RULE-7b770593](RULE-7b770593) epic gates)
 2. Create a worktree: `git worktree add ../orqa-<epic-name> -b <branch>`
 3. Assign the appropriate agent(s)
 4. Set `status: in-progress`
@@ -233,7 +233,7 @@ P2/P3 epics may still be in progress — they carry forward to the next mileston
 
 ## Lesson Lifecycle
 
-See [RULE-017](RULE-017) for the full lesson lifecycle.
+See [RULE-551bde31](RULE-551bde31) for the full lesson lifecycle.
 
 Summary:
 
