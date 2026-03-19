@@ -68,6 +68,8 @@ relationships:
     type: benefited-by
   - target: IDEA-107
     type: benefited-by
+  - target: IDEA-121
+    type: benefited-by
 ---
 
 Secondary persona. Senior developer, staff engineer, or lead researcher who works with complex systems daily. Already uses AI tools and wants structured governance, learning loops, and session continuity. See the full personas document for details.
