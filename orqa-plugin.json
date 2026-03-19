@@ -2,7 +2,19 @@
   "name": "@orqastudio/plugin-svelte",
   "version": "0.1.0-dev",
   "displayName": "Svelte Development",
-  "description": "TypeScript and Svelte development infrastructure — ESLint, svelte-check, Vitest configuration and enforcement. Provides coding standards tooling that integrates with OrqaStudio rules.",
+  "description": "Svelte development infrastructure — extends the TypeScript plugin with Svelte parser, svelte-check, Vitest config, and Svelte ESLint rules.",
+  "extends": ["@orqastudio/plugin-typescript"],
+  "configExtensions": {
+    "tsconfig": {
+      "compilerOptions": {
+        "verbatimModuleSyntax": true
+      }
+    },
+    "eslint": {
+      "import": "@orqastudio/plugin-svelte/eslint",
+      "export": "svelte"
+    }
+  },
   "provides": {
     "schemas": [],
     "views": [],
