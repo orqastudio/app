@@ -1,0 +1,7 @@
+{
+  "name": "@orqastudio/plugin-rust",
+  "displayName": "Rust",
+  "version": "0.1.0-dev",
+  "description": "Base Rust development infrastructure — Cargo config, clippy rules, and coding standards enforcement.",
+  "category": "coding-standards"
+}
