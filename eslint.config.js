@@ -1,4 +1,4 @@
-import { base } from "@orqastudio/eslint-config";
+import { base } from "@orqastudio/plugin-svelte/eslint";
 
 export default [
   ...base,

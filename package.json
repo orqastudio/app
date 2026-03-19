@@ -51,8 +51,6 @@
     "svelte": ">=5.0.0"
   },
   "devDependencies": {
-    "@orqastudio/eslint-config": "0.1.0-dev",
-    "@orqastudio/test-config": "0.1.0-dev",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
     "@tauri-apps/api": "^2.0.0",
     "@types/node": "^22.0.0",
