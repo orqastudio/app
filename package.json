@@ -44,8 +44,8 @@
     "dist/"
   ],
   "dependencies": {
-    "@orqastudio/types": "0.1.0-dev",
-    "@orqastudio/plugin-typescript": "0.1.0-dev"
+    "@orqastudio/types": "^0.1.0-dev",
+    "@orqastudio/plugin-typescript": "^0.1.0-dev"
   },
   "peerDependencies": {
     "@tauri-apps/api": ">=2.0.0",
