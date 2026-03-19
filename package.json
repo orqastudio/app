@@ -1,0 +1,26 @@
+{
+  "name": "@orqastudio/plugin-coding-standards",
+  "version": "0.1.0-dev",
+  "private": true,
+  "type": "module",
+  "description": "Unified coding standards enforcement — config generation from rules, quality checks via orqa check, organisation-wide sync.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@orqastudio/types": "^0.1.0-dev",
+    "@orqastudio/cli": "^0.1.0-dev"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0"
+  }
+}

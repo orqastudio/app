@@ -1,0 +1,55 @@
+---
+id: SKILL-CS-002
+type: skill
+title: Quality Check Runner
+description: "How to run unified quality checks via orqa check. Discovers tools from installed plugins and runs them all, returning a summary."
+status: active
+created: 2026-03-19
+updated: 2026-03-19
+category: tool
+version: 1.0.0
+user-invocable: false
+relationships: []
+---
+
+# Quality Check Runner
+
+## Running Checks
+
+```bash
+# Run all configured checks
+orqa check
+
+# Run a specific tool
+orqa check eslint
+orqa check clippy
+```
+
+## How It Works
+
+1. Discovers installed plugins with `tools` in their `orqa-plugin.json`
+2. Runs each tool's command
+3. Returns pass/fail for each with output
+4. Exits non-zero if any check fails
+
+## Plugin Tool Format
+
+Plugins declare tools in their manifest:
+
+```json
+{
+  "provides": {
+    "tools": {
+      "eslint": {
+        "command": "npx eslint",
+        "configFile": ".eslintrc.json",
+        "configFormat": "json"
+      }
+    }
+  }
+}
+```
+
+## Before Committing
+
+Always run `orqa check` before committing. The pre-commit hook enforces this.
