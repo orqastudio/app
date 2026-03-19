@@ -1,12 +1,12 @@
 /**
- * Code quality checks.
+ * Code quality checks — delegates to plugin-provided tools.
  *
- * orqa check              Run all code checks
- * orqa check rust         Rust: clippy + fmt
- * orqa check app          Svelte-check on app frontend
- * orqa check types        TypeScript check on types lib
- * orqa check sdk          TypeScript check on SDK
- * orqa check cli          TypeScript check on CLI + connector
+ * orqa check              Run all checks from installed plugins
+ * orqa check <tool>       Run a specific tool (eslint, clippy, etc.)
+ * orqa check configure    Generate config files from coding standards rules
+ *
+ * Tools are discovered from installed plugin manifests (orqa-plugin.json).
+ * Each plugin declares its tools in the `provides.tools` section.
  */
 export declare function runCheckCommand(args: string[]): Promise<void>;
 //# sourceMappingURL=check.d.ts.map
