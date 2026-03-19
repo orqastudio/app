@@ -43,6 +43,34 @@
       "icon": "bot",
       "capabilities": ["sidecar", "hooks"],
       "requires": { "node": ">=22" }
+    },
+    {
+      "name": "@orqastudio/plugin-svelte",
+      "displayName": "Svelte Development",
+      "description": "TypeScript and Svelte development infrastructure — ESLint, svelte-check, Vitest with rule-driven coding standards enforcement.",
+      "repo": "orqastudio/orqastudio-plugin-svelte",
+      "version": "0.1.0-dev",
+      "releaseTag": "v0.1.0-dev",
+      "sha256": "",
+      "image": "",
+      "category": "coding-standards",
+      "icon": "code",
+      "capabilities": ["cli-tools", "hooks"],
+      "requires": { "node": ">=22" }
+    },
+    {
+      "name": "@orqastudio/plugin-tauri",
+      "displayName": "Tauri Development",
+      "description": "Rust and Tauri development infrastructure — clippy, rustfmt, cargo test with rule-driven coding standards enforcement.",
+      "repo": "orqastudio/orqastudio-plugin-tauri",
+      "version": "0.1.0-dev",
+      "releaseTag": "v0.1.0-dev",
+      "sha256": "",
+      "image": "",
+      "category": "coding-standards",
+      "icon": "cpu",
+      "capabilities": ["cli-tools", "hooks"],
+      "requires": {}
     }
   ]
 }
