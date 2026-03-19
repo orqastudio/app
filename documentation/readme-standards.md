@@ -1,12 +1,12 @@
 ---
-id: DOC-CLI-004
+id: DOC-CLI-97ea2f47
 title: README Standards
 description: "Canonical README structure for all OrqaStudio repositories — required badges, banner, sections, and audit process."
 category: reference
 created: 2026-03-18
 updated: 2026-03-18
 relationships:
-  - target: SKILL-CLI-007
+  - target: SKILL-CLI-4cc73a12
     type: synchronised-with
 ---
 

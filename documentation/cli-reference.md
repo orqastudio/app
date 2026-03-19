@@ -1,13 +1,25 @@
 ---
-id: DOC-CLI-001
+id: DOC-CLI-2c9bfdda
 type: doc
 name: OrqaStudio CLI Reference
 category: reference
 status: active
 plugin: "@orqastudio/plugin-cli"
 relationships:
-  - target: SKILL-CLI-001
+  - target: SKILL-CLI-3198c8fb
+    type: synchronised-with  - target: SKILL-CLI-6ee6c91e
     type: synchronised-with
+  - target: SKILL-CLI-9466a88a
+    type: synchronised-with
+  - target: SKILL-CLI-9e1a2f6a
+    type: synchronised-with
+  - target: SKILL-CLI-4cc73a12
+    type: synchronised-with
+  - target: SKILL-CLI-6391d2a8
+    type: synchronised-with
+  - target: SKILL-CLI-7b5c1bda
+    type: synchronised-with
+
 ---
 
 # OrqaStudio CLI Reference
@@ -37,8 +49,8 @@ View and query the project's artifact graph from the command line.
 orqa graph --stats                          # Type and status counts
 orqa graph --type epic                      # All epics
 orqa graph --type task --status active      # Active tasks
-orqa graph --id EPIC-082                    # Single artifact + relationships
-orqa graph --related-to AD-055             # Everything connected to a decision
+orqa graph --id EPIC-2362adfc                    # Single artifact + relationships
+orqa graph --related-to AD-c6abc8e6             # Everything connected to a decision
 orqa graph --search "plugin"               # Text search in titles
 orqa graph --tree                          # Delivery hierarchy view
 orqa graph --json                          # JSON output
