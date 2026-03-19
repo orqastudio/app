@@ -6,6 +6,7 @@ pub mod hooks;
 pub mod logging;
 pub mod repo;
 pub mod search;
+pub mod servers;
 pub mod sidecar;
 pub mod startup;
 pub mod state;

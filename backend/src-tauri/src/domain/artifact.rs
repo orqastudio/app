@@ -1,8 +1,59 @@
 use std::collections::HashMap;
 
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 
 use crate::error::OrqaError;
+
+/// Generate a new artifact ID in `TYPE-XXXXXXXX` format (8 lowercase hex chars).
+///
+/// The prefix should be the artifact type in uppercase (e.g. "SKILL", "TASK", "EPIC").
+/// The hex portion is randomly generated using the system RNG.
+pub fn generate_artifact_id(prefix: &str) -> String {
+    let hex: u32 = rand::thread_rng().gen();
+    format!("{}-{hex:08x}", prefix.to_uppercase())
+}
+
+/// Validate that an artifact ID matches the expected format.
+///
+/// Accepts both legacy sequential IDs (`TYPE-NNN`) and new hex IDs (`TYPE-XXXXXXXX`).
+/// Returns `true` if the ID is valid.
+pub fn is_valid_artifact_id(id: &str) -> bool {
+    let Some((prefix, suffix)) = id.split_once('-') else {
+        return false;
+    };
+    // Prefix must be uppercase alpha (possibly with a second segment like SKILL-SVE)
+    if prefix.is_empty() || !prefix.chars().all(|c| c.is_ascii_uppercase()) {
+        // Allow compound prefixes like SKILL-SVE-001 by checking the original ID
+        // has at least one uppercase prefix segment before the final suffix
+        return id
+            .rmatch_indices('-')
+            .next()
+            .map(|(i, _)| {
+                let final_suffix = &id[i + 1..];
+                let prefix_part = &id[..i];
+                !prefix_part.is_empty()
+                    && prefix_part
+                        .chars()
+                        .all(|c| c.is_ascii_uppercase() || c == '-')
+                    && (final_suffix.chars().all(|c| c.is_ascii_digit())
+                        || (final_suffix.len() == 8
+                            && final_suffix.chars().all(|c| c.is_ascii_hexdigit())))
+            })
+            .unwrap_or(false);
+    }
+    // Suffix is either all digits (legacy) or 8 hex chars (new format)
+    suffix.chars().all(|c| c.is_ascii_digit())
+        || (suffix.len() == 8 && suffix.chars().all(|c| c.is_ascii_hexdigit()))
+}
+
+/// Check if an artifact ID uses the new hex format (TYPE-XXXXXXXX).
+pub fn is_hex_artifact_id(id: &str) -> bool {
+    let Some((_prefix, suffix)) = id.split_once('-') else {
+        return false;
+    };
+    suffix.len() == 8 && suffix.chars().all(|c| c.is_ascii_hexdigit())
+}
 
 /// Parse a string into an `ArtifactType`, returning a validation error for unknown types.
 pub fn parse_artifact_type(s: &str) -> Result<ArtifactType, OrqaError> {
@@ -24,7 +75,7 @@ pub fn derive_rel_path(artifact_type: &ArtifactType, name: &str) -> String {
     match artifact_type {
         ArtifactType::Agent => format!(".orqa/process/agents/{sanitized}.md"),
         ArtifactType::Rule => format!(".orqa/process/rules/{sanitized}.md"),
-        ArtifactType::Skill => format!(".orqa/process/skills/{sanitized}/SKILL.md"),
+        ArtifactType::Skill => format!(".orqa/process/skills/{sanitized}.md"),
         ArtifactType::Doc => format!("docs/{sanitized}.md"),
     }
 }

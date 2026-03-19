@@ -122,14 +122,13 @@ fn strip_frontmatter(content: &str) -> String {
     }
 }
 
-/// Read a skill's SKILL.md file and return its body (frontmatter stripped).
+/// Read a skill's `.md` file and return its body (frontmatter stripped).
 fn read_skill_content(project_dir: &Path, skill_name: &str) -> Option<String> {
     let skill_path = project_dir
         .join(".orqa")
-        .join("team")
+        .join("process")
         .join("skills")
-        .join(skill_name)
-        .join("SKILL.md");
+        .join(format!("{skill_name}.md"));
     let content = std::fs::read_to_string(&skill_path).ok()?;
     Some(strip_frontmatter(&content))
 }
@@ -965,9 +964,9 @@ pub fn tool_load_skill(input: &serde_json::Value, root: &Path) -> (String, bool)
 
     let skill_path = root
         .join(".orqa")
+        .join("process")
         .join("skills")
-        .join(name)
-        .join("SKILL.md");
+        .join(format!("{name}.md"));
 
     match std::fs::read_to_string(&skill_path) {
         Ok(contents) => (contents, false),

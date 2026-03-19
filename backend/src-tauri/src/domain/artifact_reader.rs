@@ -195,68 +195,19 @@ fn scan_type_from_config(
 
 /// Scan artifact files within a type directory and return sorted `DocNode` entries.
 ///
-/// Skills are special: they are subdirectories containing `SKILL.md`.
-/// All other types recursively walk subdirectories, building a tree of `DocNode`
-/// entries. Directory nodes have `children` set; file nodes have `path` set.
+/// All artifact types (including skills) are flat `.md` files scanned recursively.
+/// Directory nodes have `children` set; file nodes have `path` set.
 /// Hidden files (starting with `.` or `_`) are skipped at every level.
 fn scan_type_nodes(
     type_dir: &Path,
     type_key: &str,
     type_path: &str,
 ) -> Result<Vec<DocNode>, OrqaError> {
-    if type_key == "skills" {
-        scan_skills_nodes(type_dir, type_path)
-    } else if type_key == "hooks" {
+    if type_key == "hooks" {
         scan_hooks_nodes(type_dir, type_path)
     } else {
         scan_recursive_nodes(type_dir, type_path)
     }
-}
-
-/// Scan a skills directory: each subdirectory that contains `SKILL.md` becomes a node.
-fn scan_skills_nodes(type_dir: &Path, type_path: &str) -> Result<Vec<DocNode>, OrqaError> {
-    let mut nodes: Vec<DocNode> = Vec::new();
-
-    let Ok(entries) = std::fs::read_dir(type_dir) else {
-        return Ok(nodes);
-    };
-
-    for entry in entries {
-        let entry = entry?;
-        let file_name = entry.file_name();
-        let name = file_name.to_string_lossy();
-
-        if name.starts_with('.') || name.starts_with('_') {
-            continue;
-        }
-
-        // Use path().is_dir() instead of file_type().is_dir() to follow symlinks
-        if !entry.path().is_dir() {
-            continue;
-        }
-
-        let skill_file = entry.path().join("SKILL.md");
-        if !skill_file.exists() {
-            continue;
-        }
-
-        let content = std::fs::read_to_string(&skill_file).unwrap_or_default();
-        let (_, title, status, description) = extract_basic_frontmatter(&content);
-        let label = title.unwrap_or_else(|| humanize_name(&name));
-        let frontmatter = extract_full_frontmatter(&content);
-        nodes.push(DocNode {
-            label,
-            path: Some(format!("{type_path}/{name}/SKILL.md")),
-            children: None,
-            frontmatter,
-            status,
-            description,
-            icon: None,
-        });
-    }
-
-    nodes.sort_by(|a, b| a.label.cmp(&b.label));
-    Ok(nodes)
 }
 
 /// Scan a hooks directory: `.sh` and `.md` files (excluding `README.md`) each become a node.

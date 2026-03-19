@@ -168,12 +168,9 @@ fn scan_skills_area(project_root: &Path, skills_dir: &Path) -> GovernanceArea {
     if skills_dir.is_dir() {
         if let Ok(entries) = std::fs::read_dir(skills_dir) {
             for entry in entries.flatten() {
-                if !entry.path().is_dir() {
-                    continue;
-                }
-                let skill_md = entry.path().join("SKILL.md");
-                if skill_md.is_file() {
-                    if let Some(f) = read_governance_file_relative(&skill_md, project_root) {
+                let path = entry.path();
+                if path.is_file() && path.extension().map_or(false, |e| e == "md") {
+                    if let Some(f) = read_governance_file_relative(&path, project_root) {
                         files.push(f);
                     }
                 }

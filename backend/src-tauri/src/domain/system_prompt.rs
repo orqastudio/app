@@ -17,13 +17,13 @@ pub fn read_governance_file(
     Ok(Some(contents))
 }
 
-/// List skill names with one-line descriptions from `.orqa/skills/*/SKILL.md`.
+/// List skill names with one-line descriptions from `.orqa/process/skills/*.md`.
 ///
-/// Reads only the first non-empty line of each SKILL.md as the description.
+/// Reads only the first non-empty line of each skill as the description.
 /// Full skill content is intentionally NOT loaded here — skills are loaded
 /// on demand via the `load_skill` tool.
 pub fn list_skill_catalog(project_path: &Path) -> Vec<(String, String)> {
-    let skills_dir = project_path.join(".orqa").join("skills");
+    let skills_dir = project_path.join(".orqa").join("process").join("skills");
     let mut catalog = Vec::new();
 
     let Ok(read_dir) = std::fs::read_dir(&skills_dir) else {
@@ -31,13 +31,16 @@ pub fn list_skill_catalog(project_path: &Path) -> Vec<(String, String)> {
     };
 
     for entry in read_dir.flatten() {
-        let skill_md = entry.path().join("SKILL.md");
-        if !skill_md.exists() {
+        let path = entry.path();
+        if !path.is_file() || path.extension().map_or(true, |e| e != "md") {
             continue;
         }
 
-        let skill_name = entry.file_name().to_string_lossy().to_string();
-        let description = std::fs::read_to_string(&skill_md)
+        let skill_name = path
+            .file_stem()
+            .map(|s| s.to_string_lossy().to_string())
+            .unwrap_or_default();
+        let description = std::fs::read_to_string(&path)
             .ok()
             .and_then(|content| {
                 content

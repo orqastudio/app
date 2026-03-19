@@ -11,7 +11,7 @@ struct SkillEmbedding {
 
 /// Manages skill embeddings and prompt-based matching.
 ///
-/// Loads all skills from `.orqa/process/skills/*/SKILL.md`, extracts their
+/// Loads all skills from `.orqa/process/skills/*.md`, extracts their
 /// `description:` frontmatter field, embeds them with the ONNX embedder,
 /// and caches the results for fast cosine-similarity lookups at prompt time.
 pub struct SkillInjector {
@@ -34,7 +34,7 @@ impl SkillInjector {
     ///
     /// Skills without a `description:` frontmatter field are silently skipped.
     pub fn new(project_dir: &Path, embedder: &mut Embedder) -> Result<Self, SkillInjectorError> {
-        let skills_dir = project_dir.join(".orqa").join("team").join("skills");
+        let skills_dir = project_dir.join(".orqa").join("process").join("skills");
         let skill_metas = discover_skill_descriptions(&skills_dir)?;
 
         if skill_metas.is_empty() {
@@ -140,17 +140,17 @@ fn discover_skill_descriptions(skills_dir: &Path) -> Result<Vec<(String, String)
     };
 
     for entry in read_dir.flatten() {
-        if !entry.file_type().map(|ft| ft.is_dir()).unwrap_or(false) {
+        let path = entry.path();
+        if !path.is_file() || path.extension().map_or(true, |e| e != "md") {
             continue;
         }
 
-        let skill_md = entry.path().join("SKILL.md");
-        if !skill_md.exists() {
-            continue;
-        }
+        let skill_name = path
+            .file_stem()
+            .map(|s| s.to_string_lossy().to_string())
+            .unwrap_or_default();
 
-        let skill_name = entry.file_name().to_string_lossy().to_string();
-        if let Some(description) = extract_description(&skill_md) {
+        if let Some(description) = extract_description(&path) {
             results.push((skill_name, description));
         }
     }
