@@ -7,6 +7,8 @@ plugin: "@orqastudio/plugin-tauri"
 relationships:
   - target: DOC-TAU-001
     type: synchronised-with
+  - target: AGENT-TAU-001
+    type: employed-by
 ---
 
 # Rust Testing Patterns
