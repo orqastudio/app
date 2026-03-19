@@ -1,9 +1,9 @@
 {
-  "$schema": "https://github.com/orqastudio/orqastudio-types/blob/main/schemas/orqa-plugin.json",
   "name": "@yourorg/plugin-name",
   "version": "0.1.0-dev",
   "displayName": "Your Plugin Name",
   "description": "A frontend plugin providing views and widgets for OrqaStudio.",
+  "category": "custom",
   "provides": {
     "schemas": [],
     "views": [
