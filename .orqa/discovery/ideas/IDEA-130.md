@@ -1,0 +1,102 @@
+---
+id: IDEA-130
+type: idea
+title: "Native ONNX embeddings server — hardware-accelerated search + pre-processing MCP service"
+description: "A persistent ONNX embeddings server running on best available hardware (NPU → DirectML GPU → CUDA → CPU). Exposed as MCP tools for search, skill matching, and code_research. Pre-processes artifacts on save for instant semantic queries. Replaces ChunkHound dependency. Enables smarter orchestrator delegation via semantic skill matching."
+status: captured
+created: 2026-03-19
+updated: 2026-03-19
+relationships:
+  - target: PILLAR-569581e0
+    type: grounded
+  - target: MS-654badde
+    type: grounded-by
+---
+
+# IDEA-130: Native ONNX Embeddings Server
+
+## Problem
+
+Search and skill matching currently rely on either ChunkHound (third-party MCP) or internal Rust calls that aren't exposed to external consumers. The search engine spins up per-session, re-embeds on demand, and has no pre-processing pipeline. Agents start cold — no semantic context is ready until they search.
+
+## Concept
+
+A persistent, hardware-accelerated embeddings server built into the app:
+
+### Hardware Detection
+1. **NPU** (Neural Processing Unit) — if available, fastest and most power-efficient
+2. **DirectML GPU** — already supported via `ort` directml feature
+3. **CUDA GPU** — for NVIDIA hardware
+4. **CPU fallback** — always available, slowest but reliable
+
+Detection at startup, with user override in settings.
+
+### MCP Interface
+Exposed as MCP tools alongside the artifact graph:
+- `search.regex({ pattern, paths? })` — regex search across indexed content
+- `search.semantic({ query, limit? })` — cosine similarity against pre-computed embeddings
+- `search.research({ question })` — compound query: semantic → symbol extraction → regex follow-up → assembled context
+- `embeddings.embed({ texts })` — raw embedding API for custom use
+- `embeddings.status()` — index health, hardware info, model version
+
+### Pre-Processing Pipeline
+- **File watcher** triggers re-embedding on `.orqa/` file save
+- **Artifact graph changes** trigger relationship-aware re-indexing
+- **Session start** — embeddings are already warm, no cold start delay
+- **Incremental** — only re-embed changed chunks, not the full corpus
+
+### Orchestrator Integration
+Before delegating, the orchestrator can:
+```
+search.semantic({ query: "svelte component state management" })
+→ returns top-5 relevant skills by cosine similarity
+→ orchestrator injects those skills into the delegation prompt
+```
+
+This replaces keyword-based intent mapping with semantic matching — the prompt injector becomes a semantic skill matcher.
+
+### Replaces
+- ChunkHound MCP server dependency
+- `orqa-code-search` context-switching skill
+- `orqa-native-search` skill
+- Keyword-based prompt injector intent mapping
+
+### Enables
+- In-app agent framework with pre-processed semantic context
+- Non-code projects using semantic search (consulting, research, governance)
+- Smarter skill injection based on meaning, not keywords
+- Real-time "related artifacts" suggestions in the app UI
+
+## Architecture
+
+```
+┌─────────────────────────────────────┐
+│  ONNX Embeddings Server             │
+│  ├── Hardware detector (NPU/GPU/CPU)│
+│  ├── Model manager (BGE-small)      │
+│  ├── Chunk store (DuckDB)           │
+│  ├── File watcher (incremental)     │
+│  └── MCP interface (stdio)          │
+└─────────────────┬───────────────────┘
+                  │
+    ┌─────────────┼─────────────┐
+    │             │             │
+    ▼             ▼             ▼
+Claude Code    App UI      In-App Agents
+(via MCP)    (native)     (native calls)
+```
+
+## Existing Infrastructure
+- `ort` 2.0 with DirectML — already in Cargo.toml
+- `search/embedder.rs` — ONNX model loading, batch embedding
+- `search/store.rs` — DuckDB vector storage, regex + semantic search
+- `search/chunker.rs` — file chunking pipeline
+- BGE-small-en model download pipeline — already implemented
+- File watcher (`notify` crate) — already in use for artifact graph
+
+## Key Design Considerations
+- The server should be a separate process (sidecar) or a mode of the main binary (`--embeddings-server`)
+- Pre-processing should be non-blocking — don't slow down file saves
+- The DuckDB index should persist across sessions (already does)
+- Model download should happen once, not per-session (already implemented)
+- NPU detection needs platform-specific code (Windows WinML, macOS CoreML)
