@@ -12,7 +12,9 @@ capabilities:
   - file_search
   - shell_execute
 subagent_mapping: null
-relationships: []
+relationships:
+  - target: SKILL-046
+    type: employs
 ---
 
 # Installer Agent

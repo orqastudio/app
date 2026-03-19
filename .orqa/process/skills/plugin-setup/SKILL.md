@@ -9,6 +9,8 @@ category: tool
 version: 0.1.0
 user-invocable: true
 relationships: []
+  - target: AGENT-009
+    type: employed-by
 ---
 
 # OrqaStudio Plugin Setup
