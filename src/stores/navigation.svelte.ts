@@ -13,6 +13,7 @@
 
 import { getStores } from "../registry.svelte.js";
 import type { NavDocNode, NavType, NavigationItem } from "@orqastudio/types";
+import { parseHash, pushRoute, currentRoute, type ParsedRoute } from "../router.js";
 import { isArtifactGroup } from "@orqastudio/types";
 
 /**
@@ -72,6 +73,93 @@ export class NavigationStore {
 
 	/** The currently active navigation item for routing. */
 	activeNavItem = $state<ActiveNavItem | null>(null);
+
+	/** Whether we're currently applying a route from hashchange (prevents loops). */
+	private _applyingRoute = false;
+
+	// -----------------------------------------------------------------------
+	// Hash Router Integration
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Initialize the hash router. Call once after stores are ready.
+	 * Reads the current hash to restore state and listens for hashchange.
+	 */
+	initRouter(): void {
+		// Restore state from current hash (survives hot reload)
+		const route = currentRoute();
+		if (route.type !== "default") {
+			this.applyRoute(route);
+		}
+
+		// Listen for back/forward
+		window.addEventListener("hashchange", () => {
+			const newRoute = currentRoute();
+			this.applyRoute(newRoute);
+		});
+	}
+
+	/**
+	 * Apply a parsed route to navigation state.
+	 * Called from hashchange listener and on init.
+	 */
+	private applyRoute(route: ParsedRoute): void {
+		this._applyingRoute = true;
+		try {
+			switch (route.type) {
+				case "project":
+					this.setActivity("project");
+					break;
+				case "settings":
+					this.setActivity("settings");
+					break;
+				case "graph":
+					this.setActivity("artifact-graph");
+					break;
+				case "plugin":
+					if (route.pluginName && route.viewKey) {
+						this.setActivity(route.viewKey);
+					}
+					break;
+				case "artifact":
+					if (route.activity) this.setActivity(route.activity);
+					if (route.artifactPath) this.openArtifact(route.artifactPath, []);
+					break;
+				case "artifacts":
+					if (route.activity) this.setActivity(route.activity);
+					break;
+				default:
+					this.setActivity("chat");
+					break;
+			}
+		} finally {
+			this._applyingRoute = false;
+		}
+	}
+
+	/**
+	 * Push the current navigation state to the URL hash.
+	 * Skipped when applying a route from hashchange (prevents loops).
+	 */
+	private syncToHash(): void {
+		if (this._applyingRoute) return;
+
+		if (this.activeNavItem?.type === "plugin" && this.activeNavItem.pluginSource) {
+			pushRoute({ type: "plugin", pluginName: this.activeNavItem.pluginSource, viewKey: this.activeNavItem.key });
+		} else if (this.selectedArtifactPath) {
+			pushRoute({ type: "artifact", activity: this.activeActivity, artifactPath: this.selectedArtifactPath });
+		} else if (this.activeActivity === "project") {
+			pushRoute({ type: "project" });
+		} else if (this.activeActivity === "settings" || this.activeActivity === "configure") {
+			pushRoute({ type: "settings" });
+		} else if (this.activeActivity === "artifact-graph") {
+			pushRoute({ type: "graph" });
+		} else if (this.activeActivity === "chat") {
+			pushRoute({ type: "default" });
+		} else {
+			pushRoute({ type: "artifacts", activity: this.activeActivity });
+		}
+	}
 
 	// -----------------------------------------------------------------------
 	// Navigation tree accessors (new model)
@@ -415,18 +503,22 @@ export class NavigationStore {
 				this.navPanelCollapsed = false;
 			}
 		}
+
+		this.syncToHash();
 	}
 
 	openArtifact(path: string, breadcrumbs: string[]) {
 		this.selectedArtifactPath = path;
 		this.explorerView = "artifact-viewer";
 		this.breadcrumbs = breadcrumbs;
+		this.syncToHash();
 	}
 
 	closeArtifact() {
 		this.selectedArtifactPath = null;
 		this.explorerView = "artifact-list";
 		this.breadcrumbs = [];
+		this.syncToHash();
 	}
 
 	/** Navigate to an artifact by its ID string (e.g. "EPIC-005", "MS-001"). */
