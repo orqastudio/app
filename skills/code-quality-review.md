@@ -1,5 +1,5 @@
 ---
-id: SKILL-004
+id: SKILL-f0efaf83
 title: Code Quality Review
 description: |
   Code review methodology: automated checks, manual review checklists, forbidden
@@ -14,6 +14,10 @@ category: methodology
 version: 1.0.0
 user-invocable: true
 relationships: []
+relationships:
+  - target: DOC-SW-421219ce
+    type: synchronised-with
+
 ---
 
 

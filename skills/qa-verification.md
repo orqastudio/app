@@ -1,5 +1,5 @@
 ---
-id: SKILL-025
+id: SKILL-1b805150
 title: QA Verification
 description: |
   End-to-end functional verification methodology: the "Would It Work" protocol,
@@ -14,6 +14,10 @@ category: methodology
 version: 1.0.0
 user-invocable: true
 relationships: []
+relationships:
+  - target: DOC-SW-421219ce
+    type: synchronised-with
+
 ---
 
 

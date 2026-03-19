@@ -1,5 +1,8 @@
 import { invoke, extractErrorMessage } from "../ipc/invoke.js";
+import { logger } from "../logger.js";
 import type { SidecarStatus, StartupSnapshot, StartupTask } from "@orqastudio/types";
+
+const log = logger("settings");
 
 export type ThemeMode = "light" | "dark" | "system";
 export type DefaultModel = "auto" | "claude-opus-4-6" | "claude-sonnet-4-6" | "claude-haiku-4-5";
@@ -135,6 +138,7 @@ export class SettingsStore {
 				this.lastSessionId = all["last_session_id"];
 			}
 		} catch (err) {
+			log.error("failed to load settings", err);
 			this.error = extractErrorMessage(err);
 		} finally {
 			this.loading = false;
@@ -152,6 +156,7 @@ export class SettingsStore {
 				scope: "app",
 			});
 		} catch (err) {
+			log.error("failed to persist theme mode", err);
 			this.error = extractErrorMessage(err);
 		}
 	}
@@ -166,6 +171,7 @@ export class SettingsStore {
 				scope: "app",
 			});
 		} catch (err) {
+			log.error("failed to persist default model", err);
 			this.error = extractErrorMessage(err);
 		}
 	}
@@ -180,6 +186,7 @@ export class SettingsStore {
 				scope: "app",
 			});
 		} catch (err) {
+			log.error("failed to persist font size", err);
 			this.error = extractErrorMessage(err);
 		}
 	}
@@ -203,6 +210,7 @@ export class SettingsStore {
 				const status = await invoke<StartupSnapshot>("get_startup_status");
 				this.startupStatus = status;
 			} catch (err: unknown) {
+				log.error("failed to check startup status", err);
 				const message = extractErrorMessage(err);
 				this.error = `Failed to check startup status: ${message}`;
 			}
@@ -212,6 +220,7 @@ export class SettingsStore {
 			const status = await invoke<SidecarStatus>("sidecar_status");
 			this.sidecarStatus = status;
 		} catch (err) {
+			log.error("failed to poll sidecar status", err);
 			this.sidecarStatus = {
 				state: "error",
 				pid: null,
@@ -228,6 +237,7 @@ export class SettingsStore {
 			const status = await invoke<SidecarStatus>("sidecar_restart");
 			this.sidecarStatus = status;
 		} catch (err) {
+			log.error("failed to restart sidecar", err);
 			this.sidecarStatus = {
 				state: "error",
 				pid: null,

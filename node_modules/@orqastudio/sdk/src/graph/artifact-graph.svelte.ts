@@ -16,6 +16,7 @@ import { SvelteMap, SvelteSet } from "svelte/reactivity";
 import { listen } from "@tauri-apps/api/event";
 import type { UnlistenFn } from "@tauri-apps/api/event";
 import { invoke, extractErrorMessage } from "../ipc/invoke.js";
+import { logger } from "../logger.js";
 import type {
 	ArtifactNode,
 	ArtifactRef,
@@ -57,6 +58,8 @@ export interface ArtifactGraphConfig {
 // ---------------------------------------------------------------------------
 // SDK class
 // ---------------------------------------------------------------------------
+
+const log = logger("graph");
 
 export class ArtifactGraphSDK {
 	// -----------------------------------------------------------------------
@@ -146,7 +149,7 @@ export class ArtifactGraphSDK {
 
 		if (config.watchFiles !== false) {
 			await invoke<void>("artifact_watch_start", { projectPath: config.projectPath }).catch((err: unknown) => {
-				console.warn("[artifact-graph-sdk] watcher failed to start:", err);
+				log.warn("watcher failed to start", err);
 			});
 		}
 
@@ -574,7 +577,7 @@ export class ArtifactGraphSDK {
 		this._notifySubscribers(newGraph);
 
 		for (const cb of this.refreshCallbacks) {
-			try { cb(); } catch { /* ignore listener errors */ }
+			try { cb(); } catch (err: unknown) { log.warn("subscriber callback failed", err); }
 		}
 	}
 

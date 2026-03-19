@@ -11,7 +11,10 @@ import type {
 	PluginManifest,
 	ConflictResolutionSuggestion,
 } from "@orqastudio/types";
+import { logger } from "../logger.js";
 import type { RegistrationConflict } from "./plugin-registry.svelte.js";
+
+const log = logger("conflict-resolver");
 
 /**
  * Build a system prompt for the AI to resolve plugin conflicts.
@@ -105,7 +108,8 @@ export function parseConflictResolutionResponse(
 				typeof s.strategy === "string" &&
 				typeof s.rationale === "string",
 		);
-	} catch {
+	} catch (err: unknown) {
+		log.warn("failed to parse conflict resolution response", err);
 		return [];
 	}
 }

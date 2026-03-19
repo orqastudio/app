@@ -1,5 +1,5 @@
 ---
-id: SKILL-035
+id: SKILL-c6d04755
 title: UAT Process
 description: |
   Structured user acceptance testing methodology. Collect all findings first,
@@ -13,6 +13,10 @@ category: methodology
 version: 1.0.0
 user-invocable: false
 relationships: []
+relationships:
+  - target: DOC-SW-421219ce
+    type: synchronised-with
+
 ---
 
 Structured UAT methodology for the orchestrator and QA agents. Prevents premature fixing
@@ -126,8 +130,8 @@ A UAT round that only produces bug fixes has failed Pillar 2.
 
 ## Related
 
-- [RULE-030](RULE-030) — UAT process enforcement rule
-- [RULE-028](RULE-028) — systems thinking (systemic analysis principle)
-- [RULE-017](RULE-017) — lessons learned (lesson promotion pipeline)
-- `.orqa/process/lessons/[IMPL-011](IMPL-011).md` — origin lesson (systemic investigation)
-- `.orqa/process/lessons/[IMPL-012](IMPL-012).md` — origin lesson (encode, don't just practice)
+- [RULE-4d4f540d](RULE-4d4f540d) — UAT process enforcement rule
+- [RULE-d90112d9](RULE-d90112d9) — systems thinking (systemic analysis principle)
+- [RULE-551bde31](RULE-551bde31) — lessons learned (lesson promotion pipeline)
+- `.orqa/process/lessons/[IMPL-91ad864c](IMPL-91ad864c).md` — origin lesson (systemic investigation)
+- `.orqa/process/lessons/[IMPL-8a971261](IMPL-8a971261).md` — origin lesson (encode, don't just practice)

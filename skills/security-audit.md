@@ -1,5 +1,5 @@
 ---
-id: SKILL-028
+id: SKILL-170c220e
 title: Security Audit
 description: |
   Security auditing methodology: secret management, capability/permission systems,
@@ -14,6 +14,10 @@ category: methodology
 version: 1.0.0
 user-invocable: true
 relationships: []
+relationships:
+  - target: DOC-SW-421219ce
+    type: synchronised-with
+
 ---
 Security auditing methodology for applications. This skill teaches *what to check and how* — the specific security mechanisms (e.g., Tauri capabilities, keyring APIs) come from the project's technology skills.
 

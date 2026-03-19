@@ -1,6 +1,9 @@
 import { invoke, extractErrorMessage } from "../ipc/invoke.js";
 import { getStores } from "../registry.svelte.js";
+import { logger } from "../logger.js";
 import type { NavTree } from "@orqastudio/types";
+
+const log = logger("artifact");
 
 export class ArtifactStore {
 	// The full navigation tree — loaded once, refreshed by file watcher
@@ -31,22 +34,20 @@ export class ArtifactStore {
 
 	/** Load artifact content for viewing. Delegates to the SDK which reads from disk each time. */
 	async loadContent(path: string) {
-		console.time(`[perf] loadContent ${path}`);
 		this.activeContentLoading = true;
 		this.activeContentError = null;
 		try {
-			console.time(`[perf] IPC readContent`);
-			const content = await getStores().artifactGraphSDK.readContent(path);
-			console.timeEnd(`[perf] IPC readContent`);
+			const content = await log.perfAsync(`loadContent ${path}`, () =>
+				getStores().artifactGraphSDK.readContent(path),
+			);
 			this.activeContent = content;
 		} catch (err: unknown) {
-			console.timeEnd(`[perf] IPC readContent`);
 			const message = extractErrorMessage(err);
+			log.error(`Failed to load content: ${message}`);
 			this.activeContentError = `Failed to load content: ${message}`;
 			this.activeContent = null;
 		} finally {
 			this.activeContentLoading = false;
-			console.timeEnd(`[perf] loadContent ${path}`);
 		}
 	}
 

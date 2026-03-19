@@ -1,5 +1,5 @@
 ---
-id: SKILL-033
+id: SKILL-bcb42347
 title: Test Engineering
 description: |
   Test engineering methodology: test organisation, coverage requirements, mock
@@ -14,6 +14,10 @@ category: methodology
 version: 1.0.0
 user-invocable: true
 relationships: []
+relationships:
+  - target: DOC-SW-421219ce
+    type: synchronised-with
+
 ---
 
 

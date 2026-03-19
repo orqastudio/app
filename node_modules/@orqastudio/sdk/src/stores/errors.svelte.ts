@@ -3,6 +3,9 @@
  */
 import { listen } from "@tauri-apps/api/event";
 import type { UnlistenFn } from "@tauri-apps/api/event";
+import { logger } from "../logger.js";
+
+const log = logger("errors");
 
 export interface AppError {
 	id: number;
@@ -101,5 +104,5 @@ export class ErrorStoreImpl {
  */
 export function initBrowserHandlers(): void {
 	// no-op — callers should use the instance method
-	console.warn("[OrqaStudio SDK] initBrowserHandlers() is deprecated. Use getStores().errorStore.initBrowserHandlers() instead.");
+	log.warn("initBrowserHandlers() is deprecated — use getStores().errorStore.initBrowserHandlers() instead");
 }

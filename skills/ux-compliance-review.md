@@ -1,5 +1,5 @@
 ---
-id: SKILL-036
+id: SKILL-5124e508
 title: UX Compliance Review
 description: |
   UX compliance review methodology: label auditing, state coverage verification,
@@ -14,6 +14,10 @@ category: methodology
 version: 1.0.0
 user-invocable: true
 relationships: []
+relationships:
+  - target: DOC-SW-421219ce
+    type: synchronised-with
+
 ---
 
 

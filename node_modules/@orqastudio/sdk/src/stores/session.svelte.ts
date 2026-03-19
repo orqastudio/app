@@ -1,5 +1,8 @@
 import type { Session, SessionSummary } from "@orqastudio/types";
 import { invoke, extractErrorMessage } from "../ipc/invoke.js";
+import { logger } from "../logger.js";
+
+const log = logger("session");
 
 export class SessionStore {
 	sessions = $state<SessionSummary[]>([]);
@@ -153,8 +156,8 @@ export class SessionStore {
 				value: sessionId,
 				scope: "app",
 			});
-		} catch {
-			// Non-critical — best-effort persistence
+		} catch (err: unknown) {
+			log.warn("failed to persist active session id", err);
 		}
 	}
 
@@ -165,8 +168,8 @@ export class SessionStore {
 				value: null,
 				scope: "app",
 			});
-		} catch {
-			// Non-critical — best-effort persistence
+		} catch (err: unknown) {
+			log.warn("failed to clear persisted session id", err);
 		}
 	}
 }

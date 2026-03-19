@@ -1,11 +1,11 @@
 ---
-id: SKILL-SW-001
+id: SKILL-SW-1d47d8d8
 type: skill
 name: Software Delivery Management
 status: active
 plugin: "@orqastudio/plugin-software-project"
 relationships:
-  - target: DOC-SW-001
+  - target: DOC-SW-421219ce
     type: synchronised-with
 ---
 
@@ -62,16 +62,16 @@ Always include full frontmatter:
 
 ```yaml
 ---
-id: EPIC-083
+id: EPIC-596dc061
 type: epic
 name: Plugin Distribution System
 status: active
 relationships:
   - target: MS-010
     type: fulfils
-  - target: AD-055
+  - target: AD-c6abc8e6
     type: driven-by
-  - target: IDEA-020
+  - target: IDEA-3354aefe
     type: realised-by
 ---
 ```
