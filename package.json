@@ -1,0 +1,7 @@
+{
+  "name": "@orqastudio/plugin-svelte",
+  "version": "0.1.0-dev",
+  "private": true,
+  "type": "module",
+  "description": "Svelte development infrastructure plugin for OrqaStudio"
+}

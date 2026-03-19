@@ -1,0 +1,55 @@
+---
+id: SKILL-SVE-001
+type: skill
+name: Svelte 5 Patterns
+status: active
+plugin: "@orqastudio/plugin-svelte"
+relationships:
+  - target: DOC-SVE-001
+    type: synchronised-with
+---
+
+# Svelte 5 Patterns
+
+## Runes Only
+
+Svelte 5 uses runes exclusively. No Svelte 4 patterns.
+
+- `$state()` for reactive state
+- `$derived()` for computed values (simple expressions)
+- `$derived.by(() => ...)` for computed values with logic
+- `$effect()` for side effects
+- `$props()` for component props
+- `$bindable()` for two-way binding props
+
+## Component Structure
+
+```svelte
+<script lang="ts">
+  import { getStores } from "@orqastudio/sdk";
+
+  let { myProp }: { myProp: string } = $props();
+
+  const store = getStores();
+  const derived = $derived(store.someValue);
+</script>
+
+<!-- Template -->
+
+<style>
+  /* Scoped styles */
+</style>
+```
+
+## State Management
+
+- Use SDK stores via `getStores()` for shared state
+- Use `$state()` for component-local state
+- Use `$derived()` for values computed from state
+- Never mutate store state directly — use store methods
+
+## Testing
+
+- Use `@testing-library/svelte` for component tests
+- Use Vitest as the test runner
+- Test behaviour, not implementation

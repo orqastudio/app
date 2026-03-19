@@ -1,0 +1,65 @@
+{
+  "name": "@orqastudio/plugin-svelte",
+  "version": "0.1.0-dev",
+  "displayName": "Svelte Development",
+  "description": "TypeScript and Svelte development infrastructure — ESLint, svelte-check, Vitest configuration and enforcement. Provides coding standards tooling that integrates with OrqaStudio rules.",
+  "provides": {
+    "schemas": [],
+    "views": [],
+    "widgets": [],
+    "relationships": [],
+    "skills": [
+      {
+        "key": "svelte-patterns",
+        "id": "SKILL-SVE-001",
+        "label": "Svelte 5 Patterns"
+      },
+      {
+        "key": "eslint-config-management",
+        "id": "SKILL-SVE-002",
+        "label": "ESLint Config Management"
+      },
+      {
+        "key": "testing-patterns",
+        "id": "SKILL-SVE-003",
+        "label": "Testing Patterns"
+      },
+      {
+        "key": "svelte-installation",
+        "id": "SKILL-SVE-004",
+        "label": "Svelte Plugin Installation"
+      }
+    ],
+    "tools": {
+      "eslint": {
+        "command": "npx eslint",
+        "configFile": ".eslintrc.json",
+        "configFormat": "json"
+      },
+      "svelte-check": {
+        "command": "npx svelte-check",
+        "configFile": null,
+        "configFormat": "cli-args"
+      },
+      "vitest": {
+        "command": "npx vitest run",
+        "configFile": "vitest.config.ts",
+        "configFormat": "ts"
+      }
+    },
+    "dependencies": {
+      "devDependencies": {
+        "eslint": "^9.0.0",
+        "@typescript-eslint/eslint-plugin": "^8.0.0",
+        "@typescript-eslint/parser": "^8.0.0",
+        "eslint-plugin-svelte": "^3.0.0",
+        "svelte-check": "^4.0.0",
+        "vitest": "^3.0.0",
+        "@testing-library/svelte": "^5.0.0",
+        "typescript": "^5.9.0"
+      }
+    },
+    "cliTools": [],
+    "hooks": []
+  }
+}
