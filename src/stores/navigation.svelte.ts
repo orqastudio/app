@@ -508,6 +508,12 @@ export class NavigationStore {
 	}
 
 	openArtifact(path: string, breadcrumbs: string[]) {
+		// Set loading state immediately so the spinner shows before the $effect fires loadContent
+		const { artifactStore } = getStores();
+		artifactStore.activeContent = null;
+		artifactStore.activeContentLoading = true;
+		artifactStore.activeContentError = null;
+
 		this.selectedArtifactPath = path;
 		this.explorerView = "artifact-viewer";
 		this.breadcrumbs = breadcrumbs;
