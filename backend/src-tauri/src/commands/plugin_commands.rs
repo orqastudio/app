@@ -108,6 +108,32 @@ pub async fn plugin_check_updates(
     Ok(updates)
 }
 
+/// Find a plugin directory by scanning all installed plugins and matching by name.
+///
+/// Plugin directory names don't always match the package name — e.g.
+/// `@orqastudio/plugin-claude` lives in `plugins/claude/`, not `plugins/plugin-claude/`.
+fn find_plugin_dir(project_root: &std::path::Path, name: &str) -> Result<std::path::PathBuf, OrqaError> {
+    let plugins_dir = project_root.join("plugins");
+    if !plugins_dir.is_dir() {
+        return Err(OrqaError::Plugin(format!("plugins directory not found: {}", plugins_dir.display())));
+    }
+
+    // Scan each directory and match by manifest name
+    if let Ok(entries) = std::fs::read_dir(&plugins_dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if !path.is_dir() { continue; }
+            if let Ok(manifest) = crate::plugins::manifest::read_manifest(&path) {
+                if manifest.name == name {
+                    return Ok(path);
+                }
+            }
+        }
+    }
+
+    Err(OrqaError::Plugin(format!("plugin not found: {name}")))
+}
+
 /// Get the filesystem path for an installed plugin.
 ///
 /// Used by the frontend to load plugin view bundles at runtime.
@@ -118,19 +144,7 @@ pub fn plugin_get_path(
 ) -> Result<String, OrqaError> {
     let project_path = active_project_path(&state)?;
     let project_root = std::path::Path::new(&project_path);
-    let plugins_dir = project_root.join("plugins");
-
-    let short_name = name.split('/').last().unwrap_or(&name);
-    let plugin_dir = plugins_dir.join(short_name);
-
-    if !plugin_dir.exists() {
-        return Err(OrqaError::Plugin(format!(
-            "plugin not found: {} (expected at {})",
-            name,
-            plugin_dir.display()
-        )));
-    }
-
+    let plugin_dir = find_plugin_dir(project_root, &name)?;
     Ok(plugin_dir.to_string_lossy().to_string())
 }
 
@@ -142,11 +156,7 @@ pub fn plugin_get_manifest(
 ) -> Result<serde_json::Value, OrqaError> {
     let project_path = active_project_path(&state)?;
     let project_root = std::path::Path::new(&project_path);
-    let plugins_dir = project_root.join("plugins");
-
-    let short_name = name.split('/').last().unwrap_or(&name);
-    let plugin_dir = plugins_dir.join(short_name);
-
+    let plugin_dir = find_plugin_dir(project_root, &name)?;
     let manifest = crate::plugins::manifest::read_manifest(&plugin_dir)?;
     serde_json::to_value(&manifest).map_err(|e| OrqaError::Serialization(e.to_string()))
 }
