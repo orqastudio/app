@@ -7,6 +7,7 @@
 import { execSync } from "node:child_process";
 import * as path from "node:path";
 import * as fs from "node:fs";
+import { getRoot } from "../lib/root.js";
 
 const USAGE = `
 Usage: orqa debug [command]
@@ -25,8 +26,8 @@ export async function runDebugCommand(args: string[]): Promise<void> {
 
 	// Look for debug-tool in the expected location
 	const debugToolPaths = [
-		path.join(process.cwd(), "debug-tool", "debug-tool.sh"),
-		path.join(process.cwd(), "node_modules", ".bin", "orqa-debug"),
+		path.join(getRoot(), "debug-tool", "debug-tool.sh"),
+		path.join(getRoot(), "node_modules", ".bin", "orqa-debug"),
 	];
 
 	let debugToolPath: string | null = null;

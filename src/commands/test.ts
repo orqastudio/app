@@ -9,6 +9,7 @@
 import { execSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { getRoot } from "../lib/root.js";
 
 const USAGE = `
 Usage: orqa test [subcommand]
@@ -52,7 +53,7 @@ export async function runTestCommand(args: string[]): Promise<void> {
 		return;
 	}
 
-	const root = process.cwd();
+	const root = getRoot();
 	const target = args[0];
 	const suites = getSuites(root);
 

@@ -11,6 +11,7 @@ import { execSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as readline from "node:readline";
+import { getRoot } from "../lib/root.js";
 const NODE_MIN_MAJOR = 22;
 const USAGE = `
 Usage: orqa install [subcommand]
@@ -32,7 +33,7 @@ export async function runInstallCommand(args) {
         console.log(USAGE);
         return;
     }
-    const root = process.cwd();
+    const root = getRoot();
     switch (subcommand) {
         case "prereqs":
             await cmdPrereqs();

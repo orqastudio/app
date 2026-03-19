@@ -6,6 +6,7 @@
 
 import { auditLicenses, DEFAULT_LICENSE_POLICY } from "../lib/license.js";
 import { auditReadmes } from "../lib/readme.js";
+import { getRoot } from "../lib/root.js";
 
 const USAGE = `
 Usage: orqa repo <subcommand> [options]
@@ -27,7 +28,7 @@ export async function runRepoCommand(args: string[]): Promise<void> {
 		return;
 	}
 
-	const root = process.cwd();
+	const root = getRoot();
 	const jsonOutput = args.includes("--json");
 
 	switch (subcommand) {

@@ -18,6 +18,7 @@ import {
 	generateConfigs,
 	type ToolDefinition,
 } from "../lib/config-generator.js";
+import { getRoot } from "../lib/root.js";
 
 const USAGE = `
 Usage: orqa check [subcommand]
@@ -37,7 +38,7 @@ export async function runCheckCommand(args: string[]): Promise<void> {
 		return;
 	}
 
-	const root = process.cwd();
+	const root = getRoot();
 	const target = args[0];
 
 	if (target === "configure") {

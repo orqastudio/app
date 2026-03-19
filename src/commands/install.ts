@@ -12,6 +12,7 @@ import { execSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as readline from "node:readline";
+import { getRoot } from "../lib/root.js";
 
 const NODE_MIN_MAJOR = 22;
 
@@ -38,7 +39,7 @@ export async function runInstallCommand(args: string[]): Promise<void> {
 		return;
 	}
 
-	const root = process.cwd();
+	const root = getRoot();
 
 	switch (subcommand) {
 		case "prereqs":

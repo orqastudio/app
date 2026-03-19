@@ -8,9 +8,10 @@
  */
 
 import { execSync } from "node:child_process";
+import { getRoot } from "../lib/root.js";
 
 export async function runVerifyCommand(): Promise<void> {
-	const root = process.cwd();
+	const root = getRoot();
 	let failed = false;
 
 	const checks = [

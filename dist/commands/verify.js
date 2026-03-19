@@ -7,8 +7,9 @@
  * Exits non-zero if any check fails.
  */
 import { execSync } from "node:child_process";
+import { getRoot } from "../lib/root.js";
 export async function runVerifyCommand() {
-    const root = process.cwd();
+    const root = getRoot();
     let failed = false;
     const checks = [
         { name: "integrity", cmd: "orqa validate ." },

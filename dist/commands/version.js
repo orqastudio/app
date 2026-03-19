@@ -4,6 +4,7 @@
  * orqa version sync|bump|check|show
  */
 import { readCanonicalVersion, writeCanonicalVersion, syncVersions, checkVersionDrift, isValidVersion, } from "../lib/version-sync.js";
+import { getRoot } from "../lib/root.js";
 const USAGE = `
 Usage: orqa version <subcommand> [options]
 
@@ -19,7 +20,7 @@ export async function runVersionCommand(args) {
         console.log(USAGE);
         return;
     }
-    const root = process.cwd();
+    const root = getRoot();
     switch (subcommand) {
         case "show": {
             const version = readCanonicalVersion(root);

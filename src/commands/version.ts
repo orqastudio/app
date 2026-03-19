@@ -11,6 +11,7 @@ import {
 	checkVersionDrift,
 	isValidVersion,
 } from "../lib/version-sync.js";
+import { getRoot } from "../lib/root.js";
 
 const USAGE = `
 Usage: orqa version <subcommand> [options]
@@ -30,7 +31,7 @@ export async function runVersionCommand(args: string[]): Promise<void> {
 		return;
 	}
 
-	const root = process.cwd();
+	const root = getRoot();
 
 	switch (subcommand) {
 		case "show": {

@@ -12,6 +12,7 @@ import { execSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { loadPluginTools, extractEnforcementEntries, generateConfigs, } from "../lib/config-generator.js";
+import { getRoot } from "../lib/root.js";
 const USAGE = `
 Usage: orqa check [subcommand]
 
@@ -28,7 +29,7 @@ export async function runCheckCommand(args) {
         console.log(USAGE);
         return;
     }
-    const root = process.cwd();
+    const root = getRoot();
     const target = args[0];
     if (target === "configure") {
         await cmdConfigure(root);
