@@ -1,5 +1,5 @@
 ---
-id: AGENT-RST-001
+id: AGENT-RST-4241392c
 title: Rust Standards Agent
 description: "Scoped task agent for Rust coding standards. Operates in assess or configure mode — not conversational."
 status: active
@@ -12,9 +12,9 @@ capabilities:
   - content_search
   - shell_execute
 relationships:
-  - target: SKILL-RST-001
+  - target: SKILL-RST-5efa83a5
     type: employs
-  - target: SKILL-RST-002
+  - target: SKILL-RST-214b7cdc
     type: employs
 ---
 

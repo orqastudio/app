@@ -1,13 +1,13 @@
 ---
-id: SKILL-RST-001
+id: SKILL-RST-5efa83a5
 type: skill
 name: Clippy Config Management
 status: active
 plugin: "@orqastudio/plugin-rust"
 relationships:
-  - target: DOC-RST-001
+  - target: DOC-RST-27becb92
     type: synchronised-with
-  - target: AGENT-RST-001
+  - target: AGENT-RST-4241392c
     type: employed-by
 ---
 
@@ -28,6 +28,11 @@ enforcement:
         level: deny
       - lint: "clippy::pedantic"
         level: warn
+      # Ban bare println/eprintln — use the tracing crate or structured logging
+      - lint: "clippy::print_stdout"
+        level: deny
+      - lint: "clippy::print_stderr"
+        level: deny
 ```
 
 ## Config Generation

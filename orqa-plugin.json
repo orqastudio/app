@@ -6,21 +6,10 @@
   "category": "coding-standards",
   "provides": {
     "skills": [
-      {
-        "key": "clippy-config-management",
-        "id": "SKILL-RST-001",
-        "label": "Clippy Config Management"
-      },
-      {
-        "key": "rust-testing-patterns",
-        "id": "SKILL-RST-002",
-        "label": "Rust Testing Patterns"
-      },
-      {
-        "key": "rust-installation",
-        "id": "SKILL-RST-003",
-        "label": "Rust Plugin Installation"
-      }
+      { "key": "clippy-config-management", "id": "SKILL-RST-5efa83a5", "label": "Clippy Config Management" },
+      { "key": "rust-testing-patterns", "id": "SKILL-RST-214b7cdc", "label": "Rust Testing Patterns" },
+      { "key": "rust-installation", "id": "SKILL-RST-2a72f929", "label": "Rust Plugin Installation" },
+      { "key": "rust-async-patterns", "id": "SKILL-c323ec5f", "label": "Rust Async Patterns" }
     ],
     "tools": {
       "clippy": {

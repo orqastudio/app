@@ -1,15 +1,17 @@
 ---
-id: DOC-RST-001
+id: DOC-RST-27becb92
 type: doc
 name: Rust Development Guide
 status: active
 category: how-to
 plugin: "@orqastudio/plugin-rust"
 relationships:
-  - target: SKILL-RST-001
+  - target: SKILL-RST-5efa83a5
     type: synchronised-with
-  - target: SKILL-RST-002
+  - target: SKILL-RST-214b7cdc
+    type: synchronised-with  - target: SKILL-12495e28
     type: synchronised-with
+
 ---
 
 # Rust Development Guide
@@ -31,7 +33,7 @@ The Rust plugin provides base development infrastructure for any Rust project ma
 1. **Define rules** — coding standards rules with enforcement entries targeting `@orqastudio/plugin-rust`
 2. **Configure** — `orqa check configure` reads rules and generates `clippy.toml` / `.rustfmt.toml`
 3. **Check** — `orqa check` runs clippy, rustfmt, and cargo test against the config
-4. **Assess** — the Rust Standards Agent (AGENT-RST-001) provides structured violation reports
+4. **Assess** — the Rust Standards Agent (AGENT-RST-4241392c) provides structured violation reports
 
 ## Extension
 

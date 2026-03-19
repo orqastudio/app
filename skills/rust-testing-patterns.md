@@ -1,13 +1,13 @@
 ---
-id: SKILL-RST-002
+id: SKILL-RST-214b7cdc
 type: skill
 name: Rust Testing Patterns
 status: active
 plugin: "@orqastudio/plugin-rust"
 relationships:
-  - target: DOC-RST-001
+  - target: DOC-RST-27becb92
     type: synchronised-with
-  - target: AGENT-RST-001
+  - target: AGENT-RST-4241392c
     type: employed-by
 ---
 

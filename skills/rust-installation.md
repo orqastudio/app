@@ -1,11 +1,11 @@
 ---
-id: SKILL-RST-003
+id: SKILL-RST-2a72f929
 type: skill
 name: Rust Plugin Installation
 status: active
 plugin: "@orqastudio/plugin-rust"
 relationships:
-  - target: DOC-RST-001
+  - target: DOC-RST-27becb92
     type: synchronised-with
 ---
 
@@ -21,9 +21,9 @@ relationships:
 - **clippy** tool — lint enforcement via `cargo clippy`
 - **rustfmt** tool — formatting enforcement via `cargo fmt --check`
 - **cargo-test** tool — test execution via `cargo test`
-- **Clippy Config Management** skill (SKILL-RST-001)
-- **Rust Testing Patterns** skill (SKILL-RST-002)
-- **Rust Standards Agent** (AGENT-RST-001) — assess and configure modes
+- **Clippy Config Management** skill (SKILL-RST-5efa83a5)
+- **Rust Testing Patterns** skill (SKILL-RST-214b7cdc)
+- **Rust Standards Agent** (AGENT-RST-4241392c) — assess and configure modes
 
 ## Installation
 
