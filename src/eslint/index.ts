@@ -38,12 +38,23 @@ export const base: ConfigArray = tseslint.config(
           varsIgnorePattern: "^_",
         },
       ],
+
+      // Ban bare console usage — all logging must go through the centralized logger.
+      // Only the logger implementation itself may use console directly.
+      "no-console": ["error", { allow: [] }],
     },
   },
   {
     files: ["**/*.test.ts", "**/*.test.js", "**/__tests__/**"],
     rules: {
       "@typescript-eslint/no-unused-vars": "off",
+    },
+  },
+  {
+    // Web workers and logger implementations can't use the SDK logger
+    files: ["**/*.worker.ts", "**/logger.ts", "**/dev-console.ts"],
+    rules: {
+      "no-console": "off",
     },
   },
 );
