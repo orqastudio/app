@@ -29,12 +29,19 @@ relationships:
 - Treats the software plugin as special (bundled) when it should be equal to any other plugin
 - Assumes every project needs the software plugin (not true — research projects, consulting projects, etc.)
 
-## The Fix
+## The Fix — DONE
 
-1. Delete `app/ui/src/lib/plugins/software-project/` entirely
-2. The app loads ALL plugins uniformly via IPC from the Rust backend's plugin discovery
-3. The Rust backend already has `plugins/discovery.rs` that scans `plugins/` directories
-4. First-party plugins are installed during project setup, not compiled into the app
+1. ~~Delete the TypeScript manifest copy~~ — done, manifests load via IPC
+2. ~~Remove hardcoded plugin registration from +layout.svelte~~ — done, generic loader
+3. ~~Remove compiled component registry~~ — done, plugins ship pre-bundled views
+4. App discovers installed plugins at runtime, registers from canonical orqa-plugin.json
+
+## Remaining Work
+
+- Move RoadmapView from the app into the software plugin's own bundle
+- Create the plugin-view route that mounts plugin bundles at runtime
+- Define the plugin view protocol (how a plugin exports a Svelte component bundle)
+- Plugins use @orqastudio/sdk for data and @orqastudio/svelte-components for UI — feels seamless
 
 ## Project Setup Flow
 
