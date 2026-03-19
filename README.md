@@ -1,20 +1,27 @@
-![License](https://img.shields.io/badge/license-BSL--1.1-blue)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript)
+![License](https://img.shields.io/badge/license-BSL%201.1-blue)
+![Status](https://img.shields.io/badge/status-pre--release-orange)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
 
-# OrqaStudio TypeScript Plugin
+![OrqaStudio](https://github.com/orqastudio/orqastudio-brand/blob/main/assets/banners/banner-1680x240.png?raw=1)
 
-> Base TypeScript development infrastructure for OrqaStudio — tsconfig presets, ESLint configs, and config composition for plugin extensions.
+# TypeScript
 
-This plugin provides the foundation that other language/framework plugins extend. It ships:
+OrqaStudio plugin for TypeScript development infrastructure — tsconfig presets, ESLint configs, and config composition for framework plugin extensions.
 
-- **tsconfig presets** — `base`, `library`, and `app` configs
-- **ESLint configs** — strict TypeScript rules
-- **Config composition** — a pattern for other plugins to contribute tsconfig and eslint extensions
+## Installation
 
-## Development
+```bash
+orqa plugin install @orqastudio/plugin-typescript
+```
 
-All development happens in the [orqastudio-dev](https://github.com/orqastudio/orqastudio-dev) monorepo. See [CONTRIBUTING.md](CONTRIBUTING.md).
+## Usage
+
+Provides base configs that other plugins extend:
+
+- **tsconfig presets** — `base`, `library`, `app` (extend in your tsconfig.json)
+- **ESLint configs** — strict TypeScript rules (import in eslint.config.js)
+- **Config composition** — framework plugins (svelte, etc.) register extensions via `configExtensions` in their orqa-plugin.json
 
 ## License
 
-[BSL-1.1](LICENSE) with [Ethical Use Addendum](CHANGE-LICENSE).
+BSL-1.1 — see [LICENSE](LICENSE) for details.
