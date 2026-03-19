@@ -41,7 +41,7 @@
       "image": "https://github.com/orqastudio/orqastudio-plugin-claude/blob/main/thumbnail.png?raw=1",
       "category": "ai-provider",
       "icon": "bot",
-      "capabilities": ["sidecar", "hooks"],
+      "capabilities": ["sidecar"],
       "requires": { "node": ">=22" }
     },
     {
