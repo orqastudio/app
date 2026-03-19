@@ -92,8 +92,9 @@ export class NavigationStore {
 			this.applyRoute(route);
 		}
 
-		// Listen for back/forward
-		window.addEventListener("hashchange", () => {
+		// Listen for back/forward — popstate fires on history navigation,
+		// not on programmatic pushState (which avoids the double-fire loop)
+		window.addEventListener("popstate", () => {
 			const newRoute = currentRoute();
 			this.applyRoute(newRoute);
 		});
@@ -508,6 +509,8 @@ export class NavigationStore {
 	}
 
 	openArtifact(path: string, breadcrumbs: string[]) {
+		console.time(`[perf] openArtifact → render`);
+		console.log(`[perf] openArtifact called: ${path}`);
 		// Set loading state immediately so the spinner shows before the $effect fires loadContent
 		const { artifactStore } = getStores();
 		artifactStore.activeContent = null;
@@ -518,6 +521,10 @@ export class NavigationStore {
 		this.explorerView = "artifact-viewer";
 		this.breadcrumbs = breadcrumbs;
 		this.syncToHash();
+		// The timeEnd will be called manually when we want to measure render
+		requestAnimationFrame(() => {
+			console.timeEnd(`[perf] openArtifact → render`);
+		});
 	}
 
 	closeArtifact() {

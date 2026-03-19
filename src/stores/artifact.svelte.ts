@@ -31,17 +31,22 @@ export class ArtifactStore {
 
 	/** Load artifact content for viewing. Delegates to the SDK which reads from disk each time. */
 	async loadContent(path: string) {
+		console.time(`[perf] loadContent ${path}`);
 		this.activeContentLoading = true;
 		this.activeContentError = null;
 		try {
+			console.time(`[perf] IPC readContent`);
 			const content = await getStores().artifactGraphSDK.readContent(path);
+			console.timeEnd(`[perf] IPC readContent`);
 			this.activeContent = content;
 		} catch (err: unknown) {
+			console.timeEnd(`[perf] IPC readContent`);
 			const message = extractErrorMessage(err);
 			this.activeContentError = `Failed to load content: ${message}`;
 			this.activeContent = null;
 		} finally {
 			this.activeContentLoading = false;
+			console.timeEnd(`[perf] loadContent ${path}`);
 		}
 	}
 

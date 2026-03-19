@@ -111,12 +111,17 @@ export function buildHash(route: ParsedRoute): string {
 }
 
 /**
- * Push a route to the browser history without triggering a page reload.
+ * Push a route to the browser history.
+ *
+ * Uses history.pushState instead of setting window.location.hash to
+ * avoid triggering the hashchange listener (which would cause a loop
+ * when called from syncToHash → pushRoute → hashchange → applyRoute).
+ * The hashchange listener only fires for back/forward navigation.
  */
 export function pushRoute(route: ParsedRoute): void {
 	const hash = buildHash(route);
 	if (window.location.hash !== hash) {
-		window.location.hash = hash;
+		history.pushState(null, "", hash);
 	}
 }
 
