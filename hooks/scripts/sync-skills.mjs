@@ -21,10 +21,28 @@ import { createHash } from "crypto";
 const PLUGIN_ROOT = process.env.CLAUDE_PLUGIN_ROOT || dirname(dirname(import.meta.url.replace("file:///", "").replace("file://", "")));
 const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 
+// Discover all plugin skill directories in the project
+function discoverPluginSkillDirs(projectDir) {
+  const pluginsDir = join(projectDir, "plugins");
+  if (!existsSync(pluginsDir)) return [];
+  const dirs = [];
+  for (const entry of readdirSync(pluginsDir, { withFileTypes: true })) {
+    if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+    const skillsDir = join(pluginsDir, entry.name, "skills");
+    if (existsSync(skillsDir)) {
+      dirs.push(skillsDir);
+    }
+  }
+  return dirs;
+}
+
 // OrqaStudio skill sources (flat .md files)
+// Includes project-level, app-level, and all plugin skill directories
 const SKILL_SOURCES = [
   join(PROJECT_DIR, ".orqa", "process", "skills"),
   join(PROJECT_DIR, "app", ".orqa", "process", "skills"),
+  // Plugin skills
+  ...discoverPluginSkillDirs(PROJECT_DIR),
 ];
 
 // Connector skills directory (Claude Code folder/SKILL.md format)
