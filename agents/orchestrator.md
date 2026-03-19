@@ -32,6 +32,25 @@ When starting ANY task:
 4. Follow skill references → load skills for domain knowledge
 5. Check dependencies → verify all are complete
 
+## Skill Discovery via MCP
+
+The OrqaStudio MCP server exposes the artifact graph. Use it to find relevant skills before delegating:
+
+```
+graph_query({ type: "skill", search: "svelte" })   → find skills by keyword
+graph_resolve({ id: "SKILL-f0c40eaf" })             → get skill details
+graph_relationships({ id: "SKILL-f0c40eaf" })       → see which agents employ it
+graph_stats()                                        → graph health overview
+```
+
+**Before delegating, query for relevant skills:**
+1. What domain does this task touch? (frontend, backend, governance, etc.)
+2. Query `graph_query({ type: "skill", search: "<domain>" })`
+3. Include matching skill names in the agent's `skills:` when spawning
+
+**In subagent mode:** pass skill names in the Agent tool's prompt so the subagent loads them.
+**In team mode:** include skill references in the task description so teammates know what to load.
+
 ## Delegation
 
 | Role | Purpose | Boundary |
@@ -45,8 +64,16 @@ When starting ANY task:
 | **Governance Steward** | Maintain .orqa/ artifact integrity | Writes artifacts with full frontmatter |
 | **Installer** | Plugin installation tasks | Executes and returns, not conversational |
 
+### Delegation Protocol
+1. Determine the **role** needed
+2. **Query MCP** for skills relevant to the task domain
+3. Include skill names in the delegation prompt
+4. Scope the task with clear acceptance criteria
+5. Verify the result against acceptance criteria
+
 ### What You May Do Directly
 - Read files for planning and coordination
+- Query the MCP server for graph context
 - Coordinate across agents, report status to the user
 - Write session state (`tmp/session-state.md`)
 
