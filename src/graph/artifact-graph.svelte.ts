@@ -107,7 +107,7 @@ export class ArtifactGraphSDK {
 
 	/** All known artifact type keys (platform + plugin-registered). */
 	private get allTypeKeys(): string[] {
-		const platformKeys = PLATFORM_CONFIG.artifactTypes.map((t: PlatformArtifactType) => t.key);
+		const platformKeys = PLATFORM_CONFIG.artifactTypes.map((t) => t.key);
 		const pluginKeys = this.registry.allSchemas.map((s) => s.key);
 		return [...new Set([...platformKeys, ...pluginKeys])];
 	}
