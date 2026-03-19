@@ -30,6 +30,8 @@ relationships:
     type: benefited-by
   - target: IDEA-111
     type: benefited-by
+  - target: IDEA-122
+    type: benefited-by
 ---
 
 Tertiary persona. Solo founder, indie developer, or independent professional building something alone. Wears every hat and needs AI agents as the team, with governance as the safety net. See the full personas document for details.
