@@ -245,6 +245,7 @@ fn register_commands(builder: tauri::Builder<tauri::Wry>) -> tauri::Builder<taur
         commands::plugin_commands::plugin_install_github,
         commands::plugin_commands::plugin_uninstall,
         commands::plugin_commands::plugin_check_updates,
+        commands::plugin_commands::plugin_get_path,
         commands::plugin_commands::plugin_get_manifest,
         commands::hook_commands::get_registered_hooks,
         commands::hook_commands::generate_hook_dispatchers,

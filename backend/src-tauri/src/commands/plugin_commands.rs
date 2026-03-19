@@ -108,6 +108,32 @@ pub async fn plugin_check_updates(
     Ok(updates)
 }
 
+/// Get the filesystem path for an installed plugin.
+///
+/// Used by the frontend to load plugin view bundles at runtime.
+#[tauri::command]
+pub fn plugin_get_path(
+    name: String,
+    state: tauri::State<'_, AppState>,
+) -> Result<String, OrqaError> {
+    let project_path = active_project_path(&state)?;
+    let project_root = std::path::Path::new(&project_path);
+    let plugins_dir = project_root.join("plugins");
+
+    let short_name = name.split('/').last().unwrap_or(&name);
+    let plugin_dir = plugins_dir.join(short_name);
+
+    if !plugin_dir.exists() {
+        return Err(OrqaError::Plugin(format!(
+            "plugin not found: {} (expected at {})",
+            name,
+            plugin_dir.display()
+        )));
+    }
+
+    Ok(plugin_dir.to_string_lossy().to_string())
+}
+
 /// Read the plugin manifest for a specific installed plugin.
 #[tauri::command]
 pub fn plugin_get_manifest(

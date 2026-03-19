@@ -8,7 +8,7 @@
 	import StatusBar from "./StatusBar.svelte";
 	import WelcomeScreen from "./WelcomeScreen.svelte";
 	import ProjectDashboard from "$lib/components/dashboard/ProjectDashboard.svelte";
-	import RoadmapView from "$lib/components/roadmap/RoadmapView.svelte";
+	import PluginViewContainer from "$lib/components/plugin/PluginViewContainer.svelte";
 	import ArtifactViewer from "$lib/components/artifact/ArtifactViewer.svelte";
 	import SettingsView from "$lib/components/settings/SettingsView.svelte";
 	import ConversationView from "$lib/components/conversation/ConversationView.svelte";
@@ -40,11 +40,11 @@
 	);
 	const setupNeeded = $derived(!setupStore.setupComplete);
 
-	// Resolve plugin view component for the active nav item
-	const pluginViewComponent = $derived.by(() => {
+	// Resolve plugin view info for the active nav item
+	const activePluginView = $derived.by(() => {
 		const navItem = navigationStore.activeNavItem;
 		if (!navItem || navItem.type !== "plugin" || !navItem.pluginSource) return null;
-		return pluginRegistry.getViewComponent(navItem.pluginSource, navItem.key);
+		return { pluginName: navItem.pluginSource, viewKey: navItem.key };
 	});
 
 	function handleGlobalKeydown(e: KeyboardEvent) {
@@ -176,10 +176,12 @@
 				<ResizablePaneGroup direction="horizontal" class="flex-1">
 					<ResizablePane defaultSize={70} minSize={30}>
 						<div class="h-full overflow-hidden">
-							{#if navigationStore.activeNavItem?.type === "plugin" && pluginViewComponent}
-								<!-- Plugin-provided view -->
-								{@const PluginView = pluginViewComponent}
-								<PluginView />
+							{#if activePluginView}
+								<!-- Plugin-provided view — loaded at runtime from plugin bundle -->
+								<PluginViewContainer
+									pluginName={activePluginView.pluginName}
+									viewKey={activePluginView.viewKey}
+								/>
 							{:else if navigationStore.activeActivity === "project"}
 								<ProjectDashboard />
 							{:else if navigationStore.activeActivity === "artifact-graph"}
