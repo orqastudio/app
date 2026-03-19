@@ -1,13 +1,13 @@
 ---
-id: SKILL-SVE-003
+id: SKILL-SVE-fd2b84c4
 type: skill
 name: Testing Patterns
 status: active
 plugin: "@orqastudio/plugin-svelte"
 relationships:
-  - target: DOC-SVE-001
+  - target: DOC-SVE-5d832d1d
     type: synchronised-with
-  - target: AGENT-SVE-001
+  - target: AGENT-SVE-b0857607
     type: employed-by
 ---
 

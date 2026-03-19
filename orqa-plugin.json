@@ -21,26 +21,19 @@
     "widgets": [],
     "relationships": [],
     "skills": [
-      {
-        "key": "svelte-patterns",
-        "id": "SKILL-SVE-001",
-        "label": "Svelte 5 Patterns"
-      },
-      {
-        "key": "eslint-config-management",
-        "id": "SKILL-SVE-002",
-        "label": "ESLint Config Management"
-      },
-      {
-        "key": "testing-patterns",
-        "id": "SKILL-SVE-003",
-        "label": "Testing Patterns"
-      },
-      {
-        "key": "svelte-installation",
-        "id": "SKILL-SVE-004",
-        "label": "Svelte Plugin Installation"
-      }
+      { "key": "svelte-patterns", "id": "SKILL-SVE-89d35141", "label": "Svelte 5 Patterns" },
+      { "key": "eslint-config-management", "id": "SKILL-SVE-88f32b6a", "label": "ESLint Config Management" },
+      { "key": "testing-patterns", "id": "SKILL-SVE-fd2b84c4", "label": "Testing Patterns" },
+      { "key": "svelte-installation", "id": "SKILL-SVE-90dd73ab", "label": "Svelte Plugin Installation" },
+      { "key": "svelte5-best-practices", "id": "SKILL-1c708b68", "label": "Svelte 5 Best Practices" },
+      { "key": "svelte5-runes", "id": "SKILL-SVE-005", "label": "Svelte 5 Runes Reference" },
+      { "key": "svelte5-snippets", "id": "SKILL-SVE-006", "label": "Svelte 5 Snippets Reference" },
+      { "key": "svelte5-events", "id": "SKILL-SVE-007", "label": "Svelte 5 Events Reference" },
+      { "key": "svelte5-typescript", "id": "SKILL-SVE-008", "label": "Svelte 5 TypeScript Reference" },
+      { "key": "svelte5-migration", "id": "SKILL-SVE-009", "label": "Svelte 4→5 Migration Reference" },
+      { "key": "svelte5-sveltekit", "id": "SKILL-SVE-010", "label": "SvelteKit Patterns Reference" },
+      { "key": "svelte5-performance", "id": "SKILL-SVE-011", "label": "Svelte 5 Performance Reference" },
+      { "key": "tailwind-design-system", "id": "SKILL-SVE-012", "label": "Tailwind Design System" }
     ],
     "tools": {
       "eslint": {

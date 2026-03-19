@@ -1,13 +1,13 @@
 ---
-id: SKILL-SVE-002
+id: SKILL-SVE-88f32b6a
 type: skill
 name: ESLint Config Management
 status: active
 plugin: "@orqastudio/plugin-svelte"
 relationships:
-  - target: DOC-SVE-001
+  - target: DOC-SVE-5d832d1d
     type: synchronised-with
-  - target: AGENT-SVE-001
+  - target: AGENT-SVE-b0857607
     type: employed-by
 ---
 

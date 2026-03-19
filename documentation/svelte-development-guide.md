@@ -1,17 +1,23 @@
 ---
-id: DOC-SVE-001
+id: DOC-SVE-5d832d1d
 title: "Svelte Development Guide"
 description: "How to develop with Svelte 5 in OrqaStudio projects — runes, component patterns, testing, and coding standards."
 category: how-to
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
-  - target: SKILL-SVE-001
+  - target: SKILL-SVE-89d35141
     type: synchronised-with
-  - target: SKILL-SVE-002
+  - target: SKILL-SVE-88f32b6a
     type: synchronised-with
-  - target: SKILL-SVE-003
+  - target: SKILL-SVE-fd2b84c4
+    type: synchronised-with  - target: SKILL-SVE-90dd73ab
     type: synchronised-with
+  - target: SKILL-1c708b68
+    type: synchronised-with
+  - target: SKILL-45b6ea05
+    type: synchronised-with
+
 ---
 
 # Svelte Development Guide

@@ -1,11 +1,11 @@
 ---
-id: SKILL-SVE-001
+id: SKILL-SVE-89d35141
 type: skill
 name: Svelte 5 Patterns
 status: active
 plugin: "@orqastudio/plugin-svelte"
 relationships:
-  - target: DOC-SVE-001
+  - target: DOC-SVE-5d832d1d
     type: synchronised-with
 ---
 

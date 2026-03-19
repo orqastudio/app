@@ -1,5 +1,5 @@
 ---
-id: AGENT-SVE-001
+id: AGENT-SVE-b0857607
 title: Svelte Standards Agent
 description: "Scoped task agent for Svelte/TypeScript coding standards. Operates in assess or configure mode — not conversational."
 status: active
@@ -12,9 +12,9 @@ capabilities:
   - content_search
   - shell_execute
 relationships:
-  - target: SKILL-SVE-002
+  - target: SKILL-SVE-88f32b6a
     type: employs
-  - target: SKILL-SVE-003
+  - target: SKILL-SVE-fd2b84c4
     type: employs
 ---
 
