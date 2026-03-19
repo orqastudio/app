@@ -11,7 +11,7 @@
 	const stores = initializeStores();
 	initializeGraphViz();
 
-	// Register bundled plugins
+	// Register installed plugins (async — loads manifests from disk via IPC)
 	registerSoftwareProjectPlugin(stores.pluginRegistry);
 
 	const { navigationStore } = stores;

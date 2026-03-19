@@ -1,28 +1,32 @@
 /**
  * Registration function for the Software Project plugin.
  *
- * Bundled plugins use static imports — this is called during app startup
- * in +layout.svelte after initializeStores().
+ * The manifest is loaded from the canonical orqa-plugin.json via IPC —
+ * no TypeScript copy to maintain. Only the Svelte component bindings
+ * are statically imported (components can't be loaded from JSON).
  */
 
 import type { PluginRegistry } from "@orqastudio/sdk";
-import { manifest } from "./manifest.js";
+import type { PluginManifest } from "@orqastudio/types";
+import { invoke } from "@tauri-apps/api/core";
 
 // Static imports of view components
 import RoadmapView from "$lib/components/roadmap/RoadmapView.svelte";
 
+export const PLUGIN_NAME = "@orqastudio/plugin-software-project";
+
 /**
  * Register the Software Project plugin with the plugin registry.
  *
- * Components map: view keys → Svelte components.
- * The roadmap view stays in its current location until the full extraction
- * to a separate repo (Step 5 of EPIC-080).
+ * Loads the manifest from the Rust backend (which reads the canonical
+ * orqa-plugin.json from disk), then registers with UI component bindings.
  */
-export function registerSoftwareProjectPlugin(registry: PluginRegistry): void {
+export async function registerSoftwareProjectPlugin(registry: PluginRegistry): Promise<void> {
+	const manifest = await invoke<PluginManifest>("plugin_get_manifest", {
+		name: PLUGIN_NAME,
+	});
+
 	registry.register(manifest, {
-		// Views
 		roadmap: RoadmapView,
-		// Widgets — registered by key but rendered by the dashboard
-		// (widget rendering happens through the registry, not direct import)
 	});
 }
