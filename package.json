@@ -9,11 +9,11 @@
     "dev": "vite build --watch"
   },
   "dependencies": {
-    "@orqastudio/types": "0.1.0-dev"
+    "@orqastudio/types": "^0.1.0-dev"
   },
   "peerDependencies": {
-    "@orqastudio/sdk": "0.1.0-dev",
-    "@orqastudio/svelte-components": "0.1.0-dev",
+    "@orqastudio/sdk": "^0.1.0-dev",
+    "@orqastudio/svelte-components": "^0.1.0-dev",
     "svelte": "^5.0.0"
   },
   "devDependencies": {
