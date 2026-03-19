@@ -8,6 +8,24 @@ updated: 2026-03-19
 relationships:
   - target: MS-001
     type: fulfils
+  - target: TASK-528
+    type: delivered-by
+  - target: TASK-529
+    type: delivered-by
+  - target: TASK-530
+    type: delivered-by
+  - target: TASK-531
+    type: delivered-by
+  - target: TASK-532
+    type: delivered-by
+  - target: TASK-533
+    type: delivered-by
+  - target: TASK-534
+    type: delivered-by
+  - target: TASK-535
+    type: delivered-by
+  - target: TASK-536
+    type: delivered-by
 ---
 
 # EPIC-085: Schema-driven CLI validator — zero hardcoded types or keys

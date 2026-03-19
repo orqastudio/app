@@ -6,8 +6,22 @@ status: completed
 created: 2026-03-18
 updated: 2026-03-19
 relationships:
-  - target: MS-002
+  - target: MS-001
     type: fulfils
+  - target: TASK-555
+    type: delivered-by
+  - target: TASK-556
+    type: delivered-by
+  - target: TASK-557
+    type: delivered-by
+  - target: TASK-558
+    type: delivered-by
+  - target: TASK-559
+    type: delivered-by
+  - target: TASK-560
+    type: delivered-by
+  - target: TASK-561
+    type: delivered-by
 ---
 
 # EPIC-088: Contribution model and README standards

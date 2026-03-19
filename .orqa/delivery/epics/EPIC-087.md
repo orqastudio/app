@@ -6,8 +6,24 @@ status: completed
 created: 2026-03-18
 updated: 2026-03-19
 relationships:
-  - target: MS-002
+  - target: MS-001
     type: fulfils
+  - target: TASK-547
+    type: delivered-by
+  - target: TASK-548
+    type: delivered-by
+  - target: TASK-549
+    type: delivered-by
+  - target: TASK-550
+    type: delivered-by
+  - target: TASK-551
+    type: delivered-by
+  - target: TASK-552
+    type: delivered-by
+  - target: TASK-553
+    type: delivered-by
+  - target: TASK-554
+    type: delivered-by
 ---
 
 # EPIC-087: Ethical licensing model — BSL-1.1 with social use grants
