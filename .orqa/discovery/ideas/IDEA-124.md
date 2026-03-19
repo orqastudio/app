@@ -163,10 +163,9 @@ Each plugin ships dedicated agents that are NOT conversational — they're scope
 - `svelte-standards-configurator` — reads the project's coding standards rules, generates/updates ESLint + svelte-check + Vitest config files. Does the job and exits.
 - `tauri-standards-configurator` — same for clippy + rustfmt + cargo test config.
 
-**Installation agent** (one-time setup):
-- `plugin-installer` — detects languages, recommends sub-projects, adds dependencies, generates initial config. Interactive during setup, then done.
-
 These agents have constrained tool access (file read/write, no shell, no web), a defined output schema, and no memory between runs. They're implementation tools, not thinking partners. The orchestrator delegates to them for specific jobs — they don't participate in conversations.
+
+**Plugin installation** is handled by a core platform agent (not plugin-specific). Each plugin ships an installation skill that teaches the core installer agent how to install that plugin — what dependencies to add, what config to generate, what questions to ask about sub-projects. The agent is generic; the knowledge comes from the plugin's skill.
 
 ## orqa check
 
