@@ -1,5 +1,5 @@
 ---
-id: SKILL-TAU-004
+id: SKILL-TAU-002
 type: skill
 name: Tauri Plugin Installation
 status: active

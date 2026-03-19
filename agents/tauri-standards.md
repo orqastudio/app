@@ -1,7 +1,7 @@
 ---
 id: AGENT-TAU-001
 title: Tauri Standards Agent
-description: "Scoped task agent for Rust/Tauri coding standards. Operates in assess or configure mode — not conversational."
+description: "Scoped task agent for Tauri v2 patterns and configuration. Extends the Rust Standards Agent with Tauri-specific knowledge."
 status: active
 plugin: "@orqastudio/plugin-tauri"
 model: sonnet
@@ -12,10 +12,10 @@ capabilities:
   - content_search
   - shell_execute
 relationships:
-  - target: SKILL-TAU-002
+  - target: SKILL-TAU-001
     type: employs
-  - target: SKILL-TAU-003
-    type: employs
+  - target: AGENT-RST-001
+    type: informed-by
 ---
 
 # Tauri Standards Agent
