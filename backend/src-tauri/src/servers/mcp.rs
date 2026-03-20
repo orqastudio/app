@@ -230,6 +230,7 @@ impl McpServer {
                     "properties": {
                         "pattern": { "type": "string", "description": "Regex pattern to search for" },
                         "path_filter": { "type": "string", "description": "Optional: filter results to files matching this path prefix" },
+                        "scope": { "type": "string", "enum": ["artifacts", "codebase", "all"], "description": "Search scope: 'artifacts' (.orqa/ only), 'codebase' (non-.orqa/), 'all' (default)" },
                         "limit": { "type": "integer", "description": "Max results (default: 20)" }
                     },
                     "required": ["pattern"]
@@ -242,6 +243,7 @@ impl McpServer {
                     "type": "object",
                     "properties": {
                         "query": { "type": "string", "description": "Natural language search query" },
+                        "scope": { "type": "string", "enum": ["artifacts", "codebase", "all"], "description": "Search scope: 'artifacts' (.orqa/ only), 'codebase' (non-.orqa/), 'all' (default)" },
                         "limit": { "type": "integer", "description": "Max results (default: 10)" }
                     },
                     "required": ["query"]
@@ -254,6 +256,7 @@ impl McpServer {
                     "type": "object",
                     "properties": {
                         "question": { "type": "string", "description": "Natural language question about the codebase" },
+                        "scope": { "type": "string", "enum": ["artifacts", "codebase", "all"], "description": "Search scope: 'artifacts' (.orqa/ only), 'codebase' (non-.orqa/), 'all' (default)" },
                         "limit": { "type": "integer", "description": "Max initial semantic results (default: 5)" }
                     },
                     "required": ["question"]
@@ -494,9 +497,19 @@ impl McpServer {
         ))
     }
 
+    /// Filter search results by scope (artifacts vs codebase).
+    fn filter_by_scope(results: Vec<crate::search::types::SearchResult>, scope: &str) -> Vec<crate::search::types::SearchResult> {
+        match scope {
+            "artifacts" => results.into_iter().filter(|r| r.file_path.contains(".orqa/") || r.file_path.contains(".orqa\\")).collect(),
+            "codebase" => results.into_iter().filter(|r| !r.file_path.contains(".orqa/") && !r.file_path.contains(".orqa\\")).collect(),
+            _ => results, // "all" or unrecognised
+        }
+    }
+
     fn tool_search_regex(&mut self, args: &Value) -> Result<String, String> {
         let pattern = args.get("pattern").and_then(|v| v.as_str()).ok_or("missing 'pattern'")?;
         let path_filter = args.get("path_filter").and_then(|v| v.as_str());
+        let scope = args.get("scope").and_then(|v| v.as_str()).unwrap_or("all");
         let limit = args.get("limit").and_then(|v| v.as_u64()).unwrap_or(20) as u32;
 
         let engine = self.get_search()?;
@@ -504,7 +517,9 @@ impl McpServer {
             .search_regex(pattern, path_filter, limit)
             .map_err(|e| format!("search error: {e}"))?;
 
-        let summary: Vec<Value> = results
+        let filtered = Self::filter_by_scope(results, scope);
+
+        let summary: Vec<Value> = filtered
             .iter()
             .map(|r| json!({
                 "file": r.file_path,
@@ -519,6 +534,7 @@ impl McpServer {
 
     fn tool_search_semantic(&mut self, args: &Value) -> Result<String, String> {
         let query = args.get("query").and_then(|v| v.as_str()).ok_or("missing 'query'")?;
+        let scope = args.get("scope").and_then(|v| v.as_str()).unwrap_or("all");
         let limit = args.get("limit").and_then(|v| v.as_u64()).unwrap_or(10) as u32;
 
         let engine = self.get_search()?;
@@ -526,7 +542,9 @@ impl McpServer {
             .search_semantic(query, limit)
             .map_err(|e| format!("semantic search error: {e}"))?;
 
-        let summary: Vec<Value> = results
+        let filtered = Self::filter_by_scope(results, scope);
+
+        let summary: Vec<Value> = filtered
             .iter()
             .map(|r| json!({
                 "file": r.file_path,
@@ -541,13 +559,15 @@ impl McpServer {
 
     fn tool_search_research(&mut self, args: &Value) -> Result<String, String> {
         let question = args.get("question").and_then(|v| v.as_str()).ok_or("missing 'question'")?;
+        let scope = args.get("scope").and_then(|v| v.as_str()).unwrap_or("all");
         let limit = args.get("limit").and_then(|v| v.as_u64()).unwrap_or(5) as u32;
 
         // Step 1: Semantic search for conceptually relevant chunks
         let engine = self.get_search()?;
-        let semantic_results = engine
+        let raw_results = engine
             .search_semantic(question, limit)
             .map_err(|e| format!("semantic search error: {e}"))?;
+        let semantic_results = Self::filter_by_scope(raw_results, scope);
 
         if semantic_results.is_empty() {
             // Fall back to regex with keywords from the question
