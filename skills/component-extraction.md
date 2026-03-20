@@ -9,11 +9,9 @@ category: methodology
 file-patterns:
   - "ui/src/lib/components/**"
 user-invocable: false
-relationships: []
 relationships:
   - target: DOC-SW-421219ce
     type: synchronised-with
-
 ---
 
 # Component Extraction

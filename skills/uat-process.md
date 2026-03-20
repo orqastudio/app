@@ -12,11 +12,9 @@ updated: 2026-03-10
 category: methodology
 version: 1.0.0
 user-invocable: false
-relationships: []
 relationships:
   - target: DOC-SW-421219ce
     type: synchronised-with
-
 ---
 
 Structured UAT methodology for the orchestrator and QA agents. Prevents premature fixing
