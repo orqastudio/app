@@ -20,7 +20,6 @@
     },
     "mcpServers": {
       "orqastudio": {
-        "type": "stdio",
         "command": "orqa",
         "args": ["mcp"]
       }

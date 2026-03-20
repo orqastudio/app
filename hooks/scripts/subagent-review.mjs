@@ -11,6 +11,7 @@
 import { readFileSync, existsSync } from "fs";
 import { join, relative } from "path";
 import { execSync } from "child_process";
+import { logTelemetry } from "./telemetry.mjs";
 
 // Get files modified since the subagent started (via git diff)
 function getModifiedFiles(projectDir) {
@@ -93,6 +94,8 @@ function checkArtifactIntegrity(projectDir, files) {
 }
 
 async function main() {
+  const startTime = Date.now();
+
   let input = "";
   for await (const chunk of process.stdin) {
     input += chunk;
@@ -110,6 +113,12 @@ async function main() {
 
   const modifiedFiles = getModifiedFiles(projectDir);
   if (modifiedFiles.length === 0) {
+    logTelemetry("subagent-review", "SubagentStop", startTime, "clean", {
+      agent_type: agentType,
+      files_checked: 0,
+      todos_found: 0,
+      artifact_issues: 0,
+    }, projectDir);
     process.exit(0);
   }
 
@@ -130,8 +139,21 @@ async function main() {
   }
 
   if (warnings.length === 0) {
+    logTelemetry("subagent-review", "SubagentStop", startTime, "clean", {
+      agent_type: agentType,
+      files_checked: modifiedFiles.length,
+      todos_found: 0,
+      artifact_issues: 0,
+    }, projectDir);
     process.exit(0);
   }
+
+  logTelemetry("subagent-review", "SubagentStop", startTime, "warned", {
+    agent_type: agentType,
+    files_checked: modifiedFiles.length,
+    todos_found: stubIssues.length,
+    artifact_issues: artifactIssues.length,
+  }, projectDir);
 
   const message = [
     `SUBAGENT REVIEW — ${agentType} completed with warnings:`,

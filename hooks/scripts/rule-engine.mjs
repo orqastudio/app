@@ -7,6 +7,7 @@
 
 import { readFileSync, readdirSync, existsSync, writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
+import { logTelemetry } from "./telemetry.mjs";
 
 // Unescape YAML double-quoted string escapes
 function yamlUnescape(str) {
@@ -285,6 +286,8 @@ function collectKnowledgeContent(projectDir, injectViolations) {
 
 // Main
 async function main() {
+  const startTime = Date.now();
+
   // Read stdin
   let input = "";
   for await (const chunk of process.stdin) {
@@ -311,6 +314,12 @@ async function main() {
   const violations = evaluate(rules, toolName, toolInput);
 
   if (violations.length === 0) {
+    logTelemetry("rule-engine", "PreToolUse", startTime, "clean", {
+      violations_found: 0,
+      rules_evaluated: rules.length,
+      tool: toolName,
+      action: "allow",
+    }, projectDir);
     process.exit(0);
   }
 
@@ -329,6 +338,16 @@ async function main() {
   const hasWarn = warnViolations.length > 0;
 
   if (hasBlock) {
+    logTelemetry("rule-engine", "PreToolUse", startTime, "blocked", {
+      violations_found: violations.length,
+      rules_evaluated: rules.length,
+      tool: toolName,
+      action: "block",
+      blocked_rules: blockViolations.map((v) => v.ruleId),
+      warned_rules: warnViolations.map((v) => v.ruleId),
+      injected_rules: injectViolations.map((v) => v.ruleId),
+    }, projectDir);
+
     // Blocking: deny the tool call
     const messages = [...blockViolations, ...warnViolations].map(
       (v) => `[${v.ruleId}] ${v.message}`
@@ -347,6 +366,15 @@ async function main() {
     process.stderr.write(output);
     process.exit(2);
   } else if (hasWarn || knowledgeContent) {
+    logTelemetry("rule-engine", "PreToolUse", startTime, "warned", {
+      violations_found: violations.length,
+      rules_evaluated: rules.length,
+      tool: toolName,
+      action: "warn",
+      warned_rules: warnViolations.map((v) => v.ruleId),
+      injected_rules: injectViolations.map((v) => v.ruleId),
+    }, projectDir);
+
     // Non-blocking: warn and/or inject knowledge
     const messages = warnViolations.map((v) => `[${v.ruleId}] ${v.message}`);
     const combinedMessage = [
@@ -360,6 +388,14 @@ async function main() {
     process.stdout.write(output);
     process.exit(0);
   } else {
+    logTelemetry("rule-engine", "PreToolUse", startTime, "inject-deduped", {
+      violations_found: violations.length,
+      rules_evaluated: rules.length,
+      tool: toolName,
+      action: "allow",
+      injected_rules: injectViolations.map((v) => v.ruleId),
+    }, projectDir);
+
     // Inject entries had no new skills to inject (all already injected)
     process.exit(0);
   }

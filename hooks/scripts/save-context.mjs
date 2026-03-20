@@ -6,8 +6,9 @@
 // writes a summary to tmp/governance-context.md so the orchestrator can
 // recover after compaction.
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from "fs";
 import { join } from "path";
+import { logTelemetry } from "./telemetry.mjs";
 
 // Simple YAML frontmatter parser
 function parseFrontmatter(content) {
@@ -61,6 +62,8 @@ function findActiveTasks(projectDir) {
 }
 
 async function main() {
+  const startTime = Date.now();
+
   let input = "";
   for await (const chunk of process.stdin) {
     input += chunk;
@@ -129,7 +132,24 @@ async function main() {
     "4. Any skills referenced by the current tasks",
   );
 
-  writeFileSync(join(tmpDir, "governance-context.md"), lines.join("\n"));
+  const contextContent = lines.join("\n");
+  const contextPath = join(tmpDir, "governance-context.md");
+  writeFileSync(contextPath, contextContent);
+
+  // Measure saved file size
+  let fileSizeBytes = 0;
+  try {
+    fileSizeBytes = statSync(contextPath).size;
+  } catch {
+    // ignore
+  }
+
+  logTelemetry("save-context", "PreCompact", startTime, "saved", {
+    epics_preserved: activeEpics.length,
+    tasks_preserved: activeTasks.length,
+    file_size_bytes: fileSizeBytes,
+    had_existing_state: existingState.length > 0,
+  }, projectDir);
 
   // Return the context as a system message so it survives compaction
   const summary = [

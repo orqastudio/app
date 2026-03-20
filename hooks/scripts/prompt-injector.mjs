@@ -11,6 +11,7 @@
 
 import { readFileSync, readdirSync, existsSync, mkdirSync, writeFileSync } from "fs";
 import { join } from "path";
+import { logTelemetry } from "./telemetry.mjs";
 
 // Intent-to-knowledge mapping table
 // Each entry: { keywords: string[], skills: string[], description: string }
@@ -307,14 +308,16 @@ function stripFrontmatter(content) {
   return content.trim();
 }
 
-// Read knowledge files, deduplicating against already-injected
+// Read knowledge files, deduplicating against already-injected.
+// Returns { content: string|null, injected: string[], dedupCount: number }
 function collectKnowledgeContent(projectDir, skillNames) {
   const alreadyInjected = readInjectedSkills(projectDir);
   const alreadySet = new Set(alreadyInjected);
 
   // Filter to only new skills
   const newSkills = skillNames.filter((name) => !alreadySet.has(name));
-  if (newSkills.length === 0) return null;
+  const dedupCount = skillNames.length - newSkills.length;
+  if (newSkills.length === 0) return { content: null, injected: [], dedupCount };
 
   const parts = [];
   const injectedNow = [];
@@ -347,12 +350,12 @@ function collectKnowledgeContent(projectDir, skillNames) {
     }
   }
 
-  if (parts.length === 0) return null;
+  if (parts.length === 0) return { content: null, injected: [], dedupCount };
 
   // Persist updated state
   writeInjectedSkills(projectDir, [...alreadyInjected, ...injectedNow]);
 
-  return parts.join("\n\n---\n\n");
+  return { content: parts.join("\n\n---\n\n"), injected: injectedNow, dedupCount };
 }
 
 // Read project.json and extract settings for template resolution
@@ -401,6 +404,8 @@ function readContextReminder(projectDir) {
 
 // Main
 async function main() {
+  const startTime = Date.now();
+
   let input = "";
   for await (const chunk of process.stdin) {
     input += chunk;
@@ -434,8 +439,22 @@ async function main() {
   // Only the context reminder (above) injects into the orchestrator.
 
   if (parts.length === 0) {
+    logTelemetry("prompt-injector", "UserPromptSubmit", startTime, "skipped", {
+      knowledge_injected: [],
+      intent_matched: false,
+      dedup_count: 0,
+      action: "allow",
+    }, projectDir);
     process.exit(0);
   }
+
+  logTelemetry("prompt-injector", "UserPromptSubmit", startTime, "injected", {
+    knowledge_injected: [],
+    intent_matched: false,
+    dedup_count: 0,
+    action: "allow",
+    reminder_injected: true,
+  }, projectDir);
 
   // Return combined content as systemMessage
   const output = JSON.stringify({

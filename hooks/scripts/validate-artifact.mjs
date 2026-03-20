@@ -7,6 +7,7 @@
 
 import { readFileSync, existsSync } from "fs";
 import { join, relative } from "path";
+import { logTelemetry } from "./telemetry.mjs";
 
 // Check if a file path is within the .orqa/ directory
 function isOrqaArtifact(filePath, projectDir) {
@@ -80,6 +81,8 @@ function validateArtifact(filePath, projectDir) {
 
 // Main
 async function main() {
+  const startTime = Date.now();
+
   let input = "";
   for await (const chunk of process.stdin) {
     input += chunk;
@@ -106,13 +109,30 @@ async function main() {
     process.exit(0);
   }
 
+  const rel = relative(projectDir, filePath).replace(/\\/g, "/");
   const issues = validateArtifact(filePath, projectDir);
 
   if (issues.length === 0) {
+    logTelemetry("validate-artifact", "PostToolUse", startTime, "valid", {
+      file: rel,
+      errors_found: 0,
+      warnings_issued: 0,
+    }, projectDir);
     process.exit(0);
   }
 
-  const rel = relative(projectDir, filePath).replace(/\\/g, "/");
+  const errorCount = issues.filter((i) =>
+    i.includes("Missing required") || i.includes("Invalid status") || i.includes("Missing YAML")
+  ).length;
+  const warningCount = issues.length - errorCount;
+
+  logTelemetry("validate-artifact", "PostToolUse", startTime, "invalid", {
+    file: rel,
+    errors_found: errorCount,
+    warnings_issued: warningCount,
+    issues: issues,
+  }, projectDir);
+
   const message = [
     `ARTIFACT VALIDATION — ${rel}:`,
     ...issues.map((i) => `  - ${i}`),

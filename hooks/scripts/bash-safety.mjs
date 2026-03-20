@@ -6,6 +6,8 @@
 // Warn patterns: exit 0, write JSON to stdout with systemMessage.
 // Safe patterns: exit 0, no output.
 
+import { logTelemetry } from "./telemetry.mjs";
+
 /**
  * @typedef {{ severity: "block" | "warn", id: string, pattern: RegExp, reason: string }} SafetyRule
  */
@@ -194,6 +196,8 @@ function checkCommand(command) {
 }
 
 async function main() {
+  const startTime = Date.now();
+
   let input = "";
   for await (const chunk of process.stdin) {
     input += chunk;
@@ -209,6 +213,7 @@ async function main() {
 
   const toolName = hookInput.tool_name || "";
   const command = (hookInput.tool_input || {}).command || "";
+  const projectDir = hookInput.cwd || process.env.CLAUDE_PROJECT_DIR || ".";
 
   // Only applies to Bash tool calls
   if (toolName !== "Bash") {
@@ -223,10 +228,23 @@ async function main() {
   const { blocked, warned } = checkCommand(command);
 
   if (blocked.length === 0 && warned.length === 0) {
+    logTelemetry("bash-safety", "PostToolUse", startTime, "allowed", {
+      command_checked: command.slice(0, 120),
+      patterns_matched: 0,
+      action: "allow",
+    }, projectDir);
     process.exit(0);
   }
 
   if (blocked.length > 0) {
+    logTelemetry("bash-safety", "PostToolUse", startTime, "blocked", {
+      command_checked: command.slice(0, 120),
+      patterns_matched: blocked.length + warned.length,
+      action: "block",
+      blocked_rules: blocked.map((r) => r.id),
+      warned_rules: warned.map((r) => r.id),
+    }, projectDir);
+
     // Build a combined message for all violations
     const lines = ["BASH SAFETY — command blocked:"];
 
@@ -254,6 +272,13 @@ async function main() {
   }
 
   // Warn-only path: allow the command but surface the warnings
+  logTelemetry("bash-safety", "PostToolUse", startTime, "warned", {
+    command_checked: command.slice(0, 120),
+    patterns_matched: warned.length,
+    action: "warn",
+    warned_rules: warned.map((r) => r.id),
+  }, projectDir);
+
   const lines = ["BASH SAFETY — command allowed with warnings:"];
   for (const rule of warned) {
     lines.push(`  [${rule.id}] ${rule.reason}`);
