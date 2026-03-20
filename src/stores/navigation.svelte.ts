@@ -15,6 +15,9 @@ import { getStores } from "../registry.svelte.js";
 import type { NavDocNode, NavType, NavigationItem } from "@orqastudio/types";
 import { parseHash, pushRoute, currentRoute, type ParsedRoute } from "../router.js";
 import { isArtifactGroup } from "@orqastudio/types";
+import { logger } from "../logger.js";
+
+const log = logger("navigation");
 
 /**
  * Convert a config key to a human-readable label.
@@ -509,8 +512,7 @@ export class NavigationStore {
 	}
 
 	openArtifact(path: string, breadcrumbs: string[]) {
-		console.time(`[perf] openArtifact → render`);
-		console.log(`[perf] openArtifact called: ${path}`);
+		log.info(`openArtifact: ${path}`);
 		// Set loading state immediately so the spinner shows before the $effect fires loadContent
 		const { artifactStore } = getStores();
 		artifactStore.activeContent = null;
@@ -523,7 +525,7 @@ export class NavigationStore {
 		this.syncToHash();
 		// The timeEnd will be called manually when we want to measure render
 		requestAnimationFrame(() => {
-			console.timeEnd(`[perf] openArtifact → render`);
+			log.perf("openArtifact → render");
 		});
 	}
 
@@ -539,7 +541,7 @@ export class NavigationStore {
 		const { artifactGraphSDK } = getStores();
 		const node = artifactGraphSDK.resolve(id);
 		if (!node) {
-			console.warn(`[navigateToArtifact] could not resolve artifact ID: ${id}`);
+			log.warn(`navigateToArtifact: could not resolve artifact ID: ${id}`);
 			return;
 		}
 		this.navigateToPath(node.path);
@@ -550,7 +552,7 @@ export class NavigationStore {
 		const { artifactStore } = getStores();
 		const tree = artifactStore.navTree;
 		if (!tree) {
-			console.warn(`[navigateToPath] navTree not yet loaded, cannot navigate to: ${path}`);
+			log.warn(`navigateToPath: navTree not yet loaded, cannot navigate to: ${path}`);
 			return;
 		}
 
@@ -562,7 +564,7 @@ export class NavigationStore {
 				if (found) {
 					const typeKey = this._resolveKeyForNavTypePath(navType.path);
 					if (!typeKey) {
-						console.warn(`[navigateToPath] no config key for NavType path: ${navType.path}`);
+						log.warn(`navigateToPath: no config key for NavType path: ${navType.path}`);
 						return;
 					}
 
@@ -586,7 +588,7 @@ export class NavigationStore {
 			}
 		}
 
-		console.warn(`[navigateToPath] no NavTree node found for path: ${path}`);
+		log.warn(`navigateToPath: no NavTree node found for path: ${path}`);
 	}
 
 	private _findNodeInNavType(navType: NavType, normalizedPath: string): NavDocNode | null {
