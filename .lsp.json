@@ -1,0 +1,32 @@
+{
+  "orqastudio": {
+    "command": "orqa",
+    "args": ["lsp"],
+    "extensionToLanguage": {
+      ".md": "markdown"
+    }
+  },
+  "typescript": {
+    "command": "typescript-language-server",
+    "args": ["--stdio"],
+    "extensionToLanguage": {
+      ".ts": "typescript",
+      ".tsx": "typescriptreact",
+      ".js": "javascript",
+      ".jsx": "javascriptreact"
+    }
+  },
+  "svelte": {
+    "command": "svelteserver",
+    "args": ["--stdio"],
+    "extensionToLanguage": {
+      ".svelte": "svelte"
+    }
+  },
+  "rust": {
+    "command": "rust-analyzer",
+    "extensionToLanguage": {
+      ".rs": "rust"
+    }
+  }
+}

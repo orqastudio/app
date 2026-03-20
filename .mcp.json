@@ -2,8 +2,8 @@
   "mcpServers": {
     "orqastudio": {
       "type": "stdio",
-      "command": "orqa-studio",
-      "args": ["--mcp"],
+      "command": "orqa",
+      "args": ["mcp"],
       "env": {}
     }
   }
