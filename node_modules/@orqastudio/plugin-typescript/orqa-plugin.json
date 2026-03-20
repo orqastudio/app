@@ -8,6 +8,18 @@
     "skills": [
       { "key": "typescript-advanced-types", "id": "SKILL-TS-001", "label": "TypeScript Advanced Types" }
     ],
+    "lspServers": {
+      "typescript": {
+        "command": "typescript-language-server",
+        "args": ["--stdio"],
+        "extensionToLanguage": {
+          ".ts": "typescript",
+          ".tsx": "typescriptreact",
+          ".js": "javascript",
+          ".jsx": "javascriptreact"
+        }
+      }
+    },
     "configPresets": {
       "tsconfig": [
         { "name": "base", "path": "src/tsconfig/base.json", "description": "Strict TypeScript defaults" },
