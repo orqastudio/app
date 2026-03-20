@@ -269,3 +269,43 @@ This requires Developer Mode enabled or running as administrator.
 ### macOS / Linux
 
 Standard `ln -sfn` works without special permissions.
+
+## LSP Server Setup
+
+The OrqaStudio LSP server provides real-time validation of `.orqa/` artifact files in your editor. It's separate from the Claude Code plugin — it runs in your editor (VS Code, Neovim, etc.).
+
+### VS Code
+
+Add to `.vscode/settings.json`:
+
+```json
+{
+  "orqastudio.lsp.path": "orqa-studio",
+  "orqastudio.lsp.args": ["--lsp"]
+}
+```
+
+Or if using a language client extension, configure the server command:
+
+```json
+{
+  "languageserver": {
+    "orqastudio": {
+      "command": "orqa-studio",
+      "args": ["--lsp"],
+      "filetypes": ["markdown"],
+      "rootPatterns": [".orqa/"]
+    }
+  }
+}
+```
+
+### What it provides
+
+- Frontmatter schema validation (required fields, valid types)
+- Hex ID format validation (AD-057)
+- Skill documentation constraint (AD-058)
+- Relationship target existence checking
+- Status validation (12 canonical statuses)
+- Duplicate frontmatter key detection
+- Real-time diagnostics as you type
