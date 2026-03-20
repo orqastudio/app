@@ -19,6 +19,15 @@
     "schemas": [],
     "views": [],
     "widgets": [],
+    "lspServers": {
+      "svelte": {
+        "command": "svelteserver",
+        "args": ["--stdio"],
+        "extensionToLanguage": {
+          ".svelte": "svelte"
+        }
+      }
+    },
     "relationships": [],
     "skills": [
       { "key": "svelte-patterns", "id": "SKILL-SVE-89d35141", "label": "Svelte 5 Patterns" },
