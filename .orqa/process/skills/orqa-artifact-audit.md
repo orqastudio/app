@@ -191,7 +191,8 @@ created: "YYYY-MM-DD"
 updated: "YYYY-MM-DD"
 relationships:
   - target: [EPIC-NNN]
-    type: delivers  - target: DOC-a1b2c3d4
+    type: delivers
+  - target: DOC-a1b2c3d4
     type: synchronised-with
 
 ---

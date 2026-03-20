@@ -5,7 +5,8 @@ name: Tech Debt Management
 status: active
 relationships:
   - target: DOC-343aeb1f
-    type: synchronised-with  - target: DOC-a1b2c3d4
+    type: synchronised-with
+  - target: DOC-a1b2c3d4
     type: synchronised-with
 
 ---

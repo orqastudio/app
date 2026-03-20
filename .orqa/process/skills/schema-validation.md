@@ -5,7 +5,8 @@ name: Schema Validation
 status: active
 relationships:
   - target: DOC-32c6f5a6
-    type: synchronised-with  - target: DOC-a1b2c3d4
+    type: synchronised-with
+  - target: DOC-a1b2c3d4
     type: synchronised-with
 
 ---

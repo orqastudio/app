@@ -15,7 +15,8 @@ relationships:
   - target: SKILL-b453410f
     type: informed-by
   - target: DOC-99a1b71a
-    type: synchronised-with  - target: DOC-a1b2c3d4
+    type: synchronised-with
+  - target: DOC-a1b2c3d4
     type: synchronised-with
 
 ---

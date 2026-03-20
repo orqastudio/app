@@ -5,7 +5,8 @@ name: Artifact Relationships
 status: active
 relationships:
   - target: DOC-da5d186a
-    type: synchronised-with  - target: DOC-a1b2c3d4
+    type: synchronised-with
+  - target: DOC-a1b2c3d4
     type: synchronised-with
 
 ---

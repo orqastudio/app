@@ -28,7 +28,8 @@ relationships:
   - target: AGENT-b0774726
     type: employed-by
   - target: AGENT-ec1b3785
-    type: employed-by  - target: DOC-a1b2c3d4
+    type: employed-by
+  - target: DOC-a1b2c3d4
     type: synchronised-with
 
 ---

@@ -5,7 +5,8 @@ name: Naming Conventions
 status: active
 relationships:
   - target: DOC-5d1eed43
-    type: synchronised-with  - target: DOC-a1b2c3d4
+    type: synchronised-with
+  - target: DOC-a1b2c3d4
     type: synchronised-with
 
 ---
