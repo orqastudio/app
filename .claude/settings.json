@@ -1,5 +1,8 @@
 {
   "env": {
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "70"
+  },
+  "enabledPlugins": {
+    "orqastudio-governance@orqa-local": true
   }
 }
