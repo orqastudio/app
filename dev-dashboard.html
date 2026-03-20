@@ -176,6 +176,21 @@
 
     .log-line.level-warn .log-text { color: #f0a500; }
     .log-line.level-error .log-text { color: #e94560; }
+    .log-line.level-perf .log-text { color: #74b9ff; }
+    .log-line.level-debug .log-text { color: #555570; }
+
+    .search-input {
+      background: #0f3460;
+      border: 1px solid #1a4a7a;
+      color: #e0e0e0;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 12px;
+      width: 180px;
+    }
+    .search-input::placeholder { color: #555570; }
+    .search-input:focus { outline: none; border-color: #45D6E9; }
 
     /* ── Log Output ─────────────────────────────────────── */
 
@@ -217,6 +232,24 @@
     .log-source.rust { color: #c77dff; }
     .log-source.sidecar { color: #ff6b6b; }
     .log-source.frontend { color: #74b9ff; }
+    /* Library watcher sources */
+    .log-source.types { color: #4ecca3; }
+    .log-source.sdk { color: #74b9ff; }
+    .log-source.cli { color: #a0a0b0; }
+    .log-source.svelte-components { color: #ff7979; }
+    .log-source.software { color: #f0a500; }
+    .log-source.typescript { color: #3178c6; }
+    .log-source.claude-code { color: #d4a574; }
+    .log-source.graph-visualiser { color: #badc58; }
+    /* SDK logger module sources */
+    .log-source.navigation { color: #74b9ff; }
+    .log-source.artifact { color: #7bed9f; }
+    .log-source.graph { color: #badc58; }
+    .log-source.graph-view { color: #badc58; }
+    .log-source.graph-layout { color: #badc58; }
+    .log-source.plugins { color: #d4a574; }
+    .log-source.references { color: #dfe6e9; }
+    .log-source.errors { color: #e94560; }
 
     .log-text {
       flex: 1;
@@ -317,9 +350,37 @@
 
     <div class="separator"></div>
 
+    <!-- Library watcher sources -->
     <div class="filter-group">
+      <button class="filter-btn active" data-source="types" onclick="toggleFilter(this)" title="Types">
+        <svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1" fill="#4ecca3" stroke="none"/></svg>
+      </button>
+      <button class="filter-btn active" data-source="sdk" onclick="toggleFilter(this)" title="SDK">
+        <svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1" fill="#74b9ff" stroke="none"/></svg>
+      </button>
+      <button class="filter-btn active" data-source="cli" onclick="toggleFilter(this)" title="CLI">
+        <svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1" fill="#a0a0b0" stroke="none"/></svg>
+      </button>
+      <button class="filter-btn active" data-source="svelte-components" onclick="toggleFilter(this)" title="Components">
+        <svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1" fill="#ff7979" stroke="none"/></svg>
+      </button>
+      <button class="filter-btn active" data-source="software" onclick="toggleFilter(this)" title="Software Plugin">
+        <svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1" fill="#f0a500" stroke="none"/></svg>
+      </button>
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- Level filters -->
+    <div class="filter-group">
+      <button class="filter-btn active" data-level="debug" onclick="toggleLevelFilter(this)" title="Debug">
+        <svg viewBox="0 0 24 24" stroke="#555570"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      </button>
       <button class="filter-btn active" data-level="info" onclick="toggleLevelFilter(this)" title="Info">
         <svg viewBox="0 0 24 24" stroke="#a0a0b0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      </button>
+      <button class="filter-btn active" data-level="perf" onclick="toggleLevelFilter(this)" title="Performance">
+        <svg viewBox="0 0 24 24" stroke="#74b9ff"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       </button>
       <button class="filter-btn active" data-level="warn" onclick="toggleLevelFilter(this)" title="Warnings">
         <svg viewBox="0 0 24 24" stroke="#f0a500"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -328,6 +389,10 @@
         <svg viewBox="0 0 24 24" stroke="#e94560"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
       </button>
     </div>
+
+    <div class="separator"></div>
+
+    <input class="search-input" id="search-filter" type="text" placeholder="Filter text..." oninput="applyAllFilters()" />
   </div>
 
   <div id="output"></div>
@@ -354,8 +419,9 @@
 
     let lines = 0;
     let autoScroll = true;
-    const filters = { ctrl: true, vite: true, rust: true, sidecar: true, frontend: true };
-    const levelFilters = { info: true, warn: true, error: true };
+    const filters = { ctrl: true, vite: true, rust: true, sidecar: true, frontend: true, types: true, sdk: true, cli: true, 'svelte-components': true, software: true };
+    const levelFilters = { debug: true, info: true, perf: true, warn: true, error: true };
+    const searchFilter = document.getElementById('search-filter');
 
     // Track process state for button enabling
     let state = { vite: false, rust: false };
@@ -366,19 +432,26 @@
       autoScroll = scrollHeight - scrollTop - clientHeight < 50;
     });
 
-    function classifyLevel(text, isError) {
+    function classifyLevel(text, isError, rawLevel) {
+      if (rawLevel && ['debug', 'info', 'perf', 'warn', 'error'].includes(rawLevel)) return rawLevel;
       if (isError) return 'error';
       const lower = text.toLowerCase();
       if (/\b(error|err!|panic|fatal)\b/.test(lower)) return 'error';
       if (/\b(warn|warning|warn!)\b/.test(lower)) return 'warn';
+      if (/⏱|perf|ms\)$/.test(lower)) return 'perf';
       return 'info';
     }
 
-    function addLine(source, text, isError) {
+    function addLine(source, text, isError, rawLevel) {
       lines++;
       lineCount.textContent = `${lines} lines`;
 
-      const level = classifyLevel(text, isError);
+      // Auto-register unknown sources (from library watchers or logger tags)
+      if (!(source in filters)) {
+        filters[source] = true;
+      }
+
+      const level = classifyLevel(text, isError, rawLevel);
       const div = document.createElement('div');
       div.className = `log-line level-${level}`;
       div.dataset.source = source;
@@ -420,10 +493,12 @@
     }
 
     function applyAllFilters() {
+      const query = (searchFilter?.value || '').toLowerCase();
       document.querySelectorAll('.log-line').forEach(el => {
-        const sourceOk = filters[el.dataset.source];
-        const levelOk = levelFilters[el.dataset.level];
-        el.style.display = (sourceOk && levelOk) ? '' : 'none';
+        const sourceOk = filters[el.dataset.source] !== false;
+        const levelOk = levelFilters[el.dataset.level] !== false;
+        const textOk = !query || el.textContent.toLowerCase().includes(query);
+        el.style.display = (sourceOk && levelOk && textOk) ? '' : 'none';
       });
     }
 
@@ -473,7 +548,9 @@
 
       es.addEventListener('log', (e) => {
         const data = JSON.parse(e.data);
-        addLine(data.source, data.text, data.error || false);
+        // Frontend logger entries include source tag and level
+        const source = data.source || 'unknown';
+        addLine(source, data.text, data.error || false, data.level);
       });
 
       es.addEventListener('status', (e) => {

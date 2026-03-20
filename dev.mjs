@@ -30,6 +30,7 @@ import { fileURLToPath } from "node:url";
 import {
   writeFileSync,
   readFileSync,
+  readdirSync,
   unlinkSync,
   existsSync,
   mkdirSync,
@@ -43,6 +44,8 @@ const PROJECT_ROOT = resolve(process.cwd());
 const CONTROL_FILE = join(PROJECT_ROOT, "tmp", "dev-controller.json");
 const DASHBOARD_HTML = join(SCRIPT_DIR, "dev-dashboard.html");
 const UI_DIR = join(PROJECT_ROOT, "ui");
+const DEV_ROOT = resolve(PROJECT_ROOT, "..");
+const LIBS_DIR = join(DEV_ROOT, "libs");
 const VITE_PORT = 1420;
 const DASHBOARD_PORT = 3001;
 const PORT_TIMEOUT_MS = 15_000;
@@ -166,19 +169,21 @@ function startDashboardServer() {
       return;
     }
 
-    // Frontend console log forwarding endpoint (dev mode only).
-    // The frontend monkey-patches console.log/warn/error to POST here.
+    // Frontend logger forwarding endpoint (dev mode only).
+    // The SDK logger POSTs structured entries here via sendBeacon/fetch.
     if (req.method === "POST" && req.url === "/log") {
       let body = "";
       req.on("data", (chunk) => { body += chunk; });
       req.on("end", () => {
         try {
           const data = JSON.parse(body);
-          const source = "frontend";
-          const level = data.level || "log";
-          const text = `[${level}] ${data.message || ""}`;
+          // Use the logger's source tag if provided, fall back to "frontend"
+          const source = data.source || "frontend";
+          const level = data.level || "info";
+          const text = data.message || "";
           const isError = level === "error";
-          sseLog(source, text, isError);
+          // Broadcast to dashboard with source and level preserved
+          sseBroadcast("log", { source, text, error: isError, level });
           prefixLines(source, COLOURS.blue, text, isError);
         } catch {
           // Malformed JSON — ignore silently
@@ -548,6 +553,160 @@ async function start() {
   logSuccess(`Vite ready on http://localhost:${VITE_PORT}`);
   sseStatus(true, false);
 
+  // ── 1b. Start Library & Plugin Watchers ─────────────────────────────────
+  // Watch mode for all first-party packages — changes auto-rebuild to dist/
+  // and Vite picks them up via HMR. Production builds are separate (npm run build).
+  //
+  // Discovery: scans libs/, plugins/, connectors/ for package.json files with
+  // a "dev" script (preferred) or a "build" script (falls back to tsc --watch).
+  // Packages missing node_modules get `npm install` + npm link for @orqastudio/* deps.
+
+  const libWatchers = [];
+  const npxCmd = IS_WINDOWS ? "npx.cmd" : "npx";
+
+  /** Ensure a package has its dependencies installed and @orqastudio/* deps linked. */
+  function ensureDeps(dir, pkg) {
+    const hasDeps = pkg.dependencies || pkg.devDependencies;
+    if (!hasDeps) return;
+
+    const pkgName = pkg.name || dir;
+
+    const hasNodeModules = existsSync(join(dir, "node_modules"));
+    if (!hasNodeModules) {
+      logCtrl(`Installing deps for ${pkgName}...`);
+      try {
+        // Install non-@orqastudio deps (--ignore-scripts to avoid build loops)
+        execSync(`${npmCmd} install --ignore-scripts`, {
+          cwd: dir,
+          stdio: "pipe",
+          timeout: 60_000,
+          windowsHide: true,
+        });
+        logSuccess(`Deps installed for ${pkgName}`);
+      } catch (err) {
+        // Classify failure: if all missing packages are @orqastudio/* → info (expected, will link).
+        // If any non-@orqastudio package failed → error (real problem).
+        const stderr = err.stderr?.toString() || "";
+        const hasOrqaFailure = stderr.includes("@orqastudio/");
+        const hasNonOrqaFailure = stderr.split("\n").some((line) => {
+          // A 404 for a non-@orqastudio package, or a non-404 error
+          if (!line.includes("npm error")) return false;
+          if (line.includes("404") && !line.includes("@orqastudio/")) {
+            // Check if this 404 line references any package (not just a generic 404 message)
+            return /404.*(?:Not Found|does not exist)/.test(line) && !hasOrqaFailure;
+          }
+          // Non-404 errors that aren't about @orqastudio packages
+          return line.includes("ETARGET") || line.includes("ERESOLVE") ||
+            (line.includes("ERR!") && !line.includes("@orqastudio/"));
+        });
+
+        if (hasOrqaFailure && !hasNonOrqaFailure) {
+          logCtrl(`${pkgName}: @orqastudio deps not in registry — will link`);
+        } else if (hasNonOrqaFailure) {
+          // Extract the actual failing package name from stderr
+          const failingPkgs = stderr.match(/notarget.*?for\s+(\S+)/g) || [];
+          logError("ctrl", `${pkgName}: npm install failed for: ${failingPkgs.map((m) => m.replace(/.*for\s+/, "")).join(", ") || "unknown packages"}`);
+        }
+      }
+    }
+
+    // Link any @orqastudio/* dependencies
+    const allDeps = {
+      ...pkg.dependencies,
+      ...pkg.peerDependencies,
+      ...pkg.devDependencies,
+    };
+    const orqaDeps = Object.keys(allDeps).filter((d) => d.startsWith("@orqastudio/"));
+    if (orqaDeps.length > 0) {
+      try {
+        execSync(`${npmCmd} link ${orqaDeps.join(" ")}`, {
+          cwd: dir,
+          stdio: "pipe",
+          timeout: 30_000,
+          windowsHide: true,
+        });
+        logCtrl(`${pkgName}: linked ${orqaDeps.join(", ")}`);
+      } catch (err) {
+        const stderr = err.stderr?.toString() || "";
+        logError("ctrl", `${pkgName}: failed to link @orqastudio deps:\n  ${stderr.trim()}`);
+      }
+    }
+  }
+
+  function discoverWatchablePackages() {
+    const packages = [];
+    const searchDirs = [
+      join(DEV_ROOT, "libs"),
+      join(DEV_ROOT, "plugins"),
+      join(DEV_ROOT, "connectors"),
+    ];
+
+    for (const searchDir of searchDirs) {
+      if (!existsSync(searchDir)) continue;
+      let entries;
+      try {
+        entries = readdirSync(searchDir, { withFileTypes: true });
+      } catch { continue; }
+
+      for (const entry of entries) {
+        if (!entry.isDirectory()) continue;
+        const pkgPath = join(searchDir, entry.name, "package.json");
+        if (!existsSync(pkgPath)) continue;
+
+        try {
+          const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
+          const scripts = pkg.scripts || {};
+          const dir = join(searchDir, entry.name);
+          const shortName = entry.name;
+
+          // Ensure dependencies are installed before starting watcher
+          ensureDeps(dir, pkg);
+
+          // Use the dev script ONLY if it's a watch command (contains --watch).
+          // Scripts like "vite dev" start a dev server — not what we want.
+          if (scripts.dev && scripts.dev.includes("--watch")) {
+            packages.push({ name: shortName, dir, cmd: npmCmd, args: ["run", "dev"] });
+          } else if (scripts.build) {
+            // Infer watch mode from build script
+            const build = scripts.build;
+            if (build.includes("svelte-package")) {
+              packages.push({
+                name: shortName, dir, cmd: npxCmd,
+                args: ["svelte-package", "-i", "src", "-o", "dist", "--watch", "--preserve-output"],
+              });
+            } else if (build.includes("tsc") && existsSync(join(dir, "tsconfig.json"))) {
+              packages.push({
+                name: shortName, dir, cmd: npxCmd,
+                args: ["tsc", "--watch", "--preserveWatchOutput"],
+              });
+            } else if (build.includes("vite build")) {
+              packages.push({
+                name: shortName, dir, cmd: npxCmd,
+                args: ["vite", "build", "--watch"],
+              });
+            }
+          }
+        } catch { continue; }
+      }
+    }
+
+    return packages;
+  }
+
+  const watchablePackages = discoverWatchablePackages();
+
+  for (const pkg of watchablePackages) {
+    const watcher = new ChildProcess(pkg.name, COLOURS.green);
+    watcher.spawn(pkg.cmd, pkg.args, { cwd: pkg.dir });
+    libWatchers.push(watcher);
+  }
+
+  if (watchablePackages.length > 0) {
+    logSuccess(
+      `Library watchers started: ${watchablePackages.map((p) => p.name).join(", ")}`,
+    );
+  }
+
   // ── 2. Build + Run Rust ────────────────────────────────────────────────
 
   let rust = null;
@@ -590,6 +749,7 @@ async function start() {
       if (code === 0 || code === null) {
         logCtrl("App window closed. Shutting down controller...");
         sseStatus(false, false);
+        for (const w of libWatchers) w.kill();
         vite.kill();
         unwatchFile(SIGNAL_FILE);
         if (dashboardServer) dashboardServer.close();
@@ -686,6 +846,7 @@ async function start() {
       logCtrl("Stop signal received — shutting down...");
       sseStatus(false, false);
       rust?.kill();
+      for (const w of libWatchers) w.kill();
       vite.kill();
       removeControlFile();
       try {
@@ -726,6 +887,7 @@ async function start() {
     sseStatus(false, false);
     unwatchFile(SIGNAL_FILE);
     rust?.kill();
+    for (const w of libWatchers) w.kill();
     vite.kill();
     if (dashboardServer) dashboardServer.close();
     removeControlFile();
