@@ -5,6 +5,14 @@
   "description": "Base Rust development infrastructure — clippy, rustfmt, cargo test configuration and coding standards enforcement.",
   "category": "coding-standards",
   "provides": {
+    "lspServers": {
+      "rust": {
+        "command": "rust-analyzer",
+        "extensionToLanguage": {
+          ".rs": "rust"
+        }
+      }
+    },
     "skills": [
       { "key": "clippy-config-management", "id": "SKILL-RST-5efa83a5", "label": "Clippy Config Management" },
       { "key": "rust-testing-patterns", "id": "SKILL-RST-214b7cdc", "label": "Rust Testing Patterns" },
