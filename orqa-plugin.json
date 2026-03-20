@@ -5,12 +5,12 @@
   "description": "Tauri v2 desktop application patterns — extends the Rust plugin with Tauri-specific configuration, IPC patterns, and build settings.",
   "extends": ["@orqastudio/plugin-rust"],
   "provides": {
-    "skills": [
-      { "key": "tauri-patterns", "id": "SKILL-TAU-de97219c", "label": "Tauri v2 Patterns" },
-      { "key": "tauri-installation", "id": "SKILL-TAU-6f7f4da5", "label": "Tauri Plugin Installation" },
-      { "key": "tauri-v2", "id": "SKILL-45b6ea05", "label": "Tauri v2 Development" },
-      { "key": "tauri-v2-capabilities-reference", "id": "SKILL-a5434b61", "label": "Tauri v2 Capabilities Reference" },
-      { "key": "tauri-v2-ipc-patterns", "id": "SKILL-2539a6e4", "label": "Tauri v2 IPC Patterns Reference" }
+    "knowledge": [
+      { "key": "tauri-patterns", "id": "KNOW-TAU-de97219c", "label": "Tauri v2 Patterns" },
+      { "key": "tauri-installation", "id": "KNOW-TAU-6f7f4da5", "label": "Tauri Plugin Installation" },
+      { "key": "tauri-v2", "id": "KNOW-45b6ea05", "label": "Tauri v2 Development" },
+      { "key": "tauri-v2-capabilities-reference", "id": "KNOW-a5434b61", "label": "Tauri v2 Capabilities Reference" },
+      { "key": "tauri-v2-ipc-patterns", "id": "KNOW-2539a6e4", "label": "Tauri v2 IPC Patterns Reference" }
     ]
   }
 }

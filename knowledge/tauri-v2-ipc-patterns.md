@@ -1,6 +1,6 @@
 ---
-id: SKILL-2539a6e4
-type: skill
+id: KNOW-2539a6e4
+type: knowledge
 title: Tauri v2 IPC Patterns Reference
 status: active
 created: 2026-03-20

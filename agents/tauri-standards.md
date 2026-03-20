@@ -12,7 +12,7 @@ capabilities:
   - content_search
   - shell_execute
 relationships:
-  - target: SKILL-TAU-de97219c
+  - target: KNOW-TAU-de97219c
     type: employs
 ---
 

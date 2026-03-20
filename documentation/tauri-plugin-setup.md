@@ -6,9 +6,9 @@ category: onboarding
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
-  - target: SKILL-2539a6e4
+  - target: KNOW-2539a6e4
     type: synchronised-with
-  - target: SKILL-TAU-6f7f4da5
+  - target: KNOW-TAU-6f7f4da5
     type: synchronised-with
 ---
 

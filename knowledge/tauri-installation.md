@@ -1,6 +1,6 @@
 ---
-id: SKILL-TAU-6f7f4da5
-type: skill
+id: KNOW-TAU-6f7f4da5
+type: knowledge
 name: Tauri Plugin Installation
 status: active
 plugin: "@orqastudio/plugin-tauri"

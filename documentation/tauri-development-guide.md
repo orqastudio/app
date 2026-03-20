@@ -6,15 +6,15 @@ category: how-to
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
-  - target: SKILL-TAU-de97219c
+  - target: KNOW-TAU-de97219c
     type: synchronised-with
-  - target: SKILL-TAU-6f7f4da5
+  - target: KNOW-TAU-6f7f4da5
     type: synchronised-with
-  - target: SKILL-a5434b61
+  - target: KNOW-a5434b61
     type: synchronised-with
-  - target: SKILL-c323ec5f
+  - target: KNOW-c323ec5f
     type: synchronised-with
-  - target: SKILL-2539a6e4
+  - target: KNOW-2539a6e4
     type: synchronised-with
 ---
 

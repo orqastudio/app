@@ -1,6 +1,6 @@
 ---
-id: SKILL-TAU-de97219c
-type: skill
+id: KNOW-TAU-de97219c
+type: knowledge
 name: Tauri v2 Patterns
 status: active
 plugin: "@orqastudio/plugin-tauri"
