@@ -1,14 +1,14 @@
 ---
 id: EPIC-0b01f993
 type: epic
-title: "Dev environment overhaul — library watchers, auto-install, CLI dev commands"
+title: Dev environment overhaul — library watchers, auto-install, CLI dev commands
 description: "Overhauled the dev environment: added library watchers in dev controller for automatic rebuilds, auto-install dependencies on dev start, created `orqa dev icons` command for brand icon pipeline, added `getRoot()` for CLI root resolution. Streamlined the inner-loop development experience."
 status: completed
 created: 2026-03-19
 milestone: MS-654badde
 relationships:
   - target: MS-654badde
-    type: delivers
+    type: fulfils
 ---
 
 # EPIC-0b01f993: Dev Environment Overhaul

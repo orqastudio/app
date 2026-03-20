@@ -1,14 +1,14 @@
 ---
 id: EPIC-063f117b
 type: epic
-title: "GitHub Packages CI/CD pipeline — all 7 packages publishing"
-description: "Established CI/CD pipeline for all 7 OrqaStudio npm packages via GitHub Packages. SHA-based versioning, npm ci for reproducible installs, caret dependencies for flexibility. All packages publish on push to main."
+title: GitHub Packages CI/CD pipeline — all 7 packages publishing
+description: Established CI/CD pipeline for all 7 OrqaStudio npm packages via GitHub Packages. SHA-based versioning, npm ci for reproducible installs, caret dependencies for flexibility. All packages publish on push to main.
 status: completed
 created: 2026-03-19
 milestone: MS-654badde
 relationships:
   - target: MS-654badde
-    type: delivers
+    type: fulfils
 ---
 
 # EPIC-063f117b: GitHub Packages CI/CD Pipeline

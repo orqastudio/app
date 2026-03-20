@@ -1,16 +1,14 @@
 ---
 id: EPIC-5edafb59
 type: epic
-title: "Claude Code connector switch — clear state, register plugin, verify governance"
-description: "The actual switch to the Claude Code connector plugin. Clears stale symlinks and session state, registers the plugin in Claude Code settings, resets auto-memory, verifies hooks/agents/skills/MCP all work end-to-end, and runs a first governed session to confirm the system is production-ready."
+title: Claude Code connector switch — clear state, register plugin, verify governance
+description: The actual switch to the Claude Code connector plugin. Clears stale symlinks and session state, registers the plugin in Claude Code settings, resets auto-memory, verifies hooks/agents/skills/MCP all work end-to-end, and runs a first governed session to confirm the system is production-ready.
 status: captured
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
   - target: MS-654badde
     type: fulfils
-  - target: EPIC-cdb03816
-    type: depends-on
   - target: TASK-c6dd7927
     type: delivered-by
   - target: TASK-60598b3d

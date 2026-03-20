@@ -1,17 +1,14 @@
 ---
 id: IDEA-9c58fbb6
 type: idea
-title: "Git as a plugin — centralised githooks enforcement across organisation repos"
-description: "Git integration as a first-party plugin that sets up git and githooks, enforcing consistent quality checks across all repos in an organisation. Ships enabled by default with the app. Acts as the central source of truth for githooks config. Disabling shows a user warning that version history and enforcement of artifact data integrity will be lost."
+title: Git as a plugin — centralised githooks enforcement across organisation repos
+description: Git integration as a first-party plugin that sets up git and githooks, enforcing consistent quality checks across all repos in an organisation. Ships enabled by default with the app. Acts as the central source of truth for githooks config. Disabling shows a user warning that version history and enforcement of artifact data integrity will be lost.
 status: captured
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
-  - target: MS-654badde
-    type: grounded-by
   - target: PILLAR-569581e0
     type: grounded
----
   - target: PERSONA-cda6edd6
     type: benefits
 ---

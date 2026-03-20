@@ -1,17 +1,14 @@
 ---
 id: IDEA-c48df450
 type: idea
-title: "Production ONNX model download — first-run installer for embedding models"
-description: "The ONNX embedding model (BGE-small-en) is too large to bundle with the app. Production environments need a first-run download flow that fetches the model on install, with progress indication, retry logic, and offline fallback."
+title: Production ONNX model download — first-run installer for embedding models
+description: The ONNX embedding model (BGE-small-en) is too large to bundle with the app. Production environments need a first-run download flow that fetches the model on install, with progress indication, retry logic, and offline fallback.
 status: captured
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
   - target: PILLAR-569581e0
     type: grounded
-  - target: MS-654badde
-    type: grounded-by
----
   - target: PERSONA-cda6edd6
     type: benefits
 ---

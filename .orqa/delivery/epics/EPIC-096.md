@@ -21,8 +21,6 @@ relationships:
     type: delivered-by
   - target: TASK-52a123bd
     type: delivered-by
-  - target: EPIC-5edafb59
-    type: depended-on-by
 ---
 
 # EPIC-cdb03816: Pre-Connector Switch — System Architecture

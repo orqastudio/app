@@ -1,10 +1,14 @@
 ---
 id: IDEA-012914dd
 type: idea
-title: "App-wide centralized logging"
+title: App-wide centralized logging
 status: captured
 created: 2026-03-19
-relationships: []
+relationships:
+  - target: PERSONA-cda6edd6
+    type: benefits
+  - target: PILLAR-569581e0
+    type: grounded
 ---
 
 # App-Wide Centralized Logging

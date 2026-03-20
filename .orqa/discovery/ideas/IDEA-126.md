@@ -1,10 +1,14 @@
 ---
 id: IDEA-bfef0e8a
 type: idea
-title: "Claude Code connector comprehensive review"
+title: Claude Code connector comprehensive review
 status: captured
 created: 2026-03-19
-relationships: []
+relationships:
+  - target: PERSONA-cda6edd6
+    type: benefits
+  - target: PILLAR-569581e0
+    type: grounded
 ---
 
 # Claude Code Connector Comprehensive Review

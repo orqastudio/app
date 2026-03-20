@@ -212,6 +212,10 @@ relationships:
     type: grounded-by
   - target: IDEA-c48df450
     type: grounded-by
+  - target: IDEA-012914dd
+    type: grounded-by
+  - target: IDEA-bfef0e8a
+    type: grounded-by
 ---
 ## What This Pillar Means
 

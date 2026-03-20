@@ -1,17 +1,14 @@
 ---
 id: IDEA-66d2cbeb
 type: idea
-title: "Native ONNX embeddings server — hardware-accelerated search + pre-processing MCP service"
-description: "A persistent ONNX embeddings server running on best available hardware (NPU → DirectML GPU → CUDA → CPU). Exposed as MCP tools for search, skill matching, and code_research. Pre-processes artifacts on save for instant semantic queries. Replaces ChunkHound dependency. Enables smarter orchestrator delegation via semantic skill matching."
+title: Native ONNX embeddings server — hardware-accelerated search + pre-processing MCP service
+description: A persistent ONNX embeddings server running on best available hardware (NPU → DirectML GPU → CUDA → CPU). Exposed as MCP tools for search, skill matching, and code_research. Pre-processes artifacts on save for instant semantic queries. Replaces ChunkHound dependency. Enables smarter orchestrator delegation via semantic skill matching.
 status: captured
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
   - target: PILLAR-569581e0
     type: grounded
-  - target: MS-654badde
-    type: grounded-by
----
   - target: PERSONA-cda6edd6
     type: benefits
 ---

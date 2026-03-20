@@ -1,7 +1,7 @@
 ---
 id: PERSONA-cda6edd6
-title: "Alex — The Lead"
-description: "Senior product manager or tech lead who turns ambiguity into clarity. Uses AI as a thinking partner for structured reasoning and governance."
+title: Alex — The Lead
+description: Senior product manager or tech lead who turns ambiguity into clarity. Uses AI as a thinking partner for structured reasoning and governance.
 status: active
 created: 2026-03-07
 updated: 2026-03-18
@@ -159,6 +159,20 @@ relationships:
   - target: IDEA-b1953a83
     type: benefited-by
   - target: IDEA-50f18707
+    type: benefited-by
+  - target: IDEA-012914dd
+    type: benefited-by
+  - target: IDEA-bfef0e8a
+    type: benefited-by
+  - target: IDEA-9c58fbb6
+    type: benefited-by
+  - target: IDEA-37a23ec0
+    type: benefited-by
+  - target: IDEA-1be10a72
+    type: benefited-by
+  - target: IDEA-66d2cbeb
+    type: benefited-by
+  - target: IDEA-c48df450
     type: benefited-by
 ---
 
