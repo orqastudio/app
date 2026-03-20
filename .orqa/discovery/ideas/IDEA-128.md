@@ -10,6 +10,9 @@ relationships:
   - target: PILLAR-569581e0
     type: grounded
 ---
+  - target: PERSONA-cda6edd6
+    type: benefits
+---
 
 # IDEA-37a23ec0: skills.sh Compatibility Plugin
 

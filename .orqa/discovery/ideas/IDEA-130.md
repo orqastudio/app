@@ -12,6 +12,9 @@ relationships:
   - target: MS-654badde
     type: grounded-by
 ---
+  - target: PERSONA-cda6edd6
+    type: benefits
+---
 
 # IDEA-66d2cbeb: Native ONNX Embeddings Server
 

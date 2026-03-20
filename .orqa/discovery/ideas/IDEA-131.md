@@ -12,6 +12,9 @@ relationships:
   - target: MS-654badde
     type: grounded-by
 ---
+  - target: PERSONA-cda6edd6
+    type: benefits
+---
 
 # IDEA-c48df450: Production Model Download
 

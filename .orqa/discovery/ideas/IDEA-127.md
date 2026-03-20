@@ -12,6 +12,9 @@ relationships:
   - target: PILLAR-569581e0
     type: grounded
 ---
+  - target: PERSONA-cda6edd6
+    type: benefits
+---
 
 # IDEA-9c58fbb6: Git as a Plugin
 

@@ -12,6 +12,9 @@ relationships:
   - target: MS-654badde
     type: grounded-by
 ---
+  - target: PERSONA-cda6edd6
+    type: benefits
+---
 
 # IDEA-1be10a72: Session Management Framework
 
