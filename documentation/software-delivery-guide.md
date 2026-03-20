@@ -7,7 +7,8 @@ status: active
 plugin: "@orqastudio/plugin-software-project"
 relationships:
   - target: SKILL-SW-1d47d8d8
-    type: synchronised-with  - target: SKILL-f0efaf83
+    type: synchronised-with
+  - target: SKILL-f0efaf83
     type: synchronised-with
   - target: SKILL-353a228b
     type: synchronised-with
