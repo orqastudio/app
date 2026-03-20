@@ -6,7 +6,8 @@ status: active
 plugin: "@orqastudio/plugin-tauri"
 relationships:
   - target: DOC-TAU-d0237b23
-    type: synchronised-with  - target: DOC-TAU-d9c0d1c7
+    type: synchronised-with
+  - target: DOC-TAU-d9c0d1c7
     type: synchronised-with
 
 ---
