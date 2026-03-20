@@ -17,7 +17,7 @@ capabilities:
   - code_research
   - shell_execute
 relationships:
-  - target: SKILL-1c5e752e
+  - target: SKILL-a2b3c4d5
     type: employs
   - target: SKILL-f0c40eaf
     type: employs

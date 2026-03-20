@@ -14,8 +14,6 @@ relationships:
     type: synchronised-with
   - target: SKILL-449b1e02
     type: synchronised-with
-  - target: SKILL-6d221be6
-    type: synchronised-with
   - target: SKILL-f0c40eaf
     type: synchronised-with
   - target: SKILL-f5edb34d
@@ -118,5 +116,5 @@ These skills ship with the OrqaStudio platform and are available to all agents. 
 
 | Skill | Description |
 |---|---|
-| `chunkhound` | ChunkHound MCP tool usage and query patterns |
-| `orqa-code-search` | Context-aware code search wrapper (CLI vs App) |
+| `search` | Unified search — regex, semantic, and compound research queries |
+
