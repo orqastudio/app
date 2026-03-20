@@ -158,6 +158,9 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 
     start_sidecar(&app_state, &tracker);
 
+    // Start IPC socket server for CLI ↔ App communication (orqa mcp / orqa lsp)
+    servers::ipc_socket::start(None);
+
     app.manage(app_state);
 
     let model_dir = app_dir.join("models").join("bge-small-en-v1.5");
