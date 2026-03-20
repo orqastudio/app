@@ -1,0 +1,45 @@
+[package]
+name = "orqa-search"
+version = "0.1.0-dev"
+edition = "2021"
+description = "ONNX-based code search engine for OrqaStudio"
+
+[lib]
+name = "orqa_search"
+path = "src/lib.rs"
+
+[[bin]]
+name = "orqa-search-server"
+path = "src/bin/server.rs"
+
+[dependencies]
+thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt", "json"] }
+tokio = { version = "1", features = ["full"] }
+duckdb = { version = "1", features = ["bundled"] }
+ignore = "0.4"
+regex = "1"
+ort = { version = "2.0.0-rc.11", features = ["directml", "ndarray"] }
+tokenizers = { version = "0.21", default-features = false, features = ["onig"] }
+ndarray = "0.17"
+reqwest = { version = "0.12", features = ["stream", "json"] }
+futures-util = "0.3"
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+doc_markdown = "allow"
+cast_possible_truncation = "allow"
+cast_sign_loss = "allow"
+cast_precision_loss = "allow"
+cast_lossless = "allow"
+cast_possible_wrap = "allow"
