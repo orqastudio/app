@@ -12,7 +12,8 @@ relationships:
     type: synchronised-with
   - target: SKILL-12495e28
     type: synchronised-with
-
+  - target: SKILL-RST-2a72f929
+    type: synchronised-with
 ---
 
 # Rust Development Guide
