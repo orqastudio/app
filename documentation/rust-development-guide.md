@@ -9,7 +9,8 @@ relationships:
   - target: SKILL-RST-5efa83a5
     type: synchronised-with
   - target: SKILL-RST-214b7cdc
-    type: synchronised-with  - target: SKILL-12495e28
+    type: synchronised-with
+  - target: SKILL-12495e28
     type: synchronised-with
 
 ---
