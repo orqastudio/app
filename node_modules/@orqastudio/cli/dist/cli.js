@@ -16,6 +16,8 @@
 import { runPluginCommand } from "./commands/plugin.js";
 import { runValidateCommand } from "./commands/validate.js";
 import { runIdCommand } from "./commands/id.js";
+import { runMcpCommand } from "./commands/mcp.js";
+import { runLspCommand } from "./commands/lsp.js";
 import { runDebugCommand } from "./commands/debug.js";
 import { runGraphCommand } from "./commands/graph.js";
 import { runVersionCommand } from "./commands/version.js";
@@ -38,6 +40,8 @@ Commands:
   test        Run test suites (rust, app)
   validate    Integrity validation only (--fix to auto-fix)
   id          Artifact ID management (generate, check, migrate)
+  mcp         Start MCP server (connects to running app or spawns direct)
+  lsp         Start LSP server (connects to running app or spawns direct)
   plugin      Plugin management (install, uninstall, list, update, registry, create)
   graph       Browse the artifact graph
   version     Version management (sync, bump, check, show)
@@ -83,6 +87,12 @@ async function main() {
             break;
         case "id":
             await runIdCommand(commandArgs);
+            break;
+        case "mcp":
+            await runMcpCommand(commandArgs);
+            break;
+        case "lsp":
+            await runLspCommand(commandArgs);
             break;
         case "plugin":
             await runPluginCommand(commandArgs);
