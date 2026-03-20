@@ -16,6 +16,10 @@
     }
   },
   "provides": {
+    "agents": [
+      { "key": "svelte-standards", "path": "agents/svelte-standards.md" },
+      { "key": "svelte-specialist", "path": "agents/svelte-specialist.md" }
+    ],
     "schemas": [],
     "views": [],
     "widgets": [],
