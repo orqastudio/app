@@ -58,3 +58,12 @@
 [submodule "plugins/coding-standards"]
 	path = plugins/coding-standards
 	url = git@github.com:orqastudio/orqastudio-plugin-coding-standards.git
+[submodule "libs/search"]
+	path = libs/search
+	url = git@github.com:orqastudio/orqastudio-lib-search.git
+[submodule "libs/mcp-server"]
+	path = libs/mcp-server
+	url = git@github.com:orqastudio/orqastudio-lib-mcp-server.git
+[submodule "libs/lsp-server"]
+	path = libs/lsp-server
+	url = git@github.com:orqastudio/orqastudio-lib-lsp-server.git

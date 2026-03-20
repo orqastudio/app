@@ -1,9 +1,9 @@
 ---
 id: EPIC-8d2e4f6a
 type: epic
-title: "Connector architecture v2: dev processes, graph-first enforcement, plugin specialists"
-description: Improve connector reliability and agent performance by separating MCP/ONNX/LSP into independent dev processes, leveraging existing platform capabilities instead of duplicating them in hooks, enforcing artifact graph usage, enabling plugin-provided specialist agents, and adding knowledge bundles, hook telemetry, and bash safety checks.
-status: ready
+title: "Connector architecture v2: service extraction, semantic knowledge injection, graph-first enforcement"
+description: Extract MCP/LSP/ONNX into standalone libraries that run independently in dev mode. Replace keyword-based INTENT_MAP with semantic search for knowledge injection. Enforce artifact graph usage. Enable plugin specialist agents. Add hook telemetry and bash safety.
+status: active
 created: 2026-03-20
 updated: 2026-03-20
 relationships:
@@ -13,55 +13,85 @@ relationships:
     type: driven-by
 ---
 
-# EPIC-099: Connector Architecture v2 — Dev Processes, Graph-First Enforcement, Plugin Specialists
+# EPIC-099: Connector Architecture v2 — Service Extraction, Semantic Knowledge Injection, Graph-First Enforcement
 
 ## Problem
 
-OrqaStudio's MCP server exposes 10 tools and the LSP server validates artifact integrity — but neither is usable from Claude Code because they aren't running as independent managed processes. Hook scripts duplicate work the LSP already does. 50% of knowledge files are unreachable via INTENT_MAP. ChunkHound references remain throughout the codebase despite native ONNX search being the only supported implementation. Hook execution is silent with no telemetry. No bash safety hook exists.
+OrqaStudio's MCP server (10 tools), LSP server (artifact validation), and ONNX search engine (semantic + regex) are all embedded inside the Tauri app binary. In dev mode, none of these services are available until the app compiles — which means Claude Code can't use graph queries, semantic search, or artifact validation to help build the app itself. This is a critical dogfooding gap.
+
+Additionally, knowledge injection relies on a hand-maintained INTENT_MAP of keyword→knowledge mappings. This is fragile, incomplete (only covered 12 of 46 files before expansion), and fundamentally the wrong approach when we already have a semantic search engine that can determine relevance automatically.
 
 ## Design
 
-See AD-061 for the full architecture decision.
+See AD-061 for the architecture decision.
 
-### Phase 1 — Dev Process Infrastructure (unblocks everything else)
+### Phase 1 — Service Extraction (unblocks everything else)
 
-1. **MCP server as managed process**: Add MCP server startup to the dev controller. Fix install-time `.mcp.json` registration so Claude Code discovers the server automatically on `orqa install`.
-2. **ONNX search engine initialization**: Move ONNX search engine startup from lazy app-internal to dev controller concern. The search engine runs as a stable process Claude Code can reach.
-3. **LSP server as managed process**: Add LSP server startup to the dev controller. Advertise socket path to hook scripts so they can delegate validation calls.
-4. **MCP tool surface verification**: After fixing `.mcp.json` and process startup, verify all 10 MCP tools appear in Claude Code's tool list (`graph_query`, `search_semantic`, `search_regex`, `code_research`, and the 6 additional graph tools).
-5. **Hook telemetry**: Implement structured event logging for every hook execution. Events stream to dev controller output: hook name, trigger, files affected, outcome, duration.
-6. **Remove ChunkHound references**: Audit and remove all ChunkHound references from CLAUDE.md, rules, hook scripts, documentation, and agent prompts. Replace with native search tool names.
+Extract three services from the Tauri app into standalone Rust crate libraries:
 
-### Phase 2 — Leverage Existing Capabilities
+| Library | Current Location | Standalone Binary | App Integration |
+|---------|-----------------|-------------------|-----------------|
+| `libs/search` | `backend/src-tauri/src/search/` | `cargo run -p orqa-search-server` | Compiled into app as dependency |
+| `libs/mcp-server` | `backend/src-tauri/src/servers/mcp.rs` | `cargo run -p orqa-mcp-server` | Compiled into app as dependency |
+| `libs/lsp-server` | `backend/src-tauri/src/servers/lsp.rs` | `cargo run -p orqa-lsp-server` | Compiled into app as dependency |
 
-1. **Replace validate-artifact.mjs**: Rewrite as a thin adapter over LSP calls. Remove all YAML parsing and file-system inspection logic. The LSP provides the validation; the hook script reports the result.
-2. **Expand INTENT_MAP**: Cover all 26+ knowledge files currently installed across plugins. Map intent keywords to knowledge bundle names (not individual files).
-3. **Knowledge bundles**: Define named knowledge bundles in plugin manifests (`provides.knowledge_bundles`). Each bundle groups related knowledge files under a domain tag. Update orchestrator delegation to inject bundles instead of individual files.
-4. **Bash safety PostToolUse hook**: Implement a `PostToolUse` hook on Bash tool calls. Intercept: `--no-verify` on git, `rm -rf` without scoped path, `sudo`, force push to main/master, `make kill`/`make stop` without user approval. Warn and request confirmation.
-5. **Plugin specialist agent pattern**: Define `provides.agents` in plugin manifests. A specialist agent specifies a base core agent, additional knowledge bundle references, and domain-specific prompt additions. Orchestrator resolves specialists at delegation time.
+Each becomes a Rust workspace member with its own `Cargo.toml`. In production, the app imports them as library crates. In dev mode, the dev controller spawns them as standalone processes — available before the app compiles.
 
-### Phase 3 — Graph-First Enforcement
+1. **Extract search engine** into `libs/search` crate — ONNX embedder, DuckDB store, chunker, regex/semantic search
+2. **Extract MCP server** into `libs/mcp-server` crate — graph query, search tools, artifact resolution. Depends on search crate.
+3. **Extract LSP server** into `libs/lsp-server` crate — frontmatter validation, relationship verification, status checks
+4. **Dev controller integration** — spawn all three as managed processes alongside Vite/Tauri. Log to controller dashboard. Support individual restart.
+5. **Verify MCP tools surface in Claude Code** — after extraction, confirm all tools appear in the deferred tools list
 
-1. **Mandatory graph_query in orchestrator flow**: Update orchestrator delegation prompt to require `graph_query` before any task breakdown. The task's relationships (epic, milestone, dependencies) must be loaded before planning begins.
-2. **search_semantic in delegation flow**: Add `search_semantic` as a required step in the orchestrator's pre-delegation checklist. Find similar prior work (tasks, decisions, lessons) before starting new work.
-3. **Capability-to-tool mapping artifact**: Create a knowledge artifact documenting which MCP tool to use for which governance operation (artifact lookup, relationship traversal, semantic search, code search).
-4. **Hook execution semantics documentation**: Document when hooks run, what they check, how they signal outcomes, and how to add new hooks. This is the missing contract for plugin authors adding hooks.
+### Phase 2 — Semantic Knowledge Injection
+
+Replace the keyword-based INTENT_MAP with semantic search against the knowledge corpus:
+
+1. **Semantic injection in prompt-injector** — on UserPromptSubmit, embed the user's prompt via the ONNX search engine, search against knowledge files (scope: artifacts), inject top-N relevant matches. No keywords, no maintenance. New knowledge files are automatically discoverable.
+2. **Remove INTENT_MAP** — the keyword mapping becomes unnecessary once semantic injection works. Remove it and the associated maintenance burden.
+3. **Knowledge bundles** (optional optimisation) — if semantic search returns closely related files (e.g., store-patterns + store-orchestration), inject them as a coherent bundle with cross-references. May emerge naturally from semantic similarity.
+4. **Replace validate-artifact.mjs** with LSP/MCP calls — the LSP already validates schema, relationships, and status. The hook becomes a thin adapter.
+
+### Phase 3 — Enforcement and Agents
+
+1. **Graph-first enforcement** — enforce agents query graph_query before writing/editing .orqa/ artifacts. PreToolUse check: verify graph context was loaded before artifact modification.
+2. **Semantic search in delegation** — orchestrator uses search_semantic as standard pre-delegation step. Find similar prior work before starting new tasks.
+3. **Plugin specialist agents** — plugins provide specialist agents via `provides.agents` in manifest. Core agents stay generic. Specialists have specialised system prompts and domain knowledge. Connector install symlinks them alongside core agents.
+4. **Hook telemetry** — structured logging for every hook execution. Events stream to dev controller: hook name, trigger, outcome, duration.
+5. **Hook execution semantics docs** — document ordering, error handling, result merging, hook-to-rule mapping.
+
+### Already Complete
+
+- ChunkHound purge (all references removed from active files)
+- INTENT_MAP expanded to 47 entries covering all 46 knowledge files (temporary bridge until semantic injection)
+- Bash safety PostToolUse hook (14 rules: blocks force push, --no-verify, rm -rf, sudo, eval; warns on force-with-lease, branch -D, DROP TABLE)
 
 ## Acceptance Criteria
 
-- [ ] MCP server running as independent process, accessible from Claude Code — `graph_query` works without manual server startup
-- [ ] `search_semantic` works from CLI via `orqa mcp` or directly through Claude Code's MCP tool list
-- [ ] Zero ChunkHound references in codebase (grep for "chunkhound" returns nothing)
-- [ ] Hook telemetry visible in dev controller output — at minimum: hook name, outcome, duration per execution
-- [ ] Bash safety hook blocks `--no-verify`, `rm -rf` (unscoped), `sudo`, force push to main, and `make kill`/`make stop` without confirmation
-- [ ] All 26+ knowledge files reachable via INTENT_MAP (either directly or via bundles)
-- [ ] At least 2 plugins provide specialist agents via `provides.agents` in their manifests
-- [ ] `validate-artifact.mjs` delegates to LSP/MCP instead of parsing YAML directly — no file-system inspection logic in the hook script
+- [ ] Search engine runs as standalone process in dev mode (`cargo run -p orqa-search-server`)
+- [ ] MCP server runs as standalone process in dev mode (`cargo run -p orqa-mcp-server`)
+- [ ] LSP server runs as standalone process in dev mode (`cargo run -p orqa-lsp-server`)
+- [ ] All three packaged into Tauri app in production build (library crate dependencies)
+- [ ] Dev controller spawns and manages all three processes
+- [ ] MCP tools (graph_query, search_semantic, etc.) available in Claude Code without app running
+- [ ] Knowledge injection uses semantic search instead of INTENT_MAP
+- [ ] INTENT_MAP removed from prompt-injector
+- [ ] validate-artifact.mjs delegates to LSP instead of file-system parsing
+- [ ] At least 2 plugins provide specialist agents via `provides.agents`
+- [ ] Hook telemetry visible in dev controller output
+- [ ] Hook execution semantics documented
 - [ ] `make check` passes after all changes
 
 ## Risks
 
-- Dev controller process management: adding three new managed processes increases startup complexity and failure surface
-- LSP socket stability: hooks calling the LSP depend on the LSP being up; need graceful degradation if LSP is not running
-- Knowledge bundle migration: existing orchestrator delegation logic references individual knowledge files; migration to bundles must not regress injection quality
-- ChunkHound removal: some rules reference ChunkHound for search guidance; replacement text must be accurate and complete
+- Crate extraction: shared types between search/MCP/LSP need careful interface design
+- ONNX model availability: standalone search needs model path resolution outside the app's data directory
+- Semantic injection quality: depends on embedding model quality for short prompts against knowledge file content
+- Dev controller complexity: 5 managed processes (Vite, Tauri, MCP, LSP, Search) increases startup surface
+- Knowledge injection latency: semantic search adds ~100-500ms per prompt vs instant keyword matching
+
+## Dependencies
+
+- ONNX model (BGE-small-en-v1.5) must be available in dev environment
+- Rust workspace must support multiple binary crates
+- Dev controller must handle process dependencies (search must start before MCP)
