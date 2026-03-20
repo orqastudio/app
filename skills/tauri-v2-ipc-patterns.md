@@ -1,3 +1,15 @@
+---
+id: SKILL-2539a6e4
+type: skill
+title: "Tauri v2 IPC Patterns Reference"
+status: active
+created: 2026-03-20
+updated: 2026-03-20
+relationships:
+  - target: DOC-TAU-d9c0d1c7
+    type: synchronised-with
+---
+
 # Tauri v2 IPC Patterns Reference
 
 ## Overview

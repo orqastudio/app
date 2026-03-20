@@ -1,3 +1,15 @@
+---
+id: SKILL-a5434b61
+type: skill
+title: "Tauri v2 Capabilities & Permissions Reference"
+status: active
+created: 2026-03-20
+updated: 2026-03-20
+relationships:
+  - target: DOC-TAU-d9c0d1c7
+    type: synchronised-with
+---
+
 # Tauri v2 Capabilities & Permissions Reference
 
 ## Overview

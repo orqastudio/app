@@ -10,7 +10,7 @@ relationships:
     type: synchronised-with
   - target: SKILL-TAU-6f7f4da5
     type: synchronised-with
-  - target: SKILL-TAU-003
+  - target: SKILL-a5434b61
     type: synchronised-with
   - target: SKILL-c323ec5f
     type: synchronised-with

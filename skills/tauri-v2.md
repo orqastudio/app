@@ -7,11 +7,9 @@ created: 2026-03-01
 updated: 2026-03-10
 category: domain
 user-invocable: false
-relationships: []
 relationships:
   - target: DOC-TAU-d9c0d1c7
     type: synchronised-with
-
 ---
 > Build cross-platform desktop and mobile apps with web frontends and Rust backends.
 

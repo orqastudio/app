@@ -6,7 +6,7 @@ category: onboarding
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
-  - target: SKILL-TAU-004
+  - target: SKILL-2539a6e4
     type: synchronised-with
 ---
 
