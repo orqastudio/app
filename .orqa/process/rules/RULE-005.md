@@ -1,7 +1,7 @@
 ---
 id: RULE-5e03e67b
 title: Code Search Usage
-description: Prefer semantic search over Grep/Glob for multi-file searches. Load the correct search skill for your context.
+description: Prefer semantic search over Grep/Glob for multi-file searches. Load the correct search knowledge for your context.
 status: active
 created: 2026-03-07
 updated: 2026-03-07
@@ -15,11 +15,11 @@ relationships:
 ---
 **Prefer semantic search over Grep/Glob for any search that spans more than one file or directory.**
 
-## Two Search Skills — Context-Dependent Loading
+## Two Search Knowledge Artifacts — Context-Dependent Loading
 
-OrqaStudio has two independent search implementations that provide the same three tools. Load the correct skill for your context.
+OrqaStudio has two independent search implementations that provide the same three tools. Load the correct knowledge artifact for your context.
 
-| Context | Skill to Load | Implementation | Tool Names |
+| Context | Knowledge to Load | Implementation | Tool Names |
 |---------|--------------|----------------|------------|
 | **CLI** (Claude Code terminal) | `chunkhound` | External MCP server, localhost:11435, OpenAI-compatible embedding API | `mcp__chunkhound__search_regex`, `mcp__chunkhound__search_semantic`, `mcp__chunkhound__code_research` |
 | **App** (OrqaStudio UI) | `orqa-native-search` | Embedded Rust engine, ONNX Runtime + DuckDB, no HTTP server | `search_regex`, `search_semantic`, `code_research` |
@@ -38,12 +38,12 @@ OrqaStudio has two independent search implementations that provide the same thre
 
 - The orchestrator and ALL subagents MUST prefer semantic search over Grep/Glob for multi-file searches
 - Grep/Glob are only appropriate for single-file lookups or when semantic search is confirmed unavailable
-- Every agent's YAML frontmatter MUST include BOTH `chunkhound` and `orqa-native-search` in its `skills:` list
-- At runtime, agents load whichever skill matches their current context
+- Every agent's YAML frontmatter MUST include BOTH `chunkhound` and `orqa-native-search` in its `knowledge:` list
+- At runtime, agents load whichever knowledge artifact matches their current context
 
 ## Shared Query Patterns
 
-Both skills use identical query patterns — the interfaces are the same:
+Both knowledge artifacts use identical query patterns — the interfaces are the same:
 
 | Situation | Tool | Example |
 |-----------|------|---------|
@@ -65,7 +65,7 @@ If neither tool set is available in the current session:
 
 ## Related Rules
 
-- [RULE-deab6ea7](RULE-deab6ea7) (skill-enforcement) — search skills are universal, required for every agent
+- [RULE-deab6ea7](RULE-deab6ea7) (knowledge-enforcement) — search knowledge is universal, required for every agent
 - [RULE-57ccb4a3](RULE-57ccb4a3) (error-ownership) — use `search_regex` to find function signatures before calling them
 - [RULE-cb65b5d0](RULE-cb65b5d0) (reusable-components) — use `search_semantic` to find similar components
 - [RULE-1acb1602](RULE-1acb1602) (end-to-end-completeness) — use `code_research` to map the full request chain

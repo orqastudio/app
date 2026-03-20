@@ -159,8 +159,8 @@ Three research investigations ([RES-0a32a350](RES-0a32a350), [RES-5d1fa2a8](RES-
 audited 476+ artifacts across all layers. Critical findings:
 
 **Data Integrity:**
-- [SKILL-e3a559c9](SKILL-e3a559c9) ID assigned to 3 different skills (graph traversal breaks)
-- SKILL-bcfeb64e exists as divergent copies (not symlinked)
+- [KNOW-e3a559c9](KNOW-e3a559c9) ID assigned to 3 different skills (graph traversal breaks)
+- KNOW-bcfeb64e exists as divergent copies (not symlinked)
 - 20+ epics reference DOC-NNN phantom IDs (unresolvable graph edges)
 - 4 different scoring dimension sets across epics (priority comparison meaningless)
 - [EPIC-0a7b21cf](EPIC-0a7b21cf) fully complete but all tasks marked todo
@@ -217,8 +217,8 @@ scoring dimensions.
 
 | ID | Title |
 |----|-------|
-| [TASK-bd34be90](TASK-bd34be90) | Fix [SKILL-e3a559c9](SKILL-e3a559c9) ID collision — assign unique IDs |
-| [TASK-6856f61d](TASK-6856f61d) | Fix SKILL-bcfeb64e rule-enforcement duplication — symlink or split |
+| [TASK-bd34be90](TASK-bd34be90) | Fix [KNOW-e3a559c9](KNOW-e3a559c9) ID collision — assign unique IDs |
+| [TASK-6856f61d](TASK-6856f61d) | Fix KNOW-bcfeb64e rule-enforcement duplication — symlink or split |
 | [TASK-8af47bbd](TASK-8af47bbd) | Fix epic/task status mismatches (EPIC-0a7b21cf, [EPIC-dc1e3e4b](EPIC-dc1e3e4b), EPIC-03900ea5) |
 | [TASK-15bc3749](TASK-15bc3749) | Audit [EPIC-3a8ad459](EPIC-3a8ad459) tasks against plugin codebase |
 | [TASK-6c46014d](TASK-6c46014d) | Resolve DOC-NNN phantom references across all epics |

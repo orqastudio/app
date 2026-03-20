@@ -1,7 +1,7 @@
 ---
 id: EPIC-74c5cd5e
 title: Ethical licensing model — BSL-1.1 with social use grants
-description: Created AD-fc646168 licensing decision, DOC-4ed362fb licensing guide, SKILL-12ed4953 licensing skill. Updated LICENSE across all 12 BSL-1.1 repos with protected characteristics including gender identity. Created CHANGE-LICENSE (Apache 2.0 + Ethical Use Addendum). Tightened grants to close loopholes.
+description: Created AD-fc646168 licensing decision, DOC-4ed362fb licensing guide, KNOW-12ed4953 licensing skill. Updated LICENSE across all 12 BSL-1.1 repos with protected characteristics including gender identity. Created CHANGE-LICENSE (Apache 2.0 + Ethical Use Addendum). Tightened grants to close loopholes.
 status: completed
 created: 2026-03-18
 updated: 2026-03-19
@@ -28,4 +28,4 @@ relationships:
 
 # EPIC-74c5cd5e: Ethical licensing model — BSL-1.1 with social use grants
 
-Created AD-fc646168 licensing decision, DOC-4ed362fb licensing guide, SKILL-e1333874 licensing skill. Updated LICENSE across all 12 BSL-1.1 repos with protected characteristics including gender identity. Created CHANGE-LICENSE (Apache 2.0 + Ethical Use Addendum). Tightened grants to close loopholes.
+Created AD-fc646168 licensing decision, DOC-4ed362fb licensing guide, KNOW-e1333874 licensing skill. Updated LICENSE across all 12 BSL-1.1 repos with protected characteristics including gender identity. Created CHANGE-LICENSE (Apache 2.0 + Ethical Use Addendum). Tightened grants to close loopholes.

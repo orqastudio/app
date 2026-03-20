@@ -11,6 +11,7 @@
     { "name": "components", "path": "libs/svelte-components" },
     { "name": "visualiser", "path": "libs/graph-visualiser" }
   ],
+  "dogfood": true,
   "default_model": "auto",
   "excluded_paths": ["node_modules", ".git", "target", "dist", "build"],
   "artifacts": [
@@ -43,7 +44,7 @@
         { "key": "decision", "label": "Decisions", "icon": "scale", "path": ".orqa/process/decisions" },
         { "key": "rule", "label": "Rules", "icon": "shield", "path": ".orqa/process/rules" },
         { "key": "lesson", "label": "Lessons", "icon": "book-open", "path": ".orqa/process/lessons" },
-        { "key": "skill", "label": "Skills", "icon": "zap", "path": ".orqa/process/skills" },
+        { "key": "knowledge", "label": "Knowledge", "icon": "book-open", "path": ".orqa/process/knowledge" },
         { "key": "agent", "label": "Agents", "icon": "bot", "path": ".orqa/process/agents" }
       ]
     },
@@ -90,6 +91,16 @@
   "relationships": [
     { "key": "depends-on", "inverse": "depended-on-by", "label": "Depends On", "inverse_label": "Depended On By" }
   ],
+  "plugins": {
+    "@orqastudio/plugin-software-project": { "installed": true, "enabled": true, "path": "plugins/software" },
+    "@orqastudio/plugin-cli": { "installed": true, "enabled": true, "path": "plugins/cli" },
+    "@orqastudio/plugin-claude": { "installed": true, "enabled": true, "path": "plugins/claude" },
+    "@orqastudio/plugin-svelte": { "installed": true, "enabled": true, "path": "plugins/svelte" },
+    "@orqastudio/plugin-tauri": { "installed": true, "enabled": true, "path": "plugins/tauri" },
+    "@orqastudio/plugin-rust": { "installed": true, "enabled": true, "path": "plugins/rust" },
+    "@orqastudio/plugin-typescript": { "installed": true, "enabled": true, "path": "plugins/typescript" },
+    "@orqastudio/plugin-coding-standards": { "installed": true, "enabled": true, "path": "plugins/coding-standards" }
+  },
   "artifactLinks": {
     "displayModes": {},
     "colors": {
@@ -99,7 +110,7 @@
       "AD": "#8b5cf6",
       "IDEA": "#c084fc",
       "IMPL": "#67e8f9",
-      "SKILL": "#2dd4bf",
+      "KNOW": "#2dd4bf",
       "PILLAR": "#818cf8",
       "RES": "#6366f1",
       "MS": "#38bdf8",

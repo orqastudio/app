@@ -16,7 +16,7 @@ During [EPIC-942c7678](EPIC-942c7678) implementation, several items were identif
 1. **[RES-c4dd4c4d](RES-c4dd4c4d)** (draft research) — behavioral directives in the pipeline. Research doc exists but no task tracks its completion.
 2. **Claude memory cleanup** — 6 of 10 memory files duplicate artifact knowledge. No task to clean them up.
 3. **ArtifactType::Hook dead code** — Hook is no longer a governance artifact. No task to remove the enum variant.
-4. **Broken forward-references** — 9 broken-link errors to artifacts that don't exist yet (SKILL-bcfeb64e, AGENT-1dab5ebe/004/005, VER-001). No task to create these artifacts or remove the references.
+4. **Broken forward-references** — 9 broken-link errors to artifacts that don't exist yet (KNOW-bcfeb64e, AGENT-1dab5ebe/004/005, VER-001). No task to create these artifacts or remove the references.
 5. **Stale source paths** — 31 broken paths discovered and fixed, but the fix work was not tracked as a task.
 6. **Three new observations** (IMPL-c306b136, 019, 020) — systemic issues identified but not scoped into the epic.
 

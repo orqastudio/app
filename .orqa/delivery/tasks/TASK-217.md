@@ -7,7 +7,7 @@ created: 2026-03-12
 updated: 2026-03-12
 acceptance:
   - Researcher and Planner agents can use WebSearch and WebFetch in CLI context
-  - SKILL-e3a559c9 skill is in Researcher and Planner agent definitions
+  - KNOW-e3a559c9 skill is in Researcher and Planner agent definitions
   - Capability mappings are correct in RULE-92dba0cb
   - Tool access restrictions in RULE-f809076f are updated
 relationships:
@@ -26,7 +26,7 @@ The `research-methodology` skill (`.orqa/process/skills/research-methodology/SKI
 ## How
 
 1. Add `web_fetch` and `web_search` to Researcher and Planner agent capabilities
-2. Add [SKILL-e3a559c9](SKILL-e3a559c9) (research-methodology) to both agents' skills lists
+2. Add [KNOW-e3a559c9](KNOW-e3a559c9) (research-methodology) to both agents' skills lists
 3. Update [RULE-f809076f](RULE-f809076f) tool access matrix with web capabilities
 4. Verify [RULE-92dba0cb](RULE-92dba0cb) already has the mappings
 
@@ -34,6 +34,6 @@ The `research-methodology` skill (`.orqa/process/skills/research-methodology/SKI
 
 - Researcher agent definition has web_fetch and web_search capabilities
 - Planner agent definition has web_fetch and web_search capabilities
-- Both agents have [SKILL-e3a559c9](SKILL-e3a559c9) in their skills lists
+- Both agents have [KNOW-e3a559c9](KNOW-e3a559c9) in their skills lists
 - [RULE-f809076f](RULE-f809076f) matrix shows web capabilities for appropriate roles
 - [RULE-92dba0cb](RULE-92dba0cb) mappings already cover web_fetch and web_search

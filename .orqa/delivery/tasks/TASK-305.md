@@ -1,7 +1,7 @@
 ---
 id: TASK-65f6b166
 title: Fix broken forward-references to non-existent artifacts
-description: "verify-links reports 9 broken-link errors for references to artifacts that don't exist: SKILL-bcfeb64e (4 refs), AGENT-1dab5ebe/004/005, VER-NNN (2 refs). Either create the referenced artifacts or remove the forward references."
+description: "verify-links reports 9 broken-link errors for references to artifacts that don't exist: KNOW-bcfeb64e (4 refs), AGENT-1dab5ebe/004/005, VER-NNN (2 refs). Either create the referenced artifacts or remove the forward references."
 status: completed
 created: 2026-03-13
 updated: 2026-03-13
@@ -21,7 +21,7 @@ relationships:
 
 Resolve all 9 broken-link errors reported by `verify-links`:
 
-- SKILL-bcfeb64e — 4 references in various artifacts
+- KNOW-bcfeb64e — 4 references in various artifacts
 - AGENT-1dab5ebe — 1 reference
 - AGENT-caff7bc1 — 1 reference
 - AGENT-fb0ce261 — 1 reference

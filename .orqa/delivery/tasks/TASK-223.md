@@ -8,7 +8,7 @@ updated: 2026-03-12
 docs: []
 acceptance:
   - A skill exists that can recommend epics-required true or false based on project signals
-  - SKILL-e0dec720 skill uses this recommendation during setup
+  - KNOW-e0dec720 skill uses this recommendation during setup
   - project.json has a workflow.epics-required field after setup
   - Software-like projects default to true
   - Research/planning projects default to false

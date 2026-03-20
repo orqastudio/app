@@ -94,7 +94,7 @@ The artifact system scans `.orqa/` directories, builds a bidirectional graph of 
    - Walk each configured path (groups expand to children)
    - For each directory: read `schema.json` for filterable/sortable fields, `_navigation.json` for defaults
    - For each `.md` file: extract YAML frontmatter for title, status, description
-   - Skills get special handling (subdirectories with `SKILL.md`)
+   - Skills get special handling (subdirectories with `KNOW.md`)
    - Hooks get special handling (`.sh` files)
    - Documentation directories are recursively scanned into `DocNode` trees
    - `README.md` frontmatter provides default icon, label, description, sort order for directories
@@ -195,7 +195,7 @@ graph TD
     Sidecar["Sidecar emits tool_execute NDJSON"]
     Rust["Rust reads it → tool_executor.rs dispatches to handler<br/>(read_file, bash, etc.)"]
     Enforce["Enforcement check<br/>(enforce_file/enforce_bash) runs BEFORE execution"]
-    Inject["Skill injection<br/>Inject verdicts → read SKILL.md → prepend to output"]
+    Inject["Skill injection<br/>Inject verdicts → read KNOW.md → prepend to output"]
     Track["Process tracking<br/>record_read/record_write/record_command on WorkflowTracker"]
     Result["Result sent back to sidecar as tool_result NDJSON"]
     SDK["Sidecar returns result to SDK → SDK continues conversation"]
@@ -281,7 +281,7 @@ The enforcement pipeline loads rules from `.orqa/process/rules/`, compiles their
    - `enforce_bash()` runs before `bash` tool
    - **Block** verdicts: tool execution is prevented, error message returned
    - **Warn** verdicts: warning prepended to tool output, execution continues
-   - **Inject** verdicts: skill SKILL.md content read from disk, prepended to tool output (deduplicated via `WorkflowTracker.mark_skill_injected()`)
+   - **Inject** verdicts: skill KNOW.md content read from disk, prepended to tool output (deduplicated via `WorkflowTracker.mark_skill_injected()`)
 
 5. **Governance scanning** (`enforcement_engine.scan(project_path)`):
    - Evaluates Scan-event entries across project files
@@ -344,7 +344,7 @@ The system prompt is assembled from governance artifacts at message-send time an
 
 1. **System prompt assembly** (`system_prompt.rs::build_system_prompt`):
    a. Read all `.orqa/rules/*.md` files → full content included under `## Rules`
-   b. List skill catalog from `.orqa/skills/*/SKILL.md` → name + first non-empty line only (NOT full content)
+   b. List knowledge catalog from `.orqa/knowledge/*/KNOW.md` → name + first non-empty line only (NOT full content)
    c. Read `.claude/CLAUDE.md` → full content under `## Project Instructions`
    d. Read `AGENTS.md` → full content under `## Agent Definitions`
    e. Concatenate all parts into a single string
@@ -360,7 +360,7 @@ The system prompt is assembled from governance artifacts at message-send time an
 
 4. **Skill loading** (on demand via `load_skill` tool):
    - Agent calls `load_skill` tool with skill name
-   - `tool_executor.rs::tool_load_skill` reads `.orqa/process/skills/<name>/SKILL.md`
+   - `tool_executor.rs::tool_load_skill` reads `.orqa/process/knowledge/<name>/KNOW.md`
    - Returns full skill content to the agent
    - WorkflowTracker records `record_skill_loaded(name)`
 
@@ -372,8 +372,8 @@ The system prompt is assembled from governance artifacts at message-send time an
 
 6. **Enforcement-based skill injection** (`tool_executor.rs`):
    - When enforcement engine returns `Inject` verdicts with `skills[]`
-   - Read each skill's SKILL.md from disk
-   - Prepend skill content to tool output
+   - Read each knowledge artifact's KNOW.md from disk
+   - Prepend knowledge content to tool output
    - Deduplicated via `WorkflowTracker.mark_skill_injected()`
 
 ### Persistence

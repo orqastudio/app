@@ -18,8 +18,8 @@ Data persistence in OrqaStudio follows three channels, each with clear boundarie
 | Channel | What Belongs | Why |
 |---------|-------------|-----|
 | **SQLite** | Conversation data: sessions, messages, stream metrics, project settings | Structured, queryable, transactional |
-| **File-based artifacts** | Governance data: rules, skills, agents, docs, planning artifacts | Version-controlled, human-readable, scannable |
-| **Ephemeral** | Session state (WorkflowTracker), injected skill cache, dev server PIDs | Lost on restart, reconstructible |
+| **File-based artifacts** | Governance data: rules, knowledge, agents, docs, planning artifacts | Version-controlled, human-readable, scannable |
+| **Ephemeral** | Session state (WorkflowTracker), injected knowledge cache, dev server PIDs | Lost on restart, reconstructible |
 
 ## Boundaries
 
@@ -31,14 +31,14 @@ Per [AD-2aa4d6db](AD-2aa4d6db), SQLite is scoped to conversation persistence:
 - Search index (DuckDB, separate from SQLite)
 
 SQLite MUST NOT store:
-- Governance artifacts (rules, skills, agents)
+- Governance artifacts (rules, knowledge, agents)
 - Planning artifacts (epics, tasks, ideas)
 - User preferences that should be file-based
 
 ### File-based artifacts (.orqa/)
 
 The `.orqa/` directory is the single source of truth for governance:
-- Rules, skills, agents, hooks
+- Rules, knowledge, agents, hooks
 - Documentation, research, decisions
 - Planning (milestones, epics, tasks, ideas)
 - Project configuration (`project.json`)
@@ -52,7 +52,7 @@ File-based artifacts MUST NOT:
 
 Temporary data that doesn't survive app restart:
 - `WorkflowTracker` — session event history for process gates
-- Injected skill dedup cache — which skills were already injected this session
+- Injected knowledge dedup cache — which knowledge artifacts were already injected this session
 - `tmp/` directory — session state, script output, dev artifacts
 
 Ephemeral state MUST NOT:

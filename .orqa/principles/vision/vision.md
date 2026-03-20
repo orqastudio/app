@@ -142,7 +142,7 @@ Project artifacts encode:
 - Domain-specific rules and conventions (what "done" means for this project)
 - Custom coding standards, naming conventions, or workflow patterns
 - Industry-specific terminology and artifact types
-- Project-specific agent configurations and skill sets
+- Project-specific agent configurations and knowledge artifacts
 
 The project layer is **additive only**. Project artifacts can extend the core framework — adding new rules, new agent behaviours, new artifact types — but they cannot override or weaken core rules. If a core rule says "all errors must be handled as Result types," no project rule can override that constraint. The core layer defines the floor; the project layer raises it.
 
@@ -282,7 +282,7 @@ The system and its users improve over time through structured retrospection.
 Most tools accumulate conversation history. OrqaStudio accumulates *understanding*. Every cycle of work produces not just output but insight that feeds the next cycle:
 
 - **Lesson capture** — Mistakes and discoveries are documented with recurrence tracking, not just mentioned in chat
-- **Pattern promotion** — When a lesson recurs, it is promoted to a rule, coding standard, or skill update — the governance framework evolves automatically
+- **Pattern promotion** — When a lesson recurs, it is promoted to a rule, coding standard, or knowledge update — the governance framework evolves automatically
 - **Retrospectives** — Process-level observations become entries that inform future governance evolution
 - **Metrics and trends** — Pass/fail rates, quality trends, and violation recurrence are visualised over time, making improvement (or regression) visible
 - **Session continuity** — Handoff notes and searchable session history prevent context loss between sessions, so each session builds on the last
@@ -332,7 +332,7 @@ The difference matters: the UI, the workflow, and the default experience are des
 
 People use AI tools to help with complex work — software development, product planning, research, operations. But current AI tools operate as conversational interfaces with no structural layer. The thinking that happens in conversation is ephemeral: context is lost between sessions, standards are inconsistently applied, mistakes recur, and there is no mechanism for the process to improve over time.
 
-For software development specifically, agentic coding tools like Claude Code are powerful but operate as developer-facing CLI tools with no product management layer. The governance framework that makes agentic development reliable — agents, skills, rules, learning loops, documentation-first workflow — lives in dotfiles, markdown documents, and terminal output. Product managers and tech leads are locked out of the implementation loop entirely.
+For software development specifically, agentic coding tools like Claude Code are powerful but operate as developer-facing CLI tools with no product management layer. The governance framework that makes agentic development reliable — agents, knowledge, rules, learning loops, documentation-first workflow — lives in dotfiles, markdown documents, and terminal output. Product managers and tech leads are locked out of the implementation loop entirely.
 
 The result across all domains: AI-assisted work produces inconsistent quality, accumulates decisions invisibly, and fails to learn from its own history.
 
@@ -342,7 +342,7 @@ OrqaStudio is a desktop application that provides a structural layer for AI-assi
 
 **For any domain:** Conversations with AI produce structured artifacts — plans, decisions, retrospectives, and knowledge — that persist across sessions and evolve over time. The agile learning loop (chaos → clarity → execution → reflection → improved clarity) is operationalised through the UI.
 
-**For software development (the first domain):** OrqaStudio integrates with Claude Code and other AI providers, making governance artifacts (agents, skills, rules, architecture decisions, learning loops) visible and manageable through a graphical interface. The system learns from every session and feeds improvements back into the governance framework automatically.
+**For software development (the first domain):** OrqaStudio integrates with Claude Code and other AI providers, making governance artifacts (agents, knowledge, rules, architecture decisions, learning loops) visible and manageable through a graphical interface. The system learns from every session and feeds improvements back into the governance framework automatically.
 
 OrqaStudio turns ephemeral AI conversations into accumulated, structured, improving knowledge.
 

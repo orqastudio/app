@@ -22,7 +22,7 @@ OrqaStudio ensures the tooling ecosystem is configured to match documented stand
 ## The Chain
 
 ```
-Documented standard (RULE-b49142be, skills)
+Documented standard (RULE-b49142be, knowledge)
   → Linter configuration (clippy.toml, eslint.config.js)
   → Hook trigger (.githooks/pre-commit, make check)
   → Violation reported to developer
@@ -63,14 +63,14 @@ OrqaStudio's role is managing the full chain, not replicating any step.
 Enforcement entries with `event: lint` are declarative — they document which linter
 rule enforces which standard. They don't execute anything. They exist for traceability:
 every documented standard should map to either a linter rule (lint event) or a process
-gate/skill injection (file/inject event).
+gate/knowledge injection (file/inject event).
 
 ## When OrqaStudio Should NOT Regex-Match
 
 If a pattern is already caught by a configured linter:
 - Don't add a `file` enforcement entry that regex-matches the same pattern
 - Instead, add a `lint` entry documenting the delegation
-- The skill for that area should describe how to fix the violation
+- The knowledge artifact for that area should describe how to fix the violation
 
 If a pattern is NOT caught by any linter:
 - Consider adding a linter rule first
@@ -87,5 +87,5 @@ If a pattern is NOT caught by any linter:
 ## Related Rules
 
 - [RULE-b49142be](RULE-b49142be) (coding-standards) — the standards this rule maps to linters
-- [RULE-f9d0279c](RULE-f9d0279c) (skill-injection) — skill injection complements linter delegation
+- [RULE-f9d0279c](RULE-f9d0279c) (knowledge-injection) — knowledge injection complements linter delegation
 - [RULE-57ccb4a3](RULE-57ccb4a3) (error-ownership) — pre-commit hook enforcement

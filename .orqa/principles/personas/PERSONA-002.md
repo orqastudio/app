@@ -1,7 +1,7 @@
 ---
 id: PERSONA-015e8c2c
-title: "Sam — The Practitioner"
-description: "Senior professional who already uses AI tools daily. Values OrqaStudio as a structural layer that makes AI-assisted work visible, governed, and improving."
+title: Sam — The Practitioner
+description: Senior professional who already uses AI tools daily. Values OrqaStudio as a structural layer that makes AI-assisted work visible, governed, and improving.
 status: active
 created: 2026-03-07
 updated: 2026-03-18
@@ -73,6 +73,12 @@ relationships:
   - target: IDEA-112a4b5d
     type: benefited-by
   - target: IDEA-2d7ac819
+    type: benefited-by
+  - target: IDEA-d5feee98
+    type: benefited-by
+  - target: IDEA-2d2bf14a
+    type: benefited-by
+  - target: IDEA-bbbad601
     type: benefited-by
 ---
 

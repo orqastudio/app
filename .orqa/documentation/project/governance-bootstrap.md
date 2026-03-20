@@ -38,7 +38,7 @@ The governance scanner walks the filesystem to collect governance files from mul
 |--------|-------------|-------------|
 | OrqaStudio rules | `.orqa/process/rules/*.md` | Enforcement rules (canonical location) |
 | OrqaStudio agents | `.orqa/process/agents/*.md` | Agent role definitions (canonical location) |
-| OrqaStudio skills | `.orqa/process/skills/*/SKILL.md` | Skill definitions (canonical location) |
+| OrqaStudio skills | `.orqa/process/knowledge/*/KNOW.md` | Skill definitions (canonical location) |
 | OrqaStudio hooks | `.orqa/process/hooks/*` | Session hooks (canonical location) |
 | OrqaStudio settings | `.orqa/settings.json` | Hook configuration, permissions (canonical location) |
 | CLI compat rules | `.claude/rules/*.md` | Symlink layer for CLI tools (if present) |
@@ -61,7 +61,7 @@ The governance bootstrap writes governance artifacts to `.orqa/` — the source 
 | Rules | `.orqa/process/rules/*.md` | Enforcement rules |
 | Hooks | `.orqa/process/hooks/*.sh` | Session and pre-commit hooks |
 | Agents | `.orqa/process/agents/*.md` | Agent role definitions |
-| Skills | `.orqa/process/skills/*/SKILL.md` | Skill definitions |
+| Skills | `.orqa/process/knowledge/*/KNOW.md` | Skill definitions |
 | Settings | `.orqa/settings.json` | Hook registration and permissions |
 | Project instructions | `.orqa/INSTRUCTIONS.md` | Project-level AI instructions |
 | Cross-agent instructions | `AGENTS.md` | Cross-agent instructions (root, tool-agnostic) |

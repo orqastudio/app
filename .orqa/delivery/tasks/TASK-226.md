@@ -1,6 +1,6 @@
 ---
 id: TASK-6856f61d
-title: Fix SKILL-bcfeb64e rule-enforcement duplication
+title: Fix KNOW-bcfeb64e rule-enforcement duplication
 description: rule-enforcement exists as divergent copies in team/skills/ and plugin/skills/. Symlink or assign distinct IDs.
 status: completed
 created: 2026-03-12

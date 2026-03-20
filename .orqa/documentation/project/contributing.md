@@ -32,7 +32,7 @@ When adding or modifying `.orqa/` artifacts:
 - Run `orqa verify` before committing — zero errors is the baseline
 - New artifacts need required relationships per the schema (`grounded`, `benefits`, `enforces`, `upholds`)
 - Use canonical relationship vocabulary from `core.json`
-- Doc/skill pairs must be connected via `synchronised-with`
+- Doc/knowledge pairs must be connected via `synchronised-with`
 - Docs need a `category` field (reference, how-to, architecture, concept, onboarding)
 
 ## Multi-Repo PR Process

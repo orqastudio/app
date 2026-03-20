@@ -1,7 +1,7 @@
 ---
 id: TASK-bd34be90
-title: Fix SKILL-e3a559c9 ID collision
-description: Three skills share SKILL-e3a559c9. Assign unique IDs and update all agent references.
+title: Fix KNOW-e3a559c9 ID collision
+description: Three skills share KNOW-e3a559c9. Assign unique IDs and update all agent references.
 status: completed
 created: 2026-03-12
 updated: 2026-03-12
@@ -18,7 +18,7 @@ relationships:
 
 ## What
 
-Three skills share [SKILL-e3a559c9](SKILL-e3a559c9). Assign unique IDs and update all agent references.
+Three skills share [KNOW-e3a559c9](KNOW-e3a559c9). Assign unique IDs and update all agent references.
 
 ## How
 

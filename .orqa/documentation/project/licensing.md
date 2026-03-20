@@ -9,11 +9,11 @@ relationships:
   - target: AD-fc646168
     type: documents
     rationale: This doc explains the licensing decision for humans
-  - target: SKILL-CLI-9466a88a
+  - target: KNOW-CLI-9466a88a
     type: synchronised-with
-  - target: SKILL-e1333874
+  - target: KNOW-e1333874
     type: synchronised-with
-  - target: SKILL-12ed4953
+  - target: KNOW-12ed4953
     type: synchronised-with
 ---
 

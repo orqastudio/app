@@ -6,7 +6,7 @@ status: active
 created: 2026-03-19
 category: how-to
 relationships:
-  - target: SKILL-01a64d58
+  - target: KNOW-01a64d58
     type: synchronised-with
 ---
 

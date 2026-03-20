@@ -7,7 +7,7 @@ created: 2026-03-09
 updated: 2026-03-09
 assignee: AGENT-1dab5ebe
 acceptance:
-  - SKILL-819789ab skill includes commit discipline section
+  - KNOW-819789ab skill includes commit discipline section
   - Covers when to commit during governance work
   - Covers how to group changes into logical commits
   - Covers commit message conventions for governance vs code

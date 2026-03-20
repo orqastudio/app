@@ -7,24 +7,24 @@ created: 2026-03-09
 updated: 2026-03-09
 assignee: AGENT-1dab5ebe
 acceptance:
-  - SKILL-e0dec720 skill created (universal scaffolding — .orqa/ structure
+  - KNOW-e0dec720 skill created (universal scaffolding — .orqa/ structure
   - canon rules
   - canon skills)
-  - SKILL-82ceb1bd skill created (reads folder
+  - KNOW-82ceb1bd skill created (reads folder
   - produces project profile YAML)
-  - SKILL-0fd23e0b skill created (reads existing agentic config
+  - KNOW-0fd23e0b skill created (reads existing agentic config
   - maps to OrqaStudio)
-  - SKILL-819789ab skill created (software development governance preset)
+  - KNOW-819789ab skill created (software development governance preset)
   - Each skill follows SKILL.md format with proper frontmatter
-  - SKILL-e0dec720 knows how to create .orqa/ directory structure
-  - SKILL-82ceb1bd knows file patterns for languages
+  - KNOW-e0dec720 knows how to create .orqa/ directory structure
+  - KNOW-82ceb1bd knows file patterns for languages
   - frameworks
   - existing governance
-  - SKILL-0fd23e0b knows config formats for Claude Code
+  - KNOW-0fd23e0b knows config formats for Claude Code
   - Cursor
   - Copilot
   - Aider
-  - SKILL-819789ab knows worktree rules
+  - KNOW-819789ab knows worktree rules
   - code quality
   - testing standards
 relationships:

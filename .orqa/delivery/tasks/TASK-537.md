@@ -1,6 +1,6 @@
 ---
 id: TASK-68fc93b3
-title: "Create SKILL-CLI-9466a88a and SKILL-CLI-4cc73a12"
+title: "Create KNOW-CLI-9466a88a and KNOW-CLI-4cc73a12"
 status: completed
 created: 2026-03-18
 updated: 2026-03-19

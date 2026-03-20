@@ -29,6 +29,8 @@ relationships:
     type: delivered-by
   - target: AD-05756de7
     type: driven-by
+  - target: AD-48593e40
+    type: driven-by
 ---
 
 # EPIC-6967c7dc: Claude Code Connector Rewrite

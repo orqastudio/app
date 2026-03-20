@@ -53,6 +53,6 @@ When a user creates a new project:
 2. Based on the conversation, AI recommends plugins (software, research, consulting, custom)
 3. Plugins are installed from the official registry (or created on the fly for custom use cases)
 4. `project.json` is configured with the installed plugins' navigation, delivery hierarchy, and relationships
-5. The setup skills (SKILL-82ceb1bd through SKILL-819789ab) guide this process
+5. The setup skills (KNOW-82ceb1bd through KNOW-819789ab) guide this process
 
 The app binary is domain-agnostic. Domain knowledge comes entirely from plugins.

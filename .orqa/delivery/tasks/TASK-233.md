@@ -1,7 +1,7 @@
 ---
 id: TASK-507ce554
 title: Split composability skill core vs project
-description: composability SKILL-f0c40eaf has 37 project references but is core. Split into portable principle and project examples.
+description: composability KNOW-f0c40eaf has 37 project references but is core. Split into portable principle and project examples.
 status: completed
 created: 2026-03-12
 updated: 2026-03-12
@@ -18,7 +18,7 @@ relationships:
 
 ## What
 
-composability [SKILL-f0c40eaf](SKILL-f0c40eaf) has 37 project references but is core. Split into portable principle and project examples.
+composability [KNOW-f0c40eaf](KNOW-f0c40eaf) has 37 project references but is core. Split into portable principle and project examples.
 
 ## How
 

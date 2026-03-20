@@ -2,7 +2,7 @@
 id: DOC-c0866ebc
 title: "How To: Build an OrqaStudio Plugin"
 category: how-to
-description: "Step-by-step guide for building a Claude Code companion plugin that adds hooks, commands, and skills to an OrqaStudio project."
+description: "Step-by-step guide for building a Claude Code companion plugin that adds hooks, commands, and knowledge to an OrqaStudio project."
 created: 2026-03-14
 updated: 2026-03-14
 sort: 1
@@ -16,7 +16,7 @@ An OrqaStudio plugin is a Claude Code companion plugin — a directory registere
 
 - **Run hooks** before/after tool calls and at session boundaries
 - **Add slash commands** (e.g., `/orqa`) that agents can invoke
-- **Inject skills** as system context when agents write to specific files
+- **Inject knowledge** as system context when agents write to specific files
 
 The OrqaStudio companion plugin lives at `.orqa/plugins/orqastudio-claude-plugin/` and
 is the reference implementation for everything in this guide.
@@ -36,11 +36,9 @@ is the reference implementation for everything in this guide.
 │       └── session-start.sh
 ├── commands/
 │   └── orqa.md           # Slash command: /orqa
-└── skills/
-    ├── my-skill/
-    │   └── SKILL.md
-    └── another-skill/
-        └── SKILL.md
+└── knowledge/
+    ├── my-knowledge.md
+    └── another-knowledge.md
 ```
 
 Register the plugin in `.claude/settings.json`:
@@ -173,27 +171,27 @@ when the command is invoked — write it as instructions for the agent.
 
 ---
 
-## Creating a Skill
+## Creating a Knowledge Artifact
 
-Skills live in `skills/<name>/SKILL.md`. The directory name is how agents refer to
-the skill. Skills are injected into agent context by hook scripts or by the orchestrator.
+Knowledge artifacts are flat markdown files in `knowledge/`. The filename (without `.md`) is how
+agents refer to the knowledge. Knowledge is injected into agent context by hook scripts based on
+file path patterns.
 
 ```markdown
 ---
-id: SKILL-NNN
-title: My Domain Skill
+id: KNOW-NNN
+title: My Domain Knowledge
 description: Describes specific patterns for working in the foo/ module.
 status: active
 created: "2026-03-14"
 updated: "2026-03-14"
-scope: []
 user-invocable: false
 version: 0.1.0
 ---
 
-# My Domain Skill
+# My Domain Knowledge
 
-Content here is injected into the agent's context window when the skill is loaded.
+Content here is injected into the agent's context window when the knowledge is loaded.
 Write it as reference documentation the agent reads and applies.
 
 ## Key Patterns
@@ -201,8 +199,7 @@ Write it as reference documentation the agent reads and applies.
 ...
 ```
 
-The `layer: plugin` field marks this as a portable plugin skill (not project-specific).
-Set `user-invocable: true` if users should be able to trigger the skill directly.
+The `layer: plugin` field marks this as a portable plugin knowledge artifact (not project-specific).
 
 ---
 
@@ -217,6 +214,6 @@ patterns working together:
 - `hooks/scripts/graph-guardian.mjs` — validates artifact cross-references after writes (PostToolUse)
 - `hooks/scripts/session-start.sh` — runs `git status` and `git stash list` checks (SessionStart)
 - `commands/orqa.md` — the `/orqa` governance summary command
-- `skills/rule-enforcement/SKILL.md` — teaches agents how enforcement entries work
+- `knowledge/rule-enforcement.md` — teaches agents how enforcement entries work
 
 ---

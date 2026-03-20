@@ -1,0 +1,50 @@
+---
+id: TASK-a7b8c9d0
+type: task
+title: "Implement knowledge resolution from project.json plugin paths"
+description: "Implement the connector's knowledge resolution logic: at delegation time, read project.json to find plugin paths, then read knowledge files from those canonical locations."
+status: ready
+created: 2026-03-20
+updated: 2026-03-20
+acceptance:
+  - Connector reads project.json to discover plugin paths at delegation time
+  - Knowledge files are resolved from canonical plugin knowledge/ directories
+  - No hardcoded paths to specific knowledge files
+  - Resolution falls back gracefully if a plugin path is missing or unreadable
+  - No unwrap() or expect() in Rust implementation; no 'any' in TypeScript
+relationships:
+  - target: EPIC-663d52ac
+    type: delivers
+  - target: TASK-c3d4e5f6
+    type: depends-on
+  - target: TASK-e1f2a3b4
+    type: depended-on-by
+---
+
+## What
+
+Implement the knowledge resolution mechanism in the connector so that when the orchestrator needs to inject domain knowledge into a subagent, it:
+1. Reads `project.json` to get the list of active plugin paths
+2. For each plugin path, checks if a `knowledge/<name>/SKILL.md` (or `<name>.md`) file exists
+3. Returns the content for injection into the agent's prompt
+
+This replaces the previous model of reading from local copies.
+
+## How
+
+Locate the knowledge injection logic in `connectors/claude-code/` (likely in the orchestrator or a delegation helper):
+- Replace static file reads with dynamic resolution via `project.json`
+- Parse `project.json` to extract plugin paths (the same paths used by `orqa graph`)
+- For each plugin, glob `knowledge/**/*.md` to find available knowledge files
+- Expose a `resolveKnowledge(name: string): string | null` function used by the orchestrator
+
+Error handling:
+- If `project.json` is unreadable → log warning, return empty knowledge set (don't fail delegation)
+- If a specific knowledge file is missing → return null for that knowledge item, don't crash
+
+## Verification
+
+1. Delegation with knowledge injection reads from plugin paths, not local copies
+2. Adding a new knowledge file to a plugin makes it available to the connector without code changes
+3. `search_regex "knowledge"` in connector source shows dynamic resolution, not hardcoded paths
+4. TASK-e1f2a3b4 (end-to-end test) passes

@@ -1,7 +1,7 @@
 ---
 id: RULE-f9d0279c
-title: Automated Skill Injection
-description: "When agents touch specific code areas, relevant domain skills are auto-injected. Enforcement entries map file paths to skill names."
+title: Automated Knowledge Injection
+description: "When agents touch specific code areas, relevant domain knowledge is auto-injected. Enforcement entries map file paths to knowledge artifact names."
 status: active
 created: 2026-03-11
 updated: 2026-03-12
@@ -44,19 +44,19 @@ relationships:
     type: documented-by
 ---
 When agents write to specific code areas, the enforcement engine automatically injects
-relevant domain skills as system context. This implements Layer 2 (Knowledge Injection)
+relevant domain knowledge as system context. This implements Layer 2 (Knowledge Injection)
 of the structured thinking enforcement system.
 
 ## How It Works
 
-Enforcement entries with `action: inject` and a `skills` array are evaluated on every
-Write/Edit tool call. When a file path matches, the specified skills are read from
-`.orqa/process/skills/<name>/SKILL.md` and returned as `systemMessage` to inject into the
+Enforcement entries with `action: inject` and a `knowledge` array are evaluated on every
+Write/Edit tool call. When a file path matches, the specified knowledge artifacts are read from
+`.orqa/process/knowledge/<name>/KNOWLEDGE.md` and returned as `systemMessage` to inject into the
 agent's context.
 
-## Path-to-Skill Map
+## Path-to-Knowledge Map
 
-| File Path Pattern | Injected Skills | Why |
+| File Path Pattern | Injected Knowledge | Why |
 |------------------|-----------------|-----|
 | `backend/src-tauri/src/domain/**` | `orqa-domain-services`, `orqa-error-composition` | Domain logic needs service anatomy and error flow |
 | `backend/src-tauri/src/commands/**` | `orqa-ipc-patterns`, `orqa-error-composition` | IPC boundary needs contract discipline |
@@ -68,30 +68,30 @@ agent's context.
 
 ## Deduplication
 
-Skills are injected once per session. If an agent writes to `backend/src-tauri/src/domain/foo.rs`
-and then `backend/src-tauri/src/domain/bar.rs`, the domain skills are only injected on the first
-write. The enforcement engine tracks injected skills per session and skips re-injection.
+Knowledge artifacts are injected once per session. If an agent writes to `backend/src-tauri/src/domain/foo.rs`
+and then `backend/src-tauri/src/domain/bar.rs`, the domain knowledge is only injected on the first
+write. The enforcement engine tracks injected knowledge per session and skips re-injection.
 
 ## Adding New Injection Mappings
 
-To add a new path-to-skill mapping:
+To add a new path-to-knowledge mapping:
 
 1. Add an enforcement entry to this rule's frontmatter
 2. Set `event: file`, `action: inject`
 3. Set `paths` to the glob patterns
-4. Set `skills` to the skill directory names
+4. Set `knowledge` to the knowledge artifact directory names
 5. Set `message` to a brief description
 
-Ensure the referenced skills exist in `.orqa/process/skills/`.
+Ensure the referenced knowledge artifacts exist in `.orqa/process/knowledge/`.
 
 ## FORBIDDEN
 
 - Injection entries that block tool calls (inject is always non-blocking)
-- Injection entries without a `skills` field
-- Referencing skills that don't exist in `.orqa/process/skills/`
+- Injection entries without a `knowledge` field
+- Referencing knowledge artifacts that don't exist in `.orqa/process/knowledge/`
 
 ## Related Rules
 
-- [RULE-deab6ea7](RULE-deab6ea7) (skill-enforcement) — skill loading model and tier system
-- [RULE-b49142be](RULE-b49142be) (coding-standards) — the standards that injected skills help enforce
-- [RULE-7f416d7d](RULE-7f416d7d) (tooling-ecosystem) — linter delegation complements skill injection
+- [RULE-deab6ea7](RULE-deab6ea7) (knowledge-enforcement) — knowledge loading model and tier system
+- [RULE-b49142be](RULE-b49142be) (coding-standards) — the standards that injected knowledge helps enforce
+- [RULE-7f416d7d](RULE-7f416d7d) (tooling-ecosystem) — linter delegation complements knowledge injection

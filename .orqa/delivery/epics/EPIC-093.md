@@ -2,7 +2,7 @@
 id: EPIC-76e9a5da
 type: epic
 title: Plugin development workflow — three-tier skill architecture and template updates
-description: "Established the three-tier plugin development skill architecture: base SKILL-b453410f (platform plugin development), first-party SKILL-12ed4953 (OrqaStudio-maintained plugins), and third-party SKILL-c60144c1 (community plugins). Updated plugin templates with thumbnails, README boilerplate, deactivated workflow templates, and schema compatibility."
+description: "Established the three-tier plugin development skill architecture: base KNOW-b453410f (platform plugin development), first-party KNOW-12ed4953 (OrqaStudio-maintained plugins), and third-party KNOW-c60144c1 (community plugins). Updated plugin templates with thumbnails, README boilerplate, deactivated workflow templates, and schema compatibility."
 status: completed
 created: 2026-03-19
 milestone: MS-654badde
@@ -15,7 +15,7 @@ relationships:
 
 ## What Was Done
 
-1. **Three-tier skill architecture** — defined clear separation between platform-level plugin guidance (SKILL-b453410f), first-party plugin development workflow (SKILL-e1333874), and third-party/community plugin development (SKILL-63cc1a00). Each tier has appropriate scope and access.
+1. **Three-tier skill architecture** — defined clear separation between platform-level plugin guidance (KNOW-b453410f), first-party plugin development workflow (KNOW-e1333874), and third-party/community plugin development (KNOW-63cc1a00). Each tier has appropriate scope and access.
 
 2. **Plugin templates updated** — plugin template repositories now include:
    - Thumbnails per plugin folder for registry display

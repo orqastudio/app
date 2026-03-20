@@ -1,6 +1,6 @@
 ---
 id: TASK-ce698c7d
-title: "Rewrite SKILL-eea50a65 Governance Patterns for domain-agnostic core"
+title: "Rewrite KNOW-eea50a65 Governance Patterns for domain-agnostic core"
 status: completed
 created: 2026-03-18
 updated: 2026-03-19

@@ -16,35 +16,35 @@ relationships:
   - target: RULE-b49142be
     type: documents
     rationale: This document is the source-of-truth referenced by RULE-b49142be — it defines the specific standards that rule enforces
-  - target: SKILL-01a64d58
+  - target: KNOW-01a64d58
     type: synchronised-with
-  - target: SKILL-025fc31d
+  - target: KNOW-025fc31d
     type: synchronised-with
-  - target: SKILL-5ad0bf1b
+  - target: KNOW-5ad0bf1b
     type: synchronised-with
-  - target: SKILL-58611337
+  - target: KNOW-58611337
     type: synchronised-with
-  - target: SKILL-dac84f00
+  - target: KNOW-dac84f00
     type: synchronised-with
-  - target: SKILL-8a821622
+  - target: KNOW-8a821622
     type: synchronised-with
-  - target: SKILL-282c0305
+  - target: KNOW-282c0305
     type: synchronised-with
-  - target: SKILL-49f495ff
+  - target: KNOW-49f495ff
     type: synchronised-with
-  - target: SKILL-2b6147c9
+  - target: KNOW-2b6147c9
     type: synchronised-with
-  - target: SKILL-1b990160
+  - target: KNOW-1b990160
     type: synchronised-with
-  - target: SKILL-65f5aa67
+  - target: KNOW-65f5aa67
     type: synchronised-with
-  - target: SKILL-3f34e682
+  - target: KNOW-3f34e682
     type: synchronised-with
-  - target: SKILL-7a96b952
+  - target: KNOW-7a96b952
     type: synchronised-with
-  - target: SKILL-c60144c1
+  - target: KNOW-c60144c1
     type: synchronised-with
-  - target: SKILL-12ed4953
+  - target: KNOW-12ed4953
     type: synchronised-with
 ---
 ## Purpose
@@ -145,41 +145,41 @@ The standards are enforced by `make check`. The principles behind them are gover
 ```bash
 make check
 ```
-  - target: SKILL-01a64d58
+  - target: KNOW-01a64d58
     type: synchronised-with
-  - target: SKILL-63cc1a00
+  - target: KNOW-63cc1a00
     type: synchronised-with
-  - target: SKILL-e1333874
+  - target: KNOW-e1333874
     type: synchronised-with
-  - target: SKILL-025fc31d
+  - target: KNOW-025fc31d
     type: synchronised-with
-  - target: SKILL-5ad0bf1b
+  - target: KNOW-5ad0bf1b
     type: synchronised-with
-  - target: SKILL-13ec986c
+  - target: KNOW-13ec986c
     type: synchronised-with
-  - target: SKILL-58611337
+  - target: KNOW-58611337
     type: synchronised-with
-  - target: SKILL-dac84f00
+  - target: KNOW-dac84f00
     type: synchronised-with
-  - target: SKILL-8a821622
+  - target: KNOW-8a821622
     type: synchronised-with
-  - target: SKILL-282c0305
+  - target: KNOW-282c0305
     type: synchronised-with
-  - target: SKILL-49f495ff
+  - target: KNOW-49f495ff
     type: synchronised-with
-  - target: SKILL-40addb7a
+  - target: KNOW-40addb7a
     type: synchronised-with
-  - target: SKILL-2b6147c9
+  - target: KNOW-2b6147c9
     type: synchronised-with
-  - target: SKILL-a4b6310b
+  - target: KNOW-a4b6310b
     type: synchronised-with
-  - target: SKILL-1b990160
+  - target: KNOW-1b990160
     type: synchronised-with
-  - target: SKILL-65f5aa67
+  - target: KNOW-65f5aa67
     type: synchronised-with
-  - target: SKILL-3f34e682
+  - target: KNOW-3f34e682
     type: synchronised-with
-  - target: SKILL-7a96b952
+  - target: KNOW-7a96b952
     type: synchronised-with
 
 ---

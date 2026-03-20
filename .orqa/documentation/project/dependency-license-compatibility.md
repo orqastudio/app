@@ -8,9 +8,9 @@ updated: 2026-03-18
 relationships:
   - target: AD-fc646168
     type: documents
-  - target: SKILL-63cc1a00
+  - target: KNOW-63cc1a00
     type: synchronised-with
-  - target: SKILL-c60144c1
+  - target: KNOW-c60144c1
     type: synchronised-with
 ---
 

@@ -7,15 +7,15 @@ created: 2026-03-09
 updated: 2026-03-09
 assignee: AGENT-1dab5ebe
 acceptance:
-  - SKILL-f5edb34d skill created (from debugger)
-  - SKILL-8c98ea98 skill created (from refactor-agent)
-  - SKILL-170c220e skill created (from security-engineer)
-  - SKILL-8d76c3c7 skill created (from agent-maintainer)
-  - SKILL-f0efaf83 skill created (from code-reviewer)
-  - SKILL-1b805150 skill created (from qa-tester)
-  - SKILL-5124e508 skill created (from ux-reviewer)
-  - SKILL-bcb42347 skill created (from test-engineer)
-  - SKILL-30a419dd skill created (from systems-architect)
+  - KNOW-f5edb34d skill created (from debugger)
+  - KNOW-8c98ea98 skill created (from refactor-agent)
+  - KNOW-170c220e skill created (from security-engineer)
+  - KNOW-8d76c3c7 skill created (from agent-maintainer)
+  - KNOW-f0efaf83 skill created (from code-reviewer)
+  - KNOW-1b805150 skill created (from qa-tester)
+  - KNOW-5124e508 skill created (from ux-reviewer)
+  - KNOW-bcb42347 skill created (from test-engineer)
+  - KNOW-30a419dd skill created (from systems-architect)
   - Each skill captures the domain knowledge from its source agent
   - Each skill follows the SKILL.md format with proper frontmatter
 relationships:
