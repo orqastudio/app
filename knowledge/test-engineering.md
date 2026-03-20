@@ -1,5 +1,5 @@
 ---
-id: SKILL-bcb42347
+id: KNOW-bcb42347
 title: Test Engineering
 description: |
   Test engineering methodology: test organisation, coverage requirements, mock

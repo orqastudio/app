@@ -6,21 +6,21 @@ category: how-to
 status: active
 plugin: "@orqastudio/plugin-software-project"
 relationships:
-  - target: SKILL-SW-1d47d8d8
+  - target: KNOW-SW-1d47d8d8
     type: synchronised-with
-  - target: SKILL-f0efaf83
+  - target: KNOW-f0efaf83
     type: synchronised-with
-  - target: SKILL-353a228b
+  - target: KNOW-353a228b
     type: synchronised-with
-  - target: SKILL-1b805150
+  - target: KNOW-1b805150
     type: synchronised-with
-  - target: SKILL-170c220e
+  - target: KNOW-170c220e
     type: synchronised-with
-  - target: SKILL-bcb42347
+  - target: KNOW-bcb42347
     type: synchronised-with
-  - target: SKILL-c6d04755
+  - target: KNOW-c6d04755
     type: synchronised-with
-  - target: SKILL-5124e508
+  - target: KNOW-5124e508
     type: synchronised-with
 
 ---

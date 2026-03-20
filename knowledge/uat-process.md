@@ -1,5 +1,5 @@
 ---
-id: SKILL-c6d04755
+id: KNOW-c6d04755
 title: UAT Process
 description: |
   Structured user acceptance testing methodology. Collect all findings first,

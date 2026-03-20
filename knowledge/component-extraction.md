@@ -1,5 +1,5 @@
 ---
-id: SKILL-353a228b
+id: KNOW-353a228b
 title: Component Extraction
 description: "Methodology for identifying repeated UI patterns and extracting them into shared components. Covers detection heuristics, extraction criteria, prop design, and placement conventions."
 status: active

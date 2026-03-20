@@ -1,5 +1,5 @@
 ---
-id: SKILL-5124e508
+id: KNOW-5124e508
 title: UX Compliance Review
 description: |
   UX compliance review methodology: label auditing, state coverage verification,

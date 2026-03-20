@@ -1,5 +1,5 @@
 ---
-id: SKILL-1b805150
+id: KNOW-1b805150
 title: QA Verification
 description: |
   End-to-end functional verification methodology: the "Would It Work" protocol,

@@ -1,5 +1,5 @@
 ---
-id: SKILL-f0efaf83
+id: KNOW-f0efaf83
 title: Code Quality Review
 description: |
   Code review methodology: automated checks, manual review checklists, forbidden

@@ -1,5 +1,5 @@
 ---
-id: SKILL-170c220e
+id: KNOW-170c220e
 title: Security Audit
 description: |
   Security auditing methodology: secret management, capability/permission systems,

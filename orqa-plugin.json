@@ -280,45 +280,45 @@
         "semantic": "lineage"
       }
     ],
-    "skills": [
+    "knowledge": [
       {
         "key": "software-delivery",
-        "id": "SKILL-SW-1d47d8d8",
+        "id": "KNOW-SW-1d47d8d8",
         "label": "Software Delivery Lifecycle"
       },
       {
         "key": "code-quality-review",
-        "id": "SKILL-f0efaf83",
+        "id": "KNOW-f0efaf83",
         "label": "Code Quality Review"
       },
       {
         "key": "qa-verification",
-        "id": "SKILL-1b805150",
+        "id": "KNOW-1b805150",
         "label": "QA Verification"
       },
       {
         "key": "security-audit",
-        "id": "SKILL-170c220e",
+        "id": "KNOW-170c220e",
         "label": "Security Audit"
       },
       {
         "key": "test-engineering",
-        "id": "SKILL-bcb42347",
+        "id": "KNOW-bcb42347",
         "label": "Test Engineering"
       },
       {
         "key": "uat-process",
-        "id": "SKILL-c6d04755",
+        "id": "KNOW-c6d04755",
         "label": "UAT Process"
       },
       {
         "key": "ux-compliance-review",
-        "id": "SKILL-5124e508",
+        "id": "KNOW-5124e508",
         "label": "UX Compliance Review"
       },
       {
         "key": "component-extraction",
-        "id": "SKILL-353a228b",
+        "id": "KNOW-353a228b",
         "label": "Component Extraction"
       }
     ],
