@@ -1,6 +1,6 @@
 ---
-id: SKILL-RST-214b7cdc
-type: skill
+id: KNOW-RST-214b7cdc
+type: knowledge
 name: Rust Testing Patterns
 status: active
 plugin: "@orqastudio/plugin-rust"

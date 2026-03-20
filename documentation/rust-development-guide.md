@@ -6,13 +6,13 @@ status: active
 category: how-to
 plugin: "@orqastudio/plugin-rust"
 relationships:
-  - target: SKILL-RST-5efa83a5
+  - target: KNOW-RST-5efa83a5
     type: synchronised-with
-  - target: SKILL-RST-214b7cdc
+  - target: KNOW-RST-214b7cdc
     type: synchronised-with
-  - target: SKILL-12495e28
+  - target: KNOW-12495e28
     type: synchronised-with
-  - target: SKILL-RST-2a72f929
+  - target: KNOW-RST-2a72f929
     type: synchronised-with
 ---
 

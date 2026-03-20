@@ -13,11 +13,11 @@
         }
       }
     },
-    "skills": [
-      { "key": "clippy-config-management", "id": "SKILL-RST-5efa83a5", "label": "Clippy Config Management" },
-      { "key": "rust-testing-patterns", "id": "SKILL-RST-214b7cdc", "label": "Rust Testing Patterns" },
-      { "key": "rust-installation", "id": "SKILL-RST-2a72f929", "label": "Rust Plugin Installation" },
-      { "key": "rust-async-patterns", "id": "SKILL-c323ec5f", "label": "Rust Async Patterns" }
+    "knowledge": [
+      { "key": "clippy-config-management", "id": "KNOW-RST-5efa83a5", "label": "Clippy Config Management" },
+      { "key": "rust-testing-patterns", "id": "KNOW-RST-214b7cdc", "label": "Rust Testing Patterns" },
+      { "key": "rust-installation", "id": "KNOW-RST-2a72f929", "label": "Rust Plugin Installation" },
+      { "key": "rust-async-patterns", "id": "KNOW-c323ec5f", "label": "Rust Async Patterns" }
     ],
     "tools": {
       "clippy": {

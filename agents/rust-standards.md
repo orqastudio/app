@@ -12,9 +12,9 @@ capabilities:
   - content_search
   - shell_execute
 relationships:
-  - target: SKILL-RST-5efa83a5
+  - target: KNOW-RST-5efa83a5
     type: employs
-  - target: SKILL-RST-214b7cdc
+  - target: KNOW-RST-214b7cdc
     type: employs
 ---
 
