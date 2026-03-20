@@ -5,6 +5,10 @@
   "description": "Base Rust development infrastructure — clippy, rustfmt, cargo test configuration and coding standards enforcement.",
   "category": "coding-standards",
   "provides": {
+    "agents": [
+      { "key": "rust-standards", "path": "agents/rust-standards.md" },
+      { "key": "rust-specialist", "path": "agents/rust-specialist.md" }
+    ],
     "lspServers": {
       "rust": {
         "command": "rust-analyzer",
