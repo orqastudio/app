@@ -1,6 +1,6 @@
 ---
-id: SKILL-CS-001
-type: skill
+id: KNOW-CS-001
+type: knowledge
 title: Config Generation from Rules
 description: "How to generate tool config files (ESLint, clippy, rustfmt, etc.) from OrqaStudio enforcement rules. Rules define what to enforce; this plugin generates the tooling config."
 status: active

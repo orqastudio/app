@@ -9,15 +9,15 @@
     "views": [],
     "widgets": [],
     "relationships": [],
-    "skills": [
+    "knowledge": [
       {
         "key": "config-generation",
-        "id": "SKILL-CS-001",
+        "id": "KNOW-CS-001",
         "label": "Config Generation from Rules"
       },
       {
         "key": "quality-checks",
-        "id": "SKILL-CS-002",
+        "id": "KNOW-CS-002",
         "label": "Quality Check Runner"
       }
     ],
