@@ -1,0 +1,18 @@
+---
+id: IDEA-63278de9
+type: idea
+title: "Package Sonar MCP into Claude Code connector for debugging"
+description: "Bundle the Sonar MCP server (https://github.com/RasKrebs/sonar) into the Claude Code connector plugin to provide enhanced debugging capabilities during development."
+status: captured
+created: 2026-03-20
+updated: 2026-03-20
+relationships:
+  - target: PILLAR-569581e0
+    type: grounded
+  - target: PERSONA-cda6edd6
+    type: benefits
+---
+
+# IDEA-132: Sonar MCP for Debugging
+
+Package [Sonar](https://github.com/RasKrebs/sonar) into the Claude Code connector to help with debugging during development. Sonar provides MCP-based debugging tools that could complement the existing diagnostic-methodology skill.
