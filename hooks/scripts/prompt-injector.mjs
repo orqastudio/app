@@ -16,20 +16,11 @@ import { join } from "path";
 // Each entry: { keywords: string[], skills: string[], description: string }
 // Knowledge names must match directory names under .orqa/process/knowledge/ or app/.orqa/process/knowledge/
 const INTENT_MAP = [
+  // ── Backend / IPC ──────────────────────────────────────────────────────────
   {
     keywords: ["tauri command", "ipc", "invoke", "#[tauri::command]", "add a command", "new command"],
     skills: ["orqa-ipc-patterns", "orqa-error-composition"],
     description: "IPC boundary work",
-  },
-  {
-    keywords: ["store", "reactive", "$state", "$derived", "$effect", "rune"],
-    skills: ["orqa-store-patterns", "orqa-store-orchestration"],
-    description: "Store architecture",
-  },
-  {
-    keywords: ["component", "svelte component", "ui component", "create a component"],
-    skills: ["svelte5-best-practices", "tailwind-design-system"],
-    description: "Component work",
   },
   {
     keywords: ["domain", "domain service", "domain model", "business logic"],
@@ -47,44 +38,227 @@ const INTENT_MAP = [
     description: "Streaming pipeline",
   },
   {
-    keywords: ["plan", "approach", "design", "architect", "tradeoff"],
-    skills: ["planning", "systems-thinking"],
-    description: "Planning phase",
+    keywords: ["rust", "async", "tokio", "future", "trait", "impl", "cargo"],
+    skills: ["rust-async-patterns", "orqa-backend-best-practices"],
+    description: "Rust / async backend work",
   },
   {
-    keywords: ["review", "check", "audit", "verify", "quality"],
-    skills: ["orqa-governance"],
-    description: "Review phase",
+    keywords: ["typescript", "type alias", "generic", "discriminated union", "mapped type", "conditional type"],
+    skills: ["typescript-advanced-types"],
+    description: "TypeScript advanced types",
+  },
+  // ── Frontend / UI ─────────────────────────────────────────────────────────
+  {
+    keywords: ["store", "reactive", "$state", "$derived", "$effect", "rune"],
+    skills: ["orqa-store-patterns", "orqa-store-orchestration"],
+    description: "Store architecture",
   },
   {
-    keywords: ["debug", "fix", "broken", "error", "failing", "crash", "bug"],
-    skills: ["diagnostic-methodology", "systems-thinking"],
-    description: "Diagnostic work",
+    keywords: ["component", "svelte component", "ui component", "create a component"],
+    skills: ["svelte5-best-practices", "orqa-frontend-best-practices"],
+    description: "Component work",
   },
   {
-    keywords: ["test", "testing", "vitest", "cargo test", "coverage"],
+    keywords: ["tailwind", "design system", "css", "theme", "token", "color", "spacing", "typography"],
+    skills: ["tailwind-design-system"],
+    description: "Tailwind / design system",
+  },
+  {
+    keywords: ["extract component", "shared component", "reusable component", "component library"],
+    skills: ["component-extraction", "svelte5-best-practices"],
+    description: "Component extraction",
+  },
+  {
+    keywords: ["ux", "accessibility", "usability", "a11y", "user experience", "ux review", "compliance"],
+    skills: ["ux-compliance-review"],
+    description: "UX and accessibility compliance",
+  },
+  // ── Testing ────────────────────────────────────────────────────────────────
+  {
+    keywords: ["test", "testing", "vitest", "cargo test", "coverage", "unit test", "integration test"],
     skills: ["orqa-testing"],
     description: "Testing work",
   },
   {
-    keywords: ["search", "find", "where is", "locate"],
-    skills: ["orqa-code-search"],
-    description: "Code search",
+    keywords: ["e2e", "playwright", "end-to-end", "test engineering", "test strategy", "test plan"],
+    skills: ["test-engineering"],
+    description: "Test engineering and E2E",
   },
+  {
+    keywords: ["qa", "quality assurance", "acceptance", "verification", "qa verification"],
+    skills: ["qa-verification"],
+    description: "QA verification process",
+  },
+  // ── Debugging / Diagnostics ───────────────────────────────────────────────
+  {
+    keywords: ["debug", "fix", "broken", "error", "failing", "crash", "bug", "investigate", "diagnose"],
+    skills: ["diagnostic-methodology", "systems-thinking"],
+    description: "Diagnostic work",
+  },
+  // ── Planning / Architecture ────────────────────────────────────────────────
+  {
+    keywords: ["plan", "approach", "design", "architect", "tradeoff", "trade-off"],
+    skills: ["planning", "systems-thinking"],
+    description: "Planning phase",
+  },
+  {
+    keywords: ["architecture", "evaluate architecture", "assess design", "design review", "architectural decision", "adr"],
+    skills: ["architectural-evaluation", "systems-thinking"],
+    description: "Architectural evaluation",
+  },
+  {
+    keywords: ["system", "holistic", "impact analysis", "second-order", "ripple effect", "dependencies between"],
+    skills: ["systems-thinking"],
+    description: "Systems thinking",
+  },
+  {
+    keywords: ["research", "investigate", "gather information", "explore options", "compare"],
+    skills: ["research-methodology"],
+    description: "Research methodology",
+  },
+  // ── Refactoring / Tech Debt ────────────────────────────────────────────────
+  {
+    keywords: ["refactor", "restructur", "reorganiz", "extract", "consolidat", "move files", "migrate files"],
+    skills: ["restructuring-methodology", "systems-thinking"],
+    description: "Refactoring work",
+  },
+  {
+    keywords: ["tech debt", "cleanup", "refactor debt", "pay down debt", "dead code", "legacy code"],
+    skills: ["tech-debt-management"],
+    description: "Tech debt management",
+  },
+  {
+    keywords: ["compose", "composable", "modular", "reuse", "combine", "compose modules"],
+    skills: ["composability"],
+    description: "Composability and modularity",
+  },
+  // ── Code Quality ───────────────────────────────────────────────────────────
+  {
+    keywords: ["code review", "quality review", "lint", "static analysis", "clippy", "eslint", "code quality"],
+    skills: ["code-quality-review"],
+    description: "Code quality review",
+  },
+  {
+    keywords: ["security", "audit", "vulnerability", "owasp", "injection", "xss", "auth", "permissions"],
+    skills: ["security-audit"],
+    description: "Security audit",
+  },
+  // ── Search ─────────────────────────────────────────────────────────────────
+  {
+    keywords: ["search", "find", "where is", "locate", "grep", "semantic search", "chunkhound"],
+    skills: ["search"],
+    description: "Code and artifact search",
+  },
+  // ── Governance / Artifacts ─────────────────────────────────────────────────
   {
     keywords: ["governance", "rule", "knowledge", "artifact", "enforcement"],
     skills: ["orqa-governance", "orqa-documentation"],
     description: "Governance work",
   },
   {
-    keywords: ["refactor", "restructur", "reorganiz", "extract", "consolidat"],
-    skills: ["restructuring-methodology", "systems-thinking"],
-    description: "Refactoring work",
+    keywords: ["artifact status", "status transition", "promote", "lifecycle", "state machine", "in progress", "complete"],
+    skills: ["artifact-status-management"],
+    description: "Artifact status management",
   },
+  {
+    keywords: ["relationship", "link artifact", "connect artifact", "bidirectional", "artifact graph", "references"],
+    skills: ["artifact-relationships"],
+    description: "Artifact relationships",
+  },
+  {
+    keywords: ["create artifact", "new artifact", "write artifact", "artifact template", "frontmatter"],
+    skills: ["artifact-creation", "artifact-ids"],
+    description: "Artifact creation",
+  },
+  {
+    keywords: ["artifact id", "generate id", "artifact identifier", "id format"],
+    skills: ["artifact-ids"],
+    description: "Artifact ID generation",
+  },
+  {
+    keywords: ["governance maintenance", "maintain governance", "audit governance", "graph health", "integrity check"],
+    skills: ["governance-maintenance"],
+    description: "Governance maintenance",
+  },
+  {
+    keywords: ["governance context", "governance background", "orqa overview", "orqa architecture"],
+    skills: ["governance-context", "orqa-architecture"],
+    description: "Governance context and architecture",
+  },
+  {
+    keywords: ["schema", "validate", "frontmatter", "core.json", "schema validation", "yaml schema"],
+    skills: ["schema-validation"],
+    description: "Schema validation",
+  },
+  {
+    keywords: ["naming", "convention", "rename", "identifier", "naming convention", "name format"],
+    skills: ["naming-conventions"],
+    description: "Naming conventions",
+  },
+  {
+    keywords: ["delegate", "delegation", "agent role", "orchestrat", "subagent", "assign task"],
+    skills: ["delegation-patterns"],
+    description: "Delegation patterns",
+  },
+  {
+    keywords: ["rule enforcement", "enforce rule", "gate check", "pipeline gate", "pre-commit hook"],
+    skills: ["rule-enforcement"],
+    description: "Rule enforcement",
+  },
+  // ── Plugin Development ──────────────────────────────────────────────────────
+  {
+    keywords: ["plugin", "develop plugin", "create plugin", "build plugin", "first-party plugin", "core plugin"],
+    skills: ["plugin-development-first-party", "orqa-plugin-development"],
+    description: "First-party plugin development",
+  },
+  {
+    keywords: ["third-party plugin", "community plugin", "external plugin", "publish plugin"],
+    skills: ["plugin-development-third-party"],
+    description: "Third-party plugin development",
+  },
+  {
+    keywords: ["install plugin", "plugin setup", "configure plugin", "enable plugin", "plugin config"],
+    skills: ["plugin-setup"],
+    description: "Plugin setup and installation",
+  },
+  // ── Project Setup / Inference ───────────────────────────────────────────────
+  {
+    keywords: ["infer project", "detect project", "project type", "stack detection", "detect stack"],
+    skills: ["project-inference", "project-type-software"],
+    description: "Project inference and detection",
+  },
+  {
+    keywords: ["project setup", "setup project", "initialize project", "new project", "onboard project"],
+    skills: ["project-setup"],
+    description: "Project setup",
+  },
+  {
+    keywords: ["project migration", "migrate project", "upgrade project", "move project"],
+    skills: ["project-migration"],
+    description: "Project migration",
+  },
+  // ── Epic / Skills Maintenance ───────────────────────────────────────────────
+  {
+    keywords: ["epic", "requirement", "infer requirement", "epic scope", "derive requirement"],
+    skills: ["epic-requirement-inference"],
+    description: "Epic requirement inference",
+  },
+  {
+    keywords: ["skills maintenance", "update skill", "maintain skill", "skill quality", "knowledge quality"],
+    skills: ["skills-maintenance"],
+    description: "Skills and knowledge maintenance",
+  },
+  // ── Logging ────────────────────────────────────────────────────────────────
   {
     keywords: ["log", "logging", "logger", "console.log", "tracing"],
     skills: ["centralized-logging"],
     description: "Logging work",
+  },
+  // ── Licensing ──────────────────────────────────────────────────────────────
+  {
+    keywords: ["license", "licensing", "dependency license", "license compatibility", "open source license"],
+    skills: ["dependency-license-compatibility", "licensing-decisions"],
+    description: "License and dependency licensing",
   },
 ];
 
