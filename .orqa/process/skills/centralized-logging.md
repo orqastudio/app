@@ -14,7 +14,8 @@ version: 1.0.0
 user-invocable: false
 relationships:
   - target: DOC-36d28810
-    type: synchronised-with  - target: DOC-4b4fbc0f
+    type: synchronised-with
+  - target: DOC-4b4fbc0f
     type: synchronised-with
 
 ---

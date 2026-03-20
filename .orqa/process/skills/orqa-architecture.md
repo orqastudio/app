@@ -15,7 +15,8 @@ version: 1.0.0
 user-invocable: true
 relationships:
   - target: AGENT-caff7bc1
-    type: employed-by  - target: DOC-4b4fbc0f
+    type: employed-by
+  - target: DOC-4b4fbc0f
     type: synchronised-with
 
 ---

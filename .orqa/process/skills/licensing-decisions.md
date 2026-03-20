@@ -7,7 +7,8 @@ category: domain
 user-invocable: true
 relationships:
   - target: DOC-4ed362fb
-    type: synchronised-with  - target: DOC-4b4fbc0f
+    type: synchronised-with
+  - target: DOC-4b4fbc0f
     type: synchronised-with
 
 ---
