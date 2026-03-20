@@ -11,7 +11,8 @@ relationships:
   - target: SKILL-SVE-88f32b6a
     type: synchronised-with
   - target: SKILL-SVE-fd2b84c4
-    type: synchronised-with  - target: SKILL-SVE-90dd73ab
+    type: synchronised-with
+  - target: SKILL-SVE-90dd73ab
     type: synchronised-with
   - target: SKILL-1c708b68
     type: synchronised-with

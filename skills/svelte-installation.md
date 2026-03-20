@@ -6,7 +6,8 @@ status: active
 plugin: "@orqastudio/plugin-svelte"
 relationships:
   - target: DOC-SVE-f7ed7a62
-    type: synchronised-with  - target: DOC-SVE-5d832d1d
+    type: synchronised-with
+  - target: DOC-SVE-5d832d1d
     type: synchronised-with
 
 ---
