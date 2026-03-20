@@ -91,16 +91,18 @@ cat <<'EOF'
 SESSION END PROTOCOL:
 
 Before stopping, the orchestrator MUST:
-1. Write session state to tmp/session-state.md:
+1. Run `orqa validate --fix` to auto-fix missing inverses and verify graph integrity
+2. Write session state to tmp/session-state.md:
    - Scope: which epic/task was in focus
    - Done: what was completed this session
    - In Progress: what's partially done
    - Next: what should happen next session
    - Blockers: anything blocking progress
-2. Commit all work
-3. Verify checks pass (make check)
+3. Commit all work
+4. Verify checks pass (make check)
 
 PRE-STOP CHECKLIST:
+- orqa validate --fix passes (0 errors)
 - All checks pass (make check)
 - No stub/mock/placeholder patterns in committed code
 - Changes are within task scope

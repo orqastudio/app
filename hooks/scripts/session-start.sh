@@ -110,6 +110,16 @@ touch "$GUARD"
 # ─── Health Checks ───────────────────────────────────────────────────────────
 OUTPUT=""
 
+# ─── Graph Integrity ─────────────────────────────────────────────────────────
+# Run orqa validate --fix at session start to auto-fix missing inverses
+# and surface any remaining integrity issues before work begins.
+if command -v orqa &> /dev/null; then
+  VALIDATE_OUTPUT=$(cd "$PROJECT_DIR" && orqa validate --fix 2>&1 || true)
+  if echo "$VALIDATE_OUTPUT" | grep -q "error"; then
+    OUTPUT="${OUTPUT}GRAPH INTEGRITY ISSUES:\n${VALIDATE_OUTPUT}\n\n"
+  fi
+fi
+
 # Check for stashes
 STASHES=$(cd "$PROJECT_DIR" && git stash list 2>/dev/null || true)
 if [ -n "$STASHES" ]; then
