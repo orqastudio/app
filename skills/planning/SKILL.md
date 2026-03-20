@@ -49,7 +49,7 @@ For any non-trivial feature, follow this preferred workflow before writing the f
 - `.orqa/documentation/about/vision.md` — Two-Pillar framework and product vision
 - `.orqa/documentation/about/governance.md` — Governance rules and decision-making process
 
-### Use ChunkHound First
+### Use Search Tools First
 
 Before reading entire files:
 
@@ -57,7 +57,7 @@ Before reading entire files:
 - `search_semantic` — Find relevant docs and code for specific concepts
 - `search_regex` — Verify command names, function names, or specific symbols exist
 
-**Why ChunkHound first:** Avoids pulling entire files into context. Narrows down exactly what to read.
+**Why search tools first:** Avoids pulling entire files into context. Narrows down exactly what to read.
 
 ## Plan Structure Requirements
 
@@ -252,5 +252,5 @@ State "N/A — [reason]" for inapplicable ones.]
 
 ## Related Skills
 
-- See the **chunkhound** skill for pre-implementation codebase research
+- See the **search** skill for pre-implementation codebase research
 - See the **architecture** skill for architectural compliance during planning

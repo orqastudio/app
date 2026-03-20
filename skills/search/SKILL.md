@@ -1,6 +1,6 @@
 ---
 name: search
-description: "Unified search across the project via MCP tools. Three modes: regex for exact patterns, semantic for natural language, research for compound queries. Replaces chunkhound, orqa-code-search, and orqa-native-search. Use when: searching before creating new code, finding callers before refactoring, understanding how a system works end-to-end."
+description: "Unified search across the project via MCP tools. Three modes: regex for exact patterns, semantic for natural language, research for compound queries. Use when: searching before creating new code, finding callers before refactoring, understanding how a system works end-to-end."
 user-invocable: true
 ---
 
