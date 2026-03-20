@@ -6,7 +6,7 @@ category: onboarding
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
-  - target: SKILL-SVE-90dd73ab
+  - target: KNOW-SVE-90dd73ab
     type: synchronised-with
 ---
 
