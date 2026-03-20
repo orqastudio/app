@@ -1,6 +1,0 @@
-{
-  "defaults": {
-    "group": "layer",
-    "sort": { "field": "title", "direction": "asc" }
-  }
-}
