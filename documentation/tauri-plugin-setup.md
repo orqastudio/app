@@ -1,12 +1,14 @@
 ---
 id: DOC-TAU-d0237b23
-title: "Tauri Plugin Setup"
-description: "How to install and configure the Tauri development plugin — toolchain requirements, config generation, and organisation mode."
+title: Tauri Plugin Setup
+description: How to install and configure the Tauri development plugin — toolchain requirements, config generation, and organisation mode.
 category: onboarding
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
   - target: SKILL-2539a6e4
+    type: synchronised-with
+  - target: SKILL-TAU-6f7f4da5
     type: synchronised-with
 ---
 

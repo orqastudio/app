@@ -7,6 +7,8 @@ plugin: "@orqastudio/plugin-tauri"
 relationships:
   - target: DOC-TAU-d9c0d1c7
     type: synchronised-with
+  - target: AGENT-TAU-1ed9512e
+    type: employed-by
 ---
 
 # Tauri v2 Patterns
