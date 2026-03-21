@@ -35,10 +35,10 @@ use std::path::PathBuf;
 use std::process;
 
 use orqa_validation::{
-    auto_fix, build_validation_context, compute_health, validate,
+    auto_fix, build_validation_context, compute_health,
     graph::{build_artifact_graph, load_project_config},
     types::IntegritySeverity,
-    AppliedFix, GraphHealth, IntegrityCheck, ValidationError,
+    validate, AppliedFix, GraphHealth, IntegrityCheck, ValidationError,
 };
 use serde::Serialize;
 
@@ -70,7 +70,10 @@ fn main() {
     let apply_fixes_flag = args.iter().any(|a| a == "--fix");
 
     if !project_path.exists() {
-        eprintln!("Error: project path does not exist: {}", project_path.display());
+        eprintln!(
+            "Error: project path does not exist: {}",
+            project_path.display()
+        );
         process::exit(2);
     }
 
@@ -130,5 +133,9 @@ fn run(project_path: &std::path::Path, apply_fixes_flag: bool) -> Result<Report,
         None
     };
 
-    Ok(Report { checks, health, fixes_applied })
+    Ok(Report {
+        checks,
+        health,
+        fixes_applied,
+    })
 }

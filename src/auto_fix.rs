@@ -85,10 +85,7 @@ pub fn update_artifact_field(
 
     let (fm_opt, body) = extract_frontmatter(&content);
     let fm_text = fm_opt.ok_or_else(|| {
-        ValidationError::Validation(format!(
-            "no frontmatter block in '{}'",
-            full_path.display()
-        ))
+        ValidationError::Validation(format!("no frontmatter block in '{}'", full_path.display()))
     })?;
 
     let field_prefix = format!("{field}:");
@@ -202,8 +199,7 @@ fn apply_missing_inverse_fix(
     check: &IntegrityCheck,
     project_path: &Path,
 ) -> Result<Option<AppliedFix>, ValidationError> {
-    let Some((source_id, target_id, inverse_type)) =
-        parse_missing_inverse_message(&check.message)
+    let Some((source_id, target_id, inverse_type)) = parse_missing_inverse_message(&check.message)
     else {
         return Ok(None);
     };
@@ -225,10 +221,7 @@ fn apply_missing_inverse_fix(
     };
 
     let yaml_value: serde_yaml::Value = serde_yaml::from_str(&fm_text).map_err(|e| {
-        ValidationError::Validation(format!(
-            "YAML parse error in {}: {e}",
-            target_node.path
-        ))
+        ValidationError::Validation(format!("YAML parse error in {}: {e}", target_node.path))
     })?;
 
     // Guard: don't add a duplicate.
@@ -403,7 +396,10 @@ fn apply_missing_status_fix(
     };
 
     // Guard: don't add if `status:` already present.
-    if fm_text.lines().any(|l| l.trim_start().starts_with("status:")) {
+    if fm_text
+        .lines()
+        .any(|l| l.trim_start().starts_with("status:"))
+    {
         return Ok(None);
     }
 
@@ -501,9 +497,8 @@ fn apply_duplicate_relationship_fix(
         );
     }
 
-    let new_fm = serde_yaml::to_string(&new_yaml).map_err(|e| {
-        ValidationError::Validation(format!("YAML serialization error: {e}"))
-    })?;
+    let new_fm = serde_yaml::to_string(&new_yaml)
+        .map_err(|e| ValidationError::Validation(format!("YAML serialization error: {e}")))?;
     // serde_yaml adds a leading `---\n` in some versions; normalise it away.
     let new_fm = new_fm
         .trim_start_matches("---\n")
@@ -516,7 +511,10 @@ fn apply_duplicate_relationship_fix(
 
     Ok(Some(AppliedFix {
         artifact_id: check.artifact_id.clone(),
-        description: format!("Removed {removed} duplicate relationship entries from {}", node.path),
+        description: format!(
+            "Removed {removed} duplicate relationship entries from {}",
+            node.path
+        ),
         file_path: node.path.clone(),
     }))
 }
@@ -570,8 +568,7 @@ fn insert_relationship_entry(fm_text: &str, body: &str, new_entry: &str) -> Stri
             }
             format!("---\n{}\n---\n{}", new_lines.join("\n"), body)
         } else {
-            let new_fm =
-                fm_text.replace("relationships:", &format!("relationships:\n{new_entry}"));
+            let new_fm = fm_text.replace("relationships:", &format!("relationships:\n{new_entry}"));
             format!("---\n{new_fm}\n---\n{body}")
         }
     } else {

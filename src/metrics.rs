@@ -471,7 +471,11 @@ fn compute_pillar_traceability(graph: &ArtifactGraph, primary_ids: &[&str]) -> f
         .iter()
         .filter_map(|id| {
             let node = graph.nodes.get(*id)?;
-            if node.artifact_type == "doc" { None } else { Some(*id) }
+            if node.artifact_type == "doc" {
+                None
+            } else {
+                Some(*id)
+            }
         })
         .collect();
 
@@ -480,7 +484,10 @@ fn compute_pillar_traceability(graph: &ArtifactGraph, primary_ids: &[&str]) -> f
         return 0.0;
     }
 
-    let traceable = non_doc_ids.iter().filter(|id| reachable.contains(*id)).count();
+    let traceable = non_doc_ids
+        .iter()
+        .filter(|id| reachable.contains(*id))
+        .count();
     (traceable as f64 / non_doc_count as f64) * 100.0
 }
 
@@ -493,17 +500,11 @@ fn compute_bidirectionality_ratio(graph: &ArtifactGraph, primary_ids: &[&str]) -
         .iter()
         .filter_map(|id| graph.nodes.get(*id))
         .flat_map(|node| {
-            node.references_out
-                .iter()
-                .filter_map(|r| {
-                    r.relationship_type.as_ref().map(|rt| {
-                        (
-                            node.id.clone(),
-                            r.target_id.clone(),
-                            rt.clone(),
-                        )
-                    })
-                })
+            node.references_out.iter().filter_map(|r| {
+                r.relationship_type
+                    .as_ref()
+                    .map(|rt| (node.id.clone(), r.target_id.clone(), rt.clone()))
+            })
         })
         .collect();
 

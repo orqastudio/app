@@ -3,7 +3,9 @@
 use std::collections::HashMap;
 
 use crate::graph::ArtifactGraph;
-use crate::types::{IntegrityCategory, IntegrityCheck, IntegritySeverity, RelationshipSchema, ValidationContext};
+use crate::types::{
+    IntegrityCategory, IntegrityCheck, IntegritySeverity, RelationshipSchema, ValidationContext,
+};
 
 /// Check that `maxCount` cardinality constraints are not exceeded.
 pub fn check_cardinality(

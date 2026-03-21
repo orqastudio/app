@@ -142,15 +142,30 @@ fn build_valid_relationship_types(project_path: &Path) -> std::collections::Hash
     // Plugin-provided relationships
     for dir_name in &["plugins", "connectors"] {
         let scan_dir = project_path.join(dir_name);
-        if !scan_dir.exists() { continue; }
-        let Ok(entries) = std::fs::read_dir(&scan_dir) else { continue; };
+        if !scan_dir.exists() {
+            continue;
+        }
+        let Ok(entries) = std::fs::read_dir(&scan_dir) else {
+            continue;
+        };
         for entry in entries.flatten() {
-            if !entry.file_type().is_ok_and(|ft| ft.is_dir()) { continue; }
+            if !entry.file_type().is_ok_and(|ft| ft.is_dir()) {
+                continue;
+            }
             let manifest = entry.path().join("orqa-plugin.json");
-            if !manifest.exists() { continue; }
-            let Ok(content) = std::fs::read_to_string(&manifest) else { continue; };
-            let Ok(json) = serde_json::from_str::<serde_json::Value>(&content) else { continue; };
-            if let Some(rels) = json.pointer("/provides/relationships").and_then(|v| v.as_array()) {
+            if !manifest.exists() {
+                continue;
+            }
+            let Ok(content) = std::fs::read_to_string(&manifest) else {
+                continue;
+            };
+            let Ok(json) = serde_json::from_str::<serde_json::Value>(&content) else {
+                continue;
+            };
+            if let Some(rels) = json
+                .pointer("/provides/relationships")
+                .and_then(|v| v.as_array())
+            {
                 for rel in rels {
                     if let Some(key) = rel.get("key").and_then(|v| v.as_str()) {
                         valid.insert(key.to_owned());
@@ -187,7 +202,14 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, Valida
     let mut graph = ArtifactGraph::default();
 
     // Pass 1a: walk the project's own .orqa/ with project: None.
-    walk_directory(&orqa_dir, project_path, &mut graph, &type_registry, None, &valid_rel_types)?;
+    walk_directory(
+        &orqa_dir,
+        project_path,
+        &mut graph,
+        &type_registry,
+        None,
+        &valid_rel_types,
+    )?;
 
     // Pass 1b: if organisation mode, scan each child project.
     if let Some(ref settings) = settings {
@@ -390,8 +412,8 @@ fn collect_node(
     project_name: Option<&str>,
     valid_rel_types: &std::collections::HashSet<String>,
 ) -> Result<(), ValidationError> {
-    let content =
-        std::fs::read_to_string(file_path).map_err(|e| ValidationError::FileSystem(e.to_string()))?;
+    let content = std::fs::read_to_string(file_path)
+        .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
     let (fm_text, body) = extract_frontmatter(&content);
     let Some(fm_text) = fm_text else {
         return Ok(());
@@ -736,7 +758,13 @@ fn humanize_stem(file_path: &Path) -> String {
 
 /// Load project settings from a project path, returning an empty `DeliveryConfig`
 /// and empty statuses on failure.
-pub fn load_project_config(project_path: &Path) -> (Vec<String>, DeliveryConfig, Vec<crate::settings::ProjectRelationshipConfig>) {
+pub fn load_project_config(
+    project_path: &Path,
+) -> (
+    Vec<String>,
+    DeliveryConfig,
+    Vec<crate::settings::ProjectRelationshipConfig>,
+) {
     match load_settings(project_path) {
         Some(settings) => {
             let statuses = settings.statuses.iter().map(|s| s.key.clone()).collect();
@@ -808,10 +836,12 @@ mod tests {
     fn relationship_creates_forward_ref() {
         let tmp = make_project();
         let tasks_dir = tmp.path().join(".orqa/delivery/tasks");
+        // Use `enforces` — a core.json relationship type that is always valid
+        // even without a project.json in the test fixture.
         write_artifact(
             &tasks_dir,
             "TASK-001.md",
-            "---\nid: TASK-001\ntitle: My Task\nrelationships:\n  - target: EPIC-001\n    type: delivers\n---\n",
+            "---\nid: TASK-001\ntitle: My Task\nrelationships:\n  - target: EPIC-001\n    type: enforces\n---\n",
         );
         let graph = build_artifact_graph(tmp.path()).expect("build");
         let node = graph.nodes.get("TASK-001").expect("node");

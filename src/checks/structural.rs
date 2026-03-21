@@ -3,7 +3,9 @@
 use std::collections::HashMap;
 
 use crate::graph::{ArtifactGraph, ArtifactNode, ArtifactRef};
-use crate::types::{IntegrityCategory, IntegrityCheck, IntegritySeverity, RelationshipSchema, ValidationContext};
+use crate::types::{
+    IntegrityCategory, IntegrityCheck, IntegritySeverity, RelationshipSchema, ValidationContext,
+};
 
 /// Check for broken references — target_id doesn't exist in the graph.
 pub fn check_broken_refs(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {

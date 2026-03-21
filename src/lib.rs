@@ -40,7 +40,7 @@ pub use error::ValidationError;
 pub use graph::{build_artifact_graph, ArtifactGraph, ArtifactNode, ArtifactRef};
 pub use metrics::{
     compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
-    AncestryChain, AncestryNode, TracedArtifact, TraceabilityResult,
+    AncestryChain, AncestryNode, TraceabilityResult, TracedArtifact,
 };
 pub use types::{
     AppliedFix, GraphHealth, IntegrityCategory, IntegrityCheck, IntegritySeverity,

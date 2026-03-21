@@ -93,7 +93,13 @@ fn check_delivery_node_parent(
     };
 
     if parent_node.artifact_type != parent_cfg.parent_type {
-        push_wrong_parent_type_check(node, parent_cfg, parent_ref.target_id.as_str(), parent_node, checks);
+        push_wrong_parent_type_check(
+            node,
+            parent_cfg,
+            parent_ref.target_id.as_str(),
+            parent_node,
+            checks,
+        );
     }
 }
 
