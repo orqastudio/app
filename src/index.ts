@@ -115,6 +115,10 @@ export type {
 	AppliedFix,
 	HealthSnapshot,
 	GraphHealthData,
+	AncestryNode,
+	AncestryChain,
+	TracedArtifact,
+	TraceabilityResult,
 } from "./artifact-graph.js";
 export { ARTIFACT_TYPES } from "./artifact-graph.js";
 
