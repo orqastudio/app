@@ -38,7 +38,10 @@ pub use auto_fix::{apply_fixes, update_artifact_field};
 pub use context::build_validation_context;
 pub use error::ValidationError;
 pub use graph::{build_artifact_graph, ArtifactGraph, ArtifactNode, ArtifactRef};
-pub use metrics::compute_health;
+pub use metrics::{
+    compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
+    AncestryChain, AncestryNode, TracedArtifact, TraceabilityResult,
+};
 pub use types::{
     AppliedFix, GraphHealth, IntegrityCategory, IntegrityCheck, IntegritySeverity,
     RelationshipConstraints, RelationshipSchema, StatusRule, ValidationContext,

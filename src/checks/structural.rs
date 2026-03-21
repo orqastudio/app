@@ -167,6 +167,112 @@ fn check_to_constraint(
     }
 }
 
+/// Check that every artifact has a `type:` field in its frontmatter.
+///
+/// The inferred type (computed during graph construction) is used as the suggestion.
+/// Artifacts whose inferred type is the generic `"doc"` fallback are excluded — they
+/// either have no meaningful type to add or live outside a recognised path prefix.
+pub fn check_missing_type_field(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
+    for node in graph.nodes.values() {
+        // Only flag if the frontmatter has NO `type` key at all.
+        let has_type_field = node
+            .frontmatter
+            .get("type")
+            .is_some_and(|v| !v.is_null() && v.as_str().is_some_and(|s| !s.is_empty()));
+
+        if has_type_field {
+            continue;
+        }
+
+        // Skip generic doc fallbacks — they live outside configured paths.
+        if node.artifact_type == "doc" {
+            continue;
+        }
+
+        checks.push(IntegrityCheck {
+            category: IntegrityCategory::MissingType,
+            severity: IntegritySeverity::Warning,
+            artifact_id: node.id.clone(),
+            message: format!(
+                "{} has no 'type:' field — inferred as '{}'",
+                node.id, node.artifact_type
+            ),
+            auto_fixable: true,
+            fix_description: Some(format!("Add type: {} to frontmatter", node.artifact_type)),
+        });
+    }
+}
+
+/// Check that every artifact has a `status:` field in its frontmatter.
+///
+/// Artifacts living in the `doc` type fallback are excluded since they often have
+/// no lifecycle status.
+pub fn check_missing_status_field(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
+    // Types that don't require lifecycle status.
+    const EXCLUDED_TYPES: &[&str] = &["doc", "pillar", "persona", "knowledge"];
+
+    for node in graph.nodes.values() {
+        if EXCLUDED_TYPES.contains(&node.artifact_type.as_str()) {
+            continue;
+        }
+
+        let has_status = node
+            .frontmatter
+            .get("status")
+            .is_some_and(|v| !v.is_null() && v.as_str().is_some_and(|s| !s.is_empty()));
+
+        if has_status {
+            continue;
+        }
+
+        checks.push(IntegrityCheck {
+            category: IntegrityCategory::MissingStatus,
+            severity: IntegritySeverity::Warning,
+            artifact_id: node.id.clone(),
+            message: format!("{} has no 'status:' field", node.id),
+            auto_fixable: true,
+            fix_description: Some("Add status: captured to frontmatter".to_owned()),
+        });
+    }
+}
+
+/// Check for duplicate relationship entries (same target + type appearing more than once).
+pub fn check_duplicate_relationships(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
+    for node in graph.nodes.values() {
+        let mut seen: std::collections::HashMap<(&str, &str), usize> =
+            std::collections::HashMap::new();
+
+        for ref_entry in &node.references_out {
+            if ref_entry.field != "relationships" {
+                continue;
+            }
+            let rel_type = ref_entry.relationship_type.as_deref().unwrap_or("");
+            *seen
+                .entry((ref_entry.target_id.as_str(), rel_type))
+                .or_insert(0) += 1;
+        }
+
+        for ((target_id, rel_type), count) in &seen {
+            if *count > 1 {
+                checks.push(IntegrityCheck {
+                    category: IntegrityCategory::DuplicateRelationship,
+                    severity: IntegritySeverity::Warning,
+                    artifact_id: node.id.clone(),
+                    message: format!(
+                        "{} has {} duplicate '{}' relationship entries to {}",
+                        node.id, count - 1, rel_type, target_id
+                    ),
+                    auto_fixable: true,
+                    fix_description: Some(format!(
+                        "Remove {} duplicate relationship entry/entries (target: {target_id}, type: {rel_type})",
+                        count - 1
+                    )),
+                });
+            }
+        }
+    }
+}
+
 /// Check that required relationships are present with minimum counts.
 pub fn check_required_relationships(
     graph: &ArtifactGraph,

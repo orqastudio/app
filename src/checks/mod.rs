@@ -25,6 +25,9 @@ pub fn run_all(graph: &ArtifactGraph, ctx: &ValidationContext) -> Vec<IntegrityC
     structural::check_missing_inverses(graph, ctx, &mut checks);
     structural::check_relationship_type_constraints(graph, ctx, &mut checks);
     structural::check_required_relationships(graph, ctx, &mut checks);
+    structural::check_missing_type_field(graph, &mut checks);
+    structural::check_missing_status_field(graph, &mut checks);
+    structural::check_duplicate_relationships(graph, &mut checks);
     cardinality::check_cardinality(graph, ctx, &mut checks);
     cycles::check_circular_dependencies(graph, ctx, &mut checks);
     body_refs::check_body_text_refs_without_relationships(graph, &mut checks);

@@ -121,11 +121,59 @@ fn load_settings(project_path: &Path) -> Option<ProjectSettings> {
     serde_json::from_str(&contents).ok()
 }
 
+/// Build a set of valid relationship type keys from core.json + plugin manifests.
+fn build_valid_relationship_types(project_path: &Path) -> std::collections::HashSet<String> {
+    let mut valid = std::collections::HashSet::new();
+
+    // Core relationships (from embedded core.json)
+    for rel in &crate::platform::PLATFORM.relationships {
+        valid.insert(rel.key.clone());
+        valid.insert(rel.inverse.clone());
+    }
+
+    // Project-level relationships (from project.json)
+    if let Some(settings) = load_settings(project_path) {
+        for rel in &settings.relationships {
+            valid.insert(rel.key.clone());
+            valid.insert(rel.inverse.clone());
+        }
+    }
+
+    // Plugin-provided relationships
+    for dir_name in &["plugins", "connectors"] {
+        let scan_dir = project_path.join(dir_name);
+        if !scan_dir.exists() { continue; }
+        let Ok(entries) = std::fs::read_dir(&scan_dir) else { continue; };
+        for entry in entries.flatten() {
+            if !entry.file_type().is_ok_and(|ft| ft.is_dir()) { continue; }
+            let manifest = entry.path().join("orqa-plugin.json");
+            if !manifest.exists() { continue; }
+            let Ok(content) = std::fs::read_to_string(&manifest) else { continue; };
+            let Ok(json) = serde_json::from_str::<serde_json::Value>(&content) else { continue; };
+            if let Some(rels) = json.pointer("/provides/relationships").and_then(|v| v.as_array()) {
+                for rel in rels {
+                    if let Some(key) = rel.get("key").and_then(|v| v.as_str()) {
+                        valid.insert(key.to_owned());
+                    }
+                    if let Some(inv) = rel.get("inverse").and_then(|v| v.as_str()) {
+                        valid.insert(inv.to_owned());
+                    }
+                }
+            }
+        }
+    }
+
+    valid
+}
+
 /// Build an `ArtifactGraph` by scanning all `.md` files under the project's `.orqa/` directory.
 ///
 /// Two-pass algorithm:
 /// 1. Walk every `.md` file, parse frontmatter, collect nodes and forward refs.
 /// 2. Invert every forward ref into a backlink on the target node.
+///
+/// Invalid relationship types (not in core.json or plugins) are excluded from
+/// the graph and logged as warnings. They don't represent valid knowledge flow.
 pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, ValidationError> {
     let orqa_dir = project_path.join(".orqa");
 
@@ -134,11 +182,12 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, Valida
         .as_ref()
         .map(build_type_registry)
         .unwrap_or_default();
+    let valid_rel_types = build_valid_relationship_types(project_path);
 
     let mut graph = ArtifactGraph::default();
 
     // Pass 1a: walk the project's own .orqa/ with project: None.
-    walk_directory(&orqa_dir, project_path, &mut graph, &type_registry, None)?;
+    walk_directory(&orqa_dir, project_path, &mut graph, &type_registry, None, &valid_rel_types)?;
 
     // Pass 1b: if organisation mode, scan each child project.
     if let Some(ref settings) = settings {
@@ -163,6 +212,7 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, Valida
                         &mut graph,
                         &child_registry,
                         Some(&child.name),
+                        &valid_rel_types,
                     )?;
                     qualify_intra_project_refs(&mut graph, &child.name);
                 }
@@ -285,6 +335,7 @@ fn walk_directory(
     graph: &mut ArtifactGraph,
     type_registry: &TypeRegistry,
     project_name: Option<&str>,
+    valid_rel_types: &std::collections::HashSet<String>,
 ) -> Result<(), ValidationError> {
     let Ok(entries) = std::fs::read_dir(dir) else {
         return Ok(());
@@ -310,6 +361,7 @@ fn walk_directory(
                 graph,
                 type_registry,
                 project_name,
+                valid_rel_types,
             )?;
         } else if ft.is_file() && name.ends_with(".md") {
             if name.eq_ignore_ascii_case("README.md") {
@@ -321,6 +373,7 @@ fn walk_directory(
                 graph,
                 type_registry,
                 project_name,
+                valid_rel_types,
             )?;
         }
     }
@@ -335,6 +388,7 @@ fn collect_node(
     graph: &mut ArtifactGraph,
     type_registry: &TypeRegistry,
     project_name: Option<&str>,
+    valid_rel_types: &std::collections::HashSet<String>,
 ) -> Result<(), ValidationError> {
     let content =
         std::fs::read_to_string(file_path).map_err(|e| ValidationError::FileSystem(e.to_string()))?;
@@ -361,6 +415,7 @@ fn collect_node(
         &body,
         type_registry,
         project_name,
+        valid_rel_types,
     );
 
     let graph_key = match project_name {
@@ -385,6 +440,7 @@ fn build_node(
     body: &str,
     type_registry: &TypeRegistry,
     project_name: Option<&str>,
+    valid_rel_types: &std::collections::HashSet<String>,
 ) -> ArtifactNode {
     let title = yaml_value
         .get("title")
@@ -405,7 +461,25 @@ fn build_node(
     let frontmatter_type = yaml_value.get("type").and_then(|v| v.as_str());
     let artifact_type = infer_artifact_type(&rel_path, type_registry, frontmatter_type, &id);
     let frontmatter = yaml_to_json(yaml_value);
-    let mut references_out = collect_relationship_refs(yaml_value, &id);
+    let all_refs = collect_relationship_refs(yaml_value, &id);
+    // Filter: only include edges with valid relationship types in the graph.
+    // Invalid types are warned and excluded — they don't represent valid knowledge flow.
+    let mut references_out: Vec<ArtifactRef> = Vec::new();
+    for r in all_refs {
+        if let Some(ref rel_type) = r.relationship_type {
+            if !valid_rel_types.is_empty() && !valid_rel_types.contains(rel_type) {
+                tracing::warn!(
+                    artifact = %id,
+                    relationship = %rel_type,
+                    target = %r.target_id,
+                    "Skipping invalid relationship type '{}' on {} — not defined in core.json or any plugin schema",
+                    rel_type, id,
+                );
+                continue;
+            }
+        }
+        references_out.push(r);
+    }
     references_out.extend(collect_body_refs(body, &id));
     ArtifactNode {
         id,

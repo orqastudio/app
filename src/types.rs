@@ -108,6 +108,12 @@ pub enum IntegrityCategory {
     ParentChildInconsistency,
     /// Delivery path does not match the delivery config hierarchy.
     DeliveryPathMismatch,
+    /// The artifact has no `type:` field in its frontmatter.
+    MissingType,
+    /// The artifact has no `status:` field in its frontmatter.
+    MissingStatus,
+    /// The same target + relationship type appears more than once in `relationships`.
+    DuplicateRelationship,
 }
 
 /// Severity of an integrity finding.

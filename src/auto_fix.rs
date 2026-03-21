@@ -1,9 +1,12 @@
 //! Auto-fix engine for objective integrity issues.
 //!
-//! Currently supports:
+//! Supports:
 //! - `MissingInverse`: adds the inverse relationship entry to the target artifact's frontmatter.
 //! - `InvalidStatus`: rewrites the `status` field to the suggested canonical value.
 //! - `BodyTextRefWithoutRelationship`: adds an `informed-by` relationship.
+//! - `MissingType`: infers the artifact type from the path registry or ID prefix and adds it.
+//! - `MissingStatus`: adds `status: captured` when the field is absent.
+//! - `DuplicateRelationship`: deduplicates relationship entries with the same target + type.
 
 use std::path::Path;
 
@@ -39,6 +42,21 @@ pub fn apply_fixes(
             }
             IntegrityCategory::BodyTextRefWithoutRelationship => {
                 if let Some(fix) = apply_body_text_ref_fix(graph, check, project_path)? {
+                    applied.push(fix);
+                }
+            }
+            IntegrityCategory::MissingType => {
+                if let Some(fix) = apply_missing_type_fix(graph, check, project_path)? {
+                    applied.push(fix);
+                }
+            }
+            IntegrityCategory::MissingStatus => {
+                if let Some(fix) = apply_missing_status_fix(graph, check, project_path)? {
+                    applied.push(fix);
+                }
+            }
+            IntegrityCategory::DuplicateRelationship => {
+                if let Some(fix) = apply_duplicate_relationship_fix(graph, check, project_path)? {
                     applied.push(fix);
                 }
             }
@@ -309,6 +327,218 @@ fn apply_body_text_ref_fix(
         ),
         file_path: source_node.path.clone(),
     }))
+}
+
+/// Fix a missing `type:` field by inferring the type from the artifact's path and ID.
+///
+/// The inferred type is taken directly from the node's `artifact_type` field, which
+/// was already computed by the graph builder using the path registry + ID prefix heuristic.
+fn apply_missing_type_fix(
+    graph: &ArtifactGraph,
+    check: &IntegrityCheck,
+    project_path: &Path,
+) -> Result<Option<AppliedFix>, ValidationError> {
+    let Some(node) = graph.nodes.get(&check.artifact_id) else {
+        return Ok(None);
+    };
+
+    let inferred_type = node.artifact_type.clone();
+    if inferred_type.is_empty() || inferred_type == "doc" {
+        // "doc" is a fallback that may not be meaningful — don't add it blindly.
+        return Ok(None);
+    }
+
+    let file_path = project_path.join(&node.path);
+    if !file_path.exists() {
+        return Ok(None);
+    }
+
+    let content = std::fs::read_to_string(&file_path)
+        .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
+    let (fm_opt, body) = extract_frontmatter(&content);
+    let fm_text = match fm_opt {
+        Some(t) => t,
+        None => return Ok(None),
+    };
+
+    // Guard: don't add if `type:` already present.
+    if fm_text.lines().any(|l| l.trim_start().starts_with("type:")) {
+        return Ok(None);
+    }
+
+    // Insert `type:` after the `id:` line (or at the beginning if id not found).
+    let new_fm = insert_field_after(&fm_text, "id:", &format!("type: {inferred_type}"));
+    let new_content = format!("---\n{new_fm}\n---\n{body}");
+    std::fs::write(&file_path, new_content)
+        .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
+
+    Ok(Some(AppliedFix {
+        artifact_id: check.artifact_id.clone(),
+        description: format!("Added type: {inferred_type} to {}", node.path),
+        file_path: node.path.clone(),
+    }))
+}
+
+/// Fix a missing `status:` field by adding `status: captured`.
+fn apply_missing_status_fix(
+    graph: &ArtifactGraph,
+    check: &IntegrityCheck,
+    project_path: &Path,
+) -> Result<Option<AppliedFix>, ValidationError> {
+    let Some(node) = graph.nodes.get(&check.artifact_id) else {
+        return Ok(None);
+    };
+
+    let file_path = project_path.join(&node.path);
+    if !file_path.exists() {
+        return Ok(None);
+    }
+
+    let content = std::fs::read_to_string(&file_path)
+        .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
+    let (fm_opt, body) = extract_frontmatter(&content);
+    let fm_text = match fm_opt {
+        Some(t) => t,
+        None => return Ok(None),
+    };
+
+    // Guard: don't add if `status:` already present.
+    if fm_text.lines().any(|l| l.trim_start().starts_with("status:")) {
+        return Ok(None);
+    }
+
+    // Insert `status:` after `type:` if present, otherwise after `id:`.
+    let anchor = if fm_text.lines().any(|l| l.trim_start().starts_with("type:")) {
+        "type:"
+    } else {
+        "id:"
+    };
+    let new_fm = insert_field_after(&fm_text, anchor, "status: captured");
+    let new_content = format!("---\n{new_fm}\n---\n{body}");
+    std::fs::write(&file_path, new_content)
+        .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
+
+    Ok(Some(AppliedFix {
+        artifact_id: check.artifact_id.clone(),
+        description: format!("Added status: captured to {}", node.path),
+        file_path: node.path.clone(),
+    }))
+}
+
+/// Fix duplicate relationships by deduplicating entries with the same target + type.
+///
+/// Keeps the first occurrence of each (target, type) pair and removes subsequent duplicates.
+fn apply_duplicate_relationship_fix(
+    graph: &ArtifactGraph,
+    check: &IntegrityCheck,
+    project_path: &Path,
+) -> Result<Option<AppliedFix>, ValidationError> {
+    let Some(node) = graph.nodes.get(&check.artifact_id) else {
+        return Ok(None);
+    };
+
+    let file_path = project_path.join(&node.path);
+    if !file_path.exists() {
+        return Ok(None);
+    }
+
+    let content = std::fs::read_to_string(&file_path)
+        .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
+    let (fm_opt, body) = extract_frontmatter(&content);
+    let fm_text = match fm_opt {
+        Some(t) => t,
+        None => return Ok(None),
+    };
+
+    let yaml_value: serde_yaml::Value = serde_yaml::from_str(&fm_text).map_err(|e| {
+        ValidationError::Validation(format!("YAML parse error in {}: {e}", node.path))
+    })?;
+
+    let Some(rels) = yaml_value
+        .get("relationships")
+        .and_then(|v| v.as_sequence())
+    else {
+        return Ok(None);
+    };
+
+    let mut seen: std::collections::HashSet<(String, String)> = std::collections::HashSet::new();
+    let mut removed = 0usize;
+    let deduped: Vec<serde_yaml::Value> = rels
+        .iter()
+        .filter(|rel| {
+            let target = rel
+                .get("target")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_owned();
+            let rel_type = rel
+                .get("type")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_owned();
+            let key = (target, rel_type);
+            if seen.contains(&key) {
+                removed += 1;
+                false
+            } else {
+                seen.insert(key);
+                true
+            }
+        })
+        .cloned()
+        .collect();
+
+    if removed == 0 {
+        return Ok(None);
+    }
+
+    // Rebuild the YAML with deduplicated relationships.
+    let mut new_yaml = yaml_value.clone();
+    if let Some(map) = new_yaml.as_mapping_mut() {
+        map.insert(
+            serde_yaml::Value::String("relationships".to_owned()),
+            serde_yaml::Value::Sequence(deduped),
+        );
+    }
+
+    let new_fm = serde_yaml::to_string(&new_yaml).map_err(|e| {
+        ValidationError::Validation(format!("YAML serialization error: {e}"))
+    })?;
+    // serde_yaml adds a leading `---\n` in some versions; normalise it away.
+    let new_fm = new_fm
+        .trim_start_matches("---\n")
+        .trim_end_matches('\n')
+        .to_owned();
+
+    let new_content = format!("---\n{new_fm}\n---\n{body}");
+    std::fs::write(&file_path, new_content)
+        .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
+
+    Ok(Some(AppliedFix {
+        artifact_id: check.artifact_id.clone(),
+        description: format!("Removed {removed} duplicate relationship entries from {}", node.path),
+        file_path: node.path.clone(),
+    }))
+}
+
+/// Insert a new field line immediately after the first line that starts with `anchor_prefix`.
+///
+/// If no such anchor line is found, the new field is prepended before all other content.
+fn insert_field_after(fm_text: &str, anchor_prefix: &str, new_field: &str) -> String {
+    let lines: Vec<&str> = fm_text.lines().collect();
+    let anchor_pos = lines
+        .iter()
+        .position(|l| l.trim_start().starts_with(anchor_prefix));
+
+    match anchor_pos {
+        Some(pos) => {
+            let mut result = lines[..=pos].to_vec();
+            result.push(new_field);
+            result.extend_from_slice(&lines[pos + 1..]);
+            result.join("\n")
+        }
+        None => format!("{new_field}\n{}", fm_text),
+    }
 }
 
 /// Insert a new relationship entry into frontmatter text, returning the full reconstructed file.
