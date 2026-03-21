@@ -3,6 +3,7 @@
 //! Prefers shelling out to `orqa plugin install` if the CLI is available,
 //! falls back to built-in download + extract using tar + flate2 crates.
 
+use sha2::{Digest, Sha256};
 use serde::Serialize;
 use std::path::Path;
 
@@ -49,7 +50,7 @@ pub fn install_from_path(source: &Path, project_root: &Path) -> Result<InstallRe
     let plugins_dir = project_root.join("plugins");
     std::fs::create_dir_all(&plugins_dir)?;
 
-    let short_name = manifest.name.split('/').last().unwrap_or(&manifest.name);
+    let short_name = manifest.name.split('/').next_back().unwrap_or(&manifest.name);
     let target = plugins_dir.join(short_name);
 
     if target.exists() {
@@ -77,96 +78,36 @@ pub async fn install_from_github(
         Some(v) => v.to_string(),
         None => fetch_latest_tag(repo).await?,
     };
+    let (bytes, sha256) = download_plugin_archive(repo, &tag).await?;
 
-    let repo_name = repo
-        .split('/')
-        .last()
-        .ok_or_else(|| OrqaError::Plugin("invalid repo format".to_string()))?;
-
-    let archive_url =
-        format!("https://github.com/{repo}/releases/download/{tag}/{repo_name}-{tag}.tar.gz");
-
-    tracing::info!("downloading plugin: {archive_url}");
-
-    let response = reqwest::get(&archive_url)
-        .await
-        .map_err(|e| OrqaError::Plugin(format!("download failed: {e}")))?;
-
-    if !response.status().is_success() {
-        return Err(OrqaError::Plugin(format!(
-            "download failed: HTTP {}",
-            response.status()
-        )));
-    }
-
-    let bytes = response
-        .bytes()
-        .await
-        .map_err(|e| OrqaError::Plugin(format!("failed to read response: {e}")))?;
-
-    // Compute SHA-256
-    use sha2::{Digest, Sha256};
-    let sha256 = format!("{:x}", Sha256::digest(&bytes));
-
-    // Extract
     let plugins_dir = project_root.join("plugins");
     std::fs::create_dir_all(&plugins_dir)?;
-
     let tmp_dir = plugins_dir.join(format!(".tmp-{}", std::process::id()));
     std::fs::create_dir_all(&tmp_dir)?;
 
-    let extract_result = extract_tar_gz(&bytes, &tmp_dir);
+    let manifest = extract_and_read_manifest(&bytes, &tmp_dir)?;
 
-    if let Err(e) = extract_result {
-        let _ = std::fs::remove_dir_all(&tmp_dir);
-        return Err(e);
-    }
-
-    // Find manifest in extracted contents
-    let entries: Vec<_> = std::fs::read_dir(&tmp_dir)?
-        .filter_map(|e| e.ok())
-        .filter(|e| e.path().is_dir())
-        .collect();
-
-    let extracted_dir = if entries.len() == 1 {
-        entries[0].path()
-    } else {
-        tmp_dir.clone()
-    };
-
-    let manifest = match read_manifest(&extracted_dir) {
-        Ok(m) => m,
-        Err(e) => {
-            let _ = std::fs::remove_dir_all(&tmp_dir);
-            return Err(e);
-        }
-    };
-
-    // Collision detection
     let incoming_rels: Vec<crate::domain::integrity_engine::RelationshipSchema> = manifest
         .provides
         .relationships
         .iter()
         .filter_map(|v| serde_json::from_value(v.clone()).ok())
         .collect();
-
     let collisions = super::collision::detect_relationship_collisions(
         &incoming_rels,
         project_root,
         &manifest.name,
     );
 
-    let short_name = manifest.name.split('/').last().unwrap_or(&manifest.name);
+    let short_name = manifest.name.split('/').next_back().unwrap_or(&manifest.name);
     let target = plugins_dir.join(short_name);
-
     if target.exists() {
         std::fs::remove_dir_all(&target)?;
     }
-
+    let extracted_dir = find_extracted_dir(&tmp_dir)?;
     std::fs::rename(&extracted_dir, &target)?;
     let _ = std::fs::remove_dir_all(&tmp_dir);
 
-    // Update lockfile
     let mut lockfile = read_lockfile(project_root);
     lockfile.plugins.retain(|p| p.name != manifest.name);
     lockfile.plugins.push(LockEntry {
@@ -187,9 +128,70 @@ pub async fn install_from_github(
     })
 }
 
+async fn download_plugin_archive(
+    repo: &str,
+    tag: &str,
+) -> Result<(bytes::Bytes, String), OrqaError> {
+    let repo_name = repo
+        .split('/')
+        .next_back()
+        .ok_or_else(|| OrqaError::Plugin("invalid repo format".to_string()))?;
+
+    let archive_url =
+        format!("https://github.com/{repo}/releases/download/{tag}/{repo_name}-{tag}.tar.gz");
+    tracing::info!("downloading plugin: {archive_url}");
+
+    let response = reqwest::get(&archive_url)
+        .await
+        .map_err(|e| OrqaError::Plugin(format!("download failed: {e}")))?;
+
+    if !response.status().is_success() {
+        return Err(OrqaError::Plugin(format!(
+            "download failed: HTTP {}",
+            response.status()
+        )));
+    }
+
+    let bytes = response
+        .bytes()
+        .await
+        .map_err(|e| OrqaError::Plugin(format!("failed to read response: {e}")))?;
+    let sha256 = format!("{:x}", Sha256::digest(&bytes));
+    Ok((bytes, sha256))
+}
+
+fn extract_and_read_manifest(
+    bytes: &bytes::Bytes,
+    tmp_dir: &Path,
+) -> Result<super::manifest::PluginManifest, OrqaError> {
+    if let Err(e) = extract_tar_gz(bytes, tmp_dir) {
+        let _ = std::fs::remove_dir_all(tmp_dir);
+        return Err(e);
+    }
+    match read_manifest(tmp_dir) {
+        Ok(m) => Ok(m),
+        Err(e) => {
+            let _ = std::fs::remove_dir_all(tmp_dir);
+            Err(e)
+        }
+    }
+}
+
+fn find_extracted_dir(tmp_dir: &Path) -> Result<std::path::PathBuf, OrqaError> {
+    let entries: Vec<_> = std::fs::read_dir(tmp_dir)?
+        .filter_map(std::result::Result::ok)
+        .filter(|e| e.path().is_dir())
+        .collect();
+    Ok(if entries.len() == 1 {
+        entries[0].path()
+    } else {
+        tmp_dir.to_path_buf()
+    })
+}
+
 /// Uninstall a plugin by name.
 pub fn uninstall(name: &str, project_root: &Path) -> Result<(), OrqaError> {
-    let short_name = name.split('/').last().unwrap_or(name);
+    let short_name = name.split('/').next_back().unwrap_or(name);
     let plugin_dir = project_root.join("plugins").join(short_name);
 
     if !plugin_dir.exists() {
