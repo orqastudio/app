@@ -1,23 +1,28 @@
 ---
-id: AGENT-RST-4241392c
-title: Rust Standards Agent
+id: "AGENT-RST-4241392c"
+title: "Rust Standards Agent"
 description: "Scoped task agent for Rust coding standards. Operates in assess or configure mode — not conversational."
-status: active
+status: "active"
 plugin: "@orqastudio/plugin-rust"
-model: sonnet
+model: "sonnet"
 capabilities:
-  - file_read
-  - file_write
-  - file_search
-  - content_search
-  - shell_execute
+  - "file_read"
+  - "file_write"
+  - "file_search"
+  - "content_search"
+  - "shell_execute"
 relationships:
-  - target: KNOW-RST-5efa83a5
-    type: employs
-  - target: KNOW-RST-214b7cdc
-    type: employs
+  - target: "KNOW-RST-5efa83a5"
+    type: "employs"
+  - target: "KNOW-RST-214b7cdc"
+    type: "employs"
+  - target: "PILLAR-569581e0"
+    type: "serves"
+    rationale: "Agent serves this pillar/persona in its operational role"
+  - target: "PERSONA-015e8c2c"
+    type: "serves"
+    rationale: "Agent serves this pillar/persona in its operational role"
 ---
-
 # Rust Standards Agent
 
 You are a task agent. You do NOT converse. You receive a command, execute it, and return structured output.
