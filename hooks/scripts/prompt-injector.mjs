@@ -1,16 +1,17 @@
 #!/usr/bin/env node
-// Thinking mode classifier: determines the thinking approach from the user prompt
-// via ONNX semantic search against thinking mode description artifacts.
-// Fallback: asks the LLM to self-classify as step 1.
+// Prompt injector — single injection point for all UserPromptSubmit context.
+// Combines three sources into one systemMessage:
+//   1. Agent role preamble (read from .orqa agent definition frontmatter `preamble` field)
+//   2. Thinking mode (ONNX semantic search against thinking-mode-* artifacts, fallback: LLM self-classification)
+//   3. Context line (project name + dogfood status + plugin discovery hint)
 //
+// Replaces the static context-reminder.md that Claude Code would auto-inject.
 // Used by UserPromptSubmit hook. Reads hook input from stdin.
-// Outputs JSON with systemMessage containing:
-//   1. Mode template (if ONNX matched a thinking-mode-* artifact) OR fallback self-classification prompt
-//   2. Concise context line (project name + dogfood status + plugin hint)
 
 import { readFileSync, existsSync } from "fs";
 import { join } from "path";
 import { spawnSync } from "node:child_process";
+import { parse as parseYaml } from "yaml";
 import { logTelemetry } from "./telemetry.mjs";
 
 // ---------------------------------------------------------------------------
@@ -49,6 +50,54 @@ function detectAgentType(hookInput) {
   }
 
   return "default";
+}
+
+// ---------------------------------------------------------------------------
+// Agent role preamble (read from .orqa agent definitions)
+// ---------------------------------------------------------------------------
+
+// Parse YAML frontmatter from a markdown file using the yaml library.
+// Returns the parsed object or null if no frontmatter found.
+function parseFrontmatter(content) {
+  const fmEnd = content.indexOf("\n---", 4);
+  if (!content.startsWith("---\n") || fmEnd === -1) return null;
+
+  const yamlStr = content.slice(4, fmEnd);
+  try {
+    return parseYaml(yamlStr);
+  } catch {
+    return null;
+  }
+}
+
+// Read the agent's preamble from its definition file in the .orqa source of truth.
+// Uses the `preamble` frontmatter field, falling back to `description`.
+function getAgentPreamble(agentType, projectDir) {
+  const filename = `${agentType}.md`;
+  const candidates = [
+    join(projectDir, "app", ".orqa", "process", "agents", filename),
+    join(projectDir, ".orqa", "process", "agents", filename),
+  ];
+
+  for (const candidate of candidates) {
+    if (!existsSync(candidate)) continue;
+
+    try {
+      const content = readFileSync(candidate, "utf-8");
+      const fm = parseFrontmatter(content);
+      if (!fm) continue;
+
+      const preamble = fm.preamble || fm.description;
+      if (preamble) {
+        return `You are the ${agentType}: ${preamble}`;
+      }
+    } catch {
+      continue;
+    }
+  }
+
+  // Fallback for agents without a definition file
+  return `You are a ${agentType}. Follow the task delegated to you.`;
 }
 
 // ---------------------------------------------------------------------------
@@ -174,7 +223,7 @@ function extractKnowledgeNames(hits) {
     const pluginFlatMatch = normalised.match(/knowledge\/([^/]+)\.md$/);
     if (pluginFlatMatch) {
       const candidate = pluginFlatMatch[1];
-      if (candidate !== "context-reminder" && candidate !== "README") {
+      if (candidate !== "README") {
         names.add(candidate);
       }
     }
@@ -266,7 +315,10 @@ async function main() {
   // Step 1: Classify thinking mode via ONNX semantic search.
   const { mode, source } = classifyThinkingMode(userMessage, projectDir);
 
-  // Step 2: Build mode injection.
+  // Step 2: Build role preamble from .orqa agent definition (replaces static context-reminder.md).
+  const preamble = getAgentPreamble(agentType, projectDir);
+
+  // Step 3: Build mode injection.
   let modeInjection;
   if (mode && MODE_TEMPLATES[mode]) {
     modeInjection = MODE_TEMPLATES[mode];
@@ -274,10 +326,10 @@ async function main() {
     modeInjection = FALLBACK_CLASSIFICATION_PROMPT;
   }
 
-  // Step 3: Append concise context line.
+  // Step 4: Append concise context line.
   const contextLine = getContextLine(projectDir);
 
-  const systemMessage = `${modeInjection}\n\n${contextLine}`;
+  const systemMessage = `${preamble}\n\n${modeInjection}\n\n${contextLine}`;
 
   logTelemetry("prompt-injector", "UserPromptSubmit", startTime, "injected", {
     agent_type: agentType,

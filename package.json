@@ -17,8 +17,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@orqastudio/cli": "^0.1.0-dev",
     "@orqastudio/types": "^0.1.0-dev",
-    "@orqastudio/cli": "^0.1.0-dev"
+    "yaml": "^2.8.3"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
