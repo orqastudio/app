@@ -1,17 +1,39 @@
 #!/usr/bin/env node
-// Prompt-based knowledge injector: examines user prompt, finds relevant domain
-// knowledge via semantic search, and injects it as systemMessage.
+// Prompt-based knowledge injector: injects a decision tree and optional
+// semantic search suggestions into the orchestrator on every UserPromptSubmit.
 //
 // Used by UserPromptSubmit hook. Reads hook input from stdin.
-// Outputs JSON with systemMessage containing knowledge content.
+// Outputs JSON with systemMessage containing:
+//   1. Decision tree (always — primary injection from decision-tree/KNOW.md)
+//   2. Suggested knowledge names (if semantic search available — enhancement)
+//   3. Context reminder with resolved project variables (always)
 //
-// Primary path: semantic search via orqa mcp (JSON-RPC over stdio).
-// Fallback path: keyword-based INTENT_MAP when search is unavailable.
+// Semantic search path: orqa mcp (JSON-RPC over stdio) — returns name suggestions only.
+// INTENT_MAP: tertiary fallback when search is unavailable (marked for removal).
 
-import { readFileSync, existsSync, mkdirSync, writeFileSync } from "fs";
+import { readFileSync, existsSync } from "fs";
 import { join } from "path";
 import { spawnSync } from "node:child_process";
 import { logTelemetry } from "./telemetry.mjs";
+
+// ---------------------------------------------------------------------------
+// Decision tree: primary injection on every prompt
+// ---------------------------------------------------------------------------
+
+// Read the orchestrator decision tree from the plugin knowledge directory.
+// Returns the stripped body (no frontmatter) or null if unavailable.
+function readDecisionTree() {
+  const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT || "";
+  if (!pluginRoot) return null;
+  const treePath = join(pluginRoot, "knowledge", "decision-tree", "KNOW.md");
+  if (!existsSync(treePath)) return null;
+  try {
+    const raw = readFileSync(treePath, "utf-8");
+    return stripFrontmatter(raw) || null;
+  } catch {
+    return null;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Semantic search via MCP server
@@ -413,31 +435,7 @@ function classifyIntentFallback(prompt) {
 }
 
 // ---------------------------------------------------------------------------
-// Deduplication state
-// ---------------------------------------------------------------------------
-
-// Read the session-level injected skills state
-function readInjectedSkills(projectDir) {
-  const stateFile = join(projectDir, "tmp", ".injected-skills.json");
-  if (!existsSync(stateFile)) return [];
-  try {
-    return JSON.parse(readFileSync(stateFile, "utf-8"));
-  } catch {
-    return [];
-  }
-}
-
-// Write the session-level injected skills state
-function writeInjectedSkills(projectDir, skills) {
-  const tmpDir = join(projectDir, "tmp");
-  if (!existsSync(tmpDir)) {
-    mkdirSync(tmpDir, { recursive: true });
-  }
-  writeFileSync(join(tmpDir, ".injected-skills.json"), JSON.stringify(skills));
-}
-
-// ---------------------------------------------------------------------------
-// Knowledge file loading
+// Knowledge content utilities
 // ---------------------------------------------------------------------------
 
 // Strip YAML frontmatter from knowledge content
@@ -445,57 +443,6 @@ function stripFrontmatter(content) {
   const match = content.match(/^---\n[\s\S]*?\n---\n([\s\S]*)$/);
   if (match) return match[1].trim();
   return content.trim();
-}
-
-// Read knowledge files, deduplicating against already-injected.
-// Caps injection at maxKnowledge files per call.
-// Returns { content: string|null, injected: string[], dedupCount: number }
-function collectKnowledgeContent(projectDir, skillNames, maxKnowledge = 5) {
-  const alreadyInjected = readInjectedSkills(projectDir);
-  const alreadySet = new Set(alreadyInjected);
-
-  // Filter to only new skills, then cap at maxKnowledge.
-  const newSkills = skillNames.filter((name) => !alreadySet.has(name)).slice(0, maxKnowledge);
-  const dedupCount = skillNames.length - newSkills.length;
-  if (newSkills.length === 0) return { content: null, injected: [], dedupCount };
-
-  const parts = [];
-  const injectedNow = [];
-
-  const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT || "";
-
-  for (const name of newSkills) {
-    // Search plugin knowledge/ first, then project-level, then app-level.
-    // KNOW.md is the canonical filename post-rename; SKILL.md is the legacy fallback.
-    const candidates = [
-      pluginRoot ? join(pluginRoot, "knowledge", name, "KNOW.md") : "",
-      pluginRoot ? join(pluginRoot, "knowledge", name, "SKILL.md") : "",
-      pluginRoot ? join(pluginRoot, "knowledge", `${name}.md`) : "",
-      join(projectDir, ".orqa", "process", "knowledge", name, "KNOW.md"),
-      join(projectDir, ".orqa", "process", "knowledge", `${name}.md`),
-      join(projectDir, "app", ".orqa", "process", "knowledge", name, "KNOW.md"),
-      join(projectDir, "app", ".orqa", "process", "knowledge", `${name}.md`),
-    ].filter(Boolean);
-    const knowledgePath = candidates.find((p) => existsSync(p));
-    if (!knowledgePath) continue;
-    try {
-      const raw = readFileSync(knowledgePath, "utf-8");
-      const content = stripFrontmatter(raw);
-      if (content) {
-        parts.push(content);
-        injectedNow.push(name);
-      }
-    } catch {
-      // Skip unreadable files silently
-    }
-  }
-
-  if (parts.length === 0) return { content: null, injected: [], dedupCount };
-
-  // Persist updated state
-  writeInjectedSkills(projectDir, [...alreadyInjected, ...injectedNow]);
-
-  return { content: parts.join("\n\n---\n\n"), injected: injectedNow, dedupCount };
 }
 
 // ---------------------------------------------------------------------------
@@ -547,22 +494,29 @@ function readContextReminder(projectDir) {
 }
 
 // ---------------------------------------------------------------------------
-// Skill resolution (semantic search primary, INTENT_MAP fallback)
+// Knowledge name suggestions (semantic search enhancement + INTENT_MAP fallback)
 // ---------------------------------------------------------------------------
 
-// Resolve skill names to inject for a given prompt.
-// Tries semantic search first; falls back to INTENT_MAP if search unavailable.
-// Returns { skillNames: string[], source: "semantic_search" | "intent_map_fallback" }
-function resolveSkillNames(userMessage, projectDir) {
-  // Attempt semantic search.
+// Resolve knowledge name suggestions for a given prompt.
+// These are injected as NAME SUGGESTIONS only — not as loaded content.
+// The decision tree (always injected) teaches the agent to search by itself;
+// these names are a convenience hint from the hook's vantage point.
+//
+// Returns { skillNames: string[], source: "semantic_search" | "intent_map_fallback" | "none" }
+function resolveKnowledgeSuggestions(userMessage, projectDir) {
+  // Attempt semantic search — returns names only (top 3 used as suggestions).
   const searchResults = searchKnowledge(userMessage, projectDir);
   if (searchResults !== null && searchResults.length > 0) {
-    return { skillNames: searchResults, source: "semantic_search" };
+    return { skillNames: searchResults.slice(0, 3), source: "semantic_search" };
   }
 
-  // Fallback to keyword INTENT_MAP.
+  // Tertiary fallback: keyword INTENT_MAP (marked for removal once search is always available).
   const fallbackSkills = classifyIntentFallback(userMessage);
-  return { skillNames: fallbackSkills, source: "intent_map_fallback" };
+  if (fallbackSkills.length > 0) {
+    return { skillNames: fallbackSkills.slice(0, 3), source: "intent_map_fallback" };
+  }
+
+  return { skillNames: [], source: "none" };
 }
 
 // ---------------------------------------------------------------------------
@@ -593,83 +547,63 @@ async function main() {
 
   const parts = [];
 
-  // Always inject context reminder with resolved project variables.
+  // ── Layer 1: Decision tree (always injected) ─────────────────────────────
+  // The decision tree is the primary injection. It teaches the orchestrator
+  // how to think about the request — classify context, understand domain,
+  // form the right search query. It is not a fallback; it is always present.
+  const decisionTree = readDecisionTree();
+  const decisionTreeInjected = decisionTree !== null;
+  if (decisionTree) {
+    parts.push(`[Decision Tree]\n${decisionTree}`);
+  }
+
+  // ── Layer 2: Knowledge name suggestions (semantic search enhancement) ────
+  // If the search server is available, run search_semantic against the prompt
+  // and surface the top 3 knowledge file NAMES as suggestions. These are
+  // names only — the agent resolves and reads them via search_semantic.
+  // Tertiary fallback: INTENT_MAP keyword matching (marked for removal).
+  const { skillNames, source: suggestionSource } = resolveKnowledgeSuggestions(userMessage, projectDir);
+  if (skillNames.length > 0) {
+    const suggestionBlock = [
+      "[Suggested Knowledge]",
+      "Based on your prompt, these knowledge files may be relevant:",
+      ...skillNames.map((name) => `- ${name}`),
+    ].join("\n");
+    parts.push(suggestionBlock);
+  }
+
+  // ── Layer 3: Context reminder (always injected) ──────────────────────────
+  // Project variables resolved inline (project name, dogfood status, plugins).
   const reminder = readContextReminder(projectDir);
+  const reminderInjected = reminder.length > 0;
   if (reminder) {
     parts.push(reminder);
   }
 
-  // Skill injection is DISABLED for the orchestrator's UserPromptSubmit hook.
-  // The orchestrator delegates — it doesn't implement. Implementation agents
-  // receive domain skills via their Agent tool prompt, not via this hook.
-  // Only the context reminder (above) injects into the orchestrator.
-  //
-  // To enable knowledge injection, remove this block and let execution fall
-  // through to the injection section below.
-  {
-    if (parts.length === 0) {
-      logTelemetry("prompt-injector", "UserPromptSubmit", startTime, "skipped", {
-        source: null,
-        query: userMessage.slice(0, 100),
-        matches: 0,
-        knowledge_injected: [],
-        dedup_count: 0,
-        action: "allow",
-      }, projectDir);
-      process.exit(0);
-    }
-
-    logTelemetry("prompt-injector", "UserPromptSubmit", startTime, "injected", {
-      source: null,
-      query: userMessage.slice(0, 100),
-      matches: 0,
-      knowledge_injected: [],
-      dedup_count: 0,
-      action: "allow",
-      reminder_injected: true,
-    }, projectDir);
-
-    const output = JSON.stringify({ systemMessage: parts.join("\n\n---\n\n") });
-    process.stdout.write(output);
-    process.exit(0);
-  }
-
-  // Knowledge injection block — reached when injection is enabled (above block removed).
-  // Uses semantic search primary, INTENT_MAP fallback.
-  /* eslint-disable no-unreachable */
-  const { skillNames, source } = resolveSkillNames(userMessage, projectDir);
-  const { content, injected, dedupCount } = collectKnowledgeContent(projectDir, skillNames);
-
-  if (content) {
-    parts.push(content);
-  }
-
   if (parts.length === 0) {
     logTelemetry("prompt-injector", "UserPromptSubmit", startTime, "skipped", {
-      source,
+      decision_tree_injected: decisionTreeInjected,
+      suggestion_source: suggestionSource,
+      suggestions: skillNames,
+      reminder_injected: reminderInjected,
       query: userMessage.slice(0, 100),
-      matches: skillNames.length,
-      knowledge_injected: [],
-      dedup_count: dedupCount,
       action: "allow",
     }, projectDir);
     process.exit(0);
   }
 
   logTelemetry("prompt-injector", "UserPromptSubmit", startTime, "injected", {
-    source,
+    decision_tree_injected: decisionTreeInjected,
+    suggestion_source: suggestionSource,
+    suggestions: skillNames,
+    reminder_injected: reminderInjected,
     query: userMessage.slice(0, 100),
-    matches: skillNames.length,
-    knowledge_injected: injected,
-    dedup_count: dedupCount,
     action: "allow",
-    reminder_injected: reminder.length > 0,
   }, projectDir);
 
   const output = JSON.stringify({ systemMessage: parts.join("\n\n---\n\n") });
   process.stdout.write(output);
   process.exit(0);
-  /* eslint-enable no-unreachable */
 }
 
 main().catch(() => process.exit(0));
