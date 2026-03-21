@@ -13,14 +13,7 @@
     { "key": "knowledge", "label": "Knowledge", "icon": "zap", "idPrefix": "KNOW" },
     { "key": "agent", "label": "Agent", "icon": "bot", "idPrefix": "AGENT" },
     { "key": "doc", "label": "Document", "icon": "file-text", "idPrefix": "DOC" },
-    { "key": "pivot", "label": "Pivot", "icon": "refresh-cw", "idPrefix": "PIVOT" },
-    { "key": "bug", "label": "Bug", "icon": "bug", "idPrefix": "BUG" },
-    { "key": "milestone", "label": "Milestone", "icon": "flag", "idPrefix": "MS" },
-    { "key": "epic", "label": "Epic", "icon": "target", "idPrefix": "EPIC" },
-    { "key": "task", "label": "Task", "icon": "check-square", "idPrefix": "TASK" },
-    { "key": "research", "label": "Research", "icon": "microscope", "idPrefix": "RES" },
-    { "key": "wireframe", "label": "Wireframe", "icon": "layout", "idPrefix": "WF" },
-    { "key": "grounding", "label": "Grounding", "icon": "anchor", "idPrefix": "GND" }
+    { "key": "pivot", "label": "Pivot", "icon": "refresh-cw", "idPrefix": "PIVOT" }
   ],
 
   "relationships": [
@@ -246,54 +239,6 @@
         "required": true,
         "minCount": 1
       }
-    },
-    {
-      "key": "delivers",
-      "inverse": "delivered-by",
-      "label": "Delivers",
-      "inverseLabel": "Delivered By",
-      "from": ["task"],
-      "to": ["epic"],
-      "description": "Task delivers work for an epic",
-      "semantic": "delivery",
-      "constraints": {
-        "required": true,
-        "minCount": 1
-      }
-    },
-    {
-      "key": "fulfils",
-      "inverse": "fulfilled-by",
-      "label": "Fulfils",
-      "inverseLabel": "Fulfilled By",
-      "from": ["epic"],
-      "to": ["milestone"],
-      "description": "Epic fulfils a milestone objective",
-      "semantic": "delivery",
-      "constraints": {
-        "required": true,
-        "minCount": 1
-      }
-    },
-    {
-      "key": "depends-on",
-      "inverse": "depended-on-by",
-      "label": "Depends On",
-      "inverseLabel": "Depended On By",
-      "from": ["task"],
-      "to": ["task"],
-      "description": "Task depends on another task completing first",
-      "semantic": "delivery"
-    },
-    {
-      "key": "implements",
-      "inverse": "implemented-by",
-      "label": "Implements",
-      "inverseLabel": "Implemented By",
-      "from": ["task", "epic"],
-      "to": ["decision"],
-      "description": "Work directly implements a decision",
-      "semantic": "delivery"
     }
   ],
 
@@ -317,10 +262,6 @@
     "agency": {
       "description": "Relationships where agents consume knowledge capabilities",
       "keys": ["employs", "employed-by"]
-    },
-    "delivery": {
-      "description": "Relationships structuring the delivery hierarchy — milestones, epics, tasks, and dependencies",
-      "keys": ["delivers", "delivered-by", "fulfils", "fulfilled-by", "depends-on", "depended-on-by", "implements", "implemented-by"]
     },
     "synchronisation": {
       "description": "Paired content kept in sync",
