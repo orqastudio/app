@@ -42,6 +42,16 @@
     },
     "dependencies": {
       "rustToolchain": "stable"
+    },
+    "decision_tree": {
+      "branches": [
+        {
+          "mode": "implementation",
+          "domain": "rust-backend",
+          "description": "Implementing Rust code — Tauri commands, domain logic, repositories, async patterns",
+          "search_context": "rust async, tauri command, thiserror, repository pattern, domain service"
+        }
+      ]
     }
   }
 }
