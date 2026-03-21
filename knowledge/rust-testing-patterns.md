@@ -9,6 +9,8 @@ relationships:
     type: synchronised-with
   - target: AGENT-RST-4241392c
     type: employed-by
+  - target: AGENT-RST-spec-a3f7d2b1
+    type: employed-by
 ---
 
 # Rust Testing Patterns
