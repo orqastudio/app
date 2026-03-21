@@ -166,7 +166,7 @@ export class PluginRegistry {
 		// Update plugin config
 		let config = this.pluginConfigs.get(pluginName);
 		if (!config) {
-			config = { enabled: true };
+			config = { installed: true, enabled: true, path: `plugins/${pluginName}` };
 			this.pluginConfigs.set(pluginName, config);
 		}
 
