@@ -450,7 +450,10 @@
       { "key": "enforcement-patterns", "id": "KNOW-GOV-e4b91f37", "label": "Enforcement Patterns" }
     ],
     "cliTools": [],
-    "hooks": []
+    "hooks": [],
+    "behavioral_rules": [
+      "For process learnings and feedback: create lesson artifacts in .orqa/process/lessons/ instead of auto-memory files. Use auto-memory only for user-specific preferences (user type) and external references (reference type)."
+    ]
   },
   "semantics": {
     "foundation": {
