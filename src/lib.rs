@@ -35,6 +35,7 @@
 
 pub mod error;
 pub mod graph;
+pub mod platform;
 pub mod server;
 pub mod types;
 pub mod validation;
