@@ -11,6 +11,8 @@ enforcement:
   - "event: stop"
   - governance-maintenance
 relationships:
+  - target: AD-f9034c99
+    type: enforces
   - target: DOC-01ddd8aa
     type: documented-by
   - target: DOC-c158f4a6

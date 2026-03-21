@@ -7,6 +7,8 @@ status: active
 created: 2026-03-07
 updated: 2026-03-07
 relationships:
+  - target: AD-e156310d
+    type: enforces
 ---
 User acceptance testing follows a structured process that prevents premature fixing and ensures systemic solutions.
 

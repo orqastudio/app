@@ -13,6 +13,10 @@ enforcement:
   - ".orqa/**/*.md"
   - orqa-governance
 relationships:
+  - target: AD-d8ea4d2b
+    type: enforces
+  - target: AD-a76663db
+    type: enforces
   - target: AGENT-ff44f841
     type: observed-by
 ---

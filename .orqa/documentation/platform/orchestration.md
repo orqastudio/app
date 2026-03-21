@@ -8,6 +8,8 @@ created: 2026-03-02
 updated: 2026-03-12
 sort: 20
 relationships:
+  - target: AD-774cc3d0
+    type: documents
   - target: RULE-deab6ea7
     type: documents
     rationale: Documentation page references RULE-deab6ea7

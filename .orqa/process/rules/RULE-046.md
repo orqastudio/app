@@ -7,6 +7,8 @@ status: active
 created: 2026-03-13
 updated: 2026-03-13
 relationships:
+  - target: AD-f9034c99
+    type: enforces
 ---
 Rules that cannot be enforced by linters, hooks, or automated tooling still need a defined enforcement mechanism. Every behavioral rule maps to one of four strategies, and each strategy has a concrete implementation path.
 

@@ -7,7 +7,9 @@ description: Domain model and glossary of key terms used throughout OrqaStudio d
 created: 2026-03-02
 updated: 2026-03-18
 sort: 10
-relationships: []
+relationships:
+  - target: AD-40b3de0a
+    type: documents
 ---
 
 **Date:** 2026-03-02

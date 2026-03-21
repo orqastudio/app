@@ -7,6 +7,8 @@ status: active
 created: 2026-03-07
 updated: 2026-03-07
 relationships:
+  - target: AD-6dfbba70
+    type: enforces
 ---
 ## The Rule (NON-NEGOTIABLE)
 

@@ -13,6 +13,10 @@ enforcement:
   - "event: bash"
   - "event: bash"
 relationships:
+  - target: DOC-7c66f103
+    type: documented-by
+  - target: AD-6ce44025
+    type: enforces
   - target: DOC-4db3a417
     type: documented-by
 ---

@@ -18,6 +18,8 @@ capabilities:
   - web_search
 subagent_mapping: null
 relationships:
+  - target: KNOW-025fc31d
+    type: employs
   - target: KNOW-a2b3c4d5
     type: employs
   - target: KNOW-f0c40eaf

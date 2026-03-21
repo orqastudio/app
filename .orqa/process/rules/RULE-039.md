@@ -7,6 +7,8 @@ status: active
 created: 2026-03-11
 updated: 2026-03-11
 relationships:
+  - target: AD-6ce44025
+    type: enforces
 ---
 
 Every session that performs work must leave the codebase in a clean, resumable state. Session state bridges the gap between context windows.

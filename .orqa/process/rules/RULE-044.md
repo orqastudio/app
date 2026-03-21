@@ -18,6 +18,12 @@ enforcement:
   - .orqa/process/knowledge/planning/KNOW.md
   - .orqa/process/knowledge/orqa-code-search/KNOW.md
 relationships:
+  - target: AD-2783985c
+    type: enforces
+  - target: AD-e8ab8572
+    type: enforces
+  - target: AD-ea4a5979
+    type: enforces
   - target: DOC-e0042602
     type: documented-by
 ---

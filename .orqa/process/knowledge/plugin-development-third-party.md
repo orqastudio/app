@@ -13,6 +13,8 @@ category: domain
 version: 0.1.0
 user-invocable: false
 relationships:
+  - target: DOC-c65f07b7
+    type: synchronised-with
   - target: KNOW-b453410f
     type: synchronised-with
   - target: DOC-99a1b71a

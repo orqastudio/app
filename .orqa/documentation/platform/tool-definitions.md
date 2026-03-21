@@ -7,7 +7,11 @@ description: "Definitions, parameters, and execution model for tools available t
 created: 2026-03-02
 updated: 2026-03-10
 sort: 16
-relationships: []
+relationships:
+  - target: AD-5d9ac6bd
+    type: documents
+  - target: AD-0dbba717
+    type: documents
 ---
 
 **Date:** 2026-03-02 | **References:** [AD-0dbba717](AD-0dbba717), [AD-5d9ac6bd](AD-5d9ac6bd)

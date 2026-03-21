@@ -13,6 +13,8 @@ enforcement:
   - ".orqa/delivery/tasks/**"
   - ".orqa/delivery/epics/**"
 relationships:
+  - target: AD-c8535011
+    type: enforces
 ---
 ## The Rule
 

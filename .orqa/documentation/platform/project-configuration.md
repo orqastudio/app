@@ -7,7 +7,9 @@ description: Schema and usage of the .orqa/project.json configuration file that 
 created: 2026-03-03
 updated: 2026-03-18
 sort: 3
-relationships: []
+relationships:
+  - target: AD-4f5277f0
+    type: documents
 ---
 
 **Date:** 2026-03-03 | **Status:** Active | **Decision:** [AD-4f5277f0](AD-4f5277f0) — File-based project settings

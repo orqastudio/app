@@ -7,6 +7,8 @@ status: active
 created: 2026-03-11
 updated: 2026-03-13
 relationships:
+  - target: AD-d8ea4d2b
+    type: enforces
   - target: AGENT-ff44f841
     type: observed-by
 ---

@@ -7,6 +7,8 @@ status: active
 created: 2026-03-07
 updated: 2026-03-12
 relationships:
+  - target: AD-c8535011
+    type: enforces
 ---
 Every implementation plan — whether captured in an epic, a task, or proposed in conversation — MUST satisfy two mandatory requirements before implementation begins.
 

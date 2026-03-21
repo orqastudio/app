@@ -7,7 +7,15 @@ description: Catalog of all Tauri IPC commands defining the frontend-backend com
 created: 2026-03-02
 updated: 2026-03-10
 sort: 1
-relationships: []
+relationships:
+  - target: AD-fcd55d44
+    type: documents
+  - target: AD-1ad08e5f
+    type: documents
+  - target: AD-a334623b
+    type: documents
+  - target: EPIC-0a8a5e72
+    type: documents
 ---
 
 **References:** [Tauri v2 Research](RES-00c5dbc3), [AD-a334623b](AD-a334623b), [AD-fcd55d44](AD-fcd55d44), Rust Module Architecture

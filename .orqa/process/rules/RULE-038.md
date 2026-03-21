@@ -7,6 +7,8 @@ status: active
 created: 2026-03-11
 updated: 2026-03-11
 relationships:
+  - target: AD-53e80192
+    type: enforces
 ---
 Every knowledge artifact MUST have a `user-invocable` field in its YAML frontmatter. This field determines how the knowledge artifact surfaces to users.
 

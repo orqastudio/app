@@ -5,7 +5,11 @@ title: Priority Assessment
 category: concept
 description: "How agents assess epic priority — project-flexible, inference-based, not formula-driven"
 sort: 9
-relationships: []
+relationships:
+  - target: MS-eea45fa8
+    type: documents
+  - target: MS-654badde
+    type: documents
 ---
 
 ## Principle

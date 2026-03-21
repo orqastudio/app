@@ -7,6 +7,10 @@ status: active
 created: 2026-03-11
 updated: 2026-03-11
 relationships:
+  - target: AD-20d6719d
+    type: enforces
+  - target: AD-29b5eb06
+    type: enforces
 ---
 The orchestrator's context window is a finite resource. Filling it with implementation details, full file contents, or raw agent output degrades coordination quality. These constraints are mandatory.
 

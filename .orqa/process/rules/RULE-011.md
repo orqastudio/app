@@ -7,6 +7,8 @@ status: active
 created: 2026-03-07
 updated: 2026-03-07
 relationships:
+  - target: AD-f9034c99
+    type: enforces
 ---
 # Enforcement Before Code (NON-NEGOTIABLE)
 

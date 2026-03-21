@@ -7,6 +7,16 @@ status: active
 created: 2026-03-07
 updated: 2026-03-13
 relationships:
+  - target: AD-8b7c4ac5
+    type: enforces
+  - target: AD-6ce44025
+    type: enforces
+  - target: AD-0c56aa90
+    type: enforces
+  - target: AD-2f1991c2
+    type: enforces
+  - target: AD-20d6719d
+    type: enforces
 ---
 # Artifact Config Integrity (NON-NEGOTIABLE)
 

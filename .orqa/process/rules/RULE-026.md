@@ -7,6 +7,10 @@ status: active
 created: 2026-03-07
 updated: 2026-03-13
 relationships:
+  - target: AD-53e80192
+    type: enforces
+  - target: AD-6f0dea5e
+    type: enforces
   - target: DOC-4db3a417
     type: documented-by
   - target: DOC-b10607c0

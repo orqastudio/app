@@ -6,6 +6,10 @@ category: architecture
 description: "How plugins extend OrqaStudio — current CLI companion plugin, four-layer model, component SDK extraction plan, and built-in vs plugin decision framework."
 sort: 12
 relationships:
+  - target: RULE-f9d0279c
+    type: documents
+  - target: EPIC-0a8a5e72
+    type: documents
   - target: RULE-98682b5e
     type: documents
     rationale: Documentation page references RULE-98682b5e

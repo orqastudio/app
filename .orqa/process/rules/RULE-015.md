@@ -7,6 +7,8 @@ status: active
 created: 2026-03-07
 updated: 2026-03-07
 relationships:
+  - target: AD-29b5eb06
+    type: enforces
 ---
 ## The Core Rule
 

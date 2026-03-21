@@ -8,6 +8,38 @@ created: 2026-03-07
 updated: 2026-03-18
 sort: 11
 relationships:
+  - target: RULE-65973a88
+    type: documents
+  - target: AD-e156310d
+    type: documents
+  - target: AD-10586f26
+    type: documents
+  - target: AD-21d35c1d
+    type: documents
+  - target: AD-c8535011
+    type: documents
+  - target: AD-6dfbba70
+    type: documents
+  - target: AD-2783985c
+    type: documents
+  - target: AD-774cc3d0
+    type: documents
+  - target: AD-a334623b
+    type: documents
+  - target: AD-e513c9e4
+    type: documents
+  - target: MS-eea45fa8
+    type: documents
+  - target: MS-654badde
+    type: documents
+  - target: EPIC-6787bb93
+    type: documents
+  - target: EPIC-fe75b52c
+    type: documents
+  - target: EPIC-642234ba
+    type: documents
+  - target: EPIC-e045ab6d
+    type: documents
   - target: RULE-7b770593
     type: documents
     rationale: Source-of-truth for artifact lifecycle that RULE-7b770593 enforces

@@ -7,6 +7,8 @@ status: active
 created: 2026-03-07
 updated: 2026-03-07
 relationships:
+  - target: AD-1d928079
+    type: enforces
 ---
 # Systems Thinking First (NON-NEGOTIABLE)
 

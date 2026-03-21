@@ -7,7 +7,9 @@ description: "SQLite database schema covering sessions, messages, governance art
 created: 2026-03-02
 updated: 2026-03-10
 sort: 4
-relationships: []
+relationships:
+  - target: AD-8b91f5a4
+    type: documents
 ---
 
 
