@@ -334,7 +334,8 @@ fn build_node(
         .get("priority")
         .and_then(|v| v.as_str())
         .map(str::to_owned);
-    let artifact_type = infer_artifact_type(&rel_path, type_registry);
+    let frontmatter_type = yaml_value.get("type").and_then(|v| v.as_str());
+    let artifact_type = infer_artifact_type(&rel_path, type_registry, frontmatter_type, &id);
     let frontmatter = yaml_to_json(yaml_value);
     let mut references_out = collect_forward_refs(yaml_value, &id);
     references_out.extend(collect_body_refs(body, &id));
@@ -514,15 +515,55 @@ pub fn extract_frontmatter(content: &str) -> (Option<String>, String) {
     (Some(fm_text), body)
 }
 
-fn infer_artifact_type(rel_path: &str, type_registry: &TypeRegistry) -> String {
-    let normalized = rel_path.replace('\\', "/");
-
-    for (path_prefix, type_key) in type_registry {
-        if normalized.starts_with(path_prefix) {
-            return type_key.clone();
+fn infer_artifact_type(
+    rel_path: &str,
+    type_registry: &TypeRegistry,
+    frontmatter_type: Option<&str>,
+    artifact_id: &str,
+) -> String {
+    // 1. Explicit frontmatter type field overrides everything.
+    if let Some(t) = frontmatter_type {
+        let t = t.trim();
+        if !t.is_empty() {
+            return t.to_owned();
         }
     }
 
+    let normalized = rel_path.replace('\\', "/");
+
+    // 2. Config-driven registry: longest-prefix match wins.
+    let mut best_match: Option<(&String, &String)> = None;
+    for (path_prefix, type_key) in type_registry {
+        let prefix_slash = if path_prefix.ends_with('/') {
+            path_prefix.clone()
+        } else {
+            format!("{path_prefix}/")
+        };
+        if (normalized.starts_with(&prefix_slash) || normalized == *path_prefix)
+            && (best_match.is_none() || path_prefix.len() > best_match.unwrap().0.len())
+        {
+            best_match = Some((path_prefix, type_key));
+        }
+    }
+    if let Some((_, type_key)) = best_match {
+        return type_key.clone();
+    }
+
+    // 3. ID-prefix match against the platform's artifact type definitions.
+    if let Some(prefix) = artifact_id.split('-').next() {
+        if !prefix.is_empty() {
+            let matched = crate::platform::PLATFORM
+                .artifact_types
+                .iter()
+                .find(|t| t.id_prefix == prefix)
+                .map(|t| t.key.clone());
+            if let Some(t) = matched {
+                return t;
+            }
+        }
+    }
+
+    // 4. Hardcoded path-segment heuristic for well-known directory names.
     if normalized.contains("/epics/") {
         "epic"
     } else if normalized.contains("/tasks/") {
