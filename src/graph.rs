@@ -169,6 +169,16 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, McpErr
         }
     }
 
+    // Pass 1c: in organisation mode, resolve cross-project refs from the root.
+    // Root nodes reference child artifacts by bare ID (e.g. RULE-6c0496e0) but
+    // those artifacts are stored with a qualified key (e.g. app::RULE-6c0496e0).
+    // Build a bare-ID → graph-key index from all child nodes and rewrite refs.
+    if let Some(ref settings) = settings {
+        if settings.organisation {
+            resolve_cross_project_refs(&mut graph);
+        }
+    }
+
     // Pass 2: invert references — add backlinks to target nodes.
     let forward_refs: Vec<ArtifactRef> = graph
         .nodes
@@ -183,6 +193,69 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, McpErr
     }
 
     Ok(graph)
+}
+
+/// Resolve cross-project references in organisation mode.
+///
+/// Root project nodes reference child artifacts by bare ID (e.g. `RULE-6c0496e0`)
+/// but those artifacts are stored with a qualified key (`app::RULE-6c0496e0`).
+///
+/// This pass has two effects:
+/// 1. Rewrites unresolvable bare-ID `target_id` values in `references_out` to their
+///    qualified equivalents so that Pass 2 backlinks and the integrity checker resolve them.
+/// 2. Inserts bare-ID aliases in `graph.nodes` for child-project nodes that do not
+///    conflict with root-project entries, so that `graph.nodes.contains_key(bare_id)`
+///    works for any consumer that uses direct map lookups.
+///
+/// Root project artifacts (unqualified keys) take priority. When a bare ID is present in
+/// multiple child projects, the first one found wins and a warning is logged.
+fn resolve_cross_project_refs(graph: &mut ArtifactGraph) {
+    // Build bare-ID → qualified graph key for all child-project nodes only.
+    // Root nodes (no `::` in their key) are excluded — they already resolve directly.
+    let mut bare_to_qualified: HashMap<String, String> = HashMap::new();
+    let mut duplicates: Vec<String> = Vec::new();
+
+    for key in graph.nodes.keys() {
+        if let Some(sep) = key.find("::") {
+            let bare_id = &key[sep + 2..];
+            // Root key wins: skip if already resolved directly.
+            if graph.nodes.contains_key(bare_id) {
+                continue;
+            }
+            if bare_to_qualified.contains_key(bare_id) {
+                duplicates.push(bare_id.to_owned());
+            } else {
+                bare_to_qualified.insert(bare_id.to_owned(), key.clone());
+            }
+        }
+    }
+
+    for dup in &duplicates {
+        tracing::warn!(
+            "artifact ID '{}' exists in multiple child projects; first-found wins for ref resolution",
+            dup
+        );
+    }
+
+    // 1. Rewrite unresolvable bare-ID refs on every node.
+    let all_keys: std::collections::HashSet<String> = graph.nodes.keys().cloned().collect();
+
+    for node in graph.nodes.values_mut() {
+        for ref_entry in &mut node.references_out {
+            if !all_keys.contains(&ref_entry.target_id) && !ref_entry.target_id.contains("::") {
+                if let Some(qualified) = bare_to_qualified.get(&ref_entry.target_id) {
+                    ref_entry.target_id = qualified.clone();
+                }
+            }
+        }
+    }
+
+    // 2. Insert bare-ID aliases so that direct `graph.nodes.get(bare_id)` lookups resolve.
+    for (bare_id, qualified_key) in &bare_to_qualified {
+        if let Some(node) = graph.nodes.get(qualified_key).cloned() {
+            graph.nodes.insert(bare_id.clone(), node);
+        }
+    }
 }
 
 /// Qualify intra-project relationship targets for a child project.
@@ -766,5 +839,129 @@ mod tests {
         let (fm, body) = extract_frontmatter(content);
         assert!(fm.is_none());
         assert_eq!(body, content);
+    }
+
+    // -----------------------------------------------------------------------
+    // Organisation mode tests
+    // -----------------------------------------------------------------------
+
+    /// Helper: write a minimal project.json with organisation mode enabled.
+    fn write_org_project_json(dir: &Path, child_name: &str, child_path: &str) {
+        let json = format!(
+            r#"{{
+  "name": "Test Org",
+  "organisation": true,
+  "projects": [
+    {{ "name": "{child_name}", "path": "{child_path}" }}
+  ],
+  "artifacts": []
+}}"#
+        );
+        let orqa = dir.join(".orqa");
+        fs::create_dir_all(&orqa).expect("create .orqa");
+        fs::write(orqa.join("project.json"), json).expect("write project.json");
+    }
+
+    #[test]
+    fn organisation_mode_scans_child_project() {
+        let tmp = make_project();
+        // Root project with one child sub-project "app" at ./app
+        let child_dir = tmp.path().join("app");
+        write_org_project_json(tmp.path(), "app", "app");
+
+        // Write a rule in the child project's .orqa/
+        let rules_dir = child_dir.join(".orqa/process/rules");
+        write_artifact(
+            &rules_dir,
+            "RULE-001.md",
+            "---\nid: RULE-001\ntitle: Test Rule\n---\n",
+        );
+
+        let graph = build_artifact_graph(tmp.path()).expect("build");
+
+        // Should be resolvable by both qualified and bare ID.
+        assert!(
+            graph.nodes.contains_key("app::RULE-001"),
+            "qualified key must exist"
+        );
+        assert!(
+            graph.nodes.contains_key("RULE-001"),
+            "bare-ID alias must exist for cross-project resolution"
+        );
+        let node = graph.nodes.get("RULE-001").expect("bare-ID lookup");
+        assert_eq!(node.id, "RULE-001");
+        assert_eq!(node.project.as_deref(), Some("app"));
+    }
+
+    #[test]
+    fn cross_project_ref_from_root_resolves_without_broken_link() {
+        let tmp = make_project();
+        let child_dir = tmp.path().join("app");
+        write_org_project_json(tmp.path(), "app", "app");
+
+        // Root epic references RULE-001 which lives in the child project.
+        let root_epics = tmp.path().join(".orqa/delivery/epics");
+        write_artifact(
+            &root_epics,
+            "EPIC-001.md",
+            "---\nid: EPIC-001\ntitle: Root Epic\nrelationships:\n  - target: RULE-001\n    type: enforced-by\n---\n",
+        );
+
+        // RULE-001 is in the child project only.
+        let child_rules = child_dir.join(".orqa/process/rules");
+        write_artifact(
+            &child_rules,
+            "RULE-001.md",
+            "---\nid: RULE-001\ntitle: Child Rule\n---\n",
+        );
+
+        let graph = build_artifact_graph(tmp.path()).expect("build");
+        let stats = graph_stats(&graph);
+
+        assert_eq!(
+            stats.broken_ref_count, 0,
+            "cross-project ref should not be a broken link"
+        );
+    }
+
+    #[test]
+    fn root_project_takes_priority_over_child_on_id_conflict() {
+        let tmp = make_project();
+        let child_dir = tmp.path().join("app");
+        write_org_project_json(tmp.path(), "app", "app");
+
+        // Same ID in both root and child — root wins.
+        let root_rules = tmp.path().join(".orqa/process/rules");
+        write_artifact(
+            &root_rules,
+            "RULE-001.md",
+            "---\nid: RULE-001\ntitle: Root Rule\n---\n",
+        );
+        let child_rules = child_dir.join(".orqa/process/rules");
+        write_artifact(
+            &child_rules,
+            "RULE-001.md",
+            "---\nid: RULE-001\ntitle: Child Rule\n---\n",
+        );
+
+        let graph = build_artifact_graph(tmp.path()).expect("build");
+
+        // Bare-ID key should resolve to the root node.
+        let node = graph.nodes.get("RULE-001").expect("node");
+        assert_eq!(node.title, "Root Rule", "root project node must win");
+        // Qualified key still accessible for child.
+        let child_node = graph.nodes.get("app::RULE-001").expect("child node");
+        assert_eq!(child_node.title, "Child Rule");
+    }
+
+    #[test]
+    fn child_without_orqa_dir_is_silently_skipped() {
+        let tmp = make_project();
+        write_org_project_json(tmp.path(), "no-orqa-project", "no-orqa");
+        // "no-orqa/" directory exists but has no .orqa/ inside.
+        fs::create_dir_all(tmp.path().join("no-orqa")).expect("create dir");
+
+        let graph = build_artifact_graph(tmp.path()).expect("build");
+        assert!(graph.nodes.is_empty());
     }
 }
