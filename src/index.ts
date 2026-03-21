@@ -114,6 +114,7 @@ export type {
 	ProposedTransition,
 	AppliedFix,
 	HealthSnapshot,
+	GraphHealthData,
 } from "./artifact-graph.js";
 export { ARTIFACT_TYPES } from "./artifact-graph.js";
 

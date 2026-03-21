@@ -165,5 +165,49 @@ export interface HealthSnapshot {
     broken_ref_count: number;
     error_count: number;
     warning_count: number;
+    /** Largest connected component size / total nodes (0.0–1.0). */
+    largest_component_ratio: number;
+    /** Orphan count as a percentage of total nodes (0.0–100.0). */
+    orphan_percentage: number;
+    /** Average degree: (edges * 2) / nodes. */
+    avg_degree: number;
+    /** Edge density: edges / (nodes * (nodes - 1)). */
+    graph_density: number;
+    /** Number of weakly-connected components. */
+    component_count: number;
+    /** Percentage of rules with at least one grounded-by → pillar relationship. */
+    pillar_traceability: number;
+    /** Ratio of typed relationship edges that have their inverse present (0.0–1.0). */
+    bidirectionality_ratio: number;
     created_at: string;
+}
+
+/** Extended structural health metrics from the backend artifact graph analysis.
+ *
+ * Returned by the `get_graph_health` Tauri command. Replaces the client-side
+ * Cytoscape analysis previously done in GraphVisualiser.
+ */
+export interface GraphHealthData {
+    /** Total number of nodes (excluding alias nodes). */
+    total_nodes: number;
+    /** Total number of directed edges. */
+    total_edges: number;
+    /** Number of weakly-connected components. 1 = fully connected. */
+    component_count: number;
+    /** Largest component size / total nodes (0.0–1.0). */
+    largest_component_ratio: number;
+    /** Nodes with zero incoming references (excluding doc artifacts). */
+    orphan_count: number;
+    /** orphan_count / total_nodes * 100, rounded to 1 decimal place. */
+    orphan_percentage: number;
+    /** Average number of relationships per node (edges * 2 / nodes). */
+    avg_degree: number;
+    /** Edge density: edges / (nodes * (nodes - 1)), clamped 0.0–1.0. */
+    graph_density: number;
+    /** Percentage of rules with at least one grounded-by → pillar edge. */
+    pillar_traceability: number;
+    /** Ratio of typed relationship edges that have their inverse present (0.0–1.0). */
+    bidirectionality_ratio: number;
+    /** Number of broken references (target not in graph). */
+    broken_ref_count: number;
 }
