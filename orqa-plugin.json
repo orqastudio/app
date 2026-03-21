@@ -278,6 +278,16 @@
         "to": ["research"],
         "description": "Research consolidated — extends core merged-into to research artifacts. Source should transition to surpassed.",
         "semantic": "lineage"
+      },
+      {
+        "key": "implements",
+        "inverse": "implemented-by",
+        "label": "Implements",
+        "inverseLabel": "Implemented By",
+        "from": ["task", "epic"],
+        "to": ["decision"],
+        "description": "Work directly implements a decision — traces delivery back to governance",
+        "semantic": "delivery"
       }
     ],
     "knowledge": [
@@ -402,6 +412,10 @@
     "corrective": {
       "description": "Bug tracking — reporting issues and fixing them",
       "keys": ["reports", "reported-by", "fixes", "fixed-by", "affects", "affected-by"]
+    },
+    "delivery": {
+      "description": "Governance-to-delivery bridge — tracing implementation back to decisions",
+      "keys": ["implements", "implemented-by"]
     }
   }
 }
