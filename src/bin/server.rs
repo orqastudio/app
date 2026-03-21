@@ -20,13 +20,11 @@ fn main() {
         .with_writer(std::io::stderr)
         .init();
 
-    let project_root: PathBuf = match std::env::args().nth(1) {
-        Some(p) => PathBuf::from(p),
-        None => {
-            eprintln!("usage: orqa-mcp-server <project-path>");
-            process::exit(1);
-        }
+    let Some(arg) = std::env::args().nth(1) else {
+        eprintln!("usage: orqa-mcp-server <project-path>");
+        process::exit(1);
     };
+    let project_root = PathBuf::from(arg);
 
     if !project_root.exists() {
         eprintln!(
