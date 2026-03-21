@@ -1,9 +1,10 @@
-//! Graph tool implementations: query, resolve, relationships, stats, validate, read, refresh.
+//! Graph tool implementations: query, resolve, relationships, stats, validate, health, read, refresh.
 
 use serde_json::{json, Value};
 
 use crate::graph::{
-    build_artifact_graph, check_integrity_headless, graph_stats, ArtifactGraph, ArtifactNode,
+    build_artifact_graph, check_integrity_headless, compute_health, graph_stats, ArtifactGraph,
+    ArtifactNode,
 };
 use crate::types::McpToolDefinition;
 
@@ -56,6 +57,11 @@ pub fn tool_definitions() -> Vec<McpToolDefinition> {
         McpToolDefinition {
             name: "graph_stats".into(),
             description: "Get artifact graph statistics (node counts, edge counts, health)".into(),
+            input_schema: json!({ "type": "object", "properties": {} }),
+        },
+        McpToolDefinition {
+            name: "graph_health".into(),
+            description: "Get graph-theoretic health metrics: connected components, orphan rate, average degree, graph density, largest component ratio, pillar traceability, and bidirectionality ratio".into(),
             input_schema: json!({ "type": "object", "properties": {} }),
         },
         McpToolDefinition {
@@ -209,6 +215,11 @@ pub fn tool_relationships(graph: &ArtifactGraph, args: &Value) -> Result<String,
 pub fn tool_stats(graph: &ArtifactGraph) -> Result<String, String> {
     let stats = graph_stats(graph);
     serde_json::to_string_pretty(&stats).map_err(|e| e.to_string())
+}
+
+pub fn tool_health(graph: &ArtifactGraph) -> Result<String, String> {
+    let health = compute_health(graph);
+    serde_json::to_string_pretty(&health).map_err(|e| e.to_string())
 }
 
 pub fn tool_validate(graph: &ArtifactGraph, args: &Value) -> Result<String, String> {

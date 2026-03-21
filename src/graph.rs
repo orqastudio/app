@@ -11,7 +11,7 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 
 use crate::error::McpError;
-use crate::settings::{ArtifactEntry, DeliveryConfig, ProjectSettings};
+use crate::settings::{ArtifactEntry, ProjectSettings};
 
 // ---------------------------------------------------------------------------
 // Domain types
@@ -546,47 +546,100 @@ pub fn graph_stats(graph: &ArtifactGraph) -> GraphStats {
 }
 
 // ---------------------------------------------------------------------------
-// Integrity checks
+// Integrity checks — delegated to orqa-validation
 // ---------------------------------------------------------------------------
 
-/// Category of integrity issue found in the artifact graph.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum IntegrityCategory {
-    BrokenLink,
-    MissingInverse,
-    TypeConstraintViolation,
-    RequiredRelationshipMissing,
-    CardinalityViolation,
-    CircularDependency,
-    InvalidStatus,
-    BodyTextRefWithoutRelationship,
-    ParentChildInconsistency,
-    DeliveryPathMismatch,
-}
+// Re-export the validation crate's public integrity types so existing callers
+// (e.g. tools/graph.rs) do not need to change their import paths.
+pub use orqa_validation::IntegrityCategory;
+pub use orqa_validation::IntegrityCheck;
+pub use orqa_validation::IntegritySeverity;
 
-/// Severity of an integrity finding.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum IntegritySeverity {
-    Error,
-    Warning,
-}
-
-/// A single integrity finding from the graph.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct IntegrityCheck {
-    pub category: IntegrityCategory,
-    pub severity: IntegritySeverity,
-    pub artifact_id: String,
-    pub message: String,
-    pub auto_fixable: bool,
-    pub fix_description: Option<String>,
-}
-
-/// Run integrity checks on the artifact graph, using the platform's embedded relationship schema.
+/// Convert the MCP server's `ArtifactGraph` into the validation crate's graph type.
 ///
-/// Passes empty valid_statuses and project_relationships (headless mode — no project settings loaded).
+/// The two graph types are structurally identical. A serde JSON round-trip is the
+/// cleanest conversion without coupling the crates at the type level.
+fn to_validation_graph(
+    graph: &ArtifactGraph,
+) -> Result<orqa_validation::ArtifactGraph, serde_json::Error> {
+    let json = serde_json::to_value(graph)?;
+    serde_json::from_value(json)
+}
+
+/// Run integrity checks on the artifact graph using the `orqa-validation` library.
+///
+/// Loads statuses and delivery config from project settings when available, falling
+/// back to empty defaults (headless mode) when project.json is not found.
 pub fn check_integrity_headless(graph: &ArtifactGraph) -> Vec<IntegrityCheck> {
-    crate::integrity::run_checks(graph, &[], &DeliveryConfig::default(), &[])
+    let val_graph = match to_validation_graph(graph) {
+        Ok(g) => g,
+        Err(e) => {
+            tracing::error!("failed to convert graph for validation: {e}");
+            return Vec::new();
+        }
+    };
+    let ctx = orqa_validation::build_validation_context(&[], &Default::default(), &[], &[]);
+    orqa_validation::validate(&val_graph, &ctx)
+}
+
+/// Run integrity checks with full project settings context.
+///
+/// Uses statuses and delivery config from the project settings, giving richer
+/// validation results than `check_integrity_headless`.
+pub fn check_integrity_with_settings(
+    graph: &ArtifactGraph,
+    settings: &crate::settings::ProjectSettings,
+) -> Vec<IntegrityCheck> {
+    let val_graph = match to_validation_graph(graph) {
+        Ok(g) => g,
+        Err(e) => {
+            tracing::error!("failed to convert graph for validation: {e}");
+            return Vec::new();
+        }
+    };
+    let statuses: Vec<String> = settings.statuses.iter().map(|s| s.key.clone()).collect();
+    let project_relationships: Vec<orqa_validation::types::RelationshipSchema> = settings
+        .relationships
+        .iter()
+        .map(|r| orqa_validation::types::RelationshipSchema {
+            key: r.key.clone(),
+            inverse: r.inverse.clone(),
+            description: String::new(),
+            from: vec![],
+            to: vec![],
+            semantic: None,
+            constraints: None,
+        })
+        .collect();
+    let ctx = orqa_validation::build_validation_context(
+        &statuses,
+        &Default::default(),
+        &[],
+        &project_relationships,
+    );
+    orqa_validation::validate(&val_graph, &ctx)
+}
+
+/// Compute graph health metrics using the `orqa-validation` library.
+pub fn compute_health(graph: &ArtifactGraph) -> orqa_validation::GraphHealth {
+    match to_validation_graph(graph) {
+        Ok(val_graph) => orqa_validation::compute_health(&val_graph),
+        Err(e) => {
+            tracing::error!("failed to convert graph for health computation: {e}");
+            orqa_validation::GraphHealth {
+                component_count: 0,
+                orphan_count: 0,
+                orphan_percentage: 0.0,
+                avg_degree: 0.0,
+                graph_density: 0.0,
+                largest_component_ratio: 0.0,
+                total_nodes: 0,
+                total_edges: 0,
+                pillar_traceability: 0.0,
+                bidirectionality_ratio: 0.0,
+            }
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------

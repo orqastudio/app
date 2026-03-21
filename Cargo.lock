@@ -1736,6 +1736,7 @@ version = "0.1.0-dev"
 dependencies = [
  "dirs-next",
  "orqa-search",
+ "orqa-validation",
  "regex",
  "serde",
  "serde_json",
@@ -1765,6 +1766,18 @@ dependencies = [
  "tokio",
  "tracing",
  "tracing-subscriber",
+]
+
+[[package]]
+name = "orqa-validation"
+version = "0.1.0-dev"
+dependencies = [
+ "regex",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "thiserror 2.0.18",
+ "tracing",
 ]
 
 [[package]]

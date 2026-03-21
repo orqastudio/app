@@ -190,6 +190,7 @@ impl McpServer {
                 .get_graph()
                 .and_then(|g| graph_tools::tool_relationships(g, &arguments)),
             "graph_stats" => self.get_graph().and_then(graph_tools::tool_stats),
+            "graph_health" => self.get_graph().and_then(graph_tools::tool_health),
             "graph_validate" => self
                 .get_graph()
                 .and_then(|g| graph_tools::tool_validate(g, &arguments)),

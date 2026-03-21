@@ -17,7 +17,6 @@
 
 pub mod error;
 pub mod graph;
-pub mod integrity;
 pub mod platform;
 pub mod server;
 pub mod settings;
