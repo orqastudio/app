@@ -118,7 +118,7 @@ const MODE_TEMPLATES = {
 // Behavioral rules injected into EVERY mode (appended after mode-specific content).
 // These enforce rules that were removed from the orchestrator system prompt when it
 // was cleaned to be generic. Without these, behavioral rules have no enforcement.
-const BEHAVIORAL_RULES = "For every new artifact or insight: trace to all usage contexts (milestones, rules, pillars, epics) before moving on. Never offer to stop or wrap up — keep working until the user says stop. Use agent teams (TeamCreate) for multi-step work — understand task dependencies before delegating. When an epic is scoped: sync session state steps and task list with the epic's tasks — work against the epic's defined tasks, not ad-hoc. When the user says 'now', 'immediately', or 'straight away' — act in the CURRENT turn, do not queue or defer. For process learnings and feedback: create lesson artifacts in .orqa/process/lessons/ instead of auto-memory files. Use auto-memory only for user-specific preferences (user type) and external references (reference type).";
+const BEHAVIORAL_RULES = "For every new artifact or insight: trace to all usage contexts (milestones, rules, pillars, epics) before moving on. Never offer to stop or wrap up — keep working until the user says stop. Use agent teams (TeamCreate) for multi-step work — understand task dependencies before delegating. When the user says 'now', 'immediately', or 'straight away' — act in the CURRENT turn, do not queue or defer.";
 
 // ---------------------------------------------------------------------------
 // Semantic search via MCP server
@@ -490,7 +490,7 @@ async function main() {
   }
 
   // Build session constant with plugin contributions appended.
-  const sessionConstantBase = "Remember: tmp/session-state.md is your working document. It MUST include the scoped epic (EPIC-XXXXXXXX) so the stop hook can check completion. When an epic is scoped, sync session state steps AND task list with the epic's artifact tasks — work against the epic's defined tasks, not ad-hoc. Update session state when scope changes, decisions are made, or steps complete.";
+  const sessionConstantBase = "Remember: tmp/session-state.md is your working document. Update session state when scope changes, decisions are made, or steps complete.";
   let sessionConstant = sessionConstantBase;
   if (injectorConfig?.session_reminders) {
     sessionConstant = `${sessionConstantBase} ${injectorConfig.session_reminders}`;
