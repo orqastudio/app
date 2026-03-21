@@ -1,4 +1,4 @@
-## Session: 2026-03-21T09:21:02Z
+## Session: 2026-03-21T09:35:57Z
 
 ### Active Epics
 - EPIC-6787bb93: Artifact Browser — Sort, Filter, Search
@@ -15,11 +15,11 @@
 - TASK-367f0026: Fix connector basics — path bugs, intent mappings, license, dual manifests
 
 ### Recent Commits
+26c5fa5 Add CONTRIBUTING.md across repos + update license policy docs
 1721708 Fix Rust warnings, tracing env var, debugger license
 2f88b07 Fix license badge URLs: BSL-1.1 → BSL%201.1 across all READMEs
 0369f22 Remove app/.mcp.json — dev repo is the single dev environment
 ffc2d88 Add CI/release workflows, README, LICENSE for extracted crates
-2340747 Fix dev startup errors: deps, types, stale processes
 
 ### Uncommitted Changes
 8 files with uncommitted changes
