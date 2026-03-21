@@ -281,6 +281,21 @@
           "type": "array",
           "description": "CLI tool registrations contributed by this plugin.",
           "items": {}
+        },
+        "behavioral_rules": {
+          "type": "array",
+          "description": "Behavioral rules contributed by this plugin. Appended to BEHAVIORAL_RULES in the prompt-injector.",
+          "items": { "type": "string" }
+        },
+        "mode_templates": {
+          "type": "object",
+          "description": "Mode templates contributed by this plugin. Merged into MODE_TEMPLATES. Plugin keys must not collide with built-in mode keys.",
+          "additionalProperties": { "type": "string" }
+        },
+        "session_reminders": {
+          "type": "array",
+          "description": "Session state reminders contributed by this plugin. Appended to sessionConstant in the prompt-injector.",
+          "items": { "type": "string" }
         }
       }
     },

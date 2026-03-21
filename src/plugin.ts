@@ -356,6 +356,12 @@ export interface PluginProvides {
 	cliTools?: CliToolRegistration[];
 	/** Hooks triggered on specific events. */
 	hooks?: HookRegistration[];
+	/** Behavioral rules appended to BEHAVIORAL_RULES in the prompt-injector. */
+	behavioral_rules?: string[];
+	/** Mode templates merged into MODE_TEMPLATES. Plugin keys must not collide with built-in mode keys. */
+	mode_templates?: Record<string, string>;
+	/** Session state reminders appended to sessionConstant in the prompt-injector. */
+	session_reminders?: string[];
 }
 
 // ---------------------------------------------------------------------------
