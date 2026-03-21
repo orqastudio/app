@@ -1,420 +1,145 @@
 #!/usr/bin/env node
 // PostToolUse hook: validates .orqa/ artifacts after Write/Edit operations.
-// Checks frontmatter schema, relationship validity, and bidirectional integrity.
+//
+// Delegates to the MCP server's graph_validate and graph_health tools for
+// comprehensive schema-driven integrity checks. Falls back to minimal
+// file-level checks (frontmatter presence, id field) when the MCP server
+// is unavailable.
 //
 // Runs after Write/Edit completes on .orqa/ files. Non-blocking — reports
 // validation issues as systemMessage warnings without denying the operation.
-//
-// This replicates validation from libs/lsp-server/src/validation.rs.
-// When the LSP is running as a dev process, this can be replaced with an LSP call.
 
-import { readFileSync, existsSync, readdirSync, statSync } from "fs";
+import { readFileSync, existsSync } from "fs";
 import { join, relative } from "path";
+import { spawnSync } from "node:child_process";
 import { logTelemetry } from "./telemetry.mjs";
 
 // ---------------------------------------------------------------------------
-// Core schema (loaded from libs/types/src/platform/core.json)
+// MCP bridge helpers
 // ---------------------------------------------------------------------------
 
 /**
- * Load core.json relationship keys (forward + inverse) from the project or
- * fall back to a hardcoded set so the hook still runs when the repo is not
- * fully checked out.
+ * Call the MCP server with multiple tool calls in a single spawn.
  *
- * @param {string} projectDir
- * @returns {{ validRelationshipTypes: Set<string> }}
+ * Sends: initialize + N tools/call messages (newline-delimited JSON-RPC).
+ * Returns a Map<id, parsedResult> for each tool call that succeeds.
+ *
+ * @param {string} projectPath
+ * @param {Array<{id: number, name: string, arguments: object}>} calls
+ * @returns {Map<number, unknown> | null}
  */
-function loadCoreSchema(projectDir) {
-  const candidates = [
-    join(projectDir, "libs/types/src/platform/core.json"),
-    // Connector installed into a target project — look two levels up
-    join(projectDir, "../../libs/types/src/platform/core.json"),
-  ];
+function callMcp(projectPath, calls) {
+  const initialize = JSON.stringify({
+    jsonrpc: "2.0",
+    id: 1,
+    method: "initialize",
+    params: {
+      protocolVersion: "2024-11-05",
+      capabilities: {},
+      clientInfo: { name: "validate-artifact", version: "1.0.0" },
+    },
+  });
 
-  for (const candidate of candidates) {
-    if (existsSync(candidate)) {
-      try {
-        const raw = JSON.parse(readFileSync(candidate, "utf-8"));
-        const keys = new Set();
-        if (Array.isArray(raw.relationships)) {
-          for (const rel of raw.relationships) {
-            if (rel.key) keys.add(rel.key);
-            if (rel.inverse) keys.add(rel.inverse);
-          }
-        }
-        return { validRelationshipTypes: keys };
-      } catch {
-        // fall through to hardcoded fallback
-      }
-    }
+  const toolCalls = calls.map(({ id, name, arguments: args }) =>
+    JSON.stringify({
+      jsonrpc: "2.0",
+      id,
+      method: "tools/call",
+      params: { name, arguments: args },
+    })
+  );
+
+  const input = [initialize, ...toolCalls].join("\n") + "\n";
+
+  let result;
+  try {
+    result = spawnSync("orqa", ["mcp", projectPath], {
+      input,
+      encoding: "utf-8",
+      timeout: 10000,
+      windowsHide: true,
+    });
+  } catch {
+    return null;
   }
 
-  // Hardcoded fallback — mirrors core.json as of 2026-03-20.
-  // Keep this in sync when core.json changes.
-  return {
-    validRelationshipTypes: new Set([
-      "upholds", "upheld-by",
-      "grounded", "grounded-by",
-      "benefits", "benefited-by",
-      "crystallises", "crystallised-by",
-      "spawns", "spawned-by",
-      "drives", "driven-by",
-      "governs", "governed-by",
-      "enforces", "enforced-by",
-      "codifies", "codified-by",
-      "informs", "informed-by",
-      "teaches", "taught-by",
-      "guides", "guided-by",
-      "cautions", "cautioned-by",
-      "observes", "observed-by",
-      "employs", "employed-by",
-      "documents", "documented-by",
-      "synchronised-with",
-      "merged-into", "merged-from",
-      "revises", "revised-by",
-      // Common delivery relationships not yet in core.json but widely used
-      "delivers", "delivered-by",
-      "fulfils", "fulfilled-by",
-      "realises", "realised-by",
-      "belongs-to",
-      "depends-on", "depended-on-by",
-      "related-to",
-      "parent-of", "child-of",
-      "supersedes", "superseded-by",
-      "references",
-    ]),
-  };
-}
-
-// ---------------------------------------------------------------------------
-// The 12 canonical artifact statuses (mirrors VALID_STATUSES in validation.rs)
-// ---------------------------------------------------------------------------
-
-const VALID_STATUSES = [
-  "captured", "exploring", "ready", "prioritised", "active",
-  "hold", "blocked", "review", "completed", "surpassed", "archived", "recurring",
-];
-
-// ---------------------------------------------------------------------------
-// Artifact ID validation (mirrors is_valid_artifact_id + is_hex_artifact_id)
-// ---------------------------------------------------------------------------
-
-/**
- * Returns true for both legacy sequential IDs (TYPE-NNN) and hex IDs (TYPE-XXXXXXXX).
- * Supports compound prefixes like RULE-PREFIX-NNN.
- *
- * @param {string} id
- * @returns {boolean}
- */
-function isValidArtifactId(id) {
-  if (!id) return false;
-  const dashIdx = id.indexOf("-");
-  if (dashIdx === -1) return false;
-
-  const prefix = id.slice(0, dashIdx);
-  const suffix = id.slice(dashIdx + 1);
-
-  // Simple case: single UPPERCASE prefix
-  if (/^[A-Z]+$/.test(prefix)) {
-    return /^\d+$/.test(suffix) || (suffix.length === 8 && /^[0-9a-f]+$/i.test(suffix));
+  if (result.error || result.status !== 0 || !result.stdout) {
+    return null;
   }
 
-  // Compound prefix: find the last dash, check final suffix
-  const lastDash = id.lastIndexOf("-");
-  if (lastDash === dashIdx) return false; // no compound possible
-  const compoundPrefix = id.slice(0, lastDash);
-  const finalSuffix = id.slice(lastDash + 1);
-  if (!/^[A-Z][A-Z-]*[A-Z]$/.test(compoundPrefix)) return false;
-  return /^\d+$/.test(finalSuffix) || (finalSuffix.length === 8 && /^[0-9a-f]+$/i.test(finalSuffix));
-}
-
-/**
- * Returns true if the ID uses the new hex format (TYPE-XXXXXXXX with 8 hex chars).
- *
- * @param {string} id
- * @returns {boolean}
- */
-function isHexArtifactId(id) {
-  if (!id) return false;
-  const lastDash = id.lastIndexOf("-");
-  if (lastDash === -1) return false;
-  const suffix = id.slice(lastDash + 1);
-  return suffix.length === 8 && /^[0-9a-f]+$/i.test(suffix);
-}
-
-// ---------------------------------------------------------------------------
-// Frontmatter parser
-//
-// Handles simple scalar fields and multi-line relationship blocks:
-//
-//   relationships:
-//     - target: EPIC-001
-//       type: delivers
-//       rationale: ...
-//
-// Returns:
-//   { fields: Map<string, string>, relationships: Array<{type, target}>, raw: string }
-// ---------------------------------------------------------------------------
-
-/**
- * @param {string} content  Full file content
- * @returns {{ fields: Map<string, string>, relationships: Array<{type: string, target: string}>, raw: string } | null}
- */
-function parseFrontmatter(content) {
-  if (!content.startsWith("---\n")) return null;
-  const endIdx = content.indexOf("\n---", 4);
-  if (endIdx === -1) return null;
-
-  const raw = content.slice(4, endIdx);
-  const lines = raw.split("\n");
-
-  const fields = new Map();
-  const relationships = [];
-  const duplicateKeys = [];
-
-  let inRelationships = false;
-  let currentRel = null;
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-
-    if (line === "" || line.startsWith("  ") || line.startsWith("\t")) {
-      // Indented line — part of a block value or relationship entry
-      if (inRelationships) {
-        const trimmed = line.trim();
-        if (trimmed.startsWith("- ")) {
-          // New relationship item
-          if (currentRel) relationships.push(currentRel);
-          currentRel = {};
-          const afterDash = trimmed.slice(2);
-          const colonIdx = afterDash.indexOf(":");
-          if (colonIdx !== -1) {
-            const key = afterDash.slice(0, colonIdx).trim();
-            const val = afterDash.slice(colonIdx + 1).trim().replace(/^"|"$/g, "");
-            currentRel[key] = val;
-          }
-        } else if (currentRel && trimmed.length > 0) {
-          const colonIdx = trimmed.indexOf(":");
-          if (colonIdx !== -1) {
-            const key = trimmed.slice(0, colonIdx).trim();
-            const val = trimmed.slice(colonIdx + 1).trim().replace(/^"|"$/g, "");
-            currentRel[key] = val;
-          }
-        }
-      }
+  const responses = new Map();
+  const lines = result.stdout.split("\n").filter((l) => l.trim());
+  for (const line of lines) {
+    let parsed;
+    try {
+      parsed = JSON.parse(line);
+    } catch {
       continue;
     }
-
-    // Top-level key: value line
-    const colonIdx = line.indexOf(":");
-    if (colonIdx !== -1) {
-      const key = line.slice(0, colonIdx).trim();
-      const val = line.slice(colonIdx + 1).trim().replace(/^"|"$/g, "");
-
-      if (key === "relationships") {
-        if (currentRel) {
-          relationships.push(currentRel);
-          currentRel = null;
-        }
-        inRelationships = true;
-      } else {
-        inRelationships = false;
-        if (currentRel) {
-          relationships.push(currentRel);
-          currentRel = null;
-        }
-        if (fields.has(key)) {
-          duplicateKeys.push(key);
-        } else {
-          fields.set(key, val);
-        }
-      }
-    }
-  }
-
-  if (currentRel) relationships.push(currentRel);
-
-  return { fields, relationships, raw, duplicateKeys };
-}
-
-// ---------------------------------------------------------------------------
-// Artifact graph builder
-//
-// Walks the .orqa/ directory tree collecting all artifact IDs and their
-// relationships, so we can validate:
-//   1. Relationship targets exist
-//   2. Bidirectional relationships are declared in both directions
-// ---------------------------------------------------------------------------
-
-/**
- * Build a lightweight in-memory graph of all .orqa/ artifacts.
- *
- * @param {string} projectDir
- * @returns {Map<string, { path: string, relationships: Array<{type: string, target: string}> }>}
- */
-function buildArtifactGraph(projectDir) {
-  const orqaDir = join(projectDir, ".orqa");
-  if (!existsSync(orqaDir)) return new Map();
-
-  /** @type {Map<string, { path: string, relationships: Array<{type: string, target: string}> }>} */
-  const graph = new Map();
-
-  /**
-   * @param {string} dir
-   */
-  function walk(dir) {
-    let entries;
+    if (parsed.id === 1) continue; // skip initialize response
+    if (parsed.error) continue;
+    const textContent = parsed.result?.content?.[0]?.text;
+    if (!textContent) continue;
     try {
-      entries = readdirSync(dir);
+      responses.set(parsed.id, JSON.parse(textContent));
     } catch {
-      return;
-    }
-    for (const entry of entries) {
-      const full = join(dir, entry);
-      let stat;
-      try {
-        stat = statSync(full);
-      } catch {
-        continue;
-      }
-      if (stat.isDirectory()) {
-        walk(full);
-      } else if (entry.endsWith(".md")) {
-        let text;
-        try {
-          text = readFileSync(full, "utf-8");
-        } catch {
-          continue;
-        }
-        const fm = parseFrontmatter(text);
-        if (!fm) continue;
-        const id = fm.fields.get("id");
-        if (!id) continue;
-        const relPath = relative(projectDir, full).replace(/\\/g, "/");
-        graph.set(id, { path: relPath, relationships: fm.relationships || [] });
-      }
+      // text content is not JSON — skip
     }
   }
 
-  walk(orqaDir);
-  return graph;
+  return responses;
 }
 
 // ---------------------------------------------------------------------------
-// Validation logic (mirrors libs/lsp-server/src/validation.rs)
+// Fallback: minimal file-level checks when MCP is unavailable
 // ---------------------------------------------------------------------------
 
 /**
- * Validate a single artifact file.
+ * Run minimal file-level checks when MCP server is unavailable.
+ * Only checks: frontmatter presence and id field existence.
  *
- * @param {string} filePath         Absolute path to the file
- * @param {string} projectDir       Absolute path to the project root
- * @param {Map<string, {path: string, relationships: Array<{type: string, target: string}>}>} graph
- * @param {Set<string>} validRelationshipTypes
- * @returns {{ errors: string[], warnings: string[], info: string[] }}
+ * @param {string} filePath  Absolute path to the artifact file
+ * @returns {{ errors: string[], warnings: string[] }}
  */
-function validateArtifact(filePath, projectDir, graph, validRelationshipTypes) {
+function minimalFallbackChecks(filePath) {
   const errors = [];
   const warnings = [];
-  const info = [];
 
-  if (!existsSync(filePath)) return { errors, warnings, info };
+  if (!existsSync(filePath)) {
+    return { errors, warnings };
+  }
 
-  const content = readFileSync(filePath, "utf-8");
-  const rel = relative(projectDir, filePath).replace(/\\/g, "/");
+  let content;
+  try {
+    content = readFileSync(filePath, "utf-8");
+  } catch {
+    return { errors, warnings };
+  }
 
-  // 1. Frontmatter presence
   if (!content.startsWith("---\n")) {
     errors.push("Missing YAML frontmatter (file must start with ---)");
-    return { errors, warnings, info };
+    return { errors, warnings };
   }
+
   if (!content.slice(4).includes("\n---")) {
     errors.push("Unclosed YAML frontmatter (missing closing ---)");
-    return { errors, warnings, info };
+    return { errors, warnings };
   }
 
-  const fm = parseFrontmatter(content);
-  if (!fm) {
-    errors.push("Could not parse YAML frontmatter");
-    return { errors, warnings, info };
-  }
+  const endIdx = content.indexOf("\n---", 4);
+  const frontmatter = content.slice(4, endIdx);
+  const hasId = frontmatter.split("\n").some((l) => l.startsWith("id:"));
 
-  // 2. Duplicate frontmatter keys
-  for (const key of fm.duplicateKeys) {
-    errors.push(`Duplicate frontmatter key "${key}"`);
-  }
-
-  // 3. Required `id` field
-  const id = fm.fields.get("id");
-  if (!id) {
+  if (!hasId) {
     errors.push("Missing required frontmatter field: id");
-  } else {
-    // 4. Artifact ID format
-    if (!isValidArtifactId(id)) {
-      errors.push(`Invalid artifact ID "${id}" — must be TYPE-XXXXXXXX (8 hex chars) or TYPE-NNN (sequential)`);
-    } else if (!isHexArtifactId(id)) {
-      warnings.push(`Legacy sequential ID "${id}" — new artifacts should use TYPE-XXXXXXXX hex format (AD-057)`);
-    }
   }
 
-  // 5. Status validation (status is not strictly required, but if present must be valid)
-  const status = fm.fields.get("status");
-  if (status && !VALID_STATUSES.includes(status)) {
-    errors.push(`Invalid status "${status}" — must be one of: ${VALID_STATUSES.join(", ")}`);
-  }
+  warnings.push(
+    "MCP server unavailable — only minimal checks were run. " +
+      "Run `orqa validate` for full integrity check."
+  );
 
-  // 6. Knowledge artifact must have `synchronised-with`
-  const artifactType = fm.fields.get("type");
-  const isKnowledge = artifactType === "knowledge" || rel.includes("/knowledge/");
-  if (isKnowledge) {
-    const hasSyncWith = fm.relationships.some((r) => r.type === "synchronised-with");
-    if (!hasSyncWith) {
-      errors.push(
-        "Knowledge artifacts must have at least one synchronised-with relationship to a human-facing doc (AD-058)"
-      );
-    }
-  }
-
-  // 7. Relationship type validation + target existence + bidirectional check
-  if (fm.relationships.length > 0) {
-    for (const rel_entry of fm.relationships) {
-      const relType = rel_entry.type;
-      const target = rel_entry.target;
-
-      // 7a. Relationship type must be a known key from core.json
-      if (relType && !validRelationshipTypes.has(relType)) {
-        warnings.push(`Unknown relationship type "${relType}" — not a key in core.json relationships`);
-      }
-
-      // 7b. Relationship target must exist in the graph
-      if (target && !graph.has(target)) {
-        warnings.push(`Relationship target "${target}" not found in artifact graph`);
-      }
-
-      // 7c. Bidirectional check — if A→B exists, warn if B→A is missing
-      // (only check when we have both ends in the graph)
-      if (target && id && graph.has(target)) {
-        const targetNode = graph.get(target);
-        const hasInverse = targetNode.relationships.some((r) => r.target === id);
-        if (!hasInverse) {
-          info.push(
-            `Bidirectional relationship missing: "${target}" has no back-reference to "${id}" — consider adding the inverse relationship`
-          );
-        }
-      }
-    }
-  }
-
-  // 8. Missing `relationships` section on delivery/process artifacts
-  if (rel.startsWith(".orqa/delivery/") || rel.startsWith(".orqa/process/")) {
-    if (fm.relationships.length === 0 && !fm.raw.includes("relationships:")) {
-      info.push(
-        "No relationships declared — most delivery/process artifacts should have at least one"
-      );
-    }
-  }
-
-  return { errors, warnings, info };
+  return { errors, warnings };
 }
 
 // ---------------------------------------------------------------------------
@@ -431,6 +156,32 @@ function validateArtifact(filePath, projectDir, graph, validRelationshipTypes) {
 function isOrqaArtifact(filePath, projectDir) {
   const rel = relative(projectDir, filePath).replace(/\\/g, "/");
   return rel.startsWith(".orqa/") && filePath.endsWith(".md");
+}
+
+/**
+ * Format a graph_health response into a one-line summary string.
+ *
+ * @param {object} health  Parsed graph_health JSON (GraphHealth struct fields)
+ * @returns {string}
+ */
+function formatHealthSummary(health) {
+  if (!health || typeof health !== "object") return "";
+
+  const traceability =
+    typeof health.pillar_traceability === "number"
+      ? `${health.pillar_traceability.toFixed(1)}% traceability`
+      : null;
+  const orphans =
+    typeof health.orphan_count === "number"
+      ? `${health.orphan_count} orphan${health.orphan_count !== 1 ? "s" : ""}`
+      : null;
+  const components =
+    typeof health.component_count === "number"
+      ? `${health.component_count} cluster${health.component_count !== 1 ? "s" : ""}`
+      : null;
+
+  const parts = [traceability, orphans, components].filter(Boolean);
+  return parts.length > 0 ? `Graph health: ${parts.join(", ")}` : "";
 }
 
 // ---------------------------------------------------------------------------
@@ -456,7 +207,7 @@ async function main() {
   const toolInput = hookInput.tool_input || {};
   const projectDir = hookInput.cwd || process.env.CLAUDE_PROJECT_DIR || ".";
 
-  // Only validate Write and Edit on .orqa/ files
+  // Only validate Write and Edit on .orqa/ files.
   if (!["Write", "Edit"].includes(toolName)) {
     process.exit(0);
   }
@@ -468,56 +219,136 @@ async function main() {
 
   const relPath = relative(projectDir, filePath).replace(/\\/g, "/");
 
-  // Load schema and build artifact graph
-  const { validRelationshipTypes } = loadCoreSchema(projectDir);
-  const graph = buildArtifactGraph(projectDir);
+  // ---------------------------------------------------------------------------
+  // Primary path: delegate to MCP graph_validate + graph_health
+  // ---------------------------------------------------------------------------
 
-  const { errors, warnings, info } = validateArtifact(
-    filePath,
-    projectDir,
-    graph,
-    validRelationshipTypes
-  );
+  const mcpResponses = callMcp(projectDir, [
+    { id: 2, name: "graph_validate", arguments: {} },
+    { id: 3, name: "graph_health", arguments: {} },
+  ]);
 
-  const totalIssues = errors.length + warnings.length + info.length;
+  if (!mcpResponses) {
+    // Fallback: MCP unavailable — run minimal checks.
+    const { errors, warnings } = minimalFallbackChecks(filePath);
 
-  if (totalIssues === 0) {
-    logTelemetry("validate-artifact", "PostToolUse", startTime, "valid", {
-      file: relPath,
-      errors_found: 0,
-      warnings_issued: 0,
-      info_issued: 0,
-    }, projectDir);
+    const totalIssues = errors.length + warnings.length;
+
+    logTelemetry(
+      "validate-artifact",
+      "PostToolUse",
+      startTime,
+      "fallback",
+      {
+        file: relPath,
+        mcp_available: false,
+        errors_found: errors.length,
+        warnings_issued: warnings.length,
+      },
+      projectDir
+    );
+
+    if (totalIssues === 0) {
+      process.exit(0);
+    }
+
+    const lines = [`ARTIFACT VALIDATION (fallback) — ${relPath}:`];
+    if (errors.length > 0) {
+      lines.push("  Errors (must fix before committing):");
+      for (const e of errors) lines.push(`    - ${e}`);
+    }
+    if (warnings.length > 0) {
+      lines.push("  Warnings:");
+      for (const w of warnings) lines.push(`    - ${w}`);
+    }
+    lines.push("");
+    lines.push("Fix errors before committing. Run `orqa validate` for full integrity check.");
+
+    process.stdout.write(JSON.stringify({ systemMessage: lines.join("\n") }));
     process.exit(0);
   }
 
-  logTelemetry("validate-artifact", "PostToolUse", startTime, "invalid", {
-    file: relPath,
-    errors_found: errors.length,
-    warnings_issued: warnings.length,
-    info_issued: info.length,
-    errors,
-    warnings,
-    info,
-  }, projectDir);
+  // Parse graph_validate results — filter to findings for this artifact.
+  const validateResult = mcpResponses.get(2);
+  const healthResult = mcpResponses.get(3);
 
-  const lines = [`ARTIFACT VALIDATION — ${relPath}:`];
-  if (errors.length > 0) {
-    lines.push("  Errors (must fix before committing):");
-    for (const e of errors) lines.push(`    - ${e}`);
-  }
-  if (warnings.length > 0) {
-    lines.push("  Warnings:");
-    for (const w of warnings) lines.push(`    - ${w}`);
-  }
-  if (info.length > 0) {
-    lines.push("  Info:");
-    for (const i of info) lines.push(`    - ${i}`);
-  }
-  lines.push("");
-  lines.push("Fix errors before committing. Run `orqa validate` for full integrity check.");
+  /** @type {Array<{severity: string, category: string, message: string, artifact_id: string, auto_fixable: boolean}>} */
+  const allChecks = Array.isArray(validateResult) ? validateResult : [];
 
-  process.stdout.write(JSON.stringify({ systemMessage: lines.join("\n") }));
+  // Determine the artifact ID from the file path (look it up in validate results
+  // or extract directly from the file frontmatter).
+  let artifactId = null;
+  try {
+    const content = readFileSync(filePath, "utf-8");
+    if (content.startsWith("---\n")) {
+      const endIdx = content.indexOf("\n---", 4);
+      if (endIdx !== -1) {
+        const fmLines = content.slice(4, endIdx).split("\n");
+        const idLine = fmLines.find((l) => l.startsWith("id:"));
+        if (idLine) {
+          artifactId = idLine.replace(/^id:\s*/, "").replace(/^"|"$/g, "").trim();
+        }
+      }
+    }
+  } catch {
+    // If we can't read the file, keep artifactId null and show all findings.
+  }
+
+  // Filter to findings relevant to this artifact.
+  const relevantChecks = artifactId
+    ? allChecks.filter((c) => c.artifact_id === artifactId)
+    : allChecks;
+
+  const errors = relevantChecks.filter((c) => c.severity === "Error").map((c) => c.message);
+  const warnings = relevantChecks.filter((c) => c.severity !== "Error").map((c) => c.message);
+
+  const healthSummary = formatHealthSummary(healthResult);
+  const totalIssues = errors.length + warnings.length;
+
+  logTelemetry(
+    "validate-artifact",
+    "PostToolUse",
+    startTime,
+    totalIssues === 0 ? "valid" : "invalid",
+    {
+      file: relPath,
+      artifact_id: artifactId,
+      mcp_available: true,
+      errors_found: errors.length,
+      warnings_issued: warnings.length,
+      health_summary: healthSummary,
+    },
+    projectDir
+  );
+
+  if (totalIssues === 0 && !healthSummary) {
+    process.exit(0);
+  }
+
+  const lines = [];
+
+  if (totalIssues > 0) {
+    lines.push(`ARTIFACT VALIDATION — ${relPath}:`);
+    if (errors.length > 0) {
+      lines.push("  Errors (must fix before committing):");
+      for (const e of errors) lines.push(`    - ${e}`);
+    }
+    if (warnings.length > 0) {
+      lines.push("  Warnings:");
+      for (const w of warnings) lines.push(`    - ${w}`);
+    }
+    lines.push("");
+    lines.push("Fix errors before committing. Run `orqa validate --fix` for auto-remediation.");
+  }
+
+  if (healthSummary) {
+    lines.push(healthSummary);
+  }
+
+  if (lines.length > 0) {
+    process.stdout.write(JSON.stringify({ systemMessage: lines.join("\n") }));
+  }
+
   process.exit(0);
 }
 
