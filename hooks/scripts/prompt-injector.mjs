@@ -4,9 +4,11 @@
 //
 // Used by UserPromptSubmit hook. Reads hook input from stdin.
 // Outputs JSON with systemMessage containing:
-//   1. Decision tree (always — primary injection from decision-tree/KNOW.md)
-//   2. Suggested knowledge names (if semantic search available — enhancement)
-//   3. Context reminder with resolved project variables (always)
+//   1. Decision tree (always — agent-specific tree from decision-tree/KNOW.md,
+//      implementer-tree/KNOW.md, or reviewer-tree/KNOW.md)
+//   2. Plugin decision tree branches (merged from installed plugins' provides.decision_tree)
+//   3. Suggested knowledge names (if semantic search available — enhancement)
+//   4. Context reminder with resolved project variables (always)
 //
 // Semantic search path: orqa mcp (JSON-RPC over stdio) — returns name suggestions only.
 // INTENT_MAP: tertiary fallback when search is unavailable (marked for removal).
@@ -17,22 +19,166 @@ import { spawnSync } from "node:child_process";
 import { logTelemetry } from "./telemetry.mjs";
 
 // ---------------------------------------------------------------------------
+// Agent detection: resolve which tree to inject
+// ---------------------------------------------------------------------------
+
+// Detect agent type from hook input.
+// Returns: "orchestrator" | "implementer" | "reviewer" | "default"
+//
+// The UserPromptSubmit event provides agent_type in the hook payload when
+// Claude Code runs the hook for a subagent. For the main conversation thread,
+// agent_type is absent or "human" — treated as orchestrator.
+function detectAgentType(hookInput) {
+  const agentType = (hookInput.agent_type || "").toLowerCase();
+
+  // Main conversation (no agent_type, or "human") → orchestrator
+  if (!agentType || agentType === "human") return "orchestrator";
+
+  // Explicit implementer subagent patterns
+  if (
+    agentType === "implementer" ||
+    agentType.includes("implement") ||
+    agentType.includes("builder") ||
+    agentType.includes("engineer") ||
+    agentType.includes("developer")
+  ) {
+    return "implementer";
+  }
+
+  // Explicit reviewer subagent patterns
+  if (
+    agentType === "reviewer" ||
+    agentType.includes("review") ||
+    agentType.includes("qa") ||
+    agentType.includes("tester") ||
+    agentType.includes("auditor")
+  ) {
+    return "reviewer";
+  }
+
+  // All other subagents (researcher, planner, writer, designer, etc.) get
+  // the orchestrator/base tree — it teaches generic structured reasoning.
+  return "default";
+}
+
+// Map agent type to knowledge directory name
+function treeNameForAgent(agentType) {
+  switch (agentType) {
+    case "implementer": return "implementer-tree";
+    case "reviewer":    return "reviewer-tree";
+    case "orchestrator":
+    case "default":
+    default:            return "decision-tree";
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Decision tree: primary injection on every prompt
 // ---------------------------------------------------------------------------
 
-// Read the orchestrator decision tree from the plugin knowledge directory.
+// Read the agent-specific decision tree from the plugin knowledge directory.
 // Returns the stripped body (no frontmatter) or null if unavailable.
-function readDecisionTree() {
+function readDecisionTree(agentType) {
   const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT || "";
   if (!pluginRoot) return null;
-  const treePath = join(pluginRoot, "knowledge", "decision-tree", "KNOW.md");
-  if (!existsSync(treePath)) return null;
+  const treeName = treeNameForAgent(agentType);
+  const treePath = join(pluginRoot, "knowledge", treeName, "KNOW.md");
+  if (!existsSync(treePath)) {
+    // Fall back to base decision-tree if agent-specific tree is missing
+    const fallbackPath = join(pluginRoot, "knowledge", "decision-tree", "KNOW.md");
+    if (!existsSync(fallbackPath)) return null;
+    try {
+      const raw = readFileSync(fallbackPath, "utf-8");
+      return stripFrontmatter(raw) || null;
+    } catch {
+      return null;
+    }
+  }
   try {
     const raw = readFileSync(treePath, "utf-8");
     return stripFrontmatter(raw) || null;
   } catch {
     return null;
   }
+}
+
+// ---------------------------------------------------------------------------
+// Plugin decision tree branch merging
+// ---------------------------------------------------------------------------
+
+// A decision tree branch contributed by a plugin.
+// Fields: mode, domain, description, search_context
+// All four fields are required (validated at install time per RULE).
+
+// Read all installed plugins from project.json and collect decision_tree branches.
+// Returns an array of branch objects, or [] if none.
+function readPluginDecisionBranches(projectDir) {
+  const projectJsonPath = join(projectDir, ".orqa", "project.json");
+  if (!existsSync(projectJsonPath)) return [];
+
+  let settings;
+  try {
+    settings = JSON.parse(readFileSync(projectJsonPath, "utf-8"));
+  } catch {
+    return [];
+  }
+
+  const pluginsConfig = settings.plugins || {};
+  const branches = [];
+
+  for (const [pluginName, cfg] of Object.entries(pluginsConfig)) {
+    if (!cfg.installed || !cfg.enabled) continue;
+
+    // Resolve plugin directory. Plugins live under plugins/<name>/ relative to
+    // the project root. The plugin name may be scoped (@org/name) — use the
+    // last segment as the directory name.
+    const pluginDirName = pluginName.replace(/^.*\//, "").replace(/^@[^/]+\//, "");
+    const pluginDir = join(projectDir, "plugins", pluginDirName);
+    const manifestPath = join(pluginDir, "orqa-plugin.json");
+
+    if (!existsSync(manifestPath)) continue;
+
+    let manifest;
+    try {
+      manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
+    } catch {
+      continue;
+    }
+
+    const pluginBranches = manifest?.provides?.decision_tree?.branches;
+    if (!Array.isArray(pluginBranches)) continue;
+
+    for (const branch of pluginBranches) {
+      // Validate all required fields are present before including.
+      if (branch.mode && branch.domain && branch.description && branch.search_context) {
+        branches.push(branch);
+      }
+    }
+  }
+
+  return branches;
+}
+
+// Format plugin branches as an appendix to the decision tree injection.
+// Returns a string block or "" if no branches.
+function formatPluginBranches(branches) {
+  if (branches.length === 0) return "";
+
+  const lines = [
+    "### Plugin-Contributed Domains",
+    "",
+    "The following domains are available from installed plugins:",
+    "",
+  ];
+
+  for (const branch of branches) {
+    lines.push(`**${branch.domain}** (${branch.mode})`);
+    lines.push(`${branch.description}`);
+    lines.push(`Search context: \`${branch.search_context}\``);
+    lines.push("");
+  }
+
+  return lines.join("\n").trimEnd();
 }
 
 // ---------------------------------------------------------------------------
@@ -545,16 +691,34 @@ async function main() {
     process.exit(0);
   }
 
+  // Detect which agent is active so we inject the right tree.
+  const agentType = detectAgentType(hookInput);
+  const treeName = treeNameForAgent(agentType);
+
   const parts = [];
 
-  // ── Layer 1: Decision tree (always injected) ─────────────────────────────
-  // The decision tree is the primary injection. It teaches the orchestrator
-  // how to think about the request — classify context, understand domain,
-  // form the right search query. It is not a fallback; it is always present.
-  const decisionTree = readDecisionTree();
+  // ── Layer 1: Decision tree (always injected, agent-specific) ─────────────
+  // The decision tree is the primary injection. Each agent role has its own
+  // reasoning protocol: orchestrator (decision-tree), implementer
+  // (implementer-tree), reviewer (reviewer-tree). Other agents fall back to
+  // the base decision-tree.
+  const decisionTree = readDecisionTree(agentType);
   const decisionTreeInjected = decisionTree !== null;
   if (decisionTree) {
-    parts.push(`[Decision Tree]\n${decisionTree}`);
+    let treeContent = `[Decision Tree — ${agentType}]\n${decisionTree}`;
+
+    // Merge plugin-contributed domain branches into the tree for implementer
+    // and orchestrator agents (they need domain awareness). Reviewers and
+    // researchers don't need domain branches — they work from standards.
+    if (agentType === "orchestrator" || agentType === "implementer" || agentType === "default") {
+      const pluginBranches = readPluginDecisionBranches(projectDir);
+      const branchBlock = formatPluginBranches(pluginBranches);
+      if (branchBlock) {
+        treeContent += `\n\n${branchBlock}`;
+      }
+    }
+
+    parts.push(treeContent);
   }
 
   // ── Layer 2: Knowledge name suggestions (semantic search enhancement) ────
@@ -582,6 +746,8 @@ async function main() {
 
   if (parts.length === 0) {
     logTelemetry("prompt-injector", "UserPromptSubmit", startTime, "skipped", {
+      agent_type: agentType,
+      tree_name: treeName,
       decision_tree_injected: decisionTreeInjected,
       suggestion_source: suggestionSource,
       suggestions: skillNames,
@@ -593,6 +759,8 @@ async function main() {
   }
 
   logTelemetry("prompt-injector", "UserPromptSubmit", startTime, "injected", {
+    agent_type: agentType,
+    tree_name: treeName,
     decision_tree_injected: decisionTreeInjected,
     suggestion_source: suggestionSource,
     suggestions: skillNames,

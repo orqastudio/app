@@ -1,11 +1,14 @@
 ---
 id: KNOW-CC-implementer-tree
 type: knowledge
-title: "Implementer decision tree — domain-aware implementation protocol"
+title: Implementer decision tree — domain-aware implementation protocol
 description: "Reasoning protocol for Implementer agents. Provides a thinking framework: understand the domain context, ask the right question, discover patterns, then build."
 status: active
 created: 2026-03-21
 updated: 2026-03-21
+relationships:
+  - target: AGENT-cc255bc8
+    type: employed-by
 ---
 
 ## Implementer Reasoning Protocol

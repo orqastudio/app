@@ -1,11 +1,14 @@
 ---
 id: KNOW-CC-reviewer-tree
 type: knowledge
-title: "Reviewer decision tree — standards-driven review protocol"
+title: Reviewer decision tree — standards-driven review protocol
 description: "Reasoning protocol for Reviewer agents. Provides a thinking framework: understand what is being reviewed, ask what standards apply, find them, then produce an evidence-based verdict."
 status: active
 created: 2026-03-21
 updated: 2026-03-21
+relationships:
+  - target: AGENT-b0774726
+    type: employed-by
 ---
 
 ## Reviewer Reasoning Protocol

@@ -1,18 +1,31 @@
 ---
 id: KNOW-CC-decision-tree
 type: knowledge
-title: "Orchestrator decision tree — self-navigating knowledge discovery"
+title: Orchestrator decision tree — self-navigating knowledge discovery
 description: "Reasoning protocol injected on every prompt. Provides a thinking framework: classify context, understand what kind of work this is, form the right question, then search."
 status: active
 created: 2026-03-21
 updated: 2026-03-21
 injection:
-  paths: [".claude/"]
-  artifact_types: ["agent"]
-  keywords: ["delegate", "implement", "research", "plan", "review", "investigate", "build", "fix", "create"]
+  paths:
+    - .claude/
+  artifact_types:
+    - agent
+  keywords:
+    - delegate
+    - implement
+    - research
+    - plan
+    - review
+    - investigate
+    - build
+    - fix
+    - create
 relationships:
   - target: AD-e7c4a1f3
     type: implemented-by
+  - target: AGENT-1dab5ebe
+    type: employed-by
 ---
 
 ## Orchestrator Reasoning Protocol
