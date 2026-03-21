@@ -88,6 +88,53 @@
 		if (graphHealth.bidirectionality_ratio >= 0.4) return "text-warning";
 		return "text-destructive";
 	});
+
+	// ---------------------------------------------------------------------------
+	// Threshold alerts
+	// ---------------------------------------------------------------------------
+
+	type AlertLevel = "amber" | "red";
+
+	interface ThresholdAlert {
+		level: AlertLevel;
+		message: string;
+	}
+
+	const thresholdAlerts = $derived.by((): ThresholdAlert[] => {
+		if (!graphHealth || graphHealth.total_nodes === 0) return [];
+
+		const alerts: ThresholdAlert[] = [];
+
+		if (graphHealth.orphan_percentage > 5) {
+			alerts.push({
+				level: "amber",
+				message: `${graphHealth.orphan_percentage}% orphaned artifacts (threshold: 5%)`,
+			});
+		}
+
+		if (graphHealth.component_count > 3) {
+			alerts.push({
+				level: "amber",
+				message: `${graphHealth.component_count} disconnected clusters (threshold: 3)`,
+			});
+		}
+
+		if (graphHealth.pillar_traceability < 90) {
+			alerts.push({
+				level: "red",
+				message: `Pillar traceability ${graphHealth.pillar_traceability}% — below 90% target`,
+			});
+		}
+
+		if (graphHealth.bidirectionality_ratio < 0.8) {
+			alerts.push({
+				level: "amber",
+				message: `Bidirectionality ${Math.round(graphHealth.bidirectionality_ratio * 100)}% — below 80% target`,
+			});
+		}
+
+		return alerts;
+	});
 </script>
 
 <CardRoot class="gap-2 flex flex-col h-full">
@@ -230,6 +277,22 @@
 						<p class="text-muted-foreground">Percentage of typed relationship edges that have their inverse edge present. Missing inverses create navigation asymmetry — you can traverse one way but not the other. Target: 70%+.</p>
 					</TooltipContent>
 				</TooltipRoot>
+			</div>
+		{/if}
+
+		<!-- Threshold alerts -->
+		{#if thresholdAlerts.length > 0}
+			<div class="flex flex-col gap-1">
+				{#each thresholdAlerts as alert (alert.message)}
+					<div
+						class="flex items-center gap-1.5 rounded px-2 py-1 text-xs {alert.level === 'red'
+							? 'bg-destructive/10 text-destructive'
+							: 'bg-amber-500/10 text-amber-600 dark:text-amber-400'}"
+					>
+						<Icon name={alert.level === "red" ? "circle-alert" : "triangle-alert"} size="sm" />
+						<span>{alert.message}</span>
+					</div>
+				{/each}
 			</div>
 		{/if}
 

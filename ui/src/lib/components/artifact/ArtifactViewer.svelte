@@ -6,14 +6,48 @@
 	import HookViewer from "./HookViewer.svelte";
 	import PipelineStepper from "./PipelineStepper.svelte";
 	import ReferencesPanel from "./ReferencesPanel.svelte";
+	import TraceabilityPanel from "./TraceabilityPanel.svelte";
 	import MarkdownRenderer from "$lib/components/content/MarkdownRenderer.svelte";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import { ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
+	import type { TraceabilityResult } from "@orqastudio/types";
 
 	const { artifactStore, projectStore, navigationStore, artifactGraphSDK } = getStores();
 	import { parseFrontmatter } from "$lib/utils/frontmatter";
+
+	// ---------------------------------------------------------------------------
+	// Traceability state
+	// ---------------------------------------------------------------------------
+
+	let traceabilityResult = $state<TraceabilityResult | null>(null);
+	let traceabilityLoading = $state(false);
+	let traceabilityError = $state<string | null>(null);
+
+	$effect(() => {
+		const id = graphNode?.id;
+		if (!id) {
+			traceabilityResult = null;
+			traceabilityError = null;
+			return;
+		}
+		traceabilityLoading = true;
+		traceabilityError = null;
+		artifactGraphSDK
+			.getTraceability(id)
+			.then((result) => {
+				traceabilityResult = result;
+			})
+			.catch((err: unknown) => {
+				traceabilityError =
+					err instanceof Error ? err.message : String(err);
+				traceabilityResult = null;
+			})
+			.finally(() => {
+				traceabilityLoading = false;
+			});
+	});
 
 	const content = $derived(artifactStore.activeContent);
 	const breadcrumbs = $derived(navigationStore.breadcrumbs);
@@ -230,6 +264,11 @@
 			<ReferencesPanel artifactPath={currentPath} />
 			{#if graphNode?.id}
 				<ChainTrace artifactId={graphNode.id} />
+				<TraceabilityPanel
+					result={traceabilityResult}
+					loading={traceabilityLoading}
+					error={traceabilityError}
+				/>
 			{/if}
 		{/if}
 		<ScrollArea class="min-h-0 flex-1" onclick={handleContentClick}>

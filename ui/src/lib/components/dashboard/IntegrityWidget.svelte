@@ -53,6 +53,9 @@
 		BodyTextRefWithoutRelationship: "Body Refs Without Relationships",
 		ParentChildInconsistency: "Parent-Child Inconsistencies",
 		DeliveryPathMismatch: "Delivery Path Mismatches",
+		MissingType: "Missing Type Field",
+		MissingStatus: "Missing Status Field",
+		DuplicateRelationship: "Duplicate Relationships",
 	};
 
 	/** Unique categories present in current checks, for the filter dropdown. */

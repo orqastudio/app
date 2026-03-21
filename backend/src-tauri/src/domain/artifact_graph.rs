@@ -625,8 +625,7 @@ fn primary_nodes(graph: &ArtifactGraph) -> Vec<&ArtifactNode> {
 /// of direction).
 fn compute_components(nodes: &[&ArtifactNode]) -> Vec<Vec<String>> {
     // Build adjacency map (undirected) for the primary nodes.
-    let mut adj: std::collections::HashMap<&str, Vec<&str>> =
-        std::collections::HashMap::new();
+    let mut adj: std::collections::HashMap<&str, Vec<&str>> = std::collections::HashMap::new();
     for node in nodes {
         adj.entry(node.id.as_str()).or_default();
         for r in &node.references_out {
@@ -639,8 +638,7 @@ fn compute_components(nodes: &[&ArtifactNode]) -> Vec<Vec<String>> {
         }
     }
 
-    let mut visited: std::collections::HashSet<&str> =
-        std::collections::HashSet::new();
+    let mut visited: std::collections::HashSet<&str> = std::collections::HashSet::new();
     let mut components: Vec<Vec<String>> = Vec::new();
 
     for node in nodes {
@@ -649,8 +647,7 @@ fn compute_components(nodes: &[&ArtifactNode]) -> Vec<Vec<String>> {
         }
         // BFS from this node.
         let mut component: Vec<String> = Vec::new();
-        let mut queue: std::collections::VecDeque<&str> =
-            std::collections::VecDeque::new();
+        let mut queue: std::collections::VecDeque<&str> = std::collections::VecDeque::new();
         queue.push_back(node.id.as_str());
         visited.insert(node.id.as_str());
         while let Some(current) = queue.pop_front() {
@@ -700,29 +697,20 @@ pub fn compute_graph_health(graph: &ArtifactGraph) -> GraphHealth {
     // Connected components (undirected BFS).
     let components = compute_components(&nodes);
     let component_count = components.len();
-    let largest_component_size = components
-        .iter()
-        .map(|c| c.len())
-        .max()
-        .unwrap_or(0);
-    let largest_component_ratio =
-        largest_component_size as f64 / total_nodes as f64;
+    let largest_component_size = components.iter().map(|c| c.len()).max().unwrap_or(0);
+    let largest_component_ratio = largest_component_size as f64 / total_nodes as f64;
 
     // Orphans: no incoming or outgoing edges (docs excluded).
     let orphan_count = nodes
         .iter()
         .filter(|n| {
-            n.artifact_type != "doc"
-                && n.references_out.is_empty()
-                && n.references_in.is_empty()
+            n.artifact_type != "doc" && n.references_out.is_empty() && n.references_in.is_empty()
         })
         .count();
-    let orphan_percentage =
-        (orphan_count as f64 / total_nodes as f64 * 1000.0).round() / 10.0;
+    let orphan_percentage = (orphan_count as f64 / total_nodes as f64 * 1000.0).round() / 10.0;
 
     // Average degree: (total_edges * 2) / total_nodes (undirected convention).
-    let avg_degree =
-        ((total_edges as f64 * 2.0) / total_nodes as f64 * 10.0).round() / 10.0;
+    let avg_degree = ((total_edges as f64 * 2.0) / total_nodes as f64 * 10.0).round() / 10.0;
 
     // Graph density: edges / (nodes * (nodes - 1)), directed.
     let max_edges = total_nodes * (total_nodes.saturating_sub(1));
@@ -733,10 +721,8 @@ pub fn compute_graph_health(graph: &ArtifactGraph) -> GraphHealth {
     };
 
     // Pillar traceability: % of rules with at least one grounded-by → pillar edge.
-    let rule_nodes: Vec<&&ArtifactNode> = nodes
-        .iter()
-        .filter(|n| n.artifact_type == "rule")
-        .collect();
+    let rule_nodes: Vec<&&ArtifactNode> =
+        nodes.iter().filter(|n| n.artifact_type == "rule").collect();
     let pillar_traceability = if rule_nodes.is_empty() {
         100.0
     } else {
@@ -839,6 +825,12 @@ pub enum IntegrityCategory {
     ParentChildInconsistency,
     /// Delivery path does not match the delivery config hierarchy.
     DeliveryPathMismatch,
+    /// The artifact has no `type:` field in its frontmatter.
+    MissingType,
+    /// The artifact has no `status:` field in its frontmatter.
+    MissingStatus,
+    /// The same target + relationship type appears more than once in `relationships`.
+    DuplicateRelationship,
 }
 
 /// Severity of an integrity finding.

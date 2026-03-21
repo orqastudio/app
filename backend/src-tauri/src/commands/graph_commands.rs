@@ -8,6 +8,7 @@ use crate::domain::artifact_graph::{
     GraphHealth, GraphStats, IntegrityCheck,
 };
 use crate::domain::health_snapshot::{HealthSnapshot, NewHealthSnapshot};
+use crate::domain::integrity_engine::{compute_traceability_for, TraceabilityResult};
 use crate::domain::project_settings::{DeliveryConfig, StatusDefinition};
 use crate::domain::status_transitions::{evaluate_transitions, ProposedTransition};
 use crate::error::OrqaError;
@@ -149,6 +150,27 @@ pub fn get_graph_stats(state: State<'_, AppState>) -> Result<GraphStats, OrqaErr
 pub fn get_graph_health(state: State<'_, AppState>) -> Result<GraphHealth, OrqaError> {
     let graph = get_or_build_graph(&state)?;
     Ok(compute_graph_health(&graph))
+}
+
+/// Return the full traceability chain for a single artifact.
+///
+/// Computes:
+/// - All paths from the artifact upward to any pillar or vision artifact.
+/// - All downstream artifacts with their BFS distance.
+/// - Sibling artifacts (sharing at least one direct parent).
+/// - Impact radius (distinct descendants within 2 hops).
+/// - Whether the artifact is disconnected from the pillar hierarchy.
+#[tauri::command]
+pub fn get_artifact_traceability(
+    id: String,
+    state: State<'_, AppState>,
+) -> Result<TraceabilityResult, OrqaError> {
+    if id.trim().is_empty() {
+        return Err(OrqaError::Validation("id cannot be empty".to_string()));
+    }
+    let graph = get_or_build_graph(&state)?;
+    compute_traceability_for(&graph, &id)
+        .map_err(|e| OrqaError::Serialization(format!("traceability conversion failed: {e}")))
 }
 
 /// Apply a single auto-apply transition by writing the new status to disk.

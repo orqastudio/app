@@ -66,10 +66,7 @@ pub fn build_validation_context(
 /// Delegates to [`orqa_validation::validate`]. The app's `ArtifactGraph` and
 /// the lib's `ArtifactGraph` share the same JSON representation, so round-trip
 /// conversion is used.
-pub fn run_schema_checks(
-    graph: &ArtifactGraph,
-    ctx: &ValidationContext,
-) -> Vec<IntegrityCheck> {
+pub fn run_schema_checks(graph: &ArtifactGraph, ctx: &ValidationContext) -> Vec<IntegrityCheck> {
     // Convert app ArtifactGraph → lib ArtifactGraph via JSON.
     let lib_graph = match convert_graph(graph) {
         Ok(g) => g,
@@ -82,10 +79,27 @@ pub fn run_schema_checks(
     let lib_checks = orqa_validation::validate(&lib_graph, ctx);
 
     // Convert lib IntegrityCheck → app IntegrityCheck via JSON.
-    lib_checks
-        .into_iter()
-        .filter_map(convert_check)
-        .collect()
+    lib_checks.into_iter().filter_map(convert_check).collect()
+}
+
+// ---------------------------------------------------------------------------
+// Traceability
+// ---------------------------------------------------------------------------
+
+/// Re-exported traceability types from `orqa_validation`.
+pub use orqa_validation::{AncestryChain, AncestryNode, TraceabilityResult, TracedArtifact};
+
+/// Compute full traceability for a single artifact by ID.
+///
+/// Delegates to [`orqa_validation::compute_traceability`] via JSON round-trip
+/// conversion, consistent with the integrity-check bridge pattern.
+pub fn compute_traceability_for(
+    graph: &ArtifactGraph,
+    artifact_id: &str,
+) -> Result<TraceabilityResult, serde_json::Error> {
+    let lib_graph = convert_graph(graph)?;
+    let result = orqa_validation::compute_traceability(&lib_graph, artifact_id);
+    Ok(result)
 }
 
 // ---------------------------------------------------------------------------
