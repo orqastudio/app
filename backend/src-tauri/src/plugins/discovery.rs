@@ -38,27 +38,22 @@ pub fn scan_plugins(project_root: &Path) -> Vec<DiscoveredPlugin> {
 
     let mut discovered = Vec::new();
 
-    for (_name, config) in &settings.plugins {
+    for config in settings.plugins.values() {
         if !config.installed || !config.enabled {
             continue;
         }
 
         let plugin_path = project_root.join(&config.path);
 
-        match read_manifest(&plugin_path) {
-            Ok(manifest) => {
-                discovered.push(DiscoveredPlugin {
-                    name: manifest.name.clone(),
-                    version: manifest.version.clone(),
-                    display_name: manifest.display_name.clone(),
-                    description: manifest.description.clone(),
-                    path: plugin_path.to_string_lossy().to_string(),
-                    source: "installed".to_string(),
-                });
-            }
-            Err(_) => {
-                // Plugin registered but manifest not found at path — skip
-            }
+        if let Ok(manifest) = read_manifest(&plugin_path) {
+            discovered.push(DiscoveredPlugin {
+                name: manifest.name.clone(),
+                version: manifest.version.clone(),
+                display_name: manifest.display_name.clone(),
+                description: manifest.description.clone(),
+                path: plugin_path.to_string_lossy().to_string(),
+                source: "installed".to_string(),
+            });
         }
     }
 

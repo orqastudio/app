@@ -229,15 +229,15 @@ impl McpServerState {
                 Some(serde_json::to_string(&resp).unwrap_or_default())
             }
             None => {
-                if !id_val.is_null() {
+                if id_val.is_null() {
+                    None
+                } else {
                     let resp = serde_json::json!({
                         "jsonrpc": "2.0",
                         "id": id_val,
                         "error": { "code": -32601, "message": format!("method not found: {method}") }
                     });
                     Some(serde_json::to_string(&resp).unwrap_or_default())
-                } else {
-                    None
                 }
             }
         }
