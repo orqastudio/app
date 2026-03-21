@@ -141,15 +141,18 @@ impl McpServer {
         let path = match uri {
             "orqa://schema/core.json" => {
                 let candidates = [
-                    self.project_root
-                        .join("libs/types/src/platform/core.json"),
+                    self.project_root.join("libs/types/src/platform/core.json"),
                     self.project_root.join("app/.orqa/platform/core.json"),
                 ];
                 candidates.into_iter().find(|p| p.exists())
             }
             "orqa://schema/project.json" => {
                 let p = self.project_root.join(".orqa/project.json");
-                if p.exists() { Some(p) } else { None }
+                if p.exists() {
+                    Some(p)
+                } else {
+                    None
+                }
             }
             _ => None,
         };
@@ -176,51 +179,39 @@ impl McpServer {
         debug!(tool = tool_name, "tool call");
 
         let result: Result<String, String> = match tool_name {
-            "graph_query" => {
-                self.get_graph()
-                    .and_then(|g| graph_tools::tool_query(g, &arguments))
-            }
-            "graph_resolve" => {
-                self.get_graph()
-                    .and_then(|g| graph_tools::tool_resolve(g, &arguments))
-            }
-            "graph_relationships" => {
-                self.get_graph()
-                    .and_then(|g| graph_tools::tool_relationships(g, &arguments))
-            }
-            "graph_stats" => {
-                self.get_graph()
-                    .and_then(|g| graph_tools::tool_stats(g))
-            }
-            "graph_validate" => {
-                self.get_graph()
-                    .and_then(|g| graph_tools::tool_validate(g, &arguments))
-            }
+            "graph_query" => self
+                .get_graph()
+                .and_then(|g| graph_tools::tool_query(g, &arguments)),
+            "graph_resolve" => self
+                .get_graph()
+                .and_then(|g| graph_tools::tool_resolve(g, &arguments)),
+            "graph_relationships" => self
+                .get_graph()
+                .and_then(|g| graph_tools::tool_relationships(g, &arguments)),
+            "graph_stats" => self.get_graph().and_then(|g| graph_tools::tool_stats(g)),
+            "graph_validate" => self
+                .get_graph()
+                .and_then(|g| graph_tools::tool_validate(g, &arguments)),
             "graph_read" => graph_tools::tool_read(&self.project_root, &arguments),
             "graph_refresh" => {
                 let root = self.project_root.clone();
-                graph_tools::tool_refresh(&root)
-                    .map(|(new_graph, msg)| {
-                        self.graph = Some(new_graph);
-                        msg
-                    })
+                graph_tools::tool_refresh(&root).map(|(new_graph, msg)| {
+                    self.graph = Some(new_graph);
+                    msg
+                })
             }
-            "search_regex" => {
-                self.get_search()
-                    .and_then(|e| search_tools::tool_search_regex(e, &arguments))
-            }
-            "search_semantic" => {
-                self.get_search()
-                    .and_then(|e| search_tools::tool_search_semantic(e, &arguments))
-            }
-            "search_research" => {
-                self.get_search()
-                    .and_then(|e| search_tools::tool_search_research(e, &arguments))
-            }
-            "search_status" => {
-                self.get_search()
-                    .and_then(|e| search_tools::tool_search_status(e))
-            }
+            "search_regex" => self
+                .get_search()
+                .and_then(|e| search_tools::tool_search_regex(e, &arguments)),
+            "search_semantic" => self
+                .get_search()
+                .and_then(|e| search_tools::tool_search_semantic(e, &arguments)),
+            "search_research" => self
+                .get_search()
+                .and_then(|e| search_tools::tool_search_research(e, &arguments)),
+            "search_status" => self
+                .get_search()
+                .and_then(|e| search_tools::tool_search_status(e)),
             _ => Err(format!("unknown tool: {tool_name}")),
         };
 
@@ -316,8 +307,8 @@ pub fn run(project_root: &std::path::Path) -> Result<(), McpError> {
                         data: None,
                     }),
                 };
-                let out =
-                    serde_json::to_string(&error_resp).map_err(|e| McpError::Json(e.to_string()))?;
+                let out = serde_json::to_string(&error_resp)
+                    .map_err(|e| McpError::Json(e.to_string()))?;
                 writeln!(stdout, "{out}").map_err(McpError::Io)?;
                 stdout.flush().map_err(McpError::Io)?;
                 continue;
@@ -325,8 +316,7 @@ pub fn run(project_root: &std::path::Path) -> Result<(), McpError> {
         };
 
         if let Some(resp) = server.handle_request(&req) {
-            let out =
-                serde_json::to_string(&resp).map_err(|e| McpError::Json(e.to_string()))?;
+            let out = serde_json::to_string(&resp).map_err(|e| McpError::Json(e.to_string()))?;
             writeln!(stdout, "{out}").map_err(McpError::Io)?;
             stdout.flush().map_err(McpError::Io)?;
         }

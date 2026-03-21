@@ -259,7 +259,8 @@ pub fn tool_read(project_root: &std::path::Path, args: &Value) -> Result<String,
 }
 
 pub fn tool_refresh(project_root: &std::path::Path) -> Result<(ArtifactGraph, String), String> {
-    let graph = build_artifact_graph(project_root).map_err(|e| format!("failed to build graph: {e}"))?;
+    let graph =
+        build_artifact_graph(project_root).map_err(|e| format!("failed to build graph: {e}"))?;
     let stats = graph_stats(&graph);
     let msg = format!(
         "Graph refreshed: {} nodes, {} edges, {} orphans, {} broken refs",

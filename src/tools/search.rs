@@ -86,15 +86,11 @@ fn filter_by_scope(results: Vec<SearchResult>, scope: &str) -> Vec<SearchResult>
     match scope {
         "artifacts" => results
             .into_iter()
-            .filter(|r| {
-                r.file_path.contains(".orqa/") || r.file_path.contains(".orqa\\")
-            })
+            .filter(|r| r.file_path.contains(".orqa/") || r.file_path.contains(".orqa\\"))
             .collect(),
         "codebase" => results
             .into_iter()
-            .filter(|r| {
-                !r.file_path.contains(".orqa/") && !r.file_path.contains(".orqa\\")
-            })
+            .filter(|r| !r.file_path.contains(".orqa/") && !r.file_path.contains(".orqa\\"))
             .collect(),
         _ => results, // "all" or unrecognised
     }

@@ -29,7 +29,10 @@ fn main() {
     };
 
     if !project_root.exists() {
-        eprintln!("error: project path does not exist: {}", project_root.display());
+        eprintln!(
+            "error: project path does not exist: {}",
+            project_root.display()
+        );
         process::exit(1);
     }
 

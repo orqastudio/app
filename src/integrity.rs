@@ -224,8 +224,7 @@ fn check_missing_inverses(
             };
 
             let has_inverse = target.references_out.iter().any(|r| {
-                r.relationship_type.as_deref() == Some(expected_inverse)
-                    && r.target_id == node.id
+                r.relationship_type.as_deref() == Some(expected_inverse) && r.target_id == node.id
             });
 
             if !has_inverse {
@@ -258,8 +257,11 @@ fn check_relationship_type_constraints(
     ctx: &ValidationContext,
     checks: &mut Vec<IntegrityCheck>,
 ) {
-    let schema_map: HashMap<&str, &RelationshipSchema> =
-        ctx.relationships.iter().map(|r| (r.key.as_str(), r)).collect();
+    let schema_map: HashMap<&str, &RelationshipSchema> = ctx
+        .relationships
+        .iter()
+        .map(|r| (r.key.as_str(), r))
+        .collect();
 
     for node in graph.nodes.values() {
         for ref_entry in &node.references_out {
@@ -386,8 +388,11 @@ fn check_cardinality(
     ctx: &ValidationContext,
     checks: &mut Vec<IntegrityCheck>,
 ) {
-    let schema_map: HashMap<&str, &RelationshipSchema> =
-        ctx.relationships.iter().map(|r| (r.key.as_str(), r)).collect();
+    let schema_map: HashMap<&str, &RelationshipSchema> = ctx
+        .relationships
+        .iter()
+        .map(|r| (r.key.as_str(), r))
+        .collect();
 
     for node in graph.nodes.values() {
         let mut counts: HashMap<&str, usize> = HashMap::new();
@@ -463,7 +468,14 @@ fn check_circular_dependencies(
             continue;
         }
 
-        detect_cycles_from(graph, &node.id, &deps, &forward_dep_keys, &mut reported, checks);
+        detect_cycles_from(
+            graph,
+            &node.id,
+            &deps,
+            &forward_dep_keys,
+            &mut reported,
+            checks,
+        );
     }
 }
 
