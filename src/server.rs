@@ -191,9 +191,11 @@ impl McpServer {
                 .and_then(|g| graph_tools::tool_relationships(g, &arguments)),
             "graph_stats" => self.get_graph().and_then(graph_tools::tool_stats),
             "graph_health" => self.get_graph().and_then(graph_tools::tool_health),
-            "graph_validate" => self
-                .get_graph()
-                .and_then(|g| graph_tools::tool_validate(g, &arguments)),
+            "graph_validate" => {
+                let root = self.project_root.clone();
+                self.get_graph()
+                    .and_then(|g| graph_tools::tool_validate(g, &root, &arguments))
+            }
             "graph_read" => graph_tools::tool_read(&self.project_root, &arguments),
             "graph_refresh" => {
                 let root = self.project_root.clone();

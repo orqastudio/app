@@ -236,8 +236,12 @@ pub fn tool_health(graph: &ArtifactGraph) -> Result<String, String> {
     serde_json::to_string_pretty(&health).map_err(|e| e.to_string())
 }
 
-pub fn tool_validate(graph: &ArtifactGraph, args: &Value) -> Result<String, String> {
-    let checks = check_integrity_headless(graph);
+pub fn tool_validate(
+    graph: &ArtifactGraph,
+    project_root: &std::path::Path,
+    args: &Value,
+) -> Result<String, String> {
+    let checks = check_integrity_headless(graph, project_root);
     let path_filter = args.get("path").and_then(|v| v.as_str());
 
     let filtered: Vec<&_> = if let Some(prefix) = path_filter {

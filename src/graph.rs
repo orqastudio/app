@@ -134,10 +134,26 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, McpErr
         .map(build_type_registry)
         .unwrap_or_default();
 
+    // Merge static platform types with plugin-contributed types for ID-prefix inference.
+    let mut platform_types: Vec<crate::platform::ArtifactTypeDef> =
+        crate::platform::PLATFORM.artifact_types.clone();
+    platform_types.extend(
+        crate::platform::scan_plugin_manifests(project_path)
+            .artifact_types
+            .into_iter(),
+    );
+
     let mut graph = ArtifactGraph::default();
 
     // Pass 1a: walk the project's own .orqa/ with project: None.
-    walk_directory(&orqa_dir, project_path, &mut graph, &type_registry, None)?;
+    walk_directory(
+        &orqa_dir,
+        project_path,
+        &mut graph,
+        &type_registry,
+        &platform_types,
+        None,
+    )?;
 
     // Pass 1b: if organisation mode, scan each child project.
     if let Some(ref settings) = settings {
@@ -161,6 +177,7 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, McpErr
                         &child_path,
                         &mut graph,
                         &child_registry,
+                        &platform_types,
                         Some(&child.name),
                     )?;
                     qualify_intra_project_refs(&mut graph, &child.name);
@@ -299,6 +316,7 @@ fn walk_directory(
     project_root: &Path,
     graph: &mut ArtifactGraph,
     type_registry: &TypeRegistry,
+    platform_types: &[crate::platform::ArtifactTypeDef],
     project_name: Option<&str>,
 ) -> Result<(), McpError> {
     let Ok(entries) = std::fs::read_dir(dir) else {
@@ -324,6 +342,7 @@ fn walk_directory(
                 project_root,
                 graph,
                 type_registry,
+                platform_types,
                 project_name,
             )?;
         } else if ft.is_file() && name.ends_with(".md") {
@@ -335,6 +354,7 @@ fn walk_directory(
                 project_root,
                 graph,
                 type_registry,
+                platform_types,
                 project_name,
             )?;
         }
@@ -349,6 +369,7 @@ fn collect_node(
     project_root: &Path,
     graph: &mut ArtifactGraph,
     type_registry: &TypeRegistry,
+    platform_types: &[crate::platform::ArtifactTypeDef],
     project_name: Option<&str>,
 ) -> Result<(), McpError> {
     let content =
@@ -375,6 +396,7 @@ fn collect_node(
         &yaml_value,
         &body,
         type_registry,
+        platform_types,
         project_name,
     );
 
@@ -399,6 +421,7 @@ fn build_node(
     yaml_value: &serde_yaml::Value,
     body: &str,
     type_registry: &TypeRegistry,
+    platform_types: &[crate::platform::ArtifactTypeDef],
     project_name: Option<&str>,
 ) -> ArtifactNode {
     let title = yaml_value
@@ -418,7 +441,8 @@ fn build_node(
         .and_then(|v| v.as_str())
         .map(str::to_owned);
     let frontmatter_type = yaml_value.get("type").and_then(|v| v.as_str());
-    let artifact_type = infer_artifact_type(&rel_path, type_registry, frontmatter_type, &id);
+    let artifact_type =
+        infer_artifact_type(&rel_path, type_registry, platform_types, frontmatter_type, &id);
     let frontmatter = yaml_to_json(yaml_value);
     let mut references_out = collect_forward_refs(yaml_value, &id);
     references_out.extend(collect_body_refs(body, &id));
@@ -570,7 +594,11 @@ fn to_validation_graph(
 ///
 /// Loads statuses and delivery config from project settings when available, falling
 /// back to empty defaults (headless mode) when project.json is not found.
-pub fn check_integrity_headless(graph: &ArtifactGraph) -> Vec<IntegrityCheck> {
+/// Plugin-contributed relationships from `plugins/*/orqa-plugin.json` are merged in.
+pub fn check_integrity_headless(
+    graph: &ArtifactGraph,
+    project_root: &Path,
+) -> Vec<IntegrityCheck> {
     let val_graph = match to_validation_graph(graph) {
         Ok(g) => g,
         Err(e) => {
@@ -578,7 +606,10 @@ pub fn check_integrity_headless(graph: &ArtifactGraph) -> Vec<IntegrityCheck> {
             return Vec::new();
         }
     };
-    let ctx = orqa_validation::build_validation_context(&[], &Default::default(), &[], &[]);
+    let plugin_contributions = crate::platform::scan_plugin_manifests(project_root);
+    let plugin_relationships = contributions_to_validation_schemas(plugin_contributions);
+    let ctx =
+        orqa_validation::build_validation_context(&[], &Default::default(), &[], &plugin_relationships);
     orqa_validation::validate(&val_graph, &ctx)
 }
 
@@ -586,9 +617,11 @@ pub fn check_integrity_headless(graph: &ArtifactGraph) -> Vec<IntegrityCheck> {
 ///
 /// Uses statuses and delivery config from the project settings, giving richer
 /// validation results than `check_integrity_headless`.
+/// Plugin-contributed relationships are merged in alongside project relationships.
 pub fn check_integrity_with_settings(
     graph: &ArtifactGraph,
     settings: &crate::settings::ProjectSettings,
+    project_root: &Path,
 ) -> Vec<IntegrityCheck> {
     let val_graph = match to_validation_graph(graph) {
         Ok(g) => g,
@@ -598,7 +631,7 @@ pub fn check_integrity_with_settings(
         }
     };
     let statuses: Vec<String> = settings.statuses.iter().map(|s| s.key.clone()).collect();
-    let project_relationships: Vec<orqa_validation::types::RelationshipSchema> = settings
+    let mut project_relationships: Vec<orqa_validation::types::RelationshipSchema> = settings
         .relationships
         .iter()
         .map(|r| orqa_validation::types::RelationshipSchema {
@@ -611,6 +644,8 @@ pub fn check_integrity_with_settings(
             constraints: None,
         })
         .collect();
+    let plugin_contributions = crate::platform::scan_plugin_manifests(project_root);
+    project_relationships.extend(contributions_to_validation_schemas(plugin_contributions));
     let ctx = orqa_validation::build_validation_context(
         &statuses,
         &Default::default(),
@@ -618,6 +653,41 @@ pub fn check_integrity_with_settings(
         &project_relationships,
     );
     orqa_validation::validate(&val_graph, &ctx)
+}
+
+/// Convert plugin `RelationshipDef` contributions to the `orqa_validation` schema type.
+fn contributions_to_validation_schemas(
+    contributions: crate::platform::PluginContributions,
+) -> Vec<orqa_validation::types::RelationshipSchema> {
+    contributions
+        .relationships
+        .into_iter()
+        .map(|r| orqa_validation::types::RelationshipSchema {
+            key: r.key,
+            inverse: r.inverse,
+            description: r.description,
+            from: r.from,
+            to: r.to,
+            semantic: r.semantic,
+            constraints: r.constraints.map(|c| orqa_validation::types::RelationshipConstraints {
+                required: c.required,
+                min_count: c.min_count,
+                max_count: c.max_count,
+                require_inverse: c.require_inverse,
+                status_rules: c
+                    .status_rules
+                    .into_iter()
+                    .map(|sr| orqa_validation::types::StatusRule {
+                        evaluate: sr.evaluate,
+                        condition: sr.condition,
+                        statuses: sr.statuses,
+                        proposed_status: sr.proposed_status,
+                        description: sr.description,
+                    })
+                    .collect(),
+            }),
+        })
+        .collect()
 }
 
 /// Compute graph health metrics using the `orqa-validation` library.
@@ -672,6 +742,7 @@ pub fn extract_frontmatter(content: &str) -> (Option<String>, String) {
 fn infer_artifact_type(
     rel_path: &str,
     type_registry: &TypeRegistry,
+    platform_types: &[crate::platform::ArtifactTypeDef],
     frontmatter_type: Option<&str>,
     artifact_id: &str,
 ) -> String {
@@ -703,11 +774,10 @@ fn infer_artifact_type(
         return type_key.clone();
     }
 
-    // 3. ID-prefix match against the platform's artifact type definitions.
+    // 3. ID-prefix match against platform + plugin artifact type definitions.
     if let Some(prefix) = artifact_id.split('-').next() {
         if !prefix.is_empty() {
-            let matched = crate::platform::PLATFORM
-                .artifact_types
+            let matched = platform_types
                 .iter()
                 .find(|t| t.id_prefix == prefix)
                 .map(|t| t.key.clone());
