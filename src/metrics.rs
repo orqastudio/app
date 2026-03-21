@@ -283,6 +283,7 @@ pub fn compute_health(graph: &ArtifactGraph) -> GraphHealth {
             total_edges: 0,
             pillar_traceability: 0.0,
             bidirectionality_ratio: 0.0,
+            broken_ref_count: 0,
         };
     }
 
@@ -348,6 +349,14 @@ pub fn compute_health(graph: &ArtifactGraph) -> GraphHealth {
     // Bidirectionality ratio: fraction of typed relationship edges that have their inverse.
     let bidirectionality_ratio = compute_bidirectionality_ratio(graph, &primary_ids);
 
+    // Broken references: edges whose target is not in the graph.
+    let broken_ref_count: usize = primary_ids
+        .iter()
+        .filter_map(|id| graph.nodes.get(*id))
+        .flat_map(|n| n.references_out.iter())
+        .filter(|r| !graph.nodes.contains_key(&r.target_id))
+        .count();
+
     GraphHealth {
         component_count,
         orphan_count,
@@ -359,6 +368,7 @@ pub fn compute_health(graph: &ArtifactGraph) -> GraphHealth {
         total_edges,
         pillar_traceability,
         bidirectionality_ratio,
+        broken_ref_count,
     }
 }
 

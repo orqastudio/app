@@ -349,9 +349,8 @@ fn apply_missing_type_fix(
     let content = std::fs::read_to_string(&file_path)
         .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
     let (fm_opt, body) = extract_frontmatter(&content);
-    let fm_text = match fm_opt {
-        Some(t) => t,
-        None => return Ok(None),
+    let Some(fm_text) = fm_opt else {
+        return Ok(None);
     };
 
     // Guard: don't add if `type:` already present.
@@ -390,9 +389,8 @@ fn apply_missing_status_fix(
     let content = std::fs::read_to_string(&file_path)
         .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
     let (fm_opt, body) = extract_frontmatter(&content);
-    let fm_text = match fm_opt {
-        Some(t) => t,
-        None => return Ok(None),
+    let Some(fm_text) = fm_opt else {
+        return Ok(None);
     };
 
     // Guard: don't add if `status:` already present.
@@ -441,9 +439,8 @@ fn apply_duplicate_relationship_fix(
     let content = std::fs::read_to_string(&file_path)
         .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
     let (fm_opt, body) = extract_frontmatter(&content);
-    let fm_text = match fm_opt {
-        Some(t) => t,
-        None => return Ok(None),
+    let Some(fm_text) = fm_opt else {
+        return Ok(None);
     };
 
     let yaml_value: serde_yaml::Value = serde_yaml::from_str(&fm_text).map_err(|e| {
@@ -535,7 +532,7 @@ fn insert_field_after(fm_text: &str, anchor_prefix: &str, new_field: &str) -> St
             result.extend_from_slice(&lines[pos + 1..]);
             result.join("\n")
         }
-        None => format!("{new_field}\n{}", fm_text),
+        None => format!("{new_field}\n{fm_text}"),
     }
 }
 

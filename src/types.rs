@@ -173,4 +173,6 @@ pub struct GraphHealth {
     pub pillar_traceability: f64,
     /// Ratio of relationship edges that have their inverse (0.0–1.0).
     pub bidirectionality_ratio: f64,
+    /// Number of broken references (target not in graph).
+    pub broken_ref_count: usize,
 }

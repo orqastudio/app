@@ -435,9 +435,11 @@ fn collect_node(
         file_path,
         &yaml_value,
         &body,
-        type_registry,
-        project_name,
-        valid_rel_types,
+        &NodeBuildCtx {
+            type_registry,
+            project_name,
+            valid_rel_types,
+        },
     );
 
     let graph_key = match project_name {
@@ -454,15 +456,20 @@ fn collect_node(
     Ok(())
 }
 
+/// Context shared across all nodes built during a single graph scan.
+struct NodeBuildCtx<'a> {
+    type_registry: &'a TypeRegistry,
+    project_name: Option<&'a str>,
+    valid_rel_types: &'a std::collections::HashSet<String>,
+}
+
 fn build_node(
     id: String,
     rel_path: String,
     file_path: &Path,
     yaml_value: &serde_yaml::Value,
     body: &str,
-    type_registry: &TypeRegistry,
-    project_name: Option<&str>,
-    valid_rel_types: &std::collections::HashSet<String>,
+    ctx: &NodeBuildCtx<'_>,
 ) -> ArtifactNode {
     let title = yaml_value
         .get("title")
@@ -481,7 +488,8 @@ fn build_node(
         .and_then(|v| v.as_str())
         .map(str::to_owned);
     let frontmatter_type = yaml_value.get("type").and_then(|v| v.as_str());
-    let artifact_type = infer_artifact_type(&rel_path, type_registry, frontmatter_type, &id);
+    let artifact_type =
+        infer_artifact_type(&rel_path, ctx.type_registry, frontmatter_type, &id);
     let frontmatter = yaml_to_json(yaml_value);
     let all_refs = collect_relationship_refs(yaml_value, &id);
     // Filter: only include edges with valid relationship types in the graph.
@@ -489,7 +497,7 @@ fn build_node(
     let mut references_out: Vec<ArtifactRef> = Vec::new();
     for r in all_refs {
         if let Some(ref rel_type) = r.relationship_type {
-            if !valid_rel_types.is_empty() && !valid_rel_types.contains(rel_type) {
+            if !ctx.valid_rel_types.is_empty() && !ctx.valid_rel_types.contains(rel_type) {
                 tracing::warn!(
                     artifact = %id,
                     relationship = %rel_type,
@@ -505,7 +513,7 @@ fn build_node(
     references_out.extend(collect_body_refs(body, &id));
     ArtifactNode {
         id,
-        project: project_name.map(str::to_owned),
+        project: ctx.project_name.map(str::to_owned),
         path: rel_path,
         artifact_type,
         title,

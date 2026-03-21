@@ -28,6 +28,7 @@ pub mod auto_fix;
 pub mod checks;
 pub mod context;
 pub mod error;
+pub mod generated;
 pub mod graph;
 pub mod metrics;
 pub mod platform;
@@ -37,7 +38,9 @@ pub mod types;
 pub use auto_fix::{apply_fixes, update_artifact_field};
 pub use context::build_validation_context;
 pub use error::ValidationError;
-pub use graph::{build_artifact_graph, ArtifactGraph, ArtifactNode, ArtifactRef};
+pub use graph::{
+    build_artifact_graph, graph_stats, ArtifactGraph, ArtifactNode, ArtifactRef, GraphStats,
+};
 pub use metrics::{
     compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
     AncestryChain, AncestryNode, TraceabilityResult, TracedArtifact,
