@@ -1,4 +1,4 @@
-![License](https://img.shields.io/badge/license-BSL-1.1-blue)
+![License](https://img.shields.io/badge/license-BSL%201.1-blue)
 ![Status](https://img.shields.io/badge/status-pre--release-orange)
 ![Rust](https://img.shields.io/badge/Rust-CE422B?logo=rust&logoColor=white)
 

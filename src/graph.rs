@@ -169,14 +169,13 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, McpErr
         }
     }
 
-    // Pass 1c: in organisation mode, resolve cross-project refs from the root.
+    // Pass 1c: in organisation mode, rewrite cross-project target IDs before Pass 2.
     // Root nodes reference child artifacts by bare ID (e.g. RULE-6c0496e0) but
     // those artifacts are stored with a qualified key (e.g. app::RULE-6c0496e0).
-    // Build a bare-ID → graph-key index from all child nodes and rewrite refs.
-    if let Some(ref settings) = settings {
-        if settings.organisation {
-            resolve_cross_project_refs(&mut graph);
-        }
+    // Rewriting here ensures Pass 2 can find targets and insert backlinks correctly.
+    let org_mode = settings.as_ref().is_some_and(|s| s.organisation);
+    if org_mode {
+        rewrite_cross_project_refs(&mut graph);
     }
 
     // Pass 2: invert references — add backlinks to target nodes.
@@ -192,34 +191,28 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, McpErr
         }
     }
 
+    // Pass 3: in organisation mode, insert bare-ID aliases AFTER backlinks are computed.
+    // This ensures the alias node already contains its backlinks when inserted.
+    if org_mode {
+        insert_bare_id_aliases(&mut graph);
+    }
+
     Ok(graph)
 }
 
-/// Resolve cross-project references in organisation mode.
+/// Build a bare-ID → qualified-graph-key index for all child-project nodes.
 ///
-/// Root project nodes reference child artifacts by bare ID (e.g. `RULE-6c0496e0`)
-/// but those artifacts are stored with a qualified key (`app::RULE-6c0496e0`).
-///
-/// This pass has two effects:
-/// 1. Rewrites unresolvable bare-ID `target_id` values in `references_out` to their
-///    qualified equivalents so that Pass 2 backlinks and the integrity checker resolve them.
-/// 2. Inserts bare-ID aliases in `graph.nodes` for child-project nodes that do not
-///    conflict with root-project entries, so that `graph.nodes.contains_key(bare_id)`
-///    works for any consumer that uses direct map lookups.
-///
-/// Root project artifacts (unqualified keys) take priority. When a bare ID is present in
-/// multiple child projects, the first one found wins and a warning is logged.
-fn resolve_cross_project_refs(graph: &mut ArtifactGraph) {
-    // Build bare-ID → qualified graph key for all child-project nodes only.
-    // Root nodes (no `::` in their key) are excluded — they already resolve directly.
+/// Root nodes (no `::` in their key) are excluded because they already resolve
+/// directly. When a bare ID appears in multiple child projects, first-found wins.
+fn build_child_id_index(graph: &ArtifactGraph) -> HashMap<String, String> {
     let mut bare_to_qualified: HashMap<String, String> = HashMap::new();
     let mut duplicates: Vec<String> = Vec::new();
 
     for key in graph.nodes.keys() {
         if let Some(sep) = key.find("::") {
             let bare_id = &key[sep + 2..];
-            // Root key wins: skip if already resolved directly.
             if graph.nodes.contains_key(bare_id) {
+                // Root key takes priority — skip.
                 continue;
             }
             if bare_to_qualified.contains_key(bare_id) {
@@ -237,7 +230,16 @@ fn resolve_cross_project_refs(graph: &mut ArtifactGraph) {
         );
     }
 
-    // 1. Rewrite unresolvable bare-ID refs on every node.
+    bare_to_qualified
+}
+
+/// Rewrite unresolvable bare-ID `target_id` values in `references_out` to their
+/// qualified equivalents.
+///
+/// Must run before Pass 2 (backlink computation) so that the qualified target IDs
+/// are present when backlinks are inserted.
+fn rewrite_cross_project_refs(graph: &mut ArtifactGraph) {
+    let bare_to_qualified = build_child_id_index(graph);
     let all_keys: std::collections::HashSet<String> = graph.nodes.keys().cloned().collect();
 
     for node in graph.nodes.values_mut() {
@@ -249,8 +251,16 @@ fn resolve_cross_project_refs(graph: &mut ArtifactGraph) {
             }
         }
     }
+}
 
-    // 2. Insert bare-ID aliases so that direct `graph.nodes.get(bare_id)` lookups resolve.
+/// Insert bare-ID aliases for child-project nodes so that direct `graph.nodes.get(bare_id)`
+/// lookups resolve without the caller needing to know the project prefix.
+///
+/// Must run **after** Pass 2 (backlink computation) so that the cloned alias nodes
+/// already contain their `references_in` backlinks.
+fn insert_bare_id_aliases(graph: &mut ArtifactGraph) {
+    let bare_to_qualified = build_child_id_index(graph);
+
     for (bare_id, qualified_key) in &bare_to_qualified {
         if let Some(node) = graph.nodes.get(qualified_key).cloned() {
             graph.nodes.insert(bare_id.clone(), node);
@@ -494,19 +504,36 @@ fn collect_body_refs(body: &str, source_id: &str) -> Vec<ArtifactRef> {
 // ---------------------------------------------------------------------------
 
 /// Compute summary statistics for the graph.
+///
+/// In organisation mode, bare-ID alias nodes (added by `insert_bare_id_aliases`) are
+/// excluded from counts to avoid double-counting. An alias node is identified by its
+/// graph key equalling its `id` while also having a `project` field (meaning it belongs
+/// to a child project but was aliased into the root namespace for resolution convenience).
 pub fn graph_stats(graph: &ArtifactGraph) -> GraphStats {
-    let node_count = graph.nodes.len();
-    let edge_count: usize = graph.nodes.values().map(|n| n.references_out.len()).sum();
-    let orphan_count = graph
+    // Primary nodes: root nodes (project: None) OR child nodes accessed by their qualified key.
+    // Alias nodes: child nodes accessed by their bare ID (key == id, project: Some(...)).
+    let primary_nodes: Vec<&ArtifactNode> = graph
         .nodes
-        .values()
+        .iter()
+        .filter(|(key, node)| {
+            // Root node: graph key is just the bare ID, project is None.
+            // Child primary: graph key is "project::id", so key != node.id.
+            // Alias: key == node.id AND project is Some — exclude these.
+            !(key.as_str() == node.id && node.project.is_some())
+        })
+        .map(|(_, node)| node)
+        .collect();
+
+    let node_count = primary_nodes.len();
+    let edge_count: usize = primary_nodes.iter().map(|n| n.references_out.len()).sum();
+    let orphan_count = primary_nodes
+        .iter()
         .filter(|n| {
             n.artifact_type != "doc" && n.references_out.is_empty() && n.references_in.is_empty()
         })
         .count();
-    let broken_ref_count: usize = graph
-        .nodes
-        .values()
+    let broken_ref_count: usize = primary_nodes
+        .iter()
         .flat_map(|n| n.references_out.iter())
         .filter(|r| !graph.nodes.contains_key(&r.target_id))
         .count();
