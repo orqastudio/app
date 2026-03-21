@@ -1,4 +1,4 @@
-## Session: 2026-03-21T20:10:00Z
+## Session: 2026-03-21T20:20:00Z
 
 ### Scope
 - Epic: EPIC-6967c7dc (Claude Code connector rewrite)
@@ -12,28 +12,14 @@
 - [x] **Step 2:** Clean orchestrator.md
 - [x] **Step 3:** Symlink .claude/CLAUDE.md → orchestrator.md
 - [x] **Step 4:** Verify end-to-end
-- [ ] **Step 5:** Session state rule + enforcement
-  - [x] Rule RULE-4f7e2a91 created
-  - [x] Enforcement hook (freshness check + constant reminder in prompt-injector.mjs)
-  - [x] Rule documents enforcement mechanism
-  - [ ] Schema validation for enforcement field — needs validator check (Step 5d)
-- [x] **Step 5a:** Create governance plugin — DONE (11 types, 2 additive relationships, display config)
-- [ ] **Step 5b:** Plugin dependency system
-  - [ ] Add `requires` field to plugin manifests for declaring dependencies on other plugins
-  - [ ] Add `category` field to plugin manifests (thinking | delivery | governance | connector | tooling)
-  - [ ] Validator checks: required categories are satisfied, plugin dependencies are met
-  - [ ] Claude Code connector declares: requires `@orqastudio/plugin-systems-thinking`, `@orqastudio/plugin-agile-governance`
-- [ ] **Step 5c:** Rename + split plugins
-  - [ ] Rename `@orqastudio/plugin-governance` → `@orqastudio/plugin-agile-governance` (differentiates from other governance approaches)
-  - [ ] Create `@orqastudio/plugin-systems-thinking` (methodology: systems thinking, diagnostic methodology, restructuring methodology)
-  - [ ] Rename `@orqastudio/plugin-software-project` stays as-is (already specific enough)
+- [x] **Step 5:** Session state rule + enforcement (RULE-4f7e2a91 + hook)
+- [x] **Step 5a:** Create governance plugin — DONE
+- [x] **Step 5b:** Plugin dependency system — DONE
+- [x] **Step 5c:** Rename + split — DONE (validator clean, 0 errors)
+- [x] **Step 5d:** Migrate core.json → plugins — DONE (Option A: data in plugin, core.json deprecated duplicate, Rust migration separate task)
 - [ ] **Step 5d:** Migrate core.json content to plugins
-  - [ ] Move all artifactTypes, relationships, semantics from core.json to owning plugins
-  - [ ] core.json becomes structural definition only (schema ref, required categories, empty arrays)
-  - [ ] Verify validator and graph scanner still work
 - [ ] **Step 5e:** Add frontmatter.required validation check to CLI validator
-- [ ] **Step 5d:** Add frontmatter.required validation check to CLI validator
-- [ ] **Step 5e:** PostToolUse hooks validate via `orqa validate` CLI
+- [ ] **Step 5f:** PostToolUse hooks validate via `orqa validate` CLI
 - [x] **Step 6:** Migrate user preferences to rules — DONE (RULE-045 through RULE-048)
 - [ ] **Step 7:** `orqa link` CLI command
 - [ ] **Step 8:** Move Claude symlink logic to connector
@@ -42,43 +28,44 @@
 - [ ] **Step 11:** Lessons as memory source (research)
 - [x] **Step 12:** Decision pros/cons idea — DONE (IDEA-144)
 - [ ] **Step 13:** Orchestrator prompt injection: teams + dependencies reminder
+- [ ] **Step 14:** Session state ↔ task list synchronisation
+
+**COMMITTED:** 30fc6de — Steps 1-6, 5a, 12
 
 ### Architecture Decisions
 
 #### Three required plugin categories
-- **Thinking** — methodology plugins. `@orqastudio/plugin-systems-thinking` (systems thinking, diagnostic methodology, restructuring methodology). Replaceable with alternative thinking frameworks.
-- **Delivery** — work tracking plugins. `@orqastudio/plugin-software-project` (epics, tasks, milestones). Replaceable with e.g. kanban, scrum-specific, etc.
-- **Governance** — structured decision-making. `@orqastudio/plugin-agile-governance` (rules, decisions, lessons, knowledge, learning loop). Replaceable with alternative governance models.
-- App REQUIRES one of each category installed. Validator checks this.
-- Plugins declare `category` in their manifest.
-- Plugins declare `requires` for dependencies on specific other plugins.
-- Learning loop stays in governance (operates on lesson→rule artifacts).
-- Systems thinking is a separate thinking plugin (methodology, not artifact types).
+- **Thinking** — `@orqastudio/plugin-systems-thinking`. Replaceable.
+- **Delivery** — `@orqastudio/plugin-software-project`. Replaceable.
+- **Governance** — `@orqastudio/plugin-agile-governance`. Replaceable.
+- App REQUIRES one of each. Validator checks.
 
 #### Plugin dependency system
-- Plugin manifests get `category` field (thinking | delivery | governance | connector | tooling)
-- Plugin manifests get `requires` field (array of plugin names this plugin depends on)
-- Claude Code connector requires: `@orqastudio/plugin-systems-thinking`, `@orqastudio/plugin-agile-governance`
-- Validator checks: all 3 required categories have at least one installed plugin, all `requires` dependencies are met
+- Manifests get `category` + `requires` fields
+- Connector requires systems-thinking + agile-governance
+- Validator checks categories and dependencies
 
 #### Plugins own everything
-- core.json = structural definition only (schema ref, required plugin slots, empty arrays)
-- Each plugin owns its types, relationships, semantics, frontmatter schemas
-- Validator merges all plugin schemas at runtime
+- core.json = structural definition only
+- Each plugin owns types, relationships, semantics, frontmatter schemas
 
-#### 4-layer agent context
-1. System prompt (static) → role + tools
-2. UserPromptSubmit hook (ONNX) → thinking mode + where to find knowledge
-3. Agent self-service → CLI/graph queries
-4. Enforcement hooks → mechanical compliance
-
-#### Other decisions
-- CLI is platform-agnostic, connector owns Claude-specific setup
-- Rules require enforcement (created together, documented in body)
-- All plugins are replaceable (governance, thinking, delivery)
+#### Session state ↔ task list sync needed
 
 ### Bugs
-- **BUG: prompt-injector shows "Project: unknown | Dogfood: inactive | Plugins: none"** — the hook is outputting stale/wrong values and using old `|` separator format. Either the running hook is a different version than the source, or our edits to prompt-injector.mjs broke the context line. Need to investigate after commit.
+- **prompt-injector stale hooks** — ROOT CAUSE: `plugins/claude/hooks/hooks.json` declares hooks but has no scripts. Leftover from before connector split. Fix: remove hook declarations from plugins/claude. Pending approval.
 
-### Lessons
-- IMPL-071: Session state as living document → RULE-4f7e2a91
+### Lessons Captured
+- IMPL-071: Session state as living document → promoted to RULE-4f7e2a91
+- IMPL-072: Dogfooding proves the methodology before the app (CLI-first governance works)
+- IMPL-073: Dogfood readiness signal — when lessons are observations not corrections, ready for next level
+- IMPL-074: Orchestrator must trace artifacts to usage contexts → recurrence 3, PROMOTING TO RULE NOW
+  - Occurrence 1: didn't trace IMPL-073 to dogfood milestone
+  - Occurrence 2: said "worth noting" but didn't note it
+  - Occurrence 3: said "eligible for promotion" but didn't promote it
+  - Governance steward creating rule + updating lesson status
+  - → RULE-049 created (RULE-67b91c13). Enforcement: Task #16 (thinking mode templates)
+
+### Dogfood Milestone Readiness Signal
+- Gate question: "Are recent lessons observations rather than corrections?"
+- If yes → current infrastructure layer is mature, ready to dogfood at next level (CLI → app)
+- Add as gate on Continuity pillar or readiness criterion in RULE-009 (dogfood mode)
