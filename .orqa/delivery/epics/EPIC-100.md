@@ -132,12 +132,20 @@ This is not just "show relationships" — it's "show how this work evolved from 
 4. **Cross-cutting relationships** — documents, synchronised-with, employs — relationships that bridge between the governance and delivery hierarchies
 5. **Impact radius** — what would be affected if this artifact changed (using the `computeImpact` function with configurable depth)
 
+**Full graph layout:**
+- Replace `cose-bilkent` (force-directed, produces a ball) with `dagre` (hierarchical DAG layout)
+- Vision/Pillars as root nodes at the top, flow downward through the governance hierarchy
+- Hierarchy levels by artifact type: vision(0) → pillar(1) → idea(2) → decision/research(3) → epic/rule(4) → task/knowledge(5)
+- Edge direction follows the governance flow (grounded-by, drives, delivers, enforces)
+- Cross-cutting edges (documents, synchronised-with) rendered as lighter/dotted to not dominate the hierarchy
+
 **Visual design:**
 - Use the graph visualiser's existing Cytoscape infrastructure for rendering
 - Ancestry chain rendered as a vertical timeline (pillar at top, current artifact highlighted)
 - Descendants as an expandable tree
 - Cross-cutting links shown as dotted connections to the side
 - Disconnected artifacts shown with a warning indicator and a "connect to pillar" action
+- Layout switchable between hierarchical (default) and force-directed (exploration)
 
 ### Phase 6 — Auto-Fix and Enforcement
 
