@@ -78,6 +78,16 @@
       }
     },
     "cliTools": [],
-    "hooks": []
+    "hooks": [],
+    "decision_tree": {
+      "branches": [
+        {
+          "mode": "implementation",
+          "domain": "svelte-frontend",
+          "description": "Building Svelte 5 UI — components, stores, pages, runes-based reactivity",
+          "search_context": "svelte5 runes, $state, $derived, component purity, shadcn-svelte, tailwind"
+        }
+      ]
+    }
   }
 }
