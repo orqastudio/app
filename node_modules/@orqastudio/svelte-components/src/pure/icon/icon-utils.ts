@@ -126,6 +126,8 @@ import CalendarIcon from "@lucide/svelte/icons/calendar";
 import CalendarCheckIcon from "@lucide/svelte/icons/calendar-check";
 import CalendarPlusIcon from "@lucide/svelte/icons/calendar-plus";
 import Link2OffIcon from "@lucide/svelte/icons/link-2-off";
+import ActivityIcon from "@lucide/svelte/icons/activity";
+import ArrowLeftRightIcon from "@lucide/svelte/icons/arrow-left-right";
 import TrashIcon from "@lucide/svelte/icons/trash-2";
 import CheckCircleIcon from "@lucide/svelte/icons/check-circle";
 
@@ -254,6 +256,8 @@ export const DEFAULT_ICON_MAP: Record<string, Component> = {
 	calendar: CalendarIcon,
 	"calendar-check": CalendarCheckIcon,
 	"calendar-plus": CalendarPlusIcon,
+	activity: ActivityIcon,
+	"arrow-left-right": ArrowLeftRightIcon,
 };
 
 /**
