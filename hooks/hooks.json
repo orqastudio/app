@@ -10,6 +10,16 @@
             "timeout": 10000
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/artifact-enforcement.mjs",
+            "timeout": 10000
+          }
+        ]
       }
     ],
     "PostToolUse": [
@@ -19,6 +29,16 @@
           {
             "type": "command",
             "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/validate-artifact.mjs",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/impact-check.mjs",
             "timeout": 10000
           }
         ]
