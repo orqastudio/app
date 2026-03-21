@@ -111,7 +111,35 @@ Expand graph-theoretic metrics beyond current set:
 | Schema completeness | % of artifacts with all required fields |
 | Relationship completeness | % with expected relationship types for their type |
 
-### Phase 5 — Auto-Fix and Enforcement
+### Phase 5 — Rebuild Relationships and Traceability UI
+
+Rebuild the artifact relationships and traceability components from scratch using the graph metrics and validation data from `libs/validation`.
+
+**Traceability view** — the core feature: show how any artifact traces back to the vision through the pillar hierarchy. For any selected artifact, render the full provenance chain:
+
+```
+Vision → Pillar → Idea → Research → Decision → Epic → Task (you are here)
+                              ↓
+                          Rule → Knowledge → Agent
+```
+
+This is not just "show relationships" — it's "show how this work evolved from a pillar, through ideation, into implementation." Each node in the chain is clickable, showing the decision points and context that led to the current artifact.
+
+**Relationships panel rebuild:**
+1. **Ancestry chain** — trace UP from any artifact to its pillar(s) via BFS. Show the full path with relationship types. If no path exists, flag it as disconnected from governance.
+2. **Descendant tree** — trace DOWN from any artifact to see everything it spawned (epic → tasks, decision → rules, etc.)
+3. **Sibling context** — other artifacts at the same level that share the same parent (other tasks in the same epic, other rules enforcing the same decision)
+4. **Cross-cutting relationships** — documents, synchronised-with, employs — relationships that bridge between the governance and delivery hierarchies
+5. **Impact radius** — what would be affected if this artifact changed (using the `computeImpact` function with configurable depth)
+
+**Visual design:**
+- Use the graph visualiser's existing Cytoscape infrastructure for rendering
+- Ancestry chain rendered as a vertical timeline (pillar at top, current artifact highlighted)
+- Descendants as an expandable tree
+- Cross-cutting links shown as dotted connections to the side
+- Disconnected artifacts shown with a warning indicator and a "connect to pillar" action
+
+### Phase 6 — Auto-Fix and Enforcement
 
 The validation library provides auto-fix methods for objective issues:
 
@@ -160,6 +188,11 @@ The graph self-heals on every commit. Human review is only needed for subjective
 - [ ] Dashboard trend lines show metric history over time
 - [ ] Graph visualiser has dedicated health panel with full metric breakdown
 - [ ] Graph visualiser shows cluster colouring and pillar traceability tree
+- [ ] Graph visualiser working reliably with loading indicators
+- [ ] Traceability view: any artifact shows full ancestry chain to vision/pillar
+- [ ] Traceability view: shows provenance (pillar → idea → research → decision → epic → task)
+- [ ] Relationships panel rebuilt with ancestry, descendants, siblings, cross-cutting, impact radius
+- [ ] Disconnected artifacts show warning + "connect to pillar" action
 - [ ] `make check` passes after all changes
 
 ## Risks
