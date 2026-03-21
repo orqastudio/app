@@ -24,6 +24,7 @@ import type {
 	IntegrityCheck,
 	AppliedFix,
 	HealthSnapshot,
+	GraphHealthData,
 	ProposedTransition,
 	RelationshipType,
 	PlatformArtifactType,
@@ -492,6 +493,16 @@ export class ArtifactGraphSDK {
 	async getHealthSnapshots(limit?: number): Promise<HealthSnapshot[]> {
 		const effectiveLimit = limit ?? this.config?.snapshotLimit ?? 30;
 		return invoke<HealthSnapshot[]>("get_health_snapshots", { limit: effectiveLimit });
+	}
+
+	/** Fetch extended structural health metrics from the backend.
+	 *
+	 * Returns `GraphHealthData` computed by the Rust `compute_graph_health` function,
+	 * including component count, orphan percentage, density, traceability, and
+	 * bidirectionality. Use this instead of the client-side Cytoscape analysis.
+	 */
+	async getGraphHealth(): Promise<GraphHealthData> {
+		return invoke<GraphHealthData>("get_graph_health");
 	}
 
 	// -----------------------------------------------------------------------
