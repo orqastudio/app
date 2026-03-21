@@ -101,9 +101,14 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, LspErr
         }
     }
 
-    // Pass 2: compute backlinks — currently unused by LSP validation but
-    // included for API completeness.
-    // (The LSP only queries `graph.nodes.contains_key(target)` for existence.)
+    // Pass 1c: in organisation mode, insert bare-ID aliases for child-project nodes
+    // so that existence checks via `graph.nodes.contains_key(bare_id)` resolve
+    // regardless of which project owns the artifact.
+    if let Some(ref s) = settings {
+        if s.organisation {
+            insert_bare_id_aliases(&mut graph);
+        }
+    }
 
     Ok(graph)
 }
@@ -207,6 +212,44 @@ fn collect_node(
     graph.nodes.insert(graph_key, node);
     graph.path_index.insert(path_key, id);
     Ok(())
+}
+
+// ---------------------------------------------------------------------------
+// Organisation mode: bare-ID alias insertion
+// ---------------------------------------------------------------------------
+
+/// Insert bare-ID aliases for child-project nodes in the graph.
+///
+/// Child artifacts are stored with qualified keys (`project::ARTIFACT-ID`).
+/// When the LSP validates a reference target like `RULE-6c0496e0`, it queries
+/// `graph.nodes.contains_key("RULE-6c0496e0")` which fails without this alias.
+///
+/// This pass inserts a copy of each child node under its bare ID when the bare
+/// ID does not conflict with a root-project node. First-found wins on conflicts
+/// between child projects.
+fn insert_bare_id_aliases(graph: &mut ArtifactGraph) {
+    let mut bare_to_qualified: std::collections::HashMap<String, String> =
+        std::collections::HashMap::new();
+
+    for key in graph.nodes.keys() {
+        if let Some(sep) = key.find("::") {
+            let bare_id = &key[sep + 2..];
+            // Root key takes priority: skip if already resolved directly.
+            if graph.nodes.contains_key(bare_id) {
+                continue;
+            }
+            // First-found wins on duplicate bare IDs across child projects.
+            bare_to_qualified
+                .entry(bare_id.to_owned())
+                .or_insert_with(|| key.clone());
+        }
+    }
+
+    for (bare_id, qualified_key) in &bare_to_qualified {
+        if let Some(node) = graph.nodes.get(qualified_key).cloned() {
+            graph.nodes.insert(bare_id.clone(), node);
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -488,5 +531,63 @@ mod tests {
         let content = "# No frontmatter here\n";
         let (fm, _body) = extract_frontmatter(content);
         assert!(fm.is_none());
+    }
+
+    // -----------------------------------------------------------------------
+    // Organisation mode tests
+    // -----------------------------------------------------------------------
+
+    fn write_org_project_json(dir: &Path, child_name: &str, child_path: &str) {
+        let json = format!(
+            r#"{{
+  "name": "Test Org",
+  "organisation": true,
+  "projects": [
+    {{ "name": "{child_name}", "path": "{child_path}" }}
+  ],
+  "artifacts": []
+}}"#
+        );
+        let orqa = dir.join(".orqa");
+        fs::create_dir_all(&orqa).expect("create .orqa");
+        fs::write(orqa.join("project.json"), json).expect("write project.json");
+    }
+
+    #[test]
+    fn organisation_mode_scans_child_project_and_inserts_bare_alias() {
+        let tmp = tempfile::tempdir().expect("tempdir");
+        let child_dir = tmp.path().join("app");
+        write_org_project_json(tmp.path(), "app", "app");
+
+        let rules_dir = child_dir.join(".orqa/process/rules");
+        write_artifact(&rules_dir, "RULE-001.md", "---\nid: RULE-001\ntitle: Rule\n---\n");
+
+        let graph = build_artifact_graph(tmp.path()).expect("build");
+
+        // Both qualified and bare-ID keys should exist.
+        assert!(graph.nodes.contains_key("app::RULE-001"), "qualified key");
+        assert!(
+            graph.nodes.contains_key("RULE-001"),
+            "bare-ID alias for LSP existence checks"
+        );
+    }
+
+    #[test]
+    fn root_project_wins_on_id_conflict_with_child() {
+        let tmp = tempfile::tempdir().expect("tempdir");
+        let child_dir = tmp.path().join("app");
+        write_org_project_json(tmp.path(), "app", "app");
+
+        // Same ID in both root and child.
+        let root_rules = tmp.path().join(".orqa/process/rules");
+        write_artifact(&root_rules, "RULE-001.md", "---\nid: RULE-001\ntitle: Root\n---\n");
+        let child_rules = child_dir.join(".orqa/process/rules");
+        write_artifact(&child_rules, "RULE-001.md", "---\nid: RULE-001\ntitle: Child\n---\n");
+
+        let graph = build_artifact_graph(tmp.path()).expect("build");
+
+        // Bare-ID key should be the root node (no project prefix).
+        let node = graph.nodes.get("RULE-001").expect("node");
+        assert_eq!(node.project, None, "root node has no project prefix");
     }
 }
