@@ -333,7 +333,23 @@
       }
     ],
     "cliTools": [],
-    "hooks": []
+    "hooks": [],
+    "decision_tree": {
+      "branches": [
+        {
+          "mode": "implementation",
+          "domain": "delivery",
+          "description": "Working on epics, tasks, milestones — delivery planning and tracking",
+          "search_context": "delivery planning, epic scoping, task breakdown, milestone tracking"
+        },
+        {
+          "mode": "implementation",
+          "domain": "bug-tracking",
+          "description": "Reporting and fixing bugs against delivery artifacts",
+          "search_context": "bug triage, bug reporting, fix verification"
+        }
+      ]
+    }
   },
   "defaultNavigation": [
     {

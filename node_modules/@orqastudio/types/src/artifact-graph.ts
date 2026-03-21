@@ -123,7 +123,7 @@ export type IntegrityCategory =
     | "DuplicateRelationship";
 
 /** Severity of an integrity finding. */
-export type IntegritySeverity = "Error" | "Warning";
+export type IntegritySeverity = "Error" | "Warning" | "Info";
 
 /** A single integrity finding from the graph. */
 export interface IntegrityCheck {
