@@ -28,6 +28,7 @@ import type {
 	ProposedTransition,
 	RelationshipType,
 	PlatformArtifactType,
+	TraceabilityResult,
 } from "@orqastudio/types";
 import { PLATFORM_CONFIG } from "@orqastudio/types";
 import type { PluginRegistry } from "../plugins/plugin-registry.svelte.js";
@@ -503,6 +504,16 @@ export class ArtifactGraphSDK {
 	 */
 	async getGraphHealth(): Promise<GraphHealthData> {
 		return invoke<GraphHealthData>("get_graph_health");
+	}
+
+	/** Fetch full traceability data for an artifact.
+	 *
+	 * Returns ancestry chains to pillar/vision roots, all downstream descendants
+	 * with BFS depth, sibling artifacts sharing a common parent, impact radius,
+	 * and a disconnected flag when no path to any pillar exists.
+	 */
+	async getTraceability(id: string): Promise<TraceabilityResult> {
+		return invoke<TraceabilityResult>("get_artifact_traceability", { id });
 	}
 
 	// -----------------------------------------------------------------------
