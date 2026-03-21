@@ -1,4 +1,4 @@
-## Session: 2026-03-21T10:11:16Z
+## Session: 2026-03-21T10:16:24Z
 
 ### Active Epics
 - EPIC-6787bb93: Artifact Browser — Sort, Filter, Search
@@ -15,11 +15,11 @@
 - TASK-367f0026: Fix connector basics — path bugs, intent mappings, license, dual manifests
 
 ### Recent Commits
+00f1fd9 Add epic completion discipline knowledge artifact
 96d414e Separate governance (core) from delivery (plugin) schemas (AD-063)
 3989902 Add delivery relationships to core.json + libs/validation submodule (AD-063)
 d731b42 AD-063: impact-triggered investigation for high-blast-radius changes
 60f3f1f EPIC-100: Phase 5 traceability + Phase 3.5 graph visualiser fix
-db8c3a3 AD-063: context-aware injection on knowledge artifacts, prompt keywords
 
 ### Uncommitted Changes
 3 files with uncommitted changes
