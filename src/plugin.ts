@@ -266,6 +266,8 @@ export interface PluginManifest {
 	description?: string;
 	/** Plugin dependencies — other plugin names that must be loaded first. */
 	requires?: string[];
+	/** Plugin category. The app requires at least one plugin from each of: thinking, delivery, governance. */
+	category?: "thinking" | "delivery" | "governance" | "connector" | "tooling" | "coding-standards" | null;
 	/**
 	 * Sidecar key(s) this plugin requires at runtime.
 	 * If specified, the plugin is only loaded when a matching sidecar provider
@@ -278,6 +280,11 @@ export interface PluginManifest {
 	settings?: SettingsRegistration;
 	/** Recommended navigation tree additions. */
 	defaultNavigation?: DefaultNavItem[];
+	/**
+	 * Semantic category definitions contributed by this plugin.
+	 * Merged with platform semantics at runtime.
+	 */
+	semantics?: Record<string, { description: string; keys: string[] }>;
 	/**
 	 * Recorded decisions from previous installations when relationship or
 	 * artifact type keys collided with core or other plugins.
