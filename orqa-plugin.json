@@ -4,6 +4,7 @@
   "displayName": "Tauri Development",
   "description": "Tauri v2 desktop application patterns — extends the Rust plugin with Tauri-specific configuration, IPC patterns, and build settings.",
   "extends": ["@orqastudio/plugin-rust"],
+  "category": "tooling",
   "provides": {
     "knowledge": [
       { "key": "tauri-patterns", "id": "KNOW-TAU-de97219c", "label": "Tauri v2 Patterns" },
