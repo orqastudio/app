@@ -1,13 +1,12 @@
 ---
 id: RULE-d90112d9
+type: rule
 title: Systems Thinking First
 description: "Every change must be evaluated as part of the whole system, not as an isolated fix. This is the foundational discipline that OrqaStudio exists to enable — it applies to every project the app manages."
 status: active
 created: 2026-03-07
 updated: 2026-03-07
 relationships:
-  - target: AD-1d928079
-    type: enforces
 ---
 # Systems Thinking First (NON-NEGOTIABLE)
 

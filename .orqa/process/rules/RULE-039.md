@@ -1,13 +1,12 @@
 ---
 id: RULE-e352fd0a
+type: rule
 title: Session Management
 description: "Sessions must be managed with state persistence, clean handoffs, and no unsaved work at session boundaries."
 status: active
 created: 2026-03-11
 updated: 2026-03-11
 relationships:
-  - target: AD-6ce44025
-    type: enforces
 ---
 
 Every session that performs work must leave the codebase in a clean, resumable state. Session state bridges the gap between context windows.

@@ -1,13 +1,12 @@
 ---
 id: RULE-57ccb4a3
+type: rule
 title: Error Ownership
 description: All errors are your responsibility. Pre-existing errors must be fixed. Never skip or ignore failures.
 status: active
 created: 2026-03-07
 updated: 2026-03-12
 relationships:
-  - target: AD-1ad08e5f
-    type: enforces
 ---
 ## Rule (NON-NEGOTIABLE)
 

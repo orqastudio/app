@@ -1,16 +1,12 @@
 ---
 id: RULE-551bde31
+type: rule
 title: Lessons Learned
 description: "Two learning loops: implementation lessons in .orqa/process/lessons/ and process retrospectives. Both are mandatory."
 status: active
 created: 2026-03-07
 updated: 2026-03-14
 relationships:
-  - target: AD-8b3962f6
-    type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-8b3962f6
-  - target: AD-f9034c99
-    type: enforces
   - target: DOC-c4b4b8b7
     type: documented-by
 ---

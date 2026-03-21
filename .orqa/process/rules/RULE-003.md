@@ -1,23 +1,12 @@
 ---
 id: RULE-6c0496e0
+type: rule
 title: Artifact Config Integrity
 description: Every path in project.json artifacts must resolve to an actual directory on disk. Config-driven scanning with no hardcoded paths.
 status: active
 created: 2026-03-07
 updated: 2026-03-13
 relationships:
-  - target: AD-2f1991c2
-    type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-2f1991c2
-  - target: AD-20d6719d
-    type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-20d6719d
-  - target: AD-8b7c4ac5
-    type: enforces
-  - target: AD-6ce44025
-    type: enforces
-  - target: AD-0c56aa90
-    type: enforces
 ---
 # Artifact Config Integrity (NON-NEGOTIABLE)
 

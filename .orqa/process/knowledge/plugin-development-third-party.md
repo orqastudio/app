@@ -1,5 +1,6 @@
 ---
 id: KNOW-63cc1a00
+type: knowledge
 title: Third-Party Plugin Development
 description: |
   Third-party plugin workflow for community and external developers. Plugins are
@@ -17,8 +18,6 @@ relationships:
   - target: DOC-99a1b71a
     type: synchronised-with
   - target: DOC-a1b2c3d4
-    type: synchronised-with
-  - target: DOC-c65f07b7
     type: synchronised-with
 ---
 

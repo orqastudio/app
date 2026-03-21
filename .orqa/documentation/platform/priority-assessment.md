@@ -1,16 +1,11 @@
 ---
 id: DOC-c8de180d
+type: doc
 title: Priority Assessment
 category: concept
 description: "How agents assess epic priority — project-flexible, inference-based, not formula-driven"
 sort: 9
-relationships:
-  - target: MS-654badde
-    type: documents
-    rationale: Documentation page references MS-654badde
-  - target: MS-eea45fa8
-    type: documents
-    rationale: Documentation page references MS-eea45fa8
+relationships: []
 ---
 
 ## Principle

@@ -1,23 +1,12 @@
 ---
 id: RULE-7b770593
+type: rule
 title: Artifact Lifecycle
 description: "Enforces creation standards, status transitions, promotion gates, and documentation gates for all .orqa/ artifacts."
 status: active
 created: 2026-03-07
 updated: 2026-03-13
 relationships:
-  - target: AD-8b3962f6
-    type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-8b3962f6
-  - target: AD-c3700062
-    type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-c3700062
-  - target: AD-6dfbba70
-    type: enforces
-  - target: DOC-e5ff4baf
-    type: documented-by
-  - target: DOC-7c66f103
-    type: documented-by
   - target: DOC-01ddd8aa
     type: documented-by
   - target: DOC-c4b4b8b7

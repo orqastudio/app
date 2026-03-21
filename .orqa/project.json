@@ -43,7 +43,7 @@
       "icon": "landmark",
       "children": [
         {
-          "key": "pillars",
+          "key": "pillar",
           "label": "Pillars",
           "icon": "columns-3",
           "path": ".orqa/principles/pillars"
@@ -55,7 +55,7 @@
           "path": ".orqa/principles/vision"
         },
         {
-          "key": "personas",
+          "key": "persona",
           "label": "Personas",
           "icon": "users",
           "path": ".orqa/principles/personas"
@@ -74,7 +74,7 @@
       "icon": "compass",
       "children": [
         {
-          "key": "ideas",
+          "key": "idea",
           "label": "Ideas",
           "icon": "lightbulb",
           "path": ".orqa/discovery/ideas"
@@ -86,13 +86,13 @@
           "path": ".orqa/discovery/research"
         },
         {
-          "key": "wireframes",
+          "key": "wireframe",
           "label": "Wireframes",
           "icon": "layout",
           "path": ".orqa/discovery/wireframes"
         },
         {
-          "key": "decisions",
+          "key": "decision",
           "label": "Decisions",
           "icon": "scale",
           "path": ".orqa/process/decisions"
@@ -105,13 +105,13 @@
       "icon": "brain",
       "children": [
         {
-          "key": "rules",
+          "key": "rule",
           "label": "Rules",
           "icon": "shield",
           "path": ".orqa/process/rules"
         },
         {
-          "key": "lessons",
+          "key": "lesson",
           "label": "Lessons",
           "icon": "book-open",
           "path": ".orqa/process/lessons"
@@ -123,7 +123,7 @@
           "path": ".orqa/process/knowledge"
         },
         {
-          "key": "agents",
+          "key": "agent",
           "label": "Agents",
           "icon": "bot",
           "path": ".orqa/process/agents"
@@ -136,19 +136,19 @@
       "icon": "rocket",
       "children": [
         {
-          "key": "milestones",
+          "key": "milestone",
           "label": "Milestones",
           "icon": "flag",
           "path": ".orqa/delivery/milestones"
         },
         {
-          "key": "epics",
+          "key": "epic",
           "label": "Epics",
           "icon": "layers",
           "path": ".orqa/delivery/epics"
         },
         {
-          "key": "tasks",
+          "key": "task",
           "label": "Tasks",
           "icon": "check-square",
           "path": ".orqa/delivery/tasks"
@@ -161,13 +161,13 @@
       "icon": "book-open",
       "children": [
         {
-          "key": "platform",
+          "key": "doc",
           "label": "Platform",
           "icon": "server",
           "path": ".orqa/documentation/platform"
         },
         {
-          "key": "project",
+          "key": "doc",
           "label": "Project",
           "icon": "folder",
           "path": ".orqa/documentation/project"

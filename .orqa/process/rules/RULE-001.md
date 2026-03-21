@@ -1,5 +1,6 @@
 ---
 id: RULE-532100d9
+type: rule
 title: Agent Delegation
 description: The orchestrator coordinates but does not implement. All implementation is delegated to universal roles with appropriate knowledge loaded.
 status: active
@@ -10,8 +11,6 @@ enforcement:
   - "event: stop"
   - governance-maintenance
 relationships:
-  - target: AD-f9034c99
-    type: enforces
   - target: DOC-01ddd8aa
     type: documented-by
   - target: DOC-c158f4a6

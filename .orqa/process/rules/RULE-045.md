@@ -1,5 +1,6 @@
 ---
 id: RULE-130f1f63
+type: rule
 title: Data Integrity
 description: "All artifact cross-references must resolve, pipeline relationships must have bidirectional inverses, and integrity checks run on every commit."
 status: active
@@ -12,10 +13,6 @@ enforcement:
   - ".orqa/**/*.md"
   - orqa-governance
 relationships:
-  - target: AD-d8ea4d2b
-    type: enforces
-  - target: AD-a76663db
-    type: enforces
   - target: AGENT-ff44f841
     type: observed-by
 ---

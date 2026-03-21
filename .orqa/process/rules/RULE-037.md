@@ -1,13 +1,12 @@
 ---
 id: RULE-f809076f
+type: rule
 title: Tool Access Restrictions
 description: "Each universal role has a defined set of permitted tools. Using tools outside a role's scope violates ownership boundaries."
 status: active
 created: 2026-03-11
 updated: 2026-03-11
 relationships:
-  - target: AD-774cc3d0
-    type: enforces
 ---
 Tool access per role enforces ownership boundaries defined in [RULE-532100d9](RULE-532100d9). A Reviewer that can Edit would be tempted to fix issues instead of reporting them. A Researcher that can Write would be tempted to create artifacts instead of investigating.
 

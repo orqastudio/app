@@ -1,13 +1,12 @@
 ---
 id: RULE-2f7b6a31
+type: rule
 title: Artifact Link Format
 description: "All cross-references between artifacts must use markdown link syntax with artifact IDs. Bare IDs, file paths, and web-style paths are forbidden."
 status: active
 created: 2026-03-11
 updated: 2026-03-13
 relationships:
-  - target: AD-d8ea4d2b
-    type: enforces
   - target: AGENT-ff44f841
     type: observed-by
 ---

@@ -1,5 +1,6 @@
 ---
 id: DOC-b10607c0
+type: doc
 title: Orchestration
 category: architecture
 description: How the orchestrator coordinates work across specialized agents using delegation and verification.
@@ -10,9 +11,6 @@ relationships:
   - target: RULE-deab6ea7
     type: documents
     rationale: Documentation page references RULE-deab6ea7
-  - target: AD-774cc3d0
-    type: documents
-    rationale: Documentation page references AD-774cc3d0
   - target: RULE-92dba0cb
     type: documents
     rationale: Documentation page references RULE-92dba0cb

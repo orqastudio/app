@@ -1,17 +1,12 @@
 ---
 id: RULE-df24948b
+type: rule
 title: Context Window Management
 description: "The orchestrator must protect its context window by delegating, minimizing output, summarizing results, and using session state files."
 status: active
 created: 2026-03-11
 updated: 2026-03-11
 relationships:
-  - target: AD-29b5eb06
-    type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-29b5eb06
-  - target: AD-20d6719d
-    type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-20d6719d
 ---
 The orchestrator's context window is a finite resource. Filling it with implementation details, full file contents, or raw agent output degrades coordination quality. These constraints are mandatory.
 

@@ -1,5 +1,6 @@
 ---
 id: RULE-22783309
+type: rule
 title: IDs Are Not Priority
 description: "Artifact IDs are sequential identifiers for uniqueness and reference. They carry no information about priority, importance, or execution order."
 status: active
@@ -8,8 +9,6 @@ updated: 2026-03-07
 relationships:
   - target: AGENT-ff44f841
     type: observed-by
-  - target: AD-0c56aa90
-    type: enforces
 ---
 Artifact IDs ([EPIC-be023ed2](EPIC-be023ed2), [TASK-7d550875](TASK-7d550875), [AD-774cc3d0](AD-774cc3d0), etc.) are sequential identifiers for uniqueness and reference. They carry NO information about priority, importance, or execution order.
 

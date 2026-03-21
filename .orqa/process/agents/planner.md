@@ -1,5 +1,6 @@
 ---
 id: AGENT-caff7bc1
+type: agent
 title: Planner
 description: "Designs implementation approaches, evaluates architectural tradeoffs, maps dependencies, and produces structured plans. Does not implement — plans inform the Implementer."
 status: active
@@ -22,8 +23,6 @@ relationships:
   - target: KNOW-f0c40eaf
     type: employs
   - target: KNOW-6f33713e
-    type: employs
-  - target: KNOW-025fc31d
     type: employs
   - target: KNOW-f7476f0a
     type: employs

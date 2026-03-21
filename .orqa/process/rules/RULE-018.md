@@ -1,13 +1,12 @@
 ---
 id: RULE-9ba80a19
+type: rule
 title: No Aliases or Hacks
 description: "Fix root causes of type mismatches between layers. Never paper over with aliases, shims, or duplicate mappings."
 status: active
 created: 2026-03-07
 updated: 2026-03-12
 relationships:
-  - target: AD-1d928079
-    type: enforces
 ---
 When a value or type mismatch exists between layers, fix the root cause. Never paper over it with aliases, shims, or duplicate mappings.
 

@@ -1,13 +1,12 @@
 ---
 id: RULE-5ee43922
+type: rule
 title: User-Invocable Knowledge Semantics
 description: The user-invocable field in knowledge frontmatter controls whether a knowledge artifact can be triggered directly by users as a slash command or from the UI.
 status: active
 created: 2026-03-11
 updated: 2026-03-11
 relationships:
-  - target: AD-53e80192
-    type: enforces
 ---
 Every knowledge artifact MUST have a `user-invocable` field in its YAML frontmatter. This field determines how the knowledge artifact surfaces to users.
 

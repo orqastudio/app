@@ -1,15 +1,13 @@
 ---
 id: DOC-f9c6149e
+type: doc
 title: SQLite Schema
 category: reference
 description: "SQLite database schema covering sessions, messages, governance artifacts, and configuration tables."
 created: 2026-03-02
 updated: 2026-03-10
 sort: 4
-relationships:
-  - target: AD-8b91f5a4
-    type: documents
-    rationale: Documentation page references AD-8b91f5a4
+relationships: []
 ---
 
 

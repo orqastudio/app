@@ -1,5 +1,6 @@
 ---
 id: KNOW-e3a559c9
+type: knowledge
 title: OrqaStudio Plugin Setup
 description: "Installs the OrqaStudio companion plugin for Claude Code. Detects existing .claude/ infrastructure, migrates to .orqa/, registers the plugin, and sets up symlinks."
 status: active

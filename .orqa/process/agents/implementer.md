@@ -1,5 +1,6 @@
 ---
 id: AGENT-cc255bc8
+type: agent
 title: Implementer
 description: "Builds things — code, deliverables, artifacts. Whatever \"work\" means in the project domain. Takes plans and turns them into working implementations."
 status: active

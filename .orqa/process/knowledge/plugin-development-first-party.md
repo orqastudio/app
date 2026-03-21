@@ -1,5 +1,6 @@
 ---
 id: KNOW-e1333874
+type: knowledge
 title: First-Party Plugin Development
 description: |
   First-party plugin workflow for the OrqaStudio dev environment. Use when creating
@@ -17,8 +18,6 @@ relationships:
   - target: DOC-99a1b71a
     type: synchronised-with
   - target: DOC-a1b2c3d4
-    type: synchronised-with
-  - target: DOC-4ed362fb
     type: synchronised-with
 ---
 

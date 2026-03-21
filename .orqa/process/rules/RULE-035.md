@@ -1,13 +1,12 @@
 ---
 id: RULE-11c29c9e
+type: rule
 title: Skill Portability
 description: Skills must be portable within their declared layer. Core skills must work on any project unchanged. Project skills must declare their scope.
 status: active
 created: 2026-03-11
 updated: 2026-03-11
 relationships:
-  - target: AD-e513c9e4
-    type: enforces
 ---
 A skill's `layer` field declares its portability scope. Content within the skill MUST be portable within that scope. A core skill that contains project-specific paths is broken — it will give wrong guidance on other projects.
 

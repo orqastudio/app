@@ -1,5 +1,6 @@
 ---
 id: KNOW-6f33713e
+type: knowledge
 title: Planning
 description: |
   Enforces documentation-first planning for all implementation tasks.

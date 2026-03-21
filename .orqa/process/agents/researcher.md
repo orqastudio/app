@@ -1,5 +1,6 @@
 ---
 id: AGENT-fb0ce261
+type: agent
 title: Researcher
 description: "Investigates questions, gathers information, evaluates options, and produces structured findings. Does not make changes — research informs decisions."
 status: active

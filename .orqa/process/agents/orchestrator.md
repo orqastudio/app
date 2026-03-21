@@ -1,5 +1,6 @@
 ---
 id: AGENT-1dab5ebe
+type: agent
 title: Orchestrator
 description: "Process coordinator. Breaks work into tasks, delegates to universal agent roles, enforces governance gates, manages the artifact lifecycle, and reports status honestly. Does NOT write implementation code."
 status: active

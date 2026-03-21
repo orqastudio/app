@@ -1,5 +1,6 @@
 ---
 id: KNOW-54823e2d
+type: knowledge
 title: Systems Thinking
 description: "Practical methodology for applying systems thinking to codebases — identifying systems, mapping boundaries, tracing relationships, finding patterns, and discovering the uniform base."
 status: active

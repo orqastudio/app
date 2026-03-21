@@ -1,5 +1,6 @@
 ---
 id: AGENT-b0774726
+type: agent
 title: Reviewer
 description: "Checks quality, compliance, and correctness. Produces PASS/FAIL verdicts with evidence. Does not implement fixes — sends findings back to the Implementer."
 status: active

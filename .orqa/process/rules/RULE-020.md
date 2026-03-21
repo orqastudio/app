@@ -1,5 +1,6 @@
 ---
 id: RULE-e9c54567
+type: rule
 title: No Stubs or Placeholders
 description: "No hardcoded fake data, TODO functions, or scaffolded implementations in production code."
 status: active
@@ -9,10 +10,6 @@ enforcement:
   - "event: file"
   - "src/**/*"
 relationships:
-  - target: DOC-4b4fbc0f
-    type: documented-by
-  - target: AD-1d928079
-    type: enforces
 ---
 ## What Counts as a Stub
 

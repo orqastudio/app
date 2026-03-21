@@ -1,5 +1,6 @@
 ---
 id: RULE-39169bcd
+type: rule
 title: Pillar Alignment in Documentation
 description: Every documentation page describing a feature must include a Pillar Alignment section.
 status: active
@@ -8,8 +9,6 @@ updated: 2026-03-07
 relationships:
   - target: AGENT-ff44f841
     type: observed-by
-  - target: AD-47c41f0c
-    type: enforces
 ---
 Every documentation page that describes a feature, component, workflow, integration, or capability MUST include a "Pillar Alignment" section. This ensures all documented work traces back to the product vision and prevents scope creep from accumulating silently in the docs.
 

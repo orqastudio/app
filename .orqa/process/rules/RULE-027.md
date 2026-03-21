@@ -1,13 +1,12 @@
 ---
 id: RULE-8035e176
+type: rule
 title: Structure Before Work
 description: No implementation work may begin without the full artifact structure in place first.
 status: active
 created: 2026-03-07
 updated: 2026-03-07
 relationships:
-  - target: AD-6dfbba70
-    type: enforces
 ---
 ## The Rule (NON-NEGOTIABLE)
 

@@ -1,5 +1,6 @@
 ---
 id: RULE-9daf29c0
+type: rule
 title: Documentation-First Implementation
 description: Documentation is the source of truth. Verify docs exist before writing code; update docs before changing code.
 status: active
@@ -8,8 +9,6 @@ updated: 2026-03-12
 relationships:
   - target: AGENT-ff44f841
     type: observed-by
-  - target: AD-1d928079
-    type: enforces
 ---
 ## Principle
 

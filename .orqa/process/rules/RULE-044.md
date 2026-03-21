@@ -1,5 +1,6 @@
 ---
 id: RULE-98682b5e
+type: rule
 title: Core Graph Firmware Protection
 description: "Core graph artifacts (schemas, orchestrator, core knowledge, role definitions) are firmware — non-editable by agents or users except through the update system or in dogfood mode."
 status: active
@@ -17,13 +18,6 @@ enforcement:
   - .orqa/process/knowledge/planning/KNOW.md
   - .orqa/process/knowledge/orqa-code-search/KNOW.md
 relationships:
-  - target: AD-ea4a5979
-    type: enforces
-    rationale: "Auto-generated inverse of enforces relationship from AD-ea4a5979"
-  - target: AD-2783985c
-    type: enforces
-  - target: AD-e8ab8572
-    type: enforces
   - target: DOC-e0042602
     type: documented-by
 ---

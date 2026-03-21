@@ -1,5 +1,6 @@
 ---
 id: DOC-c158f4a6
+type: doc
 title: Delegation Reference
 category: reference
 description: "Orchestrator's source of truth for delegation — maps work types to roles, skills, and grounding. If the orchestrator is writing anything other than coordination output, the system has failed."

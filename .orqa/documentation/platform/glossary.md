@@ -1,15 +1,13 @@
 ---
 id: DOC-1b0a39a1
+type: doc
 title: "Glossary & Domain Model"
 category: reference
 description: Domain model and glossary of key terms used throughout OrqaStudio documentation and code.
 created: 2026-03-02
 updated: 2026-03-18
 sort: 10
-relationships:
-  - target: AD-40b3de0a
-    type: documents
-    rationale: Documentation page references AD-40b3de0a
+relationships: []
 ---
 
 **Date:** 2026-03-02

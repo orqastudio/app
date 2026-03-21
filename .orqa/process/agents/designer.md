@@ -1,5 +1,6 @@
 ---
 id: AGENT-c5284fde
+type: agent
 title: Designer
 description: "Designs experiences, interfaces, and structures. Produces visual designs, interaction patterns, information architecture, and layout specifications. In software, builds UI. In other domains, designs how humans interact with the system."
 status: active

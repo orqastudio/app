@@ -1,5 +1,6 @@
 ---
 id: RULE-633e636d
+type: rule
 title: Git Workflow
 description: "Worktree-based workflow with mandatory cleanup, stash policy, and data loss prevention rules."
 status: active
@@ -12,12 +13,8 @@ enforcement:
   - "event: bash"
   - "event: bash"
 relationships:
-  - target: DOC-7c66f103
-    type: documented-by
   - target: DOC-4db3a417
     type: documented-by
-  - target: AD-6ce44025
-    type: enforces
 ---
 **Source of Truth:** `.orqa/documentation/guide/workflow.md`
 

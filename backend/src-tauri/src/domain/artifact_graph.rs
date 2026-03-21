@@ -304,7 +304,8 @@ fn build_node(
         .get("priority")
         .and_then(|v| v.as_str())
         .map(str::to_owned);
-    let artifact_type = infer_artifact_type(&rel_path, type_registry);
+    let frontmatter_type = yaml_value.get("type").and_then(|v| v.as_str());
+    let artifact_type = infer_artifact_type(&rel_path, type_registry, frontmatter_type, &id);
     let frontmatter = yaml_to_json(yaml_value);
     let mut references_out = collect_forward_refs(yaml_value, &id);
     references_out.extend(collect_body_refs(body, &id));
@@ -913,20 +914,61 @@ fn apply_missing_inverse_fix(
 
 /// Infer a human-readable artifact type category from a relative file path.
 ///
-/// First checks the config-driven type registry (built from project.json).
-/// Falls back to the hardcoded path-segment heuristic for backwards compatibility.
-fn infer_artifact_type(rel_path: &str, type_registry: &TypeRegistry) -> String {
+/// Resolution priority (highest to lowest):
+/// 1. Explicit `type:` field in frontmatter (`frontmatter_type` parameter).
+/// 2. Longest-prefix match against the config-driven type registry (from project.json).
+/// 3. ID-prefix match against the platform artifact types (from core.json).
+/// 4. Hardcoded path-segment heuristic for well-known directory names.
+/// 5. `"doc"` as the final fallback.
+fn infer_artifact_type(
+    rel_path: &str,
+    type_registry: &TypeRegistry,
+    frontmatter_type: Option<&str>,
+    artifact_id: &str,
+) -> String {
+    if let Some(t) = frontmatter_type.map(str::trim).filter(|t| !t.is_empty()) {
+        return t.to_owned();
+    }
     let normalized = rel_path.replace('\\', "/");
+    if let Some(t) = type_from_registry(&normalized, type_registry) {
+        return t;
+    }
+    if let Some(t) = type_from_id_prefix(artifact_id) {
+        return t;
+    }
+    type_from_path_heuristic(&normalized)
+}
 
-    // Check the config-driven registry first: if the rel_path starts with a
-    // registered path prefix, use its type key.
+/// Return the type key for the longest-matching path prefix in the registry.
+fn type_from_registry(normalized: &str, type_registry: &TypeRegistry) -> Option<String> {
+    let mut best: Option<(&String, &String)> = None;
     for (path_prefix, type_key) in type_registry {
-        if normalized.starts_with(path_prefix) {
-            return type_key.clone();
+        let prefix_slash = if path_prefix.ends_with('/') {
+            path_prefix.clone()
+        } else {
+            format!("{path_prefix}/")
+        };
+        if (normalized.starts_with(&prefix_slash) || normalized == *path_prefix)
+            && (best.is_none() || path_prefix.len() > best.unwrap().0.len())
+        {
+            best = Some((path_prefix, type_key));
         }
     }
+    best.map(|(_, k)| k.clone())
+}
 
-    // Hardcoded fallback for backwards compatibility.
+/// Return the artifact type key matching the ID prefix against core.json types.
+fn type_from_id_prefix(artifact_id: &str) -> Option<String> {
+    let prefix = artifact_id.split('-').next().filter(|p| !p.is_empty())?;
+    crate::domain::platform_config::PLATFORM
+        .artifact_types
+        .iter()
+        .find(|t| t.id_prefix == prefix)
+        .map(|t| t.key.clone())
+}
+
+/// Hardcoded path-segment heuristic for well-known directory names.
+fn type_from_path_heuristic(normalized: &str) -> String {
     if normalized.contains("/epics/") {
         "epic"
     } else if normalized.contains("/tasks/") {
@@ -1507,29 +1549,58 @@ mod tests {
     #[test]
     fn infer_artifact_type_variants() {
         let empty_registry: TypeRegistry = Vec::new();
+        // These fall through to the hardcoded path-segment heuristic.
         assert_eq!(
-            infer_artifact_type(".orqa/delivery/epics/EPIC-001.md", &empty_registry),
+            infer_artifact_type(".orqa/delivery/epics/EPIC-001.md", &empty_registry, None, "EPIC-001"),
             "epic"
         );
         assert_eq!(
-            infer_artifact_type(".orqa/delivery/tasks/TASK-001.md", &empty_registry),
+            infer_artifact_type(".orqa/delivery/tasks/TASK-001.md", &empty_registry, None, "TASK-001"),
             "task"
         );
         assert_eq!(
-            infer_artifact_type(".orqa/delivery/milestones/MS-001.md", &empty_registry),
+            infer_artifact_type(".orqa/delivery/milestones/MS-001.md", &empty_registry, None, "MS-001"),
             "milestone"
         );
         assert_eq!(
-            infer_artifact_type(".orqa/process/decisions/AD-001.md", &empty_registry),
+            infer_artifact_type(".orqa/process/decisions/AD-001.md", &empty_registry, None, "AD-001"),
             "decision"
         );
         assert_eq!(
-            infer_artifact_type(".orqa/process/lessons/IMPL-001.md", &empty_registry),
+            infer_artifact_type(".orqa/process/lessons/IMPL-001.md", &empty_registry, None, "IMPL-001"),
             "lesson"
         );
         assert_eq!(
-            infer_artifact_type(".orqa/documentation/product/vision.md", &empty_registry),
+            infer_artifact_type(".orqa/documentation/product/vision.md", &empty_registry, None, "DOC-001"),
             "doc"
+        );
+    }
+
+    #[test]
+    fn infer_artifact_type_frontmatter_type_wins() {
+        let empty_registry: TypeRegistry = Vec::new();
+        // Frontmatter type: field overrides path-based inference.
+        assert_eq!(
+            infer_artifact_type(".orqa/delivery/epics/EPIC-001.md", &empty_registry, Some("rule"), "EPIC-001"),
+            "rule"
+        );
+    }
+
+    #[test]
+    fn infer_artifact_type_id_prefix_fallback() {
+        let empty_registry: TypeRegistry = Vec::new();
+        // When neither frontmatter type nor path matches, ID prefix is used.
+        assert_eq!(
+            infer_artifact_type(".orqa/unknown/RULE-006.md", &empty_registry, None, "RULE-006"),
+            "rule"
+        );
+        assert_eq!(
+            infer_artifact_type(".orqa/unknown/KNOW-011.md", &empty_registry, None, "KNOW-011"),
+            "knowledge"
+        );
+        assert_eq!(
+            infer_artifact_type(".orqa/unknown/AGENT-001.md", &empty_registry, None, "AGENT-001"),
+            "agent"
         );
     }
 
@@ -1538,12 +1609,12 @@ mod tests {
         let registry: TypeRegistry =
             vec![(".orqa/custom/widgets".to_string(), "widget".to_string())];
         assert_eq!(
-            infer_artifact_type(".orqa/custom/widgets/W-001.md", &registry),
+            infer_artifact_type(".orqa/custom/widgets/W-001.md", &registry, None, "W-001"),
             "widget"
         );
         // Falls back to hardcoded when registry doesn't match
         assert_eq!(
-            infer_artifact_type(".orqa/delivery/epics/EPIC-001.md", &registry),
+            infer_artifact_type(".orqa/delivery/epics/EPIC-001.md", &registry, None, "EPIC-001"),
             "epic"
         );
     }

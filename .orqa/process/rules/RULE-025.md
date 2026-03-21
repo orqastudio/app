@@ -1,13 +1,12 @@
 ---
 id: RULE-1f30904a
+type: rule
 title: Root Directory Cleanliness
 description: The project root must stay lean. Every file in root must have a justification.
 status: active
 created: 2026-03-07
 updated: 2026-03-12
 relationships:
-  - target: AD-71d44f5c
-    type: enforces
 ---
 The project root must stay lean. Every file in root must have a justification.
 

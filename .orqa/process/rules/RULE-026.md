@@ -1,16 +1,12 @@
 ---
 id: RULE-deab6ea7
+type: rule
 title: Skill Enforcement
 description: "Three-tier skill loading: agent portable skills, orchestrator-injected project skills, and context-resolving wrappers."
 status: active
 created: 2026-03-07
 updated: 2026-03-13
 relationships:
-  - target: AD-6f0dea5e
-    type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-6f0dea5e
-  - target: AD-53e80192
-    type: enforces
   - target: DOC-4db3a417
     type: documented-by
   - target: DOC-b10607c0

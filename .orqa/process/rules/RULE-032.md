@@ -1,17 +1,12 @@
 ---
 id: RULE-a764b2ae
+type: rule
 title: Artifact Schema Compliance
 description: "Every artifact's YAML frontmatter must validate against the JSON Schema defined in its artifact directory's schema.json file."
 status: active
 created: 2026-03-10
 updated: 2026-03-13
 relationships:
-  - target: AD-89391ab6
-    type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-89391ab6
-  - target: AD-c3700062
-    type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-c3700062
   - target: DOC-01ddd8aa
     type: documented-by
   - target: AGENT-ff44f841

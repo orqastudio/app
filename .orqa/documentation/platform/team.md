@@ -1,15 +1,13 @@
 ---
 id: DOC-abd30340
+type: doc
 title: The Agentic Development Team
 category: reference
 description: Roster of specialized agents in the agentic development team with their roles and responsibilities.
 created: 2026-03-02
 updated: 2026-03-10
 sort: 8
-relationships:
-  - target: AD-774cc3d0
-    type: documents
-    rationale: Documentation page references AD-774cc3d0
+relationships: []
 ---
 
 **Date:** 2026-03-02

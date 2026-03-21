@@ -1,5 +1,6 @@
 ---
 id: AGENT-ff44f841
+type: agent
 title: Governance Steward
 description: |
   Specialist for all .orqa/ artifact creation and maintenance. Owns graph integrity,
@@ -25,8 +26,6 @@ relationships:
   - target: KNOW-f0c40eaf
     type: employs
   - target: KNOW-eea50a65
-    type: employs
-  - target: KNOW-13ec986c
     type: employs
   - target: KNOW-4368d782
     type: employs

@@ -1,5 +1,6 @@
 ---
 id: AGENT-ec1b3785
+type: agent
 title: Writer
 description: "Creates documentation, communications, and records. Produces structured written artifacts that capture decisions, specifications, and knowledge."
 status: active
@@ -24,8 +25,6 @@ relationships:
   - target: KNOW-f0c40eaf
     type: employs
   - target: KNOW-6f33713e
-    type: employs
-  - target: KNOW-13ec986c
     type: employs
 ---
 

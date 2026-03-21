@@ -1,5 +1,6 @@
 ---
 id: AGENT-bedeffd1
+type: agent
 title: Installer
 description: "Task agent for plugin installation. Consumes plugin installation skills to set up dependencies, generate configs, and configure sub-projects. Not conversational — executes and returns."
 status: active
