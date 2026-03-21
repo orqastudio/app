@@ -222,6 +222,9 @@
         }
       }
     ],
+    "agents": [
+      { "key": "enforcer", "path": "agents/enforcer.md" }
+    ],
     "views": [],
     "widgets": [],
     "relationships": [
@@ -443,7 +446,9 @@
         "semantic": "knowledge-flow"
       }
     ],
-    "knowledge": [],
+    "knowledge": [
+      { "key": "enforcement-patterns", "id": "KNOW-GOV-e4b91f37", "label": "Enforcement Patterns" }
+    ],
     "cliTools": [],
     "hooks": []
   },
