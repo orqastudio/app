@@ -2,6 +2,7 @@
 id: "AGENT-SVE-b0857607"
 title: "Svelte Standards Agent"
 description: "Scoped task agent for Svelte/TypeScript coding standards. Operates in assess or configure mode — not conversational."
+preamble: "Execute Svelte/TypeScript standards checks in assess or configure mode. Return structured JSON output. Do not converse — execute and return."
 status: "active"
 plugin: "@orqastudio/plugin-svelte"
 model: "sonnet"
