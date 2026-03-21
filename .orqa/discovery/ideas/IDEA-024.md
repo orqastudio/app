@@ -1,12 +1,11 @@
 ---
-
-id: IDEA-f3a08e7a
+id: "IDEA-f3a08e7a"
 title: "Git Integration & Worktree-Aware Workspace"
 description: "Git awareness for OrqaStudio including branch status, worktree visibility, and version control operations surfaced through the app UI."
-status: review
-created: 2026-03-07
-updated: 2026-03-13
-horizon: active
+status: "review"
+created: "2026-03-07"
+updated: "2026-03-13"
+horizon: "active"
 research-needed:
   - "What git operations does the user need visibility into from the app?"
   - "How should branch status, diffs, and commit history surface in the UI?"
@@ -15,13 +14,10 @@ research-needed:
   - "How do branches/worktrees relate to the artifact lifecycle (tasks, epics)?"
   - "What git state is relevant for dogfooding (uncommitted changes, stale worktrees, merge conflicts)?"
 relationships:
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: MS-654badde
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Problem
 

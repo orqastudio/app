@@ -1,24 +1,24 @@
 ---
-id: IDEA-c4f10c20
-title: OrqaStudio package ecosystem for plugin portability
-description: Extract shared code into scoped npm packages hosted on GitHub Packages so that plugins can import types, validation, SDK, and UI components without depending on the full app.
-status: completed
-created: 2026-03-14
-updated: 2026-03-14
-horizon: active
+id: "IDEA-c4f10c20"
+title: "OrqaStudio package ecosystem for plugin portability"
+description: "Extract shared code into scoped npm packages hosted on GitHub Packages so that plugins can import types, validation, SDK, and UI components without depending on the full app."
+status: "completed"
+created: "2026-03-14"
+updated: "2026-03-14"
+horizon: "active"
 research-needed:
-- SDK extraction scope — what from ui/src/lib/sdk/ is portable vs app-specific?
-- Component library extraction — which shadcn wrappers and shared components should be in the package?
-- Monorepo vs multi-repo — should packages live in separate repos or a monorepo with workspaces?
-- Versioning strategy — how do package versions relate to app versions?
+  - "SDK extraction scope — what from ui/src/lib/sdk/ is portable vs app-specific?"
+  - "Component library extraction — which shadcn wrappers and shared components should be in the package?"
+  - "Monorepo vs multi-repo — should packages live in separate repos or a monorepo with workspaces?"
+  - "Versioning strategy — how do package versions relate to app versions?"
 relationships:
-- target: EPIC-a210c825
-  type: realises
-  rationale: Auto-generated inverse of informs relationship from EPIC-a210c825
-- target: PILLAR-569581e0
-  type: grounded
-- target: PERSONA-015e8c2c
-  type: benefits
+  - target: "EPIC-a210c825"
+    type: "realises"
+    rationale: "Auto-generated inverse of informs relationship from EPIC-a210c825"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-015e8c2c"
+    type: "benefits"
 ---
 ## Motivation
 

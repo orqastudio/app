@@ -1,32 +1,28 @@
 ---
-
-id: TASK-d5d3e417
-title: Add make verify targets
-description: Add make targets for full .orqa/ link verification and pipeline integrity checking.
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+id: "TASK-d5d3e417"
+title: "Add make verify targets"
+description: "Add make targets for full .orqa/ link verification and pipeline integrity checking."
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
 assignee: null
 docs: []
 acceptance:
-  - make verify-links runs full .orqa/ link verification
-  - make verify-integrity runs pipeline integrity check
-  - make verify runs both
-  - All three targets documented in commands.md
+  - "make verify-links runs full .orqa/ link verification"
+  - "make verify-integrity runs pipeline integrity check"
+  - "make verify runs both"
+  - "All three targets documented in commands.md"
 rule-overrides: []
 relationships:
-  - target: EPIC-942c7678
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-8954343c
-    type: depended-on-by
-  - target: TASK-c4a7b6bb
-    type: depended-on-by
-  - target: TASK-cea1bc37
-    type: depended-on-by
-  - target: RULE-c71f1c3f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-942c7678"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-8954343c"
+    type: "depended-on-by"
+  - target: "TASK-c4a7b6bb"
+    type: "depended-on-by"
+  - target: "TASK-cea1bc37"
+    type: "depended-on-by"
 ---
 ## What
 

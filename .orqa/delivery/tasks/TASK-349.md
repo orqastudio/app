@@ -1,83 +1,79 @@
 ---
-
-id: TASK-cea1bc37
-title: Reconcile EPIC-942c7678
+id: "TASK-cea1bc37"
+title: "Reconcile EPIC-942c7678"
 description: "Standing reconciliation task — verify epic body accuracy: task table, pillars, docs-produced, scope."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
 acceptance:
-  - Epic task table lists ALL tasks created during the epic
-  - Epic pillars array reflects all pillars served
-  - Epic docs-produced list matches actual documentation created/updated
-  - Epic scope section accurately reflects what was in/out of scope
+  - "Epic task table lists ALL tasks created during the epic"
+  - "Epic pillars array reflects all pillars served"
+  - "Epic docs-produced list matches actual documentation created/updated"
+  - "Epic scope section accurately reflects what was in/out of scope"
 relationships:
-  - target: EPIC-942c7678
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-e7324438
-    type: depends-on
-  - target: TASK-d5d3e417
-    type: depends-on
-  - target: TASK-8954343c
-    type: depends-on
-  - target: TASK-c4a7b6bb
-    type: depends-on
-  - target: TASK-5da55ccb
-    type: depends-on
-  - target: TASK-8b9c68ae
-    type: depends-on
-  - target: TASK-4b293b82
-    type: depends-on
-  - target: TASK-1dad83f7
-    type: depends-on
-  - target: TASK-0cddbf9b
-    type: depends-on
-  - target: TASK-c42dac0c
-    type: depends-on
-  - target: TASK-191958e7
-    type: depends-on
-  - target: TASK-b3aadbcd
-    type: depends-on
-  - target: TASK-a86c3565
-    type: depends-on
-  - target: TASK-b6b5c31c
-    type: depends-on
-  - target: TASK-9f1f8b4b
-    type: depends-on
-  - target: TASK-f6e9b767
-    type: depends-on
-  - target: TASK-6e4fd8b9
-    type: depends-on
-  - target: TASK-a0d3f53c
-    type: depends-on
-  - target: TASK-c70b9d8a
-    type: depends-on
-  - target: TASK-7f5b6792
-    type: depends-on
-  - target: TASK-7b8ded48
-    type: depends-on
-  - target: TASK-2e138cb1
-    type: depends-on
-  - target: TASK-7fbe6eca
-    type: depends-on
-  - target: TASK-0e7221a8
-    type: depends-on
-  - target: TASK-65f6b166
-    type: depends-on
-  - target: TASK-0bcbb927
-    type: depends-on
-  - target: TASK-53493d31
-    type: depends-on
-  - target: TASK-bd4fb2bc
-    type: depends-on
-  - target: TASK-cdfd039f
-    type: depends-on
-  - target: TASK-6dab59a2
-    type: depends-on
-  - target: app::RULE-7b770593
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-942c7678"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-e7324438"
+    type: "depends-on"
+  - target: "TASK-d5d3e417"
+    type: "depends-on"
+  - target: "TASK-8954343c"
+    type: "depends-on"
+  - target: "TASK-c4a7b6bb"
+    type: "depends-on"
+  - target: "TASK-5da55ccb"
+    type: "depends-on"
+  - target: "TASK-8b9c68ae"
+    type: "depends-on"
+  - target: "TASK-4b293b82"
+    type: "depends-on"
+  - target: "TASK-1dad83f7"
+    type: "depends-on"
+  - target: "TASK-0cddbf9b"
+    type: "depends-on"
+  - target: "TASK-c42dac0c"
+    type: "depends-on"
+  - target: "TASK-191958e7"
+    type: "depends-on"
+  - target: "TASK-b3aadbcd"
+    type: "depends-on"
+  - target: "TASK-a86c3565"
+    type: "depends-on"
+  - target: "TASK-b6b5c31c"
+    type: "depends-on"
+  - target: "TASK-9f1f8b4b"
+    type: "depends-on"
+  - target: "TASK-f6e9b767"
+    type: "depends-on"
+  - target: "TASK-6e4fd8b9"
+    type: "depends-on"
+  - target: "TASK-a0d3f53c"
+    type: "depends-on"
+  - target: "TASK-c70b9d8a"
+    type: "depends-on"
+  - target: "TASK-7f5b6792"
+    type: "depends-on"
+  - target: "TASK-7b8ded48"
+    type: "depends-on"
+  - target: "TASK-2e138cb1"
+    type: "depends-on"
+  - target: "TASK-7fbe6eca"
+    type: "depends-on"
+  - target: "TASK-0e7221a8"
+    type: "depends-on"
+  - target: "TASK-65f6b166"
+    type: "depends-on"
+  - target: "TASK-0bcbb927"
+    type: "depends-on"
+  - target: "TASK-53493d31"
+    type: "depends-on"
+  - target: "TASK-bd4fb2bc"
+    type: "depends-on"
+  - target: "TASK-cdfd039f"
+    type: "depends-on"
+  - target: "TASK-6dab59a2"
+    type: "depends-on"
 ---
 ## What
 

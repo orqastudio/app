@@ -1,23 +1,13 @@
 ---
-
-
-
-
-id: DOC-91c7dc26
-type: wireframe
-status: captured
+id: "DOC-91c7dc26"
+type: "wireframe"
+status: "captured"
 title: "Wireframe: Core Layout"
 description: "Wireframe specification for the core application layout with sidebar, panels, and toolbar."
-created: 2026-03-02
-updated: 2026-03-15
+created: "2026-03-02"
+updated: "2026-03-15"
 sort: 1
-relationships:
-  - target: RES-df5560cb
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
-  - target: AD-4f5277f0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+relationships: []
 ---
 <!-- FRESHNESS NOTE (2026-03-15): The "Zone Relationship to PaneForge" section is stale — the implementation uses shadcn-svelte Resizable (PaneGroup/Pane/Handle) not PaneForge. The three-zone structure, Activity Bar, Nav Sub-Panel, and Status Bar descriptions remain accurate. The Project Dashboard section in the wireframe (shown as a wireframe view) reflects an earlier vision — the actual dashboard is now the narrative flow layout (see EPIC-11561c51 and the dashboard wireframe). -->
 

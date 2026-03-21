@@ -1,24 +1,20 @@
 ---
-
-id: TASK-de80141b
-title: SQLite persistence design
+id: "TASK-de80141b"
+title: "SQLite persistence design"
 description: "Evaluated SQLite via rusqlite for structured local storage of conversation data, sessions, and messages."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: "2026-03-02"
+updated: "2026-03-02"
 acceptance:
-  - SQLite selected for conversation persistence with documented rationale
-  - Scope boundary established
-  - rusqlite selected as the access library
+  - "SQLite selected for conversation persistence with documented rationale"
+  - "Scope boundary established"
+  - "rusqlite selected as the access library"
 relationships:
-  - target: EPIC-a8a7e205
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-03551f92
-    type: depended-on-by
-  - target: AD-2aa4d6db
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-a8a7e205"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-03551f92"
+    type: "depended-on-by"
 ---
 ## What
 

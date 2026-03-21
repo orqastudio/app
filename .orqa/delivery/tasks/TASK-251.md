@@ -1,27 +1,23 @@
 ---
-
-id: TASK-d2842e47
+id: "TASK-d2842e47"
 title: "Research: cross-cutting concerns of directory restructure"
 description: "Audit every config, import, and path reference affected by the proposed repository reorganisation into backend/, ui/src/, sidecars/, and debugger/ directories."
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+status: "completed"
+created: "2026-03-12"
+updated: "2026-03-12"
 acceptance:
   - "Complete inventory of files containing paths to src-tauri/, ui/, sidecar/, scripts/"
-  - Per-file list of exact changes needed
-  - Watcher configuration analysis (current vs proposed)
-  - Proposed migration order with verification steps between each move
-  - Risk assessment with rollback strategy
-  - Findings written to RES-c7b4b22f
+  - "Per-file list of exact changes needed"
+  - "Watcher configuration analysis (current vs proposed)"
+  - "Proposed migration order with verification steps between each move"
+  - "Risk assessment with rollback strategy"
+  - "Findings written to RES-c7b4b22f"
 relationships:
-  - target: EPIC-7b039d05
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-03741ecb
-    type: depended-on-by
-  - target: RES-c7b4b22f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-7b039d05"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-03741ecb"
+    type: "depended-on-by"
 ---
 ## What
 

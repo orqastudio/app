@@ -1,35 +1,31 @@
 ---
-
-id: TASK-77b6e5bd
-title: Create artifact audit skill
+id: "TASK-77b6e5bd"
+title: "Create artifact audit skill"
 description: "Create a reusable skill that captures the methodology, checklists, and patterns for auditing .orqa/ artifacts — enabling future audits to be systematic and repeatable without rediscovering the process each time."
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-11"
 acceptance:
-  - SKILL.md exists in .orqa/process/skills/orqa-artifact-audit/
-  - Skill covers all artifact types in .orqa/
-  - Skill includes verification checklists that an agent can follow
+  - "SKILL.md exists in .orqa/process/skills/orqa-artifact-audit/"
+  - "Skill covers all artifact types in .orqa/"
+  - "Skill includes verification checklists that an agent can follow"
   - "Skill is referenced in relevant agent definitions (reviewer, orchestrator)"
 relationships:
-  - target: EPIC-4a7aeacb
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-b6e9df91
-    type: depends-on
-  - target: TASK-69b7753b
-    type: depends-on
-  - target: TASK-f32f3eba
-    type: depends-on
-  - target: TASK-b743b819
-    type: depends-on
-  - target: TASK-1ac4d16f
-    type: depends-on
-  - target: TASK-ec136ce9
-    type: depended-on-by
-  - target: EPIC-0a8a5e72
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4a7aeacb"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-b6e9df91"
+    type: "depends-on"
+  - target: "TASK-69b7753b"
+    type: "depends-on"
+  - target: "TASK-f32f3eba"
+    type: "depends-on"
+  - target: "TASK-b743b819"
+    type: "depends-on"
+  - target: "TASK-1ac4d16f"
+    type: "depends-on"
+  - target: "TASK-ec136ce9"
+    type: "depended-on-by"
 ---
 ## What
 

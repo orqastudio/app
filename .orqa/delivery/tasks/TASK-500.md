@@ -1,31 +1,27 @@
 ---
-
-id: TASK-afe17917
-title: Add dependency chain tracing to artifact viewer
-description: Extend the artifact viewer with a Trace section that shows upward (task→epic→milestone→pillar) and downward (what this artifact affects) dependency chains. Uses BFS over relationship edges from the artifactGraphSDK. Each artifact in the chain is a clickable ArtifactLink.
-status: blocked
-priority: P1
+id: "TASK-afe17917"
+title: "Add dependency chain tracing to artifact viewer"
+description: "Extend the artifact viewer with a Trace section that shows upward (task→epic→milestone→pillar) and downward (what this artifact affects) dependency chains. Uses BFS over relationship edges from the artifactGraphSDK. Each artifact in the chain is a clickable ArtifactLink."
+status: "blocked"
+priority: "P1"
 scoring:
   impact: 4
   urgency: 3
   complexity: 3
   dependencies: 3
-created: 2026-03-15
-updated: 2026-03-15
-horizon: active
+created: "2026-03-15"
+updated: "2026-03-15"
+horizon: "active"
 acceptance:
   - "Artifact viewer shows a 'Trace' section with upward chain (task→epic→milestone→pillar)"
-  - Uses BFS from current artifact following relationship edges
-  - Clickable chain — each artifact in the path is an ArtifactLink
+  - "Uses BFS from current artifact following relationship edges"
+  - "Clickable chain — each artifact in the path is an ArtifactLink"
   - "Shows both upward (why does this exist?) and downward (what does this affect?) chains"
 relationships:
-  - target: EPIC-dbbbb5ac
-    type: delivers
-  - target: TASK-f8f9b6e7
-    type: depends-on
-  - target: RULE-65973a88
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-dbbbb5ac"
+    type: "delivers"
+  - target: "TASK-f8f9b6e7"
+    type: "depends-on"
 ---
 ## What
 

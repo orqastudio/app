@@ -1,22 +1,18 @@
 ---
-
-id: TASK-9952c534
+id: "TASK-9952c534"
 title: "Update RULE-7b770593: related idea surfacing during promotion"
-description: Add mandatory step to RULE-7b770593 promotion procedure requiring scanning for thematically related ideas before creating an epic
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+description: "Add mandatory step to RULE-7b770593 promotion procedure requiring scanning for thematically related ideas before creating an epic"
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
 acceptance:
-  - RULE-7b770593 promotion procedure includes a mandatory step to scan all ideas for thematic overlap before epic creation
+  - "RULE-7b770593 promotion procedure includes a mandatory step to scan all ideas for thematic overlap before epic creation"
 relationships:
-  - target: EPIC-4e6e9eae
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-7cf80542
-    type: depended-on-by
-  - target: app::RULE-7b770593
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4e6e9eae"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-7cf80542"
+    type: "depended-on-by"
 ---
 ## What
 

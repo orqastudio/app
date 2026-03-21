@@ -1,14 +1,11 @@
 ---
-
-
-
-id: EPIC-942c7678
-title: Philosophy Alignment & Data Integrity
-description: Content migration and directory reorganization to express the Knowledge Maturity Pipeline philosophy. Moves artifacts to process/delivery/documentation structure, audits all content, integrates integrity checks, and ensures app layout picks up the new structure.
-status: completed
-priority: P1
-created: 2026-03-13
-updated: 2026-03-13
+id: "EPIC-942c7678"
+title: "Philosophy Alignment & Data Integrity"
+description: "Content migration and directory reorganization to express the Knowledge Maturity Pipeline philosophy. Moves artifacts to process/delivery/documentation structure, audits all content, integrates integrity checks, and ensures app layout picks up the new structure."
+status: "completed"
+priority: "P1"
+created: "2026-03-13"
+updated: "2026-03-13"
 deadline: null
 horizon: null
 scoring:
@@ -17,129 +14,119 @@ scoring:
   complexity: 4
   dependencies: 3
 rule-overrides:
-- 'rule: RULE-6c0496e0'
-- 'rule: RULE-a764b2ae'
+  - "rule: RULE-6c0496e0"
+  - "rule: RULE-a764b2ae"
 relationships:
-  - target: EPIC-ca7b398b
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-130f1f63
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RES-c4dd4c4d
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-07667737
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-07667737
-- target: RES-132fbb38
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-132fbb38
-- target: RES-cd3d33bf
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-cd3d33bf
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-e7324438
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-d5d3e417
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-8954343c
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-c4a7b6bb
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-5da55ccb
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-8b9c68ae
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-4b293b82
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-1dad83f7
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-0cddbf9b
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-c42dac0c
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-191958e7
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-b3aadbcd
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-a86c3565
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-b6b5c31c
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-9f1f8b4b
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-f6e9b767
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-6e4fd8b9
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-a0d3f53c
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-c70b9d8a
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-7f5b6792
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-7b8ded48
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-2e138cb1
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-7fbe6eca
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-0e7221a8
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-65f6b166
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-0bcbb927
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-53493d31
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-bd4fb2bc
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-cdfd039f
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-6dab59a2
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-cea1bc37
-  type: delivered-by
-  rationale: Epic contains this task
-- target: AD-71d44f5c
-  type: driven-by
-- target: AD-8b3962f6
-  type: driven-by
+  - target: "RES-07667737"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-07667737"
+  - target: "RES-132fbb38"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-132fbb38"
+  - target: "RES-cd3d33bf"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-cd3d33bf"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-e7324438"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-d5d3e417"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-8954343c"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-c4a7b6bb"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-5da55ccb"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-8b9c68ae"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-4b293b82"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-1dad83f7"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-0cddbf9b"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-c42dac0c"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-191958e7"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-b3aadbcd"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-a86c3565"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-b6b5c31c"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-9f1f8b4b"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-f6e9b767"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-6e4fd8b9"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-a0d3f53c"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-c70b9d8a"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-7f5b6792"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-7b8ded48"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-2e138cb1"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-7fbe6eca"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-0e7221a8"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-65f6b166"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-0bcbb927"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-53493d31"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-bd4fb2bc"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-cdfd039f"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-6dab59a2"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-cea1bc37"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "AD-71d44f5c"
+    type: "driven-by"
+  - target: "AD-8b3962f6"
+    type: "driven-by"
 ---
-
 ## Context
 
 [EPIC-ca7b398b](EPIC-ca7b398b) gave every governance artifact a `relationships` array and pipeline stage fields. That was the **schema migration**. This epic is the **content migration** — ensuring every artifact's body text, organizational placement, and cross-references actually express the Knowledge Maturity Pipeline philosophy.

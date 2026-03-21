@@ -1,15 +1,13 @@
 ---
-
-
-id: EPIC-527de6a3
-title: Artifact Graph SDK extraction research
-description: Research extracting the artifactGraphSDK into a standalone npm package that plugins can import, enabling the plugin architecture's data layer.
-status: captured
-priority: P2
-created: 2026-03-13
-updated: 2026-03-13
+id: "EPIC-527de6a3"
+title: "Artifact Graph SDK extraction research"
+description: "Research extracting the artifactGraphSDK into a standalone npm package that plugins can import, enabling the plugin architecture's data layer."
+status: "captured"
+priority: "P2"
+created: "2026-03-13"
+updated: "2026-03-13"
 deadline: null
-horizon: next
+horizon: "next"
 scoring:
   impact: 3
   urgency: 2
@@ -17,20 +15,14 @@ scoring:
   dependencies: 2
 rule-overrides: []
 relationships:
-  - target: IDEA-b77e2955
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RES-5657d9f6
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-00ec6dd1
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-00ec6dd1
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: IDEA-53205849
-  type: realised-by
+  - target: "RES-00ec6dd1"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-00ec6dd1"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "IDEA-53205849"
+    type: "realised-by"
 ---
 ## Context
 

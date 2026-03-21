@@ -1,27 +1,23 @@
 ---
-
-id: TASK-f950424e
-title: Document body templates in artifact-framework.md and schema.json
+id: "TASK-f950424e"
+title: "Document body templates in artifact-framework.md and schema.json"
 description: "Add bodyTemplate definitions to each artifact type's schema.json and update artifact-framework.md with the canonical body structure for each type."
-status: completed
-created: 2026-03-10
-updated: 2026-03-10
-assignee: AGENT-1dab5ebe
+status: "completed"
+created: "2026-03-10"
+updated: "2026-03-10"
+assignee: "AGENT-1dab5ebe"
 acceptance:
-  - Each schema.json (except research) has a bodyTemplate key listing required section headings
-  - artifact-framework.md updated with body template documentation for all 9 types
-  - Schema bodyTemplate format is machine-parseable (array of heading strings)
+  - "Each schema.json (except research) has a bodyTemplate key listing required section headings"
+  - "artifact-framework.md updated with body template documentation for all 9 types"
+  - "Schema bodyTemplate format is machine-parseable (array of heading strings)"
 relationships:
-  - target: EPIC-0a8a5e72
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-6a4eea2f
-    type: depended-on-by
-  - target: TASK-12eec0f3
-    type: depended-on-by
-  - target: RES-a15d38de
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-0a8a5e72"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-6a4eea2f"
+    type: "depended-on-by"
+  - target: "TASK-12eec0f3"
+    type: "depended-on-by"
 ---
 ## What
 

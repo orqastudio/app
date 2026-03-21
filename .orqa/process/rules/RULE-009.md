@@ -1,25 +1,13 @@
 ---
-
-
-
-id: RULE-6083347d
-title: Dogfood Mode
+id: "RULE-6083347d"
+title: "Dogfood Mode"
 description: "Project-level rule for when an app is editing itself. Provides agent context awareness, operational caution, and system prompt injection. Active when dogfood: true in project.json."
-status: active
-created: 2026-03-07
-updated: 2026-03-07
+status: "active"
+created: "2026-03-07"
+updated: "2026-03-07"
 relationships:
-  - target: AD-6ce44025
-    type: enforces
-  - target: app::RULE-d90112d9
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-c71f1c3f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-b49142be
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "AD-6ce44025"
+    type: "enforces"
 ---
 # Dogfood Mode (CONDITIONAL — only when `dogfood: true`)
 

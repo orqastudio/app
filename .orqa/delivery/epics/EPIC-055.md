@@ -1,14 +1,15 @@
 ---
-id: EPIC-5f9fcf48
-title: Codebase Quality and Composability Alignment
-description: |
-  Address critical code quality issues found by RES-55eb9e55: eliminate stream_commands.rs
+id: "EPIC-5f9fcf48"
+title: "Codebase Quality and Composability Alignment"
+description: "Address critical code quality issues found by RES-55eb9e55: eliminate stream_commands.rs
+
   duplication, add frontend and search test coverage, fix error handling gaps, and
-  audit orphaned backend commands.
-status: completed
-priority: P1
-created: 2026-03-12
-updated: 2026-03-12
+
+  audit orphaned backend commands.\n"
+status: "completed"
+priority: "P1"
+created: "2026-03-12"
+updated: "2026-03-12"
 deadline: null
 horizon: null
 scoring:
@@ -17,39 +18,39 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-- target: RES-55eb9e55
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-55eb9e55
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-d88b98c2
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-7dd0d161
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-86293118
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-23af5ea6
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-da26ead7
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-c5865668
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-0fb46344
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-aadbf15a
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-389af55e
-  type: delivered-by
-  rationale: Epic contains this task
+  - target: "RES-55eb9e55"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-55eb9e55"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-d88b98c2"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-7dd0d161"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-86293118"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-23af5ea6"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-da26ead7"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-c5865668"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-0fb46344"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-aadbf15a"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-389af55e"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
 ---
 ## Context
 

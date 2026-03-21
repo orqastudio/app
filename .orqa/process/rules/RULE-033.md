@@ -1,21 +1,13 @@
 ---
-
-
-id: RULE-89155a7f
-title: Tooltips over title attributes
+id: "RULE-89155a7f"
+title: "Tooltips over title attributes"
 description: "Use shadcn Tooltip components for hover hints instead of native HTML title attributes. Tooltips provide consistent styling, positioning, and accessibility."
-status: active
-created: 2026-03-10
-updated: 2026-03-10
+status: "active"
+created: "2026-03-10"
+updated: "2026-03-10"
 relationships:
-  - target: AD-8d552e96
-    type: enforces
-  - target: RULE-b49142be
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-cb65b5d0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "AD-8d552e96"
+    type: "enforces"
 ---
 All interactive elements that need hover hints MUST use the shadcn `Tooltip` component (`$lib/components/ui/tooltip`) instead of the native HTML `title` attribute.
 

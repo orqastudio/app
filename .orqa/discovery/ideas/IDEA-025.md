@@ -1,34 +1,22 @@
 ---
-
-
-
-id: IDEA-b153fabd
-title: Agent task ownership review
+id: "IDEA-b153fabd"
+title: "Agent task ownership review"
 description: "Audit agent definitions for process vs execution knowledge placement, define clear task ownership boundaries between orchestrator and specialist agents."
-status: surpassed
-created: 2026-03-07
-updated: 2026-03-12
+status: "surpassed"
+created: "2026-03-07"
+updated: "2026-03-12"
 research-needed:
-  - Audit all 16 agent definitions for process vs execution knowledge placement
-  - Identify process skills incorrectly embedded in specialist agents
-  - Define clear task ownership boundaries between orchestrator and agents
-  - Review whether any orchestrator responsibilities are missing from its definition
+  - "Audit all 16 agent definitions for process vs execution knowledge placement"
+  - "Identify process skills incorrectly embedded in specialist agents"
+  - "Define clear task ownership boundaries between orchestrator and agents"
+  - "Review whether any orchestrator responsibilities are missing from its definition"
 relationships:
-  - target: EPIC-be023ed2
-    type: realises
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: app::RULE-532100d9
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-a2fa3068
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IMPL-a4643199
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-be023ed2"
+    type: "realises"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Motivation
 

@@ -1,30 +1,15 @@
 ---
-
-
-
-
-id: IMPL-f40a935f
-type: lesson
-title: Orchestrator deferred scoped deliverable instead of implementing
+id: "IMPL-f40a935f"
+type: "lesson"
+title: "Orchestrator deferred scoped deliverable instead of implementing"
 description: "The orchestrator marked an epic as nearly complete while deferring a task's implementation work to a future epic, violating RULE-e120bb70."
-status: active
-created: 2026-03-12
-updated: 2026-03-12
-maturity: understanding
+status: "active"
+created: "2026-03-12"
+updated: "2026-03-12"
+maturity: "understanding"
 recurrence: 1
-relationships:
-  - target: EPIC-4726cb3b
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
-  - target: TASK-c75be77c
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-e120bb70
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+relationships: []
 ---
-
-
 ## Pattern
 
 During [EPIC-4726cb3b](EPIC-4726cb3b), the orchestrator reported [TASK-c75be77c](TASK-c75be77c) (AD-2aa4d6db SQLite governance table removal) as documentation-only and deferred the actual table removal to a future epic. This violated [RULE-e120bb70](RULE-e120bb70) (no deferred deliverables) — the task's acceptance criteria explicitly included removing the tables, not just documenting the violation.

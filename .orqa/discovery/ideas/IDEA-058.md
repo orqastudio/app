@@ -1,25 +1,21 @@
 ---
-
-id: IDEA-3293309b
-title: OrqaDev Companion App + In-App Debug Overlay
+id: "IDEA-3293309b"
+title: "OrqaDev Companion App + In-App Debug Overlay"
 description: "Replace the dev dashboard HTML page with a pure SSE endpoint, build a dedicated OrqaDev companion app that consumes the feed, and add an optional in-app debug overlay that subscribes to the same stream."
-status: captured
-created: 2026-03-12
-updated: 2026-03-13
-horizon: next
+status: "captured"
+created: "2026-03-12"
+updated: "2026-03-13"
+horizon: "next"
 research-needed:
   - "Tech stack for companion app (Tauri mini-app? Electron? Web app with persistent tab?)"
   - "SSE endpoint design — structured event schema, log levels, source tags, metadata"
   - "In-app debug overlay UX — toggle mechanism, panel placement, performance impact"
-  - Whether companion app should also expose process controls (start/restart/stop) or just observe
+  - "Whether companion app should also expose process controls (start/restart/stop) or just observe"
 relationships:
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: TASK-aadbf15a
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Motivation
 

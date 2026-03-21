@@ -1,21 +1,15 @@
 ---
-
-
-id: IMPL-e4e56c2f
-type: lesson
+id: "IMPL-e4e56c2f"
+type: "lesson"
 title: "Enforcement epics must close the loop — run tooling, act on output, create follow-up work"
 description: "EPIC-4e6e9eae (principle enforcement foundations) was planned with 5 phases building enforcement tooling but no phase to actually run the tooling, review output, and create work to address findings. An enforcement epic that builds tools but doesn't use them is incomplete. Planning methodology should require a 'close the loop' phase for any epic that produces enforcement or audit tooling."
-status: active
-created: 2026-03-13
-updated: 2026-03-13
-maturity: observation
+status: "active"
+created: "2026-03-13"
+updated: "2026-03-13"
+maturity: "observation"
 recurrence: 1
-relationships:
-  - target: app::RULE-303c1cc8
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
+relationships: []
 ---
-
 ## Pattern
 
 When planning an epic that builds enforcement or audit tooling, the natural tendency is to stop at "tooling is built and works." But tooling that isn't run and acted upon is inert. The gap audit tool (TASK-6b0459ea) would detect future *principle* enforcement gaps, but no tooling catches *planning* incompleteness — specifically, the absence of a "close the loop" phase.

@@ -1,31 +1,14 @@
 ---
-
-
-
-
-
-id: IMPL-6ba34dea
-type: lesson
-title: Orchestrator writes governance artifacts directly instead of delegating to Writer
+id: "IMPL-6ba34dea"
+type: "lesson"
+title: "Orchestrator writes governance artifacts directly instead of delegating to Writer"
 description: "The orchestrator is creating IMPL, IDEA, and TASK artifacts itself rather than delegating to a Writer agent. This violates RULE-532100d9 in spirit — while governance artifacts are in the orchestrator's exception list, the volume of artifact creation during this session is implementation work that could be parallelised. Delegating artifact writes to a Writer agent would free the orchestrator to continue the design discussion without blocking on file creation."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
-maturity: understanding
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
+maturity: "understanding"
 recurrence: 2
-relationships:
-  - target: EPIC-942c7678
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
-  - target: IDEA-1c7ebe74
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-2e138cb1
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-532100d9
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+relationships: []
 ---
 ## Pattern
 

@@ -1,31 +1,14 @@
 ---
-
-
-
-
-
-id: IMPL-97e2788f
-type: lesson
-title: Open items discovered during implementation are not tracked as tasks
+id: "IMPL-97e2788f"
+type: "lesson"
+title: "Open items discovered during implementation are not tracked as tasks"
 description: "When work reveals open items (dead code, cleanup needed, research questions, follow-up fixes), these get reported in conversation but are not formalized as tasks in the artifact system. When the session ends, they exist only in conversation history and Claude memory — both lossy stores. The epic gets marked done while untracked work remains."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
-maturity: understanding
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
+maturity: "understanding"
 recurrence: 1
-relationships:
-  - target: EPIC-942c7678
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
-  - target: RES-c4dd4c4d
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-8035e176
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-7b770593
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+relationships: []
 ---
 ## Pattern
 

@@ -1,57 +1,69 @@
 ---
-id: PILLAR-94b281db
-title: Purpose Through Continuity
-description: The system actively maintains coherence between intention and action. It prevents drift between what the user set out to do and what is actually being done, ensuring purpose is never lost during implementation.
-status: active
-created: 2026-03-13
-updated: 2026-03-13
+id: "PILLAR-94b281db"
+title: "Purpose Through Continuity"
+description: "The system actively maintains coherence between intention and action. It prevents drift between what the user set out to do and what is actually being done, ensuring purpose is never lost during implementation."
+status: "active"
+created: "2026-03-13"
+updated: "2026-03-13"
 gate:
-  - Does this feature help users stay oriented toward their original purpose during extended work?
-  - Does this prevent knowledge, decisions, or context from being silently lost?
-  - Does this make scope drift visible and require explicit approval rather than happening implicitly?
-  - Does this reduce the user's cognitive burden rather than adding to it?
-  - Is the gap between declared intent and actual enforcement visible and shrinking?
+  - "Does this feature help users stay oriented toward their original purpose during extended work?"
+  - "Does this prevent knowledge, decisions, or context from being silently lost?"
+  - "Does this make scope drift visible and require explicit approval rather than happening implicitly?"
+  - "Does this reduce the user's cognitive burden rather than adding to it?"
+  - "Is the gap between declared intent and actual enforcement visible and shrinking?"
 relationships:
-  - target: VISION-001
-    type: upholds
-  - target: IDEA-7035530f
-    type: grounded-by
-  - target: IDEA-a9ea01b6
-    type: grounded-by
-  - target: IDEA-167c0362
-    type: grounded-by
-  - target: IDEA-88288601
-    type: grounded-by
-  - target: IDEA-6bd0622f
-    type: grounded-by
-  - target: IDEA-c31c1c6b
-    type: grounded-by
-  - target: IDEA-889dffd4
-    type: grounded-by
-  - target: IDEA-f9bb2c66
-    type: grounded-by
-  - target: IDEA-bcb32ace
-    type: grounded-by
-  - target: IDEA-ff21a84a
-    type: grounded-by
-  - target: IDEA-2051515a
-    type: grounded-by
-  - target: IDEA-2dfe18ae
-    type: grounded-by
-  - target: IDEA-c496b2de
-    type: grounded-by
-  - target: IDEA-4e095061
-    type: grounded-by
-  - target: IDEA-5c25ac99
-    type: grounded-by
-  - target: IDEA-3f67dc75
-    type: grounded-by
-  - target: IDEA-1be10a72
-    type: grounded-by
-  - target: IDEA-af2d6611
-    type: grounded-by
-  - target: IDEA-02db855b
-    type: grounded-by
+  - target: "VISION-001"
+    type: "upholds"
+  - target: "IDEA-7035530f"
+    type: "grounded-by"
+  - target: "IDEA-a9ea01b6"
+    type: "grounded-by"
+  - target: "IDEA-167c0362"
+    type: "grounded-by"
+  - target: "IDEA-88288601"
+    type: "grounded-by"
+  - target: "IDEA-6bd0622f"
+    type: "grounded-by"
+  - target: "IDEA-c31c1c6b"
+    type: "grounded-by"
+  - target: "IDEA-889dffd4"
+    type: "grounded-by"
+  - target: "IDEA-f9bb2c66"
+    type: "grounded-by"
+  - target: "IDEA-bcb32ace"
+    type: "grounded-by"
+  - target: "IDEA-ff21a84a"
+    type: "grounded-by"
+  - target: "IDEA-2051515a"
+    type: "grounded-by"
+  - target: "IDEA-2dfe18ae"
+    type: "grounded-by"
+  - target: "IDEA-c496b2de"
+    type: "grounded-by"
+  - target: "IDEA-4e095061"
+    type: "grounded-by"
+  - target: "IDEA-5c25ac99"
+    type: "grounded-by"
+  - target: "IDEA-3f67dc75"
+    type: "grounded-by"
+  - target: "IDEA-1be10a72"
+    type: "grounded-by"
+  - target: "IDEA-af2d6611"
+    type: "grounded-by"
+  - target: "IDEA-02db855b"
+    type: "grounded-by"
+  - target: "AGENT-1dab5ebe"
+    type: "served-by"
+    rationale: "This agent serves this pillar/persona"
+  - target: "AGENT-caff7bc1"
+    type: "served-by"
+    rationale: "This agent serves this pillar/persona"
+  - target: "AGENT-ff44f841"
+    type: "served-by"
+    rationale: "This agent serves this pillar/persona"
+  - target: "AGENT-bedeffd1"
+    type: "served-by"
+    rationale: "This agent serves this pillar/persona"
 ---
 ## What This Pillar Means
 

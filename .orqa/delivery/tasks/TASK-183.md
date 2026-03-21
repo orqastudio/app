@@ -1,46 +1,26 @@
 ---
-
-
-
-
-
-id: TASK-b4c3c05d
-title: Add enforcement field to rule schema and key rules
-description: Add the enforcement array to the rule schema and add enforcement entries to key mechanically-enforceable rules.
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
-assignee: AGENT-1dab5ebe
+id: "TASK-b4c3c05d"
+title: "Add enforcement field to rule schema and key rules"
+description: "Add the enforcement array to the rule schema and add enforcement entries to key mechanically-enforceable rules."
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-12"
+assignee: "AGENT-1dab5ebe"
 docs:
-  - DOC-01ddd8aa
+  - "DOC-01ddd8aa"
 acceptance:
   - "Rule schema includes enforcement field (array of objects with event, pattern, action, message)"
-  - At least 5 key rules have enforcement entries added
-  - All modified rules pass schema validation
-  - Enforcement entries are mechanically testable patterns
+  - "At least 5 key rules have enforcement entries added"
+  - "All modified rules pass schema validation"
+  - "Enforcement entries are mechanically testable patterns"
 relationships:
-  - target: EPIC-3a8ad459
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-0b584382
-    type: depended-on-by
-  - target: TASK-fa39671d
-    type: depended-on-by
-  - target: RULE-b49142be
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-633e636d
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-c71f1c3f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-e9c54567
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-1f30904a
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-3a8ad459"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-0b584382"
+    type: "depended-on-by"
+  - target: "TASK-fa39671d"
+    type: "depended-on-by"
 ---
 ## What
 

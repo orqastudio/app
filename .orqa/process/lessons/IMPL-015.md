@@ -1,25 +1,15 @@
 ---
-
-
-
-id: IMPL-2e30e4ab
-type: lesson
-title: Commit at natural boundaries to prevent file accumulation
+id: "IMPL-2e30e4ab"
+type: "lesson"
+title: "Commit at natural boundaries to prevent file accumulation"
 description: "Commit governance changes at natural boundaries (end of epic, task batch, or session) to prevent large numbers of uncommitted files from accumulating on main."
-status: completed
-created: 2026-03-09
-updated: 2026-03-09
-maturity: understanding
+status: "completed"
+created: "2026-03-09"
+updated: "2026-03-09"
+maturity: "understanding"
 recurrence: 1
-relationships:
-  - target: EPIC-be023ed2
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
-  - target: app::RULE-633e636d
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+relationships: []
 ---
-
 ## What Happened
 
 Over multiple sessions, 237 files of changes accumulated on main without being

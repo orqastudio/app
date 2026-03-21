@@ -1,31 +1,14 @@
 ---
-
-
-
-
-
-id: IMPL-257c8303
-type: lesson
-title: Lessons must flow forward — a review task should exist whenever observations accumulate
+id: "IMPL-257c8303"
+type: "lesson"
+title: "Lessons must flow forward — a review task should exist whenever observations accumulate"
 description: "Observations logged during an epic must not sit idle. A lesson review task should be added to the epic to triage each observation: implement now (if needed to complete the epic), promote to rule/skill, or defer to a future idea. Lessons without a forward path are dead weight in the system."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
-maturity: understanding
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
+maturity: "understanding"
 recurrence: 1
-relationships:
-  - target: EPIC-942c7678
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
-  - target: IMPL-97e2788f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IMPL-c306b136
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-7b770593
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+relationships: []
 ---
 ## Pattern
 

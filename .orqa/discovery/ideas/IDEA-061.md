@@ -1,24 +1,20 @@
 ---
-
-id: IDEA-c773575b
-title: Plugin architecture for verification data collection
+id: "IDEA-c773575b"
+title: "Plugin architecture for verification data collection"
 description: "Plugins that provide skill + hooks + data collection for enforcement tooling. Each plugin closes the enforcement-verification loop: the same plugin that enforces also provides metrics for automated verification."
-status: captured
-created: 2026-03-12
-updated: 2026-03-13
-horizon: later
+status: "captured"
+created: "2026-03-12"
+updated: "2026-03-13"
+horizon: "later"
 research-needed:
-  - Plugin data collection API design — how plugins expose metrics endpoints
-  - VER-NNN record schema and storage (file vs SQLite based on volume)
-  - Parameter comparison engine — how automated pass/fail works
+  - "Plugin data collection API design — how plugins expose metrics endpoints"
+  - "VER-NNN record schema and storage (file vs SQLite based on volume)"
+  - "Parameter comparison engine — how automated pass/fail works"
 relationships:
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: AD-a76663db
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Motivation
 

@@ -1,33 +1,29 @@
 ---
-
-id: TASK-d8813639
-title: Add docs and skills fields to task schema
-description: Extend the task schema with optional docs (array of documentation paths) and skills (array of skill names) fields that create graph edges from tasks to their implementation context.
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+id: "TASK-d8813639"
+title: "Add docs and skills fields to task schema"
+description: "Extend the task schema with optional docs (array of documentation paths) and skills (array of skill names) fields that create graph edges from tasks to their implementation context."
+status: "completed"
+created: "2026-03-12"
+updated: "2026-03-12"
 acceptance:
   - "Task schema accepts `docs` and `skills` arrays"
-  - Existing tasks without these fields still validate
-  - Schema validator passes with and without the new fields
-  - Artifact framework documentation reflects the new fields
+  - "Existing tasks without these fields still validate"
+  - "Schema validator passes with and without the new fields"
+  - "Artifact framework documentation reflects the new fields"
 relationships:
-  - target: EPIC-dc1e3e4b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-199f5d5a
-    type: depended-on-by
-  - target: TASK-ff26ebf3
-    type: depended-on-by
-  - target: TASK-0c6ac8d8
-    type: depended-on-by
-  - target: TASK-b72ead56
-    type: depended-on-by
-  - target: TASK-dd9c8538
-    type: depended-on-by
-  - target: TASK-21b461ea
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-dc1e3e4b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-199f5d5a"
+    type: "depended-on-by"
+  - target: "TASK-ff26ebf3"
+    type: "depended-on-by"
+  - target: "TASK-0c6ac8d8"
+    type: "depended-on-by"
+  - target: "TASK-b72ead56"
+    type: "depended-on-by"
+  - target: "TASK-dd9c8538"
+    type: "depended-on-by"
 ---
 ## What
 

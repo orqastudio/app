@@ -1,33 +1,25 @@
 ---
-
-
-id: TASK-32932be1
-title: Governance data quality backfill
+id: "TASK-32932be1"
+title: "Governance data quality backfill"
 description: "Audits and repairs frontmatter quality across all governance artifacts — adding missing titles, descriptions, and consistent YAML field ordering — with no code changes required."
-status: completed
-created: 2026-03-09
-updated: 2026-03-09
-assignee: AGENT-1dab5ebe
+status: "completed"
+created: "2026-03-09"
+updated: "2026-03-09"
+assignee: "AGENT-1dab5ebe"
 acceptance:
-  - All lessons have human-readable titles (no code references) and descriptions
-  - All rules have descriptions in their frontmatter
-  - All research documents have descriptions
-  - Research documents either all reference a milestone field or none do (consistent approach)
-  - MS-85b9269b restructured to match MS-654badde format with phases as epics and associated tasks
-  - YAML field order audited across all artifact types for content hierarchy sense
-  - Field ordering documented in artifact framework
+  - "All lessons have human-readable titles (no code references) and descriptions"
+  - "All rules have descriptions in their frontmatter"
+  - "All research documents have descriptions"
+  - "Research documents either all reference a milestone field or none do (consistent approach)"
+  - "MS-85b9269b restructured to match MS-654badde format with phases as epics and associated tasks"
+  - "YAML field order audited across all artifact types for content hierarchy sense"
+  - "Field ordering documented in artifact framework"
 relationships:
-  - target: EPIC-a2fa3068
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-34eaf518
-    type: depended-on-by
-  - target: MS-85b9269b
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-c740060f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-a2fa3068"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-34eaf518"
+    type: "depended-on-by"
 ---
 ## Findings Addressed
 

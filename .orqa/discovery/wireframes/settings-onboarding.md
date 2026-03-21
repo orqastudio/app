@@ -1,19 +1,13 @@
 ---
-
-
-
-id: DOC-53b07f55
-type: wireframe
-status: captured
+id: "DOC-53b07f55"
+type: "wireframe"
+status: "captured"
 title: "Wireframe: Settings & Onboarding"
-description: Wireframe specification for settings pages and the onboarding flow.
-created: 2026-03-02
-updated: 2026-03-15
+description: "Wireframe specification for settings pages and the onboarding flow."
+created: "2026-03-02"
+updated: "2026-03-15"
 sort: 5
-relationships:
-  - target: RES-3b36e149
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
+relationships: []
 ---
 <!-- FRESHNESS NOTE (2026-03-15): The onboarding wizard (Sections 2-5) is partially outdated. The actual SetupWizard has more steps than the wireframe shows: ClaudeCliStep, ClaudeAuthStep, SidecarStep, EmbeddingModelStep, and SetupComplete — the wireframe only shows CLI setup and project selection. The "Project Discovery conversation" flow (Sections 5a/5b) and governance artifact confirmation dialog (5c) are not yet implemented. The Settings view (Section 1) is largely accurate — Provider, Project, Appearance, and Shortcuts sections all exist. Settings now lives in a `SettingsView` component rendered in the Explorer Panel, matching the wireframe. The "Model" settings section is not shown in the wireframe but exists in the implementation. -->
 

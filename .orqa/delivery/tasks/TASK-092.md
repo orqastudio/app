@@ -1,26 +1,22 @@
 ---
-
-id: TASK-b13e6846
-title: Validate cross-references and update roadmap
+id: "TASK-b13e6846"
+title: "Validate cross-references and update roadmap"
 description: "Validated all research-to-decision cross-references, fixed broken links, and updated the roadmap completed-work section to reference MS-85b9269b with retroactive epics."
-status: completed
-created: 2026-03-08
-updated: 2026-03-08
+status: "completed"
+created: "2026-03-08"
+updated: "2026-03-08"
 acceptance:
-  - Every research-refs entry points to an existing research file
-  - Every supersedes/superseded-by pair is bidirectional
-  - Roadmap references MS-85b9269b with all retroactive epics
+  - "Every research-refs entry points to an existing research file"
+  - "Every supersedes/superseded-by pair is bidirectional"
+  - "Roadmap references MS-85b9269b with all retroactive epics"
 relationships:
-  - target: EPIC-766e2afa
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-953f7ac3
-    type: depends-on
-  - target: TASK-da84a27e
-    type: depended-on-by
-  - target: MS-654badde
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-766e2afa"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-953f7ac3"
+    type: "depends-on"
+  - target: "TASK-da84a27e"
+    type: "depended-on-by"
 ---
 ## What
 

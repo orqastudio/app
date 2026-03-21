@@ -1,16 +1,12 @@
 ---
-
-id: DOC-05278b9c
-title: Responsive Behavior
-category: reference
-description: Responsive layout behavior across different window sizes and breakpoints.
-created: 2026-03-02
-updated: 2026-03-04
+id: "DOC-05278b9c"
+title: "Responsive Behavior"
+category: "reference"
+description: "Responsive layout behavior across different window sizes and breakpoints."
+created: "2026-03-02"
+updated: "2026-03-04"
 sort: 7
-relationships:
-  - target: RES-df5560cb
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
+relationships: []
 ---
 **Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-df5560cb)
 

@@ -1,43 +1,39 @@
 ---
-
-id: TASK-1ec1a07c
-title: Build AI-assisted backfill and link verification tooling
+id: "TASK-1ec1a07c"
+title: "Build AI-assisted backfill and link verification tooling"
 description: "Build tooling that reads artifacts, proposes relationship connections based on content analysis, presents for human review, and batch-updates frontmatter. Includes link verification tooling that scans artifact content for contextual accuracy of cross-references. Reusable for future schema migrations. Usage documented as an injectable skill."
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+status: "completed"
+created: "2026-03-12"
+updated: "2026-03-12"
 assignee: null
 docs: []
 acceptance:
-  - Backfill tool reads an artifact and identifies required relationship types from schema
-  - Backfill tool searches other artifacts for likely connections (semantic search or content analysis)
-  - Backfill tool proposes relationships with draft rationale
+  - "Backfill tool reads an artifact and identifies required relationship types from schema"
+  - "Backfill tool searches other artifacts for likely connections (semantic search or content analysis)"
+  - "Backfill tool proposes relationships with draft rationale"
   - "Human can approve, reject, or edit each proposal"
-  - Backfill tool updates artifact frontmatter with approved relationships
-  - Backfill tool tracks processed vs pending artifacts
-  - Safe frontmatter editing — markdown body is never corrupted
-  - Link verification tool scans all artifact content (not just frontmatter) for cross-references
+  - "Backfill tool updates artifact frontmatter with approved relationships"
+  - "Backfill tool tracks processed vs pending artifacts"
+  - "Safe frontmatter editing — markdown body is never corrupted"
+  - "Link verification tool scans all artifact content (not just frontmatter) for cross-references"
   - "Link verification uses pattern matching for structural checks (broken refs, missing targets)"
   - "Link verification uses AI for contextual accuracy (does the reference make sense in context?)"
   - "Link verification produces a report of broken, missing, and contextually inaccurate links"
-  - An injectable skill is created documenting how to use both tools
+  - "An injectable skill is created documenting how to use both tools"
 rule-overrides:
   - "rule: RULE-a764b2ae"
 relationships:
-  - target: EPIC-ca7b398b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-845e2653
-    type: depends-on
-  - target: TASK-354c88f2
-    type: depends-on
-  - target: TASK-fedfd82a
-    type: depended-on-by
-  - target: TASK-508cf6cd
-    type: depended-on-by
-  - target: ARTIFACT-ID
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-ca7b398b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-845e2653"
+    type: "depends-on"
+  - target: "TASK-354c88f2"
+    type: "depends-on"
+  - target: "TASK-fedfd82a"
+    type: "depended-on-by"
+  - target: "TASK-508cf6cd"
+    type: "depended-on-by"
 ---
 ## What
 

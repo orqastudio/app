@@ -1,25 +1,15 @@
 ---
-
-
-
-id: IMPL-3de505e8
-type: lesson
-title: Documentation Must Be App-Native
-description: External documentation tools (like Docsify) create parallel navigation and rendering systems that diverge from the app. First-class features should be rendered natively by the app itself.\n
-status: active
-created: 2026-03-07
-updated: 2026-03-07
-maturity: understanding
+id: "IMPL-3de505e8"
+type: "lesson"
+title: "Documentation Must Be App-Native"
+description: "External documentation tools (like Docsify) create parallel navigation and rendering systems that diverge from the app. First-class features should be rendered natively by the app itself.\\n"
+status: "active"
+created: "2026-03-07"
+updated: "2026-03-07"
+maturity: "understanding"
 recurrence: 1
-relationships:
-  - target: AD-8b7c4ac5
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
-  - target: AD-0c56aa90
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+relationships: []
 ---
-
 ## What Happened
 
 The initial project used Docsify (a JavaScript documentation site generator) to render project documentation. This required maintaining a separate `index.html`, `_sidebar.md`, `custom.css`, and `.nojekyll` file. The sidebar had its own synchronization rule to keep it aligned with the file structure. This was all removed in favor of native artifact rendering within OrqaStudio itself.

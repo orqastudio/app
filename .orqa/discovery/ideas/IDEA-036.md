@@ -1,26 +1,22 @@
 ---
-
-id: IDEA-75424fb8
-title: Full-Codebase Artifact Graph
+id: "IDEA-75424fb8"
+title: "Full-Codebase Artifact Graph"
 description: "Expand the artifact graph beyond .orqa/ to include source code files, creating a unified knowledge graph that maps relationships between governance artifacts and the code they govern."
-status: captured
-created: 2026-03-10
-updated: 2026-03-13
-horizon: someday
+status: "captured"
+created: "2026-03-10"
+updated: "2026-03-13"
+horizon: "someday"
 research-needed:
   - "What source code entities should be nodes? Files, functions, modules, types?"
   - "How to keep a large graph performant (thousands of source files vs hundreds of artifacts)?"
   - "Incremental graph updates vs full rebuild — the full snapshot watcher event won't scale"
   - "How do task scope fields, code comments, and inline references create edges to source code?"
-  - Integration with native search engine (semantic search over graph nodes)
+  - "Integration with native search engine (semantic search over graph nodes)"
 relationships:
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: EPIC-0a8a5e72
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Motivation
 

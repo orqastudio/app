@@ -1,33 +1,15 @@
 ---
-
-
-
-
-
-id: IMPL-e22b63b4
-type: lesson
-title: Plugins and sidecars are paired — no requirement mechanism exists
+id: "IMPL-e22b63b4"
+type: "lesson"
+title: "Plugins and sidecars are paired — no requirement mechanism exists"
 description: "The orqastudio-claude-plugin is designed for Claude Code CLI. If a different sidecar is used (Cursor, Copilot), this plugin should not be active. Currently there is no mechanism for a plugin to declare which sidecar it requires, or for the system to enforce that pairing."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
-maturity: understanding
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
+maturity: "understanding"
 recurrence: 1
-relationships:
-  - target: RES-cd3d33bf
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
-  - target: IDEA-1c7ebe74
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-53493d31
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IDEA-1287dd52
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+relationships: []
 ---
-
 ## Pattern
 
 The companion plugin (`orqastudio-claude-plugin`) contains hooks, rules, skills, and agents designed specifically for the Claude Code CLI sidecar. These artifacts assume:

@@ -1,19 +1,13 @@
 ---
-
-
-
-id: DOC-99d7fbe5
-type: wireframe
-status: captured
+id: "DOC-99d7fbe5"
+type: "wireframe"
+status: "captured"
 title: "Wireframe: Artifact Browser"
-description: Wireframe specification for the artifact browser view showing governance artifacts in a navigable list.
-created: 2026-03-02
-updated: 2026-03-15
+description: "Wireframe specification for the artifact browser view showing governance artifacts in a navigable list."
+created: "2026-03-02"
+updated: "2026-03-15"
 sort: 3
-relationships:
-  - target: RES-df5560cb
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
+relationships: []
 ---
 <!-- FRESHNESS NOTE (2026-03-15): Section 6 "File Watching" refers to Tauri's `fs.watch` API — the implementation uses Tauri event listeners via the artifact graph SDK, not a direct `fs.watch` call. The viewer (Section 3) now includes additional panels not shown here: RelationshipsList, ReferencesPanel, PipelineStepper, ActionsNeeded, and AcceptanceCriteria (added in EPIC-b67074cc). The list item anatomy and empty state sections remain accurate. -->
 

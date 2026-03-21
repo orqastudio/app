@@ -1,40 +1,22 @@
 ---
+id: "KNOW-5ad0bf1b"
+title: "OrqaStudio Backend Best Practices"
+description: "Umbrella skill for all backend implementation work. Establishes composability,
 
-
-
-
-
-id: KNOW-5ad0bf1b
-title: OrqaStudio Backend Best Practices
-description: |
-  Umbrella skill for all backend implementation work. Establishes composability,
   coding standards, and error handling as always-in-mind principles, then
+
   references deeper skills for Rust, Tauri, and persistence specifics.
-  Use when: Any agent is about to write or modify backend code (backend/src-tauri/, sidecar/).
-status: active
-created: 2026-03-11
-updated: 2026-03-11
-category: domain
-version: 1.0.0
+
+  Use when: Any agent is about to write or modify backend code (backend/src-tauri/, sidecar/).\n"
+status: "active"
+created: "2026-03-11"
+updated: "2026-03-11"
+category: "domain"
+version: "1.0.0"
 user-invocable: true
 relationships:
-  - target: DOC-4b4fbc0f
-    type: synchronised-with
-  - target: app::KNOW-f0c40eaf
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-65973a88
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-8d552e96
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-1acb1602
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-57ccb4a3
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "DOC-4b4fbc0f"
+    type: "synchronised-with"
 ---
 This skill ensures every backend agent has the right mental model before writing code. It does not duplicate content from deeper skills — it establishes principles and points to the right references.
 

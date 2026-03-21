@@ -1,29 +1,25 @@
 ---
-
-id: TASK-da84a27e
-title: Reconcile EPIC-766e2afa
+id: "TASK-da84a27e"
+title: "Reconcile EPIC-766e2afa"
 description: "Standing reconciliation task — verify epic body accuracy: task table, pillars, docs-produced, scope."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
 acceptance:
-  - Epic task table lists ALL tasks created during the epic
-  - Epic pillars array reflects all pillars served
-  - Epic docs-produced list matches actual documentation created/updated
-  - Epic scope section accurately reflects what was in/out of scope
+  - "Epic task table lists ALL tasks created during the epic"
+  - "Epic pillars array reflects all pillars served"
+  - "Epic docs-produced list matches actual documentation created/updated"
+  - "Epic scope section accurately reflects what was in/out of scope"
 relationships:
-  - target: EPIC-766e2afa
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-e6418f4a
-    type: depends-on
-  - target: TASK-953f7ac3
-    type: depends-on
-  - target: TASK-b13e6846
-    type: depends-on
-  - target: app::RULE-7b770593
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-766e2afa"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-e6418f4a"
+    type: "depends-on"
+  - target: "TASK-953f7ac3"
+    type: "depends-on"
+  - target: "TASK-b13e6846"
+    type: "depends-on"
 ---
 ## What
 

@@ -1,13 +1,11 @@
 ---
-
-
-id: EPIC-4bbc3439
-title: Vision Alignment & Schema Simplification
-description: 'Align all documentation, governance rules, agent definitions, and code with the evolved vision: .orqa/ as sole source of truth, provider-agnostic AI integration, three-layer architecture (Canon/Project/Plugin), and simplified artifact schema where plans are merged into research and tasks trace cleanly to epics to milestones.'
-status: completed
-priority: P1
-created: 2026-03-08
-updated: 2026-03-08
+id: "EPIC-4bbc3439"
+title: "Vision Alignment & Schema Simplification"
+description: "Align all documentation, governance rules, agent definitions, and code with the evolved vision: .orqa/ as sole source of truth, provider-agnostic AI integration, three-layer architecture (Canon/Project/Plugin), and simplified artifact schema where plans are merged into research and tasks trace cleanly to epics to milestones."
+status: "completed"
+priority: "P1"
+created: "2026-03-08"
+updated: "2026-03-08"
 horizon: null
 scoring:
   impact: 5
@@ -15,57 +13,51 @@ scoring:
   complexity: 4
   dependencies: 4
 relationships:
-  - target: TASK-e1b911d8
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-9f54c3bb
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-c7520d05
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-c7520d05
-- target: RES-1c148040
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-1c148040
-- target: RES-4057ea03
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-4057ea03
-- target: RES-0749aff0
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-0749aff0
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-5e893805
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-bb5a702e
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-ac590adf
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-abf6025d
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-dd1484aa
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-614a6a45
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-f2872193
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-24c90717
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-1648c4f2
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-88ccf38a
-  type: delivered-by
-  rationale: Epic contains this task
+  - target: "RES-c7520d05"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-c7520d05"
+  - target: "RES-1c148040"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-1c148040"
+  - target: "RES-4057ea03"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-4057ea03"
+  - target: "RES-0749aff0"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-0749aff0"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-5e893805"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-bb5a702e"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-ac590adf"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-abf6025d"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-dd1484aa"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-614a6a45"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-f2872193"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-24c90717"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-1648c4f2"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-88ccf38a"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
 ---
 ## Implementation Design
 

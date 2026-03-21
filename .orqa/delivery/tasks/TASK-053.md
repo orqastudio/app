@@ -1,41 +1,37 @@
 ---
-
-id: TASK-f6850c71
-title: Extract domain skills from old agents
-description: Read each old software-specific agent and extract its domain knowledge into a standalone skill file. These skills will be loaded into universal roles at runtime based on project context.
-status: completed
-created: 2026-03-09
-updated: 2026-03-09
-assignee: AGENT-1dab5ebe
+id: "TASK-f6850c71"
+title: "Extract domain skills from old agents"
+description: "Read each old software-specific agent and extract its domain knowledge into a standalone skill file. These skills will be loaded into universal roles at runtime based on project context."
+status: "completed"
+created: "2026-03-09"
+updated: "2026-03-09"
+assignee: "AGENT-1dab5ebe"
 acceptance:
-  - KNOW-f5edb34d skill created (from debugger)
-  - KNOW-8c98ea98 skill created (from refactor-agent)
-  - KNOW-170c220e skill created (from security-engineer)
-  - KNOW-8d76c3c7 skill created (from agent-maintainer)
-  - KNOW-f0efaf83 skill created (from code-reviewer)
-  - KNOW-1b805150 skill created (from qa-tester)
-  - KNOW-5124e508 skill created (from ux-reviewer)
-  - KNOW-bcb42347 skill created (from test-engineer)
-  - KNOW-30a419dd skill created (from systems-architect)
-  - Each skill captures the domain knowledge from its source agent
-  - Each skill follows the SKILL.md format with proper frontmatter
+  - "KNOW-f5edb34d skill created (from debugger)"
+  - "KNOW-8c98ea98 skill created (from refactor-agent)"
+  - "KNOW-170c220e skill created (from security-engineer)"
+  - "KNOW-8d76c3c7 skill created (from agent-maintainer)"
+  - "KNOW-f0efaf83 skill created (from code-reviewer)"
+  - "KNOW-1b805150 skill created (from qa-tester)"
+  - "KNOW-5124e508 skill created (from ux-reviewer)"
+  - "KNOW-bcb42347 skill created (from test-engineer)"
+  - "KNOW-30a419dd skill created (from systems-architect)"
+  - "Each skill captures the domain knowledge from its source agent"
+  - "Each skill follows the SKILL.md format with proper frontmatter"
 relationships:
-  - target: EPIC-be023ed2
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-3cb01b3f
-    type: depends-on
-  - target: TASK-7d550875
-    type: depends-on
-  - target: TASK-4a2936f9
-    type: depended-on-by
-  - target: TASK-2ac2d88f
-    type: depended-on-by
-  - target: TASK-0d8b4a06
-    type: depended-on-by
-  - target: AD-774cc3d0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-be023ed2"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-3cb01b3f"
+    type: "depends-on"
+  - target: "TASK-7d550875"
+    type: "depends-on"
+  - target: "TASK-4a2936f9"
+    type: "depended-on-by"
+  - target: "TASK-2ac2d88f"
+    type: "depended-on-by"
+  - target: "TASK-0d8b4a06"
+    type: "depended-on-by"
 ---
 ## Reference
 

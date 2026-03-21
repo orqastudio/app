@@ -1,31 +1,23 @@
 ---
-
-
-id: TASK-61934d01
-title: Classify artifacts as core vs project-specific and standardise layer taxonomy
+id: "TASK-61934d01"
+title: "Classify artifacts as core vs project-specific and standardise layer taxonomy"
 description: "Audit every governance artifact to determine whether it is truly core (ships with every project) or OrqaStudio-specific (dogfood). Rename layer values, standardise scope, plan template distribution, and identify user-facing documentation gaps."
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-11"
 acceptance:
-  - Every artifact has been evaluated and correctly classified
-  - Layer enum renamed in all schemas and all artifact frontmatter
+  - "Every artifact has been evaluated and correctly classified"
+  - "Layer enum renamed in all schemas and all artifact frontmatter"
   - "Scope values standardised across rules, skills, and agents"
-  - Research document RES-5484edbd updated with classification results
-  - List of artifacts needing generalisation for core templates produced
-  - User-facing documentation plan documented
+  - "Research document RES-5484edbd updated with classification results"
+  - "List of artifacts needing generalisation for core templates produced"
+  - "User-facing documentation plan documented"
 relationships:
-  - target: EPIC-4a7aeacb
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-ec136ce9
-    type: depended-on-by
-  - target: RES-5484edbd
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-deab6ea7
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4a7aeacb"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-ec136ce9"
+    type: "depended-on-by"
 ---
 ## What
 

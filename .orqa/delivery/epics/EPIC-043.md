@@ -1,16 +1,11 @@
 ---
-
-
-
-
-
-id: EPIC-a2fa3068
-title: Dogfood Readiness Verification
+id: "EPIC-a2fa3068"
+title: "Dogfood Readiness Verification"
 description: "First round of user acceptance testing. The user exercises the app end-to-end, testing conversation flow, artifact browsing, governance visibility, settings, and streaming behaviour. Findings are captured as tasks within this epic."
-status: completed
-priority: P1
-created: 2026-03-09
-updated: 2026-03-09
+status: "completed"
+priority: "P1"
+created: "2026-03-09"
+updated: "2026-03-09"
 horizon: null
 scoring:
   impact: 4
@@ -18,57 +13,42 @@ scoring:
   complexity: 2
   dependencies: 3
 relationships:
-  - target: MS-654badde
-    type: fulfils
-    rationale: Epic belongs to this milestone
-  - target: TASK-973496a4
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-c740060f
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-3e2a9187
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-32932be1
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-066116ae
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-a80d3862
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-e74f41ca
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-e99e01ba
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-06914ff4
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-71f6a74c
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-34eaf518
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: MS-85b9269b
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-df17333f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-429b41ad
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-4fb1b91f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-31c9baca
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-973496a4"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-c740060f"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-3e2a9187"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-32932be1"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-066116ae"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-a80d3862"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-e74f41ca"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-e99e01ba"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-06914ff4"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-71f6a74c"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-34eaf518"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
 ---
 ## Implementation Design
 

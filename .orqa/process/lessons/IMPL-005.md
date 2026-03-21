@@ -1,21 +1,15 @@
 ---
-
-
-id: IMPL-5331c7b9
-type: lesson
-title: Config paths must match disk paths exactly
-description: Every path in project.json artifacts must resolve to an actual directory on disk. Mismatches cause silent empty results with no error.
-status: completed
-created: 2026-03-07
-updated: 2026-03-07
-maturity: understanding
+id: "IMPL-5331c7b9"
+type: "lesson"
+title: "Config paths must match disk paths exactly"
+description: "Every path in project.json artifacts must resolve to an actual directory on disk. Mismatches cause silent empty results with no error."
+status: "completed"
+created: "2026-03-07"
+updated: "2026-03-07"
+maturity: "understanding"
 recurrence: 1
-relationships:
-  - target: app::RULE-6c0496e0
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
+relationships: []
 ---
-
 ## What Happened
 
 All artifact categories showed empty content in the app. The scanner was working correctly, but `project.json` had wrong paths:

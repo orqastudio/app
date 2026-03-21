@@ -1,21 +1,15 @@
 ---
-
-
-id: IMPL-bb34f3cf
-type: lesson
-title: Extract domain logic before command files become monolithic
-description: Command files grow incrementally during feature work. Extract domain logic into focused service modules as soon as a command file exceeds 300 lines. Thin commands delegate to domain services.\n
-status: active
-created: 2026-03-07
-updated: 2026-03-07
-maturity: understanding
+id: "IMPL-bb34f3cf"
+type: "lesson"
+title: "Extract domain logic before command files become monolithic"
+description: "Command files grow incrementally during feature work. Extract domain logic into focused service modules as soon as a command file exceeds 300 lines. Thin commands delegate to domain services.\\n"
+status: "active"
+created: "2026-03-07"
+updated: "2026-03-07"
+maturity: "understanding"
 recurrence: 1
-relationships:
-  - target: AD-6cd1ff6f
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
+relationships: []
 ---
-
 ## What Happened
 
 `stream_commands.rs` grew to 2,425 lines containing streaming orchestration, tool execution, system prompt building, and session titling — all in one file. This violated the composability principle and made parallel agent work prone to merge conflicts.

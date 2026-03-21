@@ -1,30 +1,22 @@
 ---
-
-
-id: IDEA-14f3874c
-title: Configurable Priority Scoring
+id: "IDEA-14f3874c"
+title: "Configurable Priority Scoring"
 description: "Make the epic scoring/prioritisation system configurable per project — custom dimensions, formulas, and priority bands — with the ability to disable scoring entirely for projects that don't need it."
-status: captured
-created: 2026-03-07
-updated: 2026-03-13
-horizon: later
+status: "captured"
+created: "2026-03-07"
+updated: "2026-03-13"
+horizon: "later"
 research-needed:
   - "Current scoring model audit (dimensions, formula, band thresholds)"
-  - Configuration schema for custom dimensions and formulas in project.json
+  - "Configuration schema for custom dimensions and formulas in project.json"
   - "What happens to priority field when scoring is disabled (manual P1/P2/P3? removed?)"
-  - UI for configuring scoring dimensions and previewing priority distribution
-  - Migration path for existing epics when scoring config changes
+  - "UI for configuring scoring dimensions and previewing priority distribution"
+  - "Migration path for existing epics when scoring config changes"
 relationships:
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: IDEA-464ab876
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IDEA-abf847bb
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Problem
 

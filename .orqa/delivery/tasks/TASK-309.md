@@ -1,32 +1,24 @@
 ---
-
-
-id: TASK-cdfd039f
-title: Triage EPIC-942c7678 observations (IMPL-c306b136 through IMPL-257c8303)
+id: "TASK-cdfd039f"
+title: "Triage EPIC-942c7678 observations (IMPL-c306b136 through IMPL-257c8303)"
 description: "Review all 8 observations logged during EPIC-942c7678 implementation. For each: implement now if needed for epic completion, promote to rule/skill if at understanding maturity, or defer to a new IDEA if out of scope. No observation may remain untriaged when the epic closes."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
 acceptance:
-  - Every IMPL-c306b136 through IMPL-257c8303 has a documented triage outcome
-  - Implement-now items have tasks created within EPIC-942c7678
-  - Promote items have rule/skill/AD updates completed or tasks created
-  - Defer items have IDEA-NNN entries created with relationship back to the observation
+  - "Every IMPL-c306b136 through IMPL-257c8303 has a documented triage outcome"
+  - "Implement-now items have tasks created within EPIC-942c7678"
+  - "Promote items have rule/skill/AD updates completed or tasks created"
+  - "Defer items have IDEA-NNN entries created with relationship back to the observation"
   - "No observation left at maturity: observation without a forward path"
 relationships:
-  - target: EPIC-942c7678
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-bd4fb2bc
-    type: depends-on
-  - target: TASK-cea1bc37
-    type: depended-on-by
-  - target: IMPL-c306b136
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IMPL-257c8303
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-942c7678"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-bd4fb2bc"
+    type: "depends-on"
+  - target: "TASK-cea1bc37"
+    type: "depended-on-by"
 ---
 ## What
 

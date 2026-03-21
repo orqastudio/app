@@ -1,41 +1,28 @@
 ---
-
-
-
-id: TASK-bd4fb2bc
+id: "TASK-bd4fb2bc"
 title: "Establish learning loop and completion discipline (IMPL-97e2788f, 022, 023, 024)"
 description: "Create enforcement for: tracking open items during implementation, human-gated epic completion, automated observation logging by agents, and recording lessons on task completion artifacts."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
 acceptance:
-  - IMPL-97e2788f through IMPL-257c8303 maturity updated to understanding
-  - Epic completion gate updated in RULE-7b770593 to require human approval
-  - Open-item tracking discipline documented (rule update or new rule)
-  - Epic readiness surfacing approach documented (UI feature or tool output)
-  - Learning checkpoint defined for task completion
-  - Task body template updated with Lessons section
+  - "IMPL-97e2788f through IMPL-257c8303 maturity updated to understanding"
+  - "Epic completion gate updated in RULE-7b770593 to require human approval"
+  - "Open-item tracking discipline documented (rule update or new rule)"
+  - "Epic readiness surfacing approach documented (UI feature or tool output)"
+  - "Learning checkpoint defined for task completion"
+  - "Task body template updated with Lessons section"
 relationships:
-  - target: EPIC-942c7678
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-cdfd039f
-    type: depended-on-by
-  - target: TASK-cea1bc37
-    type: depended-on-by
-  - target: IMPL-ccb23768
-    type: yields
-  - target: app::RULE-7b770593
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IMPL-97e2788f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IMPL-257c8303
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-942c7678"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-cdfd039f"
+    type: "depended-on-by"
+  - target: "TASK-cea1bc37"
+    type: "depended-on-by"
+  - target: "IMPL-ccb23768"
+    type: "yields"
 ---
-
 ## What
 
 Address four related process gaps:

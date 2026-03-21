@@ -1,28 +1,24 @@
 ---
-
-id: TASK-e752886d
-title: Audit frontend for repeat patterns and create component reuse skill and enforcement rule
+id: "TASK-e752886d"
+title: "Audit frontend for repeat patterns and create component reuse skill and enforcement rule"
 description: "Audit ui/src/lib/components/ for repeated patterns, create a component extraction skill, and update RULE-cb65b5d0 enforcement to mandate component reuse as a composability requirement."
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-11"
 acceptance:
-  - Audit document listing all repeated patterns with occurrence counts
-  - New skill for component extraction methodology created
-  - RULE-cb65b5d0 updated or companion rule created for enforcement
-  - Follow-up tasks created for each shared component that should be extracted
-  - Depends on TASK-cca73736 (component inventory) completing first
+  - "Audit document listing all repeated patterns with occurrence counts"
+  - "New skill for component extraction methodology created"
+  - "RULE-cb65b5d0 updated or companion rule created for enforcement"
+  - "Follow-up tasks created for each shared component that should be extracted"
+  - "Depends on TASK-cca73736 (component inventory) completing first"
 relationships:
-  - target: EPIC-4a7aeacb
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-cca73736
-    type: depends-on
-  - target: TASK-ec136ce9
-    type: depended-on-by
-  - target: RULE-cb65b5d0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4a7aeacb"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-cca73736"
+    type: "depends-on"
+  - target: "TASK-ec136ce9"
+    type: "depended-on-by"
 ---
 ## What
 

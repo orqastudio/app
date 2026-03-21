@@ -1,28 +1,20 @@
 ---
-
-
-id: IDEA-0915667e
-title: Open-Source Licensing and IP Protection
-description: Choose licensing strategy that protects OrqaStudio from big tech absorption while enabling open-source community participation.
-status: review
-created: 2026-03-12
-updated: 2026-03-13
-horizon: later
+id: "IDEA-0915667e"
+title: "Open-Source Licensing and IP Protection"
+description: "Choose licensing strategy that protects OrqaStudio from big tech absorption while enabling open-source community participation."
+status: "review"
+created: "2026-03-12"
+updated: "2026-03-13"
+horizon: "later"
 research-needed:
   - "FSL vs AGPL vs BSL — which fits best?"
-  - Trademark registration process and cost
-  - CLA requirements if accepting contributions
+  - "Trademark registration process and cost"
+  - "CLA requirements if accepting contributions"
 relationships:
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: RES-f8578159
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-NNN
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Description
 

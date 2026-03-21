@@ -1,33 +1,21 @@
 ---
-
-
-
-id: TASK-51610830
-title: Add web_fetch and web_search capabilities to research and planner agents
-description: Ensure Researcher and Planner agent definitions include web_fetch and web_search capabilities so they can access external knowledge during investigation.
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+id: "TASK-51610830"
+title: "Add web_fetch and web_search capabilities to research and planner agents"
+description: "Ensure Researcher and Planner agent definitions include web_fetch and web_search capabilities so they can access external knowledge during investigation."
+status: "completed"
+created: "2026-03-12"
+updated: "2026-03-12"
 acceptance:
-  - Researcher and Planner agents can use WebSearch and WebFetch in CLI context
-  - KNOW-e3a559c9 skill is in Researcher and Planner agent definitions
-  - Capability mappings are correct in RULE-92dba0cb
-  - Tool access restrictions in RULE-f809076f are updated
+  - "Researcher and Planner agents can use WebSearch and WebFetch in CLI context"
+  - "KNOW-e3a559c9 skill is in Researcher and Planner agent definitions"
+  - "Capability mappings are correct in RULE-92dba0cb"
+  - "Tool access restrictions in RULE-f809076f are updated"
 relationships:
-  - target: EPIC-dc1e3e4b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-dd9c8538
-    type: depended-on-by
-  - target: app::KNOW-e3a559c9
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-f809076f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-92dba0cb
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-dc1e3e4b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-dd9c8538"
+    type: "depended-on-by"
 ---
 ## What
 

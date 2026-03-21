@@ -1,37 +1,21 @@
 ---
-
-
-
-
-id: TASK-dce77e0b
-title: Fix EPIC-6787bb93 task statuses
-description: Correct task statuses that were marked done incorrectly.
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
-assignee: AGENT-1dab5ebe
+id: "TASK-dce77e0b"
+title: "Fix EPIC-6787bb93 task statuses"
+description: "Correct task statuses that were marked done incorrectly."
+status: "completed"
+created: "2026-03-12"
+updated: "2026-03-12"
+assignee: "AGENT-1dab5ebe"
 acceptance:
-  - TASK-21b461ea status reverted to in-progress with note about client-side-only search
-  - TASK-db9be55f status confirmed as todo
-  - EPIC-6787bb93 description updated to reflect true completion state
+  - "TASK-21b461ea status reverted to in-progress with note about client-side-only search"
+  - "TASK-db9be55f status confirmed as todo"
+  - "EPIC-6787bb93 description updated to reflect true completion state"
 relationships:
-  - target: EPIC-4726cb3b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-91bc09f9
-    type: depended-on-by
-  - target: RES-9bcc7279
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-21b461ea
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-db9be55f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-6787bb93
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4726cb3b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-91bc09f9"
+    type: "depended-on-by"
 ---
 ## What
 

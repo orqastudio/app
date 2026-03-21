@@ -1,12 +1,11 @@
 ---
-
-id: EPIC-03900ea5
-title: Composability Refactoring
-description: Refactor monolithic service files into composable units while preserving existing store, IPC, and component boundaries.
-status: completed
-priority: P2
-created: 2026-03-07
-updated: 2026-03-12
+id: "EPIC-03900ea5"
+title: "Composability Refactoring"
+description: "Refactor monolithic service files into composable units while preserving existing store, IPC, and component boundaries."
+status: "completed"
+priority: "P2"
+created: "2026-03-07"
+updated: "2026-03-12"
 horizon: null
 scoring:
   impact: 3
@@ -14,18 +13,15 @@ scoring:
   complexity: 3
   dependencies: 2
 relationships:
-  - target: EPIC-897bbe8f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-45cffcbe
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-45cffcbe
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-0672dd23
-  type: delivered-by
-  rationale: Epic contains this task
+  - target: "RES-45cffcbe"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-45cffcbe"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-0672dd23"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
 ---
 **Note:** This epic was superseded by [EPIC-897bbe8f](EPIC-897bbe8f), which completed the composability refactoring. The status remains `done` because the work was delivered through [EPIC-897bbe8f](EPIC-897bbe8f). The tasks listed below were not completed under this epic directly -- they were subsumed by [EPIC-897bbe8f](EPIC-897bbe8f)'s broader scope.
 

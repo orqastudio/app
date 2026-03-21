@@ -1,16 +1,12 @@
 ---
-
-id: DOC-1ab26625
-title: Lesson Promotion Pipeline Architecture
-category: architecture
-description: Architecture of the lesson promotion pipeline that converts implementation lessons into enforced rules.
-created: 2026-03-05
-updated: 2026-03-05
+id: "DOC-1ab26625"
+title: "Lesson Promotion Pipeline Architecture"
+category: "architecture"
+description: "Architecture of the lesson promotion pipeline that converts implementation lessons into enforced rules."
+created: "2026-03-05"
+updated: "2026-03-05"
 sort: 18
-relationships:
-  - target: IMPL-eb748de2
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
+relationships: []
 ---
 **Date:** 2026-03-05
 

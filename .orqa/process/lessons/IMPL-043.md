@@ -1,22 +1,15 @@
 ---
-
-
-id: IMPL-6936bcf3
-type: lesson
-title: Null relationship targets should link to the tracking artifact instead
+id: "IMPL-6936bcf3"
+type: "lesson"
+title: "Null relationship targets should link to the tracking artifact instead"
 description: "When a relationship target doesn't exist yet, the target should point to the IDEA or TASK that tracks its creation — not be set to null. Every planned artifact has a tracking artifact somewhere in the delivery pipeline."
-status: active
-created: 2026-03-13
-updated: 2026-03-13
-maturity: understanding
+status: "active"
+created: "2026-03-13"
+updated: "2026-03-13"
+maturity: "understanding"
 recurrence: 1
-relationships:
-  - target: IDEA-1287dd52
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
+relationships: []
 ---
-
-
 ## Pattern
 
 When creating relationship edges where the target artifact doesn't exist yet, agents default to `target: null` with a rationale explaining the gap. But if the work is planned, there's always an artifact tracking it — an IDEA, TASK, or EPIC. The null target hides a valid forward reference and creates unnecessary integrity warnings.

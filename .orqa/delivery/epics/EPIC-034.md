@@ -1,12 +1,11 @@
 ---
-
-id: EPIC-9bdef0ce
-title: Native Search Engine
-description: 'Implement native code search engine using DuckDB for storage, ONNX Runtime for embeddings, and DirectML for hardware acceleration. Three search modes: regex, semantic, and code_research.'
-status: completed
-priority: P1
-created: 2026-03-04
-updated: 2026-03-09
+id: "EPIC-9bdef0ce"
+title: "Native Search Engine"
+description: "Implement native code search engine using DuckDB for storage, ONNX Runtime for embeddings, and DirectML for hardware acceleration. Three search modes: regex, semantic, and code_research."
+status: "completed"
+priority: "P1"
+created: "2026-03-04"
+updated: "2026-03-09"
 horizon: null
 scoring:
   impact: 4
@@ -14,30 +13,27 @@ scoring:
   complexity: 5
   dependencies: 3
 relationships:
-  - target: AD-99c2a969
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-5a9e6375
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-5a9e6375
-- target: RES-a68430ce
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-a68430ce
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-e1b911d8
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-9f54c3bb
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-e5fb0123
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-b470c205
-  type: delivered-by
-  rationale: Epic contains this task
+  - target: "RES-5a9e6375"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-5a9e6375"
+  - target: "RES-a68430ce"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-a68430ce"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-e1b911d8"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-9f54c3bb"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-e5fb0123"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-b470c205"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
 ---
 ## Implementation Design
 

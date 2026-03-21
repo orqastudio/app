@@ -1,20 +1,19 @@
 ---
+id: "EPIC-dc1e3e4b"
+title: "Graph-Based Knowledge Injection"
+description: "Replace content injection with graph injection. The orchestrator prompt becomes
 
+  minimal — just \"here's how to read and extend the artifact graph.\" Agents receive
 
-
-
-id: EPIC-dc1e3e4b
-title: Graph-Based Knowledge Injection
-description: |
-  Replace content injection with graph injection. The orchestrator prompt becomes
-  minimal — just "here's how to read and extend the artifact graph." Agents receive
   the relationship map and read nodes on demand. The plugin architecture layers on
+
   top, making the system self-building. Web search parity ensures research and
-  skills can be informed by external knowledge.
-status: completed
-priority: P1
-created: 2026-03-12
-updated: 2026-03-12
+
+  skills can be informed by external knowledge.\n"
+status: "completed"
+priority: "P1"
+created: "2026-03-12"
+updated: "2026-03-12"
 deadline: null
 horizon: null
 scoring:
@@ -23,77 +22,63 @@ scoring:
   complexity: 4
   dependencies: 4
 relationships:
-  - target: MS-eea45fa8
-    type: fulfils
-    rationale: Epic belongs to this milestone
-  - target: TASK-d8813639
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-199f5d5a
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-ff26ebf3
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-0c6ac8d8
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-faa1f950
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-26b03735
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-b72ead56
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-e7fd64ce
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-dbc452ad
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-51610830
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-9d327363
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-61776521
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-6fa0243a
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-b91cefba
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-4bc73133
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-e258e6cb
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-dd9c8538
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: MS-654badde
-    type: fulfils
-  - target: EPIC-3a8ad459
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-4440cdd4
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-0a7b21cf
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-2783985c
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "MS-eea45fa8"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-d8813639"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-199f5d5a"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-ff26ebf3"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-0c6ac8d8"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-faa1f950"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-26b03735"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-b72ead56"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-e7fd64ce"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-dbc452ad"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-51610830"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-9d327363"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-61776521"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-6fa0243a"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-b91cefba"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-4bc73133"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-e258e6cb"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-dd9c8538"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "MS-654badde"
+    type: "fulfils"
 ---
-
-
 ## Context
 
 OrqaStudio's governance system has matured through several phases:

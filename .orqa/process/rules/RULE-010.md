@@ -1,33 +1,21 @@
 ---
-
-
-
-id: RULE-1acb1602
-title: End-to-End Completeness
+id: "RULE-1acb1602"
+title: "End-to-End Completeness"
 description: "Every feature must be implemented across all layers (Rust command, IPC type, Svelte component, store) in the same commit."
-status: active
-created: 2026-03-07
-updated: 2026-03-13
+status: "active"
+created: "2026-03-07"
+updated: "2026-03-13"
 relationships:
-  - target: AD-1d928079
-    type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-1d928079
-  - target: AD-fcd55d44
-    type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-fcd55d44
-  - target: AD-e513c9e4
-    type: enforces
-  - target: AD-a334623b
-    type: enforces
-  - target: app::RULE-e9c54567
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-57ccb4a3
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-5e03e67b
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "AD-1d928079"
+    type: "enforces"
+    rationale: "Auto-generated inverse of enforces relationship from AD-1d928079"
+  - target: "AD-fcd55d44"
+    type: "enforces"
+    rationale: "Auto-generated inverse of enforces relationship from AD-fcd55d44"
+  - target: "AD-e513c9e4"
+    type: "enforces"
+  - target: "AD-a334623b"
+    type: "enforces"
 ---
 Every feature MUST be implemented across ALL layers in the same commit. Partial implementations that work in isolation but fail at runtime due to missing layers are forbidden.
 

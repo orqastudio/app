@@ -1,37 +1,29 @@
 ---
-
-
-id: IDEA-1287dd52
+id: "IDEA-1287dd52"
 title: "Plugin ecosystem: type system, provider integration, capability routing"
 description: "Implement the plugin type taxonomy, AI provider schema, capability fulfilment model, and plugin installation wiring designed in RES-cd3d33bf. Covers plugin.json schema extension, .orqa/providers/ definitions, per-project capability routing, and load-time plugin filtering."
-status: surpassed
-created: 2026-03-13
-updated: 2026-03-13
-horizon: later
+status: "surpassed"
+created: "2026-03-13"
+updated: "2026-03-13"
+horizon: "later"
 research-needed:
   - "Detailed plugin.json schema with type array, requires shape per type, default-capabilities"
   - "AI provider schema for .orqa/providers/<name>.json"
   - "Capability routing resolution implementation (project > plugin defaults > app baseline)"
   - "Plugin installation process: wiring capabilities, skills, agent updates"
-  - Load-time filtering implementation for non-matching plugins
-  - App MCP server baseline capabilities manifest
+  - "Load-time filtering implementation for non-matching plugins"
+  - "App MCP server baseline capabilities manifest"
 relationships:
-  - type: merged-into
-    target: IDEA-c496b2de
-  - type: realises
-    target: EPIC-3f65c703
-  - target: AD-c6abc8e6
-    type: crystallises
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-015e8c2c
-    type: benefits
-  - target: RES-cd3d33bf
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IDEA-1c7ebe74
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - type: "merged-into"
+    target: "IDEA-c496b2de"
+  - type: "realises"
+    target: "EPIC-3f65c703"
+  - target: "AD-c6abc8e6"
+    type: "crystallises"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-015e8c2c"
+    type: "benefits"
 ---
 > **Surpassed 2026-03-16**: Basic plugin ecosystem concept merged into EPIC-3f65c703 via AD-c6abc8e6. Provider-aware plugin system (provider detection, capability routing, load-time filtering) split into IDEA-c496b2de as a distinct capability layer needed for multi-model AI support.
 

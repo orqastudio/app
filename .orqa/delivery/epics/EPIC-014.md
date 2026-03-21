@@ -1,25 +1,25 @@
 ---
-id: EPIC-603c4ceb
-title: Project Type System
-description: Add a project type system so OrqaStudio adapts its agents, tools, and scanning to the domain (software, research, product, personal).
-status: captured
-priority: P1
-created: 2026-03-07
-updated: 2026-03-07
-horizon: next
+id: "EPIC-603c4ceb"
+title: "Project Type System"
+description: "Add a project type system so OrqaStudio adapts its agents, tools, and scanning to the domain (software, research, product, personal)."
+status: "captured"
+priority: "P1"
+created: "2026-03-07"
+updated: "2026-03-07"
+horizon: "next"
 scoring:
   impact: 4
   urgency: 2
   complexity: 3
   dependencies: 3
 relationships:
-- target: MS-eea45fa8
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: AD-774cc3d0
-  type: driven-by
-- target: AD-6f0dea5e
-  type: driven-by
+  - target: "MS-eea45fa8"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "AD-774cc3d0"
+    type: "driven-by"
+  - target: "AD-6f0dea5e"
+    type: "driven-by"
 ---
 ## Why P1
 

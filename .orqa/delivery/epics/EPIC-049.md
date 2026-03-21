@@ -1,12 +1,11 @@
 ---
-
-id: EPIC-4a7aeacb
-title: Agent, Skill, and Enforcement Artifact Audit
-description: Comprehensive audit of all agent definitions, skill definitions, and enforcement artifacts (rules, hooks) to verify accuracy against the current codebase, fix stale references, remove deprecated content, and ensure internal consistency.
-status: completed
-priority: P1
-created: 2026-03-11
-updated: 2026-03-11
+id: "EPIC-4a7aeacb"
+title: "Agent, Skill, and Enforcement Artifact Audit"
+description: "Comprehensive audit of all agent definitions, skill definitions, and enforcement artifacts (rules, hooks) to verify accuracy against the current codebase, fix stale references, remove deprecated content, and ensure internal consistency."
+status: "completed"
+priority: "P1"
+created: "2026-03-11"
+updated: "2026-03-11"
 deadline: null
 horizon: null
 scoring:
@@ -15,114 +14,111 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: EPIC-0a8a5e72
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-63578440
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-63578440
-- target: RES-5484edbd
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-5484edbd
-- target: RES-a6311b1b
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-a6311b1b
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-b6e9df91
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-69b7753b
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-f32f3eba
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-b743b819
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-1ac4d16f
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-77b6e5bd
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-4a8c3c6a
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-cca73736
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-a5f1b36d
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-809a14cc
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-241f1480
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-732d8f12
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-50906c0c
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-42d570dc
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-a958f2d2
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-e752886d
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-1033a8ed
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-8b70b4c1
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-ab739ac3
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-8120e247
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-448102a7
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-22b0ab76
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-59ff2cfe
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-58d6a5ca
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-77f6948d
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-786b1168
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-7cbdca2a
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-03c8cc85
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-44de1cec
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-61934d01
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-ec136ce9
-  type: delivered-by
-  rationale: Epic contains this task
+  - target: "RES-63578440"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-63578440"
+  - target: "RES-5484edbd"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-5484edbd"
+  - target: "RES-a6311b1b"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-a6311b1b"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-b6e9df91"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-69b7753b"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-f32f3eba"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-b743b819"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-1ac4d16f"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-77b6e5bd"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-4a8c3c6a"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-cca73736"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-a5f1b36d"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-809a14cc"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-241f1480"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-732d8f12"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-50906c0c"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-42d570dc"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-a958f2d2"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-e752886d"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-1033a8ed"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-8b70b4c1"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-ab739ac3"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-8120e247"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-448102a7"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-22b0ab76"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-59ff2cfe"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-58d6a5ca"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-77f6948d"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-786b1168"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-7cbdca2a"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-03c8cc85"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-44de1cec"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-61934d01"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-ec136ce9"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
 ---
 ## Context
 

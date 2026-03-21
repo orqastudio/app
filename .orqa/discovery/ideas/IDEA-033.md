@@ -1,25 +1,21 @@
 ---
-
-id: IDEA-464ab876
-title: Live Roadmap View
-description: Replace the static roadmap markdown document with a database-driven roadmap view that auto-updates as epic/milestone statuses change. First artifact type to be driven by SQLite rather than file scanning.
-status: captured
-created: 2026-03-07
-updated: 2026-03-13
-horizon: later
+id: "IDEA-464ab876"
+title: "Live Roadmap View"
+description: "Replace the static roadmap markdown document with a database-driven roadmap view that auto-updates as epic/milestone statuses change. First artifact type to be driven by SQLite rather than file scanning."
+status: "captured"
+created: "2026-03-07"
+updated: "2026-03-13"
+horizon: "later"
 research-needed:
-  - Data model for roadmap state in SQLite (derived from milestone + epic frontmatter)
-  - Sync strategy from .orqa/ file changes to SQLite roadmap table
+  - "Data model for roadmap state in SQLite (derived from milestone + epic frontmatter)"
+  - "Sync strategy from .orqa/ file changes to SQLite roadmap table"
   - "UI design for roadmap view (timeline, kanban, grouped list)"
   - "What happens to the markdown roadmap doc — deprecate or auto-generate?"
 relationships:
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: IDEA-9334b770
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Problem
 

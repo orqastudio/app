@@ -1,39 +1,23 @@
 ---
-
-
-
-
-id: IDEA-53205849
-title: Component Library SDK for Plugin Views
-description: Extract shared components into an importable SDK so plugins can create dynamic views that match the design system.
-status: completed
-created: 2026-03-12
-updated: 2026-03-13
-horizon: active
+id: "IDEA-53205849"
+title: "Component Library SDK for Plugin Views"
+description: "Extract shared components into an importable SDK so plugins can create dynamic views that match the design system."
+status: "completed"
+created: "2026-03-12"
+updated: "2026-03-13"
+horizon: "active"
 research-needed:
   - "Which components should be in the SDK vs remain internal?"
   - "How should the view registration API work?"
   - "How do plugins access theme tokens?"
   - "What's the distribution mechanism (npm package, bundled, git submodule)?"
 relationships:
-  - target: EPIC-527de6a3
-    type: realises
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-015e8c2c
-    type: benefits
-  - target: RES-00ec6dd1
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IDEA-b77e2955
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IDEA-9713910f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IDEA-af73e0af
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-527de6a3"
+    type: "realises"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-015e8c2c"
+    type: "benefits"
 ---
 ## Description
 

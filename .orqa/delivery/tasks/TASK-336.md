@@ -1,35 +1,31 @@
 ---
-
-id: TASK-6ea994f2
-title: Reconcile EPIC-962a7bc9
+id: "TASK-6ea994f2"
+title: "Reconcile EPIC-962a7bc9"
 description: "Standing reconciliation task — verify epic body accuracy: task table, pillars, docs-produced, scope."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
 acceptance:
-  - Epic task table lists ALL tasks created during the epic
-  - Epic pillars array reflects all pillars served
-  - Epic docs-produced list matches actual documentation created/updated
-  - Epic scope section accurately reflects what was in/out of scope
+  - "Epic task table lists ALL tasks created during the epic"
+  - "Epic pillars array reflects all pillars served"
+  - "Epic docs-produced list matches actual documentation created/updated"
+  - "Epic scope section accurately reflects what was in/out of scope"
 relationships:
-  - target: EPIC-962a7bc9
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-ba209f54
-    type: depends-on
-  - target: TASK-19a7f11e
-    type: depends-on
-  - target: TASK-a48075b1
-    type: depends-on
-  - target: TASK-91807ad8
-    type: depends-on
-  - target: TASK-47df8cbd
-    type: depends-on
-  - target: TASK-7ea07ed8
-    type: depends-on
-  - target: app::RULE-7b770593
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-962a7bc9"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-ba209f54"
+    type: "depends-on"
+  - target: "TASK-19a7f11e"
+    type: "depends-on"
+  - target: "TASK-a48075b1"
+    type: "depends-on"
+  - target: "TASK-91807ad8"
+    type: "depends-on"
+  - target: "TASK-47df8cbd"
+    type: "depends-on"
+  - target: "TASK-7ea07ed8"
+    type: "depends-on"
 ---
 ## What
 

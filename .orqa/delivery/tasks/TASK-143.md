@@ -1,43 +1,23 @@
 ---
-
-
-
-
-
-id: TASK-732d8f12
+id: "TASK-732d8f12"
 title: "Deduplicate rule/skill content — rules keep constraints, skills keep methodology"
 description: "Remove duplicated methodology, templates, and code examples from three rules and move them into their companion skills, leaving rules with only constraints and FORBIDDEN sections."
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-11"
 acceptance:
   - "RULE-303c1cc8 contains only constraints, gates, and FORBIDDEN — references planning skill"
   - "RULE-4d4f540d contains only phase structure, constraints, and FORBIDDEN — references uat-process skill"
   - "RULE-1acb1602 contains only layer requirements, checklist, and FORBIDDEN — references orqa-ipc-patterns skill"
   - "Skills contain the full methodology, templates, and code examples"
   - "No content lost — everything moved, nothing deleted"
-  - Rules are significantly shorter after deduplication
+  - "Rules are significantly shorter after deduplication"
 relationships:
-  - target: EPIC-4a7aeacb
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-ec136ce9
-    type: depended-on-by
-  - target: app::RULE-303c1cc8
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-4d4f540d
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-1acb1602
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-cb65b5d0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-cca73736
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4a7aeacb"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-ec136ce9"
+    type: "depended-on-by"
 ---
 ## What
 

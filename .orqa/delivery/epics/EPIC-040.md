@@ -1,11 +1,11 @@
 ---
-id: EPIC-ee688e85
-title: Provider Abstraction Layer
-description: Refactor sidecar from Claude-specific to provider-agnostic architecture. Provider interface, Claude adapter, sdk_session_id → provider_session_id rename across 13+ files including SQLite migration.
-status: completed
-priority: P1
-created: 2026-03-07
-updated: 2026-03-09
+id: "EPIC-ee688e85"
+title: "Provider Abstraction Layer"
+description: "Refactor sidecar from Claude-specific to provider-agnostic architecture. Provider interface, Claude adapter, sdk_session_id → provider_session_id rename across 13+ files including SQLite migration."
+status: "completed"
+priority: "P1"
+created: "2026-03-07"
+updated: "2026-03-09"
 horizon: null
 scoring:
   impact: 4
@@ -13,28 +13,28 @@ scoring:
   complexity: 4
   dependencies: 3
 relationships:
-- target: RES-abd8d6d1
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-abd8d6d1
-- target: RES-9547df7b
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-9547df7b
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-a9aec9e8
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-e9bbba1b
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-300e666c
-  type: delivered-by
-  rationale: Epic contains this task
-- target: AD-ff88ecea
-  type: driven-by
-- target: IDEA-7035530f
-  type: realised-by
+  - target: "RES-abd8d6d1"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-abd8d6d1"
+  - target: "RES-9547df7b"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-9547df7b"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-a9aec9e8"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-e9bbba1b"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-300e666c"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "AD-ff88ecea"
+    type: "driven-by"
+  - target: "IDEA-7035530f"
+    type: "realised-by"
 ---
 ## Implementation Design
 

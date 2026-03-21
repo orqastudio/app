@@ -1,11 +1,10 @@
 ---
-
-id: TASK-ab087863
-title: Implement 7 high-priority integrity checks + codebase-wide clippy compliance
-description: Implement all 7 graph-implementable integrity checks identified in TASK-07218422 audit. Also fix all clippy too_many_lines violations across the entire backend codebase to achieve zero-warning clippy compliance.
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+id: "TASK-ab087863"
+title: "Implement 7 high-priority integrity checks + codebase-wide clippy compliance"
+description: "Implement all 7 graph-implementable integrity checks identified in TASK-07218422 audit. Also fix all clippy too_many_lines violations across the entire backend codebase to achieve zero-warning clippy compliance."
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
 acceptance:
   - "PlanningPlacement check: flags ideas/epics/tasks with no milestone (direct or indirect) and no horizon"
   - "DependencyViolation check: flags in-progress tasks whose depends-on items are not done"
@@ -14,19 +13,16 @@ acceptance:
   - "MilestoneGate check: flags active milestones where P1 epics are not all done"
   - "IdeaPromotionValidity check: flags promoted ideas that were never shaped"
   - "IdeaDeliveryTracking check: flags promoted ideas whose epics are done but idea is not delivered"
-  - All new categories added to IntegrityCategory enum and TypeScript type
-  - IntegrityWidget labels updated for all new categories
-  - cargo clippy -- -D warnings passes with zero warnings across entire codebase
-  - All 610 Rust tests pass
+  - "All new categories added to IntegrityCategory enum and TypeScript type"
+  - "IntegrityWidget labels updated for all new categories"
+  - "cargo clippy -- -D warnings passes with zero warnings across entire codebase"
+  - "All 610 Rust tests pass"
 relationships:
-  - target: EPIC-e37794bf
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-07218422
-    type: depends-on
-  - target: AD-aa6b409a
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-e37794bf"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-07218422"
+    type: "depends-on"
 ---
 ## What
 

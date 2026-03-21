@@ -1,30 +1,15 @@
 ---
-
-
-
-
-id: IMPL-c306b136
-type: lesson
-title: Hardcoded .orqa/ paths in source code should be project-configurable
+id: "IMPL-c306b136"
+type: "lesson"
+title: "Hardcoded .orqa/ paths in source code should be project-configurable"
 description: "Source code references to .orqa/ subdirectories are hardcoded constants. If a project requires a different directory structure, the code breaks. These required paths should come from project config so the system adapts to different project layouts."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
-maturity: understanding
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
+maturity: "understanding"
 recurrence: 1
-relationships:
-  - target: app::RULE-6c0496e0
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
-  - target: RES-cd3d33bf
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-0bcbb927
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+relationships: []
 ---
-
-
 ## Pattern
 
 `paths.rs` defines constants like `PILLARS_DIR = ".orqa/process/pillars"`. `project_scanner.rs` hardcodes `.orqa/process/lessons`. `artifact_fs.rs` hardcodes `governance_dir()` mappings. None of these read from `project.json`.

@@ -1,25 +1,21 @@
 ---
-
-id: EPIC-5dbece66
-title: Codebase Test Coverage
+id: "EPIC-5dbece66"
+title: "Codebase Test Coverage"
 description: "Achieve comprehensive test coverage across the entire codebase — frontend (Vitest), backend (cargo test + tarpaulin), and IPC contract verification. Close the frontend test gap (zero tests vs 465 Rust tests) and establish coverage measurement and enforcement."
-status: captured
-priority: P2
-created: 2026-03-07
-updated: 2026-03-13
-horizon: next
+status: "captured"
+priority: "P2"
+created: "2026-03-07"
+updated: "2026-03-13"
+horizon: "next"
 scoring:
   impact: 4
   urgency: 3
   complexity: 3
   dependencies: 3
 relationships:
-  - target: MS-654badde
-    type: fulfils
-    rationale: Epic belongs to this milestone
-  - target: IDEA-64f9ef1c
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
 ---
 ## Why P2
 

@@ -1,15 +1,11 @@
 ---
-
-
-
-
-id: EPIC-0a8a5e72
-title: Artifact Graph SDK and Structural Integrity
-description: Build a bidirectional artifact node graph with a typed frontend SDK, body template enforcement, markdown cross-linking, file watcher for live refresh, and plugin-ready subscription API — establishing the foundation for the plugin architecture.
-status: completed
-priority: P1
-created: 2026-03-10
-updated: 2026-03-10
+id: "EPIC-0a8a5e72"
+title: "Artifact Graph SDK and Structural Integrity"
+description: "Build a bidirectional artifact node graph with a typed frontend SDK, body template enforcement, markdown cross-linking, file watcher for live refresh, and plugin-ready subscription API — establishing the foundation for the plugin architecture."
+status: "completed"
+priority: "P1"
+created: "2026-03-10"
+updated: "2026-03-10"
 horizon: null
 scoring:
   impact: 5
@@ -17,85 +13,73 @@ scoring:
   complexity: 5
   dependencies: 5
 relationships:
-  - target: EPIC-e045ab6d
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IDEA-75424fb8
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IDEA-b77e2955
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-fe75b52c
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-06ba5474
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-06ba5474
-- target: RES-a15d38de
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-a15d38de
-- target: RES-c387773d
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-c387773d
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-f950424e
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-6a4eea2f
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-8c0e5f1d
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-137ec554
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-126265d4
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-18eee9b0
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-451dd8b1
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-ff295517
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-2b47b899
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-832a3128
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-db618792
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-30307a19
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-aba97fb4
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-64ceb043
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-12eec0f3
-  type: delivered-by
-  rationale: Epic contains this task
-- target: IDEA-a99c270e
-  type: realised-by
-- target: IDEA-9334b770
-  type: realised-by
-- target: DOC-e6f39c35
-  type: documented-by
-- target: DOC-3c65a1e3
-  type: documented-by
-- target: DOC-e0042602
-  type: documented-by
+  - target: "RES-06ba5474"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-06ba5474"
+  - target: "RES-a15d38de"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-a15d38de"
+  - target: "RES-c387773d"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-c387773d"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-f950424e"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-6a4eea2f"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-8c0e5f1d"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-137ec554"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-126265d4"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-18eee9b0"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-451dd8b1"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-ff295517"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-2b47b899"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-832a3128"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-db618792"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-30307a19"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-aba97fb4"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-64ceb043"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-12eec0f3"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "IDEA-a99c270e"
+    type: "realised-by"
+  - target: "IDEA-9334b770"
+    type: "realised-by"
+  - target: "DOC-e6f39c35"
+    type: "documented-by"
+  - target: "DOC-3c65a1e3"
+    type: "documented-by"
+  - target: "DOC-e0042602"
+    type: "documented-by"
 ---
 ## Context
 

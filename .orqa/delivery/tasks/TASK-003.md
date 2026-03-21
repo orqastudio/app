@@ -1,35 +1,23 @@
 ---
-
-
-
-id: TASK-fa777da9
-title: Update streaming pipeline documentation
-description: Update streaming-pipeline.md to reflect the new SystemPromptSent emission point added by TASK-58a9d218.
-status: completed
-created: 2026-03-07
-updated: 2026-03-07
-assignee: AGENT-ec1b3785
+id: "TASK-fa777da9"
+title: "Update streaming pipeline documentation"
+description: "Update streaming-pipeline.md to reflect the new SystemPromptSent emission point added by TASK-58a9d218."
+status: "completed"
+created: "2026-03-07"
+updated: "2026-03-07"
+assignee: "AGENT-ec1b3785"
 acceptance:
-  - SystemPromptSent emission point documented in event sequence
-  - Emission location noted (after resolve_system_prompt
-  - before sidecar.send)
-  - custom_prompt documented as populated by EPIC-642234ba
-  - ContextInjected documented as added by EPIC-1dcf5ffa
+  - "SystemPromptSent emission point documented in event sequence"
+  - "Emission location noted (after resolve_system_prompt"
+  - "before sidecar.send)"
+  - "custom_prompt documented as populated by EPIC-642234ba"
+  - "ContextInjected documented as added by EPIC-1dcf5ffa"
 relationships:
-  - target: EPIC-e045ab6d
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-b6aa7a3b
-    type: depended-on-by
-  - target: TASK-58a9d218
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-642234ba
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-1dcf5ffa
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-e045ab6d"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-b6aa7a3b"
+    type: "depended-on-by"
 ---
 ## What
 

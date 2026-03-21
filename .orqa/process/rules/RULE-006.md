@@ -1,15 +1,10 @@
 ---
-
-
-
-
-
-id: RULE-b49142be
-title: Coding Standards
+id: "RULE-b49142be"
+title: "Coding Standards"
 description: "Rust and TypeScript coding standards: formatting, linting, error handling, component patterns, and coverage requirements."
-status: active
-created: 2026-03-07
-updated: 2026-03-13
+status: "active"
+created: "2026-03-07"
+updated: "2026-03-13"
 enforcement:
   - "event: lint"
   - "event: lint"
@@ -22,38 +17,23 @@ enforcement:
   - "event: lint"
   - "event: lint"
 relationships:
-  - target: AD-afc78f6e
-    type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-afc78f6e
-  - target: AD-1ad08e5f
-    type: enforces
-  - target: AD-8d552e96
-    type: enforces
-  - target: AD-61087142
-    type: enforces
-  - target: AD-6cd1ff6f
-    type: enforces
-  - target: AD-aa6b409a
-    type: enforces
-  - target: DOC-4b4fbc0f
-    type: documented-by
-  - target: DOC-4db3a417
-    type: documented-by
-  - target: app::RULE-e9c54567
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-cb65b5d0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-57ccb4a3
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-f10bb5de
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-5e03e67b
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "AD-afc78f6e"
+    type: "enforces"
+    rationale: "Auto-generated inverse of enforces relationship from AD-afc78f6e"
+  - target: "AD-1ad08e5f"
+    type: "enforces"
+  - target: "AD-8d552e96"
+    type: "enforces"
+  - target: "AD-61087142"
+    type: "enforces"
+  - target: "AD-6cd1ff6f"
+    type: "enforces"
+  - target: "AD-aa6b409a"
+    type: "enforces"
+  - target: "DOC-4b4fbc0f"
+    type: "documented-by"
+  - target: "DOC-4db3a417"
+    type: "documented-by"
 ---
 **Source of Truth:** `.orqa/documentation/development/coding-standards.md`
 

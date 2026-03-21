@@ -1,26 +1,22 @@
 ---
-
-id: IDEA-6bd0622f
-title: Dev Controller — unified development lifecycle orchestrator
+id: "IDEA-6bd0622f"
+title: "Dev Controller — unified development lifecycle orchestrator"
 description: "A persistent Node process that owns the entire dev lifecycle — spawning, monitoring, and restarting all app processes (Vite, Rust, sidecar) with unified output, IPC-based control, and dogfood session persistence."
-status: exploring
-created: 2026-03-10
-updated: 2026-03-11
-horizon: next
+status: "exploring"
+created: "2026-03-10"
+updated: "2026-03-11"
+horizon: "next"
 research-needed:
-  - How to spawn Vite and cargo independently (bypass cargo tauri dev entirely)
-  - IPC mechanism for make stop/restart to signal the running controller
-  - Session context injection for dogfood persistence across restarts
+  - "How to spawn Vite and cargo independently (bypass cargo tauri dev entirely)"
+  - "IPC mechanism for make stop/restart to signal the running controller"
+  - "Session context injection for dogfood persistence across restarts"
   - "How to pipe controller output into OrqaStudio's own UI (dev panel)"
   - "Hot reload strategy — Vite HMR for frontend, controlled restart for Rust"
 relationships:
-  - target: PILLAR-94b281db
-    type: grounded
-  - target: PERSONA-015e8c2c
-    type: benefits
-  - target: RES-5a9e6375
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-94b281db"
+    type: "grounded"
+  - target: "PERSONA-015e8c2c"
+    type: "benefits"
 ---
 ## Motivation
 

@@ -1,71 +1,71 @@
 ---
-id: EPIC-a210c825
-title: Package ecosystem extraction for plugin portability
-description: Extract types, integrity validator, eslint config, and SDK into standalone @orqastudio/ npm packages hosted on GitHub Packages. Gives plugins parity access to the frontend-backend connection, artifact graph, and code standards.
-status: completed
-priority: P1
+id: "EPIC-a210c825"
+title: "Package ecosystem extraction for plugin portability"
+description: "Extract types, integrity validator, eslint config, and SDK into standalone @orqastudio/ npm packages hosted on GitHub Packages. Gives plugins parity access to the frontend-backend connection, artifact graph, and code standards."
+status: "completed"
+priority: "P1"
 scoring:
   impact: 5
   urgency: 4
   complexity: 4
   dependencies: 5
-created: 2026-03-14
-updated: 2026-03-14
+created: "2026-03-14"
+updated: "2026-03-14"
 deadline: null
-horizon: active
+horizon: "active"
 relationships:
-- target: RES-d3f58f2d
-  type: guided-by
-  rationale: Integrity check alignment audit identified the need for a single check library
-- target: RES-f9356600
-  type: guided-by
-  rationale: SDK extraction research confirmed architecture is clean and extraction-ready
-- target: RES-0fd8fe85
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-0fd8fe85
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-e6732238
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-ff56038f
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-248a0485
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-3b56186e
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-2aca491a
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-51959c4d
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-b9cb39f8
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-a6dcd46b
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-f3091875
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-c3abf5c1
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-82add1d1
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-9593e951
-  type: delivered-by
-  rationale: Epic contains this task
-- target: IDEA-c4f10c20
-  type: realised-by
-- target: IDEA-a620e1f5
-  type: realised-by
+  - target: "RES-d3f58f2d"
+    type: "guided-by"
+    rationale: "Integrity check alignment audit identified the need for a single check library"
+  - target: "RES-f9356600"
+    type: "guided-by"
+    rationale: "SDK extraction research confirmed architecture is clean and extraction-ready"
+  - target: "RES-0fd8fe85"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-0fd8fe85"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-e6732238"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-ff56038f"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-248a0485"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-3b56186e"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-2aca491a"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-51959c4d"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-b9cb39f8"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-a6dcd46b"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-f3091875"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-c3abf5c1"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-82add1d1"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-9593e951"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "IDEA-c4f10c20"
+    type: "realised-by"
+  - target: "IDEA-a620e1f5"
+    type: "realised-by"
 ---
 ## Context
 

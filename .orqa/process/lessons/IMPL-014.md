@@ -1,22 +1,14 @@
 ---
-
-
-id: IMPL-1bd6ed0c
-type: lesson
+id: "IMPL-1bd6ed0c"
+type: "lesson"
 title: "Epic titles should describe outcomes, not process"
-description: >
-  Epic titles like "UAT Round 1" or "Phase 3 Implementation" describe process
-  activities. Titles should describe what is achieved, not how the work is
-  organised.
-status: completed
-created: 2026-03-07
-updated: 2026-03-13
-maturity: understanding
+description: "Epic titles like \"UAT Round 1\" or \"Phase 3 Implementation\" describe process activities. Titles should describe what is achieved, not how the work is organised.\n"
+status: "completed"
+created: "2026-03-07"
+updated: "2026-03-13"
+maturity: "understanding"
 recurrence: 1
-relationships:
-  - target: EPIC-a2fa3068
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
+relationships: []
 ---
 ## What Happened
 

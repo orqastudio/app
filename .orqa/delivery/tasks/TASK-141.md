@@ -1,44 +1,20 @@
 ---
-
-
-
-
-
-
-id: TASK-809a14cc
-title: Document orphaned skills as forward-looking in their SKILL.md files
-description: Add a forward-looking status note to each of five skills that have no current loading mechanism because their parent features are not yet built.
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+id: "TASK-809a14cc"
+title: "Document orphaned skills as forward-looking in their SKILL.md files"
+description: "Add a forward-looking status note to each of five skills that have no current loading mechanism because their parent features are not yet built."
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-11"
 acceptance:
-  - Each of the 5 skills has a clear note that it is forward-looking
-  - Each note references the parent epic/idea it will be activated by
-  - No changes to the skill content itself — just status clarity
+  - "Each of the 5 skills has a clear note that it is forward-looking"
+  - "Each note references the parent epic/idea it will be activated by"
+  - "No changes to the skill content itself — just status clarity"
 relationships:
-  - target: EPIC-4a7aeacb
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-ec136ce9
-    type: depended-on-by
-  - target: EPIC-be023ed2
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-f1ada1f5
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-e1d418de
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-39860e8b
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IDEA-b77e2955
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-30307a19
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4a7aeacb"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-ec136ce9"
+    type: "depended-on-by"
 ---
 ## What
 

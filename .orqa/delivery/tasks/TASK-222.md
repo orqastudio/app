@@ -1,184 +1,24 @@
 ---
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-id: TASK-4bc73133
-title: Audit existing architecture decisions against AD-2783985c/039/040
+id: "TASK-4bc73133"
+title: "Audit existing architecture decisions against AD-2783985c/039/040"
 description: "Review AD-e513c9e4 through AD-0f6286cd to identify which decisions are superseded, affected, or made defunct by the graph-based knowledge injection (AD-2783985c), core graph firmware (AD-e8ab8572), and task-first audit trail (AD-6dfbba70) decisions."
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+status: "completed"
+created: "2026-03-12"
+updated: "2026-03-12"
 docs:
-  - DOC-01ddd8aa
+  - "DOC-01ddd8aa"
 acceptance:
-  - Every AD from AD-e513c9e4 to AD-0f6286cd has been reviewed
-  - Superseded decisions have status superseded and superseded-by set
-  - New decisions (AD-2783985c/039/040) have supersedes set where applicable
-  - No one-sided supersessions exist (RULE-7b770593 compliance)
+  - "Every AD from AD-e513c9e4 to AD-0f6286cd has been reviewed"
+  - "Superseded decisions have status superseded and superseded-by set"
+  - "New decisions (AD-2783985c/039/040) have supersedes set where applicable"
+  - "No one-sided supersessions exist (RULE-7b770593 compliance)"
   - "Summary table of audit findings exists in this task's body"
 relationships:
-  - target: EPIC-dc1e3e4b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-dd9c8538
-    type: depended-on-by
-  - target: AD-2783985c
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-e8ab8572
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-6dfbba70
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-53e80192
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-774cc3d0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-2aa4d6db
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-0291fa65
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-89391ab6
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-2f1991c2
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-d8ea4d2b
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-0f6286cd
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-e513c9e4
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-a334623b
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-1ad08e5f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-8d552e96
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-dffc3d30
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-61087142
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-dc919e52
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-22650b3b
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-fcd55d44
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-0dbba717
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-5d9ac6bd
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-834fc71a
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-afc78f6e
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-8b91f5a4
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-69072318
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-6ce44025
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-4047ceb1
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-1d928079
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-40b3de0a
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-4f5277f0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-8b7c4ac5
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-0c56aa90
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-c3700062
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-99c2a969
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-ff88ecea
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-6cd1ff6f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-44a033cf
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-6f0dea5e
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-47c41f0c
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-dc1e3e4b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-dd9c8538"
+    type: "depended-on-by"
 ---
 ## What
 

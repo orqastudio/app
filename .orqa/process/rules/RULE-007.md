@@ -1,29 +1,17 @@
 ---
-
-
-
-id: RULE-c71f1c3f
-title: Development Commands
-description: All development commands must be invoked via make targets. Raw cargo and npm commands are forbidden.
-status: active
-created: 2026-03-07
-updated: 2026-03-07
+id: "RULE-c71f1c3f"
+title: "Development Commands"
+description: "All development commands must be invoked via make targets. Raw cargo and npm commands are forbidden."
+status: "active"
+created: "2026-03-07"
+updated: "2026-03-07"
 enforcement:
   - "event: bash"
   - "event: bash"
   - "event: bash"
 relationships:
-  - target: AD-ea4a5979
-    type: enforces
-  - target: RULE-b49142be
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-f10bb5de
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-633e636d
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "AD-ea4a5979"
+    type: "enforces"
 ---
 All development commands MUST be invoked via `make` targets. Raw `cargo` and `npm run` commands are forbidden for tasks that have a `make` equivalent.
 

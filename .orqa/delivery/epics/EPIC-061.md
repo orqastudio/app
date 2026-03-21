@@ -1,52 +1,11 @@
 ---
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-id: EPIC-4e6e9eae
-title: Principle enforcement foundations
-description: Close all gaps between declared principles and mechanical enforcement. Backfill the relationship graph, mechanically enforce all enforceable rules, automate the learning loop, build Pillar 3 tooling, establish a behavioral rule enforcement plan, define priority dimensions, and build the gap audit into repeatable tooling. The system enforces itself going forward.
-status: completed
-priority: P1
-created: 2026-03-13
-updated: 2026-03-13
+id: "EPIC-4e6e9eae"
+title: "Principle enforcement foundations"
+description: "Close all gaps between declared principles and mechanical enforcement. Backfill the relationship graph, mechanically enforce all enforceable rules, automate the learning loop, build Pillar 3 tooling, establish a behavioral rule enforcement plan, define priority dimensions, and build the gap audit into repeatable tooling. The system enforces itself going forward."
+status: "completed"
+priority: "P1"
+created: "2026-03-13"
+updated: "2026-03-13"
 deadline: null
 horizon: null
 scoring:
@@ -56,221 +15,97 @@ scoring:
   dependencies: 5
 rule-overrides: []
 relationships:
-  - target: IMPL-40b0b5ca
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IMPL-8d666f0c
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IMPL-eed5b00a
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IMPL-6f4106d7
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IMPL-e4e56c2f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IMPL-3d4cc12c
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-b49142be
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-61087142
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-89155a7f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-cb65b5d0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-9ba80a19
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-1f30904a
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-7b770593
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-6c0496e0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-39169bcd
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-6d1c8dc7
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-1acb1602
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-11c29c9e
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-92dba0cb
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-c95f4444
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-532100d9
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-5e03e67b
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-c71f1c3f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-22783309
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-b2753bad
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-deab6ea7
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-8035e176
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-df24948b
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-878e5422
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-551bde31
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-e120bb70
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-303c1cc8
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-65973a88
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-9daf29c0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-3eccebf3
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-d90112d9
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-4d4f540d
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-633e636d
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-e352fd0a
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: PILLAR-94b281db
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-e37794bf
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-dd35bbf0
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-dd35bbf0
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-b476bd8e
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-209f1646
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-4017a3de
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-2284f3e6
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-8f18cf73
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-fc7f41ca
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-ab350828
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-e5b83fae
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-2ecb94ed
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-530bb45d
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-9952c534
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-aab2e7a9
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-5f701f54
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-67dec092
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-6b0459ea
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-7cf80542
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-247b6ce4
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-db81ac75
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-75b09cdb
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-074e4088
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-81e74493
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-41d5cd97
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-9e9754a8
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-822d8c82
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-0b53e322
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-fc1f139e
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-92b1419d
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-47f0f832
-  type: delivered-by
-  rationale: Epic contains this task
+  - target: "RES-dd35bbf0"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-dd35bbf0"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-b476bd8e"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-209f1646"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-4017a3de"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-2284f3e6"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-8f18cf73"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-fc7f41ca"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-ab350828"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-e5b83fae"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-2ecb94ed"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-530bb45d"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-9952c534"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-aab2e7a9"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-5f701f54"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-67dec092"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-6b0459ea"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-7cf80542"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-247b6ce4"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-db81ac75"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-75b09cdb"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-074e4088"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-81e74493"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-41d5cd97"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-9e9754a8"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-822d8c82"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-0b53e322"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-fc1f139e"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-92b1419d"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-47f0f832"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
 ---
-
 ## Context
 
 [RES-dd35bbf0](RES-dd35bbf0) audited the entire governance framework and found six gap patterns:

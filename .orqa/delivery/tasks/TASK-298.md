@@ -1,28 +1,24 @@
 ---
-
-id: TASK-a0d3f53c
-title: Create AD for standards distribution pattern (AD-8b3962f6)
+id: "TASK-a0d3f53c"
+title: "Create AD for standards distribution pattern (AD-8b3962f6)"
 description: "Formalize how operational standards flow through the pipeline: Observation → Understanding → Principle → Practice → Enforcement → Verification."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
 assignee: null
 docs: []
 acceptance:
-  - AD-8b3962f6 exists in decisions directory
-  - Documents the full pipeline flow for operational standards
-  - Explains how each artifact type maps to a pipeline stage
-  - Provides examples of standards flowing through the pipeline
+  - "AD-8b3962f6 exists in decisions directory"
+  - "Documents the full pipeline flow for operational standards"
+  - "Explains how each artifact type maps to a pipeline stage"
+  - "Provides examples of standards flowing through the pipeline"
 rule-overrides: []
 relationships:
-  - target: EPIC-942c7678
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-cea1bc37
-    type: depended-on-by
-  - target: AD-8b3962f6
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-942c7678"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-cea1bc37"
+    type: "depended-on-by"
 ---
 ## What
 

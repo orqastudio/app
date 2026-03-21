@@ -1,12 +1,11 @@
 ---
-
-id: IDEA-0d3f67de
-title: Dev controller as standalone repository — attachable to dev and production processes
+id: "IDEA-0d3f67de"
+title: "Dev controller as standalone repository — attachable to dev and production processes"
 description: "Extract the dev controller into its own Tauri app in a standalone repository. Auto-detects dev or production OrqaStudio instances via process discovery. In dev mode it manages process lifecycle + log aggregation. In production mode it attaches to running instances for debugging. Lightweight standalone download — not a webview, a proper Tauri desktop app. Works with the unified logger from IDEA-29bdf6cf."
-status: captured
-created: 2026-03-13
-updated: 2026-03-13
-horizon: someday
+status: "captured"
+created: "2026-03-13"
+updated: "2026-03-13"
+horizon: "someday"
 research-needed:
   - "What is the current dev controller architecture? What does it manage (process lifecycle, SSE, HMR signals)?"
   - "What interface would production attachment use — socket, named pipe, HTTP endpoint?"
@@ -15,13 +14,10 @@ research-needed:
   - "What security considerations exist for attaching to production processes?"
   - "How does this interact with IDEA-29bdf6cf (unified logger)? The controller would be the log aggregation point."
 relationships:
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-015e8c2c
-    type: benefits
-  - target: IDEA-29bdf6cf
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-015e8c2c"
+    type: "benefits"
 ---
 ## Motivation
 

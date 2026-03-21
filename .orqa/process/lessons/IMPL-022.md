@@ -1,19 +1,14 @@
 ---
-
-
-id: IMPL-b149653d
-type: lesson
-title: Epics with all tasks done but not marked complete should surface in the UI
+id: "IMPL-b149653d"
+type: "lesson"
+title: "Epics with all tasks done but not marked complete should surface in the UI"
 description: "When all tasks under an epic reach status:done but the epic itself remains in-progress (because it awaits human gate approval), the system should proactively surface this to the user via a dashboard or notification. Otherwise the epic sits in limbo with no visibility."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
-maturity: understanding
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
+maturity: "understanding"
 recurrence: 1
-relationships:
-  - target: app::RULE-7b770593
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
+relationships: []
 ---
 ## Pattern
 

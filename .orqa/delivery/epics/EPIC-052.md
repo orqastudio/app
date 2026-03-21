@@ -1,20 +1,21 @@
 ---
+id: "EPIC-4440cdd4"
+title: "Structured Thinking Enforcement"
+description: "Shift OrqaStudio's enforcement system from code-pattern regex matching to
 
-
-
-id: EPIC-4440cdd4
-title: Structured Thinking Enforcement
-description: |
-  Shift OrqaStudio's enforcement system from code-pattern regex matching to
   structured thinking process enforcement. Process gates inject thinking prompts
+
   at workflow transitions. Knowledge injection auto-loads domain skills based on
+
   file paths and prompt intent. Tooling ecosystem management delegates code quality
+
   to linters while OrqaStudio manages the full chain from documented intent to
-  linter config to hook trigger.
-status: completed
-priority: P1
-created: 2026-03-11
-updated: 2026-03-12
+
+  linter config to hook trigger.\n"
+status: "completed"
+priority: "P1"
+created: "2026-03-11"
+updated: "2026-03-12"
 deadline: null
 horizon: null
 scoring:
@@ -23,79 +24,68 @@ scoring:
   complexity: 4
   dependencies: 4
 relationships:
-  - target: MS-eea45fa8
-    type: fulfils
-    rationale: Epic belongs to this milestone
-  - target: TASK-fde17fff
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-835e2645
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-49c63248
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-4f45e5b9
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-ff48daa1
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-15370e74
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-4fa7dd50
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-8232a533
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-6cd46196
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-439fa554
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-50b3aa55
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-05357368
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-2bbc5077
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-24ef68ce
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-2143a39a
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-965b2b81
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-34007190
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-d6727d2f
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: MS-654badde
-    type: fulfils
-  - target: DOC-4db3a417
-    type: documented-by
-  - target: RULE-c95f4444
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-f9d0279c
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-7f416d7d
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "MS-eea45fa8"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-fde17fff"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-835e2645"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-49c63248"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-4f45e5b9"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-ff48daa1"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-15370e74"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-4fa7dd50"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-8232a533"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-6cd46196"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-439fa554"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-50b3aa55"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-05357368"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-2bbc5077"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-24ef68ce"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-2143a39a"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-965b2b81"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-34007190"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-d6727d2f"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "MS-654badde"
+    type: "fulfils"
+  - target: "DOC-4db3a417"
+    type: "documented-by"
 ---
-
-
 ## Context
 
 OrqaStudio is a clarity engine. Its core value proposition is turning messy situations

@@ -1,25 +1,21 @@
 ---
-
-id: TASK-8b70b4c1
-title: Create stub scanner pre-commit hook
-description: Pre-commit hook that greps staged production files for TODO/FIXME/HACK comments and blocks the commit if found.
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+id: "TASK-8b70b4c1"
+title: "Create stub scanner pre-commit hook"
+description: "Pre-commit hook that greps staged production files for TODO/FIXME/HACK comments and blocks the commit if found."
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-11"
 acceptance:
-  - Hook blocks commits containing TODO/FIXME/HACK in production source files
-  - Test files are excluded from scanning
-  - Hook runs as part of the existing pre-commit chain
-  - RULE-e9c54567 updated to reference the hook
+  - "Hook blocks commits containing TODO/FIXME/HACK in production source files"
+  - "Test files are excluded from scanning"
+  - "Hook runs as part of the existing pre-commit chain"
+  - "RULE-e9c54567 updated to reference the hook"
 relationships:
-  - target: EPIC-4a7aeacb
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-ec136ce9
-    type: depended-on-by
-  - target: app::RULE-e9c54567
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4a7aeacb"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-ec136ce9"
+    type: "depended-on-by"
 ---
 ## What
 

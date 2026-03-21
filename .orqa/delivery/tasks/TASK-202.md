@@ -1,29 +1,26 @@
 ---
+id: "TASK-05357368"
+title: "Document linter-to-standard mapping"
+description: "Create a clear mapping between documented coding standards and the linter
 
-id: TASK-05357368
-title: Document linter-to-standard mapping
-description: |
-  Create a clear mapping between documented coding standards and the linter
   rules/configs that enforce them. Each standard traces to a specific linter
-  rule. Each skill describes how to configure the relevant tool.
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
+
+  rule. Each skill describes how to configure the relevant tool.\n"
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-12"
 acceptance:
-  - Every RULE-b49142be standard has a corresponding linter rule or agent discipline note
-  - lint enforcement entries added and validate against schema
-  - Skills reference correct linter configs
+  - "Every RULE-b49142be standard has a corresponding linter rule or agent discipline note"
+  - "lint enforcement entries added and validate against schema"
+  - "Skills reference correct linter configs"
 relationships:
-  - target: EPIC-4440cdd4
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-2bbc5077
-    type: depended-on-by
-  - target: TASK-d6727d2f
-    type: depended-on-by
-  - target: RULE-b49142be
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4440cdd4"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-2bbc5077"
+    type: "depended-on-by"
+  - target: "TASK-d6727d2f"
+    type: "depended-on-by"
 ---
 ## What
 

@@ -1,28 +1,20 @@
 ---
-
-
-id: TASK-62998ad6
-title: Record core architecture decisions (AD-dc919e52 through AD-0dbba717)
+id: "TASK-62998ad6"
+title: "Record core architecture decisions (AD-dc919e52 through AD-0dbba717)"
 description: "Captured foundational architecture decisions covering thick backend, IPC boundary, error propagation, and Svelte 5 runes-only policy."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: "2026-03-02"
+updated: "2026-03-02"
 acceptance:
-  - Each AD follows the decision schema with all required sections
-  - Decisions are internally consistent and cross-referenced
-  - All decisions are recorded in the decisions index
+  - "Each AD follows the decision schema with all required sections"
+  - "Decisions are internally consistent and cross-referenced"
+  - "All decisions are recorded in the decisions index"
 relationships:
-  - target: EPIC-46e5f406
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-737a5c6c
-    type: depended-on-by
-  - target: AD-dc919e52
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-0dbba717
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-46e5f406"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-737a5c6c"
+    type: "depended-on-by"
 ---
 ## What
 

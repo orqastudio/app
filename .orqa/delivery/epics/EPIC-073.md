@@ -1,94 +1,89 @@
 ---
-
-id: EPIC-b2ca1ea3
-title: UAT round 3 — navigation architecture, artifact links, roadmap drill-down, doc reorg
-description: '30 UAT findings grouped into 10 systemic themes. Largest themes: navigation architecture overhaul (Exploring/Delivery/Documentation/Process), artifact link component rework with settings, roadmap hierarchical drill-down, documentation reorganisation into book chapters, and schema migrations for scope → relationship.'
-status: active
-priority: P1
+id: "EPIC-b2ca1ea3"
+title: "UAT round 3 — navigation architecture, artifact links, roadmap drill-down, doc reorg"
+description: "30 UAT findings grouped into 10 systemic themes. Largest themes: navigation architecture overhaul (Exploring/Delivery/Documentation/Process), artifact link component rework with settings, roadmap hierarchical drill-down, documentation reorganisation into book chapters, and schema migrations for scope → relationship."
+status: "active"
+priority: "P1"
 scoring:
   impact: 5
   urgency: 5
   complexity: 4
   dependencies: 4
-created: 2026-03-14
-updated: 2026-03-14
+created: "2026-03-14"
+updated: "2026-03-14"
 deadline: null
-horizon: active
+horizon: "active"
 relationships:
-  - target: RES-627d3b37
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-9c90ef3d
-  type: guided-by
-  rationale: Documentation reorganisation research informs the doc reorg tasks
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic delivers to this milestone
-- target: TASK-6d896b8d
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-6d896b8d
-- target: TASK-44721f88
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-44721f88
-- target: TASK-d9c5be64
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-d9c5be64
-- target: TASK-07e661cd
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-07e661cd
-- target: TASK-8d601baf
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-8d601baf
-- target: TASK-697497a9
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-697497a9
-- target: TASK-d7ef4c9d
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-d7ef4c9d
-- target: TASK-88ed71e0
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-88ed71e0
-- target: TASK-a3f97edc
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-a3f97edc
-- target: TASK-6018c3ed
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-6018c3ed
-- target: TASK-e71504ed
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-e71504ed
-- target: TASK-d8a69e21
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-d8a69e21
-- target: TASK-a4f1bec7
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-a4f1bec7
-- target: TASK-27eca2aa
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-27eca2aa
-- target: TASK-b1dc0073
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-b1dc0073
-- target: TASK-ebc48b97
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-ebc48b97
-- target: TASK-b8d36c3f
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-b8d36c3f
-- target: TASK-71a3c1f7
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-71a3c1f7
-- target: TASK-e40d6994
-  type: delivered-by
-  rationale: Auto-generated inverse of contains relationship from TASK-e40d6994
-- target: TASK-730add34
-  type: delivered-by
-- target: TASK-3fceb34c
-  type: delivered-by
-- target: IDEA-a5f04c5c
-  type: realised-by
+  - target: "RES-9c90ef3d"
+    type: "guided-by"
+    rationale: "Documentation reorganisation research informs the doc reorg tasks"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic delivers to this milestone"
+  - target: "TASK-6d896b8d"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-6d896b8d"
+  - target: "TASK-44721f88"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-44721f88"
+  - target: "TASK-d9c5be64"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-d9c5be64"
+  - target: "TASK-07e661cd"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-07e661cd"
+  - target: "TASK-8d601baf"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-8d601baf"
+  - target: "TASK-697497a9"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-697497a9"
+  - target: "TASK-d7ef4c9d"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-d7ef4c9d"
+  - target: "TASK-88ed71e0"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-88ed71e0"
+  - target: "TASK-a3f97edc"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-a3f97edc"
+  - target: "TASK-6018c3ed"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-6018c3ed"
+  - target: "TASK-e71504ed"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-e71504ed"
+  - target: "TASK-d8a69e21"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-d8a69e21"
+  - target: "TASK-a4f1bec7"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-a4f1bec7"
+  - target: "TASK-27eca2aa"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-27eca2aa"
+  - target: "TASK-b1dc0073"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-b1dc0073"
+  - target: "TASK-ebc48b97"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-ebc48b97"
+  - target: "TASK-b8d36c3f"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-b8d36c3f"
+  - target: "TASK-71a3c1f7"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-71a3c1f7"
+  - target: "TASK-e40d6994"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of contains relationship from TASK-e40d6994"
+  - target: "TASK-730add34"
+    type: "delivered-by"
+  - target: "TASK-3fceb34c"
+    type: "delivered-by"
+  - target: "IDEA-a5f04c5c"
+    type: "realised-by"
 ---
-
 ## Context
 
 UAT round 3 collected 30 findings across the app after implementing 31 tasks in 6 epics. F2 (agent artifact discipline — 57 integrity warnings) was addressed by EPIC-915291e7 (enforcement bootstrapping). The remaining 29 findings group into 10 systemic themes.

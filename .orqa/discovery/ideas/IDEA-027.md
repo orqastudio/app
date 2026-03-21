@@ -1,31 +1,27 @@
 ---
-
-id: IDEA-52c65fc8
-title: Native Hooks System
+id: "IDEA-52c65fc8"
+title: "Native Hooks System"
 description: "Design a hooks layer that works in both app and CLI contexts, with richer lifecycle events and backwards compatibility with Claude Code hooks."
-status: completed
-created: 2026-03-07
-updated: 2026-03-07
-horizon: active
+status: "completed"
+created: "2026-03-07"
+updated: "2026-03-07"
+horizon: "active"
 research-needed:
-  - Audit current Claude hooks in .claude/settings.json and what they enforce
-  - Research Claude hookify plugin as inspiration for CLI compatibility
-  - Design a hooks layer that works in both app and CLI contexts
+  - "Audit current Claude hooks in .claude/settings.json and what they enforce"
+  - "Research Claude hookify plugin as inspiration for CLI compatibility"
+  - "Design a hooks layer that works in both app and CLI contexts"
   - "Define hook lifecycle (pre-commit, session-start, pre-delegation, post-delegation, etc.)"
-  - Determine which hooks should be platform-managed vs user-defined
-  - Consider how hooks relate to the three-layer governance model
-  - Evaluate building a custom Claude Code MCP plugin for CLI enforcement parity
-  - Design HOOK-NNN identifiers for app-managed hooks (completing the promotion chain IMPL → RULE → HOOK)
+  - "Determine which hooks should be platform-managed vs user-defined"
+  - "Consider how hooks relate to the three-layer governance model"
+  - "Evaluate building a custom Claude Code MCP plugin for CLI enforcement parity"
+  - "Design HOOK-NNN identifiers for app-managed hooks (completing the promotion chain IMPL → RULE → HOOK)"
 relationships:
-  - target: EPIC-3a8ad459
-    type: realises
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-015e8c2c
-    type: benefits
-  - target: EPIC-a2fa3068
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-3a8ad459"
+    type: "realises"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-015e8c2c"
+    type: "benefits"
 ---
 ## Motivation
 

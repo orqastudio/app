@@ -1,47 +1,23 @@
 ---
-
-
-
-
-
-
-id: IDEA-289ecd64
+id: "IDEA-289ecd64"
 title: "Pipeline health dashboard — integrity surfacing, visualization, and process automation"
 description: "Surface pipeline integrity checks on the app dashboard with scan/fix actions, add pipeline thread visualization, temporal trend analysis, and automate two process improvements: related idea surfacing during promotion and intent-based observation capture from user prompts."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
-horizon: active
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
+horizon: "active"
 research-needed:
   - "Should integrity checks run on app startup, on a schedule, or on-demand from the dashboard? → On-demand (Scan button), with optional auto-run on project load"
   - "What's the right UX — a health score, a warning banner, an expandable issue list? → Health score summary + expandable categorised issue list with drill-through"
   - "Should the Rust backend call the existing Node scripts or reimplement the checks natively? → Native Rust implementation using the existing ArtifactGraph — the graph already tracks orphans and broken refs"
   - "How does this interact with the pre-commit hook — are they the same checks presented differently? → Same logical checks, different presentation. Hook blocks commits, dashboard shows current state."
 relationships:
-  - target: EPIC-e37794bf
-    type: realises
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: IDEA-3c8085b6
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IDEA-6522afe2
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IDEA-c3b01bfd
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IMPL-40b0b5ca
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-7b770593
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IMPL-8d666f0c
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-e37794bf"
+    type: "realises"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Motivation
 

@@ -1,28 +1,20 @@
 ---
-
-
-id: IDEA-a99c270e
-title: Artifact Node Graph
+id: "IDEA-a99c270e"
+title: "Artifact Node Graph"
 description: "Build a bidirectional graph of all governance artifacts with typed relationships, enabling backreference queries, broken link detection, orphan detection, and a plugin-ready SDK for unified artifact access."
-status: completed
-created: 2026-03-10
-updated: 2026-03-13
+status: "completed"
+created: "2026-03-10"
+updated: "2026-03-13"
 research-needed:
-  - Inter-artifact linking design (RES-c387773d)
-  - Graph SDK design (RES-06ba5474)
+  - "Inter-artifact linking design (RES-c387773d)"
+  - "Graph SDK design (RES-06ba5474)"
 relationships:
-  - target: EPIC-0a8a5e72
-    type: realises
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: RES-c387773d
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RES-06ba5474
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-0a8a5e72"
+    type: "realises"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Motivation
 

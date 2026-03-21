@@ -1,25 +1,21 @@
 ---
-
-id: TASK-7cbdca2a
-title: Create rule for tool access restrictions per role
-description: Formalize the tool access restrictions defined in agent YAML tools lists into a dedicated rule that enforces which tools each universal role may use.
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+id: "TASK-7cbdca2a"
+title: "Create rule for tool access restrictions per role"
+description: "Formalize the tool access restrictions defined in agent YAML tools lists into a dedicated rule that enforces which tools each universal role may use."
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-11"
 acceptance:
-  - New rule created mapping roles to permitted tool sets
-  - FORBIDDEN section lists role-tool violations
-  - Rule references agent YAML as the detailed source
-  - Ownership boundaries from RULE-532100d9 reinforced through tool restrictions
+  - "New rule created mapping roles to permitted tool sets"
+  - "FORBIDDEN section lists role-tool violations"
+  - "Rule references agent YAML as the detailed source"
+  - "Ownership boundaries from RULE-532100d9 reinforced through tool restrictions"
 relationships:
-  - target: EPIC-4a7aeacb
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-ec136ce9
-    type: depended-on-by
-  - target: app::RULE-532100d9
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4a7aeacb"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-ec136ce9"
+    type: "depended-on-by"
 ---
 ## What
 

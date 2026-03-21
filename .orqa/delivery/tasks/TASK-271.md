@@ -1,30 +1,26 @@
 ---
-
-id: TASK-845e2653
-title: Implement rule-overrides in CLI plugin prompt injection
+id: "TASK-845e2653"
+title: "Implement rule-overrides in CLI plugin prompt injection"
 description: "When loading rules into agent context for a task, read the task's rule-overrides (falling back to epic's if task has none). Suspended rules are loaded but annotated with the suspension reason."
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+status: "completed"
+created: "2026-03-12"
+updated: "2026-03-12"
 assignee: null
 docs: []
 acceptance:
-  - Plugin reads rule-overrides from active task frontmatter
-  - Falls back to epic rule-overrides if task has none
-  - Suspended rules are included in context but annotated as suspended with reason
-  - Non-suspended rules load normally
+  - "Plugin reads rule-overrides from active task frontmatter"
+  - "Falls back to epic rule-overrides if task has none"
+  - "Suspended rules are included in context but annotated as suspended with reason"
+  - "Non-suspended rules load normally"
 rule-overrides: []
 relationships:
-  - target: EPIC-ca7b398b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-1ec1a07c
-    type: depended-on-by
-  - target: TASK-508cf6cd
-    type: depended-on-by
-  - target: app::RULE-a764b2ae
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-ca7b398b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-1ec1a07c"
+    type: "depended-on-by"
+  - target: "TASK-508cf6cd"
+    type: "depended-on-by"
 ---
 ## What
 

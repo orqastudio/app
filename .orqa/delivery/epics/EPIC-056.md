@@ -1,14 +1,15 @@
 ---
-id: EPIC-7b039d05
-title: Repository Directory Reorganisation
-description: |
-  Restructure the repository so that frontend, backend, sidecar, and debugger code
+id: "EPIC-7b039d05"
+title: "Repository Directory Reorganisation"
+description: "Restructure the repository so that frontend, backend, sidecar, and debugger code
+
   each live in their own top-level directory. Watchers then target only their specific
-  directory, eliminating unnecessary rebuilds when unrelated files change.
-status: completed
-priority: P1
-created: 2026-03-12
-updated: 2026-03-12
+
+  directory, eliminating unnecessary rebuilds when unrelated files change.\n"
+status: "completed"
+priority: "P1"
+created: "2026-03-12"
+updated: "2026-03-12"
 deadline: null
 horizon: null
 scoring:
@@ -17,36 +18,36 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-- target: RES-c7b4b22f
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-c7b4b22f
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-d2842e47
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-0fca4194
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-0e401567
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-e5c3ae15
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-8c23c140
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-50ed0c4a
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-7a35077d
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-03741ecb
-  type: delivered-by
-  rationale: Epic contains this task
+  - target: "RES-c7b4b22f"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-c7b4b22f"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-d2842e47"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-0fca4194"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-0e401567"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-e5c3ae15"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-8c23c140"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-50ed0c4a"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-7a35077d"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-03741ecb"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
 ---
 ## Context
 

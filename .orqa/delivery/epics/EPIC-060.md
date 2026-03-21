@@ -1,15 +1,13 @@
 ---
-
-
-id: EPIC-e37794bf
-title: Pipeline health dashboard
-description: Surface pipeline integrity on the app dashboard with scan/fix actions, add pipeline visualization and temporal analytics.
-status: completed
-priority: P1
-created: 2026-03-13
-updated: 2026-03-13
+id: "EPIC-e37794bf"
+title: "Pipeline health dashboard"
+description: "Surface pipeline integrity on the app dashboard with scan/fix actions, add pipeline visualization and temporal analytics."
+status: "completed"
+priority: "P1"
+created: "2026-03-13"
+updated: "2026-03-13"
 deadline: null
-horizon: active
+horizon: "active"
 scoring:
   impact: 4
   urgency: 3
@@ -17,67 +15,60 @@ scoring:
   dependencies: 3
 rule-overrides: []
 relationships:
-  - target: EPIC-4e6e9eae
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-0a8a5e72
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-e757fc6e
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-e757fc6e
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-2ffc45f7
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-ce651394
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-f6fd3161
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-ee4681f4
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-5fc0e2dc
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-614122c8
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-c5f53141
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-e188a8c8
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-b155317a
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-d624db8f
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-d746777d
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-07218422
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-ab087863
-  type: delivered-by
-  rationale: Epic contains this task
-- target: IDEA-c3b01bfd
-  type: realised-by
-- target: IDEA-6522afe2
-  type: realised-by
-- target: IDEA-289ecd64
-  type: realised-by
-- target: IDEA-3c8085b6
-  type: realised-by
+  - target: "RES-e757fc6e"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-e757fc6e"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-2ffc45f7"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-ce651394"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-f6fd3161"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-ee4681f4"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-5fc0e2dc"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-614122c8"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-c5f53141"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-e188a8c8"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-b155317a"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-d624db8f"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-d746777d"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-07218422"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-ab087863"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "IDEA-c3b01bfd"
+    type: "realised-by"
+  - target: "IDEA-6522afe2"
+    type: "realised-by"
+  - target: "IDEA-289ecd64"
+    type: "realised-by"
+  - target: "IDEA-3c8085b6"
+    type: "realised-by"
 ---
-
 ## Context
 
 Pipeline integrity checks (`make verify`) only run from the CLI or pre-commit hook. The artifact graph already computes orphans and broken refs during its two-pass build, and the dashboard already shows GraphStats (nodes, edges, orphans, broken refs) — but there's no way to run targeted integrity checks on-demand, see categorised issues, or fix them from the UI.

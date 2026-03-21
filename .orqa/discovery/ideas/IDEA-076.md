@@ -1,12 +1,11 @@
 ---
-
-id: IDEA-1db13693
-title: Bug and tweak tracking — milestone-direct attachment without epic overhead
+id: "IDEA-1db13693"
+title: "Bug and tweak tracking — milestone-direct attachment without epic overhead"
 description: "Bugs and UI tweaks often don't relate to any epic but still need tracking, prioritisation, and milestone assignment. Introduce a mechanism for tasks to attach directly to milestones without requiring an epic wrapper. Same principle for small UI polish items."
-status: captured
-created: 2026-03-13
-updated: 2026-03-13
-horizon: next
+status: "captured"
+created: "2026-03-13"
+updated: "2026-03-13"
+horizon: "next"
 research-needed:
   - "Should tasks be allowed to reference a milestone directly (no epic) or should there be a lightweight 'bug' or 'chore' epic type?"
   - "How does milestone completion gate change if tasks can attach directly — do direct tasks count as P1 blockers?"
@@ -14,13 +13,10 @@ research-needed:
   - "How do UI tweaks (IDEA-bcf96889) fit — are they bugs, tasks, or their own thing?"
   - "What changes to the task schema are needed (optional epic field, milestone field, category/type field)?"
 relationships:
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: IDEA-bcf96889
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Motivation
 

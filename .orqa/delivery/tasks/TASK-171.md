@@ -1,41 +1,33 @@
 ---
-
-
-id: TASK-ad922861
-title: Create capability vocabulary rule (RULE-92dba0cb)
+id: "TASK-ad922861"
+title: "Create capability vocabulary rule (RULE-92dba0cb)"
 description: "Create a rule defining the abstract capability vocabulary, provider mapping tables, and delegation resolution protocol."
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
-assignee: AGENT-1dab5ebe
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-12"
+assignee: "AGENT-1dab5ebe"
 docs:
-  - DOC-01ddd8aa
+  - "DOC-01ddd8aa"
 acceptance:
   - "Rule defines the canonical capability vocabulary (file_read, file_write, etc.)"
-  - Rule contains provider mapping tables for Claude Code CLI and OrqaStudio App
-  - Rule specifies the orchestrator delegation protocol for capability resolution
-  - Rule includes detection mechanism for determining current context
-  - Rule passes schema validation
+  - "Rule contains provider mapping tables for Claude Code CLI and OrqaStudio App"
+  - "Rule specifies the orchestrator delegation protocol for capability resolution"
+  - "Rule includes detection mechanism for determining current context"
+  - "Rule passes schema validation"
 relationships:
-  - target: EPIC-0a7b21cf
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-561205e2
-    type: depended-on-by
-  - target: TASK-f936b9b2
-    type: depended-on-by
-  - target: TASK-2067fdaf
-    type: depended-on-by
-  - target: TASK-869c27b5
-    type: depended-on-by
-  - target: TASK-413692fe
-    type: depended-on-by
-  - target: app::RULE-92dba0cb
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-3a8ad459
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-0a7b21cf"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-561205e2"
+    type: "depended-on-by"
+  - target: "TASK-f936b9b2"
+    type: "depended-on-by"
+  - target: "TASK-2067fdaf"
+    type: "depended-on-by"
+  - target: "TASK-869c27b5"
+    type: "depended-on-by"
+  - target: "TASK-413692fe"
+    type: "depended-on-by"
 ---
 ## What
 

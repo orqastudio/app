@@ -1,14 +1,11 @@
 ---
-
-
-
-id: IDEA-68d4e688
-title: Plugin-Based Tool Architecture
+id: "IDEA-68d4e688"
+title: "Plugin-Based Tool Architecture"
 description: "Redesign the tool system so tools are implemented as plugins rather than hardcoded Rust functions — enabling user-created tools, community tool packs, and dynamic tool registration without app rebuilds."
-status: surpassed
-created: 2026-03-11
-updated: 2026-03-13
-horizon: later
+status: "surpassed"
+created: "2026-03-11"
+updated: "2026-03-13"
+horizon: "later"
 research-needed:
   - "How are tools currently implemented? (Rust functions in backend/src-tauri/src/tools/, registered in the tool registry)"
   - "What is the current tool registration mechanism? (compile-time or runtime?)"
@@ -18,25 +15,16 @@ research-needed:
   - "How does this relate to AD-0dbba717 (Tool Implementation as MCP) and the existing plugin system ideas (IDEA-b77e2955)?"
   - "What's the migration path from hardcoded tools to plugin tools without breaking existing functionality?"
 relationships:
-  - type: merged-into
-    target: IDEA-2dfe18ae
-  - type: realises
-    target: EPIC-3f65c703
-  - target: AD-c6abc8e6
-    type: crystallises
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-015e8c2c
-    type: benefits
-  - target: AD-0dbba717
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IDEA-b77e2955
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IDEA-59ce25c3
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - type: "merged-into"
+    target: "IDEA-2dfe18ae"
+  - type: "realises"
+    target: "EPIC-3f65c703"
+  - target: "AD-c6abc8e6"
+    type: "crystallises"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-015e8c2c"
+    type: "benefits"
 ---
 > **Surpassed 2026-03-16**: Plugin architecture concept merged into EPIC-3f65c703 via AD-c6abc8e6. Runtime tool registration (WASM/MCP/script formats, capability-based permissions) split into IDEA-2dfe18ae as architecturally distinct from artifact/view plugins.
 

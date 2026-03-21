@@ -1,29 +1,16 @@
 ---
-
-
-
-id: IMPL-ccb23768
-title: Lessons learned should be recorded on task completion artifacts
+id: "IMPL-ccb23768"
+title: "Lessons learned should be recorded on task completion artifacts"
 description: "When a task is completed, any observations logged or recurrence incremented during that task should be recorded in the task artifact itself. This makes the learning visible to the user as part of the completion statement, not buried in conversation history."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
-maturity: understanding
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
+maturity: "understanding"
 recurrence: 1
 relationships:
-  - target: TASK-bd4fb2bc
-    type: yielded-by
-  - target: IMPL-262e63e1
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IMPL-e53df28b
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: IMPL-c306b136
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "TASK-bd4fb2bc"
+    type: "yielded-by"
 ---
-
 ## Pattern
 
 Currently, task artifacts have three body sections: What, How, Verification. When a task is completed, the agent updates `status: done` but doesn't record what was learned during implementation.

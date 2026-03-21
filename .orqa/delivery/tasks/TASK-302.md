@@ -1,26 +1,22 @@
 ---
-
-id: TASK-2e138cb1
+id: "TASK-2e138cb1"
 title: "Complete RES-c4dd4c4d: behavioral directives research"
 description: "RES-c4dd4c4d (Agent Memory, User Directives, and the Knowledge Pipeline) is in draft status. Complete the research and discuss findings with user to determine where behavioral directives fit in the pipeline."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
 acceptance:
-  - RES-c4dd4c4d status is complete
-  - Research conclusions identify whether a new artifact type is needed or existing types cover the gap
-  - User has reviewed and approved the findings
+  - "RES-c4dd4c4d status is complete"
+  - "Research conclusions identify whether a new artifact type is needed or existing types cover the gap"
+  - "User has reviewed and approved the findings"
 relationships:
-  - target: EPIC-942c7678
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-7fbe6eca
-    type: depended-on-by
-  - target: TASK-cea1bc37
-    type: depended-on-by
-  - target: RES-c4dd4c4d
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-942c7678"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-7fbe6eca"
+    type: "depended-on-by"
+  - target: "TASK-cea1bc37"
+    type: "depended-on-by"
 ---
 ## What
 

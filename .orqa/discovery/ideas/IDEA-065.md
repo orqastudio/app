@@ -1,28 +1,20 @@
 ---
-
-
-id: IDEA-9bfb9012
-title: Friction is the feature — evaluate as foundational principle or pillar
+id: "IDEA-9bfb9012"
+title: "Friction is the feature — evaluate as foundational principle or pillar"
 description: "The purposeful friction of mandatory relationships (forcing connection to purpose before creation) may be significant enough to become a pillar. AI makes the friction nearly free, but the friction itself is non-negotiable."
-status: completed
-created: 2026-03-12
-updated: 2026-03-13
+status: "completed"
+created: "2026-03-12"
+updated: "2026-03-13"
 horizon: null
 research-needed:
   - "Does this stand as its own pillar or is it a property of the existing two?"
   - "How does this interact with UX-first design — friction in the right places vs friction-free experience?"
   - "User testing — does mandatory-relationships-with-AI-assist feel like value or bureaucracy?"
 relationships:
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: AD-a76663db
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: PILLAR-94b281db
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Motivation
 

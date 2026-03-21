@@ -1,21 +1,15 @@
 ---
-
-
-id: IMPL-d5cbc9c7
-type: lesson
-title: Do not refactor agentic structure while delegating to agents
+id: "IMPL-d5cbc9c7"
+type: "lesson"
+title: "Do not refactor agentic structure while delegating to agents"
 description: "When modifying rules, skills, or agent definitions, the orchestrator must handle changes directly. Delegating to agents that read the same artifacts being modified causes stale-context conflicts.\n"
-status: active
-created: 2026-03-07
-updated: 2026-03-07
-maturity: understanding
+status: "active"
+created: "2026-03-07"
+updated: "2026-03-07"
+maturity: "understanding"
 recurrence: 1
-relationships:
-  - target: RULE-6083347d
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
+relationships: []
 ---
-
 ## What Happened
 
 During the schema alignment sprint, agents were delegated tasks that modified the artifact schema, rules, and agent definitions — the same artifacts those agents read for instructions. Three background agents ran concurrently, each with stale context about the structure they were modifying. One agent wrote directly to `.claude/` instead of `.orqa/`, another referenced a plan field that was being removed, and coordination became impossible.

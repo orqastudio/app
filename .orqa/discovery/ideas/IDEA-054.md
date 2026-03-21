@@ -1,12 +1,11 @@
 ---
-
-id: IDEA-c599e4ac
-title: Web Search Skill for Agent Research
+id: "IDEA-c599e4ac"
+title: "Web Search Skill for Agent Research"
 description: "A skill that teaches agents how to effectively use web search and web fetch tools for external research — query formulation, source evaluation, result synthesis, and citation practices."
-status: captured
-created: 2026-03-11
-updated: 2026-03-13
-horizon: later
+status: "captured"
+created: "2026-03-11"
+updated: "2026-03-13"
+horizon: "later"
 research-needed:
   - "What web search/fetch tools are available in each context? (CLI MCP tools, app-embedded tools)"
   - "What query patterns produce the best results for technical research?"
@@ -14,13 +13,10 @@ research-needed:
   - "How should web research findings be captured in .orqa/ artifacts?"
   - "Should web search results be cached/indexed for future sessions?"
 relationships:
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-015e8c2c
-    type: benefits
-  - target: IDEA-59ce25c3
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-015e8c2c"
+    type: "benefits"
 ---
 ## Motivation
 

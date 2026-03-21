@@ -1,26 +1,22 @@
 ---
-
-id: TASK-50906c0c
-title: Create rule for artifact link format constraints
-description: Extract the artifact link format constraint from the orqa-documentation skill into a new dedicated rule with enforcement path.
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+id: "TASK-50906c0c"
+title: "Create rule for artifact link format constraints"
+description: "Extract the artifact link format constraint from the orqa-documentation skill into a new dedicated rule with enforcement path."
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-11"
 acceptance:
-  - New RULE-NNN created for artifact link format enforcement
-  - Constraint removed from orqa-documentation skill FORBIDDEN section
-  - Skill references the new rule for the constraint
-  - Rule includes valid and invalid examples
-  - Rule has a FORBIDDEN section with concrete violations
+  - "New RULE-NNN created for artifact link format enforcement"
+  - "Constraint removed from orqa-documentation skill FORBIDDEN section"
+  - "Skill references the new rule for the constraint"
+  - "Rule includes valid and invalid examples"
+  - "Rule has a FORBIDDEN section with concrete violations"
 relationships:
-  - target: EPIC-4a7aeacb
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-ec136ce9
-    type: depended-on-by
-  - target: EPIC-e045ab6d
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4a7aeacb"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-ec136ce9"
+    type: "depended-on-by"
 ---
 ## What
 

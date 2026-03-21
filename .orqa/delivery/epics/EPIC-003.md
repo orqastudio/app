@@ -1,25 +1,21 @@
 ---
-
-id: EPIC-1dcf5ffa
-title: Context Injection on Failed Resume
-description: Add fallback context injection when SDK session resume fails due to app restart or cleared storage.
-status: captured
-priority: P1
-created: 2026-03-07
-updated: 2026-03-07
-horizon: next
+id: "EPIC-1dcf5ffa"
+title: "Context Injection on Failed Resume"
+description: "Add fallback context injection when SDK session resume fails due to app restart or cleared storage."
+status: "captured"
+priority: "P1"
+created: "2026-03-07"
+updated: "2026-03-07"
+horizon: "next"
 scoring:
   impact: 4
   urgency: 4
   complexity: 3
   dependencies: 2
 relationships:
-  - target: MS-654badde
-    type: fulfils
-    rationale: Epic belongs to this milestone
-  - target: EPIC-e045ab6d
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
 ---
 ## Why P1
 

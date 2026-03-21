@@ -1,21 +1,15 @@
 ---
-
-
-id: IMPL-b3e47100
-type: lesson
-title: Symlinks Prevent Governance Divergence
+id: "IMPL-b3e47100"
+type: "lesson"
+title: "Symlinks Prevent Governance Divergence"
 description: "When .claude/ contains copies instead of symlinks to .orqa/, agents writing to .claude/ bypass the source of truth and the two directories silently diverge."
-status: completed
-created: 2026-03-07
-updated: 2026-03-07
-maturity: understanding
+status: "completed"
+created: "2026-03-07"
+updated: "2026-03-07"
+maturity: "understanding"
 recurrence: 1
-relationships:
-  - target: app::RULE-6c0496e0
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
+relationships: []
 ---
-
 ## What Happened
 
 Agents were writing governance artifacts (rules, agents, skills) directly to `.claude/` directories, which were separate copies of the `.orqa/` source of truth. Over multiple sessions, the two directories diverged — `.claude/` had newer rule content while `.orqa/` had the original versions. The CLI loaded from `.claude/` and the app scanned `.orqa/`, resulting in inconsistent governance enforcement.

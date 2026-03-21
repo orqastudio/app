@@ -1,23 +1,19 @@
 ---
-
-id: TASK-15bc3749
-title: Audit EPIC-3a8ad459 tasks against plugin codebase
-description: 14 tasks marked todo but plugin has working code. Verify each task against actual implementation.
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+id: "TASK-15bc3749"
+title: "Audit EPIC-3a8ad459 tasks against plugin codebase"
+description: "14 tasks marked todo but plugin has working code. Verify each task against actual implementation."
+status: "completed"
+created: "2026-03-12"
+updated: "2026-03-12"
 acceptance:
-  - Every EPIC-3a8ad459 task has accurate status
-  - EPIC-3a8ad459 status updated accordingly
+  - "Every EPIC-3a8ad459 task has accurate status"
+  - "EPIC-3a8ad459 status updated accordingly"
 relationships:
-  - target: EPIC-6f2d06d4
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-94149697
-    type: depended-on-by
-  - target: EPIC-3a8ad459
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-6f2d06d4"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-94149697"
+    type: "depended-on-by"
 ---
 ## What
 

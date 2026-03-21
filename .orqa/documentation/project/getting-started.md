@@ -1,32 +1,24 @@
 ---
-
-
-id: DOC-2a7f1063
-title: Getting Started
-category: onboarding
-description: Step-by-step guide to setting up the OrqaStudio development environment from scratch.
-created: 2026-03-02
-updated: 2026-03-09
+id: "DOC-2a7f1063"
+title: "Getting Started"
+category: "onboarding"
+description: "Step-by-step guide to setting up the OrqaStudio development environment from scratch."
+created: "2026-03-02"
+updated: "2026-03-09"
 sort: 1
 relationships:
-  - target: AD-834fc71a
-    type: documents
-    rationale: Documentation page references AD-834fc71a
-  - target: AD-dffc3d30
-    type: documents
-    rationale: Documentation page references AD-dffc3d30
-  - target: AD-8b91f5a4
-    type: documents
-    rationale: Documentation page references AD-8b91f5a4
-  - target: AD-afc78f6e
-    type: documents
-    rationale: Documentation page references AD-afc78f6e
-  - target: RES-00c5dbc3
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RES-df5560cb
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "AD-834fc71a"
+    type: "documents"
+    rationale: "Documentation page references AD-834fc71a"
+  - target: "AD-dffc3d30"
+    type: "documents"
+    rationale: "Documentation page references AD-dffc3d30"
+  - target: "AD-8b91f5a4"
+    type: "documents"
+    rationale: "Documentation page references AD-8b91f5a4"
+  - target: "AD-afc78f6e"
+    type: "documents"
+    rationale: "Documentation page references AD-afc78f6e"
 ---
 **Date:** 2026-03-02
 

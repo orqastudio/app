@@ -1,27 +1,14 @@
 ---
-
-
-
-
-id: IMPL-f27a1550
-type: lesson
-title: Epic body drifts from actual work — no standing mechanism to maintain consistency
+id: "IMPL-f27a1550"
+type: "lesson"
+title: "Epic body drifts from actual work — no standing mechanism to maintain consistency"
 description: "When tasks are added, pillars updated, or scope evolves mid-epic, the epic body (task table, pillars array, docs-produced) isn't updated in sync. This causes incomplete epic bodies at closure that need manual reconciliation. A standing reconciliation task per epic would force ongoing maintenance."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
-maturity: understanding
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
+maturity: "understanding"
 recurrence: 1
-relationships:
-  - target: EPIC-942c7678
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
-  - target: PILLAR-94b281db
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-6dab59a2
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+relationships: []
 ---
 ## Pattern
 

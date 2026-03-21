@@ -1,28 +1,24 @@
 ---
-
-id: TASK-cca73736
-title: Audit shared component inventory and update RULE-cb65b5d0
-description: Audit all Svelte components under ui/src/lib/components/ and update RULE-cb65b5d0 to reflect the accurate shared component inventory.
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+id: "TASK-cca73736"
+title: "Audit shared component inventory and update RULE-cb65b5d0"
+description: "Audit all Svelte components under ui/src/lib/components/ and update RULE-cb65b5d0 to reflect the accurate shared component inventory."
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-11"
 acceptance:
-  - Every .svelte file under ui/src/lib/components/ catalogued with purpose
-  - RULE-cb65b5d0 inventory reflects actual disk state
-  - Name mismatches resolved (rule uses actual component names)
-  - Components in wrong locations identified with recommended moves
-  - Follow-up tasks created for missing-but-useful components
+  - "Every .svelte file under ui/src/lib/components/ catalogued with purpose"
+  - "RULE-cb65b5d0 inventory reflects actual disk state"
+  - "Name mismatches resolved (rule uses actual component names)"
+  - "Components in wrong locations identified with recommended moves"
+  - "Follow-up tasks created for missing-but-useful components"
 relationships:
-  - target: EPIC-4a7aeacb
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-e752886d
-    type: depended-on-by
-  - target: TASK-ec136ce9
-    type: depended-on-by
-  - target: RULE-cb65b5d0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4a7aeacb"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-e752886d"
+    type: "depended-on-by"
+  - target: "TASK-ec136ce9"
+    type: "depended-on-by"
 ---
 ## What
 

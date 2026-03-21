@@ -1,23 +1,19 @@
 ---
-
-id: TASK-bd34be90
-title: Fix KNOW-e3a559c9 ID collision
-description: Three skills share KNOW-e3a559c9. Assign unique IDs and update all agent references.
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+id: "TASK-bd34be90"
+title: "Fix KNOW-e3a559c9 ID collision"
+description: "Three skills share KNOW-e3a559c9. Assign unique IDs and update all agent references."
+status: "completed"
+created: "2026-03-12"
+updated: "2026-03-12"
 acceptance:
-  - Every skill has a unique SKILL-NNN ID
-  - All agent frontmatter references resolve to exactly one skill
+  - "Every skill has a unique SKILL-NNN ID"
+  - "All agent frontmatter references resolve to exactly one skill"
 relationships:
-  - target: EPIC-6f2d06d4
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-94149697
-    type: depended-on-by
-  - target: app::KNOW-e3a559c9
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-6f2d06d4"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-94149697"
+    type: "depended-on-by"
 ---
 ## What
 

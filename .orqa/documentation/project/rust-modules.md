@@ -1,33 +1,21 @@
 ---
-
-
-
-id: DOC-2f60e3a2
-title: Rust Module Architecture
-category: architecture
-description: Module layout and dependency structure of the Rust backend crate.
-created: 2026-03-02
-updated: 2026-03-10
+id: "DOC-2f60e3a2"
+title: "Rust Module Architecture"
+category: "architecture"
+description: "Module layout and dependency structure of the Rust backend crate."
+created: "2026-03-02"
+updated: "2026-03-10"
 sort: 7
 relationships:
-  - target: AD-e513c9e4
-    type: documents
-    rationale: Documentation page references AD-e513c9e4
-  - target: AD-1ad08e5f
-    type: documents
-    rationale: Documentation page references AD-1ad08e5f
-  - target: AD-8b91f5a4
-    type: documents
-    rationale: Documentation page references AD-8b91f5a4
-  - target: RES-7f87b149
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RES-00c5dbc3
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RES-a68430ce
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "AD-e513c9e4"
+    type: "documents"
+    rationale: "Documentation page references AD-e513c9e4"
+  - target: "AD-1ad08e5f"
+    type: "documents"
+    rationale: "Documentation page references AD-1ad08e5f"
+  - target: "AD-8b91f5a4"
+    type: "documents"
+    rationale: "Documentation page references AD-8b91f5a4"
 ---
 **References:** [Claude Integration](RES-7f87b149), [Tauri v2](RES-00c5dbc3), [Persistence](RES-a68430ce)
 

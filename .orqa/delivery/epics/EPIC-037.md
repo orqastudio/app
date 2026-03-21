@@ -1,11 +1,11 @@
 ---
-id: EPIC-c0ab7529
-title: Dogfood Readiness
-description: Multi-phase sprint to make OrqaStudio ready for self-hosted development (dogfooding). Covers governance alignment, frontend audit fixes, documentation alignment, enforcement engine, tool approval, lesson promotion, and SDK session resume.
-status: completed
-priority: P1
-created: 2026-03-05
-updated: 2026-03-09
+id: "EPIC-c0ab7529"
+title: "Dogfood Readiness"
+description: "Multi-phase sprint to make OrqaStudio ready for self-hosted development (dogfooding). Covers governance alignment, frontend audit fixes, documentation alignment, enforcement engine, tool approval, lesson promotion, and SDK session resume."
+status: "completed"
+priority: "P1"
+created: "2026-03-05"
+updated: "2026-03-09"
 horizon: null
 scoring:
   impact: 5
@@ -13,30 +13,30 @@ scoring:
   complexity: 4
   dependencies: 4
 relationships:
-- target: RES-61899f39
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-61899f39
-- target: RES-5af44375
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-5af44375
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-76849c1d
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-4b610526
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-ef24c223
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-04c0045a
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-428a887f
-  type: delivered-by
-  rationale: Epic contains this task
+  - target: "RES-61899f39"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-61899f39"
+  - target: "RES-5af44375"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-5af44375"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-76849c1d"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-4b610526"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-ef24c223"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-04c0045a"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-428a887f"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
 ---
 ## Implementation Design
 

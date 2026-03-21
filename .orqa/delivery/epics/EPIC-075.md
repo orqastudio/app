@@ -1,45 +1,45 @@
 ---
-id: EPIC-2a6e2567
-title: Documentation reorganisation — book-chapter structure with how-to guides
-description: Reorganise .orqa/documentation/ from ad-hoc sections (architecture/, product/, process/, ui/, wireframes/) into book chapters (about/, guide/, development/, how-to/, reference/, grounding/). Write missing how-to guides for plugin SDK, testing, and linting. Migrate relationships and project.json paths.
-status: completed
-priority: P1
+id: "EPIC-2a6e2567"
+title: "Documentation reorganisation — book-chapter structure with how-to guides"
+description: "Reorganise .orqa/documentation/ from ad-hoc sections (architecture/, product/, process/, ui/, wireframes/) into book chapters (about/, guide/, development/, how-to/, reference/, grounding/). Write missing how-to guides for plugin SDK, testing, and linting. Migrate relationships and project.json paths."
+status: "completed"
+priority: "P1"
 scoring:
   impact: 4
   urgency: 4
   complexity: 4
   dependencies: 3
-created: 2026-03-14
-updated: 2026-03-14
+created: "2026-03-14"
+updated: "2026-03-14"
 deadline: null
-horizon: active
+horizon: "active"
 relationships:
-- target: RES-9c90ef3d
-  type: guided-by
-  rationale: Documentation audit and migration inventory drive this epic
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-d51a5a7e
-  type: delivered-by
-  rationale: Auto-generated inverse of delivered-by relationship from TASK-d51a5a7e
-- target: TASK-700bb275
-  type: delivered-by
-  rationale: Auto-generated inverse of delivered-by relationship from TASK-700bb275
-- target: TASK-bad2c95f
-  type: delivered-by
-  rationale: Auto-generated inverse of delivered-by relationship from TASK-bad2c95f
-- target: TASK-28a2989f
-  type: delivered-by
-  rationale: Auto-generated inverse of delivered-by relationship from TASK-28a2989f
-- target: TASK-96db8fb0
-  type: delivered-by
-  rationale: Auto-generated inverse of delivered-by relationship from TASK-96db8fb0
-- target: TASK-eb73e082
-  type: delivered-by
-  rationale: Auto-generated inverse of delivered-by relationship from TASK-eb73e082
-- target: IDEA-93949f43
-  type: realised-by
+  - target: "RES-9c90ef3d"
+    type: "guided-by"
+    rationale: "Documentation audit and migration inventory drive this epic"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-d51a5a7e"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-d51a5a7e"
+  - target: "TASK-700bb275"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-700bb275"
+  - target: "TASK-bad2c95f"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-bad2c95f"
+  - target: "TASK-28a2989f"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-28a2989f"
+  - target: "TASK-96db8fb0"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-96db8fb0"
+  - target: "TASK-eb73e082"
+    type: "delivered-by"
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-eb73e082"
+  - target: "IDEA-93949f43"
+    type: "realised-by"
 ---
 ## Context
 

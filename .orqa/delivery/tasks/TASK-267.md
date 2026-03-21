@@ -1,27 +1,23 @@
 ---
-
-id: TASK-d9d85326
-title: Document plugin architecture and SDK extraction plan
-description: Document the plugin system architecture and plan for component library / SDK extraction.
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
-assignee: AGENT-ec1b3785
+id: "TASK-d9d85326"
+title: "Document plugin architecture and SDK extraction plan"
+description: "Document the plugin system architecture and plan for component library / SDK extraction."
+status: "completed"
+created: "2026-03-12"
+updated: "2026-03-12"
+assignee: "AGENT-ec1b3785"
 acceptance:
   - "Document covers: current plugin capabilities, component library extraction plan, view registration API, theme tokens"
-  - Built-in vs plugin boundary documented with decision framework
-  - Document lives in .orqa/documentation/development/
+  - "Built-in vs plugin boundary documented with decision framework"
+  - "Document lives in .orqa/documentation/development/"
 relationships:
-  - target: EPIC-4726cb3b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-76e79dba
-    type: depends-on
-  - target: TASK-91bc09f9
-    type: depended-on-by
-  - target: RES-00ec6dd1
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4726cb3b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-76e79dba"
+    type: "depends-on"
+  - target: "TASK-91bc09f9"
+    type: "depended-on-by"
 ---
 ## What
 

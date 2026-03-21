@@ -1,16 +1,11 @@
 ---
-
-
-
-
-
-id: EPIC-4726cb3b
-title: Codebase Audit and Architecture Documentation
-description: Thorough code review ensuring artifact accuracy, documenting undiscovered implementation patterns, removing dead/outdated code, assessing test coverage, aligning linting with coding standards, and producing complete architecture documentation for the target core application.
-status: completed
-priority: P1
-created: 2026-03-12
-updated: 2026-03-12
+id: "EPIC-4726cb3b"
+title: "Codebase Audit and Architecture Documentation"
+description: "Thorough code review ensuring artifact accuracy, documenting undiscovered implementation patterns, removing dead/outdated code, assessing test coverage, aligning linting with coding standards, and producing complete architecture documentation for the target core application."
+status: "completed"
+priority: "P1"
+created: "2026-03-12"
+updated: "2026-03-12"
 deadline: null
 horizon: null
 scoring:
@@ -19,69 +14,54 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: app::RULE-532100d9
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-6787bb93
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-21b461ea
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-db9be55f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-2aa4d6db
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-9bcc7279
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-9bcc7279
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-caa1dd3c
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-e3e503a9
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-efaf25d7
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-54fae8bf
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-0baf0584
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-9ca53d45
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-e0cbdfe2
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-e5775999
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-76e79dba
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-d9d85326
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-dce77e0b
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-7e7d1e02
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-c75be77c
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-91bc09f9
-  type: delivered-by
-  rationale: Epic contains this task
+  - target: "RES-9bcc7279"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-9bcc7279"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-caa1dd3c"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-e3e503a9"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-efaf25d7"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-54fae8bf"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-0baf0584"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-9ca53d45"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-e0cbdfe2"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-e5775999"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-76e79dba"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-d9d85326"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-dce77e0b"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-7e7d1e02"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-c75be77c"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-91bc09f9"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
 ---
 ## Context
 

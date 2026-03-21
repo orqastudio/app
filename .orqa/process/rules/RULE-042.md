@@ -1,57 +1,45 @@
 ---
-
-
-
-id: RULE-f9d0279c
-title: Automated Knowledge Injection
-description: When agents touch specific code areas, relevant domain knowledge is auto-injected. Enforcement entries map file paths to knowledge artifact names.
-status: active
-created: 2026-03-11
-updated: 2026-03-12
+id: "RULE-f9d0279c"
+title: "Automated Knowledge Injection"
+description: "When agents touch specific code areas, relevant domain knowledge is auto-injected. Enforcement entries map file paths to knowledge artifact names."
+status: "active"
+created: "2026-03-11"
+updated: "2026-03-12"
 enforcement:
-- 'event: file'
-- backend/src-tauri/src/domain/**
-- orqa-domain-services
-- orqa-error-composition
-- 'event: file'
-- backend/src-tauri/src/commands/**
-- orqa-ipc-patterns
-- orqa-error-composition
-- 'event: file'
-- backend/src-tauri/src/repo/**
-- orqa-repository-pattern
-- 'event: file'
-- sidecar/src/**
-- orqa-streaming
-- 'event: file'
-- ui/src/lib/components/**
-- component-extraction
-- svelte5-best-practices
-- 'event: file'
-- ui/src/lib/stores/**
-- orqa-store-patterns
-- orqa-store-orchestration
-- 'event: file'
-- .orqa/**
-- orqa-governance
-- orqa-documentation
+  - "event: file"
+  - "backend/src-tauri/src/domain/**"
+  - "orqa-domain-services"
+  - "orqa-error-composition"
+  - "event: file"
+  - "backend/src-tauri/src/commands/**"
+  - "orqa-ipc-patterns"
+  - "orqa-error-composition"
+  - "event: file"
+  - "backend/src-tauri/src/repo/**"
+  - "orqa-repository-pattern"
+  - "event: file"
+  - "sidecar/src/**"
+  - "orqa-streaming"
+  - "event: file"
+  - "ui/src/lib/components/**"
+  - "component-extraction"
+  - "svelte5-best-practices"
+  - "event: file"
+  - "ui/src/lib/stores/**"
+  - "orqa-store-patterns"
+  - "orqa-store-orchestration"
+  - "event: file"
+  - ".orqa/**"
+  - "orqa-governance"
+  - "orqa-documentation"
 relationships:
-  - target: app::RULE-deab6ea7
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-b49142be
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-7f416d7d
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: AD-ea4a5979
-  type: enforces
-  rationale: Auto-generated inverse of practiced-by relationship from AD-ea4a5979
-- target: AD-f9034c99
-  type: enforces
-- target: DOC-e0042602
-  type: documented-by
+  - target: "AD-ea4a5979"
+    type: "enforces"
+    rationale: "Auto-generated inverse of practiced-by relationship from AD-ea4a5979"
+  - target: "AD-f9034c99"
+    type: "enforces"
+  - target: "DOC-e0042602"
+    type: "documented-by"
 ---
 When agents write to specific code areas, the enforcement engine automatically injects
 relevant domain knowledge as system context. This implements Layer 2 (Knowledge Injection)

@@ -1,37 +1,33 @@
 ---
-
-id: DOC-52bbfba5
-title: Svelte Component Tree
-description: Component tree structure and hierarchy of the Svelte 5 frontend application.
-created: 2026-03-02
-updated: 2026-03-10
-category: architecture
+id: "DOC-52bbfba5"
+title: "Svelte Component Tree"
+description: "Component tree structure and hierarchy of the Svelte 5 frontend application."
+created: "2026-03-02"
+updated: "2026-03-10"
+category: "architecture"
 tags:
-  - frontend
-  - svelte
-  - components
-  - stores
-  - architecture
+  - "frontend"
+  - "svelte"
+  - "components"
+  - "stores"
+  - "architecture"
 sort: 8
 relationships:
-  - target: AD-8d552e96
-    type: documents
-    rationale: Documentation page references AD-8d552e96
-  - target: AD-61087142
-    type: documents
-    rationale: Documentation page references AD-61087142
-  - target: RULE-cb65b5d0
-    type: documents
-    rationale: Documentation page references RULE-cb65b5d0
-  - target: AD-afc78f6e
-    type: documents
-    rationale: Documentation page references AD-afc78f6e
-  - target: AD-fcd55d44
-    type: documents
-    rationale: Documentation page references AD-fcd55d44
-  - target: RES-df5560cb
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "AD-8d552e96"
+    type: "documents"
+    rationale: "Documentation page references AD-8d552e96"
+  - target: "AD-61087142"
+    type: "documents"
+    rationale: "Documentation page references AD-61087142"
+  - target: "RULE-cb65b5d0"
+    type: "documents"
+    rationale: "Documentation page references RULE-cb65b5d0"
+  - target: "AD-afc78f6e"
+    type: "documents"
+    rationale: "Documentation page references AD-afc78f6e"
+  - target: "AD-fcd55d44"
+    type: "documents"
+    rationale: "Documentation page references AD-fcd55d44"
 ---
 **References:** [Frontend Research](RES-df5560cb), Information Architecture
 

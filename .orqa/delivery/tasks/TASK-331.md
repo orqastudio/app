@@ -1,27 +1,23 @@
 ---
-
-id: TASK-ddbcf6e0
-title: Reconcile EPIC-e881130b
+id: "TASK-ddbcf6e0"
+title: "Reconcile EPIC-e881130b"
 description: "Standing reconciliation task — verify epic body accuracy: task table, pillars, docs-produced, scope."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
 acceptance:
-  - Epic task table lists ALL tasks created during the epic
-  - Epic pillars array reflects all pillars served
-  - Epic docs-produced list matches actual documentation created/updated
-  - Epic scope section accurately reflects what was in/out of scope
+  - "Epic task table lists ALL tasks created during the epic"
+  - "Epic pillars array reflects all pillars served"
+  - "Epic docs-produced list matches actual documentation created/updated"
+  - "Epic scope section accurately reflects what was in/out of scope"
 relationships:
-  - target: EPIC-e881130b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-53bfe6e9
-    type: depends-on
-  - target: TASK-4fb1b91f
-    type: depends-on
-  - target: app::RULE-7b770593
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-e881130b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-53bfe6e9"
+    type: "depends-on"
+  - target: "TASK-4fb1b91f"
+    type: "depends-on"
 ---
 ## What
 

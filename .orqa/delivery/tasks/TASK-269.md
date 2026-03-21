@@ -1,25 +1,21 @@
 ---
-
-id: TASK-7e7d1e02
-title: Tighten RULE-532100d9 orchestrator content boundary
-description: Clarify in RULE-532100d9 that the orchestrator creates artifact structure but delegates content writing to Writer.
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
-assignee: AGENT-1dab5ebe
+id: "TASK-7e7d1e02"
+title: "Tighten RULE-532100d9 orchestrator content boundary"
+description: "Clarify in RULE-532100d9 that the orchestrator creates artifact structure but delegates content writing to Writer."
+status: "completed"
+created: "2026-03-12"
+updated: "2026-03-12"
+assignee: "AGENT-1dab5ebe"
 acceptance:
-  - RULE-532100d9 exception list distinguishes structure (orchestrator) from content (Writer)
-  - Research artifacts listed as Writer-delegated content
-  - No new rule created — existing RULE-532100d9 tightened
+  - "RULE-532100d9 exception list distinguishes structure (orchestrator) from content (Writer)"
+  - "Research artifacts listed as Writer-delegated content"
+  - "No new rule created — existing RULE-532100d9 tightened"
 relationships:
-  - target: EPIC-4726cb3b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-91bc09f9
-    type: depended-on-by
-  - target: app::RULE-532100d9
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4726cb3b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-91bc09f9"
+    type: "depended-on-by"
 ---
 ## What
 

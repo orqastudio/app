@@ -1,27 +1,23 @@
 ---
-
-id: EPIC-642234ba
+id: "EPIC-642234ba"
 title: "Settings UI for Thinking & Custom Prompt"
-description: Add UI controls for show_thinking toggle and custom system prompt fields that already exist in the backend.
-status: captured
-priority: P1
-created: 2026-03-07
-updated: 2026-03-07
-horizon: next
+description: "Add UI controls for show_thinking toggle and custom system prompt fields that already exist in the backend."
+status: "captured"
+priority: "P1"
+created: "2026-03-07"
+updated: "2026-03-07"
+horizon: "next"
 scoring:
   impact: 3
   urgency: 3
   complexity: 2
   dependencies: 2
 relationships:
-  - target: MS-654badde
-    type: fulfils
-    rationale: Epic belongs to this milestone
-  - target: DOC-01ddd8aa
-    type: documented-by
-  - target: app::RULE-e120bb70
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "DOC-01ddd8aa"
+    type: "documented-by"
 ---
 ## Why P1
 

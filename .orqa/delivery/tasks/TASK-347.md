@@ -1,49 +1,45 @@
 ---
-
-id: TASK-91bc09f9
-title: Reconcile EPIC-4726cb3b
+id: "TASK-91bc09f9"
+title: "Reconcile EPIC-4726cb3b"
 description: "Standing reconciliation task — verify epic body accuracy: task table, pillars, docs-produced, scope."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
 acceptance:
-  - Epic task table lists ALL tasks created during the epic
-  - Epic pillars array reflects all pillars served
-  - Epic docs-produced list matches actual documentation created/updated
-  - Epic scope section accurately reflects what was in/out of scope
+  - "Epic task table lists ALL tasks created during the epic"
+  - "Epic pillars array reflects all pillars served"
+  - "Epic docs-produced list matches actual documentation created/updated"
+  - "Epic scope section accurately reflects what was in/out of scope"
 relationships:
-  - target: EPIC-4726cb3b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-caa1dd3c
-    type: depends-on
-  - target: TASK-e3e503a9
-    type: depends-on
-  - target: TASK-efaf25d7
-    type: depends-on
-  - target: TASK-54fae8bf
-    type: depends-on
-  - target: TASK-0baf0584
-    type: depends-on
-  - target: TASK-9ca53d45
-    type: depends-on
-  - target: TASK-e0cbdfe2
-    type: depends-on
-  - target: TASK-e5775999
-    type: depends-on
-  - target: TASK-76e79dba
-    type: depends-on
-  - target: TASK-d9d85326
-    type: depends-on
-  - target: TASK-dce77e0b
-    type: depends-on
-  - target: TASK-7e7d1e02
-    type: depends-on
-  - target: TASK-c75be77c
-    type: depends-on
-  - target: app::RULE-7b770593
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4726cb3b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-caa1dd3c"
+    type: "depends-on"
+  - target: "TASK-e3e503a9"
+    type: "depends-on"
+  - target: "TASK-efaf25d7"
+    type: "depends-on"
+  - target: "TASK-54fae8bf"
+    type: "depends-on"
+  - target: "TASK-0baf0584"
+    type: "depends-on"
+  - target: "TASK-9ca53d45"
+    type: "depends-on"
+  - target: "TASK-e0cbdfe2"
+    type: "depends-on"
+  - target: "TASK-e5775999"
+    type: "depends-on"
+  - target: "TASK-76e79dba"
+    type: "depends-on"
+  - target: "TASK-d9d85326"
+    type: "depends-on"
+  - target: "TASK-dce77e0b"
+    type: "depends-on"
+  - target: "TASK-7e7d1e02"
+    type: "depends-on"
+  - target: "TASK-c75be77c"
+    type: "depends-on"
 ---
 ## What
 

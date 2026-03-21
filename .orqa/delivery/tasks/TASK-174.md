@@ -1,37 +1,25 @@
 ---
-
-
-
-id: TASK-2067fdaf
-title: Update delegation rules for capability resolution
-description: Update RULE-532100d9 and RULE-deab6ea7 to reference capability-based delegation and skill loading.
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
-assignee: AGENT-1dab5ebe
+id: "TASK-2067fdaf"
+title: "Update delegation rules for capability resolution"
+description: "Update RULE-532100d9 and RULE-deab6ea7 to reference capability-based delegation and skill loading."
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-12"
+assignee: "AGENT-1dab5ebe"
 docs:
-  - DOC-01ddd8aa
+  - "DOC-01ddd8aa"
 acceptance:
-  - RULE-532100d9 delegation protocol includes capability resolution step
-  - RULE-deab6ea7 skill loading references capability-based tool access
-  - Both rules reference RULE-92dba0cb for the mapping table
+  - "RULE-532100d9 delegation protocol includes capability resolution step"
+  - "RULE-deab6ea7 skill loading references capability-based tool access"
+  - "Both rules reference RULE-92dba0cb for the mapping table"
 relationships:
-  - target: EPIC-0a7b21cf
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-ad922861
-    type: depends-on
-  - target: TASK-413692fe
-    type: depended-on-by
-  - target: app::RULE-532100d9
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-deab6ea7
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-92dba0cb
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-0a7b21cf"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-ad922861"
+    type: "depends-on"
+  - target: "TASK-413692fe"
+    type: "depended-on-by"
 ---
 ## What
 

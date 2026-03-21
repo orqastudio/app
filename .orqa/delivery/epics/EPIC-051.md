@@ -1,19 +1,17 @@
 ---
+id: "EPIC-0a7b21cf"
+title: "Provider-Agnostic Tool Abstraction Layer"
+description: "Replace concrete tool names in agent definitions with abstract capabilities.
 
-
-
-
-id: EPIC-0a7b21cf
-title: Provider-Agnostic Tool Abstraction Layer
-description: |
-  Replace concrete tool names in agent definitions with abstract capabilities.
   Create a rule that maps capabilities to provider-specific tools per context
+
   (CLI, App, future providers). Update all agent definitions and the delegation
-  protocol to use the abstraction.
-status: completed
-priority: P1
-created: 2026-03-11
-updated: 2026-03-12
+
+  protocol to use the abstraction.\n"
+status: "completed"
+priority: "P1"
+created: "2026-03-11"
+updated: "2026-03-12"
 deadline: null
 horizon: null
 scoring:
@@ -22,49 +20,35 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: MS-eea45fa8
-    type: fulfils
-    rationale: Epic belongs to this milestone
-  - target: TASK-ad922861
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-561205e2
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-f936b9b2
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-2067fdaf
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-027139e7
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-65c86121
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-413692fe
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: MS-654badde
-    type: fulfils
-  - target: IDEA-889dffd4
-    type: realised-by
-  - target: EPIC-3a8ad459
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-92dba0cb
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-532100d9
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-deab6ea7
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "MS-eea45fa8"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-ad922861"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-561205e2"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-f936b9b2"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-2067fdaf"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-027139e7"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-65c86121"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-413692fe"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "MS-654badde"
+    type: "fulfils"
+  - target: "IDEA-889dffd4"
+    type: "realised-by"
 ---
-
-
 ## Context
 
 Agent definitions currently list concrete tool names from multiple AI providers in a

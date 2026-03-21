@@ -1,27 +1,23 @@
 ---
-
-id: EPIC-fe75b52c
-title: AI-Mediated Artifact Editing
+id: "EPIC-fe75b52c"
+title: "AI-Mediated Artifact Editing"
 description: "Build an AI-mediated editing experience where creates, edits, and deletes are proposals sent to the AI conversation panel. The AI analyses cross-reference implications and suggests cascading updates to keep artifacts in sync."
-status: captured
-priority: P1
-created: 2026-03-07
-updated: 2026-03-11
-horizon: next
+status: "captured"
+priority: "P1"
+created: "2026-03-07"
+updated: "2026-03-11"
+horizon: "next"
 scoring:
   impact: 5
   urgency: 3
   complexity: 5
   dependencies: 4
 relationships:
-  - target: MS-654badde
-    type: fulfils
-    rationale: Epic belongs to this milestone
-  - target: DOC-01ddd8aa
-    type: documented-by
-  - target: EPIC-6787bb93
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "DOC-01ddd8aa"
+    type: "documented-by"
 ---
 ## Why P1
 

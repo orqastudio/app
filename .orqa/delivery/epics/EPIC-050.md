@@ -1,93 +1,81 @@
 ---
+id: "EPIC-3a8ad459"
+title: "Rule Enforcement Engine with Claude Code Companion Plugin"
+description: "Build a two-context rule enforcement engine: a Claude Code companion plugin
 
-
-
-id: EPIC-3a8ad459
-title: Rule Enforcement Engine with Claude Code Companion Plugin
-description: |
-  Build a two-context rule enforcement engine: a Claude Code companion plugin
   (separate repo) that enforces .orqa/ rules in the CLI, then integrate the same
-  enforcement logic into the OrqaStudio app for dogfooding parity.
-status: completed
-priority: P1
-created: 2026-03-11
-updated: 2026-03-12
+
+  enforcement logic into the OrqaStudio app for dogfooding parity.\n"
+status: "completed"
+priority: "P1"
+created: "2026-03-11"
+updated: "2026-03-12"
 deadline: null
-horizon: active
+horizon: "active"
 scoring:
   impact: 5
   urgency: 5
   complexity: 5
   dependencies: 5
 relationships:
-  - target: TASK-70762a1f
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-84e27636
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-915291e7
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-5657d9f6
-  type: guided-by
-  rationale: Research analyzing what this epic built vs. what remains incomplete
-- target: MS-eea45fa8
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-869c27b5
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-0b584382
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-2df410be
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-73f7e0fa
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-61be543f
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-18229566
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-b4c3c05d
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-bd0e805b
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-11cf4c1d
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-3fc8be56
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-c083a1c8
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-6f15cbb0
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-4556173e
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-7e02fb8e
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-fa39671d
-  type: delivered-by
-  rationale: Epic contains this task
-- target: MS-654badde
-  type: fulfils
-- target: IDEA-52c65fc8
-  type: realised-by
-- target: IDEA-abf847bb
-  type: realised-by
+  - target: "RES-5657d9f6"
+    type: "guided-by"
+    rationale: "Research analyzing what this epic built vs. what remains incomplete"
+  - target: "MS-eea45fa8"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-869c27b5"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-0b584382"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-2df410be"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-73f7e0fa"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-61be543f"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-18229566"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-b4c3c05d"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-bd0e805b"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-11cf4c1d"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-3fc8be56"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-c083a1c8"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-6f15cbb0"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-4556173e"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-7e02fb8e"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-fa39671d"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "MS-654badde"
+    type: "fulfils"
+  - target: "IDEA-52c65fc8"
+    type: "realised-by"
+  - target: "IDEA-abf847bb"
+    type: "realised-by"
 ---
-
 ## Context
 
 OrqaStudio has 39 rules in `.orqa/process/rules/` with structured frontmatter

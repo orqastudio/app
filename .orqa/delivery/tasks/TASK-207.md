@@ -1,44 +1,40 @@
 ---
+id: "TASK-34007190"
+title: "Integration testing for all enforcement layers"
+description: "End-to-end verification that all four enforcement layers work together in
 
-id: TASK-34007190
-title: Integration testing for all enforcement layers
-description: |
-  End-to-end verification that all four enforcement layers work together in
-  both CLI (plugin) and app (Rust) contexts.
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
+  both CLI (plugin) and app (Rust) contexts.\n"
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-12"
 acceptance:
-  - Process gates fire at correct moments in both CLI and app contexts
-  - Skill injection works for path-based triggers with deduplication
-  - Linter delegation documented and functional via make check
-  - All new rules validate against schema
-  - No regression in existing enforcement
+  - "Process gates fire at correct moments in both CLI and app contexts"
+  - "Skill injection works for path-based triggers with deduplication"
+  - "Linter delegation documented and functional via make check"
+  - "All new rules validate against schema"
+  - "No regression in existing enforcement"
 relationships:
-  - target: EPIC-4440cdd4
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-15370e74
-    type: depends-on
-  - target: TASK-4fa7dd50
-    type: depends-on
-  - target: TASK-8232a533
-    type: depends-on
-  - target: TASK-6cd46196
-    type: depends-on
-  - target: TASK-439fa554
-    type: depends-on
-  - target: TASK-50b3aa55
-    type: depends-on
-  - target: TASK-2bbc5077
-    type: depends-on
-  - target: TASK-965b2b81
-    type: depends-on
-  - target: TASK-d6727d2f
-    type: depended-on-by
-  - target: RULE-c95f4444
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4440cdd4"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-15370e74"
+    type: "depends-on"
+  - target: "TASK-4fa7dd50"
+    type: "depends-on"
+  - target: "TASK-8232a533"
+    type: "depends-on"
+  - target: "TASK-6cd46196"
+    type: "depends-on"
+  - target: "TASK-439fa554"
+    type: "depends-on"
+  - target: "TASK-50b3aa55"
+    type: "depends-on"
+  - target: "TASK-2bbc5077"
+    type: "depends-on"
+  - target: "TASK-965b2b81"
+    type: "depends-on"
+  - target: "TASK-d6727d2f"
+    type: "depended-on-by"
 ---
 ## What
 

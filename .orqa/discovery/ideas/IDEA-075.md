@@ -1,23 +1,19 @@
 ---
-
-id: IDEA-d145c669
-title: App UI save should validate before overwriting project.json
+id: "IDEA-d145c669"
+title: "App UI save should validate before overwriting project.json"
 description: "Clicking save in the OrqaStudio app UI can overwrite a valid project.json with blank/default values. Need validation before write, or dirty-checking to only save modified fields."
-status: captured
-created: 2026-03-13
-updated: 2026-03-13
-horizon: next
+status: "captured"
+created: "2026-03-13"
+updated: "2026-03-13"
+horizon: "next"
 research-needed:
   - "What fields does the settings editor currently write? Does it serialize the full model or only changed fields?"
   - "Should project.json have a JSON schema that the app validates against before saving?"
 relationships:
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: EPIC-942c7678
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Motivation
 

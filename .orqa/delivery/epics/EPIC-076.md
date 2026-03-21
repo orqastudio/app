@@ -1,37 +1,37 @@
 ---
-id: EPIC-dbbbb5ac
-title: Graph analysis — Cytoscape algorithms powering governance insights
-description: Use Cytoscape.js graph analysis algorithms to power dashboard health scoring, dependency chain tracing, impact analysis, knowledge gap detection, and artifact importance ranking. Replaces file-based integrity checks with graph-theoretic analysis.
-status: ready
-priority: P1
+id: "EPIC-dbbbb5ac"
+title: "Graph analysis — Cytoscape algorithms powering governance insights"
+description: "Use Cytoscape.js graph analysis algorithms to power dashboard health scoring, dependency chain tracing, impact analysis, knowledge gap detection, and artifact importance ranking. Replaces file-based integrity checks with graph-theoretic analysis."
+status: "ready"
+priority: "P1"
 scoring:
   impact: 5
   urgency: 3
   complexity: 5
   dependencies: 3
-created: 2026-03-15
-updated: 2026-03-15
+created: "2026-03-15"
+updated: "2026-03-15"
 deadline: null
-horizon: active
+horizon: "active"
 relationships:
-- target: RES-f0bd8d42
-  type: guided-by
-  rationale: Graph analysis research drives the design
-- target: MS-eea45fa8
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-f8f9b6e7
-  type: delivered-by
-- target: TASK-595ffcaf
-  type: delivered-by
-- target: TASK-afe17917
-  type: delivered-by
-- target: TASK-21decc93
-  type: delivered-by
-- target: TASK-75917a42
-  type: delivered-by
-- target: TASK-0190fabe
-  type: delivered-by
+  - target: "RES-f0bd8d42"
+    type: "guided-by"
+    rationale: "Graph analysis research drives the design"
+  - target: "MS-eea45fa8"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-f8f9b6e7"
+    type: "delivered-by"
+  - target: "TASK-595ffcaf"
+    type: "delivered-by"
+  - target: "TASK-afe17917"
+    type: "delivered-by"
+  - target: "TASK-21decc93"
+    type: "delivered-by"
+  - target: "TASK-75917a42"
+    type: "delivered-by"
+  - target: "TASK-0190fabe"
+    type: "delivered-by"
 ---
 ## Context
 

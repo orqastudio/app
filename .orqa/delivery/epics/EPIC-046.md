@@ -1,14 +1,11 @@
 ---
-
-
-
-id: EPIC-962a7bc9
-title: Pillars as First-Class Artifacts
+id: "EPIC-962a7bc9"
+title: "Pillars as First-Class Artifacts"
 description: "Make product pillars structured artifacts in .orqa/process/pillars/ with frontmatter schema, referenced by ID from other artifacts, and injected into AI system prompts. Replaces hardcoded pillar strings across rules and documentation. Implements AD-47c41f0c."
-status: completed
-priority: P1
-created: 2026-03-09
-updated: 2026-03-09
+status: "completed"
+priority: "P1"
+created: "2026-03-09"
+updated: "2026-03-09"
 horizon: null
 scoring:
   impact: 4
@@ -16,39 +13,30 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: MS-654badde
-    type: fulfils
-    rationale: Epic belongs to this milestone
-  - target: TASK-ba209f54
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-19a7f11e
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-a48075b1
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-91807ad8
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-47df8cbd
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-7ea07ed8
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-6ea994f2
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: AD-47c41f0c
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: PILLAR-569581e0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: PILLAR-cdf756ff
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-ba209f54"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-19a7f11e"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-a48075b1"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-91807ad8"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-47df8cbd"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-7ea07ed8"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-6ea994f2"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
 ---
 ## Context
 

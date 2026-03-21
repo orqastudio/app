@@ -1,28 +1,20 @@
 ---
-
-
-id: TASK-97dfe088
-title: Record persistence and governance decisions (AD-5d9ac6bd through AD-8b91f5a4)
+id: "TASK-97dfe088"
+title: "Record persistence and governance decisions (AD-5d9ac6bd through AD-8b91f5a4)"
 description: "Captured architecture decisions for persistence strategy, governance artifact format, data ownership boundaries, and configuration management."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: "2026-03-02"
+updated: "2026-03-02"
 acceptance:
-  - Each AD follows the decision schema with all required sections
-  - Persistence and governance boundaries are clearly delineated
-  - Decisions are added to the decisions index
+  - "Each AD follows the decision schema with all required sections"
+  - "Persistence and governance boundaries are clearly delineated"
+  - "Decisions are added to the decisions index"
 relationships:
-  - target: EPIC-46e5f406
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-737a5c6c
-    type: depended-on-by
-  - target: AD-5d9ac6bd
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-8b91f5a4
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-46e5f406"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-737a5c6c"
+    type: "depended-on-by"
 ---
 ## What
 

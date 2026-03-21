@@ -1,31 +1,28 @@
 ---
+id: "TASK-2bbc5077"
+title: "Consolidate code-pattern rules to reference linters"
+description: "Simplify rules that currently regex-match code patterns (unwrap, TODO, etc.)
 
-id: TASK-2bbc5077
-title: Consolidate code-pattern rules to reference linters
-description: |
-  Simplify rules that currently regex-match code patterns (unwrap, TODO, etc.)
   to instead reference the linter configs that enforce them. Remove regex
-  enforcement for patterns that linters already cover.
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
+
+  enforcement for patterns that linters already cover.\n"
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-12"
 acceptance:
-  - No enforcement entries regex-match patterns already caught by linters
-  - bash enforcement entries for git safety remain unchanged
-  - make check still catches all documented violations
+  - "No enforcement entries regex-match patterns already caught by linters"
+  - "bash enforcement entries for git safety remain unchanged"
+  - "make check still catches all documented violations"
 relationships:
-  - target: EPIC-4440cdd4
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-05357368
-    type: depends-on
-  - target: TASK-34007190
-    type: depended-on-by
-  - target: TASK-d6727d2f
-    type: depended-on-by
-  - target: RULE-b49142be
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4440cdd4"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-05357368"
+    type: "depends-on"
+  - target: "TASK-34007190"
+    type: "depended-on-by"
+  - target: "TASK-d6727d2f"
+    type: "depended-on-by"
 ---
 ## What
 

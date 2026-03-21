@@ -1,38 +1,34 @@
 ---
-
-id: TASK-f936b9b2
-title: Migrate agent definitions from tools to capabilities
-description: Update all 7 agent definitions to declare capabilities instead of concrete tool names.
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
-assignee: AGENT-1dab5ebe
+id: "TASK-f936b9b2"
+title: "Migrate agent definitions from tools to capabilities"
+description: "Update all 7 agent definitions to declare capabilities instead of concrete tool names."
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-12"
+assignee: "AGENT-1dab5ebe"
 docs:
-  - DOC-01ddd8aa
+  - "DOC-01ddd8aa"
 acceptance:
-  - All 7 agent definitions have a capabilities field
-  - Capabilities map correctly to the vocabulary defined in RULE-92dba0cb
+  - "All 7 agent definitions have a capabilities field"
+  - "Capabilities map correctly to the vocabulary defined in RULE-92dba0cb"
   - "Each agent's capability set matches its current tool access"
-  - All agent definitions pass schema validation
+  - "All agent definitions pass schema validation"
 relationships:
-  - target: EPIC-0a7b21cf
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-ad922861
-    type: depends-on
-  - target: TASK-561205e2
-    type: depends-on
-  - target: TASK-027139e7
-    type: depended-on-by
-  - target: TASK-65c86121
-    type: depended-on-by
-  - target: TASK-2df410be
-    type: depended-on-by
-  - target: TASK-413692fe
-    type: depended-on-by
-  - target: app::RULE-92dba0cb
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-0a7b21cf"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-ad922861"
+    type: "depends-on"
+  - target: "TASK-561205e2"
+    type: "depends-on"
+  - target: "TASK-027139e7"
+    type: "depended-on-by"
+  - target: "TASK-65c86121"
+    type: "depended-on-by"
+  - target: "TASK-2df410be"
+    type: "depended-on-by"
+  - target: "TASK-413692fe"
+    type: "depended-on-by"
 ---
 ## What
 

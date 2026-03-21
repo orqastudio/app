@@ -1,14 +1,11 @@
 ---
-
-
-
-id: EPIC-766e2afa
-title: Artifact System Migration
-description: 'Make the artifact system self-sustaining: correct default creation, historical content linkage, and framework coverage for all 8 types.'
-status: completed
-priority: P1
-created: 2026-03-08
-updated: 2026-03-08
+id: "EPIC-766e2afa"
+title: "Artifact System Migration"
+description: "Make the artifact system self-sustaining: correct default creation, historical content linkage, and framework coverage for all 8 types."
+status: "completed"
+priority: "P1"
+created: "2026-03-08"
+updated: "2026-03-08"
 horizon: null
 scoring:
   impact: 4
@@ -16,42 +13,33 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: MS-85b9269b
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-a8a7e205
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-6787bb93
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-7ad6368f
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-7ad6368f
-- target: RES-8354435e
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-8354435e
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-e6418f4a
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-953f7ac3
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-b13e6846
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-da84a27e
-  type: delivered-by
-  rationale: Epic contains this task
-- target: AD-6ce44025
-  type: driven-by
-- target: AD-0c56aa90
-  type: driven-by
-- target: AD-c3700062
-  type: driven-by
+  - target: "RES-7ad6368f"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-7ad6368f"
+  - target: "RES-8354435e"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-8354435e"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-e6418f4a"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-953f7ac3"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-b13e6846"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-da84a27e"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "AD-6ce44025"
+    type: "driven-by"
+  - target: "AD-0c56aa90"
+    type: "driven-by"
+  - target: "AD-c3700062"
+    type: "driven-by"
 ---
 ## Workstreams
 

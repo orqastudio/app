@@ -1,12 +1,11 @@
 ---
-
-id: EPIC-ca7b398b
-title: Knowledge Maturity Pipeline — Full Migration
-description: 'Migrate all governance artifacts to the AD-a76663db knowledge maturity pipeline: rule-overrides mechanism, relationship backfill on ~150 artifacts, schema enforcement, deprecated field removal. Done in one pass to avoid mid-migration drift.'
-status: completed
-priority: P1
-created: 2026-03-12
-updated: 2026-03-12
+id: "EPIC-ca7b398b"
+title: "Knowledge Maturity Pipeline — Full Migration"
+description: "Migrate all governance artifacts to the AD-a76663db knowledge maturity pipeline: rule-overrides mechanism, relationship backfill on ~150 artifacts, schema enforcement, deprecated field removal. Done in one pass to avoid mid-migration drift."
+status: "completed"
+priority: "P1"
+created: "2026-03-12"
+updated: "2026-03-12"
 deadline: null
 horizon: null
 scoring:
@@ -15,51 +14,48 @@ scoring:
   complexity: 4
   dependencies: 4
 rule-overrides:
-- 'rule: RULE-a764b2ae'
-- 'rule: RULE-7b770593'
+  - "rule: RULE-a764b2ae"
+  - "rule: RULE-7b770593"
 relationships:
-  - target: AD-a76663db
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-132fbb38
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-132fbb38
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-845e2653
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-354c88f2
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-1ec1a07c
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-fedfd82a
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-4eb0c231
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-da2965a2
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-c4685a41
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-d40d7b76
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-7b2f5ee7
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-78abb39a
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-508cf6cd
-  type: delivered-by
-  rationale: Epic contains this task
+  - target: "RES-132fbb38"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-132fbb38"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-845e2653"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-354c88f2"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-1ec1a07c"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-fedfd82a"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-4eb0c231"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-da2965a2"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-c4685a41"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-d40d7b76"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-7b2f5ee7"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-78abb39a"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-508cf6cd"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
 ---
 ## Context
 

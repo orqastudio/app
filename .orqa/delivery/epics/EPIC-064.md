@@ -1,89 +1,88 @@
 ---
-id: EPIC-915291e7
-title: Close enforcement bootstrapping gap
-description: 'The enforcement system can''t enforce the project''s principles because: (1) documentation is isolated from the artifact graph — agents can''t traverse to the knowledge they need, (2) no grounding mechanism exists — agents lose purpose under implementation pressure, (3) the orchestrator has no delegation reference — work types aren''t mapped to roles and skills, and (4) mechanical enforcement gaps remain — stop events, skill injection, and write-time integrity aren''t wired. This epic closes all four gaps so the system can enforce itself during its own development.'
-status: completed
-priority: P1
-created: 2026-03-14
-updated: 2026-03-14
+id: "EPIC-915291e7"
+title: "Close enforcement bootstrapping gap"
+description: "The enforcement system can't enforce the project's principles because: (1) documentation is isolated from the artifact graph — agents can't traverse to the knowledge they need, (2) no grounding mechanism exists — agents lose purpose under implementation pressure, (3) the orchestrator has no delegation reference — work types aren't mapped to roles and skills, and (4) mechanical enforcement gaps remain — stop events, skill injection, and write-time integrity aren't wired. This epic closes all four gaps so the system can enforce itself during its own development."
+status: "completed"
+priority: "P1"
+created: "2026-03-14"
+updated: "2026-03-14"
 deadline: null
-horizon: active
+horizon: "active"
 scoring:
   impact: 5
   urgency: 5
   complexity: 5
   dependencies: 5
 relationships:
-- target: AD-f9034c99
-  type: driven-by
-  rationale: AD-f9034c99 requires enforcement to accompany rule promotion — this epic implements that requirement across all layers
-- target: RES-5657d9f6
-  type: guided-by
-  rationale: Research document analyzing the bootstrapping gap drives this epic's scope
-- target: RES-d3f58f2d
-  type: guided-by
-  rationale: Integrity check alignment audit informed enforcement bootstrapping scope
-- target: MS-eea45fa8
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-ab9fa5f9
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-528bba63
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-419e65f4
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-70762a1f
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-84e27636
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-6385a2ac
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-7e02fb8e
-  type: delivered-by
-  rationale: Absorbed from EPIC-3a8ad459 — surface violations in governance UI
-- target: TASK-fb9cfd61
-  type: delivered-by
-  rationale: Phase 1 — delete duplicate documentation
-- target: TASK-257a5482
-  type: delivered-by
-  rationale: Phase 1 — merge overlapping documentation
-- target: TASK-d1307b98
-  type: delivered-by
-  rationale: Phase 1 — restructure unfocused documentation
-- target: TASK-349bc911
-  type: delivered-by
-  rationale: Phase 2 — create grounding documents
-- target: TASK-46275b63
-  type: delivered-by
-  rationale: Phase 2 — create delegation reference
-- target: TASK-ca282ce0
-  type: delivered-by
-  rationale: Phase 2 — define Governance Steward agent
-- target: TASK-f9f933b5
-  type: delivered-by
-  rationale: Phase 2 — connect documentation to graph
-- target: TASK-269b3f8f
-  type: delivered-by
-  rationale: Phase 3 — grounding injection in plugin
-- target: RES-17a8e33f
-  type: guided-by
-  rationale: Documentation audit findings shaped the restructuring plan
-- target: MS-654badde
-  type: fulfils
-- target: IDEA-93949f43
-  type: realised-by
-- target: IMPL-945fa6ab
-  type: cautioned-by
-- target: IMPL-e848fb92
-  type: cautioned-by
+  - target: "AD-f9034c99"
+    type: "driven-by"
+    rationale: "AD-f9034c99 requires enforcement to accompany rule promotion — this epic implements that requirement across all layers"
+  - target: "RES-5657d9f6"
+    type: "guided-by"
+    rationale: "Research document analyzing the bootstrapping gap drives this epic's scope"
+  - target: "RES-d3f58f2d"
+    type: "guided-by"
+    rationale: "Integrity check alignment audit informed enforcement bootstrapping scope"
+  - target: "MS-eea45fa8"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-ab9fa5f9"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-528bba63"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-419e65f4"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-70762a1f"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-84e27636"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-6385a2ac"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-7e02fb8e"
+    type: "delivered-by"
+    rationale: "Absorbed from EPIC-3a8ad459 — surface violations in governance UI"
+  - target: "TASK-fb9cfd61"
+    type: "delivered-by"
+    rationale: "Phase 1 — delete duplicate documentation"
+  - target: "TASK-257a5482"
+    type: "delivered-by"
+    rationale: "Phase 1 — merge overlapping documentation"
+  - target: "TASK-d1307b98"
+    type: "delivered-by"
+    rationale: "Phase 1 — restructure unfocused documentation"
+  - target: "TASK-349bc911"
+    type: "delivered-by"
+    rationale: "Phase 2 — create grounding documents"
+  - target: "TASK-46275b63"
+    type: "delivered-by"
+    rationale: "Phase 2 — create delegation reference"
+  - target: "TASK-ca282ce0"
+    type: "delivered-by"
+    rationale: "Phase 2 — define Governance Steward agent"
+  - target: "TASK-f9f933b5"
+    type: "delivered-by"
+    rationale: "Phase 2 — connect documentation to graph"
+  - target: "TASK-269b3f8f"
+    type: "delivered-by"
+    rationale: "Phase 3 — grounding injection in plugin"
+  - target: "RES-17a8e33f"
+    type: "guided-by"
+    rationale: "Documentation audit findings shaped the restructuring plan"
+  - target: "MS-654badde"
+    type: "fulfils"
+  - target: "IDEA-93949f43"
+    type: "realised-by"
+  - target: "IMPL-945fa6ab"
+    type: "cautioned-by"
+  - target: "IMPL-e848fb92"
+    type: "cautioned-by"
 ---
-
 ## Context
 
 During a heavy implementation session (31 tasks across 6 epics), the orchestrator lost awareness of the project's core principles — pillars, vision, architectural constraints. Investigation revealed four structural gaps:

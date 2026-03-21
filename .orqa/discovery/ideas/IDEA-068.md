@@ -1,25 +1,21 @@
 ---
-
-id: IDEA-d9c48c83
-title: AI-assisted artifact backfill tooling
+id: "IDEA-d9c48c83"
+title: "AI-assisted artifact backfill tooling"
 description: "Tooling that reads artifacts, analyses content against other artifacts, proposes relationship connections, presents for human review, and batch-updates frontmatter. Built as a precursor to the AD-a76663db migration, reusable for any future schema evolution."
-status: review
-created: 2026-03-12
-updated: 2026-03-13
-horizon: active
+status: "review"
+created: "2026-03-12"
+updated: "2026-03-13"
+horizon: "active"
 research-needed:
   - "Should this be a CLI skill, a script, or an app feature?"
   - "How to analyse artifact content to propose relationships — semantic search, keyword matching, or AI classification?"
   - "Batch review UX — how does the human efficiently review and approve/reject proposals?"
-  - Frontmatter update mechanism — safe in-place editing of YAML frontmatter without corrupting markdown body
+  - "Frontmatter update mechanism — safe in-place editing of YAML frontmatter without corrupting markdown body"
 relationships:
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: EPIC-ca7b398b
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Motivation
 

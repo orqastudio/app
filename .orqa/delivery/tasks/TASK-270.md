@@ -1,26 +1,22 @@
 ---
-
-id: TASK-c75be77c
-title: Resolve AD-2aa4d6db SQLite scoping violation
+id: "TASK-c75be77c"
+title: "Resolve AD-2aa4d6db SQLite scoping violation"
 description: "Governance scan results should produce research artifacts (.orqa/ files), not SQLite rows. Migrate governance tables out of SQLite."
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
-assignee: AGENT-1dab5ebe
+status: "completed"
+created: "2026-03-12"
+updated: "2026-03-12"
+assignee: "AGENT-1dab5ebe"
 acceptance:
-  - governance_analyses and governance_recommendations tables removed from SQLite
-  - Governance scan results produce research artifacts in .orqa/ that can be translated into epics/tasks
-  - AD-2aa4d6db updated to reflect the decision
-  - artifacts table clarified as read-through cache of file-based artifacts
+  - "governance_analyses and governance_recommendations tables removed from SQLite"
+  - "Governance scan results produce research artifacts in .orqa/ that can be translated into epics/tasks"
+  - "AD-2aa4d6db updated to reflect the decision"
+  - "artifacts table clarified as read-through cache of file-based artifacts"
 relationships:
-  - target: EPIC-4726cb3b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-91bc09f9
-    type: depended-on-by
-  - target: AD-2aa4d6db
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4726cb3b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-91bc09f9"
+    type: "depended-on-by"
 ---
 ## What
 

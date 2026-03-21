@@ -1,40 +1,28 @@
 ---
-
-
-
-id: TASK-965b2b81
+id: "TASK-965b2b81"
 title: "Create RULE-c95f4444, RULE-f9d0279c, RULE-7f416d7d"
-description: |
-  Create three new rules documenting the enforcement layers: data persistence
-  boundaries, automated skill injection, and tooling ecosystem management.
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
+description: "Create three new rules documenting the enforcement layers: data persistence
+
+  boundaries, automated skill injection, and tooling ecosystem management.\n"
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-12"
 acceptance:
   - "RULE-c95f4444, RULE-f9d0279c, RULE-7f416d7d created with valid frontmatter"
-  - All three rules pass schema validation
-  - Rules reference each other and related rules appropriately
+  - "All three rules pass schema validation"
+  - "Rules reference each other and related rules appropriately"
 relationships:
-  - target: EPIC-4440cdd4
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-49c63248
-    type: depends-on
-  - target: TASK-4f45e5b9
-    type: depends-on
-  - target: TASK-34007190
-    type: depended-on-by
-  - target: TASK-d6727d2f
-    type: depended-on-by
-  - target: RULE-c95f4444
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-f9d0279c
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-7f416d7d
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4440cdd4"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-49c63248"
+    type: "depends-on"
+  - target: "TASK-4f45e5b9"
+    type: "depends-on"
+  - target: "TASK-34007190"
+    type: "depended-on-by"
+  - target: "TASK-d6727d2f"
+    type: "depended-on-by"
 ---
 ## What
 

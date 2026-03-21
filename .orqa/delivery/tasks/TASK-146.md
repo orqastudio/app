@@ -1,26 +1,22 @@
 ---
-
-id: TASK-a958f2d2
-title: Create systems-thinking companion skill for RULE-d90112d9
+id: "TASK-a958f2d2"
+title: "Create systems-thinking companion skill for RULE-d90112d9"
 description: "Create a systems-thinking skill that provides practical methodology for applying RULE-d90112d9's systems-thinking principle to real codebases."
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-11"
 acceptance:
-  - New skill systems-thinking created in .orqa/process/skills/
+  - "New skill systems-thinking created in .orqa/process/skills/"
   - "Covers system identification, boundary mapping, relationship tracing, pattern recognition, uniform base discovery"
-  - Practical examples showing the methodology applied to real scenarios
-  - RULE-d90112d9 updated to reference the companion skill
+  - "Practical examples showing the methodology applied to real scenarios"
+  - "RULE-d90112d9 updated to reference the companion skill"
   - "Skill is layer canon (systems thinking is universal, not project-specific)"
 relationships:
-  - target: EPIC-4a7aeacb
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-ec136ce9
-    type: depended-on-by
-  - target: app::RULE-d90112d9
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4a7aeacb"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-ec136ce9"
+    type: "depended-on-by"
 ---
 ## What
 

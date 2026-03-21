@@ -1,11 +1,11 @@
 ---
-id: EPIC-a1dd9e9f
-title: Three-Tier Skill Loading
-description: 'Implement AD-53e80192: restructure skill loading into three tiers — portable agent skills (Tier 1), orchestrator-injected project skills (Tier 2), and wrapper skills that resolve context-dependent implementations (Tier 3).'
-status: completed
-priority: P1
-created: 2026-03-09
-updated: 2026-03-09
+id: "EPIC-a1dd9e9f"
+title: "Three-Tier Skill Loading"
+description: "Implement AD-53e80192: restructure skill loading into three tiers — portable agent skills (Tier 1), orchestrator-injected project skills (Tier 2), and wrapper skills that resolve context-dependent implementations (Tier 3)."
+status: "completed"
+priority: "P1"
+created: "2026-03-09"
+updated: "2026-03-09"
 horizon: null
 scoring:
   impact: 4
@@ -13,29 +13,29 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-bdff8a4a
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-92c3293c
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-f6f4e12e
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-429b41ad
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-93b2e953
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-80821c3e
-  type: delivered-by
-  rationale: Epic contains this task
-- target: AD-53e80192
-  type: driven-by
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-bdff8a4a"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-92c3293c"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-f6f4e12e"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-429b41ad"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-93b2e953"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-80821c3e"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "AD-53e80192"
+    type: "driven-by"
 ---
 ## Implementation Design
 

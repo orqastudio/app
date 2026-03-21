@@ -1,13 +1,11 @@
 ---
-
-
-id: EPIC-be023ed2
-title: Portable Governance Framework
-description: Restructure agents from 16 software-specific roles to 7 universal roles, extract domain knowledge into skills, create project setup skills, update product documentation to reflect the PILLAR-569581e0 engine identity and governance hub capability. Implements AD-774cc3d0 and AD-6f0dea5e.
-status: completed
-priority: P1
-created: 2026-03-09
-updated: 2026-03-09
+id: "EPIC-be023ed2"
+title: "Portable Governance Framework"
+description: "Restructure agents from 16 software-specific roles to 7 universal roles, extract domain knowledge into skills, create project setup skills, update product documentation to reflect the PILLAR-569581e0 engine identity and governance hub capability. Implements AD-774cc3d0 and AD-6f0dea5e."
+status: "completed"
+priority: "P1"
+created: "2026-03-09"
+updated: "2026-03-09"
 horizon: null
 scoring:
   impact: 5
@@ -15,48 +13,41 @@ scoring:
   complexity: 4
   dependencies: 4
 relationships:
-  - target: AD-774cc3d0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-6f0dea5e
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-658ab0b7
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-658ab0b7
-- target: MS-eea45fa8
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-7d550875
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-4a2936f9
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-f6850c71
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-f1ada1f5
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-58887d38
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-2ac2d88f
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-3cb01b3f
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-0d8b4a06
-  type: delivered-by
-  rationale: Epic contains this task
-- target: MS-654badde
-  type: fulfils
-- target: IDEA-b153fabd
-  type: realised-by
+  - target: "RES-658ab0b7"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-658ab0b7"
+  - target: "MS-eea45fa8"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-7d550875"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-4a2936f9"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-f6850c71"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-f1ada1f5"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-58887d38"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-2ac2d88f"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-3cb01b3f"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-0d8b4a06"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "MS-654badde"
+    type: "fulfils"
+  - target: "IDEA-b153fabd"
+    type: "realised-by"
 ---
-
 ## Context
 
 [AD-774cc3d0](AD-774cc3d0) established that agents should represent universal roles (Orchestrator, Researcher,

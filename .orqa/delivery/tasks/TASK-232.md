@@ -1,23 +1,19 @@
 ---
-
-id: TASK-84fc1180
-title: Split 8 core rules with project-specific content
+id: "TASK-84fc1180"
+title: "Split 8 core rules with project-specific content"
 description: "RULE-9daf29c0,012,018,020,022,025,026,031 embed Tauri/Svelte/Rust in core rules. Extract to project companions."
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+status: "completed"
+created: "2026-03-12"
+updated: "2026-03-12"
 acceptance:
-  - Each rule contains only universal principles
-  - Project examples in project-layer companions
+  - "Each rule contains only universal principles"
+  - "Project examples in project-layer companions"
 relationships:
-  - target: EPIC-6f2d06d4
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-94149697
-    type: depended-on-by
-  - target: app::RULE-9daf29c0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-6f2d06d4"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-94149697"
+    type: "depended-on-by"
 ---
 ## What
 

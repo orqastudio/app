@@ -1,35 +1,31 @@
 ---
-
-id: IDEA-b77e2955
-title: Plugin Distribution via Git Submodules
+id: "IDEA-b77e2955"
+title: "Plugin Distribution via Git Submodules"
 description: "An official plugins repository under the GitHub org that embeds each plugin as a git submodule. The app reads the repository catalogue, pulls plugins based on user selection, and manages versioning/updates. Each plugin is its own repo with independent releases."
-status: surpassed
-created: 2026-03-10
-updated: 2026-03-13
-horizon: later
+status: "surpassed"
+created: "2026-03-10"
+updated: "2026-03-13"
+horizon: "later"
 research-needed:
-  - Git submodule vs git subtree for plugin embedding — trade-offs for automated updates
+  - "Git submodule vs git subtree for plugin embedding — trade-offs for automated updates"
   - "Plugin catalogue format — how does the app discover available plugins from the repo?"
   - "Versioning strategy — semver per plugin repo, pinned in the main catalogue"
   - "Auto-update mechanism — how does the app detect and pull new plugin versions?"
-  - Plugin isolation — how to prevent a broken plugin from affecting the app
-  - Plugin signing/trust — how to verify plugins from the official repo vs third-party
+  - "Plugin isolation — how to prevent a broken plugin from affecting the app"
+  - "Plugin signing/trust — how to verify plugins from the official repo vs third-party"
 relationships:
-  - type: merged-into
-    target: IDEA-ff21a84a
-  - type: merged-into
-    target: IDEA-2051515a
-  - type: realises
-    target: EPIC-3f65c703
-  - target: AD-c6abc8e6
-    type: crystallises
-  - target: PILLAR-cdf756ff
-    type: grounded
-  - target: PERSONA-a4b15450
-    type: benefits
-  - target: TASK-30307a19
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - type: "merged-into"
+    target: "IDEA-ff21a84a"
+  - type: "merged-into"
+    target: "IDEA-2051515a"
+  - type: "realises"
+    target: "EPIC-3f65c703"
+  - target: "AD-c6abc8e6"
+    type: "crystallises"
+  - target: "PILLAR-cdf756ff"
+    type: "grounded"
+  - target: "PERSONA-a4b15450"
+    type: "benefits"
 ---
 > **Surpassed 2026-03-16**: Core plugin distribution mechanism merged into EPIC-3f65c703 via AD-c6abc8e6. Plugin catalogue/marketplace concept split into IDEA-ff21a84a. User plugin development workflow split into IDEA-2051515a.
 

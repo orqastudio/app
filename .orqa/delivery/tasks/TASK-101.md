@@ -1,28 +1,20 @@
 ---
-
-
-id: TASK-cb6280ff
-title: Record composability and integration decisions (AD-69072318 through AD-1d928079)
+id: "TASK-cb6280ff"
+title: "Record composability and integration decisions (AD-69072318 through AD-1d928079)"
 description: "Captured architecture decisions for composability principle, tool execution model, and provider-agnostic design."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: "2026-03-02"
+updated: "2026-03-02"
 acceptance:
-  - Each AD follows the decision schema
-  - Composability principle is established as a platform concern
-  - Decisions are added to the decisions index
+  - "Each AD follows the decision schema"
+  - "Composability principle is established as a platform concern"
+  - "Decisions are added to the decisions index"
 relationships:
-  - target: EPIC-46e5f406
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-737a5c6c
-    type: depended-on-by
-  - target: AD-69072318
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-1d928079
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-46e5f406"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-737a5c6c"
+    type: "depended-on-by"
 ---
 ## What
 

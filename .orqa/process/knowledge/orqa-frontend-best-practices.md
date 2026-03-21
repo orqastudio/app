@@ -1,36 +1,22 @@
 ---
+id: "KNOW-282c0305"
+title: "OrqaStudio Frontend Best Practices"
+description: "Umbrella skill for all frontend implementation work. Establishes composability,
 
-
-
-
-id: KNOW-282c0305
-title: OrqaStudio Frontend Best Practices
-description: |
-  Umbrella skill for all frontend implementation work. Establishes composability,
   coding standards, and component conventions as always-in-mind principles, then
+
   references deeper skills for Svelte 5, TypeScript, and Tailwind specifics.
-  Use when: Any agent is about to write or modify frontend code (ui/, components, stores).
-status: active
-created: 2026-03-11
-updated: 2026-03-11
-category: domain
-version: 1.0.0
+
+  Use when: Any agent is about to write or modify frontend code (ui/, components, stores).\n"
+status: "active"
+created: "2026-03-11"
+updated: "2026-03-11"
+category: "domain"
+version: "1.0.0"
 user-invocable: true
 relationships:
-  - target: DOC-4b4fbc0f
-    type: synchronised-with
-  - target: app::KNOW-f0c40eaf
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-8d552e96
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-cb65b5d0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-57ccb4a3
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "DOC-4b4fbc0f"
+    type: "synchronised-with"
 ---
 This skill ensures every frontend agent has the right mental model before writing code. It does not duplicate content from deeper skills — it establishes principles and points to the right references.
 

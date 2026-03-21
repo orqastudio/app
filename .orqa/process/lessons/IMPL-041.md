@@ -1,19 +1,14 @@
 ---
-
-
-id: IMPL-336adfc0
-type: lesson
+id: "IMPL-336adfc0"
+type: "lesson"
 title: "Orchestrator should think critically about user suggestions, not just accept them"
 description: "When the user shares an instinct or preference, the orchestrator should evaluate it against the system's principles and present a reasoned assessment — agreeing, disagreeing, or offering alternatives — rather than immediately accepting. The user explicitly asked for critical thinking, indicating the default behaviour is too deferential."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
-maturity: understanding
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
+maturity: "understanding"
 recurrence: 1
-relationships:
-  - target: app::RULE-1e8a1914
-    type: informed-by
-    rationale: "Auto-generated from body text reference" []
+relationships: []
 ---
 ## Pattern
 

@@ -1,12 +1,11 @@
 ---
-
-id: EPIC-de088896
-title: 'Rebrand: Forge → OrqaStudio'
-description: 'Product rebrand from "Forge" to "Orqa Studio": name, directory structure (src/ → ui/), brand assets, documentation, and build configuration updates.'
-status: completed
-priority: P1
-created: 2026-03-04
-updated: 2026-03-09
+id: "EPIC-de088896"
+title: "Rebrand: Forge → OrqaStudio"
+description: "Product rebrand from \"Forge\" to \"Orqa Studio\": name, directory structure (src/ → ui/), brand assets, documentation, and build configuration updates."
+status: "completed"
+priority: "P1"
+created: "2026-03-04"
+updated: "2026-03-09"
 horizon: null
 scoring:
   impact: 4
@@ -14,21 +13,18 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: AD-44a033cf
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-0a797991
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-0a797991
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-0ea0bf38
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-7582d9b2
-  type: delivered-by
-  rationale: Epic contains this task
+  - target: "RES-0a797991"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-0a797991"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-0ea0bf38"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-7582d9b2"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
 ---
 ## Implementation Design
 

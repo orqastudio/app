@@ -1,22 +1,18 @@
 ---
-
-id: TASK-fa3388c2
-title: Update EPIC-31c9baca body canon to core
-description: EPIC-31c9baca uses canon throughout. Current vocabulary is core. Update.
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+id: "TASK-fa3388c2"
+title: "Update EPIC-31c9baca body canon to core"
+description: "EPIC-31c9baca uses canon throughout. Current vocabulary is core. Update."
+status: "completed"
+created: "2026-03-12"
+updated: "2026-03-12"
 acceptance:
-  - EPIC-31c9baca body uses core not canon
+  - "EPIC-31c9baca body uses core not canon"
 relationships:
-  - target: EPIC-6f2d06d4
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-94149697
-    type: depended-on-by
-  - target: EPIC-31c9baca
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-6f2d06d4"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-94149697"
+    type: "depended-on-by"
 ---
 ## What
 

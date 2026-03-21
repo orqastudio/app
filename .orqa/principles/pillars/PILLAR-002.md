@@ -1,10 +1,10 @@
 ---
-id: PILLAR-cdf756ff
-title: Learning Through Reflection
-description: The system and its users improve over time through structured retrospection.
-status: active
-created: 2026-03-09
-updated: 2026-03-09
+id: "PILLAR-cdf756ff"
+title: "Learning Through Reflection"
+description: "The system and its users improve over time through structured retrospection."
+status: "active"
+created: "2026-03-09"
+updated: "2026-03-09"
 gate:
   - "Does this capture lessons, discoveries, or patterns?"
   - "Does it track metrics or outcomes that show improvement (or regression)?"
@@ -12,34 +12,46 @@ gate:
   - "Does it accumulate knowledge across sessions so each cycle starts from a better position?"
   - "Are discovered enforcement gaps acted on immediately, not deferred?"
 relationships:
-  - target: VISION-001
-    type: upholds
-  - target: IDEA-3ff06133
-    type: grounded-by
-  - target: IDEA-02c70c90
-    type: grounded-by
-  - target: IDEA-9713910f
-    type: grounded-by
-  - target: IDEA-5fb79e8b
-    type: grounded-by
-  - target: IDEA-b77e2955
-    type: grounded-by
-  - target: IDEA-cc13aea9
-    type: grounded-by
-  - target: IDEA-a56a0b94
-    type: grounded-by
-  - target: IDEA-60dd3dde
-    type: grounded-by
-  - target: IDEA-d8c14add
-    type: grounded-by
-  - target: IDEA-0f1f39ca
-    type: grounded-by
-  - target: IDEA-791c9641
-    type: grounded-by
-  - target: IDEA-c1364d60
-    type: grounded-by
-  - target: IDEA-50f18707
-    type: grounded-by
+  - target: "VISION-001"
+    type: "upholds"
+  - target: "IDEA-3ff06133"
+    type: "grounded-by"
+  - target: "IDEA-02c70c90"
+    type: "grounded-by"
+  - target: "IDEA-9713910f"
+    type: "grounded-by"
+  - target: "IDEA-5fb79e8b"
+    type: "grounded-by"
+  - target: "IDEA-b77e2955"
+    type: "grounded-by"
+  - target: "IDEA-cc13aea9"
+    type: "grounded-by"
+  - target: "IDEA-a56a0b94"
+    type: "grounded-by"
+  - target: "IDEA-60dd3dde"
+    type: "grounded-by"
+  - target: "IDEA-d8c14add"
+    type: "grounded-by"
+  - target: "IDEA-0f1f39ca"
+    type: "grounded-by"
+  - target: "IDEA-791c9641"
+    type: "grounded-by"
+  - target: "IDEA-c1364d60"
+    type: "grounded-by"
+  - target: "IDEA-50f18707"
+    type: "grounded-by"
+  - target: "AGENT-1dab5ebe"
+    type: "served-by"
+    rationale: "This agent serves this pillar/persona"
+  - target: "AGENT-b0774726"
+    type: "served-by"
+    rationale: "This agent serves this pillar/persona"
+  - target: "AGENT-fb0ce261"
+    type: "served-by"
+    rationale: "This agent serves this pillar/persona"
+  - target: "AGENT-ff44f841"
+    type: "served-by"
+    rationale: "This agent serves this pillar/persona"
 ---
 ## What This Pillar Means
 

@@ -1,85 +1,108 @@
 ---
-id: PERSONA-015e8c2c
-title: Sam — The Practitioner
-description: Senior professional who already uses AI tools daily. Values OrqaStudio as a structural layer that makes AI-assisted work visible, governed, and improving.
-status: active
-created: 2026-03-07
-updated: 2026-03-18
+id: "PERSONA-015e8c2c"
+title: "Sam — The Practitioner"
+description: "Senior professional who already uses AI tools daily. Values OrqaStudio as a structural layer that makes AI-assisted work visible, governed, and improving."
+status: "active"
+created: "2026-03-07"
+updated: "2026-03-18"
 relationships:
-  - target: IDEA-7035530f
-    type: benefited-by
-  - target: IDEA-72903969
-    type: benefited-by
-  - target: IDEA-125f4ec8
-    type: benefited-by
-  - target: IDEA-3bcdd78b
-    type: benefited-by
-  - target: IDEA-8ebeb1a2
-    type: benefited-by
-  - target: IDEA-3354aefe
-    type: benefited-by
-  - target: IDEA-88288601
-    type: benefited-by
-  - target: IDEA-52c65fc8
-    type: benefited-by
-  - target: IDEA-d15d04a6
-    type: benefited-by
-  - target: IDEA-abf847bb
-    type: benefited-by
-  - target: IDEA-48e79f74
-    type: benefited-by
-  - target: IDEA-6bd0622f
-    type: benefited-by
-  - target: IDEA-c31c1c6b
-    type: benefited-by
-  - target: IDEA-770dc935
-    type: benefited-by
-  - target: IDEA-c599e4ac
-    type: benefited-by
-  - target: IDEA-68d4e688
-    type: benefited-by
-  - target: IDEA-53205849
-    type: benefited-by
-  - target: IDEA-2ffe9ff9
-    type: benefited-by
-  - target: IDEA-1c7ebe74
-    type: benefited-by
-  - target: IDEA-1287dd52
-    type: benefited-by
-  - target: IDEA-5e90b487
-    type: benefited-by
-  - target: IDEA-0d3f67de
-    type: benefited-by
-  - target: IDEA-0f690b5f
-    type: benefited-by
-  - target: IDEA-34a6bbf5
-    type: benefited-by
-  - target: IDEA-f9bb2c66
-    type: benefited-by
-  - target: IDEA-e41039bc
-    type: benefited-by
-  - target: IDEA-c4f10c20
-    type: benefited-by
-  - target: IDEA-bcb32ace
-    type: benefited-by
-  - target: IDEA-aabbab9d
-    type: benefited-by
-  - target: IDEA-0128a151
-    type: benefited-by
-  - target: IDEA-49a009ae
-    type: benefited-by
-  - target: IDEA-3f67dc75
-    type: benefited-by
-  - target: IDEA-112a4b5d
-    type: benefited-by
-  - target: IDEA-2d7ac819
-    type: benefited-by
-  - target: IDEA-d5feee98
-    type: benefited-by
-  - target: IDEA-2d2bf14a
-    type: benefited-by
-  - target: IDEA-bbbad601
-    type: benefited-by
+  - target: "IDEA-7035530f"
+    type: "benefited-by"
+  - target: "IDEA-72903969"
+    type: "benefited-by"
+  - target: "IDEA-125f4ec8"
+    type: "benefited-by"
+  - target: "IDEA-3bcdd78b"
+    type: "benefited-by"
+  - target: "IDEA-8ebeb1a2"
+    type: "benefited-by"
+  - target: "IDEA-3354aefe"
+    type: "benefited-by"
+  - target: "IDEA-88288601"
+    type: "benefited-by"
+  - target: "IDEA-52c65fc8"
+    type: "benefited-by"
+  - target: "IDEA-d15d04a6"
+    type: "benefited-by"
+  - target: "IDEA-abf847bb"
+    type: "benefited-by"
+  - target: "IDEA-48e79f74"
+    type: "benefited-by"
+  - target: "IDEA-6bd0622f"
+    type: "benefited-by"
+  - target: "IDEA-c31c1c6b"
+    type: "benefited-by"
+  - target: "IDEA-770dc935"
+    type: "benefited-by"
+  - target: "IDEA-c599e4ac"
+    type: "benefited-by"
+  - target: "IDEA-68d4e688"
+    type: "benefited-by"
+  - target: "IDEA-53205849"
+    type: "benefited-by"
+  - target: "IDEA-2ffe9ff9"
+    type: "benefited-by"
+  - target: "IDEA-1c7ebe74"
+    type: "benefited-by"
+  - target: "IDEA-1287dd52"
+    type: "benefited-by"
+  - target: "IDEA-5e90b487"
+    type: "benefited-by"
+  - target: "IDEA-0d3f67de"
+    type: "benefited-by"
+  - target: "IDEA-0f690b5f"
+    type: "benefited-by"
+  - target: "IDEA-34a6bbf5"
+    type: "benefited-by"
+  - target: "IDEA-f9bb2c66"
+    type: "benefited-by"
+  - target: "IDEA-e41039bc"
+    type: "benefited-by"
+  - target: "IDEA-c4f10c20"
+    type: "benefited-by"
+  - target: "IDEA-bcb32ace"
+    type: "benefited-by"
+  - target: "IDEA-aabbab9d"
+    type: "benefited-by"
+  - target: "IDEA-0128a151"
+    type: "benefited-by"
+  - target: "IDEA-49a009ae"
+    type: "benefited-by"
+  - target: "IDEA-3f67dc75"
+    type: "benefited-by"
+  - target: "IDEA-112a4b5d"
+    type: "benefited-by"
+  - target: "IDEA-2d7ac819"
+    type: "benefited-by"
+  - target: "IDEA-d5feee98"
+    type: "benefited-by"
+  - target: "IDEA-2d2bf14a"
+    type: "benefited-by"
+  - target: "IDEA-bbbad601"
+    type: "benefited-by"
+  - target: "AGENT-cc255bc8"
+    type: "served-by"
+    rationale: "This agent serves this pillar/persona"
+  - target: "AGENT-b0774726"
+    type: "served-by"
+    rationale: "This agent serves this pillar/persona"
+  - target: "AGENT-ec1b3785"
+    type: "served-by"
+    rationale: "This agent serves this pillar/persona"
+  - target: "AGENT-RST-spec-a3f7d2b1"
+    type: "served-by"
+    rationale: "This agent serves this pillar/persona"
+  - target: "AGENT-RST-4241392c"
+    type: "served-by"
+    rationale: "This agent serves this pillar/persona"
+  - target: "AGENT-SVE-spec-c8e4f9a2"
+    type: "served-by"
+    rationale: "This agent serves this pillar/persona"
+  - target: "AGENT-SVE-b0857607"
+    type: "served-by"
+    rationale: "This agent serves this pillar/persona"
+  - target: "AGENT-TAU-1ed9512e"
+    type: "served-by"
+    rationale: "This agent serves this pillar/persona"
 ---
-
 Secondary persona. Senior developer, staff engineer, or lead researcher who works with complex systems daily. Already uses AI tools and wants structured governance, learning loops, and session continuity. See the full personas document for details.

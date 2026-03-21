@@ -1,13 +1,11 @@
 ---
-
-
-id: EPIC-4d1f11ab
+id: "EPIC-4d1f11ab"
 title: "Enforcement & Continuity"
 description: "Add real-time violation detection during streaming, hook-based rule injection, compliance dashboard, and session handoff continuity."
-status: completed
-priority: P2
-created: 2026-03-07
-updated: 2026-03-12
+status: "completed"
+priority: "P2"
+created: "2026-03-07"
+updated: "2026-03-12"
 horizon: null
 scoring:
   impact: 4
@@ -15,22 +13,15 @@ scoring:
   complexity: 4
   dependencies: 3
 relationships:
-  - target: MS-eea45fa8
-    type: fulfils
-    rationale: Epic belongs to this milestone
-  - target: TASK-7af85748
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: MS-654badde
-    type: fulfils
-  - target: EPIC-3a8ad459
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-4440cdd4
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "MS-eea45fa8"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-7af85748"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "MS-654badde"
+    type: "fulfils"
 ---
-
 **Note:** Two deliverables from this epic were deferred:
 - **Visual compliance dashboard** -- not delivered; should be tracked in a future epic when dashboard UI work is prioritised.
 - **Session handoff and continuity** -- not delivered; depends on SDK session resume capabilities. Should be tracked in a separate epic.

@@ -1,12 +1,11 @@
 ---
-
-id: EPIC-39860e8b
-title: Git Workflow Enforcement Review
+id: "EPIC-39860e8b"
+title: "Git Workflow Enforcement Review"
 description: "Review and strengthen git commit discipline enforcement after discovering 237 files uncommitted across multiple sessions. Update session hooks, git-workflow rule, and create a software project-type skill for commit discipline. Addresses IMPL-2e30e4ab."
-status: completed
-priority: P1
-created: 2026-03-09
-updated: 2026-03-09
+status: "completed"
+priority: "P1"
+created: "2026-03-09"
+updated: "2026-03-09"
 horizon: null
 scoring:
   impact: 4
@@ -14,30 +13,27 @@ scoring:
   complexity: 2
   dependencies: 3
 relationships:
-  - target: MS-654badde
-    type: fulfils
-    rationale: Epic belongs to this milestone
-  - target: TASK-80b08c75
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-5a90e7e0
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-58372e60
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-e1d418de
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-648a5a90
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-5e116826
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: IMPL-2e30e4ab
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-80b08c75"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-5a90e7e0"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-58372e60"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-e1d418de"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-648a5a90"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-5e116826"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
 ---
 ## Context
 

@@ -1,27 +1,23 @@
 ---
-
-id: TASK-c740060f
-title: Null field handling and YAML display ordering
+id: "TASK-c740060f"
+title: "Null field handling and YAML display ordering"
 description: "Fixes the artifact detail renderer to suppress null, empty, and invalid-date field values, and makes field render order follow YAML source order rather than a hardcoded list."
-status: completed
-created: 2026-03-09
-updated: 2026-03-09
-assignee: AGENT-cc255bc8
+status: "completed"
+created: "2026-03-09"
+updated: "2026-03-09"
+assignee: "AGENT-cc255bc8"
 acceptance:
   - "Null, empty string, and undefined YAML values are not displayed in read views"
-  - Invalid Date never shown for null/missing date fields
-  - Fields render in the order they appear in the YAML frontmatter
-  - Priority labels (P1/P2/P3) include a human-readable explanation
-  - Milestone gate question renders as the last field in the detail view
+  - "Invalid Date never shown for null/missing date fields"
+  - "Fields render in the order they appear in the YAML frontmatter"
+  - "Priority labels (P1/P2/P3) include a human-readable explanation"
+  - "Milestone gate question renders as the last field in the detail view"
 relationships:
-  - target: EPIC-a2fa3068
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-34eaf518
-    type: depended-on-by
-  - target: TASK-32932be1
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-a2fa3068"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-34eaf518"
+    type: "depended-on-by"
 ---
 ## Findings Addressed
 

@@ -1,25 +1,21 @@
 ---
-
-id: IDEA-0ea1fce4
-title: Project initialization — tooling detection and plugin suggestion
+id: "IDEA-0ea1fce4"
+title: "Project initialization — tooling detection and plugin suggestion"
 description: "During project setup, detect existing tooling (automated scan + user interview), suggest verification plugins, recommend options if none exist. Mature plugin system could offer to generate plugins automatically."
-status: captured
-created: 2026-03-12
-updated: 2026-03-13
-horizon: later
+status: "captured"
+created: "2026-03-12"
+updated: "2026-03-13"
+horizon: "later"
 research-needed:
   - "Extend project-inference skill to detect linters, monitoring tools, CI/CD"
-  - User interview flow design for metrics/monitoring tooling
-  - Plugin marketplace/registry concept for matching detected tools to plugins
-  - AI-assisted plugin generation feasibility — how much can be automated from the plugin template
+  - "User interview flow design for metrics/monitoring tooling"
+  - "Plugin marketplace/registry concept for matching detected tools to plugins"
+  - "AI-assisted plugin generation feasibility — how much can be automated from the plugin template"
 relationships:
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-a4b15450
-    type: benefits
-  - target: AD-a76663db
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-a4b15450"
+    type: "benefits"
 ---
 ## Motivation
 

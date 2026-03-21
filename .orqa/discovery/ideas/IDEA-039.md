@@ -1,13 +1,11 @@
 ---
-
-
-id: IDEA-0b05f1fd
-title: Local Model Support and Democratised AI Development
+id: "IDEA-0b05f1fd"
+title: "Local Model Support and Democratised AI Development"
 description: "Explore running OrqaStudio with cheaper local models once the structured thinking foundation is mature enough, reducing dependency on expensive cloud subscriptions and democratising AI-assisted development."
-status: captured
-created: 2026-03-10
-updated: 2026-03-13
-horizon: someday
+status: "captured"
+created: "2026-03-10"
+updated: "2026-03-13"
+horizon: "someday"
 research-needed:
   - "Minimum model capability threshold — what reasoning quality is needed for structured artifact creation, planning, and code generation?"
   - "Context window requirements — the file-based architecture means loading the right files at the right time, not everything at once. What's the minimum context window?"
@@ -17,16 +15,10 @@ research-needed:
   - "Hybrid approach — could a local model handle routine tasks (artifact creation, simple edits) while cloud models handle complex planning and architecture?"
   - "Skill-driven context injection — since skills load domain knowledge at the right time, does this compensate for smaller context windows?"
 relationships:
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: AD-2aa4d6db
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-0a8a5e72
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Motivation
 

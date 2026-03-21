@@ -1,32 +1,28 @@
 ---
-
-id: TASK-7b8ded48
+id: "TASK-7b8ded48"
 title: "Research: relationship and metadata display UX (RES-07667737)"
 description: "UX review investigating how artifacts should present their relationships, pipeline stage, and metadata to users in the app. Produces design recommendations for a future implementation epic."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
 assignee: null
 docs: []
 acceptance:
-  - RES-07667737 is complete with findings and recommendations
-  - Current metadata display audited with specific issues identified
-  - Recommendations for relationship visualization
-  - Recommendations for pipeline stage representation
-  - Recommendations for three-level structure navigation
-  - Design recommendations suitable for informing a future implementation epic
+  - "RES-07667737 is complete with findings and recommendations"
+  - "Current metadata display audited with specific issues identified"
+  - "Recommendations for relationship visualization"
+  - "Recommendations for pipeline stage representation"
+  - "Recommendations for three-level structure navigation"
+  - "Design recommendations suitable for informing a future implementation epic"
 rule-overrides: []
 relationships:
-  - target: EPIC-942c7678
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-b3aadbcd
-    type: depends-on
-  - target: TASK-cea1bc37
-    type: depended-on-by
-  - target: RES-07667737
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-942c7678"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-b3aadbcd"
+    type: "depends-on"
+  - target: "TASK-cea1bc37"
+    type: "depended-on-by"
 ---
 ## What
 

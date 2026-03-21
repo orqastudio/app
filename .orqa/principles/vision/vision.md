@@ -7,13 +7,10 @@ description: Product vision defining OrqaStudio as an AI-assisted clarity engine
 created: 2026-03-02
 updated: 2026-03-07
 sort: 1
+status: captured
 relationships:
   - target: PILLAR-569581e0
     type: upheld-by
-  - target: AD-6f0dea5e
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-status: captured
   - target: PILLAR-cdf756ff
     type: upheld-by
   - target: PILLAR-94b281db

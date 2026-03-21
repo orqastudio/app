@@ -1,29 +1,24 @@
 ---
-
-id: TASK-0bcbb927
-title: Replace hardcoded path constants with runtime config cache (IMPL-c306b136)
+id: "TASK-0bcbb927"
+title: "Replace hardcoded path constants with runtime config cache (IMPL-c306b136)"
 description: "Remove paths.rs constants and all hardcoded .orqa/ paths. Load project.json once at startup, build a ProjectPaths struct, pass it through the call chain. Decision: Option C from RES-cd3d33bf, approved by user."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
 acceptance:
   - "paths.rs removed or reduced to only truly structural constants (ORQA_DIR, SETTINGS_FILE)"
-  - ProjectPaths struct built from project.json at startup
-  - All modules that previously used path constants use ProjectPaths instead
+  - "ProjectPaths struct built from project.json at startup"
+  - "All modules that previously used path constants use ProjectPaths instead"
   - "project_scanner.rs, artifact_fs.rs, and delivery workflow code all read from config"
   - "make lint-backend && make test-rust pass"
-  - IMPL-c306b136 maturity updated to understanding
+  - "IMPL-c306b136 maturity updated to understanding"
 relationships:
-  - target: EPIC-942c7678
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-cea1bc37
-    type: depended-on-by
-  - target: IMPL-c306b136
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-942c7678"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-cea1bc37"
+    type: "depended-on-by"
 ---
-
 ## What
 
 Eliminate the constant/config duality by making `project.json` the single source of truth for all `.orqa/` paths at runtime. Load config once, cache in a struct, pass through the call chain.

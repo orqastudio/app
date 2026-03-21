@@ -1,37 +1,17 @@
 ---
-
-
-
-
-
-id: RULE-5e03e67b
-title: Code Search Usage
-description: Prefer semantic search over Grep/Glob for multi-file searches. Load the correct search knowledge for your context.
-status: active
-created: 2026-03-07
-updated: 2026-03-07
+id: "RULE-5e03e67b"
+title: "Code Search Usage"
+description: "Prefer semantic search over Grep/Glob for multi-file searches. Load the correct search knowledge for your context."
+status: "active"
+created: "2026-03-07"
+updated: "2026-03-07"
 relationships:
-  - target: AD-99c2a969
-    type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-99c2a969
-  - target: AD-0f6286cd
-    type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-0f6286cd
-  - target: app::RULE-deab6ea7
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-57ccb4a3
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-cb65b5d0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: RULE-1acb1602
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-e9c54567
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "AD-99c2a969"
+    type: "enforces"
+    rationale: "Auto-generated inverse of enforces relationship from AD-99c2a969"
+  - target: "AD-0f6286cd"
+    type: "enforces"
+    rationale: "Auto-generated inverse of enforces relationship from AD-0f6286cd"
 ---
 **Prefer semantic search over Grep/Glob for any search that spans more than one file or directory.**
 

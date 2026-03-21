@@ -1,28 +1,24 @@
 ---
-
-id: IDEA-325a4ddc
+id: "IDEA-325a4ddc"
 title: "Document Browser Sorting, Filtering & Navigation Config"
-description: Enhance the artifact navigation pane with sorting and filtering controls. Include manual sort order that persists to a _navigation.json config file alongside the README in each artifact group directory. Filter and sort state also persists to this file so it is properly retained across sessions.
-status: surpassed
-created: 2026-03-10
-updated: 2026-03-12
+description: "Enhance the artifact navigation pane with sorting and filtering controls. Include manual sort order that persists to a _navigation.json config file alongside the README in each artifact group directory. Filter and sort state also persists to this file so it is properly retained across sessions."
+status: "surpassed"
+created: "2026-03-10"
+updated: "2026-03-12"
 research-needed:
   - "Sort options (alphabetical, by status, by date, manual drag-and-drop)"
   - "Filter options (by status, by priority, by pillar, free-text search)"
   - "_navigation.json schema design (sort order array, active filters, view preferences)"
-  - Interaction between _navigation.json and README.md frontmatter (sort field)
-  - Scanner changes to read/write _navigation.json alongside README.md
-  - Performance of re-sorting large artifact directories
+  - "Interaction between _navigation.json and README.md frontmatter (sort field)"
+  - "Scanner changes to read/write _navigation.json alongside README.md"
+  - "Performance of re-sorting large artifact directories"
 relationships:
-  - target: EPIC-6787bb93
-    type: realises
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: RES-14aacfa0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-6787bb93"
+    type: "realises"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Archived
 

@@ -1,99 +1,55 @@
 ---
-
-
-
-
-
-
-
-
-
-
-
-id: EPIC-6787bb93
-title: Artifact Browser — Sort, Filter, Search
-description: Complete the core artifact browsing experience with sorting/grouping/filtering in the browser panel, AI-driven cross-artifact search, and a references panel.
-status: active
-priority: P1
-created: 2026-03-07
-updated: 2026-03-11
-horizon: active
+id: "EPIC-6787bb93"
+title: "Artifact Browser — Sort, Filter, Search"
+description: "Complete the core artifact browsing experience with sorting/grouping/filtering in the browser panel, AI-driven cross-artifact search, and a references panel."
+status: "active"
+priority: "P1"
+created: "2026-03-07"
+updated: "2026-03-11"
+horizon: "active"
 scoring:
   impact: 5
   urgency: 4
   complexity: 3
   dependencies: 4
 relationships:
-  - target: AD-0291fa65
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-fe75b52c
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-a2fa3068
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-31c9baca
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-0f6286cd
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-89391ab6
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-2f1991c2
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: EPIC-0a8a5e72
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: TASK-61934d01
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: app::RULE-7b770593
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: PILLAR-569581e0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-- target: RES-6ca176bb
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-6ca176bb
-- target: RES-14aacfa0
-  type: guided-by
-  rationale: Auto-generated inverse of informed-by relationship from RES-14aacfa0
-- target: MS-654badde
-  type: fulfils
-  rationale: Epic belongs to this milestone
-- target: TASK-db9be55f
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-e6d10f6f
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-d05c56ea
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-cc68b8df
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-5e1e41de
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-2e1df475
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-21b461ea
-  type: delivered-by
-  rationale: Epic contains this task
-- target: TASK-3b119193
-  type: delivered-by
-  rationale: Epic contains this task
-- target: DOC-01ddd8aa
-  type: documented-by
-- target: IDEA-325a4ddc
-  type: realised-by
+  - target: "RES-6ca176bb"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-6ca176bb"
+  - target: "RES-14aacfa0"
+    type: "guided-by"
+    rationale: "Auto-generated inverse of informed-by relationship from RES-14aacfa0"
+  - target: "MS-654badde"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
+  - target: "TASK-db9be55f"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-e6d10f6f"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-d05c56ea"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-cc68b8df"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-5e1e41de"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-2e1df475"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-21b461ea"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "TASK-3b119193"
+    type: "delivered-by"
+    rationale: "Epic contains this task"
+  - target: "DOC-01ddd8aa"
+    type: "documented-by"
+  - target: "IDEA-325a4ddc"
+    type: "realised-by"
 ---
 ## Why P1
 

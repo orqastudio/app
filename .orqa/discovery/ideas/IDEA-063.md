@@ -1,25 +1,21 @@
 ---
-
-id: IDEA-95654649
-title: Verification definition and scheduling system
+id: "IDEA-95654649"
+title: "Verification definition and scheduling system"
 description: "Verification definitions on artifacts (mode, cadence, trigger, source, parameters, prompt) with a scheduling system that creates VER-NNN records from automated checks and TASK-NNN from failures or reflection prompts."
-status: captured
-created: 2026-03-12
-updated: 2026-03-13
-horizon: later
+status: "captured"
+created: "2026-03-12"
+updated: "2026-03-13"
+horizon: "later"
 research-needed:
-  - Verification definition schema design (mode/cadence/trigger/source/parameters/prompt/required-fields)
+  - "Verification definition schema design (mode/cadence/trigger/source/parameters/prompt/required-fields)"
   - "Scheduling mechanism — cron-like, project-start hooks, manual triggers"
-  - VER-NNN storage strategy for different volume levels
-  - Auto-creation of TASK-NNN from failed automated checks
+  - "VER-NNN storage strategy for different volume levels"
+  - "Auto-creation of TASK-NNN from failed automated checks"
 relationships:
-  - target: PILLAR-569581e0
-    type: grounded
-  - target: PERSONA-cda6edd6
-    type: benefits
-  - target: AD-a76663db
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "PILLAR-569581e0"
+    type: "grounded"
+  - target: "PERSONA-cda6edd6"
+    type: "benefits"
 ---
 ## Motivation
 

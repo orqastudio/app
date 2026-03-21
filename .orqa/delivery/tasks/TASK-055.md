@@ -1,39 +1,31 @@
 ---
-
-
-id: TASK-58887d38
-title: Update product documentation
+id: "TASK-58887d38"
+title: "Update product documentation"
 description: "Update governance.md with the concept taxonomy from AD-774cc3d0, create a new governance-hub.md page for the distribution and coexistence model from AD-6f0dea5e, and verify artifact-framework.md alignment."
-status: completed
-created: 2026-03-09
-updated: 2026-03-09
-assignee: AGENT-1dab5ebe
+status: "completed"
+created: "2026-03-09"
+updated: "2026-03-09"
+assignee: "AGENT-1dab5ebe"
 acceptance:
-  - governance.md updated with concept taxonomy (agent/skill/rule/hook/lesson definitions)
-  - governance.md updated with agent vs skill decision framework
-  - governance-hub.md created covering distribution model
-  - coexistence
-  - drift reconciliation
-  - governance-hub.md positions hub capability as contextual
-  - not identity
-  - artifact-framework.md verified aligned with AD-774cc3d0 universal roles
-  - All three pages have pillar alignment sections
+  - "governance.md updated with concept taxonomy (agent/skill/rule/hook/lesson definitions)"
+  - "governance.md updated with agent vs skill decision framework"
+  - "governance-hub.md created covering distribution model"
+  - "coexistence"
+  - "drift reconciliation"
+  - "governance-hub.md positions hub capability as contextual"
+  - "not identity"
+  - "artifact-framework.md verified aligned with AD-774cc3d0 universal roles"
+  - "All three pages have pillar alignment sections"
 relationships:
-  - target: EPIC-be023ed2
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-4a2936f9
-    type: depends-on
-  - target: TASK-2ac2d88f
-    type: depends-on
-  - target: TASK-0d8b4a06
-    type: depended-on-by
-  - target: AD-774cc3d0
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
-  - target: AD-6f0dea5e
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-be023ed2"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-4a2936f9"
+    type: "depends-on"
+  - target: "TASK-2ac2d88f"
+    type: "depends-on"
+  - target: "TASK-0d8b4a06"
+    type: "depended-on-by"
 ---
 ## Reference
 

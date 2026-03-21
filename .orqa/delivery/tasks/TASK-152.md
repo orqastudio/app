@@ -1,32 +1,28 @@
 ---
-
-id: TASK-448102a7
-title: Create schema validation pre-commit hook
+id: "TASK-448102a7"
+title: "Create schema validation pre-commit hook"
 description: "Pre-commit hook that validates YAML frontmatter of staged .orqa/ markdown files against their directory's schema.json before allowing the commit."
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-11"
 acceptance:
-  - Staged .orqa/ markdown files are validated against their schema.json
-  - Missing required fields block the commit with clear error messages
+  - "Staged .orqa/ markdown files are validated against their schema.json"
+  - "Missing required fields block the commit with clear error messages"
   - "Invalid enum values (e.g., wrong status) block the commit"
   - "Pattern violations (e.g., malformed ID) block the commit"
-  - Out-of-order frontmatter fields flagged when schema defines propertyOrder
-  - Files outside .orqa/ are not affected
-  - Hook runs as part of the existing .githooks/pre-commit chain
+  - "Out-of-order frontmatter fields flagged when schema defines propertyOrder"
+  - "Files outside .orqa/ are not affected"
+  - "Hook runs as part of the existing .githooks/pre-commit chain"
 relationships:
-  - target: EPIC-4a7aeacb
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-22b0ab76
-    type: depended-on-by
-  - target: TASK-58d6a5ca
-    type: depended-on-by
-  - target: TASK-ec136ce9
-    type: depended-on-by
-  - target: app::RULE-a764b2ae
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4a7aeacb"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-22b0ab76"
+    type: "depended-on-by"
+  - target: "TASK-58d6a5ca"
+    type: "depended-on-by"
+  - target: "TASK-ec136ce9"
+    type: "depended-on-by"
 ---
 ## What
 

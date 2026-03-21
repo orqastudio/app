@@ -1,24 +1,20 @@
 ---
-
-id: TASK-75b09cdb
+id: "TASK-75b09cdb"
 title: "Update RULE-303c1cc8: loop-closure + scope verification requirements"
-description: Update RULE-303c1cc8 to require loop-closure phases in enforcement epics and explicit user approval for out-of-scope sections
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+description: "Update RULE-303c1cc8 to require loop-closure phases in enforcement epics and explicit user approval for out-of-scope sections"
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
 acceptance:
-  - RULE-303c1cc8 requires epics producing enforcement tooling to include a loop-closure phase and out-of-scope sections to have user approval
+  - "RULE-303c1cc8 requires epics producing enforcement tooling to include a loop-closure phase and out-of-scope sections to have user approval"
 relationships:
-  - target: EPIC-4e6e9eae
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-247b6ce4
-    type: depends-on
-  - target: TASK-7cf80542
-    type: depended-on-by
-  - target: app::RULE-303c1cc8
-    type: informed-by
-    rationale: "Auto-generated from body text reference"
+  - target: "EPIC-4e6e9eae"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-247b6ce4"
+    type: "depends-on"
+  - target: "TASK-7cf80542"
+    type: "depended-on-by"
 ---
 ## What
 
