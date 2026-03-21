@@ -1,0 +1,42 @@
+//! All schema-driven integrity checks.
+//!
+//! Each sub-module handles one category of checks. The `run_all` function
+//! coordinates them into a single result list.
+
+pub mod body_refs;
+pub mod cardinality;
+pub mod cycles;
+pub mod delivery;
+pub mod status;
+pub mod structural;
+
+use crate::graph::ArtifactGraph;
+use crate::types::{IntegrityCheck, ValidationContext};
+
+/// Run all schema-driven integrity checks on the graph.
+///
+/// Returns a list of findings (errors and warnings). The checks are driven
+/// entirely by the `ValidationContext` — no relationship keys or artifact types
+/// are hardcoded.
+pub fn run_all(graph: &ArtifactGraph, ctx: &ValidationContext) -> Vec<IntegrityCheck> {
+    let mut checks = Vec::new();
+
+    structural::check_broken_refs(graph, &mut checks);
+    structural::check_missing_inverses(graph, ctx, &mut checks);
+    structural::check_relationship_type_constraints(graph, ctx, &mut checks);
+    structural::check_required_relationships(graph, ctx, &mut checks);
+    cardinality::check_cardinality(graph, ctx, &mut checks);
+    cycles::check_circular_dependencies(graph, ctx, &mut checks);
+    body_refs::check_body_text_refs_without_relationships(graph, &mut checks);
+
+    if !ctx.valid_statuses.is_empty() {
+        status::check_valid_statuses(graph, ctx, &mut checks);
+        status::check_parent_child_consistency(graph, ctx, &mut checks);
+    }
+
+    if !ctx.delivery.types.is_empty() {
+        delivery::check_delivery_paths(graph, ctx, &mut checks);
+    }
+
+    checks
+}
