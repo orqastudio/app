@@ -322,7 +322,13 @@ function checkSessionState(projectDir) {
     }
 
     if (!isOrchestratorMaintained) {
-      return "Session state reminder: tmp/session-state.md exists but has no step checklist. Add a ### Steps section with checkboxes tracking current work (RULE-4f7e2a91).";
+      return "Session state reminder: tmp/session-state.md exists but has no step checklist. Add a ### Steps section with checkboxes tracking current work, and include the scoped epic (EPIC-XXXXXXXX) so the stop hook can check completion (RULE-4f7e2a91).";
+    }
+
+    // Check for scoped epic — the stop hook needs this to verify epic completion
+    const hasEpicScope = /EPIC-[a-f0-9]{8}/i.test(content);
+    if (!hasEpicScope) {
+      return "Session state reminder: tmp/session-state.md has no scoped epic. Add the epic ID (EPIC-XXXXXXXX) so the stop hook can check completion status (RULE-4f7e2a91).";
     }
 
     let stat;
@@ -392,7 +398,7 @@ async function main() {
   // Step 5: Check session state freshness.
   const sessionReminder = checkSessionState(projectDir);
 
-  const sessionConstant = "Remember: tmp/session-state.md is your working document. Update it when scope changes, decisions are made, or steps complete.";
+  const sessionConstant = "Remember: tmp/session-state.md is your working document. It MUST include the scoped epic (EPIC-XXXXXXXX) so the stop hook can check completion. Update it when scope changes, decisions are made, or steps complete.";
 
   let systemMessage = `${preamble}\n\n${modeInjection}\n\n${contextLine}\n\n${sessionConstant}`;
   if (sessionReminder) {
