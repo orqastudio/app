@@ -284,6 +284,44 @@ function collectKnowledgeContent(projectDir, injectViolations) {
   return parts.join("\n\n---\n\n");
 }
 
+// Cache for dogfood flag — read project.json once per process
+let _dogfoodCache = null;
+
+// Check if dogfood mode is active in .orqa/project.json
+function isDogfoodMode(projectDir) {
+  if (_dogfoodCache !== null) return _dogfoodCache;
+  try {
+    const projectJsonPath = join(projectDir, ".orqa", "project.json");
+    if (!existsSync(projectJsonPath)) {
+      _dogfoodCache = false;
+      return false;
+    }
+    const raw = readFileSync(projectJsonPath, "utf-8");
+    const parsed = JSON.parse(raw);
+    _dogfoodCache = parsed.dogfood === true;
+  } catch {
+    _dogfoodCache = false;
+  }
+  return _dogfoodCache;
+}
+
+// Check dogfood plugin safety: block edits to first-party plugins when dogfood is active
+function checkDogfoodPluginSafety(projectDir, toolName, toolInput) {
+  if (!["Write", "Edit"].includes(toolName)) return null;
+  if (!isDogfoodMode(projectDir)) return null;
+
+  const filePath = (toolInput.file_path || "").replace(/\\/g, "/");
+  // Match paths starting with plugins/ (absolute or relative)
+  if (/(?:^|\/)plugins\/[^/]/.test(filePath)) {
+    return {
+      decision: "block",
+      reason:
+        "Dogfood safety: Production agents cannot edit first-party plugins while dogfood mode is active. Plugin changes should go through a dedicated plugin-dev workflow or a non-dogfood session.",
+    };
+  }
+  return null;
+}
+
 // Main
 async function main() {
   const startTime = Date.now();
@@ -308,6 +346,29 @@ async function main() {
   // Only evaluate for Write, Edit, and Bash tools
   if (!["Write", "Edit", "Bash"].includes(toolName)) {
     process.exit(0);
+  }
+
+  // Dogfood plugin safety check (runs before rule evaluation)
+  const dogfoodBlock = checkDogfoodPluginSafety(projectDir, toolName, toolInput);
+  if (dogfoodBlock) {
+    logTelemetry("rule-engine", "PreToolUse", startTime, "blocked", {
+      violations_found: 1,
+      rules_evaluated: 0,
+      tool: toolName,
+      action: "block",
+      blocked_rules: ["dogfood-plugin-safety"],
+      warned_rules: [],
+      injected_rules: [],
+    }, projectDir);
+
+    const output = JSON.stringify({
+      hookSpecificOutput: {
+        permissionDecision: "deny",
+      },
+      systemMessage: dogfoodBlock.reason,
+    });
+    process.stderr.write(output);
+    process.exit(2);
   }
 
   const rules = loadEnforcementRules(projectDir);

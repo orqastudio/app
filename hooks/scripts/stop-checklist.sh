@@ -127,12 +127,13 @@ except Exception:
 fi
 
 # ─── Escalation Check ─────────────────────────────────────────────────────────
-# Scan lessons for escalation candidates (recurrence >= 2 unpromoted, recurrence >= 3 needing
-# enforcement strengthening). Findings are surfaced as warnings — not blocking.
+# Scan lessons for escalation candidates (recurrence >= 3 unpromoted or enforcement not working).
+# Tasks are ALWAYS created immediately — they become the FIRST tasks for the next session.
+# Per RULE-045 (Enforcement Gap Priority): enforcement gaps are always CRITICAL.
 
-ESCALATION_OUTPUT=""
+ESCALATION_TASKS_CREATED=0
 if command -v orqa >/dev/null 2>&1; then
-  ESCALATION_RESULT=$(orqa audit escalation --json 2>/dev/null || true)
+  ESCALATION_RESULT=$(orqa audit escalation --json --create-tasks 2>/dev/null || true)
   if [ -n "$ESCALATION_RESULT" ]; then
     FINDING_COUNT=$(echo "$ESCALATION_RESULT" | python3 -c "
 import json, sys
@@ -140,6 +141,15 @@ try:
     data = json.load(sys.stdin)
     findings = data.get('findings') or []
     print(len(findings))
+except Exception:
+    print(0)
+" 2>/dev/null || echo "0")
+
+    ESCALATION_TASKS_CREATED=$(echo "$ESCALATION_RESULT" | python3 -c "
+import json, sys
+try:
+    data = json.load(sys.stdin)
+    print(data.get('tasks_created') or 0)
 except Exception:
     print(0)
 " 2>/dev/null || echo "0")
@@ -152,12 +162,17 @@ try:
     findings = data.get('findings') or []
     for f in findings:
         tag = '[PROMOTE]' if f.get('reason') == 'promote' else '[STRENGTHEN]'
-        print(f'  {tag} {f[\"lessonId\"]} recurrence={f[\"recurrence\"]} status={f[\"status\"]}')
+        rule = f' -> ' + f['ruleId'] if f.get('ruleId') else ''
+        print(f'  {tag} {f[\"lessonId\"]}{rule} recurrence={f[\"recurrence\"]}')
         print(f'    {f[\"description\"]}')
 except Exception:
     pass
 " 2>/dev/null || true)
-      OUTPUT="${OUTPUT}ESCALATION CANDIDATES (${FINDING_COUNT}): Lessons need promotion or enforcement strengthening.\n${ESCALATION_DETAILS}\n\nRun: orqa audit escalation --create-tasks to auto-create CRITICAL task artifacts.\n\n"
+
+      # Stage newly created task artifacts
+      (cd "$PROJECT_DIR" && git add ".orqa/delivery/tasks/" 2>/dev/null || true)
+
+      OUTPUT="${OUTPUT}ESCALATION TASKS CREATED (${ESCALATION_TASKS_CREATED}): CRITICAL enforcement gaps — address FIRST next session (RULE-045).\n${ESCALATION_DETAILS}\n\n"
     fi
   fi
 fi
