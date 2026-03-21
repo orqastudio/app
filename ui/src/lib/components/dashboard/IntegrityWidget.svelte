@@ -19,7 +19,7 @@
 	let error = $state<string | null>(null);
 
 	// Filter state
-	let severityFilter = $state<"all" | "Error" | "Warning">("all");
+	let severityFilter = $state<"all" | "Error" | "Warning" | "Info">("all");
 	let categoryFilter = $state<IntegrityCategory | "all">("all");
 
 	// Sort state
@@ -29,6 +29,7 @@
 
 	const errorCount = $derived(checks.filter((c) => c.severity === "Error").length);
 	const warningCount = $derived(checks.filter((c) => c.severity === "Warning").length);
+	const infoCount = $derived(checks.filter((c) => c.severity === "Info").length);
 
 	const healthColor = $derived.by(() => {
 		if (!scanned) return "text-muted-foreground";
@@ -40,15 +41,10 @@
 	const categoryLabels: Record<IntegrityCategory, string> = {
 		BrokenLink: "Broken Links",
 		MissingInverse: "Missing Inverses",
-		NullTarget: "Null Targets",
-		ResearchGap: "Research Gaps",
-		PlanningPlacement: "Planning Placement",
-		DependencyViolation: "Dependency Violations",
+		TypeConstraintViolation: "Type Constraint Violations",
+		RequiredRelationshipMissing: "Required Relationships Missing",
+		CardinalityViolation: "Cardinality Violations",
 		CircularDependency: "Circular Dependencies",
-		SupersessionSymmetry: "Supersession Symmetry",
-		MilestoneGate: "Milestone Gates",
-		IdeaPromotionValidity: "Idea Promotion Validity",
-		IdeaDeliveryTracking: "Idea Delivery Tracking",
 		InvalidStatus: "Invalid Statuses",
 		BodyTextRefWithoutRelationship: "Body Refs Without Relationships",
 		ParentChildInconsistency: "Parent-Child Inconsistencies",
@@ -56,6 +52,7 @@
 		MissingType: "Missing Type Field",
 		MissingStatus: "Missing Status Field",
 		DuplicateRelationship: "Duplicate Relationships",
+		FilenameMismatch: "Filename Mismatches",
 	};
 
 	/** Unique categories present in current checks, for the filter dropdown. */
@@ -98,7 +95,9 @@
 	});
 
 	function severityRank(s: IntegritySeverity): number {
-		return s === "Error" ? 0 : 1;
+		if (s === "Error") return 0;
+		if (s === "Warning") return 1;
+		return 2; // Info
 	}
 
 	function toggleSort(col: SortColumn) {
@@ -177,6 +176,11 @@
 							{warningCount} Warning{warningCount !== 1 ? "s" : ""}
 						</Badge>
 					{/if}
+					{#if infoCount > 0}
+						<Badge variant="secondary" class="text-[10px] px-1.5 py-0">
+							{infoCount} Info
+						</Badge>
+					{/if}
 				</div>
 			</CardAction>
 		{/if}
@@ -226,6 +230,12 @@
 						class="h-7 px-2 text-xs {severityFilter === 'Warning' ? 'text-warning bg-warning/10 hover:bg-warning/15' : ''}"
 						onclick={() => (severityFilter = "Warning")}
 					>Warnings</Button>
+					<Button
+						variant={severityFilter === "Info" ? "secondary" : "ghost"}
+						size="sm"
+						class="h-7 px-2 text-xs {severityFilter === 'Info' ? 'text-muted-foreground bg-muted hover:bg-muted/80' : ''}"
+						onclick={() => (severityFilter = "Info")}
+					>Info</Button>
 				</div>
 			</div>
 
@@ -283,8 +293,10 @@
 								<td class="px-2 py-1.5">
 									{#if check.severity === "Error"}
 										<Icon name="circle-alert" size="sm" />
-									{:else}
+									{:else if check.severity === "Warning"}
 										<Icon name="triangle-alert" size="sm" />
+									{:else}
+										<Icon name="info" size="sm" />
 									{/if}
 								</td>
 								<td class="whitespace-nowrap px-2 py-1.5 text-muted-foreground text-right">
