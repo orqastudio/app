@@ -1,8 +1,8 @@
 ---
 id: IDEA-a3f2c17e
 type: idea
-title: "Semantic prompt classification — embeddings-driven orchestrator context injection"
-description: "Use the ONNX embeddings server to classify user prompts before the orchestrator processes them. Determine whether the input is research, feedback, process observation, implementation request, etc. — then inject the right process context concisely based on what kind of work is being requested."
+title: "Inference-time decision tree — self-navigating knowledge discovery"
+description: "Instead of pre-injecting knowledge into agents, inject a thinking framework (decision tree) that the agent works through as part of its inference process. The agent asks itself structured questions after each prompt, self-navigates to the right knowledge articles, and only loads what it determines it needs. Lighter context, higher precision, self-documenting reasoning."
 status: captured
 created: 2026-03-21
 updated: 2026-03-21
@@ -18,73 +18,103 @@ relationships:
     rationale: "Alex (Lead) — the orchestrator serves Alex's coordination needs"
 ---
 
-## The Idea
+## The Shift: From Pre-Injection to Self-Navigation
 
-Use the ONNX embeddings server to pre-classify user prompts before the orchestrator acts on them. Instead of the orchestrator receiving raw text and deciding what to do, the `UserPromptSubmit` hook embeds the prompt, classifies it against known work categories, and injects the appropriate process context.
+Current model: the `UserPromptSubmit` hook pre-injects knowledge into the agent's context based on keyword matching or semantic search. The agent receives pre-selected content whether it needs it or not.
 
-## Categories to Classify
+New model: instead of injecting knowledge AT the agent, inject a **thinking framework** — a decision tree the agent works through as part of its own inference process. The agent asks itself structured questions, self-navigates to the right knowledge, and only reads what it determines it needs.
 
-| Category | Signal | Process Injected |
-|----------|--------|-----------------|
-| **Research request** | "investigate", "find out", "what does X do" | Research methodology, search-first approach |
-| **Feedback/observation** | "I noticed", "this isn't right", "the X is broken" | Lesson capture, bug triage, status assessment |
-| **Process observation** | "we should", "can we enforce", "the governance" | Rule creation, AD drafting, enforcement design |
-| **Implementation request** | "build", "add", "fix", "implement" | Epic/task scoping, delegation protocol, knowledge injection |
-| **Planning request** | "plan", "scope", "what's next", "priorities" | Milestone review, epic planning, graph-first orientation |
-| **Review request** | "check", "review", "audit", "validate" | Quality checklist, standards injection, reviewer delegation |
-
-## How It Works
-
-1. `UserPromptSubmit` hook receives the prompt
-2. Embed the prompt via the search server
-3. Compare against category embeddings (pre-computed from category descriptions)
-4. Top match determines which process knowledge to inject
-5. Orchestrator receives the prompt + concise process context for that category
-
-## Why This Matters for the Orchestrator
-
-The orchestrator determines what gets done by whom. Currently it receives every prompt the same way and must figure out the intent from raw text. With semantic classification:
-- Research questions get research methodology injected
-- Implementation requests get delegation protocol + knowledge injection
-- Process observations get governance context
-- The orchestrator's response is informed by the RIGHT process, not all processes
-
-## Decision Tree for Knowledge Injection
-
-Beyond flat classification, the system should support a **decision tree** that progressively narrows what knowledge to inject based on layered context:
+**The injected content is not knowledge — it's a reasoning protocol:**
 
 ```
-Level 1: Intent Classification (embeddings)
-  ├── Research → "what domain?"
-  │   ├── Frontend → svelte5-best-practices, orqa-frontend
-  │   ├── Backend → rust-async-patterns, orqa-backend
-  │   └── Governance → orqa-governance, artifact-relationships
-  ├── Implementation → "what layer?"
-  │   ├── UI component → component-extraction, tailwind-design-system
-  │   ├── Rust command → orqa-ipc-patterns, orqa-domain-services
-  │   ├── Store → orqa-store-patterns, orqa-store-orchestration
-  │   └── Artifact → orqa-governance, schema-validation
-  ├── Feedback → "what type?"
-  │   ├── Bug report → bug triage, diagnostic-methodology
-  │   ├── Process improvement → governance-maintenance, systems-thinking
-  │   └── Quality concern → code-quality-review, test-engineering
-  └── Planning → "what scope?"
-      ├── Epic scoping → epic-requirement-inference, planning
-      ├── Task breakdown → software-delivery, delegation-patterns
-      └── Architecture → architectural-evaluation, composability
+After receiving this prompt, before acting, work through:
+
+1. What kind of work is this?
+   → Research: read knowledge/research-methodology
+   → Implementation: read knowledge/delegation-patterns
+   → Feedback: read knowledge/governance-maintenance
+   → Planning: read knowledge/planning
+
+2. What domain does it touch? (check file paths, artifact types, prompt words)
+   → Frontend (.svelte, ui/): read knowledge/svelte5-best-practices
+   → Backend (.rs, commands/): read knowledge/orqa-ipc-patterns
+   → Governance (.orqa/): read knowledge/orqa-governance
+   → Store (.svelte.ts, stores/): read knowledge/orqa-store-patterns
+
+3. What do I already know vs what do I need to load?
+   → Check session dedup — don't reload what's already in context
+
+4. Have I checked the graph for related work?
+   → graph_query for related artifacts before starting
+
+5. What's my role boundary?
+   → Orchestrator: delegate, don't implement
+   → Implementer: build, don't self-certify
+   → Reviewer: check, don't fix
 ```
 
-Each level uses semantic similarity to narrow further. Level 1 classifies intent from the prompt. Level 2 classifies domain from the prompt + file context. The tree is defined as a governance artifact — editable, versionable, and inspectable in the app.
+The agent **self-navigates** through this tree as part of its reasoning. Knowledge files aren't pre-loaded — they're referenced as paths the agent chooses to read based on its own assessment.
 
-**Tree nodes are knowledge artifacts** — each leaf in the tree references specific knowledge files to inject. The tree structure itself is a knowledge artifact with `injection` metadata, making it self-documenting and extensible by plugins.
+## Decision Tree as a Governance Artifact
 
-**Plugin extension:** Plugins add branches to the tree. The software plugin adds implementation sub-branches (UI, Rust, Store). A future data-science plugin could add analysis/ML branches. The tree merges at install time like all other plugin schemas.
+The decision tree itself is a structured artifact — editable, versionable, inspectable in the app:
+
+```
+Level 1: Intent (what kind of work?)
+  ├── Research → ask: "what domain?"
+  │   ├── Frontend → READ: svelte5-best-practices, orqa-frontend
+  │   ├── Backend → READ: rust-async-patterns, orqa-backend
+  │   └── Governance → READ: orqa-governance, artifact-relationships
+  ├── Implementation → ask: "what layer?"
+  │   ├── UI component → READ: component-extraction, tailwind-design-system
+  │   ├── Rust command → READ: orqa-ipc-patterns, orqa-domain-services
+  │   ├── Store → READ: orqa-store-patterns, orqa-store-orchestration
+  │   └── Artifact → READ: orqa-governance, schema-validation
+  ├── Feedback → ask: "what type?"
+  │   ├── Bug → READ: diagnostic-methodology
+  │   ├── Process → READ: governance-maintenance, systems-thinking
+  │   └── Quality → READ: code-quality-review, test-engineering
+  └── Planning → ask: "what scope?"
+      ├── Epic → READ: epic-requirement-inference, planning
+      ├── Task → READ: software-delivery, delegation-patterns
+      └── Architecture → READ: architectural-evaluation, composability
+```
+
+Each leaf points to knowledge articles. The agent reads them **on demand** — only when its own reasoning determines they're relevant.
+
+## Embeddings Enhancement
+
+The decision tree questions can optionally be enhanced with semantic similarity:
+- Level 1 classification can use embeddings to match the prompt against category descriptions
+- Level 2 domain detection can use file context + embeddings
+- But the tree works WITHOUT embeddings too — keyword heuristics or the agent's own judgment suffice
+
+This means the system degrades gracefully — with the search server, it's precise; without it, the agent still has the structured questions to guide its reasoning.
+
+## Plugin Extension
+
+Plugins add branches to the tree:
+- Software plugin adds implementation sub-branches (UI, Rust, Store)
+- A data-science plugin could add analysis/ML branches
+- Each plugin's `orqa-plugin.json` declares its decision tree branches
+- Trees merge at install time like all other plugin schemas
+
+## Why This is Better Than Pre-Injection
+
+| Aspect | Pre-Injection | Self-Navigation |
+|--------|--------------|-----------------|
+| Context usage | Inject everything potentially relevant | Agent loads only what it needs |
+| Precision | Hook guesses what's relevant | Agent's own reasoning determines relevance |
+| Transparency | User can't see why knowledge was injected | Decision tree reasoning is visible in thinking |
+| Adaptability | Static rules, need updating | Agent adapts to novel prompts |
+| Token efficiency | Wastes tokens on irrelevant knowledge | Minimal — only reads what it decides to |
+| Debuggability | "Why did it inject X?" | "The agent asked Q1→Q2→loaded X" |
 
 ## Value
 
-- Reduces orchestrator context window usage (inject only relevant process, not everything)
-- Faster delegation (category already classified)
-- More consistent process application (same category → same process every time)
-- Foundation for agent-aware injection (different agents could get different category-specific context)
-- Decision tree is inspectable — the user can see WHY certain knowledge was injected
-- Progressive narrowing means higher precision than flat keyword matching
+- Lighter context window (no wasted tokens on pre-injected irrelevant knowledge)
+- Higher precision (agent's own reasoning picks the right path)
+- Self-documenting (decision tree visible in agent thinking/reasoning)
+- Graceful degradation (works with or without embeddings server)
+- Plugin-extensible (plugins add branches, not injection rules)
+- Foundation for agent-specific trees (orchestrator, implementer, reviewer get different questions)
