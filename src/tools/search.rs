@@ -120,7 +120,7 @@ pub fn tool_search_regex(engine: &mut SearchEngine, args: &Value) -> Result<Stri
         .ok_or("missing 'pattern'")?;
     let path_filter = args.get("path_filter").and_then(|v| v.as_str());
     let scope = args.get("scope").and_then(|v| v.as_str()).unwrap_or("all");
-    let limit = args.get("limit").and_then(|v| v.as_u64()).unwrap_or(20) as u32;
+    let limit = args.get("limit").and_then(serde_json::Value::as_u64).unwrap_or(20) as u32;
 
     let results = engine
         .search_regex(pattern, path_filter, limit)
@@ -137,7 +137,7 @@ pub fn tool_search_semantic(engine: &mut SearchEngine, args: &Value) -> Result<S
         .and_then(|v| v.as_str())
         .ok_or("missing 'query'")?;
     let scope = args.get("scope").and_then(|v| v.as_str()).unwrap_or("all");
-    let limit = args.get("limit").and_then(|v| v.as_u64()).unwrap_or(10) as u32;
+    let limit = args.get("limit").and_then(serde_json::Value::as_u64).unwrap_or(10) as u32;
 
     let results = engine
         .search_semantic(query, limit)
@@ -154,7 +154,7 @@ pub fn tool_search_research(engine: &mut SearchEngine, args: &Value) -> Result<S
         .and_then(|v| v.as_str())
         .ok_or("missing 'question'")?;
     let scope = args.get("scope").and_then(|v| v.as_str()).unwrap_or("all");
-    let limit = args.get("limit").and_then(|v| v.as_u64()).unwrap_or(5) as u32;
+    let limit = args.get("limit").and_then(serde_json::Value::as_u64).unwrap_or(5) as u32;
 
     // Step 1: Semantic search for conceptually relevant chunks
     let raw_results = engine

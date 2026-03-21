@@ -419,8 +419,7 @@ fn check_cardinality(
                             ),
                             auto_fixable: false,
                             fix_description: Some(format!(
-                                "Remove excess '{}' relationships to comply with max count {}",
-                                rel_type, max
+                                "Remove excess '{rel_type}' relationships to comply with max count {max}",
                             )),
                         });
                     }

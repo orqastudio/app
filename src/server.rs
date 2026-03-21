@@ -66,11 +66,12 @@ impl McpServer {
                 dirs_next::home_dir().map(|d| d.join("Downloads")),
             ];
             for dir in model_dirs.into_iter().flatten() {
-                if dir.join("model.onnx").exists() && dir.join("tokenizer.json").exists() {
-                    if engine.init_embedder_sync(&dir).is_ok() {
-                        let _ = engine.embed_chunks();
-                        break;
-                    }
+                if dir.join("model.onnx").exists()
+                    && dir.join("tokenizer.json").exists()
+                    && engine.init_embedder_sync(&dir).is_ok()
+                {
+                    let _ = engine.embed_chunks();
+                    break;
                 }
             }
 
@@ -97,7 +98,7 @@ impl McpServer {
     // Method handlers
     // -----------------------------------------------------------------------
 
-    fn handle_initialize(&self, _params: &Value) -> Value {
+    fn handle_initialize(_params: &Value) -> Value {
         json!({
             "protocolVersion": "2024-11-05",
             "capabilities": {
@@ -111,13 +112,13 @@ impl McpServer {
         })
     }
 
-    fn handle_tools_list(&self) -> Value {
+    fn handle_tools_list() -> Value {
         let mut tools = graph_tools::tool_definitions();
         tools.extend(search_tools::tool_definitions());
         json!({ "tools": tools })
     }
 
-    fn handle_resources_list(&self) -> Value {
+    fn handle_resources_list() -> Value {
         let resources = vec![
             McpResource {
                 uri: "orqa://schema/core.json".into(),
@@ -188,7 +189,7 @@ impl McpServer {
             "graph_relationships" => self
                 .get_graph()
                 .and_then(|g| graph_tools::tool_relationships(g, &arguments)),
-            "graph_stats" => self.get_graph().and_then(|g| graph_tools::tool_stats(g)),
+            "graph_stats" => self.get_graph().and_then(graph_tools::tool_stats),
             "graph_validate" => self
                 .get_graph()
                 .and_then(|g| graph_tools::tool_validate(g, &arguments)),
@@ -211,7 +212,7 @@ impl McpServer {
                 .and_then(|e| search_tools::tool_search_research(e, &arguments)),
             "search_status" => self
                 .get_search()
-                .and_then(|e| search_tools::tool_search_status(e)),
+                .and_then(search_tools::tool_search_status),
             _ => Err(format!("unknown tool: {tool_name}")),
         };
 
@@ -232,11 +233,11 @@ impl McpServer {
 
     fn handle_request(&mut self, req: &JsonRpcRequest) -> Option<JsonRpcResponse> {
         let result = match req.method.as_str() {
-            "initialize" => Some(self.handle_initialize(&req.params)),
+            "initialize" => Some(Self::handle_initialize(&req.params)),
             "initialized" => return None, // notification — no response
-            "tools/list" => Some(self.handle_tools_list()),
+            "tools/list" => Some(Self::handle_tools_list()),
             "tools/call" => Some(self.handle_tool_call(&req.params)),
-            "resources/list" => Some(self.handle_resources_list()),
+            "resources/list" => Some(Self::handle_resources_list()),
             "resources/read" => Some(self.handle_resources_read(&req.params)),
             _ => None,
         };

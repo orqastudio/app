@@ -122,8 +122,7 @@ pub fn tool_query(graph: &ArtifactGraph, args: &Value) -> Result<String, String>
                 let desc_match = n
                     .description
                     .as_ref()
-                    .map(|d| d.to_lowercase().contains(&q_lower))
-                    .unwrap_or(false);
+                    .is_some_and(|d| d.to_lowercase().contains(&q_lower));
                 if !title_match && !desc_match {
                     return false;
                 }
