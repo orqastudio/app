@@ -114,8 +114,13 @@ const MODE_TEMPLATES = {
   "documentation": "Mode: documentation. Write docs before or instead of code. Follow artifact framework schema. Documentation is source of truth.",
 };
 
+// Behavioral rules injected into EVERY mode (appended after mode-specific content).
+// These enforce rules that were removed from the orchestrator system prompt when it
+// was cleaned to be generic. Without these, behavioral rules have no enforcement.
+const BEHAVIORAL_RULES = "For every new artifact or insight: trace to all usage contexts (milestones, rules, pillars, epics) before moving on. Never offer to stop or wrap up — keep working until the user says stop. Use agent teams (TeamCreate) for multi-step work — understand task dependencies before delegating.";
+
 const FALLBACK_CLASSIFICATION_PROMPT =
-  "Classify this prompt before responding: implementation | research | learning-loop | planning | review | debugging | documentation. If learning-loop: capture as lesson first. Then proceed with the appropriate approach.";
+  `Classify this prompt before responding: implementation | research | learning-loop | planning | review | debugging | documentation. If learning-loop: capture as lesson first. Then proceed with the appropriate approach. ${BEHAVIORAL_RULES}`;
 
 // ---------------------------------------------------------------------------
 // Semantic search via MCP server
@@ -372,10 +377,10 @@ async function main() {
   // Step 2: Build role preamble from .orqa agent definition (replaces static context-reminder.md).
   const preamble = getAgentPreamble(agentType, projectDir);
 
-  // Step 3: Build mode injection.
+  // Step 3: Build mode injection (mode template + behavioral rules).
   let modeInjection;
   if (mode && MODE_TEMPLATES[mode]) {
-    modeInjection = MODE_TEMPLATES[mode];
+    modeInjection = `${MODE_TEMPLATES[mode]} ${BEHAVIORAL_RULES}`;
   } else {
     modeInjection = FALLBACK_CLASSIFICATION_PROMPT;
   }
