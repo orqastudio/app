@@ -1,10 +1,20 @@
 //! Body text reference validation — checks that body-text artifact references
-//! have corresponding relationship edges in the frontmatter.
+//! are noted as informational.
+//!
+//! Body text mentions are NOT knowledge flow relationships. They're citations —
+//! "this ID appeared in prose." The graph records them as informational edges
+//! with `field: "body"` and no relationship type, but they should NOT be
+//! auto-fixed into formal relationships (that caused incorrect `informed-by`
+//! edges on non-decision types).
 
 use crate::graph::ArtifactGraph;
 use crate::types::{IntegrityCategory, IntegrityCheck, IntegritySeverity};
 
-/// Check that body-text references have corresponding relationship edges.
+/// Note body-text references that don't have formal relationship edges.
+///
+/// These are INFO-level, NOT auto-fixable. Body text mentions are references,
+/// not knowledge flow. Adding formal relationships from body text creates
+/// semantically incorrect edges (e.g., `informed-by` on epics).
 pub fn check_body_text_refs_without_relationships(
     graph: &ArtifactGraph,
     checks: &mut Vec<IntegrityCheck>,
@@ -21,17 +31,14 @@ pub fn check_body_text_refs_without_relationships(
             if !has_relationship {
                 checks.push(IntegrityCheck {
                     category: IntegrityCategory::BodyTextRefWithoutRelationship,
-                    severity: IntegritySeverity::Warning,
+                    severity: IntegritySeverity::Info,
                     artifact_id: node.id.clone(),
                     message: format!(
-                        "{} references {} in body text but has no relationship edge to it",
+                        "{} mentions {} in body text (informational — not a knowledge flow relationship)",
                         node.id, target_id
                     ),
-                    auto_fixable: true,
-                    fix_description: Some(format!(
-                        "Add {{ target: \"{}\", type: \"informed-by\" }} to {}'s relationships array",
-                        target_id, node.id
-                    )),
+                    auto_fixable: false,
+                    fix_description: None,
                 });
             }
         }

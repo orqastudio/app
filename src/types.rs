@@ -121,6 +121,7 @@ pub enum IntegrityCategory {
 pub enum IntegritySeverity {
     Error,
     Warning,
+    Info,
 }
 
 /// A single integrity finding from the graph.
