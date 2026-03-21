@@ -36,7 +36,7 @@ fn read_project_settings(project_path: &Path) -> Result<Option<ProjectSettings>,
 // ---------------------------------------------------------------------------
 
 /// Build a `TypeRegistry` from parsed project settings.
-fn build_type_registry(settings: &Option<ProjectSettings>) -> TypeRegistry {
+fn build_type_registry(settings: Option<&ProjectSettings>) -> TypeRegistry {
     let Some(settings) = settings else {
         return Vec::new();
     };
@@ -68,7 +68,7 @@ fn build_type_registry(settings: &Option<ProjectSettings>) -> TypeRegistry {
 /// 2. Invert every forward ref into a backlink on the target node.
 pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, LspError> {
     let settings = read_project_settings(project_path)?;
-    let type_registry = build_type_registry(&settings);
+    let type_registry = build_type_registry(settings.as_ref());
     let orqa_dir = project_path.join(".orqa");
 
     let mut graph = ArtifactGraph::default();
@@ -89,7 +89,7 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, LspErr
                 let child_orqa = child_path.join(".orqa");
                 if child_orqa.exists() {
                     let child_settings = read_project_settings(&child_path)?;
-                    let child_registry = build_type_registry(&child_settings);
+                    let child_registry = build_type_registry(child_settings.as_ref());
                     walk_directory(
                         &child_orqa,
                         &child_path,

@@ -41,7 +41,7 @@ pub fn is_valid_artifact_id(id: &str) -> bool {
         return id
             .rmatch_indices('-')
             .next()
-            .map(|(i, _)| {
+            .is_some_and(|(i, _)| {
                 let final_suffix = &id[i + 1..];
                 let prefix_part = &id[..i];
                 !prefix_part.is_empty()
@@ -51,8 +51,7 @@ pub fn is_valid_artifact_id(id: &str) -> bool {
                     && (final_suffix.chars().all(|c| c.is_ascii_digit())
                         || (final_suffix.len() == 8
                             && final_suffix.chars().all(|c| c.is_ascii_hexdigit())))
-            })
-            .unwrap_or(false);
+            });
     }
     suffix.chars().all(|c| c.is_ascii_digit())
         || (suffix.len() == 8 && suffix.chars().all(|c| c.is_ascii_hexdigit()))
@@ -70,16 +69,14 @@ pub fn is_hex_artifact_id(id: &str) -> bool {
 ///
 /// Returns 1 as a safe fallback if the block cannot be found.
 fn find_frontmatter_end_line(content: &str) -> u32 {
-    let mut count = 0u32;
     let mut in_fm = false;
-    for line in content.lines() {
+    for (count, line) in content.lines().enumerate() {
         if line == "---" {
             if in_fm {
-                return count;
+                return count as u32;
             }
             in_fm = true;
         }
-        count += 1;
     }
     1
 }
@@ -99,16 +96,34 @@ pub fn validate_file(
 ) -> Vec<Diagnostic> {
     let mut diagnostics = Vec::new();
 
-    if !rel_path.starts_with(".orqa/") || !rel_path.ends_with(".md") {
+    if !rel_path.starts_with(".orqa/") || !rel_path.to_ascii_lowercase().ends_with(".md") {
         return diagnostics;
     }
 
-    // -----------------------------------------------------------------------
-    // Frontmatter presence
-    // -----------------------------------------------------------------------
+    let Some(frontmatter) = parse_frontmatter(content, &mut diagnostics) else {
+        return diagnostics;
+    };
 
-    let fm_match = content.find("---\n");
-    if fm_match != Some(0) {
+    let lines: Vec<&str> = frontmatter.lines().collect();
+    let has_id = lines.iter().any(|l| l.starts_with("id:"));
+    let has_status = lines.iter().any(|l| l.starts_with("status:"));
+
+    check_required_id(has_id, content, &mut diagnostics);
+    check_status(has_status, content, &mut diagnostics);
+    check_artifact_id(has_id, content, &mut diagnostics);
+    check_duplicate_keys(content, &mut diagnostics);
+    check_knowledge_sync(rel_path, frontmatter, content, &mut diagnostics);
+    check_relationship_targets(graph, content, &mut diagnostics);
+    check_missing_relationships(rel_path, frontmatter, content, &mut diagnostics);
+
+    diagnostics
+}
+
+fn parse_frontmatter<'a>(
+    content: &'a str,
+    diagnostics: &mut Vec<Diagnostic>,
+) -> Option<&'a str> {
+    if content.find("---\n") != Some(0) {
         diagnostics.push(Diagnostic {
             range: Range::new(Position::new(0, 0), Position::new(0, 3)),
             severity: Some(DiagnosticSeverity::ERROR),
@@ -116,11 +131,9 @@ pub fn validate_file(
             message: "Missing YAML frontmatter (must start with ---)".into(),
             ..Default::default()
         });
-        return diagnostics;
+        return None;
     }
-
-    let fm_end = content[4..].find("\n---");
-    if fm_end.is_none() {
+    let Some(fm_end) = content[4..].find("\n---") else {
         diagnostics.push(Diagnostic {
             range: Range::new(Position::new(0, 0), Position::new(0, 3)),
             severity: Some(DiagnosticSeverity::ERROR),
@@ -128,20 +141,12 @@ pub fn validate_file(
             message: "Unclosed YAML frontmatter (missing closing ---)".into(),
             ..Default::default()
         });
-        return diagnostics;
-    }
+        return None;
+    };
+    Some(&content[4..fm_end + 4])
+}
 
-    let fm_end_offset = fm_end.expect("checked above") + 4;
-    let frontmatter = &content[4..fm_end_offset];
-    let lines: Vec<&str> = frontmatter.lines().collect();
-
-    let has_id = lines.iter().any(|l| l.starts_with("id:"));
-    let has_status = lines.iter().any(|l| l.starts_with("status:"));
-
-    // -----------------------------------------------------------------------
-    // Required `id` field
-    // -----------------------------------------------------------------------
-
+fn check_required_id(has_id: bool, content: &str, diagnostics: &mut Vec<Diagnostic>) {
     if !has_id {
         let line_num = find_frontmatter_end_line(content);
         diagnostics.push(Diagnostic {
@@ -152,16 +157,88 @@ pub fn validate_file(
             ..Default::default()
         });
     }
+}
 
-    // -----------------------------------------------------------------------
-    // Status validation
-    // -----------------------------------------------------------------------
+fn check_status(has_status: bool, content: &str, diagnostics: &mut Vec<Diagnostic>) {
+    if !has_status {
+        return;
+    }
+    for (i, line) in content.lines().enumerate() {
+        if line.starts_with("status:") {
+            let status = line.trim_start_matches("status:").trim().trim_matches('"');
+            if !VALID_STATUSES.contains(&status) {
+                diagnostics.push(Diagnostic {
+                    range: Range::new(
+                        Position::new(i as u32, 0),
+                        Position::new(i as u32, line.len() as u32),
+                    ),
+                    severity: Some(DiagnosticSeverity::ERROR),
+                    source: Some("orqastudio".into()),
+                    message: format!(
+                        "Invalid status \"{status}\" — must be one of: {}",
+                        VALID_STATUSES.join(", ")
+                    ),
+                    ..Default::default()
+                });
+            }
+            break;
+        }
+    }
+}
 
-    if has_status {
-        for (i, line) in content.lines().enumerate() {
-            if line.starts_with("status:") {
-                let status = line.trim_start_matches("status:").trim().trim_matches('"');
-                if !VALID_STATUSES.contains(&status) {
+fn check_artifact_id(has_id: bool, content: &str, diagnostics: &mut Vec<Diagnostic>) {
+    if !has_id {
+        return;
+    }
+    for (i, line) in content.lines().enumerate() {
+        if line.starts_with("id:") {
+            let id = line.trim_start_matches("id:").trim().trim_matches('"');
+            if !is_valid_artifact_id(id) {
+                diagnostics.push(Diagnostic {
+                    range: Range::new(
+                        Position::new(i as u32, 0),
+                        Position::new(i as u32, line.len() as u32),
+                    ),
+                    severity: Some(DiagnosticSeverity::ERROR),
+                    source: Some("orqastudio".into()),
+                    message: format!(
+                        "Invalid artifact ID \"{id}\" — must be TYPE-XXXXXXXX (8 hex chars)"
+                    ),
+                    ..Default::default()
+                });
+            } else if !is_hex_artifact_id(id) {
+                diagnostics.push(Diagnostic {
+                    range: Range::new(
+                        Position::new(i as u32, 0),
+                        Position::new(i as u32, line.len() as u32),
+                    ),
+                    severity: Some(DiagnosticSeverity::WARNING),
+                    source: Some("orqastudio".into()),
+                    message: format!(
+                        "Legacy sequential ID \"{id}\" — new artifacts should use TYPE-XXXXXXXX hex format (AD-057)"
+                    ),
+                    ..Default::default()
+                });
+            }
+            break;
+        }
+    }
+}
+
+fn check_duplicate_keys(content: &str, diagnostics: &mut Vec<Diagnostic>) {
+    let mut seen_keys: std::collections::HashMap<String, u32> =
+        std::collections::HashMap::new();
+    for (i, line) in content.lines().enumerate() {
+        if line == "---" {
+            if seen_keys.is_empty() {
+                continue; // opening ---
+            }
+            break; // closing ---
+        }
+        if let Some(key) = line.split(':').next() {
+            let key = key.trim().to_string();
+            if !key.is_empty() && !key.starts_with('-') && !key.starts_with(' ') {
+                if let Some(&first_line) = seen_keys.get(&key) {
                     diagnostics.push(Diagnostic {
                         range: Range::new(
                             Position::new(i as u32, 0),
@@ -170,153 +247,80 @@ pub fn validate_file(
                         severity: Some(DiagnosticSeverity::ERROR),
                         source: Some("orqastudio".into()),
                         message: format!(
-                            "Invalid status \"{status}\" — must be one of: {}",
-                            VALID_STATUSES.join(", ")
+                            "Duplicate frontmatter key \"{key}\" (first seen on line {})",
+                            first_line + 1
                         ),
                         ..Default::default()
                     });
-                }
-                break;
-            }
-        }
-    }
-
-    // -----------------------------------------------------------------------
-    // Artifact ID format validation
-    // -----------------------------------------------------------------------
-
-    if has_id {
-        for (i, line) in content.lines().enumerate() {
-            if line.starts_with("id:") {
-                let id = line.trim_start_matches("id:").trim().trim_matches('"');
-                if !is_valid_artifact_id(id) {
-                    diagnostics.push(Diagnostic {
-                        range: Range::new(
-                            Position::new(i as u32, 0),
-                            Position::new(i as u32, line.len() as u32),
-                        ),
-                        severity: Some(DiagnosticSeverity::ERROR),
-                        source: Some("orqastudio".into()),
-                        message: format!(
-                            "Invalid artifact ID \"{id}\" — must be TYPE-XXXXXXXX (8 hex chars)"
-                        ),
-                        ..Default::default()
-                    });
-                } else if !is_hex_artifact_id(id) {
-                    diagnostics.push(Diagnostic {
-                        range: Range::new(
-                            Position::new(i as u32, 0),
-                            Position::new(i as u32, line.len() as u32),
-                        ),
-                        severity: Some(DiagnosticSeverity::WARNING),
-                        source: Some("orqastudio".into()),
-                        message: format!(
-                            "Legacy sequential ID \"{id}\" — new artifacts should use TYPE-XXXXXXXX hex format (AD-057)"
-                        ),
-                        ..Default::default()
-                    });
-                }
-                break;
-            }
-        }
-    }
-
-    // -----------------------------------------------------------------------
-    // Duplicate frontmatter keys
-    // -----------------------------------------------------------------------
-
-    {
-        let mut seen_keys: std::collections::HashMap<String, u32> =
-            std::collections::HashMap::new();
-        for (i, line) in content.lines().enumerate() {
-            if line == "---" {
-                if seen_keys.is_empty() {
-                    continue; // opening ---
-                }
-                break; // closing ---
-            }
-            if let Some(key) = line.split(':').next() {
-                let key = key.trim().to_string();
-                if !key.is_empty() && !key.starts_with('-') && !key.starts_with(' ') {
-                    if let Some(&first_line) = seen_keys.get(&key) {
-                        diagnostics.push(Diagnostic {
-                            range: Range::new(
-                                Position::new(i as u32, 0),
-                                Position::new(i as u32, line.len() as u32),
-                            ),
-                            severity: Some(DiagnosticSeverity::ERROR),
-                            source: Some("orqastudio".into()),
-                            message: format!(
-                                "Duplicate frontmatter key \"{key}\" (first seen on line {})",
-                                first_line + 1
-                            ),
-                            ..Default::default()
-                        });
-                    } else {
-                        seen_keys.insert(key, i as u32);
-                    }
+                } else {
+                    seen_keys.insert(key, i as u32);
                 }
             }
         }
     }
+}
 
-    // -----------------------------------------------------------------------
-    // Knowledge artifact: must have `synchronised-with`
-    // -----------------------------------------------------------------------
+fn check_knowledge_sync(
+    rel_path: &str,
+    frontmatter: &str,
+    content: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
+    let is_knowledge = frontmatter
+        .lines()
+        .any(|l| l.trim().starts_with("type:") && l.contains("knowledge"))
+        || rel_path.contains("/knowledge/");
 
-    {
-        let is_knowledge = frontmatter
-            .lines()
-            .any(|l| l.trim().starts_with("type:") && l.contains("knowledge"))
-            || rel_path.contains("/knowledge/");
-
-        if is_knowledge && !frontmatter.contains("synchronised-with") {
-            let line_num = find_frontmatter_end_line(content);
-            diagnostics.push(Diagnostic {
-                range: Range::new(
-                    Position::new(line_num, 0),
-                    Position::new(line_num, 3),
-                ),
-                severity: Some(DiagnosticSeverity::ERROR),
-                source: Some("orqastudio".into()),
-                message: "Knowledge artifacts must have at least one synchronised-with relationship to a human-facing doc (AD-058)".into(),
-                ..Default::default()
-            });
-        }
+    if is_knowledge && !frontmatter.contains("synchronised-with") {
+        let line_num = find_frontmatter_end_line(content);
+        diagnostics.push(Diagnostic {
+            range: Range::new(
+                Position::new(line_num, 0),
+                Position::new(line_num, 3),
+            ),
+            severity: Some(DiagnosticSeverity::ERROR),
+            source: Some("orqastudio".into()),
+            message: "Knowledge artifacts must have at least one synchronised-with relationship to a human-facing doc (AD-058)".into(),
+            ..Default::default()
+        });
     }
+}
 
-    // -----------------------------------------------------------------------
-    // Relationship target existence check
-    // -----------------------------------------------------------------------
-
-    if let Some(graph) = graph {
-        for (i, line) in content.lines().enumerate() {
-            let trimmed = line.trim();
-            if trimmed.starts_with("- target:") {
-                let target = trimmed
-                    .trim_start_matches("- target:")
-                    .trim()
-                    .trim_matches('"');
-                if !target.is_empty() && !graph.nodes.contains_key(target) {
-                    diagnostics.push(Diagnostic {
-                        range: Range::new(
-                            Position::new(i as u32, 0),
-                            Position::new(i as u32, line.len() as u32),
-                        ),
-                        severity: Some(DiagnosticSeverity::WARNING),
-                        source: Some("orqastudio".into()),
-                        message: format!("Relationship target \"{target}\" not found in graph"),
-                        ..Default::default()
-                    });
-                }
+fn check_relationship_targets(
+    graph: Option<&ArtifactGraph>,
+    content: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
+    let Some(graph) = graph else { return };
+    for (i, line) in content.lines().enumerate() {
+        let trimmed = line.trim();
+        if trimmed.starts_with("- target:") {
+            let target = trimmed
+                .trim_start_matches("- target:")
+                .trim()
+                .trim_matches('"');
+            if !target.is_empty() && !graph.nodes.contains_key(target) {
+                diagnostics.push(Diagnostic {
+                    range: Range::new(
+                        Position::new(i as u32, 0),
+                        Position::new(i as u32, line.len() as u32),
+                    ),
+                    severity: Some(DiagnosticSeverity::WARNING),
+                    source: Some("orqastudio".into()),
+                    message: format!("Relationship target \"{target}\" not found in graph"),
+                    ..Default::default()
+                });
             }
         }
     }
+}
 
-    // -----------------------------------------------------------------------
-    // Missing `relationships` section on delivery/process artifacts
-    // -----------------------------------------------------------------------
-
+fn check_missing_relationships(
+    rel_path: &str,
+    frontmatter: &str,
+    content: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
     if (rel_path.starts_with(".orqa/delivery/") || rel_path.starts_with(".orqa/process/"))
         && !frontmatter.contains("relationships:")
     {
@@ -329,8 +333,6 @@ pub fn validate_file(
             ..Default::default()
         });
     }
-
-    diagnostics
 }
 
 // ---------------------------------------------------------------------------
