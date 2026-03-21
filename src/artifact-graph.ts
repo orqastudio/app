@@ -101,19 +101,18 @@ export type CanonicalStatus =
 /** Alias for CanonicalStatus — used by the frontend. */
 export type ArtifactStatus = CanonicalStatus;
 
-/** Category of integrity issue found in the artifact graph. */
+/** Category of integrity issue found in the artifact graph.
+ *
+ * Must stay in sync with `IntegrityCategory` in `libs/validation/src/types.rs`
+ * and `libs/types/src/platform/validation.schema.json`.
+ */
 export type IntegrityCategory =
     | "BrokenLink"
     | "MissingInverse"
-    | "NullTarget"
-    | "ResearchGap"
-    | "PlanningPlacement"
-    | "DependencyViolation"
+    | "TypeConstraintViolation"
+    | "RequiredRelationshipMissing"
+    | "CardinalityViolation"
     | "CircularDependency"
-    | "SupersessionSymmetry"
-    | "MilestoneGate"
-    | "IdeaPromotionValidity"
-    | "IdeaDeliveryTracking"
     | "InvalidStatus"
     | "BodyTextRefWithoutRelationship"
     | "ParentChildInconsistency"
