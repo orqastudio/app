@@ -5,14 +5,17 @@
 // Replaces `cargo tauri dev` with direct control over Vite and cargo.
 //
 // Run from the app directory (cwd is used as project root):
-//   node <path>/dev.mjs dev            Start dev environment (detached, exits when ready)
-//   node <path>/dev.mjs start          Start the controller (long-running, stays in foreground)
-//   node <path>/dev.mjs stop           Gracefully stop the controller and all processes
-//   node <path>/dev.mjs kill           Force-kill all OrqaStudio processes
-//   node <path>/dev.mjs restart-tauri  Restart the Tauri app (Vite stays alive)
-//   node <path>/dev.mjs restart-vite   Restart the Vite dev server
-//   node <path>/dev.mjs restart        Restart everything (Vite + Tauri)
-//   node <path>/dev.mjs status         Show what's running
+//   node <path>/dev.mjs dev             Start dev environment (detached, exits when ready)
+//   node <path>/dev.mjs start           Start the controller (long-running, stays in foreground)
+//   node <path>/dev.mjs stop            Gracefully stop the controller and all processes
+//   node <path>/dev.mjs kill            Force-kill all OrqaStudio processes
+//   node <path>/dev.mjs restart-tauri   Restart the Tauri app (Vite + services stay alive)
+//   node <path>/dev.mjs restart-vite    Restart the Vite dev server
+//   node <path>/dev.mjs restart         Restart everything (Vite + Tauri)
+//   node <path>/dev.mjs restart-search  Restart search server (and MCP, which depends on it)
+//   node <path>/dev.mjs restart-mcp     Restart MCP server only
+//   node <path>/dev.mjs restart-lsp     Restart LSP server only
+//   node <path>/dev.mjs status          Show what's running
 //
 // Why this exists:
 //   1. cargo tauri dev orphans Vite on crash (Tauri #10023, #2794, #1626)
@@ -51,6 +54,9 @@ const DASHBOARD_PORT = 3001;
 const PORT_TIMEOUT_MS = 15_000;
 const POLL_INTERVAL_MS = 500;
 
+// The project path passed to search/mcp/lsp servers — they index the app's .orqa/ artifacts
+const APP_PROJECT_PATH = PROJECT_ROOT;
+
 // ── Logging ─────────────────────────────────────────────────────────────────
 
 const COLOURS = {
@@ -62,6 +68,10 @@ const COLOURS = {
   blue: "\x1b[34m",
   magenta: "\x1b[35m",
   cyan: "\x1b[36m",
+  // Distinct colours for the three new servers
+  orange: "\x1b[38;5;208m",   // search  — bright orange
+  teal: "\x1b[38;5;37m",      // mcp     — dark teal
+  pink: "\x1b[38;5;213m",     // lsp     — bright pink/violet
 };
 
 function prefixLines(prefix, colour, data, isError = false) {
@@ -115,8 +125,14 @@ function sseLog(source, text, isError = false) {
 }
 
 /** Broadcast process status to SSE clients */
-function sseStatus(viteAlive, rustState) {
-  sseBroadcast("status", { vite: viteAlive, rust: rustState });
+function sseStatus(viteAlive, rustState, searchAlive, mcpAlive, lspAlive) {
+  sseBroadcast("status", {
+    vite: viteAlive,
+    rust: rustState,
+    ...(searchAlive !== undefined && { search: searchAlive }),
+    ...(mcpAlive !== undefined && { mcp: mcpAlive }),
+    ...(lspAlive !== undefined && { lsp: lspAlive }),
+  });
 }
 
 /** Signal handler — called by dashboard command buttons */
@@ -205,7 +221,13 @@ function startDashboardServer() {
 
     if (req.method === "POST" && req.url?.startsWith("/command/")) {
       const cmd = req.url.replace("/command/", "");
-      if (signalHandler && ["start", "restart-tauri", "restart-vite", "restart", "stop"].includes(cmd)) {
+      const allowed = [
+        "start",
+        "restart-tauri", "restart-vite", "restart",
+        "restart-search", "restart-mcp", "restart-lsp",
+        "stop",
+      ];
+      if (signalHandler && allowed.includes(cmd)) {
         signalHandler(cmd);
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ message: `Signal '${cmd}' sent.` }));
@@ -508,7 +530,7 @@ async function start() {
   );
   console.log("");
 
-  writeControlFile({ state: "starting", vite: null, rust: null });
+  writeControlFile({ state: "starting", vite: null, rust: null, search: null, mcp: null, lsp: null });
 
   // ── 0. Start Dashboard Server ────────────────────────────────────────
   let dashboardServer = null;
@@ -707,7 +729,109 @@ async function start() {
     );
   }
 
-  // ── 2. Build + Run Rust ────────────────────────────────────────────────
+  // ── 2. Start Search, MCP, and LSP servers ─────────────────────────────
+  // Dependency order: search must be ready before MCP (MCP queries search).
+  // LSP is independent and starts in parallel with MCP.
+  // All three must be up before Tauri starts so they're available for dogfooding.
+
+  let searchProc = null;
+  let mcpProc = null;
+  let lspProc = null;
+
+  function startSearch() {
+    logCtrl("Starting search server...");
+    searchProc = new ChildProcess("search", COLOURS.orange);
+    searchProc.spawn(
+      "cargo",
+      [
+        "run",
+        "--manifest-path",
+        join(LIBS_DIR, "search", "Cargo.toml"),
+        "--bin", "orqa-search-server",
+        "--",
+        APP_PROJECT_PATH,
+      ],
+      {
+        env: {
+          ...process.env,
+          RUST_LOG: process.env.RUST_LOG || "info",
+        },
+      },
+    );
+    searchProc.process.on("close", (code) => {
+      if (code !== 0 && code !== null) {
+        logError("search", `Search server exited (code ${code}).`);
+      }
+    });
+    return searchProc;
+  }
+
+  function startMcp() {
+    logCtrl("Starting MCP server...");
+    mcpProc = new ChildProcess("mcp", COLOURS.teal);
+    mcpProc.spawn(
+      "cargo",
+      [
+        "run",
+        "--manifest-path",
+        join(LIBS_DIR, "mcp-server", "Cargo.toml"),
+        "--bin", "orqa-mcp-server",
+        "--",
+        APP_PROJECT_PATH,
+      ],
+      {
+        env: {
+          ...process.env,
+          RUST_LOG: process.env.RUST_LOG || "info",
+        },
+      },
+    );
+    mcpProc.process.on("close", (code) => {
+      if (code !== 0 && code !== null) {
+        logError("mcp", `MCP server exited (code ${code}).`);
+      }
+    });
+    return mcpProc;
+  }
+
+  function startLsp() {
+    logCtrl("Starting LSP server...");
+    lspProc = new ChildProcess("lsp", COLOURS.pink);
+    lspProc.spawn(
+      "cargo",
+      [
+        "run",
+        "--manifest-path",
+        join(LIBS_DIR, "lsp-server", "Cargo.toml"),
+        "--bin", "orqa-lsp-server",
+        "--",
+        APP_PROJECT_PATH,
+      ],
+      {
+        env: {
+          ...process.env,
+          RUST_LOG: process.env.RUST_LOG || "info",
+        },
+      },
+    );
+    lspProc.process.on("close", (code) => {
+      if (code !== 0 && code !== null) {
+        logError("lsp", `LSP server exited (code ${code}).`);
+      }
+    });
+    return lspProc;
+  }
+
+  // Start search first (MCP depends on it), then MCP + LSP in parallel
+  startSearch();
+  // Give search a moment to begin its compile/startup before MCP tries to connect
+  await new Promise((r) => setTimeout(r, 2_000));
+  startMcp();
+  startLsp();
+
+  logSuccess("Search, MCP, and LSP servers starting (compiling on first run).");
+
+  // ── 3. Build + Run Rust ────────────────────────────────────────────────
 
   let rust = null;
 
@@ -739,8 +863,11 @@ async function start() {
       state: "running",
       vite: vite.pid,
       rust: rust.pid,
+      search: searchProc?.pid ?? null,
+      mcp: mcpProc?.pid ?? null,
+      lsp: lspProc?.pid ?? null,
     });
-    sseStatus(true, true);
+    sseStatus(true, true, searchProc?.running ?? false, mcpProc?.running ?? false, lspProc?.running ?? false);
 
     // When the app exits:
     // - code 0 = user closed the window → shut down everything
@@ -748,7 +875,10 @@ async function start() {
     rust.process.on("close", (code) => {
       if (code === 0 || code === null) {
         logCtrl("App window closed. Shutting down controller...");
-        sseStatus(false, false);
+        sseStatus(false, false, false, false, false);
+        searchProc?.kill();
+        mcpProc?.kill();
+        lspProc?.kill();
         for (const w of libWatchers) w.kill();
         vite.kill();
         unwatchFile(SIGNAL_FILE);
@@ -765,8 +895,11 @@ async function start() {
           state: "app-crashed",
           vite: vite.pid,
           rust: null,
+          search: searchProc?.pid ?? null,
+          mcp: mcpProc?.pid ?? null,
+          lsp: lspProc?.pid ?? null,
         });
-        sseStatus(true, false);
+        sseStatus(true, false, searchProc?.running ?? false, mcpProc?.running ?? false, lspProc?.running ?? false);
         logCtrl(
           `App crashed (code ${code}). Controller still alive — use 'make restart-tauri' to relaunch.`,
         );
@@ -781,6 +914,29 @@ async function start() {
   // ── 3a. Shared signal processor ──────────────────────────────────────
   const SIGNAL_FILE = join(PROJECT_ROOT, "tmp", "dev-signal");
 
+  /** Helper to write the full control file with all current PIDs */
+  function writeFullControlFile(state) {
+    writeControlFile({
+      state,
+      vite: vite.pid,
+      rust: rust?.pid ?? null,
+      search: searchProc?.pid ?? null,
+      mcp: mcpProc?.pid ?? null,
+      lsp: lspProc?.pid ?? null,
+    });
+  }
+
+  /** Broadcast current status of all five tracked processes */
+  function broadcastStatus(viteAlive, rustState) {
+    sseStatus(
+      viteAlive,
+      rustState,
+      searchProc?.running ?? false,
+      mcpProc?.running ?? false,
+      lspProc?.running ?? false,
+    );
+  }
+
   async function processSignal(signal) {
     if (signal === "start") {
       // Re-launch processes when controller is alive but processes are stopped
@@ -793,15 +949,21 @@ async function start() {
           return;
         }
         logSuccess(`Vite ready on http://localhost:${VITE_PORT}`);
-        sseStatus(true, false);
       }
+      if (!searchProc?.running) {
+        startSearch();
+        await new Promise((r) => setTimeout(r, 2_000));
+      }
+      if (!mcpProc?.running) startMcp();
+      if (!lspProc?.running) startLsp();
       if (!rust?.running) {
         await startRust();
       }
+      broadcastStatus(true, rust?.running ?? false);
       logSuccess("All processes started.");
     } else if (signal === "restart-vite") {
       logCtrl("Restart Vite signal received...");
-      sseStatus(false, rust?.running ?? false);
+      broadcastStatus(false, rust?.running ?? false);
       vite.kill();
 
       await waitForPort(VITE_PORT, PORT_TIMEOUT_MS, true);
@@ -814,10 +976,10 @@ async function start() {
         return;
       }
       logSuccess(`Vite ready on http://localhost:${VITE_PORT}`);
-      sseStatus(true, rust?.running ? true : false);
+      broadcastStatus(true, rust?.running ? true : false);
     } else if (signal === "restart-tauri") {
       logCtrl("Restart Tauri signal received — rebuilding app...");
-      sseStatus(true, "building");
+      broadcastStatus(true, "building");
       rust?.kill();
 
       // Wait for the app process to fully exit and port to release
@@ -825,10 +987,42 @@ async function start() {
 
       await startRust();
       logSuccess("App restarted. Vite was kept alive.");
+    } else if (signal === "restart-search") {
+      logCtrl("Restart search signal received — restarting search (and MCP)...");
+      // Kill MCP first since it depends on search
+      mcpProc?.kill();
+      searchProc?.kill();
+      await new Promise((r) => setTimeout(r, 500));
+      startSearch();
+      // Wait briefly for search to begin startup before MCP reconnects
+      await new Promise((r) => setTimeout(r, 2_000));
+      startMcp();
+      writeFullControlFile("running");
+      broadcastStatus(vite.running, rust?.running ?? false);
+      logSuccess("Search and MCP restarted.");
+    } else if (signal === "restart-mcp") {
+      logCtrl("Restart MCP signal received...");
+      mcpProc?.kill();
+      await new Promise((r) => setTimeout(r, 500));
+      startMcp();
+      writeFullControlFile("running");
+      broadcastStatus(vite.running, rust?.running ?? false);
+      logSuccess("MCP server restarted.");
+    } else if (signal === "restart-lsp") {
+      logCtrl("Restart LSP signal received...");
+      lspProc?.kill();
+      await new Promise((r) => setTimeout(r, 500));
+      startLsp();
+      writeFullControlFile("running");
+      broadcastStatus(vite.running, rust?.running ?? false);
+      logSuccess("LSP server restarted.");
     } else if (signal === "restart") {
       logCtrl("Full restart signal received — restarting everything...");
-      sseStatus(false, "building");
+      broadcastStatus(false, "building");
       rust?.kill();
+      mcpProc?.kill();
+      lspProc?.kill();
+      searchProc?.kill();
       vite.kill();
 
       await waitForPort(VITE_PORT, PORT_TIMEOUT_MS, true);
@@ -838,14 +1032,23 @@ async function start() {
       vite.spawn(npmCmd, ["run", "dev"], { cwd: UI_DIR });
       await waitForPort(VITE_PORT, 30_000, false);
       logSuccess(`Vite ready on http://localhost:${VITE_PORT}`);
-      sseStatus(true, "building");
+      broadcastStatus(true, "building");
+
+      // Restart search first, then MCP + LSP in parallel
+      startSearch();
+      await new Promise((r) => setTimeout(r, 2_000));
+      startMcp();
+      startLsp();
 
       await startRust();
       logSuccess("Full restart complete.");
     } else if (signal === "stop") {
       logCtrl("Stop signal received — shutting down...");
-      sseStatus(false, false);
+      broadcastStatus(false, false);
       rust?.kill();
+      searchProc?.kill();
+      mcpProc?.kill();
+      lspProc?.kill();
       for (const w of libWatchers) w.kill();
       vite.kill();
       removeControlFile();
@@ -884,9 +1087,12 @@ async function start() {
   // Handle Ctrl+C / terminal close
   function shutdown() {
     logCtrl("Shutting down...");
-    sseStatus(false, false);
+    sseStatus(false, false, false, false, false);
     unwatchFile(SIGNAL_FILE);
     rust?.kill();
+    searchProc?.kill();
+    mcpProc?.kill();
+    lspProc?.kill();
     for (const w of libWatchers) w.kill();
     vite.kill();
     if (dashboardServer) dashboardServer.close();
@@ -908,6 +1114,7 @@ async function start() {
   logCtrl("Dev controller running. Press Ctrl+C to stop.");
   logCtrl(`Dashboard: http://localhost:${DASHBOARD_PORT}`);
   logCtrl("Use 'make restart-tauri' to rebuild the app (Vite stays alive).");
+  logCtrl("Use 'make restart-search' / 'make restart-mcp' / 'make restart-lsp' for service restarts.");
   logCtrl("Use 'make stop' to shut everything down.");
 }
 
@@ -978,6 +1185,26 @@ async function restartTauri() {
   await dev();
 }
 
+// ── Restart service helpers (external commands) ─────────────────────────────
+
+async function restartService(signal, label) {
+  const ctrl = readControlFile();
+  if (ctrl) {
+    try {
+      process.kill(ctrl.pid, 0); // check alive
+      logCtrl(`Signalling controller to restart ${label}...`);
+      const dir = join(PROJECT_ROOT, "tmp");
+      if (!existsSync(dir)) execSync(`mkdir -p "${dir}"`);
+      writeFileSync(join(PROJECT_ROOT, "tmp", "dev-signal"), signal);
+      logSuccess(`${label} restart signal sent.`);
+      return;
+    } catch {
+      removeControlFile();
+    }
+  }
+  logError("ctrl", `No controller running. Use 'make dev' first.`);
+}
+
 // ── Status ──────────────────────────────────────────────────────────────────
 
 function status() {
@@ -999,6 +1226,9 @@ function status() {
   console.log(`State: ${ctrl.state}`);
   if (ctrl.vite) console.log(`Vite PID: ${ctrl.vite}`);
   if (ctrl.rust) console.log(`Rust PID: ${ctrl.rust}`);
+  if (ctrl.search) console.log(`Search PID: ${ctrl.search}`);
+  if (ctrl.mcp) console.log(`MCP PID: ${ctrl.mcp}`);
+  if (ctrl.lsp) console.log(`LSP PID: ${ctrl.lsp}`);
 }
 
 // ── Dev (spawn controller, wait for ready, exit) ─────────────────────────────
@@ -1117,6 +1347,15 @@ switch (command) {
     await dev();
     break;
   }
+  case "restart-search":
+    await restartService("restart-search", "Search (+ MCP)");
+    break;
+  case "restart-mcp":
+    await restartService("restart-mcp", "MCP");
+    break;
+  case "restart-lsp":
+    await restartService("restart-lsp", "LSP");
+    break;
   case "status":
     status();
     break;
@@ -1126,13 +1365,16 @@ switch (command) {
     console.log("Usage: node dev.mjs <command>");
     console.log("");
     console.log("Commands:");
-    console.log("  dev            Start dev environment (spawn controller, wait for ready, exit)");
-    console.log("  start          Start the dev controller (long-running, stays in foreground)");
-    console.log("  stop           Stop the controller gracefully");
-    console.log("  kill           Force-kill all OrqaStudio processes");
-    console.log("  restart-tauri  Restart Tauri app only (Vite stays alive)");
-    console.log("  restart-vite   Restart Vite dev server only");
-    console.log("  restart        Restart Vite + Tauri (controller stays alive)");
-    console.log("  status         Show process status");
+    console.log("  dev             Start dev environment (spawn controller, wait for ready, exit)");
+    console.log("  start           Start the dev controller (long-running, stays in foreground)");
+    console.log("  stop            Stop the controller gracefully");
+    console.log("  kill            Force-kill all OrqaStudio processes");
+    console.log("  restart-tauri   Restart Tauri app only (Vite stays alive)");
+    console.log("  restart-vite    Restart Vite dev server only");
+    console.log("  restart         Restart Vite + Tauri (controller stays alive)");
+    console.log("  restart-search  Restart search server (and MCP, which depends on it)");
+    console.log("  restart-mcp     Restart MCP server only");
+    console.log("  restart-lsp     Restart LSP server only");
+    console.log("  status          Show process status");
     process.exit(1);
 }

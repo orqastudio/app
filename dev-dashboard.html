@@ -232,6 +232,9 @@
     .log-source.rust { color: #c77dff; }
     .log-source.sidecar { color: #ff6b6b; }
     .log-source.frontend { color: #74b9ff; }
+    .log-source.search { color: #ff8c00; }
+    .log-source.mcp { color: #00b4b4; }
+    .log-source.lsp { color: #e67de8; }
     /* Library watcher sources */
     .log-source.types { color: #4ecca3; }
     .log-source.sdk { color: #74b9ff; }
@@ -303,6 +306,15 @@
       <span class="status-item" id="rust-status">
         <span class="status-dot dead" id="rust-dot"></span>Rust
       </span>
+      <span class="status-item" id="search-status">
+        <span class="status-dot dead" id="search-dot"></span>Search
+      </span>
+      <span class="status-item" id="mcp-status">
+        <span class="status-dot dead" id="mcp-dot"></span>MCP
+      </span>
+      <span class="status-item" id="lsp-status">
+        <span class="status-dot dead" id="lsp-dot"></span>LSP
+      </span>
     </div>
   </header>
 
@@ -319,6 +331,15 @@
       </button>
       <button id="btn-restart-all" onclick="sendCommand('restart')" title="Restart All">
         <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+      </button>
+      <button id="btn-restart-search" onclick="sendCommand('restart-search')" title="Restart Search (+ MCP)">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><polyline points="11 8 11 11 13 13"/></svg>
+      </button>
+      <button id="btn-restart-mcp" onclick="sendCommand('restart-mcp')" title="Restart MCP">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </button>
+      <button id="btn-restart-lsp" onclick="sendCommand('restart-lsp')" title="Restart LSP">
+        <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
       </button>
       <button class="danger" id="btn-stop" onclick="sendCommand('stop')" title="Stop">
         <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"></rect></svg>
@@ -345,6 +366,15 @@
       </button>
       <button class="filter-btn active" data-source="frontend" onclick="toggleFilter(this)" title="Frontend">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="#74b9ff" stroke="none"/></svg>
+      </button>
+      <button class="filter-btn active" data-source="search" onclick="toggleFilter(this)" title="Search">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="#ff8c00" stroke="none"/></svg>
+      </button>
+      <button class="filter-btn active" data-source="mcp" onclick="toggleFilter(this)" title="MCP">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="#00b4b4" stroke="none"/></svg>
+      </button>
+      <button class="filter-btn active" data-source="lsp" onclick="toggleFilter(this)" title="LSP">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="#e67de8" stroke="none"/></svg>
       </button>
     </div>
 
@@ -415,16 +445,26 @@
     const btnRestart = document.getElementById('btn-restart');
     const btnRestartVite = document.getElementById('btn-restart-vite');
     const btnRestartAll = document.getElementById('btn-restart-all');
+    const btnRestartSearch = document.getElementById('btn-restart-search');
+    const btnRestartMcp = document.getElementById('btn-restart-mcp');
+    const btnRestartLsp = document.getElementById('btn-restart-lsp');
     const btnStop = document.getElementById('btn-stop');
+
+    const searchDot = document.getElementById('search-dot');
+    const mcpDot = document.getElementById('mcp-dot');
+    const lspDot = document.getElementById('lsp-dot');
+    const searchStatusEl = document.getElementById('search-status');
+    const mcpStatusEl = document.getElementById('mcp-status');
+    const lspStatusEl = document.getElementById('lsp-status');
 
     let lines = 0;
     let autoScroll = true;
-    const filters = { ctrl: true, vite: true, rust: true, sidecar: true, frontend: true, types: true, sdk: true, cli: true, 'svelte-components': true, software: true };
+    const filters = { ctrl: true, vite: true, rust: true, sidecar: true, frontend: true, search: true, mcp: true, lsp: true, types: true, sdk: true, cli: true, 'svelte-components': true, software: true };
     const levelFilters = { debug: true, info: true, perf: true, warn: true, error: true };
     const searchFilter = document.getElementById('search-filter');
 
     // Track process state for button enabling
-    let state = { vite: false, rust: false };
+    let state = { vite: false, rust: false, search: false, mcp: false, lsp: false };
 
     // Auto-scroll detection
     output.addEventListener('scroll', () => {
@@ -522,12 +562,27 @@
         rustDot.className = `status-dot ${cls}`;
         rustStatus.className = `status-item${isBuilding ? ' building' : (isAlive ? ' alive' : '')}`;
       }
+      if (data.search !== undefined) {
+        state.search = data.search;
+        searchDot.className = `status-dot ${data.search ? 'alive' : 'dead'}`;
+        searchStatusEl.className = `status-item${data.search ? ' alive' : ''}`;
+      }
+      if (data.mcp !== undefined) {
+        state.mcp = data.mcp;
+        mcpDot.className = `status-dot ${data.mcp ? 'alive' : 'dead'}`;
+        mcpStatusEl.className = `status-item${data.mcp ? ' alive' : ''}`;
+      }
+      if (data.lsp !== undefined) {
+        state.lsp = data.lsp;
+        lspDot.className = `status-dot ${data.lsp ? 'alive' : 'dead'}`;
+        lspStatusEl.className = `status-item${data.lsp ? ' alive' : ''}`;
+      }
       updateButtons();
     }
 
     function updateButtons() {
-      const anyAlive = state.vite || state.rust;
-      const allDead = !state.vite && !state.rust;
+      const anyAlive = state.vite || state.rust || state.search || state.mcp || state.lsp;
+      const allDead = !state.vite && !state.rust && !state.search && !state.mcp && !state.lsp;
 
       // Start is only enabled when nothing is running (controller is alive but processes stopped)
       btnStart.disabled = anyAlive;
@@ -535,6 +590,10 @@
       btnRestart.disabled = !state.rust || state.rust === 'building';
       btnRestartVite.disabled = !state.vite;
       btnRestartAll.disabled = allDead;
+      // Service restarts are always available when the controller is connected
+      btnRestartSearch.disabled = false;
+      btnRestartMcp.disabled = false;
+      btnRestartLsp.disabled = false;
       btnStop.disabled = allDead;
     }
 
@@ -560,12 +619,15 @@
       es.onerror = () => {
         connStatus.textContent = 'Controller stopped';
         // When disconnected, everything is dead
-        updateStatus({ vite: false, rust: false });
+        updateStatus({ vite: false, rust: false, search: false, mcp: false, lsp: false });
         // Controller is gone — disable all buttons
         btnStart.disabled = true;
         btnRestart.disabled = true;
         btnRestartVite.disabled = true;
         btnRestartAll.disabled = true;
+        btnRestartSearch.disabled = true;
+        btnRestartMcp.disabled = true;
+        btnRestartLsp.disabled = true;
         btnStop.disabled = true;
         // Try to close the tab (works when opened via window.open)
         setTimeout(() => window.close(), 1500);
