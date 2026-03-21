@@ -99,10 +99,26 @@ pub fn build_validation_context(
     project_relationships: &[ProjectRelationshipConfig],
     plugin_relationships: &[RelationshipSchema],
 ) -> ValidationContext {
+    let (mut relationships, mut inverse_map) =
+        collect_platform_and_plugin_relationships(plugin_relationships);
+    collect_project_relationships(project_relationships, &mut relationships, &mut inverse_map);
+    let dependency_keys = collect_dependency_keys(&relationships);
+
+    ValidationContext {
+        relationships,
+        inverse_map,
+        valid_statuses: valid_statuses.to_vec(),
+        delivery: delivery.clone(),
+        dependency_keys,
+    }
+}
+
+fn collect_platform_and_plugin_relationships(
+    plugin_relationships: &[RelationshipSchema],
+) -> (Vec<RelationshipSchema>, HashMap<String, String>) {
     let mut relationships: Vec<RelationshipSchema> = Vec::new();
     let mut inverse_map: HashMap<String, String> = HashMap::new();
 
-    // 1. Platform relationships from the embedded core.json.
     for rel in &PLATFORM.relationships {
         relationships.push(RelationshipSchema {
             key: rel.key.clone(),
@@ -119,13 +135,12 @@ pub fn build_validation_context(
         }
     }
 
-    // 2. Plugin relationships — extend existing definitions or add new ones.
+    // Plugin relationships — extend existing definitions or add new ones.
     // When a plugin declares a key that already exists (e.g. extending core's
     // `merged-into` to also allow research→research), the from/to arrays are
     // unioned. Collision detection happens at plugin install time, not here.
     for pr in plugin_relationships {
         if let Some(existing) = relationships.iter_mut().find(|r| r.key == pr.key) {
-            // Extend from/to constraints (union)
             for t in &pr.from {
                 if !existing.from.contains(t) {
                     existing.from.push(t.clone());
@@ -136,12 +151,10 @@ pub fn build_validation_context(
                     existing.to.push(t.clone());
                 }
             }
-            // Merge constraints if plugin provides them and existing doesn't
             if pr.constraints.is_some() && existing.constraints.is_none() {
-                existing.constraints = pr.constraints.clone();
+                existing.constraints.clone_from(&pr.constraints);
             }
         } else {
-            // New relationship from plugin
             relationships.push(pr.clone());
         }
         inverse_map.insert(pr.key.clone(), pr.inverse.clone());
@@ -150,9 +163,15 @@ pub fn build_validation_context(
         }
     }
 
-    // 3. Project relationships from project.json.
+    (relationships, inverse_map)
+}
+
+fn collect_project_relationships(
+    project_relationships: &[ProjectRelationshipConfig],
+    relationships: &mut Vec<RelationshipSchema>,
+    inverse_map: &mut HashMap<String, String>,
+) {
     for pr in project_relationships {
-        // Only add if not already defined by platform or plugin.
         if !inverse_map.contains_key(&pr.key) {
             relationships.push(RelationshipSchema {
                 key: pr.key.clone(),
@@ -169,29 +188,22 @@ pub fn build_validation_context(
             inverse_map.insert(pr.inverse.clone(), pr.key.clone());
         }
     }
+}
 
-    // 4. Collect dependency keys from semantics.
+fn collect_dependency_keys(relationships: &[RelationshipSchema]) -> HashSet<String> {
     let mut dependency_keys = HashSet::new();
     if let Some(sem) = PLATFORM.semantics.get("dependency") {
         for k in &sem.keys {
             dependency_keys.insert(k.clone());
         }
     }
-    // Also check plugin/project semantics: any relationship with "dependency" semantic.
-    for rel in &relationships {
+    for rel in relationships {
         if rel.semantic.as_deref() == Some("dependency") {
             dependency_keys.insert(rel.key.clone());
             dependency_keys.insert(rel.inverse.clone());
         }
     }
-
-    ValidationContext {
-        relationships,
-        inverse_map,
-        valid_statuses: valid_statuses.to_vec(),
-        delivery: delivery.clone(),
-        dependency_keys,
-    }
+    dependency_keys
 }
 
 // ---------------------------------------------------------------------------
@@ -306,7 +318,6 @@ fn check_relationship_type_constraints(
     ctx: &ValidationContext,
     checks: &mut Vec<IntegrityCheck>,
 ) {
-    // Build a lookup: relationship key → schema.
     let schema_map: HashMap<&str, &RelationshipSchema> = ctx
         .relationships
         .iter()
@@ -315,63 +326,76 @@ fn check_relationship_type_constraints(
 
     for node in graph.nodes.values() {
         for ref_entry in &node.references_out {
-            let rel_type = match &ref_entry.relationship_type {
-                Some(t) => t.as_str(),
-                None => continue,
+            let Some(rel_type) = ref_entry.relationship_type.as_deref() else {
+                continue;
             };
-
             let Some(schema) = schema_map.get(rel_type) else {
-                continue; // Unknown relationship — not a type-constraint issue.
+                continue;
             };
-
-            // Check `from` constraint: the source type must be in the `from` list.
-            if !schema.from.is_empty() && !schema.from.contains(&node.artifact_type) {
-                checks.push(IntegrityCheck {
-                    category: IntegrityCategory::TypeConstraintViolation,
-                    severity: IntegritySeverity::Error,
-                    artifact_id: node.id.clone(),
-                    message: format!(
-                        "{} ({}) uses '{}' relationship but only [{}] types may use it as source",
-                        node.id,
-                        node.artifact_type,
-                        rel_type,
-                        schema.from.join(", ")
-                    ),
-                    auto_fixable: false,
-                    fix_description: Some(format!(
-                        "Change the relationship type or move the artifact to a valid type: {}",
-                        schema.from.join(", ")
-                    )),
-                });
-            }
-
-            // Check `to` constraint: the target type must be in the `to` list.
-            if !schema.to.is_empty() {
-                if let Some(target) = graph.nodes.get(&ref_entry.target_id) {
-                    if !schema.to.contains(&target.artifact_type) {
-                        checks.push(IntegrityCheck {
-                            category: IntegrityCategory::TypeConstraintViolation,
-                            severity: IntegritySeverity::Error,
-                            artifact_id: node.id.clone(),
-                            message: format!(
-                                "{} --{}--> {} ({}) but '{}' only targets [{}] types",
-                                node.id,
-                                rel_type,
-                                ref_entry.target_id,
-                                target.artifact_type,
-                                rel_type,
-                                schema.to.join(", ")
-                            ),
-                            auto_fixable: false,
-                            fix_description: Some(format!(
-                                "Change the target to one of: {}",
-                                schema.to.join(", ")
-                            )),
-                        });
-                    }
-                }
-            }
+            check_from_constraint(node, rel_type, schema, checks);
+            check_to_constraint(node, ref_entry, rel_type, schema, graph, checks);
         }
+    }
+}
+
+fn check_from_constraint(
+    node: &ArtifactNode,
+    rel_type: &str,
+    schema: &RelationshipSchema,
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    if !schema.from.is_empty() && !schema.from.contains(&node.artifact_type) {
+        checks.push(IntegrityCheck {
+            category: IntegrityCategory::TypeConstraintViolation,
+            severity: IntegritySeverity::Error,
+            artifact_id: node.id.clone(),
+            message: format!(
+                "{} ({}) uses '{}' relationship but only [{}] types may use it as source",
+                node.id,
+                node.artifact_type,
+                rel_type,
+                schema.from.join(", ")
+            ),
+            auto_fixable: false,
+            fix_description: Some(format!(
+                "Change the relationship type or move the artifact to a valid type: {}",
+                schema.from.join(", ")
+            )),
+        });
+    }
+}
+
+fn check_to_constraint(
+    node: &ArtifactNode,
+    ref_entry: &crate::domain::artifact_graph::ArtifactRef,
+    rel_type: &str,
+    schema: &RelationshipSchema,
+    graph: &ArtifactGraph,
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    if schema.to.is_empty() {
+        return;
+    }
+    let Some(target) = graph.nodes.get(&ref_entry.target_id) else {
+        return;
+    };
+    if !schema.to.contains(&target.artifact_type) {
+        checks.push(IntegrityCheck {
+            category: IntegrityCategory::TypeConstraintViolation,
+            severity: IntegritySeverity::Error,
+            artifact_id: node.id.clone(),
+            message: format!(
+                "{} --{}--> {} ({}) but '{}' only targets [{}] types",
+                node.id,
+                rel_type,
+                ref_entry.target_id,
+                target.artifact_type,
+                rel_type,
+                schema.to.join(", ")
+            ),
+            auto_fixable: false,
+            fix_description: Some(format!("Change the target to one of: {}", schema.to.join(", "))),
+        });
     }
 }
 
@@ -477,8 +501,7 @@ fn check_cardinality(
                             ),
                             auto_fixable: false,
                             fix_description: Some(format!(
-                                "Remove excess '{}' relationships to comply with max count {}",
-                                rel_type, max
+                                "Remove excess '{rel_type}' relationships to comply with max count {max}",
                             )),
                         });
                     }
@@ -549,42 +572,19 @@ fn detect_cycles_from(
     checks: &mut Vec<IntegrityCheck>,
 ) {
     let mut visited = HashSet::new();
-    let mut stack = Vec::new();
-
-    for dep_id in initial_dep_ids {
-        stack.push((dep_id.clone(), vec![start_id.to_string()]));
-    }
+    let mut stack: Vec<(String, Vec<String>)> = initial_dep_ids
+        .iter()
+        .map(|id| (id.clone(), vec![start_id.to_string()]))
+        .collect();
 
     while let Some((current_id, path)) = stack.pop() {
         if current_id == start_id {
-            let mut cycle_parts = path.clone();
-            cycle_parts.sort();
-            let cycle_key = cycle_parts.join(",");
-            if !reported.contains(&cycle_key) {
-                reported.insert(cycle_key);
-                checks.push(IntegrityCheck {
-                    category: IntegrityCategory::CircularDependency,
-                    severity: IntegritySeverity::Error,
-                    artifact_id: start_id.to_string(),
-                    message: format!(
-                        "Circular dependency: {} \u{2192} {} \u{2192} {}",
-                        start_id,
-                        path[1..].join(" \u{2192} "),
-                        start_id
-                    ),
-                    auto_fixable: false,
-                    fix_description: Some(
-                        "Break the dependency cycle by removing one edge".to_string(),
-                    ),
-                });
-            }
+            report_cycle(start_id, &path, reported, checks);
             continue;
         }
-
         if !visited.insert(current_id.clone()) {
             continue;
         }
-
         if let Some(dep_node) = graph.nodes.get(&current_id) {
             let next_deps: Vec<String> = dep_node
                 .references_out
@@ -602,6 +602,33 @@ fn detect_cycles_from(
                 stack.push((next_id, new_path));
             }
         }
+    }
+}
+
+fn report_cycle(
+    start_id: &str,
+    path: &[String],
+    reported: &mut HashSet<String>,
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    let mut cycle_parts = path.to_vec();
+    cycle_parts.sort();
+    let cycle_key = cycle_parts.join(",");
+    if !reported.contains(&cycle_key) {
+        reported.insert(cycle_key);
+        checks.push(IntegrityCheck {
+            category: IntegrityCategory::CircularDependency,
+            severity: IntegritySeverity::Error,
+            artifact_id: start_id.to_string(),
+            message: format!(
+                "Circular dependency: {} \u{2192} {} \u{2192} {}",
+                start_id,
+                path[1..].join(" \u{2192} "),
+                start_id
+            ),
+            auto_fixable: false,
+            fix_description: Some("Break the dependency cycle by removing one edge".to_string()),
+        });
     }
 }
 
@@ -969,20 +996,7 @@ fn check_delivery_node_parent(
     });
 
     let Some(parent_ref) = parent_ref else {
-        checks.push(IntegrityCheck {
-            category: IntegrityCategory::DeliveryPathMismatch,
-            severity: IntegritySeverity::Warning,
-            artifact_id: node.id.clone(),
-            message: format!(
-                "{} (delivery type '{}') is missing required '{}' relationship to a {} artifact",
-                node.id, dtype.key, parent_cfg.relationship, parent_cfg.parent_type
-            ),
-            auto_fixable: false,
-            fix_description: Some(format!(
-                "Add a '{}' relationship targeting a {} artifact",
-                parent_cfg.relationship, parent_cfg.parent_type
-            )),
-        });
+        push_missing_parent_check(node, dtype, parent_cfg, checks);
         return;
     };
 
@@ -991,26 +1005,58 @@ fn check_delivery_node_parent(
     };
 
     if parent_node.artifact_type != parent_cfg.parent_type {
-        checks.push(IntegrityCheck {
-            category: IntegrityCategory::DeliveryPathMismatch,
-            severity: IntegritySeverity::Warning,
-            artifact_id: node.id.clone(),
-            message: format!(
-                "{} has {} relationship to '{}' but {} is a '{}', expected '{}'",
-                node.id,
-                parent_cfg.relationship,
-                parent_ref.target_id,
-                parent_ref.target_id,
-                parent_node.artifact_type,
-                parent_cfg.parent_type
-            ),
-            auto_fixable: false,
-            fix_description: Some(format!(
-                "Update '{}' relationship to target a valid {} artifact",
-                parent_cfg.relationship, parent_cfg.parent_type
-            )),
-        });
+        push_wrong_parent_type_check(node, parent_cfg, parent_ref, parent_node, checks);
     }
+}
+
+fn push_missing_parent_check(
+    node: &ArtifactNode,
+    dtype: &crate::domain::project_settings::DeliveryTypeConfig,
+    parent_cfg: &crate::domain::project_settings::DeliveryParentConfig,
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    checks.push(IntegrityCheck {
+        category: IntegrityCategory::DeliveryPathMismatch,
+        severity: IntegritySeverity::Warning,
+        artifact_id: node.id.clone(),
+        message: format!(
+            "{} (delivery type '{}') is missing required '{}' relationship to a {} artifact",
+            node.id, dtype.key, parent_cfg.relationship, parent_cfg.parent_type
+        ),
+        auto_fixable: false,
+        fix_description: Some(format!(
+            "Add a '{}' relationship targeting a {} artifact",
+            parent_cfg.relationship, parent_cfg.parent_type
+        )),
+    });
+}
+
+fn push_wrong_parent_type_check(
+    node: &ArtifactNode,
+    parent_cfg: &crate::domain::project_settings::DeliveryParentConfig,
+    parent_ref: &crate::domain::artifact_graph::ArtifactRef,
+    parent_node: &ArtifactNode,
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    checks.push(IntegrityCheck {
+        category: IntegrityCategory::DeliveryPathMismatch,
+        severity: IntegritySeverity::Warning,
+        artifact_id: node.id.clone(),
+        message: format!(
+            "{} has {} relationship to '{}' but {} is a '{}', expected '{}'",
+            node.id,
+            parent_cfg.relationship,
+            parent_ref.target_id,
+            parent_ref.target_id,
+            parent_node.artifact_type,
+            parent_cfg.parent_type
+        ),
+        auto_fixable: false,
+        fix_description: Some(format!(
+            "Update '{}' relationship to target a valid {} artifact",
+            parent_cfg.relationship, parent_cfg.parent_type
+        )),
+    });
 }
 
 // ---------------------------------------------------------------------------

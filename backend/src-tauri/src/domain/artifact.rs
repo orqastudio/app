@@ -29,7 +29,7 @@ pub fn is_valid_artifact_id(id: &str) -> bool {
         return id
             .rmatch_indices('-')
             .next()
-            .map(|(i, _)| {
+            .is_some_and(|(i, _)| {
                 let final_suffix = &id[i + 1..];
                 let prefix_part = &id[..i];
                 !prefix_part.is_empty()
@@ -39,8 +39,7 @@ pub fn is_valid_artifact_id(id: &str) -> bool {
                     && (final_suffix.chars().all(|c| c.is_ascii_digit())
                         || (final_suffix.len() == 8
                             && final_suffix.chars().all(|c| c.is_ascii_hexdigit())))
-            })
-            .unwrap_or(false);
+            });
     }
     // Suffix is either all digits (legacy) or 8 hex chars (new format)
     suffix.chars().all(|c| c.is_ascii_digit())

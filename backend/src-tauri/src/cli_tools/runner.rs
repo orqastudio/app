@@ -187,7 +187,10 @@ impl CliToolRunner {
     /// Get the status of all registered CLI tools (last run info).
     pub fn statuses(&self, project_root: &Path) -> Vec<CliToolStatus> {
         let tools = read_cli_tool_registry(project_root);
-        let cache = self.last_results.lock().unwrap_or_else(|e| e.into_inner());
+        let cache = self
+            .last_results
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
 
         tools
             .iter()

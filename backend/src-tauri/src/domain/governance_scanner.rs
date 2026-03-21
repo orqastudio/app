@@ -169,7 +169,7 @@ fn scan_knowledge_area(project_root: &Path, knowledge_dir: &Path) -> GovernanceA
         if let Ok(entries) = std::fs::read_dir(knowledge_dir) {
             for entry in entries.flatten() {
                 let path = entry.path();
-                if path.is_file() && path.extension().map_or(false, |e| e == "md") {
+                if path.is_file() && path.extension().is_some_and(|e| e == "md") {
                     if let Some(f) = read_governance_file_relative(&path, project_root) {
                         files.push(f);
                     }
