@@ -1,0 +1,280 @@
+{
+  "name": "@orqastudio/plugin-governance",
+  "version": "0.1.0-dev",
+  "displayName": "Governance",
+  "description": "Core governance model — rules, decisions, lessons, knowledge, agents, and foundational principles. Defines artifact types and frontmatter schemas that drive structured thinking and enforcement.",
+  "provides": {
+    "schemas": [
+      {
+        "key": "vision",
+        "label": "Vision",
+        "plural": "Vision",
+        "icon": "eye",
+        "defaultPath": ".orqa/principles",
+        "idPrefix": "VISION",
+        "frontmatter": {
+          "required": ["id", "type", "status"],
+          "optional": ["title", "description", "relationships"]
+        },
+        "statusTransitions": {
+          "active": ["review", "archived"],
+          "review": ["active"],
+          "archived": []
+        }
+      },
+      {
+        "key": "pillar",
+        "label": "Pillar",
+        "plural": "Pillars",
+        "icon": "columns-3",
+        "defaultPath": ".orqa/principles/pillars",
+        "idPrefix": "PILLAR",
+        "frontmatter": {
+          "required": ["id", "type", "status"],
+          "optional": ["title", "description", "gate", "relationships"]
+        },
+        "statusTransitions": {
+          "active": ["review", "archived"],
+          "review": ["active"],
+          "archived": []
+        }
+      },
+      {
+        "key": "persona",
+        "label": "Persona",
+        "plural": "Personas",
+        "icon": "users",
+        "defaultPath": ".orqa/principles/personas",
+        "idPrefix": "PERSONA",
+        "frontmatter": {
+          "required": ["id", "type", "status"],
+          "optional": ["title", "description", "relationships"]
+        },
+        "statusTransitions": {
+          "active": ["review", "archived"],
+          "review": ["active"],
+          "archived": []
+        }
+      },
+      {
+        "key": "idea",
+        "label": "Idea",
+        "plural": "Ideas",
+        "icon": "lightbulb",
+        "defaultPath": ".orqa/discovery/ideas",
+        "idPrefix": "IDEA",
+        "frontmatter": {
+          "required": ["id", "type", "status"],
+          "optional": ["title", "description", "priority", "relationships"]
+        },
+        "statusTransitions": {
+          "captured": ["exploring"],
+          "exploring": ["ready", "hold", "archived"],
+          "ready": ["prioritised", "hold"],
+          "prioritised": ["active"],
+          "active": ["review", "hold"],
+          "hold": ["exploring", "ready"],
+          "review": ["completed", "active"],
+          "completed": ["surpassed", "archived"]
+        }
+      },
+      {
+        "key": "decision",
+        "label": "Decision",
+        "plural": "Decisions",
+        "icon": "scale",
+        "defaultPath": ".orqa/process/decisions",
+        "idPrefix": "AD",
+        "frontmatter": {
+          "required": ["id", "type", "status"],
+          "optional": ["title", "description", "relationships"]
+        },
+        "statusTransitions": {
+          "captured": ["exploring", "active"],
+          "exploring": ["active", "hold"],
+          "active": ["review", "hold", "archived"],
+          "hold": ["active", "exploring"],
+          "review": ["active", "completed"],
+          "completed": ["surpassed", "archived"],
+          "archived": []
+        }
+      },
+      {
+        "key": "rule",
+        "label": "Rule",
+        "plural": "Rules",
+        "icon": "shield",
+        "defaultPath": ".orqa/process/rules",
+        "idPrefix": "RULE",
+        "frontmatter": {
+          "required": ["id", "type", "status", "enforcement"],
+          "optional": ["title", "description", "relationships"]
+        },
+        "statusTransitions": {
+          "captured": ["exploring", "active"],
+          "exploring": ["active", "hold"],
+          "active": ["review", "hold", "archived"],
+          "hold": ["active", "exploring"],
+          "review": ["active", "completed"],
+          "completed": ["surpassed", "archived"],
+          "archived": []
+        }
+      },
+      {
+        "key": "lesson",
+        "label": "Lesson",
+        "plural": "Lessons",
+        "icon": "book-open",
+        "defaultPath": ".orqa/process/lessons",
+        "idPrefix": "IMPL",
+        "frontmatter": {
+          "required": ["id", "type", "status", "recurrence"],
+          "optional": ["title", "description", "maturity", "relationships"]
+        },
+        "statusTransitions": {
+          "captured": ["exploring"],
+          "exploring": ["active", "recurring"],
+          "active": ["completed", "recurring"],
+          "recurring": ["active", "completed"],
+          "completed": ["archived"]
+        }
+      },
+      {
+        "key": "knowledge",
+        "label": "Knowledge",
+        "plural": "Knowledge",
+        "icon": "zap",
+        "defaultPath": ".orqa/process/knowledge",
+        "idPrefix": "KNOW",
+        "frontmatter": {
+          "required": ["id", "type", "status"],
+          "optional": ["title", "description", "relationships"]
+        },
+        "statusTransitions": {
+          "captured": ["exploring", "active"],
+          "exploring": ["active", "hold"],
+          "active": ["review", "hold", "archived"],
+          "hold": ["active", "exploring"],
+          "review": ["active", "completed"],
+          "completed": ["surpassed", "archived"],
+          "archived": []
+        }
+      },
+      {
+        "key": "agent",
+        "label": "Agent",
+        "plural": "Agents",
+        "icon": "bot",
+        "defaultPath": ".orqa/process/agents",
+        "idPrefix": "AGENT",
+        "frontmatter": {
+          "required": ["id", "type", "status", "preamble"],
+          "optional": ["title", "description", "model", "capabilities", "knowledge", "relationships"]
+        },
+        "statusTransitions": {
+          "captured": ["exploring", "active"],
+          "exploring": ["active", "hold"],
+          "active": ["review", "hold", "archived"],
+          "hold": ["active", "exploring"],
+          "review": ["active", "completed"],
+          "completed": ["surpassed", "archived"],
+          "archived": []
+        }
+      },
+      {
+        "key": "doc",
+        "label": "Document",
+        "plural": "Documents",
+        "icon": "file-text",
+        "defaultPath": ".orqa/documentation",
+        "idPrefix": "DOC",
+        "frontmatter": {
+          "required": ["id", "type", "status"],
+          "optional": ["title", "description", "relationships"]
+        },
+        "statusTransitions": {
+          "captured": ["exploring", "active"],
+          "exploring": ["active", "hold"],
+          "active": ["review", "hold", "archived"],
+          "hold": ["active", "exploring"],
+          "review": ["active", "completed"],
+          "completed": ["surpassed", "archived"],
+          "archived": []
+        }
+      },
+      {
+        "key": "pivot",
+        "label": "Pivot",
+        "plural": "Pivots",
+        "icon": "refresh-cw",
+        "defaultPath": ".orqa/principles",
+        "idPrefix": "PIVOT",
+        "frontmatter": {
+          "required": ["id", "type", "status"],
+          "optional": ["title", "description", "relationships"]
+        },
+        "statusTransitions": {
+          "captured": ["exploring", "active"],
+          "exploring": ["active", "archived"],
+          "active": ["completed"],
+          "completed": ["archived"]
+        }
+      }
+    ],
+    "views": [],
+    "widgets": [],
+    "relationships": [
+      {
+        "key": "promoted-to",
+        "inverse": "promoted-from",
+        "label": "Promoted To",
+        "inverseLabel": "Promoted From",
+        "from": ["lesson"],
+        "to": ["rule"],
+        "description": "Lesson promoted to an enforceable rule",
+        "semantic": "governance"
+      },
+      {
+        "key": "related",
+        "inverse": "related",
+        "label": "Related",
+        "inverseLabel": "Related",
+        "from": ["rule", "decision", "knowledge", "lesson", "agent", "doc"],
+        "to": ["rule", "decision", "knowledge", "lesson", "agent", "doc"],
+        "description": "General association between governance artifacts",
+        "semantic": "knowledge-flow"
+      }
+    ],
+    "knowledge": [],
+    "cliTools": [],
+    "hooks": []
+  },
+  "artifactLinks": {
+    "displayModes": {
+      "VISION": "title",
+      "PILLAR": "title",
+      "PERSONA": "title",
+      "IDEA": "title",
+      "AD": "title",
+      "RULE": "title",
+      "IMPL": "title",
+      "KNOW": "title",
+      "AGENT": "title",
+      "DOC": "title",
+      "PIVOT": "title"
+    },
+    "colors": {
+      "VISION": "#f59e0b",
+      "PILLAR": "#8b5cf6",
+      "PERSONA": "#ec4899",
+      "IDEA": "#fbbf24",
+      "AD": "#6366f1",
+      "RULE": "#10b981",
+      "IMPL": "#f97316",
+      "KNOW": "#14b8a6",
+      "AGENT": "#0ea5e9",
+      "DOC": "#64748b",
+      "PIVOT": "#ef4444"
+    }
+  }
+}

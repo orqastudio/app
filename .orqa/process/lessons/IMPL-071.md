@@ -1,0 +1,32 @@
+---
+id: IMPL-a3f2c1d8
+type: lesson
+title: Session state must be a living document
+description: "The orchestrator treated tmp/session-state.md as a checkpoint to write at session end. Tangents and new decisions during a session caused context loss — when the user asked about the original plan, the orchestrator had to reconstruct from conversation history."
+status: promoted
+created: 2026-03-21
+updated: 2026-03-21
+maturity: pattern
+recurrence: 1
+relationships:
+  - target: "RULE-4f7e2a91"
+    type: "promoted-to"
+---
+
+## Pattern
+
+`tmp/session-state.md` was treated as a write-once artifact produced at session end. During a session, multiple decisions were made (clean orchestrator.md, symlink CLAUDE.md, CLI vs connector separation, user preference migration, orqa link command, dogfood thinking mode). When a tangent arose (orqa link), the orchestrator pursued it without updating the session state. When the user asked "what about the rest of the original plan?" — the orchestrator had to reconstruct from conversation history. Earlier decisions and incomplete migration steps were nearly lost.
+
+## Root Cause
+
+Session state treated as a post-session summary rather than a real-time working document. Any scope change, tangent, or new decision that isn't immediately reflected in the state creates an invisible gap. The longer the gap, the more context is at risk.
+
+## Fix
+
+Update `tmp/session-state.md` in real time as discussions and decisions happen — not just at session end. Every new decision, plan step, or scope change should be reflected immediately. Session state is a working document that tracks the current state of the conversation, preventing tangents from causing silent context loss.
+
+## Suggested Promotion
+
+If recurrence reaches 2, promote to a rule requiring real-time session state updates. The rule should require:
+- Session state updated on every scope change or new decision
+- A hook checking `tmp/session-state.md` freshness (e.g., warn if it hasn't been written in the last N tool calls when scope-changing operations are detected)
