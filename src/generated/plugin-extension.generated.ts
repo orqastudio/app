@@ -100,6 +100,42 @@ export interface PluginManifestProvides {
    * Hook registrations contributed by this plugin.
    */
   hooks?: string[];
+  decision_tree?: PluginDecisionTree;
+  /**
+   * LSP server registrations contributed by this plugin.
+   */
+  lspServers?: {
+    [k: string]:
+      | {
+          command: string;
+          args?: string[];
+          extensionToLanguage?: {
+            [k: string]: string | undefined;
+          };
+          [k: string]: unknown | undefined;
+        }
+      | undefined;
+  };
+  /**
+   * Development tool registrations contributed by this plugin.
+   */
+  tools?: {
+    [k: string]:
+      | {
+          [k: string]: unknown | undefined;
+        }
+      | undefined;
+  };
+  /**
+   * Dependencies required by this plugin.
+   */
+  dependencies?: {
+    [k: string]: unknown | undefined;
+  };
+  /**
+   * CLI tool registrations contributed by this plugin.
+   */
+  cliTools?: unknown[];
 }
 /**
  * An artifact type schema contributed by a plugin. Plugin schemas must declare key, label, icon, idPrefix, and frontmatter. They may use $ref to reference core types in core.json.
@@ -218,6 +254,38 @@ export interface PluginRelationshipExtension {
      */
     requireInverse?: boolean | null;
   } | null;
+}
+/**
+ * Agent decision tree branches contributed by this plugin. Branches are merged at runtime into the orchestrator and implementer reasoning protocols injected on every UserPromptSubmit.
+ */
+export interface PluginDecisionTree {
+  /**
+   * Domain branches to merge into the orchestrator and implementer decision trees.
+   *
+   * @minItems 1
+   */
+  branches: [DecisionTreeBranch, ...DecisionTreeBranch[]];
+}
+/**
+ * A domain-specific branch contributed by a plugin to the agent decision tree. Branches extend the orchestrator and implementer reasoning protocols with domain context, helping agents form better search queries and classify work correctly.
+ */
+export interface DecisionTreeBranch {
+  /**
+   * The reasoning mode this branch applies to. Matches Step 1 classifications in the decision tree.
+   */
+  mode: string;
+  /**
+   * Unique domain key (lowercase, hyphenated). Used as the display label in the injected tree.
+   */
+  domain: string;
+  /**
+   * Human-readable description of when this domain applies. Shown inline in the decision tree injection.
+   */
+  description: string;
+  /**
+   * Comma-separated keywords that help the agent form a targeted search_semantic query when working in this domain.
+   */
+  search_context: string;
 }
 /**
  * Result of validating a plugin manifest at install time.
