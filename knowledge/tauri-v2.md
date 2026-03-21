@@ -1,7 +1,7 @@
 ---
 id: KNOW-c323ec5f
 title: Tauri v2 Development
-description: "Tauri v2 cross-platform app development with Rust backend. Use when configuring tauri.conf.json, implementing Rust commands (#[tauri::command]), setting up IPC patterns (invoke, emit, channels), configuring permissions/capabilities, troubleshooting build issues, or deploying desktop/mobile apps. Triggers on Tauri, src-tauri, invoke, emit, capabilities.json."
+description: Tauri v2 cross-platform app development with Rust backend. Use when configuring tauri.conf.json, implementing Rust commands (#[tauri::command]), setting up IPC patterns (invoke, emit, channels), configuring permissions/capabilities, troubleshooting build issues, or deploying desktop/mobile apps. Triggers on Tauri, src-tauri, invoke, emit, capabilities.json.
 status: active
 created: 2026-03-01
 updated: 2026-03-10
@@ -10,6 +10,8 @@ user-invocable: false
 relationships:
   - target: DOC-TAU-d9c0d1c7
     type: synchronised-with
+  - target: AGENT-RST-spec-a3f7d2b1
+    type: employed-by
 ---
 > Build cross-platform desktop and mobile apps with web frontends and Rust backends.
 
