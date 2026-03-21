@@ -63,6 +63,15 @@ LSP server imports graph-level checks from `libs/validation`. The 8 LSP file-lev
 
 `validate-artifact.mjs` hook delegates to MCP `graph_validate` instead of its own JS YAML parser. The hook becomes a thin adapter: call the tool, interpret the result, report to the pre-commit pipeline.
 
+### Phase 3.5 — Fix Graph Visualiser
+
+The graph visualiser view is currently broken or extremely slow with no loading indicator. Before integrating server-computed metrics, the visualiser must work reliably:
+
+1. **Diagnose and fix the loading issue** — determine if it's a data loading problem (slow Tauri command), rendering problem (Cytoscape choking on 1200+ nodes), or a missing loading state
+2. **Add proper loading spinner** — show `LoadingSpinner` while graph data loads and Cytoscape initialises
+3. **Fix any regressions from the skill→knowledge rename** — the `unusedSkills` → `unusedKnowledge` rename in `analysis.ts` and `types.ts` may have broken type references in consuming components
+4. **Performance optimisation** — if 1200+ nodes is too many for Cytoscape, implement progressive loading or level-of-detail rendering
+
 ### Phase 4 — Metrics Integration
 
 Graph visualiser calls server-computed metrics from `libs/validation` (via MCP) instead of running its own Cytoscape analysis. Dashboard clarity view and graph visualiser show identical numbers because they query the same source.
