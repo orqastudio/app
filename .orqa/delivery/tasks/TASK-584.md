@@ -1,9 +1,9 @@
 ---
 id: TASK-6675ad7c
 title: LSP server — real-time frontmatter validation
-status: captured
+status: active
 created: 2026-03-19
-updated: 2026-03-19
+updated: 2026-03-21
 relationships:
   - target: EPIC-6967c7dc
     type: delivers

@@ -1,9 +1,9 @@
 ---
 id: TASK-0751c0ff
 title: "Plugin packaging — dual-manifest, new commands, end-to-end testing"
-status: captured
+status: active
 created: 2026-03-19
-updated: 2026-03-19
+updated: 2026-03-21
 relationships:
   - target: EPIC-6967c7dc
     type: delivers

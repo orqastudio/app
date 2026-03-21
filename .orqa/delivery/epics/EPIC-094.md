@@ -45,6 +45,10 @@ relationships:
     type: delivered-by
   - target: TASK-ff8a8590
     type: delivered-by
+  - target: TASK-d6c514a7
+    type: delivered-by
+  - target: TASK-f36a6838
+    type: delivered-by
 ---
 
 # EPIC-6967c7dc: Claude Code Connector Rewrite

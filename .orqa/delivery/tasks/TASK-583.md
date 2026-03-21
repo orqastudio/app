@@ -1,9 +1,9 @@
 ---
 id: TASK-c9880303
 title: MCP server — Rust backend artifact graph API
-status: captured
+status: active
 created: 2026-03-19
-updated: 2026-03-19
+updated: 2026-03-21
 relationships:
   - target: EPIC-6967c7dc
     type: delivers

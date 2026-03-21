@@ -2,9 +2,9 @@
 id: TASK-907d579d
 type: task
 title: "Move domain skills to their respective plugins"
-status: captured
+status: surpassed
 created: 2026-03-19
-updated: 2026-03-19
+updated: 2026-03-21
 relationships:
   - target: EPIC-6967c7dc
     type: delivers
