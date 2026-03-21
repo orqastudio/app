@@ -413,6 +413,9 @@ fn integrity_check_to_diagnostic(
         IntegrityCategory::BodyTextRefWithoutRelationship => "[body-ref]",
         IntegrityCategory::ParentChildInconsistency => "[parent-child]",
         IntegrityCategory::DeliveryPathMismatch => "[delivery-path]",
+        IntegrityCategory::MissingType => "[missing-type]",
+        IntegrityCategory::MissingStatus => "[missing-status]",
+        IntegrityCategory::DuplicateRelationship => "[duplicate-relationship]",
     };
 
     let mut message = format!("{category_label} {}", check.message);
