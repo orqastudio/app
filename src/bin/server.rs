@@ -98,9 +98,8 @@ fn parse_args(args: &[String]) -> (PathBuf, Option<u16>) {
         i += 1;
     }
 
-    let root = project_root.unwrap_or_else(|| {
-        std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."))
-    });
+    let root = project_root
+        .unwrap_or_else(|| std::env::current_dir().unwrap_or_else(|_| PathBuf::from(".")));
 
     (root, tcp_port)
 }

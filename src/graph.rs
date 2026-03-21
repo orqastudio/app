@@ -10,7 +10,9 @@ use std::path::Path;
 use regex::Regex;
 
 use crate::error::LspError;
-use crate::types::{ArtifactEntry, ArtifactGraph, ArtifactNode, ArtifactRef, ProjectSettings, TypeRegistry};
+use crate::types::{
+    ArtifactEntry, ArtifactGraph, ArtifactNode, ArtifactRef, ProjectSettings, TypeRegistry,
+};
 
 // ---------------------------------------------------------------------------
 // Settings reader
@@ -152,7 +154,13 @@ fn walk_directory(
             if name.eq_ignore_ascii_case("README.md") {
                 continue;
             }
-            collect_node(&entry.path(), project_root, graph, type_registry, project_name)?;
+            collect_node(
+                &entry.path(),
+                project_root,
+                graph,
+                type_registry,
+                project_name,
+            )?;
         }
     }
 
@@ -506,7 +514,11 @@ mod tests {
     fn path_index_maps_path_to_id() {
         let tmp = tempfile::tempdir().expect("tempdir");
         let dir = tmp.path().join(".orqa/delivery/epics");
-        write_artifact(&dir, "EPIC-001.md", "---\nid: EPIC-001\ntitle: My Epic\n---\n");
+        write_artifact(
+            &dir,
+            "EPIC-001.md",
+            "---\nid: EPIC-001\ntitle: My Epic\n---\n",
+        );
         let graph = build_artifact_graph(tmp.path()).expect("build");
         let key = graph
             .path_index
@@ -560,7 +572,11 @@ mod tests {
         write_org_project_json(tmp.path(), "app", "app");
 
         let rules_dir = child_dir.join(".orqa/process/rules");
-        write_artifact(&rules_dir, "RULE-001.md", "---\nid: RULE-001\ntitle: Rule\n---\n");
+        write_artifact(
+            &rules_dir,
+            "RULE-001.md",
+            "---\nid: RULE-001\ntitle: Rule\n---\n",
+        );
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
 
@@ -580,9 +596,17 @@ mod tests {
 
         // Same ID in both root and child.
         let root_rules = tmp.path().join(".orqa/process/rules");
-        write_artifact(&root_rules, "RULE-001.md", "---\nid: RULE-001\ntitle: Root\n---\n");
+        write_artifact(
+            &root_rules,
+            "RULE-001.md",
+            "---\nid: RULE-001\ntitle: Root\n---\n",
+        );
         let child_rules = child_dir.join(".orqa/process/rules");
-        write_artifact(&child_rules, "RULE-001.md", "---\nid: RULE-001\ntitle: Child\n---\n");
+        write_artifact(
+            &child_rules,
+            "RULE-001.md",
+            "---\nid: RULE-001\ntitle: Child\n---\n",
+        );
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
 

@@ -160,10 +160,7 @@ pub fn validate_file(
     if has_status {
         for (i, line) in content.lines().enumerate() {
             if line.starts_with("status:") {
-                let status = line
-                    .trim_start_matches("status:")
-                    .trim()
-                    .trim_matches('"');
+                let status = line.trim_start_matches("status:").trim().trim_matches('"');
                 if !VALID_STATUSES.contains(&status) {
                     diagnostics.push(Diagnostic {
                         range: Range::new(
@@ -308,9 +305,7 @@ pub fn validate_file(
                         ),
                         severity: Some(DiagnosticSeverity::WARNING),
                         source: Some("orqastudio".into()),
-                        message: format!(
-                            "Relationship target \"{target}\" not found in graph"
-                        ),
+                        message: format!("Relationship target \"{target}\" not found in graph"),
                         ..Default::default()
                     });
                 }

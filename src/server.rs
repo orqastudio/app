@@ -72,7 +72,9 @@ impl OrqaLspBackend {
         let rel_path = self.relative_path(&uri);
         let graph = self.get_graph();
         let diagnostics = validate_file(&rel_path, content, graph.as_ref());
-        self.client.publish_diagnostics(uri, diagnostics, None).await;
+        self.client
+            .publish_diagnostics(uri, diagnostics, None)
+            .await;
     }
 }
 
@@ -109,11 +111,8 @@ impl LanguageServer for OrqaLspBackend {
     }
 
     async fn did_open(&self, params: DidOpenTextDocumentParams) {
-        self.validate_and_publish(
-            params.text_document.uri,
-            &params.text_document.text,
-        )
-        .await;
+        self.validate_and_publish(params.text_document.uri, &params.text_document.text)
+            .await;
     }
 
     async fn did_change(&self, params: DidChangeTextDocumentParams) {
@@ -154,8 +153,7 @@ pub async fn run_stdio(project_root: &Path) -> Result<(), Box<dyn std::error::Er
     let stdout = tokio::io::stdout();
 
     let project_root = project_root.to_path_buf();
-    let (service, socket) =
-        LspService::new(|client| OrqaLspBackend::new(client, project_root));
+    let (service, socket) = LspService::new(|client| OrqaLspBackend::new(client, project_root));
     Server::new(stdin, stdout, socket).serve(service).await;
 
     Ok(())
@@ -175,8 +173,7 @@ pub async fn run_tcp(project_root: &Path, port: u16) -> Result<(), Box<dyn std::
     let (read, write) = tokio::io::split(stream);
 
     let project_root = project_root.to_path_buf();
-    let (service, socket) =
-        LspService::new(|client| OrqaLspBackend::new(client, project_root));
+    let (service, socket) = LspService::new(|client| OrqaLspBackend::new(client, project_root));
     Server::new(read, write, socket).serve(service).await;
 
     Ok(())
