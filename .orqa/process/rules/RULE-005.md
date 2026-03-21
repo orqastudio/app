@@ -5,6 +5,7 @@ description: "Prefer semantic search over Grep/Glob for multi-file searches. Loa
 status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
+enforcement: "agent system prompt — orchestrator and all subagents are instructed to prefer semantic search; code-reviewer checks for Grep/Glob usage in multi-file searches"
 relationships:
   - target: "AD-99c2a969"
     type: "enforces"

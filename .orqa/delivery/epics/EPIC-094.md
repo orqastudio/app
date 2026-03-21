@@ -31,6 +31,20 @@ relationships:
     type: driven-by
   - target: AD-48593e40
     type: driven-by
+  - target: TASK-30b1a23d
+    type: delivered-by
+  - target: TASK-b2518dd2
+    type: delivered-by
+  - target: TASK-dc8d94c3
+    type: delivered-by
+  - target: TASK-74e31e06
+    type: delivered-by
+  - target: TASK-b331119d
+    type: delivered-by
+  - target: TASK-c72d3ebd
+    type: delivered-by
+  - target: TASK-ff8a8590
+    type: delivered-by
 ---
 
 # EPIC-6967c7dc: Claude Code Connector Rewrite

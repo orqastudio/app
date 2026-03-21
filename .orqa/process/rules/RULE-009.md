@@ -5,6 +5,7 @@ description: "Project-level rule for when an app is editing itself. Provides age
 status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
+enforcement: "agent system prompt — dogfood context injected into agent system prompt when dogfood: true; enforcement gap priority enforced by orchestrator at session start"
 relationships:
   - target: "AD-6ce44025"
     type: "enforces"

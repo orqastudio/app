@@ -5,6 +5,7 @@ description: "Test organisation, coverage requirements, mock boundaries, and iso
 status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
+enforcement: "pre-commit hook — make check runs make test-rust and make test-frontend; cargo tarpaulin enforces 80% coverage per module"
 relationships:
   - target: "AD-e156310d"
     type: "enforces"

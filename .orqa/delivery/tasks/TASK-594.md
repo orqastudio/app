@@ -2,9 +2,9 @@
 id: TASK-e9a4f8f3
 type: task
 title: "Implement session management in the connector — state persistence, scope tracking, clean handoff"
-status: captured
+status: completed
 created: 2026-03-19
-updated: 2026-03-19
+updated: 2026-03-21
 relationships:
   - target: EPIC-6967c7dc
     type: delivers

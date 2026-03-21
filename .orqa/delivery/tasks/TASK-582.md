@@ -1,9 +1,9 @@
 ---
 id: TASK-cd24193f
 title: Hook improvements — validate-artifact, save-context, subagent-review
-status: captured
+status: completed
 created: 2026-03-19
-updated: 2026-03-19
+updated: 2026-03-21
 relationships:
   - target: EPIC-6967c7dc
     type: delivers

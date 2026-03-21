@@ -5,6 +5,7 @@ description: "All code must comply with architecture decisions in .orqa/process/
 status: "active"
 created: "2026-03-07"
 updated: "2026-03-10"
+enforcement: "agent system prompt — orchestrator reads decisions before delegating; plan-mode compliance section verifies all relevant decisions"
 relationships:
   - target: "AD-fc646168"
     type: "governed-by"

@@ -5,6 +5,7 @@ description: "Every feature must be implemented across all layers (Rust command,
 status: "active"
 created: "2026-03-07"
 updated: "2026-03-13"
+enforcement: "pre-commit hook — code-reviewer agent verifies all four layers exist and are consistent before marking any feature task done"
 relationships:
   - target: "AD-1d928079"
     type: "enforces"

@@ -1,0 +1,43 @@
+---
+id: TASK-30b1a23d
+type: task
+title: "Rust crate migration — read plugin manifests instead of core.json"
+description: "Update libs/validation, libs/lsp-server, and libs/mcp-server to read artifact type definitions and relationships from plugin manifests (orqa-plugin.json) instead of the monolithic core.json file."
+status: captured
+created: 2026-03-21
+updated: 2026-03-21
+acceptance:
+  - libs/validation reads artifact schemas from plugin manifests, not core.json
+  - libs/lsp-server reads type/relationship definitions from plugin manifests
+  - libs/mcp-server reads artifact graph configuration from plugin manifests
+  - core.json is no longer required at runtime for these three crates
+  - cargo clippy -- -D warnings passes with zero warnings
+  - cargo test passes for all three crates
+relationships:
+  - target: EPIC-6967c7dc
+    type: delivers
+---
+
+## What
+
+The three Rust library crates (`libs/validation`, `libs/lsp-server`, `libs/mcp-server`) currently source artifact type definitions and relationship schemas from the monolithic `core.json` file. As the plugin system matures, these definitions live in individual plugin manifests (`orqa-plugin.json`). This task migrates each crate to read from the distributed plugin manifests instead.
+
+## Why
+
+`core.json` is a centralised coupling point that breaks the plugin model. Each plugin should be self-describing via its manifest. Reading from manifests enables third-party plugins to extend validation, LSP, and MCP behaviour without touching core files.
+
+## How
+
+1. Audit each crate for `core.json` read paths — use `search_regex "core.json"` scoped to `libs/`
+2. For each crate, identify which fields are consumed from `core.json`
+3. Map those fields to their equivalent locations in `orqa-plugin.json` manifest schemas
+4. Update the crate's config loading logic to aggregate across all installed plugin manifests
+5. Remove the `core.json` dependency from each crate's `Cargo.toml` if applicable
+6. Run `make lint-backend` and `make test-rust` to verify
+
+## Verification
+
+1. `search_regex "core.json"` in `libs/` returns zero matches in non-test code
+2. `make lint-backend` passes
+3. `make test-rust` passes
+4. Validation, LSP, and MCP features work end-to-end with a project that has no `core.json`

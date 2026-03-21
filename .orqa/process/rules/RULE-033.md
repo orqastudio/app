@@ -5,6 +5,7 @@ description: "Use shadcn Tooltip components for hover hints instead of native HT
 status: "active"
 created: "2026-03-10"
 updated: "2026-03-10"
+enforcement: "code review — code-reviewer rejects title attributes on interactive elements; ESLint rule can be added to catch title attribute usage in Svelte components"
 relationships:
   - target: "AD-8d552e96"
     type: "enforces"

@@ -5,6 +5,7 @@ description: "Check shared component library before creating new UI elements. Us
 status: "active"
 created: "2026-03-07"
 updated: "2026-03-11"
+enforcement: "code review — code-reviewer rejects inline empty states, spinners, and error displays when shared components exist; knowledge injection on ui/src/lib/components/** writes"
 relationships:
   - target: "DOC-52bbfba5"
     type: "documented-by"
