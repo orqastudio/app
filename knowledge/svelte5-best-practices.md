@@ -7,14 +7,16 @@ created: 2026-03-01
 updated: 2026-03-10
 category: domain
 file-patterns:
-  - "ui/src/lib/components/**"
-  - "ui/src/lib/stores/**"
+  - ui/src/lib/components/**
+  - ui/src/lib/stores/**
 user-invocable: false
 license: MIT
 metadata: null
 relationships:
   - target: DOC-SVE-5d832d1d
     type: synchronised-with
+  - target: AGENT-SVE-spec-c8e4f9a2
+    type: employed-by
 ---
 
 

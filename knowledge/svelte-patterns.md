@@ -7,6 +7,8 @@ plugin: "@orqastudio/plugin-svelte"
 relationships:
   - target: DOC-SVE-5d832d1d
     type: synchronised-with
+  - target: AGENT-SVE-spec-c8e4f9a2
+    type: employed-by
 ---
 
 # Svelte 5 Patterns
