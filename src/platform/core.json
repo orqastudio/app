@@ -14,7 +14,13 @@
     { "key": "agent", "label": "Agent", "icon": "bot", "idPrefix": "AGENT" },
     { "key": "doc", "label": "Document", "icon": "file-text", "idPrefix": "DOC" },
     { "key": "pivot", "label": "Pivot", "icon": "refresh-cw", "idPrefix": "PIVOT" },
-    { "key": "bug", "label": "Bug", "icon": "bug", "idPrefix": "BUG" }
+    { "key": "bug", "label": "Bug", "icon": "bug", "idPrefix": "BUG" },
+    { "key": "milestone", "label": "Milestone", "icon": "flag", "idPrefix": "MS" },
+    { "key": "epic", "label": "Epic", "icon": "target", "idPrefix": "EPIC" },
+    { "key": "task", "label": "Task", "icon": "check-square", "idPrefix": "TASK" },
+    { "key": "research", "label": "Research", "icon": "microscope", "idPrefix": "RES" },
+    { "key": "wireframe", "label": "Wireframe", "icon": "layout", "idPrefix": "WF" },
+    { "key": "grounding", "label": "Grounding", "icon": "anchor", "idPrefix": "GND" }
   ],
 
   "relationships": [
@@ -165,14 +171,18 @@
       "semantic": "knowledge-flow"
     },
     {
-      "key": "observes",
-      "inverse": "observed-by",
-      "label": "Observes",
-      "inverseLabel": "Observed By",
+      "key": "serves",
+      "inverse": "served-by",
+      "label": "Serves",
+      "inverseLabel": "Served By",
       "from": ["agent"],
-      "to": ["epic", "task", "decision", "rule", "milestone"],
-      "description": "Agent monitors an artifact",
-      "semantic": "observation"
+      "to": ["pillar", "persona"],
+      "description": "Agent is accountable to a foundational principle",
+      "semantic": "foundation",
+      "constraints": {
+        "required": true,
+        "minCount": 1
+      }
     },
     {
       "key": "employs",
@@ -182,7 +192,7 @@
       "from": ["agent"],
       "to": ["knowledge"],
       "description": "Agent employs a knowledge capability",
-      "semantic": "observation",
+      "semantic": "agency",
       "constraints": {
         "required": true,
         "minCount": 1
@@ -236,13 +246,61 @@
         "required": true,
         "minCount": 1
       }
+    },
+    {
+      "key": "delivers",
+      "inverse": "delivered-by",
+      "label": "Delivers",
+      "inverseLabel": "Delivered By",
+      "from": ["task"],
+      "to": ["epic"],
+      "description": "Task delivers work for an epic",
+      "semantic": "delivery",
+      "constraints": {
+        "required": true,
+        "minCount": 1
+      }
+    },
+    {
+      "key": "fulfils",
+      "inverse": "fulfilled-by",
+      "label": "Fulfils",
+      "inverseLabel": "Fulfilled By",
+      "from": ["epic"],
+      "to": ["milestone"],
+      "description": "Epic fulfils a milestone objective",
+      "semantic": "delivery",
+      "constraints": {
+        "required": true,
+        "minCount": 1
+      }
+    },
+    {
+      "key": "depends-on",
+      "inverse": "depended-on-by",
+      "label": "Depends On",
+      "inverseLabel": "Depended On By",
+      "from": ["task"],
+      "to": ["task"],
+      "description": "Task depends on another task completing first",
+      "semantic": "delivery"
+    },
+    {
+      "key": "implements",
+      "inverse": "implemented-by",
+      "label": "Implements",
+      "inverseLabel": "Implemented By",
+      "from": ["task", "epic"],
+      "to": ["decision"],
+      "description": "Work directly implements a decision",
+      "semantic": "delivery"
     }
   ],
 
   "semantics": {
     "foundation": {
-      "description": "Relationships anchoring the foundational layer — vision, pillars, personas, and changes to them",
-      "keys": ["upholds", "upheld-by", "grounded", "grounded-by", "benefits", "benefited-by", "revises", "revised-by"]
+      "description": "Relationships anchoring the foundational layer — vision, pillars, personas, agents, and changes to them",
+      "keys": ["upholds", "upheld-by", "grounded", "grounded-by", "benefits", "benefited-by", "revises", "revised-by", "serves", "served-by"]
     },
     "lineage": {
       "description": "Relationships establishing artifact succession — one thing becoming or spawning another",
@@ -256,9 +314,13 @@
       "description": "Relationships where knowledge flows between artifacts",
       "keys": ["informs", "informed-by", "teaches", "taught-by", "guides", "guided-by", "cautions", "cautioned-by", "documents", "documented-by"]
     },
-    "observation": {
-      "description": "Relationships where agents monitor and use capabilities",
-      "keys": ["observes", "observed-by", "employs", "employed-by"]
+    "agency": {
+      "description": "Relationships where agents consume knowledge capabilities",
+      "keys": ["employs", "employed-by"]
+    },
+    "delivery": {
+      "description": "Relationships structuring the delivery hierarchy — milestones, epics, tasks, and dependencies",
+      "keys": ["delivers", "delivered-by", "fulfils", "fulfilled-by", "depends-on", "depended-on-by", "implements", "implemented-by"]
     },
     "synchronisation": {
       "description": "Paired content kept in sync",
