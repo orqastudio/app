@@ -22,6 +22,7 @@ pub enum IntegrityCategory {
     MissingType,
     MissingStatus,
     DuplicateRelationship,
+    FilenameMismatch,
 }
 
 /// Severity of an integrity finding.
