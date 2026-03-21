@@ -32,21 +32,34 @@
 			traceabilityError = null;
 			return;
 		}
+
+		// Track whether this effect instance is still current.
+		// When the user navigates to a different artifact, the previous
+		// effect's cleanup runs, setting stale=true so the old promise's
+		// callbacks don't write to state (preventing memory leak).
+		let stale = false;
+
 		traceabilityLoading = true;
 		traceabilityError = null;
 		artifactGraphSDK
 			.getTraceability(id)
 			.then((result) => {
-				traceabilityResult = result;
+				if (!stale) traceabilityResult = result;
 			})
 			.catch((err: unknown) => {
-				traceabilityError =
-					err instanceof Error ? err.message : String(err);
-				traceabilityResult = null;
+				if (!stale) {
+					traceabilityError =
+						err instanceof Error ? err.message : String(err);
+					traceabilityResult = null;
+				}
 			})
 			.finally(() => {
-				traceabilityLoading = false;
+				if (!stale) traceabilityLoading = false;
 			});
+
+		return () => {
+			stale = true;
+		};
 	});
 
 	const content = $derived(artifactStore.activeContent);
