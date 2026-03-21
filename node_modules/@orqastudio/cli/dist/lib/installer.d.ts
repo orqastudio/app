@@ -5,7 +5,9 @@
  * Local path installs are also supported for development.
  *
  * Post-install setup (runPostInstallSetup):
- * - Creates .claude/agents → .orqa/process/agents/ symlink
+ * - Creates .claude/agents/ as a merged directory of core + plugin agents
+ *   Core agents are symlinked from app/.orqa/process/agents/ (or .orqa/process/agents/).
+ *   Plugin agents declared via provides.agents in orqa-plugin.json are symlinked alongside.
  * - Creates .claude/rules → .orqa/process/rules/ symlink
  * - Aggregates lspServers/mcpServers from all plugin manifests → .lsp.json/.mcp.json
  * NOTE: .claude/CLAUDE.md is NOT managed here — it is a Claude Code project artifact
@@ -55,12 +57,17 @@ export declare function listInstalledPlugins(projectRoot?: string): InstallResul
 export interface PostInstallResult {
     symlinkAgents: "created" | "skipped" | "exists";
     symlinkRules: "created" | "skipped" | "exists";
+    pluginAgentCount: number;
     lspCount: number;
     mcpCount: number;
 }
 /**
  * Run post-install setup for the Claude Code connector:
- * 1. Create .claude/agents → .orqa/process/agents/ symlink
+ * 1. Build .claude/agents/ as a merged directory containing symlinks to:
+ *    - All core agents from app/.orqa/process/agents/ (or .orqa/process/agents/)
+ *    - All plugin agents declared via provides.agents in installed plugin manifests
+ *    Plugin agents are keyed by their manifest `key` field (e.g. "rust-specialist").
+ *    Core agents take precedence: a plugin cannot shadow a core agent filename.
  * 2. Create .claude/rules → .orqa/process/rules/ symlink
  * 3. Aggregate lspServers/mcpServers from all plugins/connectors → .lsp.json/.mcp.json
  *    written into the connector's plugin directory.

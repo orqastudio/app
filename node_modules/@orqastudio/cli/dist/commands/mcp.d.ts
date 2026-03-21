@@ -2,7 +2,8 @@
  * MCP proxy command — connects to the running OrqaStudio app's IPC socket
  * and bridges stdin/stdout ↔ TCP for MCP protocol messages.
  *
- * If the app isn't running, falls back to spawning orqa-studio --mcp directly.
+ * If the app isn't running, falls back to the standalone MCP server crate
+ * (libs/mcp-server) via cargo run.
  *
  * orqa mcp [project-path]
  */

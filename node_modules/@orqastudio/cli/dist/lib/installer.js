@@ -5,7 +5,9 @@
  * Local path installs are also supported for development.
  *
  * Post-install setup (runPostInstallSetup):
- * - Creates .claude/agents → .orqa/process/agents/ symlink
+ * - Creates .claude/agents/ as a merged directory of core + plugin agents
+ *   Core agents are symlinked from app/.orqa/process/agents/ (or .orqa/process/agents/).
+ *   Plugin agents declared via provides.agents in orqa-plugin.json are symlinked alongside.
  * - Creates .claude/rules → .orqa/process/rules/ symlink
  * - Aggregates lspServers/mcpServers from all plugin manifests → .lsp.json/.mcp.json
  * NOTE: .claude/CLAUDE.md is NOT managed here — it is a Claude Code project artifact
@@ -249,7 +251,11 @@ export function listInstalledPlugins(projectRoot) {
 }
 /**
  * Run post-install setup for the Claude Code connector:
- * 1. Create .claude/agents → .orqa/process/agents/ symlink
+ * 1. Build .claude/agents/ as a merged directory containing symlinks to:
+ *    - All core agents from app/.orqa/process/agents/ (or .orqa/process/agents/)
+ *    - All plugin agents declared via provides.agents in installed plugin manifests
+ *    Plugin agents are keyed by their manifest `key` field (e.g. "rust-specialist").
+ *    Core agents take precedence: a plugin cannot shadow a core agent filename.
  * 2. Create .claude/rules → .orqa/process/rules/ symlink
  * 3. Aggregate lspServers/mcpServers from all plugins/connectors → .lsp.json/.mcp.json
  *    written into the connector's plugin directory.
@@ -273,11 +279,13 @@ export function runPostInstallSetup(projectRoot, connectorPluginDir) {
     const agentsSource = fs.existsSync(path.join(appOrqaDir, "process", "agents"))
         ? path.join(appOrqaDir, "process", "agents")
         : path.join(orqaDir, "process", "agents");
-    const symlinkAgents = setupSymlink(path.join(claudeDir, "agents"), agentsSource);
+    // Build the merged .claude/agents/ directory with core + plugin agent symlinks.
+    const symlinkAgents = setupMergedAgentsDir(path.join(claudeDir, "agents"), agentsSource, projectRoot);
     const symlinkRules = setupSymlink(path.join(claudeDir, "rules"), path.join(orqaDir, "process", "rules"));
     const { lsp, mcp } = aggregateServers(projectRoot);
+    const pluginAgentCount = countPluginAgents(projectRoot);
     const lspPath = path.join(connectorPluginDir, ".lsp.json");
-    const mcpPath = path.join(connectorPluginDir, ".mcp.json");
+    const mcpPath = path.join(projectRoot, ".mcp.json");
     const newLsp = JSON.stringify(lsp, null, 2);
     const existingLsp = fs.existsSync(lspPath) ? fs.readFileSync(lspPath, "utf-8") : "";
     if (newLsp !== existingLsp) {
@@ -291,9 +299,139 @@ export function runPostInstallSetup(projectRoot, connectorPluginDir) {
     return {
         symlinkAgents,
         symlinkRules,
+        pluginAgentCount,
         lspCount: Object.keys(lsp).length,
         mcpCount: Object.keys(mcp).length,
     };
+}
+/**
+ * Build or repair the .claude/agents/ merged directory.
+ *
+ * Strategy:
+ * - If the path is an old-style symlink pointing to a directory, remove it and
+ *   recreate as a real directory. This migrates existing installs transparently.
+ * - Create the directory if it doesn't exist.
+ * - Symlink every core agent .md file from agentsSource into the directory.
+ * - Symlink every plugin agent declared in provides.agents from installed plugins.
+ *   Plugin agents are skipped if a core agent with the same filename already exists.
+ *
+ * Returns:
+ * - "created": directory was newly created (or migrated from a symlink)
+ * - "exists": directory already existed and was updated in-place
+ * - "skipped": agentsSource does not exist — nothing to link
+ */
+function setupMergedAgentsDir(agentsDirPath, coreAgentsSource, projectRoot) {
+    if (!fs.existsSync(coreAgentsSource)) {
+        return "skipped";
+    }
+    let wasCreated = false;
+    // Migrate: if it's a symlink, remove it so we can create a real directory
+    try {
+        const stat = fs.lstatSync(agentsDirPath);
+        if (stat.isSymbolicLink()) {
+            fs.unlinkSync(agentsDirPath);
+            wasCreated = true;
+        }
+    }
+    catch {
+        // Path does not exist — will be created below
+        wasCreated = true;
+    }
+    if (!fs.existsSync(agentsDirPath)) {
+        fs.mkdirSync(agentsDirPath, { recursive: true });
+        wasCreated = true;
+    }
+    // Collect core agent filenames so we can detect conflicts
+    const coreAgentFiles = new Set();
+    for (const entry of fs.readdirSync(coreAgentsSource)) {
+        if (!entry.endsWith(".md"))
+            continue;
+        coreAgentFiles.add(entry);
+        const linkPath = path.join(agentsDirPath, entry);
+        const targetPath = path.join(coreAgentsSource, entry);
+        ensureAgentSymlink(linkPath, targetPath);
+    }
+    // Link plugin agents
+    const pluginsDir = path.join(projectRoot, "plugins");
+    if (fs.existsSync(pluginsDir)) {
+        for (const entry of fs.readdirSync(pluginsDir, { withFileTypes: true })) {
+            if (!entry.isDirectory() || entry.name.startsWith("."))
+                continue;
+            const pluginDir = path.join(pluginsDir, entry.name);
+            const manifestPath = path.join(pluginDir, "orqa-plugin.json");
+            if (!fs.existsSync(manifestPath))
+                continue;
+            try {
+                const raw = fs.readFileSync(manifestPath, "utf-8");
+                const manifest = JSON.parse(raw);
+                const agentEntries = manifest.provides?.agents ?? [];
+                for (const agentEntry of agentEntries) {
+                    const agentFile = path.basename(agentEntry.path);
+                    // Core agents take precedence — never shadow them
+                    if (coreAgentFiles.has(agentFile))
+                        continue;
+                    const targetPath = path.join(pluginDir, agentEntry.path);
+                    if (!fs.existsSync(targetPath))
+                        continue;
+                    const linkPath = path.join(agentsDirPath, agentFile);
+                    ensureAgentSymlink(linkPath, targetPath);
+                }
+            }
+            catch {
+                // Skip plugins with invalid manifests
+            }
+        }
+    }
+    return wasCreated ? "created" : "exists";
+}
+/**
+ * Create or verify a symlink at linkPath pointing to targetPath.
+ * If a symlink already exists at linkPath pointing to the correct target, leave it.
+ * If a stale symlink or file exists, replace it.
+ */
+function ensureAgentSymlink(linkPath, targetPath) {
+    try {
+        const stat = fs.lstatSync(linkPath);
+        if (stat.isSymbolicLink()) {
+            const current = fs.readlinkSync(linkPath);
+            if (current === targetPath)
+                return; // Already correct
+            fs.unlinkSync(linkPath);
+        }
+        else {
+            // Regular file — leave it (manual override)
+            return;
+        }
+    }
+    catch {
+        // Does not exist — fall through to create
+    }
+    fs.symlinkSync(targetPath, linkPath, "file");
+}
+/**
+ * Count the total number of plugin agent entries across all installed plugins.
+ */
+function countPluginAgents(projectRoot) {
+    let count = 0;
+    const pluginsDir = path.join(projectRoot, "plugins");
+    if (!fs.existsSync(pluginsDir))
+        return count;
+    for (const entry of fs.readdirSync(pluginsDir, { withFileTypes: true })) {
+        if (!entry.isDirectory() || entry.name.startsWith("."))
+            continue;
+        const manifestPath = path.join(pluginsDir, entry.name, "orqa-plugin.json");
+        if (!fs.existsSync(manifestPath))
+            continue;
+        try {
+            const raw = fs.readFileSync(manifestPath, "utf-8");
+            const manifest = JSON.parse(raw);
+            count += manifest.provides?.agents?.length ?? 0;
+        }
+        catch {
+            // Skip invalid
+        }
+    }
+    return count;
 }
 /**
  * Create a symlink from linkPath → targetPath.
@@ -353,7 +491,9 @@ function aggregateServers(projectRoot) {
                 if (provides.mcpServers && typeof provides.mcpServers === "object") {
                     for (const [name, config] of Object.entries(provides.mcpServers)) {
                         if (!(name in mcp)) {
-                            mcp[name] = config;
+                            // Strip "type" field — Claude Code doesn't use it
+                            const { type, ...mcpConfig } = config;
+                            mcp[name] = mcpConfig;
                         }
                     }
                 }
