@@ -21,7 +21,7 @@ use tower_lsp::{Client, LanguageServer, LspService, Server};
 
 use crate::graph::build_artifact_graph;
 use crate::types::ArtifactGraph;
-use crate::validation::validate_file;
+use crate::validation::{validate_file, validate_graph_checks};
 
 // ---------------------------------------------------------------------------
 // Backend state
@@ -67,11 +67,37 @@ impl OrqaLspBackend {
             .replace('\\', "/")
     }
 
+    /// Extract the `id:` value from YAML frontmatter, if present.
+    fn extract_artifact_id(content: &str) -> Option<String> {
+        if !content.starts_with("---\n") {
+            return None;
+        }
+        let end = content[4..].find("\n---")?;
+        let frontmatter = &content[4..end + 4];
+        frontmatter
+            .lines()
+            .find(|l| l.starts_with("id:"))
+            .map(|l| l.trim_start_matches("id:").trim().trim_matches('"').to_owned())
+    }
+
     /// Validate `content` at `uri` and publish diagnostics to the client.
+    ///
+    /// Combines file-level checks (fast, single-file) with graph-level checks
+    /// (comprehensive, full graph scan via `orqa_validation`).
     async fn validate_and_publish(&self, uri: Url, content: &str) {
         let rel_path = self.relative_path(&uri);
         let graph = self.get_graph();
-        let diagnostics = validate_file(&rel_path, content, graph.as_ref());
+
+        // File-level checks: frontmatter syntax, required fields, status, IDs.
+        let mut diagnostics = validate_file(&rel_path, content, graph.as_ref());
+
+        // Graph-level checks: broken refs, missing inverses, type constraints,
+        // cardinality, cycles — delegated to orqa_validation.
+        let artifact_id = Self::extract_artifact_id(content);
+        let graph_diagnostics =
+            validate_graph_checks(&self.project_root, artifact_id.as_deref());
+        diagnostics.extend(graph_diagnostics);
+
         self.client
             .publish_diagnostics(uri, diagnostics, None)
             .await;

@@ -489,6 +489,7 @@ name = "orqa-lsp-server"
 version = "0.1.0-dev"
 dependencies = [
  "lsp-types 0.95.1",
+ "orqa-validation",
  "regex",
  "serde",
  "serde_json",
@@ -499,6 +500,18 @@ dependencies = [
  "tower-lsp",
  "tracing",
  "tracing-subscriber",
+]
+
+[[package]]
+name = "orqa-validation"
+version = "0.1.0-dev"
+dependencies = [
+ "regex",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "thiserror",
+ "tracing",
 ]
 
 [[package]]
