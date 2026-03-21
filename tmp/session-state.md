@@ -1,4 +1,4 @@
-## Session: 2026-03-21T15:56:06Z
+## Session: 2026-03-21T16:46:30Z
 
 ### Active Epics
 - EPIC-fd22ca6c: Dashboard & artifact viewer UAT fixes
@@ -13,11 +13,11 @@
 - TASK-367f0026: Fix connector basics — path bugs, intent mappings, license, dual manifests
 
 ### Recent Commits
-f3d1eb3 EPIC-101 Phases 1-2: decision tree + hook update
-f3b76c1 AD-064 + EPIC-101: Inference-time decision tree for knowledge discovery
-3c88fa1 Schema-driven type system + type unification (EPIC-100 cleanup)
-4727b06 Expand idea: self-navigating decision tree, agent-driven knowledge discovery
-91e7102 Log idea: semantic prompt classification for orchestrator (IDEA-a3f2c17e)
+73136fc ONNX-only prompt classification — no keywords
+49403ff ONNX-driven prompt classification + slim injection
+cb9e17d Slim decision tree injection to ~25 tokens
+175ce72 EPIC-101 complete — decision tree for self-navigating knowledge discovery
+34d975c Agent-specific trees + plugin extension model (EPIC-101 Phases 3-4)
 
 ### Uncommitted Changes
 6 files with uncommitted changes

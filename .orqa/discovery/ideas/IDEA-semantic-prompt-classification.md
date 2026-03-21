@@ -124,3 +124,21 @@ Plugins add branches to the tree:
 - Graceful degradation (works with or without embeddings server)
 - Plugin-extensible (plugins add branches, not injection rules)
 - Foundation for agent-specific trees (orchestrator, implementer, reviewer get different questions)
+
+## Cross-Project Learning (Future)
+
+The classification mode descriptions improve over time as the learning loop captures corrections. Three dimensions:
+
+**1. Opt-in telemetry** — projects that choose to share their classification corrections contribute to improving the global starting prompt. Strictly opt-in, anonymised, user-controlled. This is about democratising AI tooling, not data extraction. Users must be able to opt out completely with zero impact on their local experience.
+
+**2. Global prompt evolution** — across consenting projects, classification corrections aggregate into improved starting descriptions. "Users who expected learning-loop mode but got implementation when saying X" refines the learning-loop description for everyone. Same governance pipeline (observation → lesson → rule) applied cross-project.
+
+**3. AI-driven semantic merge for upgrades** — when a new version ships with improved classification prompts, it cannot overwrite local project refinements. An AI merge process must:
+- Take the new global prompt (improved from cross-project learning)
+- Take the local project's refinements (lessons that corrected classifications locally)
+- Merge so local learnings are preserved but global improvements are incorporated
+- Flag conflicts for human review rather than silently overwriting
+
+This is a semantic merge — understanding the intent of both versions, not just diffing text. The separate-artifacts-per-mode architecture makes this tractable: each mode description is independently mergeable.
+
+**Privacy principle:** The system must be as useful for projects that share nothing as for those that share everything. Opt-in telemetry is an enhancement, not a requirement. Local learning always works.
