@@ -47,8 +47,13 @@ UNCOMMITTED_COUNT=$(echo "$UNCOMMITTED_FILES" | grep -c '.' 2>/dev/null || echo 
 # Check if the file was written recently (within last 60 seconds) by the agent
 WRITE_STATE=true
 if [ -f "$SESSION_FILE" ]; then
-  # If file was modified in the last 60 seconds, the agent likely wrote it — don't overwrite
-  if find "$SESSION_FILE" -mmin -1 2>/dev/null | grep -q .; then
+  # If the file contains orchestrator-maintained content (step checklists,
+  # architecture decisions), never overwrite — regardless of age.
+  # The orchestrator updates session state in real time (RULE-4f7e2a91).
+  if grep -q "^### Steps\|^### Completed\|^- \[x\]\|^- \[ \]" "$SESSION_FILE" 2>/dev/null; then
+    WRITE_STATE=false
+  # Fallback: if modified in the last 60 seconds, preserve it
+  elif find "$SESSION_FILE" -mmin -1 2>/dev/null | grep -q .; then
     WRITE_STATE=false
   fi
 fi
