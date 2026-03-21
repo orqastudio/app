@@ -15,7 +15,7 @@ fn main() {
     // Initialise tracing — output to stderr so it doesn't pollute the JSON-RPC stdout stream.
     tracing_subscriber::fmt()
         .with_env_filter(
-            EnvFilter::try_from_env("ORQA_LOG").unwrap_or_else(|_| EnvFilter::new("warn")),
+            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")),
         )
         .with_writer(std::io::stderr)
         .init();
