@@ -118,7 +118,7 @@ const MODE_TEMPLATES = {
 // Behavioral rules injected into EVERY mode (appended after mode-specific content).
 // These enforce rules that were removed from the orchestrator system prompt when it
 // was cleaned to be generic. Without these, behavioral rules have no enforcement.
-const BEHAVIORAL_RULES = "For every new artifact or insight: trace to all usage contexts (milestones, rules, pillars, epics) before moving on. Never offer to stop or wrap up — keep working until the user says stop. Use agent teams (TeamCreate) for multi-step work — understand task dependencies before delegating.";
+const BEHAVIORAL_RULES = "For every new artifact or insight: trace to all usage contexts (milestones, rules, pillars, epics) before moving on. Never offer to stop or wrap up — keep working until the user says stop. Use agent teams (TeamCreate) for multi-step work — understand task dependencies before delegating. When an epic is scoped: sync session state steps and task list with the epic's tasks — work against the epic's defined tasks, not ad-hoc.";
 
 const FALLBACK_CLASSIFICATION_PROMPT =
   `Classify this prompt before responding: implementation | research | learning-loop | planning | review | debugging | documentation. If learning-loop: capture as lesson first. Then proceed with the appropriate approach. ${BEHAVIORAL_RULES}`;
@@ -398,7 +398,7 @@ async function main() {
   // Step 5: Check session state freshness.
   const sessionReminder = checkSessionState(projectDir);
 
-  const sessionConstant = "Remember: tmp/session-state.md is your working document. It MUST include the scoped epic (EPIC-XXXXXXXX) so the stop hook can check completion. Update it when scope changes, decisions are made, or steps complete.";
+  const sessionConstant = "Remember: tmp/session-state.md is your working document. It MUST include the scoped epic (EPIC-XXXXXXXX) so the stop hook can check completion. When an epic is scoped, sync session state steps AND task list with the epic's artifact tasks — work against the epic's defined tasks, not ad-hoc. Update session state when scope changes, decisions are made, or steps complete.";
 
   let systemMessage = `${preamble}\n\n${modeInjection}\n\n${contextLine}\n\n${sessionConstant}`;
   if (sessionReminder) {
