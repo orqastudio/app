@@ -372,11 +372,12 @@ pub fn validate_graph_checks(project_root: &Path, artifact_id: Option<&str>) -> 
         Err(_) => return Vec::new(),
     };
 
+    let plugin_contributions = orqa_validation::platform::scan_plugin_manifests(project_root);
     let ctx = orqa_validation::build_validation_context(
         &[],
         &orqa_validation::settings::DeliveryConfig::default(),
         &[],
-        &[],
+        &plugin_contributions.relationships,
     );
 
     let checks = orqa_validation::validate(&graph, &ctx);

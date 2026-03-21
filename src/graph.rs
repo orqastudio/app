@@ -69,12 +69,25 @@ fn build_type_registry(settings: Option<&ProjectSettings>) -> TypeRegistry {
 pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, LspError> {
     let settings = read_project_settings(project_path)?;
     let type_registry = build_type_registry(settings.as_ref());
+
+    // Merge static platform types with plugin-contributed types for ID-prefix inference.
+    let mut platform_types: Vec<crate::platform::ArtifactTypeDef> =
+        crate::platform::PLATFORM.artifact_types.clone();
+    platform_types.extend(crate::platform::scan_plugin_manifests(project_path));
+
     let orqa_dir = project_path.join(".orqa");
 
     let mut graph = ArtifactGraph::default();
 
     // Pass 1a: walk the project's own .orqa/
-    walk_directory(&orqa_dir, project_path, &mut graph, &type_registry, None)?;
+    walk_directory(
+        &orqa_dir,
+        project_path,
+        &mut graph,
+        &type_registry,
+        &platform_types,
+        None,
+    )?;
 
     // Pass 1b: organisation mode — scan each child project
     if let Some(ref s) = settings {
@@ -95,6 +108,7 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, LspErr
                         &child_path,
                         &mut graph,
                         &child_registry,
+                        &platform_types,
                         Some(&child.name),
                     )?;
                     qualify_intra_project_refs(&mut graph, &child.name);
@@ -124,6 +138,7 @@ fn walk_directory(
     project_root: &Path,
     graph: &mut ArtifactGraph,
     type_registry: &TypeRegistry,
+    platform_types: &[crate::platform::ArtifactTypeDef],
     project_name: Option<&str>,
 ) -> Result<(), LspError> {
     let Ok(entries) = std::fs::read_dir(dir) else {
@@ -148,6 +163,7 @@ fn walk_directory(
                 project_root,
                 graph,
                 type_registry,
+                platform_types,
                 project_name,
             )?;
         } else if ft.is_file() && name.ends_with(".md") {
@@ -159,6 +175,7 @@ fn walk_directory(
                 project_root,
                 graph,
                 type_registry,
+                platform_types,
                 project_name,
             )?;
         }
@@ -176,6 +193,7 @@ fn collect_node(
     project_root: &Path,
     graph: &mut ArtifactGraph,
     type_registry: &TypeRegistry,
+    platform_types: &[crate::platform::ArtifactTypeDef],
     project_name: Option<&str>,
 ) -> Result<(), LspError> {
     let content = std::fs::read_to_string(file_path)?;
@@ -199,7 +217,8 @@ fn collect_node(
         .replace('\\', "/");
 
     let frontmatter_type = yaml_value.get("type").and_then(|v| v.as_str());
-    let artifact_type = infer_artifact_type(&rel_path, type_registry, frontmatter_type, &id);
+    let artifact_type =
+        infer_artifact_type(&rel_path, type_registry, platform_types, frontmatter_type, &id);
 
     let node = ArtifactNode {
         id: id.clone(),
@@ -309,12 +328,13 @@ pub fn extract_frontmatter(content: &str) -> (Option<String>, String) {
 /// Resolution priority (highest to lowest):
 /// 1. Explicit `type:` field in frontmatter (`frontmatter_type` parameter).
 /// 2. Longest-prefix match against the config-driven type registry (from project.json).
-/// 3. ID-prefix match against the platform artifact types (from core.json).
+/// 3. ID-prefix match against `platform_types` (core.json + plugin manifests).
 /// 4. Hardcoded path-segment heuristic for well-known directory names.
 /// 5. `"doc"` as the final fallback.
 fn infer_artifact_type(
     rel_path: &str,
     type_registry: &TypeRegistry,
+    platform_types: &[crate::platform::ArtifactTypeDef],
     frontmatter_type: Option<&str>,
     artifact_id: &str,
 ) -> String {
@@ -346,11 +366,10 @@ fn infer_artifact_type(
         return type_key.clone();
     }
 
-    // 3. ID-prefix match against the platform's artifact type definitions.
+    // 3. ID-prefix match against platform + plugin artifact type definitions.
     if let Some(prefix) = artifact_id.split('-').next() {
         if !prefix.is_empty() {
-            let matched = crate::platform::PLATFORM
-                .artifact_types
+            let matched = platform_types
                 .iter()
                 .find(|t| t.id_prefix == prefix)
                 .map(|t| t.key.clone());

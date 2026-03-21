@@ -2,8 +2,13 @@
 //!
 //! Minimal subset of the platform config needed for artifact type inference
 //! from ID prefixes (e.g. "RULE-006" → "rule").
+//!
+//! Plugin manifests (`plugins/*/orqa-plugin.json` and `connectors/*/orqa-plugin.json`)
+//! are scanned at runtime via [`scan_plugin_manifests`] to merge additional
+//! artifact types into the platform type list.
 
 use serde::Deserialize;
+use std::path::Path;
 use std::sync::LazyLock;
 
 /// The platform core config JSON, embedded at compile time from the canonical source.
@@ -31,6 +36,76 @@ pub struct PlatformConfig {
 pub static PLATFORM: LazyLock<PlatformConfig> = LazyLock::new(|| {
     serde_json::from_str(PLATFORM_JSON).expect("platform core.json must be valid JSON")
 });
+
+// ---------------------------------------------------------------------------
+// Plugin manifest scanning
+// ---------------------------------------------------------------------------
+
+/// Minimal subset of a plugin manifest's `provides.schemas` entry.
+#[derive(Debug, Clone, Deserialize)]
+struct PluginProvidesSchema {
+    pub key: String,
+    #[serde(rename = "idPrefix")]
+    pub id_prefix: String,
+}
+
+/// The `provides` block of a plugin manifest (only the fields we care about).
+#[derive(Debug, Clone, Deserialize, Default)]
+struct PluginProvides {
+    #[serde(default)]
+    pub schemas: Vec<PluginProvidesSchema>,
+}
+
+/// A minimal plugin manifest — only the `provides` block is needed.
+#[derive(Debug, Clone, Deserialize)]
+struct PluginManifest {
+    #[serde(default)]
+    pub provides: PluginProvides,
+}
+
+/// Scan `plugins/*/orqa-plugin.json` and `connectors/*/orqa-plugin.json` under
+/// `project_root` and return the artifact type definitions they contribute.
+///
+/// These supplement `PLATFORM.artifact_types` for ID-prefix → type-key inference.
+/// Malformed or unreadable manifests are silently skipped.
+pub fn scan_plugin_manifests(project_root: &Path) -> Vec<ArtifactTypeDef> {
+    let mut types = Vec::new();
+    let search_dirs = ["plugins", "connectors"];
+
+    for search_dir in &search_dirs {
+        let dir = project_root.join(search_dir);
+        let entries = match std::fs::read_dir(&dir) {
+            Ok(e) => e,
+            Err(_) => continue,
+        };
+
+        for entry in entries.flatten() {
+            let manifest_path = entry.path().join("orqa-plugin.json");
+            if !manifest_path.exists() {
+                continue;
+            }
+
+            let content = match std::fs::read_to_string(&manifest_path) {
+                Ok(c) => c,
+                Err(_) => continue,
+            };
+
+            let manifest: PluginManifest = match serde_json::from_str(&content) {
+                Ok(m) => m,
+                Err(_) => continue,
+            };
+
+            for schema in manifest.provides.schemas {
+                types.push(ArtifactTypeDef {
+                    key: schema.key,
+                    id_prefix: schema.id_prefix,
+                });
+            }
+        }
+    }
+
+    types
+}
 
 #[cfg(test)]
 mod tests {
