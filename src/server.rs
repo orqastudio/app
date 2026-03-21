@@ -210,9 +210,7 @@ impl McpServer {
             "search_research" => self
                 .get_search()
                 .and_then(|e| search_tools::tool_search_research(e, &arguments)),
-            "search_status" => self
-                .get_search()
-                .and_then(search_tools::tool_search_status),
+            "search_status" => self.get_search().and_then(search_tools::tool_search_status),
             _ => Err(format!("unknown tool: {tool_name}")),
         };
 
