@@ -131,7 +131,7 @@ pub async fn install_from_github(
 async fn download_plugin_archive(
     repo: &str,
     tag: &str,
-) -> Result<(bytes::Bytes, String), OrqaError> {
+) -> Result<(Vec<u8>, String), OrqaError> {
     let repo_name = repo
         .split('/')
         .next_back()
@@ -155,13 +155,14 @@ async fn download_plugin_archive(
     let bytes = response
         .bytes()
         .await
-        .map_err(|e| OrqaError::Plugin(format!("failed to read response: {e}")))?;
+        .map_err(|e| OrqaError::Plugin(format!("failed to read response: {e}")))?
+        .to_vec();
     let sha256 = format!("{:x}", Sha256::digest(&bytes));
     Ok((bytes, sha256))
 }
 
 fn extract_and_read_manifest(
-    bytes: &bytes::Bytes,
+    bytes: &[u8],
     tmp_dir: &Path,
 ) -> Result<super::manifest::PluginManifest, OrqaError> {
     if let Err(e) = extract_tar_gz(bytes, tmp_dir) {
