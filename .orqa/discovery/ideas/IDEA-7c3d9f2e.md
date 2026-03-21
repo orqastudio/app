@@ -120,21 +120,25 @@ When built locally, Orqa Cloud should host the plugin and project-type registrie
 - **Registry independence** — no dependency on a third-party platform for core distribution infrastructure
 - **Self-dogfooding** — OrqaStudio's own registries are hosted on OrqaStudio Cloud, proving the platform
 
-### Dual-Origin Sync
+### Multi-Origin Sync
 
-Orqa Cloud instances must support pushing to multiple remotes simultaneously. A local Forgejo instance can sync to:
+Orqa Cloud instances must support syncing to any number of remotes — not just two. The protocol is git itself, and git handles N remotes natively. A local Forgejo instance can sync to:
 
 - A hosted Orqa Cloud instance (org-level)
-- GitHub, GitLab, or any other git remote
+- GitHub, GitLab, Bitbucket, or any other git remote
+- Multiple hosted Cloud instances (e.g. one per department)
+
+Git resolves conflicts between origins using its standard merge/rebase mechanisms. The management layer configures remote lists per-project and handles push mirroring via Forgejo's built-in mirror support.
 
 This enables several critical workflows:
 
-| Scenario | How dual-origin helps |
+| Scenario | How multi-origin helps |
 |----------|----------------------|
-| **Team collaboration** | Different team members work against different remotes — some prefer GitHub, some use the local instance |
-| **Domain separation** | Frontend team pushes to GitHub (open source contributions welcome), backend team pushes to internal Forgejo (proprietary governance) |
+| **Team collaboration** | Different team members work against different remotes — some prefer GitHub, some use the local instance, some use both |
+| **Domain separation** | Frontend team pushes to GitHub (open source), backend team pushes to internal Forgejo (proprietary governance), ops team pushes to a third remote |
 | **Dogfooding** | OrqaStudio itself runs on a local Docker instance for governance AND syncs to GitHub for public collaboration |
-| **Disaster recovery** | Two remotes means no single point of failure for the repo |
-| **Migration path** | Teams can gradually move from GitHub to Orqa Cloud without a hard cutover — both remotes stay in sync until the team is ready |
+| **Disaster recovery** | N remotes means no single point of failure — any origin can reconstruct the full history |
+| **Migration path** | Teams can gradually move between providers without a hard cutover — all remotes stay in sync until ready to decommission |
+| **Federated orgs** | Multiple organisations each run their own Cloud instance, syncing shared repos between them while keeping org-specific repos private |
 
-The sync is git-native (multiple push URLs on a remote, or separate named remotes with hook-based mirroring). Forgejo already supports mirror repositories — the management layer configures this per-project.
+The protocol scales because it IS git. Adding a new origin is `git remote add` + a mirror config in the management API. Conflict resolution uses the same merge strategies developers already know.
