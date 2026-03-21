@@ -637,6 +637,7 @@ pub fn compute_health(graph: &ArtifactGraph) -> orqa_validation::GraphHealth {
                 total_edges: 0,
                 pillar_traceability: 0.0,
                 bidirectionality_ratio: 0.0,
+                broken_ref_count: 0,
             }
         }
     }
