@@ -38,20 +38,17 @@ pub fn is_valid_artifact_id(id: &str) -> bool {
         return false;
     };
     if prefix.is_empty() || !prefix.chars().all(|c| c.is_ascii_uppercase()) {
-        return id
-            .rmatch_indices('-')
-            .next()
-            .is_some_and(|(i, _)| {
-                let final_suffix = &id[i + 1..];
-                let prefix_part = &id[..i];
-                !prefix_part.is_empty()
-                    && prefix_part
-                        .chars()
-                        .all(|c| c.is_ascii_uppercase() || c == '-')
-                    && (final_suffix.chars().all(|c| c.is_ascii_digit())
-                        || (final_suffix.len() == 8
-                            && final_suffix.chars().all(|c| c.is_ascii_hexdigit())))
-            });
+        return id.rmatch_indices('-').next().is_some_and(|(i, _)| {
+            let final_suffix = &id[i + 1..];
+            let prefix_part = &id[..i];
+            !prefix_part.is_empty()
+                && prefix_part
+                    .chars()
+                    .all(|c| c.is_ascii_uppercase() || c == '-')
+                && (final_suffix.chars().all(|c| c.is_ascii_digit())
+                    || (final_suffix.len() == 8
+                        && final_suffix.chars().all(|c| c.is_ascii_hexdigit())))
+        });
     }
     suffix.chars().all(|c| c.is_ascii_digit())
         || (suffix.len() == 8 && suffix.chars().all(|c| c.is_ascii_hexdigit()))
@@ -119,10 +116,7 @@ pub fn validate_file(
     diagnostics
 }
 
-fn parse_frontmatter<'a>(
-    content: &'a str,
-    diagnostics: &mut Vec<Diagnostic>,
-) -> Option<&'a str> {
+fn parse_frontmatter<'a>(content: &'a str, diagnostics: &mut Vec<Diagnostic>) -> Option<&'a str> {
     if content.find("---\n") != Some(0) {
         diagnostics.push(Diagnostic {
             range: Range::new(Position::new(0, 0), Position::new(0, 3)),
@@ -226,8 +220,7 @@ fn check_artifact_id(has_id: bool, content: &str, diagnostics: &mut Vec<Diagnost
 }
 
 fn check_duplicate_keys(content: &str, diagnostics: &mut Vec<Diagnostic>) {
-    let mut seen_keys: std::collections::HashMap<String, u32> =
-        std::collections::HashMap::new();
+    let mut seen_keys: std::collections::HashMap<String, u32> = std::collections::HashMap::new();
     for (i, line) in content.lines().enumerate() {
         if line == "---" {
             if seen_keys.is_empty() {
