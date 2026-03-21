@@ -114,6 +114,8 @@ pub enum IntegrityCategory {
     MissingStatus,
     /// The same target + relationship type appears more than once in `relationships`.
     DuplicateRelationship,
+    /// The filename does not match the artifact's frontmatter `id`.
+    FilenameMismatch,
 }
 
 /// Severity of an integrity finding.

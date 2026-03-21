@@ -338,3 +338,43 @@ pub fn check_required_relationships(
         }
     }
 }
+
+/// Check that the filename (stem, without extension) matches the artifact's `id`.
+///
+/// The convention is `<ID>.md` — e.g., `EPIC-8d2e4f6a.md` for id `EPIC-8d2e4f6a`.
+/// Legacy sequential filenames (e.g., `TASK-100.md` with id `TASK-97dfe088`) are
+/// flagged as warnings with an auto-fix suggestion to rename.
+pub fn check_filename_matches_id(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
+    for node in graph.nodes.values() {
+        // Extract filename stem from the path (last component, without .md)
+        let path = &node.path;
+        let stem = path
+            .rsplit('/')
+            .next()
+            .unwrap_or(path)
+            .strip_suffix(".md")
+            .unwrap_or(path);
+
+        // Skip qualified project-prefixed keys (e.g., "app::RULE-xyz")
+        if node.id.contains("::") {
+            continue;
+        }
+
+        if stem != node.id {
+            checks.push(IntegrityCheck {
+                category: IntegrityCategory::FilenameMismatch,
+                severity: IntegritySeverity::Warning,
+                artifact_id: node.id.clone(),
+                message: format!(
+                    "Filename '{}' does not match id '{}' — expected '{}.md'",
+                    stem, node.id, node.id
+                ),
+                auto_fixable: true,
+                fix_description: Some(format!(
+                    "Rename file from '{}.md' to '{}.md'",
+                    stem, node.id
+                )),
+            });
+        }
+    }
+}

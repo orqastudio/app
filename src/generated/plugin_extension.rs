@@ -6,6 +6,26 @@
 
 use serde::{Deserialize, Serialize};
 
+/// A domain-specific branch contributed by a plugin to the agent decision tree. Branches extend the orchestrator and implementer reasoning protocols with domain context, helping agents form better search queries and classify work correctly.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DecisionTreeBranch {
+    /// The reasoning mode this branch applies to. Matches Step 1 classifications in the decision tree.
+    pub mode: String,
+    /// Unique domain key (lowercase, hyphenated). Used as the display label in the injected tree.
+    pub domain: String,
+    /// Human-readable description of when this domain applies. Shown inline in the decision tree injection.
+    pub description: String,
+    /// Comma-separated keywords that help the agent form a targeted search_semantic query when working in this domain.
+    pub search_context: String,
+}
+
+/// Decision tree extension contributed by a plugin. Each branch adds a domain-specific entry to the agent reasoning protocol injected on every UserPromptSubmit.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PluginDecisionTree {
+    /// Domain branches to merge into the orchestrator and implementer decision trees.
+    pub branches: Vec<DecisionTreeBranch>,
+}
+
 /// An artifact type schema contributed by a plugin. Plugin schemas must declare key, label, icon, idPrefix, and frontmatter. They may use $ref to reference core types in core.json.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PluginArtifactSchema {
@@ -80,6 +100,21 @@ pub struct PluginManifestProvides {
     /// Hook registrations contributed by this plugin.
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub hooks: Option<Vec<String>>,
+    /// Agent decision tree branches contributed by this plugin. Branches are merged at runtime into the orchestrator and implementer reasoning protocols injected on every UserPromptSubmit.
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub decision_tree: Option<PluginDecisionTree>,
+    /// LSP server registrations contributed by this plugin.
+    #[serde(rename = "lspServers", skip_serializing_if = "Option::is_none", default)]
+    pub lsp_servers: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// Development tool registrations contributed by this plugin.
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub tools: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// Dependencies required by this plugin.
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub dependencies: Option<serde_json::Value>,
+    /// CLI tool registrations contributed by this plugin.
+    #[serde(rename = "cliTools", skip_serializing_if = "Option::is_none", default)]
+    pub cli_tools: Option<Vec<serde_json::Value>>,
 }
 
 /// The full orqa-plugin.json manifest for an OrqaStudio plugin.
