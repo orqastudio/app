@@ -399,6 +399,7 @@ fn integrity_check_to_diagnostic(
     let severity = match check.severity {
         IntegritySeverity::Error => DiagnosticSeverity::ERROR,
         IntegritySeverity::Warning => DiagnosticSeverity::WARNING,
+        IntegritySeverity::Info => DiagnosticSeverity::INFORMATION,
     };
 
     // Annotate the category in the message for clarity.
