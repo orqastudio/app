@@ -202,6 +202,9 @@ impl McpServer {
                     msg
                 })
             }
+            "graph_traceability" => self
+                .get_graph()
+                .and_then(|g| graph_tools::tool_traceability(g, &arguments)),
             "search_regex" => self
                 .get_search()
                 .and_then(|e| search_tools::tool_search_regex(e, &arguments)),

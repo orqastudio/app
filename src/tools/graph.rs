@@ -1,4 +1,4 @@
-//! Graph tool implementations: query, resolve, relationships, stats, validate, health, read, refresh.
+//! Graph tool implementations: query, resolve, relationships, stats, validate, health, read, refresh, traceability.
 
 use serde_json::{json, Value};
 
@@ -95,6 +95,20 @@ pub fn tool_definitions() -> Vec<McpToolDefinition> {
             name: "graph_refresh".into(),
             description: "Rebuild the artifact graph from disk".into(),
             input_schema: json!({ "type": "object", "properties": {} }),
+        },
+        McpToolDefinition {
+            name: "graph_traceability".into(),
+            description: "Get full traceability for an artifact: ancestry chains to pillars, descendants, siblings, and impact radius".into(),
+            input_schema: json!({
+                "type": "object",
+                "properties": {
+                    "artifact_id": {
+                        "type": "string",
+                        "description": "Artifact ID to trace (e.g. EPIC-094, TASK-580)"
+                    }
+                },
+                "required": ["artifact_id"]
+            }),
         },
     ]
 }
@@ -277,4 +291,22 @@ pub fn tool_refresh(project_root: &std::path::Path) -> Result<(ArtifactGraph, St
         stats.node_count, stats.edge_count, stats.orphan_count, stats.broken_ref_count
     );
     Ok((graph, msg))
+}
+
+pub fn tool_traceability(graph: &ArtifactGraph, args: &Value) -> Result<String, String> {
+    let artifact_id = args
+        .get("artifact_id")
+        .and_then(|v| v.as_str())
+        .ok_or("missing 'artifact_id'")?;
+    if artifact_id.trim().is_empty() {
+        return Err("artifact_id cannot be empty".into());
+    }
+
+    // Convert MCP-server ArtifactGraph to validation-lib ArtifactGraph via JSON.
+    let lib_graph: orqa_validation::ArtifactGraph = serde_json::to_value(graph)
+        .and_then(serde_json::from_value)
+        .map_err(|e| format!("graph conversion failed: {e}"))?;
+
+    let result = orqa_validation::compute_traceability(&lib_graph, artifact_id);
+    serde_json::to_string_pretty(&result).map_err(|e| e.to_string())
 }
