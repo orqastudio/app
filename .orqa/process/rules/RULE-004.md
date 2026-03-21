@@ -1,28 +1,26 @@
 ---
-id: RULE-7b770593
-type: rule
-title: Artifact Lifecycle
+id: "RULE-7b770593"
+type: "rule"
+title: "Artifact Lifecycle"
 description: "Enforces creation standards, status transitions, promotion gates, and documentation gates for all .orqa/ artifacts."
-status: active
-created: 2026-03-07
-updated: 2026-03-13
+status: "active"
+created: "2026-03-07"
+updated: "2026-03-13"
 relationships:
-  - target: DOC-7c66f103
-    type: documented-by
-  - target: DOC-e5ff4baf
-    type: documented-by
-  - target: AD-c3700062
-    type: enforces
-  - target: AD-6dfbba70
-    type: enforces
-  - target: AD-8b3962f6
-    type: enforces
-  - target: DOC-01ddd8aa
-    type: documented-by
-  - target: DOC-c4b4b8b7
-    type: documented-by
-  - target: AGENT-ff44f841
-    type: observed-by
+  - target: "DOC-7c66f103"
+    type: "documented-by"
+  - target: "DOC-e5ff4baf"
+    type: "documented-by"
+  - target: "AD-c3700062"
+    type: "enforces"
+  - target: "AD-6dfbba70"
+    type: "enforces"
+  - target: "AD-8b3962f6"
+    type: "enforces"
+  - target: "DOC-01ddd8aa"
+    type: "documented-by"
+  - target: "DOC-c4b4b8b7"
+    type: "documented-by"
 ---
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
 

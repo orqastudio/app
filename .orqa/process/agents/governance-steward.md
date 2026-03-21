@@ -1,52 +1,47 @@
 ---
-id: AGENT-ff44f841
-type: agent
-title: Governance Steward
-description: |
-  Specialist for all .orqa/ artifact creation and maintenance. Owns graph integrity,
+id: "AGENT-ff44f841"
+type: "agent"
+title: "Governance Steward"
+description: "Specialist for all .orqa/ artifact creation and maintenance. Owns graph integrity,
+
   schema compliance, bidirectional relationships, and pillar alignment on every artifact
-  it writes. The orchestrator delegates governance work here instead of writing directly.
-status: active
-created: 2026-03-14
-updated: 2026-03-14
-model: sonnet
+
+  it writes. The orchestrator delegates governance work here instead of writing directly.\n"
+status: "active"
+created: "2026-03-14"
+updated: "2026-03-14"
+model: "sonnet"
 capabilities:
-  - file_read
-  - file_edit
-  - file_write
-  - file_search
-  - content_search
-  - code_search_regex
-  - code_search_semantic
-  - code_research
+  - "file_read"
+  - "file_edit"
+  - "file_write"
+  - "file_search"
+  - "content_search"
+  - "code_search_regex"
+  - "code_search_semantic"
+  - "code_research"
 subagent_mapping: null
 relationships:
-  - target: KNOW-13ec986c
-    type: employs
-  - target: KNOW-a2b3c4d5
-    type: employs
-  - target: KNOW-f0c40eaf
-    type: employs
-  - target: KNOW-eea50a65
-    type: employs
-  - target: KNOW-4368d782
-    type: employs
-  - target: RULE-7b770593
-    type: observes
-  - target: RULE-9daf29c0
-    type: observes
-  - target: RULE-22783309
-    type: observes
-  - target: RULE-39169bcd
-    type: observes
-  - target: RULE-a764b2ae
-    type: observes
-  - target: RULE-2f7b6a31
-    type: observes
-  - target: RULE-130f1f63
-    type: observes
+  - target: "KNOW-13ec986c"
+    type: "employs"
+  - target: "KNOW-a2b3c4d5"
+    type: "employs"
+  - target: "KNOW-f0c40eaf"
+    type: "employs"
+  - target: "KNOW-eea50a65"
+    type: "employs"
+  - target: "KNOW-4368d782"
+    type: "employs"
+  - target: "PILLAR-569581e0"
+    type: "serves"
+    rationale: "Agent serves this pillar/persona in its operational role"
+  - target: "PILLAR-cdf756ff"
+    type: "serves"
+    rationale: "Agent serves this pillar/persona in its operational role"
+  - target: "PILLAR-94b281db"
+    type: "serves"
+    rationale: "Agent serves this pillar/persona in its operational role"
 ---
-
 ## Purpose
 
 You maintain the integrity of the artifact graph. Every artifact you create has correct

@@ -1,20 +1,18 @@
 ---
-id: RULE-a764b2ae
-type: rule
-title: Artifact Schema Compliance
+id: "RULE-a764b2ae"
+type: "rule"
+title: "Artifact Schema Compliance"
 description: "Every artifact's YAML frontmatter must validate against the JSON Schema defined in its artifact directory's schema.json file."
-status: active
-created: 2026-03-10
-updated: 2026-03-13
+status: "active"
+created: "2026-03-10"
+updated: "2026-03-13"
 relationships:
-  - target: AD-c3700062
-    type: enforces
-  - target: AD-89391ab6
-    type: enforces
-  - target: DOC-01ddd8aa
-    type: documented-by
-  - target: AGENT-ff44f841
-    type: observed-by
+  - target: "AD-c3700062"
+    type: "enforces"
+  - target: "AD-89391ab6"
+    type: "enforces"
+  - target: "DOC-01ddd8aa"
+    type: "documented-by"
 ---
 Every artifact in `.orqa/` must have YAML frontmatter that validates against the JSON Schema in its directory's `schema.json` file. Fields not defined in the schema are rejected. Required fields must be present. Enum fields must use valid values.
 
