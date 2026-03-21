@@ -15,7 +15,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { execSync } from "node:child_process";
+import { createSymlink } from "@orqastudio/cli";
 
 export interface BridgeMapping {
 	/** .claude/ relative path. */
@@ -136,7 +136,7 @@ export class ArtifactBridge {
 					path.dirname(claudeTarget),
 					orqaSource,
 				);
-				this.createSymlink(relativePath, claudeTarget, mapping.isDirectory);
+				createSymlink(relativePath, claudeTarget);
 				created.push(mapping.claudePath);
 			} catch (err) {
 				errors.push(
@@ -246,23 +246,6 @@ export class ArtifactBridge {
 	// -----------------------------------------------------------------------
 	// Private helpers
 	// -----------------------------------------------------------------------
-
-	private createSymlink(target: string, linkPath: string, isDirectory: boolean): void {
-		const isWindows = process.platform === "win32";
-
-		if (isWindows) {
-			// Windows requires admin for symlinks or developer mode
-			// Use PowerShell New-Item for proper NTFS symlinks
-			const type = isDirectory ? "SymbolicLink" : "SymbolicLink";
-			const absTarget = path.resolve(path.dirname(linkPath), target);
-			execSync(
-				`powershell -Command "New-Item -ItemType ${type} -Path '${linkPath}' -Target '${absTarget}' -Force"`,
-				{ stdio: "pipe" },
-			);
-		} else {
-			fs.symlinkSync(target, linkPath, isDirectory ? "dir" : "file");
-		}
-	}
 
 	private listArtifacts(dir: string): Array<{ id: string; name: string; path: string }> {
 		const results: Array<{ id: string; name: string; path: string }> = [];
