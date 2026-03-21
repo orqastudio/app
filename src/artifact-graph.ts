@@ -120,7 +120,8 @@ export type IntegrityCategory =
     | "DeliveryPathMismatch"
     | "MissingType"
     | "MissingStatus"
-    | "DuplicateRelationship";
+    | "DuplicateRelationship"
+    | "FilenameMismatch";
 
 /** Severity of an integrity finding. */
 export type IntegritySeverity = "Error" | "Warning" | "Info";
