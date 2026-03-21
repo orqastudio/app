@@ -10,10 +10,7 @@ injection:
   paths: [".orqa/delivery/epics/", ".orqa/delivery/tasks/", ".orqa/delivery/milestones/"]
   artifact_types: ["epic", "task", "milestone"]
   keywords: ["epic", "milestone", "deliver", "complete", "finish", "wrap up", "next session"]
-relationships:
-  - target: PILLAR-94b281db
-    type: grounded
-    rationale: "Purpose Through Continuity — maintaining coherence across sessions"
+relationships: []
 ---
 
 ## Epic Completion Discipline
