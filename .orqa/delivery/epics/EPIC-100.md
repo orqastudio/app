@@ -67,7 +67,48 @@ LSP server imports graph-level checks from `libs/validation`. The 8 LSP file-lev
 
 Graph visualiser calls server-computed metrics from `libs/validation` (via MCP) instead of running its own Cytoscape analysis. Dashboard clarity view and graph visualiser show identical numbers because they query the same source.
 
-Wire `auto_fixable: true` checks to `orqa validate --fix` across all surfaces.
+Expand graph-theoretic metrics beyond current set:
+
+| Metric | Purpose |
+|--------|---------|
+| Connected components | Fragmentation — should be 1 |
+| Orphan count/% | Unreachable artifacts |
+| Average degree | Interconnectedness |
+| Graph density | Actual edges / possible edges |
+| Betweenness centrality | Bottleneck artifacts — critical bridges |
+| Clustering coefficient | Local cohesion — do related artifacts form tight groups |
+| Eigenvector centrality | Influence — nodes connected to important nodes |
+| Pillar traceability % | % of artifacts traceable to at least one pillar (RULE-031) |
+| Bidirectionality ratio | % of relationships with proper inverses |
+| Staleness/currency | Age of active artifacts, stale items detection |
+| Schema completeness | % of artifacts with all required fields |
+| Relationship completeness | % with expected relationship types for their type |
+
+### Phase 5 — Auto-Fix and Enforcement
+
+The validation library provides auto-fix methods for objective issues:
+
+**Auto-fixable (no human judgment needed):**
+- Missing inverse relationship → add the inverse to target artifact
+- Broken ref from known rename (SKILL→KNOW) → update the ID
+- Missing `type:` field → infer from path registry + core.json
+- Missing `status:` field → set `captured`
+- Duplicate relationship entries → deduplicate
+- Bidirectionality gaps → add the missing direction
+
+**Not auto-fixable (flag for human review):**
+- Which pillar an idea should ground to
+- Which epic an unassigned task belongs to
+- Whether an orphan should be archived or connected
+
+API: `validate()` returns checks, `auto_fix()` applies objective fixes, remainder is reported for review.
+
+**Enforcement integration:**
+- PreToolUse hook: block artifact creation without minimum relationships
+- Pre-commit hook: `orqa validate --fix` auto-heals, fails on remaining errors
+- Dashboard: threshold alerts when metrics cross boundaries (orphan % > 5%, clusters > 3, traceability < 90%)
+
+The graph self-heals on every commit. Human review is only needed for subjective decisions.
 
 ## Acceptance Criteria
 
@@ -82,6 +123,12 @@ Wire `auto_fixable: true` checks to `orqa validate --fix` across all surfaces.
 - [ ] Graph visualiser metrics match server-computed metrics
 - [ ] `IntegrityCheck` is the single output type across all consumers
 - [ ] Zero code duplication across validation implementations
+- [ ] Auto-fix resolves objective issues without human intervention
+- [ ] `auto_fix()` API handles: missing inverses, ID migrations, missing type/status fields, dedup
+- [ ] PreToolUse hook blocks artifact creation without minimum relationships
+- [ ] Pre-commit hook runs `orqa validate --fix` and fails on remaining errors
+- [ ] Dashboard alerts when metrics cross thresholds
+- [ ] Pillar traceability metric computed and displayed
 - [ ] `make check` passes after all changes
 
 ## Risks
