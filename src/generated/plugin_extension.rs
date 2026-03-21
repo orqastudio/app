@@ -115,6 +115,15 @@ pub struct PluginManifestProvides {
     /// CLI tool registrations contributed by this plugin.
     #[serde(rename = "cliTools", skip_serializing_if = "Option::is_none", default)]
     pub cli_tools: Option<Vec<serde_json::Value>>,
+    /// Behavioral rules contributed by this plugin. Appended to BEHAVIORAL_RULES in the prompt-injector.
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub behavioral_rules: Option<Vec<String>>,
+    /// Mode templates contributed by this plugin. Merged into MODE_TEMPLATES. Plugin keys must not collide with built-in mode keys.
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub mode_templates: Option<std::collections::HashMap<String, String>>,
+    /// Session state reminders contributed by this plugin. Appended to sessionConstant in the prompt-injector.
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub session_reminders: Option<Vec<String>>,
 }
 
 /// The full orqa-plugin.json manifest for an OrqaStudio plugin.
@@ -138,10 +147,19 @@ pub struct PluginManifest {
     /// Plugin dependencies — names of plugins that must be loaded first.
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub requires: Option<Vec<String>>,
+    /// Plugin category. The app requires at least one plugin from each of: thinking, delivery, governance.
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub category: Option<String>,
     /// Minimum versions required for this plugin to function.
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub compatibility: Option<serde_json::Value>,
     pub provides: PluginManifestProvides,
+    /// Semantic category definitions contributed by this plugin. Merged with platform semantics at runtime.
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub semantics: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// Artifact link display configuration contributed by this plugin.
+    #[serde(rename = "artifactLinks", skip_serializing_if = "Option::is_none", default)]
+    pub artifact_links: Option<serde_json::Value>,
 }
 
 /// Result of validating a plugin manifest at install time.
