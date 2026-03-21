@@ -139,6 +139,43 @@ if [ "$UNCOMMITTED_COUNT" -gt 0 ]; then
   OUTPUT="${OUTPUT}UNCOMMITTED CHANGES: ${UNCOMMITTED_COUNT} files. Commit or stash before ending session.\n\n"
 fi
 
+# ─── Epic Completion Check ────────────────────────────────────────────────────
+# Check if the scoped epic has incomplete tasks. If so, remind the orchestrator
+# that the epic isn't done — RULE-046 (continuous operation) applies.
+
+EPIC_REMINDER=""
+if command -v orqa >/dev/null 2>&1; then
+  # Find the scoped epic from session state (look for EPIC- references)
+  SCOPED_EPIC=""
+  if [ -f "$SESSION_FILE" ]; then
+    SCOPED_EPIC=$(grep -oP 'EPIC-[a-f0-9]{8}' "$SESSION_FILE" 2>/dev/null | head -1 || true)
+  fi
+
+  if [ -n "$SCOPED_EPIC" ]; then
+    # Query the graph for tasks delivering to this epic
+    EPIC_TASKS=$(orqa graph --type task 2>/dev/null | grep -i "$SCOPED_EPIC" || true)
+    INCOMPLETE=$(cd "$PROJECT_DIR" && grep -rl "delivers" .orqa/delivery/tasks/*.md 2>/dev/null | while read f; do
+      if grep -q "$SCOPED_EPIC" "$f" 2>/dev/null; then
+        status=$(grep "^status:" "$f" | head -1 | sed 's/^status:\s*//' | tr -d '"')
+        if [ "$status" != "completed" ] && [ "$status" != "surpassed" ] && [ "$status" != "archived" ]; then
+          title=$(grep "^title:" "$f" | head -1 | sed 's/^title:\s*//' | tr -d '"')
+          echo "  - $status: $title"
+        fi
+      fi
+    done || true)
+
+    if [ -n "$INCOMPLETE" ]; then
+      EPIC_REMINDER="EPIC NOT COMPLETE — $SCOPED_EPIC has incomplete tasks (RULE-046: keep working until done):\n${INCOMPLETE}\n\nDo not stop unless the user explicitly asks you to.\n\n"
+    else
+      EPIC_REMINDER="EPIC COMPLETE — $SCOPED_EPIC: all tasks completed. Summarise the work done before ending.\n\n"
+    fi
+  fi
+fi
+
+if [ -n "$EPIC_REMINDER" ]; then
+  echo -e "$EPIC_REMINDER"
+fi
+
 cat <<'EOF'
 SESSION END PROTOCOL:
 
