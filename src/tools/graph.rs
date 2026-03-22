@@ -306,11 +306,6 @@ pub fn tool_traceability(graph: &ArtifactGraph, args: &Value) -> Result<String, 
         return Err("artifact_id cannot be empty".into());
     }
 
-    // Convert MCP-server ArtifactGraph to validation-lib ArtifactGraph via JSON.
-    let lib_graph: orqa_validation::ArtifactGraph = serde_json::to_value(graph)
-        .and_then(serde_json::from_value)
-        .map_err(|e| format!("graph conversion failed: {e}"))?;
-
-    let result = orqa_validation::compute_traceability(&lib_graph, artifact_id);
+    let result = orqa_validation::compute_traceability(graph, artifact_id);
     serde_json::to_string_pretty(&result).map_err(|e| e.to_string())
 }

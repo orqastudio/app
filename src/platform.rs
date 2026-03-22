@@ -166,9 +166,8 @@ pub fn scan_plugin_manifests(project_root: &Path) -> PluginContributions {
 
     for search_dir in &search_dirs {
         let dir = project_root.join(search_dir);
-        let entries = match std::fs::read_dir(&dir) {
-            Ok(e) => e,
-            Err(_) => continue,
+        let Ok(entries) = std::fs::read_dir(&dir) else {
+            continue;
         };
 
         for entry in entries.flatten() {
