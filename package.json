@@ -1,0 +1,7 @@
+{
+  "name": "@orqastudio/plugin-core-framework",
+  "version": "0.1.0-dev",
+  "description": "Core framework plugin — universal agents, delegation, session management, knowledge model",
+  "license": "BSL-1.1",
+  "private": true
+}

@@ -1,0 +1,18 @@
+{
+  "name": "@orqastudio/plugin-core-framework",
+  "version": "0.1.0-dev",
+  "displayName": "Core Framework",
+  "description": "The agent execution model — universal roles, delegation, session management, knowledge loading, thinking mode classification. Every project gets this.",
+  "category": "framework",
+  "role": "core:framework",
+  "uninstallable": true,
+  "provides": {
+    "schemas": [],
+    "relationships": [],
+    "agents": [],
+    "knowledge": [],
+    "hooks": [],
+    "views": [],
+    "widgets": []
+  }
+}
