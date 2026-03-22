@@ -223,7 +223,16 @@
       }
     ],
     "agents": [
-      { "key": "enforcer", "path": "agents/enforcer.md" }
+      { "key": "orchestrator", "id": "AGENT-1dab5ebe", "path": "agents/orchestrator.md" },
+      { "key": "implementer", "id": "AGENT-cc255bc8", "path": "agents/implementer.md" },
+      { "key": "reviewer", "id": "AGENT-b0774726", "path": "agents/reviewer.md" },
+      { "key": "researcher", "id": "AGENT-fb0ce261", "path": "agents/researcher.md" },
+      { "key": "planner", "id": "AGENT-caff7bc1", "path": "agents/planner.md" },
+      { "key": "writer", "id": "AGENT-ec1b3785", "path": "agents/writer.md" },
+      { "key": "designer", "id": "AGENT-c5284fde", "path": "agents/designer.md" },
+      { "key": "governance-steward", "id": "AGENT-ff44f841", "path": "agents/governance-steward.md" },
+      { "key": "installer", "id": "AGENT-bedeffd1", "path": "agents/installer.md" },
+      { "key": "enforcer", "id": "AGENT-GOV-e7f3a2c9", "path": "agents/enforcer.md" }
     ],
     "views": [],
     "widgets": [],
@@ -447,7 +456,17 @@
       }
     ],
     "knowledge": [
-      { "key": "enforcement-patterns", "id": "KNOW-GOV-e4b91f37", "label": "Enforcement Patterns" }
+      { "key": "enforcement-patterns", "id": "KNOW-GOV-e4b91f37", "label": "Enforcement Patterns" },
+      { "key": "planning", "id": "KNOW-6f33713e", "label": "Planning" },
+      { "key": "research-methodology", "id": "KNOW-f7476f0a", "label": "Research Methodology" },
+      { "key": "diagnostic-methodology", "id": "KNOW-f5edb34d", "label": "Diagnostic Methodology" },
+      { "key": "governance-maintenance", "id": "KNOW-8d76c3c7", "label": "Governance Maintenance" },
+      { "key": "epic-requirement-inference", "id": "KNOW-8d1c4be6", "label": "Plugin Artifact Usage" },
+      { "key": "artifact-status-management", "id": "KNOW-449b1e02", "label": "Artifact Status Management" },
+      { "key": "orqa-governance", "id": "KNOW-eea50a65", "label": "Governance Patterns" },
+      { "key": "orqa-artifact-audit", "id": "KNOW-4368d782", "label": "Artifact Audit Methodology" },
+      { "key": "naming-conventions", "id": "KNOW-250d5d6f", "label": "Naming Conventions" },
+      { "key": "schema-validation", "id": "KNOW-b08d355c", "label": "Schema Validation" }
     ],
     "cliTools": [],
     "hooks": [],
