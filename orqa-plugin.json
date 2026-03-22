@@ -12,12 +12,12 @@
     "knowledge": [
       {
         "key": "config-generation",
-        "id": "KNOW-CS-001",
+        "id": "KNOW-6125ab55",
         "label": "Config Generation from Rules"
       },
       {
         "key": "quality-checks",
-        "id": "KNOW-CS-002",
+        "id": "KNOW-ea517e13",
         "label": "Quality Check Runner"
       }
     ],
