@@ -21,8 +21,6 @@ injection:
     - fix
     - create
 relationships:
-  - target: AD-e7c4a1f3
-    type: implemented-by
   - target: AGENT-1dab5ebe
     type: employed-by
 ---
