@@ -35,8 +35,9 @@ use std::path::PathBuf;
 use std::process;
 
 use orqa_validation::{
-    auto_fix, build_validation_context, compute_health,
+    auto_fix, build_validation_context_with_types, compute_health,
     graph::{build_artifact_graph, load_project_config},
+    platform::scan_plugin_manifests,
     types::IntegritySeverity,
     validate, AppliedFix, GraphHealth, IntegrityCheck, ValidationError,
 };
@@ -109,15 +110,16 @@ fn run(project_path: &std::path::Path, apply_fixes_flag: bool) -> Result<Report,
     // Build the graph.
     let graph = build_artifact_graph(project_path)?;
 
-    // Load project settings — returns (valid_statuses, delivery, project_relationships).
-    // `load_project_config` never fails; it returns empty defaults on any I/O or parse error.
+    // Load project settings and plugin contributions.
     let (valid_statuses, delivery, project_relationships) = load_project_config(project_path);
+    let plugin_contributions = scan_plugin_manifests(project_path);
 
-    let ctx = build_validation_context(
+    let ctx = build_validation_context_with_types(
         &valid_statuses,
         &delivery,
         &project_relationships,
-        &[], // no plugin relationships from CLI
+        &plugin_contributions.relationships,
+        &plugin_contributions.artifact_types,
     );
 
     // Run integrity checks.
