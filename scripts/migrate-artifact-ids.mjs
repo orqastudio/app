@@ -17,9 +17,10 @@
  * Produces a migration manifest (scripts/id-migration-manifest.json) mapping old → new.
  */
 
-import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "fs";
+import { readFileSync, writeFileSync, readdirSync, existsSync } from "fs";
 import { join, relative } from "path";
 import { randomBytes } from "crypto";
+import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 
 const ROOT = process.cwd();
 const APPLY = process.argv.includes("--apply");
@@ -53,24 +54,63 @@ function walkFiles(dir, extensions, results = []) {
 }
 
 // ---------------------------------------------------------------------------
+// Frontmatter helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Split a markdown file into { fmText, body }.
+ * fmText is the raw YAML between the opening and closing --- markers (no markers).
+ * body is everything after the closing --- marker (starting with \n if there is content).
+ * Returns null if the file has no valid frontmatter.
+ */
+function splitFrontmatter(content) {
+  if (!content.startsWith("---\n")) return null;
+  const fmEnd = content.indexOf("\n---", 4);
+  if (fmEnd === -1) return null;
+  return {
+    fmText: content.slice(4, fmEnd),
+    // body: everything after the \n--- closing marker (the \n--- itself is 4 chars)
+    body: content.slice(fmEnd + 4), // content after the closing ---
+  };
+}
+
+/**
+ * Reassemble a markdown file from a parsed frontmatter object and the raw body text.
+ */
+function joinFrontmatter(fm, body) {
+  const newFm = stringifyYaml(fm, { lineWidth: 0 }).trimEnd();
+  return "---\n" + newFm + "\n---" + body;
+}
+
+// ---------------------------------------------------------------------------
 // ID extraction
 // ---------------------------------------------------------------------------
 
-// Match frontmatter `id: TYPE-NNN` (sequential format, not already hex)
-const ID_PATTERN = /^id:\s*"?([A-Z]+-(?:[A-Z]+-)?(\d+))"?\s*$/;
-
+/**
+ * Extract the artifact ID from a markdown file by parsing its YAML frontmatter.
+ * Returns null if no frontmatter, no id field, or the id is not in sequential format.
+ */
 function extractArtifactId(content) {
-  const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!fmMatch) return null;
-  for (const line of fmMatch[1].split("\n")) {
-    const m = line.match(ID_PATTERN);
-    if (m) return m[1];
+  const parts = splitFrontmatter(content);
+  if (!parts) return null;
+
+  let fm;
+  try {
+    fm = parseYaml(parts.fmText);
+  } catch {
+    return null;
   }
-  return null;
+
+  if (!fm || typeof fm !== "object") return null;
+  const id = fm.id;
+  if (!id || typeof id !== "string") return null;
+  if (isTemplateId(id)) return null;
+  if (isAlreadyHex(id)) return null;
+  return id;
 }
 
 function getTypePrefix(id) {
-  // SKILL-SVE-001 → SKILL, TASK-580 → TASK, AD-057 → AD
+  // SKILL-SVE-001 → SKILL-SVE, TASK-580 → TASK, AD-057 → AD
   // For compound prefixes like SKILL-SVE, we want the full type prefix
   const parts = id.split("-");
   if (parts.length === 3) {
@@ -116,8 +156,6 @@ function buildMigrationMap() {
     const content = readFileSync(file, "utf-8");
     const id = extractArtifactId(content);
     if (!id) continue;
-    if (isTemplateId(id)) continue;
-    if (isAlreadyHex(id)) continue;
 
     const prefix = getTypePrefix(id);
     const newId = generateHexId(prefix);
@@ -129,22 +167,122 @@ function buildMigrationMap() {
 }
 
 // ---------------------------------------------------------------------------
+// YAML-aware frontmatter update for markdown files
+// ---------------------------------------------------------------------------
+
+/**
+ * Recursively walk frontmatter object fields and replace old IDs in string values.
+ * Handles plain string fields and arrays of strings or objects.
+ * The `relationships` array is handled separately — only non-relationship fields
+ * are processed here.
+ * Returns true if any change was made.
+ */
+function updateFrontmatterStringFields(obj, mapping, skipKey = null) {
+  let changed = false;
+  for (const key of Object.keys(obj)) {
+    if (key === skipKey) continue;
+    const val = obj[key];
+    if (typeof val === "string" && mapping[val]) {
+      obj[key] = mapping[val];
+      changed = true;
+    } else if (Array.isArray(val)) {
+      for (let i = 0; i < val.length; i++) {
+        if (typeof val[i] === "string" && mapping[val[i]]) {
+          val[i] = mapping[val[i]];
+          changed = true;
+        } else if (val[i] && typeof val[i] === "object") {
+          changed = updateFrontmatterStringFields(val[i], mapping) || changed;
+        }
+      }
+    }
+  }
+  return changed;
+}
+
+/**
+ * Replace old IDs in a plain text string (body text, prose, tables) using regex.
+ * Safe to use on non-YAML content.
+ */
+function replaceIdsInText(text, oldIds, mapping) {
+  if (oldIds.length === 0) return text;
+  const pattern = new RegExp(
+    oldIds.map((id) => id.replace(/[-]/g, "\\-")).join("|"),
+    "g"
+  );
+  return text.replace(pattern, (match) => mapping[match] ?? match);
+}
+
+/**
+ * Update a markdown file using YAML parse/stringify for frontmatter and regex for body.
+ * Returns the updated content string, or null if no changes were needed.
+ */
+function updateMarkdownFile(content, mapping, oldIds) {
+  const parts = splitFrontmatter(content);
+
+  if (!parts) {
+    // No frontmatter — only update body text via regex
+    const updated = replaceIdsInText(content, oldIds, mapping);
+    return updated !== content ? updated : null;
+  }
+
+  let fm;
+  try {
+    fm = parseYaml(parts.fmText);
+  } catch {
+    // Invalid YAML frontmatter — fall back to body-only regex update
+    const updated = replaceIdsInText(content, oldIds, mapping);
+    return updated !== content ? updated : null;
+  }
+
+  let fmChanged = false;
+
+  if (fm && typeof fm === "object") {
+    // 1. Update the id field
+    if (fm.id && mapping[fm.id]) {
+      fm.id = mapping[fm.id];
+      fmChanged = true;
+    }
+
+    // 2. Update relationship targets
+    if (Array.isArray(fm.relationships)) {
+      for (const rel of fm.relationships) {
+        if (rel && typeof rel === "object" && rel.target && mapping[rel.target]) {
+          rel.target = mapping[rel.target];
+          fmChanged = true;
+        }
+      }
+    }
+
+    // 3. Update other string fields (depends-on, epic, etc.), skip relationships (handled above)
+    const otherChanged = updateFrontmatterStringFields(fm, mapping, "relationships");
+    fmChanged = fmChanged || otherChanged;
+  }
+
+  // 4. Update body text via regex
+  const updatedBody = replaceIdsInText(parts.body, oldIds, mapping);
+  const bodyChanged = updatedBody !== parts.body;
+
+  if (!fmChanged && !bodyChanged) return null;
+
+  const newFm = fmChanged ? fm : null;
+  const newBody = bodyChanged ? updatedBody : parts.body;
+
+  if (newFm) {
+    return joinFrontmatter(newFm, newBody);
+  }
+  return "---\n" + parts.fmText + "\n---" + newBody;
+}
+
+// ---------------------------------------------------------------------------
 // Apply migration
 // ---------------------------------------------------------------------------
 
 function applyMigration(mapping) {
-  // Build regex that matches any old ID as a whole word
-  // Sort by length descending so longer IDs match first (SKILL-SVE-001 before SKILL-001)
   const oldIds = Object.keys(mapping).sort((a, b) => b.length - a.length);
   if (oldIds.length === 0) {
     console.log("No IDs to migrate.");
     return { filesChanged: 0, replacements: 0 };
   }
-
-  const pattern = new RegExp(
-    oldIds.map((id) => id.replace(/[-]/g, "\\-")).join("|"),
-    "g"
-  );
 
   // Scan ALL files that could contain references
   const scanDirs = [
@@ -154,20 +292,43 @@ function applyMigration(mapping) {
     join(ROOT, "connectors"),
   ];
 
-  const allFiles = [];
+  const allMdFiles = [];
+  const allJsonFiles = [];
   for (const dir of scanDirs) {
-    walkFiles(dir, [".md", ".json"], allFiles);
+    walkFiles(dir, [".md"], allMdFiles);
+    walkFiles(dir, [".json"], allJsonFiles);
   }
 
   let filesChanged = 0;
   let totalReplacements = 0;
 
-  for (const file of allFiles) {
+  // Process markdown files with YAML-aware frontmatter handling
+  for (const file of allMdFiles) {
     const original = readFileSync(file, "utf-8");
-    let updated = original;
-    let count = 0;
+    const updated = updateMarkdownFile(original, mapping, oldIds);
 
-    updated = updated.replace(pattern, (match) => {
+    if (updated !== null) {
+      const count = countOldIdOccurrences(original, oldIds);
+      if (APPLY) {
+        writeFileSync(file, updated);
+      }
+      filesChanged++;
+      totalReplacements += count;
+      const rel = relative(ROOT, file);
+      console.log(`  ${APPLY ? "updated" : "would update"}: ${rel} (${count} replacements)`);
+    }
+  }
+
+  // Process JSON files with simple text replacement (IDs in JSON are plain strings)
+  const jsonPattern = new RegExp(
+    oldIds.map((id) => id.replace(/[-]/g, "\\-")).join("|"),
+    "g"
+  );
+
+  for (const file of allJsonFiles) {
+    const original = readFileSync(file, "utf-8");
+    let count = 0;
+    const updated = original.replace(jsonPattern, (match) => {
       if (mapping[match]) {
         count++;
         return mapping[match];
@@ -187,6 +348,18 @@ function applyMigration(mapping) {
   }
 
   return { filesChanged, replacements: totalReplacements };
+}
+
+/**
+ * Count total occurrences of any old ID in the original content string.
+ */
+function countOldIdOccurrences(content, oldIds) {
+  let count = 0;
+  for (const id of oldIds) {
+    const escaped = id.replace(/[-]/g, "\\-");
+    count += (content.match(new RegExp(escaped, "g")) || []).length;
+  }
+  return count;
 }
 
 // ---------------------------------------------------------------------------
