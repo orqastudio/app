@@ -8,12 +8,9 @@ updated: 2026-03-21
 maturity: pattern
 recurrence: 3
 relationships:
-  - target: "IMPL-97023ba6"
-    type: "informed-by"
-    rationale: "IMPL-073's own logic classifies this as a correction — which signals the orchestrator's systems thinking process isn't yet mature"
-  - target: "RULE-67b91c13"
-    type: "promoted-to"
-    rationale: "Promoted after recurrence 3 in a single session — orchestrator observed connections without acting on them three times"
+  - target: RULE-67b91c13
+    type: promoted-to
+    rationale: Promoted after recurrence 3 in a single session — orchestrator observed connections without acting on them three times
 ---
 
 ## Pattern

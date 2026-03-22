@@ -1,7 +1,7 @@
 ---
 id: TASK-b2518dd2
-title: "Plugin hook injection mechanism — plugins declare behavioral rules and mode templates"
-description: "Implement a mechanism by which plugins declare behavioral rules and mode templates in their manifests, and the connector aggregates these at runtime to build the injected system context."
+title: Plugin hook injection mechanism — plugins declare behavioral rules and mode templates
+description: Implement a mechanism by which plugins declare behavioral rules and mode templates in their manifests, and the connector aggregates these at runtime to build the injected system context.
 status: captured
 created: 2026-03-21
 updated: 2026-03-21
@@ -15,6 +15,8 @@ acceptance:
 relationships:
   - target: EPIC-6967c7dc
     type: delivers
+  - target: TASK-dc8d94c3
+    type: depended-on-by
 ---
 
 ## What

@@ -42,8 +42,6 @@ relationships:
     type: delivered-by
   - target: TASK-c72d3ebd
     type: delivered-by
-  - target: TASK-ff8a8590
-    type: delivered-by
   - target: TASK-d6c514a7
     type: delivered-by
   - target: TASK-f36a6838

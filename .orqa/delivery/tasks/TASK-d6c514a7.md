@@ -13,7 +13,7 @@ relationships:
   - target: EPIC-6967c7dc
     type: delivers
   - target: TASK-c9880303
-    type: reviews
+    type: delivers
 ---
 
 ## What

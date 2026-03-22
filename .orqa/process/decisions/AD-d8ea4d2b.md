@@ -1,17 +1,11 @@
 ---
-id: "AD-d8ea4d2b"
-title: "Cross-Linking as Default Behaviour"
-description: "Artifact IDs in markdown body text are automatically converted to proper artifact links. A pre-commit hook enforces this, and agents are expected to cross-link by default."
-status: "completed"
-created: "2026-03-11"
-updated: "2026-03-11"
-relationships:
-  - target: "RULE-2f7b6a31"
-    type: "enforced-by"
-    rationale: "RULE-2f7b6a31 enforces the cross-linking format via autolink-artifacts.mjs (auto-converts bare IDs) and verify-links.mjs (validates link targets) in the pre-commit hook"
-  - target: "RULE-130f1f63"
-    type: "enforced-by"
-    rationale: "RULE-130f1f63 enforces bidirectional link integrity — every cross-reference must resolve and relationship inverses must be consistent"
+id: AD-d8ea4d2b
+title: Cross-Linking as Default Behaviour
+description: Artifact IDs in markdown body text are automatically converted to proper artifact links. A pre-commit hook enforces this, and agents are expected to cross-link by default.
+status: completed
+created: 2026-03-11
+updated: 2026-03-11
+relationships: []
 ---
 ## Decision
 

@@ -2,13 +2,10 @@
 id: IDEA-0575eefc
 title: "Artifact migration: location audit, content cleanup, plugin categories"
 status: exploring
-description: "Audit artifact locations, move to correct plugins, rewrite content to be domain-portable, add plugin category schema (core/enhancement/extension), deduplicate."
-created: "2026-03-22"
-updated: "2026-03-22"
-relationships:
-  - target: "RULE-130f1f63"
-    type: "related"
-    rationale: "Data integrity requires consistent, traceable IDs"
+description: Audit artifact locations, move to correct plugins, rewrite content to be domain-portable, add plugin category schema (core/enhancement/extension), deduplicate.
+created: 2026-03-22
+updated: 2026-03-22
+relationships: []
 ---
 
 # Artifact Migration: Location Audit + Content Cleanup

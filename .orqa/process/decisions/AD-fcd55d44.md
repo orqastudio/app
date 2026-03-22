@@ -1,28 +1,25 @@
 ---
-id: "AD-fcd55d44"
-title: "Streaming Pipeline"
+id: AD-fcd55d44
+title: Streaming Pipeline
 description: "Streaming pipeline: Agent SDK (SSE) -> sidecar (NDJSON) -> Rust (Channel<T>) -> Svelte store. Clarifies AD-a334623b."
-status: "completed"
-created: "2026-03-02"
-updated: "2026-03-02"
+status: completed
+created: 2026-03-02
+updated: 2026-03-02
 relationships:
-  - target: "RES-7f87b149"
-    type: "informed-by"
-    rationale: "RES-7f87b149 documented the Agent SDK's SSE streaming events (content_block_delta, text_delta, thinking_delta), defining the sidecar input format"
-  - target: "RES-00c5dbc3"
-    type: "informed-by"
-    rationale: "RES-00c5dbc3 confirmed Tauri's Channel<T> provides ordered streaming with negligible latency, validating it as the IPC streaming mechanism"
-  - target: "RULE-1acb1602"
-    type: "enforced-by"
-    rationale: "RULE-1acb1602 requires end-to-end completeness across all layers, ensuring the streaming pipeline is implemented fully from sidecar to UI"
-  - target: "EPIC-46e5f406"
-    type: "drives"
-  - target: "DOC-eda128cd"
-    type: "documented-by"
-  - target: "DOC-52bbfba5"
-    type: "documented-by"
-  - target: "DOC-3c65a1e3"
-    type: "documented-by"
+  - target: RES-7f87b149
+    type: informed-by
+    rationale: RES-7f87b149 documented the Agent SDK's SSE streaming events (content_block_delta, text_delta, thinking_delta), defining the sidecar input format
+  - target: RES-00c5dbc3
+    type: informed-by
+    rationale: RES-00c5dbc3 confirmed Tauri's Channel<T> provides ordered streaming with negligible latency, validating it as the IPC streaming mechanism
+  - target: EPIC-46e5f406
+    type: drives
+  - target: DOC-eda128cd
+    type: documented-by
+  - target: DOC-52bbfba5
+    type: documented-by
+  - target: DOC-3c65a1e3
+    type: documented-by
 ---
 ## Decision
 
