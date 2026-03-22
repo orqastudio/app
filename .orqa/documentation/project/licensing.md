@@ -9,7 +9,7 @@ relationships:
   - target: AD-fc646168
     type: documents
     rationale: This doc explains the licensing decision for humans
-  - target: KNOW-CLI-9466a88a
+  - target: KNOW-9466a88a
     type: synchronised-with
   - target: KNOW-e1333874
     type: synchronised-with

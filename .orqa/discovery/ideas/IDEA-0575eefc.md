@@ -22,7 +22,7 @@ still carry bare IDs (e.g., `KNOW-54823e2d`) instead of plugin-prefixed IDs (e.g
 
 **NOTE (2026-03-22):** There are also many older artifacts across all plugins that were
 never migrated to the hex ID format — they still use sequential numbering (e.g.,
-`KNOW-TS-001`, `KNOW-CS-001`). These also need converting to hex format as part of
+`KNOW-TS-001`, `KNOW-6125ab55`). These also need converting to hex format as part of
 this migration. The `scripts/migrate-artifact-ids.mjs` bulk migration script handles
 sequential → hex conversion. Run with `--apply` after confirming the manifest.
 
@@ -55,22 +55,22 @@ sequential → hex conversion. Run with `--apply` after confirming the manifest.
 
 ### Agents
 
-| Current ID | Title | Location | Needs Prefix? |
-|-----------|-------|----------|---------------|
-| AGENT-1dab5ebe | Orchestrator | plugins/agile-governance/agents | GOV |
-| AGENT-cc255bc8 | Implementer | plugins/agile-governance/agents | GOV |
-| AGENT-b0774726 | Reviewer | plugins/agile-governance/agents | GOV |
-| AGENT-fb0ce261 | Researcher | plugins/agile-governance/agents | GOV |
-| AGENT-caff7bc1 | Planner | plugins/agile-governance/agents | GOV |
-| AGENT-ec1b3785 | Writer | plugins/agile-governance/agents | GOV |
-| AGENT-c5284fde | Designer | plugins/agile-governance/agents | GOV |
-| AGENT-ff44f841 | Governance Steward | plugins/agile-governance/agents | GOV |
-| AGENT-bedeffd1 | Installer | plugins/agile-governance/agents | GOV |
-| AGENT-GOV-e7f3a2c9 | Enforcer | plugins/agile-governance/agents | Already prefixed |
-| AGENT-SVE-spec-c8e4f9a2 | Svelte Specialist | plugins/svelte/agents | Already prefixed |
-| AGENT-SVE-b0857607 | Svelte Standards | plugins/svelte/agents | Already prefixed |
-| AGENT-RST-spec-a3f7d2b1 | Rust Specialist | plugins/rust/agents | Already prefixed |
-| AGENT-RST-4241392c | Rust Standards | plugins/rust/agents | Already prefixed |
+| Current ID | Title | Location | Needs Prefix? | Work Neededs
+|-----------|-------|----------|---------------|--------------|
+| AGENT-1dab5ebe | Orchestrator | plugins/agile-governance/agents | GOV | *STAY* |
+| AGENT-cc255bc8 | Implementer | plugins/agile-governance/agents | GOV | *STAY* |
+| AGENT-b0774726 | Reviewer | plugins/agile-governance/agents | GOV | *STAY* |
+| AGENT-fb0ce261 | Researcher | plugins/agile-governance/agents | GOV | *STAY* |
+| AGENT-caff7bc1 | Planner | plugins/agile-governance/agents | GOV | *STAY* |
+| AGENT-ec1b3785 | Writer | plugins/agile-governance/agents | GOV | *STAY* |
+| AGENT-c5284fde | Designer | plugins/agile-governance/agents | GOV | *STAY* |
+| AGENT-ff44f841 | Governance Steward | plugins/agile-governance/agents | GOV | *MOVE TO GOVERNANCE PLUGIN* |
+| AGENT-bedeffd1 | Installer | plugins/agile-governance/agents | GOV | *STAY* |
+| AGENT-e7f3a2c9 | Enforcer | plugins/agile-governance/agents | Already prefixed | *RENAME TO GOVERNANCE ENFORCER* |
+| AGENT-b2f574e5 | Svelte Specialist | plugins/svelte/agents | Already prefixed | *STAY* |
+| AGENT-b0857607 | Svelte Standards | plugins/svelte/agents | Already prefixed | *STAY* |
+| AGENT-e1e47559 | Rust Specialist | plugins/rust/agents | Already prefixed | *STAY* |
+| AGENT-4241392c | Rust Standards | plugins/rust/agents | Already prefixed | *STAY* |
 
 ### Rules (by location)
 
@@ -188,8 +188,8 @@ sequential → hex conversion. Run with `--apply` after confirming the manifest.
 
 | Current ID | Title | Needs Prefix? |
 |-----------|-------|---------------|
-| KNOW-SW-1d47d8d8 | Software Delivery | Already prefixed |
-| KNOW-SW-epic-complete | Epic Completion | Already prefixed |
+| KNOW-1d47d8d8 | Software Delivery | Already prefixed |
+| KNOW-e2354dce | Epic Completion | Already prefixed |
 | KNOW-b453410f | Plugin Development | SW |
 | KNOW-e1333874 | First-Party Plugin Dev | SW |
 | KNOW-63cc1a00 | Third-Party Plugin Dev | SW |
@@ -207,9 +207,9 @@ sequential → hex conversion. Run with `--apply` after confirming the manifest.
 
 | Current ID | Title | Needs Prefix? |
 |-----------|-------|---------------|
-| KNOW-CC-decision-tree | Decision Tree | Already prefixed |
-| KNOW-CC-implementer-tree | Implementer Tree | Already prefixed |
-| KNOW-CC-reviewer-tree | Reviewer Tree | Already prefixed |
+| KNOW-3155cdaa | Decision Tree | Already prefixed |
+| KNOW-b1593311 | Implementer Tree | Already prefixed |
+| KNOW-08fcd847 | Reviewer Tree | Already prefixed |
 | KNOW-e3a559c9 | Plugin Setup | CC |
 | KNOW-82ceb1bd | Project Inference | CC |
 | KNOW-0fd23e0b | Project Migration | CC |
@@ -244,4 +244,4 @@ sequential → hex conversion. Run with `--apply` after confirming the manifest.
 3. [ ] Run `orqa id migrate` for each bare-ID artifact to add plugin prefix
 4. [ ] Update plugin manifests (orqa-plugin.json) with new IDs
 5. [ ] Run `orqa validate --fix` to verify graph integrity
-6. [ ] Fix sequential IDs (KNOW-TS-001, KNOW-CS-001/002) to use hex format
+6. [ ] Fix sequential IDs (KNOW-TS-001, KNOW-6125ab55/002) to use hex format
