@@ -20,12 +20,16 @@ Each plugin declares a `role` in addition to its existing `category`:
 
 | Role | Meaning | Examples |
 |------|---------|---------|
-| `core:governance` | Defines the governance lifecycle (rules, decisions, lessons, enforcement) | agile-governance |
-| `core:discovery` | Defines the discovery/thinking lifecycle (agents, thinking modes, methodology) | systems-thinking |
-| `core:delivery` | Defines the delivery lifecycle (milestones, epics, tasks, research) | software |
-| `enhancement:governance` | Extends governance with domain-specific enforcement | coding-standards |
-| `enhancement:delivery` | Extends delivery with domain-specific tooling | rust, svelte, tauri, typescript |
+| `core:framework` | The agent execution model — universal roles, delegation, sessions, knowledge loading. Every project gets this. | **orqa-core** (NEW) |
+| `core:governance` | The governance lifecycle — rules, decisions, lessons, enforcement, integrity | agile-governance |
+| `core:discovery` | The reasoning methodology — systems thinking, pillar/vision alignment, thinking modes | systems-thinking |
+| `core:delivery` | The delivery lifecycle — milestones, epics, tasks, plan compliance | software |
+| `enhancement:delivery` | Extends delivery with domain-specific tooling and coding standards | coding-standards, rust, svelte, tauri, typescript |
 | `extension` | General functional addition, not lifecycle-specific | cli, claude-code connector |
+
+**orqa-core** is the operating system. The other core plugins plug into it. You could
+swap agile-governance for a different governance model, or systems-thinking for a
+different discovery methodology, but orqa-core is always present.
 
 Core plugins can reference the general categories "Discovery", "Delivery", "Governance"
 but MUST NOT reference other plugins' specific artifact types or OrqaStudio-specific paths.
@@ -45,16 +49,16 @@ but MUST NOT reference other plugins' specific artifact types or OrqaStudio-spec
 
 | Current ID | Title | Current Location | Action |
 |-----------|-------|-----------------|--------|
-| AGENT-1dab5ebe | Orchestrator | agile-governance | **MOVE → systems-thinking** (universal role, not governance-specific) |
-| AGENT-cc255bc8 | Implementer | agile-governance | **MOVE → systems-thinking** |
-| AGENT-b0774726 | Reviewer | agile-governance | **MOVE → systems-thinking** |
-| AGENT-fb0ce261 | Researcher | agile-governance | **MOVE → systems-thinking** |
-| AGENT-caff7bc1 | Planner | agile-governance | **MOVE → systems-thinking** |
-| AGENT-ec1b3785 | Writer | agile-governance | **MOVE → systems-thinking** |
-| AGENT-c5284fde | Designer | agile-governance | **MOVE → systems-thinking** |
-| AGENT-ff44f841 | Governance Steward | agile-governance | **STAY** (governance-specific) |
-| AGENT-bedeffd1 | Installer | agile-governance | **MOVE → systems-thinking** (universal role) |
-| AGENT-e7f3a2c9 | Enforcer | agile-governance | **STAY + RENAME** to "Governance Enforcer" |
+| AGENT-1dab5ebe | Orchestrator | agile-governance | **MOVE → orqa-core** (framework execution model) |
+| AGENT-cc255bc8 | Implementer | agile-governance | **MOVE → orqa-core** |
+| AGENT-b0774726 | Reviewer | agile-governance | **MOVE → orqa-core** |
+| AGENT-fb0ce261 | Researcher | agile-governance | **MOVE → orqa-core** |
+| AGENT-caff7bc1 | Planner | agile-governance | **MOVE → orqa-core** |
+| AGENT-ec1b3785 | Writer | agile-governance | **MOVE → orqa-core** |
+| AGENT-c5284fde | Designer | agile-governance | **MOVE → orqa-core** |
+| AGENT-ff44f841 | Governance Steward | agile-governance | STAY (governance-specific) |
+| AGENT-bedeffd1 | Installer | agile-governance | **MOVE → orqa-core** (framework role) |
+| AGENT-e7f3a2c9 | Enforcer | agile-governance | STAY + RENAME to "Governance Enforcer" |
 | AGENT-b2f574e5 | Svelte Specialist | svelte | STAY |
 | AGENT-b0857607 | Svelte Standards | svelte | STAY |
 | AGENT-e1e47559 | Rust Specialist | rust | STAY |
@@ -64,23 +68,23 @@ but MUST NOT reference other plugins' specific artifact types or OrqaStudio-spec
 
 | Current ID | Title | Action |
 |-----------|-------|--------|
-| RULE-532100d9 | Agent Delegation | **MOVE → systems-thinking** (how agents work, not governance) |
-| RULE-7b770593 | Artifact Lifecycle | **REVIEW** — if generic (status transitions for any artifact), STAY. If it references governance-specific types, SPLIT into generic lifecycle + governance-specific |
-| RULE-9daf29c0 | Documentation-First | **MOVE → systems-thinking** (methodology, not governance enforcement) |
+| RULE-532100d9 | Agent Delegation | **MOVE → orqa-core** (framework execution model) |
+| RULE-7b770593 | Artifact Lifecycle | **REVIEW** — generic status transitions STAY, governance-specific parts SPLIT |
+| RULE-9daf29c0 | Documentation-First | **MOVE → orqa-core** (framework methodology) |
 | RULE-3eccebf3 | Enforcement Before Code | STAY (governance enforcement pattern) |
 | RULE-57ccb4a3 | Error Ownership | STAY (governance discipline) |
-| RULE-633e636d | Git Workflow | **MOVE → future git-integration plugin** (not governance) |
-| RULE-6d1c8dc7 | Historical Preservation | **MOVE → systems-thinking** (archival methodology) |
+| RULE-633e636d | Git Workflow | **MOVE → future git-integration plugin** |
+| RULE-6d1c8dc7 | Historical Preservation | **MOVE → orqa-core** (framework archival methodology) |
 | RULE-878e5422 | Honest Reporting | STAY (governance discipline) |
 | RULE-22783309 | IDs Are Not Priority | STAY (governance convention) |
 | RULE-551bde31 | Lessons Learned | STAY (governance learning loop) |
 | RULE-e120bb70 | No Deferred Deliverables | STAY (governance enforcement) |
-| RULE-e9c54567 | No Stubs or Placeholders | **MOVE → software** (code implementation rule) |
-| RULE-b2753bad | Required Reading | STAY (governance discipline) |
-| RULE-8035e176 | Structure Before Work | **MOVE → systems-thinking** (methodology) |
+| RULE-e9c54567 | No Stubs or Placeholders | **MOVE → coding-standards** (code-level rule) |
+| RULE-b2753bad | Required Reading | **MOVE → orqa-core** (framework discipline) |
+| RULE-8035e176 | Structure Before Work | **MOVE → orqa-core** (framework methodology) |
 | RULE-2f7b6a31 | Artifact Link Format | **MERGE with Artifact Lifecycle** if possible, else STAY |
-| RULE-f809076f | Tool Access Restrictions | **MOVE → systems-thinking** (agent capability model) |
-| RULE-e352fd0a | Session Management | **MOVE → systems-thinking** (methodology) |
+| RULE-f809076f | Tool Access Restrictions | **MOVE → orqa-core** (framework agent model) |
+| RULE-e352fd0a | Session Management | **MOVE → orqa-core** (framework methodology) |
 | RULE-98682b5e | Core Graph Firmware Protection | STAY (governance protection) |
 | RULE-130f1f63 | Data Integrity | **REVIEW** — STAY if generic cross-reference integrity. SPLIT if OrqaStudio-specific |
 | RULE-9bc8c230 | Behavioral Rule Enforcement Plan | STAY (governance enforcement) |
@@ -89,7 +93,7 @@ but MUST NOT reference other plugins' specific artifact types or OrqaStudio-spec
 
 | Current ID | Title | Action |
 |-----------|-------|--------|
-| RULE-9ba80a19 | No Aliases or Hacks | **MOVE → software** (code implementation rule) |
+| RULE-9ba80a19 | No Aliases or Hacks | **MOVE → coding-standards** (code-level rule) |
 | RULE-39169bcd | Pillar Alignment in Documentation | STAY (discovery methodology) |
 | RULE-1f30904a | Root Directory Cleanliness | **MOVE → coding-standards** (file structure rule) |
 | RULE-d90112d9 | Systems Thinking First | STAY (core methodology) |
@@ -103,11 +107,11 @@ but MUST NOT reference other plugins' specific artifact types or OrqaStudio-spec
 |-----------|-------|--------|
 | RULE-6c0496e0 | Artifact Config Integrity | **REVIEW** — may be redundant with well-enforced schemas. Remove if so |
 | RULE-303c1cc8 | Plan Mode Compliance | STAY (delivery planning) |
-| RULE-deab6ea7 | Skill Enforcement | **MOVE → agile-governance** (governance framework) |
-| RULE-11c29c9e | Skill Portability | **MOVE → agile-governance** (governance framework) |
-| RULE-df24948b | Context Window Management | **MOVE → systems-thinking** (agent methodology) |
-| RULE-5ee43922 | User-Invocable Knowledge Semantics | **MOVE → systems-thinking** (knowledge model) |
-| RULE-92dba0cb | Provider-Agnostic Tool Capabilities | **MOVE → agile-governance** (agent capability model) |
+| RULE-deab6ea7 | Skill Enforcement | **MOVE → orqa-core** (framework knowledge model) |
+| RULE-11c29c9e | Skill Portability | **MOVE → orqa-core** (framework knowledge model) |
+| RULE-df24948b | Context Window Management | **MOVE → orqa-core** (framework agent methodology) |
+| RULE-5ee43922 | User-Invocable Knowledge Semantics | **MOVE → orqa-core** (framework knowledge model) |
+| RULE-92dba0cb | Provider-Agnostic Tool Capabilities | **MOVE → orqa-core** (framework agent model) |
 
 ### Rules — dev environment (.orqa/process/rules/) — 19 project-specific
 
@@ -138,16 +142,16 @@ but MUST NOT reference other plugins' specific artifact types or OrqaStudio-spec
 | Current ID | Title | Action | Content Status |
 |-----------|-------|--------|---------------|
 | KNOW-e4b91f37 | Enforcement Patterns | STAY | GENERIC — teaches methodology |
-| KNOW-6f33713e | Planning | **MOVE → systems-thinking** (methodology) | NEEDS REWRITE — has .orqa/ paths, AD IDs |
-| KNOW-f7476f0a | Research Methodology | **MOVE → systems-thinking** (methodology) | GENERIC |
-| KNOW-f5edb34d | Diagnostic Methodology | **MOVE → systems-thinking** (methodology) | GENERIC |
-| KNOW-8d76c3c7 | Governance Maintenance | STAY but REWRITE | NEEDS REWRITE — mix of generic + OrqaStudio-specific. Extract generic part |
+| KNOW-6f33713e | Planning | **MOVE → orqa-core** (framework methodology) | NEEDS REWRITE — has .orqa/ paths, AD IDs |
+| KNOW-f7476f0a | Research Methodology | **MOVE → orqa-core** (framework methodology) | GENERIC |
+| KNOW-f5edb34d | Diagnostic Methodology | **MOVE → orqa-core** (framework methodology) | GENERIC |
+| KNOW-8d76c3c7 | Governance Maintenance | STAY but REWRITE | NEEDS REWRITE — mix of generic + OrqaStudio-specific |
 | KNOW-8d1c4be6 | Plugin Artifact Usage | STAY | REVIEW — may be OrqaStudio-specific |
-| KNOW-449b1e02 | Artifact Status Management | STAY | GENERIC — portable status model |
-| KNOW-eea50a65 | Governance Patterns | **MOVE → dev .orqa/** (100% OrqaStudio-specific) | ORQASTUDIO-ONLY — describes .orqa/ structure, core.json |
-| KNOW-4368d782 | Artifact Audit Methodology | **MOVE → dev .orqa/** (100% OrqaStudio-specific) | ORQASTUDIO-ONLY — schema-driven audit against core.json |
-| KNOW-250d5d6f | Naming Conventions | **MOVE → dev .orqa/** (100% OrqaStudio-specific) | ORQASTUDIO-ONLY — GitHub repo naming, npm scopes |
-| KNOW-b08d355c | Schema Validation | **MOVE → dev .orqa/** (100% OrqaStudio-specific) | ORQASTUDIO-ONLY — core.json, orqa-plugin.json validation |
+| KNOW-449b1e02 | Artifact Status Management | **MOVE → orqa-core** (framework status model) | GENERIC — portable status model |
+| KNOW-eea50a65 | Governance Patterns | **MOVE → dev .orqa/** | ORQASTUDIO-ONLY — .orqa/ structure, core.json |
+| KNOW-4368d782 | Artifact Audit Methodology | **MOVE → dev .orqa/** | ORQASTUDIO-ONLY — schema-driven audit |
+| KNOW-250d5d6f | Naming Conventions | **MOVE → dev .orqa/** | ORQASTUDIO-ONLY — GitHub repo naming, npm scopes |
+| KNOW-b08d355c | Schema Validation | **MOVE → dev .orqa/** | ORQASTUDIO-ONLY — core.json validation |
 
 ### Knowledge — systems-thinking (currently 14)
 
@@ -163,7 +167,7 @@ but MUST NOT reference other plugins' specific artifact types or OrqaStudio-spec
 | KNOW-1ab0e715 | Thinking Mode: Documentation | STAY | MOSTLY GENERIC |
 | KNOW-a4c8f1e2 | Thinking Mode: Dogfood Implementation | STAY | GENERIC |
 | KNOW-fda0559b | Thinking Mode: Implementation | STAY | MOSTLY GENERIC |
-| KNOW-85e392ea | Thinking Mode: Learning Loop | STAY | MOSTLY GENERIC |
+| KNOW-85e392ea | Thinking Mode: Learning Loop | **MOVE → agile-governance** (governance learning loop) | MOSTLY GENERIC |
 | KNOW-de25b290 | Thinking Mode: Planning | STAY | MOSTLY GENERIC |
 | KNOW-1a8eb147 | Thinking Mode: Research | STAY | MOSTLY GENERIC |
 | KNOW-83614358 | Thinking Mode: Review | STAY | MOSTLY GENERIC |
@@ -223,11 +227,15 @@ describe OrqaStudio's implementation, not portable governance methodology.
 ## Steps
 
 1. [ ] User reviews this table — confirms moves, merges, and rewrites
-2. [ ] Add `role` field to orqa-plugin.json schema (core:governance | core:discovery | core:delivery | enhancement:governance | enhancement:delivery | extension)
-3. [ ] Move artifacts to correct plugins per table above
-4. [ ] Move OrqaStudio-only knowledge to dev .orqa/
-5. [ ] Rewrite content flagged as NEEDS REWRITE — remove .orqa/ paths, AD IDs, OrqaStudio CLI refs
-6. [ ] Merge deduplication candidates
+2. [ ] Create orqa-core plugin (new repo, submodule) — the framework operating system
+3. [ ] Add `role` field to orqa-plugin.json schema (core:framework | core:governance | core:discovery | core:delivery | enhancement:delivery | extension)
+4. [ ] Move universal agents + framework rules/knowledge to orqa-core
+5. [ ] Move coding rules (no stubs, no aliases, root cleanliness, tooltips) to coding-standards
+6. [ ] Move OrqaStudio-only knowledge to dev .orqa/
 7. [ ] Move platform docs from agile-governance/documentation/ to dev .orqa/documentation/
-8. [ ] Run `orqa validate --fix` to verify graph integrity
-9. [ ] Tighten thinking-mode-* content — remove artifact type names, use generic categories
+8. [ ] Rewrite content flagged as NEEDS REWRITE — remove .orqa/ paths, AD IDs, OrqaStudio CLI refs
+9. [ ] Merge deduplication candidates (Artifact Link Format into Lifecycle, governance-maintenance split)
+10. [ ] Move Thinking Mode: Learning Loop to agile-governance
+11. [ ] Tighten thinking-mode-* content — remove artifact type names, use generic categories
+12. [ ] Run `orqa validate --fix` to verify graph integrity
+13. [ ] Register orqa-core in .orqa/project.json and .claude/ symlinks
