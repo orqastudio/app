@@ -19,6 +19,8 @@ use tower_lsp::lsp_types::{
 };
 use tower_lsp::{Client, LanguageServer, LspService, Server};
 
+use orqa_validation::platform::{scan_plugin_manifests, ArtifactTypeDef};
+
 use crate::graph::build_artifact_graph;
 use crate::types::ArtifactGraph;
 use crate::validation::{validate_file, validate_graph_checks};
@@ -31,6 +33,9 @@ pub(crate) struct OrqaLspBackend {
     client: Client,
     project_root: PathBuf,
     graph: Mutex<Option<ArtifactGraph>>,
+    /// Artifact type definitions loaded from plugin manifests.
+    /// Used for JSON Schema frontmatter validation.
+    artifact_types: Mutex<Vec<ArtifactTypeDef>>,
 }
 
 impl OrqaLspBackend {
@@ -39,6 +44,7 @@ impl OrqaLspBackend {
             client,
             project_root,
             graph: Mutex::new(None),
+            artifact_types: Mutex::new(Vec::new()),
         }
     }
 
@@ -56,6 +62,23 @@ impl OrqaLspBackend {
         if let Ok(mut guard) = self.graph.lock() {
             *guard = build_artifact_graph(&self.project_root).ok();
         }
+    }
+
+    /// Load artifact type definitions from plugin manifests.
+    fn load_artifact_types(&self) {
+        let contributions = scan_plugin_manifests(&self.project_root);
+        if let Ok(mut guard) = self.artifact_types.lock() {
+            *guard = contributions.artifact_types;
+        }
+    }
+
+    /// Get the cached artifact types.
+    fn get_artifact_types(&self) -> Vec<ArtifactTypeDef> {
+        self.artifact_types
+            .lock()
+            .ok()
+            .map(|guard| guard.clone())
+            .unwrap_or_default()
     }
 
     /// Compute the relative path of `uri` from the project root, with forward slashes.
@@ -87,9 +110,10 @@ impl OrqaLspBackend {
     async fn validate_and_publish(&self, uri: Url, content: &str) {
         let rel_path = self.relative_path(&uri);
         let graph = self.get_graph();
+        let artifact_types = self.get_artifact_types();
 
-        // File-level checks: frontmatter syntax, required fields, status, IDs.
-        let mut diagnostics = validate_file(&rel_path, content, graph.as_ref());
+        // File-level checks: frontmatter syntax, JSON Schema, IDs.
+        let mut diagnostics = validate_file(&rel_path, content, graph.as_ref(), &artifact_types);
 
         // Graph-level checks: broken refs, missing inverses, type constraints,
         // cardinality, cycles — delegated to orqa_validation.
@@ -129,6 +153,7 @@ impl LanguageServer for OrqaLspBackend {
         self.client
             .log_message(MessageType::INFO, "OrqaStudio LSP server initialized")
             .await;
+        self.load_artifact_types();
         self.refresh_graph();
     }
 
@@ -149,6 +174,12 @@ impl LanguageServer for OrqaLspBackend {
     }
 
     async fn did_save(&self, params: DidSaveTextDocumentParams) {
+        // Reload schemas if a plugin manifest was saved.
+        let path = params.text_document.uri.to_file_path().unwrap_or_default();
+        if path.file_name().is_some_and(|n| n == "orqa-plugin.json") {
+            self.load_artifact_types();
+        }
+
         // Refresh the graph so new artifacts become visible as relationship targets.
         self.refresh_graph();
 

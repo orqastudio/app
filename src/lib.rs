@@ -47,5 +47,5 @@ pub use graph::{
 pub use server::{run_stdio, run_tcp};
 pub use types::{ArtifactGraph, ArtifactNode};
 pub use validation::{
-    is_hex_artifact_id, is_valid_artifact_id, validate_file, validate_graph_checks, VALID_STATUSES,
+    is_hex_artifact_id, is_valid_artifact_id, validate_file, validate_graph_checks,
 };

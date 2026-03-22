@@ -112,27 +112,33 @@ mod tests {
     use super::*;
 
     #[test]
-    fn platform_loads_artifact_types() {
-        assert!(!PLATFORM.artifact_types.is_empty());
+    fn platform_core_json_is_empty() {
+        // core.json is now empty — all artifact types come from plugin manifests.
+        assert!(
+            PLATFORM.artifact_types.is_empty(),
+            "core.json should be empty; plugins are the source of truth"
+        );
     }
 
     #[test]
-    fn rule_prefix_maps_to_rule_type() {
-        let matched = PLATFORM
-            .artifact_types
-            .iter()
-            .find(|t| t.id_prefix == "RULE")
-            .map(|t| t.key.as_str());
-        assert_eq!(matched, Some("rule"));
-    }
+    fn scan_plugin_manifests_finds_types() {
+        // This test requires running from the project root. Skip if not available.
+        let project_root = std::env::current_dir()
+            .ok()
+            .and_then(|p| {
+                let mut candidate = p.as_path();
+                while !candidate.join("plugins").exists() {
+                    candidate = candidate.parent()?;
+                }
+                Some(candidate.to_path_buf())
+            });
+        let Some(root) = project_root else { return };
 
-    #[test]
-    fn know_prefix_maps_to_knowledge_type() {
-        let matched = PLATFORM
-            .artifact_types
-            .iter()
-            .find(|t| t.id_prefix == "KNOW")
-            .map(|t| t.key.as_str());
-        assert_eq!(matched, Some("knowledge"));
+        let types = scan_plugin_manifests(&root);
+        assert!(!types.is_empty(), "Should find artifact types from plugins");
+
+        let rule = types.iter().find(|t| t.id_prefix == "RULE");
+        assert!(rule.is_some(), "Should find RULE type from agile-governance plugin");
+        assert_eq!(rule.map(|t| t.key.as_str()), Some("rule"));
     }
 }

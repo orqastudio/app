@@ -5,7 +5,7 @@
 //! ## File-level checks (single file, fast, always run)
 //! - Missing YAML frontmatter delimiters
 //! - Missing required `id` field
-//! - Invalid `status` value (against 12 canonical statuses)
+//! - JSON Schema validation (types, patterns, enums, required fields)
 //! - Invalid or legacy artifact ID format
 //! - Duplicate frontmatter keys
 //! - Knowledge artifact missing `synchronised-with` relationship
@@ -22,28 +22,15 @@
 //! - Body text references without relationship edges
 //! - Parent/child status inconsistencies
 
+use std::collections::HashMap;
 use std::path::Path;
 
+use orqa_validation::checks::schema::{build_frontmatter_schema, validate_frontmatter};
+use orqa_validation::platform::ArtifactTypeDef;
 use orqa_validation::types::{IntegrityCategory, IntegritySeverity};
 use tower_lsp::lsp_types::{Diagnostic, DiagnosticSeverity, Position, Range};
 
 use crate::types::ArtifactGraph;
-
-/// The 12 canonical artifact statuses.
-pub const VALID_STATUSES: &[&str] = &[
-    "captured",
-    "exploring",
-    "ready",
-    "prioritised",
-    "active",
-    "hold",
-    "blocked",
-    "review",
-    "completed",
-    "surpassed",
-    "archived",
-    "recurring",
-];
 
 /// Validate that an artifact ID matches the expected format.
 ///
@@ -101,10 +88,13 @@ fn find_frontmatter_end_line(content: &str) -> u32 {
 /// `content` is the full file text.
 /// `graph` is `None` when the graph hasn't been built yet (relationship target
 /// checks are skipped in that case).
+/// `artifact_types` provides JSON Schema definitions for frontmatter validation.
+/// When empty, schema validation is skipped (only structural checks run).
 pub fn validate_file(
     rel_path: &str,
     content: &str,
     graph: Option<&ArtifactGraph>,
+    artifact_types: &[ArtifactTypeDef],
 ) -> Vec<Diagnostic> {
     let mut diagnostics = Vec::new();
 
@@ -118,12 +108,11 @@ pub fn validate_file(
 
     let lines: Vec<&str> = frontmatter.lines().collect();
     let has_id = lines.iter().any(|l| l.starts_with("id:"));
-    let has_status = lines.iter().any(|l| l.starts_with("status:"));
 
     check_required_id(has_id, content, &mut diagnostics);
-    check_status(has_status, content, &mut diagnostics);
     check_artifact_id(has_id, content, &mut diagnostics);
     check_duplicate_keys(content, &mut diagnostics);
+    check_json_schema(content, frontmatter, artifact_types, &mut diagnostics);
     check_knowledge_sync(rel_path, frontmatter, content, &mut diagnostics);
     check_relationship_targets(graph, content, &mut diagnostics);
     check_missing_relationships(rel_path, frontmatter, content, &mut diagnostics);
@@ -168,31 +157,91 @@ fn check_required_id(has_id: bool, content: &str, diagnostics: &mut Vec<Diagnost
     }
 }
 
-fn check_status(has_status: bool, content: &str, diagnostics: &mut Vec<Diagnostic>) {
-    if !has_status {
+/// Validate frontmatter against JSON Schema derived from plugin artifact type definitions.
+///
+/// Parses the YAML frontmatter as JSON, matches the artifact to its type by ID prefix,
+/// builds the enriched JSON Schema, and validates. Schema errors are mapped to LSP
+/// diagnostics with line-level positioning where possible.
+fn check_json_schema(
+    content: &str,
+    frontmatter_str: &str,
+    artifact_types: &[ArtifactTypeDef],
+    diagnostics: &mut Vec<Diagnostic>,
+) {
+    if artifact_types.is_empty() {
         return;
     }
-    for (i, line) in content.lines().enumerate() {
-        if line.starts_with("status:") {
-            let status = line.trim_start_matches("status:").trim().trim_matches('"');
-            if !VALID_STATUSES.contains(&status) {
-                diagnostics.push(Diagnostic {
-                    range: Range::new(
-                        Position::new(i as u32, 0),
-                        Position::new(i as u32, line.len() as u32),
-                    ),
-                    severity: Some(DiagnosticSeverity::ERROR),
-                    source: Some("orqastudio".into()),
-                    message: format!(
-                        "Invalid status \"{status}\" — must be one of: {}",
-                        VALID_STATUSES.join(", ")
-                    ),
-                    ..Default::default()
-                });
+
+    // Parse frontmatter YAML into a JSON value.
+    let frontmatter: serde_json::Value = match serde_yaml::from_str(frontmatter_str) {
+        Ok(v) => v,
+        Err(_) => return, // YAML parse errors are caught elsewhere
+    };
+
+    // Extract ID to determine artifact type.
+    let id = match frontmatter.get("id").and_then(serde_json::Value::as_str) {
+        Some(id) => id,
+        None => return, // No ID — can't match to a schema
+    };
+
+    // Match by ID prefix (everything before the first '-').
+    let prefix = match id.split('-').next() {
+        Some(p) if !p.is_empty() => p,
+        _ => return,
+    };
+
+    // Build prefix → type_def lookup.
+    let type_map: HashMap<&str, &ArtifactTypeDef> = artifact_types
+        .iter()
+        .map(|t| (t.id_prefix.as_str(), t))
+        .collect();
+
+    let Some(type_def) = type_map.get(prefix) else {
+        return; // Unknown type — no schema to validate against
+    };
+
+    // Build and validate against the enriched JSON Schema.
+    let schema = build_frontmatter_schema(type_def);
+    let errors = validate_frontmatter(&frontmatter, &schema);
+
+    for error in errors {
+        // Try to find the line number for the offending field.
+        let field_name = error
+            .path
+            .trim_start_matches('/')
+            .split('/')
+            .next()
+            .unwrap_or("");
+
+        let (line, line_len) = find_field_line(content, field_name);
+
+        diagnostics.push(Diagnostic {
+            range: Range::new(
+                Position::new(line, 0),
+                Position::new(line, line_len),
+            ),
+            severity: Some(DiagnosticSeverity::ERROR),
+            source: Some("orqastudio".into()),
+            message: format!("[schema] {}", error.message),
+            ..Default::default()
+        });
+    }
+}
+
+/// Find the line number of a frontmatter field in the file content.
+/// Returns (line_number, line_length). Falls back to the closing `---` line.
+fn find_field_line(content: &str, field_name: &str) -> (u32, u32) {
+    if !field_name.is_empty() {
+        let search = format!("{field_name}:");
+        for (i, line) in content.lines().enumerate() {
+            if line.starts_with(&search) {
+                return (i as u32, line.len() as u32);
             }
-            break;
         }
     }
+    // Fallback: use the closing --- line
+    let end = find_frontmatter_end_line(content);
+    (end, 3)
 }
 
 fn check_artifact_id(has_id: bool, content: &str, diagnostics: &mut Vec<Diagnostic>) {
@@ -473,16 +522,38 @@ mod tests {
         assert!(!is_hex_artifact_id("EPIC-123"));
     }
 
+    fn make_epic_type() -> ArtifactTypeDef {
+        let mut transitions = std::collections::HashMap::new();
+        transitions.insert("captured".to_owned(), vec!["active".to_owned()]);
+        transitions.insert("active".to_owned(), vec!["completed".to_owned()]);
+        transitions.insert("completed".to_owned(), vec![]);
+        ArtifactTypeDef {
+            key: "epic".to_owned(),
+            label: "Epic".to_owned(),
+            icon: "layers".to_owned(),
+            id_prefix: "EPIC".to_owned(),
+            frontmatter_schema: serde_json::json!({
+                "type": "object",
+                "required": ["id", "status"],
+                "properties": {
+                    "id": { "type": "string", "pattern": "^EPIC-[a-f0-9]{8}$" }
+                },
+                "additionalProperties": true
+            }),
+            status_transitions: transitions,
+        }
+    }
+
     #[test]
     fn no_diagnostics_for_non_orqa_file() {
-        let diagnostics = validate_file("src/main.rs", "fn main() {}", None);
+        let diagnostics = validate_file("src/main.rs", "fn main() {}", None, &[]);
         assert!(diagnostics.is_empty());
     }
 
     #[test]
     fn error_on_missing_frontmatter() {
         let content = "# No frontmatter\n";
-        let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None);
+        let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None, &[]);
         assert_eq!(diagnostics.len(), 1);
         assert!(diagnostics[0].message.contains("frontmatter"));
     }
@@ -490,34 +561,38 @@ mod tests {
     #[test]
     fn error_on_missing_id() {
         let content = "---\ntitle: My Epic\nstatus: active\n---\n# Body\n";
-        let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None);
+        let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None, &[]);
         assert!(diagnostics
             .iter()
             .any(|d| d.message.contains("Missing required frontmatter field: id")));
     }
 
     #[test]
-    fn error_on_invalid_status() {
-        let content = "---\nid: EPIC-001\nstatus: wip\n---\n# Body\n";
-        let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None);
-        assert!(diagnostics
-            .iter()
-            .any(|d| d.message.contains("Invalid status")));
+    fn schema_catches_invalid_status() {
+        let types = vec![make_epic_type()];
+        let content = "---\nid: EPIC-deadbeef\nstatus: wip\n---\n# Body\n";
+        let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None, &types);
+        assert!(
+            diagnostics.iter().any(|d| d.message.contains("[schema]")),
+            "Expected schema validation error for invalid status, got: {diagnostics:?}"
+        );
     }
 
     #[test]
-    fn no_error_for_valid_status() {
-        let content = "---\nid: EPIC-001\nstatus: active\n---\n# Body\n";
-        let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None);
-        assert!(!diagnostics
-            .iter()
-            .any(|d| d.message.contains("Invalid status")));
+    fn no_schema_error_for_valid_status() {
+        let types = vec![make_epic_type()];
+        let content = "---\nid: EPIC-deadbeef\nstatus: active\n---\n# Body\n";
+        let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None, &types);
+        assert!(
+            !diagnostics.iter().any(|d| d.message.contains("[schema]")),
+            "Expected no schema errors, got: {diagnostics:?}"
+        );
     }
 
     #[test]
     fn warning_for_legacy_sequential_id() {
         let content = "---\nid: EPIC-001\nstatus: active\n---\n# Body\n";
-        let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None);
+        let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None, &[]);
         assert!(diagnostics
             .iter()
             .any(|d| d.message.contains("Legacy sequential ID")));
@@ -526,7 +601,7 @@ mod tests {
     #[test]
     fn no_id_warning_for_hex_id() {
         let content = "---\nid: EPIC-deadbeef\nstatus: active\n---\n# Body\n";
-        let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None);
+        let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None, &[]);
         assert!(!diagnostics
             .iter()
             .any(|d| d.message.contains("Legacy sequential ID")));
@@ -535,7 +610,7 @@ mod tests {
     #[test]
     fn error_on_duplicate_frontmatter_key() {
         let content = "---\nid: EPIC-001\nstatus: active\nstatus: completed\n---\n# Body\n";
-        let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None);
+        let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None, &[]);
         assert!(diagnostics
             .iter()
             .any(|d| d.message.contains("Duplicate frontmatter key")));
@@ -544,7 +619,7 @@ mod tests {
     #[test]
     fn knowledge_artifact_missing_synchronised_with() {
         let content = "---\nid: KNOW-001\ntype: knowledge\n---\n# Body\n";
-        let diagnostics = validate_file(".orqa/process/knowledge/KNOW-001.md", content, None);
+        let diagnostics = validate_file(".orqa/process/knowledge/KNOW-001.md", content, None, &[]);
         assert!(diagnostics
             .iter()
             .any(|d| d.message.contains("synchronised-with")));
@@ -553,7 +628,7 @@ mod tests {
     #[test]
     fn info_on_missing_relationships_for_delivery() {
         let content = "---\nid: EPIC-001\nstatus: active\n---\n# Body\n";
-        let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None);
+        let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None, &[]);
         assert!(diagnostics
             .iter()
             .any(|d| d.message.contains("No relationships declared")));
