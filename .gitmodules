@@ -31,9 +31,6 @@
 [submodule "plugins/cli"]
 	path = plugins/cli
 	url = git@github.com:orqastudio/orqastudio-plugin-cli.git
-[submodule "plugins/claude"]
-	path = plugins/claude
-	url = git@github.com:orqastudio/orqastudio-plugin-claude.git
 [submodule "plugins/software"]
 	path = plugins/software
 	url = git@github.com:orqastudio/orqastudio-plugin-software.git
@@ -76,3 +73,12 @@
 [submodule "plugins/systems-thinking"]
 	path = plugins/systems-thinking
 	url = git@github.com:orqastudio/orqastudio-plugin-systems-thinking.git
+[submodule "integrations/claude-agent-sdk"]
+	path = integrations/claude-agent-sdk
+	url = git@github.com:orqastudio/orqastudio-plugin-claude.git
+[submodule "plugins/rust"]
+	path = plugins/rust
+	url = git@github.com:orqastudio/orqastudio-plugin-rust.git
+[submodule "plugins/core"]
+	path = plugins/core
+	url = git@github.com:orqastudio/orqastudio-plugin-core.git

@@ -387,10 +387,17 @@
     }
   ],
   "plugins": {
-    "@orqastudio/plugin-claude": {
+    "@orqastudio/plugin-core": {
       "installed": true,
       "enabled": true,
-      "path": "plugins/claude",
+      "path": "plugins/core",
+      "relationships": null,
+      "config": null
+    },
+    "@orqastudio/integration-claude-agent-sdk": {
+      "installed": true,
+      "enabled": true,
+      "path": "integrations/claude-agent-sdk",
       "relationships": null,
       "config": null
     },
