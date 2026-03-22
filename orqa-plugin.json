@@ -67,7 +67,11 @@
           ],
           "completed": [
             "surpassed"
-          ]
+          ],
+          "surpassed": [
+            "archived"
+          ],
+          "archived": []
         }
       },
       {
@@ -128,7 +132,11 @@
           ],
           "completed": [
             "surpassed"
-          ]
+          ],
+          "surpassed": [
+            "archived"
+          ],
+          "archived": []
         }
       },
       {
@@ -183,7 +191,11 @@
           ],
           "completed": [
             "surpassed"
-          ]
+          ],
+          "surpassed": [
+            "archived"
+          ],
+          "archived": []
         }
       },
       {
@@ -229,7 +241,11 @@
           "completed": [
             "surpassed",
             "archived"
-          ]
+          ],
+          "surpassed": [
+            "archived"
+          ],
+          "archived": []
         }
       },
       {
@@ -270,7 +286,11 @@
           "completed": [
             "surpassed",
             "archived"
-          ]
+          ],
+          "surpassed": [
+            "archived"
+          ],
+          "archived": []
         }
       }
     ],
