@@ -1,13 +1,13 @@
 ---
-id: KNOW-SVE-90dd73ab
+id: KNOW-90dd73ab
 type: knowledge
 name: Svelte Plugin Installation
 status: active
 plugin: "@orqastudio/plugin-svelte"
 relationships:
-  - target: DOC-SVE-f7ed7a62
+  - target: DOC-f7ed7a62
     type: synchronised-with
-  - target: DOC-SVE-5d832d1d
+  - target: DOC-5d832d1d
     type: synchronised-with
 
 ---

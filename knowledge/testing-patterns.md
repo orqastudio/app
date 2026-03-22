@@ -1,15 +1,15 @@
 ---
-id: KNOW-SVE-fd2b84c4
+id: KNOW-fd2b84c4
 type: knowledge
 name: Testing Patterns
 status: active
 plugin: "@orqastudio/plugin-svelte"
 relationships:
-  - target: DOC-SVE-5d832d1d
+  - target: DOC-5d832d1d
     type: synchronised-with
-  - target: AGENT-SVE-b0857607
+  - target: AGENT-b0857607
     type: employed-by
-  - target: AGENT-SVE-spec-c8e4f9a2
+  - target: AGENT-b2f574e5
     type: employed-by
 ---
 

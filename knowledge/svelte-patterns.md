@@ -1,13 +1,13 @@
 ---
-id: KNOW-SVE-89d35141
+id: KNOW-89d35141
 type: knowledge
 name: Svelte 5 Patterns
 status: active
 plugin: "@orqastudio/plugin-svelte"
 relationships:
-  - target: DOC-SVE-5d832d1d
+  - target: DOC-5d832d1d
     type: synchronised-with
-  - target: AGENT-SVE-spec-c8e4f9a2
+  - target: AGENT-b2f574e5
     type: employed-by
 ---
 

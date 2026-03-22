@@ -22,7 +22,8 @@
         "DeliveryPathMismatch",
         "MissingType",
         "MissingStatus",
-        "DuplicateRelationship"
+        "DuplicateRelationship",
+        "FilenameMismatch"
       ]
     },
 

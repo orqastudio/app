@@ -23,7 +23,8 @@ export type IntegrityCategory =
   | "DeliveryPathMismatch"
   | "MissingType"
   | "MissingStatus"
-  | "DuplicateRelationship";
+  | "DuplicateRelationship"
+  | "FilenameMismatch";
 /**
  * Severity of an integrity finding.
  */

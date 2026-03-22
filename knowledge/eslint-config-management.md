@@ -1,13 +1,13 @@
 ---
-id: KNOW-SVE-88f32b6a
+id: KNOW-88f32b6a
 type: knowledge
 name: ESLint Config Management
 status: active
 plugin: "@orqastudio/plugin-svelte"
 relationships:
-  - target: DOC-SVE-5d832d1d
+  - target: DOC-5d832d1d
     type: synchronised-with
-  - target: AGENT-SVE-b0857607
+  - target: AGENT-b0857607
     type: employed-by
 ---
 

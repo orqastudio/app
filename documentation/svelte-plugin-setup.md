@@ -1,12 +1,12 @@
 ---
-id: DOC-SVE-f7ed7a62
+id: DOC-f7ed7a62
 title: "Svelte Plugin Setup"
 description: "How to install and configure the Svelte development plugin — dependencies, config generation, and organisation mode."
 category: onboarding
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
-  - target: KNOW-SVE-90dd73ab
+  - target: KNOW-90dd73ab
     type: synchronised-with
 ---
 

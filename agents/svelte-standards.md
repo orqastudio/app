@@ -1,5 +1,5 @@
 ---
-id: "AGENT-SVE-b0857607"
+id: "AGENT-b0857607"
 title: "Svelte Standards Agent"
 description: "Scoped task agent for Svelte/TypeScript coding standards. Operates in assess or configure mode — not conversational."
 preamble: "Execute Svelte/TypeScript standards checks in assess or configure mode. Return structured JSON output. Do not converse — execute and return."
@@ -13,9 +13,9 @@ capabilities:
   - "content_search"
   - "shell_execute"
 relationships:
-  - target: "KNOW-SVE-88f32b6a"
+  - target: "KNOW-88f32b6a"
     type: "employs"
-  - target: "KNOW-SVE-fd2b84c4"
+  - target: "KNOW-fd2b84c4"
     type: "employs"
   - target: "PILLAR-569581e0"
     type: "serves"
