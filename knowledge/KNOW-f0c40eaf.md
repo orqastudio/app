@@ -1,6 +1,5 @@
 ---
 id: KNOW-f0c40eaf
-type: knowledge
 title: Composability
 description: |
   Universal composability philosophy: building systems from small, pure, swappable units.

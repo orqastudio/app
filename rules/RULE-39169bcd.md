@@ -1,6 +1,5 @@
 ---
 id: "RULE-39169bcd"
-type: "rule"
 title: "Pillar Alignment in Documentation"
 description: "Every documentation page describing a feature must include a Pillar Alignment section."
 status: "active"

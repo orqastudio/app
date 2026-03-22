@@ -1,17 +1,12 @@
 ---
 id: KNOW-a4c8f1e2
-type: knowledge
 title: "Thinking Mode: Dogfood Implementation"
 thinking-mode: dogfood-implementation
-description: "Building infrastructure for immediate use in the current workflow — not a future feature idea."
+description: Building infrastructure for immediate use in the current workflow — not a future feature idea.
 status: active
 created: 2026-03-21
 updated: 2026-03-21
-relationships:
-  - target: RULE-009
-    type: related-to
-  - target: RULE-010
-    type: related-to
+relationships: []
 ---
 
 # Thinking Mode: Dogfood Implementation
