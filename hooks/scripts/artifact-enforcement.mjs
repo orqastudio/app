@@ -8,7 +8,7 @@
 // Issues a WARN (non-blocking systemMessage) listing any missing relationships.
 // Never blocks — governance debt is surfaced, not prevented.
 
-import { existsSync, readFileSync } from "fs";
+import { existsSync, readFileSync, readdirSync } from "fs";
 import { join, relative } from "path";
 import { logTelemetry } from "./telemetry.mjs";
 
@@ -17,20 +17,45 @@ import { logTelemetry } from "./telemetry.mjs";
 // ---------------------------------------------------------------------------
 
 /**
- * Minimum relationship requirements per artifact type.
- * Each entry lists the relationship keys that MUST appear in the relationships array.
+ * Build relationship requirements by scanning plugin manifests at runtime.
+ * Returns a map of artifact type → required relationship keys, derived from
+ * the `constraints.required: true` flag on relationship definitions.
  *
- * @type {Record<string, Array<{key: string, label: string}>>}
+ * @param {string} projectDir
+ * @returns {Record<string, Array<{key: string, label: string}>>}
  */
-const TYPE_REQUIREMENTS = {
-  task: [{ key: "delivers", label: "delivers → epic" }],
-  epic: [{ key: "fulfils", label: "fulfils → milestone" }],
-  idea: [{ key: "grounded", label: "grounded → pillar" }],
-  agent: [
-    { key: "serves", label: "serves → pillar or persona" },
-    { key: "employs", label: "employs → knowledge" },
-  ],
-};
+function buildTypeRequirements(projectDir) {
+  const requirements = {};
+
+  for (const parentDir of ["plugins", "connectors"]) {
+    const parent = join(projectDir, parentDir);
+    if (!existsSync(parent)) continue;
+    let entries;
+    try { entries = readdirSync(parent, { withFileTypes: true }); } catch { continue; }
+    for (const entry of entries) {
+      if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+      const manifestPath = join(parent, entry.name, "orqa-plugin.json");
+      if (!existsSync(manifestPath)) continue;
+      let manifest;
+      try { manifest = JSON.parse(readFileSync(manifestPath, "utf-8")); } catch { continue; }
+      const rels = manifest?.provides?.relationships;
+      if (!Array.isArray(rels)) continue;
+      for (const rel of rels) {
+        if (!rel.constraints?.required) continue;
+        const fromTypes = Array.isArray(rel.from) ? rel.from : [];
+        for (const fromType of fromTypes) {
+          if (!requirements[fromType]) requirements[fromType] = [];
+          const toLabel = Array.isArray(rel.to) ? rel.to.join(" or ") : String(rel.to);
+          const existing = requirements[fromType];
+          if (!existing.some((r) => r.key === rel.key)) {
+            existing.push({ key: rel.key, label: `${rel.key} → ${toLabel}` });
+          }
+        }
+      }
+    }
+  }
+  return requirements;
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -184,7 +209,8 @@ async function main() {
     process.exit(0);
   }
 
-  const requirements = TYPE_REQUIREMENTS[artifactType];
+  const typeRequirements = buildTypeRequirements(projectDir);
+  const requirements = typeRequirements[artifactType];
   if (!requirements || requirements.length === 0) {
     process.exit(0);
   }

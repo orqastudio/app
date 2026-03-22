@@ -70,29 +70,49 @@ function parseFrontmatter(content) {
   }
 }
 
-// Read the agent's preamble from its definition file in the .orqa source of truth.
+// Read the agent's preamble by scanning all agent directories (plugins, connectors, .orqa).
+// Matches by title (case-insensitive) since filenames are now ID-based (AGENT-xxxx.md).
 // Uses the `preamble` frontmatter field, falling back to `description`.
 function getAgentPreamble(agentType, projectDir) {
-  const filename = `${agentType}.md`;
-  const candidates = [
-    join(projectDir, "app", ".orqa", "process", "agents", filename),
-    join(projectDir, ".orqa", "process", "agents", filename),
-  ];
+  // Collect all agent directories: .orqa/process/agents + plugins/*/agents + connectors/*/agents
+  const agentDirs = [];
+  const orqaAgents = join(projectDir, ".orqa", "process", "agents");
+  if (existsSync(orqaAgents)) agentDirs.push(orqaAgents);
 
-  for (const candidate of candidates) {
-    if (!existsSync(candidate)) continue;
+  for (const parentDir of ["plugins", "connectors"]) {
+    const parent = join(projectDir, parentDir);
+    if (!existsSync(parent)) continue;
+    let entries;
+    try { entries = readdirSync(parent, { withFileTypes: true }); } catch { continue; }
+    for (const entry of entries) {
+      if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+      const dir = join(parent, entry.name, "agents");
+      if (existsSync(dir)) agentDirs.push(dir);
+    }
+  }
 
-    try {
-      const content = readFileSync(candidate, "utf-8");
-      const fm = parseFrontmatter(content);
-      if (!fm) continue;
+  // Search all agent files for one whose title matches the agent type
+  const normalizedType = agentType.toLowerCase().replace(/[_-]/g, " ");
+  for (const dir of agentDirs) {
+    let files;
+    try { files = readdirSync(dir); } catch { continue; }
+    for (const file of files) {
+      if (!file.endsWith(".md")) continue;
+      try {
+        const content = readFileSync(join(dir, file), "utf-8");
+        const fm = parseFrontmatter(content);
+        if (!fm) continue;
 
-      const preamble = fm.preamble || fm.description;
-      if (preamble) {
-        return `You are the ${agentType}: ${preamble}`;
+        const title = (fm.title || "").toLowerCase().replace(/[_-]/g, " ");
+        if (title !== normalizedType) continue;
+
+        const preamble = fm.preamble || fm.description;
+        if (preamble) {
+          return `You are the ${agentType}: ${preamble}`;
+        }
+      } catch {
+        continue;
       }
-    } catch {
-      continue;
     }
   }
 
