@@ -1,10 +1,10 @@
 ---
-id: "RULE-b49142be"
-title: "Coding Standards"
-description: "OrqaStudio-specific extension of RULE-d4b8e3f2 (lint-enforcement-discipline). Defines Rust (rustfmt, clippy, thiserror) and TypeScript/Svelte 5 (strict TS, runes, shadcn-svelte) coding standards with coverage requirements."
-status: "active"
-created: "2026-03-07"
-updated: "2026-03-13"
+id: RULE-b49142be
+title: Coding Standards
+description: OrqaStudio-specific extension of RULE-d4b8e3f2 (lint-enforcement-discipline). Defines Rust (rustfmt, clippy, thiserror) and TypeScript/Svelte 5 (strict TS, runes, shadcn-svelte) coding standards with coverage requirements.
+status: active
+created: 2026-03-07
+updated: 2026-03-13
 enforcement:
   - "event: lint"
   - "event: lint"
@@ -17,25 +17,23 @@ enforcement:
   - "event: lint"
   - "event: lint"
 relationships:
-  - target: "AD-afc78f6e"
-    type: "enforces"
-    rationale: "Auto-generated inverse of enforces relationship from AD-afc78f6e"
-  - target: "AD-1ad08e5f"
-    type: "enforces"
-  - target: "AD-8d552e96"
-    type: "enforces"
-  - target: "AD-61087142"
-    type: "enforces"
-  - target: "AD-6cd1ff6f"
-    type: "enforces"
-  - target: "AD-aa6b409a"
-    type: "enforces"
-  - target: "DOC-4b4fbc0f"
-    type: "documented-by"
-  - target: "DOC-4db3a417"
-    type: "documented-by"
-  - target: "RULE-d4b8e3f2"
-    type: "extends"
+  - target: AD-afc78f6e
+    type: enforces
+    rationale: Auto-generated inverse of enforces relationship from AD-afc78f6e
+  - target: AD-1ad08e5f
+    type: enforces
+  - target: AD-8d552e96
+    type: enforces
+  - target: AD-61087142
+    type: enforces
+  - target: AD-6cd1ff6f
+    type: enforces
+  - target: AD-aa6b409a
+    type: enforces
+  - target: DOC-4b4fbc0f
+    type: documented-by
+  - target: DOC-4db3a417
+    type: documented-by
 ---
 **Source of Truth:** `.orqa/documentation/development/coding-standards.md`
 

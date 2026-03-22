@@ -1,12 +1,15 @@
 ---
 id: IDEA-8cee938b
-title: "Core plugin enforcement — require one per lifecycle category"
+title: Core plugin enforcement — require one per lifecycle category
 status: captured
-created: "2026-03-22"
+created: 2026-03-22
 relationships:
   - target: PILLAR-569581e0
     type: grounded
-    rationale: "Clarity Through Structure — projects need all three lifecycle layers"
+    rationale: Clarity Through Structure — projects need all three lifecycle layers
+  - target: PERSONA-cda6edd6
+    type: benefits
+    rationale: Lead ensures lifecycle coverage
 ---
 
 # Core Plugin Enforcement

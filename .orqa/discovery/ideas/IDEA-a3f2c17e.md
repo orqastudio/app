@@ -15,6 +15,8 @@ relationships:
   - target: PERSONA-cda6edd6
     type: benefits
     rationale: Alex (Lead) — the orchestrator serves Alex's coordination needs
+  - target: AD-e7c4a1f3
+    type: crystallises
 ---
 
 ## The Shift: From Pre-Injection to Self-Navigation

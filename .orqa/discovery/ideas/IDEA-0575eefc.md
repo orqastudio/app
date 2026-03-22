@@ -5,7 +5,13 @@ status: exploring
 description: Audit artifact locations, move to correct plugins, rewrite content to be domain-portable, add plugin category schema (core/enhancement/extension), deduplicate.
 created: 2026-03-22
 updated: 2026-03-22
-relationships: []
+relationships:
+  - target: PILLAR-569581e0
+    type: grounded
+    rationale: Structured artifact placement
+  - target: PERSONA-cda6edd6
+    type: benefits
+    rationale: Lead needs artifacts in consistent locations
 ---
 
 # Artifact Migration: Location Audit + Content Cleanup

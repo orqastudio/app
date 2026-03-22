@@ -204,5 +204,13 @@ relationships:
     rationale: This agent serves this pillar/persona
   - target: IDEA-610ccd5d
     type: benefited-by
+  - target: IDEA-0575eefc
+    type: benefited-by
+  - target: IDEA-09979c9d
+    type: benefited-by
+  - target: IDEA-8cee938b
+    type: benefited-by
+  - target: IDEA-a93e9261
+    type: benefited-by
 ---
 Primary persona. Senior product manager or tech lead who manages a product or team using AI-assisted development. Their job is to turn ambiguity into clarity — taking complex situations and producing structured understanding that a team can execute against. See the full personas document for details.
