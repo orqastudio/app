@@ -1,0 +1,33 @@
+---
+id: KNOW-323c2803
+type: knowledge
+title: "Thinking Mode: Debugging"
+description: "Something is broken or behaving unexpectedly — reproduce, isolate, identify root cause, then route to implementation or learning loop."
+status: active
+created: 2026-03-21
+updated: 2026-03-21
+relationships:
+  - target: DOC-a9a6ef19
+    type: synchronised-with
+---
+
+# Thinking Mode: Debugging
+
+Something is broken or behaving unexpectedly. The agent diagnoses — reproduce, isolate, identify root cause. Debugging ends when the cause is known; the fix routes to Implementation Mode.
+
+## Example Signals
+
+"this is broken", "why is X showing wrong numbers", "it's not working", "there's an error when I do Y", "the dashboard doesn't match", "something changed and now it fails", "the command returns unexpected results"
+
+## What the Agent Needs
+
+- Diagnostic methodology (`diagnostic-methodology` knowledge)
+- Reproduction steps — can the failure be reliably triggered?
+- Isolation strategy — narrow the failing layer (frontend/IPC/backend/data)
+- Root cause classification: bug (→ Implementation) or governance gap (→ Learning Loop)
+
+## Distinguishing from Similar Modes
+
+- Not **Implementation**: root cause is unknown — diagnosis comes first
+- Not **Research**: a specific failure exists — investigation is targeted, not exploratory
+- Not **Review**: something is actively wrong, not just non-conformant
