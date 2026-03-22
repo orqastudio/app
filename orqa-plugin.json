@@ -16,13 +16,13 @@
         "idPrefix": "VISION",
         "frontmatter": {
           "required": [
-            "id",
-            "status"
+            "id"
           ],
           "optional": [
             "title",
             "description",
-            "relationships"
+            "relationships",
+            "status"
           ]
         },
         "statusTransitions": {
@@ -46,14 +46,14 @@
         "idPrefix": "PILLAR",
         "frontmatter": {
           "required": [
-            "id",
-            "status"
+            "id"
           ],
           "optional": [
             "title",
             "description",
             "gate",
-            "relationships"
+            "relationships",
+            "status"
           ]
         },
         "statusTransitions": {
@@ -77,13 +77,13 @@
         "idPrefix": "PERSONA",
         "frontmatter": {
           "required": [
-            "id",
-            "status"
+            "id"
           ],
           "optional": [
             "title",
             "description",
-            "relationships"
+            "relationships",
+            "status"
           ]
         },
         "statusTransitions": {
@@ -297,13 +297,13 @@
         "idPrefix": "KNOW",
         "frontmatter": {
           "required": [
-            "id",
-            "status"
+            "id"
           ],
           "optional": [
             "title",
             "description",
-            "relationships"
+            "relationships",
+            "status"
           ]
         },
         "statusTransitions": {
@@ -395,13 +395,13 @@
         "idPrefix": "DOC",
         "frontmatter": {
           "required": [
-            "id",
-            "status"
+            "id"
           ],
           "optional": [
             "title",
             "description",
-            "relationships"
+            "relationships",
+            "status"
           ]
         },
         "statusTransitions": {
@@ -608,7 +608,7 @@
         "description": "Rule enforces a decision",
         "semantic": "governance",
         "constraints": {
-          "required": true,
+          "required": false,
           "minCount": 1
         }
       },
