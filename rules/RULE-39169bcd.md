@@ -5,7 +5,9 @@ description: "Every documentation page describing a feature must include a Pilla
 status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
-enforcement: "code review — writer agent and code-reviewer check for Pillar Alignment section in all feature documentation pages; pages without it are a review FAIL"
+enforcement:
+  - mechanism: behavioral
+    message: "Every documentation page describing a feature must include a Pillar Alignment section; pages without it are a review FAIL"
 relationships:
   - target: "AD-47c41f0c"
     type: "enforces"

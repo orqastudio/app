@@ -33,7 +33,7 @@ The goal is not "low debt" — it's **zero debt**. Every architectural change mu
 1. **Grep the entire codebase** for the values you're about to change
 2. **List every file** that references the old values
 3. **Change everything in the same commit** — schema + all references
-4. **Run `cargo test` AND `orqa validate`** before committing
+4. **Run `cargo test` AND `orqa enforce`** before committing
 
 ### After making a schema change:
 1. Run the tech debt audit: `grep -rn "old-value" app/ libs/ connectors/ plugins/`
@@ -80,7 +80,7 @@ diff <(jq '.provides.schemas[].key' plugins/software/orqa-plugin.json) \
 
 1. **Create a task** for each category of debt found
 2. **Fix in isolation** — one category per commit, not mixed with feature work
-3. **Verify with tests** — `cargo test`, `make verify`, `orqa validate`
+3. **Verify with tests** — `cargo test`, `make verify`, `orqa enforce`
 4. **Update skills and docs** if the fix changes how something works
 
 ## Debt Categories
