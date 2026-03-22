@@ -4,27 +4,11 @@
 //
 // Called from pre-commit hook when .orqa/ markdown files are staged.
 
-import { readFileSync } from "fs";
 import { resolve } from "path";
-import { createRequire } from "module";
 import { execSync } from "child_process";
+import { parseFrontmatter } from "../tools/lib/parse-artifact.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
-const require = createRequire(resolve(ROOT, "ui", "package.json"));
-const yaml = require("yaml");
-
-function parseFrontmatter(content) {
-  const normalized = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-  const lines = normalized.split("\n");
-  if (lines[0]?.trim() !== "---") return null;
-  for (let i = 1; i < lines.length; i++) {
-    if (lines[i].trim() === "---") {
-      const yamlBlock = lines.slice(1, i).join("\n");
-      try { return yaml.parse(yamlBlock); } catch { return null; }
-    }
-  }
-  return null;
-}
 
 // Valid status transitions per artifact type (prefix-based detection)
 const VALID_TRANSITIONS = {
@@ -57,6 +41,15 @@ const VALID_TRANSITIONS = {
   },
 };
 
+// Extract status from already-committed content using a regex.
+// The old content comes from `git show HEAD:file` — it is already validated,
+// so a lightweight regex extraction is sufficient here.
+function parseStatusFromContent(content) {
+  const normalized = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  const match = normalized.match(/^---\n[\s\S]*?\nstatus:\s*(\S+)[\s\S]*?\n---/m);
+  return match?.[1] ?? null;
+}
+
 // Get staged files that are modifications (not new files)
 const stagedModified = execSync(
   "git diff --cached --name-only --diff-filter=M", { encoding: "utf-8" }
@@ -65,7 +58,7 @@ const stagedModified = execSync(
 let errors = 0;
 
 for (const file of stagedModified) {
-  // Get the old (HEAD) version
+  // Get the old (HEAD) version — already committed and validated
   let oldContent;
   try {
     oldContent = execSync(`git show HEAD:${file}`, { encoding: "utf-8" });
@@ -73,13 +66,13 @@ for (const file of stagedModified) {
     continue; // File didn't exist in HEAD (new file)
   }
 
-  const newContent = readFileSync(resolve(ROOT, file), "utf-8");
-  const oldFm = parseFrontmatter(oldContent);
-  const newFm = parseFrontmatter(newContent);
+  // Parse staged file via the Rust binary (authoritative parser for new content)
+  const newFm = parseFrontmatter(resolve(ROOT, file));
+  const oldStatus = parseStatusFromContent(oldContent);
+  const newStatus = newFm?.status ?? null;
 
-  if (!oldFm || !newFm) continue;
-  if (!oldFm.status || !newFm.status) continue;
-  if (oldFm.status === newFm.status) continue;
+  if (!oldStatus || !newStatus) continue;
+  if (oldStatus === newStatus) continue;
 
   // Determine artifact type from filename
   const filename = file.split("/").pop();
@@ -93,13 +86,13 @@ for (const file of stagedModified) {
 
   if (!transitionMap) continue; // Unknown artifact type, skip
 
-  const validNextStatuses = transitionMap[oldFm.status];
+  const validNextStatuses = transitionMap[oldStatus];
   if (!validNextStatuses) {
     // Old status is a terminal state or unknown
-    console.error(`  ERROR: ${filename}: cannot transition from terminal status "${oldFm.status}" to "${newFm.status}"`);
+    console.error(`  ERROR: ${filename}: cannot transition from terminal status "${oldStatus}" to "${newStatus}"`);
     errors++;
-  } else if (!validNextStatuses.includes(newFm.status)) {
-    console.error(`  ERROR: ${filename}: invalid transition "${oldFm.status}" → "${newFm.status}" (valid: ${validNextStatuses.join(", ")})`);
+  } else if (!validNextStatuses.includes(newStatus)) {
+    console.error(`  ERROR: ${filename}: invalid transition "${oldStatus}" → "${newStatus}" (valid: ${validNextStatuses.join(", ")})`);
     errors++;
   }
 }

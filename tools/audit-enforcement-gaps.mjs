@@ -9,24 +9,9 @@
 
 import { readFileSync, readdirSync, existsSync } from "fs";
 import { resolve, join } from "path";
-import { createRequire } from "module";
+import { parseFrontmatter } from "./lib/parse-artifact.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
-const require = createRequire(resolve(ROOT, "ui", "package.json"));
-const yaml = require("yaml");
-
-function parseFrontmatter(content) {
-  const normalized = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-  const lines = normalized.split("\n");
-  if (lines[0]?.trim() !== "---") return null;
-  for (let i = 1; i < lines.length; i++) {
-    if (lines[i].trim() === "---") {
-      const yamlBlock = lines.slice(1, i).join("\n");
-      try { return yaml.parse(yamlBlock); } catch { return null; }
-    }
-  }
-  return null;
-}
 
 // ── Load all artifacts ───────────────────────────────────────────────────────
 
@@ -37,8 +22,9 @@ function loadDir(dirPath, type, prefix) {
   for (const file of readdirSync(dirPath).sort()) {
     if (!file.endsWith(".md") || file === "README.md") continue;
     if (prefix && !file.startsWith(prefix)) continue;
-    const content = readFileSync(join(dirPath, file), "utf-8");
-    const fm = parseFrontmatter(content);
+    const filePath = join(dirPath, file);
+    const content = readFileSync(filePath, "utf-8");
+    const fm = parseFrontmatter(filePath);
     if (fm && fm.id) artifacts.set(fm.id, { fm, type, content });
   }
 }
@@ -50,7 +36,7 @@ function loadSkills(dirPath) {
     const skillFile = join(dirPath, subdir, "SKILL.md");
     if (!existsSync(skillFile)) continue;
     const content = readFileSync(skillFile, "utf-8");
-    const fm = parseFrontmatter(content);
+    const fm = parseFrontmatter(skillFile);
     if (fm && fm.id) artifacts.set(fm.id, { fm, type: "skills", content });
   }
 }

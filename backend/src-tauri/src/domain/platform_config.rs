@@ -142,16 +142,66 @@ pub fn has_semantic(relationship_key: &str, semantic: &str) -> bool {
 mod tests {
     use super::*;
 
+    // ---------------------------------------------------------------------------
+    // Helpers — build in-memory relationship fixtures rather than relying on
+    // the static PLATFORM (core.json is intentionally empty; plugins are the
+    // runtime source of truth for all relationship data).
+    // ---------------------------------------------------------------------------
+
+    fn make_rel(key: &str, inverse: &str, semantic: Option<&str>) -> RelationshipDef {
+        RelationshipDef {
+            key: key.to_string(),
+            inverse: inverse.to_string(),
+            label: String::new(),
+            from: Vec::new(),
+            to: Vec::new(),
+            description: String::new(),
+            semantic: semantic.map(str::to_string),
+            constraints: None,
+        }
+    }
+
+    fn make_rel_with_constraints(
+        key: &str,
+        inverse: &str,
+        required: Option<bool>,
+        min_count: Option<usize>,
+    ) -> RelationshipDef {
+        RelationshipDef {
+            key: key.to_string(),
+            inverse: inverse.to_string(),
+            label: String::new(),
+            from: Vec::new(),
+            to: Vec::new(),
+            description: String::new(),
+            semantic: None,
+            constraints: Some(ConstraintsDef {
+                required,
+                min_count,
+                max_count: None,
+                require_inverse: None,
+                status_rules: Vec::new(),
+            }),
+        }
+    }
+
     #[test]
-    fn platform_config_loads() {
-        assert!(!PLATFORM.artifact_types.is_empty());
-        assert!(!PLATFORM.relationships.is_empty());
-        assert!(!PLATFORM.semantics.is_empty());
+    fn platform_config_loads_without_panic() {
+        // core.json is intentionally empty — plugins are the source of truth.
+        // Verify the static initialises cleanly (no panic, no bad JSON).
+        assert!(PLATFORM.artifact_types.is_empty());
+        assert!(PLATFORM.relationships.is_empty());
+        assert!(PLATFORM.semantics.is_empty());
     }
 
     #[test]
     fn inverse_map_contains_all_pairs() {
-        let map = build_inverse_map(&PLATFORM.relationships);
+        let rels = vec![
+            make_rel("upholds", "upheld-by", Some("foundation")),
+            make_rel("grounded", "grounded-by", Some("foundation")),
+            make_rel("synchronised-with", "synchronised-with", None),
+        ];
+        let map = build_inverse_map(&rels);
         assert_eq!(map.get("upholds").unwrap(), "upheld-by");
         assert_eq!(map.get("upheld-by").unwrap(), "upholds");
         assert_eq!(map.get("grounded").unwrap(), "grounded-by");
@@ -159,32 +209,42 @@ mod tests {
     }
 
     #[test]
-    fn lineage_semantic_contains_crystallises_and_merged() {
+    fn inverse_map_self_referential_key_inserted_once() {
+        // When key == inverse, only one entry should be inserted.
+        let rels = vec![make_rel("peer", "peer", None)];
+        let map = build_inverse_map(&rels);
+        assert_eq!(map.get("peer").unwrap(), "peer");
+        assert_eq!(map.len(), 1);
+    }
+
+    #[test]
+    fn keys_for_semantic_returns_matching_keys() {
+        // keys_for_semantic reads PLATFORM.semantics, which is empty for now.
+        // The function must return an empty vec rather than panicking.
         let lineage = keys_for_semantic("lineage");
-        assert!(lineage.contains(&"crystallises".to_string()));
-        assert!(lineage.contains(&"merged-into".to_string()));
+        assert!(lineage.is_empty());
     }
 
     #[test]
-    fn has_semantic_works() {
-        assert!(has_semantic("crystallises", "lineage"));
-        assert!(has_semantic("merged-into", "lineage"));
-        assert!(!has_semantic("upholds", "lineage"));
-        assert!(has_semantic("upholds", "foundation"));
+    fn has_semantic_returns_false_when_platform_is_empty() {
+        // With an empty platform (plugins are the source of truth at runtime),
+        // has_semantic must return false for any input — not panic.
+        assert!(!has_semantic("crystallises", "lineage"));
+        assert!(!has_semantic("upholds", "foundation"));
     }
 
     #[test]
-    fn constraints_are_loaded() {
-        let grounded = PLATFORM
-            .relationships
-            .iter()
-            .find(|r| r.key == "grounded")
-            .unwrap();
-        let constraints = grounded
-            .constraints
-            .as_ref()
-            .expect("grounded should have constraints");
+    fn constraints_round_trip_through_struct() {
+        let rel = make_rel_with_constraints("grounded", "grounded-by", Some(true), Some(1));
+        let constraints = rel.constraints.as_ref().expect("constraints present");
         assert_eq!(constraints.required, Some(true));
         assert_eq!(constraints.min_count, Some(1));
+        assert!(constraints.max_count.is_none());
+    }
+
+    #[test]
+    fn build_inverse_map_empty_input_returns_empty_map() {
+        let map = build_inverse_map(&[]);
+        assert!(map.is_empty());
     }
 }

@@ -6,35 +6,16 @@
 // Exit code 0 = all valid, 1 = validation errors found.
 
 import { readFileSync } from "fs";
-import { resolve, dirname, relative } from "path";
+import { resolve, relative } from "path";
 import { createRequire } from "module";
+import { parseFrontmatter } from "../tools/lib/parse-artifact.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
 // npm packages live in ui/node_modules/ (monorepo layout)
 const require = createRequire(resolve(ROOT, "ui", "package.json"));
 const Ajv = require("ajv").default;
 const addFormats = require("ajv-formats").default;
-const yaml = require("yaml");
 const CONFIG_PATH = resolve(ROOT, ".orqa/project.json");
-
-// Parse YAML frontmatter from a markdown file (first --- block only)
-function parseFrontmatter(content) {
-  // Normalize line endings — CRLF breaks YAML date/number parsing
-  const normalized = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-  const lines = normalized.split("\n");
-  if (lines[0]?.trim() !== "---") return null;
-  for (let i = 1; i < lines.length; i++) {
-    if (lines[i].trim() === "---") {
-      const yamlBlock = lines.slice(1, i).join("\n");
-      try {
-        return yaml.parse(yamlBlock);
-      } catch {
-        return null;
-      }
-    }
-  }
-  return null;
-}
 
 // Collect all leaf artifact paths from the config tree
 function collectPaths(entries) {
@@ -111,8 +92,9 @@ for (const file of files) {
   // Skip READMEs and non-md files
   if (file.endsWith("README.md") || !file.endsWith(".md")) continue;
 
-  const content = readFileSync(resolve(ROOT, file), "utf-8");
-  const frontmatter = parseFrontmatter(content);
+  const absFile = resolve(ROOT, file);
+  const content = readFileSync(absFile, "utf-8");
+  const frontmatter = parseFrontmatter(absFile);
 
   if (!frontmatter) {
     // No frontmatter — skip (could be a plain doc)

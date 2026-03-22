@@ -19,25 +19,10 @@
 
 import { readFileSync, readdirSync, existsSync } from "fs";
 import { resolve, join } from "path";
-import { createRequire } from "module";
 import { execSync } from "child_process";
+import { parseFrontmatter } from "./lib/parse-artifact.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
-const require = createRequire(resolve(ROOT, "ui", "package.json"));
-const yaml = require("yaml");
-
-function parseFrontmatter(content) {
-  const normalized = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-  const lines = normalized.split("\n");
-  if (lines[0]?.trim() !== "---") return null;
-  for (let i = 1; i < lines.length; i++) {
-    if (lines[i].trim() === "---") {
-      const yamlBlock = lines.slice(1, i).join("\n");
-      try { return yaml.parse(yamlBlock); } catch { return null; }
-    }
-  }
-  return null;
-}
 
 const ARTIFACT_DIRS = {
   lessons: { dir: ".orqa/process/lessons", prefix: "IMPL-", stage: "Observation/Understanding" },
@@ -97,7 +82,7 @@ for (const [type, config] of Object.entries(ARTIFACT_DIRS)) {
 
 function checkArtifact(filePath, id, type, config) {
   const content = readFileSync(filePath, "utf-8");
-  const fm = parseFrontmatter(content);
+  const fm = parseFrontmatter(filePath);
   if (!fm) return;
 
   stats.total++;
@@ -185,7 +170,7 @@ for (const [type, config] of Object.entries(ARTIFACT_DIRS)) {
       const skillFile = join(dirPath, subdir, "SKILL.md");
       if (!existsSync(skillFile)) continue;
       const content = readFileSync(skillFile, "utf-8");
-      const fm = parseFrontmatter(content);
+      const fm = parseFrontmatter(skillFile);
       if (fm && fm.id) allArtifacts.set(fm.id, { fm, filePath: skillFile, type, content });
     }
   } else {
@@ -194,7 +179,7 @@ for (const [type, config] of Object.entries(ARTIFACT_DIRS)) {
       if (config.prefix && !file.startsWith(config.prefix)) continue;
       const filePath = join(dirPath, file);
       const content = readFileSync(filePath, "utf-8");
-      const fm = parseFrontmatter(content);
+      const fm = parseFrontmatter(filePath);
       if (fm && fm.id) allArtifacts.set(fm.id, { fm, filePath, type, content });
     }
   }
@@ -374,8 +359,7 @@ if (existsSync(epicDirPath) && existsSync(taskDirPath)) {
     if (!file.endsWith(".md") || file === "README.md" || !file.startsWith("TASK-")) continue;
     const relPath = join(TASK_DIR, file);
     if (stagedFiles && !stagedFiles.has(relPath)) continue;
-    const content = readFileSync(join(taskDirPath, file), "utf-8");
-    const fm = parseFrontmatter(content);
+    const fm = parseFrontmatter(join(taskDirPath, file));
     if (fm) allTasks.push(fm);
   }
 
@@ -386,8 +370,7 @@ if (existsSync(epicDirPath) && existsSync(taskDirPath)) {
     const relPath = join(EPIC_DIR, file);
     if (stagedFiles && !stagedFiles.has(relPath)) continue;
 
-    const content = readFileSync(join(epicDirPath, file), "utf-8");
-    const fm = parseFrontmatter(content);
+    const fm = parseFrontmatter(join(epicDirPath, file));
     if (!fm || !checkStatuses.has(fm.status)) continue;
 
     epicStats.scanned++;

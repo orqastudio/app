@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+// ARCHIVED: One-off migration tool — ran once to backfill relationship fields
+// onto existing decision artifacts. Not intended for repeat use.
+// Left here as a reference for what was done. parseFrontmatter intentionally
+// left as-is (hand-rolled) since this script is not maintained going forward.
+//
 // Batch apply relationship backfill to all decisions.
 // Adds grounded relationships based on domain knowledge,
 // enforced-by relationships for rules referenced in the body,

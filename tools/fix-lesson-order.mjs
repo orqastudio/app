@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+// ARCHIVED: One-off migration tool — ran once to fix lesson frontmatter field
+// ordering to match schema propertyOrder. Not intended for repeat use.
+// parseFrontmatter intentionally left as-is (hand-rolled) since this script
+// is not maintained going forward.
+//
 // Fix lesson frontmatter field ordering to match schema propertyOrder.
 import { readFileSync, writeFileSync, readdirSync } from "fs";
 import { resolve, join } from "path";

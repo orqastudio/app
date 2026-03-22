@@ -13,12 +13,10 @@
 
 import { readFileSync, readdirSync, existsSync } from "fs";
 import { resolve, join, relative } from "path";
-import { createRequire } from "module";
 import { execSync } from "child_process";
+import { parseFrontmatter } from "./lib/parse-artifact.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
-const require = createRequire(resolve(ROOT, "ui", "package.json"));
-const yaml = require("yaml");
 
 const stagedOnly = process.argv.includes("--staged");
 let stagedFiles = null;
@@ -36,18 +34,6 @@ let warnings = 0;
 
 function error(msg) { console.error(`  ERROR: ${msg}`); errors++; }
 function warn(msg) { console.error(`  WARNING: ${msg}`); warnings++; }
-
-function parseFrontmatter(content) {
-  const normalized = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-  const lines = normalized.split("\n");
-  if (lines[0]?.trim() !== "---") return null;
-  for (let i = 1; i < lines.length; i++) {
-    if (lines[i].trim() === "---") {
-      const yamlBlock = lines.slice(1, i).join("\n");
-      try { return yaml.parse(yamlBlock); } catch { return null; }
-    }
-  }
-  return null;
 }
 
 // ── Check 1: Skill portability ─────────────────────────────────────────────
@@ -80,7 +66,7 @@ if (existsSync(SKILLS_DIR)) {
     if (stagedFiles && !stagedFiles.has(relPath)) continue;
 
     const content = readFileSync(skillFile, "utf-8");
-    const fm = parseFrontmatter(content);
+    const fm = parseFrontmatter(skillFile);
     if (!fm || fm.layer !== "core") continue;
 
     skillsChecked++;
@@ -134,8 +120,9 @@ if (existsSync(AGENTS_DIR)) {
     const relPath = relative(ROOT, join(AGENTS_DIR, file)).replace(/\\/g, "/");
     if (stagedFiles && !stagedFiles.has(relPath)) continue;
 
-    const content = readFileSync(join(AGENTS_DIR, file), "utf-8");
-    const fm = parseFrontmatter(content);
+    const agentFile = join(AGENTS_DIR, file);
+    const content = readFileSync(agentFile, "utf-8");
+    const fm = parseFrontmatter(agentFile);
     if (!fm || fm.status !== "active") continue;
 
     agentsChecked++;

@@ -12,24 +12,9 @@
 
 import { readFileSync, readdirSync, existsSync } from "fs";
 import { resolve, join } from "path";
-import { createRequire } from "module";
+import { parseFrontmatter } from "./lib/parse-artifact.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
-const require = createRequire(resolve(ROOT, "ui", "package.json"));
-const yaml = require("yaml");
-
-function parseFrontmatter(content) {
-  const normalized = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-  const lines = normalized.split("\n");
-  if (lines[0]?.trim() !== "---") return null;
-  for (let i = 1; i < lines.length; i++) {
-    if (lines[i].trim() === "---") {
-      const yamlBlock = lines.slice(1, i).join("\n");
-      try { return yaml.parse(yamlBlock); } catch { return null; }
-    }
-  }
-  return null;
-}
 
 const epicFilter = process.argv[2] || null;
 const EPIC_DIR = resolve(ROOT, ".orqa/delivery/epics");
@@ -44,8 +29,7 @@ if (!existsSync(EPIC_DIR) || !existsSync(TASK_DIR)) {
 const allTasks = new Map();
 for (const file of readdirSync(TASK_DIR).sort()) {
   if (!file.endsWith(".md") || !file.startsWith("TASK-")) continue;
-  const content = readFileSync(join(TASK_DIR, file), "utf-8");
-  const fm = parseFrontmatter(content);
+  const fm = parseFrontmatter(join(TASK_DIR, file));
   if (fm) allTasks.set(fm.id, fm);
 }
 
@@ -55,8 +39,9 @@ let driftCount = 0;
 const checkStatuses = new Set(["in-progress", "review", "done"]);
 for (const file of readdirSync(EPIC_DIR).sort()) {
   if (!file.endsWith(".md") || !file.startsWith("EPIC-")) continue;
-  const content = readFileSync(join(EPIC_DIR, file), "utf-8");
-  const fm = parseFrontmatter(content);
+  const epicFilePath = join(EPIC_DIR, file);
+  const content = readFileSync(epicFilePath, "utf-8");
+  const fm = parseFrontmatter(epicFilePath);
   if (!fm || !checkStatuses.has(fm.status)) continue;
   if (epicFilter && fm.id !== epicFilter) continue;
 
@@ -136,8 +121,9 @@ for (const file of readdirSync(EPIC_DIR).sort()) {
 // Check done tasks for unresolved TBD references
 for (const file of readdirSync(TASK_DIR).sort()) {
   if (!file.endsWith(".md") || !file.startsWith("TASK-")) continue;
-  const content = readFileSync(join(TASK_DIR, file), "utf-8");
-  const fm = parseFrontmatter(content);
+  const taskFilePath = join(TASK_DIR, file);
+  const content = readFileSync(taskFilePath, "utf-8");
+  const fm = parseFrontmatter(taskFilePath);
   if (!fm || fm.status !== "done") continue;
 
   const bodyStart = content.indexOf("---", content.indexOf("---") + 3);

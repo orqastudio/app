@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+// ARCHIVED: One-off migration tool — ran once to migrate deprecated frontmatter
+// fields into relationship edges. Not intended for repeat use.
+// parseFrontmatter intentionally left as-is (hand-rolled) since this script
+// is not maintained going forward.
+//
 // Migrate deprecated fields into relationships and then remove them.
 //
 // 1. Lesson promoted-to → add grounded-by relationship, then remove field

@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+// ARCHIVED: One-off migration tool — ran once to backfill category and
+// relationship fields onto existing skill artifacts. Not intended for repeat
+// use. parseFrontmatter intentionally left as-is (hand-rolled) since this
+// script is not maintained going forward.
+//
 // Batch apply category and relationship backfill to all skills.
 //
 // Usage: node tools/apply-skill-backfill.mjs [--dry-run]

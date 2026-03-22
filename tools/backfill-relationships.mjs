@@ -19,29 +19,11 @@
 import { readFileSync, readdirSync, existsSync, writeFileSync } from "fs";
 import { resolve, join, basename } from "path";
 import { createRequire } from "module";
+import { parseFrontmatter } from "./lib/parse-artifact.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const require = createRequire(resolve(ROOT, "ui", "package.json"));
 const yaml = require("yaml");
-
-// ── Frontmatter Parsing ─────────────────────────────────────────────────────
-
-function parseFrontmatter(content) {
-  const normalized = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-  const lines = normalized.split("\n");
-  if (lines[0]?.trim() !== "---") return null;
-  for (let i = 1; i < lines.length; i++) {
-    if (lines[i].trim() === "---") {
-      const yamlBlock = lines.slice(1, i).join("\n");
-      try {
-        return yaml.parse(yamlBlock);
-      } catch {
-        return null;
-      }
-    }
-  }
-  return null;
-}
 
 function extractBody(content) {
   const normalized = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
@@ -159,7 +141,7 @@ function buildArtifactIndex() {
         const skillFile = join(fullPath, subdir, "SKILL.md");
         if (!existsSync(skillFile)) continue;
         const content = readFileSync(skillFile, "utf-8");
-        const fm = parseFrontmatter(content);
+        const fm = parseFrontmatter(skillFile);
         if (!fm) continue;
         const body = extractBody(content);
         index.set(fm.id || subdir, {
@@ -176,7 +158,7 @@ function buildArtifactIndex() {
         if (!file.startsWith(prefix + "-") || !file.endsWith(".md")) continue;
         const filePath = join(fullPath, file);
         const content = readFileSync(filePath, "utf-8");
-        const fm = parseFrontmatter(content);
+        const fm = parseFrontmatter(filePath);
         if (!fm) continue;
         const body = extractBody(content);
         index.set(fm.id || file.replace(".md", ""), {
@@ -324,7 +306,7 @@ if (isSkillDir) {
     const skillFile = join(targetDir, subdir, "SKILL.md");
     if (!existsSync(skillFile)) continue;
     const content = readFileSync(skillFile, "utf-8");
-    const fm = parseFrontmatter(content);
+    const fm = parseFrontmatter(skillFile);
     if (!fm) continue;
     if (filterId && fm.id !== filterId) continue;
 
@@ -352,7 +334,7 @@ if (isSkillDir) {
     if (!file.endsWith(".md") || file === "README.md" || file === "schema.json") continue;
     const filePath = join(targetDir, file);
     const content = readFileSync(filePath, "utf-8");
-    const fm = parseFrontmatter(content);
+    const fm = parseFrontmatter(filePath);
     if (!fm) continue;
     if (filterId && fm.id !== filterId) continue;
 

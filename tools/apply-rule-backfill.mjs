@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+// ARCHIVED: One-off migration tool — ran once to backfill relationship fields
+// onto existing rule artifacts. Not intended for repeat use.
+// Left here as a reference for what was done. parseFrontmatter intentionally
+// left as-is (hand-rolled) since this script is not maintained going forward.
+//
 // Batch apply relationship backfill to all rules.
 // Reads proposals from the backfill tool and applies them,
 // plus adds grounded relationships based on domain knowledge.

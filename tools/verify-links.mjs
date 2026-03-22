@@ -22,31 +22,10 @@
 
 import { readFileSync, readdirSync, existsSync } from "fs";
 import { resolve, join, relative } from "path";
-import { createRequire } from "module";
 import { execSync } from "child_process";
+import { parseFrontmatter } from "./lib/parse-artifact.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
-const require = createRequire(resolve(ROOT, "ui", "package.json"));
-const yaml = require("yaml");
-
-// ── Frontmatter Parsing ─────────────────────────────────────────────────────
-
-function parseFrontmatter(content) {
-  const normalized = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-  const lines = normalized.split("\n");
-  if (lines[0]?.trim() !== "---") return null;
-  for (let i = 1; i < lines.length; i++) {
-    if (lines[i].trim() === "---") {
-      const yamlBlock = lines.slice(1, i).join("\n");
-      try {
-        return yaml.parse(yamlBlock);
-      } catch {
-        return null;
-      }
-    }
-  }
-  return null;
-}
 
 // ── Artifact Discovery ──────────────────────────────────────────────────────
 
@@ -83,8 +62,7 @@ function discoverAllArtifacts() {
     for (const subdir of readdirSync(skillsPath)) {
       const skillFile = join(skillsPath, subdir, "SKILL.md");
       if (!existsSync(skillFile)) continue;
-      const content = readFileSync(skillFile, "utf-8");
-      const fm = parseFrontmatter(content);
+      const fm = parseFrontmatter(skillFile);
       if (fm?.id) {
         artifacts.set(fm.id, { path: join(".orqa/process/skills", subdir, "SKILL.md"), type: "skill" });
       }
@@ -97,8 +75,7 @@ function discoverAllArtifacts() {
     for (const file of readdirSync(agentsPath)) {
       if (!file.endsWith(".md") || file === "README.md") continue;
       const filePath = resolve(agentsPath, file);
-      const content = readFileSync(filePath, "utf-8");
-      const fm = parseFrontmatter(content);
+      const fm = parseFrontmatter(filePath);
       if (fm?.id?.match(/^AGENT-\d+$/)) {
         artifacts.set(fm.id, { path: join(".orqa/process/agents", file), type: "agent" });
       }
@@ -115,8 +92,9 @@ const LINKED_REF_PATTERN = /\[([^\]]*)\]\(([A-Z]+-\d+)\)/g;
 const BARE_ID_PATTERN = /(?<!\[)(?<!\()(?<!\w)\b(RULE-\d+|AD-\d+|IMPL-\d+|PILLAR-\d+|MS-\d+|EPIC-\d+|TASK-\d+|IDEA-\d+|RES-\d+|VER-\d+|AGENT-\d+)\b(?!\))(?!\])/g;
 
 function scanFile(filePath, knownArtifacts) {
-  const content = readFileSync(resolve(ROOT, filePath), "utf-8");
-  const fm = parseFrontmatter(content);
+  const absPath = resolve(ROOT, filePath);
+  const content = readFileSync(absPath, "utf-8");
+  const fm = parseFrontmatter(absPath);
   const issues = [];
 
   // Extract body (after frontmatter)

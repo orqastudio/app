@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+// ARCHIVED: One-off migration tool — ran once to backfill maturity and
+// relationship fields onto existing lesson artifacts. Not intended for repeat
+// use. parseFrontmatter intentionally left as-is (hand-rolled) since this
+// script is not maintained going forward.
+//
 // Batch apply maturity and relationship backfill to all lessons.
 //
 // Usage: node tools/apply-lesson-backfill.mjs [--dry-run]
