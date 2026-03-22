@@ -9,20 +9,54 @@
     "schemas": [],
     "relationships": [],
     "knowledge": [
-      { "key": "systems-thinking", "id": "KNOW-54823e2d", "label": "Systems Thinking" },
-      { "key": "architectural-evaluation", "id": "KNOW-30a419dd", "label": "Architectural Evaluation" },
-      { "key": "artifact-relationships", "id": "KNOW-82d32398", "label": "Artifact Relationships" },
-      { "key": "composability", "id": "KNOW-f0c40eaf", "label": "Composability" },
-      { "key": "restructuring-methodology", "id": "KNOW-8c98ea98", "label": "Restructuring Methodology" },
-      { "key": "tech-debt-management", "id": "KNOW-c7fb7c83", "label": "Tech Debt Management" },
-      { "key": "thinking-mode-implementation", "id": "KNOW-fda0559b", "label": "Thinking Mode: Implementation" },
-      { "key": "thinking-mode-research", "id": "KNOW-1a8eb147", "label": "Thinking Mode: Research" },
-      { "key": "thinking-mode-planning", "id": "KNOW-de25b290", "label": "Thinking Mode: Planning" },
-      { "key": "thinking-mode-review", "id": "KNOW-83614358", "label": "Thinking Mode: Review" },
-      { "key": "thinking-mode-debugging", "id": "KNOW-323c2803", "label": "Thinking Mode: Debugging" },
-      { "key": "thinking-mode-documentation", "id": "KNOW-1ab0e715", "label": "Thinking Mode: Documentation" },
-      { "key": "thinking-mode-learning-loop", "id": "KNOW-85e392ea", "label": "Thinking Mode: Learning Loop" },
-      { "key": "thinking-mode-dogfood-implementation", "id": "KNOW-a4c8f1e2", "label": "Thinking Mode: Dogfood Implementation" }
+      {
+        "key": "1a8eb147",
+        "id": "KNOW-1a8eb147",
+        "label": "Thinking Mode: Research"
+      },
+      {
+        "key": "1ab0e715",
+        "id": "KNOW-1ab0e715",
+        "label": "Thinking Mode: Documentation"
+      },
+      {
+        "key": "30a419dd",
+        "id": "KNOW-30a419dd",
+        "label": "Architectural Evaluation"
+      },
+      {
+        "key": "54823e2d",
+        "id": "KNOW-54823e2d",
+        "label": "Systems Thinking"
+      },
+      {
+        "key": "82d32398",
+        "id": "KNOW-82d32398"
+      },
+      {
+        "key": "8c98ea98",
+        "id": "KNOW-8c98ea98",
+        "label": "Restructuring Methodology"
+      },
+      {
+        "key": "a4c8f1e2",
+        "id": "KNOW-a4c8f1e2",
+        "label": "Thinking Mode: Dogfood Implementation"
+      },
+      {
+        "key": "c7fb7c83",
+        "id": "KNOW-c7fb7c83"
+      },
+      {
+        "key": "de25b290",
+        "id": "KNOW-de25b290",
+        "label": "Thinking Mode: Planning"
+      },
+      {
+        "key": "f0c40eaf",
+        "id": "KNOW-f0c40eaf",
+        "label": "Composability"
+      }
     ],
     "hooks": [],
     "views": [],
