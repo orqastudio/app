@@ -1,0 +1,50 @@
+---
+id: "RULE-89155a7f"
+title: "Tooltips over title attributes"
+description: "Use shadcn Tooltip components for hover hints instead of native HTML title attributes. Tooltips provide consistent styling, positioning, and accessibility."
+status: "active"
+created: "2026-03-10"
+updated: "2026-03-10"
+enforcement: "code review — code-reviewer rejects title attributes on interactive elements; ESLint rule can be added to catch title attribute usage in Svelte components"
+relationships:
+  - target: "AD-8d552e96"
+    type: "enforces"
+---
+All interactive elements that need hover hints MUST use the shadcn `Tooltip` component (`$lib/components/ui/tooltip`) instead of the native HTML `title` attribute.
+
+## Why
+
+- Native `title` attributes render as plain browser tooltips with inconsistent styling across platforms
+- shadcn Tooltips match the design system (theme-aware, positioned, animated)
+- Tooltips support richer content (multiple lines, icons) when needed
+- Consistent UX across the entire application
+
+## Pattern
+
+```svelte
+<Tooltip.Root>
+  <Tooltip.Trigger>
+    {#snippet child({ props })}
+      <button {...props} onclick={handleClick}>Label</button>
+    {/snippet}
+  </Tooltip.Trigger>
+  <Tooltip.Content side="top">
+    <p>Hint text</p>
+  </Tooltip.Content>
+</Tooltip.Root>
+```
+
+## FORBIDDEN
+
+- `title="..."` on interactive elements (buttons, links, badges) for hover hints
+- Custom tooltip implementations that duplicate shadcn Tooltip functionality
+
+## Exceptions
+
+- `alt` attributes on images (accessibility, not hover hints)
+- `title` on `<svg>` elements (accessibility requirement)
+
+## Related Rules
+
+- [RULE-b49142be](RULE-b49142be) (coding-standards) — component library usage
+- [RULE-cb65b5d0](RULE-cb65b5d0) (reusable-components) — use shared components consistently
