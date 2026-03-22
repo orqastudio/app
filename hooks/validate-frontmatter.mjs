@@ -61,70 +61,39 @@ function loadSchemas(projectRoot) {
 }
 
 function buildJsonSchema(pluginSchema) {
-  const properties = {
-    id: {
-      type: "string",
-      pattern: `^${pluginSchema.idPrefix}-[a-f0-9]{8}$`,
-    },
+  // The manifest's frontmatter field is already a JSON Schema object.
+  // Clone it and enrich with auto-derived id pattern and status enum.
+  const fm = pluginSchema.frontmatter || {};
+  const schema = {
+    type: "object",
+    additionalProperties: true,
+    ...fm,
   };
 
-  // Add status as enum from transition keys if available
-  if (pluginSchema.statusTransitions && Object.keys(pluginSchema.statusTransitions).length > 0) {
-    properties.status = {
+  // Ensure properties exists
+  if (!schema.properties) schema.properties = {};
+
+  // Auto-derive id pattern if not explicitly declared
+  if (!schema.properties.id) {
+    schema.properties.id = {
       type: "string",
-      enum: Object.keys(pluginSchema.statusTransitions),
+      pattern: `^${pluginSchema.idPrefix}-[a-f0-9]{8}$`,
     };
   }
 
-  // Standard optional fields with types
-  const fieldTypes = {
-    title: { type: "string" },
-    description: { type: ["string", "null"] },
-    created: { type: "string" },
-    updated: { type: "string" },
-    status: properties.status || { type: "string" },
-    enforcement: { type: ["string", "array", "null"] },
-    recurrence: { type: ["integer", "number"] },
-    priority: { type: "string" },
-    preamble: { type: "string" },
-    model: { type: "string" },
-    capabilities: { type: "array" },
-    knowledge: { type: "array" },
-    relationships: {
-      type: "array",
-      items: {
-        type: "object",
-        required: ["target", "type"],
-        properties: {
-          target: { type: "string" },
-          type: { type: "string" },
-          rationale: { type: "string" },
-        },
-      },
-    },
-  };
-
-  for (const field of pluginSchema.frontmatter?.required || []) {
-    if (!properties[field]) {
-      properties[field] = fieldTypes[field] || { type: ["string", "number", "boolean", "array", "object", "null"] };
-    }
+  // Auto-derive status enum from statusTransitions keys if not explicitly declared
+  if (!schema.properties.status && pluginSchema.statusTransitions && Object.keys(pluginSchema.statusTransitions).length > 0) {
+    schema.properties.status = {
+      type: "string",
+      enum: Object.keys(pluginSchema.statusTransitions).sort(),
+    };
   }
 
-  for (const field of pluginSchema.frontmatter?.optional || []) {
-    if (!properties[field]) {
-      properties[field] = fieldTypes[field] || { type: ["string", "number", "boolean", "array", "object", "null"] };
-    }
-  }
+  // Ensure id is always required
+  if (!schema.required) schema.required = [];
+  if (!schema.required.includes("id")) schema.required.unshift("id");
 
-  // Deduplicate required fields (id is always required + plugin may also list it)
-  const required = [...new Set(["id", ...(pluginSchema.frontmatter?.required || [])])];
-
-  return {
-    type: "object",
-    required,
-    properties,
-    additionalProperties: true,
-  };
+  return schema;
 }
 
 // ---------------------------------------------------------------------------

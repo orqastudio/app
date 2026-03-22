@@ -7,6 +7,9 @@
   "role": "enhancement:governance",
   "provides": {
     "schemas": [],
+    "enforcement_mechanisms": [
+      { "key": "pre-commit", "description": "Git pre-commit hook — final gate before commit", "strength": 7 }
+    ],
     "relationships": [],
     "agents": [],
     "knowledge": [],
