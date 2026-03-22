@@ -20,6 +20,12 @@ systems-thinking, software, claude-code connector) on 2026-03-22. Many migrated 
 still carry bare IDs (e.g., `KNOW-54823e2d`) instead of plugin-prefixed IDs (e.g.,
 `KNOW-SYS-54823e2d`).
 
+**NOTE (2026-03-22):** There are also many older artifacts across all plugins that were
+never migrated to the hex ID format — they still use sequential numbering (e.g.,
+`KNOW-TS-001`, `KNOW-CS-001`). These also need converting to hex format as part of
+this migration. The `scripts/migrate-artifact-ids.mjs` bulk migration script handles
+sequential → hex conversion. Run with `--apply` after confirming the manifest.
+
 ## Prerequisites
 
 1. **Manual audit** of the artifact table below — confirm every artifact lives in the right plugin

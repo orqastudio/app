@@ -142,3 +142,14 @@ This enables several critical workflows:
 | **Federated orgs** | Multiple organisations each run their own Cloud instance, syncing shared repos between them while keeping org-specific repos private |
 
 The protocol scales because it IS git. Adding a new origin is `git remote add` + a mirror config in the management API. Conflict resolution uses the same merge strategies developers already know.
+
+### Relationship to `orqa git` and Repo Protection
+
+[IDEA-09979c9d](IDEA-09979c9d) (`orqa git`) builds CLI utility commands for coordinating
+git operations across the dev environment's 28 submodules. Currently all 28 GitHub repos
+are public and unprotected — no branch protection, no PR requirements. Forgejo would
+solve this structurally: one instance, one config, all repos protected. `orqa git` remains
+the CLI interface regardless of backend (GitHub or Forgejo).
+
+[IDEA-f3a08e7a](IDEA-f3a08e7a) (Git Integration) covers the GitHub-specific protection
+plan as a short-term measure until Forgejo is in place.

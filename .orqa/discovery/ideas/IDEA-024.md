@@ -43,6 +43,24 @@ The gate question for [MS-654badde](MS-654badde) is: "Can we use this app instea
 3. **Basic operations** — Commit, branch switch, worktree create/merge/cleanup via Tauri commands
 4. **Full integration** — Diff viewer, merge conflict resolution, commit history, interactive staging
 
+## GitHub Integration (future scope)
+
+Beyond local git operations, the dev environment needs GitHub-level coordination:
+
+### PR Linking Across Submodules
+- `orqa pr create` — creates PRs in all submodules with changes AND a parent dev-repo PR that links them
+- PRs across submodules in the same batch share a linking identifier (issue number, batch ID, or PR title convention)
+- Divergent changes between submodules and the dev environment that don't have matching PR names/identifiers should be flagged or blocked
+
+### Branch Protection
+- All repos in the orqastudio org should require PRs to main (no direct pushes)
+- Commits limited to maintainers until contribution structure is in place
+- `orqa repo protect` — CLI command to audit and enforce branch protection rules across all repos via `gh api`
+
+### Org-Level Enforcement
+- `orqa repo audit` — check branch protection, push permissions, required reviews across all repos
+- Surface gaps as governance findings (same pattern as artifact enforcement gaps)
+
 ## Pillar Alignment
 
 | Pillar | Alignment |
