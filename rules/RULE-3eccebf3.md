@@ -1,6 +1,5 @@
 ---
 id: RULE-3eccebf3
-type: rule
 title: Enforcement Before Code
 description: "Enforcement artifacts (rules, knowledge, lessons) must be created before the implementation code that establishes the pattern."
 status: active

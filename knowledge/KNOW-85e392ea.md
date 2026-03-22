@@ -1,6 +1,5 @@
 ---
 id: KNOW-85e392ea
-type: knowledge
 title: "Thinking Mode: Learning Loop"
 thinking-mode: learning-loop
 description: "The user is teaching the system — sharing an observation, feedback, or lesson that should be captured and potentially promoted to a rule."

@@ -1,6 +1,5 @@
 ---
 id: RULE-551bde31
-type: rule
 title: Lessons Learned
 description: "Two learning loops: implementation lessons in .orqa/process/lessons/ and process retrospectives. Both are mandatory."
 status: active

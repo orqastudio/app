@@ -1,6 +1,5 @@
 ---
 id: "RULE-a764b2ae"
-type: "rule"
 title: "Artifact Schema Compliance"
 description: "Every artifact's YAML frontmatter must validate against the JSON Schema defined in its artifact directory's schema.json file."
 status: "active"

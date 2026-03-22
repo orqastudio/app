@@ -1,6 +1,5 @@
 ---
 id: RULE-9bc8c230
-type: rule
 title: Behavioral Rule Enforcement Plan
 description: "Defines enforcement strategies for rules that cannot be mechanically checked by linters, hooks, or tooling. Every behavioral rule has a defined enforcement mechanism: prompt injection, output validation, knowledge injection, or session hooks."
 status: active

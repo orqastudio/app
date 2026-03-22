@@ -1,6 +1,5 @@
 ---
 id: RULE-e120bb70
-type: rule
 title: No Deferred Deliverables
 description: "If a deliverable is in scope, it ships with the epic. Deferring scoped deliverables is forbidden."
 status: active
