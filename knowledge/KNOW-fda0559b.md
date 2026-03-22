@@ -1,6 +1,5 @@
 ---
 id: KNOW-fda0559b
-type: knowledge
 title: "Thinking Mode: Implementation"
 description: "The user wants something built, fixed, added, or refactored — hands-on work producing code, artifacts, or configuration changes."
 status: active

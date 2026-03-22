@@ -1,16 +1,14 @@
 ---
-id: "RULE-4f7e2a91"
-title: "Real-time Session State Management"
-description: "tmp/session-state.md must be updated in real time during conversations — not just at session end. Every new decision, plan change, scope change, or step completion must be reflected immediately."
-status: "active"
-created: "2026-03-21"
-updated: "2026-03-21"
+id: RULE-4f7e2a91
+title: Real-time Session State Management
+description: tmp/session-state.md must be updated in real time during conversations — not just at session end. Every new decision, plan change, scope change, or step completion must be reflected immediately.
+status: active
+created: 2026-03-21
+updated: 2026-03-21
 enforcement: []
 relationships:
-  - target: "IMPL-a3f2c1d8"
-    type: "promoted-from"
-  - target: "RULE-6083347d"
-    type: "related"
+  - target: IMPL-a3f2c1d8
+    type: promoted-from
 ---
 
 Session state is a **working document**, not a post-session summary. `tmp/session-state.md` must reflect the current state of the conversation at all times.

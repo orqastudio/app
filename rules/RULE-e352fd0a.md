@@ -1,6 +1,5 @@
 ---
 id: RULE-e352fd0a
-type: rule
 title: Session Management
 description: "Sessions must be managed with state persistence, clean handoffs, and no unsaved work at session boundaries."
 status: active

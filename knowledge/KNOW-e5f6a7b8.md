@@ -1,6 +1,5 @@
 ---
 id: KNOW-e5f6a7b8
-type: knowledge
 title: Implementer Reasoning Methodology
 description: |
   Reasoning protocol for Implementer agents: understand the domain and task,

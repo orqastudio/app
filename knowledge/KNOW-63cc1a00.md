@@ -1,6 +1,5 @@
 ---
 id: KNOW-63cc1a00
-type: knowledge
 title: Third-Party Plugin Development
 description: |
   Third-party plugin workflow for community and external developers. Plugins are

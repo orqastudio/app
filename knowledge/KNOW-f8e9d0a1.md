@@ -1,6 +1,5 @@
 ---
 id: KNOW-f8e9d0a1
-type: knowledge
 title: Governance Migration Methodology
 description: |
   Methodology for migrating an existing project to a structured governance

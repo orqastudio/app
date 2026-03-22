@@ -1,6 +1,5 @@
 ---
 id: "AGENT-ec1b3785"
-type: "agent"
 title: "Writer"
 description: "Creates documentation, communications, and records. Produces structured written artifacts that capture decisions, specifications, and knowledge."
 preamble: "Create documentation and written artifacts. Follow the artifact framework schema. Documentation is the source of truth."

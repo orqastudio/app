@@ -1,6 +1,5 @@
 ---
 id: KNOW-f7476f0a
-type: knowledge
 title: Research Methodology
 description: |
   Research best practices for agents investigating external sources: source

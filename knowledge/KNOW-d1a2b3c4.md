@@ -1,6 +1,5 @@
 ---
 id: KNOW-d1a2b3c4
-type: knowledge
 title: Agent Decision Methodology
 description: |
   Reasoning protocol for orchestrating agents: classify the incoming request,

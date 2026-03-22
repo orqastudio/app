@@ -1,6 +1,5 @@
 ---
 id: KNOW-f5edb34d
-type: knowledge
 title: Diagnostic Methodology
 description: |
   Root cause analysis methodology: capture, reproduce, isolate, fix, verify.
