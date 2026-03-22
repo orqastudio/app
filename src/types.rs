@@ -214,6 +214,79 @@ pub struct EnforcementEvent {
 }
 
 // ---------------------------------------------------------------------------
+// Artifact parse types
+// ---------------------------------------------------------------------------
+
+/// The result of validating a parsed artifact's frontmatter against its type schema.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ValidationResult {
+    pub valid: bool,
+    pub errors: Vec<String>,
+}
+
+/// A fully parsed artifact: frontmatter, body, type inference, and schema validation.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ParsedArtifact {
+    pub id: String,
+    #[serde(rename = "type")]
+    pub artifact_type: String,
+    pub status: Option<String>,
+    pub title: String,
+    pub frontmatter: serde_json::Value,
+    pub content: String,
+    pub validation: ValidationResult,
+}
+
+// ---------------------------------------------------------------------------
+// Hook lifecycle types
+// ---------------------------------------------------------------------------
+
+/// Context passed to the hook evaluation engine.
+///
+/// Carries all the information the evaluator needs to match rule enforcement
+/// entries against the current lifecycle event.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct HookContext {
+    /// The lifecycle event name, e.g. `"PreAction"`, `"PostAction"`, `"PromptSubmit"`.
+    pub event: String,
+    /// The tool being invoked (populated for `PreAction` / `PostAction` events).
+    pub tool_name: Option<String>,
+    /// The raw tool input as JSON (populated for `PreAction` / `PostAction` events).
+    pub tool_input: Option<serde_json::Value>,
+    /// The file path being written or read, if applicable.
+    pub file_path: Option<String>,
+    /// The user message text, for `PromptSubmit` events.
+    pub user_message: Option<String>,
+    /// The agent type running the hook, for agent-scoped rules.
+    pub agent_type: Option<String>,
+}
+
+/// The result of evaluating all active rules against a [`HookContext`].
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct HookResult {
+    /// Overall action: `"allow"`, `"warn"`, or `"block"`.
+    ///
+    /// Precedence: any `"block"` violation → `"block"`;
+    /// otherwise any `"warn"` → `"warn"`; else `"allow"`.
+    pub action: String,
+    /// Human-readable summary messages (one per violation).
+    pub messages: Vec<String>,
+    /// Structured violation list for programmatic consumption.
+    pub violations: Vec<HookViolation>,
+}
+
+/// A single rule violation found during hook evaluation.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct HookViolation {
+    /// The rule artifact ID that produced this violation.
+    pub rule_id: String,
+    /// Enforcement action declared by the rule: `"block"`, `"warn"`, or `"inject"`.
+    pub action: String,
+    /// Human-readable description from the rule enforcement entry.
+    pub message: String,
+}
+
+// ---------------------------------------------------------------------------
 // Graph health metrics
 // ---------------------------------------------------------------------------
 

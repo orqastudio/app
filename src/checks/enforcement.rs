@@ -32,120 +32,128 @@ pub fn check_enforcement_mechanisms(
         .collect();
 
     for node in graph.nodes.values() {
-        // Only validate rule artifacts.
         if node.artifact_type != "rule" {
             continue;
         }
 
-        let enforcement = node.frontmatter.get("enforcement");
+        check_rule_enforcement(node, &registered_keys, checks);
+    }
+}
 
-        // Check: enforcement field exists.
-        let Some(enforcement) = enforcement else {
+/// Validate the `enforcement` field on a single rule node.
+fn check_rule_enforcement(
+    node: &crate::graph::ArtifactNode,
+    registered_keys: &HashSet<&str>,
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    let enforcement = node.frontmatter.get("enforcement");
+
+    let Some(enforcement) = enforcement else {
+        checks.push(IntegrityCheck {
+            category: IntegrityCategory::SchemaViolation,
+            severity: IntegritySeverity::Error,
+            artifact_id: node.id.clone(),
+            message: "Rule has no enforcement field — every rule must have ≥1 enforcement entry"
+                .to_owned(),
+            auto_fixable: false,
+            fix_description: None,
+        });
+        return;
+    };
+
+    let Some(entries) = enforcement.as_array() else {
+        checks.push(IntegrityCheck {
+            category: IntegrityCategory::SchemaViolation,
+            severity: IntegritySeverity::Error,
+            artifact_id: node.id.clone(),
+            message: format!(
+                "Rule enforcement field must be an array, got {}",
+                value_type_name(enforcement)
+            ),
+            auto_fixable: false,
+            fix_description: None,
+        });
+        return;
+    };
+
+    if entries.is_empty() {
+        checks.push(IntegrityCheck {
+            category: IntegrityCategory::SchemaViolation,
+            severity: IntegritySeverity::Error,
+            artifact_id: node.id.clone(),
+            message: "Rule has empty enforcement array — must have ≥1 entry".to_owned(),
+            auto_fixable: false,
+            fix_description: None,
+        });
+        return;
+    }
+
+    for (i, entry) in entries.iter().enumerate() {
+        check_enforcement_entry(node, i, entry, registered_keys, checks);
+    }
+}
+
+/// Validate a single enforcement entry object.
+fn check_enforcement_entry(
+    node: &crate::graph::ArtifactNode,
+    i: usize,
+    entry: &serde_json::Value,
+    registered_keys: &HashSet<&str>,
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    let Some(obj) = entry.as_object() else {
+        checks.push(IntegrityCheck {
+            category: IntegrityCategory::SchemaViolation,
+            severity: IntegritySeverity::Warning,
+            artifact_id: node.id.clone(),
+            message: format!(
+                "Enforcement entry [{i}] is a {}, not an object — needs migration to structured format",
+                value_type_name(entry)
+            ),
+            auto_fixable: false,
+            fix_description: None,
+        });
+        return;
+    };
+
+    let Some(mechanism) = obj.get("mechanism").and_then(serde_json::Value::as_str) else {
+        if obj.contains_key("event") {
             checks.push(IntegrityCheck {
                 category: IntegrityCategory::SchemaViolation,
-                severity: IntegritySeverity::Error,
+                severity: IntegritySeverity::Warning,
                 artifact_id: node.id.clone(),
-                message: "Rule has no enforcement field — every rule must have ≥1 enforcement entry"
-                    .to_owned(),
+                message: format!(
+                    "Enforcement entry [{i}] uses legacy 'event' field — migrate to 'mechanism' field"
+                ),
                 auto_fixable: false,
                 fix_description: None,
             });
-            continue;
-        };
-
-        // Check: enforcement is an array.
-        let Some(entries) = enforcement.as_array() else {
+        } else {
             checks.push(IntegrityCheck {
                 category: IntegrityCategory::SchemaViolation,
                 severity: IntegritySeverity::Error,
                 artifact_id: node.id.clone(),
                 message: format!(
-                    "Rule enforcement field must be an array, got {}",
-                    value_type_name(enforcement)
+                    "Enforcement entry [{i}] missing required 'mechanism' field"
                 ),
                 auto_fixable: false,
                 fix_description: None,
             });
-            continue;
-        };
-
-        // Check: enforcement array is not empty.
-        if entries.is_empty() {
-            checks.push(IntegrityCheck {
-                category: IntegrityCategory::SchemaViolation,
-                severity: IntegritySeverity::Error,
-                artifact_id: node.id.clone(),
-                message: "Rule has empty enforcement array — must have ≥1 entry".to_owned(),
-                auto_fixable: false,
-                fix_description: None,
-            });
-            continue;
         }
+        return;
+    };
 
-        for (i, entry) in entries.iter().enumerate() {
-            // Enforcement entries can be strings (malformed, Phase 13 migration) or objects.
-            let Some(obj) = entry.as_object() else {
-                checks.push(IntegrityCheck {
-                    category: IntegrityCategory::SchemaViolation,
-                    severity: IntegritySeverity::Warning,
-                    artifact_id: node.id.clone(),
-                    message: format!(
-                        "Enforcement entry [{}] is a {}, not an object — needs migration to structured format",
-                        i,
-                        value_type_name(entry)
-                    ),
-                    auto_fixable: false,
-                    fix_description: None,
-                });
-                continue;
-            };
-
-            // Check: entry has a `mechanism` field.
-            let Some(mechanism) = obj.get("mechanism").and_then(serde_json::Value::as_str) else {
-                // Check for legacy `event` field and suggest migration.
-                if obj.contains_key("event") {
-                    checks.push(IntegrityCheck {
-                        category: IntegrityCategory::SchemaViolation,
-                        severity: IntegritySeverity::Warning,
-                        artifact_id: node.id.clone(),
-                        message: format!(
-                            "Enforcement entry [{}] uses legacy 'event' field — migrate to 'mechanism' field",
-                            i
-                        ),
-                        auto_fixable: false,
-                        fix_description: None,
-                    });
-                } else {
-                    checks.push(IntegrityCheck {
-                        category: IntegrityCategory::SchemaViolation,
-                        severity: IntegritySeverity::Error,
-                        artifact_id: node.id.clone(),
-                        message: format!(
-                            "Enforcement entry [{}] missing required 'mechanism' field",
-                            i
-                        ),
-                        auto_fixable: false,
-                        fix_description: None,
-                    });
-                }
-                continue;
-            };
-
-            // Check: mechanism is registered by an installed plugin.
-            if !registered_keys.contains(mechanism) {
-                checks.push(IntegrityCheck {
-                    category: IntegrityCategory::SchemaViolation,
-                    severity: IntegritySeverity::Warning,
-                    artifact_id: node.id.clone(),
-                    message: format!(
-                        "Enforcement entry [{}] references mechanism '{}' which is not registered by any installed plugin — enforcement degraded",
-                        i, mechanism
-                    ),
-                    auto_fixable: false,
-                    fix_description: None,
-                });
-            }
-        }
+    if !registered_keys.contains(mechanism) {
+        checks.push(IntegrityCheck {
+            category: IntegrityCategory::SchemaViolation,
+            severity: IntegritySeverity::Warning,
+            artifact_id: node.id.clone(),
+            message: format!(
+                "Enforcement entry [{i}] references mechanism '{mechanism}' which is not registered by any installed plugin — enforcement degraded"
+            ),
+            auto_fixable: false,
+            fix_description: None,
+        });
     }
 }
 
@@ -268,10 +276,7 @@ mod tests {
 
     #[test]
     fn string_enforcement_entry_warns() {
-        let rule = make_rule(
-            "RULE-a1b2c3d4",
-            serde_json::json!(["event: bash"]),
-        );
+        let rule = make_rule("RULE-a1b2c3d4", serde_json::json!(["event: bash"]));
         let graph = make_graph(vec![rule]);
         let mut checks = Vec::new();
         check_enforcement_mechanisms(&graph, &test_mechanisms(), &mut checks);

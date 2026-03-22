@@ -66,8 +66,7 @@ pub fn check_schema_conflicts(
                     severity: IntegritySeverity::Error,
                     artifact_id: format!("schema:{key}"),
                     message: format!(
-                        "Schema conflict: multiple plugins define '{}' with different statusTransitions — resolve via project.json enforcement.resolutions",
-                        key
+                        "Schema conflict: multiple plugins define '{key}' with different statusTransitions — resolve via project.json enforcement.resolutions"
                     ),
                     auto_fixable: false,
                     fix_description: None,
@@ -86,8 +85,7 @@ pub fn check_schema_conflicts(
                     severity: IntegritySeverity::Warning,
                     artifact_id: format!("schema:{key}"),
                     message: format!(
-                        "Schema overlap: multiple plugins define '{}' with different required fields — consider resolving via project.json",
-                        key
+                        "Schema overlap: multiple plugins define '{key}' with different required fields — consider resolving via project.json"
                     ),
                     auto_fixable: false,
                     fix_description: None,

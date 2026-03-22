@@ -489,7 +489,7 @@ fn build_node(
         .map(str::to_owned);
     let frontmatter_type = yaml_value.get("type").and_then(|v| v.as_str());
     let artifact_type =
-        infer_artifact_type(&rel_path, ctx.type_registry, frontmatter_type, &id);
+        infer_artifact_type(&rel_path, ctx.type_registry, frontmatter_type, &id, &[]);
     let frontmatter = yaml_to_json(yaml_value);
     let all_refs = collect_relationship_refs(yaml_value, &id);
     // Filter: only include edges with valid relationship types in the graph.
@@ -654,14 +654,16 @@ pub fn extract_frontmatter(content: &str) -> (Option<String>, String) {
 /// Resolution priority (highest to lowest):
 /// 1. Explicit `type:` field in frontmatter.
 /// 2. Longest-prefix match against the config-driven type registry.
-/// 3. ID-prefix match against the platform artifact types.
-/// 4. Hardcoded path-segment heuristic for well-known directory names.
-/// 5. `"doc"` as the final fallback.
-fn infer_artifact_type(
+/// 3. ID-prefix match against `plugin_types` (caller-supplied plugin contributions).
+/// 4. ID-prefix match against the static PLATFORM artifact types (legacy fallback).
+/// 5. Hardcoded path-segment heuristic for well-known directory names.
+/// 6. `"doc"` as the final fallback.
+pub(crate) fn infer_artifact_type(
     rel_path: &str,
     type_registry: &TypeRegistry,
     frontmatter_type: Option<&str>,
     artifact_id: &str,
+    plugin_types: &[crate::platform::ArtifactTypeDef],
 ) -> String {
     if let Some(t) = frontmatter_type.map(str::trim).filter(|t| !t.is_empty()) {
         return t.to_owned();
@@ -687,9 +689,10 @@ fn infer_artifact_type(
     }
 
     if let Some(prefix) = artifact_id.split('-').next().filter(|p| !p.is_empty()) {
-        let matched = crate::platform::PLATFORM
-            .artifact_types
+        // Check caller-supplied plugin types first.
+        let matched = plugin_types
             .iter()
+            .chain(crate::platform::PLATFORM.artifact_types.iter())
             .find(|t| t.id_prefix == prefix)
             .map(|t| t.key.clone());
         if let Some(t) = matched {

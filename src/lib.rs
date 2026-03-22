@@ -26,29 +26,39 @@
 
 pub mod auto_fix;
 pub mod checks;
+pub mod content;
 pub mod context;
+pub mod daemon;
 pub mod error;
 pub mod generated;
 pub mod graph;
+pub mod hooks;
 pub mod metrics;
+pub mod parse;
 pub mod platform;
 pub mod settings;
 pub mod types;
 
 pub use auto_fix::{apply_fixes, update_artifact_field};
+pub use content::{
+    extract_behavioral_messages, find_agent, find_agent_in_graph, find_knowledge, AgentContent,
+    BehavioralMessages, KnowledgeContent,
+};
 pub use context::{build_validation_context, build_validation_context_with_types};
 pub use error::ValidationError;
 pub use graph::{
     build_artifact_graph, graph_stats, ArtifactGraph, ArtifactNode, ArtifactRef, GraphStats,
 };
+pub use hooks::evaluate_hook;
 pub use metrics::{
     compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
     AncestryChain, AncestryNode, TraceabilityResult, TracedArtifact,
 };
+pub use parse::{artifact_from_graph_node, parse_artifact, query_artifacts};
 pub use types::{
-    AppliedFix, EnforcementEvent, EnforcementResult, GraphHealth, IntegrityCategory,
-    IntegrityCheck, IntegritySeverity, RelationshipConstraints, RelationshipSchema, StatusRule,
-    ValidationContext,
+    AppliedFix, EnforcementEvent, EnforcementResult, GraphHealth, HookContext, HookResult,
+    HookViolation, IntegrityCategory, IntegrityCheck, IntegritySeverity, ParsedArtifact,
+    RelationshipConstraints, RelationshipSchema, StatusRule, ValidationContext, ValidationResult,
 };
 
 /// Run all integrity checks on the artifact graph.
