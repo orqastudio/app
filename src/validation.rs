@@ -1,36 +1,26 @@
 //! Frontmatter validation logic for OrqaStudio artifact files.
 //!
-//! Produces LSP `Diagnostic` values for `.orqa/` markdown files:
+//! Produces LSP `Diagnostic` values for `.orqa/` markdown files.
 //!
-//! ## File-level checks (single file, fast, always run)
+//! ## File-level checks (single file, fast, always run on the editor buffer)
 //! - Missing YAML frontmatter delimiters
-//! - Missing required `id` field
-//! - JSON Schema validation (types, patterns, enums, required fields)
+//! - Unclosed frontmatter block
 //! - Invalid or legacy artifact ID format
 //! - Duplicate frontmatter keys
+//! - JSON Schema validation (types, patterns, enums, required fields) — via `orqa_validation`
 //! - Knowledge artifact missing `synchronised-with` relationship
 //! - Relationship targets not found in the artifact graph
 //! - Missing `relationships` section on delivery/process artifacts
 //!
-//! ## Graph-level checks (full graph, run when graph is available)
-//! Delegated to [`orqa_validation::validate()`] — covers:
-//! - Broken references (targets that don't exist)
-//! - Missing inverse relationships
-//! - Type constraints (from/to type mismatches)
-//! - Cardinality violations (min/max count constraints)
-//! - Circular dependencies
-//! - Body text references without relationship edges
-//! - Parent/child status inconsistencies
+//! ## Graph-level checks
+//! Delegated to the validation daemon — see `server::OrqaLspBackend::daemon_validate`.
 
 use std::collections::HashMap;
-use std::path::Path;
 
 use orqa_validation::checks::schema::{build_frontmatter_schema, validate_frontmatter};
+use orqa_validation::graph::ArtifactGraph;
 use orqa_validation::platform::ArtifactTypeDef;
-use orqa_validation::types::{IntegrityCategory, IntegritySeverity};
 use tower_lsp::lsp_types::{Diagnostic, DiagnosticSeverity, Position, Range};
-
-use crate::types::ArtifactGraph;
 
 /// Validate that an artifact ID matches the expected format.
 ///
@@ -106,11 +96,7 @@ pub fn validate_file(
         return diagnostics;
     };
 
-    let lines: Vec<&str> = frontmatter.lines().collect();
-    let has_id = lines.iter().any(|l| l.starts_with("id:"));
-
-    check_required_id(has_id, content, &mut diagnostics);
-    check_artifact_id(has_id, content, &mut diagnostics);
+    check_artifact_id(frontmatter, content, &mut diagnostics);
     check_duplicate_keys(content, &mut diagnostics);
     check_json_schema(content, frontmatter, artifact_types, &mut diagnostics);
     check_knowledge_sync(rel_path, frontmatter, content, &mut diagnostics);
@@ -120,6 +106,11 @@ pub fn validate_file(
     diagnostics
 }
 
+/// Parse frontmatter delimiters. Returns the frontmatter text slice on success,
+/// or pushes a diagnostic and returns `None` if the block is missing or unclosed.
+///
+/// This is a structural text-level check — the engine doesn't do this because
+/// it works from parsed YAML, not raw editor buffer content.
 fn parse_frontmatter<'a>(content: &'a str, diagnostics: &mut Vec<Diagnostic>) -> Option<&'a str> {
     if content.find("---\n") != Some(0) {
         diagnostics.push(Diagnostic {
@@ -144,19 +135,6 @@ fn parse_frontmatter<'a>(content: &'a str, diagnostics: &mut Vec<Diagnostic>) ->
     Some(&content[4..fm_end + 4])
 }
 
-fn check_required_id(has_id: bool, content: &str, diagnostics: &mut Vec<Diagnostic>) {
-    if !has_id {
-        let line_num = find_frontmatter_end_line(content);
-        diagnostics.push(Diagnostic {
-            range: Range::new(Position::new(line_num, 0), Position::new(line_num, 3)),
-            severity: Some(DiagnosticSeverity::ERROR),
-            source: Some("orqastudio".into()),
-            message: "Missing required frontmatter field: id".into(),
-            ..Default::default()
-        });
-    }
-}
-
 /// Validate frontmatter against JSON Schema derived from plugin artifact type definitions.
 ///
 /// Parses the YAML frontmatter as JSON, matches the artifact to its type by ID prefix,
@@ -179,9 +157,8 @@ fn check_json_schema(
     };
 
     // Extract ID to determine artifact type.
-    let id = match frontmatter.get("id").and_then(serde_json::Value::as_str) {
-        Some(id) => id,
-        None => return, // No ID — can't match to a schema
+    let Some(id) = frontmatter.get("id").and_then(serde_json::Value::as_str) else {
+        return; // No ID — can't match to a schema
     };
 
     // Match by ID prefix (everything before the first '-').
@@ -244,7 +221,12 @@ fn find_field_line(content: &str, field_name: &str) -> (u32, u32) {
     (end, 3)
 }
 
-fn check_artifact_id(has_id: bool, content: &str, diagnostics: &mut Vec<Diagnostic>) {
+/// Validate the `id:` field format if present.
+///
+/// Errors on IDs that don't match TYPE-XXXXXXXX or TYPE-NNN.
+/// Warns on legacy sequential IDs.
+fn check_artifact_id(frontmatter: &str, content: &str, diagnostics: &mut Vec<Diagnostic>) {
+    let has_id = frontmatter.lines().any(|l| l.starts_with("id:"));
     if !has_id {
         return;
     }
@@ -283,6 +265,10 @@ fn check_artifact_id(has_id: bool, content: &str, diagnostics: &mut Vec<Diagnost
     }
 }
 
+/// Check for duplicate frontmatter keys.
+///
+/// This is a structural text-level check that the YAML parser may silently
+/// accept (last value wins), but editors should flag as an error.
 fn check_duplicate_keys(content: &str, diagnostics: &mut Vec<Diagnostic>) {
     let mut seen_keys: std::collections::HashMap<String, u32> = std::collections::HashMap::new();
     for (i, line) in content.lines().enumerate() {
@@ -392,98 +378,6 @@ fn check_missing_relationships(
     }
 }
 
-// ---------------------------------------------------------------------------
-// Graph-level checks (delegated to orqa-validation)
-// ---------------------------------------------------------------------------
-
-/// Run comprehensive graph-level integrity checks via `orqa_validation`.
-///
-/// This function builds the full artifact graph from disk and runs all
-/// schema-driven integrity checks (broken refs, missing inverses, type
-/// constraints, cardinality, cycles). Findings that reference `artifact_id`
-/// are converted to LSP `Diagnostic` values anchored to line 1 of the file.
-///
-/// Returns an empty vec when:
-/// - The graph cannot be built (directory missing, IO error)
-/// - The validation context cannot be constructed
-/// - No checks reference this artifact
-///
-/// `artifact_id` is extracted from the frontmatter `id:` field by the caller.
-/// When it is `None` (no id yet), this function returns no diagnostics because
-/// the graph-level checks all require a valid artifact ID to match against.
-pub fn validate_graph_checks(project_root: &Path, artifact_id: Option<&str>) -> Vec<Diagnostic> {
-    let Some(artifact_id) = artifact_id else {
-        return Vec::new();
-    };
-
-    let graph = match orqa_validation::build_artifact_graph(project_root) {
-        Ok(g) => g,
-        Err(_) => return Vec::new(),
-    };
-
-    let plugin_contributions = orqa_validation::platform::scan_plugin_manifests(project_root);
-    let ctx = orqa_validation::build_validation_context(
-        &[],
-        &orqa_validation::settings::DeliveryConfig::default(),
-        &[],
-        &plugin_contributions.relationships,
-    );
-
-    let checks = orqa_validation::validate(&graph, &ctx);
-
-    checks
-        .into_iter()
-        .filter(|c| c.artifact_id == artifact_id)
-        .map(integrity_check_to_diagnostic)
-        .collect()
-}
-
-/// Convert an [`orqa_validation::IntegrityCheck`] to an LSP `Diagnostic`.
-///
-/// Graph-level findings are not tied to a specific line — they are anchored to
-/// the opening frontmatter delimiter (line 0, column 0–3) so the editor shows
-/// them at the top of the file.
-fn integrity_check_to_diagnostic(
-    check: orqa_validation::types::IntegrityCheck,
-) -> Diagnostic {
-    let severity = match check.severity {
-        IntegritySeverity::Error => DiagnosticSeverity::ERROR,
-        IntegritySeverity::Warning => DiagnosticSeverity::WARNING,
-        IntegritySeverity::Info => DiagnosticSeverity::INFORMATION,
-    };
-
-    // Annotate the category in the message for clarity.
-    let category_label = match check.category {
-        IntegrityCategory::BrokenLink => "[broken-link]",
-        IntegrityCategory::MissingInverse => "[missing-inverse]",
-        IntegrityCategory::TypeConstraintViolation => "[type-constraint]",
-        IntegrityCategory::RequiredRelationshipMissing => "[required-relationship]",
-        IntegrityCategory::CardinalityViolation => "[cardinality]",
-        IntegrityCategory::CircularDependency => "[circular-dep]",
-        IntegrityCategory::InvalidStatus => "[invalid-status]",
-        IntegrityCategory::BodyTextRefWithoutRelationship => "[body-ref]",
-        IntegrityCategory::ParentChildInconsistency => "[parent-child]",
-        IntegrityCategory::DeliveryPathMismatch => "[delivery-path]",
-        IntegrityCategory::MissingType => "[missing-type]",
-        IntegrityCategory::MissingStatus => "[missing-status]",
-        IntegrityCategory::DuplicateRelationship => "[duplicate-relationship]",
-        IntegrityCategory::FilenameMismatch => "[filename-mismatch]",
-        IntegrityCategory::SchemaViolation => "[schema-violation]",
-    };
-
-    let mut message = format!("{category_label} {}", check.message);
-    if let Some(fix_desc) = check.fix_description {
-        message.push_str(&format!(" (auto-fix: {fix_desc})"));
-    }
-
-    Diagnostic {
-        range: Range::new(Position::new(0, 0), Position::new(0, 3)),
-        severity: Some(severity),
-        source: Some("orqastudio".into()),
-        message,
-        ..Default::default()
-    }
-}
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -492,6 +386,29 @@ fn integrity_check_to_diagnostic(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use orqa_validation::platform::ArtifactTypeDef;
+
+    fn make_epic_type() -> ArtifactTypeDef {
+        let mut transitions = std::collections::HashMap::new();
+        transitions.insert("captured".to_owned(), vec!["active".to_owned()]);
+        transitions.insert("active".to_owned(), vec!["completed".to_owned()]);
+        transitions.insert("completed".to_owned(), vec![]);
+        ArtifactTypeDef {
+            key: "epic".to_owned(),
+            label: "Epic".to_owned(),
+            icon: "layers".to_owned(),
+            id_prefix: "EPIC".to_owned(),
+            frontmatter_schema: serde_json::json!({
+                "type": "object",
+                "required": ["id", "status"],
+                "properties": {
+                    "id": { "type": "string", "pattern": "^EPIC-[a-f0-9]{8}$" }
+                },
+                "additionalProperties": true
+            }),
+            status_transitions: transitions,
+        }
+    }
 
     #[test]
     fn valid_artifact_id_hex() {
@@ -522,28 +439,6 @@ mod tests {
         assert!(!is_hex_artifact_id("EPIC-123"));
     }
 
-    fn make_epic_type() -> ArtifactTypeDef {
-        let mut transitions = std::collections::HashMap::new();
-        transitions.insert("captured".to_owned(), vec!["active".to_owned()]);
-        transitions.insert("active".to_owned(), vec!["completed".to_owned()]);
-        transitions.insert("completed".to_owned(), vec![]);
-        ArtifactTypeDef {
-            key: "epic".to_owned(),
-            label: "Epic".to_owned(),
-            icon: "layers".to_owned(),
-            id_prefix: "EPIC".to_owned(),
-            frontmatter_schema: serde_json::json!({
-                "type": "object",
-                "required": ["id", "status"],
-                "properties": {
-                    "id": { "type": "string", "pattern": "^EPIC-[a-f0-9]{8}$" }
-                },
-                "additionalProperties": true
-            }),
-            status_transitions: transitions,
-        }
-    }
-
     #[test]
     fn no_diagnostics_for_non_orqa_file() {
         let diagnostics = validate_file("src/main.rs", "fn main() {}", None, &[]);
@@ -559,12 +454,15 @@ mod tests {
     }
 
     #[test]
-    fn error_on_missing_id() {
+    fn no_missing_id_error_without_schema() {
+        // Without schema types, missing id is not flagged at file level —
+        // the engine's graph-level checks handle required field validation.
         let content = "---\ntitle: My Epic\nstatus: active\n---\n# Body\n";
         let diagnostics = validate_file(".orqa/delivery/epics/EPIC-001.md", content, None, &[]);
-        assert!(diagnostics
+        // Should not contain a "Missing required frontmatter field: id" error
+        assert!(!diagnostics
             .iter()
-            .any(|d| d.message.contains("Missing required frontmatter field: id")));
+            .any(|d| d.message.contains("Missing required frontmatter field")));
     }
 
     #[test]
