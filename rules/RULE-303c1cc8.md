@@ -5,7 +5,9 @@ description: Every implementation plan must have architectural compliance verifi
 status: active
 created: 2026-03-07
 updated: 2026-03-12
-enforcement: "agent system prompt — orchestrator verifies Architectural Compliance and Systems Architecture Checklist sections exist before delegating implementation; plans missing these sections are rejected"
+enforcement:
+  - mechanism: behavioral
+    message: "Every implementation plan must have an Architectural Compliance section and Systems Architecture Checklist before implementation begins; plans missing these sections are rejected"
 relationships:
   - target: AD-c8535011
     type: enforces

@@ -15,18 +15,32 @@
         "defaultPath": ".orqa/delivery/milestones",
         "idPrefix": "MS",
         "frontmatter": {
+          "type": "object",
           "required": [
             "id",
             "status"
           ],
-          "optional": [
-            "name",
-            "description",
-            "gate",
-            "priority",
-            "target_date",
-            "relationships"
-          ]
+          "properties": {
+            "id": { "type": "string", "pattern": "^MS-[a-f0-9]{8}$" },
+            "name": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "gate": { "type": ["string", "array"] },
+            "priority": { "type": "string" },
+            "target_date": { "type": "string" },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "statusTransitions": {
           "captured": [
@@ -82,16 +96,30 @@
         "defaultPath": ".orqa/delivery/epics",
         "idPrefix": "EPIC",
         "frontmatter": {
+          "type": "object",
           "required": [
             "id",
             "status"
           ],
-          "optional": [
-            "name",
-            "description",
-            "priority",
-            "relationships"
-          ]
+          "properties": {
+            "id": { "type": "string", "pattern": "^EPIC-[a-f0-9]{8}$" },
+            "name": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "priority": { "type": "string" },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "statusTransitions": {
           "captured": [
@@ -147,17 +175,31 @@
         "defaultPath": ".orqa/delivery/tasks",
         "idPrefix": "TASK",
         "frontmatter": {
+          "type": "object",
           "required": [
             "id",
             "status"
           ],
-          "optional": [
-            "name",
-            "description",
-            "priority",
-            "assignee",
-            "relationships"
-          ]
+          "properties": {
+            "id": { "type": "string", "pattern": "^TASK-[a-f0-9]{8}$" },
+            "name": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "priority": { "type": "string" },
+            "assignee": { "type": ["string", "null"] },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "statusTransitions": {
           "captured": [
@@ -206,16 +248,30 @@
         "defaultPath": ".orqa/discovery/research",
         "idPrefix": "RES",
         "frontmatter": {
+          "type": "object",
           "required": [
             "id",
             "status"
           ],
-          "optional": [
-            "name",
-            "description",
-            "methodology",
-            "relationships"
-          ]
+          "properties": {
+            "id": { "type": "string", "pattern": "^RES-[a-f0-9]{8}$" },
+            "name": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "methodology": { "type": "string" },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "statusTransitions": {
           "captured": [
@@ -256,15 +312,29 @@
         "defaultPath": ".orqa/discovery/wireframes",
         "idPrefix": "WF",
         "frontmatter": {
+          "type": "object",
           "required": [
             "id",
             "status"
           ],
-          "optional": [
-            "name",
-            "description",
-            "relationships"
-          ]
+          "properties": {
+            "id": { "type": "string", "pattern": "^WF-[a-f0-9]{8}$" },
+            "name": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "statusTransitions": {
           "captured": [

@@ -186,4 +186,4 @@ Navigate to **Delivery → Roadmap** in the sidebar:
 4. **Connect epics to decisions** — if there's no decision driving the work, create one
 5. **Keep tasks atomic** — if a task takes more than one session, split it
 6. **Track bugs separately** — bugs enter as discovery, get fixed through delivery
-7. **Run integrity checks** — `orqa validate` catches missing relationships and type violations
+7. **Run integrity checks** — `orqa enforce` catches missing relationships and type violations

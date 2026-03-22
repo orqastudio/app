@@ -5,7 +5,14 @@ description: User acceptance testing follows a collect-then-systematize approach
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-enforcement: "agent system prompt — uat-process knowledge injected during review/testing phases; orchestrator rejects UAT completion reports without encoded process improvements"
+enforcement:
+  - mechanism: behavioral
+    message: "UAT follows collect-then-systematize; findings must be grouped by root cause before tasks are created; orchestrator rejects UAT completion reports without encoded process improvements"
+  - mechanism: hook
+    type: PostToolUse
+    event: file
+    action: inject
+    description: "uat-process knowledge injected during review/testing phases"
 relationships:
   - target: AD-e156310d
     type: enforces
