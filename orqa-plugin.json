@@ -34,5 +34,6 @@
       }
     ],
     "hooks": []
-  }
+  },
+  "role": "enhancement:delivery"
 }

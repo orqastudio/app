@@ -1,6 +1,5 @@
 ---
 id: KNOW-ea517e13
-type: knowledge
 title: Quality Check Runner
 description: "How to run unified quality checks via orqa check. Discovers tools from installed plugins and runs them all, returning a summary."
 status: active

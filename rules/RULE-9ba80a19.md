@@ -1,6 +1,5 @@
 ---
 id: RULE-9ba80a19
-type: rule
 title: No Aliases or Hacks
 description: "Fix root causes of type mismatches between layers. Never paper over with aliases, shims, or duplicate mappings."
 status: active
