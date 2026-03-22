@@ -5,7 +5,11 @@ description: "Fix root causes of type mismatches between layers. Never paper ove
 status: active
 created: 2026-03-07
 updated: 2026-03-12
-enforcement: "code review — code-reviewer rejects alias entries, widened type unions, and normalizer maps; TypeScript strict mode catches type mismatches at boundary"
+enforcement:
+  - mechanism: behavioral
+    message: "Fix root causes of type mismatches between layers; never paper over with aliases, shims, or duplicate mappings"
+  - mechanism: tsc
+    description: "TypeScript strict mode catches type mismatches at the boundary"
 relationships:
   - target: AD-1d928079
     type: enforces

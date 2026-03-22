@@ -6,11 +6,16 @@ status: "active"
 created: "2026-03-11"
 updated: "2026-03-12"
 enforcement:
-  - "event: lint"
-  - "event: lint"
-  - "event: lint"
-  - "event: lint"
-  - "event: lint"
+  - mechanism: behavioral
+    message: "Code quality enforcement belongs in linters; linter configuration must match documented standards; zero warnings policy applies"
+  - mechanism: lint
+    linter: eslint
+  - mechanism: lint
+    linter: clippy
+  - mechanism: lint
+    linter: rustfmt
+  - mechanism: svelte-check
+  - mechanism: tsc
 relationships:
   - target: "AD-aa6b409a"
     type: "enforces"

@@ -5,7 +5,16 @@ description: "Coding standards must be reflected in automated linting rules. Lin
 status: "active"
 created: "2026-03-22"
 updated: "2026-03-22"
-enforcement: "pre-commit hook — runs linters on staged files before every commit"
+enforcement:
+  - mechanism: behavioral
+    message: "Coding standards must be reflected in automated linting rules; standards and tooling must stay in sync; zero warnings policy"
+  - mechanism: pre-commit
+    check: "make check"
+    description: "Pre-commit hook runs linters on staged files before every commit"
+  - mechanism: lint
+    linter: eslint
+  - mechanism: lint
+    linter: clippy
 ---
 Coding standards must be reflected in automated linting rules. If a standard exists in documentation, there must be a corresponding lint rule that enforces it. If a lint rule enforces something, that standard must be documented. Standards and tooling stay in sync.
 

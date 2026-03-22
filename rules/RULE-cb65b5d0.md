@@ -5,7 +5,15 @@ description: "Check shared component library before creating new UI elements. Us
 status: "active"
 created: "2026-03-07"
 updated: "2026-03-11"
-enforcement: "code review — code-reviewer rejects inline empty states, spinners, and error displays when shared components exist; knowledge injection on ui/src/lib/components/** writes"
+enforcement:
+  - mechanism: behavioral
+    message: "Check shared component library before creating new UI elements; code reviewer rejects inline empty states, spinners, and error displays when shared components exist"
+  - mechanism: hook
+    type: PostToolUse
+    event: file
+    action: inject
+    pattern: "ui/src/lib/components/**"
+    description: "Knowledge injection triggered when writing to component directory"
 relationships:
   - target: "DOC-52bbfba5"
     type: "documented-by"

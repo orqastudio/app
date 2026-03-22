@@ -6,6 +6,9 @@
   "category": "coding-standards",
   "provides": {
     "schemas": [],
+    "enforcement_mechanisms": [
+      { "key": "lint", "description": "Linter enforcement (delegates to language-specific linters)", "strength": 6 }
+    ],
     "views": [],
     "widgets": [],
     "relationships": [],

@@ -5,7 +5,15 @@ description: "Test organisation, coverage requirements, mock boundaries, and iso
 status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
-enforcement: "pre-commit hook — make check runs make test-rust and make test-frontend; cargo tarpaulin enforces 80% coverage per module"
+enforcement:
+  - mechanism: behavioral
+    message: "80%+ test coverage required; tests must be organised by layer; no skipping tests without documented justification"
+  - mechanism: pre-commit
+    check: "make check"
+    description: "make check runs make test-rust and make test-frontend"
+  - mechanism: cargo-test
+    description: "cargo tarpaulin enforces 80% coverage per module"
+  - mechanism: vitest
 relationships:
   - target: "AD-e156310d"
     type: "enforces"
