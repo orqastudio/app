@@ -9,8 +9,31 @@
   "provides": {
     "schemas": [],
     "relationships": [],
-    "agents": [],
-    "knowledge": [],
+    "agents": [
+      { "key": "orchestrator", "id": "AGENT-1dab5ebe", "path": "agents/orchestrator.md" },
+      { "key": "implementer", "id": "AGENT-cc255bc8", "path": "agents/implementer.md" },
+      { "key": "reviewer", "id": "AGENT-b0774726", "path": "agents/reviewer.md" },
+      { "key": "researcher", "id": "AGENT-fb0ce261", "path": "agents/researcher.md" },
+      { "key": "planner", "id": "AGENT-caff7bc1", "path": "agents/planner.md" },
+      { "key": "writer", "id": "AGENT-ec1b3785", "path": "agents/writer.md" },
+      { "key": "designer", "id": "AGENT-c5284fde", "path": "agents/designer.md" },
+      { "key": "installer", "id": "AGENT-bedeffd1", "path": "agents/installer.md" }
+    ],
+    "knowledge": [
+      { "key": "planning", "id": "KNOW-6f33713e", "label": "Planning" },
+      { "key": "research-methodology", "id": "KNOW-f7476f0a", "label": "Research Methodology" },
+      { "key": "diagnostic-methodology", "id": "KNOW-f5edb34d", "label": "Diagnostic Methodology" },
+      { "key": "artifact-status-management", "id": "KNOW-449b1e02", "label": "Artifact Status Management" },
+      { "key": "search", "id": "KNOW-a2b3c4d5", "label": "Search" },
+      { "key": "plugin-development", "id": "KNOW-b453410f", "label": "Plugin Development" },
+      { "key": "plugin-development-first-party", "id": "KNOW-e1333874", "label": "First-Party Plugin Development" },
+      { "key": "plugin-development-third-party", "id": "KNOW-63cc1a00", "label": "Third-Party Plugin Development" },
+      { "key": "plugin-setup", "id": "KNOW-e3a559c9", "label": "Plugin Setup" },
+      { "key": "project-setup", "id": "KNOW-e0dec720", "label": "Project Setup" },
+      { "key": "thinking-mode-implementation", "id": "KNOW-fda0559b", "label": "Thinking Mode: Implementation" },
+      { "key": "thinking-mode-debugging", "id": "KNOW-323c2803", "label": "Thinking Mode: Debugging" },
+      { "key": "thinking-mode-review", "id": "KNOW-83614358", "label": "Thinking Mode: Review" }
+    ],
     "hooks": [],
     "views": [],
     "widgets": []
