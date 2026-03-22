@@ -1,1 +1,1 @@
-C:/Users/Bobbi/code/orqastudio-dev/plugins/core/agents/orchestrator.md
+C:/Users/Bobbi/code/orqastudio-dev/plugins/core/agents/AGENT-1dab5ebe.md
