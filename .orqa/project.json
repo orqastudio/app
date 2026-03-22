@@ -387,7 +387,7 @@
     }
   ],
   "plugins": {
-    "@orqastudio/plugin-core": {
+    "@orqastudio/plugin-core-framework": {
       "installed": true,
       "enabled": true,
       "path": "plugins/core",

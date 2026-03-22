@@ -81,4 +81,4 @@
 	url = git@github.com:orqastudio/orqastudio-plugin-rust.git
 [submodule "plugins/core"]
 	path = plugins/core
-	url = git@github.com:orqastudio/orqastudio-plugin-core.git
+	url = git@github.com:orqastudio/orqastudio-plugin-core-framework.git
