@@ -26,7 +26,7 @@ Before creating any new UI element, search for existing patterns:
 2. **`search_regex`** — known class patterns like `animate-spin`, `text-muted-foreground`, `rounded-full`
 3. **Grep for repeated markup** — `<Loader2`, `class="h-4 w-4 animate-spin"`, `{#if loading}`
 
-### Known Repeated Patterns (from [TASK-e752886d](TASK-e752886d) audit)
+### Known Repeated Patterns (from prior audit)
 
 | Pattern | Occurrences | Files | Extraction Priority |
 |---------|-------------|-------|-------------------|

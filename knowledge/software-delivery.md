@@ -11,47 +11,47 @@ relationships:
 
 # Software Delivery Management
 
-You are managing software delivery artifacts in an OrqaStudio project. This skill covers how to create, connect, and progress milestones, epics, tasks, research, wireframes, and bugs through the delivery lifecycle.
+You are managing software delivery artifacts in a structured project. This knowledge covers how to create, connect, and progress milestones, epics, tasks, research, wireframes, and bugs through the delivery lifecycle.
 
 ## Artifact Types
 
-### Milestone (MS-nnn)
+### Milestone
 Top of the delivery hierarchy. Represents a significant project checkpoint or release.
-- Path: `.orqa/delivery/milestones/`
+- Stored in the project's delivery artifacts directory
 - Key fields: `gate` (optional completion conditions), `target_date`
 - Children: epics connect via `fulfils`
 
-### Epic (EPIC-nnn)
+### Epic
 A body of work delivering a coherent capability. Groups related tasks.
-- Path: `.orqa/delivery/epics/`
+- Stored in the project's delivery artifacts directory
 - Connects up: `fulfils` → milestone
 - Connects down: tasks connect via `delivers`
 - Origin: `realised-by` → idea (the validated idea that became this work)
 - Motivation: `driven-by` → decision (the architecture choice that motivates this)
 - Knowledge: `guided-by` → research, `cautioned-by` → lesson
 
-### Task (TASK-nnn)
+### Task
 An atomic unit of work completable in a single session.
-- Path: `.orqa/delivery/tasks/`
+- Stored in the project's delivery artifacts directory
 - Connects up: `delivers` → epic
 - Sequencing: `depends-on` → other tasks
 - Output: `yields` → lesson (when something is learned)
 - Fixes: `fixes` → bug (when fixing a reported issue)
 
-### Research (RES-nnn)
+### Research
 Investigation or analysis that produces findings.
-- Path: `.orqa/discovery/research/`
+- Stored in the project's discovery artifacts directory
 - Origin: `spawned-by` → idea
 - Output: `produces` → wireframe, `informs` → decision, `guides` → epic
 
-### Wireframe (WF-nnn)
+### Wireframe
 Visual specification of a UI or interaction pattern.
-- Path: `.orqa/discovery/wireframes/`
+- Stored in the project's discovery artifacts directory
 - Origin: `produced-by` → research
 
-### Bug (BUG-nnn)
+### Bug
 A functional or display issue reported against existing work.
-- Path: `.orqa/discovery/bugs/`
+- Stored in the project's discovery artifacts directory
 - Reports against: `reports` → epic, task, or milestone
 - Impact: `affects` → persona
 - Resolution: `fixed-by` → task
@@ -62,16 +62,16 @@ Always include full frontmatter:
 
 ```yaml
 ---
-id: EPIC-596dc061
+id: <generated-id>
 type: epic
 name: Plugin Distribution System
 status: active
 relationships:
-  - target: MS-010
+  - target: <milestone-id>
     type: fulfils
-  - target: AD-c6abc8e6
+  - target: <decision-id>
     type: driven-by
-  - target: IDEA-3354aefe
+  - target: <idea-id>
     type: realised-by
 ---
 ```
@@ -117,20 +117,20 @@ captured → exploring → ready → prioritised → active → review → compl
 ## Delivery Hierarchy
 
 ```
-Milestone (MS)
+Milestone
   ↑ fulfils
-Epic (EPIC)
+Epic
   ↑ delivers
-Task (TASK)
+Task
 ```
 
 ## Traceability
 
-Any artifact traces back to the idea and pillar through the graph:
+Any delivery artifact traces back to the idea and pillar through the graph:
 ```
 task →(delivers)→ epic →(realised-by)→ idea →(grounded-by)→ pillar →(upholds)→ vision
 ```
 
 ## Validation
 
-Run `orqa validate` before committing. The integrity checker verifies all relationship targets exist, inverses are present, verbs match from/to type constraints, and required frontmatter fields are present.
+Before committing, run the project's integrity checker to verify all relationship targets exist, inverses are present, verbs match from/to type constraints, and required frontmatter fields are present.
