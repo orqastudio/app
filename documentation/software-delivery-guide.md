@@ -1,6 +1,5 @@
 ---
 id: DOC-421219ce
-type: doc
 name: Software Delivery Guide
 category: how-to
 status: active

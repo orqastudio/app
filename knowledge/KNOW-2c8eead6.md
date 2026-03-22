@@ -1,6 +1,5 @@
 ---
 id: KNOW-2c8eead6
-type: knowledge
 title: Skills Maintenance
 description: |
   Full skills.sh lifecycle management: CLI reference, skill evaluation criteria, KNOW.md format,

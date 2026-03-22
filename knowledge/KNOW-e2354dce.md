@@ -1,6 +1,5 @@
 ---
 id: KNOW-e2354dce
-type: knowledge
 title: "Delivery Unit Completion Discipline"
 description: "Delivery units (epics) must be completed in their entirety — never left half-done. All tasks delivered before moving on."
 status: active

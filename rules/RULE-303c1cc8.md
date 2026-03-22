@@ -1,6 +1,5 @@
 ---
 id: RULE-303c1cc8
-type: rule
 title: Plan Mode Compliance
 description: Every implementation plan must have architectural compliance verification and UX-first design.
 status: active
