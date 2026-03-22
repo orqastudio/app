@@ -1,26 +1,23 @@
 ---
 id: IDEA-7c3d9f2e
-title: "OrqaStudio Cloud — Forgejo-based git hosting as a plugin"
-description: "A minimal OrqaStudio-branded git hosting platform based on Forgejo, shipped as a Docker container and deployable as a plugin for local or cloud use. Provides project/organisation/user oversight with the same governance model that runs locally."
+title: OrqaStudio Cloud — Forgejo-based git hosting as a plugin
+description: A minimal OrqaStudio-branded git hosting platform based on Forgejo, shipped as a Docker container and deployable as a plugin for local or cloud use. Provides project/organisation/user oversight with the same governance model that runs locally.
 status: captured
 created: 2026-03-21
 updated: 2026-03-21
 relationships:
   - target: PILLAR-569581e0
     type: grounded
-    rationale: "Clarity Through Structure — centralised governance visibility across projects"
+    rationale: Clarity Through Structure — centralised governance visibility across projects
   - target: PILLAR-94b281db
     type: grounded
-    rationale: "Purpose Through Continuity — projects maintain coherence whether local or hosted"
+    rationale: Purpose Through Continuity — projects maintain coherence whether local or hosted
   - target: PERSONA-cda6edd6
     type: benefits
-    rationale: "Alex (Lead) — organisation-level oversight across all projects"
+    rationale: Alex (Lead) — organisation-level oversight across all projects
   - target: PERSONA-a4b15450
     type: benefits
-    rationale: "Jordan (Independent) — can run locally without cloud dependency"
-  - target: IDEA-4f8e2a1c
-    type: grounded
-    rationale: "Cloud instance is the natural aggregation point for cross-project learning"
+    rationale: Jordan (Independent) — can run locally without cloud dependency
 ---
 
 ## The Idea

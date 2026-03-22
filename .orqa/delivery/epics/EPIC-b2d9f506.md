@@ -8,13 +8,10 @@ updated: 2026-03-21
 relationships:
   - target: MS-654badde
     type: fulfils
-    rationale: "This epic fulfils the Dogfooding milestone by improving agent reasoning quality and token efficiency"
+    rationale: This epic fulfils the Dogfooding milestone by improving agent reasoning quality and token efficiency
   - target: AD-e7c4a1f3
     type: driven-by
-    rationale: "This epic is driven by the inference-time decision tree architecture decision"
-  - target: IDEA-a3f2c17e
-    type: crystallised-by
-    rationale: "This epic crystallises the self-navigating knowledge discovery idea into implementation"
+    rationale: This epic is driven by the inference-time decision tree architecture decision
 ---
 
 # EPIC-101: Inference-Time Decision Tree — Self-Navigating Knowledge Discovery

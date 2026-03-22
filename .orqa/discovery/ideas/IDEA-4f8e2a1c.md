@@ -1,26 +1,20 @@
 ---
 id: IDEA-4f8e2a1c
-title: "Cross-project classification learning with opt-in telemetry and AI-driven semantic merge"
-description: "Projects that opt in share classification corrections to improve the global starting prompt. New version upgrades use AI-driven semantic merge to combine global improvements with local refinements without overwriting project-specific learnings."
+title: Cross-project classification learning with opt-in telemetry and AI-driven semantic merge
+description: Projects that opt in share classification corrections to improve the global starting prompt. New version upgrades use AI-driven semantic merge to combine global improvements with local refinements without overwriting project-specific learnings.
 status: captured
 created: 2026-03-21
 updated: 2026-03-21
 relationships:
   - target: PILLAR-94b281db
     type: grounded
-    rationale: "Purpose Through Continuity — local learnings persist across upgrades"
+    rationale: Purpose Through Continuity — local learnings persist across upgrades
   - target: PILLAR-569581e0
     type: grounded
-    rationale: "Clarity Through Structure — classification improvements are visible and governed"
+    rationale: Clarity Through Structure — classification improvements are visible and governed
   - target: PERSONA-a4b15450
     type: benefits
-    rationale: "Jordan (Independent) — solo users benefit from collective learning without being forced to share"
-  - target: IDEA-a3f2c17e
-    type: grounded
-    rationale: "Builds on the thinking mode classification system"
-  - target: IDEA-7c3d9f2e
-    type: grounded-by
-    rationale: "Cloud instance is the natural aggregation point for cross-project learning"
+    rationale: Jordan (Independent) — solo users benefit from collective learning without being forced to share
 ---
 
 ## The Idea

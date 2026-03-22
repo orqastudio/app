@@ -1,29 +1,20 @@
 ---
 id: IDEA-a3f2c17e
-title: "Inference-time decision tree — self-navigating knowledge discovery"
-description: "Instead of pre-injecting knowledge into agents, inject a thinking framework (decision tree) that the agent works through as part of its inference process. The agent asks itself structured questions after each prompt, self-navigates to the right knowledge articles, and only loads what it determines it needs. Lighter context, higher precision, self-documenting reasoning."
+title: Inference-time decision tree — self-navigating knowledge discovery
+description: Instead of pre-injecting knowledge into agents, inject a thinking framework (decision tree) that the agent works through as part of its inference process. The agent asks itself structured questions after each prompt, self-navigates to the right knowledge articles, and only loads what it determines it needs. Lighter context, higher precision, self-documenting reasoning.
 status: exploring
 created: 2026-03-21
 updated: 2026-03-21
 relationships:
   - target: PILLAR-94b281db
     type: grounded
-    rationale: "Purpose Through Continuity — ensuring the right process is applied to the right kind of work"
+    rationale: Purpose Through Continuity — ensuring the right process is applied to the right kind of work
   - target: PILLAR-569581e0
     type: grounded
-    rationale: "Clarity Through Structure — making the orchestrator's decision-making visible and structured"
+    rationale: Clarity Through Structure — making the orchestrator's decision-making visible and structured
   - target: PERSONA-cda6edd6
     type: benefits
-    rationale: "Alex (Lead) — the orchestrator serves Alex's coordination needs"
-  - target: AD-e7c4a1f3
-    type: crystallises
-    rationale: "This idea crystallised into the inference-time decision tree architecture decision"
-  - target: EPIC-b2d9f506
-    type: crystallises
-    rationale: "This idea crystallised into the implementation epic"
-  - target: IDEA-4f8e2a1c
-    type: grounded-by
-    rationale: "Cross-project classification learning builds on the thinking mode classification system defined here"
+    rationale: Alex (Lead) — the orchestrator serves Alex's coordination needs
 ---
 
 ## The Shift: From Pre-Injection to Self-Navigation

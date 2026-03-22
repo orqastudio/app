@@ -1,7 +1,7 @@
 ---
 id: TASK-d6c514a7
-title: "MCP server review — verify artifact graph API"
-description: "Review the existing MCP server implementation to verify that the artifact graph API is correctly implemented, properly registered, and returns accurate data. Produce a verdict with any gaps."
+title: MCP server review — verify artifact graph API
+description: Review the existing MCP server implementation to verify that the artifact graph API is correctly implemented, properly registered, and returns accurate data. Produce a verdict with any gaps.
 status: completed
 created: 2026-03-21
 updated: 2026-03-21
@@ -11,8 +11,6 @@ acceptance:
   - Verdict delivered — pass or list of issues for implementer to address
 relationships:
   - target: EPIC-6967c7dc
-    type: delivers
-  - target: TASK-c9880303
     type: delivers
 ---
 
