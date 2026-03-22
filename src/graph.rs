@@ -7,13 +7,9 @@
 use std::path::Path;
 
 use crate::error::McpError;
-use orqa_validation::settings::DeliveryConfig;
 
 // ---------------------------------------------------------------------------
-// Re-export graph types and constructors from orqa-validation
-//
-// These re-exports preserve the existing public API of this module so that
-// callers in `tools/graph.rs` and `server.rs` require no import changes.
+// Re-export graph types from orqa-validation
 // ---------------------------------------------------------------------------
 
 pub use orqa_validation::{ArtifactGraph, ArtifactNode, ArtifactRef, GraphHealth, GraphStats};
@@ -65,98 +61,6 @@ pub fn compute_health(graph: &ArtifactGraph) -> orqa_validation::GraphHealth {
     orqa_validation::compute_health(graph)
 }
 
-// ---------------------------------------------------------------------------
-// Integrity checks — delegated to orqa-validation
-// ---------------------------------------------------------------------------
-
-/// Run integrity checks on the artifact graph using the `orqa-validation` library.
-///
-/// Loads statuses and delivery config from project settings when available, falling
-/// back to empty defaults (headless mode) when project.json is not found.
-/// Plugin-contributed relationships from `plugins/*/orqa-plugin.json` are merged in.
-pub fn check_integrity_headless(graph: &ArtifactGraph, project_root: &Path) -> Vec<IntegrityCheck> {
-    let plugin_contributions = crate::platform::scan_plugin_manifests(project_root);
-    let plugin_relationships = contributions_to_validation_schemas(plugin_contributions);
-    let ctx = orqa_validation::build_validation_context(
-        &[],
-        &DeliveryConfig::default(),
-        &[],
-        &plugin_relationships,
-    );
-    orqa_validation::validate(graph, &ctx)
-}
-
-/// Run integrity checks with full project settings context.
-///
-/// Uses statuses and delivery config from the project settings, giving richer
-/// validation results than `check_integrity_headless`.
-/// Plugin-contributed relationships are merged in alongside project relationships.
-pub fn check_integrity_with_settings(
-    graph: &ArtifactGraph,
-    settings: &crate::settings::ProjectSettings,
-    project_root: &Path,
-) -> Vec<IntegrityCheck> {
-    let statuses: Vec<String> = settings.statuses.iter().map(|s| s.key.clone()).collect();
-    let mut project_relationships: Vec<orqa_validation::types::RelationshipSchema> = settings
-        .relationships
-        .iter()
-        .map(|r| orqa_validation::types::RelationshipSchema {
-            key: r.key.clone(),
-            inverse: r.inverse.clone(),
-            description: String::new(),
-            from: vec![],
-            to: vec![],
-            semantic: None,
-            constraints: None,
-        })
-        .collect();
-    let plugin_contributions = crate::platform::scan_plugin_manifests(project_root);
-    project_relationships.extend(contributions_to_validation_schemas(plugin_contributions));
-    let ctx = orqa_validation::build_validation_context(
-        &statuses,
-        &DeliveryConfig::default(),
-        &[],
-        &project_relationships,
-    );
-    orqa_validation::validate(graph, &ctx)
-}
-
-/// Convert plugin `RelationshipDef` contributions to the `orqa_validation` schema type.
-fn contributions_to_validation_schemas(
-    contributions: crate::platform::PluginContributions,
-) -> Vec<orqa_validation::types::RelationshipSchema> {
-    contributions
-        .relationships
-        .into_iter()
-        .map(|r| orqa_validation::types::RelationshipSchema {
-            key: r.key,
-            inverse: r.inverse,
-            description: r.description,
-            from: r.from,
-            to: r.to,
-            semantic: r.semantic,
-            constraints: r
-                .constraints
-                .map(|c| orqa_validation::types::RelationshipConstraints {
-                    required: c.required,
-                    min_count: c.min_count,
-                    max_count: c.max_count,
-                    require_inverse: c.require_inverse,
-                    status_rules: c
-                        .status_rules
-                        .into_iter()
-                        .map(|sr| orqa_validation::types::StatusRule {
-                            evaluate: sr.evaluate,
-                            condition: sr.condition,
-                            statuses: sr.statuses,
-                            proposed_status: sr.proposed_status,
-                            description: sr.description,
-                        })
-                        .collect(),
-                }),
-        })
-        .collect()
-}
 
 // ---------------------------------------------------------------------------
 // Helpers

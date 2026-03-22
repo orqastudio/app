@@ -21,6 +21,12 @@ pub enum McpError {
     #[error("validation error: {0}")]
     Validation(String),
 
+    #[error("daemon unreachable: {0}")]
+    DaemonUnreachable(String),
+
+    #[error("protocol error: {0}")]
+    Protocol(String),
+
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),
 }

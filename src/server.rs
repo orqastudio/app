@@ -7,8 +7,8 @@ use orqa_search::SearchEngine;
 use serde_json::{json, Value};
 use tracing::{debug, warn};
 
+use crate::daemon::{DaemonClient, DEFAULT_DAEMON_PORT};
 use crate::error::McpError;
-use crate::graph::{build_artifact_graph, ArtifactGraph};
 use crate::tools::{graph as graph_tools, search as search_tools};
 use crate::types::{JsonRpcError, JsonRpcRequest, JsonRpcResponse, McpResource};
 
@@ -16,25 +16,31 @@ use crate::types::{JsonRpcError, JsonRpcRequest, JsonRpcResponse, McpResource};
 // Server state
 // ---------------------------------------------------------------------------
 
-/// The MCP server.  Holds lazy-initialised graph and search engine state.
+/// The MCP server. Holds a daemon client for graph operations and a lazy
+/// search engine for semantic/regex queries.
 pub struct McpServer {
     project_root: PathBuf,
-    graph: Option<ArtifactGraph>,
+    daemon: DaemonClient,
     search: Option<SearchEngine>,
 }
 
 impl McpServer {
     /// Create a new server for the given project root.
     pub fn new(project_root: PathBuf) -> Self {
+        Self::with_daemon_port(project_root, DEFAULT_DAEMON_PORT)
+    }
+
+    /// Create a new server connecting to the daemon on `daemon_port`.
+    pub fn with_daemon_port(project_root: PathBuf, daemon_port: u16) -> Self {
         Self {
             project_root,
-            graph: None,
+            daemon: DaemonClient::new(daemon_port),
             search: None,
         }
     }
 
     // -----------------------------------------------------------------------
-    // Lazy accessors
+    // Lazy accessor
     // -----------------------------------------------------------------------
 
     /// Get or initialise the search engine (lazy init).
@@ -80,18 +86,6 @@ impl McpServer {
         self.search
             .as_mut()
             .ok_or_else(|| "search engine not available".into())
-    }
-
-    /// Get or build the artifact graph (lazy init).
-    fn get_graph(&mut self) -> Result<&ArtifactGraph, String> {
-        if self.graph.is_none() {
-            let graph = build_artifact_graph(&self.project_root)
-                .map_err(|e| format!("failed to build graph: {e}"))?;
-            self.graph = Some(graph);
-        }
-        self.graph
-            .as_ref()
-            .ok_or_else(|| "graph not available".into())
     }
 
     // -----------------------------------------------------------------------
@@ -180,33 +174,17 @@ impl McpServer {
         debug!(tool = tool_name, "tool call");
 
         let result: Result<String, String> = match tool_name {
-            "graph_query" => self
-                .get_graph()
-                .and_then(|g| graph_tools::tool_query(g, &arguments)),
-            "graph_resolve" => self
-                .get_graph()
-                .and_then(|g| graph_tools::tool_resolve(g, &arguments)),
-            "graph_relationships" => self
-                .get_graph()
-                .and_then(|g| graph_tools::tool_relationships(g, &arguments)),
-            "graph_stats" => self.get_graph().and_then(graph_tools::tool_stats),
-            "graph_health" => self.get_graph().and_then(graph_tools::tool_health),
-            "graph_validate" => {
-                let root = self.project_root.clone();
-                self.get_graph()
-                    .and_then(|g| graph_tools::tool_validate(g, &root, &arguments))
-            }
+            "graph_query" => graph_tools::tool_query(&self.daemon, &arguments),
+            "graph_resolve" => graph_tools::tool_resolve(&self.daemon, &arguments),
+            "graph_relationships" => graph_tools::tool_relationships(&self.daemon, &arguments),
+            "graph_stats" => graph_tools::tool_stats(&self.daemon),
+            "graph_health" => graph_tools::tool_health(&self.daemon),
+            "graph_validate" => graph_tools::tool_validate(&self.daemon, &arguments),
             "graph_read" => graph_tools::tool_read(&self.project_root, &arguments),
-            "graph_refresh" => {
-                let root = self.project_root.clone();
-                graph_tools::tool_refresh(&root).map(|(new_graph, msg)| {
-                    self.graph = Some(new_graph);
-                    msg
-                })
+            "graph_refresh" => graph_tools::tool_refresh(&self.daemon),
+            "graph_traceability" => {
+                graph_tools::tool_traceability(&self.project_root, &arguments)
             }
-            "graph_traceability" => self
-                .get_graph()
-                .and_then(|g| graph_tools::tool_traceability(g, &arguments)),
             "search_regex" => self
                 .get_search()
                 .and_then(|e| search_tools::tool_search_regex(e, &arguments)),
@@ -289,7 +267,19 @@ impl McpServer {
 ///
 /// Returns `McpError::Io` if reading from stdin or writing to stdout fails.
 pub fn run(project_root: &std::path::Path) -> Result<(), McpError> {
-    let mut server = McpServer::new(project_root.to_path_buf());
+    run_with_daemon_port(project_root, DEFAULT_DAEMON_PORT)
+}
+
+/// Run the MCP server over stdio, connecting to the daemon on `daemon_port`.
+///
+/// # Errors
+///
+/// Returns `McpError::Io` if reading from stdin or writing to stdout fails.
+pub fn run_with_daemon_port(
+    project_root: &std::path::Path,
+    daemon_port: u16,
+) -> Result<(), McpError> {
+    let mut server = McpServer::with_daemon_port(project_root.to_path_buf(), daemon_port);
     let stdin = io::stdin();
     let mut stdout = io::stdout();
 

@@ -15,14 +15,14 @@
 //! orqa_mcp_server::server::run(Path::new("/my/project")).unwrap();
 //! ```
 
+pub mod daemon;
 pub mod error;
 pub mod graph;
-pub mod platform;
 pub mod server;
 pub mod settings;
 pub mod tools;
 pub mod types;
 
-// Re-export the primary entry point and error type at the crate root.
+// Re-export the primary entry points and error type at the crate root.
 pub use error::McpError;
-pub use server::run;
+pub use server::{run, run_with_daemon_port};
