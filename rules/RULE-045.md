@@ -1,88 +1,59 @@
 ---
-id: "RULE-130f1f63"
-type: "rule"
-title: "Data Integrity"
-description: "All artifact cross-references must resolve, pipeline relationships must have bidirectional inverses, and integrity checks run on every commit."
+id: "RULE-12e74734"
+title: "Enforcement Gap Priority"
+description: "Any discovered enforcement gap is immediately CRITICAL priority. It is never deferred, scoped out, or addressed in a future epic. This rule applies universally — not only in dogfood mode."
 status: "active"
-created: "2026-03-13"
-updated: "2026-03-14"
-enforcement:
-  - "event: file"
-  - ".orqa/**/*.md"
-  - "event: file"
-  - ".orqa/**/*.md"
-  - "orqa-governance"
+created: "2026-03-21"
+updated: "2026-03-21"
+enforcement: []
 relationships:
-  - target: "AD-d8ea4d2b"
-    type: "enforces"
-  - target: "AD-a76663db"
-    type: "enforces"
+  - target: "RULE-6083347d"
+    type: "supersedes-section"
+    rationale: "Extracts the enforcement-gap-priority section from dogfood mode (RULE-009) to make it a universal rule"
 ---
-All artifact cross-references must resolve to existing artifacts. Pipeline relationships must have bidirectional inverses. These constraints are enforced at commit time and can be verified manually.
 
-## Link Resolution (NON-NEGOTIABLE)
+Governance without enforcement is a fiction. Every rule, architecture decision, and pillar gate question that lacks mechanical enforcement is an enforcement gap. **An enforcement gap is always CRITICAL.**
 
-Every cross-reference in `.orqa/` artifacts must resolve:
+## What Is an Enforcement Gap
 
-1. **Frontmatter references** — fields like `epic`, `milestone`, `depends-on`, `pillars` must point to existing artifacts
-2. **Body text links** — `[DISPLAY](ARTIFACT-ID)` link targets must exist
-3. **Relationship targets** — every `target` in a `relationships` array must be a valid artifact ID
+An enforcement gap exists when any of the following are true:
 
-## Bidirectional Inverses (NON-NEGOTIABLE)
+- A rule exists but nothing mechanically checks it
+- An architecture decision is accepted but no rule enforces it
+- A pillar gate question cannot be answered by current tooling
+- A lesson has recurred two or more times but has not been promoted to a rule
+- A pipeline stage transition has no automation
 
-For every relationship `A --type--> B`, the artifact `B` must have the corresponding inverse relationship `inverse-type --> A`.
+## Response Protocol (NON-NEGOTIABLE)
 
-| Type | Inverse |
-|------|---------|
-| `delivers` | `delivered-by` |
-| `delivers` | `delivered-by` |
-| `observes` | `observed-by` |
-| `grounded` | `grounded-by` |
-| `grounded-by` | `grounded` |
-| `enforces` | `enforced-by` |
-| `enforces` | `enforced-by` |
-| `informs` | `informed-by` |
-| `enforces` | `enforced-by` |
-| `informs` | `informed-by` |
+When an enforcement gap is discovered:
 
-One-sided relationships indicate a broken graph edge. The pre-commit hook blocks commits that introduce asymmetric relationships.
+1. **Stop what you are doing** — gaps are not tracked for later; they break the credibility of the entire governance system
+2. **Capture immediately** — create a CRITICAL task in `.orqa/delivery/tasks/` for the gap
+3. **Prioritize above feature work** — enforcement gaps preempt all non-critical work
+4. **Do not wait for the next planning cycle** — there is no acceptable delay
+
+This applies regardless of where the gap is found: during feature work, code review, planning, or any other activity.
+
+## Why Universal
+
+RULE-009 scoped this requirement to dogfood mode only. But the reasoning applies universally: any project that claims to use structured governance while tolerating known enforcement gaps is not credibly governed. The dogfood motivation (credibility) is not unique to dogfood projects.
 
 ## Enforcement
 
-### Write-time (automatic — enforcement engine)
+This is a behavioral constraint on orchestrating agents. Enforcement has two layers:
 
-When any `.orqa/**/*.md` file is written or edited, the enforcement engine (consumed by the Claude plugin in CLI context, the Rust app in app context) injects a graph integrity reminder. This catches missing bidirectional inverses at the moment of creation — before more artifacts are built on top of broken edges.
-
-The enforcement entries on this rule declare:
-- `event: file` / `action: inject` — reminds the agent to check bidirectional inverses
-- `event: file` / `action: inject` / `knowledge: [orqa-governance]` — loads governance patterns
-
-### Pre-commit (automatic)
-
-The `.githooks/pre-commit` hook runs on every commit that includes `.orqa/` files:
-
-- `tools/verify-links.mjs --staged --check-bidirectional` — checks staged files for broken links and missing inverses
-- `tools/verify-pipeline-integrity.mjs --staged` — checks staged files for pipeline consistency
-
-This is the hard gate — commits with broken links or missing inverses are blocked.
-
-### Manual (full scan)
-
-```bash
-make verify-links      # Full link verification across all .orqa/ files
-make verify-integrity  # Pipeline integrity check
-make verify            # Both
-```
+1. **Agent system prompt** — the orchestrator's `Safety` section includes: "Pipeline integrity first — enforcement gaps are always CRITICAL priority, not backlog." This is loaded on every session start via the orchestrator agent definition (`app/.orqa/process/agents/orchestrator.md`).
+2. **Session start hook** — the `SessionStart` hook (`connectors/claude-code/hooks/`) reports enforcement health. Any rule with an empty `enforcement` array AND no `lint` delegation entry is surfaced as a potential gap.
 
 ## FORBIDDEN
 
-- Committing artifacts with broken cross-references
-- Committing relationships without bidirectional inverses
-- Bypassing integrity checks with `--no-verify`
-- Phantom artifact IDs (referencing IDs that were never created as real artifacts)
+- Logging an enforcement gap as a non-CRITICAL task
+- Deferring an enforcement gap to a future epic without explicit user approval
+- Treating "it's hard to enforce mechanically" as a reason not to create the task
 
 ## Related Rules
 
-- [RULE-a764b2ae](RULE-a764b2ae) (schema-validation) — schema validation is complementary to link verification
-- [RULE-2f7b6a31](RULE-2f7b6a31) (artifact-cross-references) — cross-reference format rules enforced by link verification
-- [RULE-633e636d](RULE-633e636d) (git-workflow) — pre-commit hook enforcement mechanism
+- [RULE-6083347d](RULE-6083347d) (dogfood-mode) — enforcement gap priority originated here; this rule makes it universal
+- [RULE-1e8a1914](RULE-1e8a1914) (vision-alignment) — enforcement gaps undermine pillar credibility
+- [RULE-7f416d7d](RULE-7f416d7d) (tooling-ecosystem) — linter delegation is the preferred mechanical enforcement mechanism
