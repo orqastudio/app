@@ -151,29 +151,31 @@ milestone/epic/task structure creation.
 | RULE-5ee43922 | User-Invocable Knowledge Semantics | **MOVE → orqa-core** (framework knowledge model) |
 | RULE-92dba0cb | Provider-Agnostic Tool Capabilities | **MOVE → orqa-core** (framework agent model) |
 
-### Rules — dev environment (.orqa/process/rules/) — 19 project-specific
+### Rules — dev environment (.orqa/process/rules/) — 19 rules, 14 should move to plugins
+
+Rules that enforce plugin-specific behaviour must travel with their plugin.
 
 | Current ID | Title | Action |
 |-----------|-------|--------|
-| RULE-65973a88 | Architecture Decisions | STAY (project-level) |
-| RULE-5e03e67b | Code Search Usage | STAY |
-| RULE-b49142be | Coding Standards | STAY |
-| RULE-c71f1c3f | Development Commands | STAY |
-| RULE-6083347d | Dogfood Mode | STAY |
-| RULE-1acb1602 | End-to-End Completeness | STAY |
-| RULE-cb65b5d0 | Reusable Components | STAY |
-| RULE-f10bb5de | Testing Standards | STAY |
+| RULE-12e74734 | Enforcement Gap Priority | **MOVE → agile-governance** (governance loop enforcement) |
+| RULE-9cd980b1 | Honest Status Reporting | **MOVE → agile-governance** (governance discipline) |
+| RULE-c4fe67a2 | Governance Priority Over Delivery | **MOVE → agile-governance** (governance meta-rule) |
+| RULE-67b91c13 | Trace Artifacts to Usage Contexts | **MOVE → agile-governance** (governance traceability) |
+| RULE-029db175 | Continuous Operation | **MOVE → orqa-core** (framework agent behaviour) |
+| RULE-4f7e2a91 | Real-time Session State Management | **MOVE → orqa-core** (framework session model) |
+| RULE-f9d0279c | Automated Knowledge Injection | **MOVE → orqa-core** (framework knowledge loading) |
+| RULE-5e03e67b | Code Search Usage | **MOVE → orqa-core** (framework search methodology) |
+| RULE-4263a6b3 | Pre-Release Version Tagging | **MOVE → cli** (version management enforcement) |
 | RULE-89155a7f | Tooltips over title attributes | **MOVE → coding-standards** (UI convention) |
-| RULE-c95f4444 | Data Persistence Boundaries | STAY |
-| RULE-f9d0279c | Automated Knowledge Injection | STAY |
-| RULE-7f416d7d | Tooling Ecosystem Management | STAY |
-| RULE-4f7e2a91 | Real-time Session State Management | STAY |
-| RULE-12e74734 | Enforcement Gap Priority | STAY |
-| RULE-029db175 | Continuous Operation | STAY |
-| RULE-4263a6b3 | Pre-Release Version Tagging | STAY |
-| RULE-9cd980b1 | Honest Status Reporting | STAY |
-| RULE-67b91c13 | Trace Artifacts to Usage Contexts | STAY |
-| RULE-c4fe67a2 | Governance Priority Over Delivery | STAY |
+| RULE-cb65b5d0 | Reusable Components | **MOVE → coding-standards** (code reuse discipline) |
+| RULE-f10bb5de | Testing Standards | **MOVE → coding-standards** (testing discipline) |
+| RULE-7f416d7d | Tooling Ecosystem Management | **MOVE → coding-standards** (linter delegation) |
+| RULE-1acb1602 | End-to-End Completeness | **MOVE → software** (delivery layer completeness) |
+| RULE-65973a88 | Architecture Decisions | **SPLIT** — generic "decisions are first-class artifacts" → agile-governance; OrqaStudio AD source of truth details → STAY |
+| RULE-b49142be | Coding Standards | **SPLIT** — generic enforcement discipline (run linters, no disabling rules, lint-rule alignment) → coding-standards; OrqaStudio Rust+Svelte+TS specifics → STAY |
+| RULE-c71f1c3f | Development Commands | STAY (OrqaStudio Makefile targets — purely project-specific) |
+| RULE-6083347d | Dogfood Mode | **SPLIT** — generic "editing the app you're running inside" methodology → orqa-core; OrqaStudio-specific restart/sidecar rules → STAY |
+| RULE-c95f4444 | Data Persistence Boundaries | STAY (OrqaStudio SQLite/file/ephemeral split — purely project-specific) |
 
 ### Knowledge — agile-governance (currently 11)
 
