@@ -6,8 +6,16 @@
   "category": "coding-standards",
   "provides": {
     "agents": [
-      { "key": "rust-standards", "path": "agents/rust-standards.md" },
-      { "key": "rust-specialist", "path": "agents/rust-specialist.md" }
+      {
+        "key": "4241392c",
+        "id": "AGENT-4241392c",
+        "path": "agents/AGENT-4241392c.md"
+      },
+      {
+        "key": "e1e47559",
+        "id": "AGENT-e1e47559",
+        "path": "agents/AGENT-e1e47559.md"
+      }
     ],
     "lspServers": {
       "rust": {
@@ -18,10 +26,23 @@
       }
     },
     "knowledge": [
-      { "key": "clippy-config-management", "id": "KNOW-5efa83a5", "label": "Clippy Config Management" },
-      { "key": "rust-testing-patterns", "id": "KNOW-214b7cdc", "label": "Rust Testing Patterns" },
-      { "key": "rust-installation", "id": "KNOW-2a72f929", "label": "Rust Plugin Installation" },
-      { "key": "rust-async-patterns", "id": "KNOW-c323ec5f", "label": "Rust Async Patterns" }
+      {
+        "key": "12495e28",
+        "id": "KNOW-12495e28",
+        "label": "Rust Async Patterns"
+      },
+      {
+        "key": "214b7cdc",
+        "id": "KNOW-214b7cdc"
+      },
+      {
+        "key": "2a72f929",
+        "id": "KNOW-2a72f929"
+      },
+      {
+        "key": "5efa83a5",
+        "id": "KNOW-5efa83a5"
+      }
     ],
     "tools": {
       "clippy": {
