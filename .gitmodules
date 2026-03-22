@@ -85,3 +85,6 @@
 [submodule "plugins/githooks"]
 	path = plugins/githooks
 	url = git@github.com:orqastudio/orqastudio-plugin-githooks.git
+[submodule "libs/logger"]
+	path = libs/logger
+	url = git@github.com:orqastudio/orqastudio-lib-logger.git
