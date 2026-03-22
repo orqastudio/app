@@ -5,7 +5,13 @@ description: "Methodology for developing software while running it. You are edit
 status: "active"
 created: "2026-03-22"
 updated: "2026-03-22"
-enforcement: "agent system prompt — self-hosted context injected when the project flag is active; session state protocol ensures state is preserved before restarts"
+enforcement:
+  - mechanism: behavioral
+    message: "When developing software while running it, treat every restart as a session boundary; preserve session state before any restart"
+  - mechanism: hook
+    type: SessionStart
+    action: inject
+    description: "Self-hosted context injected into system prompt when the project self-hosted flag is active"
 ---
 When developing software while running it, you are editing the app you are running inside. The codebase IS the running instance. This creates unique constraints that do not apply to normal development.
 

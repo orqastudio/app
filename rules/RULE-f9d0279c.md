@@ -6,32 +6,50 @@ status: "active"
 created: "2026-03-11"
 updated: "2026-03-12"
 enforcement:
-  - "event: file"
-  - "backend/src-tauri/src/domain/**"
-  - "orqa-domain-services"
-  - "orqa-error-composition"
-  - "event: file"
-  - "backend/src-tauri/src/commands/**"
-  - "orqa-ipc-patterns"
-  - "orqa-error-composition"
-  - "event: file"
-  - "backend/src-tauri/src/repo/**"
-  - "orqa-repository-pattern"
-  - "event: file"
-  - "sidecar/src/**"
-  - "orqa-streaming"
-  - "event: file"
-  - "ui/src/lib/components/**"
-  - "component-extraction"
-  - "svelte5-best-practices"
-  - "event: file"
-  - "ui/src/lib/stores/**"
-  - "orqa-store-patterns"
-  - "orqa-store-orchestration"
-  - "event: file"
-  - ".orqa/**"
-  - "orqa-governance"
-  - "orqa-documentation"
+  - mechanism: behavioral
+    message: "When agents touch specific code areas, relevant domain knowledge must be auto-injected; knowledge injection mappings must be kept up to date"
+  - mechanism: hook
+    type: PostToolUse
+    event: file
+    action: inject
+    pattern: "backend/src-tauri/src/domain/**"
+    knowledge: "orqa-domain-services, orqa-error-composition"
+  - mechanism: hook
+    type: PostToolUse
+    event: file
+    action: inject
+    pattern: "backend/src-tauri/src/commands/**"
+    knowledge: "orqa-ipc-patterns, orqa-error-composition"
+  - mechanism: hook
+    type: PostToolUse
+    event: file
+    action: inject
+    pattern: "backend/src-tauri/src/repo/**"
+    knowledge: "orqa-repository-pattern"
+  - mechanism: hook
+    type: PostToolUse
+    event: file
+    action: inject
+    pattern: "sidecar/src/**"
+    knowledge: "orqa-streaming"
+  - mechanism: hook
+    type: PostToolUse
+    event: file
+    action: inject
+    pattern: "ui/src/lib/components/**"
+    knowledge: "component-extraction, svelte5-best-practices"
+  - mechanism: hook
+    type: PostToolUse
+    event: file
+    action: inject
+    pattern: "ui/src/lib/stores/**"
+    knowledge: "orqa-store-patterns, orqa-store-orchestration"
+  - mechanism: hook
+    type: PostToolUse
+    event: file
+    action: inject
+    pattern: ".orqa/**"
+    knowledge: "orqa-governance, orqa-documentation"
 relationships:
   - target: "AD-ea4a5979"
     type: "enforces"

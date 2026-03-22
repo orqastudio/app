@@ -5,7 +5,12 @@ description: Documentation is deleted when outdated. Research and tasks are pres
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-enforcement: "agent system prompt — governance steward and orchestrator are instructed not to delete research or task artifacts; orqa validate checks for surpassed artifacts missing surpassed-by fields"
+enforcement:
+  - mechanism: behavioral
+    message: "Documentation is deleted when outdated; research and tasks are preserved and marked as surpassed for historical traceability; never delete research or task artifacts"
+  - mechanism: tool
+    command: "orqa enforce"
+    description: "Checks for surpassed artifacts missing surpassed-by fields"
 relationships:
   - target: AD-c8535011
     type: enforces

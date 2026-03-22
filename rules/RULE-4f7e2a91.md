@@ -5,7 +5,9 @@ description: tmp/session-state.md must be updated in real time during conversati
 status: active
 created: 2026-03-21
 updated: 2026-03-21
-enforcement: []
+enforcement:
+  - mechanism: behavioral
+    message: "tmp/session-state.md must be updated in real time during conversations; every new decision, plan change, scope change, or step completion must be reflected immediately"
 relationships:
   - target: IMPL-a3f2c1d8
     type: promoted-from

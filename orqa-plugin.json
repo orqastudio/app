@@ -8,6 +8,12 @@
   "uninstallable": true,
   "provides": {
     "schemas": [],
+    "enforcement_mechanisms": [
+      { "key": "behavioral", "description": "Prompt injection reminder — minimum enforcement floor", "strength": 1 },
+      { "key": "json-schema", "description": "Frontmatter JSON Schema validation", "strength": 8 },
+      { "key": "hook", "description": "Lifecycle hook enforcement (PreAction, PostAction, etc.)", "strength": 5 },
+      { "key": "onnx", "description": "Semantic inference — similarity, classification, pattern matching (lesson recurrence, duplicate detection, compliance)", "strength": 4 }
+    ],
     "relationships": [],
     "agents": [
       {
@@ -145,6 +151,9 @@
     ],
     "hooks": [],
     "views": [],
-    "widgets": []
+    "widgets": [],
+    "behavioral_rules": [],
+    "mode_templates": {},
+    "session_reminders": []
   }
 }

@@ -5,7 +5,9 @@ description: Skills must be portable within their declared layer. Core skills mu
 status: active
 created: 2026-03-11
 updated: 2026-03-11
-enforcement: "agent system prompt — core skills must be portable within their declared layer; orchestrator audits skill content against layer constraints when reviewing agent definitions"
+enforcement:
+  - mechanism: behavioral
+    message: "Core skills must be portable within their declared layer; project skills must declare their scope; a core skill containing project-specific paths is broken"
 relationships:
   - target: AD-e513c9e4
     type: enforces

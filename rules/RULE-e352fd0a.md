@@ -5,7 +5,17 @@ description: "Sessions must be managed with state persistence, clean handoffs, a
 status: active
 created: 2026-03-11
 updated: 2026-03-11
-enforcement: "session hooks — companion plugin Stop hook verifies session state is written and changes are committed; SessionStart hook reads tmp/session-state.md and surfaces unfinished work"
+enforcement:
+  - mechanism: behavioral
+    message: "Sessions must be managed with state persistence, clean handoffs, and no unsaved work at session boundaries"
+  - mechanism: hook
+    type: Stop
+    action: check
+    description: "Stop hook verifies session state is written to tmp/session-state.md and changes are committed"
+  - mechanism: hook
+    type: SessionStart
+    action: surface
+    description: "SessionStart hook reads tmp/session-state.md and surfaces unfinished work"
 relationships:
   - target: AD-6ce44025
     type: enforces

@@ -90,7 +90,7 @@ orqa plugin install --path /path/to/my-plugin
 ### 6. Community Registry Submission
 
 To submit to the community plugin registry:
-1. Ensure all validation passes (`orqa validate`)
+1. Ensure all validation passes (`orqa enforce`)
 2. Submit a PR to the community registry repository
 3. Maintainers review for quality, security, and compatibility
 4. Verified plugins show a verified badge in the app
