@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/rule-engine.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/hooks/rule-engine.js",
             "timeout": 10000
           }
         ]
@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/artifact-enforcement.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/hooks/artifact-enforcement.js",
             "timeout": 10000
           }
         ]
@@ -26,18 +26,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/memory-redirect.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/hooks/memory-redirect.js",
             "timeout": 5000
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/bash-safety.mjs",
-            "timeout": 10000
           }
         ]
       }
@@ -48,7 +38,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/validate-artifact.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/hooks/validate-artifact.js",
             "timeout": 10000
           }
         ]
@@ -58,7 +48,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/impact-check.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/hooks/impact-check.js",
             "timeout": 10000
           }
         ]
@@ -70,7 +60,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/prompt-injector.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/hooks/prompt-injector.js",
             "timeout": 10000
           }
         ]
@@ -106,7 +96,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/save-context.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/hooks/save-context.js",
             "timeout": 10000
           }
         ]
@@ -118,7 +108,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/subagent-review.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/hooks/subagent-review.js",
             "timeout": 15000
           }
         ]

@@ -13,7 +13,6 @@ export { scanArtifactGraph, queryGraph, getGraphStats } from "@orqastudio/cli";
 // Plugin management re-exports
 export { installPlugin, uninstallPlugin, listInstalledPlugins } from "@orqastudio/cli";
 // Local modules
-export { RuleEngine } from "./rule-engine.js";
-export { PromptInjector } from "./prompt-injector.js";
 export { ArtifactBridge } from "./artifact-bridge.js";
+export { runConnectorSetup } from "./connector-setup.js";
 //# sourceMappingURL=index.js.map

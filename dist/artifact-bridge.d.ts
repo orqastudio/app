@@ -82,7 +82,6 @@ export declare class ArtifactBridge {
             status: "linked" | "missing-source" | "real-file" | "broken" | "not-created";
         }>;
     };
-    private createSymlink;
     private listArtifacts;
     private parseArtifactHeader;
 }

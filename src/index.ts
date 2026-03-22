@@ -17,7 +17,5 @@ export type { GraphNode, GraphQueryOptions } from "@orqastudio/cli";
 export { installPlugin, uninstallPlugin, listInstalledPlugins } from "@orqastudio/cli";
 
 // Local modules
-export { RuleEngine, type RuleEnforcementResult } from "./rule-engine.js";
-export { PromptInjector, type InjectionResult } from "./prompt-injector.js";
 export { ArtifactBridge, type BridgeMapping } from "./artifact-bridge.js";
 export { runConnectorSetup, type ConnectorSetupResult } from "./connector-setup.js";

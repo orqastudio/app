@@ -11,7 +11,6 @@
 export { scanArtifactGraph, queryGraph, getGraphStats } from "@orqastudio/cli";
 export type { GraphNode, GraphQueryOptions } from "@orqastudio/cli";
 export { installPlugin, uninstallPlugin, listInstalledPlugins } from "@orqastudio/cli";
-export { RuleEngine, type RuleEnforcementResult } from "./rule-engine.js";
-export { PromptInjector, type InjectionResult } from "./prompt-injector.js";
 export { ArtifactBridge, type BridgeMapping } from "./artifact-bridge.js";
+export { runConnectorSetup, type ConnectorSetupResult } from "./connector-setup.js";
 //# sourceMappingURL=index.d.ts.map
