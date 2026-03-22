@@ -1,7 +1,7 @@
 ---
 id: "RULE-b49142be"
 title: "Coding Standards"
-description: "Rust and TypeScript coding standards: formatting, linting, error handling, component patterns, and coverage requirements."
+description: "OrqaStudio-specific extension of RULE-d4b8e3f2 (lint-enforcement-discipline). Defines Rust (rustfmt, clippy, thiserror) and TypeScript/Svelte 5 (strict TS, runes, shadcn-svelte) coding standards with coverage requirements."
 status: "active"
 created: "2026-03-07"
 updated: "2026-03-13"
@@ -34,6 +34,8 @@ relationships:
     type: "documented-by"
   - target: "DOC-4db3a417"
     type: "documented-by"
+  - target: "RULE-d4b8e3f2"
+    type: "extends"
 ---
 **Source of Truth:** `.orqa/documentation/development/coding-standards.md`
 
