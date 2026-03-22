@@ -6,11 +6,18 @@ status: active
 created: 2026-03-07
 updated: 2026-03-07
 enforcement:
-  - "event: file"
-  - ".orqa/**"
-  - "event: file"
-  - ".orqa/delivery/tasks/**"
-  - ".orqa/delivery/epics/**"
+  - mechanism: behavioral
+    message: "If a deliverable is listed in an epic's scope, it ships with that epic; deferring scoped deliverables to a future epic is forbidden"
+  - mechanism: hook
+    type: PostToolUse
+    event: file
+    action: check
+    pattern: ".orqa/**"
+  - mechanism: hook
+    type: PostToolUse
+    event: file
+    action: check
+    pattern: ".orqa/delivery/tasks/**|.orqa/delivery/epics/**"
 relationships:
   - target: AD-c8535011
     type: enforces

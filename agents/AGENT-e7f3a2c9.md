@@ -49,7 +49,7 @@ Load `enforcement-patterns` knowledge for the full escalation path. Summary:
 
 | Rule Type | Preferred Mechanism |
 |-----------|-------------------|
-| Schema rules (field requirements) | `orqa validate` check |
+| Schema rules (field requirements) | `orqa enforce` check |
 | Code quality (no unwrap, no any) | Linter rule + pre-commit hook |
 | Process rules (documentation first) | PreToolUse blocking hook |
 | Behavioral rules (never stop, trace to usage) | Thinking mode injection + stop hook check |
@@ -60,7 +60,7 @@ Load `enforcement-patterns` knowledge for the full escalation path. Summary:
 - Add or update the enforcement entry in the rule's frontmatter
 - Implement the mechanism in the appropriate location:
   - Hooks: connector's `hooks.json` or plugin's hook definitions
-  - Validators: `orqa validate` schema or custom check
+  - Validators: `orqa enforce` schema or custom check
   - Linter rules: `eslint.config.js` or `clippy.toml`
 - Test that the mechanism actually catches violations
 

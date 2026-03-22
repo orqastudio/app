@@ -5,7 +5,9 @@ description: "Architecture decisions are first-class governance artifacts. Every
 status: "active"
 created: "2026-03-22"
 updated: "2026-03-22"
-enforcement: "agent system prompt — orchestrator reads decisions before delegating; plan-mode compliance section verifies all relevant decisions"
+enforcement:
+  - mechanism: behavioral
+    message: "Orchestrator reads architecture decisions before delegating; every significant technical choice must be recorded as a decision artifact; plans must include an Architectural Compliance section"
 ---
 Architecture decisions are first-class governance artifacts. Every significant technical choice must be recorded as a decision artifact with status, rationale, alternatives considered, and relationships to the rules and delivery work it drives. Decisions are the bridge between discovery (research, ideas) and governance (rules, enforcement).
 

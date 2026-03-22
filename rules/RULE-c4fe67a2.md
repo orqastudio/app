@@ -5,7 +5,16 @@ description: Lesson promotions (recurrence >= 2) and rule violations are ALWAYS 
 status: active
 created: 2026-03-21
 updated: 2026-03-21
-enforcement: stop hook escalation check + BEHAVIORAL_RULES injection + orqa audit escalation CLI (pending)
+enforcement:
+  - mechanism: behavioral
+    message: "Lesson promotions (recurrence >= 2) and rule violations are ALWAYS CRITICAL priority; they take precedence over all delivery tasks"
+  - mechanism: hook
+    type: Stop
+    action: check
+    description: "Stop hook checks for lessons due for promotion and escalates governance violations"
+  - mechanism: tool
+    command: "orqa audit"
+    description: "CLI escalation check for governance priority violations"
 relationships: []
 ---
 

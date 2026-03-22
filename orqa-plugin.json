@@ -15,15 +15,28 @@
         "defaultPath": ".orqa/principles",
         "idPrefix": "VISION",
         "frontmatter": {
+          "type": "object",
           "required": [
             "id"
           ],
-          "optional": [
-            "title",
-            "description",
-            "relationships",
-            "status"
-          ]
+          "properties": {
+            "id": { "type": "string", "pattern": "^VISION-[a-f0-9]{8}$" },
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "statusTransitions": {
           "active": [
@@ -51,16 +64,29 @@
         "defaultPath": ".orqa/principles/pillars",
         "idPrefix": "PILLAR",
         "frontmatter": {
+          "type": "object",
           "required": [
             "id"
           ],
-          "optional": [
-            "title",
-            "description",
-            "gate",
-            "relationships",
-            "status"
-          ]
+          "properties": {
+            "id": { "type": "string", "pattern": "^PILLAR-[a-f0-9]{8}$" },
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "gate": { "type": ["string", "array"] },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "statusTransitions": {
           "active": [
@@ -85,15 +111,28 @@
         "defaultPath": ".orqa/principles/personas",
         "idPrefix": "PERSONA",
         "frontmatter": {
+          "type": "object",
           "required": [
             "id"
           ],
-          "optional": [
-            "title",
-            "description",
-            "relationships",
-            "status"
-          ]
+          "properties": {
+            "id": { "type": "string", "pattern": "^PERSONA-[a-f0-9]{8}$" },
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "statusTransitions": {
           "active": [
@@ -117,16 +156,30 @@
         "defaultPath": ".orqa/discovery/ideas",
         "idPrefix": "IDEA",
         "frontmatter": {
+          "type": "object",
           "required": [
             "id",
             "status"
           ],
-          "optional": [
-            "title",
-            "description",
-            "priority",
-            "relationships"
-          ]
+          "properties": {
+            "id": { "type": "string", "pattern": "^IDEA-[a-f0-9]{8}$" },
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "priority": { "type": "string" },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "statusTransitions": {
           "captured": [
@@ -174,15 +227,29 @@
         "defaultPath": ".orqa/process/decisions",
         "idPrefix": "AD",
         "frontmatter": {
+          "type": "object",
           "required": [
             "id",
             "status"
           ],
-          "optional": [
-            "title",
-            "description",
-            "relationships"
-          ]
+          "properties": {
+            "id": { "type": "string", "pattern": "^AD-[a-f0-9]{8}$" },
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "statusTransitions": {
           "captured": [
@@ -225,16 +292,31 @@
         "defaultPath": ".orqa/process/rules",
         "idPrefix": "RULE",
         "frontmatter": {
+          "type": "object",
           "required": [
             "id",
             "status",
             "enforcement"
           ],
-          "optional": [
-            "title",
-            "description",
-            "relationships"
-          ]
+          "properties": {
+            "id": { "type": "string", "pattern": "^RULE-[a-f0-9]{8}$" },
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "enforcement": { "type": "array" },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "statusTransitions": {
           "captured": [
@@ -277,17 +359,32 @@
         "defaultPath": ".orqa/process/lessons",
         "idPrefix": "IMPL",
         "frontmatter": {
+          "type": "object",
           "required": [
             "id",
             "status",
             "recurrence"
           ],
-          "optional": [
-            "title",
-            "description",
-            "maturity",
-            "relationships"
-          ]
+          "properties": {
+            "id": { "type": "string", "pattern": "^IMPL-[a-f0-9]{8}$" },
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "recurrence": { "type": "integer", "minimum": 0 },
+            "maturity": { "type": "string" },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "statusTransitions": {
           "captured": [
@@ -332,15 +429,28 @@
         "defaultPath": ".orqa/process/knowledge",
         "idPrefix": "KNOW",
         "frontmatter": {
+          "type": "object",
           "required": [
             "id"
           ],
-          "optional": [
-            "title",
-            "description",
-            "relationships",
-            "status"
-          ]
+          "properties": {
+            "id": { "type": "string", "pattern": "^KNOW-[a-f0-9]{8}$" },
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "statusTransitions": {
           "captured": [
@@ -382,19 +492,34 @@
         "defaultPath": ".orqa/process/agents",
         "idPrefix": "AGENT",
         "frontmatter": {
+          "type": "object",
           "required": [
             "id",
             "status",
             "preamble"
           ],
-          "optional": [
-            "title",
-            "description",
-            "model",
-            "capabilities",
-            "knowledge",
-            "relationships"
-          ]
+          "properties": {
+            "id": { "type": "string", "pattern": "^AGENT-[a-f0-9]{8}$" },
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "preamble": { "type": "string" },
+            "model": { "type": "string" },
+            "capabilities": { "type": "array", "items": { "type": "string" } },
+            "knowledge": { "type": "array", "items": { "type": "string" } },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "statusTransitions": {
           "captured": [
@@ -436,15 +561,28 @@
         "defaultPath": ".orqa/documentation",
         "idPrefix": "DOC",
         "frontmatter": {
+          "type": "object",
           "required": [
             "id"
           ],
-          "optional": [
-            "title",
-            "description",
-            "relationships",
-            "status"
-          ]
+          "properties": {
+            "id": { "type": "string", "pattern": "^DOC-[a-f0-9]{8}$" },
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "statusTransitions": {
           "captured": [
@@ -486,15 +624,29 @@
         "defaultPath": ".orqa/principles",
         "idPrefix": "PIVOT",
         "frontmatter": {
+          "type": "object",
           "required": [
             "id",
             "status"
           ],
-          "optional": [
-            "title",
-            "description",
-            "relationships"
-          ]
+          "properties": {
+            "id": { "type": "string", "pattern": "^PIVOT-[a-f0-9]{8}$" },
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "statusTransitions": {
           "captured": [

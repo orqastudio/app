@@ -12,7 +12,7 @@ relationships:
 
 ## Available Mechanisms (strongest to weakest)
 
-1. **Validator check** (`orqa validate`) — fails the validation pipeline. Strongest: blocks commits via pre-commit hook.
+1. **Validator check** (`orqa enforce`) — fails the validation pipeline. Strongest: blocks commits via pre-commit hook.
 2. **PreToolUse blocking hook** — prevents the action before it happens. Connector-specific.
 3. **PostToolUse warning hook** — warns after the action. Non-blocking but visible.
 4. **Stop hook check** — runs at session end. Catches accumulated violations.

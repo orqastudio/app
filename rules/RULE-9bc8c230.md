@@ -5,7 +5,12 @@ description: "Defines enforcement strategies for rules that cannot be mechanical
 status: active
 created: 2026-03-13
 updated: 2026-03-13
-enforcement: "agent system prompt — this rule is the behavioral enforcement plan itself; the orchestrator injects it as the authoritative reference for how all behavioral rules are enforced; pipeline integrity tool verifies coverage"
+enforcement:
+  - mechanism: behavioral
+    message: "Every behavioral rule maps to a defined enforcement strategy (prompt injection, output validation, knowledge injection, or session hooks); the orchestrator injects this rule as the authoritative reference"
+  - mechanism: tool
+    command: "orqa enforce"
+    description: "Pipeline integrity tool verifies behavioral rule enforcement coverage"
 relationships:
   - target: AD-f9034c99
     type: enforces

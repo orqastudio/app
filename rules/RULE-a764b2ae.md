@@ -5,7 +5,14 @@ description: "Every artifact's YAML frontmatter must validate against the JSON S
 status: "active"
 created: "2026-03-10"
 updated: "2026-03-13"
-enforcement: "pre-commit hook — .githooks/pre-commit calls validate-artifacts.sh which delegates to validate-schema.mjs (ajv) on staged .orqa/**/*.md files; validation failures block commits"
+enforcement:
+  - mechanism: behavioral
+    message: "Every artifact's YAML frontmatter must validate against the JSON Schema in its directory's schema.json; fields not in the schema are rejected"
+  - mechanism: pre-commit
+    check: "validate-artifacts.sh"
+    description: ".githooks/pre-commit calls validate-artifacts.sh which delegates to validate-schema.mjs (ajv) on staged .orqa/**/*.md files"
+  - mechanism: json-schema
+    description: "Validates frontmatter required fields and enum values against schema.json in each artifact directory"
 relationships:
   - target: "AD-c3700062"
     type: "enforces"

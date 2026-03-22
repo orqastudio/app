@@ -5,7 +5,9 @@ description: "Enforcement artifacts (rules, knowledge, lessons) must be created 
 status: active
 created: 2026-03-07
 updated: 2026-03-07
-enforcement: "agent system prompt — orchestrator verifies enforcement artifacts exist before delegating implementation; code-reviewer rejects tasks where enforcement artifacts are missing"
+enforcement:
+  - mechanism: behavioral
+    message: "Enforcement artifacts (rules, knowledge, lessons) must be created before the implementation code that establishes the pattern; orchestrator verifies enforcement artifacts exist before delegating"
 relationships:
   - target: AD-f9034c99
     type: enforces

@@ -5,7 +5,16 @@ description: All errors are your responsibility. Pre-existing errors must be fix
 status: active
 created: 2026-03-07
 updated: 2026-03-12
-enforcement: "pre-commit hook — .githooks/pre-commit runs quality checks based on staged files; --no-verify is forbidden; lint and type errors block commits"
+enforcement:
+  - mechanism: behavioral
+    message: "All errors are your responsibility; never claim a pre-existing error, skip failures, or commit with failing checks"
+  - mechanism: pre-commit
+    check: "make check"
+  - mechanism: hook
+    type: PreToolUse
+    event: bash
+    action: block
+    pattern: "--no-verify"
 relationships:
   - target: AD-1ad08e5f
     type: enforces

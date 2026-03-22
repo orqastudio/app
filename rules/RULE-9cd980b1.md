@@ -5,7 +5,9 @@ description: Partial work must be reported as partial. Reporting incomplete work
 status: active
 created: 2026-03-21
 updated: 2026-03-21
-enforcement: []
+enforcement:
+  - mechanism: behavioral
+    message: "A task is complete only when ALL acceptance criteria are met AND a Reviewer has verified it; partial work must be reported as partial, never as complete"
 relationships: []
 ---
 
