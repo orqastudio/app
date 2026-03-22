@@ -1,18 +1,12 @@
 ---
-id: "RULE-c4fe67a2"
-title: "Governance Priority Over Delivery"
-description: "Lesson promotions (recurrence >= 2) and rule violations are ALWAYS CRITICAL priority — they take precedence over all delivery tasks. The learning loop breaks if governance debt accumulates."
-status: "active"
-created: "2026-03-21"
-updated: "2026-03-21"
-enforcement: "stop hook escalation check + BEHAVIORAL_RULES injection + orqa audit escalation CLI (pending)"
-relationships:
-  - target: "RULE-12e74734"
-    type: "related"
-    rationale: "Enforcement gap priority rule — both rules protect the integrity of the governance pipeline; this rule extends that priority to lesson promotion and rule violations"
-  - target: "RULE-67b91c13"
-    type: "related"
-    rationale: "Trace-to-usage rule — lesson promotions are a primary trigger for that rule's tracing obligation; this rule ensures promotions happen before they can be traced"
+id: RULE-c4fe67a2
+title: Governance Priority Over Delivery
+description: Lesson promotions (recurrence >= 2) and rule violations are ALWAYS CRITICAL priority — they take precedence over all delivery tasks. The learning loop breaks if governance debt accumulates.
+status: active
+created: 2026-03-21
+updated: 2026-03-21
+enforcement: stop hook escalation check + BEHAVIORAL_RULES injection + orqa audit escalation CLI (pending)
+relationships: []
 ---
 
 The learning loop is the mechanism by which observed problems become enforced constraints. If lesson promotions are deferred in favour of delivery work, the loop breaks silently — lessons recur indefinitely, governance debt accumulates, and the system loses credibility.

@@ -1,15 +1,12 @@
 ---
-id: "RULE-9cd980b1"
-title: "Honest Status Reporting"
-description: "Partial work must be reported as partial. Reporting incomplete work as complete is worse than reporting it as incomplete. No agent may self-certify completion without meeting all acceptance criteria."
-status: "active"
-created: "2026-03-21"
-updated: "2026-03-21"
+id: RULE-9cd980b1
+title: Honest Status Reporting
+description: Partial work must be reported as partial. Reporting incomplete work as complete is worse than reporting it as incomplete. No agent may self-certify completion without meeting all acceptance criteria.
+status: active
+created: 2026-03-21
+updated: 2026-03-21
 enforcement: []
-relationships:
-  - target: "RULE-e9c54567"
-    type: "related"
-    rationale: "No-stubs rule enforces honesty at the artifact level; this rule enforces it at the status-reporting level"
+relationships: []
 ---
 
 The governance pipeline depends on accurate status signals. A task reported as `done` when it is partial silently breaks every downstream dependency. **Partial work reported as complete is worse than incomplete work reported honestly.**

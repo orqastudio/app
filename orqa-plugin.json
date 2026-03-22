@@ -34,7 +34,8 @@
             "active"
           ],
           "archived": []
-        }
+        },
+        "influence": "high"
       },
       {
         "key": "pillar",
@@ -64,7 +65,8 @@
             "active"
           ],
           "archived": []
-        }
+        },
+        "influence": "high"
       },
       {
         "key": "persona",
@@ -193,7 +195,8 @@
             "archived"
           ],
           "archived": []
-        }
+        },
+        "influence": "high"
       },
       {
         "key": "rule",
@@ -241,7 +244,8 @@
             "archived"
           ],
           "archived": []
-        }
+        },
+        "influence": "high"
       },
       {
         "key": "lesson",
@@ -797,30 +801,6 @@
         ],
         "description": "Lesson promoted to an enforceable rule",
         "semantic": "governance"
-      },
-      {
-        "key": "related",
-        "inverse": "related",
-        "label": "Related",
-        "inverseLabel": "Related",
-        "from": [
-          "rule",
-          "decision",
-          "knowledge",
-          "lesson",
-          "agent",
-          "doc"
-        ],
-        "to": [
-          "rule",
-          "decision",
-          "knowledge",
-          "lesson",
-          "agent",
-          "doc"
-        ],
-        "description": "General association between governance artifacts",
-        "semantic": "knowledge-flow"
       }
     ],
     "knowledge": [
