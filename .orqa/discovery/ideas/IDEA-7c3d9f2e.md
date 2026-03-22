@@ -68,6 +68,21 @@ The .orqa/ directory is just files in a repo — works against Forgejo the same 
 | **Self-hosted cloud** | Organisation | Deploy Docker image to own infrastructure |
 | **Managed cloud** | Organisation (SaaS) | OrqaStudio-hosted instance |
 
+### josh — Virtual Monorepo Proxy (worth investigating)
+
+The [josh project](https://github.com/josh-project/josh) (Rust, MIT) is a git proxy
+that presents sub-paths of a monorepo as independent virtual repositories. Pushes to
+virtual repos get mapped back to the monorepo. This means:
+
+- One actual repo, one commit history, atomic commits across submodules for free
+- Each submodule still appears as an independent repo to external consumers
+- Could sit in front of Forgejo or alongside it
+
+This could solve the "28 separate repos" problem architecturally: internally we work
+with one repo (via josh), externally each component mirrors as a separate repo to
+GitHub/Forgejo. Submodule orchestration and failure recovery become non-issues because
+there is only one repo.
+
 ### Why Forgejo (not Gitea/GitLab)
 
 - GPLv3+ licence — guarantees it stays open, aligns with BSL ethical use addendum
