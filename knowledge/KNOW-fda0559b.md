@@ -4,6 +4,7 @@ type: knowledge
 title: "Thinking Mode: Implementation"
 description: "The user wants something built, fixed, added, or refactored — hands-on work producing code, artifacts, or configuration changes."
 status: active
+thinking-mode: implementation
 created: 2026-03-21
 updated: 2026-03-21
 relationships:
@@ -17,14 +18,14 @@ The user wants something built, added, fixed, created, or refactored. This mode 
 
 ## Example Signals
 
-"build a new component", "add a Tauri command", "fix the broken store", "refactor the scanner", "create a new plugin", "implement the design", "wire up the IPC layer", "add the missing test"
+"build a new component", "add a backend command", "fix the broken store", "refactor the scanner", "create a new plugin", "implement the design", "wire up the integration layer", "add the missing test"
 
 ## What the Agent Needs
 
-- Coding standards (RULE-006) and four-layer completeness rule (RULE-010)
-- Relevant domain knowledge: `svelte5-best-practices`, `rust-async-patterns`, `orqa-ipc-patterns`
+- Coding standards and end-to-end completeness rules
+- Relevant domain knowledge for the area being modified
 - Search the codebase for existing implementations before creating new ones
-- Verify full request chain: component → store → invoke → Rust command
+- Verify the full request chain across all layers
 
 ## Distinguishing from Similar Modes
 
