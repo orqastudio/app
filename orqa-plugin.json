@@ -5,6 +5,9 @@
   "description": "Base TypeScript development infrastructure — tsconfig presets, ESLint configs, and config composition for plugin extensions.",
   "category": "coding-standards",
   "provides": {
+    "enforcement_mechanisms": [
+      { "key": "tsc", "description": "TypeScript type checking", "strength": 6 }
+    ],
     "knowledge": [
       { "key": "typescript-advanced-types", "id": "KNOW-TS-001", "label": "TypeScript Advanced Types" }
     ],
