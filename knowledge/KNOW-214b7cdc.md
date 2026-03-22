@@ -1,6 +1,5 @@
 ---
 id: KNOW-214b7cdc
-type: knowledge
 name: Rust Testing Patterns
 status: active
 plugin: "@orqastudio/plugin-rust"

@@ -1,6 +1,5 @@
 ---
 id: DOC-27becb92
-type: doc
 name: Rust Development Guide
 status: active
 category: how-to

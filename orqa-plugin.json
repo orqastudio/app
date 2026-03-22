@@ -74,5 +74,6 @@
         }
       ]
     }
-  }
+  },
+  "role": "enhancement:delivery"
 }
