@@ -70,3 +70,9 @@
 [submodule "libs/validation"]
 	path = libs/validation
 	url = git@github.com:orqastudio/orqastudio-lib-validation.git
+[submodule "plugins/agile-governance"]
+	path = plugins/agile-governance
+	url = git@github.com:orqastudio/orqastudio-plugin-agile-governance.git
+[submodule "plugins/systems-thinking"]
+	path = plugins/systems-thinking
+	url = git@github.com:orqastudio/orqastudio-plugin-systems-thinking.git
