@@ -154,23 +154,33 @@ milestone/epic/task structure creation.
 ### Rules — dev environment (.orqa/process/rules/) — 19 rules, 14 should move to plugins
 
 Rules that enforce plugin-specific behaviour must travel with their plugin.
+Rules enforced via a tool must either live in the tool's plugin OR declare a
+dependency on it via `requires` in the manifest.
+
+**Enforcement method key:**
+- `behavioral` — enforced via agent prompt injection / system prompt
+- `hook` — enforced via pre-commit, stop, or session hooks
+- `lint` — enforced via linter (clippy, ESLint, svelte-check)
+- `review` — enforced via code reviewer agent
+- `tool` — enforced via a CLI tool (orqa validate, orqa check, etc.)
+- `none` — not yet mechanically enforced (enforcement gap)
 
 | Current ID | Title | Action |
 |-----------|-------|--------|
-| RULE-12e74734 | Enforcement Gap Priority | **MOVE → agile-governance** (governance loop enforcement) |
-| RULE-9cd980b1 | Honest Status Reporting | **MOVE → agile-governance** (governance discipline) |
-| RULE-c4fe67a2 | Governance Priority Over Delivery | **MOVE → agile-governance** (governance meta-rule) |
-| RULE-67b91c13 | Trace Artifacts to Usage Contexts | **MOVE → agile-governance** (governance traceability) |
-| RULE-029db175 | Continuous Operation | **MOVE → orqa-core** (framework agent behaviour) |
-| RULE-4f7e2a91 | Real-time Session State Management | **MOVE → orqa-core** (framework session model) |
-| RULE-f9d0279c | Automated Knowledge Injection | **MOVE → orqa-core** (framework knowledge loading) |
-| RULE-5e03e67b | Code Search Usage | **MOVE → orqa-core** (framework search methodology) |
-| RULE-4263a6b3 | Pre-Release Version Tagging | **MOVE → cli** (version management enforcement) |
-| RULE-89155a7f | Tooltips over title attributes | **MOVE → coding-standards** (UI convention) |
-| RULE-cb65b5d0 | Reusable Components | **MOVE → coding-standards** (code reuse discipline) |
-| RULE-f10bb5de | Testing Standards | **MOVE → coding-standards** (testing discipline) |
-| RULE-7f416d7d | Tooling Ecosystem Management | **MOVE → coding-standards** (linter delegation) |
-| RULE-1acb1602 | End-to-End Completeness | **MOVE → software** (delivery layer completeness) |
+| RULE-12e74734 | Enforcement Gap Priority | **MOVE → agile-governance** | `none` — enforcement gap itself! |
+| RULE-9cd980b1 | Honest Status Reporting | **MOVE → agile-governance** | `behavioral` — prompt injection |
+| RULE-c4fe67a2 | Governance Priority Over Delivery | **MOVE → agile-governance** | `behavioral` + `hook` (stop hook escalation). Requires: claude-code connector |
+| RULE-67b91c13 | Trace Artifacts to Usage Contexts | **MOVE → agile-governance** | `none` — enforcement gap |
+| RULE-029db175 | Continuous Operation | **MOVE → orqa-core** | `behavioral` — prompt injection |
+| RULE-4f7e2a91 | Real-time Session State Management | **MOVE → orqa-core** | `behavioral` + `hook`. Requires: claude-code connector |
+| RULE-f9d0279c | Automated Knowledge Injection | **MOVE → orqa-core** | `hook` (PostToolUse file write). Requires: claude-code connector |
+| RULE-5e03e67b | Code Search Usage | **MOVE → orqa-core** | `behavioral` — agent prompt. Requires: MCP search (orqa-core provides) |
+| RULE-4263a6b3 | Pre-Release Version Tagging | **MOVE → cli** | `tool` (orqa version check). Rule lives WITH the tool |
+| RULE-89155a7f | Tooltips over title attributes | **MOVE → coding-standards** | `review` + potential `lint` (ESLint rule). Requires: svelte plugin for ESLint enforcement |
+| RULE-cb65b5d0 | Reusable Components | **MOVE → coding-standards** | `review` + `hook` (knowledge injection on component writes). Requires: claude-code connector |
+| RULE-f10bb5de | Testing Standards | **MOVE → coding-standards** | `hook` (pre-commit runs make test). Requires: rust + svelte plugins for test runners |
+| RULE-7f416d7d | Tooling Ecosystem Management | **MOVE → coding-standards** | `lint` delegation — rule documents which linter enforces what. Requires: rust + svelte + typescript plugins |
+| RULE-1acb1602 | End-to-End Completeness | **MOVE → software** | `review` + `hook` (pre-commit). OrqaStudio-specific (four-layer Tauri stack). **NEEDS REWRITE** to be generic "all layers must be updated together" |
 | RULE-65973a88 | Architecture Decisions | **SPLIT** — generic "decisions are first-class artifacts" → agile-governance; OrqaStudio AD source of truth details → STAY |
 | RULE-b49142be | Coding Standards | **SPLIT** — generic enforcement discipline (run linters, no disabling rules, lint-rule alignment) → coding-standards; OrqaStudio Rust+Svelte+TS specifics → STAY |
 | RULE-c71f1c3f | Development Commands | STAY (OrqaStudio Makefile targets — purely project-specific) |
