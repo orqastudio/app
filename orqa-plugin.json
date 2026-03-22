@@ -15,19 +15,60 @@
         "defaultPath": ".orqa/delivery/milestones",
         "idPrefix": "MS",
         "frontmatter": {
-          "required": ["id", "type", "status"],
-          "optional": ["name", "description", "gate", "priority", "target_date", "relationships"]
+          "required": [
+            "id",
+            "type",
+            "status"
+          ],
+          "optional": [
+            "name",
+            "description",
+            "gate",
+            "priority",
+            "target_date",
+            "relationships"
+          ]
         },
         "statusTransitions": {
-          "captured": ["exploring", "ready", "prioritised"],
-          "exploring": ["ready", "prioritised", "hold"],
-          "ready": ["prioritised", "active", "review"],
-          "prioritised": ["active", "ready"],
-          "active": ["hold", "blocked", "review"],
-          "hold": ["active", "ready"],
-          "blocked": ["active", "ready"],
-          "review": ["completed", "active"],
-          "completed": ["surpassed"]
+          "captured": [
+            "exploring",
+            "ready",
+            "prioritised"
+          ],
+          "exploring": [
+            "ready",
+            "prioritised",
+            "hold"
+          ],
+          "ready": [
+            "prioritised",
+            "active",
+            "review"
+          ],
+          "prioritised": [
+            "active",
+            "ready"
+          ],
+          "active": [
+            "hold",
+            "blocked",
+            "review"
+          ],
+          "hold": [
+            "active",
+            "ready"
+          ],
+          "blocked": [
+            "active",
+            "ready"
+          ],
+          "review": [
+            "completed",
+            "active"
+          ],
+          "completed": [
+            "surpassed"
+          ]
         }
       },
       {
@@ -38,19 +79,58 @@
         "defaultPath": ".orqa/delivery/epics",
         "idPrefix": "EPIC",
         "frontmatter": {
-          "required": ["id", "type", "status"],
-          "optional": ["name", "description", "priority", "relationships"]
+          "required": [
+            "id",
+            "type",
+            "status"
+          ],
+          "optional": [
+            "name",
+            "description",
+            "priority",
+            "relationships"
+          ]
         },
         "statusTransitions": {
-          "captured": ["exploring", "ready", "prioritised"],
-          "exploring": ["ready", "prioritised", "hold"],
-          "ready": ["prioritised", "active", "review"],
-          "prioritised": ["active", "ready"],
-          "active": ["hold", "blocked", "review"],
-          "hold": ["active", "ready"],
-          "blocked": ["active", "ready"],
-          "review": ["completed", "active"],
-          "completed": ["surpassed"]
+          "captured": [
+            "exploring",
+            "ready",
+            "prioritised"
+          ],
+          "exploring": [
+            "ready",
+            "prioritised",
+            "hold"
+          ],
+          "ready": [
+            "prioritised",
+            "active",
+            "review"
+          ],
+          "prioritised": [
+            "active",
+            "ready"
+          ],
+          "active": [
+            "hold",
+            "blocked",
+            "review"
+          ],
+          "hold": [
+            "active",
+            "ready"
+          ],
+          "blocked": [
+            "active",
+            "ready"
+          ],
+          "review": [
+            "completed",
+            "active"
+          ],
+          "completed": [
+            "surpassed"
+          ]
         }
       },
       {
@@ -61,18 +141,52 @@
         "defaultPath": ".orqa/delivery/tasks",
         "idPrefix": "TASK",
         "frontmatter": {
-          "required": ["id", "type", "status"],
-          "optional": ["name", "description", "priority", "assignee", "relationships"]
+          "required": [
+            "id",
+            "type",
+            "status"
+          ],
+          "optional": [
+            "name",
+            "description",
+            "priority",
+            "assignee",
+            "relationships"
+          ]
         },
         "statusTransitions": {
-          "captured": ["ready", "prioritised"],
-          "ready": ["prioritised", "active"],
-          "prioritised": ["active", "ready"],
-          "active": ["hold", "blocked", "review"],
-          "hold": ["active", "ready"],
-          "blocked": ["active", "ready"],
-          "review": ["completed", "active"],
-          "completed": ["surpassed"]
+          "captured": [
+            "ready",
+            "prioritised"
+          ],
+          "ready": [
+            "prioritised",
+            "active"
+          ],
+          "prioritised": [
+            "active",
+            "ready"
+          ],
+          "active": [
+            "hold",
+            "blocked",
+            "review"
+          ],
+          "hold": [
+            "active",
+            "ready"
+          ],
+          "blocked": [
+            "active",
+            "ready"
+          ],
+          "review": [
+            "completed",
+            "active"
+          ],
+          "completed": [
+            "surpassed"
+          ]
         }
       },
       {
@@ -83,16 +197,43 @@
         "defaultPath": ".orqa/discovery/research",
         "idPrefix": "RES",
         "frontmatter": {
-          "required": ["id", "type", "status"],
-          "optional": ["name", "description", "methodology", "relationships"]
+          "required": [
+            "id",
+            "type",
+            "status"
+          ],
+          "optional": [
+            "name",
+            "description",
+            "methodology",
+            "relationships"
+          ]
         },
         "statusTransitions": {
-          "captured": ["exploring", "active"],
-          "exploring": ["active", "hold"],
-          "active": ["review", "hold"],
-          "hold": ["active", "exploring"],
-          "review": ["completed", "active"],
-          "completed": ["surpassed", "archived"]
+          "captured": [
+            "exploring",
+            "active"
+          ],
+          "exploring": [
+            "active",
+            "hold"
+          ],
+          "active": [
+            "review",
+            "hold"
+          ],
+          "hold": [
+            "active",
+            "exploring"
+          ],
+          "review": [
+            "completed",
+            "active"
+          ],
+          "completed": [
+            "surpassed",
+            "archived"
+          ]
         }
       },
       {
@@ -103,35 +244,74 @@
         "defaultPath": ".orqa/discovery/wireframes",
         "idPrefix": "WF",
         "frontmatter": {
-          "required": ["id", "type", "status"],
-          "optional": ["name", "description", "relationships"]
+          "required": [
+            "id",
+            "type",
+            "status"
+          ],
+          "optional": [
+            "name",
+            "description",
+            "relationships"
+          ]
         },
         "statusTransitions": {
-          "captured": ["exploring", "active"],
-          "exploring": ["active", "review"],
-          "active": ["review", "hold"],
-          "review": ["completed", "active"],
-          "completed": ["surpassed", "archived"]
+          "captured": [
+            "exploring",
+            "active"
+          ],
+          "exploring": [
+            "active",
+            "review"
+          ],
+          "active": [
+            "review",
+            "hold"
+          ],
+          "review": [
+            "completed",
+            "active"
+          ],
+          "completed": [
+            "surpassed",
+            "archived"
+          ]
         }
       }
     ],
     "views": [
-      { "key": "roadmap", "label": "Roadmap", "icon": "kanban" }
+      {
+        "key": "roadmap",
+        "label": "Roadmap",
+        "icon": "kanban"
+      }
     ],
     "widgets": [
       {
         "key": "pipeline",
         "label": "Delivery Pipeline",
         "icon": "git-branch",
-        "defaultPosition": { "row": 0, "col": 0 },
-        "defaultSpan": { "rows": 1, "cols": 2 }
+        "defaultPosition": {
+          "row": 0,
+          "col": 0
+        },
+        "defaultSpan": {
+          "rows": 1,
+          "cols": 2
+        }
       },
       {
         "key": "milestone-context",
         "label": "Milestone Context",
         "icon": "flag",
-        "defaultPosition": { "row": 0, "col": 2 },
-        "defaultSpan": { "rows": 1, "cols": 1 }
+        "defaultPosition": {
+          "row": 0,
+          "col": 2
+        },
+        "defaultSpan": {
+          "rows": 1,
+          "cols": 1
+        }
       }
     ],
     "relationships": [
@@ -140,8 +320,13 @@
         "inverse": "realised-by",
         "label": "Realises",
         "inverseLabel": "Realised By",
-        "from": ["idea"],
-        "to": ["epic", "task"],
+        "from": [
+          "idea"
+        ],
+        "to": [
+          "epic",
+          "task"
+        ],
         "description": "Idea realised through delivery work",
         "semantic": "lineage"
       },
@@ -150,8 +335,12 @@
         "inverse": "produced-by",
         "label": "Produces",
         "inverseLabel": "Produced By",
-        "from": ["research"],
-        "to": ["wireframe"],
+        "from": [
+          "research"
+        ],
+        "to": [
+          "wireframe"
+        ],
         "description": "Research produces a visual specification",
         "semantic": "lineage"
       },
@@ -160,8 +349,12 @@
         "inverse": "yielded-by",
         "label": "Yields",
         "inverseLabel": "Yielded By",
-        "from": ["task"],
-        "to": ["lesson"],
+        "from": [
+          "task"
+        ],
+        "to": [
+          "lesson"
+        ],
         "description": "Task yields a lesson learned",
         "semantic": "knowledge-flow"
       },
@@ -170,8 +363,12 @@
         "inverse": "delivered-by",
         "label": "Delivers",
         "inverseLabel": "Delivered By",
-        "from": ["task"],
-        "to": ["epic"],
+        "from": [
+          "task"
+        ],
+        "to": [
+          "epic"
+        ],
         "description": "Task delivers work to an epic",
         "semantic": "hierarchy",
         "constraints": {
@@ -181,7 +378,9 @@
             {
               "evaluate": "target",
               "condition": "all-targets-in",
-              "statuses": ["completed"],
+              "statuses": [
+                "completed"
+              ],
               "proposedStatus": "review",
               "description": "Epic moves to review when all delivering tasks are completed"
             }
@@ -193,8 +392,12 @@
         "inverse": "fulfilled-by",
         "label": "Fulfils",
         "inverseLabel": "Fulfilled By",
-        "from": ["epic"],
-        "to": ["milestone"],
+        "from": [
+          "epic"
+        ],
+        "to": [
+          "milestone"
+        ],
         "description": "Epic fulfils a milestone checkpoint",
         "semantic": "hierarchy",
         "constraints": {
@@ -202,7 +405,9 @@
             {
               "evaluate": "target",
               "condition": "all-targets-in",
-              "statuses": ["completed"],
+              "statuses": [
+                "completed"
+              ],
               "proposedStatus": "review",
               "description": "Milestone moves to review when all fulfilling epics are completed"
             }
@@ -214,8 +419,12 @@
         "inverse": "depended-on-by",
         "label": "Depends On",
         "inverseLabel": "Depended On By",
-        "from": ["task"],
-        "to": ["task"],
+        "from": [
+          "task"
+        ],
+        "to": [
+          "task"
+        ],
         "description": "Task cannot proceed until dependency is completed",
         "semantic": "dependency",
         "constraints": {
@@ -223,14 +432,25 @@
             {
               "evaluate": "source",
               "condition": "any-target-in",
-              "statuses": ["captured", "exploring", "ready", "prioritised", "active", "hold"],
+              "statuses": [
+                "captured",
+                "exploring",
+                "ready",
+                "prioritised",
+                "active",
+                "hold"
+              ],
               "proposedStatus": "blocked",
               "description": "Task is blocked when any dependency is not yet completed"
             },
             {
               "evaluate": "source",
               "condition": "all-targets-in",
-              "statuses": ["completed", "surpassed", "archived"],
+              "statuses": [
+                "completed",
+                "surpassed",
+                "archived"
+              ],
               "proposedStatus": "ready",
               "description": "Task is unblocked when all dependencies are completed"
             }
@@ -242,8 +462,14 @@
         "inverse": "reported-by",
         "label": "Reports",
         "inverseLabel": "Reported By",
-        "from": ["bug"],
-        "to": ["epic", "task", "milestone"],
+        "from": [
+          "bug"
+        ],
+        "to": [
+          "epic",
+          "task",
+          "milestone"
+        ],
         "description": "Bug reports an issue against delivery work",
         "semantic": "corrective",
         "constraints": {
@@ -256,8 +482,12 @@
         "inverse": "fixed-by",
         "label": "Fixes",
         "inverseLabel": "Fixed By",
-        "from": ["task"],
-        "to": ["bug"],
+        "from": [
+          "task"
+        ],
+        "to": [
+          "bug"
+        ],
         "description": "Task fixes a reported bug",
         "semantic": "corrective"
       },
@@ -266,8 +496,12 @@
         "inverse": "affected-by",
         "label": "Affects",
         "inverseLabel": "Affected By",
-        "from": ["bug"],
-        "to": ["persona"],
+        "from": [
+          "bug"
+        ],
+        "to": [
+          "persona"
+        ],
         "description": "Bug affects a target persona",
         "semantic": "corrective"
       },
@@ -276,8 +510,12 @@
         "inverse": "merged-from",
         "label": "Merged Into",
         "inverseLabel": "Merged From",
-        "from": ["research"],
-        "to": ["research"],
+        "from": [
+          "research"
+        ],
+        "to": [
+          "research"
+        ],
         "description": "Research consolidated — extends core merged-into to research artifacts. Source should transition to surpassed.",
         "semantic": "lineage"
       },
@@ -286,52 +524,71 @@
         "inverse": "implemented-by",
         "label": "Implements",
         "inverseLabel": "Implemented By",
-        "from": ["task", "epic"],
-        "to": ["decision"],
+        "from": [
+          "task",
+          "epic"
+        ],
+        "to": [
+          "decision"
+        ],
         "description": "Work directly implements a decision — traces delivery back to governance",
         "semantic": "delivery"
       }
     ],
     "knowledge": [
       {
-        "key": "software-delivery",
-        "id": "KNOW-1d47d8d8",
-        "label": "Software Delivery Lifecycle"
-      },
-      {
-        "key": "code-quality-review",
-        "id": "KNOW-f0efaf83",
-        "label": "Code Quality Review"
-      },
-      {
-        "key": "qa-verification",
-        "id": "KNOW-1b805150",
-        "label": "QA Verification"
-      },
-      {
-        "key": "security-audit",
+        "key": "170c220e",
         "id": "KNOW-170c220e",
         "label": "Security Audit"
       },
       {
-        "key": "test-engineering",
-        "id": "KNOW-bcb42347",
-        "label": "Test Engineering"
+        "key": "1b805150",
+        "id": "KNOW-1b805150",
+        "label": "QA Verification"
       },
       {
-        "key": "uat-process",
-        "id": "KNOW-c6d04755",
-        "label": "UAT Process"
+        "key": "1d47d8d8",
+        "id": "KNOW-1d47d8d8"
       },
       {
-        "key": "ux-compliance-review",
+        "key": "2c8eead6",
+        "id": "KNOW-2c8eead6",
+        "label": "Skills Maintenance"
+      },
+      {
+        "key": "353a228b",
+        "id": "KNOW-353a228b",
+        "label": "Component Extraction"
+      },
+      {
+        "key": "5124e508",
         "id": "KNOW-5124e508",
         "label": "UX Compliance Review"
       },
       {
-        "key": "component-extraction",
-        "id": "KNOW-353a228b",
-        "label": "Component Extraction"
+        "key": "819789ab",
+        "id": "KNOW-819789ab",
+        "label": "Project Type: Software"
+      },
+      {
+        "key": "bcb42347",
+        "id": "KNOW-bcb42347",
+        "label": "Test Engineering"
+      },
+      {
+        "key": "c6d04755",
+        "id": "KNOW-c6d04755",
+        "label": "UAT Process"
+      },
+      {
+        "key": "e2354dce",
+        "id": "KNOW-e2354dce",
+        "label": "Delivery Unit Completion Discipline"
+      },
+      {
+        "key": "f0efaf83",
+        "id": "KNOW-f0efaf83",
+        "label": "Code Quality Review"
       }
     ],
     "cliTools": [],
@@ -366,8 +623,18 @@
       "icon": "compass",
       "label": "Discovery",
       "children": [
-        { "key": "research", "type": "plugin", "icon": "flask-conical", "pluginSource": "@orqastudio/plugin-software-project" },
-        { "key": "wireframes", "type": "plugin", "icon": "layout", "pluginSource": "@orqastudio/plugin-software-project" }
+        {
+          "key": "research",
+          "type": "plugin",
+          "icon": "flask-conical",
+          "pluginSource": "@orqastudio/plugin-software-project"
+        },
+        {
+          "key": "wireframes",
+          "type": "plugin",
+          "icon": "layout",
+          "pluginSource": "@orqastudio/plugin-software-project"
+        }
       ]
     },
     {
@@ -376,10 +643,30 @@
       "icon": "rocket",
       "label": "Delivery",
       "children": [
-        { "key": "roadmap", "type": "plugin", "icon": "kanban", "pluginSource": "@orqastudio/plugin-software-project" },
-        { "key": "milestones", "type": "plugin", "icon": "flag", "pluginSource": "@orqastudio/plugin-software-project" },
-        { "key": "epics", "type": "plugin", "icon": "layers", "pluginSource": "@orqastudio/plugin-software-project" },
-        { "key": "tasks", "type": "plugin", "icon": "check-square", "pluginSource": "@orqastudio/plugin-software-project" }
+        {
+          "key": "roadmap",
+          "type": "plugin",
+          "icon": "kanban",
+          "pluginSource": "@orqastudio/plugin-software-project"
+        },
+        {
+          "key": "milestones",
+          "type": "plugin",
+          "icon": "flag",
+          "pluginSource": "@orqastudio/plugin-software-project"
+        },
+        {
+          "key": "epics",
+          "type": "plugin",
+          "icon": "layers",
+          "pluginSource": "@orqastudio/plugin-software-project"
+        },
+        {
+          "key": "tasks",
+          "type": "plugin",
+          "icon": "check-square",
+          "pluginSource": "@orqastudio/plugin-software-project"
+        }
       ]
     }
   ],
@@ -396,13 +683,19 @@
         "key": "epic",
         "label": "Epic",
         "path": ".orqa/delivery/epics",
-        "parent": { "type": "milestone", "relationship": "fulfils" }
+        "parent": {
+          "type": "milestone",
+          "relationship": "fulfils"
+        }
       },
       {
         "key": "task",
         "label": "Task",
         "path": ".orqa/delivery/tasks",
-        "parent": { "type": "epic", "relationship": "delivers" }
+        "parent": {
+          "type": "epic",
+          "relationship": "delivers"
+        }
       }
     ]
   },
@@ -427,19 +720,37 @@
   "semantics": {
     "hierarchy": {
       "description": "Delivery hierarchy — work rolls up to parent artifacts",
-      "keys": ["delivers", "delivered-by", "fulfils", "fulfilled-by"]
+      "keys": [
+        "delivers",
+        "delivered-by",
+        "fulfils",
+        "fulfilled-by"
+      ]
     },
     "dependency": {
       "description": "Task sequencing — blocked status inferred from unmet dependencies",
-      "keys": ["depends-on", "depended-on-by"]
+      "keys": [
+        "depends-on",
+        "depended-on-by"
+      ]
     },
     "corrective": {
       "description": "Bug tracking — reporting issues and fixing them",
-      "keys": ["reports", "reported-by", "fixes", "fixed-by", "affects", "affected-by"]
+      "keys": [
+        "reports",
+        "reported-by",
+        "fixes",
+        "fixed-by",
+        "affects",
+        "affected-by"
+      ]
     },
     "delivery": {
       "description": "Governance-to-delivery bridge — tracing implementation back to decisions",
-      "keys": ["implements", "implemented-by"]
+      "keys": [
+        "implements",
+        "implemented-by"
+      ]
     }
   }
 }
