@@ -3,12 +3,13 @@ id: KNOW-e0dec720
 type: knowledge
 title: Project Setup
 description: |
-  Universal project scaffolding: creates the .orqa/ directory structure,
-  copies core rules and skills, initialises project.json, and sets up
+  Universal project scaffolding: creates the governance directory structure,
+  copies core rules and knowledge, initialises project configuration, and sets up
   CLI symlinks. This is the base setup — project type presets layer on top.
-  Use when: Initialising a new project with OrqaStudio governance, or
-  repairing a broken .orqa/ structure.
+  Use when: initialising a new project with governance, or repairing a broken
+  governance directory structure.
 status: active
+onboarding: true
 created: 2026-03-01
 updated: 2026-03-10
 category: tool
@@ -18,69 +19,67 @@ relationships:
   - target: DOC-a1b2c3d4
     type: synchronised-with
 ---
-> **Forward-looking:** This skill will be activated when project initialisation is implemented. See [EPIC-be023ed2](EPIC-be023ed2) for context.
 
-Creates the base governance structure for any project. This skill is domain-agnostic — it sets up the infrastructure that all project types share. Domain-specific rules and skills are added by project type presets (e.g., `project-type-software`).
+Creates the base governance structure for any project. This skill is domain-agnostic — it sets up the infrastructure that all project types share. Domain-specific rules and knowledge are added by project type presets (e.g., `project-type-software`).
 
-## .orqa/ Directory Structure
+## Governance Directory Structure
 
 The base structure created by project setup:
 
 ```
-.orqa/
-  project.json              # Project configuration
-  icon.svg                  # Project icon (default provided)
-  documentation/            # Documentation tree
-    architecture/           #   Architecture decisions and docs
-    development/            #   Development guides
-    process/                #   Process documentation
-    product/                #   Product vision, roadmap
-  planning/                 # Planning artifacts
-    ideas/                  #   IDEA-NNN.md
-    research/               #   Investigation documents
-    milestones/             #   MS-NNN.md
-    epics/                  #   EPIC-NNN.md
-    tasks/                  #   TASK-NNN.md
-  governance/               # Governance artifacts
-    lessons/                #   IMPL-NNN.md
-    decisions/              #   AD-NNN.md
-    rules/                  #   Rule markdown files
-    hooks/                  #   Event hooks
-  team/                     # Team artifacts
-    agents/                 #   Agent definitions
-    skills/                 #   Skill directories
+<governance-dir>/
+  project configuration         # Project metadata and artifact paths
+  icon.svg                      # Project icon (default provided)
+  documentation/                # Documentation tree
+    architecture/               #   Architecture decisions and docs
+    development/                #   Development guides
+    process/                    #   Process documentation
+    product/                    #   Product vision, roadmap
+  delivery/                     # Planning artifacts
+    ideas/                      #   Idea artifacts
+    research/                   #   Investigation documents
+    milestones/                 #   Milestone artifacts
+    epics/                      #   Epic artifacts
+    tasks/                      #   Task artifacts
+  process/                      # Governance artifacts
+    lessons/                    #   Lesson artifacts
+    decisions/                  #   Architecture decision records
+    rules/                      #   Rule artifacts
+    hooks/                      #   Event hooks
+  team/                         # Team artifacts
+    agents/                     #   Agent definitions
+    knowledge/                  #   Knowledge directories
 ```
 
-## project.json Schema
+## Project Configuration Schema
 
 ```json
 {
   "name": "<project-name>",
   "description": "<project-description>",
-  "dogfood": false,
   "default_model": "sonnet",
   "artifacts": [
-    { "key": "docs", "label": "Documentation", "icon": "file-text", "path": ".orqa/documentation" },
+    { "key": "docs", "label": "Documentation", "icon": "file-text", "path": "<governance-dir>/documentation" },
     { "key": "planning", "label": "Planning", "icon": "target",
       "children": [
-        { "key": "ideas", "label": "Ideas", "path": ".orqa/delivery/ideas" },
-        { "key": "research", "label": "Research", "path": ".orqa/delivery/research" },
-        { "key": "milestones", "label": "Milestones", "path": ".orqa/delivery/milestones" },
-        { "key": "epics", "label": "Epics", "path": ".orqa/delivery/epics" },
-        { "key": "tasks", "label": "Tasks", "path": ".orqa/delivery/tasks" }
+        { "key": "ideas", "label": "Ideas", "path": "<governance-dir>/delivery/ideas" },
+        { "key": "research", "label": "Research", "path": "<governance-dir>/delivery/research" },
+        { "key": "milestones", "label": "Milestones", "path": "<governance-dir>/delivery/milestones" },
+        { "key": "epics", "label": "Epics", "path": "<governance-dir>/delivery/epics" },
+        { "key": "tasks", "label": "Tasks", "path": "<governance-dir>/delivery/tasks" }
       ]
     },
     { "key": "governance", "label": "Governance", "icon": "shield",
       "children": [
-        { "key": "lessons", "label": "Lessons", "path": ".orqa/process/lessons" },
-        { "key": "decisions", "label": "Decisions", "path": ".orqa/process/decisions" },
-        { "key": "rules", "label": "Rules", "path": ".orqa/process/rules" }
+        { "key": "lessons", "label": "Lessons", "path": "<governance-dir>/process/lessons" },
+        { "key": "decisions", "label": "Decisions", "path": "<governance-dir>/process/decisions" },
+        { "key": "rules", "label": "Rules", "path": "<governance-dir>/process/rules" }
       ]
     },
     { "key": "team", "label": "Team", "icon": "users",
       "children": [
-        { "key": "agents", "label": "Agents", "path": ".orqa/process/agents" },
-        { "key": "skills", "label": "Skills", "path": ".orqa/process/knowledge" }
+        { "key": "agents", "label": "Agents", "path": "<governance-dir>/process/agents" },
+        { "key": "knowledge", "label": "Knowledge", "path": "<governance-dir>/process/knowledge" }
       ]
     }
   ]
@@ -102,43 +101,43 @@ These files are copied during setup (core layer — non-editable by project):
 - `orchestrator.md`, `researcher.md`, `planner.md`, `implementer.md`
 - `reviewer.md`, `writer.md`, `designer.md`
 
-### Core Skills
-- `orqa-code-search`, `search` — Code search
+### Core Knowledge
+- `search` — Search methodology
 - `composability` — Composability philosophy
 - `planning` — Planning methodology
 - `architecture` — ADR patterns
-- `diagnostic-methodology`, `restructuring-methodology` — Process skills
-- `code-quality-review`, `qa-verification`, `ux-compliance-review` — Review skills
-- `test-engineering`, `security-audit`, `architectural-evaluation` — Specialisation skills
-- `governance-maintenance`, `skills-maintenance` — Maintenance skills
+- `diagnostic-methodology`, `restructuring-methodology` — Process knowledge
+- `code-quality-review`, `qa-verification`, `ux-compliance-review` — Review knowledge
+- `test-engineering`, `security-audit`, `architectural-evaluation` — Specialisation knowledge
+- `governance-maintenance`, `skills-maintenance` — Maintenance knowledge
 
 ## CLI Symlink Setup
 
-For Claude Code compatibility, create symlinks in `.claude/`:
+For Claude Code compatibility, create symlinks in the agent infrastructure directory:
 
 ```
-.claude/rules/    → .orqa/process/rules/
-.claude/agents/   → .orqa/process/agents/
-.claude/knowledge/   → .orqa/process/knowledge/
-.claude/hooks/    → .orqa/process/hooks/
-.claude/CLAUDE.md → .orqa/process/agents/orchestrator.md
+<agent-dir>/rules/     → <governance-dir>/process/rules/
+<agent-dir>/agents/    → <governance-dir>/process/agents/
+<agent-dir>/knowledge/ → <governance-dir>/process/knowledge/
+<agent-dir>/hooks/     → <governance-dir>/process/hooks/
+<agent-dir>/CLAUDE.md  → <governance-dir>/process/agents/orchestrator.md
 ```
 
 ## Setup Procedure
 
-1. Create the `.orqa/` directory tree
-2. Generate `project.json` with project name and default artifacts config
-3. Copy core rules, agents, and skills
+1. Create the governance directory tree
+2. Generate project configuration with project name and default artifacts config
+3. Copy core rules, agents, and knowledge
 4. Create CLI symlinks (if Claude Code is detected)
 5. Run `project-inference` to detect project characteristics
 6. Run `epic-requirement-inference` to recommend `workflow.epics-required` setting
-7. Set `workflow.epics-required` in `project.json` based on recommendation
+7. Set `workflow.epics-required` in project configuration based on recommendation
 8. Apply appropriate project type preset (e.g., `project-type-software`)
 9. Report what was created and what the user should review
 
 ## Critical Rules
 
-- NEVER overwrite existing `.orqa/` content — setup is for NEW projects
-- If `.orqa/` already exists, offer repair/update instead of overwrite
-- Core content is read-only for the project — updates come from OrqaStudio releases
-- Project-added rules and skills layer ON TOP of core, never replace it
+- NEVER overwrite existing governance content — setup is for NEW projects
+- If governance directory already exists, offer repair/update instead of overwrite
+- Core content is read-only for the project — updates come from platform releases
+- Project-added rules and knowledge layer ON TOP of core, never replace it

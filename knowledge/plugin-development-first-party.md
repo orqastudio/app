@@ -3,9 +3,9 @@ id: KNOW-e1333874
 type: knowledge
 title: First-Party Plugin Development
 description: |
-  First-party plugin workflow for the OrqaStudio dev environment. Use when creating
-  or modifying plugins within the orqastudio-dev monorepo. Plugins are submodules,
-  managed by the dev environment's orqa CLI, and published via GitHub Actions.
+  First-party plugin workflow for the platform dev environment. Use when creating
+  or modifying plugins within the platform monorepo. Plugins are submodules,
+  managed by the dev environment's CLI, and published via CI workflows.
 status: active
 created: 2026-03-19
 updated: 2026-03-19
@@ -27,7 +27,7 @@ relationships:
 
 ## Detection
 
-This skill is loaded when the base plugin development skill (KNOW-b453410f) detects the dev environment. Detection: the current working directory is inside a repository that contains `orqastudio-dev` in its path or has a `.orqa/` directory AND a `plugins/` directory at root.
+This skill is loaded when the base plugin development skill detects the dev environment: the current working directory is inside a repository that has a project governance directory AND a `plugins/` directory at root.
 
 ## Workflow
 
@@ -40,20 +40,20 @@ orqa plugin create --template <cli-tool|frontend|full|sidecar> --name <plugin-na
 
 This:
 - Copies the template into `plugins/<plugin-name>/`
-- Creates a GitHub repo under the `orqastudio` org: `orqastudio-plugin-<name>`
+- Creates a repository under the platform org
 - Initialises git, sets remote, pushes initial commit
 - Registers as a git submodule in the dev environment
 - Activates workflow templates (renames `.template` → `.yml`)
-- Generates LICENSE (BSL-1.1) and CONTRIBUTING.md pointing to dev environment
+- Generates LICENSE and CONTRIBUTING.md
 
 ### 2. Plugin Manifest
 
 Every plugin must have `orqa-plugin.json` at root. The template provides a skeleton — fill in:
-- `name` — `@orqastudio/plugin-<name>` for first-party
+- `name` — `@platform/plugin-<name>` for first-party
 - `displayName` — human-readable name
 - `description` — one-line summary
 - `category` — `coding-standards`, `delivery`, `integration`, `custom`
-- `provides` — what the plugin contributes (skills, views, tools, schemas, relationships)
+- `provides` — what the plugin contributes (knowledge, views, tools, schemas, relationships)
 - `extends` — optional, list of plugins this one extends
 
 ### 3. Development
@@ -62,19 +62,19 @@ First-party plugins live as submodules in the dev environment. The `orqa dev` co
 
 - Edit source in `plugins/<name>/src/`
 - Watchers auto-rebuild to `dist/`
-- Vite picks up changes via HMR
-- No separate project.json needed — the dev environment manages the project
+- HMR picks up frontend changes
+- No separate project configuration needed — the dev environment manages the project
 
-### 4. Skills, Documentation, Agents
+### 4. Knowledge, Documentation, Agents
 
 Every plugin that defines artifact types or relationships MUST ship:
-- A **skill** teaching agents how to use the plugin's artifacts
+- A **knowledge artifact** teaching agents how to use the plugin's artifacts
 - A **documentation** artifact teaching humans the same
 - Connected via `synchronised-with`
 
 ### 5. Publishing
 
-Push to `main` triggers the `publish-dev` workflow which publishes `0.1.0-dev.<SHA>` to GitHub Packages.
+Push to `main` triggers the publish workflow which publishes a dev-tagged version to the package registry.
 
 ### 6. Validation
 

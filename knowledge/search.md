@@ -3,7 +3,7 @@ id: KNOW-a2b3c4d5
 type: knowledge
 title: Search
 description: |
-  Unified search across the project via MCP tools. Three modes: regex for exact
+  Search methodology for structured project search. Three modes: regex for exact
   patterns, semantic for natural language, research for compound queries.
   Use when: searching before creating new code, finding callers before refactoring,
   understanding how a system works end-to-end.
@@ -36,7 +36,7 @@ relationships:
 
 # Search
 
-Three MCP tools for structured search. Works for code and non-code projects.
+Three tools for structured search across code and governance artifacts.
 
 ## Tool Selection
 
@@ -62,7 +62,7 @@ search_regex({ pattern: "pub fn.*Result", path_filter: "src/domain" })
 
 ## search_semantic
 
-Natural language search using ONNX embeddings (requires model loaded).
+Natural language search using vector embeddings.
 
 ```
 search_semantic({ query: "how does the artifact validation pipeline work?", limit: 10 })

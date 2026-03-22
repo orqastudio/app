@@ -4,8 +4,8 @@ type: knowledge
 title: Third-Party Plugin Development
 description: |
   Third-party plugin workflow for community and external developers. Plugins are
-  standalone projects with their own project.json and the software plugin pre-installed
-  for independent lifecycle management.
+  standalone projects with their own project configuration and the software plugin
+  pre-installed for independent lifecycle management.
 status: active
 created: 2026-03-19
 updated: 2026-03-19
@@ -27,7 +27,7 @@ relationships:
 
 ## Detection
 
-This skill is loaded when the base plugin development skill (KNOW-b453410f) detects that the working directory is NOT the orqastudio-dev environment. Any standalone project creating a plugin uses this workflow.
+This skill is loaded when the base plugin development skill detects that the working directory is NOT the platform dev environment. Any standalone project creating a plugin uses this workflow.
 
 ## Workflow
 
@@ -42,22 +42,20 @@ This:
 - Creates a new directory `<plugin-name>/`
 - Copies the chosen template
 - Initialises a git repo
-- Creates `project.json` with OrqaStudio project configuration
-- Pre-installs the software plugin for lifecycle management
+- Creates project configuration with the software plugin pre-installed for lifecycle management
 - Activates workflow templates (renames `.template` → `.yml`)
-- Generates LICENSE (user chooses: Apache-2.0, MIT, or other)
-- Generates CONTRIBUTING.md with standard community guidelines
+- Generates LICENSE (user chooses) and CONTRIBUTING.md
 
 ### 2. Project Structure
 
-Third-party plugins are standalone OrqaStudio projects:
+Third-party plugins are standalone projects:
 
 ```
 my-plugin/
-├── .orqa/                    # OrqaStudio project artifacts
-│   ├── project.json          # Project config (software plugin pre-installed)
-│   └── delivery/             # Milestones, epics, tasks
-├── orqa-plugin.json          # Plugin manifest
+├── <governance-dir>/             # Project governance artifacts
+│   ├── project configuration     # Software plugin pre-installed
+│   └── delivery/                 # Milestones, epics, delivery items
+├── orqa-plugin.json              # Plugin manifest
 ├── package.json
 ├── src/
 ├── .github/workflows/
@@ -70,14 +68,14 @@ my-plugin/
 
 ### 3. Plugin Manifest
 
-- `name` — `@yourorg/plugin-<name>` (your npm scope)
+- `name` — `@yourorg/plugin-<name>` (your package scope)
 - `displayName`, `description`, `category`, `provides` — same as first-party
-- No `@orqastudio` scope for third-party packages
+- Use your own package scope, not the platform's scope
 
 ### 4. Development
 
 Third-party plugins develop independently:
-- Create `.orqa/` seed data for testing
+- Create governance seed data for testing
 - Run `orqa dev` within the plugin project
 - Use `orqa check` for coding standards enforcement
 - Use `orqa verify` for integrity validation
@@ -94,7 +92,7 @@ orqa plugin install --path /path/to/my-plugin
 
 To submit to the community plugin registry:
 1. Ensure all validation passes (`orqa validate`)
-2. Submit a PR to `orqastudio/orqastudio-community-registry`
+2. Submit a PR to the community registry repository
 3. Maintainers review for quality, security, and compatibility
 4. Verified plugins show a verified badge in the app
 
@@ -104,5 +102,3 @@ Third-party plugins choose their own license. The plugin creation workflow asks:
 - Apache-2.0 (permissive, attribution required)
 - MIT (permissive, minimal requirements)
 - Other (manual LICENSE file)
-
-First-party plugins always use BSL-1.1 with Ethical Use Addendum.

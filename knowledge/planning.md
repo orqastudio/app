@@ -58,25 +58,25 @@ For any non-trivial feature, follow this preferred workflow before writing the f
 
 ### Always Read
 
-- `.orqa/documentation/reference/` — Existing feature designs related to the task
-- `.orqa/process/decisions/` — Relevant `AD-NNN.md` architecture decision artifacts
-- `.orqa/delivery/tasks/` — Task artifacts with context, constraints, and priorities
-- `.orqa/documentation/about/roadmap.md` — Verify the work is prioritized and not scope creep
+- Project governance directory `documentation/reference/` — Existing feature designs related to the task
+- Project governance directory `process/decisions/` — Architecture decision artifacts
+- Project governance directory `delivery/tasks/` — Task artifacts with context, constraints, and priorities
+- Project roadmap — Verify the work is prioritised and not scope creep
 
 ### Read When Modifying Backend
 
-- `backend/src-tauri/src/` — Existing Rust module structure, command handlers, domain types
+- Existing backend module structure, command handlers, domain types
 
 ### Read When User-Facing Changes
 
-- `.orqa/documentation/about/vision.md` — Two-Pillar framework and product vision
-- `.orqa/documentation/about/governance.md` — Governance rules and decision-making process
+- Product vision document — Core principles and product vision
+- Governance documentation — Rules and decision-making process
 
 ### Use Search Tools First
 
 Before reading entire files:
 
-- `code_research` — "How does [feature area] work?" for architectural understanding
+- `search_research` — "How does [feature area] work?" for architectural understanding
 - `search_semantic` — Find relevant docs and code for specific concepts
 - `search_regex` — Verify command names, function names, or specific symbols exist
 
@@ -90,34 +90,32 @@ Every implementation plan must include these sections in order:
 
 > **Reminder:** When this plan reaches implementation phases, Phase 1 MUST be documentation updates. See section 5 below.
 
-**Verify adherence to all foundational principles.** Show HOW each principle is satisfied with patterns specific to the plan — not just a list of AD numbers.
+**Verify adherence to all foundational principles.** Show HOW each principle is satisfied with patterns specific to the plan — not just a list of decision IDs.
 
 **Mandatory checks (verify every one that applies):**
 
 | Principle | Verify |
 |-----------|--------|
-| [AD-e513c9e4](AD-e513c9e4) (Thick backend) | Domain logic in Rust, Svelte is view layer only |
-| [AD-a334623b](AD-a334623b) (IPC boundary) | All communication via `#[tauri::command]` and `invoke()` |
-| [AD-1ad08e5f](AD-1ad08e5f) (Error propagation) | All functions return `Result<T, E>`, no unwrap/expect/panic |
-| [AD-8d552e96](AD-8d552e96) (Svelte 5 runes) | `$state`, `$derived`, `$effect`, `$props()` only — no Svelte 4 patterns |
-| [AD-dffc3d30](AD-dffc3d30) (SQLite persistence) | Structured data in SQLite, file-based artifacts from disk |
-| [AD-61087142](AD-61087142) (Component purity) | Pages fetch data, components receive via props only |
-| End-to-end completeness | Every feature includes all 4 layers: Rust command → IPC type → Svelte component → store binding |
-| Coding standards | Function size limits, zero clippy/rustfmt warnings, 80%+ coverage |
+| Architecture decisions | Each relevant architecture decision is satisfied — show HOW with specific patterns |
+| Error propagation | All functions return typed results, no unchecked panics or exceptions |
+| Layer separation | Domain logic in backend, frontend is view layer only |
+| Type safety | Types are consistent across all layers |
+| End-to-end completeness | Every feature includes all required layers end-to-end |
+| Coding standards | Function size limits, zero linter warnings, adequate test coverage |
 
 **Example (good):**
 
 ```markdown
 ## Architectural Compliance
 
-**AD-e513c9e4 (Thick backend):** Session management logic lives entirely in `backend/src-tauri/src/domain/sessions.rs`.
+**Thick backend:** Session management logic lives entirely in the backend domain module.
 Frontend only displays session list and current conversation.
 
-**AD-a334623b (IPC boundary):** New commands `create_session` and `list_sessions` exposed via `#[tauri::command]`.
-Frontend calls via `invoke('create_session', { name })`.
+**IPC boundary:** New commands `create_session` and `list_sessions` exposed via the IPC bridge.
+Frontend calls via the invoke mechanism.
 
-**AD-1ad08e5f (Error propagation):** All session functions return `Result<Session, SessionError>`.
-Command handlers map to `Result<T, String>` for Tauri serialization.
+**Error propagation:** All session functions return typed Result types.
+Command handlers map errors for serialization.
 ```
 
 **Anti-pattern (bad):**
@@ -125,7 +123,7 @@ Command handlers map to `Result<T, String>` for Tauri serialization.
 ```markdown
 ## Architectural Compliance
 
-Complies with AD-e513c9e4, AD-a334623b, AD-1ad08e5f, AD-8d552e96, AD-dffc3d30, AD-61087142.
+Complies with all architecture decisions.
 ```
 
 ### 1b. Systems Architecture Checklist
@@ -135,11 +133,11 @@ Every plan MUST explicitly address each dimension below. For each, state either 
 | Dimension | What to Address |
 |-----------|----------------|
 | **Data Persistence** | What new data is created? Where is it stored? Schema design. Migration strategy. |
-| **IPC Contract** | New/modified Tauri commands. Request/response types. Serialization. |
-| **State Management** | Frontend state: where stored (runes store, component, URL)? How loaded/saved? What happens on window refresh? |
+| **IPC Contract** | New/modified commands. Request/response types. Serialization. |
+| **State Management** | Frontend state: where stored? How loaded/saved? What happens on window refresh? |
 | **Configuration** | What config files are read/written? What config values are new? Where do defaults come from? |
 | **Error Handling** | What can go wrong? How does each error surface to the user? Recovery paths? |
-| **Testing Strategy** | Unit test approach (cargo test, Vitest). Integration test approach. E2E coverage (Playwright)? |
+| **Testing Strategy** | Unit test approach. Integration test approach. E2E coverage? |
 | **User Preferences** | Are there user choices that need persisting across sessions? Default values? Override mechanisms? |
 | **Documentation** | Which docs need updating? Docs MUST be written before code (documentation-first). |
 
@@ -176,13 +174,13 @@ Every plan MUST explicitly address each dimension below. For each, state either 
 ## Verification Gate: Phase 1 Complete
 
 **Quality Checks:**
-- `cargo fmt --check` passes
-- `cargo clippy --all-targets -- -D warnings` passes
-- `cargo test` passes with 80%+ coverage
-- `npm run check` passes
+- Format check passes
+- Linter passes with zero warnings
+- Tests pass with adequate coverage
+- Type check passes
 
 **Documentation Compliance:**
-- IPC command signatures match the relevant `AD-NNN.md` decisions in `.orqa/process/decisions/`
+- IPC command signatures match architecture decision artifacts
 - Component states match the plan's component state table
 - Error types match documented error propagation strategy
 ```
@@ -217,17 +215,7 @@ Phase 4: Documentation verification ← Confirm docs still match
 **After each implementation phase:**
 
 1. **Verify documentation currency**
-2. **Run quality checks:**
-
-   ```bash
-   cargo fmt --check
-   cargo clippy --all-targets -- -D warnings
-   cargo test
-   npm run check
-   npm run lint
-   npm run test
-   ```
-
+2. **Run quality checks** — format, lint, test, type-check
 3. **Documentation compliance audit**
 4. **Fix cycle:** If any check fails, fix it and re-run
 5. **Gate pass:** Only when all checks pass AND documentation compliance is verified
@@ -244,7 +232,7 @@ Use this template for every implementation plan. Sections must appear in this or
 
 ## Systems Architecture Checklist
 [Address each dimension: Data Persistence, IPC Contract, State Management, Configuration,
-Health & Status, Error Handling, Testing Strategy, User Preferences, Documentation.
+Error Handling, Testing Strategy, User Preferences, Documentation.
 State "N/A — [reason]" for inapplicable ones.]
 
 ## Target UX
@@ -265,13 +253,6 @@ State "N/A — [reason]" for inapplicable ones.]
 ## Verification
 [Measured by user-visible outcomes]
 ```
-
-## See Also
-
-- `.orqa/process/rules/[RULE-303c1cc8](RULE-303c1cc8).md` — Plan mode requirements
-- `.orqa/process/rules/[RULE-65973a88](RULE-65973a88).md` — AD-XXX quick reference
-- `.orqa/process/rules/[RULE-1e8a1914](RULE-1e8a1914).md` — Two-Pillar framework and governance
-- `.orqa/documentation/development/coding-standards.md` — Code quality standards
 
 ## Related Skills
 

@@ -3,10 +3,10 @@ id: KNOW-b453410f
 type: knowledge
 title: Plugin Development
 description: |
-  OrqaStudio plugin development base knowledge. Detects whether this is a first-party
-  plugin (dev environment) or third-party plugin (standalone), then loads the
-  appropriate sub-knowledge artifact. Use when: creating new plugins, scaffolding from templates,
-  or extending OrqaStudio with custom views, tools, or artifact types.
+  Plugin development base knowledge. Detects whether this is a first-party
+  plugin (platform dev environment) or third-party plugin (standalone), then loads the
+  appropriate sub-knowledge artifact. Use when: creating new plugins, scaffolding from
+  templates, or extending the platform with custom views, tools, or artifact types.
 status: active
 created: 2026-03-01
 updated: 2026-03-19
@@ -30,9 +30,9 @@ relationships:
 
 Before starting any plugin work, determine the context automatically:
 
-**First-party** (KNOW-e1333874): The working directory is inside `orqastudio-dev/` or any repository with `plugins/` and `.orqa/` at root AND a `.gitmodules` file referencing `orqastudio` org repos. First-party plugins are submodules in the dev environment.
+**First-party** (KNOW-e1333874): The working directory is inside the platform dev environment — a repository with a `plugins/` directory and a project governance directory at root, and a submodule configuration referencing platform org repos. First-party plugins are submodules in the dev environment.
 
-**Third-party** (KNOW-63cc1a00): Everything else. The plugin will be a standalone project with its own `.orqa/` governance and the software plugin pre-installed.
+**Third-party** (KNOW-63cc1a00): Everything else. The plugin is a standalone project with its own project governance directory and the software plugin pre-installed for independent lifecycle management.
 
 Load the appropriate sub-knowledge artifact based on detection. Do NOT ask the user — infer from the environment.
 
@@ -61,7 +61,7 @@ Every plugin requires `orqa-plugin.json` at root:
 }
 ```
 
-See DOC-99a1b71a (Plugin Manifest Schema Reference) for the full field reference.
+See the Plugin Manifest Schema Reference documentation for the full field reference.
 
 ### Extension Pattern
 
@@ -69,7 +69,7 @@ Plugins can extend other plugins via the `extends` field:
 
 ```json
 {
-  "extends": ["@orqastudio/plugin-rust"],
+  "extends": ["@platform/plugin-rust"],
   "configExtensions": {
     "tsconfig": { "compilerOptions": { ... } },
     "eslint": { "import": "@scope/plugin/eslint", "export": "config" }
@@ -84,7 +84,7 @@ Four scaffolding templates are available:
 | Template | Use When |
 |----------|----------|
 | `cli-tool` | One-shot CLI commands (build tools, generators, analysers) |
-| `frontend` | Views and dashboards rendered in the OrqaStudio explorer |
+| `frontend` | Views and dashboards rendered in the platform explorer |
 | `sidecar` | Long-running provider processes (AI services, language servers) |
 | `full` | All of the above — views, sidecar, CLI tools, and hooks |
 
@@ -93,7 +93,7 @@ Four scaffolding templates are available:
 Plugins consume the SDK for graph queries:
 
 ```typescript
-import { getStores } from "@orqastudio/sdk";
+import { getStores } from "@platform/sdk";
 const { artifactGraphSDK } = getStores();
 
 // Resolution
@@ -124,7 +124,7 @@ Every plugin that defines artifact types or relationships MUST ship:
 
 ### Validation
 
-Run `orqa validate` in the plugin directory to check:
+Run validation in the plugin directory to check:
 - Manifest schema compliance
 - Knowledge/doc frontmatter validity
 - Relationship target resolution
@@ -135,8 +135,8 @@ Run `orqa validate` in the plugin directory to check:
 
 | Anti-Pattern | Correct Approach |
 |-------------|-----------------|
-| Developing inside production `.orqa/` | Always scaffold from a template |
+| Developing inside production governance directory | Always scaffold from a template |
 | Hardcoding artifact paths | Use SDK resolution methods |
 | Polling for changes | Use SDK subscriptions |
-| Skipping validation | Run `orqa validate` before every commit |
+| Skipping validation | Run validation before every commit |
 | Missing knowledge+doc pair | Every artifact-providing plugin needs both |
