@@ -7,7 +7,7 @@ description: |
   portability rules, provenance tracking, and skill audit protocol.
   Use when: Adding, updating, removing, or auditing agent skills; evaluating whether to install
   a community skill or create a project-specific one; managing the .orqa/process/knowledge/ directory.
-status: active
+status: archived
 created: 2026-03-01
 updated: 2026-03-10
 category: methodology
