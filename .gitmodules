@@ -82,3 +82,6 @@
 [submodule "plugins/core"]
 	path = plugins/core
 	url = git@github.com:orqastudio/orqastudio-plugin-core-framework.git
+[submodule "plugins/githooks"]
+	path = plugins/githooks
+	url = git@github.com:orqastudio/orqastudio-plugin-githooks.git

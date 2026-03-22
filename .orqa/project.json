@@ -470,6 +470,13 @@
       "path": "connectors/claude-code",
       "relationships": null,
       "config": null
+    },
+    "@orqastudio/plugin-githooks": {
+      "installed": true,
+      "enabled": true,
+      "path": "plugins/githooks",
+      "relationships": null,
+      "config": null
     }
   }
 }
