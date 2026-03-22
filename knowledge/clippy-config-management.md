@@ -1,15 +1,15 @@
 ---
-id: KNOW-RST-5efa83a5
+id: KNOW-5efa83a5
 type: knowledge
 name: Clippy Config Management
 status: active
 plugin: "@orqastudio/plugin-rust"
 relationships:
-  - target: DOC-RST-27becb92
+  - target: DOC-27becb92
     type: synchronised-with
-  - target: AGENT-RST-4241392c
+  - target: AGENT-4241392c
     type: employed-by
-  - target: AGENT-RST-spec-a3f7d2b1
+  - target: AGENT-e1e47559
     type: employed-by
 ---
 

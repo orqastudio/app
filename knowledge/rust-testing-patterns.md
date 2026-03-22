@@ -1,15 +1,15 @@
 ---
-id: KNOW-RST-214b7cdc
+id: KNOW-214b7cdc
 type: knowledge
 name: Rust Testing Patterns
 status: active
 plugin: "@orqastudio/plugin-rust"
 relationships:
-  - target: DOC-RST-27becb92
+  - target: DOC-27becb92
     type: synchronised-with
-  - target: AGENT-RST-4241392c
+  - target: AGENT-4241392c
     type: employed-by
-  - target: AGENT-RST-spec-a3f7d2b1
+  - target: AGENT-e1e47559
     type: employed-by
 ---
 

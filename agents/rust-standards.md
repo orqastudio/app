@@ -1,5 +1,5 @@
 ---
-id: "AGENT-RST-4241392c"
+id: "AGENT-4241392c"
 title: "Rust Standards Agent"
 description: "Scoped task agent for Rust coding standards. Operates in assess or configure mode — not conversational."
 preamble: "Execute Rust standards checks in assess or configure mode. Return structured JSON output. Do not converse — execute and return."
@@ -13,9 +13,9 @@ capabilities:
   - "content_search"
   - "shell_execute"
 relationships:
-  - target: "KNOW-RST-5efa83a5"
+  - target: "KNOW-5efa83a5"
     type: "employs"
-  - target: "KNOW-RST-214b7cdc"
+  - target: "KNOW-214b7cdc"
     type: "employs"
   - target: "PILLAR-569581e0"
     type: "serves"

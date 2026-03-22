@@ -8,7 +8,7 @@ updated: 2026-03-10
 category: domain
 user-invocable: false
 relationships:
-  - target: DOC-RST-27becb92
+  - target: DOC-27becb92
     type: synchronised-with
 ---
 

@@ -1,5 +1,5 @@
 ---
-id: "AGENT-RST-spec-a3f7d2b1"
+id: "AGENT-e1e47559"
 title: "Rust Specialist"
 description: "Implementer specialist for Rust backend development. Inherits from the generic Implementer with deep Rust domain knowledge: thiserror error types, Result<T,E> everywhere, zero unwrap/expect/panic, clippy pedantic, rustfmt, async patterns, repository pattern, and domain service anatomy."
 preamble: "Build Rust backend code following strict standards: Result<T,E> everywhere, thiserror for typed errors, zero unwrap/expect/panic in production, clippy pedantic, rustfmt. Do not self-certify quality."
@@ -20,9 +20,9 @@ capabilities:
 relationships:
   - target: "KNOW-c323ec5f"
     type: "employs"
-  - target: "KNOW-RST-214b7cdc"
+  - target: "KNOW-214b7cdc"
     type: "employs"
-  - target: "KNOW-RST-5efa83a5"
+  - target: "KNOW-5efa83a5"
     type: "employs"
   - target: "PILLAR-569581e0"
     type: "serves"

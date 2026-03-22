@@ -1,11 +1,11 @@
 ---
-id: KNOW-RST-2a72f929
+id: KNOW-2a72f929
 type: knowledge
 name: Rust Plugin Installation
 status: active
 plugin: "@orqastudio/plugin-rust"
 relationships:
-  - target: DOC-RST-27becb92
+  - target: DOC-27becb92
     type: synchronised-with
 ---
 
@@ -21,9 +21,9 @@ relationships:
 - **clippy** tool — lint enforcement via `cargo clippy`
 - **rustfmt** tool — formatting enforcement via `cargo fmt --check`
 - **cargo-test** tool — test execution via `cargo test`
-- **Clippy Config Management** skill (KNOW-RST-5efa83a5)
-- **Rust Testing Patterns** skill (KNOW-RST-214b7cdc)
-- **Rust Standards Agent** (AGENT-RST-4241392c) — assess and configure modes
+- **Clippy Config Management** skill (KNOW-5efa83a5)
+- **Rust Testing Patterns** skill (KNOW-214b7cdc)
+- **Rust Standards Agent** (AGENT-4241392c) — assess and configure modes
 
 ## Installation
 
