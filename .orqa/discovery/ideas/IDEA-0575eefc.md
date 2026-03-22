@@ -34,6 +34,30 @@ different discovery methodology, but orqa-core is always present.
 Core plugins can reference the general categories "Discovery", "Delivery", "Governance"
 but MUST NOT reference other plugins' specific artifact types or OrqaStudio-specific paths.
 
+## Thinking Mode Tagging
+
+Knowledge artifacts that serve as thinking modes add a frontmatter field:
+
+```yaml
+thinking-mode: implementation   # maps to the mode template key
+```
+
+This decouples mode detection from filename convention. The prompt-injector
+searches semantically via ONNX embeddings, finds the best match regardless
+of which plugin the artifact lives in, and injects the corresponding mode
+template. Thinking modes live with their owning plugin:
+
+| Thinking Mode | Plugin | Rationale |
+|--------------|--------|-----------|
+| implementation | orqa-core | Generic how-to-implement |
+| debugging | orqa-core | Generic how-to-debug |
+| review | orqa-core | Generic how-to-review |
+| learning-loop | agile-governance | Governance learning cycle |
+| dogfood-implementation | systems-thinking | Self-referential methodology |
+| planning | systems-thinking | Discovery methodology |
+| research | systems-thinking | Discovery methodology |
+| documentation | systems-thinking | Discovery methodology |
+
 ## Content Portability Rules
 
 1. **No `.orqa/` path references** — use "project governance directory" or similar
@@ -163,14 +187,14 @@ but MUST NOT reference other plugins' specific artifact types or OrqaStudio-spec
 | KNOW-f0c40eaf | Composability | STAY | GENERIC |
 | KNOW-8c98ea98 | Restructuring Methodology | STAY | GENERIC |
 | KNOW-c7fb7c83 | Tech Debt Management | STAY | GENERIC |
-| KNOW-323c2803 | Thinking Mode: Debugging | STAY | MOSTLY GENERIC — minor rewrite to remove artifact type names |
-| KNOW-1ab0e715 | Thinking Mode: Documentation | STAY | MOSTLY GENERIC |
-| KNOW-a4c8f1e2 | Thinking Mode: Dogfood Implementation | STAY | GENERIC |
-| KNOW-fda0559b | Thinking Mode: Implementation | STAY | MOSTLY GENERIC |
-| KNOW-85e392ea | Thinking Mode: Learning Loop | **MOVE → agile-governance** (governance learning loop) | MOSTLY GENERIC |
-| KNOW-de25b290 | Thinking Mode: Planning | STAY | MOSTLY GENERIC |
-| KNOW-1a8eb147 | Thinking Mode: Research | STAY | MOSTLY GENERIC |
-| KNOW-83614358 | Thinking Mode: Review | STAY | MOSTLY GENERIC |
+| KNOW-323c2803 | Thinking Mode: Debugging | **MOVE → orqa-core** + add `thinking-mode: debugging` | MOSTLY GENERIC |
+| KNOW-1ab0e715 | Thinking Mode: Documentation | STAY + add `thinking-mode: documentation` | MOSTLY GENERIC |
+| KNOW-a4c8f1e2 | Thinking Mode: Dogfood Implementation | STAY + add `thinking-mode: dogfood-implementation` | GENERIC |
+| KNOW-fda0559b | Thinking Mode: Implementation | **MOVE → orqa-core** + add `thinking-mode: implementation` | MOSTLY GENERIC |
+| KNOW-85e392ea | Thinking Mode: Learning Loop | **MOVE → agile-governance** + add `thinking-mode: learning-loop` | MOSTLY GENERIC |
+| KNOW-de25b290 | Thinking Mode: Planning | STAY + add `thinking-mode: planning` | MOSTLY GENERIC |
+| KNOW-1a8eb147 | Thinking Mode: Research | STAY + add `thinking-mode: research` | MOSTLY GENERIC |
+| KNOW-83614358 | Thinking Mode: Review | **MOVE → orqa-core** + add `thinking-mode: review` | MOSTLY GENERIC |
 
 ### Knowledge — software (currently 14)
 
@@ -178,11 +202,11 @@ but MUST NOT reference other plugins' specific artifact types or OrqaStudio-spec
 |-----------|-------|--------|---------------|
 | KNOW-1d47d8d8 | Software Delivery | STAY but REWRITE | ORQASTUDIO-ONLY — references .orqa/delivery/, artifact IDs. Extract generic delivery pattern |
 | KNOW-e2354dce | Epic Completion | STAY but REWRITE | ORQASTUDIO-ONLY — references .orqa/, orqa validate. Extract generic "delivery unit completion" |
-| KNOW-b453410f | Plugin Development | **MOVE → dev .orqa/** | ORQASTUDIO-ONLY — orqa plugin create, .orqa/ structure |
-| KNOW-e1333874 | First-Party Plugin Dev | **MOVE → dev .orqa/** | ORQASTUDIO-ONLY — orqastudio-dev/, .gitmodules |
-| KNOW-63cc1a00 | Third-Party Plugin Dev | **MOVE → dev .orqa/** | ORQASTUDIO-ONLY — project.json, software plugin pre-install |
-| KNOW-a2b3c4d5 | Search | **MOVE → dev .orqa/** | ORQASTUDIO-ONLY — orqa mcp, DuckDB, ONNX engine |
-| KNOW-2c8eead6 | Skills Maintenance | **MOVE → dev .orqa/** | ORQASTUDIO-ONLY — npx skills CLI, .orqa/ paths |
+| KNOW-b453410f | Plugin Development | **MOVE → orqa-core** (framework infrastructure) | NEEDS REWRITE — remove OrqaStudio-specific paths, make generic |
+| KNOW-e1333874 | First-Party Plugin Dev | **MOVE → orqa-core** (framework infrastructure) | NEEDS REWRITE — remove orqastudio-dev/ refs |
+| KNOW-63cc1a00 | Third-Party Plugin Dev | **MOVE → orqa-core** (framework infrastructure) | NEEDS REWRITE — remove project.json specifics |
+| KNOW-a2b3c4d5 | Search | **MOVE → orqa-core** (framework infrastructure) | NEEDS REWRITE — make search methodology generic |
+| KNOW-2c8eead6 | Skills Maintenance | **ARCHIVE** — reactivate when skills.sh integration lands | See IDEA for skills.sh |
 | KNOW-f0efaf83 | Code Quality Review | STAY | GENERIC |
 | KNOW-353a228b | Component Extraction | STAY but minor rewrite | MOSTLY GENERIC — remove TASK-e752886d reference |
 | KNOW-1b805150 | QA Verification | STAY | GENERIC |

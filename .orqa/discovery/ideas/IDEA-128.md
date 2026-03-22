@@ -35,3 +35,9 @@ skills.sh is building a community ecosystem of reusable AI skills. OrqaStudio sh
 - Reformatting should preserve the original content but add OrqaStudio frontmatter
 - Skills that don't map cleanly to OrqaStudio conventions should be imported with warnings, not rejected
 - The plugin itself is a thin adapter — it doesn't host skills, it bridges two formats
+
+## Pending: Skills Maintenance Knowledge
+
+KNOW-2c8eead6 (Skills Maintenance) is currently archived. When this plugin is implemented,
+reactivate it and move it here — it teaches how skills are maintained, updated, and
+synchronized, which is directly relevant to the skills.sh import/update workflow.
