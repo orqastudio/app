@@ -2,6 +2,7 @@
 id: KNOW-a4c8f1e2
 type: knowledge
 title: "Thinking Mode: Dogfood Implementation"
+thinking-mode: dogfood-implementation
 description: "Building infrastructure for immediate use in the current workflow — not a future feature idea."
 status: active
 created: 2026-03-21
@@ -37,7 +38,7 @@ You are building infrastructure that this project will use immediately. This is 
 - Verify full request chain: component → store → invoke → Rust command
 
 **PLUS Dogfood-Specific Guidance:**
-- Awareness of `dogfood: true` flag in `.orqa/project.json` — you are editing the app from inside or alongside it
+- Awareness of the project's dogfood flag in project configuration — you are editing the app from inside or alongside it
 - RULE-009 context (dogfood mode constraints, restart protocol, sidecar self-edit warnings)
 - Search **aggressively** for existing patterns in THIS codebase — reuse over rebuild is critical for dogfood
 - For Rust backend changes: offer to run `make restart-tauri` after commit — changes affect the running environment

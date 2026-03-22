@@ -2,6 +2,7 @@
 id: KNOW-de25b290
 type: knowledge
 title: "Thinking Mode: Planning"
+thinking-mode: planning
 description: "The user wants work scoped, broken down, prioritised, or designed — structure and approach before any execution begins."
 status: active
 created: 2026-03-21
@@ -22,7 +23,7 @@ The user wants work scoped, broken down, prioritised, or designed. This is about
 ## What the Agent Needs
 
 - Artifact graph context: `graph_query`, `graph_resolve`, `graph_relationships`
-- Current milestone and epic state — what's in-progress, what's blocked
+- Current state of delivery items — what's in-progress, what's blocked
 - Dependency mapping before task ordering
 - Pillar gate questions — every task must serve at least one pillar
 

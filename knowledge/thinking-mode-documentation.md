@@ -2,6 +2,7 @@
 id: KNOW-1ab0e715
 type: knowledge
 title: "Thinking Mode: Documentation"
+thinking-mode: documentation
 description: "The user wants docs written, updated, or organised — capturing knowledge for humans, not building features."
 status: active
 created: 2026-03-21
@@ -13,7 +14,7 @@ relationships:
 
 # Thinking Mode: Documentation
 
-The user wants docs written, updated, or organised. This is about capturing knowledge for humans browsing the app, not building features. The agent writes documentation artifacts, not code.
+The user wants docs written, updated, or organised. This is about capturing knowledge for humans browsing the project, not building features. The agent writes documentation artifacts, not code.
 
 ## Example Signals
 
@@ -21,7 +22,7 @@ The user wants docs written, updated, or organised. This is about capturing know
 
 ## What the Agent Needs
 
-- Documentation standards (`orqa-documentation` knowledge, RULE-008)
+- Project documentation standards and the documentation-before-code rule
 - Current state of the feature being documented — read the code and existing artifacts first
 - Doc schema: `type: doc`, correct `category`, relationships to relevant artifacts
 - Documentation before code rule: docs define intent, code implements it
