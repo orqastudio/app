@@ -1,6 +1,6 @@
 # Governance Context (saved before compaction)
 
-Saved: 2026-03-22T13:05:58.253Z
+Saved: 2026-03-22T19:36:25.686Z
 
 ## Active Epics
 
@@ -21,7 +21,7 @@ Saved: 2026-03-22T13:05:58.253Z
 
 ## Previous Session State
 
-## Session: 2026-03-22T13:05:14Z
+## Session: 2026-03-22T19:09:06Z
 
 ### Active Epics
 - EPIC-2362adfc: Dev environment migration and schema-driven enforcement
@@ -38,11 +38,11 @@ Saved: 2026-03-22T13:05:58.253Z
 - TASK-c9880303: MCP server — Rust backend artifact graph API
 
 ### Recent Commits
-ca8d883 Git hooks plugin: pre-commit schema enforcement
-3152b28 ZERO validation errors — clean graph
-70abeed Single validator source of truth: plugins only
-5aaf086 Fix validation: schema adjustments + constraint violations
-d862022 Remove 'related' relationship + fix broken refs + schema-driven influence
+dc3264a Epic: EPIC-941369fc complete — JSON Schema + enforcement engine (all 13 phases)
+7e0d4d3 Phase 1: Single Rust validator binary + CLI delegation
+93d7f04 Epic: 5-digit approval codes instead of OVR- prefix
+284f805 Epic: One-time-use approval IDs with expiry
+d01ee1e Epic: Request ID bridge for override approval flow
 
 ### Uncommitted Changes
 0
