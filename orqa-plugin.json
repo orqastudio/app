@@ -5,6 +5,11 @@
   "description": "Base Rust development infrastructure — clippy, rustfmt, cargo test configuration and coding standards enforcement.",
   "category": "coding-standards",
   "provides": {
+    "enforcement_mechanisms": [
+      { "key": "clippy", "description": "Rust linter (clippy)", "strength": 6 },
+      { "key": "rustfmt", "description": "Rust formatter", "strength": 6 },
+      { "key": "cargo-test", "description": "Rust test runner", "strength": 6 }
+    ],
     "agents": [
       {
         "key": "4241392c",
