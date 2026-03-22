@@ -6,9 +6,13 @@ status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
 enforcement:
-  - "event: bash"
-  - "event: bash"
-  - "event: bash"
+  - mechanism: behavioral
+    message: "All development commands must be invoked via make targets; raw cargo and npm run commands are forbidden for tasks that have a make equivalent"
+  - mechanism: hook
+    type: PreToolUse
+    event: bash
+    action: block
+    pattern: "cargo tauri dev|npm run dev|cargo clippy|cargo fmt|cargo test"
 relationships:
   - target: "AD-ea4a5979"
     type: "enforces"

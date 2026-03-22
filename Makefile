@@ -12,7 +12,7 @@
 # make kill            Force-kill all processes
 #
 # After install, use orqa directly for everything else:
-#   orqa audit / check / test / validate / id / version / repo / plugin / graph
+#   orqa audit / check / test / enforce / id / version / repo / plugin / graph
 
 .DEFAULT_GOAL := install
 

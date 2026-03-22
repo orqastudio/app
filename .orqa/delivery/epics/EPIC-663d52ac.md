@@ -56,7 +56,7 @@ See AD-060 for the full architecture decision.
 2. **ID migration**: `SKILL-XXXXXXXX` → `KNOW-XXXXXXXX` across all artifacts and relationships
 3. **Type system**: update `core.json`, Rust types, TypeScript types, plugin manifests
 4. **UI**: update navigation labels, artifact browser, icons
-5. **CLI**: update `orqa validate`, `orqa graph`, ID generation
+5. **CLI**: update `orqa enforce`, `orqa graph`, ID generation
 6. **Documentation**: update vision.md, CLAUDE.md, artifact-framework docs to explain the semantic distinction
 
 ### Phase 2: Connector architecture
@@ -77,11 +77,11 @@ See AD-060 for the full architecture decision.
 ## Acceptance Criteria
 
 - [ ] No directory named `skills/` exists in `.orqa/process/` anywhere
-- [ ] All `SKILL-*` IDs migrated to `KNOW-*` with `orqa validate` passing
+- [ ] All `SKILL-*` IDs migrated to `KNOW-*` with `orqa enforce` passing
 - [ ] `core.json` has `knowledge` artifact type, not `skill`
 - [ ] Connector reads knowledge from plugin paths — no copies in connector directory
 - [ ] Vision.md and core docs explain the semantic distinction
-- [ ] `orqa validate schema` passes on all project.json and plugin manifests
+- [ ] `orqa enforce schema` passes on all project.json and plugin manifests
 - [ ] Only 5 user-facing slash commands registered in Claude Code
 - [ ] Delegation injects correct knowledge files into subagent prompts
 

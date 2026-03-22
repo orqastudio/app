@@ -351,7 +351,7 @@ pub struct RelationshipSchema {
 
 ### CLI Validator
 
-The CLI (`orqa validate`) runs the same schema-driven checks as the Rust engine. It also scans `app/.orqa/`, `plugins/`, and `connectors/` directories — not just `.orqa/`. Both implementations enforce the schema identically; different contexts (runtime vs CI).
+The CLI (`orqa enforce`) runs the same schema-driven checks as the Rust engine. It also scans `app/.orqa/`, `plugins/`, and `connectors/` directories — not just `.orqa/`. Both implementations enforce the schema identically; different contexts (runtime vs CI).
 
 ---
 

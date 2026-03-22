@@ -8,7 +8,7 @@ updated: 2026-03-20
 acceptance:
   - No knowledge/ or skills/ directory with copied files exists in connectors/claude-code/
   - Connector plugin manifest no longer declares knowledge file paths pointing to local copies
-  - orqa validate passes on the connector plugin
+  - orqa enforce passes on the connector plugin
   - The connector still functions correctly (knowledge is read from canonical sources)
 relationships:
   - target: EPIC-663d52ac
@@ -40,6 +40,6 @@ Do NOT remove the connector-specific files (orchestrator.md, agent definitions, 
 ## Verification
 
 1. `git diff --stat` shows only deletions in `connectors/claude-code/knowledge/` (or skills/)
-2. `orqa validate` passes on the connector plugin
+2. `orqa enforce` passes on the connector plugin
 3. No knowledge file in the connector has identical content to a file in a canonical plugin
 4. TASK-a7b8c9d0 (knowledge resolution) can proceed without needing these files

@@ -9,7 +9,7 @@ acceptance:
   - No directory named skills/ exists under .orqa/process/ in any project or plugin
   - No SKILL-* ID remains in any .md artifact file
   - All relationship targets updated to the new KNOW-* IDs
-  - orqa validate passes on all projects after the rename
+  - orqa enforce passes on all projects after the rename
   - project.json artifact trees updated to reference knowledge/ paths
 relationships:
   - target: EPIC-663d52ac
@@ -46,7 +46,7 @@ This is a coordinated multi-step operation:
 
 3. Update `project.json` artifact tree entries (see TASK-5a6b7c8d for project.json specifics)
 
-4. Run `orqa validate` on each project to catch any missed references
+4. Run `orqa enforce` on each project to catch any missed references
 
 Scope: `app/.orqa/`, `.orqa/`, all `plugins/*/` directories, `connectors/claude-code/`
 
@@ -54,6 +54,6 @@ Scope: `app/.orqa/`, `.orqa/`, all `plugins/*/` directories, `connectors/claude-
 
 1. `find . -type d -name "skills"` returns zero results under `.orqa/`
 2. `grep -r "SKILL-" .orqa/` returns zero matches
-3. `orqa validate` passes on main project
-4. `orqa validate` passes on app submodule
-5. `orqa validate` passes on all plugin directories
+3. `orqa enforce` passes on main project
+4. `orqa enforce` passes on app submodule
+5. `orqa enforce` passes on all plugin directories

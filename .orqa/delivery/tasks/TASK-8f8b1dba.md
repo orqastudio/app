@@ -20,4 +20,4 @@ relationships:
 3. Project-level skills documented — grouped by domain (architecture, frontend, backend, etc.)
 4. Every skill has at least one `synchronised-with` relationship to a doc
 5. Every doc has the inverse `synchronised-with` back to its skills
-6. `orqa validate` passes with 0 errors for skill documentation constraint
+6. `orqa enforce` passes with 0 errors for skill documentation constraint

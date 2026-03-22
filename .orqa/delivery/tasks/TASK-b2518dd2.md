@@ -10,7 +10,7 @@ acceptance:
   - The connector reads each installed plugin's manifest at startup and aggregates declared behavioral rules
   - Mode templates from plugins are merged into the connector's runtime context injection
   - No behavioral rules or mode templates are hardcoded in the connector itself
-  - orqa validate passes on all plugin manifests after schema update
+  - orqa enforce passes on all plugin manifests after schema update
   - Integration test: a new plugin with a behavioral rule results in that rule appearing in injected context
 relationships:
   - target: EPIC-6967c7dc
@@ -38,7 +38,7 @@ The plugin system's promise is that plugins are self-describing and self-contain
 
 ## Verification
 
-1. `orqa validate` passes on all updated plugin manifests
+1. `orqa enforce` passes on all updated plugin manifests
 2. A test plugin with a declared behavioral rule produces that rule in the injected runtime context
 3. No behavioral rules remain hardcoded in the connector hook scripts
 4. TASK-dc8d94c3 is unblocked

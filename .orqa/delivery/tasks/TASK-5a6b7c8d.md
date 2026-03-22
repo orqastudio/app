@@ -8,7 +8,7 @@ updated: 2026-03-20
 acceptance:
   - project.json artifact tree has no 'skills' entries
   - knowledge/ directory path is correctly declared in artifact tree
-  - orqa validate schema passes on project.json
+  - orqa enforce schema passes on project.json
   - The app's artifact browser shows knowledge artifacts under the correct tree node
 relationships:
   - target: EPIC-663d52ac
@@ -33,11 +33,11 @@ Read `project.json` and locate the artifact tree configuration section. Find ent
 
 Also check any plugin-level configuration that extends or overrides the main artifact tree.
 
-After updating, run `orqa validate` to confirm the project config is valid.
+After updating, run `orqa enforce` to confirm the project config is valid.
 
 ## Verification
 
-1. `orqa validate` passes on the updated project.json
+1. `orqa enforce` passes on the updated project.json
 2. `orqa graph` shows knowledge artifacts in the correct tree position
 3. The app artifact browser navigation shows "Knowledge" not "Skills"
 4. No 'skills' path segments remain in project.json

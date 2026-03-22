@@ -63,7 +63,7 @@ Run these regularly (ideally as CI checks):
 
 ```bash
 # Schema compliance — do all artifacts match the schema?
-orqa validate
+orqa enforce
 
 # Rust compilation — does the backend compile cleanly?
 cargo check && cargo clippy -- -D warnings

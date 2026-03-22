@@ -10,7 +10,7 @@ acceptance:
   - artifact-framework.md documents the knowledge artifact type with schema, lifecycle, and examples
   - CLAUDE.md (app orchestrator) updated to reference knowledge/ not skills/
   - No doc file uses 'skill' to mean OrqaStudio's domain knowledge concept
-  - Documentation passes orqa validate schema checks
+  - Documentation passes orqa enforce schema checks
 relationships:
   - target: EPIC-663d52ac
     type: delivers
@@ -44,6 +44,6 @@ For `CLAUDE.md`: search for "skill" references in the Knowledge Injection sectio
 ## Verification
 
 1. All three docs updated with correct terminology
-2. `orqa validate` passes on the documentation artifacts
+2. `orqa enforce` passes on the documentation artifacts
 3. The "Knowledge vs Skills" distinction is clear to a new reader of vision.md
 4. CLAUDE.md Knowledge Injection section references `knowledge/` paths correctly

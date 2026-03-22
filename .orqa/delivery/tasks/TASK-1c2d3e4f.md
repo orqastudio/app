@@ -1,15 +1,15 @@
 ---
 id: TASK-1c2d3e4f
-title: "Update CLI: orqa validate, orqa graph, ID generation"
+title: "Update CLI: orqa enforce, orqa graph, ID generation"
 description: "Update the orqa CLI tool to recognise 'knowledge' as an artifact type, scan knowledge/ directories, generate KNOW- prefixed IDs, and validate KNOW- references."
 status: ready
 created: 2026-03-20
 updated: 2026-03-20
 acceptance:
-  - orqa validate recognises knowledge/ directory and KNOW- prefix
+  - orqa enforce recognises knowledge/ directory and KNOW- prefix
   - orqa graph lists knowledge artifacts under 'knowledge' type
   - ID generation produces KNOW-XXXXXXXX for new knowledge artifacts
-  - orqa validate reports errors for any remaining SKILL- references
+  - orqa enforce reports errors for any remaining SKILL- references
   - All existing make targets still work after CLI update
 relationships:
   - target: EPIC-663d52ac
@@ -45,5 +45,5 @@ Rebuild CLI after changes and run `orqa verify` to confirm the installation.
 
 1. `orqa graph --type knowledge` lists all knowledge artifacts
 2. Creating a new knowledge artifact generates a `KNOW-` prefixed ID
-3. `orqa validate` flags `SKILL-` references as errors
+3. `orqa enforce` flags `SKILL-` references as errors
 4. `make check` passes (no regressions in CLI tests)

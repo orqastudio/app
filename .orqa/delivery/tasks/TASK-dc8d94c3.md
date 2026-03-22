@@ -10,7 +10,7 @@ acceptance:
   - Governance-specific behavioral rules are declared in the governance plugin, not in the connector
   - The connector contains no hardcoded references to software-plugin or governance-plugin specific logic
   - All moved rules are accessible at runtime via the plugin hook injection mechanism (TASK-b2518dd2)
-  - orqa validate passes on the connector and all affected plugins
+  - orqa enforce passes on the connector and all affected plugins
   - End-to-end behavior is unchanged — rules are applied at the same points in the workflow
 relationships:
   - target: EPIC-6967c7dc
@@ -48,4 +48,4 @@ Blocked by TASK-b2518dd2 — the plugin hook injection mechanism must exist befo
 2. Software plugin manifest declares the epic/task sync rules
 3. Governance plugin manifest declares the governance rules
 4. Runtime behavior test: both rule sets are present in injected context when both plugins are installed
-5. `orqa validate` passes on all affected artifacts
+5. `orqa enforce` passes on all affected artifacts

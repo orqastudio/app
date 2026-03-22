@@ -97,8 +97,8 @@ The status to propose for the evaluated artifact if the condition is met.
 ## Running validation
 
 ```bash
-orqa validate              # CLI — full integrity check
-orqa validate --json       # JSON output for programmatic use
+orqa enforce              # CLI — full integrity check
+orqa enforce --json       # JSON output for programmatic use
 ```
 
 In the app, the Rust validator runs the same checks against the same schemas via `run_integrity_scan`.

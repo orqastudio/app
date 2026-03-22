@@ -42,7 +42,7 @@ orqa install              # Re-run full setup (or individual: prereqs, submodule
 orqa verify               # Governance checks (integrity, version, license, readme)
 orqa check                # Code quality (lint, typecheck, format) — or: orqa check rust, orqa check app
 orqa test                 # Run test suites — or: orqa test rust, orqa test app
-orqa validate             # Integrity validation only
+orqa enforce             # Integrity validation only
 orqa version check        # Check for version drift
 orqa version bump 0.2.0   # Bump version across all repos
 orqa plugin install <src> # Install a plugin

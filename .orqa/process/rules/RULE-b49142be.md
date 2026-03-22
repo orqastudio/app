@@ -6,16 +6,20 @@ status: active
 created: 2026-03-07
 updated: 2026-03-13
 enforcement:
-  - "event: lint"
-  - "event: lint"
-  - "event: lint"
-  - "event: lint"
-  - "event: lint"
-  - "event: lint"
-  - "event: lint"
-  - "event: lint"
-  - "event: lint"
-  - "event: lint"
+  - mechanism: behavioral
+    message: "Follow Rust (rustfmt, clippy, thiserror) and TypeScript/Svelte 5 (strict TS, runes, shadcn-svelte) coding standards; 80%+ test coverage required"
+  - mechanism: pre-commit
+    check: "make check"
+  - mechanism: lint
+    linter: rustfmt
+  - mechanism: lint
+    linter: clippy
+  - mechanism: lint
+    linter: eslint
+  - mechanism: svelte-check
+  - mechanism: cargo-test
+  - mechanism: vitest
+  - mechanism: tsc
 relationships:
   - target: AD-afc78f6e
     type: enforces

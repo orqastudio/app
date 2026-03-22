@@ -20,7 +20,7 @@ relationships:
 
 OrqaStudio has 6 validation implementations that produce different results. The app's `integrity_engine.rs` has 13 checks. The MCP server has a manual copy missing 2. The LSP has 8 file-level checks. The hook has its own JS parser. The graph visualiser computes metrics in a separate JS pipeline. The CLI depends on the app being alive.
 
-When you run `orqa validate` and get 5 errors, then open the dashboard and see 3, and then look at the graph and see 12 orphans — all from the same artifact graph — none of those numbers are trustworthy. This is an enforcement gap: the product exists to make governance reliable, and its own governance reporting is inconsistent.
+When you run `orqa enforce` and get 5 errors, then open the dashboard and see 3, and then look at the graph and see 12 orphans — all from the same artifact graph — none of those numbers are trustworthy. This is an enforcement gap: the product exists to make governance reliable, and its own governance reporting is inconsistent.
 
 ## Design
 
@@ -169,7 +169,7 @@ API: `validate()` returns checks, `auto_fix()` applies objective fixes, remainde
 
 **Enforcement integration:**
 - PreToolUse hook: block artifact creation without minimum relationships
-- Pre-commit hook: `orqa validate --fix` auto-heals, fails on remaining errors
+- Pre-commit hook: `orqa enforce --fix` auto-heals, fails on remaining errors
 - Dashboard: threshold alerts when metrics cross boundaries (orphan % > 5%, clusters > 3, traceability < 90%)
 
 The graph self-heals on every commit. Human review is only needed for subjective decisions.
@@ -180,7 +180,7 @@ The graph self-heals on every commit. Human review is only needed for subjective
 - [ ] App imports `libs/validation` — `integrity_engine.rs` deleted
 - [ ] MCP server imports `libs/validation` — `mcp/integrity.rs` deleted
 - [ ] LSP server imports graph-level checks from `libs/validation`
-- [ ] CLI `orqa validate` uses `libs/validation` directly (no app dependency)
+- [ ] CLI `orqa enforce` uses `libs/validation` directly (no app dependency)
 - [ ] `validate-artifact.mjs` hook delegates to MCP `graph_validate` — no JS YAML parsing
 - [ ] Graph health metrics (clusters, orphans, degree) computed server-side in `libs/validation`
 - [ ] Dashboard clarity view matches MCP `graph_validate` output exactly
@@ -190,7 +190,7 @@ The graph self-heals on every commit. Human review is only needed for subjective
 - [ ] Auto-fix resolves objective issues without human intervention
 - [ ] `auto_fix()` API handles: missing inverses, ID migrations, missing type/status fields, dedup
 - [ ] PreToolUse hook blocks artifact creation without minimum relationships
-- [ ] Pre-commit hook runs `orqa validate --fix` and fails on remaining errors
+- [ ] Pre-commit hook runs `orqa enforce --fix` and fails on remaining errors
 - [ ] Dashboard alerts when metrics cross thresholds
 - [ ] Pillar traceability metric computed and displayed
 - [ ] Health snapshots stored in SQLite with all 12+ metrics

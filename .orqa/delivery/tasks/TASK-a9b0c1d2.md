@@ -48,4 +48,4 @@ For the connector README: if it doesn't exist, create it. Document:
 1. Plugin dev docs show only `knowledge/` and `KNOW-` examples
 2. Connector README exists and explains the bridge model accurately
 3. A new plugin author following the docs would create `knowledge/` not `skills/`
-4. `orqa validate` passes on all updated documentation artifacts
+4. `orqa enforce` passes on all updated documentation artifacts

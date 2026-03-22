@@ -20,7 +20,7 @@ OrqaStudio has 6 separate validation implementations that produce different resu
 - **LSP server** — 8 file-level checks implemented independently, covering frontmatter schema and relationship existence but not graph-level properties
 - **validate-artifact.mjs hook** — its own JS YAML parser with duplicated relationship checks, no awareness of graph topology
 - **Graph visualiser** — computes cluster, orphan, degree, and PageRank metrics client-side in a separate JavaScript Cytoscape pipeline, producing numbers that don't match any server-side metric
-- **CLI `orqa validate`** — calls app integrity engine via IPC when the app is running, has no standalone path
+- **CLI `orqa enforce`** — calls app integrity engine via IPC when the app is running, has no standalone path
 
 This divergence makes it impossible to get consistent validation results across the dashboard, CLI, MCP, LSP, and hooks. When the dashboard says 3 integrity errors and the CLI says 5, neither is authoritative. When the graph visualiser shows 12 orphaned nodes and the MCP `graph_validate` shows 8, the discrepancy is invisible to the user.
 
@@ -74,7 +74,7 @@ Every consumer receives the same type. No translation layer, no format conversio
 | App | Import `libs/validation` as workspace dependency |
 | MCP server | Import `libs/validation` as workspace dependency |
 | LSP server | Import `libs/validation` as workspace dependency |
-| CLI `orqa validate` | Import `libs/validation` as workspace dependency |
+| CLI `orqa enforce` | Import `libs/validation` as workspace dependency |
 | Hook (validate-artifact.mjs) | Call MCP `graph_validate` tool — no direct Rust dependency |
 | Graph visualiser | Call MCP or direct crate import — no independent metric pipeline |
 
@@ -94,7 +94,7 @@ The hook's YAML parsing logic is replaced by delegation to `graph_validate`. No 
 - Graph health metrics (clusters, orphans, degree, PageRank) computed server-side, surfaced consistently
 - Adding a new check requires one change in one place — `libs/validation/src/checks/`
 - The MCP `graph_validate` tool becomes the stable interface for any external consumer (hooks, editors, CI)
-- `auto_fixable: true` checks can be wired to `orqa validate --fix` across all surfaces
+- `auto_fixable: true` checks can be wired to `orqa enforce --fix` across all surfaces
 
 ## Alternatives Considered
 

@@ -1,15 +1,6 @@
 {
-  "migrated": "2026-03-19T23:33:22.039Z",
+  "migrated": "2026-03-22T13:05:58.262Z",
   "mapping": {
-    "EPIC-096": "EPIC-cdb03816",
-    "TASK-595": "TASK-b9c91655",
-    "TASK-596": "TASK-9fb85edf",
-    "TASK-597": "TASK-6827dc2b",
-    "TASK-598": "TASK-945e12fa",
-    "TASK-599": "TASK-15a03760",
-    "TASK-600": "TASK-1b4f95d3",
-    "TASK-601": "TASK-52a123bd",
-    "IDEA-130": "IDEA-66d2cbeb",
-    "IDEA-131": "IDEA-c48df450"
+    "DOC-hook-execution": "DOC-hook-00ca7785"
   }
 }

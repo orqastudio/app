@@ -8,7 +8,7 @@ updated: 2026-03-20
 acceptance:
   - All orqa-plugin.json files reference knowledge/ not skills/
   - Plugin manifests use 'knowledge' type declarations where 'skill' was used
-  - orqa validate schema passes on all plugin manifests
+  - orqa enforce schema passes on all plugin manifests
   - No plugin manifest references SKILL- prefixed IDs
 relationships:
   - target: EPIC-663d52ac
@@ -35,10 +35,10 @@ For each `orqa-plugin.json` in `plugins/*/`:
 
 Also check `registry/official/` for any manifest entries referencing skills.
 
-Run `orqa validate schema` against each plugin manifest after changes.
+Run `orqa enforce schema` against each plugin manifest after changes.
 
 ## Verification
 
 1. `grep -r '"skill' plugins/` (excluding comments) returns zero matches
-2. `orqa validate schema` passes on every plugin directory
+2. `orqa enforce schema` passes on every plugin directory
 3. Plugin knowledge files are still discovered by `orqa graph` after the rename

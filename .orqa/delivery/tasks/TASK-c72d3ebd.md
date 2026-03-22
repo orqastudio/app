@@ -9,7 +9,7 @@ acceptance:
   - All 5 identified agent artifacts have a non-empty preamble field in their frontmatter
   - Each preamble accurately describes the agent's role, delegation boundary, and key constraints
   - Preambles are concise (under 200 words each) and actionable — not generic boilerplate
-  - orqa validate passes on all 5 updated agent artifacts
+  - orqa enforce passes on all 5 updated agent artifacts
   - Preamble content is consistent with the agent's existing description and acceptance criteria
 relationships:
   - target: EPIC-6967c7dc
@@ -26,7 +26,7 @@ Agent preambles are the behavioral contract between the orchestrator and the del
 
 ## How
 
-1. Run `orqa validate` or `graph_query({ type: "agent" })` to identify the 5 agents missing preambles
+1. Run `orqa enforce` or `graph_query({ type: "agent" })` to identify the 5 agents missing preambles
 2. For each agent, read its existing artifact (description, responsibilities, rules) to understand its role
 3. Write a preamble that captures:
    - The agent's role in one sentence
@@ -34,11 +34,11 @@ Agent preambles are the behavioral contract between the orchestrator and the del
    - Key rules that apply (reference by RULE-ID)
    - Output format expectations (what the agent returns)
 4. Add the preamble field to the frontmatter
-5. Run `orqa validate` to confirm compliance
+5. Run `orqa enforce` to confirm compliance
 
 ## Verification
 
-1. `orqa validate` reports zero missing-preamble violations for agent artifacts
+1. `orqa enforce` reports zero missing-preamble violations for agent artifacts
 2. All 5 updated agents have preambles under 200 words
 3. Each preamble references at least one RULE-ID relevant to the agent's domain
 4. Preamble content matches the agent's documented responsibilities

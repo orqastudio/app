@@ -40,5 +40,5 @@ Currently git setup is manual and inconsistent. Each project may or may not have
 - Hook templates should be generated from rules (same pattern as coding standards plugins)
 - The plugin should detect existing `.git/hooks/` and offer migration
 - Must work with husky/lint-staged if already installed (coexistence or migration)
-- Pre-commit hook should run `orqa validate` (or a fast subset)
+- Pre-commit hook should run `orqa enforce` (or a fast subset)
 - Commit-msg hook could enforce conventional commits or artifact ID references

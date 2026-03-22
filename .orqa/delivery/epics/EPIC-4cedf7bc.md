@@ -55,6 +55,6 @@ Two related changes that improve artifact identity and governance transparency:
 5. Integrity scanner reports missing skill docs as errors
 
 ### Verification Tooling
-1. `orqa validate` catches missing skill docs and invalid ID formats
+1. `orqa enforce` catches missing skill docs and invalid ID formats
 2. Pre-commit hook validates new artifact IDs are hex format
 3. Agent skill for creating artifacts with correct hex IDs

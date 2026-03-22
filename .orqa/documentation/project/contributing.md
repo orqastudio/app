@@ -49,7 +49,7 @@ Use the same branch name across all affected repos. The dev repo PR lists all su
 ## Quality Gate
 
 `orqa verify` must pass before any PR is mergeable:
-- `orqa validate` — artifact graph integrity
+- `orqa enforce` — artifact graph integrity
 - `orqa version check` — no version drift
 - `orqa repo license` — correct licenses per policy
 - `orqa repo readme` — banner, badges, sections present

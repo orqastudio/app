@@ -8,7 +8,7 @@ updated: 2026-03-20
 acceptance:
   - core.json artifact type entry renamed from 'skill' to 'knowledge'
   - idPrefix updated from 'SKILL' to 'KNOW'
-  - orqa validate schema passes after the change
+  - orqa enforce schema passes after the change
   - No other artifact types or schema fields are affected
 relationships:
   - target: EPIC-663d52ac
@@ -45,7 +45,7 @@ Locate the artifact type definition for `skill` in `core.json` and update:
 
 ## Verification
 
-1. `orqa validate schema` passes on `core.json`
+1. `orqa enforce schema` passes on `core.json`
 2. The `knowledge` type appears in `orqa graph` type listings
 3. No references to the old `skill` type remain in `core.json`
 4. Other tasks (Rust types, TS types, mass rename) can proceed using this as the source of truth

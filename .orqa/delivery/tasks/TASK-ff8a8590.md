@@ -12,7 +12,7 @@ acceptance:
   - For each identified item, command creates a TASK artifact in .orqa/delivery/tasks/ with status: captured and type: enforcement-escalation
   - Created tasks include the lesson/rule ID, recurrence count, and a description of what enforcement is missing
   - Command is registered as a stop hook in the connector's hooks.json so it runs automatically at session end
-  - orqa validate passes on all auto-created task artifacts
+  - orqa enforce passes on all auto-created task artifacts
   - Command is idempotent — re-running does not create duplicate tasks for already-escalated items
 relationships:
   - target: EPIC-6967c7dc
@@ -48,5 +48,5 @@ Per RULE-009 (dogfood mode enforcement priority), enforcement gaps are always CR
 2. With a seed lesson at recurrence=3 and no enforcement link, running the command creates a task artifact
 3. Re-running with the same seed does not create a duplicate task
 4. The stop hook fires at session end and outputs the escalation report
-5. `orqa validate` passes on all auto-created task artifacts
+5. `orqa enforce` passes on all auto-created task artifacts
 6. `make test-rust` passes including new unit tests for the escalation scanner logic

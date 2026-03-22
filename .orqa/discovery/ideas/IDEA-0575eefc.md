@@ -78,7 +78,7 @@ milestone/epic/task structure creation.
 
 1. **No `.orqa/` path references** — use "project governance directory" or similar
 2. **No specific artifact IDs** (AD-xxx, RULE-xxx) — reference concepts not IDs
-3. **No OrqaStudio CLI commands** (orqa validate, orqa graph) — reference generic actions
+3. **No OrqaStudio CLI commands** (orqa enforce, orqa graph) — reference generic actions
 4. **No project-specific config** (core.json, project.json) — these are app-level
 5. **CAN reference** general categories: "Discovery artifacts", "Delivery artifacts", "Governance artifacts"
 6. **CAN reference** generic types: "rules", "knowledge", "agents", "decisions", "lessons" (these are the governance vocabulary, not project-specific)
@@ -170,7 +170,7 @@ the tool's plugin — those tools are the enforcement mechanism, not the connect
 - `hook` — action validation (app: enforcement engine, connector: PreToolUse/PostToolUse)
 - `lint` — linter rule (provided by language plugin: rust, svelte, typescript)
 - `review` — code reviewer agent check
-- `tool` — CLI tool (orqa validate, orqa check — lives with CLI plugin)
+- `tool` — CLI tool (orqa enforce, orqa check — lives with CLI plugin)
 - `none` — not yet mechanically enforced (enforcement gap)
 
 | Current ID | Title | Action |
@@ -235,7 +235,7 @@ the tool's plugin — those tools are the enforcement mechanism, not the connect
 | Current ID | Title | Action | Content Status |
 |-----------|-------|--------|---------------|
 | KNOW-1d47d8d8 | Software Delivery | STAY but REWRITE | ORQASTUDIO-ONLY — references .orqa/delivery/, artifact IDs. Extract generic delivery pattern |
-| KNOW-e2354dce | Epic Completion | STAY but REWRITE | ORQASTUDIO-ONLY — references .orqa/, orqa validate. Extract generic "delivery unit completion" |
+| KNOW-e2354dce | Epic Completion | STAY but REWRITE | ORQASTUDIO-ONLY — references .orqa/, orqa enforce. Extract generic "delivery unit completion" |
 | KNOW-b453410f | Plugin Development | **MOVE → orqa-core** (framework infrastructure) | NEEDS REWRITE — remove OrqaStudio-specific paths, make generic |
 | KNOW-e1333874 | First-Party Plugin Dev | **MOVE → orqa-core** (framework infrastructure) | NEEDS REWRITE — remove orqastudio-dev/ refs |
 | KNOW-63cc1a00 | Third-Party Plugin Dev | **MOVE → orqa-core** (framework infrastructure) | NEEDS REWRITE — remove project.json specifics |
@@ -295,5 +295,5 @@ describe OrqaStudio's implementation, not portable governance methodology.
 9. [ ] Merge deduplication candidates (Artifact Link Format into Lifecycle, governance-maintenance split)
 10. [ ] Move Thinking Mode: Learning Loop to agile-governance
 11. [ ] Tighten thinking-mode-* content — remove artifact type names, use generic categories
-12. [ ] Run `orqa validate --fix` to verify graph integrity
+12. [ ] Run `orqa enforce --fix` to verify graph integrity
 13. [ ] Register orqa-core in .orqa/project.json and .claude/ symlinks
