@@ -442,6 +442,27 @@
       "path": "plugins/typescript",
       "relationships": null,
       "config": null
+    },
+    "@orqastudio/plugin-agile-governance": {
+      "installed": true,
+      "enabled": true,
+      "path": "plugins/agile-governance",
+      "relationships": null,
+      "config": null
+    },
+    "@orqastudio/plugin-systems-thinking": {
+      "installed": true,
+      "enabled": true,
+      "path": "plugins/systems-thinking",
+      "relationships": null,
+      "config": null
+    },
+    "@orqastudio/claude-code-connector": {
+      "installed": true,
+      "enabled": true,
+      "path": "connectors/claude-code",
+      "relationships": null,
+      "config": null
     }
   }
 }

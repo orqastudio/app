@@ -1,1 +1,1 @@
-../app/.orqa/process/agents/orchestrator.md
+C:/Users/Bobbi/code/orqastudio-dev/plugins/agile-governance/agents/orchestrator.md
