@@ -233,12 +233,12 @@ milestone/epic/task structure creation.
 
 | Current ID | Title | Action | Content Status |
 |-----------|-------|--------|---------------|
-| KNOW-3155cdaa | Decision Tree | STAY | Connector-specific |
-| KNOW-b1593311 | Implementer Tree | STAY | Connector-specific |
-| KNOW-08fcd847 | Reviewer Tree | STAY | Connector-specific |
+| KNOW-3155cdaa | Decision Tree | **MOVE → dev .orqa/** | Not portable — Claude Code-specific agent reasoning |
+| KNOW-b1593311 | Implementer Tree | **MOVE → dev .orqa/** | Not portable — Claude Code-specific |
+| KNOW-08fcd847 | Reviewer Tree | **MOVE → dev .orqa/** | Not portable — Claude Code-specific |
 | KNOW-e3a559c9 | Plugin Setup | **MOVE → orqa-core** (framework onboarding) | NEEDS REWRITE — make connector-agnostic |
-| KNOW-82ceb1bd | Project Inference | STAY | Connector-specific (detects project type via files) |
-| KNOW-0fd23e0b | Project Migration | STAY | Connector-specific (migrates .claude/ → .orqa/) |
+| KNOW-82ceb1bd | Project Inference | **MOVE → dev .orqa/** | Not portable — Claude Code-specific detection logic |
+| KNOW-0fd23e0b | Project Migration | **MOVE → dev .orqa/** | Not portable — Claude Code .claude/ → .orqa/ migration |
 | KNOW-e0dec720 | Project Setup | **MOVE → orqa-core** (framework onboarding) | NEEDS REWRITE — make connector-agnostic |
 | KNOW-819789ab | Project Type: Software | **MOVE → software** + add `onboarding: true` tag | Used during project onboarding to configure software delivery |
 
