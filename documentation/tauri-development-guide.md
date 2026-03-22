@@ -1,14 +1,14 @@
 ---
-id: DOC-TAU-d9c0d1c7
+id: DOC-d9c0d1c7
 title: Tauri Development Guide
 description: How to develop with Rust and Tauri v2 in OrqaStudio projects — IPC patterns, error handling, testing, and coding standards.
 category: how-to
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
-  - target: KNOW-TAU-de97219c
+  - target: KNOW-de97219c
     type: synchronised-with
-  - target: KNOW-TAU-6f7f4da5
+  - target: KNOW-6f7f4da5
     type: synchronised-with
   - target: KNOW-a5434b61
     type: synchronised-with

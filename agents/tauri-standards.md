@@ -1,5 +1,5 @@
 ---
-id: "AGENT-TAU-1ed9512e"
+id: "AGENT-1ed9512e"
 title: "Tauri Standards Agent"
 description: "Scoped task agent for Tauri v2 patterns and configuration. Extends the Rust Standards Agent with Tauri-specific knowledge."
 preamble: "Execute Tauri v2 standards checks in assess or configure mode. Return structured JSON output. Do not converse — execute and return."
@@ -13,7 +13,7 @@ capabilities:
   - "content_search"
   - "shell_execute"
 relationships:
-  - target: "KNOW-TAU-de97219c"
+  - target: "KNOW-de97219c"
     type: "employs"
   - target: "PILLAR-569581e0"
     type: "serves"

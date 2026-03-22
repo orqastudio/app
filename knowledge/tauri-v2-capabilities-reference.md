@@ -6,7 +6,7 @@ status: active
 created: 2026-03-20
 updated: 2026-03-20
 relationships:
-  - target: DOC-TAU-d9c0d1c7
+  - target: DOC-d9c0d1c7
     type: synchronised-with
 ---
 

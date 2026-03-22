@@ -1,13 +1,13 @@
 ---
-id: KNOW-TAU-de97219c
+id: KNOW-de97219c
 type: knowledge
 name: Tauri v2 Patterns
 status: active
 plugin: "@orqastudio/plugin-tauri"
 relationships:
-  - target: DOC-TAU-d9c0d1c7
+  - target: DOC-d9c0d1c7
     type: synchronised-with
-  - target: AGENT-TAU-1ed9512e
+  - target: AGENT-1ed9512e
     type: employed-by
 ---
 

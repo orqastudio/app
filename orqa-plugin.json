@@ -7,8 +7,8 @@
   "category": "tooling",
   "provides": {
     "knowledge": [
-      { "key": "tauri-patterns", "id": "KNOW-TAU-de97219c", "label": "Tauri v2 Patterns" },
-      { "key": "tauri-installation", "id": "KNOW-TAU-6f7f4da5", "label": "Tauri Plugin Installation" },
+      { "key": "tauri-patterns", "id": "KNOW-de97219c", "label": "Tauri v2 Patterns" },
+      { "key": "tauri-installation", "id": "KNOW-6f7f4da5", "label": "Tauri Plugin Installation" },
       { "key": "tauri-v2", "id": "KNOW-45b6ea05", "label": "Tauri v2 Development" },
       { "key": "tauri-v2-capabilities-reference", "id": "KNOW-a5434b61", "label": "Tauri v2 Capabilities Reference" },
       { "key": "tauri-v2-ipc-patterns", "id": "KNOW-2539a6e4", "label": "Tauri v2 IPC Patterns Reference" }

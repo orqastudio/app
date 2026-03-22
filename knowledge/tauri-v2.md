@@ -8,9 +8,9 @@ updated: 2026-03-10
 category: domain
 user-invocable: false
 relationships:
-  - target: DOC-TAU-d9c0d1c7
+  - target: DOC-d9c0d1c7
     type: synchronised-with
-  - target: AGENT-RST-spec-a3f7d2b1
+  - target: AGENT-e1e47559
     type: employed-by
 ---
 > Build cross-platform desktop and mobile apps with web frontends and Rust backends.

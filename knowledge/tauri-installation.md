@@ -1,13 +1,13 @@
 ---
-id: KNOW-TAU-6f7f4da5
+id: KNOW-6f7f4da5
 type: knowledge
 name: Tauri Plugin Installation
 status: active
 plugin: "@orqastudio/plugin-tauri"
 relationships:
-  - target: DOC-TAU-d0237b23
+  - target: DOC-d0237b23
     type: synchronised-with
-  - target: DOC-TAU-d9c0d1c7
+  - target: DOC-d9c0d1c7
     type: synchronised-with
 
 ---
