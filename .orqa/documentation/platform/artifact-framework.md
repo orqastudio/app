@@ -429,7 +429,7 @@ All artifact IDs use their type prefix followed by a zero-padded number that aut
 
 | Type | Pattern | Examples |
 |------|---------|----------|
-| Vision | `VISION-NNN` | VISION-001 |
+| Vision | `VISION-NNN` | VISION-7781f555 |
 | Pillar | `PILLAR-NNN` | PILLAR-569581e0, PILLAR-cdf756ff |
 | Persona | `PERSONA-NNN` | PERSONA-cda6edd6 |
 | Idea | `IDEA-NNN` | IDEA-7035530f, IDEA-14f3874c |

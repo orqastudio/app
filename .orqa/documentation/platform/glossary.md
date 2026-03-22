@@ -329,7 +329,7 @@ The merged constraint set used by the integrity engine. Combines platform relati
 
 ## Related Documents
 
-- [VISION-001](VISION-001) — Product vision and mission
+- [VISION-7781f555](VISION-7781f555) — Product vision and mission
 - Artifact Framework (DOC-01ddd8aa) — Comprehensive artifact type and relationship reference
 - Enforcement Architecture (DOC-4db3a417) — Five-layer enforcement system
 - Status & Workflow (DOC-94224b27) — Unified 12-status vocabulary

@@ -12,7 +12,7 @@ gate:
   - "Does it accumulate knowledge across sessions so each cycle starts from a better position?"
   - "Are discovered enforcement gaps acted on immediately, not deferred?"
 relationships:
-  - target: "VISION-001"
+  - target: "VISION-7781f555"
     type: "upholds"
   - target: "IDEA-3ff06133"
     type: "grounded-by"

@@ -12,7 +12,7 @@ gate:
   - "Does this reduce the user's cognitive burden rather than adding to it?"
   - "Is the gap between declared intent and actual enforcement visible and shrinking?"
 relationships:
-  - target: "VISION-001"
+  - target: "VISION-7781f555"
     type: "upholds"
   - target: "IDEA-7035530f"
     type: "grounded-by"
