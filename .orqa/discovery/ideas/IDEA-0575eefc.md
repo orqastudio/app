@@ -233,14 +233,14 @@ milestone/epic/task structure creation.
 
 | Current ID | Title | Action | Content Status |
 |-----------|-------|--------|---------------|
-| KNOW-3155cdaa | Decision Tree | **MOVE → dev .orqa/** | Not portable — Claude Code-specific agent reasoning |
-| KNOW-b1593311 | Implementer Tree | **MOVE → dev .orqa/** | Not portable — Claude Code-specific |
-| KNOW-08fcd847 | Reviewer Tree | **MOVE → dev .orqa/** | Not portable — Claude Code-specific |
-| KNOW-e3a559c9 | Plugin Setup | **MOVE → orqa-core** (framework onboarding) | NEEDS REWRITE — make connector-agnostic |
-| KNOW-82ceb1bd | Project Inference | **MOVE → dev .orqa/** | Not portable — Claude Code-specific detection logic |
-| KNOW-0fd23e0b | Project Migration | **MOVE → dev .orqa/** | Not portable — Claude Code .claude/ → .orqa/ migration |
-| KNOW-e0dec720 | Project Setup | **MOVE → orqa-core** (framework onboarding) | NEEDS REWRITE — make connector-agnostic |
-| KNOW-819789ab | Project Type: Software | **MOVE → software** + add `onboarding: true` tag | Used during project onboarding to configure software delivery |
+| KNOW-3155cdaa | Decision Tree | **SPLIT** → generic "Agent Decision Methodology" in orqa-core + Claude Code-specific tree in dev .orqa/ | Extract reasoning pattern; keep CC tool names/mappings project-level |
+| KNOW-b1593311 | Implementer Tree | **SPLIT** → generic "Implementer Reasoning" in orqa-core + CC-specific tree in dev .orqa/ | Same split pattern |
+| KNOW-08fcd847 | Reviewer Tree | **SPLIT** → generic "Reviewer Reasoning" in orqa-core + CC-specific tree in dev .orqa/ | Same split pattern |
+| KNOW-e3a559c9 | Plugin Setup | **MOVE → orqa-core** + add `onboarding: true` | NEEDS REWRITE — make connector-agnostic |
+| KNOW-82ceb1bd | Project Inference | **SPLIT** → generic "Project Type Detection" in orqa-core (`onboarding: true`) + CC-specific inference rules in dev .orqa/ | Generic: file signature → project type. Specific: .claude/ detection |
+| KNOW-0fd23e0b | Project Migration | **SPLIT** → generic "Governance Migration Methodology" in orqa-core + CC-specific .claude/ → .orqa/ steps in dev .orqa/ | Generic: format migration methodology. Specific: Claude Code paths |
+| KNOW-e0dec720 | Project Setup | **MOVE → orqa-core** + add `onboarding: true` | NEEDS REWRITE — make connector-agnostic |
+| KNOW-819789ab | Project Type: Software | **MOVE → software** + add `onboarding: true` | Used during project onboarding to configure software delivery |
 
 ### Knowledge — dev environment (.orqa/process/knowledge/) — 16 project-specific
 
