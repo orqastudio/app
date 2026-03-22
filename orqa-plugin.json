@@ -33,7 +33,13 @@
           "review": [
             "active"
           ],
-          "archived": []
+          "archived": [],
+          "surpassed": [
+            "archived"
+          ],
+          "captured": [
+            "active"
+          ]
         },
         "influence": "high"
       },
@@ -64,7 +70,10 @@
           "review": [
             "active"
           ],
-          "archived": []
+          "archived": [],
+          "surpassed": [
+            "archived"
+          ]
         },
         "influence": "high"
       },
@@ -94,7 +103,10 @@
           "review": [
             "active"
           ],
-          "archived": []
+          "archived": [],
+          "surpassed": [
+            "archived"
+          ]
         }
       },
       {
@@ -147,7 +159,11 @@
           "completed": [
             "surpassed",
             "archived"
-          ]
+          ],
+          "surpassed": [
+            "archived"
+          ],
+          "archived": []
         }
       },
       {
@@ -194,7 +210,10 @@
             "surpassed",
             "archived"
           ],
-          "archived": []
+          "archived": [],
+          "surpassed": [
+            "archived"
+          ]
         },
         "influence": "high"
       },
@@ -243,7 +262,10 @@
             "surpassed",
             "archived"
           ],
-          "archived": []
+          "archived": [],
+          "surpassed": [
+            "archived"
+          ]
         },
         "influence": "high"
       },
@@ -277,14 +299,28 @@
           ],
           "active": [
             "completed",
-            "recurring"
+            "recurring",
+            "review",
+            "promoted"
           ],
           "recurring": [
             "active",
             "completed"
           ],
           "completed": [
+            "archived",
+            "surpassed"
+          ],
+          "surpassed": [
             "archived"
+          ],
+          "archived": [],
+          "promoted": [
+            "archived"
+          ],
+          "review": [
+            "completed",
+            "active"
           ]
         }
       },
@@ -332,7 +368,10 @@
             "surpassed",
             "archived"
           ],
-          "archived": []
+          "archived": [],
+          "surpassed": [
+            "archived"
+          ]
         }
       },
       {
@@ -383,7 +422,10 @@
             "surpassed",
             "archived"
           ],
-          "archived": []
+          "archived": [],
+          "surpassed": [
+            "archived"
+          ]
         }
       },
       {
@@ -430,7 +472,10 @@
             "surpassed",
             "archived"
           ],
-          "archived": []
+          "archived": [],
+          "surpassed": [
+            "archived"
+          ]
         }
       },
       {
@@ -464,8 +509,13 @@
             "completed"
           ],
           "completed": [
+            "archived",
+            "surpassed"
+          ],
+          "surpassed": [
             "archived"
-          ]
+          ],
+          "archived": []
         }
       }
     ],
