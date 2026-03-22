@@ -4,7 +4,7 @@ use std::collections::{HashMap, HashSet};
 
 use serde::{Deserialize, Serialize};
 
-use crate::platform::ArtifactTypeDef;
+use crate::platform::{ArtifactTypeDef, EnforcementMechanism, SchemaExtension};
 use crate::settings::DeliveryConfig;
 
 // ---------------------------------------------------------------------------
@@ -80,6 +80,10 @@ pub struct ValidationContext {
     /// Artifact type definitions contributed by plugins (frontmatter requirements,
     /// status transitions, id prefixes). Used by schema-violation checks.
     pub artifact_types: Vec<ArtifactTypeDef>,
+    /// Schema extensions from plugins that extend other types' frontmatter schemas.
+    pub schema_extensions: Vec<SchemaExtension>,
+    /// Enforcement mechanisms registered by installed plugins.
+    pub enforcement_mechanisms: Vec<EnforcementMechanism>,
 }
 
 // ---------------------------------------------------------------------------
@@ -150,6 +154,63 @@ pub struct AppliedFix {
     pub artifact_id: String,
     pub description: String,
     pub file_path: String,
+}
+
+// ---------------------------------------------------------------------------
+// Enforcement event types
+// ---------------------------------------------------------------------------
+
+/// Result of an enforcement check.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum EnforcementResult {
+    /// No violation found.
+    Pass,
+    /// Violation detected, enforcement triggered.
+    Fail,
+    /// Potential issue, not blocking.
+    Warn,
+    /// Enforcement check itself failed.
+    Error,
+}
+
+/// Known ONNX inference check types for the `onnx` enforcement mechanism.
+///
+/// Rules declare these in their enforcement entries:
+/// ```yaml
+/// enforcement:
+///   - mechanism: onnx
+///     check: lesson-recurrence
+///     threshold: 0.85
+///     action: warn
+/// ```
+pub const ONNX_CHECK_TYPES: &[&str] = &[
+    "lesson-recurrence",
+    "duplicate-detection",
+    "compliance-check",
+    "quality-signal",
+];
+
+/// A single enforcement event produced by a validation check.
+///
+/// Every enforcement check — regardless of source — produces one event
+/// per check per artifact. These are serialised to the centralised
+/// enforcement log (`tmp/enforcement-log.jsonl`).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EnforcementEvent {
+    /// Mechanism key that produced this event.
+    pub mechanism: String,
+    /// Check type within the mechanism (e.g. "frontmatter", "PreToolUse").
+    #[serde(rename = "type")]
+    pub check_type: String,
+    /// Rule ID that triggered this enforcement, if applicable.
+    pub rule_id: Option<String>,
+    /// Artifact ID being checked, if applicable.
+    pub artifact_id: Option<String>,
+    /// Check result.
+    pub result: EnforcementResult,
+    /// Human-readable message describing the finding.
+    pub message: String,
 }
 
 // ---------------------------------------------------------------------------

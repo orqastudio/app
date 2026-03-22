@@ -46,8 +46,9 @@ pub use metrics::{
     AncestryChain, AncestryNode, TraceabilityResult, TracedArtifact,
 };
 pub use types::{
-    AppliedFix, GraphHealth, IntegrityCategory, IntegrityCheck, IntegritySeverity,
-    RelationshipConstraints, RelationshipSchema, StatusRule, ValidationContext,
+    AppliedFix, EnforcementEvent, EnforcementResult, GraphHealth, IntegrityCategory,
+    IntegrityCheck, IntegritySeverity, RelationshipConstraints, RelationshipSchema, StatusRule,
+    ValidationContext,
 };
 
 /// Run all integrity checks on the artifact graph.

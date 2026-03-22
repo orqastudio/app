@@ -5,8 +5,11 @@
 
 pub mod body_refs;
 pub mod cardinality;
+pub mod conflicts;
 pub mod cycles;
 pub mod delivery;
+pub mod enforcement;
+pub mod schema;
 pub mod status;
 pub mod structural;
 
@@ -34,8 +37,21 @@ pub fn run_all(graph: &ArtifactGraph, ctx: &ValidationContext) -> Vec<IntegrityC
     body_refs::check_body_text_refs_without_relationships(graph, &mut checks);
 
     if !ctx.artifact_types.is_empty() {
-        structural::check_frontmatter_requirements(graph, &ctx.artifact_types, &mut checks);
+        schema::check_frontmatter_schemas_with_extensions(
+            graph,
+            &ctx.artifact_types,
+            &ctx.schema_extensions,
+            &mut checks,
+        );
         structural::check_status_transitions(graph, &ctx.artifact_types, &mut checks);
+    }
+
+    if !ctx.enforcement_mechanisms.is_empty() {
+        enforcement::check_enforcement_mechanisms(
+            graph,
+            &ctx.enforcement_mechanisms,
+            &mut checks,
+        );
     }
 
     if !ctx.valid_statuses.is_empty() {

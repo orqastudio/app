@@ -66,40 +66,60 @@ pub struct SemanticDef {
     pub keys: Vec<String>,
 }
 
-/// Frontmatter field requirements for an artifact type, as declared in a plugin manifest.
-#[derive(Debug, Clone, Deserialize, Default)]
-pub struct FrontmatterSchema {
-    /// Fields that must be present in every artifact of this type.
+/// An enforcement mechanism provided by a plugin.
+///
+/// Rules reference mechanisms by key in their `enforcement` entries.
+/// The validator checks that every referenced mechanism is registered.
+#[derive(Debug, Clone, Deserialize)]
+pub struct EnforcementMechanism {
+    /// Unique mechanism key (e.g. "behavioral", "pre-commit", "eslint").
+    pub key: String,
+    /// Human-readable description.
     #[serde(default)]
-    pub required: Vec<String>,
-    /// Fields that are allowed but not required.
+    pub description: String,
+    /// Strength level (1-10). Higher = stronger enforcement.
     #[serde(default)]
-    pub optional: Vec<String>,
+    pub strength: u8,
 }
 
 /// An artifact type definition, contributed by a plugin manifest.
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone)]
 pub struct ArtifactTypeDef {
     pub key: String,
     pub label: String,
     pub icon: String,
-    #[serde(rename = "idPrefix")]
     pub id_prefix: String,
-    /// Frontmatter fields that are required for this artifact type.
-    #[serde(default)]
-    pub frontmatter_required: Vec<String>,
-    /// Frontmatter fields that are optional for this artifact type.
-    #[serde(default)]
-    pub frontmatter_optional: Vec<String>,
+    /// JSON Schema (draft 2020-12) for frontmatter validation.
+    /// Stored as the raw JSON value from the plugin manifest's `frontmatter` field.
+    /// The schema builder enriches this with auto-derived `id` and `status` properties.
+    pub frontmatter_schema: serde_json::Value,
     /// Valid status transitions: maps each status key to the statuses it may transition to.
-    #[serde(default)]
     pub status_transitions: HashMap<String, Vec<String>>,
 }
 
-/// The full platform config parsed from core.json.
-#[derive(Debug, Clone, Deserialize)]
+impl ArtifactTypeDef {
+    /// Extract the `required` field names from the frontmatter JSON Schema.
+    /// Returns an empty vec if no `required` array is present.
+    pub fn frontmatter_required(&self) -> Vec<String> {
+        self.frontmatter_schema
+            .get("required")
+            .and_then(serde_json::Value::as_array)
+            .map(|arr| {
+                arr.iter()
+                    .filter_map(serde_json::Value::as_str)
+                    .map(String::from)
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
+}
+
+/// The full platform config.
+///
+/// Plugins are the source of truth — artifact types come from plugin manifests,
+/// not from deserialization. This struct is constructed manually.
+#[derive(Debug, Clone)]
 pub struct PlatformConfig {
-    #[serde(rename = "artifactTypes")]
     pub artifact_types: Vec<ArtifactTypeDef>,
     pub relationships: Vec<RelationshipDef>,
     pub semantics: HashMap<String, SemanticDef>,
@@ -132,12 +152,26 @@ struct PluginProvidesSchema {
     pub label: String,
     #[serde(default)]
     pub icon: String,
-    /// Optional frontmatter requirements declared in the plugin manifest.
+    /// JSON Schema for frontmatter validation (raw JSON value).
     #[serde(default)]
-    pub frontmatter: Option<FrontmatterSchema>,
+    pub frontmatter: serde_json::Value,
     /// Optional status transition map declared in the plugin manifest.
     #[serde(default, rename = "statusTransitions")]
     pub status_transitions: Option<HashMap<String, Vec<String>>>,
+    /// When set, this schema extends another type's schema via allOf composition.
+    /// The value is the key of the base schema to extend.
+    #[serde(default)]
+    pub extends: Option<String>,
+}
+
+/// A schema extension collected during plugin scanning.
+/// Applied to the base type's schema via allOf composition.
+#[derive(Debug, Clone)]
+pub struct SchemaExtension {
+    /// The artifact type key being extended.
+    pub target_key: String,
+    /// Additional JSON Schema to compose via allOf.
+    pub frontmatter_schema: serde_json::Value,
 }
 
 /// Minimal subset of a plugin manifest's `provides.relationships` entry.
@@ -164,6 +198,8 @@ struct PluginProvides {
     pub schemas: Vec<PluginProvidesSchema>,
     #[serde(default)]
     pub relationships: Vec<PluginProvidesRelationship>,
+    #[serde(default)]
+    pub enforcement_mechanisms: Vec<EnforcementMechanism>,
 }
 
 /// A minimal plugin manifest — only the `provides` block is needed.
@@ -181,6 +217,10 @@ pub struct PluginContributions {
     /// Additional (or extended) relationships contributed by plugins, in the
     /// canonical `RelationshipSchema` form accepted by `build_validation_context`.
     pub relationships: Vec<RelationshipSchema>,
+    /// Schema extensions: plugins that extend another type's frontmatter schema.
+    pub schema_extensions: Vec<SchemaExtension>,
+    /// Enforcement mechanisms registered by plugins.
+    pub enforcement_mechanisms: Vec<EnforcementMechanism>,
 }
 
 /// Scan `plugins/*/orqa-plugin.json` and `connectors/*/orqa-plugin.json` under
@@ -230,20 +270,36 @@ pub fn scan_plugin_manifests(project_root: &Path) -> PluginContributions {
             };
 
             for schema in manifest.provides.schemas {
-                let (frontmatter_required, frontmatter_optional) = schema
-                    .frontmatter
-                    .map(|f| (f.required, f.optional))
-                    .unwrap_or_default();
-                contributions.artifact_types.push(ArtifactTypeDef {
-                    key: schema.key,
-                    label: schema.label,
-                    icon: schema.icon,
-                    id_prefix: schema.id_prefix,
-                    frontmatter_required,
-                    frontmatter_optional,
-                    status_transitions: schema.status_transitions.unwrap_or_default(),
-                });
+                // If frontmatter is null/missing, use an empty object schema.
+                let frontmatter_schema = if schema.frontmatter.is_null() {
+                    serde_json::json!({ "type": "object", "additionalProperties": true })
+                } else {
+                    schema.frontmatter.clone()
+                };
+
+                if let Some(target_key) = schema.extends {
+                    // This is a schema extension — collect it for later composition.
+                    contributions.schema_extensions.push(SchemaExtension {
+                        target_key,
+                        frontmatter_schema,
+                    });
+                } else {
+                    // This is a base schema definition.
+                    contributions.artifact_types.push(ArtifactTypeDef {
+                        key: schema.key,
+                        label: schema.label,
+                        icon: schema.icon,
+                        id_prefix: schema.id_prefix,
+                        frontmatter_schema,
+                        status_transitions: schema.status_transitions.unwrap_or_default(),
+                    });
+                }
             }
+
+            // Collect enforcement mechanisms.
+            contributions
+                .enforcement_mechanisms
+                .extend(manifest.provides.enforcement_mechanisms);
 
             for rel in manifest.provides.relationships {
                 let constraints = rel.constraints.map(|c| RelationshipConstraints {

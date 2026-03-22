@@ -2,7 +2,7 @@
 
 use std::collections::{HashMap, HashSet};
 
-use crate::platform::{ArtifactTypeDef, PLATFORM};
+use crate::platform::{ArtifactTypeDef, EnforcementMechanism, SchemaExtension, PLATFORM};
 use crate::settings::{DeliveryConfig, ProjectRelationshipConfig};
 use crate::types::{RelationshipConstraints, RelationshipSchema, StatusRule, ValidationContext};
 
@@ -27,13 +27,55 @@ pub fn build_validation_context(
     )
 }
 
-/// Build a `ValidationContext` with full plugin contributions including artifact types.
+/// Build a `ValidationContext` with full plugin contributions including artifact types
+/// and schema extensions.
 pub fn build_validation_context_with_types(
     valid_statuses: &[String],
     delivery: &DeliveryConfig,
     project_relationships: &[ProjectRelationshipConfig],
     plugin_relationships: &[RelationshipSchema],
     plugin_artifact_types: &[ArtifactTypeDef],
+) -> ValidationContext {
+    build_validation_context_full(
+        valid_statuses,
+        delivery,
+        project_relationships,
+        plugin_relationships,
+        plugin_artifact_types,
+        &[],
+    )
+}
+
+/// Build a `ValidationContext` with all plugin contributions including schema extensions
+/// and enforcement mechanisms.
+pub fn build_validation_context_full(
+    valid_statuses: &[String],
+    delivery: &DeliveryConfig,
+    project_relationships: &[ProjectRelationshipConfig],
+    plugin_relationships: &[RelationshipSchema],
+    plugin_artifact_types: &[ArtifactTypeDef],
+    plugin_schema_extensions: &[SchemaExtension],
+) -> ValidationContext {
+    build_validation_context_complete(
+        valid_statuses,
+        delivery,
+        project_relationships,
+        plugin_relationships,
+        plugin_artifact_types,
+        plugin_schema_extensions,
+        &[],
+    )
+}
+
+/// Build a `ValidationContext` with all plugin contributions.
+pub fn build_validation_context_complete(
+    valid_statuses: &[String],
+    delivery: &DeliveryConfig,
+    project_relationships: &[ProjectRelationshipConfig],
+    plugin_relationships: &[RelationshipSchema],
+    plugin_artifact_types: &[ArtifactTypeDef],
+    plugin_schema_extensions: &[SchemaExtension],
+    plugin_enforcement_mechanisms: &[EnforcementMechanism],
 ) -> ValidationContext {
     let (mut relationships, mut inverse_map) =
         collect_platform_and_plugin_relationships(plugin_relationships);
@@ -47,6 +89,8 @@ pub fn build_validation_context_with_types(
         delivery: delivery.clone(),
         dependency_keys,
         artifact_types: plugin_artifact_types.to_vec(),
+        schema_extensions: plugin_schema_extensions.to_vec(),
+        enforcement_mechanisms: plugin_enforcement_mechanisms.to_vec(),
     }
 }
 

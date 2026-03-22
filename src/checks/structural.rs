@@ -208,7 +208,7 @@ pub fn check_missing_type_field(graph: &ArtifactGraph, checks: &mut Vec<Integrit
 
 /// Check that every artifact has a `status:` field in its frontmatter.
 ///
-/// Uses plugin-provided artifact type schemas: if a type's frontmatter_required
+/// Uses plugin-provided artifact type schemas: if a type's JSON Schema `required`
 /// includes "status", then artifacts of that type must have it. Types without
 /// "status" in their required fields are automatically excluded.
 pub fn check_missing_status_field(
@@ -219,7 +219,7 @@ pub fn check_missing_status_field(
     // Build set of types that require status from their schema
     let types_requiring_status: std::collections::HashSet<&str> = artifact_types
         .iter()
-        .filter(|t| t.frontmatter_required.contains(&"status".to_string()))
+        .filter(|t| t.frontmatter_required().contains(&"status".to_string()))
         .map(|t| t.key.as_str())
         .collect();
 
@@ -368,7 +368,8 @@ pub fn check_frontmatter_requirements(
             continue;
         };
 
-        if type_def.frontmatter_required.is_empty() {
+        let required = type_def.frontmatter_required();
+        if required.is_empty() {
             continue;
         }
 
@@ -379,7 +380,7 @@ pub fn check_frontmatter_requirements(
             .map(|obj| obj.keys().map(String::as_str).collect())
             .unwrap_or_default();
 
-        for required_field in &type_def.frontmatter_required {
+        for required_field in &required {
             if !present_keys.contains(required_field.as_str()) {
                 checks.push(IntegrityCheck {
                     category: IntegrityCategory::SchemaViolation,

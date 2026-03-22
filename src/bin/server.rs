@@ -35,11 +35,13 @@ use std::path::PathBuf;
 use std::process;
 
 use orqa_validation::{
-    auto_fix, build_validation_context_with_types, compute_health,
+    auto_fix, compute_health,
+    context::build_validation_context_complete,
     graph::{build_artifact_graph, load_project_config},
     platform::scan_plugin_manifests,
-    types::IntegritySeverity,
-    validate, AppliedFix, GraphHealth, IntegrityCheck, ValidationError,
+    types::{IntegrityCategory, IntegritySeverity},
+    validate, AppliedFix, EnforcementEvent, EnforcementResult, GraphHealth, IntegrityCheck,
+    ValidationError,
 };
 use serde::Serialize;
 
@@ -53,6 +55,8 @@ struct Report {
     health: GraphHealth,
     #[serde(skip_serializing_if = "Option::is_none")]
     fixes_applied: Option<Vec<AppliedFix>>,
+    /// Enforcement events generated from schema and enforcement checks.
+    enforcement_events: Vec<EnforcementEvent>,
 }
 
 // ---------------------------------------------------------------------------
@@ -114,12 +118,14 @@ fn run(project_path: &std::path::Path, apply_fixes_flag: bool) -> Result<Report,
     let (valid_statuses, delivery, project_relationships) = load_project_config(project_path);
     let plugin_contributions = scan_plugin_manifests(project_path);
 
-    let ctx = build_validation_context_with_types(
+    let ctx = build_validation_context_complete(
         &valid_statuses,
         &delivery,
         &project_relationships,
         &plugin_contributions.relationships,
         &plugin_contributions.artifact_types,
+        &plugin_contributions.schema_extensions,
+        &plugin_contributions.enforcement_mechanisms,
     );
 
     // Run integrity checks.
@@ -135,9 +141,39 @@ fn run(project_path: &std::path::Path, apply_fixes_flag: bool) -> Result<Report,
         None
     };
 
+    // Generate enforcement events from schema/enforcement checks.
+    let enforcement_events = checks_to_enforcement_events(&checks);
+
     Ok(Report {
         checks,
         health,
         fixes_applied,
+        enforcement_events,
     })
+}
+
+/// Convert integrity checks to enforcement events for the centralised log.
+///
+/// Only `SchemaViolation` findings are converted — they represent enforcement
+/// actions. Other integrity categories are structural issues, not enforcement.
+fn checks_to_enforcement_events(checks: &[IntegrityCheck]) -> Vec<EnforcementEvent> {
+    checks
+        .iter()
+        .filter(|c| matches!(c.category, IntegrityCategory::SchemaViolation))
+        .map(|c| {
+            let result = match c.severity {
+                IntegritySeverity::Error => EnforcementResult::Fail,
+                IntegritySeverity::Warning => EnforcementResult::Warn,
+                IntegritySeverity::Info => EnforcementResult::Pass,
+            };
+            EnforcementEvent {
+                mechanism: "json-schema".to_owned(),
+                check_type: "frontmatter".to_owned(),
+                rule_id: None,
+                artifact_id: Some(c.artifact_id.clone()),
+                result,
+                message: c.message.clone(),
+            }
+        })
+        .collect()
 }
