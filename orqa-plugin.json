@@ -4,6 +4,7 @@
   "displayName": "Software Project",
   "description": "Software development lifecycle — delivery planning with milestones, epics and tasks, research discovery, bug tracking, roadmap views, and delivery pipeline widgets.",
   "category": "delivery",
+  "role": "core:delivery",
   "provides": {
     "schemas": [
       {
