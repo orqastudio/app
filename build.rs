@@ -534,5 +534,6 @@ fn to_pascal_case(s: &str) -> String {
         .collect()
 }
 
-// Keep the include_str! to verify schema files exist at build time.
-const _GRAPH_SCHEMA: &str = include_str!("../types/src/platform/graph.schema.json");
+// Note: the include_str! that previously verified graph.schema.json at compile time
+// has been removed. Plugins are now the source of truth for schemas; the
+// libs/types/src/platform/ directory no longer exists.

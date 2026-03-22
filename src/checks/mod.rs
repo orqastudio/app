@@ -33,6 +33,11 @@ pub fn run_all(graph: &ArtifactGraph, ctx: &ValidationContext) -> Vec<IntegrityC
     cycles::check_circular_dependencies(graph, ctx, &mut checks);
     body_refs::check_body_text_refs_without_relationships(graph, &mut checks);
 
+    if !ctx.artifact_types.is_empty() {
+        structural::check_frontmatter_requirements(graph, &ctx.artifact_types, &mut checks);
+        structural::check_status_transitions(graph, &ctx.artifact_types, &mut checks);
+    }
+
     if !ctx.valid_statuses.is_empty() {
         status::check_valid_statuses(graph, ctx, &mut checks);
         status::check_parent_child_consistency(graph, ctx, &mut checks);

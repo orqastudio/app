@@ -3,6 +3,7 @@
 use std::collections::HashMap;
 
 use crate::graph::{ArtifactGraph, ArtifactNode, ArtifactRef};
+use crate::platform::ArtifactTypeDef;
 use crate::types::{
     IntegrityCategory, IntegrityCheck, IntegritySeverity, RelationshipSchema, ValidationContext,
 };
@@ -335,6 +336,96 @@ pub fn check_required_relationships(
                     )),
                 });
             }
+        }
+    }
+}
+
+/// Check that artifact frontmatter contains all required fields for its type.
+///
+/// Required fields are declared in the plugin manifest's `provides.schemas[].frontmatter.required`
+/// array. Only artifact types that declare requirements are checked; types with no schema
+/// declaration (e.g. docs) are skipped silently.
+pub fn check_frontmatter_requirements(
+    graph: &ArtifactGraph,
+    artifact_types: &[ArtifactTypeDef],
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    let type_map: HashMap<&str, &ArtifactTypeDef> =
+        artifact_types.iter().map(|t| (t.key.as_str(), t)).collect();
+
+    for node in graph.nodes.values() {
+        let Some(type_def) = type_map.get(node.artifact_type.as_str()) else {
+            continue;
+        };
+
+        if type_def.frontmatter_required.is_empty() {
+            continue;
+        }
+
+        // Derive the set of present frontmatter keys from the stored JSON value.
+        let present_keys: std::collections::HashSet<&str> = node
+            .frontmatter
+            .as_object()
+            .map(|obj| obj.keys().map(String::as_str).collect())
+            .unwrap_or_default();
+
+        for required_field in &type_def.frontmatter_required {
+            if !present_keys.contains(required_field.as_str()) {
+                checks.push(IntegrityCheck {
+                    category: IntegrityCategory::SchemaViolation,
+                    severity: IntegritySeverity::Error,
+                    artifact_id: node.id.clone(),
+                    message: format!(
+                        "Missing required frontmatter field '{}' for type '{}'",
+                        required_field, node.artifact_type
+                    ),
+                    auto_fixable: false,
+                    fix_description: None,
+                });
+            }
+        }
+    }
+}
+
+/// Check that artifact status values are valid per the type's declared status transitions.
+///
+/// Status transitions are declared in the plugin manifest's
+/// `provides.schemas[].statusTransitions` map. Only types that declare a transitions
+/// map are validated; types with no declared transitions are skipped. An artifact whose
+/// current status is not a key in the map is flagged as a warning.
+pub fn check_status_transitions(
+    graph: &ArtifactGraph,
+    artifact_types: &[ArtifactTypeDef],
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    let type_map: HashMap<&str, &ArtifactTypeDef> =
+        artifact_types.iter().map(|t| (t.key.as_str(), t)).collect();
+
+    for node in graph.nodes.values() {
+        let Some(type_def) = type_map.get(node.artifact_type.as_str()) else {
+            continue;
+        };
+
+        if type_def.status_transitions.is_empty() {
+            continue;
+        }
+
+        let Some(status) = &node.status else {
+            continue;
+        };
+
+        if !type_def.status_transitions.contains_key(status.as_str()) {
+            checks.push(IntegrityCheck {
+                category: IntegrityCategory::SchemaViolation,
+                severity: IntegritySeverity::Warning,
+                artifact_id: node.id.clone(),
+                message: format!(
+                    "Status '{}' is not defined in schema transitions for type '{}'",
+                    status, node.artifact_type
+                ),
+                auto_fixable: false,
+                fix_description: None,
+            });
         }
     }
 }

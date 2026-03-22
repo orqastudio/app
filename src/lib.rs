@@ -36,7 +36,7 @@ pub mod settings;
 pub mod types;
 
 pub use auto_fix::{apply_fixes, update_artifact_field};
-pub use context::build_validation_context;
+pub use context::{build_validation_context, build_validation_context_with_types};
 pub use error::ValidationError;
 pub use graph::{
     build_artifact_graph, graph_stats, ArtifactGraph, ArtifactNode, ArtifactRef, GraphStats,

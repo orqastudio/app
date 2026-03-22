@@ -1,18 +1,39 @@
-//! Build a `ValidationContext` from platform config, project settings, and plugin manifests.
+//! Build a `ValidationContext` from project settings and plugin manifests.
 
 use std::collections::{HashMap, HashSet};
 
-use crate::platform::PLATFORM;
+use crate::platform::{ArtifactTypeDef, PLATFORM};
 use crate::settings::{DeliveryConfig, ProjectRelationshipConfig};
 use crate::types::{RelationshipConstraints, RelationshipSchema, StatusRule, ValidationContext};
 
 /// Build a `ValidationContext` by merging platform config, project relationships,
-/// and (optionally) plugin-provided relationship schemas.
+/// plugin-provided relationship schemas, and plugin-provided artifact type definitions.
+///
+/// `plugin_artifact_types` is used to populate schema-violation checks (frontmatter
+/// requirements and status transitions). Pass an empty slice when plugin manifests
+/// have not been scanned.
 pub fn build_validation_context(
     valid_statuses: &[String],
     delivery: &DeliveryConfig,
     project_relationships: &[ProjectRelationshipConfig],
     plugin_relationships: &[RelationshipSchema],
+) -> ValidationContext {
+    build_validation_context_with_types(
+        valid_statuses,
+        delivery,
+        project_relationships,
+        plugin_relationships,
+        &[],
+    )
+}
+
+/// Build a `ValidationContext` with full plugin contributions including artifact types.
+pub fn build_validation_context_with_types(
+    valid_statuses: &[String],
+    delivery: &DeliveryConfig,
+    project_relationships: &[ProjectRelationshipConfig],
+    plugin_relationships: &[RelationshipSchema],
+    plugin_artifact_types: &[ArtifactTypeDef],
 ) -> ValidationContext {
     let (mut relationships, mut inverse_map) =
         collect_platform_and_plugin_relationships(plugin_relationships);
@@ -25,6 +46,7 @@ pub fn build_validation_context(
         valid_statuses: valid_statuses.to_vec(),
         delivery: delivery.clone(),
         dependency_keys,
+        artifact_types: plugin_artifact_types.to_vec(),
     }
 }
 

@@ -4,6 +4,7 @@ use std::collections::{HashMap, HashSet};
 
 use serde::{Deserialize, Serialize};
 
+use crate::platform::ArtifactTypeDef;
 use crate::settings::DeliveryConfig;
 
 // ---------------------------------------------------------------------------
@@ -63,7 +64,7 @@ pub struct RelationshipSchema {
     pub constraints: Option<RelationshipConstraints>,
 }
 
-/// The full validation context loaded from core.json + project.json + plugins.
+/// The full validation context loaded from project.json + plugins.
 #[derive(Debug, Clone)]
 pub struct ValidationContext {
     /// All relationship schemas, keyed by relationship key for fast lookup.
@@ -76,6 +77,9 @@ pub struct ValidationContext {
     pub delivery: DeliveryConfig,
     /// Relationship keys that have the "dependency" semantic.
     pub dependency_keys: HashSet<String>,
+    /// Artifact type definitions contributed by plugins (frontmatter requirements,
+    /// status transitions, id prefixes). Used by schema-violation checks.
+    pub artifact_types: Vec<ArtifactTypeDef>,
 }
 
 // ---------------------------------------------------------------------------
@@ -116,6 +120,9 @@ pub enum IntegrityCategory {
     DuplicateRelationship,
     /// The filename does not match the artifact's frontmatter `id`.
     FilenameMismatch,
+    /// A required frontmatter field is absent, or the artifact status is not permitted
+    /// by the type's declared status transition schema.
+    SchemaViolation,
 }
 
 /// Severity of an integrity finding.

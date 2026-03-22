@@ -1,11 +1,10 @@
-//! Platform configuration loaded from the embedded `core.json`.
+//! Platform configuration sourced from plugin manifests at runtime.
 //!
-//! Adapted from `libs/mcp-server/src/platform.rs` for standalone use in the
-//! `orqa-validation` crate. The path to `core.json` is relative to this source file.
-//!
-//! Plugin manifests (`plugins/*/orqa-plugin.json` and `connectors/*/orqa-plugin.json`)
-//! are scanned at runtime via [`scan_plugin_manifests`] to merge additional artifact
-//! types and relationships into the platform config.
+//! Plugins (`plugins/*/orqa-plugin.json` and `connectors/*/orqa-plugin.json`)
+//! are now the sole source of truth for artifact type schemas and relationships.
+//! There is no longer a compile-time `core.json` dependency — the `PLATFORM`
+//! static provides empty defaults, and all meaningful schema data is loaded via
+//! [`scan_plugin_manifests`].
 
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -13,12 +12,6 @@ use std::path::Path;
 use std::sync::LazyLock;
 
 use crate::types::{RelationshipConstraints, RelationshipSchema, StatusRule};
-
-/// The platform core config JSON, embedded at compile time from the canonical source.
-///
-/// Path is relative to this source file: `libs/validation/src/platform.rs`
-/// → `libs/types/src/platform/core.json`
-const PLATFORM_JSON: &str = include_str!("../../types/src/platform/core.json");
 
 /// A relationship definition from core.json.
 #[derive(Debug, Clone, Deserialize)]
@@ -73,7 +66,18 @@ pub struct SemanticDef {
     pub keys: Vec<String>,
 }
 
-/// An artifact type from core.json.
+/// Frontmatter field requirements for an artifact type, as declared in a plugin manifest.
+#[derive(Debug, Clone, Deserialize, Default)]
+pub struct FrontmatterSchema {
+    /// Fields that must be present in every artifact of this type.
+    #[serde(default)]
+    pub required: Vec<String>,
+    /// Fields that are allowed but not required.
+    #[serde(default)]
+    pub optional: Vec<String>,
+}
+
+/// An artifact type definition, contributed by a plugin manifest.
 #[derive(Debug, Clone, Deserialize)]
 pub struct ArtifactTypeDef {
     pub key: String,
@@ -81,6 +85,15 @@ pub struct ArtifactTypeDef {
     pub icon: String,
     #[serde(rename = "idPrefix")]
     pub id_prefix: String,
+    /// Frontmatter fields that are required for this artifact type.
+    #[serde(default)]
+    pub frontmatter_required: Vec<String>,
+    /// Frontmatter fields that are optional for this artifact type.
+    #[serde(default)]
+    pub frontmatter_optional: Vec<String>,
+    /// Valid status transitions: maps each status key to the statuses it may transition to.
+    #[serde(default)]
+    pub status_transitions: HashMap<String, Vec<String>>,
 }
 
 /// The full platform config parsed from core.json.
@@ -92,16 +105,24 @@ pub struct PlatformConfig {
     pub semantics: HashMap<String, SemanticDef>,
 }
 
-/// Lazily-parsed platform config, available for the lifetime of the process.
-pub static PLATFORM: LazyLock<PlatformConfig> = LazyLock::new(|| {
-    serde_json::from_str(PLATFORM_JSON).expect("platform core.json must be valid JSON")
+/// Platform config with empty defaults.
+///
+/// Plugins are now the source of truth for artifact types, relationships, and
+/// semantics. This static retains the same surface area so existing code that
+/// reads `PLATFORM.relationships` or `PLATFORM.artifact_types` continues to
+/// compile — it simply receives empty slices until plugins are loaded via
+/// [`scan_plugin_manifests`].
+pub static PLATFORM: LazyLock<PlatformConfig> = LazyLock::new(|| PlatformConfig {
+    artifact_types: Vec::new(),
+    relationships: Vec::new(),
+    semantics: HashMap::new(),
 });
 
 // ---------------------------------------------------------------------------
 // Plugin manifest scanning
 // ---------------------------------------------------------------------------
 
-/// Minimal subset of a plugin manifest's `provides` block needed for validation.
+/// Minimal subset of a plugin manifest's `provides.schemas` entry needed for validation.
 #[derive(Debug, Clone, Deserialize)]
 struct PluginProvidesSchema {
     pub key: String,
@@ -111,6 +132,12 @@ struct PluginProvidesSchema {
     pub label: String,
     #[serde(default)]
     pub icon: String,
+    /// Optional frontmatter requirements declared in the plugin manifest.
+    #[serde(default)]
+    pub frontmatter: Option<FrontmatterSchema>,
+    /// Optional status transition map declared in the plugin manifest.
+    #[serde(default, rename = "statusTransitions")]
+    pub status_transitions: Option<HashMap<String, Vec<String>>>,
 }
 
 /// Minimal subset of a plugin manifest's `provides.relationships` entry.
@@ -168,9 +195,8 @@ pub fn scan_plugin_manifests(project_root: &Path) -> PluginContributions {
 
     for search_dir in &search_dirs {
         let dir = project_root.join(search_dir);
-        let entries = match std::fs::read_dir(&dir) {
-            Ok(e) => e,
-            Err(_) => continue,
+        let Ok(entries) = std::fs::read_dir(&dir) else {
+            continue;
         };
 
         for entry in entries.flatten() {
@@ -204,11 +230,18 @@ pub fn scan_plugin_manifests(project_root: &Path) -> PluginContributions {
             };
 
             for schema in manifest.provides.schemas {
+                let (frontmatter_required, frontmatter_optional) = schema
+                    .frontmatter
+                    .map(|f| (f.required, f.optional))
+                    .unwrap_or_default();
                 contributions.artifact_types.push(ArtifactTypeDef {
                     key: schema.key,
                     label: schema.label,
                     icon: schema.icon,
                     id_prefix: schema.id_prefix,
+                    frontmatter_required,
+                    frontmatter_optional,
+                    status_transitions: schema.status_transitions.unwrap_or_default(),
                 });
             }
 
