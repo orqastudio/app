@@ -1,6 +1,5 @@
 ---
 id: KNOW-de97219c
-type: knowledge
 name: Tauri v2 Patterns
 status: active
 plugin: "@orqastudio/plugin-tauri"

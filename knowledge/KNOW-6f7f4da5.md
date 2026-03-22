@@ -1,6 +1,5 @@
 ---
 id: KNOW-6f7f4da5
-type: knowledge
 name: Tauri Plugin Installation
 status: active
 plugin: "@orqastudio/plugin-tauri"
