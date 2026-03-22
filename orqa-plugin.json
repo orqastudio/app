@@ -28,7 +28,7 @@
     "knowledge": [
       {
         "key": "plugin-setup",
-        "id": "KNOW-CC-5ebf82dc",
+        "id": "KNOW-5ebf82dc",
         "label": "OrqaStudio Plugin Setup"
       },
       {
@@ -58,7 +58,7 @@
       },
       {
         "key": "tool-mapping",
-        "id": "KNOW-CC-tool-mapping",
+        "id": "KNOW-b0b55e54",
         "label": "Tool Mapping for Governance Operations"
       }
     ],

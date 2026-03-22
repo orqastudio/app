@@ -1,5 +1,5 @@
 ---
-id: KNOW-CC-tool-mapping
+id: KNOW-b0b55e54
 name: tool-mapping
 description: "Which MCP tool to use for which governance operation. Required reading before any delegation that touches the artifact graph or codebase."
 user-invocable: false
