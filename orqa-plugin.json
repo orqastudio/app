@@ -113,5 +113,6 @@
         "description": "Check for version drift at session start"
       }
     ]
-  }
+  },
+  "role": "extension"
 }

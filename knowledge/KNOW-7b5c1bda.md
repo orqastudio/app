@@ -1,6 +1,5 @@
 ---
 id: KNOW-7b5c1bda
-type: knowledge
 name: Version Management
 status: active
 plugin: "@orqastudio/plugin-cli"

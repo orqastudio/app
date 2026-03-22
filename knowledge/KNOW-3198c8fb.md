@@ -1,6 +1,5 @@
 ---
 id: KNOW-3198c8fb
-type: knowledge
 name: OrqaStudio CLI Usage
 status: active
 plugin: "@orqastudio/plugin-cli"
