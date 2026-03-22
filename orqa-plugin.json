@@ -1,0 +1,17 @@
+{
+  "name": "@orqastudio/plugin-githooks",
+  "version": "0.1.0-dev",
+  "displayName": "Git Hooks",
+  "description": "Pre-commit enforcement via git hooks — schema validation, filename-to-ID match, relationship integrity, frontmatter requirements. Installable independently of any connector.",
+  "category": "enforcement",
+  "role": "enhancement:governance",
+  "provides": {
+    "schemas": [],
+    "relationships": [],
+    "agents": [],
+    "knowledge": [],
+    "hooks": [],
+    "views": [],
+    "widgets": []
+  }
+}
