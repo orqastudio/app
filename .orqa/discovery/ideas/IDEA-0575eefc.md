@@ -58,6 +58,20 @@ template. Thinking modes live with their owning plugin:
 | research | systems-thinking | Discovery methodology |
 | documentation | systems-thinking | Discovery methodology |
 
+## Onboarding Tag
+
+Knowledge artifacts used during project setup add a frontmatter tag:
+
+```yaml
+onboarding: true
+```
+
+During `orqa install` or project onboarding workflows, the installer can query
+for all knowledge artifacts tagged `onboarding: true` across installed plugins
+to build a project-type-appropriate setup flow. For example, installing the
+software plugin brings in "Project Type: Software" knowledge which guides
+milestone/epic/task structure creation.
+
 ## Content Portability Rules
 
 1. **No `.orqa/` path references** — use "project governance directory" or similar
@@ -222,11 +236,11 @@ template. Thinking modes live with their owning plugin:
 | KNOW-3155cdaa | Decision Tree | STAY | Connector-specific |
 | KNOW-b1593311 | Implementer Tree | STAY | Connector-specific |
 | KNOW-08fcd847 | Reviewer Tree | STAY | Connector-specific |
-| KNOW-e3a559c9 | Plugin Setup | STAY | Connector-specific |
-| KNOW-82ceb1bd | Project Inference | STAY | Connector-specific |
-| KNOW-0fd23e0b | Project Migration | STAY | Connector-specific |
-| KNOW-e0dec720 | Project Setup | STAY | Connector-specific |
-| KNOW-819789ab | Project Type: Software | STAY | Connector-specific |
+| KNOW-e3a559c9 | Plugin Setup | **MOVE → orqa-core** (framework onboarding) | NEEDS REWRITE — make connector-agnostic |
+| KNOW-82ceb1bd | Project Inference | STAY | Connector-specific (detects project type via files) |
+| KNOW-0fd23e0b | Project Migration | STAY | Connector-specific (migrates .claude/ → .orqa/) |
+| KNOW-e0dec720 | Project Setup | **MOVE → orqa-core** (framework onboarding) | NEEDS REWRITE — make connector-agnostic |
+| KNOW-819789ab | Project Type: Software | **MOVE → software** + add `onboarding: true` tag | Used during project onboarding to configure software delivery |
 
 ### Knowledge — dev environment (.orqa/process/knowledge/) — 16 project-specific
 
