@@ -4,6 +4,7 @@
   "displayName": "Agile Governance",
   "description": "Core governance model — rules, decisions, lessons, knowledge, agents, and foundational principles. Defines artifact types and frontmatter schemas that drive structured thinking and enforcement.",
   "category": "governance",
+  "role": "core:governance",
   "provides": {
     "schemas": [
       {
