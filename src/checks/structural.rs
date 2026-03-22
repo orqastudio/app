@@ -208,14 +208,24 @@ pub fn check_missing_type_field(graph: &ArtifactGraph, checks: &mut Vec<Integrit
 
 /// Check that every artifact has a `status:` field in its frontmatter.
 ///
-/// Artifacts living in the `doc` type fallback are excluded since they often have
-/// no lifecycle status.
-pub fn check_missing_status_field(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
-    // Types that don't require lifecycle status.
-    const EXCLUDED_TYPES: &[&str] = &["doc", "pillar", "persona", "knowledge"];
+/// Uses plugin-provided artifact type schemas: if a type's frontmatter_required
+/// includes "status", then artifacts of that type must have it. Types without
+/// "status" in their required fields are automatically excluded.
+pub fn check_missing_status_field(
+    graph: &ArtifactGraph,
+    artifact_types: &[ArtifactTypeDef],
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    // Build set of types that require status from their schema
+    let types_requiring_status: std::collections::HashSet<&str> = artifact_types
+        .iter()
+        .filter(|t| t.frontmatter_required.contains(&"status".to_string()))
+        .map(|t| t.key.as_str())
+        .collect();
 
     for node in graph.nodes.values() {
-        if EXCLUDED_TYPES.contains(&node.artifact_type.as_str()) {
+        // If no schema loaded or type not in schema, skip (don't enforce without schema)
+        if artifact_types.is_empty() || !types_requiring_status.contains(node.artifact_type.as_str()) {
             continue;
         }
 
