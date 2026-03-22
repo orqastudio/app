@@ -1,6 +1,5 @@
 ---
 id: TASK-e5f6a7b8
-type: task
 title: "Update Rust types: ArtifactEntry, scanner, ProjectSettings skill references"
 description: "Update Rust source files to replace all 'skill' type references with 'knowledge' in ArtifactEntry, the artifact scanner, and ProjectSettings."
 status: ready

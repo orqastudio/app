@@ -1,6 +1,5 @@
 ---
 id: DOC-03f1dff2
-type: doc
 title: Design System
 category: reference
 description: "Design system tokens, spacing scale, color themes, and component styling conventions."

@@ -1,6 +1,5 @@
 ---
 id: "IMPL-9d2eaf01"
-type: "lesson"
 title: "Observation creation should be delegated to background agents"
 description: "When the orchestrator identifies something that needs to be recorded as an observation, it should delegate the creation to a background Writer agent rather than doing it inline. This keeps the orchestrator focused on coordination and prevents observation logging from blocking the primary work flow."
 status: "completed"

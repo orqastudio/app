@@ -1,6 +1,5 @@
 ---
 id: IDEA-2d2bf14a
-type: idea
 title: "Python language support plugin — skills, documentation, and Pyright LSP"
 description: "A @orqastudio/plugin-python providing Python development skills, coding standards documentation, and Pyright LSP integration for Claude Code."
 status: captured

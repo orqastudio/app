@@ -1,6 +1,5 @@
 ---
 id: "IMPL-e4e56c2f"
-type: "lesson"
 title: "Enforcement epics must close the loop — run tooling, act on output, create follow-up work"
 description: "EPIC-4e6e9eae (principle enforcement foundations) was planned with 5 phases building enforcement tooling but no phase to actually run the tooling, review output, and create work to address findings. An enforcement epic that builds tools but doesn't use them is incomplete. Planning methodology should require a 'close the loop' phase for any epic that produces enforcement or audit tooling."
 status: "active"

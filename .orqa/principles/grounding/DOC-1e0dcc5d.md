@@ -2,7 +2,6 @@
 
 
 id: DOC-1e0dcc5d
-type: grounding
 status: captured
 title: Product Purpose — Agent Grounding
 description: "Concise grounding document for Orchestrator, Planner, and Writer roles. Injected into agent context at initialization."

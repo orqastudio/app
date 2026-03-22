@@ -1,6 +1,5 @@
 ---
 id: "IMPL-6936bcf3"
-type: "lesson"
 title: "Null relationship targets should link to the tracking artifact instead"
 description: "When a relationship target doesn't exist yet, the target should point to the IDEA or TASK that tracks its creation — not be set to null. Every planned artifact has a tracking artifact somewhere in the delivery pipeline."
 status: "active"

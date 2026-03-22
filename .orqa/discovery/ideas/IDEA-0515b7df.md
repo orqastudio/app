@@ -1,6 +1,5 @@
 ---
 id: IDEA-0515b7df
-type: idea
 title: "Speech to text & text to speech integration"
 description: "Add speech-to-text and text-to-speech capabilities to OrqaStudio. Could enable voice-driven artifact creation, verbal status updates, and spoken summaries of governance state."
 status: captured

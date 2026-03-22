@@ -2,7 +2,6 @@
 
 
 id: DOC-4aec151e
-type: grounding
 status: captured
 title: Code Principles — Agent Grounding
 description: Concise grounding document for Implementer and Reviewer roles. Injected into agent context at initialization.

@@ -1,6 +1,5 @@
 ---
 id: TASK-ad41ea9b
-type: task
 title: Bulk ID migration script — sequential to hex
 status: captured
 created: 2026-03-19

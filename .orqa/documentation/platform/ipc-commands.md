@@ -1,6 +1,5 @@
 ---
 id: DOC-3c65a1e3
-type: doc
 title: IPC Command Catalog
 category: reference
 description: Catalog of all Tauri IPC commands defining the frontend-backend communication contract.

@@ -1,7 +1,6 @@
 ---
 
 id: IMPL-7d4e3af9
-type: lesson
 title: Kill existing dev server processes before starting new ones
 description: Check for and kill existing dev server processes on port 1420 before starting a new instance to avoid port-in-use errors.
 status: active

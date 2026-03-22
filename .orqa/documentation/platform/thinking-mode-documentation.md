@@ -1,6 +1,5 @@
 ---
 id: DOC-632df5ad
-type: doc
 title: "Thinking Mode: Documentation"
 description: "The user wants docs written, updated, or organised — capturing knowledge for humans, not building features."
 category: platform

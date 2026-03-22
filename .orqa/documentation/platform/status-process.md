@@ -1,6 +1,5 @@
 ---
 id: DOC-94224b27
-type: doc
 title: "Status & Workflow"
 category: reference
 description: "How the unified status system works — what each status means, when it changes, and who changes it."

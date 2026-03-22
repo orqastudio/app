@@ -1,6 +1,5 @@
 ---
 id: "DOC-99d7fbe5"
-type: "wireframe"
 status: "captured"
 title: "Wireframe: Artifact Browser"
 description: "Wireframe specification for the artifact browser view showing governance artifacts in a navigable list."

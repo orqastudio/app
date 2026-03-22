@@ -1,6 +1,5 @@
 ---
 id: TASK-30b1a23d
-type: task
 title: "Rust crate migration — read plugin manifests instead of core.json"
 description: "Update libs/validation, libs/lsp-server, and libs/mcp-server to read artifact type definitions and relationships from plugin manifests (orqa-plugin.json) instead of the monolithic core.json file."
 status: captured

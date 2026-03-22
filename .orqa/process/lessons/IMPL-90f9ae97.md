@@ -1,6 +1,5 @@
 ---
 id: IMPL-90f9ae97
-type: lesson
 title: Orchestrator must trace artifacts to their usage contexts without prompting
 description: "When a new artifact or insight is captured, the orchestrator did not trace where it should be applied — the user had to prompt the connection. Every new artifact should trigger automatic impact tracing: where does this get used?"
 status: promoted

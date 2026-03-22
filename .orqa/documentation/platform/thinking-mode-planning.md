@@ -1,6 +1,5 @@
 ---
 id: DOC-646d0876
-type: doc
 title: "Thinking Mode: Planning"
 description: "The user wants work scoped, broken down, prioritised, or designed — structure and approach before any execution begins."
 category: platform

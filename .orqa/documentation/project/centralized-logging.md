@@ -1,6 +1,5 @@
 ---
 id: DOC-36d28810
-type: doc
 title: Centralized Logging Guide
 status: active
 created: 2026-03-19

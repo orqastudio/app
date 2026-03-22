@@ -1,6 +1,5 @@
 ---
 id: IDEA-a0ea01c4
-type: idea
 title: "Plugin lifecycle events — install/uninstall/update hooks"
 description: "Trigger events on plugin install, uninstall, and update that the app and other plugins can listen to. Enables plugins to react to ecosystem changes — e.g. regenerate configs when a coding standards plugin is installed."
 status: captured

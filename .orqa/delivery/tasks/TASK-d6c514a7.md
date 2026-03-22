@@ -1,6 +1,5 @@
 ---
 id: TASK-d6c514a7
-type: task
 title: "MCP server review — verify artifact graph API"
 description: "Review the existing MCP server implementation to verify that the artifact graph API is correctly implemented, properly registered, and returns accurate data. Produce a verdict with any gaps."
 status: completed

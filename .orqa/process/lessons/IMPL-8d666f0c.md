@@ -1,7 +1,6 @@
 ---
 
 id: IMPL-8d666f0c
-type: lesson
 title: User prompt input should infer intent and auto-record observations
 description: "When a user submits a prompt, the system should infer intent — if the prompt contains an observation worth recording, the system should automatically capture it as an IMPL entry without requiring the user to explicitly say 'observation:' or ask for it to be recorded."
 status: completed

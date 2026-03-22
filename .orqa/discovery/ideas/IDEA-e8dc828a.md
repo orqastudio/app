@@ -1,6 +1,5 @@
 ---
 id: IDEA-e8dc828a
-type: idea
 title: "Legal document integration plugin — inspired by Lexicon"
 description: "A plugin for legal document management inspired by Lexicon (https://github.com/RichEsq/lexicon). Could bring contract review, compliance tracking, and legal clause management into OrqaStudio's artifact graph."
 status: captured

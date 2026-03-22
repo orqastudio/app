@@ -1,6 +1,5 @@
 ---
 id: TASK-c72d3ebd
-type: task
 title: "Add preamble field to 5 existing agent artifacts surfaced by frontmatter validation audit"
 description: "5 agent artifacts are missing the preamble frontmatter field. Add a meaningful preamble to each that describes the agent's role, constraints, and behavioral expectations."
 status: captured

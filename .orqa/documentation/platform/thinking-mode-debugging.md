@@ -1,6 +1,5 @@
 ---
 id: DOC-a9a6ef19
-type: doc
 title: "Thinking Mode: Debugging"
 description: "Something is broken or behaving unexpectedly — reproduce, isolate, identify root cause, then route to implementation or learning loop."
 category: platform

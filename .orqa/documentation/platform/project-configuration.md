@@ -1,6 +1,5 @@
 ---
 id: DOC-78ed20f0
-type: doc
 title: "Project Configuration (`.orqa/project.json`)"
 category: reference
 description: Schema and usage of the .orqa/project.json configuration file that defines project-level settings.

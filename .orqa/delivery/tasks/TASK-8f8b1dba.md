@@ -1,6 +1,5 @@
 ---
 id: TASK-8f8b1dba
-type: task
 title: "Create documentation artifacts for all existing skills"
 status: captured
 created: 2026-03-19

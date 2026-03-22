@@ -1,6 +1,5 @@
 ---
 id: TASK-a9b0c1d2
-type: task
 title: "Update plugin dev docs and connector README"
 description: "Update the plugin development documentation to say plugins provide knowledge/ not skills/, and update the connector README to explain the bridge model — no local copies, reads from canonical plugin paths."
 status: ready

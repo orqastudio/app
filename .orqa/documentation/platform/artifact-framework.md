@@ -1,6 +1,5 @@
 ---
 id: DOC-01ddd8aa
-type: doc
 title: Artifact Framework
 category: reference
 description: "Schema definitions, lifecycle rules, and governance for all structured artifacts in .orqa/."

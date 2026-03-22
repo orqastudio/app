@@ -1,7 +1,6 @@
 ---
 
 id: IMPL-eed5b00a
-type: lesson
 title: Project-level prioritization system needed to enforce priority principles automatically
 description: "Priority should be set at the project level with configurable dimensions and automatic classification. For OrqaStudio: data integrity and filling gaps in process/principles are always CRITICAL. Tools that improve/enforce agentic workflow principles take precedence over feature work."
 status: active

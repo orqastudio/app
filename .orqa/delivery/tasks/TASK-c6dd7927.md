@@ -1,6 +1,5 @@
 ---
 id: TASK-c6dd7927
-type: task
 title: Clear stale .claude/ symlinks and session state
 status: captured
 created: 2026-03-19

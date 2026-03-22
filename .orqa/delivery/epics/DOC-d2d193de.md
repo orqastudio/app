@@ -1,6 +1,5 @@
 ---
 id: "DOC-d2d193de"
-type: "epic"
 status: "captured"
 title: "Lesson Dashboard UI Spec"
 description: "UI specification for the lesson dashboard that visualizes implementation lessons and promotion status."

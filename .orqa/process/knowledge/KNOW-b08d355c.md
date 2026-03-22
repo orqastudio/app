@@ -1,6 +1,5 @@
 ---
 id: KNOW-b08d355c
-type: knowledge
 name: Schema Validation
 status: active
 relationships:

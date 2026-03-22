@@ -1,6 +1,5 @@
 ---
 id: "DOC-c816d78d"
-type: "wireframe"
 status: "captured"
 title: "Wireframe: Conversation View"
 description: "Wireframe specification for the conversation view including message display and input area."

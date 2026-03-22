@@ -1,6 +1,5 @@
 ---
 id: DOC-b10607c0
-type: doc
 title: Orchestration
 category: architecture
 description: How the orchestrator coordinates work across specialized agents using delegation and verification.

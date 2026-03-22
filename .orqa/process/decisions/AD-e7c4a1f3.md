@@ -1,8 +1,7 @@
 ---
 id: AD-e7c4a1f3
-type: decision
 title: "Inference-time decision tree: agents self-navigate to knowledge instead of receiving pre-injected context"
-status: accepted
+status: active
 created: 2026-03-21
 updated: 2026-03-21
 relationships:

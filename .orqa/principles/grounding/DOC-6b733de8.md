@@ -2,7 +2,6 @@
 
 
 id: DOC-6b733de8
-type: grounding
 status: captured
 title: Design Principles — Agent Grounding
 description: Concise grounding document for the Designer role. Injected into agent context at initialization.

@@ -1,6 +1,5 @@
 ---
 id: TASK-ff8a8590
-type: task
 title: "CLI orqa audit escalation command and stop hook integration"
 description: "Add an 'orqa audit escalation' CLI command that scans for lessons and rules with recurrence >= 3 that are not yet enforced or re-enforced, creates escalation tasks automatically, and runs as a stop hook."
 status: captured

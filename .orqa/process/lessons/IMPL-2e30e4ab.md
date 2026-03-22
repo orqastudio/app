@@ -1,6 +1,5 @@
 ---
 id: "IMPL-2e30e4ab"
-type: "lesson"
 title: "Commit at natural boundaries to prevent file accumulation"
 description: "Commit governance changes at natural boundaries (end of epic, task batch, or session) to prevent large numbers of uncommitted files from accumulating on main."
 status: "completed"

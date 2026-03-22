@@ -1,6 +1,5 @@
 ---
 id: DOC-6d410630
-type: doc
 title: "Thinking Mode: Implementation"
 description: "The user wants something built, fixed, added, or refactored — hands-on work producing code, artifacts, or configuration changes."
 category: platform

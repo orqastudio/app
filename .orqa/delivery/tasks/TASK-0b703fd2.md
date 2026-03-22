@@ -1,6 +1,5 @@
 ---
 id: TASK-0b703fd2
-type: task
 title: ID generation utilities — Rust and TypeScript
 status: captured
 created: 2026-03-19

@@ -1,6 +1,5 @@
 ---
 id: TASK-5a6b7c8d
-type: task
 title: "Update project.json artifact tree config"
 description: "Update project.json to replace 'skills' artifact tree entries with 'knowledge' entries, pointing to the renamed knowledge/ directories."
 status: ready

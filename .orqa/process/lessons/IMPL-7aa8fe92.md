@@ -1,6 +1,5 @@
 ---
 id: IMPL-7aa8fe92
-type: lesson
 title: Dogfooding proves the methodology before the app
 description: "A CLI-only session building the Claude Code connector demonstrated full systems thinking and agile governance without the app running. The session itself was proof that the process works — CLI, artifact graph, hooks, and plugins are sufficient infrastructure for structured thinking."
 status: captured

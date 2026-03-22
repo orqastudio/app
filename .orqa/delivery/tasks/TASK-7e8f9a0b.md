@@ -1,6 +1,5 @@
 ---
 id: TASK-7e8f9a0b
-type: task
 title: "Update plugin manifests: all orqa-plugin.json skill → knowledge"
 description: "Update all orqa-plugin.json plugin manifest files to replace 'skills' directory references and type declarations with 'knowledge' equivalents."
 status: ready

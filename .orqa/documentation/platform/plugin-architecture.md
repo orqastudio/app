@@ -1,6 +1,5 @@
 ---
 id: DOC-e0042602
-type: doc
 title: Plugin Architecture
 category: architecture
 description: "How plugins extend OrqaStudio — current CLI companion plugin, four-layer model, component SDK extraction plan, and built-in vs plugin decision framework."

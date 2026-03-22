@@ -1,6 +1,5 @@
 ---
 id: DOC-063c50a6
-type: doc
 title: "Thinking Mode: Review"
 description: "The user wants something checked, validated, or audited against standards — produces a PASS/FAIL verdict with evidence, not fixes."
 category: platform

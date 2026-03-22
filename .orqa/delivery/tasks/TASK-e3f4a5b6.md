@@ -1,6 +1,5 @@
 ---
 id: TASK-e3f4a5b6
-type: task
 title: "Debug MCP/LSP server registration"
 description: "Investigate and fix the MCP/LSP server registration issue. Determine why the server is not registering correctly and implement the fix."
 status: ready

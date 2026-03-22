@@ -1,6 +1,5 @@
 ---
 id: TASK-52a123bd
-type: task
 title: "Final connector audit and cleanup before switch"
 status: captured
 created: 2026-03-19

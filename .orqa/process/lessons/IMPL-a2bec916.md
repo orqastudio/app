@@ -1,7 +1,6 @@
 ---
 
 id: IMPL-a2bec916
-type: lesson
 title: The orchestrator should periodically zoom out and sanity-check scope
 description: "During extended design discussions, the orchestrator can lose sight of the bigger picture — accumulating decisions, observations, and tasks without pausing to verify the whole still makes sense. A periodic zoom-out sanity check should be automatic, not user-prompted."
 status: active

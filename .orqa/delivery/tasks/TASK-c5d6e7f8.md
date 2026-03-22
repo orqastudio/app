@@ -1,6 +1,5 @@
 ---
 id: TASK-c5d6e7f8
-type: task
 title: "Update core docs: vision.md, artifact-framework.md, CLAUDE.md"
 description: "Update the core documentation files to explain the knowledge vs skills semantic distinction, document the 'knowledge' artifact type, and update all references from 'skill' to 'knowledge'."
 status: ready

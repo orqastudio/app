@@ -1,6 +1,5 @@
 ---
 id: IMPL-adc37455
-type: lesson
 title: Orchestrator must not offer to stop
 description: "The orchestrator asked the user 'or if you'd like to wrap the session here' — directly violating RULE-046 (Continuous Operation). Offering to stop is projecting the orchestrator's own state onto the user's intent."
 status: captured

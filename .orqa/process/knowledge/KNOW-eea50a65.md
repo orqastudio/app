@@ -1,6 +1,5 @@
 ---
 id: KNOW-eea50a65
-type: knowledge
 title: Governance Patterns
 description: |
   How the .orqa/ governance structure works: artifact layering, config-driven

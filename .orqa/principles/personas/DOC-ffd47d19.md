@@ -1,7 +1,6 @@
 ---
 
 id: DOC-ffd47d19
-type: persona
 title: User Personas
 description: "User personas describing target users, their goals, pain points, and usage patterns."
 created: 2026-03-02

@@ -2,7 +2,6 @@
 
 
 id: DOC-3749bfac
-type: grounding
 status: captured
 title: Research Principles — Agent Grounding
 description: Concise grounding document for the Researcher role. Injected into agent context at initialization.

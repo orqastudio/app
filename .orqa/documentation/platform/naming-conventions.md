@@ -1,6 +1,5 @@
 ---
 id: DOC-5d1eed43
-type: doc
 name: Repository and Package Naming Conventions
 category: reference
 status: active

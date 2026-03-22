@@ -1,6 +1,5 @@
 ---
 id: TASK-db0e3e3c
-type: task
 title: Update integrity scanner to validate hex ID format
 status: captured
 created: 2026-03-19

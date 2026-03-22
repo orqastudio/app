@@ -1,6 +1,5 @@
 ---
 id: DOC-fadf0401
-type: doc
 title: Plugin Artifact Usage Guide
 description: "How plugin-provided artifact types and relationships extend the platform graph. Reference for understanding and working with any plugin's artifacts."
 category: concept

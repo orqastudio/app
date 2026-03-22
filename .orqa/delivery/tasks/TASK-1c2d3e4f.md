@@ -1,6 +1,5 @@
 ---
 id: TASK-1c2d3e4f
-type: task
 title: "Update CLI: orqa validate, orqa graph, ID generation"
 description: "Update the orqa CLI tool to recognise 'knowledge' as an artifact type, scan knowledge/ directories, generate KNOW- prefixed IDs, and validate KNOW- references."
 status: ready

@@ -1,6 +1,5 @@
 ---
 id: "DOC-53b07f55"
-type: "wireframe"
 status: "captured"
 title: "Wireframe: Settings & Onboarding"
 description: "Wireframe specification for settings pages and the onboarding flow."
