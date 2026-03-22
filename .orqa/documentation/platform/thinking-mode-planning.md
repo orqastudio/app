@@ -1,0 +1,67 @@
+---
+id: DOC-646d0876
+type: doc
+title: "Thinking Mode: Planning"
+description: "The user wants work scoped, broken down, prioritised, or designed — structure and approach before any execution begins."
+category: platform
+status: active
+created: 2026-03-21
+updated: 2026-03-21
+relationships:
+  - target: KNOW-de25b290
+    type: synchronised-with
+---
+
+## What This Mode Is
+
+Planning Mode is active when the user wants work scoped, broken down, prioritised, or designed. This is about structure and approach before execution begins. The agent produces plans and task artifacts, not code. Execution belongs to Implementation Mode.
+
+The planner's value is structural clarity: breaking ambiguous intent into concrete tasks with known dependencies, sequenced against the current milestone state, and verified against pillar alignment before a single line of code is written.
+
+---
+
+## When It Activates
+
+The orchestrator routes here when the user's request is about organising future work rather than executing current work.
+
+Typical signals:
+- "plan the next milestone"
+- "break this epic into tasks"
+- "what's the priority order for these items"
+- "design an approach for X before we build it"
+- "scope out the work needed for this feature"
+- "what should we tackle first"
+- "map the dependencies between these tasks"
+- "how should we structure this initiative"
+
+---
+
+## What the Agent Needs
+
+The planner needs full artifact graph context to produce accurate plans:
+
+- `graph_query` — find the current milestone, epics, and task state
+- `graph_resolve` — load full artifact details including dependencies
+- `graph_relationships` — map what depends on what before sequencing
+- Pillar gate questions — every proposed task must answer at least one gate question
+
+Plans follow the documentation-first principle (RULE-008): the plan document is written before any implementation task is created, and implementation tasks reference the plan.
+
+---
+
+## How It Connects to the Thinking Framework
+
+Planning Mode is the bridge between intent and execution:
+
+- **Research Mode** feeds planning — understand the system before scoping changes
+- **Planning Mode** feeds **Implementation Mode** — tasks created here are executed there
+- Planning output (epics, tasks) goes into `.orqa/delivery/` with full frontmatter
+
+---
+
+## Governance
+
+- RULE-008 (documentation first): plans are written before task artifacts
+- RULE-031 (vision alignment): every planned task must serve at least one pillar
+- Plans include an architectural compliance section verifying relevant decisions
+- Task artifacts: `type: task`, `status: proposed`, link back to their parent epic

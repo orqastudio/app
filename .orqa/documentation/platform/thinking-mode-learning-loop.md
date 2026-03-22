@@ -1,0 +1,71 @@
+---
+id: DOC-a6c2cc2b
+type: doc
+title: "Thinking Mode: Learning Loop"
+description: "The user is teaching the system — sharing an observation, feedback, or lesson that should be captured and potentially promoted to a rule."
+category: platform
+status: active
+created: 2026-03-21
+updated: 2026-03-21
+relationships:
+  - target: KNOW-85e392ea
+    type: synchronised-with
+---
+
+## What This Mode Is
+
+Learning Loop Mode is active when the user is teaching the system — sharing an observation, a piece of feedback, or a lesson learned. This is NOT a request for work to be done. It is a signal that the governance system should grow.
+
+The governance learning pipeline is:
+
+```
+Observation → Lesson artifact → Pattern check → Rule (if recurring) → Enforcement
+```
+
+This mode is the entry point to that pipeline. Missing it means the observation is lost — it never becomes a lesson, never becomes a rule, and never becomes enforcement. That is why it is the most important mode to detect correctly.
+
+---
+
+## When It Activates
+
+The orchestrator routes here when the user is narrating a pattern they've noticed rather than requesting an action.
+
+Typical signals:
+- "I noticed that X keeps happening"
+- "we should always do Y from now on"
+- "that approach caused problems — let's not do it again"
+- "remember this for next time"
+- "can we make sure this doesn't happen again"
+- "for future reference, the right way to do this is..."
+- "this is a pattern I keep seeing across sessions"
+
+---
+
+## What the Agent Needs
+
+The governance steward role handles learning loop work:
+
+1. **Capture** — write a lesson artifact in `.orqa/process/lessons/` with the observation documented
+2. **Check recurrence** — search existing lessons for the same pattern. If it has occurred before, promotion to a rule is required.
+3. **Promote if recurring** — create or update a RULE artifact with a full enforcement chain
+4. **Enforcement chain** — a rule without enforcement is just documentation. The chain must close: rule → linter/hook/gate/injection
+
+---
+
+## How It Connects to the Thinking Framework
+
+Learning Loop Mode is the governance intake for the entire framework:
+
+- **Debugging Mode** may route here when a root cause reveals a systemic governance gap
+- **Review Mode** may route here when a FAIL verdict reveals a missing rule
+- **Research Mode** may route here when investigation reveals an anti-pattern worth naming
+
+The learning loop is what makes OrqaStudio's governance compound over time. Every observation that is captured and promoted strengthens the system for all future sessions.
+
+---
+
+## Governance
+
+- Lesson artifacts live in `.orqa/process/lessons/` with `type: lesson`
+- Recurring lessons (seen 2+ times) MUST be promoted to rules — this is non-negotiable
+- RULE-009 (dogfood mode): enforcement gaps discovered during development are immediately CRITICAL
