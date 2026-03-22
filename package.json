@@ -1,0 +1,6 @@
+{
+  "name": "@orqastudio/plugin-systems-thinking",
+  "version": "0.1.0-dev",
+  "private": true,
+  "description": "Systems thinking methodology for OrqaStudio"
+}
