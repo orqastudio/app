@@ -419,6 +419,7 @@ fn integrity_check_to_diagnostic(
         IntegrityCategory::MissingStatus => "[missing-status]",
         IntegrityCategory::DuplicateRelationship => "[duplicate-relationship]",
         IntegrityCategory::FilenameMismatch => "[filename-mismatch]",
+        IntegrityCategory::SchemaViolation => "[schema-violation]",
     };
 
     let mut message = format!("{category_label} {}", check.message);
