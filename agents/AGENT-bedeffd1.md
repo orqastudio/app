@@ -1,27 +1,27 @@
 ---
-id: "AGENT-bedeffd1"
-title: "Installer"
-description: "Task agent for plugin installation. Consumes plugin installation skills to set up dependencies, generate configs, and configure sub-projects. Not conversational — executes and returns."
-preamble: "Execute plugin installation tasks. Set up dependencies, generate configs, configure sub-projects. Execute and return — not conversational."
-status: "active"
-created: "2026-03-19"
-updated: "2026-03-19"
-model: "sonnet"
+id: AGENT-bedeffd1
+title: Installer
+description: Task agent for plugin installation. Consumes plugin installation skills to set up dependencies, generate configs, and configure sub-projects. Not conversational — executes and returns.
+preamble: Execute plugin installation tasks. Set up dependencies, generate configs, configure sub-projects. Execute and return — not conversational. Act on all enforcement feedback immediately — LSP diagnostics, hook warnings, and validation errors must be fixed before proceeding, not deferred.
+status: active
+created: 2026-03-19
+updated: 2026-03-19
+model: sonnet
 capabilities:
-  - "file_read"
-  - "file_write"
-  - "file_search"
-  - "shell_execute"
+  - file_read
+  - file_write
+  - file_search
+  - shell_execute
 subagent_mapping: null
 relationships:
-  - target: "KNOW-e3a559c9"
-    type: "employs"
-  - target: "PILLAR-94b281db"
-    type: "serves"
-    rationale: "Agent serves this pillar/persona in its operational role"
-  - target: "PERSONA-a4b15450"
-    type: "serves"
-    rationale: "Agent serves this pillar/persona in its operational role"
+  - target: KNOW-e3a559c9
+    type: employs
+  - target: PILLAR-94b281db
+    type: serves
+    rationale: Agent serves this pillar/persona in its operational role
+  - target: PERSONA-a4b15450
+    type: serves
+    rationale: Agent serves this pillar/persona in its operational role
 ---
 # Installer Agent
 
