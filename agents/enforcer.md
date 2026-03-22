@@ -1,5 +1,5 @@
 ---
-id: "AGENT-GOV-e7f3a2c9"
+id: "AGENT-e7f3a2c9"
 type: "agent"
 title: "Enforcer"
 description: "Specialist enforcement agent. Designs and implements mechanical enforcement for rules — prompt-based, hook-based, validator checks, pre-commit gates, linter rules. Reads rule-enforcement knowledge from governance plugin and installed connectors. Runs in parallel with delivery work."

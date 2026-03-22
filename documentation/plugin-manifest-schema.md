@@ -93,7 +93,7 @@ Array of knowledge artifact registrations:
 ```json
 {
   "key": "software-delivery",
-  "id": "KNOW-SW-1d47d8d8",
+  "id": "KNOW-1d47d8d8",
   "label": "Software Delivery Lifecycle"
 }
 ```
@@ -140,6 +140,6 @@ Display configuration for artifact links (display modes and colors by ID prefix)
 
 ## Conventions
 
-- Plugin-namespaced IDs use prefixes like `KNOW-SW-1d47d8d8`, `DOC-CLI-2c9bfdda`
+- Plugin-namespaced IDs use prefixes like `KNOW-1d47d8d8`, `DOC-2c9bfdda`
 - Relationship keys should be lowercase kebab-case
 - Semantic categories should match or extend: `hierarchy`, `dependency`, `lineage`, `corrective`, `knowledge-flow`, `foundation`, `governance`, `observation`, `synchronisation`

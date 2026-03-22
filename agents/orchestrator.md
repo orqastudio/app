@@ -27,7 +27,7 @@ relationships:
     type: "employs"
   - target: "KNOW-6f33713e"
     type: "employs"
-  - target: "KNOW-CC-decision-tree"
+  - target: "KNOW-3155cdaa"
     type: "employs"
     rationale: "Orchestrator reasoning protocol — injected on every UserPromptSubmit for the main conversation"
   - target: "PILLAR-569581e0"

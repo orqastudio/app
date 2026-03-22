@@ -86,7 +86,7 @@ The knowledge artifact teaches agents; the doc teaches humans. They cover the sa
 
 The software plugin (`plugins/software/`) defines 5 types: milestone, epic, task, research, wireframe. It ships 9 custom relationships (delivers, fulfils, depends-on, realises, produces, yields, reports, fixes, affects).
 
-- **KNOW-SW-1d47d8d8** teaches agents the software delivery lifecycle
-- **DOC-SW-421219ce** teaches humans the same concepts
+- **KNOW-1d47d8d8** teaches agents the software delivery lifecycle
+- **DOC-421219ce** teaches humans the same concepts
 
 Any new plugin should follow this pattern.

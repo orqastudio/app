@@ -104,7 +104,7 @@ These move knowledge between artifacts.
 
 ## Plugin Relationships
 
-The software-project plugin adds delivery-specific relationships. See the Software Delivery Guide (DOC-SW-421219ce) for the complete reference. Key additions:
+The software-project plugin adds delivery-specific relationships. See the Software Delivery Guide (DOC-421219ce) for the complete reference. Key additions:
 
 | Relationship | Meaning |
 |---|---|

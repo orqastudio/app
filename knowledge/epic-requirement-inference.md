@@ -118,10 +118,10 @@ to a parent before it passes integrity.
 
 Every plugin that defines artifact types SHOULD ship a paired knowledge artifact and doc:
 
-- A **skill** (e.g., `KNOW-SW-1d47d8d8`) explaining how agents should work with the
+- A **skill** (e.g., `KNOW-1d47d8d8`) explaining how agents should work with the
   plugin's artifacts — creation workflows, relationship patterns, status
   lifecycle, and common scenarios
-- A **doc** (e.g., `DOC-SW-421219ce`) explaining how humans should understand the
+- A **doc** (e.g., `DOC-421219ce`) explaining how humans should understand the
   plugin's artifacts — what they represent, when to use each type, and how they
   relate to each other
 - The skill and doc are connected via a `synchronised-with` relationship so
@@ -139,10 +139,10 @@ the full pattern:
 - **5 artifact types:** milestone, epic, task, research, wireframe
 - **9 relationships:** delivers, fulfils, depends-on, realises, produces,
   yields, reports, fixes, affects
-- **KNOW-SW-1d47d8d8** teaches agents the software delivery lifecycle — how to
+- **KNOW-1d47d8d8** teaches agents the software delivery lifecycle — how to
   break milestones into epics, epics into tasks, and how status propagates
   up the delivery hierarchy
-- **DOC-SW-421219ce** teaches humans the same concepts in user-facing language
+- **DOC-421219ce** teaches humans the same concepts in user-facing language
 
 Other plugins follow the same pattern: define types and relationships in
 `orqa-plugin.json`, then ship a knowledge+doc pair that teaches agents and humans

@@ -232,7 +232,7 @@
       { "key": "designer", "id": "AGENT-c5284fde", "path": "agents/designer.md" },
       { "key": "governance-steward", "id": "AGENT-ff44f841", "path": "agents/governance-steward.md" },
       { "key": "installer", "id": "AGENT-bedeffd1", "path": "agents/installer.md" },
-      { "key": "enforcer", "id": "AGENT-GOV-e7f3a2c9", "path": "agents/enforcer.md" }
+      { "key": "enforcer", "id": "AGENT-e7f3a2c9", "path": "agents/enforcer.md" }
     ],
     "views": [],
     "widgets": [],

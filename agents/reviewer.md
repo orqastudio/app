@@ -24,7 +24,7 @@ relationships:
     type: "employs"
   - target: "KNOW-f0c40eaf"
     type: "employs"
-  - target: "KNOW-CC-reviewer-tree"
+  - target: "KNOW-08fcd847"
     type: "employs"
     rationale: "Reviewer reasoning protocol — injected on every UserPromptSubmit for reviewer subagents"
   - target: "PILLAR-cdf756ff"
