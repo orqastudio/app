@@ -65,6 +65,17 @@ if [ "$ERRORS" -gt 0 ]; then
   exit 1
 fi
 
+# JSON Schema validation of frontmatter
+PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if [ -f "$PLUGIN_DIR/hooks/validate-frontmatter.mjs" ]; then
+  echo "--- Frontmatter schema validation ---"
+  if ! node "$PLUGIN_DIR/hooks/validate-frontmatter.mjs"; then
+    echo ""
+    echo "Fix frontmatter errors before committing."
+    exit 1
+  fi
+fi
+
 # Check filename-to-ID alignment on staged artifacts
 MISMATCHED=""
 for file in $(git diff --cached --name-only --diff-filter=ACMR -- '*.md' | grep -E '^(\.orqa/|plugins/|connectors/)' || true); do
