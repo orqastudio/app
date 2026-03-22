@@ -4,10 +4,10 @@ type: knowledge
 title: Governance Maintenance
 description: |
   Governance framework custodianship: auditing agent definitions, maintaining
-  rules and skills, processing lesson promotions, verifying reading list currency,
-  and ensuring internal consistency across the governance layer.
+  rules and knowledge artifacts, processing lesson promotions, verifying reading
+  list currency, and ensuring internal consistency across the governance layer.
   Use when: Auditing governance artifacts, promoting lessons to rules, maintaining
-  agent/skill/rule consistency, or reviewing the governance framework.
+  agent/knowledge/rule consistency, or reviewing the governance framework.
 status: active
 created: 2026-03-01
 updated: 2026-03-10
@@ -20,15 +20,15 @@ relationships:
 ---
 
 
-Methodology for maintaining a governance framework's internal consistency. This skill teaches the *custodianship process* — the specific artifact types and directory structures come from the project's governance skill.
+Methodology for maintaining a governance framework's internal consistency. This knowledge artifact teaches the *custodianship process* — the specific artifact types and directory structures come from the project's governance configuration.
 
 ## Responsibilities
 
 1. **Agent Content Auditing** — Verify agent definitions have accurate tool lists, correct model assignments, current required reading sections, and bodies that reflect the project's actual tech stack.
-2. **Skill Currency** — Ensure skills are up to date, relevant, and accurately reflect current best practices.
+2. **Knowledge Currency** — Ensure knowledge artifacts are up to date, relevant, and accurately reflect current best practices.
 3. **Rule File Currency** — Audit rules for outdated, contradictory, or inapplicable content.
 4. **Reading List Maintenance** — Verify all documents referenced in required reading sections actually exist. Flag stale references.
-5. **Learning Loop Coordination** — Process implementation lessons. When recurrence reaches the promotion threshold, promote to a rule, coding standard, or skill update. Update the lesson's promotion metadata after promotion.
+5. **Learning Loop Coordination** — Process implementation lessons. When recurrence reaches the promotion threshold, promote to a rule, coding standard, or knowledge update. Update the lesson's promotion metadata after promotion.
 6. **Cross-Reference Integrity** — Ensure all artifact cross-references (depends-on, supersedes, relationships, etc.) point to existing artifacts.
 
 ## Audit Protocol
@@ -36,17 +36,17 @@ Methodology for maintaining a governance framework's internal consistency. This 
 ### Step 1: Agent Content Audit
 
 - List all agent definitions
-- For each agent: verify frontmatter fields (name, description, tools, model, skills)
+- For each agent: verify frontmatter fields (name, description, tools, model, knowledge)
 - Verify required reading references resolve to real files
 - Confirm model assignments are intentional
-- Check that skill lists match the agent's domain
+- Check that knowledge lists match the agent's domain
 
-### Step 2: Skill Audit
+### Step 2: Knowledge Audit
 
-- List all skill directories
-- Verify each skill has valid frontmatter
-- Check for hardcoded paths or project-specific assumptions in portable skills
-- Confirm skills are referenced by at least one agent's skills list
+- List all knowledge directories
+- Verify each knowledge artifact has valid frontmatter
+- Check for hardcoded paths or project-specific assumptions in portable knowledge
+- Confirm knowledge artifacts are referenced by at least one agent's knowledge list
 
 ### Step 3: Rule Audit
 
@@ -66,7 +66,7 @@ Methodology for maintaining a governance framework's internal consistency. This 
 - Check lessons for recurrence counts at or above threshold
 - For each promotable lesson:
   1. Validate the learning against project history
-  2. Determine target: new rule, coding standard addition, or skill update
+  2. Determine target: new rule, coding standard addition, or knowledge update
   3. Apply the change to the appropriate file
   4. Update the lesson's promotion metadata
   5. Cross-reference with other agents that may be affected
@@ -77,7 +77,7 @@ Methodology for maintaining a governance framework's internal consistency. This 
 
 1. Verify no existing agent covers the responsibility
 2. Create definition following the standard template
-3. Include appropriate tool lists and skills
+3. Include appropriate tool lists and knowledge references
 4. Add required reading references to existing docs
 
 ### Modifying an Existing Agent
@@ -90,7 +90,7 @@ Methodology for maintaining a governance framework's internal consistency. This 
 
 1. Read the lesson file
 2. Validate the learning against recent project history
-3. Determine target: rule, coding standard, or skill update
+3. Determine target: rule, coding standard, or knowledge update
 4. Apply the change to the appropriate file
 5. Update the lesson's promotion metadata
 6. Cross-reference with other agents that may be affected

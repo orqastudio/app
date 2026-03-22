@@ -2,6 +2,7 @@
 id: KNOW-85e392ea
 type: knowledge
 title: "Thinking Mode: Learning Loop"
+thinking-mode: learning-loop
 description: "The user is teaching the system — sharing an observation, feedback, or lesson that should be captured and potentially promoted to a rule."
 status: active
 created: 2026-03-21
@@ -21,9 +22,9 @@ The user is teaching the system — sharing an observation, feedback, or lesson.
 
 ## What the Agent Needs
 
-- Capture the observation as a lesson artifact in `.orqa/process/lessons/`
+- Capture the observation as a lesson artifact in the project's governance directory
 - Check if this observation has recurred — recurring lessons must be promoted to rules
-- If pattern is systemic, create or update a RULE artifact with enforcement chain
+- If pattern is systemic, create or update a rule artifact with enforcement chain
 - Governance steward role: write the artifact with full frontmatter
 
 ## Distinguishing from Similar Modes
