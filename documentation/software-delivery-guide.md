@@ -1,12 +1,12 @@
 ---
-id: DOC-SW-421219ce
+id: DOC-421219ce
 type: doc
 name: Software Delivery Guide
 category: how-to
 status: active
 plugin: "@orqastudio/plugin-software-project"
 relationships:
-  - target: KNOW-SW-1d47d8d8
+  - target: KNOW-1d47d8d8
     type: synchronised-with
   - target: KNOW-f0efaf83
     type: synchronised-with

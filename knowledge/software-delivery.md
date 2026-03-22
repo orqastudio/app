@@ -1,11 +1,11 @@
 ---
-id: KNOW-SW-1d47d8d8
+id: KNOW-1d47d8d8
 type: knowledge
 name: Software Delivery Management
 status: active
 plugin: "@orqastudio/plugin-software-project"
 relationships:
-  - target: DOC-SW-421219ce
+  - target: DOC-421219ce
     type: synchronised-with
 ---
 

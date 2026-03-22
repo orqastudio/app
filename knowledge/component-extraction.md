@@ -10,7 +10,7 @@ file-patterns:
   - "ui/src/lib/components/**"
 user-invocable: false
 relationships:
-  - target: DOC-SW-421219ce
+  - target: DOC-421219ce
     type: synchronised-with
 ---
 

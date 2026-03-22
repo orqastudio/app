@@ -14,7 +14,7 @@ category: methodology
 version: 1.0.0
 user-invocable: true
 relationships:
-  - target: DOC-SW-421219ce
+  - target: DOC-421219ce
     type: synchronised-with
 ---
 Security auditing methodology for applications. This skill teaches *what to check and how* — the specific security mechanisms (e.g., Tauri capabilities, keyring APIs) come from the project's technology skills.

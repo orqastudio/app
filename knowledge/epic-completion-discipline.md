@@ -1,5 +1,5 @@
 ---
-id: KNOW-SW-epic-complete
+id: KNOW-e2354dce
 type: knowledge
 title: "Epic completion discipline"
 description: "Epics must be completed in their entirety — never left half-done. All tasks delivered before moving on."

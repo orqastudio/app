@@ -51,6 +51,10 @@ export interface PluginManifest {
    */
   requires?: string[];
   /**
+   * Plugin category. The app requires at least one plugin from each of: thinking, delivery, governance.
+   */
+  category?: "thinking" | "delivery" | "governance" | "connector" | "tooling" | "coding-standards" | null;
+  /**
    * Minimum versions required for this plugin to function.
    */
   compatibility?: {
@@ -59,6 +63,17 @@ export interface PluginManifest {
     types?: string | null;
   } | null;
   provides: PluginManifestProvides;
+  /**
+   * Semantic category definitions contributed by this plugin. Merged with platform semantics at runtime.
+   */
+  semantics?: {
+    [k: string]:
+      | {
+          description: string;
+          keys: string[];
+        }
+      | undefined;
+  };
 }
 /**
  * The 'provides' block of a plugin manifest. Declares all capabilities the plugin registers with the app at install time.

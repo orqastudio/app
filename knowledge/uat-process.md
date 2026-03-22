@@ -13,7 +13,7 @@ category: methodology
 version: 1.0.0
 user-invocable: false
 relationships:
-  - target: DOC-SW-421219ce
+  - target: DOC-421219ce
     type: synchronised-with
 ---
 
