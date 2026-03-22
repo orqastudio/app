@@ -98,15 +98,20 @@ function callMcpTool(projectPath, toolName, toolArgs) {
 // ---------------------------------------------------------------------------
 
 /**
- * Check if a file path is within the .orqa/ directory.
+ * Check if a file path is a governance artifact (.orqa/, plugin, or connector).
  *
  * @param {string} filePath
  * @param {string} projectDir
  * @returns {boolean}
  */
 function isOrqaArtifact(filePath, projectDir) {
+  if (!filePath.endsWith(".md")) return false;
   const rel = relative(projectDir, filePath).replace(/\\/g, "/");
-  return rel.startsWith(".orqa/") && filePath.endsWith(".md");
+  return (
+    rel.startsWith(".orqa/") ||
+    /^plugins\/[^/]+\/(agents|rules|knowledge|documentation)\//.test(rel) ||
+    /^connectors\/[^/]+\/knowledge\//.test(rel)
+  );
 }
 
 /**

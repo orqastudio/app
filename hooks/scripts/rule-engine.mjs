@@ -115,31 +115,50 @@ function matchGlob(filePath, pattern) {
   return new RegExp(regex).test(normalized);
 }
 
-// Load all active rules with enforcement entries
+// Collect all rule directories: .orqa/process/rules + plugins/*/rules + connectors/*/rules
+function findRulesDirs(projectDir) {
+  const dirs = [];
+  const devRules = join(projectDir, ".orqa", "process", "rules");
+  if (existsSync(devRules)) dirs.push(devRules);
+
+  for (const parentDir of ["plugins", "connectors"]) {
+    const parent = join(projectDir, parentDir);
+    if (!existsSync(parent)) continue;
+    let entries;
+    try { entries = readdirSync(parent, { withFileTypes: true }); } catch { continue; }
+    for (const entry of entries) {
+      if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+      const rulesDir = join(parent, entry.name, "rules");
+      if (existsSync(rulesDir)) dirs.push(rulesDir);
+    }
+  }
+  return dirs;
+}
+
+// Load all active rules with enforcement entries from all rule directories
 function loadEnforcementRules(projectDir) {
-  const rulesDir = join(projectDir, ".orqa", "process", "rules");
-  if (!existsSync(rulesDir)) return [];
-
   const rules = [];
-  for (const file of readdirSync(rulesDir)) {
-    if (!file.startsWith("RULE-") || !file.endsWith(".md")) continue;
+  for (const rulesDir of findRulesDirs(projectDir)) {
+    for (const file of readdirSync(rulesDir)) {
+      if (!file.startsWith("RULE-") || !file.endsWith(".md")) continue;
 
-    const content = readFileSync(join(rulesDir, file), "utf-8");
-    const fm = parseFrontmatter(content);
-    if (!fm) continue;
-    if (fm.status && fm.status !== "active") continue;
-    if (!fm.enforcement || !Array.isArray(fm.enforcement)) continue;
+      const content = readFileSync(join(rulesDir, file), "utf-8");
+      const fm = parseFrontmatter(content);
+      if (!fm) continue;
+      if (fm.status && fm.status !== "active") continue;
+      if (!fm.enforcement || !Array.isArray(fm.enforcement)) continue;
 
-    for (const entry of fm.enforcement) {
-      rules.push({
-        ruleId: fm.id || file.replace(".md", ""),
-        event: entry.event,
-        pattern: entry.pattern,
-        paths: entry.paths || null,
-        action: entry.action,
-        message: entry.message,
-        skills: entry.skills || null,
-      });
+      for (const entry of fm.enforcement) {
+        rules.push({
+          ruleId: fm.id || file.replace(".md", ""),
+          event: entry.event,
+          pattern: entry.pattern,
+          paths: entry.paths || null,
+          action: entry.action,
+          message: entry.message,
+          skills: entry.skills || null,
+        });
+      }
     }
   }
   return rules;
@@ -255,13 +274,23 @@ function collectKnowledgeContent(projectDir, injectViolations) {
   const parts = [];
   const injectedNow = [];
   for (const name of allSkillNames) {
-    // Search project-level knowledge first, then app-level (for core knowledge)
+    // Search project-level, then plugin/connector knowledge directories
     const candidates = [
       join(projectDir, ".orqa", "process", "knowledge", name, "KNOW.md"),
       join(projectDir, ".orqa", "process", "knowledge", `${name}.md`),
-      join(projectDir, "app", ".orqa", "process", "knowledge", name, "KNOW.md"),
-      join(projectDir, "app", ".orqa", "process", "knowledge", `${name}.md`),
     ];
+    // Add plugin and connector knowledge paths
+    for (const parentDir of ["plugins", "connectors"]) {
+      const parent = join(projectDir, parentDir);
+      if (!existsSync(parent)) continue;
+      let entries;
+      try { entries = readdirSync(parent, { withFileTypes: true }); } catch { continue; }
+      for (const entry of entries) {
+        if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+        candidates.push(join(parent, entry.name, "knowledge", name, "KNOW.md"));
+        candidates.push(join(parent, entry.name, "knowledge", `${name}.md`));
+      }
+    }
     const knowledgePath = candidates.find((p) => existsSync(p));
     if (!knowledgePath) continue;
     try {
