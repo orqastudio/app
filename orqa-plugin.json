@@ -15,12 +15,25 @@
         "defaultPath": ".orqa/principles",
         "idPrefix": "VISION",
         "frontmatter": {
-          "required": ["id", "type", "status"],
-          "optional": ["title", "description", "relationships"]
+          "required": [
+            "id",
+            "type",
+            "status"
+          ],
+          "optional": [
+            "title",
+            "description",
+            "relationships"
+          ]
         },
         "statusTransitions": {
-          "active": ["review", "archived"],
-          "review": ["active"],
+          "active": [
+            "review",
+            "archived"
+          ],
+          "review": [
+            "active"
+          ],
           "archived": []
         }
       },
@@ -32,12 +45,26 @@
         "defaultPath": ".orqa/principles/pillars",
         "idPrefix": "PILLAR",
         "frontmatter": {
-          "required": ["id", "type", "status"],
-          "optional": ["title", "description", "gate", "relationships"]
+          "required": [
+            "id",
+            "type",
+            "status"
+          ],
+          "optional": [
+            "title",
+            "description",
+            "gate",
+            "relationships"
+          ]
         },
         "statusTransitions": {
-          "active": ["review", "archived"],
-          "review": ["active"],
+          "active": [
+            "review",
+            "archived"
+          ],
+          "review": [
+            "active"
+          ],
           "archived": []
         }
       },
@@ -49,12 +76,25 @@
         "defaultPath": ".orqa/principles/personas",
         "idPrefix": "PERSONA",
         "frontmatter": {
-          "required": ["id", "type", "status"],
-          "optional": ["title", "description", "relationships"]
+          "required": [
+            "id",
+            "type",
+            "status"
+          ],
+          "optional": [
+            "title",
+            "description",
+            "relationships"
+          ]
         },
         "statusTransitions": {
-          "active": ["review", "archived"],
-          "review": ["active"],
+          "active": [
+            "review",
+            "archived"
+          ],
+          "review": [
+            "active"
+          ],
           "archived": []
         }
       },
@@ -66,18 +106,50 @@
         "defaultPath": ".orqa/discovery/ideas",
         "idPrefix": "IDEA",
         "frontmatter": {
-          "required": ["id", "type", "status"],
-          "optional": ["title", "description", "priority", "relationships"]
+          "required": [
+            "id",
+            "type",
+            "status"
+          ],
+          "optional": [
+            "title",
+            "description",
+            "priority",
+            "relationships"
+          ]
         },
         "statusTransitions": {
-          "captured": ["exploring"],
-          "exploring": ["ready", "hold", "archived"],
-          "ready": ["prioritised", "hold"],
-          "prioritised": ["active"],
-          "active": ["review", "hold"],
-          "hold": ["exploring", "ready"],
-          "review": ["completed", "active"],
-          "completed": ["surpassed", "archived"]
+          "captured": [
+            "exploring"
+          ],
+          "exploring": [
+            "ready",
+            "hold",
+            "archived"
+          ],
+          "ready": [
+            "prioritised",
+            "hold"
+          ],
+          "prioritised": [
+            "active"
+          ],
+          "active": [
+            "review",
+            "hold"
+          ],
+          "hold": [
+            "exploring",
+            "ready"
+          ],
+          "review": [
+            "completed",
+            "active"
+          ],
+          "completed": [
+            "surpassed",
+            "archived"
+          ]
         }
       },
       {
@@ -88,16 +160,43 @@
         "defaultPath": ".orqa/process/decisions",
         "idPrefix": "AD",
         "frontmatter": {
-          "required": ["id", "type", "status"],
-          "optional": ["title", "description", "relationships"]
+          "required": [
+            "id",
+            "type",
+            "status"
+          ],
+          "optional": [
+            "title",
+            "description",
+            "relationships"
+          ]
         },
         "statusTransitions": {
-          "captured": ["exploring", "active"],
-          "exploring": ["active", "hold"],
-          "active": ["review", "hold", "archived"],
-          "hold": ["active", "exploring"],
-          "review": ["active", "completed"],
-          "completed": ["surpassed", "archived"],
+          "captured": [
+            "exploring",
+            "active"
+          ],
+          "exploring": [
+            "active",
+            "hold"
+          ],
+          "active": [
+            "review",
+            "hold",
+            "archived"
+          ],
+          "hold": [
+            "active",
+            "exploring"
+          ],
+          "review": [
+            "active",
+            "completed"
+          ],
+          "completed": [
+            "surpassed",
+            "archived"
+          ],
           "archived": []
         }
       },
@@ -109,16 +208,44 @@
         "defaultPath": ".orqa/process/rules",
         "idPrefix": "RULE",
         "frontmatter": {
-          "required": ["id", "type", "status", "enforcement"],
-          "optional": ["title", "description", "relationships"]
+          "required": [
+            "id",
+            "type",
+            "status",
+            "enforcement"
+          ],
+          "optional": [
+            "title",
+            "description",
+            "relationships"
+          ]
         },
         "statusTransitions": {
-          "captured": ["exploring", "active"],
-          "exploring": ["active", "hold"],
-          "active": ["review", "hold", "archived"],
-          "hold": ["active", "exploring"],
-          "review": ["active", "completed"],
-          "completed": ["surpassed", "archived"],
+          "captured": [
+            "exploring",
+            "active"
+          ],
+          "exploring": [
+            "active",
+            "hold"
+          ],
+          "active": [
+            "review",
+            "hold",
+            "archived"
+          ],
+          "hold": [
+            "active",
+            "exploring"
+          ],
+          "review": [
+            "active",
+            "completed"
+          ],
+          "completed": [
+            "surpassed",
+            "archived"
+          ],
           "archived": []
         }
       },
@@ -130,15 +257,38 @@
         "defaultPath": ".orqa/process/lessons",
         "idPrefix": "IMPL",
         "frontmatter": {
-          "required": ["id", "type", "status", "recurrence"],
-          "optional": ["title", "description", "maturity", "relationships"]
+          "required": [
+            "id",
+            "type",
+            "status",
+            "recurrence"
+          ],
+          "optional": [
+            "title",
+            "description",
+            "maturity",
+            "relationships"
+          ]
         },
         "statusTransitions": {
-          "captured": ["exploring"],
-          "exploring": ["active", "recurring"],
-          "active": ["completed", "recurring"],
-          "recurring": ["active", "completed"],
-          "completed": ["archived"]
+          "captured": [
+            "exploring"
+          ],
+          "exploring": [
+            "active",
+            "recurring"
+          ],
+          "active": [
+            "completed",
+            "recurring"
+          ],
+          "recurring": [
+            "active",
+            "completed"
+          ],
+          "completed": [
+            "archived"
+          ]
         }
       },
       {
@@ -149,16 +299,43 @@
         "defaultPath": ".orqa/process/knowledge",
         "idPrefix": "KNOW",
         "frontmatter": {
-          "required": ["id", "type", "status"],
-          "optional": ["title", "description", "relationships"]
+          "required": [
+            "id",
+            "type",
+            "status"
+          ],
+          "optional": [
+            "title",
+            "description",
+            "relationships"
+          ]
         },
         "statusTransitions": {
-          "captured": ["exploring", "active"],
-          "exploring": ["active", "hold"],
-          "active": ["review", "hold", "archived"],
-          "hold": ["active", "exploring"],
-          "review": ["active", "completed"],
-          "completed": ["surpassed", "archived"],
+          "captured": [
+            "exploring",
+            "active"
+          ],
+          "exploring": [
+            "active",
+            "hold"
+          ],
+          "active": [
+            "review",
+            "hold",
+            "archived"
+          ],
+          "hold": [
+            "active",
+            "exploring"
+          ],
+          "review": [
+            "active",
+            "completed"
+          ],
+          "completed": [
+            "surpassed",
+            "archived"
+          ],
           "archived": []
         }
       },
@@ -170,16 +347,47 @@
         "defaultPath": ".orqa/process/agents",
         "idPrefix": "AGENT",
         "frontmatter": {
-          "required": ["id", "type", "status", "preamble"],
-          "optional": ["title", "description", "model", "capabilities", "knowledge", "relationships"]
+          "required": [
+            "id",
+            "type",
+            "status",
+            "preamble"
+          ],
+          "optional": [
+            "title",
+            "description",
+            "model",
+            "capabilities",
+            "knowledge",
+            "relationships"
+          ]
         },
         "statusTransitions": {
-          "captured": ["exploring", "active"],
-          "exploring": ["active", "hold"],
-          "active": ["review", "hold", "archived"],
-          "hold": ["active", "exploring"],
-          "review": ["active", "completed"],
-          "completed": ["surpassed", "archived"],
+          "captured": [
+            "exploring",
+            "active"
+          ],
+          "exploring": [
+            "active",
+            "hold"
+          ],
+          "active": [
+            "review",
+            "hold",
+            "archived"
+          ],
+          "hold": [
+            "active",
+            "exploring"
+          ],
+          "review": [
+            "active",
+            "completed"
+          ],
+          "completed": [
+            "surpassed",
+            "archived"
+          ],
           "archived": []
         }
       },
@@ -191,16 +399,43 @@
         "defaultPath": ".orqa/documentation",
         "idPrefix": "DOC",
         "frontmatter": {
-          "required": ["id", "type", "status"],
-          "optional": ["title", "description", "relationships"]
+          "required": [
+            "id",
+            "type",
+            "status"
+          ],
+          "optional": [
+            "title",
+            "description",
+            "relationships"
+          ]
         },
         "statusTransitions": {
-          "captured": ["exploring", "active"],
-          "exploring": ["active", "hold"],
-          "active": ["review", "hold", "archived"],
-          "hold": ["active", "exploring"],
-          "review": ["active", "completed"],
-          "completed": ["surpassed", "archived"],
+          "captured": [
+            "exploring",
+            "active"
+          ],
+          "exploring": [
+            "active",
+            "hold"
+          ],
+          "active": [
+            "review",
+            "hold",
+            "archived"
+          ],
+          "hold": [
+            "active",
+            "exploring"
+          ],
+          "review": [
+            "active",
+            "completed"
+          ],
+          "completed": [
+            "surpassed",
+            "archived"
+          ],
           "archived": []
         }
       },
@@ -212,28 +447,46 @@
         "defaultPath": ".orqa/principles",
         "idPrefix": "PIVOT",
         "frontmatter": {
-          "required": ["id", "type", "status"],
-          "optional": ["title", "description", "relationships"]
+          "required": [
+            "id",
+            "type",
+            "status"
+          ],
+          "optional": [
+            "title",
+            "description",
+            "relationships"
+          ]
         },
         "statusTransitions": {
-          "captured": ["exploring", "active"],
-          "exploring": ["active", "archived"],
-          "active": ["completed"],
-          "completed": ["archived"]
+          "captured": [
+            "exploring",
+            "active"
+          ],
+          "exploring": [
+            "active",
+            "archived"
+          ],
+          "active": [
+            "completed"
+          ],
+          "completed": [
+            "archived"
+          ]
         }
       }
     ],
     "agents": [
-      { "key": "orchestrator", "id": "AGENT-1dab5ebe", "path": "agents/orchestrator.md" },
-      { "key": "implementer", "id": "AGENT-cc255bc8", "path": "agents/implementer.md" },
-      { "key": "reviewer", "id": "AGENT-b0774726", "path": "agents/reviewer.md" },
-      { "key": "researcher", "id": "AGENT-fb0ce261", "path": "agents/researcher.md" },
-      { "key": "planner", "id": "AGENT-caff7bc1", "path": "agents/planner.md" },
-      { "key": "writer", "id": "AGENT-ec1b3785", "path": "agents/writer.md" },
-      { "key": "designer", "id": "AGENT-c5284fde", "path": "agents/designer.md" },
-      { "key": "governance-steward", "id": "AGENT-ff44f841", "path": "agents/governance-steward.md" },
-      { "key": "installer", "id": "AGENT-bedeffd1", "path": "agents/installer.md" },
-      { "key": "enforcer", "id": "AGENT-e7f3a2c9", "path": "agents/enforcer.md" }
+      {
+        "key": "e7f3a2c9",
+        "id": "AGENT-e7f3a2c9",
+        "path": "agents/AGENT-e7f3a2c9.md"
+      },
+      {
+        "key": "ff44f841",
+        "id": "AGENT-ff44f841",
+        "path": "agents/AGENT-ff44f841.md"
+      }
     ],
     "views": [],
     "widgets": [],
@@ -243,41 +496,66 @@
         "inverse": "upheld-by",
         "label": "Upholds",
         "inverseLabel": "Upheld By",
-        "from": ["pillar"],
-        "to": ["vision"],
+        "from": [
+          "pillar"
+        ],
+        "to": [
+          "vision"
+        ],
         "description": "Pillar supports the vision",
         "semantic": "foundation",
-        "constraints": { "required": true, "minCount": 1 }
+        "constraints": {
+          "required": true,
+          "minCount": 1
+        }
       },
       {
         "key": "grounded",
         "inverse": "grounded-by",
         "label": "Grounded",
         "inverseLabel": "Grounded By",
-        "from": ["idea"],
-        "to": ["pillar"],
+        "from": [
+          "idea"
+        ],
+        "to": [
+          "pillar"
+        ],
         "description": "Idea anchored to a foundational principle",
         "semantic": "foundation",
-        "constraints": { "required": true, "minCount": 1 }
+        "constraints": {
+          "required": true,
+          "minCount": 1
+        }
       },
       {
         "key": "benefits",
         "inverse": "benefited-by",
         "label": "Benefits",
         "inverseLabel": "Benefited By",
-        "from": ["idea"],
-        "to": ["persona"],
+        "from": [
+          "idea"
+        ],
+        "to": [
+          "persona"
+        ],
         "description": "Idea serves a target persona",
         "semantic": "foundation",
-        "constraints": { "required": true, "minCount": 1 }
+        "constraints": {
+          "required": true,
+          "minCount": 1
+        }
       },
       {
         "key": "crystallises",
         "inverse": "crystallised-by",
         "label": "Crystallises",
         "inverseLabel": "Crystallised By",
-        "from": ["idea"],
-        "to": ["decision"],
+        "from": [
+          "idea"
+        ],
+        "to": [
+          "decision"
+        ],
         "description": "Idea crystallises into an architecture decision",
         "semantic": "lineage"
       },
@@ -286,8 +564,12 @@
         "inverse": "spawned-by",
         "label": "Spawns",
         "inverseLabel": "Spawned By",
-        "from": ["idea"],
-        "to": ["research"],
+        "from": [
+          "idea"
+        ],
+        "to": [
+          "research"
+        ],
         "description": "Idea spawns an investigation",
         "semantic": "lineage"
       },
@@ -296,8 +578,12 @@
         "inverse": "driven-by",
         "label": "Drives",
         "inverseLabel": "Driven By",
-        "from": ["decision"],
-        "to": ["epic"],
+        "from": [
+          "decision"
+        ],
+        "to": [
+          "epic"
+        ],
         "description": "Decision motivates a body of delivery work",
         "semantic": "governance"
       },
@@ -306,8 +592,12 @@
         "inverse": "governed-by",
         "label": "Governs",
         "inverseLabel": "Governed By",
-        "from": ["decision"],
-        "to": ["rule"],
+        "from": [
+          "decision"
+        ],
+        "to": [
+          "rule"
+        ],
         "description": "Decision establishes governance — leads into the learning loop",
         "semantic": "governance"
       },
@@ -316,19 +606,30 @@
         "inverse": "enforced-by",
         "label": "Enforces",
         "inverseLabel": "Enforced By",
-        "from": ["rule"],
-        "to": ["decision"],
+        "from": [
+          "rule"
+        ],
+        "to": [
+          "decision"
+        ],
         "description": "Rule enforces a decision",
         "semantic": "governance",
-        "constraints": { "required": true, "minCount": 1 }
+        "constraints": {
+          "required": true,
+          "minCount": 1
+        }
       },
       {
         "key": "codifies",
         "inverse": "codified-by",
         "label": "Codifies",
         "inverseLabel": "Codified By",
-        "from": ["rule"],
-        "to": ["lesson"],
+        "from": [
+          "rule"
+        ],
+        "to": [
+          "lesson"
+        ],
         "description": "Rule codifies a lesson into enforceable governance",
         "semantic": "governance"
       },
@@ -337,8 +638,12 @@
         "inverse": "informed-by",
         "label": "Informs",
         "inverseLabel": "Informed By",
-        "from": ["research"],
-        "to": ["decision"],
+        "from": [
+          "research"
+        ],
+        "to": [
+          "decision"
+        ],
         "description": "Research findings inform an architecture decision",
         "semantic": "knowledge-flow"
       },
@@ -347,8 +652,12 @@
         "inverse": "taught-by",
         "label": "Teaches",
         "inverseLabel": "Taught By",
-        "from": ["lesson"],
-        "to": ["decision"],
+        "from": [
+          "lesson"
+        ],
+        "to": [
+          "decision"
+        ],
         "description": "Lesson teaches a future decision",
         "semantic": "knowledge-flow"
       },
@@ -357,8 +666,12 @@
         "inverse": "guided-by",
         "label": "Guides",
         "inverseLabel": "Guided By",
-        "from": ["research"],
-        "to": ["epic"],
+        "from": [
+          "research"
+        ],
+        "to": [
+          "epic"
+        ],
         "description": "Research guides a body of delivery work",
         "semantic": "knowledge-flow"
       },
@@ -367,8 +680,12 @@
         "inverse": "cautioned-by",
         "label": "Cautions",
         "inverseLabel": "Cautioned By",
-        "from": ["lesson"],
-        "to": ["epic"],
+        "from": [
+          "lesson"
+        ],
+        "to": [
+          "epic"
+        ],
         "description": "Lesson cautions a body of delivery work",
         "semantic": "knowledge-flow"
       },
@@ -377,30 +694,52 @@
         "inverse": "served-by",
         "label": "Serves",
         "inverseLabel": "Served By",
-        "from": ["agent"],
-        "to": ["pillar", "persona"],
+        "from": [
+          "agent"
+        ],
+        "to": [
+          "pillar",
+          "persona"
+        ],
         "description": "Agent is accountable to a foundational principle",
         "semantic": "foundation",
-        "constraints": { "required": true, "minCount": 1 }
+        "constraints": {
+          "required": true,
+          "minCount": 1
+        }
       },
       {
         "key": "employs",
         "inverse": "employed-by",
         "label": "Employs",
         "inverseLabel": "Employed By",
-        "from": ["agent"],
-        "to": ["knowledge"],
+        "from": [
+          "agent"
+        ],
+        "to": [
+          "knowledge"
+        ],
         "description": "Agent employs a knowledge capability",
         "semantic": "agency",
-        "constraints": { "required": true, "minCount": 1 }
+        "constraints": {
+          "required": true,
+          "minCount": 1
+        }
       },
       {
         "key": "documents",
         "inverse": "documented-by",
         "label": "Documents",
         "inverseLabel": "Documented By",
-        "from": ["doc"],
-        "to": ["epic", "decision", "rule", "milestone"],
+        "from": [
+          "doc"
+        ],
+        "to": [
+          "epic",
+          "decision",
+          "rule",
+          "milestone"
+        ],
         "description": "Document describes an artifact for human reference",
         "semantic": "knowledge-flow"
       },
@@ -409,8 +748,14 @@
         "inverse": "synchronised-with",
         "label": "Synchronised With",
         "inverseLabel": "Synchronised With",
-        "from": ["knowledge", "doc"],
-        "to": ["knowledge", "doc"],
+        "from": [
+          "knowledge",
+          "doc"
+        ],
+        "to": [
+          "knowledge",
+          "doc"
+        ],
         "description": "Paired content kept in sync — agent-facing and human-facing versions",
         "semantic": "synchronisation"
       },
@@ -419,8 +764,14 @@
         "inverse": "merged-from",
         "label": "Merged Into",
         "inverseLabel": "Merged From",
-        "from": ["idea", "research"],
-        "to": ["idea", "research"],
+        "from": [
+          "idea",
+          "research"
+        ],
+        "to": [
+          "idea",
+          "research"
+        ],
         "description": "Artifacts consolidated — multiple ideas or research threads become one",
         "semantic": "lineage"
       },
@@ -429,19 +780,32 @@
         "inverse": "revised-by",
         "label": "Revises",
         "inverseLabel": "Revised By",
-        "from": ["pivot"],
-        "to": ["vision", "persona", "pillar"],
+        "from": [
+          "pivot"
+        ],
+        "to": [
+          "vision",
+          "persona",
+          "pillar"
+        ],
         "description": "Pivot revises a foundational artifact",
         "semantic": "foundation",
-        "constraints": { "required": true, "minCount": 1 }
+        "constraints": {
+          "required": true,
+          "minCount": 1
+        }
       },
       {
         "key": "promoted-to",
         "inverse": "promoted-from",
         "label": "Promoted To",
         "inverseLabel": "Promoted From",
-        "from": ["lesson"],
-        "to": ["rule"],
+        "from": [
+          "lesson"
+        ],
+        "to": [
+          "rule"
+        ],
         "description": "Lesson promoted to an enforceable rule",
         "semantic": "governance"
       },
@@ -450,24 +814,42 @@
         "inverse": "related",
         "label": "Related",
         "inverseLabel": "Related",
-        "from": ["rule", "decision", "knowledge", "lesson", "agent", "doc"],
-        "to": ["rule", "decision", "knowledge", "lesson", "agent", "doc"],
+        "from": [
+          "rule",
+          "decision",
+          "knowledge",
+          "lesson",
+          "agent",
+          "doc"
+        ],
+        "to": [
+          "rule",
+          "decision",
+          "knowledge",
+          "lesson",
+          "agent",
+          "doc"
+        ],
         "description": "General association between governance artifacts",
         "semantic": "knowledge-flow"
       }
     ],
     "knowledge": [
-      { "key": "enforcement-patterns", "id": "KNOW-GOV-e4b91f37", "label": "Enforcement Patterns" },
-      { "key": "planning", "id": "KNOW-6f33713e", "label": "Planning" },
-      { "key": "research-methodology", "id": "KNOW-f7476f0a", "label": "Research Methodology" },
-      { "key": "diagnostic-methodology", "id": "KNOW-f5edb34d", "label": "Diagnostic Methodology" },
-      { "key": "governance-maintenance", "id": "KNOW-8d76c3c7", "label": "Governance Maintenance" },
-      { "key": "epic-requirement-inference", "id": "KNOW-8d1c4be6", "label": "Plugin Artifact Usage" },
-      { "key": "artifact-status-management", "id": "KNOW-449b1e02", "label": "Artifact Status Management" },
-      { "key": "orqa-governance", "id": "KNOW-eea50a65", "label": "Governance Patterns" },
-      { "key": "orqa-artifact-audit", "id": "KNOW-4368d782", "label": "Artifact Audit Methodology" },
-      { "key": "naming-conventions", "id": "KNOW-250d5d6f", "label": "Naming Conventions" },
-      { "key": "schema-validation", "id": "KNOW-b08d355c", "label": "Schema Validation" }
+      {
+        "key": "85e392ea",
+        "id": "KNOW-85e392ea",
+        "label": "Thinking Mode: Learning Loop"
+      },
+      {
+        "key": "8d1c4be6",
+        "id": "KNOW-8d1c4be6",
+        "label": "Plugin Artifact Usage"
+      },
+      {
+        "key": "8d76c3c7",
+        "id": "KNOW-8d76c3c7",
+        "label": "Governance Maintenance"
+      }
     ],
     "cliTools": [],
     "hooks": [],
@@ -478,27 +860,73 @@
   "semantics": {
     "foundation": {
       "description": "Relationships anchoring the foundational layer — vision, pillars, personas, agents, and changes to them",
-      "keys": ["upholds", "upheld-by", "grounded", "grounded-by", "benefits", "benefited-by", "revises", "revised-by", "serves", "served-by"]
+      "keys": [
+        "upholds",
+        "upheld-by",
+        "grounded",
+        "grounded-by",
+        "benefits",
+        "benefited-by",
+        "revises",
+        "revised-by",
+        "serves",
+        "served-by"
+      ]
     },
     "lineage": {
       "description": "Relationships establishing artifact succession — one thing becoming or spawning another",
-      "keys": ["crystallises", "crystallised-by", "spawns", "spawned-by", "merged-into", "merged-from"]
+      "keys": [
+        "crystallises",
+        "crystallised-by",
+        "spawns",
+        "spawned-by",
+        "merged-into",
+        "merged-from"
+      ]
     },
     "governance": {
       "description": "Relationships where decisions and rules direct behaviour",
-      "keys": ["drives", "driven-by", "governs", "governed-by", "enforces", "enforced-by", "codifies", "codified-by", "promoted-to", "promoted-from"]
+      "keys": [
+        "drives",
+        "driven-by",
+        "governs",
+        "governed-by",
+        "enforces",
+        "enforced-by",
+        "codifies",
+        "codified-by",
+        "promoted-to",
+        "promoted-from"
+      ]
     },
     "knowledge-flow": {
       "description": "Relationships where knowledge flows between artifacts",
-      "keys": ["informs", "informed-by", "teaches", "taught-by", "guides", "guided-by", "cautions", "cautioned-by", "documents", "documented-by", "related"]
+      "keys": [
+        "informs",
+        "informed-by",
+        "teaches",
+        "taught-by",
+        "guides",
+        "guided-by",
+        "cautions",
+        "cautioned-by",
+        "documents",
+        "documented-by",
+        "related"
+      ]
     },
     "agency": {
       "description": "Relationships where agents consume knowledge capabilities",
-      "keys": ["employs", "employed-by"]
+      "keys": [
+        "employs",
+        "employed-by"
+      ]
     },
     "synchronisation": {
       "description": "Paired content kept in sync",
-      "keys": ["synchronised-with"]
+      "keys": [
+        "synchronised-with"
+      ]
     }
   },
   "artifactLinks": {
