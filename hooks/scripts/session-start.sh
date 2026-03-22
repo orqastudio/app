@@ -88,22 +88,10 @@ if [ -f "$ORQA_DIR/project.json" ]; then
   fi
 fi
 
-# Session management protocol
-OUTPUT="${OUTPUT}SESSION PROTOCOL:\n"
-OUTPUT="${OUTPUT}1. Read previous session state (above, if present)\n"
-OUTPUT="${OUTPUT}2. Set scope: which epic/task is the focus for this session?\n"
-OUTPUT="${OUTPUT}3. Work within scope — delegate to specialized agents\n"
-OUTPUT="${OUTPUT}4. Before stopping: write session state to tmp/session-state.md\n\n"
-
-OUTPUT="${OUTPUT}ORCHESTRATOR REMINDERS:\n"
-OUTPUT="${OUTPUT}- You coordinate. You do NOT implement. Delegate to specialized agents.\n"
-OUTPUT="${OUTPUT}- Universal roles: researcher, planner, implementer, reviewer, writer, designer, governance-steward\n"
-OUTPUT="${OUTPUT}- Roles are specialised via knowledge at runtime\n\n"
-
-OUTPUT="${OUTPUT}SESSION START CHECKLIST:\n"
-OUTPUT="${OUTPUT}- Check .orqa/delivery/tasks/ for active tasks\n"
-OUTPUT="${OUTPUT}- Check .orqa/delivery/epics/ for active epics\n"
-OUTPUT="${OUTPUT}- Read the active epic to understand context\n"
+# Session start checklist (role reminders are in CLAUDE.md, not duplicated here)
+OUTPUT="${OUTPUT}SESSION START:\n"
+OUTPUT="${OUTPUT}1. Read previous session state above (if present)\n"
+OUTPUT="${OUTPUT}2. Set scope: which epic/task is the focus?\n"
 
 if [ -n "$OUTPUT" ]; then
   echo -e "$OUTPUT"

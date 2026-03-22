@@ -29,7 +29,7 @@ fi
 
 ACTIVE_TASKS=""
 if [ -d "$PROJECT_DIR/.orqa/delivery/tasks" ]; then
-  ACTIVE_TASKS=$(grep -l "^status: active" "$PROJECT_DIR"/.orqa/delivery/tasks/*.md 2>/dev/null | while read f; do
+  ACTIVE_TASKS=$(grep -l -E "^status: (active|in-progress|review|prioritised)" "$PROJECT_DIR"/.orqa/delivery/tasks/*.md 2>/dev/null | while read f; do
     id=$(grep "^id:" "$f" | head -1 | sed 's/^id:\s*//' | tr -d '"')
     title=$(grep "^title:" "$f" | head -1 | sed 's/^title:\s*//' | tr -d '"')
     echo "- $id: $title"
