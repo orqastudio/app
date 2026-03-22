@@ -39,6 +39,7 @@ import {
   mkdirSync,
   watchFile,
   unwatchFile,
+  lstatSync,
 } from "node:fs";
 
 const IS_WINDOWS = platform() === "win32";
@@ -450,13 +451,18 @@ class ChildProcess {
   }
 
   spawn(cmd, args, opts = {}) {
+    // stdinMode: "ignore" (default, for processes that don't read stdin),
+    //            "pipe" (keeps stdin fd open without sharing the terminal — needed
+    //                    for servers that block on stdin reads, e.g. MCP/LSP).
+    const stdinMode = opts.stdinMode ?? "ignore";
+    const { stdinMode: _drop, ...restOpts } = opts;
     this.process = spawn(cmd, args, {
       cwd: PROJECT_ROOT,
       env: { ...process.env },
-      stdio: ["ignore", "pipe", "pipe"],
+      stdio: [stdinMode, "pipe", "pipe"],
       shell: IS_WINDOWS, // Windows needs shell for .cmd/.bat executables (npx, cargo)
       windowsHide: true, // All output streams through the controller — no child windows needed
-      ...opts,
+      ...restOpts,
     });
 
     this.running = true;
@@ -506,7 +512,7 @@ async function start() {
       process.kill(existing.pid, 0); // check if alive
       logError(
         "ctrl",
-        `Controller already running (PID ${existing.pid}). Use 'make stop' first.`,
+        `Controller already running (PID ${existing.pid}). Use 'make stop' (or node dev.mjs stop) first.`,
       );
       process.exit(1);
     } catch {
@@ -632,26 +638,42 @@ async function start() {
       }
     }
 
-    // Link any @orqastudio/* dependencies
+    // Link any @orqastudio/* dependencies that are not already symlinked.
+    // npm link fails with a confusing error when the target is already a symlink,
+    // so we check first and skip packages that are already correctly linked.
     const allDeps = {
       ...pkg.dependencies,
       ...pkg.peerDependencies,
       ...pkg.devDependencies,
     };
     const orqaDeps = Object.keys(allDeps).filter((d) => d.startsWith("@orqastudio/"));
-    if (orqaDeps.length > 0) {
+    const depsToLink = orqaDeps.filter((dep) => {
+      // dep is e.g. "@orqastudio/types" → node_modules/@orqastudio/types
+      const depPath = join(dir, "node_modules", ...dep.split("/"));
       try {
-        execSync(`${npmCmd} link ${orqaDeps.join(" ")}`, {
+        const stat = lstatSync(depPath);
+        // Already a symlink — skip it.
+        return !stat.isSymbolicLink();
+      } catch {
+        // Does not exist — needs linking.
+        return true;
+      }
+    });
+    if (depsToLink.length > 0) {
+      try {
+        execSync(`${npmCmd} link ${depsToLink.join(" ")}`, {
           cwd: dir,
           stdio: "pipe",
           timeout: 30_000,
           windowsHide: true,
         });
-        logCtrl(`${pkgName}: linked ${orqaDeps.join(", ")}`);
+        logCtrl(`${pkgName}: linked ${depsToLink.join(", ")}`);
       } catch (err) {
         const stderr = err.stderr?.toString() || "";
         logError("ctrl", `${pkgName}: failed to link @orqastudio deps:\n  ${stderr.trim()}`);
       }
+    } else if (orqaDeps.length > 0) {
+      logCtrl(`${pkgName}: @orqastudio deps already linked — skipping`);
     }
   }
 
@@ -752,6 +774,8 @@ async function start() {
         APP_PROJECT_PATH,
       ],
       {
+        // Search server reads JSON-RPC requests from stdin — keep the pipe open.
+        stdinMode: "pipe",
         env: {
           ...process.env,
           RUST_LOG: process.env.RUST_LOG || "info",
@@ -780,6 +804,9 @@ async function start() {
         APP_PROJECT_PATH,
       ],
       {
+        // MCP server reads JSON-RPC 2.0 from stdin — keep the pipe open so the
+        // server does not exit on EOF before a client connects.
+        stdinMode: "pipe",
         env: {
           ...process.env,
           RUST_LOG: process.env.RUST_LOG || "info",
@@ -808,6 +835,9 @@ async function start() {
         APP_PROJECT_PATH,
       ],
       {
+        // LSP server reads from stdin — keep the pipe open so the server does
+        // not exit on EOF before a client connects.
+        stdinMode: "pipe",
         env: {
           ...process.env,
           RUST_LOG: process.env.RUST_LOG || "info",
@@ -901,7 +931,7 @@ async function start() {
         });
         sseStatus(true, false, searchProc?.running ?? false, mcpProc?.running ?? false, lspProc?.running ?? false);
         logCtrl(
-          `App crashed (code ${code}). Controller still alive — use 'make restart-tauri' to relaunch.`,
+          `App crashed (code ${code}). Controller still alive — use 'make restart-tauri' (or node dev.mjs restart-tauri) to relaunch.`,
         );
       }
     });
@@ -1113,9 +1143,9 @@ async function start() {
 
   logCtrl("Dev controller running. Press Ctrl+C to stop.");
   logCtrl(`Dashboard: http://localhost:${DASHBOARD_PORT}`);
-  logCtrl("Use 'make restart-tauri' to rebuild the app (Vite stays alive).");
-  logCtrl("Use 'make restart-search' / 'make restart-mcp' / 'make restart-lsp' for service restarts.");
-  logCtrl("Use 'make stop' to shut everything down.");
+  logCtrl("Use 'make restart-tauri' (or: node dev.mjs restart-tauri) to rebuild the app (Vite stays alive).");
+  logCtrl("Use 'make restart-search' / 'make restart-mcp' / 'make restart-lsp' (or: node dev.mjs restart-search / restart-mcp / restart-lsp) for service restarts.");
+  logCtrl("Use 'make stop' (or: node dev.mjs stop) to shut everything down.");
 }
 
 // ── Stop (graceful — signals the controller) ────────────────────────────────
@@ -1142,7 +1172,7 @@ async function stop() {
           return;
         }
       }
-      logCtrl("Controller did not exit gracefully. Use 'make kill' to force.");
+      logCtrl("Controller did not exit gracefully. Use 'make kill' (or: node dev.mjs kill) to force.");
       return;
     } catch {
       // Controller is dead but control file exists
@@ -1150,7 +1180,7 @@ async function stop() {
     }
   }
 
-  logCtrl("No controller running. Use 'make kill' to force-kill orphaned processes.");
+  logCtrl("No controller running. Use 'make kill' (or: node dev.mjs kill) to force-kill orphaned processes.");
 }
 
 // ── Kill (force — kills everything regardless of controller) ────────────────
@@ -1202,7 +1232,7 @@ async function restartService(signal, label) {
       removeControlFile();
     }
   }
-  logError("ctrl", `No controller running. Use 'make dev' first.`);
+  logError("ctrl", `No controller running. Use 'make dev' (or: node dev.mjs dev) first.`);
 }
 
 // ── Status ──────────────────────────────────────────────────────────────────
@@ -1323,10 +1353,10 @@ switch (command) {
         break;
       } catch {
         removeControlFile();
-        logError("ctrl", "No controller running. Use 'make dev' first.");
+        logError("ctrl", "No controller running. Use 'make dev' (or: node dev.mjs dev) first.");
       }
     } else {
-      logError("ctrl", "No controller running. Use 'make dev' first.");
+      logError("ctrl", "No controller running. Use 'make dev' (or: node dev.mjs dev) first.");
     }
     break;
   }
