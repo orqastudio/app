@@ -1,0 +1,6 @@
+{
+  "name": "@orqastudio/plugin-agile-governance",
+  "version": "0.1.4-dev",
+  "private": true,
+  "description": "Core governance model for OrqaStudio"
+}

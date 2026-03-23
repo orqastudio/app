@@ -1,0 +1,62 @@
+---
+id: RULE-dd04742e
+type: rule
+title: System Command Safety
+description: "Block or warn on dangerous system commands: rm -rf on critical paths, sudo, eval with variable input, fork bombs, destructive SQL."
+status: active
+created: 2026-03-22
+updated: 2026-03-22
+enforcement:
+  - mechanism: behavioral
+    message: "Never run destructive system commands without explicit user approval; no sudo, no rm -rf on root/home, no eval with variables, no unqualified DELETE/DROP"
+  - mechanism: hook
+    type: PreToolUse
+    event: bash
+    action: block
+    pattern: "\\brm\\b[^|&;]*-[a-zA-Z]*r[a-zA-Z]*f[a-zA-Z]*[^|&;]*\\s+(\\/|~|\\.)\\s*(?:$|[|&;])"
+  - mechanism: hook
+    type: PreToolUse
+    event: bash
+    action: block
+    pattern: "(?:^|[|&;`\\s])\\bsudo\\b"
+  - mechanism: hook
+    type: PreToolUse
+    event: bash
+    action: block
+    pattern: "\\beval\\s+[\"']?\\$[\\w{(]"
+  - mechanism: hook
+    type: PreToolUse
+    event: bash
+    action: block
+    pattern: ":\\s*\\(\\s*\\)\\s*\\{[^}]*:\\s*[|&]\\s*:\\s*&[^}]*\\}"
+  - mechanism: hook
+    type: PreToolUse
+    event: bash
+    action: warn
+    pattern: "\\brm\\b[^|&;]*-[a-zA-Z]*r[a-zA-Z]*f"
+  - mechanism: hook
+    type: PreToolUse
+    event: bash
+    action: warn
+    pattern: "\\bDROP\\s+TABLE\\b"
+  - mechanism: hook
+    type: PreToolUse
+    event: bash
+    action: warn
+    pattern: "\\bDELETE\\s+FROM\\s+\\w[\\w.]*(?:\\s+(?!WHERE\\b)[^;]*)?(?:;|$)"
+relationships: []
+---
+Block or warn on dangerous system commands that could cause data loss or system compromise.
+
+## Blocked Commands (Exit 2)
+
+- `rm -rf /`, `rm -rf ~`, `rm -rf .` — catastrophic data loss
+- `sudo` — unexpected privilege escalation
+- `eval $variable` — code injection risk
+- Fork bomb patterns — system resource exhaustion
+
+## Warned Commands (Allowed with Warning)
+
+- `rm -rf <path>` on non-root paths — verify target
+- `DROP TABLE` — destructive and irreversible
+- `DELETE FROM` without WHERE — removes all rows
