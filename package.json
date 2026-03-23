@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/types",
-  "version": "0.1.0-dev",
+  "version": "0.1.4-dev",
   "description": "Shared TypeScript types for the OrqaStudio ecosystem",
   "type": "module",
   "main": "dist/index.js",
@@ -29,7 +29,8 @@
     "generate": "node scripts/generate-types.mjs"
   },
   "files": [
-    "dist/"
+    "dist/",
+    "src/"
   ],
   "devDependencies": {
     "@types/node": "^22.0.0",
