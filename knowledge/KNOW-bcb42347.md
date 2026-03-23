@@ -1,5 +1,6 @@
 ---
 id: KNOW-bcb42347
+type: knowledge
 title: Test Engineering
 description: |
   Test engineering methodology: test organisation, coverage requirements, mock

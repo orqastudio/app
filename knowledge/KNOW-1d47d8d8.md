@@ -1,5 +1,6 @@
 ---
 id: KNOW-1d47d8d8
+type: knowledge
 name: Software Delivery Management
 status: active
 plugin: "@orqastudio/plugin-software-project"

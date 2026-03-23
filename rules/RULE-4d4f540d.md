@@ -1,5 +1,6 @@
 ---
 id: RULE-4d4f540d
+type: rule
 title: UAT Process
 description: User acceptance testing follows a collect-then-systematize approach. Findings are grouped by root cause before tasks are created.
 status: active
