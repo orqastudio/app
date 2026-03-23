@@ -2,7 +2,7 @@
 id: TASK-07a8b9c0
 type: task
 name: "Verify full pipeline and archive original repos"
-status: in-progress
+status: done
 description: "End-to-end verification: clean clone, make install, make check, make build. Then archive original GitHub repos with redirect READMEs."
 relationships:
   - target: EPIC-f2b9e7d3

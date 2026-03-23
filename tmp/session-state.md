@@ -1,51 +1,41 @@
 ---
 updated: 2026-03-23
-scope: EPIC-d4a8c1e5 — Plugin Framework: Universal Capability Model
+scope: EPIC-f2b9e7d3 — Git Infrastructure: Forgejo + Monorepo
 ---
 
-## Status: All 5 Phases COMPLETE — Pending Review
+## Status: Phase 1 COMPLETE, Phases 2-5 require infrastructure
 
-### Completed Tasks (10)
+### Phase 1: Monorepo Consolidation — DONE
 
-| Task | Phase | Description |
-|------|-------|-------------|
-| TASK-a1c3e5f7 | 1 | Three-way diff hash tracking in manifest.json |
-| TASK-b2d4f6a8 | 1 | Three-way diff comparison + smart refresh |
-| TASK-d4f6b8ca | 1 | Content sync fixes (.md filter, injector config, blind overwrite) |
-| TASK-c3e5a7b9 | 1 | orqa plugin status command |
-| TASK-f6b8d0ec | 2 | Extends strategy implementation |
-| TASK-a7c9e1fd | 2 | Refactor plugins/typescript to use extends |
-| TASK-b8d0e2f4 | 3 | Universal symlink + aggregation capabilities |
-| TASK-c9e1f3a5 | 3 | Migrate connector to declarative capabilities |
-| TASK-d0e2f4a6 | 4 | Integrations in plugin lifecycle |
-| TASK-e1f3a5b7 | 5 | Template validation command |
+| Task | Description | Status |
+|------|-------------|--------|
+| TASK-01a2b3c4 | Test merge process | done |
+| TASK-02b3c4d5 | Execute merge — 30 repos imported | done |
+| TASK-03c4d5e6 | npm workspaces (21 packages) | done |
+| TASK-04d5e6f7 | Cargo workspace (5 crates) | done |
+| TASK-05e6f7a8 | Install pipeline simplified | done |
+| TASK-06f7a8b9 | Per-directory licensing | done |
+| TASK-07a8b9c0 | Build verification | done |
 
-### Files Modified
+### Remaining Phases (require infrastructure)
 
-- libs/cli/src/lib/content-lifecycle.ts — three-way diff, hash tracking, extends, symlinks, aggregation
-- libs/cli/src/commands/plugin.ts — status command, callers updated, aggregation wiring, template validate
-- libs/cli/src/commands/install.ts — updated fallback script, LIB_ORDER deps
-- libs/cli/src/lib/installer.ts — integrations/ in scan dirs
-- libs/cli/src/lib/injector-config.ts — integrations/ in scan dirs
-- libs/cli/src/lib/version-sync.ts — integrations/ in version sync
-- libs/cli/src/lib/license.ts — integrations/ in license checks
-- libs/cli/src/lib/readme.ts — integrations/ in readme checks
-- libs/cli/src/commands/validate-schema.ts — integrations/ in schema validation
-- libs/cli/src/commands/id.ts — integrations/ in ID scan
-- libs/types/src/plugin.ts — strategy/mechanism on content mapping, symlink/aggregation types
-- libs/types/src/index.ts — new type exports
-- connectors/claude-code/src/connector-setup.ts — simplified, bespoke wiring removed
-- connectors/claude-code/orqa-plugin.json — declarative symlinks + aggregatedFiles
-- plugins/typescript/orqa-plugin.json — config section with extends presets
-- integrations/claude-agent-sdk/orqa-plugin.json — build command added
-- libs/cli/tsconfig.json — extends from relative path
-- libs/sdk/tsconfig.json — extends from relative path
-- libs/cli/package.json — removed plugin-typescript dependency
-- libs/sdk/package.json — removed plugin-typescript dependency
-- templates/registry.json — new template registry
+| Task | Phase | Description | Status |
+|------|-------|-------------|--------|
+| TASK-08b9c0d1 | 2 | Forgejo instance | todo |
+| TASK-09c0d1e2 | 3 | CI migration | todo |
+| TASK-10d1e2f3 | 4 | Bidirectional sync bridge | todo |
+| TASK-11e2f3a4 | 5 | Developer tooling | todo |
 
-### What's Next
+### Key Facts
 
-- EPIC-d4a8c1e5 needs review before marking complete
-- EPIC-f2b9e7d3 (Git Infrastructure) is unblocked once this epic is done
-- All changes need to be committed
+- 1,779 commits with full history from all 30 repos
+- No more submodules — all content is direct in the monorepo
+- npm workspaces resolve @orqastudio/* packages automatically
+- Cargo workspace shares build cache across 5 Rust crates
+- Plugin framework changes (EPIC-d4a8c1e5) re-applied in monorepo
+- TypeScript and Rust lib builds pass
+- Tauri app build requires frontend built first (expected — make build handles ordering)
+
+### Note on Plugin Framework
+
+The plugin framework changes from EPIC-d4a8c1e5 were lost during the monorepo merge (submodule commits weren't pushed to GitHub first). They were re-applied as a single commit in the monorepo. The changes are functionally identical but the git history shows them as one commit rather than the original task-by-task progression.
