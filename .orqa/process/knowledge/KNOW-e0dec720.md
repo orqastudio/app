@@ -3,16 +3,16 @@ id: KNOW-e0dec720
 title: Project Setup
 description: |
   Universal project scaffolding: creates the governance directory structure,
-  copies core rules and knowledge, initialises project configuration, and sets up
+  installs core plugins, initialises project configuration, and sets up
   CLI symlinks. This is the base setup — project type presets layer on top.
   Use when: initialising a new project with governance, or repairing a broken
   governance directory structure.
 status: active
 onboarding: true
 created: 2026-03-01
-updated: 2026-03-10
+updated: 2026-03-23
 category: tool
-version: 1.0.0
+version: 2.0.0
 user-invocable: true
 relationships:
   - target: DOC-a1b2c3d4
@@ -27,7 +27,8 @@ The base structure created by project setup:
 
 ```
 <governance-dir>/
-  project configuration         # Project metadata and artifact paths
+  project.json                  # Project metadata and artifact paths
+  manifest.json                 # Plugin content ownership tracking
   icon.svg                      # Project icon (default provided)
   documentation/                # Documentation tree
     architecture/               #   Architecture decisions and docs
@@ -43,14 +44,24 @@ The base structure created by project setup:
   process/                      # Governance artifacts
     lessons/                    #   Lesson artifacts
     decisions/                  #   Architecture decision records
-    rules/                      #   Rule artifacts
+    rules/                      #   Rule artifacts (populated by plugins)
     hooks/                      #   Event hooks
-  team/                         # Team artifacts
-    agents/                     #   Agent definitions
-    knowledge/                  #   Knowledge directories
+    agents/                     #   Agent definitions (populated by plugins)
+    knowledge/                  #   Knowledge artifacts (populated by plugins)
 ```
 
-## Project Configuration Schema
+## How Core Content Is Installed
+
+Core rules, agents, and knowledge are NOT copied manually. They come from the `@orqastudio/plugin-core-framework` plugin, installed automatically during project setup.
+
+The plugin lifecycle:
+1. `orqa plugin install @orqastudio/plugin-core-framework` — copies agents, rules, and knowledge to `.orqa/`
+2. The installed files are recorded in `manifest.json` and owned by the plugin
+3. Plugin-owned files cannot be edited directly — edit in the plugin source and run `orqa plugin refresh`
+
+Additional plugins (software, coding-standards, etc.) are installed the same way and layer content on top.
+
+## Project Configuration Schema (`project.json`)
 
 ```json
 {
@@ -85,9 +96,31 @@ The base structure created by project setup:
 }
 ```
 
-## Core Content
+## Manifest File (`manifest.json`)
 
-These files are copied during setup (core layer — non-editable by project):
+Created alongside `project.json`. Tracks which files in `.orqa/` are owned by which plugin:
+
+```json
+{
+  "plugins": {
+    "@orqastudio/plugin-core-framework": {
+      "version": "0.1.0-dev",
+      "installed_at": "2026-03-23T00:35:00.000Z",
+      "files": [
+        ".orqa/process/agents/AGENT-1dab5ebe.md",
+        ".orqa/process/knowledge/KNOW-b453410f.md",
+        ".orqa/process/rules/RULE-029db175.md"
+      ]
+    }
+  }
+}
+```
+
+The engine uses `manifest.json` to enforce edit protection on plugin-owned files and to know which files to remove on uninstall or disable.
+
+## Core Content (from `@orqastudio/plugin-core-framework`)
+
+The core plugin provides:
 
 ### Core Rules
 - `artifact-lifecycle.md` — Artifact status transitions and gates
@@ -125,18 +158,19 @@ For Claude Code compatibility, create symlinks in the agent infrastructure direc
 ## Setup Procedure
 
 1. Create the governance directory tree
-2. Generate project configuration with project name and default artifacts config
-3. Copy core rules, agents, and knowledge
-4. Create CLI symlinks (if Claude Code is detected)
-5. Run `project-inference` to detect project characteristics
-6. Run `epic-requirement-inference` to recommend `workflow.epics-required` setting
-7. Set `workflow.epics-required` in project configuration based on recommendation
-8. Apply appropriate project type preset (e.g., `project-type-software`)
-9. Report what was created and what the user should review
+2. Generate `project.json` with project name and default artifacts config
+3. Create an empty `manifest.json`
+4. Run `orqa plugin install @orqastudio/plugin-core-framework` — populates agents, rules, knowledge
+5. Create CLI symlinks (if Claude Code is detected)
+6. Run `project-inference` to detect project characteristics
+7. Run `epic-requirement-inference` to recommend `workflow.epics-required` setting
+8. Set `workflow.epics-required` in `project.json` based on recommendation
+9. Apply appropriate project type preset (e.g., `project-type-software`)
+10. Report what was created and what the user should review
 
 ## Critical Rules
 
 - NEVER overwrite existing governance content — setup is for NEW projects
 - If governance directory already exists, offer repair/update instead of overwrite
-- Core content is read-only for the project — updates come from platform releases
-- Project-added rules and knowledge layer ON TOP of core, never replace it
+- Plugin-owned files in `.orqa/` are read-only for the project — update via `orqa plugin refresh`
+- Project-added rules and knowledge layer ON TOP of plugin content, never replace it

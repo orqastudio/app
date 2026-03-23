@@ -7,9 +7,9 @@ description: |
   pre-installed for independent lifecycle management.
 status: active
 created: 2026-03-19
-updated: 2026-03-19
+updated: 2026-03-23
 category: domain
-version: 0.1.0
+version: 0.2.0
 user-invocable: false
 relationships:
   - target: DOC-c65f07b7
@@ -33,7 +33,6 @@ This skill is loaded when the base plugin development skill detects that the wor
 ### 1. Scaffold from Template
 
 ```bash
-# Choose a template
 orqa plugin create --template <cli-tool|frontend|full|sidecar> --name <plugin-name>
 ```
 
@@ -57,6 +56,8 @@ my-plugin/
 ├── orqa-plugin.json              # Plugin manifest
 ├── package.json
 ├── src/
+├── knowledge/                    # Knowledge artifacts (copied to .orqa/ on install)
+├── rules/                        # Rule artifacts (copied to .orqa/ on install)
 ├── .github/workflows/
 │   ├── ci.yml
 │   └── publish-dev.yml
@@ -67,19 +68,50 @@ my-plugin/
 
 ### 3. Plugin Manifest
 
-- `name` — `@yourorg/plugin-<name>` (your package scope)
-- `displayName`, `description`, `category`, `provides` — same as first-party
-- Use your own package scope, not the platform's scope
+```json
+{
+  "name": "@yourorg/plugin-name",
+  "version": "0.1.0-dev",
+  "displayName": "My Plugin",
+  "description": "One-line description.",
+  "category": "coding-standards|delivery|integration|custom",
+  "provides": {
+    "schemas": [],
+    "knowledge": [],
+    "enforcement_mechanisms": []
+  },
+  "content": {
+    "knowledge": { "source": "knowledge", "target": ".orqa/process/knowledge" },
+    "rules": { "source": "rules", "target": ".orqa/process/rules" }
+  },
+  "dependencies": {
+    "npm": []
+  }
+}
+```
 
-### 4. Development
+- `name` — `@yourorg/plugin-<name>` (your package scope, not the platform's)
+- `provides` — at least one capability (schemas, views, hooks, agents, knowledge, enforcement_mechanisms, etc.) or a `content` mapping
+- `content` — source-to-target mappings; files are copied to the project's `.orqa/` at install and tracked in `.orqa/manifest.json`
+
+### 4. Content Ownership
+
+Plugin-owned files in `.orqa/` are protected — users cannot edit them directly. The engine enforces this using `manifest.json`. To update content:
+
+1. Edit in the plugin source directory
+2. Run `orqa plugin refresh` in the consuming project
+
+This applies to your own plugin too when testing locally.
+
+### 5. Development
 
 Third-party plugins develop independently:
 - Create governance seed data for testing
 - Run `orqa dev` within the plugin project
 - Use `orqa check` for coding standards enforcement
-- Use `orqa verify` for integrity validation
+- Run `orqa enforce` for manifest and integrity validation
 
-### 5. Testing Locally
+### 6. Testing Locally
 
 Install in a test project via file path:
 
@@ -87,15 +119,38 @@ Install in a test project via file path:
 orqa plugin install --path /path/to/my-plugin
 ```
 
-### 6. Community Registry Submission
+After making content changes during development:
+
+```bash
+orqa plugin refresh my-plugin-name
+```
+
+To inspect what has drifted between source and `.orqa/`:
+
+```bash
+orqa plugin diff my-plugin-name
+```
+
+### 7. Community Registry Submission
 
 To submit to the community plugin registry:
-1. Ensure all validation passes (`orqa enforce`)
+1. Ensure all enforcement passes (`orqa enforce`)
 2. Submit a PR to the community registry repository
 3. Maintainers review for quality, security, and compatibility
 4. Verified plugins show a verified badge in the app
 
-### 7. Licensing
+### 8. Lifecycle Reference
+
+```bash
+orqa plugin install <name-or-path>   # Install and copy content to .orqa/
+orqa plugin uninstall <name>          # Remove plugin and its owned files from .orqa/
+orqa plugin enable <name>             # Re-copy content for a disabled plugin
+orqa plugin disable <name>            # Remove content without uninstalling
+orqa plugin refresh [name]            # Rebuild and re-sync content (one or all)
+orqa plugin diff [name]               # Show content drift between source and .orqa/
+```
+
+### 9. Licensing
 
 Third-party plugins choose their own license. The plugin creation workflow asks:
 - Apache-2.0 (permissive, attribution required)
