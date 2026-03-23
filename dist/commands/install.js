@@ -58,6 +58,8 @@ export async function runInstallCommand(args) {
             console.log();
             cmdLink(root);
             console.log();
+            cmdPluginSync(root);
+            console.log();
             cmdSmokeTest(root);
             console.log("\n=== Install complete. Run 'make dev' to start developing. ===");
             break;
@@ -366,6 +368,38 @@ function cmdLink(root) {
     }
     catch {
         // Non-fatal — prompt-injector will fall back to live scanning.
+    }
+}
+// ── Plugin Content Sync ─────────────────────────────────────────────────────
+function cmdPluginSync(root) {
+    console.log("Syncing plugin content to .orqa/...");
+    try {
+        execSync("orqa plugin refresh", { cwd: root, stdio: "inherit" });
+    }
+    catch {
+        // Refresh may fail for npm deps on fresh clone — fall back to content-only sync
+        console.log("  Full refresh failed — falling back to content-only sync...");
+        try {
+            execSync(`node -e "
+const { copyPluginContent, readContentManifest, writeContentManifest } = require('./libs/cli/dist/lib/content-lifecycle.js');
+const { readManifest } = require('./libs/cli/dist/lib/manifest.js');
+const { listInstalledPlugins } = require('./libs/cli/dist/lib/installer.js');
+const root = process.cwd();
+const m = readContentManifest(root);
+for (const p of listInstalledPlugins(root)) {
+  try {
+    const pm = readManifest(p.path);
+    const files = copyPluginContent(p.path, root, pm);
+    if (files.length > 0) { m.plugins[p.name] = { version: pm.version, installed_at: new Date().toISOString(), files }; }
+  } catch {}
+}
+writeContentManifest(root, m);
+console.log('  Content synced for ' + Object.keys(m.plugins).length + ' plugins');
+"`, { cwd: root, stdio: "inherit" });
+        }
+        catch (e) {
+            console.error(`  Content sync failed: ${e instanceof Error ? e.message : String(e)}`);
+        }
     }
 }
 // ── Smoke Test ──────────────────────────────────────────────────────────────
