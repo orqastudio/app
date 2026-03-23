@@ -594,6 +594,17 @@
                 "null"
               ]
             },
+            "thinking-mode": {
+              "type": "string",
+              "description": "Prompt classification mode this knowledge artifact represents. Used by the thinking-mode classifier to match prompts to behavioral context."
+            },
+            "priority-rules": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Rule categories prioritised when this thinking mode is active. Used by the prompt injector to select relevant behavioral rules."
+            },
             "relationships": {
               "type": "array",
               "items": {

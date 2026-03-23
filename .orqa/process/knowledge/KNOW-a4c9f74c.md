@@ -3,6 +3,7 @@ id: KNOW-a4c9f74c
 type: knowledge
 title: "Thinking Mode: Governance"
 thinking-mode: governance
+priority-rules: [process, planning]
 description: "The user wants rules created, enforced, audited, or maintained — governance structure and pipeline integrity, not feature work."
 status: active
 created: 2026-03-23
