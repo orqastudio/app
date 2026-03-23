@@ -1,0 +1,90 @@
+[submodule "app"]
+	path = app
+	url = git@github.com:orqastudio/orqastudio-app.git
+[submodule "libs/types"]
+	path = libs/types
+	url = git@github.com:orqastudio/orqastudio-lib-types.git
+[submodule "libs/sdk"]
+	path = libs/sdk
+	url = git@github.com:orqastudio/orqastudio-lib-sdk.git
+[submodule "libs/svelte-components"]
+	path = libs/svelte-components
+	url = git@github.com:orqastudio/orqastudio-lib-svelte-components.git
+[submodule "libs/graph-visualiser"]
+	path = libs/graph-visualiser
+	url = git@github.com:orqastudio/orqastudio-lib-graph-visualiser.git
+[submodule "libs/brand"]
+	path = libs/brand
+	url = git@github.com:orqastudio/orqastudio-lib-brand.git
+[submodule "libs/cli"]
+	path = libs/cli
+	url = git@github.com:orqastudio/orqastudio-lib-cli.git
+[submodule ".github-org"]
+	path = .github-org
+	url = git@github.com:orqastudio/.github.git
+[submodule "registry/official"]
+	path = registry/official
+	url = git@github.com:orqastudio/orqastudio-registry-official.git
+[submodule "registry/community"]
+	path = registry/community
+	url = git@github.com:orqastudio/orqastudio-registry-community.git
+[submodule "plugins/cli"]
+	path = plugins/cli
+	url = git@github.com:orqastudio/orqastudio-plugin-cli.git
+[submodule "plugins/software"]
+	path = plugins/software
+	url = git@github.com:orqastudio/orqastudio-plugin-software.git
+[submodule "connectors/claude-code"]
+	path = connectors/claude-code
+	url = git@github.com:orqastudio/orqastudio-connector-claude-code.git
+[submodule "tools/debug"]
+	path = tools/debug
+	url = git@github.com:orqastudio/orqastudio-tool-debug.git
+[submodule "templates"]
+	path = templates
+	url = git@github.com:orqastudio/orqastudio-templates.git
+[submodule "plugins/svelte"]
+	path = plugins/svelte
+	url = git@github.com:orqastudio/orqastudio-plugin-svelte.git
+[submodule "plugins/tauri"]
+	path = plugins/tauri
+	url = git@github.com:orqastudio/orqastudio-plugin-tauri.git
+[submodule "plugins/typescript"]
+	path = plugins/typescript
+	url = git@github.com:orqastudio/orqastudio-plugin-typescript.git
+[submodule "plugins/coding-standards"]
+	path = plugins/coding-standards
+	url = git@github.com:orqastudio/orqastudio-plugin-coding-standards.git
+[submodule "libs/search"]
+	path = libs/search
+	url = git@github.com:orqastudio/orqastudio-lib-search.git
+[submodule "libs/mcp-server"]
+	path = libs/mcp-server
+	url = git@github.com:orqastudio/orqastudio-lib-mcp-server.git
+[submodule "libs/lsp-server"]
+	path = libs/lsp-server
+	url = git@github.com:orqastudio/orqastudio-lib-lsp-server.git
+[submodule "libs/validation"]
+	path = libs/validation
+	url = git@github.com:orqastudio/orqastudio-lib-validation.git
+[submodule "plugins/agile-governance"]
+	path = plugins/agile-governance
+	url = git@github.com:orqastudio/orqastudio-plugin-agile-governance.git
+[submodule "plugins/systems-thinking"]
+	path = plugins/systems-thinking
+	url = git@github.com:orqastudio/orqastudio-plugin-systems-thinking.git
+[submodule "integrations/claude-agent-sdk"]
+	path = integrations/claude-agent-sdk
+	url = git@github.com:orqastudio/orqastudio-plugin-claude.git
+[submodule "plugins/rust"]
+	path = plugins/rust
+	url = git@github.com:orqastudio/orqastudio-plugin-rust.git
+[submodule "plugins/core"]
+	path = plugins/core
+	url = git@github.com:orqastudio/orqastudio-plugin-core-framework.git
+[submodule "plugins/githooks"]
+	path = plugins/githooks
+	url = git@github.com:orqastudio/orqastudio-plugin-githooks.git
+[submodule "libs/logger"]
+	path = libs/logger
+	url = git@github.com:orqastudio/orqastudio-lib-logger.git
