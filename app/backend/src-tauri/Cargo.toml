@@ -54,24 +54,12 @@ orqa-validation = { path = "../../../libs/validation" }
 [dev-dependencies]
 tempfile = "3"
 
+[lints]
+workspace = true
+
 [lints.clippy]
-pedantic = { level = "warn", priority = -1 }
-# Reasonable allows for pedantic lints that are too noisy
-module_name_repetitions = "allow"
-must_use_candidate = "allow"
-missing_errors_doc = "allow"
-missing_panics_doc = "allow"
 # Tauri commands require owned State<> and String params — can't pass by reference
 needless_pass_by_value = "allow"
-# Doc backtick enforcement is too noisy for mixed prose/code docs
-doc_markdown = "allow"
-# Numeric casts are pervasive in DB/index/metrics code — explicit try_from everywhere
-# would obscure logic. We trust our value ranges (IDs, counts, sizes).
-cast_possible_truncation = "allow"
-cast_sign_loss = "allow"
-cast_precision_loss = "allow"
-cast_lossless = "allow"
-cast_possible_wrap = "allow"
 
 [features]
 default = ["custom-protocol"]
