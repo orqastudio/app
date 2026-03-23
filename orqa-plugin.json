@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/plugin-core-framework",
-  "version": "0.1.0-dev",
+  "version": "0.1.4-dev",
   "displayName": "Core Framework",
   "description": "The agent execution model — universal roles, delegation, session management, knowledge loading, thinking mode classification. Every project gets this.",
   "category": "framework",
@@ -23,10 +23,26 @@
   "provides": {
     "schemas": [],
     "enforcement_mechanisms": [
-      { "key": "behavioral", "description": "Prompt injection reminder — minimum enforcement floor", "strength": 1 },
-      { "key": "json-schema", "description": "Frontmatter JSON Schema validation", "strength": 8 },
-      { "key": "hook", "description": "Lifecycle hook enforcement (PreAction, PostAction, etc.)", "strength": 5 },
-      { "key": "onnx", "description": "Semantic inference — similarity, classification, pattern matching (lesson recurrence, duplicate detection, compliance)", "strength": 4 }
+      {
+        "key": "behavioral",
+        "description": "Prompt injection reminder — minimum enforcement floor",
+        "strength": 1
+      },
+      {
+        "key": "json-schema",
+        "description": "Frontmatter JSON Schema validation",
+        "strength": 8
+      },
+      {
+        "key": "hook",
+        "description": "Lifecycle hook enforcement (PreAction, PostAction, etc.)",
+        "strength": 5
+      },
+      {
+        "key": "onnx",
+        "description": "Semantic inference — similarity, classification, pattern matching (lesson recurrence, duplicate detection, compliance)",
+        "strength": 4
+      }
     ],
     "relationships": [],
     "agents": [
