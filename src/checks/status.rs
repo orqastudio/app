@@ -174,7 +174,10 @@ fn check_child_type_consistency(
         let Some(&parent_pos) = status_pos.get(parent_status.as_str()) else {
             continue;
         };
-        if child_pos > parent_pos {
+        // Only flag when parent is in a very early state (before active, ordinal < 4)
+        // and child is in a late state (completed or later, ordinal >= 6).
+        // An active epic with completed tasks is normal workflow — the epic has more tasks.
+        if child_pos > parent_pos && parent_pos < 4 && child_pos >= 6 {
             checks.push(IntegrityCheck {
                 artifact_id: node.id.clone(),
                 category: IntegrityCategory::ParentChildInconsistency,
@@ -211,11 +214,14 @@ fn check_parent_child_consistency_hardcoded(
         };
 
         // Check epic parent.
+        // Only flag when parent is in a very early state (before active, ordinal < 4)
+        // and child is in a late state (completed or later, ordinal >= 6).
+        // An active epic with completed tasks is normal workflow — the epic has more tasks.
         if let Some(parent_id) = node.frontmatter.get("epic").and_then(|v| v.as_str()) {
             if let Some(parent) = graph.nodes.get(parent_id) {
                 if let Some(parent_status) = &parent.status {
                     if let Some(&parent_pos) = status_pos.get(parent_status.as_str()) {
-                        if child_pos > parent_pos {
+                        if child_pos > parent_pos && parent_pos < 4 && child_pos >= 6 {
                             push_parent_child_inconsistency(
                                 checks,
                                 &node.id,
@@ -231,11 +237,13 @@ fn check_parent_child_consistency_hardcoded(
         }
 
         // Check milestone parent.
+        // Only flag when parent is in a very early state (before active, ordinal < 4)
+        // and child is in a late state (completed or later, ordinal >= 6).
         if let Some(parent_id) = node.frontmatter.get("milestone").and_then(|v| v.as_str()) {
             if let Some(parent) = graph.nodes.get(parent_id) {
                 if let Some(parent_status) = &parent.status {
                     if let Some(&parent_pos) = status_pos.get(parent_status.as_str()) {
-                        if child_pos > parent_pos {
+                        if child_pos > parent_pos && parent_pos < 4 && child_pos >= 6 {
                             push_parent_child_inconsistency(
                                 checks,
                                 &node.id,
