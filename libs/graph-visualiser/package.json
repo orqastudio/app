@@ -1,0 +1,46 @@
+{
+  "name": "@orqastudio/graph-visualiser",
+  "version": "0.1.4-dev",
+  "description": "Graph visualisation, topology analysis, and layout engine for OrqaStudio",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orqastudio/orqastudio-graph-visualiser.git"
+  },
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit"
+  },
+  "files": [
+    "dist/",
+    "src/"
+  ],
+  "dependencies": {
+    "@orqastudio/types": "0.1.4-dev",
+    "cytoscape": "^3.33.1"
+  },
+  "peerDependencies": {
+    "svelte": ">=5.0.0"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "svelte": "^5.0.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
