@@ -2,7 +2,7 @@
 id: TASK-08b9c0d1
 type: task
 name: "Phase 2 — Stand up Forgejo instance"
-status: in-progress
+status: done
 description: "Docker Compose setup for local Forgejo instance. Server deployment deferred — Docker for now."
 relationships:
   - target: EPIC-f2b9e7d3

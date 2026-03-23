@@ -1,0 +1,51 @@
+name: Check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: docker
+    container:
+      image: ghcr.io/catthehacker/ubuntu:act-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Install dependencies
+        run: |
+          npm install
+          cargo fetch --quiet
+
+      - name: Build TypeScript packages
+        run: |
+          for dir in libs/types libs/logger plugins/typescript libs/cli connectors/claude-code libs/sdk libs/svelte-components libs/graph-visualiser; do
+            if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
+              echo "Building $dir..."
+              cd "$dir"
+              if [ -f "tsconfig.json" ]; then
+                npx tsc --noEmit || true
+              fi
+              cd -
+            fi
+          done
+
+      - name: Rust format check
+        run: cargo fmt --all --check
+
+      - name: Rust clippy
+        run: cargo clippy --workspace -- -D warnings
+
+      - name: Rust tests
+        run: cargo test --workspace

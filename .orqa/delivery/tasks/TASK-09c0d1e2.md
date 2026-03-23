@@ -2,7 +2,7 @@
 id: TASK-09c0d1e2
 type: task
 name: "Phase 3 — Migrate CI to Forgejo Actions"
-status: todo
+status: in-progress
 description: "Set up Forgejo runner, migrate publish and check workflows, post CI status to GitHub mirror."
 relationships:
   - target: EPIC-f2b9e7d3
