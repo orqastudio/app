@@ -184,4 +184,4 @@ After every phase implementation, the orchestrator MUST invoke the code-reviewer
 - [RULE-1e8a1914](RULE-1e8a1914) (vision-alignment) — the pillar framework that plans must serve
 - [RULE-65973a88](RULE-65973a88) (architecture-decisions) — the architecture decisions plans must comply with
 - [RULE-b49142be](RULE-b49142be) (coding-standards) — the standards implementations must meet
-- [RULE-1acb1602](RULE-1acb1602) (end-to-end-completeness) — the full-stack requirement per feature
+- end-to-end-completeness — the full-stack requirement per feature
