@@ -6,6 +6,20 @@
   "category": "framework",
   "role": "core:framework",
   "uninstallable": true,
+  "content": {
+    "agents": {
+      "source": "agents",
+      "target": ".orqa/process/agents"
+    },
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    },
+    "rules": {
+      "source": "rules",
+      "target": ".orqa/process/rules"
+    }
+  },
   "provides": {
     "schemas": [],
     "enforcement_mechanisms": [

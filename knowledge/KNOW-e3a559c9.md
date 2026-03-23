@@ -4,9 +4,9 @@ title: Plugin Setup
 description: "Installs the companion plugin for Claude Code. Detects existing agent infrastructure, migrates to the project governance directory, registers the plugin, and sets up symlinks."
 status: active
 created: 2026-03-11
-updated: 2026-03-11
+updated: 2026-03-23
 category: tool
-version: 0.1.0
+version: 0.2.0
 user-invocable: true
 relationships:
   - target: DOC-a1b2c3d4
@@ -117,9 +117,14 @@ Clone or verify the plugin repository exists locally.
 
 Add the local plugin source to the Claude Code plugins configuration as a known marketplace with a directory source pointing to the plugin location.
 
-### Step 3: Register the plugin installation
+### Step 3: Install the plugin
 
-Add the plugin to the installed plugins registry with scope, project path, install path, and version information.
+Run `orqa plugin install <plugin-name>`. This:
+- Copies plugin content to `.orqa/` based on the `content` field in `orqa-plugin.json`
+- Records installed files in `.orqa/manifest.json`
+- Installs npm dependencies declared in `dependencies.npm`
+- Runs the plugin's `build` command if present
+- Registers the plugin in the project's plugin registry
 
 ### Step 4: Enable the plugin in project settings
 
@@ -166,6 +171,19 @@ After installation, the agent infrastructure directory contains only:
 | `knowledge/` | Symlink | → knowledge artifacts |
 
 The governance directory is the source of truth. The symlinks are managed by the plugin.
+
+## Plugin Lifecycle After Install
+
+Installed plugin files in `.orqa/` are owned by the plugin and protected from direct edits. To update plugin content:
+
+```bash
+orqa plugin refresh          # Rebuild all plugins and re-sync content to .orqa/
+orqa plugin refresh <name>   # Refresh a specific plugin
+orqa plugin diff <name>      # Show content drift between source and .orqa/
+orqa plugin disable <name>   # Remove plugin content without uninstalling
+orqa plugin enable <name>    # Re-copy content for a disabled plugin
+orqa plugin uninstall <name> # Remove plugin and delete all its owned files
+```
 
 ## Platform Notes
 
