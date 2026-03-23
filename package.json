@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/logger",
-  "version": "0.1.0-dev",
+  "version": "0.1.4-dev",
   "description": "Structured logging with dashboard forwarding for OrqaStudio",
   "type": "module",
   "main": "dist/index.js",
@@ -14,13 +14,18 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orqastudio/orqastudio-logger.git"
+  },
   "license": "Apache-2.0",
   "scripts": {
     "build": "tsc",
     "check": "tsc --noEmit"
   },
   "files": [
-    "dist/"
+    "dist/",
+    "src/"
   ],
   "engines": {
     "node": ">=20"
