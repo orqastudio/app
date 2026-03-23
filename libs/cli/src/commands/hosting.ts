@@ -14,8 +14,8 @@ import { execSync } from "node:child_process";
 import * as path from "node:path";
 import { getRoot } from "../lib/root.js";
 
-const COMPOSE_FILE = "infrastructure/forgejo/docker-compose.yml";
-const SETUP_SCRIPT = "infrastructure/forgejo/setup.sh";
+const COMPOSE_FILE = "infrastructure/orqastudio-git/docker-compose.yml";
+const SETUP_SCRIPT = "infrastructure/orqastudio-git/setup.sh";
 
 const USAGE = `
 Usage: orqa hosting <subcommand>
