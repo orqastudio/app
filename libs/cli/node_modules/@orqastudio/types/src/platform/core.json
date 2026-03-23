@@ -1,0 +1,7 @@
+{
+  "$schema": "https://orqastudio.dev/schemas/platform-config.json",
+  "description": "Empty — plugins are the single source of truth for artifact types, relationships, and validation constraints. See @orqastudio/plugin-agile-governance and @orqastudio/plugin-software-project for schemas.",
+  "artifactTypes": [],
+  "relationships": [],
+  "semantics": {}
+}
