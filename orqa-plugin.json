@@ -1,20 +1,49 @@
 {
   "name": "@orqastudio/plugin-typescript",
   "displayName": "TypeScript",
-  "version": "0.1.0-dev",
+  "version": "0.1.4-dev",
   "description": "Base TypeScript development infrastructure — tsconfig presets, ESLint configs, and config composition for plugin extensions.",
   "category": "coding-standards",
+  "content": {
+    "documentation": {
+      "source": "documentation",
+      "target": ".orqa/documentation"
+    },
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    }
+  },
+  "dependencies": {
+    "npm": [
+      "@typescript-eslint/eslint-plugin",
+      "@typescript-eslint/parser",
+      "typescript-eslint",
+      "typescript-language-server"
+    ]
+  },
+  "build": "npm run build",
   "provides": {
     "enforcement_mechanisms": [
-      { "key": "tsc", "description": "TypeScript type checking", "strength": 6 }
+      {
+        "key": "tsc",
+        "description": "TypeScript type checking",
+        "strength": 6
+      }
     ],
     "knowledge": [
-      { "key": "typescript-advanced-types", "id": "KNOW-TS-001", "label": "TypeScript Advanced Types" }
+      {
+        "key": "typescript-advanced-types",
+        "id": "KNOW-TS-001",
+        "label": "TypeScript Advanced Types"
+      }
     ],
     "lspServers": {
       "typescript": {
         "command": "typescript-language-server",
-        "args": ["--stdio"],
+        "args": [
+          "--stdio"
+        ],
         "extensionToLanguage": {
           ".ts": "typescript",
           ".tsx": "typescriptreact",
@@ -25,13 +54,33 @@
     },
     "configPresets": {
       "tsconfig": [
-        { "name": "base", "path": "src/tsconfig/base.json", "description": "Strict TypeScript defaults" },
-        { "name": "library", "path": "src/tsconfig/library.json", "description": "Library preset (NodeNext, declarations)" },
-        { "name": "app", "path": "src/tsconfig/app.json", "description": "App preset (bundler resolution, no emit)" }
+        {
+          "name": "base",
+          "path": "src/tsconfig/base.json",
+          "description": "Strict TypeScript defaults"
+        },
+        {
+          "name": "library",
+          "path": "src/tsconfig/library.json",
+          "description": "Library preset (NodeNext, declarations)"
+        },
+        {
+          "name": "app",
+          "path": "src/tsconfig/app.json",
+          "description": "App preset (bundler resolution, no emit)"
+        }
       ],
       "eslint": [
-        { "name": "base", "import": "@orqastudio/plugin-typescript/eslint", "export": "base" },
-        { "name": "recommended", "import": "@orqastudio/plugin-typescript/eslint", "export": "recommended" }
+        {
+          "name": "base",
+          "import": "@orqastudio/plugin-typescript/eslint",
+          "export": "base"
+        },
+        {
+          "name": "recommended",
+          "import": "@orqastudio/plugin-typescript/eslint",
+          "export": "recommended"
+        }
       ]
     }
   }
