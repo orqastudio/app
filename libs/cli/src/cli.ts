@@ -13,6 +13,7 @@
  *   orqa graph [--type <type>] [--status <s>]     Browse the artifact graph
  *   orqa version sync|bump|check|show             Version management
  *   orqa repo license|readme                      Repo maintenance audits
+ *   orqa hosting up|down|setup|status|push        Local git server management
  */
 
 import { runPluginCommand } from "./commands/plugin.js";
@@ -31,6 +32,7 @@ import { runDevCommand } from "./commands/dev.js";
 import { runLinkCommand } from "./commands/link.js";
 import { runEnforceCommand } from "./commands/enforce.js";
 import { runDaemonCommand } from "./commands/daemon.js";
+import { runHostingCommand } from "./commands/hosting.js";
 
 const USAGE = `
 OrqaStudio CLI v0.1.0-dev
@@ -52,6 +54,7 @@ Commands:
   version     Version management (sync, bump, check, show)
   repo        Repo maintenance (license audit, readme audit)
   link        Cross-platform symlink management (create, verify, status)
+  hosting     Local git server management (up, down, setup, status, push)
   daemon      Manage the validation daemon (start, stop, status)
   log         Log enforcement responses (enforcement-response)
 
@@ -124,6 +127,9 @@ async function main(): Promise<void> {
 			break;
 		case "enforce":
 			await runEnforceCommand(commandArgs);
+			break;
+		case "hosting":
+			await runHostingCommand(commandArgs);
 			break;
 		case "daemon":
 			await runDaemonCommand(commandArgs);
