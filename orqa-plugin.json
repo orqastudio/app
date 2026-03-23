@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/plugin-software-project",
-  "version": "0.1.0-dev",
+  "version": "0.1.4-dev",
   "displayName": "Software Project",
   "description": "Software development lifecycle — delivery planning with milestones, epics and tasks, research discovery, bug tracking, roadmap views, and delivery pipeline widgets.",
   "category": "delivery",
@@ -21,21 +21,49 @@
             "status"
           ],
           "properties": {
-            "id": { "type": "string", "pattern": "^MS-[a-f0-9]{8}$" },
-            "name": { "type": "string" },
-            "description": { "type": ["string", "null"] },
-            "gate": { "type": ["string", "array"] },
-            "priority": { "type": "string" },
-            "target_date": { "type": "string" },
+            "id": {
+              "type": "string",
+              "pattern": "^MS-[a-f0-9]{8}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "gate": {
+              "type": [
+                "string",
+                "array"
+              ]
+            },
+            "priority": {
+              "type": "string"
+            },
+            "target_date": {
+              "type": "string"
+            },
             "relationships": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["target", "type"],
+                "required": [
+                  "target",
+                  "type"
+                ],
                 "properties": {
-                  "target": { "type": "string" },
-                  "type": { "type": "string" },
-                  "rationale": { "type": "string" }
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -102,19 +130,40 @@
             "status"
           ],
           "properties": {
-            "id": { "type": "string", "pattern": "^EPIC-[a-f0-9]{8}$" },
-            "name": { "type": "string" },
-            "description": { "type": ["string", "null"] },
-            "priority": { "type": "string" },
+            "id": {
+              "type": "string",
+              "pattern": "^EPIC-[a-f0-9]{8}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "priority": {
+              "type": "string"
+            },
             "relationships": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["target", "type"],
+                "required": [
+                  "target",
+                  "type"
+                ],
                 "properties": {
-                  "target": { "type": "string" },
-                  "type": { "type": "string" },
-                  "rationale": { "type": "string" }
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -181,20 +230,46 @@
             "status"
           ],
           "properties": {
-            "id": { "type": "string", "pattern": "^TASK-[a-f0-9]{8}$" },
-            "name": { "type": "string" },
-            "description": { "type": ["string", "null"] },
-            "priority": { "type": "string" },
-            "assignee": { "type": ["string", "null"] },
+            "id": {
+              "type": "string",
+              "pattern": "^TASK-[a-f0-9]{8}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "priority": {
+              "type": "string"
+            },
+            "assignee": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
             "relationships": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["target", "type"],
+                "required": [
+                  "target",
+                  "type"
+                ],
                 "properties": {
-                  "target": { "type": "string" },
-                  "type": { "type": "string" },
-                  "rationale": { "type": "string" }
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -254,19 +329,40 @@
             "status"
           ],
           "properties": {
-            "id": { "type": "string", "pattern": "^RES-[a-f0-9]{8}$" },
-            "name": { "type": "string" },
-            "description": { "type": ["string", "null"] },
-            "methodology": { "type": "string" },
+            "id": {
+              "type": "string",
+              "pattern": "^RES-[a-f0-9]{8}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "methodology": {
+              "type": "string"
+            },
             "relationships": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["target", "type"],
+                "required": [
+                  "target",
+                  "type"
+                ],
                 "properties": {
-                  "target": { "type": "string" },
-                  "type": { "type": "string" },
-                  "rationale": { "type": "string" }
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -318,18 +414,37 @@
             "status"
           ],
           "properties": {
-            "id": { "type": "string", "pattern": "^WF-[a-f0-9]{8}$" },
-            "name": { "type": "string" },
-            "description": { "type": ["string", "null"] },
+            "id": {
+              "type": "string",
+              "pattern": "^WF-[a-f0-9]{8}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
             "relationships": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["target", "type"],
+                "required": [
+                  "target",
+                  "type"
+                ],
                 "properties": {
-                  "target": { "type": "string" },
-                  "type": { "type": "string" },
-                  "rationale": { "type": "string" }
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -442,6 +557,21 @@
         ],
         "description": "Task yields a lesson learned",
         "semantic": "knowledge-flow"
+      },
+      {
+        "key": "addresses",
+        "inverse": "addressed-by",
+        "label": "Addresses",
+        "inverseLabel": "Addressed By",
+        "from": [
+          "task",
+          "epic"
+        ],
+        "to": [
+          "lesson"
+        ],
+        "description": "Task or epic addresses a lesson or implementation finding",
+        "semantic": "corrective"
       },
       {
         "key": "delivers",
@@ -772,7 +902,9 @@
     }
   },
   "dependencies": {
-    "npm": ["@orqastudio/types"]
+    "npm": [
+      "@orqastudio/types"
+    ]
   },
   "build": "npm run build",
   "delivery": {

@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/svelte-components",
-  "version": "0.1.0-dev",
+  "version": "0.1.4-dev",
   "type": "module",
   "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -34,13 +34,20 @@
     },
     "./tokens": "./dist/tokens/index.css"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orqastudio/orqastudio-svelte-components.git"
+  },
   "files": [
     "dist",
     "!dist/**/*.stories.*"
   ],
   "peerDependencies": {
-    "@orqastudio/sdk": "^0.1.0-dev",
-    "@orqastudio/types": "^0.1.0-dev",
+    "@orqastudio/sdk": "0.1.4-dev",
+    "@orqastudio/types": "0.1.4-dev",
     "svelte": ">=5.0.0"
   },
   "dependencies": {
