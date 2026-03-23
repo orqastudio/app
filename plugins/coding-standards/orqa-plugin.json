@@ -1,0 +1,63 @@
+{
+  "name": "@orqastudio/plugin-coding-standards",
+  "version": "0.1.4-dev",
+  "displayName": "Coding Standards",
+  "description": "Unified coding standards enforcement — config generation from governance rules, quality checks via orqa check, and organisation-wide standards sync.",
+  "category": "coding-standards",
+  "provides": {
+    "schemas": [],
+    "enforcement_mechanisms": [
+      {
+        "key": "lint",
+        "description": "Linter enforcement (delegates to language-specific linters)",
+        "strength": 6
+      }
+    ],
+    "views": [],
+    "widgets": [],
+    "relationships": [],
+    "knowledge": [
+      {
+        "key": "6125ab55",
+        "id": "KNOW-6125ab55",
+        "label": "Config Generation from Rules"
+      },
+      {
+        "key": "ea517e13",
+        "id": "KNOW-ea517e13",
+        "label": "Quality Check Runner"
+      }
+    ],
+    "cliTools": [
+      {
+        "key": "check",
+        "command": "orqa check",
+        "description": "Run all configured quality checks"
+      },
+      {
+        "key": "configure",
+        "command": "orqa check configure",
+        "description": "Generate tool config files from enforcement rules"
+      }
+    ],
+    "hooks": []
+  },
+  "content": {
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    },
+    "rules": {
+      "source": "rules",
+      "target": ".orqa/process/rules"
+    }
+  },
+  "dependencies": {
+    "npm": [
+      "@orqastudio/cli",
+      "@orqastudio/types"
+    ]
+  },
+  "build": "npm run build",
+  "role": "enhancement:delivery"
+}
