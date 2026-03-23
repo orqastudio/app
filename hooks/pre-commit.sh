@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # OrqaStudio Git Hooks Plugin — pre-commit enforcement
 #
-# Schema-driven validation for governance artifacts. Runs orqa validate
+# Schema-driven validation for governance artifacts. Runs orqa enforce
 # on any staged .orqa/ or plugin artifact files. Blocks commits with
 # validation errors.
 #
@@ -51,15 +51,15 @@ fi
 echo "=== Pre-commit: Validating governance artifacts ==="
 
 # Run schema-driven validation
-RESULT=$($ORQA validate "$PROJECT_ROOT" --json 2>/dev/null || echo '{"errors":0}')
+RESULT=$($ORQA enforce "$PROJECT_ROOT" --json 2>/dev/null || echo '{"errors":0}')
 ERRORS=$(echo "$RESULT" | node -e "process.stdin.on('data',d=>{try{console.log(JSON.parse(d).errors||0)}catch{console.log(0)}})" 2>/dev/null || echo "0")
 
 if [ "$ERRORS" -gt 0 ]; then
   echo ""
   echo "BLOCKED: $ERRORS validation error(s) found in governance artifacts."
   echo ""
-  echo "Run 'orqa validate' to see details."
-  echo "Run 'orqa validate --fix' to auto-fix where possible."
+  echo "Run 'orqa enforce' to see details."
+  echo "Run 'orqa enforce --fix' to auto-fix where possible."
   echo ""
   echo "To bypass (not recommended): git commit --no-verify"
   exit 1
