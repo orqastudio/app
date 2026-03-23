@@ -97,14 +97,14 @@ pub fn reauthenticate_claude() -> Result<ClaudeCliInfo, OrqaError> {
 /// Check whether the embedding model is downloaded and ready.
 ///
 /// Looks for `model.onnx` and `tokenizer.json` in the app data directory
-/// under `models/bge-small-en-v1.5/`.
+/// under `models/all-MiniLM-L6-v2/`.
 #[tauri::command]
 pub fn check_embedding_model(app_handle: tauri::AppHandle) -> Result<SetupStepStatus, OrqaError> {
     let app_dir = app_handle
         .path()
         .app_data_dir()
         .map_err(|e| OrqaError::FileSystem(format!("failed to resolve app data dir: {e}")))?;
-    let model_dir = app_dir.join("models").join("bge-small-en-v1.5");
+    let model_dir = app_dir.join("models").join("all-MiniLM-L6-v2");
 
     let model_file = model_dir.join("model.onnx");
     let tokenizer_file = model_dir.join("tokenizer.json");
@@ -114,7 +114,7 @@ pub fn check_embedding_model(app_handle: tauri::AppHandle) -> Result<SetupStepSt
             id: "embedding_model".to_string(),
             label: "Embedding Model".to_string(),
             status: StepStatus::Complete,
-            detail: Some("bge-small-en-v1.5 ready".to_string()),
+            detail: Some("all-MiniLM-L6-v2 ready".to_string()),
         })
     } else {
         Ok(SetupStepStatus {

@@ -18,7 +18,7 @@ for semantic search.
 
 Options:
   --model-dir <path>   Model directory (default: ORQA_MODEL_DIR env var,
-                        or models/bge-small-en-v1.5/ at project root)
+                        or models/all-MiniLM-L6-v2/ at project root)
   --download-only      Download the model but do not index or embed
   --skip-download      Skip model download (use existing model on disk)
   --db <path>          DuckDB database path (default: .orqa/search.duckdb)
@@ -58,7 +58,7 @@ function parseOptions(args: string[]): IndexOptions {
 	if (!modelDir) {
 		modelDir =
 			process.env.ORQA_MODEL_DIR ??
-			join(resolve(projectPath), "models", "bge-small-en-v1.5");
+			join(resolve(projectPath), "models", "all-MiniLM-L6-v2");
 	}
 
 	// Resolve db path: CLI arg > default
@@ -165,6 +165,11 @@ export async function runIndexCommand(args: string[]): Promise<void> {
 		},
 		{
 			id: 3,
+			method: "embed_chunks",
+			params: {},
+		},
+		{
+			id: 4,
 			method: "get_status",
 			params: {},
 		},

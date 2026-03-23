@@ -43,7 +43,7 @@
 					id: "embedding_model",
 					label: "Embedding Model",
 					status: "complete",
-					detail: "bge-small-en-v1.5 ready",
+					detail: "all-MiniLM-L6-v2 ready",
 				};
 				checking = false;
 				setTimeout(onComplete, 1000);
@@ -83,7 +83,7 @@
 		<div class="space-y-2">
 			<Icon name="circle-check" size="xl" />
 			<p class="text-sm font-medium text-success">Model ready</p>
-			<p class="text-xs text-muted-foreground">bge-small-en-v1.5</p>
+			<p class="text-xs text-muted-foreground">all-MiniLM-L6-v2</p>
 		</div>
 	{:else}
 		<div class="space-y-3">

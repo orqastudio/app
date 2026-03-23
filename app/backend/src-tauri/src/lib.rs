@@ -163,7 +163,7 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 
     app.manage(app_state);
 
-    let model_dir = app_dir.join("models").join("bge-small-en-v1.5");
+    let model_dir = app_dir.join("models").join("all-MiniLM-L6-v2");
     spawn_model_download(model_dir, Arc::clone(&tracker));
 
     Ok(())

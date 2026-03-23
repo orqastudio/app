@@ -24,7 +24,7 @@ pub enum EmbedError {
     Download(String),
 }
 
-/// ONNX-based text embedder using bge-small-en-v1.5.
+/// ONNX-based text embedder using all-MiniLM-L6-v2.
 ///
 /// Loads an ONNX model and tokenizer from disk, then embeds text into
 /// 384-dimensional vectors using mean pooling over token embeddings.
@@ -57,12 +57,18 @@ impl Embedder {
             ));
         }
 
-        // Build ONNX session with DirectML for hardware acceleration.
-        // DirectML auto-routes to NPU > GPU > CPU. If DirectML is not
-        // available on this system, ort silently falls back to CPU.
+        // Build ONNX session with DirectML targeting the AMD Radeon 890M
+        // iGPU (device_id 1). Device 0 is the NVIDIA RTX 5060 Ti dGPU.
+        // If DirectML is not available, ort silently falls back to CPU.
+        //
+        // Level3 optimization restored with ort 2.0.0-rc.12 (ORT 1.24).
+        // Previously Level1 was used as a workaround for rc.11 where Level3
+        // forced embedding nodes to CPU while /embeddings/Add_1 stayed on DML,
+        // causing E_INVALIDARG (0x80070057) from cross-device tensor transfers.
+        // rc.12 bundles ORT 1.24 which should resolve the DirectML placement.
         let session = ort::session::Session::builder()
             .map_err(|e| EmbedError::Ort(e.to_string()))?
-            .with_execution_providers([ort::ep::DirectML::default().build()])
+            .with_execution_providers([ort::ep::DirectML::default().with_device_id(1).build()])
             .map_err(|e| EmbedError::Ort(e.to_string()))?
             .with_optimization_level(ort::session::builder::GraphOptimizationLevel::Level3)
             .map_err(|e| EmbedError::Ort(e.to_string()))?
@@ -186,7 +192,7 @@ impl Embedder {
     }
 }
 
-const HF_BASE_URL: &str = "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/main";
+const HF_BASE_URL: &str = "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main";
 
 /// Files needed for the embedder, with their HF paths relative to the repo root.
 const MODEL_FILES: &[(&str, &str)] = &[

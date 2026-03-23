@@ -143,7 +143,7 @@ struct CliOptions {
 ///
 /// If `--db` is not provided, uses `<temp_dir>/orqa-search-server.duckdb`.
 /// If `--model-dir` is not provided, falls back to `ORQA_MODEL_DIR` env var,
-/// then `models/bge-small-en-v1.5/` relative to the current directory.
+/// then `models/all-MiniLM-L6-v2/` relative to the current directory.
 fn parse_cli_options(args: &[String]) -> CliOptions {
     let mut db_path: Option<PathBuf> = None;
     let mut model_dir: Option<PathBuf> = None;
@@ -173,7 +173,7 @@ fn resolve_model_dir(cli_model_dir: Option<PathBuf>) -> PathBuf {
     if let Ok(dir) = std::env::var("ORQA_MODEL_DIR") {
         return PathBuf::from(dir);
     }
-    PathBuf::from("models").join("bge-small-en-v1.5")
+    PathBuf::from("models").join("all-MiniLM-L6-v2")
 }
 
 // ---------------------------------------------------------------------------
@@ -187,6 +187,7 @@ fn handle_request(engine: &mut SearchEngine, request: &JsonRpcRequest) -> Value 
         "search_semantic" => handle_search_semantic(engine, &request.params),
         "get_status" => handle_get_status(engine),
         "init_embedder_sync" => handle_init_embedder_sync(engine, &request.params),
+        "embed_chunks" => handle_embed_chunks(engine),
         "download_model" => handle_download_model(&request.params),
         unknown => {
             warn!("unknown method: {unknown}");
@@ -243,6 +244,13 @@ fn handle_init_embedder_sync(engine: &mut SearchEngine, params: &Value) -> Value
     };
     match engine.init_embedder_sync(&PathBuf::from(&p.model_dir)) {
         Ok(()) => Value::Bool(true),
+        Err(e) => error_value(e.to_string()),
+    }
+}
+
+fn handle_embed_chunks(engine: &mut SearchEngine) -> Value {
+    match engine.embed_chunks() {
+        Ok(count) => serde_json::json!({ "embedded": count }),
         Err(e) => error_value(e.to_string()),
     }
 }
@@ -431,9 +439,9 @@ mod tests {
 
     #[test]
     fn resolve_model_dir_default_fallback() {
-        // When no CLI arg and no env var, falls back to models/bge-small-en-v1.5
+        // When no CLI arg and no env var, falls back to models/all-MiniLM-L6-v2
         let dir = resolve_model_dir(None);
-        assert!(dir.to_string_lossy().contains("bge-small-en-v1.5"));
+        assert!(dir.to_string_lossy().contains("all-MiniLM-L6-v2"));
     }
 
     #[test]
