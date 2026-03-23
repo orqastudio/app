@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/claude-code-cli",
-  "version": "0.1.0-dev",
+  "version": "0.1.4-dev",
   "description": "Claude Code integration for OrqaStudio — governance hooks, skills, and /orqa commands.",
   "type": "module",
   "main": "dist/index.js",
@@ -17,8 +17,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@orqastudio/cli": "^0.1.0-dev",
-    "@orqastudio/types": "^0.1.0-dev",
+    "@orqastudio/cli": "0.1.4-dev",
+    "@orqastudio/types": "0.1.4-dev",
     "yaml": "^2.8.3"
   },
   "devDependencies": {
@@ -27,6 +27,7 @@
   },
   "files": [
     "dist",
+    "src",
     "hooks",
     "skills",
     "agents",
