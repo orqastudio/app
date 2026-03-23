@@ -1,5 +1,6 @@
 ---
 id: KNOW-bcfeb64e
+type: knowledge
 title: Rule Enforcement (CLI Plugin)
 description: Understands how OrqaStudio governance rules are enforced in the Claude Code CLI via the companion plugin's PreToolUse hook.
 status: active
