@@ -1,47 +1,18 @@
 # Contributing to OrqaStudio
 
-## Getting Started
+**Coming soon** — contribution workflows are being set up.
 
-```bash
-git clone git@github.com:orqastudio/app.git
-cd app
-make install
-```
+OrqaStudio is in active pre-release development. The primary development platform is self-hosted using Forgejo, with this GitHub repository serving as a read-only mirror.
 
-See the [README](README.md) for full setup instructions.
+## Current Status
 
-## Workflow
+We're not accepting contributions yet while we establish the development infrastructure and contribution workflows. This includes setting up CI/CD, issue tracking, and a clear path for community involvement.
 
-1. Fork [orqastudio/app](https://github.com/orqastudio/app)
-2. `make install` to bootstrap
-3. Create a branch: `git checkout -b feat/my-feature`
-4. Make changes, commit with sign-off: `git commit -s -m "your message"`
-5. Push and open a PR
-
-We use DCO (Developer Certificate of Origin). Sign off every commit. You retain copyright. No CLA required.
-
-## Pre-commit Checks
-
-These must pass before committing:
-
-```bash
-orqa check     # lint, typecheck, format
-orqa test      # test suites
-```
-
-## Quality Standards
-
-- **Rust**: `cargo clippy -- -D warnings`, `cargo fmt --check`, no `unwrap()` in production
-- **TypeScript**: strict mode, no `any`, Svelte 5 runes only
-- **All**: tests for new functionality, no TODOs, no commented-out code
-
-## Issues and Discussions
-
-File bugs and feature requests on the [monorepo issues](https://github.com/orqastudio/app/issues).
+If you're interested in the project, you're welcome to look around the codebase and explore how it works.
 
 ## Community Plugins
 
-Community plugins are maintained independently. To list yours in the registry, submit a PR to [community-plugins](https://github.com/orqastudio/community-plugins) with your plugin's metadata.
+The community plugin registry will be available at [orqastudio/community-plugins](https://github.com/orqastudio/community-plugins) once the plugin SDK is stable.
 
 ## License
 
