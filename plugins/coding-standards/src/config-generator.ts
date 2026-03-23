@@ -111,21 +111,23 @@ export class ConfigGenerator {
 		const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
 		if (!fmMatch) return null;
 
-		const yaml = fmMatch[1];
-		const idMatch = yaml.match(/^id:\s*(.+)/m);
-		const nameMatch = yaml.match(/^(?:title|name):\s*(.+)/m);
-		const statusMatch = yaml.match(/^status:\s*(.+)/m);
+		const yamlBlock = fmMatch[1];
+		if (!yamlBlock) return null;
 
-		if (!idMatch) return null;
+		const idMatch = yamlBlock.match(/^id:\s*(.+)/m);
+		const nameMatch = yamlBlock.match(/^(?:title|name):\s*(.+)/m);
+		const statusMatch = yamlBlock.match(/^status:\s*(.+)/m);
+
+		if (!idMatch?.[1]) return null;
 		const status = statusMatch?.[1]?.trim().replace(/"/g, "");
 		if (status && status !== "active") return null;
 
 		// Simple enforcement array extraction
-		if (!yaml.includes("enforcement:")) return null;
+		if (!yamlBlock.includes("enforcement:")) return null;
 
 		// Parse enforcement entries (simplified YAML parsing)
 		const enforcement: EnforcementEntry[] = [];
-		const enfSection = yaml.split("enforcement:")[1];
+		const enfSection = yamlBlock.split("enforcement:")[1];
 		if (!enfSection) return null;
 
 		const entryBlocks = enfSection.split(/\n\s+-\s+/).filter(Boolean);
@@ -134,7 +136,9 @@ export class ConfigGenerator {
 			for (const line of block.split("\n")) {
 				const kv = line.match(/^\s*(\w+):\s*(.+)/);
 				if (!kv) continue;
-				const [, key, val] = kv;
+				const key = kv[1];
+				const val = kv[2];
+				if (!key || !val) continue;
 				const cleaned = val.trim().replace(/^["']|["']$/g, "");
 				switch (key) {
 					case "event": entry.event = cleaned; break;
