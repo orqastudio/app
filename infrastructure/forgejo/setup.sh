@@ -1,34 +1,35 @@
 #!/usr/bin/env bash
 #
-# setup.sh — First-time Forgejo setup after docker compose up
+# setup.sh — First-time git server setup
 #
-# Creates the admin user and orqastudio organisation, then pushes the monorepo.
+# Creates the admin user, orqastudio organisation, and monorepo.
 # Run once after the container starts for the first time.
 #
 # Prerequisites:
-#   - Docker container running (docker compose up -d)
-#   - Wait ~10 seconds for Forgejo to initialise
+#   - Server container running (orqa hosting up)
+#   - Wait ~10 seconds for initialisation
 #
 # Usage:
-#   bash infrastructure/forgejo/setup.sh
+#   orqa hosting setup
 
 set -euo pipefail
 
-FORGEJO_URL="http://localhost:3000"
+SERVER_URL="http://localhost:3030"
+CONTAINER="orqastudio"
 ADMIN_USER="orqa-admin"
 ADMIN_PASS="admin123"  # Change this after first login
 ADMIN_EMAIL="admin@orqastudio.dev"
 ORG_NAME="orqastudio"
 
-echo "=== OrqaStudio Forgejo Setup ==="
+echo "=== OrqaStudio Git Server Setup ==="
 echo ""
 
 # ---------------------------------------------------------------------------
-# Step 1: Create admin user via Forgejo CLI inside the container
+# Step 1: Create admin user via CLI inside the container
 # ---------------------------------------------------------------------------
 
 echo "--- Creating admin user ---"
-docker exec orqastudio-forgejo forgejo admin user create \
+docker exec "$CONTAINER" forgejo admin user create \
   --username "$ADMIN_USER" \
   --password "$ADMIN_PASS" \
   --email "$ADMIN_EMAIL" \
@@ -44,7 +45,7 @@ echo ""
 # ---------------------------------------------------------------------------
 
 echo "--- Creating organisation: $ORG_NAME ---"
-curl -s -X POST "$FORGEJO_URL/api/v1/orgs" \
+curl -s -X POST "$SERVER_URL/api/v1/orgs" \
   -H "Content-Type: application/json" \
   -u "$ADMIN_USER:$ADMIN_PASS" \
   -d "{
@@ -58,11 +59,11 @@ echo "  Organisation: $ORG_NAME"
 echo ""
 
 # ---------------------------------------------------------------------------
-# Step 3: Create the monorepo on Forgejo via API
+# Step 3: Create the monorepo via API
 # ---------------------------------------------------------------------------
 
 echo "--- Creating repository: $ORG_NAME/orqastudio ---"
-curl -s -X POST "$FORGEJO_URL/api/v1/orgs/$ORG_NAME/repos" \
+curl -s -X POST "$SERVER_URL/api/v1/orgs/$ORG_NAME/repos" \
   -H "Content-Type: application/json" \
   -u "$ADMIN_USER:$ADMIN_PASS" \
   -d "{
@@ -77,23 +78,24 @@ echo "  Repo: $ORG_NAME/orqastudio"
 echo ""
 
 # ---------------------------------------------------------------------------
-# Step 4: Add Forgejo as a git remote and push
+# Step 4: Add local server as a git remote and push
 # ---------------------------------------------------------------------------
 
-echo "--- Pushing monorepo to Forgejo ---"
+echo "--- Pushing monorepo to local server ---"
 
 cd "$(git rev-parse --show-toplevel)"
 
-# Add forgejo remote if it doesn't exist
-if git remote get-url forgejo > /dev/null 2>&1; then
-  echo "  Remote 'forgejo' already exists"
+REMOTE_NAME="local"
+
+if git remote get-url "$REMOTE_NAME" > /dev/null 2>&1; then
+  echo "  Remote '$REMOTE_NAME' already exists"
 else
-  git remote add forgejo "http://$ADMIN_USER:$ADMIN_PASS@localhost:3000/$ORG_NAME/orqastudio.git"
-  echo "  Remote 'forgejo' added"
+  git remote add "$REMOTE_NAME" "http://$ADMIN_USER:$ADMIN_PASS@localhost:3030/$ORG_NAME/orqastudio.git"
+  echo "  Remote '$REMOTE_NAME' added"
 fi
 
-git push forgejo main 2>&1 || echo "  (push may require force on first time)"
-echo "  Monorepo pushed to Forgejo"
+git push "$REMOTE_NAME" main 2>&1 || echo "  (push may require force on first time)"
+echo "  Monorepo pushed to local server"
 echo ""
 
 # ---------------------------------------------------------------------------
@@ -102,16 +104,15 @@ echo ""
 
 echo "--- Configuring push mirror to GitHub ---"
 echo ""
-echo "  Push mirror must be configured via the Forgejo web UI:"
-echo "  1. Go to: $FORGEJO_URL/$ORG_NAME/orqastudio/settings"
+echo "  Push mirror must be configured via the web UI:"
+echo "  1. Go to: $SERVER_URL/$ORG_NAME/orqastudio/settings"
 echo "  2. Click 'Mirror Settings'"
 echo "  3. Add push mirror:"
 echo "     URL: https://github.com/orqastudio/orqastudio.git"
-echo "     (or the monorepo's GitHub URL once created)"
 echo "     Auth: GitHub personal access token with repo scope"
 echo "  4. Set sync interval (e.g., every push or hourly)"
 echo ""
-echo "  NOTE: You'll need to create the target repo on GitHub first."
+echo "  NOTE: Create the target repo on GitHub first."
 echo ""
 
 # ---------------------------------------------------------------------------
@@ -119,7 +120,7 @@ echo ""
 # ---------------------------------------------------------------------------
 
 echo "--- Configuring branch protection ---"
-curl -s -X POST "$FORGEJO_URL/api/v1/repos/$ORG_NAME/orqastudio/branch_protections" \
+curl -s -X POST "$SERVER_URL/api/v1/repos/$ORG_NAME/orqastudio/branch_protections" \
   -H "Content-Type: application/json" \
   -u "$ADMIN_USER:$ADMIN_PASS" \
   -d "{
@@ -136,12 +137,12 @@ echo ""
 
 echo "=== Setup Complete ==="
 echo ""
-echo "  Forgejo UI:  $FORGEJO_URL"
-echo "  Repo:        $FORGEJO_URL/$ORG_NAME/orqastudio"
-echo "  SSH clone:   ssh://git@localhost:222/$ORG_NAME/orqastudio.git"
-echo "  HTTP clone:  $FORGEJO_URL/$ORG_NAME/orqastudio.git"
+echo "  Web UI:     $SERVER_URL"
+echo "  Repo:       $SERVER_URL/$ORG_NAME/orqastudio"
+echo "  SSH clone:  ssh://git@localhost:222/$ORG_NAME/orqastudio.git"
+echo "  HTTP clone: $SERVER_URL/$ORG_NAME/orqastudio.git"
 echo ""
 echo "  Next steps:"
-echo "  1. Change admin password at $FORGEJO_URL/user/settings/account"
+echo "  1. Change admin password at $SERVER_URL/user/settings/account"
 echo "  2. Configure push mirror to GitHub via repo settings"
 echo "  3. Set up SSH key for the admin user"

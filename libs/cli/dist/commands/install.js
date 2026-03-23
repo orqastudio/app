@@ -1,16 +1,14 @@
 /**
  * Install commands — dev environment bootstrapping.
  *
- * orqa install              Full setup (prereqs + submodules + build-all + verify)
+ * orqa install              Full setup (prereqs + deps + build + plugin sync + verify)
  * orqa install prereqs      Check and install prerequisites (node 22+, rust)
- * orqa install submodules   Init and update git submodules
- * orqa install deps         Install package dependencies (npm install + cargo fetch)
- * orqa install link         Build libs and npm link into app (requires deps published)
+ * orqa install deps         Install npm (workspaces) and cargo dependencies
+ * orqa install build        Build all libs in dependency order
  * orqa install publish      Publish all libs to GitHub Package Registry
  *
- * The full install (no subcommand) uses a unified pipeline that processes each
- * lib in dependency order: install → build → publish → link. This ensures each
- * lib's @orqastudio/* deps are on the registry before the next lib needs them.
+ * Uses npm workspaces (root package.json) and Cargo workspace (root Cargo.toml).
+ * No submodules, no npm link — workspaces resolve all @orqastudio/* packages.
  */
 import { execSync } from "node:child_process";
 import * as fs from "node:fs";
@@ -26,18 +24,15 @@ Run with no subcommand for full setup. Or run individual steps:
 
 Subcommands:
   prereqs      Check and install prerequisites (node 22+, rust, git)
-  submodules   Init and update git submodules
-  deps         Install npm and cargo dependencies
-  link         Build all libs and npm link into app
+  deps         Install npm (workspaces) and cargo dependencies
+  build        Build all libs in dependency order
   publish      Publish all libs to GitHub Package Registry (use --dry-run to preview)
 
-Running 'orqa install' with no subcommand runs the unified pipeline (install →
-build → publish → link per lib in dependency order), then 'orqa verify'.
+Running 'orqa install' with no subcommand runs: prereqs → deps → build →
+plugin sync → smoke test.
 
-The 'deps' and 'link' subcommands are available separately for cases where all
-@orqastudio/* packages are already published at the current version.
-
-Run 'orqa verify' separately to check integrity, version, license, and readme.
+Uses npm workspaces — no npm link needed. Run 'orqa verify' separately to
+check integrity, version, license, and readme.
 `.trim();
 export async function runInstallCommand(args) {
     const subcommand = args[0];
@@ -50,14 +45,11 @@ export async function runInstallCommand(args) {
         case "prereqs":
             await cmdPrereqs();
             break;
-        case "submodules":
-            cmdSubmodules(root);
-            break;
         case "deps":
             cmdDeps(root);
             break;
-        case "link":
-            cmdLink(root);
+        case "build":
+            cmdBuildAll(root);
             break;
         case "publish":
             cmdPublish(root, args.includes("--dry-run"));
@@ -66,7 +58,7 @@ export async function runInstallCommand(args) {
             console.log("=== OrqaStudio Full Install ===\n");
             await cmdPrereqs();
             console.log();
-            cmdSubmodules(root);
+            cmdDeps(root);
             console.log();
             cmdBuildAll(root);
             console.log();
@@ -286,89 +278,49 @@ function exitWithRustInstructions(platform) {
     }
     process.exit(1);
 }
-// ── Submodules ──────────────────────────────────────────────────────────────
-function cmdSubmodules(root) {
-    console.log("Initialising submodules...");
-    run("git submodule update --init --recursive", root);
-    console.log("  ✓ all submodules initialised");
-}
 // ── Deps ────────────────────────────────────────────────────────────────────
-const LIB_ORDER = [
-    { dir: "libs/types", deps: [], build: "npx tsc" },
-    { dir: "libs/logger", deps: [], build: "npx tsc" },
-    { dir: "plugins/typescript", deps: [], build: "npx tsc" },
-    { dir: "libs/cli", deps: ["@orqastudio/types", "@orqastudio/plugin-typescript"], build: "npx tsc" },
-    { dir: "connectors/claude-code", deps: ["@orqastudio/types", "@orqastudio/cli"], build: "npx tsc" },
-    { dir: "libs/sdk", deps: ["@orqastudio/types", "@orqastudio/logger", "@orqastudio/plugin-typescript"], build: "npx tsc" },
-    { dir: "libs/svelte-components", deps: ["@orqastudio/types", "@orqastudio/sdk"], build: "npm run build" },
-    { dir: "libs/graph-visualiser", deps: ["@orqastudio/types"], build: "npm run build" },
+/** Build order — packages must be built before their dependents. */
+const BUILD_ORDER = [
+    { dir: "libs/types", build: "npx tsc" },
+    { dir: "libs/logger", build: "npx tsc" },
+    { dir: "plugins/typescript", build: "npx tsc" },
+    { dir: "libs/cli", build: "npx tsc" },
+    { dir: "connectors/claude-code", build: "npx tsc" },
+    { dir: "libs/sdk", build: "npx tsc" },
+    { dir: "libs/svelte-components", build: "npm run build" },
+    { dir: "libs/graph-visualiser", build: "npm run build" },
 ];
 function cmdDeps(root) {
     console.log("Installing dependencies...");
-    for (const lib of LIB_ORDER) {
+    console.log("  - npm install (workspaces)");
+    run("npm install", root);
+    console.log("  - cargo fetch (workspace)");
+    run("cargo fetch --quiet", root);
+    console.log("  ✓ all dependencies installed");
+}
+// ── Build All ───────────────────────────────────────────────────────────────
+/**
+ * Build all libs in dependency order. npm workspaces handles resolution —
+ * this just needs to run tsc/build in the right sequence since later
+ * packages depend on earlier packages' compiled output.
+ */
+function cmdBuildAll(root) {
+    console.log("Building libraries...");
+    for (const lib of BUILD_ORDER) {
         const dir = path.join(root, lib.dir);
         if (!fs.existsSync(dir)) {
             console.log(`  - ${lib.dir} (skipped — not found)`);
             continue;
         }
         console.log(`  - ${lib.dir}`);
-        run("npm install", dir);
-    }
-    const appUi = path.join(root, "app/ui");
-    if (fs.existsSync(appUi)) {
-        console.log("  - app/ui");
-        run("npm install", appUi);
-    }
-    const cargoDir = path.join(root, "app/backend/src-tauri");
-    if (fs.existsSync(cargoDir)) {
-        console.log("  - app/backend (cargo fetch)");
-        run("cargo fetch --quiet", cargoDir);
-    }
-    console.log("  ✓ all dependencies installed");
-}
-// ── Link ────────────────────────────────────────────────────────────────────
-function cmdLink(root) {
-    console.log("Building and linking libraries...");
-    for (const lib of LIB_ORDER) {
-        const dir = path.join(root, lib.dir);
-        if (!fs.existsSync(dir))
-            continue;
-        console.log(`  - ${lib.dir}`);
-        if (lib.deps.length > 0) {
-            run(`npm link ${lib.deps.join(" ")}`, dir);
-        }
         run(lib.build, dir);
-        run("npm link", dir);
     }
     const appUi = path.join(root, "app/ui");
     if (fs.existsSync(appUi)) {
-        const allLibs = LIB_ORDER
-            .map((lib) => {
-            const pkgPath = path.join(root, lib.dir, "package.json");
-            try {
-                return JSON.parse(fs.readFileSync(pkgPath, "utf-8")).name;
-            }
-            catch {
-                return null;
-            }
-        })
-            .filter(Boolean);
-        if (allLibs.length > 0) {
-            console.log("  - app/ui (linking)");
-            run(`npm link ${allLibs.join(" ")}`, appUi);
-        }
         console.log("  - app/ui (svelte-kit sync)");
         run("npx svelte-kit sync", appUi);
         console.log("  - app/ui (build)");
         run("npm run build", appUi);
-    }
-    if (hasCommand("orqa")) {
-        const version = runQuiet("orqa --version");
-        console.log(`  ✓ orqa CLI: ${version}`);
-    }
-    else {
-        console.error("  ✗ orqa not on PATH — try closing and reopening your terminal");
-        process.exit(1);
     }
     // Generate injector config from plugin manifests.
     try {
@@ -383,102 +335,12 @@ function cmdLink(root) {
     catch {
         // Non-fatal — prompt-injector will fall back to live scanning.
     }
-}
-// ── Build All ───────────────────────────────────────────────────────────────
-/**
- * Unified build pipeline. Processes each lib in dependency order:
- * install → build → publish → link. By the time the next lib runs
- * `npm install`, all its @orqastudio/* deps are already on the registry.
- */
-function cmdBuildAll(root) {
-    console.log("Installing, building, publishing, and linking libraries...");
-    for (const lib of LIB_ORDER) {
-        const dir = path.join(root, lib.dir);
-        if (!fs.existsSync(dir))
-            continue;
-        console.log(`  - ${lib.dir}`);
-        run("npm install", dir);
-        if (lib.deps.length > 0) {
-            run(`npm link ${lib.deps.join(" ")}`, dir);
-        }
-        run(lib.build, dir);
-        publishOne(dir);
-        run("npm link", dir);
-    }
-    const appUi = path.join(root, "app/ui");
-    if (fs.existsSync(appUi)) {
-        console.log("  - app/ui (install)");
-        run("npm install", appUi);
-        const allLibs = LIB_ORDER
-            .map((lib) => {
-            const pkgPath = path.join(root, lib.dir, "package.json");
-            try {
-                return JSON.parse(fs.readFileSync(pkgPath, "utf-8")).name;
-            }
-            catch {
-                return null;
-            }
-        })
-            .filter(Boolean);
-        if (allLibs.length > 0) {
-            console.log("  - app/ui (linking)");
-            run(`npm link ${allLibs.join(" ")}`, appUi);
-        }
-        console.log("  - app/ui (svelte-kit sync)");
-        run("npx svelte-kit sync", appUi);
-        console.log("  - app/ui (build)");
-        run("npm run build", appUi);
-    }
-    const cargoDir = path.join(root, "app/backend/src-tauri");
-    if (fs.existsSync(cargoDir)) {
-        console.log("  - app/backend (cargo fetch)");
-        run("cargo fetch --quiet", cargoDir);
-    }
-    if (hasCommand("orqa")) {
-        const version = runQuiet("orqa --version");
-        console.log(`  ✓ orqa CLI: ${version}`);
-    }
-    else {
-        console.error("  ✗ orqa not on PATH — try closing and reopening your terminal");
-        process.exit(1);
-    }
-    // Generate injector config from plugin manifests.
-    try {
-        const config = generateInjectorConfig(root);
-        const pluginCount = Object.keys(config.mode_templates).length
-            + (config.behavioral_rules ? 1 : 0)
-            + (config.session_reminders ? 1 : 0);
-        if (pluginCount > 0) {
-            console.log("  ✓ injector config generated");
-        }
-    }
-    catch {
-        // Non-fatal — prompt-injector will fall back to live scanning.
-    }
-    console.log("  ✓ all libraries built, published, and linked");
+    console.log("  ✓ all libraries built");
 }
 // ── Publish ─────────────────────────────────────────────────────────────────
-/** Publish a single package if not already on the registry. */
-function publishOne(dir) {
-    const pkgPath = path.join(dir, "package.json");
-    const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
-    if (pkg.private)
-        return;
-    const existing = runQuiet(`npm view ${pkg.name}@${pkg.version} version`);
-    if (existing)
-        return;
-    try {
-        run("npm publish --access restricted", dir);
-    }
-    catch {
-        // Non-fatal during link — publish may fail if not authenticated.
-        // The link will still work if the package was already published.
-        console.error(`    ⚠ publish failed for ${pkg.name}@${pkg.version} (non-fatal)`);
-    }
-}
 function cmdPublish(root, dryRun) {
     console.log(dryRun ? "Dry run — packages that would be published:" : "Publishing packages...");
-    for (const lib of LIB_ORDER) {
+    for (const lib of BUILD_ORDER) {
         const dir = path.join(root, lib.dir);
         if (!fs.existsSync(dir))
             continue;
@@ -525,8 +387,9 @@ const m = readContentManifest(root);
 for (const p of listInstalledPlugins(root)) {
   try {
     const pm = readManifest(p.path);
-    const files = copyPluginContent(p.path, root, pm);
-    if (files.length > 0) { m.plugins[p.name] = { version: pm.version, installed_at: new Date().toISOString(), files }; }
+    const result = copyPluginContent(p.path, root, pm);
+    const count = Object.keys(result.copied).length;
+    if (count > 0) { m.plugins[p.name] = { version: pm.version, installed_at: new Date().toISOString(), files: result.copied }; }
   } catch {}
 }
 writeContentManifest(root, m);

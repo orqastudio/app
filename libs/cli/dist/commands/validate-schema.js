@@ -253,7 +253,7 @@ function discoverAndValidate(projectRoot) {
         });
     }
     // Validate all plugin manifests
-    for (const container of ["plugins", "connectors"]) {
+    for (const container of ["plugins", "connectors", "integrations"]) {
         const containerDir = join(projectRoot, container);
         let entries;
         try {
@@ -273,7 +273,7 @@ function discoverAndValidate(projectRoot) {
     }
     // Plugin integrity checks: required categories + dependency resolution
     const loadedPlugins = [];
-    for (const container of ["plugins", "connectors"]) {
+    for (const container of ["plugins", "connectors", "integrations"]) {
         const containerDir = join(projectRoot, container);
         let entries;
         try {

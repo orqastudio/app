@@ -56,7 +56,7 @@ export async function runHostingCommand(args: string[]): Promise<void> {
 		case "up":
 			console.log("Starting local git server...");
 			run(composeCmd(root, "up -d"), root);
-			console.log("\nServer started. Web UI: http://localhost:3000");
+			console.log("\nServer started. Web UI: http://localhost:3030");
 			break;
 
 		case "down":
@@ -86,7 +86,7 @@ export async function runHostingCommand(args: string[]): Promise<void> {
 
 		case "push":
 			console.log("Pushing monorepo to local git server...");
-			run("git push forgejo main", root);
+			run("git push local main", root);
 			console.log("Push complete.");
 			break;
 
@@ -99,7 +99,7 @@ A push mirror replicates commits from the local git server to GitHub automatical
 This must be configured via the server web UI because it requires a GitHub token.
 
 Steps:
-  1. Open the server web UI: http://localhost:3000
+  1. Open the server web UI: http://localhost:3030
   2. Navigate to the repository settings
   3. Click "Mirror Settings"
   4. Add a push mirror:

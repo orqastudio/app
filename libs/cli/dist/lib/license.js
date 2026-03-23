@@ -27,7 +27,7 @@ export function auditLicenses(projectRoot, policy = DEFAULT_LICENSE_POLICY) {
     // App
     results.push(checkLicense(path.join(projectRoot, "app"), "app", policy));
     // Scan category directories
-    for (const category of ["libs", "plugins", "connectors", "tools", "registry"]) {
+    for (const category of ["libs", "plugins", "connectors", "integrations", "tools", "registry"]) {
         const dir = path.join(projectRoot, category);
         if (!fs.existsSync(dir))
             continue;

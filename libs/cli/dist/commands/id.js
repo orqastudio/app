@@ -88,6 +88,7 @@ function checkDuplicates(projectRoot, autoFix) {
         join(projectRoot, "app", ".orqa"),
         join(projectRoot, "plugins"),
         join(projectRoot, "connectors"),
+        join(projectRoot, "integrations"),
     ];
     const allFiles = scanDirs.flatMap((d) => walkFiles(d));
     for (const file of allFiles) {
@@ -158,6 +159,7 @@ function migrateId(projectRoot, oldId, newId) {
         join(projectRoot, "app", ".orqa"),
         join(projectRoot, "plugins"),
         join(projectRoot, "connectors"),
+        join(projectRoot, "integrations"),
     ];
     const allFiles = scanDirs.flatMap((d) => walkFiles(d));
     // Find the source artifact

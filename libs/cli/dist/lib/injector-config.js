@@ -25,6 +25,7 @@ export function aggregateInjectorConfig(projectRoot) {
     const scanDirs = [
         path.join(projectRoot, "plugins"),
         path.join(projectRoot, "connectors"),
+        path.join(projectRoot, "integrations"),
     ];
     for (const dir of scanDirs) {
         if (!fs.existsSync(dir))

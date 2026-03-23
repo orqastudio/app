@@ -8,7 +8,8 @@ import * as path from "node:path";
 import { installPlugin, uninstallPlugin, listInstalledPlugins } from "../lib/installer.js";
 import { fetchRegistry, searchRegistry } from "../lib/registry.js";
 import { readManifest } from "../lib/manifest.js";
-import { readContentManifest, writeContentManifest, copyPluginContent, removePluginContent, installPluginDeps, buildPlugin, runLifecycleHook, diffPluginContent, } from "../lib/content-lifecycle.js";
+import { readContentManifest, writeContentManifest, copyPluginContent, removePluginContent, installPluginDeps, buildPlugin, runLifecycleHook, diffPluginContent, computeThreeWayState, findSourceFile, processAggregatedFiles, computeFileHash, } from "../lib/content-lifecycle.js";
+import { generateInjectorConfig } from "../lib/injector-config.js";
 const USAGE = `
 Usage: orqa plugin <subcommand> [options]
 
@@ -21,8 +22,10 @@ Subcommands:
   disable <name>                    Disable a plugin (remove content from .orqa/)
   refresh [name]                    Re-sync content for one or all enabled plugins
   diff [name]                       Show content drift for one or all installed plugins
+  status [name]                     Show three-way state for tracked files
   registry [--official|--community] Browse available plugins
   create [template]                 Scaffold a new plugin from template
+  template-validate [template]      Validate a plugin template directory
 `.trim();
 export async function runPluginCommand(args) {
     const subcommand = args[0];
@@ -58,8 +61,14 @@ export async function runPluginCommand(args) {
         case "registry":
             await cmdRegistry(args.slice(1));
             break;
+        case "status":
+            await cmdStatus(args.slice(1));
+            break;
         case "create":
             await cmdCreate(args.slice(1));
+            break;
+        case "template-validate":
+            await cmdTemplateValidate(args.slice(1));
             break;
         default:
             console.error(`Unknown subcommand: ${subcommand}`);
@@ -163,7 +172,7 @@ function deleteContentFiles(projectRoot, pluginName) {
     if (!entry) {
         return;
     }
-    for (const relPath of entry.files) {
+    for (const relPath of Object.keys(entry.files)) {
         const absPath = path.join(projectRoot, relPath);
         if (fs.existsSync(absPath)) {
             fs.unlinkSync(absPath);
@@ -259,16 +268,17 @@ async function cmdInstall(args) {
     installPluginDeps(result.path, pluginManifest);
     buildPlugin(result.path, pluginManifest);
     // Copy content to .orqa/
-    const copiedFiles = copyPluginContent(result.path, projectRoot, pluginManifest);
-    if (copiedFiles.length > 0) {
-        console.log(`  Copied ${copiedFiles.length} content file(s) to .orqa/`);
+    const copyResult = copyPluginContent(result.path, projectRoot, pluginManifest);
+    const copiedCount = Object.keys(copyResult.copied).length;
+    if (copiedCount > 0) {
+        console.log(`  Copied ${copiedCount} content file(s) to .orqa/`);
     }
     // Record ownership in .orqa/manifest.json
     const contentManifest = readContentManifest(projectRoot);
     contentManifest.plugins[result.name] = {
         version: result.version,
         installed_at: new Date().toISOString(),
-        files: copiedFiles,
+        files: copyResult.copied,
     };
     writeContentManifest(projectRoot, contentManifest);
     // Register in .orqa/project.json
@@ -298,16 +308,17 @@ async function cmdInstallFirstParty(pluginDir, projectRoot) {
     installPluginDeps(pluginDir, pluginManifest);
     buildPlugin(pluginDir, pluginManifest);
     // Copy content to .orqa/
-    const copiedFiles = copyPluginContent(pluginDir, projectRoot, pluginManifest);
-    if (copiedFiles.length > 0) {
-        console.log(`  Copied ${copiedFiles.length} content file(s) to .orqa/`);
+    const copyResult = copyPluginContent(pluginDir, projectRoot, pluginManifest);
+    const copiedCount = Object.keys(copyResult.copied).length;
+    if (copiedCount > 0) {
+        console.log(`  Copied ${copiedCount} content file(s) to .orqa/`);
     }
     // Record ownership in .orqa/manifest.json
     const contentManifest = readContentManifest(projectRoot);
     contentManifest.plugins[pluginManifest.name] = {
         version: pluginManifest.version,
         installed_at: new Date().toISOString(),
-        files: copiedFiles,
+        files: copyResult.copied,
     };
     writeContentManifest(projectRoot, contentManifest);
     // Register in .orqa/project.json
@@ -386,16 +397,17 @@ async function cmdUpdate(args) {
             const result = await installPlugin({ source: locked.repo, projectRoot });
             // Re-sync content
             const pluginManifest = readManifest(result.path);
-            const copiedFiles = copyPluginContent(result.path, projectRoot, pluginManifest);
-            if (copiedFiles.length > 0) {
-                console.log(`  Re-synced ${copiedFiles.length} content file(s)`);
+            const copyResult = copyPluginContent(result.path, projectRoot, pluginManifest);
+            const copiedCount = Object.keys(copyResult.copied).length;
+            if (copiedCount > 0) {
+                console.log(`  Re-synced ${copiedCount} content file(s)`);
             }
             // Update content manifest
             const contentManifest = readContentManifest(projectRoot);
             contentManifest.plugins[result.name] = {
                 version: result.version,
                 installed_at: new Date().toISOString(),
-                files: copiedFiles,
+                files: copyResult.copied,
             };
             writeContentManifest(projectRoot, contentManifest);
             // Run install hook again
@@ -422,16 +434,17 @@ async function cmdEnable(args) {
     }
     const pluginManifest = readManifest(pluginDir);
     // Copy content from plugin -> .orqa/
-    const copiedFiles = copyPluginContent(pluginDir, projectRoot, pluginManifest);
-    if (copiedFiles.length > 0) {
-        console.log(`Copied ${copiedFiles.length} content file(s) to .orqa/`);
+    const copyResult = copyPluginContent(pluginDir, projectRoot, pluginManifest);
+    const copiedCount = Object.keys(copyResult.copied).length;
+    if (copiedCount > 0) {
+        console.log(`Copied ${copiedCount} content file(s) to .orqa/`);
     }
     // Update content manifest (add or refresh entry)
     const contentManifest = readContentManifest(projectRoot);
     contentManifest.plugins[name] = {
         version: pluginManifest.version,
         installed_at: new Date().toISOString(),
-        files: copiedFiles,
+        files: copyResult.copied,
     };
     writeContentManifest(projectRoot, contentManifest);
     // Set enabled: true in project.json
@@ -499,22 +512,52 @@ async function cmdRefresh(args) {
         // Install deps and build
         installPluginDeps(pluginDir, pluginManifest);
         buildPlugin(pluginDir, pluginManifest);
-        // Re-sync content
-        const copiedFiles = copyPluginContent(pluginDir, projectRoot, pluginManifest);
+        // Re-sync content (uses three-way diff internally)
+        const existingManifest = readContentManifest(projectRoot);
+        const copyResult = copyPluginContent(pluginDir, projectRoot, pluginManifest, existingManifest);
+        // Merge: skipped files retain their existing hashes
+        const mergedFiles = { ...copyResult.copied };
+        const existingEntry = existingManifest.plugins[p.name];
+        if (existingEntry) {
+            for (const skippedFile of copyResult.skipped) {
+                const existing = existingEntry.files[skippedFile.path];
+                if (existing) {
+                    mergedFiles[skippedFile.path] = existing;
+                }
+            }
+        }
         // Update manifest
         const contentManifest = readContentManifest(projectRoot);
         contentManifest.plugins[p.name] = {
             version: pluginManifest.version,
             installed_at: new Date().toISOString(),
-            files: copiedFiles,
+            files: mergedFiles,
         };
         writeContentManifest(projectRoot, contentManifest);
-        if (copiedFiles.length > 0) {
-            console.log(`  Re-synced ${copiedFiles.length} content file(s)`);
+        const copiedCount = Object.keys(copyResult.copied).length;
+        if (copiedCount > 0) {
+            console.log(`  Re-synced ${copiedCount} content file(s)`);
         }
         else {
             console.log(`  No content to sync.`);
         }
+        if (copyResult.skipped.length > 0) {
+            console.log(`  Skipped ${copyResult.skipped.length} user-modified file(s)`);
+        }
+    }
+    // Process aggregated files from all plugins
+    try {
+        processAggregatedFiles(projectRoot);
+    }
+    catch {
+        // Non-fatal
+    }
+    // Regenerate injector config
+    try {
+        generateInjectorConfig(projectRoot);
+    }
+    catch {
+        // Non-fatal
     }
     console.log("Refresh complete.");
 }
@@ -638,5 +681,107 @@ async function cmdCreate(args) {
     // Phase 8: will scaffold from templates/
     console.log(`Scaffolding plugin from '${template}' template...`);
     console.log("(Template system not yet implemented — coming in Phase 8)");
+}
+// ---------------------------------------------------------------------------
+// status
+// ---------------------------------------------------------------------------
+async function cmdStatus(args) {
+    const targetName = args[0];
+    const useJson = args.includes("--json");
+    const projectRoot = process.cwd();
+    const installed = listInstalledPlugins(projectRoot);
+    const toCheck = targetName
+        ? installed.filter((p) => p.name === targetName)
+        : installed;
+    if (toCheck.length === 0) {
+        console.log(targetName ? `Plugin not found: ${targetName}` : "No plugins installed.");
+        return;
+    }
+    const contentManifest = readContentManifest(projectRoot);
+    const allResults = [];
+    for (const p of toCheck) {
+        const pluginManifest = readManifest(p.path);
+        const entry = contentManifest.plugins[p.name];
+        if (!entry)
+            continue;
+        const fileStatuses = [];
+        for (const [relPath, hashEntry] of Object.entries(entry.files)) {
+            const sourceFile = findSourceFile(p.path, pluginManifest, relPath);
+            const sourceHash = sourceFile && fs.existsSync(sourceFile)
+                ? computeFileHash(sourceFile)
+                : "";
+            const state = computeThreeWayState(relPath, projectRoot, hashEntry, sourceHash);
+            fileStatuses.push({ path: relPath, state });
+        }
+        allResults.push({ plugin: p.name, files: fileStatuses });
+    }
+    if (useJson) {
+        console.log(JSON.stringify(allResults, null, 2));
+        return;
+    }
+    for (const result of allResults) {
+        console.log(`\n${result.plugin}:`);
+        for (const f of result.files) {
+            const icon = f.state === "clean" ? " " :
+                f.state === "plugin-updated" ? "P" :
+                    f.state === "user-modified" ? "U" :
+                        f.state === "conflict" ? "C" :
+                            f.state === "missing" ? "!" : "?";
+            console.log(`  [${icon}] ${path.basename(f.path)}: ${f.state}`);
+        }
+    }
+}
+// ---------------------------------------------------------------------------
+// template-validate
+// ---------------------------------------------------------------------------
+async function cmdTemplateValidate(args) {
+    const templateDir = args[0];
+    if (!templateDir) {
+        console.error("Usage: orqa plugin template-validate <template-dir>");
+        process.exit(1);
+    }
+    const absDir = path.resolve(templateDir);
+    if (!fs.existsSync(absDir)) {
+        console.error(`Directory not found: ${absDir}`);
+        process.exit(1);
+    }
+    const manifestPath = path.join(absDir, "orqa-plugin.json");
+    if (!fs.existsSync(manifestPath)) {
+        console.error(`No orqa-plugin.json found in ${absDir}`);
+        process.exit(1);
+    }
+    const errors = [];
+    try {
+        const raw = fs.readFileSync(manifestPath, "utf-8");
+        const manifest = JSON.parse(raw);
+        if (!manifest.name)
+            errors.push("Missing required field: name");
+        if (!manifest.version)
+            errors.push("Missing required field: version");
+        if (!manifest.provides)
+            errors.push("Missing required field: provides");
+        // Check content mappings point to existing directories
+        if (manifest.content) {
+            for (const [label, mapping] of Object.entries(manifest.content)) {
+                const sourceDir = path.join(absDir, mapping.source);
+                if (!fs.existsSync(sourceDir)) {
+                    errors.push(`Content "${label}": source dir "${mapping.source}" does not exist`);
+                }
+            }
+        }
+    }
+    catch (err) {
+        errors.push(`Failed to parse orqa-plugin.json: ${err instanceof Error ? err.message : String(err)}`);
+    }
+    if (errors.length === 0) {
+        console.log("Template validation passed.");
+    }
+    else {
+        console.error(`Template validation failed (${errors.length} error(s)):`);
+        for (const e of errors) {
+            console.error(`  - ${e}`);
+        }
+        process.exit(1);
+    }
 }
 //# sourceMappingURL=plugin.js.map

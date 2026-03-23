@@ -1,78 +1,42 @@
-## OrqaStudio Forgejo — Local Git Hosting
+## OrqaStudio — Local Git Hosting
 ##
 ## Usage:
-##   docker compose up -d        Start Forgejo
-##   docker compose down          Stop Forgejo
-##   docker compose logs -f       Follow logs
+##   orqa hosting up       Start the server
+##   orqa hosting down     Stop the server
+##   orqa hosting setup    First-time configuration
 ##
-## Access: http://localhost:3000
+## Access: http://localhost:3030
 ## SSH:    ssh://git@localhost:222
-##
-## First run creates an admin user via FORGEJO__security__INSTALL_LOCK
-## and environment variables. After first run, configure via the web UI.
 
 services:
-  forgejo:
+  orqastudio:
     image: codeberg.org/forgejo/forgejo:10
-    container_name: orqastudio-forgejo
+    container_name: orqastudio
     restart: unless-stopped
     environment:
-      # Database — SQLite for local dev (no separate DB needed)
       FORGEJO__database__DB_TYPE: sqlite3
-
-      # Server
       FORGEJO__server__DOMAIN: localhost
       FORGEJO__server__SSH_DOMAIN: localhost
-      FORGEJO__server__ROOT_URL: http://localhost:3000/
+      FORGEJO__server__ROOT_URL: http://localhost:3030/
       FORGEJO__server__HTTP_PORT: "3000"
       FORGEJO__server__SSH_PORT: "222"
       FORGEJO__server__START_SSH_SERVER: "true"
       FORGEJO__server__LFS_START_SERVER: "true"
-
-      # Security — skip the install page
       FORGEJO__security__INSTALL_LOCK: "true"
-
-      # Repository defaults
       FORGEJO__repository__DEFAULT_BRANCH: main
       FORGEJO__repository__ENABLE_PUSH_CREATE_USER: "true"
-
-      # Mirrors — enable push mirrors
       FORGEJO__mirror__ENABLED: "true"
       FORGEJO__mirror__DEFAULT_INTERVAL: 1h
-
-      # Actions (CI) — enable for later phases
       FORGEJO__actions__ENABLED: "true"
-
-      # Service — allow registration (for contributors later)
       FORGEJO__service__DISABLE_REGISTRATION: "false"
       FORGEJO__service__REQUIRE_SIGNIN_VIEW: "false"
-
     volumes:
-      - forgejo-data:/data
-      - forgejo-config:/etc/forgejo
+      - orqastudio-data:/data
+      - orqastudio-config:/etc/forgejo
     ports:
-      - "3000:3000"   # Web UI
-      - "222:22"       # SSH
-
-  sync-bridge:
-    build: ../sync-bridge
-    container_name: orqastudio-sync-bridge
-    restart: unless-stopped
-    environment:
-      FORGEJO_URL: http://forgejo:3000
-      FORGEJO_TOKEN: ${FORGEJO_TOKEN:-}
-      FORGEJO_WEBHOOK_SECRET: ${FORGEJO_WEBHOOK_SECRET:-dev-secret}
-      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
-      GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET:-dev-secret}
-      FORGEJO_ORG: orqastudio
-      FORGEJO_REPO: orqastudio
-      GITHUB_OWNER: orqastudio
-      GITHUB_REPO: orqastudio
-    ports:
-      - "3001:3001"
-    depends_on:
-      - forgejo
+      - "3030:3000"
+      - "222:22"
 
 volumes:
-  forgejo-data:
-  forgejo-config:
+  orqastudio-data:
+  orqastudio-config:

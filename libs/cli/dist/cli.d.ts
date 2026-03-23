@@ -12,6 +12,8 @@
  *   orqa graph [--type <type>] [--status <s>]     Browse the artifact graph
  *   orqa version sync|bump|check|show             Version management
  *   orqa repo license|readme                      Repo maintenance audits
+ *   orqa git status|pr|sync|audit                  Monorepo-aware git operations
+ *   orqa hosting up|down|setup|status|push        Local git server management
  */
 export {};
 //# sourceMappingURL=cli.d.ts.map

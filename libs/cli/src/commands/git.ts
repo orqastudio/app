@@ -28,7 +28,7 @@ Options:
 const PR_USAGE = `
 Usage: orqa git pr [options]
 
-Create a pull request on the local git server (Forgejo).
+Create a pull request on the local git server.
 
 Options:
   -t, --title <title>   PR title (default: branch name)
@@ -262,19 +262,19 @@ async function cmdPr(root: string, args: string[]): Promise<void> {
 		title = branch.replace(/[/_-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 	}
 
-	// Push to forgejo
-	console.log(`Pushing branch '${branch}' to forgejo...`);
+	// Push to local
+	console.log(`Pushing branch '${branch}' to local...`);
 	try {
-		execSync(`git push forgejo ${branch}`, { cwd: root, stdio: "inherit" });
+		execSync(`git push local ${branch}`, { cwd: root, stdio: "inherit" });
 	} catch {
-		console.error("Failed to push to forgejo. Is the remote configured and the server running?");
+		console.error("Failed to push to local. Is the remote configured and the server running?");
 		process.exit(1);
 	}
 
-	// Get the forgejo remote URL to derive the API base
-	const remoteUrl = gitSilent("remote get-url forgejo", root);
+	// Get the local remote URL to derive the API base
+	const remoteUrl = gitSilent("remote get-url local", root);
 	if (!remoteUrl) {
-		console.error("Could not determine forgejo remote URL.");
+		console.error("Could not determine local remote URL.");
 		process.exit(1);
 	}
 
@@ -349,7 +349,7 @@ function deriveApiBase(remoteUrl: string): string | null {
 async function cmdSync(root: string): Promise<void> {
 	const remotes = [
 		{ name: "origin", label: "GitHub" },
-		{ name: "forgejo", label: "Local server" },
+		{ name: "local", label: "Local server" },
 	];
 
 	// Get current branch
@@ -395,7 +395,7 @@ async function cmdAudit(root: string): Promise<void> {
 	// Check remotes
 	const remotes = [
 		{ name: "origin", label: "GitHub" },
-		{ name: "forgejo", label: "Local server" },
+		{ name: "local", label: "Local server" },
 	];
 
 	console.log("Remote configuration:");
