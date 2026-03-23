@@ -1,4 +1,29 @@
 {
+  "name": "orqastudio-monorepo",
+  "private": true,
+  "workspaces": [
+    "libs/types",
+    "libs/logger",
+    "libs/brand",
+    "libs/cli",
+    "libs/sdk",
+    "libs/svelte-components",
+    "libs/graph-visualiser",
+    "plugins/agile-governance",
+    "plugins/cli",
+    "plugins/coding-standards",
+    "plugins/core",
+    "plugins/githooks",
+    "plugins/rust",
+    "plugins/software",
+    "plugins/svelte",
+    "plugins/systems-thinking",
+    "plugins/tauri",
+    "plugins/typescript",
+    "connectors/claude-code",
+    "integrations/claude-agent-sdk",
+    "app/ui"
+  ],
   "devDependencies": {
     "yaml": "^2.8.2"
   }
