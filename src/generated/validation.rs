@@ -16,7 +16,7 @@ pub enum IntegrityCategory {
     CardinalityViolation,
     CircularDependency,
     InvalidStatus,
-    TypePrefixMismatch,
+    BodyTextRefWithoutRelationship,
     ParentChildInconsistency,
     DeliveryPathMismatch,
     MissingType,

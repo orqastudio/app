@@ -127,6 +127,8 @@ pub enum IntegrityCategory {
     /// A required frontmatter field is absent, or the artifact status is not permitted
     /// by the type's declared status transition schema.
     SchemaViolation,
+    /// Body text contains a reference to an artifact but no formal relationship edge exists.
+    BodyTextRefWithoutRelationship,
 }
 
 /// Severity of an integrity finding.
