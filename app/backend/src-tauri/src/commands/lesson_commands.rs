@@ -63,9 +63,7 @@ mod tests {
     fn make_project_paths(tmp: &tempfile::TempDir) -> ProjectPaths {
         let settings = ProjectSettings {
             name: "test".to_string(),
-            organisation: false,
             dogfood: false,
-            projects: vec![],
             description: None,
             default_model: "auto".to_string(),
             excluded_paths: vec![],

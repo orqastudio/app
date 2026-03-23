@@ -3,14 +3,8 @@
 	import { getStores, logger } from "@orqastudio/sdk";
 
 	const log = logger("dashboard");
-	const { artifactGraphSDK, projectStore } = getStores();
+	const { artifactGraphSDK } = getStores();
 	import type { HealthSnapshot } from "@orqastudio/types";
-
-	const projectFilter = $derived(
-		projectStore.activeChildProject
-			? { project: projectStore.activeChildProject }
-			: undefined,
-	);
 
 	let snapshots = $state<HealthSnapshot[]>([]);
 	let loading = $state(false);
@@ -18,9 +12,9 @@
 
 	/** All governance artifacts with their created dates. */
 	const governanceArtifacts = $derived([
-		...artifactGraphSDK.byType("rule", projectFilter),
-		...artifactGraphSDK.byType("lesson", projectFilter),
-		...artifactGraphSDK.byType("decision", projectFilter),
+		...artifactGraphSDK.byType("rule"),
+		...artifactGraphSDK.byType("lesson"),
+		...artifactGraphSDK.byType("decision"),
 	]);
 
 	/** Build cumulative governance count over time, aligned to snapshot dates. */

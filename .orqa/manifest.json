@@ -2,227 +2,691 @@
   "plugins": {
     "@orqastudio/plugin-agile-governance": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T13:01:43.164Z",
-      "files": [
-        ".orqa/process/agents/AGENT-e7f3a2c9.md",
-        ".orqa/process/agents/AGENT-ff44f841.md",
-        ".orqa/process/knowledge/KNOW-85e392ea.md",
-        ".orqa/process/knowledge/KNOW-8d1c4be6.md",
-        ".orqa/process/knowledge/KNOW-8d76c3c7.md",
-        ".orqa/process/knowledge/KNOW-e4b91f37.md",
-        ".orqa/process/rules/RULE-12e74734.md",
-        ".orqa/process/rules/RULE-22783309.md",
-        ".orqa/process/rules/RULE-3eccebf3.md",
-        ".orqa/process/rules/RULE-551bde31.md",
-        ".orqa/process/rules/RULE-57ccb4a3.md",
-        ".orqa/process/rules/RULE-633e636d.md",
-        ".orqa/process/rules/RULE-67b91c13.md",
-        ".orqa/process/rules/RULE-7b770593.md",
-        ".orqa/process/rules/RULE-98682b5e.md",
-        ".orqa/process/rules/RULE-9bc8c230.md",
-        ".orqa/process/rules/RULE-9cd980b1.md",
-        ".orqa/process/rules/RULE-a3f7c2e1.md",
-        ".orqa/process/rules/RULE-a764b2ae.md",
-        ".orqa/process/rules/RULE-c4fe67a2.md",
-        ".orqa/process/rules/RULE-dd04742e.md",
-        ".orqa/process/rules/RULE-e120bb70.md",
-        ".orqa/process/rules/RULE-e9c54567.md"
-      ]
+      "installed_at": "2026-03-23T21:06:38.163Z",
+      "files": {
+        ".orqa/process/agents/AGENT-e7f3a2c9.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/agents/AGENT-ff44f841.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-85e392ea.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-8d1c4be6.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-8d76c3c7.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-e4b91f37.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-12e74734.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-22783309.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-3eccebf3.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-551bde31.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-57ccb4a3.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-633e636d.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-67b91c13.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-7b770593.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-98682b5e.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-9bc8c230.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-9cd980b1.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-a3f7c2e1.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-a764b2ae.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-c4fe67a2.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-dd04742e.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-e120bb70.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-e9c54567.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        }
+      }
     },
     "@orqastudio/plugin-cli": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T13:01:43.169Z",
-      "files": [
-        ".orqa/documentation/DOC-2c9bfdda.md",
-        ".orqa/documentation/DOC-476471d2.md",
-        ".orqa/documentation/DOC-65eb8303.md",
-        ".orqa/documentation/DOC-97ea2f47.md",
-        ".orqa/documentation/DOC-a6cc3de5.md",
-        ".orqa/process/knowledge/KNOW-3198c8fb.md",
-        ".orqa/process/knowledge/KNOW-4cc73a12.md",
-        ".orqa/process/knowledge/KNOW-6391d2a8.md",
-        ".orqa/process/knowledge/KNOW-6ee6c91e.md",
-        ".orqa/process/knowledge/KNOW-7b5c1bda.md",
-        ".orqa/process/knowledge/KNOW-9466a88a.md",
-        ".orqa/process/knowledge/KNOW-9e1a2f6a.md",
-        ".orqa/process/rules/RULE-4263a6b3.md"
-      ]
+      "installed_at": "2026-03-23T21:06:38.167Z",
+      "files": {
+        ".orqa/documentation/DOC-2c9bfdda.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/documentation/DOC-476471d2.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/documentation/DOC-65eb8303.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/documentation/DOC-97ea2f47.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/documentation/DOC-a6cc3de5.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-3198c8fb.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-4cc73a12.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-6391d2a8.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-6ee6c91e.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-7b5c1bda.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-9466a88a.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-9e1a2f6a.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-4263a6b3.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        }
+      }
     },
     "@orqastudio/plugin-coding-standards": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T13:01:44.886Z",
-      "files": [
-        ".orqa/process/knowledge/KNOW-6125ab55.md",
-        ".orqa/process/knowledge/KNOW-ea517e13.md",
-        ".orqa/process/rules/RULE-1f30904a.md",
-        ".orqa/process/rules/RULE-7f416d7d.md",
-        ".orqa/process/rules/RULE-878e5422.md",
-        ".orqa/process/rules/RULE-89155a7f.md",
-        ".orqa/process/rules/RULE-9ba80a19.md",
-        ".orqa/process/rules/RULE-cb65b5d0.md",
-        ".orqa/process/rules/RULE-d4b8e3f2.md",
-        ".orqa/process/rules/RULE-f10bb5de.md"
-      ]
+      "installed_at": "2026-03-23T21:06:39.111Z",
+      "files": {
+        ".orqa/process/knowledge/KNOW-6125ab55.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-ea517e13.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-1f30904a.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-7f416d7d.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-878e5422.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-89155a7f.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-9ba80a19.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-cb65b5d0.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-d4b8e3f2.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-f10bb5de.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        }
+      }
     },
     "@orqastudio/plugin-core-framework": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T13:01:44.901Z",
-      "files": [
-        ".orqa/process/agents/AGENT-1dab5ebe.md",
-        ".orqa/process/agents/AGENT-b0774726.md",
-        ".orqa/process/agents/AGENT-bedeffd1.md",
-        ".orqa/process/agents/AGENT-c5284fde.md",
-        ".orqa/process/agents/AGENT-caff7bc1.md",
-        ".orqa/process/agents/AGENT-cc255bc8.md",
-        ".orqa/process/agents/AGENT-ec1b3785.md",
-        ".orqa/process/agents/AGENT-fb0ce261.md",
-        ".orqa/process/knowledge/KNOW-323c2803.md",
-        ".orqa/process/knowledge/KNOW-449b1e02.md",
-        ".orqa/process/knowledge/KNOW-63cc1a00.md",
-        ".orqa/process/knowledge/KNOW-6f33713e.md",
-        ".orqa/process/knowledge/KNOW-83614358.md",
-        ".orqa/process/knowledge/KNOW-a2b3c4d5.md",
-        ".orqa/process/knowledge/KNOW-a4b5c6d7.md",
-        ".orqa/process/knowledge/KNOW-b453410f.md",
-        ".orqa/process/knowledge/KNOW-c9d8e7f6.md",
-        ".orqa/process/knowledge/KNOW-d1a2b3c4.md",
-        ".orqa/process/knowledge/KNOW-e0dec720.md",
-        ".orqa/process/knowledge/KNOW-e1333874.md",
-        ".orqa/process/knowledge/KNOW-e3a559c9.md",
-        ".orqa/process/knowledge/KNOW-e5f6a7b8.md",
-        ".orqa/process/knowledge/KNOW-f5edb34d.md",
-        ".orqa/process/knowledge/KNOW-f7476f0a.md",
-        ".orqa/process/knowledge/KNOW-f8e9d0a1.md",
-        ".orqa/process/knowledge/KNOW-fda0559b.md",
-        ".orqa/process/rules/RULE-029db175.md",
-        ".orqa/process/rules/RULE-11c29c9e.md",
-        ".orqa/process/rules/RULE-4f7e2a91.md",
-        ".orqa/process/rules/RULE-532100d9.md",
-        ".orqa/process/rules/RULE-5c9a1b74.md",
-        ".orqa/process/rules/RULE-5e03e67b.md",
-        ".orqa/process/rules/RULE-5ee43922.md",
-        ".orqa/process/rules/RULE-6d1c8dc7.md",
-        ".orqa/process/rules/RULE-8035e176.md",
-        ".orqa/process/rules/RULE-92dba0cb.md",
-        ".orqa/process/rules/RULE-9daf29c0.md",
-        ".orqa/process/rules/RULE-b2753bad.md",
-        ".orqa/process/rules/RULE-deab6ea7.md",
-        ".orqa/process/rules/RULE-df24948b.md",
-        ".orqa/process/rules/RULE-e352fd0a.md",
-        ".orqa/process/rules/RULE-f809076f.md",
-        ".orqa/process/rules/RULE-f9d0279c.md"
-      ]
+      "installed_at": "2026-03-23T21:06:39.118Z",
+      "files": {
+        ".orqa/process/agents/AGENT-1dab5ebe.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/agents/AGENT-b0774726.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/agents/AGENT-bedeffd1.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/agents/AGENT-c5284fde.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/agents/AGENT-caff7bc1.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/agents/AGENT-cc255bc8.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/agents/AGENT-ec1b3785.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/agents/AGENT-fb0ce261.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-323c2803.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-449b1e02.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-63cc1a00.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-6f33713e.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-83614358.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-a2b3c4d5.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-a4b5c6d7.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-b453410f.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-c9d8e7f6.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-d1a2b3c4.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-e0dec720.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-e1333874.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-e3a559c9.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-e5f6a7b8.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-f5edb34d.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-f7476f0a.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-f8e9d0a1.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-fda0559b.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-029db175.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-11c29c9e.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-4f7e2a91.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-532100d9.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-5c9a1b74.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-5e03e67b.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-5ee43922.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-6d1c8dc7.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-8035e176.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-92dba0cb.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-9daf29c0.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-b2753bad.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-deab6ea7.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-df24948b.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-e352fd0a.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-f809076f.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-f9d0279c.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        }
+      }
     },
     "@orqastudio/plugin-rust": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T13:01:44.937Z",
-      "files": [
-        ".orqa/process/agents/AGENT-4241392c.md",
-        ".orqa/process/agents/AGENT-e1e47559.md",
-        ".orqa/documentation/DOC-27becb92.md",
-        ".orqa/process/knowledge/KNOW-12495e28.md",
-        ".orqa/process/knowledge/KNOW-214b7cdc.md",
-        ".orqa/process/knowledge/KNOW-2a72f929.md",
-        ".orqa/process/knowledge/KNOW-5efa83a5.md"
-      ]
+      "installed_at": "2026-03-23T21:06:39.149Z",
+      "files": {
+        ".orqa/process/agents/AGENT-4241392c.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/agents/AGENT-e1e47559.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/documentation/DOC-27becb92.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-12495e28.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-214b7cdc.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-2a72f929.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-5efa83a5.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        }
+      }
     },
     "@orqastudio/plugin-software-project": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T13:46:35.361Z",
-      "files": [
-        ".orqa/documentation/DOC-421219ce.md",
-        ".orqa/process/knowledge/KNOW-170c220e.md",
-        ".orqa/process/knowledge/KNOW-1b805150.md",
-        ".orqa/process/knowledge/KNOW-1d47d8d8.md",
-        ".orqa/process/knowledge/KNOW-2c8eead6.md",
-        ".orqa/process/knowledge/KNOW-353a228b.md",
-        ".orqa/process/knowledge/KNOW-5124e508.md",
-        ".orqa/process/knowledge/KNOW-819789ab.md",
-        ".orqa/process/knowledge/KNOW-bcb42347.md",
-        ".orqa/process/knowledge/KNOW-c6d04755.md",
-        ".orqa/process/knowledge/KNOW-e2354dce.md",
-        ".orqa/process/knowledge/KNOW-f0efaf83.md",
-        ".orqa/process/rules/RULE-303c1cc8.md",
-        ".orqa/process/rules/RULE-4d4f540d.md",
-        ".orqa/process/rules/RULE-6c0496e0.md"
-      ]
+      "installed_at": "2026-03-23T21:06:43.053Z",
+      "files": {
+        ".orqa/documentation/DOC-421219ce.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-170c220e.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-1b805150.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-1d47d8d8.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-2c8eead6.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-353a228b.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-5124e508.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-819789ab.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-bcb42347.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-c6d04755.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-e2354dce.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-f0efaf83.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-303c1cc8.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-4d4f540d.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-6c0496e0.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        }
+      }
     },
     "@orqastudio/plugin-svelte": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T13:01:49.591Z",
-      "files": [
-        ".orqa/process/agents/AGENT-b0857607.md",
-        ".orqa/process/agents/AGENT-b2f574e5.md",
-        ".orqa/documentation/DOC-5d832d1d.md",
-        ".orqa/documentation/DOC-f7ed7a62.md",
-        ".orqa/process/knowledge/KNOW-1c708b68.md",
-        ".orqa/process/knowledge/KNOW-344a1247.md",
-        ".orqa/process/knowledge/KNOW-45b6ea05.md",
-        ".orqa/process/knowledge/KNOW-6963d39f.md",
-        ".orqa/process/knowledge/KNOW-6a2bc391.md",
-        ".orqa/process/knowledge/KNOW-7e3c5886.md",
-        ".orqa/process/knowledge/KNOW-88f32b6a.md",
-        ".orqa/process/knowledge/KNOW-89d35141.md",
-        ".orqa/process/knowledge/KNOW-90dd73ab.md",
-        ".orqa/process/knowledge/KNOW-b29e340b.md",
-        ".orqa/process/knowledge/KNOW-c40438c2.md",
-        ".orqa/process/knowledge/KNOW-e9baaf88.md",
-        ".orqa/process/knowledge/KNOW-fd2b84c4.md"
-      ]
+      "installed_at": "2026-03-23T21:06:44.333Z",
+      "files": {
+        ".orqa/process/agents/AGENT-b0857607.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/agents/AGENT-b2f574e5.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/documentation/DOC-5d832d1d.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/documentation/DOC-f7ed7a62.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-1c708b68.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-344a1247.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-45b6ea05.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-6963d39f.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-6a2bc391.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-7e3c5886.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-88f32b6a.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-89d35141.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-90dd73ab.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-b29e340b.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-c40438c2.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-e9baaf88.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-fd2b84c4.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        }
+      }
     },
     "@orqastudio/plugin-tauri": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T13:01:49.599Z",
-      "files": [
-        ".orqa/process/agents/AGENT-1ed9512e.md",
-        ".orqa/documentation/DOC-d0237b23.md",
-        ".orqa/documentation/DOC-d9c0d1c7.md",
-        ".orqa/process/knowledge/KNOW-2539a6e4.md",
-        ".orqa/process/knowledge/KNOW-6f7f4da5.md",
-        ".orqa/process/knowledge/KNOW-a5434b61.md",
-        ".orqa/process/knowledge/KNOW-c323ec5f.md",
-        ".orqa/process/knowledge/KNOW-de97219c.md"
-      ]
+      "installed_at": "2026-03-23T21:06:44.340Z",
+      "files": {
+        ".orqa/process/agents/AGENT-1ed9512e.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/documentation/DOC-d0237b23.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/documentation/DOC-d9c0d1c7.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-2539a6e4.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-6f7f4da5.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-a5434b61.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-c323ec5f.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-de97219c.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        }
+      }
     },
     "@orqastudio/plugin-typescript": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T13:01:50.468Z",
-      "files": [
-        ".orqa/documentation/DOC-e4f5a6b7.md",
-        ".orqa/process/knowledge/KNOW-49cee771.md"
-      ]
+      "installed_at": "2026-03-23T21:06:46.756Z",
+      "files": {
+        ".orqa/documentation/DOC-e4f5a6b7.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-49cee771.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        }
+      }
     },
     "@orqastudio/plugin-systems-thinking": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T13:01:49.596Z",
-      "files": [
-        ".orqa/process/knowledge/KNOW-1a8eb147.md",
-        ".orqa/process/knowledge/KNOW-1ab0e715.md",
-        ".orqa/process/knowledge/KNOW-30a419dd.md",
-        ".orqa/process/knowledge/KNOW-54823e2d.md",
-        ".orqa/process/knowledge/KNOW-82d32398.md",
-        ".orqa/process/knowledge/KNOW-8c98ea98.md",
-        ".orqa/process/knowledge/KNOW-a4c8f1e2.md",
-        ".orqa/process/knowledge/KNOW-c7fb7c83.md",
-        ".orqa/process/knowledge/KNOW-de25b290.md",
-        ".orqa/process/knowledge/KNOW-f0c40eaf.md",
-        ".orqa/process/rules/RULE-1e8a1914.md",
-        ".orqa/process/rules/RULE-39169bcd.md",
-        ".orqa/process/rules/RULE-d90112d9.md"
-      ]
+      "installed_at": "2026-03-23T21:06:44.337Z",
+      "files": {
+        ".orqa/process/knowledge/KNOW-1a8eb147.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-1ab0e715.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-30a419dd.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-54823e2d.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-82d32398.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-8c98ea98.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-a4c8f1e2.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-c7fb7c83.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-de25b290.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-f0c40eaf.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-1e8a1914.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-39169bcd.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/rules/RULE-d90112d9.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        }
+      }
     },
     "@orqastudio/plugin-githooks": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T13:01:44.903Z",
-      "files": []
+      "installed_at": "2026-03-23T21:06:39.119Z",
+      "files": {}
     },
     "@orqastudio/claude-code-connector": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T13:53:06.425Z",
-      "files": [
-        ".orqa/process/knowledge/KNOW-0fd23e0b.md",
-        ".orqa/process/knowledge/KNOW-82ceb1bd.md"
-      ]
+      "installed_at": "2026-03-23T21:06:48.039Z",
+      "files": {
+        ".orqa/process/knowledge/KNOW-0fd23e0b.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        },
+        ".orqa/process/knowledge/KNOW-82ceb1bd.md": {
+          "sourceHash": "",
+          "installedHash": ""
+        }
+      }
+    },
+    "@orqastudio/plugin-claude": {
+      "version": "0.1.0-dev",
+      "installed_at": "2026-03-23T21:06:48.400Z",
+      "files": {}
     }
   }
 }

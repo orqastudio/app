@@ -15,6 +15,7 @@
  *   orqa repo license|readme                      Repo maintenance audits
  *   orqa git status|pr|sync|audit                  Monorepo-aware git operations
  *   orqa hosting up|down|setup|status|push        Local git server management
+ *   orqa index [project-path]                     Download model, index, embed
  */
 
 import { runPluginCommand } from "./commands/plugin.js";
@@ -35,6 +36,7 @@ import { runEnforceCommand } from "./commands/enforce.js";
 import { runDaemonCommand } from "./commands/daemon.js";
 import { runGitCommand } from "./commands/git.js";
 import { runHostingCommand } from "./commands/hosting.js";
+import { runIndexCommand } from "./commands/index.js";
 
 const USAGE = `
 OrqaStudio CLI v0.1.0-dev
@@ -58,6 +60,7 @@ Commands:
   link        Cross-platform symlink management (create, verify, status)
   git         Monorepo-aware git operations (status, pr, sync, audit)
   hosting     Local git server management (up, down, setup, status, push)
+  index       Download ONNX model, index codebase, generate embeddings
   daemon      Manage the validation daemon (start, stop, status)
   log         Log enforcement responses (enforcement-response)
 
@@ -136,6 +139,9 @@ async function main(): Promise<void> {
 			break;
 		case "hosting":
 			await runHostingCommand(commandArgs);
+			break;
+		case "index":
+			await runIndexCommand(commandArgs);
 			break;
 		case "daemon":
 			await runDaemonCommand(commandArgs);

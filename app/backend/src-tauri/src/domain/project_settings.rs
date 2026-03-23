@@ -157,13 +157,6 @@ pub struct GovernanceCounts {
     pub has_claude_config: bool,
 }
 
-/// A child project reference in an organisation-mode project.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ChildProjectConfig {
-    pub name: String,
-    pub path: String,
-}
-
 /// Per-plugin configuration stored in project.json under `plugins.<name>`.
 ///
 /// Tracks installation state and whether the plugin is active.
@@ -193,15 +186,9 @@ pub struct PluginProjectConfig {
 #[serde(deny_unknown_fields)]
 pub struct ProjectSettings {
     pub name: String,
-    /// When `true`, this project aggregates child projects into a single graph.
-    #[serde(default)]
-    pub organisation: bool,
     /// When `true`, this project is dogfooding — the app being built is the app being used.
     #[serde(default)]
     pub dogfood: bool,
-    /// Child project paths (relative to project root or absolute).
-    #[serde(default)]
-    pub projects: Vec<ChildProjectConfig>,
     #[serde(default)]
     pub description: Option<String>,
     #[serde(default = "default_model")]
@@ -271,9 +258,7 @@ mod tests {
     fn sample_settings() -> ProjectSettings {
         ProjectSettings {
             name: "test-project".to_string(),
-            organisation: false,
             dogfood: false,
-            projects: vec![],
             description: Some("A test project".to_string()),
             default_model: "auto".to_string(),
             excluded_paths: default_excluded_paths(),

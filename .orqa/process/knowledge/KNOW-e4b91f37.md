@@ -25,7 +25,7 @@ relationships:
 - **Schema rules** (field requirements, types): validator check
 - **Code quality rules** (no unwrap, no any): linter + pre-commit hook
 - **Process rules** (documentation first, no stubs): PreToolUse hook
-- **Behavioral rules** (never stop, trace to usage): thinking mode injection + stop hook check
+- **Behavioral rules** (never stop, trace to usage): prompt classification + behavioral rule injection + stop hook check
 - **Safety rules** (no force push, no --no-verify): PreToolUse blocking hook
 
 ## Escalation Path
@@ -41,7 +41,7 @@ When enforcement fails (lesson recurrence >= 3):
 Each connector provides its own enforcement primitives. For Claude Code:
 - `PreToolUse` hooks: can block Write/Edit/Bash
 - `PostToolUse` hooks: can warn after Write/Edit/Bash
-- `UserPromptSubmit` hooks: inject thinking mode + behavioral rules
+- `UserPromptSubmit` hooks: classify prompt type + inject behavioral rules
 - `Stop` hooks: session-end checks
 - `SubagentStop` hooks: review subagent work
 

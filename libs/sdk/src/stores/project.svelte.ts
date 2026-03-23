@@ -6,7 +6,6 @@ import type {
 	ProjectScanResult,
 	ArtifactEntry,
 	NavigationItem,
-	ChildProjectConfig,
 } from "@orqastudio/types";
 
 export class ProjectStore {
@@ -20,9 +19,6 @@ export class ProjectStore {
 	settingsLoaded = $state(false);
 	scanning = $state(false);
 	iconDataUrl = $state<string | null>(null);
-
-	/** Active child project filter in organisation mode. Null = show all. */
-	activeChildProject = $state<string | null>(null);
 
 	get hasProject(): boolean {
 		return this.activeProject !== null;
@@ -54,16 +50,6 @@ export class ProjectStore {
 	/** Whether this project uses the new navigation model. */
 	get hasNavigation(): boolean {
 		return this.navigation !== null;
-	}
-
-	/** Whether this project is an organisation-mode project. */
-	get isOrganisation(): boolean {
-		return this.projectSettings?.organisation === true;
-	}
-
-	/** Child project configs from project.json. */
-	get childProjects(): ChildProjectConfig[] {
-		return this.projectSettings?.projects ?? [];
 	}
 
 	/** Try to restore the last active project on app startup. */
@@ -228,7 +214,6 @@ export class ProjectStore {
 		this.projectSettings = null;
 		this.settingsLoaded = false;
 		this.iconDataUrl = null;
-		this.activeChildProject = null;
 		this.error = null;
 	}
 
@@ -257,7 +242,6 @@ export class ProjectStore {
 		this.settingsLoaded = false;
 		this.scanning = false;
 		this.iconDataUrl = null;
-		this.activeChildProject = null;
 		this.loading = false;
 		this.error = null;
 	}

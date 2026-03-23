@@ -8,7 +8,7 @@ export { EnforcementStore } from "./enforcement.svelte.js";
 export { LessonStore } from "./lessons.svelte.js";
 export { SetupStore } from "./setup.svelte.js";
 export { SettingsStore } from "./settings.svelte.js";
-export type { ThemeMode, DefaultModel } from "./settings.svelte.js";
+export type { ThemeMode, DefaultModel, DaemonState, DaemonHealth } from "./settings.svelte.js";
 export { ErrorStoreImpl, initBrowserHandlers } from "./errors.svelte.js";
 export type { AppError } from "./errors.svelte.js";
 export { NavigationStore } from "./navigation.svelte.js";

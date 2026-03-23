@@ -12,7 +12,6 @@
 	import SettingsDialog from "./SettingsDialog.svelte";
 	import InitConfirmDialog from "./InitConfirmDialog.svelte";
 	import MenuBar from "./MenuBar.svelte";
-	import ProjectSwitcher from "../navigation/ProjectSwitcher.svelte";
 
 	const hasProject = $derived(projectStore.hasProject);
 
@@ -108,9 +107,6 @@
 		onExit={() => getCurrentWindow().close()}
 	/>
 
-	<div class="ml-2">
-		<ProjectSwitcher />
-	</div>
 	<div class="flex-1"></div>
 	<WindowControls />
 </div>

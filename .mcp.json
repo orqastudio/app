@@ -2,7 +2,9 @@
   "mcpServers": {
     "orqastudio": {
       "command": "orqa",
-      "args": ["mcp"]
+      "args": [
+        "mcp"
+      ]
     }
   }
 }

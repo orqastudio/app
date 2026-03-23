@@ -75,7 +75,7 @@ async function main(): Promise<void> {
   if (downstreamCount > 0) {
     const summary = parsed.downstream_summary ?? "(see graph_relationships for details)";
     lines.push(`It has ${downstreamCount} downstream relationship${downstreamCount !== 1 ? "s" : ""}: ${summary}.`);
-    lines.push("Review downstream artifacts for cascading effects before committing.");
+    lines.push("You MUST review downstream artifacts for cascading effects before committing. Do NOT commit without verifying all downstream relationships are intact.");
   }
 
   if (lines.length > 1) {

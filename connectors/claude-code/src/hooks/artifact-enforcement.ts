@@ -101,7 +101,7 @@ async function main(): Promise<void> {
     `New ${artifactType} artifact is missing required relationships:`,
     ...missing.map((r) => `  - ${r.label}`),
     "",
-    "Add these relationships before committing. Run `orqa enforce` to check the full graph after writing.",
+    "You MUST add these relationships before committing. Do NOT commit without them. Run `orqa enforce` to verify the full graph after writing.",
   ];
 
   process.stdout.write(JSON.stringify({ systemMessage: lines.join("\n") }));

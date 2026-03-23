@@ -34,10 +34,26 @@ pub struct KnowledgeContent {
     pub frontmatter: serde_json::Value,
 }
 
+/// A single behavioral enforcement rule with its metadata.
+#[derive(Debug, Clone, Serialize)]
+pub struct BehavioralRule {
+    /// Rule ID (e.g. "RULE-532100d9").
+    pub id: String,
+    /// Rule title (e.g. "Agent Delegation").
+    pub title: String,
+    /// Derived category for grouping (e.g. "process", "quality", "safety").
+    pub category: String,
+    /// The behavioral enforcement message.
+    pub message: String,
+}
+
 /// Behavioral enforcement messages extracted from active rules.
 #[derive(Debug, Serialize)]
 pub struct BehavioralMessages {
+    /// Flat message list (backwards-compatible).
     pub messages: Vec<String>,
+    /// Structured rules with metadata for priority-based injection.
+    pub rules: Vec<BehavioralRule>,
     /// Total number of rule artifacts inspected.
     pub rule_count: usize,
     /// Number of enforcement entries with `mechanism: behavioral`.
@@ -153,13 +169,14 @@ pub fn find_knowledge(
 
 /// Extract all `mechanism: behavioral` enforcement messages from active rules.
 ///
-/// Only rules with `status: active` are inspected. Messages are returned
-/// in sorted order for deterministic output.
+/// Only rules with `status: active` are inspected. Rules are returned with
+/// structured metadata (id, title, category) for priority-based injection.
+/// The flat `messages` field is preserved for backwards compatibility.
 pub fn extract_behavioral_messages(
     graph: &ArtifactGraph,
     _project_root: &Path,
 ) -> Result<BehavioralMessages, ValidationError> {
-    let mut messages: Vec<String> = Vec::new();
+    let mut rules: Vec<BehavioralRule> = Vec::new();
     let mut rule_count: usize = 0;
     let mut behavioral_count: usize = 0;
 
@@ -204,18 +221,113 @@ pub fn extract_behavioral_messages(
             behavioral_count += 1;
 
             if let Some(msg) = obj.get("message").and_then(serde_json::Value::as_str) {
-                messages.push(msg.to_owned());
+                let category = categorize_rule(&node.title);
+                rules.push(BehavioralRule {
+                    id: node.id.clone(),
+                    title: node.title.clone(),
+                    category: category.to_owned(),
+                    message: msg.to_owned(),
+                });
             }
         }
     }
 
-    messages.sort();
+    // Sort by category then title for deterministic grouped output.
+    rules.sort_by(|a, b| a.category.cmp(&b.category).then(a.title.cmp(&b.title)));
+
+    // Backwards-compatible flat message list.
+    let messages: Vec<String> = rules.iter().map(|r| r.message.clone()).collect();
 
     Ok(BehavioralMessages {
         messages,
+        rules,
         rule_count,
         behavioral_count,
     })
+}
+
+/// Derive a category from a rule title using keyword matching.
+///
+/// Categories group rules for structured injection:
+/// - `safety`: Error handling, stubs, command safety, coding standards
+/// - `process`: Delegation, reporting, lifecycle, governance, session management
+/// - `planning`: Plans, documentation, architecture decisions, structure
+/// - `quality`: Review, testing, search, components, linting
+/// - `general`: Anything that doesn't match a specific category
+fn categorize_rule(title: &str) -> &'static str {
+    let lower = title.to_lowercase();
+
+    // Safety: error handling, stubs, command safety, coding standards
+    if lower.contains("error")
+        || lower.contains("stub")
+        || lower.contains("placeholder")
+        || lower.contains("command safety")
+        || lower.contains("system command")
+        || lower.contains("coding standard")
+        || lower.contains("no alias")
+        || lower.contains("version")
+    {
+        return "safety";
+    }
+
+    // Process: delegation, reporting, lifecycle, governance, session
+    if lower.contains("delegat")
+        || lower.contains("report")
+        || lower.contains("honest")
+        || lower.contains("lifecycle")
+        || lower.contains("governance")
+        || lower.contains("session")
+        || lower.contains("continu")
+        || lower.contains("operation")
+        || lower.contains("enforcement")
+        || lower.contains("priority")
+        || lower.contains("lesson")
+        || lower.contains("trace")
+        || lower.contains("dogfood")
+        || lower.contains("self-hosted")
+        || lower.contains("agent team")
+        || lower.contains("context window")
+        || lower.contains("deferred")
+    {
+        return "process";
+    }
+
+    // Planning: plans, documentation, architecture, structure
+    if lower.contains("plan")
+        || lower.contains("document")
+        || lower.contains("architecture")
+        || lower.contains("structure")
+        || lower.contains("artifact")
+        || lower.contains("vision")
+        || lower.contains("pillar")
+        || lower.contains("roadmap")
+        || lower.contains("uat")
+        || lower.contains("persist")
+    {
+        return "planning";
+    }
+
+    // Quality: review, testing, search, components, linting, skills
+    if lower.contains("review")
+        || lower.contains("test")
+        || lower.contains("search")
+        || lower.contains("component")
+        || lower.contains("lint")
+        || lower.contains("skill")
+        || lower.contains("tool")
+        || lower.contains("tooltip")
+        || lower.contains("knowledge")
+        || lower.contains("git")
+        || lower.contains("root directory")
+        || lower.contains("config")
+        || lower.contains("schema")
+        || lower.contains("firmware")
+        || lower.contains("system")
+    {
+        return "quality";
+    }
+
+    "general"
 }
 
 // ---------------------------------------------------------------------------

@@ -86,7 +86,7 @@ This escalation is non-negotiable for CRITICAL enforcement gaps.
 For Claude Code connector enforcement:
 - `PreToolUse` hooks: block Write/Edit/Bash before execution
 - `PostToolUse` hooks: warn after Write/Edit/Bash
-- `UserPromptSubmit` hooks: inject thinking mode + behavioral guidance
+- `UserPromptSubmit` hooks: classify prompt type + inject behavioral rules
 - `Stop` hooks: session-end accumulated violation checks
 - `SubagentStop` hooks: review subagent work quality
 

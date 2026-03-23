@@ -76,7 +76,7 @@ async function main(): Promise<void> {
     for (const f of warnFindings) lines.push(`    - ${f.message}`);
   }
   lines.push("");
-  lines.push("Fix errors before committing. Run `orqa enforce --fix` for auto-remediation.");
+  lines.push("You MUST fix all errors before committing. Do NOT commit with validation errors. Run `orqa enforce --fix` for auto-remediation.");
 
   process.stdout.write(JSON.stringify({ systemMessage: lines.join("\n") }));
   process.exit(0);

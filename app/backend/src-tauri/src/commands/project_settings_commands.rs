@@ -110,41 +110,6 @@ pub fn project_icon_read(project_path: String, icon_filename: String) -> Result<
     Ok(format!("data:{mime};base64,{encoded}"))
 }
 
-/// Validate an organisation config — check that each child path has `.orqa/project.json`.
-///
-/// Returns a list of validation error strings (empty if all valid).
-#[tauri::command]
-pub fn validate_organisation_config(project_path: String) -> Result<Vec<String>, OrqaError> {
-    let settings = project_settings_repo::read(&project_path)?
-        .ok_or_else(|| OrqaError::NotFound("project settings not found".to_string()))?;
-
-    if !settings.organisation {
-        return Ok(vec![]);
-    }
-
-    let project_root = Path::new(&project_path);
-    let mut errors = Vec::new();
-
-    for child in &settings.projects {
-        let child_path = if Path::new(&child.path).is_absolute() {
-            std::path::PathBuf::from(&child.path)
-        } else {
-            project_root.join(&child.path)
-        };
-
-        let child_settings = child_path.join(".orqa").join("project.json");
-        if !child_settings.exists() {
-            errors.push(format!(
-                "Child project '{}' at '{}' has no .orqa/project.json",
-                child.name,
-                child_path.display()
-            ));
-        }
-    }
-
-    Ok(errors)
-}
-
 /// Scan a project directory for language, framework, and governance info.
 ///
 /// Uses the provided excluded paths or falls back to standard defaults.
@@ -182,9 +147,7 @@ mod tests {
         let path = dir.path().to_str().expect("path");
         let settings = ProjectSettings {
             name: "test-project".to_string(),
-            organisation: false,
             dogfood: false,
-            projects: vec![],
             description: Some("A test".to_string()),
             default_model: "auto".to_string(),
             excluded_paths: vec!["node_modules".to_string()],

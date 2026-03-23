@@ -87,7 +87,7 @@ async function main(): Promise<void> {
     "",
     ...warnings,
     "",
-    "Address these before committing.",
+    "You MUST address all issues above before committing. Do NOT commit with outstanding stub markers or artifact integrity violations.",
   ].join("\n");
 
   process.stdout.write(JSON.stringify({ systemMessage: message }));

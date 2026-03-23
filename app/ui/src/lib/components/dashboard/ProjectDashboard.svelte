@@ -94,9 +94,6 @@
 					{/if}
 					<div>
 						<h1 class="text-2xl font-bold">{projectName}</h1>
-						{#if projectStore.isOrganisation}
-							<p class="text-xs text-primary font-medium">Organisation ({projectStore.childProjects.length} projects)</p>
-						{/if}
 						{#if projectStore.projectSettings?.description}
 							<p class="text-sm text-muted-foreground">{projectStore.projectSettings.description}</p>
 						{:else}
@@ -105,37 +102,6 @@
 					</div>
 				</div>
 			</div>
-
-			<!-- Org-mode: per-project artifact breakdown -->
-			{#if projectStore.isOrganisation && !projectStore.activeChildProject}
-				<div class="mb-4">
-					<CardRoot class="gap-2">
-						<CardHeader class="pb-2">
-							<CardTitle class="flex items-center gap-1.5 text-sm font-semibold">
-								<Icon name="layers" size="md" />
-								Project Breakdown
-							</CardTitle>
-						</CardHeader>
-						<CardContent class="pt-0">
-							<div class="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
-								{#each projectStore.childProjects as child}
-									{@const childCount = [...artifactGraphSDK.graph.values()].filter(n => n.project === child.name).length}
-									<button
-										class="flex items-center gap-2 rounded border border-border p-2 text-left text-xs hover:bg-muted transition-colors"
-										onclick={() => { projectStore.activeChildProject = child.name; }}
-									>
-										<Icon name="folder" size="sm" />
-										<div class="min-w-0 flex-1">
-											<p class="font-medium truncate">{child.name}</p>
-											<p class="text-muted-foreground">{childCount} artifacts</p>
-										</div>
-									</button>
-								{/each}
-							</div>
-						</CardContent>
-					</CardRoot>
-				</div>
-			{/if}
 
 			<!-- Narrative layout -->
 			<div class="flex flex-col gap-4">

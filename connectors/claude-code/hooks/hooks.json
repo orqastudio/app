@@ -52,6 +52,16 @@
             "timeout": 10000
           }
         ]
+      },
+      {
+        "matcher": "TaskUpdate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/hooks/findings-check.js",
+            "timeout": 5000
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [

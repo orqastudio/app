@@ -118,6 +118,11 @@ struct InitEmbedderParams {
     model_dir: String,
 }
 
+#[derive(Debug, Deserialize)]
+struct DownloadModelParams {
+    model_dir: String,
+}
+
 fn default_max_results() -> u32 {
     20
 }
@@ -126,20 +131,49 @@ fn default_max_results() -> u32 {
 // CLI argument parsing
 // ---------------------------------------------------------------------------
 
-/// Parse CLI arguments and return the database path.
+/// Parsed CLI options.
+struct CliOptions {
+    db_path: PathBuf,
+    model_dir: Option<PathBuf>,
+}
+
+/// Parse CLI arguments.
 ///
-/// Usage: `orqa-search-server [--db <path>]`
+/// Usage: `orqa-search-server [--db <path>] [--model-dir <path>]`
 ///
 /// If `--db` is not provided, uses `<temp_dir>/orqa-search-server.duckdb`.
-fn parse_db_path(args: &[String]) -> PathBuf {
+/// If `--model-dir` is not provided, falls back to `ORQA_MODEL_DIR` env var,
+/// then `models/bge-small-en-v1.5/` relative to the current directory.
+fn parse_cli_options(args: &[String]) -> CliOptions {
+    let mut db_path: Option<PathBuf> = None;
+    let mut model_dir: Option<PathBuf> = None;
     let mut i = 0;
     while i < args.len() {
         if args[i] == "--db" && i + 1 < args.len() {
-            return PathBuf::from(&args[i + 1]);
+            db_path = Some(PathBuf::from(&args[i + 1]));
+            i += 2;
+        } else if args[i] == "--model-dir" && i + 1 < args.len() {
+            model_dir = Some(PathBuf::from(&args[i + 1]));
+            i += 2;
+        } else {
+            i += 1;
         }
-        i += 1;
     }
-    std::env::temp_dir().join("orqa-search-server.duckdb")
+    CliOptions {
+        db_path: db_path.unwrap_or_else(|| std::env::temp_dir().join("orqa-search-server.duckdb")),
+        model_dir,
+    }
+}
+
+/// Resolve the model directory from CLI arg, env var, or default.
+fn resolve_model_dir(cli_model_dir: Option<PathBuf>) -> PathBuf {
+    if let Some(dir) = cli_model_dir {
+        return dir;
+    }
+    if let Ok(dir) = std::env::var("ORQA_MODEL_DIR") {
+        return PathBuf::from(dir);
+    }
+    PathBuf::from("models").join("bge-small-en-v1.5")
 }
 
 // ---------------------------------------------------------------------------
@@ -153,6 +187,7 @@ fn handle_request(engine: &mut SearchEngine, request: &JsonRpcRequest) -> Value 
         "search_semantic" => handle_search_semantic(engine, &request.params),
         "get_status" => handle_get_status(engine),
         "init_embedder_sync" => handle_init_embedder_sync(engine, &request.params),
+        "download_model" => handle_download_model(&request.params),
         unknown => {
             warn!("unknown method: {unknown}");
             Value::Null
@@ -212,6 +247,34 @@ fn handle_init_embedder_sync(engine: &mut SearchEngine, params: &Value) -> Value
     }
 }
 
+fn handle_download_model(params: &Value) -> Value {
+    let p: DownloadModelParams = match serde_json::from_value(params.clone()) {
+        Ok(v) => v,
+        Err(e) => return error_value(format!("invalid params: {e}")),
+    };
+    let model_dir = PathBuf::from(&p.model_dir);
+    info!("downloading model to {}", model_dir.display());
+
+    // Run the async download in a blocking context.
+    let rt = match tokio::runtime::Runtime::new() {
+        Ok(rt) => rt,
+        Err(e) => return error_value(format!("failed to create tokio runtime: {e}")),
+    };
+    match rt.block_on(orqa_search::embedder::ensure_model_exists(&model_dir, |file, downloaded, total| {
+        if let Some(total) = total {
+            info!("downloading {file}: {downloaded}/{total} bytes");
+        } else {
+            info!("downloading {file}: {downloaded} bytes");
+        }
+    })) {
+        Ok(()) => {
+            info!("model download complete: {}", model_dir.display());
+            serde_json::json!({ "downloaded": true, "model_dir": p.model_dir })
+        }
+        Err(e) => error_value(format!("model download failed: {e}")),
+    }
+}
+
 /// Wrap an error message as a JSON object `{"error": "..."}`.
 fn error_value(msg: String) -> Value {
     serde_json::json!({ "error": msg })
@@ -233,17 +296,38 @@ fn main() {
         .init();
 
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let db_path = parse_db_path(&args);
+    let options = parse_cli_options(&args);
+    let model_dir = resolve_model_dir(options.model_dir);
 
-    info!("orqa-search-server starting, db={}", db_path.display());
+    info!("orqa-search-server starting, db={}", options.db_path.display());
 
-    let mut engine = match SearchEngine::new(&db_path) {
+    let mut engine = match SearchEngine::new(&options.db_path) {
         Ok(e) => e,
         Err(err) => {
             error!("failed to initialize search engine: {err}");
             std::process::exit(1);
         }
     };
+
+    // Auto-init embedder if model files exist on disk.
+    if model_dir.join("model.onnx").exists() && model_dir.join("tokenizer.json").exists() {
+        info!("model files found at {}, initializing embedder", model_dir.display());
+        match engine.init_embedder_sync(&model_dir) {
+            Ok(()) => {
+                info!("embedder initialized, embedding any unembedded chunks");
+                match engine.embed_chunks() {
+                    Ok(count) => info!("embedded {count} chunks"),
+                    Err(e) => warn!("failed to embed chunks: {e}"),
+                }
+            }
+            Err(e) => warn!("failed to initialize embedder: {e}"),
+        }
+    } else {
+        warn!(
+            "model files not found at {}, semantic search unavailable (regex search still works)",
+            model_dir.display()
+        );
+    }
 
     info!("search engine ready, listening on stdin");
 
@@ -320,16 +404,36 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_db_path_default() {
-        let path = parse_db_path(&[]);
-        assert!(path.to_string_lossy().contains("orqa-search-server.duckdb"));
+    fn parse_cli_options_default() {
+        let options = parse_cli_options(&[]);
+        assert!(options.db_path.to_string_lossy().contains("orqa-search-server.duckdb"));
+        assert!(options.model_dir.is_none());
     }
 
     #[test]
-    fn parse_db_path_explicit() {
-        let args = vec!["--db".to_string(), "/tmp/custom.duckdb".to_string()];
-        let path = parse_db_path(&args);
-        assert_eq!(path, PathBuf::from("/tmp/custom.duckdb"));
+    fn parse_cli_options_explicit() {
+        let args = vec![
+            "--db".to_string(),
+            "/tmp/custom.duckdb".to_string(),
+            "--model-dir".to_string(),
+            "/tmp/models".to_string(),
+        ];
+        let options = parse_cli_options(&args);
+        assert_eq!(options.db_path, PathBuf::from("/tmp/custom.duckdb"));
+        assert_eq!(options.model_dir, Some(PathBuf::from("/tmp/models")));
+    }
+
+    #[test]
+    fn resolve_model_dir_uses_cli_first() {
+        let dir = resolve_model_dir(Some(PathBuf::from("/custom/models")));
+        assert_eq!(dir, PathBuf::from("/custom/models"));
+    }
+
+    #[test]
+    fn resolve_model_dir_default_fallback() {
+        // When no CLI arg and no env var, falls back to models/bge-small-en-v1.5
+        let dir = resolve_model_dir(None);
+        assert!(dir.to_string_lossy().contains("bge-small-en-v1.5"));
     }
 
     #[test]

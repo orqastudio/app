@@ -21,9 +21,6 @@ relationships:
   - target: IDEA-c4f10c20
     type: addresses
     rationale: Extends the completed package ecosystem idea with the capability model
-  - target: EPIC-f2b9e7d3
-    type: dependency-of
-    rationale: Git infrastructure epic depends on this — monorepo migration needs the plugin model solid first
 ---
 
 ## Problem

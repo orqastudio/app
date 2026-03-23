@@ -8,7 +8,7 @@ created: 2026-03-23
 updated: 2026-03-23
 relationships:
   - target: AD-c6abc8e6
-    type: evolves
+    type: revises
     rationale: Extends the organisation-mode architecture with a concrete plugin capability model
   - target: IDEA-09979c9d
     type: informs

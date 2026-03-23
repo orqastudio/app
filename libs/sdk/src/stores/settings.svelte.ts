@@ -7,6 +7,15 @@ const log = logger("settings");
 export type ThemeMode = "light" | "dark" | "system";
 export type DefaultModel = "auto" | "claude-opus-4-6" | "claude-sonnet-4-6" | "claude-haiku-4-5";
 
+export type DaemonState = "connected" | "disconnected" | "degraded";
+
+export interface DaemonHealth {
+	state: DaemonState;
+	artifacts: number;
+	rules: number;
+	error: string | null;
+}
+
 function defaultApplyTheme(mode: ThemeMode): void {
 	if (typeof document === "undefined") return;
 
@@ -41,12 +50,20 @@ export class SettingsStore {
 		error_message: null,
 	});
 
+	daemonHealth = $state<DaemonHealth>({
+		state: "disconnected",
+		artifacts: 0,
+		rules: 0,
+		error: null,
+	});
+
 	loading = $state(false);
 	error = $state<string | null>(null);
 	startupStatus = $state<StartupSnapshot | null>(null);
 
 	private _initialized = false;
 	private _pollIntervalId: ReturnType<typeof setInterval> | null = null;
+	private _daemonPollIntervalId: ReturnType<typeof setInterval> | null = null;
 	private _mediaQueryCleanup: (() => void) | null = null;
 	private _onThemeChange: ((mode: ThemeMode) => void) | null = null;
 
@@ -79,6 +96,12 @@ export class SettingsStore {
 		this._pollIntervalId = setInterval(() => {
 			this.refreshSidecarStatus();
 		}, 5000);
+
+		// Start daemon health polling (every 10 seconds)
+		this.refreshDaemonHealth();
+		this._daemonPollIntervalId = setInterval(() => {
+			this.refreshDaemonHealth();
+		}, 10_000);
 	}
 
 	private applyTheme(mode: ThemeMode): void {
@@ -93,6 +116,10 @@ export class SettingsStore {
 		if (this._pollIntervalId !== null) {
 			clearInterval(this._pollIntervalId);
 			this._pollIntervalId = null;
+		}
+		if (this._daemonPollIntervalId !== null) {
+			clearInterval(this._daemonPollIntervalId);
+			this._daemonPollIntervalId = null;
 		}
 		if (this._mediaQueryCleanup) {
 			this._mediaQueryCleanup();
@@ -247,6 +274,73 @@ export class SettingsStore {
 				error_message: extractErrorMessage(err),
 			};
 		}
+	}
+
+	async refreshDaemonHealth(): Promise<void> {
+		try {
+			const controller = new AbortController();
+			const timeoutId = setTimeout(() => controller.abort(), 3000);
+			const response = await fetch("http://127.0.0.1:3002/health", {
+				signal: controller.signal,
+			});
+			clearTimeout(timeoutId);
+
+			if (!response.ok) {
+				this.daemonHealth = {
+					state: "degraded",
+					artifacts: 0,
+					rules: 0,
+					error: `HTTP ${response.status}`,
+				};
+				return;
+			}
+
+			const data = (await response.json()) as {
+				status: string;
+				artifacts: number;
+				rules: number;
+			};
+
+			if (data.status === "ok") {
+				this.daemonHealth = {
+					state: "connected",
+					artifacts: data.artifacts,
+					rules: data.rules,
+					error: null,
+				};
+			} else {
+				this.daemonHealth = {
+					state: "degraded",
+					artifacts: data.artifacts ?? 0,
+					rules: data.rules ?? 0,
+					error: `Unexpected status: ${data.status}`,
+				};
+			}
+		} catch (err: unknown) {
+			this.daemonHealth = {
+				state: "disconnected",
+				artifacts: 0,
+				rules: 0,
+				error: err instanceof Error ? err.message : "Connection failed",
+			};
+		}
+	}
+
+	get daemonStateLabel(): string {
+		switch (this.daemonHealth.state) {
+			case "connected":
+				return `Daemon (${this.daemonHealth.artifacts})`;
+			case "degraded":
+				return "Daemon Degraded";
+			case "disconnected":
+				return "Daemon Offline";
+			default:
+				return "Daemon Unknown";
+		}
+	}
+
+	get daemonConnected(): boolean {
+		return this.daemonHealth.state === "connected";
 	}
 
 	get modelDisplayName(): string {

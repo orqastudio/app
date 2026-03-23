@@ -63,7 +63,12 @@ impl McpServer {
                 .map_err(|e| format!("failed to index project: {e}"))?;
 
             // Try to init embedder from known model locations.
+            // Priority: ORQA_MODEL_DIR env var > project-root models/ > app data dir > ~/Downloads
+            let env_model_dir = std::env::var("ORQA_MODEL_DIR").ok().map(PathBuf::from);
+            let project_model_dir = Some(self.project_root.join("models").join("bge-small-en-v1.5"));
             let model_dirs = [
+                env_model_dir,
+                project_model_dir,
                 dirs_next::data_dir().map(|d| {
                     d.join("com.orqastudio.app")
                         .join("models")

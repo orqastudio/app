@@ -33,12 +33,6 @@ import type {
 import { PLATFORM_CONFIG } from "@orqastudio/types";
 import type { PluginRegistry } from "../plugins/plugin-registry.svelte.js";
 
-/** Options for project-filtered queries. */
-export interface QueryOptions {
-	/** Filter to a specific child project. Omit to include all projects. */
-	project?: string;
-}
-
 // ---------------------------------------------------------------------------
 // Subscription callback types
 // ---------------------------------------------------------------------------
@@ -201,14 +195,9 @@ export class ArtifactGraphSDK {
 	// Resolution — synchronous in-memory lookups
 	// -----------------------------------------------------------------------
 
-	resolve(id: string, options?: QueryOptions): ArtifactNode | undefined {
+	resolve(id: string): ArtifactNode | undefined {
 		const direct = this.graph.get(id);
 		if (direct) return direct;
-
-		if (options?.project) {
-			const qualified = `${options.project}::${id}`;
-			return this.graph.get(qualified);
-		}
 
 		for (const node of this.graph.values()) {
 			if (node.id === id) return node;
@@ -220,22 +209,6 @@ export class ArtifactGraphSDK {
 		const id = this.pathIndex.get(path);
 		if (!id) return undefined;
 		return this.graph.get(id);
-	}
-
-	// -----------------------------------------------------------------------
-	// Organisation-mode getters
-	// -----------------------------------------------------------------------
-
-	get projects(): string[] {
-		const names = new Set<string>();
-		for (const node of this.graph.values()) {
-			if (node.project) names.add(node.project);
-		}
-		return [...names];
-	}
-
-	get isOrganisation(): boolean {
-		return this.projects.length > 0;
 	}
 
 	// -----------------------------------------------------------------------
@@ -254,22 +227,20 @@ export class ArtifactGraphSDK {
 	// Bulk queries — synchronous
 	// -----------------------------------------------------------------------
 
-	byType(type: string, options?: QueryOptions): ArtifactNode[] {
+	byType(type: string): ArtifactNode[] {
 		const result: ArtifactNode[] = [];
 		for (const node of this.graph.values()) {
 			if (node.artifact_type === type) {
-				if (options?.project && node.project !== options.project) continue;
 				result.push(node);
 			}
 		}
 		return result;
 	}
 
-	byStatus(status: string, options?: QueryOptions): ArtifactNode[] {
+	byStatus(status: string): ArtifactNode[] {
 		const result: ArtifactNode[] = [];
 		for (const node of this.graph.values()) {
 			if (node.status === status) {
-				if (options?.project && node.project !== options.project) continue;
 				result.push(node);
 			}
 		}

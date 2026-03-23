@@ -81,14 +81,18 @@ On every session start, run these discovery steps before any work:
 4. **Current work** — `graph_query({ type: "task", status: "in-progress" })` — confirm no duplicate active work
 5. **Session state** — check `tmp/session-state.md`, `git status`, `git stash list`
 
-## Thinking Mode Awareness
+## Prompt Classification
 
-The UserPromptSubmit hook classifies each incoming prompt with an ONNX model and injects
-thinking mode context before you see the message. That injected context tells you:
-- How to approach the problem (analytical, creative, investigative, etc.)
-- Where to find relevant knowledge, rules, and prior decisions for this prompt type
+The UserPromptSubmit hook classifies each incoming prompt using keyword matching and injects
+relevant behavioral rules as context before you see the message. Classification types:
+`implementation`, `planning`, `review`, `debugging`, `research`, `documentation`, `governance`, `general`.
 
-Follow the guidance provided in the thinking mode context for each prompt. Do not skip it.
+Based on the classification, the hook selects the most relevant behavioral rules by category
+(critical rules are always included; remaining slots filled from prompt-relevant categories)
+and injects them as a `systemMessage`. The full rule set and preamble are written to
+`tmp/orchestrator-preamble.md` for reference.
+
+Follow the injected rule guidance for each prompt. Do not skip it.
 
 ## The Artifact Graph
 

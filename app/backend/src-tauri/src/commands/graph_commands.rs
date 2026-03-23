@@ -84,10 +84,6 @@ pub fn get_artifacts_by_type(
 ///
 /// Always reads from disk to ensure the caller sees the current content.
 /// The path must be relative to the project root. Path traversal is rejected.
-///
-/// In organisation mode, paths may be prefixed with `"{project_name}::"` —
-/// in that case the path is resolved relative to the child project's root
-/// instead of the active project root.
 #[tauri::command]
 pub fn read_artifact_content(
     path: String,
@@ -104,28 +100,7 @@ pub fn read_artifact_content(
 
     let project_path = active_project_path(&state)?;
     let project_root = Path::new(&project_path);
-
-    let full_path = if let Some((project_name, rel_path)) = path.split_once("::") {
-        // Organisation mode: resolve relative to child project root.
-        let settings = crate::repo::project_settings_repo::read(&project_path)?
-            .ok_or_else(|| OrqaError::NotFound("project settings not found".to_string()))?;
-        let child = settings
-            .projects
-            .iter()
-            .find(|c| c.name == project_name)
-            .ok_or_else(|| {
-                OrqaError::NotFound(format!("child project not found: {project_name}"))
-            })?;
-        let child_root = if Path::new(&child.path).is_absolute() {
-            std::path::PathBuf::from(&child.path)
-        } else {
-            project_root.join(&child.path)
-        };
-        let child_root = child_root.canonicalize().unwrap_or(child_root);
-        child_root.join(rel_path.replace('\\', "/"))
-    } else {
-        project_root.join(path.replace('\\', "/"))
-    };
+    let full_path = project_root.join(path.replace('\\', "/"));
 
     if !full_path.exists() {
         return Err(OrqaError::NotFound(format!("file not found: {path}")));

@@ -25,7 +25,7 @@ async function main(): Promise<void> {
   }
 
   const systemMessage =
-    "This looks like a process learning. Consider creating a lesson artifact in .orqa/process/lessons/ instead — lessons go through the learning loop (promotion to rules at recurrence >= 2). Auto-memory is for user preferences (user type) and references (reference type) only.";
+    "STOP: This is a process learning. You MUST create a lesson artifact in .orqa/process/lessons/ instead of writing to auto-memory. Lessons go through the learning loop (promotion to rules at recurrence >= 2). Do NOT store process learnings in auto-memory — auto-memory is ONLY for user preferences (user type) and references (reference type).";
 
   process.stdout.write(JSON.stringify({ systemMessage }));
   process.exit(0);

@@ -53,9 +53,6 @@ pub type SharedWatcher = Arc<Mutex<Option<WatcherHandle>>>;
 /// Events are debounced with a 500 ms window.  On any change inside the
 /// `.orqa/` directory a single `artifact-changed` Tauri event is emitted.
 ///
-/// In organisation mode, the watcher also monitors each child project's
-/// `.orqa/` directory so that changes in any child trigger a graph rebuild.
-///
 /// Returns an error string if the watcher cannot be initialised.
 pub fn start<R: Runtime>(
     app: AppHandle<R>,
@@ -73,43 +70,12 @@ pub fn start<R: Runtime>(
 
     let mut debouncer = create_debouncer(app, &orqa_dir)?;
 
-    // Watch the org project's own .orqa/ directory.
+    // Watch the project's .orqa/ directory.
     debouncer
         .watch(&orqa_dir, RecursiveMode::Recursive)
         .map_err(|e| format!("failed to watch {}: {e}", orqa_dir.display()))?;
 
     tracing::info!("[watcher] watching {} for changes", orqa_dir.display());
-
-    // In organisation mode, also watch each child project's .orqa/ directory.
-    if let Ok(Some(settings)) =
-        crate::repo::project_settings_repo::read(&project_path.to_string_lossy())
-    {
-        if settings.organisation {
-            for child in &settings.projects {
-                let child_path = if Path::new(&child.path).is_absolute() {
-                    PathBuf::from(&child.path)
-                } else {
-                    project_path.join(&child.path)
-                };
-                let child_path = child_path.canonicalize().unwrap_or(child_path);
-                let child_orqa = child_path.join(".orqa");
-                if child_orqa.exists() {
-                    match debouncer.watch(&child_orqa, RecursiveMode::Recursive) {
-                        Ok(()) => {
-                            tracing::info!(
-                                "[watcher] watching child '{}' at {}",
-                                child.name,
-                                child_orqa.display()
-                            );
-                        }
-                        Err(e) => {
-                            tracing::warn!("[watcher] failed to watch child '{}': {e}", child.name);
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     let mut guard = shared
         .lock()

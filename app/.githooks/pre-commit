@@ -59,6 +59,8 @@ if [ -n "$ORQA_CHANGED" ]; then
   node .githooks/validate-status-transitions.mjs
   echo "--- Artifacts: pillar alignment in docs ---"
   node .githooks/validate-pillar-alignment.mjs
+  echo "--- Artifacts: relationship type validation ---"
+  node .githooks/validate-relationships.mjs $ORQA_CHANGED
 fi
 
 # Historical preservation (block deletion of research/task/idea/lesson files)

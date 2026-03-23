@@ -213,7 +213,6 @@ fn register_commands(builder: tauri::Builder<tauri::Wry>) -> tauri::Builder<taur
         commands::project_settings_commands::project_scan,
         commands::project_settings_commands::project_icon_upload,
         commands::project_settings_commands::project_icon_read,
-        commands::project_settings_commands::validate_organisation_config,
         commands::settings_commands::settings_set,
         commands::settings_commands::settings_get_all,
         commands::search_commands::get_startup_status,

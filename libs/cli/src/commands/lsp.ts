@@ -11,6 +11,7 @@ import { createConnection } from "node:net";
 import { spawn } from "node:child_process";
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
+import { getRoot } from "../lib/root.js";
 
 const USAGE = `
 Usage: orqa lsp [project-path]
@@ -80,9 +81,43 @@ async function bridgeViaSocket(port: number, projectPath: string): Promise<void>
 	});
 }
 
+/**
+ * Find the standalone orqa-lsp-server binary.
+ * Searches workspace target dirs (debug first, then release), plus the old
+ * libs/lsp-server path for backwards compatibility.
+ */
+function findLspBinary(projectRoot: string): string | null {
+	const ext = process.platform === "win32" ? ".exe" : "";
+	const bin = `orqa-lsp-server${ext}`;
+	const candidates = [
+		join(projectRoot, "target", "debug", bin),
+		join(projectRoot, "target", "release", bin),
+		join(projectRoot, "libs", "lsp-server", "target", "debug", bin),
+		join(projectRoot, "libs", "lsp-server", "target", "release", bin),
+	];
+	for (const c of candidates) {
+		if (existsSync(c)) return c;
+	}
+	return null;
+}
+
 async function spawnDirect(projectPath: string): Promise<void> {
+	const projectRoot = getRoot();
+	const lspBinary = findLspBinary(projectRoot);
+
+	if (lspBinary) {
+		process.stderr.write(`Using standalone LSP server: ${lspBinary}\n`);
+		return spawnBinary(lspBinary, [projectPath]);
+	}
+
+	// Last resort: try orqa-studio --lsp (requires the app binary on PATH).
+	process.stderr.write("Standalone orqa-lsp-server not found, trying orqa-studio --lsp\n");
+	return spawnBinary("orqa-studio", ["--lsp", projectPath]);
+}
+
+function spawnBinary(binary: string, args: string[]): Promise<void> {
 	return new Promise((resolve) => {
-		const child = spawn("orqa-studio", ["--lsp", projectPath], {
+		const child = spawn(binary, args, {
 			stdio: ["pipe", "pipe", "inherit"],
 		});
 
@@ -90,8 +125,11 @@ async function spawnDirect(projectPath: string): Promise<void> {
 		child.stdout.pipe(process.stdout);
 
 		child.on("error", (err) => {
-			process.stderr.write(`Failed to start orqa-studio: ${err.message}\n`);
-			process.stderr.write("Ensure the OrqaStudio app is running (make dev) or orqa-studio is on PATH.\n");
+			process.stderr.write(`Failed to start ${binary}: ${err.message}\n`);
+			process.stderr.write(
+				"Build the LSP server with: cargo build -p orqa-lsp-server\n" +
+				"Or ensure the OrqaStudio app is running (make dev).\n",
+			);
 			process.exit(1);
 		});
 

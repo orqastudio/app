@@ -7,10 +7,10 @@ description: Future enhancements for the self-hosted git platform covering brand
 created: 2026-03-23
 relationships:
   - target: EPIC-f2b9e7d3
-    type: follows
+    type: delivers
     rationale: Built on the git infrastructure established in this epic
   - target: IDEA-7c3d9f2e
-    type: related
+    type: informs
     rationale: Forgejo cloud hosting vision — this idea captures near-term evolution
 ---
 

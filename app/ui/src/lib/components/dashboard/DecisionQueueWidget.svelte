@@ -6,14 +6,8 @@
 	import { SvelteMap } from "svelte/reactivity";
 	import { getStores } from "@orqastudio/sdk";
 
-	const { artifactGraphSDK, navigationStore, projectStore } = getStores();
+	const { artifactGraphSDK, navigationStore } = getStores();
 	import type { ArtifactNode } from "@orqastudio/types";
-
-	const projectFilter = $derived(
-		projectStore.activeChildProject
-			? { project: projectStore.activeChildProject }
-			: undefined,
-	);
 
 	// -------------------------------------------------------------------------
 	// Tab state
@@ -50,7 +44,7 @@
 	}
 
 	const pendingActions = $derived.by((): PendingAction[] => {
-		return artifactGraphSDK.byStatus("review", projectFilter).map((node) => ({
+		return artifactGraphSDK.byStatus("review").map((node) => ({
 			id: node.id,
 			title: node.title,
 			artifactType: node.artifact_type,
@@ -89,7 +83,7 @@
 
 		// Pre-index tasks by epic reference (frontmatter `epic` field)
 		const tasksByEpic = new SvelteMap<string, ArtifactNode[]>();
-		for (const task of artifactGraphSDK.byType("task", projectFilter)) {
+		for (const task of artifactGraphSDK.byType("task")) {
 			const fm = task.frontmatter as Record<string, unknown>;
 			const epicId = typeof fm.epic === "string" ? fm.epic : null;
 			if (!epicId) continue;
@@ -98,7 +92,7 @@
 			tasksByEpic.set(epicId, existing);
 		}
 
-		for (const node of artifactGraphSDK.byType("epic", projectFilter)) {
+		for (const node of artifactGraphSDK.byType("epic")) {
 			const status = node.status ?? "";
 			if (status !== "active" && status !== "ready" && status !== "prioritised") continue;
 

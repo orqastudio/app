@@ -41,8 +41,28 @@
     "dist",
     "build"
   ],
-  "stack": null,
-  "governance": null,
+  "stack": {
+    "languages": [
+      "javascript",
+      "rust",
+      "svelte",
+      "typescript"
+    ],
+    "frameworks": [
+      "cargo"
+    ],
+    "package_manager": "cargo",
+    "has_claude_config": true,
+    "has_design_tokens": false
+  },
+  "governance": {
+    "lessons": 75,
+    "decisions": 65,
+    "agents": 15,
+    "rules": 55,
+    "knowledge": 97,
+    "has_claude_config": true
+  },
   "icon": null,
   "show_thinking": false,
   "custom_system_prompt": null,
@@ -181,32 +201,32 @@
   ],
   "artifactLinks": {
     "displayModes": {
-      "TASK": "title",
-      "DOC": "title",
-      "AD": "title",
-      "RULE": "title",
+      "MS": "title",
+      "IMPL": "title",
+      "AGENT": "title",
       "PILLAR": "title",
       "KNOW": "title",
-      "MS": "title",
-      "EPIC": "title",
-      "IMPL": "title",
-      "RES": "title",
       "IDEA": "title",
-      "AGENT": "title"
+      "AD": "title",
+      "RULE": "title",
+      "RES": "title",
+      "EPIC": "title",
+      "DOC": "title",
+      "TASK": "title"
     },
     "colors": {
-      "AD": "#8b5cf6",
-      "TASK": "#06b6d4",
-      "RULE": "#a78bfa",
-      "IDEA": "#c084fc",
-      "PILLAR": "#818cf8",
-      "DOC": "#94a3b8",
-      "KNOW": "#2dd4bf",
-      "RES": "#6366f1",
       "AGENT": "#f472b6",
       "EPIC": "#3b82f6",
+      "DOC": "#94a3b8",
+      "MS": "#38bdf8",
+      "PILLAR": "#818cf8",
+      "RES": "#6366f1",
+      "TASK": "#06b6d4",
       "IMPL": "#67e8f9",
-      "MS": "#38bdf8"
+      "AD": "#8b5cf6",
+      "KNOW": "#2dd4bf",
+      "IDEA": "#c084fc",
+      "RULE": "#a78bfa"
     }
   },
   "statuses": [
@@ -387,38 +407,10 @@
     }
   ],
   "plugins": {
-    "@orqastudio/plugin-core-framework": {
-      "installed": true,
-      "enabled": true,
-      "path": "plugins/core",
-      "relationships": null,
-      "config": null
-    },
-    "@orqastudio/integration-claude-agent-sdk": {
-      "installed": true,
-      "enabled": true,
-      "path": "integrations/claude-agent-sdk",
-      "relationships": null,
-      "config": null
-    },
     "@orqastudio/plugin-svelte": {
       "installed": true,
       "enabled": true,
       "path": "plugins/svelte",
-      "relationships": null,
-      "config": null
-    },
-    "@orqastudio/plugin-rust": {
-      "installed": true,
-      "enabled": true,
-      "path": "plugins/rust",
-      "relationships": null,
-      "config": null
-    },
-    "@orqastudio/plugin-software-project": {
-      "installed": true,
-      "enabled": true,
-      "path": "plugins/software",
       "relationships": null,
       "config": null
     },
@@ -429,31 +421,10 @@
       "relationships": null,
       "config": null
     },
-    "@orqastudio/plugin-tauri": {
+    "@orqastudio/integration-claude-agent-sdk": {
       "installed": true,
       "enabled": true,
-      "path": "plugins/tauri",
-      "relationships": null,
-      "config": null
-    },
-    "@orqastudio/plugin-coding-standards": {
-      "installed": true,
-      "enabled": true,
-      "path": "plugins/coding-standards",
-      "relationships": null,
-      "config": null
-    },
-    "@orqastudio/plugin-typescript": {
-      "installed": true,
-      "enabled": true,
-      "path": "plugins/typescript",
-      "relationships": null,
-      "config": null
-    },
-    "@orqastudio/plugin-agile-governance": {
-      "installed": true,
-      "enabled": true,
-      "path": "plugins/agile-governance",
+      "path": "integrations/claude-agent-sdk",
       "relationships": null,
       "config": null
     },
@@ -464,6 +435,41 @@
       "relationships": null,
       "config": null
     },
+    "@orqastudio/plugin-rust": {
+      "installed": true,
+      "enabled": true,
+      "path": "plugins/rust",
+      "relationships": null,
+      "config": null
+    },
+    "@orqastudio/plugin-tauri": {
+      "installed": true,
+      "enabled": true,
+      "path": "plugins/tauri",
+      "relationships": null,
+      "config": null
+    },
+    "@orqastudio/plugin-typescript": {
+      "installed": true,
+      "enabled": true,
+      "path": "plugins/typescript",
+      "relationships": null,
+      "config": null
+    },
+    "@orqastudio/plugin-systems-thinking": {
+      "installed": true,
+      "enabled": true,
+      "path": "plugins/systems-thinking",
+      "relationships": null,
+      "config": null
+    },
+    "@orqastudio/plugin-agile-governance": {
+      "installed": true,
+      "enabled": true,
+      "path": "plugins/agile-governance",
+      "relationships": null,
+      "config": null
+    },
     "@orqastudio/plugin-githooks": {
       "installed": true,
       "enabled": true,
@@ -471,10 +477,26 @@
       "relationships": null,
       "config": null
     },
-    "@orqastudio/plugin-systems-thinking": {
+    "@orqastudio/plugin-software-project": {
       "installed": true,
       "enabled": true,
-      "path": "plugins/systems-thinking"
+      "path": "plugins/software",
+      "relationships": null,
+      "config": null
+    },
+    "@orqastudio/plugin-core-framework": {
+      "installed": true,
+      "enabled": true,
+      "path": "plugins/core",
+      "relationships": null,
+      "config": null
+    },
+    "@orqastudio/plugin-coding-standards": {
+      "installed": true,
+      "enabled": true,
+      "path": "plugins/coding-standards",
+      "relationships": null,
+      "config": null
     }
   }
 }

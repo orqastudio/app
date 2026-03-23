@@ -81,14 +81,29 @@ On every session start, run these discovery steps before any work:
 4. **Current work** — `graph_query({ type: "task", status: "in-progress" })` — confirm no duplicate active work
 5. **Session state** — check `tmp/session-state.md`, `git status`, `git stash list`
 
-## Thinking Mode Awareness
+## Prompt Classification
 
-The UserPromptSubmit hook classifies each incoming prompt with an ONNX model and injects
-thinking mode context before you see the message. That injected context tells you:
-- How to approach the problem (analytical, creative, investigative, etc.)
-- Where to find relevant knowledge, rules, and prior decisions for this prompt type
+The UserPromptSubmit hook classifies each incoming prompt using a three-tier system and injects
+relevant behavioral rules as context before you see the message. Classification types:
+`implementation`, `planning`, `review`, `debugging`, `research`, `documentation`, `governance`, `general`.
 
-Follow the guidance provided in the thinking mode context for each prompt. Do not skip it.
+### Three-Tier Classification
+
+1. **ONNX semantic search** (primary) — queries the MCP search engine against thinking-mode
+   knowledge artifacts in `.orqa/process/knowledge/`. Each artifact has a `thinking-mode`
+   frontmatter field and "Example Signals" that make it semantically matchable. The best
+   match's thinking-mode value maps to the prompt type. Requires the OrqaStudio app or
+   MCP server to be running (IPC socket at `LOCALAPPDATA/com.orqastudio.app/ipc.port`).
+2. **Keyword regex** (fallback) — pattern-matches against known signal words when semantic
+   search is unavailable (app not running, IPC timeout, no search index).
+3. **General default** — when neither tier produces a match.
+
+Based on the classification, the hook selects the most relevant behavioral rules by category
+(critical rules are always included; remaining slots filled from prompt-relevant categories)
+and injects them as a `systemMessage`. The classification method (`semantic` or `keyword`)
+is logged to telemetry and shown in `tmp/orchestrator-preamble.md`.
+
+Follow the injected rule guidance for each prompt. Do not skip it.
 
 ## The Artifact Graph
 
