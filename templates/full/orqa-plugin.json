@@ -1,0 +1,64 @@
+{
+  "name": "@yourorg/plugin-name",
+  "version": "0.1.0-dev",
+  "displayName": "Your Full Plugin",
+  "description": "A full plugin providing views, sidecar, CLI tools, and hooks.",
+  "category": "custom",
+  "provides": {
+    "schemas": [],
+    "views": [
+      {
+        "key": "my-view",
+        "label": "My View",
+        "icon": "layout-dashboard"
+      }
+    ],
+    "widgets": [],
+    "relationships": [],
+    "enforcement_mechanisms": [],
+    "sidecar": {
+      "key": "my-provider",
+      "label": "My Provider",
+      "runtime": "node",
+      "entrypoint": "sidecar/dist/sidecar.js",
+      "requires": [{ "binary": "node", "minVersion": "20.0.0" }]
+    },
+    "cliTools": [
+      {
+        "key": "my-tool",
+        "label": "My Tool",
+        "icon": "wrench",
+        "runtime": "node",
+        "entrypoint": "dist/cli-tool.js",
+        "category": "custom"
+      }
+    ],
+    "hooks": [
+      {
+        "key": "my-hook",
+        "event": "artifact-change",
+        "runtime": "node",
+        "entrypoint": "dist/hook.js"
+      }
+    ]
+  },
+  "content": {
+    "rules": {
+      "source": "rules",
+      "target": ".orqa/process/rules"
+    },
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    }
+  },
+  "dependencies": {
+    "npm": ["@orqastudio/types"],
+    "system": []
+  },
+  "build": "npm run build",
+  "lifecycle": {
+    "install": "node scripts/post-install.mjs",
+    "uninstall": "node scripts/pre-uninstall.mjs"
+  }
+}

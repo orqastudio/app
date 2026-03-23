@@ -1,0 +1,42 @@
+{
+  "name": "@yourorg/plugin-name",
+  "version": "0.1.0-dev",
+  "displayName": "Your CLI Tool Plugin",
+  "description": "A CLI tool plugin providing one-shot commands.",
+  "category": "custom",
+  "provides": {
+    "schemas": [],
+    "views": [],
+    "widgets": [],
+    "relationships": [],
+    "enforcement_mechanisms": [],
+    "cliTools": [
+      {
+        "key": "my-tool",
+        "label": "My Tool",
+        "icon": "wrench",
+        "runtime": "node",
+        "entrypoint": "dist/cli-tool.js",
+        "args": [],
+        "category": "custom"
+      }
+    ]
+  },
+  "content": {
+    "rules": {
+      "source": "rules",
+      "target": ".orqa/process/rules"
+    },
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    }
+  },
+  "dependencies": {
+    "npm": ["@orqastudio/types"]
+  },
+  "build": "npm run build",
+  "lifecycle": {
+    "install": "node scripts/post-install.mjs"
+  }
+}

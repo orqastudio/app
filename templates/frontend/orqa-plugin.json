@@ -1,0 +1,37 @@
+{
+  "name": "@yourorg/plugin-name",
+  "version": "0.1.0-dev",
+  "displayName": "Your Plugin Name",
+  "description": "A frontend plugin providing views and widgets for OrqaStudio.",
+  "category": "custom",
+  "provides": {
+    "schemas": [],
+    "views": [
+      {
+        "key": "my-view",
+        "label": "My View",
+        "icon": "layout-dashboard"
+      }
+    ],
+    "widgets": [],
+    "relationships": [],
+    "enforcement_mechanisms": []
+  },
+  "defaultNavigation": [
+    {
+      "key": "my-view",
+      "type": "plugin",
+      "icon": "layout-dashboard",
+      "pluginSource": "@yourorg/plugin-name"
+    }
+  ],
+  "content": {
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    }
+  },
+  "dependencies": {
+    "npm": ["@orqastudio/sdk"]
+  }
+}
