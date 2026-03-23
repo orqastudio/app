@@ -27,6 +27,9 @@ relationships:
     type: employs
   - target: KNOW-6f33713e
     type: employs
+  - target: KNOW-3155cdaa
+    type: employs
+    rationale: Orchestrator reasoning protocol — injected on every UserPromptSubmit for the main conversation
   - target: PILLAR-569581e0
     type: serves
     rationale: Agent serves this pillar/persona in its operational role

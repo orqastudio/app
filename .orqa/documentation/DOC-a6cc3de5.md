@@ -1,5 +1,6 @@
 ---
 id: DOC-a6cc3de5
+type: doc
 title: License Policy
 description: "Which licenses apply to which OrqaStudio components and how to audit compliance."
 category: reference

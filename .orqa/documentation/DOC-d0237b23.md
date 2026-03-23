@@ -1,5 +1,6 @@
 ---
 id: DOC-d0237b23
+type: doc
 title: Tauri Plugin Setup
 description: How to install and configure the Tauri development plugin — toolchain requirements, config generation, and organisation mode.
 category: onboarding

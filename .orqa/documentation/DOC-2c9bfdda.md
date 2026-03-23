@@ -1,5 +1,6 @@
 ---
 id: DOC-2c9bfdda
+type: doc
 name: OrqaStudio CLI Reference
 category: reference
 status: active

@@ -2,7 +2,7 @@
   "plugins": {
     "@orqastudio/plugin-agile-governance": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T10:30:51.215Z",
+      "installed_at": "2026-03-23T11:06:12.158Z",
       "files": [
         ".orqa/process/agents/AGENT-e7f3a2c9.md",
         ".orqa/process/agents/AGENT-ff44f841.md",
@@ -31,13 +31,13 @@
     },
     "@orqastudio/plugin-cli": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T10:30:51.221Z",
+      "installed_at": "2026-03-23T11:06:12.163Z",
       "files": [
-        ".orqa/documentation/cli-reference.md",
-        ".orqa/documentation/dev-environment-setup.md",
-        ".orqa/documentation/DOC-a6cc3de5.md",
-        ".orqa/documentation/DOC-97ea2f47.md",
+        ".orqa/documentation/DOC-2c9bfdda.md",
         ".orqa/documentation/DOC-476471d2.md",
+        ".orqa/documentation/DOC-65eb8303.md",
+        ".orqa/documentation/DOC-97ea2f47.md",
+        ".orqa/documentation/DOC-a6cc3de5.md",
         ".orqa/process/knowledge/KNOW-3198c8fb.md",
         ".orqa/process/knowledge/KNOW-4cc73a12.md",
         ".orqa/process/knowledge/KNOW-6391d2a8.md",
@@ -50,7 +50,7 @@
     },
     "@orqastudio/plugin-coding-standards": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T10:30:52.933Z",
+      "installed_at": "2026-03-23T11:06:12.167Z",
       "files": [
         ".orqa/process/knowledge/KNOW-6125ab55.md",
         ".orqa/process/knowledge/KNOW-ea517e13.md",
@@ -66,7 +66,7 @@
     },
     "@orqastudio/plugin-core-framework": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T10:30:52.950Z",
+      "installed_at": "2026-03-23T11:06:12.179Z",
       "files": [
         ".orqa/process/agents/AGENT-1dab5ebe.md",
         ".orqa/process/agents/AGENT-b0774726.md",
@@ -115,7 +115,7 @@
     },
     "@orqastudio/plugin-rust": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T10:30:52.981Z",
+      "installed_at": "2026-03-23T11:06:12.182Z",
       "files": [
         ".orqa/process/agents/AGENT-4241392c.md",
         ".orqa/process/agents/AGENT-e1e47559.md",
@@ -128,7 +128,7 @@
     },
     "@orqastudio/plugin-software-project": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T10:30:56.877Z",
+      "installed_at": "2026-03-23T11:06:12.187Z",
       "files": [
         ".orqa/documentation/DOC-421219ce.md",
         ".orqa/process/knowledge/KNOW-170c220e.md",
@@ -149,12 +149,12 @@
     },
     "@orqastudio/plugin-svelte": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T00:35:00.334Z",
+      "installed_at": "2026-03-23T11:06:12.193Z",
       "files": [
         ".orqa/process/agents/AGENT-b0857607.md",
         ".orqa/process/agents/AGENT-b2f574e5.md",
-        ".orqa/documentation/svelte-development-guide.md",
-        ".orqa/documentation/svelte-plugin-setup.md",
+        ".orqa/documentation/DOC-5d832d1d.md",
+        ".orqa/documentation/DOC-f7ed7a62.md",
         ".orqa/process/knowledge/KNOW-1c708b68.md",
         ".orqa/process/knowledge/KNOW-344a1247.md",
         ".orqa/process/knowledge/KNOW-45b6ea05.md",
@@ -172,11 +172,11 @@
     },
     "@orqastudio/plugin-tauri": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T00:35:00.344Z",
+      "installed_at": "2026-03-23T11:06:12.199Z",
       "files": [
         ".orqa/process/agents/AGENT-1ed9512e.md",
-        ".orqa/documentation/tauri-development-guide.md",
-        ".orqa/documentation/tauri-plugin-setup.md",
+        ".orqa/documentation/DOC-d0237b23.md",
+        ".orqa/documentation/DOC-d9c0d1c7.md",
         ".orqa/process/knowledge/KNOW-2539a6e4.md",
         ".orqa/process/knowledge/KNOW-6f7f4da5.md",
         ".orqa/process/knowledge/KNOW-a5434b61.md",
@@ -186,15 +186,15 @@
     },
     "@orqastudio/plugin-typescript": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T00:35:00.345Z",
+      "installed_at": "2026-03-23T11:06:12.201Z",
       "files": [
-        ".orqa/documentation/typescript-skills.md",
-        ".orqa/process/knowledge/typescript-advanced-types.md"
+        ".orqa/documentation/DOC-e4f5a6b7.md",
+        ".orqa/process/knowledge/KNOW-49cee771.md"
       ]
     },
     "@orqastudio/plugin-systems-thinking": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T00:38:12.598Z",
+      "installed_at": "2026-03-23T11:06:12.197Z",
       "files": [
         ".orqa/process/knowledge/KNOW-1a8eb147.md",
         ".orqa/process/knowledge/KNOW-1ab0e715.md",

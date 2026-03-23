@@ -71,5 +71,5 @@ If search tools are not available in the current session:
 - [RULE-deab6ea7](RULE-deab6ea7) (knowledge-enforcement) — search knowledge is universal, required for every agent
 - [RULE-57ccb4a3](RULE-57ccb4a3) (error-ownership) — use `search_regex` to find function signatures before calling them
 - [RULE-cb65b5d0](RULE-cb65b5d0) (reusable-components) — use `search_semantic` to find similar components
-- RULE-1acb1602 (end-to-end-completeness) — use `search_research` to map the full request chain
+- [RULE-1acb1602](RULE-1acb1602) (end-to-end-completeness) — use `search_research` to map the full request chain
 - [RULE-e9c54567](RULE-e9c54567) (no-stubs) — use `search_regex` to verify implementations exist

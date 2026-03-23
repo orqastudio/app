@@ -1,5 +1,6 @@
 ---
 id: DOC-97ea2f47
+type: doc
 title: README Standards
 description: "Canonical README structure for all OrqaStudio repositories — required badges, banner, sections, and audit process."
 category: reference
