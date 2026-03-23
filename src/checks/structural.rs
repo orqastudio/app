@@ -206,6 +206,57 @@ pub fn check_missing_type_field(graph: &ArtifactGraph, checks: &mut Vec<Integrit
     }
 }
 
+/// Check that explicit `type:` fields match the type implied by the ID prefix.
+///
+/// Uses plugin-provided artifact type schemas: each schema defines `key` (the type)
+/// and `id_prefix` (e.g., "RULE", "TASK"). If an artifact has `id: RULE-abc` and
+/// `type: task`, that's a mismatch — the prefix says "rule" but the type says "task".
+pub fn check_type_prefix_mismatch(
+    graph: &ArtifactGraph,
+    artifact_types: &[ArtifactTypeDef],
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    // Build prefix → type key mapping from plugin schemas
+    let prefix_to_type: HashMap<String, String> = artifact_types
+        .iter()
+        .map(|t| (t.id_prefix.to_uppercase(), t.key.clone()))
+        .collect();
+
+    for node in graph.nodes.values() {
+        // Only check artifacts that HAVE an explicit type field
+        let explicit_type = match node.frontmatter.get("type").and_then(|v| v.as_str()) {
+            Some(t) if !t.is_empty() => t,
+            _ => continue,
+        };
+
+        // Extract prefix from ID (everything before the first dash)
+        let prefix = match node.id.split('-').next() {
+            Some(p) => p.to_uppercase(),
+            None => continue,
+        };
+
+        // Look up what type this prefix implies
+        let expected_type = match prefix_to_type.get(&prefix) {
+            Some(t) => t.as_str(),
+            None => continue, // Unknown prefix — can't validate
+        };
+
+        if explicit_type != expected_type {
+            checks.push(IntegrityCheck {
+                category: IntegrityCategory::TypePrefixMismatch,
+                severity: IntegritySeverity::Error,
+                artifact_id: node.id.clone(),
+                message: format!(
+                    "{} has type: '{}' but ID prefix '{}' implies type '{}' per plugin schema",
+                    node.id, explicit_type, prefix, expected_type
+                ),
+                auto_fixable: true,
+                fix_description: Some(format!("Change type: {} to type: {}", explicit_type, expected_type)),
+            });
+        }
+    }
+}
+
 /// Check that every artifact has a `status:` field in its frontmatter.
 ///
 /// Uses plugin-provided artifact type schemas: if a type's JSON Schema `required`

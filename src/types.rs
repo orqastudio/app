@@ -110,8 +110,8 @@ pub enum IntegrityCategory {
     CircularDependency,
     /// Status value is not in the valid status list.
     InvalidStatus,
-    /// Body text references an artifact without a corresponding relationship edge.
-    BodyTextRefWithoutRelationship,
+    /// The explicit `type:` field does not match the type implied by the ID prefix.
+    TypePrefixMismatch,
     /// Child artifact is further along the status progression than its parent.
     ParentChildInconsistency,
     /// Delivery path does not match the delivery config hierarchy.

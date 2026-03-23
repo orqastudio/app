@@ -3,7 +3,6 @@
 //! Each sub-module handles one category of checks. The `run_all` function
 //! coordinates them into a single result list.
 
-pub mod body_refs;
 pub mod cardinality;
 pub mod conflicts;
 pub mod cycles;
@@ -34,7 +33,10 @@ pub fn run_all(graph: &ArtifactGraph, ctx: &ValidationContext) -> Vec<IntegrityC
     structural::check_filename_matches_id(graph, &mut checks);
     cardinality::check_cardinality(graph, ctx, &mut checks);
     cycles::check_circular_dependencies(graph, ctx, &mut checks);
-    body_refs::check_body_text_refs_without_relationships(graph, &mut checks);
+
+    if !ctx.artifact_types.is_empty() {
+        structural::check_type_prefix_mismatch(graph, &ctx.artifact_types, &mut checks);
+    }
 
     if !ctx.artifact_types.is_empty() {
         schema::check_frontmatter_schemas_with_extensions(

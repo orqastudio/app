@@ -3,7 +3,7 @@
 //! Supports:
 //! - `MissingInverse`: adds the inverse relationship entry to the target artifact's frontmatter.
 //! - `InvalidStatus`: rewrites the `status` field to the suggested canonical value.
-//! - `BodyTextRefWithoutRelationship`: adds an `informed-by` relationship.
+//! - `TypePrefixMismatch`: corrects the `type` field to match the ID prefix.
 //! - `MissingType`: infers the artifact type from the path registry or ID prefix and adds it.
 //! - `MissingStatus`: adds `status: captured` when the field is absent.
 //! - `DuplicateRelationship`: deduplicates relationship entries with the same target + type.
@@ -40,8 +40,8 @@ pub fn apply_fixes(
                     applied.push(fix);
                 }
             }
-            IntegrityCategory::BodyTextRefWithoutRelationship => {
-                if let Some(fix) = apply_body_text_ref_fix(graph, check, project_path)? {
+            IntegrityCategory::TypePrefixMismatch => {
+                if let Some(fix) = apply_type_prefix_fix(graph, check, project_path)? {
                     applied.push(fix);
                 }
             }
@@ -256,27 +256,28 @@ fn apply_missing_inverse_fix(
     }))
 }
 
-/// Fix a body-text ref without relationship by adding an `informed-by` relationship entry.
-fn apply_body_text_ref_fix(
+/// Fix a type/prefix mismatch by rewriting the `type:` field to match the ID prefix.
+fn apply_type_prefix_fix(
     graph: &ArtifactGraph,
     check: &IntegrityCheck,
     project_path: &Path,
 ) -> Result<Option<AppliedFix>, ValidationError> {
-    let target_id = check.fix_description.as_deref().and_then(|desc| {
-        let after = desc.strip_prefix("Add { target: \"")?;
-        let end = after.find('"')?;
-        Some(after[..end].to_owned())
+    // Extract the correct type from the fix description: "Change type: X to type: Y"
+    let correct_type = check.fix_description.as_deref().and_then(|desc| {
+        desc.strip_prefix("Change type: ")
+            .and_then(|rest| rest.split(" to type: ").nth(1))
+            .map(|s| s.to_owned())
     });
 
-    let Some(target_id) = target_id else {
+    let Some(correct_type) = correct_type else {
         return Ok(None);
     };
 
-    let Some(source_node) = graph.nodes.get(&check.artifact_id) else {
+    let Some(node) = graph.nodes.get(&check.artifact_id) else {
         return Ok(None);
     };
 
-    let file_path = project_path.join(&source_node.path);
+    let file_path = project_path.join(&node.path);
     if !file_path.exists() {
         return Ok(None);
     }
@@ -288,37 +289,25 @@ fn apply_body_text_ref_fix(
         return Ok(None);
     };
 
-    // Guard: don't add a duplicate entry.
-    let yaml_value: serde_yaml::Value =
-        serde_yaml::from_str(&fm_text).unwrap_or(serde_yaml::Value::Null);
-    if let Some(rels) = yaml_value
-        .get("relationships")
-        .and_then(|v| v.as_sequence())
-    {
-        let already_present = rels.iter().any(|rel| {
-            rel.get("target").and_then(|v| v.as_str()) == Some(&target_id)
-                && rel.get("type").and_then(|v| v.as_str()) == Some("informed-by")
-        });
-        if already_present {
-            return Ok(None);
+    // Replace the type field in the frontmatter
+    let mut new_fm = String::new();
+    for line in fm_text.lines() {
+        if line.starts_with("type:") {
+            new_fm.push_str(&format!("type: {correct_type}"));
+        } else {
+            new_fm.push_str(line);
         }
+        new_fm.push('\n');
     }
 
-    let new_entry = format!(
-        "  - target: {target_id}\n    type: informed-by\n    rationale: \"Auto-generated from body text reference\""
-    );
-
-    let new_content = insert_relationship_entry(&fm_text, &body, &new_entry);
+    let new_content = format!("---\n{new_fm}---\n{body}");
     std::fs::write(&file_path, new_content)
         .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
 
     Ok(Some(AppliedFix {
         artifact_id: check.artifact_id.clone(),
-        description: format!(
-            "Added {{ target: \"{}\", type: \"informed-by\" }} to {}'s relationships",
-            target_id, check.artifact_id
-        ),
-        file_path: source_node.path.clone(),
+        description: format!("Changed type to '{}' to match ID prefix", correct_type),
+        file_path: node.path.clone(),
     }))
 }
 
