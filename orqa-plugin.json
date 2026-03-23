@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/plugin-agile-governance",
-  "version": "0.1.0-dev",
+  "version": "0.1.4-dev",
   "displayName": "Agile Governance",
   "description": "Core governance model — rules, decisions, lessons, knowledge, agents, and foundational principles. Defines artifact types and frontmatter schemas that drive structured thinking and enforcement.",
   "category": "governance",
@@ -20,18 +20,37 @@
             "id"
           ],
           "properties": {
-            "id": { "type": "string", "pattern": "^VISION-[a-f0-9]{8}$" },
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
+            "id": {
+              "type": "string",
+              "pattern": "^VISION-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
             "relationships": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["target", "type"],
+                "required": [
+                  "target",
+                  "type"
+                ],
                 "properties": {
-                  "target": { "type": "string" },
-                  "type": { "type": "string" },
-                  "rationale": { "type": "string" }
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -69,19 +88,43 @@
             "id"
           ],
           "properties": {
-            "id": { "type": "string", "pattern": "^PILLAR-[a-f0-9]{8}$" },
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
-            "gate": { "type": ["string", "array"] },
+            "id": {
+              "type": "string",
+              "pattern": "^PILLAR-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "gate": {
+              "type": [
+                "string",
+                "array"
+              ]
+            },
             "relationships": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["target", "type"],
+                "required": [
+                  "target",
+                  "type"
+                ],
                 "properties": {
-                  "target": { "type": "string" },
-                  "type": { "type": "string" },
-                  "rationale": { "type": "string" }
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -116,18 +159,37 @@
             "id"
           ],
           "properties": {
-            "id": { "type": "string", "pattern": "^PERSONA-[a-f0-9]{8}$" },
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
+            "id": {
+              "type": "string",
+              "pattern": "^PERSONA-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
             "relationships": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["target", "type"],
+                "required": [
+                  "target",
+                  "type"
+                ],
                 "properties": {
-                  "target": { "type": "string" },
-                  "type": { "type": "string" },
-                  "rationale": { "type": "string" }
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -162,19 +224,40 @@
             "status"
           ],
           "properties": {
-            "id": { "type": "string", "pattern": "^IDEA-[a-f0-9]{8}$" },
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
-            "priority": { "type": "string" },
+            "id": {
+              "type": "string",
+              "pattern": "^IDEA-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "priority": {
+              "type": "string"
+            },
             "relationships": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["target", "type"],
+                "required": [
+                  "target",
+                  "type"
+                ],
                 "properties": {
-                  "target": { "type": "string" },
-                  "type": { "type": "string" },
-                  "rationale": { "type": "string" }
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -233,18 +316,37 @@
             "status"
           ],
           "properties": {
-            "id": { "type": "string", "pattern": "^AD-[a-f0-9]{8}$" },
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
+            "id": {
+              "type": "string",
+              "pattern": "^AD-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
             "relationships": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["target", "type"],
+                "required": [
+                  "target",
+                  "type"
+                ],
                 "properties": {
-                  "target": { "type": "string" },
-                  "type": { "type": "string" },
-                  "rationale": { "type": "string" }
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -299,19 +401,40 @@
             "enforcement"
           ],
           "properties": {
-            "id": { "type": "string", "pattern": "^RULE-[a-f0-9]{8}$" },
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
-            "enforcement": { "type": "array" },
+            "id": {
+              "type": "string",
+              "pattern": "^RULE-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "enforcement": {
+              "type": "array"
+            },
             "relationships": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["target", "type"],
+                "required": [
+                  "target",
+                  "type"
+                ],
                 "properties": {
-                  "target": { "type": "string" },
-                  "type": { "type": "string" },
-                  "rationale": { "type": "string" }
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -366,20 +489,44 @@
             "recurrence"
           ],
           "properties": {
-            "id": { "type": "string", "pattern": "^IMPL-[a-f0-9]{8}$" },
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
-            "recurrence": { "type": "integer", "minimum": 0 },
-            "maturity": { "type": "string" },
+            "id": {
+              "type": "string",
+              "pattern": "^IMPL-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "recurrence": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maturity": {
+              "type": "string"
+            },
             "relationships": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["target", "type"],
+                "required": [
+                  "target",
+                  "type"
+                ],
                 "properties": {
-                  "target": { "type": "string" },
-                  "type": { "type": "string" },
-                  "rationale": { "type": "string" }
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -434,18 +581,37 @@
             "id"
           ],
           "properties": {
-            "id": { "type": "string", "pattern": "^KNOW-[a-f0-9]{8}$" },
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
+            "id": {
+              "type": "string",
+              "pattern": "^KNOW-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
             "relationships": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["target", "type"],
+                "required": [
+                  "target",
+                  "type"
+                ],
                 "properties": {
-                  "target": { "type": "string" },
-                  "type": { "type": "string" },
-                  "rationale": { "type": "string" }
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -499,22 +665,55 @@
             "preamble"
           ],
           "properties": {
-            "id": { "type": "string", "pattern": "^AGENT-[a-f0-9]{8}$" },
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
-            "preamble": { "type": "string" },
-            "model": { "type": "string" },
-            "capabilities": { "type": "array", "items": { "type": "string" } },
-            "knowledge": { "type": "array", "items": { "type": "string" } },
+            "id": {
+              "type": "string",
+              "pattern": "^AGENT-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "preamble": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "knowledge": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             "relationships": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["target", "type"],
+                "required": [
+                  "target",
+                  "type"
+                ],
                 "properties": {
-                  "target": { "type": "string" },
-                  "type": { "type": "string" },
-                  "rationale": { "type": "string" }
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -566,18 +765,37 @@
             "id"
           ],
           "properties": {
-            "id": { "type": "string", "pattern": "^DOC-[a-f0-9]{8}$" },
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
+            "id": {
+              "type": "string",
+              "pattern": "^DOC-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
             "relationships": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["target", "type"],
+                "required": [
+                  "target",
+                  "type"
+                ],
                 "properties": {
-                  "target": { "type": "string" },
-                  "type": { "type": "string" },
-                  "rationale": { "type": "string" }
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -630,18 +848,37 @@
             "status"
           ],
           "properties": {
-            "id": { "type": "string", "pattern": "^PIVOT-[a-f0-9]{8}$" },
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
+            "id": {
+              "type": "string",
+              "pattern": "^PIVOT-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
             "relationships": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["target", "type"],
+                "required": [
+                  "target",
+                  "type"
+                ],
                 "properties": {
-                  "target": { "type": "string" },
-                  "type": { "type": "string" },
-                  "rationale": { "type": "string" }
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
                 }
               }
             }
