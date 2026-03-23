@@ -505,12 +505,14 @@
         "label": "Depends On",
         "inverseLabel": "Depended On By",
         "from": [
-          "task"
+          "task",
+          "epic"
         ],
         "to": [
-          "task"
+          "task",
+          "epic"
         ],
-        "description": "Task cannot proceed until dependency is completed",
+        "description": "Task or epic cannot proceed until dependency is completed",
         "semantic": "dependency",
         "constraints": {
           "statusRules": [
@@ -755,6 +757,24 @@
       ]
     }
   ],
+  "content": {
+    "documentation": {
+      "source": "documentation",
+      "target": ".orqa/documentation"
+    },
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    },
+    "rules": {
+      "source": "rules",
+      "target": ".orqa/process/rules"
+    }
+  },
+  "dependencies": {
+    "npm": ["@orqastudio/types"]
+  },
+  "build": "npm run build",
   "delivery": {
     "types": [
       {
