@@ -54,6 +54,25 @@ services:
       - "3000:3000"   # Web UI
       - "222:22"       # SSH
 
+  sync-bridge:
+    build: ../sync-bridge
+    container_name: orqastudio-sync-bridge
+    restart: unless-stopped
+    environment:
+      FORGEJO_URL: http://forgejo:3000
+      FORGEJO_TOKEN: ${FORGEJO_TOKEN:-}
+      FORGEJO_WEBHOOK_SECRET: ${FORGEJO_WEBHOOK_SECRET:-dev-secret}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET:-dev-secret}
+      FORGEJO_ORG: orqastudio
+      FORGEJO_REPO: orqastudio
+      GITHUB_OWNER: orqastudio
+      GITHUB_REPO: orqastudio
+    ports:
+      - "3001:3001"
+    depends_on:
+      - forgejo
+
 volumes:
   forgejo-data:
   forgejo-config:

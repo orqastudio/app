@@ -1,0 +1,16 @@
+{
+  "name": "@orqastudio/sync-bridge",
+  "version": "0.1.0",
+  "description": "Bidirectional PR/issue/CI-status sync between Forgejo and GitHub",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0"
+  }
+}
