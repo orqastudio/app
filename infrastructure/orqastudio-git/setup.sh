@@ -29,7 +29,7 @@ echo ""
 # ---------------------------------------------------------------------------
 
 echo "--- Creating admin user ---"
-docker exec "$CONTAINER" forgejo admin user create \
+docker exec --user git "$CONTAINER" forgejo admin user create \
   --username "$ADMIN_USER" \
   --password "$ADMIN_PASS" \
   --email "$ADMIN_EMAIL" \
