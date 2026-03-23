@@ -16,10 +16,12 @@
 //! Delegated to the validation daemon — see `server::OrqaLspBackend::daemon_validate`.
 
 use std::collections::HashMap;
+use std::path::Path;
 
 use orqa_validation::checks::schema::{build_frontmatter_schema, validate_frontmatter};
 use orqa_validation::graph::ArtifactGraph;
 use orqa_validation::platform::ArtifactTypeDef;
+use orqa_validation::types::{IntegrityCategory, IntegritySeverity};
 use tower_lsp::lsp_types::{Diagnostic, DiagnosticSeverity, Position, Range};
 
 /// Validate that an artifact ID matches the expected format.
