@@ -81,10 +81,15 @@ echo ""
 # Step 1: Verify clean working tree
 # ---------------------------------------------------------------------------
 
-if [[ -n "$(git status --porcelain)" ]]; then
-  echo "ERROR: Working tree is not clean. Commit or stash changes first."
+# Check for uncommitted changes (ignore submodule-modified and untracked in tmp/)
+DIRTY=$(git status --porcelain --ignore-submodules=dirty | grep -v '^?? tmp/' || true)
+if [[ -n "$DIRTY" ]]; then
+  echo "ERROR: Working tree has uncommitted changes:"
+  echo "$DIRTY"
+  echo "Commit or stash changes first."
   exit 1
 fi
+echo "  Working tree clean (ignoring submodule npm link artifacts)."
 
 # ---------------------------------------------------------------------------
 # Step 2: Remove all submodules
