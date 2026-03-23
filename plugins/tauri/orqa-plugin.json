@@ -1,0 +1,59 @@
+{
+  "name": "@orqastudio/plugin-tauri",
+  "version": "0.1.4-dev",
+  "displayName": "Tauri Development",
+  "description": "Tauri v2 desktop application patterns — extends the Rust plugin with Tauri-specific configuration, IPC patterns, and build settings.",
+  "extends": [
+    "@orqastudio/plugin-rust"
+  ],
+  "category": "tooling",
+  "provides": {
+    "knowledge": [
+      {
+        "key": "2539a6e4",
+        "id": "KNOW-2539a6e4",
+        "label": "Tauri v2 IPC Patterns Reference"
+      },
+      {
+        "key": "6f7f4da5",
+        "id": "KNOW-6f7f4da5"
+      },
+      {
+        "key": "a5434b61",
+        "id": "KNOW-a5434b61",
+        "label": "Tauri v2 Capabilities & Permissions Reference"
+      },
+      {
+        "key": "c323ec5f",
+        "id": "KNOW-c323ec5f",
+        "label": "Tauri v2 Development"
+      },
+      {
+        "key": "de97219c",
+        "id": "KNOW-de97219c"
+      }
+    ],
+    "agents": [
+      {
+        "key": "1ed9512e",
+        "id": "AGENT-1ed9512e",
+        "path": "agents/AGENT-1ed9512e.md"
+      }
+    ]
+  },
+  "content": {
+    "agents": {
+      "source": "agents",
+      "target": ".orqa/process/agents"
+    },
+    "documentation": {
+      "source": "documentation",
+      "target": ".orqa/documentation"
+    },
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    }
+  },
+  "role": "enhancement:delivery"
+}
