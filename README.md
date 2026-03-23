@@ -10,10 +10,10 @@ Schema-driven integrity engine for the OrqaStudio artifact graph — validates a
 
 ## Usage
 
-The validation library is consumed by the OrqaStudio CLI and git hooks plugin. It runs as a sidecar binary during `orqa validate` and the pre-commit hook.
+The validation library is consumed by the OrqaStudio CLI and git hooks plugin. It runs as a sidecar binary during `orqa enforce` and the pre-commit hook.
 
 ```bash
-orqa validate
+orqa enforce
 ```
 
 ## Development
