@@ -1,5 +1,6 @@
 ---
 id: "RULE-f10bb5de"
+type: rule
 title: "Testing Standards"
 description: "Test organisation, coverage requirements, mock boundaries, and isolation rules."
 status: "active"
