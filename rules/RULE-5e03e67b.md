@@ -1,5 +1,6 @@
 ---
 id: "RULE-5e03e67b"
+type: rule
 title: "Code Search Usage"
 description: "Prefer semantic search over Grep/Glob for multi-file searches. Load the correct search knowledge for your context."
 status: "active"

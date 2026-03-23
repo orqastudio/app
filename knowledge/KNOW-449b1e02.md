@@ -1,5 +1,6 @@
 ---
 id: KNOW-449b1e02
+type: knowledge
 title: Artifact Status Management
 description: |
   Teaches agents when and how to correctly update artifact status fields.

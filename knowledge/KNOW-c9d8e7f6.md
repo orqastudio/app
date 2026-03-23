@@ -1,5 +1,6 @@
 ---
 id: KNOW-c9d8e7f6
+type: knowledge
 title: Reviewer Reasoning Methodology
 description: |
   Reasoning protocol for Reviewer agents: understand what is being reviewed,

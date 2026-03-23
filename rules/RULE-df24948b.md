@@ -1,5 +1,6 @@
 ---
 id: RULE-df24948b
+type: rule
 title: Context Window Management
 description: "The orchestrator must protect its context window by delegating, minimizing output, summarizing results, and using session state files."
 status: active

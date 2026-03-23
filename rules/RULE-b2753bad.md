@@ -1,5 +1,6 @@
 ---
 id: RULE-b2753bad
+type: rule
 title: Required Reading
 description: Every agent must read its required documentation before any implementation work begins.
 status: active

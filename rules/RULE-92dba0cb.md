@@ -1,5 +1,6 @@
 ---
 id: RULE-92dba0cb
+type: rule
 title: Provider-Agnostic Tool Capabilities
 description: Agent definitions declare abstract capabilities. A provider mapping table resolves capabilities to concrete tool names per context.
 status: active

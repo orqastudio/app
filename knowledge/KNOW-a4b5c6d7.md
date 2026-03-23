@@ -1,5 +1,6 @@
 ---
 id: KNOW-a4b5c6d7
+type: knowledge
 title: Project Type Detection
 description: |
   Methodology for detecting project type, language stack, frameworks, build
