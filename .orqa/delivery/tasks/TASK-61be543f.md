@@ -1,5 +1,6 @@
 ---
 id: TASK-61be543f
+type: task
 title: Implement SessionStart hook (orchestrator injection + session checks)
 description: Plugin SessionStart hook injects orchestrator context and runs session-start checks.
 status: completed

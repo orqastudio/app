@@ -1,5 +1,6 @@
 ---
 id: IMPL-2ba0fc33
+type: lesson
 title: Graph nodes must carry display metadata — not just IDs
 description: "Relationship chips, dynamic tables, action indicators, and kanban cards all need status, title, and priority from referenced artifacts. Currently this requires full node lookup or frontmatter parsing. Display metadata should be first-class on graph nodes."
 status: active

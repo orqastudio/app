@@ -1,5 +1,6 @@
 ---
 id: TASK-c3d4e5f6
+type: task
 title: Remove knowledge file copies from connector plugin
 description: Delete all copied knowledge files from the connector plugin directory. The connector must not maintain its own copies — it reads from canonical plugin paths at delegation time.
 status: ready

@@ -1,5 +1,6 @@
 ---
 id: TASK-50ed0c4a
+type: task
 title: Move dev controller to debugger/
 description: Relocate scripts/dev.mjs and scripts/dev-dashboard.html to debugger/ and update Makefile and internal paths.
 status: completed

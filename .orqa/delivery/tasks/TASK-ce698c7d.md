@@ -1,5 +1,6 @@
 ---
 id: TASK-ce698c7d
+type: task
 title: "Rewrite KNOW-eea50a65 Governance Patterns for domain-agnostic core"
 status: completed
 created: 2026-03-18

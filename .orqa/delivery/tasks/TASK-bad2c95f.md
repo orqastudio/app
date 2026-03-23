@@ -1,5 +1,6 @@
 ---
 id: TASK-bad2c95f
+type: task
 title: Add grounding/ to project.json + create chapter READMEs
 description: "Register the grounding/ directory in the project.json artifact config so it is scannable. Create README.md files for each new chapter directory (about, how-to, reference) with icon, label, and description frontmatter for the nav tree."
 status: completed

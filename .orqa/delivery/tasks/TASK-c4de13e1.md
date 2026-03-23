@@ -1,5 +1,6 @@
 ---
 id: TASK-c4de13e1
+type: task
 title: Dynamic artifact table component
 description: "Support live artifact tables in markdown that show status, title, and priority from the graph."
 status: completed

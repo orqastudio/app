@@ -1,5 +1,6 @@
 ---
 id: TASK-f6f4e12e
+type: task
 title: Orchestrator skill injection table
 description: Adds a Tier 2 skill injection table to the orchestrator definition and updates the skill-enforcement rule to document how project-specific skills are matched to task scope at delegation time.
 status: completed

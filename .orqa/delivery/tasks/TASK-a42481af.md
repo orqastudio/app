@@ -1,5 +1,6 @@
 ---
 id: TASK-a42481af
+type: task
 title: Design MCP host interface
 description: "Designed the interface for future external MCP server support, defining how OrqaStudio will host and connect to MCP servers."
 status: completed

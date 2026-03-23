@@ -1,5 +1,6 @@
 ---
 id: "RULE-c71f1c3f"
+type: rule
 title: "Development Commands"
 description: "All development commands must be invoked via make targets. Raw cargo and npm commands are forbidden."
 status: "active"

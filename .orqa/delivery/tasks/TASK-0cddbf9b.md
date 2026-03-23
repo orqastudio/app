@@ -1,5 +1,6 @@
 ---
 id: TASK-0cddbf9b
+type: task
 title: Move pillars to process/ and rename planning to delivery
 description: "Move pillars from planning/ to process/. Rename planning/ to delivery/. Update project.json, all path references."
 status: completed

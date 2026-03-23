@@ -1,5 +1,6 @@
 ---
 id: "EPIC-3a8ad459"
+type: epic
 title: "Rule Enforcement Engine with Claude Code Companion Plugin"
 description: "Build a two-context rule enforcement engine: a Claude Code companion plugin
 

@@ -1,5 +1,6 @@
 ---
 id: TASK-fc7b7dcd
+type: task
 title: "Add version/releaseTag/sha256 to registry entry schema"
 status: completed
 created: 2026-03-18

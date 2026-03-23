@@ -1,5 +1,6 @@
 ---
 id: EPIC-b67074cc
+type: epic
 title: Artifact viewer enhancements
 description: "Enhance the artifact viewer with unified relationships display, actions needed inference, pipeline position stepper, horizon display, and acceptance criteria checkboxes. Originated from UAT Theme D findings."
 status: completed

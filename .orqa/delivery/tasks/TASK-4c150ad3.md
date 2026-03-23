@@ -1,5 +1,6 @@
 ---
 id: TASK-4c150ad3
+type: task
 title: "Replace hardcoded AppLayout if/else with PluginViewContainer"
 status: completed
 created: 2026-03-18

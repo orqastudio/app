@@ -1,5 +1,6 @@
 ---
 id: EPIC-b434f0ac
+type: epic
 title: "Clean up tools, scripts, and githooks"
 description: "Migrate all dev tools and scripts to use the CLI (which bridges to the Rust engine) instead of hand-rolling frontmatter parsers and validation logic. Shell scripts call orqa commands."
 status: captured

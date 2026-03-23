@@ -1,5 +1,6 @@
 ---
 id: "EPIC-dc1e3e4b"
+type: epic
 title: "Graph-Based Knowledge Injection"
 description: "Replace content injection with graph injection. The orchestrator prompt becomes
 

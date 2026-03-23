@@ -1,5 +1,6 @@
 ---
 id: TASK-fedfd82a
+type: task
 title: Backfill rules with relationships
 description: "Use backfill tooling to add grounded relationships to all 44 rules, connecting each to the decision or pillar it enforces."
 status: completed

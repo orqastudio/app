@@ -1,5 +1,6 @@
 ---
 id: TASK-b91cefba
+type: task
 title: Pre-commit hook blocks core graph artifact modifications
 description: "Add a pre-commit check that warns and blocks commits modifying core graph artifacts (schemas, orchestrator, core skills, role definitions) unless force-overridden. Dogfood mode bypasses."
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: TASK-1f8f15b9
+type: task
 title: "Reorder artifact viewer layout — actions needed, pipeline, metadata, acceptance, body"
 description: Change the ArtifactViewer component ordering so the most actionable information appears first.
 status: completed

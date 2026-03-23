@@ -1,5 +1,6 @@
 ---
 id: "EPIC-d3fcb4ed"
+type: epic
 title: "Discovery & Research Artifacts"
 description: "Build structured research artifacts, decision traceability graph, research-to-AD promotion, and conversational research workflow."
 status: "captured"

@@ -1,5 +1,6 @@
 ---
 id: TASK-ec8c8405
+type: task
 title: Body template validation in integrity validator
 description: Add integrity checks that validate artifact body sections against bodyTemplate in schema.json.
 status: completed

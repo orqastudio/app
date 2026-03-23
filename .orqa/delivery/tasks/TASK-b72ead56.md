@@ -1,5 +1,6 @@
 ---
 id: TASK-b72ead56
+type: task
 title: Plugin reads task docs and skills fields for context injection
 description: "Update the companion plugin to read task docs and skills fields from YAML frontmatter, loading referenced documentation and skills into agent context automatically."
 status: completed

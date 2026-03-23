@@ -1,5 +1,6 @@
 ---
 id: TASK-b9cb39f8
+type: task
 title: Wire orqa-studio to import from packages + update pre-commit and make verify
 description: "Update the main orqa-studio app to import types, SDK, and stores from the extracted packages instead of local files. Replace verify-links.mjs and verify-pipeline-integrity.mjs with @orqastudio/integrity-validator. Update pre-commit hook and make targets."
 status: completed

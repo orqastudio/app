@@ -1,5 +1,6 @@
 ---
 id: EPIC-b2f0399e
+type: epic
 title: Code Quality Audit
 description: "Audit the codebase against coding standards, fix violations, and feed findings into the PILLAR-cdf756ff loop as lessons."
 status: captured

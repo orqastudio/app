@@ -1,5 +1,6 @@
 ---
 id: "TASK-cdfd039f"
+type: task
 title: "Triage EPIC-942c7678 observations (IMPL-c306b136 through IMPL-257c8303)"
 description: "Review all 8 observations logged during EPIC-942c7678 implementation. For each: implement now if needed for epic completion, promote to rule/skill if at understanding maturity, or defer to a new IDEA if out of scope. No observation may remain untriaged when the epic closes."
 status: "completed"

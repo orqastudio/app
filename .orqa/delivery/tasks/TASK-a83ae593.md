@@ -1,5 +1,6 @@
 ---
 id: TASK-a83ae593
+type: task
 title: Design Rust module architecture
 description: "Defined domain boundaries, service interfaces, and the repository pattern for the Rust backend."
 status: completed

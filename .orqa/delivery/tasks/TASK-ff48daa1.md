@@ -1,5 +1,6 @@
 ---
 id: TASK-ff48daa1
+type: task
 title: Design WorkflowTracker domain type
 description: |
   Create a Rust struct that tracks session-level events to enable process gate

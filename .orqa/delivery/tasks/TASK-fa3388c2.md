@@ -1,5 +1,6 @@
 ---
 id: "TASK-fa3388c2"
+type: task
 title: "Update EPIC-31c9baca body canon to core"
 description: "EPIC-31c9baca uses canon throughout. Current vocabulary is core. Update."
 status: "completed"

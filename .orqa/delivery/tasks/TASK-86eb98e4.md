@@ -1,5 +1,6 @@
 ---
 id: TASK-86eb98e4
+type: task
 title: Research notification strategy
 description: "Research toast library choice, desktop notification API, in-app panel design, and event-to-channel mapping for the notification system."
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: "RULE-d4b8e3f2"
+type: rule
 title: "Lint Enforcement Discipline"
 description: "Coding standards must be reflected in automated linting rules. Lint rules must align with documented standards, pre-commit hooks enforce checks automatically, and zero warnings is the policy."
 status: "active"

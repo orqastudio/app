@@ -1,5 +1,6 @@
 ---
 id: TASK-efcbcc95
+type: task
 title: Implement remaining IPC commands across all domains
 description: "Built the full IPC command surface covering settings, governance, tools, sidecar management, and system information."
 status: completed

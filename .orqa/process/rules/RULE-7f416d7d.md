@@ -1,5 +1,6 @@
 ---
 id: "RULE-7f416d7d"
+type: rule
 title: "Tooling Ecosystem Management"
 description: "OrqaStudio manages linter configuration to match documented standards. Code quality enforcement belongs in linters, not in regex matching."
 status: "active"

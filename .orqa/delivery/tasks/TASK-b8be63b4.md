@@ -1,5 +1,6 @@
 ---
 id: TASK-b8be63b4
+type: task
 title: Onboarding strategy definition
 description: Defined the approach for first-run project setup and Claude API authentication flow.
 status: completed

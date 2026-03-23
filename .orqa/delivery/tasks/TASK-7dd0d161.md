@@ -1,5 +1,6 @@
 ---
 id: TASK-7dd0d161
+type: task
 title: Add frontend store unit tests (all 10 stores)
 description: "Zero frontend tests exist. Add Vitest unit tests for all 10 Svelte 5 rune stores covering state transitions, error handling, and invoke mock patterns."
 status: completed

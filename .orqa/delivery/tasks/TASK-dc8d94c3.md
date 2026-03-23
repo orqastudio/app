@@ -1,5 +1,6 @@
 ---
 id: TASK-dc8d94c3
+type: task
 title: "Remove hardcoded plugin-specific rules from connector — move to owning plugins"
 description: "Move epic/task sync rules to the software plugin and governance-specific rules to the governance plugin. The connector must not own logic that belongs to a specific plugin domain."
 status: captured

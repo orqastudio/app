@@ -1,5 +1,6 @@
 ---
 id: TASK-520b31fc
+type: task
 title: Classify skills with layer field
 description: "Adds a layer field to every skill definition, distinguishing portable canon skills from OrqaStudio-specific project skills, and documents the classification in the skill enforcement rule."
 status: completed

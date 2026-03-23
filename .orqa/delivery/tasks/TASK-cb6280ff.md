@@ -1,5 +1,6 @@
 ---
 id: "TASK-cb6280ff"
+type: task
 title: "Record composability and integration decisions (AD-69072318 through AD-1d928079)"
 description: "Captured architecture decisions for composability principle, tool execution model, and provider-agnostic design."
 status: "completed"

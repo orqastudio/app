@@ -1,5 +1,6 @@
 ---
 id: TASK-e258e6cb
+type: task
 title: Create skill for epic-requirement inference during project setup
 description: "Create a skill that informs the project-setup process about whether epics should be required, based on the project type, structure, and intended use. The skill provides heuristics and questions to determine the right workflow.epics-required setting."
 status: completed

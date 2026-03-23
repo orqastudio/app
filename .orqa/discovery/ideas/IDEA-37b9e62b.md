@@ -1,5 +1,6 @@
 ---
 id: IDEA-37b9e62b
+type: idea
 title: "Zero tech debt enforcement — automated detection and prevention"
 status: captured
 priority: P1

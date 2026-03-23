@@ -1,5 +1,6 @@
 ---
 id: "TASK-75b09cdb"
+type: task
 title: "Update RULE-303c1cc8: loop-closure + scope verification requirements"
 description: "Update RULE-303c1cc8 to require loop-closure phases in enforcement epics and explicit user approval for out-of-scope sections"
 status: "completed"

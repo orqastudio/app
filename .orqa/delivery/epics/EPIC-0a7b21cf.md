@@ -1,5 +1,6 @@
 ---
 id: "EPIC-0a7b21cf"
+type: epic
 title: "Provider-Agnostic Tool Abstraction Layer"
 description: "Replace concrete tool names in agent definitions with abstract capabilities.
 

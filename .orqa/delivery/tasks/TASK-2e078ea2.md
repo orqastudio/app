@@ -1,5 +1,6 @@
 ---
 id: TASK-2e078ea2
+type: task
 title: Build MilestoneContextCard and new dashboard layout shell
 description: "Replace the existing dashboard layout with a narrative flow structure: milestone context at top, three columns (Where You Are, How You're Improving, What's Next), and a collapsible section at the bottom. Build the MilestoneContextCard component showing the active milestone."
 status: completed

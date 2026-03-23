@@ -1,5 +1,6 @@
 ---
 id: TASK-6827dc2b
+type: task
 title: Implement code_research compound search tool
 status: captured
 created: 2026-03-19

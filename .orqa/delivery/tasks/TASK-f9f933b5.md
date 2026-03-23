@@ -1,5 +1,6 @@
 ---
 id: TASK-f9f933b5
+type: task
 title: Connect documentation to artifact graph via relationships
 description: "Backfill relationships on documentation files, skills, and agents so documentation participates in graph traversal. Skills link to their documentation, docs link to the rules/decisions they describe, agents link to their grounding."
 status: completed

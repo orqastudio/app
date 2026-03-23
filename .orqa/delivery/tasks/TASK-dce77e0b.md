@@ -1,5 +1,6 @@
 ---
 id: "TASK-dce77e0b"
+type: task
 title: "Fix EPIC-6787bb93 task statuses"
 description: "Correct task statuses that were marked done incorrectly."
 status: "completed"

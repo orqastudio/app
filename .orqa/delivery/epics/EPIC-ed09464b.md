@@ -1,5 +1,6 @@
 ---
 id: EPIC-ed09464b
+type: epic
 title: Configuration-driven delivery pipeline
 description: "Replace hardcoded delivery artifact types (milestones, epics, tasks) with project-configurable type definitions in project.json. The code becomes a generic enforcement engine for whatever delivery pipeline the project defines. Core artifacts (ideas, research, rules, lessons, decisions, skills, agents, pillars) remain hardcoded as firmware."
 status: completed

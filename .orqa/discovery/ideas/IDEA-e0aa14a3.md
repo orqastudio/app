@@ -1,5 +1,6 @@
 ---
 id: IDEA-e0aa14a3
+type: idea
 title: Configurable dashboard with plugin-registered widgets
 description: "Dashboard widgets should be configurable — users can choose which widgets to display, reorder them, and resize them. Plugins should be able to register custom widgets that appear alongside built-in ones."
 status: surpassed

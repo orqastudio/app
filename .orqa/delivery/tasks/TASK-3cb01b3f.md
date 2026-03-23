@@ -1,5 +1,6 @@
 ---
 id: TASK-3cb01b3f
+type: task
 title: Task Dependency Mechanism
 description: "Add a formal depends-on field to the task schema in the artifact framework, add a dependency gate to the task lifecycle rules, and backfill existing tasks that have implicit dependencies."
 status: completed

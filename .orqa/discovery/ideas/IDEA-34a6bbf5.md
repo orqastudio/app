@@ -1,5 +1,6 @@
 ---
 id: IDEA-34a6bbf5
+type: idea
 title: Multi-repo product overview via git submodules
 description: "A parent OrqaStudio project that consumes .orqa/ artifacts from multiple git submodules, creating an overarching view of cross-project status. Includes a permissions hierarchy controlling whether parent projects can write to child .orqa/ directories or access code outside them. Potentially the implementation mechanism for organisations."
 status: surpassed

@@ -1,5 +1,6 @@
 ---
 id: TASK-53bfe6e9
+type: task
 title: Vision evolution and pillar renaming
 description: "Reframes the product vision as a domain-agnostic clarity engine and renames the two product pillars, aligning all vision, governance, and roadmap documentation to the new language."
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: IDEA-4f8e2a1c
+type: idea
 title: Cross-project classification learning with opt-in telemetry and AI-driven semantic merge
 description: Projects that opt in share classification corrections to improve the global starting prompt. New version upgrades use AI-driven semantic merge to combine global improvements with local refinements without overwriting project-specific learnings.
 status: captured

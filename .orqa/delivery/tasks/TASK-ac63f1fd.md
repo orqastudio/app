@@ -1,5 +1,6 @@
 ---
 id: TASK-ac63f1fd
+type: task
 title: Define information architecture
 description: "Designed the app's navigation structure, content hierarchy, and organizational patterns for all content types."
 status: completed

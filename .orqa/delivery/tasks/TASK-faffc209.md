@@ -1,5 +1,6 @@
 ---
 id: TASK-faffc209
+type: task
 title: Streaming and Conversation UX Fixes
 description: "Fixes a set of UX issues found during early dogfooding: broken streaming, unreadable tool output, cluttered tool display, unnamed sessions, and a generic titlebar."
 status: completed

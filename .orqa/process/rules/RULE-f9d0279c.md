@@ -1,5 +1,6 @@
 ---
 id: "RULE-f9d0279c"
+type: rule
 title: "Automated Knowledge Injection"
 description: "When agents touch specific code areas, relevant domain knowledge is auto-injected. Enforcement entries map file paths to knowledge artifact names."
 status: "active"

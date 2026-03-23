@@ -1,5 +1,6 @@
 ---
 id: TASK-9fb85edf
+type: task
 title: Add native search tools to MCP server (search_regex, search_semantic)
 status: captured
 created: 2026-03-19

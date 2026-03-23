@@ -1,5 +1,6 @@
 ---
 id: "TASK-2e138cb1"
+type: task
 title: "Complete RES-c4dd4c4d: behavioral directives research"
 description: "RES-c4dd4c4d (Agent Memory, User Directives, and the Knowledge Pipeline) is in draft status. Complete the research and discuss findings with user to determine where behavioral directives fit in the pipeline."
 status: "completed"

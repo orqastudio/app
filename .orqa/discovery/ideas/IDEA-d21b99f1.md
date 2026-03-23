@@ -1,5 +1,6 @@
 ---
 id: IDEA-d21b99f1
+type: idea
 title: Surface lesson frequency trends on the dashboard
 description: Show users whether lesson creation is trending up or down over time. Decreasing lesson frequency is evidence the learning pipeline is working — the system is learning and preventing repeat mistakes. Increasing frequency may signal new domain complexity or process gaps.
 status: captured

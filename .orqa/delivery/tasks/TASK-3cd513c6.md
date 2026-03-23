@@ -1,5 +1,6 @@
 ---
 id: TASK-3cd513c6
+type: task
 title: "Check both forward and inverse relationship constraints"
 status: completed
 created: 2026-03-18

@@ -1,5 +1,6 @@
 ---
 id: TASK-5a90e7e0
+type: task
 title: Update pre-commit-reminder hook with commit prompt
 description: Update pre-commit-reminder hook with commit prompt
 status: completed

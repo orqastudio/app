@@ -1,5 +1,6 @@
 ---
 id: "EPIC-e045ab6d"
+type: epic
 title: "AI Transparency Wiring"
 description: "Wire the emission logic that connects existing AI transparency types, components, and store handling into a working end-to-end pipeline."
 status: "completed"

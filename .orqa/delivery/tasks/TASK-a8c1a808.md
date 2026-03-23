@@ -1,5 +1,6 @@
 ---
 id: TASK-a8c1a808
+type: task
 title: "Add both plugins to official registry"
 status: completed
 created: 2026-03-19

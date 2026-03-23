@@ -1,5 +1,6 @@
 ---
 id: "IDEA-adce6c86"
+type: idea
 title: "Artifact platform audit — built-in vs external"
 description: "Audit which artifact types are first-class platform citizens with enforced lifecycles versus display-only documents, mapped to the three-layer governance model."
 status: "surpassed"

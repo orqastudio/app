@@ -1,5 +1,6 @@
 ---
 id: "EPIC-b2ca1ea3"
+type: epic
 title: "UAT round 3 — navigation architecture, artifact links, roadmap drill-down, doc reorg"
 description: "30 UAT findings grouped into 10 systemic themes. Largest themes: navigation architecture overhaul (Exploring/Delivery/Documentation/Process), artifact link component rework with settings, roadmap hierarchical drill-down, documentation reorganisation into book chapters, and schema migrations for scope → relationship."
 status: "active"

@@ -1,5 +1,6 @@
 ---
 id: TASK-a6dcd46b
+type: task
 title: "Create @orqastudio/test-config package — shared vitest + testing utilities"
 description: "Extract shared test configuration (vitest config, test utilities, fixture helpers) into a standalone package. All orqastudio repos and plugins use this for consistent testing with full CI/CD integration."
 status: completed

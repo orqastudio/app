@@ -1,5 +1,6 @@
 ---
 id: "TASK-7e7d1e02"
+type: task
 title: "Tighten RULE-532100d9 orchestrator content boundary"
 description: "Clarify in RULE-532100d9 that the orchestrator creates artifact structure but delegates content writing to Writer."
 status: "completed"

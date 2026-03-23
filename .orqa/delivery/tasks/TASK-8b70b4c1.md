@@ -1,5 +1,6 @@
 ---
 id: "TASK-8b70b4c1"
+type: task
 title: "Create stub scanner pre-commit hook"
 description: "Pre-commit hook that greps staged production files for TODO/FIXME/HACK comments and blocks the commit if found."
 status: "completed"

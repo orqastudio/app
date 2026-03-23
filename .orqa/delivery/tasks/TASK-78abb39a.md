@@ -1,5 +1,6 @@
 ---
 id: TASK-78abb39a
+type: task
 title: "Verify pipeline integrity — all artifacts connected, no orphans"
 description: "Final verification that the migration is complete: every governance artifact has relationships, no orphan nodes, bidirectional consistency holds, pipeline flow is forward."
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: "EPIC-4726cb3b"
+type: epic
 title: "Codebase Audit and Architecture Documentation"
 description: "Thorough code review ensuring artifact accuracy, documenting undiscovered implementation patterns, removing dead/outdated code, assessing test coverage, aligning linting with coding standards, and producing complete architecture documentation for the target core application."
 status: "completed"

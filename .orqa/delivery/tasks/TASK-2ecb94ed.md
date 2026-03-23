@@ -1,5 +1,6 @@
 ---
 id: TASK-2ecb94ed
+type: task
 title: Recurrence auto-tracking and promotion readiness detection
 description: Add tooling to auto-track lesson recurrence from review output and detect lessons ready for promotion
 status: completed

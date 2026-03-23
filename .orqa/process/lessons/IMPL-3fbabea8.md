@@ -1,5 +1,6 @@
 ---
 id: IMPL-3fbabea8
+type: lesson
 title: "Frontmatter reference fields should be relationship types, not standalone fields"
 description: "Fields like epic, milestone, scope, depends-on are semantically relationships but stored as standalone frontmatter fields. This creates two classes of graph edges — relationship array edges (scannable, typed, invertible) and field-based edges (invisible to relationship tooling)."
 status: active

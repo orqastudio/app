@@ -1,5 +1,6 @@
 ---
 id: TASK-6a4eea2f
+type: task
 title: Add body template linting to pre-commit hook
 description: Extend validate-schema.mjs to check that artifact bodies contain required section headings defined in the bodyTemplate schema key.
 status: completed

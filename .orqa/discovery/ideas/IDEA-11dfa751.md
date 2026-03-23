@@ -1,5 +1,6 @@
 ---
 id: IDEA-11dfa751
+type: idea
 title: Session state as a browsable artifact in .orqa/
 description: "Move session state from tmp/session-state.md into the .orqa/ directory so it becomes a first-class artifact visible in the app's artifact navigation. Enables users to browse session history, see pending decisions, and understand what was happening across sessions — all within the OrqaStudio UI."
 status: captured

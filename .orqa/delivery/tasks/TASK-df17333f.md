@@ -1,5 +1,6 @@
 ---
 id: "TASK-df17333f"
+type: task
 title: "Verify end-to-end AI transparency rendering"
 description: "Verify the full AI transparency pipeline works end-to-end: Rust emission to Channel<T> to store accumulation to component rendering."
 status: "completed"

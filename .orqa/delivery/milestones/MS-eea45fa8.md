@@ -1,5 +1,6 @@
 ---
 id: "MS-eea45fa8"
+type: milestone
 title: "MVP"
 description: "Someone other than the developer can use OrqaStudio to fulfil the mission statement — both a technical PM managing a software project and someone doing non-software structured thinking."
 status: "exploring"

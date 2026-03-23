@@ -1,5 +1,6 @@
 ---
 id: "PILLAR-cdf756ff"
+type: pillar
 title: "Learning Through Reflection"
 description: "The system and its users improve over time through structured retrospection."
 status: "active"

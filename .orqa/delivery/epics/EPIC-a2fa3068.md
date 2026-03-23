@@ -1,5 +1,6 @@
 ---
 id: "EPIC-a2fa3068"
+type: epic
 title: "Dogfood Readiness Verification"
 description: "First round of user acceptance testing. The user exercises the app end-to-end, testing conversation flow, artifact browsing, governance visibility, settings, and streaming behaviour. Findings are captured as tasks within this epic."
 status: "completed"

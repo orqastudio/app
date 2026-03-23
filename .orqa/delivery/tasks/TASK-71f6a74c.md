@@ -1,5 +1,6 @@
 ---
 id: TASK-71f6a74c
+type: task
 title: Epic title naming convention cleanup
 description: "Renames all epic titles that use process words instead of describing outcomes, and adds a naming convention to the artifact lifecycle rule to prevent recurrence."
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: "EPIC-a2cfc2b4"
+type: epic
 title: "Native Tool UX & First-Run Setup"
 description: "Two related UX improvements: (1) friendly tool call display with names, icons, and grouping; (2) first-run setup wizard for project creation and AI provider configuration."
 status: "completed"

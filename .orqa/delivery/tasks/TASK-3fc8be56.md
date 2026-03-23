@@ -1,5 +1,6 @@
 ---
 id: "TASK-3fc8be56"
+type: task
 title: "Remove .claude/ symlinks and update RULE-6c0496e0"
 description: "Remove the .claude/ symlink architecture and update RULE-6c0496e0 to describe plugin-based loading."
 status: "surpassed"

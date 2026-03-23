@@ -1,5 +1,6 @@
 ---
 id: KNOW-88f32b6a
+type: knowledge
 name: ESLint Config Management
 status: active
 plugin: "@orqastudio/plugin-svelte"

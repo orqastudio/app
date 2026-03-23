@@ -1,5 +1,6 @@
 ---
 id: AD-a4f2c8e1
+type: decision
 title: "Validation consolidation: libs/validation as single source of truth"
 status: active
 created: 2026-03-21

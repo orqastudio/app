@@ -1,5 +1,6 @@
 ---
 id: "AD-40b3de0a"
+type: decision
 title: "Four-Zone VS Code-Style Layout"
 description: "Four-zone VS Code-style layout with Activity Bar, Explorer Panel, Sessions Panel, and Chat Panel. Superseded by AD-4f5277f0."
 status: "surpassed"

@@ -1,5 +1,6 @@
 ---
 id: TASK-fde17fff
+type: task
 title: Move rule-enforcement skill to core + rename plugin skill
 description: |
   Move the rule-enforcement SKILL.md from the plugin to .orqa/process/skills/ as a

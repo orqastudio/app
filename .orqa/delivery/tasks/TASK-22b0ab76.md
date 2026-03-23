@@ -1,5 +1,6 @@
 ---
 id: TASK-22b0ab76
+type: task
 title: Create schema compliance scanning skill and tools
 description: "Create a skill for schema compliance scanning methodology and design tools that can validate artifact frontmatter against schemas at any time, not just at commit time."
 status: completed

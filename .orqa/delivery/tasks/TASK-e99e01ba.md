@@ -1,5 +1,6 @@
 ---
 id: TASK-e99e01ba
+type: task
 title: Artifact type definitions and classification
 description: "Adds formal one-paragraph definitions for each artifact type to the framework documentation and reclassifies any misclassified artifacts, flattening the research directory to a relationship-via-YAML-fields model."
 status: completed

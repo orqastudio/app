@@ -1,5 +1,6 @@
 ---
 id: TASK-ab6f8ad9
+type: task
 title: Implement session management UI
 description: "Built the session dropdown with history browsing, search, and navigation between conversations."
 status: completed

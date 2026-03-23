@@ -1,5 +1,6 @@
 ---
 id: "RULE-cb65b5d0"
+type: rule
 title: "Reusable Components"
 description: "Check shared component library before creating new UI elements. Use EmptyState, LoadingSpinner, ErrorDisplay, etc."
 status: "active"

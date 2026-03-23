@@ -1,5 +1,6 @@
 ---
 id: TASK-e9059b0b
+type: task
 title: "Enhance artifact viewer with unified relationships, actions needed, and pipeline position"
 description: Move all relationships to the relationships viewer across all artifact types. Add inferred Actions Needed box. Add pipeline position stepper. Auto-embed child artifacts. Display horizon field. Implement acceptance criteria checkboxes.
 status: completed

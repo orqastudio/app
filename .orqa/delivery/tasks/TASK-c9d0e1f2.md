@@ -1,5 +1,6 @@
 ---
 id: TASK-c9d0e1f2
+type: task
 title: "Update TypeScript types: types lib, SDK skill references"
 description: "Update the @orqastudio/types library and SDK to rename all skill-related type definitions, interfaces, and constants to knowledge equivalents."
 status: ready

@@ -1,5 +1,6 @@
 ---
 id: TASK-50b3aa55
+type: task
 title: Add injection map entries to relevant rules
 description: |
   Add enforcement entries with action:inject to rules that govern specific

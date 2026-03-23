@@ -1,5 +1,6 @@
 ---
 id: KNOW-dac84f00
+type: knowledge
 title: OrqaStudio Enforcement Engine
 description: Understands how OrqaStudio governance rules are mechanically enforced via the
 status: active

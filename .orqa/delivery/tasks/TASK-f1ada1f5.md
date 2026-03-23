@@ -1,5 +1,6 @@
 ---
 id: "TASK-f1ada1f5"
+type: task
 title: "Create project setup skills"
 description: "Write the four setup skills that replace templates for project initialisation: base scaffolding, folder inference, agentic config migration, and the software project type preset."
 status: "completed"

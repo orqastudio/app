@@ -1,5 +1,6 @@
 ---
 id: "TASK-55c08ed7"
+type: task
 title: "Mark surpassed research and connect orphans"
 description: "RES-8b971acf surpassed. 9 orphaned Phase 0 research files need connection or documentation."
 status: "completed"

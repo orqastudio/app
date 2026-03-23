@@ -1,5 +1,6 @@
 ---
 id: IDEA-49a009ae
+type: idea
 title: App-shipped platform knowledge — immutable Layer 1 documentation and skills
 description: "Platform knowledge (type definitions, relationship semantics, enforcement rules, how the system works) ships as immutable Layer 1 artifacts. Platform docs teach humans. Platform skills teach agents. Both are versioned with the app and cannot be edited by the project. Project-level docs and skills are separate, editable, and synchronised via relationships."
 status: exploring

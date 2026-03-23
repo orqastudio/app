@@ -1,6 +1,7 @@
 ---
 
 id: IMPL-e8bcc5d2
+type: lesson
 title: Acceptance criteria not verified line-by-line after implementation
 description: Implementer agents deliver the structural change but miss specific acceptance criteria items. The orchestrator marks tasks done without checking each criterion against the actual output. UAT then catches items that were in scope but not delivered.
 status: review

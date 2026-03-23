@@ -1,5 +1,6 @@
 ---
 id: EPIC-1c8cddf8
+type: epic
 title: Sub-Agent Support
 description: "Build agent registry, spawn_agent tool, explore mode, output aggregation, and turn limits for sub-agent delegation."
 status: captured

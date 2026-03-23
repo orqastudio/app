@@ -1,5 +1,6 @@
 ---
 id: EPIC-50a2ec6f
+type: epic
 title: Chat-Guided Onboarding
 description: "Make the chat conversation itself guide new users through setup, with project state awareness and entry mode detection."
 status: captured

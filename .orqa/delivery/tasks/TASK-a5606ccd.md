@@ -1,6 +1,7 @@
 ---
 
 id: TASK-a5606ccd
+type: task
 title: Validate existing artifacts against delivery type configuration
 description: "Extend the integrity scanner to verify that delivery artifacts exist in their configured paths, that parent references point to valid parent types, and that no delivery directory contains artifacts whose type is not covered by the delivery type config. Current artifacts must pass validation cleanly."
 status: blocked

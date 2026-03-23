@@ -1,5 +1,6 @@
 ---
 id: TASK-f6e9b767
+type: task
 title: Lessons maturity review (16 lessons)
 description: Evaluate all 16 lessons for elevation potential. Verify promoted lessons have grounded-by relationships. Ensure meaningful rationales on all edges.
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: "TASK-9f1f8b4b"
+type: task
 title: "Agents content audit (7 agents)"
 description: "Audit all 7 agent definitions: expand Tier 1 skills where gaps exist, match capabilities to RULE-f809076f role matrix, update orchestrator prompt for pipeline philosophy."
 status: "completed"

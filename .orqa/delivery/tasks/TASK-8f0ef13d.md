@@ -1,5 +1,6 @@
 ---
 id: TASK-8f0ef13d
+type: task
 title: Research document relationship schema update and data backfill
 description: Add relationships array to research schema. Backfill existing research documents with relationship data. Backfill epic horizon fields.
 status: completed

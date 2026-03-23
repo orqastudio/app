@@ -1,5 +1,6 @@
 ---
 id: "EPIC-5f9fcf48"
+type: epic
 title: "Codebase Quality and Composability Alignment"
 description: "Address critical code quality issues found by RES-55eb9e55: eliminate stream_commands.rs
 

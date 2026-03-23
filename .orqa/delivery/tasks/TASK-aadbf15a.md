@@ -1,5 +1,6 @@
 ---
 id: TASK-aadbf15a
+type: task
 title: Unified logging — OrqaDev dashboard + production error surfacing
 description: "Two-tier logging: (1) in dev mode, stream info-level logs from backend, sidecar, frontend, and file watchers to the existing OrqaDev web dashboard (port 3001); (2) in all modes, surface errors in the app UI."
 status: completed

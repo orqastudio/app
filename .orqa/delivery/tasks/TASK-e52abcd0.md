@@ -1,5 +1,6 @@
 ---
 id: TASK-e52abcd0
+type: task
 title: "Create DOC-4ed362fb Licensing and Ethics guide"
 status: completed
 created: 2026-03-18

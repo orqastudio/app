@@ -1,5 +1,6 @@
 ---
 id: TASK-2830a2da
+type: task
 title: Add documents/documented-by relationship types + body-text edge extraction
 description: Introduce documents/documented-by relationship types and extract artifact references from markdown body text as graph edges.
 status: completed

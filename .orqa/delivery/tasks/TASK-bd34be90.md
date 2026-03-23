@@ -1,5 +1,6 @@
 ---
 id: "TASK-bd34be90"
+type: task
 title: "Fix KNOW-e3a559c9 ID collision"
 description: "Three skills share KNOW-e3a559c9. Assign unique IDs and update all agent references."
 status: "completed"

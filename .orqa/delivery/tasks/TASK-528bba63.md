@@ -1,5 +1,6 @@
 ---
 id: TASK-528bba63
+type: task
 title: Implement full skill content injection in rule-engine.mjs
 description: "Currently skill injection returns skill names as a list. Change it to read the actual SKILL.md file content and inject it as systemMessage so agents receive the knowledge, not just a reference."
 status: completed

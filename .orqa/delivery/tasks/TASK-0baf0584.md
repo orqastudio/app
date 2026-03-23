@@ -1,5 +1,6 @@
 ---
 id: TASK-0baf0584
+type: task
 title: Set up frontend coverage tooling
 description: Configure Vitest coverage reporter with threshold enforcement.
 status: completed

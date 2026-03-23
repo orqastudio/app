@@ -1,5 +1,6 @@
 ---
 id: TASK-b2ebf089
+type: task
 title: Implement four-zone layout and sidebar
 description: "Built the desktop layout with toolbar, sidebar navigation, main content area, and status bar with resizable panels."
 status: completed

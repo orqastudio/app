@@ -1,5 +1,6 @@
 ---
 id: "TASK-8b9c68ae"
+type: task
 title: "Create AD for directory reorganization (AD-71d44f5c)"
 description: "Architecture decision formalizing the three-level structure (process/delivery/documentation) and the first-class artifact principle."
 status: "completed"

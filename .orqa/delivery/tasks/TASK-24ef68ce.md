@@ -1,5 +1,6 @@
 ---
 id: TASK-24ef68ce
+type: task
 title: Add prompt event handler to plugin rule-engine.mjs
 description: |
   Add UserPromptSubmit hook handling to the plugin that classifies user intent

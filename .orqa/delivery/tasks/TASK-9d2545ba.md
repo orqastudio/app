@@ -1,5 +1,6 @@
 ---
 id: TASK-9d2545ba
+type: task
 title: Implement toast notification system
 description: "Install and configure a toast notification library with configurable position, duration, and severity levels."
 status: completed

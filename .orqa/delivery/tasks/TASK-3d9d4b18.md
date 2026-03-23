@@ -1,5 +1,6 @@
 ---
 id: TASK-3d9d4b18
+type: task
 title: Design artifact browser wireframes
 description: "Created wireframes for the artifact browser including navigation tree, content panel, and frontmatter display."
 status: completed

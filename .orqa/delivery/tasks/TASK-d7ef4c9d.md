@@ -1,5 +1,6 @@
 ---
 id: TASK-d7ef4c9d
+type: task
 title: Roadmap all-done state and Done column collapse logic (F36)
 description: "Implement the all-completed state for the roadmap kanban: when all items are in the Done column, show a celebration/completion state with a 'View board' button to reveal the full board. Fix Done column collapse logic so it only auto-collapses when non-done items exist."
 status: completed

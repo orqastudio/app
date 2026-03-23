@@ -1,5 +1,6 @@
 ---
 id: IDEA-3354aefe
+type: idea
 title: Design Tool Integration
 description: "Integration with 3rd-party design tools including Figma MCP server, design token sync, and code-to-Figma backfill."
 status: captured

@@ -1,5 +1,6 @@
 ---
 id: "EPIC-ee688e85"
+type: epic
 title: "Provider Abstraction Layer"
 description: "Refactor sidecar from Claude-specific to provider-agnostic architecture. Provider interface, Claude adapter, sdk_session_id → provider_session_id rename across 13+ files including SQLite migration."
 status: "completed"

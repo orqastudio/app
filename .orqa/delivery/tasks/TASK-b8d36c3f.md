@@ -1,5 +1,6 @@
 ---
 id: TASK-b8d36c3f
+type: task
 title: "Quick fixes: broken link RES-63578440 and IDEA-93949f43 categorisation"
 description: "Fix broken body link in RES-63578440 referencing TASK-3ce9c6dd, and fix IDEA-93949f43 appearing under Other in the artifact browser."
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: KNOW-49f495ff
+type: knowledge
 title: Orqa IPC Patterns
 description: |
   OrqaStudio IPC patterns: Tauri invoke() calls, #[tauri::command] handlers,

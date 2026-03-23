@@ -1,5 +1,6 @@
 ---
 id: IDEA-bcb32ace
+type: idea
 title: Dev controller log streaming to devtool — agents react to build/runtime errors
 description: "Capture Vite HMR errors, Rust compile errors, and runtime warnings from the dev controller and surface them in the devtool as a subscribable stream. Agents can monitor the stream and react to errors automatically."
 status: captured

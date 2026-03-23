@@ -1,5 +1,6 @@
 ---
 id: TASK-cf67e6e8
+type: task
 title: "Create KNOW-12ed4953 Licensing Decisions"
 status: completed
 created: 2026-03-18

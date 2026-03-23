@@ -1,5 +1,6 @@
 ---
 id: "TASK-fa777da9"
+type: task
 title: "Update streaming pipeline documentation"
 description: "Update streaming-pipeline.md to reflect the new SystemPromptSent emission point added by TASK-58a9d218."
 status: "completed"

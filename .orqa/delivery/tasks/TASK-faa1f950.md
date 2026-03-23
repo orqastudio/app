@@ -1,5 +1,6 @@
 ---
 id: TASK-faa1f950
+type: task
 title: Extract dev server and worktree content to skills or docs
 description: "Move dev server lifecycle, worktree workflow, and hooks configuration from the orchestrator prompt to standalone skills or documentation that agents read from the graph."
 status: completed

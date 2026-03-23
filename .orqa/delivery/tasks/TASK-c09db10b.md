@@ -1,5 +1,6 @@
 ---
 id: TASK-c09db10b
+type: task
 title: Frontend decomposition and design tokens
 description: "Decomposes monolithic frontend components and stores, decouples the conversation store from the session store, and replaces 60+ hardcoded colors with semantic design tokens."
 status: completed

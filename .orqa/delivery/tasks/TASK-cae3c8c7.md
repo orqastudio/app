@@ -1,5 +1,6 @@
 ---
 id: TASK-cae3c8c7
+type: task
 title: "Agent skill + docs for artifact ID format and generation"
 status: captured
 created: 2026-03-19

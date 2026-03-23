@@ -1,5 +1,6 @@
 ---
 id: "TASK-f936b9b2"
+type: task
 title: "Migrate agent definitions from tools to capabilities"
 description: "Update all 7 agent definitions to declare capabilities instead of concrete tool names."
 status: "completed"

@@ -1,5 +1,6 @@
 ---
 id: TASK-d40d7b76
+type: task
 title: Make relationship fields required in schemas
 description: "Move relationships, maturity, and category from optional to required in all governance schemas. Update orchestrator prompt with relationship guidance."
 status: completed

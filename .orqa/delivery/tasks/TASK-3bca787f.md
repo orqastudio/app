@@ -1,5 +1,6 @@
 ---
 id: TASK-3bca787f
+type: task
 title: "Close personal use, SaaS, and education loopholes"
 status: completed
 created: 2026-03-18

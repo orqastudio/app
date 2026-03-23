@@ -1,5 +1,6 @@
 ---
 id: TASK-a1e2f58a
+type: task
 title: Implement session and message CRUD
 description: "Built complete CRUD operations for sessions and messages including creation, listing, retrieval, updating, and deletion via IPC commands."
 status: completed

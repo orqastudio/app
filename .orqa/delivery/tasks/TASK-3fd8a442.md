@@ -1,5 +1,6 @@
 ---
 id: TASK-3fd8a442
+type: task
 title: Define error taxonomy
 description: Defined typed errors across the Rust/IPC/TypeScript boundary using thiserror on the Rust side and discriminated unions on the TypeScript side.
 status: completed

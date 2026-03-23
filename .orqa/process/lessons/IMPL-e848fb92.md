@@ -1,5 +1,6 @@
 ---
 id: "IMPL-e848fb92"
+type: lesson
 title: "Orchestrator creates artifacts without maintaining bidirectional relationships"
 description: "When creating or modifying artifacts (AD-f9034c99, RULE-532100d9, RULE-551bde31), the orchestrator added content links in body text but failed to add bidirectional relationship entries in frontmatter. This happened repeatedly across multiple artifacts in the same session despite RULE-130f1f63 requiring bidirectional inverses."
 status: "review"

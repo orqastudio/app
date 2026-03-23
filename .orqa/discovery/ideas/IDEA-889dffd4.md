@@ -1,5 +1,6 @@
 ---
 id: "IDEA-889dffd4"
+type: idea
 title: "Provider-Agnostic Tool Abstraction for Agent Definitions"
 description: "Agent definitions should declare tool capabilities abstractly (e.g. \"file_read\",
 

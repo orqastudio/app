@@ -1,5 +1,6 @@
 ---
 id: TASK-b6e9df91
+type: task
 title: Audit all agent definitions for accuracy
 description: "Verify every agent YAML definition in .orqa/process/agents/ has correct skills lists, valid required reading paths, accurate role descriptions, and no stale references."
 status: completed

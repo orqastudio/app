@@ -1,5 +1,6 @@
 ---
 id: KNOW-de25b290
+type: knowledge
 title: "Thinking Mode: Planning"
 thinking-mode: planning
 description: "The user wants work scoped, broken down, prioritised, or designed — structure and approach before any execution begins."

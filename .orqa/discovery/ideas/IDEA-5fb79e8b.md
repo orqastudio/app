@@ -1,5 +1,6 @@
 ---
 id: IDEA-5fb79e8b
+type: idea
 title: Institutional Memory
 description: "Long-term knowledge preservation with project evolution maps, organisational PILLAR-cdf756ff records, and strategic timeline visualisations."
 status: captured

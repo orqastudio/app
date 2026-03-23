@@ -1,5 +1,6 @@
 ---
 id: AD-6cea0c64
+type: decision
 title: Icon-based status representation — colors reserved for artifact types
 description: Status is represented by iconography (circle variants) not colors. The color palette is reserved exclusively for artifact type identity. This prevents visual conflict between type and status channels.
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: KNOW-5efa83a5
+type: knowledge
 name: Clippy Config Management
 status: active
 plugin: "@orqastudio/plugin-rust"

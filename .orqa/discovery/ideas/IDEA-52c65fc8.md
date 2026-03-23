@@ -1,5 +1,6 @@
 ---
 id: "IDEA-52c65fc8"
+type: idea
 title: "Native Hooks System"
 description: "Design a hooks layer that works in both app and CLI contexts, with richer lifecycle events and backwards compatibility with Claude Code hooks."
 status: "completed"

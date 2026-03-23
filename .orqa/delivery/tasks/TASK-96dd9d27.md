@@ -1,5 +1,6 @@
 ---
 id: TASK-96dd9d27
+type: task
 title: "Rewrite KNOW-8d1c4be6 as Plugin Artifact Usage"
 status: completed
 created: 2026-03-18

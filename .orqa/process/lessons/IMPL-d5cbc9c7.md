@@ -1,5 +1,6 @@
 ---
 id: "IMPL-d5cbc9c7"
+type: lesson
 title: "Do not refactor agentic structure while delegating to agents"
 description: "When modifying rules, skills, or agent definitions, the orchestrator must handle changes directly. Delegating to agents that read the same artifacts being modified causes stale-context conflicts.\n"
 status: "active"

@@ -1,5 +1,6 @@
 ---
 id: TASK-64ceb043
+type: task
 title: "Migrate nav and linking to SDK: ArtifactLink, ArtifactNav, FrontmatterHeader, AppLayout"
 description: "Replace ArtifactLink prefix routing, ArtifactNav pendingArtifactId workaround, and AppLayout watch init with SDK-based patterns."
 status: completed

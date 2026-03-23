@@ -1,5 +1,6 @@
 ---
 id: "IDEA-9bfb9012"
+type: idea
 title: "Friction is the feature — evaluate as foundational principle or pillar"
 description: "The purposeful friction of mandatory relationships (forcing connection to purpose before creation) may be significant enough to become a pillar. AI makes the friction nearly free, but the friction itself is non-negotiable."
 status: "completed"

@@ -1,5 +1,6 @@
 ---
 id: TASK-71c613fb
+type: task
 title: Implement governance filesystem scanner
 description: Built the filesystem walker that collects governance artifacts from the .orqa/ directory structure.
 status: completed

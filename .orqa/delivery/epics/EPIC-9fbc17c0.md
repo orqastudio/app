@@ -1,5 +1,6 @@
 ---
 id: EPIC-9fbc17c0
+type: epic
 title: Automated status transitions — the system enforces its own lifecycle
 description: "Implement app-level automation that detects conditions requiring status changes and applies them. Validates all artifacts have valid statuses. The status process documented in DOC-94224b27 and KNOW-449b1e02 is enforced mechanically, not just by convention."
 status: active

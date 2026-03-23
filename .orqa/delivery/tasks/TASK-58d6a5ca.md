@@ -1,5 +1,6 @@
 ---
 id: TASK-58d6a5ca
+type: task
 title: Enforce frontmatter field ordering at creation time via schema validation
 description: Add propertyOrder enforcement to the schema validation hook and agent artifact creation process so frontmatter fields are written in the correct order from the start.
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: "TASK-fb9cfd61"
+type: task
 title: "Delete duplicate and stale documentation"
 description: "Remove documentation files that duplicate other docs or are entirely outdated. DOC-019 (architecture-overview) duplicates DOC-001, DOC-054 (launch-timeline) is outdated, DOC-032 (process/rules) duplicates RULE-deab6ea7."
 status: "completed"

@@ -1,5 +1,6 @@
 ---
 id: IDEA-8cee938b
+type: idea
 title: Core plugin enforcement — require one per lifecycle category
 status: captured
 created: 2026-03-22

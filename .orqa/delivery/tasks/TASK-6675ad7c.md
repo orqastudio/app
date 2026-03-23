@@ -1,5 +1,6 @@
 ---
 id: TASK-6675ad7c
+type: task
 title: LSP server — real-time frontmatter validation
 status: active
 created: 2026-03-19

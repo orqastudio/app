@@ -1,5 +1,6 @@
 ---
 id: TASK-d5e090bf
+type: task
 title: Reusable pipeline stepper with configurable stages and visual refresh
 description: Refactor PipelineStepper to accept stages as a prop and update styling to match the app look and feel.
 status: completed

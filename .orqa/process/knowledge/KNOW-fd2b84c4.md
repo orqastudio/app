@@ -1,5 +1,6 @@
 ---
 id: KNOW-fd2b84c4
+type: knowledge
 name: Testing Patterns
 status: active
 plugin: "@orqastudio/plugin-svelte"

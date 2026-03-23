@@ -1,5 +1,6 @@
 ---
 id: TASK-c083a1c8
+type: task
 title: Document plugin installation and configuration
 description: "Write documentation for installing, configuring, and using the orqa companion plugin."
 status: completed

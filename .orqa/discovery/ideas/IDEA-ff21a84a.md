@@ -1,5 +1,6 @@
 ---
 id: IDEA-ff21a84a
+type: idea
 title: "Plugin catalogue and marketplace"
 status: captured
 horizon: someday

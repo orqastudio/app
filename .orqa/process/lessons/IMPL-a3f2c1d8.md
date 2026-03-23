@@ -1,5 +1,6 @@
 ---
 id: IMPL-a3f2c1d8
+type: lesson
 title: Session state must be a living document
 description: "The orchestrator treated tmp/session-state.md as a checkpoint to write at session end. Tangents and new decisions during a session caused context loss — when the user asked about the original plan, the orchestrator had to reconstruct from conversation history."
 status: promoted

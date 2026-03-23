@@ -1,5 +1,6 @@
 ---
 id: "DOC-2c8605a0"
+type: doc
 status: "captured"
 title: "Wireframe: Dashboard Views"
 description: "Wireframe specification for dashboard views including metrics, status, and activity summaries."

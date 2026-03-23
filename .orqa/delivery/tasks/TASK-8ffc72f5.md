@@ -1,5 +1,6 @@
 ---
 id: TASK-8ffc72f5
+type: task
 title: Design core layout wireframes
 description: "Created wireframes for the four-zone desktop layout with toolbar, sidebar, main content area, and status bar."
 status: completed

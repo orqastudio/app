@@ -1,5 +1,6 @@
 ---
 id: IDEA-8ebeb1a2
+type: idea
 title: Output Composability
 description: "New artifact generation modules for different domains including service design, policy development, and research planning."
 status: captured

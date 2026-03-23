@@ -1,5 +1,6 @@
 ---
 id: TASK-025a0d1e
+type: task
 title: "Assign scope to RULE-c95f4444, RULE-f9d0279c, RULE-7f416d7d"
 description: These rules have empty scope arrays. Assign agent IDs for enforcement.
 status: completed

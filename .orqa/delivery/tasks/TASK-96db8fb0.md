@@ -1,5 +1,6 @@
 ---
 id: TASK-96db8fb0
+type: task
 title: Move process/ ui/ wireframes/ → target chapters (17 files)
 description: "Migrate the remaining three chapters to their target locations: 6 process files to guide/about/development/reference, 6 ui files to reference/, and 5 wireframe files to reference/wireframes/. Remove the process, ui, and wireframes keys from project.json and add the reference key."
 status: completed

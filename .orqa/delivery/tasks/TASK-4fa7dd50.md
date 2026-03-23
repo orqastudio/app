@@ -1,5 +1,6 @@
 ---
 id: TASK-4fa7dd50
+type: task
 title: Implement plan-before-build + structure-before-code gates
 description: |
   Process gates that fire when code is written without epic/task context or

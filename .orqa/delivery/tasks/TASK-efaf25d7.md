@@ -1,5 +1,6 @@
 ---
 id: "TASK-efaf25d7"
+type: task
 title: "Enable clippy pedantic in Cargo.toml"
 description: "Explicitly configure clippy pedantic lints in Cargo.toml and fix resulting warnings."
 status: "completed"

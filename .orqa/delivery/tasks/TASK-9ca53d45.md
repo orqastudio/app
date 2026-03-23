@@ -1,5 +1,6 @@
 ---
 id: TASK-9ca53d45
+type: task
 title: Add tests for untested command modules
 description: Write unit tests for the 8 Tauri command modules that have zero test coverage.
 status: completed

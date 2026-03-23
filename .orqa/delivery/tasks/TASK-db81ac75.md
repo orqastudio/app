@@ -1,5 +1,6 @@
 ---
 id: TASK-db81ac75
+type: task
 title: Create follow-up epics/tasks to address findings
 description: Group findings from the enforcement tooling run into coherent follow-up epics prioritized using the Phase 7 framework
 status: completed

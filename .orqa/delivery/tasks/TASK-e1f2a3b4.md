@@ -1,5 +1,6 @@
 ---
 id: TASK-e1f2a3b4
+type: task
 title: "Test delegation: verify knowledge injection end-to-end"
 description: "Write and run an end-to-end test that verifies the connector correctly injects knowledge files from canonical plugin paths into subagent prompts during delegation."
 status: ready

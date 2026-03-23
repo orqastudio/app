@@ -1,5 +1,6 @@
 ---
 id: TASK-0c6ac8d8
+type: task
 title: Write graph-based orchestrator prompt
 description: Rewrite the orchestrator prompt from ~2000 lines of inlined rules/tables to ~200 lines of graph navigation instructions. The prompt teaches agents how to read and extend the artifact graph.
 status: completed

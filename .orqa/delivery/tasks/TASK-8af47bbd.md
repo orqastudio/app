@@ -1,5 +1,6 @@
 ---
 id: "TASK-8af47bbd"
+type: task
 title: "Fix epic and task status mismatches"
 description: "EPIC-0a7b21cf complete but draft, EPIC-dc1e3e4b in-progress but draft, EPIC-03900ea5 superseded but done. Fix statuses."
 status: "completed"

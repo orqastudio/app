@@ -1,5 +1,6 @@
 ---
 id: KNOW-a4c8f1e2
+type: knowledge
 title: "Thinking Mode: Dogfood Implementation"
 thinking-mode: dogfood-implementation
 description: Building infrastructure for immediate use in the current workflow — not a future feature idea.

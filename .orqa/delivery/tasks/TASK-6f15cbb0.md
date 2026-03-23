@@ -1,5 +1,6 @@
 ---
 id: TASK-6f15cbb0
+type: task
 title: Port enforcement engine to Rust backend
 description: Implement the rule enforcement engine in Rust for app-native enforcement.
 status: surpassed

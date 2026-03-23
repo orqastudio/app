@@ -1,5 +1,6 @@
 ---
 id: KNOW-65f5aa67
+type: knowledge
 title: Orqa Store Patterns
 description: |
   OrqaStudio Svelte 5 rune store patterns: class-based stores with $state/$derived,

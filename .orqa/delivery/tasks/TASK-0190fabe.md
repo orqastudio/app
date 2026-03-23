@@ -1,5 +1,6 @@
 ---
 id: TASK-0190fabe
+type: task
 title: Knowledge gap detection in governance audit
 description: "Extend the governance audit (IntegrityWidget or dedicated panel) to surface per-type unlinked artifacts: rules without grounded-by, skills without practiced-by, decisions without enforces. Also detect disconnected components not reachable from the main graph. Each gap entry links directly to the artifact that needs fixing."
 status: blocked

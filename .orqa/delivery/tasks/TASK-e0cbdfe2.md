@@ -1,5 +1,6 @@
 ---
 id: TASK-e0cbdfe2
+type: task
 title: Create component test infrastructure
 description: "Set up Svelte component testing with @testing-library/svelte and write template tests for key shared components."
 status: completed

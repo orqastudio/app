@@ -1,5 +1,6 @@
 ---
 id: "TASK-bd4fb2bc"
+type: task
 title: "Establish learning loop and completion discipline (IMPL-97e2788f, 022, 023, 024)"
 description: "Create enforcement for: tracking open items during implementation, human-gated epic completion, automated observation logging by agents, and recording lessons on task completion artifacts."
 status: "completed"

@@ -1,5 +1,6 @@
 ---
 id: TASK-012ea89f
+type: task
 title: Define design system
 description: "Established the visual design system including typography, colour palette, spacing scale, and iconography conventions."
 status: completed

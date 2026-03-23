@@ -1,5 +1,6 @@
 ---
 id: TASK-41df15c4
+type: task
 title: "Relationships panel — equal columns, overflow toggle, status dots"
 description: "Redesign the relationships panel with equal-width columns, expandable overflow, and status dots from graph node data."
 status: completed

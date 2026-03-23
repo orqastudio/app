@@ -1,5 +1,6 @@
 ---
 id: TASK-bd0e805b
+type: task
 title: "Implement /orqa, /orqa:rules, /orqa:status commands"
 description: Plugin slash commands for governance interaction in Claude Code.
 status: completed

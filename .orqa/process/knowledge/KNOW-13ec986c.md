@@ -1,5 +1,6 @@
 ---
 id: "KNOW-13ec986c"
+type: knowledge
 title: "Orqa Documentation Authoring"
 description: "OrqaStudio documentation authoring conventions: internal link format, cross-referencing
 

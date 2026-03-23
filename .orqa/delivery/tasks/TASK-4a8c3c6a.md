@@ -1,5 +1,6 @@
 ---
 id: TASK-4a8c3c6a
+type: task
 title: Audit for missing and miscategorised governance artifacts
 description: "Identify governance concepts that lack artifacts (undocumented conventions, implicit rules) and artifacts that are miscategorised (rules that should be skills, skills that should be rules, lessons that should be promoted, patterns enforced but not captured)."
 status: completed

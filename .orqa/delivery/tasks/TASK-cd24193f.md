@@ -1,5 +1,6 @@
 ---
 id: TASK-cd24193f
+type: task
 title: Hook improvements — validate-artifact, save-context, subagent-review
 status: completed
 created: 2026-03-19

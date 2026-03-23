@@ -1,7 +1,6 @@
 ---
-
-
 id: DOC-bfdf76ba
+type: doc
 status: captured
 title: Artifact Principles — Agent Grounding
 description: "Concise grounding document for Orchestrator, Writer, Researcher, and Governance Steward roles. Injected into agent context at initialization."

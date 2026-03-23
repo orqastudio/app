@@ -1,5 +1,6 @@
 ---
 id: EPIC-a80f16b4
+type: epic
 title: "Runtime plugin view loading — no compiled-in plugins"
 description: "Removed embedded software plugin manifest. Dynamic plugin registration via IPC. Plugin views load at runtime from pre-bundled JavaScript. window.__orqa exposes shared modules. PluginViewContainer mounts plugin bundles on demand. Hash-based routing for explorer panel."
 status: completed

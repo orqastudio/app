@@ -1,5 +1,6 @@
 ---
 id: TASK-7fcdc743
+type: task
 title: Roadmap kanban view
 description: "Create a dynamic kanban board showing milestones as columns with epic cards, with drill-down capability."
 status: completed

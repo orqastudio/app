@@ -1,5 +1,6 @@
 ---
 id: "EPIC-c0ab7529"
+type: epic
 title: "Dogfood Readiness"
 description: "Multi-phase sprint to make OrqaStudio ready for self-hosted development (dogfooding). Covers governance alignment, frontend audit fixes, documentation alignment, enforcement engine, tool approval, lesson promotion, and SDK session resume."
 status: "completed"

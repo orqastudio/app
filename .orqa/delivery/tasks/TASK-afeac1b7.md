@@ -1,5 +1,6 @@
 ---
 id: TASK-afeac1b7
+type: task
 title: Reset Claude Code auto-memory to rebuild from governed sources
 status: captured
 created: 2026-03-19

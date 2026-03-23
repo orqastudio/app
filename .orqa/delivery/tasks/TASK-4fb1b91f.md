@@ -1,5 +1,6 @@
 ---
 id: TASK-4fb1b91f
+type: task
 title: Licensing and Legal Documentation
 description: "Establish legal foundation for the open source project including Apache 2.0 license, attribution notices, third-party dependency documentation, and contributing guidelines."
 status: completed

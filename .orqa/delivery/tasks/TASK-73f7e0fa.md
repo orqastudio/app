@@ -1,5 +1,6 @@
 ---
 id: "TASK-73f7e0fa"
+type: task
 title: "Implement PreToolUse hook (file + bash event enforcement)"
 description: "Plugin PreToolUse hook evaluates active rules against tool calls and blocks/warns on violations."
 status: "completed"

@@ -1,5 +1,6 @@
 ---
 id: TASK-daef57b3
+type: task
 title: "Create core installer agent (AGENT-bedeffd1)"
 status: completed
 created: 2026-03-19

@@ -1,5 +1,6 @@
 ---
 id: "IMPL-6ba34dea"
+type: lesson
 title: "Orchestrator writes governance artifacts directly instead of delegating to Writer"
 description: "The orchestrator is creating IMPL, IDEA, and TASK artifacts itself rather than delegating to a Writer agent. This violates RULE-532100d9 in spirit — while governance artifacts are in the orchestrator's exception list, the volume of artifact creation during this session is implementation work that could be parallelised. Delegating artifact writes to a Writer agent would free the orchestrator to continue the design discussion without blocking on file creation."
 status: "completed"

@@ -1,5 +1,6 @@
 ---
 id: TASK-11cf4c1d
+type: task
 title: Test plugin against OrqaStudio governance artifacts
 description: Integration testing of the plugin against the real .orqa/ directory in orqa-studio.
 status: surpassed

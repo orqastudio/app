@@ -1,5 +1,6 @@
 ---
 id: TASK-df2403fa
+type: task
 title: "Expose shared modules on window.__orqa"
 status: completed
 created: 2026-03-18

@@ -1,5 +1,6 @@
 ---
 id: EPIC-fba4debd
+type: epic
 title: "System tray for daemon lifecycle"
 description: "A system tray application for managing the OrqaStudio daemon. Shows daemon status, launches the app and debugger in dev mode. Lightweight — runs independently of the app."
 status: captured

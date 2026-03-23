@@ -1,5 +1,6 @@
 ---
 id: IDEA-2dfe18ae
+type: idea
 title: "Tools as plugins — runtime tool registration"
 status: captured
 horizon: someday

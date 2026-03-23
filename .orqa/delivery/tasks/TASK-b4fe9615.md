@@ -1,5 +1,6 @@
 ---
 id: "TASK-b4fe9615"
+type: task
 title: "Remove outer wrapping parentheses from artifact links"
 description: "Strip surrounding parentheses/brackets from artifact links across all .orqa/ markdown files — change ([EPIC-e045ab6d](EPIC-e045ab6d)) to [EPIC-e045ab6d](EPIC-e045ab6d). The markdown links themselves stay as-is."
 status: "ready"

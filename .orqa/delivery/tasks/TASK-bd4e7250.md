@@ -1,5 +1,6 @@
 ---
 id: TASK-bd4e7250
+type: task
 title: "LSP server — hex ID validation, skill doc constraint, and ID generation"
 status: captured
 created: 2026-03-19

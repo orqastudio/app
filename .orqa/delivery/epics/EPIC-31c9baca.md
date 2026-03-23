@@ -1,5 +1,6 @@
 ---
 id: EPIC-31c9baca
+type: epic
 title: Three-Layer Governance Classification
 description: "Classify all governance artifacts (agents, skills, rules, hooks) into three layers: canon (platform principles), project (project-specific), and plugin (extensible/ecosystem). Add scope categorisation to agents (software-engineering, governance, general). This is foundational architecture enabling multi-project support."
 status: completed

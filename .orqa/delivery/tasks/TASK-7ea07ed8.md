@@ -1,5 +1,6 @@
 ---
 id: TASK-7ea07ed8
+type: task
 title: Update product documentation for pillar artifacts
 description: Update product documentation for pillar artifacts
 status: completed

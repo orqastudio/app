@@ -1,5 +1,6 @@
 ---
 id: TASK-c70b9d8a
+type: task
 title: README alignment audit
 description: "Every artifact directory README should describe what the artifact type IS, its role in the pipeline, and be consistent in format. Must reflect new directory structure."
 status: completed

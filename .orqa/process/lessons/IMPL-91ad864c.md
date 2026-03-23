@@ -1,5 +1,6 @@
 ---
 id: "IMPL-91ad864c"
+type: lesson
 title: "Investigate systemically before fixing individual issues"
 description: "Collect all findings first, group by systemic theme, investigate the architecture, then design solutions at the system level. One fix addressing six findings is better than six independent fixes."
 status: "completed"

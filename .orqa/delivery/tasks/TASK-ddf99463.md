@@ -1,5 +1,6 @@
 ---
 id: TASK-ddf99463
+type: task
 title: Populate Guide section
 description: "Create a Guide section with user-facing documentation including SDK docs, moving articles from other categories where appropriate."
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: TASK-1368cb7f
+type: task
 title: Implement SQLite database and migrations
 description: "Set up SQLite database creation, schema initialization, and migration infrastructure for conversation persistence."
 status: completed

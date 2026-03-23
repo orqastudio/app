@@ -1,5 +1,6 @@
 ---
 id: TASK-682afea5
+type: task
 title: "Add ID prefix-based type inference fallback"
 status: completed
 created: 2026-03-18

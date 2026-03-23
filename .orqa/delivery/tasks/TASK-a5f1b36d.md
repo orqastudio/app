@@ -1,5 +1,6 @@
 ---
 id: TASK-a5f1b36d
+type: task
 title: Reclassify tech skills as Tier 2 in orchestrator
 description: "Move rust-async-patterns, svelte5-best-practices, tailwind-design-system, typescript-advanced-types, and tauri-v2 from the Tier 1 table to the Tier 2 injection table in the orchestrator's Skills section."
 status: completed

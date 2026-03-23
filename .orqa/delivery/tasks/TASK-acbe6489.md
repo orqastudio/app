@@ -1,5 +1,6 @@
 ---
 id: TASK-acbe6489
+type: task
 title: Define user personas
 description: "Created target user archetypes with goals, contexts, pain points, and usage patterns for OrqaStudio."
 status: completed

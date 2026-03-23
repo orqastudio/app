@@ -1,5 +1,6 @@
 ---
 id: EPIC-599fb1fd
+type: epic
 title: "LSP and MCP as daemon interfaces"
 description: "Refactor LSP and MCP servers to be thin protocol translators over the daemon. LSP translates LSP JSON-RPC to daemon calls. MCP translates MCP tool calls to daemon calls. Remove local reimplementations."
 status: captured

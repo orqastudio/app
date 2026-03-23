@@ -1,5 +1,6 @@
 ---
 id: "TASK-67dec092"
+type: task
 title: "Define priority dimensions and auto-classification rules"
 description: "Define project-level priority dimensions based on RES-dd35bbf0 gap patterns and encode auto-classification rules"
 status: "completed"

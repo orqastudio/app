@@ -1,5 +1,6 @@
 ---
 id: TASK-2df410be
+type: task
 title: Implement agent and skill loading from .orqa/process/
 description: "Plugin loads agent definitions and skills directly from .orqa/process/, replacing .claude/ symlinks."
 status: completed

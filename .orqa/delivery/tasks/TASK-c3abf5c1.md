@@ -1,5 +1,6 @@
 ---
 id: TASK-c3abf5c1
+type: task
 title: Initial publish of tier-0 packages to GitHub Packages
 description: "Create GitHub releases for types, eslint-config, and test-config to trigger the publish workflows. These have no orqa dependencies so they can be published first."
 status: completed

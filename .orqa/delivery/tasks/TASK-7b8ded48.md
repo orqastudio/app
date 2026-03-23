@@ -1,5 +1,6 @@
 ---
 id: "TASK-7b8ded48"
+type: task
 title: "Research: relationship and metadata display UX (RES-07667737)"
 description: "UX review investigating how artifacts should present their relationships, pipeline stage, and metadata to users in the app. Produces design recommendations for a future implementation epic."
 status: "completed"

@@ -1,5 +1,6 @@
 ---
 id: "IMPL-e53df28b"
+type: lesson
 title: "Orchestrator must manage the dev environment lifecycle automatically"
 description: "The orchestrator should automatically manage dev server restart instead of telling the user to do it manually.\\n"
 status: "active"

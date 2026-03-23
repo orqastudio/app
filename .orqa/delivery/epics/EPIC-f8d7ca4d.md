@@ -1,5 +1,6 @@
 ---
 id: EPIC-f8d7ca4d
+type: epic
 title: Additional MVP Polish
 description: "Nice-to-have polish items for MVP launch including search index UI, multi-window support, and sprint planning."
 status: captured

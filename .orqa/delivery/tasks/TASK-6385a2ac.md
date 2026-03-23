@@ -1,5 +1,6 @@
 ---
 id: TASK-6385a2ac
+type: task
 title: Unify process gates and enforcement engine evaluation
 description: "The Rust backend has two separate enforcement systems: process gates (workflow state tracking) and the enforcement engine (pattern matching). Unify them so enforcement entries can reference workflow state and process gates can evaluate enforcement entries."
 status: completed

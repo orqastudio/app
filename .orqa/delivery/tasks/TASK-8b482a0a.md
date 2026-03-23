@@ -1,5 +1,6 @@
 ---
 id: "TASK-8b482a0a"
+type: task
 title: "Extract remaining command domain logic"
 description: "Applies the thin-handler pattern established in TASK-320eb399 to the setup, governance, and artifact command files, moving all business logic into dedicated domain and repository modules."
 status: "completed"

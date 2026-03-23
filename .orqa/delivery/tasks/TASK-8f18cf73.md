@@ -1,5 +1,6 @@
 ---
 id: TASK-8f18cf73
+type: task
 title: "Clippy/custom check: function size limits"
 description: Add clippy or custom check to enforce function size limits in Rust code
 status: completed

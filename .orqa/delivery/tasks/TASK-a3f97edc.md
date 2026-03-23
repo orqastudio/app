@@ -1,5 +1,6 @@
 ---
 id: TASK-a3f97edc
+type: task
 title: Documentation reorg research and redundant badge removal
 description: "Complete RES-9c90ef3d research (doc chapter structure, migration plan, missing how-to content). Remove redundant category badge from doc list panel."
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: KNOW-90dd73ab
+type: knowledge
 name: Svelte Plugin Installation
 status: active
 plugin: "@orqastudio/plugin-svelte"

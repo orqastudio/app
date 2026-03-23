@@ -1,5 +1,6 @@
 ---
 id: IDEA-c496b2de
+type: idea
 title: "Provider-aware plugin system"
 status: captured
 horizon: someday

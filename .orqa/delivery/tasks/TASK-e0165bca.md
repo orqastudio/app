@@ -1,5 +1,6 @@
 ---
 id: TASK-e0165bca
+type: task
 title: Configurable relationship chip display per type in project settings
 description: Allow project settings to configure whether relationship chips show title or id as primary content per artifact type.
 status: completed

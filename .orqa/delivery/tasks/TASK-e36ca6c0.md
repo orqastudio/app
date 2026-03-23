@@ -1,5 +1,6 @@
 ---
 id: TASK-e36ca6c0
+type: task
 title: Mermaid and PlantUML rendering in markdown
 description: "Render mermaid and plantuml code blocks as diagrams in the markdown renderer, styled to match the app theme."
 status: completed

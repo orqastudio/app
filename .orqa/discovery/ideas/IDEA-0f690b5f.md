@@ -1,5 +1,6 @@
 ---
 id: IDEA-0f690b5f
+type: idea
 title: Frontend artifact graph in state — display flexibility via graph-synchronised store
 description: "The frontend should hold the full artifact graph in a Svelte store, synchronised with the backend graph. This gives maximum display flexibility — components can traverse edges, resolve relationships, and render artifacts by ID without per-view backend calls. IDs remain the connector in frontmatter, but the graph store provides the human-readable context (titles, descriptions, status) that IDs alone don't convey."
 status: captured

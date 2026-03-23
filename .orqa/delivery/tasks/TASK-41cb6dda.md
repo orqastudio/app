@@ -1,5 +1,6 @@
 ---
 id: TASK-41cb6dda
+type: task
 title: Implement recommendation review UI
 description: "Built the UI for reviewing, approving, and acting on governance recommendations."
 status: completed

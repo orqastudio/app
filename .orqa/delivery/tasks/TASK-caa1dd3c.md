@@ -1,5 +1,6 @@
 ---
 id: TASK-caa1dd3c
+type: task
 title: Fix post-restructure path references in docs
 description: Update all documentation files that reference pre-restructure paths.
 status: completed

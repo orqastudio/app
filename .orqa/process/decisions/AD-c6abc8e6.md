@@ -1,5 +1,6 @@
 ---
 id: AD-c6abc8e6
+type: decision
 title: "Organisation-mode multi-project architecture"
 status: exploring
 created: 2026-03-16

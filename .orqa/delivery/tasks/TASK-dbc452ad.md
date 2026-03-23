@@ -1,5 +1,6 @@
 ---
 id: TASK-dbc452ad
+type: task
 title: Plugin extends graph on artifact creation
 description: "Add PostToolUse logic that detects when new artifacts are created and prompts for proper graph relationships (docs, skills, epic, depends-on fields)."
 status: completed

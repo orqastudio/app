@@ -1,5 +1,6 @@
 ---
 id: TASK-6aba71e3
+type: task
 title: Add status validation to plugin graph-guardian
 description: "Extend graph-guardian.mjs with a PostToolUse hook that validates the status field whenever a .orqa/ artifact is written. If the status value is not in the valid enum for that artifact type, a warning is added to additionalContext listing the valid values."
 status: ready

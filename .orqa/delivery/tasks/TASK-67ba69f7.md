@@ -1,5 +1,6 @@
 ---
 id: TASK-67ba69f7
+type: task
 title: "Delete 6 domain-specific check files from CLI validator"
 status: completed
 created: 2026-03-18

@@ -1,5 +1,6 @@
 ---
 id: TASK-19a7f11e
+type: task
 title: Register pillars in artifact config
 description: Register pillars in artifact config
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: IDEA-af2d6611
+type: idea
 title: "Skills learning approach from Singularity — adaptive agent skill discovery"
 description: "Investigate the skills learning approach from Singularity (https://github.com/Shmayro/singularity-claude) for potential integration into the OrqaStudio app (Rust backend) and/or the Claude Code connector. Could enable agents to learn and adapt their skill usage over time."
 status: captured

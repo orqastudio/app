@@ -1,5 +1,6 @@
 ---
 id: TASK-a9aec9e8
+type: task
 title: Provider interface and Claude adapter
 description: "Defines a provider abstraction interface in the sidecar and refactors the Claude Agent SDK integration into a concrete adapter, enabling future providers to be added via a factory."
 status: completed

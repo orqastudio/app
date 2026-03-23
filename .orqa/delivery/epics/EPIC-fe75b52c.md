@@ -1,5 +1,6 @@
 ---
 id: "EPIC-fe75b52c"
+type: epic
 title: "AI-Mediated Artifact Editing"
 description: "Build an AI-mediated editing experience where creates, edits, and deletes are proposals sent to the AI conversation panel. The AI analyses cross-reference implications and suggests cascading updates to keep artifacts in sync."
 status: "captured"

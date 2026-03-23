@@ -1,5 +1,6 @@
 ---
 id: KNOW-8d1c4be6
+type: knowledge
 title: Plugin Artifact Usage
 description: |
   How plugin-provided artifact types and relationships work in the platform.

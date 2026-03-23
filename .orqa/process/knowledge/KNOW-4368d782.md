@@ -1,5 +1,6 @@
 ---
 id: KNOW-4368d782
+type: knowledge
 title: Artifact Audit Methodology
 description: |
   Schema-driven audit methodology for governance artifacts. Validates reference

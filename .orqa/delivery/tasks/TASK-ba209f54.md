@@ -1,5 +1,6 @@
 ---
 id: TASK-ba209f54
+type: task
 title: Create pillar artifact schema and initial pillars
 description: Create pillar artifact schema and initial pillars
 status: completed

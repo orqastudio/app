@@ -1,5 +1,6 @@
 ---
 id: TASK-8c45c6b4
+type: task
 title: Implement conversation UI with streaming
 description: "Built the conversation view with message bubbles, streaming token display, message input, and real-time response rendering."
 status: completed

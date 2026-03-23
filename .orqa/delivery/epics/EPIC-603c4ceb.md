@@ -1,5 +1,6 @@
 ---
 id: "EPIC-603c4ceb"
+type: epic
 title: "Project Type System"
 description: "Add a project type system so OrqaStudio adapts its agents, tools, and scanning to the domain (software, research, product, personal)."
 status: "captured"

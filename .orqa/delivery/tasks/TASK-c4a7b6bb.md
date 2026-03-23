@@ -1,5 +1,6 @@
 ---
 id: TASK-c4a7b6bb
+type: task
 title: Backfill missing bidirectional inverses
 description: "For every relationship A --type--> B, ensure B --inverse--> A exists. Add relationships arrays to artifact types that need them."
 status: completed

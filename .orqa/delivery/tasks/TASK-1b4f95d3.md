@@ -1,5 +1,6 @@
 ---
 id: TASK-1b4f95d3
+type: task
 title: "Download ONNX embedding model for dev environment"
 status: captured
 created: 2026-03-19

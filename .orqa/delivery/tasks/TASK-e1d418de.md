@@ -1,5 +1,6 @@
 ---
 id: TASK-e1d418de
+type: task
 title: Create or update commit discipline skill
 description: Create or update commit discipline skill
 status: completed

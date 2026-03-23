@@ -1,5 +1,6 @@
 ---
 id: AD-ff88ecea
+type: decision
 title: Provider-Agnostic AI Integration
 description: "The AI integration layer uses a Provider interface. Claude is the first provider via ClaudeAgentProvider, but the architecture supports pluggable providers (direct API, mock, future models) without changing the NDJSON protocol or Rust backend.\n"
 status: completed

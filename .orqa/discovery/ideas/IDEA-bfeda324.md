@@ -1,5 +1,6 @@
 ---
 id: IDEA-bfeda324
+type: idea
 title: Reasoning Transparency
 description: "Maintain clear reasoning trails with AI-generated summaries, confidence indicators, and chronological decision logs."
 status: completed

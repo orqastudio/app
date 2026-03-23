@@ -1,5 +1,6 @@
 ---
 id: TASK-b5f9240b
+type: task
 title: Agent mapping — 9 Claude Code subagent definitions + new skills
 status: surpassed
 created: 2026-03-19

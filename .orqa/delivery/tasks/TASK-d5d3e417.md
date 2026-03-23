@@ -1,5 +1,6 @@
 ---
 id: "TASK-d5d3e417"
+type: task
 title: "Add make verify targets"
 description: "Add make targets for full .orqa/ link verification and pipeline integrity checking."
 status: "completed"

@@ -1,5 +1,6 @@
 ---
 id: "IDEA-f3a08e7a"
+type: idea
 title: "Git Integration & Worktree-Aware Workspace"
 description: "Git awareness for OrqaStudio including branch status, worktree visibility, and version control operations surfaced through the app UI."
 status: "review"

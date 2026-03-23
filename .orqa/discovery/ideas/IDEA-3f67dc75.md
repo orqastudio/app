@@ -1,5 +1,6 @@
 ---
 id: IDEA-3f67dc75
+type: idea
 title: "Release lifecycle — milestones as releases, update management, breaking change protocol, plugin compatibility"
 description: "A controlled release workflow where milestones drive releases, the app manages updates with breaking change awareness, and plugins have a backwards compatibility lifecycle with deprecation and migration paths."
 status: captured

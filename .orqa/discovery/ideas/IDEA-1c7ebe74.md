@@ -1,5 +1,6 @@
 ---
 id: IDEA-1c7ebe74
+type: idea
 title: Make sidecars transportable as plugins
 description: "Currently sidecars (AI provider integrations like the Claude Code CLI bridge) are native app code, while plugins are the extension mechanism. If sidecars were themselves transportable as plugins, the provider definition and its integration plugin would be a single artefact — eliminating the need for separate provider config in the app and requirement declarations in the plugin."
 status: captured

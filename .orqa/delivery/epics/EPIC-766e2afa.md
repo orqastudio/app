@@ -1,5 +1,6 @@
 ---
 id: "EPIC-766e2afa"
+type: epic
 title: "Artifact System Migration"
 description: "Make the artifact system self-sustaining: correct default creation, historical content linkage, and framework coverage for all 8 types."
 status: "completed"

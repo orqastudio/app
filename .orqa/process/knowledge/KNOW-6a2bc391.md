@@ -1,5 +1,6 @@
 ---
 id: KNOW-6a2bc391
+type: knowledge
 title: "Svelte 4 to Svelte 5 Migration Reference"
 status: active
 created: 2026-03-20

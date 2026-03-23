@@ -1,5 +1,6 @@
 ---
 id: TASK-99bbc0a3
+type: task
 title: "Implement config generator — rules to tool config files"
 status: captured
 created: 2026-03-19

@@ -1,5 +1,6 @@
 ---
 id: "TASK-a958f2d2"
+type: task
 title: "Create systems-thinking companion skill for RULE-d90112d9"
 description: "Create a systems-thinking skill that provides practical methodology for applying RULE-d90112d9's systems-thinking principle to real codebases."
 status: "completed"

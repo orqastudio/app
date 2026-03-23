@@ -1,5 +1,6 @@
 ---
 id: TASK-da2965a2
+type: task
 title: Backfill decisions with relationships
 description: "Use backfill tooling to add practices and enforces relationships to all 42 decisions, connecting to skills and rules already backfilled."
 status: completed

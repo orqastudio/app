@@ -1,5 +1,6 @@
 ---
 id: EPIC-6967c7dc
+type: epic
 title: Claude Code connector rewrite — dual-manifest plugin with LSP, MCP, agents, and hooks
 description: Rewrites the Claude Code connector as a properly packaged dual-manifest plugin (orqa-plugin.json + .claude-plugin/plugin.json). Fixes path bugs and outdated intent mappings, maps all 9 OrqaStudio agents to Claude Code subagent definitions, adds new skills (artifact-creation, delegation-patterns, governance-context), improves hooks (validate-artifact, save-context, subagent-review), adds MCP server for artifact graph API, adds LSP server for real-time frontmatter validation, and adds new slash commands (/orqa-validate, /orqa-create).
 status: active

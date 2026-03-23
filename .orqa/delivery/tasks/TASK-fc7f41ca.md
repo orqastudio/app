@@ -1,5 +1,6 @@
 ---
 id: TASK-fc7f41ca
+type: task
 title: "Hook checks: status transitions, config-disk consistency, pillar alignment, historical preservation, E2E completeness"
 description: "Add pre-commit hook checks for status transition validation, config-disk consistency, pillar alignment sections, historical preservation, and end-to-end completeness"
 status: completed

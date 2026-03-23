@@ -1,5 +1,6 @@
 ---
 id: TASK-595ffcaf
+type: task
 title: Replace GraphHealthWidget scoring with graph-theoretic metrics
 description: "Migrate GraphHealthWidget from file-based scan counts to graph-theoretic metrics sourced from the artifactGraphSDK's graphHealth property. Health score becomes largestComponentRatio; orphan count uses structural 0-degree detection; component count is displayed as disconnected clusters."
 status: blocked

@@ -1,5 +1,6 @@
 ---
 id: TASK-4017a3de
+type: task
 title: Extend pipeline integrity tool with enforcement chain checks
 description: "Add checks for AD enforcement gaps, promoted lesson targets, and rule-AD reference consistency to verify-pipeline-integrity.mjs"
 status: completed

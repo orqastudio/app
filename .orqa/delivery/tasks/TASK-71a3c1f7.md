@@ -1,5 +1,6 @@
 ---
 id: TASK-71a3c1f7
+type: task
 title: "Metadata panel icons, remove duplicate relationship fields, spacing (F43, F44, F45, F46)"
 description: "Four metadata panel fixes: add icons to all metadata fields; exclude relationship-specific fields from the metadata panel (they belong only in the relationships section); reduce the gap between metadata and acceptance criteria; add a gap between acceptance criteria and body content."
 status: completed

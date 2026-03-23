@@ -1,5 +1,6 @@
 ---
 id: MS-654badde
+type: milestone
 title: Dogfooding
 description: OrqaStudio is usable as a daily workspace for building OrqaStudio itself. The app runs in dogfood mode, editing its own source code. This milestone covers the gap between "pieces exist" and "it actually works end-to-end.
 status: active
@@ -211,6 +212,9 @@ relationships:
   - target: EPIC-b2d9f506
     type: fulfilled-by
     rationale: Milestone contains this epic
+  - target: EPIC-941369fc
+    type: fulfilled-by
+    rationale: "Auto-generated inverse of fulfilled-by relationship from EPIC-941369fc"
 ---
 ## Context
 

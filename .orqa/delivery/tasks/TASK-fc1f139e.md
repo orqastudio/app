@@ -1,5 +1,6 @@
 ---
 id: TASK-fc1f139e
+type: task
 title: Decision persistence tooling
 description: "Build tooling that captures pending decisions, unanswered questions, and open threads at session boundaries"
 status: completed

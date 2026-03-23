@@ -1,5 +1,6 @@
 ---
 id: TASK-2eeb847c
+type: task
 title: Add synchronised-with constraint to core.json for skills
 status: captured
 created: 2026-03-19

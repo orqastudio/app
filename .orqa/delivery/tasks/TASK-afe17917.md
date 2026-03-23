@@ -1,5 +1,6 @@
 ---
 id: "TASK-afe17917"
+type: task
 title: "Add dependency chain tracing to artifact viewer"
 description: "Extend the artifact viewer with a Trace section that shows upward (task→epic→milestone→pillar) and downward (what this artifact affects) dependency chains. Uses BFS over relationship edges from the artifactGraphSDK. Each artifact in the chain is a clickable ArtifactLink."
 status: "blocked"

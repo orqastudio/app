@@ -1,5 +1,6 @@
 ---
 id: TASK-2ffc45f7
+type: task
 title: Extend ArtifactRef with relationship_type and process relationships array
 description: "Add relationship_type field to ArtifactRef in Rust and TypeScript. Update collect_forward_refs to process the relationships array from frontmatter, creating typed edges with relationship_type populated from each relationship's type field."
 status: completed

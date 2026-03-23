@@ -1,5 +1,6 @@
 ---
 id: "EPIC-897bbe8f"
+type: epic
 title: "Composability Refactoring"
 description: "Major refactoring sprint establishing the domain service extraction pattern. Decomposed monolithic command files, decoupled stores, extracted utilities, added semantic design tokens, and established the thin-command → domain service → repository pattern."
 status: "completed"

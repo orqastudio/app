@@ -1,5 +1,6 @@
 ---
 id: TASK-571fed4d
+type: task
 title: Tool call display polish
 description: "Replaces raw tool call JSON with user-friendly presentation: human-readable names, Lucide icons, parameter summaries, and grouping of consecutive same-tool calls."
 status: completed

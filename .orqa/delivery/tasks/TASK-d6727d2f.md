@@ -1,5 +1,6 @@
 ---
 id: "TASK-d6727d2f"
+type: task
 title: "Reconcile EPIC-4440cdd4"
 description: "Standing reconciliation task — verify epic body accuracy: task table, pillars, docs-produced, scope."
 status: "completed"

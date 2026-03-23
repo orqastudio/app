@@ -1,6 +1,7 @@
 ---
 
 id: IMPL-687d20fb
+type: lesson
 title: Domain-Neutral Naming Avoids Renames
 description: "Provider-specific names like sdk_session_id spread across the entire stack. When the architecture evolves to support multiple providers, the rename touches every layer including database migrations.\n"
 status: active

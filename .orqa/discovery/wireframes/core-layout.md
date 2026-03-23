@@ -1,5 +1,6 @@
 ---
 id: "DOC-91c7dc26"
+type: doc
 status: "captured"
 title: "Wireframe: Core Layout"
 description: "Wireframe specification for the core application layout with sidebar, panels, and toolbar."

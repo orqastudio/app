@@ -1,5 +1,6 @@
 ---
 id: EPIC-4cedf7bc
+type: epic
 title: "Artifact ID migration + mandatory skill documentation"
 description: "Implements AD-05756de7 (type-prefixed 8-char hex IDs) and AD-6f6ff517 (skills require human-facing docs). Migrates all existing artifact IDs, adds ID generation tooling, enforces synchronised-with constraint on skills, creates missing documentation artifacts, and adds agent skills for working with the new ID format."
 status: captured

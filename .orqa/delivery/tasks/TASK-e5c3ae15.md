@@ -1,5 +1,6 @@
 ---
 id: TASK-e5c3ae15
+type: task
 title: Move backend to backend/src-tauri/
 description: "Relocate src-tauri/ to backend/src-tauri/ and update Makefile, tauri.conf.json, and .gitignore."
 status: completed

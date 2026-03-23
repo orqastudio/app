@@ -1,5 +1,6 @@
 ---
 id: TASK-2ac2d88f
+type: task
 title: Update rules for universal roles
 description: "Update agent-delegation.md and all other rules that reference old software-specific agent names to use the new universal role names (Implementer, Reviewer, etc.) and skill-based delegation."
 status: completed

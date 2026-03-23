@@ -1,5 +1,6 @@
 ---
 id: TASK-3fceb34c
+type: task
 title: Evaluate friction vs UX-first design tension
 description: "Research how purposeful friction (mandatory relationships, schema enforcement) interacts with UX-first design. Identify where friction serves clarity and where it conflicts with the principle of reducing cognitive burden."
 status: blocked

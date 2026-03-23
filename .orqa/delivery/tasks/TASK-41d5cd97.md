@@ -1,5 +1,6 @@
 ---
 id: TASK-41d5cd97
+type: task
 title: "Behavioral enforcement plan: skill injection rules"
 description: Define enforcement mechanisms for behavioral rules enforced via domain knowledge skill injection
 status: completed

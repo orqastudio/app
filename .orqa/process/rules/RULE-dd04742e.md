@@ -1,5 +1,6 @@
 ---
 id: RULE-dd04742e
+type: rule
 title: System Command Safety
 description: "Block or warn on dangerous system commands: rm -rf on critical paths, sudo, eval with variable input, fork bombs, destructive SQL."
 status: active

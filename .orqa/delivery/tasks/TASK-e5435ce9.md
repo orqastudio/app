@@ -1,5 +1,6 @@
 ---
 id: TASK-e5435ce9
+type: task
 title: Define tool system and permission model
 description: "Defined file tools, search tools, and governance tools with their permission model and execution patterns."
 status: completed

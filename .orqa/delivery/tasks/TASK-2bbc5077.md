@@ -1,5 +1,6 @@
 ---
 id: "TASK-2bbc5077"
+type: task
 title: "Consolidate code-pattern rules to reference linters"
 description: "Simplify rules that currently regex-match code patterns (unwrap, TODO, etc.)
 

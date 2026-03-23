@@ -1,5 +1,6 @@
 ---
 id: KNOW-250d5d6f
+type: knowledge
 name: Naming Conventions
 status: active
 relationships:

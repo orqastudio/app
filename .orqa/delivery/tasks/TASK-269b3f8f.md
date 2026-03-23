@@ -1,5 +1,6 @@
 ---
 id: TASK-269b3f8f
+type: task
 title: "Add grounding injection to plugin — resolve grounded-by on agents, inject content"
 description: Extend the Claude Code plugin to resolve grounded-by relationships on agent definitions and inject the target document content as system-level context at session initialization.
 status: completed

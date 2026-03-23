@@ -1,5 +1,6 @@
 ---
 id: TASK-f8f9b6e7
+type: task
 title: Build headless Cytoscape analysis in artifact graph SDK
 description: "Extend the artifactGraphSDK with a headless Cytoscape instance for graph-theoretic analysis. Exposes graph health metrics (component count, orphans, average degree, largest component ratio) as reactive properties recomputed whenever graph data changes."
 status: ready

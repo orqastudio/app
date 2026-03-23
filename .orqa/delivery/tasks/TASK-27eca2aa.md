@@ -1,5 +1,6 @@
 ---
 id: TASK-27eca2aa
+type: task
 title: Roadmap columns fill space and basic layout fixes
 description: Roadmap kanban columns expand to fill available horizontal space.
 status: completed

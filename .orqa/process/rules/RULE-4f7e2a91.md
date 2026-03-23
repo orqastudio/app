@@ -1,5 +1,6 @@
 ---
 id: RULE-4f7e2a91
+type: rule
 title: Real-time Session State Management
 description: tmp/session-state.md must be updated in real time during conversations — not just at session end. Every new decision, plan change, scope change, or step completion must be reflected immediately.
 status: active

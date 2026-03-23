@@ -1,5 +1,6 @@
 ---
 id: TASK-429b41ad
+type: task
 title: Orchestrator delegation with skill injection
 description: "Updates the orchestrator's delegation protocol to automatically include the relevant Tier 2 project skills in every delegation prompt, matched from the task's scope against the injection table."
 status: completed

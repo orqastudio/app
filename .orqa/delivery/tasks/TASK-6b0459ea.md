@@ -1,5 +1,6 @@
 ---
 id: "TASK-6b0459ea"
+type: task
 title: "Automated gap audit tool (repeatable RES-dd35bbf0)"
 description: "Build a repeatable version of the RES-dd35bbf0 audit as tooling that scans rules, ADs, lessons, and pipeline stages for enforcement gaps"
 status: "completed"

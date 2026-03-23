@@ -1,5 +1,6 @@
 ---
 id: TASK-21b461ea
+type: task
 title: "Frontend: Spotlight-style AI search overlay"
 description: Build a floating search overlay (Ctrl+Space) that sends queries to the AI provider with artifact graph context and renders structured results.
 status: active

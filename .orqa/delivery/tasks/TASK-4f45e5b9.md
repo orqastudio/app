@@ -1,5 +1,6 @@
 ---
 id: TASK-4f45e5b9
+type: task
 title: Add lint event type to enforcement schema
 description: |
   Add a 'lint' event type to the enforcement schema. This documents that

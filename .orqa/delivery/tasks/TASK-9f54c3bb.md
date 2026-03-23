@@ -1,5 +1,6 @@
 ---
 id: TASK-9f54c3bb
+type: task
 title: Local embeddings and semantic search
 description: "Adds on-device embedding generation using an ONNX model with GPU acceleration, enabling semantic similarity search that ranks results by cosine distance."
 status: completed

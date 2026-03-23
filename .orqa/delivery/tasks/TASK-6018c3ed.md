@@ -1,5 +1,6 @@
 ---
 id: TASK-6018c3ed
+type: task
 title: Fix lesson status vocabulary and viewer layout
 description: Fix lessons showing Active instead of Captured. Move actions below status pipeline. Fix status pipeline connector line centering on circle.
 status: completed

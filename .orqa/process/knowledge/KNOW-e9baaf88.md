@@ -1,5 +1,6 @@
 ---
 id: KNOW-e9baaf88
+type: knowledge
 title: "Svelte 5 TypeScript Reference"
 status: active
 created: 2026-03-20

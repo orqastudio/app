@@ -1,5 +1,6 @@
 ---
 id: EPIC-58ba6d53
+type: epic
 title: "Artifact viewer redesign — layout, relationships, and graph enrichment"
 description: "Redesign the artifact viewer information hierarchy, relationships panel, and pipeline stepper. Enrich graph nodes with metadata for display. The largest systemic theme from UAT round 2."
 status: completed

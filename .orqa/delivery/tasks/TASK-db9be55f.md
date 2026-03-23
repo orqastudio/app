@@ -1,5 +1,6 @@
 ---
 id: TASK-db9be55f
+type: task
 title: Audit artifact group README files for accuracy
 description: "Verify that all README.md files in .orqa/ artifact directories have accurate descriptions, icons, labels, and sort metadata reflecting the current state of each group."
 status: ready

@@ -1,5 +1,6 @@
 ---
 id: "TASK-c75be77c"
+type: task
 title: "Resolve AD-2aa4d6db SQLite scoping violation"
 description: "Governance scan results should produce research artifacts (.orqa/ files), not SQLite rows. Migrate governance tables out of SQLite."
 status: "completed"

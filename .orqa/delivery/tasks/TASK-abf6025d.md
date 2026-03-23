@@ -1,5 +1,6 @@
 ---
 id: TASK-abf6025d
+type: task
 title: Add artifacts config to project.json and Rust types
 description: Define the artifacts config schema in project.json and add corresponding Rust types. This is the foundation — the scanner and frontend will read from this config.
 status: completed

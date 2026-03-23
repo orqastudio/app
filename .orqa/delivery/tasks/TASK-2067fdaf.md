@@ -1,5 +1,6 @@
 ---
 id: "TASK-2067fdaf"
+type: task
 title: "Update delegation rules for capability resolution"
 description: "Update RULE-532100d9 and RULE-deab6ea7 to reference capability-based delegation and skill loading."
 status: "completed"

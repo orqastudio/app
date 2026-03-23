@@ -1,5 +1,6 @@
 ---
 id: IDEA-64f9ef1c
+type: idea
 title: Test coverage enforcement plugin
 description: "A plugin that enforces test coverage thresholds at configurable granularity — per milestone gate, per epic completion, or per task acceptance. Integrates with cargo tarpaulin (Rust) and Vitest coverage (frontend) to gate artifact status transitions on coverage targets."
 status: captured

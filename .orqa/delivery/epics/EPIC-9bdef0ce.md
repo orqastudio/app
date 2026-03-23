@@ -1,5 +1,6 @@
 ---
 id: "EPIC-9bdef0ce"
+type: epic
 title: "Native Search Engine"
 description: "Implement native code search engine using DuckDB for storage, ONNX Runtime for embeddings, and DirectML for hardware acceleration. Three search modes: regex, semantic, and code_research."
 status: "completed"

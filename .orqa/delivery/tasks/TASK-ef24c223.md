@@ -1,5 +1,6 @@
 ---
 id: TASK-ef24c223
+type: task
 title: Lesson promotion pipeline
 description: "Implements the self-learning loop that creates lesson entries, tracks recurrence counts, and promotes repeated patterns into rules or skills at a configurable threshold."
 status: completed

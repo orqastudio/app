@@ -1,5 +1,6 @@
 ---
 id: EPIC-1653af9d
+type: epic
 title: "CLI as consumer — bridge to Rust engine"
 description: "Refactor CLI from containing enforcement logic to being a thin bridge from command-line/Node to the Rust engine. Remove TS validator fallback. All orqa commands delegate to the daemon/binary. Dev environment commands (build, watch, kill, dev) managed by CLI."
 status: captured
@@ -8,6 +9,9 @@ relationships:
   - target: EPIC-81c336c1
     type: depends-on
     rationale: "Needs the Rust engine to handle all validation/enforcement"
+  - target: EPIC-b434f0ac
+    type: depended-on-by
+    rationale: "Auto-generated inverse of depended-on-by relationship from EPIC-b434f0ac"
 ---
 # CLI as Consumer
 

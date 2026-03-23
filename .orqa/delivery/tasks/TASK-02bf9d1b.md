@@ -1,5 +1,6 @@
 ---
 id: TASK-02bf9d1b
+type: task
 title: Implement tool call rendering
 description: "Built tool call card components with collapsible display showing tool name, input parameters, and output results."
 status: completed

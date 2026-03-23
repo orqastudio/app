@@ -1,5 +1,6 @@
 ---
 id: "RULE-5c9a1b74"
+type: rule
 title: "Self-Hosted Development"
 description: "Methodology for developing software while running it. You are editing the app you are running inside — this creates unique constraints around restarts, protocol changes, and state preservation."
 status: "active"

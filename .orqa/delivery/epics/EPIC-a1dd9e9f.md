@@ -1,5 +1,6 @@
 ---
 id: "EPIC-a1dd9e9f"
+type: epic
 title: "Three-Tier Skill Loading"
 description: "Implement AD-53e80192: restructure skill loading into three tiers — portable agent skills (Tier 1), orchestrator-injected project skills (Tier 2), and wrapper skills that resolve context-dependent implementations (Tier 3)."
 status: "completed"

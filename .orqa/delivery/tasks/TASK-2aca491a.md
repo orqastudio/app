@@ -1,5 +1,6 @@
 ---
 id: TASK-2aca491a
+type: task
 title: "Extract stores into SDK — session, project, artifact, conversation"
 description: "Move the four primary data stores into @orqastudio/sdk. Fix conversationStore's DEFAULT_MODEL dependency by making it a config parameter."
 status: completed

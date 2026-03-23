@@ -1,5 +1,6 @@
 ---
 id: TASK-7b2f5ee7
+type: task
 title: Remove deprecated fields from schemas and artifacts
 description: "Remove promoted-to from lessons, promoted-from from rules, research-refs from decisions. Data already migrated to relationships."
 status: completed

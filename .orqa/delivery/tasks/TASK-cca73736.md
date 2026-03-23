@@ -1,5 +1,6 @@
 ---
 id: "TASK-cca73736"
+type: task
 title: "Audit shared component inventory and update RULE-cb65b5d0"
 description: "Audit all Svelte components under ui/src/lib/components/ and update RULE-cb65b5d0 to reflect the accurate shared component inventory."
 status: "completed"

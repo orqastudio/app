@@ -1,5 +1,6 @@
 ---
 id: TASK-0ea0bf38
+type: task
 title: Product rebrand to Orqa Studio
 description: "Full product rebrand from Forge to Orqa Studio across all code, configuration, documentation, agent definitions, and brand assets."
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: "PERSONA-a4b15450"
+type: persona
 title: "Jordan — The Independent"
 description: "Solo builder who relies heavily on AI for execution. Needs a tool that maximises AI assistance while maintaining quality without a team."
 status: "active"

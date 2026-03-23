@@ -1,5 +1,6 @@
 ---
 id: IDEA-c45ca5df
+type: idea
 title: "Plugin installation ecosystem — dependency management, setup automation"
 description: "Define what plugins need to ensure they install/download all dependencies and set themselves up correctly on install. Includes npm/cargo deps, binary downloads (LSP servers, ONNX models), config file generation, and post-install verification."
 status: captured

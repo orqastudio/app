@@ -1,5 +1,6 @@
 ---
 id: TASK-e6d10f6f
+type: task
 title: "Backend: Extend DocNode with frontmatter and NavType with schema metadata"
 description: "Extend the Rust DocNode to carry all scalar frontmatter fields, extract filterable/sortable fields from schema.json, and read _navigation.json per type directory."
 status: completed

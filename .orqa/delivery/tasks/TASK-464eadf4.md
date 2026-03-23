@@ -1,5 +1,6 @@
 ---
 id: TASK-464eadf4
+type: task
 title: Documentation relationship audit — documents/documented-by edges
 description: Audit all documentation pages and populate documents/documented-by relationship edges across all docs.
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: EPIC-8d2e4f6a
+type: epic
 title: "Connector architecture v2: service extraction, semantic knowledge injection, graph-first enforcement"
 description: Extract MCP/LSP/ONNX into standalone libraries that run independently in dev mode. Replace keyword-based INTENT_MAP with semantic search for knowledge injection. Enforce artifact graph usage. Enable plugin specialist agents. Add hook telemetry and bash safety.
 status: review

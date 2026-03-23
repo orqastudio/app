@@ -1,5 +1,6 @@
 ---
 id: EPIC-cfd1ac79
+type: epic
 title: Project Scaffold
 description: "The first working version: a Tauri v2 desktop app with Claude conversations via Agent SDK sidecar, streaming, SQLite, and conversation UI."
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: "TASK-de80141b"
+type: task
 title: "SQLite persistence design"
 description: "Evaluated SQLite via rusqlite for structured local storage of conversation data, sessions, and messages."
 status: "completed"

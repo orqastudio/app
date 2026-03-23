@@ -1,5 +1,6 @@
 ---
 id: TASK-ff56038f
+type: task
 title: "Create @orqastudio/eslint-config package"
 description: "Extract shared ESLint and TypeScript config from orqa-studio into a standalone @orqastudio/eslint-config package. All orqastudio repos and plugins use this for consistent code standards."
 status: completed

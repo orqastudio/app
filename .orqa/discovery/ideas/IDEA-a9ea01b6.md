@@ -1,5 +1,6 @@
 ---
 id: IDEA-a9ea01b6
+type: idea
 title: "Entry Modes & Directed Onboarding"
 description: "AI-assisted onboarding flows beyond chat guidance, with each mode supporting new projects and existing work adaptation."
 status: completed

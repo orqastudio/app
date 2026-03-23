@@ -1,5 +1,6 @@
 ---
 id: TASK-530bb45d
+type: task
 title: Pipeline stage transition health checks
 description: "Build pipeline health checks that detect stuck observations, accepted ADs without skills, skills without rules, and rules without verification"
 status: completed

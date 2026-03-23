@@ -1,5 +1,6 @@
 ---
 id: "IDEA-b153fabd"
+type: idea
 title: "Agent task ownership review"
 description: "Audit agent definitions for process vs execution knowledge placement, define clear task ownership boundaries between orchestrator and specialist agents."
 status: "surpassed"

@@ -1,5 +1,6 @@
 ---
 id: TASK-6fa0243a
+type: task
 title: Verify orchestrator prompt works at ~200 lines (dogfood session)
 description: Run a full dogfood session with the simplified graph-based orchestrator prompt and verify agents can navigate the graph to find the context they need.
 status: completed

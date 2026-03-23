@@ -1,5 +1,6 @@
 ---
 id: AD-1ad08e5f
+type: decision
 title: Error Propagation via Result Types
 description: "All Rust functions return Result<T, E> with thiserror for error types. No unwrap(), expect(), or panic!() in production code."
 status: completed

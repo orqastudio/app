@@ -1,5 +1,6 @@
 ---
 id: TASK-48be3b08
+type: task
 title: Audit and reorder documentation for reading flow
 description: "Reorder documentation within each category for structured reading — fundamentals first, specifics later."
 status: completed

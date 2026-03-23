@@ -1,5 +1,6 @@
 ---
 id: "EPIC-4d1f11ab"
+type: epic
 title: "Enforcement & Continuity"
 description: "Add real-time violation detection during streaming, hook-based rule injection, compliance dashboard, and session handoff continuity."
 status: "completed"

@@ -1,5 +1,6 @@
 ---
 id: EPIC-06c40d5d
+type: epic
 title: "Idea & Feedback Capture"
 description: "Build idea quick-capture from conversation and anywhere, idea inbox, promotion workflows, and duplicate detection."
 status: captured

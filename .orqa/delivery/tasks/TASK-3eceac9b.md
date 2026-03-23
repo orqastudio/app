@@ -1,5 +1,6 @@
 ---
 id: TASK-3eceac9b
+type: task
 title: Acceptance criteria audit and backfill
 description: Audit all tasks for acceptance criteria completeness and backfill missing criteria based on actual implementation review.
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: IDEA-125f4ec8
+type: idea
 title: Domain Expansion
 description: "Extend OrqaStudio beyond software development to other domains — research, product management, operations, personal productivity, consulting, and education."
 status: captured

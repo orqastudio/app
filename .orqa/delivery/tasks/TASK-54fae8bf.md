@@ -1,5 +1,6 @@
 ---
 id: "TASK-54fae8bf"
+type: task
 title: "Set up Rust coverage tooling"
 description: "Configure cargo-tarpaulin or llvm-cov for Rust coverage measurement."
 status: "completed"

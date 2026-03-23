@@ -1,5 +1,6 @@
 ---
 id: RULE-b49142be
+type: rule
 title: Coding Standards
 description: OrqaStudio-specific extension of RULE-d4b8e3f2 (lint-enforcement-discipline). Defines Rust (rustfmt, clippy, thiserror) and TypeScript/Svelte 5 (strict TS, runes, shadcn-svelte) coding standards with coverage requirements.
 status: active

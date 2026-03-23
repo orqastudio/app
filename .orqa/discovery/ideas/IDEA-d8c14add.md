@@ -1,5 +1,6 @@
 ---
 id: IDEA-d8c14add
+type: idea
 title: "Code-governance traceability"
 status: captured
 horizon: someday

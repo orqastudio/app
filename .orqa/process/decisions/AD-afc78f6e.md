@@ -1,5 +1,6 @@
 ---
 id: AD-afc78f6e
+type: decision
 title: Frontend Library Selections
 description: "Frontend libraries: shadcn-svelte, CodeMirror 6, PaneForge, LayerChart, lucide-svelte, custom conversation UI."
 status: completed

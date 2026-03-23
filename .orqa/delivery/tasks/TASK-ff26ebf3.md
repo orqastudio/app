@@ -1,5 +1,6 @@
 ---
 id: TASK-ff26ebf3
+type: task
 title: Backfill skills field on existing tasks from injection table
 description: "Populate the skills field on existing todo tasks using the orchestrator's current Tier 2 injection table, transferring injection logic from the prompt to the graph."
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: TASK-0751c0ff
+type: task
 title: "Plugin packaging — dual-manifest, new commands, end-to-end testing"
 status: active
 created: 2026-03-19

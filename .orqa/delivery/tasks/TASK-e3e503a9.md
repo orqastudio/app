@@ -1,5 +1,6 @@
 ---
 id: TASK-e3e503a9
+type: task
 title: Update rust-modules.md module tree
 description: Bring the Rust module tree documentation in line with current codebase structure.
 status: completed

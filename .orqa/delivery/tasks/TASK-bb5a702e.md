@@ -1,5 +1,6 @@
 ---
 id: TASK-bb5a702e
+type: task
 title: Architecture Docs Vision Audit
 description: "Audit architecture, process, and development docs for alignment with the updated vision. These define how the app is built and how work happens — they must reflect .orqa/ as source of truth and provider-agnostic framing."
 status: completed

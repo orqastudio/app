@@ -1,5 +1,6 @@
 ---
 id: TASK-0fca4194
+type: task
 title: Update documentation paths for directory reorganisation
 description: Find-replace all path references in .orqa/ documentation to reflect the new directory structure.
 status: completed

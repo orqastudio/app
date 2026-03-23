@@ -1,5 +1,6 @@
 ---
 id: TASK-b2562f5a
+type: task
 title: Fix all README inaccuracies
 description: "Planning mentions plans, Documentation wrong links, Skills says chunkhound, Tasks diverges from schema."
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: IDEA-bbbad601
+type: idea
 title: "Research Tarus VS Code extension for Tauri diagnostics"
 description: "Research how the Tarus VS Code extension (https://github.com/mvoof/tarus.git) provides diagnostics for Tauri apps. Evaluate whether similar diagnostics should be built into @orqastudio/plugin-tauri."
 status: captured

@@ -1,5 +1,6 @@
 ---
 id: "TASK-a0d3f53c"
+type: task
 title: "Create AD for standards distribution pattern (AD-8b3962f6)"
 description: "Formalize how operational standards flow through the pipeline: Observation → Understanding → Principle → Practice → Enforcement → Verification."
 status: "completed"

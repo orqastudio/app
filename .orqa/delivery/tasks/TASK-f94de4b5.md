@@ -1,5 +1,6 @@
 ---
 id: TASK-f94de4b5
+type: task
 title: Design IPC command catalogue
 description: "Catalogued every Tauri command with its input types, output types, error cases, and domain assignment."
 status: completed

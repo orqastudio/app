@@ -1,5 +1,6 @@
 ---
 id: "TASK-e6418f4a"
+type: task
 title: "Add Decision type to artifact framework"
 description: "Added Decision (AD-NNN) type schema to artifact-framework.md, decision creation section to artifact-workflow.md, decision enforcement to RULE-7b770593, and decision directory to orchestrator resources."
 status: "completed"

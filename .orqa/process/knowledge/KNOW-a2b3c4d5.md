@@ -1,5 +1,6 @@
 ---
 id: KNOW-a2b3c4d5
+type: knowledge
 title: Search
 description: |
   Search methodology for structured project search. Three modes: regex for exact

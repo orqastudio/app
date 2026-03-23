@@ -1,5 +1,6 @@
 ---
 id: AD-fcd55d44
+type: decision
 title: Streaming Pipeline
 description: "Streaming pipeline: Agent SDK (SSE) -> sidecar (NDJSON) -> Rust (Channel<T>) -> Svelte store. Clarifies AD-a334623b."
 status: completed

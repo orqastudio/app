@@ -1,5 +1,6 @@
 ---
 id: TASK-bc24af0b
+type: task
 title: Define delivery type schema in project.json and Rust/TS types
 description: "Introduce a delivery.types array in project.json that describes the hierarchy of delivery artifact types (milestone, epic, task), including their key, label, path, and parent config. Add corresponding Rust and TypeScript types so the rest of the system can read the hierarchy from config rather than hardcoding it."
 status: completed

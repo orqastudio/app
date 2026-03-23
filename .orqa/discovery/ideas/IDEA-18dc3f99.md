@@ -1,5 +1,6 @@
 ---
 id: IDEA-18dc3f99
+type: idea
 title: "App plugin loader — aggregate LSP/MCP servers into agent context"
 description: "The app's Rust plugin loader should aggregate LSP and MCP server declarations from all installed plugins and load them into the agent context at runtime. Enables the in-app agent framework to use plugin-provided language servers and tool servers."
 status: captured

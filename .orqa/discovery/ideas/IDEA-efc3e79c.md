@@ -1,5 +1,6 @@
 ---
 id: IDEA-efc3e79c
+type: idea
 title: Ecosystem Potential
 description: "Long-term platform potential including ethical AI capabilities, open reasoning framework, and community innovation infrastructure."
 status: captured

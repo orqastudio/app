@@ -1,5 +1,6 @@
 ---
 id: KNOW-e0dec720
+type: knowledge
 title: Project Setup
 description: |
   Universal project scaffolding: creates the governance directory structure,

@@ -1,5 +1,6 @@
 ---
 id: TASK-c6361fd8
+type: task
 title: "Create CONTRIBUTING.md with DCO and multi-repo PR workflow"
 status: completed
 created: 2026-03-18

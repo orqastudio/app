@@ -1,5 +1,6 @@
 ---
 id: "IDEA-6bd0622f"
+type: idea
 title: "Dev Controller — unified development lifecycle orchestrator"
 description: "A persistent Node process that owns the entire dev lifecycle — spawning, monitoring, and restarting all app processes (Vite, Rust, sidecar) with unified output, IPC-based control, and dogfood session persistence."
 status: "exploring"

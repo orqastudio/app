@@ -1,5 +1,6 @@
 ---
 id: "TASK-ab739ac3"
+type: task
 title: "Create task dependency validator hook"
 description: "Pre-task hook that checks depends-on tasks have status done before allowing a task to start."
 status: "completed"

@@ -1,5 +1,6 @@
 ---
 id: TASK-07a0db5e
+type: task
 title: Health trend widget redesign
 description: Make health trends more prominent in the dashboard grid with better sparkline rendering.
 status: completed

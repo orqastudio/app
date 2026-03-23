@@ -1,5 +1,6 @@
 ---
 id: IDEA-3bcdd78b
+type: idea
 title: Chaos-to-Clarity Engine
 description: Dedicated workflows for transforming unstructured situations into structured understanding through brain-dump flows and AI-driven triage.
 status: captured

@@ -1,5 +1,6 @@
 ---
 id: "TASK-809a14cc"
+type: task
 title: "Document orphaned skills as forward-looking in their SKILL.md files"
 description: "Add a forward-looking status note to each of five skills that have no current loading mechanism because their parent features are not yet built."
 status: "completed"

@@ -1,5 +1,6 @@
 ---
 id: TASK-2fcf37c5
+type: task
 title: "Pipeline health: collapse all-clear, remove Refresh, auto-rescan after refresh"
 description: "Streamline the pipeline health display — collapse all-clear state, remove redundant Refresh button, auto-run integrity scan after graph refresh."
 status: completed

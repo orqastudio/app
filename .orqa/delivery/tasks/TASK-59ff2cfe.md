@@ -1,5 +1,6 @@
 ---
 id: "TASK-59ff2cfe"
+type: task
 title: "Populate empty Related Rules sections on 5 rules"
 description: "Fill in the empty Related Rules sections on RULE-65973a88, RULE-633e636d, RULE-39169bcd, RULE-1f30904a, and RULE-d90112d9 with accurate cross-references."
 status: "completed"

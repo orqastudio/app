@@ -1,5 +1,6 @@
 ---
 id: "IDEA-0b05f1fd"
+type: idea
 title: "Local Model Support and Democratised AI Development"
 description: "Explore running OrqaStudio with cheaper local models once the structured thinking foundation is mature enough, reducing dependency on expensive cloud subscriptions and democratising AI-assisted development."
 status: "captured"

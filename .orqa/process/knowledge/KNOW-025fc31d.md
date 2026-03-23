@@ -1,5 +1,6 @@
 ---
 id: KNOW-025fc31d
+type: knowledge
 title: OrqaStudio Architecture
 description: |
   OrqaStudio architecture knowledge: ADR patterns, data flow mapping, layer responsibilities,

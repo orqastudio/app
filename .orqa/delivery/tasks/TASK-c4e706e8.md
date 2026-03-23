@@ -1,5 +1,6 @@
 ---
 id: TASK-c4e706e8
+type: task
 title: Design SQLite schema
 description: "Designed all SQLite tables, columns, indexes, and foreign key constraints for conversation persistence."
 status: completed

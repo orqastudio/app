@@ -1,5 +1,6 @@
 ---
 id: TASK-8f37b70c
+type: task
 title: Define user journeys
 description: "Documented end-to-end user flows for primary use cases including first-run, conversation, artifact browsing, and governance review."
 status: completed

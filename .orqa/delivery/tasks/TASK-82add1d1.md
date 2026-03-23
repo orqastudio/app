@@ -1,5 +1,6 @@
 ---
 id: TASK-82add1d1
+type: task
 title: "Switch tier-1 packages from file: to published deps + publish"
 description: "Update integrity-validator and SDK to depend on published @orqastudio/types instead of file: references. Fix CI, verify, then publish both."
 status: completed

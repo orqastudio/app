@@ -1,5 +1,6 @@
 ---
 id: "AD-2aa4d6db"
+type: decision
 title: "SQLite for Conversation Persistence Only"
 description: "SQLite is scoped exclusively to conversation persistence (sessions, messages, tool calls, streaming state). All governance data, project configuration, and artifact relationships live in the file-based artifact system with the node graph as the query layer. Any proposal to store new data in SQLite must justify why file-based storage with graph indexing is insufficient.\n"
 status: "completed"

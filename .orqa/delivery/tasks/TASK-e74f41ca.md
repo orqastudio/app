@@ -1,5 +1,6 @@
 ---
 id: "TASK-e74f41ca"
+type: task
 title: "Scanner frontmatter extraction"
 description: "Extends the artifact scanner to extract and expose the status field from YAML frontmatter so sidebar list items display correct titles and status indicators for all artifact types."
 status: "completed"

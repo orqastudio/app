@@ -1,5 +1,6 @@
 ---
 id: EPIC-596aba2e
+type: epic
 title: Process Visibility Dashboard
 description: "Build scanner runner, scanner dashboard, metrics dashboard, and agent activity panel for richer process visibility."
 status: captured

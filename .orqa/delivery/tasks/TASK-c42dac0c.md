@@ -1,5 +1,6 @@
 ---
 id: TASK-c42dac0c
+type: task
 title: Create verification artifact type
 description: "Create the VER-NNN artifact type under delivery/verification/ with schema, README, and project.json registration."
 status: completed

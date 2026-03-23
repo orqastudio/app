@@ -1,5 +1,6 @@
 ---
 id: "IDEA-2ffe9ff9"
+type: idea
 title: "Reframing as a product feature"
 description: "The AI should offer alternative perspectives when users are making decisions — like a therapist reframing questions. Encode this as an AI behaviour and domain-specific skills."
 status: "captured"

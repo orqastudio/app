@@ -1,5 +1,6 @@
 ---
 id: TASK-e0b5c973
+type: task
 title: Create architecture decisions index
 description: "Created the consolidated architecture decisions index page listing all AD records with status, category, and cross-references."
 status: completed

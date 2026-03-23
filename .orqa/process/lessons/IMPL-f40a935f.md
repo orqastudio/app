@@ -1,5 +1,6 @@
 ---
 id: "IMPL-f40a935f"
+type: lesson
 title: "Orchestrator deferred scoped deliverable instead of implementing"
 description: "The orchestrator marked an epic as nearly complete while deferring a task's implementation work to a future epic, violating RULE-e120bb70."
 status: "active"

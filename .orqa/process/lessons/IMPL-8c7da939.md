@@ -1,5 +1,6 @@
 ---
 id: IMPL-8c7da939
+type: lesson
 title: Duplicate controls for the same operation confuse users
 description: Multiple buttons that trigger the same underlying function (Refresh on dashboard and Re-index on statusbar both call artifactGraphSDK.refresh()) create confusion about whether they do different things.
 status: active

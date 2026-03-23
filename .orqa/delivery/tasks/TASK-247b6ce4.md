@@ -1,5 +1,6 @@
 ---
 id: TASK-247b6ce4
+type: task
 title: Run all enforcement tooling and review output
 description: "Execute make verify, all new linter rules, gap audit tool, pipeline health checks, and behavioral enforcement mechanisms against the full codebase"
 status: completed

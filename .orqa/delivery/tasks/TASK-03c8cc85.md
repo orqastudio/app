@@ -1,5 +1,6 @@
 ---
 id: TASK-03c8cc85
+type: task
 title: Create rule for user-invocable skill field semantics
 description: "Document the semantics of the user-invocable field in skill YAML frontmatter as a rule, defining what it means, when to set it, and how the system uses it."
 status: completed

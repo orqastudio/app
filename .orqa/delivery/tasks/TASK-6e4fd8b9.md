@@ -1,5 +1,6 @@
 ---
 id: TASK-6e4fd8b9
+type: task
 title: Documentation inventory
 description: "Audit documentation/: what docs NEED to exist vs what IS there. Identify stale content. Every remaining doc must be human-consumption content. Flag placeholder directories."
 status: completed

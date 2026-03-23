@@ -1,5 +1,6 @@
 ---
 id: "TASK-97dfe088"
+type: task
 title: "Record persistence and governance decisions (AD-5d9ac6bd through AD-8b91f5a4)"
 description: "Captured architecture decisions for persistence strategy, governance artifact format, data ownership boundaries, and configuration management."
 status: "completed"

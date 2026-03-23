@@ -1,5 +1,6 @@
 ---
 id: TASK-05a35e0e
+type: task
 title: "First governed session test — real task under full governance"
 status: captured
 created: 2026-03-19

@@ -1,5 +1,6 @@
 ---
 id: TASK-8ec6d63c
+type: task
 title: "Harden version management with format validation and dep drift"
 status: completed
 created: 2026-03-18

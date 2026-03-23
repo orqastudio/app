@@ -1,5 +1,6 @@
 ---
 id: TASK-953f7ac3
+type: task
 title: Convert monolithic decisions doc to individual artifacts
 description: "Converted the monolithic docs/architecture/decisions.md from full content to an index table, creating 20 individual AD-NNN.md artifacts with complete YAML frontmatter and cross-references."
 status: completed

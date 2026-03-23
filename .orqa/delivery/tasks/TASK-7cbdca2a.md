@@ -1,5 +1,6 @@
 ---
 id: "TASK-7cbdca2a"
+type: task
 title: "Create rule for tool access restrictions per role"
 description: "Formalize the tool access restrictions defined in agent YAML tools lists into a dedicated rule that enforces which tools each universal role may use."
 status: "completed"

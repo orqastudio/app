@@ -1,5 +1,6 @@
 ---
 id: TASK-18a17bfe
+type: task
 title: Unify scrollbar styling across all panels
 description: Make scrollbar appearance consistent across all panels — use the viewer panel scrollbar as the reference style.
 status: ready

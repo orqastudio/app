@@ -1,5 +1,6 @@
 ---
 id: EPIC-a8a7e205
+type: epic
 title: Tech Stack Research
 description: Pre-build investigation that determined the technology choices underpinning the entire OrqaStudio platform.
 status: completed

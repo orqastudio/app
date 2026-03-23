@@ -1,5 +1,6 @@
 ---
 id: "TASK-e1d73ed7"
+type: task
 title: "Rename RES-5a9e6375-tauri-dev-process-management.md"
 description: "File has id: RES-ed556ff3 but wrong filename. Rename to RES-ed556ff3.md."
 status: "completed"

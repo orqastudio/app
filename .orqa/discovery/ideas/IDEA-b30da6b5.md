@@ -1,5 +1,6 @@
 ---
 id: IDEA-b30da6b5
+type: idea
 title: Developer Experience Enhancements
 description: "Developer experience improvements discovered through self-use, including wireframe browser, terminal, and git integration."
 status: captured

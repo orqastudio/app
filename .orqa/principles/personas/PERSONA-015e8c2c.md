@@ -1,5 +1,6 @@
 ---
 id: "PERSONA-015e8c2c"
+type: persona
 title: "Sam — The Practitioner"
 description: "Senior professional who already uses AI tools daily. Values OrqaStudio as a structural layer that makes AI-assisted work visible, governed, and improving."
 status: "active"

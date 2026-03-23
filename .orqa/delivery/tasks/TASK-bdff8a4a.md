@@ -1,5 +1,6 @@
 ---
 id: TASK-bdff8a4a
+type: task
 title: Create code-search wrapper skill
 description: Creates a context-detecting wrapper skill that instructs agents to load the appropriate concrete search skill depending on whether they are running in CLI or App context.
 status: completed

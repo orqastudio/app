@@ -1,5 +1,6 @@
 ---
 id: TASK-59b04e4d
+type: task
 title: Design Svelte component tree
 description: "Mapped the Svelte component hierarchy to the UX wireframes, defining which components are pages, containers, and display components."
 status: completed

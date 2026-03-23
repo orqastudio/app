@@ -1,5 +1,6 @@
 ---
 id: AD-dffc3d30
+type: decision
 title: SQLite for All Structured Persistence
 description: SQLite is the sole persistence layer for structured data. File-based artifacts are read from disk.
 status: surpassed

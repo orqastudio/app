@@ -1,5 +1,6 @@
 ---
 id: TASK-8c0e5f1d
+type: task
 title: Backfill existing artifacts to match body templates
 description: Audit all existing planning and governance artifacts and add missing required body sections so they pass the new body template linting.
 status: completed

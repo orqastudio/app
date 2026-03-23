@@ -1,5 +1,6 @@
 ---
 id: "AD-6cd1ff6f"
+type: decision
 title: "Domain Service Extraction Pattern"
 description: "Tauri command handlers are thin orchestrators. Domain logic lives in focused service modules under domain/. Commands delegate to services, services delegate to repositories. No business logic in command files.\n"
 status: "completed"

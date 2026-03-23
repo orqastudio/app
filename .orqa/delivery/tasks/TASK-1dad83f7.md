@@ -1,5 +1,6 @@
 ---
 id: TASK-1dad83f7
+type: task
 title: Move team artifacts to process/
 description: "Move skills and agents from .orqa/process/ to .orqa/process/. Update project.json, all path references, .claude/ symlinks."
 status: completed

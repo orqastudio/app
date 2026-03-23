@@ -1,5 +1,6 @@
 ---
 id: IDEA-0f1f39ca
+type: idea
 title: "Governance libraries and pattern detection"
 status: captured
 horizon: someday

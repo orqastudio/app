@@ -1,5 +1,6 @@
 ---
 id: TASK-44de1cec
+type: task
 title: Create rule for session management and overnight mode
 description: Formalize the session management and overnight mode conventions from orchestrator.md into a dedicated rule with enforceable constraints.
 status: completed

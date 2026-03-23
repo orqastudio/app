@@ -1,5 +1,6 @@
 ---
 id: TASK-ebc48b97
+type: task
 title: "Rework ArtifactLink component — status dot inside, ellipsis, hover popover"
 description: "Systematic rework of the ArtifactLink component: move status dot inside the chip, add max-width with text-overflow ellipsis for title display, add hover popover showing artifact metadata from the graph."
 status: completed

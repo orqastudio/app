@@ -1,5 +1,6 @@
 ---
 id: "EPIC-4440cdd4"
+type: epic
 title: "Structured Thinking Enforcement"
 description: "Shift OrqaStudio's enforcement system from code-pattern regex matching to
 

@@ -1,5 +1,6 @@
 ---
 id: EPIC-83b67d0f
+type: epic
 title: "Coding standards plugins — Svelte, Tauri, TypeScript, Rust with rule-driven enforcement"
 description: "Created @orqastudio/plugin-svelte, @orqastudio/plugin-tauri (restructured to extend Rust), @orqastudio/plugin-typescript (new — tsconfig presets, ESLint base, config composition), and @orqastudio/plugin-rust (new — clippy/rustfmt/cargo-test, standards agent). Plugins provide linting/testing infrastructure. Rules define enforcement config. Organisation mode syncs standards with override tracking."
 status: active

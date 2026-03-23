@@ -1,5 +1,6 @@
 ---
 id: TASK-23b3cca4
+type: task
 title: Classify agents with layer and scope fields
 description: "Adds layer and scope classification fields to all 16 agent definitions, distinguishing canon agents from project agents and categorising each by domain (software-engineering, governance, or general)."
 status: completed

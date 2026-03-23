@@ -1,5 +1,6 @@
 ---
 id: IDEA-af73e0af
+type: idea
 title: Multi-View Output System
 description: "Expand artifact projections beyond backlogs with strategy maps, experiment frameworks, and audience-tailored summaries."
 status: captured

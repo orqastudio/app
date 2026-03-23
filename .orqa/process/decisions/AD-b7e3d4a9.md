@@ -1,5 +1,6 @@
 ---
 id: AD-b7e3d4a9
+type: decision
 title: "Relationship schema: complete knowledge flow traceability from vision to implementation"
 status: exploring
 created: 2026-03-21

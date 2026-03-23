@@ -1,5 +1,6 @@
 ---
 id: "EPIC-bdf61169"
+type: epic
 title: "UX Polish Sprint"
 description: "UX improvements identified during early dogfooding: streaming fix, output truncation, tool call grouping, auto-naming sessions, custom titlebar."
 status: "completed"

@@ -1,5 +1,6 @@
 ---
 id: AD-d8ea4d2b
+type: decision
 title: Cross-Linking as Default Behaviour
 description: Artifact IDs in markdown body text are automatically converted to proper artifact links. A pre-commit hook enforces this, and agents are expected to cross-link by default.
 status: completed

@@ -1,5 +1,6 @@
 ---
 id: "TASK-5da55ccb"
+type: task
 title: "Create data integrity rule (RULE-130f1f63)"
 description: "Codify data integrity requirements: all cross-references must resolve, pipeline relationships must have bidirectional inverses, pre-commit enforces both, make verify is the manual full-scan."
 status: "completed"

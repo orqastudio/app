@@ -1,5 +1,6 @@
 ---
 id: TASK-d624db8f
+type: task
 title: Reconcile EPIC-e37794bf — verify all deliverables and update status
 description: "Final reconciliation of EPIC-e37794bf: verify all tasks are done, update task table with real IDs, confirm epic deliverables match implementation, and set epic to review status pending UAT."
 status: completed

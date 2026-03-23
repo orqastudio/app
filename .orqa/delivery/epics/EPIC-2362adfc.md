@@ -1,5 +1,6 @@
 ---
 id: EPIC-2362adfc
+type: epic
 title: Dev environment migration and schema-driven enforcement
 description: >
   Consolidate all OrqaStudio repos into a submodule-based dev environment,
@@ -21,8 +22,79 @@ relationships:
   - target: AD-c6abc8e6
     type: driven-by
     rationale: Organisation-mode architecture decision drives this work
+  - target: TASK-562d3074
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-562d3074"
+  - target: TASK-b00e0456
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-b00e0456"
+  - target: TASK-d4972225
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-d4972225"
+  - target: TASK-10ab6c5c
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-10ab6c5c"
+  - target: TASK-027775f4
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-027775f4"
+  - target: TASK-0a8b014a
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-0a8b014a"
+  - target: TASK-787d5838
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-787d5838"
+  - target: TASK-f9dd2f94
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-f9dd2f94"
+  - target: TASK-a8e3dd62
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-a8e3dd62"
+  - target: TASK-3138a6a1
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-3138a6a1"
+  - target: TASK-5caec0de
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-5caec0de"
+  - target: TASK-99b87aa5
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-99b87aa5"
+  - target: TASK-254b7f01
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-254b7f01"
+  - target: TASK-8bbaefcb
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-8bbaefcb"
+  - target: TASK-79b97c1e
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-79b97c1e"
+  - target: TASK-6eeac2d4
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-6eeac2d4"
+  - target: TASK-113d38e6
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-113d38e6"
+  - target: TASK-a4b662fe
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-a4b662fe"
+  - target: TASK-e79d972d
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-e79d972d"
+  - target: TASK-250c9968
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-250c9968"
+  - target: TASK-7054f5c0
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-7054f5c0"
+  - target: TASK-36b8f772
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-36b8f772"
+  - target: TASK-237a479a
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-237a479a"
+  - target: TASK-c6153bd0
+    type: delivered-by
+    rationale: "Auto-generated inverse of delivered-by relationship from TASK-c6153bd0"
 ---
-
 ## Objective
 
 Consolidate the OrqaStudio development workflow into a single `orqastudio-dev` repo that uses git submodules for all sub-repositories, with npm link wiring local code instances. Move all project-level governance artifacts into the dev environment. Make ALL integrity enforcement schema-driven — no hardcoded artifact types or relationships anywhere in the codebase.

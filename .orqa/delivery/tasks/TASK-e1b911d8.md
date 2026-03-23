@@ -1,5 +1,6 @@
 ---
 id: TASK-e1b911d8
+type: task
 title: Code indexer and regex search
 description: "Implements the code indexing pipeline using DuckDB to store file chunks, and exposes a regex search command for matching patterns across all indexed content."
 status: completed

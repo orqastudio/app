@@ -1,5 +1,6 @@
 ---
 id: EPIC-b1b3f5db
+type: epic
 title: Governance Bootstrap
 description: "The initial governance layer: filesystem scanner, coverage analysis, recommendations, and governance coverage indicator on the dashboard."
 status: completed

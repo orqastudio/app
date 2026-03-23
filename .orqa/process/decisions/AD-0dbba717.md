@@ -1,5 +1,6 @@
 ---
 id: AD-0dbba717
+type: decision
 title: Tool Implementation as MCP
 description: Core tools implemented in Rust and exposed to Agent SDK as custom MCP server. Built-in SDK tools disabled.
 status: completed

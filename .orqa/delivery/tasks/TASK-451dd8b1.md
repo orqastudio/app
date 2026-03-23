@@ -1,5 +1,6 @@
 ---
 id: TASK-451dd8b1
+type: task
 title: "Migrate stores to SDK: replace artifact/navigation store ad-hoc patterns"
 description: "Replace invoke('read_artifact') + viewerCache and ARTIFACT_PREFIX_MAP + pendingArtifactId in the artifact and navigation stores with Artifact Graph SDK calls."
 status: completed

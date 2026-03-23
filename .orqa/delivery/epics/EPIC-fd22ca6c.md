@@ -1,5 +1,6 @@
 ---
 id: EPIC-fd22ca6c
+type: epic
 title: "Dashboard & artifact viewer UAT fixes"
 description: "UAT round covering the full dashboard and artifact viewer experience. Fixes navigation bugs, redesigns dashboard widgets for actionable insight, enhances artifact viewer with relationship consolidation and pipeline position, and improves search UX."
 status: active

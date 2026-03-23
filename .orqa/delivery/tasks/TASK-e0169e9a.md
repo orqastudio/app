@@ -1,5 +1,6 @@
 ---
 id: TASK-e0169e9a
+type: task
 title: "Rewrite KNOW-4368d782 Artifact Audit as schema-driven methodology"
 status: completed
 created: 2026-03-18

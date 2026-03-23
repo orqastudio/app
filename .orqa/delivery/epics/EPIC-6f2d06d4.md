@@ -1,5 +1,6 @@
 ---
 id: "EPIC-6f2d06d4"
+type: epic
 title: "Artifact Graph Alignment Audit"
 description: "Comprehensive audit and cleanup of all .orqa/ artifacts to align with graph-based
 

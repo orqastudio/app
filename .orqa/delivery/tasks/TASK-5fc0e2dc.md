@@ -1,5 +1,6 @@
 ---
 id: TASK-5fc0e2dc
+type: task
 title: Auto-fix engine for deterministic integrity issues
 description: "Add auto-fix logic to the artifact graph that can programmatically fix missing bidirectional inverses by writing the inverse relationship to the target artifact's frontmatter. Returns a list of fixes applied."
 status: completed

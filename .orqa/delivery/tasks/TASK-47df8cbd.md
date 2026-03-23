@@ -1,5 +1,6 @@
 ---
 id: TASK-47df8cbd
+type: task
 title: Update system prompt assembly to inject pillars
 description: Update system prompt assembly to inject pillars
 status: completed

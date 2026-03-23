@@ -1,5 +1,6 @@
 ---
 id: "EPIC-4bbc3439"
+type: epic
 title: "Vision Alignment & Schema Simplification"
 description: "Align all documentation, governance rules, agent definitions, and code with the evolved vision: .orqa/ as sole source of truth, provider-agnostic AI integration, three-layer architecture (Canon/Project/Plugin), and simplified artifact schema where plans are merged into research and tasks trace cleanly to epics to milestones."
 status: "completed"

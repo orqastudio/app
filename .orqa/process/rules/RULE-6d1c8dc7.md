@@ -1,5 +1,6 @@
 ---
 id: RULE-6d1c8dc7
+type: rule
 title: Historical Artifact Preservation
 description: Documentation is deleted when outdated. Research and tasks are preserved and marked as surpassed for historical traceability.
 status: active

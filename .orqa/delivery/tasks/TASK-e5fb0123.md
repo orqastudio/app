@@ -1,5 +1,6 @@
 ---
 id: TASK-e5fb0123
+type: task
 title: Model auto-download and startup loading
 description: "Automatically downloads the embedding model from Hugging Face on first use and pre-loads it at startup, with download progress visible in the status bar."
 status: completed

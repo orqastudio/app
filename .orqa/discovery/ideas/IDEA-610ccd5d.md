@@ -1,5 +1,6 @@
 ---
 id: IDEA-610ccd5d
+type: idea
 title: "Decision Pros/Cons Slash Command"
 description: "A Claude Code connector slash command (e.g. /pending-decisions) that queries the artifact graph for decisions in exploring or review status, then presents each with a structured pros/cons analysis to help the user make informed choices."
 status: captured

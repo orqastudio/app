@@ -1,5 +1,6 @@
 ---
 id: TASK-76e79dba
+type: task
 title: Write core architecture documentation
 description: Complete end-to-end documentation of the target core application architecture.
 status: completed

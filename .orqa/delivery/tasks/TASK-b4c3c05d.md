@@ -1,5 +1,6 @@
 ---
 id: "TASK-b4c3c05d"
+type: task
 title: "Add enforcement field to rule schema and key rules"
 description: "Add the enforcement array to the rule schema and add enforcement entries to key mechanically-enforceable rules."
 status: "completed"

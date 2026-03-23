@@ -1,5 +1,6 @@
 ---
 id: TASK-07e661cd
+type: task
 title: Dashboard components use shared library
 description: "Replace native elements in dashboard with shared components: ScrollArea for pipeline health table, SelectMenu for category dropdown, proper toggle pattern for filter buttons."
 status: completed

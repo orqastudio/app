@@ -1,5 +1,6 @@
 ---
 id: TASK-1ac4d16f
+type: task
 title: Cross-layer consistency verification
 description: "Verify consistency across the orchestrator, agents, skills, and rules layers — skill injection tables, agent-to-subagent mappings, orphaned artifacts, and cross-references."
 status: completed

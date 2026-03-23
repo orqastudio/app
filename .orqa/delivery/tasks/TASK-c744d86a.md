@@ -1,5 +1,6 @@
 ---
 id: TASK-c744d86a
+type: task
 title: Relationships graph visualization view
 description: "Add a toggle between list and graph view in the relationships panel, with a radial graph showing the focused artifact at centre."
 status: completed

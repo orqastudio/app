@@ -1,5 +1,6 @@
 ---
 id: IDEA-c40febb6
+type: idea
 title: "Artifact graph as agent memory — .orqa/ replaces separate memory systems"
 description: >
   AI agents built with the Agent SDK could use the .orqa/ artifact graph

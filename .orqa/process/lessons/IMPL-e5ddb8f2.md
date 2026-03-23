@@ -1,5 +1,6 @@
 ---
 id: IMPL-e5ddb8f2
+type: lesson
 title: Priority without justification is noise
 description: "A P1 label without reasoning is an assertion, not a decision. Every priority assignment should have visible justification against defined criteria so stakeholders can evaluate and challenge it."
 status: active

@@ -1,5 +1,6 @@
 ---
 id: TASK-42d570dc
+type: task
 title: Create rule for skill portability constraints
 description: Extract skill portability constraints from the skills-maintenance skill into a new dedicated rule with rule-level enforcement.
 status: completed

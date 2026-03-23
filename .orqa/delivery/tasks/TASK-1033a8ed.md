@@ -1,5 +1,6 @@
 ---
 id: TASK-1033a8ed
+type: task
 title: Replace OrqaStudio-specific examples with generic ones in composability skill
 description: Replace OrqaStudio-specific file paths and code examples in the composability skill with generic equivalents that illustrate the same composability principles without tying them to this codebase.
 status: completed

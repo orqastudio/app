@@ -1,5 +1,6 @@
 ---
 id: IDEA-25cfa2e0
+type: idea
 title: Preserve Navigation State Across Refresh and HMR
 description: "Browser refresh, Vite HMR, and app rebuilds should restore the user to the same active screen (artifact, panel, scroll position) rather than resetting to the default view."
 status: captured

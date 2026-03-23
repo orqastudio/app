@@ -1,5 +1,6 @@
 ---
 id: TASK-3bafbf7f
+type: task
 title: Implement Rust backend sidecar and streaming
 description: "Built the Agent SDK sidecar process management in Rust with NDJSON streaming via Channel<T> for real-time conversation display."
 status: completed

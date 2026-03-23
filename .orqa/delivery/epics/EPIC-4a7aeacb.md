@@ -1,5 +1,6 @@
 ---
 id: "EPIC-4a7aeacb"
+type: epic
 title: "Agent, Skill, and Enforcement Artifact Audit"
 description: "Comprehensive audit of all agent definitions, skill definitions, and enforcement artifacts (rules, hooks) to verify accuracy against the current codebase, fix stale references, remove deprecated content, and ensure internal consistency."
 status: "completed"
