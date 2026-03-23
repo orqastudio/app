@@ -378,6 +378,99 @@ fn check_missing_relationships(
     }
 }
 
+// ---------------------------------------------------------------------------
+// Graph-level checks (delegated to orqa-validation)
+// ---------------------------------------------------------------------------
+
+/// Run comprehensive graph-level integrity checks via `orqa_validation`.
+///
+/// This function builds the full artifact graph from disk and runs all
+/// schema-driven integrity checks (broken refs, missing inverses, type
+/// constraints, cardinality, cycles). Findings that reference `artifact_id`
+/// are converted to LSP `Diagnostic` values anchored to line 1 of the file.
+///
+/// Returns an empty vec when:
+/// - The graph cannot be built (directory missing, IO error)
+/// - The validation context cannot be constructed
+/// - No checks reference this artifact
+///
+/// `artifact_id` is extracted from the frontmatter `id:` field by the caller.
+/// When it is `None` (no id yet), this function returns no diagnostics because
+/// the graph-level checks all require a valid artifact ID to match against.
+pub fn validate_graph_checks(project_root: &Path, artifact_id: Option<&str>) -> Vec<Diagnostic> {
+    let Some(artifact_id) = artifact_id else {
+        return Vec::new();
+    };
+
+    let graph = match orqa_validation::build_artifact_graph(project_root) {
+        Ok(g) => g,
+        Err(_) => return Vec::new(),
+    };
+
+    let plugin_contributions = orqa_validation::platform::scan_plugin_manifests(project_root);
+    let ctx = orqa_validation::build_validation_context(
+        &[],
+        &orqa_validation::settings::DeliveryConfig::default(),
+        &[],
+        &plugin_contributions.relationships,
+    );
+
+    let checks = orqa_validation::validate(&graph, &ctx);
+
+    checks
+        .into_iter()
+        .filter(|c| c.artifact_id == artifact_id)
+        .map(integrity_check_to_diagnostic)
+        .collect()
+}
+
+/// Convert an [`orqa_validation::IntegrityCheck`] to an LSP `Diagnostic`.
+///
+/// Graph-level findings are not tied to a specific line — they are anchored to
+/// the opening frontmatter delimiter (line 0, column 0–3) so the editor shows
+/// them at the top of the file.
+fn integrity_check_to_diagnostic(
+    check: orqa_validation::types::IntegrityCheck,
+) -> Diagnostic {
+    let severity = match check.severity {
+        IntegritySeverity::Error => DiagnosticSeverity::ERROR,
+        IntegritySeverity::Warning => DiagnosticSeverity::WARNING,
+        IntegritySeverity::Info => DiagnosticSeverity::INFORMATION,
+    };
+
+    // Annotate the category in the message for clarity.
+    let category_label = match check.category {
+        IntegrityCategory::BrokenLink => "[broken-link]",
+        IntegrityCategory::MissingInverse => "[missing-inverse]",
+        IntegrityCategory::TypeConstraintViolation => "[type-constraint]",
+        IntegrityCategory::RequiredRelationshipMissing => "[required-relationship]",
+        IntegrityCategory::CardinalityViolation => "[cardinality]",
+        IntegrityCategory::CircularDependency => "[circular-dep]",
+        IntegrityCategory::InvalidStatus => "[invalid-status]",
+        IntegrityCategory::TypePrefixMismatch => "[type-prefix-mismatch]",
+        IntegrityCategory::BodyTextRefWithoutRelationship => "[body-ref]",
+        IntegrityCategory::ParentChildInconsistency => "[parent-child]",
+        IntegrityCategory::DeliveryPathMismatch => "[delivery-path]",
+        IntegrityCategory::MissingType => "[missing-type]",
+        IntegrityCategory::MissingStatus => "[missing-status]",
+        IntegrityCategory::DuplicateRelationship => "[duplicate-relationship]",
+        IntegrityCategory::FilenameMismatch => "[filename-mismatch]",
+        IntegrityCategory::SchemaViolation => "[schema-violation]",
+    };
+
+    let mut message = format!("{category_label} {}", check.message);
+    if let Some(fix_desc) = check.fix_description {
+        message.push_str(&format!(" (auto-fix: {fix_desc})"));
+    }
+
+    Diagnostic {
+        range: Range::new(Position::new(0, 0), Position::new(0, 3)),
+        severity: Some(severity),
+        source: Some("orqastudio".into()),
+        message,
+        ..Default::default()
+    }
+}
 
 // ---------------------------------------------------------------------------
 // Tests
