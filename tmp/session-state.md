@@ -1,11 +1,11 @@
-## Session: 2026-03-23T20:14:25Z
+## Session: 2026-03-23T20:21:29Z
 
 ### Recent Commits
+9cabd74c Remove GitHub Packages publishConfig and .npmrc from all packages
+3e3d41f4 Remove GitHub Packages publishing — distribution moves to cloud platform
+3d93d23d Remove community registry from monorepo — lives on GitHub separately
+ff5d55e2 Remove first-party registry and .github-org from monorepo
 fbf8d6e6 Capture idea: git hosting evolution — theming, public engagement, auth
-49782139 Make setup script credentials configurable via env vars
-f4bb00d4 Rename repo to orqastudio/app across all infrastructure config
-46e15d18 Fix setup: run admin create as git user, org/repo creation order
-4d7e28a4 Rename infrastructure/forgejo to infrastructure/orqastudio-git, fix SSH config
 
 ### Uncommitted Changes
 1 files

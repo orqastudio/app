@@ -206,7 +206,7 @@ export function generateReadmeTemplate(opts: {
 
 	const badgeLine = [licenseBadge, statusBadge, ...langBadges].join("\n");
 
-	const banner = `![OrqaStudio](https://github.com/orqastudio/orqastudio-brand/blob/main/assets/banners/banner-1680x240.png?raw=1)`;
+	const banner = `![OrqaStudio](https://github.com/orqastudio/.github/blob/main/assets/banners/banner-1680x240.png?raw=1)`;
 
 	const installSection = opts.category !== "tool"
 		? `\n## Installation\n\n\`\`\`bash\nnpm install ${opts.name}\n\`\`\`\n`

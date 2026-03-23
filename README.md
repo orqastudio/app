@@ -5,7 +5,7 @@
 ![Svelte](https://img.shields.io/badge/Svelte-FF3E00?logo=svelte&logoColor=white)
 ![Shell](https://img.shields.io/badge/Shell-4EAA25?logo=gnubash&logoColor=white)
 
-![OrqaStudio](https://github.com/orqastudio/orqastudio-brand/blob/main/assets/banners/banner-1680x240.png?raw=1)
+![OrqaStudio](https://github.com/orqastudio/.github/blob/main/assets/banners/banner-1680x240.png?raw=1)
 
 # OrqaStudio Dev Environment
 

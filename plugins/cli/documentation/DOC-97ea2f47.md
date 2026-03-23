@@ -36,7 +36,7 @@ The header appears before any content. Order matters:
 ![Svelte](https://img.shields.io/badge/Svelte-FF3E00?logo=svelte&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
 
-![OrqaStudio](https://github.com/orqastudio/orqastudio-brand/blob/main/assets/banners/banner-1680x240.png?raw=1)
+![OrqaStudio](https://github.com/orqastudio/.github/blob/main/assets/banners/banner-1680x240.png?raw=1)
 
 # OrqaStudio
 ```
@@ -49,7 +49,7 @@ The header appears before any content. Order matters:
 |-------|--------|
 | **License** | `![License](https://img.shields.io/badge/license-{LICENSE}-blue)` where `{LICENSE}` matches the license policy for the component category |
 | **Status** | `![Status](https://img.shields.io/badge/status-{STATUS}-orange)` — use `pre-release`, `stable`, or `experimental` |
-| **Banner** | `![OrqaStudio](https://github.com/orqastudio/orqastudio-brand/blob/main/assets/banners/banner-1680x240.png?raw=1)` |
+| **Banner** | `![OrqaStudio](https://github.com/orqastudio/.github/blob/main/assets/banners/banner-1680x240.png?raw=1)` |
 
 ### Language Badges
 
