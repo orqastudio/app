@@ -2,7 +2,7 @@
 id: EPIC-f2b9e7d3
 type: epic
 name: "Git Infrastructure: Forgejo + Monorepo"
-status: captured
+status: active
 description: Consolidate 30 repos into a monorepo, stand up Forgejo as authoritative git hosting with GitHub as a bidirectional contribution mirror, migrate CI, and build the sync bridge for dual-platform contribution.
 priority: P1
 relationships:
@@ -136,7 +136,20 @@ Update `orqa` CLI for the new monorepo + Forgejo workflow.
 
 ## Tasks
 
-(To be detailed during Phase planning — each phase becomes its own set of TASK-NNN artifacts)
+| Task | Phase | Description | Status | Depends On |
+|------|-------|-------------|--------|-----------|
+| TASK-01a2b3c4 | 1 | Test monorepo merge on throwaway clone | todo | — |
+| TASK-02b3c4d5 | 1 | Execute merge — import all 30 repos | todo | TASK-01a2b3c4 |
+| TASK-03c4d5e6 | 1 | Set up npm workspaces | todo | TASK-02b3c4d5 |
+| TASK-04d5e6f7 | 1 | Set up Cargo workspace | todo | TASK-02b3c4d5 |
+| TASK-05e6f7a8 | 1 | Update orqa install pipeline | todo | TASK-03c4d5e6, TASK-04d5e6f7 |
+| TASK-06f7a8b9 | 1 | License per directory + version management | todo | TASK-02b3c4d5 |
+| TASK-07a8b9c0 | 1 | Verify full pipeline + archive original repos | todo | TASK-05e6f7a8, TASK-06f7a8b9 |
+| TASK-08b9c0d1 | 2 | Stand up Forgejo instance | todo | TASK-07a8b9c0 |
+| TASK-09c0d1e2 | 3 | Migrate CI to Forgejo Actions | todo | TASK-08b9c0d1 |
+| TASK-10d1e2f3 | 4 | Bidirectional contribution bridge | todo | TASK-09c0d1e2 |
+| TASK-11e2f3a4 | 5 | Developer tooling (orqa git) | todo | TASK-10d1e2f3 |
+| TASK-12f3a4b5 | — | Reconcile EPIC-f2b9e7d3 | in-progress | all |
 
 ## Risk Register
 
