@@ -1,0 +1,65 @@
+# Rust
+/target/
+# Note: Cargo.lock is committed for applications (not libraries)
+# src-tauri/Cargo.lock is tracked for reproducible builds
+
+# Node
+node_modules/
+dist/
+
+# SvelteKit
+.svelte-kit/
+
+# SQLite database (local data, not committed)
+orqa.db
+orqa.db-wal
+orqa.db-shm
+
+# Tauri
+/backend/src-tauri/target/
+/backend/src-tauri/WixTools/
+/backend/src-tauri/icons/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment
+.env
+.env.local
+
+# Build output
+/ui/build/
+
+# Temporary
+tmp/
+*.log
+
+# Claude Code
+.claude/plugins/
+.claude/worktrees/
+
+# Platform compatibility junctions (symlinks from .claude/ to .orqa/)
+# The canonical files live in .orqa/; .claude/ directories are junctions for CLI compatibility
+.claude/agents/
+.claude/rules/
+.claude/skills/
+.claude/hooks/
+
+# Skills CLI cache (npx skills add --copy creates these; .orqa/skills/ is authoritative)
+.agents/
+.continue/
+skills-lock.json
+
+
+# Plugin-generated config files (written by SDK at startup)
+sidecar-config.json
+plugin-tools.json
+plugin-hooks.json

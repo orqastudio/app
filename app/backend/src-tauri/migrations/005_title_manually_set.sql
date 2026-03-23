@@ -1,0 +1,5 @@
+-- Migration 005: Add title_manually_set column to sessions
+-- Tracks whether the user explicitly renamed the session (manual = true)
+-- to prevent auto-naming from overwriting user titles.
+--
+-- Applied idempotently via run_migration_005 in db.rs (checks pragma_table_info).

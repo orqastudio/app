@@ -1,0 +1,345 @@
+{
+  "name": "Orqa Dogfood",
+  "description": "OrqaStudio is an AI-assisted clarity engine that helps people turn messy situations into structured understanding and evolving plans through agile thinking and continuous retrospection.",
+  "default_model": "auto",
+  "excluded_paths": [
+    "node_modules",
+    ".git",
+    "target",
+    "dist",
+    "build"
+  ],
+  "stack": {
+    "languages": [
+      "javascript",
+      "rust",
+      "svelte",
+      "typescript"
+    ],
+    "frameworks": [
+      "svelte",
+      "typescript",
+      "vite"
+    ],
+    "package_manager": "npm",
+    "has_claude_config": true,
+    "has_design_tokens": false
+  },
+  "governance": {
+    "lessons": 16,
+    "decisions": 44,
+    "agents": 7,
+    "rules": 45,
+    "knowledge": 49,
+    "has_claude_config": true
+  },
+  "icon": "icon.svg",
+  "show_thinking": true,
+  "custom_system_prompt": "You are running inside OrqaStudio — the same app you are helping develop. Your responses flow through the Agent SDK sidecar (sidecar/dist/sidecar.js) → Rust Channel<T> → this Svelte UI.\n\nKey constraints of this environment:\n  - Rust backend changes require a manual app restart (no hot reload)\n  - Frontend changes hot-reload via Vite HMR — but editing components mid-stream can crash the window\n  - The sidecar must be rebuilt (`cd sidecar && bun run build`) after any changes to sidecar source\n  - You have 6 file tools available: read, write, edit, bash, glob, grep\n\nProject conventions:\n  - Svelte 5 runes only — no $:, no export let, no let:\n  - All Rust functions return Result — no unwrap() in production\n  - Use `make` targets, not raw cargo/npm commands\n  - shadcn-svelte for UI components, Tailwind for styling\n  - SQLite for all structured persistence, not localStorage.",
+  "artifacts": [
+    {
+      "key": "principles",
+      "label": "Principles",
+      "icon": "landmark",
+      "children": [
+        {
+          "key": "pillar",
+          "label": "Pillars",
+          "icon": "columns-3",
+          "path": ".orqa/principles/pillars"
+        },
+        {
+          "key": "vision",
+          "label": "Vision",
+          "icon": "eye",
+          "path": ".orqa/principles/vision"
+        },
+        {
+          "key": "persona",
+          "label": "Personas",
+          "icon": "users",
+          "path": ".orqa/principles/personas"
+        },
+        {
+          "key": "grounding",
+          "label": "Grounding",
+          "icon": "anchor",
+          "path": ".orqa/principles/grounding"
+        }
+      ]
+    },
+    {
+      "key": "discovery",
+      "label": "Discovery",
+      "icon": "compass",
+      "children": [
+        {
+          "key": "idea",
+          "label": "Ideas",
+          "icon": "lightbulb",
+          "path": ".orqa/discovery/ideas"
+        },
+        {
+          "key": "research",
+          "label": "Research",
+          "icon": "search",
+          "path": ".orqa/discovery/research"
+        },
+        {
+          "key": "wireframe",
+          "label": "Wireframes",
+          "icon": "layout",
+          "path": ".orqa/discovery/wireframes"
+        },
+        {
+          "key": "decision",
+          "label": "Decisions",
+          "icon": "scale",
+          "path": ".orqa/process/decisions"
+        }
+      ]
+    },
+    {
+      "key": "learning",
+      "label": "Learning",
+      "icon": "brain",
+      "children": [
+        {
+          "key": "rule",
+          "label": "Rules",
+          "icon": "shield",
+          "path": ".orqa/process/rules"
+        },
+        {
+          "key": "lesson",
+          "label": "Lessons",
+          "icon": "book-open",
+          "path": ".orqa/process/lessons"
+        },
+        {
+          "key": "knowledge",
+          "label": "Knowledge",
+          "icon": "book-open",
+          "path": ".orqa/process/knowledge"
+        },
+        {
+          "key": "agent",
+          "label": "Agents",
+          "icon": "bot",
+          "path": ".orqa/process/agents"
+        }
+      ]
+    },
+    {
+      "key": "delivery",
+      "label": "Delivery",
+      "icon": "rocket",
+      "children": [
+        {
+          "key": "milestone",
+          "label": "Milestones",
+          "icon": "flag",
+          "path": ".orqa/delivery/milestones"
+        },
+        {
+          "key": "epic",
+          "label": "Epics",
+          "icon": "layers",
+          "path": ".orqa/delivery/epics"
+        },
+        {
+          "key": "task",
+          "label": "Tasks",
+          "icon": "check-square",
+          "path": ".orqa/delivery/tasks"
+        }
+      ]
+    },
+    {
+      "key": "documentation",
+      "label": "Documentation",
+      "icon": "book-open",
+      "children": [
+        {
+          "key": "doc",
+          "label": "Platform",
+          "icon": "server",
+          "path": ".orqa/documentation/platform"
+        },
+        {
+          "key": "doc",
+          "label": "Project",
+          "icon": "folder",
+          "path": ".orqa/documentation/project"
+        }
+      ]
+    }
+  ],
+  "delivery": {
+    "types": [
+      {
+        "key": "milestone",
+        "label": "Milestone",
+        "path": ".orqa/delivery/milestones",
+        "parent": null,
+        "gate_field": "gate"
+      },
+      {
+        "key": "epic",
+        "label": "Epic",
+        "path": ".orqa/delivery/epics",
+        "parent": { "type": "milestone", "relationship": "delivers" }
+      },
+      {
+        "key": "task",
+        "label": "Task",
+        "path": ".orqa/delivery/tasks",
+        "parent": { "type": "epic", "relationship": "delivers" }
+      }
+    ]
+  },
+  "relationships": [
+    {
+      "key": "depends-on",
+      "inverse": "depended-on-by",
+      "label": "Depends On",
+      "inverse_label": "Depended On By"
+    }
+  ],
+  "artifactLinks": {
+    "displayModes": {
+      "RULE": "title",
+      "IMPL": "title",
+      "PILLAR": "title",
+      "KNOW": "title",
+      "AGENT": "title",
+      "IDEA": "title",
+      "TASK": "title",
+      "MS": "title",
+      "AD": "title",
+      "RES": "title",
+      "EPIC": "title",
+      "DOC": "title"
+    },
+    "colors": {
+      "MS": "#38bdf8",
+      "AD": "#8b5cf6",
+      "EPIC": "#3b82f6",
+      "AGENT": "#f472b6",
+      "RES": "#6366f1",
+      "PILLAR": "#818cf8",
+      "RULE": "#a78bfa",
+      "KNOW": "#2dd4bf",
+      "TASK": "#06b6d4",
+      "IDEA": "#c084fc",
+      "IMPL": "#67e8f9",
+      "DOC": "#94a3b8"
+    }
+  },
+  "statuses": [
+    {
+      "key": "captured",
+      "label": "Captured",
+      "icon": "circle",
+      "spin": false,
+      "transitions": ["exploring", "ready", "prioritised"],
+      "auto_rules": []
+    },
+    {
+      "key": "exploring",
+      "label": "Exploring",
+      "icon": "compass",
+      "spin": false,
+      "transitions": ["ready", "prioritised", "hold"],
+      "auto_rules": []
+    },
+    {
+      "key": "ready",
+      "label": "Ready",
+      "icon": "circle-dot",
+      "spin": false,
+      "transitions": ["prioritised", "active", "review"],
+      "auto_rules": [
+        { "condition": "dependency-blocked", "target": "blocked" }
+      ]
+    },
+    {
+      "key": "prioritised",
+      "label": "Prioritised",
+      "icon": "circle-star",
+      "spin": false,
+      "transitions": ["active", "ready"],
+      "auto_rules": []
+    },
+    {
+      "key": "active",
+      "label": "Active",
+      "icon": "circle-dot-dashed",
+      "spin": true,
+      "transitions": ["hold", "blocked", "review"],
+      "auto_rules": [
+        { "condition": "all-children-completed", "target": "review" }
+      ]
+    },
+    {
+      "key": "hold",
+      "label": "On Hold",
+      "icon": "circle-pause",
+      "spin": false,
+      "transitions": ["active", "ready"],
+      "auto_rules": []
+    },
+    {
+      "key": "blocked",
+      "label": "Blocked",
+      "icon": "circle-stop",
+      "spin": false,
+      "transitions": ["active", "ready"],
+      "auto_rules": [
+        { "condition": "dependencies-met", "target": "ready" }
+      ]
+    },
+    {
+      "key": "review",
+      "label": "Review",
+      "icon": "circle-user-round",
+      "spin": false,
+      "transitions": ["completed", "active"],
+      "auto_rules": []
+    },
+    {
+      "key": "completed",
+      "label": "Completed",
+      "icon": "circle-check-big",
+      "spin": false,
+      "transitions": ["surpassed"],
+      "auto_rules": []
+    },
+    {
+      "key": "surpassed",
+      "label": "Surpassed",
+      "icon": "circle-minus",
+      "spin": false,
+      "transitions": [],
+      "auto_rules": []
+    },
+    {
+      "key": "archived",
+      "label": "Archived",
+      "icon": "circle-off",
+      "spin": false,
+      "transitions": [],
+      "auto_rules": []
+    },
+    {
+      "key": "recurring",
+      "label": "Recurring",
+      "icon": "circle-fading-arrow-up",
+      "spin": false,
+      "transitions": ["review", "completed"],
+      "auto_rules": [
+        { "condition": "recurrence-threshold", "target": "review" }
+      ]
+    }
+  ]
+}
