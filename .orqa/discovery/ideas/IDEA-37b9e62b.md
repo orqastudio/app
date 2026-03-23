@@ -8,9 +8,9 @@ relationships:
   - target: PILLAR-569581e0
     type: grounded
     rationale: "Clarity Through Structure — tech debt obscures structure"
-  - target: RULE-12e74734
-    type: implements
-    rationale: "Enforcement Gap Priority — tech debt IS an enforcement gap"
+  - target: PERSONA-015e8c2c
+    type: benefits
+    rationale: "Practitioners benefit from automated tech debt prevention in AI-assisted workflows"
 ---
 # Zero Tech Debt Enforcement
 

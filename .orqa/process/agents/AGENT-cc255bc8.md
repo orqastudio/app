@@ -26,9 +26,6 @@ relationships:
     type: employs
   - target: KNOW-f0c40eaf
     type: employs
-  - target: KNOW-b1593311
-    type: employs
-    rationale: Implementer reasoning protocol — injected on every UserPromptSubmit for implementer subagents
   - target: PILLAR-569581e0
     type: serves
     rationale: Agent serves this pillar/persona in its operational role

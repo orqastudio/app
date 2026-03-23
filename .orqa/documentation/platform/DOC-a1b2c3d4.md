@@ -37,10 +37,6 @@ relationships:
     type: synchronised-with
   - target: KNOW-e3a559c9
     type: synchronised-with
-  - target: KNOW-82ceb1bd
-    type: synchronised-with
-  - target: KNOW-0fd23e0b
-    type: synchronised-with
   - target: KNOW-e0dec720
     type: synchronised-with
   - target: KNOW-819789ab
