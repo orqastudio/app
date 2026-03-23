@@ -69,8 +69,16 @@ export async function runDevCommand(args: string[]): Promise<void> {
 		process.exit(1);
 	}
 
-	// Start the validation daemon alongside the dev environment.
+	// Start the validation daemon and refresh plugin content before starting dev.
 	if (sub === "dev") {
+		// Refresh plugin content so .orqa/ is in sync with plugin source
+		try {
+			const { runPluginCommand } = await import("./plugin.js");
+			await runPluginCommand(["refresh"]);
+		} catch {
+			// Non-fatal — content may be stale but dev can still start
+		}
+
 		await runDaemonCommand(["start"]).catch(() => {
 			// Daemon may already be running or binary not built — non-fatal.
 		});

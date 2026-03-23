@@ -176,4 +176,9 @@ export type {
 	PluginInstallProgress,
 	PluginUpdate,
 	DiscoveredPlugin,
+	PluginContentMapping,
+	PluginDependencies,
+	PluginLifecycle,
+	BundledAgentRef,
+	BundledKnowledgeRef,
 } from "./plugin.js";

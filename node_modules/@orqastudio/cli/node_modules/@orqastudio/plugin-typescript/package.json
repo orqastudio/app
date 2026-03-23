@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/plugin-typescript",
-  "version": "0.1.0-dev",
+  "version": "0.1.4-dev",
   "type": "module",
   "description": "TypeScript development infrastructure plugin for OrqaStudio — base tsconfig, ESLint configs, and config composition for plugin extensions.",
   "main": "dist/index.js",
