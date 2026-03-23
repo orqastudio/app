@@ -1,13 +1,17 @@
 {
   "name": "@orqastudio/plugin-coding-standards",
-  "version": "0.1.0-dev",
+  "version": "0.1.4-dev",
   "displayName": "Coding Standards",
   "description": "Unified coding standards enforcement — config generation from governance rules, quality checks via orqa check, and organisation-wide standards sync.",
   "category": "coding-standards",
   "provides": {
     "schemas": [],
     "enforcement_mechanisms": [
-      { "key": "lint", "description": "Linter enforcement (delegates to language-specific linters)", "strength": 6 }
+      {
+        "key": "lint",
+        "description": "Linter enforcement (delegates to language-specific linters)",
+        "strength": 6
+      }
     ],
     "views": [],
     "widgets": [],
@@ -38,5 +42,22 @@
     ],
     "hooks": []
   },
+  "content": {
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    },
+    "rules": {
+      "source": "rules",
+      "target": ".orqa/process/rules"
+    }
+  },
+  "dependencies": {
+    "npm": [
+      "@orqastudio/cli",
+      "@orqastudio/types"
+    ]
+  },
+  "build": "npm run build",
   "role": "enhancement:delivery"
 }

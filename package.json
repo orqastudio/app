@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/plugin-coding-standards",
-  "version": "0.1.0-dev",
+  "version": "0.1.4-dev",
   "private": true,
   "type": "module",
   "description": "Unified coding standards enforcement — config generation from rules, quality checks via orqa check, organisation-wide sync.",
@@ -17,8 +17,8 @@
     "check": "tsc --noEmit"
   },
   "dependencies": {
-    "@orqastudio/cli": "^0.1.0-dev",
-    "@orqastudio/types": "^0.1.0-dev"
+    "@orqastudio/cli": "0.1.4-dev",
+    "@orqastudio/types": "0.1.4-dev"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
