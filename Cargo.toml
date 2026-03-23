@@ -20,3 +20,5 @@ cast_sign_loss = "allow"
 cast_precision_loss = "allow"
 cast_lossless = "allow"
 cast_possible_wrap = "allow"
+# Tauri commands require owned State<> and String params
+needless_pass_by_value = "allow"
