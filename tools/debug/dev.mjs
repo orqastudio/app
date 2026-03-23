@@ -1185,8 +1185,19 @@ async function stop() {
 
 // ── Kill (force — kills everything regardless of controller) ────────────────
 
-async function kill() {
+async function kill(args = []) {
   await killAll();
+
+  if (args.includes("--include-hosting")) {
+    logCtrl("Stopping local git server...");
+    try {
+      execSync(`docker compose -f "${join(PROJECT_ROOT, "infrastructure/orqastudio-git/docker-compose.yml")}" down`, { stdio: "inherit" });
+    } catch {
+      logCtrl("No local git server running.");
+    }
+  } else {
+    logCtrl("Local git server preserved (use --include-hosting to stop it too).");
+  }
 }
 
 // ── Restart (external command) ──────────────────────────────────────────────
@@ -1338,7 +1349,7 @@ switch (command) {
     await stop();
     break;
   case "kill":
-    await kill();
+    await kill(process.argv.slice(3));
     break;
   case "restart-tauri":
     await restartTauri();
