@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/plugin-rust",
-  "version": "0.1.0-dev",
+  "version": "0.1.4-dev",
   "private": true,
   "description": "Base Rust development infrastructure — Cargo config, clippy rules, and coding standards enforcement.",
   "license": "BSL-1.1"
