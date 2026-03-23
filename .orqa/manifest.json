@@ -2,7 +2,7 @@
   "plugins": {
     "@orqastudio/plugin-agile-governance": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T23:08:19.110Z",
+      "installed_at": "2026-03-23T23:42:30.916Z",
       "files": {
         ".orqa/process/agents/AGENT-e7f3a2c9.md": {
           "sourceHash": "",
@@ -100,7 +100,7 @@
     },
     "@orqastudio/plugin-cli": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T23:08:19.114Z",
+      "installed_at": "2026-03-23T23:42:30.920Z",
       "files": {
         ".orqa/documentation/DOC-2c9bfdda.md": {
           "sourceHash": "",
@@ -158,7 +158,7 @@
     },
     "@orqastudio/plugin-coding-standards": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T23:08:20.105Z",
+      "installed_at": "2026-03-23T23:42:31.898Z",
       "files": {
         ".orqa/process/knowledge/KNOW-6125ab55.md": {
           "sourceHash": "",
@@ -204,7 +204,7 @@
     },
     "@orqastudio/plugin-core-framework": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T23:08:20.112Z",
+      "installed_at": "2026-03-23T23:42:31.905Z",
       "files": {
         ".orqa/process/agents/AGENT-1dab5ebe.md": {
           "sourceHash": "",
@@ -382,7 +382,7 @@
     },
     "@orqastudio/plugin-rust": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T23:08:20.143Z",
+      "installed_at": "2026-03-23T23:42:31.960Z",
       "files": {
         ".orqa/process/agents/AGENT-4241392c.md": {
           "sourceHash": "",
@@ -416,7 +416,7 @@
     },
     "@orqastudio/plugin-software-project": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T23:08:24.010Z",
+      "installed_at": "2026-03-23T23:42:35.828Z",
       "files": {
         ".orqa/documentation/DOC-421219ce.md": {
           "sourceHash": "",
@@ -482,7 +482,7 @@
     },
     "@orqastudio/plugin-svelte": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T23:08:25.367Z",
+      "installed_at": "2026-03-23T23:42:37.414Z",
       "files": {
         ".orqa/process/agents/AGENT-b0857607.md": {
           "sourceHash": "",
@@ -556,7 +556,7 @@
     },
     "@orqastudio/plugin-tauri": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T23:08:25.372Z",
+      "installed_at": "2026-03-23T23:42:37.420Z",
       "files": {
         ".orqa/process/agents/AGENT-1ed9512e.md": {
           "sourceHash": "",
@@ -594,7 +594,7 @@
     },
     "@orqastudio/plugin-typescript": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T23:08:27.826Z",
+      "installed_at": "2026-03-23T23:42:40.064Z",
       "files": {
         ".orqa/documentation/DOC-e4f5a6b7.md": {
           "sourceHash": "",
@@ -608,7 +608,7 @@
     },
     "@orqastudio/plugin-systems-thinking": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T23:08:25.370Z",
+      "installed_at": "2026-03-23T23:42:37.418Z",
       "files": {
         ".orqa/process/knowledge/KNOW-1a8eb147.md": {
           "sourceHash": "",
@@ -666,12 +666,12 @@
     },
     "@orqastudio/plugin-githooks": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T23:08:20.113Z",
+      "installed_at": "2026-03-23T23:42:31.906Z",
       "files": {}
     },
     "@orqastudio/claude-code-connector": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T23:08:29.210Z",
+      "installed_at": "2026-03-23T23:42:41.429Z",
       "files": {
         ".orqa/process/knowledge/KNOW-0fd23e0b.md": {
           "sourceHash": "",
@@ -685,7 +685,7 @@
     },
     "@orqastudio/plugin-claude": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T23:08:29.344Z",
+      "installed_at": "2026-03-23T23:42:41.563Z",
       "files": {}
     }
   }
