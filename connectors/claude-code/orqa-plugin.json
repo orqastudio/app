@@ -1,0 +1,132 @@
+{
+  "name": "@orqastudio/claude-code-connector",
+  "version": "0.1.0-dev",
+  "displayName": "Claude Code Connector",
+  "description": "Bridges OrqaStudio governance with Claude Code — agent mapping, rule enforcement, skill injection, artifact validation, and slash commands.",
+  "requires": [
+    "@orqastudio/plugin-agile-governance",
+    "@orqastudio/plugin-systems-thinking"
+  ],
+  "category": "connector",
+  "content": {
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    }
+  },
+  "dependencies": {
+    "npm": ["@orqastudio/cli", "@orqastudio/types", "yaml"]
+  },
+  "build": "npm run build",
+  "lifecycle": {
+    "install": "node dist/index.js setup"
+  },
+  "provides": {
+    "schemas": [],
+    "views": [],
+    "widgets": [],
+    "relationships": [],
+    "lspServers": {
+      "orqastudio": {
+        "command": "orqa",
+        "args": [
+          "lsp"
+        ],
+        "extensionToLanguage": {
+          ".md": "markdown"
+        }
+      }
+    },
+    "mcpServers": {
+      "orqastudio": {
+        "command": "orqa",
+        "args": [
+          "mcp"
+        ]
+      }
+    },
+    "knowledge": [
+      {
+        "key": "artifact-creation",
+        "id": "KNOW-816ebef3",
+        "label": "Human-readable title"
+      },
+      {
+        "key": "artifact-ids",
+        "id": "KNOW-9573eeea",
+        "label": "artifact-ids"
+      },
+      {
+        "key": "decision-tree",
+        "id": "KNOW-3155cdaa",
+        "label": "Orchestrator decision tree — self-navigating knowledge discovery"
+      },
+      {
+        "key": "delegation-patterns",
+        "id": "KNOW-ac314f61",
+        "label": "delegation-patterns"
+      },
+      {
+        "key": "implementer-tree",
+        "id": "KNOW-b1593311",
+        "label": "Implementer decision tree — domain-aware implementation protocol"
+      },
+      {
+        "key": "0fd23e0b",
+        "id": "KNOW-0fd23e0b",
+        "label": "Project Migration"
+      },
+      {
+        "key": "82ceb1bd",
+        "id": "KNOW-82ceb1bd",
+        "label": "Project Inference"
+      },
+      {
+        "key": "reviewer-tree",
+        "id": "KNOW-08fcd847",
+        "label": "Reviewer decision tree — standards-driven review protocol"
+      },
+      {
+        "key": "rule-enforcement",
+        "id": "KNOW-bcfeb64e",
+        "label": "Rule Enforcement (CLI Plugin)"
+      },
+      {
+        "key": "tool-mapping",
+        "id": "KNOW-b0b55e54",
+        "label": "tool-mapping"
+      }
+    ],
+    "hooks": [
+      {
+        "event": "PreToolUse",
+        "description": "Rule enforcement — evaluates governance rules before Write/Edit/Bash"
+      },
+      {
+        "event": "UserPromptSubmit",
+        "description": "Intent classification — injects relevant skills based on user prompt"
+      },
+      {
+        "event": "SessionStart",
+        "description": "Health checks, session recovery, delegation reminders"
+      },
+      {
+        "event": "Stop",
+        "description": "Pre-commit checklist, uncommitted change warnings"
+      },
+      {
+        "event": "PostToolUse",
+        "description": "Artifact validation — validates .orqa/ files after Write/Edit"
+      },
+      {
+        "event": "PreCompact",
+        "description": "Context preservation — saves governance context before compaction"
+      },
+      {
+        "event": "SubagentStop",
+        "description": "Subagent review — validates output against governance scope"
+      }
+    ],
+    "cliTools": []
+  }
+}

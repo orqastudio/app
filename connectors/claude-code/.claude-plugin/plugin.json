@@ -1,0 +1,8 @@
+{
+  "name": "orqastudio",
+  "description": "OrqaStudio governance integration for Claude Code — agent delegation, rule enforcement, skill injection, artifact validation, and process workflow.",
+  "version": "0.1.0-dev",
+  "author": {
+    "name": "OrqaStudio"
+  }
+}
