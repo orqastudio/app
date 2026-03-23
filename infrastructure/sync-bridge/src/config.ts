@@ -23,13 +23,13 @@ export function loadConfig(): BridgeConfig {
       token: process.env.FORGEJO_TOKEN ?? '',
       webhookSecret: process.env.FORGEJO_WEBHOOK_SECRET ?? 'dev-secret',
       org: process.env.FORGEJO_ORG ?? 'orqastudio',
-      repo: process.env.FORGEJO_REPO ?? 'orqastudio',
+      repo: process.env.FORGEJO_REPO ?? 'app',
     },
     github: {
       token: process.env.GITHUB_TOKEN ?? '',
       webhookSecret: process.env.GITHUB_WEBHOOK_SECRET ?? 'dev-secret',
       owner: process.env.GITHUB_OWNER ?? 'orqastudio',
-      repo: process.env.GITHUB_REPO ?? 'orqastudio',
+      repo: process.env.GITHUB_REPO ?? 'app',
     },
   };
 }

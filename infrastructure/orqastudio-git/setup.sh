@@ -62,19 +62,19 @@ echo ""
 # Step 3: Create the monorepo via API
 # ---------------------------------------------------------------------------
 
-echo "--- Creating repository: $ORG_NAME/orqastudio ---"
+echo "--- Creating repository: $ORG_NAME/app ---"
 curl -s -X POST "$SERVER_URL/api/v1/orgs/$ORG_NAME/repos" \
   -H "Content-Type: application/json" \
   -u "$ADMIN_USER:$ADMIN_PASS" \
   -d "{
-    \"name\": \"orqastudio\",
+    \"name\": \"app\",
     \"description\": \"OrqaStudio monorepo — app, libraries, plugins, connectors\",
     \"private\": false,
     \"default_branch\": \"main\",
     \"auto_init\": false
   }" > /dev/null 2>&1 || echo "  (repo may already exist)"
 
-echo "  Repo: $ORG_NAME/orqastudio"
+echo "  Repo: $ORG_NAME/app"
 echo ""
 
 # ---------------------------------------------------------------------------
@@ -108,7 +108,7 @@ echo "  Push mirror must be configured via the web UI:"
 echo "  1. Go to: $SERVER_URL/$ORG_NAME/orqastudio/settings"
 echo "  2. Click 'Mirror Settings'"
 echo "  3. Add push mirror:"
-echo "     URL: https://github.com/orqastudio/orqastudio.git"
+echo "     URL: https://github.com/orqastudio/app.git"
 echo "     Auth: GitHub personal access token with repo scope"
 echo "  4. Set sync interval (e.g., every push or hourly)"
 echo ""
