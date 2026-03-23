@@ -1,0 +1,118 @@
+{
+  "name": "@orqastudio/plugin-rust",
+  "displayName": "Rust",
+  "version": "0.1.4-dev",
+  "description": "Base Rust development infrastructure — clippy, rustfmt, cargo test configuration and coding standards enforcement.",
+  "category": "coding-standards",
+  "provides": {
+    "enforcement_mechanisms": [
+      {
+        "key": "clippy",
+        "description": "Rust linter (clippy)",
+        "strength": 6
+      },
+      {
+        "key": "rustfmt",
+        "description": "Rust formatter",
+        "strength": 6
+      },
+      {
+        "key": "cargo-test",
+        "description": "Rust test runner",
+        "strength": 6
+      }
+    ],
+    "agents": [
+      {
+        "key": "4241392c",
+        "id": "AGENT-4241392c",
+        "path": "agents/AGENT-4241392c.md"
+      },
+      {
+        "key": "e1e47559",
+        "id": "AGENT-e1e47559",
+        "path": "agents/AGENT-e1e47559.md"
+      }
+    ],
+    "lspServers": {
+      "rust": {
+        "command": "rust-analyzer",
+        "extensionToLanguage": {
+          ".rs": "rust"
+        }
+      }
+    },
+    "knowledge": [
+      {
+        "key": "12495e28",
+        "id": "KNOW-12495e28",
+        "label": "Rust Async Patterns"
+      },
+      {
+        "key": "214b7cdc",
+        "id": "KNOW-214b7cdc"
+      },
+      {
+        "key": "2a72f929",
+        "id": "KNOW-2a72f929"
+      },
+      {
+        "key": "5efa83a5",
+        "id": "KNOW-5efa83a5"
+      }
+    ],
+    "tools": {
+      "clippy": {
+        "command": "cargo clippy",
+        "configFile": "clippy.toml",
+        "configFormat": "toml"
+      },
+      "rustfmt": {
+        "command": "cargo fmt --check",
+        "configFile": ".rustfmt.toml",
+        "configFormat": "toml"
+      },
+      "cargo-test": {
+        "command": "cargo test",
+        "configFile": null,
+        "configFormat": "cli-args"
+      }
+    },
+    "dependencies": {
+      "rustToolchain": "stable"
+    },
+    "decision_tree": {
+      "branches": [
+        {
+          "mode": "implementation",
+          "domain": "rust-backend",
+          "description": "Implementing Rust code — Tauri commands, domain logic, repositories, async patterns",
+          "search_context": "rust async, tauri command, thiserror, repository pattern, domain service"
+        }
+      ]
+    }
+  },
+  "content": {
+    "agents": {
+      "source": "agents",
+      "target": ".orqa/process/agents"
+    },
+    "documentation": {
+      "source": "documentation",
+      "target": ".orqa/documentation"
+    },
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    }
+  },
+  "dependencies": {
+    "system": [
+      {
+        "binary": "cargo",
+        "minVersion": "1.70.0"
+      }
+    ]
+  },
+  "role": "enhancement:delivery"
+}
