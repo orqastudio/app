@@ -631,6 +631,17 @@ pub fn graph_stats(graph: &ArtifactGraph) -> GraphStats {
 ///
 /// Returns `(Some(frontmatter_text), body)` if the file starts with `---`,
 /// or `(None, full_content)` if no frontmatter block is found.
+/// Extract YAML frontmatter and body from a markdown file.
+///
+/// Returns `(Some(yaml_text), body)` where `yaml_text` is the YAML content
+/// between `---` markers (without the markers themselves, trimmed of leading/trailing
+/// newlines). `body` is everything after the closing `---` marker.
+///
+/// # Contract for callers that rewrite files
+///
+/// To reconstruct the file: `format!("---\n{yaml_text}\n---\n{body}")`
+/// This produces a clean file with `---` on its own line, YAML content, `---`,
+/// then body content.
 pub fn extract_frontmatter(content: &str) -> (Option<String>, String) {
     let trimmed = content.trim_start();
     if !trimmed.starts_with("---") {
@@ -642,7 +653,9 @@ pub fn extract_frontmatter(content: &str) -> (Option<String>, String) {
         return (None, content.to_string());
     };
 
-    let fm_text = after_open[..close_pos].to_string();
+    // Trim leading/trailing whitespace from the YAML block so callers
+    // can reliably reconstruct with `format!("---\n{fm}\n---\n{body}")`.
+    let fm_text = after_open[..close_pos].trim().to_string();
     let body = after_open[close_pos + 4..]
         .trim_start_matches('\n')
         .to_string();

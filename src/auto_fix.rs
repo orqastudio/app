@@ -375,19 +375,18 @@ fn apply_missing_type_fix(
 
     let content = std::fs::read_to_string(&file_path)
         .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
-    let (fm_opt, body) = extract_frontmatter(&content);
-    let Some(fm_text) = fm_opt else {
-        return Ok(None);
-    };
 
-    // Guard: don't add if `type:` already present.
-    if fm_text.lines().any(|l| l.trim_start().starts_with("type:")) {
+    // Guard: don't add if `type:` already present as a top-level frontmatter key.
+    // Must NOT match indented `type:` in relationship entries (e.g., `    type: grounded-by`).
+    if content.lines().any(|l| l.starts_with("type:")) {
         return Ok(None);
     }
 
-    // Insert `type:` after the `id:` line (or at the beginning if id not found).
-    let new_fm = insert_field_after(&fm_text, "id:", &format!("type: {inferred_type}"));
-    let new_content = format!("---\n{new_fm}\n---\n{body}");
+    // Insert `type:` after the `id:` line, operating on the raw file.
+    let Some(new_content) = insert_field_in_file(&content, "id:", &format!("type: {inferred_type}")) else {
+        return Ok(None);
+    };
+
     std::fs::write(&file_path, new_content)
         .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
 
@@ -415,27 +414,22 @@ fn apply_missing_status_fix(
 
     let content = std::fs::read_to_string(&file_path)
         .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
-    let (fm_opt, body) = extract_frontmatter(&content);
-    let Some(fm_text) = fm_opt else {
-        return Ok(None);
-    };
 
-    // Guard: don't add if `status:` already present.
-    if fm_text
-        .lines()
-        .any(|l| l.trim_start().starts_with("status:"))
-    {
+    // Guard: don't add if `status:` already present as a top-level frontmatter key.
+    if content.lines().any(|l| l.starts_with("status:")) {
         return Ok(None);
     }
 
     // Insert `status:` after `type:` if present, otherwise after `id:`.
-    let anchor = if fm_text.lines().any(|l| l.trim_start().starts_with("type:")) {
+    let anchor = if content.lines().any(|l| l.trim_start().starts_with("type:")) {
         "type:"
     } else {
         "id:"
     };
-    let new_fm = insert_field_after(&fm_text, anchor, "status: captured");
-    let new_content = format!("---\n{new_fm}\n---\n{body}");
+    let Some(new_content) = insert_field_in_file(&content, anchor, "status: captured") else {
+        return Ok(None);
+    };
+
     std::fs::write(&file_path, new_content)
         .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
 
@@ -543,24 +537,30 @@ fn apply_duplicate_relationship_fix(
     }))
 }
 
-/// Insert a new field line immediately after the first line that starts with `anchor_prefix`.
+/// Insert a new YAML field line into a raw file, immediately after the first
+/// frontmatter line that starts with `anchor_prefix`.
 ///
-/// If no such anchor line is found, the new field is prepended before all other content.
-fn insert_field_after(fm_text: &str, anchor_prefix: &str, new_field: &str) -> String {
-    let lines: Vec<&str> = fm_text.lines().collect();
-    let anchor_pos = lines
-        .iter()
-        .position(|l| l.trim_start().starts_with(anchor_prefix));
+/// Operates on the raw file content (with `---` delimiters) so no
+/// parse/reconstruct round-trip is needed. Returns the full file content.
+fn insert_field_in_file(raw_content: &str, anchor_prefix: &str, new_field: &str) -> Option<String> {
+    let lines: Vec<&str> = raw_content.lines().collect();
 
-    match anchor_pos {
-        Some(pos) => {
-            let mut result = lines[..=pos].to_vec();
-            result.push(new_field);
-            result.extend_from_slice(&lines[pos + 1..]);
-            result.join("\n")
-        }
-        None => format!("{new_field}\n{fm_text}"),
-    }
+    // Find the opening `---`
+    let open = lines.iter().position(|l| l.trim() == "---")?;
+
+    // Find the anchor line within frontmatter
+    let anchor_pos = lines[open + 1..]
+        .iter()
+        .position(|l| l.trim_start().starts_with(anchor_prefix))
+        .map(|p| p + open + 1)?;
+
+    // Insert the new field line after the anchor
+    let mut result: Vec<&str> = Vec::with_capacity(lines.len() + 1);
+    result.extend_from_slice(&lines[..=anchor_pos]);
+    result.push(new_field);
+    result.extend_from_slice(&lines[anchor_pos + 1..]);
+
+    Some(result.join("\n"))
 }
 
 /// Insert a new relationship entry into frontmatter text, returning the full reconstructed file.
