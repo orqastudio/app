@@ -87,6 +87,7 @@ function checkDuplicates(projectRoot: string, autoFix: boolean): void {
 		join(projectRoot, "app", ".orqa"),
 		join(projectRoot, "plugins"),
 		join(projectRoot, "connectors"),
+		join(projectRoot, "integrations"),
 	];
 
 	const allFiles = scanDirs.flatMap((d) => walkFiles(d));
@@ -169,6 +170,7 @@ function migrateId(projectRoot: string, oldId: string, newId: string): void {
 		join(projectRoot, "app", ".orqa"),
 		join(projectRoot, "plugins"),
 		join(projectRoot, "connectors"),
+		join(projectRoot, "integrations"),
 	];
 
 	const allFiles = scanDirs.flatMap((d) => walkFiles(d));

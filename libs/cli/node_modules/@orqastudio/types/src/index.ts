@@ -181,4 +181,6 @@ export type {
 	PluginLifecycle,
 	BundledAgentRef,
 	BundledKnowledgeRef,
+	PluginSymlinkDeclaration,
+	PluginAggregatedFile,
 } from "./plugin.js";

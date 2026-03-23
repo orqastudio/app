@@ -1,5 +1,5 @@
 {
-  "extends": "@orqastudio/plugin-typescript/tsconfig/library.json",
+  "extends": "../../plugins/typescript/src/tsconfig/library.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",

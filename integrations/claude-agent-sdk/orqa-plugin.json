@@ -4,6 +4,7 @@
   "displayName": "Claude Integration",
   "description": "Claude AI provider — Agent SDK sidecar for streaming conversations, tool execution, and model management.",
   "requires": [],
+  "build": "cd sidecar && bun run build",
   "provides": {
     "schemas": [],
     "views": [],

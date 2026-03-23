@@ -127,6 +127,25 @@
         "description": "Subagent review — validates output against governance scope"
       }
     ],
-    "cliTools": []
+    "cliTools": [],
+    "symlinks": [
+      {
+        "source": ".orqa/process/rules",
+        "target": ".claude/rules"
+      }
+    ],
+    "aggregatedFiles": [
+      {
+        "target": ".mcp.json",
+        "collect": "provides.mcpServers",
+        "wrapper": "mcpServers",
+        "stripFields": ["type"]
+      },
+      {
+        "target": ".lsp.json",
+        "collect": "provides.lspServers",
+        "relativeToPlugin": true
+      }
+    ]
   }
 }

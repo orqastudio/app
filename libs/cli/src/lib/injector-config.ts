@@ -40,6 +40,7 @@ export function aggregateInjectorConfig(projectRoot: string): InjectorConfig {
 	const scanDirs = [
 		path.join(projectRoot, "plugins"),
 		path.join(projectRoot, "connectors"),
+		path.join(projectRoot, "integrations"),
 	];
 
 	for (const dir of scanDirs) {

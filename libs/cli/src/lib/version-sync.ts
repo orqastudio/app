@@ -96,12 +96,13 @@ export function syncVersions(projectRoot: string, version: string): VersionSyncR
 	const cargoToml = path.join(projectRoot, "app", "backend", "src-tauri", "Cargo.toml");
 	if (updateCargoVersion(cargoToml, version)) updated.push(cargoToml);
 
-	// Plugins
-	const pluginsDir = path.join(projectRoot, "plugins");
-	if (fs.existsSync(pluginsDir)) {
-		for (const entry of fs.readdirSync(pluginsDir, { withFileTypes: true })) {
+	// Plugins + Integrations
+	for (const container of ["plugins", "integrations"]) {
+		const containerDir = path.join(projectRoot, container);
+		if (!fs.existsSync(containerDir)) continue;
+		for (const entry of fs.readdirSync(containerDir, { withFileTypes: true })) {
 			if (!entry.isDirectory()) continue;
-			const dir = path.join(pluginsDir, entry.name);
+			const dir = path.join(containerDir, entry.name);
 			if (updateJsonVersion(path.join(dir, "orqa-plugin.json"), version)) updated.push(path.join(dir, "orqa-plugin.json"));
 			if (updateJsonVersion(path.join(dir, "package.json"), version)) updated.push(path.join(dir, "package.json"));
 			if (updateJsonVersion(path.join(dir, ".claude-plugin", "plugin.json"), version)) updated.push(path.join(dir, ".claude-plugin/plugin.json"));
@@ -141,7 +142,7 @@ export function checkVersionDrift(projectRoot: string): VersionDrift[] {
 	};
 
 	// Scan all known locations
-	for (const dir of ["libs", "plugins", "connectors"]) {
+	for (const dir of ["libs", "plugins", "connectors", "integrations"]) {
 		const base = path.join(projectRoot, dir);
 		if (!fs.existsSync(base)) continue;
 		for (const entry of fs.readdirSync(base, { withFileTypes: true })) {

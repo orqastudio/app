@@ -1,11 +1,13 @@
 /**
  * Connector Setup — Claude Code-specific post-install setup.
  *
- * This module owns all Claude Code-specific directory wiring:
+ * This module owns Claude Code-specific directory wiring:
  * - .claude/agents/ — merged directory of core + plugin agent symlinks
- * - .claude/rules   — symlink to .orqa/process/rules/
- * - .lsp.json       — aggregated LSP server configurations
- * - .mcp.json       — aggregated MCP server configurations
+ *
+ * Symlinks (.claude/rules) and aggregated files (.mcp.json, .lsp.json)
+ * are now handled by the plugin framework's universal mechanisms:
+ * - provides.symlinks → processPluginSymlinks()
+ * - provides.aggregatedFiles → processAggregatedFiles()
  *
  * It is called by the Claude Code connector after plugin installation,
  * and can also be run standalone to repair a broken install.
@@ -20,10 +22,7 @@ import { ensureSymlink } from "@orqastudio/cli";
 
 export interface ConnectorSetupResult {
 	symlinkAgents: "created" | "skipped" | "exists" | "replaced";
-	symlinkRules: "created" | "skipped" | "exists" | "replaced";
 	pluginAgentCount: number;
-	lspCount: number;
-	mcpCount: number;
 }
 
 /**
@@ -33,9 +32,9 @@ export interface ConnectorSetupResult {
  *    - All plugin agents declared via provides.agents in installed plugin manifests
  *    Plugin agents are keyed by their manifest `key` field (e.g. "rust-specialist").
  *    Core agents take precedence: a plugin cannot shadow a core agent filename.
- * 2. Create .claude/rules → .orqa/process/rules/ symlink
- * 3. Aggregate lspServers/mcpServers from all plugins/connectors → .lsp.json/.mcp.json
- *    written into the connector's plugin directory.
+ *
+ * Symlinks and aggregated files (rules, .mcp.json, .lsp.json) are now handled
+ * by the plugin framework's universal mechanisms declared in orqa-plugin.json.
  *
  * Called automatically by installPlugin when the installed plugin is the Claude Code connector.
  * Can also be called standalone to repair a broken install.
@@ -45,7 +44,7 @@ export interface ConnectorSetupResult {
  */
 export function runConnectorSetup(
 	projectRoot: string,
-	connectorPluginDir: string,
+	_connectorPluginDir: string,
 ): ConnectorSetupResult {
 	const orqaDir = path.join(projectRoot, ".orqa");
 	const appOrqaDir = path.join(projectRoot, "app", ".orqa");
@@ -69,35 +68,11 @@ export function runConnectorSetup(
 		projectRoot,
 	);
 
-	const rulesTarget = path.join(orqaDir, "process", "rules");
-	const symlinkRules: "created" | "skipped" | "exists" | "replaced" = fs.existsSync(rulesTarget)
-		? ensureSymlink(rulesTarget, path.join(claudeDir, "rules")).status
-		: "skipped";
-
-	const { lsp, mcp } = aggregateServers(projectRoot);
 	const pluginAgentCount = countPluginAgents(projectRoot);
-
-	const lspPath = path.join(connectorPluginDir, ".lsp.json");
-	const mcpPath = path.join(projectRoot, ".mcp.json");
-
-	const newLsp = JSON.stringify(lsp, null, 2);
-	const existingLsp = fs.existsSync(lspPath) ? fs.readFileSync(lspPath, "utf-8") : "";
-	if (newLsp !== existingLsp) {
-		fs.writeFileSync(lspPath, newLsp);
-	}
-
-	const newMcp = JSON.stringify({ mcpServers: mcp }, null, 2);
-	const existingMcp = fs.existsSync(mcpPath) ? fs.readFileSync(mcpPath, "utf-8") : "";
-	if (newMcp !== existingMcp) {
-		fs.writeFileSync(mcpPath, newMcp);
-	}
 
 	return {
 		symlinkAgents,
-		symlinkRules,
 		pluginAgentCount,
-		lspCount: Object.keys(lsp).length,
-		mcpCount: Object.keys(mcp).length,
 	};
 }
 
@@ -222,67 +197,4 @@ function countPluginAgents(projectRoot: string): number {
 	}
 
 	return count;
-}
-
-interface ServerMap {
-	[name: string]: unknown;
-}
-
-/**
- * Scan plugins/ and connectors/ directories for orqa-plugin.json manifests
- * and aggregate their lspServers/mcpServers declarations.
- * First declaration wins (plugins/ is scanned before connectors/).
- */
-function aggregateServers(projectRoot: string): { lsp: ServerMap; mcp: ServerMap } {
-	const lsp: ServerMap = {};
-	const mcp: ServerMap = {};
-
-	const scanDirs = [
-		path.join(projectRoot, "plugins"),
-		path.join(projectRoot, "connectors"),
-	];
-
-	for (const scanDir of scanDirs) {
-		if (!fs.existsSync(scanDir)) continue;
-
-		for (const entry of fs.readdirSync(scanDir, { withFileTypes: true })) {
-			if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
-
-			const manifestPath = path.join(scanDir, entry.name, "orqa-plugin.json");
-			if (!fs.existsSync(manifestPath)) continue;
-
-			try {
-				const raw = fs.readFileSync(manifestPath, "utf-8");
-				const manifest = JSON.parse(raw) as {
-					provides?: {
-						lspServers?: Record<string, unknown>;
-						mcpServers?: Record<string, unknown>;
-					};
-				};
-				const provides = manifest.provides ?? {};
-
-				if (provides.lspServers && typeof provides.lspServers === "object") {
-					for (const [name, config] of Object.entries(provides.lspServers)) {
-						if (!(name in lsp)) {
-							lsp[name] = config;
-						}
-					}
-				}
-
-				if (provides.mcpServers && typeof provides.mcpServers === "object") {
-					for (const [name, config] of Object.entries(provides.mcpServers)) {
-						if (!(name in mcp)) {
-							// Strip "type" field — Claude Code doesn't use it
-							const { type: _type, ...mcpConfig } = config as Record<string, unknown>;
-							mcp[name] = mcpConfig;
-						}
-					}
-				}
-			} catch {
-				// Skip invalid manifests
-			}
-		}
-	}
-
-	return { lsp, mcp };
 }

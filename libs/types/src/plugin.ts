@@ -270,6 +270,32 @@ export interface PluginContentMapping {
 	source: string;
 	/** Target directory in the project (relative to project root). */
 	target: string;
+	/** Copy strategy: "copy" (default) copies files; "extends" sets up config extension. */
+	strategy?: "copy" | "extends";
+	/** Mechanism for "extends" strategy: how the extension is wired. */
+	mechanism?: "json-extends" | "js-import";
+}
+
+/** A symlink declaration for a plugin to create in the project. */
+export interface PluginSymlinkDeclaration {
+	/** Source path (relative to project root). */
+	source: string;
+	/** Target path (relative to project root). */
+	target: string;
+}
+
+/** An aggregated file declaration — collects values from multiple plugin manifests into one file. */
+export interface PluginAggregatedFile {
+	/** Target file path (relative to project root). */
+	target: string;
+	/** Dot-path into each plugin's orqa-plugin.json to collect (e.g. "provides.mcpServers"). */
+	collect: string;
+	/** Whether paths in collected values are relative to the plugin dir (default: false = relative to project root). */
+	relativeToPlugin?: boolean;
+	/** If set, wraps all collected entries under this key in the output JSON. */
+	wrapper?: string;
+	/** Fields to strip from each collected entry before writing. */
+	stripFields?: string[];
 }
 
 /** Plugin dependency declarations. */
@@ -460,6 +486,10 @@ export interface PluginProvides {
 	mode_templates?: Record<string, string>;
 	/** Session state reminders appended to sessionConstant in the prompt-injector. */
 	session_reminders?: string[];
+	/** Symlinks to create in the project directory. */
+	symlinks?: PluginSymlinkDeclaration[];
+	/** Aggregated files — collect values from all plugin manifests into a single output file. */
+	aggregatedFiles?: PluginAggregatedFile[];
 }
 
 // ---------------------------------------------------------------------------

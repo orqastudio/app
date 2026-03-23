@@ -76,8 +76,9 @@ function detectCollisions(
 	}
 
 	// Already-installed plugin relationships
-	const dir = path.join(projectRoot, "plugins");
-	if (fs.existsSync(dir)) {
+	for (const container of ["plugins", "connectors", "integrations"]) {
+		const dir = path.join(projectRoot, container);
+		if (!fs.existsSync(dir)) continue;
 		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
 			if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
 			try {
@@ -309,34 +310,35 @@ export function uninstallPlugin(name: string, projectRoot?: string): void {
  */
 export function listInstalledPlugins(projectRoot?: string): InstallResult[] {
 	const root = projectRoot ?? process.cwd();
-	const dir = pluginsDir(root);
-
-	if (!fs.existsSync(dir)) return [];
-
 	const results: InstallResult[] = [];
 
-	for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-		if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+	for (const container of ["plugins", "connectors", "integrations"]) {
+		const dir = path.join(root, container);
+		if (!fs.existsSync(dir)) continue;
 
-		const pluginPath = path.join(dir, entry.name);
-		const manifestPath = path.join(pluginPath, "orqa-plugin.json");
+		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+			if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
 
-		if (!fs.existsSync(manifestPath)) continue;
+			const pluginPath = path.join(dir, entry.name);
+			const manifestPath = path.join(pluginPath, "orqa-plugin.json");
 
-		try {
-			const manifest = readManifest(pluginPath);
-			const lockfile = readLockfile(root);
-			const locked = lockfile.plugins.find((p) => p.name === manifest.name);
+			if (!fs.existsSync(manifestPath)) continue;
 
-			results.push({
-				name: manifest.name,
-				version: manifest.version,
-				path: pluginPath,
-				source: locked ? "github" : "local",
-				collisions: [],
-			});
-		} catch {
-			// Skip invalid plugins
+			try {
+				const manifest = readManifest(pluginPath);
+				const lockfile = readLockfile(root);
+				const locked = lockfile.plugins.find((p) => p.name === manifest.name);
+
+				results.push({
+					name: manifest.name,
+					version: manifest.version,
+					path: pluginPath,
+					source: locked ? "github" : "local",
+					collisions: [],
+				});
+			} catch {
+				// Skip invalid plugins
+			}
 		}
 	}
 

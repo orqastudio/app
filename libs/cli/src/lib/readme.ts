@@ -106,7 +106,7 @@ export function auditReadmes(projectRoot: string): ReadmeAuditResult[] {
 	results.push(checkReadme(path.join(projectRoot, "app"), "app"));
 
 	// Scan category directories
-	for (const category of ["libs", "plugins", "connectors", "tools", "registry"]) {
+	for (const category of ["libs", "plugins", "connectors", "integrations", "tools", "registry"]) {
 		const dir = path.join(projectRoot, category);
 		if (!fs.existsSync(dir)) continue;
 

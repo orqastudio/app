@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "templates": [
+    {
+      "key": "frontend",
+      "label": "Frontend Plugin",
+      "description": "Views and widgets only — no backend code.",
+      "path": "frontend"
+    },
+    {
+      "key": "sidecar",
+      "label": "Sidecar Plugin",
+      "description": "AI provider sidecar with streaming and tool execution.",
+      "path": "sidecar"
+    },
+    {
+      "key": "cli-tool",
+      "label": "CLI Tool Plugin",
+      "description": "One-shot CLI tools registered as plugin commands.",
+      "path": "cli-tool"
+    },
+    {
+      "key": "full",
+      "label": "Full Plugin",
+      "description": "Complete plugin with views, sidecar, CLI tools, and content.",
+      "path": "full"
+    }
+  ]
+}

@@ -300,7 +300,7 @@ function discoverAndValidate(projectRoot: string): SchemaFinding[] {
 	}
 
 	// Validate all plugin manifests
-	for (const container of ["plugins", "connectors"]) {
+	for (const container of ["plugins", "connectors", "integrations"]) {
 		const containerDir = join(projectRoot, container);
 		let entries;
 		try {
@@ -319,7 +319,7 @@ function discoverAndValidate(projectRoot: string): SchemaFinding[] {
 
 	// Plugin integrity checks: required categories + dependency resolution
 	const loadedPlugins: LoadedPlugin[] = [];
-	for (const container of ["plugins", "connectors"]) {
+	for (const container of ["plugins", "connectors", "integrations"]) {
 		const containerDir = join(projectRoot, container);
 		let entries;
 		try {

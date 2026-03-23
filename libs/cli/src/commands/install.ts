@@ -306,9 +306,9 @@ const LIB_ORDER: Array<{
 	{ dir: "libs/types", deps: [], build: "npx tsc" },
 	{ dir: "libs/logger", deps: [], build: "npx tsc" },
 	{ dir: "plugins/typescript", deps: [], build: "npx tsc" },
-	{ dir: "libs/cli", deps: ["@orqastudio/types", "@orqastudio/plugin-typescript"], build: "npx tsc" },
+	{ dir: "libs/cli", deps: ["@orqastudio/types"], build: "npx tsc" },
 	{ dir: "connectors/claude-code", deps: ["@orqastudio/types", "@orqastudio/cli"], build: "npx tsc" },
-	{ dir: "libs/sdk", deps: ["@orqastudio/types", "@orqastudio/logger", "@orqastudio/plugin-typescript"], build: "npx tsc" },
+	{ dir: "libs/sdk", deps: ["@orqastudio/types", "@orqastudio/logger"], build: "npx tsc" },
 	{ dir: "libs/svelte-components", deps: ["@orqastudio/types", "@orqastudio/sdk"], build: "npm run build" },
 	{ dir: "libs/graph-visualiser", deps: ["@orqastudio/types"], build: "npm run build" },
 ];
@@ -577,8 +577,9 @@ const m = readContentManifest(root);
 for (const p of listInstalledPlugins(root)) {
   try {
     const pm = readManifest(p.path);
-    const files = copyPluginContent(p.path, root, pm);
-    if (files.length > 0) { m.plugins[p.name] = { version: pm.version, installed_at: new Date().toISOString(), files }; }
+    const result = copyPluginContent(p.path, root, pm);
+    const count = Object.keys(result.copied).length;
+    if (count > 0) { m.plugins[p.name] = { version: pm.version, installed_at: new Date().toISOString(), files: result.copied }; }
   } catch {}
 }
 writeContentManifest(root, m);

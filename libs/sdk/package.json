@@ -46,8 +46,7 @@
   ],
   "dependencies": {
     "@orqastudio/logger": "0.1.4-dev",
-    "@orqastudio/types": "0.1.4-dev",
-    "@orqastudio/plugin-typescript": "0.1.4-dev"
+    "@orqastudio/types": "0.1.4-dev"
   },
   "peerDependencies": {
     "@tauri-apps/api": ">=2.0.0",
