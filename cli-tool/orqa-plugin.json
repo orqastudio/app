@@ -9,6 +9,7 @@
     "views": [],
     "widgets": [],
     "relationships": [],
+    "enforcement_mechanisms": [],
     "cliTools": [
       {
         "key": "my-tool",
@@ -20,5 +21,22 @@
         "category": "custom"
       }
     ]
+  },
+  "content": {
+    "rules": {
+      "source": "rules",
+      "target": ".orqa/process/rules"
+    },
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    }
+  },
+  "dependencies": {
+    "npm": ["@orqastudio/types"]
+  },
+  "build": "npm run build",
+  "lifecycle": {
+    "install": "node scripts/post-install.mjs"
   }
 }

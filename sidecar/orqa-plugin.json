@@ -9,6 +9,7 @@
     "views": [],
     "widgets": [],
     "relationships": [],
+    "enforcement_mechanisms": [],
     "sidecar": {
       "key": "my-provider",
       "label": "My Provider",
@@ -16,5 +17,20 @@
       "entrypoint": "dist/sidecar.js",
       "requires": [{ "binary": "node", "minVersion": "20.0.0" }]
     }
+  },
+  "content": {
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    }
+  },
+  "dependencies": {
+    "npm": ["@orqastudio/types"],
+    "system": [{ "binary": "node", "minVersion": "20.0.0" }]
+  },
+  "build": "npm run build",
+  "lifecycle": {
+    "install": "node scripts/post-install.mjs",
+    "uninstall": "node scripts/pre-uninstall.mjs"
   }
 }

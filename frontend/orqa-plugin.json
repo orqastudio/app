@@ -14,7 +14,8 @@
       }
     ],
     "widgets": [],
-    "relationships": []
+    "relationships": [],
+    "enforcement_mechanisms": []
   },
   "defaultNavigation": [
     {
@@ -23,5 +24,14 @@
       "icon": "layout-dashboard",
       "pluginSource": "@yourorg/plugin-name"
     }
-  ]
+  ],
+  "content": {
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    }
+  },
+  "dependencies": {
+    "npm": ["@orqastudio/sdk"]
+  }
 }

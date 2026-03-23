@@ -15,6 +15,7 @@
     ],
     "widgets": [],
     "relationships": [],
+    "enforcement_mechanisms": [],
     "sidecar": {
       "key": "my-provider",
       "label": "My Provider",
@@ -40,5 +41,24 @@
         "entrypoint": "dist/hook.js"
       }
     ]
+  },
+  "content": {
+    "rules": {
+      "source": "rules",
+      "target": ".orqa/process/rules"
+    },
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    }
+  },
+  "dependencies": {
+    "npm": ["@orqastudio/types"],
+    "system": []
+  },
+  "build": "npm run build",
+  "lifecycle": {
+    "install": "node scripts/post-install.mjs",
+    "uninstall": "node scripts/pre-uninstall.mjs"
   }
 }
