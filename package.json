@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/plugin-githooks",
-  "version": "0.1.0-dev",
+  "version": "0.1.4-dev",
   "description": "Git hooks plugin — pre-commit schema enforcement for governance artifacts",
   "license": "BSL-1.1",
   "private": true,
