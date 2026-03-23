@@ -4,7 +4,7 @@
 // then builds the systemMessage in Claude Code's format.
 // Data comes from daemon; format (systemMessage JSON shape) is connector-specific.
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync, statSync } from "fs";
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "fs";
 import { join } from "path";
 import { readInput, callDaemon, outputAllow } from "./shared.js";
 import { logTelemetry } from "./telemetry.js";
@@ -38,15 +38,37 @@ async function main() {
     const sessionReminder = checkSessionState(projectDir);
     // Context line (connector-specific — stays here).
     const contextLine = getContextLine(projectDir);
-    // Build systemMessage: preamble + mode + behavioral rules + context + session.
+    // Build thinking mode section.
     const behavioralStr = behavioralMessages.join(" ");
     const modeInjection = mode
         ? `Thinking mode: ${mode}. ${behavioralStr}`.trim()
         : `Classify this prompt before responding: implementation | research | learning-loop | planning | review | debugging | documentation. If learning-loop: capture as lesson first. Then proceed with the appropriate approach. ${behavioralStr}`.trim();
-    let systemMessage = `${preamble}\n\n${modeInjection}\n\n${contextLine}`;
-    if (sessionReminder) {
-        systemMessage += `\n\n${sessionReminder}`;
-    }
+    // Build the preamble markdown document.
+    const sessionSection = sessionReminder ?? "Session state is current.";
+    const preambleDoc = [
+        "# Orchestrator Preamble",
+        "",
+        "## Agent Identity",
+        "",
+        preamble,
+        "",
+        "## Thinking Mode",
+        "",
+        modeInjection,
+        "",
+        "## Project Context",
+        "",
+        contextLine,
+        "",
+        "## Session State",
+        "",
+        sessionSection,
+        "",
+    ].join("\n");
+    // Write preamble to tmp/orchestrator-preamble.md.
+    const tmpDir = join(projectDir, "tmp");
+    mkdirSync(tmpDir, { recursive: true });
+    writeFileSync(join(tmpDir, "orchestrator-preamble.md"), preambleDoc, "utf-8");
     logTelemetry("prompt-injector", "UserPromptSubmit", startTime, "injected", {
         agent_type: agentType,
         mode,
@@ -54,6 +76,7 @@ async function main() {
         action: "allow",
         session_state_reminder: !!sessionReminder,
     }, projectDir);
+    const systemMessage = "CRITICAL: Before addressing this request, read tmp/orchestrator-preamble.md for your session context, active rules, and thinking mode guidance. Follow all instructions in that file.";
     process.stdout.write(JSON.stringify({ systemMessage }));
     process.exit(0);
 }
