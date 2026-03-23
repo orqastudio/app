@@ -94,7 +94,7 @@ pub struct ValidationContext {
 ///
 /// Generic categories derived from schema-driven checks. No relationship keys
 /// or artifact types are hardcoded.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum IntegrityCategory {
     /// Target of a reference does not exist in the graph.
     BrokenLink,

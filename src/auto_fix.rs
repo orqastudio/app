@@ -14,6 +14,45 @@ use crate::error::ValidationError;
 use crate::graph::{extract_frontmatter, ArtifactGraph};
 use crate::types::{AppliedFix, IntegrityCategory, IntegrityCheck};
 
+/// Find a node by artifact ID, checking both bare and qualified keys.
+///
+/// In organisation mode, graph keys are `project::ID` but check artifact_ids
+/// use the bare `ID`. This helper finds the node regardless.
+fn find_node<'a>(graph: &'a ArtifactGraph, artifact_id: &str) -> Option<&'a crate::graph::ArtifactNode> {
+    // Try bare ID first
+    if let Some(node) = graph.nodes.get(artifact_id) {
+        return Some(node);
+    }
+    // Try qualified keys (project::id)
+    graph.nodes.values().find(|n| n.id == artifact_id)
+}
+
+/// Resolve the absolute file path for a node, handling child project paths.
+///
+/// In organisation mode, `node.path` is relative to the child project root.
+/// The child project root is looked up from `.orqa/project.json`.
+fn resolve_node_path(node: &crate::graph::ArtifactNode, project_path: &Path) -> std::path::PathBuf {
+    if let Some(ref proj_name) = node.project {
+        // Try to find the child project path from project.json
+        let project_json_path = project_path.join(".orqa/project.json");
+        if let Ok(content) = std::fs::read_to_string(&project_json_path) {
+            if let Ok(json) = serde_json::from_str::<serde_json::Value>(&content) {
+                if let Some(projects) = json.get("projects").and_then(|v| v.as_array()) {
+                    for proj in projects {
+                        let name = proj.get("name").and_then(|v| v.as_str()).unwrap_or("");
+                        if name == proj_name {
+                            if let Some(child_path) = proj.get("path").and_then(|v| v.as_str()) {
+                                return project_path.join(child_path).join(&node.path);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    project_path.join(&node.path)
+}
+
 /// Apply auto-fixable integrity checks by modifying artifact files on disk.
 ///
 /// Returns the list of fixes that were successfully applied.
@@ -141,11 +180,11 @@ fn apply_invalid_status_fix(
         return Ok(None);
     };
 
-    let Some(node) = graph.nodes.get(&check.artifact_id) else {
+    let Some(node) = find_node(graph, &check.artifact_id) else {
         return Ok(None);
     };
 
-    let file_path = project_path.join(&node.path);
+    let file_path = resolve_node_path(node, project_path);
     if !file_path.exists() {
         return Ok(None);
     }
@@ -273,11 +312,11 @@ fn apply_type_prefix_fix(
         return Ok(None);
     };
 
-    let Some(node) = graph.nodes.get(&check.artifact_id) else {
+    let Some(node) = find_node(graph, &check.artifact_id) else {
         return Ok(None);
     };
 
-    let file_path = project_path.join(&node.path);
+    let file_path = resolve_node_path(node, project_path);
     if !file_path.exists() {
         return Ok(None);
     }
@@ -320,17 +359,16 @@ fn apply_missing_type_fix(
     check: &IntegrityCheck,
     project_path: &Path,
 ) -> Result<Option<AppliedFix>, ValidationError> {
-    let Some(node) = graph.nodes.get(&check.artifact_id) else {
+    let Some(node) = find_node(graph, &check.artifact_id) else {
         return Ok(None);
     };
 
     let inferred_type = node.artifact_type.clone();
     if inferred_type.is_empty() || inferred_type == "doc" {
-        // "doc" is a fallback that may not be meaningful — don't add it blindly.
         return Ok(None);
     }
 
-    let file_path = project_path.join(&node.path);
+    let file_path = resolve_node_path(node, project_path);
     if !file_path.exists() {
         return Ok(None);
     }
@@ -366,11 +404,11 @@ fn apply_missing_status_fix(
     check: &IntegrityCheck,
     project_path: &Path,
 ) -> Result<Option<AppliedFix>, ValidationError> {
-    let Some(node) = graph.nodes.get(&check.artifact_id) else {
+    let Some(node) = find_node(graph, &check.artifact_id) else {
         return Ok(None);
     };
 
-    let file_path = project_path.join(&node.path);
+    let file_path = resolve_node_path(node, project_path);
     if !file_path.exists() {
         return Ok(None);
     }
@@ -416,11 +454,11 @@ fn apply_duplicate_relationship_fix(
     check: &IntegrityCheck,
     project_path: &Path,
 ) -> Result<Option<AppliedFix>, ValidationError> {
-    let Some(node) = graph.nodes.get(&check.artifact_id) else {
+    let Some(node) = find_node(graph, &check.artifact_id) else {
         return Ok(None);
     };
 
-    let file_path = project_path.join(&node.path);
+    let file_path = resolve_node_path(node, project_path);
     if !file_path.exists() {
         return Ok(None);
     }
