@@ -18,9 +18,6 @@ relationships:
   - target: AD-c8535011
     type: driven-by
     rationale: Implements the config-driven delivery pipeline decision
-  - target: MS-eea45fa8
-    type: fulfils
-    rationale: Epic belongs to this milestone
   - target: TASK-bc24af0b
     type: delivered-by
   - target: TASK-fcb7ddc4
@@ -31,6 +28,9 @@ relationships:
     type: delivered-by
   - target: TASK-26acd796
     type: delivered-by
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 
 ## Context

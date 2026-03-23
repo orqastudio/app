@@ -7,8 +7,6 @@ status: completed
 created: 2026-03-18
 updated: 2026-03-19
 relationships:
-  - target: MS-654badde
-    type: fulfils
   - target: IDEA-1fb76817
     type: realised-by
   - target: IDEA-112a4b5d
@@ -29,6 +27,9 @@ relationships:
     type: delivered-by
   - target: TASK-2ae1177d
     type: delivered-by
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 
 # EPIC-a80f16b4: Runtime plugin view loading — no compiled-in plugins

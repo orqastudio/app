@@ -17,15 +17,15 @@ relationships:
   - target: "RES-a602a623"
     type: "guided-by"
     rationale: "Auto-generated inverse of informed-by relationship from RES-a602a623"
-  - target: "MS-654badde"
-    type: "fulfils"
-    rationale: "Epic belongs to this milestone"
   - target: "TASK-faffc209"
     type: "delivered-by"
     rationale: "Epic contains this task"
   - target: "TASK-16a4b326"
     type: "delivered-by"
     rationale: "Epic contains this task"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 ## Implementation Design
 

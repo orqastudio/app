@@ -75,7 +75,7 @@ Tauri `invoke()` is the ONLY frontend-backend interface. Every backend capabilit
 
 Command handlers should be thin — delegate to domain services, don't contain business logic.
 
-### End-to-End Completeness ([RULE-1acb1602](RULE-1acb1602))
+### End-to-End Completeness (RULE-1acb1602)
 
 Every feature requires all 4 layers in the same commit:
 

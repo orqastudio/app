@@ -14,9 +14,6 @@ scoring:
   complexity: 2
   dependencies: 1
 relationships:
-  - target: MS-654badde
-    type: fulfils
-    rationale: Epic belongs to this milestone
   - target: TASK-18a17bfe
     type: delivered-by
     rationale: Epic contains this task
@@ -25,6 +22,9 @@ relationships:
     rationale: Epic contains this task
   - target: TASK-3ce9c6dd
     type: delivered-by
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 ## Why P3
 

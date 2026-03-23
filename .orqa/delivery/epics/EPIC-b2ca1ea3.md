@@ -18,9 +18,6 @@ relationships:
   - target: "RES-9c90ef3d"
     type: "guided-by"
     rationale: "Documentation reorganisation research informs the doc reorg tasks"
-  - target: "MS-654badde"
-    type: "fulfils"
-    rationale: "Epic delivers to this milestone"
   - target: "TASK-6d896b8d"
     type: "delivered-by"
     rationale: "Auto-generated inverse of contains relationship from TASK-6d896b8d"
@@ -84,6 +81,9 @@ relationships:
     type: "delivered-by"
   - target: "IDEA-a5f04c5c"
     type: "realised-by"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 ## Context
 

@@ -14,9 +14,9 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: "MS-654badde"
-    type: "fulfils"
-    rationale: "Epic belongs to this milestone"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 ## Why P2
 

@@ -15,12 +15,12 @@ updated: 2026-03-14
 deadline: null
 horizon: active
 relationships:
-  - target: MS-654badde
-    type: fulfils
-    rationale: Epic belongs to this milestone
   - target: TASK-e9059b0b
     type: delivered-by
     rationale: Epic contains this task
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 ## Context
 

@@ -2,7 +2,7 @@
   "plugins": {
     "@orqastudio/plugin-agile-governance": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T00:35:00.281Z",
+      "installed_at": "2026-03-23T10:30:51.215Z",
       "files": [
         ".orqa/process/agents/AGENT-e7f3a2c9.md",
         ".orqa/process/agents/AGENT-ff44f841.md",
@@ -31,13 +31,13 @@
     },
     "@orqastudio/plugin-cli": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T00:35:00.289Z",
+      "installed_at": "2026-03-23T10:30:51.221Z",
       "files": [
         ".orqa/documentation/cli-reference.md",
         ".orqa/documentation/dev-environment-setup.md",
-        ".orqa/documentation/license-policy.md",
-        ".orqa/documentation/readme-standards.md",
-        ".orqa/documentation/versioning-guide.md",
+        ".orqa/documentation/DOC-a6cc3de5.md",
+        ".orqa/documentation/DOC-97ea2f47.md",
+        ".orqa/documentation/DOC-476471d2.md",
         ".orqa/process/knowledge/KNOW-3198c8fb.md",
         ".orqa/process/knowledge/KNOW-4cc73a12.md",
         ".orqa/process/knowledge/KNOW-6391d2a8.md",
@@ -50,7 +50,7 @@
     },
     "@orqastudio/plugin-coding-standards": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T00:35:00.295Z",
+      "installed_at": "2026-03-23T10:30:52.933Z",
       "files": [
         ".orqa/process/knowledge/KNOW-6125ab55.md",
         ".orqa/process/knowledge/KNOW-ea517e13.md",
@@ -66,7 +66,7 @@
     },
     "@orqastudio/plugin-core-framework": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T00:47:36.868Z",
+      "installed_at": "2026-03-23T10:30:52.950Z",
       "files": [
         ".orqa/process/agents/AGENT-1dab5ebe.md",
         ".orqa/process/agents/AGENT-b0774726.md",
@@ -115,11 +115,11 @@
     },
     "@orqastudio/plugin-rust": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T00:35:00.319Z",
+      "installed_at": "2026-03-23T10:30:52.981Z",
       "files": [
         ".orqa/process/agents/AGENT-4241392c.md",
         ".orqa/process/agents/AGENT-e1e47559.md",
-        ".orqa/documentation/rust-development-guide.md",
+        ".orqa/documentation/DOC-27becb92.md",
         ".orqa/process/knowledge/KNOW-12495e28.md",
         ".orqa/process/knowledge/KNOW-214b7cdc.md",
         ".orqa/process/knowledge/KNOW-2a72f929.md",
@@ -128,9 +128,9 @@
     },
     "@orqastudio/plugin-software-project": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T00:35:00.326Z",
+      "installed_at": "2026-03-23T10:30:56.877Z",
       "files": [
-        ".orqa/documentation/software-delivery-guide.md",
+        ".orqa/documentation/DOC-421219ce.md",
         ".orqa/process/knowledge/KNOW-170c220e.md",
         ".orqa/process/knowledge/KNOW-1b805150.md",
         ".orqa/process/knowledge/KNOW-1d47d8d8.md",
@@ -210,6 +210,11 @@
         ".orqa/process/rules/RULE-39169bcd.md",
         ".orqa/process/rules/RULE-d90112d9.md"
       ]
+    },
+    "@orqastudio/plugin-githooks": {
+      "version": "0.1.0-dev",
+      "installed_at": "2026-03-23T10:30:52.951Z",
+      "files": []
     }
   }
 }

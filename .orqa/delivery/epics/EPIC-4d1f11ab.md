@@ -14,14 +14,12 @@ scoring:
   complexity: 4
   dependencies: 3
 relationships:
-  - target: "MS-eea45fa8"
-    type: "fulfils"
-    rationale: "Epic belongs to this milestone"
   - target: "TASK-7af85748"
     type: "delivered-by"
     rationale: "Epic contains this task"
-  - target: "MS-654badde"
-    type: "fulfils"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 **Note:** Two deliverables from this epic were deferred:
 - **Visual compliance dashboard** -- not delivered; should be tracked in a future epic when dashboard UI work is prioritised.

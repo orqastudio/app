@@ -19,9 +19,6 @@ relationships:
   - target: "RES-dd35bbf0"
     type: "guided-by"
     rationale: "Auto-generated inverse of informed-by relationship from RES-dd35bbf0"
-  - target: "MS-654badde"
-    type: "fulfils"
-    rationale: "Epic belongs to this milestone"
   - target: "TASK-b476bd8e"
     type: "delivered-by"
     rationale: "Epic contains this task"
@@ -106,6 +103,9 @@ relationships:
   - target: "TASK-47f0f832"
     type: "delivered-by"
     rationale: "Epic contains this task"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 ## Context
 
@@ -157,7 +157,7 @@ Convert every self-compliance-only rule to mechanical enforcement where possible
 - [RULE-6c0496e0](RULE-6c0496e0): Config-disk consistency — verify `project.json` artifact paths match actual directories
 - [RULE-39169bcd](RULE-39169bcd): Pillar alignment sections — check doc pages for required section
 - [RULE-6d1c8dc7](RULE-6d1c8dc7): Historical preservation — block deletion of research/task files
-- [RULE-1acb1602](RULE-1acb1602): End-to-end completeness — when a Tauri command is added, check for matching TS interface
+- RULE-1acb1602: End-to-end completeness — when a Tauri command is added, check for matching TS interface
 
 **Tooling-enforceable (extend verify tools or new scripts):**
 - [RULE-11c29c9e](RULE-11c29c9e): Skill portability — scan core skills for project-specific paths

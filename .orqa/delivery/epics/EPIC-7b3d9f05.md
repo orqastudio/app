@@ -7,12 +7,13 @@ status: review
 created: 2026-03-21
 updated: 2026-03-21
 relationships:
-  - target: MS-654badde
-    type: fulfils
   - target: AD-a4f2c8e1
     type: driven-by
   - target: AD-b7e3d4a9
     type: driven-by
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 
 # EPIC-100: Validation Consolidation — libs/validation Crate as Single Source of Truth

@@ -60,5 +60,5 @@ Two enforcement layers:
 ## Related Rules
 
 - [RULE-e9c54567](RULE-e9c54567) (no-stubs) — stubs are the implementation-level form of dishonest reporting
-- [RULE-1acb1602](RULE-1acb1602) (end-to-end-completeness) — completion requires all layers working, not just one layer
+- RULE-1acb1602 (end-to-end-completeness) — completion requires all layers working, not just one layer
 - [RULE-4f7e2a91](RULE-4f7e2a91) (session-state-management) — session state must reflect actual completion status

@@ -9,6 +9,9 @@ relationships:
   - target: EPIC-81c336c1
     type: depends-on
     rationale: "Needs daemon HTTP API for artifact queries, validation, content"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 # LSP and MCP as Daemon Interfaces
 

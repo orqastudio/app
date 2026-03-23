@@ -21,9 +21,6 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: "MS-eea45fa8"
-    type: "fulfils"
-    rationale: "Epic belongs to this milestone"
   - target: "TASK-ad922861"
     type: "delivered-by"
     rationale: "Epic contains this task"
@@ -45,10 +42,11 @@ relationships:
   - target: "TASK-413692fe"
     type: "delivered-by"
     rationale: "Epic contains this task"
-  - target: "MS-654badde"
-    type: "fulfils"
   - target: "IDEA-889dffd4"
     type: "realised-by"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 ## Context
 

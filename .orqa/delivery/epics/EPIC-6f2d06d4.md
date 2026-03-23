@@ -28,9 +28,6 @@ relationships:
   - target: "RES-0a32a350"
     type: "guided-by"
     rationale: "Auto-generated inverse of informed-by relationship from RES-0a32a350"
-  - target: "MS-eea45fa8"
-    type: "fulfils"
-    rationale: "Epic belongs to this milestone"
   - target: "TASK-3f426c14"
     type: "delivered-by"
     rationale: "Epic contains this task"
@@ -91,8 +88,9 @@ relationships:
   - target: "TASK-94149697"
     type: "delivered-by"
     rationale: "Epic contains this task"
-  - target: "MS-654badde"
-    type: "fulfils"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 ## Governing Principles
 
@@ -171,7 +169,7 @@ audited 476+ artifacts across all layers. Critical findings:
 **Content Staleness:**
 - orchestration.md and workflow.md describe pre-graph patterns
 - Planning README mentions deprecated "plans" artifact type
-- Documentation README uses web-style links violating [RULE-2f7b6a31](RULE-2f7b6a31)
+- Documentation README uses web-style links violating RULE-2f7b6a31
 - [EPIC-31c9baca](EPIC-31c9baca) uses `canon` terminology (now `core`)
 - [RES-8b971acf](RES-8b971acf) references non-existent `.orqa/agents/` path
 

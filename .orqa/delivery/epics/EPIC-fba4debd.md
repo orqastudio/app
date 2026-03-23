@@ -9,6 +9,9 @@ relationships:
   - target: EPIC-81c336c1
     type: depends-on
     rationale: "Requires the daemon to be running"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 # System Tray for Daemon Lifecycle
 

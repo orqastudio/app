@@ -7,8 +7,6 @@ status: captured
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
-  - target: MS-654badde
-    type: fulfils
   - target: TASK-c6dd7927
     type: delivered-by
   - target: TASK-60598b3d
@@ -19,6 +17,9 @@ relationships:
     type: delivered-by
   - target: TASK-05a35e0e
     type: delivered-by
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 
 # EPIC-5edafb59: Claude Code Connector Switch

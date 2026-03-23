@@ -15,9 +15,6 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: MS-654badde
-    type: fulfils
-    rationale: Epic belongs to this milestone
   - target: TASK-d622e989
     type: delivered-by
     rationale: Epic contains this task
@@ -45,6 +42,9 @@ relationships:
     type: realised-by
   - target: IMPL-65c3ca6c
     type: cautioned-by
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 ## UAT Findings Summary
 

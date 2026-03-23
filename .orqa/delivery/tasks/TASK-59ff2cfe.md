@@ -26,7 +26,7 @@ Five rules have a "Related Rules" heading with no content: [RULE-65973a88](RULE-
 1. Read each of the 5 rules and understand their scope
 2. Search other rules for references to these 5 rules (they may already be referenced from the other direction)
 3. Identify logical relationships (rules that enforce complementary constraints, rules that agents need together)
-4. Add Related Rules entries with the standard format: `- [RULE-NNN](RULE-NNN) (slug) — brief description of relationship`
+4. Add Related Rules entries with the standard format: `- RULE-NNN (slug) — brief description of relationship`
 5. Check if the referenced rules also link back — add bidirectional refs where missing
 
 ## Verification

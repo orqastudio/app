@@ -362,7 +362,7 @@
         "path": ".orqa/delivery/epics",
         "parent": {
           "type": "milestone",
-          "relationship": "delivers"
+          "relationship": "fulfils"
         },
         "gate_field": null
       },

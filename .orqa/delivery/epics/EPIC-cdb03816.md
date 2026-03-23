@@ -7,8 +7,6 @@ status: captured
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
-  - target: MS-654badde
-    type: fulfils
   - target: TASK-9fb85edf
     type: delivered-by
   - target: TASK-6827dc2b
@@ -21,6 +19,9 @@ relationships:
     type: delivered-by
   - target: TASK-52a123bd
     type: delivered-by
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 
 # EPIC-cdb03816: Pre-Connector Switch — System Architecture

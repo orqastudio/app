@@ -22,9 +22,6 @@ relationships:
   - target: "RES-55eb9e55"
     type: "guided-by"
     rationale: "Auto-generated inverse of informed-by relationship from RES-55eb9e55"
-  - target: "MS-654badde"
-    type: "fulfils"
-    rationale: "Epic belongs to this milestone"
   - target: "TASK-d88b98c2"
     type: "delivered-by"
     rationale: "Epic contains this task"
@@ -52,6 +49,9 @@ relationships:
   - target: "TASK-389af55e"
     type: "delivered-by"
     rationale: "Epic contains this task"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 ## Context
 

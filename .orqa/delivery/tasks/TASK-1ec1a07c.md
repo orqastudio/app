@@ -58,7 +58,7 @@ Two complementary tools for the migration:
 
 ### Link Verification Tool
 
-1. Scan all `.orqa/**/*.md` files for cross-references (pattern: `[Display](ARTIFACT-ID)`, bare `ARTIFACT-ID`, frontmatter reference fields)
+1. Scan all `.orqa/**/*.md` files for cross-references (pattern: `Display`, bare `ARTIFACT-ID`, frontmatter reference fields)
 2. Structural checks (pattern matching): target artifact exists, ID format is valid, no broken refs, bidirectional consistency (if A references B, B should reference A where applicable)
 3. Contextual checks (AI-assisted): does the reference make sense given the content of both artifacts? Is a rule referencing a decision that's actually related to its enforcement domain?
 4. Produce a structured report: broken links, missing targets, contextually suspect references

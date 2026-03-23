@@ -14,11 +14,11 @@ scoring:
   complexity: 5
   dependencies: 4
 relationships:
-  - target: "MS-654badde"
-    type: "fulfils"
-    rationale: "Epic belongs to this milestone"
   - target: "DOC-01ddd8aa"
     type: "documented-by"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 ## Why P1
 

@@ -56,7 +56,7 @@ All 45 rules have `status: active`. The pre-commit hook (`.githooks/pre-commit`)
 | [RULE-c71f1c3f](RULE-c71f1c3f) | Development Commands | Self-compliance only | No check that `make` targets are used instead of raw cargo/npm. Purely behavioral. |
 | [RULE-9daf29c0](RULE-9daf29c0) | Documentation-First | Partial: `validate-epic-readiness.sh` enforces docs-required gate | No check that docs are updated BEFORE code. The hook only checks epic status transitions, not temporal ordering. |
 | [RULE-6083347d](RULE-6083347d) | Dogfood Mode | Partial: core graph protection in pre-commit checks dogfood flag | Restart protocol, sidecar self-edit warnings are self-compliance only. |
-| [RULE-1acb1602](RULE-1acb1602) | End-to-End Completeness | Self-compliance only | No check that all four layers (command, IPC type, component, store) exist for a feature. |
+| RULE-1acb1602 | End-to-End Completeness | Self-compliance only | No check that all four layers (command, IPC type, component, store) exist for a feature. |
 | [RULE-3eccebf3](RULE-3eccebf3) | Enforcement Before Code | Self-compliance only | No check that enforcement artifacts are created before implementation code. |
 | [RULE-57ccb4a3](RULE-57ccb4a3) | Error Ownership | Partial: pre-commit hook runs checks; clippy catches unwrap | The principle "all errors are YOUR responsibility" is behavioral. The hook enforces the checks, not the ownership mindset. |
 | [RULE-633e636d](RULE-633e636d) | Git Workflow | Partial: hook blocks `--no-verify`; stub scanner runs | Worktree creation/cleanup, stash policy, untracked file policy are self-compliance only. |
@@ -80,7 +80,7 @@ All 45 rules have `status: active`. The pre-commit hook (`.githooks/pre-commit`)
 | [RULE-1e8a1914](RULE-1e8a1914) | Vision Alignment | Partial: pillar relationships required by `verify-pipeline-integrity.mjs` | No check that features trace to a pillar gate question. Relationship existence is checked, not semantic accuracy. |
 | [RULE-a764b2ae](RULE-a764b2ae) | Artifact Schema Compliance | Hook: `validate-schema.mjs` via `validate-artifacts.sh` | Fully mechanically enforced for staged .orqa/ files. |
 | [RULE-89155a7f](RULE-89155a7f) | Tooltips over title attributes | Self-compliance only | No linter rule catches `title=` on interactive elements. |
-| [RULE-2f7b6a31](RULE-2f7b6a31) | Artifact Link Format | Hook: `autolink-artifacts.mjs` auto-links bare IDs; `verify-links.mjs` checks link validity | Mechanically enforced. Bare IDs are auto-linked; broken links are flagged. |
+| RULE-2f7b6a31 | Artifact Link Format | Hook: `autolink-artifacts.mjs` auto-links bare IDs; `verify-links.mjs` checks link validity | Mechanically enforced. Bare IDs are auto-linked; broken links are flagged. |
 | [RULE-11c29c9e](RULE-11c29c9e) | Skill Portability | Self-compliance only | No check that core skills avoid project-specific paths. |
 | [RULE-df24948b](RULE-df24948b) | Context Window Management | Self-compliance only | Purely behavioral. |
 | [RULE-f809076f](RULE-f809076f) | Tool Access Restrictions | Self-compliance only | No enforcement mechanism restricts which tools each role can use. |
@@ -91,9 +91,9 @@ All 45 rules have `status: active`. The pre-commit hook (`.githooks/pre-commit`)
 | [RULE-f9d0279c](RULE-f9d0279c) | Automated Skill Injection | Self-compliance only (designed for app enforcement engine, not yet built) | Path-to-skill mapping exists in the rule but no tooling implements injection. |
 | [RULE-7f416d7d](RULE-7f416d7d) | Tooling Ecosystem Management | Linter: the linters themselves are the enforcement | Meta-rule about maintaining linter-to-standard mappings. No check that mappings are complete. |
 | [RULE-98682b5e](RULE-98682b5e) | Core Graph Firmware Protection | Hook: pre-commit blocks commits touching core paths (unless dogfood=true or ORQA_CORE_OVERRIDE=1) | Fully mechanically enforced. |
-| [RULE-130f1f63](RULE-130f1f63) | Data Integrity | Hook: `verify-links.mjs --check-bidirectional`, `verify-pipeline-integrity.mjs` | Mechanically enforced for staged files. Link resolution, bidirectional consistency, and pipeline integrity all checked. |
+| RULE-130f1f63 | Data Integrity | Hook: `verify-links.mjs --check-bidirectional`, `verify-pipeline-integrity.mjs` | Mechanically enforced for staged files. Link resolution, bidirectional consistency, and pipeline integrity all checked. |
 
-**Summary**: Of 45 active rules, **7 have full mechanical enforcement** (RULE-a764b2ae, [RULE-2f7b6a31](RULE-2f7b6a31), [RULE-98682b5e](RULE-98682b5e), [RULE-130f1f63](RULE-130f1f63), and partially [RULE-b49142be](RULE-b49142be), [RULE-e9c54567](RULE-e9c54567), RULE-7b770593). **27 rules rely entirely on self-compliance** with no mechanical check whatsoever. The remaining **11 rules have partial enforcement** where some aspects are checked but significant gaps remain.
+**Summary**: Of 45 active rules, **7 have full mechanical enforcement** (RULE-a764b2ae, RULE-2f7b6a31, [RULE-98682b5e](RULE-98682b5e), RULE-130f1f63, and partially [RULE-b49142be](RULE-b49142be), [RULE-e9c54567](RULE-e9c54567), RULE-7b770593). **27 rules rely entirely on self-compliance** with no mechanical check whatsoever. The remaining **11 rules have partial enforcement** where some aspects are checked but significant gaps remain.
 
 ### 2. Pillar Gate Coverage
 
@@ -133,7 +133,7 @@ Of 46 ADs, 4 are superseded (AD-dffc3d30, [AD-8b91f5a4](AD-8b91f5a4), [AD-690723
 | AD | Title | Has enforced-by/practices relationship? | Corresponding Rule? | Gap |
 |----|-------|----------------------------------------|---------------------|-----|
 | [AD-e513c9e4](AD-e513c9e4) | Thick Backend Architecture | No | No direct rule | No enforcement that domain logic stays in backend. |
-| [AD-a334623b](AD-a334623b) | IPC Boundary Design | No | [RULE-1acb1602](RULE-1acb1602) covers end-to-end but not IPC-specific | No check that `invoke()` is the only frontend-backend interface. |
+| [AD-a334623b](AD-a334623b) | IPC Boundary Design | No | RULE-1acb1602 covers end-to-end but not IPC-specific | No check that `invoke()` is the only frontend-backend interface. |
 | [AD-1ad08e5f](AD-1ad08e5f) | Error Propagation via Result Types | No | [RULE-b49142be](RULE-b49142be) references this; clippy catches unwrap | Partially enforced via linter. No explicit AD->RULE relationship. |
 | [AD-8d552e96](AD-8d552e96) | Svelte 5 Runes Only | No | [RULE-b49142be](RULE-b49142be) references this; svelte-check catches Svelte 4 | Partially enforced via linter. No explicit AD->RULE relationship. |
 | [AD-61087142](AD-61087142) | Component Purity | No | [RULE-b49142be](RULE-b49142be) references this | No linter check that components don't call `invoke()`. Self-compliance only. |
@@ -163,7 +163,7 @@ Of 46 ADs, 4 are superseded (AD-dffc3d30, [AD-8b91f5a4](AD-8b91f5a4), [AD-690723
 | [AD-0291fa65](AD-0291fa65) | Core UI Boundary | No | No rule | No enforcement of navigate/search/edit scope. |
 | [AD-89391ab6](AD-89391ab6) | Schema-Driven Filtering | No | No rule | No enforcement. |
 | [AD-2f1991c2](AD-2f1991c2) | Config-Driven Nav Defaults | No | No rule | No enforcement. |
-| [AD-d8ea4d2b](AD-d8ea4d2b) | Cross-Linking as Default | No | [RULE-2f7b6a31](RULE-2f7b6a31), [RULE-130f1f63](RULE-130f1f63) | Cross-linking is enforced by tooling but no AD->RULE relationship. |
+| [AD-d8ea4d2b](AD-d8ea4d2b) | Cross-Linking as Default | No | RULE-2f7b6a31, RULE-130f1f63 | Cross-linking is enforced by tooling but no AD->RULE relationship. |
 | [AD-0f6286cd](AD-0f6286cd) | AI-Driven Cross-Artifact Search | No | No rule | No enforcement. |
 | [AD-2783985c](AD-2783985c) | Graph-Based Knowledge Injection | Yes: enforced-by [RULE-98682b5e](RULE-98682b5e) | [RULE-98682b5e](RULE-98682b5e) | Has relationship. |
 | [AD-e8ab8572](AD-e8ab8572) | Core Graph Firmware | Yes: enforced-by [RULE-98682b5e](RULE-98682b5e) | [RULE-98682b5e](RULE-98682b5e) | Has relationship. |

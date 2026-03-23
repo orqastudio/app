@@ -7,8 +7,6 @@ status: completed
 created: 2026-03-18
 updated: 2026-03-19
 relationships:
-  - target: MS-654badde
-    type: fulfils
   - target: TASK-67ba69f7
     type: delivered-by
   - target: TASK-c8543fd5
@@ -27,6 +25,9 @@ relationships:
     type: delivered-by
   - target: TASK-682afea5
     type: delivered-by
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 
 # EPIC-bc67563e: Schema-driven CLI validator — zero hardcoded types or keys

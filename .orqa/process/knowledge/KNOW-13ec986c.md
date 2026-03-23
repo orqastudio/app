@@ -32,7 +32,7 @@ All cross-references between artifacts use **artifact IDs as markdown links**. T
 ### Format
 
 ```markdown
-[Display Text](ARTIFACT-ID)
+Display Text
 ```
 
 ### Examples
@@ -71,7 +71,7 @@ The `MarkdownRenderer` component passes a custom `MarkdownLink` renderer to Svel
 2. **External URL** (`http://` or `https://`) — opens in the user's default browser via Tauri shell plugin
 3. **Anything else** — renders as a plain `<a>` tag (likely broken — fix it)
 
-See [RULE-2f7b6a31](RULE-2f7b6a31) for the full artifact link format constraint and enforcement.
+See RULE-2f7b6a31 for the full artifact link format constraint and enforcement.
 
 ### FORBIDDEN Link Formats
 
@@ -145,8 +145,8 @@ Content organized by topic.
 
 ## Related Documents
 
-- [Related Doc](DOC-NNN) — brief description
-- [Related Decision](AD-NNN) — brief description
+- Related Doc — brief description
+- Related Decision — brief description
 ```
 
 ### Artifact Body Text

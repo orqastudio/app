@@ -7,8 +7,6 @@ status: active
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
-  - target: MS-654badde
-    type: fulfils
   - target: TASK-367f0026
     type: delivered-by
   - target: TASK-b5f9240b
@@ -47,6 +45,9 @@ relationships:
     type: delivered-by
   - target: TASK-f36a6838
     type: delivered-by
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 
 # EPIC-6967c7dc: Claude Code Connector Rewrite

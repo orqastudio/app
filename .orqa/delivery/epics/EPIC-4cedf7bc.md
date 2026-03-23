@@ -7,8 +7,6 @@ status: captured
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
-  - target: MS-654badde
-    type: fulfils
   - target: AD-05756de7
     type: driven-by
   - target: AD-6f6ff517
@@ -27,6 +25,9 @@ relationships:
     type: delivered-by
   - target: TASK-bd4e7250
     type: delivered-by
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 
 # EPIC-4cedf7bc: Artifact ID Migration + Mandatory Skill Documentation

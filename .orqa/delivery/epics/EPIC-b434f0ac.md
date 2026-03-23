@@ -9,6 +9,9 @@ relationships:
   - target: EPIC-1653af9d
     type: depends-on
     rationale: "Needs CLI commands available for tools to call"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 # Tools and Scripts Cleanup
 

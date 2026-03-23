@@ -54,7 +54,7 @@ If the same concept has two identifiers in any layer, that is a bug — not a fe
 
 ## Related Rules
 
-- [RULE-1acb1602](RULE-1acb1602) (end-to-end-completeness) — type consistency must hold across all layers in the same commit
+- RULE-1acb1602 (end-to-end-completeness) — type consistency must hold across all layers in the same commit
 - [RULE-57ccb4a3](RULE-57ccb4a3) (error-ownership) — a type mismatch is an error you own; fix it, don't work around it
 - [RULE-e9c54567](RULE-e9c54567) (no-stubs) — alias entries are a form of fake data hiding real gaps
 - [RULE-5e03e67b](RULE-5e03e67b) (code-search-usage) — use `search_regex` to find all usages of an identifier before renaming or removing it

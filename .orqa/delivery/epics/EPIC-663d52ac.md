@@ -7,8 +7,6 @@ status: ready
 created: 2026-03-20
 updated: 2026-03-20
 relationships:
-  - target: MS-654badde
-    type: fulfils
   - target: AD-047d2e07
     type: driven-by
   - target: TASK-a1b2c3d4
@@ -39,6 +37,9 @@ relationships:
     type: delivered-by
   - target: TASK-e3f4a5b6
     type: delivered-by
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 
 # EPIC-098: Skills→Knowledge Rename and Connector Architecture Alignment

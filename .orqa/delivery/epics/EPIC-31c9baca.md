@@ -14,9 +14,6 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: MS-654badde
-    type: fulfils
-    rationale: Epic belongs to this milestone
   - target: TASK-23b3cca4
     type: delivered-by
     rationale: Epic contains this task
@@ -32,6 +29,9 @@ relationships:
   - target: TASK-f578bc81
     type: delivered-by
     rationale: Epic contains this task
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 Note: This epic used 'canon' terminology which has since been renamed to 'core'.
 

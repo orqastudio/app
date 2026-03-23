@@ -7,8 +7,6 @@ status: completed
 created: 2026-03-18
 updated: 2026-03-19
 relationships:
-  - target: MS-654badde
-    type: fulfils
   - target: TASK-f43dc620
     type: delivered-by
   - target: TASK-e52abcd0
@@ -25,6 +23,9 @@ relationships:
     type: delivered-by
   - target: TASK-0ba8b71f
     type: delivered-by
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 
 # EPIC-74c5cd5e: Ethical licensing model — BSL-1.1 with social use grants

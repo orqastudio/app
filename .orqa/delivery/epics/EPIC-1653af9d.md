@@ -12,6 +12,9 @@ relationships:
   - target: EPIC-b434f0ac
     type: depended-on-by
     rationale: "Auto-generated inverse of depended-on-by relationship from EPIC-b434f0ac"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 # CLI as Consumer
 

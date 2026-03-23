@@ -34,15 +34,15 @@ relationships:
 ---
 ## What
 
-Create [RULE-130f1f63](RULE-130f1f63) codifying the data integrity requirements established in Phase 0.
+Create RULE-130f1f63 codifying the data integrity requirements established in Phase 0.
 
 ## How
 
-1. Create `.orqa/process/rules/[RULE-130f1f63](RULE-130f1f63).md` with frontmatter and body
+1. Create `.orqa/process/rules/RULE-130f1f63.md` with frontmatter and body
 2. Cover all integrity requirements: link resolution, bidirectional inverses, enforcement mechanisms
-3. Reference related rules (RULE-a764b2ae, [RULE-2f7b6a31](RULE-2f7b6a31), RULE-633e636d)
+3. Reference related rules (RULE-a764b2ae, RULE-2f7b6a31, RULE-633e636d)
 
 ## Verification
 
-- [RULE-130f1f63](RULE-130f1f63) exists and passes schema validation
+- RULE-130f1f63 exists and passes schema validation
 - Rule content accurately reflects the enforcement implemented in [TASK-e7324438](TASK-e7324438)/282

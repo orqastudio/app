@@ -14,9 +14,6 @@ scoring:
   complexity: 2
   dependencies: 3
 relationships:
-  - target: "MS-654badde"
-    type: "fulfils"
-    rationale: "Epic belongs to this milestone"
   - target: "TASK-973496a4"
     type: "delivered-by"
     rationale: "Epic contains this task"
@@ -50,6 +47,9 @@ relationships:
   - target: "TASK-34eaf518"
     type: "delivered-by"
     rationale: "Epic contains this task"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 ## Implementation Design
 

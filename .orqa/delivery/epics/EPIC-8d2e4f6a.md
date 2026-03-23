@@ -7,10 +7,11 @@ status: review
 created: 2026-03-20
 updated: 2026-03-20
 relationships:
-  - target: MS-654badde
-    type: fulfils
   - target: AD-3f9a1c7b
     type: driven-by
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 
 # EPIC-099: Connector Architecture v2 — Service Extraction, Semantic Knowledge Injection, Graph-First Enforcement

@@ -60,4 +60,4 @@ Use `search_regex` to find function definitions before calling them — faster a
 
 - [RULE-b49142be](RULE-b49142be) (coding-standards) — defines *what* to verify (specific checks and patterns)
 - [RULE-5e03e67b](RULE-5e03e67b) (code-search-usage) — tools for finding and verifying code before modifying it
-- [RULE-1acb1602](RULE-1acb1602) (end-to-end-completeness) — the full chain that must be verified
+- RULE-1acb1602 (end-to-end-completeness) — the full chain that must be verified

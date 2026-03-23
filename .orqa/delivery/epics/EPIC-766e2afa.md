@@ -20,9 +20,6 @@ relationships:
   - target: "RES-8354435e"
     type: "guided-by"
     rationale: "Auto-generated inverse of informed-by relationship from RES-8354435e"
-  - target: "MS-654badde"
-    type: "fulfils"
-    rationale: "Epic belongs to this milestone"
   - target: "TASK-e6418f4a"
     type: "delivered-by"
     rationale: "Epic contains this task"
@@ -41,6 +38,9 @@ relationships:
     type: "driven-by"
   - target: "AD-c3700062"
     type: "driven-by"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 ## Workstreams
 

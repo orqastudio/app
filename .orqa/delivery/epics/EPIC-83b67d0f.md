@@ -7,8 +7,6 @@ status: active
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
-  - target: MS-654badde
-    type: fulfils
   - target: IDEA-2d7ac819
     type: realised-by
   - target: TASK-b784e910
@@ -31,6 +29,9 @@ relationships:
     type: delivered-by
   - target: TASK-ae1fb7e5
     type: delivered-by
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 
 # EPIC-83b67d0f: Coding Standards Plugins

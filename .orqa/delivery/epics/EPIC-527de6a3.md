@@ -19,11 +19,11 @@ relationships:
   - target: "RES-00ec6dd1"
     type: "guided-by"
     rationale: "Auto-generated inverse of informed-by relationship from RES-00ec6dd1"
-  - target: "MS-654badde"
-    type: "fulfils"
-    rationale: "Epic belongs to this milestone"
   - target: "IDEA-53205849"
     type: "realised-by"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 ## Context
 

@@ -16,7 +16,7 @@ scoring:
 relationships:
   - target: MS-654badde
     type: fulfils
-    rationale: Epic belongs to this milestone
+    rationale: "Epic fulfils this milestone"
 ---
 ## Why P2
 

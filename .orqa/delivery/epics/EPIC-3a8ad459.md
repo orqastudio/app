@@ -22,9 +22,6 @@ relationships:
   - target: "RES-5657d9f6"
     type: "guided-by"
     rationale: "Research analyzing what this epic built vs. what remains incomplete"
-  - target: "MS-eea45fa8"
-    type: "fulfils"
-    rationale: "Epic belongs to this milestone"
   - target: "TASK-869c27b5"
     type: "delivered-by"
     rationale: "Epic contains this task"
@@ -70,12 +67,13 @@ relationships:
   - target: "TASK-fa39671d"
     type: "delivered-by"
     rationale: "Epic contains this task"
-  - target: "MS-654badde"
-    type: "fulfils"
   - target: "IDEA-52c65fc8"
     type: "realised-by"
   - target: "IDEA-abf847bb"
     type: "realised-by"
+  - target: MS-654badde
+    type: fulfils
+    rationale: "Epic fulfils this milestone"
 ---
 ## Context
 

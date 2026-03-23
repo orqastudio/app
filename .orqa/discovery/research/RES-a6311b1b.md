@@ -186,7 +186,7 @@ Component variant examples use `React.ButtonHTMLAttributes`, `forwardRef`, Radix
 |------|-------|-------------|
 | [RULE-303c1cc8](RULE-303c1cc8) (Plan Mode Compliance) | `planning` | Full plan template exists in both |
 | [RULE-4d4f540d](RULE-4d4f540d) (UAT Process) | `uat-process` | Full 4-phase methodology in both |
-| [RULE-1acb1602](RULE-1acb1602) (End-to-End Completeness) | `orqa-ipc-patterns` (partial) | 100+ lines of code examples in rule |
+| RULE-1acb1602 (End-to-End Completeness) | `orqa-ipc-patterns` (partial) | 100+ lines of code examples in rule |
 | [RULE-cb65b5d0](RULE-cb65b5d0) (Reusable Components) | None | Component inventory = knowledge, not constraint |
 
 **Recommendation:** Rules keep constraints and FORBIDDEN sections. Skills keep methodology, templates, and code examples. Deduplicate on fix.

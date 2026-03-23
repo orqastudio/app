@@ -25,11 +25,11 @@ This happened with [AD-f9034c99](AD-f9034c99) (5 relationships declared, 0 inver
 
 ## Root Cause
 
-[RULE-130f1f63](RULE-130f1f63)'s enforcement only fires at commit time via the pre-commit hook. The orchestrator creates/modifies artifacts across multiple turns before committing. By the time the pre-commit hook catches missing inverses, the orchestrator has lost context about which inverses were needed.
+RULE-130f1f63's enforcement only fires at commit time via the pre-commit hook. The orchestrator creates/modifies artifacts across multiple turns before committing. By the time the pre-commit hook catches missing inverses, the orchestrator has lost context about which inverses were needed.
 
 ## Fix
 
-Write-time enforcement: [RULE-130f1f63](RULE-130f1f63) now has `event: file` enforcement entries on `.orqa/**/*.md` that inject graph integrity reminders when artifacts are written. This catches the gap between "artifact modified" and "commit attempted."
+Write-time enforcement: RULE-130f1f63 now has `event: file` enforcement entries on `.orqa/**/*.md` that inject graph integrity reminders when artifacts are written. This catches the gap between "artifact modified" and "commit attempted."
 
 The deeper issue is that 40+ rules in context become passive text that the orchestrator deprioritizes under task pressure. Mechanical enforcement at the moment of action is more reliable than rules that depend on the orchestrator remembering.
 
