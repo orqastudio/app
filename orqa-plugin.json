@@ -8,6 +8,19 @@
     "@orqastudio/plugin-systems-thinking"
   ],
   "category": "connector",
+  "content": {
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    }
+  },
+  "dependencies": {
+    "npm": ["@orqastudio/cli", "@orqastudio/types", "yaml"]
+  },
+  "build": "npm run build",
+  "lifecycle": {
+    "install": "node dist/index.js setup"
+  },
   "provides": {
     "schemas": [],
     "views": [],
