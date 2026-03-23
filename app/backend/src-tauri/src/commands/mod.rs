@@ -1,5 +1,6 @@
 pub mod artifact_commands;
 pub mod cli_tool_commands;
+pub mod daemon_commands;
 pub mod enforcement_commands;
 pub mod graph_commands;
 pub mod helpers;

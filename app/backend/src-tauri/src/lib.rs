@@ -191,6 +191,7 @@ fn register_plugins(builder: tauri::Builder<tauri::Wry>) -> tauri::Builder<tauri
 #[allow(clippy::too_many_lines)]
 fn register_commands(builder: tauri::Builder<tauri::Wry>) -> tauri::Builder<tauri::Wry> {
     builder.invoke_handler(tauri::generate_handler![
+        commands::daemon_commands::daemon_health,
         commands::sidecar_commands::sidecar_status,
         commands::sidecar_commands::sidecar_restart,
         commands::stream_commands::stream_send_message,

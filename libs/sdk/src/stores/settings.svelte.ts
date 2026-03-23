@@ -278,28 +278,11 @@ export class SettingsStore {
 
 	async refreshDaemonHealth(): Promise<void> {
 		try {
-			const controller = new AbortController();
-			const timeoutId = setTimeout(() => controller.abort(), 3000);
-			const response = await fetch("http://127.0.0.1:3002/health", {
-				signal: controller.signal,
-			});
-			clearTimeout(timeoutId);
-
-			if (!response.ok) {
-				this.daemonHealth = {
-					state: "degraded",
-					artifacts: 0,
-					rules: 0,
-					error: `HTTP ${response.status}`,
-				};
-				return;
-			}
-
-			const data = (await response.json()) as {
+			const data = await invoke<{
 				status: string;
 				artifacts: number;
 				rules: number;
-			};
+			}>("daemon_health");
 
 			if (data.status === "ok") {
 				this.daemonHealth = {
@@ -321,7 +304,7 @@ export class SettingsStore {
 				state: "disconnected",
 				artifacts: 0,
 				rules: 0,
-				error: err instanceof Error ? err.message : "Connection failed",
+				error: extractErrorMessage(err),
 			};
 		}
 	}
