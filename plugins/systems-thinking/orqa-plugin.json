@@ -1,0 +1,75 @@
+{
+  "name": "@orqastudio/plugin-systems-thinking",
+  "version": "0.1.4-dev",
+  "displayName": "Systems Thinking",
+  "description": "Systems thinking methodology — second-order effects analysis, diagnostic methodology, restructuring methodology. Teaches agents to trace consequences, find root causes, and refactor with awareness of the whole system.",
+  "category": "thinking",
+  "role": "core:discovery",
+  "content": {
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    },
+    "rules": {
+      "source": "rules",
+      "target": ".orqa/process/rules"
+    }
+  },
+  "provides": {
+    "schemas": [],
+    "relationships": [],
+    "knowledge": [
+      {
+        "key": "1a8eb147",
+        "id": "KNOW-1a8eb147",
+        "label": "Thinking Mode: Research"
+      },
+      {
+        "key": "1ab0e715",
+        "id": "KNOW-1ab0e715",
+        "label": "Thinking Mode: Documentation"
+      },
+      {
+        "key": "30a419dd",
+        "id": "KNOW-30a419dd",
+        "label": "Architectural Evaluation"
+      },
+      {
+        "key": "54823e2d",
+        "id": "KNOW-54823e2d",
+        "label": "Systems Thinking"
+      },
+      {
+        "key": "82d32398",
+        "id": "KNOW-82d32398"
+      },
+      {
+        "key": "8c98ea98",
+        "id": "KNOW-8c98ea98",
+        "label": "Restructuring Methodology"
+      },
+      {
+        "key": "a4c8f1e2",
+        "id": "KNOW-a4c8f1e2",
+        "label": "Thinking Mode: Dogfood Implementation"
+      },
+      {
+        "key": "c7fb7c83",
+        "id": "KNOW-c7fb7c83"
+      },
+      {
+        "key": "de25b290",
+        "id": "KNOW-de25b290",
+        "label": "Thinking Mode: Planning"
+      },
+      {
+        "key": "f0c40eaf",
+        "id": "KNOW-f0c40eaf",
+        "label": "Composability"
+      }
+    ],
+    "hooks": [],
+    "views": [],
+    "widgets": []
+  }
+}
