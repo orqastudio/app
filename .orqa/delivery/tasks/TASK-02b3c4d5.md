@@ -2,7 +2,7 @@
 id: TASK-02b3c4d5
 type: task
 name: "Execute monorepo merge — import all 30 repos"
-status: todo
+status: in-progress
 description: Run the validated merge script to import all 30 submodule repos into the monorepo with full history preserved. Remove .gitmodules and submodule references.
 relationships:
   - target: EPIC-f2b9e7d3

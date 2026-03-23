@@ -2,7 +2,7 @@
 id: TASK-01a2b3c4
 type: task
 name: "Test monorepo merge process on throwaway clone"
-status: todo
+status: done
 description: Validate the git-filter-repo merge process on a disposable copy before touching the real repo. Prove the process works for all 30 repos with history preserved.
 relationships:
   - target: EPIC-f2b9e7d3
