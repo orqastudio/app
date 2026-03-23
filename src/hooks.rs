@@ -250,8 +250,7 @@ fn check_manifest_ownership(ctx: &HookContext, project_root: &Path) -> Option<Ho
                     rule_id: "plugin-ownership".to_owned(),
                     action: "block".to_owned(),
                     message: format!(
-                        "This artifact is owned by plugin {}. Edit the plugin source and run 'orqa plugin refresh' instead.",
-                        plugin_name
+                        "This artifact is owned by plugin {plugin_name}. Edit the plugin source and run 'orqa plugin refresh' instead."
                     ),
                 });
             }

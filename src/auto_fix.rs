@@ -8,6 +8,7 @@
 //! - `MissingStatus`: adds `status: captured` when the field is absent.
 //! - `DuplicateRelationship`: deduplicates relationship entries with the same target + type.
 
+use std::fmt::Write as FmtWrite;
 use std::path::Path;
 
 use crate::error::ValidationError;
@@ -305,7 +306,7 @@ fn apply_type_prefix_fix(
     let correct_type = check.fix_description.as_deref().and_then(|desc| {
         desc.strip_prefix("Change type: ")
             .and_then(|rest| rest.split(" to type: ").nth(1))
-            .map(|s| s.to_owned())
+            .map(str::to_owned)
     });
 
     let Some(correct_type) = correct_type else {
@@ -332,7 +333,8 @@ fn apply_type_prefix_fix(
     let mut new_fm = String::new();
     for line in fm_text.lines() {
         if line.starts_with("type:") {
-            new_fm.push_str(&format!("type: {correct_type}"));
+            // Write to a String never fails, so the error is unreachable.
+            let _ = write!(new_fm, "type: {correct_type}");
         } else {
             new_fm.push_str(line);
         }
@@ -345,7 +347,7 @@ fn apply_type_prefix_fix(
 
     Ok(Some(AppliedFix {
         artifact_id: check.artifact_id.clone(),
-        description: format!("Changed type to '{}' to match ID prefix", correct_type),
+        description: format!("Changed type to '{correct_type}' to match ID prefix"),
         file_path: node.path.clone(),
     }))
 }

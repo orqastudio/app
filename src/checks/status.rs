@@ -81,17 +81,41 @@ pub fn check_valid_statuses(
     }
 }
 
+/// Canonical status ordering for parent-child consistency checks.
+///
+/// Lateral states (`hold`, `blocked`) share the same ordinal as `active` (4)
+/// so that a blocked/held child does not falsely appear "further along" than
+/// its parent.  `recurring` is treated as equivalent to `completed` (6).
+/// `surpassed` (7) is intentionally higher than `completed` (6) so that a
+/// surpassed child of a completed parent is not flagged — that is a valid
+/// end-state transition.
+fn status_ordinal(status: &str) -> Option<usize> {
+    match status {
+        "captured" => Some(0),
+        "exploring" => Some(1),
+        "ready" => Some(2),
+        "prioritised" => Some(3),
+        "active" | "hold" | "blocked" => Some(4),
+        "review" => Some(5),
+        "completed" | "recurring" => Some(6),
+        "surpassed" => Some(7),
+        "archived" => Some(8),
+        _ => None,
+    }
+}
+
 /// Check parent-child status consistency using the delivery hierarchy.
 pub fn check_parent_child_consistency(
     graph: &ArtifactGraph,
     ctx: &ValidationContext,
     checks: &mut Vec<IntegrityCheck>,
 ) {
+    // Build a position map using the canonical ordering so that lateral states
+    // (hold, blocked) are not treated as "further along" than active.
     let status_pos: HashMap<&str, usize> = ctx
         .valid_statuses
         .iter()
-        .enumerate()
-        .map(|(i, s)| (s.as_str(), i))
+        .filter_map(|s| status_ordinal(s.as_str()).map(|pos| (s.as_str(), pos)))
         .collect();
 
     if ctx.delivery.types.is_empty() {
@@ -170,6 +194,9 @@ fn check_child_type_consistency(
 }
 
 /// Hardcoded fallback for parent-child consistency when no delivery config is present.
+///
+/// Uses the same [`status_ordinal`] ordering as the main check so that lateral
+/// states (hold, blocked) are not falsely flagged.
 fn check_parent_child_consistency_hardcoded(
     graph: &ArtifactGraph,
     status_pos: &HashMap<&str, usize>,

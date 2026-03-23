@@ -251,7 +251,7 @@ pub fn check_type_prefix_mismatch(
                     node.id, explicit_type, prefix, expected_type
                 ),
                 auto_fixable: true,
-                fix_description: Some(format!("Change type: {} to type: {}", explicit_type, expected_type)),
+                fix_description: Some(format!("Change type: {explicit_type} to type: {expected_type}")),
             });
         }
     }
