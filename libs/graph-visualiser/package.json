@@ -11,9 +11,6 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/orqastudio/orqastudio-graph-visualiser.git"

@@ -34,9 +34,6 @@
     },
     "./tokens": "./dist/tokens/index.css"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/orqastudio/orqastudio-svelte-components.git"

@@ -15,9 +15,6 @@
       "types": "./dist/constants.d.ts"
     }
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/orqastudio/orqastudio-types.git"

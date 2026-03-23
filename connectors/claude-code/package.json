@@ -35,9 +35,6 @@
     ".claude-plugin",
     "orqa-plugin.json"
   ],
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "repository": {
     "type": "git",
     "url": "git@github.com:orqastudio/claude-code-cli-plugin.git"

@@ -27,9 +27,6 @@
       "types": "./dist/stores/index.d.ts"
     }
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/orqastudio/orqastudio-sdk.git"
