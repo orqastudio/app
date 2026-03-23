@@ -10,6 +10,10 @@ We're not accepting contributions yet while we establish the development infrast
 
 If you're interested in the project, you're welcome to look around the codebase and explore how it works.
 
+## Get In Touch
+
+Join the conversation at [OrqaStudio Discussions](https://github.com/orgs/orqastudio/discussions) — whether you want to contribute, have questions, or just want to follow along.
+
 ## Community Plugins
 
 The community plugin registry will be available at [orqastudio/community-plugins](https://github.com/orqastudio/community-plugins) once the plugin SDK is stable.
