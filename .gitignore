@@ -3,6 +3,8 @@ dist/
 build/
 target/
 .svelte-kit/
+.claude/
+tmp/
 *.swp
 *.swo
 .DS_Store

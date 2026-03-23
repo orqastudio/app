@@ -1,1 +1,0 @@
-C:/Users/Bobbi/code/orqastudio-dev/plugins/core/agents/AGENT-1dab5ebe.md
