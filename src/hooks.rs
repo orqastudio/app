@@ -34,6 +34,7 @@
 //!
 //! Matches when context has a `file_path` that matches any glob in `paths`.
 
+use std::collections::HashMap;
 use std::path::Path;
 
 use regex::Regex;
@@ -72,6 +73,12 @@ pub fn evaluate_hook(ctx: &HookContext, project_root: &Path) -> HookResult {
     );
 
     let mut violations: Vec<HookViolation> = Vec::new();
+
+    // --- Plugin ownership protection ---
+    // Before evaluating rules, check if the target file is owned by a plugin.
+    if let Some(violation) = check_manifest_ownership(ctx, project_root) {
+        violations.push(violation);
+    }
 
     for rule in &rules {
         let Some(enforcement) = rule.frontmatter.get("enforcement") else {
@@ -198,6 +205,56 @@ fn check_file_entry(
                 action: action.to_owned(),
                 message: message.to_owned(),
             });
+        }
+    }
+
+    None
+}
+
+// ---------------------------------------------------------------------------
+// Manifest ownership check
+// ---------------------------------------------------------------------------
+
+/// Content manifest entry for a single plugin.
+#[derive(Debug, serde::Deserialize)]
+struct ManifestEntry {
+    #[serde(default)]
+    files: Vec<String>,
+}
+
+/// Content manifest format (`.orqa/manifest.json`).
+#[derive(Debug, serde::Deserialize)]
+struct ContentManifest {
+    #[serde(default)]
+    plugins: HashMap<String, ManifestEntry>,
+}
+
+/// Check if the target file is owned by a plugin (listed in `.orqa/manifest.json`).
+///
+/// Blocks the write with a message identifying the owning plugin. Only fires on
+/// file-write contexts (contexts that have a `file_path`).
+fn check_manifest_ownership(ctx: &HookContext, project_root: &Path) -> Option<HookViolation> {
+    let file_path = ctx.file_path.as_deref()?;
+
+    // Normalise to forward slashes for comparison against manifest entries
+    let normalised = file_path.replace('\\', "/");
+
+    let manifest_path = project_root.join(".orqa/manifest.json");
+    let content = std::fs::read_to_string(&manifest_path).ok()?;
+    let manifest: ContentManifest = serde_json::from_str(&content).ok()?;
+
+    for (plugin_name, entry) in &manifest.plugins {
+        for tracked_file in &entry.files {
+            if tracked_file == &normalised {
+                return Some(HookViolation {
+                    rule_id: "plugin-ownership".to_owned(),
+                    action: "block".to_owned(),
+                    message: format!(
+                        "This artifact is owned by plugin {}. Edit the plugin source and run 'orqa plugin refresh' instead.",
+                        plugin_name
+                    ),
+                });
+            }
         }
     }
 
@@ -626,6 +683,53 @@ mod tests {
         );
 
         let result = evaluate_hook(&bash_ctx("git commit --no-verify"), tmp.path());
+        assert_eq!(result.action, "allow");
+    }
+
+    // -----------------------------------------------------------------------
+    // Plugin ownership protection
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn plugin_owned_file_is_blocked() {
+        let tmp = TempDir::new().unwrap();
+
+        // Create manifest.json with an owned file
+        let orqa_dir = tmp.path().join(".orqa");
+        fs::create_dir_all(&orqa_dir).unwrap();
+        fs::write(
+            orqa_dir.join("manifest.json"),
+            r#"{"plugins":{"@orqastudio/plugin-agile-governance":{"version":"0.1.0-dev","installed_at":"2026-03-22T00:00:00Z","files":[".orqa/process/rules/RULE-633e636d.md"]}}}"#,
+        ).unwrap();
+
+        let ctx = file_ctx(".orqa/process/rules/RULE-633e636d.md");
+        let result = evaluate_hook(&ctx, tmp.path());
+        assert_eq!(result.action, "block");
+        assert!(result.messages[0].contains("@orqastudio/plugin-agile-governance"));
+        assert!(result.messages[0].contains("orqa plugin refresh"));
+    }
+
+    #[test]
+    fn non_owned_file_is_allowed() {
+        let tmp = TempDir::new().unwrap();
+
+        let orqa_dir = tmp.path().join(".orqa");
+        fs::create_dir_all(&orqa_dir).unwrap();
+        fs::write(
+            orqa_dir.join("manifest.json"),
+            r#"{"plugins":{"@orqastudio/plugin-core":{"version":"0.1.0","installed_at":"2026-03-22T00:00:00Z","files":[".orqa/process/rules/RULE-abc.md"]}}}"#,
+        ).unwrap();
+
+        let ctx = file_ctx(".orqa/process/rules/RULE-other.md");
+        let result = evaluate_hook(&ctx, tmp.path());
+        assert_eq!(result.action, "allow");
+    }
+
+    #[test]
+    fn no_manifest_allows_all_files() {
+        let tmp = TempDir::new().unwrap();
+        let ctx = file_ctx(".orqa/process/rules/RULE-633e636d.md");
+        let result = evaluate_hook(&ctx, tmp.path());
         assert_eq!(result.action, "allow");
     }
 
