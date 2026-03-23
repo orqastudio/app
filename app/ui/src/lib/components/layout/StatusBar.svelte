@@ -152,17 +152,23 @@
 
 		<span class="h-3 w-px bg-border"></span>
 
+		<div class="flex items-center gap-1.5">
+			<span class="inline-block h-2 w-2 rounded-full {sidecarColor}"></span>
+			<span>{settingsStore.sidecarStateLabel}</span>
+		</div>
+
+		<span class="h-3 w-px bg-border"></span>
+
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
 					<button
 						{...props}
-						class="flex items-center gap-1 rounded px-1.5 py-0.5 transition-colors hover:bg-accent hover:text-accent-foreground"
+						class="flex items-center gap-1.5 rounded transition-colors hover:bg-accent hover:text-accent-foreground"
 						onclick={() => settingsStore.refreshDaemonHealth()}
 					>
-						<Icon name="server" size="xs" />
-						<span>{settingsStore.daemonStateLabel}</span>
 						<span class="inline-block h-2 w-2 rounded-full {daemonColor}"></span>
+						<span>{settingsStore.daemonStateLabel}</span>
 					</button>
 				{/snippet}
 			</TooltipTrigger>
@@ -170,12 +176,5 @@
 				<p>{daemonTooltip}</p>
 			</TooltipContent>
 		</TooltipRoot>
-
-		<span class="h-3 w-px bg-border"></span>
-
-		<div class="flex items-center gap-1.5">
-			<span>{settingsStore.sidecarStateLabel}</span>
-			<span class="inline-block h-2 w-2 rounded-full {sidecarColor}"></span>
-		</div>
 	</div>
 </div>

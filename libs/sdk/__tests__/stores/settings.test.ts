@@ -142,19 +142,19 @@ describe("SettingsStore", () => {
 	describe("derived: sidecarStateLabel", () => {
 		it("maps sidecar states to labels", () => {
 			settingsStore.sidecarStatus = { ...settingsStore.sidecarStatus, state: "connected" };
-			expect(settingsStore.sidecarStateLabel).toBe("Connected");
+			expect(settingsStore.sidecarStateLabel).toBe("Claude Code");
 
 			settingsStore.sidecarStatus = { ...settingsStore.sidecarStatus, state: "starting" };
-			expect(settingsStore.sidecarStateLabel).toBe("Starting");
+			expect(settingsStore.sidecarStateLabel).toBe("Claude Code (Starting)");
 
 			settingsStore.sidecarStatus = { ...settingsStore.sidecarStatus, state: "error" };
-			expect(settingsStore.sidecarStateLabel).toBe("Error");
+			expect(settingsStore.sidecarStateLabel).toBe("Claude Code (Offline)");
 
 			settingsStore.sidecarStatus = { ...settingsStore.sidecarStatus, state: "stopped" };
-			expect(settingsStore.sidecarStateLabel).toBe("Disconnected");
+			expect(settingsStore.sidecarStateLabel).toBe("Claude Code (Offline)");
 
 			settingsStore.sidecarStatus = { ...settingsStore.sidecarStatus, state: "not_started" };
-			expect(settingsStore.sidecarStateLabel).toBe("Disconnected");
+			expect(settingsStore.sidecarStateLabel).toBe("Claude Code (Offline)");
 		});
 	});
 

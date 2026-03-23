@@ -312,13 +312,13 @@ export class SettingsStore {
 	get daemonStateLabel(): string {
 		switch (this.daemonHealth.state) {
 			case "connected":
-				return `Daemon (${this.daemonHealth.artifacts})`;
+				return "Connected";
 			case "degraded":
-				return "Daemon Degraded";
+				return "Degraded";
 			case "disconnected":
-				return "Daemon Offline";
+				return "Offline";
 			default:
-				return "Daemon Unknown";
+				return "Offline";
 		}
 	}
 
@@ -344,17 +344,17 @@ export class SettingsStore {
 	get sidecarStateLabel(): string {
 		switch (this.sidecarStatus.state) {
 			case "connected":
-				return "Connected";
+				return "Claude Code";
 			case "starting":
-				return "Starting";
+				return "Claude Code (Starting)";
 			case "error":
-				return "Error";
+				return "Claude Code (Offline)";
 			case "stopped":
-				return "Disconnected";
+				return "Claude Code (Offline)";
 			case "not_started":
-				return "Disconnected";
+				return "Claude Code (Offline)";
 			default:
-				return "Unknown";
+				return "Claude Code (Offline)";
 		}
 	}
 

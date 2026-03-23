@@ -94,10 +94,23 @@ export class ArtifactGraphSDK {
 	private unlistenFn: UnlistenFn | null = null;
 	private unlistenTransitionsFn: UnlistenFn | null = null;
 	private _initCalled = false;
+	private _initialized = false;
 	private config: ArtifactGraphConfig | null = null;
+	private _lastSchemaCount = 0;
 
 	constructor(registry: PluginRegistry) {
 		this.registry = registry;
+
+		// Watch for plugin registrations that add new schemas after initial load.
+		// When plugins register asynchronously, allTypeKeys is empty on first
+		// _fetchAll(). This effect re-fetches once new schemas appear.
+		$effect(() => {
+			const schemaCount = this.registry.allSchemas.length;
+			if (schemaCount > this._lastSchemaCount && this._initialized) {
+				this._lastSchemaCount = schemaCount;
+				void this._fetchAll();
+			}
+		});
 	}
 
 	// -----------------------------------------------------------------------
@@ -150,6 +163,8 @@ export class ArtifactGraphSDK {
 		}
 
 		await this._loadAll();
+		this._lastSchemaCount = this.allTypeKeys.length;
+		this._initialized = true;
 		if (!this.unlistenFn) {
 			this.unlistenFn = await listen("artifact-graph-updated", () => {
 				void this.refresh();
