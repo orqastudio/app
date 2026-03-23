@@ -1,6 +1,6 @@
 [package]
 name = "orqa-studio"
-version = "0.1.0-dev"
+version = "0.1.4-dev"
 edition = "2021"
 
 [package.metadata.tauri]
