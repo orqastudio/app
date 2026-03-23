@@ -457,13 +457,6 @@
       "relationships": null,
       "config": null
     },
-    "@orqastudio/plugin-systems-thinking": {
-      "installed": true,
-      "enabled": true,
-      "path": "plugins/systems-thinking",
-      "relationships": null,
-      "config": null
-    },
     "@orqastudio/claude-code-connector": {
       "installed": true,
       "enabled": true,
@@ -477,6 +470,11 @@
       "path": "plugins/githooks",
       "relationships": null,
       "config": null
+    },
+    "@orqastudio/plugin-systems-thinking": {
+      "installed": true,
+      "enabled": true,
+      "path": "plugins/systems-thinking"
     }
   }
 }
