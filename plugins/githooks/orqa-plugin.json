@@ -1,0 +1,45 @@
+{
+  "name": "@orqastudio/plugin-githooks",
+  "version": "0.1.4-dev",
+  "displayName": "Git Hooks",
+  "description": "Pre-commit enforcement via git hooks — schema validation, filename-to-ID match, relationship integrity. Schema-driven: reads validation rules from installed plugin manifests.",
+  "category": "enforcement",
+  "role": "enhancement:governance",
+  "dependencies": {
+    "npm": [
+      "ajv",
+      "ajv-formats",
+      "fast-glob",
+      "gray-matter"
+    ]
+  },
+  "provides": {
+    "schemas": [],
+    "enforcement_mechanisms": [
+      {
+        "key": "pre-commit",
+        "description": "Git pre-commit hook — final gate before commit",
+        "strength": 7
+      }
+    ],
+    "relationships": [],
+    "agents": [],
+    "knowledge": [],
+    "hooks": [
+      {
+        "event": "pre-commit",
+        "script": "hooks/pre-commit.sh",
+        "description": "Validates governance artifacts against plugin schemas before every commit"
+      }
+    ],
+    "cliTools": [
+      {
+        "key": "hooks-install",
+        "command": "bash ${PLUGIN_ROOT}/hooks/install.sh",
+        "description": "Install git hooks into the project"
+      }
+    ],
+    "views": [],
+    "widgets": []
+  }
+}
