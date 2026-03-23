@@ -33,6 +33,28 @@
 		}
 	});
 
+	// TODO: Plugin name should come from plugin manifest / sidecar config.
+	// Hardcoded for single-provider; multi-provider will list each provider with status.
+	const sidecarPluginName = "@orqastudio/plugin-claude";
+
+	const sidecarTooltip = $derived.by(() => {
+		const status = settingsStore.sidecarStatus;
+		switch (status.state) {
+			case "connected":
+				return `Connected via ${sidecarPluginName}`;
+			case "starting":
+				return `Starting ${sidecarPluginName}...`;
+			case "error":
+				return `Error: ${status.error_message ?? "Unknown error"}`;
+			case "stopped":
+				return `Stopped — ${sidecarPluginName}`;
+			case "not_started":
+				return "No providers configured";
+			default:
+				return "No providers configured";
+		}
+	});
+
 	const daemonTooltip = $derived.by(() => {
 		const health = settingsStore.daemonHealth;
 		if (health.state === "connected") {
@@ -50,7 +72,7 @@
 			(session.total_input_tokens > 0 || session.total_output_tokens > 0),
 	);
 
-	const artifactCount = $derived(artifactGraphSDK.graph.size);
+	const artifactCount = $derived(Math.max(artifactGraphSDK.graph.size, settingsStore.daemonHealth.artifacts ?? 0));
 
 	function formatTokens(count: number): string {
 		if (count >= 1_000_000) {
@@ -64,6 +86,11 @@
 
 	function openModelSettings() {
 		settingsStore.setActiveSection("model");
+		navigationStore.setActivity("settings");
+	}
+
+	function openPluginSettings() {
+		settingsStore.setActiveSection("project-plugins");
 		navigationStore.setActivity("settings");
 	}
 </script>
@@ -134,13 +161,12 @@
 					>
 						{#if artifactGraphSDK.loading}
 							<Icon name="loader-circle" size="xs" />
-							<span>Indexing...</span>
 						{:else if artifactGraphSDK.error}
 							<Icon name="triangle-alert" size="xs" />
 							<span>Index Error</span>
 						{:else}
 							<Icon name="database" size="xs" />
-							<span>{artifactCount} Artifacts Indexed</span>
+							<span>{artifactCount}</span>
 						{/if}
 					</button>
 				{/snippet}
@@ -152,10 +178,23 @@
 
 		<span class="h-3 w-px bg-border"></span>
 
-		<div class="flex items-center gap-1.5">
-			<span class="inline-block h-2 w-2 rounded-full {sidecarColor}"></span>
-			<span>{settingsStore.sidecarStateLabel}</span>
-		</div>
+		<TooltipRoot>
+			<TooltipTrigger>
+				{#snippet child({ props })}
+					<button
+						{...props}
+						class="flex items-center gap-1.5 rounded px-1.5 py-0.5 transition-colors hover:bg-accent hover:text-accent-foreground"
+						onclick={openPluginSettings}
+					>
+						<span class="inline-block h-2 w-2 rounded-full {sidecarColor}"></span>
+						<span>{settingsStore.sidecarStateLabel}</span>
+					</button>
+				{/snippet}
+			</TooltipTrigger>
+			<TooltipContent side="top">
+				<p>{sidecarTooltip}</p>
+			</TooltipContent>
+		</TooltipRoot>
 
 		<span class="h-3 w-px bg-border"></span>
 
