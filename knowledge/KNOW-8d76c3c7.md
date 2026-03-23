@@ -1,5 +1,6 @@
 ---
 id: KNOW-8d76c3c7
+type: knowledge
 title: Governance Maintenance
 description: |
   Governance framework custodianship: auditing agent definitions, maintaining

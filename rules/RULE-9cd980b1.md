@@ -1,5 +1,6 @@
 ---
 id: RULE-9cd980b1
+type: rule
 title: Honest Status Reporting
 description: Partial work must be reported as partial. Reporting incomplete work as complete is worse than reporting it as incomplete. No agent may self-certify completion without meeting all acceptance criteria.
 status: active

@@ -1,5 +1,6 @@
 ---
 id: RULE-57ccb4a3
+type: rule
 title: Error Ownership
 description: All errors are your responsibility. Pre-existing errors must be fixed. Never skip or ignore failures.
 status: active

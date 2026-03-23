@@ -1,5 +1,6 @@
 ---
 id: RULE-c4fe67a2
+type: rule
 title: Governance Priority Over Delivery
 description: Lesson promotions (recurrence >= 2) and rule violations are ALWAYS CRITICAL priority — they take precedence over all delivery tasks. The learning loop breaks if governance debt accumulates.
 status: active
