@@ -1,0 +1,37 @@
+---
+id: TASK-b2d4f6a8
+type: task
+name: "Three-way diff comparison in diffPluginContent()"
+status: done
+description: Update diffPluginContent() to use stored hashes for three-way comparison. Detect plugin-updated, user-modified, conflict, and clean states. Update orqa plugin diff output to show three-way status.
+relationships:
+  - target: EPIC-d4a8c1e5
+    type: delivers
+    rationale: Phase 1 — three-way diff infrastructure
+  - target: TASK-a1c3e5f7
+    type: depends-on
+    rationale: Needs hash tracking in manifest before three-way comparison works
+acceptance:
+  - "diffPluginContent() detects: clean, plugin-updated, user-modified, conflict"
+  - "orqa plugin diff output shows which state each file is in"
+  - "user-modified files are NOT overwritten by orqa plugin refresh"
+  - "plugin-updated files with no user edits are updated on refresh"
+  - "conflicts are reported clearly — user decides resolution"
+  - "make check passes"
+---
+
+## Scope
+
+### Three-way states
+
+| Source hash vs baseline | Baseline vs disk | State | Action |
+|------------------------|-----------------|-------|--------|
+| Same | Same | Clean | No action |
+| Changed | Same | Plugin updated | Auto-update on refresh |
+| Same | Changed | User modified | Preserve — warn on refresh |
+| Changed | Changed | Conflict | Surface to user for resolution |
+
+### Key files
+
+- `libs/cli/src/lib/content-lifecycle.ts` — `diffPluginContent()`, `refreshPluginContent()`
+- `libs/cli/src/commands/plugin.ts` — `cmdDiff()`, `cmdRefresh()` output formatting

@@ -1,0 +1,16 @@
+---
+id: TASK-e1f3a5b7
+type: task
+name: "Template schema tracking and validation"
+status: done
+description: "Ensure plugin templates stay in sync with schema changes. Add orqa template validate command that checks templates produce valid artifacts against current schemas."
+relationships:
+  - target: EPIC-d4a8c1e5
+    type: delivers
+    rationale: Phase 5 — template schema tracking
+acceptance:
+  - "Templates can declare which schemas they depend on"
+  - "orqa template validate checks templates against current schemas"
+  - "Schema changes that break templates are detectable"
+  - "TypeScript compiles cleanly"
+---

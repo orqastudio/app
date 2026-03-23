@@ -5,11 +5,14 @@ title: OrqaStudio Cloud — Forgejo-based git hosting as a plugin
 description: A minimal OrqaStudio-branded git hosting platform based on Forgejo, shipped as a Docker container and deployable as a plugin for local or cloud use. Provides project/organisation/user oversight with the same governance model that runs locally.
 status: captured
 created: 2026-03-21
-updated: 2026-03-21
+updated: 2026-03-23
 relationships:
   - target: PILLAR-569581e0
     type: grounded
     rationale: Clarity Through Structure — centralised governance visibility across projects
+  - target: EPIC-f2b9e7d3
+    type: addressed-by
+    rationale: Bundled into the Git Infrastructure epic (Phase 2 — Forgejo Instance)
   - target: PILLAR-94b281db
     type: grounded
     rationale: Purpose Through Continuity — projects maintain coherence whether local or hosted

@@ -128,7 +128,7 @@
     },
     "@orqastudio/plugin-software-project": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-23T13:01:48.697Z",
+      "installed_at": "2026-03-23T13:46:35.361Z",
       "files": [
         ".orqa/documentation/DOC-421219ce.md",
         ".orqa/process/knowledge/KNOW-170c220e.md",
@@ -218,7 +218,7 @@
     },
     "@orqastudio/claude-code-connector": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-23T11:40:14.289Z",
+      "installed_at": "2026-03-23T13:53:06.425Z",
       "files": [
         ".orqa/process/knowledge/KNOW-0fd23e0b.md",
         ".orqa/process/knowledge/KNOW-82ceb1bd.md"
