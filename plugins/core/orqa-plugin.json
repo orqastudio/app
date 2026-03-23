@@ -1,0 +1,189 @@
+{
+  "name": "@orqastudio/plugin-core-framework",
+  "version": "0.1.4-dev",
+  "displayName": "Core Framework",
+  "description": "The agent execution model — universal roles, delegation, session management, knowledge loading, thinking mode classification. Every project gets this.",
+  "category": "framework",
+  "role": "core:framework",
+  "uninstallable": true,
+  "content": {
+    "agents": {
+      "source": "agents",
+      "target": ".orqa/process/agents"
+    },
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    },
+    "rules": {
+      "source": "rules",
+      "target": ".orqa/process/rules"
+    }
+  },
+  "provides": {
+    "schemas": [],
+    "enforcement_mechanisms": [
+      {
+        "key": "behavioral",
+        "description": "Prompt injection reminder — minimum enforcement floor",
+        "strength": 1
+      },
+      {
+        "key": "json-schema",
+        "description": "Frontmatter JSON Schema validation",
+        "strength": 8
+      },
+      {
+        "key": "hook",
+        "description": "Lifecycle hook enforcement (PreAction, PostAction, etc.)",
+        "strength": 5
+      },
+      {
+        "key": "onnx",
+        "description": "Semantic inference — similarity, classification, pattern matching (lesson recurrence, duplicate detection, compliance)",
+        "strength": 4
+      }
+    ],
+    "relationships": [],
+    "agents": [
+      {
+        "key": "1dab5ebe",
+        "id": "AGENT-1dab5ebe",
+        "path": "agents/AGENT-1dab5ebe.md"
+      },
+      {
+        "key": "b0774726",
+        "id": "AGENT-b0774726",
+        "path": "agents/AGENT-b0774726.md"
+      },
+      {
+        "key": "bedeffd1",
+        "id": "AGENT-bedeffd1",
+        "path": "agents/AGENT-bedeffd1.md"
+      },
+      {
+        "key": "c5284fde",
+        "id": "AGENT-c5284fde",
+        "path": "agents/AGENT-c5284fde.md"
+      },
+      {
+        "key": "caff7bc1",
+        "id": "AGENT-caff7bc1",
+        "path": "agents/AGENT-caff7bc1.md"
+      },
+      {
+        "key": "cc255bc8",
+        "id": "AGENT-cc255bc8",
+        "path": "agents/AGENT-cc255bc8.md"
+      },
+      {
+        "key": "ec1b3785",
+        "id": "AGENT-ec1b3785",
+        "path": "agents/AGENT-ec1b3785.md"
+      },
+      {
+        "key": "fb0ce261",
+        "id": "AGENT-fb0ce261",
+        "path": "agents/AGENT-fb0ce261.md"
+      }
+    ],
+    "knowledge": [
+      {
+        "key": "323c2803",
+        "id": "KNOW-323c2803",
+        "label": "Thinking Mode: Debugging"
+      },
+      {
+        "key": "449b1e02",
+        "id": "KNOW-449b1e02",
+        "label": "Artifact Status Management"
+      },
+      {
+        "key": "63cc1a00",
+        "id": "KNOW-63cc1a00",
+        "label": "Third-Party Plugin Development"
+      },
+      {
+        "key": "6f33713e",
+        "id": "KNOW-6f33713e",
+        "label": "Planning"
+      },
+      {
+        "key": "83614358",
+        "id": "KNOW-83614358",
+        "label": "Thinking Mode: Review"
+      },
+      {
+        "key": "a2b3c4d5",
+        "id": "KNOW-a2b3c4d5",
+        "label": "Search"
+      },
+      {
+        "key": "a4b5c6d7",
+        "id": "KNOW-a4b5c6d7",
+        "label": "Project Type Detection"
+      },
+      {
+        "key": "b453410f",
+        "id": "KNOW-b453410f",
+        "label": "Plugin Development"
+      },
+      {
+        "key": "c9d8e7f6",
+        "id": "KNOW-c9d8e7f6",
+        "label": "Reviewer Reasoning Methodology"
+      },
+      {
+        "key": "d1a2b3c4",
+        "id": "KNOW-d1a2b3c4",
+        "label": "Agent Decision Methodology"
+      },
+      {
+        "key": "e0dec720",
+        "id": "KNOW-e0dec720",
+        "label": "Project Setup"
+      },
+      {
+        "key": "e1333874",
+        "id": "KNOW-e1333874",
+        "label": "First-Party Plugin Development"
+      },
+      {
+        "key": "e3a559c9",
+        "id": "KNOW-e3a559c9",
+        "label": "Plugin Setup"
+      },
+      {
+        "key": "e5f6a7b8",
+        "id": "KNOW-e5f6a7b8",
+        "label": "Implementer Reasoning Methodology"
+      },
+      {
+        "key": "f5edb34d",
+        "id": "KNOW-f5edb34d",
+        "label": "Diagnostic Methodology"
+      },
+      {
+        "key": "f7476f0a",
+        "id": "KNOW-f7476f0a",
+        "label": "Research Methodology"
+      },
+      {
+        "key": "f8e9d0a1",
+        "id": "KNOW-f8e9d0a1",
+        "label": "Governance Migration Methodology"
+      },
+      {
+        "key": "fda0559b",
+        "id": "KNOW-fda0559b",
+        "label": "Thinking Mode: Implementation"
+      }
+    ],
+    "hooks": [],
+    "views": [],
+    "widgets": [],
+    "behavioral_rules": [],
+    "mode_templates": {},
+    "session_reminders": []
+  }
+}
