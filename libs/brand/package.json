@@ -1,0 +1,12 @@
+{
+  "name": "@orqastudio/brand",
+  "version": "0.1.4-dev",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate-icons": "node scripts/generate-icons.mjs"
+  },
+  "dependencies": {
+    "sharp": "^0.33.0"
+  }
+}

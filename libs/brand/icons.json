@@ -1,0 +1,67 @@
+{
+  "$schema": "Icons mapping — SVG source → output files with size, format, and purpose.",
+  "icons": [
+    {
+      "source": "svg/Fin.svg",
+      "purpose": "Small-size mark — favicons, taskbar, status bar, system tray",
+      "outputs": [
+        { "path": "assets/icons/favicon.svg", "format": "svg", "size": null },
+        { "path": "assets/icons/favicon.ico", "format": "ico", "sizes": [16, 32, 48] },
+        { "path": "assets/icons/favicon-16x16.png", "format": "png", "size": 16 },
+        { "path": "assets/icons/favicon-32x32.png", "format": "png", "size": 32 },
+        { "path": "assets/icons/favicon-48x48.png", "format": "png", "size": 48 },
+        { "path": "assets/icons/icon-64x64.png", "format": "png", "size": 64 },
+        { "path": "assets/icons/icon-128x128.png", "format": "png", "size": 128 }
+      ]
+    },
+    {
+      "source": "svg/App Icon.svg",
+      "purpose": "Full app icon — app store listings, desktop shortcut, about screen",
+      "outputs": [
+        { "path": "assets/icons/app-icon.ico", "format": "ico", "sizes": [16, 32, 48, 64, 128, 256] },
+        { "path": "assets/icons/icon-180x180.png", "format": "png", "size": 180 },
+        { "path": "assets/icons/icon-256x256.png", "format": "png", "size": 256 },
+        { "path": "assets/icons/icon-512x512.png", "format": "png", "size": 512 },
+        { "path": "assets/icons/icon-1024x1024.png", "format": "png", "size": 1024 },
+        { "path": "assets/icons/apple-touch-icon.png", "format": "png", "size": 180 }
+      ]
+    },
+    {
+      "source": "svg/Favicon.svg",
+      "purpose": "Favicon variant with reflection — alternative favicon for contexts needing more visual weight",
+      "outputs": []
+    },
+    {
+      "source": "svg/Logo.svg",
+      "purpose": "Full wordmark logo — splash screens, documentation headers",
+      "outputs": []
+    },
+    {
+      "source": "svg/DogFood.svg",
+      "purpose": "Dogfooding variant — internal/dev builds",
+      "outputs": []
+    }
+  ],
+  "deployTargets": {
+    "tauri-app": {
+      "description": "Tauri v2 desktop application icons — fin for taskbar/small sizes, app icon for large",
+      "copy": [
+        { "from": "assets/icons/favicon.ico", "to": "app/backend/src-tauri/icons/icon.ico" },
+        { "from": "assets/icons/favicon-32x32.png", "to": "app/backend/src-tauri/icons/32x32.png" },
+        { "from": "assets/icons/icon-64x64.png", "to": "app/backend/src-tauri/icons/64x64.png" },
+        { "from": "assets/icons/icon-128x128.png", "to": "app/backend/src-tauri/icons/128x128.png" },
+        { "from": "assets/icons/icon-128x128.png", "to": "app/backend/src-tauri/icons/128x128@2x.png" },
+        { "from": "assets/icons/icon-256x256.png", "to": "app/backend/src-tauri/icons/icon.png" },
+        { "from": "assets/icons/icon-512x512.png", "to": "app/backend/src-tauri/icons/512x512.png" },
+        { "from": "assets/icons/icon-1024x1024.png", "to": "app/backend/src-tauri/icons/1024x1024.png" }
+      ]
+    },
+    "web-app": {
+      "description": "SvelteKit static assets for the web view",
+      "copy": [
+        { "from": "assets/icons/favicon.svg", "to": "app/ui/static/favicon.svg" },
+        { "from": "assets/icons/favicon.ico", "to": "app/ui/static/favicon.ico" }
+      ]
+    }
+  }
+}
