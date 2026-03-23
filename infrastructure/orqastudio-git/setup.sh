@@ -16,9 +16,9 @@ set -euo pipefail
 
 SERVER_URL="http://localhost:3030"
 CONTAINER="orqastudio"
-ADMIN_USER="orqa-admin"
-ADMIN_PASS="admin123"  # Change this after first login
-ADMIN_EMAIL="admin@orqastudio.dev"
+ADMIN_USER="${ORQA_GIT_USER:-orqa-admin}"
+ADMIN_PASS="${ORQA_GIT_PASS:-admin123}"
+ADMIN_EMAIL="${ORQA_GIT_EMAIL:-admin@orqastudio.dev}"
 ORG_NAME="orqastudio"
 
 echo "=== OrqaStudio Git Server Setup ==="
