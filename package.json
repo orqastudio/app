@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/plugin-svelte",
-  "version": "0.1.0-dev",
+  "version": "0.1.4-dev",
   "private": true,
   "type": "module",
   "description": "Svelte development infrastructure — extends TypeScript plugin with Svelte parser, svelte-check, Vitest config, and ESLint rules.",
@@ -23,8 +23,8 @@
     "check": "tsc --noEmit"
   },
   "dependencies": {
-    "@orqastudio/types": "^0.1.0-dev",
-    "@orqastudio/plugin-typescript": "^0.1.0-dev",
+    "@orqastudio/types": "0.1.4-dev",
+    "@orqastudio/plugin-typescript": "0.1.4-dev",
     "svelte-language-server": "^0.17.0"
   },
   "peerDependencies": {

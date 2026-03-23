@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/plugin-svelte",
-  "version": "0.1.0-dev",
+  "version": "0.1.4-dev",
   "displayName": "Svelte Development",
   "description": "Svelte development infrastructure — extends the TypeScript plugin with Svelte parser, svelte-check, Vitest config, and Svelte ESLint rules.",
   "category": "tooling",
@@ -32,6 +32,23 @@
       }
     ],
     "schemas": [],
+    "enforcement_mechanisms": [
+      {
+        "key": "eslint",
+        "description": "ESLint rule enforcement",
+        "strength": 6
+      },
+      {
+        "key": "svelte-check",
+        "description": "Svelte type and template checking",
+        "strength": 6
+      },
+      {
+        "key": "vitest",
+        "description": "Vitest frontend test runner",
+        "strength": 6
+      }
+    ],
     "views": [],
     "widgets": [],
     "lspServers": {
@@ -150,5 +167,27 @@
         }
       ]
     }
-  }
+  },
+  "content": {
+    "agents": {
+      "source": "agents",
+      "target": ".orqa/process/agents"
+    },
+    "documentation": {
+      "source": "documentation",
+      "target": ".orqa/documentation"
+    },
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    }
+  },
+  "dependencies": {
+    "npm": [
+      "@orqastudio/types",
+      "@orqastudio/plugin-typescript"
+    ]
+  },
+  "build": "npm run build",
+  "role": "enhancement:delivery"
 }

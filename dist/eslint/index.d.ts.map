@@ -1,0 +1,1 @@
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../src/eslint/index.ts"],"names":[],"mappings":"AAEA,OAAO,KAAK,EAAE,WAAW,EAAE,iBAAiB,EAAE,MAAM,mBAAmB,CAAC;AAExE;;GAEG;AACH,OAAO,EAAE,IAAI,EAAE,MAAM,sCAAsC,CAAC;AAE5D;;;;;;;;;;;;;;;;;;GAkBG;AACH,wBAAgB,MAAM,CACpB,YAAY,EAAE;IACZ,OAAO,EAAE,MAAM,CAAC,MAAM,EAAE,iBAAiB,EAAE,CAAC,CAAC;CAC9C,GACA,WAAW,CAsBb"}
