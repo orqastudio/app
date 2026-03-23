@@ -215,6 +215,14 @@
       "version": "0.1.0-dev",
       "installed_at": "2026-03-23T10:30:52.951Z",
       "files": []
+    },
+    "@orqastudio/claude-code-connector": {
+      "version": "0.1.0-dev",
+      "installed_at": "2026-03-23T11:40:14.289Z",
+      "files": [
+        ".orqa/process/knowledge/KNOW-0fd23e0b.md",
+        ".orqa/process/knowledge/KNOW-82ceb1bd.md"
+      ]
     }
   }
 }
