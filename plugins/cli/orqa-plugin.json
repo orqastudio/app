@@ -1,0 +1,144 @@
+{
+  "name": "@orqastudio/plugin-cli",
+  "version": "0.1.4-dev",
+  "displayName": "CLI Tools",
+  "description": "Bundles the orqa CLI with skills for graph browsing, validation, plugin management, version management, license/readme auditing, and dev environment maintenance.",
+  "category": "tooling",
+  "provides": {
+    "schemas": [],
+    "enforcement_mechanisms": [
+      {
+        "key": "tool",
+        "description": "CLI tool enforcement (orqa enforce)",
+        "strength": 6
+      }
+    ],
+    "views": [],
+    "widgets": [],
+    "relationships": [],
+    "knowledge": [
+      {
+        "key": "3198c8fb",
+        "id": "KNOW-3198c8fb"
+      },
+      {
+        "key": "4cc73a12",
+        "id": "KNOW-4cc73a12"
+      },
+      {
+        "key": "6391d2a8",
+        "id": "KNOW-6391d2a8"
+      },
+      {
+        "key": "6ee6c91e",
+        "id": "KNOW-6ee6c91e"
+      },
+      {
+        "key": "7b5c1bda",
+        "id": "KNOW-7b5c1bda"
+      },
+      {
+        "key": "9466a88a",
+        "id": "KNOW-9466a88a"
+      },
+      {
+        "key": "9e1a2f6a",
+        "id": "KNOW-9e1a2f6a"
+      }
+    ],
+    "cliTools": [
+      {
+        "key": "orqa-enforce",
+        "label": "Enforcement Engine",
+        "icon": "shield-check",
+        "runtime": "node",
+        "entrypoint": "node_modules/@orqastudio/cli/dist/cli.js",
+        "args": [
+          "enforce"
+        ],
+        "category": "integrity"
+      },
+      {
+        "key": "orqa-graph-stats",
+        "label": "Graph Statistics",
+        "icon": "bar-chart-3",
+        "runtime": "node",
+        "entrypoint": "node_modules/@orqastudio/cli/dist/cli.js",
+        "args": [
+          "graph",
+          "--stats",
+          "--json"
+        ],
+        "category": "custom"
+      },
+      {
+        "key": "orqa-version-check",
+        "label": "Version Drift Check",
+        "icon": "git-compare",
+        "runtime": "node",
+        "entrypoint": "node_modules/@orqastudio/cli/dist/cli.js",
+        "args": [
+          "version",
+          "check"
+        ],
+        "category": "integrity"
+      },
+      {
+        "key": "orqa-repo-license",
+        "label": "License Audit",
+        "icon": "scale",
+        "runtime": "node",
+        "entrypoint": "node_modules/@orqastudio/cli/dist/cli.js",
+        "args": [
+          "repo",
+          "license"
+        ],
+        "category": "integrity"
+      },
+      {
+        "key": "orqa-repo-readme",
+        "label": "README Audit",
+        "icon": "file-text",
+        "runtime": "node",
+        "entrypoint": "node_modules/@orqastudio/cli/dist/cli.js",
+        "args": [
+          "repo",
+          "readme"
+        ],
+        "category": "integrity"
+      }
+    ],
+    "hooks": [
+      {
+        "event": "PreCommit",
+        "command": "cd libs/cli && npx tsc && cd ../.. && orqa verify",
+        "description": "Rebuild CLI then run all audits before every commit"
+      },
+      {
+        "event": "SessionStart",
+        "command": "orqa version check",
+        "description": "Check for version drift at session start"
+      }
+    ]
+  },
+  "content": {
+    "documentation": {
+      "source": "documentation",
+      "target": ".orqa/documentation"
+    },
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    },
+    "rules": {
+      "source": "rules",
+      "target": ".orqa/process/rules"
+    }
+  },
+  "dependencies": {
+    "npm": [
+      "@orqastudio/cli"
+    ]
+  },
+  "role": "extension"
+}
