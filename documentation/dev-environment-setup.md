@@ -1,5 +1,6 @@
 ---
 id: DOC-65eb8303
+type: doc
 title: Dev Environment Setup Guide
 description: "How to set up the OrqaStudio dev environment — submodules, npm linking, and the multi-repo workflow."
 category: onboarding
