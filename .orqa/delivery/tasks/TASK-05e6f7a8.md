@@ -2,7 +2,7 @@
 id: TASK-05e6f7a8
 type: task
 name: "Update orqa install pipeline for monorepo"
-status: in-progress
+status: done
 description: "Simplify the orqa install command for monorepo — npm install at root handles workspaces, topological build replaces LIB_ORDER, no npm link."
 relationships:
   - target: EPIC-f2b9e7d3
