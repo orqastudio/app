@@ -1,0 +1,193 @@
+{
+  "name": "@orqastudio/plugin-svelte",
+  "version": "0.1.4-dev",
+  "displayName": "Svelte Development",
+  "description": "Svelte development infrastructure — extends the TypeScript plugin with Svelte parser, svelte-check, Vitest config, and Svelte ESLint rules.",
+  "category": "tooling",
+  "extends": [
+    "@orqastudio/plugin-typescript"
+  ],
+  "configExtensions": {
+    "tsconfig": {
+      "compilerOptions": {
+        "verbatimModuleSyntax": true
+      }
+    },
+    "eslint": {
+      "import": "@orqastudio/plugin-svelte/eslint",
+      "export": "svelte"
+    }
+  },
+  "provides": {
+    "agents": [
+      {
+        "key": "b0857607",
+        "id": "AGENT-b0857607",
+        "path": "agents/AGENT-b0857607.md"
+      },
+      {
+        "key": "b2f574e5",
+        "id": "AGENT-b2f574e5",
+        "path": "agents/AGENT-b2f574e5.md"
+      }
+    ],
+    "schemas": [],
+    "enforcement_mechanisms": [
+      {
+        "key": "eslint",
+        "description": "ESLint rule enforcement",
+        "strength": 6
+      },
+      {
+        "key": "svelte-check",
+        "description": "Svelte type and template checking",
+        "strength": 6
+      },
+      {
+        "key": "vitest",
+        "description": "Vitest frontend test runner",
+        "strength": 6
+      }
+    ],
+    "views": [],
+    "widgets": [],
+    "lspServers": {
+      "svelte": {
+        "command": "svelteserver",
+        "args": [
+          "--stdio"
+        ],
+        "extensionToLanguage": {
+          ".svelte": "svelte"
+        }
+      }
+    },
+    "relationships": [],
+    "knowledge": [
+      {
+        "key": "1c708b68",
+        "id": "KNOW-1c708b68",
+        "label": "Svelte 5 Best Practices"
+      },
+      {
+        "key": "344a1247",
+        "id": "KNOW-344a1247",
+        "label": "Svelte 5 Runes Reference"
+      },
+      {
+        "key": "45b6ea05",
+        "id": "KNOW-45b6ea05",
+        "label": "Tailwind Design System"
+      },
+      {
+        "key": "6963d39f",
+        "id": "KNOW-6963d39f",
+        "label": "Svelte 5 Snippets Reference"
+      },
+      {
+        "key": "6a2bc391",
+        "id": "KNOW-6a2bc391",
+        "label": "Svelte 4 to Svelte 5 Migration Reference"
+      },
+      {
+        "key": "7e3c5886",
+        "id": "KNOW-7e3c5886",
+        "label": "Svelte 5 Events Reference"
+      },
+      {
+        "key": "88f32b6a",
+        "id": "KNOW-88f32b6a"
+      },
+      {
+        "key": "89d35141",
+        "id": "KNOW-89d35141"
+      },
+      {
+        "key": "90dd73ab",
+        "id": "KNOW-90dd73ab"
+      },
+      {
+        "key": "b29e340b",
+        "id": "KNOW-b29e340b",
+        "label": "SvelteKit Patterns Reference"
+      },
+      {
+        "key": "c40438c2",
+        "id": "KNOW-c40438c2",
+        "label": "Svelte 5 Performance Reference"
+      },
+      {
+        "key": "e9baaf88",
+        "id": "KNOW-e9baaf88",
+        "label": "Svelte 5 TypeScript Reference"
+      },
+      {
+        "key": "fd2b84c4",
+        "id": "KNOW-fd2b84c4"
+      }
+    ],
+    "tools": {
+      "eslint": {
+        "command": "npx eslint",
+        "configFile": ".eslintrc.json",
+        "configFormat": "json"
+      },
+      "svelte-check": {
+        "command": "npx svelte-check",
+        "configFile": null,
+        "configFormat": "cli-args"
+      },
+      "vitest": {
+        "command": "npx vitest run",
+        "configFile": "vitest.config.ts",
+        "configFormat": "ts"
+      }
+    },
+    "dependencies": {
+      "devDependencies": {
+        "eslint": "^9.0.0",
+        "@typescript-eslint/eslint-plugin": "^8.0.0",
+        "@typescript-eslint/parser": "^8.0.0",
+        "eslint-plugin-svelte": "^3.0.0",
+        "svelte-check": "^4.0.0",
+        "vitest": "^3.0.0",
+        "@testing-library/svelte": "^5.0.0",
+        "typescript": "^5.9.0"
+      }
+    },
+    "cliTools": [],
+    "hooks": [],
+    "decision_tree": {
+      "branches": [
+        {
+          "mode": "implementation",
+          "domain": "svelte-frontend",
+          "description": "Building Svelte 5 UI — components, stores, pages, runes-based reactivity",
+          "search_context": "svelte5 runes, $state, $derived, component purity, shadcn-svelte, tailwind"
+        }
+      ]
+    }
+  },
+  "content": {
+    "agents": {
+      "source": "agents",
+      "target": ".orqa/process/agents"
+    },
+    "documentation": {
+      "source": "documentation",
+      "target": ".orqa/documentation"
+    },
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    }
+  },
+  "dependencies": {
+    "npm": [
+      "@orqastudio/types",
+      "@orqastudio/plugin-typescript"
+    ]
+  },
+  "build": "npm run build",
+  "role": "enhancement:delivery"
+}
