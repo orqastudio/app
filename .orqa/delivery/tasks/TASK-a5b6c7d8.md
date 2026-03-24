@@ -3,7 +3,7 @@ id: TASK-a5b6c7d8
 title: "Resolve dashboard/sync-bridge port conflict and update all 3001 consumers"
 type: task
 description: "The OrqaDev Dashboard and Sync Bridge both default to port 3001. Multiple consumers hardcode localhost:3001/log. Separate these services to distinct ports (dashboard: 10401, sync bridge: 10402) and update all hardcoded references."
-status: ready
+status: completed
 created: 2026-03-24
 updated: 2026-03-24
 acceptance:

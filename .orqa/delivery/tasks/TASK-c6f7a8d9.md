@@ -3,7 +3,7 @@ id: TASK-c6f7a8d9
 title: "Update documentation and commands reference for port allocation changes"
 type: task
 description: "Update all documentation to reflect the new port allocation, CLI process lifecycle commands, and dev controller demotion. Documentation-first: these updates inform the implementation."
-status: ready
+status: completed
 created: 2026-03-24
 updated: 2026-03-24
 acceptance:

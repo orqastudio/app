@@ -3,7 +3,7 @@ id: TASK-c4718ed7
 type: task
 title: "Fix pre-commit hook extension and integer expression bug"
 description: "Fix two bugs in the plugin pre-commit hook: (1) plugins/githooks/hooks/pre-commit.sh has .sh extension preventing Git discovery, (2) line 57 has integer expression expected error when stdin buffer contains multi-line input."
-status: captured
+status: completed
 priority: P1
 created: 2026-03-24
 updated: 2026-03-24

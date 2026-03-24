@@ -3,7 +3,7 @@ id: TASK-82b3e4f5
 title: "Fix daemon port mismatch between CLI and MCP server"
 type: task
 description: "Align the daemon port constant in CLI (libs/cli/src/commands/daemon.ts) and MCP server (libs/mcp-server/src/daemon.rs) so both use the same default port. Remove the --port 9258 workaround."
-status: ready
+status: completed
 created: 2026-03-24
 updated: 2026-03-24
 acceptance:

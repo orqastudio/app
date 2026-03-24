@@ -3,7 +3,7 @@ id: TASK-27cb554b
 type: task
 title: "Migrate relationship validation hooks to daemon delegation"
 description: "Replace two independent JavaScript relationship validation implementations (app hooks and plugin hooks) with daemon delegation. Both hooks load relationship vocabularies from plugin manifests — this should happen once in Rust."
-status: captured
+status: completed
 priority: P3
 created: 2026-03-24
 updated: 2026-03-24

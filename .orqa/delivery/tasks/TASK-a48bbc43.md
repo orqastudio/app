@@ -3,7 +3,7 @@ id: TASK-a48bbc43
 type: task
 title: "Consolidate frontmatter parsing to SDK single export"
 description: "Reduce 7 copies of frontmatter parsing across the codebase to 2 canonical implementations: one Rust (orqa_validation) and one TypeScript (SDK). App UI and CLI should import from SDK; MCP server should re-export from orqa_validation."
-status: captured
+status: completed
 priority: P3
 created: 2026-03-24
 updated: 2026-03-24

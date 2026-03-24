@@ -3,7 +3,7 @@ id: TASK-a4d5e6b7
 title: "Extract search engine from MCP server into standalone process"
 type: task
 description: "Move the ONNX embedding and DuckDB search functionality from the MCP server into a standalone search server process. MCP server becomes a thin protocol adapter that delegates search to the standalone engine."
-status: ready
+status: archived
 created: 2026-03-24
 updated: 2026-03-24
 acceptance:

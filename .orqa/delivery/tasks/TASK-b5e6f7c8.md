@@ -3,7 +3,7 @@ id: TASK-b5e6f7c8
 title: "Demote dev controller to debug-only tooling"
 type: task
 description: "Move dev.mjs from the primary development workflow to a debug-only tool. orqa dev becomes the primary entry point for starting the development environment. make dev calls orqa dev."
-status: ready
+status: completed
 created: 2026-03-24
 updated: 2026-03-24
 acceptance:

@@ -3,7 +3,7 @@ id: TASK-f3a4b5c6
 title: "Fix app LSP hardcoded daemon port"
 type: task
 description: "The app backend at app/backend/src-tauri/src/servers/lsp.rs:15 hardcodes 3002 as the daemon port passed to orqa_lsp_server::run_stdio(). This conflicts with the LSP server's own default of 9258 and must be updated to the canonical port 10258."
-status: ready
+status: completed
 created: 2026-03-24
 updated: 2026-03-24
 acceptance:

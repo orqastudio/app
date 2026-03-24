@@ -3,7 +3,7 @@ id: EPIC-a4c7e9b1
 type: epic
 title: "Port allocation standardisation and CLI process ownership"
 description: "Standardise all service ports above 10000, fix the daemon port mismatch between CLI and MCP server, establish the CLI as the single developer interface with MCP/LSP as stdio protocol modes, embed the search engine in the daemon, and demote the dev controller to debug-only tooling."
-status: captured
+status: active
 priority: P1
 scoring:
   impact: 4

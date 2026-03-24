@@ -3,7 +3,7 @@ id: TASK-71a2d3e4
 title: "Remap all service ports to 10000+ range"
 type: task
 description: "Audit all port constants and config files across the codebase and update them to use the 10000+ range. Create a single canonical port allocation table."
-status: ready
+status: completed
 created: 2026-03-24
 updated: 2026-03-24
 acceptance:
