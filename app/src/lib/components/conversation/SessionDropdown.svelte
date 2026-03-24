@@ -203,7 +203,6 @@
 								class="mt-0.5 shrink-0 rounded p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
 								onclick={(e) => handleDeleteClick(e, session.id, session.title ?? "Untitled")}
 								aria-label="Delete session"
-								title="Delete session"
 							>
 								<Icon name="trash-2" size="sm" />
 							</button>

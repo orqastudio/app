@@ -113,7 +113,7 @@
 
 					<!-- Colour swatch + native picker + reset -->
 					<div class="flex items-center gap-1.5">
-						<label class="flex cursor-pointer items-center gap-1" title="Pick colour for {prefix}">
+						<label class="flex cursor-pointer items-center gap-1" aria-label="Pick colour for {prefix}">
 							<span
 								class="inline-block h-4 w-4 shrink-0 rounded border border-border"
 								style="background-color: {color};"
@@ -131,7 +131,7 @@
 						{#if !isDefault}
 							<button
 								class="text-[10px] text-muted-foreground hover:text-foreground"
-								title="Reset to default"
+								aria-label="Reset to default"
 								onclick={() => resetColor(prefix)}
 							>
 								↩

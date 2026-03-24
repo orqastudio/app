@@ -222,7 +222,7 @@
 									class="h-7 font-mono text-xs"
 									placeholder="e.g. circle"
 								/>
-								<span class="shrink-0 text-base leading-none" title="Icon preview (name only)">
+								<span class="shrink-0 text-base leading-none" aria-label="Icon preview">
 									{#if status.icon}
 										<span class="font-mono text-[10px] text-muted-foreground">{status.icon}</span>
 									{/if}

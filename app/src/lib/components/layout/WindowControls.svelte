@@ -35,14 +35,14 @@
 	<button
 		class="flex h-8 w-10 items-center justify-center text-muted-foreground hover:bg-accent hover:text-foreground"
 		onclick={minimize}
-		title="Minimize"
+		aria-label="Minimize"
 	>
 		<Icon name="minus" size="sm" />
 	</button>
 	<button
 		class="flex h-8 w-10 items-center justify-center text-muted-foreground hover:bg-accent hover:text-foreground"
 		onclick={toggleMaximize}
-		title={isMaximized ? "Restore" : "Maximize"}
+		aria-label={isMaximized ? "Restore" : "Maximize"}
 	>
 		{#if isMaximized}
 			<Icon name="copy" size="xs" />
@@ -53,7 +53,7 @@
 	<button
 		class="flex h-8 w-10 items-center justify-center text-muted-foreground hover:bg-destructive hover:text-destructive-foreground"
 		onclick={close}
-		title="Close"
+		aria-label="Close"
 	>
 		<Icon name="x" size="sm" />
 	</button>

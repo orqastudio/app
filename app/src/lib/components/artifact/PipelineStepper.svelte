@@ -78,7 +78,6 @@
 						<button
 							onclick={() => handleTransition(stage.key)}
 							disabled={transitioning}
-							title="Transition to {stage.label}"
 							class="flex h-4 w-4 items-center justify-center rounded-full border border-primary/50 bg-primary/5 transition-colors hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50"
 						></button>
 					{:else if isPast}
