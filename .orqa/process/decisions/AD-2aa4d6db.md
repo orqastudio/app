@@ -68,7 +68,7 @@ If the answer to questions 1-2 is "it can be file-based" and the answer to quest
 
 The following SQLite tables predate this decision and violate it:
 
-- **`governance_analyses`** — AI-generated governance scan results. Should produce research artifacts in `.orqa/delivery/research/` that can be promoted to epics/tasks via the standard artifact lifecycle.
+- **`governance_analyses`** — AI-generated governance scan results. Should produce research artifacts in `.orqa/discovery/research/` that can be promoted to epics/tasks via the standard artifact lifecycle.
 - **`governance_recommendations`** — AI-generated governance recommendations. Should be inline within the research artifact, not a separate table.
 
 These tables and their associated repo/command code should be removed. Governance scan results flow through the artifact pipeline: scan → research artifact → promote to epic/task.

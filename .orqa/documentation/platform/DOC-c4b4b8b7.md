@@ -30,7 +30,7 @@ For enforcement rules, see [RULE-7b770593](RULE-7b770593).
 graph TD
     Idea["User has an idea"]
     Captured["IDEA-NNN created<br/>status: captured"]
-    Exploring["Research investigates<br/>status: exploring<br/>.orqa/delivery/research/ artifacts created"]
+    Exploring["Research investigates<br/>status: exploring<br/>.orqa/discovery/research/ artifacts created"]
     Shaped["Idea scoped and validated<br/>status: shaped"]
     Promoted["User approves promotion<br/>status: promoted, EPIC-NNN created"]
 
@@ -89,7 +89,7 @@ Triggered when the user approves investigation of a captured idea.
 
 1. Update `IDEA-NNN.md`: set `status: exploring`
 2. For each item in `research-needed`:
-   - Create or update research artifacts in `.orqa/delivery/research/`
+   - Create or update research artifacts in `.orqa/discovery/research/`
    - Investigate technical feasibility, UX implications, architectural fit
    - Document findings in the research artifacts
 3. If research produces an architectural choice, create an `AD-NNN.md` in `.orqa/process/decisions/` (see Decision Creation below)
@@ -299,7 +299,7 @@ The orchestrator periodically verifies:
 - Every task's `epic` points to an existing `EPIC-NNN.md`
 - Every epic's `depends-on` and `blocks` point to existing epics
 - Every idea's `evolves-into` (when set) points to an existing epic
-- Every epic's `research-refs` (when set) point to existing research files in `.orqa/delivery/research/`
+- Every epic's `research-refs` (when set) point to existing research files in `.orqa/discovery/research/`
 - Every decision's `evolves-into` (when set) points to an existing `AD-NNN.md`
 - Every decision's `evolves-from` (when set) points to an existing `AD-NNN.md`
 - Milestone `epic-count` matches the actual number of epics referencing it

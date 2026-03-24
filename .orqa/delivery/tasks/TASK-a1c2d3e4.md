@@ -19,7 +19,7 @@ relationships:
 
 ## What
 
-Audit the bidirectional mapping between documented coding standards and automated linting rules per RULE-d4b8e3f2 (lint-rule-alignment) and RULE-7f416d7d (tooling-ecosystem).
+Audit the bidirectional mapping between documented coding standards and automated linting rules per [RULE-b49142be](RULE-b49142be) (coding-standards, Lint Rule Alignment section) and RULE-7f416d7d (tooling-ecosystem).
 
 ## How
 

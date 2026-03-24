@@ -14,7 +14,7 @@ created: 2026-03-14
 updated: 2026-03-14
 assignee: null
 acceptance:
-  - Research document created in .orqa/delivery/research/ covering toast library options for Svelte 5
+  - Research document created in .orqa/discovery/research/ covering toast library options for Svelte 5
   - Desktop notification API (Tauri) evaluated with pros/cons
   - In-app notification panel design patterns documented
   - Event-to-channel mapping defined (which app events trigger which notification type)

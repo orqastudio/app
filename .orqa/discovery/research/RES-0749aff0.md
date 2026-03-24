@@ -92,7 +92,7 @@ research-refs on any artifact (traceability to thinking)
 ```
 
 - **Plans become research docs** — design explorations, architecture spikes, investigation documents
-- **Existing plans** move to `.orqa/delivery/research/` and are marked `status: surpassed`
+- **Existing plans** move to `.orqa/discovery/research/` and are marked `status: surpassed`
 - **Tasks always reference an epic** via `epic:` field (not `plan:`)
 - **Epics contain their own design** in the markdown body
 - **`research-refs`** field available on epics, tasks, and decisions for linking back to research

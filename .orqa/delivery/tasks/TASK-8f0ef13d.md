@@ -28,7 +28,7 @@ relationships:
 ## Scope
 
 ### Research Schema Update (Finding #21)
-- **Current**: `.orqa/delivery/research/schema.json` has NO `relationships` field
+- **Current**: `.orqa/discovery/research/schema.json` has NO `relationships` field
 - **Fix**: Add `relationships` array matching the pattern used in rules, skills, ideas, etc.
 - **Backfill**: For each RES-NNN, add at minimum the `informs` relationship to any epic that lists it in `research-refs`
 

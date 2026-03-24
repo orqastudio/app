@@ -78,7 +78,7 @@ Load the `search` skill for query patterns and tool usage guidance.
 | Development guides | `.orqa/documentation/development/` | How-to docs for implementation |
 | Process documentation | `.orqa/documentation/guide/` | Workflow and governance processes |
 | Product documentation | `.orqa/documentation/about/` | Vision, roadmap, artifact framework |
-| Research documents | `.orqa/delivery/research/` | Investigations and analysis |
+| Research documents | `.orqa/discovery/research/` | Investigations and analysis |
 
 ## YAML Frontmatter Requirement
 

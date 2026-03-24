@@ -10,7 +10,7 @@ sources:
   - "url: \"file://.orqa/delivery/milestones/"
   - "url: \"file://.orqa/delivery/epics/"
   - "url: \"file://.orqa/delivery/ideas/"
-  - "url: \"file://.orqa/delivery/research/"
+  - "url: \"file://.orqa/discovery/research/"
   - "url: \"file://.orqa/delivery/tasks/"
 relationships:
   - target: "EPIC-6f2d06d4"

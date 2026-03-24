@@ -55,8 +55,8 @@ Every artifact type has a typed ID prefix:
 | `TASK-NNN` | Task | `.orqa/delivery/tasks/` |
 | `MS-NNN` | Milestone | `.orqa/delivery/milestones/` |
 | `IDEA-NNN` | Idea | `.orqa/delivery/ideas/` |
-| `RES-NNN` | Research | `.orqa/delivery/research/` |
-| `PILLAR-NNN` | Pillar | `.orqa/process/pillars/` |
+| `RES-NNN` | Research | `.orqa/discovery/research/` |
+| `PILLAR-NNN` | Pillar | `.orqa/principles/pillars/` |
 | `AD-NNN` | Architecture Decision | `.orqa/process/decisions/` |
 | `RULE-NNN` | Rule | `.orqa/process/rules/` |
 | `IMPL-NNN` | Lesson | `.orqa/process/lessons/` |

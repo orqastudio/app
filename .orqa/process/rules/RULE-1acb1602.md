@@ -1,0 +1,100 @@
+---
+id: RULE-1acb1602
+type: rule
+title: End-to-End Completeness
+description: "Every feature must include all required layers in the same commit. No partial implementations across boundaries."
+status: active
+created: 2026-03-07
+updated: 2026-03-24
+enforcement:
+  - mechanism: behavioral
+    message: "Every feature must include all required layers in the same commit — no partial implementations across boundaries"
+  - mechanism: review
+    description: "Code reviewer verifies all layers exist for each new feature endpoint"
+relationships:
+  - target: AD-a334623b
+    type: enforces
+    rationale: "IPC boundary design requires matching types on both sides"
+  - target: RULE-65973a88
+    type: complements
+    rationale: "Architecture decisions define the layer requirements this rule enforces"
+  - target: RULE-e9c54567
+    type: complements
+    rationale: "No-stubs ensures each layer has a real implementation, not scaffolding"
+  - target: RULE-9ba80a19
+    type: complements
+    rationale: "No-aliases ensures layers agree on types without shims"
+---
+
+Every feature that crosses a service boundary MUST include all required layers in the same commit. A feature that exists in only some layers is incomplete — it creates dead code, broken contracts, and false confidence.
+
+## The Four-Layer Rule
+
+For any feature that touches the IPC boundary between frontend and backend, ALL four layers must be present in the same commit:
+
+| Layer | What | Where |
+|-------|------|-------|
+| **Backend command** | Tauri command or service function | `backend/src-tauri/src/commands/` |
+| **IPC type** | Shared type definitions (Rust + TypeScript) | Rust: domain types with `Serialize`/`Deserialize`. TS: matching interface in `$lib/types/` |
+| **Frontend store** | Reactive state management | `ui/src/lib/stores/` |
+| **UI component** | User-facing display | `ui/src/lib/components/` or `ui/src/routes/` |
+
+If a feature adds a backend command, the matching TypeScript types, store bindings, and UI component must ship in the same commit. If a feature adds a UI component that calls the backend, the backend command must already exist or be added in the same commit.
+
+## When This Applies
+
+- Adding a new Tauri command that will be called from the frontend
+- Adding a new UI feature that requires backend data
+- Modifying an IPC type (both sides must be updated together)
+- Adding a new store that fetches from the backend
+
+## When This Does NOT Apply
+
+- Pure backend changes with no frontend impact (e.g., internal refactoring)
+- Pure frontend changes with no backend calls (e.g., layout adjustments)
+- Documentation-only changes
+- Governance artifact changes
+
+## Verification Checklist
+
+Before committing a feature that crosses the IPC boundary:
+
+1. **Backend command exists** — the Tauri command is defined and registered
+2. **Types match** — Rust types derive `Serialize`/`Deserialize`, TypeScript interfaces match field names and types
+3. **Store calls the command** — the store uses `invoke()` to call the backend
+4. **Component renders the data** — the UI component displays the data from the store
+5. **Error handling is end-to-end** — errors propagate from backend through IPC to the UI with user-visible messages
+
+## Generalised Principle
+
+The four-layer rule is the OrqaStudio-specific instance of a general principle: **all layers that participate in a feature must be updated together**. In other project types, the layers differ:
+
+- **REST API project**: endpoint + handler + client + UI
+- **CLI tool**: command + logic + output formatter
+- **Library**: public API + implementation + documentation + tests
+
+The principle is the same: no partial implementations across boundaries.
+
+## FORBIDDEN
+
+- Adding a Tauri command without a matching TypeScript interface
+- Adding a TypeScript interface without a matching Tauri command
+- Adding a store that calls `invoke()` for a command that doesn't exist
+- Adding a UI component that reads from a store that has no backend wiring
+- Modifying a Rust IPC type without updating the TypeScript counterpart (or vice versa)
+- Claiming a feature is "done" when only some layers exist
+
+## Related Rules
+
+- [RULE-65973a88](RULE-65973a88) (architecture-decisions) — decisions define the layer requirements (IPC boundary, component purity, type safety) that this rule enforces
+- [RULE-e9c54567](RULE-e9c54567) (no-stubs) — each layer must have a real implementation, not scaffolding
+- [RULE-9ba80a19](RULE-9ba80a19) (no-aliases) — type consistency must hold across all layers in the same commit
+- [RULE-57ccb4a3](RULE-57ccb4a3) (error-ownership) — the full chain must be verified
+- [RULE-5e03e67b](RULE-5e03e67b) (code-search-usage) — use `search_research` to map the full request chain
+- [RULE-303c1cc8](RULE-303c1cc8) (plan-mode-compliance) — the full-stack requirement per feature
+- [RULE-d90112d9](RULE-d90112d9) (systems-thinking) — full-stack thinking is systems thinking applied to the four-layer feature structure
+- [RULE-c95f4444](RULE-c95f4444) (data-persistence) — all layers must agree on persistence strategy
+- [RULE-9cd980b1](RULE-9cd980b1) (honest-status-reporting) — completion requires all layers working, not just one layer
+- [RULE-6c0496e0](RULE-6c0496e0) (artifact-config-integrity) — config changes must be reflected across all layers
+- [RULE-4263a6b3](RULE-4263a6b3) (version-numbering) — version consistency across all layers is a layer-consistency requirement
+- [RULE-b49142be](RULE-b49142be) (coding-standards) — standards that apply within each layer

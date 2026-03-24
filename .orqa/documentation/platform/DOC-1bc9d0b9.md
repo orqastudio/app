@@ -22,7 +22,7 @@ Every feature, task, and implementation must pass the Pillar Alignment Test befo
 
 ### Pillar Alignment Test
 
-Active pillars are defined as structured artifacts in `.orqa/process/pillars/PILLAR-NNN.md`. Each pillar has:
+Active pillars are defined as structured artifacts in `.orqa/principles/pillars/PILLAR-NNN.md`. Each pillar has:
 
 - **`title`** — The principle name
 - **`description`** — What the pillar means
@@ -47,7 +47,7 @@ When pillars conflict, the pillar with the lower `priority` number takes precede
 
 The following are immutable without explicit user approval:
 
-1. **Pillar framework** — Every feature serves at least one active pillar defined in `.orqa/process/pillars/`
+1. **Pillar framework** — Every feature serves at least one active pillar defined in `.orqa/principles/pillars/`
 2. **Primary audience** — Structured thinkers: product managers, tech leads, and anyone who needs to turn complex situations into structured understanding
 3. **Human approval gate** — Plans must be approved by a human before execution begins. AI assists and executes, but humans authorise.
 4. **Technology stack** — Tauri v2 + Svelte 5 + Rust + SQLite
@@ -152,7 +152,7 @@ The current process uses:
 - **Hooks** in `.orqa/process/hooks/` (session start, pre-commit)
 - **Git worktree workflow** for task isolation
 
-The governance works, but it is invisible — artifacts live in dotfiles and terminal output. This is exactly the problem OrqaStudio exists to solve: making governance visible and structured, and improving it over time through structured reflection. See `.orqa/process/pillars/` for the active pillar definitions.
+The governance works, but it is invisible — artifacts live in dotfiles and terminal output. This is exactly the problem OrqaStudio exists to solve: making governance visible and structured, and improving it over time through structured reflection. See `.orqa/principles/pillars/` for the active pillar definitions.
 
 Everything being developed in this bootstrap phase is destined to become the core layer. The agents, rules, hooks, and artifact framework defined here are not OrqaStudio-specific — they represent the reusable, opinionated framework that ships with every new project OrqaStudio creates.
 

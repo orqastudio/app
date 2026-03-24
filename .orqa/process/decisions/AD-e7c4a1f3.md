@@ -56,7 +56,7 @@ Different agents can have different decision trees (orchestrator focuses on dele
 
 ## Impact
 
-- Rewrite `prompt-injector.mjs` — inject decision tree instead of knowledge
+- Rewrite `prompt-injector.ts` — inject decision tree instead of knowledge
 - Create decision tree governance artifact in `.orqa/process/knowledge/`
 - Update CLAUDE.md and agent definitions to reference the tree
 - Remove INTENT_MAP (replaced by the tree and semantic search)

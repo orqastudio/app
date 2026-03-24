@@ -40,7 +40,7 @@ In the SessionStart hook or prompt-injector.mjs:
 2. Parse frontmatter relationships
 3. Filter for `type: grounded-by` relationships
 4. For each grounded-by target:
-   a. Resolve artifact ID to file path (e.g., PILLAR-569581e0 → .orqa/process/pillars/PILLAR-569581e0.md)
+   a. Resolve artifact ID to file path (e.g., PILLAR-569581e0 → .orqa/principles/pillars/PILLAR-569581e0.md)
    b. Read file content
    c. Strip YAML frontmatter
    d. Collect body content

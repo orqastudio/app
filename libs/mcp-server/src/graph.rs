@@ -84,7 +84,7 @@ pub fn extract_frontmatter(content: &str) -> (Option<String>, String) {
         return (None, content.to_string());
     };
 
-    let fm_text = after_open[..close_pos].to_string();
+    let fm_text = after_open[..close_pos].trim().to_string();
     let body = after_open[close_pos + 4..]
         .trim_start_matches('\n')
         .to_string();

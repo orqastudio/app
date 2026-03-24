@@ -2,7 +2,7 @@
 id: "EPIC-962a7bc9"
 type: epic
 title: "Pillars as First-Class Artifacts"
-description: "Make product pillars structured artifacts in .orqa/process/pillars/ with frontmatter schema, referenced by ID from other artifacts, and injected into AI system prompts. Replaces hardcoded pillar strings across rules and documentation. Implements AD-47c41f0c."
+description: "Make product pillars structured artifacts in .orqa/principles/pillars/ with frontmatter schema, referenced by ID from other artifacts, and injected into AI system prompts. Replaces hardcoded pillar strings across rules and documentation. Implements AD-47c41f0c."
 status: "completed"
 priority: "P1"
 created: "2026-03-09"
@@ -54,7 +54,7 @@ frontmatter, referenced by ID, and injected into AI system prompts.
 
 ### 1. Pillar Artifact Type
 
-Create `.orqa/process/pillars/` directory with two initial artifacts:
+Create `.orqa/principles/pillars/` directory with two initial artifacts:
 
 - `[PILLAR-569581e0](PILLAR-569581e0).md` — Clarity Through Structure
 - `[PILLAR-cdf756ff](PILLAR-cdf756ff).md` — Learning Through Reflection
@@ -68,7 +68,7 @@ Add pillars path to `project.json` artifacts array under the Planning group.
 ### 3. System Prompt Injection
 
 Update the system prompt builder (`stream_commands.rs` or governance prompt
-assembly) to read active pillars from `.orqa/process/pillars/` and inject
+assembly) to read active pillars from `.orqa/principles/pillars/` and inject
 them as structured context into every AI conversation.
 
 ### 4. Rule Genericisation

@@ -2,7 +2,7 @@
 id: RULE-b49142be
 type: rule
 title: Coding Standards
-description: OrqaStudio-specific extension of RULE-d4b8e3f2 (lint-enforcement-discipline). Defines Rust (rustfmt, clippy, thiserror) and TypeScript/Svelte 5 (strict TS, runes, shadcn-svelte) coding standards with coverage requirements.
+description: Defines Rust (rustfmt, clippy, thiserror) and TypeScript/Svelte 5 (strict TS, runes, shadcn-svelte) coding standards with coverage requirements, plus lint rule alignment discipline.
 status: active
 created: 2026-03-07
 updated: 2026-03-13
@@ -87,7 +87,16 @@ For individual checks, see `.orqa/documentation/development/commands.md` or run 
 
 ## Lint Rule Alignment (NON-NEGOTIABLE)
 
-Coding standards MUST be reflected in automated linting rules. If a standard exists in this document or in `.orqa/documentation/development/coding-standards.md`, there MUST be a corresponding lint rule that enforces it. Conversely, if a lint rule enforces something, that standard MUST be documented.
+Coding standards MUST be reflected in automated linting rules. If a standard exists in this document or in `.orqa/documentation/development/coding-standards.md`, there MUST be a corresponding lint rule that enforces it. Conversely, if a lint rule enforces something, that standard MUST be documented. Standards and tooling stay in sync.
+
+Every documented coding standard must have exactly one of:
+- A linter rule configured to catch violations automatically
+- A pre-commit hook check that catches violations before commit
+- A documented exception explaining why mechanical enforcement is impractical
+
+If none of the above exist, the standard is unenforced — which means it is aspirational, not a rule.
+
+The pre-commit hook enforces zero warnings. Warnings are not advisory — they are failures.
 
 **When modifying coding standards:**
 
@@ -109,6 +118,9 @@ Coding standards MUST be reflected in automated linting rules. If a standard exi
 - `#[allow(clippy::...)]` without a documented justification
 - Adding a rule to an ignore list instead of fixing the code
 - Claiming "this error existed before" as a reason not to fix it
+- Bypassing the pre-commit hook with `--no-verify`
+- Standards that exist in documentation without a corresponding lint rule
+- Lint rules that enforce undocumented standards
 
 ## Related Rules
 

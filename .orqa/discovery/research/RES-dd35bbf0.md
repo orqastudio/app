@@ -26,7 +26,7 @@ relationships:
 | Artifact Type | Location | Count | What to Check |
 |---------------|----------|-------|---------------|
 | Rules | `.orqa/process/rules/` | ~44 | Enforcement mechanism per rule |
-| Pillars | `.orqa/process/pillars/` | ~3 | Gate question coverage |
+| Pillars | `.orqa/principles/pillars/` | ~3 | Gate question coverage |
 | Lessons | `.orqa/process/lessons/` | 47 | Promotion status |
 | Decisions | `.orqa/process/decisions/` | 46 | Enforcement chain |
 | Ideas | `.orqa/delivery/ideas/` | ~78 | Principle gap signals |

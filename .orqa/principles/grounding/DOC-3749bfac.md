@@ -24,7 +24,7 @@ When two sources contradict each other, document both positions and the contradi
 
 ## Research Produces Artifacts
 
-Research findings belong in `RES-NNN.md` artifacts in `.orqa/delivery/research/`, not in conversation turns. The `sources` frontmatter field lists external references with their tier and access date. The body documents findings with explicit confidence levels: Confirmed, Likely, Uncertain, or Speculative.
+Research findings belong in `RES-NNN.md` artifacts in `.orqa/discovery/research/`, not in conversation turns. The `sources` frontmatter field lists external references with their tier and access date. The body documents findings with explicit confidence levels: Confirmed, Likely, Uncertain, or Speculative.
 
 Each confidence level has a specific meaning. Confirmed means verified against a T1 source and independently corroborated. Speculative means reasoning from first principles with no external source. Use the right level — not the most confident one that sounds plausible.
 

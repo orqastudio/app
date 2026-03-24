@@ -74,7 +74,7 @@ Additional plugins (software, coding-standards, etc.) are installed the same way
     { "key": "planning", "label": "Planning", "icon": "target",
       "children": [
         { "key": "ideas", "label": "Ideas", "path": "<governance-dir>/delivery/ideas" },
-        { "key": "research", "label": "Research", "path": "<governance-dir>/delivery/research" },
+        { "key": "research", "label": "Research", "path": "<governance-dir>/discovery/research" },
         { "key": "milestones", "label": "Milestones", "path": "<governance-dir>/delivery/milestones" },
         { "key": "epics", "label": "Epics", "path": "<governance-dir>/delivery/epics" },
         { "key": "tasks", "label": "Tasks", "path": "<governance-dir>/delivery/tasks" }

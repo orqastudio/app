@@ -3,7 +3,7 @@ id: "RULE-d4b8e3f2"
 type: rule
 title: "Lint Enforcement Discipline"
 description: "Coding standards must be reflected in automated linting rules. Lint rules must align with documented standards, pre-commit hooks enforce checks automatically, and zero warnings is the policy."
-status: "active"
+status: "inactive"
 created: "2026-03-22"
 updated: "2026-03-22"
 enforcement:
@@ -17,6 +17,10 @@ enforcement:
   - mechanism: lint
     linter: clippy
 ---
+Merged into [RULE-b49142be](RULE-b49142be). This rule is preserved for historical reference.
+
+---
+
 Coding standards must be reflected in automated linting rules. If a standard exists in documentation, there must be a corresponding lint rule that enforces it. If a lint rule enforces something, that standard must be documented. Standards and tooling stay in sync.
 
 ## The Alignment Requirement
