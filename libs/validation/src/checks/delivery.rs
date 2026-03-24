@@ -24,7 +24,7 @@ pub fn check_delivery_paths(
         let Some(dtype) = matched else {
             checks.push(IntegrityCheck {
                 category: IntegrityCategory::DeliveryPathMismatch,
-                severity: IntegritySeverity::Warning,
+                severity: IntegritySeverity::Error,
                 artifact_id: node.id.clone(),
                 message: format!(
                     "{} is under '{}' but no delivery type in the config covers that path",
@@ -44,7 +44,7 @@ pub fn check_delivery_paths(
         if node.artifact_type != dtype.key {
             checks.push(IntegrityCheck {
                 category: IntegrityCategory::DeliveryPathMismatch,
-                severity: IntegritySeverity::Warning,
+                severity: IntegritySeverity::Error,
                 artifact_id: node.id.clone(),
                 message: format!(
                     "{} is under path '{}' (delivery type '{}') but has artifact_type '{}'",
@@ -111,7 +111,7 @@ fn push_missing_parent_check(
 ) {
     checks.push(IntegrityCheck {
         category: IntegrityCategory::DeliveryPathMismatch,
-        severity: IntegritySeverity::Warning,
+        severity: IntegritySeverity::Error,
         artifact_id: node.id.clone(),
         message: format!(
             "{} (delivery type '{}') is missing required '{}' relationship to a {} artifact",
@@ -134,7 +134,7 @@ fn push_wrong_parent_type_check(
 ) {
     checks.push(IntegrityCheck {
         category: IntegrityCategory::DeliveryPathMismatch,
-        severity: IntegritySeverity::Warning,
+        severity: IntegritySeverity::Error,
         artifact_id: node.id.clone(),
         message: format!(
             "{} has {} relationship to '{}' but {} is a '{}', expected '{}'",

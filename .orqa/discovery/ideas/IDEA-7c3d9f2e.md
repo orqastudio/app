@@ -11,7 +11,7 @@ relationships:
     type: grounded
     rationale: Clarity Through Structure — centralised governance visibility across projects
   - target: EPIC-f2b9e7d3
-    type: addressed-by
+    type: realises
     rationale: Bundled into the Git Infrastructure epic (Phase 2 — Forgejo Instance)
   - target: PILLAR-94b281db
     type: grounded

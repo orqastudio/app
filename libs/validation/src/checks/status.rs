@@ -69,7 +69,7 @@ pub fn check_valid_statuses(
 
         checks.push(IntegrityCheck {
             category: IntegrityCategory::InvalidStatus,
-            severity: IntegritySeverity::Warning,
+            severity: IntegritySeverity::Error,
             artifact_id: node.id.clone(),
             message: format!(
                 "{} has invalid status '{}'. Valid values: {}",
@@ -181,7 +181,7 @@ fn check_child_type_consistency(
             checks.push(IntegrityCheck {
                 artifact_id: node.id.clone(),
                 category: IntegrityCategory::ParentChildInconsistency,
-                severity: IntegritySeverity::Warning,
+                severity: IntegritySeverity::Error,
                 message: format!(
                     "{} is '{}' but {} {} is '{}' \u{2014} child is further along than parent",
                     node.id, child_status, parent_label, parent_ref.target_id, parent_status,
@@ -271,7 +271,7 @@ fn push_parent_child_inconsistency(
     checks.push(IntegrityCheck {
         artifact_id: child_id.to_owned(),
         category: IntegrityCategory::ParentChildInconsistency,
-        severity: IntegritySeverity::Warning,
+        severity: IntegritySeverity::Error,
         message: format!(
             "{child_id} is '{child_status}' but {parent_label} {parent_id} is '{parent_status}' \u{2014} child is further along than parent",
         ),

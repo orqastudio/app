@@ -9,8 +9,8 @@ updated: 2026-03-24
 enforcement:
   - mechanism: behavioral
     message: "Every feature must include all required layers in the same commit — no partial implementations across boundaries"
-  - mechanism: review
-    description: "Code reviewer verifies all layers exist for each new feature endpoint"
+  - mechanism: behavioral
+    message: "Code reviewer verifies all layers exist for each new feature endpoint"
 relationships:
   - target: AD-a334623b
     type: enforces

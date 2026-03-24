@@ -58,7 +58,7 @@ pub fn check_missing_inverses(
             if !has_inverse {
                 checks.push(IntegrityCheck {
                     category: IntegrityCategory::MissingInverse,
-                    severity: IntegritySeverity::Warning,
+                    severity: IntegritySeverity::Error,
                     artifact_id: node.id.clone(),
                     message: format!(
                         "{} --{}--> {} but {} has no {} edge back to {}",
@@ -194,7 +194,7 @@ pub fn check_missing_type_field(graph: &ArtifactGraph, checks: &mut Vec<Integrit
 
         checks.push(IntegrityCheck {
             category: IntegrityCategory::MissingType,
-            severity: IntegritySeverity::Warning,
+            severity: IntegritySeverity::Error,
             artifact_id: node.id.clone(),
             message: format!(
                 "{} has no 'type:' field — inferred as '{}'",
@@ -291,7 +291,7 @@ pub fn check_missing_status_field(
 
         checks.push(IntegrityCheck {
             category: IntegrityCategory::MissingStatus,
-            severity: IntegritySeverity::Warning,
+            severity: IntegritySeverity::Error,
             artifact_id: node.id.clone(),
             message: format!("{} has no 'status:' field", node.id),
             auto_fixable: true,
@@ -320,7 +320,7 @@ pub fn check_duplicate_relationships(graph: &ArtifactGraph, checks: &mut Vec<Int
             if *count > 1 {
                 checks.push(IntegrityCheck {
                     category: IntegrityCategory::DuplicateRelationship,
-                    severity: IntegritySeverity::Warning,
+                    severity: IntegritySeverity::Error,
                     artifact_id: node.id.clone(),
                     message: format!(
                         "{} has {} duplicate '{}' relationship entries to {}",
@@ -479,7 +479,7 @@ pub fn check_status_transitions(
         if !type_def.status_transitions.contains_key(status.as_str()) {
             checks.push(IntegrityCheck {
                 category: IntegrityCategory::SchemaViolation,
-                severity: IntegritySeverity::Warning,
+                severity: IntegritySeverity::Error,
                 artifact_id: node.id.clone(),
                 message: format!(
                     "Status '{}' is not defined in schema transitions for type '{}'",
@@ -516,7 +516,7 @@ pub fn check_filename_matches_id(graph: &ArtifactGraph, checks: &mut Vec<Integri
         if stem != node.id {
             checks.push(IntegrityCheck {
                 category: IntegrityCategory::FilenameMismatch,
-                severity: IntegritySeverity::Warning,
+                severity: IntegritySeverity::Error,
                 artifact_id: node.id.clone(),
                 message: format!(
                     "Filename '{}' does not match id '{}' — expected '{}.md'",

@@ -30,16 +30,18 @@ relationships:
     type: delivered-by
   - target: TASK-11e2f3a4
     type: delivered-by
-  - target: IDEA-7c3d9f2e
-    type: promoted-from
   - target: TASK-05e6f7a8
     type: delivered-by
   - target: TASK-13a4b5c6
     type: delivered-by
   - target: RES-a1b2c3d4
     type: guided-by
+  - target: IDEA-7c3d9f2e
+    type: realised-by
+    rationale: Epic realises the Forgejo git hosting idea
   - target: IDEA-09979c9d
-    type: promoted-from
+    type: realised-by
+    rationale: Epic realises the unified git operations idea
   - target: TASK-06f7a8b9
     type: delivered-by
   - target: TASK-04d5e6f7

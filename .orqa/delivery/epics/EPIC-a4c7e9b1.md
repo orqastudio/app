@@ -20,9 +20,6 @@ relationships:
   - target: PILLAR-569581e0
     type: grounded
     rationale: "Makes infrastructure configuration visible, structured, and consistently managed through the CLI"
-  - target: AD-2ce57da9
-    type: informed-by
-    rationale: "CLI as single developer interface with MCP/LSP as stdio modes; daemon as app runtime only"
   - target: TASK-14b5c6d7
     type: delivered-by
   - target: TASK-82b3e4f5

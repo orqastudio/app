@@ -229,7 +229,7 @@ export function formatReport(report: ValidationReport): {
 
 	if (checks.length === 0) {
 		return {
-			text: "All validation checks passed. 0 errors, 0 warnings.",
+			text: "All validation checks passed. 0 errors.",
 			errors: 0,
 			warnings: 0,
 		};
@@ -255,7 +255,7 @@ export function formatReport(report: ValidationReport): {
 		(c) => c.severity === "Error" || c.severity === "error",
 	).length;
 	const warnings = checks.length - errors;
-	lines.push(`\n${errors} error(s), ${warnings} warning(s).`);
+	lines.push(`\n${checks.length} error(s).`);
 
 	if (report.fixes_applied.length > 0) {
 		lines.push(`Auto-fixed ${report.fixes_applied.length} issue(s).`);

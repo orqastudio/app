@@ -135,6 +135,8 @@ pub enum IntegrityCategory {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum IntegritySeverity {
     Error,
+    /// Reserved — no checks currently emit Warning. All graph integrity
+    /// violations are errors because without relationships there is no graph.
     Warning,
     Info,
 }

@@ -37,7 +37,7 @@ pub fn check_cardinality(
                     if *count > max {
                         checks.push(IntegrityCheck {
                             category: IntegrityCategory::CardinalityViolation,
-                            severity: IntegritySeverity::Warning,
+                            severity: IntegritySeverity::Error,
                             artifact_id: node.id.clone(),
                             message: format!(
                                 "{} has {} '{}' relationships but maximum is {}",

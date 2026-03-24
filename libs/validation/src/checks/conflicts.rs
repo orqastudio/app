@@ -82,7 +82,7 @@ pub fn check_schema_conflicts(
             if other_required != first_required {
                 checks.push(IntegrityCheck {
                     category: IntegrityCategory::SchemaViolation,
-                    severity: IntegritySeverity::Warning,
+                    severity: IntegritySeverity::Error,
                     artifact_id: format!("schema:{key}"),
                     message: format!(
                         "Schema overlap: multiple plugins define '{key}' with different required fields — consider resolving via project.json"

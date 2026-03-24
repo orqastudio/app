@@ -65,6 +65,12 @@ relationships:
     type: served-by
   - target: AGENT-b5a7f8cb
     type: served-by
+  - target: IDEA-0d7e84de
+    type: grounded-by
+    rationale: Market research agent idea grounds this pillar
+  - target: IDEA-f2cb20a9
+    type: grounded-by
+    rationale: OrqaStudio competitive landscape analysis grounds this pillar
 ---
 ## What This Pillar Means
 

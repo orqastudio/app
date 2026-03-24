@@ -104,7 +104,7 @@ fn check_enforcement_entry(
     let Some(obj) = entry.as_object() else {
         checks.push(IntegrityCheck {
             category: IntegrityCategory::SchemaViolation,
-            severity: IntegritySeverity::Warning,
+            severity: IntegritySeverity::Error,
             artifact_id: node.id.clone(),
             message: format!(
                 "Enforcement entry [{i}] is a {}, not an object — needs migration to structured format",
@@ -120,7 +120,7 @@ fn check_enforcement_entry(
         if obj.contains_key("event") {
             checks.push(IntegrityCheck {
                 category: IntegrityCategory::SchemaViolation,
-                severity: IntegritySeverity::Warning,
+                severity: IntegritySeverity::Error,
                 artifact_id: node.id.clone(),
                 message: format!(
                     "Enforcement entry [{i}] uses legacy 'event' field — migrate to 'mechanism' field"
@@ -146,7 +146,7 @@ fn check_enforcement_entry(
     if !registered_keys.contains(mechanism) {
         checks.push(IntegrityCheck {
             category: IntegrityCategory::SchemaViolation,
-            severity: IntegritySeverity::Warning,
+            severity: IntegritySeverity::Error,
             artifact_id: node.id.clone(),
             message: format!(
                 "Enforcement entry [{i}] references mechanism '{mechanism}' which is not registered by any installed plugin — enforcement degraded"
@@ -284,7 +284,7 @@ mod tests {
         check_enforcement_mechanisms(&graph, &test_mechanisms(), &mut checks);
         assert_eq!(checks.len(), 1);
         assert!(checks[0].message.contains("string"));
-        assert_eq!(checks[0].severity, IntegritySeverity::Warning);
+        assert_eq!(checks[0].severity, IntegritySeverity::Error);
     }
 
     #[test]

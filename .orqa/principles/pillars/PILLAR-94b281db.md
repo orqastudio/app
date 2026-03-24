@@ -75,6 +75,9 @@ relationships:
     type: served-by
   - target: EPIC-c311d349
     type: grounded-by
+  - target: IDEA-f2cb20a9
+    type: grounded-by
+    rationale: OrqaStudio competitive landscape analysis grounds this pillar
 ---
 ## What This Pillar Means
 

@@ -12,6 +12,24 @@ relationships:
   - target: RULE-67b91c13
     type: promoted-to
     rationale: Promoted after recurrence 3 in a single session — orchestrator observed connections without acting on them three times
+  - target: TASK-e79d972d
+    type: addressed-by
+    rationale: Task addresses this lesson
+  - target: TASK-f9dd2f94
+    type: addressed-by
+    rationale: Task addresses this lesson
+  - target: TASK-250c9968
+    type: addressed-by
+    rationale: Task addresses this lesson
+  - target: TASK-10ab6c5c
+    type: addressed-by
+    rationale: Task addresses this lesson
+  - target: TASK-5caec0de
+    type: addressed-by
+    rationale: Task addresses this lesson
+  - target: TASK-b00e0456
+    type: addressed-by
+    rationale: Task addresses this lesson
 ---
 
 ## Pattern
