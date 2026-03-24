@@ -69,7 +69,12 @@ echo "=== Pre-commit: Validating governance artifacts ==="
 
 # Run schema-driven validation
 RESULT=$($ORQA enforce "$PROJECT_ROOT" --json 2>/dev/null || echo '{"errors":0}')
-ERRORS=$(echo "$RESULT" | node -e "process.stdin.on('data',d=>{try{console.log(JSON.parse(d).errors||0)}catch{console.log(0)}})" 2>/dev/null || echo "0")
+ERRORS=$(echo "$RESULT" | node -e "let b='';process.stdin.on('data',d=>b+=d);process.stdin.on('end',()=>{try{console.log(JSON.parse(b).errors||0)}catch{console.log(0)}})" 2>/dev/null || echo "0")
+
+# Guard: ensure ERRORS is a valid integer
+if ! [[ "$ERRORS" =~ ^[0-9]+$ ]]; then
+  ERRORS=0
+fi
 
 if [ "$ERRORS" -gt 0 ]; then
   echo ""
