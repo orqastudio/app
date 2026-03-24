@@ -40,6 +40,13 @@ if [ "$RULE_OVERRIDES_JSON" != "{}" ]; then
   fi
 fi
 
+# Plugin source protection (only if .orqa/ files changed)
+ORQA_ALL=$(git diff --cached --name-only --diff-filter=ACMR -- '.orqa/*' | head -100 || true)
+if [ -n "$ORQA_ALL" ]; then
+  echo "--- Artifacts: plugin source protection ---"
+  node .githooks/validate-plugin-sources.mjs $ORQA_ALL || { FAILED=true; }
+fi
+
 # Artifact auto-linking and schema validation (only if .orqa/ markdown files changed)
 ORQA_CHANGED=$(git diff --cached --name-only --diff-filter=ACMR -- '.orqa/**/*.md' | grep -v 'README\.md' || true)
 if [ -n "$ORQA_CHANGED" ]; then
