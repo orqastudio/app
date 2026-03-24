@@ -581,7 +581,11 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 				},
 			},
 		]);
-		logSuccess("File watchers active. Rust source changes will trigger auto-rebuild.");
+		logSuccess("Rust file watchers active.");
+
+		logCtrl("Setting up plugin source watchers...");
+		setupPluginWatchers(root);
+		logSuccess("Plugin file watchers active.");
 	} else {
 		logCtrl("File watching disabled (--no-watch).");
 	}
@@ -816,6 +820,115 @@ function closeAllWatchers(): void {
 		try { w.close(); } catch { /* ignore */ }
 	}
 	activeWatchers.length = 0;
+}
+
+// ── Plugin File Watchers ────────────────────────────────────────────────────
+
+/**
+ * Watch plugin src/ directories for changes. When a plugin source file changes,
+ * rebuild the plugin (`npm run build`) and refresh its content (`orqa plugin refresh`).
+ */
+function setupPluginWatchers(projectRoot: string): void {
+	const pluginDirs = ["plugins", "connectors"];
+	const npmCmd = IS_WINDOWS ? "npm.cmd" : "npm";
+
+	for (const baseDir of pluginDirs) {
+		const absBase = path.join(projectRoot, baseDir);
+		if (!fs.existsSync(absBase)) continue;
+
+		for (const entry of fs.readdirSync(absBase, { withFileTypes: true })) {
+			if (!entry.isDirectory()) continue;
+
+			const pluginDir = path.join(absBase, entry.name);
+			const pkgPath = path.join(pluginDir, "package.json");
+			if (!fs.existsSync(pkgPath)) continue;
+
+			let pkg: { name?: string; scripts?: Record<string, string> };
+			try {
+				pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
+			} catch {
+				continue;
+			}
+
+			if (!pkg.scripts?.["build"]) continue;
+
+			const srcDir = path.join(pluginDir, "src");
+			if (!fs.existsSync(srcDir)) continue;
+
+			const label = pkg.name ?? entry.name;
+			let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+			let building = false;
+
+			const watcher = fs.watch(srcDir, { recursive: true }, (_event, filename) => {
+				if (!filename) return;
+				// Watch TS, Svelte, CSS, and JSON source files
+				if (!/\.(ts|svelte|css|json|js)$/.test(filename)) return;
+
+				if (debounceTimer) clearTimeout(debounceTimer);
+				debounceTimer = setTimeout(() => {
+					void rebuildPlugin(label, pluginDir, npmCmd, filename ?? "unknown");
+				}, WATCH_DEBOUNCE_MS);
+			});
+
+			async function rebuildPlugin(
+				pluginLabel: string,
+				dir: string,
+				npm: string,
+				file: string,
+			): Promise<void> {
+				if (building) return;
+				building = true;
+
+				logCtrl(`Plugin change: ${pluginLabel} (${file}) → rebuilding...`);
+
+				try {
+					await runNpmBuild(npm, dir);
+					logSuccess(`${pluginLabel} rebuilt.`);
+
+					// Refresh content so .orqa/ gets the latest
+					try {
+						const { runPluginCommand } = await import("./plugin.js");
+						await runPluginCommand(["refresh", "--plugin", pluginLabel]);
+					} catch {
+						logCtrl(`Content refresh skipped for ${pluginLabel}`);
+					}
+				} catch (err: unknown) {
+					const msg = err instanceof Error ? err.message : String(err);
+					logError("watch", `Plugin build failed for ${pluginLabel}: ${msg}`);
+				} finally {
+					building = false;
+				}
+			}
+
+			watcher.on("error", (err) => {
+				logError("watch", `Plugin watcher error for ${label}: ${err.message}`);
+			});
+
+			activeWatchers.push(watcher);
+			logCtrl(`Watching plugin: ${label} (${srcDir})`);
+		}
+	}
+}
+
+function runNpmBuild(npmCmd: string, cwd: string): Promise<void> {
+	return new Promise((resolve, reject) => {
+		const child = spawn(npmCmd, ["run", "build"], {
+			cwd,
+			stdio: ["ignore", "pipe", "pipe"],
+			shell: IS_WINDOWS,
+			windowsHide: true,
+		});
+
+		child.stdout?.on("data", (data: Buffer) => prefixLines("plugin", COLOURS.pink, data.toString()));
+		child.stderr?.on("data", (data: Buffer) => prefixLines("plugin", COLOURS.pink, data.toString()));
+
+		child.on("close", (code) => {
+			if (code === 0) resolve();
+			else reject(new Error(`npm run build exited with code ${code}`));
+		});
+
+		child.on("error", reject);
+	});
 }
 
 // ── Subcommand: dev (spawn controller in background) ────────────────────────
