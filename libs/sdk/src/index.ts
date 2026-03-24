@@ -28,7 +28,7 @@ export { logger, subscribeToLogs, setLogLevel } from "./logger.js";
 export type { Logger, LogLevel, LogEntry } from "./logger.js";
 
 // Router
-export { parseHash, pushRoute, currentRoute } from "./router.js";
+export { parseHash, pushRoute, currentRoute, injectNavigation } from "./router.js";
 export type { ParsedRoute } from "./router.js";
 
 // Store classes (for advanced use / testing — prefer getStores() for access)

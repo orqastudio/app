@@ -19,6 +19,21 @@
  *   #/                                     → Default (chat/welcome)
  */
 
+// Navigation functions — injected by the app during initialization.
+// The SDK can't import $app/navigation directly (it's a standalone library).
+// The app calls injectNavigation() with SvelteKit's pushState/replaceState.
+let _pushState: (url: string, state: Record<string, unknown>) => void = (url) => history.pushState(null, "", url);
+let _replaceState: (url: string, state: Record<string, unknown>) => void = (url) => history.replaceState(null, "", url);
+
+/** Inject SvelteKit navigation functions. Call once from the app's root layout. */
+export function injectNavigation(
+	pushState: (url: string, state: Record<string, unknown>) => void,
+	replaceState: (url: string, state: Record<string, unknown>) => void,
+): void {
+	_pushState = pushState;
+	_replaceState = replaceState;
+}
+
 export interface ParsedRoute {
 	type: "project" | "artifacts" | "artifact" | "plugin" | "settings" | "graph" | "setup" | "default";
 	activity?: string;
@@ -113,15 +128,14 @@ export function buildHash(route: ParsedRoute): string {
 /**
  * Push a route to the browser history.
  *
- * Uses history.pushState instead of setting window.location.hash to
- * avoid triggering the hashchange listener (which would cause a loop
- * when called from syncToHash → pushRoute → hashchange → applyRoute).
- * The hashchange listener only fires for back/forward navigation.
+ * Uses SvelteKit's pushState to avoid conflicts with the SvelteKit router.
+ * This also avoids triggering the hashchange listener (which would cause a
+ * loop when called from syncToHash → pushRoute → hashchange → applyRoute).
  */
 export function pushRoute(route: ParsedRoute): void {
 	const hash = buildHash(route);
 	if (window.location.hash !== hash) {
-		history.pushState(null, "", hash);
+		_pushState(hash, {});
 	}
 }
 
@@ -131,7 +145,7 @@ export function pushRoute(route: ParsedRoute): void {
 export function replaceRoute(route: ParsedRoute): void {
 	const hash = buildHash(route);
 	if (window.location.hash !== hash) {
-		history.replaceState(null, "", hash);
+		_replaceState(hash, {});
 	}
 }
 
