@@ -575,37 +575,9 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 	// ── 4. Rust Source File Watchers ────────────────────────────────────
 	if (opts.watch) {
 		logCtrl("Setting up Rust source file watchers...");
+		// daemon (libs/validation) and search (libs/search) are watched by cargo tauri dev.
+		// We only watch MCP and LSP which Tauri doesn't cover.
 		setupRustWatchers([
-			{
-				label: "daemon (validation)",
-				dir: path.join(libsDir, "validation", "src"),
-				manifest: path.join(libsDir, "validation", "Cargo.toml"),
-				restart: async () => {
-					// Restart the daemon (separate process, managed via daemon.ts)
-					try {
-						const { runDaemonCommand } = await import("./daemon.js");
-						await runDaemonCommand(["restart"]);
-					} catch {
-						logError("watch", "Daemon restart failed — may need manual restart");
-					}
-				},
-			},
-			{
-				label: "search server",
-				dir: path.join(libsDir, "search", "src"),
-				manifest: path.join(libsDir, "search", "Cargo.toml"),
-				restart: async () => {
-					killManaged(searchProc);
-					await sleep(500);
-					startSearch();
-					await sleep(2_000);
-					// MCP depends on search, restart it too
-					killManaged(mcpProc);
-					await sleep(500);
-					startMcp();
-					writeFullControlFile("running");
-				},
-			},
 			{
 				label: "MCP server",
 				dir: path.join(libsDir, "mcp-server", "src"),
