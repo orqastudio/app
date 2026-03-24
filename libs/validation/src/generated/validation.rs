@@ -59,4 +59,3 @@ pub struct AppliedFix {
     /// Relative path to the file that was modified.
     pub file_path: String,
 }
-

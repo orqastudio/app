@@ -160,8 +160,8 @@ const GOVERNANCE_TABLE_PATTERNS = [
   /INSERT\s+INTO.*\b(rules|skills|agents|decisions|lessons|pillars)\b/i,
 ];
 
-const repoDir = resolve(ROOT, "backend/src-tauri/src/repo");
-const migrationsDir = resolve(ROOT, "backend/src-tauri/migrations");
+const repoDir = resolve(ROOT, "src-tauri/src/repo");
+const migrationsDir = resolve(ROOT, "src-tauri/migrations");
 
 function checkDirForPatterns(dirPath, patterns, label) {
   if (!existsSync(dirPath)) return;

@@ -79,8 +79,8 @@ pub fn find_agent(
             continue;
         }
 
-        let entries = std::fs::read_dir(&dir)
-            .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
+        let entries =
+            std::fs::read_dir(&dir).map_err(|e| ValidationError::FileSystem(e.to_string()))?;
 
         for entry in entries.flatten() {
             let path = entry.path();
@@ -210,11 +210,7 @@ pub fn extract_behavioral_messages(
                 continue;
             };
 
-            if obj
-                .get("mechanism")
-                .and_then(serde_json::Value::as_str)
-                != Some("behavioral")
-            {
+            if obj.get("mechanism").and_then(serde_json::Value::as_str) != Some("behavioral") {
                 continue;
             }
 
@@ -750,6 +746,9 @@ mod tests {
 
         let tmp = make_project();
         let result = extract_behavioral_messages(&graph, tmp.path()).expect("ok");
-        assert_eq!(result.messages, vec!["Zebra rule", "Apple rule", "Mango rule"]);
+        assert_eq!(
+            result.messages,
+            vec!["Zebra rule", "Apple rule", "Mango rule"]
+        );
     }
 }

@@ -519,8 +519,7 @@ mod tests {
     #[test]
     fn knowledge_artifact_missing_synchronised_with() {
         let content = "---\nid: KNOW-001\ntype: knowledge\n---\n# Body\n";
-        let findings =
-            validate_file(".orqa/process/knowledge/KNOW-001.md", content, None, &[]);
+        let findings = validate_file(".orqa/process/knowledge/KNOW-001.md", content, None, &[]);
         assert!(findings
             .iter()
             .any(|f| f.message.contains("synchronised-with")));

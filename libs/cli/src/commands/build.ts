@@ -43,13 +43,13 @@ function getTargets(root: string): BuildTarget[] {
 		{
 			name: "Rust backend (release)",
 			key: "rust",
-			dir: path.join(root, "app/backend/src-tauri"),
+			dir: path.join(root, "app/src-tauri"),
 			command: "cargo build --release",
 		},
 		{
 			name: "Frontend (Vite)",
 			key: "app",
-			dir: path.join(root, "app/ui"),
+			dir: path.join(root, "app"),
 			command: "npx vite build",
 		},
 	];

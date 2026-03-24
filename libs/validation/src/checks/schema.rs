@@ -177,10 +177,7 @@ pub fn check_frontmatter_schemas_with_extensions(
                 category: IntegrityCategory::SchemaViolation,
                 severity: IntegritySeverity::Error,
                 artifact_id: node.id.clone(),
-                message: format!(
-                    "Frontmatter schema violation{path_info}: {}",
-                    error.message,
-                ),
+                message: format!("Frontmatter schema violation{path_info}: {}", error.message,),
                 auto_fixable: false,
                 fix_description: None,
             });

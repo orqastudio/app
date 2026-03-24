@@ -61,7 +61,6 @@ pub fn compute_health(graph: &ArtifactGraph) -> orqa_validation::GraphHealth {
     orqa_validation::compute_health(graph)
 }
 
-
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------

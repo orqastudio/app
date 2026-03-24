@@ -90,10 +90,12 @@ impl OrqaLspBackend {
         }
         let end = content[4..].find("\n---")?;
         let frontmatter = &content[4..end + 4];
-        frontmatter
-            .lines()
-            .find(|l| l.starts_with("id:"))
-            .map(|l| l.trim_start_matches("id:").trim().trim_matches('"').to_owned())
+        frontmatter.lines().find(|l| l.starts_with("id:")).map(|l| {
+            l.trim_start_matches("id:")
+                .trim()
+                .trim_matches('"')
+                .to_owned()
+        })
     }
 
     /// Return the list of valid statuses for an artifact ID prefix, if known.
@@ -105,12 +107,7 @@ impl OrqaLspBackend {
         types
             .iter()
             .find(|t| t.id_prefix == prefix)
-            .map(|t| {
-                t.status_transitions
-                    .keys()
-                    .cloned()
-                    .collect::<Vec<_>>()
-            })
+            .map(|t| t.status_transitions.keys().cloned().collect::<Vec<_>>())
             .unwrap_or_default()
     }
 
@@ -120,7 +117,13 @@ impl OrqaLspBackend {
     /// Failures are logged but not fatal — the daemon may not be running.
     async fn daemon_reload(&self) {
         let url = format!("{}/reload", self.daemon_url);
-        match self.http.post(&url).json(&serde_json::json!({})).send().await {
+        match self
+            .http
+            .post(&url)
+            .json(&serde_json::json!({}))
+            .send()
+            .await
+        {
             Ok(resp) if resp.status().is_success() => {
                 tracing::debug!("daemon reloaded");
             }
@@ -212,7 +215,10 @@ impl OrqaLspBackend {
 
 fn integrity_check_value_to_diagnostic(check: &Value) -> Option<Diagnostic> {
     let message = check.get("message").and_then(|v| v.as_str())?;
-    let severity_str = check.get("severity").and_then(|v| v.as_str()).unwrap_or("Error");
+    let severity_str = check
+        .get("severity")
+        .and_then(|v| v.as_str())
+        .unwrap_or("Error");
     let category_str = check.get("category").and_then(|v| v.as_str()).unwrap_or("");
     let fix_desc = check.get("fix_description").and_then(|v| v.as_str());
 

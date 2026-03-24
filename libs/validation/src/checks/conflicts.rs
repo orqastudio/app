@@ -42,10 +42,8 @@ pub fn check_schema_conflicts(
         by_key.entry(t.key.as_str()).or_default().push(t);
     }
 
-    let resolved_keys: std::collections::HashSet<&str> = resolutions
-        .iter()
-        .map(|r| r.conflict.as_str())
-        .collect();
+    let resolved_keys: std::collections::HashSet<&str> =
+        resolutions.iter().map(|r| r.conflict.as_str()).collect();
 
     for (key, types) in &by_key {
         if types.len() <= 1 {

@@ -46,21 +46,21 @@
     "tauri-app": {
       "description": "Tauri v2 desktop application icons — fin for taskbar/small sizes, app icon for large",
       "copy": [
-        { "from": "assets/icons/favicon.ico", "to": "app/backend/src-tauri/icons/icon.ico" },
-        { "from": "assets/icons/favicon-32x32.png", "to": "app/backend/src-tauri/icons/32x32.png" },
-        { "from": "assets/icons/icon-64x64.png", "to": "app/backend/src-tauri/icons/64x64.png" },
-        { "from": "assets/icons/icon-128x128.png", "to": "app/backend/src-tauri/icons/128x128.png" },
-        { "from": "assets/icons/icon-128x128.png", "to": "app/backend/src-tauri/icons/128x128@2x.png" },
-        { "from": "assets/icons/icon-256x256.png", "to": "app/backend/src-tauri/icons/icon.png" },
-        { "from": "assets/icons/icon-512x512.png", "to": "app/backend/src-tauri/icons/512x512.png" },
-        { "from": "assets/icons/icon-1024x1024.png", "to": "app/backend/src-tauri/icons/1024x1024.png" }
+        { "from": "assets/icons/favicon.ico", "to": "app/src-tauri/icons/icon.ico" },
+        { "from": "assets/icons/favicon-32x32.png", "to": "app/src-tauri/icons/32x32.png" },
+        { "from": "assets/icons/icon-64x64.png", "to": "app/src-tauri/icons/64x64.png" },
+        { "from": "assets/icons/icon-128x128.png", "to": "app/src-tauri/icons/128x128.png" },
+        { "from": "assets/icons/icon-128x128.png", "to": "app/src-tauri/icons/128x128@2x.png" },
+        { "from": "assets/icons/icon-256x256.png", "to": "app/src-tauri/icons/icon.png" },
+        { "from": "assets/icons/icon-512x512.png", "to": "app/src-tauri/icons/512x512.png" },
+        { "from": "assets/icons/icon-1024x1024.png", "to": "app/src-tauri/icons/1024x1024.png" }
       ]
     },
     "web-app": {
       "description": "SvelteKit static assets for the web view",
       "copy": [
-        { "from": "assets/icons/favicon.svg", "to": "app/ui/static/favicon.svg" },
-        { "from": "assets/icons/favicon.ico", "to": "app/ui/static/favicon.ico" }
+        { "from": "assets/icons/favicon.svg", "to": "app/static/favicon.svg" },
+        { "from": "assets/icons/favicon.ico", "to": "app/static/favicon.ico" }
       ]
     }
   }

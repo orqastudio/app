@@ -109,9 +109,7 @@ pub fn validate_graph_checks(project_root: &Path, artifact_id: Option<&str>) -> 
 /// Graph-level findings are not tied to a specific line — they are anchored to
 /// the opening frontmatter delimiter (line 0, column 0–3) so the editor shows
 /// them at the top of the file.
-fn integrity_check_to_diagnostic(
-    check: orqa_validation::types::IntegrityCheck,
-) -> Diagnostic {
+fn integrity_check_to_diagnostic(check: orqa_validation::types::IntegrityCheck) -> Diagnostic {
     let severity = match check.severity {
         IntegritySeverity::Error => DiagnosticSeverity::ERROR,
         IntegritySeverity::Warning => DiagnosticSeverity::WARNING,

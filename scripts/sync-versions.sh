@@ -78,9 +78,9 @@ done
 
 echo ""
 echo "--- Updating app version ---"
-update_json_version "$ROOT/app/ui/package.json"
-update_orqa_deps "$ROOT/app/ui/package.json"
-update_cargo_version "$ROOT/app/backend/src-tauri/Cargo.toml"
+update_json_version "$ROOT/app/package.json"
+update_orqa_deps "$ROOT/app/package.json"
+update_cargo_version "$ROOT/app/src-tauri/Cargo.toml"
 
 echo ""
 echo "--- Updating plugin versions ---"

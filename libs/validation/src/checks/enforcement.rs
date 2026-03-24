@@ -133,9 +133,7 @@ fn check_enforcement_entry(
                 category: IntegrityCategory::SchemaViolation,
                 severity: IntegritySeverity::Error,
                 artifact_id: node.id.clone(),
-                message: format!(
-                    "Enforcement entry [{i}] missing required 'mechanism' field"
-                ),
+                message: format!("Enforcement entry [{i}] missing required 'mechanism' field"),
                 auto_fixable: false,
                 fix_description: None,
             });
@@ -268,7 +266,10 @@ mod tests {
             references_in: vec![],
         };
         // No enforcement field at all
-        node.frontmatter.as_object_mut().unwrap().remove("enforcement");
+        node.frontmatter
+            .as_object_mut()
+            .unwrap()
+            .remove("enforcement");
         let graph = make_graph(vec![node]);
         let mut checks = Vec::new();
         check_enforcement_mechanisms(&graph, &test_mechanisms(), &mut checks);
@@ -337,10 +338,16 @@ mod tests {
             references_in: vec![],
         };
         // No enforcement field — but it's an epic, not a rule
-        node.frontmatter.as_object_mut().unwrap().remove("enforcement");
+        node.frontmatter
+            .as_object_mut()
+            .unwrap()
+            .remove("enforcement");
         let graph = make_graph(vec![node]);
         let mut checks = Vec::new();
         check_enforcement_mechanisms(&graph, &test_mechanisms(), &mut checks);
-        assert!(checks.is_empty(), "Epics should not be checked for enforcement");
+        assert!(
+            checks.is_empty(),
+            "Epics should not be checked for enforcement"
+        );
     }
 }

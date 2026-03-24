@@ -281,13 +281,13 @@ async function runPluginToolsByCategory(root: string, category: Set<string>): Pr
  */
 function findProjectDir(root: string, pluginName: string): string | null {
 	if (pluginName.includes("svelte") || pluginName.includes("typescript")) {
-		const appUi = path.join(root, "app/ui");
-		if (fs.existsSync(path.join(appUi, "package.json"))) return appUi;
+		const appDir = path.join(root, "app");
+		if (fs.existsSync(path.join(appDir, "package.json"))) return appDir;
 		if (fs.existsSync(path.join(root, "package.json"))) return root;
 	}
 
 	if (pluginName.includes("tauri") || pluginName.includes("rust")) {
-		const srcTauri = path.join(root, "app/backend/src-tauri");
+		const srcTauri = path.join(root, "app/src-tauri");
 		if (fs.existsSync(path.join(srcTauri, "Cargo.toml"))) return srcTauri;
 	}
 

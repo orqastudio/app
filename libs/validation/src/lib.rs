@@ -40,6 +40,9 @@ pub mod settings;
 pub mod types;
 
 pub use auto_fix::{apply_fixes, update_artifact_field};
+pub use checks::file_level::{
+    is_hex_artifact_id, is_valid_artifact_id, validate_file, FileFinding, FileSeverity,
+};
 pub use content::{
     extract_behavioral_messages, find_agent, find_agent_in_graph, find_knowledge, AgentContent,
     BehavioralMessages, KnowledgeContent,
@@ -53,9 +56,6 @@ pub use hooks::evaluate_hook;
 pub use metrics::{
     compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
     AncestryChain, AncestryNode, TraceabilityResult, TracedArtifact,
-};
-pub use checks::file_level::{
-    is_hex_artifact_id, is_valid_artifact_id, validate_file, FileFinding, FileSeverity,
 };
 pub use parse::{artifact_from_graph_node, parse_artifact, query_artifacts};
 pub use types::{

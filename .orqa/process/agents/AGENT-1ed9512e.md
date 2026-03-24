@@ -42,7 +42,7 @@ Output:
 ```json
 {
   "command": "assess",
-  "project": "app/backend/src-tauri",
+  "project": "app/src-tauri",
   "tools": {
     "clippy": { "passed": false, "violations": 3, "findings": [...] },
     "rustfmt": { "passed": true, "violations": 0, "findings": [] }
@@ -65,7 +65,7 @@ Output:
 {
   "command": "configure",
   "generated": [
-    { "project": "app/backend/src-tauri", "file": "clippy.toml", "lints": 8 }
+    { "project": "app/src-tauri", "file": "clippy.toml", "lints": 8 }
   ]
 }
 ```

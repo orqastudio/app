@@ -206,10 +206,7 @@ pub fn tool_relationships(daemon: &DaemonClient, args: &Value) -> Result<String,
 
     let mut out = json!({});
     if direction == "out" || direction == "both" {
-        let refs_out = item
-            .get("references_out")
-            .cloned()
-            .unwrap_or(json!([]));
+        let refs_out = item.get("references_out").cloned().unwrap_or(json!([]));
         // Normalise field names to match original tool output.
         let formatted: Vec<Value> = refs_out
             .as_array()
@@ -228,10 +225,7 @@ pub fn tool_relationships(daemon: &DaemonClient, args: &Value) -> Result<String,
         out["outgoing"] = json!(formatted);
     }
     if direction == "in" || direction == "both" {
-        let refs_in = item
-            .get("references_in")
-            .cloned()
-            .unwrap_or(json!([]));
+        let refs_in = item.get("references_in").cloned().unwrap_or(json!([]));
         let formatted: Vec<Value> = refs_in
             .as_array()
             .map(|arr| {
@@ -255,14 +249,8 @@ pub fn tool_relationships(daemon: &DaemonClient, args: &Value) -> Result<String,
 /// `graph_stats` — reads artifact and rule counts from `GET /health`.
 pub fn tool_stats(daemon: &DaemonClient) -> Result<String, String> {
     let health = daemon.health().map_err(|e| e.to_string())?;
-    let artifact_count = health
-        .get("artifacts")
-        .and_then(Value::as_u64)
-        .unwrap_or(0);
-    let rule_count = health
-        .get("rules")
-        .and_then(Value::as_u64)
-        .unwrap_or(0);
+    let artifact_count = health.get("artifacts").and_then(Value::as_u64).unwrap_or(0);
+    let rule_count = health.get("rules").and_then(Value::as_u64).unwrap_or(0);
 
     let stats = json!({
         "node_count": artifact_count,
@@ -335,10 +323,7 @@ pub fn tool_read(project_root: &std::path::Path, args: &Value) -> Result<String,
 /// `graph_refresh` — calls `POST /reload` on the daemon.
 pub fn tool_refresh(daemon: &DaemonClient) -> Result<String, String> {
     let result = daemon.reload().map_err(|e| e.to_string())?;
-    let artifact_count = result
-        .get("artifacts")
-        .and_then(Value::as_u64)
-        .unwrap_or(0);
+    let artifact_count = result.get("artifacts").and_then(Value::as_u64).unwrap_or(0);
     Ok(format!("Graph refreshed: {artifact_count} artifacts"))
 }
 

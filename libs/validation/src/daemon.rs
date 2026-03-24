@@ -65,8 +65,7 @@ impl DaemonState {
     /// Build daemon state by scanning the project root.
     fn build(project_root: &Path) -> Result<Self, ValidationError> {
         let graph = build_artifact_graph(project_root)?;
-        let (valid_statuses, delivery, project_relationships) =
-            load_project_config(project_root);
+        let (valid_statuses, delivery, project_relationships) = load_project_config(project_root);
         let plugin_contributions = scan_plugin_manifests(project_root);
 
         let ctx = build_validation_context_complete(
@@ -105,10 +104,7 @@ impl DaemonState {
 /// - A PID file already exists for a running process
 /// - The TCP port cannot be bound
 /// - Initial state construction fails
-pub fn run_daemon(
-    project_root: &Path,
-    port: u16,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub fn run_daemon(project_root: &Path, port: u16) -> Result<(), Box<dyn std::error::Error>> {
     if !project_root.exists() {
         return Err(format!("project root does not exist: {}", project_root.display()).into());
     }
@@ -158,8 +154,7 @@ fn serve(
     let shared = Arc::new(Mutex::new(state));
 
     let addr = format!("0.0.0.0:{port}");
-    let server = Server::http(&addr)
-        .map_err(|e| format!("failed to bind {addr}: {e}"))?;
+    let server = Server::http(&addr).map_err(|e| format!("failed to bind {addr}: {e}"))?;
 
     eprintln!(
         "orqa-validation daemon: listening on http://{addr} ({artifact_count} artifacts, {rule_count} rules)"
@@ -181,9 +176,7 @@ fn serve(
         }
 
         // Check if filesystem watcher flagged a reload.
-        if needs_reload.load(Ordering::Relaxed)
-            && last_reload.elapsed() >= reload_debounce
-        {
+        if needs_reload.load(Ordering::Relaxed) && last_reload.elapsed() >= reload_debounce {
             needs_reload.store(false, Ordering::Relaxed);
             last_reload = Instant::now();
 
@@ -272,11 +265,7 @@ fn handle_request(mut request: Request, shared: &Arc<Mutex<DaemonState>>) {
     let content_length = body_vec.len();
     let response = Response::new(
         StatusCode(status),
-        vec![tiny_http::Header::from_bytes(
-            b"Content-Type",
-            b"application/json",
-        )
-        .unwrap()],
+        vec![tiny_http::Header::from_bytes(b"Content-Type", b"application/json").unwrap()],
         Cursor::new(body_vec),
         Some(content_length),
         None,
@@ -309,10 +298,7 @@ fn handle_health(shared: &Arc<Mutex<DaemonState>>) -> Result<Value, (u16, String
 }
 
 /// `POST /parse` — `{ "file": "/abs/path.md" }` → `ParsedArtifact`.
-fn handle_parse(
-    body: &str,
-    shared: &Arc<Mutex<DaemonState>>,
-) -> Result<Value, (u16, String)> {
+fn handle_parse(body: &str, shared: &Arc<Mutex<DaemonState>>) -> Result<Value, (u16, String)> {
     let req: Value = parse_body(body)?;
     let file = req_str(&req, "file")?;
     let file_path = PathBuf::from(file);
@@ -332,10 +318,7 @@ fn handle_parse(
 /// Returns full `ArtifactNode` objects (including `references_out` and
 /// `references_in`) so that callers like `graph_relationships` can read
 /// relationship data without a separate lookup.
-fn handle_query(
-    body: &str,
-    shared: &Arc<Mutex<DaemonState>>,
-) -> Result<Value, (u16, String)> {
+fn handle_query(body: &str, shared: &Arc<Mutex<DaemonState>>) -> Result<Value, (u16, String)> {
     let req: Value = parse_body(body)?;
     let type_filter = req.get("type").and_then(Value::as_str);
     let status_filter = req.get("status").and_then(Value::as_str);
@@ -388,10 +371,7 @@ fn handle_query(
 }
 
 /// `POST /hook` — `HookContext` JSON → `HookResult`.
-fn handle_hook(
-    body: &str,
-    shared: &Arc<Mutex<DaemonState>>,
-) -> Result<Value, (u16, String)> {
+fn handle_hook(body: &str, shared: &Arc<Mutex<DaemonState>>) -> Result<Value, (u16, String)> {
     let req: Value = parse_body(body)?;
     let event = req
         .get("event")
@@ -473,9 +453,7 @@ fn handle_content_knowledge(
 }
 
 /// `POST /content/behavioral` — `{}` → `BehavioralMessages`.
-fn handle_content_behavioral(
-    shared: &Arc<Mutex<DaemonState>>,
-) -> Result<Value, (u16, String)> {
+fn handle_content_behavioral(shared: &Arc<Mutex<DaemonState>>) -> Result<Value, (u16, String)> {
     let (graph, project_root) = {
         let state = lock(shared)?;
         (state.graph.clone(), state.project_root.clone())
@@ -496,15 +474,9 @@ struct ValidationReport {
 }
 
 /// `POST /validate` — `{ "fix": false }` → `ValidationReport`.
-fn handle_validate(
-    body: &str,
-    shared: &Arc<Mutex<DaemonState>>,
-) -> Result<Value, (u16, String)> {
+fn handle_validate(body: &str, shared: &Arc<Mutex<DaemonState>>) -> Result<Value, (u16, String)> {
     let req: Value = parse_body(body)?;
-    let apply_fixes = req
-        .get("fix")
-        .and_then(Value::as_bool)
-        .unwrap_or(false);
+    let apply_fixes = req.get("fix").and_then(Value::as_bool).unwrap_or(false);
 
     let (graph, ctx, project_root) = {
         let state = lock(shared)?;
@@ -563,8 +535,8 @@ fn handle_reload(shared: &Arc<Mutex<DaemonState>>) -> Result<Value, (u16, String
         state.project_root.clone()
     };
 
-    let new_state = DaemonState::build(&project_root)
-        .map_err(|e| (500u16, format!("reload failed: {e}")))?;
+    let new_state =
+        DaemonState::build(&project_root).map_err(|e| (500u16, format!("reload failed: {e}")))?;
 
     let artifact_count = new_state.graph.nodes.len();
     let rule_count = new_state
@@ -653,8 +625,7 @@ fn start_fs_watcher(
 
 fn ensure_tmp_dir(project_root: &Path) -> Result<PathBuf, Box<dyn std::error::Error>> {
     let tmp = project_root.join("tmp");
-    std::fs::create_dir_all(&tmp)
-        .map_err(|e| format!("failed to create tmp dir: {e}"))?;
+    std::fs::create_dir_all(&tmp).map_err(|e| format!("failed to create tmp dir: {e}"))?;
     Ok(tmp.join("daemon.pid"))
 }
 
@@ -663,8 +634,8 @@ fn check_existing_pid(pid_path: &Path) -> Result<(), Box<dyn std::error::Error>>
         return Ok(());
     }
 
-    let contents = std::fs::read_to_string(pid_path)
-        .map_err(|e| format!("failed to read PID file: {e}"))?;
+    let contents =
+        std::fs::read_to_string(pid_path).map_err(|e| format!("failed to read PID file: {e}"))?;
     let pid: u32 = contents
         .trim()
         .parse()
@@ -682,11 +653,8 @@ fn check_existing_pid(pid_path: &Path) -> Result<(), Box<dyn std::error::Error>>
     }
 
     // Stale PID file — process no longer alive. Remove and continue.
-    eprintln!(
-        "orqa-validation daemon: removing stale PID file (PID {pid} is not running)"
-    );
-    std::fs::remove_file(pid_path)
-        .map_err(|e| format!("failed to remove stale PID file: {e}"))?;
+    eprintln!("orqa-validation daemon: removing stale PID file (PID {pid} is not running)");
+    std::fs::remove_file(pid_path).map_err(|e| format!("failed to remove stale PID file: {e}"))?;
     Ok(())
 }
 
@@ -817,8 +785,7 @@ fn parse_body(body: &str) -> Result<Value, (u16, String)> {
     if body.trim().is_empty() {
         return Ok(Value::Object(serde_json::Map::new()));
     }
-    serde_json::from_str(body)
-        .map_err(|e| (400u16, format!("invalid JSON body: {e}")))
+    serde_json::from_str(body).map_err(|e| (400u16, format!("invalid JSON body: {e}")))
 }
 
 fn req_str<'a>(req: &'a Value, key: &str) -> Result<&'a str, (u16, String)> {

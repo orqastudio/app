@@ -504,7 +504,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 		spawnManaged(app, npx(), [
 			"tauri", "dev",
 		], {
-			cwd: path.join(appDir, "backend/src-tauri"),
+			cwd: appDir,
 			env: rustEnv(),
 		});
 

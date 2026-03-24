@@ -336,13 +336,13 @@ function cmdBuildAll(root: string): void {
 		run(lib.build, dir);
 	}
 
-	const appUi = path.join(root, "app/ui");
-	if (fs.existsSync(appUi)) {
-		console.log("  - app/ui (svelte-kit sync)");
-		run("npx svelte-kit sync", appUi);
+	const appDir = path.join(root, "app");
+	if (fs.existsSync(path.join(appDir, "package.json"))) {
+		console.log("  - app (svelte-kit sync)");
+		run("npx svelte-kit sync", appDir);
 
-		console.log("  - app/ui (build)");
-		run("npm run build", appUi);
+		console.log("  - app (build)");
+		run("npm run build", appDir);
 	}
 
 	// Generate injector config from plugin manifests.
@@ -464,7 +464,7 @@ function cmdSmokeTest(root: string): void {
 	}
 
 	// Rust compiles
-	const cargoDir = path.join(root, "app/backend/src-tauri");
+	const cargoDir = path.join(root, "app/src-tauri");
 	if (fs.existsSync(cargoDir)) {
 		try {
 			execSync("cargo check --quiet", { cwd: cargoDir, stdio: ["pipe", "pipe", "pipe"] });
@@ -476,10 +476,10 @@ function cmdSmokeTest(root: string): void {
 	}
 
 	// Svelte-check
-	const appUi = path.join(root, "app/ui");
-	if (fs.existsSync(appUi)) {
+	const appCheckDir = path.join(root, "app");
+	if (fs.existsSync(path.join(appCheckDir, "package.json"))) {
 		try {
-			execSync("npx svelte-check --threshold error", { cwd: appUi, stdio: ["pipe", "pipe", "pipe"] });
+			execSync("npx svelte-check --threshold error", { cwd: appCheckDir, stdio: ["pipe", "pipe", "pipe"] });
 			console.log("  ✓ svelte-check passes");
 		} catch {
 			console.error("  ✗ svelte-check failed — frontend dependencies may not be linked");

@@ -251,7 +251,9 @@ pub fn check_type_prefix_mismatch(
                     node.id, explicit_type, prefix, expected_type
                 ),
                 auto_fixable: true,
-                fix_description: Some(format!("Change type: {explicit_type} to type: {expected_type}")),
+                fix_description: Some(format!(
+                    "Change type: {explicit_type} to type: {expected_type}"
+                )),
             });
         }
     }
@@ -276,7 +278,9 @@ pub fn check_missing_status_field(
 
     for node in graph.nodes.values() {
         // If no schema loaded or type not in schema, skip (don't enforce without schema)
-        if artifact_types.is_empty() || !types_requiring_status.contains(node.artifact_type.as_str()) {
+        if artifact_types.is_empty()
+            || !types_requiring_status.contains(node.artifact_type.as_str())
+        {
             continue;
         }
 

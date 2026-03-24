@@ -1,5 +1,5 @@
 //! Project settings types — a standalone subset of the types from
-//! `app/backend/src-tauri/src/domain/project_settings.rs`.
+//! `app/src-tauri/src/domain/project_settings.rs`.
 //!
 //! Only the types needed for graph building and integrity checks are included.
 

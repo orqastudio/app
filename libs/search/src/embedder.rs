@@ -192,7 +192,8 @@ impl Embedder {
     }
 }
 
-const HF_BASE_URL: &str = "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main";
+const HF_BASE_URL: &str =
+    "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main";
 
 /// Files needed for the embedder, with their HF paths relative to the repo root.
 const MODEL_FILES: &[(&str, &str)] = &[

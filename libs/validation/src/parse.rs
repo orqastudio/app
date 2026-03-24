@@ -7,7 +7,9 @@ use std::collections::HashSet;
 
 use crate::checks::schema::{build_frontmatter_schema, validate_frontmatter};
 use crate::error::ValidationError;
-use crate::graph::{build_valid_relationship_types, extract_frontmatter, infer_artifact_type, ArtifactGraph};
+use crate::graph::{
+    build_valid_relationship_types, extract_frontmatter, infer_artifact_type, ArtifactGraph,
+};
 use crate::platform::{scan_plugin_manifests, ArtifactTypeDef};
 use crate::types::{ParsedArtifact, ValidationResult};
 
@@ -56,8 +58,7 @@ pub fn parse_artifact(
         })?
         .to_owned();
 
-    let frontmatter = serde_json::to_value(&yaml_value)
-        .unwrap_or(serde_json::Value::Null);
+    let frontmatter = serde_json::to_value(&yaml_value).unwrap_or(serde_json::Value::Null);
 
     let title = yaml_value
         .get("title")
@@ -93,8 +94,11 @@ pub fn parse_artifact(
         &plugin_contributions.artifact_types,
     );
 
-    let mut validation =
-        run_validation(&frontmatter, &artifact_type, &plugin_contributions.artifact_types);
+    let mut validation = run_validation(
+        &frontmatter,
+        &artifact_type,
+        &plugin_contributions.artifact_types,
+    );
 
     // Validate relationship types against the vocabulary from core + plugins + project.
     let valid_rel_types = build_valid_relationship_types(project_path);
@@ -249,10 +253,7 @@ pub fn passes_filters(
 }
 
 /// Case-insensitive substring match against the node's title and description.
-pub fn passes_search(
-    node: &crate::graph::ArtifactNode,
-    search_filter: Option<&str>,
-) -> bool {
+pub fn passes_search(node: &crate::graph::ArtifactNode, search_filter: Option<&str>) -> bool {
     let Some(query) = search_filter else {
         return true;
     };
@@ -421,7 +422,8 @@ mod tests {
     fn parse_extracts_body_after_frontmatter() {
         let tmp = make_project();
         let dir = tmp.path().join(".orqa/delivery/epics");
-        let content = "---\nid: EPIC-aabbccdd\ntitle: Test Epic\nstatus: draft\n---\n\nThis is the body.\n";
+        let content =
+            "---\nid: EPIC-aabbccdd\ntitle: Test Epic\nstatus: draft\n---\n\nThis is the body.\n";
         write_file(&dir, "EPIC-aabbccdd.md", content);
 
         let file_path = dir.join("EPIC-aabbccdd.md");
@@ -558,7 +560,11 @@ relationships:
         validate_relationship_types(&yaml, &valid_types, &mut validation);
 
         assert!(!validation.valid, "should be invalid");
-        assert_eq!(validation.errors.len(), 2, "two errors: bogus type + missing type");
+        assert_eq!(
+            validation.errors.len(),
+            2,
+            "two errors: bogus type + missing type"
+        );
         assert!(
             validation.errors[0].contains("bogus-type"),
             "first error mentions the invalid type"
@@ -590,7 +596,10 @@ relationships:
 
         validate_relationship_types(&yaml, &empty_types, &mut validation);
 
-        assert!(validation.valid, "empty vocabulary should not produce errors");
+        assert!(
+            validation.valid,
+            "empty vocabulary should not produce errors"
+        );
         assert!(validation.errors.is_empty());
     }
 

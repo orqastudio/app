@@ -128,10 +128,10 @@ async function cmdLink(): Promise<void> {
 	}
 
 	// Link everything into the app
-	const appUi = path.join(root, "app/ui");
-	if (fs.existsSync(appUi)) {
-		console.log("\n--- app/ui ---");
-		run("npm install", appUi);
+	const appDir = path.join(root, "app");
+	if (fs.existsSync(path.join(appDir, "package.json"))) {
+		console.log("\n--- app ---");
+		run("npm install", appDir);
 
 		const allLibs = BUILD_ORDER.filter((e) => e.link).map((e) => {
 			const pkgPath = path.join(root, e.dir, "package.json");
@@ -144,12 +144,12 @@ async function cmdLink(): Promise<void> {
 		}).filter(Boolean) as string[];
 
 		if (allLibs.length > 0) {
-			run(`npm link ${allLibs.join(" ")}`, appUi);
+			run(`npm link ${allLibs.join(" ")}`, appDir);
 		}
 
-		run("npx svelte-kit sync", appUi);
-		console.log("\n--- app/ui build ---");
-		run("npm run build", appUi);
+		run("npx svelte-kit sync", appDir);
+		console.log("\n--- app build ---");
+		run("npm run build", appDir);
 	}
 
 	// Install brand lib deps (for icon generation)

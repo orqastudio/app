@@ -268,13 +268,16 @@ fn handle_download_model(params: &Value) -> Value {
         Ok(rt) => rt,
         Err(e) => return error_value(format!("failed to create tokio runtime: {e}")),
     };
-    match rt.block_on(orqa_search::embedder::ensure_model_exists(&model_dir, |file, downloaded, total| {
-        if let Some(total) = total {
-            info!("downloading {file}: {downloaded}/{total} bytes");
-        } else {
-            info!("downloading {file}: {downloaded} bytes");
-        }
-    })) {
+    match rt.block_on(orqa_search::embedder::ensure_model_exists(
+        &model_dir,
+        |file, downloaded, total| {
+            if let Some(total) = total {
+                info!("downloading {file}: {downloaded}/{total} bytes");
+            } else {
+                info!("downloading {file}: {downloaded} bytes");
+            }
+        },
+    )) {
         Ok(()) => {
             info!("model download complete: {}", model_dir.display());
             serde_json::json!({ "downloaded": true, "model_dir": p.model_dir })
@@ -307,7 +310,10 @@ fn main() {
     let options = parse_cli_options(&args);
     let model_dir = resolve_model_dir(options.model_dir);
 
-    info!("orqa-search-server starting, db={}", options.db_path.display());
+    info!(
+        "orqa-search-server starting, db={}",
+        options.db_path.display()
+    );
 
     let mut engine = match SearchEngine::new(&options.db_path) {
         Ok(e) => e,
@@ -319,7 +325,10 @@ fn main() {
 
     // Auto-init embedder if model files exist on disk.
     if model_dir.join("model.onnx").exists() && model_dir.join("tokenizer.json").exists() {
-        info!("model files found at {}, initializing embedder", model_dir.display());
+        info!(
+            "model files found at {}, initializing embedder",
+            model_dir.display()
+        );
         match engine.init_embedder_sync(&model_dir) {
             Ok(()) => {
                 info!("embedder initialized, embedding any unembedded chunks");
@@ -361,13 +370,7 @@ fn main() {
 
         let response = match serde_json::from_str::<JsonRpcRequest>(&line) {
             Ok(request) => {
-                if request.jsonrpc != "2.0" {
-                    JsonRpcResponse::err(
-                        request.id,
-                        -32600,
-                        "invalid JSON-RPC version".to_string(),
-                    )
-                } else {
+                if request.jsonrpc == "2.0" {
                     info!("dispatch method={}", request.method);
                     let result = handle_request(&mut engine, &request);
                     // If the result itself contains an "error" key, surface it as a JSON-RPC error
@@ -380,6 +383,8 @@ fn main() {
                     } else {
                         JsonRpcResponse::ok(request.id, result)
                     }
+                } else {
+                    JsonRpcResponse::err(request.id, -32600, "invalid JSON-RPC version".to_string())
                 }
             }
             Err(e) => JsonRpcResponse::err(None, -32700, format!("parse error: {e}")),
@@ -414,7 +419,10 @@ mod tests {
     #[test]
     fn parse_cli_options_default() {
         let options = parse_cli_options(&[]);
-        assert!(options.db_path.to_string_lossy().contains("orqa-search-server.duckdb"));
+        assert!(options
+            .db_path
+            .to_string_lossy()
+            .contains("orqa-search-server.duckdb"));
         assert!(options.model_dir.is_none());
     }
 

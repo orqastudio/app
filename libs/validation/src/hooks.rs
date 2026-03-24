@@ -114,15 +114,13 @@ pub fn evaluate_hook(ctx: &HookContext, project_root: &Path) -> HookResult {
 
             match event_kind {
                 Some("bash") => {
-                    if let Some(violation) =
-                        check_bash_entry(ctx, &rule.id, &action, &message, obj)
+                    if let Some(violation) = check_bash_entry(ctx, &rule.id, &action, &message, obj)
                     {
                         violations.push(violation);
                     }
                 }
                 Some("file") => {
-                    if let Some(violation) =
-                        check_file_entry(ctx, &rule.id, &action, &message, obj)
+                    if let Some(violation) = check_file_entry(ctx, &rule.id, &action, &message, obj)
                     {
                         violations.push(violation);
                     }

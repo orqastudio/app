@@ -7,7 +7,7 @@ use orqa_search::SearchEngine;
 use serde_json::{json, Value};
 use tracing::{debug, warn};
 
-use crate::daemon::{DaemonClient, default_daemon_port};
+use crate::daemon::{default_daemon_port, DaemonClient};
 use crate::error::McpError;
 use crate::tools::{graph as graph_tools, search as search_tools};
 use crate::types::{JsonRpcError, JsonRpcRequest, JsonRpcResponse, McpResource};
@@ -187,9 +187,7 @@ impl McpServer {
             "graph_validate" => graph_tools::tool_validate(&self.daemon, &arguments),
             "graph_read" => graph_tools::tool_read(&self.project_root, &arguments),
             "graph_refresh" => graph_tools::tool_refresh(&self.daemon),
-            "graph_traceability" => {
-                graph_tools::tool_traceability(&self.daemon, &arguments)
-            }
+            "graph_traceability" => graph_tools::tool_traceability(&self.daemon, &arguments),
             "search_regex" => self
                 .get_search()
                 .and_then(|e| search_tools::tool_search_regex(e, &arguments)),

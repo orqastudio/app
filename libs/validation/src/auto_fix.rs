@@ -19,7 +19,10 @@ use crate::types::{AppliedFix, IntegrityCategory, IntegrityCheck};
 ///
 /// In organisation mode, graph keys are `project::ID` but check artifact_ids
 /// use the bare `ID`. This helper finds the node regardless.
-fn find_node<'a>(graph: &'a ArtifactGraph, artifact_id: &str) -> Option<&'a crate::graph::ArtifactNode> {
+fn find_node<'a>(
+    graph: &'a ArtifactGraph,
+    artifact_id: &str,
+) -> Option<&'a crate::graph::ArtifactNode> {
     // Try bare ID first
     if let Some(node) = graph.nodes.get(artifact_id) {
         return Some(node);
@@ -385,7 +388,9 @@ fn apply_missing_type_fix(
     }
 
     // Insert `type:` after the `id:` line, operating on the raw file.
-    let Some(new_content) = insert_field_in_file(&content, "id:", &format!("type: {inferred_type}")) else {
+    let Some(new_content) =
+        insert_field_in_file(&content, "id:", &format!("type: {inferred_type}"))
+    else {
         return Ok(None);
     };
 

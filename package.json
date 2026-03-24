@@ -22,7 +22,7 @@
     "plugins/typescript",
     "connectors/claude-code",
     "integrations/claude-agent-sdk",
-    "app/ui"
+    "app"
   ],
   "devDependencies": {
     "yaml": "^2.8.2"

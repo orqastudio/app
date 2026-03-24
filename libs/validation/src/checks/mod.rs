@@ -50,11 +50,7 @@ pub fn run_all(graph: &ArtifactGraph, ctx: &ValidationContext) -> Vec<IntegrityC
     }
 
     if !ctx.enforcement_mechanisms.is_empty() {
-        enforcement::check_enforcement_mechanisms(
-            graph,
-            &ctx.enforcement_mechanisms,
-            &mut checks,
-        );
+        enforcement::check_enforcement_mechanisms(graph, &ctx.enforcement_mechanisms, &mut checks);
     }
 
     if !ctx.valid_statuses.is_empty() {

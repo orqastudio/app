@@ -62,17 +62,17 @@ npm link @orqastudio/types
 npm run build
 npm link
 
-# 7. Install app UI and link all libs
+# 7. Install app and link all libs
 echo ""
-echo "--- app/ui ---"
-cd "$ROOT/app/ui"
+echo "--- app ---"
+cd "$ROOT/app"
 npm install
 npm link @orqastudio/types @orqastudio/sdk @orqastudio/cli @orqastudio/connector-claude-code @orqastudio/svelte-components @orqastudio/graph-visualiser
 npx svelte-kit sync
 
-# 8. Build UI (needed for Rust compilation)
+# 8. Build frontend (needed for Rust compilation)
 echo ""
-echo "--- app/ui build ---"
+echo "--- app build ---"
 npm run build
 
 echo ""

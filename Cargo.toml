@@ -4,7 +4,7 @@ members = [
     "libs/search",
     "libs/mcp-server",
     "libs/lsp-server",
-    "app/backend/src-tauri",
+    "app/src-tauri",
 ]
 resolver = "2"
 

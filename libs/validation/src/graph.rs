@@ -126,7 +126,9 @@ fn load_settings(project_path: &Path) -> Option<ProjectSettings> {
 }
 
 /// Build a set of valid relationship type keys from core.json + plugin manifests.
-pub(crate) fn build_valid_relationship_types(project_path: &Path) -> std::collections::HashSet<String> {
+pub(crate) fn build_valid_relationship_types(
+    project_path: &Path,
+) -> std::collections::HashSet<String> {
     let mut valid = std::collections::HashSet::new();
 
     // Core relationships (from embedded core.json)

@@ -308,7 +308,7 @@ function checkSourcePaths() {
   const sourceExts = [".rs", ".ts", ".mjs", ".js", ".svelte"];
 
   // Directories to scan (skip node_modules, target, dist, .git)
-  const scanDirs = ["backend/src-tauri/src", "ui/src", "tools", ".githooks"];
+  const scanDirs = ["src-tauri/src", "src", "tools", ".githooks"];
 
   // Test fixture paths — paths used in unit tests as pattern-matching inputs,
   // not as real file references. Listed in path-manifest.json under "test_fixtures".

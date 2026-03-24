@@ -52,7 +52,7 @@ You are a task agent. You do NOT converse. You receive an installation request, 
   "plugin": "@orqastudio/plugin-svelte",
   "projects": [
     {
-      "path": "app/ui",
+      "path": "app",
       "dependencies_added": ["eslint", "vitest"],
       "configs_generated": [".eslintrc.json", "vitest.config.ts"]
     }

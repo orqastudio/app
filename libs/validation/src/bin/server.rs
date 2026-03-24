@@ -230,15 +230,14 @@ fn run_parse(args: &[String]) {
     }
 
     // Determine project root: explicit --project flag or the file's parent directory.
-    let project_path = find_flag_value(args, "--project")
-        .map_or_else(
-            || {
-                file_path
-                    .parent()
-                    .map_or_else(|| PathBuf::from("."), std::path::Path::to_path_buf)
-            },
-            PathBuf::from,
-        );
+    let project_path = find_flag_value(args, "--project").map_or_else(
+        || {
+            file_path
+                .parent()
+                .map_or_else(|| PathBuf::from("."), std::path::Path::to_path_buf)
+        },
+        PathBuf::from,
+    );
 
     match parse_artifact(&file_path, &project_path) {
         Ok(parsed) => {

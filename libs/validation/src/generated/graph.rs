@@ -72,4 +72,3 @@ pub struct GraphStats {
     /// References whose target_id does not exist in the graph.
     pub broken_ref_count: usize,
 }
-

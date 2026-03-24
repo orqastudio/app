@@ -35,13 +35,13 @@ function getSuites(root: string): TestSuite[] {
 		{
 			name: "Rust backend",
 			key: "rust",
-			dir: path.join(root, "app/backend/src-tauri"),
+			dir: path.join(root, "app/src-tauri"),
 			command: "cargo test",
 		},
 		{
 			name: "Frontend (vitest)",
 			key: "app",
-			dir: path.join(root, "app/ui"),
+			dir: path.join(root, "app"),
 			command: "npx vitest run",
 		},
 	];
