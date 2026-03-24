@@ -1014,7 +1014,25 @@ async function cmdDev(root: string): Promise<void> {
 	}
 	if (existing) removeControlFile(root);
 
-	// Refresh plugin content so .orqa/ is in sync with plugin source
+	// 1. Install all workspace dependencies from root
+	logCtrl("Installing dependencies...");
+	try {
+		const npmCmd = IS_WINDOWS ? "npm.cmd" : "npm";
+		execSync(`${npmCmd} install`, { cwd: root, stdio: "inherit" });
+	} catch {
+		logCtrl("npm install failed — dependencies may be stale");
+	}
+
+	// 2. Build all Rust binaries
+	logCtrl("Building Rust binaries...");
+	try {
+		execSync("cargo build --workspace --color always", { cwd: root, stdio: "inherit" });
+	} catch {
+		logCtrl("Rust build failed — some binaries may be stale");
+	}
+
+	// 3. Refresh plugin content (builds TS/Svelte plugins, syncs to .orqa/)
+	logCtrl("Building plugins and syncing content...");
 	try {
 		const { runPluginCommand } = await import("./plugin.js");
 		await runPluginCommand(["refresh"]);
