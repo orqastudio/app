@@ -28,7 +28,7 @@
     "hooks": [
       {
         "event": "pre-commit",
-        "script": "hooks/pre-commit.sh",
+        "script": "hooks/pre-commit",
         "description": "Validates governance artifacts against plugin schemas before every commit"
       },
       {

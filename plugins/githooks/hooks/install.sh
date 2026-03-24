@@ -22,7 +22,7 @@ if [ -n "$CURRENT" ] && [ "$CURRENT" != "$SCRIPT_DIR" ]; then
 fi
 
 git config core.hooksPath "$SCRIPT_DIR"
-chmod +x "$SCRIPT_DIR/pre-commit.sh"
+chmod +x "$SCRIPT_DIR/pre-commit"
 chmod +x "$SCRIPT_DIR/post-commit"
 
 echo "Git hooks installed: $SCRIPT_DIR"
