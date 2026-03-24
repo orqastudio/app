@@ -465,7 +465,17 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 	const rust = createManagedProcess("rust", COLOURS.magenta);
 
 	async function startRust(): Promise<void> {
-		logCtrl("Compiling and starting Rust app...");
+		logCtrl("Building Rust app (this may take a while on first run)...");
+
+		writeControlFile(root, {
+			state: "building",
+			vite: vite.child?.pid ?? null,
+			rust: null,
+			search: searchProc.child?.pid ?? null,
+			mcp: mcpProc.child?.pid ?? null,
+			lsp: lspProc.child?.pid ?? null,
+		});
+
 		spawnManaged(rust, "cargo", [
 			"run",
 			"--manifest-path", path.join(appDir, "backend/src-tauri/Cargo.toml"),
@@ -474,6 +484,46 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 		], {
 			env: { ...process.env, RUST_LOG: process.env["RUST_LOG"] ?? "info" },
 		});
+
+		// Wait for the app binary to actually start (cargo compiles first, then runs).
+		// The Tauri app writes an IPC port file when it's ready.
+		const ipcPortFile = path.join(
+			process.env["LOCALAPPDATA"] ?? path.join(process.env["HOME"] ?? "~", ".local", "share"),
+			"com.orqastudio.app",
+			"ipc.port",
+		);
+
+		const buildDeadline = Date.now() + 300_000; // 5 minutes for compilation
+		let appReady = false;
+
+		// First wait for the process to be alive (cargo finished compiling)
+		while (Date.now() < buildDeadline) {
+			await sleep(2_000);
+
+			if (!rust.child || rust.child.exitCode !== null) {
+				// Process exited during build — don't wait forever
+				logError("ctrl", "Rust app exited during build.");
+				break;
+			}
+
+			// Check if the IPC port file was recently written (app is up)
+			try {
+				const stat = fs.statSync(ipcPortFile);
+				// Consider "ready" if port file was written in the last 30 seconds
+				if (Date.now() - stat.mtimeMs < 30_000) {
+					appReady = true;
+					break;
+				}
+			} catch {
+				// Port file doesn't exist yet — still building/starting
+			}
+		}
+
+		if (appReady) {
+			logSuccess("App loaded and ready.");
+		} else {
+			logCtrl("App may still be loading — check the window.");
+		}
 
 		writeControlFile(root, {
 			state: "running",
@@ -989,8 +1039,9 @@ async function cmdDev(root: string): Promise<void> {
 	logCtrl(`Controller spawned (PID ${child.pid}). Waiting for ready...`);
 
 	// Poll control file until state is "running"
-	const READY_TIMEOUT_MS = 120_000;
+	const READY_TIMEOUT_MS = 300_000; // 5 minutes — Rust compilation can be slow
 	const deadline = Date.now() + READY_TIMEOUT_MS;
+	let lastState = "";
 
 	while (Date.now() < deadline) {
 		await sleep(POLL_INTERVAL_MS);
@@ -1003,8 +1054,18 @@ async function cmdDev(root: string): Promise<void> {
 			process.exit(1);
 		}
 
+		// Show state transitions
+		if (ctrl.state !== lastState) {
+			lastState = ctrl.state;
+			if (ctrl.state === "building") {
+				logCtrl("Building Rust app — this may take a few minutes...");
+			} else if (ctrl.state === "starting") {
+				logCtrl("Services starting...");
+			}
+		}
+
 		if (ctrl.state === "running") {
-			logSuccess("Dev environment ready.");
+			logSuccess("Dev environment ready. App loaded.");
 			return;
 		}
 	}
