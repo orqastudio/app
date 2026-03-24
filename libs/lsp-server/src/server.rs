@@ -44,7 +44,7 @@ use crate::validation::validate_file;
 pub(crate) struct OrqaLspBackend {
     client: Client,
     project_root: PathBuf,
-    /// Base URL of the validation daemon, e.g. `http://127.0.0.1:9258`.
+    /// Base URL of the validation daemon, e.g. `http://127.0.0.1:10258`.
     daemon_url: String,
     http: HttpClient,
     /// Artifact type definitions loaded from plugin manifests.

@@ -13,7 +13,7 @@ import { join } from "node:path";
 import { getRoot } from "../lib/root.js";
 import { findBinary } from "../lib/validation-engine.js";
 
-const DEFAULT_PORT = 3002;
+const DEFAULT_PORT = 10258;
 
 const USAGE = `
 Usage: orqa daemon <subcommand> [options]

@@ -56,7 +56,7 @@
 //! endpoints. The artifact graph, rules, and plugin schemas are loaded once on
 //! startup and held in memory for low-latency calls from hooks, LSP, MCP, and CLI.
 //!
-//! Default port: 3002. Writes a PID file to `<project-path>/tmp/daemon.pid`.
+//! Default port: 10258. Writes a PID file to `<project-path>/tmp/daemon.pid`.
 //!
 //! Endpoints:
 //!   GET  /health                — liveness + artifact counts
@@ -561,7 +561,7 @@ fn run_daemon_cmd(args: &[String]) {
 
     let port: u16 = find_flag_value(args, "--port")
         .and_then(|s| s.parse().ok())
-        .unwrap_or(3002);
+        .unwrap_or(10258);
 
     match run_daemon(&project_path, port) {
         Ok(()) => process::exit(0),

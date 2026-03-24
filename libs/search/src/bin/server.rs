@@ -26,7 +26,7 @@
 //!
 //! # Dev Controller Integration
 //!
-//! When `ORQA_DEV_LOG_PORT` environment variable is set (e.g. `3001`), the server
+//! When `ORQA_DEV_LOG_PORT` environment variable is set (e.g. `10401`), the server
 //! also POSTs structured log events to `http://localhost:<port>/log`.
 
 use std::io::{BufRead, BufReader, Write};

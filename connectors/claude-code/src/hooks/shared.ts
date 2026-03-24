@@ -2,13 +2,13 @@
  * Shared I/O helpers for connector hooks.
  *
  * Each hook is a thin adapter: read stdin → call daemon → write stdout/stderr.
- * All enforcement logic lives in the Rust daemon at localhost:3002.
+ * All enforcement logic lives in the Rust daemon at localhost:10258.
  */
 
 import { spawnSync } from "node:child_process";
 import type { HookInput } from "../types.js";
 
-const DAEMON_BASE = "http://localhost:3002";
+const DAEMON_BASE = "http://localhost:10258";
 
 /** Canonical hook event (mirrors @orqastudio/types HookContext). */
 export type CanonicalEvent =

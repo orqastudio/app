@@ -50,8 +50,8 @@ const DASHBOARD_HTML = join(SCRIPT_DIR, "dev-dashboard.html");
 const UI_DIR = join(PROJECT_ROOT, "ui");
 const DEV_ROOT = resolve(PROJECT_ROOT, "..");
 const LIBS_DIR = join(DEV_ROOT, "libs");
-const VITE_PORT = 1420;
-const DASHBOARD_PORT = 3001;
+const VITE_PORT = 10420;
+const DASHBOARD_PORT = 10401;
 const PORT_TIMEOUT_MS = 15_000;
 const POLL_INTERVAL_MS = 500;
 

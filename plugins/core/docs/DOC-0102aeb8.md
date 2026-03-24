@@ -126,7 +126,7 @@ This command structure was established by [AD-2ce57da9](AD-2ce57da9).
 |---------|---------|
 | `orqa mcp [project-path]` | Start MCP server (stdio) for Claude Code |
 | `orqa lsp [project-path]` | Start LSP server (stdio) for editor diagnostics |
-| `orqa daemon start` | Start validation daemon (port 3002) |
+| `orqa daemon start` | Start validation daemon (port 10258) |
 | `orqa daemon stop` | Stop the daemon |
 | `orqa daemon status` | Show daemon health |
 

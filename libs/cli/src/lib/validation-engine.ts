@@ -79,7 +79,7 @@ export function findBinary(projectRoot: string): string | null {
 // Daemon communication
 // ---------------------------------------------------------------------------
 
-const DAEMON_PORT = 3002;
+const DAEMON_PORT = 10258;
 
 /**
  * Call the running daemon's /validate endpoint.

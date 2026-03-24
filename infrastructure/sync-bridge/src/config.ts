@@ -17,9 +17,9 @@ export interface BridgeConfig {
 
 export function loadConfig(): BridgeConfig {
   return {
-    port: parseInt(process.env.PORT ?? '3001', 10),
+    port: parseInt(process.env.PORT ?? '10402', 10),
     forgejo: {
-      url: process.env.FORGEJO_URL ?? 'http://localhost:3030',
+      url: process.env.FORGEJO_URL ?? 'http://localhost:10030',
       token: process.env.FORGEJO_TOKEN ?? '',
       webhookSecret: process.env.FORGEJO_WEBHOOK_SECRET ?? 'dev-secret',
       org: process.env.FORGEJO_ORG ?? 'orqastudio',

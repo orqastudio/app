@@ -112,7 +112,7 @@ When the orchestrator delegates to a specialist, two things happen:
 1. **Declared knowledge** — the agent's `employs` relationships are followed, loading base knowledge
 2. **Semantic knowledge** — the task description is searched against the knowledge corpus for additional relevant knowledge
 
-See [DOC-b05e7295](DOC-b05e7295) for the full knowledge auto-injection model.
+See RULE-f9d0279c for the full knowledge auto-injection model.
 
 ## Agent Teams
 
@@ -125,5 +125,4 @@ The orchestrator uses Claude Code's agent teams (via `TeamCreate`) for all deleg
 ## Related Documents
 
 - [KNOW-af4d6183](KNOW-af4d6183) — Agent-facing knowledge pair for this documentation page
-- [DOC-b05e7295](DOC-b05e7295) — Knowledge Auto-Injection (how agents receive domain knowledge)
-- [DOC-48b0ae10](DOC-48b0ae10) — Documentation Placement Guide (where to write agent artifacts)
+- [RULE-f9d0279c](RULE-f9d0279c) — Knowledge Auto-Injection (how agents receive domain knowledge)

@@ -618,6 +618,7 @@ mod tests {
                     { "mechanism": "hook", "type": "PreAction", "action": "block" }
                 ]
             }),
+            body: None,
             references_out: vec![],
             references_in: vec![],
         };
@@ -659,6 +660,7 @@ mod tests {
                     { "mechanism": "behavioral", "message": "Ignored message" }
                 ]
             }),
+            body: None,
             references_out: vec![],
             references_in: vec![],
         };
@@ -696,6 +698,7 @@ mod tests {
                     { "mechanism": "behavioral", "message": "Not from an epic" }
                 ]
             }),
+            body: None,
             references_out: vec![],
             references_in: vec![],
         };
@@ -734,6 +737,7 @@ mod tests {
                     { "mechanism": "behavioral", "message": "Mango rule" }
                 ]
             }),
+            body: None,
             references_out: vec![],
             references_in: vec![],
         };
@@ -746,6 +750,6 @@ mod tests {
 
         let tmp = make_project();
         let result = extract_behavioral_messages(&graph, tmp.path()).expect("ok");
-        assert_eq!(result.messages, vec!["Apple rule", "Mango rule", "Zebra rule"]);
+        assert_eq!(result.messages, vec!["Zebra rule", "Apple rule", "Mango rule"]);
     }
 }

@@ -198,6 +198,7 @@ mod tests {
             status: Some("active".to_owned()),
             priority: None,
             frontmatter,
+            body: None,
             references_out: vec![],
             references_in: vec![],
         }
@@ -262,6 +263,7 @@ mod tests {
             status: Some("active".to_owned()),
             priority: None,
             frontmatter: serde_json::json!({ "id": "RULE-a1b2c3d4", "status": "active" }),
+            body: None,
             references_out: vec![],
             references_in: vec![],
         };
@@ -330,6 +332,7 @@ mod tests {
             status: Some("active".to_owned()),
             priority: None,
             frontmatter: serde_json::json!({ "id": "EPIC-a1b2c3d4", "status": "active" }),
+            body: None,
             references_out: vec![],
             references_in: vec![],
         };

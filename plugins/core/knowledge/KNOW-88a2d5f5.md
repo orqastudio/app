@@ -185,7 +185,7 @@ Provides real-time diagnostics for `.orqa/` artifacts: frontmatter schema valida
 ### orqa daemon — Validation Daemon
 
 ```
-orqa daemon start [--port <port>]   Start daemon (default port: 3002)
+orqa daemon start [--port <port>]   Start daemon (default port: 10258)
 orqa daemon stop                    Stop the daemon
 orqa daemon status                  Show daemon health
 ```

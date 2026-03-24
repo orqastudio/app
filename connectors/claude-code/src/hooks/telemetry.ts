@@ -1,11 +1,11 @@
 // Telemetry for hook scripts.
 //
 // Forwards hook execution metrics to the dev controller dashboard at
-// localhost:3001/log. Fire-and-forget — never blocks or throws.
+// localhost:10401/log. Fire-and-forget — never blocks or throws.
 
 import type { TelemetryDetails } from "../types.js";
 
-const DASHBOARD_URL = "http://localhost:3001/log";
+const DASHBOARD_URL = "http://localhost:10401/log";
 
 /**
  * Log hook execution metrics to the dev controller dashboard.
@@ -16,7 +16,7 @@ export function logTelemetry(
   startTime: number,
   outcome: string,
   details: TelemetryDetails,
-  _projectDir?: string,
+  _projectDir?: string, // eslint-disable-line @typescript-eslint/no-unused-vars -- reserved for future dashboard routing
 ): void {
   const durationMs = Date.now() - startTime;
   const level = outcome === "error" ? "error" : outcome === "blocked" ? "warn" : "info";

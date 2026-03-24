@@ -20,7 +20,7 @@ relationships:
     type: evolves-from
     rationale: "Search engine remains standalone but is reached via the daemon, not a separate search process"
   - target: PILLAR-569581e0
-    type: grounded
+    type: aligned-with
     rationale: "Simplifies developer infrastructure to a single CLI entry point — clearer, more structured, less to manage"
 ---
 

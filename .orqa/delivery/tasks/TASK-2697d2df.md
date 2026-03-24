@@ -30,14 +30,14 @@ The LSP currently does not register a hover provider. This task adds one that sh
 
 2. **Add `GET /artifact/:id` endpoint to the daemon** — returns full metadata for a single artifact (title, type, status, description, file path, relationships).
 
-3. **Implement `textDocument/hover` handler** — detect if the cursor is on an artifact ID pattern (`TYPE-XXXXXXXX`), fetch metadata from the daemon, and return formatted hover content.
+3. **Implement `textDocument/hover` handler** — detect if the cursor is on an artifact ID pattern (`&lt;TYPE&gt;-&lt;hex8&gt;`), fetch metadata from the daemon, and return formatted hover content.
 
 4. **Format hover content as Markdown** — show title, type badge, status, description excerpt, file path, and relationship count.
 
 5. **Handle hover in different contexts**:
    - Frontmatter `target:` values — show the referenced artifact's metadata
    - Frontmatter `id:` field — show this artifact's own metadata (useful for quick reference)
-   - Body `[TYPE-XXXXXXXX](TYPE-XXXXXXXX)` links — show the referenced artifact's metadata
+   - Body `[&lt;TYPE&gt;-&lt;hex8&gt;](&lt;TYPE&gt;-&lt;hex8&gt;)` links — show the referenced artifact's metadata
 
 ## Acceptance Criteria
 

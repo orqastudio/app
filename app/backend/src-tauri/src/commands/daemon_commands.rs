@@ -18,7 +18,7 @@ pub struct DaemonHealthResponse {
 
 /// Query the daemon's health endpoint and return the result.
 ///
-/// Makes an HTTP GET to `http://127.0.0.1:3002/health` with a 3-second timeout.
+/// Makes an HTTP GET to `http://127.0.0.1:10258/health` with a 3-second timeout.
 /// Returns the daemon's JSON response on success, or an error if the daemon is
 /// unreachable or returns a non-200 status.
 #[tauri::command]
@@ -29,7 +29,7 @@ pub async fn daemon_health() -> Result<DaemonHealthResponse, OrqaError> {
         .map_err(|e| OrqaError::Sidecar(format!("failed to build HTTP client: {e}")))?;
 
     let response = client
-        .get("http://127.0.0.1:3002/health")
+        .get("http://127.0.0.1:10258/health")
         .send()
         .await
         .map_err(|e| OrqaError::Sidecar(format!("daemon unreachable: {e}")))?;

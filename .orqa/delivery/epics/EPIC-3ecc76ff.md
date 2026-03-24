@@ -14,7 +14,7 @@ scoring:
   dependencies: 2
 relationships:
   - target: PILLAR-569581e0
-    type: fulfils
+    type: grounded
     rationale: "LSP enforcement makes governance artifacts visible and manageable in the editor — mechanical enforcement of structural rules"
   - target: AD-2ce57da9
     type: implements

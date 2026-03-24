@@ -14,7 +14,7 @@
 
 set -euo pipefail
 
-SERVER_URL="http://localhost:3030"
+SERVER_URL="http://localhost:10030"
 CONTAINER="orqastudio"
 ADMIN_USER="${ORQA_GIT_USER:-orqa-admin}"
 ADMIN_PASS="${ORQA_GIT_PASS:-admin123}"
@@ -90,7 +90,7 @@ REMOTE_NAME="local"
 if git remote get-url "$REMOTE_NAME" > /dev/null 2>&1; then
   echo "  Remote '$REMOTE_NAME' already exists"
 else
-  git remote add "$REMOTE_NAME" "http://$ADMIN_USER:$ADMIN_PASS@localhost:3030/$ORG_NAME/orqastudio.git"
+  git remote add "$REMOTE_NAME" "http://$ADMIN_USER:$ADMIN_PASS@localhost:10030/$ORG_NAME/orqastudio.git"
   echo "  Remote '$REMOTE_NAME' added"
 fi
 
@@ -139,7 +139,7 @@ echo "=== Setup Complete ==="
 echo ""
 echo "  Web UI:     $SERVER_URL"
 echo "  Repo:       $SERVER_URL/$ORG_NAME/orqastudio"
-echo "  SSH clone:  ssh://git@localhost:222/$ORG_NAME/orqastudio.git"
+echo "  SSH clone:  ssh://git@localhost:10222/$ORG_NAME/orqastudio.git"
 echo "  HTTP clone: $SERVER_URL/$ORG_NAME/orqastudio.git"
 echo ""
 echo "  Next steps:"

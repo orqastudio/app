@@ -9,7 +9,7 @@ updated: 2026-03-24
 category: code-quality
 relationships:
   - target: EPIC-b2f0399e
-    type: informs
+    type: supports
     rationale: Findings feed the code quality audit epic
   - target: IDEA-b6d8e0f2
     type: references

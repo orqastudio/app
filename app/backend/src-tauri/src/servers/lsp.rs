@@ -12,5 +12,5 @@ use std::path::Path;
 ///
 /// Delegates entirely to `orqa_lsp_server::run_stdio`.
 pub async fn run(project_root: &Path) -> Result<(), Box<dyn std::error::Error>> {
-    orqa_lsp_server::run_stdio(project_root, 3002).await
+    orqa_lsp_server::run_stdio(project_root, 10258).await
 }

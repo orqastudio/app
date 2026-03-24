@@ -19,7 +19,7 @@ use serde_json::Value;
 use crate::error::McpError;
 
 /// Default port for the validation daemon.
-pub const DEFAULT_DAEMON_PORT: u16 = 9258;
+pub const DEFAULT_DAEMON_PORT: u16 = 10258;
 
 /// Blocking HTTP client bound to a specific daemon instance.
 pub struct DaemonClient {
