@@ -269,17 +269,17 @@ export function installPluginDeps(pluginDir: string, pluginManifest: PluginManif
 	}
 
 	if (Array.isArray(deps.npm) && deps.npm.length > 0) {
-		// Skip npm install if node_modules exists and a package.json is present —
-		// in dev environments deps are typically already linked.
 		const hasNodeModules = fs.existsSync(path.join(pluginDir, "node_modules"));
 		const hasPackageJson = fs.existsSync(path.join(pluginDir, "package.json"));
 
-		if (!hasNodeModules && hasPackageJson) {
+		// Skip npm install for workspace members — their deps are managed by the
+		// root package.json. Running npm install inside a workspace member breaks
+		// npm's arborist ("Cannot read properties of null").
+		const isWorkspaceMember = isInsideWorkspace(pluginDir);
+
+		if (!hasNodeModules && hasPackageJson && !isWorkspaceMember) {
 			execSync("npm install", { cwd: pluginDir, stdio: "inherit" });
-		} else if (!hasPackageJson) {
-			// No package.json — nothing to install
 		}
-		// If node_modules exists, assume deps are already satisfied
 	}
 
 	if (Array.isArray(deps.system) && deps.system.length > 0) {
@@ -546,6 +546,24 @@ export function computeThreeWayState(
 export function computeFileHash(filePath: string): string {
 	const content = fs.readFileSync(filePath);
 	return createHash("sha256").update(content).digest("hex");
+}
+
+/** Check if a directory is inside an npm workspace (root package.json has "workspaces"). */
+function isInsideWorkspace(dir: string): boolean {
+	let current = path.dirname(dir);
+	while (current !== path.dirname(current)) {
+		const pkgPath = path.join(current, "package.json");
+		if (fs.existsSync(pkgPath)) {
+			try {
+				const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
+				if (Array.isArray(pkg.workspaces) && pkg.workspaces.length > 0) {
+					return true;
+				}
+			} catch { /* ignore */ }
+		}
+		current = path.dirname(current);
+	}
+	return false;
 }
 
 // ---------------------------------------------------------------------------
