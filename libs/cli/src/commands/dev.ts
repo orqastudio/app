@@ -501,7 +501,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			lsp: lspProc.child?.pid ?? null,
 		});
 
-		spawnManaged(app, npx(), [
+		spawnManaged(app, "cargo", [
 			"tauri", "dev",
 		], {
 			cwd: appDir,
