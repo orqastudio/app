@@ -4,7 +4,7 @@ type: lesson
 title: Orchestrator must use TeamCreate + background agents for ALL delegated work
 category: process
 status: promoted
-recurrence: 3
+recurrence: 4
 promoted-to: RULE-00a8c660
 created: 2026-03-24
 tags: [delegation, teams, orchestrator, agent-teams]
@@ -43,3 +43,11 @@ The only exceptions where the orchestrator may act directly:
 ## Promotion
 
 Promoted to [RULE-00a8c660](RULE-00a8c660) which codifies the Agent Teams requirement. Also added to CLAUDE.md Safety section as a NON-NEGOTIABLE constraint. Memory entry `feedback_use_agent_teams.md` captures this for cross-session persistence.
+
+## Mechanical Enforcement (2026-03-24)
+
+Despite promotion to a rule, behavioral enforcement, AND a memory entry, the orchestrator continued to use bare Agent calls without TeamCreate (recurrence 4). Added mechanical enforcement via PreToolUse hook (`connectors/claude-code/hooks/scripts/enforce-background-agents.mjs`):
+
+- Hook now checks for BOTH `run_in_background: true` AND `team_name` on every Agent tool call
+- Missing `team_name` triggers a systemMessage warning citing RULE-00a8c660
+- Warn-only (not blocking) to allow edge cases, but ensures the orchestrator sees the violation every time

@@ -223,7 +223,7 @@ pub fn query_artifacts(
 // ---------------------------------------------------------------------------
 
 /// Check whether a node passes the optional type and status filters.
-fn passes_filters(
+pub fn passes_filters(
     node: &crate::graph::ArtifactNode,
     type_filter: Option<&str>,
     status_filter: Option<&str>,
@@ -243,7 +243,7 @@ fn passes_filters(
 }
 
 /// Case-insensitive substring match against the node's title and description.
-fn passes_search(
+pub fn passes_search(
     node: &crate::graph::ArtifactNode,
     search_filter: Option<&str>,
 ) -> bool {

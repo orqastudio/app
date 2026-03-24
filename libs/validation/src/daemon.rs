@@ -37,9 +37,9 @@ use tiny_http::{Method, Request, Response, Server, StatusCode};
 use crate::content::{extract_behavioral_messages, find_agent, find_knowledge};
 use crate::context::build_validation_context_complete;
 use crate::error::ValidationError;
-use crate::graph::{build_artifact_graph, load_project_config, ArtifactGraph};
+use crate::graph::{build_artifact_graph, load_project_config, ArtifactGraph, ArtifactNode};
 use crate::metrics::compute_traceability;
-use crate::parse::{parse_artifact, query_artifacts};
+use crate::parse::{parse_artifact, passes_filters, passes_search};
 use crate::platform::{scan_plugin_manifests, PluginContributions};
 use crate::types::{
     AppliedFix, EnforcementEvent, EnforcementResult, GraphHealth, HookContext, HookResult,
@@ -286,7 +286,11 @@ fn handle_parse(
     to_value(parsed)
 }
 
-/// `POST /query` — `{ "type": "rule", "status": "active", "id": "RULE-…" }` → `[ParsedArtifact]`.
+/// `POST /query` — `{ "type": "rule", "status": "active", "id": "RULE-…" }` → `[ArtifactNode]`.
+///
+/// Returns full `ArtifactNode` objects (including `references_out` and
+/// `references_in`) so that callers like `graph_relationships` can read
+/// relationship data without a separate lookup.
 fn handle_query(
     body: &str,
     shared: &Arc<Mutex<DaemonState>>,
@@ -298,15 +302,47 @@ fn handle_query(
     let search_filter = req.get("search").and_then(Value::as_str);
 
     let state = lock(shared)?;
-    let results = query_artifacts(
-        &state.graph,
-        &state.project_root,
-        type_filter,
-        status_filter,
-        id_filter,
-        search_filter,
-        &state.plugin_contributions.artifact_types,
-    );
+
+    // Fast path: exact ID lookup (O(1) vs O(n) scan).
+    if let Some(idf) = id_filter {
+        if let Some(node) = state.graph.nodes.get(idf) {
+            if passes_filters(node, type_filter, status_filter)
+                && passes_search(node, search_filter)
+            {
+                return to_value(vec![node.clone()]);
+            }
+        }
+    }
+
+    let mut results: Vec<ArtifactNode> = state
+        .graph
+        .nodes
+        .iter()
+        .filter(|(key, node)| {
+            // In organisation mode skip bare-ID alias nodes to avoid duplicates.
+            if key.as_str() == node.id && node.project.is_some() {
+                return false;
+            }
+            if !passes_filters(node, type_filter, status_filter) {
+                return false;
+            }
+            if let Some(idf) = id_filter {
+                if node.id != idf && !node.id.starts_with(idf) {
+                    return false;
+                }
+            }
+            passes_search(node, search_filter)
+        })
+        .map(|(_, node)| node.clone())
+        .collect();
+
+    // Stable output order: sort by artifact type then by ID.
+    results.sort_by(|a, b| {
+        a.artifact_type
+            .cmp(&b.artifact_type)
+            .then_with(|| a.id.cmp(&b.id))
+    });
+
     to_value(results)
 }
 
