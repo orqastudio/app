@@ -57,13 +57,35 @@ if [ -f "$SESSION_FILE" ]; then
   fi
 fi
 
-# ─── Checklist (always shown) ────────────────────────────────────────────────
-CHECKLIST="SESSION END:\n1. Ensure session state is written to tmp/session-state.md\n2. Commit all work\n3. No uncommitted changes left behind"
+# ─── Unpushed Commits Check ───────────────────────────────────────────────────
+UNPUSHED=""
+if cd "$PROJECT_DIR" 2>/dev/null; then
+  UPSTREAM=$(git rev-parse --abbrev-ref '@{upstream}' 2>/dev/null || true)
+  if [ -n "$UPSTREAM" ]; then
+    UNPUSHED_COUNT=$(git rev-list "$UPSTREAM"..HEAD --count 2>/dev/null || echo "0")
+    if [ "$UNPUSHED_COUNT" -gt 0 ]; then
+      UNPUSHED="STOP: You have ${UNPUSHED_COUNT} unpushed commit(s). Run 'git push' before ending the session. Every commit must be pushed."
+    fi
+  fi
+fi
 
+# ─── Checklist (always shown) ────────────────────────────────────────────────
+CHECKLIST="SESSION END:\n1. Ensure session state is written to tmp/session-state.md\n2. Commit all work\n3. Push all commits\n4. No uncommitted or unpushed changes left behind"
+
+WARNINGS=""
 if [ "$PRIORITIES_MISSING" = true ]; then
-  WARNING="STOP: You have not written next session priorities to tmp/session-state.md. Write them NOW before ending the session. Add a '## Next Session Priorities' section listing what the next session should focus on."
-  # Output as JSON systemMessage so the orchestrator sees a strong reminder
-  MSG="${WARNING}\n\n${CHECKLIST}"
+  WARNINGS="STOP: You have not written next session priorities to tmp/session-state.md. Write them NOW before ending the session. Add a '## Next Session Priorities' section listing what the next session should focus on."
+fi
+if [ -n "$UNPUSHED" ]; then
+  if [ -n "$WARNINGS" ]; then
+    WARNINGS="${WARNINGS}\n\n${UNPUSHED}"
+  else
+    WARNINGS="$UNPUSHED"
+  fi
+fi
+
+if [ -n "$WARNINGS" ]; then
+  MSG="${WARNINGS}\n\n${CHECKLIST}"
   printf '{"systemMessage":"%s"}' "$MSG"
 else
   printf '{"systemMessage":"%s"}' "$CHECKLIST"
