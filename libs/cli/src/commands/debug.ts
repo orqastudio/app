@@ -28,6 +28,7 @@ const IS_WINDOWS = platform() === "win32";
 const VITE_PORT = getPort("vite");
 const PORT_TIMEOUT_MS = 15_000;
 const POLL_INTERVAL_MS = 500;
+const WATCH_DEBOUNCE_MS = 500;
 
 const COLOURS = {
 	reset: "\x1b[0m",
@@ -356,7 +357,7 @@ async function killAll(root: string): Promise<void> {
 
 // ── Controller (foreground long-running process) ────────────────────────────
 
-async function startController(root: string): Promise<void> {
+async function startController(root: string, opts: { watch: boolean } = { watch: true }): Promise<void> {
 	const existing = readControlFile(root);
 	if (existing && processIsAlive(existing.pid)) {
 		logError(
@@ -514,7 +515,79 @@ async function startController(root: string): Promise<void> {
 
 	await startRust();
 
-	// ── 4. Signal File Handling ──────────────────────────────────────────
+	// ── 4. Rust Source File Watchers ────────────────────────────────────
+	if (opts.watch) {
+		logCtrl("Setting up Rust source file watchers...");
+		setupRustWatchers([
+			{
+				label: "daemon (validation)",
+				dir: path.join(libsDir, "validation", "src"),
+				manifest: path.join(libsDir, "validation", "Cargo.toml"),
+				restart: async () => {
+					// Restart the daemon (separate process, managed via daemon.ts)
+					try {
+						const { runDaemonCommand } = await import("./daemon.js");
+						await runDaemonCommand(["restart"]);
+					} catch {
+						logError("watch", "Daemon restart failed — may need manual restart");
+					}
+				},
+			},
+			{
+				label: "search server",
+				dir: path.join(libsDir, "search", "src"),
+				manifest: path.join(libsDir, "search", "Cargo.toml"),
+				restart: async () => {
+					killManaged(searchProc);
+					await sleep(500);
+					startSearch();
+					await sleep(2_000);
+					// MCP depends on search, restart it too
+					killManaged(mcpProc);
+					await sleep(500);
+					startMcp();
+					writeFullControlFile("running");
+				},
+			},
+			{
+				label: "MCP server",
+				dir: path.join(libsDir, "mcp-server", "src"),
+				manifest: path.join(libsDir, "mcp-server", "Cargo.toml"),
+				restart: async () => {
+					killManaged(mcpProc);
+					await sleep(500);
+					startMcp();
+					writeFullControlFile("running");
+				},
+			},
+			{
+				label: "LSP server",
+				dir: path.join(libsDir, "lsp-server", "src"),
+				manifest: path.join(libsDir, "lsp-server", "Cargo.toml"),
+				restart: async () => {
+					killManaged(lspProc);
+					await sleep(500);
+					startLsp();
+					writeFullControlFile("running");
+				},
+			},
+			{
+				label: "Tauri app",
+				dir: path.join(appDir, "backend", "src-tauri", "src"),
+				manifest: path.join(appDir, "backend", "src-tauri", "Cargo.toml"),
+				restart: async () => {
+					killManaged(rust);
+					await sleep(1_000);
+					await startRust();
+				},
+			},
+		]);
+		logSuccess("File watchers active. Rust source changes will trigger auto-rebuild.");
+	} else {
+		logCtrl("File watching disabled (--no-watch).");
+	}
+
+	// ── 5. Signal File Handling ──────────────────────────────────────────
 	const signalFile = getSignalFilePath(root);
 	let lastMtime = 0;
 
@@ -592,6 +665,7 @@ async function startController(root: string): Promise<void> {
 			logSuccess("Full restart complete.");
 		} else if (signal === "stop") {
 			logCtrl("Stop signal received — shutting down...");
+			closeAllWatchers();
 			killManaged(rust);
 			killManaged(searchProc);
 			killManaged(mcpProc);
@@ -620,6 +694,7 @@ async function startController(root: string): Promise<void> {
 	// Handle Ctrl+C / terminal close
 	function shutdown(): void {
 		logCtrl("Shutting down...");
+		closeAllWatchers();
 		fs.unwatchFile(signalFile);
 		killManaged(rust);
 		killManaged(searchProc);
@@ -648,6 +723,100 @@ function cleanupSignalFile(root: string): void {
 	} catch {
 		/* ignore */
 	}
+}
+
+// ── File Watcher (Rust source → auto-rebuild) ───────────────────────────────
+
+interface WatchTarget {
+	/** Human-readable label for logs */
+	label: string;
+	/** Directory to watch (recursive) */
+	dir: string;
+	/** Cargo.toml manifest path for targeted rebuild */
+	manifest: string;
+	/** Function to restart the affected process after a successful rebuild */
+	restart: () => Promise<void>;
+}
+
+/** Active fs.watch handles — closed on shutdown */
+const activeWatchers: fs.FSWatcher[] = [];
+
+function setupRustWatchers(targets: WatchTarget[]): void {
+	for (const target of targets) {
+		if (!fs.existsSync(target.dir)) {
+			logCtrl(`Watch: skipping ${target.label} — ${target.dir} does not exist`);
+			continue;
+		}
+
+		let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+		let rebuilding = false;
+
+		const watcher = fs.watch(target.dir, { recursive: true }, (_event, filename) => {
+			// Only care about Rust source files
+			if (!filename || !filename.endsWith(".rs")) return;
+
+			// Debounce: reset timer on each change
+			if (debounceTimer) clearTimeout(debounceTimer);
+			debounceTimer = setTimeout(() => {
+				void handleChange(target, filename ?? "unknown");
+			}, WATCH_DEBOUNCE_MS);
+		});
+
+		async function handleChange(t: WatchTarget, file: string): Promise<void> {
+			if (rebuilding) return;
+			rebuilding = true;
+
+			const relPath = path.relative(t.dir, path.join(t.dir, file));
+			logCtrl(`Detected change in ${t.label}: ${relPath} → rebuilding...`);
+
+			try {
+				await runCargoBuild(t.manifest);
+				logSuccess(`${t.label} rebuilt successfully. Restarting...`);
+				await t.restart();
+				logSuccess(`${t.label} restarted.`);
+			} catch (err: unknown) {
+				const msg = err instanceof Error ? err.message : String(err);
+				logError("watch", `Build failed for ${t.label}: ${msg}`);
+				logCtrl("Keeping old binary running. Fix the error and save again.");
+			} finally {
+				rebuilding = false;
+			}
+		}
+
+		watcher.on("error", (err) => {
+			logError("watch", `Watcher error for ${target.label}: ${err.message}`);
+		});
+
+		activeWatchers.push(watcher);
+		logCtrl(`Watching ${target.label}: ${target.dir}`);
+	}
+}
+
+function runCargoBuild(manifestPath: string): Promise<void> {
+	return new Promise((resolve, reject) => {
+		const child = spawn("cargo", ["build", "--manifest-path", manifestPath, "--color", "always"], {
+			stdio: ["ignore", "pipe", "pipe"],
+			shell: IS_WINDOWS,
+			windowsHide: true,
+		});
+
+		child.stdout?.on("data", (data: Buffer) => prefixLines("build", COLOURS.yellow, data.toString()));
+		child.stderr?.on("data", (data: Buffer) => prefixLines("build", COLOURS.yellow, data.toString()));
+
+		child.on("close", (code) => {
+			if (code === 0) resolve();
+			else reject(new Error(`cargo build exited with code ${code}`));
+		});
+
+		child.on("error", reject);
+	});
+}
+
+function closeAllWatchers(): void {
+	for (const w of activeWatchers) {
+		try { w.close(); } catch { /* ignore */ }
+	}
+	activeWatchers.length = 0;
 }
 
 // ── Subcommand: dev (spawn controller in background) ────────────────────────
