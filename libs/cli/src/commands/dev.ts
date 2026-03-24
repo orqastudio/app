@@ -1029,14 +1029,11 @@ function runNpmBuild(npmCmd: string, cwd: string): Promise<void> {
 // ── Subcommand: dev (spawn controller in background) ────────────────────────
 
 async function cmdDev(root: string): Promise<void> {
+	// Always start fresh — kill existing processes first
 	const existing = readControlFile(root);
 	if (existing && processIsAlive(existing.pid)) {
-		logSuccess(
-			`Dev environment already running (PID ${existing.pid}).`,
-		);
-		return;
+		logCtrl("Stopping existing dev environment...");
 	}
-	if (existing) removeControlFile(root);
 
 	// 0. Rebuild the CLI itself (we may be running stale code)
 	logCtrl("Rebuilding CLI...");
