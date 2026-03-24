@@ -9,9 +9,13 @@
  * so the same governance process applies via CLI as through the app.
  */
 
-// Re-export graph browsing from @orqastudio/cli
+// Re-export graph browsing from @orqastudio/cli (now daemon-backed)
 export { scanArtifactGraph, queryGraph, getGraphStats } from "@orqastudio/cli";
-export type { GraphNode, GraphQueryOptions } from "@orqastudio/cli";
+export type { GraphNode, GraphQueryOptions, GraphStats } from "@orqastudio/cli";
+
+// Re-export daemon client for direct daemon access
+export { callDaemonGraph, isDaemonRunning } from "@orqastudio/cli";
+export type { DaemonArtifactNode, DaemonArtifactRef, DaemonHealthResponse } from "@orqastudio/cli";
 
 // Plugin management re-exports
 export { installPlugin, uninstallPlugin, listInstalledPlugins } from "@orqastudio/cli";

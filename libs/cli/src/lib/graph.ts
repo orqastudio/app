@@ -1,19 +1,20 @@
 /**
  * Artifact graph scanner and query engine for CLI usage.
  *
- * Scans the `.orqa/` directory to build a lightweight in-memory graph,
- * then supports queries by type, status, relationships, and text search.
- *
- * This allows CLI users (including Claude Code) to browse the artifact graph
- * without needing the Tauri app running.
+ * Delegates to the orqa-validation daemon (localhost:10258) for all graph
+ * operations. Falls back to the `orqa-validation` binary when the daemon
+ * is unreachable. The CLI no longer reimplements scanning, type inference,
+ * query filtering, or stats computation — these all live canonically in
+ * the Rust validation crate.
  */
 
-import * as fs from "node:fs";
-import * as path from "node:path";
-import { parse as parseYaml } from "yaml";
+import {
+	callDaemonGraph,
+	type DaemonArtifactNode,
+} from "./daemon-client.js";
 
 // ---------------------------------------------------------------------------
-// Types
+// Types (preserved for callers)
 // ---------------------------------------------------------------------------
 
 export interface GraphNode {
@@ -56,118 +57,96 @@ export interface GraphStats {
 }
 
 // ---------------------------------------------------------------------------
-// Scanning
+// Conversion: daemon ArtifactNode → CLI GraphNode
+// ---------------------------------------------------------------------------
+
+function toGraphNode(node: DaemonArtifactNode): GraphNode {
+	// Merge references_out into the relationships format callers expect.
+	// Only include refs that have an explicit relationship_type (from the
+	// `relationships` frontmatter array). Field-based refs (e.g. "epic",
+	// "milestone") are still accessible via frontmatter but don't appear
+	// as typed relationships.
+	const relationships: Array<{ target: string; type: string }> = [];
+	for (const ref of node.references_out) {
+		relationships.push({
+			target: ref.target_id,
+			type: ref.relationship_type ?? ref.field,
+		});
+	}
+
+	return {
+		id: node.id,
+		type: node.artifact_type,
+		title: node.title,
+		status: node.status ?? "unknown",
+		path: node.path,
+		relationships,
+		frontmatter: node.frontmatter,
+	};
+}
+
+// ---------------------------------------------------------------------------
+// Public API (signatures preserved)
 // ---------------------------------------------------------------------------
 
 /**
  * Scan the `.orqa/` directory and build an in-memory artifact graph.
+ *
+ * Delegates to the daemon's POST /query endpoint (no filters = all nodes).
  */
-export function scanArtifactGraph(projectRoot?: string): GraphNode[] {
-	const root = projectRoot ?? process.cwd();
-	const orqaDir = path.join(root, ".orqa");
-
-	if (!fs.existsSync(orqaDir)) {
-		return [];
-	}
-
-	const nodes: GraphNode[] = [];
-	scanDirectory(orqaDir, root, nodes);
-	return nodes;
+export async function scanArtifactGraph(): Promise<GraphNode[]> {
+	const daemonNodes = await callDaemonGraph<DaemonArtifactNode[]>(
+		"POST",
+		"/query",
+		{},
+	);
+	return daemonNodes.map(toGraphNode);
 }
-
-function scanDirectory(dir: string, projectRoot: string, nodes: GraphNode[]): void {
-	for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-		const fullPath = path.join(dir, entry.name);
-
-		if (entry.isDirectory()) {
-			if (entry.name === "tmp" || entry.name === "node_modules" || entry.name.startsWith(".")) {
-				continue;
-			}
-			scanDirectory(fullPath, projectRoot, nodes);
-		} else if (entry.name.endsWith(".md") && entry.name !== "README.md") {
-			const node = parseArtifact(fullPath, projectRoot);
-			if (node) nodes.push(node);
-		}
-	}
-}
-
-function parseArtifact(filePath: string, projectRoot: string): GraphNode | null {
-	const content = fs.readFileSync(filePath, "utf-8");
-
-	// Extract and parse YAML frontmatter
-	if (!content.startsWith("---\n")) return null;
-	const fmEnd = content.indexOf("\n---", 4);
-	if (fmEnd === -1) return null;
-
-	let frontmatter: Record<string, unknown>;
-	try {
-		frontmatter = parseYaml(content.slice(4, fmEnd)) as Record<string, unknown>;
-	} catch {
-		return null;
-	}
-	if (!frontmatter.id) return null;
-
-	// Extract title from first heading after frontmatter
-	const afterFm = content.slice(fmEnd + 5);
-	const titleMatch = afterFm.match(/^#\s+(.+)/m);
-	const title = (frontmatter.title as string) ?? titleMatch?.[1] ?? frontmatter.id as string;
-
-	// Parse relationships
-	const relationships: Array<{ target: string; type: string }> = [];
-	if (Array.isArray(frontmatter.relationships)) {
-		for (const rel of frontmatter.relationships) {
-			if (typeof rel === "object" && rel !== null && "target" in rel && "type" in rel) {
-				relationships.push({
-					target: String(rel.target),
-					type: String(rel.type),
-				});
-			}
-		}
-	}
-
-	return {
-		id: String(frontmatter.id),
-		type: String(frontmatter.type ?? inferType(filePath)),
-		title: String(title),
-		status: String(frontmatter.status ?? "unknown"),
-		path: path.relative(projectRoot, filePath).replace(/\\/g, "/"),
-		relationships,
-		frontmatter,
-	};
-}
-
-function inferType(filePath: string): string {
-	const parts = filePath.replace(/\\/g, "/").split("/");
-	// Look for type clues in the path: .orqa/delivery/epics/ → "epic"
-	for (const part of parts) {
-		const singular = part.replace(/s$/, "");
-		if (["epic", "task", "milestone", "idea", "decision", "rule", "lesson", "knowledge", "agent", "pillar", "persona", "research", "wireframe"].includes(singular)) {
-			return singular;
-		}
-	}
-	return "artifact";
-}
-
-// ---------------------------------------------------------------------------
-// Querying
-// ---------------------------------------------------------------------------
 
 /**
  * Query the artifact graph with filters.
+ *
+ * Delegates to the daemon's POST /query endpoint with type/status/search
+ * filters. Post-filters locally for relatedTo, relationshipType, and limit
+ * since the daemon doesn't support those directly.
  */
-export function queryGraph(
-	nodes: GraphNode[],
-	options: GraphQueryOptions,
-): GraphNode[] {
-	let results = [...nodes];
+export async function queryGraph(
+	_nodesOrOptions: GraphNode[] | GraphQueryOptions,
+	optionsArg?: GraphQueryOptions,
+): Promise<GraphNode[]> {
+	// Support both old signature (nodes, options) and direct (options) call.
+	const options: GraphQueryOptions =
+		optionsArg ?? (_nodesOrOptions as GraphQueryOptions);
 
+	// Build daemon query body with the filters it supports natively.
+	const body: Record<string, unknown> = {};
 	if (options.type) {
-		const types = Array.isArray(options.type) ? options.type : [options.type];
+		// Daemon only accepts a single type string, not an array.
+		body.type = Array.isArray(options.type) ? options.type[0] : options.type;
+	}
+	if (options.status) {
+		body.status = Array.isArray(options.status) ? options.status[0] : options.status;
+	}
+	if (options.search) {
+		body.search = options.search;
+	}
+
+	const daemonNodes = await callDaemonGraph<DaemonArtifactNode[]>(
+		"POST",
+		"/query",
+		body,
+	);
+
+	let results = daemonNodes.map(toGraphNode);
+
+	// Apply client-side filters the daemon doesn't support.
+	if (options.type && Array.isArray(options.type) && options.type.length > 1) {
+		const types = options.type;
 		results = results.filter((n) => types.includes(n.type));
 	}
 
-	if (options.status) {
-		const statuses = Array.isArray(options.status) ? options.status : [options.status];
+	if (options.status && Array.isArray(options.status) && options.status.length > 1) {
+		const statuses = options.status;
 		results = results.filter((n) => statuses.includes(n.status));
 	}
 
@@ -185,15 +164,6 @@ export function queryGraph(
 		);
 	}
 
-	if (options.search) {
-		const lower = options.search.toLowerCase();
-		results = results.filter(
-			(n) =>
-				n.title.toLowerCase().includes(lower) ||
-				n.id.toLowerCase().includes(lower),
-		);
-	}
-
 	if (options.limit) {
 		results = results.slice(0, options.limit);
 	}
@@ -203,8 +173,23 @@ export function queryGraph(
 
 /**
  * Get aggregate statistics for the graph.
+ *
+ * Fetches all nodes from the daemon and computes per-type/per-status
+ * breakdowns client-side, since the daemon's /health endpoint only
+ * provides total counts.
  */
-export function getGraphStats(nodes: GraphNode[]): GraphStats {
+export async function getGraphStats(_nodes?: GraphNode[]): Promise<GraphStats> {
+	// If caller already has nodes, compute locally to avoid extra daemon call.
+	if (_nodes && _nodes.length > 0) {
+		return computeStatsLocally(_nodes);
+	}
+
+	// Otherwise fetch all nodes for full breakdown.
+	const nodes = await scanArtifactGraph();
+	return computeStatsLocally(nodes);
+}
+
+function computeStatsLocally(nodes: GraphNode[]): GraphStats {
 	const byType: Record<string, number> = {};
 	const byStatus: Record<string, number> = {};
 	let totalRelationships = 0;

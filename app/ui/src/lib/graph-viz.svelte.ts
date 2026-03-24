@@ -2,15 +2,13 @@
  * App-level GraphVisualiser singleton.
  *
  * Created once, wired to the SDK's graph data via onRefresh().
- * Components import { graphViz } to access topology analysis and
- * visualization elements.
+ * Components import { graphViz } to access visualization elements.
  */
 
 import { GraphVisualiser } from "@orqastudio/graph-visualiser";
 import { getStores } from "@orqastudio/sdk";
 
 let _instance: GraphVisualiser | null = null;
-let _unlistenRefresh: (() => void) | null = null;
 
 /**
  * Initialize the graph visualiser and wire it to the SDK's graph refresh.

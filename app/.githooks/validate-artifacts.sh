@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # Artifact schema validation for pre-commit hook.
-# Delegates to validate-schema.mjs which reads JSON Schema files
-# from each artifact directory registered in .orqa/project.json.
+# Delegates to validate-schema.mjs which calls the orqa-validation daemon.
 #
 # Passes through all arguments including --warn-rules=RULE-032,...
 

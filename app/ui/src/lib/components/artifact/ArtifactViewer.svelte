@@ -1,7 +1,6 @@
 <script lang="ts">
 	import AcceptanceCriteria from "./AcceptanceCriteria.svelte";
 	import Breadcrumb from "./Breadcrumb.svelte";
-	import ChainTrace from "./ChainTrace.svelte";
 	import FrontmatterHeader from "./FrontmatterHeader.svelte";
 	import HookViewer from "./HookViewer.svelte";
 	import PipelineStepper from "./PipelineStepper.svelte";
@@ -276,7 +275,6 @@
 		{#if currentPath && !isReadme}
 			<ReferencesPanel artifactPath={currentPath} />
 			{#if graphNode?.id}
-				<ChainTrace artifactId={graphNode.id} />
 				<TraceabilityPanel
 					result={traceabilityResult}
 					loading={traceabilityLoading}

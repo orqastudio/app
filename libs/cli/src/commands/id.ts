@@ -7,9 +7,12 @@
  */
 
 import { randomBytes } from "node:crypto";
-import { readFileSync, writeFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
+import {
+	parseFrontmatterFromContent,
+	writeFrontmatter,
+} from "../lib/frontmatter.js";
 
 const USAGE = `
 Usage: orqa id <subcommand> [options]
@@ -31,30 +34,6 @@ Options:
 function generateId(prefix: string): string {
 	const hex = randomBytes(4).toString("hex");
 	return `${prefix.toUpperCase()}-${hex}`;
-}
-
-/**
- * Parse frontmatter from content. Returns [yaml, body] or null.
- */
-function parseFrontmatter(content: string): [Record<string, unknown>, string] | null {
-	if (!content.startsWith("---\n")) return null;
-	const fmEnd = content.indexOf("\n---", 4);
-	if (fmEnd === -1) return null;
-	try {
-		const fm = parseYaml(content.substring(4, fmEnd)) as Record<string, unknown>;
-		if (!fm || typeof fm !== "object") return null;
-		return [fm, content.substring(fmEnd + 4)];
-	} catch {
-		return null;
-	}
-}
-
-/**
- * Write frontmatter back to a file using proper YAML serialisation.
- */
-function writeFrontmatter(filePath: string, fm: Record<string, unknown>, body: string): void {
-	const yamlText = stringifyYaml(fm, { lineWidth: 0 }).trimEnd();
-	writeFileSync(filePath, `---\n${yamlText}\n---${body}`);
 }
 
 /**
@@ -94,7 +73,7 @@ function checkDuplicates(projectRoot: string, autoFix: boolean): void {
 
 	for (const file of allFiles) {
 		const content = readFileSync(file, "utf-8");
-		const parsed = parseFrontmatter(content);
+		const parsed = parseFrontmatterFromContent(content);
 		if (!parsed) continue;
 		const [fm] = parsed;
 		const id = typeof fm.id === "string" ? fm.id.trim() : "";
@@ -130,7 +109,7 @@ function checkDuplicates(projectRoot: string, autoFix: boolean): void {
 			for (let i = 1; i < files.length; i++) {
 				const file = files[i];
 				const content = readFileSync(file, "utf-8");
-				const parsed = parseFrontmatter(content);
+				const parsed = parseFrontmatterFromContent(content);
 				if (!parsed) continue;
 
 				const [fm, body] = parsed;
@@ -179,7 +158,7 @@ function migrateId(projectRoot: string, oldId: string, newId: string): void {
 	let sourceFile: string | null = null;
 	for (const file of allFiles) {
 		const content = readFileSync(file, "utf-8");
-		const parsed = parseFrontmatter(content);
+		const parsed = parseFrontmatterFromContent(content);
 		if (!parsed) continue;
 		const [fm] = parsed;
 		if (fm.id === oldId) {
@@ -195,7 +174,7 @@ function migrateId(projectRoot: string, oldId: string, newId: string): void {
 
 	// Update the source artifact's ID
 	const content = readFileSync(sourceFile, "utf-8");
-	const parsed = parseFrontmatter(content);
+	const parsed = parseFrontmatterFromContent(content);
 	if (!parsed) {
 		console.error(`Failed to parse frontmatter in ${sourceFile}`);
 		process.exit(1);
@@ -226,7 +205,7 @@ function updateReferences(allFiles: string[], oldId: string, newId: string): num
 		// Quick check: skip files that don't contain the old ID at all
 		if (!content.includes(oldId)) continue;
 
-		const parsed = parseFrontmatter(content);
+		const parsed = parseFrontmatterFromContent(content);
 		if (!parsed) continue;
 
 		const [fm, body] = parsed;

@@ -8,15 +8,19 @@ import { relative } from "path";
 import { readInput, callDaemon, outputAllow } from "./shared.js";
 import { logTelemetry } from "./telemetry.js";
 
-interface ParseFinding {
-  severity: string;
-  message: string;
+interface ValidationResult {
+  valid: boolean;
+  errors: string[];
 }
 
 interface ParsedArtifact {
-  findings?: ParseFinding[];
-  errors?: number;
-  warnings?: number;
+  id: string;
+  type: string;
+  status?: string;
+  title: string;
+  frontmatter: Record<string, unknown>;
+  content: string;
+  validation: ValidationResult;
 }
 
 async function main(): Promise<void> {
@@ -52,29 +56,22 @@ async function main(): Promise<void> {
     outputAllow();
   }
 
-  const findings = parsed.findings ?? [];
-  const errorFindings = findings.filter((f) => f.severity === "error" || f.severity === "Error");
-  const warnFindings = findings.filter((f) => f.severity !== "error" && f.severity !== "Error");
+  const validation = parsed.validation;
+  const errors = validation.errors ?? [];
 
   logTelemetry("validate-artifact", "PostToolUse", startTime,
-    findings.length === 0 ? "valid" : "invalid",
-    { file: relPath, errors_found: errorFindings.length, warnings_issued: warnFindings.length },
+    validation.valid ? "valid" : "invalid",
+    { file: relPath, errors_found: errors.length },
     projectDir,
   );
 
-  if (findings.length === 0) {
+  if (validation.valid && errors.length === 0) {
     outputAllow();
   }
 
   const lines = [`ARTIFACT VALIDATION — ${relPath}:`];
-  if (errorFindings.length > 0) {
-    lines.push("  Errors (must fix before committing):");
-    for (const f of errorFindings) lines.push(`    - ${f.message}`);
-  }
-  if (warnFindings.length > 0) {
-    lines.push("  Warnings:");
-    for (const f of warnFindings) lines.push(`    - ${f.message}`);
-  }
+  lines.push("  Errors (must fix before committing):");
+  for (const e of errors) lines.push(`    - ${e}`);
   lines.push("");
   lines.push("You MUST fix all errors before committing. Do NOT commit with validation errors. Run `orqa enforce --fix` for auto-remediation.");
 

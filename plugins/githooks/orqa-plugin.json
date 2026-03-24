@@ -55,7 +55,7 @@
       "Relationship type fields in artifact frontmatter MUST use types defined in plugin manifests (provides.relationships[].key or .inverse). Invalid types are rejected by pre-commit hook and PreAction hook."
     ],
     "session_reminders": [
-      "Relationship types are schema-driven — valid types come from plugin manifests (provides.relationships[]). Run `node .githooks/validate-relationships.mjs --all` to check all artifacts."
+      "Relationship types are schema-driven — valid types come from core.json and plugin manifests. Validation is handled by the orqa-validation daemon."
     ],
     "mode_templates": {}
   }

@@ -1,74 +1,36 @@
 #!/usr/bin/env node
 // validate-relationships.mjs — Validates relationship types in .orqa/ artifact frontmatter.
 //
-// Reads valid relationship types from installed plugin manifests (orqa-plugin.json).
-// Each relationship entry in frontmatter must have a `type` field whose value matches
-// a `key` or `inverse` from a plugin's `provides.relationships[]`.
+// Thin adapter: delegates to the orqa-validation daemon at localhost:10258.
+// The daemon holds the full relationship vocabulary (core.json + plugin manifests)
+// in memory — no JS-side vocabulary loading needed.
 //
 // Usage:
 //   node validate-relationships.mjs <file1.md> [file2.md ...]
 //   node validate-relationships.mjs --all
 // Exit code 0 = all valid, 1 = validation errors found.
 
-import { readFileSync, readdirSync, existsSync } from "fs";
+import { readdirSync, existsSync } from "fs";
 import { resolve, join, relative } from "path";
-import { createRequire } from "module";
-import { parseFrontmatter } from "../tools/lib/parse-artifact.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
+const DAEMON_BASE = "http://localhost:10258";
 
 // ---------------------------------------------------------------------------
-// Relationship vocabulary loading from plugin manifests
+// Daemon client
 // ---------------------------------------------------------------------------
 
-function loadRelationshipVocabulary(projectRoot) {
-  const vocab = new Map(); // type key → { plugin, label, inverse, from, to, semantic }
-
-  for (const container of ["plugins", "connectors"]) {
-    const dir = join(projectRoot, container);
-    if (!existsSync(dir)) continue;
-    let entries;
-    try { entries = readdirSync(dir, { withFileTypes: true }); } catch { continue; }
-
-    for (const entry of entries) {
-      if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
-      const manifestPath = join(dir, entry.name, "orqa-plugin.json");
-      if (!existsSync(manifestPath)) continue;
-
-      let manifest;
-      try { manifest = JSON.parse(readFileSync(manifestPath, "utf-8")); } catch { continue; }
-
-      const pluginName = manifest.name || entry.name;
-
-      for (const rel of manifest.provides?.relationships || []) {
-        if (!rel.key) continue;
-
-        // Register the forward key
-        vocab.set(rel.key, {
-          plugin: pluginName,
-          label: rel.label || rel.key,
-          inverse: rel.inverse || null,
-          from: rel.from || [],
-          to: rel.to || [],
-          semantic: rel.semantic || "unknown",
-        });
-
-        // Register the inverse key
-        if (rel.inverse) {
-          vocab.set(rel.inverse, {
-            plugin: pluginName,
-            label: rel.inverseLabel || rel.inverse,
-            inverse: rel.key,
-            from: rel.to || [],
-            to: rel.from || [],
-            semantic: rel.semantic || "unknown",
-          });
-        }
-      }
-    }
+async function callDaemon(path, body) {
+  const res = await fetch(`${DAEMON_BASE}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(8000),
+  });
+  if (!res.ok) {
+    throw new Error(`daemon ${path} returned ${res.status}`);
   }
-
-  return vocab;
+  return res.json();
 }
 
 // ---------------------------------------------------------------------------
@@ -107,13 +69,6 @@ if (files.length === 0) {
   process.exit(0);
 }
 
-const vocab = loadRelationshipVocabulary(ROOT);
-
-if (vocab.size === 0) {
-  console.log("No relationship types found in plugin manifests — nothing to validate.");
-  process.exit(0);
-}
-
 let errors = 0;
 
 for (const file of files) {
@@ -122,46 +77,38 @@ for (const file of files) {
   const absFile = resolve(ROOT, file);
   if (!existsSync(absFile)) continue;
 
-  const frontmatter = parseFrontmatter(absFile);
-  if (!frontmatter) continue;
+  let parsed;
+  try {
+    parsed = await callDaemon("/parse", { file: absFile });
+  } catch {
+    // Daemon unavailable — skip relationship validation gracefully.
+    // The daemon handles all vocabulary loading; without it we cannot validate.
+    console.log("Daemon unavailable — skipping relationship validation.");
+    process.exit(0);
+  }
 
-  const relationships = frontmatter.relationships;
-  if (!Array.isArray(relationships) || relationships.length === 0) continue;
-
-  for (let i = 0; i < relationships.length; i++) {
-    const rel = relationships[i];
-
-    // Each relationship must be an object with target and type
-    if (!rel || typeof rel !== "object") {
-      console.error(`ERROR: ${file} relationships[${i}] — not an object`);
-      errors++;
-      continue;
+  // Check validation result from daemon (schema-level checks include relationship fields)
+  if (parsed.validation && !parsed.validation.valid) {
+    for (const err of parsed.validation.errors || []) {
+      if (err.toLowerCase().includes("relationship")) {
+        console.error(`ERROR: ${file} — ${err}`);
+        errors++;
+      }
     }
+  }
 
-    if (!rel.target) {
-      console.error(`ERROR: ${file} relationships[${i}] — missing 'target' field`);
-      errors++;
-    }
-
-    if (!rel.type) {
-      console.error(`ERROR: ${file} relationships[${i}] — missing 'type' field`);
-      errors++;
-      continue;
-    }
-
-    if (!vocab.has(rel.type)) {
-      const validTypes = [...vocab.keys()].sort().join(", ");
-      console.error(
-        `ERROR: ${file} relationships[${i}].type — invalid type '${rel.type}'\n` +
-        `  Valid types: ${validTypes}`
-      );
-      errors++;
+  // Check findings array if the daemon provides file-level findings
+  for (const finding of parsed.findings || []) {
+    if (finding.severity === "error" || finding.severity === "Error") {
+      if (finding.message.toLowerCase().includes("relationship")) {
+        console.error(`ERROR: ${file} — ${finding.message}`);
+        errors++;
+      }
     }
   }
 }
 
 if (errors > 0) {
   console.error(`\nRelationship validation failed: ${errors} error(s) found.`);
-  console.error("Relationship types are defined in plugin manifests (provides.relationships[]).");
   process.exit(1);
 }

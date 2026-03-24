@@ -3,12 +3,12 @@
  *
  * orqa graph [options]
  *
- * This is key for the Claude Code integration: it allows browsing
- * the full artifact graph without the Tauri app running.
+ * Delegates to the orqa-validation daemon for all graph operations.
+ * Falls back to the orqa-validation binary when the daemon is unreachable.
  */
 
 import { scanArtifactGraph, queryGraph, getGraphStats } from "../lib/graph.js";
-import type { GraphNode, GraphQueryOptions } from "../lib/graph.js";
+import type { GraphNode, GraphQueryOptions, GraphStats } from "../lib/graph.js";
 
 const USAGE = `
 Usage: orqa graph [options]
@@ -35,7 +35,7 @@ export async function runGraphCommand(args: string[]): Promise<void> {
 		return;
 	}
 
-	const nodes = scanArtifactGraph();
+	const nodes = await scanArtifactGraph();
 
 	if (nodes.length === 0) {
 		console.log("No artifacts found. Is there a .orqa/ directory in the current project?");
@@ -44,7 +44,7 @@ export async function runGraphCommand(args: string[]): Promise<void> {
 
 	// --stats mode
 	if (args.includes("--stats")) {
-		const stats = getGraphStats(nodes);
+		const stats = await getGraphStats(nodes);
 		if (args.includes("--json")) {
 			console.log(JSON.stringify(stats, null, 2));
 		} else {
@@ -91,18 +91,18 @@ export async function runGraphCommand(args: string[]): Promise<void> {
 	const limitIdx = args.indexOf("--limit");
 	options.limit = limitIdx >= 0 ? parseInt(args[limitIdx + 1], 10) : 50;
 
-	const results = queryGraph(nodes, options);
+	const results = await queryGraph(nodes, options);
 
 	if (args.includes("--json")) {
 		console.log(JSON.stringify(results, null, 2));
 	} else if (args.includes("--tree")) {
-		printTree(results, nodes);
+		printTree(results);
 	} else {
 		printResults(results);
 	}
 }
 
-function printStats(stats: ReturnType<typeof getGraphStats>): void {
+function printStats(stats: GraphStats): void {
 	console.log(`Artifact Graph Statistics\n`);
 	console.log(`  Total artifacts: ${stats.totalNodes}`);
 	console.log(`  Total relationships: ${stats.totalRelationships}\n`);
@@ -179,7 +179,7 @@ function printArtifactDetail(node: GraphNode, allNodes: GraphNode[]): void {
 	console.log();
 }
 
-function printTree(results: GraphNode[], allNodes: GraphNode[]): void {
+function printTree(results: GraphNode[]): void {
 	// Build delivery hierarchy: milestone → epic → task
 	const milestones = results.filter((n) => n.type === "milestone");
 	const epics = results.filter((n) => n.type === "epic");

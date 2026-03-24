@@ -22,8 +22,9 @@ import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { randomBytes } from "node:crypto";
-import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
+import { stringify as stringifyYaml } from "yaml";
 import { getRoot } from "../lib/root.js";
+import { parseFrontmatterFromFile } from "../lib/frontmatter.js";
 
 // ─── Full audit ───────────────────────────────────────────────────────────────
 
@@ -94,26 +95,7 @@ interface EscalationFinding {
 	description: string;
 }
 
-// ─── Frontmatter parsing ──────────────────────────────────────────────────────
-
-function parseFrontmatter(filePath: string): Record<string, unknown> | null {
-	let content: string;
-	try {
-		content = readFileSync(filePath, "utf-8");
-	} catch {
-		return null;
-	}
-	if (!content.startsWith("---\n")) return null;
-	const fmEnd = content.indexOf("\n---", 4);
-	if (fmEnd === -1) return null;
-	try {
-		const fm = parseYaml(content.substring(4, fmEnd)) as Record<string, unknown>;
-		if (!fm || typeof fm !== "object") return null;
-		return fm;
-	} catch {
-		return null;
-	}
-}
+// ─── Frontmatter helpers ─────────────────────────────────────────────────────
 
 function extractRelationships(fm: Record<string, unknown>): ArtifactRelationship[] {
 	const raw = fm.relationships;
@@ -126,7 +108,7 @@ function extractRelationships(fm: Record<string, unknown>): ArtifactRelationship
 }
 
 function parseLessonFrontmatter(filePath: string): LessonFrontmatter | null {
-	const fm = parseFrontmatter(filePath);
+	const fm = parseFrontmatterFromFile(filePath);
 	if (!fm) return null;
 	return {
 		id: typeof fm.id === "string" ? fm.id : "",
@@ -138,7 +120,7 @@ function parseLessonFrontmatter(filePath: string): LessonFrontmatter | null {
 }
 
 function parseRuleFrontmatter(filePath: string): RuleFrontmatter | null {
-	const fm = parseFrontmatter(filePath);
+	const fm = parseFrontmatterFromFile(filePath);
 	if (!fm) return null;
 	return {
 		id: typeof fm.id === "string" ? fm.id : "",
@@ -265,7 +247,7 @@ function findActiveEpic(projectDir: string): string | null {
 
 	for (const entry of entries) {
 		if (!entry.endsWith(".md")) continue;
-		const fm = parseFrontmatter(join(epicsDir, entry));
+		const fm = parseFrontmatterFromFile(join(epicsDir, entry));
 		if (fm?.status === "active" && typeof fm.id === "string") {
 			return fm.id;
 		}
