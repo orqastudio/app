@@ -20,8 +20,8 @@ export function initializeGraphViz(): GraphVisualiser {
     const { artifactGraphSDK } = getStores();
     _instance = new GraphVisualiser();
 
-    // Sync on every graph refresh
-    _unlistenRefresh = artifactGraphSDK.onRefresh(() => {
+    // Sync on every graph refresh (return value is unlisten fn — kept alive by closure)
+    artifactGraphSDK.onRefresh(() => {
         _instance!.update(artifactGraphSDK.graph);
     });
 
