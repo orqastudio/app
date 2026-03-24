@@ -6,9 +6,9 @@ status: captured
 description: Comprehensive review of the entire codebase against documented coding standards (RULE-b49142be). Enforcement mechanisms have been unstable during the monorepo migration and plugin framework overhaul — standards may have drifted.
 created: 2026-03-23
 relationships:
-  - target: RULE-b49142be
-    type: enforces
-    rationale: Verify the coding standards rule is actually being followed
+  - target: PERSONA-cda6edd6
+    type: benefits
+    rationale: Serves the primary developer persona
 ---
 
 ## Motivation

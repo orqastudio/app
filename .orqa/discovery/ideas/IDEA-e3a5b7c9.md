@@ -6,6 +6,9 @@ status: captured
 description: The app's status bar 'connected' indicator should represent live connectivity to the daemon (orqa-validation HTTP server), not just a static label. Show connected/disconnected/degraded based on periodic health checks.
 created: 2026-03-23
 relationships:
+  - target: PERSONA-cda6edd6
+    type: benefits
+    rationale: "Serves the primary developer persona"
   - target: PILLAR-569581e0
     type: grounded
     rationale: Clarity Through Structure — making system health visible

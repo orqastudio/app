@@ -8,27 +8,18 @@ created: 2026-03-23
 updated: 2026-03-23
 category: infrastructure
 relationships:
-  - target: IDEA-09979c9d
-    type: informs
-    rationale: orqa git CLI design depends on repo structure decision
-  - target: IDEA-7c3d9f2e
-    type: informs
-    rationale: Forgejo hosting is the assumed target platform
-  - target: IDEA-f3a08e7a
-    type: informs
-    rationale: Git integration scope depends on repo structure
   - target: AD-c6abc8e6
     type: informs
     rationale: May produce a formal AD on repo structure
   - target: AD-b7e3f1a2
-    type: produces
+    type: informs
     rationale: Research led to the Universal Plugin Capability Model decision
   - target: EPIC-d4a8c1e5
-    type: produces
+    type: guides
     rationale: Research identified plugin framework as prerequisite work
   - target: EPIC-f2b9e7d3
-    type: produces
-    rationale: Research produced the Git Infrastructure epic
+    type: guides
+    rationale: Research guided the Git Infrastructure epic
 ---
 
 ## Research Questions

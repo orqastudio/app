@@ -1,0 +1,56 @@
+---
+id: TASK-b8d9e0f1
+type: task
+title: "Sources of truth audit"
+description: "Find and eliminate duplicate data sources across the codebase — multiple implementations of the same functionality, superseded code that was not removed, and divergent sources for the same data."
+status: ready
+created: 2026-03-24
+updated: 2026-03-24
+acceptance:
+  - "All duplicate implementations identified with a clear recommendation: keep one, remove the other"
+  - "Superseded implementations that were not removed are identified and removed"
+  - "For each data concept, exactly one authoritative source is documented"
+  - "Known duplicate: Cytoscape SDK graph health vs Rust backend graph health — resolved (Rust is authoritative)"
+  - "make check passes after all removals"
+  - "No regressions in functionality after removing duplicate code"
+relationships:
+  - target: EPIC-b2f0399e
+    type: delivers
+  - target: TASK-c3e4f5a6
+    type: related-to
+---
+
+## What
+
+Audit the codebase for duplicate data sources — places where the same concept is computed, stored, or served by multiple implementations. Duplicates cause inconsistency when one is updated but not the other, and they waste maintenance effort.
+
+This is distinct from the dead code removal task (TASK-c3e4f5a6) which finds completely unused code. This task finds code that IS used but duplicates functionality that should have a single source of truth.
+
+## Known Duplicates
+
+| Concept | Source A | Source B | Resolution |
+|---------|----------|----------|------------|
+| Graph health analysis | Rust backend (`graph_health` command) | Cytoscape SDK (`computeGraphHealth`) | Rust is authoritative. Cytoscape code is dead — see [TASK-a7c3d1e9](TASK-a7c3d1e9) |
+
+## How
+
+1. **Map data concepts**: Identify the key data concepts in the system (graph health, artifact validation, search indexing, session state, etc.)
+2. **For each concept, trace all sources**: Use `search_semantic` and `search_regex` to find all implementations that produce, compute, or serve that data
+3. **Identify duplicates**: Where two or more implementations exist for the same concept
+4. **Determine authoritative source**: Based on architecture decisions, which is the canonical implementation?
+5. **Remove or consolidate**: Either remove the non-authoritative source or consolidate into a single implementation
+6. **Verify no regressions**: `make check` passes, and all consumers of the removed source are updated to use the authoritative one
+
+### Patterns to Look For
+
+- Same function name in multiple modules (Rust and TypeScript doing the same computation)
+- Frontend reimplementing logic that the backend already provides
+- SDK/library code that duplicates app-level code
+- Config or state read from multiple locations
+- Validation logic in both frontend and backend that could diverge
+
+## Verification
+
+1. Findings report lists every duplicate found with resolution
+2. All removals verified: consumers updated, `make check` passes
+3. No data concept has more than one authoritative source after the audit

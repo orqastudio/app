@@ -2,7 +2,7 @@
 id: TASK-f6b8d0ec
 type: task
 name: "Implement extends strategy in content sync"
-status: done
+status: completed
 description: Add a new content strategy type 'extends' alongside the existing 'copy' strategy. For extends, orqa install sets up an extends reference in the target config file rather than copying the source. The base config remains in the plugin.
 relationships:
   - target: EPIC-d4a8c1e5

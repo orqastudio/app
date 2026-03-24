@@ -2,7 +2,7 @@
 id: TASK-b2d4f6a8
 type: task
 name: "Three-way diff comparison in diffPluginContent()"
-status: done
+status: completed
 description: Update diffPluginContent() to use stored hashes for three-way comparison. Detect plugin-updated, user-modified, conflict, and clean states. Update orqa plugin diff output to show three-way status.
 relationships:
   - target: EPIC-d4a8c1e5

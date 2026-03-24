@@ -6,12 +6,9 @@ status: captured
 description: Future enhancements for the self-hosted git platform covering branding, community engagement for non-technical users, contribution workflow design, and authentication strategy.
 created: 2026-03-23
 relationships:
-  - target: EPIC-f2b9e7d3
-    type: delivers
-    rationale: Built on the git infrastructure established in this epic
-  - target: IDEA-7c3d9f2e
-    type: informs
-    rationale: Forgejo cloud hosting vision — this idea captures near-term evolution
+  - target: PERSONA-cda6edd6
+    type: benefits
+    rationale: Serves the primary developer persona
 ---
 
 ## 1. Custom Theming

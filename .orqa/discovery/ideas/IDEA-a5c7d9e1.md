@@ -6,6 +6,9 @@ status: exploring
 description: Centralised build commands that use git diffs from the local server to determine what needs rebuilding. Only rebuild affected packages instead of everything.
 created: 2026-03-23
 relationships:
+  - target: PERSONA-cda6edd6
+    type: benefits
+    rationale: "Serves the primary developer persona"
   - target: PILLAR-569581e0
     type: grounded
     rationale: Structure — centralised build management instead of manual per-package rebuilds

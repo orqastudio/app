@@ -3,7 +3,7 @@ id: "EPIC-dbbbb5ac"
 type: epic
 title: "Graph analysis — Cytoscape algorithms powering governance insights"
 description: "Use Cytoscape.js graph analysis algorithms to power dashboard health scoring, dependency chain tracing, impact analysis, knowledge gap detection, and artifact importance ranking. Replaces file-based integrity checks with graph-theoretic analysis."
-status: "ready"
+status: "surpassed"
 priority: "P1"
 scoring:
   impact: 5
@@ -11,7 +11,7 @@ scoring:
   complexity: 5
   dependencies: 3
 created: "2026-03-15"
-updated: "2026-03-15"
+updated: "2026-03-24"
 deadline: null
 horizon: "active"
 relationships:
@@ -32,6 +32,8 @@ relationships:
   - target: "TASK-75917a42"
     type: "delivered-by"
   - target: "TASK-0190fabe"
+    type: "delivered-by"
+  - target: "TASK-a7c3d1e9"
     type: "delivered-by"
 ---
 ## Context

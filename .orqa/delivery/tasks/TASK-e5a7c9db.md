@@ -2,7 +2,7 @@
 id: TASK-e5a7c9db
 type: task
 name: "Reconcile EPIC-d4a8c1e5"
-status: in-progress
+status: active
 description: Standing reconciliation task — keep the epic body accurate as tasks are added, completed, or scope changes.
 relationships:
   - target: EPIC-d4a8c1e5

@@ -12,23 +12,11 @@ relationships:
   - target: MS-654badde
     type: fulfils
     rationale: Reliable git infrastructure is foundational to dogfooding
-  - target: IDEA-09979c9d
-    type: addresses
-    rationale: orqa git CLI — unified git operations
-  - target: IDEA-7c3d9f2e
-    type: addresses
-    rationale: Forgejo-based git hosting
-  - target: IDEA-f3a08e7a
-    type: addresses
-    rationale: Git integration and workspace awareness
-  - target: IDEA-5c25ac99
-    type: addresses
-    rationale: Git hosting as cloud sync
   - target: AD-c6abc8e6
     type: implements
     rationale: Organisation-mode multi-project architecture — now with concrete repo structure
   - target: AD-b7e3f1a2
-    type: depends-on
+    type: implements
     rationale: Universal plugin capability model determines how plugins are consumed in the monorepo
 ---
 

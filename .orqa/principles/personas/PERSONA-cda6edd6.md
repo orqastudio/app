@@ -213,5 +213,9 @@ relationships:
     type: benefited-by
   - target: IDEA-a93e9261
     type: benefited-by
+  - target: IDEA-e7a4b31f
+    type: benefited-by
+  - target: IDEA-e3a103e8
+    type: benefited-by
 ---
 Primary persona. Senior product manager or tech lead who manages a product or team using AI-assisted development. Their job is to turn ambiguity into clarity — taking complex situations and producing structured understanding that a team can execute against. See the full personas document for details.

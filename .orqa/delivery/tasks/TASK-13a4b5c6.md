@@ -2,7 +2,7 @@
 id: TASK-13a4b5c6
 type: task
 name: "Remove All Projects dropdown — crashes app, org model deprecated"
-status: in-progress
+status: active
 description: The All Projects dropdown in the toolbar crashes the app. The multi-project organisation model from the submodule era is no longer appropriate. Organisations will be driven by the git hosting platform in the future. Remove the current implementation.
 relationships:
   - target: EPIC-f2b9e7d3

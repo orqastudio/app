@@ -12,15 +12,6 @@ relationships:
   - target: MS-654badde
     type: fulfils
     rationale: Plugin framework is foundational to dogfooding — the dev environment runs on plugins
-  - target: IDEA-09979c9d
-    type: addresses
-    rationale: orqa git depends on a solid plugin consumption model
-  - target: IDEA-7c3d9f2e
-    type: addresses
-    rationale: Forgejo hosting depends on how plugins are distributed
-  - target: IDEA-c4f10c20
-    type: addresses
-    rationale: Extends the completed package ecosystem idea with the capability model
 ---
 
 ## Problem

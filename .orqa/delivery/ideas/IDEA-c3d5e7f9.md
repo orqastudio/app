@@ -7,6 +7,10 @@ description: "Investigate upgrading ort from 2.0.0-rc.11 to rc.12 (ONNX Runtime 
 pillars: []
 created: 2026-03-23
 updated: 2026-03-23
+relationships:
+  - target: PERSONA-cda6edd6
+    type: benefits
+    rationale: "Serves the primary developer persona"
 ---
 
 ## Context

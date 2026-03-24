@@ -130,7 +130,7 @@ The graph is lying — enforcement chains exist in prose but not in structured r
 
 **1a. AD → Rule enforcement edges**: For each of the 37 accepted ADs without enforcement relationships, determine:
 - Does a rule enforce this AD? If yes, add `enforced-by: RULE-NNN` relationship to the AD and `enforces: AD-NNN` to the rule
-- Does a skill practice this AD? If yes, add `practiced-by: SKILL-NNN` relationship
+- Does a knowledge artifact practice this AD? If yes, add `practiced-by: KNOW-NNN` relationship
 - Is this AD a strategy/selection decision with no enforceable constraint? Mark as `intended: true` (no enforcement needed)
 
 **1b. Lesson promoted-to targets**: All 22 promoted lessons have empty `evolves-into` fields. For each, trace what rule/skill/standard it was promoted to and populate the field.

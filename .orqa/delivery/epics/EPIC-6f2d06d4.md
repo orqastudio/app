@@ -100,7 +100,7 @@ enforces. Every task in this epic must preserve and strengthen these principles.
 ### 1. Graph-Based Knowledge Injection
 
 The artifact graph is the knowledge system. Hooks inject **artifact IDs only** (TASK-NNN,
-SKILL-NNN, DOC-NNN) — never content, never indexes. Agents have Read tooling and graph
+KNOW-NNN, DOC-NNN) — never content, never indexes. Agents have Read tooling and graph
 traversal knowledge to resolve IDs to files on demand. This keeps injection lightweight
 and context-efficient.
 

@@ -2,7 +2,7 @@
 id: TASK-d0e2f4a6
 type: task
 name: "Bring integrations into plugin lifecycle commands"
-status: done
+status: completed
 description: Make orqa plugin list, refresh, and status cover integrations (sidecars). Add integrations to the install pipeline. Report integration health.
 relationships:
   - target: EPIC-d4a8c1e5

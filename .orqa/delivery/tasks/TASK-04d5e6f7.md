@@ -2,7 +2,7 @@
 id: TASK-04d5e6f7
 type: task
 name: "Set up Cargo workspace"
-status: done
+status: completed
 description: "Create root Cargo.toml workspace with all 4 Rust crates + the Tauri app as members. Shared build cache, unified cargo check/clippy/test."
 relationships:
   - target: EPIC-f2b9e7d3

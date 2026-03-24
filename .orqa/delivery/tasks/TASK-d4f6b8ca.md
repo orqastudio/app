@@ -2,7 +2,7 @@
 id: TASK-d4f6b8ca
 type: task
 name: "Fix content sync gaps — .md filter, injector config, blind overwrite"
-status: done
+status: completed
 description: Fix three bugs in the current content sync — the hardcoded .md-only filter, injector config not regenerated on refresh, and blind overwrite on copy that clobbers user edits.
 relationships:
   - target: EPIC-d4a8c1e5

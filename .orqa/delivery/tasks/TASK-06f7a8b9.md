@@ -2,7 +2,7 @@
 id: TASK-06f7a8b9
 type: task
 name: "License per directory and version management"
-status: done
+status: completed
 description: "Set up per-directory LICENSE files for mixed BSL-1.1/Apache-2.0 licensing. Update orqa version sync for monorepo (single VERSION file, workspace-aware propagation)."
 relationships:
   - target: EPIC-f2b9e7d3

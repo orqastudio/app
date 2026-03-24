@@ -2,7 +2,7 @@
 id: TASK-a1c3e5f7
 type: task
 name: "Three-way diff hash tracking in manifest.json"
-status: done
+status: completed
 description: Extend manifest.json to record per-file source and installed content hashes. Update copyPluginContent() to compute and store hashes on every copy. This enables detecting both plugin updates and user local edits.
 relationships:
   - target: EPIC-d4a8c1e5

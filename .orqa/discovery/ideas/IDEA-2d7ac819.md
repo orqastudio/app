@@ -38,7 +38,7 @@ RULE-xxx (Rule: "Coding Standards")
   Plugin: @orqastudio/plugin-svelte → ESLint config
   Plugin: @orqastudio/plugin-tauri  → Clippy config
   ↓ paired with
-DOC-xxx + SKILL-xxx (what the standards are, for humans and agents)
+DOC-xxx + KNOW-xxx (what the standards are, for humans and agents)
 ```
 
 ## Rule Enforcement Schema

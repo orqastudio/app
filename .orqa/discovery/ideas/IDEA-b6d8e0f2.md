@@ -6,6 +6,9 @@ status: captured
 description: All local development service ports should be above 10000 to avoid clashing with other local development instances (e.g., other Docker containers using 3000, 3001, etc.)
 created: 2026-03-23
 relationships:
+  - target: PERSONA-cda6edd6
+    type: benefits
+    rationale: "Serves the primary developer persona"
   - target: PILLAR-569581e0
     type: grounded
     rationale: Structure — predictable, non-conflicting port assignments

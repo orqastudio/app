@@ -2,7 +2,7 @@
 id: TASK-e1f3a5b7
 type: task
 name: "Template schema tracking and validation"
-status: done
+status: completed
 description: "Ensure plugin templates stay in sync with schema changes. Add orqa template validate command that checks templates produce valid artifacts against current schemas."
 relationships:
   - target: EPIC-d4a8c1e5
