@@ -1177,6 +1177,8 @@ async function cmdStop(root: string): Promise<void> {
 
 async function cmdKill(root: string): Promise<void> {
 	await killAll(root);
+	removeControlFile(root);
+	cleanupSignalFile(root);
 }
 
 // ── Subcommand: restart (send signal to running controller) ─────────────────
