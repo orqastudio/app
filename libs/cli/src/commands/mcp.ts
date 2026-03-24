@@ -14,11 +14,14 @@ import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
 const USAGE = `
-Usage: orqa mcp [project-path]
+Usage: orqa mcp [project-path|subcommand]
 
 Start an MCP server bridge. Connects to the running OrqaStudio app
 via IPC socket. Falls back to the standalone MCP server crate if the
 app is not running.
+
+Subcommands:
+  index [project-path]   Download ONNX model, index codebase, generate embeddings
 `.trim();
 
 function getPortFilePath(): string {
@@ -43,6 +46,13 @@ function readPort(): number | null {
 export async function runMcpCommand(args: string[]): Promise<void> {
 	if (args.includes("--help") || args.includes("-h")) {
 		console.log(USAGE);
+		return;
+	}
+
+	// Handle 'index' subcommand
+	if (args[0] === "index") {
+		const { runIndexCommand } = await import("./index.js");
+		await runIndexCommand(args.slice(1));
 		return;
 	}
 

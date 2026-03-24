@@ -66,6 +66,11 @@
         "key": "f0c40eaf",
         "id": "KNOW-f0c40eaf",
         "label": "Composability"
+      },
+      {
+        "key": "f5edb34d",
+        "id": "KNOW-f5edb34d",
+        "label": "Diagnostic Methodology"
       }
     ],
     "hooks": [],

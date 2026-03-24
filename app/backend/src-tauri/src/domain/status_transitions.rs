@@ -403,6 +403,7 @@ mod tests {
             status: Some(status.to_owned()),
             priority: None,
             frontmatter,
+            body: None,
             references_out: Vec::new(),
             references_in: Vec::new(),
         }

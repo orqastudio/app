@@ -1,0 +1,50 @@
+{
+  "name": "@orqastudio/plugin-plugin-dev",
+  "version": "0.1.4-dev",
+  "displayName": "Plugin Development",
+  "description": "Plugin development tooling — scaffolding, manifest management, content ownership, three-way diff, first-party and third-party workflows. Opt-in for plugin authors.",
+  "category": "development",
+  "role": "enhancement:development",
+  "provides": {
+    "agents": [
+      {
+        "key": "34a6e2cd",
+        "id": "AGENT-34a6e2cd",
+        "path": "agents/AGENT-34a6e2cd.md"
+      }
+    ],
+    "knowledge": [
+      {
+        "key": "b453410f",
+        "id": "KNOW-b453410f",
+        "label": "Plugin Development"
+      },
+      {
+        "key": "e1333874",
+        "id": "KNOW-e1333874",
+        "label": "First-Party Plugin Development"
+      },
+      {
+        "key": "63cc1a00",
+        "id": "KNOW-63cc1a00",
+        "label": "Third-Party Plugin Development"
+      }
+    ],
+    "schemas": [],
+    "enforcement_mechanisms": [],
+    "relationships": [],
+    "hooks": [],
+    "views": [],
+    "widgets": []
+  },
+  "content": {
+    "agents": {
+      "source": "agents",
+      "target": ".orqa/process/agents"
+    },
+    "knowledge": {
+      "source": "knowledge",
+      "target": ".orqa/process/knowledge"
+    }
+  }
+}

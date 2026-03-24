@@ -328,6 +328,8 @@ export interface PluginManifest {
 	displayName?: string;
 	/** Short description of what the plugin does. */
 	description?: string;
+	/** Plugins this plugin conceptually extends (implies requires). */
+	extends?: string[];
 	/** Plugin dependencies — other plugin names that must be loaded first. */
 	requires?: string[];
 	/** Plugin category. The app requires at least one plugin from each of: thinking, delivery, governance. */

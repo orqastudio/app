@@ -43,6 +43,7 @@ Subcommands:
   registry [--official|--community] Browse available plugins
   create [template]                 Scaffold a new plugin from template
   template-validate [template]      Validate a plugin template directory
+  link [create|verify|remove|status] Cross-platform symlink management
 `.trim();
 
 export async function runPluginCommand(args: string[]): Promise<void> {
@@ -90,6 +91,11 @@ export async function runPluginCommand(args: string[]): Promise<void> {
 		case "template-validate":
 			await cmdTemplateValidate(args.slice(1));
 			break;
+		case "link": {
+			const { runLinkCommand } = await import("./link.js");
+			await runLinkCommand(args.slice(1));
+			break;
+		}
 		default:
 			console.error(`Unknown subcommand: ${subcommand}`);
 			console.error(USAGE);

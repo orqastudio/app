@@ -56,8 +56,7 @@ mod tests {
     #[test]
     fn daemon_health_response_deserialization() {
         let json = r#"{"status": "ok", "artifacts": 42, "rules": 7}"#;
-        let resp: DaemonHealthResponse =
-            serde_json::from_str(json).expect("should deserialize");
+        let resp: DaemonHealthResponse = serde_json::from_str(json).expect("should deserialize");
         assert_eq!(resp.status, "ok");
         assert_eq!(resp.artifacts, 42);
         assert_eq!(resp.rules, 7);

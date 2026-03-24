@@ -285,6 +285,7 @@ fn run_query(args: &[String]) {
     let type_filter = find_flag_value(args, "--type");
     let status_filter = find_flag_value(args, "--status");
     let id_filter = find_flag_value(args, "--id");
+    let search_filter = find_flag_value(args, "--search");
 
     let graph = match build_artifact_graph(&project_path) {
         Ok(g) => g,
@@ -302,6 +303,7 @@ fn run_query(args: &[String]) {
         type_filter,
         status_filter,
         id_filter,
+        search_filter,
         &plugin_contributions.artifact_types,
     );
 

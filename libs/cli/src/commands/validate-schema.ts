@@ -17,6 +17,19 @@ interface LoadedPlugin {
 	requires: string[];
 }
 
+/** Merge `requires` and `extends` arrays from a plugin manifest into a single deduplicated deps list. */
+function mergePluginDeps(requires: unknown, extendsField: unknown): string[] {
+	const deps = new Set<string>();
+	for (const src of [requires, extendsField]) {
+		if (Array.isArray(src)) {
+			for (const entry of src) {
+				if (typeof entry === "string") deps.add(entry);
+			}
+		}
+	}
+	return [...deps];
+}
+
 interface PluginIntegrityFinding {
 	plugin: string;
 	severity: "error" | "warning";
@@ -338,9 +351,7 @@ function discoverAndValidate(projectRoot: string): SchemaFinding[] {
 						name: data["name"],
 						path: relative(process.cwd(), manifestPath),
 						category: typeof data["category"] === "string" ? data["category"] : null,
-						requires: Array.isArray(data["requires"])
-							? (data["requires"] as unknown[]).filter((r): r is string => typeof r === "string")
-							: [],
+						requires: mergePluginDeps(data["requires"], data["extends"]),
 					});
 				}
 			} catch {

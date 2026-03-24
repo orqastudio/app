@@ -7,6 +7,9 @@
   "extends": [
     "@orqastudio/plugin-typescript"
   ],
+  "requires": [
+    "@orqastudio/plugin-typescript"
+  ],
   "configExtensions": {
     "tsconfig": {
       "compilerOptions": {

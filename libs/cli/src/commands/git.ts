@@ -5,6 +5,9 @@
  * orqa git pr        Create a pull request on the local git server
  * orqa git sync      Push to all remotes
  * orqa git audit     Check git infrastructure health
+ * orqa git license   Audit LICENSE files across all repos
+ * orqa git readme    Audit README.md files across all repos
+ * orqa git hosting   Local git server management
  */
 
 import { execSync } from "node:child_process";
@@ -20,6 +23,9 @@ Subcommands:
   pr        Create a pull request on the local git server
   sync      Push to all remotes
   audit     Check git infrastructure health
+  license   Audit LICENSE files across all repos (--json)
+  readme    Audit README.md files across all repos (--json)
+  hosting   Local git server management (up, down, setup, status, logs, push, mirror)
 
 Options:
   --help, -h  Show this help message
@@ -509,6 +515,17 @@ export async function runGitCommand(args: string[]): Promise<void> {
 		case "audit":
 			await cmdAudit(root);
 			break;
+		case "license":
+		case "readme": {
+			const { runRepoCommand } = await import("./repo.js");
+			await runRepoCommand([subcommand, ...args.slice(1)]);
+			break;
+		}
+		case "hosting": {
+			const { runHostingCommand } = await import("./hosting.js");
+			await runHostingCommand(args.slice(1));
+			break;
+		}
 		default:
 			console.error(`Unknown git subcommand: ${subcommand}`);
 			console.error("Run 'orqa git --help' for available subcommands.");

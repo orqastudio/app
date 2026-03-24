@@ -69,6 +69,7 @@ pub fn evaluate_hook(ctx: &HookContext, project_root: &Path) -> HookResult {
         Some("rule"),
         Some("active"),
         None,
+        None,
         &plugin_contributions.artifact_types,
     );
 

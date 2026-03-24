@@ -188,7 +188,7 @@ impl McpServer {
             "graph_read" => graph_tools::tool_read(&self.project_root, &arguments),
             "graph_refresh" => graph_tools::tool_refresh(&self.daemon),
             "graph_traceability" => {
-                graph_tools::tool_traceability(&self.project_root, &arguments)
+                graph_tools::tool_traceability(&self.daemon, &arguments)
             }
             "search_regex" => self
                 .get_search()

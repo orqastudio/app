@@ -103,11 +103,6 @@
         "label": "Artifact Status Management"
       },
       {
-        "key": "63cc1a00",
-        "id": "KNOW-63cc1a00",
-        "label": "Third-Party Plugin Development"
-      },
-      {
         "key": "6f33713e",
         "id": "KNOW-6f33713e",
         "label": "Planning"
@@ -128,11 +123,6 @@
         "label": "Project Type Detection"
       },
       {
-        "key": "b453410f",
-        "id": "KNOW-b453410f",
-        "label": "Plugin Development"
-      },
-      {
         "key": "c9d8e7f6",
         "id": "KNOW-c9d8e7f6",
         "label": "Reviewer Reasoning Methodology"
@@ -148,11 +138,6 @@
         "label": "Project Setup"
       },
       {
-        "key": "e1333874",
-        "id": "KNOW-e1333874",
-        "label": "First-Party Plugin Development"
-      },
-      {
         "key": "e3a559c9",
         "id": "KNOW-e3a559c9",
         "label": "Plugin Setup"
@@ -161,11 +146,6 @@
         "key": "e5f6a7b8",
         "id": "KNOW-e5f6a7b8",
         "label": "Implementer Reasoning Methodology"
-      },
-      {
-        "key": "f5edb34d",
-        "id": "KNOW-f5edb34d",
-        "label": "Diagnostic Methodology"
       },
       {
         "key": "f7476f0a",
@@ -181,6 +161,41 @@
         "key": "fda0559b",
         "id": "KNOW-fda0559b",
         "label": "Thinking Mode: Implementation"
+      },
+      {
+        "key": "a4fd56bd",
+        "id": "KNOW-a4fd56bd",
+        "label": "Demoted Rule Stability Tracking"
+      },
+      {
+        "key": "7c1a3e50",
+        "id": "KNOW-7c1a3e50",
+        "label": "CLI Architecture"
+      },
+      {
+        "key": "8d2b4f61",
+        "id": "KNOW-8d2b4f61",
+        "label": "Shared Validation Engine"
+      },
+      {
+        "key": "9e3c5072",
+        "id": "KNOW-9e3c5072",
+        "label": "Three-Layer Enforcement Model"
+      },
+      {
+        "key": "b05e7294",
+        "id": "KNOW-b05e7294",
+        "label": "Knowledge Auto-Injection"
+      },
+      {
+        "key": "88a2d5f5",
+        "id": "KNOW-88a2d5f5",
+        "label": "OrqaStudio CLI Commands"
+      },
+      {
+        "key": "25919e07",
+        "id": "KNOW-25919e07",
+        "label": "Agentic Workflow and Enforcement Pipeline"
       }
     ],
     "hooks": [],

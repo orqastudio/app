@@ -10,3 +10,4 @@ tmp/
 *.swo
 .DS_Store
 *.duckdb
+*.duckdb.wal

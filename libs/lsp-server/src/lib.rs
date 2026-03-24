@@ -42,3 +42,6 @@ pub use error::LspError;
 pub use graph::{build_artifact_graph, ArtifactGraph, ArtifactNode};
 pub use server::{run_stdio, run_tcp};
 pub use validation::{is_hex_artifact_id, is_valid_artifact_id, validate_file};
+
+// The ID helpers are re-exports from the shared engine (orqa_validation::checks::file_level).
+// The LSP's validate_file wraps the shared engine's validate_file, converting FileFinding → Diagnostic.

@@ -30,6 +30,7 @@ Subcommands:
   deps         Install npm (workspaces) and cargo dependencies
   build        Build all libs in dependency order
   publish      Publish all libs to GitHub Package Registry (use --dry-run to preview)
+  link         Build all libs and npm link into the app (legacy link-based setup)
 
 Running 'orqa install' with no subcommand runs: prereqs → deps → build →
 plugin sync → smoke test.
@@ -61,6 +62,11 @@ export async function runInstallCommand(args: string[]): Promise<void> {
 		case "publish":
 			cmdPublish(root, args.includes("--dry-run"));
 			break;
+		case "link": {
+			const { runSetupCommand } = await import("./setup.js");
+			await runSetupCommand(["link"]);
+			break;
+		}
 		case undefined:
 			console.log("=== OrqaStudio Full Install ===\n");
 			await cmdPrereqs();

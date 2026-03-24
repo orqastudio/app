@@ -15,7 +15,6 @@
  * orqa enforce response --event-id X --action fixed --detail "..."
  */
 
-import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync, readdirSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { parse as parseYaml } from "yaml";
@@ -27,6 +26,11 @@ import {
 	readEvents,
 	readResponses,
 } from "../lib/enforcement-log.js";
+import {
+	findBinary,
+	callDaemon,
+	runRustBinary,
+} from "../lib/validation-engine.js";
 import type { EnforcementResolution } from "@orqastudio/types";
 
 const USAGE = `
@@ -56,82 +60,7 @@ Subcommands:
     --detail <text>   Human-readable detail (required)
 `.trim();
 
-/**
- * Find the Rust validation binary. Checks common build locations.
- */
-function findBinary(projectRoot: string): string | null {
-	const candidates = [
-		join(projectRoot, "libs", "validation", "target", "release", "orqa-validation"),
-		join(projectRoot, "libs", "validation", "target", "release", "orqa-validation.exe"),
-		join(projectRoot, "libs", "validation", "target", "debug", "orqa-validation"),
-		join(projectRoot, "libs", "validation", "target", "debug", "orqa-validation.exe"),
-		join(projectRoot, "target", "release", "orqa-validation"),
-		join(projectRoot, "target", "release", "orqa-validation.exe"),
-		join(projectRoot, "target", "debug", "orqa-validation"),
-		join(projectRoot, "target", "debug", "orqa-validation.exe"),
-		join(projectRoot, "app", "backend", "target", "release", "orqa-validation"),
-		join(projectRoot, "app", "backend", "target", "release", "orqa-validation.exe"),
-		join(projectRoot, "app", "backend", "target", "debug", "orqa-validation"),
-		join(projectRoot, "app", "backend", "target", "debug", "orqa-validation.exe"),
-	];
-	for (const c of candidates) {
-		if (existsSync(c)) return c;
-	}
-	return null;
-}
-
-/**
- * Run the Rust validator binary.
- */
-function runRustBinary(
-	binaryPath: string,
-	targetPath: string,
-	autoFix: boolean,
-): { exitCode: number; output: string } {
-	const args = [targetPath];
-	if (autoFix) args.push("--fix");
-
-	try {
-		const output = execFileSync(binaryPath, args, {
-			encoding: "utf-8",
-			timeout: 60000,
-			windowsHide: true,
-		});
-		return { exitCode: 0, output };
-	} catch (e: unknown) {
-		const err = e as { status?: number; stdout?: string; stderr?: string };
-		return {
-			exitCode: err.status ?? 2,
-			output: err.stdout ?? err.stderr ?? String(e),
-		};
-	}
-}
-
-/**
- * Call the running daemon's /validate endpoint.
- * Returns the JSON response body string, or null if the daemon is not reachable.
- */
-async function callDaemon(targetPath: string, autoFix: boolean): Promise<string | null> {
-	const port = 3002;
-	try {
-		const controller = new AbortController();
-		const timeout = setTimeout(() => controller.abort(), 500);
-		try {
-			const response = await fetch(`http://127.0.0.1:${port}/validate`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ path: targetPath, fix: autoFix }),
-				signal: controller.signal,
-			});
-			if (!response.ok) return null;
-			return await response.text();
-		} finally {
-			clearTimeout(timeout);
-		}
-	} catch {
-		return null;
-	}
-}
+// findBinary, callDaemon, runRustBinary — imported from ../lib/validation-engine.js
 
 export async function runEnforceCommand(args: string[]): Promise<void> {
 	if (args[0] === "--help" || args[0] === "-h") {

@@ -116,6 +116,23 @@ pub async fn install_from_github(
     std::fs::rename(&extracted_dir, &target)?;
     let _ = std::fs::remove_dir_all(&tmp_dir);
 
+    update_lockfile(project_root, &manifest, repo, sha256)?;
+
+    Ok(InstallResult {
+        name: manifest.name,
+        version: manifest.version,
+        path: target.to_string_lossy().to_string(),
+        source: "github".to_string(),
+        collisions,
+    })
+}
+
+fn update_lockfile(
+    project_root: &Path,
+    manifest: &super::manifest::PluginManifest,
+    repo: &str,
+    sha256: String,
+) -> Result<(), OrqaError> {
     let mut lockfile = read_lockfile(project_root);
     lockfile.plugins.retain(|p| p.name != manifest.name);
     lockfile.plugins.push(LockEntry {
@@ -125,15 +142,7 @@ pub async fn install_from_github(
         sha256,
         installed_at: chrono_now_iso(),
     });
-    write_lockfile(project_root, &lockfile)?;
-
-    Ok(InstallResult {
-        name: manifest.name,
-        version: manifest.version,
-        path: target.to_string_lossy().to_string(),
-        source: "github".to_string(),
-        collisions,
-    })
+    write_lockfile(project_root, &lockfile)
 }
 
 async fn download_plugin_archive(repo: &str, tag: &str) -> Result<(Vec<u8>, String), OrqaError> {

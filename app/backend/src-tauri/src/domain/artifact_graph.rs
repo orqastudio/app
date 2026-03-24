@@ -26,8 +26,8 @@ use crate::error::OrqaError;
 // ---------------------------------------------------------------------------
 
 pub use orqa_validation::{
-    ArtifactGraph, ArtifactNode, ArtifactRef, GraphHealth, GraphStats, IntegrityCategory,
-    IntegrityCheck, IntegritySeverity, AppliedFix,
+    AppliedFix, ArtifactGraph, ArtifactNode, ArtifactRef, GraphHealth, GraphStats,
+    IntegrityCategory, IntegrityCheck, IntegritySeverity,
 };
 
 // `graph_stats` and `build_artifact_graph` are wrapped below to convert error types.

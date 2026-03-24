@@ -6,6 +6,10 @@
   "extends": [
     "@orqastudio/plugin-rust"
   ],
+  "requires": [
+    "@orqastudio/plugin-rust",
+    "@orqastudio/plugin-svelte"
+  ],
   "category": "tooling",
   "provides": {
     "knowledge": [

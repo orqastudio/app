@@ -54,6 +54,9 @@ pub use metrics::{
     compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
     AncestryChain, AncestryNode, TraceabilityResult, TracedArtifact,
 };
+pub use checks::file_level::{
+    is_hex_artifact_id, is_valid_artifact_id, validate_file, FileFinding, FileSeverity,
+};
 pub use parse::{artifact_from_graph_node, parse_artifact, query_artifacts};
 pub use types::{
     AppliedFix, EnforcementEvent, EnforcementResult, GraphHealth, HookContext, HookResult,

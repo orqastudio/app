@@ -6,10 +6,11 @@
  * orqa daemon status                  Show daemon status and health
  */
 
-import { execFileSync, spawn } from "node:child_process";
+import { spawn } from "node:child_process";
 import { existsSync, readFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { getRoot } from "../lib/root.js";
+import { findBinary } from "../lib/validation-engine.js";
 
 const DEFAULT_PORT = 3002;
 
@@ -186,25 +187,7 @@ async function daemonStatus(): Promise<void> {
 // Helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Find the Rust validation binary. Mirrors the search in enforce.ts.
- */
-function findBinary(projectRoot: string): string | null {
-	const candidates = [
-		join(projectRoot, "libs", "validation", "target", "release", "orqa-validation"),
-		join(projectRoot, "libs", "validation", "target", "release", "orqa-validation.exe"),
-		join(projectRoot, "libs", "validation", "target", "debug", "orqa-validation"),
-		join(projectRoot, "libs", "validation", "target", "debug", "orqa-validation.exe"),
-		join(projectRoot, "target", "release", "orqa-validation"),
-		join(projectRoot, "target", "release", "orqa-validation.exe"),
-		join(projectRoot, "target", "debug", "orqa-validation"),
-		join(projectRoot, "target", "debug", "orqa-validation.exe"),
-	];
-	for (const c of candidates) {
-		if (existsSync(c)) return c;
-	}
-	return null;
-}
+// findBinary — imported from ../lib/validation-engine.js
 
 function getPidPath(projectRoot: string): string {
 	return join(projectRoot, "tmp", "daemon.pid");

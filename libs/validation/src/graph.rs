@@ -52,6 +52,10 @@ pub struct ArtifactNode {
     pub priority: Option<String>,
     /// Full YAML frontmatter parsed into JSON for generic access.
     pub frontmatter: serde_json::Value,
+    /// Markdown body content (everything after the YAML frontmatter block).
+    /// Cached at graph-build time to avoid re-reading files during queries.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub body: Option<String>,
     /// Forward references declared in this node's frontmatter.
     pub references_out: Vec<ArtifactRef>,
     /// Backlinks computed from other nodes' `references_out` during pass 2.
@@ -521,6 +525,7 @@ fn build_node(
         status,
         priority,
         frontmatter,
+        body: Some(body.to_owned()),
         references_out,
         references_in: Vec::new(),
     }

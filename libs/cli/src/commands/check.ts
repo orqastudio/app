@@ -1,12 +1,20 @@
 /**
- * Code quality checks — delegates to plugin-provided tools.
+ * Code quality checks — CLI adapter for the shared validation engine +
+ * plugin-provided lint tools.
  *
- * orqa check              Run all checks from installed plugins
- * orqa check <tool>       Run a specific tool (eslint, clippy, etc.)
+ * orqa check              Run validation engine + all plugin lint tools
+ * orqa check validate     Run the shared validation engine only
+ * orqa check <tool>       Run a specific plugin tool (eslint, clippy, etc.)
  * orqa check configure    Generate config files from coding standards rules
+ * orqa check verify       Run all governance checks (integrity, version, license, readme)
+ * orqa check enforce      Enforcement + integrity validation
+ * orqa check audit        Full governance audit with escalation scanning
+ * orqa check schema       Validate project.json and plugin manifests
  *
- * Tools are discovered from installed plugin manifests (orqa-plugin.json).
- * Each plugin declares its tools in the `provides.tools` section.
+ * The validation engine (libs/validation/) runs the same checks as the LSP:
+ * schema validation, relationship type checks, broken links, missing inverses,
+ * status transitions, and more. Plugin tools (eslint, clippy, etc.) are
+ * discovered from installed plugin manifests (orqa-plugin.json).
  */
 
 import { execSync } from "node:child_process";
@@ -19,17 +27,28 @@ import {
 	type ToolDefinition,
 } from "../lib/config-generator.js";
 import { getRoot } from "../lib/root.js";
+import {
+	runValidation,
+	formatReport,
+} from "../lib/validation-engine.js";
 
 const USAGE = `
 Usage: orqa check [subcommand]
 
-Run all code quality checks from installed plugins, or target a specific tool:
+Run all code quality checks (validation engine + plugin lint tools):
 
 Subcommands:
+  validate      Run the shared validation engine only (artifact graph integrity)
   configure     Generate config files from coding standards rules
-  <tool-name>   Run a specific tool (e.g. eslint, clippy, svelte-check)
+  verify        Run all governance checks (integrity, version, license, readme)
+  enforce       Enforcement + integrity validation (--fix, --mechanism, --report)
+  audit         Full governance audit with escalation scanning
+  schema        Validate project.json and plugin manifests
+  <tool-name>   Run a specific plugin tool (e.g. eslint, clippy, svelte-check)
 
-Running 'orqa check' with no subcommand runs all tools from all installed plugins.
+Running 'orqa check' with no subcommand runs the validation engine AND all
+plugin lint tools. The validation engine runs the same checks as the LSP
+(schema validation, broken links, missing inverses, relationship types, etc.).
 `.trim();
 
 export async function runCheckCommand(args: string[]): Promise<void> {
@@ -46,15 +65,88 @@ export async function runCheckCommand(args: string[]): Promise<void> {
 		return;
 	}
 
-	// Load plugin tools
-	const pluginTools = loadPluginTools(root);
-
-	if (pluginTools.size === 0) {
-		console.log("No plugins with tools installed. Install a plugin first (e.g. orqa plugin install @orqastudio/plugin-svelte).");
+	// Merged subcommands: verify, enforce, audit, schema
+	if (target === "verify") {
+		const { runVerifyCommand } = await import("./verify.js");
+		await runVerifyCommand();
+		return;
+	}
+	if (target === "enforce") {
+		const { runEnforceCommand } = await import("./enforce.js");
+		await runEnforceCommand(args.slice(1));
+		return;
+	}
+	if (target === "audit") {
+		const { runAuditCommand } = await import("./audit.js");
+		await runAuditCommand(args.slice(1));
+		return;
+	}
+	if (target === "schema") {
+		const { runEnforceCommand } = await import("./enforce.js");
+		await runEnforceCommand(["schema", ...args.slice(1)]);
 		return;
 	}
 
-	// Collect all tools to run
+	// "orqa check validate" — run only the shared validation engine
+	if (target === "validate") {
+		const validationFailed = await runValidationStep(root, args.includes("--fix"));
+		if (validationFailed) process.exit(1);
+		return;
+	}
+
+	// If a specific tool name is given, run only that plugin tool (no validation engine)
+	if (target) {
+		const pluginFailed = await runPluginTools(root, target);
+		if (pluginFailed) process.exit(1);
+		return;
+	}
+
+	// Default: no subcommand → run validation engine + all plugin lint tools
+	let failed = false;
+
+	console.log("=== Artifact validation (shared engine) ===");
+	const validationFailed = await runValidationStep(root, args.includes("--fix"));
+	if (validationFailed) failed = true;
+
+	console.log("\n=== Plugin lint tools ===");
+	const pluginFailed = await runPluginTools(root, undefined);
+	if (pluginFailed) failed = true;
+
+	if (failed) {
+		process.exit(1);
+	}
+}
+
+/**
+ * Run the shared validation engine (same checks as LSP).
+ * Returns true if errors were found.
+ */
+async function runValidationStep(root: string, autoFix: boolean): Promise<boolean> {
+	try {
+		const { report, exitCode } = await runValidation(root, root, autoFix);
+		const { text, errors } = formatReport(report);
+		console.log(text);
+		return errors > 0 || exitCode !== 0;
+	} catch (e: unknown) {
+		const msg = e instanceof Error ? e.message : String(e);
+		console.error(msg);
+		// Validation engine not available — warn but don't block lint tools
+		return false;
+	}
+}
+
+/**
+ * Run plugin-provided lint tools. If `target` is specified, run only that tool.
+ * Returns true if any tool failed.
+ */
+async function runPluginTools(root: string, target: string | undefined): Promise<boolean> {
+	const pluginTools = loadPluginTools(root);
+
+	if (pluginTools.size === 0) {
+		console.log("No plugins with tools installed.");
+		return false;
+	}
+
 	const toRun: Array<{ pluginName: string; toolName: string; tool: ToolDefinition }> = [];
 
 	for (const [pluginName, tools] of pluginTools) {
@@ -92,9 +184,7 @@ export async function runCheckCommand(args: string[]): Promise<void> {
 		}
 	}
 
-	if (failed) {
-		process.exit(1);
-	}
+	return failed;
 }
 
 async function cmdConfigure(root: string): Promise<void> {

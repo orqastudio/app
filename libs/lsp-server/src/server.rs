@@ -3,28 +3,37 @@
 //! Implements the `LanguageServer` trait from `tower-lsp`. Handles:
 //! - `initialize` / `initialized` / `shutdown`
 //! - `textDocument/didOpen`, `didChange`, `didSave`, `didClose`
+//! - `textDocument/codeAction` — offers quick-fixes for invalid statuses
 //!
 //! On each document event the server:
 //! 1. Runs fast text-level checks (frontmatter structure, duplicate keys, ID
-//!    format) using local logic that works on the unsaved editor buffer.
+//!    format, JSON Schema validation) using local logic on the unsaved buffer.
 //! 2. Calls the validation daemon `POST /validate` for graph-level checks
 //!    (broken refs, missing inverses, type constraints, cardinality, cycles).
 //!
-//! The daemon owns all graph state. The LSP never builds the graph directly.
+//! Schema definitions are loaded from plugin manifests (`plugins/*/orqa-plugin.json`
+//! and `connectors/*/orqa-plugin.json`) on startup. They are refreshed whenever a
+//! plugin manifest is saved.
 
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 
 use reqwest::Client as HttpClient;
 use serde_json::Value;
+use tokio::sync::RwLock;
 use tower_lsp::jsonrpc::Result as RpcResult;
 use tower_lsp::lsp_types::{
-    DidChangeTextDocumentParams, DidCloseTextDocumentParams, DidOpenTextDocumentParams,
-    DidSaveTextDocumentParams, InitializeParams, InitializeResult, InitializedParams, MessageType,
-    ServerCapabilities, ServerInfo, TextDocumentSyncCapability, TextDocumentSyncKind, Url,
+    CodeAction, CodeActionKind, CodeActionOrCommand, CodeActionParams,
+    CodeActionProviderCapability, CodeActionResponse, DidChangeTextDocumentParams,
+    DidCloseTextDocumentParams, DidOpenTextDocumentParams, DidSaveTextDocumentParams,
+    InitializeParams, InitializeResult, InitializedParams, MessageType, ServerCapabilities,
+    ServerInfo, TextDocumentSyncCapability, TextDocumentSyncKind, TextEdit, Url, WorkspaceEdit,
 };
 use tower_lsp::{Client, LanguageServer, LspService, Server};
 
 use tower_lsp::lsp_types::{Diagnostic, DiagnosticSeverity, Position, Range};
+
+use orqa_validation::platform::{scan_plugin_manifests, ArtifactTypeDef};
 
 use crate::validation::validate_file;
 
@@ -38,6 +47,9 @@ pub(crate) struct OrqaLspBackend {
     /// Base URL of the validation daemon, e.g. `http://127.0.0.1:9258`.
     daemon_url: String,
     http: HttpClient,
+    /// Artifact type definitions loaded from plugin manifests.
+    /// Refreshed when a plugin manifest (`orqa-plugin.json`) is saved.
+    artifact_types: Arc<RwLock<Vec<ArtifactTypeDef>>>,
 }
 
 impl OrqaLspBackend {
@@ -47,7 +59,19 @@ impl OrqaLspBackend {
             project_root,
             daemon_url: format!("http://127.0.0.1:{daemon_port}"),
             http: HttpClient::new(),
+            artifact_types: Arc::new(RwLock::new(Vec::new())),
         }
+    }
+
+    /// Load artifact type definitions from all plugin manifests under the project root.
+    ///
+    /// Called on `initialized` and whenever a plugin manifest is saved.
+    async fn load_artifact_types(&self) {
+        let contributions = scan_plugin_manifests(&self.project_root);
+        let count = contributions.artifact_types.len();
+        let mut types = self.artifact_types.write().await;
+        *types = contributions.artifact_types;
+        tracing::info!(count, "loaded artifact type schemas from plugin manifests");
     }
 
     /// Compute the relative path of `uri` from the project root, with forward slashes.
@@ -70,6 +94,24 @@ impl OrqaLspBackend {
             .lines()
             .find(|l| l.starts_with("id:"))
             .map(|l| l.trim_start_matches("id:").trim().trim_matches('"').to_owned())
+    }
+
+    /// Return the list of valid statuses for an artifact ID prefix, if known.
+    ///
+    /// Used by the code-action handler to suggest valid alternatives when the
+    /// current status is invalid.
+    async fn valid_statuses_for_prefix(&self, prefix: &str) -> Vec<String> {
+        let types = self.artifact_types.read().await;
+        types
+            .iter()
+            .find(|t| t.id_prefix == prefix)
+            .map(|t| {
+                t.status_transitions
+                    .keys()
+                    .cloned()
+                    .collect::<Vec<_>>()
+            })
+            .unwrap_or_default()
     }
 
     /// Tell the daemon to reload its graph from disk.
@@ -143,13 +185,15 @@ impl OrqaLspBackend {
     /// Validate `content` at `uri` and publish diagnostics to the client.
     ///
     /// Combines fast text-level checks (structural frontmatter, duplicate keys,
-    /// ID format) with graph-level checks from the validation daemon.
+    /// ID format, JSON Schema validation) with graph-level checks from the daemon.
     async fn validate_and_publish(&self, uri: Url, content: &str) {
         let rel_path = self.relative_path(&uri);
 
-        // Text-level checks: frontmatter syntax, ID format, duplicate keys.
-        // These run on the unsaved buffer and never need the graph.
-        let mut diagnostics = validate_file(&rel_path, content, None, &[]);
+        // Text-level checks: frontmatter syntax, ID format, duplicate keys,
+        // and JSON Schema validation against plugin-defined type schemas.
+        let types = self.artifact_types.read().await;
+        let mut diagnostics = validate_file(&rel_path, content, None, &types);
+        drop(types);
 
         // Graph-level checks: delegated to the daemon which has a live graph.
         let artifact_id = Self::extract_artifact_id(content);
@@ -227,6 +271,7 @@ impl LanguageServer for OrqaLspBackend {
                 text_document_sync: Some(TextDocumentSyncCapability::Kind(
                     TextDocumentSyncKind::FULL,
                 )),
+                code_action_provider: Some(CodeActionProviderCapability::Simple(true)),
                 ..Default::default()
             },
             server_info: Some(ServerInfo {
@@ -240,6 +285,10 @@ impl LanguageServer for OrqaLspBackend {
         self.client
             .log_message(MessageType::INFO, "OrqaStudio LSP server initialized")
             .await;
+
+        // Load artifact type schemas from plugin manifests.
+        self.load_artifact_types().await;
+
         // Ask the daemon to load its initial state.
         self.daemon_reload().await;
     }
@@ -261,6 +310,13 @@ impl LanguageServer for OrqaLspBackend {
     }
 
     async fn did_save(&self, params: DidSaveTextDocumentParams) {
+        let rel_path = self.relative_path(&params.text_document.uri);
+
+        // Refresh artifact type schemas when a plugin manifest is saved.
+        if rel_path.ends_with("orqa-plugin.json") {
+            self.load_artifact_types().await;
+        }
+
         // Reload the daemon whenever anything is saved — new artifacts become
         // visible as relationship targets, and plugin manifest changes take effect.
         self.daemon_reload().await;
@@ -268,6 +324,93 @@ impl LanguageServer for OrqaLspBackend {
         if let Some(text) = params.text {
             self.validate_and_publish(params.text_document.uri, &text)
                 .await;
+        }
+    }
+
+    async fn code_action(&self, params: CodeActionParams) -> RpcResult<Option<CodeActionResponse>> {
+        let uri = &params.text_document.uri;
+        let mut actions: Vec<CodeActionOrCommand> = Vec::new();
+
+        // Scan existing diagnostics for [invalid-status] and [schema] status errors
+        // and offer quick-fix replacements with valid alternatives.
+        for diag in &params.context.diagnostics {
+            if diag.source.as_deref() != Some("orqastudio") {
+                continue;
+            }
+
+            // Quick-fix for invalid status values.
+            // Matches diagnostics from the daemon ("[invalid-status]") and from
+            // the JSON Schema validator ("[schema] ... status ...").
+            let is_status_diag = diag.message.contains("[invalid-status]")
+                || (diag.message.contains("[schema]") && diag.message.contains("status"));
+
+            if !is_status_diag {
+                continue;
+            }
+
+            // Read the document to find the current status line and artifact ID prefix.
+            let Some(file_path) = uri.to_file_path().ok() else {
+                continue;
+            };
+            let Ok(content) = std::fs::read_to_string(&file_path) else {
+                continue;
+            };
+
+            let prefix = Self::extract_artifact_id(&content)
+                .and_then(|id| id.split('-').next().map(String::from));
+
+            let Some(prefix) = prefix else { continue };
+
+            let valid_statuses = self.valid_statuses_for_prefix(&prefix).await;
+            if valid_statuses.is_empty() {
+                continue;
+            }
+
+            // Find the status line and its range in the document.
+            let mut status_range = None;
+            for (i, line) in content.lines().enumerate() {
+                if line.starts_with("status:") {
+                    let value_start = "status:".len();
+                    let trimmed_value = line[value_start..].trim();
+                    // Compute column range for the status value.
+                    let col_start = line.find(trimmed_value).unwrap_or(value_start) as u32;
+                    let col_end = col_start + trimmed_value.len() as u32;
+                    status_range = Some(Range::new(
+                        Position::new(i as u32, col_start),
+                        Position::new(i as u32, col_end),
+                    ));
+                    break;
+                }
+            }
+
+            let Some(range) = status_range else { continue };
+
+            for status in &valid_statuses {
+                let mut changes = std::collections::HashMap::new();
+                changes.insert(
+                    uri.clone(),
+                    vec![TextEdit {
+                        range,
+                        new_text: status.clone(),
+                    }],
+                );
+                actions.push(CodeActionOrCommand::CodeAction(CodeAction {
+                    title: format!("Change status to \"{status}\""),
+                    kind: Some(CodeActionKind::QUICKFIX),
+                    diagnostics: Some(vec![diag.clone()]),
+                    edit: Some(WorkspaceEdit {
+                        changes: Some(changes),
+                        ..Default::default()
+                    }),
+                    ..Default::default()
+                }));
+            }
+        }
+
+        if actions.is_empty() {
+            Ok(None)
+        } else {
+            Ok(Some(actions))
         }
     }
 

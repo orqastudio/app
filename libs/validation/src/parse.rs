@@ -105,20 +105,25 @@ pub fn parse_artifact(
     })
 }
 
-/// Convert a graph node (`ArtifactNode`) into a [`ParsedArtifact`] without re-reading the file.
+/// Convert a graph node (`ArtifactNode`) into a [`ParsedArtifact`].
 ///
-/// Used by the `query` subcommand, which has already built the full graph.
+/// Uses the cached body content from the node when available. Falls back to
+/// re-reading the file from disk only if the node has no cached body (e.g.
+/// nodes from older serialised graphs).
 pub fn artifact_from_graph_node(
     node: &crate::graph::ArtifactNode,
     project_path: &Path,
     artifact_types: &[ArtifactTypeDef],
 ) -> Result<ParsedArtifact, ValidationError> {
-    // Re-read the file to get the body content (graph nodes don't store it).
-    let file_path = project_path.join(&node.path);
-    let content = std::fs::read_to_string(&file_path)
-        .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
-
-    let (_, body) = extract_frontmatter(&content);
+    let body = if let Some(ref cached) = node.body {
+        cached.clone()
+    } else {
+        let file_path = project_path.join(&node.path);
+        let content = std::fs::read_to_string(&file_path)
+            .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
+        let (_, body) = extract_frontmatter(&content);
+        body
+    };
 
     let validation = run_validation(&node.frontmatter, &node.artifact_type, artifact_types);
 
@@ -139,8 +144,9 @@ pub fn artifact_from_graph_node(
 
 /// Filter and convert graph nodes into [`ParsedArtifact`] values.
 ///
-/// Applies optional `type_filter` and `status_filter`. Each node's file is
-/// read to extract the body content. Nodes whose files cannot be read are
+/// Applies optional `type_filter`, `status_filter`, `id_filter`, and
+/// `search_filter`. The search filter is a case-insensitive substring match
+/// against title and description. Nodes whose files cannot be read are
 /// skipped with a warning rather than failing the whole query.
 pub fn query_artifacts(
     graph: &ArtifactGraph,
@@ -148,8 +154,25 @@ pub fn query_artifacts(
     type_filter: Option<&str>,
     status_filter: Option<&str>,
     id_filter: Option<&str>,
+    search_filter: Option<&str>,
     artifact_types: &[ArtifactTypeDef],
 ) -> Vec<ParsedArtifact> {
+    // Fast path: when an exact ID is provided, try a direct HashMap lookup
+    // first (O(1)) instead of iterating all nodes (O(n)).
+    if let Some(idf) = id_filter {
+        if let Some(node) = graph.nodes.get(idf) {
+            if passes_filters(node, type_filter, status_filter)
+                && passes_search(node, search_filter)
+            {
+                if let Ok(parsed) = artifact_from_graph_node(node, project_path, artifact_types) {
+                    return vec![parsed];
+                }
+            }
+        }
+        // Also check qualified keys in org mode (e.g., "project::RULE-abc").
+        // If the direct lookup didn't match, fall through to the prefix scan below.
+    }
+
     let mut results = Vec::new();
 
     for (key, node) in &graph.nodes {
@@ -159,23 +182,18 @@ pub fn query_artifacts(
             continue;
         }
 
-        if let Some(tf) = type_filter {
-            if node.artifact_type != tf {
-                continue;
-            }
-        }
-
-        if let Some(sf) = status_filter {
-            match &node.status {
-                Some(s) if s == sf => {}
-                _ => continue,
-            }
+        if !passes_filters(node, type_filter, status_filter) {
+            continue;
         }
 
         if let Some(idf) = id_filter {
             if node.id != idf && !node.id.starts_with(idf) {
                 continue;
             }
+        }
+
+        if !passes_search(node, search_filter) {
+            continue;
         }
 
         match artifact_from_graph_node(node, project_path, artifact_types) {
@@ -203,6 +221,46 @@ pub fn query_artifacts(
 // ---------------------------------------------------------------------------
 // Private helpers
 // ---------------------------------------------------------------------------
+
+/// Check whether a node passes the optional type and status filters.
+fn passes_filters(
+    node: &crate::graph::ArtifactNode,
+    type_filter: Option<&str>,
+    status_filter: Option<&str>,
+) -> bool {
+    if let Some(tf) = type_filter {
+        if node.artifact_type != tf {
+            return false;
+        }
+    }
+    if let Some(sf) = status_filter {
+        match &node.status {
+            Some(s) if s == sf => {}
+            _ => return false,
+        }
+    }
+    true
+}
+
+/// Case-insensitive substring match against the node's title and description.
+fn passes_search(
+    node: &crate::graph::ArtifactNode,
+    search_filter: Option<&str>,
+) -> bool {
+    let Some(query) = search_filter else {
+        return true;
+    };
+    let q = query.to_lowercase();
+    if node.title.to_lowercase().contains(&q) {
+        return true;
+    }
+    if let Some(ref desc) = node.description {
+        if desc.to_lowercase().contains(&q) {
+            return true;
+        }
+    }
+    false
+}
 
 fn run_validation(
     frontmatter: &serde_json::Value,
@@ -366,7 +424,7 @@ mod tests {
         );
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let results = query_artifacts(&graph, tmp.path(), Some("rule"), None, None, &[]);
+        let results = query_artifacts(&graph, tmp.path(), Some("rule"), None, None, None, &[]);
 
         assert_eq!(results.len(), 1);
         assert_eq!(results[0].id, "RULE-a1b2c3d4");
@@ -391,7 +449,7 @@ mod tests {
         );
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let results = query_artifacts(&graph, tmp.path(), None, Some("active"), None, &[]);
+        let results = query_artifacts(&graph, tmp.path(), None, Some("active"), None, None, &[]);
 
         assert_eq!(results.len(), 1);
         assert_eq!(results[0].id, "RULE-a1b2c3d4");
@@ -416,7 +474,7 @@ mod tests {
         );
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let results = query_artifacts(&graph, tmp.path(), None, None, Some("RULE-a1"), &[]);
+        let results = query_artifacts(&graph, tmp.path(), None, None, Some("RULE-a1"), None, &[]);
 
         assert_eq!(results.len(), 1);
         assert_eq!(results[0].id, "RULE-a1b2c3d4");
@@ -447,7 +505,7 @@ mod tests {
         );
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        let results = query_artifacts(&graph, tmp.path(), None, None, None, &[]);
+        let results = query_artifacts(&graph, tmp.path(), None, None, None, None, &[]);
 
         // epics come before rules alphabetically; within rules, aaaaaaaa before zzzzzzzz
         let ids: Vec<&str> = results.iter().map(|r| r.id.as_str()).collect();

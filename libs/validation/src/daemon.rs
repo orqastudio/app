@@ -16,6 +16,7 @@
 //! | POST   | `/content/knowledge`     | Load knowledge artifact            |
 //! | POST   | `/content/behavioral`    | Extract behavioral messages        |
 //! | POST   | `/validate`              | Full graph validation report       |
+//! | POST   | `/traceability`          | Traceability from cached graph     |
 //! | POST   | `/reload`                | Rebuild all state from disk        |
 //!
 //! # PID file
@@ -37,6 +38,7 @@ use crate::content::{extract_behavioral_messages, find_agent, find_knowledge};
 use crate::context::build_validation_context_complete;
 use crate::error::ValidationError;
 use crate::graph::{build_artifact_graph, load_project_config, ArtifactGraph};
+use crate::metrics::compute_traceability;
 use crate::parse::{parse_artifact, query_artifacts};
 use crate::platform::{scan_plugin_manifests, PluginContributions};
 use crate::types::{
@@ -207,6 +209,7 @@ fn handle_request(mut request: Request, shared: &Arc<Mutex<DaemonState>>) {
         (Method::Post, "/content/knowledge") => handle_content_knowledge(&body, shared),
         (Method::Post, "/content/behavioral") => handle_content_behavioral(shared),
         (Method::Post, "/validate") => handle_validate(&body, shared),
+        (Method::Post, "/traceability") => handle_traceability(&body, shared),
         (Method::Post, "/reload") => handle_reload(shared),
         _ => Err((404, format!("not found: {method} {url}"))),
     };
@@ -292,6 +295,7 @@ fn handle_query(
     let type_filter = req.get("type").and_then(Value::as_str);
     let status_filter = req.get("status").and_then(Value::as_str);
     let id_filter = req.get("id").and_then(Value::as_str);
+    let search_filter = req.get("search").and_then(Value::as_str);
 
     let state = lock(shared)?;
     let results = query_artifacts(
@@ -300,6 +304,7 @@ fn handle_query(
         type_filter,
         status_filter,
         id_filter,
+        search_filter,
         &state.plugin_contributions.artifact_types,
     );
     to_value(results)
@@ -453,6 +458,25 @@ fn handle_validate(
         fixes_applied,
         enforcement_events,
     })
+}
+
+/// `POST /traceability` — `{ "artifact_id": "EPIC-094" }` → `TraceabilityResult`.
+///
+/// Uses the daemon's cached graph instead of rebuilding from disk.
+fn handle_traceability(
+    body: &str,
+    shared: &Arc<Mutex<DaemonState>>,
+) -> Result<Value, (u16, String)> {
+    let req: Value = parse_body(body)?;
+    let artifact_id = req_str(&req, "artifact_id")?;
+
+    if artifact_id.trim().is_empty() {
+        return Err((400, "artifact_id cannot be empty".to_owned()));
+    }
+
+    let state = lock(shared)?;
+    let result = compute_traceability(&state.graph, artifact_id);
+    to_value(result)
 }
 
 /// `POST /reload` — rebuild all state from disk.

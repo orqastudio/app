@@ -507,6 +507,7 @@ mod tests {
                 status: Some("draft".to_string()),
                 priority: None,
                 frontmatter: serde_json::json!({}),
+                body: None,
                 references_out: vec![],
                 references_in: vec![],
             },

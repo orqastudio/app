@@ -123,10 +123,8 @@ pub fn tool_definitions() -> Vec<McpToolDefinition> {
 
 /// `graph_query` — delegates to `POST /query` on the daemon.
 ///
-/// Supports `type`, `status`, and `search` filters. The daemon `/query`
-/// endpoint accepts `type` and `status`; `search` is applied client-side
-/// on the returned results because the daemon query API does not yet support
-/// full-text search.
+/// Supports `type`, `status`, and `search` filters. All filtering is
+/// performed server-side by the daemon.
 pub fn tool_query(daemon: &DaemonClient, args: &Value) -> Result<String, String> {
     let type_filter = args.get("type").and_then(|v| v.as_str());
     let status_filter = args.get("status").and_then(|v| v.as_str());
@@ -139,6 +137,9 @@ pub fn tool_query(daemon: &DaemonClient, args: &Value) -> Result<String, String>
     if let Some(s) = status_filter {
         query_params.insert("status".into(), json!(s));
     }
+    if let Some(q) = search_filter {
+        query_params.insert("search".into(), json!(q));
+    }
 
     let result = daemon
         .query(&Value::Object(query_params))
@@ -146,27 +147,8 @@ pub fn tool_query(daemon: &DaemonClient, args: &Value) -> Result<String, String>
 
     let items = result.as_array().ok_or("daemon returned non-array")?;
 
-    // Apply search filter locally.
-    let filtered: Vec<&Value> = if let Some(q) = search_filter {
-        let q_lower = q.to_lowercase();
-        items
-            .iter()
-            .filter(|item| {
-                let title = item.get("title").and_then(|v| v.as_str()).unwrap_or("");
-                let desc = item
-                    .get("description")
-                    .and_then(|v| v.as_str())
-                    .unwrap_or("");
-                title.to_lowercase().contains(&q_lower)
-                    || desc.to_lowercase().contains(&q_lower)
-            })
-            .collect()
-    } else {
-        items.iter().collect()
-    };
-
     // Return summary fields consistent with the old local implementation.
-    let summary: Vec<Value> = filtered
+    let summary: Vec<Value> = items
         .iter()
         .map(|item| {
             json!({
@@ -360,14 +342,10 @@ pub fn tool_refresh(daemon: &DaemonClient) -> Result<String, String> {
     Ok(format!("Graph refreshed: {artifact_count} artifacts"))
 }
 
-/// `graph_traceability` — still computed locally via `orqa_validation`.
+/// `graph_traceability` — delegates to `POST /traceability` on the daemon.
 ///
-/// The daemon does not expose a traceability endpoint. We build the graph
-/// locally on demand for this operation.
-pub fn tool_traceability(
-    project_root: &std::path::Path,
-    args: &Value,
-) -> Result<String, String> {
+/// Uses the daemon's cached graph instead of rebuilding from disk on every call.
+pub fn tool_traceability(daemon: &DaemonClient, args: &Value) -> Result<String, String> {
     let artifact_id = args
         .get("artifact_id")
         .and_then(|v| v.as_str())
@@ -376,9 +354,8 @@ pub fn tool_traceability(
         return Err("artifact_id cannot be empty".into());
     }
 
-    let graph = orqa_validation::build_artifact_graph(project_root)
-        .map_err(|e| format!("failed to build graph: {e}"))?;
-
-    let result = orqa_validation::compute_traceability(&graph, artifact_id);
+    let result = daemon
+        .traceability(artifact_id)
+        .map_err(|e| e.to_string())?;
     serde_json::to_string_pretty(&result).map_err(|e| e.to_string())
 }

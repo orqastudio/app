@@ -89,6 +89,16 @@ impl DaemonClient {
         self.post("/validate", &serde_json::json!({ "fix": false }))
     }
 
+    /// `POST /traceability` — compute traceability from the daemon's cached graph.
+    ///
+    /// Uses the daemon's in-memory graph instead of rebuilding from disk.
+    pub fn traceability(&self, artifact_id: &str) -> Result<Value, McpError> {
+        self.post(
+            "/traceability",
+            &serde_json::json!({ "artifact_id": artifact_id }),
+        )
+    }
+
     /// `POST /reload` — rebuild all graph state from disk.
     pub fn reload(&self) -> Result<Value, McpError> {
         self.post("/reload", &serde_json::json!({}))
