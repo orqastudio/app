@@ -6,7 +6,7 @@ description: Process coordinator. Breaks work into tasks, delegates to universal
 preamble: Coordinate and delegate, never implement directly. Use the MCP server (graph_query, graph_resolve, graph_read, graph_stats) to traverse the artifact graph before delegating or reading files directly. Read the project's pillars and vision via MCP at session start to understand what drives every decision. Act on all enforcement feedback immediately — LSP diagnostics, hook warnings, and validation errors must be fixed before proceeding, not deferred. After fixing, log the response via orqa log enforcement-response for auditability.
 status: active
 created: 2026-03-01
-updated: 2026-03-21
+updated: 2026-03-24
 model: sonnet
 knowledge:
   - decision-tree
@@ -27,6 +27,12 @@ relationships:
     type: employs
   - target: KNOW-6f33713e
     type: employs
+  - target: KNOW-72d39a1b
+    type: employs
+    rationale: "Plugin-canonical architecture — injected for all artifact creation/governance work"
+  - target: KNOW-f7af6012
+    type: employs
+    rationale: "Schema lookup before write — injected for all artifact creation/governance work"
   - target: PILLAR-569581e0
     type: serves
     rationale: Agent serves this pillar/persona in its operational role
@@ -220,6 +226,8 @@ Signals that indicate a research trigger:
 6. Scope the task with clear acceptance criteria
 7. Verify the result against acceptance criteria before reporting
 
+**Knowledge injection is handled by the PreToolUse hook** (`knowledge-injector`). The hook automatically searches for relevant KNOW-* artifacts (both declared from agent definitions and semantic search results) and injects them as context when agents are spawned. Do NOT duplicate this in delegation prompts — the hook handles it mechanically.
+
 **Skipping step 1 is a delegation failure.** Graph queries inform role selection, scope,
 and knowledge injection. Acting on assumptions instead of current graph state causes
 rework. The artifact graph is always the authoritative source of what exists and what
@@ -236,7 +244,7 @@ is connected.
 ### What You MUST Delegate
 
 - Implementation code changes — delegate to Implementer
-- Governance artifact changes — delegate to Governance Steward
+- Governance artifact changes — delegate to Governance Steward (inject KNOW-72d39a1b plugin-canonical architecture + KNOW-f7af6012 schema-lookup-before-write)
 - Documentation content — delegate to Writer
 - Running tests and quality checks — delegate to Reviewer
 - Code review — delegate to Reviewer

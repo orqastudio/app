@@ -417,6 +417,31 @@
             "enforcement": {
               "type": "array"
             },
+            "demoted_date": {
+              "type": "string",
+              "format": "date",
+              "description": "ISO date when the rule was demoted to inactive"
+            },
+            "demoted_reason": {
+              "type": "string",
+              "description": "Why the rule was demoted (e.g. enforced by orqa lsp schema validation)"
+            },
+            "replaced_by": {
+              "type": "string",
+              "description": "What now covers this rule (e.g. orqa lsp, pre-commit hook)"
+            },
+            "stability_threshold": {
+              "type": "number",
+              "minimum": 1,
+              "default": 10,
+              "description": "Sessions with zero violations before the rule is safe to delete"
+            },
+            "stability_count": {
+              "type": "number",
+              "minimum": 0,
+              "default": 0,
+              "description": "Current count of consecutive clean sessions since demotion"
+            },
             "relationships": {
               "type": "array",
               "items": {
@@ -453,6 +478,11 @@
           "active": [
             "review",
             "hold",
+            "inactive",
+            "archived"
+          ],
+          "inactive": [
+            "active",
             "archived"
           ],
           "hold": [

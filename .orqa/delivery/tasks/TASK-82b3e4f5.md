@@ -27,9 +27,20 @@ The daemon port is mismatched: CLI starts on 3002, MCP server expects 9258. This
 
 ## Files to Modify
 
-- `libs/cli/src/commands/daemon.ts` — change DEFAULT_PORT
-- `libs/mcp-server/src/daemon.rs` — change DEFAULT_DAEMON_PORT
-- Any connector/hook scripts that reference the daemon port
+**CLI ecosystem (currently 3002):**
+- `libs/cli/src/commands/daemon.ts:14` — `DEFAULT_PORT`
+- `libs/cli/src/commands/enforce.ts:115` — hardcoded port
+- `connectors/claude-code/src/hooks/shared.ts:11` — `DAEMON_BASE`
+- `libs/validation/src/bin/server.rs:562` — fallback default
+- `app/backend/src-tauri/src/commands/daemon_commands.rs:32` — hardcoded address
+
+**Rust library ecosystem (currently 9258):**
+- `libs/mcp-server/src/daemon.rs:22` — `DEFAULT_DAEMON_PORT`
+- `libs/mcp-server/src/bin/server.rs:50` — defaults to 9258
+- `libs/lsp-server/src/bin/server.rs:28` — `DEFAULT_DAEMON_PORT`
+
+**App LSP (currently 3002, separate task):**
+- `app/backend/src-tauri/src/servers/lsp.rs:15` — see [TASK-f3a4b5c6](TASK-f3a4b5c6)
 
 ## Verification
 

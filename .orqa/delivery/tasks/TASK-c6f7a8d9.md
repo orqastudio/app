@@ -9,7 +9,7 @@ updated: 2026-03-24
 acceptance:
   - .orqa/documentation/development/commands.md updated with new CLI commands
   - RULE-c71f1c3f (development-commands) updated with new make-to-orqa mapping
-  - Port allocation table documented in a discoverable location
+  - Port allocation table documented in the core-framework plugin as the canonical reference
   - RULE-6083347d (dogfood-mode) updated to reference orqa dev instead of make dev
   - All documentation references to old ports (1420, 3002, 9258) are updated
   - Reviewer verifies no stale port references remain in documentation
@@ -31,6 +31,7 @@ Documentation-first: update all docs before implementation begins. This ensures 
 - `.orqa/documentation/development/coding-standards.md` — if port conventions are mentioned
 - `README.md` — if it references port numbers or dev setup
 - Any connector/plugin documentation referencing ports
+- **Core-framework plugin** — canonical port allocation table must live here (single source of truth for all port assignments, referenced by all other docs)
 
 ## Verification
 

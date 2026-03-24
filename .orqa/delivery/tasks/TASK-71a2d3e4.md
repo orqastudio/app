@@ -28,17 +28,39 @@ relationships:
 
 Audit every config file and source file for port assignments. Update all OrqaStudio service ports to the 10000+ range per the port allocation table in the epic.
 
-## Files to Check
+## Files to Check (Complete Audit)
 
-- `libs/cli/src/commands/daemon.ts` — DEFAULT_PORT
-- `libs/mcp-server/src/daemon.rs` — DEFAULT_DAEMON_PORT
-- `ui/vite.config.ts` — Vite dev server port
-- `backend/src-tauri/tauri.conf.json` — devUrl port
-- Any docker-compose, env files, or other config referencing ports
-- Documentation referencing specific port numbers
+**Daemon port (3002):**
+- `libs/cli/src/commands/daemon.ts:14` — `DEFAULT_PORT = 3002`
+- `libs/cli/src/commands/enforce.ts:115` — `const port = 3002`
+- `connectors/claude-code/src/hooks/shared.ts:11` — `DAEMON_BASE = "http://localhost:3002"`
+- `libs/validation/src/bin/server.rs:562` — fallback default `3002`
+- `app/backend/src-tauri/src/commands/daemon_commands.rs:32` — hardcoded `127.0.0.1:3002`
+
+**Daemon port (9258):**
+- `libs/mcp-server/src/daemon.rs:22` — `DEFAULT_DAEMON_PORT: u16 = 9258`
+- `libs/mcp-server/src/bin/server.rs:50` — defaults to 9258
+- `libs/lsp-server/src/bin/server.rs:28` — `DEFAULT_DAEMON_PORT: u16 = 9258`
+
+**App LSP hardcoded port:**
+- `app/backend/src-tauri/src/servers/lsp.rs:15` — hardcoded `3002` (see [TASK-f3a4b5c6](TASK-f3a4b5c6))
+
+**Dashboard port (3001):**
+- `tools/debug/dev.mjs:54` — `DASHBOARD_PORT`
+- `libs/logger/src/index.ts:40` — forwards to `localhost:3001`
+- `app/ui/src/lib/utils/dev-console.ts:13` — forwards to `localhost:3001`
+- `connectors/claude-code/src/hooks/telemetry.ts:8` — forwards to `localhost:3001`
+- `infrastructure/sync-bridge/src/config.ts:20` — defaults to `3001` (see [TASK-a5b6c7d8](TASK-a5b6c7d8))
+
+**Vite dev server (1420):**
+- `tools/debug/dev.mjs:53` — `VITE_PORT`
+- `app/backend/src-tauri/tauri.conf.json:8` — `devUrl`
+
+**Infrastructure (Forgejo):**
+- `infrastructure/orqastudio-git/docker-compose.yml:37-38` — ports 3030 and 222
 
 ## Verification
 
-1. `search_regex` for port numbers 1420, 3002, 9258 returns zero results after changes
+1. `search_regex` for port numbers 1420, 3001, 3002, 3030, 9258 returns zero results after changes
 2. All services start on their new ports
 3. `make check` passes

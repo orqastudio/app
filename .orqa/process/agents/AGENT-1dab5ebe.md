@@ -231,6 +231,8 @@ Signals that indicate a research trigger:
 6. Scope the task with clear acceptance criteria
 7. Verify the result against acceptance criteria before reporting
 
+**Knowledge injection is handled by the PreToolUse hook** (`knowledge-injector`). The hook automatically searches for relevant KNOW-* artifacts (both declared from agent definitions and semantic search results) and injects them as context when agents are spawned. Do NOT duplicate this in delegation prompts — the hook handles it mechanically.
+
 **Skipping step 1 is a delegation failure.** Graph queries inform role selection, scope,
 and knowledge injection. Acting on assumptions instead of current graph state causes
 rework. The artifact graph is always the authoritative source of what exists and what

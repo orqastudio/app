@@ -4,10 +4,13 @@ type: decision
 title: "Connector architecture v2: dev process separation, graph-first enforcement, plugin specialist agents"
 status: active
 created: 2026-03-20
-updated: 2026-03-20
+updated: 2026-03-24
 relationships:
   - target: EPIC-8d2e4f6a
     type: drives
+  - target: AD-2ce57da9
+    type: evolves-into
+    rationale: "Section 1 (Dev Process Separation) superseded — MCP and LSP are now CLI stdio modes, not separate managed processes. Other sections remain active."
 ---
 
 # AD-061: Connector Architecture v2 — Dev Process Separation, Graph-First Enforcement, Plugin Specialist Agents

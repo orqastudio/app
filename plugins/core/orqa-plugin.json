@@ -18,6 +18,10 @@
     "rules": {
       "source": "rules",
       "target": ".orqa/process/rules"
+    },
+    "docs": {
+      "source": "docs",
+      "target": ".orqa/documentation"
     }
   },
   "provides": {
