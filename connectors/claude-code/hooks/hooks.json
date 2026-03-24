@@ -84,6 +84,16 @@
             "timeout": 10000
           }
         ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/hooks/departure-detection.js",
+            "timeout": 5000
+          }
+        ]
       }
     ],
     "SessionStart": [

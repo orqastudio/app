@@ -32,6 +32,11 @@
         "description": "Validates governance artifacts against plugin schemas before every commit"
       },
       {
+        "event": "post-commit",
+        "script": "hooks/post-commit",
+        "description": "Auto-pushes to remote after every commit (RULE-633e636d enforcement)"
+      },
+      {
         "event": "PreAction",
         "script": "hooks/validate-relationships.mjs --stdin",
         "description": "Validates relationship types when writing .orqa/ artifact files"

@@ -1,5 +1,6 @@
 ---
 id: IMPL-f8a0b2c4
+type: lesson
 title: Frontend must never call local services directly — always route through Tauri invoke
 category: architecture
 status: active

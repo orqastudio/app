@@ -32,7 +32,27 @@ relationships:
 |-------|--------|-------|
 | `id` | `PREFIX-NNN` | Unique, matches idPrefix from schema |
 | `type` | string | Must match a type from core.json or plugin schemas |
-| `status` | string | One of the 12 canonical statuses |
+| `status` | string | One of the canonical statuses (see table below) |
+
+## Artifact Status — Query the Schema (NON-NEGOTIABLE)
+
+Valid statuses are defined by **plugin schemas** (`statusTransitions` in `orqa-plugin.json`). Do NOT memorize or hardcode status values. Instead, discover them at runtime:
+
+### How to Discover Valid Statuses
+
+1. **Via MCP**: `graph_query({ type: "<artifact-type>" })` — returns schema metadata including valid statuses
+2. **Via plugin file**: Read the plugin's `orqa-plugin.json` and find the `statusTransitions` for the artifact type
+3. **Via schema.json**: Read the `schema.json` in the artifact's directory for the `status` enum
+
+### Why Runtime Discovery
+
+- Plugins define status vocabularies — different plugins may define different valid statuses
+- Hardcoded status lists create maintenance burden and drift from the actual schema
+- The plugin schema is the single source of truth; everything else is a stale copy
+
+### Common Mistakes
+
+Agents frequently use statuses that feel natural but are not in any plugin schema. Before writing any `status` field, query the schema. Common errors include using `done` instead of `completed`, `todo` instead of `captured`, `in-progress` instead of `active`, and `draft` instead of `captured`.
 
 ### Common Optional Fields
 

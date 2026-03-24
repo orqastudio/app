@@ -1,5 +1,6 @@
 ---
 id: IMPL-a3b5c7d9
+type: lesson
 title: Agent team findings must be written to disk before task completion
 category: process
 status: promoted

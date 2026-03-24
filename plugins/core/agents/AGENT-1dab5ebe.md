@@ -246,6 +246,11 @@ is connected.
 
 These constraints are always in effect. No exceptions.
 
+- **ALL work MUST use TeamCreate + background Agent spawning (RULE-00a8c660).** The orchestrator
+  MUST NEVER implement, review, research, or write documentation inline. For EVERY piece of
+  delegated work: (1) `TeamCreate` to create a team, (2) `TaskCreate` for each task,
+  (3) spawn agents with `run_in_background: true`. No exceptions. Even single tasks use teams.
+  The orchestrator's job is to stay available for conversation — not to block on agent work.
 - **No `unwrap()` / `expect()` / `panic!()`** in Rust production code
 - **No `--no-verify`** on git commits
 - **No force push** to main

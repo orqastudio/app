@@ -1,5 +1,6 @@
 ---
 id: IMPL-d6e8f0a2
+type: lesson
 title: Team lead must commit after each task completion — code and artifacts together
 category: process
 status: active

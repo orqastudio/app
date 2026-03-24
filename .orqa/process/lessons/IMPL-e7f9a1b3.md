@@ -1,5 +1,6 @@
 ---
 id: IMPL-e7f9a1b3
+type: lesson
 title: Session state with next priorities not written proactively at session end
 category: process
 status: promoted

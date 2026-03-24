@@ -4,15 +4,12 @@ type: rule
 title: Agent team task completion requires findings written to disk
 status: active
 description: Teammates MUST write findings to tmp/team/<team-name>/task-<id>.md BEFORE marking a task complete. The file is the evidence. TaskUpdate(completed) is the signal, not the proof.
+enforcement:
+  - mechanism: behavioral
+    message: "Write findings to tmp/team/<team-name>/task-<id>.md before marking task complete"
 created: 2026-03-23
 promoted-from: IMPL-a3b5c7d9
-relationships:
-  - target: RULE-878e5422
-    type: enforces
-    rationale: Honest reporting requires verifiable evidence
-  - target: RULE-9cd980b1
-    type: enforces
-    rationale: Status must be backed by evidence on disk
+relationships: []
 ---
 
 ## Rule (NON-NEGOTIABLE)

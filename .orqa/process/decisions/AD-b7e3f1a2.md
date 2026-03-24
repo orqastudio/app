@@ -6,16 +6,7 @@ status: active
 description: All plugin functionality is expressed through a universal capability vocabulary declared in the manifest. No bespoke wiring code in individual plugins.
 created: 2026-03-23
 updated: 2026-03-23
-relationships:
-  - target: AD-c6abc8e6
-    type: revises
-    rationale: Extends the organisation-mode architecture with a concrete plugin capability model
-  - target: IDEA-09979c9d
-    type: informs
-    rationale: orqa git depends on how plugins declare and consume content
-  - target: IDEA-7c3d9f2e
-    type: informs
-    rationale: Forgejo hosting depends on how plugins are distributed
+relationships: []
 ---
 
 ## Decision

@@ -1,5 +1,6 @@
 ---
 id: IMPL-b4c6d8ea
+type: lesson
 title: Orchestrator repeatedly uses invalid relationship types in artifact frontmatter
 category: governance
 status: promoted

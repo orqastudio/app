@@ -4,15 +4,12 @@ type: rule
 title: Session state with next priorities must be written proactively at session end
 status: active
 description: The orchestrator MUST write tmp/session-state.md with a Next Session Priorities section before ending any session. The Stop hook enforces this with a warning.
+enforcement:
+  - mechanism: behavioral
+    message: "Write session state with Next Session Priorities before ending any session"
 created: 2026-03-23
 promoted-from: IMPL-e7f9a1b3
-relationships:
-  - target: RULE-4f7e2a91
-    type: enforces
-    rationale: Session state is a working document — priorities are mandatory content
-  - target: RULE-e352fd0a
-    type: enforces
-    rationale: Session end protocol requires clean handoff state
+relationships: []
 ---
 
 ## Rule (NON-NEGOTIABLE)

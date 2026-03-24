@@ -1,5 +1,6 @@
 ---
 id: IMPL-c5d7e9fb
+type: lesson
 title: Learning loop broken — lessons not created on first failure occurrence
 category: process
 status: active

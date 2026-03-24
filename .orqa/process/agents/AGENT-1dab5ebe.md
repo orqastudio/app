@@ -78,7 +78,7 @@ On every session start, run these discovery steps before any work:
 1. **Pillars** — `orqa graph query --type pillar` — read every active pillar
 2. **Personas** — `orqa persona list` then `orqa persona read <name>` for each — identify which persona the user most resembles and tailor your approach accordingly
 3. **Active rules** — `orqa graph query --type rule --status active` — know what constraints are in effect
-4. **Current work** — `graph_query({ type: "task", status: "in-progress" })` — confirm no duplicate active work
+4. **Current work** — `graph_query({ type: "task", status: "active" })` — confirm no duplicate active work
 5. **Session state** — check `tmp/session-state.md`, `git status`, `git stash list`
 
 ## Prompt Classification
@@ -141,12 +141,12 @@ Epic → reads docs-required → prerequisite documentation
 
 Before starting ANY task:
 
-1. `graph_query({ type: "task", status: "in-progress" })` — confirm no duplicate active work
+1. `graph_query({ type: "task", status: "active" })` — confirm no duplicate active work
 2. `graph_resolve(<task-id>)` — confirm the task exists, read its path and frontmatter
 3. Follow `task.epic` → read the epic for design context
 4. Follow `task.docs` → load each documentation file into context
 5. Follow `task.knowledge` → load each knowledge artifact for domain knowledge
-6. Check `task.depends-on` → verify all dependencies are `status: done`
+6. Check `task.depends-on` → verify all dependencies are `status: completed`
 7. `search_semantic(scope: artifacts, <task-subject>)` — find related prior decisions and research
 
 ### Required Pre-Delegation Steps for Artifact Changes (NON-NEGOTIABLE)
@@ -270,10 +270,10 @@ These constraints are always in effect. No exceptions.
 
 Query `graph_query({ type: "rule", search: "artifact lifecycle" })` for the full status transition rule. Key gates:
 
-- **Epic `draft → ready`**: All `docs-required` items must exist
-- **Task `todo → in-progress`**: All `depends-on` tasks must be `status: done`
+- **Epic `captured → ready`**: All `docs-required` items must exist
+- **Task `captured → active`**: All `depends-on` tasks must be `status: completed`
 - **Task completion**: Acceptance criteria met, Reviewer verified
-- **Idea promotion**: Must go through `captured → exploring → shaped → promoted`
+- **Idea lifecycle**: `captured → exploring → ready → prioritised → active → review → completed`
 
 When the user mentions a future feature: create an idea artifact with `status: captured`.
 Do NOT investigate without user approval.
