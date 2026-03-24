@@ -48,7 +48,9 @@ export interface DaemonHealthResponse {
 // Configuration
 // ---------------------------------------------------------------------------
 
-const DAEMON_PORT = 10258;
+import { getPort } from "./ports.js";
+
+const DAEMON_PORT = getPort("daemon");
 const DAEMON_BASE = `http://127.0.0.1:${DAEMON_PORT}`;
 const TIMEOUT_MS = 5000;
 

@@ -19,7 +19,14 @@ use serde_json::Value;
 use crate::error::McpError;
 
 /// Default port for the validation daemon.
-pub const DEFAULT_DAEMON_PORT: u16 = 10258;
+/// Reads `ORQA_PORT_BASE` from the environment (default 10200) and adds offset 58.
+pub fn default_daemon_port() -> u16 {
+    let base: u16 = std::env::var("ORQA_PORT_BASE")
+        .ok()
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(10200);
+    base + 58
+}
 
 /// Blocking HTTP client bound to a specific daemon instance.
 pub struct DaemonClient {

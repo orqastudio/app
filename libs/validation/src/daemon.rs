@@ -56,6 +56,7 @@ struct DaemonState {
     project_root: PathBuf,
     graph: ArtifactGraph,
     ctx: ValidationContext,
+    #[allow(dead_code)] // Kept alive for data referenced by ValidationContext
     plugin_contributions: PluginContributions,
 }
 

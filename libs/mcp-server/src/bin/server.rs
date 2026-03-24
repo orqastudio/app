@@ -11,7 +11,7 @@ use std::process;
 
 use tracing_subscriber::EnvFilter;
 
-use orqa_mcp_server::daemon::DEFAULT_DAEMON_PORT;
+use orqa_mcp_server::daemon::default_daemon_port;
 
 fn main() {
     // Initialise tracing — output to stderr so it doesn't pollute the JSON-RPC stdout stream.
@@ -47,7 +47,7 @@ fn main() {
 
 fn parse_args(args: &[String]) -> (PathBuf, u16) {
     let mut project_root: Option<PathBuf> = None;
-    let mut daemon_port: u16 = DEFAULT_DAEMON_PORT;
+    let mut daemon_port: u16 = default_daemon_port();
     let mut i = 1usize;
 
     while i < args.len() {

@@ -25,7 +25,14 @@ use std::path::PathBuf;
 use tracing_subscriber::EnvFilter;
 
 /// Default port for the validation daemon HTTP API.
-const DEFAULT_DAEMON_PORT: u16 = 10258;
+/// Reads `ORQA_PORT_BASE` from the environment (default 10200) and adds offset 58.
+fn default_daemon_port() -> u16 {
+    let base: u16 = std::env::var("ORQA_PORT_BASE")
+        .ok()
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(10200);
+    base + 58
+}
 
 #[tokio::main]
 async fn main() {
@@ -72,7 +79,7 @@ async fn main() {
 fn parse_args(args: &[String]) -> (PathBuf, Option<u16>, u16) {
     let mut project_root: Option<PathBuf> = None;
     let mut tcp_port: Option<u16> = None;
-    let mut daemon_port: u16 = DEFAULT_DAEMON_PORT;
+    let mut daemon_port: u16 = default_daemon_port();
     let mut i = 1usize;
 
     while i < args.len() {

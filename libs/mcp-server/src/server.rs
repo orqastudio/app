@@ -7,7 +7,7 @@ use orqa_search::SearchEngine;
 use serde_json::{json, Value};
 use tracing::{debug, warn};
 
-use crate::daemon::{DaemonClient, DEFAULT_DAEMON_PORT};
+use crate::daemon::{DaemonClient, default_daemon_port};
 use crate::error::McpError;
 use crate::tools::{graph as graph_tools, search as search_tools};
 use crate::types::{JsonRpcError, JsonRpcRequest, JsonRpcResponse, McpResource};
@@ -27,7 +27,7 @@ pub struct McpServer {
 impl McpServer {
     /// Create a new server for the given project root.
     pub fn new(project_root: PathBuf) -> Self {
-        Self::with_daemon_port(project_root, DEFAULT_DAEMON_PORT)
+        Self::with_daemon_port(project_root, default_daemon_port())
     }
 
     /// Create a new server connecting to the daemon on `daemon_port`.
@@ -272,7 +272,7 @@ impl McpServer {
 ///
 /// Returns `McpError::Io` if reading from stdin or writing to stdout fails.
 pub fn run(project_root: &std::path::Path) -> Result<(), McpError> {
-    run_with_daemon_port(project_root, DEFAULT_DAEMON_PORT)
+    run_with_daemon_port(project_root, default_daemon_port())
 }
 
 /// Run the MCP server over stdio, connecting to the daemon on `daemon_port`.

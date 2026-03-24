@@ -8,7 +8,14 @@
 import { spawnSync } from "node:child_process";
 import type { HookInput } from "../types.js";
 
-const DAEMON_BASE = "http://localhost:10258";
+/** Resolve daemon port from ORQA_PORT_BASE (default 10200) + offset 58. */
+function getDaemonPort(): number {
+  const raw = process.env["ORQA_PORT_BASE"];
+  const base = (raw !== undefined && raw !== "") ? parseInt(raw, 10) : 10200;
+  return (Number.isNaN(base) ? 10200 : base) + 58;
+}
+
+const DAEMON_BASE = `http://localhost:${getDaemonPort()}`;
 
 /** Canonical hook event (mirrors @orqastudio/types HookContext). */
 export type CanonicalEvent =

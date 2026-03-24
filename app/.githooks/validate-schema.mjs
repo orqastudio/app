@@ -9,7 +9,9 @@ import { resolve, relative } from "path";
 import { spawnSync } from "child_process";
 
 const ROOT = resolve(import.meta.dirname, "..");
-const DAEMON_BASE = "http://localhost:10258";
+const PORT_BASE = parseInt(process.env.ORQA_PORT_BASE || "10200", 10);
+const DAEMON_PORT = (Number.isNaN(PORT_BASE) ? 10200 : PORT_BASE) + 58;
+const DAEMON_BASE = `http://localhost:${DAEMON_PORT}`;
 
 // Parse args: files and optional --warn-rules=RULE-032,RULE-004
 const args = process.argv.slice(2);

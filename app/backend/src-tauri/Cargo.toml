@@ -45,10 +45,6 @@ notify-debouncer-full = "0.6"
 rand = "0.8"
 tar = "0.4"
 flate2 = "1"
-tower-lsp = "0.20"
-lsp-types = "0.95"
-orqa-lsp-server = { path = "../../../libs/lsp-server" }
-orqa-mcp-server = { path = "../../../libs/mcp-server" }
 orqa-validation = { path = "../../../libs/validation" }
 
 [dev-dependencies]

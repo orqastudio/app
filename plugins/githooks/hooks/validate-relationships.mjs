@@ -14,7 +14,9 @@
 import { existsSync } from "fs";
 import { join, resolve } from "path";
 
-const DAEMON_BASE = "http://localhost:10258";
+const PORT_BASE = parseInt(process.env.ORQA_PORT_BASE || "10200", 10);
+const DAEMON_PORT = (Number.isNaN(PORT_BASE) ? 10200 : PORT_BASE) + 58;
+const DAEMON_BASE = `http://localhost:${DAEMON_PORT}`;
 
 // ---------------------------------------------------------------------------
 // Find project root

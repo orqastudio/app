@@ -10,10 +10,11 @@
 import { spawn } from "node:child_process";
 import { existsSync, readFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
+import { getPort } from "../lib/ports.js";
 import { getRoot } from "../lib/root.js";
 import { findBinary } from "../lib/validation-engine.js";
 
-const DEFAULT_PORT = 10258;
+const DEFAULT_PORT = getPort("daemon");
 
 const USAGE = `
 Usage: orqa daemon <subcommand> [options]

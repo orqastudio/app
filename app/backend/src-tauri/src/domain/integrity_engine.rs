@@ -20,6 +20,8 @@
 use orqa_validation::ArtifactGraph;
 
 use crate::domain::artifact_graph::IntegrityCheck;
+// DeliveryConfig and ProjectRelationshipConfig are re-exported from orqa_validation::settings
+// in project_settings.rs, so they are the SAME type as the validation lib's — no conversion needed.
 use crate::domain::project_settings::{DeliveryConfig, ProjectRelationshipConfig};
 
 // ---------------------------------------------------------------------------
@@ -44,33 +46,21 @@ pub use orqa_validation::ValidationContext;
 ///
 /// Delegates to [`orqa_validation::build_validation_context`].
 ///
-/// Handles the serde-identical conversion from app-side `DeliveryConfig` and
-/// `ProjectRelationshipConfig` to the lib's types via JSON round-trip.
-/// Both type pairs have identical serde representations, so the conversion
-/// is lossless.
+/// Build a `ValidationContext` by merging platform config, project relationships,
+/// and plugin manifests.
+///
+/// Since `DeliveryConfig` and `ProjectRelationshipConfig` are now re-exported from
+/// `orqa_validation::settings`, they are the same type — no conversion needed.
 pub fn build_validation_context(
     valid_statuses: &[String],
     delivery: &DeliveryConfig,
     project_relationships: &[ProjectRelationshipConfig],
     plugin_relationships: &[RelationshipSchema],
 ) -> ValidationContext {
-    let lib_delivery: orqa_validation::settings::DeliveryConfig =
-        serde_json::from_value(serde_json::to_value(delivery).unwrap_or_default())
-            .unwrap_or_default();
-
-    let lib_project_rels: Vec<orqa_validation::settings::ProjectRelationshipConfig> =
-        project_relationships
-            .iter()
-            .filter_map(|r| {
-                let json = serde_json::to_value(r).ok()?;
-                serde_json::from_value(json).ok()
-            })
-            .collect();
-
     orqa_validation::build_validation_context(
         valid_statuses,
-        &lib_delivery,
-        &lib_project_rels,
+        delivery,
+        project_relationships,
         plugin_relationships,
     )
 }

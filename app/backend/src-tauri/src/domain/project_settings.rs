@@ -2,6 +2,12 @@ use serde::{Deserialize, Serialize};
 
 use crate::domain::project::DetectedStack;
 
+// Re-export config types from the canonical source in orqa-validation.
+pub use orqa_validation::settings::{
+    ArtifactEntry, ArtifactTypeConfig, DeliveryConfig, DeliveryParentConfig, DeliveryTypeConfig,
+    ProjectRelationshipConfig,
+};
+
 /// An automatic transition rule on a status definition.
 ///
 /// `condition` is a named condition evaluated by the transition engine.
@@ -13,6 +19,9 @@ pub struct StatusAutoRule {
 }
 
 /// A status definition loaded from `project.json`.
+///
+/// Extends the validation lib's `StatusDefinition` with `auto_rules` for the
+/// transition engine (app-specific feature).
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StatusDefinition {
     pub key: String,
@@ -26,95 +35,6 @@ pub struct StatusDefinition {
     /// Automatic transition rules evaluated by the transition engine.
     #[serde(default)]
     pub auto_rules: Vec<StatusAutoRule>,
-}
-
-/// A single artifact type with a filesystem path to scan.
-///
-/// `label` and `icon` are optional — the scanner reads them from the directory's
-/// README.md frontmatter when absent, falling back to a humanized key name.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ArtifactTypeConfig {
-    pub key: String,
-    #[serde(default)]
-    pub label: Option<String>,
-    #[serde(default)]
-    pub icon: Option<String>,
-    pub path: String,
-}
-
-/// An entry in the artifacts config — either a direct type or a group of types.
-///
-/// Serde uses `untagged` matching: `Group` must come before `Type` in the enum
-/// because it has a required `children` field that distinguishes it from a bare type.
-///
-/// `label` and `icon` on both variants are optional — presentation metadata comes
-/// primarily from README.md frontmatter in each directory, not from this config.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum ArtifactEntry {
-    /// A named group containing multiple artifact types.
-    Group {
-        key: String,
-        #[serde(default)]
-        label: Option<String>,
-        #[serde(default)]
-        icon: Option<String>,
-        children: Vec<ArtifactTypeConfig>,
-    },
-    /// A direct artifact type with its own path.
-    Type(ArtifactTypeConfig),
-}
-
-/// The parent relationship config for a delivery type.
-///
-/// `parent_type` is the key of the parent delivery type.
-/// `field` is the frontmatter field on this type that references the parent.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct DeliveryParentConfig {
-    #[serde(rename = "type")]
-    pub parent_type: String,
-    /// The relationship type that connects child to parent (e.g. "delivers", "belongs-to").
-    /// The system reads the relationship graph, not standalone frontmatter fields.
-    pub relationship: String,
-}
-
-/// A single delivery type defined in `project.json`.
-///
-/// Delivery types form a hierarchy (e.g. milestone → epic → task).
-/// `parent` is `None` for the root type.
-/// `gate_field` names the frontmatter field that acts as the completion gate question.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct DeliveryTypeConfig {
-    pub key: String,
-    pub label: String,
-    pub path: String,
-    #[serde(default)]
-    pub parent: Option<DeliveryParentConfig>,
-    #[serde(default)]
-    pub gate_field: Option<String>,
-}
-
-/// The delivery configuration block from `project.json`.
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct DeliveryConfig {
-    #[serde(default)]
-    pub types: Vec<DeliveryTypeConfig>,
-}
-
-/// A project-level relationship type defined in `project.json`.
-///
-/// Extends the canonical relationship vocabulary with project-specific pairs
-/// (e.g. `depends-on` / `depended-on-by`).
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ProjectRelationshipConfig {
-    /// The forward relationship key (e.g. "depends-on").
-    pub key: String,
-    /// The inverse relationship key (e.g. "depended-on-by").
-    pub inverse: String,
-    /// Human-readable label for the forward direction.
-    pub label: String,
-    /// Human-readable label for the inverse direction.
-    pub inverse_label: String,
 }
 
 /// Display mode for artifact link chips.

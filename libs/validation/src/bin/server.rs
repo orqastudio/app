@@ -559,9 +559,16 @@ fn run_daemon_cmd(args: &[String]) {
         process::exit(2);
     }
 
+    let default_port: u16 = {
+        let base: u16 = std::env::var("ORQA_PORT_BASE")
+            .ok()
+            .and_then(|s| s.parse().ok())
+            .unwrap_or(10200);
+        base + 58
+    };
     let port: u16 = find_flag_value(args, "--port")
         .and_then(|s| s.parse().ok())
-        .unwrap_or(10258);
+        .unwrap_or(default_port);
 
     match run_daemon(&project_path, port) {
         Ok(()) => process::exit(0),
