@@ -14,6 +14,7 @@ interface LoadedPlugin {
 	name: string;
 	path: string;
 	category: string | null;
+	role: string | null;
 	requires: string[];
 }
 
@@ -61,6 +62,29 @@ function checkPluginDependencies(plugins: LoadedPlugin[]): PluginIntegrityFindin
 					message: `Plugin "${plugin.name}" requires "${dep}" which is not installed`,
 				});
 			}
+		}
+	}
+	return findings;
+}
+
+/**
+ * Check that no two plugins share the same `core:*` role.
+ * Each core role (framework, discovery, delivery, governance) is exclusive.
+ */
+function checkMethodologyExclusivity(plugins: LoadedPlugin[]): PluginIntegrityFinding[] {
+	const findings: PluginIntegrityFinding[] = [];
+	const coreRoles = new Map<string, string>();
+	for (const plugin of plugins) {
+		if (!plugin.role || !plugin.role.startsWith("core:")) continue;
+		const existing = coreRoles.get(plugin.role);
+		if (existing) {
+			findings.push({
+				plugin: plugin.name,
+				severity: "error",
+				message: `Role "${plugin.role}" conflict: both "${existing}" and "${plugin.name}" declare this core role. Only one plugin per core role is allowed.`,
+			});
+		} else {
+			coreRoles.set(plugin.role, plugin.name);
 		}
 	}
 	return findings;
@@ -351,6 +375,7 @@ function discoverAndValidate(projectRoot: string): SchemaFinding[] {
 						name: data["name"],
 						path: relative(process.cwd(), manifestPath),
 						category: typeof data["category"] === "string" ? data["category"] : null,
+						role: typeof data["role"] === "string" ? data["role"] : null,
 						requires: mergePluginDeps(data["requires"], data["extends"]),
 					});
 				}
@@ -373,6 +398,15 @@ function discoverAndValidate(projectRoot: string): SchemaFinding[] {
 		findings.push({
 			file: "(project)",
 			field: `plugins.${finding.plugin}.requires`,
+			severity: finding.severity,
+			message: finding.message,
+		});
+	}
+
+	for (const finding of checkMethodologyExclusivity(loadedPlugins)) {
+		findings.push({
+			file: "(project)",
+			field: `plugins.${finding.plugin}.role`,
 			severity: finding.severity,
 			message: finding.message,
 		});

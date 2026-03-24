@@ -6,7 +6,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { installPlugin, uninstallPlugin, listInstalledPlugins } from "../lib/installer.js";
+import { installPlugin, uninstallPlugin, listInstalledPlugins, detectMethodologyConflict } from "../lib/installer.js";
 import { fetchRegistry, searchRegistry } from "../lib/registry.js";
 import { readManifest } from "../lib/manifest.js";
 import {
@@ -327,8 +327,20 @@ async function cmdInstall(args: string[]): Promise<void> {
 		console.log(`Path: ${result.path}`);
 	}
 
-	// --- Content lifecycle: post-install steps ---
+	// --- Methodology exclusivity check ---
 	const pluginManifest = readManifest(result.path);
+	const methodologyConflict = detectMethodologyConflict(pluginManifest, projectRoot);
+	if (methodologyConflict) {
+		console.error(
+			`\nMethodology conflict: role "${methodologyConflict.role}" is already provided by ${methodologyConflict.existingPlugin}.` +
+			`\nOnly one plugin per core role is allowed. Uninstall ${methodologyConflict.existingPlugin} first, or choose a different plugin.`,
+		);
+		// Clean up the just-installed files
+		uninstallPlugin(result.name, projectRoot);
+		process.exit(1);
+	}
+
+	// --- Content lifecycle: post-install steps ---
 	const shortPath = path.relative(projectRoot, result.path).replace(/\\/g, "/");
 
 	console.log(`\nRunning post-install lifecycle for ${result.name}...`);
@@ -377,6 +389,16 @@ async function cmdInstall(args: string[]): Promise<void> {
 async function cmdInstallFirstParty(pluginDir: string, projectRoot: string): Promise<void> {
 	const pluginManifest = readManifest(pluginDir);
 	const shortPath = path.relative(projectRoot, pluginDir).replace(/\\/g, "/");
+
+	// --- Methodology exclusivity check ---
+	const methodologyConflict = detectMethodologyConflict(pluginManifest, projectRoot);
+	if (methodologyConflict) {
+		console.error(
+			`\nMethodology conflict: role "${methodologyConflict.role}" is already provided by ${methodologyConflict.existingPlugin}.` +
+			`\nOnly one plugin per core role is allowed. Uninstall ${methodologyConflict.existingPlugin} first, or choose a different plugin.`,
+		);
+		process.exit(1);
+	}
 
 	console.log(`\nInstalling first-party plugin: ${pluginManifest.name} @ ${pluginManifest.version}`);
 	console.log(`Path: ${shortPath}`);

@@ -3,6 +3,7 @@
  *
  * orqa daemon start [--port <port>]   Start the daemon in the background
  * orqa daemon stop                    Stop the running daemon
+ * orqa daemon restart [--port <port>] Stop then start the daemon
  * orqa daemon status                  Show daemon status and health
  */
 
@@ -23,6 +24,7 @@ low-latency calls from hooks, LSP, MCP, and CLI).
 Subcommands:
   start [--port <port>]   Start the daemon (default port: ${DEFAULT_PORT})
   stop                    Stop the running daemon
+  restart [--port <port>] Stop then start the daemon
   status                  Show daemon status and /health response
 
 Options:
@@ -45,12 +47,15 @@ export async function runDaemonCommand(args: string[]): Promise<void> {
 		case "stop":
 			daemonStop();
 			break;
+		case "restart":
+			await daemonRestart(args.slice(1));
+			break;
 		case "status":
 			await daemonStatus();
 			break;
 		default:
 			console.error(`Unknown daemon subcommand: ${subcommand}`);
-			console.error("Available: start, stop, status");
+			console.error("Available: start, stop, restart, status");
 			process.exit(1);
 	}
 }
@@ -145,6 +150,35 @@ function daemonStop(): void {
 		console.error(`Failed to send SIGTERM: ${msg}`);
 		process.exit(1);
 	}
+}
+
+// ---------------------------------------------------------------------------
+// restart
+// ---------------------------------------------------------------------------
+
+async function daemonRestart(args: string[]): Promise<void> {
+	const projectRoot = getRoot();
+	const pidPath = getPidPath(projectRoot);
+	const pid = readPid(pidPath);
+
+	// Stop existing daemon if running.
+	if (pid !== null && processIsAlive(pid)) {
+		try {
+			process.kill(pid, "SIGTERM");
+			console.log(`Sent SIGTERM to daemon (PID ${pid}). Waiting for exit...`);
+			// Wait up to 3 seconds for the process to die.
+			const startedAt = Date.now();
+			while (Date.now() - startedAt < 3000) {
+				await sleep(150);
+				if (!processIsAlive(pid)) break;
+			}
+		} catch {
+			// Process may have already exited.
+		}
+	}
+
+	// Start fresh.
+	await daemonStart(args);
 }
 
 // ---------------------------------------------------------------------------

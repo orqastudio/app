@@ -332,8 +332,23 @@ export interface PluginManifest {
 	extends?: string[];
 	/** Plugin dependencies — other plugin names that must be loaded first. */
 	requires?: string[];
+	/**
+	 * Plugin role — declares scope and domain using the pattern `scope:domain`.
+	 *
+	 * Scope values:
+	 * - `core` — methodology plugin. Only ONE plugin per domain is allowed per project.
+	 * - `enhancement` — extends a core plugin. Multiple enhancements per domain are fine.
+	 * - `extension` — standalone capability, no domain exclusivity.
+	 *
+	 * Core domains (exclusive — one per project):
+	 * - `core:framework` — the agent execution model (always `@orqastudio/plugin-core-framework`)
+	 * - `core:discovery` — discovery methodology (e.g. systems-thinking, design-thinking)
+	 * - `core:delivery` — delivery methodology (e.g. software-project, hardware-project)
+	 * - `core:governance` — governance methodology (e.g. agile-governance, kanban)
+	 */
+	role?: string;
 	/** Plugin category. The app requires at least one plugin from each of: thinking, delivery, governance. */
-	category?: "thinking" | "delivery" | "governance" | "connector" | "tooling" | "coding-standards" | null;
+	category?: "framework" | "thinking" | "delivery" | "governance" | "connector" | "tooling" | "coding-standards" | "enforcement" | "development" | "custom" | null;
 	/**
 	 * Sidecar key(s) this plugin requires at runtime.
 	 * If specified, the plugin is only loaded when a matching sidecar provider

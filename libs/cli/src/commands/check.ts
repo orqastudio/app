@@ -39,6 +39,8 @@ Run all code quality checks (validation engine + plugin lint tools):
 
 Subcommands:
   validate      Run the shared validation engine only (artifact graph integrity)
+  lint          Run all lint tools (clippy, eslint, svelte-check)
+  format        Run all formatters (rustfmt, prettier)
   configure     Generate config files from coding standards rules
   verify        Run all governance checks (integrity, version, license, readme)
   enforce       Enforcement + integrity validation (--fix, --mechanism, --report)
@@ -50,6 +52,12 @@ Running 'orqa check' with no subcommand runs the validation engine AND all
 plugin lint tools. The validation engine runs the same checks as the LSP
 (schema validation, broken links, missing inverses, relationship types, etc.).
 `.trim();
+
+/** Tool names that belong to the "lint" category. */
+const LINT_TOOLS = new Set(["clippy", "eslint", "svelte-check"]);
+
+/** Tool names that belong to the "format" category. */
+const FORMAT_TOOLS = new Set(["rustfmt", "prettier"]);
 
 export async function runCheckCommand(args: string[]): Promise<void> {
 	if (args[0] === "--help" || args[0] === "-h") {
@@ -91,6 +99,20 @@ export async function runCheckCommand(args: string[]): Promise<void> {
 	if (target === "validate") {
 		const validationFailed = await runValidationStep(root, args.includes("--fix"));
 		if (validationFailed) process.exit(1);
+		return;
+	}
+
+	// "orqa check lint" — run all lint-category plugin tools
+	if (target === "lint") {
+		const pluginFailed = await runPluginToolsByCategory(root, LINT_TOOLS);
+		if (pluginFailed) process.exit(1);
+		return;
+	}
+
+	// "orqa check format" — run all format-category plugin tools
+	if (target === "format") {
+		const pluginFailed = await runPluginToolsByCategory(root, FORMAT_TOOLS);
+		if (pluginFailed) process.exit(1);
 		return;
 	}
 
@@ -215,6 +237,43 @@ async function cmdConfigure(root: string): Promise<void> {
 	}
 
 	console.log(`\nGenerated ${generated.length} config file(s).`);
+}
+
+/**
+ * Run all plugin tools whose names match the given category set.
+ * Returns true if any tool failed.
+ */
+async function runPluginToolsByCategory(root: string, category: Set<string>): Promise<boolean> {
+	const pluginTools = loadPluginTools(root);
+	let failed = false;
+	let ran = 0;
+
+	for (const [pluginName, tools] of pluginTools) {
+		for (const [toolName, tool] of tools) {
+			if (!category.has(toolName)) continue;
+			ran++;
+
+			const projectDir = findProjectDir(root, pluginName);
+			if (!projectDir) {
+				console.log(`  ${toolName} (${pluginName}) — skipped, no matching project found`);
+				continue;
+			}
+
+			console.log(`  ${toolName} (${pluginName}) in ${path.relative(root, projectDir)}...`);
+			try {
+				execSync(tool.command, { cwd: projectDir, stdio: "inherit" });
+			} catch {
+				failed = true;
+			}
+		}
+	}
+
+	if (ran === 0) {
+		const names = [...category].join(", ");
+		console.log(`No installed plugin tools match category: ${names}`);
+	}
+
+	return failed;
 }
 
 /**

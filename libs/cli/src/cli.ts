@@ -19,6 +19,7 @@ import { runCheckCommand } from "./commands/check.js";
 import { runTestCommand } from "./commands/test.js";
 import { runDaemonCommand } from "./commands/daemon.js";
 import { runGitCommand } from "./commands/git.js";
+import { runBuildCommand } from "./commands/build.js";
 
 const USAGE = `
 OrqaStudio CLI v0.1.0-dev
@@ -28,10 +29,11 @@ Usage: orqa <command> [options]
 Commands:
   install     Dev environment setup (prereqs, submodules, deps, link)
   plugin      Plugin management (install, uninstall, list, update, link)
-  check       Code quality + governance (lint, typecheck, verify, enforce, audit, schema)
+  check       Code quality + governance (lint, format, validate, verify, enforce, audit)
   test        Run test suites (rust, app)
+  build       Production build (full, rust, app)
   graph       Browse the artifact graph
-  daemon      Manage the validation daemon (start, stop, status)
+  daemon      Manage the validation daemon (start, stop, restart, status)
   mcp         MCP server + search indexing (index)
   lsp         Start LSP server
   version     Version management (sync, bump, check, show)
@@ -75,6 +77,9 @@ async function main(): Promise<void> {
 			break;
 		case "test":
 			await runTestCommand(commandArgs);
+			break;
+		case "build":
+			await runBuildCommand(commandArgs);
 			break;
 		case "graph":
 			await runGraphCommand(commandArgs);

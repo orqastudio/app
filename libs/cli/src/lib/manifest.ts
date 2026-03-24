@@ -41,6 +41,13 @@ export function validateManifest(manifest: PluginManifest): string[] {
 		errors.push("Missing required field: version");
 	}
 
+	if (manifest.role !== undefined) {
+		const validRoles = /^(core:(framework|discovery|delivery|governance)|enhancement:(delivery|governance|development)|extension)$/;
+		if (!validRoles.test(manifest.role)) {
+			errors.push(`Invalid role: "${manifest.role}". Must be core:<domain>, enhancement:<domain>, or extension.`);
+		}
+	}
+
 	if (!manifest.provides) {
 		errors.push("Missing required field: provides");
 	} else {

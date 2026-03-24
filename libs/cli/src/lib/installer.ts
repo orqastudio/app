@@ -57,6 +57,52 @@ export interface KeyCollisionResult {
 	semanticMatch: boolean;
 }
 
+export interface MethodologyConflict {
+	/** The incoming plugin that is being installed. */
+	incomingPlugin: string;
+	/** The core role that conflicts (e.g. "core:discovery"). */
+	role: string;
+	/** The already-installed plugin that occupies this role. */
+	existingPlugin: string;
+}
+
+/**
+ * Detect methodology exclusivity conflicts.
+ *
+ * Plugins with a `core:*` role are exclusive — only one per domain
+ * (framework, discovery, delivery, governance) is allowed per project.
+ * This function scans installed plugins and returns a conflict if the
+ * incoming plugin's core role is already occupied.
+ */
+export function detectMethodologyConflict(
+	manifest: PluginManifest,
+	projectRoot: string,
+): MethodologyConflict | null {
+	const role = manifest.role;
+	if (!role || !role.startsWith("core:")) return null;
+
+	for (const container of ["plugins", "connectors", "integrations"]) {
+		const dir = path.join(projectRoot, container);
+		if (!fs.existsSync(dir)) continue;
+		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+			if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+			try {
+				const installed = readManifest(path.join(dir, entry.name));
+				if (installed.name === manifest.name) continue;
+				if (installed.role === role) {
+					return {
+						incomingPlugin: manifest.name,
+						role,
+						existingPlugin: installed.name,
+					};
+				}
+			} catch { /* skip invalid */ }
+		}
+	}
+
+	return null;
+}
+
 /**
  * Detect relationship key collisions between an incoming plugin and
  * existing definitions (core.json + already-installed plugins).
