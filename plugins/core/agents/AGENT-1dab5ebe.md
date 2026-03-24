@@ -259,6 +259,11 @@ These constraints are always in effect. No exceptions.
   delegated work: (1) `TeamCreate` to create a team, (2) `TaskCreate` for each task,
   (3) spawn agents with `run_in_background: true`. No exceptions. Even single tasks use teams.
   The orchestrator's job is to stay available for conversation — not to block on agent work.
+- **TeamDelete before TeamCreate (NON-NEGOTIABLE).** Always `TeamDelete` the current team
+  immediately after committing its work — before creating a new team. Do NOT send shutdown
+  requests and wait for agents to respond. TeamDelete is the reliable termination mechanism.
+  Agents that don't process shutdown requests consume resources for hours. The pattern is:
+  work completes → commit → **TeamDelete** → TeamCreate for next batch.
 - **No `unwrap()` / `expect()` / `panic!()`** in Rust production code
 - **No `--no-verify`** on git commits
 - **No force push** to main

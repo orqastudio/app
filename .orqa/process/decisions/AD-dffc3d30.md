@@ -7,6 +7,9 @@ status: surpassed
 created: 2026-03-02
 updated: 2026-03-02
 relationships:
+  - target: AD-2aa4d6db
+    type: evolves-into
+    rationale: "AD-2aa4d6db scopes SQLite to conversation persistence only, replacing this broader SQLite-for-all decision"
   - target: DOC-2a7f1063
     type: documented-by
 ---

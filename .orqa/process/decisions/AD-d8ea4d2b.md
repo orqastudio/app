@@ -6,7 +6,13 @@ description: Artifact IDs in markdown body text are automatically converted to p
 status: completed
 created: 2026-03-11
 updated: 2026-03-11
-relationships: []
+relationships:
+  - target: RULE-7b770593
+    type: enforced-by
+    rationale: "RULE-7b770593 mandates artifact cross-reference link format — this decision defines the auto-linking mechanism that ensures compliance"
+  - target: AD-0291fa65
+    type: extends
+    rationale: "Cross-linking enhances the navigate capability defined by the core UI boundary decision"
 ---
 ## Decision
 
