@@ -1061,10 +1061,13 @@ async function cmdDev(root: string): Promise<void> {
 	// Spawn the controller as a detached process (this same script with __start-controller)
 	const nodeCmd = process.execPath;
 	const cliEntry = path.join(root, "libs/cli/dist/cli.js");
+	// Write controller output to a log file so we can debug startup failures
+	const logFile = path.join(root, "tmp", "dev-controller.log");
+	const logFd = fs.openSync(logFile, "w");
 	const child = spawn(nodeCmd, [cliEntry, "dev", "__start-controller"], {
 		cwd: root,
 		detached: true,
-		stdio: "ignore",
+		stdio: ["ignore", logFd, logFd],
 		windowsHide: true,
 		env: { ...process.env },
 	});
