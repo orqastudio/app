@@ -29,6 +29,7 @@ use std::io::Cursor;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
+use std::time::Instant;
 
 use serde::Serialize;
 use serde_json::Value;
@@ -166,19 +167,58 @@ fn serve(
     eprintln!("  PID file: {}", pid_path.display());
     eprintln!("  Send SIGTERM or SIGINT to shut down.");
 
+    // --- Filesystem watcher: auto-reload on .orqa/ changes ---
+    let needs_reload = Arc::new(AtomicBool::new(false));
+    let _watcher = start_fs_watcher(project_root, Arc::clone(&needs_reload));
+
+    let mut last_reload = Instant::now();
+    let reload_debounce = std::time::Duration::from_secs(1);
+
     loop {
         if shutdown.load(Ordering::Relaxed) {
             eprintln!("orqa-validation daemon: shutdown signal received, stopping.");
             break;
         }
 
-        // Non-blocking receive with a short timeout so we can check shutdown.
+        // Check if filesystem watcher flagged a reload.
+        if needs_reload.load(Ordering::Relaxed)
+            && last_reload.elapsed() >= reload_debounce
+        {
+            needs_reload.store(false, Ordering::Relaxed);
+            last_reload = Instant::now();
+
+            eprintln!("orqa-validation daemon: .orqa/ changed, reloading graph...");
+            let project_root = {
+                let state = shared.lock().unwrap();
+                state.project_root.clone()
+            };
+            match DaemonState::build(&project_root) {
+                Ok(new_state) => {
+                    let count = new_state.graph.nodes.len();
+                    let rules = new_state
+                        .graph
+                        .nodes
+                        .values()
+                        .filter(|n| n.artifact_type == "rule")
+                        .count();
+                    *shared.lock().unwrap() = new_state;
+                    eprintln!(
+                        "orqa-validation daemon: reloaded ({count} artifacts, {rules} rules)"
+                    );
+                }
+                Err(e) => {
+                    eprintln!("orqa-validation daemon: reload failed: {e}");
+                }
+            }
+        }
+
+        // Non-blocking receive with a short timeout so we can check shutdown + reload.
         match server.recv_timeout(std::time::Duration::from_millis(200)) {
             Ok(Some(request)) => {
                 handle_request(request, &shared);
             }
             Ok(None) => {
-                // Timeout — loop back to check shutdown flag.
+                // Timeout — loop back to check flags.
             }
             Err(e) => {
                 eprintln!("orqa-validation daemon: recv error: {e}");
@@ -544,6 +584,67 @@ fn handle_reload(shared: &Arc<Mutex<DaemonState>>) -> Result<Value, (u16, String
         "artifacts": artifact_count,
         "rules": rule_count,
     }))
+}
+
+// ---------------------------------------------------------------------------
+// Filesystem watcher — auto-reload on .orqa/ changes
+// ---------------------------------------------------------------------------
+
+/// Watch `.orqa/` for file changes and set the `needs_reload` flag.
+/// Returns the watcher handle (must be kept alive for watching to continue).
+fn start_fs_watcher(
+    project_root: &Path,
+    needs_reload: Arc<AtomicBool>,
+) -> Option<notify::RecommendedWatcher> {
+    use notify::{Config, Event, EventKind, RecommendedWatcher, RecursiveMode, Watcher};
+
+    let orqa_dir = project_root.join(".orqa");
+    if !orqa_dir.exists() {
+        eprintln!("orqa-validation daemon: .orqa/ not found, file watching disabled");
+        return None;
+    }
+
+    let mut watcher = match RecommendedWatcher::new(
+        move |res: Result<Event, notify::Error>| {
+            if let Ok(event) = res {
+                // Only reload for content changes to .md files
+                let dominated_by_md = event.paths.iter().any(|p| {
+                    p.extension()
+                        .is_some_and(|ext| ext == "md" || ext == "json")
+                });
+                let is_modify = matches!(
+                    event.kind,
+                    EventKind::Create(_) | EventKind::Modify(_) | EventKind::Remove(_)
+                );
+                if is_modify && dominated_by_md {
+                    needs_reload.store(true, Ordering::Relaxed);
+                }
+            }
+        },
+        Config::default(),
+    ) {
+        Ok(w) => w,
+        Err(e) => {
+            eprintln!("orqa-validation daemon: failed to create file watcher: {e}");
+            return None;
+        }
+    };
+
+    if let Err(e) = watcher.watch(&orqa_dir, RecursiveMode::Recursive) {
+        eprintln!("orqa-validation daemon: failed to watch .orqa/: {e}");
+        return None;
+    }
+
+    // Also watch plugins/ and connectors/ for manifest changes
+    for dir_name in ["plugins", "connectors"] {
+        let dir = project_root.join(dir_name);
+        if dir.exists() {
+            let _ = watcher.watch(&dir, RecursiveMode::Recursive);
+        }
+    }
+
+    eprintln!("orqa-validation daemon: watching .orqa/ for changes (auto-reload enabled)");
+    Some(watcher)
 }
 
 // ---------------------------------------------------------------------------
