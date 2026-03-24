@@ -23,7 +23,12 @@ import { platform } from "node:os";
 import { getRoot } from "../lib/root.js";
 import { getPort } from "../lib/ports.js";
 
-const IS_WINDOWS = platform() === "win32";
+function isWindows(): boolean { return platform() === "win32"; }
+function npm(): string { return isWindows() ? "npm.cmd" : "npm"; }
+function npx(): string { return isWindows() ? "npx.cmd" : "npx"; }
+function rustEnv(): NodeJS.ProcessEnv {
+	return { ...process.env, RUST_LOG: process.env["RUST_LOG"] ?? "debug" };
+}
 const VITE_PORT = getPort("vite");
 const PORT_TIMEOUT_MS = 15_000;
 const POLL_INTERVAL_MS = 500;
@@ -102,7 +107,7 @@ function exec(cmd: string): string {
 }
 
 function findPidsOnPort(port: number): number[] {
-	if (IS_WINDOWS) {
+	if (isWindows()) {
 		const out = exec("netstat -ano");
 		const pids = new Set<number>();
 		for (const line of out.split("\n")) {
@@ -129,7 +134,7 @@ function findPidsOnPort(port: number): number[] {
 }
 
 function findPidsByName(name: string): number[] {
-	if (IS_WINDOWS) {
+	if (isWindows()) {
 		return exec(
 			`powershell.exe -NoProfile -Command "Get-Process -Name '${name}' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Id"`,
 		)
@@ -146,7 +151,7 @@ function findPidsByName(name: string): number[] {
 function killProcessTree(pid: number): void {
 	if (pid === process.pid) return;
 
-	if (IS_WINDOWS) {
+	if (isWindows()) {
 		const childPids = exec(
 			`powershell.exe -NoProfile -Command "function Get-Tree($id){Get-CimInstance Win32_Process|Where-Object{$_.ParentProcessId -eq $id}|ForEach-Object{Get-Tree $_.ProcessId;$_.ProcessId}};Get-Tree ${pid}"`,
 		)
@@ -281,7 +286,7 @@ function spawnManaged(
 		cwd: opts.cwd,
 		env: opts.env ?? { ...process.env },
 		stdio: [stdinMode, "pipe", "pipe"],
-		shell: IS_WINDOWS,
+		shell: isWindows(),
 		windowsHide: true,
 	});
 	mp.running = true;
@@ -389,7 +394,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 	const appDir = path.join(root, "app");
 	const uiDir = path.join(appDir, "ui");
 	const libsDir = path.join(root, "libs");
-	const npmCmd = IS_WINDOWS ? "npm.cmd" : "npm";
+	const npmCmd = npm();
 
 	writeControlFile(root, {
 		state: "starting",
@@ -414,6 +419,19 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 	}
 	logSuccess(`Vite ready on http://localhost:${VITE_PORT}`);
 
+	// ── 1b. Start TypeScript library watch builds ────────────────────────
+	// These run tsc --watch so linked packages rebuild automatically.
+	const tsLibs = ["libs/sdk", "libs/graph-visualiser", "libs/logger"];
+	for (const lib of tsLibs) {
+		const libDir = path.join(root, lib);
+		const tsconfigPath = path.join(libDir, "tsconfig.json");
+		if (!fs.existsSync(tsconfigPath)) continue;
+
+		const proc = createManagedProcess(`tsc:${lib.split("/").pop()}`, COLOURS.dim);
+		spawnManaged(proc, npx(), ["tsc", "--watch", "--preserveWatchOutput"], { cwd: libDir });
+		logCtrl(`TypeScript watch: ${lib}`);
+	}
+
 	// ── 2. Start search, MCP, LSP servers ────────────────────────────────
 	const searchProc = createManagedProcess("search", COLOURS.orange);
 	const mcpProc = createManagedProcess("mcp", COLOURS.teal);
@@ -428,7 +446,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			"--", appDir,
 		], {
 			stdinMode: "pipe",
-			env: { ...process.env, RUST_LOG: process.env["RUST_LOG"] ?? "info" },
+			env: rustEnv(),
 		});
 	}
 
@@ -441,7 +459,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			"--", appDir,
 		], {
 			stdinMode: "pipe",
-			env: { ...process.env, RUST_LOG: process.env["RUST_LOG"] ?? "info" },
+			env: rustEnv(),
 		});
 	}
 
@@ -454,7 +472,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			"--", appDir,
 		], {
 			stdinMode: "pipe",
-			env: { ...process.env, RUST_LOG: process.env["RUST_LOG"] ?? "info" },
+			env: rustEnv(),
 		});
 	}
 
@@ -486,7 +504,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			"--no-default-features",
 			"--color", "always",
 		], {
-			env: { ...process.env, RUST_LOG: process.env["RUST_LOG"] ?? "info" },
+			env: rustEnv(),
 		});
 
 		// Wait for the app binary to actually start (cargo compiles first, then runs).
@@ -782,7 +800,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 
 	process.on("SIGINT", shutdown);
 	process.on("SIGTERM", shutdown);
-	if (IS_WINDOWS) {
+	if (isWindows()) {
 		process.on("SIGHUP", shutdown);
 	}
 
@@ -870,7 +888,7 @@ function runCargoBuild(manifestPath: string): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const child = spawn("cargo", ["build", "--manifest-path", manifestPath, "--color", "always"], {
 			stdio: ["ignore", "pipe", "pipe"],
-			shell: IS_WINDOWS,
+			shell: isWindows(),
 			windowsHide: true,
 		});
 
@@ -901,7 +919,7 @@ function closeAllWatchers(): void {
  */
 function setupPluginWatchers(projectRoot: string): void {
 	const pluginDirs = ["plugins", "connectors"];
-	const npmCmd = IS_WINDOWS ? "npm.cmd" : "npm";
+	const npmCmd = npm();
 
 	for (const baseDir of pluginDirs) {
 		const absBase = path.join(projectRoot, baseDir);
@@ -986,7 +1004,7 @@ function runNpmBuild(npmCmd: string, cwd: string): Promise<void> {
 		const child = spawn(npmCmd, ["run", "build"], {
 			cwd,
 			stdio: ["ignore", "pipe", "pipe"],
-			shell: IS_WINDOWS,
+			shell: isWindows(),
 			windowsHide: true,
 		});
 
@@ -1015,15 +1033,15 @@ async function cmdDev(root: string): Promise<void> {
 	if (existing) removeControlFile(root);
 
 	// 1. Install all workspace dependencies from root
+	const npmCmd = npm();
 	logCtrl("Installing dependencies...");
 	try {
-		const npmCmd = IS_WINDOWS ? "npm.cmd" : "npm";
 		execSync(`${npmCmd} install`, { cwd: root, stdio: "inherit" });
 	} catch {
 		logCtrl("npm install failed — dependencies may be stale");
 	}
 
-	// 2. Build all Rust binaries
+	// 2. Build all Rust binaries (daemon, MCP, LSP, app backend)
 	logCtrl("Building Rust binaries...");
 	try {
 		execSync("cargo build --workspace --color always", { cwd: root, stdio: "inherit" });
@@ -1031,7 +1049,22 @@ async function cmdDev(root: string): Promise<void> {
 		logCtrl("Rust build failed — some binaries may be stale");
 	}
 
-	// 3. Refresh plugin content (builds TS/Svelte plugins, syncs to .orqa/)
+	// 3. Initial TS library build (so dist/ exists for linked packages)
+	logCtrl("Building TypeScript libraries...");
+	for (const lib of ["libs/sdk", "libs/graph-visualiser", "libs/logger"]) {
+		const libDir = path.join(root, lib);
+		const distDir = path.join(libDir, "dist");
+		// Only build if dist/ doesn't exist yet — watchers handle incremental
+		if (!fs.existsSync(distDir)) {
+			try {
+				execSync(`${npmCmd} run build`, { cwd: libDir, stdio: "inherit" });
+			} catch {
+				logCtrl(`Initial build failed for ${lib}`);
+			}
+		}
+	}
+
+	// 4. Refresh plugin content (builds plugins, syncs to .orqa/)
 	logCtrl("Building plugins and syncing content...");
 	try {
 		const { runPluginCommand } = await import("./plugin.js");
