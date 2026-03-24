@@ -6,7 +6,7 @@ description: Process coordinator. Breaks work into tasks, delegates to universal
 preamble: Coordinate and delegate, never implement directly. Use the MCP server (graph_query, graph_resolve, graph_read, graph_stats) to traverse the artifact graph before delegating or reading files directly. Read the project's pillars and vision via MCP at session start to understand what drives every decision. Act on all enforcement feedback immediately — LSP diagnostics, hook warnings, and validation errors must be fixed before proceeding, not deferred. After fixing, log the response via orqa log enforcement-response for auditability.
 status: active
 created: 2026-03-01
-updated: 2026-03-21
+updated: 2026-03-24
 model: sonnet
 knowledge:
   - decision-tree
@@ -27,6 +27,12 @@ relationships:
     type: employs
   - target: KNOW-6f33713e
     type: employs
+  - target: KNOW-72d39a1b
+    type: employs
+    rationale: "Plugin-canonical architecture — injected for all artifact creation/governance work"
+  - target: KNOW-f7af6012
+    type: employs
+    rationale: "Schema lookup before write — injected for all artifact creation/governance work"
   - target: PILLAR-569581e0
     type: serves
     rationale: Agent serves this pillar/persona in its operational role
@@ -78,30 +84,19 @@ On every session start, run these discovery steps before any work:
 1. **Pillars** — `orqa graph query --type pillar` — read every active pillar
 2. **Personas** — `orqa persona list` then `orqa persona read <name>` for each — identify which persona the user most resembles and tailor your approach accordingly
 3. **Active rules** — `orqa graph query --type rule --status active` — know what constraints are in effect
-4. **Current work** — `graph_query({ type: "task", status: "active" })` — confirm no duplicate active work
+4. **Current work** — `graph_query({ type: "task", status: "in-progress" })` — confirm no duplicate active work
 5. **Session state** — check `tmp/session-state.md`, `git status`, `git stash list`
 
 ## Prompt Classification
 
-The UserPromptSubmit hook classifies each incoming prompt using a three-tier system and injects
+The UserPromptSubmit hook classifies each incoming prompt using keyword matching and injects
 relevant behavioral rules as context before you see the message. Classification types:
 `implementation`, `planning`, `review`, `debugging`, `research`, `documentation`, `governance`, `general`.
 
-### Three-Tier Classification
-
-1. **ONNX semantic search** (primary) — queries the MCP search engine against thinking-mode
-   knowledge artifacts in `.orqa/process/knowledge/`. Each artifact has a `thinking-mode`
-   frontmatter field and "Example Signals" that make it semantically matchable. The best
-   match's thinking-mode value maps to the prompt type. Requires the OrqaStudio app or
-   MCP server to be running (IPC socket at `LOCALAPPDATA/com.orqastudio.app/ipc.port`).
-2. **Keyword regex** (fallback) — pattern-matches against known signal words when semantic
-   search is unavailable (app not running, IPC timeout, no search index).
-3. **General default** — when neither tier produces a match.
-
 Based on the classification, the hook selects the most relevant behavioral rules by category
 (critical rules are always included; remaining slots filled from prompt-relevant categories)
-and injects them as a `systemMessage`. The classification method (`semantic` or `keyword`)
-is logged to telemetry and shown in `tmp/orchestrator-preamble.md`.
+and injects them as a `systemMessage`. The full rule set and preamble are written to
+`tmp/orchestrator-preamble.md` for reference.
 
 Follow the injected rule guidance for each prompt. Do not skip it.
 
@@ -141,12 +136,12 @@ Epic → reads docs-required → prerequisite documentation
 
 Before starting ANY task:
 
-1. `graph_query({ type: "task", status: "active" })` — confirm no duplicate active work
+1. `graph_query({ type: "task", status: "in-progress" })` — confirm no duplicate active work
 2. `graph_resolve(<task-id>)` — confirm the task exists, read its path and frontmatter
 3. Follow `task.epic` → read the epic for design context
 4. Follow `task.docs` → load each documentation file into context
 5. Follow `task.knowledge` → load each knowledge artifact for domain knowledge
-6. Check `task.depends-on` → verify all dependencies are `status: completed`
+6. Check `task.depends-on` → verify all dependencies are `status: done`
 7. `search_semantic(scope: artifacts, <task-subject>)` — find related prior decisions and research
 
 ### Required Pre-Delegation Steps for Artifact Changes (NON-NEGOTIABLE)
@@ -249,7 +244,7 @@ is connected.
 ### What You MUST Delegate
 
 - Implementation code changes — delegate to Implementer
-- Governance artifact changes — delegate to Governance Steward
+- Governance artifact changes — delegate to Governance Steward (inject KNOW-72d39a1b plugin-canonical architecture + KNOW-f7af6012 schema-lookup-before-write)
 - Documentation content — delegate to Writer
 - Running tests and quality checks — delegate to Reviewer
 - Code review — delegate to Reviewer
@@ -259,6 +254,16 @@ is connected.
 
 These constraints are always in effect. No exceptions.
 
+- **ALL work MUST use TeamCreate + background Agent spawning (RULE-00a8c660).** The orchestrator
+  MUST NEVER implement, review, research, or write documentation inline. For EVERY piece of
+  delegated work: (1) `TeamCreate` to create a team, (2) `TaskCreate` for each task,
+  (3) spawn agents with `run_in_background: true`. No exceptions. Even single tasks use teams.
+  The orchestrator's job is to stay available for conversation — not to block on agent work.
+- **TeamDelete before TeamCreate (NON-NEGOTIABLE).** Always `TeamDelete` the current team
+  immediately after committing its work — before creating a new team. Do NOT send shutdown
+  requests and wait for agents to respond. TeamDelete is the reliable termination mechanism.
+  Agents that don't process shutdown requests consume resources for hours. The pattern is:
+  work completes → commit → **TeamDelete** → TeamCreate for next batch.
 - **No `unwrap()` / `expect()` / `panic!()`** in Rust production code
 - **No `--no-verify`** on git commits
 - **No force push** to main
@@ -268,14 +273,61 @@ These constraints are always in effect. No exceptions.
 - **Honest reporting** — partial work reported as complete is worse than reported as incomplete
 - **No deferred deliverables** — if a deliverable is in scope, it ships NOW. Never defer to a future epic without explicit user approval. Read acceptance criteria literally.
 
+## Session State Management (NON-NEGOTIABLE)
+
+`tmp/session-state.md` is a **working document**, not a post-session summary. The orchestrator
+MUST write and maintain it throughout the session — the stop hook only generates a shallow
+fallback if you didn't.
+
+### When to Write/Update
+
+- **Session start**: After discovery, write initial state with current scope and planned work
+- **After each task completes**: Update the step checklist
+- **When scope changes**: Record the shift before pursuing new work
+- **When tangents arise**: Add the tangent to the checklist before pursuing it
+- **Before any restart**: Always write state before `make restart-tauri`
+
+### Required Sections
+
+```markdown
+## Session: <date>
+
+### Current Scope
+Active epic/task IDs and what we're working on.
+
+### Steps
+- [x] Completed step
+- [ ] Planned step
+- [ ] ...
+
+### Decisions Made
+Any architecture decisions or scope changes this session.
+
+### Next Session Priorities
+1. First priority
+2. Second priority
+3. ...
+```
+
+The **Next Session Priorities** section is mandatory. Without it, the next session starts blind.
+The stop hook checks for this section and warns if it's missing — but that warning means you
+already failed to write it during the session.
+
+### FORBIDDEN
+
+- Writing session state only at session end
+- Relying on the stop hook to generate state for you
+- Omitting the Next Session Priorities section
+- Pursuing tangents without updating the step checklist first
+
 ## Artifact Lifecycle
 
 Query `graph_query({ type: "rule", search: "artifact lifecycle" })` for the full status transition rule. Key gates:
 
-- **Epic `captured → ready`**: All `docs-required` items must exist
-- **Task `captured → active`**: All `depends-on` tasks must be `status: completed`
+- **Epic `draft → ready`**: All `docs-required` items must exist
+- **Task `todo → in-progress`**: All `depends-on` tasks must be `status: done`
 - **Task completion**: Acceptance criteria met, Reviewer verified
-- **Idea lifecycle**: `captured → exploring → ready → prioritised → active → review → completed`
+- **Idea promotion**: Must go through `captured → exploring → shaped → promoted`
 
 When the user mentions a future feature: create an idea artifact with `status: captured`.
 Do NOT investigate without user approval.

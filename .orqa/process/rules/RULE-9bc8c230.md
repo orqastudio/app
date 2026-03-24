@@ -35,7 +35,7 @@ Rule content is injected into the agent's context at delegation time. The orches
 | [RULE-8035e176](RULE-8035e176) | Structure before work — artifacts must exist before implementation |
 | [RULE-df24948b](RULE-df24948b) | Context management — minimize orchestrator context window usage |
 
-**Implementation**: The orchestrator's delegation template includes these rules by reference. The companion plugin's prompt injector (`prompt-injector.ts`) auto-injects relevant rule IDs when task artifacts are referenced.
+**Implementation**: The orchestrator's delegation template includes these rules by reference. The companion plugin's prompt injector (`prompt-injector.mjs`) auto-injects relevant rule IDs when task artifacts are referenced.
 
 ### Strategy 2: Output Validation
 
@@ -88,8 +88,8 @@ Plugin hooks that trigger at session boundaries (start, end, stop) to enforce wo
 ## Verification
 
 To verify behavioral enforcement coverage:
-1. Run `node app/tools/verify-pipeline-integrity.mjs` — reports rules without enforcement chains
-2. Run `node app/tools/verify-enforcement-rules.mjs` — reports agent capability compliance
+1. Run `node tools/verify-pipeline-integrity.mjs` — reports rules without enforcement chains
+2. Run `node tools/verify-enforcement-rules.mjs` — reports agent capability compliance
 3. Cross-reference: every rule in this plan should appear in the pipeline integrity tool's enforcement chain data
 
 ## Related Rules

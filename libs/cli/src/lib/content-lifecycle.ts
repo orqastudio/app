@@ -85,14 +85,33 @@ export function readContentManifest(projectRoot: string): ContentManifest {
 	const raw = fs.readFileSync(manifestPath, "utf-8");
 	const manifest = JSON.parse(raw) as ContentManifest;
 
-	// Backward compat: migrate old array-based files to Record-based
+	// Backward compat: migrate old array-based files to Record-based.
+	// Compute actual hashes so the three-way diff works.
 	for (const [pluginName, entry] of Object.entries(manifest.plugins)) {
 		if (Array.isArray(entry.files)) {
 			const migrated: Record<string, FileHashEntry> = {};
 			for (const f of entry.files as unknown as string[]) {
-				migrated[f] = { sourceHash: "", installedHash: "" };
+				const absPath = path.join(projectRoot, f);
+				const hash = fs.existsSync(absPath) ? computeFileHash(absPath) : "";
+				migrated[f] = { sourceHash: hash, installedHash: hash };
 			}
 			manifest.plugins[pluginName] = { ...entry, files: migrated };
+		} else {
+			// Fix empty hashes from previous buggy migration
+			let hasEmpty = false;
+			for (const [filePath, hashes] of Object.entries(entry.files)) {
+				if (!hashes.sourceHash && !hashes.installedHash) {
+					hasEmpty = true;
+					const absPath = path.join(projectRoot, filePath);
+					if (fs.existsSync(absPath)) {
+						const hash = computeFileHash(absPath);
+						entry.files[filePath] = { sourceHash: hash, installedHash: hash };
+					}
+				}
+			}
+			if (hasEmpty) {
+				manifest.plugins[pluginName] = { ...entry };
+			}
 		}
 	}
 

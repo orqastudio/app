@@ -20,8 +20,6 @@ relationships:
     type: "documented-by"
   - target: "AD-61087142"
     type: "enforces"
-  - target: "AD-0291fa65"
-    type: "enforces"
 ---
 ## Shared Component Library
 

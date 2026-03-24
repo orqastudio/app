@@ -3,7 +3,6 @@ id: KNOW-1a8eb147
 type: knowledge
 title: "Thinking Mode: Research"
 thinking-mode: research
-priority-rules: [planning, process]
 description: "The user wants something investigated, explored, or understood — information gathering with no code changes, only findings."
 status: active
 created: 2026-03-21

@@ -3,7 +3,6 @@ id: KNOW-85e392ea
 type: knowledge
 title: "Thinking Mode: Learning Loop"
 thinking-mode: learning-loop
-priority-rules: [process, planning]
 description: "The user is teaching the system — sharing an observation, feedback, or lesson that should be captured and potentially promoted to a rule."
 status: active
 created: 2026-03-21

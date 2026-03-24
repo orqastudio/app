@@ -3,7 +3,6 @@ id: KNOW-1ab0e715
 type: knowledge
 title: "Thinking Mode: Documentation"
 thinking-mode: documentation
-priority-rules: [planning, quality]
 description: "The user wants docs written, updated, or organised — capturing knowledge for humans, not building features."
 status: active
 created: 2026-03-21

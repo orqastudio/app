@@ -3,7 +3,6 @@ id: KNOW-a4c8f1e2
 type: knowledge
 title: "Thinking Mode: Dogfood Implementation"
 thinking-mode: dogfood-implementation
-priority-rules: [safety, process, quality]
 description: Building infrastructure for immediate use in the current workflow — not a future feature idea.
 status: active
 created: 2026-03-21

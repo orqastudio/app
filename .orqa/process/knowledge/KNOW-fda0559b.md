@@ -5,7 +5,6 @@ title: "Thinking Mode: Implementation"
 description: "The user wants something built, fixed, added, or refactored — hands-on work producing code, artifacts, or configuration changes."
 status: active
 thinking-mode: implementation
-priority-rules: [safety, process, quality]
 created: 2026-03-21
 updated: 2026-03-21
 relationships:

@@ -61,7 +61,7 @@ All files under `.orqa/`:
 
 When the orchestrator delegates artifact work to you:
 
-1. **Read the schema** — load `schema.json` from the target directory before writing. Use `graph_query` or read the plugin's `orqa-plugin.json` to discover valid status values for the artifact type. Never assume status values from memory.
+1. **Read the schema** — load `schema.json` from the target directory before writing
 2. **Read related artifacts** — if creating a task, read its epic; if creating an epic, read its milestone
 3. **Write with full frontmatter** — every required field populated, every relationship declared
 4. **Add inverses** — for every relationship `A --type--> B`, add the inverse `B --inverse-type--> A` on the target artifact
