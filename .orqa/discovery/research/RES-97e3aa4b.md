@@ -758,6 +758,26 @@ Both try to update app builder → merge conflict, no clear resolution
 ```
 **Fix:** One Backend Lead owns all backend changes sequentially
 
+**Anti-pattern 6: Agent doesn't know the project's quality workflow**
+```
+Agent: restructures 306 files, runs cargo check, reports "done"
+Pre-commit: 20+ rustfmt diffs, 92 eslint errors, clippy warnings
+Result: commit blocked, orchestrator spends 30 minutes fixing lint
+```
+**Fix:** Every agent must know: format → lint → test → commit. This is
+project knowledge that agents must load BEFORE starting work. The team
+design should ensure agents consume the project's quality workflow from
+the coding-standards plugin, not discover it at commit time.
+
+**Anti-pattern 7: Agent uses cargo check instead of orqa check**
+```
+Agent: "cargo check passes — done"
+Reality: rustfmt, clippy, eslint, svelte-check, artifact validation all unchecked
+```
+**Fix:** Agents must use the project's check command (`orqa check`), not
+raw tool commands. The check command runs ALL quality gates. This is
+enforced through the coding-standards knowledge artifact.
+
 ### 8.2 Resource Contention
 
 **FORBIDDEN:**
