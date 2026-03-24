@@ -44,18 +44,22 @@ const COLOURS = {
 };
 
 const USAGE = `
-Usage: orqa debug [subcommand]
+Usage: orqa dev [subcommand]
 
 Subcommands:
-  (none)            Start the full dev environment (Vite + Tauri + services)
-  stop              Stop gracefully
-  kill              Force-kill all processes
-  restart           Restart Vite + Tauri
-  restart-tauri     Restart Tauri only
-  restart-vite      Restart Vite only
-  status            Show process status
-  icons [--deploy]  Generate brand icons from SVG sources
-  tool [args...]    Run the debug-tool submodule
+  (none)              Start the full dev environment
+  stop                Stop all processes gracefully
+  kill                Force-kill all processes
+  restart             Restart everything (daemon + frontend + app + services)
+  restart daemon      Restart the validation daemon
+  restart frontend    Restart Vite dev server
+  restart app         Restart Tauri app (rebuild + relaunch)
+  restart search      Restart search server (+ MCP)
+  restart mcp         Restart MCP server
+  restart lsp         Restart LSP server
+  status              Show process status
+  icons [--deploy]    Generate brand icons from SVG sources
+  tool [args...]      Run the debug-tool submodule
 `.trim();
 
 // ── Logging ─────────────────────────────────────────────────────────────────
@@ -698,8 +702,25 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			startLsp();
 			writeFullControlFile("running");
 			logSuccess("LSP server restarted.");
+		} else if (signal === "restart-daemon") {
+			logCtrl("Restart daemon signal received...");
+			try {
+				const { runDaemonCommand } = await import("./daemon.js");
+				await runDaemonCommand(["restart"]);
+				logSuccess("Daemon restarted.");
+			} catch {
+				logError("ctrl", "Daemon restart failed — may need manual restart");
+			}
 		} else if (signal === "restart") {
 			logCtrl("Full restart signal received — restarting everything...");
+			// Restart daemon first
+			try {
+				const { runDaemonCommand } = await import("./daemon.js");
+				await runDaemonCommand(["restart"]);
+				logSuccess("Daemon restarted.");
+			} catch {
+				logError("ctrl", "Daemon restart failed");
+			}
 			killManaged(rust);
 			killManaged(mcpProc);
 			killManaged(lspProc);
@@ -1214,7 +1235,6 @@ export async function runDevCommand(args: string[]): Promise<void> {
 			await cmdDev(root);
 			break;
 		case "__start-controller":
-			// Internal: called by cmdDev to spawn the long-running controller process
 			await startController(root);
 			break;
 		case "stop":
@@ -1223,24 +1243,32 @@ export async function runDevCommand(args: string[]): Promise<void> {
 		case "kill":
 			await cmdKill(root);
 			break;
-		case "restart":
-			await cmdSignal(root, "restart", "Full restart");
+		case "restart": {
+			const target = args[1];
+			if (!target) {
+				await cmdSignal(root, "restart", "Full restart");
+			} else {
+				const signalMap: Record<string, [string, string]> = {
+					daemon:   ["restart-daemon",  "Restart daemon"],
+					frontend: ["restart-vite",    "Restart frontend (Vite)"],
+					vite:     ["restart-vite",    "Restart Vite"],
+					app:      ["restart-tauri",   "Restart app (Tauri)"],
+					tauri:    ["restart-tauri",    "Restart Tauri"],
+					search:   ["restart-search",  "Restart search (+ MCP)"],
+					mcp:      ["restart-mcp",     "Restart MCP"],
+					lsp:      ["restart-lsp",     "Restart LSP"],
+				};
+				const entry = signalMap[target];
+				if (entry) {
+					await cmdSignal(root, entry[0], entry[1]);
+				} else {
+					console.error(`Unknown restart target: ${target}`);
+					console.error(`Available: ${Object.keys(signalMap).join(", ")}`);
+					process.exit(1);
+				}
+			}
 			break;
-		case "restart-tauri":
-			await cmdSignal(root, "restart-tauri", "Restart Tauri");
-			break;
-		case "restart-vite":
-			await cmdSignal(root, "restart-vite", "Restart Vite");
-			break;
-		case "restart-search":
-			await cmdSignal(root, "restart-search", "Restart Search (+ MCP)");
-			break;
-		case "restart-mcp":
-			await cmdSignal(root, "restart-mcp", "Restart MCP");
-			break;
-		case "restart-lsp":
-			await cmdSignal(root, "restart-lsp", "Restart LSP");
-			break;
+		}
 		case "status":
 			cmdStatus(root);
 			break;
