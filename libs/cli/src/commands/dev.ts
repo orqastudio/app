@@ -1049,12 +1049,24 @@ async function cmdDev(root: string): Promise<void> {
 	// 2. Stop all running OrqaStudio processes so cargo can overwrite binaries
 	await killAll(root);
 
-	// 3. Build all Rust binaries (daemon, MCP, LSP, app backend)
-	logCtrl("Building Rust binaries...");
+	// 3. Build all Rust binaries
+	logCtrl("Building Rust libraries and servers...");
 	try {
-		execSync("cargo build --workspace --color always", { cwd: root, stdio: "inherit" });
+		// Build everything except the app (which needs special feature flags)
+		execSync("cargo build --workspace --exclude orqa-studio --color always", { cwd: root, stdio: "inherit" });
 	} catch {
 		logCtrl("Rust build failed — some binaries may be stale");
+	}
+
+	// Build the Tauri app WITHOUT custom-protocol so it uses devUrl (Vite dev server)
+	logCtrl("Building Tauri app (dev mode)...");
+	try {
+		execSync(
+			`cargo build --manifest-path ${path.join(root, "app/backend/src-tauri/Cargo.toml")} --no-default-features --color always`,
+			{ cwd: root, stdio: "inherit" },
+		);
+	} catch {
+		logCtrl("Tauri app build failed");
 	}
 
 	// 3. Initial TS library build (so dist/ exists for linked packages)
