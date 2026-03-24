@@ -34,7 +34,7 @@ relationships:
 
 ### Plugin Changes
 
-In the SessionStart hook or prompt-injector.mjs:
+In the SessionStart hook or prompt-injector.ts:
 
 1. Read the active agent definition (orchestrator.md for the main session)
 2. Parse frontmatter relationships
@@ -51,7 +51,7 @@ In the SessionStart hook or prompt-injector.mjs:
 
 Grounding is injected FIRST, before:
 - Skill injection (TASK-528bba63)
-- Artifact graph traversal (prompt-injector.mjs)
+- Artifact graph traversal (prompt-injector.ts)
 - Rule enforcement (rule-engine.mjs)
 
 This ensures the agent's purpose context is loaded before any task-specific knowledge.

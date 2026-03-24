@@ -38,7 +38,7 @@ Create the core decision tree in `.orqa/process/knowledge/decision-tree.md`:
 
 ### Phase 2 — Update the prompt-injector hook
 
-Rewrite `prompt-injector.mjs` (`plugins/claude/hooks/`):
+Rewrite `prompt-injector.ts` (`plugins/claude/hooks/`):
 
 - On `UserPromptSubmit`, inject the decision tree (not knowledge content)
 - The tree is concise — fits in approximately 200 tokens
@@ -81,7 +81,7 @@ Merged at install time using the same merge mechanism as all other plugin schema
 
 - [ ] Decision tree artifact exists at `.orqa/process/knowledge/decision-tree.md` and is browsable in the app
 - [ ] `UserPromptSubmit` hook injects tree instead of knowledge content
-- [ ] INTENT_MAP removed from `prompt-injector.mjs`
+- [ ] INTENT_MAP removed from `prompt-injector.ts`
 - [ ] Token usage for injection decreases (tree fits in ~200 tokens vs current injection)
 - [ ] Agent reasoning shows tree navigation in thinking blocks
 - [ ] Orchestrator, Implementer, and Reviewer agents have role-specific tree extensions declared in their frontmatter

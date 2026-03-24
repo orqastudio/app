@@ -255,7 +255,7 @@ Beyond path-based injection (Layer 2), OrqaStudio interprets the user's **prompt
 
 ### CLI Implementation (Plugin)
 
-The CLI plugin uses keyword-based intent classification via `prompt-injector.mjs`:
+The CLI plugin uses keyword-based intent classification via `prompt-injector.ts`:
 
 1. The `UserPromptSubmit` hook fires when the user sends a message
 2. The prompt is classified against an intent map (13 categories)
@@ -400,7 +400,7 @@ connectors/claude-code/
     scripts/
       rule-engine.mjs             -- Enforcement engine: loads rules, evaluates patterns,
                                      handles inject/block/warn actions with skill reading
-      prompt-injector.mjs         -- Prompt-based skill injection: intent classification,
+      prompt-injector.ts         -- Prompt-based skill injection: intent classification,
                                      skill reading, session deduplication
 ```
 
@@ -410,7 +410,7 @@ connectors/claude-code/
 |-----------|--------|---------|
 | `PreToolUse` | `rule-engine.mjs` | Evaluate enforcement entries on file/bash tool calls |
 | `Stop` | `rule-engine.mjs` | Evaluate process gates at turn end |
-| `UserPromptSubmit` | `prompt-injector.mjs` | Classify prompt intent and inject skills |
+| `UserPromptSubmit` | `prompt-injector.ts` | Classify prompt intent and inject skills |
 
 ---
 

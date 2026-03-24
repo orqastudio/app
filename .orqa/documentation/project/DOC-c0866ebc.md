@@ -33,7 +33,7 @@ is the reference implementation for everything in this guide.
 │   ├── hooks.json        # Hook registrations (which hooks fire on which events)
 │   └── scripts/          # Hook implementation scripts
 │       ├── rule-engine.mjs
-│       ├── prompt-injector.mjs
+│       ├── prompt-injector.ts
 │       └── session-start.sh
 ├── commands/
 │   └── orqa.md           # Slash command: /orqa
@@ -104,7 +104,7 @@ path of your plugin directory.
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PLUGIN_ROOT/hooks/scripts/prompt-injector.mjs\"",
+            "command": "node \"$CLAUDE_PLUGIN_ROOT/hooks/scripts/prompt-injector.ts\"",
             "timeout": 10
           }
         ]
@@ -211,7 +211,7 @@ patterns working together:
 
 - `hooks/scripts/rule-engine.mjs` — reads enforcement entries from rule frontmatter
   and blocks tool calls that violate them (PreToolUse)
-- `hooks/scripts/prompt-injector.mjs` — injects project context on every prompt (UserPromptSubmit)
+- `hooks/scripts/prompt-injector.ts` — injects project context on every prompt (UserPromptSubmit)
 - `hooks/scripts/graph-guardian.mjs` — validates artifact cross-references after writes (PostToolUse)
 - `hooks/scripts/session-start.sh` — runs `git status` and `git stash list` checks (SessionStart)
 - `commands/orqa.md` — the `/orqa` governance summary command
