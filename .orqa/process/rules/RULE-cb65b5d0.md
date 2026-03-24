@@ -20,6 +20,9 @@ relationships:
     type: "documented-by"
   - target: "AD-61087142"
     type: "enforces"
+  - target: AD-0291fa65
+    type: enforces
+    rationale: "Auto-generated inverse of enforces relationship from AD-0291fa65"
 ---
 ## Shared Component Library
 

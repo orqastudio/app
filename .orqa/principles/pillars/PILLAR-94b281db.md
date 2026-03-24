@@ -78,6 +78,12 @@ relationships:
   - target: IDEA-f2cb20a9
     type: grounded-by
     rationale: OrqaStudio competitive landscape analysis grounds this pillar
+  - target: AGENT-fbdfa9ef
+    type: served-by
+    rationale: "Auto-generated inverse of served-by relationship from AGENT-fbdfa9ef"
+  - target: AGENT-34a6e2cd
+    type: served-by
+    rationale: "Auto-generated inverse of served-by relationship from AGENT-34a6e2cd"
 ---
 ## What This Pillar Means
 

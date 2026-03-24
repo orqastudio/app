@@ -11,10 +11,12 @@ relationships:
     type: synchronised-with
     rationale: "Agent-facing knowledge pair for this user-facing documentation page"
   - target: AD-2ce57da9
-    type: implements
+    type: aligned-with
     rationale: "Documents the commands available through the CLI-as-single-interface architecture decision"
+  - target: AD-2ce57da9
+    type: aligned-with
+    rationale: "Auto-generated inverse of implements relationship from AD-2ce57da9"
 ---
-
 # OrqaStudio CLI Commands
 
 ## Overview

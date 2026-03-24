@@ -14,8 +14,16 @@ relationships:
   - target: DOC-ffee5406
     type: synchronised-with
     rationale: "User-facing documentation pair for this agent-facing knowledge artifact"
+  - target: AGENT-1dab5ebe
+    type: employed-by
+    rationale: "Auto-generated inverse of employed-by relationship from AGENT-1dab5ebe"
+  - target: AGENT-34a6e2cd
+    type: employed-by
+    rationale: "Auto-generated inverse of employed-by relationship from AGENT-34a6e2cd"
+  - target: AGENT-fbdfa9ef
+    type: employed-by
+    rationale: "Auto-generated inverse of employed-by relationship from AGENT-fbdfa9ef"
 ---
-
 # Plugin-Canonical Architecture
 
 ## Core Principle

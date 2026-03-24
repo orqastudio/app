@@ -11,10 +11,12 @@ relationships:
     type: synchronised-with
     rationale: "Agent-facing knowledge pair for this user-facing documentation page"
   - target: AD-2ce57da9
-    type: implements
+    type: aligned-with
     rationale: "Documents the architecture decision that established CLI as single interface"
+  - target: AD-2ce57da9
+    type: aligned-with
+    rationale: "Auto-generated inverse of implements relationship from AD-2ce57da9"
 ---
-
 # CLI Architecture
 
 ## Overview

@@ -24,8 +24,16 @@ relationships:
     rationale: "Simplifies developer infrastructure to a single CLI entry point — clearer, more structured, less to manage"
   - target: EPIC-3ecc76ff
     type: implemented-by
+  - target: DOC-0102aeb8
+    type: aligned-with-by
+    rationale: "Auto-generated inverse of aligned-with-by relationship from DOC-0102aeb8"
+  - target: KNOW-7c1a3e50
+    type: aligned-with-by
+    rationale: "Auto-generated inverse of aligned-with-by relationship from KNOW-7c1a3e50"
+  - target: DOC-7c1a3e51
+    type: aligned-with-by
+    rationale: "Auto-generated inverse of aligned-with-by relationship from DOC-7c1a3e51"
 ---
-
 ## Decision
 
 Eliminate separate MCP server and LSP server processes. The CLI (`orqa`) becomes the **single developer interface** with multiple protocol modes. The daemon is for **app runtime only**.

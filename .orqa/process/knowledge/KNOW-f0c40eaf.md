@@ -32,9 +32,13 @@ relationships:
     type: employed-by
   - target: DOC-a1b2c3d4
     type: synchronised-with
-
+  - target: AGENT-34a6e2cd
+    type: employed-by
+    rationale: "Auto-generated inverse of employed-by relationship from AGENT-34a6e2cd"
+  - target: AGENT-fbdfa9ef
+    type: employed-by
+    rationale: "Auto-generated inverse of employed-by relationship from AGENT-fbdfa9ef"
 ---
-
 Software is built from small, composable units at every level: functions, modules, features, and integrations. This skill teaches the composability philosophy that shapes all code in a well-structured project.
 
 Composability is not just a coding pattern — it is a platform principle. Every project should be composable by default, because composable systems are dramatically easier to pivot, extend, and maintain as requirements change.

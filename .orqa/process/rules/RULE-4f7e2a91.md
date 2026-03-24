@@ -12,8 +12,10 @@ enforcement:
 relationships:
   - target: IMPL-a3f2c1d8
     type: promoted-from
+  - target: RULE-1d91e7cb
+    type: related
+    rationale: "Completion gate depends on session state being current"
 ---
-
 Session state is a **working document**, not a post-session summary. `tmp/session-state.md` must reflect the current state of the conversation at all times.
 
 ## What Must Be Reflected Immediately

@@ -23,7 +23,7 @@ relationships:
   - target: RULE-e120bb70
     type: extends
   - target: RULE-4f7e2a91
-    type: depends-on
+    type: related
   - target: RULE-9cd980b1
     type: extends
   - target: RULE-00a8c660

@@ -30,9 +30,6 @@ relationships:
   - target: KNOW-72d39a1b
     type: employs
     rationale: "Plugin-canonical architecture — injected for all artifact creation/governance work"
-  - target: KNOW-f7af6012
-    type: employs
-    rationale: "Schema lookup before write — injected for all artifact creation/governance work"
   - target: PILLAR-569581e0
     type: serves
     rationale: Agent serves this pillar/persona in its operational role

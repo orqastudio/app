@@ -18,10 +18,12 @@ relationships:
     type: synchronised-with
     rationale: "User-facing documentation pair for this agent-facing knowledge artifact"
   - target: AD-2ce57da9
-    type: implements
+    type: aligned-with
     rationale: "This knowledge codifies the architecture decision that made CLI the single interface"
+  - target: AD-2ce57da9
+    type: aligned-with
+    rationale: "Auto-generated inverse of implements relationship from AD-2ce57da9"
 ---
-
 ## Purpose
 
 The `orqa` CLI is the **single developer interface** for OrqaStudio. There are no separate MCP server or LSP server processes. The CLI binary supports multiple protocol modes, all communicating with the daemon as their backend.

@@ -32,9 +32,6 @@ relationships:
   - target: KNOW-72d39a1b
     type: employs
     rationale: "Plugin-canonical architecture — where content lives and why"
-  - target: KNOW-f7af6012
-    type: employs
-    rationale: "Schema lookup before write — query schemas via MCP before writing frontmatter"
   - target: PILLAR-94b281db
     type: serves
     rationale: Agent serves this pillar/persona in its operational role

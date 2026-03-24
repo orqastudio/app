@@ -32,8 +32,13 @@ relationships:
     type: employed-by
   - target: AGENT-ec1b3785
     type: employed-by
+  - target: AGENT-34a6e2cd
+    type: employed-by
+    rationale: "Auto-generated inverse of employed-by relationship from AGENT-34a6e2cd"
+  - target: AGENT-fbdfa9ef
+    type: employed-by
+    rationale: "Auto-generated inverse of employed-by relationship from AGENT-fbdfa9ef"
 ---
-
 # Search
 
 Three tools for structured search across code and governance artifacts.

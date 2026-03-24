@@ -10,9 +10,11 @@ thinking-mode: governance
 status: active
 created: 2026-03-24
 updated: 2026-03-24
-relationships: []
+relationships:
+  - target: AGENT-1dab5ebe
+    type: employed-by
+    rationale: "Auto-generated inverse of employed-by relationship from AGENT-1dab5ebe" []
 ---
-
 # Query Artifact Schemas Before Writing Frontmatter
 
 ## The Problem
