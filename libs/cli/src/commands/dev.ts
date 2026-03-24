@@ -509,41 +509,33 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			lsp: lspProc.child?.pid ?? null,
 		});
 
-		spawnManaged(rust, findBin("orqa-studio"), [], {
-			env: rustEnv(),
-		});
-
-		// Wait for the app binary to actually start (cargo compiles first, then runs).
-		// The Tauri app writes an IPC port file when it's ready.
+		// Delete old IPC port file so we can detect when the app writes a fresh one
 		const ipcPortFile = path.join(
 			process.env["LOCALAPPDATA"] ?? path.join(process.env["HOME"] ?? "~", ".local", "share"),
 			"com.orqastudio.app",
 			"ipc.port",
 		);
+		try { fs.unlinkSync(ipcPortFile); } catch { /* doesn't exist — fine */ }
 
-		const buildDeadline = Date.now() + 300_000; // 5 minutes for compilation
+		spawnManaged(rust, findBin("orqa-studio"), [], {
+			env: rustEnv(),
+		});
+
+		// Wait for the app to write a fresh IPC port file (signals it's fully loaded)
+		const appDeadline = Date.now() + 120_000; // 2 minutes for app to initialize
 		let appReady = false;
 
-		// First wait for the process to be alive (cargo finished compiling)
-		while (Date.now() < buildDeadline) {
+		while (Date.now() < appDeadline) {
 			await sleep(2_000);
 
 			if (!rust.child || rust.child.exitCode !== null) {
-				// Process exited during build — don't wait forever
-				logError("ctrl", "Rust app exited during build.");
+				logError("ctrl", "Rust app exited during startup.");
 				break;
 			}
 
-			// Check if the IPC port file was recently written (app is up)
-			try {
-				const stat = fs.statSync(ipcPortFile);
-				// Consider "ready" if port file was written in the last 30 seconds
-				if (Date.now() - stat.mtimeMs < 30_000) {
-					appReady = true;
-					break;
-				}
-			} catch {
-				// Port file doesn't exist yet — still building/starting
+			if (fs.existsSync(ipcPortFile)) {
+				appReady = true;
+				break;
 			}
 		}
 
