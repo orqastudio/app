@@ -203,8 +203,7 @@ function sleep(ms: number): Promise<void> {
 interface ControlFileState {
 	pid: number;
 	state: string;
-	vite: number | null;
-	rust: number | null;
+	app: number | null;
 	search: number | null;
 	mcp: number | null;
 	lsp: number | null;
@@ -404,47 +403,26 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 	console.log("");
 
 	const appDir = path.join(root, "app");
-	const uiDir = path.join(appDir, "ui");
 	const libsDir = path.join(root, "libs");
-	const npmCmd = npm();
 
 	writeControlFile(root, {
 		state: "starting",
-		vite: null,
-		rust: null,
+		app: null,
 		search: null,
 		mcp: null,
 		lsp: null,
 	});
 
-	// ── 1. Start Vite ────────────────────────────────────────────────────
-	logCtrl("Starting Vite dev server...");
-	const vite = createManagedProcess("vite", COLOURS.cyan);
-	spawnManaged(vite, npmCmd, ["run", "dev"], { cwd: uiDir });
-
-	logCtrl(`Waiting for Vite on port ${VITE_PORT}...`);
-	const viteReady = await waitForPort(VITE_PORT, 30_000, false);
-	if (!viteReady) {
-		logError("ctrl", "Vite failed to start within 30s");
-		killManaged(vite);
-		process.exit(1);
-	}
-	logSuccess(`Vite ready on http://localhost:${VITE_PORT}`);
-
-	// ── 1b. Start TypeScript library watch builds ────────────────────────
-	// These run tsc --watch so linked packages rebuild automatically.
-	const tsLibs = ["libs/sdk", "libs/graph-visualiser", "libs/logger"];
-	for (const lib of tsLibs) {
-		const libDir = path.join(root, lib);
-		const tsconfigPath = path.join(libDir, "tsconfig.json");
-		if (!fs.existsSync(tsconfigPath)) continue;
-
-		const proc = createManagedProcess(`tsc:${lib.split("/").pop()}`, COLOURS.dim);
-		spawnManaged(proc, npx(), ["tsc", "--watch", "--preserveWatchOutput"], { cwd: libDir });
-		logCtrl(`TypeScript watch: ${lib}`);
+	// ── 1. Start daemon ─────────────────────────────────────────────────
+	logCtrl("Starting daemon...");
+	try {
+		const { runDaemonCommand } = await import("./daemon.js");
+		await runDaemonCommand(["start"]);
+	} catch {
+		logCtrl("Daemon start failed — services may not have graph access");
 	}
 
-	// ── 2. Start search, MCP, LSP servers ────────────────────────────────
+	// ── 2. Start search, MCP, LSP servers (pre-built binaries) ──────────
 	const searchProc = createManagedProcess("search", COLOURS.orange);
 	const mcpProc = createManagedProcess("mcp", COLOURS.teal);
 	const lspProc = createManagedProcess("lsp", COLOURS.pink);
@@ -459,7 +437,6 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 		for (const c of candidates) {
 			if (fs.existsSync(c)) return c;
 		}
-		// Fallback: hope it's on PATH
 		return `${name}${ext}`;
 	}
 
@@ -487,68 +464,81 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 		});
 	}
 
-	// Start search first (MCP depends on it), then MCP + LSP
 	startSearch();
 	await sleep(2_000);
 	startMcp();
 	startLsp();
-	logSuccess("Search, MCP, and LSP servers starting.");
+	logSuccess("Search, MCP, and LSP servers started.");
 
-	// ── 3. Build + Run Rust (cargo run, no --watch) ──────────────────────
-	const rust = createManagedProcess("rust", COLOURS.magenta);
+	// ── 4. TypeScript library watch builds ───────────────────────────────
+	const tsLibs = ["libs/sdk", "libs/graph-visualiser", "libs/logger"];
+	for (const lib of tsLibs) {
+		const libDir = path.join(root, lib);
+		const tsconfigPath = path.join(libDir, "tsconfig.json");
+		if (!fs.existsSync(tsconfigPath)) continue;
+
+		const proc = createManagedProcess(`tsc:${lib.split("/").pop()}`, COLOURS.dim);
+		spawnManaged(proc, npx(), ["tsc", "--watch", "--preserveWatchOutput"], { cwd: libDir });
+		logCtrl(`TypeScript watch: ${lib}`);
+	}
+
+	// ── 5. Start Tauri app (cargo tauri dev handles Vite + app) ─────────
+	// cargo tauri dev:
+	//   - Starts Vite via beforeDevCommand (HMR for frontend)
+	//   - Compiles the app in dev mode (uses devUrl, not frontendDist)
+	//   - Watches app Rust source and recompiles on change
+	//   - Launches the app window
+	const app = createManagedProcess("app", COLOURS.magenta);
 
 	async function startRust(): Promise<void> {
-		logCtrl("Building Rust app (this may take a while on first run)...");
+		logCtrl("Starting Tauri app (cargo tauri dev)...");
 
 		writeControlFile(root, {
 			state: "building",
-			vite: vite.child?.pid ?? null,
-			rust: null,
+			app: null,
 			search: searchProc.child?.pid ?? null,
 			mcp: mcpProc.child?.pid ?? null,
 			lsp: lspProc.child?.pid ?? null,
 		});
 
-		// Delete old IPC port file so we can detect when the app writes a fresh one
-		const ipcPortFile = path.join(
-			process.env["LOCALAPPDATA"] ?? path.join(process.env["HOME"] ?? "~", ".local", "share"),
-			"com.orqastudio.app",
-			"ipc.port",
-		);
-		try { fs.unlinkSync(ipcPortFile); } catch { /* doesn't exist — fine */ }
-
-		spawnManaged(rust, findBin("orqa-studio"), [], {
+		spawnManaged(app, npx(), [
+			"tauri", "dev",
+		], {
+			cwd: path.join(appDir, "backend/src-tauri"),
 			env: rustEnv(),
 		});
 
-		// Wait for the app to write a fresh IPC port file (signals it's fully loaded)
-		const appDeadline = Date.now() + 120_000; // 2 minutes for app to initialize
+		// Wait for the app process to appear (cargo tauri dev compiles then launches)
+		const appDeadline = Date.now() + 300_000; // 5 min for compilation
 		let appReady = false;
 
 		while (Date.now() < appDeadline) {
-			await sleep(2_000);
+			await sleep(3_000);
 
-			if (!rust.child || rust.child.exitCode !== null) {
-				logError("ctrl", "Rust app exited during startup.");
+			if (!app.child || app.child.exitCode !== null) {
+				logError("ctrl", "Tauri dev exited during startup.");
 				break;
 			}
 
-			if (fs.existsSync(ipcPortFile)) {
+			// cargo tauri dev starts Vite first, then compiles, then launches.
+			// Detect the app by checking for the orqa-studio process.
+			const procs = findPidsByName("orqa-studio");
+			if (procs.length > 0) {
+				await sleep(2_000); // Let the webview render
 				appReady = true;
 				break;
 			}
 		}
 
 		if (appReady) {
-			logSuccess("App loaded and ready.");
+			logSuccess("Tauri app loaded.");
 		} else {
-			logCtrl("App may still be loading — check the window.");
+			logCtrl("Tauri app may still be compiling — check the terminal.");
 		}
 
 		writeControlFile(root, {
 			state: "running",
-			vite: vite.child?.pid ?? null,
-			rust: rust.child?.pid ?? null,
+			app: app.child?.pid ?? null,
 			search: searchProc.child?.pid ?? null,
 			mcp: mcpProc.child?.pid ?? null,
 			lsp: lspProc.child?.pid ?? null,
@@ -556,21 +546,19 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 
 		// When app exits cleanly (code 0 = user closed window), shut down everything.
 		// Non-zero = crash → stay alive for restart-tauri.
-		rust.child?.on("close", (code) => {
+		app.child?.on("close", (code) => {
 			if (code === 0 || code === null) {
 				logCtrl("App window closed. Shutting down...");
 				killManaged(searchProc);
 				killManaged(mcpProc);
 				killManaged(lspProc);
-				killManaged(vite);
 				removeControlFile(root);
 				cleanupSignalFile(root);
 				process.exit(0);
 			} else {
 				writeControlFile(root, {
 					state: "app-crashed",
-					vite: vite.child?.pid ?? null,
-					rust: null,
+					app: null,
 					search: searchProc.child?.pid ?? null,
 					mcp: mcpProc.child?.pid ?? null,
 					lsp: lspProc.child?.pid ?? null,
@@ -640,16 +628,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 					writeFullControlFile("running");
 				},
 			},
-			{
-				label: "Tauri app",
-				dir: path.join(appDir, "backend", "src-tauri", "src"),
-				manifest: path.join(appDir, "backend", "src-tauri", "Cargo.toml"),
-				restart: async () => {
-					killManaged(rust);
-					await sleep(1_000);
-					await startRust();
-				},
-			},
+			// Tauri app watching is handled by cargo tauri dev — not our watcher
 		]);
 		logSuccess("Rust file watchers active.");
 
@@ -667,8 +646,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 	function writeFullControlFile(state: string): void {
 		writeControlFile(root, {
 			state,
-			vite: vite.child?.pid ?? null,
-			rust: rust.child?.pid ?? null,
+			app: app.child?.pid ?? null,
 			search: searchProc.child?.pid ?? null,
 			mcp: mcpProc.child?.pid ?? null,
 			lsp: lspProc.child?.pid ?? null,
@@ -676,24 +654,13 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 	}
 
 	async function processSignal(signal: string): Promise<void> {
-		if (signal === "restart-vite") {
-			logCtrl("Restart Vite signal received...");
-			killManaged(vite);
-			await waitForPort(VITE_PORT, PORT_TIMEOUT_MS, true);
-			logCtrl("Restarting Vite...");
-			spawnManaged(vite, npmCmd, ["run", "dev"], { cwd: uiDir });
-			const ready = await waitForPort(VITE_PORT, 30_000, false);
-			if (!ready) {
-				logError("ctrl", "Vite failed to restart within 30s");
-				return;
-			}
-			logSuccess(`Vite ready on http://localhost:${VITE_PORT}`);
-		} else if (signal === "restart-tauri") {
-			logCtrl("Restart Tauri signal received — rebuilding app...");
-			killManaged(rust);
+		if (signal === "restart-app") {
+			// The app = cargo tauri dev (Vite + Tauri compilation + app window)
+			logCtrl("Restarting app...");
+			killManaged(app);
 			await sleep(1_000);
 			await startRust();
-			logSuccess("App restarted. Vite was kept alive.");
+			logSuccess("App restarted.");
 		} else if (signal === "restart-search") {
 			logCtrl("Restart search signal received — restarting search (and MCP)...");
 			killManaged(mcpProc);
@@ -737,30 +704,36 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			} catch {
 				logError("ctrl", "Daemon restart failed");
 			}
-			killManaged(rust);
+			killManaged(app);
 			killManaged(mcpProc);
 			killManaged(lspProc);
 			killManaged(searchProc);
-			killManaged(vite);
-			await waitForPort(VITE_PORT, PORT_TIMEOUT_MS, true);
-			logCtrl("Restarting Vite...");
-			spawnManaged(vite, npmCmd, ["run", "dev"], { cwd: uiDir });
-			await waitForPort(VITE_PORT, 30_000, false);
-			logSuccess(`Vite ready on http://localhost:${VITE_PORT}`);
+			// Restart daemon
+			try {
+				const { runDaemonCommand } = await import("./daemon.js");
+				await runDaemonCommand(["restart"]);
+			} catch { /* ignore */ }
+			// Restart services
+			killManaged(searchProc);
+			killManaged(mcpProc);
+			killManaged(lspProc);
+			await sleep(500);
 			startSearch();
 			await sleep(2_000);
 			startMcp();
 			startLsp();
+			// Restart app (cargo tauri dev)
+			killManaged(app);
+			await sleep(1_000);
 			await startRust();
 			logSuccess("Full restart complete.");
 		} else if (signal === "stop") {
 			logCtrl("Stop signal received — shutting down...");
 			closeAllWatchers();
-			killManaged(rust);
+			killManaged(app);
 			killManaged(searchProc);
 			killManaged(mcpProc);
 			killManaged(lspProc);
-			killManaged(vite);
 			removeControlFile(root);
 			cleanupSignalFile(root);
 			fs.unwatchFile(signalFile);
@@ -786,11 +759,10 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 		logCtrl("Shutting down...");
 		closeAllWatchers();
 		fs.unwatchFile(signalFile);
-		killManaged(rust);
+		killManaged(app);
 		killManaged(searchProc);
 		killManaged(mcpProc);
 		killManaged(lspProc);
-		killManaged(vite);
 		removeControlFile(root);
 		cleanupSignalFile(root);
 		process.exit(0);
@@ -1058,16 +1030,6 @@ async function cmdDev(root: string): Promise<void> {
 		logCtrl("Rust build failed — some binaries may be stale");
 	}
 
-	// Build the Tauri app WITHOUT custom-protocol so it uses devUrl (Vite dev server)
-	logCtrl("Building Tauri app (dev mode)...");
-	try {
-		execSync(
-			`cargo build --manifest-path ${path.join(root, "app/backend/src-tauri/Cargo.toml")} --no-default-features --color always`,
-			{ cwd: root, stdio: "inherit" },
-		);
-	} catch {
-		logCtrl("Tauri app build failed");
-	}
 
 	// 3. Initial TS library build (so dist/ exists for linked packages)
 	logCtrl("Building TypeScript libraries...");
@@ -1093,26 +1055,6 @@ async function cmdDev(root: string): Promise<void> {
 		// Non-fatal — content may be stale but dev can still start
 	}
 
-	// Start the validation daemon (skip if already running)
-	const daemonPort = getPort("daemon");
-	let daemonUp = false;
-	try {
-		const res = await fetch(`http://127.0.0.1:${daemonPort}/health`, {
-			signal: AbortSignal.timeout(500),
-		});
-		daemonUp = res.ok;
-	} catch { /* not running */ }
-
-	if (daemonUp) {
-		logCtrl("Daemon already running.");
-	} else {
-		try {
-			const { runDaemonCommand } = await import("./daemon.js");
-			await runDaemonCommand(["start"]);
-		} catch {
-			logCtrl("Daemon start failed — may need manual start: orqa daemon start");
-		}
-	}
 
 	logCtrl("Starting dev environment...");
 
@@ -1237,8 +1179,7 @@ function cmdStatus(root: string): void {
 	const alive = processIsAlive(ctrl.pid);
 	console.log(`Controller PID: ${ctrl.pid} (${alive ? "alive" : "dead"})`);
 	console.log(`State: ${ctrl.state}`);
-	if (ctrl.vite) console.log(`Vite PID: ${ctrl.vite}`);
-	if (ctrl.rust) console.log(`Rust PID: ${ctrl.rust}`);
+	if (ctrl.app) console.log(`App PID: ${ctrl.app}`);
 	if (ctrl.search) console.log(`Search PID: ${ctrl.search}`);
 	if (ctrl.mcp) console.log(`MCP PID: ${ctrl.mcp}`);
 	if (ctrl.lsp) console.log(`LSP PID: ${ctrl.lsp}`);
@@ -1323,10 +1264,7 @@ export async function runDevCommand(args: string[]): Promise<void> {
 			} else {
 				const signalMap: Record<string, [string, string]> = {
 					daemon:   ["restart-daemon",  "Restart daemon"],
-					frontend: ["restart-vite",    "Restart frontend (Vite)"],
-					vite:     ["restart-vite",    "Restart Vite"],
-					app:      ["restart-tauri",   "Restart app (Tauri)"],
-					tauri:    ["restart-tauri",    "Restart Tauri"],
+					app:      ["restart-app",     "Restart app (Vite + Tauri)"],
 					search:   ["restart-search",  "Restart search (+ MCP)"],
 					mcp:      ["restart-mcp",     "Restart MCP"],
 					lsp:      ["restart-lsp",     "Restart LSP"],
