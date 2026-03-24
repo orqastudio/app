@@ -321,15 +321,27 @@ function killManaged(mp: ManagedProcess): void {
 async function killAll(root: string): Promise<void> {
 	logCtrl("Stopping OrqaStudio processes...");
 
+	// Stop daemon gracefully first (it manages its own PID file)
+	try {
+		const { runDaemonCommand } = await import("./daemon.js");
+		await runDaemonCommand(["stop"]);
+		logCtrl("Daemon stopped.");
+	} catch { /* not running */ }
+
 	const pidsToKill = new Set<number>();
 
-	for (const name of ["orqa-studio", "cargo-tauri"]) {
+	// Find all OrqaStudio processes by name
+	for (const name of [
+		"orqa-studio", "cargo-tauri",
+		"orqa-mcp-server", "orqa-lsp-server", "orqa-search-server", "orqa-validation",
+	]) {
 		for (const pid of findPidsByName(name)) {
 			logCtrl(`Found ${name} (PID ${pid})`);
 			pidsToKill.add(pid);
 		}
 	}
-	for (const port of [VITE_PORT, 5173, getPort("dashboard")]) {
+	// Find by port (Vite, dashboard, daemon)
+	for (const port of [VITE_PORT, 5173, getPort("dashboard"), getPort("daemon")]) {
 		for (const pid of findPidsOnPort(port)) {
 			logCtrl(`Found process on port ${port} (PID ${pid})`);
 			pidsToKill.add(pid);
