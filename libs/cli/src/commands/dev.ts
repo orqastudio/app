@@ -1044,11 +1044,21 @@ async function cmdDev(root: string): Promise<void> {
 	}
 	if (existing) removeControlFile(root);
 
+	// 0. Rebuild the CLI itself (we may be running stale code)
+	logCtrl("Rebuilding CLI...");
+	try {
+		execSync(`${npx()} tsc --project ${path.join(root, "libs/cli/tsconfig.json")}`, {
+			cwd: root,
+			stdio: "inherit",
+		});
+	} catch {
+		logCtrl("CLI build failed — running with current dist/");
+	}
+
 	// 1. Install all workspace dependencies from root
-	const npmCmd = npm();
 	logCtrl("Installing dependencies...");
 	try {
-		execSync(`${npmCmd} install`, { cwd: root, stdio: "inherit" });
+		execSync(`${npm()} install`, { cwd: root, stdio: "inherit" });
 	} catch {
 		logCtrl("npm install failed — dependencies may be stale");
 	}
