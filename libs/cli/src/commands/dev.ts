@@ -449,14 +449,23 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 	const mcpProc = createManagedProcess("mcp", COLOURS.teal);
 	const lspProc = createManagedProcess("lsp", COLOURS.pink);
 
+	/** Find a pre-built binary in workspace target dirs. */
+	function findBin(name: string): string {
+		const ext = isWindows() ? ".exe" : "";
+		const candidates = [
+			path.join(root, "target", "debug", `${name}${ext}`),
+			path.join(root, "target", "release", `${name}${ext}`),
+		];
+		for (const c of candidates) {
+			if (fs.existsSync(c)) return c;
+		}
+		// Fallback: hope it's on PATH
+		return `${name}${ext}`;
+	}
+
 	function startSearch(): void {
 		logCtrl("Starting search server...");
-		spawnManaged(searchProc, "cargo", [
-			"run",
-			"--manifest-path", path.join(libsDir, "search", "Cargo.toml"),
-			"--bin", "orqa-search-server",
-			"--", appDir,
-		], {
+		spawnManaged(searchProc, findBin("orqa-search-server"), [appDir], {
 			stdinMode: "pipe",
 			env: rustEnv(),
 		});
@@ -464,12 +473,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 
 	function startMcp(): void {
 		logCtrl("Starting MCP server...");
-		spawnManaged(mcpProc, "cargo", [
-			"run",
-			"--manifest-path", path.join(libsDir, "mcp-server", "Cargo.toml"),
-			"--bin", "orqa-mcp-server",
-			"--", appDir,
-		], {
+		spawnManaged(mcpProc, findBin("orqa-mcp-server"), [appDir], {
 			stdinMode: "pipe",
 			env: rustEnv(),
 		});
@@ -477,12 +481,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 
 	function startLsp(): void {
 		logCtrl("Starting LSP server...");
-		spawnManaged(lspProc, "cargo", [
-			"run",
-			"--manifest-path", path.join(libsDir, "lsp-server", "Cargo.toml"),
-			"--bin", "orqa-lsp-server",
-			"--", appDir,
-		], {
+		spawnManaged(lspProc, findBin("orqa-lsp-server"), [appDir], {
 			stdinMode: "pipe",
 			env: rustEnv(),
 		});
@@ -510,12 +509,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			lsp: lspProc.child?.pid ?? null,
 		});
 
-		spawnManaged(rust, "cargo", [
-			"run",
-			"--manifest-path", path.join(appDir, "backend/src-tauri/Cargo.toml"),
-			"--no-default-features",
-			"--color", "always",
-		], {
+		spawnManaged(rust, findBin("orqa-studio"), [], {
 			env: rustEnv(),
 		});
 
