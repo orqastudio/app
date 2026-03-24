@@ -1,5 +1,6 @@
 ---
 id: "DOC-52bbfba5"
+type: doc
 title: "Svelte Component Tree"
 description: "Component tree structure and hierarchy of the Svelte 5 frontend application."
 created: "2026-03-02"

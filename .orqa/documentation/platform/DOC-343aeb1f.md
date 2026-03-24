@@ -1,5 +1,6 @@
 ---
 id: DOC-343aeb1f
+type: doc
 name: Tech Debt Management Guide
 category: how-to
 status: active

@@ -1,5 +1,6 @@
 ---
 id: DOC-1b0a39a1
+type: doc
 title: "Glossary & Domain Model"
 category: reference
 description: Domain model and glossary of key terms used throughout OrqaStudio documentation and code.

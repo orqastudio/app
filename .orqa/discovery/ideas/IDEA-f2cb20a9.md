@@ -8,7 +8,7 @@ created: 2026-03-24
 updated: 2026-03-24
 relationships:
   - target: IDEA-0d7e84de
-    type: depends-on
+    type: references
     rationale: "Requires the market research agent capability to exist first"
   - target: PILLAR-cdf756ff
     type: grounded
@@ -16,6 +16,9 @@ relationships:
   - target: PILLAR-94b281db
     type: grounded
     rationale: "Purpose Through Continuity — market positioning informs long-term product direction"
+  - target: PERSONA-cda6edd6
+    type: benefits
+    rationale: "Gives OrqaStudio product owner competitive intelligence for positioning decisions"
 ---
 
 ## The Idea

@@ -1,5 +1,6 @@
 ---
 id: DOC-eda128cd
+type: doc
 title: Streaming Pipeline
 category: architecture
 description: "End-to-end streaming architecture from Agent SDK through sidecar NDJSON to Rust Channel<T> to Svelte."

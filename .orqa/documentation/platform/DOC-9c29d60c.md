@@ -1,5 +1,6 @@
 ---
 id: DOC-9c29d60c
+type: doc
 title: Interaction Patterns
 category: reference
 description: "Standard interaction patterns for navigation, selection, editing, and feedback across the UI."

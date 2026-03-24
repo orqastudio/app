@@ -1,5 +1,6 @@
 ---
 id: DOC-bc65f7a8
+type: doc
 title: OrqaStudio — Brand Guidelines
 category: reference
 description: "Brand guidelines covering visual identity, tone, typography, and color palette for OrqaStudio."

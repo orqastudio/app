@@ -1,5 +1,6 @@
 ---
 id: DOC-dacb6315
+type: doc
 title: First-Run Setup Wizard
 category: architecture
 description: Design of the first-run setup wizard that guides users through initial project configuration.

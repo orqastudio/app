@@ -1,5 +1,6 @@
 ---
 id: DOC-c65f07b7
+type: doc
 title: Dependency License Compatibility
 description: How to ensure that every dependency we use is compatible with our licensing model — what's allowed, what's not, and how to check.
 category: how-to

@@ -1,5 +1,6 @@
 ---
 id: DOC-b513c6b2
+type: doc
 title: Process Metrics
 category: reference
 description: "Process metrics tracked across development including pass/fail rates, coverage, and violation trends."

@@ -1,5 +1,6 @@
 ---
 id: DOC-357f8d7c
+type: doc
 title: Development Commands
 category: reference
 description: Reference for all development commands available via make targets.

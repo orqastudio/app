@@ -1,5 +1,6 @@
 ---
 id: "DOC-2f60e3a2"
+type: doc
 title: "Rust Module Architecture"
 category: "architecture"
 description: "Module layout and dependency structure of the Rust backend crate."

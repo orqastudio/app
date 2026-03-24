@@ -1,5 +1,6 @@
 ---
 id: DOC-a6c2cc2b
+type: doc
 title: "Thinking Mode: Learning Loop"
 description: "The user is teaching the system — sharing an observation, feedback, or lesson that should be captured and potentially promoted to a rule."
 category: platform

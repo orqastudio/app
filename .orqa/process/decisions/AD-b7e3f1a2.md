@@ -6,7 +6,7 @@ status: active
 description: All plugin functionality is expressed through a universal capability vocabulary declared in the manifest. No bespoke wiring code in individual plugins.
 created: 2026-03-23
 updated: 2026-03-23
-relationships: []
+relationships:
   - target: RES-a1b2c3d4
     type: informed-by
   - target: EPIC-d4a8c1e5

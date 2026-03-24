@@ -13,6 +13,9 @@ relationships:
   - target: PILLAR-569581e0
     type: grounded
     rationale: "Clarity Through Structure — competitor and market data is captured as structured artifacts, not scattered notes"
+  - target: PERSONA-cda6edd6
+    type: benefits
+    rationale: "Gives product owners structured market intelligence for prioritisation"
 ---
 
 ## The Idea

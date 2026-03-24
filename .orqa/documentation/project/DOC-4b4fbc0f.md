@@ -1,5 +1,6 @@
 ---
 id: DOC-4b4fbc0f
+type: doc
 title: Coding Standards
 category: reference
 description: Coding standards for Rust and TypeScript/Svelte covering formatting, linting, error handling, and component patterns.

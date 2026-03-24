@@ -1,5 +1,6 @@
 ---
 id: DOC-87d0a2de
+type: doc
 title: Information Architecture
 category: architecture
 description: Information architecture defining how content is organized and navigated within the application.

@@ -1,5 +1,6 @@
 ---
 id: DOC-da5d186a
+type: doc
 name: Artifact Relationships Reference
 category: reference
 status: active

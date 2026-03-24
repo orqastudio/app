@@ -29,8 +29,6 @@ relationships:
     type: synchronised-with
   - target: KNOW-6963d39f
     type: synchronised-with
-  - target: KNOW-b29e340b
-    type: synchronised-with
   - target: KNOW-e9baaf88
     type: synchronised-with
 ---

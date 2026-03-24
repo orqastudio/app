@@ -1,5 +1,6 @@
 ---
 id: DOC-7d811a5d
+type: doc
 title: Core Application Architecture
 category: architecture
 description: End-to-end architecture map of OrqaStudio — every system traced from entry point to persistence/display.

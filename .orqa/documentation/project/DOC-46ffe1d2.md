@@ -1,5 +1,6 @@
 ---
 id: "DOC-46ffe1d2"
+type: doc
 title: "Dev Controller and OrqaDev Dashboard"
 category: "architecture"
 description: "Architecture of the dev controller (debugger/dev.mjs) and the OrqaDev web dashboard for unified process management and log streaming during development."

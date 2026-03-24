@@ -1,5 +1,6 @@
 ---
 id: DOC-dcf96a52
+type: doc
 title: Error Taxonomy
 category: reference
 description: "The flat OrqaError enum — its variants, From conversions, serde serialization format, and propagation through domain → command → IPC → frontend."

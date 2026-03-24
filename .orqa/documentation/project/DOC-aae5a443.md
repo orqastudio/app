@@ -1,5 +1,6 @@
 ---
 id: DOC-aae5a443
+type: doc
 title: Contributing
 category: onboarding
 description: "Guide for contributors — dev environment setup, multi-repo PR workflow, quality standards, and ethical licensing."

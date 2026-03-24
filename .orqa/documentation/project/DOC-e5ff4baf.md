@@ -1,5 +1,6 @@
 ---
 id: DOC-e5ff4baf
+type: doc
 title: Sub-Agent Support Architecture
 category: architecture
 description: Architecture for sub-agent support enabling nested agent delegation within conversations.

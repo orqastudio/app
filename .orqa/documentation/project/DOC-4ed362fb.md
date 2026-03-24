@@ -1,5 +1,6 @@
 ---
 id: DOC-4ed362fb
+type: doc
 title: Licensing & Ethics
 description: What the OrqaStudio license means for you — whether you're a user, contributor, charity, or business.
 category: concept

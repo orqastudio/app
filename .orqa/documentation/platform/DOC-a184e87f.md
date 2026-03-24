@@ -1,5 +1,6 @@
 ---
 id: DOC-a184e87f
+type: doc
 title: Tool Definitions
 category: reference
 description: "Definitions, parameters, and execution model for tools available to the AI agent within OrqaStudio sessions."

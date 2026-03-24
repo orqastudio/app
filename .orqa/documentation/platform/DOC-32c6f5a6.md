@@ -1,5 +1,6 @@
 ---
 id: DOC-32c6f5a6
+type: doc
 name: Schema Validation Reference
 category: reference
 status: active

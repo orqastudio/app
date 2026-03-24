@@ -1,5 +1,4 @@
 ---
-
 id: IMPL-85add0f1
 type: lesson
 title: Orchestrator stops to ask permission when not blocked — breaks flow
@@ -9,7 +8,7 @@ created: 2026-03-13
 updated: 2026-03-14
 maturity: observation
 recurrence: 4
-relationships: []
+relationships:
   - target: TASK-113d38e6
     type: addressed-by
   - target: TASK-36b8f772

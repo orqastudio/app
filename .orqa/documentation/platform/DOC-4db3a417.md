@@ -1,5 +1,6 @@
 ---
 id: DOC-4db3a417
+type: doc
 title: Enforcement Architecture
 category: architecture
 description: "Architecture of OrqaStudio's five-layer enforcement system — process gates, knowledge injection, tooling ecosystem delegation, prompt-based skill injection, and the schema-driven integrity engine."

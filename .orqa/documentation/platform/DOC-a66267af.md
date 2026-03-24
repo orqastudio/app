@@ -1,5 +1,6 @@
 ---
 id: DOC-a66267af
+type: doc
 title: "Thinking Mode: Research"
 description: "The user wants something investigated, explored, or understood — information gathering with no code changes, only findings."
 category: platform

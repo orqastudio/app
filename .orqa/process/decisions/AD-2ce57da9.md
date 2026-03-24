@@ -22,8 +22,6 @@ relationships:
   - target: PILLAR-569581e0
     type: aligned-with
     rationale: "Simplifies developer infrastructure to a single CLI entry point — clearer, more structured, less to manage"
-  - target: EPIC-a4c7e9b1
-    type: informs
   - target: EPIC-3ecc76ff
     type: implemented-by
 ---

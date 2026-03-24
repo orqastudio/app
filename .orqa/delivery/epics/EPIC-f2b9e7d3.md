@@ -31,7 +31,7 @@ relationships:
   - target: TASK-11e2f3a4
     type: delivered-by
   - target: IDEA-7c3d9f2e
-    type: addresses
+    type: promoted-from
   - target: TASK-05e6f7a8
     type: delivered-by
   - target: TASK-13a4b5c6
@@ -39,7 +39,7 @@ relationships:
   - target: RES-a1b2c3d4
     type: guided-by
   - target: IDEA-09979c9d
-    type: addresses
+    type: promoted-from
   - target: TASK-06f7a8b9
     type: delivered-by
   - target: TASK-04d5e6f7

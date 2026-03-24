@@ -1,5 +1,4 @@
 ---
-
 id: IMPL-e8bcc5d2
 type: lesson
 title: Acceptance criteria not verified line-by-line after implementation
@@ -9,7 +8,7 @@ created: 2026-03-14
 updated: 2026-03-14
 maturity: observation
 recurrence: 3
-relationships: []
+relationships:
   - target: TASK-8bbaefcb
     type: addressed-by
   - target: TASK-0a8b014a

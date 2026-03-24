@@ -1,5 +1,6 @@
 ---
 id: DOC-99a1b71a
+type: doc
 title: Plugin Manifest Schema Reference
 description: Complete reference for orqa-plugin.json — the manifest file every plugin must provide to register types, relationships, views, and knowledge artifacts.
 category: reference

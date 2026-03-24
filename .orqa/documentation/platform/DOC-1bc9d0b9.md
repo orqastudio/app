@@ -1,5 +1,6 @@
 ---
 id: DOC-1bc9d0b9
+type: doc
 title: Product Governance
 category: concept
 description: "Product governance criteria defining how features are evaluated against the project's active pillars."

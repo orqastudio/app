@@ -1,5 +1,6 @@
 ---
 id: DOC-c4b4b8b7
+type: doc
 title: Artifact Workflow
 category: how-to
 description: "Day-to-day workflow for creating, transitioning, and managing artifacts through their lifecycle."

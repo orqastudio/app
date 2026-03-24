@@ -1,5 +1,6 @@
 ---
 id: "DOC-fe637e80"
+type: doc
 title: "Wireframe Serving Infrastructure"
 category: "architecture"
 description: "Infrastructure for serving and rendering wireframe assets within the application."

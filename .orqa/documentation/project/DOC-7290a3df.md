@@ -1,5 +1,6 @@
 ---
 id: DOC-7290a3df
+type: doc
 title: MCP Host Interface
 category: architecture
 description: "Design for OrqaStudio's Model Context Protocol host interface for tool integration."

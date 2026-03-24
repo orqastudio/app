@@ -1,5 +1,6 @@
 ---
 id: DOC-c1d1f212
+type: doc
 title: Search Engine Architecture
 category: architecture
 description: Architecture of the embedded semantic and regex search engine using ONNX embeddings and DuckDB.

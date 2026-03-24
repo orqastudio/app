@@ -1,5 +1,6 @@
 ---
 id: DOC-e6f39c35
+type: doc
 title: Artifact Graph SDK
 description: Development guide for the Artifact Graph SDK — the typed frontend interface to the bidirectional artifact node graph.
 created: 2026-03-10

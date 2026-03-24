@@ -1,5 +1,6 @@
 ---
 id: DOC-f9c6149e
+type: doc
 title: SQLite Schema
 category: reference
 description: "SQLite database schema covering sessions, messages, governance artifacts, and configuration tables."

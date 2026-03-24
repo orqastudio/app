@@ -1,5 +1,6 @@
 ---
 id: DOC-a1b2c3d4
+type: doc
 title: Core Platform Knowledge Catalog
 description: Reference catalog of all core platform knowledge artifacts — agent-facing instructions shipped with OrqaStudio.
 status: active
