@@ -1,19 +1,18 @@
 /**
- * Debug commands — dev environment + debug tooling.
+ * Dev environment — manages Vite + Tauri + daemon + watch mode.
  *
- * `orqa dev` / `orqa debug` manages Vite + Tauri + service servers directly.
- * The debug controller (tools/debug/dev.mjs) is available for advanced debugging
- * with its dashboard UI, but is no longer the primary dev entry point.
+ * `orqa dev` is the primary entry point for the development environment.
+ * Run it in a separate terminal — it watches Rust sources and auto-rebuilds.
  *
- * orqa debug                Start the full dev environment (Vite + Tauri)
- * orqa debug stop           Stop gracefully
- * orqa debug kill           Force-kill all processes
- * orqa debug restart        Restart Vite + Tauri
- * orqa debug restart-tauri  Restart Tauri only
- * orqa debug restart-vite   Restart Vite only
- * orqa debug status         Show process status
- * orqa debug icons          Generate brand icons from SVG sources
- * orqa debug tool           Run the debug-tool submodule
+ * orqa dev                Start the full dev environment (Vite + Tauri + daemon)
+ * orqa dev stop           Stop gracefully
+ * orqa dev kill           Force-kill all processes
+ * orqa dev restart        Restart Vite + Tauri
+ * orqa dev restart-tauri  Restart Tauri only
+ * orqa dev restart-vite   Restart Vite only
+ * orqa dev status         Show process status
+ * orqa dev icons          Generate brand icons from SVG sources
+ * orqa dev tool           Run the debug-tool submodule
  */
 
 import { spawn, execSync, type ChildProcess as NodeChildProcess } from "node:child_process";
@@ -1014,7 +1013,7 @@ function cmdDebugTool(root: string, args: string[]): void {
 
 // ── Main entry point ────────────────────────────────────────────────────────
 
-export async function runDebugCommand(args: string[]): Promise<void> {
+export async function runDevCommand(args: string[]): Promise<void> {
 	if (args[0] === "--help" || args[0] === "-h") {
 		console.log(USAGE);
 		return;

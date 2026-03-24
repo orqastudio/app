@@ -11,7 +11,7 @@ import { runPluginCommand } from "./commands/plugin.js";
 import { runIdCommand } from "./commands/id.js";
 import { runMcpCommand } from "./commands/mcp.js";
 import { runLspCommand } from "./commands/lsp.js";
-import { runDebugCommand } from "./commands/debug.js";
+import { runDevCommand } from "./commands/dev.js";
 import { runGraphCommand } from "./commands/graph.js";
 import { runVersionCommand } from "./commands/version.js";
 import { runInstallCommand } from "./commands/install.js";
@@ -102,14 +102,8 @@ async function main(): Promise<void> {
 		case "git":
 			await runGitCommand(commandArgs);
 			break;
-		case "debug":
-			await runDebugCommand(commandArgs);
-			break;
-
-		// ── Backwards-compatible aliases ──────────────────────────
-		// dev → debug
 		case "dev":
-			await runDebugCommand(commandArgs);
+			await runDevCommand(commandArgs);
 			break;
 		// setup → install link
 		case "setup":

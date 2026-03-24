@@ -45,13 +45,18 @@ if [ "$INSTALL_OK" = false ]; then
   OUTPUT="${OUTPUT}\nRun: orqa install\n\n"
 fi
 
-# ─── Daemon ──────────────────────────────────────────────────────────────────
-# Start the daemon if CLI is available and daemon isn't running.
-if command -v orqa &> /dev/null; then
-  DAEMON_STATUS=$(orqa daemon status 2>&1 || true)
-  if echo "$DAEMON_STATUS" | grep -q "not running\|No PID\|not found"; then
-    orqa daemon start 2>/dev/null || true
-  fi
+# ─── Dev Environment Check ───────────────────────────────────────────────────
+# Check if daemon is running. Don't auto-start — `orqa dev` manages lifecycle.
+PORT_BASE="${ORQA_PORT_BASE:-10200}"
+DAEMON_PORT=$((PORT_BASE + 58))
+DAEMON_HEALTHY=false
+if curl -sf --max-time 1 "http://127.0.0.1:${DAEMON_PORT}/health" > /dev/null 2>&1; then
+  DAEMON_HEALTHY=true
+fi
+
+if [ "$DAEMON_HEALTHY" = false ]; then
+  OUTPUT="${OUTPUT}DEV ENVIRONMENT NOT RUNNING: Daemon not responding on port ${DAEMON_PORT}.\n"
+  OUTPUT="${OUTPUT}Start the dev environment in a separate terminal: orqa dev\n\n"
 fi
 
 # ─── Graph Integrity ─────────────────────────────────────────────────────────
@@ -109,7 +114,7 @@ fi
 if [ -f "$ORQA_DIR/project.json" ]; then
   if grep -q '"dogfood"[[:space:]]*:[[:space:]]*true' "$ORQA_DIR/project.json" 2>/dev/null; then
     OUTPUT="${OUTPUT}DOGFOOD MODE ACTIVE: You are editing the app from the CLI.\n"
-    OUTPUT="${OUTPUT}- Use orqa daemon start to ensure the engine is running\n"
+    OUTPUT="${OUTPUT}- Ensure dev environment is running: orqa dev (in a separate terminal)\n"
     OUTPUT="${OUTPUT}- See RULE-6083347d for dogfood rules\n\n"
   fi
 fi

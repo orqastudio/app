@@ -72,10 +72,14 @@ export async function runMcpCommand(args: string[]): Promise<void> {
 		process.exit(1);
 	}
 
-	// Auto-start daemon if not running (best-effort, non-fatal).
-	// We check health directly rather than calling runDaemonCommand because
-	// daemonStart calls process.exit(1) when the daemon is already running.
-	await ensureDaemonRunning();
+	// Check if daemon is running — warn if not, but don't auto-start.
+	// The daemon is managed by `orqa dev` in a separate terminal.
+	if (!(await isDaemonHealthy())) {
+		process.stderr.write(
+			"Warning: daemon not running on port " + DAEMON_PORT + ". " +
+			"Start dev environment with `orqa dev` in a separate terminal.\n",
+		);
+	}
 
 	// Spawn the MCP server binary with stdio bridging
 	return new Promise((resolve) => {
@@ -102,69 +106,19 @@ export async function runMcpCommand(args: string[]): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
-// Daemon auto-start
+// Daemon health check
 // ---------------------------------------------------------------------------
 
 import { getPort } from "../lib/ports.js";
 
 const DAEMON_PORT = getPort("daemon");
 
-/**
- * Check if the daemon is reachable; if not, attempt to start it.
- * Best-effort — failures are logged to stderr but do not prevent the MCP
- * server from launching (it handles daemon unavailability gracefully).
- */
-async function ensureDaemonRunning(): Promise<void> {
-	// Quick health check
-	if (await isDaemonHealthy()) return;
-
-	// Daemon not responding — try to start it directly (we avoid
-	// runDaemonCommand because daemonStart calls process.exit on failure,
-	// which would kill this process before we can spawn the MCP binary).
-	const projectRoot = getRoot();
-	const { findBinary } = await import("../lib/validation-engine.js");
-	const daemonBin = findBinary(projectRoot);
-	if (daemonBin === null) {
-		process.stderr.write("Warning: daemon binary not found, MCP server will run without daemon.\n");
-		return;
-	}
-
-	process.stderr.write("Daemon not running, starting...\n");
-	try {
-		const child = spawn(daemonBin, ["daemon", projectRoot, "--port", String(DAEMON_PORT)], {
-			detached: true,
-			stdio: "ignore",
-			windowsHide: true,
-		});
-		child.unref();
-
-		// Wait up to 3 seconds for health to respond
-		const deadline = Date.now() + 3000;
-		while (Date.now() < deadline) {
-			await new Promise((r) => setTimeout(r, 150));
-			if (await isDaemonHealthy()) {
-				process.stderr.write("Daemon started.\n");
-				return;
-			}
-		}
-		process.stderr.write("Warning: daemon did not start within 3s. MCP server will run without it.\n");
-	} catch {
-		process.stderr.write("Warning: failed to auto-start daemon. MCP server will run without it.\n");
-	}
-}
-
 async function isDaemonHealthy(): Promise<boolean> {
 	try {
-		const controller = new AbortController();
-		const timeout = setTimeout(() => controller.abort(), 500);
-		try {
-			const response = await fetch(`http://127.0.0.1:${DAEMON_PORT}/health`, {
-				signal: controller.signal,
-			});
-			return response.ok;
-		} finally {
-			clearTimeout(timeout);
-		}
+		const res = await fetch(`http://127.0.0.1:${DAEMON_PORT}/health`, {
+			signal: AbortSignal.timeout(500),
+		});
+		return res.ok;
 	} catch {
 		return false;
 	}
