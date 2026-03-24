@@ -1041,7 +1041,25 @@ async function cmdDev(root: string): Promise<void> {
 		logCtrl("npm install failed — dependencies may be stale");
 	}
 
-	// 2. Build all Rust binaries (daemon, MCP, LSP, app backend)
+	// 2. Stop running Rust processes so cargo can overwrite binaries
+	logCtrl("Stopping running services before build...");
+	try {
+		const { runDaemonCommand } = await import("./daemon.js");
+		await runDaemonCommand(["stop"]);
+	} catch { /* not running — fine */ }
+
+	// Kill any remaining server processes holding binary locks
+	for (const name of ["orqa-mcp-server", "orqa-lsp-server", "orqa-search-server", "orqa-studio"]) {
+		try {
+			if (isWindows()) {
+				execSync(`taskkill /F /IM ${name}.exe 2>nul`, { stdio: "ignore" });
+			} else {
+				execSync(`pkill -f ${name} 2>/dev/null`, { stdio: "ignore" });
+			}
+		} catch { /* not running — fine */ }
+	}
+
+	// 3. Build all Rust binaries (daemon, MCP, LSP, app backend)
 	logCtrl("Building Rust binaries...");
 	try {
 		execSync("cargo build --workspace --color always", { cwd: root, stdio: "inherit" });
