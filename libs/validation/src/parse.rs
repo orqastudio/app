@@ -3,9 +3,11 @@
 
 use std::path::Path;
 
+use std::collections::HashSet;
+
 use crate::checks::schema::{build_frontmatter_schema, validate_frontmatter};
 use crate::error::ValidationError;
-use crate::graph::{extract_frontmatter, infer_artifact_type, ArtifactGraph};
+use crate::graph::{build_valid_relationship_types, extract_frontmatter, infer_artifact_type, ArtifactGraph};
 use crate::platform::{scan_plugin_manifests, ArtifactTypeDef};
 use crate::types::{ParsedArtifact, ValidationResult};
 
@@ -91,8 +93,12 @@ pub fn parse_artifact(
         &plugin_contributions.artifact_types,
     );
 
-    let validation =
+    let mut validation =
         run_validation(&frontmatter, &artifact_type, &plugin_contributions.artifact_types);
+
+    // Validate relationship types against the vocabulary from core + plugins + project.
+    let valid_rel_types = build_valid_relationship_types(project_path);
+    validate_relationship_types(&yaml_value, &valid_rel_types, &mut validation);
 
     Ok(ParsedArtifact {
         id,
@@ -301,6 +307,50 @@ fn run_validation(
     }
 }
 
+/// Check that every relationship's `type` field is in the valid vocabulary.
+///
+/// Invalid types are added as errors to the validation result. This mirrors
+/// the graph builder's `tracing::warn` but surfaces findings in the `/parse`
+/// response so pre-commit hooks and editors can report them.
+fn validate_relationship_types(
+    yaml_value: &serde_yaml::Value,
+    valid_rel_types: &HashSet<String>,
+    validation: &mut ValidationResult,
+) {
+    if valid_rel_types.is_empty() {
+        return; // No vocabulary loaded — skip (avoids false positives)
+    }
+    let Some(seq) = yaml_value
+        .get("relationships")
+        .and_then(|v| v.as_sequence())
+    else {
+        return;
+    };
+    for item in seq {
+        let rel_type = item.get("type").and_then(|v| v.as_str());
+        let target = item
+            .get("target")
+            .and_then(|v| v.as_str())
+            .unwrap_or("<unknown>");
+
+        match rel_type {
+            Some(rt) if !valid_rel_types.contains(rt) => {
+                validation.valid = false;
+                validation.errors.push(format!(
+                    "Invalid relationship type '{rt}' on target '{target}' — not defined in any plugin or project schema",
+                ));
+            }
+            None => {
+                validation.valid = false;
+                validation.errors.push(format!(
+                    "Relationship to '{target}' is missing a 'type' field",
+                ));
+            }
+            _ => {} // valid
+        }
+    }
+}
+
 fn humanize_stem(file_path: &Path) -> String {
     let stem = file_path
         .file_stem()
@@ -478,6 +528,100 @@ mod tests {
 
         assert_eq!(results.len(), 1);
         assert_eq!(results[0].id, "RULE-a1b2c3d4");
+    }
+
+    #[test]
+    fn validate_relationship_types_flags_invalid() {
+        let yaml: serde_yaml::Value = serde_yaml::from_str(
+            r#"
+id: RULE-test0001
+title: Test
+relationships:
+  - type: depends-on
+    target: TASK-aaa
+  - type: bogus-type
+    target: TASK-bbb
+  - target: TASK-ccc
+"#,
+        )
+        .expect("yaml");
+
+        let mut valid_types = HashSet::new();
+        valid_types.insert("depends-on".to_string());
+        valid_types.insert("blocks".to_string());
+
+        let mut validation = ValidationResult {
+            valid: true,
+            errors: Vec::new(),
+        };
+
+        validate_relationship_types(&yaml, &valid_types, &mut validation);
+
+        assert!(!validation.valid, "should be invalid");
+        assert_eq!(validation.errors.len(), 2, "two errors: bogus type + missing type");
+        assert!(
+            validation.errors[0].contains("bogus-type"),
+            "first error mentions the invalid type"
+        );
+        assert!(
+            validation.errors[1].contains("missing a 'type' field"),
+            "second error mentions missing type"
+        );
+    }
+
+    #[test]
+    fn validate_relationship_types_skips_when_vocabulary_empty() {
+        let yaml: serde_yaml::Value = serde_yaml::from_str(
+            r#"
+id: RULE-test0002
+title: Test
+relationships:
+  - type: anything-goes
+    target: TASK-aaa
+"#,
+        )
+        .expect("yaml");
+
+        let empty_types = HashSet::new();
+        let mut validation = ValidationResult {
+            valid: true,
+            errors: Vec::new(),
+        };
+
+        validate_relationship_types(&yaml, &empty_types, &mut validation);
+
+        assert!(validation.valid, "empty vocabulary should not produce errors");
+        assert!(validation.errors.is_empty());
+    }
+
+    #[test]
+    fn validate_relationship_types_all_valid() {
+        let yaml: serde_yaml::Value = serde_yaml::from_str(
+            r#"
+id: RULE-test0003
+title: Test
+relationships:
+  - type: depends-on
+    target: TASK-aaa
+  - type: blocks
+    target: TASK-bbb
+"#,
+        )
+        .expect("yaml");
+
+        let mut valid_types = HashSet::new();
+        valid_types.insert("depends-on".to_string());
+        valid_types.insert("blocks".to_string());
+
+        let mut validation = ValidationResult {
+            valid: true,
+            errors: Vec::new(),
+        };
+
+        validate_relationship_types(&yaml, &valid_types, &mut validation);
+
+        assert!(validation.valid, "all types valid — should pass");
+        assert!(validation.errors.is_empty());
     }
 
     #[test]

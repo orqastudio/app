@@ -7,10 +7,7 @@
   "role": "enhancement:governance",
   "dependencies": {
     "npm": [
-      "ajv",
-      "ajv-formats",
-      "fast-glob",
-      "gray-matter"
+      "fast-glob"
     ]
   },
   "provides": {

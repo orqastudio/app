@@ -7,7 +7,7 @@ use serde::Serialize;
 use std::path::Path;
 
 use super::manifest::read_manifest;
-use crate::domain::project_settings::ProjectSettings;
+use crate::domain::config_loader;
 
 /// A discovered plugin from scanning the project.
 #[derive(Debug, Clone, Serialize)]
@@ -20,19 +20,15 @@ pub struct DiscoveredPlugin {
     pub source: String,
 }
 
-/// Read project.json to get the plugins configuration.
-fn read_project_settings(project_root: &Path) -> Option<ProjectSettings> {
-    let path = project_root.join(".orqa").join("project.json");
-    let content = std::fs::read_to_string(&path).ok()?;
-    serde_json::from_str(&content).ok()
-}
-
 /// Scan for plugins that are registered as installed AND enabled in project.json.
 ///
 /// Only plugins explicitly registered in project.json are discovered.
 /// No fallback directory scanning — if a plugin isn't registered, it isn't loaded.
 pub fn scan_plugins(project_root: &Path) -> Vec<DiscoveredPlugin> {
-    let Some(settings) = read_project_settings(project_root) else {
+    let Some(settings) = config_loader::load_project_settings(project_root)
+        .ok()
+        .flatten()
+    else {
         return vec![];
     };
 

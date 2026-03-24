@@ -516,7 +516,7 @@ Clear connection state
   "mcpServers": {
     "web-search": {
       "transport": "sse",
-      "url": "http://localhost:3001/mcp",
+      "url": "http://localhost:8080/mcp",
       "trust": "user",
       "enabled": true
     },

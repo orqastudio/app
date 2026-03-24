@@ -1,10 +1,14 @@
 /**
  * Debug commands — dev environment + debug tooling.
  *
+ * `orqa dev` / `orqa debug` manages Vite + Tauri + service servers directly.
+ * The debug controller (tools/debug/dev.mjs) is available for advanced debugging
+ * with its dashboard UI, but is no longer the primary dev entry point.
+ *
  * orqa debug                Start the full dev environment (Vite + Tauri)
  * orqa debug stop           Stop gracefully
  * orqa debug kill           Force-kill all processes
- * orqa debug restart        Restart Vite + Tauri (not the controller)
+ * orqa debug restart        Restart Vite + Tauri
  * orqa debug restart-tauri  Restart Tauri only
  * orqa debug restart-vite   Restart Vite only
  * orqa debug status         Show process status
@@ -12,19 +16,41 @@
  * orqa debug tool           Run the debug-tool submodule
  */
 
-import { execSync } from "node:child_process";
+import { spawn, execSync, type ChildProcess as NodeChildProcess } from "node:child_process";
+import { createServer as createNetServer } from "node:net";
 import * as path from "node:path";
 import * as fs from "node:fs";
+import { platform } from "node:os";
 import { getRoot } from "../lib/root.js";
+import { getPort } from "../lib/ports.js";
+
+const IS_WINDOWS = platform() === "win32";
+const VITE_PORT = getPort("vite");
+const PORT_TIMEOUT_MS = 15_000;
+const POLL_INTERVAL_MS = 500;
+
+const COLOURS = {
+	reset: "\x1b[0m",
+	dim: "\x1b[2m",
+	red: "\x1b[31m",
+	green: "\x1b[32m",
+	yellow: "\x1b[33m",
+	blue: "\x1b[34m",
+	magenta: "\x1b[35m",
+	cyan: "\x1b[36m",
+	orange: "\x1b[38;5;208m",
+	teal: "\x1b[38;5;37m",
+	pink: "\x1b[38;5;213m",
+};
 
 const USAGE = `
 Usage: orqa debug [subcommand]
 
 Subcommands:
-  (none)            Start the full dev environment (Vite + Tauri)
+  (none)            Start the full dev environment (Vite + Tauri + services)
   stop              Stop gracefully
   kill              Force-kill all processes
-  restart           Restart Vite + Tauri (not the controller)
+  restart           Restart Vite + Tauri
   restart-tauri     Restart Tauri only
   restart-vite      Restart Vite only
   status            Show process status
@@ -32,73 +58,765 @@ Subcommands:
   tool [args...]    Run the debug-tool submodule
 `.trim();
 
-export async function runDebugCommand(args: string[]): Promise<void> {
-	if (args[0] === "--help" || args[0] === "-h") {
-		console.log(USAGE);
-		return;
-	}
+// ── Logging ─────────────────────────────────────────────────────────────────
 
-	const root = getRoot();
-	const sub = args[0] ?? "dev";
-
-	// Debug tool subcommand — delegates to debug-tool submodule
-	if (sub === "tool") {
-		await cmdDebugTool(root, args.slice(1));
-		return;
-	}
-
-	// Icons command — runs brand icon generator
-	if (sub === "icons") {
-		const brandScript = path.join(root, "libs/brand/scripts/generate-icons.mjs");
-		if (!fs.existsSync(brandScript)) {
-			console.error("Brand icon script not found. Are you in the dev repo root?");
-			process.exit(1);
-		}
-		const iconArgs = args.slice(1).join(" ");
-		try {
-			execSync(`node "${brandScript}" ${iconArgs}`, {
-				cwd: path.join(root, "libs/brand"),
-				stdio: "inherit",
-			});
-		} catch {
-			process.exit(1);
-		}
-		return;
-	}
-
-	// All other commands delegate to the dev controller
-	const appDir = path.join(root, "app");
-	const devScript = path.join(root, "tools/debug/dev.mjs");
-
-	if (!fs.existsSync(devScript)) {
-		console.error("Dev script not found. Are you in the dev repo root?");
-		process.exit(1);
-	}
-
-	// Start the validation daemon and refresh plugin content before starting dev.
-	if (sub === "dev") {
-		// Refresh plugin content so .orqa/ is in sync with plugin source
-		try {
-			const { runPluginCommand } = await import("./plugin.js");
-			await runPluginCommand(["refresh"]);
-		} catch {
-			// Non-fatal — content may be stale but dev can still start
-		}
-
-		const { runDaemonCommand } = await import("./daemon.js");
-		await runDaemonCommand(["start"]).catch(() => {
-			// Daemon may already be running or binary not built — non-fatal.
-		});
-	}
-
-	try {
-		execSync(`node ${devScript} ${sub}`, { cwd: appDir, stdio: "inherit" });
-	} catch {
-		// Dev server exits with non-zero on stop/kill — expected
+function prefixLines(prefix: string, colour: string, data: string): void {
+	const text = data.toString().trimEnd();
+	if (!text) return;
+	for (const line of text.split("\n")) {
+		const ts = new Date().toLocaleTimeString("en-GB", { hour12: false });
+		console.log(
+			`${COLOURS.dim}${ts}${COLOURS.reset} ${colour}[${prefix}]${COLOURS.reset} ${line}`,
+		);
 	}
 }
 
-async function cmdDebugTool(root: string, args: string[]): Promise<void> {
+function logCtrl(msg: string): void {
+	prefixLines("ctrl", COLOURS.yellow, msg);
+}
+
+function logError(prefix: string, msg: string): void {
+	prefixLines(prefix, COLOURS.red, msg);
+}
+
+function logSuccess(msg: string): void {
+	prefixLines("ctrl", COLOURS.green, msg);
+}
+
+// ── Process Utilities ───────────────────────────────────────────────────────
+
+function exec(cmd: string): string {
+	try {
+		return execSync(cmd, {
+			encoding: "utf-8",
+			timeout: 10_000,
+			windowsHide: true,
+		}).trim();
+	} catch {
+		return "";
+	}
+}
+
+function findPidsOnPort(port: number): number[] {
+	if (IS_WINDOWS) {
+		const out = exec("netstat -ano");
+		const pids = new Set<number>();
+		for (const line of out.split("\n")) {
+			if (line.includes(`:${port}`) && line.includes("LISTENING")) {
+				const parts = line.trim().split(/\s+/);
+				const pid = parseInt(parts[parts.length - 1] ?? "", 10);
+				if (pid > 0) pids.add(pid);
+			}
+		}
+		return [...pids];
+	}
+	if (platform() === "darwin") {
+		return exec(`lsof -ti:${port}`)
+			.split("\n")
+			.map((s) => parseInt(s, 10))
+			.filter((n) => n > 0);
+	}
+	return exec(
+		`ss -tlnp sport = :${port} 2>/dev/null | awk 'NR>1{match($0,/pid=([0-9]+)/,a); print a[1]}'`,
+	)
+		.split("\n")
+		.map((s) => parseInt(s, 10))
+		.filter((n) => n > 0);
+}
+
+function findPidsByName(name: string): number[] {
+	if (IS_WINDOWS) {
+		return exec(
+			`powershell.exe -NoProfile -Command "Get-Process -Name '${name}' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Id"`,
+		)
+			.split("\n")
+			.map((s) => parseInt(s.trim(), 10))
+			.filter((n) => n > 0);
+	}
+	return exec(`pgrep -f "${name}"`)
+		.split("\n")
+		.map((s) => parseInt(s, 10))
+		.filter((n) => n > 0);
+}
+
+function killProcessTree(pid: number): void {
+	if (pid === process.pid) return;
+
+	if (IS_WINDOWS) {
+		const childPids = exec(
+			`powershell.exe -NoProfile -Command "function Get-Tree($id){Get-CimInstance Win32_Process|Where-Object{$_.ParentProcessId -eq $id}|ForEach-Object{Get-Tree $_.ProcessId;$_.ProcessId}};Get-Tree ${pid}"`,
+		)
+			.split("\n")
+			.map((s) => parseInt(s.trim(), 10))
+			.filter((n) => n > 0);
+
+		for (const childPid of childPids) {
+			try {
+				process.kill(childPid, "SIGKILL");
+			} catch {
+				/* already dead */
+			}
+		}
+	}
+
+	try {
+		process.kill(pid, "SIGKILL");
+	} catch {
+		/* already dead */
+	}
+}
+
+function isPortFree(port: number): Promise<boolean> {
+	return new Promise((resolve) => {
+		const server = createNetServer();
+		server.once("error", () => resolve(false));
+		server.once("listening", () => server.close(() => resolve(true)));
+		server.listen(port, "127.0.0.1");
+	});
+}
+
+async function waitForPort(port: number, timeoutMs: number, wantFree: boolean): Promise<boolean> {
+	const deadline = Date.now() + timeoutMs;
+	while (Date.now() < deadline) {
+		const free = await isPortFree(port);
+		if (wantFree === free) return true;
+		await sleep(POLL_INTERVAL_MS);
+	}
+	return false;
+}
+
+function sleep(ms: number): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// ── Control File (IPC) ──────────────────────────────────────────────────────
+
+interface ControlFileState {
+	pid: number;
+	state: string;
+	vite: number | null;
+	rust: number | null;
+	search: number | null;
+	mcp: number | null;
+	lsp: number | null;
+}
+
+function getControlFilePath(root: string): string {
+	return path.join(root, "tmp", "dev-controller.json");
+}
+
+function getSignalFilePath(root: string): string {
+	return path.join(root, "tmp", "dev-signal");
+}
+
+function ensureTmpDir(root: string): void {
+	const tmpDir = path.join(root, "tmp");
+	if (!fs.existsSync(tmpDir)) {
+		fs.mkdirSync(tmpDir, { recursive: true });
+	}
+}
+
+function writeControlFile(root: string, state: Omit<ControlFileState, "pid">): void {
+	ensureTmpDir(root);
+	fs.writeFileSync(
+		getControlFilePath(root),
+		JSON.stringify({ pid: process.pid, ...state }, null, 2),
+	);
+}
+
+function readControlFile(root: string): ControlFileState | null {
+	try {
+		return JSON.parse(fs.readFileSync(getControlFilePath(root), "utf-8")) as ControlFileState;
+	} catch {
+		return null;
+	}
+}
+
+function removeControlFile(root: string): void {
+	try {
+		fs.unlinkSync(getControlFilePath(root));
+	} catch {
+		/* ignore */
+	}
+}
+
+function processIsAlive(pid: number): boolean {
+	try {
+		process.kill(pid, 0);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+// ── Child Process Management ────────────────────────────────────────────────
+
+interface ManagedProcess {
+	name: string;
+	colour: string;
+	child: NodeChildProcess | null;
+	running: boolean;
+}
+
+function createManagedProcess(name: string, colour: string): ManagedProcess {
+	return { name, colour, child: null, running: false };
+}
+
+function spawnManaged(
+	mp: ManagedProcess,
+	cmd: string,
+	args: string[],
+	opts: {
+		cwd?: string;
+		env?: NodeJS.ProcessEnv;
+		stdinMode?: "ignore" | "pipe";
+	} = {},
+): ManagedProcess {
+	const stdinMode = opts.stdinMode ?? "ignore";
+	mp.child = spawn(cmd, args, {
+		cwd: opts.cwd,
+		env: opts.env ?? { ...process.env },
+		stdio: [stdinMode, "pipe", "pipe"],
+		shell: IS_WINDOWS,
+		windowsHide: true,
+	});
+	mp.running = true;
+
+	mp.child.stdout?.on("data", (data: Buffer) =>
+		prefixLines(mp.name, mp.colour, data.toString()),
+	);
+	mp.child.stderr?.on("data", (data: Buffer) =>
+		prefixLines(mp.name, mp.colour, data.toString()),
+	);
+
+	mp.child.on("close", (code) => {
+		mp.running = false;
+		if (code !== 0 && code !== null) {
+			logError(mp.name, `Exited with code ${code}`);
+		}
+	});
+
+	return mp;
+}
+
+function killManaged(mp: ManagedProcess): void {
+	if (mp.child && mp.running && mp.child.pid) {
+		prefixLines(mp.name, mp.colour, "Stopping...");
+		killProcessTree(mp.child.pid);
+		mp.running = false;
+	}
+}
+
+// ── Kill All (orphan cleanup) ───────────────────────────────────────────────
+
+async function killAll(root: string): Promise<void> {
+	logCtrl("Stopping OrqaStudio processes...");
+
+	const pidsToKill = new Set<number>();
+
+	for (const name of ["orqa-studio", "cargo-tauri"]) {
+		for (const pid of findPidsByName(name)) {
+			logCtrl(`Found ${name} (PID ${pid})`);
+			pidsToKill.add(pid);
+		}
+	}
+	for (const port of [VITE_PORT, 5173, getPort("dashboard")]) {
+		for (const pid of findPidsOnPort(port)) {
+			logCtrl(`Found process on port ${port} (PID ${pid})`);
+			pidsToKill.add(pid);
+		}
+	}
+
+	if (pidsToKill.size === 0) {
+		logCtrl("No OrqaStudio processes found.");
+	} else {
+		for (const pid of pidsToKill) {
+			logCtrl(`Killing PID ${pid}...`);
+			killProcessTree(pid);
+		}
+	}
+
+	logCtrl("Waiting for ports to release...");
+	const freed = await waitForPort(VITE_PORT, PORT_TIMEOUT_MS, true);
+	if (!freed) {
+		for (const pid of findPidsOnPort(VITE_PORT)) {
+			logCtrl(`Force killing PID ${pid} on port ${VITE_PORT}...`);
+			killProcessTree(pid);
+		}
+		const retried = await waitForPort(VITE_PORT, 5_000, true);
+		if (!retried) {
+			logError("ctrl", `FAILED: Port ${VITE_PORT} still in use`);
+			process.exit(1);
+		}
+	}
+
+	removeControlFile(root);
+	logSuccess("All processes stopped.");
+}
+
+// ── Controller (foreground long-running process) ────────────────────────────
+
+async function startController(root: string): Promise<void> {
+	const existing = readControlFile(root);
+	if (existing && processIsAlive(existing.pid)) {
+		logError(
+			"ctrl",
+			`Controller already running (PID ${existing.pid}). Use 'orqa dev stop' first.`,
+		);
+		process.exit(1);
+	}
+	if (existing) removeControlFile(root);
+
+	// Kill any orphaned processes from previous runs
+	await killAll(root);
+
+	console.log("");
+	console.log(
+		`${COLOURS.yellow}╔══════════════════════════════════════════════╗${COLOURS.reset}`,
+	);
+	console.log(
+		`${COLOURS.yellow}║      OrqaStudio Dev Environment               ║${COLOURS.reset}`,
+	);
+	console.log(
+		`${COLOURS.yellow}╚══════════════════════════════════════════════╝${COLOURS.reset}`,
+	);
+	console.log("");
+
+	const appDir = path.join(root, "app");
+	const uiDir = path.join(appDir, "ui");
+	const libsDir = path.join(root, "libs");
+	const npmCmd = IS_WINDOWS ? "npm.cmd" : "npm";
+
+	writeControlFile(root, {
+		state: "starting",
+		vite: null,
+		rust: null,
+		search: null,
+		mcp: null,
+		lsp: null,
+	});
+
+	// ── 1. Start Vite ────────────────────────────────────────────────────
+	logCtrl("Starting Vite dev server...");
+	const vite = createManagedProcess("vite", COLOURS.cyan);
+	spawnManaged(vite, npmCmd, ["run", "dev"], { cwd: uiDir });
+
+	logCtrl(`Waiting for Vite on port ${VITE_PORT}...`);
+	const viteReady = await waitForPort(VITE_PORT, 30_000, false);
+	if (!viteReady) {
+		logError("ctrl", "Vite failed to start within 30s");
+		killManaged(vite);
+		process.exit(1);
+	}
+	logSuccess(`Vite ready on http://localhost:${VITE_PORT}`);
+
+	// ── 2. Start search, MCP, LSP servers ────────────────────────────────
+	const searchProc = createManagedProcess("search", COLOURS.orange);
+	const mcpProc = createManagedProcess("mcp", COLOURS.teal);
+	const lspProc = createManagedProcess("lsp", COLOURS.pink);
+
+	function startSearch(): void {
+		logCtrl("Starting search server...");
+		spawnManaged(searchProc, "cargo", [
+			"run",
+			"--manifest-path", path.join(libsDir, "search", "Cargo.toml"),
+			"--bin", "orqa-search-server",
+			"--", appDir,
+		], {
+			stdinMode: "pipe",
+			env: { ...process.env, RUST_LOG: process.env["RUST_LOG"] ?? "info" },
+		});
+	}
+
+	function startMcp(): void {
+		logCtrl("Starting MCP server...");
+		spawnManaged(mcpProc, "cargo", [
+			"run",
+			"--manifest-path", path.join(libsDir, "mcp-server", "Cargo.toml"),
+			"--bin", "orqa-mcp-server",
+			"--", appDir,
+		], {
+			stdinMode: "pipe",
+			env: { ...process.env, RUST_LOG: process.env["RUST_LOG"] ?? "info" },
+		});
+	}
+
+	function startLsp(): void {
+		logCtrl("Starting LSP server...");
+		spawnManaged(lspProc, "cargo", [
+			"run",
+			"--manifest-path", path.join(libsDir, "lsp-server", "Cargo.toml"),
+			"--bin", "orqa-lsp-server",
+			"--", appDir,
+		], {
+			stdinMode: "pipe",
+			env: { ...process.env, RUST_LOG: process.env["RUST_LOG"] ?? "info" },
+		});
+	}
+
+	// Start search first (MCP depends on it), then MCP + LSP
+	startSearch();
+	await sleep(2_000);
+	startMcp();
+	startLsp();
+	logSuccess("Search, MCP, and LSP servers starting.");
+
+	// ── 3. Build + Run Rust (cargo run, no --watch) ──────────────────────
+	const rust = createManagedProcess("rust", COLOURS.magenta);
+
+	async function startRust(): Promise<void> {
+		logCtrl("Compiling and starting Rust app...");
+		spawnManaged(rust, "cargo", [
+			"run",
+			"--manifest-path", path.join(appDir, "backend/src-tauri/Cargo.toml"),
+			"--no-default-features",
+			"--color", "always",
+		], {
+			env: { ...process.env, RUST_LOG: process.env["RUST_LOG"] ?? "info" },
+		});
+
+		writeControlFile(root, {
+			state: "running",
+			vite: vite.child?.pid ?? null,
+			rust: rust.child?.pid ?? null,
+			search: searchProc.child?.pid ?? null,
+			mcp: mcpProc.child?.pid ?? null,
+			lsp: lspProc.child?.pid ?? null,
+		});
+
+		// When app exits cleanly (code 0 = user closed window), shut down everything.
+		// Non-zero = crash → stay alive for restart-tauri.
+		rust.child?.on("close", (code) => {
+			if (code === 0 || code === null) {
+				logCtrl("App window closed. Shutting down...");
+				killManaged(searchProc);
+				killManaged(mcpProc);
+				killManaged(lspProc);
+				killManaged(vite);
+				removeControlFile(root);
+				cleanupSignalFile(root);
+				process.exit(0);
+			} else {
+				writeControlFile(root, {
+					state: "app-crashed",
+					vite: vite.child?.pid ?? null,
+					rust: null,
+					search: searchProc.child?.pid ?? null,
+					mcp: mcpProc.child?.pid ?? null,
+					lsp: lspProc.child?.pid ?? null,
+				});
+				logCtrl(
+					`App crashed (code ${code}). Use 'orqa dev restart-tauri' to relaunch.`,
+				);
+			}
+		});
+	}
+
+	await startRust();
+
+	// ── 4. Signal File Handling ──────────────────────────────────────────
+	const signalFile = getSignalFilePath(root);
+	let lastMtime = 0;
+
+	function writeFullControlFile(state: string): void {
+		writeControlFile(root, {
+			state,
+			vite: vite.child?.pid ?? null,
+			rust: rust.child?.pid ?? null,
+			search: searchProc.child?.pid ?? null,
+			mcp: mcpProc.child?.pid ?? null,
+			lsp: lspProc.child?.pid ?? null,
+		});
+	}
+
+	async function processSignal(signal: string): Promise<void> {
+		if (signal === "restart-vite") {
+			logCtrl("Restart Vite signal received...");
+			killManaged(vite);
+			await waitForPort(VITE_PORT, PORT_TIMEOUT_MS, true);
+			logCtrl("Restarting Vite...");
+			spawnManaged(vite, npmCmd, ["run", "dev"], { cwd: uiDir });
+			const ready = await waitForPort(VITE_PORT, 30_000, false);
+			if (!ready) {
+				logError("ctrl", "Vite failed to restart within 30s");
+				return;
+			}
+			logSuccess(`Vite ready on http://localhost:${VITE_PORT}`);
+		} else if (signal === "restart-tauri") {
+			logCtrl("Restart Tauri signal received — rebuilding app...");
+			killManaged(rust);
+			await sleep(1_000);
+			await startRust();
+			logSuccess("App restarted. Vite was kept alive.");
+		} else if (signal === "restart-search") {
+			logCtrl("Restart search signal received — restarting search (and MCP)...");
+			killManaged(mcpProc);
+			killManaged(searchProc);
+			await sleep(500);
+			startSearch();
+			await sleep(2_000);
+			startMcp();
+			writeFullControlFile("running");
+			logSuccess("Search and MCP restarted.");
+		} else if (signal === "restart-mcp") {
+			logCtrl("Restart MCP signal received...");
+			killManaged(mcpProc);
+			await sleep(500);
+			startMcp();
+			writeFullControlFile("running");
+			logSuccess("MCP server restarted.");
+		} else if (signal === "restart-lsp") {
+			logCtrl("Restart LSP signal received...");
+			killManaged(lspProc);
+			await sleep(500);
+			startLsp();
+			writeFullControlFile("running");
+			logSuccess("LSP server restarted.");
+		} else if (signal === "restart") {
+			logCtrl("Full restart signal received — restarting everything...");
+			killManaged(rust);
+			killManaged(mcpProc);
+			killManaged(lspProc);
+			killManaged(searchProc);
+			killManaged(vite);
+			await waitForPort(VITE_PORT, PORT_TIMEOUT_MS, true);
+			logCtrl("Restarting Vite...");
+			spawnManaged(vite, npmCmd, ["run", "dev"], { cwd: uiDir });
+			await waitForPort(VITE_PORT, 30_000, false);
+			logSuccess(`Vite ready on http://localhost:${VITE_PORT}`);
+			startSearch();
+			await sleep(2_000);
+			startMcp();
+			startLsp();
+			await startRust();
+			logSuccess("Full restart complete.");
+		} else if (signal === "stop") {
+			logCtrl("Stop signal received — shutting down...");
+			killManaged(rust);
+			killManaged(searchProc);
+			killManaged(mcpProc);
+			killManaged(lspProc);
+			killManaged(vite);
+			removeControlFile(root);
+			cleanupSignalFile(root);
+			fs.unwatchFile(signalFile);
+			logSuccess("All processes stopped.");
+			process.exit(0);
+		}
+	}
+
+	// Watch for signal file changes (written by restart subcommands)
+	fs.watchFile(signalFile, { interval: 500 }, async (curr) => {
+		if (curr.mtimeMs <= lastMtime) return;
+		lastMtime = curr.mtimeMs;
+		try {
+			const signal = fs.readFileSync(signalFile, "utf-8").trim();
+			await processSignal(signal);
+		} catch {
+			// Signal file may not exist yet
+		}
+	});
+
+	// Handle Ctrl+C / terminal close
+	function shutdown(): void {
+		logCtrl("Shutting down...");
+		fs.unwatchFile(signalFile);
+		killManaged(rust);
+		killManaged(searchProc);
+		killManaged(mcpProc);
+		killManaged(lspProc);
+		killManaged(vite);
+		removeControlFile(root);
+		cleanupSignalFile(root);
+		process.exit(0);
+	}
+
+	process.on("SIGINT", shutdown);
+	process.on("SIGTERM", shutdown);
+	if (IS_WINDOWS) {
+		process.on("SIGHUP", shutdown);
+	}
+
+	logCtrl("Dev environment running. Press Ctrl+C to stop.");
+	logCtrl("Use 'orqa dev restart-tauri' to rebuild the app (Vite stays alive).");
+	logCtrl("Use 'orqa dev stop' to shut everything down.");
+}
+
+function cleanupSignalFile(root: string): void {
+	try {
+		fs.unlinkSync(getSignalFilePath(root));
+	} catch {
+		/* ignore */
+	}
+}
+
+// ── Subcommand: dev (spawn controller in background) ────────────────────────
+
+async function cmdDev(root: string): Promise<void> {
+	const existing = readControlFile(root);
+	if (existing && processIsAlive(existing.pid)) {
+		logSuccess(
+			`Dev environment already running (PID ${existing.pid}).`,
+		);
+		return;
+	}
+	if (existing) removeControlFile(root);
+
+	// Refresh plugin content so .orqa/ is in sync with plugin source
+	try {
+		const { runPluginCommand } = await import("./plugin.js");
+		await runPluginCommand(["refresh"]);
+	} catch {
+		// Non-fatal — content may be stale but dev can still start
+	}
+
+	// Start the validation daemon
+	try {
+		const { runDaemonCommand } = await import("./daemon.js");
+		await runDaemonCommand(["start"]);
+	} catch {
+		// Daemon may already be running or binary not built — non-fatal
+	}
+
+	logCtrl("Starting dev environment...");
+
+	// Spawn the controller as a detached process (this same script with __start-controller)
+	const nodeCmd = process.execPath;
+	const cliEntry = path.join(root, "libs/cli/dist/cli.js");
+	const child = spawn(nodeCmd, [cliEntry, "debug", "__start-controller"], {
+		cwd: root,
+		detached: true,
+		stdio: "ignore",
+		windowsHide: true,
+		env: { ...process.env },
+	});
+	child.unref();
+
+	logCtrl(`Controller spawned (PID ${child.pid}). Waiting for ready...`);
+
+	// Poll control file until state is "running"
+	const READY_TIMEOUT_MS = 120_000;
+	const deadline = Date.now() + READY_TIMEOUT_MS;
+
+	while (Date.now() < deadline) {
+		await sleep(POLL_INTERVAL_MS);
+		const ctrl = readControlFile(root);
+		if (!ctrl) continue;
+
+		if (!processIsAlive(ctrl.pid)) {
+			logError("ctrl", "Controller process died during startup.");
+			removeControlFile(root);
+			process.exit(1);
+		}
+
+		if (ctrl.state === "running") {
+			logSuccess("Dev environment ready.");
+			return;
+		}
+	}
+
+	logError("ctrl", "Timed out waiting for dev environment to become ready.");
+	process.exit(1);
+}
+
+// ── Subcommand: stop ────────────────────────────────────────────────────────
+
+async function cmdStop(root: string): Promise<void> {
+	const ctrl = readControlFile(root);
+
+	if (ctrl && processIsAlive(ctrl.pid)) {
+		logCtrl("Signalling controller to stop...");
+		ensureTmpDir(root);
+		fs.writeFileSync(getSignalFilePath(root), "stop");
+
+		// Wait for controller to exit
+		const deadline = Date.now() + 10_000;
+		while (Date.now() < deadline) {
+			if (!processIsAlive(ctrl.pid)) {
+				logSuccess("Controller stopped.");
+				return;
+			}
+			await sleep(500);
+		}
+		logCtrl("Controller did not exit gracefully. Use 'orqa dev kill' to force.");
+		return;
+	}
+
+	if (ctrl) removeControlFile(root);
+	logCtrl("No controller running. Use 'orqa dev kill' to force-kill orphaned processes.");
+}
+
+// ── Subcommand: kill ────────────────────────────────────────────────────────
+
+async function cmdKill(root: string): Promise<void> {
+	await killAll(root);
+}
+
+// ── Subcommand: restart (send signal to running controller) ─────────────────
+
+async function cmdSignal(root: string, signal: string, label: string): Promise<void> {
+	const ctrl = readControlFile(root);
+	if (ctrl && processIsAlive(ctrl.pid)) {
+		logCtrl(`Signalling controller to ${label}...`);
+		ensureTmpDir(root);
+		fs.writeFileSync(getSignalFilePath(root), signal);
+		logSuccess(`${label} signal sent. Watch the controller output for progress.`);
+		return;
+	}
+
+	if (ctrl) removeControlFile(root);
+
+	// For restart-tauri and restart (full), start the dev env if not running
+	if (signal === "restart-tauri" || signal === "restart") {
+		logCtrl("No controller running. Starting dev environment...");
+		await cmdDev(root);
+		return;
+	}
+
+	logError("ctrl", "No controller running. Use 'orqa dev' first.");
+}
+
+// ── Subcommand: status ──────────────────────────────────────────────────────
+
+function cmdStatus(root: string): void {
+	const ctrl = readControlFile(root);
+	if (!ctrl) {
+		console.log("No dev controller running.");
+		return;
+	}
+
+	const alive = processIsAlive(ctrl.pid);
+	console.log(`Controller PID: ${ctrl.pid} (${alive ? "alive" : "dead"})`);
+	console.log(`State: ${ctrl.state}`);
+	if (ctrl.vite) console.log(`Vite PID: ${ctrl.vite}`);
+	if (ctrl.rust) console.log(`Rust PID: ${ctrl.rust}`);
+	if (ctrl.search) console.log(`Search PID: ${ctrl.search}`);
+	if (ctrl.mcp) console.log(`MCP PID: ${ctrl.mcp}`);
+	if (ctrl.lsp) console.log(`LSP PID: ${ctrl.lsp}`);
+}
+
+// ── Subcommand: icons ───────────────────────────────────────────────────────
+
+function cmdIcons(root: string, args: string[]): void {
+	const brandScript = path.join(root, "libs/brand/scripts/generate-icons.mjs");
+	if (!fs.existsSync(brandScript)) {
+		console.error("Brand icon script not found. Are you in the dev repo root?");
+		process.exit(1);
+	}
+	const iconArgs = args.join(" ");
+	try {
+		execSync(`node "${brandScript}" ${iconArgs}`, {
+			cwd: path.join(root, "libs/brand"),
+			stdio: "inherit",
+		});
+	} catch {
+		process.exit(1);
+	}
+}
+
+// ── Subcommand: tool ────────────────────────────────────────────────────────
+
+function cmdDebugTool(root: string, args: string[]): void {
 	const debugToolPaths = [
 		path.join(root, "debug-tool", "debug-tool.sh"),
 		path.join(root, "node_modules", ".bin", "orqa-debug"),
@@ -122,5 +840,64 @@ async function cmdDebugTool(root: string, args: string[]): Promise<void> {
 		execSync(cmd, { encoding: "utf-8", stdio: "inherit" });
 	} catch {
 		process.exit(1);
+	}
+}
+
+// ── Main entry point ────────────────────────────────────────────────────────
+
+export async function runDebugCommand(args: string[]): Promise<void> {
+	if (args[0] === "--help" || args[0] === "-h") {
+		console.log(USAGE);
+		return;
+	}
+
+	const root = getRoot();
+	const sub = args[0] ?? "dev";
+
+	switch (sub) {
+		case "dev":
+			await cmdDev(root);
+			break;
+		case "__start-controller":
+			// Internal: called by cmdDev to spawn the long-running controller process
+			await startController(root);
+			break;
+		case "stop":
+			await cmdStop(root);
+			break;
+		case "kill":
+			await cmdKill(root);
+			break;
+		case "restart":
+			await cmdSignal(root, "restart", "Full restart");
+			break;
+		case "restart-tauri":
+			await cmdSignal(root, "restart-tauri", "Restart Tauri");
+			break;
+		case "restart-vite":
+			await cmdSignal(root, "restart-vite", "Restart Vite");
+			break;
+		case "restart-search":
+			await cmdSignal(root, "restart-search", "Restart Search (+ MCP)");
+			break;
+		case "restart-mcp":
+			await cmdSignal(root, "restart-mcp", "Restart MCP");
+			break;
+		case "restart-lsp":
+			await cmdSignal(root, "restart-lsp", "Restart LSP");
+			break;
+		case "status":
+			cmdStatus(root);
+			break;
+		case "icons":
+			cmdIcons(root, args.slice(1));
+			break;
+		case "tool":
+			cmdDebugTool(root, args.slice(1));
+			break;
+		default:
+			console.error(`Unknown subcommand: ${sub}`);
+			console.log(USAGE);
+			process.exit(1);
 	}
 }

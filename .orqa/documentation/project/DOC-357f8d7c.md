@@ -5,7 +5,7 @@ title: Development Commands
 category: reference
 description: Reference for all development commands available via make targets.
 created: 2026-03-05
-updated: 2026-03-10
+updated: 2026-03-24
 sort: 4
 relationships: []
 ---
@@ -57,7 +57,7 @@ Start the full dev environment. Spawns the dev controller as a detached backgrou
 **Underlying command:**
 
 ```bash
-node debugger/dev.mjs dev
+node tools/debug/dev.mjs dev
 ```
 
 **What it does:**
@@ -76,13 +76,13 @@ Start the dev controller in the foreground — a persistent Node process that ow
 **Underlying command:**
 
 ```bash
-node debugger/dev.mjs start
+node tools/debug/dev.mjs start
 ```
 
 **What it does:**
 1. Kills any orphaned processes from previous runs
-2. Starts the dashboard server at `http://localhost:3001` and opens it in the browser
-3. Spawns Vite dev server, waits for port 1420
+2. Starts the dashboard server at `http://localhost:10401` and opens it in the browser
+3. Spawns Vite dev server, waits for port 10420
 4. Compiles and runs the Tauri app via `cargo run`
 5. Watches for IPC signals from restart/stop commands
 6. Streams all output with colour-coded prefixes: `[ctrl]`, `[vite]`, `[rust]`
@@ -98,7 +98,7 @@ Signal the dev controller to kill the Tauri app binary, recompile, and relaunch.
 **Underlying command:**
 
 ```bash
-node debugger/dev.mjs restart-tauri
+node tools/debug/dev.mjs restart-tauri
 ```
 
 **When to use:** After Rust backend changes that require a recompile. The dashboard shows rebuild progress live.
@@ -112,10 +112,10 @@ Signal the dev controller to restart only the Vite dev server. The Tauri app sta
 **Underlying command:**
 
 ```bash
-node debugger/dev.mjs restart-vite
+node tools/debug/dev.mjs restart-vite
 ```
 
-**When to use:** When the Vite dev server gets stuck, HMR stops working, or port 1420 needs to be recycled.
+**When to use:** When the Vite dev server gets stuck, HMR stops working, or port 10420 needs to be recycled.
 
 ---
 
@@ -126,7 +126,7 @@ Signal the dev controller to restart everything — kills Vite and the Tauri app
 **Underlying command:**
 
 ```bash
-node debugger/dev.mjs restart
+node tools/debug/dev.mjs restart
 ```
 
 **When to use:** When both Vite and Rust need a clean restart.
@@ -140,7 +140,7 @@ Gracefully signal the dev controller to stop all processes and exit. The dashboa
 **Underlying command:**
 
 ```bash
-node debugger/dev.mjs stop
+node tools/debug/dev.mjs stop
 ```
 
 **When to use:** When you intentionally want to shut everything down and don't need it running. Prefer `make restart` commands during active development — they keep the controller alive.
@@ -154,7 +154,7 @@ Force-kill all OrqaStudio processes regardless of controller state. Does not wai
 **Underlying command:**
 
 ```bash
-node debugger/dev.mjs kill
+node tools/debug/dev.mjs kill
 ```
 
 **When to use:** When `make stop` doesn't work, processes are stuck, or you need to tear down the entire dev environment. Partner to `make dev`.
@@ -168,7 +168,7 @@ Show the dev controller's state: controller PID, child process PIDs, and whether
 **Underlying command:**
 
 ```bash
-node debugger/dev.mjs status
+node tools/debug/dev.mjs status
 ```
 
 **When to use:** To check what's running without opening the dashboard.

@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
+use crate::domain::config_loader;
 use crate::domain::project_settings::{ArtifactEntry, ProjectSettings};
 use crate::error::OrqaError;
 
@@ -26,23 +27,17 @@ pub struct ProjectPaths {
 impl ProjectPaths {
     /// Build a `ProjectPaths` from the project root directory.
     ///
-    /// Reads `project.json`, extracts artifact paths, and creates the lookup map.
+    /// Delegates to [`config_loader::load_project_settings`] for file I/O.
     /// Returns an error if the settings file cannot be read or parsed.
     /// Returns an empty path map if no settings file exists.
     pub fn load(project_root: &Path) -> Result<Self, OrqaError> {
-        let settings_file = project_root.join(SETTINGS_FILE);
-
-        if !settings_file.exists() {
-            return Ok(Self {
+        match config_loader::load_project_settings(project_root)? {
+            Some(settings) => Ok(Self::from_settings(project_root, &settings)),
+            None => Ok(Self {
                 project_root: project_root.to_path_buf(),
                 artifact_paths: HashMap::new(),
-            });
+            }),
         }
-
-        let contents = std::fs::read_to_string(&settings_file)?;
-        let settings: ProjectSettings = serde_json::from_str(&contents)?;
-
-        Ok(Self::from_settings(project_root, &settings))
     }
 
     /// Build a `ProjectPaths` from an already-loaded `ProjectSettings`.

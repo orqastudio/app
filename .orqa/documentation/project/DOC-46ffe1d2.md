@@ -3,18 +3,18 @@ id: "DOC-46ffe1d2"
 type: doc
 title: "Dev Controller and OrqaDev Dashboard"
 category: "architecture"
-description: "Architecture of the dev controller (debugger/dev.mjs) and the OrqaDev web dashboard for unified process management and log streaming during development."
+description: "Architecture of the dev controller (tools/debug/dev.mjs) and the OrqaDev web dashboard for unified process management and log streaming during development."
 created: "2026-03-12"
-updated: "2026-03-12"
+updated: "2026-03-24"
 sort: 5
 relationships: []
 ---
 ## Overview
 
-The dev controller (`debugger/dev.mjs`) is a persistent Node.js process that owns the
+The dev controller (`tools/debug/dev.mjs`) is a persistent Node.js process that owns the
 entire development lifecycle. It spawns and manages Vite and Tauri processes, captures
 their output, and serves the **OrqaDev web dashboard** — a real-time log viewer and
-process control panel accessible at `http://localhost:3001`.
+process control panel accessible at `http://localhost:10401`.
 
 This replaces `cargo tauri dev` which has known issues with Vite process orphaning on
 crash, `taskkill` hangs on MSYS2/Git Bash, and no unified build visibility. See
@@ -24,12 +24,12 @@ crash, `taskkill` hangs on MSYS2/Git Bash, and no unified build visibility. See
 
 ```
 ┌─────────────────────────────────────────────┐
-│  Dev Controller (debugger/dev.mjs)           │
-│  Port 3001 — HTTP + SSE                     │
+│  Dev Controller (tools/debug/dev.mjs)           │
+│  Port 10401 — HTTP + SSE                    │
 │                                             │
 │  ┌──────────┐  ┌──────────┐                 │
 │  │  Vite    │  │  Cargo   │  Child          │
-│  │  :1420   │  │  tauri   │  processes      │
+│  │  :10420   │  │  tauri   │  processes      │
 │  └────┬─────┘  └────┬─────┘                 │
 │       │stdout/err    │stdout/err             │
 │       └──────┬───────┘                       │
@@ -54,7 +54,7 @@ crash, `taskkill` hangs on MSYS2/Git Bash, and no unified build visibility. See
 │  ├─ Log Output ──────────────────────────┤  │
 │  │  12:34:05 [vite] hmr update /App...   │  │
 │  │  12:34:06 [rust] Compiling orqa...    │  │
-│  │  12:34:07 [ctrl] Tauri ready on :1420 │  │
+│  │  12:34:07 [ctrl] Tauri ready on :10420 │  │
 │  ├─ Footer ──────────────────────────────┤  │
 │  │  142 lines                 ● connected│  │
 │  └───────────────────────────────────────┘  │
@@ -122,8 +122,8 @@ See [commands reference](commands.md) for full details.
 
 | File | Purpose |
 |------|---------|
-| `debugger/dev.mjs` | Controller + HTTP/SSE server |
-| `debugger/dev-dashboard.html` | Self-contained dashboard UI (HTML/CSS/JS) |
+| `tools/debug/dev.mjs` | Controller + HTTP/SSE server |
+| `tools/debug/dev-dashboard.html` | Self-contained dashboard UI (HTML/CSS/JS) |
 | `tmp/dev-controller.json` | Runtime state (PIDs, status) — gitignored |
 
 ## Why Not `cargo tauri dev`

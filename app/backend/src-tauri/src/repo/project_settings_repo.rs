@@ -1,23 +1,17 @@
 use std::path::Path;
 
+use crate::domain::config_loader;
 use crate::domain::paths;
 use crate::domain::project_settings::ProjectSettings;
 use crate::error::OrqaError;
 
 /// Read project settings from `{project_path}/.orqa/project.json`.
 ///
+/// Delegates to the centralised [`config_loader::load_project_settings`].
 /// Returns `Ok(None)` if the file does not exist.
 /// Returns `Err(OrqaError::Serialization(...))` if JSON is malformed.
 pub fn read(project_path: &str) -> Result<Option<ProjectSettings>, OrqaError> {
-    let settings_file = Path::new(project_path).join(paths::SETTINGS_FILE);
-
-    if !settings_file.exists() {
-        return Ok(None);
-    }
-
-    let contents = std::fs::read_to_string(&settings_file)?;
-    let settings: ProjectSettings = serde_json::from_str(&contents)?;
-    Ok(Some(settings))
+    config_loader::load_project_settings(Path::new(project_path))
 }
 
 /// Write project settings to `{project_path}/.orqa/project.json`.

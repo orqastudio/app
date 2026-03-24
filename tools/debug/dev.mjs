@@ -1,5 +1,16 @@
 #!/usr/bin/env node
-// dev.mjs — OrqaStudio Dev Controller
+// dev.mjs — OrqaStudio Debug Controller (DEBUG-ONLY)
+//
+// This is debug-only tooling. The primary dev entry point is `orqa dev`
+// (libs/cli/src/commands/debug.ts), which manages Vite + Tauri directly.
+//
+// This controller adds advanced debugging features on top:
+//   - Dashboard SSE server for real-time process monitoring
+//   - Library/plugin file watchers for automatic rebuilds
+//   - Extended process lifecycle management with UI
+//
+// Use `orqa dev` for normal development. Use this script directly only
+// when you need the debug dashboard or library watcher features.
 //
 // A persistent process that owns the entire dev lifecycle.
 // Replaces `cargo tauri dev` with direct control over Vite and cargo.
