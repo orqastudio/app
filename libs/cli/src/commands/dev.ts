@@ -1082,7 +1082,7 @@ async function cmdDev(root: string): Promise<void> {
 		// Only build if dist/ doesn't exist yet — watchers handle incremental
 		if (!fs.existsSync(distDir)) {
 			try {
-				execSync(`${npmCmd} run build`, { cwd: libDir, stdio: "inherit" });
+				execSync(`${npm()} run build`, { cwd: libDir, stdio: "inherit" });
 			} catch {
 				logCtrl(`Initial build failed for ${lib}`);
 			}
