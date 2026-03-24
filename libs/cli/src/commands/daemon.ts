@@ -8,7 +8,7 @@
  */
 
 import { spawn } from "node:child_process";
-import { existsSync, readFileSync, mkdirSync } from "node:fs";
+import { existsSync, readFileSync, mkdirSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { getPort } from "../lib/ports.js";
 import { getRoot } from "../lib/root.js";
@@ -75,21 +75,17 @@ async function daemonStart(args: string[]): Promise<void> {
 	if (existing !== null && processIsAlive(existing)) {
 		const health = await fetchHealth(port);
 		if (health !== null) {
-			console.error(
-				`Daemon already running (PID ${existing}, port ${port}).`,
-			);
-			process.exit(1);
+			console.log(`Daemon already running (PID ${existing}, port ${port}).`);
+			return;
 		}
 		// PID file exists but /health failed — stale, let the binary clean it up.
 	}
 
 	const binary = findBinary(projectRoot);
 	if (binary === null) {
-		console.error(
-			"orqa-validation binary not found. Build it with:\n" +
-			"  cargo build --manifest-path libs/validation/Cargo.toml",
+		throw new Error(
+			"orqa-validation binary not found. Build with: cargo build --manifest-path libs/validation/Cargo.toml",
 		);
-		process.exit(1);
 	}
 
 	ensureTmpDir(projectRoot);
@@ -112,10 +108,7 @@ async function daemonStart(args: string[]): Promise<void> {
 	}
 
 	if (health === null) {
-		console.error(
-			`Daemon did not start within 3 seconds. Check tmp/daemon.pid and stderr.`,
-		);
-		process.exit(1);
+		throw new Error("Daemon did not start within 3 seconds. Check tmp/daemon.pid and stderr.");
 	}
 
 	console.log(
@@ -134,13 +127,14 @@ function daemonStop(): void {
 	const pid = readPid(pidPath);
 
 	if (pid === null) {
-		console.error("No daemon PID file found. Is the daemon running?");
-		process.exit(1);
+		// No PID file — nothing to stop
+		return;
 	}
 
 	if (!processIsAlive(pid)) {
-		console.error(`Daemon PID ${pid} is not running (stale PID file).`);
-		process.exit(1);
+		// Stale PID file — clean it up silently
+		try { unlinkSync(pidPath); } catch { /* ignore */ }
+		return;
 	}
 
 	try {
@@ -149,7 +143,6 @@ function daemonStop(): void {
 	} catch (e: unknown) {
 		const msg = e instanceof Error ? e.message : String(e);
 		console.error(`Failed to send SIGTERM: ${msg}`);
-		process.exit(1);
 	}
 }
 
