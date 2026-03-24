@@ -34,6 +34,38 @@ export function injectNavigation(
 	_replaceState = replaceState;
 }
 
+// ── Navigation API for plugins and SDK consumers ────────────────────────────
+
+/** Navigate to an artifact by path (e.g., ".orqa/process/rules/RULE-abc.md"). */
+export function navigateToArtifact(artifactPath: string, activity?: string): void {
+	pushRoute({ type: "artifact", activity: activity ?? "explorer", artifactPath });
+}
+
+/** Navigate to a plugin view. */
+export function navigateToPluginView(pluginName: string, viewKey: string): void {
+	pushRoute({ type: "plugin", pluginName, viewKey });
+}
+
+/** Navigate to an activity panel (e.g., "roadmap", "lessons", "settings"). */
+export function navigateToActivity(activity: string): void {
+	pushRoute({ type: "artifacts", activity });
+}
+
+/** Navigate to the project dashboard. */
+export function navigateToProject(): void {
+	pushRoute({ type: "project" });
+}
+
+/** Navigate to the artifact graph view. */
+export function navigateToGraph(): void {
+	pushRoute({ type: "graph" });
+}
+
+/** Navigate to settings. */
+export function navigateToSettings(): void {
+	pushRoute({ type: "settings" });
+}
+
 export interface ParsedRoute {
 	type: "project" | "artifacts" | "artifact" | "plugin" | "settings" | "graph" | "setup" | "default";
 	activity?: string;
