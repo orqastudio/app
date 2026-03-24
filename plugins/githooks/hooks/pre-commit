@@ -94,7 +94,7 @@ if [ "$HAS_FRONTEND" = true ]; then
   # in unstaged parts of the codebase.
   STAGED_FE=$(echo "$STAGED_FILES" | grep -E '\.(svelte|ts|js)$' || true)
   if [ -n "$STAGED_FE" ]; then
-    echo "$STAGED_FE" | xargs npx eslint --config app/eslint.config.js --no-error-on-unmatched-pattern 2>&1 || { log_violation "eslint" "frontend" "lint errors"; FAILED=true; }
+    echo "$STAGED_FE" | xargs npx eslint --config app/eslint.config.js --no-error-on-unmatched-pattern --max-warnings 0 2>&1 || { log_violation "eslint" "frontend" "lint errors"; FAILED=true; }
   fi
 fi
 
