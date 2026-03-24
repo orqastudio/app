@@ -838,12 +838,25 @@ async function cmdDev(root: string): Promise<void> {
 		// Non-fatal — content may be stale but dev can still start
 	}
 
-	// Start the validation daemon
+	// Start the validation daemon (skip if already running)
+	const daemonPort = getPort("daemon");
+	let daemonUp = false;
 	try {
-		const { runDaemonCommand } = await import("./daemon.js");
-		await runDaemonCommand(["start"]);
-	} catch {
-		// Daemon may already be running or binary not built — non-fatal
+		const res = await fetch(`http://127.0.0.1:${daemonPort}/health`, {
+			signal: AbortSignal.timeout(500),
+		});
+		daemonUp = res.ok;
+	} catch { /* not running */ }
+
+	if (daemonUp) {
+		logCtrl("Daemon already running.");
+	} else {
+		try {
+			const { runDaemonCommand } = await import("./daemon.js");
+			await runDaemonCommand(["start"]);
+		} catch {
+			logCtrl("Daemon start failed — may need manual start: orqa daemon start");
+		}
 	}
 
 	logCtrl("Starting dev environment...");
@@ -851,7 +864,7 @@ async function cmdDev(root: string): Promise<void> {
 	// Spawn the controller as a detached process (this same script with __start-controller)
 	const nodeCmd = process.execPath;
 	const cliEntry = path.join(root, "libs/cli/dist/cli.js");
-	const child = spawn(nodeCmd, [cliEntry, "debug", "__start-controller"], {
+	const child = spawn(nodeCmd, [cliEntry, "dev", "__start-controller"], {
 		cwd: root,
 		detached: true,
 		stdio: "ignore",
