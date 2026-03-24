@@ -71,6 +71,10 @@ relationships:
   - target: "AGENT-bedeffd1"
     type: "served-by"
     rationale: "This agent serves this pillar/persona"
+  - target: AGENT-9393ead6
+    type: served-by
+  - target: EPIC-c311d349
+    type: grounded-by
 ---
 ## What This Pillar Means
 

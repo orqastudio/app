@@ -11,6 +11,8 @@ relationships:
   - target: TASK-a1c3e5f7
     type: depends-on
     rationale: Needs hash tracking in manifest before three-way comparison works
+  - target: TASK-c3e5a7b9
+    type: depended-on-by
 acceptance:
   - "diffPluginContent() detects: clean, plugin-updated, user-modified, conflict"
   - "orqa plugin diff output shows which state each file is in"

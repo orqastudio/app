@@ -17,6 +17,8 @@ relationships:
   - target: EPIC-5ab0265a
     type: delivers
     rationale: "Task delivers work to the deduplication epic"
+  - target: TASK-a0f9197e
+    type: depended-on-by
 ---
 
 ## What

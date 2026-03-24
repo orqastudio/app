@@ -12,6 +12,18 @@ relationships:
   - target: "EPIC-915291e7"
     type: "cautions"
     rationale: "Auto-generated inverse of informs relationship from EPIC-915291e7"
+  - target: TASK-99b87aa5
+    type: addressed-by
+  - target: TASK-a4b662fe
+    type: addressed-by
+  - target: TASK-a8e3dd62
+    type: addressed-by
+  - target: TASK-c6153bd0
+    type: addressed-by
+  - target: TASK-562d3074
+    type: addressed-by
+  - target: TASK-027775f4
+    type: addressed-by
 ---
 ## Pattern
 

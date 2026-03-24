@@ -108,5 +108,13 @@ relationships:
   - target: "AGENT-1ed9512e"
     type: "served-by"
     rationale: "This agent serves this pillar/persona"
+  - target: AGENT-9393ead6
+    type: served-by
+  - target: IDEA-d209dac4
+    type: benefited-by
+  - target: AGENT-24901a7c
+    type: served-by
+  - target: AGENT-b5a7f8cb
+    type: served-by
 ---
 Secondary persona. Senior developer, staff engineer, or lead researcher who works with complex systems daily. Already uses AI tools and wants structured governance, learning loops, and session continuity. See the full personas document for details.

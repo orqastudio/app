@@ -11,6 +11,8 @@ relationships:
   - target: TASK-08b9c0d1
     type: depends-on
     rationale: Forgejo must be running
+  - target: TASK-10d1e2f3
+    type: depended-on-by
 acceptance:
   - "Forgejo runner registered and operational"
   - "PR check workflow runs make check on every PR"

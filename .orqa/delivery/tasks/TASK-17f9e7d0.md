@@ -15,6 +15,10 @@ relationships:
   - target: EPIC-c311d349
     type: delivers
     rationale: "Research task for the performance epic"
+  - target: TASK-6bfd772e
+    type: depended-on-by
+  - target: TASK-de485369
+    type: depended-on-by
 ---
 
 ## What

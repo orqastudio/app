@@ -7,6 +7,9 @@ status: active
 recurrence: 1
 created: 2026-03-24
 tags: [documentation, knowledge, placement, architecture, docs-knowledge-pair, plugin-canonical]
+relationships:
+  - target: TASK-c8d9e0f1
+    type: addressed-by
 ---
 
 ## Observation

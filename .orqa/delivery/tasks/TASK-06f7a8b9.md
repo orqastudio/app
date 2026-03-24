@@ -11,6 +11,8 @@ relationships:
   - target: TASK-02b3c4d5
     type: depends-on
     rationale: Repos must be imported first
+  - target: TASK-07a8b9c0
+    type: depended-on-by
 acceptance:
   - "Each component directory has a LICENSE file matching its intended license"
   - "Root LICENSE is BSL-1.1 (project default)"

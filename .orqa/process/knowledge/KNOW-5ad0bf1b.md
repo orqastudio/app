@@ -18,6 +18,10 @@ user-invocable: true
 relationships:
   - target: "DOC-4b4fbc0f"
     type: "synchronised-with"
+  - target: AGENT-9393ead6
+    type: employed-by
+  - target: AGENT-24901a7c
+    type: employed-by
 ---
 This skill ensures every backend agent has the right mental model before writing code. It does not duplicate content from deeper skills — it establishes principles and points to the right references.
 

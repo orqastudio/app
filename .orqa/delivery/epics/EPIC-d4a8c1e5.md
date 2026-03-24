@@ -12,6 +12,32 @@ relationships:
   - target: MS-654badde
     type: fulfils
     rationale: Plugin framework is foundational to dogfooding — the dev environment runs on plugins
+  - target: TASK-c9e1f3a5
+    type: delivered-by
+  - target: TASK-a1c3e5f7
+    type: delivered-by
+  - target: TASK-e5a7c9db
+    type: delivered-by
+  - target: TASK-c3e5a7b9
+    type: delivered-by
+  - target: TASK-d4f6b8ca
+    type: delivered-by
+  - target: TASK-b8d0e2f4
+    type: delivered-by
+  - target: RES-a1b2c3d4
+    type: guided-by
+  - target: TASK-d0e2f4a6
+    type: delivered-by
+  - target: TASK-b2d4f6a8
+    type: delivered-by
+  - target: TASK-a7c9e1fd
+    type: delivered-by
+  - target: TASK-e1f3a5b7
+    type: delivered-by
+  - target: EPIC-f2b9e7d3
+    type: depended-on-by
+  - target: TASK-f6b8d0ec
+    type: delivered-by
 ---
 
 ## Problem

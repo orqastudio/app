@@ -55,6 +55,10 @@ relationships:
     type: synchronised-with
   - target: KNOW-a2b3c4d5
     type: synchronised-with
+  - target: KNOW-82ceb1bd
+    type: synchronised-with
+  - target: KNOW-0fd23e0b
+    type: synchronised-with
 ---
 
 # Core Platform Knowledge Catalog

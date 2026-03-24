@@ -13,6 +13,8 @@ relationships:
   - target: TASK-061b5052
     type: depends-on
     rationale: "Needs plugin schemas to know valid artifact ID prefixes"
+  - target: TASK-124d9841
+    type: depended-on-by
 ---
 
 # Broken Link Detection with Line-Level Positioning

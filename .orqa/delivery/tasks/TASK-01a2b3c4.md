@@ -8,6 +8,8 @@ relationships:
   - target: EPIC-f2b9e7d3
     type: delivers
     rationale: Phase 1 — monorepo consolidation
+  - target: TASK-02b3c4d5
+    type: depended-on-by
 acceptance:
   - "git-filter-repo is installed and working"
   - "Test merge of 3+ repos (one lib, one plugin, one connector) succeeds with history"

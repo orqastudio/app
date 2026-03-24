@@ -11,6 +11,8 @@ relationships:
   - target: TASK-07a8b9c0
     type: depends-on
     rationale: Monorepo must be verified before migrating hosting
+  - target: TASK-09c0d1e2
+    type: depended-on-by
 acceptance:
   - "Forgejo running locally via Docker Compose"
   - "Monorepo pushed to Forgejo"

@@ -17,6 +17,8 @@ relationships:
     type: delivers
   - target: TASK-a1c2d3e4
     type: depends-on
+  - target: TASK-a7c8d9e0
+    type: depended-on-by
 ---
 
 ## What

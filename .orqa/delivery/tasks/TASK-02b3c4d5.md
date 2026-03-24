@@ -11,6 +11,12 @@ relationships:
   - target: TASK-01a2b3c4
     type: depends-on
     rationale: Must validate the process first
+  - target: TASK-06f7a8b9
+    type: depended-on-by
+  - target: TASK-04d5e6f7
+    type: depended-on-by
+  - target: TASK-03c4d5e6
+    type: depended-on-by
 acceptance:
   - "All 30 repos imported as directories with full commit history"
   - ".gitmodules removed"

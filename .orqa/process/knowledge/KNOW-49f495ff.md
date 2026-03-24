@@ -18,6 +18,10 @@ user-invocable: true
 relationships:
   - target: DOC-4b4fbc0f
     type: synchronised-with
+  - target: AGENT-9393ead6
+    type: employed-by
+  - target: AGENT-24901a7c
+    type: employed-by
 ---
 OrqaStudio uses Tauri v2's `invoke()` as the ONLY interface between the Svelte frontend and the Rust backend. There are no HTTP servers, no direct FFI calls, and no side channels.
 

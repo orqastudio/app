@@ -13,6 +13,10 @@ relationships:
   - target: TASK-061b5052
     type: depends-on
     rationale: "Needs plugin schemas for valid statuses and relationship types"
+  - target: TASK-0893ec7a
+    type: depended-on-by
+  - target: TASK-2697d2df
+    type: depended-on-by
 ---
 
 # Autocomplete for Artifact IDs and Statuses

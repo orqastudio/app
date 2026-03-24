@@ -94,6 +94,8 @@ relationships:
   - target: TASK-c6153bd0
     type: delivered-by
     rationale: "Auto-generated inverse of delivered-by relationship from TASK-c6153bd0"
+  - target: TASK-0be99e74
+    type: delivered-by
 ---
 ## Objective
 

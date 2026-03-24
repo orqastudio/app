@@ -8,6 +8,8 @@ relationships:
   - target: EPIC-d4a8c1e5
     type: delivers
     rationale: Phase 3 — universal plugin capabilities
+  - target: TASK-c9e1f3a5
+    type: depended-on-by
 acceptance:
   - "PluginManifest supports provides.symlinks array for symlink declarations"
   - "PluginManifest supports provides.aggregates for cross-plugin service collection"

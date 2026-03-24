@@ -23,6 +23,32 @@ relationships:
   - target: AD-2ce57da9
     type: informed-by
     rationale: "CLI as single developer interface with MCP/LSP as stdio modes; daemon as app runtime only"
+  - target: TASK-14b5c6d7
+    type: delivered-by
+  - target: TASK-82b3e4f5
+    type: delivered-by
+  - target: TASK-f3a4b5c6
+    type: delivered-by
+  - target: TASK-c8d9e0f1
+    type: delivered-by
+  - target: TASK-b5e6f7c8
+    type: delivered-by
+  - target: TASK-c6f7a8d9
+    type: delivered-by
+  - target: TASK-71a2d3e4
+    type: delivered-by
+  - target: TASK-b7c8d9e0
+    type: delivered-by
+  - target: AD-2ce57da9
+    type: driven-by
+  - target: TASK-93c4f5a6
+    type: delivered-by
+  - target: TASK-a4d5e6b7
+    type: delivered-by
+  - target: TASK-a5b6c7d8
+    type: delivered-by
+  - target: TASK-d7a8b9e0
+    type: delivered-by
 ---
 
 ## Context

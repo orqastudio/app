@@ -14,6 +14,8 @@ relationships:
   - target: TASK-06f7a8b9
     type: depends-on
     rationale: Licensing must be in place
+  - target: TASK-08b9c0d1
+    type: depended-on-by
 acceptance:
   - "git clone <monorepo> && make install succeeds from scratch"
   - "make check passes (lint, typecheck, test)"

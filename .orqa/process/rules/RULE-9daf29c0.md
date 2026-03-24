@@ -12,6 +12,8 @@ enforcement:
 relationships:
   - target: "AD-1d928079"
     type: "enforces"
+  - target: AD-c4d5e6f7
+    type: governed-by
 ---
 ## Principle
 

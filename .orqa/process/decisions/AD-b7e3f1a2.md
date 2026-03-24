@@ -7,6 +7,12 @@ description: All plugin functionality is expressed through a universal capabilit
 created: 2026-03-23
 updated: 2026-03-23
 relationships: []
+  - target: RES-a1b2c3d4
+    type: informed-by
+  - target: EPIC-d4a8c1e5
+    type: implemented-by
+  - target: EPIC-f2b9e7d3
+    type: implemented-by
 ---
 
 ## Decision

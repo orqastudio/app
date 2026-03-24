@@ -8,6 +8,10 @@ relationships:
   - target: EPIC-d4a8c1e5
     type: delivers
     rationale: Phase 1 — three-way diff infrastructure
+  - target: TASK-d4f6b8ca
+    type: depended-on-by
+  - target: TASK-b2d4f6a8
+    type: depended-on-by
 acceptance:
   - "manifest.json entries include sourceHash and installedHash per file"
   - "copyPluginContent() computes SHA-256 of source and copied file, records both"

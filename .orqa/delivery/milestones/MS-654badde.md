@@ -247,6 +247,16 @@ relationships:
   - target: EPIC-1653af9d
     type: fulfilled-by
     rationale: Epic fulfils this milestone
+  - target: EPIC-a4c7e9b1
+    type: fulfilled-by
+  - target: EPIC-c311d349
+    type: fulfilled-by
+  - target: EPIC-5ab0265a
+    type: fulfilled-by
+  - target: EPIC-d4a8c1e5
+    type: fulfilled-by
+  - target: EPIC-f2b9e7d3
+    type: fulfilled-by
 ---
 ## Context
 

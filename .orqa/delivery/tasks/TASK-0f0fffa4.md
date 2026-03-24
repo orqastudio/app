@@ -13,6 +13,8 @@ relationships:
   - target: TASK-061b5052
     type: depends-on
     rationale: "Schema validation requires plugin schemas to be ingested first"
+  - target: TASK-124d9841
+    type: depended-on-by
 ---
 
 # Real-Time Schema Validation Diagnostics

@@ -53,6 +53,18 @@ relationships:
   - target: "AGENT-ff44f841"
     type: "served-by"
     rationale: "This agent serves this pillar/persona"
+  - target: AGENT-9393ead6
+    type: served-by
+  - target: EPIC-b2f0399e
+    type: grounded-by
+  - target: IDEA-d209dac4
+    type: grounded-by
+  - target: EPIC-5ab0265a
+    type: grounded-by
+  - target: AGENT-24901a7c
+    type: served-by
+  - target: AGENT-b5a7f8cb
+    type: served-by
 ---
 ## What This Pillar Means
 

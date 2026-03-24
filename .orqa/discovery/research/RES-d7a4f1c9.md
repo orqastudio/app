@@ -17,6 +17,10 @@ relationships:
   - target: IDEA-e3a103e8
     type: references
     rationale: Finding 5 resulted in this idea for graph query performance
+  - target: EPIC-c311d349
+    type: guides
+  - target: EPIC-5ab0265a
+    type: guides
 ---
 
 ## Research Questions

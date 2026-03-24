@@ -23,6 +23,22 @@ relationships:
   - target: PILLAR-569581e0
     type: grounded
     rationale: "Enforcement alignment ensures documented standards are mechanically enforced, making governance structure tangible"
+  - target: TASK-a1c2d3e4
+    type: delivered-by
+  - target: TASK-d4f5a6b7
+    type: delivered-by
+  - target: TASK-a7c8d9e0
+    type: delivered-by
+  - target: TASK-b2d3e4f5
+    type: delivered-by
+  - target: TASK-f6b7c8d9
+    type: delivered-by
+  - target: TASK-b8d9e0f1
+    type: delivered-by
+  - target: TASK-c3e4f5a6
+    type: delivered-by
+  - target: TASK-e5a6b7c8
+    type: delivered-by
 ---
 
 ## Why P2

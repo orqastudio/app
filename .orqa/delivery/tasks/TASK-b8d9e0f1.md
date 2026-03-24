@@ -18,6 +18,8 @@ relationships:
     type: delivers
   - target: TASK-c3e4f5a6
     type: related-to
+  - target: TASK-a7c8d9e0
+    type: depended-on-by
 ---
 
 ## What

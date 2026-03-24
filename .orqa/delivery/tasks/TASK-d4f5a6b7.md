@@ -15,6 +15,8 @@ acceptance:
 relationships:
   - target: EPIC-b2f0399e
     type: delivers
+  - target: TASK-a7c8d9e0
+    type: depended-on-by
 ---
 
 ## What

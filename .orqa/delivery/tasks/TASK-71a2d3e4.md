@@ -22,6 +22,12 @@ relationships:
   - target: TASK-93c4f5a6
     type: depended-on-by
     rationale: "Auto-generated inverse of depends-on relationship from TASK-93c4f5a6"
+  - target: TASK-f3a4b5c6
+    type: depended-on-by
+  - target: TASK-b7c8d9e0
+    type: depended-on-by
+  - target: TASK-a5b6c7d8
+    type: depended-on-by
 ---
 
 ## What

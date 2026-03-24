@@ -20,6 +20,8 @@ relationships:
   - target: TASK-28789c27
     type: depends-on
     rationale: "MCP server frontmatter fix should be done first to establish the re-export pattern"
+  - target: TASK-a0f9197e
+    type: depended-on-by
 ---
 
 ## What

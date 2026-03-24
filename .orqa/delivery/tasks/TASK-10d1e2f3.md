@@ -11,6 +11,8 @@ relationships:
   - target: TASK-09c0d1e2
     type: depends-on
     rationale: CI must be on Forgejo before sync bridge
+  - target: TASK-11e2f3a4
+    type: depended-on-by
 acceptance:
   - "PR on GitHub creates corresponding PR on Forgejo"
   - "PR merged on Forgejo auto-closes GitHub PR"

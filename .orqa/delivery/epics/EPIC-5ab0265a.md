@@ -26,6 +26,24 @@ relationships:
   - target: PILLAR-cdf756ff
     type: grounded
     rationale: "Learning Through Reflection — the audit identified a systemic pattern (JS reimplementing Rust) that must be encoded as an enforceable constraint"
+  - target: TASK-27cb554b
+    type: delivered-by
+  - target: TASK-9043c368
+    type: delivered-by
+  - target: TASK-c4718ed7
+    type: delivered-by
+  - target: TASK-140e2028
+    type: delivered-by
+  - target: TASK-a0f9197e
+    type: delivered-by
+  - target: TASK-56628529
+    type: delivered-by
+  - target: TASK-13c4355e
+    type: delivered-by
+  - target: TASK-a48bbc43
+    type: delivered-by
+  - target: TASK-28789c27
+    type: delivered-by
 ---
 
 ## Context

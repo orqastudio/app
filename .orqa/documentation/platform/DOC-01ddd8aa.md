@@ -4,7 +4,7 @@ title: Artifact Framework
 category: reference
 description: "Schema definitions, lifecycle rules, and governance for all structured artifacts in .orqa/."
 created: 2026-03-07
-updated: 2026-03-18
+updated: 2026-03-24
 sort: 11
 relationships:
   - target: RULE-65973a88
@@ -200,6 +200,35 @@ These types are defined in the project's delivery hierarchy, not in core.json:
 
 ---
 
+## The Five Conceptual Layers
+
+The `.orqa/` directory organises artifacts into five conceptual layers. Each layer answers a different question in the structured thinking process.
+
+| Layer | Directory | Question It Answers | Artifact Types |
+|-------|-----------|---------------------|----------------|
+| **Principles** | `.orqa/principles/` | Why does this project exist? Who is it for? What guides every decision? | Vision, Pillar, Persona, Grounding (DOC) |
+| **Discovery** | `.orqa/discovery/` | What could we build? What do we know? What should we investigate? | Idea, Research, Wireframes |
+| **Delivery** | `.orqa/delivery/` | What are we building? What's the plan? What's done? | Milestone, Epic, Task |
+| **Process** | `.orqa/process/` | How do we work? What constraints apply? What have we learned? | Decision, Rule, Lesson, Knowledge, Agent |
+| **Documentation** | `.orqa/documentation/` | What does the user need to know? What does the developer need to know? | Document (DOC) |
+
+### Principles Layer
+
+The principles layer (`.orqa/principles/`) is the **foundational "why" layer**. It contains artifacts that define the project's identity, values, and target audience. Everything downstream — discovery, delivery, process — is evaluated against principles.
+
+| Subdirectory | Type | Purpose |
+|-------------|------|---------|
+| `pillars/` | Pillar | Guiding principles with gate questions. Every feature must serve at least one pillar. |
+| `vision/` | Vision | The product vision — what this project is, what it is not, and why it exists. |
+| `personas/` | Persona | Target user archetypes that ideas must benefit. Personas drive UI design and feature prioritisation. |
+| `grounding/` | Document (DOC) | Agent grounding documents — concise behavioural context injected into agent roles at initialisation. Each grounding document distils principles into actionable guidance for a specific agent role. |
+
+The `grounding/` subdirectory uses the `doc` type because grounding documents are reference material — they distil vision, pillars, and personas into role-specific behavioural guidance. They are not a separate artifact type; they are documents whose placement in the principles layer signals their foundational nature.
+
+Principles artifacts are rarely modified during day-to-day work. They change through deliberate **pivots** (see the `pivot` type) when the project's direction evolves. The `revises` / `revised-by` relationship connects pivots to the foundational artifacts they modify.
+
+---
+
 ## Directory Structure
 
 Navigation sections in `project.json` are views into the graph. The canonical directory layout:
@@ -211,7 +240,7 @@ Navigation sections in `project.json` are views into the graph. The canonical di
 │   ├── pillars/                    # PILLAR-NNN — guiding principles
 │   ├── vision/                     # VISION-NNN — product vision
 │   ├── personas/                   # PERSONA-NNN — target user archetypes
-│   └── grounding/                  # Grounding artifacts
+│   └── grounding/                  # DOC-NNN — agent grounding documents
 ├── discovery/
 │   ├── ideas/                      # IDEA-NNN — candidates for future work
 │   ├── research/                   # RES-NNN — investigations and explorations

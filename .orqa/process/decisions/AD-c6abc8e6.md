@@ -31,6 +31,10 @@ relationships:
     target: IDEA-461e7f09
   - target: EPIC-2362adfc
     type: drives
+  - target: RES-a1b2c3d4
+    type: informed-by
+  - target: EPIC-f2b9e7d3
+    type: implemented-by
 ---
 
 # AD-c6abc8e6: Organisation-mode multi-project architecture

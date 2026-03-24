@@ -8,6 +8,8 @@ relationships:
   - target: EPIC-d4a8c1e5
     type: delivers
     rationale: Phase 2 — config extends strategy
+  - target: TASK-a7c9e1fd
+    type: depended-on-by
 acceptance:
   - "Content entries in orqa-plugin.json can declare strategy: 'extends' or 'copy' (default)"
   - "Extends strategy writes/updates the extends reference in the target config file"

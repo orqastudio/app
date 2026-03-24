@@ -18,6 +18,38 @@ relationships:
   - target: AD-b7e3f1a2
     type: implements
     rationale: Universal plugin capability model determines how plugins are consumed in the monorepo
+  - target: TASK-12f3a4b5
+    type: delivered-by
+  - target: TASK-09c0d1e2
+    type: delivered-by
+  - target: TASK-02b3c4d5
+    type: delivered-by
+  - target: TASK-10d1e2f3
+    type: delivered-by
+  - target: TASK-07a8b9c0
+    type: delivered-by
+  - target: TASK-11e2f3a4
+    type: delivered-by
+  - target: IDEA-7c3d9f2e
+    type: addresses
+  - target: TASK-05e6f7a8
+    type: delivered-by
+  - target: TASK-13a4b5c6
+    type: delivered-by
+  - target: RES-a1b2c3d4
+    type: guided-by
+  - target: IDEA-09979c9d
+    type: addresses
+  - target: TASK-06f7a8b9
+    type: delivered-by
+  - target: TASK-04d5e6f7
+    type: delivered-by
+  - target: TASK-03c4d5e6
+    type: delivered-by
+  - target: TASK-08b9c0d1
+    type: delivered-by
+  - target: TASK-01a2b3c4
+    type: delivered-by
 ---
 
 ## Problem

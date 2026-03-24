@@ -11,6 +11,8 @@ relationships:
   - target: TASK-02b3c4d5
     type: depends-on
     rationale: Repos must be imported first
+  - target: TASK-05e6f7a8
+    type: depended-on-by
 acceptance:
   - "Root Cargo.toml defines workspace with all Rust crates"
   - "cargo check at root compiles all crates with shared build cache"

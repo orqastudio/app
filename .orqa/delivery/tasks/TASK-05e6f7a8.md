@@ -14,6 +14,8 @@ relationships:
   - target: TASK-04d5e6f7
     type: depends-on
     rationale: Cargo workspace must be set up first
+  - target: TASK-07a8b9c0
+    type: depended-on-by
 acceptance:
   - "orqa install works from clean clone with no npm link"
   - "LIB_ORDER removed or replaced with workspace-aware build"
