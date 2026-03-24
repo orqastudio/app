@@ -255,6 +255,53 @@ These constraints are always in effect. No exceptions.
 - **Honest reporting** — partial work reported as complete is worse than reported as incomplete
 - **No deferred deliverables** — if a deliverable is in scope, it ships NOW. Never defer to a future epic without explicit user approval. Read acceptance criteria literally.
 
+## Session State Management (NON-NEGOTIABLE)
+
+`tmp/session-state.md` is a **working document**, not a post-session summary. The orchestrator
+MUST write and maintain it throughout the session — the stop hook only generates a shallow
+fallback if you didn't.
+
+### When to Write/Update
+
+- **Session start**: After discovery, write initial state with current scope and planned work
+- **After each task completes**: Update the step checklist
+- **When scope changes**: Record the shift before pursuing new work
+- **When tangents arise**: Add the tangent to the checklist before pursuing it
+- **Before any restart**: Always write state before `make restart-tauri`
+
+### Required Sections
+
+```markdown
+## Session: <date>
+
+### Current Scope
+Active epic/task IDs and what we're working on.
+
+### Steps
+- [x] Completed step
+- [ ] Planned step
+- [ ] ...
+
+### Decisions Made
+Any architecture decisions or scope changes this session.
+
+### Next Session Priorities
+1. First priority
+2. Second priority
+3. ...
+```
+
+The **Next Session Priorities** section is mandatory. Without it, the next session starts blind.
+The stop hook checks for this section and warns if it's missing — but that warning means you
+already failed to write it during the session.
+
+### FORBIDDEN
+
+- Writing session state only at session end
+- Relying on the stop hook to generate state for you
+- Omitting the Next Session Priorities section
+- Pursuing tangents without updating the step checklist first
+
 ## Artifact Lifecycle
 
 Query `graph_query({ type: "rule", search: "artifact lifecycle" })` for the full status transition rule. Key gates:
