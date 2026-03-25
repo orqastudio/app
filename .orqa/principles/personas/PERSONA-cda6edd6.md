@@ -239,5 +239,7 @@ relationships:
   - target: IDEA-f2cb20a9
     type: benefited-by
     rationale: OrqaStudio competitive landscape analysis benefits the lead persona
+  - target: IDEA-a7882323
+    type: benefited-by
 ---
 Primary persona. Senior product manager or tech lead who manages a product or team using AI-assisted development. Their job is to turn ambiguity into clarity — taking complex situations and producing structured understanding that a team can execute against. See the full personas document for details.
