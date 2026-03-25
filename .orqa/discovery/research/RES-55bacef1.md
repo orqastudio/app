@@ -54,7 +54,7 @@ This research synthesizes seven parallel investigations into a unified architect
 
 **Workflow composition** should follow a contribution-point model: the core framework defines a workflow skeleton with named slots, and stage plugins fill those slots via declarative manifests. The resolved workflow is a YAML file on disk -- deterministic, diffable, and inspectable. This replaces the current monolithic CLAUDE.md approach.
 
-**Agent specialization** follows a three-layer taxonomy: `Universal Role + Stage Context + Domain Knowledge = Effective Agent Type`. Universal roles (Implementer, Reviewer, etc.) come from the core framework. Stage context comes from the active workflow stage. Domain knowledge is composed from knowledge plugins at delegation time. This eliminates the need for fixed specialist agent definitions. (*COMMENT* Note that these universal roles should come with tool constraints - research needs web-search but should only be creating/editing research artifacts etc.)
+**Agent specialization** follows a three-layer taxonomy: `Universal Role + Stage Context + Domain Knowledge = Effective Agent Type`. Universal roles (Implementer, Reviewer, etc.) come from the core framework, each with tool constraints scoped to their role AND the artifact types they operate on — e.g. a Researcher gets web-search but can only create/edit research artifacts. Stage context comes from the active workflow stage. Domain knowledge is composed from knowledge plugins at delegation time. This eliminates the need for fixed specialist agent definitions.
 
 **Knowledge architecture** uses a hybrid manifest + capability matching system. Knowledge plugins declare their artifacts in structured manifests with injection tiers (always, stage-triggered, on-demand). Conflict resolution follows a strict priority: project rules > project knowledge > plugin knowledge > core knowledge. Individual knowledge artifacts are atomic and self-contained at 500-2000 tokens each.
 
@@ -136,7 +136,7 @@ The workflow definition is YAML (structure, stages, transitions, guards). Gate l
 
 ### Contribution Merging
 
-At `orqa install` time, the resolver: (*COMMENT* should be part of the `orqa plugin install` sub-process that `orqa install` triggers. It's the plugins that drive this, and need to be triggered when plugins change)
+As part of `orqa plugin install` (which `orqa install` triggers), the resolver:
 
 1. Reads the core workflow skeleton
 2. Reads each plugin's contribution manifest
@@ -154,7 +154,7 @@ Plugins can provide workflow templates that project owners override for their sp
 
 Research recommends medium-grained stages (5-8 per workflow) as the optimal balance between flexibility and complexity. Too few stages (3) force plugins to overload each stage. Too many stages (15+) create navigation overhead without adding value.
 
-Recommended stages for a software development workflow: `discover`, `plan`, `document`, `implement`, `review`, `learn`. Each stage has a clear owner (plugin) and clear boundaries (what enters, what exits). (*Comment* we need our plugins to match this, but we also need these workflow stages to be configurable per domain - software development is just one domain. We should have plugins that define the workflow and then plugins that depend on that plugin that define each stage - composability!).
+Recommended stages for a software development workflow: `discover`, `plan`, `document`, `implement`, `review`, `learn`. Each stage has a clear owner (plugin) and clear boundaries (what enters, what exits). Workflow stages are configurable per domain — software development is just one domain. The composability model uses two layers: a **workflow-definition plugin** that defines the skeleton and stage slots, and **stage-definition plugins** that depend on it and fill each slot. This means a non-software domain (e.g. research, design, compliance) provides its own workflow plugin with different stages, and stage plugins compose into it the same way.
 
 ---
 
@@ -199,7 +199,7 @@ Not all agents need the most capable model. Research consistently shows 60-80% c
 | Writer | Sonnet | Documentation follows templates |
 | Designer | Sonnet | Component creation follows patterns |
 
-The orchestrator determines complexity at delegation time and selects the model tier. Task artifacts can override the default. (*COMMENT* This needs to be defined by the connector/integration in coordination with the workflow created. These are good mappings for our software 'base', but the architecture needs to allow for different mappings for different project domains)
+The orchestrator determines complexity at delegation time and selects the model tier. Task artifacts can override the default. Model tier mappings are defined by the connector/integration in coordination with the active workflow — the table above is a good default for software development, but the architecture must allow different mappings for different project domains. The connector knows which models are available; the workflow plugin knows which roles matter for its domain.
 
 ---
 
@@ -440,7 +440,7 @@ Migration follows a forward-compatible-first approach:
 
 **5. Findings-to-Disk Enforcement:** Orchestrator reads only structured summary headers from findings files (~200 tokens), never full findings. Detailed review is delegated to Reviewer agents.
 
-**6. Token Tracking:** Hook-based tracking captures tokens per API call, attributed to session/team/agent/task. Metrics written to `tmp/token-metrics.jsonl`. Future dashboard in OrqaStudio UI. (*COMMENT* I'm concerned about tmp being used as the semantics for this (and session state) in the directory naming, could we use something that is less 'temporary' and therefore could be confused as being disposable - both this and session state are state data, not disposable information).
+**6. Token Tracking:** Hook-based tracking captures tokens per API call, attributed to session/team/agent/task. Metrics written to `.state/token-metrics.jsonl` (see AD-8727f99a — `tmp/` renamed to `.state/` to reflect that session state and metrics are operational data, not disposable). Future dashboard in OrqaStudio UI.
 
 ### Expected Impact
 
@@ -608,33 +608,35 @@ Epic 1 must complete before Epic 2 (prompt generation needs workflow stage conte
 
 ---
 
-## 11. Open Questions
+## 11. Resolved Questions
+
+All questions have been resolved as AD-e9f71dc1. Summary of decisions:
 
 ### Architecture Questions
 
-1. **Workflow inheritance vs. composition:** Should plugins be able to extend another plugin's workflow (add states to an existing state machine), or should composition be limited to contribution points in the skeleton? The research recommends starting with no inheritance (plugin owns its complete state machine) and adding extension points only if a clear need emerges. (*COMMENT* AGREED)
+1. **Workflow inheritance vs. composition:** **RESOLVED — No inheritance.** Plugin owns its complete state machine. Add extension points only if a clear need emerges.
 
-2. **Guard expression language:** The declarative guard system (field_check, relationship_check, query) covers most cases, but some guards may need more complex logic. How far should the expression language go before it becomes a programming language? Recommendation: keep guards declarative and use code hooks for anything that cannot be expressed as a field check or graph query. (*COMMENT* AGREED)
+2. **Guard expression language:** **RESOLVED — Declarative only.** Field checks, relationship checks, graph queries. Code hooks for anything beyond that.
 
-3. **Cross-plugin workflow coordination:** When two plugins define artifact types that have inter-dependencies (e.g., an epic's tasks must all be done before the epic can transition), how is this expressed? The current recommendation is graph queries in guards (`query: { type: task, epic: $self, status: { not: done } }`), but this creates implicit coupling between plugins. (*COMMENT* I think implicit coupling with a project domain is ok - as long as this is documented so that alternative plugins that provide stage data use the same terminology)
+3. **Cross-plugin workflow coordination:** **RESOLVED — Implicit coupling within a domain is acceptable.** Graph queries in guards are the right mechanism, provided the expected vocabulary (artifact type names, status values) is documented so that alternative plugins providing the same stage use the same terminology.
 
-4. **Workflow versioning strategy:** Should the workflow engine support running multiple versions simultaneously (Temporal-style patching), or is forward-compatible addition sufficient? For file-based artifacts that are not "running processes," forward-compatible addition with status mapping migrations seems sufficient. Revisit if OrqaStudio adds long-running automated workflows. (*COMMENT* AGREED - Also to note, that I DO NOT want backwards-compatibility to be a factor in the tasks that come from this, we are in pre-release, breaking changes are expected and necessary, data should be migrated)
+4. **Workflow versioning:** **RESOLVED — Forward-compatible addition only.** No backwards compatibility during pre-release. Breaking changes are expected and necessary. Data is migrated via `orqa migrate`.
 
 ### Token Efficiency Questions
 
-1. **Compressed summary generation:** Who generates the 100-150 token structured summaries of rules and knowledge? Options: (a) the rule/knowledge author writes them, (b) an LLM generates them at install time, (c) a hybrid where the author writes a summary template and the LLM fills it. Recommendation: author writes them as part of the knowledge artifact (a `summary` field in frontmatter), with an `orqa summarize` CLI command that generates drafts for review. (*COMMENT* AGREED - although note that authors can be agents)
+5. **Compressed summary generation:** **RESOLVED — Author writes summaries** (including agent authors). `summary` field in knowledge artifact frontmatter. `orqa summarize` CLI generates drafts for review.
 
-2. **On-demand retrieval latency:** Semantic search adds 1-2 seconds per query. For agents that need multiple knowledge lookups, this could add 5-10 seconds to task start. Is this acceptable? Recommendation: yes, if the alternative is loading 10x more tokens. The latency cost is paid once at task start; the token cost compounds throughout the agent's lifetime. (*COMMENT* AGREED)
+6. **On-demand retrieval latency:** **RESOLVED — Acceptable.** 1-2s per query paid once at task start beats 10x token cost compounding throughout agent lifetime.
 
-3. **Token budget enforcement granularity:** Should token budgets be enforced per-agent, per-team, or per-session? Recommendation: per-agent budgets for prompt size, per-session budgets for total cost. Team-level budgets add complexity without clear benefit. (*COMMENT* AGREED)
+7. **Token budget enforcement granularity:** **RESOLVED — Per-agent for prompt size, per-session for total cost.** Team-level adds complexity without benefit.
 
 ### Process Questions
 
-1. **MCP server as application boundary:** The current OrqaStudio architecture has the MCP server, LSP server, and ONNX search engine as libraries compiled into the app. The service extraction initiative (planned) would make them standalone services. Should the prompt generation pipeline run in the MCP server (accessible from both CLI and app) or in the core framework (requiring reimplementation for each connector)? (*COMMENT* This wasn't the intended architecture as to my understanding - the daemon is where the business logic should live, the MCP is an access method)
+8. **Business logic boundary:** **RESOLVED — Daemon, not MCP.** The daemon runs business logic (validation, graph queries, search, state machine evaluation, prompt generation). MCP and LSP are access protocols — thin layers exposing daemon capabilities to consumers.
 
-2. **Migration timeline:** Converting 58 rules to compressed summaries, 20+ knowledge artifacts to plugin manifests, and 8 agent definitions to universal role templates is significant content migration work. Should this be done incrementally (one plugin at a time) or as a big-bang migration? Recommendation: incrementally, starting with the software-kanban plugin as the proving ground. (*COMMENT* Incrementally, but in one epic with tasks done sequentially with validation in between)
+9. **Migration timeline:** **RESOLVED — Incremental, one epic (EPIC-59b92c8d), sequential tasks with validation between each.** Not big-bang, not multi-epic.
 
-3. **Backwards compatibility during transition:** During the migration from current architecture to plugin-composed architecture, both systems will need to coexist. How long should the transition period be? Recommendation: the prompt generation pipeline should fall back to current CLAUDE.md loading when no plugin-composed prompt is available, allowing gradual migration. (*COMMENT* AGREED - but this should only be for a short period whilst the LLM is performing the migration)
+10. **Backwards compatibility during transition:** **RESOLVED — Short fallback period only.** CLAUDE.md loading as safety net while the LLM performs migration. Remove fallback code after migration complete.
 
 ---
 
