@@ -723,20 +723,6 @@
         "semantic": "corrective"
       },
       {
-        "key": "merged-into",
-        "inverse": "merged-from",
-        "label": "Merged Into",
-        "inverseLabel": "Merged From",
-        "from": [
-          "research"
-        ],
-        "to": [
-          "research"
-        ],
-        "description": "Research consolidated — extends core merged-into to research artifacts. Source should transition to surpassed.",
-        "semantic": "lineage"
-      },
-      {
         "key": "implements",
         "inverse": "implemented-by",
         "label": "Implements",

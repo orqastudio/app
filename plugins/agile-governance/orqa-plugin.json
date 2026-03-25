@@ -1112,9 +1112,10 @@
           "research"
         ],
         "to": [
-          "decision"
+          "decision",
+          "research"
         ],
-        "description": "Research findings inform an architecture decision",
+        "description": "Research findings inform a decision or another research thread",
         "semantic": "knowledge-flow"
       },
       {
