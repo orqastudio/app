@@ -2,7 +2,7 @@
 # OrqaStudio connector — SessionStart hook
 #
 # 1. Verify connector installation (symlinks, plugin state)
-# 2. Start daemon if not running
+# 2. BLOCK if daemon is not running (rule enforcement requires it)
 # 3. Run health checks (graph integrity, git state)
 # 4. Load session continuity context
 
@@ -45,18 +45,23 @@ if [ "$INSTALL_OK" = false ]; then
   OUTPUT="${OUTPUT}\nRun: orqa install\n\n"
 fi
 
-# ─── Dev Environment Check ───────────────────────────────────────────────────
-# Check if daemon is running. Don't auto-start — `orqa dev` manages lifecycle.
+# ─── Daemon Health Gate (BLOCKING) ───────────────────────────────────────────
+# The daemon provides rule enforcement, graph validation, and content services.
+# Without it, rules are not mechanically enforced — work must not proceed.
 PORT_BASE="${ORQA_PORT_BASE:-10200}"
 DAEMON_PORT=$((PORT_BASE + 58))
 DAEMON_HEALTHY=false
-if curl -sf --max-time 1 "http://127.0.0.1:${DAEMON_PORT}/health" > /dev/null 2>&1; then
+if curl -sf --max-time 2 "http://127.0.0.1:${DAEMON_PORT}/health" > /dev/null 2>&1; then
   DAEMON_HEALTHY=true
 fi
 
 if [ "$DAEMON_HEALTHY" = false ]; then
-  OUTPUT="${OUTPUT}DEV ENVIRONMENT NOT RUNNING: Daemon not responding on port ${DAEMON_PORT}.\n"
-  OUTPUT="${OUTPUT}Start the dev environment in a separate terminal: orqa dev\n\n"
+  BLOCK_MSG="OrqaStudio daemon is not running. Rule enforcement requires the daemon.\\n\\n"
+  BLOCK_MSG="${BLOCK_MSG}Start it with: orqa daemon start\\n"
+  BLOCK_MSG="${BLOCK_MSG}Or run: orqa-validation daemon --project-root \$(pwd) &\\n\\n"
+  BLOCK_MSG="${BLOCK_MSG}Daemon expected on port ${DAEMON_PORT} (ORQA_PORT_BASE=${PORT_BASE} + 58)."
+  printf '{"hookSpecificOutput":{"permissionDecision":"deny"},"systemMessage":"%s"}' "$BLOCK_MSG" >&2
+  exit 2
 fi
 
 # ─── Graph Integrity ─────────────────────────────────────────────────────────

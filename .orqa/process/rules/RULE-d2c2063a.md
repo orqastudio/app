@@ -2,19 +2,19 @@
 id: "RULE-d2c2063a"
 type: rule
 title: "Development Commands"
-description: "All development commands must be invoked via make targets. Raw cargo and npm commands are forbidden."
+description: "Dev environment startup must use orqa CLI. Raw cargo test/clippy/fmt/build are allowed."
 status: "active"
 created: "2026-03-07"
-updated: "2026-03-07"
+updated: "2026-03-25"
 enforcement:
   - mechanism: behavioral
-    message: "All development commands must be invoked via make targets; raw cargo and npm run commands are forbidden for tasks that have a make equivalent"
+    message: "Use 'orqa debug' to start the dev environment, not raw 'cargo tauri dev' or 'npm run dev'. Raw cargo test/clippy/fmt/build and npx commands are allowed for quality checks."
   - mechanism: hook
     type: PreToolUse
     event: bash
     action: block
-    pattern: "cargo tauri dev|npm run dev|cargo clippy|cargo fmt|cargo test"
-summary: "All dev commands via make targets — raw cargo/npm forbidden for tasks with make equivalents. Key: make dev (start), make stop/kill (teardown), make restart-tauri/restart-vite/restart (restarts), make check/lint/test/format/build. Agents must only use restart commands during dev, never make dev/stop/kill unless user asks. Dev server required for any code-modifying session. Exceptions: cargo add, npm install, git, npx."
+    pattern: "cargo tauri dev|npm run dev"
+summary: "Dev environment commands via orqa CLI — raw 'cargo tauri dev' and 'npm run dev' forbidden (use 'orqa debug' instead). Raw cargo test/clippy/fmt/build are allowed since the orqa CLI wraps them and agents use them for quality checks. Agents must only use restart commands during dev, never orqa debug/stop/kill unless user asks. Dev server required for any code-modifying session. Exceptions: cargo add, npm install, git, npx."
 tier: stage-triggered
 roles: [orchestrator, implementer]
 priority: P1
@@ -23,39 +23,33 @@ relationships:
   - target: "AD-e8a0f910"
     type: "enforces"
 ---
-All development commands MUST be invoked via `make` targets. Raw `cargo` and `npm run` commands are forbidden for tasks that have a `make` equivalent.
+The dev environment MUST be started via `orqa debug`, not raw `cargo tauri dev` or `npm run dev`. These are the only commands blocked by the enforcement hook.
+
+Raw `cargo test`, `cargo clippy`, `cargo fmt`, `cargo build`, `npx tsc`, `npx vitest`, and `npm run test` are **allowed** -- agents use them for quality checks and the `orqa` CLI wraps them internally.
 
 ## Command Mapping
 
-| Action | Use This | NOT This |
-|--------|----------|----------|
-| Start dev environment | `make dev` | `cargo tauri dev` |
-| Start controller (foreground) | `make start` | running dev.mjs directly |
-| Stop gracefully | `make stop` | `taskkill` / manual process hunting |
-| Force kill everything | `make kill` | `taskkill` / manual process hunting |
-| Restart Tauri app | `make restart-tauri` | killing processes then `make dev` |
-| Restart Vite | `make restart-vite` | killing Vite manually |
-| Restart Vite + Tauri | `make restart` | killing everything then `make dev` |
-| Run all checks | `make check` | `cargo clippy && npm run check && ...` |
-| Format Rust | `make format` | `cargo fmt` |
-| Check formatting | `make format-check` | `cargo fmt --check` |
-| Run all linters | `make lint` | `cargo clippy && npm run lint` |
-| Run Rust linter | `make lint-backend` | `cargo clippy -- -D warnings` |
-| Run ESLint | `make lint-frontend` | `npm run lint` |
-| Run all tests | `make test` | `cargo test && npm run test` |
-| Run Rust tests | `make test-rust` | `cargo test` |
-| Run frontend tests | `make test-frontend` | `npm run test` |
-| Run frontend type checks | `make typecheck` | `npm run check` |
-| Build production | `make build` | `cargo tauri build` |
-| Install deps | `make install` | `npm install && cargo fetch` |
-| Index code search | `make index` | `orqa index` |
+| Action | Use This | Also Allowed |
+|--------|----------|--------------|
+| Start dev environment | `orqa debug` | NOT `cargo tauri dev` or `npm run dev` |
+| Stop gracefully | `orqa debug stop` | |
+| Force kill everything | `orqa debug kill` | |
+| Restart Tauri app | `orqa debug restart` | |
+| Run all checks | `orqa check` | `cargo clippy`, `cargo fmt --check`, `npx tsc` |
+| Run all linters | `orqa check lint` | `cargo clippy -- -D warnings` |
+| Run all tests | `orqa test` | `cargo test`, `npx vitest run` |
+| Run Rust tests | `orqa test rust` | `cargo test -p <crate>` |
+| Run frontend tests | `orqa test app` | `npx vitest run` |
+| Build production | `orqa build` | `cargo build` |
+| Install deps | `make install` | `npm install`, `cargo add` |
+| Index code search | `orqa mcp index` | |
 
 ## Why
 
-- Single source of truth for how commands are invoked
-- Ensures `--manifest-path` and other flags are always correct
-- Consistent across agents, humans, and CI
-- Documented in `.orqa/documentation/development/commands.md`
+- `orqa debug` manages the full dev environment lifecycle (Vite + Tauri + controller)
+- Raw `cargo tauri dev` bypasses the controller and can cause port conflicts
+- Raw `npm run dev` starts Vite without the controller orchestration
+- Other raw commands are fine because they are stateless and idempotent
 
 ## Dev Server (NON-NEGOTIABLE)
 
@@ -64,49 +58,40 @@ The dev environment must be running during any session that modifies code (Rust,
 - **Frontend**: Vite HMR — instant reload, window stays open
 - **Rust**: Changes require manual restart (see below)
 
-**`make dev` vs `make start`:** `make dev` spawns the controller as a detached process, waits for everything to be ready, then exits cleanly. `make start` runs the controller in the foreground. Agents should use `make dev` to start and `make kill` to tear down. `make start` is for humans who want the controller in their terminal.
-
 **Dogfooding context:** OrqaStudio is developed using itself. The controller uses `--no-watch` so that editing `.rs` files does not kill the running app mid-conversation. Vite HMR still works for frontend changes.
 
 ### Agent Restart Behaviour (NON-NEGOTIABLE)
 
-**During development or dogfooding, agents MUST ONLY use the restart commands** (`make restart-tauri`, `make restart-vite`, `make restart`) to manage the dev environment. Agents MUST NOT use `make dev`, `make start`, `make stop`, or `make kill` unless the user explicitly asks them to start or stop the controller.
+**During development or dogfooding, agents MUST ONLY use the restart commands** (`orqa debug restart`) to manage the dev environment. Agents MUST NOT use `orqa debug` (start) or `orqa debug stop/kill` unless the user explicitly asks.
 
 The assumption is that the dev environment is already running. If an agent needs to apply changes:
 
-- **Rust changes**: `make restart-tauri` — recompiles and relaunches the Tauri app, Vite stays alive
-- **Vite stuck**: `make restart-vite` — restarts the Vite dev server only
-- **Both need restart**: `make restart` — restarts Vite + Tauri, controller stays alive
-
-If the controller is not running, `make restart-tauri` and `make restart` will automatically start it.
+- **Rust changes**: `orqa debug restart` — recompiles and relaunches the Tauri app
 
 **Rules:**
 
 1. Only sessions that are purely docs/planning are exempt from needing the dev environment
-2. After Rust changes: commit all work, then **offer to run `make restart-tauri`**. The controller stays alive, Vite stays alive — only the Tauri app binary is killed, recompiled, and relaunched.
-3. **NEVER run `make dev-watch`** — it causes the app to restart on every Rust file save
-4. **The orchestrator manages its own dev lifecycle.** Do not expect the user to run restart commands. Offer to run them and execute on approval.
+2. After Rust changes: commit all work, then run `orqa debug restart`
+3. **The orchestrator manages its own dev lifecycle.** Do not expect the user to run restart commands.
 
 ## Exceptions
 
-These raw commands are still allowed because they have no `make` equivalent:
+These raw commands are allowed:
 
+- `cargo test`, `cargo clippy`, `cargo fmt`, `cargo build` — build/quality commands
+- `npx tsc`, `npx vitest`, `npx eslint` — frontend quality commands
 - `cargo add <crate>` — adding new dependencies
 - `npm install <package>` — adding new packages
 - `git` commands — version control operations
-- `npx` one-off commands not covered by make targets
 - `bun add <package>` — adding sidecar dependencies
 
 ## Forward Compatibility
 
 When adding a new recurring command to the project:
-1. Add a `make` target first
-2. Document it in `.orqa/documentation/development/commands.md`
-3. Update this rule's command mapping table
-4. Only then start using the command
+1. Add an `orqa` CLI subcommand if it involves orchestration
+2. Update this rule's command mapping table
+3. Only then start using the command
 
 ## Related Rules
 
-- [RULE-9814ec3c](RULE-9814ec3c) (coding-standards) — references `make check` for pre-commit verification
-- [RULE-8cb4bd04](RULE-8cb4bd04) (testing-standards) — references `make test` variants for running tests
-- [RULE-f609242f](RULE-f609242f) (git-workflow) — git commands remain raw (no make wrapper needed)
+- [RULE-f609242f](RULE-f609242f) (git-workflow) — git commands remain raw (no wrapper needed)
