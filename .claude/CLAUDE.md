@@ -32,9 +32,9 @@ EPIC-c828007a  Graph Foundation               [DONE]
        │         │         │
        │         │         └──→ EPIC-281f7857  Agent Lifecycle + Tiering        [DONE]
        │         │                    │
-       │         │                    └──→ EPIC-59b92c8d  Content Migration                [ACTIVE]
+       │         │                    └──→ EPIC-59b92c8d  Content Migration                [DONE]
        │         │                               │
-       │         │                               └──→ EPIC-9d781696  Cleanup + Reconnect
+       │         │                               └──→ EPIC-9d781696  Cleanup + Reconnect               [ACTIVE]
        │         │
        │         └──→ EPIC-ecef93a8  Human Gates + Review              [DONE]
 ```
