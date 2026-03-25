@@ -1,5 +1,5 @@
 ---
-id: "RULE-a3f7c2e1"
+id: "RULE-05ae2ce7"
 type: rule
 title: "Architecture Decisions"
 description: "Architecture decisions are first-class governance artifacts. Every significant technical choice must be recorded with status, rationale, alternatives considered, and relationships to the rules and delivery work it drives."

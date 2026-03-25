@@ -1,5 +1,5 @@
 ---
-id: AGENT-34a6e2cd
+id: AGENT-ce86fb50
 type: agent
 title: Plugin Developer
 description: Develops and maintains OrqaStudio plugins — scaffolding, component creation, manifest management, installation, testing. Knows plugin directory structure, the canonical-source model, three-way diff, and how to add hooks, agents, knowledge, skills, and documentation to plugins.
@@ -19,26 +19,26 @@ capabilities:
   - shell_execute
 subagent_mapping: null
 relationships:
-  - target: KNOW-a2b3c4d5
+  - target: KNOW-13348442
     type: employs
-  - target: KNOW-f0c40eaf
+  - target: KNOW-0619a413
     type: employs
-  - target: KNOW-b453410f
+  - target: KNOW-2f38309a
     type: employs
     rationale: "Plugin development base knowledge — manifest structure, lifecycle commands, templates, content ownership"
-  - target: KNOW-e1333874
+  - target: KNOW-e6fee7a0
     type: employs
     rationale: "First-party plugin workflow — submodule management, scaffolding, publishing"
-  - target: KNOW-72d39a1b
+  - target: KNOW-e3432947
     type: employs
     rationale: "Plugin-canonical architecture — where content lives and why"
-  - target: KNOW-f7af6012
+  - target: KNOW-57365826
     type: employs
     rationale: "Schema lookup before write — query schemas via MCP before writing frontmatter"
-  - target: PILLAR-94b281db
+  - target: PILLAR-a6a4bbbb
     type: serves
     rationale: Agent serves this pillar/persona in its operational role
-  - target: PILLAR-569581e0
+  - target: PILLAR-c9e0a695
     type: serves
     rationale: Agent serves this pillar/persona in its operational role
 ---
@@ -233,4 +233,4 @@ orqa enforce                                         # Validate manifest + artif
 - ALWAYS update `provides` and `content` in the manifest when adding new components
 - ALWAYS run `orqa enforce` before committing plugin changes
 - ALWAYS use `-dev` suffix for pre-release plugin versions
-- ALWAYS write findings to `tmp/team/<team-name>/` before marking tasks complete
+- ALWAYS write findings to `.state/team/<team-name>/` before marking tasks complete

@@ -21,7 +21,7 @@
 import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { randomBytes } from "node:crypto";
+import { createHash } from "node:crypto";
 import { stringify as stringifyYaml } from "yaml";
 import { getRoot } from "../lib/root.js";
 import { parseFrontmatterFromFile } from "../lib/frontmatter.js";
@@ -258,8 +258,8 @@ function findActiveEpic(projectDir: string): string | null {
 
 // ─── Task artifact creation ───────────────────────────────────────────────────
 
-function generateId(prefix: string): string {
-	const hex = randomBytes(4).toString("hex");
+function generateIdFromTitle(prefix: string, title: string): string {
+	const hex = createHash("md5").update(title).digest("hex").substring(0, 8);
 	return `${prefix.toUpperCase()}-${hex}`;
 }
 
@@ -279,12 +279,12 @@ function nextTaskFilename(tasksDir: string): string {
 }
 
 function createTaskArtifact(projectDir: string, finding: EscalationFinding, epicId: string | null): string {
-	const taskId = generateId("TASK");
 	const today = new Date().toISOString().slice(0, 10);
 
 	const titleVerb = finding.reason === "promote" ? "Promote" : "Strengthen enforcement for";
 	const titleTarget = finding.ruleId ? `${finding.ruleId} (from ${finding.lessonId})` : `lesson ${finding.lessonId}`;
 	const title = `ESCALATION: ${titleVerb} ${titleTarget} (recurrence ${finding.recurrence})`;
+	const taskId = generateIdFromTitle("TASK", title);
 
 	const relationships: ArtifactRelationship[] = [
 		{

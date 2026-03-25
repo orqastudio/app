@@ -1,0 +1,33 @@
+---
+id: "AD-9baf6ee9"
+type: decision
+title: "Conciseness over granularity in governance artifacts"
+description: "When improving governance, tighten existing rules rather than creating new ones. Conciseness matters more than granularity for prompt-injected content. The knowledge graph content that gets injected into agent context should be lean — agents work better with fewer, denser instructions than many scattered ones."
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
+relationships:
+  - target: "RULE-ef822519"
+    type: "enforced-by"
+    rationale: "RULE-ef822519 enforces context window management constraints that make conciseness a practical necessity"
+  - target: "RULE-5dd9decd"
+    type: "enforced-by"
+---
+## Decision
+
+Governance artifacts (rules, skills, agent definitions) that are injected into agent context must prioritize conciseness over granularity. When a new concern arises, the default action is to expand an existing rule rather than create a new one.
+
+## Rationale
+
+- Agent context windows are finite — every injected token competes with task-specific context
+- Fewer, denser rules are easier to comply with than many scattered rules
+- Granular rules create search overhead — agents must find the right rule among many
+- Consolidation forces the author to find the relationship between concerns, producing better governance
+- The knowledge maturity pipeline already promotes observations to rules — this decision governs how that promotion shapes the rule set
+
+## Consequences
+
+- Default action for new governance concern: expand existing rule, not create new one
+- New rules justified only when the concern is genuinely orthogonal to all existing rules
+- Rule audits should look for consolidation opportunities
+- Prompt injection budget is a design constraint, not an afterthought

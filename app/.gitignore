@@ -37,8 +37,8 @@ desktop.ini
 # Build output
 /build/
 
-# Temporary
-tmp/
+# Operational state
+.state/
 *.log
 
 # Claude Code

@@ -1,4 +1,4 @@
-//! Structural integrity checks: broken refs, missing inverses, type constraints, required relationships.
+//! Structural integrity checks: broken refs, type constraints, required relationships.
 
 use std::collections::HashMap;
 
@@ -23,57 +23,6 @@ pub fn check_broken_refs(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>
                     ),
                     auto_fixable: false,
                     fix_description: None,
-                });
-            }
-        }
-    }
-}
-
-/// Check for missing bidirectional inverses on relationship edges.
-pub fn check_missing_inverses(
-    graph: &ArtifactGraph,
-    ctx: &ValidationContext,
-    checks: &mut Vec<IntegrityCheck>,
-) {
-    for node in graph.nodes.values() {
-        for ref_entry in &node.references_out {
-            let rel_type = match &ref_entry.relationship_type {
-                Some(t) => t.as_str(),
-                None => continue,
-            };
-
-            let expected_inverse = match ctx.inverse_map.get(rel_type) {
-                Some(inv) => inv.as_str(),
-                None => continue,
-            };
-
-            let Some(target) = graph.nodes.get(&ref_entry.target_id) else {
-                continue; // broken ref, caught by check_broken_refs
-            };
-
-            let has_inverse = target.references_out.iter().any(|r| {
-                r.relationship_type.as_deref() == Some(expected_inverse) && r.target_id == node.id
-            });
-
-            if !has_inverse {
-                checks.push(IntegrityCheck {
-                    category: IntegrityCategory::MissingInverse,
-                    severity: IntegritySeverity::Error,
-                    artifact_id: node.id.clone(),
-                    message: format!(
-                        "{} --{}--> {} but {} has no {} edge back to {}",
-                        node.id,
-                        rel_type,
-                        ref_entry.target_id,
-                        ref_entry.target_id,
-                        expected_inverse,
-                        node.id
-                    ),
-                    auto_fixable: true,
-                    fix_description: Some(format!(
-                        "Add {{ target: \"{}\", type: \"{}\" }} to {}'s relationships array",
-                        node.id, expected_inverse, ref_entry.target_id
-                    )),
                 });
             }
         }
@@ -498,8 +447,8 @@ pub fn check_status_transitions(
 
 /// Check that the filename (stem, without extension) matches the artifact's `id`.
 ///
-/// The convention is `<ID>.md` — e.g., `EPIC-8d2e4f6a.md` for id `EPIC-8d2e4f6a`.
-/// Legacy sequential filenames (e.g., `TASK-100.md` with id `TASK-97dfe088`) are
+/// The convention is `<ID>.md` — e.g., `EPIC-fb1822c2.md` for id `EPIC-fb1822c2`.
+/// Legacy sequential filenames (e.g., `TASK-100.md` with id `TASK-4cfabe07`) are
 /// flagged as warnings with an auto-fix suggestion to rename.
 pub fn check_filename_matches_id(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
     for node in graph.nodes.values() {

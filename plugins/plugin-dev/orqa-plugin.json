@@ -9,24 +9,24 @@
     "agents": [
       {
         "key": "34a6e2cd",
-        "id": "AGENT-34a6e2cd",
-        "path": "agents/AGENT-34a6e2cd.md"
+        "id": "AGENT-ce86fb50",
+        "path": "agents/AGENT-ce86fb50.md"
       }
     ],
     "knowledge": [
       {
         "key": "b453410f",
-        "id": "KNOW-b453410f",
+        "id": "KNOW-2f38309a",
         "label": "Plugin Development"
       },
       {
         "key": "e1333874",
-        "id": "KNOW-e1333874",
+        "id": "KNOW-e6fee7a0",
         "label": "First-Party Plugin Development"
       },
       {
         "key": "63cc1a00",
-        "id": "KNOW-63cc1a00",
+        "id": "KNOW-1b7fa054",
         "label": "Third-Party Plugin Development"
       }
     ],

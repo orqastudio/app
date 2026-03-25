@@ -1,0 +1,342 @@
+---
+id: DOC-6097aad6
+type: doc
+title: Hook Execution Semantics
+description: How OrqaStudio's governance hooks fire, execute, and produce results. Reference for adding new hooks and understanding enforcement behaviour.
+created: 2026-03-20
+updated: 2026-03-20
+sort: 30
+category: development
+tags:
+  - hooks
+  - enforcement
+  - governance
+  - plugin
+relationships: []
+---
+
+# Hook Execution Semantics
+
+OrqaStudio governance hooks run inside Claude Code sessions via the claude-code-connector
+plugin. Hooks intercept Claude Code lifecycle events, evaluate governance rules, inject
+knowledge, and optionally block tool calls. This document defines when hooks fire, how
+they execute, and what happens when they return results.
+
+The hook scripts live in `connectors/claude-code/hooks/scripts/`. The registration file
+is `connectors/claude-code/hooks/hooks.json`.
+
+## Hook Lifecycle
+
+Each event fires exactly once at the described point in the session lifecycle.
+
+### `SessionStart`
+
+Fires once per session, before any user interaction begins. The session guard
+(`.state/.session-started`) prevents it from running more than once even if the hook
+system retries.
+
+**What it does in OrqaStudio:**
+
+- Runs `orqa enforce --fix` to auto-repair missing relationship inverses
+- Checks for git stashes, stale worktrees, and uncommitted changes on main
+- Loads `.state/session-state.md` to inject the previous session's context
+- Loads `.state/governance-context.md` if saved before the previous compaction
+- Detects dogfood mode (`"dogfood": true` in `.orqa/project.json`)
+- Outputs the session protocol checklist and orchestrator reminders
+
+**Script:** `session-start.sh`
+
+### `UserPromptSubmit`
+
+Fires when the user sends a message, before Claude processes it.
+
+**What it does in OrqaStudio:**
+
+- Reads the user's prompt
+- Classifies intent against governance operation categories
+- Injects relevant knowledge into context based on what the prompt is about
+
+**Script:** `prompt-injector.ts`
+
+### `PreToolUse`
+
+Fires before a tool executes. This is the only event that can block tool calls.
+The tool will NOT execute if a hook returns a deny decision.
+
+**What it does in OrqaStudio (Write, Edit, Bash):**
+
+- Loads all active rules from `.orqa/process/rules/RULE-*.md` that have an
+  `enforcement` array in their frontmatter
+- Evaluates each enforcement entry against the tool call (file path, content,
+  or command string)
+- If any entry matches with `action: block` — denies the tool call
+- If any entry matches with `action: warn` — allows the tool call, appends warning
+- If any entry matches with `action: inject` — injects knowledge into context (once per session)
+
+**Script:** `rule-engine.mjs`
+
+### `PostToolUse`
+
+Fires after a tool executes. Cannot block tools — the tool has already run.
+
+**What it does in OrqaStudio (Write, Edit):**
+
+- Validates `.orqa/` files written or edited against their schema
+- Reports frontmatter errors as warnings without blocking subsequent tool calls
+
+**What it does in OrqaStudio (Bash):**
+
+- Validates bash commands for safety patterns after they have run
+- Can warn about patterns that were not caught by PreToolUse (rare)
+
+**Scripts:** `validate-artifact.mjs`, `bash-safety.mjs`
+
+### `SubagentStop`
+
+Fires when a subagent completes its work and returns control to the orchestrator.
+
+**What it does in OrqaStudio:**
+
+- Reads the subagent's output summary
+- Validates that the output falls within the governance scope of the original task
+- Warns the orchestrator if the subagent appears to have exceeded its role boundary
+
+**Script:** `subagent-review.mjs`
+
+### `PreCompact`
+
+Fires before Claude Code compacts the conversation context to stay within token limits.
+
+**What it does in OrqaStudio:**
+
+- Saves the current governance context (active epic, tasks, scope) to
+  `.state/governance-context.md`
+- This file is loaded by the next `SessionStart` hook to restore context after compaction
+
+**Script:** `save-context.mjs`
+
+### `Stop`
+
+Fires when the session ends — when the user closes the session or Claude stops responding.
+
+**What it does in OrqaStudio:**
+
+- Checks for uncommitted changes that should be committed before the session ends
+- Outputs a pre-commit checklist reminder
+
+**Script:** `stop-checklist.sh`
+
+## Execution Ordering
+
+Multiple hooks registered for the same event execute sequentially in the order they
+appear in `hooks.json`. For `PreToolUse`, which has both a `Write|Edit` matcher and a
+`Bash` matcher, only the matching hooks run — Claude Code evaluates the `matcher` regex
+against the tool name before invoking any scripts.
+
+Within a single matcher, hooks execute in array order. If the first hook blocks,
+subsequent hooks for the same event still run (they receive the same input) but their
+output is ignored if the tool is already denied.
+
+## Error Handling
+
+Hook failures do not block the tool call unless the hook explicitly returns a deny decision.
+
+| Failure Mode | Behaviour |
+|-------------|-----------|
+| Hook timeout (default 10s) | Tool proceeds as if hook returned allow (no output) |
+| Hook exits with non-zero code | Tool proceeds as if hook returned allow; stderr output is discarded |
+| Hook returns invalid JSON | Treated as allow; malformed output is ignored |
+| Hook script file not found | Tool proceeds silently; missing scripts are not an error |
+
+The timeout for each hook is configured per-entry in `hooks.json`. The
+`connectors/claude-code/hooks/hooks.json` uses 10s for most hooks and 15s for
+`SessionStart` and `SubagentStop`, which do more IO.
+
+## Result Merging
+
+When multiple hooks fire for the same event and return output:
+
+- **`systemMessage` values are concatenated** with newline separators in registration order
+- **Block/deny overrides allow**: if any hook for a `PreToolUse` event returns
+  `permissionDecision: "deny"`, the tool is blocked regardless of what other hooks return
+- **Precedence**: `deny` > `warn` (systemMessage with no deny) > `allow` (no output)
+- **Knowledge injection deduplication**: the rule engine tracks which knowledge artifacts
+  have been injected this session in `.state/.injected-skills.json`. A second Write to a
+  different file in the same domain does not re-inject the same knowledge.
+
+### Hook Output Format
+
+Hooks communicate with Claude Code via stdout (non-blocking) or stderr + exit code 2
+(blocking). The output must be JSON.
+
+**Non-blocking result (warn or inject):**
+
+```json
+{
+  "systemMessage": "Warning text or injected knowledge content"
+}
+```
+
+Output to stdout. Exit code 0.
+
+**Blocking result (deny):**
+
+```json
+{
+  "hookSpecificOutput": {
+    "permissionDecision": "deny"
+  },
+  "systemMessage": "Explanation of why the tool call was denied"
+}
+```
+
+Output to stderr. Exit code 2.
+
+**Allow (no action):**
+
+No output. Exit code 0.
+
+## Hook-to-Rule Mapping
+
+Enforcement entries in `.orqa/process/rules/RULE-*.md` declare which hook event evaluates
+them. The rule engine (`rule-engine.mjs`) reads all active rules and evaluates only the
+entries matching the current event.
+
+```yaml
+# In a RULE-*.md frontmatter:
+enforcement:
+  - event: file          # Evaluated by PreToolUse (Write/Edit tool calls)
+    pattern: "unwrap\\(\\)"
+    paths: ["src-tauri/src/**/*.rs"]
+    action: block
+    message: "No unwrap() in production Rust code (RULE-9814ec3c)."
+
+  - event: bash          # Evaluated by PreToolUse (Bash tool calls)
+    pattern: "--no-verify"
+    action: block
+    message: "Never bypass pre-commit hooks."
+
+  - event: inject        # Evaluated by PreToolUse — non-blocking knowledge injection
+    paths: ["ui/src/lib/stores/**/*.ts"]
+    action: inject
+    knowledge: ["orqa-store-patterns"]
+    message: "Store patterns injected."
+```
+
+The `event` field values map to hook events as follows:
+
+| `event` value | Hook event | Tool matcher |
+|--------------|-----------|--------------|
+| `file` | `PreToolUse` | `Write\|Edit` |
+| `bash` | `PreToolUse` | `Bash` |
+| `inject` | `PreToolUse` | `Write\|Edit` |
+| `lint` | (declarative) | Not executed — documents linter delegation |
+
+`lint` entries are never executed. They exist in rule frontmatter purely as traceability
+markers documenting which linter rule enforces which standard. See
+`connectors/claude-code/knowledge/rule-enforcement/KNOW.md` for details.
+
+## Adding New Hooks
+
+### Step 1: Write the hook script
+
+Create a new script in `connectors/claude-code/hooks/scripts/`. Scripts must:
+
+- Read hook input from stdin as JSON
+- Write JSON output to stdout (non-blocking) or stderr (blocking, exit 2)
+- Exit 0 for allow/warn, exit 2 for deny
+- Handle malformed stdin gracefully (parse errors → exit 0)
+- Complete within the configured timeout
+
+**Hook input schema (stdin):**
+
+```json
+{
+  "session_id": "string",
+  "tool_name": "string",
+  "tool_input": {},
+  "cwd": "string"
+}
+```
+
+For `SessionStart`, `UserPromptSubmit`, `SubagentStop`, `PreCompact`, and `Stop`,
+the `tool_name` and `tool_input` fields are absent or empty. These hooks receive
+session-level context only.
+
+### Step 2: Register in hooks.json
+
+Add an entry to `connectors/claude-code/hooks/hooks.json` under the correct event key:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/your-script.mjs",
+            "timeout": 10000
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Available event keys: `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `SessionStart`,
+`SubagentStop`, `PreCompact`, `Stop`.
+
+The `matcher` field is a regex matched against the tool name for `PreToolUse` and
+`PostToolUse`. Use `"*"` for events that have no tool context.
+
+The `timeout` is in milliseconds. Default 10000 (10s). Use 15000 for hooks that do
+significant IO (file scanning, git operations).
+
+### Step 3: Declare in orqa-plugin.json
+
+Add a hooks entry to `connectors/claude-code/orqa-plugin.json` so the plugin manifest
+documents the hook:
+
+```json
+{
+  "provides": {
+    "hooks": [
+      {
+        "event": "PreToolUse",
+        "description": "Brief description of what this hook enforces"
+      }
+    ]
+  }
+}
+```
+
+### Step 4: Link to the governing rule (if applicable)
+
+If the hook enforces a governance rule, add an `enforcement` entry to the rule's
+frontmatter with the appropriate `event` value. This creates the traceability chain:
+
+```
+Rule document → enforcement entry → hook script → tool call decision
+```
+
+## Telemetry
+
+All hook scripts call `logTelemetry()` from `telemetry.mjs` to record execution results
+to `.state/hook-telemetry.jsonl`. Each line is a JSON object:
+
+```json
+{
+  "hook": "rule-engine",
+  "event": "PreToolUse",
+  "duration_ms": 12,
+  "result": "blocked",
+  "data": { "tool": "Write", "violations_found": 1, "blocked_rules": ["RULE-9814ec3c"] },
+  "timestamp": "2026-03-20T10:00:00.000Z"
+}
+```
+
+The telemetry file is gitignored and reset each session. Use it for debugging hook
+performance or enforcement gaps.

@@ -66,7 +66,7 @@ path, title, status, and all frontmatter fields. Use when you have the ID and ne
 to confirm the artifact exists and read its content.
 
 ```
-graph_resolve("EPIC-0a8a5e72")
+graph_resolve("EPIC-d45b4dfd")
 → { id, path, title, status, artifact_type, frontmatter, references_out, references_in }
 ```
 
@@ -87,7 +87,7 @@ modifying relationships to understand what's already connected and avoid breakin
 existing links.
 
 ```
-graph_relationships("EPIC-0a8a5e72")
+graph_relationships("EPIC-d45b4dfd")
 → { references_out: [...], references_in: [...] }
 ```
 

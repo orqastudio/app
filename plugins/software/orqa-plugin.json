@@ -755,56 +755,56 @@
     "knowledge": [
       {
         "key": "170c220e",
-        "id": "KNOW-170c220e",
+        "id": "KNOW-45b5f8a8",
         "label": "Security Audit"
       },
       {
         "key": "1b805150",
-        "id": "KNOW-1b805150",
+        "id": "KNOW-1314ac47",
         "label": "QA Verification"
       },
       {
         "key": "1d47d8d8",
-        "id": "KNOW-1d47d8d8"
+        "id": "KNOW-a700e25a"
       },
       {
         "key": "2c8eead6",
-        "id": "KNOW-2c8eead6",
+        "id": "KNOW-72ca209f",
         "label": "Skills Maintenance"
       },
       {
         "key": "353a228b",
-        "id": "KNOW-353a228b",
+        "id": "KNOW-d00093e7",
         "label": "Component Extraction"
       },
       {
         "key": "5124e508",
-        "id": "KNOW-5124e508",
+        "id": "KNOW-bec7e87d",
         "label": "UX Compliance Review"
       },
       {
         "key": "819789ab",
-        "id": "KNOW-819789ab",
+        "id": "KNOW-d03337ac",
         "label": "Project Type: Software"
       },
       {
         "key": "bcb42347",
-        "id": "KNOW-bcb42347",
+        "id": "KNOW-5f4db8f7",
         "label": "Test Engineering"
       },
       {
         "key": "c6d04755",
-        "id": "KNOW-c6d04755",
+        "id": "KNOW-71352dc8",
         "label": "UAT Process"
       },
       {
         "key": "e2354dce",
-        "id": "KNOW-e2354dce",
+        "id": "KNOW-0188373b",
         "label": "Delivery Unit Completion Discipline"
       },
       {
         "key": "f0efaf83",
-        "id": "KNOW-f0efaf83",
+        "id": "KNOW-91a7a6c1",
         "label": "Code Quality Review"
       }
     ],

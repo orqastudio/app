@@ -1,0 +1,39 @@
+---
+id: IMPL-4eed88ef
+type: lesson
+title: Dogfood readiness signal: lessons are observations, not corrections
+description: "When captured lessons shift from corrections (process failures needing enforcement) to observations (validating that something works), that shift is a maturity signal indicating the current layer is stable enough to begin dogfooding at the next level."
+status: captured
+created: 2026-03-21
+updated: 2026-03-21
+maturity: observation
+recurrence: 1
+relationships: []
+---
+
+## Pattern
+
+During structured development, the learning loop captures two types of lessons:
+
+- **Corrections** — process failures that need rules or enforcement. Example: IMPL-071 (session state as a living document) was captured and immediately promoted to a rule because the failure was clear and recurring.
+- **Observations** — validations that something works as intended. Example: IMPL-072 (dogfooding proves the methodology) was a pure observation with no enforcement action needed.
+
+Early in a project, most lessons are corrections. The process is unstable, enforcement gaps are frequent, and each lesson needs a rule or gate to close the gap. As the infrastructure matures, corrections become rarer. Lessons shift toward observations — the process is working as designed, and the team is noticing that, not fixing it.
+
+The point at which captured lessons are predominantly observations rather than corrections is a signal that the process is stable enough to begin dogfooding at the next level — for example, moving from CLI-only governance to full app dogfooding.
+
+## Root Cause
+
+Not a failure — a maturity signal. This observation emerged while building the governance infrastructure via CLI. IMPL-072 was the first pure observation lesson, unlike IMPL-071 which was immediately promoted to a rule. The contrast between the two made the pattern visible.
+
+## Significance
+
+This gives the team a qualitative metric for readiness that doesn't require instrumentation: read recent lessons and ask "are these corrections or observations?" If corrections dominate, the process is still maturing. If observations dominate, the infrastructure is stable.
+
+This is distinct from a quantitative metric (number of lessons, coverage percentage) because it captures *type* of signal, not volume. A high volume of observation lessons is healthy. A single correction lesson that gets promoted to a rule is more significant than ten observations.
+
+## Suggested Promotion
+
+Consider adding as a gate question on the Continuity pillar: "Are recent lessons observations rather than corrections?" If yes, the current layer is mature. If most lessons are still corrections needing enforcement, the process isn't ready to move up a level.
+
+Also consider adding a readiness criterion to the dogfood rule (RULE-009): before moving to a new dogfood context (e.g., CLI → app), verify that the last N lessons are predominantly observations. This is a diagnostic signal, not an enforceable constraint — the promotion target is a pillar gate question or readiness criterion, not a new rule.

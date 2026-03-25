@@ -176,7 +176,7 @@ async function main() {
     let transitions = null;
     let matchedPrefix = null;
     for (const [prefix, rules] of transitionMap) {
-      // ID format is PREFIX-hash (e.g., EPIC-be023ed2), so match prefix + dash
+      // ID format is PREFIX-hash (e.g., EPIC-7394ba2a), so match prefix + dash
       if (filename.startsWith(prefix + "-") || filename.startsWith(prefix + ".")) {
         transitions = rules;
         matchedPrefix = prefix;

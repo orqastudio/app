@@ -1,5 +1,5 @@
 ---
-id: "AGENT-ff44f841"
+id: "AGENT-ae63c406"
 type: agent
 title: "Governance Steward"
 description: "Specialist for all .orqa/ artifact creation and maintenance. Owns graph integrity, schema compliance, bidirectional relationships, and pillar alignment on every artifact it writes."
@@ -19,23 +19,23 @@ capabilities:
   - "code_research"
 subagent_mapping: null
 relationships:
-  - target: "KNOW-13ec986c"
+  - target: "KNOW-1afbc656"
     type: "employs"
-  - target: "KNOW-a2b3c4d5"
+  - target: "KNOW-13348442"
     type: "employs"
-  - target: "KNOW-f0c40eaf"
+  - target: "KNOW-0619a413"
     type: "employs"
-  - target: "KNOW-eea50a65"
+  - target: "KNOW-936e5944"
     type: "employs"
-  - target: "KNOW-4368d782"
+  - target: "KNOW-16e91c20"
     type: "employs"
-  - target: "PILLAR-569581e0"
+  - target: "PILLAR-c9e0a695"
     type: "serves"
     rationale: "Agent serves this pillar/persona in its operational role"
-  - target: "PILLAR-cdf756ff"
+  - target: "PILLAR-2acd86c1"
     type: "serves"
     rationale: "Agent serves this pillar/persona in its operational role"
-  - target: "PILLAR-94b281db"
+  - target: "PILLAR-a6a4bbbb"
     type: "serves"
     rationale: "Agent serves this pillar/persona in its operational role"
 ---

@@ -1,5 +1,5 @@
 ---
-id: KNOW-f0c40eaf
+id: KNOW-0619a413
 type: knowledge
 title: Composability
 description: |
@@ -14,23 +14,23 @@ category: methodology
 version: 1.0.0
 user-invocable: true
 relationships:
-  - target: AGENT-c5284fde
+  - target: AGENT-0aad40f4
     type: employed-by
-  - target: AGENT-ff44f841
+  - target: AGENT-ae63c406
     type: employed-by
-  - target: AGENT-cc255bc8
+  - target: AGENT-e5dd38e4
     type: employed-by
-  - target: AGENT-1dab5ebe
+  - target: AGENT-4c94fe14
     type: employed-by
-  - target: AGENT-caff7bc1
+  - target: AGENT-85be6ace
     type: employed-by
-  - target: AGENT-fb0ce261
+  - target: AGENT-e333508b
     type: employed-by
-  - target: AGENT-b0774726
+  - target: AGENT-8e58cd87
     type: employed-by
-  - target: AGENT-ec1b3785
+  - target: AGENT-bbad3d30
     type: employed-by
-  - target: DOC-a1b2c3d4
+  - target: DOC-bad8e26f
     type: synchronised-with
 
 ---

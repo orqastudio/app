@@ -1,0 +1,138 @@
+---
+id: RES-6a16de02
+type: research
+title: "Codebase Architecture Audit — Composability, Quality, and Standards Alignment"
+description: "Full audit of backend/src-tauri/, ui/, and sidecars/claude-agentsdk-sidecar/ against composability principles, error handling, IPC boundary, component purity, test coverage, and security"
+status: completed
+created: 2026-03-12
+updated: 2026-03-12
+sources:
+  - "url: \"file://backend/src-tauri/src/"
+  - "url: \"file://ui/"
+  - "url: \"file://sidecars/claude-agentsdk-sidecar/src/"
+relationships:
+  - target: EPIC-a1555708
+    type: guides
+    rationale: "Research findings informed the design of Codebase Quality and Composability Alignment"
+---
+
+## Executive Summary
+
+Architecture is fundamentally sound. Clean module separation (commands/domain/repo/search/sidecar), well-defined error handling via `OrqaError` with `thiserror`, properly layered IPC boundary. One critical issue: `stream_commands.rs` is a 2,497-line god-file with massive code duplication.
+
+## Backend Architecture (23,051 lines, 64 files, 541 tests)
+
+### Module Structure
+
+| Module | Files | Lines | Purpose |
+|--------|-------|-------|---------|
+| `commands/` | 15 | ~5,800 | Tauri command handlers (thin IPC wrappers) |
+| `domain/` | 29 | ~11,800 | Business logic, types, engines |
+| `repo/` | 10 | ~3,800 | SQLite persistence (pure functions) |
+| `search/` | 5 | ~1,300 | DuckDB + ONNX semantic search |
+| `sidecars/claude-agentsdk-sidecar/` | 4 | ~1,100 | Process lifecycle + NDJSON protocol |
+| Root | 6 | ~1,200 | App builder, error, state, DB, watcher |
+
+### Critical Finding: stream_commands.rs God-File
+
+`commands/stream_commands.rs` (2,497 lines) contains 57 functions — only 3 are `#[tauri::command]`. The remaining ~1,200 lines duplicate logic already extracted into:
+- `domain/stream_loop.rs` (937 lines) — stream processing
+- `domain/tool_executor.rs` (1,131 lines) — tool execution
+- `domain/system_prompt.rs` (~150 lines) — system prompt building
+
+The domain modules appear to be a refactoring that was started but never completed. The command file should be ~150-200 lines, delegating all logic to domain modules.
+
+### Error Handling
+
+- `OrqaError` enum with 9 variants, proper `thiserror` + `serde` serialization
+- `From` impls for `io::Error`, `serde_json::Error`, `rusqlite::Error`
+- Gap: no `From<duckdb::Error>` — search errors use `.map_err(|e| e.to_string())`
+- `db.rs` uses `.unwrap_or(false)` in migration code (lines 55, 74, 82, 103) — silently swallows query errors
+- One `expect()` in production: `lib.rs:249` — `tauri::Builder::run().expect()` (standard Tauri pattern)
+
+### State Management
+
+`AppState` has 11 `Mutex`-wrapped fields. Every command acquires locks briefly, never holds across sidecar I/O. Functional but could benefit from grouping into sub-structs.
+
+## Frontend Architecture (15,542 lines, ~120 files, 0 tests)
+
+### Compliance: Excellent
+
+| Standard | Status | Details |
+|----------|--------|---------|
+| Svelte 5 only | PERFECT | Zero Svelte 4 patterns found |
+| No `any` types | PERFECT | Zero `any` in application code |
+| No `@ts-ignore` | PERFECT | Zero instances |
+| Component purity | NEAR-PERFECT | One `invoke()` in `AppLayout.svelte` (container — borderline) |
+| Store pattern | EXCELLENT | All 10 stores: class-based runes, singleton export |
+| Shared components | GOOD | 11 shared components in `$lib/components/shared/` |
+
+### Store Architecture (10 stores)
+
+All follow identical pattern: class with `$state` fields, methods calling `invoke()`, exported singleton. `conversationStore` handles complex streaming state with `SvelteMap` for tool calls.
+
+## Sidecar Architecture (~4,000 lines, 6 files)
+
+Clean NDJSON protocol over stdin/stdout. Types mirror `backend/src-tauri/src/sidecar/types.rs` exactly. Provider abstraction via interface with Claude Agent SDK as sole implementation. Error handling catches all errors and emits as `stream_error` responses.
+
+## IPC Boundary Audit
+
+- 75 commands registered in `lib.rs`
+- 46 unique command names called from frontend
+- 29 backend-only commands (tool execution loop + setup wizard + some potentially orphaned)
+- Zero unmatched frontend calls — every `invoke()` resolves
+- `StreamEvent` enum (14 variants) matches TypeScript union exactly
+
+## Test Coverage
+
+### Backend: 541 tests (good core coverage)
+
+Well-tested: `stream_commands` (42), `process_gates` (29), `workflow_tracker` (32), `skill_injector` (21), `sidecars/claude-agentsdk-sidecar/types` (26), `enforcement_engine` (16), all repos (7-14 each).
+
+Missing tests entirely: `search/embedder.rs` (331 lines, HIGH risk), `search/store.rs` (394 lines, HIGH risk), several command files (LOW-MEDIUM risk).
+
+### Frontend: ZERO tests
+
+No `.test.ts` files exist. No store tests, no component tests, no utility tests.
+
+## Security
+
+- Path traversal protection exists (`resolve_path`, `resolve_write_path`)
+- Tool execution gated behind user approval (`handle_tool_approval`)
+- NDJSON protocol unauthenticated but stdin/stdout only (standard Tauri pattern)
+- SQLite WAL mode + foreign keys
+- No hardcoded secrets
+
+## Composability Assessment
+
+| Area | Score | Notes |
+|------|-------|-------|
+| `error.rs` | Excellent | Single responsibility, clean API |
+| `commands/` (excluding stream) | Good | Thin wrappers delegating to domain |
+| `stream_commands.rs` | **Poor** | God-file with duplicated domain logic |
+| `domain/` | Good | Clean separation, well-tested engines |
+| `repo/` | Good | Consistent pattern, pure functions |
+| `search/` | Good | Clean facade over DuckDB + ONNX |
+| Frontend stores | Excellent | Consistent runes pattern |
+| Frontend components | Good | Proper purity, shared components |
+| Sidecar | Good | Clean provider abstraction |
+
+## Recommendations (Priority Order)
+
+### P1 — Critical
+1. **Eliminate `stream_commands.rs` duplication** — delegate to existing domain modules
+
+### P2 — High
+2. **Add frontend tests** — all 10 stores, utility functions, StreamEvent handling
+3. **Add search module tests** — `embedder.rs` and `store.rs` have zero coverage
+4. **Add `From<duckdb::Error>` to `OrqaError`** — eliminate `.map_err(|e| e.to_string())`
+
+### P3 — Moderate
+5. **Fix `db.rs` migration error handling** — `.unwrap_or(false)` silently swallows errors
+6. **Audit 29 backend-only commands** — identify truly orphaned code
+7. **Consider `AppState` decomposition** — group 11 Mutex fields into sub-structs
+
+### P4 — Low
+8. Add E2E tests (empty `tests/` directory exists)
+9. Move `AppLayout.svelte` invoke to a store
+10. Standardize `lib.rs` tracker error handling

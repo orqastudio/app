@@ -11,8 +11,8 @@ PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
 
 # ─── Session State Safety Net ────────────────────────────────────────────────
 # Write minimal session state if the orchestrator didn't maintain one.
-SESSION_FILE="$PROJECT_DIR/tmp/session-state.md"
-mkdir -p "$PROJECT_DIR/tmp"
+SESSION_FILE="$PROJECT_DIR/.state/session-state.md"
+mkdir -p "$PROJECT_DIR/.state"
 
 WRITE_STATE=true
 if [ -f "$SESSION_FILE" ]; then
@@ -88,7 +88,7 @@ CHECKLIST="SESSION END: All work committed and pushed. Session may end cleanly."
 
 WARNINGS=""
 if [ "$PRIORITIES_MISSING" = true ]; then
-  WARNINGS="WARNING: No next session priorities found in tmp/session-state.md. Consider adding a '## Next Session Priorities' section for the next session."
+  WARNINGS="WARNING: No next session priorities found in .state/session-state.md. Consider adding a '## Next Session Priorities' section for the next session."
 fi
 
 if [ -n "$WARNINGS" ]; then

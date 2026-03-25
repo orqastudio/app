@@ -6,7 +6,7 @@
  * orqa id migrate <old> <new>    Rename an ID across the entire graph
  */
 
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import { readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import {
@@ -18,9 +18,10 @@ const USAGE = `
 Usage: orqa id <subcommand> [options]
 
 Subcommands:
-  generate <TYPE>       Generate a new hex ID (e.g. orqa id generate TASK)
-  check                 Scan the graph for duplicate IDs
-  migrate <old> <new>   Rename an artifact ID across the entire graph (updates all references)
+  generate <TYPE> <TITLE>  Generate a deterministic hex ID from MD5(title)
+                           e.g. orqa id generate TASK "Fix broken tests"
+  check                    Scan the graph for duplicate IDs
+  migrate <old> <new>      Rename an artifact ID across the entire graph (updates all references)
 
 Options:
   --fix                 With 'check': prompt to regenerate duplicate IDs
@@ -29,9 +30,18 @@ Options:
 `.trim();
 
 /**
- * Generate an 8-char hex ID with the given prefix.
+ * Generate a deterministic 8-char hex ID from MD5 of the title.
+ * ID = PREFIX-{first 8 hex chars of MD5(title)}
  */
-function generateId(prefix: string): string {
+function generateIdFromTitle(prefix: string, title: string): string {
+	const hex = createHash("md5").update(title).digest("hex").substring(0, 8);
+	return `${prefix.toUpperCase()}-${hex}`;
+}
+
+/**
+ * Generate a random 8-char hex ID (legacy, used only for dedup fix).
+ */
+function generateRandomId(prefix: string): string {
 	const hex = randomBytes(4).toString("hex");
 	return `${prefix.toUpperCase()}-${hex}`;
 }
@@ -113,7 +123,7 @@ function checkDuplicates(projectRoot: string, autoFix: boolean): void {
 				if (!parsed) continue;
 
 				const [fm, body] = parsed;
-				const newId = generateId(prefix);
+				const newId = generateRandomId(prefix);
 				const oldId = fm.id as string;
 				fm.id = newId;
 
@@ -248,13 +258,15 @@ export async function runIdCommand(args: string[]): Promise<void> {
 
 	switch (subcommand) {
 		case "generate": {
-			const typePrefix = subArgs.find((a) => !a.startsWith("--"));
-			if (!typePrefix) {
-				console.error("Usage: orqa id generate <TYPE>");
-				console.error("Example: orqa id generate TASK");
+			const positional = subArgs.filter((a) => !a.startsWith("--"));
+			if (positional.length < 2) {
+				console.error('Usage: orqa id generate <TYPE> <TITLE>');
+				console.error('Example: orqa id generate TASK "Fix broken tests"');
 				process.exit(1);
 			}
-			console.log(generateId(typePrefix));
+			const [typePrefix, ...titleParts] = positional;
+			const title = titleParts.join(" ");
+			console.log(generateIdFromTitle(typePrefix, title));
 			break;
 		}
 

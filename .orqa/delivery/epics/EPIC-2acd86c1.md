@@ -1,0 +1,39 @@
+---
+id: EPIC-2acd86c1
+type: epic
+title: Learning Through Reflection
+description: Build the automated lesson capture and promotion pipeline on top of the existing lesson management CRUD and UI.
+status: captured
+priority: P1
+created: 2026-03-07
+updated: 2026-03-07
+horizon: next
+scoring:
+  impact: 4
+  urgency: 3
+  complexity: 3
+  dependencies: 3
+relationships:
+  - target: MS-21d5096a
+    type: fulfils
+    rationale: Epic belongs to this milestone
+---
+## Why P1
+
+Pillar 2 (Learning Through Reflection) — the system must get smarter with each cycle.
+
+## Tasks
+
+- [ ] Post-session hooks that capture lessons automatically to `.orqa/process/lessons/`
+- [ ] Rules enforcing lesson checking before implementation
+- [ ] Automated promotion suggestions when recurrence >= threshold
+- [ ] Lesson dashboard with recurrence trends (LayerChart)
+- [ ] Session analytics — pass/fail rates, coverage trends
+
+## Context
+
+This epic addresses a need identified during project development.
+
+## Implementation Design
+
+Implementation approach to be defined during planning.

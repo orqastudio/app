@@ -1,0 +1,182 @@
+---
+id: RES-6d8c494c
+type: research
+title: Cross-domain testing framework research
+description: "How to build a shared test framework (@orqastudio/test-config) that works across pure TypeScript, Svelte 5 rune stores, Tauri IPC, and component testing domains."
+status: completed
+created: 2026-03-14
+updated: 2026-03-14
+relationships:
+  - target: EPIC-90cb7349
+    type: guides
+    rationale: "Testing framework is TASK-72d1e17e in the package ecosystem epic"
+---
+
+## Key Findings
+
+### Current state
+
+OrqaStudio already has working test infrastructure:
+- **vitest** configured with jsdom, v8 coverage (no thresholds enforced yet)
+- **@testing-library/svelte** 5.3.1 for component tests
+- **Tauri mock** (`mockInvoke`, `MockChannel`) in `ui/src/lib/stores/__tests__/setup.ts`
+- **15 test files** exist (5 components, 10 stores) — patterns proven but not extracted
+- **Store tests work with $state/$derived** directly — no special Svelte test harness needed
+
+### Four testing domains
+
+| Domain | Dependencies | Example |
+|--------|-------------|---------|
+| Pure TypeScript | None — vitest only | integrity-validator checks, type guards |
+| Svelte 5 rune stores | SvelteMap import | SDK stores ($state, $derived) |
+| Tauri IPC stores | Mock invoke + MockChannel | Any store calling invoke() |
+| Svelte components | @testing-library/svelte, jsdom | Shared components, plugin UI |
+
+### Critical insight: $state is testable without Svelte compilation
+
+Store classes use `$state` and `$derived` but tests access fields directly:
+```typescript
+conversationStore.clear();
+expect(conversationStore.messages).toEqual([]);
+expect(conversationStore.isStreaming).toBe(false);
+```
+
+No special rune test harness needed — vitest with the Svelte plugin handles compilation. This means store tests are nearly identical across pure TS and Svelte domains.
+
+## Proposed package structure
+
+```
+@orqastudio/test-config/
+├── src/
+│   ├── config/
+│   │   ├── vitest.base.ts        ← shared vitest config (coverage, reporters, thresholds)
+│   │   └── vitest.svelte.ts      ← svelte-specific config (adds svelte plugin, jsdom)
+│   ├── mocks/
+│   │   ├── invoke.ts             ← mockInvoke factory with type-safe command mapping
+│   │   ├── channel.ts            ← MockChannel with emit() for streaming tests
+│   │   ├── event.ts              ← mock @tauri-apps/api/event (listen, emit)
+│   │   └── index.ts
+│   ├── builders/
+│   │   ├── artifact-node.ts      ← createTestNode(overrides) with sensible defaults
+│   │   ├── artifact-graph.ts     ← createTestGraph(nodes[]) builds full graph with refs
+│   │   ├── message.ts            ← createMessage(overrides) for conversation tests
+│   │   ├── stream-event.ts       ← createStreamEvent(type, data) for streaming tests
+│   │   └── index.ts
+│   ├── matchers/
+│   │   ├── store.ts              ← expectStoreState(), expectCleanAfterClear()
+│   │   └── index.ts
+│   └── index.ts                  ← barrel export
+├── __tests__/                    ← tests for the test framework itself
+│   ├── mocks/
+│   │   ├── invoke.test.ts        ← verify mock factory produces correct mocks
+│   │   └── channel.test.ts       ← verify MockChannel emit/callback works
+│   ├── builders/
+│   │   ├── artifact-node.test.ts ← verify defaults, overrides, ref building
+│   │   ├── artifact-graph.test.ts ← verify graph construction + back-refs
+│   │   └── stream-event.test.ts  ← verify event shape matches StreamEvent type
+│   └── matchers/
+│       └── store.test.ts         ← verify custom matchers pass/fail correctly
+├── vitest.config.ts
+├── package.json
+└── tsconfig.json
+```
+
+## Consumer patterns
+
+### Pure TypeScript package (integrity-validator)
+
+```typescript
+// vitest.config.ts
+import { defineConfig } from "vitest/config";
+import { baseConfig } from "@orqastudio/test-config/config";
+export default defineConfig(baseConfig);
+
+// check.test.ts
+import { createTestGraph, createTestNode } from "@orqastudio/test-config/builders";
+import { checkBrokenLinks } from "@orqastudio/integrity-validator";
+
+it("detects broken refs", () => {
+  const graph = createTestGraph([
+    createTestNode({ id: "TASK-855582b4", frontmatter: { epic: "EPIC-999" } }),
+  ]);
+  const findings = checkBrokenLinks(graph);
+  expect(findings).toHaveLength(1);
+  expect(findings[0].category).toBe("BrokenLink");
+});
+```
+
+### Svelte store package (SDK)
+
+```typescript
+// vitest.config.ts
+import { defineConfig } from "vitest/config";
+import { svelteConfig } from "@orqastudio/test-config/config";
+export default defineConfig(svelteConfig);
+
+// session.test.ts
+import { mockInvokeFactory, setupTauriMocks } from "@orqastudio/test-config/mocks";
+
+const { mockInvoke } = setupTauriMocks();
+
+it("loads sessions from backend", async () => {
+  mockInvoke.mockResolvedValueOnce([{ id: 1, title: "Test" }]);
+  await sessionStore.loadSessions(1);
+  expect(sessionStore.sessions).toHaveLength(1);
+});
+```
+
+### Component package (future)
+
+```typescript
+import { svelteConfig } from "@orqastudio/test-config/config";
+import { render, screen } from "@testing-library/svelte";
+import EmptyState from "./EmptyState.svelte";
+
+it("renders title and description", () => {
+  render(EmptyState, { props: { title: "No items", description: "Add one" } });
+  expect(screen.getByText("No items")).toBeInTheDocument();
+});
+```
+
+## Self-testing strategy
+
+The test framework itself must be tested because it's foundation code:
+
+| What to test | Why |
+|-------------|-----|
+| `mockInvoke` factory | Verify it correctly captures calls, supports mockResolvedValueOnce, resets cleanly |
+| `MockChannel.emit()` | Verify callback is called, verify typing, verify error on no listener |
+| `createTestNode()` defaults | Verify all required fields have sensible defaults, verify overrides work |
+| `createTestGraph()` back-refs | Verify referencesIn is populated from referencesOut |
+| Custom matchers | Verify they pass when expected and fail with clear messages when not |
+
+The framework uses vitest to test itself — no circular dependency since vitest is a devDependency, not part of the package's runtime.
+
+## Dependencies
+
+```json
+{
+  "peerDependencies": {
+    "vitest": ">=3.0.0"
+  },
+  "dependencies": {
+    "@orqastudio/types": "workspace:*"
+  },
+  "optionalDependencies": {
+    "@testing-library/svelte": ">=5.0.0",
+    "@tauri-apps/api": ">=2.0.0",
+    "svelte": ">=5.0.0"
+  }
+}
+```
+
+Optional dependencies mean pure TS packages don't need Svelte or Tauri installed — they only import from `@orqastudio/test-config/builders` and `@orqastudio/test-config/config`.
+
+## Versioning with the ecosystem
+
+The test framework version should track the types package version since builders depend on type shapes. When `@orqastudio/types` adds a new field, the builders need updating. This argues for either:
+
+1. **Lockstep versioning** — all packages share a version number
+2. **Semver with peer dependency ranges** — test-config declares `@orqastudio/types: "^0.1.0"`
+
+Recommendation: **semver with ranges** — simpler and standard. Lockstep is unnecessary overhead for packages that change at different rates.

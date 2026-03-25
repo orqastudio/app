@@ -13,7 +13,7 @@ The `.claude/` directory is NOT a standalone configuration. It is a set of **sym
 | `agents/` | `process/agents/` | All agent definitions (orchestrator, planner, implementer, etc.) |
 
 This means:
-- Editing a rule in `.claude/rules/RULE-532100d9.md` edits the OrqaStudio artifact
+- Editing a rule in `.claude/rules/RULE-87ba1b81.md` edits the OrqaStudio artifact
 - Rules have structured YAML frontmatter with `enforcement` arrays
 - Agent definitions follow OrqaStudio's agent artifact schema
 
@@ -29,10 +29,10 @@ orqa graph --stats
 orqa graph --type epic --status active
 
 # Show a specific artifact with all its relationships
-orqa graph --id EPIC-2362adfc
+orqa graph --id EPIC-2867fe9a
 
 # Find artifacts related to a specific one
-orqa graph --related-to PILLAR-569581e0
+orqa graph --related-to PILLAR-c9e0a695
 
 # Search by title
 orqa graph --search "plugin"

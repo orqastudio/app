@@ -1,0 +1,295 @@
+---
+id: "RES-a4f9dc97"
+type: research
+title: "Relationship & Metadata Display UX"
+description: "UX review of how artifacts present their relationships, pipeline stage, and metadata to users. Given the revised process/delivery/documentation structure and knowledge maturity pipeline philosophy, how should this information be surfaced in the app?"
+status: "completed"
+created: "2026-03-13"
+updated: "2026-03-13"
+sources: []
+relationships:
+  - target: "EPIC-88f359b0"
+    type: "guides"
+    rationale: "Research findings informed epic design"
+---
+## Research Questions
+
+1. **What relationship information matters to users?** Not all edges are equally interesting. Which relationships should be prominent, which should be discoverable, and which are internal bookkeeping?
+
+2. **How should pipeline stage be represented?** An artifact's position in the knowledge maturity pipeline (observation → understanding → principle → practice → enforcement → verification) tells a story. How do we make that story visible without cluttering the UI?
+
+3. **What's wrong with the current metadata display?** Audit the existing artifact detail views — what information is shown, what's missing, what's misleading?
+
+4. **How should bidirectional relationships render?** If [RULE-9814ec3c](RULE-9814ec3c) is `grounded` in [AD-48b310f9](AD-48b310f9), and [AD-48b310f9](AD-48b310f9) has `enforced-by` [RULE-9814ec3c](RULE-9814ec3c) — do both sides show the same thing? Different things? How do we avoid redundant noise while maintaining traceability?
+
+5. **What does relationship navigation look like?** Can users click through relationships? Is there a graph view? A breadcrumb trail? What's the right interaction model?
+
+6. **How should the three-level structure (process/delivery/documentation) influence layout?** The directory reorganization groups artifacts by function. Should the app's navigation mirror this, or present a different view?
+
+## Scope
+
+This is a UX research document, not a bug fix list. It should produce design recommendations that inform a future implementation epic. The output is suggestions and wireframes (textual), not code.
+
+---
+
+## Findings
+
+### Finding 1: What Relationship Information Matters to Users
+
+#### What Exists Today
+
+The codebase has two separate relationship rendering mechanisms operating at different levels:
+
+**`RelationshipsList` (frontmatter-level semantic relationships):** Renders the `relationships[]` array from artifact frontmatter. Each entry has `type`, `target`, `rationale`, and optional `intended`. Types are: `observes`, `observed-by`, `grounded`, `grounded-by`, `grounded-by`, `grounded`, `enforces`, `enforced-by`, `enforces`, `enforced-by`, `informs`, `informed-by`. Rendered as grouped rows inside the metadata card: `[Grounded] → [AD-7121ec20](AD-7121ec20)  [AD-09fc4e65](AD-09fc4e65)` with rationale on hover.
+
+**`ReferencesPanel` (graph-level field references):** A collapsible panel above the content area showing "Referenced by" and "References" — computed from the artifact graph's `references_in` and `references_out`. These are ALL fields that happen to contain artifact IDs (e.g., `epic: [EPIC-d45b4dfd](EPIC-d45b4dfd)` on a task, `research-refs: [RES-22e4c59c]` on an epic). The panel says "Relationships (N)" but it's actually showing field references, not semantic relationships.
+
+#### The Signal-vs-Noise Problem
+
+Looking at [RULE-87ba1b81](RULE-87ba1b81) in `.orqa/process/rules/[RULE-87ba1b81](RULE-87ba1b81).md`, it has 9 relationships: one `grounded` (to PILLAR-c9e0a695), multiple `informs` (to other rules), and multiple `informed-by` (from other rules). If all 9 render equally, the card becomes a wall of cyan chips.
+
+The relationship types break down into three user intent categories:
+
+| Category | Relationship Types | User Value | Prominence |
+|---|---|---|---|
+| **Pipeline positioning** | `grounded`, `grounded-by`, `observed-by` | "Why does this artifact exist? What authorized it?" | High — essential context |
+| **Downstream consequences** | `enforces`, `enforced-by`, `enforces`, `enforced-by`, `grounded-by`, `grounded` | "What does this artifact drive? What checks it?" | Medium — important for compliance |
+| **Lateral context** | `informs`, `informed-by`, `observes` | "Related reading, not decision chain" | Low — discoverable on demand |
+
+The `informs`/`informed-by` relationships are particularly noisy. [RULE-87ba1b81](RULE-87ba1b81) has five of these. They are informative but not structurally significant — they're essentially "related rules" links.
+
+#### Recommendations
+
+- **Split by intent, not by alphabetical type.** Show "Grounded in" prominently (pipeline anchor). Collapse `informs`/`informed-by` into a collapsible "Related" section.
+- **The `target: null` case matters.** The current rendering correctly shows "unresolved" (amber warning) vs. "intentional gap" (muted chip). This is valuable — keep it but make it clearer: "No target found" vs. "Gap acknowledged".
+- **Rationale on hover is the right pattern.** The tooltip for rationale text is good UX — it keeps the main view clean without hiding context entirely.
+
+---
+
+### Finding 2: How Pipeline Stage Should Be Represented
+
+#### The Pipeline Model
+
+The knowledge maturity pipeline has six stages, mapped to artifact types as follows:
+
+| Stage | Artifact Types | Schema Fields |
+|---|---|---|
+| **Observation** | Lesson (`maturity: observation`) | `recurrence`, relationships to Pillar |
+| **Understanding** | Lesson (`maturity: understanding`) | `grounded` relationship to Decision required |
+| **Principle** | Decision (AD) | `grounded-by` + `enforces` relationships expected |
+| **Practice** | Skill (SKILL) | `grounded` relationship — to Pillar for methodology, Decision for domain |
+| **Enforcement** | Rule (RULE) | `grounded` relationship required |
+| **Verification** | Verification (VER) | `enforces` field pointing to RULE/AD/SKILL |
+
+Pillars sit outside the linear pipeline — they are the foundation that principles and observations connect to.
+
+#### What the UI Does Today
+
+The `maturity` field on lessons renders via the generic "chip" renderer as a styled badge (`observation` or `understanding`). There is no visual indication of pipeline stage on Rules, Decisions, or Skills. A user reading a RULE artifact has no visual cue that they are looking at an "Enforcement" stage artifact.
+
+The `FrontmatterHeader` skips `relationships` from the `bodyEntries` loop (it's in `SKIP_FIELDS`) and renders it through `RelationshipsList` separately. So the pipeline connections are present but not framed as "pipeline context".
+
+#### The Story Being Missed
+
+When a user reads [IMPL-91d951b6](IMPL-91d951b6) (a promoted lesson), the relationships show:
+- `grounded` → [PILLAR-c9e0a695](PILLAR-c9e0a695)
+- `grounded-by` → [RULE-63cc16ad](RULE-63cc16ad)
+- `observed-by` → [RULE-63cc16ad](RULE-63cc16ad)
+- `informed-by` → [IMPL-286bdc1f](IMPL-286bdc1f)
+
+What the user should be able to understand: "This was an observation that became an understanding, which grounded [RULE-63cc16ad](RULE-63cc16ad)." The pipeline story is there in the relationships data, but it's not told as a story — it's rendered as a flat list of type-grouped chips.
+
+#### Recommendations
+
+- **Add a "Pipeline Stage" indicator to process-layer artifacts.** For lessons, render `maturity` prominently (not buried as a generic chip). For Rules, add the stage "Enforcement" derived from artifact type. This doesn't require a new schema field — it can be derived from artifact type + schema position.
+- **The pipeline position should be a banner, not a chip.** Consider a colored indicator strip or a "breadcrumb" style pipeline display: `Observation → Understanding → Principle → Practice → Enforcement ← (you are here) → Verification`. This is a one-time UX investment with high contextual value.
+- **Show the "promoted from" and "promoted to" chain for lessons.** When `status: promoted` and a `grounded-by` relationship exists pointing to a RULE, surface that as "Promoted to [RULE-63cc16ad](RULE-63cc16ad)" next to the status badge. The current rendering buries this in the relationships list.
+- **Keep it opt-in for delivery artifacts.** Epics, Tasks, Ideas, and Research do not participate in the knowledge maturity pipeline. They should not show pipeline stage UI.
+
+---
+
+### Finding 3: What's Wrong with the Current Metadata Display
+
+#### Audit of FrontmatterHeader
+
+**What works well:**
+- The fixed header row (ID, status, priority, dates) is clean and consistently rendered.
+- `StatusIndicator` correctly maps all status values to color-coded badges with icons.
+- The LINK_FIELDS set correctly identifies artifact ID fields and renders them as clickable ArtifactLink chips.
+- The `gate` field renders as an italicized blockquote (GateQuestions) — good visual distinction.
+- Relationships render last in the card, after body entries — reasonable ordering.
+
+**Problems identified:**
+
+1. **"Relationships" renders in the metadata card, then `ReferencesPanel` renders above the content as a separate collapsible.** Both say "Relationships" to the user. They are different data sources. The `ReferencesPanel` shows graph-level field references (which fields point where), while `RelationshipsList` shows semantic pipeline relationships. This is confusing — a user reading a rule artifact sees "Relationships (8)" in the panel above, then scrolls down to see another "Relationships" section in the card. Two different things with the same label.
+
+2. **Generic field rendering is too literal.** The `scoring` field is skipped (in `SKIP_FIELDS`), but fields like `recurrence` render as a chip badge with the label "Recurrence". For a lesson, `recurrence: 3` means "this pattern has been observed 3 times" — the number has meaning that the chip doesn't convey. It needs context ("Recurrence: 3 times").
+
+3. **The `tools` field on agents filters out `mcp__*` tools but renders the rest as generic badges.** The comment says "human-friendly labels" but many tools still render with their raw technical names if they're not in the `TOOL_LABELS` map (e.g., `load_skill`, `web_search` would render as "Load Skill", "Web Search" — actually fine, but there's no fallback label for Tauri commands that don't match the map).
+
+4. **Date display is inconsistent.** Created/updated dates render as `CalendarPlusIcon + "Jan 5"` chips in the header row, but `deadline` renders in the body via `fieldType("deadline") → "date"` → full formatted date string. The deadline is less visible than creation/updated dates, which is the wrong priority order.
+
+5. **The `bodyEntries` loop renders ALL remaining fields in YAML source order.** This means a task's `acceptance` array (the most user-relevant content) renders in whatever order it appears in the frontmatter. There's no semantic grouping. For a task, users need: "What does this do? → acceptance criteria" as the first thing, not `epic: [EPIC-2bf6887a](EPIC-2bf6887a)` followed by `depends-on: [...]` followed by `acceptance: [...]`.
+
+6. **CHIP_FIELDS only has `layer`, `model`, `recurrence`.** Fields like `category` on skills (methodology/domain/tool) and `evidence-type` on verifications render as generic text rather than styled chips. These are enums with meaningful visual differentiation.
+
+7. **`null` values are correctly filtered via `isPresent()`, but empty arrays display nothing.** If `relationships: []` exists in frontmatter, it silently disappears. This is correct behavior but could mislead — a user can't tell if relationships are empty vs. missing.
+
+---
+
+### Finding 4: How Bidirectional Relationships Should Render
+
+#### The Problem
+
+The knowledge maturity pipeline uses bidirectional relationship types by design. When [RULE-87ba1b81](RULE-87ba1b81) has `{ type: "informs", target: "[RULE-dd5b69e6](RULE-dd5b69e6)" }`, [RULE-dd5b69e6](RULE-dd5b69e6) should have `{ type: "informed-by", target: "[RULE-87ba1b81](RULE-87ba1b81)" }`. Both sides declare the relationship explicitly in their frontmatter.
+
+Looking at [RULE-87ba1b81](RULE-87ba1b81)'s frontmatter, it has both:
+- `{ type: "informs", target: [RULE-dd5b69e6](RULE-dd5b69e6) }` (explicit forward declaration)
+- `{ type: "informed-by", target: [RULE-dd5b69e6](RULE-dd5b69e6) }` (explicit inverse declaration)
+- AND `{ type: "informed-by", target: [RULE-8abcbfd5](RULE-8abcbfd5) }` (another explicit inverse)
+
+This means the user reading [RULE-87ba1b81](RULE-87ba1b81) sees both sides of every relationship it participates in. The current `RelationshipsList` groups by type, so a user sees:
+```
+[Informs]     RULE-dd5b69e6  RULE-5965256d  RULE-5dd9decd  RULE-b723ea53  RULE-8abcbfd5
+[Informed By] RULE-dd5b69e6  RULE-ef822519  RULE-b723ea53  RULE-8abcbfd5
+```
+
+[RULE-dd5b69e6](RULE-dd5b69e6) and [RULE-b723ea53](RULE-b723ea53) and [RULE-8abcbfd5](RULE-8abcbfd5) appear in BOTH groups. This is technically correct (different directions of the same relationship), but visually it looks like duplication and creates cognitive load.
+
+Meanwhile, `ReferencesPanel` also computes references from the graph's `references_out` (which includes the `relationships[].target` fields). So [RULE-dd5b69e6](RULE-dd5b69e6) appears in both the panel above and the card below — tripling the apparent repetition.
+
+#### The Core UX Question
+
+**Option A: Show both directions (current behavior).** A user on [RULE-87ba1b81](RULE-87ba1b81) sees the full picture: what it informs and what informs it. Technically complete. Visually noisy.
+
+**Option B: Show only outgoing relationships, rely on the graph panel for incoming.** The `ReferencesPanel` already shows "Referenced by" (incoming backlinks). So the `RelationshipsList` could show only `informs`, `grounded`, `enforces`, `enforces` (outgoing types) and let the panel handle the `informed-by`, `grounded-by`, etc. But the panel doesn't know relationship types — it just knows that field X in artifact Y points to this artifact.
+
+**Option C: Merge the two views.** Show a unified "Connections" section that combines semantic relationship type with graph directionality. Incoming semantic relationships (the `*-by` types) are shown differently from outgoing ones. The `ReferencesPanel` is retired.
+
+#### Recommendations
+
+**Adopt Option C with a phased approach.** The current split between `ReferencesPanel` (field references) and `RelationshipsList` (semantic relationships) is a source of confusion. They should be unified into a single "Connections" section.
+
+Proposed unified view structure:
+```
+Connections
+  This artifact →
+    [Grounds] →  PILLAR-c9e0a695 (with rationale tooltip)
+    [Informs] →  RULE-dd5b69e6  RULE-5965256d  RULE-5dd9decd
+  → This artifact
+    [Referenced by field "epic"] →  TASK-154e988e  TASK-25e35dfc  TASK-edeea471
+    [Referenced by field "research-refs"] →  EPIC-2bf6887a
+```
+
+The key distinction:
+- **Semantic outgoing** (declared `relationships[]` with non-`-by` types): what this artifact intentionally points to
+- **Field references in** (from `ReferencesPanel` data): what other artifacts have put this artifact's ID in their fields
+- **Semantic incoming** (`-by` types): explicitly declared inverses — these should be visually de-emphasized since the information is redundant with "Referenced by"
+
+The explicitly declared `-by` relationship entries should be shown as "acknowledged inverses" rather than primary content. A small note like "(see [RULE-dd5b69e6](RULE-dd5b69e6)'s relationships for the full picture)" serves better than rendering both directions with equal weight.
+
+---
+
+### Finding 5: What Relationship Navigation Should Look Like
+
+#### What Exists Today
+
+**Click-through navigation** works for any `ArtifactLink` chip — clicking navigates the viewer to that artifact. This is correct and should be preserved.
+
+**No breadcrumb trail for relationship navigation.** Once you click through a relationship from [RULE-87ba1b81](RULE-87ba1b81) to [RULE-dd5b69e6](RULE-dd5b69e6), the breadcrumb shows `Rules > Agent Delegation` (the current artifact), not `Rules > Agent Delegation > Skill Enforcement`. There's no history of how you arrived.
+
+**No graph view.** The artifact graph data exists in `artifactGraphSDK` with all nodes and edges, but there is no visual graph rendering. Users can only navigate linearly.
+
+**The `ArtifactMasterDetail` layout** is fixed: a 240px list on the left, viewer on the right. This works well for linear browsing but creates a jarring "jump" when clicking relationship links — the list stays on "Rules" but the viewer suddenly shows a PILLAR or another RULE.
+
+#### Navigation Mental Models
+
+For relationship browsing, users have two mental models:
+
+1. **Drill-down**: I want to understand why this rule exists → click `grounded` → see the decision → click `grounded-by` → see the skill that implements it. Each click goes deeper.
+
+2. **Survey**: I want to see what depends on this pillar → scan all incoming enforcement relationships → get a list of rules that ground in it.
+
+The current click-through model supports drill-down but not survey. For survey behavior, users need either a graph view or a filtered list view ("show all rules grounded in [PILLAR-c9e0a695](PILLAR-c9e0a695)").
+
+#### Recommendations
+
+**Near-term (no new infrastructure required):**
+- Add relationship-link navigation history in the breadcrumb. When a user clicks through from [RULE-87ba1b81](RULE-87ba1b81)'s `grounded` relationship to [PILLAR-c9e0a695](PILLAR-c9e0a695), the breadcrumb should show `Rules > [RULE-87ba1b81](RULE-87ba1b81) > [PILLAR-c9e0a695](PILLAR-c9e0a695)`. A "back" button or clickable history segment returns them.
+- Show a count badge on relationship types when count > 1. `[Informs] (5) ▸` with expand-on-click is cleaner than always showing all 5 chips inline.
+
+**Medium-term:**
+- Add a "Where is this used?" section to process-layer artifacts (Pillars, Decisions, Rules). This answers the survey question: "What artifacts reference this?" Using `referencesTo()` from the graph SDK, this is already technically available.
+- Consider a `RelatedArtifacts` panel that shows the 3-5 most relevant connected artifacts with their type labels and titles (not just IDs). The current chips show only the ID — resolving the title from `artifactGraphSDK.resolve(id)` would make the connection more readable without requiring a click.
+
+**Long-term:**
+- A graph view for process-layer artifacts is compelling but significant. The data is available. The interaction model (pan, zoom, click-to-focus) requires substantial frontend work. Defer to a dedicated epic. The immediate wins from breadcrumb history and survey queries are higher ROI.
+
+---
+
+### Finding 6: How the Three-Level Structure Should Influence Layout
+
+#### The Structure
+
+`project.json` organizes artifacts into three top-level groups:
+- **Process** (learning machine): pillars, lessons, decisions, rules, skills, agents
+- **Delivery** (work pipeline): ideas, research, milestones, epics, tasks, verification
+- **Documentation** (human layer): guide, product, architecture, development, process, ui, wireframes
+
+These groups are used for navigation via the sidebar activity switcher. The `ArtifactMasterDetail` component renders within each group's context.
+
+#### Current Navigation Behavior
+
+The sidebar shows group-level navigation. Within each group, `ArtifactNav` renders a flat list or tree of artifacts for the selected sub-category. The structure is visible but there is no cross-group contextual cue. When viewing [RULE-87ba1b81](RULE-87ba1b81) (Process layer), nothing tells the user "this was informed by decisions in the Process layer and is verified by records in the Delivery layer."
+
+The README files for each group (`process/README.md`, `delivery/README.md`) describe what the layer is for, but this content only appears when navigating to the README — not as persistent context when viewing an artifact within the layer.
+
+#### Cross-Layer Navigation Is Invisible
+
+The most significant structural gap: the pipeline flows **across** the three layers. A lesson (Process) can have a `enforced-by` relationship pointing to a VER (Delivery). A rule (Process) can have `grounded-by` pointing to skills (Process) that are used during epic implementation (Delivery). A user browsing Process artifacts has no visual indication when a relationship link crosses into the Delivery layer.
+
+The `ArtifactLink` chip shows the ID (e.g. `VER-NNN`) but not the layer. Clicking it navigates the viewer to that artifact, but the sidebar stays on "Process" even though you're now viewing a Delivery artifact. This context mismatch could be disorienting.
+
+#### Recommendations
+
+**The three-level structure is functionally correct — it should be surfaced, not hidden.**
+
+1. **Add layer indicators to artifact chips.** When an `ArtifactLink` chip resolves to an artifact in a different layer, show a small layer tag (e.g. `VER-NNN [delivery]`) or use color coding (Process = purple, Delivery = teal, Documentation = slate). This makes cross-layer relationships legible at a glance.
+
+2. **The sidebar context should follow artifact navigation.** When clicking a relationship link navigates to a Delivery artifact, the sidebar should update to show the Delivery group context. Currently `navigationStore` handles this via `navigateToArtifact`, but it's unclear if the sidebar activity indicator updates. This should be verified and, if not working, fixed.
+
+3. **Keep the Master-Detail layout as the primary pattern.** The 240px-list + viewer split is appropriate for all three layers. The distinction between layers is better handled by the top-level activity switcher and contextual cues within the viewer, not by fundamentally different layouts.
+
+4. **README landing pages for groups are underused.** When a group is selected and no artifact is open, the README auto-loads (this is implemented in `ArtifactMasterDetail`). These READMEs should be written to orient users — explaining the layer's purpose, its relationship to the other layers, and what the pipeline flow looks like from this layer's perspective. This is a documentation improvement, not a code change.
+
+5. **Do not mirror the three-layer structure with separate navigation sections.** The current single-level activity switcher (Process / Delivery / Docs) is correct. A nested navigation with "Process > Rules > [RULE-87ba1b81](RULE-87ba1b81)" already works via the master-detail pattern. Adding more levels would over-complicate navigation without improving orientation.
+
+---
+
+## Recommendations Summary
+
+### High Priority (foundational clarity)
+
+1. **Rename `ReferencesPanel` to "Used By" and reposition it.** The panel currently labels itself "Relationships" — rename to "Used By" or "Referenced By", and clarify that it shows field references from the graph, not semantic pipeline relationships. Alternatively, merge it with `RelationshipsList` into a unified "Connections" view (see Finding 4, Option C).
+
+2. **Show pipeline stage prominently on process-layer artifacts.** Add a derived "stage" display to Lessons (using `maturity`), Rules (always "Enforcement"), Decisions (always "Principle"), Skills (always "Practice"), Pillars (always "Foundation"). This is a thin derived layer on top of what already exists.
+
+3. **Fix the promoted-lesson display.** When a lesson has `status: promoted` and a `grounded-by` relationship to a RULE, render "Promoted to [RULE-63cc16ad](RULE-63cc16ad)" inline with the status badge, not buried in the relationships list.
+
+### Medium Priority (usability improvements)
+
+4. **Group relationships by semantic intent, not type name.** Show "Pipeline Anchor" (`grounded`, `grounded-by`) first, "Downstream" (`enforces`, `enforces`, `grounded-by`, `enforced-by`, `enforced-by`, `grounded`) second, and "Related" (`informs`, `informed-by`, `observes`, `observed-by`) as a collapsible third group.
+
+5. **Add layer context to ArtifactLink chips for cross-layer links.** A small label or color when a link crosses layer boundaries (Process ↔ Delivery) prevents navigation disorientation.
+
+6. **Add relationship navigation history to breadcrumbs.** When a user clicks through a relationship link, the breadcrumb trail should record the path so they can navigate back.
+
+7. **Prioritize metadata fields by semantic importance.** For each artifact type, define a `displayOrder` that puts the most user-relevant fields first (e.g., `acceptance` before `depends-on` for tasks, `maturity` before `recurrence` for lessons).
+
+### Lower Priority (polish)
+
+8. **Show artifact titles alongside IDs in relationship chips.** `[RULE-63cc16ad](RULE-63cc16ad) "Artifact Config Integrity"` is more readable than `[RULE-63cc16ad](RULE-63cc16ad)`. Titles are available via `artifactGraphSDK.resolve(id)?.title`. A tooltip is the minimum; inline title display is better.
+
+9. **Add a "Where is this used?" section to pillars and decisions.** These are foundation artifacts — showing what rules, skills, and lessons are grounded in them completes the picture without requiring a full graph view.
+
+10. **Clarify recurrence display for lessons.** `recurrence: 3` should render as "Seen 3 times" or "Recurrence: 3×" rather than a generic chip. The number has narrative weight.

@@ -1,5 +1,5 @@
 ---
-id: "RULE-9daf29c0"
+id: "RULE-ec9462d8"
 type: rule
 title: "Documentation-First Implementation"
 description: "Documentation is the source of truth. Verify docs exist before writing code; update docs before changing code."
@@ -10,7 +10,7 @@ enforcement:
   - mechanism: behavioral
     message: "Documentation is the source of truth; verify docs exist before writing code; update docs before changing code; orchestrator checks docs-required gate before delegating implementation"
 relationships:
-  - target: "AD-1d928079"
+  - target: "AD-af88bb69"
     type: "enforces"
 ---
 ## Principle
@@ -86,13 +86,13 @@ The artifact framework enforces documentation at two points:
 
 These fields are defined on every epic. The orchestrator checks `docs-required` before starting work, and the code-reviewer verifies `docs-produced` during the review gate.
 
-See [RULE-7b770593](RULE-7b770593) (artifact-lifecycle) for enforcement details and `.orqa/documentation/guide/artifact-workflow.md` for the full workflow.
+See [RULE-b10fe6d1](RULE-b10fe6d1) (artifact-lifecycle) for enforcement details and `.orqa/documentation/guide/artifact-workflow.md` for the full workflow.
 
 ## Related Rules
 
-- [RULE-7b770593](RULE-7b770593) (artifact-lifecycle) — artifact creation, status transitions, documentation gates
-- [RULE-303c1cc8](RULE-303c1cc8) (plan-mode-compliance) — plan structure requirements
-- [RULE-5e03e67b](RULE-5e03e67b) (code-search-usage) — using code_research for documentation discovery
-- [RULE-1e8a1914](RULE-1e8a1914) (vision-alignment) — pillar alignment and governance
-- [RULE-65973a88](RULE-65973a88) (architecture-decisions) — architecture decision compliance
-- [RULE-b49142be](RULE-b49142be) (coding-standards) — function size, typing, coverage requirements
+- [RULE-b10fe6d1](RULE-b10fe6d1) (artifact-lifecycle) — artifact creation, status transitions, documentation gates
+- [RULE-dccf4226](RULE-dccf4226) (plan-mode-compliance) — plan structure requirements
+- [RULE-0d29fc91](RULE-0d29fc91) (code-search-usage) — using code_research for documentation discovery
+- [RULE-1b238fc8](RULE-1b238fc8) (vision-alignment) — pillar alignment and governance
+- [RULE-05ae2ce7](RULE-05ae2ce7) (architecture-decisions) — architecture decision compliance
+- [RULE-9814ec3c](RULE-9814ec3c) (coding-standards) — function size, typing, coverage requirements

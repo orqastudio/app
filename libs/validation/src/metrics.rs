@@ -501,47 +501,48 @@ fn compute_pillar_traceability(graph: &ArtifactGraph, primary_ids: &[&str]) -> f
     (traceable as f64 / non_doc_count as f64) * 100.0
 }
 
-/// Compute the fraction of typed relationship edges that have their inverse present.
+/// Compute the fraction of typed relationship edges whose type has a schema-defined inverse.
 ///
-/// Only considers edges with a `relationship_type` set (relationship-array edges).
+/// Under forward-only storage, inverse edges are computed at query time by the
+/// graph engine (Pass 2) rather than stored in artifact files. This metric
+/// therefore counts whether the relationship *schema* defines an inverse for
+/// each edge's type — not whether a stored inverse edge exists.
 fn compute_bidirectionality_ratio(graph: &ArtifactGraph, primary_ids: &[&str]) -> f64 {
-    // Build a set of (source_id, target_id, rel_type) for quick lookup.
-    let edge_set: HashSet<(String, String, String)> = primary_ids
+    // Build the set of relationship types that have a schema-defined inverse.
+    let inverse_map: HashMap<String, String> = crate::platform::PLATFORM
+        .relationships
         .iter()
-        .filter_map(|id| graph.nodes.get(*id))
-        .flat_map(|node| {
-            node.references_out.iter().filter_map(|r| {
-                r.relationship_type
-                    .as_ref()
-                    .map(|rt| (node.id.clone(), r.target_id.clone(), rt.clone()))
-            })
+        .flat_map(|rel| {
+            let mut pairs = vec![(rel.key.clone(), rel.inverse.clone())];
+            if rel.inverse != rel.key {
+                pairs.push((rel.inverse.clone(), rel.key.clone()));
+            }
+            pairs
         })
         .collect();
 
-    // Build inverse map from platform config.
-    let mut inverse_map: HashMap<String, String> = HashMap::new();
-    for rel in &crate::platform::PLATFORM.relationships {
-        inverse_map.insert(rel.key.clone(), rel.inverse.clone());
-        if rel.inverse != rel.key {
-            inverse_map.insert(rel.inverse.clone(), rel.key.clone());
+    // Count typed relationship edges and those with a schema-defined inverse.
+    let mut total: usize = 0;
+    let mut with_inverse: usize = 0;
+
+    for id in primary_ids {
+        let Some(node) = graph.nodes.get(*id) else {
+            continue;
+        };
+        for ref_entry in &node.references_out {
+            let Some(rel_type) = ref_entry.relationship_type.as_deref() else {
+                continue;
+            };
+            total += 1;
+            if inverse_map.contains_key(rel_type) {
+                with_inverse += 1;
+            }
         }
     }
 
-    let total = edge_set.len();
     if total == 0 {
         return 1.0; // vacuously true
     }
 
-    let bidirectional = edge_set
-        .iter()
-        .filter(|(source, target, rel_type)| {
-            if let Some(inverse) = inverse_map.get(rel_type.as_str()) {
-                edge_set.contains(&(target.clone(), source.clone(), inverse.clone()))
-            } else {
-                false
-            }
-        })
-        .count();
-
-    bidirectional as f64 / total as f64
+    with_inverse as f64 / total as f64
 }

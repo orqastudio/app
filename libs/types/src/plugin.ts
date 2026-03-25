@@ -459,7 +459,7 @@ export interface EnforcementMechanism {
 export interface BundledAgentRef {
 	/** Short key (hex fragment of the agent ID). */
 	key: string;
-	/** Full artifact ID (e.g. "AGENT-1dab5ebe"). */
+	/** Full artifact ID (e.g. "AGENT-4c94fe14"). */
 	id: string;
 	/** Relative path to the agent markdown file within the plugin. */
 	path?: string;
@@ -469,7 +469,7 @@ export interface BundledAgentRef {
 export interface BundledKnowledgeRef {
 	/** Short key (hex fragment or semantic slug). */
 	key: string;
-	/** Full artifact ID (e.g. "KNOW-85e392ea"). */
+	/** Full artifact ID (e.g. "KNOW-83039175"). */
 	id: string;
 	/** Optional human-readable label. */
 	label?: string;

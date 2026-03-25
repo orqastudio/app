@@ -68,7 +68,7 @@ if (activeTasks.length > 0) {
 }
 
 // Check session state
-const sessionStatePath = resolve(ROOT, "tmp/session-state.md");
+const sessionStatePath = resolve(ROOT, ".state/session-state.md");
 if (existsSync(sessionStatePath)) {
   console.log("\nSESSION STATE EXISTS:");
   const content = readFileSync(sessionStatePath, "utf-8");
@@ -81,7 +81,7 @@ if (existsSync(sessionStatePath)) {
     console.log("  ...");
   }
 } else {
-  console.log("\n  No session state file (tmp/session-state.md).");
+  console.log("\n  No session state file (.state/session-state.md).");
 }
 
 // Check git log for recent commit context

@@ -952,13 +952,13 @@
     "agents": [
       {
         "key": "e7f3a2c9",
-        "id": "AGENT-e7f3a2c9",
-        "path": "agents/AGENT-e7f3a2c9.md"
+        "id": "AGENT-7a06d10e",
+        "path": "agents/AGENT-7a06d10e.md"
       },
       {
         "key": "ff44f841",
-        "id": "AGENT-ff44f841",
-        "path": "agents/AGENT-ff44f841.md"
+        "id": "AGENT-ae63c406",
+        "path": "agents/AGENT-ae63c406.md"
       }
     ],
     "views": [],
@@ -1283,17 +1283,17 @@
     "knowledge": [
       {
         "key": "85e392ea",
-        "id": "KNOW-85e392ea",
+        "id": "KNOW-83039175",
         "label": "Thinking Mode: Learning Loop"
       },
       {
         "key": "8d1c4be6",
-        "id": "KNOW-8d1c4be6",
+        "id": "KNOW-0444355f",
         "label": "Plugin Artifact Usage"
       },
       {
         "key": "8d76c3c7",
-        "id": "KNOW-8d76c3c7",
+        "id": "KNOW-8c359ea4",
         "label": "Governance Maintenance"
       }
     ],

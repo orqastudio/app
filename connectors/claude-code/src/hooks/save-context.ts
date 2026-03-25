@@ -1,11 +1,11 @@
 // PreCompact hook — all matchers
 //
 // Thin adapter: calls POST /query for active epics and tasks, then writes
-// tmp/governance-context.md and returns a systemMessage summarising what was preserved.
+// .state/governance-context.md and returns a systemMessage summarising what was preserved.
 
 import { writeFileSync, readFileSync, existsSync, mkdirSync, statSync } from "fs";
 import { join } from "path";
-import { readInput, callDaemon, outputAllow } from "./shared.js";
+import { readInput, callDaemon } from "./shared.js";
 import { logTelemetry } from "./telemetry.js";
 
 interface QueryResult {
@@ -23,7 +23,7 @@ async function main(): Promise<void> {
   }
 
   const projectDir = hookInput.cwd ?? process.env["CLAUDE_PROJECT_DIR"] ?? ".";
-  const tmpDir = join(projectDir, "tmp");
+  const tmpDir = join(projectDir, ".state");
 
   if (!existsSync(tmpDir)) {
     mkdirSync(tmpDir, { recursive: true });
@@ -101,7 +101,7 @@ async function main(): Promise<void> {
       ? `Active tasks: ${activeTasks.map((t) => `${t.id} [${t.status ?? "active"}]`).join(", ")}`
       : "No active tasks",
     "",
-    "Full context saved to tmp/governance-context.md — re-read after compaction.",
+    "Full context saved to .state/governance-context.md — re-read after compaction.",
   ].join("\n");
 
   process.stdout.write(JSON.stringify({ systemMessage: summary }));

@@ -25,13 +25,13 @@
     "agents": [
       {
         "key": "b0857607",
-        "id": "AGENT-b0857607",
-        "path": "agents/AGENT-b0857607.md"
+        "id": "AGENT-6f55de0d",
+        "path": "agents/AGENT-6f55de0d.md"
       },
       {
         "key": "b2f574e5",
-        "id": "AGENT-b2f574e5",
-        "path": "agents/AGENT-b2f574e5.md"
+        "id": "AGENT-5de8c14f",
+        "path": "agents/AGENT-5de8c14f.md"
       }
     ],
     "schemas": [],
@@ -69,64 +69,64 @@
     "knowledge": [
       {
         "key": "1c708b68",
-        "id": "KNOW-1c708b68",
+        "id": "KNOW-50382247",
         "label": "Svelte 5 Best Practices"
       },
       {
         "key": "344a1247",
-        "id": "KNOW-344a1247",
+        "id": "KNOW-abb08445",
         "label": "Svelte 5 Runes Reference"
       },
       {
         "key": "45b6ea05",
-        "id": "KNOW-45b6ea05",
+        "id": "KNOW-a1a195c1",
         "label": "Tailwind Design System"
       },
       {
         "key": "6963d39f",
-        "id": "KNOW-6963d39f",
+        "id": "KNOW-8cc0f5e4",
         "label": "Svelte 5 Snippets Reference"
       },
       {
         "key": "6a2bc391",
-        "id": "KNOW-6a2bc391",
+        "id": "KNOW-37496474",
         "label": "Svelte 4 to Svelte 5 Migration Reference"
       },
       {
         "key": "7e3c5886",
-        "id": "KNOW-7e3c5886",
+        "id": "KNOW-96aaa407",
         "label": "Svelte 5 Events Reference"
       },
       {
         "key": "88f32b6a",
-        "id": "KNOW-88f32b6a"
+        "id": "KNOW-6cfacbb2"
       },
       {
         "key": "89d35141",
-        "id": "KNOW-89d35141"
+        "id": "KNOW-4260613a"
       },
       {
         "key": "90dd73ab",
-        "id": "KNOW-90dd73ab"
+        "id": "KNOW-be54e4de"
       },
       {
         "key": "b29e340b",
-        "id": "KNOW-b29e340b",
+        "id": "KNOW-c4d3e52b",
         "label": "SvelteKit Patterns Reference"
       },
       {
         "key": "c40438c2",
-        "id": "KNOW-c40438c2",
+        "id": "KNOW-df3c489e",
         "label": "Svelte 5 Performance Reference"
       },
       {
         "key": "e9baaf88",
-        "id": "KNOW-e9baaf88",
+        "id": "KNOW-5704b089",
         "label": "Svelte 5 TypeScript Reference"
       },
       {
         "key": "fd2b84c4",
-        "id": "KNOW-fd2b84c4"
+        "id": "KNOW-3642842e"
       }
     ],
     "tools": {

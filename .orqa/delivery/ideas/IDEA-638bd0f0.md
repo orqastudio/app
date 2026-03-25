@@ -1,0 +1,28 @@
+---
+id: IDEA-638bd0f0
+type: idea
+title: "App chat panel uses MCP+LSP (same as CLI connector)"
+description: "The app's built-in chat panel should use the same MCP and LSP servers as the Claude Code connector. When this happens, orqa-mcp-server and orqa-lsp-server become app Cargo dependencies again, cargo tauri dev watches them, and they should be removed from the custom dev watchers."
+status: captured
+priority: P2
+created: 2026-03-25
+updated: 2026-03-25
+horizon: next
+relationships:
+  - target: PILLAR-c9e0a695
+    type: grounded
+    rationale: "Single source of truth — one MCP/LSP implementation for both CLI and app"
+  - target: PERSONA-477971bf
+    type: benefits
+    rationale: "Practitioners get the same capabilities in both the app and CLI"
+---
+
+## What
+
+Currently the app's chat panel has its own implementation. The CLI connector uses orqa-mcp-server and orqa-lsp-server as standalone binaries. The app should use the same binaries — one source of truth.
+
+## Dev environment impact
+
+When MCP/LSP become app Cargo dependencies:
+- cargo tauri dev will watch them automatically
+- Remove libs/mcp-server and libs/lsp-server from the custom dev watchers in dev.ts (they'd cause lock contention)

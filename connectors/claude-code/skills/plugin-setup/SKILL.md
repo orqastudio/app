@@ -67,7 +67,7 @@ Add orchestrator frontmatter if missing:
 
 ```yaml
 ---
-id: AGENT-1dab5ebe
+id: AGENT-4c94fe14
 role: orchestrator
 title: Orchestrator
 description: Coordinates work, enforces process, delegates to agents.
@@ -131,12 +131,12 @@ cp -r .claude/skills/*/ .orqa/process/knowledge/
 
 ```bash
 # Move originals to a backup (just in case)
-mkdir -p tmp/claude-backup
-mv .claude/CLAUDE.md tmp/claude-backup/ 2>/dev/null || true
-mv .claude/rules tmp/claude-backup/ 2>/dev/null || true
-mv .claude/agents tmp/claude-backup/ 2>/dev/null || true
-mv .claude/skills tmp/claude-backup/ 2>/dev/null || true
-mv .claude/hooks tmp/claude-backup/ 2>/dev/null || true
+mkdir -p .state/claude-backup
+mv .claude/CLAUDE.md .state/claude-backup/ 2>/dev/null || true
+mv .claude/rules .state/claude-backup/ 2>/dev/null || true
+mv .claude/agents .state/claude-backup/ 2>/dev/null || true
+mv .claude/skills .state/claude-backup/ 2>/dev/null || true
+mv .claude/hooks .state/claude-backup/ 2>/dev/null || true
 ```
 
 ## Plugin Installation

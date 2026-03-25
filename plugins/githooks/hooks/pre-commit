@@ -26,20 +26,20 @@ find_root() {
 PROJECT_ROOT=$(find_root)
 
 # Violation logging for stability tracking
-# Appends to tmp/precommit-violations.jsonl so the stability tracker can
+# Appends to .state/precommit-violations.jsonl so the stability tracker can
 # detect whether demoted rules' domains still have active violations.
 log_violation() {
   local vtype="$1"
   local domain="$2"
   local detail="$3"
-  mkdir -p "$PROJECT_ROOT/tmp"
+  mkdir -p "$PROJECT_ROOT/.state"
   local ts
   ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date +"%Y-%m-%dT%H:%M:%SZ")
   local staged_files
   staged_files=$(git diff --cached --name-only --diff-filter=ACMR 2>/dev/null | head -20 | tr '\n' ',' | sed 's/,$//')
   printf '{"timestamp":"%s","violation_type":"%s","domain":"%s","detail":"%s","files":"%s"}\n' \
     "$ts" "$vtype" "$domain" "$detail" "$staged_files" \
-    >> "$PROJECT_ROOT/tmp/precommit-violations.jsonl"
+    >> "$PROJECT_ROOT/.state/precommit-violations.jsonl"
 }
 
 # Check if orqa CLI is available

@@ -57,7 +57,7 @@ const warnings = [];
 // Check 1: run_in_background must be true.
 if (!tool_input?.run_in_background) {
   warnings.push(
-    "RULE-00a8c660 / RULE-532100d9: Agent tool called without `run_in_background: true`.",
+    "RULE-99abcea1 / RULE-87ba1b81: Agent tool called without `run_in_background: true`.",
     "Background execution keeps the orchestrator context clean and enables parallel coordination.",
     "Set `run_in_background: true` on every Agent tool invocation unless you have an explicit reason not to.",
   );
@@ -66,7 +66,7 @@ if (!tool_input?.run_in_background) {
 // Check 2: team_name must be set (TeamCreate must have been called first).
 if (!tool_input?.team_name) {
   warnings.push(
-    "RULE-00a8c660 violation: Agent tool called without `team_name`.",
+    "RULE-99abcea1 violation: Agent tool called without `team_name`.",
     "ALL delegated work MUST use TeamCreate first, then spawn agents with the `team_name` parameter.",
     "Even single-task delegations require a team — this keeps the orchestrator available for conversation.",
   );

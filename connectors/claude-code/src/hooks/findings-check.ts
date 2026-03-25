@@ -1,7 +1,7 @@
 // PostToolUse hook — TaskUpdate
 //
-// Enforces RULE-d2e4f6a8: when a teammate marks a task as completed,
-// verify that a findings file exists at tmp/team/*/task-<id>.md.
+// Enforces RULE-04684a16: when a teammate marks a task as completed,
+// verify that a findings file exists at .state/team/*/task-<id>.md.
 // If no findings file exists, warn the agent that completion without
 // evidence violates the rule.
 
@@ -37,8 +37,8 @@ async function main(): Promise<void> {
     outputAllow();
   }
 
-  // Search for findings file in any team directory under tmp/team/.
-  const teamDir = join(projectDir, "tmp", "team");
+  // Search for findings file in any team directory under .state/team/.
+  const teamDir = join(projectDir, ".state", "team");
   const findingsFile = findFindingsFile(teamDir, taskId);
 
   if (findingsFile) {
@@ -58,10 +58,10 @@ async function main(): Promise<void> {
   );
 
   outputWarn([
-    `RULE-d2e4f6a8 VIOLATION — Task #${taskId} marked complete without findings file.`,
+    `RULE-04684a16 VIOLATION — Task #${taskId} marked complete without findings file.`,
     "",
     "You MUST write your findings to disk BEFORE marking a task complete.",
-    `Expected file: tmp/team/<team-name>/task-${taskId}.md`,
+    `Expected file: .state/team/<team-name>/task-${taskId}.md`,
     "",
     "The findings file is the evidence of completion. TaskUpdate(completed)",
     "is the signal, not the proof. Write the file now, then re-mark the task.",
@@ -70,7 +70,7 @@ async function main(): Promise<void> {
 }
 
 /**
- * Search all team directories under tmp/team/ for a findings file matching
+ * Search all team directories under .state/team/ for a findings file matching
  * the pattern task-<id>.md.
  */
 function findFindingsFile(teamDir: string, taskId: string): string | null {

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # OrqaStudio Git Hooks Plugin — post-commit auto-push
 #
-# Pushes to the remote after every commit. Enforces RULE-633e636d which
+# Pushes to the remote after every commit. Enforces RULE-f609242f which
 # requires every commit to be pushed immediately.
 #
 # - Sets upstream on first push for new branches

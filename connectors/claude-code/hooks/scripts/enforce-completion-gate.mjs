@@ -1,7 +1,7 @@
 /**
  * PreToolUse hook: enforce completion gate before new work.
  *
- * Fires on TeamCreate. Checks tmp/session-state.md for a
+ * Fires on TeamCreate. Checks .state/session-state.md for a
  * "### Completion Gate" section. If the section exists and has
  * unchecked items ([ ]), warns the orchestrator to resolve them
  * before starting new work.
@@ -9,7 +9,7 @@
  * Non-blocking (warn only) — the orchestrator sees the message
  * and should act on it before proceeding.
  *
- * See RULE-1d91e7cb for the full completion gate protocol.
+ * See RULE-5d2d39b7 for the full completion gate protocol.
  *
  * stdin  — JSON: { tool_name, tool_input }
  * stdout — JSON: { systemMessage? }
@@ -47,7 +47,7 @@ async function main() {
   const fs = await import("node:fs");
   const path = await import("node:path");
   const projectDir = input.cwd || process.env.CLAUDE_PROJECT_DIR || ".";
-  const sessionStatePath = path.join(projectDir, "tmp", "session-state.md");
+  const sessionStatePath = path.join(projectDir, ".state", "session-state.md");
 
   if (!fs.existsSync(sessionStatePath)) {
     // No session state — can't check, allow
@@ -72,7 +72,7 @@ async function main() {
   // Found unresolved items — warn
   const items = unchecked.map(line => line.replace("- [ ] ", "  • ")).join("\n");
   const message = [
-    "COMPLETION GATE (RULE-1d91e7cb): Unresolved follow-up items found before new work.",
+    "COMPLETION GATE (RULE-5d2d39b7): Unresolved follow-up items found before new work.",
     "",
     `${unchecked.length} outstanding item(s):`,
     items,

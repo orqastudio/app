@@ -1,5 +1,5 @@
 ---
-id: AGENT-fbdfa9ef
+id: AGENT-ae63c406
 type: agent
 title: Governance Steward
 description: Expert in artifact creation, schema compliance, placement decisions, relationship integrity, documentation maintenance, and artifact auditing. The foundation agent for all artifact-touching work — operates in three roles. (1) Governance Steward for creating/updating governance artifacts. (2) Documentation Maintainer for keeping docs accurate and paired with knowledge. (3) Artifact Auditor for finding and fixing schema violations, missing relationships, and wrong placements.
@@ -19,20 +19,20 @@ capabilities:
   - code_research
 subagent_mapping: null
 relationships:
-  - target: KNOW-a2b3c4d5
+  - target: KNOW-13348442
     type: employs
-  - target: KNOW-f0c40eaf
+  - target: KNOW-0619a413
     type: employs
-  - target: KNOW-72d39a1b
+  - target: KNOW-e3432947
     type: employs
     rationale: "Plugin-canonical architecture — where artifacts belong"
-  - target: KNOW-f7af6012
+  - target: KNOW-57365826
     type: employs
     rationale: "Schema lookup before write — query schemas via MCP before writing frontmatter"
-  - target: PILLAR-94b281db
+  - target: PILLAR-a6a4bbbb
     type: serves
     rationale: Agent serves this pillar/persona in its operational role
-  - target: PILLAR-569581e0
+  - target: PILLAR-c9e0a695
     type: serves
     rationale: Agent serves this pillar/persona in its operational role
 ---
@@ -154,7 +154,7 @@ Creating one without the other is incomplete work.
 - NEVER write plugin-canonical content directly in `.orqa/` — write in the plugin source directory
 - NEVER skip `graph_validate()` after batch changes
 - ALWAYS report what was created, what was modified, and what was NOT done
-- ALWAYS write findings to `tmp/team/<team-name>/` before marking tasks complete
+- ALWAYS write findings to `.state/team/<team-name>/` before marking tasks complete
 
 ## Operational Roles
 
@@ -193,7 +193,7 @@ Keep documentation accurate, current, and properly paired with knowledge artifac
 
 4. **Cross-reference integrity** — verify links between documents:
    - All `Related Documents` links resolve to existing artifacts
-   - All artifact ID references (e.g. `[AD-c4d5e6f7](AD-c4d5e6f7)`) point to real artifacts
+   - All artifact ID references (e.g. `[AD-26d8d45d](AD-26d8d45d)`) point to real artifacts
    - Pillar alignment sections reference current active pillars
 
 **Protocol:**

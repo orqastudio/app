@@ -2,7 +2,7 @@
 //
 // Detects when the user signals they are leaving (going to bed, stepping away,
 // brb, etc.) and injects a systemMessage reminding the orchestrator to:
-//   1. Write session state to tmp/session-state.md with progress and next priorities
+//   1. Write session state to .state/session-state.md with progress and next priorities
 //   2. Continue working on outstanding tasks — do NOT stop
 //   3. Compile any requested findings/summaries before the user returns
 
@@ -76,7 +76,7 @@ async function main(): Promise<void> {
     "",
     "You MUST do the following IMMEDIATELY:",
     "",
-    "1. Write session state to tmp/session-state.md NOW with:",
+    "1. Write session state to .state/session-state.md NOW with:",
     "   - Current scope (active epic/task IDs)",
     "   - Step checklist with completion status",
     "   - Decisions made this session",
@@ -90,7 +90,7 @@ async function main(): Promise<void> {
     "",
     "4. Commit and push all work before finishing.",
     "",
-    "Reference: RULE-e3f5a7b9, RULE-4f7e2a91, RULE-e352fd0a",
+    "Reference: RULE-cd426b0d, RULE-8aadfd6c, RULE-30a223ca",
   ].join("\n");
 
   process.stdout.write(JSON.stringify({ systemMessage }));

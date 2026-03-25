@@ -1,5 +1,5 @@
 ---
-id: DOC-7c1a3e51
+id: DOC-22783288
 type: doc
 title: CLI Architecture
 description: "How the orqa CLI works as the single developer interface: three protocol modes (MCP, LSP, direct commands), the daemon as the only long-running service, and why there are no separate MCP or LSP server processes."
@@ -7,10 +7,10 @@ category: architecture
 created: 2026-03-24
 updated: 2026-03-24
 relationships:
-  - target: KNOW-7c1a3e50
+  - target: KNOW-22783288
     type: synchronised-with
     rationale: "Agent-facing knowledge pair for this user-facing documentation page"
-  - target: AD-2ce57da9
+  - target: AD-a44384d1
     type: implements
     rationale: "Documents the architecture decision that established CLI as single interface"
 ---
@@ -21,7 +21,7 @@ relationships:
 
 OrqaStudio's developer tooling is built around a single CLI binary: `orqa`. This binary is the **only developer interface** — there are no separate MCP servers, LSP servers, or search processes. The CLI supports three protocol modes, all communicating with a single daemon as their backend.
 
-This design was formalised in [AD-2ce57da9](AD-2ce57da9).
+This design was formalised in [AD-a44384d1](AD-a44384d1).
 
 ## Architecture
 
@@ -91,7 +91,7 @@ Standard CLI commands for terminal use:
 
 ## What This Eliminates
 
-The previous architecture ([AD-3f9a1c7b](AD-3f9a1c7b)) required separate MCP and LSP server processes with their own ports and lifecycle management. This design eliminates:
+The previous architecture ([AD-b741a7df](AD-b741a7df)) required separate MCP and LSP server processes with their own ports and lifecycle management. This design eliminates:
 
 | Before | After |
 |--------|-------|
@@ -134,5 +134,5 @@ orqa daemon stop     # Stop the daemon
 
 ## Related Documents
 
-- [KNOW-7c1a3e50](KNOW-7c1a3e50) — Agent-facing knowledge pair for this documentation page
-- [AD-2ce57da9](AD-2ce57da9) — Architecture decision: CLI as single interface, daemon as app runtime
+- [KNOW-22783288](KNOW-22783288) — Agent-facing knowledge pair for this documentation page
+- [AD-a44384d1](AD-a44384d1) — Architecture decision: CLI as single interface, daemon as app runtime

@@ -56,7 +56,7 @@
 //! endpoints. The artifact graph, rules, and plugin schemas are loaded once on
 //! startup and held in memory for low-latency calls from hooks, LSP, MCP, and CLI.
 //!
-//! Default port: 10258. Writes a PID file to `<project-path>/tmp/daemon.pid`.
+//! Default port: 10258. Writes a PID file to `<project-path>/.state/daemon.pid`.
 //!
 //! Endpoints:
 //!   GET  /health                — liveness + artifact counts

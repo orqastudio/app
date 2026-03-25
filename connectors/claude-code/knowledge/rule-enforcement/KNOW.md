@@ -27,7 +27,7 @@ enforcement:
     pattern: "unwrap\\(\\)"
     paths: ["src-tauri/src/**/*.rs"]
     action: block
-    message: "No unwrap() in production Rust code (RULE-b49142be)."
+    message: "No unwrap() in production Rust code (RULE-9814ec3c)."
 ```
 
 ## Event Types

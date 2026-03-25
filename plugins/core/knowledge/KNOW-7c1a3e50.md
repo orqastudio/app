@@ -1,5 +1,5 @@
 ---
-id: KNOW-7c1a3e50
+id: KNOW-22783288
 type: knowledge
 title: CLI Architecture
 description: |
@@ -14,10 +14,10 @@ category: architecture
 version: 1.0.0
 user-invocable: false
 relationships:
-  - target: DOC-7c1a3e51
+  - target: DOC-22783288
     type: synchronised-with
     rationale: "User-facing documentation pair for this agent-facing knowledge artifact"
-  - target: AD-2ce57da9
+  - target: AD-a44384d1
     type: implements
     rationale: "This knowledge codifies the architecture decision that made CLI the single interface"
 ---

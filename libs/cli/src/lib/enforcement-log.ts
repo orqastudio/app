@@ -3,7 +3,7 @@
  *
  * All enforcement events — regardless of source (hook, LSP, pre-commit,
  * JSON Schema, lint) — are logged to a single NDJSON file at
- * `tmp/enforcement-log.jsonl`. This provides a complete audit trail.
+ * `.state/enforcement-log.jsonl`. This provides a complete audit trail.
  *
  * @module enforcement-log
  */

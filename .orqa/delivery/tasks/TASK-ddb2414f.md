@@ -1,0 +1,44 @@
+---
+id: TASK-ddb2414f
+type: task
+title: "Extract stores into SDK — enforcement, lessons, setup, settings, errors"
+description: "Move the five secondary stores into @orqastudio/sdk. Fix settingsStore theme application and errorStore browser handlers to be injectable/opt-in."
+status: completed
+priority: P1
+scoring:
+  impact: 4
+  urgency: 4
+  complexity: 3
+  dependencies: 3
+created: 2026-03-14
+updated: 2026-03-14
+assignee: null
+acceptance:
+  - enforcementStore extracted and exported from SDK
+  - lessonStore extracted and exported from SDK
+  - setupStore extracted and exported from SDK
+  - "settingsStore extracted — theme application via injectable callback, not direct DOM"
+  - "errorStore extracted — browser event handlers opt-in, not automatic"
+  - Unit tests for each store
+relationships:
+  - target: EPIC-90cb7349
+    type: delivers
+    rationale: Secondary stores — enforcement, lessons, setup, settings, errors
+  - target: TASK-909a3d6e
+    type: depends-on
+  - target: TASK-de122ae3
+    type: depended-on-by
+---
+
+## Scope
+
+### From ui/src/lib/stores/
+- `enforcement.svelte.ts` → fully portable
+- `lessons.svelte.ts` → fully portable
+- `setup.svelte.ts` → fully portable
+- `settings.svelte.ts` → extract `applyThemeToDocument` as injectable callback in `initialize()`
+- `errors.svelte.ts` → wrap `window.onerror`/`onunhandledrejection` in opt-in `initBrowserHandlers()`
+
+### Modifications needed
+1. `settingsStore.initialize()` accepts an optional `onThemeChange?: (mode: ThemeMode) => void` callback
+2. `errorStore` exports `initBrowserHandlers()` separately from core error accumulation

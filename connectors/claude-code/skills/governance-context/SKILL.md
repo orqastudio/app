@@ -92,7 +92,7 @@ graph_query({ type: "knowledge", search: "testing", scope: "artifacts" })
 graph_read({ path: ".orqa/process/knowledge/search/KNOW.md" })
 
 # Get a knowledge artifact's relationships (which agents use it)
-graph_relationships({ id: "KNOW-f0c40eaf" })
+graph_relationships({ id: "KNOW-0619a413" })
 ```
 
 Use `scope: "artifacts"` to search only `.orqa/` content. Use `scope: "codebase"` for source code.

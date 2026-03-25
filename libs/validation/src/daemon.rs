@@ -21,7 +21,7 @@
 //!
 //! # PID file
 //!
-//! The daemon writes its PID to `<project_root>/tmp/daemon.pid` on startup and
+//! The daemon writes its PID to `<project_root>/.state/daemon.pid` on startup and
 //! removes it on shutdown. A second invocation that finds a live PID file exits
 //! with an error.
 
@@ -93,7 +93,7 @@ impl DaemonState {
 
 /// Start the HTTP daemon and block until a shutdown signal is received.
 ///
-/// Writes a PID file to `<project_root>/tmp/daemon.pid` and removes it on
+/// Writes a PID file to `<project_root>/.state/daemon.pid` and removes it on
 /// exit. Returns an error if the port is already in use or the PID file
 /// indicates another daemon instance is running.
 ///

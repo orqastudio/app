@@ -2,7 +2,7 @@
 // stability-check.mjs — Demoted-rule stability tracker
 //
 // Runs at session start. For each rule with status: inactive and a demoted_date,
-// checks tmp/precommit-violations.jsonl for violations in that rule's domain
+// checks .state/precommit-violations.jsonl for violations in that rule's domain
 // since the last session. Increments or resets stability_count accordingly.
 // Surfaces rules that have reached their stability_threshold for deletion.
 //

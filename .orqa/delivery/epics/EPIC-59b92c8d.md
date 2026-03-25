@@ -9,7 +9,7 @@ created: 2026-03-25
 updated: 2026-03-25
 horizon: active
 relationships:
-  - target: MS-654badde
+  - target: MS-b1ac0a20
     type: fulfils
     rationale: "Migration completes the transition to the target architecture for dogfooding"
   - target: EPIC-281f7857
@@ -21,7 +21,7 @@ relationships:
 
 ## Scope
 
-From RES-55bacef1 section 10 (Recommended Path Forward):
+From RES-d6e8ab11 section 10 (Recommended Path Forward):
 
 Sequential migration with validation between each step:
 
@@ -32,7 +32,7 @@ Sequential migration with validation between each step:
 5. Validation gate between each migration step
 6. Remove CLAUDE.md fallback after migration complete
 
-## Design Constraints (from AD-e9f71dc1)
+## Design Constraints (from AD-1ef9f57c)
 
 - Short fallback period only — CLAUDE.md loading as safety net while LLM performs migration
 - No backwards compatibility — once migrated, old format is dead

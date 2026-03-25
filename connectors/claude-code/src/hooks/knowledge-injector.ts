@@ -2,7 +2,7 @@
 //
 // Single enforcement mechanism for knowledge injection when agents are spawned.
 // The orchestrator does NOT duplicate this — it relies on the hook exclusively.
-// See AGENT-1dab5ebe Delegation Steps for the behavioral contract.
+// See AGENT-4c94fe14 Delegation Steps for the behavioral contract.
 //
 // Two knowledge layers:
 //   Layer 1 (Declared): Reads the agent definition's `employs` relationships
@@ -17,7 +17,7 @@
 //   gracefully returns empty — the hook still injects Layer 1 results.
 //
 // Future: When the search engine is extracted as an HTTP service
-//   (TASK-a4d5e6b7 in EPIC-a4c7e9b1), Layer 2 can switch from MCP TCP
+//   (TASK-aef92af1 in EPIC-9e3d320b), Layer 2 can switch from MCP TCP
 //   to a direct HTTP call, removing the app dependency. Alternatively,
 //   an `orqa search` CLI command could serve as a fallback.
 //

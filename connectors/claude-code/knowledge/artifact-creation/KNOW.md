@@ -82,16 +82,16 @@ ls .orqa/delivery/tasks/ | sort -t- -k2 -n | tail -1
 Example: Creating a task that delivers to an epic:
 
 ```yaml
-# In TASK-367f0026.md
+# In TASK-44bd295d.md
 relationships:
-  - target: EPIC-6967c7dc
+  - target: EPIC-9b58fdcb
     type: delivers
 ```
 
 ```yaml
-# In EPIC-6967c7dc.md — add the inverse
+# In EPIC-9b58fdcb.md — add the inverse
 relationships:
-  - target: TASK-367f0026
+  - target: TASK-44bd295d
     type: delivered-by
 ```
 

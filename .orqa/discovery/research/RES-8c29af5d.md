@@ -1,0 +1,238 @@
+---
+id: "RES-8c29af5d"
+type: research
+title: "Universal Roles and Task Ownership"
+description: "Combined analysis of the seven universal agent roles, their task ownership boundaries, and how they map to Claude Code's fixed subagent types. Informs the agent restructuring from AD-48b310f9."
+status: "completed"
+created: "2026-03-07"
+updated: "2026-03-07"
+relationships:
+  - target: "EPIC-7394ba2a"
+    type: "guides"
+    rationale: "Research findings informed the design of Portable Governance Framework"
+---
+## The Problem
+
+Three overlapping concerns need resolving together:
+
+1. **Role portability** — Current agents are software-specific; need universal roles [AD-48b310f9](AD-48b310f9)
+2. **Task ownership** — Who owns what? Process vs execution, investigation vs implementation
+3. **Platform mapping** — Claude Code has fixed subagent types we must map to
+
+## Universal Roles: Ownership Boundaries
+
+### Orchestrator
+
+**Owns:** Process coordination, governance lifecycle, delegation decisions, status reporting
+
+| Does Directly | Delegates To |
+|--------------|-------------|
+| Break requests into tasks | Implementation work |
+| Manage artifact lifecycle (.orqa/) | Code changes (backend/src-tauri/, ui/, sidecars/claude-agentsdk-sidecar/) |
+| Write plans and session state | Running tests and checks |
+| Load/evaluate skills | Technical investigation |
+| Report status to user | Domain-specific review |
+| Single-line config/typo fixes | Multi-file changes |
+
+**Never does:** Write implementation code, self-certify completion
+
+### Researcher
+
+**Owns:** Investigation, information gathering, analysis, findings
+
+| Does Directly | Delegates To |
+|--------------|-------------|
+| Read and analyse existing code/docs | Nothing — produces findings, not changes |
+| Search for patterns and precedents | |
+| Evaluate options and tradeoffs | |
+| Produce research artifacts | |
+
+**Deliverable:** Research document with findings, options, and recommendations
+**Never does:** Make changes — research informs decisions, doesn't implement them
+
+### Planner
+
+**Owns:** Approach design, architectural evaluation, structural mapping
+
+| Does Directly | Delegates To |
+|--------------|-------------|
+| Design implementation approaches | Nothing — produces plans, not changes |
+| Evaluate architectural compliance | |
+| Map dependencies and risks | |
+| Produce plan documents | |
+
+**Deliverable:** Plan document with approach, phases, verification criteria
+**Never does:** Implement the plan — that's the Implementer's job
+
+### Implementer
+
+**Owns:** Building things — code, deliverables, artifacts
+
+| Does Directly | Delegates To |
+|--------------|-------------|
+| Write code (backend, frontend, database) | Nothing — produces working code |
+| Create data schemas and migrations | |
+| Build CI/CD pipelines | |
+| Refactor existing code | |
+| Fix bugs (when root cause is known) | |
+
+**Deliverable:** Working code committed to a branch
+**Never does:** Self-certify quality — that's the Reviewer's job
+
+### Reviewer
+
+**Owns:** Quality verification, compliance checking, correctness validation
+
+| Does Directly | Delegates To |
+|--------------|-------------|
+| Run automated checks (lint, test, build) | Nothing — produces verdicts |
+| Review code against standards | |
+| Verify acceptance criteria | |
+| Audit security, UX, or domain compliance | |
+| Log lessons for recurring issues | |
+
+**Deliverable:** PASS/FAIL verdict with evidence and lessons logged
+**Never does:** Implement fixes — sends back to Implementer with findings
+
+### Writer
+
+**Owns:** Documentation, communications, records
+
+| Does Directly | Delegates To |
+|--------------|-------------|
+| Write architecture decisions | Nothing — produces documents |
+| Create UI specs and guides | |
+| Maintain process documentation | |
+| Write user-facing content | |
+
+**Deliverable:** Documentation committed alongside or before code
+**Never does:** Write implementation code — only documentation
+
+### Designer
+
+**Owns:** Experience design, interface design, structural design
+
+| Does Directly | Delegates To |
+|--------------|-------------|
+| Design UI layouts and components | Nothing — produces designs and implementations |
+| Implement visual styling | |
+| Create interaction patterns | |
+| Build design system components | |
+
+**Deliverable:** UI components and design specifications
+**Never does:** Backend logic — only presentation layer
+
+## Claude Code Subagent Mapping
+
+Claude Code has fixed subagent types. Our universal roles map to them based on loaded skills:
+
+### Direct Mappings
+
+| Universal Role | Claude Code Subagent | Notes |
+|---------------|---------------------|-------|
+| Orchestrator | (main conversation) | Not a subagent — IS the conversation |
+| Researcher | `Explore` | Built for codebase exploration |
+| Planner | `Plan` | Built for implementation planning |
+| Writer | `Documentation Writer` | Direct match |
+| Designer | `Designer` | Direct match |
+
+### Skill-Dependent Mappings
+
+| Universal Role + Skills | Claude Code Subagent |
+|------------------------|---------------------|
+| Implementer + backend skills | `Backend Engineer` |
+| Implementer + frontend skills | `Frontend Engineer` |
+| Implementer + database skills | `Data Engineer` |
+| Implementer + build/deploy skills | `DevOps Engineer` |
+| Implementer + restructuring skills | `Refactor Agent` |
+| Reviewer + code quality skills | `Code Reviewer` |
+| Reviewer + test engineering skills | `Test Engineer` |
+| Reviewer + QA verification skills | `QA Tester` |
+| Reviewer + UX compliance skills | `UX Reviewer` |
+| Reviewer + security audit skills | `Security Engineer` |
+| Implementer + diagnostic skills | `Debugger` |
+
+### Delegation Protocol
+
+When the orchestrator delegates:
+
+```
+1. Determine the ROLE needed (Implementer, Reviewer, etc.)
+2. Determine the SKILLS needed (backend, frontend, security, etc.)
+3. Map role + skills → closest Claude Code subagent_type
+4. Include skill-loading instructions in the delegation prompt
+5. Include task ownership boundaries ("you own X, you do NOT do Y")
+```
+
+## Role Interaction Patterns
+
+### Implementation Flow
+```
+User request
+  → Orchestrator (breaks down, plans)
+    → Planner (designs approach) — if complex
+    → Writer (documents spec) — if docs needed first
+    → Implementer (builds it)
+    → Reviewer (verifies it)
+    → Orchestrator (reports result)
+```
+
+### Investigation Flow
+```
+User question / bug report
+  → Orchestrator (scopes investigation)
+    → Researcher (investigates, produces findings)
+    → Orchestrator (presents findings to user)
+    → [if fix needed] → Implementer → Reviewer
+```
+
+### Review Flow
+```
+Implementation complete
+  → Orchestrator (triggers review)
+    → Reviewer + code quality (checks standards)
+    → Reviewer + QA (checks functionality)
+    → Reviewer + UX (checks interface) — if UI changed
+    → Orchestrator (aggregates verdicts)
+```
+
+## What Changes in Agent Definitions
+
+### Files to Create (7 universal roles)
+- `.orqa/process/agents/orchestrator.md` — UPDATE existing
+- `.orqa/process/agents/researcher.md` — NEW
+- `.orqa/process/agents/planner.md` — NEW
+- `.orqa/process/agents/implementer.md` — NEW
+- `.orqa/process/agents/reviewer.md` — NEW
+- `.orqa/process/agents/writer.md` — RENAME from documentation-writer.md
+- `.orqa/process/agents/designer.md` — UPDATE existing
+
+### Files to Remove (old software-specific agents)
+- backend-engineer.md, frontend-engineer.md, data-engineer.md
+- devops-engineer.md, test-engineer.md, code-reviewer.md
+- qa-tester.md, ux-reviewer.md, security-engineer.md
+- debugger.md, refactor-agent.md, agent-maintainer.md
+- systems-architect.md
+
+### Skills to Extract
+Domain knowledge currently embedded in agent definitions needs to move to skills:
+
+| From Agent | Extract To Skill | Content |
+|-----------|-----------------|---------|
+| debugger | `diagnostic-methodology` | Root cause analysis workflow, stack tracing approach |
+| refactor-agent | `restructuring-methodology` | Safe refactoring steps, verification after each change |
+| security-engineer | `security-audit` | Audit checklist, threat model, permission review |
+| agent-maintainer | `governance-maintenance` | Lesson promotion, rule updates, agent auditing |
+| code-reviewer | `code-quality-review` | Zero-error policy, check sequence, verdict format |
+| qa-tester | `qa-verification` | E2E test approach, acceptance criteria verification |
+| ux-reviewer | `ux-compliance-review` | UI spec comparison, accessibility checks |
+| test-engineer | `test-engineering` | TDD workflow, coverage requirements, mock boundaries |
+| systems-architect | `architectural-evaluation` | Compliance checks, boundary verification |
+
+## Open Questions for User
+
+1. Should the orchestrator's agent definition remain OrqaStudio-specific (as it is now),
+   or should it also become portable with project context loaded via skills?
+2. The orchestrator.md file IS the CLAUDE.md — restructuring it changes the entire
+   conversation context. How much of the current content is role-definition vs project-context?
+3. Should we do this restructuring incrementally (one role at a time) or all at once?

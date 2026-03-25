@@ -2,7 +2,7 @@
 // standardise-ids.mjs — Remove plugin intermediary prefixes from artifact IDs.
 //
 // Converts:
-//   KNOW-CLI-3198c8fb  →  KNOW-3198c8fb   (strip intermediary, keep hex)
+//   KNOW-CLI-3198c8fb  →  KNOW-990e4f85   (strip intermediary, keep hex)
 //   KNOW-CC-decision-tree  →  KNOW-<new hex>  (non-hex suffix, generate new)
 //   KNOW-CS-001  →  KNOW-<new hex>  (sequential, generate new)
 //   AGENT-RST-spec-a3f7d2b1  →  AGENT-<new hex>  (complex suffix, generate new)

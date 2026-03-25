@@ -15,33 +15,33 @@
     "knowledge": [
       {
         "key": "2539a6e4",
-        "id": "KNOW-2539a6e4",
+        "id": "KNOW-1da7ecd8",
         "label": "Tauri v2 IPC Patterns Reference"
       },
       {
         "key": "6f7f4da5",
-        "id": "KNOW-6f7f4da5"
+        "id": "KNOW-a274d90d"
       },
       {
         "key": "a5434b61",
-        "id": "KNOW-a5434b61",
+        "id": "KNOW-5efbe925",
         "label": "Tauri v2 Capabilities & Permissions Reference"
       },
       {
         "key": "c323ec5f",
-        "id": "KNOW-c323ec5f",
+        "id": "KNOW-59077955",
         "label": "Tauri v2 Development"
       },
       {
         "key": "de97219c",
-        "id": "KNOW-de97219c"
+        "id": "KNOW-73490bde"
       }
     ],
     "agents": [
       {
         "key": "1ed9512e",
-        "id": "AGENT-1ed9512e",
-        "path": "agents/AGENT-1ed9512e.md"
+        "id": "AGENT-65b56a0b",
+        "path": "agents/AGENT-65b56a0b.md"
       }
     ]
   },

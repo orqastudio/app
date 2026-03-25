@@ -66,7 +66,7 @@ export type EnforcementResolution =
  *
  * Every enforcement check — regardless of source (hook, LSP, pre-commit,
  * JSON Schema, lint) — produces one event per check per artifact.
- * The enforcement log is NDJSON (one event per line) at `tmp/enforcement-log.jsonl`.
+ * The enforcement log is NDJSON (one event per line) at `.state/enforcement-log.jsonl`.
  */
 export interface EnforcementEvent {
 	/** Unique event ID (UUID v4 or nanoid). */

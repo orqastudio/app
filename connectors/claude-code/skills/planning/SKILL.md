@@ -73,12 +73,12 @@ Every implementation plan must include these sections in order:
 
 | Principle | Verify |
 |-----------|--------|
-| [AD-e513c9e4](AD-e513c9e4) (Thick backend) | Domain logic in Rust, Svelte is view layer only |
-| [AD-a334623b](AD-a334623b) (IPC boundary) | All communication via `#[tauri::command]` and `invoke()` |
-| [AD-1ad08e5f](AD-1ad08e5f) (Error propagation) | All functions return `Result<T, E>`, no unwrap/expect/panic |
-| [AD-8d552e96](AD-8d552e96) (Svelte 5 runes) | `$state`, `$derived`, `$effect`, `$props()` only — no Svelte 4 patterns |
-| [AD-dffc3d30](AD-dffc3d30) (SQLite persistence) | Structured data in SQLite, file-based artifacts from disk |
-| [AD-61087142](AD-61087142) (Component purity) | Pages fetch data, components receive via props only |
+| [AD-7121ec20](AD-7121ec20) (Thick backend) | Domain logic in Rust, Svelte is view layer only |
+| [AD-4e7faf0e](AD-4e7faf0e) (IPC boundary) | All communication via `#[tauri::command]` and `invoke()` |
+| [AD-2d58941b](AD-2d58941b) (Error propagation) | All functions return `Result<T, E>`, no unwrap/expect/panic |
+| [AD-ecc96aef](AD-ecc96aef) (Svelte 5 runes) | `$state`, `$derived`, `$effect`, `$props()` only — no Svelte 4 patterns |
+| [AD-75bb14ae](AD-75bb14ae) (SQLite persistence) | Structured data in SQLite, file-based artifacts from disk |
+| [AD-9a7d7256](AD-9a7d7256) (Component purity) | Pages fetch data, components receive via props only |
 | End-to-end completeness | Every feature includes all 4 layers: Rust command → IPC type → Svelte component → store binding |
 | Coding standards | Function size limits, zero clippy/rustfmt warnings, 80%+ coverage |
 
@@ -87,13 +87,13 @@ Every implementation plan must include these sections in order:
 ```markdown
 ## Architectural Compliance
 
-**AD-e513c9e4 (Thick backend):** Session management logic lives entirely in `backend/src-tauri/src/domain/sessions.rs`.
+**AD-7121ec20 (Thick backend):** Session management logic lives entirely in `backend/src-tauri/src/domain/sessions.rs`.
 Frontend only displays session list and current conversation.
 
-**AD-a334623b (IPC boundary):** New commands `create_session` and `list_sessions` exposed via `#[tauri::command]`.
+**AD-4e7faf0e (IPC boundary):** New commands `create_session` and `list_sessions` exposed via `#[tauri::command]`.
 Frontend calls via `invoke('create_session', { name })`.
 
-**AD-1ad08e5f (Error propagation):** All session functions return `Result<Session, SessionError>`.
+**AD-2d58941b (Error propagation):** All session functions return `Result<Session, SessionError>`.
 Command handlers map to `Result<T, String>` for Tauri serialization.
 ```
 
@@ -102,7 +102,7 @@ Command handlers map to `Result<T, String>` for Tauri serialization.
 ```markdown
 ## Architectural Compliance
 
-Complies with AD-e513c9e4, AD-a334623b, AD-1ad08e5f, AD-8d552e96, AD-dffc3d30, AD-61087142.
+Complies with AD-7121ec20, AD-4e7faf0e, AD-2d58941b, AD-ecc96aef, AD-75bb14ae, AD-9a7d7256.
 ```
 
 ### 1b. Systems Architecture Checklist
@@ -245,9 +245,9 @@ State "N/A — [reason]" for inapplicable ones.]
 
 ## See Also
 
-- `.orqa/process/rules/[RULE-303c1cc8](RULE-303c1cc8).md` — Plan mode requirements
-- `.orqa/process/rules/[RULE-65973a88](RULE-65973a88).md` — AD-XXX quick reference
-- `.orqa/process/rules/[RULE-1e8a1914](RULE-1e8a1914).md` — Two-Pillar framework and governance
+- `.orqa/process/rules/[RULE-dccf4226](RULE-dccf4226).md` — Plan mode requirements
+- `.orqa/process/rules/[RULE-05ae2ce7](RULE-05ae2ce7).md` — AD-XXX quick reference
+- `.orqa/process/rules/[RULE-1b238fc8](RULE-1b238fc8).md` — Two-Pillar framework and governance
 - `.orqa/documentation/development/coding-standards.md` — Code quality standards
 
 ## Related Skills

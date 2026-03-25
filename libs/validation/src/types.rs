@@ -199,7 +199,7 @@ pub const ONNX_CHECK_TYPES: &[&str] = &[
 ///
 /// Every enforcement check — regardless of source — produces one event
 /// per check per artifact. These are serialised to the centralised
-/// enforcement log (`tmp/enforcement-log.jsonl`).
+/// enforcement log (`.state/enforcement-log.jsonl`).
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EnforcementEvent {
     /// Mechanism key that produced this event.

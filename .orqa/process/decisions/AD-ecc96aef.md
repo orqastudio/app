@@ -1,0 +1,30 @@
+---
+id: AD-ecc96aef
+type: decision
+title: Svelte 5 Runes Only
+description: "Svelte 5 runes only ($state, $derived, $effect, $props). No Svelte 4 patterns."
+status: completed
+created: 2026-03-02
+updated: 2026-03-13
+relationships:
+  - target: RULE-9814ec3c
+    type: enforced-by
+    rationale: RULE-9814ec3c enforces Svelte 5 runes via svelte/no-reactive-declaration ESLint rule and svelte-check strict mode, blocking Svelte 4 patterns ($:, export let)
+  - target: DOC-9814ec3c
+    type: documented-by
+  - target: DOC-2c94f7ba
+    type: documented-by
+  - target: RULE-83411442
+    type: enforced-by
+---
+## Decision
+
+Use Svelte 5 runes exclusively (`$state`, `$derived`, `$effect`, `$props`). No Svelte 4 patterns.
+
+## Rationale
+
+Runes provide a cleaner, more predictable reactivity model. Mixing old and new patterns creates confusion and inconsistency.
+
+## Consequences
+
+All components use `$props()` instead of `export let`, `$derived()` instead of `$:`, and `{#snippet}` instead of `<slot>`.

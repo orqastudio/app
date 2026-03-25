@@ -9,7 +9,7 @@ created: 2026-03-25
 updated: 2026-03-25
 horizon: active
 relationships:
-  - target: MS-654badde
+  - target: MS-b1ac0a20
     type: fulfils
     rationale: "Workflow engine is core infrastructure for dogfooding"
   - target: EPIC-c828007a
@@ -23,7 +23,7 @@ relationships:
 
 ## Scope
 
-From RES-55bacef1 sections 3 (Workflow Composition) and 7 (State Machine Design):
+From RES-d6e8ab11 sections 3 (Workflow Composition) and 7 (State Machine Design):
 
 - YAML workflow format with JSON Schema validation
 - State machine evaluation engine (transition resolution, guard evaluation, action execution)
@@ -35,7 +35,7 @@ From RES-55bacef1 sections 3 (Workflow Composition) and 7 (State Machine Design)
 - Migration framework — forward-compatible addition, `orqa migrate` for status mapping, no backwards compatibility (pre-release)
 - Migrate existing hardcoded status values in schema.json to plugin-owned state machines
 
-## Design Constraints (from AD-e9f71dc1)
+## Design Constraints (from AD-1ef9f57c)
 
 - No workflow inheritance — plugin owns complete state machine
 - Declarative guards only — code hooks for anything beyond field/relationship/graph checks

@@ -31,7 +31,7 @@
       {
         "event": "post-commit",
         "script": "hooks/post-commit",
-        "description": "Auto-pushes to remote after every commit (RULE-633e636d enforcement)"
+        "description": "Auto-pushes to remote after every commit (RULE-f609242f enforcement)"
       },
       {
         "event": "PreAction",

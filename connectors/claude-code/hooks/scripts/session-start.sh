@@ -13,11 +13,11 @@ ORQA_DIR="$PROJECT_DIR/.orqa"
 CLAUDE_DIR="$PROJECT_DIR/.claude"
 
 # ─── Session Guard ───────────────────────────────────────────────────────────
-GUARD="$PROJECT_DIR/tmp/.session-started"
+GUARD="$PROJECT_DIR/.state/.session-started"
 if [ -f "$GUARD" ]; then
   exit 0
 fi
-mkdir -p "$PROJECT_DIR/tmp"
+mkdir -p "$PROJECT_DIR/.state"
 touch "$GUARD"
 
 OUTPUT=""
@@ -93,20 +93,20 @@ fi
 
 # ─── Session Continuity ─────────────────────────────────────────────────────
 # Load persistent migration context (not overwritten by stop hook)
-if [ -f "$PROJECT_DIR/tmp/migration-context.md" ]; then
-  MIGRATION_CTX=$(cat "$PROJECT_DIR/tmp/migration-context.md")
+if [ -f "$PROJECT_DIR/.state/migration-context.md" ]; then
+  MIGRATION_CTX=$(cat "$PROJECT_DIR/.state/migration-context.md")
   OUTPUT="${OUTPUT}═══ MIGRATION CONTEXT ═══\n${MIGRATION_CTX}\n═══ END MIGRATION CONTEXT ═══\n\n"
 fi
 
 # Load previous session state
-if [ -f "$PROJECT_DIR/tmp/session-state.md" ]; then
-  SESSION_STATE=$(cat "$PROJECT_DIR/tmp/session-state.md")
+if [ -f "$PROJECT_DIR/.state/session-state.md" ]; then
+  SESSION_STATE=$(cat "$PROJECT_DIR/.state/session-state.md")
   OUTPUT="${OUTPUT}═══ PREVIOUS SESSION STATE ═══\n${SESSION_STATE}\n═══ END SESSION STATE ═══\n\n"
   OUTPUT="${OUTPUT}Read the session state above. Resume where the previous session left off.\n\n"
 fi
 
-if [ -f "$PROJECT_DIR/tmp/governance-context.md" ]; then
-  GOV_CONTEXT=$(cat "$PROJECT_DIR/tmp/governance-context.md")
+if [ -f "$PROJECT_DIR/.state/governance-context.md" ]; then
+  GOV_CONTEXT=$(cat "$PROJECT_DIR/.state/governance-context.md")
   OUTPUT="${OUTPUT}GOVERNANCE CONTEXT:\n${GOV_CONTEXT}\n\n"
 fi
 
@@ -115,7 +115,7 @@ if [ -f "$ORQA_DIR/project.json" ]; then
   if grep -q '"dogfood"[[:space:]]*:[[:space:]]*true' "$ORQA_DIR/project.json" 2>/dev/null; then
     OUTPUT="${OUTPUT}DOGFOOD MODE ACTIVE: You are editing the app from the CLI.\n"
     OUTPUT="${OUTPUT}- Ensure dev environment is running: orqa dev (in a separate terminal)\n"
-    OUTPUT="${OUTPUT}- See RULE-6083347d for dogfood rules\n\n"
+    OUTPUT="${OUTPUT}- See RULE-998da8ea for dogfood rules\n\n"
   fi
 fi
 
@@ -123,7 +123,7 @@ fi
 OUTPUT="${OUTPUT}SESSION START:\n"
 OUTPUT="${OUTPUT}1. Read context above (migration context + session state)\n"
 OUTPUT="${OUTPUT}2. Set scope: which epic/task is the focus?\n"
-OUTPUT="${OUTPUT}3. Keep tmp/session-state.md up to date as you work\n"
+OUTPUT="${OUTPUT}3. Keep .state/session-state.md up to date as you work\n"
 
 if [ -n "$OUTPUT" ]; then
   echo -e "$OUTPUT"

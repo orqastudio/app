@@ -108,7 +108,7 @@ async function daemonStart(args: string[]): Promise<void> {
 	}
 
 	if (health === null) {
-		throw new Error("Daemon did not start within 3 seconds. Check tmp/daemon.pid and stderr.");
+		throw new Error("Daemon did not start within 3 seconds. Check .state/daemon.pid and stderr.");
 	}
 
 	console.log(

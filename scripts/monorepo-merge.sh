@@ -81,8 +81,8 @@ echo ""
 # Step 1: Verify clean working tree
 # ---------------------------------------------------------------------------
 
-# Check for uncommitted changes (ignore submodule-modified and untracked in tmp/)
-DIRTY=$(git status --porcelain --ignore-submodules=dirty | grep -v '^?? tmp/' || true)
+# Check for uncommitted changes (ignore submodule-modified and untracked in .state/)
+DIRTY=$(git status --porcelain --ignore-submodules=dirty | grep -v '^?? \.state/' || true)
 if [[ -n "$DIRTY" ]]; then
   echo "ERROR: Working tree has uncommitted changes:"
   echo "$DIRTY"

@@ -51,18 +51,18 @@ Run `orqa enforce` to check the new artifact passes integrity checks.
 
 ```yaml
 ---
-id: TASK-907d579d
+id: TASK-424c6e2c
 type: task
 title: "Implement widget caching"
 status: captured
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
-  - target: EPIC-6967c7dc
+  - target: EPIC-9b58fdcb
     type: delivers
 ---
 
-# TASK-907d579d: Implement Widget Caching
+# TASK-424c6e2c: Implement Widget Caching
 
 ## Acceptance Criteria
 
@@ -71,8 +71,8 @@ relationships:
 3. No memory leaks from stale cache entries
 ```
 
-Then add the inverse on EPIC-6967c7dc:
+Then add the inverse on EPIC-9b58fdcb:
 ```yaml
-  - target: TASK-907d579d
+  - target: TASK-424c6e2c
     type: delivered-by
 ```

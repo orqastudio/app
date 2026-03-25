@@ -37,7 +37,7 @@ pub struct KnowledgeContent {
 /// A single behavioral enforcement rule with its metadata.
 #[derive(Debug, Clone, Serialize)]
 pub struct BehavioralRule {
-    /// Rule ID (e.g. "RULE-532100d9").
+    /// Rule ID (e.g. "RULE-87ba1b81").
     pub id: String,
     /// Rule title (e.g. "Agent Delegation").
     pub title: String,

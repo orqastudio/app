@@ -36,19 +36,19 @@ orqa enforce --json
 
 ### Missing inverse relationship
 ```
-ERROR: TASK-367f0026 --delivers--> EPIC-6967c7dc but EPIC-6967c7dc has no delivered-by --> TASK-367f0026
+ERROR: TASK-44bd295d --delivers--> EPIC-9b58fdcb but EPIC-9b58fdcb has no delivered-by --> TASK-44bd295d
 ```
 **Fix:** Add the inverse relationship to the target artifact.
 
 ### Invalid status
 ```
-ERROR: TASK-367f0026 has status "in-progress" — must be one of: captured, exploring, ready, ...
+ERROR: TASK-44bd295d has status "in-progress" — must be one of: captured, exploring, ready, ...
 ```
 **Fix:** Use one of the 12 canonical statuses (e.g., `active` instead of `in-progress`).
 
 ### Missing required field
 ```
-ERROR: .orqa/delivery/tasks/TASK-367f0026.md — missing required field: id
+ERROR: .orqa/delivery/tasks/TASK-44bd295d.md — missing required field: id
 ```
 **Fix:** Add the required field to the YAML frontmatter.
 

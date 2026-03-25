@@ -1,0 +1,42 @@
+---
+id: "TASK-cd98526a"
+type: task
+title: "Create rule for artifact link format constraints"
+description: "Extract the artifact link format constraint from the orqa-documentation skill into a new dedicated rule with enforcement path."
+status: "completed"
+created: "2026-03-11"
+updated: "2026-03-11"
+acceptance:
+  - "New RULE-NNN created for artifact link format enforcement"
+  - "Constraint removed from orqa-documentation skill FORBIDDEN section"
+  - "Skill references the new rule for the constraint"
+  - "Rule includes valid and invalid examples"
+  - "Rule has a FORBIDDEN section with concrete violations"
+relationships:
+  - target: "EPIC-5aa11e2f"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-698afd4c"
+    type: "depended-on-by"
+---
+## What
+
+The artifact link format constraint (`[EPIC-797972a7](EPIC-797972a7)` style) is currently hidden in the `orqa-documentation` skill's FORBIDDEN section. This is a binary constraint that should be a rule with enforcement path.
+
+Extract the link format constraints from `orqa-documentation` skill into a new rule. The skill keeps the "how to write good docs" knowledge; the rule enforces the link format requirement.
+
+## How
+
+1. Read the `orqa-documentation` skill and locate the artifact link format constraint in the FORBIDDEN section
+2. Determine the next available RULE number by scanning `.orqa/process/rules/`
+3. Create the new rule file with: description of the constraint, valid examples, invalid examples, FORBIDDEN section, and related rules references
+4. Remove the extracted constraint from the `orqa-documentation` skill's FORBIDDEN section
+5. Add a "See RULE-NNN for link format requirements" reference in the skill
+
+## Verification
+
+- [ ] New RULE-NNN created for artifact link format enforcement
+- [ ] Constraint removed from orqa-documentation skill FORBIDDEN section
+- [ ] Skill references the new rule for the constraint
+- [ ] Rule includes valid and invalid examples
+- [ ] Rule has a FORBIDDEN section with concrete violations

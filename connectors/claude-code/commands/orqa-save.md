@@ -1,10 +1,10 @@
 # /orqa-save — Save Session State
 
-Write session state to `tmp/session-state.md` so the next session can resume where this one left off.
+Write session state to `.state/session-state.md` so the next session can resume where this one left off.
 
 ## What to write
 
-Gather the following and write to `tmp/session-state.md`:
+Gather the following and write to `.state/session-state.md`:
 
 ```markdown
 ## Session: <current UTC timestamp>
@@ -42,7 +42,7 @@ Gather the following and write to `tmp/session-state.md`:
 
 ## Rules
 
-- Always overwrite the existing `tmp/session-state.md` — it's for the next session, not a log
+- Always overwrite the existing `.state/session-state.md` — it's for the next session, not a log
 - Use absolute dates, not relative ("2026-03-21", not "today")
 - Be specific about in-progress state — the next session starts cold
 - Include commit hashes so the next session can verify what landed

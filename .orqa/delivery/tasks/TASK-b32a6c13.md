@@ -1,0 +1,44 @@
+---
+id: TASK-b32a6c13
+type: task
+title: "Add enforcement field to 35 existing rules surfaced by frontmatter validation audit"
+description: "35 rule artifacts are missing the enforcement frontmatter field. Add enforcement declarations to each, specifying how each rule is mechanically enforced (hook, lint, gate, or manual)."
+status: captured
+created: 2026-03-21
+updated: 2026-03-21
+acceptance:
+  - All 35 identified rule artifacts have a non-empty enforcement field in their frontmatter
+  - Each enforcement entry specifies event, action, and relevant paths or conditions
+  - Rules with no possible mechanical enforcement are documented with enforcement: manual and a rationale
+  - orqa enforce passes on all 35 updated rule artifacts
+  - No new enforcement entries reference non-existent knowledge artifacts or hook scripts
+relationships:
+  - target: EPIC-9b58fdcb
+    type: delivers
+---
+
+## What
+
+The frontmatter validation audit surfaced 35 rule artifacts missing the `enforcement` field. This field is how OrqaStudio connects documented standards to mechanical enforcement (hooks, linters, gates). Without it, rules exist only as documentation and cannot be automatically checked.
+
+## Why
+
+Per RULE-009 (dogfood mode), enforcement gaps in the product's own governance are immediately CRITICAL. The system's credibility depends on its own rules being enforced. Rules without enforcement fields are invisible to the enforcement engine.
+
+## How
+
+1. Run `orqa enforce` to get the full list of 35 non-compliant rules
+2. For each rule, determine the appropriate enforcement mechanism:
+   - **Hooks**: `event: file`, `event: bash`, `event: lint` entries
+   - **Gates**: pipeline stage gates that check compliance
+   - **Lint**: delegation to clippy/ESLint (use `event: lint` entries per RULE-043)
+   - **Manual**: for rules that cannot be mechanically enforced — document why
+3. Add the `enforcement` array to each rule's frontmatter
+4. Re-run `orqa enforce` to confirm all 35 now pass
+
+## Verification
+
+1. `orqa enforce` reports zero missing-enforcement violations
+2. All 35 rules have `enforcement` arrays with at least one entry
+3. Rules marked `enforcement: manual` have a documented rationale
+4. No enforcement entries point to non-existent files or scripts

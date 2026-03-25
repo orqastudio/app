@@ -1,5 +1,5 @@
 ---
-id: "RULE-cb65b5d0"
+id: "RULE-eb269afb"
 type: rule
 title: "Reusable Components"
 description: "Check shared component library before creating new UI elements. Use EmptyState, LoadingSpinner, ErrorDisplay, etc."
@@ -16,9 +16,9 @@ enforcement:
     pattern: "ui/src/lib/components/**"
     description: "Knowledge injection triggered when writing to component directory"
 relationships:
-  - target: "DOC-52bbfba5"
+  - target: "DOC-2c94f7ba"
     type: "documented-by"
-  - target: "AD-61087142"
+  - target: "AD-9a7d7256"
     type: "enforces"
 ---
 ## Shared Component Library
@@ -85,5 +85,5 @@ Use `search_semantic` to find similar components across the *entire* frontend, n
 
 ## Related Rules
 
-- [RULE-b49142be](RULE-b49142be) (coding-standards) — component size limits and variant patterns
-- [RULE-5e03e67b](RULE-5e03e67b) (code-search-usage) — semantic search for finding existing implementations
+- [RULE-9814ec3c](RULE-9814ec3c) (coding-standards) — component size limits and variant patterns
+- [RULE-0d29fc91](RULE-0d29fc91) (code-search-usage) — semantic search for finding existing implementations

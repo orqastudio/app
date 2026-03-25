@@ -25,13 +25,13 @@
     "agents": [
       {
         "key": "4241392c",
-        "id": "AGENT-4241392c",
-        "path": "agents/AGENT-4241392c.md"
+        "id": "AGENT-26e5029d",
+        "path": "agents/AGENT-26e5029d.md"
       },
       {
         "key": "e1e47559",
-        "id": "AGENT-e1e47559",
-        "path": "agents/AGENT-e1e47559.md"
+        "id": "AGENT-065a25cc",
+        "path": "agents/AGENT-065a25cc.md"
       }
     ],
     "lspServers": {
@@ -45,20 +45,20 @@
     "knowledge": [
       {
         "key": "12495e28",
-        "id": "KNOW-12495e28",
+        "id": "KNOW-ea7898e4",
         "label": "Rust Async Patterns"
       },
       {
         "key": "214b7cdc",
-        "id": "KNOW-214b7cdc"
+        "id": "KNOW-694ff7cb"
       },
       {
         "key": "2a72f929",
-        "id": "KNOW-2a72f929"
+        "id": "KNOW-f7d03a2c"
       },
       {
         "key": "5efa83a5",
-        "id": "KNOW-5efa83a5"
+        "id": "KNOW-d4095bd9"
       }
     ],
     "tools": {

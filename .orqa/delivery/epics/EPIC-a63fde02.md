@@ -9,7 +9,7 @@ created: 2026-03-25
 updated: 2026-03-25
 horizon: active
 relationships:
-  - target: MS-654badde
+  - target: MS-b1ac0a20
     type: fulfils
     rationale: "Token-efficient prompts are critical for sustainable dogfooding"
   - target: EPIC-f6da17ed
@@ -21,7 +21,7 @@ relationships:
 
 ## Scope
 
-From RES-55bacef1 sections 5 (Knowledge Architecture) and 6 (Prompt Generation):
+From RES-d6e8ab11 sections 5 (Knowledge Architecture) and 6 (Prompt Generation):
 
 - Knowledge plugin manifest format with injection tiers (always, stage-triggered, on-demand)
 - Plugin registry for prompt contributions (built at `orqa plugin install` time, cached)

@@ -1,5 +1,5 @@
 ---
-id: DOC-0102aeb8
+id: DOC-e89753ad
 type: doc
 title: OrqaStudio CLI Commands
 description: "Complete reference for the orqa CLI: all commands, subcommands, options, and usage patterns. The single developer interface for setup, quality checks, testing, governance, plugin management, and protocol servers."
@@ -7,10 +7,10 @@ category: development
 created: 2026-03-24
 updated: 2026-03-24
 relationships:
-  - target: KNOW-88a2d5f5
+  - target: KNOW-e89753ad
     type: synchronised-with
     rationale: "Agent-facing knowledge pair for this user-facing documentation page"
-  - target: AD-2ce57da9
+  - target: AD-a44384d1
     type: implements
     rationale: "Documents the commands available through the CLI-as-single-interface architecture decision"
 ---
@@ -21,7 +21,7 @@ relationships:
 
 The `orqa` CLI is the single developer interface for OrqaStudio projects. All development operations — code quality, testing, governance, plugin management, search indexing, and protocol servers — are accessed through this one binary. There are no separate servers to manage, no Makefiles to maintain (except `make install` for bootstrap), and no raw `cargo` or `npm` commands to remember.
 
-This command structure was established by [AD-2ce57da9](AD-2ce57da9).
+This command structure was established by [AD-a44384d1](AD-a44384d1).
 
 ## Command Categories
 
@@ -188,6 +188,6 @@ The `orqa` CLI replaces all `make` targets except `make install` (bootstrap only
 
 ## Related Documents
 
-- [KNOW-88a2d5f5](KNOW-88a2d5f5) — Agent-facing knowledge pair for this documentation page
-- [AD-2ce57da9](AD-2ce57da9) — Architecture decision: CLI as single interface
-- [DOC-7c1a3e51](DOC-7c1a3e51) — CLI Architecture (protocol modes and daemon)
+- [KNOW-e89753ad](KNOW-e89753ad) — Agent-facing knowledge pair for this documentation page
+- [AD-a44384d1](AD-a44384d1) — Architecture decision: CLI as single interface
+- [DOC-22783288](DOC-22783288) — CLI Architecture (protocol modes and daemon)

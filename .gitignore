@@ -5,7 +5,7 @@ target/
 models/
 .svelte-kit/
 .claude/
-tmp/
+.state/
 *.swp
 *.swo
 .DS_Store

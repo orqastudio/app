@@ -18,7 +18,7 @@ const APPLY = process.argv.includes("--apply");
 // Mapping: skill directory → doc ID to link to
 const SKILL_TO_DOC = {
   // Core platform skills → platform skill catalog
-  "app/.orqa/process/skills": "DOC-a1b2c3d4",
+  "app/.orqa/process/skills": "DOC-bad8e26f",
 
   // Plugin skills → their plugin's development guide
   "plugins/svelte/skills": "DOC-SVE-5d832d1d",
@@ -29,7 +29,7 @@ const SKILL_TO_DOC = {
   "plugins/typescript/skills": "DOC-TS-e4f5a6b7",
 
   // Project-level skills → project coding standards
-  ".orqa/process/skills": "DOC-4b4fbc0f",
+  ".orqa/process/skills": "DOC-9814ec3c",
 };
 
 // ---------------------------------------------------------------------------

@@ -52,149 +52,149 @@
     "agents": [
       {
         "key": "1dab5ebe",
-        "id": "AGENT-1dab5ebe",
-        "path": "agents/AGENT-1dab5ebe.md"
+        "id": "AGENT-4c94fe14",
+        "path": "agents/AGENT-4c94fe14.md"
       },
       {
         "key": "b0774726",
-        "id": "AGENT-b0774726",
-        "path": "agents/AGENT-b0774726.md"
+        "id": "AGENT-8e58cd87",
+        "path": "agents/AGENT-8e58cd87.md"
       },
       {
         "key": "bedeffd1",
-        "id": "AGENT-bedeffd1",
-        "path": "agents/AGENT-bedeffd1.md"
+        "id": "AGENT-d1be3776",
+        "path": "agents/AGENT-d1be3776.md"
       },
       {
         "key": "c5284fde",
-        "id": "AGENT-c5284fde",
-        "path": "agents/AGENT-c5284fde.md"
+        "id": "AGENT-0aad40f4",
+        "path": "agents/AGENT-0aad40f4.md"
       },
       {
         "key": "caff7bc1",
-        "id": "AGENT-caff7bc1",
-        "path": "agents/AGENT-caff7bc1.md"
+        "id": "AGENT-85be6ace",
+        "path": "agents/AGENT-85be6ace.md"
       },
       {
         "key": "cc255bc8",
-        "id": "AGENT-cc255bc8",
-        "path": "agents/AGENT-cc255bc8.md"
+        "id": "AGENT-e5dd38e4",
+        "path": "agents/AGENT-e5dd38e4.md"
       },
       {
         "key": "ec1b3785",
-        "id": "AGENT-ec1b3785",
-        "path": "agents/AGENT-ec1b3785.md"
+        "id": "AGENT-bbad3d30",
+        "path": "agents/AGENT-bbad3d30.md"
       },
       {
         "key": "fb0ce261",
-        "id": "AGENT-fb0ce261",
-        "path": "agents/AGENT-fb0ce261.md"
+        "id": "AGENT-e333508b",
+        "path": "agents/AGENT-e333508b.md"
       }
     ],
     "knowledge": [
       {
         "key": "323c2803",
-        "id": "KNOW-323c2803",
+        "id": "KNOW-b95ec6e3",
         "label": "Thinking Mode: Debugging"
       },
       {
         "key": "449b1e02",
-        "id": "KNOW-449b1e02",
+        "id": "KNOW-51de8fb7",
         "label": "Artifact Status Management"
       },
       {
         "key": "6f33713e",
-        "id": "KNOW-6f33713e",
+        "id": "KNOW-21d28aa0",
         "label": "Planning"
       },
       {
         "key": "83614358",
-        "id": "KNOW-83614358",
+        "id": "KNOW-fd636a56",
         "label": "Thinking Mode: Review"
       },
       {
         "key": "a2b3c4d5",
-        "id": "KNOW-a2b3c4d5",
+        "id": "KNOW-13348442",
         "label": "Search"
       },
       {
         "key": "a4b5c6d7",
-        "id": "KNOW-a4b5c6d7",
+        "id": "KNOW-7c871921",
         "label": "Project Type Detection"
       },
       {
         "key": "c9d8e7f6",
-        "id": "KNOW-c9d8e7f6",
+        "id": "KNOW-e484802a",
         "label": "Reviewer Reasoning Methodology"
       },
       {
         "key": "d1a2b3c4",
-        "id": "KNOW-d1a2b3c4",
+        "id": "KNOW-3d946f9a",
         "label": "Agent Decision Methodology"
       },
       {
         "key": "e0dec720",
-        "id": "KNOW-e0dec720",
+        "id": "KNOW-2876afc7",
         "label": "Project Setup"
       },
       {
         "key": "e3a559c9",
-        "id": "KNOW-e3a559c9",
+        "id": "KNOW-f5ee4e0d",
         "label": "Plugin Setup"
       },
       {
         "key": "e5f6a7b8",
-        "id": "KNOW-e5f6a7b8",
+        "id": "KNOW-b320cae8",
         "label": "Implementer Reasoning Methodology"
       },
       {
         "key": "f7476f0a",
-        "id": "KNOW-f7476f0a",
+        "id": "KNOW-9ff8c63f",
         "label": "Research Methodology"
       },
       {
         "key": "f8e9d0a1",
-        "id": "KNOW-f8e9d0a1",
+        "id": "KNOW-a4e351bc",
         "label": "Governance Migration Methodology"
       },
       {
         "key": "fda0559b",
-        "id": "KNOW-fda0559b",
+        "id": "KNOW-f7fb7aa7",
         "label": "Thinking Mode: Implementation"
       },
       {
         "key": "a4fd56bd",
-        "id": "KNOW-a4fd56bd",
+        "id": "KNOW-a16b7bc7",
         "label": "Demoted Rule Stability Tracking"
       },
       {
         "key": "7c1a3e50",
-        "id": "KNOW-7c1a3e50",
+        "id": "KNOW-22783288",
         "label": "CLI Architecture"
       },
       {
         "key": "8d2b4f61",
-        "id": "KNOW-8d2b4f61",
+        "id": "KNOW-dd5062c9",
         "label": "Shared Validation Engine"
       },
       {
         "key": "9e3c5072",
-        "id": "KNOW-9e3c5072",
+        "id": "KNOW-1f4aba8f",
         "label": "Three-Layer Enforcement Model"
       },
       {
         "key": "b05e7294",
-        "id": "KNOW-b05e7294",
+        "id": "KNOW-586bfa9a",
         "label": "Knowledge Auto-Injection"
       },
       {
         "key": "88a2d5f5",
-        "id": "KNOW-88a2d5f5",
+        "id": "KNOW-e89753ad",
         "label": "OrqaStudio CLI Commands"
       },
       {
         "key": "25919e07",
-        "id": "KNOW-25919e07",
+        "id": "KNOW-477f2c9c",
         "label": "Agentic Workflow and Enforcement Pipeline"
       }
     ],

@@ -697,10 +697,10 @@ mod tests {
         fs::create_dir_all(&orqa_dir).unwrap();
         fs::write(
             orqa_dir.join("manifest.json"),
-            r#"{"plugins":{"@orqastudio/plugin-agile-governance":{"version":"0.1.0-dev","installed_at":"2026-03-22T00:00:00Z","files":[".orqa/process/rules/RULE-633e636d.md"]}}}"#,
+            r#"{"plugins":{"@orqastudio/plugin-agile-governance":{"version":"0.1.0-dev","installed_at":"2026-03-22T00:00:00Z","files":[".orqa/process/rules/RULE-f609242f.md"]}}}"#,
         ).unwrap();
 
-        let ctx = file_ctx(".orqa/process/rules/RULE-633e636d.md");
+        let ctx = file_ctx(".orqa/process/rules/RULE-f609242f.md");
         let result = evaluate_hook(&ctx, tmp.path());
         assert_eq!(result.action, "block");
         assert!(result.messages[0].contains("@orqastudio/plugin-agile-governance"));
@@ -726,7 +726,7 @@ mod tests {
     #[test]
     fn no_manifest_allows_all_files() {
         let tmp = TempDir::new().unwrap();
-        let ctx = file_ctx(".orqa/process/rules/RULE-633e636d.md");
+        let ctx = file_ctx(".orqa/process/rules/RULE-f609242f.md");
         let result = evaluate_hook(&ctx, tmp.path());
         assert_eq!(result.action, "allow");
     }

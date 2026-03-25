@@ -21,55 +21,55 @@
     "knowledge": [
       {
         "key": "1a8eb147",
-        "id": "KNOW-1a8eb147",
+        "id": "KNOW-36befd20",
         "label": "Thinking Mode: Research"
       },
       {
         "key": "1ab0e715",
-        "id": "KNOW-1ab0e715",
+        "id": "KNOW-bf70068c",
         "label": "Thinking Mode: Documentation"
       },
       {
         "key": "30a419dd",
-        "id": "KNOW-30a419dd",
+        "id": "KNOW-7fadba3f",
         "label": "Architectural Evaluation"
       },
       {
         "key": "54823e2d",
-        "id": "KNOW-54823e2d",
+        "id": "KNOW-41849545",
         "label": "Systems Thinking"
       },
       {
         "key": "82d32398",
-        "id": "KNOW-82d32398"
+        "id": "KNOW-1ea9291c"
       },
       {
         "key": "8c98ea98",
-        "id": "KNOW-8c98ea98",
+        "id": "KNOW-a3dcdd05",
         "label": "Restructuring Methodology"
       },
       {
         "key": "a4c8f1e2",
-        "id": "KNOW-a4c8f1e2",
+        "id": "KNOW-eeceaabf",
         "label": "Thinking Mode: Dogfood Implementation"
       },
       {
         "key": "c7fb7c83",
-        "id": "KNOW-c7fb7c83"
+        "id": "KNOW-d13d80e1"
       },
       {
         "key": "de25b290",
-        "id": "KNOW-de25b290",
+        "id": "KNOW-4a4241a5",
         "label": "Thinking Mode: Planning"
       },
       {
         "key": "f0c40eaf",
-        "id": "KNOW-f0c40eaf",
+        "id": "KNOW-0619a413",
         "label": "Composability"
       },
       {
         "key": "f5edb34d",
-        "id": "KNOW-f5edb34d",
+        "id": "KNOW-8564d52c",
         "label": "Diagnostic Methodology"
       }
     ],

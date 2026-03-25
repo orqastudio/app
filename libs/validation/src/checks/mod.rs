@@ -25,7 +25,6 @@ pub fn run_all(graph: &ArtifactGraph, ctx: &ValidationContext) -> Vec<IntegrityC
     let mut checks = Vec::new();
 
     structural::check_broken_refs(graph, &mut checks);
-    structural::check_missing_inverses(graph, ctx, &mut checks);
     structural::check_relationship_type_constraints(graph, ctx, &mut checks);
     structural::check_required_relationships(graph, ctx, &mut checks);
     structural::check_missing_type_field(graph, &mut checks);

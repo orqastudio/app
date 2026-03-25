@@ -9,7 +9,7 @@ created: 2026-03-25
 updated: 2026-03-25
 horizon: active
 relationships:
-  - target: MS-654badde
+  - target: MS-b1ac0a20
     type: fulfils
     rationale: "Human gates ensure quality during dogfooding"
   - target: EPIC-f6da17ed
@@ -19,7 +19,7 @@ relationships:
 
 ## Scope
 
-From RES-55bacef1 section 7 (State Machine Design — gates and variants):
+From RES-d6e8ab11 section 7 (State Machine Design — gates and variants):
 
 - Gate infrastructure — gather/present/collect/execute/learn pipeline
 - Simple approval pattern — single reviewer, approve/reject
