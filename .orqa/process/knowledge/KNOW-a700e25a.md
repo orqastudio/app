@@ -26,9 +26,9 @@ A body of work delivering a coherent capability. Groups related tasks.
 - Stored in the project's delivery artifacts directory
 - Connects up: `fulfils` → milestone
 - Connects down: tasks connect via `delivers`
-- Origin: `realised-by` → idea (the validated idea that became this work)
-- Motivation: `driven-by` → decision (the architecture choice that motivates this)
-- Knowledge: `guided-by` → research, `cautioned-by` → lesson
+- Origin: ideas connect via `realises` → epic (the validated idea that became this work)
+- Motivation: decisions connect via `drives` → epic (the architecture choice that motivates this)
+- Knowledge: research connects via `guides` → epic, lessons via `cautions` → epic
 
 ### Task
 An atomic unit of work completable in a single session.
@@ -41,20 +41,20 @@ An atomic unit of work completable in a single session.
 ### Research
 Investigation or analysis that produces findings.
 - Stored in the project's discovery artifacts directory
-- Origin: `spawned-by` → idea
+- Origin: ideas connect via `spawns` → research
 - Output: `produces` → wireframe, `informs` → decision, `guides` → epic
 
 ### Wireframe
 Visual specification of a UI or interaction pattern.
 - Stored in the project's discovery artifacts directory
-- Origin: `produced-by` → research
+- Origin: research connects via `produces` → wireframe
 
 ### Bug
 A functional or display issue reported against existing work.
 - Stored in the project's discovery artifacts directory
 - Reports against: `reports` → epic, task, or milestone
 - Impact: `affects` → persona
-- Resolution: `fixed-by` → task
+- Resolution: tasks connect via `fixes` → bug
 
 ## Creating Artifacts
 
@@ -69,18 +69,14 @@ status: active
 relationships:
   - target: <milestone-id>
     type: fulfils
-  - target: <decision-id>
-    type: driven-by
-  - target: <idea-id>
-    type: realised-by
 ---
 ```
 
 Rules:
 1. **Every artifact MUST have `id`, `type`, `status`**
-2. **Relationships are bidirectional** — when you add `delivers` on a task, add `delivered-by` on the epic
+2. **Store forward relationships only** — the graph engine computes inverses at query time. Do NOT add stored inverse entries (e.g. `delivered-by` on the epic).
 3. **Use the correct verb** — each relationship has specific from/to types. The verb constrains usage.
-4. **Next ID**: scan existing files to find the highest ID and increment
+4. **ID = PREFIX-{first 8 hex of MD5(title)}** — deterministic, verifiable, no external state needed
 
 ## Relationship Quick Reference
 
@@ -128,9 +124,9 @@ Task
 
 Any delivery artifact traces back to the idea and pillar through the graph:
 ```
-task →(delivers)→ epic →(realised-by)→ idea →(grounded-by)→ pillar →(upholds)→ vision
+task →(delivers)→ epic ←(realises)← idea ←(grounded)← pillar →(upholds)→ vision
 ```
 
 ## Validation
 
-Before committing, run the project's integrity checker to verify all relationship targets exist, inverses are present, verbs match from/to type constraints, and required frontmatter fields are present.
+Before committing, run the project's integrity checker to verify all relationship targets exist, verbs match from/to type constraints, and required frontmatter fields are present.

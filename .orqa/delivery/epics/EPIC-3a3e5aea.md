@@ -13,6 +13,9 @@ scoring:
   complexity: 4
   dependencies: 2
 relationships:
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
+    rationale: "LSP enforcement is needed for dogfooding"
   - target: "PILLAR-c9e0a695"
     type: "grounded"
     rationale: "LSP enforcement makes governance artifacts visible and manageable in the editor — mechanical enforcement of structural rules"
