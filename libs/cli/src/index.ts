@@ -61,6 +61,37 @@ export {
 	type RetrievedKnowledge,
 } from "./lib/knowledge-retrieval.js";
 
+// Token tracking
+export {
+	TokenTracker,
+	recordRequest,
+	recordAgentComplete,
+	recordSessionSummary,
+	readMetricEvents,
+	filterEvents,
+	computeTrends,
+	getMetricsPath,
+	type RequestMetrics,
+	type AgentMetrics,
+	type SessionMetrics,
+	type MetricEvent,
+	type TrendMetrics,
+} from "./lib/token-tracker.js";
+
+// Budget enforcement
+export {
+	BudgetEnforcer,
+	estimateCost,
+	inferModelTier,
+	suggestDowngrade,
+	DEFAULT_BUDGETS,
+	COST_PER_MTOK,
+	MODEL_TIERS,
+	type BudgetConfig,
+	type BudgetCheckResult,
+	type BudgetSeverity,
+} from "./lib/budget-enforcer.js";
+
 // Prompt registry
 export {
 	buildPromptRegistry,
@@ -71,3 +102,24 @@ export {
 	type RegistryPromptSection,
 } from "./lib/prompt-registry.js";
 
+// Agent spawner
+export {
+	createAgentConfig,
+	selectModelTier,
+	isValidRole,
+	modelTierLabel,
+	serializeFindings,
+	parseFindingsHeader,
+	UNIVERSAL_ROLES,
+	DEFAULT_MODEL_TIERS,
+	ROLE_TOOL_CONSTRAINTS,
+	type UniversalRole,
+	type ModelTier,
+	type TaskComplexity,
+	type ToolConstraint,
+	type TaskContext,
+	type AgentSpawnConfig,
+	type CreateAgentParams,
+	type FindingsHeader,
+	type FindingsDocument,
+} from "./lib/agent-spawner.js";
