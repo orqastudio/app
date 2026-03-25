@@ -28,9 +28,9 @@ EPIC-c828007a  Graph Foundation               [DONE]
        │
        ├──→ EPIC-f6da17ed  Workflow Engine + State Machines  [DONE]
        │         │
-       │         ├──→ EPIC-a63fde02  Prompt Generation + Knowledge    [ACTIVE]
+       │         ├──→ EPIC-a63fde02  Prompt Generation + Knowledge    [DONE]
        │         │         │
-       │         │         └──→ EPIC-281f7857  Agent Lifecycle + Tiering
+       │         │         └──→ EPIC-281f7857  Agent Lifecycle + Tiering        [ACTIVE]
        │         │                    │
        │         │                    └──→ EPIC-59b92c8d  Content Migration
        │         │                               │
