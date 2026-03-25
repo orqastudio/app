@@ -2,7 +2,7 @@
 id: TASK-74f5fcdf
 type: task
 title: "Artifact system review — state machine, definitions, audit"
-status: captured
+status: archived
 priority: P1
 created: 2026-03-25
 updated: 2026-03-25
