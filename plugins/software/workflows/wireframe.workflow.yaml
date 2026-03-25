@@ -1,0 +1,149 @@
+name: wireframe
+version: "0.1.0"
+artifact_type: wireframe
+plugin: "@orqastudio/plugin-software-project"
+description: >
+  Wireframe lifecycle state machine. Wireframes are visual specifications
+  produced during discovery. The workflow tracks capture, exploration,
+  active design, review, and completion.
+
+initial_state: captured
+
+states:
+  captured:
+    category: planning
+    description: "Wireframe concept has been captured but not yet started."
+
+  exploring:
+    category: planning
+    description: "Wireframe is being explored — defining scope, fidelity, target screens."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Wireframe exploration started"
+
+  active:
+    category: active
+    description: "Wireframe is actively being designed."
+    on_enter:
+      - type: set_field
+        params:
+          field: started_at
+          value: "${now}"
+      - type: append_log
+        params:
+          message: "Wireframe design activated"
+
+  hold:
+    category: active
+    description: "Wireframe work is paused, waiting for input or decisions."
+
+  review:
+    category: review
+    description: "Wireframe is being reviewed for accuracy and completeness."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Wireframe entered review"
+
+  completed:
+    category: completed
+    description: "Wireframe has been reviewed and accepted."
+    on_enter:
+      - type: set_field
+        params:
+          field: completed_at
+          value: "${now}"
+      - type: append_log
+        params:
+          message: "Wireframe completed"
+
+  surpassed:
+    category: terminal
+    description: "Wireframe has been superseded by a newer design."
+
+  archived:
+    category: terminal
+    description: "Wireframe is archived."
+
+transitions:
+  # Exploration phase
+  - from: captured
+    to: exploring
+    event: explore
+    description: "Begin defining wireframe scope and fidelity."
+
+  - from: captured
+    to: active
+    event: start
+    description: "Fast-track directly to active design."
+
+  # Active phase
+  - from: exploring
+    to: active
+    event: start
+    description: "Begin active wireframe design."
+
+  - from: exploring
+    to: review
+    event: submit_for_review
+    description: "Submit exploration-phase wireframe for review."
+
+  - from: active
+    to: review
+    event: submit_for_review
+    description: "Submit wireframe for review."
+
+  - from: active
+    to: hold
+    event: pause
+    description: "Pause wireframe work."
+
+  - from: hold
+    to: active
+    event: resume
+    description: "Resume paused wireframe work."
+
+  # Review phase
+  - from: review
+    to: completed
+    event: approve
+    description: "Wireframe accepted."
+
+  - from: review
+    to: active
+    event: request_changes
+    description: "Further design iteration needed."
+    actions:
+      - type: append_log
+        params:
+          message: "Changes requested during wireframe review"
+
+  # Terminal transitions
+  - from: completed
+    to: surpassed
+    event: surpass
+    description: "Mark as superseded by newer design."
+
+  - from: completed
+    to: archived
+    event: archive
+
+  - from: surpassed
+    to: archived
+    event: archive
+
+  - from: [captured, exploring, hold]
+    to: archived
+    event: archive
+    description: "Archive from any non-active state."
+
+migration:
+  captured: captured
+  exploring: exploring
+  active: active
+  hold: hold
+  review: review
+  completed: completed
+  surpassed: surpassed
+  archived: archived

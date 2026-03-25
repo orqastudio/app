@@ -1,0 +1,179 @@
+name: idea
+version: "0.1.0"
+artifact_type: idea
+plugin: "@orqastudio/plugin-agile-governance"
+description: >
+  Idea lifecycle state machine. Ideas are captured insights that may
+  crystallise into decisions, spawn epics, or be realised through delivery
+  work. The workflow tracks the full journey from capture through exploration,
+  prioritisation, active development, review, and completion.
+
+initial_state: captured
+
+states:
+  captured:
+    category: planning
+    description: "Idea has been captured but not yet explored."
+
+  exploring:
+    category: planning
+    description: "Idea is being explored — feasibility, scope, impact being assessed."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Idea exploration started"
+
+  ready:
+    category: planning
+    description: "Idea has been explored and is ready for prioritisation."
+
+  prioritised:
+    category: planning
+    description: "Idea has been prioritised and is ready for active work."
+
+  active:
+    category: active
+    description: "Idea is actively being developed or crystallised."
+    on_enter:
+      - type: set_field
+        params:
+          field: started_at
+          value: "${now}"
+      - type: append_log
+        params:
+          message: "Idea activated"
+
+  hold:
+    category: active
+    description: "Idea is paused, waiting for external input or decision."
+
+  review:
+    category: review
+    description: "Idea outcomes are being reviewed."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Idea entered review"
+
+  completed:
+    category: completed
+    description: "Idea has been reviewed and accepted — outcomes delivered."
+    on_enter:
+      - type: set_field
+        params:
+          field: completed_at
+          value: "${now}"
+      - type: append_log
+        params:
+          message: "Idea completed"
+
+  surpassed:
+    category: terminal
+    description: "Idea was completed but has been superseded."
+
+  archived:
+    category: terminal
+    description: "Idea is archived."
+
+transitions:
+  # Exploration phase
+  - from: captured
+    to: exploring
+    event: explore
+    description: "Begin exploring feasibility and impact."
+
+  # Planning phase
+  - from: exploring
+    to: ready
+    event: scope_complete
+    description: "Exploration complete, ready for prioritisation."
+
+  - from: exploring
+    to: hold
+    event: pause
+    description: "Pause exploration pending input."
+
+  - from: exploring
+    to: archived
+    event: archive
+    description: "Archive during exploration (not viable)."
+
+  - from: ready
+    to: prioritised
+    event: prioritise
+
+  - from: ready
+    to: hold
+    event: pause
+    description: "Pause before prioritisation."
+
+  # Active phase
+  - from: prioritised
+    to: active
+    event: start
+    description: "Begin active work on this idea."
+
+  - from: active
+    to: review
+    event: submit_for_review
+    description: "Submit idea outcomes for review."
+
+  - from: active
+    to: hold
+    event: pause
+    description: "Pause active work."
+
+  - from: hold
+    to: exploring
+    event: rescope
+    description: "Return to exploration for re-scoping."
+
+  - from: hold
+    to: ready
+    event: resume
+    description: "Return to ready pool."
+
+  # Review phase
+  - from: review
+    to: completed
+    event: approve
+    description: "Idea outcomes accepted."
+
+  - from: review
+    to: active
+    event: request_changes
+    description: "Further work needed."
+    actions:
+      - type: append_log
+        params:
+          message: "Changes requested during idea review"
+
+  # Terminal transitions
+  - from: completed
+    to: surpassed
+    event: surpass
+
+  - from: completed
+    to: archived
+    event: archive
+
+  - from: surpassed
+    to: archived
+    event: archive
+
+  - from: [captured, hold]
+    to: archived
+    event: archive
+    description: "Archive from non-active states."
+
+migration:
+  captured: captured
+  exploring: exploring
+  ready: ready
+  prioritised: prioritised
+  active: active
+  hold: hold
+  review: review
+  completed: completed
+  surpassed: surpassed
+  archived: archived

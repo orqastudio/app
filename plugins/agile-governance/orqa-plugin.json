@@ -963,6 +963,22 @@
     ],
     "views": [],
     "widgets": [],
+    "workflows": [
+      { "artifact_type": "vision", "path": "workflows/vision.workflow.yaml" },
+      { "artifact_type": "pillar", "path": "workflows/pillar.workflow.yaml" },
+      { "artifact_type": "persona", "path": "workflows/persona.workflow.yaml" },
+      { "artifact_type": "idea", "path": "workflows/idea.workflow.yaml" },
+      { "artifact_type": "decision", "path": "workflows/decision.workflow.yaml" },
+      { "artifact_type": "rule", "path": "workflows/rule.workflow.yaml" },
+      { "artifact_type": "lesson", "path": "workflows/lesson.workflow.yaml" },
+      { "artifact_type": "knowledge", "path": "workflows/knowledge.workflow.yaml" },
+      { "artifact_type": "agent", "path": "workflows/agent.workflow.yaml" },
+      { "artifact_type": "doc", "path": "workflows/doc.workflow.yaml" },
+      { "artifact_type": "pivot", "path": "workflows/pivot.workflow.yaml" },
+      { "artifact_type": "epic", "path": "workflows/epic.workflow.yaml" },
+      { "artifact_type": "task", "path": "workflows/task.workflow.yaml" },
+      { "artifact_type": "delivery", "path": "workflows/delivery.workflow.yaml" }
+    ],
     "relationships": [
       {
         "key": "upholds",

@@ -514,6 +514,11 @@
         }
       }
     ],
+    "workflows": [
+      { "artifact_type": "milestone", "path": "workflows/milestone.workflow.yaml" },
+      { "artifact_type": "research", "path": "workflows/research.workflow.yaml" },
+      { "artifact_type": "wireframe", "path": "workflows/wireframe.workflow.yaml" }
+    ],
     "relationships": [
       {
         "key": "realises",

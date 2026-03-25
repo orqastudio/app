@@ -181,6 +181,27 @@
               "description": { "type": "string" }
             }
           }
+        },
+
+        "workflows": {
+          "type": "array",
+          "description": "Workflow definitions for artifact type state machines. Each entry maps an artifact type to its workflow file.",
+          "items": {
+            "type": "object",
+            "required": ["artifact_type", "path"],
+            "additionalProperties": false,
+            "properties": {
+              "artifact_type": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*$",
+                "description": "Artifact type key this workflow applies to."
+              },
+              "path": {
+                "type": "string",
+                "description": "Relative path to the workflow YAML file within the plugin directory."
+              }
+            }
+          }
         }
       }
     },

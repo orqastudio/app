@@ -475,6 +475,14 @@ export interface BundledKnowledgeRef {
 	label?: string;
 }
 
+/** A workflow registration mapping an artifact type to its workflow file. */
+export interface WorkflowRegistration {
+	/** Artifact type key this workflow applies to. */
+	artifact_type: string;
+	/** Relative path to the workflow YAML file within the plugin directory. */
+	path: string;
+}
+
 /** The `provides` block of a plugin manifest. */
 export interface PluginProvides {
 	/** Artifact type schemas this plugin introduces. */
@@ -507,6 +515,8 @@ export interface PluginProvides {
 	symlinks?: PluginSymlinkDeclaration[];
 	/** Aggregated files — collect values from all plugin manifests into a single output file. */
 	aggregatedFiles?: PluginAggregatedFile[];
+	/** Workflow definitions for artifact type state machines. */
+	workflows?: WorkflowRegistration[];
 }
 
 // ---------------------------------------------------------------------------
