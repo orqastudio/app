@@ -1,0 +1,727 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/orqastudio/orqastudio-types/blob/main/schemas/workflow.schema.json",
+  "title": "OrqaStudio Workflow Definition",
+  "description": "Schema for plugin-owned YAML workflow definitions. Each workflow defines a complete state machine for an artifact type, with states, transitions, guards, actions, and human gates.",
+  "type": "object",
+  "required": ["name", "version", "artifact_type", "plugin", "states", "transitions", "initial_state"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Workflow identifier (lowercase, hyphenated). Must be unique within the plugin."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.]+)?$",
+      "description": "Semver version of this workflow definition."
+    },
+    "artifact_type": {
+      "type": "string",
+      "description": "The artifact type key this workflow governs (must match a schema key from the owning plugin)."
+    },
+    "plugin": {
+      "type": "string",
+      "description": "The plugin package name that owns this workflow."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the workflow's purpose."
+    },
+    "initial_state": {
+      "type": "string",
+      "description": "The state name that new artifacts of this type start in."
+    },
+    "contribution_points": {
+      "type": "array",
+      "description": "Named slots that stage-definition plugins can fill. Only used in workflow-definition plugins that define skeletons.",
+      "items": {
+        "$ref": "#/$defs/contribution_point"
+      }
+    },
+    "states": {
+      "type": "object",
+      "description": "Map of state name to state definition. Keys are the state identifiers used in transitions.",
+      "additionalProperties": {
+        "$ref": "#/$defs/state"
+      },
+      "minProperties": 2
+    },
+    "transitions": {
+      "type": "array",
+      "description": "Ordered list of transition definitions. Evaluated in order; first matching transition wins.",
+      "items": {
+        "$ref": "#/$defs/transition"
+      },
+      "minItems": 1
+    },
+    "gates": {
+      "type": "object",
+      "description": "Named human gate definitions referenced by transitions.",
+      "additionalProperties": {
+        "$ref": "#/$defs/gate"
+      }
+    },
+    "variants": {
+      "type": "object",
+      "description": "Named workflow variants for ad-hoc patterns (e.g. quickfix, security). Each variant overrides specific transitions or skips states.",
+      "additionalProperties": {
+        "$ref": "#/$defs/variant"
+      }
+    },
+    "selection_rules": {
+      "type": "array",
+      "description": "Rules that automatically select a workflow variant based on artifact properties.",
+      "items": {
+        "$ref": "#/$defs/selection_rule"
+      }
+    },
+    "migration": {
+      "type": "object",
+      "description": "Status mapping for migration from previous workflow versions.",
+      "additionalProperties": {
+        "type": "string",
+        "description": "Maps old status value to new state name."
+      }
+    }
+  },
+  "$defs": {
+    "state_category": {
+      "type": "string",
+      "enum": ["planning", "active", "review", "completed", "terminal"],
+      "description": "State category for cross-cutting UI treatment and dashboard aggregation."
+    },
+    "state": {
+      "type": "object",
+      "required": ["category"],
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "$ref": "#/$defs/state_category"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of what this state means."
+        },
+        "on_enter": {
+          "type": "array",
+          "description": "Actions to execute when entering this state.",
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        },
+        "on_exit": {
+          "type": "array",
+          "description": "Actions to execute when leaving this state.",
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        }
+      }
+    },
+    "transition": {
+      "type": "object",
+      "required": ["from", "to", "event"],
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "oneOf": [
+            { "type": "string" },
+            {
+              "type": "array",
+              "items": { "type": "string" },
+              "minItems": 1
+            }
+          ],
+          "description": "Source state(s). A single state name or array of state names."
+        },
+        "to": {
+          "type": "string",
+          "description": "Target state name."
+        },
+        "event": {
+          "type": "string",
+          "description": "Named event that triggers this transition (e.g. 'start', 'complete', 'approve')."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of this transition."
+        },
+        "guards": {
+          "type": "array",
+          "description": "All guards must pass for this transition to be allowed. Evaluated in order.",
+          "items": {
+            "$ref": "#/$defs/guard"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "description": "Actions to execute when this transition fires.",
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        },
+        "gate": {
+          "type": "string",
+          "description": "Reference to a named gate in the top-level 'gates' map. If set, the transition requires human gate approval."
+        }
+      }
+    },
+    "guard": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["field_check", "relationship_check", "query", "role_check", "code_hook"],
+          "description": "Guard primitive type."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of what this guard checks."
+        },
+        "params": {
+          "type": "object",
+          "description": "Guard-type-specific parameters.",
+          "additionalProperties": true
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "field_check" } } },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "required": ["field", "operator"],
+                "properties": {
+                  "field": {
+                    "type": "string",
+                    "description": "Frontmatter field path to check."
+                  },
+                  "operator": {
+                    "type": "string",
+                    "enum": ["exists", "not_empty", "equals", "not_equals", "in", "not_in", "matches"],
+                    "description": "Comparison operator."
+                  },
+                  "value": {
+                    "description": "Expected value (required for equals, not_equals, in, not_in, matches)."
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "relationship_check" } } },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "required": ["relationship_type", "condition"],
+                "properties": {
+                  "relationship_type": {
+                    "type": "string",
+                    "description": "Relationship type key to check (e.g. 'delivers', 'depends-on')."
+                  },
+                  "condition": {
+                    "type": "string",
+                    "enum": ["exists", "min_count", "all_targets_in_status", "any_target_in_status", "no_targets_in_status"],
+                    "description": "Condition to evaluate against relationships of this type."
+                  },
+                  "min_count": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Minimum number of relationships (for min_count condition)."
+                  },
+                  "statuses": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Status values for status-based conditions."
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "query" } } },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "required": ["query_name"],
+                "properties": {
+                  "query_name": {
+                    "type": "string",
+                    "description": "Named graph query to execute."
+                  },
+                  "expected_result": {
+                    "type": "string",
+                    "enum": ["empty", "non_empty", "count_equals", "count_gte", "count_lte"],
+                    "description": "How to interpret the query result."
+                  },
+                  "count": {
+                    "type": "integer",
+                    "description": "Count value for count-based expectations."
+                  },
+                  "args": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Arguments passed to the graph query."
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "role_check" } } },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "required": ["roles"],
+                "properties": {
+                  "roles": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "minItems": 1,
+                    "description": "Allowed roles that can trigger this transition."
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "code_hook" } } },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "required": ["hook"],
+                "properties": {
+                  "hook": {
+                    "type": "string",
+                    "description": "Registered code hook identifier for complex guard logic."
+                  },
+                  "args": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Arguments passed to the code hook."
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "action": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["set_field", "append_log", "create_artifact", "notify", "code_hook"],
+          "description": "Action primitive type."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of what this action does."
+        },
+        "params": {
+          "type": "object",
+          "description": "Action-type-specific parameters.",
+          "additionalProperties": true
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "set_field" } } },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "required": ["field", "value"],
+                "properties": {
+                  "field": {
+                    "type": "string",
+                    "description": "Frontmatter field path to set."
+                  },
+                  "value": {
+                    "description": "Value to set. Can use template expressions like '${now}' or '${actor}'."
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "append_log" } } },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "required": ["message"],
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "description": "Log message template. Supports ${field} interpolation."
+                  },
+                  "log_field": {
+                    "type": "string",
+                    "default": "audit_log",
+                    "description": "Frontmatter array field to append to."
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "create_artifact" } } },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "required": ["artifact_type"],
+                "properties": {
+                  "artifact_type": {
+                    "type": "string",
+                    "description": "Type key for the artifact to create."
+                  },
+                  "template": {
+                    "type": "string",
+                    "description": "Template name for generating the artifact content."
+                  },
+                  "relationship": {
+                    "type": "string",
+                    "description": "Relationship type to establish between the source artifact and the created one."
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "notify" } } },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "required": ["channel", "message"],
+                "properties": {
+                  "channel": {
+                    "type": "string",
+                    "enum": ["ui", "log", "hook"],
+                    "description": "Notification channel."
+                  },
+                  "message": {
+                    "type": "string",
+                    "description": "Notification message template."
+                  },
+                  "severity": {
+                    "type": "string",
+                    "enum": ["info", "warning", "error"],
+                    "default": "info"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "code_hook" } } },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "required": ["hook"],
+                "properties": {
+                  "hook": {
+                    "type": "string",
+                    "description": "Registered code hook identifier."
+                  },
+                  "args": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Arguments passed to the code hook."
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "gate": {
+      "type": "object",
+      "required": ["pattern", "phases"],
+      "additionalProperties": false,
+      "description": "A human gate definition — a structured sub-workflow for review/approval.",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "enum": ["simple_approval", "structured_review", "multi_reviewer", "escalation", "scope_decision"],
+          "description": "Gate pattern determining the review mechanism."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of this gate's purpose."
+        },
+        "phases": {
+          "type": "object",
+          "description": "The five gate phases. All are optional — omitted phases use pattern defaults.",
+          "additionalProperties": false,
+          "properties": {
+            "gather": {
+              "$ref": "#/$defs/gate_phase_gather"
+            },
+            "present": {
+              "$ref": "#/$defs/gate_phase_present"
+            },
+            "collect": {
+              "$ref": "#/$defs/gate_phase_collect"
+            },
+            "execute": {
+              "$ref": "#/$defs/gate_phase_execute"
+            },
+            "learn": {
+              "$ref": "#/$defs/gate_phase_learn"
+            }
+          }
+        },
+        "timeout": {
+          "type": "object",
+          "description": "Timeout configuration for the gate.",
+          "properties": {
+            "duration": {
+              "type": "string",
+              "pattern": "^\\d+[dhm]$",
+              "description": "Duration before timeout (e.g. '24h', '7d', '30m')."
+            },
+            "action": {
+              "type": "string",
+              "enum": ["escalate", "auto_approve", "auto_reject", "notify"],
+              "description": "What to do when the timeout is reached."
+            }
+          }
+        }
+      }
+    },
+    "gate_phase_gather": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "GATHER phase: collect data from artifact fields, run pre-checks.",
+      "properties": {
+        "fields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Frontmatter fields to include in the review summary."
+        },
+        "pre_checks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/guard" },
+          "description": "Automated checks to run before presenting to reviewer."
+        },
+        "summary_template": {
+          "type": "string",
+          "description": "Template for generating the review summary."
+        }
+      }
+    },
+    "gate_phase_present": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "PRESENT phase: configure how review inputs are displayed.",
+      "properties": {
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["title"],
+            "properties": {
+              "title": { "type": "string" },
+              "content_field": { "type": "string" },
+              "content_template": { "type": "string" }
+            }
+          },
+          "description": "Sections to display to the reviewer."
+        },
+        "context_queries": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Named graph queries to run for additional context."
+        }
+      }
+    },
+    "gate_phase_collect": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "COLLECT phase: configure how reviewer input is gathered.",
+      "properties": {
+        "verdicts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["key", "label"],
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Verdict identifier."
+              },
+              "label": {
+                "type": "string",
+                "description": "Display label."
+              },
+              "transitions_to": {
+                "type": "string",
+                "description": "State to transition to if this verdict is chosen."
+              }
+            }
+          },
+          "minItems": 2,
+          "description": "Available verdict options for the reviewer."
+        },
+        "require_rationale": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the reviewer must provide a rationale."
+        },
+        "min_reviewers": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "Minimum number of reviewers required (for multi-reviewer pattern)."
+        }
+      }
+    },
+    "gate_phase_execute": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "EXECUTE phase: actions to run after a verdict is collected.",
+      "properties": {
+        "actions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/action" },
+          "description": "Actions to execute after the verdict."
+        }
+      }
+    },
+    "gate_phase_learn": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "LEARN phase: post-gate learning actions (lesson creation, pattern tracking).",
+      "properties": {
+        "on_fail": {
+          "type": "object",
+          "properties": {
+            "create_lesson": {
+              "type": "boolean",
+              "default": true,
+              "description": "Whether to create a lesson artifact on rejection."
+            },
+            "track_recurrence": {
+              "type": "boolean",
+              "default": true,
+              "description": "Whether to track recurrence patterns for promotion."
+            }
+          }
+        },
+        "on_pass": {
+          "type": "object",
+          "properties": {
+            "track_cycle_time": {
+              "type": "boolean",
+              "default": true,
+              "description": "Whether to track cycle time metrics."
+            }
+          }
+        }
+      }
+    },
+    "contribution_point": {
+      "type": "object",
+      "required": ["name", "stage"],
+      "additionalProperties": false,
+      "description": "A named slot in a workflow skeleton that stage-definition plugins fill.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique name for this contribution point."
+        },
+        "stage": {
+          "type": "string",
+          "description": "Which workflow stage this contribution point belongs to."
+        },
+        "description": {
+          "type": "string",
+          "description": "What this slot expects from contributing plugins."
+        },
+        "required": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether at least one plugin must fill this slot."
+        },
+        "filled_by": {
+          "type": "string",
+          "description": "Plugin name that fills this slot (set during resolution)."
+        }
+      }
+    },
+    "variant": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "A workflow variant that overrides the base workflow for specific scenarios.",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of when this variant is used."
+        },
+        "skip_states": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "States to skip in this variant."
+        },
+        "override_transitions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/transition" },
+          "description": "Transitions that replace or supplement the base transitions."
+        },
+        "skip_gates": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Gate names to skip in this variant."
+        }
+      }
+    },
+    "selection_rule": {
+      "type": "object",
+      "required": ["variant", "conditions"],
+      "additionalProperties": false,
+      "description": "Rule for automatically selecting a workflow variant based on artifact properties.",
+      "properties": {
+        "variant": {
+          "type": "string",
+          "description": "Name of the variant to select."
+        },
+        "conditions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/guard" },
+          "minItems": 1,
+          "description": "All conditions must match for this variant to be selected."
+        },
+        "priority": {
+          "type": "integer",
+          "default": 0,
+          "description": "Higher priority rules are evaluated first."
+        }
+      }
+    }
+  }
+}

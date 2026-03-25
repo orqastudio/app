@@ -82,6 +82,50 @@ export type {
 
 export type { StreamEvent } from "./streaming.js";
 
+// Workflow types
+export type {
+	StateCategory,
+	GuardType,
+	FieldCheckOperator,
+	RelationshipCheckCondition,
+	QueryExpectedResult,
+	FieldCheckParams,
+	RelationshipCheckParams,
+	QueryGuardParams,
+	RoleCheckParams,
+	CodeHookGuardParams,
+	GuardParams,
+	Guard,
+	ActionType,
+	NotifyChannel,
+	NotifySeverity,
+	SetFieldParams,
+	AppendLogParams,
+	CreateArtifactParams,
+	NotifyParams,
+	CodeHookActionParams,
+	ActionParams,
+	Action,
+	WorkflowState,
+	Transition,
+	GatePattern,
+	GateTimeoutAction,
+	GateTimeout,
+	GatePresentSection,
+	GateVerdict,
+	GatePhaseGather,
+	GatePhasePresent,
+	GatePhaseCollect,
+	GatePhaseExecute,
+	GatePhaseLearn,
+	GatePhases,
+	Gate,
+	ContributionPoint,
+	WorkflowVariant,
+	SelectionRule,
+	WorkflowDefinition,
+} from "./workflow.js";
+
 export type { OrqaError } from "./errors.js";
 
 export type {
