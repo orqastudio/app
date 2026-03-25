@@ -2,7 +2,7 @@
 id: EPIC-aad17f28
 type: epic
 title: "Rule enforcement generation"
-description: "Implement automatic hook generation from rule enforcement specifications. Rules declare enforcement mode (mechanical/advisory/validation/workflow-guard/observational) and constraints in YAML frontmatter. The install pipeline generates Claude Code hooks from mechanical rules using templates. Closes the gap where 20 rules declare hook specifications but only 3-4 have corresponding implementations."
+description: "Complete the daemon-based rule enforcement system. The daemon already reads enforcement entries from rule frontmatter and evaluates them (hooks.rs). Extend it with missing entry types, revert the connector to calling the daemon, and block work when the daemon isn't running."
 status: active
 priority: P0
 created: 2026-03-25
@@ -11,13 +11,13 @@ horizon: active
 relationships:
   - target: RES-2c959f47
     type: informed-by
-    rationale: "Research document designed the enforcement architecture"
+    rationale: "Research identified the enforcement gap — 44 hook specs, only 3-4 implemented"
   - target: EPIC-a5501c18
     type: depends-on
-    rationale: "Connector rebuild must be complete before generating hooks into it"
+    rationale: "Connector rebuild must be complete"
   - target: AD-1ef9f57c
     type: implements
-    rationale: "AD resolved against DSL in favor of declarative templates"
+    rationale: "AD resolved: daemon is business logic boundary"
   - target: MS-b1ac0a20
     type: fulfils
     rationale: "Mechanical enforcement is required for dogfooding milestone"
@@ -25,75 +25,91 @@ relationships:
 
 ## Context
 
-RES-2c959f47 found that 20 rules declare 44 hook specifications in YAML frontmatter, but only 3-4 have corresponding hand-written hooks. The remaining rules' enforcement declarations are aspirational — they describe enforcement that does not exist.
+The daemon's `hooks.rs` already:
+- Reads all active rules from the graph
+- Parses `enforcement` entries from YAML frontmatter
+- Evaluates `bash` pattern entries (regex match on commands)
+- Evaluates `file` path entries (glob match on file paths)
+- Checks plugin file ownership via manifest
+- Returns allow/block/warn results
 
-Six enforcement archetypes were identified. Archetypes 1-3 (bash patterns, field checks, file guards) cover 58% of entries and are trivially templateable. The research recommends template-based generation at `orqa install` time.
+This was always the correct architecture (daemon = business logic boundary). During the connector rebuild session (EPIC-a5501c18), the rule-engine hook was incorrectly rewritten to do local enforcement in TypeScript, duplicating daemon logic. This must be reverted.
 
-34 of 59 active rules are appropriately advisory-only and should NOT be mechanized.
+RES-2c959f47 found 20 rules declare 44 hook specs but only bash and file types are implemented in the daemon. The daemon needs: field-check (tool_input validation), tool-matcher (per-tool blocking), and session-state checks.
+
+## Architectural Principle
+
+- **Daemon evaluates rules.** All enforcement logic lives in `libs/validation/src/hooks.rs`.
+- **Connector hooks are thin adapters.** They read stdin, call the daemon, format the response.
+- **Daemon must be running.** Projects with the Claude connector installed must block work when the daemon is not reachable.
+- **No duplicate enforcement in TypeScript.** The local bash-safety and file-ownership code added in EPIC-a5501c18 must be removed from the connector and verified to exist in the daemon.
 
 ## Tasks
 
-### Phase 1: Schema + Migration
+### Phase 1: Revert + Verify Daemon
 
-**TASK-1: Define enforcement entry JSON schema**
-- Add enforcement entry schema to plugin type definitions
-- Five modes: mechanical, advisory, validation, workflow-guard, observational
-- Six templates: bash-pattern, field-check, file-guard, session-state, knowledge-inject, session-lifecycle
-- Each entry: mode, event, matcher, template, parameters, action (block/warn), message
-- Acceptance criteria: schema in libs/types, TypeScript types exported, JSON Schema for validation
+**TASK-1: Revert connector rule-engine.ts to daemon-calling thin adapter**
+- Restore the original pattern: read stdin, call `POST /hook` on daemon, format result
+- Remove the local bash-safety and file-ownership code from TypeScript
+- Verify the daemon's `hooks.rs` already handles file ownership and bash patterns
+- Acceptance criteria: rule-engine.ts is < 30 lines, all enforcement logic in daemon
 
-**TASK-2: Migrate 59 active rules to standardized enforcement schema**
-- Audit all 59 rules' existing enforcement entries
-- Standardize to the new schema format
-- 20 rules already declare hook entries — normalize their format
-- 34 advisory-only rules — add explicit `mode: advisory` entries
-- Remaining rules — classify and add appropriate entries
-- Acceptance criteria: all 59 rules have valid enforcement entries, schema validates
+**TASK-2: Add daemon-required enforcement to SessionStart**
+- Add a SessionStart hook that checks daemon reachability (`GET /health`)
+- If daemon is not running: output a blocking message telling the user to run `orqa daemon start`
+- Acceptance criteria: new session without daemon running shows clear error and blocks
 
-### Phase 2: Template Engine
+**TASK-3: Fix daemon rule evaluation for build commands**
+- The original problem: daemon was blocking `cargo test` and `npx tsc`
+- Investigate which rules' enforcement entries match these commands
+- Fix the rules' patterns to not match legitimate build commands (or adjust action to warn)
+- Acceptance criteria: `cargo test`, `npx tsc`, `cargo build` are allowed; `--no-verify`, `push --force` are blocked
 
-**TASK-3: Build bash-pattern template**
-- Template that generates a hook script matching bash commands against regex patterns
-- Reads patterns from rule enforcement entries at install time
-- Generates a single `generated/bash-guard.mjs` that checks all patterns
-- Replaces the 4 hardcoded patterns in rule-engine.ts with all 17 declared patterns
-- Acceptance criteria: template generates working hook, covers all bash-pattern entries, tests pass
+### Phase 2: Extend Daemon Entry Types
 
-**TASK-4: Build field-check template**
-- Template for checking tool_input fields (e.g. Agent must have run_in_background: true)
-- Replaces enforce-background-agents.mjs with generated version
-- Acceptance criteria: template generates working hook, replaces hand-written script
+**TASK-4: Add field-check entry type to hooks.rs**
+- New enforcement entry type that checks tool_input fields
+- Example: Agent tool must have `run_in_background: true` and `team_name` set
+- Replaces the hand-written `enforce-background-agents.mjs`
+- Acceptance criteria: field-check entries in rules are evaluated by daemon, tests pass
 
-**TASK-5: Build file-guard template**
-- Template for glob-matching file paths (e.g. block writes to plugin-owned files)
-- Integrates with manifest.json for file ownership
-- Acceptance criteria: template generates working hook, covers all file-guard entries
+**TASK-5: Add tool-matcher entry type to hooks.rs**
+- Entry type that matches specific tool names (not just Bash)
+- Example: block `Write` to `.orqa/process/` files from implementer role
+- Acceptance criteria: tool-matcher entries evaluated, tests pass
 
-### Phase 3: Generation Pipeline
+**TASK-6: Standardize enforcement entry schema**
+- Define the canonical schema for enforcement entries in rule frontmatter
+- Document all entry types: bash, file, field-check, tool-matcher
+- Add schema validation to the Rust validation crate
+- Acceptance criteria: schema documented, validation catches invalid entries
 
-**TASK-6: Build the generation pipeline**
-- Scanner: reads all rules, parses enforcement entries
-- Template engine: maps entries to templates, generates scripts
-- Merger: combines generated + hand-written hooks into hooks.json
-- Writer: outputs to connectors/claude-code/hooks/generated/
-- Verification: validates generated hooks can be loaded
-- Acceptance criteria: `orqa install` generates hooks from rules, hand-written hooks preserved
+### Phase 3: Rule Migration
 
-**TASK-7: Wire into install pipeline**
-- Call hook generation after prompt registry build and agent file generation
-- Add `orqa hooks generate` CLI command for standalone use
-- Acceptance criteria: `orqa install` produces complete hooks.json, `orqa hooks generate` works standalone
+**TASK-7: Migrate 59 active rules to standardized enforcement schema**
+- Audit all enforcement entries against the canonical schema
+- Normalize format for the 20 rules with existing hook entries
+- Add explicit `mechanism: behavioral` for advisory-only rules
+- Acceptance criteria: all 59 rules have valid enforcement entries
 
-### Phase 4: Verification
+### Phase 4: Remove Duplicates + Verify
 
-**TASK-8: End-to-end verification**
-- Verify all 44 hook entries produce working enforcement
-- Test: bare Agent spawn is blocked (RULE-99abcea1)
-- Test: --no-verify is blocked (RULE-00700241)
-- Test: foreground agents are blocked (RULE-99abcea1)
-- Acceptance criteria: all mechanical rules produce working hooks, advisory rules still inject via pipeline
+**TASK-8: Remove hand-written enforcement scripts replaced by daemon**
+- Delete `enforce-background-agents.mjs` (replaced by field-check in daemon)
+- Delete `enforce-completion-gate.mjs` (if daemon handles it)
+- Update `hooks.json` to remove entries for deleted scripts
+- Acceptance criteria: no duplicate enforcement between daemon and connector
 
-**TASK-9: Enforcement coverage reporting**
-- Add `orqa audit enforcement` command
-- Reports: which rules have enforcement, which modes, coverage gaps
-- Acceptance criteria: command produces accurate report matching research findings
+**TASK-9: End-to-end verification**
+- Start daemon, verify all mechanical rules produce correct enforcement
+- Test: bare Agent spawn → blocked
+- Test: `--no-verify` → blocked
+- Test: foreground agents → blocked
+- Test: `cargo test` → allowed
+- Test: file ownership → protected
+- Acceptance criteria: all 44 hook entries produce correct allow/block/warn
+
+**TASK-10: Enforcement coverage reporting**
+- Add `orqa audit enforcement` CLI command
+- Reports: which rules have enforcement, mechanism type, coverage gaps
+- Acceptance criteria: command produces accurate report
