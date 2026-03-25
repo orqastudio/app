@@ -15,6 +15,21 @@ user-invocable: true
 relationships:
   - target: "DOC-9814ec3c"
     type: "synchronised-with"
+tier: "on-demand"
+roles:
+  - "implementer"
+paths:
+  - "app/src-tauri/**"
+  - "**/*.rs"
+tags:
+  - "errors"
+  - "error-handling"
+  - "composition"
+priority: "P2"
+summary: |
+  Error composition: OrqaError anatomy, From implementations, error propagation
+  through domain/repo/command layers, IPC serialization, frontend error handling
+  patterns.
 ---
 
 

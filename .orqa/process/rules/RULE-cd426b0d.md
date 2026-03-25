@@ -9,6 +9,11 @@ enforcement:
     message: "Write session state with Next Session Priorities before ending any session"
 created: 2026-03-23
 promoted-from: IMPL-30c3da78
+summary: "Before ending any session, orchestrator must write .state/session-state.md with: what was completed, Next Session Priorities (explicit ordered list), environment state, open issues. Stop hook checks for 'Next Session' heading and warns if missing. Writing priorities proactively prevents blind session starts."
+tier: always
+roles: [orchestrator]
+priority: P1
+tags: [session-state, priorities, proactive-handoff]
 relationships: []
 ---
 

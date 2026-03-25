@@ -17,6 +17,20 @@ user-invocable: true
 relationships:
   - target: DOC-4554ff3e
     type: synchronised-with
+tier: "stage-triggered"
+roles:
+  - "reviewer"
+stages:
+  - "review"
+tags:
+  - "code-review"
+  - "quality"
+  - "checklist"
+priority: "P1"
+summary: |
+  Code quality review: automated checks first (lint, test, type-check), then
+  manual review. Function size <=50 lines, no unwrap/panic, error composition.
+  Structured PASS/FAIL verdict.
 ---
 
 

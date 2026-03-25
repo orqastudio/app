@@ -12,6 +12,23 @@ user-invocable: true
 relationships:
   - target: "DOC-9814ec3c"
     type: "synchronised-with"
+tier: "stage-triggered"
+roles:
+  - "implementer"
+stages:
+  - "implement"
+paths:
+  - "app/src-tauri/**"
+  - "**/*.rs"
+tags:
+  - "backend"
+  - "best-practices"
+  - "umbrella"
+priority: "P1"
+summary: |
+  Backend best practices umbrella: composability, coding standards, error
+  handling for all backend work. References deeper Rust, Tauri, persistence
+  knowledge.
 ---
 This skill ensures every backend agent has the right mental model before writing code. It does not duplicate content from deeper skills — it establishes principles and points to the right references.
 

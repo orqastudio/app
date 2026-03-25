@@ -7,6 +7,7 @@ preamble: Check quality, compliance, and correctness. Produce PASS/FAIL verdicts
 status: active
 created: 2026-03-01
 updated: 2026-03-21
+maps_to_role: reviewer
 model: inherit
 knowledge:
   - reviewer-tree

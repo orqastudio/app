@@ -7,6 +7,7 @@ preamble: Investigate and gather information. Use search_semantic and graph_quer
 status: active
 created: 2026-03-01
 updated: 2026-03-10
+maps_to_role: researcher
 model: inherit
 capabilities:
   - file_read

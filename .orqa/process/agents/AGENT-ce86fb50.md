@@ -7,6 +7,8 @@ preamble: You are the Plugin Developer. Before creating or modifying any plugin,
 status: active
 created: 2026-03-24
 updated: 2026-03-24
+maps_to_role: implementer
+maps_to_role_domain: plugin-development
 model: sonnet
 capabilities:
   - file_read

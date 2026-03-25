@@ -9,6 +9,11 @@ updated: "2026-03-12"
 enforcement:
   - mechanism: behavioral
     message: "Documentation is the source of truth; verify docs exist before writing code; update docs before changing code; orchestrator checks docs-required gate before delegating implementation"
+summary: "Documentation is the source of truth. Verify docs exist before writing code, update docs before changing code. Check .orqa/documentation/ for existing designs. Epic docs-required gate must be satisfied before implementation. No deprecated documentation — delete and replace. Bug investigation must check docs before fixing code."
+tier: always
+roles: [orchestrator, implementer, writer]
+priority: P0
+tags: [documentation-first, source-of-truth, gates]
 relationships:
   - target: "AD-af88bb69"
     type: "enforces"

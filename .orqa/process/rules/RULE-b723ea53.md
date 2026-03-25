@@ -9,6 +9,11 @@ updated: 2026-03-11
 enforcement:
   - mechanism: behavioral
     message: "Each universal role has a defined set of permitted tools; using tools outside a role's scope violates ownership boundaries; Reviewer and Researcher cannot use Edit/Write tools"
+summary: "Each universal role has permitted capabilities enforcing ownership boundaries. Researcher/Planner are read-only. Reviewer can run shell checks but cannot edit. Writer/Designer can edit but not run shell. Orchestrator/Implementer have full access. Capabilities resolve to provider-specific tools via mapping tables."
+tier: always
+roles: [orchestrator, implementer, researcher, planner, reviewer, writer, designer]
+priority: P0
+tags: [tool-access, capabilities, role-boundaries]
 relationships:
   - target: AD-48b310f9
     type: enforces

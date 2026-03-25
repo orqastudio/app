@@ -6,6 +6,8 @@ description: "Scoped task agent for Rust coding standards. Operates in assess or
 preamble: "Execute Rust standards checks in assess or configure mode. Return structured JSON output. Do not converse — execute and return."
 status: "active"
 plugin: "@orqastudio/plugin-rust"
+maps_to_role: reviewer
+maps_to_role_domain: rust-standards
 model: "sonnet"
 capabilities:
   - "file_read"

@@ -11,6 +11,19 @@ user-invocable: false
 relationships:
   - target: DOC-7062bce9
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+paths:
+  - "**/*.ts"
+tags:
+  - "typescript"
+  - "advanced-types"
+  - "generics"
+priority: "P3"
+summary: |
+  TypeScript advanced types: generics, conditional types, mapped types, template
+  literals, utility types. For complex type logic and compile-time type safety.
 ---
 
 

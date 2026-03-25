@@ -13,6 +13,11 @@ enforcement:
     type: Stop
     action: check
     description: "Stop hook scans completion reports for missing What Is NOT Done section"
+summary: "Report status accurately — partial work reported as complete is worse than reporting incomplete. Use precise terms: done, partially done, scaffolded, not started. Apply the 'Would It Work' test before marking complete. Forbidden: 'mostly complete', 'should work', 'will be wired up later'. Stop hook checks for missing 'What Is NOT Done' section."
+tier: always
+roles: [orchestrator, implementer, reviewer]
+priority: P0
+tags: [honest-reporting, status-accuracy, completion-criteria]
 relationships:
   - target: AD-9baf6ee9
     type: enforces

@@ -36,6 +36,11 @@
         "key": "typescript-advanced-types",
         "id": "KNOW-TS-001",
         "label": "TypeScript Advanced Types"
+      },
+      {
+        "key": "40e2eb99",
+        "id": "KNOW-40e2eb99",
+        "label": "TypeScript Advanced Types"
       }
     ],
     "lspServers": {
@@ -82,6 +87,26 @@
           "export": "recommended"
         }
       ]
-    }
+    },
+    "knowledge_declarations": [
+      {
+        "id": "typescript-advanced-types",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "paths": [
+          "**/*.ts"
+        ],
+        "tags": [
+          "typescript",
+          "advanced-types",
+          "generics"
+        ],
+        "priority": "P3",
+        "summary": "TypeScript advanced types: generics, conditional types, mapped types, template literals, utility types. For complex type logic and compile-time type safety.",
+        "content_file": "knowledge/KNOW-40e2eb99.md"
+      }
+    ]
   }
 }

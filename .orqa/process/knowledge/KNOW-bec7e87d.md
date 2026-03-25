@@ -17,6 +17,17 @@ user-invocable: true
 relationships:
   - target: DOC-4554ff3e
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "reviewer"
+tags:
+  - "ux"
+  - "compliance"
+  - "review"
+priority: "P2"
+summary: |
+  UX compliance review: validates UI implementations against design system
+  standards, accessibility requirements, and interaction patterns.
 ---
 
 

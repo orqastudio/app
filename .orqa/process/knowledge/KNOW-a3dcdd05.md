@@ -17,6 +17,17 @@ user-invocable: true
 relationships:
   - target: DOC-bad8e26f
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+tags:
+  - "restructuring"
+  - "refactoring"
+  - "methodology"
+priority: "P2"
+summary: |
+  Restructuring methodology: when and how to restructure code or project layout.
+  Safe refactoring patterns, migration strategies, validation at each step.
 ---
 
 

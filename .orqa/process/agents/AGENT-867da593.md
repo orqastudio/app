@@ -5,6 +5,8 @@ title: "OrqaStudio Rust Backend Specialist"
 description: "Project-specific Rust backend specialist for OrqaStudio. Employs OrqaStudio-specific domain knowledge: error composition, domain services, IPC patterns, and repository pattern. Complements the generic plugin-provided Rust Specialist with project-level context."
 preamble: "Build OrqaStudio Rust backend code using project-specific patterns: OrqaError composition, domain service anatomy, IPC contract discipline, and repository pattern. Stores and components are out of your scope — focus on backend/src-tauri/ and libs/."
 status: "active"
+maps_to_role: implementer
+maps_to_role_domain: orqa-rust-backend
 model: "sonnet"
 skills:
   - "composability"

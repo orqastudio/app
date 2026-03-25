@@ -12,6 +12,22 @@ allowed-tools: "Read, Glob, Grep"
 relationships:
   - target: "DOC-bad8e26f"
     type: "synchronised-with"
+tier: "stage-triggered"
+roles:
+  - "implementer"
+  - "writer"
+stages:
+  - "plan"
+  - "implement"
+tags:
+  - "planning"
+  - "documentation-first"
+  - "verification"
+priority: "P1"
+summary: |
+  Documentation-first planning: plans start with documentation, get user
+  approval, then implement with mandatory verification gates. Prevents
+  documentation drift across sessions.
 ---
 
 

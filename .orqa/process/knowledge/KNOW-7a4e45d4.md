@@ -9,6 +9,18 @@ status: active
 created: 2026-03-23
 updated: 2026-03-23
 relationships: []
+tier: "always"
+roles:
+  - "*"
+tags:
+  - "thinking-mode"
+  - "general"
+  - "default"
+priority: "P0"
+summary: |
+  Default thinking mode when no specific mode matches. Applies standard process
+  and safety rules without special emphasis. Fallback for ambiguous or
+  conversational prompts.
 ---
 
 # Thinking Mode: General

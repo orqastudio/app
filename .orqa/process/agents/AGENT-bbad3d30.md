@@ -7,6 +7,7 @@ preamble: Create documentation and written artifacts. Follow the artifact framew
 status: active
 created: 2026-03-01
 updated: 2026-03-10
+maps_to_role: writer
 model: sonnet
 capabilities:
   - file_read

@@ -12,6 +12,23 @@ user-invocable: true
 relationships:
   - target: "DOC-9814ec3c"
     type: "synchronised-with"
+tier: "stage-triggered"
+roles:
+  - "implementer"
+stages:
+  - "implement"
+paths:
+  - "app/ui/**"
+  - "**/*.svelte"
+tags:
+  - "frontend"
+  - "best-practices"
+  - "umbrella"
+priority: "P1"
+summary: |
+  Frontend best practices umbrella: composability, coding standards, component
+  conventions for all frontend work. References deeper Svelte 5, TypeScript,
+  Tailwind knowledge.
 ---
 This skill ensures every frontend agent has the right mental model before writing code. It does not duplicate content from deeper skills — it establishes principles and points to the right references.
 

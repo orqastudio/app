@@ -8,6 +8,19 @@ updated: 2026-03-20
 relationships:
   - target: DOC-fd1d12bb
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+paths:
+  - "**/*.svelte"
+tags:
+  - "svelte5"
+  - "snippets"
+  - "reference"
+priority: "P3"
+summary: |
+  Svelte 5 snippets reference: {#snippet} and {@render} syntax for reusable
+  template fragments replacing slots.
 ---
 
 # Svelte 5 Snippets Reference

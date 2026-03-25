@@ -15,6 +15,17 @@ updated: 2026-03-22
 category: methodology
 version: 1.0.0
 user-invocable: true
+tier: "on-demand"
+roles:
+  - "implementer"
+tags:
+  - "migration"
+  - "governance"
+  - "methodology"
+priority: "P2"
+summary: |
+  Governance migration methodology: how to migrate governance artifacts between
+  versions or formats. Safe migration patterns with validation.
 ---
 
 Methodology for migrating an existing project's governance into a structured governance framework. The goal is coexistence, not replacement — existing tools continue to work, and the governance framework becomes the single source of truth that feeds them.

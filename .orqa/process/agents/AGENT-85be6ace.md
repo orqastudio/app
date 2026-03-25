@@ -7,6 +7,7 @@ preamble: Design the approach, map dependencies, evaluate tradeoffs. Produce a s
 status: active
 created: 2026-03-01
 updated: 2026-03-10
+maps_to_role: planner
 model: inherit
 capabilities:
   - file_read

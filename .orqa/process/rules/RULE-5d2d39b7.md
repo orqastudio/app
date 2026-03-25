@@ -19,6 +19,11 @@ enforcement:
     event: session_end
     action: check
     message: "Flag any unresolved follow-up items in session state before session end"
+summary: "Orchestrator must not start new epics/teams/phases with unresolved follow-ups from current batch. Completion gate checklist: task statuses, follow-up items from findings files, dead file cleanup, dependency cleanup, binary rebuild, stale agents, session state freshness. PostToolUse hook on TeamCreate enforces."
+tier: always
+roles: [orchestrator]
+priority: P0
+tags: [completion-gate, follow-ups, batch-transitions]
 relationships:
   - target: RULE-8ee65d73
     type: extends

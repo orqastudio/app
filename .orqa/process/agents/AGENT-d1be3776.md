@@ -7,6 +7,8 @@ preamble: Execute plugin installation tasks. Set up dependencies, generate confi
 status: active
 created: 2026-03-19
 updated: 2026-03-19
+maps_to_role: implementer
+maps_to_role_domain: installation
 model: sonnet
 capabilities:
   - file_read

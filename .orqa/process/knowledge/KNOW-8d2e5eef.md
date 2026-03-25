@@ -17,6 +17,19 @@ relationships:
   - target: DOC-8d2e5eef
     type: synchronised-with
     rationale: "User-facing documentation pair for this agent-facing knowledge artifact"
+tier: "stage-triggered"
+roles:
+  - "implementer"
+stages:
+  - "implement"
+tags:
+  - "agents"
+  - "teams"
+  - "delegation"
+priority: "P1"
+summary: |
+  Agent team structure: hub-spoke orchestration, ephemeral task-scoped agents,
+  findings to disk. Teams are the unit of delegation — never spawn bare agents.
 ---
 
 ## Purpose

@@ -9,6 +9,14 @@ relationships:
     type: synchronised-with
   - target: DOC-db794473
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+tags:
+  - "cli"
+  - "reference"
+priority: "P3"
+summary: "Additional CLI patterns and development reference."
 
 ---
 

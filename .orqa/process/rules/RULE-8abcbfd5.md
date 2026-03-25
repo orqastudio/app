@@ -11,6 +11,11 @@ enforcement:
     message: "Agent definitions must declare capabilities not tool names; orchestrator resolves capabilities to concrete tool names per provider mapping at delegation time"
   - mechanism: json-schema
     description: "Governance steward verifies agent YAML uses capabilities field not tool names"
+summary: "Agent definitions declare abstract capabilities (file_read, file_edit, shell_execute, etc.), not concrete tool names. Provider mapping tables resolve capabilities to tools per context: Claude Code CLI (PascalCase built-ins + MCP) or OrqaStudio App (Tauri commands + native ONNX). Orchestrator resolves at delegation time."
+tier: always
+roles: [orchestrator, implementer, researcher, planner, reviewer, writer, designer]
+priority: P1
+tags: [capabilities, provider-agnostic, tool-mapping]
 relationships:
   - target: AD-02a2a97b
     type: enforces

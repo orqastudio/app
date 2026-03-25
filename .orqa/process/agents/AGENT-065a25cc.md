@@ -7,6 +7,8 @@ preamble: "Build Rust backend code following strict standards: Result<T,E> every
 status: "active"
 plugin: "@orqastudio/plugin-rust"
 inherits: "AGENT-e5dd38e4"
+maps_to_role: implementer
+maps_to_role_domain: rust
 model: "sonnet"
 capabilities:
   - "file_read"

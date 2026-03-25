@@ -18,6 +18,23 @@ relationships:
     type: synchronised-with
   - target: DOC-9814ec3c
     type: synchronised-with
+tier: "stage-triggered"
+roles:
+  - "implementer"
+stages:
+  - "implement"
+paths:
+  - "**/*.ts"
+  - "**/*.rs"
+tags:
+  - "logging"
+  - "centralized"
+  - "sdk"
+priority: "P1"
+summary: |
+  Centralized logging: ALL code must use SDK logger, never bare console calls.
+  Covers log levels, module scoping, error capture, perf instrumentation, and
+  dev controller integration.
 
 ---
 

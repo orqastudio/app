@@ -9,6 +9,11 @@ updated: 2026-03-22
 enforcement:
   - mechanism: behavioral
     message: "Orchestrator must read relevant architecture decisions before delegating any implementation; plans must include an Architectural Compliance section verifying all relevant decisions"
+summary: "Architecture decisions in .orqa/process/decisions/ are source of truth. Critical decisions: error propagation (Result types, no unwrap), IPC boundary (Tauri invoke only), component purity (display vs container), type safety (strict TS, no any), immutability, UX-first, Svelte 5 only, SQLite for conversations only. Plans must include Architectural Compliance section."
+tier: stage-triggered
+roles: [implementer, planner, reviewer]
+priority: P1
+tags: [architecture, decisions, compliance, ipc, type-safety]
 relationships:
   - target: AD-859ed163
     type: enforces

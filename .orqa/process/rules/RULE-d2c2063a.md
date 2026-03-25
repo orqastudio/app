@@ -14,6 +14,11 @@ enforcement:
     event: bash
     action: block
     pattern: "cargo tauri dev|npm run dev|cargo clippy|cargo fmt|cargo test"
+summary: "All dev commands via make targets — raw cargo/npm forbidden for tasks with make equivalents. Key: make dev (start), make stop/kill (teardown), make restart-tauri/restart-vite/restart (restarts), make check/lint/test/format/build. Agents must only use restart commands during dev, never make dev/stop/kill unless user asks. Dev server required for any code-modifying session. Exceptions: cargo add, npm install, git, npx."
+tier: stage-triggered
+roles: [orchestrator, implementer]
+priority: P1
+tags: [development-commands, make-targets, dev-server, restart-protocol]
 relationships:
   - target: "AD-e8a0f910"
     type: "enforces"

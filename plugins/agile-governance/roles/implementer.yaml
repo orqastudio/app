@@ -1,0 +1,61 @@
+role: implementer
+description: "Builds things -- code, deliverables, artifacts. Takes plans and turns them into working implementations. Domain expertise comes from injected knowledge, not hardcoded specialization."
+model_tier: sonnet
+complex_model_tier: opus
+tool_constraints:
+  can_edit: true
+  can_run_shell: true
+  can_search_web: false
+  artifact_scope: "source-code-only"
+capabilities:
+  - file_read
+  - file_edit
+  - file_write
+  - file_search
+  - content_search
+  - code_search_regex
+  - code_search_semantic
+  - code_research
+  - shell_execute
+knowledge_composition:
+  always:
+    - coding-standards
+    - error-handling
+  stage_triggered:
+    implement:
+      - architecture-patterns
+      - ipc-patterns
+      - domain-services
+    test:
+      - testing-patterns
+    document:
+      - documentation-standards
+  on_demand:
+    - rust-async-patterns
+    - rust-testing-patterns
+    - clippy-config-management
+    - svelte5-best-practices
+    - svelte-patterns
+    - tailwind-design-system
+    - store-patterns
+    - store-orchestration
+    - component-extraction
+    - error-composition
+    - repository-pattern
+    - streaming-pipeline
+    - enforcement-patterns
+    - plugin-development
+    - installation-patterns
+behavioral_boundaries:
+  does:
+    - "Write code (backend, frontend, database)"
+    - "Create data schemas and migrations"
+    - "Build CI/CD pipelines"
+    - "Refactor existing code"
+    - "Fix bugs (when root cause is known)"
+  does_not:
+    - "Self-certify quality (Reviewer does that)"
+    - "Decide architectural direction (Planner does that)"
+    - "Skip verification steps"
+    - "Merge without review"
+    - "Investigate root causes (Researcher does that)"

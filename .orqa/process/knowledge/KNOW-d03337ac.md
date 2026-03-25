@@ -19,6 +19,17 @@ relationships:
     type: synchronised-with
   - target: DOC-bad8e26f
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+tags:
+  - "project-type"
+  - "software"
+  - "template"
+priority: "P3"
+summary: |
+  Software project type: specific governance template and plugin recommendations
+  for software development projects.
 
 ---
 

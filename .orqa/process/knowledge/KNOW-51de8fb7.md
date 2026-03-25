@@ -16,6 +16,22 @@ user-invocable: false
 relationships:
   - target: DOC-bad8e26f
     type: synchronised-with
+tier: "stage-triggered"
+roles:
+  - "implementer"
+  - "reviewer"
+stages:
+  - "implement"
+  - "review"
+tags:
+  - "status"
+  - "lifecycle"
+  - "artifacts"
+priority: "P2"
+summary: |
+  Artifact status management: rules for transitioning artifact status values.
+  Status drives workflow progression and enforcement. Query schema for valid
+  transitions.
 ---
 
 ## Purpose

@@ -35,6 +35,36 @@
       {
         "key": "de97219c",
         "id": "KNOW-73490bde"
+      },
+      {
+        "key": "8615fee2",
+        "id": "KNOW-8615fee2",
+        "label": "OrqaStudio Backend Best Practices"
+      },
+      {
+        "key": "207d9e2c",
+        "id": "KNOW-207d9e2c",
+        "label": "Orqa Error Composition"
+      },
+      {
+        "key": "60aefbbc",
+        "id": "KNOW-60aefbbc",
+        "label": "Orqa Domain Services"
+      },
+      {
+        "key": "4f81ddc5",
+        "id": "KNOW-4f81ddc5",
+        "label": "Orqa IPC Patterns"
+      },
+      {
+        "key": "33b2dc14",
+        "id": "KNOW-33b2dc14",
+        "label": "Orqa Streaming Pipeline"
+      },
+      {
+        "key": "fbc200e6",
+        "id": "KNOW-fbc200e6",
+        "label": "Orqa Repository Pattern"
       }
     ],
     "agents": [
@@ -42,6 +72,220 @@
         "key": "1ed9512e",
         "id": "AGENT-65b56a0b",
         "path": "agents/AGENT-65b56a0b.md"
+      }
+    ],
+    "knowledge_declarations": [
+      {
+        "id": "tauri-v2-ipc-patterns-reference",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "paths": [
+          "app/src-tauri/**"
+        ],
+        "tags": [
+          "tauri",
+          "ipc",
+          "commands",
+          "events",
+          "channels"
+        ],
+        "priority": "P2",
+        "summary": "Tauri v2 IPC patterns: commands (invoke), events (fire-and-forget), channels (streaming). Three IPC primitives with Rust/TypeScript examples.",
+        "content_file": "knowledge/KNOW-1da7ecd8.md"
+      },
+      {
+        "id": "tauri-v2-development",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "paths": [
+          "app/src-tauri/**"
+        ],
+        "tags": [
+          "tauri",
+          "development",
+          "configuration"
+        ],
+        "priority": "P2",
+        "summary": "Tauri v2 development: tauri.conf.json, Rust commands, IPC patterns, capabilities, troubleshooting builds, desktop/mobile deployment.",
+        "content_file": "knowledge/KNOW-59077955.md"
+      },
+      {
+        "id": "tauri-v2-capabilities-permissions-refere",
+        "tier": "on-demand",
+        "roles": [
+          "implementer",
+          "reviewer"
+        ],
+        "paths": [
+          "app/src-tauri/capabilities/**"
+        ],
+        "tags": [
+          "tauri",
+          "capabilities",
+          "permissions",
+          "security"
+        ],
+        "priority": "P2",
+        "summary": "Tauri v2 capabilities and permissions: capability files, permission declarations, scope configuration. Security boundary for IPC commands.",
+        "content_file": "knowledge/KNOW-5efbe925.md"
+      },
+      {
+        "id": "tauri-v2-patterns",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "paths": [
+          "app/src-tauri/**"
+        ],
+        "tags": [
+          "tauri",
+          "reference"
+        ],
+        "priority": "P3",
+        "summary": "Additional Tauri v2 reference for specific development patterns.",
+        "content_file": "knowledge/KNOW-73490bde.md"
+      },
+      {
+        "id": "tauri-plugin-installation",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "paths": [
+          "app/src-tauri/**"
+        ],
+        "tags": [
+          "tauri",
+          "reference"
+        ],
+        "priority": "P3",
+        "summary": "Tauri v2 reference material for application development patterns.",
+        "content_file": "knowledge/KNOW-a274d90d.md"
+      },
+      {
+        "id": "orqastudio-backend-best-practices",
+        "tier": "stage-triggered",
+        "roles": [
+          "implementer"
+        ],
+        "stages": [
+          "implement"
+        ],
+        "paths": [
+          "app/src-tauri/**",
+          "**/*.rs"
+        ],
+        "tags": [
+          "backend",
+          "best-practices",
+          "umbrella"
+        ],
+        "priority": "P1",
+        "summary": "Backend best practices umbrella: composability, coding standards, error handling for all backend work. References deeper Rust, Tauri, persistence knowledge.",
+        "content_file": "knowledge/KNOW-8615fee2.md"
+      },
+      {
+        "id": "orqa-error-composition",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "paths": [
+          "app/src-tauri/**",
+          "**/*.rs"
+        ],
+        "tags": [
+          "errors",
+          "error-handling",
+          "composition"
+        ],
+        "priority": "P2",
+        "summary": "Error composition: OrqaError anatomy, From implementations, error propagation through domain/repo/command layers, IPC serialization, frontend error handling patterns.",
+        "content_file": "knowledge/KNOW-207d9e2c.md"
+      },
+      {
+        "id": "orqa-domain-services",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "paths": [
+          "app/src-tauri/src/domain/**",
+          "**/*.rs"
+        ],
+        "tags": [
+          "domain-services",
+          "backend",
+          "architecture"
+        ],
+        "priority": "P2",
+        "summary": "Domain service patterns: how Rust backend services are structured, composed, tested, and wired to Tauri commands. Service anatomy and the domain/framework boundary.",
+        "content_file": "knowledge/KNOW-60aefbbc.md"
+      },
+      {
+        "id": "orqa-ipc-patterns",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "paths": [
+          "app/src-tauri/**",
+          "app/ui/**"
+        ],
+        "tags": [
+          "ipc",
+          "tauri",
+          "invoke",
+          "boundary"
+        ],
+        "priority": "P2",
+        "summary": "OrqaStudio IPC patterns: Tauri invoke() calls, #[tauri::command] handlers, Channel<T> streaming, command registration, and IPC type contracts.",
+        "content_file": "knowledge/KNOW-4f81ddc5.md"
+      },
+      {
+        "id": "orqa-streaming-pipeline",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "paths": [
+          "app/sidecar/**",
+          "app/src-tauri/src/streaming/**"
+        ],
+        "tags": [
+          "streaming",
+          "pipeline",
+          "sidecar",
+          "ndjson"
+        ],
+        "priority": "P2",
+        "summary": "Streaming pipeline: Agent SDK to sidecar (Bun) to NDJSON to Rust Channel<T> to Svelte. ProviderEvent types, StreamEvent types, sidecar protocol, error handling, tool approval.",
+        "content_file": "knowledge/KNOW-33b2dc14.md"
+      },
+      {
+        "id": "orqa-repository-pattern",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "paths": [
+          "app/src-tauri/src/repo/**",
+          "**/*.rs"
+        ],
+        "tags": [
+          "repository",
+          "persistence",
+          "rusqlite",
+          "database"
+        ],
+        "priority": "P2",
+        "summary": "Repository pattern with rusqlite: repository anatomy, connection management, query patterns, migrations, error handling, testing. The persistence layer pattern.",
+        "content_file": "knowledge/KNOW-fbc200e6.md"
       }
     ]
   },

@@ -16,6 +16,17 @@ user-invocable: true
 relationships:
   - target: DOC-bad8e26f
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "writer"
+tags:
+  - "skills"
+  - "maintenance"
+  - "knowledge"
+priority: "P2"
+summary: |
+  Skills maintenance: methodology for keeping knowledge artifacts current —
+  reviewing, updating, deprecating. Includes sync verification with docs.
 ---
 
 

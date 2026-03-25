@@ -7,6 +7,15 @@ plugin: "@orqastudio/plugin-software-project"
 relationships:
   - target: DOC-4554ff3e
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+  - "reviewer"
+tags:
+  - "software"
+  - "reference"
+priority: "P3"
+summary: "Additional software development reference material and methodology patterns."
 ---
 
 # Software Delivery Management

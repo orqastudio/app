@@ -9,6 +9,11 @@ updated: 2026-03-21
 enforcement:
   - mechanism: behavioral
     message: "Any discovered enforcement gap is immediately CRITICAL priority; it is never deferred, scoped out, or addressed in a future epic"
+summary: "Any discovered enforcement gap is immediately CRITICAL priority — never deferred. Gaps exist when rules lack mechanical checks, decisions lack enforcing rules, pillar gates lack tooling, lessons recur without promotion, or stage transitions lack automation. Create CRITICAL task immediately, prioritize above feature work."
+tier: always
+roles: [orchestrator]
+priority: P0
+tags: [enforcement-gap, critical, governance-integrity]
 relationships: []
 ---
 

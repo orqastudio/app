@@ -16,6 +16,11 @@ enforcement:
     event: bash
     action: block
     pattern: "--no-verify"
+summary: "ALL errors are your responsibility — no 'this existed before' excuses. Pre-existing errors, lint errors in untouched files, broken configs — all must be fixed. Never bypass pre-commit hook with --no-verify. Always verify: read source, check types, run linters before calling functions. No backwards compatibility shims — fix all callers in same commit. Use search_regex to find function signatures."
+tier: always
+roles: [orchestrator, implementer, reviewer]
+priority: P0
+tags: [error-ownership, pre-commit, no-excuses, verification]
 relationships:
   - target: AD-2d58941b
     type: enforces

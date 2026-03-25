@@ -9,6 +9,11 @@ updated: 2026-03-21
 enforcement:
   - mechanism: behavioral
     message: "Agents keep working until the task is done or a genuine blocker is encountered; never ask for permission to continue or propose stopping between steps"
+summary: "Agents must work continuously until task completion or genuine blocker. No permission-seeking, no 'shall I continue?', no pausing between steps. Only pause for genuine blockers (missing dependencies, ambiguous decisions) or risky irreversible actions. Enforced via orchestrator system prompt and reviewer gate."
+tier: always
+roles: [orchestrator, implementer, researcher, planner, reviewer, writer, designer]
+priority: P0
+tags: [agent-behavior, continuous-operation, autonomy]
 relationships:
   - target: IMPL-36b767ce
     type: codifies

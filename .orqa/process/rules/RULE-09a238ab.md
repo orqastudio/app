@@ -9,6 +9,11 @@ updated: "2026-03-13"
 enforcement:
   - mechanism: behavioral
     message: "SQLite stores only conversation data; file-based artifacts store governance data; ephemeral state must not be relied upon for correctness"
+summary: "Three persistence channels with strict boundaries: SQLite for conversation data only (sessions, messages, metrics), file-based artifacts (.orqa/) for governance data (rules, knowledge, agents, docs), ephemeral state (.state/) for session data lost on restart. SQLite must not store governance. Files must not store conversations. Ephemeral must not be relied upon for correctness."
+tier: stage-triggered
+roles: [implementer, reviewer, planner]
+priority: P1
+tags: [persistence, sqlite, artifacts, ephemeral, data-boundaries]
 relationships:
   - target: "AD-859ed163"
     type: "enforces"

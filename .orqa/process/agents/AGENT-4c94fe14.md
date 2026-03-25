@@ -7,6 +7,7 @@ preamble: Coordinate and delegate, never implement directly. Use the MCP server 
 status: active
 created: 2026-03-01
 updated: 2026-03-24
+maps_to_role: orchestrator
 model: sonnet
 knowledge:
   - decision-tree

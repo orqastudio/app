@@ -7,6 +7,16 @@ plugin: "@orqastudio/plugin-rust"
 relationships:
   - target: "DOC-2372ed36"
     type: "synchronised-with"
+tier: "on-demand"
+roles:
+  - "implementer"
+paths:
+  - "**/*.rs"
+tags:
+  - "rust"
+  - "reference"
+priority: "P3"
+summary: "Rust language reference for common patterns used in the OrqaStudio backend."
 ---
 
 # Rust Testing Patterns

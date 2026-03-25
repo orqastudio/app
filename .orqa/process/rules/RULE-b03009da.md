@@ -11,6 +11,11 @@ enforcement:
     message: "Every feature must include all required layers in the same commit — no partial implementations across boundaries"
   - mechanism: behavioral
     message: "Code reviewer verifies all layers exist for each new feature endpoint"
+summary: "Every feature crossing the IPC boundary must include all four layers in the same commit: backend command, IPC type (Rust + TypeScript), frontend store, UI component. Types must match across boundaries. Error handling end-to-end. General principle: no partial implementations across any service boundary."
+tier: stage-triggered
+roles: [implementer, reviewer]
+priority: P1
+tags: [end-to-end, four-layer, ipc, completeness]
 relationships:
   - target: AD-4e7faf0e
     type: enforces

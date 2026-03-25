@@ -9,6 +9,11 @@ updated: 2026-03-12
 enforcement:
   - mechanism: behavioral
     message: "Every implementation plan must have an Architectural Compliance section and Systems Architecture Checklist before implementation begins; plans missing these sections are rejected"
+summary: "Every implementation plan must include: Architectural Compliance section (error propagation, service boundary, component purity, type safety, immutability, UX-first, end-to-end, coding standards), Systems Architecture Checklist (persistence, contracts, state, config, health, errors, testing, preferences, docs), and UX-first design (user journeys → UI → backend). Independent reviewer verification after each phase. Loop closure mandatory for enforcement epics."
+tier: stage-triggered
+roles: [orchestrator, planner, reviewer]
+priority: P1
+tags: [planning, architectural-compliance, ux-first, verification-gates]
 relationships:
   - target: AD-b2f1f829
     type: enforces

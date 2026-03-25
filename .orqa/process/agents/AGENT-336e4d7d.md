@@ -5,6 +5,8 @@ title: "OrqaStudio Integration Specialist"
 description: "Project-specific integration specialist for OrqaStudio. Focuses on cross-boundary code: IPC contracts, type safety across Rust/TypeScript layers, streaming pipeline, and end-to-end completeness. Employs knowledge spanning both backend and frontend domains."
 preamble: "Build and verify cross-boundary integration code for OrqaStudio: IPC contracts, type matching across Rust and TypeScript, streaming pipeline wiring, and end-to-end feature completeness. You own the seams between layers."
 status: "active"
+maps_to_role: implementer
+maps_to_role_domain: orqa-integration
 model: "sonnet"
 skills:
   - "composability"

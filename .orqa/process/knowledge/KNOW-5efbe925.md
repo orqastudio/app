@@ -8,6 +8,21 @@ updated: 2026-03-20
 relationships:
   - target: DOC-13c73ecf
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+  - "reviewer"
+paths:
+  - "app/src-tauri/capabilities/**"
+tags:
+  - "tauri"
+  - "capabilities"
+  - "permissions"
+  - "security"
+priority: "P2"
+summary: |
+  Tauri v2 capabilities and permissions: capability files, permission
+  declarations, scope configuration. Security boundary for IPC commands.
 ---
 
 # Tauri v2 Capabilities & Permissions Reference

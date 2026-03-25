@@ -10,6 +10,21 @@ relationships:
     type: synchronised-with
   - target: DOC-9505a5b5
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+paths:
+  - "app/src-tauri/**"
+tags:
+  - "tauri"
+  - "ipc"
+  - "commands"
+  - "events"
+  - "channels"
+priority: "P2"
+summary: |
+  Tauri v2 IPC patterns: commands (invoke), events (fire-and-forget), channels
+  (streaming). Three IPC primitives with Rust/TypeScript examples.
 ---
 
 # Tauri v2 IPC Patterns Reference

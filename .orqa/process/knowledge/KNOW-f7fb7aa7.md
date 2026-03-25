@@ -10,6 +10,18 @@ updated: 2026-03-21
 relationships:
   - target: DOC-f7fb7aa7
     type: synchronised-with
+tier: "always"
+roles:
+  - "*"
+tags:
+  - "thinking-mode"
+  - "implementation"
+  - "coding"
+priority: "P0"
+summary: |
+  Implementation thinking mode: hands-on work producing code, artifacts, or
+  configuration. Requires coding standards, testing patterns, and architecture
+  awareness. Triggered by build/fix/add/refactor signals.
 ---
 
 # Thinking Mode: Implementation

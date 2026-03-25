@@ -8,6 +8,14 @@ relationships:
     type: synchronised-with
   - target: DOC-bad8e26f
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "*"
+tags:
+  - "systems-thinking"
+  - "reference"
+priority: "P3"
+summary: "Additional systems thinking reference material for deeper analysis patterns."
 
 ---
 

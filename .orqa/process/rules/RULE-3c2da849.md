@@ -19,6 +19,11 @@ enforcement:
     event: file
     action: warn
     pattern: ".orqa/process/knowledge/composability/KNOW.md|.orqa/process/knowledge/research-methodology/KNOW.md|.orqa/process/knowledge/planning/KNOW.md|.orqa/process/knowledge/orqa-code-search/KNOW.md"
+summary: "Core graph artifacts (schemas, orchestrator prompt, core knowledge, role definitions) are firmware — non-editable except via update system or dogfood mode. PostToolUse hooks warn on writes to schema.json and core knowledge files. Dogfood exception: project.json dogfood:true flag bypasses protection."
+tier: always
+roles: [orchestrator, implementer, writer]
+priority: P0
+tags: [safety, core-protection, firmware, dogfood]
 relationships:
   - target: AD-f079c196
     type: enforces

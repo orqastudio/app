@@ -17,6 +17,11 @@ enforcement:
     type: SessionStart
     action: surface
     description: "SessionStart hook reads .state/session-state.md and surfaces unfinished work"
+summary: "Sessions must leave codebase in clean, resumable state. Write session state to .state/session-state.md covering: completed tasks, in-progress tasks, blockers, context needed to resume. Stop hook verifies state is written. SessionStart hook surfaces unfinished work. No uncommitted changes at session end."
+tier: always
+roles: [orchestrator]
+priority: P1
+tags: [session-management, state-persistence, handoffs]
 relationships:
   - target: AD-4ea9a290
     type: enforces

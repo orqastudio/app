@@ -9,6 +9,16 @@ relationships:
     type: synchronised-with
   - target: DOC-13c73ecf
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+paths:
+  - "app/src-tauri/**"
+tags:
+  - "tauri"
+  - "reference"
+priority: "P3"
+summary: "Tauri v2 reference material for application development patterns."
 
 ---
 

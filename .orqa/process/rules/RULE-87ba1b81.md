@@ -13,6 +13,11 @@ enforcement:
     type: Stop
     action: check
     description: "Stop hook verifies the orchestrator did not self-implement; governance maintenance check runs at session end"
+summary: "Orchestrator coordinates but never implements. Seven universal roles (Researcher, Planner, Implementer, Reviewer, Writer, Designer, Governance Steward) receive delegated work with knowledge loaded. Resource safety rules prevent parallel Rust compilation. Autonomous continuation required — no permission-seeking between tasks."
+tier: always
+roles: [orchestrator]
+priority: P0
+tags: [delegation, roles, resource-safety, orchestration]
 relationships:
   - target: AD-c6c2d9fb
     type: enforces

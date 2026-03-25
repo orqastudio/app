@@ -14,6 +14,19 @@ relationships:
   - target: DOC-7068f40a
     type: synchronised-with
     rationale: "User-facing documentation pair for this agent-facing knowledge artifact"
+tier: "always"
+roles:
+  - "writer"
+  - "implementer"
+tags:
+  - "governance"
+  - "documentation"
+  - "placement"
+priority: "P1"
+summary: |
+  Documentation placement guide: plugin directories for production content,
+  .orqa/ for development content. Includes pairing rule (every knowledge
+  artifact has a human-facing doc), placement flowchart, common mistakes.
 ---
 
 # Documentation Placement

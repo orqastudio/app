@@ -14,6 +14,22 @@ user-invocable: true
 relationships:
   - target: "DOC-9814ec3c"
     type: "synchronised-with"
+tier: "on-demand"
+roles:
+  - "implementer"
+paths:
+  - "app/sidecar/**"
+  - "app/src-tauri/src/streaming/**"
+tags:
+  - "streaming"
+  - "pipeline"
+  - "sidecar"
+  - "ndjson"
+priority: "P2"
+summary: |
+  Streaming pipeline: Agent SDK to sidecar (Bun) to NDJSON to Rust Channel<T> to
+  Svelte. ProviderEvent types, StreamEvent types, sidecar protocol, error
+  handling, tool approval.
 ---
 OrqaStudio streams Claude conversations through a multi-layer pipeline. Understanding this pipeline is critical for anyone touching streaming, tool execution, or the sidecar.
 

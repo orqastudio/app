@@ -12,6 +12,18 @@ file-patterns:
 version: "1.0.0"
 user-invocable: true
 relationships: []
+tier: "on-demand"
+roles:
+  - "writer"
+tags:
+  - "documentation"
+  - "authoring"
+  - "markdown"
+  - "links"
+priority: "P2"
+summary: |
+  Documentation authoring: OrqaStudio internal link format, cross-referencing
+  between artifacts, markdown rendering pipeline, content structure patterns.
 ---
 How to write documentation and artifact content in OrqaStudio. Covers the internal link format, cross-referencing conventions, markdown rendering pipeline, and content structure patterns.
 

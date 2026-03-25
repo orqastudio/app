@@ -14,6 +14,20 @@ updated: 2026-03-22
 category: methodology
 version: 1.0.0
 user-invocable: true
+tier: "stage-triggered"
+roles:
+  - "implementer"
+stages:
+  - "implement"
+tags:
+  - "reasoning"
+  - "methodology"
+  - "implementer"
+priority: "P2"
+summary: |
+  Implementer reasoning methodology: structured approach to implementation
+  decisions. Consider alternatives, document rationale, verify against
+  acceptance criteria.
 ---
 
 Methodology for how an Implementer agent approaches a task. The Implementer builds — it does not investigate root causes, decide architecture, or self-certify quality. Implementation begins only when the plan and acceptance criteria are clear.

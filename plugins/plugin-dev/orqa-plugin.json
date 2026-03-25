@@ -35,7 +35,54 @@
     "relationships": [],
     "hooks": [],
     "views": [],
-    "widgets": []
+    "widgets": [],
+    "knowledge_declarations": [
+      {
+        "id": "third-party-plugin-development",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "tags": [
+          "plugin",
+          "third-party",
+          "development"
+        ],
+        "priority": "P3",
+        "summary": "Third-party plugin development: standalone plugin creation outside the platform monorepo. Template-based, registry publishing, community conventions.",
+        "content_file": "knowledge/KNOW-1b7fa054.md"
+      },
+      {
+        "id": "plugin-development",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "tags": [
+          "plugin",
+          "development",
+          "scaffolding"
+        ],
+        "priority": "P2",
+        "summary": "Plugin development: detects first-party vs third-party context, loads appropriate sub-knowledge. Use when creating new plugins or extending the platform.",
+        "content_file": "knowledge/KNOW-2f38309a.md"
+      },
+      {
+        "id": "first-party-plugin-development",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "tags": [
+          "plugin",
+          "first-party",
+          "monorepo"
+        ],
+        "priority": "P2",
+        "summary": "First-party plugin development: workflow for the platform monorepo. Plugins are submodules, managed by dev environment CLI, published via CI.",
+        "content_file": "knowledge/KNOW-e6fee7a0.md"
+      }
+    ]
   },
   "content": {
     "agents": {

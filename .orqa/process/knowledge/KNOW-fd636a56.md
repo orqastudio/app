@@ -10,6 +10,18 @@ updated: 2026-03-21
 relationships:
   - target: DOC-fd636a56
     type: synchronised-with
+tier: "always"
+roles:
+  - "*"
+tags:
+  - "thinking-mode"
+  - "review"
+  - "audit"
+priority: "P0"
+summary: |
+  Review thinking mode: checks work against standards, produces PASS/FAIL
+  verdict with evidence. Does not fix — only evaluates. Triggered by
+  check/validate/audit signals.
 ---
 
 # Thinking Mode: Review

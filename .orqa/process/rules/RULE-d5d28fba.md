@@ -9,6 +9,11 @@ updated: 2026-03-07
 enforcement:
   - mechanism: behavioral
     message: "No implementation work may begin until the artifact structure (epic and tasks) exists; agents must refuse to start unstructured requests"
+summary: "No implementation without artifact structure first: epic, tasks with acceptance criteria, research if needed, decisions if architectural choices made. Orchestrator verifies artifacts exist before delegating. Exceptions: single-line fixes, governance artifact updates, session state, emergency hotfixes (structure required before session end)."
+tier: always
+roles: [orchestrator, implementer]
+priority: P0
+tags: [structure-first, artifacts, planning, traceability]
 relationships:
   - target: AD-7fa3f280
     type: enforces

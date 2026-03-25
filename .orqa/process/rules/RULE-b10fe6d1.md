@@ -14,6 +14,11 @@ enforcement:
     description: "Validates artifact status transitions, required fields, and relationship integrity"
   - mechanism: pre-commit
     check: "orqa enforce"
+summary: "Defines artifact lifecycle: creation standards, status transitions (milestone/epic/task/research/idea/decision), documentation gates (docs-required before start, docs-produced at completion), human gate for epic completion, reconciliation tasks, priority assessment, roadmap sync, and planning placement rules. Core governance process."
+tier: always
+roles: [orchestrator, reviewer]
+priority: P0
+tags: [artifact-lifecycle, status-transitions, gates, governance]
 relationships:
   - target: "AD-3b986859"
     type: "enforces"

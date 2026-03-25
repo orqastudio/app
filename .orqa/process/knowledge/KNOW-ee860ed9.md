@@ -5,6 +5,18 @@ title: "Enforcement Patterns"
 description: "Available enforcement mechanisms from strongest to weakest — validator checks, blocking hooks, warning hooks, stop hooks, thinking modes, agent prompts."
 status: "active"
 relationships: []
+tier: "always"
+roles:
+  - "*"
+tags:
+  - "governance"
+  - "enforcement"
+  - "mechanisms"
+priority: "P1"
+summary: |
+  Enforcement mechanism hierarchy: validator checks (strongest) > PreToolUse
+  blocking hooks > PostToolUse warnings > stop hooks > thinking modes > agent
+  prompts (weakest). Choose mechanism by required enforcement strength.
 ---
 
 # Enforcement Patterns

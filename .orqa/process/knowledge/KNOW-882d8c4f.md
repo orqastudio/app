@@ -14,6 +14,21 @@ user-invocable: true
 relationships:
   - target: "DOC-9814ec3c"
     type: "synchronised-with"
+tier: "on-demand"
+roles:
+  - "implementer"
+paths:
+  - "app/ui/src/lib/stores/**"
+tags:
+  - "stores"
+  - "orchestration"
+  - "cross-store"
+  - "coordination"
+priority: "P2"
+summary: |
+  Store orchestration: how multiple rune stores coordinate without coupling.
+  Component-level orchestration via $derived/$effect, circular dependency
+  prevention, initialization order.
 ---
 
 

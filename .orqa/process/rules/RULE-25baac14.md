@@ -9,6 +9,11 @@ updated: "2026-03-07"
 enforcement:
   - mechanism: behavioral
     message: "Artifact IDs are identifiers not rankings; orchestrator must use the priority field not ID order when sequencing work"
+summary: "Artifact IDs are sequential identifiers for uniqueness — they carry no priority, importance, or execution order information. Use the priority field (P1/P2/P3) and scoring dimensions for importance. Never sort by ID to imply priority."
+tier: on-demand
+roles: [orchestrator, planner]
+priority: P2
+tags: [artifact-ids, priority, semantics]
 relationships:
   - target: "AD-45cfe1d1"
     type: "enforces"

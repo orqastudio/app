@@ -119,6 +119,106 @@
         "command": "orqa version check",
         "description": "Check for version drift at session start"
       }
+    ],
+    "knowledge_declarations": [
+      {
+        "id": "license-management",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "tags": [
+          "cli",
+          "reference"
+        ],
+        "priority": "P3",
+        "summary": "Additional CLI development patterns and tools reference.",
+        "content_file": "knowledge/KNOW-40be8113.md"
+      },
+      {
+        "id": "version-management",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "tags": [
+          "cli",
+          "reference"
+        ],
+        "priority": "P3",
+        "summary": "CLI tooling supplementary reference material.",
+        "content_file": "knowledge/KNOW-481059d2.md"
+      },
+      {
+        "id": "orqastudio-cli-usage",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "tags": [
+          "cli",
+          "reference"
+        ],
+        "priority": "P3",
+        "summary": "CLI-specific reference for command-line tool development and patterns.",
+        "content_file": "knowledge/KNOW-990e4f85.md"
+      },
+      {
+        "id": "cli-plugin-self-maintenance",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "tags": [
+          "cli",
+          "reference"
+        ],
+        "priority": "P3",
+        "summary": "CLI architecture and development supplementary reference.",
+        "content_file": "knowledge/KNOW-a0947420.md"
+      },
+      {
+        "id": "plugin-management",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "tags": [
+          "cli",
+          "reference"
+        ],
+        "priority": "P3",
+        "summary": "CLI supplementary reference for specific development scenarios.",
+        "content_file": "knowledge/KNOW-afaa4e88.md"
+      },
+      {
+        "id": "dev-environment-management",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "tags": [
+          "cli",
+          "reference"
+        ],
+        "priority": "P3",
+        "summary": "Additional CLI patterns and development reference.",
+        "content_file": "knowledge/KNOW-ea78c8e4.md"
+      },
+      {
+        "id": "readme-standards",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "tags": [
+          "cli",
+          "reference"
+        ],
+        "priority": "P3",
+        "summary": "Additional CLI development reference material.",
+        "content_file": "knowledge/KNOW-ecc181cb.md"
+      }
     ]
   },
   "content": {

@@ -515,9 +515,18 @@
       }
     ],
     "workflows": [
-      { "artifact_type": "milestone", "path": "workflows/milestone.workflow.yaml" },
-      { "artifact_type": "research", "path": "workflows/research.workflow.yaml" },
-      { "artifact_type": "wireframe", "path": "workflows/wireframe.workflow.yaml" }
+      {
+        "artifact_type": "milestone",
+        "path": "workflows/milestone.workflow.yaml"
+      },
+      {
+        "artifact_type": "research",
+        "path": "workflows/research.workflow.yaml"
+      },
+      {
+        "artifact_type": "wireframe",
+        "path": "workflows/wireframe.workflow.yaml"
+      }
     ],
     "relationships": [
       {
@@ -797,6 +806,11 @@
         "key": "f0efaf83",
         "id": "KNOW-91a7a6c1",
         "label": "Code Quality Review"
+      },
+      {
+        "key": "3f307edb",
+        "id": "KNOW-3f307edb",
+        "label": "Orqa Testing Patterns"
       }
     ],
     "cliTools": [],
@@ -811,8 +825,12 @@
       {
         "id": "code-quality-review",
         "tier": "stage-triggered",
-        "roles": ["reviewer"],
-        "stages": ["review"],
+        "roles": [
+          "reviewer"
+        ],
+        "stages": [
+          "review"
+        ],
         "priority": "P1",
         "summary": "Code review methodology: automated checks first (lint, test, type-check), then manual review checklist (function size <=50 lines, no unwrap/panic, error composition with thiserror). Produce structured verdict with PASS/FAIL per category.",
         "content_file": "knowledge/KNOW-f0efaf83.md"
@@ -820,8 +838,12 @@
       {
         "id": "test-engineering",
         "tier": "stage-triggered",
-        "roles": ["implementer"],
-        "stages": ["implement"],
+        "roles": [
+          "implementer"
+        ],
+        "stages": [
+          "implement"
+        ],
         "priority": "P2",
         "summary": "Test engineering methodology: unit tests for pure functions, integration tests for API boundaries, snapshot tests for UI components. Coverage target 80%. Test names describe behavior not implementation.",
         "content_file": "knowledge/KNOW-bcb42347.md"
@@ -829,7 +851,11 @@
       {
         "id": "security-audit",
         "tier": "on-demand",
-        "tags": ["security", "audit", "vulnerability"],
+        "tags": [
+          "security",
+          "audit",
+          "vulnerability"
+        ],
         "priority": "P2",
         "summary": "Security audit process: OWASP top 10 check, dependency vulnerability scan, secrets detection, input validation review. Produces structured findings with severity ratings.",
         "content_file": "knowledge/KNOW-170c220e.md"
@@ -837,16 +863,215 @@
       {
         "id": "delivery-completion",
         "tier": "always",
-        "roles": ["implementer", "reviewer"],
+        "roles": [
+          "implementer",
+          "reviewer"
+        ],
         "priority": "P1",
         "summary": "Delivery unit completion discipline: every task must have acceptance criteria verified, all follow-ups tracked, findings written to disk. Never mark complete without evidence."
       },
       {
         "id": "component-extraction",
         "tier": "on-demand",
-        "tags": ["refactoring", "extraction", "architecture"],
+        "tags": [
+          "refactoring",
+          "extraction",
+          "architecture"
+        ],
         "priority": "P3",
         "content_file": "knowledge/KNOW-353a228b.md"
+      },
+      {
+        "id": "delivery-unit-completion-discipline",
+        "tier": "always",
+        "roles": [
+          "implementer",
+          "reviewer"
+        ],
+        "tags": [
+          "delivery",
+          "completion",
+          "discipline"
+        ],
+        "priority": "P1",
+        "summary": "Delivery unit completion discipline: epics must be completed in entirety, never half-done. All tasks delivered before moving on. Acceptance criteria verified with evidence.",
+        "content_file": "knowledge/KNOW-0188373b.md"
+      },
+      {
+        "id": "qa-verification",
+        "tier": "stage-triggered",
+        "roles": [
+          "reviewer"
+        ],
+        "stages": [
+          "review",
+          "test"
+        ],
+        "tags": [
+          "qa",
+          "verification",
+          "end-to-end"
+        ],
+        "priority": "P1",
+        "summary": "QA verification: \"Would It Work\" protocol, verification path tracing, persistence verification, common QA failure patterns, structured QA report format.",
+        "content_file": "knowledge/KNOW-1314ac47.md"
+      },
+      {
+        "id": "security-audit-45b5f8a8",
+        "tier": "on-demand",
+        "roles": [
+          "reviewer"
+        ],
+        "tags": [
+          "security",
+          "audit",
+          "owasp"
+        ],
+        "priority": "P2",
+        "summary": "Security audit methodology: secret management, capability/permission systems, file system scoping, input validation, dependency auditing, vulnerability classification.",
+        "content_file": "knowledge/KNOW-45b5f8a8.md"
+      },
+      {
+        "id": "test-engineering-5f4db8f7",
+        "tier": "stage-triggered",
+        "roles": [
+          "implementer"
+        ],
+        "stages": [
+          "implement",
+          "test"
+        ],
+        "tags": [
+          "testing",
+          "engineering",
+          "methodology"
+        ],
+        "priority": "P1",
+        "summary": "Test engineering: unit tests for pure functions, integration for boundaries, snapshots for UI. Coverage target 80%. Test names describe behavior not implementation.",
+        "content_file": "knowledge/KNOW-5f4db8f7.md"
+      },
+      {
+        "id": "uat-process",
+        "tier": "on-demand",
+        "roles": [
+          "reviewer"
+        ],
+        "tags": [
+          "uat",
+          "user-acceptance",
+          "testing"
+        ],
+        "priority": "P2",
+        "summary": "UAT process: user acceptance testing methodology for verifying features meet user expectations before release.",
+        "content_file": "knowledge/KNOW-71352dc8.md"
+      },
+      {
+        "id": "skills-maintenance",
+        "tier": "on-demand",
+        "roles": [
+          "writer"
+        ],
+        "tags": [
+          "skills",
+          "maintenance",
+          "knowledge"
+        ],
+        "priority": "P2",
+        "summary": "Skills maintenance: methodology for keeping knowledge artifacts current — reviewing, updating, deprecating. Includes sync verification with docs.",
+        "content_file": "knowledge/KNOW-72ca209f.md"
+      },
+      {
+        "id": "code-quality-review-91a7a6c1",
+        "tier": "stage-triggered",
+        "roles": [
+          "reviewer"
+        ],
+        "stages": [
+          "review"
+        ],
+        "tags": [
+          "code-review",
+          "quality",
+          "checklist"
+        ],
+        "priority": "P1",
+        "summary": "Code quality review: automated checks first (lint, test, type-check), then manual review. Function size <=50 lines, no unwrap/panic, error composition. Structured PASS/FAIL verdict.",
+        "content_file": "knowledge/KNOW-91a7a6c1.md"
+      },
+      {
+        "id": "software-delivery-management",
+        "tier": "on-demand",
+        "roles": [
+          "implementer",
+          "reviewer"
+        ],
+        "tags": [
+          "software",
+          "reference"
+        ],
+        "priority": "P3",
+        "summary": "Additional software development reference material and methodology patterns.",
+        "content_file": "knowledge/KNOW-a700e25a.md"
+      },
+      {
+        "id": "ux-compliance-review",
+        "tier": "on-demand",
+        "roles": [
+          "reviewer"
+        ],
+        "tags": [
+          "ux",
+          "compliance",
+          "review"
+        ],
+        "priority": "P2",
+        "summary": "UX compliance review: validates UI implementations against design system standards, accessibility requirements, and interaction patterns.",
+        "content_file": "knowledge/KNOW-bec7e87d.md"
+      },
+      {
+        "id": "component-extraction-d00093e7",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "tags": [
+          "component-extraction",
+          "refactoring",
+          "ui"
+        ],
+        "priority": "P3",
+        "summary": "Component extraction: identifying repeated UI patterns and extracting shared components. Detection heuristics, extraction criteria, prop design, placement conventions.",
+        "content_file": "knowledge/KNOW-d00093e7.md"
+      },
+      {
+        "id": "project-type-software",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "tags": [
+          "project-type",
+          "software",
+          "template"
+        ],
+        "priority": "P3",
+        "summary": "Software project type: specific governance template and plugin recommendations for software development projects.",
+        "content_file": "knowledge/KNOW-d03337ac.md"
+      },
+      {
+        "id": "orqa-testing-patterns",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "tags": [
+          "testing",
+          "orqastudio",
+          "patterns"
+        ],
+        "priority": "P2",
+        "summary": "OrqaStudio testing patterns: project-specific test conventions, fixture patterns, mock strategies for the Tauri+Svelte+Rust stack.",
+        "content_file": "knowledge/KNOW-3f307edb.md"
       }
     ],
     "prompt_sections": [

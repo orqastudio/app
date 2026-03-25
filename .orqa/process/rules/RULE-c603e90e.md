@@ -13,6 +13,11 @@ enforcement:
     type: SessionStart
     action: surface
     description: "Session start hook surfaces recurring lessons that are due for promotion"
+summary: "Two mandatory learning loops: implementation lessons (IMPL files in .orqa/process/lessons/) and process retrospectives. Review agents must check existing lessons before reporting, increment recurrence, create new IMPL files. Promotion at recurrence >= 2 to rules/knowledge. Enforcement gate: rules need enforcement entries before promotion completes."
+tier: stage-triggered
+roles: [orchestrator, reviewer]
+priority: P1
+tags: [lessons, learning-loops, promotion, recurrence]
 relationships:
   - target: AD-339e9223
     type: enforces

@@ -5,6 +5,8 @@ title: "OrqaStudio Svelte Frontend Specialist"
 description: "Project-specific Svelte frontend specialist for OrqaStudio. Employs OrqaStudio-specific domain knowledge: store patterns, store orchestration, component extraction, and frontend best practices. Complements the generic plugin-provided Svelte Specialist with project-level context."
 preamble: "Build OrqaStudio Svelte 5 frontend code using project-specific patterns: runes-based stores with loading/error lifecycle, multi-store orchestration, component extraction heuristics, and the four-layer IPC chain. Focus on ui/src/."
 status: "active"
+maps_to_role: implementer
+maps_to_role_domain: orqa-svelte-frontend
 model: "sonnet"
 skills:
   - "composability"

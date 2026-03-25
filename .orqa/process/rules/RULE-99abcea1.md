@@ -7,6 +7,11 @@ status: active
 enforcement:
   - mechanism: behavioral
     message: "Delegate implementation to subagents via the Agent tool. Do not write code directly."
+summary: "Orchestrator must delegate all implementation, review, research, and documentation to subagents via Agent tool with teams. Every delegation names the role, provides acceptance criteria, file paths, and context. Teams are mandatory even for single tasks. Agents run in background to keep orchestrator available for conversation."
+tier: always
+roles: [orchestrator]
+priority: P0
+tags: [agent-teams, delegation, orchestration]
 relationships: []
 ---
 

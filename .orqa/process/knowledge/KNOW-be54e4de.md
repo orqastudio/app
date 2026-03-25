@@ -9,6 +9,16 @@ relationships:
     type: synchronised-with
   - target: DOC-fd1d12bb
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+paths:
+  - "**/*.svelte"
+tags:
+  - "svelte5"
+  - "reference"
+priority: "P3"
+summary: "Additional Svelte 5 reference material for edge cases and advanced usage."
 
 ---
 

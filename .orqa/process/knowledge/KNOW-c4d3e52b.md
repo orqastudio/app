@@ -8,6 +8,20 @@ updated: 2026-03-20
 relationships:
   - target: DOC-fd1d12bb
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+paths:
+  - "app/ui/**"
+tags:
+  - "sveltekit"
+  - "patterns"
+  - "routing"
+  - "data-loading"
+priority: "P2"
+summary: |
+  SvelteKit patterns: routing, data loading, form actions, server hooks.
+  Application-level patterns for SvelteKit projects.
 ---
 
 # SvelteKit Patterns Reference

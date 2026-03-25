@@ -10,6 +10,18 @@ updated: 2026-03-21
 relationships:
   - target: DOC-36befd20
     type: synchronised-with
+tier: "always"
+roles:
+  - "*"
+tags:
+  - "thinking-mode"
+  - "research"
+  - "investigation"
+priority: "P0"
+summary: |
+  Research thinking mode: information gathering only, no code changes. Agent
+  produces findings using search tools, cross-references before reporting.
+  Triggered by investigation, exploration, or audit signals.
 ---
 
 # Thinking Mode: Research

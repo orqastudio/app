@@ -12,6 +12,18 @@ user-invocable: false
 relationships:
   - target: DOC-9814ec3c
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+  - "reviewer"
+tags:
+  - "enforcement"
+  - "engine"
+  - "architecture"
+priority: "P2"
+summary: |
+  OrqaStudio enforcement engine: how governance rules are mechanically enforced
+  via the validation pipeline, hooks, and thinking modes.
 ---
 
 # Rule Enforcement

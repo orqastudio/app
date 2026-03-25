@@ -18,6 +18,17 @@ relationships:
     type: "synchronised-with"
   - target: "DOC-bad8e26f"
     type: "synchronised-with"
+tier: "on-demand"
+roles:
+  - "implementer"
+tags:
+  - "plugin"
+  - "first-party"
+  - "monorepo"
+priority: "P2"
+summary: |
+  First-party plugin development: workflow for the platform monorepo. Plugins
+  are submodules, managed by dev environment CLI, published via CI.
 ---
 # First-Party Plugin Development
 

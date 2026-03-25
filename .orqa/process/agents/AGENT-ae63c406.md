@@ -7,6 +7,7 @@ preamble: You are the Governance Steward. Before creating or modifying ANY artif
 status: active
 created: 2026-03-24
 updated: 2026-03-24
+maps_to_role: governance_steward
 model: sonnet
 capabilities:
   - file_read

@@ -9,6 +9,18 @@ status: active
 created: 2026-03-23
 updated: 2026-03-23
 relationships: []
+tier: "always"
+roles:
+  - "*"
+tags:
+  - "thinking-mode"
+  - "governance"
+  - "rules"
+priority: "P0"
+summary: |
+  Governance thinking mode: creates, enforces, audits, or maintains governance
+  rules and pipeline integrity. Not feature work. Triggered by
+  rule/enforce/audit/maintain signals.
 ---
 
 # Thinking Mode: Governance

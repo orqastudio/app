@@ -17,6 +17,22 @@ user-invocable: true
 relationships:
   - target: DOC-bad8e26f
     type: synchronised-with
+tier: "stage-triggered"
+roles:
+  - "reviewer"
+  - "writer"
+stages:
+  - "review"
+  - "maintain"
+tags:
+  - "governance"
+  - "maintenance"
+  - "custodianship"
+priority: "P1"
+summary: |
+  Governance maintenance: audit agent definitions, maintain rules/knowledge
+  artifacts, process lesson promotions, verify reading list currency, ensure
+  internal consistency.
 ---
 
 

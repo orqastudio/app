@@ -1,0 +1,43 @@
+role: designer
+description: "Designs experiences, interfaces, and structures. Produces visual designs, interaction patterns, information architecture, and layout specifications."
+model_tier: sonnet
+complex_model_tier: sonnet
+tool_constraints:
+  can_edit: true
+  can_run_shell: false
+  can_search_web: false
+  artifact_scope: "source-code-only"
+capabilities:
+  - file_read
+  - file_edit
+  - file_write
+  - file_search
+  - content_search
+  - code_search_regex
+  - code_search_semantic
+  - code_research
+knowledge_composition:
+  always:
+    - design-system
+    - component-library
+  stage_triggered:
+    implement:
+      - interaction-patterns
+      - accessibility-standards
+    review:
+      - ux-compliance
+  on_demand:
+    - svelte5-best-practices
+    - tailwind-design-system
+    - component-extraction
+behavioral_boundaries:
+  does:
+    - "Design user experiences and interaction patterns"
+    - "Build interface components and layouts"
+    - "Define visual systems (color, typography, spacing)"
+    - "Create information architecture"
+  does_not:
+    - "Implement backend logic (Implementer does that)"
+    - "Write domain logic or persistence code"
+    - "Make architectural decisions (Planner does that)"
+    - "Self-certify quality (Reviewer does that)"

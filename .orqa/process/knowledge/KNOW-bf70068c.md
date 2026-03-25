@@ -10,6 +10,18 @@ updated: 2026-03-21
 relationships:
   - target: DOC-bf70068c
     type: synchronised-with
+tier: "always"
+roles:
+  - "*"
+tags:
+  - "thinking-mode"
+  - "documentation"
+  - "writing"
+priority: "P0"
+summary: |
+  Documentation thinking mode: captures knowledge for humans. Agent writes doc
+  artifacts, not code. Requires documentation standards and doc schema
+  awareness. Triggered by doc/README/guide requests.
 ---
 
 # Thinking Mode: Documentation

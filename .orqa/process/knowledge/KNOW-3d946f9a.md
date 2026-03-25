@@ -14,6 +14,19 @@ updated: 2026-03-22
 category: methodology
 version: 1.0.0
 user-invocable: true
+tier: "on-demand"
+roles:
+  - "implementer"
+  - "reviewer"
+tags:
+  - "decision"
+  - "methodology"
+  - "tradeoffs"
+priority: "P2"
+summary: |
+  Agent decision methodology: structured approach to making design decisions.
+  Identify constraints, evaluate tradeoffs, document in ADR format when
+  architecturally significant.
 ---
 
 Methodology for how an orchestrating agent classifies incoming requests and decides which role to delegate to. The orchestrator coordinates — it does not implement, research, review, or document. Every action must be delegated to the appropriate role.

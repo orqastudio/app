@@ -8,6 +8,20 @@ updated: 2026-03-20
 relationships:
   - target: DOC-fd1d12bb
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+  - "reviewer"
+paths:
+  - "**/*.svelte"
+tags:
+  - "svelte5"
+  - "performance"
+  - "optimization"
+priority: "P3"
+summary: |
+  Svelte 5 performance reference: fine-grained reactivity, $derived
+  optimizations, component lazy loading, bundle size analysis.
 ---
 
 # Svelte 5 Performance Reference

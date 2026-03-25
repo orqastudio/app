@@ -8,6 +8,19 @@ relationships:
     type: synchronised-with
   - target: DOC-bad8e26f
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+  - "reviewer"
+tags:
+  - "schema"
+  - "validation"
+  - "core-json"
+priority: "P2"
+summary: |
+  Schema validation: schema-driven validation with no custom business logic.
+  Both CLI (TypeScript) and app (Rust) evaluate same schemas. The schema IS the
+  rule.
 
 ---
 

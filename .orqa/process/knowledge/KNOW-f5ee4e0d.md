@@ -12,6 +12,17 @@ user-invocable: true
 relationships:
   - target: "DOC-bad8e26f"
     type: "synchronised-with"
+tier: "on-demand"
+roles:
+  - "implementer"
+tags:
+  - "plugin"
+  - "setup"
+  - "claude-code"
+priority: "P2"
+summary: |
+  Plugin setup: installs companion plugin for Claude Code. Detects existing
+  agent infrastructure, migrates, registers plugin, sets up symlinks.
 ---
 
 # Plugin Setup

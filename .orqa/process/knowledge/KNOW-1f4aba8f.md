@@ -21,6 +21,22 @@ relationships:
   - target: KNOW-a16b7bc7
     type: complements
     rationale: "Stability tracking handles the lifecycle after a rule is demoted from this model"
+tier: "stage-triggered"
+roles:
+  - "implementer"
+  - "reviewer"
+stages:
+  - "implement"
+  - "review"
+tags:
+  - "enforcement"
+  - "three-layer"
+  - "model"
+priority: "P1"
+summary: |
+  Three-layer enforcement model: schema validation (structural) > semantic
+  analysis (behavioral) > human review (judgment). Each layer catches what the
+  previous cannot.
 ---
 
 ## Purpose

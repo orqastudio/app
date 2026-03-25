@@ -20,6 +20,11 @@ enforcement:
     pattern: "plugins/"
     condition: "dogfood: true"
     message: "Dogfood safety: Production agents cannot edit first-party plugins while dogfood mode is active"
+summary: "Conditional rule when dogfood: true in project.json. You are editing the app you run inside. App context: restart ends session (save state first), sidecar self-edit warnings, HMR crash risk. CLI context: restart is safe, no session risk. Agents must only use restart commands. Never make dev-watch. Enforcement gaps are immediately CRITICAL. Controller uses --no-watch. Plugin edits blocked in dogfood mode."
+tier: stage-triggered
+roles: [orchestrator, implementer]
+priority: P1
+tags: [dogfood, self-hosted, restart-protocol, enforcement-gaps]
 relationships:
   - target: AD-4ea9a290
     type: enforces

@@ -12,6 +12,11 @@ enforcement:
   - mechanism: tool
     command: "orqa enforce"
     description: "Pipeline integrity tool verifies behavioral rule enforcement coverage"
+summary: "Defines enforcement strategies for behavioral rules: (1) prompt injection at delegation time, (2) output validation via post-hoc checks, (3) knowledge injection based on file paths being modified, (4) session hooks at start/end boundaries. 19 behavioral rules mapped across 4 strategies."
+tier: on-demand
+roles: [orchestrator]
+priority: P2
+tags: [behavioral-enforcement, strategies, prompt-injection, knowledge-injection]
 relationships:
   - target: AD-c6c2d9fb
     type: enforces

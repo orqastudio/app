@@ -17,6 +17,18 @@ user-invocable: true
 relationships:
   - target: DOC-bad8e26f
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "reviewer"
+  - "researcher"
+tags:
+  - "architecture"
+  - "evaluation"
+  - "review"
+priority: "P2"
+summary: |
+  Architectural evaluation: methodology for assessing architectural decisions,
+  identifying violations, and recommending improvements. Systems-level review.
 ---
 
 

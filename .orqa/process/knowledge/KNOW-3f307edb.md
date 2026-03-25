@@ -16,6 +16,17 @@ user-invocable: true
 relationships:
   - target: DOC-9814ec3c
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+tags:
+  - "testing"
+  - "orqastudio"
+  - "patterns"
+priority: "P2"
+summary: |
+  OrqaStudio testing patterns: project-specific test conventions, fixture
+  patterns, mock strategies for the Tauri+Svelte+Rust stack.
 ---
 
 

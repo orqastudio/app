@@ -14,6 +14,21 @@ user-invocable: true
 relationships:
   - target: "DOC-9814ec3c"
     type: "synchronised-with"
+tier: "on-demand"
+roles:
+  - "implementer"
+paths:
+  - "app/src-tauri/src/domain/**"
+  - "**/*.rs"
+tags:
+  - "domain-services"
+  - "backend"
+  - "architecture"
+priority: "P2"
+summary: |
+  Domain service patterns: how Rust backend services are structured, composed,
+  tested, and wired to Tauri commands. Service anatomy and the domain/framework
+  boundary.
 ---
 Domain services live in `backend/src-tauri/src/domain/`. They contain the business logic of OrqaStudio and are the heart of the thick-backend architecture [AD-7121ec20](AD-7121ec20). Commands in `backend/src-tauri/src/commands/` are thin wrappers that delegate to domain services and repositories.
 

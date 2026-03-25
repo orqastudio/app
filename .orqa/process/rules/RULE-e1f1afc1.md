@@ -51,6 +51,11 @@ enforcement:
     action: inject
     pattern: ".orqa/**"
     knowledge: "orqa-governance, orqa-documentation"
+summary: "PostToolUse hooks auto-inject domain knowledge when agents write to specific code areas. Path-to-knowledge map: domain/ → domain-services + error-composition, commands/ → ipc-patterns + error-composition, repo/ → repository-pattern, sidecar/ → streaming, components/ → component-extraction + svelte5, stores/ → store-patterns + orchestration, .orqa/ → governance + documentation. Knowledge injected once per session (deduplication)."
+tier: stage-triggered
+roles: [implementer]
+priority: P1
+tags: [knowledge-injection, auto-inject, posttooluse, domain-knowledge]
 relationships:
   - target: "AD-e8a0f910"
     type: "enforces"

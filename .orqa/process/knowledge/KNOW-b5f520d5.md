@@ -14,6 +14,23 @@ user-invocable: true
 relationships:
   - target: "DOC-9814ec3c"
     type: "synchronised-with"
+tier: "stage-triggered"
+roles:
+  - "implementer"
+stages:
+  - "implement"
+paths:
+  - "app/ui/src/lib/stores/**"
+tags:
+  - "svelte5"
+  - "stores"
+  - "runes"
+  - "state-management"
+priority: "P1"
+summary: |
+  OrqaStudio Svelte 5 rune store patterns: class-based stores with
+  $state/$derived, store-to-component data flow, reactive state management. The
+  canonical store pattern.
 ---
 
 

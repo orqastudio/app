@@ -40,7 +40,41 @@
         "description": "Generate tool config files from enforcement rules"
       }
     ],
-    "hooks": []
+    "hooks": [],
+    "knowledge_declarations": [
+      {
+        "id": "quality-check-runner",
+        "tier": "on-demand",
+        "roles": [
+          "implementer",
+          "reviewer"
+        ],
+        "tags": [
+          "quality",
+          "checks",
+          "orqa-check"
+        ],
+        "priority": "P2",
+        "summary": "Quality check runner: orqa check discovers tools from installed plugins and runs them all. Returns unified summary of lint, type-check, test results.",
+        "content_file": "knowledge/KNOW-126aa140.md"
+      },
+      {
+        "id": "config-generation-from-rules",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "tags": [
+          "config-generation",
+          "eslint",
+          "clippy",
+          "enforcement"
+        ],
+        "priority": "P2",
+        "summary": "Config generation from rules: generates tool configs (ESLint, clippy, rustfmt) from OrqaStudio enforcement rules. Rules define what; this generates the how.",
+        "content_file": "knowledge/KNOW-1c2d005d.md"
+      }
+    ]
   },
   "content": {
     "knowledge": {

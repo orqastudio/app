@@ -10,6 +10,18 @@ updated: 2026-03-21
 relationships:
   - target: DOC-b95ec6e3
     type: synchronised-with
+tier: "always"
+roles:
+  - "*"
+tags:
+  - "thinking-mode"
+  - "debugging"
+  - "troubleshooting"
+priority: "P0"
+summary: |
+  Debugging thinking mode: reproduce, isolate, identify root cause, then route
+  to implementation or learning loop. Triggered by broken/unexpected behavior
+  signals.
 ---
 
 # Thinking Mode: Debugging

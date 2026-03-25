@@ -9,6 +9,11 @@ updated: 2026-03-13
 enforcement:
   - mechanism: behavioral
     message: "Every feature must serve at least one active pillar; orchestrator reads active pillars and evaluates gate questions before delegating any task; features failing pillar alignment are rejected"
+summary: "Every feature must serve at least one active pillar from .orqa/process/pillars/. Evaluate gate questions before implementing. Reject features with no pillar alignment. UX-first design: user journeys before backend architecture. Foundational principles (pillar framework, tech stack, UX-first, doc-first) are immutable without user approval."
+tier: always
+roles: [orchestrator, planner, implementer]
+priority: P0
+tags: [vision, pillars, alignment, ux-first]
 relationships:
   - target: AD-e711446e
     type: enforces

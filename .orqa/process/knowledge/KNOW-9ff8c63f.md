@@ -9,6 +9,18 @@ user-invocable: true
 relationships:
   - target: "DOC-bad8e26f"
     type: "synchronised-with"
+tier: "on-demand"
+roles:
+  - "researcher"
+tags:
+  - "research"
+  - "methodology"
+  - "source-verification"
+priority: "P2"
+summary: |
+  Research methodology: source verification, credibility assessment,
+  cross-referencing, structured documentation with confidence levels. For agents
+  investigating external sources.
 ---
 
 # Research Methodology

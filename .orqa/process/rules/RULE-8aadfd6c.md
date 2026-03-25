@@ -9,6 +9,11 @@ updated: 2026-03-21
 enforcement:
   - mechanism: behavioral
     message: ".state/session-state.md must be updated in real time during conversations; every new decision, plan change, scope change, or step completion must be reflected immediately"
+summary: "Session state (.state/session-state.md) is a working document updated in real time, not a post-session summary. Update on: new steps, step completions, scope changes, decisions, tangents, blockers. Must contain: current scope, step checklist, ADs made, lessons captured. Tangent protocol: update state before pursuing tangent."
+tier: always
+roles: [orchestrator]
+priority: P1
+tags: [session-state, real-time, working-document]
 relationships:
   - target: RULE-5d2d39b7
     type: related

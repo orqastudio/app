@@ -7,6 +7,16 @@ plugin: "@orqastudio/plugin-svelte"
 relationships:
   - target: "DOC-fd1d12bb"
     type: "synchronised-with"
+tier: "on-demand"
+roles:
+  - "implementer"
+paths:
+  - "**/*.svelte"
+tags:
+  - "svelte5"
+  - "reference"
+priority: "P3"
+summary: "Additional Svelte 5 patterns and reference material for component development."
 ---
 
 # ESLint Config Management

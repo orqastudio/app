@@ -15,6 +15,11 @@ enforcement:
     action: warn
     pattern: "git commit"
     message: "If this commit includes Rust source files (libs/validation/, libs/mcp-server/, libs/lsp-server/, app/backend/), rebuild binaries and restart the daemon before continuing."
+summary: "After any commit touching Rust source (libs/validation, libs/mcp-server, libs/lsp-server, app/backend), stop daemon, rebuild affected binary, restart daemon, verify. Rebuild is part of commit workflow, not a follow-up. Stale binaries serve outdated validation/graph/diagnostics, wasting tokens. No exceptions for small changes. PostToolUse hook warns on git commit with Rust files."
+tier: stage-triggered
+roles: [orchestrator, implementer]
+priority: P1
+tags: [rebuild, rust, daemon, binary, stale-prevention]
 relationships:
   - target: "RULE-d2c2063a"
     type: "extends"

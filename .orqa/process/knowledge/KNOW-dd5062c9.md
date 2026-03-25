@@ -17,6 +17,22 @@ relationships:
   - target: DOC-dd5062c9
     type: synchronised-with
     rationale: "User-facing documentation pair for this agent-facing knowledge artifact"
+tier: "stage-triggered"
+roles:
+  - "implementer"
+  - "reviewer"
+stages:
+  - "implement"
+  - "review"
+tags:
+  - "architecture"
+  - "validation"
+  - "shared-engine"
+priority: "P2"
+summary: |
+  Shared validation engine: single schema-driven validator used by both CLI
+  (TypeScript) and app (Rust). Schema IS the rule — no custom business logic in
+  validators.
 ---
 
 ## Purpose

@@ -9,6 +9,11 @@ updated: "2026-03-07"
 enforcement:
   - mechanism: behavioral
     message: "Prefer semantic search over Grep/Glob for any search spanning more than one file or directory; load the correct search knowledge for your context"
+summary: "Prefer semantic search (search_semantic, search_research) over Grep/Glob for multi-file searches. Same three tools in CLI (MCP server) and App (embedded Tauri): search_regex, search_semantic, search_research. Context detection: PascalCase tools = CLI, lowercase = App. Grep/Glob only for single-file lookups or when semantic search is unavailable. Always check project docs with search_research before implementation."
+tier: always
+roles: [orchestrator, implementer, researcher, planner, reviewer, writer, designer]
+priority: P1
+tags: [code-search, semantic-search, mcp, search-tools]
 relationships:
   - target: "AD-7d3d7521"
     type: "enforces"

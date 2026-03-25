@@ -6,6 +6,8 @@ description: Governance enforcement specialist enforcement agent. Designs and im
 preamble: "Design and implement enforcement mechanisms for rules. Read the enforcement-patterns knowledge artifact for available mechanisms. For each rule, choose the strongest feasible enforcement: validator check > hook > prompt injection. Enforcement must be mechanical — not just documentation. Can run in parallel with other agents."
 status: active
 plugin: "@orqastudio/plugin-agile-governance"
+maps_to_role: implementer
+maps_to_role_domain: enforcement
 model: sonnet
 capabilities:
   - file_read

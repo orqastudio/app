@@ -14,6 +14,22 @@ user-invocable: true
 relationships:
   - target: "DOC-9814ec3c"
     type: "synchronised-with"
+tier: "on-demand"
+roles:
+  - "implementer"
+paths:
+  - "app/src-tauri/src/repo/**"
+  - "**/*.rs"
+tags:
+  - "repository"
+  - "persistence"
+  - "rusqlite"
+  - "database"
+priority: "P2"
+summary: |
+  Repository pattern with rusqlite: repository anatomy, connection management,
+  query patterns, migrations, error handling, testing. The persistence layer
+  pattern.
 ---
 
 

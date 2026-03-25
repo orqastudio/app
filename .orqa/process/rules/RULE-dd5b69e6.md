@@ -9,6 +9,11 @@ updated: 2026-03-13
 enforcement:
   - mechanism: behavioral
     message: "Skills must be loaded before task execution; orchestrator's delegation template requires skill loading; three-tier skill loading must be followed"
+summary: "Three-tier skill loading: Tier 1 (portable, from agent YAML skills: list), Tier 2 (project-specific, orchestrator-injected), Tier 3 (context-resolved wrappers like orqa-code-search). Universal skills on every agent: orqa-code-search + composability. Skill layers: core (portable), setup, project, plugin, community, user. Load order: Tier 1 → Tier 2 → Required Reading → implement. Rule status: active/inactive controls enforcement."
+tier: always
+roles: [orchestrator, implementer, researcher, planner, reviewer, writer, designer]
+priority: P1
+tags: [skill-loading, three-tier, universal-skills, context-resolution]
 relationships:
   - target: AD-c1e5a39e
     type: enforces

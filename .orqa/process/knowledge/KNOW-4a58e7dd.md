@@ -17,6 +17,20 @@ user-invocable: true
 relationships:
   - target: DOC-bad8e26f
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+tags:
+  - "migration"
+  - "project"
+  - "tools"
+  - "claude"
+  - "cursor"
+priority: "P2"
+summary: |
+  Project migration: maps existing agentic tool configurations (Claude Code,
+  Cursor, Copilot, Aider) into OrqaStudio governance. Coexistence, not
+  replacement.
 ---
 
 > **Forward-looking:** This skill will be activated when project initialisation is implemented. See [EPIC-7394ba2a](EPIC-7394ba2a) for context.

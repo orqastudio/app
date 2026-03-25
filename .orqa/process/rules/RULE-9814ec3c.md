@@ -21,6 +21,11 @@ enforcement:
   - mechanism: cargo-test
   - mechanism: vitest
   - mechanism: tsc
+summary: "Rust: rustfmt, clippy pedantic, thiserror, no unwrap/panic. TypeScript/Svelte 5: strict TS, runes only ($state/$derived/$effect/$props), shadcn-svelte components, no emoji in UI. Both: 80%+ test coverage, no TODOs, no commented-out code. Enforced via make check pre-commit hook. Lint rules must align with documented standards."
+tier: stage-triggered
+roles: [implementer, reviewer, designer]
+priority: P1
+tags: [coding-standards, rust, typescript, svelte, linting]
 relationships:
   - target: AD-33e315cc
     type: enforces

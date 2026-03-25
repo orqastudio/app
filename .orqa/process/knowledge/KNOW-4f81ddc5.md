@@ -14,6 +14,21 @@ user-invocable: true
 relationships:
   - target: "DOC-9814ec3c"
     type: "synchronised-with"
+tier: "on-demand"
+roles:
+  - "implementer"
+paths:
+  - "app/src-tauri/**"
+  - "app/ui/**"
+tags:
+  - "ipc"
+  - "tauri"
+  - "invoke"
+  - "boundary"
+priority: "P2"
+summary: |
+  OrqaStudio IPC patterns: Tauri invoke() calls, #[tauri::command] handlers,
+  Channel<T> streaming, command registration, and IPC type contracts.
 ---
 OrqaStudio uses Tauri v2's `invoke()` as the ONLY interface between the Svelte frontend and the Rust backend. There are no HTTP servers, no direct FFI calls, and no side channels.
 

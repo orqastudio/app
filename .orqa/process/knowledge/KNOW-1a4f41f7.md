@@ -10,6 +10,17 @@ relationships:
     type: synchronised-with
   - target: DOC-9814ec3c
     type: synchronised-with
+tier: "on-demand"
+roles:
+  - "implementer"
+tags:
+  - "licensing"
+  - "dependencies"
+  - "compatibility"
+priority: "P2"
+summary: |
+  Dependency license compatibility: check license compatibility before adding
+  any dependency. Quick decision table for npm/crate compatibility with BSL-1.1.
 
 ---
 
