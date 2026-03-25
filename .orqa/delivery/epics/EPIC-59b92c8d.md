@@ -15,6 +15,8 @@ relationships:
   - target: EPIC-281f7857
     type: depends-on
     rationale: "Migration needs the agent lifecycle infrastructure to be in place"
+  - target: EPIC-9d781696
+    type: depended-on-by
 ---
 
 ## Scope
