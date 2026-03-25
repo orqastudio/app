@@ -266,7 +266,7 @@
         ],
         "priority": "P1",
         "summary": "Search methodology: three modes — regex for exact patterns, semantic for natural language, research for compound queries. Search before creating, find callers before refactoring.",
-        "content_file": "knowledge/KNOW-13348442.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-13348442.md"
       },
       {
         "id": "three-layer-enforcement-model",
@@ -286,7 +286,7 @@
         ],
         "priority": "P1",
         "summary": "Three-layer enforcement model: schema validation (structural) > semantic analysis (behavioral) > human review (judgment). Each layer catches what the previous cannot.",
-        "content_file": "knowledge/KNOW-1f4aba8f.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-1f4aba8f.md"
       },
       {
         "id": "planning",
@@ -306,7 +306,7 @@
         ],
         "priority": "P1",
         "summary": "Documentation-first planning: plans start with documentation, get user approval, then implement with mandatory verification gates. Prevents documentation drift across sessions.",
-        "content_file": "knowledge/KNOW-21d28aa0.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-21d28aa0.md"
       },
       {
         "id": "cli-architecture",
@@ -324,7 +324,7 @@
         ],
         "priority": "P2",
         "summary": "CLI architecture: command structure, plugin discovery, subcommand registration, and how CLI tools integrate with the daemon and plugin system.",
-        "content_file": "knowledge/KNOW-22783288.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-22783288.md"
       },
       {
         "id": "project-setup",
@@ -339,7 +339,7 @@
         ],
         "priority": "P2",
         "summary": "Project setup: how to initialize a new OrqaStudio project, configure plugins, and establish the governance structure.",
-        "content_file": "knowledge/KNOW-2876afc7.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-2876afc7.md"
       },
       {
         "id": "agent-decision-methodology",
@@ -355,7 +355,7 @@
         ],
         "priority": "P2",
         "summary": "Agent decision methodology: structured approach to making design decisions. Identify constraints, evaluate tradeoffs, document in ADR format when architecturally significant.",
-        "content_file": "knowledge/KNOW-3d946f9a.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-3d946f9a.md"
       },
       {
         "id": "agentic-workflow-and-enforcement-pipelin",
@@ -376,7 +376,7 @@
         ],
         "priority": "P1",
         "summary": "Agentic workflow and enforcement pipeline: how agent prompts flow through thinking modes, knowledge injection, validation gates, and enforcement hooks. The execution spine of the system.",
-        "content_file": "knowledge/KNOW-477f2c9c.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-477f2c9c.md"
       },
       {
         "id": "artifact-status-management",
@@ -396,7 +396,7 @@
         ],
         "priority": "P2",
         "summary": "Artifact status management: rules for transitioning artifact status values. Status drives workflow progression and enforcement. Query schema for valid transitions.",
-        "content_file": "knowledge/KNOW-51de8fb7.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-51de8fb7.md"
       },
       {
         "id": "knowledge-auto-injection",
@@ -412,7 +412,7 @@
         ],
         "priority": "P1",
         "summary": "Knowledge auto-injection: how the system automatically loads relevant knowledge based on tier (always/stage-triggered/on-demand), file paths, and semantic search triggers.",
-        "content_file": "knowledge/KNOW-586bfa9a.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-586bfa9a.md"
       },
       {
         "id": "project-type-detection",
@@ -427,7 +427,7 @@
         ],
         "priority": "P2",
         "summary": "Project type detection: methodology for classifying projects by stack, language, framework. Drives plugin recommendations and governance templates.",
-        "content_file": "knowledge/KNOW-7c871921.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-7c871921.md"
       },
       {
         "id": "research-methodology",
@@ -442,7 +442,7 @@
         ],
         "priority": "P2",
         "summary": "Research methodology: source verification, credibility assessment, cross-referencing, structured documentation with confidence levels. For agents investigating external sources.",
-        "content_file": "knowledge/KNOW-9ff8c63f.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-9ff8c63f.md"
       },
       {
         "id": "demoted-rule-stability-tracking",
@@ -461,7 +461,7 @@
         ],
         "priority": "P2",
         "summary": "Demoted rule stability tracking: monitors rules demoted to knowledge, tracks whether demotion was correct based on subsequent violations. Informs rule lifecycle decisions.",
-        "content_file": "knowledge/KNOW-a16b7bc7.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-a16b7bc7.md"
       },
       {
         "id": "governance-migration-methodology",
@@ -476,7 +476,7 @@
         ],
         "priority": "P2",
         "summary": "Governance migration methodology: how to migrate governance artifacts between versions or formats. Safe migration patterns with validation.",
-        "content_file": "knowledge/KNOW-a4e351bc.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-a4e351bc.md"
       },
       {
         "id": "implementer-reasoning-methodology",
@@ -494,7 +494,7 @@
         ],
         "priority": "P2",
         "summary": "Implementer reasoning methodology: structured approach to implementation decisions. Consider alternatives, document rationale, verify against acceptance criteria.",
-        "content_file": "knowledge/KNOW-b320cae8.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-b320cae8.md"
       },
       {
         "id": "thinking-mode-debugging",
@@ -506,7 +506,7 @@
         ],
         "priority": "P0",
         "summary": "Debugging thinking mode: reproduce, isolate, identify root cause, then route to implementation or learning loop. Triggered by broken/unexpected behavior signals.",
-        "content_file": "knowledge/KNOW-b95ec6e3.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-b95ec6e3.md"
       },
       {
         "id": "shared-validation-engine",
@@ -526,7 +526,7 @@
         ],
         "priority": "P2",
         "summary": "Shared validation engine: single schema-driven validator used by both CLI (TypeScript) and app (Rust). Schema IS the rule — no custom business logic in validators.",
-        "content_file": "knowledge/KNOW-dd5062c9.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-dd5062c9.md"
       },
       {
         "id": "reviewer-reasoning-methodology",
@@ -544,7 +544,7 @@
         ],
         "priority": "P2",
         "summary": "Reviewer reasoning methodology: structured approach to review verdicts. Evidence-based evaluation against standards, not opinion. Produce actionable feedback.",
-        "content_file": "knowledge/KNOW-e484802a.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-e484802a.md"
       },
       {
         "id": "orqastudio-cli-commands",
@@ -565,7 +565,7 @@
         ],
         "priority": "P1",
         "summary": "OrqaStudio CLI command reference: every orqa command, subcommands, and usage. Agents must use orqa commands instead of raw cargo/npm/make.",
-        "content_file": "knowledge/KNOW-e89753ad.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-e89753ad.md"
       },
       {
         "id": "plugin-setup",
@@ -580,7 +580,7 @@
         ],
         "priority": "P2",
         "summary": "Plugin setup: installs companion plugin for Claude Code. Detects existing agent infrastructure, migrates, registers plugin, sets up symlinks.",
-        "content_file": "knowledge/KNOW-f5ee4e0d.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-f5ee4e0d.md"
       },
       {
         "id": "thinking-mode-implementation",
@@ -592,7 +592,7 @@
         ],
         "priority": "P0",
         "summary": "Implementation thinking mode: hands-on work producing code, artifacts, or configuration. Requires coding standards, testing patterns, and architecture awareness. Triggered by build/fix/add/refactor signals.",
-        "content_file": "knowledge/KNOW-f7fb7aa7.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-f7fb7aa7.md"
       },
       {
         "id": "thinking-mode-review",
@@ -604,7 +604,7 @@
         ],
         "priority": "P0",
         "summary": "Review thinking mode: checks work against standards, produces PASS/FAIL verdict with evidence. Does not fix — only evaluates. Triggered by check/validate/audit signals.",
-        "content_file": "knowledge/KNOW-fd636a56.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-fd636a56.md"
       },
       {
         "id": "project-inference",
@@ -619,7 +619,7 @@
         ],
         "priority": "P2",
         "summary": "Project inference: reads project files to detect languages, frameworks, tools, and existing governance. Used during orqa install to auto-configure.",
-        "content_file": "knowledge/KNOW-03421ec0.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-03421ec0.md"
       },
       {
         "id": "project-migration",
@@ -636,7 +636,7 @@
         ],
         "priority": "P2",
         "summary": "Project migration: maps existing agentic tool configurations (Claude Code, Cursor, Copilot, Aider) into OrqaStudio governance. Coexistence, not replacement.",
-        "content_file": "knowledge/KNOW-4a58e7dd.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-4a58e7dd.md"
       },
       {
         "id": "naming-conventions",
@@ -652,7 +652,7 @@
         ],
         "priority": "P2",
         "summary": "Naming conventions: repo, folder, and npm package naming for libraries, plugins, connectors, registry, tools, and templates. The name encodes the purpose.",
-        "content_file": "knowledge/KNOW-85a449e7.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-85a449e7.md"
       },
       {
         "id": "licensing-decisions",
@@ -665,7 +665,7 @@
         ],
         "priority": "P2",
         "summary": "Licensing decisions: BSL-1.1 with Ethical Use Addendum for app/lib/plugin, Apache-2.0 for connectors, MIT for registry. Quick reference for permitted use cases.",
-        "content_file": "knowledge/KNOW-46f68631.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-46f68631.md"
       },
       {
         "id": "dependency-license-compatibility",
@@ -680,7 +680,7 @@
         ],
         "priority": "P2",
         "summary": "Dependency license compatibility: check license compatibility before adding any dependency. Quick decision table for npm/crate compatibility with BSL-1.1.",
-        "content_file": "knowledge/KNOW-1a4f41f7.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-1a4f41f7.md"
       },
       {
         "id": "schema-validation",
@@ -696,7 +696,7 @@
         ],
         "priority": "P2",
         "summary": "Schema validation: schema-driven validation with no custom business logic. Both CLI (TypeScript) and app (Rust) evaluate same schemas. The schema IS the rule.",
-        "content_file": "knowledge/KNOW-2bf2b321.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-2bf2b321.md"
       },
       {
         "id": "centralized-logging",
@@ -718,7 +718,7 @@
         ],
         "priority": "P1",
         "summary": "Centralized logging: ALL code must use SDK logger, never bare console calls. Covers log levels, module scoping, error capture, perf instrumentation, and dev controller integration.",
-        "content_file": "knowledge/KNOW-a53d826c.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-a53d826c.md"
       },
       {
         "id": "orqa-documentation-authoring",
@@ -734,7 +734,7 @@
         ],
         "priority": "P2",
         "summary": "Documentation authoring: OrqaStudio internal link format, cross-referencing between artifacts, markdown rendering pipeline, content structure patterns.",
-        "content_file": "knowledge/KNOW-1afbc656.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-1afbc656.md"
       },
       {
         "id": "orqastudio-architecture",
@@ -751,7 +751,7 @@
         ],
         "priority": "P2",
         "summary": "OrqaStudio architecture: ADR patterns, data flow mapping, layer responsibilities, violation detection, IPC boundary design for Tauri+Svelte+Rust stack.",
-        "content_file": "knowledge/KNOW-5611351f.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-5611351f.md"
       }
     ]
   }

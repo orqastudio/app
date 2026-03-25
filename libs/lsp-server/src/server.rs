@@ -247,7 +247,6 @@ fn integrity_check_value_to_diagnostic(check: &Value) -> Option<Diagnostic> {
 fn category_label_from_str(category: &str) -> &'static str {
     match category {
         "BrokenLink" => "[broken-link]",
-        "MissingInverse" => "[missing-inverse]",
         "TypeConstraintViolation" => "[type-constraint]",
         "RequiredRelationshipMissing" => "[required-relationship]",
         "CardinalityViolation" => "[cardinality]",

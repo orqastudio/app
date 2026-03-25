@@ -1,0 +1,151 @@
+# AUTO-GENERATED — do not edit manually.
+# Resolved by: orqa plugin install
+# Skeleton: @orqastudio/plugin-agile-governance (workflows/lesson.workflow.yaml)
+# Resolved at: 2026-03-25T20:21:31.250Z
+
+name: lesson
+version: 0.1.0
+artifact_type: lesson
+plugin: "@orqastudio/plugin-agile-governance"
+description: >
+  Lesson lifecycle state machine. Lessons capture implementation findings and patterns learned during delivery. They
+  have a unique "recurring" state for patterns that recur, and a "promoted" terminal state for lessons that are promoted
+  to rules.
+initial_state: captured
+states:
+  captured:
+    category: planning
+    description: Lesson has been captured but not yet explored.
+  exploring:
+    category: planning
+    description: Lesson is being explored — root cause, impact, remediation.
+    on_enter:
+      - type: append_log
+        params:
+          message: Lesson exploration started
+  active:
+    category: active
+    description: Lesson is actively being tracked and applied.
+    on_enter:
+      - type: set_field
+        params:
+          field: started_at
+          value: ${now}
+      - type: append_log
+        params:
+          message: Lesson activated
+  recurring:
+    category: active
+    description: Lesson pattern has recurred — tracking frequency and impact.
+    on_enter:
+      - type: append_log
+        params:
+          message: Lesson marked as recurring pattern
+  review:
+    category: review
+    description: Lesson is being reviewed for promotion or completion.
+    on_enter:
+      - type: append_log
+        params:
+          message: Lesson entered review
+  completed:
+    category: completed
+    description: Lesson has been addressed and documented.
+    on_enter:
+      - type: set_field
+        params:
+          field: completed_at
+          value: ${now}
+      - type: append_log
+        params:
+          message: Lesson completed
+  promoted:
+    category: terminal
+    description: Lesson has been promoted to a rule.
+    on_enter:
+      - type: append_log
+        params:
+          message: Lesson promoted to rule
+  surpassed:
+    category: terminal
+    description: Lesson has been superseded by newer findings.
+  archived:
+    category: terminal
+    description: Lesson is archived.
+transitions:
+  - from: captured
+    to: exploring
+    event: explore
+    description: Begin exploring root cause and remediation.
+  - from: exploring
+    to: active
+    event: activate
+    description: Begin actively tracking this lesson.
+  - from: exploring
+    to: recurring
+    event: mark_recurring
+    description: Pattern has recurred during exploration.
+  - from: active
+    to: completed
+    event: complete
+    description: Lesson has been addressed.
+  - from: active
+    to: recurring
+    event: mark_recurring
+    description: Pattern has recurred.
+  - from: active
+    to: review
+    event: submit_for_review
+    description: Submit for promotion review.
+  - from: active
+    to: promoted
+    event: promote
+    description: Promote directly to a rule.
+  - from: recurring
+    to: active
+    event: resolve
+    description: Recurrence resolved — return to active tracking.
+  - from: recurring
+    to: completed
+    event: complete
+    description: Recurring pattern resolved.
+  - from: review
+    to: completed
+    event: complete
+    description: Lesson documented and complete.
+  - from: review
+    to: active
+    event: request_changes
+    description: Further investigation needed.
+    actions:
+      - type: append_log
+        params:
+          message: Changes requested during lesson review
+  - from: completed
+    to: archived
+    event: archive
+  - from: completed
+    to: surpassed
+    event: surpass
+  - from: promoted
+    to: archived
+    event: archive
+  - from: surpassed
+    to: archived
+    event: archive
+  - from:
+      - captured
+      - exploring
+    to: archived
+    event: archive
+    description: Archive from non-active states.
+migration:
+  captured: captured
+  exploring: exploring
+  active: active
+  recurring: recurring
+  review: review
+  completed: completed
+  promoted: promoted
+  surpassed: surpassed
+  archived: archived

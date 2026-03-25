@@ -69,51 +69,6 @@
             }
           },
           "additionalProperties": true
-        },
-        "statusTransitions": {
-          "captured": [
-            "exploring",
-            "ready",
-            "prioritised"
-          ],
-          "exploring": [
-            "ready",
-            "prioritised",
-            "hold"
-          ],
-          "ready": [
-            "prioritised",
-            "active",
-            "review"
-          ],
-          "prioritised": [
-            "active",
-            "ready"
-          ],
-          "active": [
-            "hold",
-            "blocked",
-            "review"
-          ],
-          "hold": [
-            "active",
-            "ready"
-          ],
-          "blocked": [
-            "active",
-            "ready"
-          ],
-          "review": [
-            "completed",
-            "active"
-          ],
-          "completed": [
-            "surpassed"
-          ],
-          "surpassed": [
-            "archived"
-          ],
-          "archived": []
         }
       },
       {
@@ -169,51 +124,6 @@
             }
           },
           "additionalProperties": true
-        },
-        "statusTransitions": {
-          "captured": [
-            "exploring",
-            "ready",
-            "prioritised"
-          ],
-          "exploring": [
-            "ready",
-            "prioritised",
-            "hold"
-          ],
-          "ready": [
-            "prioritised",
-            "active",
-            "review"
-          ],
-          "prioritised": [
-            "active",
-            "ready"
-          ],
-          "active": [
-            "hold",
-            "blocked",
-            "review"
-          ],
-          "hold": [
-            "active",
-            "ready"
-          ],
-          "blocked": [
-            "active",
-            "ready"
-          ],
-          "review": [
-            "completed",
-            "active"
-          ],
-          "completed": [
-            "surpassed"
-          ],
-          "surpassed": [
-            "archived"
-          ],
-          "archived": []
         }
       },
       {
@@ -275,44 +185,6 @@
             }
           },
           "additionalProperties": true
-        },
-        "statusTransitions": {
-          "captured": [
-            "ready",
-            "prioritised"
-          ],
-          "ready": [
-            "prioritised",
-            "active"
-          ],
-          "prioritised": [
-            "active",
-            "ready"
-          ],
-          "active": [
-            "hold",
-            "blocked",
-            "review"
-          ],
-          "hold": [
-            "active",
-            "ready"
-          ],
-          "blocked": [
-            "active",
-            "ready"
-          ],
-          "review": [
-            "completed",
-            "active"
-          ],
-          "completed": [
-            "surpassed"
-          ],
-          "surpassed": [
-            "archived"
-          ],
-          "archived": []
         }
       },
       {
@@ -368,36 +240,6 @@
             }
           },
           "additionalProperties": true
-        },
-        "statusTransitions": {
-          "captured": [
-            "exploring",
-            "active"
-          ],
-          "exploring": [
-            "active",
-            "hold"
-          ],
-          "active": [
-            "review",
-            "hold"
-          ],
-          "hold": [
-            "active",
-            "exploring"
-          ],
-          "review": [
-            "completed",
-            "active"
-          ],
-          "completed": [
-            "surpassed",
-            "archived"
-          ],
-          "surpassed": [
-            "archived"
-          ],
-          "archived": []
         }
       },
       {
@@ -450,32 +292,6 @@
             }
           },
           "additionalProperties": true
-        },
-        "statusTransitions": {
-          "captured": [
-            "exploring",
-            "active"
-          ],
-          "exploring": [
-            "active",
-            "review"
-          ],
-          "active": [
-            "review",
-            "hold"
-          ],
-          "review": [
-            "completed",
-            "active"
-          ],
-          "completed": [
-            "surpassed",
-            "archived"
-          ],
-          "surpassed": [
-            "archived"
-          ],
-          "archived": []
         }
       }
     ],
@@ -895,7 +711,7 @@
         ],
         "priority": "P1",
         "summary": "Delivery unit completion discipline: epics must be completed in entirety, never half-done. All tasks delivered before moving on. Acceptance criteria verified with evidence.",
-        "content_file": "knowledge/KNOW-0188373b.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-0188373b.md"
       },
       {
         "id": "qa-verification",
@@ -914,7 +730,7 @@
         ],
         "priority": "P1",
         "summary": "QA verification: \"Would It Work\" protocol, verification path tracing, persistence verification, common QA failure patterns, structured QA report format.",
-        "content_file": "knowledge/KNOW-1314ac47.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-1314ac47.md"
       },
       {
         "id": "security-audit-45b5f8a8",
@@ -929,7 +745,7 @@
         ],
         "priority": "P2",
         "summary": "Security audit methodology: secret management, capability/permission systems, file system scoping, input validation, dependency auditing, vulnerability classification.",
-        "content_file": "knowledge/KNOW-45b5f8a8.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-45b5f8a8.md"
       },
       {
         "id": "test-engineering-5f4db8f7",
@@ -948,7 +764,7 @@
         ],
         "priority": "P1",
         "summary": "Test engineering: unit tests for pure functions, integration for boundaries, snapshots for UI. Coverage target 80%. Test names describe behavior not implementation.",
-        "content_file": "knowledge/KNOW-5f4db8f7.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-5f4db8f7.md"
       },
       {
         "id": "uat-process",
@@ -963,7 +779,7 @@
         ],
         "priority": "P2",
         "summary": "UAT process: user acceptance testing methodology for verifying features meet user expectations before release.",
-        "content_file": "knowledge/KNOW-71352dc8.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-71352dc8.md"
       },
       {
         "id": "skills-maintenance",
@@ -978,7 +794,7 @@
         ],
         "priority": "P2",
         "summary": "Skills maintenance: methodology for keeping knowledge artifacts current — reviewing, updating, deprecating. Includes sync verification with docs.",
-        "content_file": "knowledge/KNOW-72ca209f.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-72ca209f.md"
       },
       {
         "id": "code-quality-review-91a7a6c1",
@@ -996,7 +812,7 @@
         ],
         "priority": "P1",
         "summary": "Code quality review: automated checks first (lint, test, type-check), then manual review. Function size <=50 lines, no unwrap/panic, error composition. Structured PASS/FAIL verdict.",
-        "content_file": "knowledge/KNOW-91a7a6c1.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-91a7a6c1.md"
       },
       {
         "id": "software-delivery-management",
@@ -1011,7 +827,7 @@
         ],
         "priority": "P3",
         "summary": "Additional software development reference material and methodology patterns.",
-        "content_file": "knowledge/KNOW-a700e25a.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-a700e25a.md"
       },
       {
         "id": "ux-compliance-review",
@@ -1026,7 +842,7 @@
         ],
         "priority": "P2",
         "summary": "UX compliance review: validates UI implementations against design system standards, accessibility requirements, and interaction patterns.",
-        "content_file": "knowledge/KNOW-bec7e87d.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-bec7e87d.md"
       },
       {
         "id": "component-extraction-d00093e7",
@@ -1041,7 +857,7 @@
         ],
         "priority": "P3",
         "summary": "Component extraction: identifying repeated UI patterns and extracting shared components. Detection heuristics, extraction criteria, prop design, placement conventions.",
-        "content_file": "knowledge/KNOW-d00093e7.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-d00093e7.md"
       },
       {
         "id": "project-type-software",
@@ -1056,7 +872,7 @@
         ],
         "priority": "P3",
         "summary": "Software project type: specific governance template and plugin recommendations for software development projects.",
-        "content_file": "knowledge/KNOW-d03337ac.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-d03337ac.md"
       },
       {
         "id": "orqa-testing-patterns",
@@ -1071,7 +887,7 @@
         ],
         "priority": "P2",
         "summary": "OrqaStudio testing patterns: project-specific test conventions, fixture patterns, mock strategies for the Tauri+Svelte+Rust stack.",
-        "content_file": "knowledge/KNOW-3f307edb.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-3f307edb.md"
       }
     ],
     "prompt_sections": [

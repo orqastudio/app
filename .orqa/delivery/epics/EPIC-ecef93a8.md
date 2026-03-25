@@ -3,7 +3,7 @@ id: EPIC-ecef93a8
 type: epic
 title: "Human Gates and Review Sub-Workflows"
 description: "Implement human gate infrastructure with gather/present/collect/execute/learn pipeline, five gate patterns, learning integration, workflow variant selection, and ad-hoc workflow variants."
-status: captured
+status: active
 priority: P1
 created: 2026-03-25
 updated: 2026-03-25

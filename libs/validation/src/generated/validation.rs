@@ -10,7 +10,6 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum IntegrityCategory {
     BrokenLink,
-    MissingInverse,
     TypeConstraintViolation,
     RequiredRelationshipMissing,
     CardinalityViolation,

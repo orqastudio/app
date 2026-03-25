@@ -2,7 +2,7 @@
 # Resolved by: orqa plugin install
 # Skeleton: @orqastudio/plugin-agile-governance (workflows/delivery.workflow.yaml)
 # Unfilled contribution points: discovery-artifacts, planning-methodology, documentation-standards, implementation-workflow, review-process, learning-pipeline
-# Resolved at: 2026-03-25T15:11:17.230Z
+# Resolved at: 2026-03-25T20:21:31.227Z
 
 name: delivery
 version: 0.1.0

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "built_at": "2026-03-25T15:42:54.494Z",
+  "built_at": "2026-03-25T20:21:31.279Z",
   "knowledge": [
     {
       "id": "governance-maintenance",
@@ -19,7 +19,7 @@
       "tags": [],
       "priority": "P1",
       "summary": "Governance custodianship: audit agent definitions, maintain rules/knowledge artifacts, process lesson promotions, verify reading list currency, ensure internal consistency across the governance layer.",
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\agile-governance\\knowledge\\KNOW-8d76c3c7.md"
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\agile-governance\\knowledge\\KNOW-8c359ea4.md"
     },
     {
       "id": "thinking-mode-learning",
@@ -35,7 +35,7 @@
       "tags": [],
       "priority": "P2",
       "summary": "Learning loop thinking mode: when encountering surprising outcomes or process failures, capture as lesson artifacts. Lessons may be promoted to rules after review. Structure: observation, hypothesis, evidence, recommendation.",
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\agile-governance\\knowledge\\KNOW-85e392ea.md"
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\agile-governance\\knowledge\\KNOW-83039175.md"
     },
     {
       "id": "plugin-artifact-usage",
@@ -52,7 +52,2437 @@
       ],
       "priority": "P3",
       "summary": null,
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\agile-governance\\knowledge\\KNOW-8d1c4be6.md"
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\agile-governance\\knowledge\\KNOW-0444355f.md"
+    },
+    {
+      "id": "plugin-artifact-usage-0444355f",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer",
+        "writer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "plugin",
+        "artifacts",
+        "usage",
+        "governance"
+      ],
+      "priority": "P3",
+      "summary": "Plugin artifact usage: how plugins provide and consume governance artifacts. The content flow between plugin source and installed copies.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-0444355f.md"
+    },
+    {
+      "id": "thinking-mode-learning-loop",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "thinking-mode",
+        "learning-loop",
+        "lessons"
+      ],
+      "priority": "P0",
+      "summary": "Learning loop thinking mode: captures surprising outcomes or process failures as lesson artifacts. Lessons may promote to rules after review. Structure: observation, hypothesis, evidence, recommendation.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-83039175.md"
+    },
+    {
+      "id": "governance-maintenance-8c359ea4",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "reviewer",
+        "writer"
+      ],
+      "stages": [
+        "review",
+        "maintain"
+      ],
+      "paths": [],
+      "tags": [
+        "governance",
+        "maintenance",
+        "custodianship"
+      ],
+      "priority": "P1",
+      "summary": "Governance maintenance: audit agent definitions, maintain rules/knowledge artifacts, process lesson promotions, verify reading list currency, ensure internal consistency.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-8c359ea4.md"
+    },
+    {
+      "id": "thinking-mode-general",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "thinking-mode",
+        "general",
+        "default"
+      ],
+      "priority": "P0",
+      "summary": "Default thinking mode when no specific mode matches. Applies standard process and safety rules without special emphasis. Fallback for ambiguous or conversational prompts.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-7a4e45d4.md"
+    },
+    {
+      "id": "thinking-mode-governance",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "thinking-mode",
+        "governance",
+        "rules"
+      ],
+      "priority": "P0",
+      "summary": "Governance thinking mode: creates, enforces, audits, or maintains governance rules and pipeline integrity. Not feature work. Triggered by rule/enforce/audit/maintain signals.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-c89f28b3.md"
+    },
+    {
+      "id": "thinking-mode-governance",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "governance",
+        "schema",
+        "validation",
+        "frontmatter"
+      ],
+      "priority": "P1",
+      "summary": "Schema-first frontmatter rule: agents must query plugin schemas via MCP before creating/modifying artifacts. Never rely on memorized status vocabularies. Prevents schema drift.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-57365826.md"
+    },
+    {
+      "id": "thinking-mode-governance",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "governance",
+        "plugin",
+        "architecture",
+        "content-placement"
+      ],
+      "priority": "P1",
+      "summary": "Plugin-canonical architecture: plugins are the source of truth for all app content. .orqa/ contains installed copies plus dev-only artifacts. Explains content flow and the docs-knowledge pairing rule.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-e3432947.md"
+    },
+    {
+      "id": "thinking-mode-governance",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "writer",
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "governance",
+        "documentation",
+        "placement"
+      ],
+      "priority": "P1",
+      "summary": "Documentation placement guide: plugin directories for production content, .orqa/ for development content. Includes pairing rule (every knowledge artifact has a human-facing doc), placement flowchart, common mistakes.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-6d80cf39.md"
+    },
+    {
+      "id": "enforcement-patterns",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "governance",
+        "enforcement",
+        "mechanisms"
+      ],
+      "priority": "P1",
+      "summary": "Enforcement mechanism hierarchy: validator checks (strongest) > PreToolUse blocking hooks > PostToolUse warnings > stop hooks > thinking modes > agent prompts (weakest). Choose mechanism by required enforcement strength.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-ee860ed9.md"
+    },
+    {
+      "id": "governance-patterns",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "writer"
+      ],
+      "stages": [
+        "implement",
+        "govern"
+      ],
+      "paths": [],
+      "tags": [
+        "governance",
+        "artifacts",
+        "structure"
+      ],
+      "priority": "P1",
+      "summary": "Governance patterns: how .orqa/ structure works — artifact layering, config-driven discovery, relationship vocabulary, status lifecycle, lesson pipeline, directory conventions.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-936e5944.md"
+    },
+    {
+      "id": "agent-team-structure",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [
+        "implement"
+      ],
+      "paths": [],
+      "tags": [
+        "agents",
+        "teams",
+        "delegation"
+      ],
+      "priority": "P1",
+      "summary": "Agent team structure: hub-spoke orchestration, ephemeral task-scoped agents, findings to disk. Teams are the unit of delegation — never spawn bare agents.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-8d2e5eef.md"
+    },
+    {
+      "id": "artifact-audit-methodology",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "audit",
+        "artifacts",
+        "schema-validation",
+        "methodology"
+      ],
+      "priority": "P2",
+      "summary": "Artifact audit methodology: schema-driven audit for governance artifacts. Validates reference integrity, relationship vocabulary, cross-layer consistency, content accuracy.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-16e91c20.md"
+    },
+    {
+      "id": "orqastudio-enforcement-engine",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "enforcement",
+        "engine",
+        "architecture"
+      ],
+      "priority": "P2",
+      "summary": "OrqaStudio enforcement engine: how governance rules are mechanically enforced via the validation pipeline, hooks, and thinking modes.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-2a846fb7.md"
+    },
+    {
+      "id": "rule-00700241",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "safety",
+        "system-commands",
+        "destructive-operations"
+      ],
+      "priority": "P0",
+      "summary": "Block dangerous system commands: rm -rf on root/home, sudo, eval with variable input, fork bombs. Warn on rm -rf with paths, DROP TABLE, DELETE FROM without WHERE. PreToolUse hooks enforce via regex pattern matching on bash commands. Safety-critical — always loaded.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-00700241.md"
+    },
+    {
+      "id": "rule-04684a16",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer",
+        "researcher",
+        "planner",
+        "reviewer",
+        "writer",
+        "designer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "findings",
+        "task-completion",
+        "agent-teams"
+      ],
+      "priority": "P0",
+      "summary": "Agent teammates must write findings to .state/team/<team-name>/task-<id>.md BEFORE marking tasks complete. File contains: what was done, what was NOT done, evidence, follow-ups. The file is the proof — TaskUpdate(completed) is only the signal. PostToolUse hook warns if findings file missing on completion.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-04684a16.md"
+    },
+    {
+      "id": "rule-05562ed4",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "writer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "documentation",
+        "pillar-alignment",
+        "scope-control"
+      ],
+      "priority": "P2",
+      "summary": "Every documentation page describing a feature must include a Pillar Alignment section with a row per active pillar. Read pillars from .orqa/process/pillars/. Pages serving no pillar are scope creep. Exempt: research pages, dev guidelines, pillar definitions, vision/governance pages, architecture decisions.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-05562ed4.md"
+    },
+    {
+      "id": "rule-05ae2ce7",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "planner",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "architecture",
+        "decisions",
+        "compliance",
+        "ipc",
+        "type-safety"
+      ],
+      "priority": "P1",
+      "summary": "Architecture decisions in .orqa/process/decisions/ are source of truth. Critical decisions: error propagation (Result types, no unwrap), IPC boundary (Tauri invoke only), component purity (display vs container), type safety (strict TS, no any), immutability, UX-first, Svelte 5 only, SQLite for conversations only. Plans must include Architectural Compliance section.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-05ae2ce7.md"
+    },
+    {
+      "id": "rule-09a238ab",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "reviewer",
+        "planner"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "persistence",
+        "sqlite",
+        "artifacts",
+        "ephemeral",
+        "data-boundaries"
+      ],
+      "priority": "P1",
+      "summary": "Three persistence channels with strict boundaries: SQLite for conversation data only (sessions, messages, metrics), file-based artifacts (.orqa/) for governance data (rules, knowledge, agents, docs), ephemeral state (.state/) for session data lost on restart. SQLite must not store governance. Files must not store conversations. Ephemeral must not be relied upon for correctness.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-09a238ab.md"
+    },
+    {
+      "id": "rule-0be7765e",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "error-ownership",
+        "pre-commit",
+        "no-excuses",
+        "verification"
+      ],
+      "priority": "P0",
+      "summary": "ALL errors are your responsibility — no 'this existed before' excuses. Pre-existing errors, lint errors in untouched files, broken configs — all must be fixed. Never bypass pre-commit hook with --no-verify. Always verify: read source, check types, run linters before calling functions. No backwards compatibility shims — fix all callers in same commit. Use search_regex to find function signatures.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-0be7765e.md"
+    },
+    {
+      "id": "rule-0d29fc91",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer",
+        "researcher",
+        "planner",
+        "reviewer",
+        "writer",
+        "designer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "code-search",
+        "semantic-search",
+        "mcp",
+        "search-tools"
+      ],
+      "priority": "P1",
+      "summary": "Prefer semantic search (search_semantic, search_research) over Grep/Glob for multi-file searches. Same three tools in CLI (MCP server) and App (embedded Tauri): search_regex, search_semantic, search_research. Context detection: PascalCase tools = CLI, lowercase = App. Grep/Glob only for single-file lookups or when semantic search is unavailable. Always check project docs with search_research before implementation.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-0d29fc91.md"
+    },
+    {
+      "id": "rule-145332dc",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "governance-priority",
+        "lesson-promotion",
+        "violations",
+        "critical"
+      ],
+      "priority": "P0",
+      "summary": "Lesson promotions (recurrence >= 2) and rule violations are ALWAYS CRITICAL priority — they preempt all delivery tasks. Stop current work, promote the lesson or correct the violation, trace to affected artifacts, then resume. Three enforcement layers: Stop hook, BEHAVIORAL_RULES injection, orqa audit CLI.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-145332dc.md"
+    },
+    {
+      "id": "rule-1b238fc8",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "planner",
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "vision",
+        "pillars",
+        "alignment",
+        "ux-first"
+      ],
+      "priority": "P0",
+      "summary": "Every feature must serve at least one active pillar from .orqa/process/pillars/. Evaluate gate questions before implementing. Reject features with no pillar alignment. UX-first design: user journeys before backend architecture. Foundational principles (pillar framework, tech stack, UX-first, doc-first) are immutable without user approval.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-1b238fc8.md"
+    },
+    {
+      "id": "rule-205d9c91",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "orchestrator",
+        "writer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "skill-portability",
+        "core-skills",
+        "project-skills",
+        "plugin-skills"
+      ],
+      "priority": "P2",
+      "summary": "Skills must be portable within their declared layer. Core skills must not contain project-specific paths, AD references, config values, or enforcement rules. Project skills must declare their scope explicitly. Plugin skills must be self-contained. Never mix core and project content in a single skill — split instead.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-205d9c91.md"
+    },
+    {
+      "id": "rule-216e112e",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "linting",
+        "enforcement",
+        "standards-alignment"
+      ],
+      "priority": "P1",
+      "summary": "Every documented coding standard must have a corresponding lint rule, pre-commit hook check, or documented exception. Standards without enforcement are aspirational, not rules. Zero warnings policy — warnings are failures. When adding standards: update docs, add lint rule, fix all violations, update hook.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-216e112e.md"
+    },
+    {
+      "id": "rule-23699df2",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "orchestrator",
+        "implementer",
+        "writer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "schema",
+        "validation",
+        "frontmatter",
+        "json-schema"
+      ],
+      "priority": "P1",
+      "summary": "Every artifact's YAML frontmatter must validate against the JSON Schema in its directory's schema.json. Pre-commit hook runs ajv validation on staged .orqa/**/*.md files. Cross-language: Node (ajv), Rust (jsonschema crate), TypeScript (ajv) all share the same schema.json files. Schema discovery via project.json artifacts array.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-23699df2.md"
+    },
+    {
+      "id": "rule-25baac14",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "orchestrator",
+        "planner"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "artifact-ids",
+        "priority",
+        "semantics"
+      ],
+      "priority": "P2",
+      "summary": "Artifact IDs are sequential identifiers for uniqueness — they carry no priority, importance, or execution order information. Use the priority field (P1/P2/P3) and scoring dimensions for importance. Never sort by ID to imply priority.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-25baac14.md"
+    },
+    {
+      "id": "rule-2f64cc63",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer",
+        "researcher",
+        "planner",
+        "reviewer",
+        "writer",
+        "designer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "agent-behavior",
+        "continuous-operation",
+        "autonomy"
+      ],
+      "priority": "P0",
+      "summary": "Agents must work continuously until task completion or genuine blocker. No permission-seeking, no 'shall I continue?', no pausing between steps. Only pause for genuine blockers (missing dependencies, ambiguous decisions) or risky irreversible actions. Enforced via orchestrator system prompt and reviewer gate.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-2f64cc63.md"
+    },
+    {
+      "id": "rule-30a223ca",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "session-management",
+        "state-persistence",
+        "handoffs"
+      ],
+      "priority": "P1",
+      "summary": "Sessions must leave codebase in clean, resumable state. Write session state to .state/session-state.md covering: completed tasks, in-progress tasks, blockers, context needed to resume. Stop hook verifies state is written. SessionStart hook surfaces unfinished work. No uncommitted changes at session end.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-30a223ca.md"
+    },
+    {
+      "id": "rule-3c2da849",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer",
+        "writer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "safety",
+        "core-protection",
+        "firmware",
+        "dogfood"
+      ],
+      "priority": "P0",
+      "summary": "Core graph artifacts (schemas, orchestrator prompt, core knowledge, role definitions) are firmware — non-editable except via update system or dogfood mode. PostToolUse hooks warn on writes to schema.json and core knowledge files. Dogfood exception: project.json dogfood:true flag bypasses protection.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-3c2da849.md"
+    },
+    {
+      "id": "rule-42d17086",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "tooling",
+        "linting",
+        "enforcement-chain"
+      ],
+      "priority": "P2",
+      "summary": "Code quality enforcement belongs in linters, not regex hooks. Chain: documented standard -> linter config (clippy/eslint) -> hook trigger (pre-commit/make check) -> violation reported. Lint event entries are declarative traceability, not executors. Only use file enforcement for patterns no linter covers.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-42d17086.md"
+    },
+    {
+      "id": "rule-43f1bebc",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer",
+        "planner",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "systems-thinking",
+        "universal",
+        "design-principles",
+        "uniform-base"
+      ],
+      "priority": "P0",
+      "summary": "Universal rule: evaluate every change as part of the whole system. Before touching code, identify the system, boundaries, relationships, patterns, and consequences. Anti-patterns: fixing one instance instead of all, adding special cases, patching symptoms. Uniform base principle: one default behavior applied to all members, variations are optional layers. Plans addressing symptoms without identifying the system are rejected.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-43f1bebc.md"
+    },
+    {
+      "id": "rule-4603207a",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "orchestrator",
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "enforcement-first",
+        "governance",
+        "patterns"
+      ],
+      "priority": "P1",
+      "summary": "Enforcement artifacts (rules, knowledge, lessons) must be created BEFORE the implementation code that establishes the pattern. Sequence: identify pattern -> create enforcement artifact -> get approval -> write code. Applies when introducing new conventions, fixing recurring bugs, or establishing patterns.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-4603207a.md"
+    },
+    {
+      "id": "rule-484872ef",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "orchestrator",
+        "writer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "preservation",
+        "history",
+        "surpassed",
+        "documentation-lifecycle"
+      ],
+      "priority": "P2",
+      "summary": "Two categories: Documentation (delete when outdated, describes current state) and Research/Tasks (preserve, mark surpassed for historical traceability). Surpassed artifacts get surpassed-by field, body content stays immutable. Rules use active/inactive, not surpassed. Never delete research or task files.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-484872ef.md"
+    },
+    {
+      "id": "rule-49f66888",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "orchestrator",
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "self-hosted",
+        "restart-boundary",
+        "session-preservation",
+        "hot-reload"
+      ],
+      "priority": "P1",
+      "summary": "Methodology for self-hosted development: the codebase IS the running instance. Backend changes require restart — in-app context, this ends the session. Must save session state and commit before restart. Protocol changes affect live connection — warn before modifying. Frontend hot-reload works but can crash mid-stream. Determine context (app vs CLI) before acting. Self-hosted projects cannot preview themselves.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-49f66888.md"
+    },
+    {
+      "id": "rule-4dbb3612",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "enforcement-gap",
+        "critical",
+        "governance-integrity"
+      ],
+      "priority": "P0",
+      "summary": "Any discovered enforcement gap is immediately CRITICAL priority — never deferred. Gaps exist when rules lack mechanical checks, decisions lack enforcing rules, pillar gates lack tooling, lessons recur without promotion, or stage transitions lack automation. Create CRITICAL task immediately, prioritize above feature work.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-4dbb3612.md"
+    },
+    {
+      "id": "rule-5965256d",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer",
+        "researcher",
+        "planner",
+        "reviewer",
+        "writer",
+        "designer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "required-reading",
+        "agent-protocol",
+        "documentation-loading"
+      ],
+      "priority": "P1",
+      "summary": "Every agent must read its Required Reading documentation before any implementation. Required Reading is the first action after skill loading. If a document is missing or unreachable, the agent must stop and report — never silently skip. Replaces scattered 'Before Implementation' checklists with a consistent protocol across all agents.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-5965256d.md"
+    },
+    {
+      "id": "rule-5d2d39b7",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "completion-gate",
+        "follow-ups",
+        "batch-transitions"
+      ],
+      "priority": "P0",
+      "summary": "Orchestrator must not start new epics/teams/phases with unresolved follow-ups from current batch. Completion gate checklist: task statuses, follow-up items from findings files, dead file cleanup, dependency cleanup, binary rebuild, stale agents, session state freshness. PostToolUse hook on TeamCreate enforces.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-5d2d39b7.md"
+    },
+    {
+      "id": "rule-5dd9decd",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "honest-reporting",
+        "status-accuracy",
+        "completion-criteria"
+      ],
+      "priority": "P0",
+      "summary": "Report status accurately — partial work reported as complete is worse than reporting incomplete. Use precise terms: done, partially done, scaffolded, not started. Apply the 'Would It Work' test before marking complete. Forbidden: 'mostly complete', 'should work', 'will be wired up later'. Stop hook checks for missing 'What Is NOT Done' section.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-5dd9decd.md"
+    },
+    {
+      "id": "rule-63cc16ad",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "artifact-config",
+        "project-json",
+        "scanning",
+        "symlinks",
+        "config-integrity"
+      ],
+      "priority": "P1",
+      "summary": "project.json artifacts array is source of truth for scanning. Every config path must resolve to disk. No hardcoded paths in code. Config-driven scanning: flat and recursive. README.md frontmatter is primary metadata; config is override layer. .claude/ is symlinks to .orqa/ — never write directly to .claude/. Display labels: YAML title first, humanized filename fallback.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-63cc16ad.md"
+    },
+    {
+      "id": "rule-71352dc8",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "orchestrator",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "uat",
+        "testing",
+        "collect-then-systematize",
+        "process-improvement"
+      ],
+      "priority": "P1",
+      "summary": "UAT follows collect-then-systematize: Phase 1 collect findings without fixing, Phase 2 group by root cause and investigate architecture, Phase 3 create tasks scoped to systemic themes, Phase 4 fix and encode process improvements. Every UAT round must produce lessons (IMPL-NNN) and rule/skill updates — bug fixes alone means the round failed. No premature fixing, no per-finding tasks.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-71352dc8.md"
+    },
+    {
+      "id": "rule-83411442",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer",
+        "designer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "ui",
+        "tooltips",
+        "shadcn",
+        "accessibility"
+      ],
+      "priority": "P2",
+      "summary": "Use shadcn Tooltip components for hover hints on interactive elements instead of native HTML title attributes. Tooltips provide consistent styling, positioning, and accessibility. Exceptions: alt on images, title on SVG for accessibility. Enforced via ESLint no-restricted-syntax rule.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-83411442.md"
+    },
+    {
+      "id": "rule-87ba1b81",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "delegation",
+        "roles",
+        "resource-safety",
+        "orchestration"
+      ],
+      "priority": "P0",
+      "summary": "Orchestrator coordinates but never implements. Seven universal roles (Researcher, Planner, Implementer, Reviewer, Writer, Designer, Governance Steward) receive delegated work with knowledge loaded. Resource safety rules prevent parallel Rust compilation. Autonomous continuation required — no permission-seeking between tasks.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-87ba1b81.md"
+    },
+    {
+      "id": "rule-8aadfd6c",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "session-state",
+        "real-time",
+        "working-document"
+      ],
+      "priority": "P1",
+      "summary": "Session state (.state/session-state.md) is a working document updated in real time, not a post-session summary. Update on: new steps, step completions, scope changes, decisions, tangents, blockers. Must contain: current scope, step checklist, ADs made, lessons captured. Tangent protocol: update state before pursuing tangent.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-8aadfd6c.md"
+    },
+    {
+      "id": "rule-8abcbfd5",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer",
+        "researcher",
+        "planner",
+        "reviewer",
+        "writer",
+        "designer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "capabilities",
+        "provider-agnostic",
+        "tool-mapping"
+      ],
+      "priority": "P1",
+      "summary": "Agent definitions declare abstract capabilities (file_read, file_edit, shell_execute, etc.), not concrete tool names. Provider mapping tables resolve capabilities to tools per context: Claude Code CLI (PascalCase built-ins + MCP) or OrqaStudio App (Tauri commands + native ONNX). Orchestrator resolves at delegation time.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-8abcbfd5.md"
+    },
+    {
+      "id": "rule-8cb4bd04",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "testing",
+        "coverage",
+        "mocking",
+        "test-isolation"
+      ],
+      "priority": "P1",
+      "summary": "Test organization: Rust unit tests in src/**/tests/, integration in tests/, frontend in *.test.ts (Vitest), E2E in tests/ (Playwright). 80%+ coverage per module. Mock only at adapter/boundary layer — never domain logic. Each test independent, no shared mutable state. Use in-memory SQLite for DB tests.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-8cb4bd04.md"
+    },
+    {
+      "id": "rule-8ee65d73",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "no-deferral",
+        "scope-control",
+        "deliverables",
+        "human-decisions"
+      ],
+      "priority": "P0",
+      "summary": "If a deliverable is in an epic's scope, it ships with that epic. No deferring to future epics. Scope decisions are human decisions — agents advise but never unilaterally descope. Forbidden: 'will be wired up in EPIC-NNN', 'deferred to EPIC-NNN', 'minor cleanup remaining'. Surface every outstanding item individually for user decision.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-8ee65d73.md"
+    },
+    {
+      "id": "rule-97e96528",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "orchestrator",
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "root-cleanliness",
+        "directory-structure",
+        "file-organization"
+      ],
+      "priority": "P2",
+      "summary": "Project root must stay lean. Only justified files: README.md, AGENTS.md, build manifests, language/framework config, .gitignore, .mcp.json, skills-lock.json, source dirs, tests/. Temporary output goes to .state/ (gitignored). Documentation goes to .orqa/documentation/. Tools go to tools/. Never write temp files or new .md docs to root.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-97e96528.md"
+    },
+    {
+      "id": "rule-9814ec3c",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "reviewer",
+        "designer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "coding-standards",
+        "rust",
+        "typescript",
+        "svelte",
+        "linting"
+      ],
+      "priority": "P1",
+      "summary": "Rust: rustfmt, clippy pedantic, thiserror, no unwrap/panic. TypeScript/Svelte 5: strict TS, runes only ($state/$derived/$effect/$props), shadcn-svelte components, no emoji in UI. Both: 80%+ test coverage, no TODOs, no commented-out code. Enforced via make check pre-commit hook. Lint rules must align with documented standards.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-9814ec3c.md"
+    },
+    {
+      "id": "rule-998da8ea",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "orchestrator",
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "dogfood",
+        "self-hosted",
+        "restart-protocol",
+        "enforcement-gaps"
+      ],
+      "priority": "P1",
+      "summary": "Conditional rule when dogfood: true in project.json. You are editing the app you run inside. App context: restart ends session (save state first), sidecar self-edit warnings, HMR crash risk. CLI context: restart is safe, no session risk. Agents must only use restart commands. Never make dev-watch. Enforcement gaps are immediately CRITICAL. Controller uses --no-watch. Plugin edits blocked in dogfood mode.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-998da8ea.md"
+    },
+    {
+      "id": "rule-99abcea1",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "agent-teams",
+        "delegation",
+        "orchestration"
+      ],
+      "priority": "P0",
+      "summary": "Orchestrator must delegate all implementation, review, research, and documentation to subagents via Agent tool with teams. Every delegation names the role, provides acceptance criteria, file paths, and context. Teams are mandatory even for single tasks. Agents run in background to keep orchestrator available for conversation.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-99abcea1.md"
+    },
+    {
+      "id": "rule-af1cd87d",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "orchestrator"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "behavioral-enforcement",
+        "strategies",
+        "prompt-injection",
+        "knowledge-injection"
+      ],
+      "priority": "P2",
+      "summary": "Defines enforcement strategies for behavioral rules: (1) prompt injection at delegation time, (2) output validation via post-hoc checks, (3) knowledge injection based on file paths being modified, (4) session hooks at start/end boundaries. 19 behavioral rules mapped across 4 strategies.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-af1cd87d.md"
+    },
+    {
+      "id": "rule-af5771e3",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "quality",
+        "no-stubs",
+        "real-implementations",
+        "completion-reports"
+      ],
+      "priority": "P0",
+      "summary": "No hardcoded fake data, TODO functions, or scaffolded implementations in production code. Every endpoint must return real data from real backend. Agent completion reports must include 'What Was Done', 'What Is NOT Done', 'Evidence', and 'Smoke Test' sections. PostToolUse hook checks source files for stub patterns.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-af5771e3.md"
+    },
+    {
+      "id": "rule-aff3c5db",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "orchestrator",
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "rebuild",
+        "rust",
+        "daemon",
+        "binary",
+        "stale-prevention"
+      ],
+      "priority": "P1",
+      "summary": "After any commit touching Rust source (libs/validation, libs/mcp-server, libs/lsp-server, app/backend), stop daemon, rebuild affected binary, restart daemon, verify. Rebuild is part of commit workflow, not a follow-up. Stale binaries serve outdated validation/graph/diagnostics, wasting tokens. No exceptions for small changes. PostToolUse hook warns on git commit with Rust files.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-aff3c5db.md"
+    },
+    {
+      "id": "rule-b03009da",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "end-to-end",
+        "four-layer",
+        "ipc",
+        "completeness"
+      ],
+      "priority": "P1",
+      "summary": "Every feature crossing the IPC boundary must include all four layers in the same commit: backend command, IPC type (Rust + TypeScript), frontend store, UI component. Types must match across boundaries. Error handling end-to-end. General principle: no partial implementations across any service boundary.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-b03009da.md"
+    },
+    {
+      "id": "rule-b10fe6d1",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "artifact-lifecycle",
+        "status-transitions",
+        "gates",
+        "governance"
+      ],
+      "priority": "P0",
+      "summary": "Defines artifact lifecycle: creation standards, status transitions (milestone/epic/task/research/idea/decision), documentation gates (docs-required before start, docs-produced at completion), human gate for epic completion, reconciliation tasks, priority assessment, roadmap sync, and planning placement rules. Core governance process.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-b10fe6d1.md"
+    },
+    {
+      "id": "rule-b2584e59",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "traceability",
+        "artifact-impact",
+        "cross-referencing"
+      ],
+      "priority": "P1",
+      "summary": "After creating or updating any artifact, immediately ask 'where does this get used?' and update all affected artifacts (milestones, pillars, rules, epics, lessons). Observing a connection without acting is a violation. 'Worth noting' without recording it is a violation. Tracing is part of task completion.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-b2584e59.md"
+    },
+    {
+      "id": "rule-b723ea53",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer",
+        "researcher",
+        "planner",
+        "reviewer",
+        "writer",
+        "designer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "tool-access",
+        "capabilities",
+        "role-boundaries"
+      ],
+      "priority": "P0",
+      "summary": "Each universal role has permitted capabilities enforcing ownership boundaries. Researcher/Planner are read-only. Reviewer can run shell checks but cannot edit. Writer/Designer can edit but not run shell. Orchestrator/Implementer have full access. Capabilities resolve to provider-specific tools via mapping tables.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-b723ea53.md"
+    },
+    {
+      "id": "rule-c382e053",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "type-safety",
+        "root-cause",
+        "no-aliases",
+        "layer-consistency"
+      ],
+      "priority": "P1",
+      "summary": "Fix root causes of type mismatches between layers at the layer that introduced the mismatch. Never paper over with aliases, shims, normalizer maps, or widened type unions. One canonical identifier per concept across all layers. Trace the value from origin to mismatch point using code search, fix at source, remove all downstream workarounds.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-c382e053.md"
+    },
+    {
+      "id": "rule-c603e90e",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "orchestrator",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "lessons",
+        "learning-loops",
+        "promotion",
+        "recurrence"
+      ],
+      "priority": "P1",
+      "summary": "Two mandatory learning loops: implementation lessons (IMPL files in .orqa/process/lessons/) and process retrospectives. Review agents must check existing lessons before reporting, increment recurrence, create new IMPL files. Promotion at recurrence >= 2 to rules/knowledge. Enforcement gate: rules need enforcement entries before promotion completes.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-c603e90e.md"
+    },
+    {
+      "id": "rule-cd426b0d",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "session-state",
+        "priorities",
+        "proactive-handoff"
+      ],
+      "priority": "P1",
+      "summary": "Before ending any session, orchestrator must write .state/session-state.md with: what was completed, Next Session Priorities (explicit ordered list), environment state, open issues. Stop hook checks for 'Next Session' heading and warns if missing. Writing priorities proactively prevents blind session starts.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-cd426b0d.md"
+    },
+    {
+      "id": "rule-d2c2063a",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "orchestrator",
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "development-commands",
+        "make-targets",
+        "dev-server",
+        "restart-protocol"
+      ],
+      "priority": "P1",
+      "summary": "All dev commands via make targets — raw cargo/npm forbidden for tasks with make equivalents. Key: make dev (start), make stop/kill (teardown), make restart-tauri/restart-vite/restart (restarts), make check/lint/test/format/build. Agents must only use restart commands during dev, never make dev/stop/kill unless user asks. Dev server required for any code-modifying session. Exceptions: cargo add, npm install, git, npx.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-d2c2063a.md"
+    },
+    {
+      "id": "rule-d543d759",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "honest-status",
+        "verification",
+        "acceptance-criteria"
+      ],
+      "priority": "P0",
+      "summary": "Task complete only when ALL acceptance criteria met AND Reviewer verified. Implementers must run verification checklist. Reviewers: single unmet criterion is FAIL. Orchestrators: distinguish done/in-progress/blocked/partial. No self-certification. Partial work is acceptable — calling it done when it isn't is not.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-d543d759.md"
+    },
+    {
+      "id": "rule-d5d28fba",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "structure-first",
+        "artifacts",
+        "planning",
+        "traceability"
+      ],
+      "priority": "P0",
+      "summary": "No implementation without artifact structure first: epic, tasks with acceptance criteria, research if needed, decisions if architectural choices made. Orchestrator verifies artifacts exist before delegating. Exceptions: single-line fixes, governance artifact updates, session state, emergency hotfixes (structure required before session end).",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-d5d28fba.md"
+    },
+    {
+      "id": "rule-dccf4226",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "orchestrator",
+        "planner",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "planning",
+        "architectural-compliance",
+        "ux-first",
+        "verification-gates"
+      ],
+      "priority": "P1",
+      "summary": "Every implementation plan must include: Architectural Compliance section (error propagation, service boundary, component purity, type safety, immutability, UX-first, end-to-end, coding standards), Systems Architecture Checklist (persistence, contracts, state, config, health, errors, testing, preferences, docs), and UX-first design (user journeys → UI → backend). Independent reviewer verification after each phase. Loop closure mandatory for enforcement epics.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-dccf4226.md"
+    },
+    {
+      "id": "rule-dd5b69e6",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer",
+        "researcher",
+        "planner",
+        "reviewer",
+        "writer",
+        "designer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "skill-loading",
+        "three-tier",
+        "universal-skills",
+        "context-resolution"
+      ],
+      "priority": "P1",
+      "summary": "Three-tier skill loading: Tier 1 (portable, from agent YAML skills: list), Tier 2 (project-specific, orchestrator-injected), Tier 3 (context-resolved wrappers like orqa-code-search). Universal skills on every agent: orqa-code-search + composability. Skill layers: core (portable), setup, project, plugin, community, user. Load order: Tier 1 → Tier 2 → Required Reading → implement. Rule status: active/inactive controls enforcement.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-dd5b69e6.md"
+    },
+    {
+      "id": "rule-e1f1afc1",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "knowledge-injection",
+        "auto-inject",
+        "posttooluse",
+        "domain-knowledge"
+      ],
+      "priority": "P1",
+      "summary": "PostToolUse hooks auto-inject domain knowledge when agents write to specific code areas. Path-to-knowledge map: domain/ → domain-services + error-composition, commands/ → ipc-patterns + error-composition, repo/ → repository-pattern, sidecar/ → streaming, components/ → component-extraction + svelte5, stores/ → store-patterns + orchestration, .orqa/ → governance + documentation. Knowledge injected once per session (deduplication).",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-e1f1afc1.md"
+    },
+    {
+      "id": "rule-eb269afb",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "designer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "ui",
+        "components",
+        "shared-library",
+        "reusability"
+      ],
+      "priority": "P1",
+      "summary": "Check shared component library before creating new UI elements. Use EmptyState, LoadingSpinner, ErrorDisplay, ConfirmDeleteDialog, StatusIndicator, SearchInput, etc. from $lib/components/shared/. No inline empty/loading/error states. shadcn-svelte first. Panel layouts must be resizable. Use semantic search to find existing implementations.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-eb269afb.md"
+    },
+    {
+      "id": "rule-ec9462d8",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer",
+        "writer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "documentation-first",
+        "source-of-truth",
+        "gates"
+      ],
+      "priority": "P0",
+      "summary": "Documentation is the source of truth. Verify docs exist before writing code, update docs before changing code. Check .orqa/documentation/ for existing designs. Epic docs-required gate must be satisfied before implementation. No deprecated documentation — delete and replace. Bug investigation must check docs before fixing code.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-ec9462d8.md"
+    },
+    {
+      "id": "rule-ef822519",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "context-management",
+        "efficiency",
+        "delegation"
+      ],
+      "priority": "P1",
+      "summary": "Orchestrator must protect its context window: delegate rather than accumulate, use targeted reads with offset/limit, summarize agent results instead of echoing, complete one task before starting next, persist intermediate results to .state/session-state.md. Never read entire large files or hold implementation details across turns.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-ef822519.md"
+    },
+    {
+      "id": "rule-f23392dc",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "orchestrator",
+        "writer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "knowledge",
+        "user-invocable",
+        "slash-commands",
+        "frontmatter"
+      ],
+      "priority": "P2",
+      "summary": "Every knowledge artifact must have a user-invocable field (true/false) in YAML frontmatter. True: appears in CLI slash commands, app knowledge picker, and knowledge browser for direct user invocation. False: only loaded into agent context by orchestrator, hidden from user-facing lists. Set true for on-demand methodology; false for workflow-sequenced or internal-audit knowledge.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-f23392dc.md"
+    },
+    {
+      "id": "rule-f3dca71e",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "orchestrator",
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "versioning",
+        "pre-release",
+        "dev-tags",
+        "version-sync"
+      ],
+      "priority": "P2",
+      "summary": "Pre-release versions must use -dev suffix (e.g. 0.2.0-dev). Bare X.Y.Z reserved for production releases. Applies to: VERSION file (canonical), all package.json, all Cargo.toml, all orqa-plugin.json. Use orqa version bump and orqa version sync — never manually edit version fields. orqa version check detects drift between files.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-f3dca71e.md"
+    },
+    {
+      "id": "rule-f609242f",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "orchestrator",
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "git",
+        "worktree",
+        "safety",
+        "data-loss-prevention"
+      ],
+      "priority": "P0",
+      "summary": "Worktree-based git workflow: create worktree per task, work in isolation, merge after review, mandatory cleanup. Hooks block --no-verify, force-push to main, reset --hard, clean -f. Commit at natural boundaries (max 20 uncommitted files). Stash only for temporary rebase procedures. Data loss prevention checks before directory operations.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\rules\\RULE-f609242f.md"
+    },
+    {
+      "id": "license-management",
+      "plugin": "@orqastudio/plugin-cli",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "cli",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Additional CLI development patterns and tools reference.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-40be8113.md"
+    },
+    {
+      "id": "version-management",
+      "plugin": "@orqastudio/plugin-cli",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "cli",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "CLI tooling supplementary reference material.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-481059d2.md"
+    },
+    {
+      "id": "orqastudio-cli-usage",
+      "plugin": "@orqastudio/plugin-cli",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "cli",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "CLI-specific reference for command-line tool development and patterns.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-990e4f85.md"
+    },
+    {
+      "id": "cli-plugin-self-maintenance",
+      "plugin": "@orqastudio/plugin-cli",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "cli",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "CLI architecture and development supplementary reference.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-a0947420.md"
+    },
+    {
+      "id": "plugin-management",
+      "plugin": "@orqastudio/plugin-cli",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "cli",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "CLI supplementary reference for specific development scenarios.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-afaa4e88.md"
+    },
+    {
+      "id": "dev-environment-management",
+      "plugin": "@orqastudio/plugin-cli",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "cli",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Additional CLI patterns and development reference.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-ea78c8e4.md"
+    },
+    {
+      "id": "readme-standards",
+      "plugin": "@orqastudio/plugin-cli",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "cli",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Additional CLI development reference material.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-ecc181cb.md"
+    },
+    {
+      "id": "quality-check-runner",
+      "plugin": "@orqastudio/plugin-coding-standards",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "quality",
+        "checks",
+        "orqa-check"
+      ],
+      "priority": "P2",
+      "summary": "Quality check runner: orqa check discovers tools from installed plugins and runs them all. Returns unified summary of lint, type-check, test results.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-126aa140.md"
+    },
+    {
+      "id": "config-generation-from-rules",
+      "plugin": "@orqastudio/plugin-coding-standards",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "config-generation",
+        "eslint",
+        "clippy",
+        "enforcement"
+      ],
+      "priority": "P2",
+      "summary": "Config generation from rules: generates tool configs (ESLint, clippy, rustfmt) from OrqaStudio enforcement rules. Rules define what; this generates the how.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-1c2d005d.md"
+    },
+    {
+      "id": "search",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "stage-triggered",
+      "roles": [],
+      "stages": [
+        "implement",
+        "review",
+        "research"
+      ],
+      "paths": [],
+      "tags": [
+        "search",
+        "semantic",
+        "regex",
+        "methodology"
+      ],
+      "priority": "P1",
+      "summary": "Search methodology: three modes — regex for exact patterns, semantic for natural language, research for compound queries. Search before creating, find callers before refactoring.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-13348442.md"
+    },
+    {
+      "id": "three-layer-enforcement-model",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [
+        "implement",
+        "review"
+      ],
+      "paths": [],
+      "tags": [
+        "enforcement",
+        "three-layer",
+        "model"
+      ],
+      "priority": "P1",
+      "summary": "Three-layer enforcement model: schema validation (structural) > semantic analysis (behavioral) > human review (judgment). Each layer catches what the previous cannot.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-1f4aba8f.md"
+    },
+    {
+      "id": "planning",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "writer"
+      ],
+      "stages": [
+        "plan",
+        "implement"
+      ],
+      "paths": [],
+      "tags": [
+        "planning",
+        "documentation-first",
+        "verification"
+      ],
+      "priority": "P1",
+      "summary": "Documentation-first planning: plans start with documentation, get user approval, then implement with mandatory verification gates. Prevents documentation drift across sessions.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-21d28aa0.md"
+    },
+    {
+      "id": "cli-architecture",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [
+        "implement"
+      ],
+      "paths": [],
+      "tags": [
+        "architecture",
+        "cli",
+        "commands"
+      ],
+      "priority": "P2",
+      "summary": "CLI architecture: command structure, plugin discovery, subcommand registration, and how CLI tools integrate with the daemon and plugin system.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-22783288.md"
+    },
+    {
+      "id": "project-setup",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "setup",
+        "project",
+        "initialization"
+      ],
+      "priority": "P2",
+      "summary": "Project setup: how to initialize a new OrqaStudio project, configure plugins, and establish the governance structure.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-2876afc7.md"
+    },
+    {
+      "id": "agent-decision-methodology",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "on-demand",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "decision",
+        "methodology",
+        "tradeoffs"
+      ],
+      "priority": "P2",
+      "summary": "Agent decision methodology: structured approach to making design decisions. Identify constraints, evaluate tradeoffs, document in ADR format when architecturally significant.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-3d946f9a.md"
+    },
+    {
+      "id": "agentic-workflow-and-enforcement-pipelin",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [
+        "implement",
+        "review"
+      ],
+      "paths": [],
+      "tags": [
+        "architecture",
+        "agentic",
+        "enforcement",
+        "pipeline"
+      ],
+      "priority": "P1",
+      "summary": "Agentic workflow and enforcement pipeline: how agent prompts flow through thinking modes, knowledge injection, validation gates, and enforcement hooks. The execution spine of the system.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-477f2c9c.md"
+    },
+    {
+      "id": "artifact-status-management",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [
+        "implement",
+        "review"
+      ],
+      "paths": [],
+      "tags": [
+        "status",
+        "lifecycle",
+        "artifacts"
+      ],
+      "priority": "P2",
+      "summary": "Artifact status management: rules for transitioning artifact status values. Status drives workflow progression and enforcement. Query schema for valid transitions.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-51de8fb7.md"
+    },
+    {
+      "id": "knowledge-auto-injection",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "stage-triggered",
+      "roles": [],
+      "stages": [
+        "implement",
+        "review"
+      ],
+      "paths": [],
+      "tags": [
+        "knowledge",
+        "injection",
+        "auto-loading"
+      ],
+      "priority": "P1",
+      "summary": "Knowledge auto-injection: how the system automatically loads relevant knowledge based on tier (always/stage-triggered/on-demand), file paths, and semantic search triggers.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-586bfa9a.md"
+    },
+    {
+      "id": "project-type-detection",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "project-type",
+        "detection",
+        "classification"
+      ],
+      "priority": "P2",
+      "summary": "Project type detection: methodology for classifying projects by stack, language, framework. Drives plugin recommendations and governance templates.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-7c871921.md"
+    },
+    {
+      "id": "research-methodology",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "on-demand",
+      "roles": [
+        "researcher"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "research",
+        "methodology",
+        "source-verification"
+      ],
+      "priority": "P2",
+      "summary": "Research methodology: source verification, credibility assessment, cross-referencing, structured documentation with confidence levels. For agents investigating external sources.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-9ff8c63f.md"
+    },
+    {
+      "id": "demoted-rule-stability-tracking",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "stage-triggered",
+      "roles": [
+        "reviewer"
+      ],
+      "stages": [
+        "review",
+        "maintain"
+      ],
+      "paths": [],
+      "tags": [
+        "rules",
+        "demotion",
+        "stability"
+      ],
+      "priority": "P2",
+      "summary": "Demoted rule stability tracking: monitors rules demoted to knowledge, tracks whether demotion was correct based on subsequent violations. Informs rule lifecycle decisions.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-a16b7bc7.md"
+    },
+    {
+      "id": "governance-migration-methodology",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "migration",
+        "governance",
+        "methodology"
+      ],
+      "priority": "P2",
+      "summary": "Governance migration methodology: how to migrate governance artifacts between versions or formats. Safe migration patterns with validation.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-a4e351bc.md"
+    },
+    {
+      "id": "implementer-reasoning-methodology",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [
+        "implement"
+      ],
+      "paths": [],
+      "tags": [
+        "reasoning",
+        "methodology",
+        "implementer"
+      ],
+      "priority": "P2",
+      "summary": "Implementer reasoning methodology: structured approach to implementation decisions. Consider alternatives, document rationale, verify against acceptance criteria.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-b320cae8.md"
+    },
+    {
+      "id": "thinking-mode-debugging",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "always",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "thinking-mode",
+        "debugging",
+        "troubleshooting"
+      ],
+      "priority": "P0",
+      "summary": "Debugging thinking mode: reproduce, isolate, identify root cause, then route to implementation or learning loop. Triggered by broken/unexpected behavior signals.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-b95ec6e3.md"
+    },
+    {
+      "id": "shared-validation-engine",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [
+        "implement",
+        "review"
+      ],
+      "paths": [],
+      "tags": [
+        "architecture",
+        "validation",
+        "shared-engine"
+      ],
+      "priority": "P2",
+      "summary": "Shared validation engine: single schema-driven validator used by both CLI (TypeScript) and app (Rust). Schema IS the rule — no custom business logic in validators.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-dd5062c9.md"
+    },
+    {
+      "id": "reviewer-reasoning-methodology",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "stage-triggered",
+      "roles": [
+        "reviewer"
+      ],
+      "stages": [
+        "review"
+      ],
+      "paths": [],
+      "tags": [
+        "reasoning",
+        "methodology",
+        "reviewer"
+      ],
+      "priority": "P2",
+      "summary": "Reviewer reasoning methodology: structured approach to review verdicts. Evidence-based evaluation against standards, not opinion. Produce actionable feedback.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-e484802a.md"
+    },
+    {
+      "id": "orqastudio-cli-commands",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [
+        "implement",
+        "review"
+      ],
+      "paths": [],
+      "tags": [
+        "cli",
+        "commands",
+        "orqa",
+        "tooling"
+      ],
+      "priority": "P1",
+      "summary": "OrqaStudio CLI command reference: every orqa command, subcommands, and usage. Agents must use orqa commands instead of raw cargo/npm/make.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-e89753ad.md"
+    },
+    {
+      "id": "plugin-setup",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "plugin",
+        "setup",
+        "claude-code"
+      ],
+      "priority": "P2",
+      "summary": "Plugin setup: installs companion plugin for Claude Code. Detects existing agent infrastructure, migrates, registers plugin, sets up symlinks.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-f5ee4e0d.md"
+    },
+    {
+      "id": "thinking-mode-implementation",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "always",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "thinking-mode",
+        "implementation",
+        "coding"
+      ],
+      "priority": "P0",
+      "summary": "Implementation thinking mode: hands-on work producing code, artifacts, or configuration. Requires coding standards, testing patterns, and architecture awareness. Triggered by build/fix/add/refactor signals.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-f7fb7aa7.md"
+    },
+    {
+      "id": "thinking-mode-review",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "always",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "thinking-mode",
+        "review",
+        "audit"
+      ],
+      "priority": "P0",
+      "summary": "Review thinking mode: checks work against standards, produces PASS/FAIL verdict with evidence. Does not fix — only evaluates. Triggered by check/validate/audit signals.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-fd636a56.md"
+    },
+    {
+      "id": "project-inference",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "project-inference",
+        "detection",
+        "tool"
+      ],
+      "priority": "P2",
+      "summary": "Project inference: reads project files to detect languages, frameworks, tools, and existing governance. Used during orqa install to auto-configure.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-03421ec0.md"
+    },
+    {
+      "id": "project-migration",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "migration",
+        "project",
+        "tools",
+        "claude",
+        "cursor"
+      ],
+      "priority": "P2",
+      "summary": "Project migration: maps existing agentic tool configurations (Claude Code, Cursor, Copilot, Aider) into OrqaStudio governance. Coexistence, not replacement.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-4a58e7dd.md"
+    },
+    {
+      "id": "naming-conventions",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "naming",
+        "conventions",
+        "repos",
+        "packages"
+      ],
+      "priority": "P2",
+      "summary": "Naming conventions: repo, folder, and npm package naming for libraries, plugins, connectors, registry, tools, and templates. The name encodes the purpose.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-85a449e7.md"
+    },
+    {
+      "id": "licensing-decisions",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "on-demand",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "licensing",
+        "bsl",
+        "apache",
+        "decisions"
+      ],
+      "priority": "P2",
+      "summary": "Licensing decisions: BSL-1.1 with Ethical Use Addendum for app/lib/plugin, Apache-2.0 for connectors, MIT for registry. Quick reference for permitted use cases.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-46f68631.md"
+    },
+    {
+      "id": "dependency-license-compatibility",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "licensing",
+        "dependencies",
+        "compatibility"
+      ],
+      "priority": "P2",
+      "summary": "Dependency license compatibility: check license compatibility before adding any dependency. Quick decision table for npm/crate compatibility with BSL-1.1.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-1a4f41f7.md"
+    },
+    {
+      "id": "schema-validation",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "on-demand",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "schema",
+        "validation",
+        "core-json"
+      ],
+      "priority": "P2",
+      "summary": "Schema validation: schema-driven validation with no custom business logic. Both CLI (TypeScript) and app (Rust) evaluate same schemas. The schema IS the rule.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-2bf2b321.md"
+    },
+    {
+      "id": "centralized-logging",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [
+        "implement"
+      ],
+      "paths": [
+        "**/*.ts",
+        "**/*.rs"
+      ],
+      "tags": [
+        "logging",
+        "centralized",
+        "sdk"
+      ],
+      "priority": "P1",
+      "summary": "Centralized logging: ALL code must use SDK logger, never bare console calls. Covers log levels, module scoping, error capture, perf instrumentation, and dev controller integration.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-a53d826c.md"
+    },
+    {
+      "id": "orqa-documentation-authoring",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "on-demand",
+      "roles": [
+        "writer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "documentation",
+        "authoring",
+        "markdown",
+        "links"
+      ],
+      "priority": "P2",
+      "summary": "Documentation authoring: OrqaStudio internal link format, cross-referencing between artifacts, markdown rendering pipeline, content structure patterns.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-1afbc656.md"
+    },
+    {
+      "id": "orqastudio-architecture",
+      "plugin": "@orqastudio/plugin-core-framework",
+      "source": "core",
+      "tier": "on-demand",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "architecture",
+        "orqastudio",
+        "layers",
+        "boundaries"
+      ],
+      "priority": "P2",
+      "summary": "OrqaStudio architecture: ADR patterns, data flow mapping, layer responsibilities, violation detection, IPC boundary design for Tauri+Svelte+Rust stack.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-5611351f.md"
+    },
+    {
+      "id": "third-party-plugin-development",
+      "plugin": "@orqastudio/plugin-plugin-dev",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "plugin",
+        "third-party",
+        "development"
+      ],
+      "priority": "P3",
+      "summary": "Third-party plugin development: standalone plugin creation outside the platform monorepo. Template-based, registry publishing, community conventions.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-1b7fa054.md"
+    },
+    {
+      "id": "plugin-development",
+      "plugin": "@orqastudio/plugin-plugin-dev",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "plugin",
+        "development",
+        "scaffolding"
+      ],
+      "priority": "P2",
+      "summary": "Plugin development: detects first-party vs third-party context, loads appropriate sub-knowledge. Use when creating new plugins or extending the platform.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-2f38309a.md"
+    },
+    {
+      "id": "first-party-plugin-development",
+      "plugin": "@orqastudio/plugin-plugin-dev",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "plugin",
+        "first-party",
+        "monorepo"
+      ],
+      "priority": "P2",
+      "summary": "First-party plugin development: workflow for the platform monorepo. Plugins are submodules, managed by dev environment CLI, published via CI.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-e6fee7a0.md"
+    },
+    {
+      "id": "rust-testing-patterns",
+      "plugin": "@orqastudio/plugin-rust",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "**/*.rs"
+      ],
+      "tags": [
+        "rust",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Rust language reference for common patterns used in the OrqaStudio backend.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-694ff7cb.md"
+    },
+    {
+      "id": "clippy-config-management",
+      "plugin": "@orqastudio/plugin-rust",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "**/*.rs"
+      ],
+      "tags": [
+        "rust",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Supplementary Rust reference for advanced patterns.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-d4095bd9.md"
+    },
+    {
+      "id": "rust-async-patterns",
+      "plugin": "@orqastudio/plugin-rust",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "**/*.rs"
+      ],
+      "tags": [
+        "rust",
+        "async",
+        "tokio",
+        "patterns"
+      ],
+      "priority": "P2",
+      "summary": "Rust async patterns with Tokio: tasks, channels, streams, error handling, graceful shutdown, async traits. Production patterns for concurrent Rust.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-ea7898e4.md"
+    },
+    {
+      "id": "rust-plugin-installation",
+      "plugin": "@orqastudio/plugin-rust",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "**/*.rs"
+      ],
+      "tags": [
+        "rust",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Additional Rust patterns and idioms reference for backend development.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-f7d03a2c.md"
     },
     {
       "id": "code-quality-review",
@@ -69,7 +2499,7 @@
       "tags": [],
       "priority": "P1",
       "summary": "Code review methodology: automated checks first (lint, test, type-check), then manual review checklist (function size <=50 lines, no unwrap/panic, error composition with thiserror). Produce structured verdict with PASS/FAIL per category.",
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software\\knowledge\\KNOW-f0efaf83.md"
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\software\\knowledge\\KNOW-91a7a6c1.md"
     },
     {
       "id": "test-engineering",
@@ -86,7 +2516,7 @@
       "tags": [],
       "priority": "P2",
       "summary": "Test engineering methodology: unit tests for pure functions, integration tests for API boundaries, snapshot tests for UI components. Coverage target 80%. Test names describe behavior not implementation.",
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software\\knowledge\\KNOW-bcb42347.md"
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\software\\knowledge\\KNOW-5f4db8f7.md"
     },
     {
       "id": "security-audit",
@@ -103,7 +2533,7 @@
       ],
       "priority": "P2",
       "summary": "Security audit process: OWASP top 10 check, dependency vulnerability scan, secrets detection, input validation review. Produces structured findings with severity ratings.",
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software\\knowledge\\KNOW-170c220e.md"
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\software\\knowledge\\KNOW-45b5f8a8.md"
     },
     {
       "id": "delivery-completion",
@@ -136,7 +2566,1053 @@
       ],
       "priority": "P3",
       "summary": null,
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software\\knowledge\\KNOW-353a228b.md"
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\software\\knowledge\\KNOW-d00093e7.md"
+    },
+    {
+      "id": "delivery-unit-completion-discipline",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "delivery",
+        "completion",
+        "discipline"
+      ],
+      "priority": "P1",
+      "summary": "Delivery unit completion discipline: epics must be completed in entirety, never half-done. All tasks delivered before moving on. Acceptance criteria verified with evidence.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-0188373b.md"
+    },
+    {
+      "id": "qa-verification",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "reviewer"
+      ],
+      "stages": [
+        "review",
+        "test"
+      ],
+      "paths": [],
+      "tags": [
+        "qa",
+        "verification",
+        "end-to-end"
+      ],
+      "priority": "P1",
+      "summary": "QA verification: \"Would It Work\" protocol, verification path tracing, persistence verification, common QA failure patterns, structured QA report format.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-1314ac47.md"
+    },
+    {
+      "id": "security-audit-45b5f8a8",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "security",
+        "audit",
+        "owasp"
+      ],
+      "priority": "P2",
+      "summary": "Security audit methodology: secret management, capability/permission systems, file system scoping, input validation, dependency auditing, vulnerability classification.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-45b5f8a8.md"
+    },
+    {
+      "id": "test-engineering-5f4db8f7",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [
+        "implement",
+        "test"
+      ],
+      "paths": [],
+      "tags": [
+        "testing",
+        "engineering",
+        "methodology"
+      ],
+      "priority": "P1",
+      "summary": "Test engineering: unit tests for pure functions, integration for boundaries, snapshots for UI. Coverage target 80%. Test names describe behavior not implementation.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-5f4db8f7.md"
+    },
+    {
+      "id": "uat-process",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "uat",
+        "user-acceptance",
+        "testing"
+      ],
+      "priority": "P2",
+      "summary": "UAT process: user acceptance testing methodology for verifying features meet user expectations before release.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-71352dc8.md"
+    },
+    {
+      "id": "skills-maintenance",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "writer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "skills",
+        "maintenance",
+        "knowledge"
+      ],
+      "priority": "P2",
+      "summary": "Skills maintenance: methodology for keeping knowledge artifacts current — reviewing, updating, deprecating. Includes sync verification with docs.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-72ca209f.md"
+    },
+    {
+      "id": "code-quality-review-91a7a6c1",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "reviewer"
+      ],
+      "stages": [
+        "review"
+      ],
+      "paths": [],
+      "tags": [
+        "code-review",
+        "quality",
+        "checklist"
+      ],
+      "priority": "P1",
+      "summary": "Code quality review: automated checks first (lint, test, type-check), then manual review. Function size <=50 lines, no unwrap/panic, error composition. Structured PASS/FAIL verdict.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-91a7a6c1.md"
+    },
+    {
+      "id": "software-delivery-management",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "software",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Additional software development reference material and methodology patterns.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-a700e25a.md"
+    },
+    {
+      "id": "ux-compliance-review",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "ux",
+        "compliance",
+        "review"
+      ],
+      "priority": "P2",
+      "summary": "UX compliance review: validates UI implementations against design system standards, accessibility requirements, and interaction patterns.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-bec7e87d.md"
+    },
+    {
+      "id": "component-extraction-d00093e7",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "component-extraction",
+        "refactoring",
+        "ui"
+      ],
+      "priority": "P3",
+      "summary": "Component extraction: identifying repeated UI patterns and extracting shared components. Detection heuristics, extraction criteria, prop design, placement conventions.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-d00093e7.md"
+    },
+    {
+      "id": "project-type-software",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "project-type",
+        "software",
+        "template"
+      ],
+      "priority": "P3",
+      "summary": "Software project type: specific governance template and plugin recommendations for software development projects.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-d03337ac.md"
+    },
+    {
+      "id": "orqa-testing-patterns",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "testing",
+        "orqastudio",
+        "patterns"
+      ],
+      "priority": "P2",
+      "summary": "OrqaStudio testing patterns: project-specific test conventions, fixture patterns, mock strategies for the Tauri+Svelte+Rust stack.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-3f307edb.md"
+    },
+    {
+      "id": "testing-patterns",
+      "plugin": "@orqastudio/plugin-svelte",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "**/*.svelte"
+      ],
+      "tags": [
+        "svelte5",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Additional Svelte 5 reference for specific API patterns.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-3642842e.md"
+    },
+    {
+      "id": "svelte-4-to-svelte-5-migration-reference",
+      "plugin": "@orqastudio/plugin-svelte",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "**/*.svelte"
+      ],
+      "tags": [
+        "svelte",
+        "migration",
+        "svelte4",
+        "svelte5"
+      ],
+      "priority": "P3",
+      "summary": "Svelte 4 to 5 migration reference: runes replace stores, snippets replace slots, event delegation replaces on: directives. Pattern-by-pattern upgrade guide.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-37496474.md"
+    },
+    {
+      "id": "svelte-5-patterns",
+      "plugin": "@orqastudio/plugin-svelte",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "**/*.svelte"
+      ],
+      "tags": [
+        "svelte5",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Svelte 5 supplementary reference for advanced component patterns.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-4260613a.md"
+    },
+    {
+      "id": "svelte-5-best-practices",
+      "plugin": "@orqastudio/plugin-svelte",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [
+        "implement"
+      ],
+      "paths": [
+        "**/*.svelte",
+        "app/ui/**"
+      ],
+      "tags": [
+        "svelte5",
+        "runes",
+        "components",
+        "best-practices"
+      ],
+      "priority": "P1",
+      "summary": "Svelte 5 runes, snippets, SvelteKit patterns. Covers $state/$derived/$effect/$props, event handling, data loading, form actions, TypeScript props typing, SSR state isolation.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-50382247.md"
+    },
+    {
+      "id": "svelte-5-typescript-reference",
+      "plugin": "@orqastudio/plugin-svelte",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "**/*.svelte",
+        "**/*.ts"
+      ],
+      "tags": [
+        "svelte5",
+        "typescript",
+        "reference"
+      ],
+      "priority": "P2",
+      "summary": "Svelte 5 TypeScript reference: generic components, typed props, typed events, TypeScript integration patterns.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-5704b089.md"
+    },
+    {
+      "id": "eslint-config-management",
+      "plugin": "@orqastudio/plugin-svelte",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "**/*.svelte"
+      ],
+      "tags": [
+        "svelte5",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Additional Svelte 5 patterns and reference material for component development.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-6cfacbb2.md"
+    },
+    {
+      "id": "svelte-5-snippets-reference",
+      "plugin": "@orqastudio/plugin-svelte",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "**/*.svelte"
+      ],
+      "tags": [
+        "svelte5",
+        "snippets",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Svelte 5 snippets reference: {#snippet} and {@render} syntax for reusable template fragments replacing slots.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-8cc0f5e4.md"
+    },
+    {
+      "id": "svelte-5-events-reference",
+      "plugin": "@orqastudio/plugin-svelte",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "**/*.svelte"
+      ],
+      "tags": [
+        "svelte5",
+        "events",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Svelte 5 events reference: callback props replace createEventDispatcher. Native DOM events via on* attributes. Component events via $props callbacks.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-96aaa407.md"
+    },
+    {
+      "id": "tailwind-design-system",
+      "plugin": "@orqastudio/plugin-svelte",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "tailwind",
+        "design-system",
+        "css",
+        "tokens"
+      ],
+      "priority": "P2",
+      "summary": "Tailwind CSS v4 design system: design tokens, component libraries, responsive patterns. Build scalable UI systems with utility-first CSS.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-a1a195c1.md"
+    },
+    {
+      "id": "svelte-5-runes-reference",
+      "plugin": "@orqastudio/plugin-svelte",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "**/*.svelte"
+      ],
+      "tags": [
+        "svelte5",
+        "runes",
+        "reference"
+      ],
+      "priority": "P2",
+      "summary": "Svelte 5 runes reference: $state, $derived, $effect, $props, $bindable, $inspect. Complete API reference with usage patterns and migration notes from Svelte 4 stores.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-abb08445.md"
+    },
+    {
+      "id": "svelte-plugin-installation",
+      "plugin": "@orqastudio/plugin-svelte",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "**/*.svelte"
+      ],
+      "tags": [
+        "svelte5",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Additional Svelte 5 reference material for edge cases and advanced usage.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-be54e4de.md"
+    },
+    {
+      "id": "sveltekit-patterns-reference",
+      "plugin": "@orqastudio/plugin-svelte",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "app/ui/**"
+      ],
+      "tags": [
+        "sveltekit",
+        "patterns",
+        "routing",
+        "data-loading"
+      ],
+      "priority": "P2",
+      "summary": "SvelteKit patterns: routing, data loading, form actions, server hooks. Application-level patterns for SvelteKit projects.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-c4d3e52b.md"
+    },
+    {
+      "id": "svelte-5-performance-reference",
+      "plugin": "@orqastudio/plugin-svelte",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [
+        "**/*.svelte"
+      ],
+      "tags": [
+        "svelte5",
+        "performance",
+        "optimization"
+      ],
+      "priority": "P3",
+      "summary": "Svelte 5 performance reference: fine-grained reactivity, $derived optimizations, component lazy loading, bundle size analysis.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-df3c489e.md"
+    },
+    {
+      "id": "orqastudio-frontend-best-practices",
+      "plugin": "@orqastudio/plugin-svelte",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [
+        "implement"
+      ],
+      "paths": [
+        "app/ui/**",
+        "**/*.svelte"
+      ],
+      "tags": [
+        "frontend",
+        "best-practices",
+        "umbrella"
+      ],
+      "priority": "P1",
+      "summary": "Frontend best practices umbrella: composability, coding standards, component conventions for all frontend work. References deeper Svelte 5, TypeScript, Tailwind knowledge.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-0d6c1ece.md"
+    },
+    {
+      "id": "orqa-store-patterns",
+      "plugin": "@orqastudio/plugin-svelte",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [
+        "implement"
+      ],
+      "paths": [
+        "app/ui/src/lib/stores/**"
+      ],
+      "tags": [
+        "svelte5",
+        "stores",
+        "runes",
+        "state-management"
+      ],
+      "priority": "P1",
+      "summary": "OrqaStudio Svelte 5 rune store patterns: class-based stores with $state/$derived, store-to-component data flow, reactive state management. The canonical store pattern.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-b5f520d5.md"
+    },
+    {
+      "id": "orqa-store-orchestration",
+      "plugin": "@orqastudio/plugin-svelte",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "app/ui/src/lib/stores/**"
+      ],
+      "tags": [
+        "stores",
+        "orchestration",
+        "cross-store",
+        "coordination"
+      ],
+      "priority": "P2",
+      "summary": "Store orchestration: how multiple rune stores coordinate without coupling. Component-level orchestration via $derived/$effect, circular dependency prevention, initialization order.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-882d8c4f.md"
+    },
+    {
+      "id": "composability",
+      "plugin": "@orqastudio/plugin-systems-thinking",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "composability",
+        "methodology",
+        "architecture"
+      ],
+      "priority": "P2",
+      "summary": "Composability philosophy: building systems from small, pure, swappable units. Meta-skill that informs all patterns — function-level and feature-level. The most fundamental design principle.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-0619a413.md"
+    },
+    {
+      "id": "artifact-relationships",
+      "plugin": "@orqastudio/plugin-systems-thinking",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "systems-thinking",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Additional systems thinking reference material for deeper analysis patterns.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-1ea9291c.md"
+    },
+    {
+      "id": "thinking-mode-research",
+      "plugin": "@orqastudio/plugin-systems-thinking",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "thinking-mode",
+        "research",
+        "investigation"
+      ],
+      "priority": "P0",
+      "summary": "Research thinking mode: information gathering only, no code changes. Agent produces findings using search tools, cross-references before reporting. Triggered by investigation, exploration, or audit signals.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-36befd20.md"
+    },
+    {
+      "id": "systems-thinking",
+      "plugin": "@orqastudio/plugin-systems-thinking",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "systems-thinking",
+        "methodology",
+        "patterns"
+      ],
+      "priority": "P2",
+      "summary": "Systems thinking: identify systems, map boundaries, trace relationships, find patterns, discover the uniform base. Applied to codebases and architectures.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-41849545.md"
+    },
+    {
+      "id": "thinking-mode-planning",
+      "plugin": "@orqastudio/plugin-systems-thinking",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "thinking-mode",
+        "planning",
+        "design"
+      ],
+      "priority": "P0",
+      "summary": "Planning thinking mode: scopes, breaks down, prioritises, and designs work before execution. Documentation-first, user approval gates. Triggered by plan/scope/design signals.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-4a4241a5.md"
+    },
+    {
+      "id": "architectural-evaluation",
+      "plugin": "@orqastudio/plugin-systems-thinking",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "reviewer",
+        "researcher"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "architecture",
+        "evaluation",
+        "review"
+      ],
+      "priority": "P2",
+      "summary": "Architectural evaluation: methodology for assessing architectural decisions, identifying violations, and recommending improvements. Systems-level review.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-7fadba3f.md"
+    },
+    {
+      "id": "diagnostic-methodology",
+      "plugin": "@orqastudio/plugin-systems-thinking",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [
+        "debug"
+      ],
+      "paths": [],
+      "tags": [
+        "debugging",
+        "diagnostic",
+        "methodology"
+      ],
+      "priority": "P1",
+      "summary": "Diagnostic methodology: structured approach to reproducing, isolating, and identifying root causes. Hypothesis-driven debugging with evidence collection.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-8564d52c.md"
+    },
+    {
+      "id": "restructuring-methodology",
+      "plugin": "@orqastudio/plugin-systems-thinking",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "restructuring",
+        "refactoring",
+        "methodology"
+      ],
+      "priority": "P2",
+      "summary": "Restructuring methodology: when and how to restructure code or project layout. Safe refactoring patterns, migration strategies, validation at each step.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-a3dcdd05.md"
+    },
+    {
+      "id": "thinking-mode-documentation",
+      "plugin": "@orqastudio/plugin-systems-thinking",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "thinking-mode",
+        "documentation",
+        "writing"
+      ],
+      "priority": "P0",
+      "summary": "Documentation thinking mode: captures knowledge for humans. Agent writes doc artifacts, not code. Requires documentation standards and doc schema awareness. Triggered by doc/README/guide requests.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-bf70068c.md"
+    },
+    {
+      "id": "tech-debt-management",
+      "plugin": "@orqastudio/plugin-systems-thinking",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "systems-thinking",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Supplementary systems thinking patterns and analysis frameworks.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-d13d80e1.md"
+    },
+    {
+      "id": "thinking-mode-dogfood-implementation",
+      "plugin": "@orqastudio/plugin-systems-thinking",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "thinking-mode",
+        "dogfood",
+        "infrastructure"
+      ],
+      "priority": "P0",
+      "summary": "Dogfood implementation thinking mode: building infrastructure for immediate use in current workflow, not future features. Infrastructure is validated by the workflow that triggered its creation.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-eeceaabf.md"
+    },
+    {
+      "id": "tauri-v2-ipc-patterns-reference",
+      "plugin": "@orqastudio/plugin-tauri",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "app/src-tauri/**"
+      ],
+      "tags": [
+        "tauri",
+        "ipc",
+        "commands",
+        "events",
+        "channels"
+      ],
+      "priority": "P2",
+      "summary": "Tauri v2 IPC patterns: commands (invoke), events (fire-and-forget), channels (streaming). Three IPC primitives with Rust/TypeScript examples.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-1da7ecd8.md"
+    },
+    {
+      "id": "tauri-v2-development",
+      "plugin": "@orqastudio/plugin-tauri",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "app/src-tauri/**"
+      ],
+      "tags": [
+        "tauri",
+        "development",
+        "configuration"
+      ],
+      "priority": "P2",
+      "summary": "Tauri v2 development: tauri.conf.json, Rust commands, IPC patterns, capabilities, troubleshooting builds, desktop/mobile deployment.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-59077955.md"
+    },
+    {
+      "id": "tauri-v2-capabilities-permissions-refere",
+      "plugin": "@orqastudio/plugin-tauri",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [
+        "app/src-tauri/capabilities/**"
+      ],
+      "tags": [
+        "tauri",
+        "capabilities",
+        "permissions",
+        "security"
+      ],
+      "priority": "P2",
+      "summary": "Tauri v2 capabilities and permissions: capability files, permission declarations, scope configuration. Security boundary for IPC commands.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-5efbe925.md"
+    },
+    {
+      "id": "tauri-v2-patterns",
+      "plugin": "@orqastudio/plugin-tauri",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "app/src-tauri/**"
+      ],
+      "tags": [
+        "tauri",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Additional Tauri v2 reference for specific development patterns.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-73490bde.md"
+    },
+    {
+      "id": "tauri-plugin-installation",
+      "plugin": "@orqastudio/plugin-tauri",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "app/src-tauri/**"
+      ],
+      "tags": [
+        "tauri",
+        "reference"
+      ],
+      "priority": "P3",
+      "summary": "Tauri v2 reference material for application development patterns.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-a274d90d.md"
+    },
+    {
+      "id": "orqastudio-backend-best-practices",
+      "plugin": "@orqastudio/plugin-tauri",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [
+        "implement"
+      ],
+      "paths": [
+        "app/src-tauri/**",
+        "**/*.rs"
+      ],
+      "tags": [
+        "backend",
+        "best-practices",
+        "umbrella"
+      ],
+      "priority": "P1",
+      "summary": "Backend best practices umbrella: composability, coding standards, error handling for all backend work. References deeper Rust, Tauri, persistence knowledge.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-8615fee2.md"
+    },
+    {
+      "id": "orqa-error-composition",
+      "plugin": "@orqastudio/plugin-tauri",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "app/src-tauri/**",
+        "**/*.rs"
+      ],
+      "tags": [
+        "errors",
+        "error-handling",
+        "composition"
+      ],
+      "priority": "P2",
+      "summary": "Error composition: OrqaError anatomy, From implementations, error propagation through domain/repo/command layers, IPC serialization, frontend error handling patterns.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-207d9e2c.md"
+    },
+    {
+      "id": "orqa-domain-services",
+      "plugin": "@orqastudio/plugin-tauri",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "app/src-tauri/src/domain/**",
+        "**/*.rs"
+      ],
+      "tags": [
+        "domain-services",
+        "backend",
+        "architecture"
+      ],
+      "priority": "P2",
+      "summary": "Domain service patterns: how Rust backend services are structured, composed, tested, and wired to Tauri commands. Service anatomy and the domain/framework boundary.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-60aefbbc.md"
+    },
+    {
+      "id": "orqa-ipc-patterns",
+      "plugin": "@orqastudio/plugin-tauri",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "app/src-tauri/**",
+        "app/ui/**"
+      ],
+      "tags": [
+        "ipc",
+        "tauri",
+        "invoke",
+        "boundary"
+      ],
+      "priority": "P2",
+      "summary": "OrqaStudio IPC patterns: Tauri invoke() calls, #[tauri::command] handlers, Channel<T> streaming, command registration, and IPC type contracts.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-4f81ddc5.md"
+    },
+    {
+      "id": "orqa-streaming-pipeline",
+      "plugin": "@orqastudio/plugin-tauri",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "app/sidecar/**",
+        "app/src-tauri/src/streaming/**"
+      ],
+      "tags": [
+        "streaming",
+        "pipeline",
+        "sidecar",
+        "ndjson"
+      ],
+      "priority": "P2",
+      "summary": "Streaming pipeline: Agent SDK to sidecar (Bun) to NDJSON to Rust Channel<T> to Svelte. ProviderEvent types, StreamEvent types, sidecar protocol, error handling, tool approval.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-33b2dc14.md"
+    },
+    {
+      "id": "orqa-repository-pattern",
+      "plugin": "@orqastudio/plugin-tauri",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "app/src-tauri/src/repo/**",
+        "**/*.rs"
+      ],
+      "tags": [
+        "repository",
+        "persistence",
+        "rusqlite",
+        "database"
+      ],
+      "priority": "P2",
+      "summary": "Repository pattern with rusqlite: repository anatomy, connection management, query patterns, migrations, error handling, testing. The persistence layer pattern.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-fbc200e6.md"
+    },
+    {
+      "id": "typescript-advanced-types",
+      "plugin": "@orqastudio/plugin-typescript",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [],
+      "paths": [
+        "**/*.ts"
+      ],
+      "tags": [
+        "typescript",
+        "advanced-types",
+        "generics"
+      ],
+      "priority": "P3",
+      "summary": "TypeScript advanced types: generics, conditional types, mapped types, template literals, utility types. For complex type logic and compile-time type safety.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\.orqa\\process\\knowledge\\KNOW-40e2eb99.md"
     }
   ],
   "sections": [
@@ -148,7 +3624,7 @@
       "role": "implementer",
       "stage": null,
       "priority": "P1",
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software\\prompts\\implementer-role.md"
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\software\\prompts\\implementer-role.md"
     },
     {
       "id": "review-checklist",
@@ -158,12 +3634,21 @@
       "role": null,
       "stage": "review",
       "priority": "P2",
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software\\prompts\\review-checklist.md"
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\software\\prompts\\review-checklist.md"
     }
   ],
   "contributors": [
     "@orqastudio/plugin-agile-governance",
-    "@orqastudio/plugin-software-project"
+    "@orqastudio/plugin-cli",
+    "@orqastudio/plugin-coding-standards",
+    "@orqastudio/plugin-core-framework",
+    "@orqastudio/plugin-plugin-dev",
+    "@orqastudio/plugin-rust",
+    "@orqastudio/plugin-software-project",
+    "@orqastudio/plugin-svelte",
+    "@orqastudio/plugin-systems-thinking",
+    "@orqastudio/plugin-tauri",
+    "@orqastudio/plugin-typescript"
   ],
   "errors": []
 }

@@ -201,7 +201,7 @@
         ],
         "priority": "P3",
         "summary": "Additional Svelte 5 reference for specific API patterns.",
-        "content_file": "knowledge/KNOW-3642842e.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-3642842e.md"
       },
       {
         "id": "svelte-4-to-svelte-5-migration-reference",
@@ -220,7 +220,7 @@
         ],
         "priority": "P3",
         "summary": "Svelte 4 to 5 migration reference: runes replace stores, snippets replace slots, event delegation replaces on: directives. Pattern-by-pattern upgrade guide.",
-        "content_file": "knowledge/KNOW-37496474.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-37496474.md"
       },
       {
         "id": "svelte-5-patterns",
@@ -237,7 +237,7 @@
         ],
         "priority": "P3",
         "summary": "Svelte 5 supplementary reference for advanced component patterns.",
-        "content_file": "knowledge/KNOW-4260613a.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-4260613a.md"
       },
       {
         "id": "svelte-5-best-practices",
@@ -260,7 +260,7 @@
         ],
         "priority": "P1",
         "summary": "Svelte 5 runes, snippets, SvelteKit patterns. Covers $state/$derived/$effect/$props, event handling, data loading, form actions, TypeScript props typing, SSR state isolation.",
-        "content_file": "knowledge/KNOW-50382247.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-50382247.md"
       },
       {
         "id": "svelte-5-typescript-reference",
@@ -279,7 +279,7 @@
         ],
         "priority": "P2",
         "summary": "Svelte 5 TypeScript reference: generic components, typed props, typed events, TypeScript integration patterns.",
-        "content_file": "knowledge/KNOW-5704b089.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-5704b089.md"
       },
       {
         "id": "eslint-config-management",
@@ -296,7 +296,7 @@
         ],
         "priority": "P3",
         "summary": "Additional Svelte 5 patterns and reference material for component development.",
-        "content_file": "knowledge/KNOW-6cfacbb2.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-6cfacbb2.md"
       },
       {
         "id": "svelte-5-snippets-reference",
@@ -314,7 +314,7 @@
         ],
         "priority": "P3",
         "summary": "Svelte 5 snippets reference: {#snippet} and {@render} syntax for reusable template fragments replacing slots.",
-        "content_file": "knowledge/KNOW-8cc0f5e4.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-8cc0f5e4.md"
       },
       {
         "id": "svelte-5-events-reference",
@@ -332,7 +332,7 @@
         ],
         "priority": "P3",
         "summary": "Svelte 5 events reference: callback props replace createEventDispatcher. Native DOM events via on* attributes. Component events via $props callbacks.",
-        "content_file": "knowledge/KNOW-96aaa407.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-96aaa407.md"
       },
       {
         "id": "tailwind-design-system",
@@ -348,7 +348,7 @@
         ],
         "priority": "P2",
         "summary": "Tailwind CSS v4 design system: design tokens, component libraries, responsive patterns. Build scalable UI systems with utility-first CSS.",
-        "content_file": "knowledge/KNOW-a1a195c1.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-a1a195c1.md"
       },
       {
         "id": "svelte-5-runes-reference",
@@ -366,7 +366,7 @@
         ],
         "priority": "P2",
         "summary": "Svelte 5 runes reference: $state, $derived, $effect, $props, $bindable, $inspect. Complete API reference with usage patterns and migration notes from Svelte 4 stores.",
-        "content_file": "knowledge/KNOW-abb08445.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-abb08445.md"
       },
       {
         "id": "svelte-plugin-installation",
@@ -383,7 +383,7 @@
         ],
         "priority": "P3",
         "summary": "Additional Svelte 5 reference material for edge cases and advanced usage.",
-        "content_file": "knowledge/KNOW-be54e4de.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-be54e4de.md"
       },
       {
         "id": "sveltekit-patterns-reference",
@@ -402,7 +402,7 @@
         ],
         "priority": "P2",
         "summary": "SvelteKit patterns: routing, data loading, form actions, server hooks. Application-level patterns for SvelteKit projects.",
-        "content_file": "knowledge/KNOW-c4d3e52b.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-c4d3e52b.md"
       },
       {
         "id": "svelte-5-performance-reference",
@@ -421,7 +421,7 @@
         ],
         "priority": "P3",
         "summary": "Svelte 5 performance reference: fine-grained reactivity, $derived optimizations, component lazy loading, bundle size analysis.",
-        "content_file": "knowledge/KNOW-df3c489e.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-df3c489e.md"
       },
       {
         "id": "orqastudio-frontend-best-practices",
@@ -443,7 +443,7 @@
         ],
         "priority": "P1",
         "summary": "Frontend best practices umbrella: composability, coding standards, component conventions for all frontend work. References deeper Svelte 5, TypeScript, Tailwind knowledge.",
-        "content_file": "knowledge/KNOW-0d6c1ece.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-0d6c1ece.md"
       },
       {
         "id": "orqa-store-patterns",
@@ -465,7 +465,7 @@
         ],
         "priority": "P1",
         "summary": "OrqaStudio Svelte 5 rune store patterns: class-based stores with $state/$derived, store-to-component data flow, reactive state management. The canonical store pattern.",
-        "content_file": "knowledge/KNOW-b5f520d5.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-b5f520d5.md"
       },
       {
         "id": "orqa-store-orchestration",
@@ -484,7 +484,7 @@
         ],
         "priority": "P2",
         "summary": "Store orchestration: how multiple rune stores coordinate without coupling. Component-level orchestration via $derived/$effect, circular dependency prevention, initialization order.",
-        "content_file": "knowledge/KNOW-882d8c4f.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-882d8c4f.md"
       }
     ]
   },

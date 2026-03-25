@@ -22,6 +22,7 @@ import { runGitCommand } from "./commands/git.js";
 import { runBuildCommand } from "./commands/build.js";
 import { runSummarizeCommand } from "./commands/summarize.js";
 import { runMetricsCommand } from "./commands/metrics.js";
+import { runMigrateCommand } from "./commands/migrate.js";
 
 const USAGE = `
 OrqaStudio CLI v0.1.0-dev
@@ -42,6 +43,7 @@ Commands:
   lsp         Start LSP server
   version     Version management (sync, bump, check, show)
   id          Artifact ID management (generate, check, migrate)
+  migrate     Apply status migrations from workflow definitions
   git         Git operations + repo maintenance (status, pr, license, readme, hosting)
   debug       Dev environment + debug tooling (stop, kill, restart, icons, tool)
 
@@ -108,6 +110,9 @@ async function main(): Promise<void> {
 			break;
 		case "id":
 			await runIdCommand(commandArgs);
+			break;
+		case "migrate":
+			await runMigrateCommand(commandArgs);
 			break;
 		case "git":
 			await runGitCommand(commandArgs);

@@ -133,7 +133,7 @@
         ],
         "priority": "P3",
         "summary": "Additional CLI development patterns and tools reference.",
-        "content_file": "knowledge/KNOW-40be8113.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-40be8113.md"
       },
       {
         "id": "version-management",
@@ -147,7 +147,7 @@
         ],
         "priority": "P3",
         "summary": "CLI tooling supplementary reference material.",
-        "content_file": "knowledge/KNOW-481059d2.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-481059d2.md"
       },
       {
         "id": "orqastudio-cli-usage",
@@ -161,7 +161,7 @@
         ],
         "priority": "P3",
         "summary": "CLI-specific reference for command-line tool development and patterns.",
-        "content_file": "knowledge/KNOW-990e4f85.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-990e4f85.md"
       },
       {
         "id": "cli-plugin-self-maintenance",
@@ -175,7 +175,7 @@
         ],
         "priority": "P3",
         "summary": "CLI architecture and development supplementary reference.",
-        "content_file": "knowledge/KNOW-a0947420.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-a0947420.md"
       },
       {
         "id": "plugin-management",
@@ -189,7 +189,7 @@
         ],
         "priority": "P3",
         "summary": "CLI supplementary reference for specific development scenarios.",
-        "content_file": "knowledge/KNOW-afaa4e88.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-afaa4e88.md"
       },
       {
         "id": "dev-environment-management",
@@ -203,7 +203,7 @@
         ],
         "priority": "P3",
         "summary": "Additional CLI patterns and development reference.",
-        "content_file": "knowledge/KNOW-ea78c8e4.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-ea78c8e4.md"
       },
       {
         "id": "readme-standards",
@@ -217,7 +217,7 @@
         ],
         "priority": "P3",
         "summary": "Additional CLI development reference material.",
-        "content_file": "knowledge/KNOW-ecc181cb.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-ecc181cb.md"
       }
     ]
   },

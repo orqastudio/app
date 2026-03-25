@@ -3,7 +3,7 @@ id: "EPIC-f6da17ed"
 type: "epic"
 title: "Core Workflow Engine and State Machines"
 description: "Build the state machine evaluation engine, YAML workflow format, guard/action primitives, category-based composition, and workflow resolver. Plugins own state machines; core provides the engine."
-status: "captured"
+status: "active"
 priority: "P1"
 created: 2026-03-25T00:00:00.000Z
 updated: 2026-03-25T00:00:00.000Z

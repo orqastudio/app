@@ -108,7 +108,6 @@ export type ArtifactStatus = CanonicalStatus;
  */
 export type IntegrityCategory =
     | "BrokenLink"
-    | "MissingInverse"
     | "TypeConstraintViolation"
     | "RequiredRelationshipMissing"
     | "CardinalityViolation"

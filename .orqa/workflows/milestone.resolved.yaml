@@ -1,36 +1,36 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
-# Skeleton: @orqastudio/plugin-agile-governance (workflows/epic.workflow.yaml)
-# Resolved at: 2026-03-25T20:21:31.242Z
+# Skeleton: @orqastudio/plugin-software-project (workflows/milestone.workflow.yaml)
+# Resolved at: 2026-03-25T20:21:31.265Z
 
-name: epic
+name: milestone
 version: 0.1.0
-artifact_type: epic
+artifact_type: milestone
 plugin: "@orqastudio/plugin-software-project"
 description: >
-  Epic lifecycle state machine. Epics are large bodies of work composed of tasks. The epic workflow tracks discovery,
-  planning, active delivery, review, and completion with a structured review gate.
+  Milestone lifecycle state machine. Milestones are high-level delivery checkpoints that group epics. The workflow
+  tracks discovery, planning, active delivery, review, and completion.
 initial_state: captured
 states:
   captured:
     category: planning
-    description: Epic has been captured but not yet explored.
+    description: Milestone has been captured but not yet explored.
   exploring:
     category: planning
-    description: Epic is being explored — scope, feasibility, and tasks being defined.
+    description: Milestone scope is being explored — target date, epics, acceptance criteria.
     on_enter:
       - type: append_log
         params:
-          message: Epic exploration started
+          message: Milestone exploration started
   ready:
     category: planning
-    description: Epic scope is defined and ready for prioritisation.
+    description: Milestone scope is defined and ready for prioritisation.
   prioritised:
     category: planning
-    description: Epic has been prioritised and is ready for active delivery.
+    description: Milestone has been prioritised and is ready for active delivery.
   active:
     category: active
-    description: Epic delivery is in progress — tasks are being worked.
+    description: Milestone delivery is in progress — epics are being worked.
     on_enter:
       - type: set_field
         params:
@@ -38,23 +38,23 @@ states:
           value: ${now}
       - type: append_log
         params:
-          message: Epic activated
+          message: Milestone activated
   hold:
     category: active
-    description: Epic is paused, waiting for external input or decision.
+    description: Milestone is paused, waiting for external input or decision.
   blocked:
     category: active
-    description: Epic cannot proceed due to unresolved dependencies.
+    description: Milestone cannot proceed due to unresolved dependencies.
   review:
     category: review
-    description: All tasks complete — epic is awaiting final review.
+    description: All epics complete — milestone is awaiting final review.
     on_enter:
       - type: append_log
         params:
-          message: Epic entered review
+          message: Milestone entered review
   completed:
     category: completed
-    description: Epic has been reviewed and accepted as complete.
+    description: Milestone has been reviewed and accepted as complete.
     on_enter:
       - type: set_field
         params:
@@ -62,22 +62,22 @@ states:
           value: ${now}
       - type: append_log
         params:
-          message: Epic completed
+          message: Milestone completed
   surpassed:
     category: terminal
-    description: Epic was completed but has been superseded.
+    description: Milestone was completed but has been superseded.
   archived:
     category: terminal
-    description: Epic is archived.
+    description: Milestone is archived.
 transitions:
   - from: captured
     to: exploring
     event: explore
-    description: Begin exploring scope and feasibility.
+    description: Begin exploring scope and target date.
   - from: captured
     to: ready
     event: fast_track
-    description: Skip exploration for well-understood work.
+    description: Skip exploration for well-understood milestones.
     guards:
       - type: field_check
         description: Must have a description
@@ -99,6 +99,10 @@ transitions:
           field: description
           operator: not_empty
   - from: exploring
+    to: prioritised
+    event: prioritise
+    description: Fast-track from exploration to prioritised.
+  - from: exploring
     to: hold
     event: pause
     description: Pause exploration pending external input.
@@ -109,10 +113,14 @@ transitions:
     to: active
     event: start
     description: Begin delivery directly from ready.
+  - from: ready
+    to: review
+    event: submit_for_review
+    description: Submit directly for review (all epics pre-completed).
   - from: prioritised
     to: active
     event: start
-    description: Begin epic delivery.
+    description: Begin milestone delivery.
   - from: prioritised
     to: ready
     event: deprioritise
@@ -131,13 +139,13 @@ transitions:
   - from: active
     to: review
     event: submit_for_review
-    description: All tasks complete — submit for review.
-    gate: epic-review
+    description: All epics complete — submit for review.
+    gate: milestone-review
     guards:
       - type: relationship_check
-        description: All child tasks must be completed or archived
+        description: All fulfilling epics must be completed or archived
         params:
-          relationship_type: delivers
+          relationship_type: fulfils
           condition: all_targets_in_status
           statuses:
             - completed
@@ -162,6 +170,9 @@ transitions:
             - completed
             - surpassed
             - archived
+  - from: blocked
+    to: ready
+    event: replan
   - from: review
     to: completed
     event: approve
@@ -171,7 +182,7 @@ transitions:
     actions:
       - type: append_log
         params:
-          message: Changes requested during epic review
+          message: Changes requested during milestone review
   - from: completed
     to: surpassed
     event: surpass
@@ -187,20 +198,21 @@ transitions:
     to: archived
     event: archive
 gates:
-  epic-review:
+  milestone-review:
     pattern: structured_review
-    description: Epic completion review — AI pre-check then human review.
+    description: Milestone completion review — AI pre-check then human review.
     phases:
       gather:
         fields:
           - description
+          - target_date
           - priority
           - relationships
         pre_checks:
           - type: relationship_check
-            description: All child tasks must be completed
+            description: All fulfilling epics must be completed
             params:
-              relationship_type: delivers
+              relationship_type: fulfils
               condition: all_targets_in_status
               statuses:
                 - completed
@@ -211,33 +223,24 @@ gates:
             params:
               field: description
               operator: not_empty
-        summary_template: |
-          Epic: ${title} Tasks delivered: ${relationship_count:delivers} Status: All tasks in terminal state
+        summary_template: >
+          Milestone: ${title} Target date: ${target_date} Epics fulfilled: ${relationship_count:fulfils} Status: All
+          epics in terminal state
       present:
         sections:
-          - title: Epic Overview
+          - title: Milestone Overview
             content_field: description
-          - title: Delivered Tasks
-            content_template: "Task relationships: ${relationships:delivers}"
-        context_queries:
-          - epic_task_summary
+          - title: Fulfilled Epics
+            content_template: "Epic relationships: ${relationships:fulfils}"
       collect:
         verdicts:
           - key: approve
-            label: Approve — Epic Complete
+            label: Approve — Milestone Complete
             transitions_to: completed
           - key: request_changes
             label: Request Changes
             transitions_to: active
-          - key: descope
-            label: Descope — Reduce scope and complete
-            transitions_to: completed
         require_rationale: true
-      execute:
-        actions:
-          - type: append_log
-            params:
-              message: "Epic review verdict: ${verdict} by ${actor}"
       learn:
         on_fail:
           create_lesson: true

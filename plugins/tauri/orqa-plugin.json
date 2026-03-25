@@ -93,7 +93,7 @@
         ],
         "priority": "P2",
         "summary": "Tauri v2 IPC patterns: commands (invoke), events (fire-and-forget), channels (streaming). Three IPC primitives with Rust/TypeScript examples.",
-        "content_file": "knowledge/KNOW-1da7ecd8.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-1da7ecd8.md"
       },
       {
         "id": "tauri-v2-development",
@@ -111,7 +111,7 @@
         ],
         "priority": "P2",
         "summary": "Tauri v2 development: tauri.conf.json, Rust commands, IPC patterns, capabilities, troubleshooting builds, desktop/mobile deployment.",
-        "content_file": "knowledge/KNOW-59077955.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-59077955.md"
       },
       {
         "id": "tauri-v2-capabilities-permissions-refere",
@@ -131,7 +131,7 @@
         ],
         "priority": "P2",
         "summary": "Tauri v2 capabilities and permissions: capability files, permission declarations, scope configuration. Security boundary for IPC commands.",
-        "content_file": "knowledge/KNOW-5efbe925.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-5efbe925.md"
       },
       {
         "id": "tauri-v2-patterns",
@@ -148,7 +148,7 @@
         ],
         "priority": "P3",
         "summary": "Additional Tauri v2 reference for specific development patterns.",
-        "content_file": "knowledge/KNOW-73490bde.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-73490bde.md"
       },
       {
         "id": "tauri-plugin-installation",
@@ -165,7 +165,7 @@
         ],
         "priority": "P3",
         "summary": "Tauri v2 reference material for application development patterns.",
-        "content_file": "knowledge/KNOW-a274d90d.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-a274d90d.md"
       },
       {
         "id": "orqastudio-backend-best-practices",
@@ -187,7 +187,7 @@
         ],
         "priority": "P1",
         "summary": "Backend best practices umbrella: composability, coding standards, error handling for all backend work. References deeper Rust, Tauri, persistence knowledge.",
-        "content_file": "knowledge/KNOW-8615fee2.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-8615fee2.md"
       },
       {
         "id": "orqa-error-composition",
@@ -206,7 +206,7 @@
         ],
         "priority": "P2",
         "summary": "Error composition: OrqaError anatomy, From implementations, error propagation through domain/repo/command layers, IPC serialization, frontend error handling patterns.",
-        "content_file": "knowledge/KNOW-207d9e2c.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-207d9e2c.md"
       },
       {
         "id": "orqa-domain-services",
@@ -225,7 +225,7 @@
         ],
         "priority": "P2",
         "summary": "Domain service patterns: how Rust backend services are structured, composed, tested, and wired to Tauri commands. Service anatomy and the domain/framework boundary.",
-        "content_file": "knowledge/KNOW-60aefbbc.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-60aefbbc.md"
       },
       {
         "id": "orqa-ipc-patterns",
@@ -245,7 +245,7 @@
         ],
         "priority": "P2",
         "summary": "OrqaStudio IPC patterns: Tauri invoke() calls, #[tauri::command] handlers, Channel<T> streaming, command registration, and IPC type contracts.",
-        "content_file": "knowledge/KNOW-4f81ddc5.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-4f81ddc5.md"
       },
       {
         "id": "orqa-streaming-pipeline",
@@ -265,7 +265,7 @@
         ],
         "priority": "P2",
         "summary": "Streaming pipeline: Agent SDK to sidecar (Bun) to NDJSON to Rust Channel<T> to Svelte. ProviderEvent types, StreamEvent types, sidecar protocol, error handling, tool approval.",
-        "content_file": "knowledge/KNOW-33b2dc14.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-33b2dc14.md"
       },
       {
         "id": "orqa-repository-pattern",
@@ -285,7 +285,7 @@
         ],
         "priority": "P2",
         "summary": "Repository pattern with rusqlite: repository anatomy, connection management, query patterns, migrations, error handling, testing. The persistence layer pattern.",
-        "content_file": "knowledge/KNOW-fbc200e6.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-fbc200e6.md"
       }
     ]
   },

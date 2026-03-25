@@ -109,7 +109,7 @@ pub fn run_daemon(project_root: &Path, port: u16) -> Result<(), Box<dyn std::err
         return Err(format!("project root does not exist: {}", project_root.display()).into());
     }
 
-    let pid_path = ensure_tmp_dir(project_root)?;
+    let pid_path = ensure_state_dir(project_root)?;
     check_existing_pid(&pid_path)?;
     write_pid(&pid_path)?;
 
@@ -623,10 +623,10 @@ fn start_fs_watcher(
 // PID file management
 // ---------------------------------------------------------------------------
 
-fn ensure_tmp_dir(project_root: &Path) -> Result<PathBuf, Box<dyn std::error::Error>> {
-    let tmp = project_root.join("tmp");
-    std::fs::create_dir_all(&tmp).map_err(|e| format!("failed to create tmp dir: {e}"))?;
-    Ok(tmp.join("daemon.pid"))
+fn ensure_state_dir(project_root: &Path) -> Result<PathBuf, Box<dyn std::error::Error>> {
+    let state = project_root.join(".state");
+    std::fs::create_dir_all(&state).map_err(|e| format!("failed to create .state dir: {e}"))?;
+    Ok(state.join("daemon.pid"))
 }
 
 fn check_existing_pid(pid_path: &Path) -> Result<(), Box<dyn std::error::Error>> {

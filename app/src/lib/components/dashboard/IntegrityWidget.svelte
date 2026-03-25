@@ -34,7 +34,6 @@
 
 	const categoryLabels: Record<IntegrityCategory, string> = {
 		BrokenLink: "Broken Links",
-		MissingInverse: "Missing Inverses",
 		TypeConstraintViolation: "Type Constraint Violations",
 		RequiredRelationshipMissing: "Required Relationships Missing",
 		CardinalityViolation: "Cardinality Violations",

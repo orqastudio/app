@@ -118,7 +118,6 @@ fn integrity_check_to_diagnostic(check: orqa_validation::types::IntegrityCheck) 
 
     let category_label = match check.category {
         IntegrityCategory::BrokenLink => "[broken-link]",
-        IntegrityCategory::MissingInverse => "[missing-inverse]",
         IntegrityCategory::TypeConstraintViolation => "[type-constraint]",
         IntegrityCategory::RequiredRelationshipMissing => "[required-relationship]",
         IntegrityCategory::CardinalityViolation => "[cardinality]",

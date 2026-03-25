@@ -105,7 +105,7 @@
         ],
         "priority": "P3",
         "summary": "TypeScript advanced types: generics, conditional types, mapped types, template literals, utility types. For complex type logic and compile-time type safety.",
-        "content_file": "knowledge/KNOW-40e2eb99.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-40e2eb99.md"
       }
     ]
   }

@@ -91,7 +91,7 @@
         ],
         "priority": "P2",
         "summary": "Composability philosophy: building systems from small, pure, swappable units. Meta-skill that informs all patterns — function-level and feature-level. The most fundamental design principle.",
-        "content_file": "knowledge/KNOW-0619a413.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-0619a413.md"
       },
       {
         "id": "artifact-relationships",
@@ -102,7 +102,7 @@
         ],
         "priority": "P3",
         "summary": "Additional systems thinking reference material for deeper analysis patterns.",
-        "content_file": "knowledge/KNOW-1ea9291c.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-1ea9291c.md"
       },
       {
         "id": "thinking-mode-research",
@@ -114,7 +114,7 @@
         ],
         "priority": "P0",
         "summary": "Research thinking mode: information gathering only, no code changes. Agent produces findings using search tools, cross-references before reporting. Triggered by investigation, exploration, or audit signals.",
-        "content_file": "knowledge/KNOW-36befd20.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-36befd20.md"
       },
       {
         "id": "systems-thinking",
@@ -126,7 +126,7 @@
         ],
         "priority": "P2",
         "summary": "Systems thinking: identify systems, map boundaries, trace relationships, find patterns, discover the uniform base. Applied to codebases and architectures.",
-        "content_file": "knowledge/KNOW-41849545.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-41849545.md"
       },
       {
         "id": "thinking-mode-planning",
@@ -138,7 +138,7 @@
         ],
         "priority": "P0",
         "summary": "Planning thinking mode: scopes, breaks down, prioritises, and designs work before execution. Documentation-first, user approval gates. Triggered by plan/scope/design signals.",
-        "content_file": "knowledge/KNOW-4a4241a5.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-4a4241a5.md"
       },
       {
         "id": "architectural-evaluation",
@@ -154,7 +154,7 @@
         ],
         "priority": "P2",
         "summary": "Architectural evaluation: methodology for assessing architectural decisions, identifying violations, and recommending improvements. Systems-level review.",
-        "content_file": "knowledge/KNOW-7fadba3f.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-7fadba3f.md"
       },
       {
         "id": "diagnostic-methodology",
@@ -173,7 +173,7 @@
         ],
         "priority": "P1",
         "summary": "Diagnostic methodology: structured approach to reproducing, isolating, and identifying root causes. Hypothesis-driven debugging with evidence collection.",
-        "content_file": "knowledge/KNOW-8564d52c.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-8564d52c.md"
       },
       {
         "id": "restructuring-methodology",
@@ -188,7 +188,7 @@
         ],
         "priority": "P2",
         "summary": "Restructuring methodology: when and how to restructure code or project layout. Safe refactoring patterns, migration strategies, validation at each step.",
-        "content_file": "knowledge/KNOW-a3dcdd05.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-a3dcdd05.md"
       },
       {
         "id": "thinking-mode-documentation",
@@ -200,7 +200,7 @@
         ],
         "priority": "P0",
         "summary": "Documentation thinking mode: captures knowledge for humans. Agent writes doc artifacts, not code. Requires documentation standards and doc schema awareness. Triggered by doc/README/guide requests.",
-        "content_file": "knowledge/KNOW-bf70068c.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-bf70068c.md"
       },
       {
         "id": "tech-debt-management",
@@ -211,7 +211,7 @@
         ],
         "priority": "P3",
         "summary": "Supplementary systems thinking patterns and analysis frameworks.",
-        "content_file": "knowledge/KNOW-d13d80e1.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-d13d80e1.md"
       },
       {
         "id": "thinking-mode-dogfood-implementation",
@@ -223,7 +223,7 @@
         ],
         "priority": "P0",
         "summary": "Dogfood implementation thinking mode: building infrastructure for immediate use in current workflow, not future features. Infrastructure is validated by the workflow that triggered its creation.",
-        "content_file": "knowledge/KNOW-eeceaabf.md"
+        "content_file": "../../.orqa/process/knowledge/KNOW-eeceaabf.md"
       }
     ]
   }

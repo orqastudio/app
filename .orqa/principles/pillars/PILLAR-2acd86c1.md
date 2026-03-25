@@ -15,32 +15,6 @@ gate:
 relationships:
   - target: "VISION-4893db55"
     type: "upholds"
-  - target: "IDEA-70be4c7c"
-    type: "grounded-by"
-  - target: "IDEA-d911bf47"
-    type: "grounded-by"
-  - target: "IDEA-7a57ba89"
-    type: "grounded-by"
-  - target: "IDEA-8de1ec69"
-    type: "grounded-by"
-  - target: "IDEA-5113eeae"
-    type: "grounded-by"
-  - target: "IDEA-df1d0829"
-    type: "grounded-by"
-  - target: "IDEA-4263cbaa"
-    type: "grounded-by"
-  - target: "IDEA-ffd74695"
-    type: "grounded-by"
-  - target: "IDEA-cac26ee9"
-    type: "grounded-by"
-  - target: "IDEA-60a975ef"
-    type: "grounded-by"
-  - target: "IDEA-f5275987"
-    type: "grounded-by"
-  - target: "IDEA-c626feb8"
-    type: "grounded-by"
-  - target: "IDEA-641a5a2e"
-    type: "grounded-by"
   - target: "AGENT-4c94fe14"
     type: "served-by"
     rationale: "This agent serves this pillar/persona"
@@ -55,22 +29,11 @@ relationships:
     rationale: "This agent serves this pillar/persona"
   - target: AGENT-336e4d7d
     type: served-by
-  - target: EPIC-e24086ed
-    type: grounded-by
-  - target: IDEA-c9a1979f
-    type: grounded-by
-  - target: EPIC-0497a1be
-    type: grounded-by
   - target: AGENT-867da593
     type: served-by
   - target: AGENT-e5a1b6bf
     type: served-by
-  - target: IDEA-40b0842d
-    type: grounded-by
-    rationale: Market research agent idea grounds this pillar
-  - target: IDEA-34bb6f92
-    type: grounded-by
-    rationale: OrqaStudio competitive landscape analysis grounds this pillar
+
 ---
 ## What This Pillar Means
 

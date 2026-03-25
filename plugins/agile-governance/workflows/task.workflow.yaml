@@ -4,8 +4,8 @@ artifact_type: task
 plugin: "@orqastudio/plugin-software-project"
 description: >
   Task lifecycle state machine. Covers the full journey from capture through
-  planning, active work, review, and completion. Supports quickfix and
-  security variants for ad-hoc patterns.
+  planning, active work, review, and completion. Supports quickfix, security,
+  docs-only, and hotfix variants for ad-hoc patterns.
 
 initial_state: captured
 
@@ -266,6 +266,34 @@ variants:
         event: start
         description: "Jump directly to active work."
 
+  docs-only:
+    description: "For documentation-only changes — skip planning and review entirely."
+    skip_states:
+      - ready
+      - prioritised
+    skip_gates:
+      - task-review
+    override_transitions:
+      - from: captured
+        to: active
+        event: start
+        description: "Jump directly to active work."
+      - from: active
+        to: completed
+        event: complete
+        description: "Complete without human review — docs only."
+
+  hotfix:
+    description: "For hotfixes — skip planning, expedited but reviewed."
+    skip_states:
+      - ready
+      - prioritised
+    override_transitions:
+      - from: captured
+        to: active
+        event: start
+        description: "Jump directly to active work."
+
 selection_rules:
   - variant: quickfix
     priority: 10
@@ -284,6 +312,24 @@ selection_rules:
           field: labels
           operator: in
           value: ["security"]
+
+  - variant: docs-only
+    priority: 30
+    conditions:
+      - type: field_check
+        params:
+          field: labels
+          operator: in
+          value: ["docs-only", "documentation"]
+
+  - variant: hotfix
+    priority: 40
+    conditions:
+      - type: field_check
+        params:
+          field: labels
+          operator: in
+          value: ["hotfix", "emergency"]
 
 migration:
   # Maps old status values to new state names

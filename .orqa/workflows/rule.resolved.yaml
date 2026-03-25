@@ -1,0 +1,153 @@
+# AUTO-GENERATED — do not edit manually.
+# Resolved by: orqa plugin install
+# Skeleton: @orqastudio/plugin-agile-governance (workflows/rule.workflow.yaml)
+# Resolved at: 2026-03-25T20:21:31.256Z
+
+name: rule
+version: 0.1.0
+artifact_type: rule
+plugin: "@orqastudio/plugin-agile-governance"
+description: >
+  Rule lifecycle state machine. Rules are governance constraints enforced within the project. The workflow tracks
+  capture, exploration, active enforcement, potential inactivation, review, and completion. Rules have a unique
+  "inactive" state for demoted rules being monitored before removal.
+initial_state: captured
+states:
+  captured:
+    category: planning
+    description: Rule has been captured but not yet explored.
+  exploring:
+    category: planning
+    description: Rule is being explored — scope, enforcement mechanism, rationale.
+    on_enter:
+      - type: append_log
+        params:
+          message: Rule exploration started
+  active:
+    category: active
+    description: Rule is actively enforced.
+    on_enter:
+      - type: set_field
+        params:
+          field: activated_at
+          value: ${now}
+      - type: append_log
+        params:
+          message: Rule activated
+  inactive:
+    category: active
+    description: Rule has been demoted — monitoring stability before removal.
+    on_enter:
+      - type: set_field
+        params:
+          field: demoted_date
+          value: ${now}
+      - type: append_log
+        params:
+          message: Rule demoted to inactive
+  hold:
+    category: active
+    description: Rule enforcement is paused pending discussion.
+  review:
+    category: review
+    description: Rule is being reviewed for continued relevance.
+    on_enter:
+      - type: append_log
+        params:
+          message: Rule entered review
+  completed:
+    category: completed
+    description: Rule lifecycle is complete — enforcement superseded or no longer needed.
+    on_enter:
+      - type: append_log
+        params:
+          message: Rule completed
+  surpassed:
+    category: terminal
+    description: Rule has been superseded by a newer rule or enforcement mechanism.
+  archived:
+    category: terminal
+    description: Rule is archived.
+transitions:
+  - from: captured
+    to: exploring
+    event: explore
+    description: Begin exploring rule scope and enforcement.
+  - from: captured
+    to: active
+    event: activate
+    description: Fast-track to active enforcement.
+  - from: exploring
+    to: active
+    event: activate
+    description: Begin active enforcement.
+  - from: exploring
+    to: hold
+    event: pause
+    description: Pause exploration pending discussion.
+  - from: active
+    to: review
+    event: submit_for_review
+    description: Trigger periodic relevance review.
+  - from: active
+    to: hold
+    event: pause
+    description: Pause enforcement.
+  - from: active
+    to: inactive
+    event: demote
+    description: Demote rule — enforcement replaced by tooling or no longer needed.
+  - from: active
+    to: archived
+    event: archive
+    description: Archive an active rule directly.
+  - from: inactive
+    to: active
+    event: reactivate
+    description: Re-activate a demoted rule (violations detected).
+  - from: inactive
+    to: archived
+    event: archive
+    description: Archive a demoted rule after stability period.
+  - from: hold
+    to: active
+    event: resume
+    description: Resume enforcement.
+  - from: hold
+    to: exploring
+    event: rescope
+    description: Return to exploration for re-scoping.
+  - from: review
+    to: active
+    event: reaffirm
+    description: Rule is still relevant — return to active.
+  - from: review
+    to: completed
+    event: retire
+    description: Rule is no longer needed — retire.
+  - from: completed
+    to: surpassed
+    event: surpass
+  - from: completed
+    to: archived
+    event: archive
+  - from: surpassed
+    to: archived
+    event: archive
+  - from:
+      - captured
+      - exploring
+      - hold
+    to: archived
+    event: archive
+    description: Archive from non-active states.
+migration:
+  captured: captured
+  exploring: exploring
+  active: active
+  inactive: inactive
+  hold: hold
+  review: review
+  completed: completed
+  surpassed: surpassed
+  archived: archived

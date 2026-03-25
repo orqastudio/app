@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* Auto-generated types */
 // THIS FILE IS AUTO-GENERATED — DO NOT EDIT BY HAND.
 // Source: libs/types/src/platform/*.schema.json
 // Regenerate: node scripts/generate-types.mjs
@@ -12,7 +12,6 @@ export type ValidationTypes = IntegrityCheck | AppliedFix;
  */
 export type IntegrityCategory =
   | "BrokenLink"
-  | "MissingInverse"
   | "TypeConstraintViolation"
   | "RequiredRelationshipMissing"
   | "CardinalityViolation"

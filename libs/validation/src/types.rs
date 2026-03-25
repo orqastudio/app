@@ -98,8 +98,6 @@ pub struct ValidationContext {
 pub enum IntegrityCategory {
     /// Target of a reference does not exist in the graph.
     BrokenLink,
-    /// Inverse relationship edge is missing.
-    MissingInverse,
     /// From/to type constraints on a relationship are violated.
     TypeConstraintViolation,
     /// A required relationship (constraints.required) is missing or below minCount.
