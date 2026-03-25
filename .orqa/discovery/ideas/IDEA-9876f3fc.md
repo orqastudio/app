@@ -2,7 +2,7 @@
 id: IDEA-9876f3fc
 type: idea
 title: "Artifact migration: location audit, content cleanup, plugin categories"
-status: exploring
+status: surpassed
 description: Audit artifact locations, move to correct plugins, rewrite content to be domain-portable, add plugin category schema (core/enhancement/extension), deduplicate.
 created: 2026-03-22
 updated: 2026-03-22

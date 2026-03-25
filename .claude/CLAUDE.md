@@ -70,14 +70,19 @@ Never spawn a bare Agent without a team. Never run agents in the foreground. Eve
 | **Governance Steward** | Yes | No | `.orqa/` artifacts only |
 | **Planner** | Yes | No | Delivery artifacts only |
 
-### Completion Gate
+### Completion Gate (STRICT — no silent deferrals)
 
 Before creating a new team:
 - Read all findings files from the current team
-- Resolve all follow-up items (or get user approval to defer)
+- Verify EVERY acceptance criterion is marked DONE or FAILED — not "deferred"
+- If any criterion is FAILED: either fix it now or get explicit user approval to defer
+- You may NOT mark an epic or task as done if any acceptance criterion is incomplete
+- You may NOT create "follow-up" tasks to avoid completing current work
 - Commit all changes
 - `TeamDelete` the current team
 - Only then proceed
+
+Epics and tasks are the user-approved work list. Deferring work without user approval is a violation of the plan.
 
 ### Resource Safety
 
@@ -123,3 +128,6 @@ Do NOT:
 - Spawn agents without a team
 - Run agents in the foreground
 - Ask the user for permission to continue when tasks are unblocked
+- Defer acceptance criteria without explicit user approval
+- Mark tasks/epics as done when acceptance criteria are incomplete
+- Create follow-up tasks as a substitute for completing current work

@@ -1,7 +1,7 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
 # Skeleton: @orqastudio/plugin-agile-governance (workflows/knowledge.workflow.yaml)
-# Resolved at: 2026-03-25T20:21:31.248Z
+# Resolved at: 2026-03-25T21:18:21.946Z
 
 name: knowledge
 version: 0.1.0

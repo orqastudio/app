@@ -1,7 +1,7 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
 # Skeleton: @orqastudio/plugin-software-project (workflows/milestone.workflow.yaml)
-# Resolved at: 2026-03-25T20:21:31.265Z
+# Resolved at: 2026-03-25T21:18:21.957Z
 
 name: milestone
 version: 0.1.0

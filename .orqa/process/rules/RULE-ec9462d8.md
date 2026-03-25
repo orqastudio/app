@@ -89,7 +89,7 @@ The artifact framework enforces documentation at two points:
 - **`docs-required`** — documentation that must exist BEFORE implementation starts (epic `draft → ready` transition)
 - **`docs-produced`** — documentation that this work MUST create or update on completion (verified at `review → done` transition)
 
-These fields are defined on every epic. The orchestrator checks `docs-required` before starting work, and the code-reviewer verifies `docs-produced` during the review gate.
+These fields are defined on every epic. The orchestrator checks `docs-required` before starting work, and the Reviewer verifies `docs-produced` during the review gate.
 
 See [RULE-b10fe6d1](RULE-b10fe6d1) (artifact-lifecycle) for enforcement details and `.orqa/documentation/guide/artifact-workflow.md` for the full workflow.
 

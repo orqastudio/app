@@ -1,7 +1,7 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
 # Skeleton: @orqastudio/plugin-agile-governance (workflows/decision.workflow.yaml)
-# Resolved at: 2026-03-25T20:21:31.238Z
+# Resolved at: 2026-03-25T21:18:21.940Z
 
 name: decision
 version: 0.1.0

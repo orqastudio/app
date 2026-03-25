@@ -22,7 +22,7 @@ relationships:
 ---
 Agent definitions declare **capabilities** (what they can do), not **tools** (how they
 do it). The mapping from capabilities to provider-specific tool names is defined in this
-rule and resolved at delegation time by the orchestrator, companion plugin, or app.
+rule and resolved at delegation time by the orchestrator, connector, or app.
 
 ## Capability Vocabulary
 
@@ -99,7 +99,7 @@ When the orchestrator delegates to an agent:
 5. If a capability has no mapping in the current context (e.g., semantic search
    unavailable), note the gap explicitly in the delegation prompt
 
-Until the companion plugin (EPIC-9a1eba3f) automates this resolution, the orchestrator
+Until the connector fully automates this resolution, the orchestrator
 performs it manually in every delegation.
 
 ## Agent Definition Format

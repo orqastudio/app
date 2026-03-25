@@ -89,7 +89,7 @@ draft ──> ready ──> in-progress ──> review ──> done
 - `draft → ready`: All `docs-required` items exist and are approved (Documentation Gate — see below)
 - `ready → in-progress`: Epic meets Definition of Ready, worktree created, agent assigned
 - `in-progress → review`: Implementation complete, submitted for verification gates
-- `review → done`: **Human gate (NON-NEGOTIABLE)** — the orchestrator presents a completion summary to the user and receives explicit approval. The summary must include: tasks completed, docs-produced verification, lessons logged during implementation, and any scope changes. The orchestrator MUST NOT mark an epic as done without user confirmation. All verification gates must also have passed (code-reviewer, qa-tester, ux-reviewer), and all `docs-produced` items verified as created/updated
+- `review → done`: **Human gate (NON-NEGOTIABLE)** — the orchestrator presents a completion summary to the user and receives explicit approval. The summary must include: tasks completed, docs-produced verification, lessons logged during implementation, and any scope changes. The orchestrator MUST NOT mark an epic as done without user confirmation. All verification gates must also have passed (Reviewer with code-quality-review, qa-verification, and ux-compliance-review knowledge), and all `docs-produced` items verified as created/updated
 
 The epic body contains the implementation design — data model, IPC contracts, component breakdown, and approach. For investigation-heavy work, the epic may carry a `research-refs` field listing research documents in `.orqa/delivery/research/` that informed the design.
 
@@ -240,7 +240,7 @@ These fields intentionally overlap when a research doc is both informative and a
 
 ### After Epic Implementation Completes (`review → done`)
 
-Every epic's `docs-produced` field lists documentation that this work creates or updates. The code-reviewer MUST verify:
+Every epic's `docs-produced` field lists documentation that this work creates or updates. The Reviewer (with code-quality-review knowledge) MUST verify:
 
 1. Each listed document was actually created or updated
 2. The documentation reflects the actual implementation (no drift)

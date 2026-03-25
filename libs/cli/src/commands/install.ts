@@ -19,6 +19,7 @@ import { getRoot } from "../lib/root.js";
 import { generateInjectorConfig } from "../lib/injector-config.js";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
 import { runPromptRegistryBuild } from "../lib/prompt-registry.js";
+import { runAgentFileGeneration } from "../lib/agent-file-generator.js";
 
 const NODE_MIN_MAJOR = 22;
 
@@ -455,6 +456,14 @@ console.log('  Content synced for ' + Object.keys(m.plugins).length + ' plugins'
 		runPromptRegistryBuild(root);
 	} catch (e) {
 		console.error(`  Prompt registry build failed: ${e instanceof Error ? e.message : String(e)}`);
+	}
+
+	// Generate .claude/agents/*.md files from the prompt pipeline
+	console.log("Generating agent files...");
+	try {
+		runAgentFileGeneration(root);
+	} catch (e) {
+		console.error(`  Agent file generation failed: ${e instanceof Error ? e.message : String(e)}`);
 	}
 }
 

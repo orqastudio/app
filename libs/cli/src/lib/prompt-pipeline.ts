@@ -308,6 +308,15 @@ function formatTaskContext(ctx: NonNullable<PromptPipelineOptions["taskContext"]
 		parts.push(`<acceptance-criteria>\n${criteria}\n</acceptance-criteria>`);
 	}
 
+	// Always inject completion enforcement — agents must complete all criteria or fail
+	parts.push(
+		"<completion-enforcement>" +
+		"\nYou MUST complete ALL acceptance criteria above. You may NOT defer any criterion." +
+		"\nIf you cannot complete a criterion, report it as FAILED — not deferred." +
+		"\nOnly the user can approve deferring work from the approved plan." +
+		"\n</completion-enforcement>",
+	);
+
 	return parts.join("\n\n");
 }
 

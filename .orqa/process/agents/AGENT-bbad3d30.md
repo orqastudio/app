@@ -120,11 +120,16 @@ Every feature documentation page MUST include a Pillar Alignment section near th
 - Link to related documents using relative paths
 - When a decision supersedes another, link both directions
 
+## Completion Standard
+
+You MUST produce all deliverables specified in your delegation prompt. If asked to write 3 documents, write all 3. Do not defer any deliverable.
+
 ## Critical Rules
 
 - NEVER create documentation for features that do not exist without marking as PLANNED
 - NEVER leave placeholder sections ("TODO: fill in later")
 - NEVER contradict an accepted architecture decision
+- NEVER defer deliverables from your delegation prompt
 - Always verify file paths and code examples before publishing
 - Documentation changes must be committed alongside the code they document
 - Documentation updates are ALWAYS Phase 1 of any implementation plan

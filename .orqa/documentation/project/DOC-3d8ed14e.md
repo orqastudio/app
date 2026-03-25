@@ -100,9 +100,10 @@ The artifact system scans `.orqa/` directories, builds a bidirectional graph of 
    - Documentation directories are recursively scanned into `DocNode` trees
    - `README.md` frontmatter provides default icon, label, description, sort order for directories
 3. **Graph construction** (`artifact_graph.rs`):
+   - **Forward-only relationship storage**: Artifacts store only forward relationships (e.g., task stores `delivers: epic`, but epic does NOT store `delivered-by: task`). The graph computes inverses at query time.
    - Two-pass algorithm:
-     - **Pass 1**: Walk all `.orqa/**/*.md` files, extract `id` from frontmatter, collect forward refs from `SINGLE_REF_FIELDS` (milestone, epic, promoted-to, supersedes, surpassed-by) and `ARRAY_REF_FIELDS` (depends-on, blocks, research-refs, docs-required, docs-produced, skills)
-     - **Pass 2**: Invert forward refs to create backlinks
+     - **Pass 1**: Walk all `.orqa/**/*.md` files, extract `id` from frontmatter, collect forward refs from `SINGLE_REF_FIELDS` and `ARRAY_REF_FIELDS`
+     - **Pass 2**: Compute inverse references from forward refs to create queryable backlinks
    - Result: `ArtifactGraph { nodes: HashMap<id, ArtifactNode>, path_index: HashMap<path, id> }`
    - `graph_stats()` computes node_count, edge_count, orphan_count, broken_ref_count
 
@@ -248,6 +249,8 @@ graph TD
 
 The enforcement pipeline loads rules from `.orqa/process/rules/`, compiles their enforcement entries into regex patterns, and evaluates them at tool execution time (file writes, bash commands) and governance scan time.
 
+> **Architecture note (v2):** In the plugin-composed architecture, enforcement rules are migrated to knowledge plugin artifacts with injection tier metadata. The Rust enforcement engine remains for the Tauri app path, but CLI sessions use the plugin-composed prompt pipeline instead. See System 4 for the new prompt generation pipeline.
+
 ### Entry Points
 
 | Layer | Entry Point | File |
@@ -327,68 +330,97 @@ Process gates (`process_gates.rs`) fire at tool execution time and turn completi
 
 ---
 
-## System 4: Prompt Injection Pipeline
+## System 4: Prompt Generation Pipeline (Plugin-Composed)
 
 ### Overview
 
-The system prompt is assembled from governance artifacts at message-send time and injected into the sidecar request. Skills are lazily loaded on demand via the `load_skill` tool.
+The prompt generation system has two layers: the **legacy Rust path** (system_prompt.rs, used by the Tauri app) and the **new plugin-composed pipeline** (`libs/cli/src/lib/prompt-pipeline.ts`, used by CLI sessions and the target architecture). The plugin-composed pipeline replaces monolithic "load everything" with a five-stage pipeline that generates role-specific, token-budgeted, KV-cache-aware prompts from plugin registries.
+
+### Architecture: Five-Stage Pipeline
+
+```
+Plugin Registry --> Schema Assembly --> Section Resolution --> Token Budgeting --> Prompt Output
+```
+
+**Stage 1 -- Plugin Registry** (`prompt-registry.ts`):
+- Scans installed plugins for `knowledge_declarations` and `prompt_sections` in `orqa-plugin.json` manifests
+- Builds a cached registry at `orqa plugin install` time, written to `.orqa/prompt-registry.json`
+- Runtime reads only the cached registry, never raw plugin manifests
+- Classifies each entry by source: `project-rules` > `project-knowledge` > `plugin` > `core`
+
+**Stage 2 -- Schema Assembly** (`prompt-pipeline.ts::assembleSchema`):
+- For a (role, workflow-stage, task) tuple, queries the registry for applicable sections
+- Knowledge entries filtered by injection tier:
+  - **always** tier: matched by role and/or file path globs
+  - **stage-triggered** tier: matched when the workflow stage matches
+  - **on-demand** tier: not returned by query -- retrieved via semantic search at runtime
+- Conflict resolution: when two entries share the same ID, the higher-priority source wins
+- Task context added as a dynamic section with P1 priority
+
+**Stage 3 -- Section Resolution** (`prompt-pipeline.ts::resolveSections`):
+- Loads content from disk for file-backed sections
+- Falls back to inline summaries (100-150 tokens) when files are unavailable
+- Follows cross-references at depth 1 via `{{ref:ARTIFACT-ID}}` pattern
+- Detects and breaks circular references
+
+**Stage 4 -- Token Budgeting** (`prompt-pipeline.ts::applyTokenBudget`):
+- Default budgets per role: Orchestrator 2,500 / Implementer 2,800 / Reviewer 1,900 / Writer 1,800
+- Trim order: P3 sections first, then P2, then P1. **P0 sections are never trimmed.**
+- Within same priority, largest sections trimmed first
+- Returns both included and trimmed section lists for diagnostics
+
+**Stage 5 -- Prompt Output** (`prompt-pipeline.ts::assemblePrompt`):
+- KV-cache-aware zone ordering: static core at top, dynamic content at bottom
+- Zone order: role-definition > safety-rule > constraint > stage-instruction > knowledge > task-template > task-context
+- Uses Claude XML tags for structure (`<role>`, `<knowledge id="...">`, `<task-context>`)
+- Appends on-demand knowledge preamble when on-demand entries exist
+
+### Knowledge Injection Tiers
+
+| Tier | When Loaded | Token Budget | Source |
+|------|-------------|-------------|--------|
+| **always** | At agent spawn for matching roles/paths | 200-500 tokens (compressed summary) | Plugin `knowledge_declarations` with `tier: "always"` |
+| **stage-triggered** | When workflow enters a matching stage | 500-1,000 tokens | Plugin `knowledge_declarations` with `tier: "stage-triggered"` |
+| **on-demand** | Agent queries semantic search at runtime | 1,000-2,000 tokens (full artifact) | `knowledge-retrieval.ts` or MCP search tools |
+
+### On-Demand Knowledge Retrieval (`knowledge-retrieval.ts`)
+
+- Generates a preamble instructing agents to use `mcp__orqastudio__search_semantic` for on-demand retrieval
+- Provides disk-based fallback that reads from `.orqa/process/knowledge/` directories
+- Filters by tags, role, and text content within a configurable token budget
+
+### Legacy Path (Tauri App)
+
+The Rust-based system prompt assembly (`system_prompt.rs`) remains for the Tauri app:
+
+1. Read all `.orqa/rules/*.md` files (full content)
+2. List knowledge catalog (name + first line only)
+3. Read `.claude/CLAUDE.md` (full content)
+4. Read `AGENTS.md` (full content)
+5. Concatenate all parts
+
+This path will be replaced by the plugin-composed pipeline once the daemon integrates the TypeScript prompt generation.
 
 ### Entry Points
 
 | Layer | Entry Point | File |
 |-------|------------|------|
-| Backend | `build_system_prompt(project_path)` | `domain/system_prompt.rs` |
-| Backend | `load_context_messages(state, session_id)` | `domain/system_prompt.rs` |
+| Plugin-composed pipeline | `generatePrompt(options)` | `libs/cli/src/lib/prompt-pipeline.ts` |
+| Plugin-composed registry | `buildPromptRegistry(projectRoot)` | `libs/cli/src/lib/prompt-registry.ts` |
+| Plugin-composed knowledge | `retrieveKnowledge(projectPath, options)` | `libs/cli/src/lib/knowledge-retrieval.ts` |
+| Legacy (Rust) | `build_system_prompt(project_path)` | `domain/system_prompt.rs` |
 | Sidecar | `TOOL_SYSTEM_PROMPT` constant | `providers/claude-agent.ts` |
-
-### Processing Pipeline
-
-1. **System prompt assembly** (`system_prompt.rs::build_system_prompt`):
-   a. Read all `.orqa/rules/*.md` files → full content included under `## Rules`
-   b. List knowledge catalog from `.orqa/knowledge/*/KNOW.md` → name + first non-empty line only (NOT full content)
-   c. Read `.claude/CLAUDE.md` → full content under `## Project Instructions`
-   d. Read `AGENTS.md` → full content under `## Agent Definitions`
-   e. Concatenate all parts into a single string
-
-2. **Context injection** (`system_prompt.rs::load_context_messages`):
-   - Load up to 20 recent user/assistant text messages from SQLite
-   - Used for conversation continuity
-   - `load_context_summary()` computes message_count + total_chars for the `ContextInjected` event
-
-3. **Sidecar prompt composition** (`claude-agent.ts`):
-   - `TOOL_SYSTEM_PROMPT` (tool descriptions) + `\n\n` + system prompt from Rust
-   - Passed to `query()` options as `systemPrompt`
-
-4. **Skill loading** (on demand via `load_skill` tool):
-   - Agent calls `load_skill` tool with skill name
-   - `tool_executor.rs::tool_load_skill` reads `.orqa/process/knowledge/<name>/KNOW.md`
-   - Returns full skill content to the agent
-   - WorkflowTracker records `record_skill_loaded(name)`
-
-5. **Semantic skill injection** (`skill_injector.rs`):
-   - `SkillInjector::new()` loads all skill descriptions, embeds them with ONNX embedder
-   - `match_prompt()` computes cosine similarity between prompt embedding and skill embeddings
-   - Returns top-N skills above threshold
-   - Used by `ArtifactState` for proactive skill suggestions (separate from enforcement injection)
-
-6. **Enforcement-based skill injection** (`tool_executor.rs`):
-   - When enforcement engine returns `Inject` verdicts with `skills[]`
-   - Read each knowledge artifact's KNOW.md from disk
-   - Prepend knowledge content to tool output
-   - Deduplicated via `WorkflowTracker.mark_skill_injected()`
-
-### Persistence
-
-- System prompt is computed fresh for each message (not cached)
-- Provider session ID persisted in SQLite for session resumption
-- Skill injector cached in `AppState.artifacts.skill_injector`
 
 ### Key Types
 
 | Type | File | Purpose |
 |------|------|---------|
-| `ContextMessage` | `domain/system_prompt.rs` | Condensed message for context injection |
-| `SkillInjector` / `SkillMatch` | `domain/skill_injector.rs` | Semantic skill matching |
+| `PromptRegistry` / `RegistryKnowledgeEntry` | `libs/cli/src/lib/prompt-registry.ts` | Cached plugin prompt contributions |
+| `PromptResult` / `ResolvedSection` | `libs/cli/src/lib/prompt-pipeline.ts` | Pipeline output with diagnostics |
+| `KnowledgeDeclaration` / `PromptSection` | `libs/types/src/plugin.ts` | Plugin manifest schema types |
+| `KnowledgeInjectionTier` / `PromptPriority` | `libs/types/src/plugin.ts` | Injection tier and priority enums |
+| `ContextMessage` | `domain/system_prompt.rs` | Legacy condensed message for context injection |
+| `SkillInjector` / `SkillMatch` | `domain/skill_injector.rs` | Legacy semantic skill matching (ONNX) |
 
 ---
 
@@ -641,6 +673,173 @@ On app launch (`lib.rs`):
 | `Session` / `SessionSummary` / `SessionStatus` | `domain/session.rs` | Session domain model |
 | `Project` / `ProjectSummary` / `DetectedStack` | `domain/project.rs` | Project domain model |
 | `ProjectSettings` | `domain/project_settings.rs` | File-based project config |
+
+---
+
+## System 8: Plugin-Composed Workflow Engine
+
+### Overview
+
+The workflow engine evaluates plugin-owned YAML state machines for artifact types. Plugins define complete state machines with states, transitions, guards, actions, gates, and variants. The core framework provides the evaluation engine and primitives; plugins provide the definitions. This replaces hardcoded status values and informal workflow tracking.
+
+### Architecture
+
+**Plugin ownership**: The plugin that defines an artifact type owns its complete state machine. There is no inheritance model -- each plugin's state machine is self-contained.
+
+**Composition model**: Workflow-definition plugins define a skeleton with named contribution points (slots). Stage-definition plugins fill those slots via declarative manifests. The composition happens at `orqa plugin install` time, not runtime.
+
+**Resolved files**: After merging, resolved workflows are written to `.orqa/workflows/<name>.resolved.yaml`. The runtime reads only resolved files.
+
+### State Categories
+
+The core framework defines five state categories; plugins map their states to categories:
+
+| Category | Purpose | UI Treatment |
+|----------|---------|-------------|
+| `planning` | Work being designed/scoped | Blue indicators |
+| `active` | Work in progress | Green indicators |
+| `review` | Work being reviewed | Amber indicators |
+| `completed` | Work finished | Purple indicators |
+| `terminal` | Final state, no further transitions | Gray indicators |
+
+### Guard Primitives
+
+| Guard Type | Purpose | Parameters |
+|-----------|---------|-----------|
+| `field_check` | Check artifact field values | `field`, `operator` (exists/equals/matches/in/etc.), `value` |
+| `relationship_check` | Check relationship existence or target status | `relationship_type`, `condition` (exists/min_count/all_targets_in_status) |
+| `query` | Run a graph query | `query_name`, `expected_result` (empty/non_empty/count_equals/etc.) |
+| `role_check` | Verify actor role | `roles` array |
+| `code_hook` | Delegate to custom code | `hook` name, optional `args` |
+
+### Action Primitives
+
+| Action Type | Purpose | Parameters |
+|------------|---------|-----------|
+| `set_field` | Update artifact fields | `field`, `value` |
+| `append_log` | Add to audit trail | `message`, optional `log_field` |
+| `create_artifact` | Create a related artifact | `artifact_type`, optional `template`/`relationship` |
+| `notify` | Send notification | `channel` (ui/log/hook), `message`, `severity` |
+| `code_hook` | Delegate to custom code | `hook` name, optional `args` |
+
+### Human Gates (Five-Phase Pipeline)
+
+Gates are structured sub-workflows, not boolean flags:
+
+1. **GATHER** -- Collect data from fields, run pre-checks, generate summary
+2. **PRESENT** -- Show inputs in structured format with context
+3. **COLLECT** -- Reviewer provides verdict + rationale
+4. **EXECUTE** -- Apply transition, run post-transition actions, log to audit trail
+5. **LEARN** -- On FAIL: create/update lesson, track recurrence. On PASS: track cycle time.
+
+Five gate patterns: simple_approval, structured_review, multi_reviewer, escalation, scope_decision.
+
+### Workflow Variants
+
+Ad-hoc workflow patterns for scenarios that skip full pipeline stages:
+
+| Variant | Scenario | Difference |
+|---------|----------|-----------|
+| `task-quickfix` | Bug fix, UX tweak | Skip planning, automated review only |
+| `task-security` | Security fix | Skip planning, mandatory human review |
+| `task-docs-only` | Documentation fix | Skip review entirely |
+| `task-hotfix` | Production hotfix | Skip planning, expedited review |
+
+Workflow selection rules in plugin manifests automatically assign variants based on artifact properties (priority, labels, scope).
+
+### Entry Points
+
+| Layer | Entry Point | File |
+|-------|------------|------|
+| Workflow Resolver | `resolveAll(projectRoot)` | `libs/cli/src/lib/workflow-resolver.ts` |
+| Type Definitions | `WorkflowDefinition` | `libs/types/src/workflow.ts` |
+| Plugin Schema | `provides.workflow_definitions` | `orqa-plugin.json` manifests |
+
+### Key Types
+
+| Type | File | Purpose |
+|------|------|---------|
+| `WorkflowDefinition` | `libs/types/src/workflow.ts` | Complete state machine for an artifact type |
+| `WorkflowState` / `Transition` | `libs/types/src/workflow.ts` | State and transition definitions |
+| `Guard` / `GuardType` | `libs/types/src/workflow.ts` | Declarative guard system |
+| `Action` / `ActionType` | `libs/types/src/workflow.ts` | Transition action system |
+| `Gate` / `GatePattern` / `GatePhases` | `libs/types/src/workflow.ts` | Human gate sub-workflows |
+| `WorkflowVariant` / `SelectionRule` | `libs/types/src/workflow.ts` | Ad-hoc variant support |
+| `ContributionPoint` | `libs/types/src/workflow.ts` | Skeleton composition slots |
+
+---
+
+## System 9: Agent Lifecycle and Token Economy
+
+### Overview
+
+The agent lifecycle system implements ephemeral, task-scoped agents spawned from generated prompts. It replaces persistent agents and session-long lifecycles with the three-layer taxonomy: Universal Role + Stage Context + Domain Knowledge = Effective Agent.
+
+### Agent Spawning (`agent-spawner.ts`)
+
+1. **Role assignment** -- 8 universal roles: orchestrator, implementer, reviewer, researcher, planner, writer, designer, governance_steward
+2. **Model tier selection** -- Default tier per role (Opus for orchestrator/planner, Sonnet for others), with complexity-based upgrade (implementer upgrades to Opus for complex tasks)
+3. **Prompt generation** -- Calls the five-stage pipeline with (role, stage, task) tuple
+4. **Tool constraints** -- Each role has declarative constraints scoping which tools it can use and on which artifact types
+5. **Findings path** -- Agents write structured findings to `.state/team/<team>/task-<id>.md`
+
+### Model Tiering
+
+| Role | Default Tier | Upgrade Condition |
+|------|-------------|-------------------|
+| Orchestrator | Opus | N/A |
+| Planner | Opus | N/A |
+| Implementer | Sonnet | Complex tasks --> Opus |
+| Reviewer | Sonnet | N/A |
+| Researcher | Sonnet | N/A |
+| Writer | Sonnet | N/A |
+| Designer | Sonnet | N/A |
+| Governance Steward | Sonnet | N/A |
+
+### Token Tracking (`token-tracker.ts`)
+
+Four-level metrics capture, all written to `.state/token-metrics.jsonl`:
+
+| Level | Scope | Metrics |
+|-------|-------|---------|
+| 1 | Per-Request | input/output tokens, cache hit rate, reasoning tokens, latency, model |
+| 2 | Per-Agent | total tokens, context utilization, request count, lifetime |
+| 3 | Per-Session | total tokens, cost, agent spawns, overhead ratio, team spawn cost |
+| 4 | Trends | 7/30-day aggregates computed from historical data |
+
+### Budget Enforcement (`budget-enforcer.ts`)
+
+| Budget | Default | Enforcement |
+|--------|---------|-------------|
+| Per-agent prompt tokens | 4,000 | Hard block if exceeded |
+| Per-agent total tokens | 100,000 | Hard block, with warnings at 75%/90% |
+| Per-session total tokens | 500,000 | Hard block, with model downgrade suggestions |
+| Per-session cost (USD) | $5.00 | Hard block, with model downgrade suggestions |
+
+The enforcer suggests model tier downgrades at 75% and 90% thresholds.
+
+### Findings-to-Disk Format
+
+Findings documents use YAML frontmatter headers (~200 tokens) that the orchestrator reads without loading full body content:
+
+```yaml
+status: "complete"          # complete | blocked | partial
+summary: "What was done"
+changed_files: ["path/to/file"]
+follow_ups: ["Item needing attention"]
+```
+
+### Key Types
+
+| Type | File | Purpose |
+|------|------|---------|
+| `UniversalRole` / `ModelTier` | `libs/cli/src/lib/agent-spawner.ts` | Role and model tier enums |
+| `AgentSpawnConfig` / `CreateAgentParams` | `libs/cli/src/lib/agent-spawner.ts` | Agent configuration |
+| `ToolConstraint` / `ROLE_TOOL_CONSTRAINTS` | `libs/cli/src/lib/agent-spawner.ts` | Role-based tool permissions |
+| `FindingsHeader` / `FindingsDocument` | `libs/cli/src/lib/agent-spawner.ts` | Structured findings format |
+| `TokenTracker` / `RequestMetrics` | `libs/cli/src/lib/token-tracker.ts` | Session-level token tracking |
+| `BudgetEnforcer` / `BudgetConfig` | `libs/cli/src/lib/budget-enforcer.ts` | Budget enforcement |
+| `COST_PER_MTOK` | `libs/cli/src/lib/budget-enforcer.ts` | Model tier pricing |
 
 ---
 

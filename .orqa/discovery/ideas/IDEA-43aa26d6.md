@@ -2,7 +2,7 @@
 id: IDEA-43aa26d6
 type: idea
 title: "orqa build — diff-aware incremental rebuilds using git server"
-status: exploring
+status: captured
 description: Centralised build commands that use git diffs from the local server to determine what needs rebuilding. Only rebuild affected packages instead of everything.
 created: 2026-03-23
 relationships:

@@ -97,6 +97,8 @@ export {
 	buildPromptRegistry,
 	readPromptRegistry,
 	runPromptRegistryBuild,
+	queryKnowledge,
+	querySections,
 	type PromptRegistry,
 	type RegistryKnowledgeEntry,
 	type RegistryPromptSection,

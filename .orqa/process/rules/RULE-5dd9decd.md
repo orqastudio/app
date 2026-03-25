@@ -69,13 +69,13 @@ See [RULE-af5771e3](RULE-af5771e3) (no-stubs) > "Agent Completion Reports" for t
 
 ## Lesson Documentation Status
 
-Completion reports from review agents (`code-reviewer`, `qa-tester`, `ux-reviewer`) MUST include lesson documentation status:
+Completion reports from Reviewer agents (with code-quality-review, qa-verification, or ux-compliance-review knowledge) MUST include lesson documentation status:
 
 - Were any new IMPL entries added to `.orqa/process/lessons/`?
 - Were any existing IMPL entries updated with recurrence increments?
 - Was `.orqa/process/lessons/` checked for known patterns before reporting findings?
 
-Review agents that skip lesson documentation are in violation of this rule AND [RULE-c603e90e](RULE-c603e90e) (lessons-learned).
+Reviewer agents that skip lesson documentation are in violation of this rule AND [RULE-c603e90e](RULE-c603e90e) (lessons-learned).
 
 ## Related Rules
 

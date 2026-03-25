@@ -68,6 +68,20 @@ async function main(): Promise<void> {
     warnings.push(...artifactIssues.map((i) => `  - ${i}`));
   }
 
+  // Check findings files for deferral language.
+  const findingsFiles = modifiedFiles.filter(
+    (f) => f.startsWith(".state/team/") && f.endsWith(".md") && f.includes("task-"),
+  );
+  const deferrals = checkFindingsForDeferrals(projectDir, findingsFiles);
+  if (deferrals.length > 0) {
+    warnings.push("Deferral language detected in findings files:");
+    warnings.push(...deferrals.map((d) => `  - ${d}`));
+    warnings.push(
+      "The orchestrator MUST review these deferrals — either address them",
+      "now or create explicit follow-up tasks before committing.",
+    );
+  }
+
   if (warnings.length === 0) {
     logTelemetry("subagent-review", "SubagentStop", startTime, "clean", {
       agent_type: agentType, files_checked: modifiedFiles.length, todos_found: 0, artifact_issues: 0,
@@ -80,6 +94,7 @@ async function main(): Promise<void> {
     files_checked: modifiedFiles.length,
     todos_found: stubIssues.length,
     artifact_issues: artifactIssues.length,
+    deferrals_found: deferrals.length,
   }, projectDir);
 
   const message = [
@@ -150,6 +165,41 @@ function checkArtifactFrontmatter(projectDir: string, file: string): string[] {
   } catch {
     return [`${file} — malformed YAML frontmatter`];
   }
+}
+
+/** Deferral patterns that indicate incomplete work. */
+const DEFERRAL_PATTERNS: RegExp[] = [
+  /\bdeferred?\b/i,
+  /\bnot (?:done|complete|implemented|addressed)\b/i,
+  /\bskipped?\b/i,
+  /\bpostponed?\b/i,
+  /\bout of scope\b/i,
+  /\bfollow[- ]?up required\b/i,
+  /\bleft for (?:later|future|next)\b/i,
+];
+
+/** Check findings files for deferral language. Returns descriptive strings. */
+function checkFindingsForDeferrals(projectDir: string, files: string[]): string[] {
+  const results: string[] = [];
+  for (const file of files) {
+    const fullPath = join(projectDir, file);
+    if (!existsSync(fullPath)) continue;
+    try {
+      const content = readFileSync(fullPath, "utf-8");
+      const lines = content.split("\n");
+      for (let i = 0; i < lines.length; i++) {
+        const trimmed = lines[i].trim();
+        if (!trimmed || trimmed.startsWith("#")) continue;
+        for (const pattern of DEFERRAL_PATTERNS) {
+          if (pattern.test(trimmed)) {
+            results.push(`${file}:${i + 1} — ${trimmed}`);
+            break;
+          }
+        }
+      }
+    } catch { /* skip unreadable files */ }
+  }
+  return results;
 }
 
 main().catch(() => process.exit(0));

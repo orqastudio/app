@@ -151,7 +151,8 @@ Creating one without the other is incomplete work.
 - NEVER create a doc without a matching knowledge artifact (or vice versa)
 - NEVER write plugin-canonical content directly in `.orqa/` — write in the plugin source directory
 - NEVER skip `graph_validate()` after batch changes
-- ALWAYS report what was created, what was modified, and what was NOT done
+- NEVER defer artifact changes from your delegation prompt — complete them or report failure
+- ALWAYS report what was created, what was modified, and what FAILED (not "deferred")
 - ALWAYS write findings to `.state/team/<team-name>/` before marking tasks complete
 
 ## Operational Roles

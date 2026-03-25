@@ -71,7 +71,7 @@ of the structured thinking enforcement system.
 
 Enforcement entries with `action: inject` and a `knowledge` array are evaluated on every
 Write/Edit tool call. When a file path matches, the specified knowledge artifacts are read from
-`.orqa/process/knowledge/<name>/KNOW.md` and returned as `systemMessage` to inject into the
+`.orqa/process/knowledge/KNOW-<hash>.md` and returned as `systemMessage` to inject into the
 agent's context.
 
 ## Path-to-Knowledge Map

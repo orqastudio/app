@@ -48,8 +48,8 @@ RULE-009 scoped this requirement to dogfood mode only. But the reasoning applies
 
 This is a behavioral constraint on orchestrating agents. Enforcement has two layers:
 
-1. **Agent system prompt** — the orchestrator's `Safety` section includes: "Pipeline integrity first — enforcement gaps are always CRITICAL priority, not backlog." This is loaded on every session start via the orchestrator agent definition (`app/.orqa/process/agents/orchestrator.md`).
-2. **Session start hook** — the `SessionStart` hook (`connectors/claude-code/hooks/`) reports enforcement health. Any rule with an empty `enforcement` array AND no `lint` delegation entry is surfaced as a potential gap.
+1. **Agent system prompt** — the orchestrator's instructions (`.claude/CLAUDE.md` or connector-composed prompt) include: "Pipeline integrity first — enforcement gaps are always CRITICAL priority, not backlog." This is loaded on every session start.
+2. **Session start hook** — the `SessionStart` hook (`connectors/claude-code/hooks/scripts/session-start.sh`) reports enforcement health. Any rule with an empty `enforcement` array AND no `lint` delegation entry is surfaced as a potential gap.
 
 ## FORBIDDEN
 

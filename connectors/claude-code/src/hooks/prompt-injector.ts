@@ -1,34 +1,18 @@
 // UserPromptSubmit hook — all matchers
 //
-// Thin adapter: reads stdin, calls daemon for behavioral rules and agent preamble,
-// then builds the systemMessage in Claude Code's format.
-// Data comes from daemon; format (systemMessage JSON shape) is connector-specific.
+// Thin adapter: classifies the user prompt, calls the prompt pipeline from
+// @orqastudio/cli for knowledge/rule injection, then builds the systemMessage
+// in Claude Code's format. Connector-specific UX (session state checks,
+// context line) is layered on top of the pipeline output.
 
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "fs";
 import { createConnection } from "net";
 import { join } from "path";
-import { readInput, callDaemon, outputAllow } from "./shared.js";
+import { readInput, outputAllow } from "./shared.js";
 import { logTelemetry } from "./telemetry.js";
+import { generatePrompt, type PromptResult } from "@orqastudio/cli";
 
-interface BehavioralRule {
-  id: string;
-  title: string;
-  category: string;
-  message: string;
-}
-
-interface BehavioralMessages {
-  messages: string[];
-  rules: BehavioralRule[];
-  rule_count: number;
-  behavioral_count: number;
-}
-
-interface AgentContent {
-  preamble: string;
-}
-
-/** Prompt types that drive rule selection. */
+/** Prompt types that drive workflow stage selection. */
 type PromptType =
   | "implementation"
   | "planning"
@@ -38,33 +22,6 @@ type PromptType =
   | "documentation"
   | "governance"
   | "general";
-
-/** Maps prompt types to the rule categories most relevant for that type. */
-const CATEGORY_RELEVANCE: Record<PromptType, string[]> = {
-  implementation: ["safety", "process", "quality"],
-  planning: ["planning", "process"],
-  review: ["quality", "safety"],
-  debugging: ["safety", "quality"],
-  research: ["planning", "process"],
-  documentation: ["planning", "quality"],
-  governance: ["process", "planning"],
-  general: ["process", "safety"],
-};
-
-/** Maximum number of rules to inline in systemMessage. */
-const MAX_INLINE_RULES = 8;
-
-/**
- * Critical rules that are ALWAYS inlined in systemMessage regardless of prompt type.
- * These are the foundational behavioral constraints the orchestrator must never lose sight of.
- */
-const CRITICAL_RULE_IDS = new Set([
-  "RULE-99abcea1", // Use Agent tool for delegation (agent teams)
-  "RULE-87ba1b81", // Agent delegation — orchestrator coordinates, doesn't implement
-  "RULE-0d29fc91", // Semantic search preference
-  "RULE-5dd9decd", // Honest reporting — no false "complete"
-  "RULE-ec9462d8", // Documentation-first
-]);
 
 /**
  * Maps thinking-mode frontmatter values to PromptType.
@@ -232,6 +189,28 @@ async function classifyWithSearch(message: string, projectDir: string): Promise<
   return null;
 }
 
+// ---------------------------------------------------------------------------
+// Map PromptType to workflow stage names used by the prompt pipeline
+// ---------------------------------------------------------------------------
+
+/** Map prompt classification to a workflow stage string for the pipeline. */
+function promptTypeToStage(pt: PromptType): string {
+  switch (pt) {
+    case "implementation": return "implement";
+    case "planning": return "plan";
+    case "review": return "review";
+    case "debugging": return "debug";
+    case "research": return "research";
+    case "documentation": return "document";
+    case "governance": return "govern";
+    case "general": return "general";
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Main
+// ---------------------------------------------------------------------------
+
 async function main(): Promise<void> {
   const startTime = Date.now();
 
@@ -249,21 +228,6 @@ async function main(): Promise<void> {
   if (!userMessage) {
     outputAllow();
   }
-
-  // Fetch behavioral rules and agent preamble from daemon in parallel.
-  const [behavioralResult, agentResult] = await Promise.allSettled([
-    callDaemon<BehavioralMessages>("/content/behavioral", {}),
-    callDaemon<AgentContent>("/content/agent", { match: agentType || "orchestrator" }),
-  ]);
-
-  const behavioralData: BehavioralMessages =
-    behavioralResult.status === "fulfilled"
-      ? behavioralResult.value
-      : { messages: [], rules: [], rule_count: 0, behavioral_count: 0 };
-  const preamble =
-    agentResult.status === "fulfilled"
-      ? agentResult.value.preamble
-      : `You are a ${agentType || "orchestrator"}. Follow the task delegated to you.`;
 
   // Three-tier prompt classification:
   //   1. ONNX semantic search against thinking-mode knowledge artifacts (primary)
@@ -285,8 +249,26 @@ async function main(): Promise<void> {
     classificationMethod = "keyword";
   }
 
-  // Select rules: pinned critical rules + prompt-relevant dynamic rules.
-  const selectedRules = selectRules(behavioralData.rules, promptType);
+  // Run the prompt pipeline — plugin-composed knowledge/rule injection.
+  const workflowStage = promptTypeToStage(promptType);
+  let pipelineResult: PromptResult;
+  try {
+    pipelineResult = generatePrompt({
+      role: agentType || "orchestrator",
+      workflowStage,
+      projectPath: projectDir,
+    });
+  } catch {
+    // Pipeline unavailable — produce a minimal fallback prompt
+    pipelineResult = {
+      prompt: `<role>${agentType || "orchestrator"}</role>`,
+      totalTokens: 0,
+      budget: 2500,
+      includedSections: [],
+      trimmedSections: [],
+      errors: ["Prompt pipeline failed — using minimal fallback"],
+    };
+  }
 
   // Session state freshness check (connector-specific UX concern — stays here).
   const sessionReminder = checkSessionState(projectDir);
@@ -294,18 +276,10 @@ async function main(): Promise<void> {
   // Context line (connector-specific — stays here).
   const contextLine = getContextLine(projectDir);
 
-  // Build inline rules section for systemMessage — critical rules always present.
-  const inlineRulesSection = formatInlineRules(selectedRules, promptType, behavioralData.behavioral_count);
-
   // Build the full preamble document (written to file for reference).
   const sessionSection = sessionReminder ?? "Session state is current.";
-  const allRulesSection = formatAllRules(behavioralData.rules);
   const preambleDoc = [
     "# Orchestrator Preamble",
-    "",
-    "## Agent Identity",
-    "",
-    preamble,
     "",
     "## Prompt Classification",
     "",
@@ -319,30 +293,36 @@ async function main(): Promise<void> {
     "",
     sessionSection,
     "",
-    "## Active Behavioral Rules (by category)",
+    "## Pipeline Output",
     "",
-    allRulesSection,
+    `Sections included: ${pipelineResult.includedSections.length}`,
+    `Sections trimmed: ${pipelineResult.trimmedSections.length}`,
+    `Tokens: ${pipelineResult.totalTokens} / ${pipelineResult.budget}`,
+    "",
+    pipelineResult.prompt,
     "",
   ].join("\n");
 
   // Write full preamble to .state/orchestrator-preamble.md for reference.
-  const tmpDir = join(projectDir, ".state");
-  mkdirSync(tmpDir, { recursive: true });
-  writeFileSync(join(tmpDir, "orchestrator-preamble.md"), preambleDoc, "utf-8");
+  const stateDir = join(projectDir, ".state");
+  mkdirSync(stateDir, { recursive: true });
+  writeFileSync(join(stateDir, "orchestrator-preamble.md"), preambleDoc, "utf-8");
 
   logTelemetry("prompt-injector", "UserPromptSubmit", startTime, "injected", {
     agent_type: agentType,
     prompt_type: promptType,
     classification_method: classificationMethod,
-    rules_pinned: selectedRules.pinned.length,
-    rules_dynamic: selectedRules.dynamic.length,
-    rules_total: behavioralData.behavioral_count,
+    pipeline_sections: pipelineResult.includedSections.length,
+    pipeline_trimmed: pipelineResult.trimmedSections.length,
+    pipeline_tokens: pipelineResult.totalTokens,
+    pipeline_budget: pipelineResult.budget,
+    pipeline_errors: pipelineResult.errors.length,
     query: userMessage.slice(0, 100),
     action: "allow",
     session_state_reminder: !!sessionReminder,
   }, projectDir);
 
-  // Build systemMessage — inline the selected rules directly.
+  // Build systemMessage — pipeline prompt + connector-specific UX.
   const parts: string[] = [];
 
   // Session reminder goes first if present.
@@ -350,11 +330,21 @@ async function main(): Promise<void> {
     parts.push(sessionReminder);
   }
 
-  // Inline the priority rules — these are the ones that matter for this prompt.
-  parts.push(inlineRulesSection);
+  // Pipeline-generated prompt (role definition, safety rules, knowledge, etc.)
+  if (pipelineResult.prompt) {
+    parts.push(pipelineResult.prompt);
+  }
+
+  // Context line
+  parts.push(contextLine);
 
   // Reference the full preamble file for additional context.
-  parts.push("Full session context and all rules: .state/orchestrator-preamble.md");
+  parts.push("Full session context: .state/orchestrator-preamble.md");
+
+  // Pipeline errors (visible to agent for debugging)
+  if (pipelineResult.errors.length > 0) {
+    parts.push(`[Pipeline warnings: ${pipelineResult.errors.join("; ")}]`);
+  }
 
   const systemMessage = parts.join("\n\n");
   process.stdout.write(JSON.stringify({ systemMessage }));
@@ -412,145 +402,6 @@ function classifyPrompt(message: string): PromptType {
   }
 
   return "general";
-}
-
-// ---------------------------------------------------------------------------
-// Rule selection and formatting
-// ---------------------------------------------------------------------------
-
-/**
- * Select rules for inline injection. Critical rules are always pinned first,
- * then remaining slots are filled from prompt-relevant categories.
- */
-function selectRules(rules: BehavioralRule[], promptType: PromptType): { pinned: BehavioralRule[]; dynamic: BehavioralRule[] } {
-  if (rules.length === 0) return { pinned: [], dynamic: [] };
-
-  const pinned: BehavioralRule[] = [];
-  const seen = new Set<string>();
-
-  // Pin critical rules first — these always appear regardless of prompt type.
-  for (const rule of rules) {
-    if (CRITICAL_RULE_IDS.has(rule.id)) {
-      pinned.push(rule);
-      seen.add(rule.id);
-    }
-  }
-
-  // Fill remaining slots from prompt-relevant categories.
-  const dynamic: BehavioralRule[] = [];
-  const remainingSlots = MAX_INLINE_RULES - pinned.length;
-  const relevantCategories = CATEGORY_RELEVANCE[promptType];
-
-  for (const category of relevantCategories) {
-    for (const rule of rules) {
-      if (!seen.has(rule.id) && rule.category === category) {
-        dynamic.push(rule);
-        seen.add(rule.id);
-        if (dynamic.length >= remainingSlots) return { pinned, dynamic };
-      }
-    }
-  }
-
-  // Fill any remaining slots from any category.
-  for (const rule of rules) {
-    if (!seen.has(rule.id)) {
-      dynamic.push(rule);
-      seen.add(rule.id);
-      if (dynamic.length >= remainingSlots) return { pinned, dynamic };
-    }
-  }
-
-  return { pinned, dynamic };
-}
-
-/**
- * Format selected rules for inline injection in systemMessage.
- * Pinned critical rules get their own section; dynamic rules grouped by category.
- */
-function formatInlineRules(
-  selection: { pinned: BehavioralRule[]; dynamic: BehavioralRule[] },
-  promptType: PromptType,
-  totalRules: number,
-): string {
-  const { pinned, dynamic } = selection;
-  if (pinned.length === 0 && dynamic.length === 0) return "No behavioral rules loaded.";
-
-  const lines: string[] = [];
-
-  // Critical rules — always enforced, self-contained in systemMessage.
-  if (pinned.length > 0) {
-    lines.push("[Critical — Always Active]");
-    for (const rule of pinned) {
-      lines.push(`- ${rule.id} (${rule.title}): ${rule.message}`);
-    }
-  }
-
-  // Dynamic rules — selected based on prompt classification.
-  if (dynamic.length > 0) {
-    const categoryLabels: Record<string, string> = {
-      safety: "Safety & Standards",
-      process: "Process & Delegation",
-      planning: "Planning & Documentation",
-      quality: "Quality & Tooling",
-      general: "General",
-    };
-
-    const grouped = new Map<string, BehavioralRule[]>();
-    for (const rule of dynamic) {
-      const existing = grouped.get(rule.category) ?? [];
-      existing.push(rule);
-      grouped.set(rule.category, existing);
-    }
-
-    lines.push("");
-    lines.push(`[Relevant for ${promptType} work]`);
-    for (const [category, categoryRules] of grouped) {
-      const label = categoryLabels[category] ?? category;
-      lines.push(`\n  ${label}:`);
-      for (const rule of categoryRules) {
-        lines.push(`  - ${rule.id} (${rule.title}): ${rule.message}`);
-      }
-    }
-  }
-
-  const inlinedCount = pinned.length + dynamic.length;
-  lines.push(`\n(${inlinedCount} of ${totalRules} rules inlined; full list in .state/orchestrator-preamble.md)`);
-
-  return lines.join("\n");
-}
-
-/**
- * Format ALL rules grouped by category for the full preamble file.
- */
-function formatAllRules(rules: BehavioralRule[]): string {
-  if (rules.length === 0) return "No behavioral rules loaded.";
-
-  const grouped = new Map<string, BehavioralRule[]>();
-  for (const rule of rules) {
-    const existing = grouped.get(rule.category) ?? [];
-    existing.push(rule);
-    grouped.set(rule.category, existing);
-  }
-
-  const categoryLabels: Record<string, string> = {
-    safety: "Safety & Standards",
-    process: "Process & Delegation",
-    planning: "Planning & Documentation",
-    quality: "Quality & Tooling",
-    general: "General",
-  };
-
-  const sections: string[] = [];
-  for (const [category, categoryRules] of grouped) {
-    const label = categoryLabels[category] ?? category;
-    const lines = [`### ${label}`, ""];
-    for (const rule of categoryRules) {
-      lines.push(`- **${rule.id}** (${rule.title}): ${rule.message}`);
-    }
-    sections.push(lines.join("\n"));
-  }
-
-  return sections.join("\n\n");
 }
 
 // ---------------------------------------------------------------------------

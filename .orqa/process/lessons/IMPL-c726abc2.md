@@ -3,7 +3,7 @@ id: "IMPL-c726abc2"
 type: lesson
 title: "Out of Scope sections created without user verification — RULE-8ee65d73 violated"
 description: "The orchestrator wrote Out of Scope sections on epics without presenting them to the user for approval. RULE-8ee65d73 requires every scope reduction to be a user decision. This is a self-compliance-only rule (no mechanical enforcement) and was violated twice in the same session — first on EPIC-82dd0bd2, then on EPIC-a60f5b6b."
-status: "review"
+status: archived
 created: "2026-03-13"
 updated: "2026-03-13"
 maturity: "observation"

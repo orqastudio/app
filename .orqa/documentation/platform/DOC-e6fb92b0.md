@@ -20,16 +20,119 @@ relationships:
 
 # Plugin Architecture
 
-This document describes OrqaStudio's plugin architecture: what exists today, the four-layer extension model, and the planned SDK extraction for plugin authors.
+This document describes OrqaStudio's plugin architecture: the plugin-composed model where plugins own everything (workflow state machines, knowledge artifacts, prompt contributions, agent specialization), the four-layer trust model, and the extension points for plugin authors.
+
+## Architecture Principle: Plugin-Composed Everything
+
+No governance pattern is hardcoded in the core framework. Plugins provide:
+
+- **Workflow definitions** -- YAML state machines for artifact types, resolved at install time
+- **Knowledge declarations** -- Artifacts with injection tiers (always, stage-triggered, on-demand)
+- **Prompt sections** -- Role definitions, stage instructions, constraints, safety rules
+- **Agent specialization** -- Domain knowledge that composes into universal roles at spawn time
+
+The core framework provides engines, not definitions: a workflow evaluation engine, a prompt generation pipeline, a knowledge injection system, and an agent spawner. This makes OrqaStudio adaptable to any domain without forking.
 
 ## Current State
 
-OrqaStudio has two extension surfaces today:
+OrqaStudio has three extension surfaces:
 
-1. **CLI companion plugin** — a Claude Code plugin that replicates governance enforcement in CLI sessions
-2. **MCP server integration** — the orqastudio MCP server exposes native search and governance tools to CLI sessions
+1. **Plugin-composed prompt pipeline** -- plugins register knowledge declarations and prompt sections in `orqa-plugin.json` manifests, assembled into role-specific prompts at agent spawn time via the five-stage pipeline
+2. **CLI companion plugin** -- a Claude Code plugin that provides hooks and commands for CLI governance enforcement
+3. **MCP server integration** -- the orqastudio MCP server exposes native search and governance tools to CLI sessions
 
-Both are operational. The component library SDK and view registration API are future work.
+The component library SDK and view registration API are future work.
+
+---
+
+## Plugin Manifest Contributions (orqa-plugin.json)
+
+Plugins contribute to the system via their `orqa-plugin.json` manifest under the `provides` key. Three contribution types are supported:
+
+### Knowledge Declarations
+
+Plugins declare knowledge artifacts with injection tier metadata:
+
+```json
+{
+  "provides": {
+    "knowledge_declarations": [
+      {
+        "id": "rust-error-composition",
+        "tier": "always",
+        "roles": ["implementer"],
+        "paths": ["backend/**/*.rs"],
+        "priority": "P1",
+        "summary": "Compressed summary (100-150 tokens)",
+        "content_file": "knowledge/rust-errors.md"
+      }
+    ]
+  }
+}
+```
+
+**Injection tiers:**
+
+| Tier | When Loaded | Use Case |
+|------|-------------|----------|
+| `always` | At agent spawn for matching roles/paths | Safety rules, error handling patterns |
+| `stage-triggered` | When workflow enters a matching stage | Coding standards during implement, review criteria during review |
+| `on-demand` | Agent queries semantic search at runtime | Specific domain patterns, historical decisions |
+
+### Prompt Sections
+
+Plugins provide role-specific prompt sections:
+
+```json
+{
+  "provides": {
+    "prompt_sections": [
+      {
+        "id": "implementer-role",
+        "type": "role-definition",
+        "role": "implementer",
+        "priority": "P0",
+        "content_file": "prompts/implementer-role.md"
+      }
+    ]
+  }
+}
+```
+
+**Section types:** `role-definition`, `stage-instruction`, `constraint`, `safety-rule`, `task-template`
+
+**Priority levels:** P0 (never trimmed) > P1 (role-critical) > P2 (task-relevant) > P3 (nice-to-have)
+
+### Workflow Definitions
+
+Plugins provide YAML state machines for their artifact types:
+
+```json
+{
+  "provides": {
+    "workflow_definitions": [
+      {
+        "name": "task-workflow",
+        "artifact_type": "task",
+        "file": "workflows/task.workflow.yaml"
+      }
+    ]
+  }
+}
+```
+
+Workflow-definition plugins define skeletons with contribution points. Stage-definition plugins fill those points. See the Core Architecture doc (System 8) for the full workflow engine design.
+
+### Conflict Resolution
+
+When multiple plugins provide the same knowledge or prompt section ID:
+
+1. **Project rules** (`.orqa/process/rules/`) -- highest priority
+2. **Project knowledge** (`.orqa/process/knowledge/`) -- project-specific overrides
+3. **Plugin contributions** -- domain defaults
+4. **Core framework** -- universal fallbacks
+
+Within the same priority level, the most recently installed plugin wins.
 
 ---
 

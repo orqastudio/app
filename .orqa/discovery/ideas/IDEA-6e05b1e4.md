@@ -3,7 +3,7 @@ id: IDEA-6e05b1e4
 type: idea
 title: Session management framework — prevent context drift across long and multi-session work
 description: Structured session management to prevent agents losing track of intent during long sessions or across session boundaries. Sessions have explicit scope (epic/task), state persistence (what was done, what's in progress, what's next), and context recovery after compaction. Implemented first in the Claude Code connector for dogfooding, then brought into the in-app agent framework.
-status: captured
+status: surpassed
 created: 2026-03-19
 updated: 2026-03-19
 relationships:

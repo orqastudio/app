@@ -124,7 +124,7 @@ function extractDomains(data) {
 // ---------------------------------------------------------------------------
 
 function loadViolations(projectRoot) {
-  const logPath = join(projectRoot, "tmp", "precommit-violations.jsonl");
+  const logPath = join(projectRoot, ".state", "precommit-violations.jsonl");
   if (!existsSync(logPath)) return [];
 
   const lines = readFileSync(logPath, "utf-8").split("\n").filter(Boolean);

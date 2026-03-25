@@ -27,6 +27,7 @@ import type { ContentManifest, FileHashEntry, ThreeWayFileStatus } from "../lib/
 import { generateInjectorConfig } from "../lib/injector-config.js";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
 import { runPromptRegistryBuild } from "../lib/prompt-registry.js";
+import { runAgentFileGeneration } from "../lib/agent-file-generator.js";
 import type { PluginProjectConfig, PluginManifest } from "@orqastudio/types";
 
 const USAGE = `
@@ -744,6 +745,13 @@ async function cmdRefresh(args: string[]): Promise<void> {
 	// Build prompt registry from plugin knowledge declarations
 	try {
 		runPromptRegistryBuild(projectRoot);
+	} catch {
+		// Non-fatal
+	}
+
+	// Generate .claude/agents/*.md files from the prompt pipeline
+	try {
+		runAgentFileGeneration(projectRoot);
 	} catch {
 		// Non-fatal
 	}

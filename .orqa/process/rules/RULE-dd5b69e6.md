@@ -43,7 +43,7 @@ If a skill fails to load, the agent MUST report the failure explicitly. Do NOT s
 
 ## Layer Classification
 
-Every skill carries a `layer` field in its SKILL.md frontmatter:
+Every skill carries a `layer` field in its frontmatter:
 
 | Layer | Meaning | Loading |
 |-------|---------|---------|

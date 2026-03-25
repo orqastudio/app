@@ -89,8 +89,6 @@ async function main(): Promise<void> {
     "   ready when the user returns.",
     "",
     "4. Commit and push all work before finishing.",
-    "",
-    "Reference: RULE-cd426b0d, RULE-8aadfd6c, RULE-30a223ca",
   ].join("\n");
 
   process.stdout.write(JSON.stringify({ systemMessage }));

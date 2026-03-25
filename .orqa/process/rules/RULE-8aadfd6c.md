@@ -57,7 +57,7 @@ The stop hook's auto-generated state summary MUST NOT overwrite a richer orchest
 
 ## Enforcement
 
-This rule is enforced by the Claude Code connector's UserPromptSubmit hook (`connectors/claude-code/hooks/scripts/prompt-injector.mjs`):
+This rule is enforced by the Claude Code connector's prompt injector hook (`connectors/claude-code/src/hooks/prompt-injector.ts`):
 
 1. **Constant reminder** — every prompt injection includes a reminder that session state is a working document
 2. **Freshness check** — the hook checks `.state/session-state.md` on every prompt:

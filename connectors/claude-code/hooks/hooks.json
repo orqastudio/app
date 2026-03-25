@@ -46,16 +46,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/hooks/artifact-enforcement.js",
-            "timeout": 10000
-          }
-        ]
-      },
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
             "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/hooks/memory-redirect.js",
             "timeout": 5000
           }
@@ -69,16 +59,6 @@
           {
             "type": "command",
             "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/hooks/validate-artifact.js",
-            "timeout": 10000
-          }
-        ]
-      },
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/hooks/impact-check.js",
             "timeout": 10000
           }
         ]

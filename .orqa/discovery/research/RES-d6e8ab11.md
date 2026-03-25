@@ -675,3 +675,94 @@ All questions have been resolved as AD-1ef9f57c. Summary of decisions:
 - **XState v5:** Statechart formalism with parallel/hierarchical states, guard/action model
 - **Temporal:** Durable execution, workflow versioning with patching, signal-based human gates
 - **BPMN 2.0:** Industry-standard process modeling, User Tasks, maker-checker pattern
+
+---
+
+## 13. Implementation Outcomes
+
+This section was added after implementation (March 2026) to document what was built versus what was predicted, decisions that changed, and lessons learned.
+
+### What Was Built
+
+The architecture was implemented across seven epics (not the four originally proposed):
+
+| Epic | Title | Status | Notes |
+|------|-------|--------|-------|
+| EPIC-c828007a | Graph Foundation | Done | Forward-only relationship storage, constraint fixes, vocabulary docs, ID hash migration, .state rename |
+| EPIC-f6da17ed | Core Workflow Engine + State Machines | Done | YAML workflow format, state machine types, workflow resolver, guard/action primitives, contribution points |
+| EPIC-a63fde02 | Prompt Generation + Knowledge Architecture | Done | Five-stage pipeline, prompt registry, knowledge retrieval, section resolution, token budgeting |
+| EPIC-281f7857 | Agent Lifecycle + Model Tiering | Done | Agent spawner, 8 universal roles, model tier selection, tool constraints, token tracker, budget enforcer, findings format |
+| EPIC-ecef93a8 | Human Gates + Review Sub-Workflows | Done | Five-phase gate pipeline, 5 gate patterns, learning integration, workflow variants, selection rules |
+| EPIC-59b92c8d | Content Migration | Done | Rules, agents, knowledge migrated to plugin-composed format |
+| EPIC-9d781696 | Cleanup + Reconnect | Done | Verify migration, remove transition artifacts |
+
+The original plan proposed 4 epics; implementation required 7 due to the addition of a Graph Foundation epic (prerequisite infrastructure), a Content Migration epic (separate from implementation), and a Cleanup epic.
+
+### What Was Built vs What Was Predicted
+
+**Accurately predicted and built as designed:**
+
+- Five-stage prompt pipeline (Plugin Registry, Schema Assembly, Section Resolution, Token Budgeting, Prompt Output) -- implemented exactly as specified in section 6
+- Three injection tiers (always, stage-triggered, on-demand) -- implemented with the manifest format described in section 5
+- Plugin-owned state machines with YAML format -- implemented with all guard/action primitives from section 7
+- Five human gate patterns (simple_approval, structured_review, multi_reviewer, escalation, scope_decision) -- all five gate types implemented
+- Category-based state composition (planning, active, review, completed, terminal) -- implemented in the workflow type system
+- Contribution-point model for workflow composition -- implemented in the workflow resolver
+- Universal role taxonomy (8 roles) -- all 8 roles implemented with tool constraints
+- Findings-to-disk format with structured headers -- implemented with YAML frontmatter
+
+**Changed during implementation:**
+
+| Prediction | Actual | Reason |
+|-----------|--------|--------|
+| 4 implementation epics | 7 epics total | Graph foundation work, content migration, and cleanup each needed dedicated focus |
+| Workflow engine in Rust daemon | TypeScript in `libs/cli/` | Decision to build in TypeScript for faster iteration during pre-release; Rust integration deferred |
+| Prompt generation in daemon | TypeScript in `libs/cli/` | Same rationale; daemon integration planned post-migration |
+| YAML workflow files validated by JSON Schema | TypeScript type system provides validation | Type definitions in `libs/types/src/workflow.ts` serve as the schema; JSON Schema generation is future work |
+| Install-time workflow resolution only | Also available programmatically | `resolveAll()` can be called outside install for testing and validation |
+| Model tiering configurable per project domain | Implemented with sensible defaults + overrides | Connector/integration coordination deferred until connectors mature |
+
+### Token Efficiency Results
+
+**Structural improvements implemented:**
+
+- Per-role default budgets: Orchestrator 2,500 / Implementer 2,800 / Reviewer 1,900 / Writer 1,800 (compared to 9,500-16,500 pre-architecture)
+- Per-agent prompt budget enforcement: 4,000 token hard limit
+- Per-session cost enforcement: $5.00 default with 75%/90% warning thresholds
+- Four-level metrics capture (per-request, per-agent, per-session, trends) to `.state/token-metrics.jsonl`
+- Priority-based trimming (P0 never trimmed, P3 first)
+- KV-cache-aware prompt ordering (static top, dynamic bottom)
+
+**Not yet measured in production:** The architecture provides the infrastructure for the predicted 60-75% reduction, but production token measurements require running sessions through the new pipeline end-to-end via the daemon integration. The TypeScript pipeline is built and tested; the daemon integration that would expose it to actual LLM sessions is pending.
+
+### Architecture Decisions That Changed
+
+1. **Implementation language**: The research assumed Rust (daemon) implementation. Implementation chose TypeScript (`libs/cli/`) for faster iteration. This was a pragmatic decision -- the type system provides compile-time validation, the module can be consumed by both CLI and daemon, and migration to Rust is straightforward since the types are already defined in both languages.
+
+2. **Graph foundation as prerequisite**: The research did not explicitly call out graph fixes as a prerequisite epic. Implementation discovered that forward-only relationship storage, constraint fixes, and vocabulary documentation were prerequisites for workflow guards that use graph queries.
+
+3. **Content migration as separate epic**: The research section 10 described migration as part of the implementation path. Implementation treated it as a distinct epic (EPIC-59b92c8d) with sequential tasks and validation gates between each, following the decision in AD-1ef9f57c.
+
+4. **No backwards compatibility**: This was predicted by the research and confirmed by AD-1ef9f57c. The implementation carried this through strictly -- no fallback shims, no dual-write periods. Breaking changes were applied directly with data migrated via `orqa migrate`.
+
+### What Worked
+
+- **Plugin-composed everything as a principle** held up throughout implementation. No governance pattern needed to be hardcoded. The manifest format (knowledge declarations + prompt sections + workflow definitions) proved expressive enough for all use cases encountered.
+
+- **Forward-only relationship storage** eliminated the unbounded growth problem in milestone/pillar files. The graph computes inverses at query time with negligible cost.
+
+- **Five-stage pipeline decomposition** made each stage independently testable and debuggable. The conflict resolution (source priority) and token budgeting (priority trimming) are clean separation of concerns.
+
+- **YAML workflow format with declarative guards** provided the right balance of expressiveness and portability. Guards are inspectable in the YAML files; code hooks handle the edge cases.
+
+- **Hub-spoke orchestration with ephemeral agents** eliminated the context rot and shutdown discipline problems documented in prior research. Each agent gets exactly the context it needs, works on one task, and writes findings to disk.
+
+### What Did Not Work or Needs Improvement
+
+- **Token efficiency is structural but unmeasured**: The infrastructure for efficiency is in place (budgets, tracking, tiering), but production measurements are blocked on daemon integration. The predicted 60-75% reduction remains theoretical until sessions flow through the TypeScript pipeline.
+
+- **Dual TypeScript/Rust paths**: The Tauri app still uses the legacy Rust prompt assembly (`system_prompt.rs`) while CLI sessions can use the new pipeline. This creates two code paths that must be maintained until the daemon integrates the TypeScript pipeline.
+
+- **JSON Schema for workflows**: The TypeScript type system (`libs/types/src/workflow.ts`) serves as the validation layer, but a standalone JSON Schema file would enable validation outside TypeScript tooling (e.g., in YAML editors, CI pipelines). This is future work.
+
+- **On-demand knowledge retrieval**: The disk-based fallback in `knowledge-retrieval.ts` works but is not as powerful as semantic search via MCP. The quality of on-demand retrieval depends on the MCP search server being available, which is not always the case in CLI sessions.

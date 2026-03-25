@@ -5,13 +5,14 @@
 // See AGENT-4c94fe14 Delegation Steps for the behavioral contract.
 //
 // Two knowledge layers:
-//   Layer 1 (Declared): Reads the agent definition's `employs` relationships
-//     for KNOW-* IDs. Works offline — reads files on disk.
+//   Layer 1 (Declared): Reads the prompt registry for knowledge entries that
+//     match the detected agent role. No file parsing — uses the cached registry
+//     built at plugin-install time by @orqastudio/cli.
 //   Layer 2 (Semantic): Calls search_semantic via MCP TCP IPC to find
 //     task-specific knowledge beyond declared relationships.
 //
 // Availability:
-//   Layer 1 always works (file reads only).
+//   Layer 1 always works (reads .orqa/prompt-registry.json).
 //   Layer 2 requires the OrqaStudio app or MCP server running (IPC socket
 //   at LOCALAPPDATA/com.orqastudio.app/ipc.port). When unavailable, Layer 2
 //   gracefully returns empty — the hook still injects Layer 1 results.
@@ -23,11 +24,12 @@
 //
 // Non-blocking: injects context via outputWarn(), never denies.
 
-import { existsSync, readFileSync, readdirSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { createConnection } from "net";
 import { join } from "path";
 import { readInput, outputAllow, outputWarn } from "./shared.js";
 import { logTelemetry } from "./telemetry.js";
+import { readPromptRegistry, queryKnowledge, type RegistryKnowledgeEntry } from "@orqastudio/cli";
 
 /** Minimum semantic search score to include a result. */
 const MIN_SCORE = 0.25;
@@ -140,7 +142,7 @@ function mcpSearchCall(port: number, projectDir: string, query: string, limit: n
 }
 
 // ---------------------------------------------------------------------------
-// Layer 1 — Declared knowledge from agent employs relationships
+// Layer 1 — Declared knowledge from prompt registry
 // ---------------------------------------------------------------------------
 
 const ROLE_PATTERNS: Array<[RegExp, string]> = [
@@ -160,98 +162,31 @@ function detectRole(prompt: string): string | null {
   return null;
 }
 
-interface AgentFrontmatter {
-  title?: string;
-  relationships?: Array<{ target: string; type: string; rationale?: string }>;
-}
+/**
+ * Query the prompt registry for knowledge entries declared for the given role.
+ * Returns entries with their IDs, titles, and file paths.
+ *
+ * Replaces the old approach of hand-parsing AGENT-*.md frontmatter for
+ * employs relationships to KNOW-* IDs.
+ */
+function getDeclaredKnowledge(
+  role: string,
+  projectDir: string,
+): Array<{ id: string; title: string; path: string }> {
+  const registry = readPromptRegistry(projectDir);
+  if (!registry) return [];
 
-function parseFrontmatter(content: string): AgentFrontmatter {
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!match) return {};
+  const entries: RegistryKnowledgeEntry[] = queryKnowledge(registry, { role });
 
-  const yaml = match[1];
-  const result: AgentFrontmatter = {};
-
-  const titleMatch = yaml.match(/^title:\s*"?(.+?)"?\s*$/m);
-  if (titleMatch) result.title = titleMatch[1];
-
-  const relStart = yaml.indexOf("relationships:");
-  if (relStart !== -1) {
-    const relSection = yaml.slice(relStart);
-    const rels: AgentFrontmatter["relationships"] = [];
-    const relRegex = /- target:\s*(\S+)\s*\n\s*type:\s*(\S+)(?:\s*\n\s*rationale:\s*"?(.+?)"?\s*$)?/gm;
-    let relMatch: RegExpExecArray | null;
-    while ((relMatch = relRegex.exec(relSection)) !== null) {
-      rels.push({
-        target: relMatch[1],
-        type: relMatch[2],
-        rationale: relMatch[3],
-      });
-    }
-    result.relationships = rels;
-  }
-
-  return result;
-}
-
-function findAgentDefinition(role: string, projectDir: string): { path: string; frontmatter: AgentFrontmatter } | null {
-  const agentsDir = join(projectDir, ".orqa", "process", "agents");
-  if (!existsSync(agentsDir)) return null;
-
-  try {
-    const files = readdirSync(agentsDir).filter(f => f.startsWith("AGENT-") && f.endsWith(".md"));
-    for (const file of files) {
-      const filePath = join(agentsDir, file);
-      const content = readFileSync(filePath, "utf-8");
-      const fm = parseFrontmatter(content);
-      if (fm.title && fm.title.toLowerCase().includes(role.replace("-", " "))) {
-        return { path: filePath, frontmatter: fm };
-      }
-    }
-  } catch {
-    // Directory read failed
-  }
-  return null;
-}
-
-function resolveKnowledgeArtifacts(ids: string[], projectDir: string): Array<{ id: string; title: string; path: string }> {
-  const knowledgeDir = join(projectDir, ".orqa", "process", "knowledge");
-  const results: Array<{ id: string; title: string; path: string }> = [];
-
-  for (const id of ids) {
-    const filePath = join(knowledgeDir, `${id}.md`);
-    if (existsSync(filePath)) {
-      try {
-        const content = readFileSync(filePath, "utf-8");
-        const titleMatch = content.match(/^title:\s*"?(.+?)"?\s*$/m);
-        results.push({
-          id,
-          title: titleMatch?.[1] ?? id,
-          path: `.orqa/process/knowledge/${id}.md`,
-        });
-      } catch {
-        results.push({ id, title: id, path: `.orqa/process/knowledge/${id}.md` });
-      }
-    }
-  }
-
-  return results;
-}
-
-function getDeclaredKnowledge(prompt: string, projectDir: string): Array<{ id: string; title: string; path: string }> {
-  const role = detectRole(prompt);
-  if (!role) return [];
-
-  const agentDef = findAgentDefinition(role, projectDir);
-  if (!agentDef?.frontmatter.relationships) return [];
-
-  const knowIds = agentDef.frontmatter.relationships
-    .filter(r => r.type === "employs" && r.target.startsWith("KNOW-"))
-    .map(r => r.target);
-
-  if (knowIds.length === 0) return [];
-
-  return resolveKnowledgeArtifacts(knowIds, projectDir);
+  return entries
+    .filter((entry) => entry.content_file !== null)
+    .map((entry) => ({
+      id: entry.id,
+      title: entry.summary
+        ? entry.summary.split("\n")[0].slice(0, 80)
+        : entry.id,
+      path: entry.content_file!,
+    }));
 }
 
 // ---------------------------------------------------------------------------
@@ -312,8 +247,9 @@ async function main(): Promise<void> {
 
   const projectDir = input.cwd ?? process.cwd();
 
-  // Layer 1: Declared knowledge from agent employs relationships
-  const declared = getDeclaredKnowledge(prompt, projectDir);
+  // Layer 1: Declared knowledge from prompt registry (role-matched)
+  const role = detectRole(prompt);
+  const declared = role ? getDeclaredKnowledge(role, projectDir) : [];
   const declaredIds = new Set(declared.map(d => d.id));
 
   // Layer 2: Semantic search for task-relevant knowledge
@@ -323,6 +259,7 @@ async function main(): Promise<void> {
     logTelemetry("knowledge-injector", "PreToolUse:Agent", startTime, "no-results", {
       declared_count: 0,
       semantic_count: 0,
+      role: role ?? "unknown",
     });
     outputAllow();
   }
@@ -331,8 +268,7 @@ async function main(): Promise<void> {
   const parts: string[] = [];
 
   if (declared.length > 0) {
-    const role = detectRole(prompt) ?? "agent";
-    parts.push(`KNOWLEDGE INJECTION — ${role} has ${declared.length} declared knowledge artifact(s):\n`);
+    parts.push(`KNOWLEDGE INJECTION — ${role ?? "agent"} has ${declared.length} declared knowledge artifact(s):\n`);
     for (const k of declared) {
       parts.push(`- **${k.id}** (${k.title}): ${k.path}`);
     }
@@ -353,6 +289,7 @@ async function main(): Promise<void> {
     declared_ids: declared.map(d => d.id),
     semantic_count: semantic.length,
     semantic_ids: semantic.map(s => s.id),
+    role: role ?? "unknown",
   });
 
   outputWarn(parts);
