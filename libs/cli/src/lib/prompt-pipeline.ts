@@ -28,6 +28,10 @@ import {
 	querySections,
 	readPromptRegistry,
 } from "./prompt-registry.js";
+import {
+	countOnDemandEntries,
+	generateOnDemandPreamble,
+} from "./knowledge-retrieval.js";
 
 // ---------------------------------------------------------------------------
 // Public API Types
@@ -506,7 +510,7 @@ function applyTokenBudget(
  *
  * Uses Claude XML tags for structure. Never reorder sections between turns.
  */
-function assemblePrompt(sections: ResolvedSection[], role: string): string {
+function assemblePrompt(sections: ResolvedSection[], role: string, onDemandCount: number = 0): string {
 	// Sort by zone (static → dynamic), preserving relative order within zones
 	const sorted = [...sections].sort((a, b) => {
 		const zoneA = SECTION_ZONE[a.type] ?? 4;
@@ -531,6 +535,12 @@ function assemblePrompt(sections: ResolvedSection[], role: string): string {
 		parts.push(`<${tag} id="${section.id}" priority="${section.priority}">`);
 		parts.push(section.content);
 		parts.push(`</${tag}>`);
+	}
+
+	// Append on-demand knowledge preamble at the bottom (dynamic zone)
+	const preamble = generateOnDemandPreamble(onDemandCount);
+	if (preamble) {
+		parts.push(preamble);
 	}
 
 	return parts.join("\n\n");
@@ -602,8 +612,9 @@ export function generatePrompt(options: PromptPipelineOptions): PromptResult {
 	const budget = options.tokenBudget ?? DEFAULT_TOKEN_BUDGETS[options.role] ?? FALLBACK_BUDGET;
 	const { included, trimmed } = applyTokenBudget(resolved, budget);
 
-	// Stage 5 — Prompt Output
-	const prompt = assemblePrompt(included, options.role);
+	// Stage 5 — Prompt Output (includes on-demand preamble if applicable)
+	const onDemandCount = countOnDemandEntries(registry);
+	const prompt = assemblePrompt(included, options.role, onDemandCount);
 	const totalTokens = estimateTokens(prompt);
 
 	return {

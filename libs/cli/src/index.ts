@@ -41,3 +41,33 @@ export {
 export { auditLicenses, DEFAULT_LICENSE_POLICY, type LicenseAuditResult, type LicensePolicy } from "./lib/license.js";
 export { auditReadmes, generateReadmeTemplate, type ReadmeAuditResult } from "./lib/readme.js";
 
+// Prompt pipeline
+export {
+	generatePrompt,
+	estimateTokens,
+	DEFAULT_TOKEN_BUDGETS,
+	type PromptPipelineOptions,
+	type PromptResult,
+	type ResolvedSection,
+} from "./lib/prompt-pipeline.js";
+
+// Knowledge retrieval
+export {
+	retrieveKnowledge,
+	queryOnDemandEntries,
+	countOnDemandEntries,
+	generateOnDemandPreamble,
+	type KnowledgeQueryOptions,
+	type RetrievedKnowledge,
+} from "./lib/knowledge-retrieval.js";
+
+// Prompt registry
+export {
+	buildPromptRegistry,
+	readPromptRegistry,
+	runPromptRegistryBuild,
+	type PromptRegistry,
+	type RegistryKnowledgeEntry,
+	type RegistryPromptSection,
+} from "./lib/prompt-registry.js";
+

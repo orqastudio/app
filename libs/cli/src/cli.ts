@@ -20,6 +20,7 @@ import { runTestCommand } from "./commands/test.js";
 import { runDaemonCommand } from "./commands/daemon.js";
 import { runGitCommand } from "./commands/git.js";
 import { runBuildCommand } from "./commands/build.js";
+import { runSummarizeCommand } from "./commands/summarize.js";
 
 const USAGE = `
 OrqaStudio CLI v0.1.0-dev
@@ -35,6 +36,7 @@ Commands:
   graph       Browse the artifact graph
   daemon      Manage the validation daemon (start, stop, restart, status)
   mcp         MCP server + search indexing (index)
+  summarize   Generate knowledge artifact summaries (single, --all, --check)
   lsp         Start LSP server
   version     Version management (sync, bump, check, show)
   id          Artifact ID management (generate, check, migrate)
@@ -89,6 +91,9 @@ async function main(): Promise<void> {
 			break;
 		case "mcp":
 			await runMcpCommand(commandArgs);
+			break;
+		case "summarize":
+			await runSummarizeCommand(commandArgs);
 			break;
 		case "lsp":
 			await runLspCommand(commandArgs);
