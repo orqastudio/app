@@ -23,8 +23,9 @@ import {
 	processAggregatedFiles,
 	computeFileHash,
 } from "../lib/content-lifecycle.js";
-import type { ContentManifest, FileHashEntry, ThreeWayState, ThreeWayFileStatus, CopyResult } from "../lib/content-lifecycle.js";
+import type { ContentManifest, FileHashEntry, ThreeWayFileStatus } from "../lib/content-lifecycle.js";
 import { generateInjectorConfig } from "../lib/injector-config.js";
+import { runWorkflowResolution } from "../lib/workflow-resolver.js";
 import type { PluginProjectConfig, PluginManifest } from "@orqastudio/types";
 
 const USAGE = `
@@ -379,6 +380,13 @@ async function cmdInstall(args: string[]): Promise<void> {
 	// Run install lifecycle hook
 	runLifecycleHook(result.path, pluginManifest, "install");
 
+	// Re-resolve workflows (new plugin may provide workflows or contributions)
+	try {
+		runWorkflowResolution(projectRoot);
+	} catch {
+		// Non-fatal — workflow resolution is best-effort during install
+	}
+
 	console.log(`\nPlugin ${result.name} installed successfully.`);
 }
 
@@ -433,6 +441,13 @@ async function cmdInstallFirstParty(pluginDir: string, projectRoot: string): Pro
 
 	// Run install lifecycle hook
 	runLifecycleHook(pluginDir, pluginManifest, "install");
+
+	// Re-resolve workflows (new plugin may provide workflows or contributions)
+	try {
+		runWorkflowResolution(projectRoot);
+	} catch {
+		// Non-fatal — workflow resolution is best-effort during install
+	}
 
 	console.log(`\nPlugin ${pluginManifest.name} installed successfully.`);
 }
@@ -700,6 +715,13 @@ async function cmdRefresh(args: string[]): Promise<void> {
 	// Process aggregated files from all plugins
 	try {
 		processAggregatedFiles(projectRoot);
+	} catch {
+		// Non-fatal
+	}
+
+	// Resolve workflows from plugin contributions
+	try {
+		runWorkflowResolution(projectRoot);
 	} catch {
 		// Non-fatal
 	}

@@ -17,6 +17,7 @@ import * as path from "node:path";
 import * as readline from "node:readline";
 import { getRoot } from "../lib/root.js";
 import { generateInjectorConfig } from "../lib/injector-config.js";
+import { runWorkflowResolution } from "../lib/workflow-resolver.js";
 
 const NODE_MIN_MAJOR = 22;
 
@@ -437,6 +438,14 @@ console.log('  Content synced for ' + Object.keys(m.plugins).length + ' plugins'
 		} catch (e) {
 			console.error(`  Content sync failed: ${e instanceof Error ? e.message : String(e)}`);
 		}
+	}
+
+	// Resolve workflows from plugin contributions
+	console.log("Resolving workflows...");
+	try {
+		runWorkflowResolution(root);
+	} catch (e) {
+		console.error(`  Workflow resolution failed: ${e instanceof Error ? e.message : String(e)}`);
 	}
 }
 
