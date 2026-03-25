@@ -26,9 +26,9 @@ Read these before starting any work:
 ```
 EPIC-c828007a  Graph Foundation               [DONE]
        │
-       ├──→ EPIC-f6da17ed  Workflow Engine + State Machines  [ACTIVE]
+       ├──→ EPIC-f6da17ed  Workflow Engine + State Machines  [DONE]
        │         │
-       │         ├──→ EPIC-a63fde02  Prompt Generation + Knowledge
+       │         ├──→ EPIC-a63fde02  Prompt Generation + Knowledge    [ACTIVE]
        │         │         │
        │         │         └──→ EPIC-281f7857  Agent Lifecycle + Tiering
        │         │                    │
