@@ -19,9 +19,8 @@ relationships:
   - target: EPIC-4304bdcc
     type: delivers
     rationale: "Relationship storage model is governance foundation work"
-  - target: TASK-d28b2909
-    type: depends-on
-    rationale: "Vocabulary must be confirmed before changing storage model"
+  - target: TASK-8c5f7004
+    type: depended-on-by
 ---
 
 ## Research Findings
