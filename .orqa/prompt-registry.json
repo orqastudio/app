@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "built_at": "2026-03-25T15:30:29.159Z",
+  "knowledge": [
+    {
+      "id": "governance-maintenance",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "reviewer",
+        "writer"
+      ],
+      "stages": [
+        "review",
+        "maintain"
+      ],
+      "paths": [],
+      "tags": [],
+      "priority": "P1",
+      "summary": "Governance custodianship: audit agent definitions, maintain rules/knowledge artifacts, process lesson promotions, verify reading list currency, ensure internal consistency across the governance layer.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\agile-governance\\knowledge\\KNOW-8d76c3c7.md"
+    },
+    {
+      "id": "thinking-mode-learning",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "researcher",
+        "writer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [],
+      "priority": "P2",
+      "summary": "Learning loop thinking mode: when encountering surprising outcomes or process failures, capture as lesson artifacts. Lessons may be promoted to rules after review. Structure: observation, hypothesis, evidence, recommendation.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\agile-governance\\knowledge\\KNOW-85e392ea.md"
+    },
+    {
+      "id": "plugin-artifact-usage",
+      "plugin": "@orqastudio/plugin-agile-governance",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "plugin",
+        "artifact",
+        "governance"
+      ],
+      "priority": "P3",
+      "summary": null,
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\agile-governance\\knowledge\\KNOW-8d1c4be6.md"
+    },
+    {
+      "id": "code-quality-review",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "reviewer"
+      ],
+      "stages": [
+        "review"
+      ],
+      "paths": [],
+      "tags": [],
+      "priority": "P1",
+      "summary": "Code review methodology: automated checks first (lint, test, type-check), then manual review checklist (function size <=50 lines, no unwrap/panic, error composition with thiserror). Produce structured verdict with PASS/FAIL per category.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\software\\knowledge\\KNOW-f0efaf83.md"
+    },
+    {
+      "id": "test-engineering",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "stage-triggered",
+      "roles": [
+        "implementer"
+      ],
+      "stages": [
+        "implement"
+      ],
+      "paths": [],
+      "tags": [],
+      "priority": "P2",
+      "summary": "Test engineering methodology: unit tests for pure functions, integration tests for API boundaries, snapshot tests for UI components. Coverage target 80%. Test names describe behavior not implementation.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\software\\knowledge\\KNOW-bcb42347.md"
+    },
+    {
+      "id": "security-audit",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "security",
+        "audit",
+        "vulnerability"
+      ],
+      "priority": "P2",
+      "summary": "Security audit process: OWASP top 10 check, dependency vulnerability scan, secrets detection, input validation review. Produces structured findings with severity ratings.",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\software\\knowledge\\KNOW-170c220e.md"
+    },
+    {
+      "id": "delivery-completion",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "always",
+      "roles": [
+        "implementer",
+        "reviewer"
+      ],
+      "stages": [],
+      "paths": [],
+      "tags": [],
+      "priority": "P1",
+      "summary": "Delivery unit completion discipline: every task must have acceptance criteria verified, all follow-ups tracked, findings written to disk. Never mark complete without evidence.",
+      "content_file": null
+    },
+    {
+      "id": "component-extraction",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "tier": "on-demand",
+      "roles": [],
+      "stages": [],
+      "paths": [],
+      "tags": [
+        "refactoring",
+        "extraction",
+        "architecture"
+      ],
+      "priority": "P3",
+      "summary": null,
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\software\\knowledge\\KNOW-353a228b.md"
+    }
+  ],
+  "sections": [
+    {
+      "id": "implementer-role",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "type": "role-definition",
+      "role": "implementer",
+      "stage": null,
+      "priority": "P1",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\software\\prompts\\implementer-role.md"
+    },
+    {
+      "id": "review-checklist",
+      "plugin": "@orqastudio/plugin-software-project",
+      "source": "plugin",
+      "type": "stage-instruction",
+      "role": null,
+      "stage": "review",
+      "priority": "P2",
+      "content_file": "C:\\Users\\Bobbi\\code\\orqastudio-dev\\plugins\\software\\prompts\\review-checklist.md"
+    }
+  ],
+  "contributors": [
+    "@orqastudio/plugin-agile-governance",
+    "@orqastudio/plugin-software-project"
+  ],
+  "errors": []
+}

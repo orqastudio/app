@@ -26,6 +26,7 @@ import {
 import type { ContentManifest, FileHashEntry, ThreeWayFileStatus } from "../lib/content-lifecycle.js";
 import { generateInjectorConfig } from "../lib/injector-config.js";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
+import { runPromptRegistryBuild } from "../lib/prompt-registry.js";
 import type { PluginProjectConfig, PluginManifest } from "@orqastudio/types";
 
 const USAGE = `
@@ -387,6 +388,13 @@ async function cmdInstall(args: string[]): Promise<void> {
 		// Non-fatal — workflow resolution is best-effort during install
 	}
 
+	// Rebuild prompt registry (new plugin may provide knowledge declarations)
+	try {
+		runPromptRegistryBuild(projectRoot);
+	} catch {
+		// Non-fatal — prompt registry is best-effort during install
+	}
+
 	console.log(`\nPlugin ${result.name} installed successfully.`);
 }
 
@@ -447,6 +455,13 @@ async function cmdInstallFirstParty(pluginDir: string, projectRoot: string): Pro
 		runWorkflowResolution(projectRoot);
 	} catch {
 		// Non-fatal — workflow resolution is best-effort during install
+	}
+
+	// Rebuild prompt registry (new plugin may provide knowledge declarations)
+	try {
+		runPromptRegistryBuild(projectRoot);
+	} catch {
+		// Non-fatal — prompt registry is best-effort during install
 	}
 
 	console.log(`\nPlugin ${pluginManifest.name} installed successfully.`);
@@ -722,6 +737,13 @@ async function cmdRefresh(args: string[]): Promise<void> {
 	// Resolve workflows from plugin contributions
 	try {
 		runWorkflowResolution(projectRoot);
+	} catch {
+		// Non-fatal
+	}
+
+	// Build prompt registry from plugin knowledge declarations
+	try {
+		runPromptRegistryBuild(projectRoot);
 	} catch {
 		// Non-fatal
 	}

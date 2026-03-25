@@ -18,6 +18,7 @@ import * as readline from "node:readline";
 import { getRoot } from "../lib/root.js";
 import { generateInjectorConfig } from "../lib/injector-config.js";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
+import { runPromptRegistryBuild } from "../lib/prompt-registry.js";
 
 const NODE_MIN_MAJOR = 22;
 
@@ -446,6 +447,14 @@ console.log('  Content synced for ' + Object.keys(m.plugins).length + ' plugins'
 		runWorkflowResolution(root);
 	} catch (e) {
 		console.error(`  Workflow resolution failed: ${e instanceof Error ? e.message : String(e)}`);
+	}
+
+	// Build prompt registry from plugin knowledge declarations
+	console.log("Building prompt registry...");
+	try {
+		runPromptRegistryBuild(root);
+	} catch (e) {
+		console.error(`  Prompt registry build failed: ${e instanceof Error ? e.message : String(e)}`);
 	}
 }
 

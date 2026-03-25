@@ -483,6 +483,72 @@ export interface WorkflowRegistration {
 	path: string;
 }
 
+// ---------------------------------------------------------------------------
+// Knowledge Declarations (Prompt Generation Pipeline)
+// ---------------------------------------------------------------------------
+
+/** Injection tier for knowledge artifacts in the prompt pipeline. */
+export type KnowledgeInjectionTier = "always" | "stage-triggered" | "on-demand";
+
+/** Priority level for prompt sections and knowledge — determines trim order. */
+export type PromptPriority = "P0" | "P1" | "P2" | "P3";
+
+/**
+ * A knowledge artifact declaration in a plugin manifest.
+ *
+ * Declares when and for whom a knowledge artifact should be injected
+ * into agent prompts. Part of the five-stage prompt generation pipeline.
+ */
+export interface KnowledgeDeclaration {
+	/** Unique identifier within this plugin (e.g. "rust-error-composition"). */
+	id: string;
+	/** Injection tier — when this knowledge is loaded. */
+	tier: KnowledgeInjectionTier;
+	/** Agent roles that receive this knowledge (e.g. ["implementer", "reviewer"]). */
+	roles?: string[];
+	/** Workflow stages that trigger injection (for stage-triggered tier). */
+	stages?: string[];
+	/** File path glob patterns that trigger injection. */
+	paths?: string[];
+	/** Semantic tags for on-demand retrieval (for on-demand tier). */
+	tags?: string[];
+	/** Priority level for token budgeting — P0 is never trimmed, P3 is trimmed first. */
+	priority: PromptPriority;
+	/** Compressed summary (100-150 tokens) used for the "always" tier instead of full text. */
+	summary?: string;
+	/** Relative path to the full knowledge artifact file within the plugin. */
+	content_file?: string;
+}
+
+/** Type of prompt section a plugin contributes. */
+export type PromptSectionType =
+	| "role-definition"
+	| "stage-instruction"
+	| "constraint"
+	| "safety-rule"
+	| "task-template";
+
+/**
+ * A prompt section contributed by a plugin.
+ *
+ * Plugins can register role definitions, stage instructions, constraints,
+ * and other prompt sections that are assembled by the prompt pipeline.
+ */
+export interface PromptSection {
+	/** Unique identifier within this plugin (e.g. "implementer-role"). */
+	id: string;
+	/** The type of prompt section. */
+	type: PromptSectionType;
+	/** Agent role this section applies to (for role-specific sections). */
+	role?: string;
+	/** Workflow stage this section applies to (for stage-specific sections). */
+	stage?: string;
+	/** Priority level for token budgeting. */
+	priority: PromptPriority;
+	/** Relative path to the content file within the plugin. */
+	content_file: string;
+}
+
 /** The `provides` block of a plugin manifest. */
 export interface PluginProvides {
 	/** Artifact type schemas this plugin introduces. */
@@ -517,6 +583,10 @@ export interface PluginProvides {
 	aggregatedFiles?: PluginAggregatedFile[];
 	/** Workflow definitions for artifact type state machines. */
 	workflows?: WorkflowRegistration[];
+	/** Knowledge artifact declarations for prompt injection pipeline. */
+	knowledge_declarations?: KnowledgeDeclaration[];
+	/** Prompt section contributions (role definitions, stage instructions, etc.). */
+	prompt_sections?: PromptSection[];
 }
 
 // ---------------------------------------------------------------------------

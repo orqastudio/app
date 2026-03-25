@@ -807,6 +807,64 @@
     "session_reminders": [
       "Session state MUST include the scoped epic (EPIC-XXXXXXXX) so the stop hook can check completion."
     ],
+    "knowledge_declarations": [
+      {
+        "id": "code-quality-review",
+        "tier": "stage-triggered",
+        "roles": ["reviewer"],
+        "stages": ["review"],
+        "priority": "P1",
+        "summary": "Code review methodology: automated checks first (lint, test, type-check), then manual review checklist (function size <=50 lines, no unwrap/panic, error composition with thiserror). Produce structured verdict with PASS/FAIL per category.",
+        "content_file": "knowledge/KNOW-f0efaf83.md"
+      },
+      {
+        "id": "test-engineering",
+        "tier": "stage-triggered",
+        "roles": ["implementer"],
+        "stages": ["implement"],
+        "priority": "P2",
+        "summary": "Test engineering methodology: unit tests for pure functions, integration tests for API boundaries, snapshot tests for UI components. Coverage target 80%. Test names describe behavior not implementation.",
+        "content_file": "knowledge/KNOW-bcb42347.md"
+      },
+      {
+        "id": "security-audit",
+        "tier": "on-demand",
+        "tags": ["security", "audit", "vulnerability"],
+        "priority": "P2",
+        "summary": "Security audit process: OWASP top 10 check, dependency vulnerability scan, secrets detection, input validation review. Produces structured findings with severity ratings.",
+        "content_file": "knowledge/KNOW-170c220e.md"
+      },
+      {
+        "id": "delivery-completion",
+        "tier": "always",
+        "roles": ["implementer", "reviewer"],
+        "priority": "P1",
+        "summary": "Delivery unit completion discipline: every task must have acceptance criteria verified, all follow-ups tracked, findings written to disk. Never mark complete without evidence."
+      },
+      {
+        "id": "component-extraction",
+        "tier": "on-demand",
+        "tags": ["refactoring", "extraction", "architecture"],
+        "priority": "P3",
+        "content_file": "knowledge/KNOW-353a228b.md"
+      }
+    ],
+    "prompt_sections": [
+      {
+        "id": "implementer-role",
+        "type": "role-definition",
+        "role": "implementer",
+        "priority": "P1",
+        "content_file": "prompts/implementer-role.md"
+      },
+      {
+        "id": "review-checklist",
+        "type": "stage-instruction",
+        "stage": "review",
+        "priority": "P2",
+        "content_file": "prompts/review-checklist.md"
+      }
+    ],
     "decision_tree": {
       "branches": [
         {

@@ -1318,6 +1318,32 @@
     "hooks": [],
     "behavioral_rules": [
       "For process learnings and feedback: create lesson artifacts in .orqa/process/lessons/ instead of auto-memory files. Use auto-memory only for user-specific preferences (user type) and external references (reference type)."
+    ],
+    "knowledge_declarations": [
+      {
+        "id": "governance-maintenance",
+        "tier": "stage-triggered",
+        "roles": ["reviewer", "writer"],
+        "stages": ["review", "maintain"],
+        "priority": "P1",
+        "summary": "Governance custodianship: audit agent definitions, maintain rules/knowledge artifacts, process lesson promotions, verify reading list currency, ensure internal consistency across the governance layer.",
+        "content_file": "knowledge/KNOW-8d76c3c7.md"
+      },
+      {
+        "id": "thinking-mode-learning",
+        "tier": "always",
+        "roles": ["researcher", "writer"],
+        "priority": "P2",
+        "summary": "Learning loop thinking mode: when encountering surprising outcomes or process failures, capture as lesson artifacts. Lessons may be promoted to rules after review. Structure: observation, hypothesis, evidence, recommendation.",
+        "content_file": "knowledge/KNOW-85e392ea.md"
+      },
+      {
+        "id": "plugin-artifact-usage",
+        "tier": "on-demand",
+        "tags": ["plugin", "artifact", "governance"],
+        "priority": "P3",
+        "content_file": "knowledge/KNOW-8d1c4be6.md"
+      }
     ]
   },
   "content": {

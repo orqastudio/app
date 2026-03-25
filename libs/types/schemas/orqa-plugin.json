@@ -202,6 +202,100 @@
               }
             }
           }
+        },
+
+        "knowledge_declarations": {
+          "type": "array",
+          "description": "Knowledge artifact declarations for the prompt injection pipeline. Each declares when and for whom a knowledge artifact is injected.",
+          "items": {
+            "type": "object",
+            "required": ["id", "tier", "priority"],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*$",
+                "description": "Unique identifier within this plugin."
+              },
+              "tier": {
+                "type": "string",
+                "enum": ["always", "stage-triggered", "on-demand"],
+                "description": "Injection tier — when this knowledge is loaded into agent prompts."
+              },
+              "roles": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Agent roles that receive this knowledge."
+              },
+              "stages": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Workflow stages that trigger injection (for stage-triggered tier)."
+              },
+              "paths": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "File path glob patterns that trigger injection."
+              },
+              "tags": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Semantic tags for on-demand retrieval."
+              },
+              "priority": {
+                "type": "string",
+                "enum": ["P0", "P1", "P2", "P3"],
+                "description": "Priority level for token budgeting. P0 is never trimmed, P3 is trimmed first."
+              },
+              "summary": {
+                "type": "string",
+                "description": "Compressed summary (100-150 tokens) used for always-tier injection."
+              },
+              "content_file": {
+                "type": "string",
+                "description": "Relative path to the full knowledge artifact file within the plugin."
+              }
+            }
+          }
+        },
+
+        "prompt_sections": {
+          "type": "array",
+          "description": "Prompt section contributions — role definitions, stage instructions, constraints, and other prompt content.",
+          "items": {
+            "type": "object",
+            "required": ["id", "type", "priority", "content_file"],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*$",
+                "description": "Unique identifier within this plugin."
+              },
+              "type": {
+                "type": "string",
+                "enum": ["role-definition", "stage-instruction", "constraint", "safety-rule", "task-template"],
+                "description": "The type of prompt section."
+              },
+              "role": {
+                "type": "string",
+                "description": "Agent role this section applies to."
+              },
+              "stage": {
+                "type": "string",
+                "description": "Workflow stage this section applies to."
+              },
+              "priority": {
+                "type": "string",
+                "enum": ["P0", "P1", "P2", "P3"],
+                "description": "Priority level for token budgeting."
+              },
+              "content_file": {
+                "type": "string",
+                "description": "Relative path to the content file within the plugin."
+              }
+            }
+          }
         }
       }
     },

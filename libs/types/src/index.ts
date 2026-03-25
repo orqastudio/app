@@ -227,4 +227,9 @@ export type {
 	BundledKnowledgeRef,
 	PluginSymlinkDeclaration,
 	PluginAggregatedFile,
+	KnowledgeInjectionTier,
+	PromptPriority,
+	KnowledgeDeclaration,
+	PromptSectionType,
+	PromptSection,
 } from "./plugin.js";
