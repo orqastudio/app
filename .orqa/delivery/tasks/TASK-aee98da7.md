@@ -2,7 +2,7 @@
 id: TASK-aee98da7
 type: task
 title: "Token efficiency — lazy rule loading"
-status: captured
+status: archived
 priority: P1
 created: 2026-03-25
 updated: 2026-03-25

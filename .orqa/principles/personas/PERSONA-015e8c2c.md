@@ -137,5 +137,8 @@ relationships:
   - target: IDEA-d29c3686
     type: benefited-by
     rationale: "Auto-generated inverse of benefited-by relationship from IDEA-d29c3686"
+  - target: IDEA-5660c557
+    type: benefited-by
+    rationale: "Auto-generated inverse of benefited-by relationship from IDEA-5660c557"
 ---
 Secondary persona. Senior developer, staff engineer, or lead researcher who works with complex systems daily. Already uses AI tools and wants structured governance, learning loops, and session continuity. See the full personas document for details.
