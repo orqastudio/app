@@ -102,6 +102,26 @@ export {
 	type RegistryPromptSection,
 } from "./lib/prompt-registry.js";
 
+// Gate engine
+export {
+	startGate,
+	submitVerdict,
+	getOpenGates,
+	getGateSession,
+	clearGateSessions,
+	setAiRecommendation,
+	computeCycleTime,
+	type GatePhase,
+	type GateSession,
+	type GateVerdictInput,
+	type GateResult,
+	type GateEngineOptions,
+	type LessonAction,
+	type CycleTimeData,
+	type PreCheckResult,
+	type ReviewerVerdict,
+} from "./lib/gate-engine.js";
+
 // Agent spawner
 export {
 	createAgentConfig,
