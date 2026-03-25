@@ -10,18 +10,6 @@ category: tool
 version: 1.0.0
 user-invocable: false
 relationships: []
-tier: "on-demand"
-roles:
-  - "implementer"
-tags:
-  - "config-generation"
-  - "eslint"
-  - "clippy"
-  - "enforcement"
-priority: "P2"
-summary: |
-  Config generation from rules: generates tool configs (ESLint, clippy, rustfmt)
-  from OrqaStudio enforcement rules. Rules define what; this generates the how.
 ---
 
 # Config Generation from Rules

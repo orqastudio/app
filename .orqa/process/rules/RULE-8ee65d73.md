@@ -19,11 +19,6 @@ enforcement:
     event: file
     action: check
     pattern: ".orqa/delivery/tasks/**|.orqa/delivery/epics/**"
-summary: "If a deliverable is in an epic's scope, it ships with that epic. No deferring to future epics. Scope decisions are human decisions — agents advise but never unilaterally descope. Forbidden: 'will be wired up in EPIC-NNN', 'deferred to EPIC-NNN', 'minor cleanup remaining'. Surface every outstanding item individually for user decision."
-tier: always
-roles: [orchestrator, implementer]
-priority: P0
-tags: [no-deferral, scope-control, deliverables, human-decisions]
 relationships:
   - target: AD-b2f1f829
     type: enforces

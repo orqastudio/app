@@ -7,7 +7,6 @@ preamble: Design the approach, map dependencies, evaluate tradeoffs. Produce a s
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-maps_to_role: planner
 model: inherit
 capabilities:
   - file_read
@@ -97,16 +96,11 @@ For every plan, verify against foundational principles:
 | UX-first | Plan starts with user journeys. Backend derived from frontend needs. |
 | End-to-end | Every feature includes all 4 layers in the same task. |
 
-## Completion Standard
-
-You MUST address all planning questions in your delegation prompt. Every task in your breakdown must have concrete, verifiable acceptance criteria — vague criteria lead to deferred work.
-
 ## Critical Rules
 
 - NEVER skip the architectural compliance section — it is mandatory
 - NEVER design backend-first — start with what the user sees and does
 - NEVER produce a plan without verification criteria for each phase
 - NEVER ignore existing architecture decisions — plans must comply
-- NEVER produce vague acceptance criteria — each must be binary pass/fail
 - Always use `code_research` to understand current system state before designing changes
 - Always reconcile the plan's task list with the epic's roadmap entry

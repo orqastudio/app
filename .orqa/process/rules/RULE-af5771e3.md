@@ -14,12 +14,9 @@ enforcement:
     event: file
     action: check
     pattern: "src/**/*"
-summary: "No hardcoded fake data, TODO functions, or scaffolded implementations in production code. Every endpoint must return real data from real backend. Agent completion reports must include 'What Was Done', 'What Is NOT Done', 'Evidence', and 'Smoke Test' sections. PostToolUse hook checks source files for stub patterns."
-tier: stage-triggered
-roles: [implementer, reviewer]
-priority: P0
-tags: [quality, no-stubs, real-implementations, completion-reports]
 relationships:
+  - target: DOC-9814ec3c
+    type: documented-by
   - target: AD-af88bb69
     type: enforces
 ---

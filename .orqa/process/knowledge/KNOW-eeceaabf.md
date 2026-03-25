@@ -8,18 +8,6 @@ status: active
 created: 2026-03-21
 updated: 2026-03-21
 relationships: []
-tier: "always"
-roles:
-  - "*"
-tags:
-  - "thinking-mode"
-  - "dogfood"
-  - "infrastructure"
-priority: "P0"
-summary: |
-  Dogfood implementation thinking mode: building infrastructure for immediate
-  use in current workflow, not future features. Infrastructure is validated by
-  the workflow that triggered its creation.
 ---
 
 # Thinking Mode: Dogfood Implementation

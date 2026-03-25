@@ -9,11 +9,6 @@ updated: 2026-03-21
 enforcement:
   - mechanism: behavioral
     message: "Agents keep working until the task is done or a genuine blocker is encountered; never ask for permission to continue or propose stopping between steps"
-summary: "Agents must work continuously until task completion or genuine blocker. No permission-seeking, no 'shall I continue?', no pausing between steps. Only pause for genuine blockers (missing dependencies, ambiguous decisions) or risky irreversible actions. Enforced via orchestrator system prompt and reviewer gate."
-tier: always
-roles: [orchestrator, implementer, researcher, planner, reviewer, writer, designer]
-priority: P0
-tags: [agent-behavior, continuous-operation, autonomy]
 relationships:
   - target: IMPL-36b767ce
     type: codifies
@@ -48,7 +43,7 @@ Everything else proceeds without asking.
 
 This is a behavioral constraint enforced through two mechanisms:
 
-1. **Agent system prompt** — the orchestrator's instructions (`.claude/CLAUDE.md` or connector-composed prompt) state: "No deferred deliverables — if a deliverable is in scope, it ships NOW." The user preferences state: "Never ask to stop — keep working until the user says to stop."
+1. **Agent system prompt** — the orchestrator's `Safety` section (`app/.orqa/process/agents/orchestrator.md`) states: "No deferred deliverables — if a deliverable is in scope, it ships NOW." The `CLAUDE.md` user preferences section states: "Never ask to stop — keep working until the user says to stop."
 2. **Reviewer gate** — Reviewers verify acceptance criteria are fully met before a task is declared complete. Partial completion reported as complete is a separate violation (see RULE-honest-reporting).
 
 The constraint is documented in the orchestrator agent definition so it is loaded into context on every session start.

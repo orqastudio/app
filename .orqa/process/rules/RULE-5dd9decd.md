@@ -13,11 +13,6 @@ enforcement:
     type: Stop
     action: check
     description: "Stop hook scans completion reports for missing What Is NOT Done section"
-summary: "Report status accurately — partial work reported as complete is worse than reporting incomplete. Use precise terms: done, partially done, scaffolded, not started. Apply the 'Would It Work' test before marking complete. Forbidden: 'mostly complete', 'should work', 'will be wired up later'. Stop hook checks for missing 'What Is NOT Done' section."
-tier: always
-roles: [orchestrator, implementer, reviewer]
-priority: P0
-tags: [honest-reporting, status-accuracy, completion-criteria]
 relationships:
   - target: AD-9baf6ee9
     type: enforces
@@ -69,13 +64,13 @@ See [RULE-af5771e3](RULE-af5771e3) (no-stubs) > "Agent Completion Reports" for t
 
 ## Lesson Documentation Status
 
-Completion reports from Reviewer agents (with code-quality-review, qa-verification, or ux-compliance-review knowledge) MUST include lesson documentation status:
+Completion reports from review agents (`code-reviewer`, `qa-tester`, `ux-reviewer`) MUST include lesson documentation status:
 
 - Were any new IMPL entries added to `.orqa/process/lessons/`?
 - Were any existing IMPL entries updated with recurrence increments?
 - Was `.orqa/process/lessons/` checked for known patterns before reporting findings?
 
-Reviewer agents that skip lesson documentation are in violation of this rule AND [RULE-c603e90e](RULE-c603e90e) (lessons-learned).
+Review agents that skip lesson documentation are in violation of this rule AND [RULE-c603e90e](RULE-c603e90e) (lessons-learned).
 
 ## Related Rules
 

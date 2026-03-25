@@ -16,21 +16,6 @@ user-invocable: false
 relationships:
   - target: DOC-a16b7bc7
     type: synchronised-with
-tier: "stage-triggered"
-roles:
-  - "reviewer"
-stages:
-  - "review"
-  - "maintain"
-tags:
-  - "rules"
-  - "demotion"
-  - "stability"
-priority: "P2"
-summary: |
-  Demoted rule stability tracking: monitors rules demoted to knowledge, tracks
-  whether demotion was correct based on subsequent violations. Informs rule
-  lifecycle decisions.
 ---
 
 ## Purpose

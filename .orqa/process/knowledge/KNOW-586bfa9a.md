@@ -18,21 +18,6 @@ relationships:
   - target: DOC-586bfa9a
     type: synchronised-with
     rationale: "User-facing documentation pair for this agent-facing knowledge artifact"
-tier: "stage-triggered"
-roles:
-  - "*"
-stages:
-  - "implement"
-  - "review"
-tags:
-  - "knowledge"
-  - "injection"
-  - "auto-loading"
-priority: "P1"
-summary: |
-  Knowledge auto-injection: how the system automatically loads relevant
-  knowledge based on tier (always/stage-triggered/on-demand), file paths, and
-  semantic search triggers.
 ---
 
 ## Purpose

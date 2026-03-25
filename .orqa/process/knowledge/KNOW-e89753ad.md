@@ -13,22 +13,6 @@ relationships:
   - target: DOC-e89753ad
     type: synchronised-with
     rationale: "User-facing documentation pair for this agent-facing knowledge artifact"
-tier: "stage-triggered"
-roles:
-  - "implementer"
-  - "reviewer"
-stages:
-  - "implement"
-  - "review"
-tags:
-  - "cli"
-  - "commands"
-  - "orqa"
-  - "tooling"
-priority: "P1"
-summary: |
-  OrqaStudio CLI command reference: every orqa command, subcommands, and usage.
-  Agents must use orqa commands instead of raw cargo/npm/make.
 ---
 
 # OrqaStudio CLI Commands

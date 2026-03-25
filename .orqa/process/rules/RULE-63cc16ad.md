@@ -15,11 +15,6 @@ enforcement:
   - mechanism: pre-commit
     check: "orqa enforce"
     description: "Pre-commit hook runs orqa enforce on staged .orqa files"
-summary: "project.json artifacts array is source of truth for scanning. Every config path must resolve to disk. No hardcoded paths in code. Config-driven scanning: flat and recursive. README.md frontmatter is primary metadata; config is override layer. .claude/ is symlinks to .orqa/ — never write directly to .claude/. Display labels: YAML title first, humanized filename fallback."
-tier: stage-triggered
-roles: [implementer, reviewer]
-priority: P1
-tags: [artifact-config, project-json, scanning, symlinks, config-integrity]
 relationships:
   - target: AD-f9fbd1d7
     type: enforces

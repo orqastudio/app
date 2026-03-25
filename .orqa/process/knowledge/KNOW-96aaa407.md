@@ -8,19 +8,6 @@ updated: 2026-03-20
 relationships:
   - target: DOC-fd1d12bb
     type: synchronised-with
-tier: "on-demand"
-roles:
-  - "implementer"
-paths:
-  - "**/*.svelte"
-tags:
-  - "svelte5"
-  - "events"
-  - "reference"
-priority: "P3"
-summary: |
-  Svelte 5 events reference: callback props replace createEventDispatcher.
-  Native DOM events via on* attributes. Component events via $props callbacks.
 ---
 
 # Svelte 5 Events Reference

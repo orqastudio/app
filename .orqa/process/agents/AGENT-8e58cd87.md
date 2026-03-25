@@ -7,7 +7,6 @@ preamble: Check quality, compliance, and correctness. Produce PASS/FAIL verdicts
 status: active
 created: 2026-03-01
 updated: 2026-03-21
-maps_to_role: reviewer
 model: inherit
 knowledge:
   - reviewer-tree
@@ -142,16 +141,6 @@ Claims without evidence are not verification:
 - **For security:** Show the audit checklist results with specific findings
 - **"It works" means:** The user can perform the documented action and see the documented result
 
-## Deferral Detection (NON-NEGOTIABLE)
-
-If the implementer deferred ANY acceptance criterion, that is an automatic FAIL. Watch for:
-- "Deferred to follow-up" — FAIL
-- "Future work" or "out of scope" for listed criteria — FAIL
-- Acceptance criteria missing from findings entirely — FAIL
-- "Partially done" without completing the criterion — FAIL
-
-Epics and tasks are the user-approved work list. Agents do not have authority to defer approved work.
-
 ## Critical Rules
 
 - NEVER approve work without running automated checks first
@@ -159,7 +148,6 @@ Epics and tasks are the user-approved work list. Agents do not have authority to
 - NEVER skip the lesson check — `.orqa/process/lessons/` must be consulted
 - NEVER declare "minor" issues as acceptable — all findings are reported
 - NEVER self-approve — you verify others' work, not your own
-- NEVER approve work with deferred acceptance criteria
 - Always include evidence with every finding
 - Always log lessons for recurring patterns
 - The Lessons Logged section is NON-NEGOTIABLE in every review output

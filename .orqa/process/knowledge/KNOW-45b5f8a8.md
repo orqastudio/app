@@ -17,18 +17,6 @@ user-invocable: true
 relationships:
   - target: DOC-4554ff3e
     type: synchronised-with
-tier: "on-demand"
-roles:
-  - "reviewer"
-tags:
-  - "security"
-  - "audit"
-  - "owasp"
-priority: "P2"
-summary: |
-  Security audit methodology: secret management, capability/permission systems,
-  file system scoping, input validation, dependency auditing, vulnerability
-  classification.
 ---
 Security auditing methodology for applications. This skill teaches *what to check and how* — the specific security mechanisms (e.g., Tauri capabilities, keyring APIs) come from the project's technology skills.
 

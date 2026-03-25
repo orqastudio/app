@@ -1,22 +1,14 @@
 ---
-id: "KNOW-6cfacbb2"
-type: "knowledge"
-name: "ESLint Config Management"
-status: "active"
+id: KNOW-6cfacbb2
+type: knowledge
+name: ESLint Config Management
+status: active
 plugin: "@orqastudio/plugin-svelte"
 relationships:
-  - target: "DOC-fd1d12bb"
-    type: "synchronised-with"
-tier: "on-demand"
-roles:
-  - "implementer"
-paths:
-  - "**/*.svelte"
-tags:
-  - "svelte5"
-  - "reference"
-priority: "P3"
-summary: "Additional Svelte 5 patterns and reference material for component development."
+  - target: DOC-fd1d12bb
+    type: synchronised-with
+  - target: AGENT-6f55de0d
+    type: employed-by
 ---
 
 # ESLint Config Management

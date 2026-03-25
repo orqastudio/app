@@ -9,11 +9,6 @@ updated: "2026-03-21"
 enforcement:
   - mechanism: behavioral
     message: "All pre-release versions must use a -dev suffix; bare X.Y.Z version strings are reserved for production releases only"
-summary: "Pre-release versions must use -dev suffix (e.g. 0.2.0-dev). Bare X.Y.Z reserved for production releases. Applies to: VERSION file (canonical), all package.json, all Cargo.toml, all orqa-plugin.json. Use orqa version bump and orqa version sync — never manually edit version fields. orqa version check detects drift between files."
-tier: on-demand
-roles: [orchestrator, implementer]
-priority: P2
-tags: [versioning, pre-release, dev-tags, version-sync]
 relationships: []
 ---
 

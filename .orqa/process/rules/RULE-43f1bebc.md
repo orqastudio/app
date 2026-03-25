@@ -14,11 +14,6 @@ enforcement:
     event: file
     action: inject
     description: "systems-thinking knowledge injected on all implementation work"
-summary: "Universal rule: evaluate every change as part of the whole system. Before touching code, identify the system, boundaries, relationships, patterns, and consequences. Anti-patterns: fixing one instance instead of all, adding special cases, patching symptoms. Uniform base principle: one default behavior applied to all members, variations are optional layers. Plans addressing symptoms without identifying the system are rejected."
-tier: always
-roles: [orchestrator, implementer, planner, reviewer]
-priority: P0
-tags: [systems-thinking, universal, design-principles, uniform-base]
 relationships:
   - target: AD-af88bb69
     type: enforces

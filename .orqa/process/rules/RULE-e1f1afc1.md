@@ -51,17 +51,14 @@ enforcement:
     action: inject
     pattern: ".orqa/**"
     knowledge: "orqa-governance, orqa-documentation"
-summary: "PostToolUse hooks auto-inject domain knowledge when agents write to specific code areas. Path-to-knowledge map: domain/ → domain-services + error-composition, commands/ → ipc-patterns + error-composition, repo/ → repository-pattern, sidecar/ → streaming, components/ → component-extraction + svelte5, stores/ → store-patterns + orchestration, .orqa/ → governance + documentation. Knowledge injected once per session (deduplication)."
-tier: stage-triggered
-roles: [implementer]
-priority: P1
-tags: [knowledge-injection, auto-inject, posttooluse, domain-knowledge]
 relationships:
   - target: "AD-e8a0f910"
     type: "enforces"
     rationale: "Auto-generated inverse of practiced-by relationship from AD-e8a0f910"
   - target: "AD-c6c2d9fb"
     type: "enforces"
+  - target: "DOC-e6fb92b0"
+    type: "documented-by"
 ---
 When agents write to specific code areas, the enforcement engine automatically injects
 relevant domain knowledge as system context. This implements Layer 2 (Knowledge Injection)
@@ -71,7 +68,7 @@ of the structured thinking enforcement system.
 
 Enforcement entries with `action: inject` and a `knowledge` array are evaluated on every
 Write/Edit tool call. When a file path matches, the specified knowledge artifacts are read from
-`.orqa/process/knowledge/KNOW-<hash>.md` and returned as `systemMessage` to inject into the
+`.orqa/process/knowledge/<name>/KNOW.md` and returned as `systemMessage` to inject into the
 agent's context.
 
 ## Path-to-Knowledge Map

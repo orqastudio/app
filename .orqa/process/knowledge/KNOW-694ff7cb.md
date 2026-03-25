@@ -1,22 +1,16 @@
 ---
-id: "KNOW-694ff7cb"
-type: "knowledge"
-name: "Rust Testing Patterns"
-status: "active"
+id: KNOW-694ff7cb
+type: knowledge
+name: Rust Testing Patterns
+status: active
 plugin: "@orqastudio/plugin-rust"
 relationships:
-  - target: "DOC-2372ed36"
-    type: "synchronised-with"
-tier: "on-demand"
-roles:
-  - "implementer"
-paths:
-  - "**/*.rs"
-tags:
-  - "rust"
-  - "reference"
-priority: "P3"
-summary: "Rust language reference for common patterns used in the OrqaStudio backend."
+  - target: DOC-2372ed36
+    type: synchronised-with
+  - target: AGENT-26e5029d
+    type: employed-by
+  - target: AGENT-065a25cc
+    type: employed-by
 ---
 
 # Rust Testing Patterns

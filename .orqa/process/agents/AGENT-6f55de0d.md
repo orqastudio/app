@@ -6,8 +6,6 @@ description: "Scoped task agent for Svelte/TypeScript coding standards. Operates
 preamble: "Execute Svelte/TypeScript standards checks in assess or configure mode. Return structured JSON output. Do not converse — execute and return."
 status: "active"
 plugin: "@orqastudio/plugin-svelte"
-maps_to_role: reviewer
-maps_to_role_domain: svelte-standards
 model: "sonnet"
 capabilities:
   - "file_read"

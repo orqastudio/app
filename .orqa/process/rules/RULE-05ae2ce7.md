@@ -1,56 +1,47 @@
 ---
-id: RULE-05ae2ce7
+id: "RULE-05ae2ce7"
 type: rule
-title: Architecture Decisions
-description: OrqaStudio-specific extension of RULE-05ae2ce7 (architecture-decisions). Defines the critical decisions that govern OrqaStudio's Rust/Tauri/Svelte stack and the .orqa/process/decisions/ directory as their source of truth.
-status: active
-created: 2026-03-07
-updated: 2026-03-22
+title: "Architecture Decisions"
+description: "Architecture decisions are first-class governance artifacts. Every significant technical choice must be recorded with status, rationale, alternatives considered, and relationships to the rules and delivery work it drives."
+status: "active"
+created: "2026-03-22"
+updated: "2026-03-22"
 enforcement:
   - mechanism: behavioral
-    message: "Orchestrator must read relevant architecture decisions before delegating any implementation; plans must include an Architectural Compliance section verifying all relevant decisions"
-summary: "Architecture decisions in .orqa/process/decisions/ are source of truth. Critical decisions: error propagation (Result types, no unwrap), IPC boundary (Tauri invoke only), component purity (display vs container), type safety (strict TS, no any), immutability, UX-first, Svelte 5 only, SQLite for conversations only. Plans must include Architectural Compliance section."
-tier: stage-triggered
-roles: [implementer, planner, reviewer]
-priority: P1
-tags: [architecture, decisions, compliance, ipc, type-safety]
-relationships:
-  - target: AD-859ed163
-    type: enforces
+    message: "Orchestrator reads architecture decisions before delegating; every significant technical choice must be recorded as a decision artifact; plans must include an Architectural Compliance section"
 ---
-**Source of Truth:** `.orqa/process/decisions/` — individual `AD-NNN.md` artifacts. Decisions are first-class artifacts browsable in the app's artifact navigation.
+Architecture decisions are first-class governance artifacts. Every significant technical choice must be recorded as a decision artifact with status, rationale, alternatives considered, and relationships to the rules and delivery work it drives. Decisions are the bridge between discovery (research, ideas) and governance (rules, enforcement).
 
-This rule is OrqaStudio's specific extension of the generic architecture-decisions methodology (RULE-05ae2ce7). It documents the critical decisions for OrqaStudio's stack and the process for verifying compliance before writing code or plans.
+## What Belongs in a Decision Artifact
 
-## Critical Decisions (violations = immediate rejection)
-
-| Decision | Rule |
-|----------|------|
-| Error propagation | All Rust functions return `Result`. No `unwrap()` / `expect()` / `panic!()` in production. `thiserror` for typed errors. |
-| IPC boundary | Tauri `invoke()` is the ONLY frontend-backend interface. No side channels, no direct FFI. |
-| Component purity | Display components receive props only. Pages/containers fetch data. No `invoke()` in `$lib/components/`. |
-| Type safety | Strict TypeScript (no `any`). Rust IPC types derive `Serialize`/`Deserialize`. Types match across the boundary. |
-| Immutability | Rust domain types immutable by default. Svelte stores use runes (`$state`, `$derived`). |
-| UX-first design | User journeys drive backend requirements, not the reverse. |
-| Svelte 5 only | Runes only. No Svelte 4 patterns (`$:`, `export let`, `let:`). |
-| SQLite for conversations only | SQLite is scoped to conversation persistence (sessions, messages, metrics). All governance data lives in file-based artifacts with the node graph as the query layer. No localStorage for application state. ([AD-859ed163](AD-859ed163) supersedes [AD-75bb14ae](AD-75bb14ae)) |
+- The decision itself (what was chosen)
+- The status (proposed, accepted, superseded)
+- The rationale (why this choice over alternatives)
+- Alternatives considered (what was rejected and why)
+- Consequences (what this constrains, what it enables)
+- Relationships to rules, epics, and other decisions
 
 ## Before Writing Code
 
-1. Check if your change affects any existing decision — browse decisions in the app or search `.orqa/process/decisions/` for the relevant `AD-NNN.md`
+1. Check if your change affects any existing decision — search the decisions directory for relevant artifacts
 2. Read the relevant decision artifact(s) for full context
-3. If proposing a new decision, create an `AD-NNN.md` in `.orqa/process/decisions/` following the framework schema (see `.orqa/documentation/about/artifact-framework.md` — Decision schema).
+3. If proposing a new decision, create a decision artifact following the project's artifact schema
 
 ## Before Writing Plans
 
-1. Read [RULE-dccf4226](RULE-dccf4226) (plan-mode-compliance)
-2. Start with user journeys and UI design (UX-first)
-3. Include architectural compliance section verifying all relevant decisions
+1. Start with user journeys and the desired outcome
+2. Include an architectural compliance section verifying all relevant decisions
+3. Flag any conflict between the proposed approach and existing decisions before proceeding
 
-## Related Rules
+## Decision Lifecycle
 
-- [RULE-05ae2ce7](RULE-05ae2ce7) (architecture-decisions) — generic methodology this rule extends
-- [RULE-dccf4226](RULE-dccf4226) (plan-mode-compliance) — plans must include an architectural compliance section verifying all decisions
-- [RULE-ec9462d8](RULE-ec9462d8) (documentation-first) — architecture decisions ARE documentation; this rule defines their source of truth
-- [RULE-1b238fc8](RULE-1b238fc8) (vision-alignment) — decisions implement the foundational principles; this rule governs their creation and compliance
-- RULE-b03009da (end-to-end-completeness) — decisions define the layer requirements (IPC boundary, component purity, type safety) that every feature must satisfy
+- Decisions begin as `proposed`
+- Accepted decisions move to `accepted`
+- When a decision is superseded, the old artifact is updated to `superseded` and linked to the new one via `evolves-into` / `evolves-from`
+- Superseded decisions are historical reference — they are not deleted
+
+## FORBIDDEN
+
+- Making a significant technical choice without a decision artifact
+- Treating decisions as immutable — they evolve; use `evolves-into` to track that evolution
+- Deleting superseded decisions instead of marking them superseded

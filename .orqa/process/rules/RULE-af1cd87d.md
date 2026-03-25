@@ -12,11 +12,6 @@ enforcement:
   - mechanism: tool
     command: "orqa enforce"
     description: "Pipeline integrity tool verifies behavioral rule enforcement coverage"
-summary: "Defines enforcement strategies for behavioral rules: (1) prompt injection at delegation time, (2) output validation via post-hoc checks, (3) knowledge injection based on file paths being modified, (4) session hooks at start/end boundaries. 19 behavioral rules mapped across 4 strategies."
-tier: on-demand
-roles: [orchestrator]
-priority: P2
-tags: [behavioral-enforcement, strategies, prompt-injection, knowledge-injection]
 relationships:
   - target: AD-c6c2d9fb
     type: enforces
@@ -40,7 +35,7 @@ Rule content is injected into the agent's context at delegation time. The orches
 | [RULE-d5d28fba](RULE-d5d28fba) | Structure before work — artifacts must exist before implementation |
 | [RULE-ef822519](RULE-ef822519) | Context management — minimize orchestrator context window usage |
 
-**Implementation**: The orchestrator's delegation template includes these rules by reference. The connector's prompt injector (`connectors/claude-code/src/hooks/prompt-injector.ts`) auto-injects relevant rule IDs when task artifacts are referenced.
+**Implementation**: The orchestrator's delegation template includes these rules by reference. The companion plugin's prompt injector (`prompt-injector.mjs`) auto-injects relevant rule IDs when task artifacts are referenced.
 
 ### Strategy 2: Output Validation
 
@@ -67,7 +62,7 @@ Domain knowledge is loaded into agent context before work begins on relevant fil
 | [RULE-43f1bebc](RULE-43f1bebc) | Systems thinking — systems-thinking knowledge injected on all implementation work |
 | [RULE-71352dc8](RULE-71352dc8) | UAT process — uat-process knowledge injected during review/testing phases |
 
-**Implementation**: [RULE-e1f1afc1](RULE-e1f1afc1) defines the path-to-knowledge injection map. The connector's knowledge injector (`connectors/claude-code/src/hooks/knowledge-injector.ts`) triggers knowledge injection on Write/Edit.
+**Implementation**: [RULE-e1f1afc1](RULE-e1f1afc1) defines the path-to-knowledge injection map. The companion plugin's `PostToolUse` hook on Write/Edit triggers knowledge injection.
 
 ### Strategy 4: Session Hooks
 
@@ -78,7 +73,7 @@ Plugin hooks that trigger at session boundaries (start, end, stop) to enforce wo
 | [RULE-f609242f](RULE-f609242f) | Git workflow — session-start checks for stashes and untracked files; session-end verifies all changes committed |
 | [RULE-30a223ca](RULE-30a223ca) | Session management — session-end checks for uncommitted changes and writes session state |
 
-**Implementation**: The connector's `SessionStart` hook (`connectors/claude-code/hooks/scripts/session-start.sh`) and `Stop` hook (`connectors/claude-code/hooks/scripts/stop-checklist.sh`) enforce these checks.
+**Implementation**: The companion plugin's `SessionStart` hook (`session-start.sh`) and `Stop` hook (`stop-checklist.sh`) enforce these checks.
 
 ## Coverage Summary
 

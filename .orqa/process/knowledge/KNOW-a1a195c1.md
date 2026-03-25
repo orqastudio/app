@@ -11,18 +11,6 @@ user-invocable: false
 relationships:
   - target: DOC-fd1d12bb
     type: synchronised-with
-tier: "on-demand"
-roles:
-  - "implementer"
-tags:
-  - "tailwind"
-  - "design-system"
-  - "css"
-  - "tokens"
-priority: "P2"
-summary: |
-  Tailwind CSS v4 design system: design tokens, component libraries, responsive
-  patterns. Build scalable UI systems with utility-first CSS.
 ---
 
 

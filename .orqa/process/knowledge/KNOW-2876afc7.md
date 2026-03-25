@@ -18,17 +18,6 @@ user-invocable: true
 relationships:
   - target: DOC-bad8e26f
     type: synchronised-with
-tier: "on-demand"
-roles:
-  - "implementer"
-tags:
-  - "setup"
-  - "project"
-  - "initialization"
-priority: "P2"
-summary: |
-  Project setup: how to initialize a new OrqaStudio project, configure plugins,
-  and establish the governance structure.
 ---
 
 Creates the base governance structure for any project. This skill is domain-agnostic — it sets up the infrastructure that all project types share. Domain-specific rules and knowledge are added by project type presets (e.g., `project-type-software`).

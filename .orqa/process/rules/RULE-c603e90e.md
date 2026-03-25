@@ -13,16 +13,13 @@ enforcement:
     type: SessionStart
     action: surface
     description: "Session start hook surfaces recurring lessons that are due for promotion"
-summary: "Two mandatory learning loops: implementation lessons (IMPL files in .orqa/process/lessons/) and process retrospectives. Review agents must check existing lessons before reporting, increment recurrence, create new IMPL files. Promotion at recurrence >= 2 to rules/knowledge. Enforcement gate: rules need enforcement entries before promotion completes."
-tier: stage-triggered
-roles: [orchestrator, reviewer]
-priority: P1
-tags: [lessons, learning-loops, promotion, recurrence]
 relationships:
   - target: AD-339e9223
     type: enforces
   - target: AD-c6c2d9fb
     type: enforces
+  - target: DOC-f6c4ac69
+    type: documented-by
 ---
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.
 
@@ -30,7 +27,7 @@ The team maintains two learning loops to prevent mistakes from recurring across 
 
 Lessons are stored as individual markdown files in `.orqa/process/lessons/`, one file per lesson with YAML frontmatter (id, title, category, recurrence count, promoted-to, tags). In the CLI, agents can also reference `.orqa/process/lessons/` as a consolidated view.
 
-When a Reviewer (with code-quality-review, qa-verification, or ux-compliance-review knowledge) reports a FAIL verdict:
+When `code-reviewer`, `qa-tester`, or `ux-reviewer` reports a FAIL verdict:
 
 1. **Check existing lessons** — search `.orqa/process/lessons/` for the failure pattern before reporting it as a novel finding
 2. **If the failure matches an existing lesson:** note the recurrence (increment the count in the lesson file's frontmatter)
@@ -67,7 +64,7 @@ If a promoted lesson still sees violations: escalate enforcement (context inject
 
 ## Review Agent Output Requirements
 
-All Reviewer agents (with code-quality-review, qa-verification, or ux-compliance-review knowledge) MUST include a "Lessons Logged" section in their output format listing:
+All review agents (`code-reviewer`, `qa-tester`, `ux-reviewer`) MUST include a "Lessons Logged" section in their output format listing:
 
 - Any new IMPL entries added during this review
 - Any recurrence updates to existing IMPL entries

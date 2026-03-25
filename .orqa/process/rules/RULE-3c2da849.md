@@ -18,12 +18,7 @@ enforcement:
     type: PostToolUse
     event: file
     action: warn
-    pattern: ".orqa/process/knowledge/KNOW-*.md"
-summary: "Core graph artifacts (schemas, orchestrator prompt, core knowledge, role definitions) are firmware — non-editable except via update system or dogfood mode. PostToolUse hooks warn on writes to schema.json and core knowledge files. Dogfood exception: project.json dogfood:true flag bypasses protection."
-tier: always
-roles: [orchestrator, implementer, writer]
-priority: P0
-tags: [safety, core-protection, firmware, dogfood]
+    pattern: ".orqa/process/knowledge/composability/KNOW.md|.orqa/process/knowledge/research-methodology/KNOW.md|.orqa/process/knowledge/planning/KNOW.md|.orqa/process/knowledge/orqa-code-search/KNOW.md"
 relationships:
   - target: AD-f079c196
     type: enforces
@@ -31,6 +26,8 @@ relationships:
     type: enforces
   - target: AD-e8a0f910
     type: enforces
+  - target: DOC-e6fb92b0
+    type: documented-by
 ---
 Core graph artifacts define how the artifact graph works, how agents traverse it, and how the structured thinking process operates. They are **firmware** — they ship with OrqaStudio and are not modified during normal project use.
 
@@ -39,7 +36,7 @@ Core graph artifacts define how the artifact graph works, how agents traverse it
 | Artifact | Path | Why It's Protected |
 |----------|------|--------------------|
 | **Artifact schemas** | `schema.json` in every artifact directory | Define what fields exist, what edges connect artifact types |
-| **Core knowledge** | `KNOW-*.md` in `.orqa/process/knowledge/` | Define universal methodology all agents use |
+| **Core knowledge** | `composability`, `planning`, `research-methodology`, `orqa-code-search` | Define universal methodology all agents use |
 | **Orchestrator prompt** | `.orqa/process/agents/orchestrator.md` | Defines graph traversal and process model |
 | **Role definitions** | `.orqa/process/agents/*.md` + `schema.json` | Define the 7 universal roles and boundaries |
 

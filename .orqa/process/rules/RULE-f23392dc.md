@@ -14,11 +14,6 @@ enforcement:
   - mechanism: tool
     command: "orqa enforce"
     description: "Validates user-invocable field presence; missing field blocks commits"
-summary: "Every knowledge artifact must have a user-invocable field (true/false) in YAML frontmatter. True: appears in CLI slash commands, app knowledge picker, and knowledge browser for direct user invocation. False: only loaded into agent context by orchestrator, hidden from user-facing lists. Set true for on-demand methodology; false for workflow-sequenced or internal-audit knowledge."
-tier: on-demand
-roles: [orchestrator, writer]
-priority: P2
-tags: [knowledge, user-invocable, slash-commands, frontmatter]
 relationships:
   - target: AD-c1e5a39e
     type: enforces

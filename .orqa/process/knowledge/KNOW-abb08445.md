@@ -8,20 +8,6 @@ updated: 2026-03-20
 relationships:
   - target: DOC-fd1d12bb
     type: synchronised-with
-tier: "on-demand"
-roles:
-  - "implementer"
-paths:
-  - "**/*.svelte"
-tags:
-  - "svelte5"
-  - "runes"
-  - "reference"
-priority: "P2"
-summary: |
-  Svelte 5 runes reference: $state, $derived, $effect, $props, $bindable,
-  $inspect. Complete API reference with usage patterns and migration notes from
-  Svelte 4 stores.
 ---
 
 # Svelte 5 Runes Reference

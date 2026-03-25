@@ -11,20 +11,6 @@ user-invocable: false
 relationships:
   - target: DOC-2372ed36
     type: synchronised-with
-tier: "on-demand"
-roles:
-  - "implementer"
-paths:
-  - "**/*.rs"
-tags:
-  - "rust"
-  - "async"
-  - "tokio"
-  - "patterns"
-priority: "P2"
-summary: |
-  Rust async patterns with Tokio: tasks, channels, streams, error handling,
-  graceful shutdown, async traits. Production patterns for concurrent Rust.
 ---
 
 

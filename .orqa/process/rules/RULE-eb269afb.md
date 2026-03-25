@@ -15,17 +15,11 @@ enforcement:
     action: inject
     pattern: "ui/src/lib/components/**"
     description: "Knowledge injection triggered when writing to component directory"
-summary: "Check shared component library before creating new UI elements. Use EmptyState, LoadingSpinner, ErrorDisplay, ConfirmDeleteDialog, StatusIndicator, SearchInput, etc. from $lib/components/shared/. No inline empty/loading/error states. shadcn-svelte first. Panel layouts must be resizable. Use semantic search to find existing implementations."
-tier: stage-triggered
-roles: [implementer, designer]
-priority: P1
-tags: [ui, components, shared-library, reusability]
 relationships:
+  - target: "DOC-2c94f7ba"
+    type: "documented-by"
   - target: "AD-9a7d7256"
     type: "enforces"
-  - target: AD-80f39962
-    type: enforces
-    rationale: "Auto-generated inverse of enforces relationship from AD-80f39962"
 ---
 ## Shared Component Library
 

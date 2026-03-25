@@ -7,7 +7,6 @@ preamble: Coordinate and delegate, never implement directly. Use the MCP server 
 status: active
 created: 2026-03-01
 updated: 2026-03-24
-maps_to_role: orchestrator
 model: sonnet
 knowledge:
   - decision-tree
@@ -31,6 +30,9 @@ relationships:
   - target: KNOW-e3432947
     type: employs
     rationale: "Plugin-canonical architecture — injected for all artifact creation/governance work"
+  - target: KNOW-57365826
+    type: employs
+    rationale: "Schema lookup before write — injected for all artifact creation/governance work"
   - target: PILLAR-c9e0a695
     type: serves
     rationale: Agent serves this pillar/persona in its operational role

@@ -9,11 +9,6 @@ updated: 2026-03-12
 enforcement:
   - mechanism: behavioral
     message: "Every implementation plan must have an Architectural Compliance section and Systems Architecture Checklist before implementation begins; plans missing these sections are rejected"
-summary: "Every implementation plan must include: Architectural Compliance section (error propagation, service boundary, component purity, type safety, immutability, UX-first, end-to-end, coding standards), Systems Architecture Checklist (persistence, contracts, state, config, health, errors, testing, preferences, docs), and UX-first design (user journeys → UI → backend). Independent reviewer verification after each phase. Loop closure mandatory for enforcement epics."
-tier: stage-triggered
-roles: [orchestrator, planner, reviewer]
-priority: P1
-tags: [planning, architectural-compliance, ux-first, verification-gates]
 relationships:
   - target: AD-b2f1f829
     type: enforces
@@ -118,7 +113,7 @@ After every plan phase is implemented, an INDEPENDENT verification must occur be
    - Quality checks: linter, type-checker, test suite
    - Doc compliance: every UI label matches docs, every service type matches docs
    - Behavioral verification: features work as documented, not just type-check
-3. **If FAIL**: implementing agent fixes issues, Reviewer re-audits
+3. **If FAIL**: implementing agent fixes issues, code-reviewer re-audits
 4. **If PASS**: phase is marked complete, next phase can begin
 
 ### What the Reviewer Checks
@@ -181,7 +176,7 @@ Before any epic moves to `done`, the orchestrator MUST present the Out of Scope 
 
 Plans that omit architectural compliance or UX-first design are rejected. The orchestrator MUST verify both sections exist and are substantive (not just boilerplate) before delegating implementation to subagents.
 
-After every phase implementation, the orchestrator MUST invoke a Reviewer agent (with code-quality-review knowledge) for independent verification before proceeding to the next phase.
+After every phase implementation, the orchestrator MUST invoke the code-reviewer agent for independent verification before proceeding to the next phase.
 
 ## Related Rules
 

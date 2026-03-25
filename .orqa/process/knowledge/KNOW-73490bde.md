@@ -1,22 +1,14 @@
 ---
-id: "KNOW-73490bde"
-type: "knowledge"
-name: "Tauri v2 Patterns"
-status: "active"
+id: KNOW-73490bde
+type: knowledge
+name: Tauri v2 Patterns
+status: active
 plugin: "@orqastudio/plugin-tauri"
 relationships:
-  - target: "DOC-13c73ecf"
-    type: "synchronised-with"
-tier: "on-demand"
-roles:
-  - "implementer"
-paths:
-  - "app/src-tauri/**"
-tags:
-  - "tauri"
-  - "reference"
-priority: "P3"
-summary: "Additional Tauri v2 reference for specific development patterns."
+  - target: DOC-13c73ecf
+    type: synchronised-with
+  - target: AGENT-65b56a0b
+    type: employed-by
 ---
 
 # Tauri v2 Patterns

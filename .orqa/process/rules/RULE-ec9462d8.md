@@ -9,11 +9,6 @@ updated: "2026-03-12"
 enforcement:
   - mechanism: behavioral
     message: "Documentation is the source of truth; verify docs exist before writing code; update docs before changing code; orchestrator checks docs-required gate before delegating implementation"
-summary: "Documentation is the source of truth. Verify docs exist before writing code, update docs before changing code. Check .orqa/documentation/ for existing designs. Epic docs-required gate must be satisfied before implementation. No deprecated documentation — delete and replace. Bug investigation must check docs before fixing code."
-tier: always
-roles: [orchestrator, implementer, writer]
-priority: P0
-tags: [documentation-first, source-of-truth, gates]
 relationships:
   - target: "AD-af88bb69"
     type: "enforces"
@@ -89,7 +84,7 @@ The artifact framework enforces documentation at two points:
 - **`docs-required`** — documentation that must exist BEFORE implementation starts (epic `draft → ready` transition)
 - **`docs-produced`** — documentation that this work MUST create or update on completion (verified at `review → done` transition)
 
-These fields are defined on every epic. The orchestrator checks `docs-required` before starting work, and the Reviewer verifies `docs-produced` during the review gate.
+These fields are defined on every epic. The orchestrator checks `docs-required` before starting work, and the code-reviewer verifies `docs-produced` during the review gate.
 
 See [RULE-b10fe6d1](RULE-b10fe6d1) (artifact-lifecycle) for enforcement details and `.orqa/documentation/guide/artifact-workflow.md` for the full workflow.
 

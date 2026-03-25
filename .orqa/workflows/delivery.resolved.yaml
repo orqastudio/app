@@ -6,7 +6,7 @@
 #   - @orqastudio/plugin-software-project → implementation-workflow (+5 states, +10 transitions)
 #   - @orqastudio/plugin-software-project → review-process (+4 states, +11 transitions)
 # Unfilled contribution points: discovery-artifacts, documentation-standards, learning-pipeline
-# Resolved at: 2026-03-25T21:57:56.671Z
+# Resolved at: 2026-03-25T22:11:49.099Z
 
 name: delivery
 version: 0.1.0

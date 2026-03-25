@@ -11,18 +11,15 @@ enforcement:
     message: "Agent definitions must declare capabilities not tool names; orchestrator resolves capabilities to concrete tool names per provider mapping at delegation time"
   - mechanism: json-schema
     description: "Governance steward verifies agent YAML uses capabilities field not tool names"
-summary: "Agent definitions declare abstract capabilities (file_read, file_edit, shell_execute, etc.), not concrete tool names. Provider mapping tables resolve capabilities to tools per context: Claude Code CLI (PascalCase built-ins + MCP) or OrqaStudio App (Tauri commands + native ONNX). Orchestrator resolves at delegation time."
-tier: always
-roles: [orchestrator, implementer, researcher, planner, reviewer, writer, designer]
-priority: P1
-tags: [capabilities, provider-agnostic, tool-mapping]
 relationships:
   - target: AD-02a2a97b
     type: enforces
+  - target: DOC-d9cc1f84
+    type: documented-by
 ---
 Agent definitions declare **capabilities** (what they can do), not **tools** (how they
 do it). The mapping from capabilities to provider-specific tool names is defined in this
-rule and resolved at delegation time by the orchestrator, connector, or app.
+rule and resolved at delegation time by the orchestrator, companion plugin, or app.
 
 ## Capability Vocabulary
 
@@ -99,7 +96,7 @@ When the orchestrator delegates to an agent:
 5. If a capability has no mapping in the current context (e.g., semantic search
    unavailable), note the gap explicitly in the delegation prompt
 
-Until the connector fully automates this resolution, the orchestrator
+Until the companion plugin (EPIC-9a1eba3f) automates this resolution, the orchestrator
 performs it manually in every delegation.
 
 ## Agent Definition Format

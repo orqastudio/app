@@ -17,21 +17,6 @@ user-invocable: true
 relationships:
   - target: DOC-4554ff3e
     type: synchronised-with
-tier: "stage-triggered"
-roles:
-  - "implementer"
-stages:
-  - "implement"
-  - "test"
-tags:
-  - "testing"
-  - "engineering"
-  - "methodology"
-priority: "P1"
-summary: |
-  Test engineering: unit tests for pure functions, integration for boundaries,
-  snapshots for UI. Coverage target 80%. Test names describe behavior not
-  implementation.
 ---
 
 

@@ -15,11 +15,6 @@ enforcement:
   - mechanism: cargo-test
     description: "cargo tarpaulin enforces 80% coverage per module"
   - mechanism: vitest
-summary: "Test organization: Rust unit tests in src/**/tests/, integration in tests/, frontend in *.test.ts (Vitest), E2E in tests/ (Playwright). 80%+ coverage per module. Mock only at adapter/boundary layer — never domain logic. Each test independent, no shared mutable state. Use in-memory SQLite for DB tests."
-tier: stage-triggered
-roles: [implementer, reviewer]
-priority: P1
-tags: [testing, coverage, mocking, test-isolation]
 relationships:
   - target: "AD-a1c2ca06"
     type: "enforces"

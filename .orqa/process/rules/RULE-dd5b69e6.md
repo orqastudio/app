@@ -9,16 +9,17 @@ updated: 2026-03-13
 enforcement:
   - mechanism: behavioral
     message: "Skills must be loaded before task execution; orchestrator's delegation template requires skill loading; three-tier skill loading must be followed"
-summary: "Three-tier skill loading: Tier 1 (portable, from agent YAML skills: list), Tier 2 (project-specific, orchestrator-injected), Tier 3 (context-resolved wrappers like orqa-code-search). Universal skills on every agent: orqa-code-search + composability. Skill layers: core (portable), setup, project, plugin, community, user. Load order: Tier 1 → Tier 2 → Required Reading → implement. Rule status: active/inactive controls enforcement."
-tier: always
-roles: [orchestrator, implementer, researcher, planner, reviewer, writer, designer]
-priority: P1
-tags: [skill-loading, three-tier, universal-skills, context-resolution]
 relationships:
   - target: AD-c1e5a39e
     type: enforces
   - target: AD-26b0eb9f
     type: enforces
+  - target: DOC-b11d4f61
+    type: documented-by
+  - target: DOC-d9cc1f84
+    type: documented-by
+  - target: DOC-e6fb92b0
+    type: documented-by
 ---
 Every agent MUST have a `skills:` list in its YAML frontmatter. Agent tool access is declared via `capabilities:` and resolved per provider context — see [RULE-8abcbfd5](RULE-8abcbfd5). Skills load in three tiers [AD-c1e5a39e](AD-c1e5a39e).
 
@@ -43,7 +44,7 @@ If a skill fails to load, the agent MUST report the failure explicitly. Do NOT s
 
 ## Layer Classification
 
-Every skill carries a `layer` field in its frontmatter:
+Every skill carries a `layer` field in its SKILL.md frontmatter:
 
 | Layer | Meaning | Loading |
 |-------|---------|---------|

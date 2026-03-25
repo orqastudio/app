@@ -6,8 +6,6 @@ description: "Scoped task agent for Tauri v2 patterns and configuration. Extends
 preamble: "Execute Tauri v2 standards checks in assess or configure mode. Return structured JSON output. Do not converse — execute and return."
 status: "active"
 plugin: "@orqastudio/plugin-tauri"
-maps_to_role: reviewer
-maps_to_role_domain: tauri-standards
 model: "sonnet"
 capabilities:
   - "file_read"

@@ -1,35 +1,28 @@
 ---
-id: "KNOW-e6fee7a0"
-type: "knowledge"
-title: "First-Party Plugin Development"
-description: "First-party plugin workflow for the platform dev environment. Use when creating\nor modifying plugins within the platform monorepo. Plugins are submodules,\nmanaged by the dev environment's CLI, and published via CI workflows.\n"
-status: "active"
-created: 2026-03-19T00:00:00.000Z
-updated: 2026-03-23T00:00:00.000Z
-category: "domain"
-version: "0.2.0"
+id: KNOW-e6fee7a0
+type: knowledge
+title: First-Party Plugin Development
+description: |
+  First-party plugin workflow for the platform dev environment. Use when creating
+  or modifying plugins within the platform monorepo. Plugins are submodules,
+  managed by the dev environment's CLI, and published via CI workflows.
+status: active
+created: 2026-03-19
+updated: 2026-03-23
+category: domain
+version: 0.2.0
 user-invocable: false
 relationships:
-  - target: "DOC-05f59d04"
-    type: "synchronised-with"
-  - target: "KNOW-2f38309a"
-    type: "synchronised-with"
-  - target: "DOC-266182d2"
-    type: "synchronised-with"
-  - target: "DOC-bad8e26f"
-    type: "synchronised-with"
-tier: "on-demand"
-roles:
-  - "implementer"
-tags:
-  - "plugin"
-  - "first-party"
-  - "monorepo"
-priority: "P2"
-summary: |
-  First-party plugin development: workflow for the platform monorepo. Plugins
-  are submodules, managed by dev environment CLI, published via CI.
+  - target: DOC-05f59d04
+    type: synchronised-with
+  - target: KNOW-2f38309a
+    type: synchronised-with
+  - target: DOC-266182d2
+    type: synchronised-with
+  - target: DOC-bad8e26f
+    type: synchronised-with
 ---
+
 # First-Party Plugin Development
 
 ## Detection

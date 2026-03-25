@@ -21,17 +21,6 @@ relationships:
     type: synchronised-with
   - target: DOC-bad8e26f
     type: synchronised-with
-tier: "on-demand"
-roles:
-  - "implementer"
-tags:
-  - "plugin"
-  - "third-party"
-  - "development"
-priority: "P3"
-summary: |
-  Third-party plugin development: standalone plugin creation outside the
-  platform monorepo. Template-based, registry publishing, community conventions.
 ---
 
 # Third-Party Plugin Development

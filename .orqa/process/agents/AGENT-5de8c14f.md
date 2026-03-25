@@ -7,8 +7,6 @@ preamble: "Build Svelte 5 frontend code using runes only, shadcn-svelte componen
 status: "active"
 plugin: "@orqastudio/plugin-svelte"
 inherits: "AGENT-e5dd38e4"
-maps_to_role: implementer
-maps_to_role_domain: svelte
 model: "sonnet"
 capabilities:
   - "file_read"

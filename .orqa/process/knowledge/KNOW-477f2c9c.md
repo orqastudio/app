@@ -31,23 +31,6 @@ relationships:
   - target: KNOW-586bfa9a
     type: related
     rationale: "Knowledge auto-injection is the detailed injection mechanism"
-tier: "stage-triggered"
-roles:
-  - "implementer"
-  - "reviewer"
-stages:
-  - "implement"
-  - "review"
-tags:
-  - "architecture"
-  - "agentic"
-  - "enforcement"
-  - "pipeline"
-priority: "P1"
-summary: |
-  Agentic workflow and enforcement pipeline: how agent prompts flow through
-  thinking modes, knowledge injection, validation gates, and enforcement hooks.
-  The execution spine of the system.
 ---
 
 ## Purpose

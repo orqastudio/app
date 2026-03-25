@@ -7,8 +7,6 @@ preamble: You are the Plugin Developer. Before creating or modifying any plugin,
 status: active
 created: 2026-03-24
 updated: 2026-03-24
-maps_to_role: implementer
-maps_to_role_domain: plugin-development
 model: sonnet
 capabilities:
   - file_read
@@ -34,6 +32,9 @@ relationships:
   - target: KNOW-e3432947
     type: employs
     rationale: "Plugin-canonical architecture — where content lives and why"
+  - target: KNOW-57365826
+    type: employs
+    rationale: "Schema lookup before write — query schemas via MCP before writing frontmatter"
   - target: PILLAR-a6a4bbbb
     type: serves
     rationale: Agent serves this pillar/persona in its operational role

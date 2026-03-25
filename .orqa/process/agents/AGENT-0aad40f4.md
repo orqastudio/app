@@ -7,7 +7,6 @@ preamble: Design experiences, interfaces, and structures. Produce visual designs
 status: active
 created: 2026-03-01
 updated: 2026-03-10
-maps_to_role: designer
 model: sonnet
 capabilities:
   - file_read

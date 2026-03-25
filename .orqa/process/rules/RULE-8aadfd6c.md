@@ -9,16 +9,11 @@ updated: 2026-03-21
 enforcement:
   - mechanism: behavioral
     message: ".state/session-state.md must be updated in real time during conversations; every new decision, plan change, scope change, or step completion must be reflected immediately"
-summary: "Session state (.state/session-state.md) is a working document updated in real time, not a post-session summary. Update on: new steps, step completions, scope changes, decisions, tangents, blockers. Must contain: current scope, step checklist, ADs made, lessons captured. Tangent protocol: update state before pursuing tangent."
-tier: always
-roles: [orchestrator]
-priority: P1
-tags: [session-state, real-time, working-document]
 relationships:
-  - target: RULE-5d2d39b7
-    type: related
-    rationale: "Completion gate depends on session state being current"
+  - target: IMPL-984941fb
+    type: promoted-from
 ---
+
 Session state is a **working document**, not a post-session summary. `.state/session-state.md` must reflect the current state of the conversation at all times.
 
 ## What Must Be Reflected Immediately
@@ -57,7 +52,7 @@ The stop hook's auto-generated state summary MUST NOT overwrite a richer orchest
 
 ## Enforcement
 
-This rule is enforced by the Claude Code connector's prompt injector hook (`connectors/claude-code/src/hooks/prompt-injector.ts`):
+This rule is enforced by the Claude Code connector's UserPromptSubmit hook (`connectors/claude-code/hooks/scripts/prompt-injector.mjs`):
 
 1. **Constant reminder** — every prompt injection includes a reminder that session state is a working document
 2. **Freshness check** — the hook checks `.state/session-state.md` on every prompt:

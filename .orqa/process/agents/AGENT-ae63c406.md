@@ -7,7 +7,6 @@ preamble: You are the Governance Steward. Before creating or modifying ANY artif
 status: active
 created: 2026-03-24
 updated: 2026-03-24
-maps_to_role: governance_steward
 model: sonnet
 capabilities:
   - file_read
@@ -27,6 +26,9 @@ relationships:
   - target: KNOW-e3432947
     type: employs
     rationale: "Plugin-canonical architecture — where artifacts belong"
+  - target: KNOW-57365826
+    type: employs
+    rationale: "Schema lookup before write — query schemas via MCP before writing frontmatter"
   - target: PILLAR-a6a4bbbb
     type: serves
     rationale: Agent serves this pillar/persona in its operational role
@@ -151,8 +153,7 @@ Creating one without the other is incomplete work.
 - NEVER create a doc without a matching knowledge artifact (or vice versa)
 - NEVER write plugin-canonical content directly in `.orqa/` — write in the plugin source directory
 - NEVER skip `graph_validate()` after batch changes
-- NEVER defer artifact changes from your delegation prompt — complete them or report failure
-- ALWAYS report what was created, what was modified, and what FAILED (not "deferred")
+- ALWAYS report what was created, what was modified, and what was NOT done
 - ALWAYS write findings to `.state/team/<team-name>/` before marking tasks complete
 
 ## Operational Roles
