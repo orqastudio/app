@@ -27,6 +27,10 @@ relationships:
     type: delivered-by
   - target: TASK-272b3d07
     type: delivered-by
+  - target: TASK-d28b2909
+    type: delivered-by
+  - target: TASK-2cc041f3
+    type: delivered-by
 ---
 
 ## Context
