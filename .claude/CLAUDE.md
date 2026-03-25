@@ -34,7 +34,7 @@ EPIC-c828007a  Graph Foundation               [DONE]
        │         │                    │
        │         │                    └──→ EPIC-59b92c8d  Content Migration                [DONE]
        │         │                               │
-       │         │                               └──→ EPIC-9d781696  Cleanup + Reconnect               [ACTIVE]
+       │         │                               └──→ EPIC-9d781696  Cleanup + Reconnect               [DONE]
        │         │
        │         └──→ EPIC-ecef93a8  Human Gates + Review              [DONE]
 ```
