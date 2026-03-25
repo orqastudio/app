@@ -1,0 +1,110 @@
+name: pivot
+version: "0.1.0"
+artifact_type: pivot
+plugin: "@orqastudio/plugin-agile-workflow"
+description: >
+  Pivot lifecycle state machine. Pivots capture significant strategic
+  direction changes. The workflow is intentionally linear — a pivot is
+  explored, activated (decision made), completed (change implemented),
+  and eventually archived.
+
+initial_state: captured
+
+states:
+  captured:
+    category: planning
+    description: "Pivot has been captured but not yet explored."
+
+  exploring:
+    category: planning
+    description: "Pivot is being explored — impact assessment, alternatives, rationale."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Pivot exploration started"
+
+  active:
+    category: active
+    description: "Pivot decision has been made — change is being implemented."
+    on_enter:
+      - type: set_field
+        params:
+          field: decided_at
+          value: "${now}"
+      - type: append_log
+        params:
+          message: "Pivot activated"
+
+  completed:
+    category: completed
+    description: "Pivot change has been fully implemented."
+    on_enter:
+      - type: set_field
+        params:
+          field: completed_at
+          value: "${now}"
+      - type: append_log
+        params:
+          message: "Pivot completed"
+
+  surpassed:
+    category: terminal
+    description: "Pivot has been superseded by a subsequent pivot."
+
+  archived:
+    category: terminal
+    description: "Pivot is archived."
+
+transitions:
+  # Exploration phase
+  - from: captured
+    to: exploring
+    event: explore
+    description: "Begin exploring pivot impact and alternatives."
+
+  - from: captured
+    to: active
+    event: activate
+    description: "Fast-track to active implementation."
+
+  # Active phase
+  - from: exploring
+    to: active
+    event: activate
+    description: "Decide and begin implementing the pivot."
+
+  - from: exploring
+    to: archived
+    event: archive
+    description: "Archive during exploration (pivot not viable)."
+
+  - from: active
+    to: completed
+    event: complete
+    description: "Pivot change fully implemented."
+
+  # Terminal transitions
+  - from: completed
+    to: archived
+    event: archive
+
+  - from: completed
+    to: surpassed
+    event: surpass
+
+  - from: surpassed
+    to: archived
+    event: archive
+
+  - from: captured
+    to: archived
+    event: archive
+    description: "Archive a captured pivot that was never explored."
+
+migration:
+  captured: captured
+  exploring: exploring
+  active: active
+  completed: completed
+  surpassed: surpassed
+  archived: archived

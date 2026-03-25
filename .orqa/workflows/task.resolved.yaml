@@ -1,12 +1,12 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
-# Skeleton: @orqastudio/plugin-agile-governance (workflows/task.workflow.yaml)
+# Skeleton: @orqastudio/plugin-agile-workflow (workflows/task.workflow.yaml)
 # Resolved at: 2026-03-25T22:11:49.150Z
 
 name: task
 version: 0.1.0
 artifact_type: task
-plugin: "@orqastudio/plugin-software-project"
+plugin: "@orqastudio/plugin-software-kanban"
 description: >
   Task lifecycle state machine. Covers the full journey from capture through planning, active work, review, and
   completion. Supports quickfix, security, docs-only, and hotfix variants for ad-hoc patterns.

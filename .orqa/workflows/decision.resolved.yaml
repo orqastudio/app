@@ -1,12 +1,12 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
-# Skeleton: @orqastudio/plugin-agile-governance (workflows/decision.workflow.yaml)
+# Skeleton: @orqastudio/plugin-agile-workflow (workflows/decision.workflow.yaml)
 # Resolved at: 2026-03-25T22:11:49.118Z
 
 name: decision
 version: 0.1.0
 artifact_type: decision
-plugin: "@orqastudio/plugin-agile-governance"
+plugin: "@orqastudio/plugin-agile-workflow"
 description: >
   Decision lifecycle state machine. Decisions (architecture decisions, ADRs) capture significant choices and their
   rationale. The workflow tracks capture, exploration, active deliberation, review, and completion.

@@ -1,6 +1,6 @@
 {
   "plugins": {
-    "@orqastudio/plugin-agile-governance": {
+    "@orqastudio/plugin-agile-workflow": {
       "version": "0.1.4-dev",
       "installed_at": "2026-03-25T22:11:38.580Z",
       "files": {
@@ -474,7 +474,7 @@
         }
       }
     },
-    "@orqastudio/plugin-software-project": {
+    "@orqastudio/plugin-software-kanban": {
       "version": "0.1.4-dev",
       "installed_at": "2026-03-25T22:11:44.119Z",
       "files": {

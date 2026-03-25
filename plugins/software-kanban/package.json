@@ -1,0 +1,24 @@
+{
+  "name": "@orqastudio/plugin-software-kanban",
+  "version": "0.1.4-dev",
+  "private": true,
+  "type": "module",
+  "description": "Software development delivery types for OrqaStudio — milestones, epics, tasks, dependency tracking, and the delivery hierarchy.",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch"
+  },
+  "dependencies": {
+    "@orqastudio/types": "0.1.4-dev"
+  },
+  "peerDependencies": {
+    "@orqastudio/sdk": "0.1.4-dev",
+    "@orqastudio/svelte-components": "0.1.4-dev",
+    "svelte": "^5.0.0"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "vite": "^6.0.0",
+    "typescript": "^5.9.0"
+  }
+}

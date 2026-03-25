@@ -113,7 +113,7 @@ Day 16:  User confirms deletion — rule file removed
 | `connectors/claude-code/hooks/scripts/stability-check.mjs` | Session-start stability tracker |
 | `plugins/githooks/hooks/pre-commit` | Violation logging (appends to JSONL) |
 | `.state/precommit-violations.jsonl` | Append-only violation log |
-| `plugins/agile-governance/orqa-plugin.json` | Rule schema with demotion fields |
+| `plugins/agile-workflow/orqa-plugin.json` | Rule schema with demotion fields |
 
 ## Related Documents
 

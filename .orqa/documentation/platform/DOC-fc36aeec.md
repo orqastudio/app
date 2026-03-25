@@ -19,7 +19,7 @@ When you initialise a project as a "software development" type, OrqaStudio layer
 
 ### The Software Plugin
 
-The software plugin (`@orqastudio/plugin-software-project`) is installed automatically. It provides:
+The software plugin (`@orqastudio/plugin-software-kanban`) is installed automatically. It provides:
 
 - **5 artifact types:** milestone, epic, task, research, wireframe
 - **9 relationships:** delivers, fulfils, depends-on, realises, produces, yields, reports, fixes, affects

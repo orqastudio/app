@@ -1,12 +1,12 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
-# Skeleton: @orqastudio/plugin-agile-governance (workflows/epic.workflow.yaml)
+# Skeleton: @orqastudio/plugin-agile-workflow (workflows/epic.workflow.yaml)
 # Resolved at: 2026-03-25T22:11:49.122Z
 
 name: epic
 version: 0.1.0
 artifact_type: epic
-plugin: "@orqastudio/plugin-software-project"
+plugin: "@orqastudio/plugin-software-kanban"
 description: >
   Epic lifecycle state machine. Epics are large bodies of work composed of tasks. The epic workflow tracks discovery,
   planning, active delivery, review, and completion with a structured review gate.

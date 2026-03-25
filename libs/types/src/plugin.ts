@@ -320,7 +320,7 @@ export interface PluginLifecycle {
 
 /** The full plugin manifest (read from `orqa-plugin.json`). */
 export interface PluginManifest {
-	/** Package name (e.g. "@orqastudio/plugin-software-project"). */
+	/** Package name (e.g. "@orqastudio/plugin-software-kanban"). */
 	name: string;
 	/** Semver version string. */
 	version: string;
@@ -344,7 +344,7 @@ export interface PluginManifest {
 	 * - `core:framework` — the agent execution model (always `@orqastudio/plugin-core-framework`)
 	 * - `core:discovery` — discovery methodology (e.g. systems-thinking, design-thinking)
 	 * - `core:delivery` — delivery methodology (e.g. software-project, hardware-project)
-	 * - `core:governance` — governance methodology (e.g. agile-governance, kanban)
+	 * - `core:governance` — governance methodology (e.g. agile-workflow, kanban)
 	 */
 	role?: string;
 	/** Plugin category. The app requires at least one plugin from each of: thinking, delivery, governance. */

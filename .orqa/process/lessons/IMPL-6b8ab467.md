@@ -16,7 +16,7 @@ The orchestrator has used invalid relationship types (`supersedes`, `supports`, 
 
 ## Root Cause
 
-The orchestrator invents relationship types that sound correct but aren't in the plugin-defined vocabulary. The valid types are defined in `plugins/agile-governance/orqa-plugin.json` and `plugins/software/orqa-plugin.json` but the orchestrator doesn't check these before writing relationships.
+The orchestrator invents relationship types that sound correct but aren't in the plugin-defined vocabulary. The valid types are defined in `plugins/agile-workflow/orqa-plugin.json` and `plugins/software-kanban/orqa-plugin.json` but the orchestrator doesn't check these before writing relationships.
 
 ## Recurrence
 

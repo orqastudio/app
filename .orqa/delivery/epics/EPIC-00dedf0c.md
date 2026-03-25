@@ -35,7 +35,7 @@ Plugin content (rules, knowledge, agents, docs) lives in plugin directories (`pl
 5. **Record ownership** in `.orqa/manifest.json`:
    ```json
    {
-     "@orqastudio/plugin-agile-governance": {
+     "@orqastudio/plugin-agile-workflow": {
        "files": [
          ".orqa/process/rules/RULE-f609242f.md",
          ".orqa/process/rules/RULE-0be7765e.md"
@@ -100,7 +100,7 @@ For each installed plugin (or a specific one):
 
 ```
 orqa plugin diff
-  @orqastudio/plugin-agile-governance:
+  @orqastudio/plugin-agile-workflow:
     RULE-f609242f.md: identical
     RULE-0be7765e.md: MODIFIED (3 lines changed)
     KNOW-ee860ed9.md: identical
@@ -126,7 +126,7 @@ Each plugin declares its lifecycle requirements. Validated by JSON Schema.
 
 ```json
 {
-  "name": "@orqastudio/plugin-agile-governance",
+  "name": "@orqastudio/plugin-agile-workflow",
   "version": "0.1.0-dev",
   "provides": { "schemas": [...], "relationships": [...], ... },
 
@@ -168,7 +168,7 @@ The manifest schema itself is validated by JSON Schema (added to libs/types or t
 ```json
 {
   "plugins": {
-    "@orqastudio/plugin-agile-governance": {
+    "@orqastudio/plugin-agile-workflow": {
       "version": "0.1.0-dev",
       "installed_at": "2026-03-22T00:00:00Z",
       "files": [

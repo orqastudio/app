@@ -41,7 +41,7 @@ Extend OrqaStudio by registering artifact schemas, views, widgets, relationships
 | | Pattern | Example |
 |---|---|---|
 | GitHub repo | `orqastudio-plugin-{name}` | `orqastudio-plugin-software` |
-| Dev folder | `plugins/{name}/` | `plugins/software/` |
+| Dev folder | `plugins/{name}/` | `plugins/software-kanban/` |
 | npm package | `@orqastudio/plugin-{name}` | `@orqastudio/plugin-software` |
 | Manifest | `orqa-plugin.json` | |
 
@@ -125,7 +125,7 @@ The dev environment folder is always the repo name with the category prefix stri
 
 ```
 orqastudio-lib-types          → libs/types/
-orqastudio-plugin-software    → plugins/software/
+orqastudio-plugin-software-kanban → plugins/software-kanban/
 orqastudio-connector-claude-code → connectors/claude-code/
 orqastudio-registry-official  → registry/official/
 orqastudio-tool-debug         → tools/debug/

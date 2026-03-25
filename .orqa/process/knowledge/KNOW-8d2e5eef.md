@@ -74,7 +74,7 @@ The Plugin Developer (AGENT-ce86fb50) handles all plugin-related work:
 
 | Agent | Plugin | Purpose |
 |-------|--------|---------|
-| **Governance Enforcer** | `@orqastudio/plugin-agile-governance` | Designs mechanical enforcement for rules |
+| **Governance Enforcer** | `@orqastudio/plugin-agile-workflow` | Designs mechanical enforcement for rules |
 | **Tauri Standards Agent** | `@orqastudio/plugin-tauri` | Scoped task agent for Tauri v2 standards checks |
 
 ---

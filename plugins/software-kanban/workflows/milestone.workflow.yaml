@@ -1,0 +1,288 @@
+name: milestone
+version: "0.1.0"
+artifact_type: milestone
+plugin: "@orqastudio/plugin-software-kanban"
+description: >
+  Milestone lifecycle state machine. Milestones are high-level delivery
+  checkpoints that group epics. The workflow tracks discovery, planning,
+  active delivery, review, and completion.
+
+initial_state: captured
+
+states:
+  captured:
+    category: planning
+    description: "Milestone has been captured but not yet explored."
+
+  exploring:
+    category: planning
+    description: "Milestone scope is being explored — target date, epics, acceptance criteria."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Milestone exploration started"
+
+  ready:
+    category: planning
+    description: "Milestone scope is defined and ready for prioritisation."
+
+  prioritised:
+    category: planning
+    description: "Milestone has been prioritised and is ready for active delivery."
+
+  active:
+    category: active
+    description: "Milestone delivery is in progress — epics are being worked."
+    on_enter:
+      - type: set_field
+        params:
+          field: started_at
+          value: "${now}"
+      - type: append_log
+        params:
+          message: "Milestone activated"
+
+  hold:
+    category: active
+    description: "Milestone is paused, waiting for external input or decision."
+
+  blocked:
+    category: active
+    description: "Milestone cannot proceed due to unresolved dependencies."
+
+  review:
+    category: review
+    description: "All epics complete — milestone is awaiting final review."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Milestone entered review"
+
+  completed:
+    category: completed
+    description: "Milestone has been reviewed and accepted as complete."
+    on_enter:
+      - type: set_field
+        params:
+          field: completed_at
+          value: "${now}"
+      - type: append_log
+        params:
+          message: "Milestone completed"
+
+  surpassed:
+    category: terminal
+    description: "Milestone was completed but has been superseded."
+
+  archived:
+    category: terminal
+    description: "Milestone is archived."
+
+transitions:
+  # Discovery phase
+  - from: captured
+    to: exploring
+    event: explore
+    description: "Begin exploring scope and target date."
+
+  - from: captured
+    to: ready
+    event: fast_track
+    description: "Skip exploration for well-understood milestones."
+    guards:
+      - type: field_check
+        description: "Must have a description"
+        params:
+          field: description
+          operator: not_empty
+
+  - from: captured
+    to: prioritised
+    event: prioritise
+    description: "Fast-track to prioritised (urgent work)."
+
+  # Exploration phase
+  - from: exploring
+    to: ready
+    event: scope_complete
+    description: "Exploration complete, scope is defined."
+    guards:
+      - type: field_check
+        description: "Must have a description"
+        params:
+          field: description
+          operator: not_empty
+
+  - from: exploring
+    to: prioritised
+    event: prioritise
+    description: "Fast-track from exploration to prioritised."
+
+  - from: exploring
+    to: hold
+    event: pause
+    description: "Pause exploration pending external input."
+
+  # Planning phase
+  - from: ready
+    to: prioritised
+    event: prioritise
+
+  - from: ready
+    to: active
+    event: start
+    description: "Begin delivery directly from ready."
+
+  - from: ready
+    to: review
+    event: submit_for_review
+    description: "Submit directly for review (all epics pre-completed)."
+
+  - from: prioritised
+    to: active
+    event: start
+    description: "Begin milestone delivery."
+
+  - from: prioritised
+    to: ready
+    event: deprioritise
+
+  # Active phase
+  - from: active
+    to: hold
+    event: pause
+
+  - from: active
+    to: blocked
+    event: block
+    guards:
+      - type: relationship_check
+        description: "Must have at least one depends-on relationship"
+        params:
+          relationship_type: depends-on
+          condition: exists
+
+  - from: active
+    to: review
+    event: submit_for_review
+    description: "All epics complete — submit for review."
+    gate: milestone-review
+    guards:
+      - type: relationship_check
+        description: "All fulfilling epics must be completed or archived"
+        params:
+          relationship_type: fulfils
+          condition: all_targets_in_status
+          statuses: ["completed", "surpassed", "archived"]
+
+  - from: hold
+    to: active
+    event: resume
+
+  - from: hold
+    to: ready
+    event: replan
+
+  - from: blocked
+    to: active
+    event: unblock
+    guards:
+      - type: relationship_check
+        description: "All blocking dependencies must be resolved"
+        params:
+          relationship_type: depends-on
+          condition: all_targets_in_status
+          statuses: ["completed", "surpassed", "archived"]
+
+  - from: blocked
+    to: ready
+    event: replan
+
+  # Review phase
+  - from: review
+    to: completed
+    event: approve
+
+  - from: review
+    to: active
+    event: request_changes
+    actions:
+      - type: append_log
+        params:
+          message: "Changes requested during milestone review"
+
+  # Terminal transitions
+  - from: completed
+    to: surpassed
+    event: surpass
+
+  - from: surpassed
+    to: archived
+    event: archive
+
+  - from: [captured, exploring, ready, prioritised, hold]
+    to: archived
+    event: archive
+
+gates:
+  milestone-review:
+    pattern: structured_review
+    description: "Milestone completion review — AI pre-check then human review."
+    phases:
+      gather:
+        fields:
+          - description
+          - target_date
+          - priority
+          - relationships
+        pre_checks:
+          - type: relationship_check
+            description: "All fulfilling epics must be completed"
+            params:
+              relationship_type: fulfils
+              condition: all_targets_in_status
+              statuses: ["completed", "surpassed", "archived"]
+          - type: field_check
+            description: "Description must exist"
+            params:
+              field: description
+              operator: not_empty
+        summary_template: >
+          Milestone: ${title}
+          Target date: ${target_date}
+          Epics fulfilled: ${relationship_count:fulfils}
+          Status: All epics in terminal state
+      present:
+        sections:
+          - title: "Milestone Overview"
+            content_field: description
+          - title: "Fulfilled Epics"
+            content_template: "Epic relationships: ${relationships:fulfils}"
+      collect:
+        verdicts:
+          - key: approve
+            label: "Approve — Milestone Complete"
+            transitions_to: completed
+          - key: request_changes
+            label: "Request Changes"
+            transitions_to: active
+        require_rationale: true
+      learn:
+        on_fail:
+          create_lesson: true
+          track_recurrence: true
+        on_pass:
+          track_cycle_time: true
+
+migration:
+  captured: captured
+  exploring: exploring
+  ready: ready
+  prioritised: prioritised
+  active: active
+  hold: hold
+  blocked: blocked
+  review: review
+  completed: completed
+  surpassed: surpassed
+  archived: archived

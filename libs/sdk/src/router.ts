@@ -101,7 +101,7 @@ export function parseHash(hash: string): ParsedRoute {
 	}
 
 	if (segments[0] === "plugin" && segments.length >= 3) {
-		// #/plugin/@orqastudio/plugin-software-project/roadmap
+		// #/plugin/@orqastudio/plugin-software-kanban/roadmap
 		// Plugin names can contain / (scoped packages), so join all middle segments
 		const viewKey = segments[segments.length - 1];
 		const pluginName = segments.slice(1, -1).join("/");

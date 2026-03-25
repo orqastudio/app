@@ -78,5 +78,5 @@ Implementer — this requires editing artifact files to correct types, statuses,
 ## Verification
 
 - `grep -rn "^type: idea$\|^type: research$\|^type: decision$" .orqa/ --include="*.md"` — should return 0 (all migrated to stage-scoped types)
-- `grep -rn "plugin-software-project\|plugin-agile-governance\|plugins/software/" .orqa/` — should return 0 (no old plugin references)
+- grep for old plugin names in .orqa/ — should return 0 (no old plugin references)
 - `orqa check validate` exit code 0 with 0 errors

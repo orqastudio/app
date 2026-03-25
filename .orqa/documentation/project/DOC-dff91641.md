@@ -31,8 +31,8 @@ When you run `orqa install`, the CLI reads each plugin's `orqa-plugin.json` mani
 plugins/core/knowledge/    -->  .orqa/process/knowledge/
 plugins/core/rules/        -->  .orqa/process/rules/
 plugins/core/agents/       -->  .orqa/process/agents/
-plugins/software/knowledge/ --> .orqa/process/knowledge/
-plugins/agile-governance/   --> .orqa/process/ (various)
+plugins/software-kanban/knowledge/ --> .orqa/process/knowledge/
+plugins/agile-workflow/            --> .orqa/process/ (various)
 ```
 
 Each plugin manifest declares content entries like:
@@ -61,7 +61,7 @@ Write content in a plugin when it describes something that is part of the produc
 | Domain-specific patterns | Svelte component patterns | `plugins/svelte/` |
 | Technology-specific guidance | Tauri IPC patterns | `plugins/tauri/` |
 | CLI command documentation | CLI usage and commands | `plugins/cli/` |
-| Project type templates | Software project defaults | `plugins/software/` |
+| Project type templates | Software project defaults | `plugins/software-kanban/` |
 
 **Test:** Would this content exist in a brand new project that runs `orqa install`? If yes, it belongs in a plugin.
 

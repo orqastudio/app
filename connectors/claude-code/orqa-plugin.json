@@ -4,7 +4,7 @@
   "displayName": "Claude Code Connector",
   "description": "Bridges OrqaStudio governance with Claude Code — agent mapping, rule enforcement, skill injection, artifact validation, and slash commands.",
   "requires": [
-    "@orqastudio/plugin-agile-governance",
+    "@orqastudio/plugin-agile-workflow",
     "@orqastudio/plugin-systems-thinking"
   ],
   "category": "connector",

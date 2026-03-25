@@ -1,12 +1,12 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
-# Skeleton: @orqastudio/plugin-software-project (workflows/research.workflow.yaml)
+# Skeleton: @orqastudio/plugin-software-kanban (workflows/research.workflow.yaml)
 # Resolved at: 2026-03-25T22:11:49.163Z
 
 name: research
 version: 0.1.0
 artifact_type: research
-plugin: "@orqastudio/plugin-software-project"
+plugin: "@orqastudio/plugin-software-kanban"
 description: >
   Research lifecycle state machine. Research artifacts capture investigations, feasibility studies, and technical
   explorations. The workflow tracks capture, exploration, active research, review, and completion.

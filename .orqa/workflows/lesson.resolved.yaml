@@ -1,12 +1,12 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
-# Skeleton: @orqastudio/plugin-agile-governance (workflows/lesson.workflow.yaml)
+# Skeleton: @orqastudio/plugin-agile-workflow (workflows/lesson.workflow.yaml)
 # Resolved at: 2026-03-25T22:11:49.136Z
 
 name: lesson
 version: 0.1.0
 artifact_type: lesson
-plugin: "@orqastudio/plugin-agile-governance"
+plugin: "@orqastudio/plugin-agile-workflow"
 description: >
   Lesson lifecycle state machine. Lessons capture implementation findings and patterns learned during delivery. They
   have a unique "recurring" state for patterns that recur, and a "promoted" terminal state for lessons that are promoted

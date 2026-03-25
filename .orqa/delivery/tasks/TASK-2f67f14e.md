@@ -45,7 +45,7 @@ The corrected scope is documentation and cleanup, not vocabulary reduction.
 - Schema shape: `libs/types/schemas/orqa-plugin.json`
 - TypeScript types: `libs/types/src/plugin.ts` (RelationshipType, RelationshipConstraints)
 - Validation engine: `libs/validation/src/graph.rs`, `libs/validation/src/structural.rs`
-- Plugin declarations: `plugins/agile-governance/orqa-plugin.json`, `plugins/software/orqa-plugin.json`
+- Plugin declarations: `plugins/agile-workflow/orqa-plugin.json`, `plugins/software-kanban/orqa-plugin.json`
 - Runtime discovery: `libs/validation/src/platform.rs` (scan_plugin_manifests)
 
 ## Dependency Chain

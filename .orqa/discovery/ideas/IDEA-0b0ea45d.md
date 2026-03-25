@@ -88,10 +88,10 @@ Plugin views get routes from their manifest's `views` array + `project.json` nav
 
 ```json
 // project.json navigation item
-{ "key": "roadmap", "type": "plugin", "pluginSource": "@orqastudio/plugin-software-project" }
+{ "key": "roadmap", "type": "plugin", "pluginSource": "@orqastudio/plugin-software-kanban" }
 ```
 
-This maps to: `#/plugin/@orqastudio/plugin-software-project/roadmap`
+This maps to: `#/plugin/@orqastudio/plugin-software-kanban/roadmap`
 
 ### What this enables
 

@@ -4,7 +4,7 @@
   "knowledge": [
     {
       "id": "governance-maintenance",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -19,11 +19,11 @@
       "tags": [],
       "priority": "P1",
       "summary": "Governance custodianship: audit agent definitions, maintain rules/knowledge artifacts, process lesson promotions, verify reading list currency, ensure internal consistency across the governance layer.",
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\agile-governance\\knowledge\\KNOW-8d76c3c7.md"
+      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\agile-workflow\\knowledge\\KNOW-8d76c3c7.md"
     },
     {
       "id": "thinking-mode-learning",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -35,11 +35,11 @@
       "tags": [],
       "priority": "P2",
       "summary": "Learning loop thinking mode: when encountering surprising outcomes or process failures, capture as lesson artifacts. Lessons may be promoted to rules after review. Structure: observation, hypothesis, evidence, recommendation.",
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\agile-governance\\knowledge\\KNOW-85e392ea.md"
+      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\agile-workflow\\knowledge\\KNOW-85e392ea.md"
     },
     {
       "id": "plugin-artifact-usage",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [],
@@ -52,11 +52,11 @@
       ],
       "priority": "P3",
       "summary": null,
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\agile-governance\\knowledge\\KNOW-8d1c4be6.md"
+      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\agile-workflow\\knowledge\\KNOW-8d1c4be6.md"
     },
     {
       "id": "plugin-artifact-usage-0444355f",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -77,7 +77,7 @@
     },
     {
       "id": "thinking-mode-learning-loop",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [],
@@ -94,7 +94,7 @@
     },
     {
       "id": "governance-maintenance-8c359ea4",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -117,7 +117,7 @@
     },
     {
       "id": "thinking-mode-general",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [],
@@ -134,7 +134,7 @@
     },
     {
       "id": "thinking-mode-governance",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [],
@@ -151,7 +151,7 @@
     },
     {
       "id": "thinking-mode-governance",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [],
@@ -169,7 +169,7 @@
     },
     {
       "id": "thinking-mode-governance",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [],
@@ -187,7 +187,7 @@
     },
     {
       "id": "thinking-mode-governance",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -207,7 +207,7 @@
     },
     {
       "id": "enforcement-patterns",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [],
@@ -224,7 +224,7 @@
     },
     {
       "id": "governance-patterns",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -247,7 +247,7 @@
     },
     {
       "id": "agent-team-structure",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -268,7 +268,7 @@
     },
     {
       "id": "artifact-audit-methodology",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -288,7 +288,7 @@
     },
     {
       "id": "orqastudio-enforcement-engine",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -308,7 +308,7 @@
     },
     {
       "id": "rule-00700241",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -329,7 +329,7 @@
     },
     {
       "id": "rule-04684a16",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -354,7 +354,7 @@
     },
     {
       "id": "rule-05562ed4",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -374,7 +374,7 @@
     },
     {
       "id": "rule-05ae2ce7",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -397,7 +397,7 @@
     },
     {
       "id": "rule-09a238ab",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -420,7 +420,7 @@
     },
     {
       "id": "rule-0be7765e",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -442,7 +442,7 @@
     },
     {
       "id": "rule-0d29fc91",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -468,7 +468,7 @@
     },
     {
       "id": "rule-145332dc",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -488,7 +488,7 @@
     },
     {
       "id": "rule-1b238fc8",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -510,7 +510,7 @@
     },
     {
       "id": "rule-205d9c91",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -531,7 +531,7 @@
     },
     {
       "id": "rule-216e112e",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -551,7 +551,7 @@
     },
     {
       "id": "rule-23699df2",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -573,7 +573,7 @@
     },
     {
       "id": "rule-25baac14",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -593,7 +593,7 @@
     },
     {
       "id": "rule-2f64cc63",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -618,7 +618,7 @@
     },
     {
       "id": "rule-30a223ca",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -637,7 +637,7 @@
     },
     {
       "id": "rule-3c2da849",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -659,7 +659,7 @@
     },
     {
       "id": "rule-42d17086",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -679,7 +679,7 @@
     },
     {
       "id": "rule-43f1bebc",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -702,7 +702,7 @@
     },
     {
       "id": "rule-4603207a",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -722,7 +722,7 @@
     },
     {
       "id": "rule-484872ef",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -743,7 +743,7 @@
     },
     {
       "id": "rule-49f66888",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -764,7 +764,7 @@
     },
     {
       "id": "rule-4dbb3612",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -783,7 +783,7 @@
     },
     {
       "id": "rule-5965256d",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -808,7 +808,7 @@
     },
     {
       "id": "rule-5d2d39b7",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -827,7 +827,7 @@
     },
     {
       "id": "rule-5dd9decd",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -848,7 +848,7 @@
     },
     {
       "id": "rule-63cc16ad",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -870,7 +870,7 @@
     },
     {
       "id": "rule-71352dc8",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -891,7 +891,7 @@
     },
     {
       "id": "rule-83411442",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -912,7 +912,7 @@
     },
     {
       "id": "rule-87ba1b81",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -932,7 +932,7 @@
     },
     {
       "id": "rule-8aadfd6c",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -951,7 +951,7 @@
     },
     {
       "id": "rule-8abcbfd5",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -976,7 +976,7 @@
     },
     {
       "id": "rule-8cb4bd04",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -997,7 +997,7 @@
     },
     {
       "id": "rule-8ee65d73",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -1018,7 +1018,7 @@
     },
     {
       "id": "rule-97e96528",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -1038,7 +1038,7 @@
     },
     {
       "id": "rule-9814ec3c",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -1061,7 +1061,7 @@
     },
     {
       "id": "rule-998da8ea",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -1082,7 +1082,7 @@
     },
     {
       "id": "rule-99abcea1",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -1101,7 +1101,7 @@
     },
     {
       "id": "rule-af1cd87d",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -1121,7 +1121,7 @@
     },
     {
       "id": "rule-af5771e3",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -1142,7 +1142,7 @@
     },
     {
       "id": "rule-aff3c5db",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -1164,7 +1164,7 @@
     },
     {
       "id": "rule-b03009da",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -1185,7 +1185,7 @@
     },
     {
       "id": "rule-b10fe6d1",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -1206,7 +1206,7 @@
     },
     {
       "id": "rule-b2584e59",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -1225,7 +1225,7 @@
     },
     {
       "id": "rule-b723ea53",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -1250,7 +1250,7 @@
     },
     {
       "id": "rule-c382e053",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -1271,7 +1271,7 @@
     },
     {
       "id": "rule-c603e90e",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -1292,7 +1292,7 @@
     },
     {
       "id": "rule-cd426b0d",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -1311,7 +1311,7 @@
     },
     {
       "id": "rule-d2c2063a",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -1332,7 +1332,7 @@
     },
     {
       "id": "rule-d543d759",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -1353,7 +1353,7 @@
     },
     {
       "id": "rule-d5d28fba",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -1374,7 +1374,7 @@
     },
     {
       "id": "rule-dccf4226",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -1396,7 +1396,7 @@
     },
     {
       "id": "rule-dd5b69e6",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -1422,7 +1422,7 @@
     },
     {
       "id": "rule-e1f1afc1",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -1442,7 +1442,7 @@
     },
     {
       "id": "rule-eb269afb",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -1463,7 +1463,7 @@
     },
     {
       "id": "rule-ec9462d8",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -1484,7 +1484,7 @@
     },
     {
       "id": "rule-ef822519",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -1503,7 +1503,7 @@
     },
     {
       "id": "rule-f23392dc",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -1524,7 +1524,7 @@
     },
     {
       "id": "rule-f3dca71e",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -1545,7 +1545,7 @@
     },
     {
       "id": "rule-f609242f",
-      "plugin": "@orqastudio/plugin-agile-governance",
+      "plugin": "@orqastudio/plugin-agile-workflow",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -2486,7 +2486,7 @@
     },
     {
       "id": "code-quality-review",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -2503,7 +2503,7 @@
     },
     {
       "id": "test-engineering",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -2520,7 +2520,7 @@
     },
     {
       "id": "security-audit",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [],
@@ -2537,7 +2537,7 @@
     },
     {
       "id": "delivery-completion",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -2553,7 +2553,7 @@
     },
     {
       "id": "component-extraction",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [],
@@ -2570,7 +2570,7 @@
     },
     {
       "id": "delivery-unit-completion-discipline",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "always",
       "roles": [
@@ -2590,7 +2590,7 @@
     },
     {
       "id": "qa-verification",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -2612,7 +2612,7 @@
     },
     {
       "id": "security-audit-45b5f8a8",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -2631,7 +2631,7 @@
     },
     {
       "id": "test-engineering-5f4db8f7",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -2653,7 +2653,7 @@
     },
     {
       "id": "uat-process",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -2672,7 +2672,7 @@
     },
     {
       "id": "skills-maintenance",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -2691,7 +2691,7 @@
     },
     {
       "id": "code-quality-review-91a7a6c1",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "stage-triggered",
       "roles": [
@@ -2712,7 +2712,7 @@
     },
     {
       "id": "software-delivery-management",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -2731,7 +2731,7 @@
     },
     {
       "id": "ux-compliance-review",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -2750,7 +2750,7 @@
     },
     {
       "id": "component-extraction-d00093e7",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -2769,7 +2769,7 @@
     },
     {
       "id": "project-type-software",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -2788,7 +2788,7 @@
     },
     {
       "id": "orqa-testing-patterns",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "tier": "on-demand",
       "roles": [
@@ -3618,7 +3618,7 @@
   "sections": [
     {
       "id": "implementer-role",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "type": "role-definition",
       "role": "implementer",
@@ -3628,7 +3628,7 @@
     },
     {
       "id": "review-checklist",
-      "plugin": "@orqastudio/plugin-software-project",
+      "plugin": "@orqastudio/plugin-software-kanban",
       "source": "plugin",
       "type": "stage-instruction",
       "role": null,
@@ -3638,13 +3638,13 @@
     }
   ],
   "contributors": [
-    "@orqastudio/plugin-agile-governance",
+    "@orqastudio/plugin-agile-workflow",
     "@orqastudio/plugin-cli",
     "@orqastudio/plugin-coding-standards",
     "@orqastudio/plugin-core-framework",
     "@orqastudio/plugin-plugin-dev",
     "@orqastudio/plugin-rust",
-    "@orqastudio/plugin-software-project",
+    "@orqastudio/plugin-software-kanban",
     "@orqastudio/plugin-svelte",
     "@orqastudio/plugin-systems-thinking",
     "@orqastudio/plugin-tauri",

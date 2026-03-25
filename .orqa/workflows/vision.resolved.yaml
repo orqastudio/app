@@ -1,12 +1,12 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
-# Skeleton: @orqastudio/plugin-agile-governance (workflows/vision.workflow.yaml)
+# Skeleton: @orqastudio/plugin-agile-workflow (workflows/vision.workflow.yaml)
 # Resolved at: 2026-03-25T22:11:49.158Z
 
 name: vision
 version: 0.1.0
 artifact_type: vision
-plugin: "@orqastudio/plugin-agile-governance"
+plugin: "@orqastudio/plugin-agile-workflow"
 description: >
   Vision lifecycle state machine. Vision artifacts are foundational, long-lived direction statements. The workflow is
   intentionally simple — visions are captured, activated, reviewed periodically, and eventually superseded or archived.

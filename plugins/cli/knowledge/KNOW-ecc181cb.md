@@ -126,4 +126,4 @@ BSL-1.1 — see [LICENSE](LICENSE) for details.
 
 The README title should match `displayName` from `package.json` or `orqa-plugin.json`, not the npm package name:
 - `@orqastudio/types` → `# OrqaStudio Types`
-- `@orqastudio/plugin-software-project` → `# Software Project`
+- `@orqastudio/plugin-software-kanban` → `# Software Kanban`

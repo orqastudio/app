@@ -1,12 +1,12 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
-# Skeleton: @orqastudio/plugin-software-project (workflows/milestone.workflow.yaml)
+# Skeleton: @orqastudio/plugin-software-kanban (workflows/milestone.workflow.yaml)
 # Resolved at: 2026-03-25T22:11:49.160Z
 
 name: milestone
 version: 0.1.0
 artifact_type: milestone
-plugin: "@orqastudio/plugin-software-project"
+plugin: "@orqastudio/plugin-software-kanban"
 description: >
   Milestone lifecycle state machine. Milestones are high-level delivery checkpoints that group epics. The workflow
   tracks discovery, planning, active delivery, review, and completion.

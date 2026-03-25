@@ -66,7 +66,7 @@ grep -rn 'fn active_project_path' app/backend/src-tauri/src/
 # (compare package.json deps against actual imports)
 
 # Verify schemas match
-diff <(jq '.provides.schemas[].key' plugins/software/orqa-plugin.json) \
+diff <(jq '.provides.schemas[].key' plugins/software-kanban/orqa-plugin.json) \
      <(grep -o '"key": "[^"]*"' app/ui/src/lib/plugins/software-project/manifest.ts)
 ```
 

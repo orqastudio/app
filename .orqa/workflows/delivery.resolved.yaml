@@ -1,17 +1,17 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
-# Skeleton: @orqastudio/plugin-agile-governance (workflows/delivery.workflow.yaml)
+# Skeleton: @orqastudio/plugin-agile-workflow (workflows/delivery.workflow.yaml)
 # Contributions:
-#   - @orqastudio/plugin-software-project → planning-methodology (+4 states, +9 transitions)
-#   - @orqastudio/plugin-software-project → implementation-workflow (+5 states, +10 transitions)
-#   - @orqastudio/plugin-software-project → review-process (+4 states, +11 transitions)
+#   - @orqastudio/plugin-software-kanban → planning-methodology (+4 states, +9 transitions)
+#   - @orqastudio/plugin-software-kanban → implementation-workflow (+5 states, +10 transitions)
+#   - @orqastudio/plugin-software-kanban → review-process (+4 states, +11 transitions)
 # Unfilled contribution points: discovery-artifacts, documentation-standards, learning-pipeline
 # Resolved at: 2026-03-25T22:11:49.099Z
 
 name: delivery
 version: 0.1.0
 artifact_type: epic
-plugin: "@orqastudio/plugin-agile-governance"
+plugin: "@orqastudio/plugin-agile-workflow"
 description: >
   Core delivery workflow skeleton with contribution points. This is the workflow-definition plugin's skeleton —
   stage-definition plugins fill the named slots at install time. The resolved workflow is written to
@@ -26,7 +26,7 @@ contribution_points:
     stage: plan
     description: Contribute planning methodology (scoping, estimation, prioritisation).
     required: true
-    filled_by: "@orqastudio/plugin-software-project"
+    filled_by: "@orqastudio/plugin-software-kanban"
   - name: documentation-standards
     stage: document
     description: Contribute documentation standards and templates.
@@ -35,12 +35,12 @@ contribution_points:
     stage: implement
     description: Contribute implementation sub-workflows (task lifecycle, branching strategy).
     required: true
-    filled_by: "@orqastudio/plugin-software-project"
+    filled_by: "@orqastudio/plugin-software-kanban"
   - name: review-process
     stage: review
     description: Contribute review process (code review, gate definitions, acceptance criteria).
     required: true
-    filled_by: "@orqastudio/plugin-software-project"
+    filled_by: "@orqastudio/plugin-software-kanban"
   - name: learning-pipeline
     stage: learn
     description: Contribute learning pipeline (lesson creation, retrospective, pattern tracking).

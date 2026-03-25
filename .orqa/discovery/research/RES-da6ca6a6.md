@@ -68,7 +68,7 @@ Across all 12 plugins, only the **software plugin** declares views and widgets:
 
 | Plugin | Views | Widgets |
 |--------|-------|---------|
-| `@orqastudio/plugin-software-project` | `roadmap` (Kanban icon) | `pipeline` (Delivery Pipeline), `milestone-context` |
+| `@orqastudio/plugin-software-kanban` | `roadmap` (Kanban icon) | `pipeline` (Delivery Pipeline), `milestone-context` |
 | All other 11 plugins | `[]` | `[]` |
 
 The software plugin also provides `defaultNavigation` with two groups: **Discovery** (research, wireframes) and **Delivery** (roadmap, milestones, epics, tasks).
@@ -483,7 +483,7 @@ The plugin browser is functional. What is missing:
 In the "Installed" tab detail view, add a contribution summary card:
 
 ```
-@orqastudio/plugin-agile-governance v0.1.4-dev
+@orqastudio/plugin-agile-workflow v0.1.4-dev
 Role: core:governance
 
 Contributes:
