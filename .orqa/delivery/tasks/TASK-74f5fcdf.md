@@ -12,7 +12,7 @@ acceptance:
   - "Audit performed against definitions — miscategorised artifacts reclassified"
   - "IDEA-dbebfa2b addressed"
 relationships:
-  - target: EPIC-4304bdcc
+  - target: EPIC-c828007a
     type: delivers
   - target: TASK-272b3d07
     type: depended-on-by

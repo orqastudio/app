@@ -15,7 +15,7 @@ acceptance:
   - "Ensure orqa CLI commands that create artifacts use this rule"
   - "Pre-commit hook validates that ID matches title hash"
 relationships:
-  - target: EPIC-4304bdcc
+  - target: EPIC-c828007a
     type: delivers
     rationale: "Governance foundation work for stabilisation epic"
 ---

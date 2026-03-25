@@ -19,19 +19,7 @@ relationships:
     type: delivered-by
   - target: TASK-8870f959
     type: delivered-by
-  - target: TASK-aee98da7
-    type: delivered-by
-  - target: TASK-74f5fcdf
-    type: delivered-by
-  - target: TASK-cc86ee65
-    type: delivered-by
   - target: TASK-272b3d07
-    type: delivered-by
-  - target: TASK-d28b2909
-    type: delivered-by
-  - target: TASK-2cc041f3
-    type: delivered-by
-  - target: TASK-ff0a2460
     type: delivered-by
 ---
 

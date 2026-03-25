@@ -12,7 +12,7 @@ acceptance:
   - "Path from current state to each milestone documented with what's needed"
   - "Dependencies between epics captured as depends-on relationships"
 relationships:
-  - target: EPIC-4304bdcc
+  - target: EPIC-c828007a
     type: delivers
   - target: TASK-74f5fcdf
     type: depends-on

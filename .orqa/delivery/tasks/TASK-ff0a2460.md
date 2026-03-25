@@ -16,7 +16,7 @@ acceptance:
   - "Pre-commit hook passes on artifacts with forward-only relationships"
   - "cargo build/test/clippy clean on orqa-validation"
 relationships:
-  - target: EPIC-4304bdcc
+  - target: EPIC-c828007a
     type: delivers
     rationale: "Relationship storage model is governance foundation work"
   - target: TASK-8c5f7004
