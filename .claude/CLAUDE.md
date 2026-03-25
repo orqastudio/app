@@ -30,13 +30,13 @@ EPIC-c828007a  Graph Foundation               [DONE]
        │         │
        │         ├──→ EPIC-a63fde02  Prompt Generation + Knowledge    [DONE]
        │         │         │
-       │         │         └──→ EPIC-281f7857  Agent Lifecycle + Tiering        [ACTIVE]
+       │         │         └──→ EPIC-281f7857  Agent Lifecycle + Tiering        [DONE]
        │         │                    │
        │         │                    └──→ EPIC-59b92c8d  Content Migration
        │         │                               │
        │         │                               └──→ EPIC-9d781696  Cleanup + Reconnect
        │         │
-       │         └──→ EPIC-ecef93a8  Human Gates + Review
+       │         └──→ EPIC-ecef93a8  Human Gates + Review              [ACTIVE]
 ```
 
 **Work the active epic only.** When an epic completes, update the `[ACTIVE]` marker above, read the next epic's artifact, and only then begin. Do not skip ahead. Each epic depends on the one before it.
