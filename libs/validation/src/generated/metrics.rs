@@ -102,3 +102,4 @@ pub struct TraceabilityResult {
     /// True when no path exists to any pillar or vision artifact.
     pub disconnected: bool,
 }
+

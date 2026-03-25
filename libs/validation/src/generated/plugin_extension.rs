@@ -47,11 +47,7 @@ pub struct PluginArtifactSchema {
     /// Frontmatter field declarations for this artifact type.
     pub frontmatter: serde_json::Value,
     /// Status transition rules specific to this artifact type.
-    #[serde(
-        rename = "statusTransitions",
-        skip_serializing_if = "Option::is_none",
-        default
-    )]
+    #[serde(rename = "statusTransitions", skip_serializing_if = "Option::is_none", default)]
     pub status_transitions: Option<serde_json::Value>,
 }
 
@@ -108,11 +104,7 @@ pub struct PluginManifestProvides {
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub decision_tree: Option<PluginDecisionTree>,
     /// LSP server registrations contributed by this plugin.
-    #[serde(
-        rename = "lspServers",
-        skip_serializing_if = "Option::is_none",
-        default
-    )]
+    #[serde(rename = "lspServers", skip_serializing_if = "Option::is_none", default)]
     pub lsp_servers: Option<std::collections::HashMap<String, serde_json::Value>>,
     /// Development tool registrations contributed by this plugin.
     #[serde(skip_serializing_if = "Option::is_none", default)]
@@ -142,11 +134,7 @@ pub struct PluginManifest {
     /// Semver version string.
     pub version: String,
     /// Human-readable name shown in the plugin manager UI.
-    #[serde(
-        rename = "displayName",
-        skip_serializing_if = "Option::is_none",
-        default
-    )]
+    #[serde(rename = "displayName", skip_serializing_if = "Option::is_none", default)]
     pub display_name: Option<String>,
     /// Short description of what the plugin does.
     #[serde(skip_serializing_if = "Option::is_none", default)]
@@ -170,11 +158,7 @@ pub struct PluginManifest {
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub semantics: Option<std::collections::HashMap<String, serde_json::Value>>,
     /// Artifact link display configuration contributed by this plugin.
-    #[serde(
-        rename = "artifactLinks",
-        skip_serializing_if = "Option::is_none",
-        default
-    )]
+    #[serde(rename = "artifactLinks", skip_serializing_if = "Option::is_none", default)]
     pub artifact_links: Option<serde_json::Value>,
 }
 
@@ -191,3 +175,4 @@ pub struct PluginInstallValidationResult {
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub key_collisions: Option<Vec<String>>,
 }
+
